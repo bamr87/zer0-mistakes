@@ -1,0 +1,27 @@
+- title: Quick-Start
+  url: /quickstart
+  sublinks:
+    - title: zer0
+      url: /zer0/
+    - title: Master Setup
+      url: /quickstart/machine-setup
+- title: Blog
+  url: /posts
+  sublinks:
+    - title: Pages
+      url: /pages
+- title: Docs
+  url: /docs/
+  sublinks:
+    - title: Jekyll
+      url: /docs/jekyll
+
+- title: About
+  url: /about/
+  sublinks:
+    - title: Config
+      url: /about/config
+    - title: Theme
+      url: /about/theme
+    - title: Sitemap
+      url: /about/sitemap

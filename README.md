@@ -14,7 +14,9 @@ categories:
 created: 2024-02-10T23:51:11.480Z
 lastmod: 2024-05-27T04:50:51.594Z
 draft: draft
-layout: default
+layout: journals
+sidebar:
+  nav: dynamic
 permalink: /zer0/
 slug: zer0
 keywords:
@@ -25,6 +27,7 @@ keywords:
   - zer0
 date: 2024-05-27T04:49:32.883Z
 snippet: What is a snippet?
+comments: true
 ---
 
 This is the seed of the project with all the commands, scripts, and instructions that build this application from the ground up.
