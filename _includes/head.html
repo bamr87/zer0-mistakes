@@ -11,13 +11,12 @@
 {% include google-tag-manager-head.html %}
 
 <!-- Custom JS Scripts -->
-<script src="/assets/js/myScript.js"></script>
-<script src="/assets/js/auto-hide-nav.js"></script>
-<script src="/assets/js/back-to-top.js"></script>
-<script src="/assets/js/halfmoon.js"></script>
-<script src="/assets/js/side-bar-folders.js"></script>
-<script src="/assets/js/code-copy.js"></script>
-
+<script src="{{ '/assets/js/myScript.js' | relative_url }}"></script>
+<script src="{{ '/assets/js/auto-hide-nav.js' | relative_url }}"></script>
+<script src="{{ '/assets/js/back-to-top.js' | relative_url }}"></script>
+<script src="{{ '/assets/js/halfmoon.js' | relative_url }}"></script>
+<script src="{{ '/assets/js/side-bar-folders.js' | relative_url }}"></script>
+<script src="{{ '/assets/js/code-copy.js' | relative_url }}"></script>
 
 <!-- third party scripts -->
 
@@ -26,7 +25,7 @@
     <script >mermaid.initialize({ startOnLoad: true });</script> -->
 
     <!-- Nano Bar -->
-    <script src="/assets/js/nanobar.min.js"></script>
+    <script src="{{'/assets/js/nanobar.min.js' | relative_url }}"></script>
 
 <!-- add dummy progress bar -->
 <script>
@@ -91,6 +90,6 @@
     <!-- Custom Styles -->
     <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/assets/css/custom.css">
+    <link rel="stylesheet" href="{{'/assets/css/custom.css' | relative_url }}">
     <!-- TODO: Replace this css with a compiled sass. currently, when docs.scss is compiled to main.css, the scroll spy doesn't work -->
     <!-- <link rel="stylesheet" href="/assets/css/docs.css"> -->

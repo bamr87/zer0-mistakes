@@ -311,7 +311,7 @@ bundle install
 ```
 
 ## Checkpoint - Jekyll Initialized
-![](../assets/images/jekyll-serve-1.png)  
+
 
 ```shell
 code _config.yml
@@ -347,7 +347,6 @@ bundle install
 ```
 
 ## Checkpoint - Jekyll Initialized
-![](../assets/images/jekyll-serve-1.png)  
 
 ```shell
 code _config.yml
@@ -446,7 +445,6 @@ tree
 cd -
 ```
 
-![](../assets/images/about-profile.png)  
 
 ## Plant the seed
 
@@ -462,7 +460,6 @@ cd $ZREPO
 wget -O $d-zer0.md https://raw.githubusercontent.com/bamr87/it-journey/master/zer0.md 
 ```
 
-![](../assets/images/header_pages.png)  
 
 ## Convert zer0.md to zer0.sh using Python
 
