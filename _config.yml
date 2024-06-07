@@ -26,9 +26,19 @@
 
 # Site Settings ###################################################################
 
+founder                  : "Amr"
+
+## Github Information
+github_user              : &github_user "bamr87"
+repository_name          : &github_repository "zer0-mistakes"
+repository               : [*github_user, "/", *github_repository] # GitHub username/repo-name
+local_repo               : *github_repository
+branch                   : "main"
+repo_map                 : "_about/"
+portfolio                : &portfolio [*github_user, '.', 'github.io']
+
 ## Site Information ---------------------------------------------------------------
 
-founder                  : "Amr"
 title                    : zer0-mistakes
 title_url                : "/"
 title_icon               : "globe"
@@ -36,9 +46,11 @@ subtitle                 : "Jekyll Theme"
 subtitle_url             : "localhost"
 subtitle_icon            : "code"
 title_separator          : "|" # Appears in the web browser tab name
-domain                   : &domain "zer0-mistakes.com"
+domain                   : &domain "github"
+domain_ext               : ".io"
 baseurl                  : "" # the subpath of your site, e.g. /blog - Use this if you want this whole repo to be a domain branch
-url                      : &url 'https://zer0-mistakes.com' # the base hostname & protocol for your site, e.g. http://example.com
+url                      : ['https://', *github_user, '.', *domain, *domain_ext ] # the base hostname & protocol for your site, e.g. http://example.com
+base_url                 : [ '/', *github_repository]
 public_folder            : "/assets"
 port                     : 4000 # Jekyll Serve Dev port
 dg_port                  : 4001 # TODO: Doppelganger site. Use this if you want to switch between parallel deployments
@@ -53,16 +65,6 @@ description              : >- # this means to ignore newlines until the next var
   Step-by-step instructions to build your blog, portfolio,
   and documentation site with no mistakes, unless you're a n00b."
 level                    : 'n00b'
-
-### Github Information
-github_user              : &github_user "bamr87"
-repository_name          : &github_repository "zer0-mistakes"
-repository               : [*github_user, "/", *github_repository] # GitHub username/repo-name
-local_repo               : *github_repository
-branch                   : "main"
-repo_map                 : "_about/"
-github_base_url          : [*github_user, '.' , *site_domain] # the base hostname & protocol for your site, e.g. http://example.com
-portfolio                : [*github_user, '.', 'github.io']
 
 ## Maintainer Information----------------------------------------------------------
 
