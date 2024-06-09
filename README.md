@@ -36,7 +36,7 @@ However, in practice, you may need to install additional dependencies or configu
 For example, you may need to install Ruby, Node.js, or other tools to run the application locally or deploy it to a server.
 Therefore, part of this document is to provide a list of prerequisites and setup instructions to help you get started with the project.
 
-## {{ page.title }} Version {{ page.version }}
+[![Gem Version](https://badge.fury.io/rb/jekyll-theme-zer0.svg)](https://badge.fury.io/rb/jekyll-theme-zer0)
 
 ## System Specs
 

@@ -1,4 +1,5 @@
 source "https://rubygems.org"
+gemspec
 gem 'github-pages' , '231'
 gem 'jekyll' , '3.9.5'
 group :jekyll_plugins do
