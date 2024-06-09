@@ -18,7 +18,7 @@
      {% endfor %}
      {% assign prev_path = current_path %}
    {% endif %}
-   <li class="file list-group-item list-group-item-action"><a href="{{ doc.url }}">{{ doc.title }}</a></li>
+   <li class="file list-group-item list-group-item-action"><a href="{{ doc.url | relative_url }}">{{ doc.title }}</a></li>
  {% endfor %}
  </ul>
 

@@ -39,7 +39,7 @@
                 <!-- Brand Logo to root  -->
                 <!-- set the URL for the logo image in the _config file -->
                 {% capture logo_path %}{{ site.logo }}{% endcapture %}
-                <a class="navbar-brand" href="/">
+                <a class="navbar-brand" href="{{ site.baseurl }}/">
                     <img src="{{ logo_path | relative_url }}" alt="Logo" width="30" height="30">
                 </a>
             </div>

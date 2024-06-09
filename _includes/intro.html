@@ -12,7 +12,7 @@
 <!-- Intro Section -->
 
 <div class="bd-intro pt-5 ps-lg-2 position-relative" style="
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{{ page.preview | default: site.info_banner }}') no-repeat center center / cover;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{{ page.preview | relative_url | default: site.info_banner }}') no-repeat center center / cover;
   color: #fff;">
   <br>
   <h1>{{ page.title }}</h1>

@@ -49,7 +49,7 @@ title_separator          : "|" # Appears in the web browser tab name
 domain                   : &domain "github"
 domain_ext               : ".io"
 baseurl                  : &baseurl "/zer0-mistakes" # the subpath of your site, e.g. /blog - Use this if you want this whole repo to be a domain branch
-url                      : https://bamr87.github.io # the base hostname & protocol for your site, e.g. http://example.com
+url                      : &url https://bamr87.github.io # the base hostname & protocol for your site, e.g. http://example.com
 public_folder            : "/assets"
 port                     : 4000 # Jekyll Serve Dev port
 dg_port                  : 4001 # TODO: Doppelganger site. Use this if you want to switch between parallel deployments
@@ -79,7 +79,7 @@ locale                   : "en-US"
 home_dir                 : &home '/Users/bamr87/'
 local_git                : [ *home, 'github' ]
 logo                     : /assets/images/gravatar-small.png  # path of logo image to display in the masthead, e.g. "/assets/images/88x88.png"
-logo_link                : *url
+logo_link                : [ *url, *baseurl ] # URL to link the logo to, e.g. "/"
 
 teaser                   : [ *baseurl, '/assets/images/favicon_gpt_computer_retro.png' ] # path of fallback teaser image, e.g. "/assets/images/500x300.png"
 info_banner              : [ *baseurl, '/assets/images/info-banner-mountain-wizard.png' ] # path of fallback teaser image, e.g. "/assets/images/500x300.png"
