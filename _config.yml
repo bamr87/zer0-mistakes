@@ -47,9 +47,9 @@ subtitle_url             : "localhost"
 subtitle_icon            : "code"
 title_separator          : "|" # Appears in the web browser tab name
 domain                   : &domain "github"
-domain_ext               : ".io"
+domain_ext               : &domain_ext "io"
 baseurl                  : &baseurl "/zer0-mistakes" # the subpath of your site, e.g. /blog - Use this if you want this whole repo to be a domain branch
-url                      : &url [ 'https://', *github_user, '.', *domain, *domain_ext ] #https://bamr87.github.io # the base hostname & protocol for your site, e.g. http://example.com
+url                      : &url [ 'https://', *github_user, '.', *domain, '.', *domain_ext ] #https://bamr87.github.io # the base hostname & protocol for your site, e.g. http://example.com
 public_folder            : "/assets"
 port                     : 4000 # Jekyll Serve Dev port
 dg_port                  : 4001 # TODO: Doppelganger site. Use this if you want to switch between parallel deployments
