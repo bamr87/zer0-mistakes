@@ -26,7 +26,7 @@
 # Site Settings ###################################################################
 
 founder                  : "Amr"
-remote_theme             : "jekyll-theme-zer0"
+remote_theme             : "bamr87/zer0-mistakes"
 
 ## Github Information
 github_user              : &github_user "bamr87"
