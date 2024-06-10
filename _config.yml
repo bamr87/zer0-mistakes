@@ -1,5 +1,4 @@
-# Welcome to Jekyll!
-# Configuration file for Jekyll.
+# Welcome to the configuration file for Jekyll.
 # Full docs at: http://jekyllrb.com/docs/configuration/
 # YAML docs at: https://yaml.org/spec/1.2.2/
 # ---------------------------------------------------------------------------------
@@ -27,29 +26,30 @@
 # Site Settings ###################################################################
 
 founder                  : "Amr"
+theme                    : "jekyll-theme-zer0"
 
 ## Github Information
 github_user              : &github_user "bamr87"
 repository_name          : &github_repository "zer0-mistakes"
 repository               : [*github_user, "/", *github_repository] # GitHub username/repo-name
 local_repo               : *github_repository
-branch                   : "main"
-repo_map                 : "_about/"
+branch                   : &branch "main"
+repo_map                 : "/sitemap/"
 portfolio                : &portfolio [*github_user, '.', 'github.io']
 
 ## Site Information ---------------------------------------------------------------
 
-title                    : zer0-mistakes
+title                    : &title "zer0-mistakes"
 title_url                : "/"
 title_icon               : "globe"
-subtitle                 : "Jekyll Theme"
+subtitle                 : "Jekyll Theme Dev"
 subtitle_url             : "localhost"
 subtitle_icon            : "code"
 title_separator          : "|" # Appears in the web browser tab name
 domain                   : &domain "github"
 domain_ext               : ".io"
 baseurl                  : &baseurl "/zer0-mistakes" # the subpath of your site, e.g. /blog - Use this if you want this whole repo to be a domain branch
-url                      : &url https://bamr87.github.io # the base hostname & protocol for your site, e.g. http://example.com
+url                      : &url [ 'https://', *github_user, '.', *domain, *domain_ext ] #https://bamr87.github.io # the base hostname & protocol for your site, e.g. http://example.com
 public_folder            : "/assets"
 port                     : 4000 # Jekyll Serve Dev port
 dg_port                  : 4001 # TODO: Doppelganger site. Use this if you want to switch between parallel deployments

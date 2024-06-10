@@ -1,0 +1,24 @@
+{
+  "name": "zer0-mistakes",
+  "private": true,
+  "version": "0.1.3",
+  "description": "Bootstrap Jekyll theme for headless Github Pages CMS.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bamr87/zer0-mistakes.git"
+  },
+  "keywords": [
+    "jekyll",
+    "theme",
+    "zer0"
+  ],
+  "author": "Amr Abdel-Motaleb",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bamr87/zer0-mistakes/issues"
+  },
+  "homepage": "https://bamr87.github.io/zer0-mistakes/",
+  "engines": {
+    "node": ">= 0.10.0"
+  }
+}
