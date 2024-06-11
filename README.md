@@ -30,13 +30,18 @@ snippet: What is a snippet?
 comments: true
 ---
 
+{{ site.url_test }}
+
+[![pages-build-deployment](https://github.com/bamr87/zer0-mistakes/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/bamr87/zer0-mistakes/actions/workflows/pages/pages-build-deployment)
+
+[![Gem Version](https://badge.fury.io/rb/jekyll-theme-zer0.svg)](https://badge.fury.io/rb/jekyll-theme-zer0)
+
 This is the seed of the project with all the commands, scripts, and instructions that build this application from the ground up.
 In theory, this should be the only file you need to build the project from scratch.
 However, in practice, you may need to install additional dependencies or configure the environment to match the target system. 
 For example, you may need to install Ruby, Node.js, or other tools to run the application locally or deploy it to a server.
 Therefore, part of this document is to provide a list of prerequisites and setup instructions to help you get started with the project.
 
-[![Gem Version](https://badge.fury.io/rb/jekyll-theme-zer0.svg)](https://badge.fury.io/rb/jekyll-theme-zer0)
 
 ## System Specs
 
