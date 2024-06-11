@@ -292,6 +292,18 @@ defaults:
         nav: searchCats
     permalink: /:path/:name/
 
+  # pages/_about
+  - 
+    scope:
+      path: pages/_about
+    values:
+      layout: *pages
+      collection: about
+      share: true
+      related: true
+      sidebar:
+        nav: about
+
   # pages/_quickstart
   - 
     scope:
@@ -344,17 +356,6 @@ defaults:
       author_profile: false
       sidebar:
         nav: dynamic
-
-  # pages/_about
-  - 
-    scope:
-      path: pages/_about
-    values:
-      layout: *pages
-      collection: about
-      sidebar:
-        nav: about
-
 
 # Exclude from processing.
 # The following items will not be processed, by default.

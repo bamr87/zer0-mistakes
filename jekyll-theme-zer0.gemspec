@@ -2,6 +2,7 @@
 # gem build jekyll-theme-zer0.gemspec
 # gem push jekyll-theme-zer0-<version>.gem
 # npm version patch
+# gem build jekyll-theme-zer0.gemspec && gem push jekyll-theme-zer0-$(jq -r .version package.json).gem
 require "json"
 
 package_json = JSON.parse(File.read("package.json"))
