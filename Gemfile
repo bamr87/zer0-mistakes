@@ -2,7 +2,6 @@ source "https://rubygems.org"
 gemspec
 
 gem 'github-pages'
-gem 'jekyll-theme-zer0'
 
 group :jekyll_plugins do
   gem 'jekyll-remote-theme', "~> 0.4.3"
