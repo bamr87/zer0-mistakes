@@ -30,8 +30,6 @@ snippet: What is a snippet?
 comments: true
 ---
 
-{{ site.url_test }}
-
 [![pages-build-deployment](https://github.com/bamr87/zer0-mistakes/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/bamr87/zer0-mistakes/actions/workflows/pages/pages-build-deployment)
 
 [![Gem Version](https://badge.fury.io/rb/jekyll-theme-zer0.svg)](https://badge.fury.io/rb/jekyll-theme-zer0)
@@ -115,12 +113,45 @@ More importantly, you need to:
 Make sure you have the following installed on your machine:
 
 ```shell
-# install and update prerequisites
+# Check if git is installed
+if ! git --version > /dev/null 2>&1; then
+  echo "git is not installed. Installing..."
+  brew install git
+else
+  echo "git is already installed."
+fi
 
-brew install git
-brew install gh
-brew install --cask docker
-brew install --cask visual-studio-code
+# Check if gh is installed
+if ! gh --version > /dev/null 2>&1; then
+  echo "gh is not installed. Installing..."
+  brew install gh
+else
+  echo "gh is already installed."
+fi
+
+# Check if gh is authenticated
+if ! gh auth status > /dev/null 2>&1; then
+  echo "gh is not authenticated. Please authenticate..."
+  gh auth login
+else
+  echo "gh is already authenticated."
+fi
+
+# Check if Docker is installed
+if ! docker --version > /dev/null 2>&1; then
+  echo "Docker is not installed. Installing..."
+  brew install --cask docker
+else
+  echo "Docker is already installed."
+fi
+
+# Check if Visual Studio Code is installed
+if ! code --version > /dev/null 2>&1; then
+  echo "Visual Studio Code is not installed. Installing..."
+  brew install --cask visual-studio-code
+else
+  echo "Visual Studio Code is already installed."
+fi
 ```
 
 ## Environment
@@ -137,7 +168,7 @@ brew install --cask visual-studio-code
 # Or use the following to set the environment variables
 
 export GITHOME=~/github
-export GHUSER=bamr87
+export GHUSER=$(gh api user --jq '.login')
 export GIT_REPO=zer0-mistakes
 export ZREPO=$GITHOME/$GIT_REPO
 ```
