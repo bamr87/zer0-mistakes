@@ -57,7 +57,7 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
             <strong class="d-inline-block mb-2 text-primary-emphasis">{{ post.categories[0] }}</strong>
             <h3 class="mb-0">{{ post.title }}</h3>
             <div class="mb-1 text-body-secondary">{{ post.date | date: "%b %d" }}</div>
-            <p class="card-text mb-auto">{{ post.excerpt }}</p>
+            <p class="card-text mb-auto">{{ post.excerpt | strip_html | truncate: 200 }}</p>
             <a href="{{ site.baseurl }}{{ post.url }}" class="icon-link gap-1 icon-link-hover stretched-link">
               Continue reading
               <svg class="bi"><use xlink:href="#chevron-right"/></svg>
