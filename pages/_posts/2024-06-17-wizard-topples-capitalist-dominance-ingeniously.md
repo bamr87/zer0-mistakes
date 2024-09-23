@@ -1,8 +1,9 @@
 ---
+title: Wizard Topples Capitalist Dominance Ingeniously
+description: Story about IT wizardry combating capitalism.
 categories: gpt breaking
 date: 2024-06-17 20:03:39
 layout: journals
-title: Wizard Topples Capitalist Dominance Ingeniously
 lastmod: 2024-06-18T02:05:18.613Z
 preview: /assets/images/wizard-on-journey.png
 draft: draft
