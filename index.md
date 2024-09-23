@@ -24,9 +24,6 @@ This is the landing page for the site. It is a work in progress and will be upda
 
 ## Site Features
 
-
-
-
 ## Powered By
 
 {% include powered-by.html %}
