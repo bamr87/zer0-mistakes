@@ -14,6 +14,7 @@ draft: in progress
 inspiration:
   - features are the foundation of the future
 quest: /quests/featured-future/
+comments: true
 ---
 
 ## Current Features
