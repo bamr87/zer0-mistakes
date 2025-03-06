@@ -12,14 +12,34 @@
 <!-- Intro Section -->
 
 <div class="bd-intro pt-5 ps-lg-2 position-relative" style="
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{{ page.preview | relative_url | default: site.info_banner }}') no-repeat center center / cover;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{{site.baseurl}}/{{ site.public_folder }}/{{ page.preview | default: site.info_banner }}') no-repeat center center / cover;
   color: #fff;">
-<!-- Share Icon with Popover for Multiple Sharing Options -->
+
+<!-- Share Icon with Dropdown for Multiple Sharing Options -->
 <div class="position-absolute top-0 end-0 m-3">
-  <a href="#" class="btn btn-info" data-bs-toggle="popover" data-bs-html="true" data-bs-trigger="hover focus" data-bs-placement="bottom" data-bs-content="<div class='d-flex flex-column'><a href='https://reddit.com/submit?url={{ page.url | absolute_url | url_encode }}&amp;title={{ page.title | url_encode }}' target='_blank'>Share on Reddit</a><button class='btn btn-link' onclick='navigator.clipboard.writeText(&quot;{{ page.url | absolute_url }}&quot;);'>Copy Link</button></div>" title="Share Options">
+  <div class="dropdown">
+    <button class="btn btn-info dropdown-toggle" type="button" id="shareDropdown" data-bs-toggle="dropdown" aria-expanded="false">
     <i class="bi bi-share"></i>
-  </a>
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="shareDropdown">
+      <li>
+        <a class="dropdown-item" href="https://reddit.com/submit?url={{ page.url | absolute_url | url_encode }}&amp;title={{ page.title | url_encode }}" target="_blank">
+          Share on Reddit
+        </a>
+      </li>
+      <li>
+        <script src="https://platform.linkedin.com/in.js" type="text/javascript">lang: en_US</script>
+        <script type="IN/Share" data-url="{{ page.url | absolute_url | url_encode }}"></script>
+      </li>
+      <li>
+        <button class="dropdown-item" onclick='navigator.clipboard.writeText("{{ page.url | absolute_url }}");'>
+          Copy Link
+        </button>
+      </li>
+    </ul>
+  </div>
 </div>
+
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {

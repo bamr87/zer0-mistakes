@@ -28,6 +28,7 @@ keywords:
 date: 2024-05-27T04:49:32.883Z
 snippet: What is a snippet?
 comments: true
+preview: /images/zer0-mistakes-wizard.png
 ---
 
 [![pages-build-deployment](https://github.com/bamr87/zer0-mistakes/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/bamr87/zer0-mistakes/actions/workflows/pages/pages-build-deployment)

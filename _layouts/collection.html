@@ -21,9 +21,9 @@ layout: default
   <div class="col">
     <div class="card h-100">
       {%- if post.preview -%}
-      <img src="{{ site.public_folder }}/{{ post.preview}}" class="card-img-top" alt="page preview image">
+      <img src="{{site.baseurl}}/{{ site.public_folder }}/{{ post.preview}}" class="card-img-top" alt="page preview image">
       {% else %}
-      <img src="{{ site.teaser }}" class="card-img-top" alt="page preview image">
+      <img src="{{site.baseurl}}/{{ site.public_folder }}/{{ site.teaser }}" class="card-img-top" alt="page preview image">
       {%- endif -%}
       <div class="card-body">
         <h5 class="card-title " itemprop="headline">

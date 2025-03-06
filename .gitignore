@@ -8,3 +8,4 @@ vendor/
 Gemfile.lock
 env-variables.log
 *.DS_Store
+assets/.DS_Store

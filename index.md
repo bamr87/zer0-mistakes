@@ -3,7 +3,7 @@ title: Hello World
 sub-title: Landing site for zer0-mistakes
 excerpt: This is the landing page.
 description: This is the index.md file for the whole site and root
-preview: /assets/images/wizard-on-journey.png
+preview: /images/wizard-on-journey.png
 layout: default
 keywords:
   - Github

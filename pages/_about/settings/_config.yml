@@ -42,7 +42,7 @@ url                      : 'https://it-journey.dev' # the base hostname & protoc
 public_folder            : "/assets"
 port                     : 4002 # Jekyll Serve Dev port
 dg_port                  : 4001 # TODO: Doppelganger site. Use this if you want to switch between parallel deployments
-og_image                 : '/assets/images/wizard-on-journey.png'
+og_image                 : '/images/wizard-on-journey.png'
 
 ### Github Information
 github_user              : &github_user "bamr87"

@@ -11,16 +11,16 @@ title: All posts
     <div class="col">
       <div class="card h-100">
         {%- if post.preview -%}
-        <img src="{{ site.public_folder }}/{{ post.preview}}" class="card-img-top" alt="page preview image">
+        <img src="{{site.baseurl}}/{{ site.public_folder }}/{{ post.preview}}" class="card-img-top" alt="page preview image">
         {% else %}
-        <img src="{{ site.teaser }}" class="card-img-top" alt="page preview image">
+        <img src="{{site.baseurl}}/{{ site.public_folder }}/{{ site.teaser }}" class="card-img-top" alt="page preview image">
         {%- endif -%}
         <div class="card-body">
           <h5 class="card-title " itemprop="headline">
             <a class="card-link" href="{{ post.url | relative_url }}" rel="permalink">{{ post.title }}</a>
           </h5>
           <p class="card-text" itemprop="description">
-            {{ post.excerpt | strip_html | truncate: 160 }}
+            {{ post.description | strip_html | truncate: 160 }}
           </p>
         </div>
         <div class="card-footer">
