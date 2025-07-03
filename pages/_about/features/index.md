@@ -41,12 +41,7 @@ comments: true
 | Category filter for posts                             | True        |         |     |
 | Code syntax highlighting                              | True        |         |     |
 | Programming Language cheat sheets                     | True        |         |     |
-| Automated Version Bumping & Build System              | True        |         |     |
-| Comprehensive Testing Suite                           | True        |         |     |
-| Gem Build & Publish Automation                        | True        |         |     |
-| Makefile Command Interface                             | True        |         |     |
-| Git Tag Management                                     | True        |         |     |
-| Dry-run Mode for Safe Testing                         | True        |         |     |
+| [Comprehensive Gem Automation System](/about/features/comprehensive-gem-automation-system/) | True | | [automation-quest](/quests/automation-mastery/) |
 | data file generation program                          | False       |         |     |
 | infinite scrolling landing page                       | False       |         |     |
 | Landing page site intro based on features             | False       |         |     |
@@ -73,14 +68,14 @@ comments: true
 - leader board for level progression
 - Add keyboard shortcuts (e.g. ctl + / to toggle search)
 - Build Site map page [example](http://www.publicdomainsherpa.com/site-map.html)
-- Publish training article on [Programming Historian](https://programminghistorian.org/) 
+- Publish training article on [Programming Historian](https://programminghistorian.org/)
 - Add search functionality
-- Add tab functionality https://idratherbewriting.com/documentation-theme-jekyll/mydoc_navtabs.html
+- Add tab functionality <https://idratherbewriting.com/documentation-theme-jekyll/mydoc_navtabs.html>
 - Add GUI instructions for the n00bs
 - Add language title to code blocks
 - Integrate Jupyter Notebooks into the site
 - add embedded todo button for viewing
-- update SEO, document setup https://jsinibardy.com/optimize-seo-jekyll
+- update SEO, document setup <https://jsinibardy.com/optimize-seo-jekyll>
 - add next/back button to turn pages
 - enhance right side bar design - [example](https://bootstrap-themes.github.io/dashboard/docs/#whats-included)
 - Cross reference features to documentation
