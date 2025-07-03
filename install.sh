@@ -15,21 +15,6 @@
 
 set -euo pipefail  # Exit on error, undefined vars, pipe failures
 
-# Configuration
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SOURCE_DIR="$SCRIPT_DIR"
-TARGET_DIR="${1:-$(pwd)}"
-THEME_NAME="zer0-mistakes"
-GITHUB_REPO="https://github.com/bamr87/zer0-mistakes"
-TEMP_DIR=""
-
-# Check if we're running from a downloaded script (remote installation)
-REMOTE_INSTALL=false
-if [[ ! -f "$SOURCE_DIR/_config.yml" ]]; then
-    REMOTE_INSTALL=true
-    log_info "Remote installation detected - will download theme files"
-fi
-
 # Color codes for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -53,6 +38,21 @@ log_warning() {
 log_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
+
+# Configuration - moved after logging functions to avoid undefined function calls
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd 2>/dev/null || echo "$(pwd)")"
+SOURCE_DIR="$SCRIPT_DIR"
+TARGET_DIR="${1:-$(pwd)}"
+THEME_NAME="zer0-mistakes"
+GITHUB_REPO="https://github.com/bamr87/zer0-mistakes"
+TEMP_DIR=""
+
+# Check if we're running from a downloaded script (remote installation)
+REMOTE_INSTALL=false
+if [[ ! -f "$SOURCE_DIR/_config.yml" ]]; then
+    REMOTE_INSTALL=true
+    log_info "Remote installation detected - will download theme files"
+fi
 
 # Error handling function
 handle_error() {
@@ -428,10 +428,14 @@ download_theme_files() {
         trap cleanup_temp_dir EXIT
         
         # Download and extract the repository
-        curl -fsSL "$GITHUB_REPO/archive/refs/heads/main.tar.gz" | tar -xz -C "$TEMP_DIR" --strip-components=1
+        if ! curl -fsSL "$GITHUB_REPO/archive/refs/heads/main.tar.gz" | tar -xz -C "$TEMP_DIR" --strip-components=1; then
+            log_error "Failed to download theme files from GitHub"
+            log_error "Please check your internet connection and try again"
+            exit 1
+        fi
         
         if [[ ! -f "$TEMP_DIR/_config.yml" ]]; then
-            log_error "Failed to download theme files from GitHub"
+            log_error "Downloaded files are incomplete or corrupted"
             exit 1
         fi
         
@@ -535,6 +539,7 @@ main() {
 }
 
 # Script execution
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+# Handle both direct execution and curl piping
+if [[ "${BASH_SOURCE[0]:-}" == "${0}" ]] || [[ -z "${BASH_SOURCE[0]:-}" ]]; then
     main "$@"
 fi
