@@ -41,6 +41,12 @@ comments: true
 | Category filter for posts                             | True        |         |     |
 | Code syntax highlighting                              | True        |         |     |
 | Programming Language cheat sheets                     | True        |         |     |
+| Automated Version Bumping & Build System              | True        |         |     |
+| Comprehensive Testing Suite                           | True        |         |     |
+| Gem Build & Publish Automation                        | True        |         |     |
+| Makefile Command Interface                             | True        |         |     |
+| Git Tag Management                                     | True        |         |     |
+| Dry-run Mode for Safe Testing                         | True        |         |     |
 | data file generation program                          | False       |         |     |
 | infinite scrolling landing page                       | False       |         |     |
 | Landing page site intro based on features             | False       |         |     |
