@@ -1,7 +1,7 @@
 # jekyll-theme-zer0.gemspec
+# npm version patch
 # gem build jekyll-theme-zer0.gemspec
 # gem push jekyll-theme-zer0-<version>.gem
-# npm version patch
 # gem build jekyll-theme-zer0.gemspec && gem push jekyll-theme-zer0-$(jq -r .version package.json).gem
 require "json"
 
@@ -25,10 +25,10 @@ Gem::Specification.new do |s|
   
   s.platform                 = Gem::Platform::RUBY
 
-  s.required_ruby_version    = ">= 2.7.0"
+  s.required_ruby_version    = ">= 2.6.0"
 
   s.add_runtime_dependency "jekyll", "~> 3.9.5"
 
-  s.add_development_dependency "bundler", "~> 2.3.22"
+  s.add_development_dependency "bundler", ">= 2.3.0"
   s.add_development_dependency "rake", "~> 13.0"
 end

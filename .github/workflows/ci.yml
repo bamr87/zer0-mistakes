@@ -1,0 +1,138 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  RUBY_VERSION: '3.0'
+
+jobs:
+  test:
+    name: Test on Ruby ${{ matrix.ruby }}
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        ruby: ['2.7', '3.0', '3.1', '3.2']
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: true
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y jq
+    
+    - name: Make scripts executable
+      run: chmod +x scripts/*.sh
+    
+    - name: Run tests
+      run: ./scripts/test.sh --verbose
+  
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ env.RUBY_VERSION }}
+        bundler-cache: true
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y jq
+        gem install rubocop
+    
+    - name: Make scripts executable
+      run: chmod +x scripts/*.sh
+    
+    - name: Run RuboCop (if config exists)
+      run: |
+        if [ -f .rubocop.yml ]; then
+          rubocop
+        else
+          echo "No RuboCop configuration found, skipping..."
+        fi
+    
+    - name: Validate gemspec
+      run: gem specification jekyll-theme-zer0.gemspec
+    
+    - name: Check file permissions
+      run: |
+        echo "Checking for executable files that shouldn't be..."
+        find . -name "*.rb" -executable -type f || true
+        find . -name "*.md" -executable -type f || true
+        find . -name "*.yml" -executable -type f || true
+        find . -name "*.yaml" -executable -type f || true
+  
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ env.RUBY_VERSION }}
+        bundler-cache: true
+    
+    - name: Install bundle-audit
+      run: gem install bundle-audit
+    
+    - name: Run bundle-audit
+      run: |
+        bundle-audit check --update || true
+        echo "Security scan completed"
+  
+  build-test:
+    name: Build Test
+    runs-on: ubuntu-latest
+    needs: [test, lint]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ env.RUBY_VERSION }}
+        bundler-cache: true
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y jq
+    
+    - name: Make scripts executable
+      run: chmod +x scripts/*.sh
+    
+    - name: Test build
+      run: ./scripts/build.sh
+    
+    - name: Verify gem contents
+      run: |
+        VERSION=$(jq -r '.version' package.json)
+        if [ -f "jekyll-theme-zer0-$VERSION.gem" ]; then
+          echo "Gem built successfully: jekyll-theme-zer0-$VERSION.gem"
+          gem contents "jekyll-theme-zer0-$VERSION.gem" | head -10
+          echo "Total files in gem: $(gem contents jekyll-theme-zer0-$VERSION.gem | wc -l)"
+        else
+          echo "Gem file not found!"
+          exit 1
+        fi

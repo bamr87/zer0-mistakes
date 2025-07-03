@@ -9,3 +9,9 @@ Gemfile.lock
 env-variables.log
 *.DS_Store
 assets/.DS_Store
+
+# Gem development
+*.gem
+pkg/
+tmp/
+.rspec_status

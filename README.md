@@ -159,6 +159,108 @@ else
 fi
 ```
 
+## Installation
+
+The zer0-mistakes Jekyll theme can be installed in any repository using the included installation script. This script copies all essential theme files and creates the proper directory structure.
+
+### Quick Installation
+
+```bash
+# Clone this repository
+git clone https://github.com/bamr87/zer0-mistakes.git
+cd zer0-mistakes
+
+# Install the theme in a new directory
+./install.sh my-new-site
+
+# Or install in current directory
+./install.sh .
+```
+
+### What Gets Installed
+
+The installation script copies the following essential files:
+
+**Configuration Files:**
+
+- `_config.yml` - Main Jekyll configuration
+- `_config_dev.yml` - Development configuration  
+- `frontmatter.json` - VS Code frontmatter configuration
+
+**Build & Dependency Files:**
+
+- `Gemfile` - Ruby dependencies
+- `Rakefile` - Build tasks
+- `package.json` - Node.js dependencies
+
+**Docker Files:**
+
+- `docker-compose.yml` - Multi-container setup
+- `Dockerfile` - Container configuration
+
+**Theme Directories:**
+
+- `_data/` - Site data files and navigation
+- `_sass/` - Sass stylesheets and custom styles
+- `_includes/` - Reusable template components
+- `_layouts/` - Page layout templates  
+- `assets/` - Static assets (CSS, JS, images)
+
+**Static Files:**
+
+- `404.html` - Custom error page
+- `favicon.ico` - Site icon
+- `index.md` - Homepage (only if not exists)
+
+**Additional Files:**
+
+- `.gitignore` - Git ignore rules (only if not exists)
+- `INSTALLATION.md` - Setup instructions
+
+### Installation Options
+
+```bash
+# Show help and usage information
+./install.sh --help
+
+# Install in current directory
+./install.sh
+
+# Install in a specific directory
+./install.sh /path/to/my-site
+
+# Install in a relative directory
+./install.sh ../my-new-site
+```
+
+### After Installation
+
+Once installed, navigate to your new site directory and start developing:
+
+```bash
+cd my-new-site
+
+# Using Docker (recommended)
+docker-compose up
+
+# Or using local Ruby environment
+bundle install
+bundle exec jekyll serve --config _config_dev.yml
+
+# Your site will be available at http://localhost:4000
+```
+
+### Customization
+
+After installation:
+
+1. **Edit Configuration:** Update `_config.yml` with your site details
+2. **Customize Styles:** Modify `_sass/custom.scss` for custom styling
+3. **Add Content:** Create pages in the `pages/` directory
+4. **Update Navigation:** Edit `_data/navigation/` files for site navigation
+
+For detailed setup instructions, see the `INSTALLATION.md` file created during installation.
+
 ## Environment
 
 ### Set your own environment variables
