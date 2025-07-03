@@ -1,3 +1,8 @@
+## [0.1.9] - 2025-07-03
+
+### Changed
+- Version bump to 0.1.9
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
