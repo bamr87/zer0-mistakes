@@ -1,6 +1,29 @@
-## [0.1.9] - 2025-07-03
+## [0.2.0] - 2025-07-03
+
+### Added
+
+- **Remote Installation Support**: Direct installation from GitHub using `curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash`
+- **Azure Static Web Apps Integration**: Automatic workflow creation for Azure deployment
+- **Build Directory Structure**: Added `build/` directory for logs and temporary files
+- **Enhanced Error Handling**: Comprehensive error handling with colored output
+- **Cleanup Functions**: Automatic cleanup of temporary files after remote installation
 
 ### Changed
+
+- **Simplified Installation Process**: Updated `zer0.md` to use single install command instead of complex manual setup
+- **Azure-Ready Configuration**: Pre-configured directory structure for Azure Static Web Apps (app location: `.`, api location: `api/`, output location: `_site/`)
+- **Enhanced Documentation**: Updated `INSTALLATION.md` with Azure deployment instructions
+- **Improved Help System**: Added remote installation examples to help output
+
+### Fixed
+
+- **Installation Script Compatibility**: Made `install.sh` compatible with both local and remote execution
+- **Directory Structure**: Optimized for Azure Static Web Apps deployment requirements
+
+## [0.1.9] - 2025-07-03
+
+### Updated
+
 - Version bump to 0.1.9
 
 # Changelog

@@ -20,6 +20,15 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOURCE_DIR="$SCRIPT_DIR"
 TARGET_DIR="${1:-$(pwd)}"
 THEME_NAME="zer0-mistakes"
+GITHUB_REPO="https://github.com/bamr87/zer0-mistakes"
+TEMP_DIR=""
+
+# Check if we're running from a downloaded script (remote installation)
+REMOTE_INSTALL=false
+if [[ ! -f "$SOURCE_DIR/_config.yml" ]]; then
+    REMOTE_INSTALL=true
+    log_info "Remote installation detected - will download theme files"
+fi
 
 # Color codes for output
 RED='\033[0;31m'
@@ -268,6 +277,29 @@ bundle exec jekyll serve --config _config_dev.yml
 # Your site will be available at http://localhost:4000
 \`\`\`
 
+## Azure Static Web Apps Deployment
+
+This theme is pre-configured for Azure Static Web Apps deployment:
+
+### Directory Structure for Azure
+- **App Location**: \`.\" (root directory) - Contains Jekyll source files
+- **API Location**: \`api/\" - For Azure Functions (optional)
+- **Output Location**: \`_site/\" - Jekyll build output
+
+### Deployment Setup
+1. Create an Azure Static Web App in the Azure portal
+2. Copy the deployment token to your GitHub repository secrets as \`AZURE_STATIC_WEB_APPS_API_TOKEN\`
+3. Push to the \`main\` branch to trigger automatic deployment
+
+### Adding Azure Functions (Optional)
+\`\`\`bash
+# Create Azure Functions API structure
+mkdir -p api/hello
+
+# The workflow file at .github/workflows/azure-static-web-apps.yml
+# is already configured for Azure deployment
+\`\`\`
+
 ## Configuration
 
 1. Edit \`_config.yml\` to customize your site settings
@@ -284,7 +316,8 @@ bundle exec jekyll serve --config _config_dev.yml
 - \`_layouts/\` - Page layouts
 - \`_sass/\` - Sass stylesheets
 - \`assets/\` - Static assets (images, JS, CSS)
-- \`pages/\` - Your site pages
+- \`build/\` - Build logs and temporary files
+- \`.github/workflows/\` - GitHub Actions for Azure deployment
 
 ## Support
 
@@ -293,6 +326,7 @@ For issues and documentation, visit: https://github.com/bamr87/zer0-mistakes
 ---
 Installed on: $(date)
 Theme Version: zer0-mistakes
+Azure Static Web Apps: Ready
 "
     
     if [[ ! -f "$TARGET_DIR/INSTALLATION.md" ]]; then
@@ -303,6 +337,117 @@ Theme Version: zer0-mistakes
     log_success "Installation instructions created"
 }
 
+create_azure_static_web_apps_workflow() {
+    log_info "Creating Azure Static Web Apps workflow..."
+    
+    # Create .github/workflows directory
+    mkdir -p "$TARGET_DIR/.github/workflows"
+    
+    # Create Azure Static Web Apps workflow file
+    cat > "$TARGET_DIR/.github/workflows/azure-static-web-apps.yml" << 'EOF'
+name: Azure Static Web Apps CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - main
+
+jobs:
+  build_and_deploy_job:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    name: Build and Deploy Job
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          lfs: false
+      
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+          bundler-cache: true
+      
+      - name: Build Jekyll site
+        run: |
+          bundle install
+          bundle exec jekyll build
+      
+      - name: Build And Deploy
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "."
+          api_location: "api"
+          output_location: "_site"
+          skip_app_build: true
+
+  close_pull_request_job:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    name: Close Pull Request Job
+    steps:
+      - name: Close Pull Request
+        id: closepullrequest
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: "close"
+EOF
+    
+    log_success "Azure Static Web Apps workflow created"
+}
+
+create_build_directory() {
+    log_info "Creating build directory structure..."
+    
+    # Create build directory for logs and temporary files
+    mkdir -p "$TARGET_DIR/build"
+    
+    # Create initial log file
+    echo "$(date) - zer0-mistakes theme installation started" > "$TARGET_DIR/build/env-variables.log"
+    
+    log_success "Build directory created"
+}
+
+# Remote installation functions
+download_theme_files() {
+    if [[ "$REMOTE_INSTALL" == "true" ]]; then
+        log_info "Downloading zer0-mistakes theme files from GitHub..."
+        
+        # Create temporary directory
+        TEMP_DIR=$(mktemp -d)
+        trap cleanup_temp_dir EXIT
+        
+        # Download and extract the repository
+        curl -fsSL "$GITHUB_REPO/archive/refs/heads/main.tar.gz" | tar -xz -C "$TEMP_DIR" --strip-components=1
+        
+        if [[ ! -f "$TEMP_DIR/_config.yml" ]]; then
+            log_error "Failed to download theme files from GitHub"
+            exit 1
+        fi
+        
+        # Update source directory to use downloaded files
+        SOURCE_DIR="$TEMP_DIR"
+        log_success "Theme files downloaded successfully"
+    fi
+}
+
+cleanup_temp_dir() {
+    if [[ -n "$TEMP_DIR" && -d "$TEMP_DIR" ]]; then
+        rm -rf "$TEMP_DIR"
+        log_info "Cleaned up temporary files"
+    fi
+}
+
 # Help function
 show_help() {
     cat << EOF
@@ -310,10 +455,12 @@ zer0-mistakes Jekyll Theme Installer
 
 USAGE:
     $0 [TARGET_DIRECTORY]
+    curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
 
 DESCRIPTION:
     Installs the zer0-mistakes Jekyll theme by copying essential files
-    and creating the necessary directory structure.
+    and creating the necessary directory structure. Supports both local
+    and remote installation from GitHub.
 
 ARGUMENTS:
     TARGET_DIRECTORY    Directory where theme will be installed (default: current directory)
@@ -325,6 +472,9 @@ EXAMPLES:
     $0                    # Install in current directory
     $0 my-new-site       # Install in ./my-new-site
     $0 /path/to/site     # Install in absolute path
+    
+    # Remote installation
+    curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
 
 FILES INSTALLED:
     • Configuration: _config.yml, _config_dev.yml, frontmatter.json
@@ -333,6 +483,8 @@ FILES INSTALLED:
     • Theme: _data/, _sass/, _includes/, _layouts/, assets/
     • Static: 404.html, favicon.ico, index.md (if not exists)
     • Git: .gitignore (if not exists)
+    • Azure: .github/workflows/azure-static-web-apps.yml
+    • Build: build/ directory with logs
     • Docs: INSTALLATION.md
 
 For more information, visit: https://github.com/bamr87/zer0-mistakes
@@ -352,6 +504,9 @@ main() {
     log_info "Target: $TARGET_DIR"
     echo
     
+    # Download theme files if running remotely
+    download_theme_files
+    
     # Validation
     validate_source_directory
     validate_target_directory
@@ -365,6 +520,8 @@ main() {
     install_static_files
     create_gitignore
     create_readme_instructions
+    create_azure_static_web_apps_workflow
+    create_build_directory
     
     echo
     log_success "Installation completed successfully!"
