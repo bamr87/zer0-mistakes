@@ -92,7 +92,7 @@ run_test "Validate package.json syntax" "jq empty package.json"
 run_test "Validate package.json version format" "jq -r '.version' package.json | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$'"
 
 # Test 3: Validate gemspec syntax
-run_test "Validate gemspec syntax" "gem specification jekyll-theme-zer0.gemspec"
+run_test "Validate gemspec syntax" "ruby -c jekyll-theme-zer0.gemspec"
 
 # Test 4: Build gem (test build)
 run_test "Test gem build" "gem build jekyll-theme-zer0.gemspec"
@@ -110,7 +110,7 @@ if [[ -d "_layouts" ]]; then
     for layout in _layouts/*.html; do
         if [[ -f "$layout" ]]; then
             layout_name=$(basename "$layout")
-            run_test "Validate YAML front matter in $layout_name" "head -10 '$layout' | grep -q '---' && head -10 '$layout' | tail -n +2 | head -n -1 | ruby -ryaml -e 'YAML.load(STDIN.read)'"
+            run_test "Validate YAML front matter in $layout_name" "head -10 '$layout' | grep -q -- '---' && head -10 '$layout' | tail -n +2 | head -n -1 | ruby -ryaml -e 'YAML.load(STDIN.read)'"
         fi
     done
 fi

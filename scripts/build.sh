@@ -93,7 +93,7 @@ fi
 # Validate gemspec
 log "Validating gemspec..."
 if [[ "$DRY_RUN" != true ]]; then
-    gem specification jekyll-theme-zer0.gemspec > /dev/null
+    ruby -c jekyll-theme-zer0.gemspec > /dev/null
     info "✓ Gemspec is valid"
 fi
 
@@ -112,9 +112,10 @@ fi
 # List gem contents for verification
 if [[ "$DRY_RUN" != true ]] && [[ -f "jekyll-theme-zer0-${VERSION}.gem" ]]; then
     log "Gem contents:"
-    gem contents jekyll-theme-zer0-${VERSION}.gem | head -20
+    # Use tar to list contents since gem contents only works for installed gems
+    tar -tzf jekyll-theme-zer0-${VERSION}.gem | head -20
     echo "..."
-    echo "Total files: $(gem contents jekyll-theme-zer0-${VERSION}.gem | wc -l)"
+    echo "Total files: $(tar -tzf jekyll-theme-zer0-${VERSION}.gem | wc -l)"
 fi
 
 # Check if we should publish
@@ -125,8 +126,15 @@ if [[ "$PUBLISH" == true ]]; then
         log "Publishing gem to RubyGems..."
         
         # Check if user is authenticated with RubyGems
-        if ! gem whoami &> /dev/null; then
+        if [[ ! -f ~/.gem/credentials ]]; then
             error "Not authenticated with RubyGems. Run 'gem signin' first."
+        fi
+        
+        # Check if this version already exists on RubyGems
+        if gem list --remote jekyll-theme-zer0 | grep -q "jekyll-theme-zer0 (${VERSION})"; then
+            warn "Version ${VERSION} already exists on RubyGems"
+            echo -e "${YELLOW}You need to bump the version first. Use ./scripts/version.sh --bump [--major|--minor|--patch]${NC}"
+            error "Cannot republish existing version ${VERSION}"
         fi
         
         # Confirm publication
