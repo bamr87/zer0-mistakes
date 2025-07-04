@@ -1,4 +1,4 @@
-name: AI Evolution Engine - Version Automation Seed
+name: AI Evolution Engine - Docker-First Jekyll Theme Seed
 
 on:
   push:

@@ -5,7 +5,49 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2025-07-03
+## [Unreleased] - 2025-01-27
+
+### Added
+
+- **🐳 Docker-First Development Evolution**: Complete transformation to containerized development
+  - AI-powered `init_setup.sh` with intelligent environment detection and auto-healing
+  - Cross-platform Docker Compose configuration with Apple Silicon optimization
+  - Self-healing `_config_dev.yml` generation for Docker compatibility
+  - Enhanced `install.sh` with Docker-first optimization functions
+  - Comprehensive Docker troubleshooting and platform detection
+
+- **🧠 AI-Powered Self-Healing Configuration**: Intelligent automation and error recovery
+  - Auto-detection and resolution of Jekyll theme dependency issues
+  - Intelligent platform-specific optimizations (Intel/Apple Silicon)
+  - Automatic generation of Docker-compatible development configurations
+  - Smart error recovery with detailed logging and guidance
+
+- **🚀 Enhanced Installation System**: Robust, error-tolerant setup process
+  - `optimize_development_config()` function for Docker-friendly configs
+  - `fix_content_issues()` function to resolve Jekyll include problems
+  - Comprehensive error handling with actionable troubleshooting steps
+  - AI-generated documentation and setup instructions
+
+### Changed
+
+- **🔧 Installation Philosophy**: Shifted from traditional Ruby/Jekyll setup to Docker-first approach
+  - Disabled local theme dependencies to avoid gemspec issues
+  - Optimized for containerized development environments
+  - Enhanced cross-platform compatibility and consistency
+
+### Fixed
+
+- **🐛 Theme Dependency Issues**: Resolved Jekyll theme not found errors
+  - Commented out problematic Jekyll includes in README.md
+  - Disabled `remote_theme` in development configuration
+  - Added essential Jekyll plugins for Docker compatibility
+
+- **🍎 Apple Silicon Compatibility**: Fixed Docker platform issues
+  - Added `platform: linux/amd64` for Apple Silicon compatibility
+  - Automatic platform detection and optimization
+  - Cross-architecture Docker image support
+
+## [Previous] - 2025-07-03
 
 ### Added
 

@@ -266,6 +266,8 @@ docker-compose up
 # Your site will be available at http://localhost:4000
 \`\`\`
 
+**Note**: The installation script has optimized \`_config_dev.yml\` for Docker compatibility.
+
 ### Using Local Ruby Environment
 \`\`\`bash
 # Install dependencies
@@ -310,7 +312,7 @@ mkdir -p api/hello
 ## Directory Structure
 
 - \`_config.yml\` - Main Jekyll configuration
-- \`_config_dev.yml\` - Development configuration
+- \`_config_dev.yml\` - Development configuration (Docker-optimized)
 - \`_data/\` - Site data files
 - \`_includes/\` - Reusable template components
 - \`_layouts/\` - Page layouts
@@ -319,14 +321,67 @@ mkdir -p api/hello
 - \`build/\` - Build logs and temporary files
 - \`.github/workflows/\` - GitHub Actions for Azure deployment
 
+## Troubleshooting
+
+### Docker Issues
+
+#### Theme Not Found Error
+\`\`\`text
+jekyll 3.10.0 | Error: The jekyll-theme-zer0 theme could not be found.
+\`\`\`
+
+**Solution**: The installation script has configured \`_config_dev.yml\` to disable theme dependencies for Docker compatibility.
+
+#### Port Conflicts
+If port 4000 is already in use, modify \`docker-compose.yml\`:
+\`\`\`yaml
+ports:
+  - \"4001:4000\"  # Use different external port
+\`\`\`
+
+#### Platform Issues (Apple Silicon/ARM64)
+If you encounter platform warnings on Apple Silicon Macs, this is normal and the container should still work.
+
+#### Bundle Install Failures
+If you encounter gem installation issues:
+\`\`\`bash
+# Clear bundle cache
+docker-compose down
+docker system prune -f
+
+# Rebuild containers
+docker-compose up --build
+\`\`\`
+
+### Local Development Issues
+
+#### Missing Dependencies
+\`\`\`bash
+# Update bundler
+gem update bundler
+
+# Clean install
+bundle clean --force
+bundle install
+\`\`\`
+
+#### Ruby Version Issues
+Ensure you're using a compatible Ruby version (3.0+):
+\`\`\`bash
+ruby --version
+rbenv install 3.1.0  # If using rbenv
+rbenv global 3.1.0
+\`\`\`
+
 ## Support
 
-For issues and documentation, visit: https://github.com/bamr87/zer0-mistakes
+For issues and documentation, visit: [zer0-mistakes GitHub Repository](https://github.com/bamr87/zer0-mistakes)
 
 ---
-Installed on: $(date)
+Installed on: \$(date)
 Theme Version: zer0-mistakes
 Azure Static Web Apps: Ready
+Docker: Optimized for compatibility
 "
     
     if [[ ! -f "$TARGET_DIR/INSTALLATION.md" ]]; then
@@ -404,6 +459,86 @@ jobs:
 EOF
     
     log_success "Azure Static Web Apps workflow created"
+}
+
+# Post-installation configuration optimization
+optimize_development_config() {
+    log_info "Optimizing development configuration for Docker compatibility..."
+    
+    local dev_config="$TARGET_DIR/_config_dev.yml"
+    
+    # Create an enhanced _config_dev.yml that works with Docker
+    cat > "$dev_config" << 'EOF'
+# Dev config override for zer0-mistakes theme
+# Optimized for Docker development environment
+
+# Disable remote theme for initial setup - allows site to build with basic Jekyll functionality
+# Enable remote_theme only when bamr87/zer0-mistakes repository is available and accessible
+remote_theme             : false
+# theme                    : "jekyll-theme-zer0"  # Commented out to avoid gem dependency issues
+
+# Essential Jekyll plugins for development
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap  
+  - jekyll-seo-tag
+  - jekyll-paginate
+
+# Override problematic settings for local development
+url: ""
+baseurl: ""
+
+# Development-specific settings
+host: "0.0.0.0"  # Allow Docker container access
+port: 4000
+livereload: true
+incremental: true
+
+# Exclude files for faster builds
+exclude:
+  - README.md
+  - INSTALLATION.md
+  - Gemfile.lock
+  - vendor/
+  - .bundle/
+  - build/
+  - .github/
+  - docker-compose.yml
+  - Dockerfile
+  - "*.backup.*"
+
+# Markdown processing
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+EOF
+    
+    log_success "Development configuration optimized for Docker"
+}
+
+# Fix common build issues in content files
+fix_content_issues() {
+    log_info "Fixing common content build issues..."
+    
+    # Fix problematic includes in README.md if it exists
+    local readme_file="$TARGET_DIR/README.md"
+    if [[ -f "$readme_file" ]]; then
+        # Comment out script includes that might not exist
+        if grep -q "{% include_relative script/" "$readme_file"; then
+            log_info "Commenting out problematic script includes in README.md"
+            sed -i.backup 's/{% include_relative script\/\([^}]*\) %}/{%- comment -%}\n{% include_relative script\/\1 %}\n{%- endcomment -%}/g' "$readme_file"
+        fi
+        
+        # Comment out any other problematic includes
+        if grep -q "{% include.*\.sh" "$readme_file"; then
+            log_info "Commenting out shell script includes in README.md"
+            sed -i.backup2 's/{% include\([^}]*\.sh[^}]*\) %}/{%- comment -%}\n{% include\1 %}\n{%- endcomment -%}/g' "$readme_file"
+        fi
+    fi
+    
+    log_success "Content issues fixed"
 }
 
 create_build_directory() {
@@ -522,10 +657,14 @@ main() {
     install_docker_files
     install_theme_directories
     install_static_files
+    optimize_development_config
+    fix_content_issues
     create_gitignore
     create_readme_instructions
     create_azure_static_web_apps_workflow
     create_build_directory
+    optimize_development_config
+    fix_content_issues
     
     echo
     log_success "Installation completed successfully!"

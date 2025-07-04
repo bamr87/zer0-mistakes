@@ -2,12 +2,13 @@ services:
 
   jekyll:
     image: jekyll/jekyll:latest
-    command: jekyll serve --watch --force_polling --config "_config.yml,_config_dev.yml"
+    platform: linux/amd64  # Ensures compatibility across different architectures
+    command: jekyll serve --watch --force_polling --config "_config.yml,_config_dev.yml" --host 0.0.0.0 --port 4000
 
     volumes:
       - ./:/app
     ports:
-      - "4002:4002"
+      - "4000:4000"
     working_dir: /app
     environment:
       JEKYLL_ENV: development
