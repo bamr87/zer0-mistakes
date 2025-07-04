@@ -518,29 +518,6 @@ EOF
     log_success "Development configuration optimized for Docker"
 }
 
-# Fix common build issues in content files
-fix_content_issues() {
-    log_info "Fixing common content build issues..."
-    
-    # Fix problematic includes in README.md if it exists
-    local readme_file="$TARGET_DIR/README.md"
-    if [[ -f "$readme_file" ]]; then
-        # Comment out script includes that might not exist
-        if grep -q "{% include_relative script/" "$readme_file"; then
-            log_info "Commenting out problematic script includes in README.md"
-            sed -i.backup 's/{% include_relative script\/\([^}]*\) %}/{%- comment -%}\n{% include_relative script\/\1 %}\n{%- endcomment -%}/g' "$readme_file"
-        fi
-        
-        # Comment out any other problematic includes
-        if grep -q "{% include.*\.sh" "$readme_file"; then
-            log_info "Commenting out shell script includes in README.md"
-            sed -i.backup2 's/{% include\([^}]*\.sh[^}]*\) %}/{%- comment -%}\n{% include\1 %}\n{%- endcomment -%}/g' "$readme_file"
-        fi
-    fi
-    
-    log_success "Content issues fixed"
-}
-
 create_build_directory() {
     log_info "Creating build directory structure..."
     
@@ -658,13 +635,11 @@ main() {
     install_theme_directories
     install_static_files
     optimize_development_config
-    fix_content_issues
     create_gitignore
     create_readme_instructions
     create_azure_static_web_apps_workflow
     create_build_directory
     optimize_development_config
-    fix_content_issues
     
     echo
     log_success "Installation completed successfully!"
