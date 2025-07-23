@@ -42,10 +42,51 @@ log_error() {
 # Configuration - moved after logging functions to avoid undefined function calls
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd 2>/dev/null || echo "$(pwd)")"
 SOURCE_DIR="$SCRIPT_DIR"
-TARGET_DIR="${1:-$(pwd)}"
+TARGET_DIR=""
 THEME_NAME="zer0-mistakes"
 GITHUB_REPO="https://github.com/bamr87/zer0-mistakes"
 TEMP_DIR=""
+INSTALL_MODE="full"  # Default to full installation
+
+# Parse command line arguments
+parse_arguments() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -m|--minimal)
+                INSTALL_MODE="minimal"
+                shift
+                ;;
+            -f|--full)
+                INSTALL_MODE="full"
+                shift
+                ;;
+            -h|--help)
+                show_help
+                exit 0
+                ;;
+            -*)
+                log_error "Unknown option: $1"
+                show_help
+                exit 1
+                ;;
+            *)
+                if [[ -z "$TARGET_DIR" ]]; then
+                    TARGET_DIR="$1"
+                else
+                    log_error "Multiple target directories specified"
+                    show_help
+                    exit 1
+                fi
+                shift
+                ;;
+        esac
+    done
+    
+    # Set default target directory if not specified
+    if [[ -z "$TARGET_DIR" ]]; then
+        TARGET_DIR="$(pwd)"
+    fi
+}
 
 # Check if we're running from a downloaded script (remote installation)
 REMOTE_INSTALL=false
@@ -71,16 +112,25 @@ validate_source_directory() {
         exit 1
     fi
     
-    # Check for essential files
-    local required_files=(
-        "_config.yml"
-        "Gemfile"
-        "Rakefile"
-        "docker-compose.yml"
-        "Dockerfile"
-        "404.html"
-        "favicon.ico"
-    )
+    # Check for essential files based on installation mode
+    local required_files=()
+    
+    if [[ "$INSTALL_MODE" == "minimal" ]]; then
+        required_files=(
+            "_config.yml"
+            "Gemfile"
+        )
+    else
+        required_files=(
+            "_config.yml"
+            "Gemfile"
+            "Rakefile"
+            "docker-compose.yml"
+            "Dockerfile"
+            "404.html"
+            "favicon.ico"
+        )
+    fi
     
     for file in "${required_files[@]}"; do
         if [[ ! -f "$SOURCE_DIR/$file" ]]; then
@@ -89,7 +139,7 @@ validate_source_directory() {
         fi
     done
     
-    log_success "Source directory validation passed"
+    log_success "Source directory validation passed (${INSTALL_MODE} mode)"
 }
 
 validate_target_directory() {
@@ -149,23 +199,36 @@ install_config_files() {
     log_info "Installing configuration files..."
     
     copy_file_with_backup "$SOURCE_DIR/_config.yml" "$TARGET_DIR/_config.yml"
-    copy_file_with_backup "$SOURCE_DIR/_config_dev.yml" "$TARGET_DIR/_config_dev.yml"
-    copy_file_with_backup "$SOURCE_DIR/frontmatter.json" "$TARGET_DIR/frontmatter.json"
     
-    log_success "Configuration files installed"
+    # Only install dev config in full mode
+    if [[ "$INSTALL_MODE" == "full" ]]; then
+        copy_file_with_backup "$SOURCE_DIR/_config_dev.yml" "$TARGET_DIR/_config_dev.yml"
+        copy_file_with_backup "$SOURCE_DIR/frontmatter.json" "$TARGET_DIR/frontmatter.json"
+    fi
+    
+    log_success "Configuration files installed (${INSTALL_MODE} mode)"
 }
 
 install_build_files() {
     log_info "Installing build and dependency files..."
     
     copy_file_with_backup "$SOURCE_DIR/Gemfile" "$TARGET_DIR/Gemfile"
-    copy_file_with_backup "$SOURCE_DIR/Rakefile" "$TARGET_DIR/Rakefile"
-    copy_file_with_backup "$SOURCE_DIR/package.json" "$TARGET_DIR/package.json"
     
-    log_success "Build files installed"
+    # Full installation includes additional build files
+    if [[ "$INSTALL_MODE" == "full" ]]; then
+        copy_file_with_backup "$SOURCE_DIR/Rakefile" "$TARGET_DIR/Rakefile"
+        copy_file_with_backup "$SOURCE_DIR/package.json" "$TARGET_DIR/package.json"
+    fi
+    
+    log_success "Build files installed (${INSTALL_MODE} mode)"
 }
 
 install_docker_files() {
+    if [[ "$INSTALL_MODE" == "minimal" ]]; then
+        log_info "Skipping Docker files (minimal installation)"
+        return
+    fi
+    
     log_info "Installing Docker files..."
     
     copy_file_with_backup "$SOURCE_DIR/docker-compose.yml" "$TARGET_DIR/docker-compose.yml"
@@ -175,6 +238,11 @@ install_docker_files() {
 }
 
 install_theme_directories() {
+    if [[ "$INSTALL_MODE" == "minimal" ]]; then
+        log_info "Skipping theme directories (minimal installation)"
+        return
+    fi
+    
     log_info "Installing theme directories..."
     
     # Core Jekyll directories
@@ -188,6 +256,12 @@ install_theme_directories() {
 }
 
 install_static_files() {
+    if [[ "$INSTALL_MODE" == "minimal" ]]; then
+        log_info "Creating minimal index.md file..."
+        create_minimal_index
+        return
+    fi
+    
     log_info "Installing static files..."
     
     copy_file_with_backup "$SOURCE_DIR/404.html" "$TARGET_DIR/404.html"
@@ -203,7 +277,44 @@ install_static_files() {
     log_success "Static files installed"
 }
 
+create_minimal_index() {
+    if [[ ! -f "$TARGET_DIR/index.md" ]]; then
+        cat > "$TARGET_DIR/index.md" << 'EOF'
+---
+layout: default
+title: Welcome
+---
+
+# Welcome to Your Jekyll Site
+
+This site was created using the zer0-mistakes theme minimal installation.
+
+## Getting Started
+
+1. Install Jekyll dependencies: `bundle install`
+2. Start the development server: `bundle exec jekyll serve`
+3. Visit your site at: http://localhost:4000
+
+## Next Steps
+
+- Customize your `_config.yml` file
+- Add content to your site
+- Consider upgrading to a full installation for more features
+
+For full theme features, run the installer with the `--full` flag.
+EOF
+        log_info "Created minimal index.md"
+    else
+        log_warning "index.md already exists, skipping to preserve content"
+    fi
+}
+
 create_gitignore() {
+    if [[ "$INSTALL_MODE" == "minimal" ]]; then
+        create_minimal_gitignore
+        return
+    fi
+    
     log_info "Creating .gitignore file..."
     
     local gitignore_content="# Jekyll
@@ -249,7 +360,41 @@ Thumbs.db
     log_success "Git configuration completed"
 }
 
+create_minimal_gitignore() {
+    log_info "Creating minimal .gitignore file..."
+    
+    local gitignore_content="# Jekyll
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+
+# Ruby
+.bundle/
+vendor/
+Gemfile.lock
+
+# OS
+.DS_Store
+Thumbs.db
+"
+    
+    if [[ ! -f "$TARGET_DIR/.gitignore" ]]; then
+        echo "$gitignore_content" > "$TARGET_DIR/.gitignore"
+        log_info "Created minimal .gitignore"
+    else
+        log_warning ".gitignore already exists, skipping to preserve existing rules"
+    fi
+    
+    log_success "Git configuration completed (minimal)"
+}
+
 create_readme_instructions() {
+    if [[ "$INSTALL_MODE" == "minimal" ]]; then
+        create_minimal_readme
+        return
+    fi
+    
     log_info "Creating installation instructions..."
     
     local readme_content="# zer0-mistakes Jekyll Theme Installation
@@ -392,7 +537,99 @@ Docker: Optimized for compatibility
     log_success "Installation instructions created"
 }
 
+create_minimal_readme() {
+    log_info "Creating minimal installation instructions..."
+    
+    local readme_content="# zer0-mistakes Jekyll Theme - Minimal Installation
+
+This directory has been set up with a minimal zer0-mistakes Jekyll theme installation.
+
+## Quick Start
+
+\`\`\`bash
+# Install dependencies
+bundle install
+
+# Start the development server
+bundle exec jekyll serve
+
+# Your site will be available at http://localhost:4000
+\`\`\`
+
+## What's Included (Minimal Installation)
+
+- \`_config.yml\` - Main Jekyll configuration
+- \`Gemfile\` - Ruby dependencies
+- \`index.md\` - Basic homepage
+- \`.gitignore\` - Git ignore rules
+
+## Next Steps
+
+1. **Customize Configuration**: Edit \`_config.yml\` to match your site needs
+2. **Add Content**: Create pages and posts in markdown format
+3. **Choose Layouts**: Use Jekyll's default layouts or create your own
+4. **Style Your Site**: Add custom CSS or upgrade to full installation
+
+## Upgrading to Full Installation
+
+For complete theme features including:
+- Custom layouts and includes
+- Docker support
+- Azure Static Web Apps deployment
+- Pre-built styling and components
+
+Run the installer again with the full flag:
+
+\`\`\`bash
+# Local installation
+./install.sh --full
+
+# Remote installation  
+curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash -s -- --full
+\`\`\`
+
+## Troubleshooting
+
+### Missing Dependencies
+\`\`\`bash
+# Update bundler
+gem update bundler
+
+# Clean install
+bundle clean --force
+bundle install
+\`\`\`
+
+### Ruby Version Issues
+Ensure you're using a compatible Ruby version (3.0+):
+\`\`\`bash
+ruby --version
+\`\`\`
+
+## Support
+
+For issues and documentation, visit: [zer0-mistakes GitHub Repository](https://github.com/bamr87/zer0-mistakes)
+
+---
+Installed on: \$(date)
+Installation Type: Minimal
+Upgrade Available: Run with --full flag
+"
+    
+    if [[ ! -f "$TARGET_DIR/INSTALLATION.md" ]]; then
+        echo "$readme_content" > "$TARGET_DIR/INSTALLATION.md"
+        log_info "Created minimal INSTALLATION.md"
+    fi
+    
+    log_success "Minimal installation instructions created"
+}
+
 create_azure_static_web_apps_workflow() {
+    if [[ "$INSTALL_MODE" == "minimal" ]]; then
+        log_info "Skipping Azure workflow (minimal installation)"
+        return
+    fi
+    
     log_info "Creating Azure Static Web Apps workflow..."
     
     # Create .github/workflows directory
@@ -463,6 +700,11 @@ EOF
 
 # Post-installation configuration optimization
 optimize_development_config() {
+    if [[ "$INSTALL_MODE" == "minimal" ]]; then
+        log_info "Skipping development config optimization (minimal installation)"
+        return
+    fi
+    
     log_info "Optimizing development configuration for Docker compatibility..."
     
     local dev_config="$TARGET_DIR/_config_dev.yml"
@@ -519,6 +761,11 @@ EOF
 }
 
 create_build_directory() {
+    if [[ "$INSTALL_MODE" == "minimal" ]]; then
+        log_info "Skipping build directory (minimal installation)"
+        return
+    fi
+    
     log_info "Creating build directory structure..."
     
     # Create build directory for logs and temporary files
@@ -570,38 +817,62 @@ show_help() {
 zer0-mistakes Jekyll Theme Installer
 
 USAGE:
-    $0 [TARGET_DIRECTORY]
-    curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
+    $0 [OPTIONS] [TARGET_DIRECTORY]
+    curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash -s -- [OPTIONS]
 
 DESCRIPTION:
-    Installs the zer0-mistakes Jekyll theme by copying essential files
-    and creating the necessary directory structure. Supports both local
-    and remote installation from GitHub.
+    Installs the zer0-mistakes Jekyll theme with support for full or minimal installation modes.
+    Supports both local and remote installation from GitHub.
+
+INSTALLATION MODES:
+    --full, -f         Full installation (default) - includes all theme files, Docker support, 
+                       Azure workflows, and complete theme structure
+    --minimal, -m      Minimal installation - only essential config files and dependencies
+                       for users who want to start with a basic Jekyll setup
 
 ARGUMENTS:
-    TARGET_DIRECTORY    Directory where theme will be installed (default: current directory)
+    TARGET_DIRECTORY   Directory where theme will be installed (default: current directory)
 
 OPTIONS:
+    -f, --full         Full installation (default)
+    -m, --minimal      Minimal installation
     -h, --help         Show this help message
 
 EXAMPLES:
-    $0                    # Install in current directory
-    $0 my-new-site       # Install in ./my-new-site
-    $0 /path/to/site     # Install in absolute path
+    # Full installation (default)
+    $0                           # Install in current directory
+    $0 my-new-site              # Install in ./my-new-site
+    $0 --full /path/to/site     # Install in absolute path
+    
+    # Minimal installation
+    $0 --minimal                # Minimal install in current directory
+    $0 -m my-minimal-site       # Minimal install in ./my-minimal-site
     
     # Remote installation
-    curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
+    curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash -s -- --full
+    curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash -s -- --minimal
 
-FILES INSTALLED:
+FULL INSTALLATION INCLUDES:
     • Configuration: _config.yml, _config_dev.yml, frontmatter.json
     • Dependencies: Gemfile, Rakefile, package.json
     • Docker: docker-compose.yml, Dockerfile
     • Theme: _data/, _sass/, _includes/, _layouts/, assets/
-    • Static: 404.html, favicon.ico, index.md (if not exists)
-    • Git: .gitignore (if not exists)
+    • Static: 404.html, favicon.ico, index.md
+    • Git: .gitignore with comprehensive rules
     • Azure: .github/workflows/azure-static-web-apps.yml
     • Build: build/ directory with logs
-    • Docs: INSTALLATION.md
+    • Docs: Complete INSTALLATION.md
+
+MINIMAL INSTALLATION INCLUDES:
+    • Configuration: _config.yml only
+    • Dependencies: Gemfile only
+    • Static: Basic index.md
+    • Git: .gitignore with basic rules
+    • Docs: Minimal INSTALLATION.md with upgrade instructions
+
+UPGRADE PATH:
+    You can upgrade from minimal to full installation at any time by running:
+    $0 --full [same_directory]
 
 For more information, visit: https://github.com/bamr87/zer0-mistakes
 EOF
@@ -609,13 +880,11 @@ EOF
 
 # Main installation function
 main() {
-    # Check for help flag
-    if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
-        show_help
-        exit 0
-    fi
+    # Parse command line arguments first
+    parse_arguments "$@"
     
     log_info "Starting zer0-mistakes Jekyll theme installation"
+    log_info "Installation mode: $INSTALL_MODE"
     log_info "Source: $SOURCE_DIR"
     log_info "Target: $TARGET_DIR"
     echo
@@ -628,26 +897,45 @@ main() {
     validate_target_directory
     echo
     
-    # Installation steps
+    # Installation steps based on mode
     install_config_files
     install_build_files
-    install_docker_files
-    install_theme_directories
-    install_static_files
-    optimize_development_config
+    
+    if [[ "$INSTALL_MODE" == "full" ]]; then
+        install_docker_files
+        install_theme_directories
+        install_static_files
+        optimize_development_config
+        create_azure_static_web_apps_workflow
+        create_build_directory
+    else
+        install_static_files  # This handles minimal index.md creation
+    fi
+    
     create_gitignore
     create_readme_instructions
-    create_azure_static_web_apps_workflow
-    create_build_directory
-    optimize_development_config
     
     echo
     log_success "Installation completed successfully!"
-    log_info "Next steps:"
-    echo "  1. cd $TARGET_DIR"
-    echo "  2. Review and customize _config.yml"
-    echo "  3. Run 'docker-compose up' or 'bundle install && bundle exec jekyll serve'"
-    echo "  4. Visit http://localhost:4000 to see your site"
+    log_info "Installation mode: $INSTALL_MODE"
+    
+    if [[ "$INSTALL_MODE" == "minimal" ]]; then
+        log_info "Next steps:"
+        echo "  1. cd $TARGET_DIR"
+        echo "  2. Review and customize _config.yml"
+        echo "  3. Run 'bundle install && bundle exec jekyll serve'"
+        echo "  4. Visit http://localhost:4000 to see your site"
+        echo
+        log_info "To upgrade to full installation:"
+        echo "  $0 --full $TARGET_DIR"
+    else
+        log_info "Next steps:"
+        echo "  1. cd $TARGET_DIR"
+        echo "  2. Review and customize _config.yml"
+        echo "  3. Run 'docker-compose up' or 'bundle install && bundle exec jekyll serve'"
+        echo "  4. Visit http://localhost:4000 to see your site"
+    fi
+    
     echo
     log_info "For detailed instructions, see INSTALLATION.md"
 }

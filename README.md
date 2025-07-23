@@ -123,11 +123,13 @@ docker-compose up  # Just works!
 - **Git** - For repository management
 - **curl** - For one-line installation (or manual download)
 
+```shell
+# Confirm your system information
+
 system_profiler SPHardwareDataType | awk '/Model Name:|Model Identifier:|Model Number:|Chip:|System Firmware Version:/ {print $0}'
 system_profiler SPSoftwareDataType | awk '/System Version:|Kernel Version:/ {print $0}'
 
 ```
-{: .d-none }
 
 ## Prerequisites
 
