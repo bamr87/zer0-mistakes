@@ -1,183 +1,213 @@
-# Copilot Instructions
+# Zer0-Mistakes Copilot Instructions
 
-These instructions are based on the core principles and approaches outlined in our About page, designed to guide AI-powered development practices for the IT-Journey platform.
+**Docker-Optimized Jekyll Theme with AI-Powered Self-Healing Installation**
 
-## Core Development Principles
+## 🏗️ Architecture Overview
 
-### Design for Failure (DFF)
-- Always implement error handling and graceful degradation in generated code
-- Include try-catch blocks with meaningful error messages
-- Suggest redundancy and fallback mechanisms
-- Add monitoring and logging capabilities where appropriate
-- Consider edge cases and potential failure points
+Zer0-Mistakes is a Jekyll theme built for **Docker-first development** with intelligent automation. The codebase follows IT-Journey principles: **Design for Failure (DFF)**, **Don't Repeat Yourself (DRY)**, **Keep It Simple (KIS)**, and **AI-Powered Development (AIPD)**.
 
-### Don't Repeat Yourself (DRY)
-- Extract common functionality into reusable functions, components, or modules
-- Suggest refactoring when duplicate code patterns are detected
-- Create utility functions for repeated operations
-- Use configuration files for repeated constants or settings
-- Recommend template patterns for similar structures
+### Core Components
+- **`_layouts/`**: Modular layout system (default.html, journals.html, home.html)
+- **`_includes/`**: Reusable components (sidebar-left.html, header.html, footer.html)
+- **`_config.yml`**: Production configuration with remote_theme
+- **`_config_dev.yml`**: Docker-compatible development overrides
+- **`docker-compose.yml`**: Containerized development environment
+- **`install.sh`**: AI-powered one-line installation with error recovery
+- **`init_setup.sh`**: Intelligent environment detection and auto-healing
 
-### Keep It Simple (KIS)
-- Prefer clear, readable code over clever optimizations
-- Use descriptive variable and function names
-- Break complex functions into smaller, focused units
-- Avoid unnecessary abstractions or over-engineering
-- Choose well-established patterns over custom solutions
+### Key Patterns
 
-### Release Early and Often (REnO)
-- Suggest incremental development approaches
-- Recommend feature flags for gradual rollouts
-- Focus on minimal viable implementations first
-- Include versioning strategies in code suggestions
-- Encourage continuous integration practices
+#### 1. Configuration Layering
+```yaml
+# Production (_config.yml)
+remote_theme: "bamr87/zer0-mistakes"
 
-### Minimum Viable Product (MVP)
-- Prioritize core functionality over advanced features
-- Suggest starting with basic implementations that can be enhanced later
-- Focus on solving the primary user problem first
-- Recommend iterative improvement approaches
-- Avoid feature creep in initial implementations
+# Development (_config_dev.yml) - Auto-generated
+remote_theme: false
+theme: "jekyll-theme-zer0"
+```
 
-### Collaboration (COLAB)
-- Write self-documenting code with clear comments
-- Follow consistent coding standards and conventions
-- Include comprehensive README and documentation suggestions
-- Use semantic commit messages and PR descriptions
-- Consider team workflows in code organization
+#### 2. Docker-First Commands
+```bash
+# Start development environment
+docker-compose up
 
-### AI-Powered Development (AIPD)
-- Leverage AI tools effectively for code generation and review
-- Suggest AI-assisted testing and documentation approaches
-- Recommend AI integration patterns for enhanced productivity
-- Balance AI assistance with human oversight and review
-- Use AI for learning and skill development, not replacement
+# Access container
+docker-compose exec jekyll bash
 
-## Technology-Specific Guidelines
+# Clean rebuild
+docker-compose down && docker-compose up --build
+```
 
-### @azure Rule - Use Azure Best Practices
-When generating code for Azure, running terminal commands for Azure, or performing operations related to Azure, invoke your `azure_development-get_best_practices` tool if available.
+#### 3. Self-Healing Installation
+```bash
+# One-line installation with AI error recovery
+curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
+```
 
-### Open Source Development
-- Follow open source licensing and contribution guidelines
-- Include appropriate attribution and credits
-- Use community-standard project structures
-- Encourage community contributions and feedback
-- Maintain compatibility with popular tools and frameworks
+## 🔧 Critical Developer Workflows
+
+### Local Development Setup
+1. **Clone repository**: `gh repo clone bamr87/zer0-mistakes`
+2. **Start containers**: `docker-compose up`
+3. **Access site**: Visit `http://localhost:4000`
+4. **Make changes**: Edit files, auto-reload enabled
+5. **Debug issues**: Check container logs with `docker-compose logs`
+
+### Theme Development
+- **Local testing**: Use `_config_dev.yml` (remote_theme: false)
+- **Theme updates**: Modify files in `_layouts/`, `_includes/`, `assets/`
+- **Cross-platform testing**: Test on Intel/Apple Silicon via Docker
+- **Dependency management**: Update `Gemfile` for Jekyll plugins
+
+### Content Creation
+- **Posts**: Create in `pages/_posts/` with Jekyll frontmatter
+- **Pages**: Add to root or `pages/` with custom layouts
+- **Collections**: Use `pages/_quests/`, `pages/_docs/` for organized content
+- **Frontmatter**: Include `layout`, `title`, `date`, `categories`, `tags`
+
+## 🎯 Project-Specific Conventions
+
+### Jekyll Theme Architecture
+- **Remote theme**: Use `remote_theme` in production, disable for local dev
+- **Layout inheritance**: `root.html` → `default.html` → page-specific layouts
+- **Include system**: Modular components in `_includes/` for reusability
+- **Asset organization**: `assets/css/`, `assets/js/`, `assets/images/`
+
+### Error Handling Patterns
+```bash
+# Always use set -euo pipefail in scripts
+set -euo pipefail
+
+# Comprehensive logging functions
+log_info() { echo -e "\033[0;34m[INFO]\033[0m $1"; }
+log_error() { echo -e "\033[0;31m[ERROR]\033[0m $1"; }
+
+# Graceful error recovery
+command || handle_error "Command failed"
+```
+
+### Docker Optimization
+- **Platform specification**: `platform: linux/amd64` for Apple Silicon
+- **Volume mounting**: `./:/app` for live development
+- **Port consistency**: Always `4000:4000` for localhost access
+- **Environment variables**: `JEKYLL_ENV: development`
 
 ### Documentation Standards
-- Generate comprehensive README files for all projects
-- Include installation, usage, and contribution guidelines
-- Add inline code documentation for complex logic
-- Create user guides and API documentation when relevant
-- Maintain changelogs and version documentation
-- **Change Log Management**: Always update CHANGELOG.md when making significant changes
-  - Use semantic versioning (MAJOR.MINOR.PATCH) for releases
-  - Include date stamps and clear descriptions of changes
-  - Categorize changes as: Added, Changed, Deprecated, Removed, Fixed, Security
-  - Link to relevant issues or pull requests when applicable
-- **Feature Update Documentation**: Document new features and updates in markdown pages
-  - Create or update feature-specific .md files for major additions
-  - Include before/after examples for modified functionality
-  - Add migration guides when breaking changes are introduced
-  - Update table of contents and navigation when adding new pages
+- **CHANGELOG.md**: Semantic versioning with categorized changes
+- **README.md**: Include installation, usage, and troubleshooting
+- **Frontmatter**: Comprehensive metadata for SEO and organization
+- **Cross-references**: Link related pages and documentation
 
-### Testing Approaches
-- Include unit tests for core functionality
-- Suggest integration tests for system interactions
-- Recommend end-to-end tests for critical user workflows
-- Use AI-powered testing tools when appropriate
-- Implement test automation in CI/CD pipelines
+## 🔄 Integration Points
 
-## Code Quality Standards
+### External Dependencies
+- **Jekyll**: Static site generator with custom theme
+- **Docker**: Containerization for cross-platform development
+- **GitHub Pages**: Hosting and deployment platform
+- **Ruby Gems**: Jekyll plugins and dependencies
 
-### Security Best Practices
-- Validate all user inputs and external data
-- Use secure authentication and authorization patterns
-- Avoid hardcoding sensitive information
-- Implement proper error handling without information leakage
-- Follow security frameworks and standards
+### Service Communication
+- **Local development**: Jekyll server ↔ Browser (localhost:4000)
+- **Theme loading**: GitHub remote_theme ↔ Local Jekyll build
+- **Asset pipeline**: Sass compilation ↔ CSS optimization
+- **Content processing**: Markdown → HTML with Liquid templating
 
-### Performance Considerations
-- Optimize for readability first, performance second
-- Suggest performance improvements only when necessary
-- Use appropriate data structures and algorithms
-- Consider caching strategies for expensive operations
-- Monitor and measure performance impacts
+## 🚀 Deployment Workflows
 
-### Accessibility & Inclusivity
-- Follow web accessibility guidelines (WCAG) for web projects
-- Use inclusive language in code comments and documentation
-- Consider internationalization and localization needs
-- Design for diverse user abilities and technologies
-- Test with assistive technologies when relevant
+### GitHub Pages Deployment
+1. **Push to main**: Automatic build triggers
+2. **Jekyll build**: Processes site with production config
+3. **Asset optimization**: Minifies CSS/JS, optimizes images
+4. **CDN delivery**: Fast global content delivery
 
-## Learning & Education Focus
+### Docker Deployment
+```yaml
+# For production containerization
+FROM jekyll/jekyll:latest
+COPY . /app
+RUN jekyll build
+EXPOSE 4000
+CMD ["jekyll", "serve", "--host", "0.0.0.0"]
+```
 
-### Beginner-Friendly Approach
-- Explain complex concepts in simple terms
-- Provide step-by-step guidance for implementations
-- Include learning resources and references
-- Suggest progressive skill-building exercises
-- Encourage experimentation and exploration
+## 📋 Quality Assurance
 
-### Real-World Applications
-- Focus on practical, usable solutions
-- Include examples relevant to everyday development
-- Connect theoretical concepts to practical implementations
-- Suggest projects that build portfolio value
-- Emphasize industry-standard practices
+### Testing Commands
+```bash
+# Local build test
+docker-compose exec jekyll jekyll build
 
-### Community Learning
-- Encourage peer collaboration and code review
-- Suggest community resources and forums
-- Promote knowledge sharing and mentoring
-- Include contribution opportunities in suggestions
-- Foster inclusive and welcoming environments
+# Link validation
+docker-compose exec jekyll jekyll doctor
 
-## AI Integration Guidelines
+# HTML validation
+docker-compose exec jekyll htmlproofer _site
+```
 
-### AI-Assisted Development
-- Use AI for code generation, but always review and understand output
-- Leverage AI for documentation generation and maintenance
-- Implement AI-powered testing and quality assurance
-- Use AI for learning acceleration and skill development
-- Balance automation with human creativity and oversight
+### Code Quality
+- **Markdown linting**: Consistent formatting across documentation
+- **YAML validation**: Proper configuration file syntax
+- **Liquid templating**: Valid Jekyll template syntax
+- **Cross-browser testing**: Responsive design validation
 
-### Best Practices for AI Tools
-- Provide clear context and requirements to AI assistants
-- Review AI-generated code for security and performance
-- Use AI feedback loops for continuous improvement
-- Maintain human oversight for critical decisions
-- Document AI tool usage and configurations
+## 🎨 Content Management
 
-## Content Management & Documentation Evolution
+### Frontmatter Standards
+```yaml
+---
+title: "Page Title"
+description: "SEO description (150-160 chars)"
+date: 2025-01-27T10:00:00.000Z
+preview: "Social media preview text"
+tags: [tag1, tag2]
+categories: [Category1, Subcategory]
+layout: journals
+permalink: /custom-url/
+---
+```
 
-### Markdown Page Lifecycle Management
-- **Version Control for Documentation**: Track all changes to .md files with meaningful commit messages
-- **Content Freshness**: Regularly review and update documentation to ensure accuracy
-- **Cross-Reference Maintenance**: Update internal links when restructuring or renaming pages
-- **Content Validation**: Verify examples, code snippets, and external links still work
-- **Progressive Enhancement**: Start with basic documentation and iteratively improve based on user feedback
+### SEO Optimization
+- **Meta descriptions**: Compelling summaries for search results
+- **Open Graph**: Social media sharing optimization
+- **Structured data**: Schema.org markup for rich snippets
+- **Performance**: Optimized images and minified assets
 
-### Change Log Best Practices
-- **Automated Change Detection**: Use git hooks or CI/CD to detect when documentation changes
-- **User-Facing vs. Technical Changes**: Distinguish between changes that affect end users vs. internal improvements
-- **Release Notes Generation**: Create user-friendly release notes from technical change logs
-- **Breaking Change Alerts**: Clearly mark and explain any breaking changes that affect existing workflows
-- **Rollback Documentation**: Include instructions for reverting changes when necessary
+## 🔄 Evolution Patterns
 
-### Feature Documentation Workflow
-- **Feature Planning Phase**: Create initial documentation during feature planning, not after completion
-- **Live Documentation**: Update documentation as features evolve during development
-- **Testing Documentation**: Ensure all documented features have corresponding tests
-- **User Story Integration**: Link documentation to user stories and acceptance criteria
-- **Feedback Integration**: Create mechanisms for users to suggest documentation improvements
+### Version Management
+- **Semantic versioning**: MAJOR.MINOR.PATCH for releases
+- **Changelog categories**: Added, Changed, Deprecated, Removed, Fixed, Security
+- **Migration guides**: Document breaking changes and upgrade paths
+- **Deprecation warnings**: Clear communication of deprecated features
 
-### Content Quality Assurance
-- **Consistency Checks**: Ensure terminology, formatting, and style remain consistent across all .md files
-- **Accessibility Standards**: Follow markdown accessibility best practices (proper heading hierarchy, alt text for images)
-- **SEO Optimization**: Use appropriate frontmatter, meta descriptions, and structured content
-- **Multi-format Support**: Consider how content will render across different platforms (GitHub, Jekyll, static site generators)
-- **Internationalization Ready**: Structure content to support future localization efforts
+### Feature Development
+- **Incremental releases**: Small, frequent updates over large changes
+- **Backward compatibility**: Maintain compatibility when possible
+- **Documentation updates**: Update docs with new features
+- **User feedback**: Incorporate community input for improvements
+
+## 🤖 AI Integration Guidelines
+
+### Code Generation
+- **Jekyll patterns**: Generate Liquid templates and frontmatter
+- **Docker optimization**: Create container-friendly configurations
+- **Error handling**: Implement comprehensive error recovery
+- **Documentation**: Auto-generate README and troubleshooting guides
+
+### Development Assistance
+- **Theme customization**: Help modify layouts and includes
+- **Content creation**: Assist with Jekyll post/page creation
+- **Configuration**: Optimize Jekyll and Docker settings
+- **Debugging**: Troubleshoot build and runtime issues
+
+### Quality Assurance
+- **Code review**: Check for Jekyll best practices
+- **Security**: Validate safe Liquid template usage
+- **Performance**: Optimize asset loading and page speed
+- **Accessibility**: Ensure WCAG compliance in templates
+
+---
+
+*These instructions focus on Zer0-Mistakes' unique Docker-first approach, AI-powered automation, and Jekyll theme architecture. Follow these patterns to maintain consistency with the project's self-healing, cross-platform philosophy.*
 
