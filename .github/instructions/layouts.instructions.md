@@ -144,89 +144,259 @@ classes: "custom-css-classes"
 </div>
 ```
 
-## 🎯 Layout-Specific Guidelines
+## � **Bootstrap 5 Layout Patterns**
 
-### Journals Layout (`journals.html`)
-- Used for blog posts and articles
-- Includes post metadata (date, author, categories)
-- Supports table of contents generation
-- Optimized for long-form content
+### Bootstrap Grid System Integration
+```html
+<!-- Responsive container with Bootstrap grid -->
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar - hidden on mobile, shown on lg+ -->
+    <div class="col-lg-3 d-none d-lg-block">
+      {% include sidebar-left.html %}
+    </div>
 
-### Home Layout (`home.html`)
-- Designed for landing pages
-- Features hero sections and call-to-action elements
-- Includes featured content sections
-- Optimized for conversion and engagement
-
-### Default Layout (`default.html`)
-- General-purpose layout for most pages
-- Includes sidebar navigation
-- Responsive design with mobile considerations
-- SEO-optimized structure
-
-## 📱 Responsive Design Standards
-
-### Breakpoint Strategy
-```scss
-// Mobile-first approach
-.content {
-  padding: 1rem;
-
-  @media (min-width: 768px) {
-    padding: 2rem;
-  }
-
-  @media (min-width: 1200px) {
-    padding: 3rem;
-  }
-}
+    <!-- Main content - full width on mobile, adjusted on lg+ -->
+    <div class="col-12 col-lg-9">
+      <article class="bd-article">
+        {{ content }}
+      </article>
+    </div>
+  </div>
+</div>
 ```
 
-### Navigation Patterns
+### Bootstrap Component Usage in Layouts
 ```html
-<!-- Collapsible navigation for mobile -->
+<!-- Bootstrap navbar integration -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">Zer0-Mistakes</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      {% include nav_list.html %}
+    </div>
+  </div>
+</nav>
+
+<!-- Bootstrap cards for content sections -->
+<div class="card">
+  <div class="card-header">
+    <h5 class="card-title">{{ page.title }}</h5>
+  </div>
+  <div class="card-body">
+    {{ content }}
+  </div>
+</div>
+```
+
+### Bootstrap Utility Classes
+```html
+<!-- Spacing utilities -->
+<div class="mt-3 mb-4"> <!-- margin-top: 1rem, margin-bottom: 1.5rem -->
+  <p class="mb-0">Content with no bottom margin</p>
+</div>
+
+<!-- Display utilities for responsive behavior -->
+<div class="d-flex justify-content-between align-items-center d-print-none">
+  <!-- Flexbox layout, hidden in print -->
+</div>
+
+<!-- Text utilities -->
+<p class="text-muted small">Secondary text styling</p>
+<h1 class="display-4 fw-bold">Large heading with bold weight</h1>
+```
+
+### Bootstrap JavaScript Components
+```html
+<!-- Bootstrap modal integration -->
+<div class="modal fade" id="exampleModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modal Title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        Modal content here...
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap tooltip initialization -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  });
+</script>
+```
+
+## 📱 **Bootstrap 5 Responsive Design Standards**
+
+### Bootstrap Breakpoint System
+```scss
+// Bootstrap 5 breakpoints (mobile-first)
+$grid-breakpoints: (
+  xs: 0,    // Extra small devices (portrait phones, < 576px)
+  sm: 576px, // Small devices (landscape phones, ≥ 576px)
+  md: 768px, // Medium devices (tablets, ≥ 768px)
+  lg: 992px, // Large devices (desktops, ≥ 992px)
+  xl: 1200px, // Extra large devices (large desktops, ≥ 1200px)
+  xxl: 1400px // Extra extra large devices (larger desktops, ≥ 1400px)
+);
+```
+
+### Responsive Layout Patterns
+```html
+<!-- Responsive sidebar pattern -->
+<aside class="bd-sidebar col-lg-3 d-none d-lg-block">
+  {% include sidebar-left.html %}
+</aside>
+
+<!-- Responsive main content -->
+<main class="col-12 col-lg-9">
+  <div class="bd-content">
+    <!-- Content that stacks on mobile, side-by-side on desktop -->
+  </div>
+</main>
+
+<!-- Responsive navigation -->
 <nav class="navbar navbar-expand-lg">
-  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+  <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
-    {% include nav_list.html %}
+    <!-- Navigation items -->
   </div>
 </nav>
 ```
 
-## ♿ Accessibility Guidelines
-
-### Semantic HTML Structure
+### Bootstrap Responsive Utilities
 ```html
-<!-- Proper heading hierarchy -->
-<header>
-  <h1>{{ page.title }}</h1>
-  <p class="lead">{{ page.description }}</p>
-</header>
+<!-- Display utilities -->
+<div class="d-block d-sm-none">Visible only on xs</div>
+<div class="d-none d-sm-block d-md-none">Visible only on sm</div>
+<div class="d-none d-md-block d-lg-none">Visible only on md</div>
+<div class="d-none d-lg-block">Visible on lg and up</div>
 
-<main>
-  <article>
-    <h2>Section Title</h2>
-    <p>Content...</p>
-    <h3>Subsection</h3>
-    <p>More content...</p>
-  </article>
-</main>
+<!-- Flexbox responsive -->
+<div class="d-flex flex-column flex-sm-row">
+  <!-- Stack vertically on mobile, horizontal on small screens and up -->
+</div>
 ```
 
-### ARIA Labels and Roles
+### Bootstrap Navigation Patterns
 ```html
-<!-- Skip links for keyboard navigation -->
-<a href="#main-content" class="sr-only sr-only-focusable">Skip to main content</a>
+<!-- Bootstrap navbar with responsive collapse -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+  <div class="container-fluid">
+    <!-- Brand -->
+    <a class="navbar-brand fw-bold" href="/">
+      <i class="bi bi-house-door"></i> Zer0-Mistakes
+    </a>
 
-<!-- ARIA landmarks -->
-<nav aria-label="Main navigation">
-  <!-- navigation content -->
+    <!-- Mobile toggle button -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Collapsible navigation -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link active" href="/">Home</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+            Documentation
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/docs/">Getting Started</a></li>
+            <li><a class="dropdown-item" href="/docs/components/">Components</a></li>
+          </ul>
+        </li>
+      </ul>
+
+      <!-- Search form -->
+      <form class="d-flex">
+        <input class="form-control me-2" type="search" placeholder="Search...">
+        <button class="btn btn-outline-primary" type="submit">Search</button>
+      </form>
+    </div>
+  </div>
 </nav>
 
-<main id="main-content" role="main">
-  <!-- main content -->
+<!-- Bootstrap breadcrumb navigation -->
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item"><a href="/docs/">Docs</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Current Page</li>
+  </ol>
+</nav>
+```
+
+## ♿ **Bootstrap 5 Accessibility Guidelines**
+
+### Bootstrap ARIA Integration
+```html
+<!-- Bootstrap components with built-in ARIA support -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  Launch Modal
+</button>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal Title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Modal content with proper ARIA labeling
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Accessible form controls -->
+<div class="mb-3">
+  <label for="emailInput" class="form-label">Email address</label>
+  <input type="email" class="form-control" id="emailInput" aria-describedby="emailHelp">
+  <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+</div>
+```
+
+### Bootstrap Focus Management
+```html
+<!-- Bootstrap focus indicators -->
+.btn:focus, .form-control:focus {
+  outline: 2px solid #0d6efd;
+  outline-offset: 2px;
+}
+
+/* Bootstrap provides focus styles by default */
+```
+
+### Screen Reader Support
+```html
+<!-- Bootstrap screen reader utilities -->
+<p class="text-muted">
+  Regular text
+  <span class="visually-hidden">Screen reader only text</span>
+</p>
+
+<!-- Skip links for keyboard navigation -->
+<a href="#main-content" class="visually-hidden-focusable">Skip to main content</a>
+
+<main id="main-content">
+  <!-- Main content -->
 </main>
 ```
 
@@ -264,28 +434,32 @@ classes: "custom-css-classes"
 
 ## 🧪 Testing and Validation
 
-### Layout Testing Checklist
-- [ ] Responsive design across breakpoints (320px, 768px, 1200px)
-- [ ] Accessibility compliance (WCAG 2.1 AA)
-- [ ] SEO elements present (meta tags, structured data)
-- [ ] Cross-browser compatibility (Chrome, Firefox, Safari, Edge)
-- [ ] Performance metrics (Lighthouse scores)
-- [ ] Content overflow handling
-- [ ] Print styles consideration
+### Bootstrap-Specific Testing Checklist
+- [ ] **Grid responsiveness**: Test layouts across all Bootstrap breakpoints (xs, sm, md, lg, xl, xxl)
+- [ ] **Component functionality**: Verify Bootstrap JS components (modals, tooltips, dropdowns) work correctly
+- [ ] **Form validation**: Test Bootstrap form validation states and feedback
+- [ ] **Navigation collapse**: Ensure mobile navigation toggles properly
+- [ ] **Accessibility**: Use Bootstrap's accessibility features and test with screen readers
+- [ ] **Browser compatibility**: Test across supported browsers (Chrome, Firefox, Safari, Edge)
+- [ ] **Print styles**: Verify Bootstrap's print utilities work as expected
+- [ ] **Dark mode**: Test Bootstrap's color mode features if implemented
 
-### Development Workflow
+### Bootstrap Development Workflow
 ```bash
-# Test layout changes locally
+# Test responsive design across breakpoints
 docker-compose up
 
-# Validate HTML structure
+# Validate Bootstrap component integration
+docker-compose exec jekyll jekyll build
+
+# Check for Bootstrap-specific HTML validation
 docker-compose exec jekyll htmlproofer _site --check-html
 
-# Check for broken links
-docker-compose exec jekyll htmlproofer _site
-
-# Performance audit
+# Test accessibility with Bootstrap components
 docker-compose exec jekyll lighthouse http://localhost:4000 --output html
+
+# Validate Bootstrap CSS/JS loading
+curl -I http://localhost:4000 | grep "bootstrap"
 ```
 
 ## 🚀 Advanced Layout Patterns
@@ -334,24 +508,38 @@ docker-compose exec jekyll lighthouse http://localhost:4000 --output html
 
 ## 📊 Performance Monitoring
 
-### Layout Performance Metrics
-- **First Contentful Paint (FCP)**: < 1.5 seconds
-- **Largest Contentful Paint (LCP)**: < 2.5 seconds
-- **Cumulative Layout Shift (CLS)**: < 0.1
-- **Total Blocking Time (TBT)**: < 200ms
+### Bootstrap Performance Metrics
+- **CSS bundle size**: Bootstrap 5.3.3 minified CSS (~22KB gzipped)
+- **JavaScript bundle size**: Bootstrap bundle (~25KB gzipped)
+- **Icon font loading**: Bootstrap Icons (~50KB for complete icon set)
+- **Component rendering**: Ensure Bootstrap components don't cause layout shifts
+- **JavaScript execution**: Monitor Bootstrap JS initialization performance
 
-### Optimization Techniques
+### Bootstrap Optimization Techniques
 ```html
-<!-- Critical CSS inlining -->
-<style>
-  /* Critical styles for above-the-fold content */
-  .hero { background: #f8f9fa; padding: 2rem; }
-  .navbar { position: fixed; top: 0; width: 100%; }
-</style>
+<!-- Load Bootstrap CSS with preload for critical rendering -->
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"></noscript>
 
-<!-- Defer non-critical CSS -->
-<link rel="preload" href="/assets/css/main.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="/assets/css/main.css"></noscript>
+<!-- Defer Bootstrap JS to prevent render blocking -->
+<script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Use Bootstrap utility classes instead of custom CSS when possible -->
+<div class="d-flex justify-content-center align-items-center min-vh-100">
+  <!-- Centered content using Bootstrap utilities -->
+</div>
+
+<!-- Optimize Bootstrap component initialization -->
+<script>
+  // Initialize only needed Bootstrap components
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips only if they exist
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    if (tooltipTriggerList.length > 0) {
+      tooltipTriggerList.forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    }
+  });
+</script>
 ```
 
 ## 🔄 Evolution and Maintenance

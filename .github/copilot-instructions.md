@@ -66,13 +66,38 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.s
 - **Collections**: Use `pages/_quests/`, `pages/_docs/` for organized content
 - **Frontmatter**: Include `layout`, `title`, `date`, `categories`, `tags`
 
-## 🎯 Project-Specific Conventions
+## � **Bootstrap 5 Integration**
 
-### Jekyll Theme Architecture
-- **Remote theme**: Use `remote_theme` in production, disable for local dev
-- **Layout inheritance**: `root.html` → `default.html` → page-specific layouts
-- **Include system**: Modular components in `_includes/` for reusability
-- **Asset organization**: `assets/css/`, `assets/js/`, `assets/images/`
+### CSS Framework Architecture
+- **Bootstrap 5.3.3**: Latest stable version loaded via CDN
+- **Bootstrap Icons 1.10.3**: Icon library for enhanced UI elements
+- **Custom CSS**: Layered on top of Bootstrap in `/assets/css/main.css` and `/assets/css/custom.css`
+- **Responsive Design**: Mobile-first approach with breakpoint system
+
+### Bootstrap CDN Loading
+```html
+<!-- Bootstrap CSS (loaded in _includes/head.html) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+
+<!-- Bootstrap JS (loaded in _includes/js-cdn.html) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+```
+
+### Bootstrap Component Usage
+- **Grid System**: Use `container`, `row`, `col-*` classes for responsive layouts
+- **Navigation**: Bootstrap navbar components with responsive collapse
+- **Cards**: Content containers with consistent styling
+- **Modals**: Interactive dialog boxes for user interactions
+- **Tooltips/Popovers**: Enhanced user experience elements
+
+### Bootstrap Customization
+- **CSS Variables**: Override Bootstrap variables in custom CSS files
+- **Component Classes**: Extend Bootstrap with custom utility classes
+- **Theme Colors**: Use Bootstrap's color system for consistency
+- **Responsive Utilities**: Leverage `d-none`, `d-lg-block`, etc. for responsive behavior
 
 ### Error Handling Patterns
 ```bash
