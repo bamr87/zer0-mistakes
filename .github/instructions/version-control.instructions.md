@@ -287,7 +287,23 @@ yard server
 
 ### Release Steps
 
-1. **Create release branch**:
+#### Automated Release (Recommended)
+
+1. **Trigger version bump workflow**:
+   ```bash
+   # Via GitHub Actions UI or API
+   # This automatically handles steps 2-7 below
+   ```
+
+2. **Or use local version bump**:
+   ```bash
+   ./scripts/version.sh [patch|minor|major]
+   git push origin main --tags
+   ```
+
+#### Manual Release Process
+
+1. **Create release branch** (Git Flow):
    ```bash
    git checkout develop
    git pull origin develop
@@ -295,38 +311,48 @@ yard server
    ```
 
 2. **Bump version**:
-   ```ruby
-   # lib/gem_name/version.rb
-   module GemName
-     VERSION = "2.1.0"
-   end
-   ```
-
-3. **Update changelog**:
    ```bash
-   # Move [Unreleased] items to [2.1.0] - 2025-01-15
+   ./scripts/version.sh minor  # or patch/major
    ```
 
-4. **Commit and tag**:
+3. **Validate and test**:
+   ```bash
+   ./test/test_runner.sh --verbose
+   ./scripts/build.sh
+   ```
+
+4. **Commit and tag** (if not done by version script):
    ```bash
    git add .
-   git commit -m "Bump version to 2.1.0"
-   git checkout main
-   git merge release/v2.1.0
+   git commit -m "chore: bump version to 2.1.0"
    git tag v2.1.0
    git push origin main --tags
    ```
 
-5. **Build and publish** (see [Publication Guidelines](#publication-guidelines))
+5. **Deploy release**:
+   ```bash
+   ./scripts/release.sh  # Full automated deployment
+   # Or step by step:
+   ./scripts/release.sh --skip-publish  # Build and test only
+   ./scripts/release.sh --draft         # Create draft release
+   ```
 
-6. **Merge back to develop**:
+6. **Merge back to develop** (Git Flow):
    ```bash
    git checkout develop
    git merge main
    git push origin develop
    ```
 
-7. **Create GitHub release** with changelog content
+#### GitHub Release Automation
+
+The repository includes comprehensive GitHub Release automation:
+
+- **Automatic Release Creation**: Triggered by version bump or tag push
+- **Smart Release Notes**: Extracted from CHANGELOG.md
+- **Multiple Assets**: Gem file, installation script, documentation
+- **Prerelease Detection**: Automatically detects alpha/beta/rc versions
+- **Draft Support**: Option to create draft releases for review
 
 ## 📦 Publication Guidelines
 
@@ -356,6 +382,10 @@ Gem::Specification.new do |spec|
   
   # Security: restrict push to specific host
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
+  spec.metadata["homepage_uri"] = spec.homepage
+  spec.metadata["source_code_uri"] = spec.homepage
+  spec.metadata["changelog_uri"] = "#{spec.homepage}/blob/main/CHANGELOG.md"
+  spec.metadata["documentation_uri"] = "#{spec.homepage}#readme"
   
   # Dependencies with pessimistic constraints
   spec.add_dependency "rails", "~> 7.0"
@@ -363,7 +393,42 @@ Gem::Specification.new do |spec|
 end
 ```
 
-### Build and Publish
+### Automated Publication
+
+#### Using Release Script
+
+```bash
+# Full automated deployment
+./scripts/release.sh
+
+# Options available:
+./scripts/release.sh --dry-run          # Preview what would happen
+./scripts/release.sh --skip-tests       # Skip test execution
+./scripts/release.sh --draft            # Create draft GitHub release
+./scripts/release.sh --prerelease       # Mark as prerelease
+./scripts/release.sh --no-github-release # Skip GitHub release
+```
+
+#### Using GitHub Actions
+
+The repository includes automated workflows:
+
+1. **Version Bump Workflow** (`version-bump.yml`):
+   - Manual trigger with version type selection
+   - Automatic testing, version bumping, and tagging
+   - Triggers downstream release workflows
+
+2. **Gem Release Workflow** (`gem-release.yml`):
+   - Triggered by tag push
+   - Builds, tests, and publishes gem
+   - Creates comprehensive GitHub release
+
+3. **GitHub Release Workflow** (`github-release.yml`):
+   - Creates detailed GitHub releases
+   - Extracts release notes from CHANGELOG.md
+   - Includes multiple assets and installation scripts
+
+### Manual Publication
 
 ```bash
 # Build the gem
@@ -376,12 +441,41 @@ gem push gem_name-2.1.0.gem
 gem push gem_name-2.1.0.rc1.gem
 ```
 
+### GitHub Release Features
+
+#### Automatic Release Notes
+- Extracts from CHANGELOG.md for the specific version
+- Includes installation instructions and links
+- Adds developer documentation and examples
+
+#### Release Assets
+- Ruby gem package (`.gem` file)
+- One-click installation script
+- Detailed release notes (Markdown)
+- Version and build information (JSON)
+
+#### Smart Prerelease Detection
+- Automatically detects `alpha`, `beta`, `rc` in version
+- Marks releases appropriately
+- Handles `make_latest` flag correctly
+
 ### Post-Publication
 
-1. **Verify publication**: Check gem page on RubyGems.org
-2. **Update README**: Installation instructions if needed
-3. **Announce**: GitHub releases, blog posts, social media
-4. **Monitor**: Watch for issues or feedback
+1. **Verify publication**: 
+   - Check gem page on RubyGems.org
+   - Verify GitHub release creation
+   - Test installation from both sources
+
+2. **Update documentation**: 
+   - README installation instructions
+   - API documentation if changed
+   - Usage examples
+
+3. **Announce and monitor**:
+   - GitHub releases (automatic)
+   - Social media, blog posts
+   - Monitor for issues and feedback
+   - Watch download statistics
 
 ### Team Management
 
@@ -391,7 +485,17 @@ gem owner gem_name --add user@example.com
 
 # List current owners
 gem owner gem_name
+
+# Remove owners if needed
+gem owner gem_name --remove user@example.com
 ```
+
+### Publication Security
+
+- Use `allowed_push_host` to restrict publication
+- Enable 2FA on RubyGems.org account
+- Use GitHub repository secrets for automation
+- Regularly audit gem ownership and access
 
 ## 🔒 Security Considerations
 

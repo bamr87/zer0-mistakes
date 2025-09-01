@@ -92,15 +92,49 @@ jobs:
         branch: release/${{ steps.bump_version.outputs.new_version }}
         delete-branch: true
     
+    - name: Trigger GitHub Release Creation
+      id: trigger_release
+      uses: actions/github-script@v7
+      with:
+        script: |
+          try {
+            const response = await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'github-release.yml',
+              ref: 'main',
+              inputs: {
+                tag: 'v${{ steps.bump_version.outputs.new_version }}',
+                draft: 'false',
+                prerelease: 'false'
+              }
+            });
+            
+            console.log('✅ GitHub Release workflow triggered successfully');
+            return true;
+          } catch (error) {
+            console.log('⚠️ Could not trigger GitHub Release workflow:', error.message);
+            console.log('The release workflow will be triggered by the tag push instead.');
+            return false;
+          }
+
     - name: Summary
       run: |
-        echo "## Version Bump Summary" >> $GITHUB_STEP_SUMMARY
+        echo "## 🚀 Version Bump Summary" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "- **Type**: ${{ inputs.version_type }}" >> $GITHUB_STEP_SUMMARY
         echo "- **New Version**: ${{ steps.bump_version.outputs.new_version }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Tag**: v${{ steps.bump_version.outputs.new_version }}" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
-        echo "1. Review and merge the pull request if created" >> $GITHUB_STEP_SUMMARY
-        echo "2. The tag will trigger the release workflow automatically" >> $GITHUB_STEP_SUMMARY
-        echo "3. Monitor the [release workflow](https://github.com/${{ github.repository }}/actions/workflows/gem-release.yml)" >> $GITHUB_STEP_SUMMARY
+        echo "### 🎯 Automated Actions Triggered:" >> $GITHUB_STEP_SUMMARY
+        echo "1. ✅ Version files updated" >> $GITHUB_STEP_SUMMARY
+        echo "2. ✅ Git tag created and pushed" >> $GITHUB_STEP_SUMMARY
+        echo "3. ✅ CHANGELOG.md updated" >> $GITHUB_STEP_SUMMARY
+        echo "4. 🔄 GitHub Release workflow triggered" >> $GITHUB_STEP_SUMMARY
+        echo "5. 🔄 Gem Release workflow will be triggered by tag" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📋 Next Steps:" >> $GITHUB_STEP_SUMMARY
+        echo "1. Monitor the [GitHub Release workflow](https://github.com/${{ github.repository }}/actions/workflows/github-release.yml)" >> $GITHUB_STEP_SUMMARY
+        echo "2. Monitor the [Gem Release workflow](https://github.com/${{ github.repository }}/actions/workflows/gem-release.yml)" >> $GITHUB_STEP_SUMMARY
+        echo "3. Check the [Releases page](https://github.com/${{ github.repository }}/releases) for the new release" >> $GITHUB_STEP_SUMMARY
+        echo "4. Verify publication on [RubyGems](https://rubygems.org/gems/jekyll-theme-zer0)" >> $GITHUB_STEP_SUMMARY

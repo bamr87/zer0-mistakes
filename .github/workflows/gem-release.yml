@@ -122,22 +122,61 @@ jobs:
         gem push ${{ needs.build.outputs.gem-file }}
         echo "Published ${{ needs.build.outputs.gem-file }} to RubyGems"
     
-    - name: Create GitHub Release
+    - name: Extract Release Notes from Changelog
+      id: extract_release_notes
+      run: |
+        VERSION="${{ needs.build.outputs.version }}"
+        
+        # Extract release notes from CHANGELOG.md for this version
+        if [ -f "CHANGELOG.md" ]; then
+          # Find the section for this version and extract content until next version or end
+          RELEASE_NOTES=$(awk -v version="$VERSION" '
+            /^## \[/ {
+              if (found) exit
+              if ($0 ~ "\\[" version "\\]") found=1
+              next
+            }
+            found && /^## \[/ { exit }
+            found && !/^## \[/ { print }
+          ' CHANGELOG.md | sed '/^$/d' | head -n -1)
+          
+          if [ -n "$RELEASE_NOTES" ]; then
+            echo "Found release notes for version $VERSION"
+          else
+            RELEASE_NOTES="- Released version $VERSION"
+            echo "No specific release notes found, using default"
+          fi
+        else
+          RELEASE_NOTES="- Released version $VERSION"
+          echo "No CHANGELOG.md found, using default release notes"
+        fi
+        
+        # Save release notes to file and environment
+        echo "$RELEASE_NOTES" > release_notes.md
+        echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
+        echo "$RELEASE_NOTES" >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+
+    - name: Create Comprehensive GitHub Release
       id: create_release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ github.ref_name }}
-        name: Release ${{ github.ref_name }}
+        name: "🚀 Jekyll Theme Zer0 v${{ needs.build.outputs.version }}"
         body: |
-          ## Changes
+          # 🎉 Jekyll Theme Zer0 v${{ needs.build.outputs.version }}
           
-          - Released version ${{ needs.build.outputs.version }}
-          - Published to RubyGems: https://rubygems.org/gems/jekyll-theme-zer0
+          A Bootstrap Jekyll theme for headless GitHub Pages CMS with Docker-first development approach.
           
-          ## Installation
+          ## 📋 What's Changed
           
+          ${{ env.RELEASE_NOTES }}
+          
+          ## 📦 Installation
+          
+          ### Via Bundler (Recommended)
           Add this line to your Jekyll site's `Gemfile`:
           
           ```ruby
@@ -145,10 +184,51 @@ jobs:
           ```
           
           And then execute:
-          
           ```bash
           bundle install
           ```
-        files: ${{ needs.build.outputs.gem-file }}
+          
+          ### Via RubyGems
+          ```bash
+          gem install jekyll-theme-zer0 -v ${{ needs.build.outputs.version }}
+          ```
+          
+          ## 🔗 Links
+          
+          - **RubyGems**: https://rubygems.org/gems/jekyll-theme-zer0/versions/${{ needs.build.outputs.version }}
+          - **Documentation**: https://github.com/bamr87/zer0-mistakes#readme
+          - **Live Demo**: https://bamr87.github.io/zer0-mistakes/
+          - **Issues**: https://github.com/bamr87/zer0-mistakes/issues
+          
+          ## 📊 Release Assets
+          
+          - `${{ needs.build.outputs.gem-file }}` - The Ruby gem package
+          - `release_notes.md` - Detailed release notes
+          
+          ## 🛠️ For Developers
+          
+          ### Theme Configuration
+          In your `_config.yml`:
+          ```yaml
+          theme: jekyll-theme-zer0
+          # or for GitHub Pages:
+          # remote_theme: bamr87/zer0-mistakes
+          ```
+          
+          ### Docker Development
+          ```bash
+          git clone https://github.com/bamr87/zer0-mistakes.git
+          cd zer0-mistakes
+          docker-compose up
+          ```
+          
+          ---
+          
+          **Full Changelog**: https://github.com/bamr87/zer0-mistakes/compare/v${{ needs.build.outputs.version }}...HEAD
+        files: |
+          ${{ needs.build.outputs.gem-file }}
+          release_notes.md
         draft: false
-        prerelease: false
+        prerelease: ${{ contains(needs.build.outputs.version, 'rc') || contains(needs.build.outputs.version, 'beta') || contains(needs.build.outputs.version, 'alpha') }}
+        make_latest: true
+        generate_release_notes: true
