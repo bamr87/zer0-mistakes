@@ -57,9 +57,9 @@ if [[ -n $(git status --porcelain) ]]; then
     error "Working directory is not clean. Please commit or stash changes first."
 fi
 
-# Check if package.json exists
-if [[ ! -f "package.json" ]]; then
-    error "package.json not found"
+# Check if version.rb exists
+if [[ ! -f "lib/jekyll-theme-zer0/version.rb" ]]; then
+    error "lib/jekyll-theme-zer0/version.rb not found"
 fi
 
 # Check if gemspec exists
@@ -67,10 +67,10 @@ if [[ ! -f "jekyll-theme-zer0.gemspec" ]]; then
     error "jekyll-theme-zer0.gemspec not found"
 fi
 
-# Get current version
-CURRENT_VERSION=$(jq -r '.version' package.json)
-if [[ "$CURRENT_VERSION" == "null" ]]; then
-    error "Could not read version from package.json"
+# Get current version from Ruby version file
+CURRENT_VERSION=$(grep -o 'VERSION = "[^"]*"' lib/jekyll-theme-zer0/version.rb | sed 's/VERSION = "\(.*\)"/\1/')
+if [[ -z "$CURRENT_VERSION" ]]; then
+    error "Could not read version from lib/jekyll-theme-zer0/version.rb"
 fi
 
 log "Current version: $CURRENT_VERSION"
@@ -105,9 +105,16 @@ if [[ "$DRY_RUN" == true ]]; then
     exit 0
 fi
 
-# Update package.json
-log "Updating package.json..."
-jq ".version = \"$NEW_VERSION\"" package.json > package.json.tmp && mv package.json.tmp package.json
+# Update version.rb
+log "Updating lib/jekyll-theme-zer0/version.rb..."
+sed -i.bak "s/VERSION = \".*\"/VERSION = \"$NEW_VERSION\"/" lib/jekyll-theme-zer0/version.rb
+rm lib/jekyll-theme-zer0/version.rb.bak 2>/dev/null || true
+
+# Update package.json to keep in sync
+if [[ -f "package.json" ]]; then
+    log "Updating package.json..."
+    jq ".version = \"$NEW_VERSION\"" package.json > package.json.tmp && mv package.json.tmp package.json
+fi
 
 # Validate gemspec can be built
 log "Validating gemspec..."
@@ -128,7 +135,8 @@ fi
 
 # Git operations
 log "Committing changes..."
-git add package.json
+git add lib/jekyll-theme-zer0/version.rb
+[[ -f "package.json" ]] && git add package.json
 [[ -f "CHANGELOG.md" ]] && git add CHANGELOG.md
 git commit -m "chore: bump version to $NEW_VERSION"
 

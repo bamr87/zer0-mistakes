@@ -1,23 +1,24 @@
-# jekyll-theme-zer0.gemspec
-# npm version patch
-# gem build jekyll-theme-zer0.gemspec
-# gem push jekyll-theme-zer0-<version>.gem
-# gem build jekyll-theme-zer0.gemspec && gem push jekyll-theme-zer0-$(jq -r .version package.json).gem
-require "json"
+# frozen_string_literal: true
 
-package_json = JSON.parse(File.read("package.json"))
+require_relative "lib/jekyll-theme-zer0/version"
 
 Gem::Specification.new do |s|
   s.name                     = "jekyll-theme-zer0"
-  s.version                  = package_json["version"]
+  s.version                  = JekyllThemeZer0::VERSION
   s.authors                  = ["Amr Abdel"]
   s.email                    = ["amr@it-journey.dev"]
 
   s.summary                  = "Jekyll theme based on bootstrap and compatible with github pages"
-  s.homepage                 = 'https://github.com/bamr87/zer0-mistakes'
+  s.description              = "Bootstrap Jekyll theme for headless Github Pages CMS with Docker-first development approach"
+  s.homepage                 = "https://github.com/bamr87/zer0-mistakes"
   s.license                  = "MIT"
   
   s.metadata["plugin_type"]  = "theme"
+  s.metadata["homepage_uri"] = s.homepage
+  s.metadata["source_code_uri"] = s.homepage
+  s.metadata["changelog_uri"] = "#{s.homepage}/blob/main/CHANGELOG.md"
+  s.metadata["documentation_uri"] = "#{s.homepage}#readme"
+  s.metadata["allowed_push_host"] = "https://rubygems.org"
   
   s.files                    = `git ls-files -z`.split("\x0").select do |f|
     f.match(%r{^(assets|_(data|includes|layouts|sass)/|(LICENSE|README|CHANGELOG)((\.(txt|md|markdown)|$)))}i)
@@ -25,10 +26,13 @@ Gem::Specification.new do |s|
   
   s.platform                 = Gem::Platform::RUBY
 
-  s.required_ruby_version    = ">= 2.6.0"
+  s.required_ruby_version    = ">= 2.7.0"
 
-  s.add_runtime_dependency "jekyll", "~> 3.9.5"
+  s.add_runtime_dependency "jekyll", "~> 4.0"
+  s.add_runtime_dependency "jekyll-feed", "~> 0.15"
+  s.add_runtime_dependency "jekyll-sitemap", "~> 1.4"
 
-  s.add_development_dependency "bundler", "~> 2.3", ">= 2.3.0"
+  s.add_development_dependency "bundler", "~> 2.3"
   s.add_development_dependency "rake", "~> 13.0"
+  s.add_development_dependency "rspec", "~> 3.0"
 end

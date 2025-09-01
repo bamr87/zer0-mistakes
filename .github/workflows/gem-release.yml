@@ -69,7 +69,7 @@ jobs:
     - name: Get version
       id: version
       run: |
-        VERSION=$(jq -r '.version' package.json)
+        VERSION=$(grep -o 'VERSION = "[^"]*"' lib/jekyll-theme-zer0/version.rb | sed 's/VERSION = "\(.*\)"/\1/')
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "gem-file=jekyll-theme-zer0-$VERSION.gem" >> $GITHUB_OUTPUT
         echo "Version: $VERSION"

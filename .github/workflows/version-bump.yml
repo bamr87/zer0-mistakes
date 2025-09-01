@@ -54,7 +54,7 @@ jobs:
       run: |
         ./scripts/version.sh ${{ inputs.version_type }}
         
-        NEW_VERSION=$(jq -r '.version' package.json)
+        NEW_VERSION=$(grep -o 'VERSION = "[^"]*"' lib/jekyll-theme-zer0/version.rb | sed 's/VERSION = "\(.*\)"/\1/')
         echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
         echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
         echo "Bumped version to: $NEW_VERSION"
