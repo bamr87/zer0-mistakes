@@ -1,6 +1,6 @@
 ---
 title: zer0-mistakes
-sub-title: Jekyll Theme Evolution
+sub-title: Jekyll Theme
 description: Docker-optimized Jekyll theme with AI-powered installation automation and comprehensive error handling.
 version: 2.0.0
 tags:
@@ -16,7 +16,6 @@ categories:
 created: 2024-02-10T23:51:11.480Z
 lastmod: 2025-07-03T12:00:00.000Z
 draft: false
-layout: journals
 sidebar:
   nav: dynamic
 permalink: /zer0/
@@ -26,9 +25,8 @@ keywords:
   - docker
   - automation
   - installation
-  - error-recovery
 date: 2025-07-03T12:00:00.000Z
-snippet: Self-healing Jekyll theme installation with Docker optimization
+snippet: Jekyll theme installation with Docker optimization
 comments: true
 preview: /images/zer0-mistakes-docker.png
 ---
@@ -37,9 +35,9 @@ preview: /images/zer0-mistakes-docker.png
 
 [![Gem Version](https://badge.fury.io/rb/jekyll-theme-zer0.svg)](https://badge.fury.io/rb/jekyll-theme-zer0)
 
-# 🌱 Self-Healing Jekyll Theme Seed
+# 🌱 Jekyll Theme Seed
 
-This is a **Docker-optimized Jekyll theme** with AI-powered installation automation, comprehensive error handling, and self-healing capabilities. It embodies IT-Journey principles of Design for Failure (DFF), Don't Repeat Yourself (DRY), Keep It Simple (KIS), and AI-Powered Development (AIPD).
+This is a **Docker-optimized Jekyll theme** with AI-powered installation automation, and comprehensive error handling. It embodies IT-Journey principles of Design for Failure (DFF), Don't Repeat Yourself (DRY), Keep It Simple (KIS), and AI-Powered Development (AIPD).
 
 ## 🚀 Quick Start
 

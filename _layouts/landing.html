@@ -1,18 +1,77 @@
 ---
 layout: root
 ---
-
-  <!-- Left Sidebar for Outline - Offcanvas -->
-  <!-- _includes/sidebar-left.html  -->
-  <div class="offcanvas">
-    {% include sidebar-left.html %}
-  </div>
-  <div class="container-xl pt-5">
+<!--
+  ===================================================================
+  LANDING LAYOUT - Template for landing pages with visual effects
+  ===================================================================
   
-  {{ content }}
+  File: landing.html
+  Path: _layouts/landing.html
+  Inherits: root.html
+  Purpose: Specialized layout for landing pages with interactive backgrounds
+  
+  Template Logic:
+  - Creates a full-width landing page experience
+  - Includes sidebar navigation in offcanvas (mobile-friendly)
+  - Implements particles.js for animated background effects
+  - Uses responsive container for content presentation
+  - Bypasses default sidebar layout for cleaner presentation
+  
+  Layout Features:
+  - Offcanvas sidebar for navigation (hidden by default)
+  - Full-width responsive container with proper spacing
+  - Particles.js integration for visual appeal
+  - Clean, minimal structure for marketing content
+  
+  Visual Effects:
+  - Particles.js animated background
+  - Interactive particle system
+  - Customizable through particles configuration
+  - Performance-optimized for modern browsers
+  
+  Usage:
+  - Product landing pages
+  - Marketing campaign pages
+  - Portfolio showcases
+  - Event announcement pages
+  - Any page requiring visual impact
+  
+  Dependencies:
+  - particles-source.js: Core particles.js library
+  - particles.js: Custom particle configuration
+  - sidebar-left.html: Navigation include for offcanvas
+  
+  Performance Notes:
+  - Particles.js loads at page end for better performance
+  - Consider lazy loading for mobile devices
+  - Monitor performance impact on older devices
+  ===================================================================
+-->
+
+<!-- ================================ -->
+<!-- NAVIGATION SIDEBAR (OFFCANVAS)  -->
+<!-- ================================ -->
+<!-- Hidden sidebar navigation that can be toggled -->
+<div class="offcanvas">
+    {% include sidebar-left.html %}
 </div>
 
-<!-- Features -->
-    <!-- particles.js -->
-    <script src="/assets/js/particles-source.js"></script>
-    <script src="/assets/js/particles.js"></script>
+<!-- ================================ -->
+<!-- MAIN LANDING CONTENT            -->
+<!-- ================================ -->
+<!-- Responsive container for landing page content -->
+<div class="container-xl pt-5">
+    <!-- ========================== -->
+    <!-- LANDING PAGE CONTENT       -->
+    <!-- ========================== -->
+    <!-- Main content area for hero sections, features, calls-to-action -->
+    {{ content }}
+</div>
+
+<!-- ================================ -->
+<!-- VISUAL EFFECTS AND SCRIPTS      -->
+<!-- ================================ -->
+<!-- Particles.js for animated background effects -->
+<script src="/assets/js/particles-source.js"></script>
+<script src="/assets/js/particles.js"></script>
