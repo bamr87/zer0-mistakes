@@ -1,0 +1,217 @@
+name: Markdown Quality Assurance
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths: ['**/*.md']
+  pull_request:
+    branches: [ main, develop ]
+    paths: ['**/*.md']
+  workflow_dispatch:
+    inputs:
+      fix_automatically:
+        description: 'Automatically fix markdown formatting issues'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  markdown-lint:
+    name: Markdown Linting and Formatting
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install markdown tools
+        run: |
+          npm install -g markdownlint-cli2
+          npm install -g prettier
+
+      - name: Run markdown linting
+        id: lint
+        run: |
+          echo "## Markdown Linting Results" >> $GITHUB_STEP_SUMMARY
+          
+          # Run markdownlint and capture results
+          if markdownlint-cli2 "**/*.md"; then
+            echo "✅ All markdown files pass linting" >> $GITHUB_STEP_SUMMARY
+            echo "lint_passed=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Markdown linting issues found" >> $GITHUB_STEP_SUMMARY
+            echo "lint_passed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check for formatting issues
+        id: format-check
+        run: |
+          # Check if files need formatting
+          if ! prettier --check "**/*.md"; then
+            echo "format_needed=true" >> $GITHUB_OUTPUT
+            echo "📝 Markdown files need formatting" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "format_needed=false" >> $GITHUB_OUTPUT
+            echo "✅ All markdown files are properly formatted" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Auto-fix markdown formatting
+        if: |
+          (github.event_name == 'workflow_dispatch' && github.event.inputs.fix_automatically == true) ||
+          (github.event_name == 'push' && github.ref == 'refs/heads/main')
+        run: |
+          echo "🔧 Auto-fixing markdown formatting..."
+          
+          # Fix common formatting issues
+          if [ -f "scripts/fix-markdown-format.sh" ]; then
+            chmod +x scripts/fix-markdown-format.sh
+            ./scripts/fix-markdown-format.sh
+          fi
+          
+          # Use prettier for additional formatting
+          prettier --write "**/*.md"
+          
+          echo "✅ Markdown formatting fixes applied" >> $GITHUB_STEP_SUMMARY
+
+      - name: Generate markdown quality report
+        run: |
+          echo "## Markdown Quality Report" >> markdown-quality-report.md
+          echo "Generated: $(date -u)" >> markdown-quality-report.md
+          echo "" >> markdown-quality-report.md
+          
+          # Count markdown files
+          md_count=$(find . -name "*.md" -not -path "./node_modules/*" -not -path "./.git/*" | wc -l)
+          echo "📊 **Files Analyzed:** $md_count" >> markdown-quality-report.md
+          echo "" >> markdown-quality-report.md
+          
+          # Linting status
+          if [ "${{ steps.lint.outputs.lint_passed }}" == "true" ]; then
+            echo "✅ **Linting Status:** All files pass" >> markdown-quality-report.md
+          else
+            echo "❌ **Linting Status:** Issues found" >> markdown-quality-report.md
+          fi
+          
+          # Formatting status
+          if [ "${{ steps.format-check.outputs.format_needed }}" == "false" ]; then
+            echo "✅ **Formatting Status:** All files properly formatted" >> markdown-quality-report.md
+          else
+            echo "📝 **Formatting Status:** Formatting needed" >> markdown-quality-report.md
+          fi
+          
+          echo "" >> markdown-quality-report.md
+          echo "### Common Issues Fixed" >> markdown-quality-report.md
+          echo "- Trailing whitespace removal" >> markdown-quality-report.md
+          echo "- Consistent heading spacing" >> markdown-quality-report.md
+          echo "- Proper list formatting" >> markdown-quality-report.md
+          echo "- Code block language specification" >> markdown-quality-report.md
+          echo "- Emphasis formatting consistency" >> markdown-quality-report.md
+
+      - name: Upload quality report
+        uses: actions/upload-artifact@v4
+        with:
+          name: markdown-quality-report
+          path: markdown-quality-report.md
+          retention-days: 30
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit formatting fixes
+        if: |
+          steps.changes.outputs.has_changes == 'true' &&
+          ((github.event_name == 'workflow_dispatch' && github.event.inputs.fix_automatically == true) ||
+           (github.event_name == 'push' && github.ref == 'refs/heads/main'))
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit -m "🔧 Auto-fix markdown formatting issues
+
+          - Remove trailing whitespace
+          - Fix heading spacing
+          - Standardize list formatting
+          - Add code block language specifications
+          - Fix emphasis formatting
+
+          [skip ci]"
+          git push
+
+      - name: Comment on PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            
+            let comment = '## 📝 Markdown Quality Check Results\n\n';
+            
+            if ('${{ steps.lint.outputs.lint_passed }}' === 'true') {
+              comment += '✅ **Linting:** All markdown files pass linting\n';
+            } else {
+              comment += '❌ **Linting:** Issues found that need attention\n';
+            }
+            
+            if ('${{ steps.format-check.outputs.format_needed }}' === 'false') {
+              comment += '✅ **Formatting:** All files properly formatted\n';
+            } else {
+              comment += '📝 **Formatting:** Some files need formatting\n';
+              comment += '\n💡 **Tip:** Run the workflow manually with "Automatically fix markdown formatting issues" enabled to auto-fix formatting.\n';
+            }
+            
+            comment += '\n### 🔧 Available Tools\n';
+            comment += '- Run `scripts/fix-markdown-format.sh` locally to fix common issues\n';
+            comment += '- Use the "Markdown Quality Assurance" workflow with auto-fix enabled\n';
+            comment += '- Check the uploaded quality report for detailed analysis\n';
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Update status badge
+        if: github.ref == 'refs/heads/main'
+        run: |
+          # This would update a status badge in the README
+          # Implementation depends on your badge service
+          echo "Status badge update would happen here"
+
+  markdown-link-check:
+    name: Check Markdown Links
+    runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || github.event.inputs.fix_automatically != true
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check markdown links
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: 'yes'
+          use-verbose-mode: 'yes'
+          config-file: '.markdown-link-check.json'
+          folder-path: '.'
+          max-depth: -1

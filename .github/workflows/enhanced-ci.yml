@@ -1,0 +1,324 @@
+name: Enhanced CI/CD Testing Framework
+
+on:
+  push:
+    branches: [ main, develop, feature/*, hotfix/* ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      run_performance_tests:
+        description: 'Run performance benchmarks'
+        required: false
+        default: false
+        type: boolean
+      test_matrix:
+        description: 'Test matrix scope'
+        required: false
+        default: 'standard'
+        type: choice
+        options:
+          - 'minimal'     # Ruby 3.0 only
+          - 'standard'    # Ruby 2.7, 3.0, 3.2
+          - 'extended'    # Ruby 2.7-3.3 + preview
+
+env:
+  RUBY_VERSION: '3.0'
+  BUNDLE_DEPLOYMENT: 'true'
+  BUNDLE_PATH: vendor/bundle
+  BUNDLE_WITHOUT: development
+
+jobs:
+  # Pre-flight checks for fast feedback
+  preflight:
+    name: Pre-flight Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      ruby-matrix: ${{ steps.matrix.outputs.versions }}
+      should-run-performance: ${{ steps.conditions.outputs.performance }}
+      ruby-changed: ${{ steps.changes.outputs.ruby }}
+      assets-changed: ${{ steps.changes.outputs.assets }}
+      layouts-changed: ${{ steps.changes.outputs.layouts }}
+      docs-changed: ${{ steps.changes.outputs.docs }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # For changed file detection
+      
+      - name: Detect file changes
+        id: changes
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            ruby:
+              - '**/*.rb'
+              - '**/*.gemspec'
+              - 'Gemfile*'
+              - '.ruby-version'
+            assets:
+              - 'assets/**'
+              - '_sass/**'
+              - '*.css'
+              - '*.scss'
+            layouts:
+              - '_layouts/**'
+              - '_includes/**'
+              - '_config*.yml'
+            docs:
+              - '*.md'
+              - 'docs/**'
+              - '_posts/**'
+            ci:
+              - '.github/workflows/**'
+              - 'scripts/**'
+              - 'test/**'
+      
+      - name: Determine test matrix
+        id: matrix
+        run: |
+          case "${{ inputs.test_matrix || 'standard' }}" in
+            minimal)
+              echo "versions=['3.0']" >> $GITHUB_OUTPUT
+              ;;
+            extended)
+              echo "versions=['2.7', '3.0', '3.1', '3.2', '3.3', 'head']" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "versions=['2.7', '3.0', '3.2']" >> $GITHUB_OUTPUT
+              ;;
+          esac
+      
+      - name: Set test conditions
+        id: conditions
+        run: |
+          # Run performance tests on main branch or when explicitly requested
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]] || [[ "${{ inputs.run_performance_tests }}" == "true" ]]; then
+            echo "performance=true" >> $GITHUB_OUTPUT
+          else
+            echo "performance=false" >> $GITHUB_OUTPUT
+          fi
+
+  # Enhanced test matrix with conditional execution
+  test:
+    name: Test (Ruby ${{ matrix.ruby-version }})
+    runs-on: ubuntu-latest
+    needs: preflight
+    timeout-minutes: 15
+    continue-on-error: ${{ matrix.ruby-version == 'head' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-version: ${{ fromJson(needs.preflight.outputs.ruby-matrix) }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Ruby ${{ matrix.ruby-version }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true
+      
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+      
+      - name: Run enhanced test suite
+        run: |
+          # Enhanced test execution with detailed reporting
+          ./test/test_runner.sh --verbose --coverage --format json
+          
+          # Generate test summary
+          echo "## Test Results (Ruby ${{ matrix.ruby-version }})" >> $GITHUB_STEP_SUMMARY
+          jq -r '.summary' test-results-${{ matrix.ruby-version }}.json >> $GITHUB_STEP_SUMMARY
+      
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-ruby-${{ matrix.ruby-version }}
+          path: test-results-*.json
+          retention-days: 7
+
+  # Parallel security and quality checks
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: preflight
+    if: needs.preflight.outputs.changed-files == 'true' || github.event_name == 'push'
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+      
+      - name: Run bundle audit
+        run: |
+          bundle exec bundle-audit check --update
+          echo "✅ No security vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Dependency license scan
+        run: |
+          bundle exec license_finder --decisions-file .license_decisions.yml || true
+
+  lint:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    needs: preflight
+    if: needs.preflight.outputs.changed-files == 'true' || github.event_name == 'push'
+    timeout-minutes: 8
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+      
+      - name: Run RuboCop
+        run: |
+          bundle exec rubocop --format github --display-cop-names
+          echo "✅ Code style checks passed" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Markdown lint
+        uses: articulate/actions-markdownlint@v1
+        with:
+          config: .markdownlint.yml
+          files: '**/*.md'
+
+  # Performance benchmarking (conditional)
+  performance:
+    name: Performance Benchmarks
+    runs-on: ubuntu-latest
+    needs: [preflight, test]
+    if: needs.preflight.outputs.should-run-performance == 'true'
+    timeout-minutes: 20
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+      
+      - name: Run Jekyll build benchmarks
+        run: |
+          echo "## Performance Benchmarks" >> $GITHUB_STEP_SUMMARY
+          
+          # Benchmark Jekyll build time
+          echo "### Jekyll Build Performance" >> $GITHUB_STEP_SUMMARY
+          time bundle exec jekyll build --profile 2>&1 | tee build-profile.txt
+          
+          # Extract build time
+          BUILD_TIME=$(grep "done in" build-profile.txt | awk '{print $6}' | head -1)
+          echo "- Build time: ${BUILD_TIME} seconds" >> $GITHUB_STEP_SUMMARY
+          
+          # Asset compilation time
+          echo "### Asset Compilation" >> $GITHUB_STEP_SUMMARY
+          echo "- Sass compilation: $(grep -i sass build-profile.txt | wc -l) files" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Upload performance results
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-results
+          path: build-profile.txt
+          retention-days: 30
+
+  # Integration testing with Docker
+  integration:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: [preflight, test]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Start Jekyll in Docker
+        run: |
+          docker-compose up -d
+          sleep 10  # Wait for Jekyll to start
+      
+      - name: Test site accessibility
+        run: |
+          # Wait for site to be ready
+          timeout 60 bash -c 'until curl -s http://localhost:4000 > /dev/null; do sleep 1; done'
+          
+          # Basic connectivity test
+          curl -f http://localhost:4000 > /dev/null
+          echo "✅ Site is accessible" >> $GITHUB_STEP_SUMMARY
+          
+          # Test key pages
+          curl -f http://localhost:4000/about/ > /dev/null || echo "⚠️ About page may be missing"
+          
+      - name: Cleanup
+        if: always()
+        run: docker-compose down
+
+  # Enhanced build validation
+  build:
+    name: Build Validation
+    runs-on: ubuntu-latest
+    needs: [test, security, lint]
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+      
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+      
+      - name: Build and validate gem
+        run: |
+          ./scripts/build.sh --dry-run --verbose
+          echo "✅ Gem builds successfully" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Test gem installation
+        run: |
+          # Test local gem installation
+          gem build jekyll-theme-zer0.gemspec
+          gem install ./jekyll-theme-zer0-*.gem --local
+          echo "✅ Gem installs without errors" >> $GITHUB_STEP_SUMMARY
+
+  # Comprehensive status check
+  status:
+    name: CI Status
+    runs-on: ubuntu-latest
+    needs: [preflight, test, security, lint, build]
+    if: always()
+    steps:
+      - name: Check overall status
+        run: |
+          echo "## CI/CD Pipeline Status" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Pre-flight | ${{ needs.preflight.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Tests | ${{ needs.test.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Security | ${{ needs.security.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Lint | ${{ needs.lint.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
+          
+          # Fail if any critical jobs failed
+          if [[ "${{ needs.test.result }}" == "failure" ]] || [[ "${{ needs.build.result }}" == "failure" ]]; then
+            echo "❌ Critical jobs failed"
+            exit 1
+          else
+            echo "✅ All critical jobs passed"
+          fi

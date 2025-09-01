@@ -33,10 +33,18 @@ jobs:
         sudo apt-get install -y jq
     
     - name: Make scripts executable
-      run: chmod +x scripts/*.sh
+      run: chmod +x scripts/*.sh test/*.sh
     
-    - name: Run tests
-      run: ./scripts/test.sh --verbose
+    - name: Run comprehensive tests
+      run: ./test/test_runner.sh --verbose --format json
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-ruby-${{ matrix.ruby }}
+        path: test/results/
+        retention-days: 30
   
   lint:
     name: Lint
@@ -120,7 +128,7 @@ jobs:
         sudo apt-get install -y jq
     
     - name: Make scripts executable
-      run: chmod +x scripts/*.sh
+      run: chmod +x scripts/*.sh test/*.sh
     
     - name: Test build
       run: ./scripts/build.sh

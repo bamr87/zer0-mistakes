@@ -47,7 +47,7 @@ jobs:
       run: chmod +x scripts/*.sh
     
     - name: Run tests before version bump
-      run: ./scripts/test.sh
+      run: ./test/test_runner.sh --verbose
     
     - name: Bump version
       id: bump_version

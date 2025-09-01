@@ -38,7 +38,7 @@ jobs:
       run: chmod +x scripts/*.sh
     
     - name: Run tests
-      run: ./scripts/test.sh --verbose
+      run: ./test/test_runner.sh --verbose
   
   build:
     name: Build Gem
