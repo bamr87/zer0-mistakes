@@ -3,14 +3,5 @@
 # Disable remote theme for initial setup - allows site to build with basic Jekyll functionality
 # Use remote theme only when the theme repository is available and accessible
 remote_theme             : false
-# theme                    : "jekyll-theme-zer0"
+theme                    : "jekyll-theme-zer0"
 
-# Basic Jekyll configuration for development
-plugins:
-  - jekyll-feed
-  - jekyll-sitemap
-  - jekyll-seo-tag
-
-# Override any problematic settings for local development
-url: ""
-baseurl: ""
