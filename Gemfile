@@ -11,16 +11,13 @@ gemspec
 # Github Pages Gems:
 gem 'github-pages'
 
-# If you have plugins enabled in the _config.yml, add them here too:
-group :jekyll_plugins do
-
-  # these are all part of the github-pages gem
-  gem 'jekyll-remote-theme', "~> 0.4.3"
-  gem 'jekyll-feed', "~> 0.17"
-  gem 'jekyll-sitemap' , "~> 1.4.0"
-  gem 'jekyll-seo-tag', "~> 2.8.0"
-  gem 'jekyll-paginate', '~> 1.1'
-end
+# Note: The following plugins are already included in the github-pages gem
+# and should not be explicitly declared to avoid version conflicts:
+# - jekyll-remote-theme
+# - jekyll-feed
+# - jekyll-sitemap
+# - jekyll-seo-tag
+# - jekyll-paginate
 
 # Docker support (Modify the Dockerfile to include the installation of the ffi gem and its dependencies. Additionally, ensure that all gems are installed for the correct platform.)
 gem "ffi", "~> 1.17.0"
