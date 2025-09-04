@@ -1,37 +1,270 @@
 ---
 title: Machine Setup
-author: bamr87
-description: Learn how to set up your machine for developing a Static Website Generator with Jekyll, covering software installation for Windows, Mac, and Linux.
-excerpt: A guide to setting up your machine for Jekyll development.
+author: null
 layout: default
-keywords:
-  - machine setup
-  - jekyll
-  - ruby
-  - github
-  - visual studio code
-  - homebrew
-  - winget
-  - apt
-lastmod: 2025-03-06T15:52:31.348Z
-draft: true
-slug: machine-setup
-comments: true
-fmContentType: default
-preview: /assets/images/building-machines.png
-tags:
-  - development
-  - Jekyll
-  - machine setup
-  - Ruby
-  - Visual Studio Code
-categories:
-  - Development
-  - Guides
-  - Jekyll
-  - Programming
-  - Web Development
+description: null
+categories: null
+slug: machine
+lastmod: 2024-05-20T14:58:30.179Z
+draft: false
 ---
+
+# Machine Setup for Zer0-Mistakes Jekyll Theme
+
+Transform your development environment with **Docker-first setup** for the Zer0-Mistakes Jekyll theme. This modern approach eliminates dependency conflicts and ensures consistent development across all platforms.
+
+## 🚀 Quick Start (Recommended)
+
+### One-Line Installation with AI-Powered Setup
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
+```
+
+This intelligent installation script:
+- ✅ **Auto-detects** your operating system and architecture
+- ✅ **Installs Docker** if not present (with user confirmation)
+- ✅ **Configures environment** with optimal settings
+- ✅ **Self-heals** common installation issues
+- ✅ **Validates setup** with comprehensive health checks
+
+## 🐳 Docker-First Development
+
+### Why Docker?
+
+- **🔄 Consistency**: Identical environment across macOS, Windows, and Linux
+- **⚡ Speed**: Instant setup without Ruby version management
+- **🛡️ Isolation**: No conflicts with system Ruby or other projects
+- **🎯 Simplicity**: Single command to start development
+- **📦 Portability**: Share exact development environment with team
+
+### Docker Installation
+
+**macOS:**
+```bash
+# Intel Macs
+brew install --cask docker
+
+# Apple Silicon Macs (M1/M2/M3)
+brew install --cask docker
+# Docker Desktop automatically handles ARM64 compatibility
+```
+
+**Windows:**
+```powershell
+# Install Docker Desktop
+winget install Docker.DockerDesktop
+
+# Alternative: Use Windows Subsystem for Linux (WSL2)
+wsl --install
+winget install Docker.DockerDesktop
+```
+
+**Linux:**
+```bash
+# Ubuntu/Debian
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo usermod -aG docker $USER
+
+# CentOS/RHEL/Fedora
+sudo dnf install docker docker-compose
+sudo systemctl enable --now docker
+sudo usermod -aG docker $USER
+```
+
+### Verify Docker Installation
+
+```bash
+docker --version
+docker-compose --version
+
+# Test Docker functionality
+docker run hello-world
+```
+
+## 🛠️ Development Tools
+
+### Essential Tools
+
+**1. Git (Version Control)**
+```bash
+# macOS
+brew install git
+
+# Windows
+winget install Git.Git
+
+# Linux (Ubuntu/Debian)
+sudo apt install git
+
+# Configure Git
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+```
+
+**2. GitHub CLI (Repository Management)**
+```bash
+# macOS
+brew install gh
+
+# Windows
+winget install GitHub.cli
+
+# Linux
+curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+sudo apt update
+sudo apt install gh
+
+# Authenticate with GitHub
+gh auth login
+```
+
+**3. Visual Studio Code (Recommended Editor)**
+```bash
+# macOS
+brew install --cask visual-studio-code
+
+# Windows
+winget install Microsoft.VisualStudioCode
+
+# Linux
+sudo snap install code --classic
+```
+
+### VS Code Extensions for Jekyll Development
+
+Install these essential extensions for optimal Jekyll development:
+
+```bash
+# Install via Command Line
+code --install-extension ms-vscode.vscode-json
+code --install-extension redhat.vscode-yaml
+code --install-extension yzhang.markdown-all-in-one
+code --install-extension ms-vscode-remote.remote-containers
+code --install-extension ms-azuretools.vscode-docker
+code --install-extension github.vscode-pull-request-github
+code --install-extension sissel.shopify-liquid
+code --install-extension ginfuru.ginfuru-better-solarized-dark-theme
+code --install-extension pkief.material-icon-theme
+code --install-extension streetsidesoftware.code-spell-checker
+```
+
+**Key Extensions:**
+- **Remote - Containers**: Develop inside Docker containers
+- **Docker**: Container management and debugging
+- **Liquid**: Jekyll template language support
+- **YAML**: Configuration file support
+- **Markdown All in One**: Enhanced Markdown editing
+- **GitHub Pull Requests**: Seamless GitHub integration
+
+## 🔧 Platform-Specific Setup
+
+### macOS Configuration
+
+**Xcode Command Line Tools** (for Git and other development tools):
+```bash
+xcode-select --install
+```
+
+**Homebrew Package Manager**:
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+### Windows Configuration
+
+**Windows Subsystem for Linux (WSL2)** - Recommended for optimal Docker performance:
+```powershell
+# Enable WSL2
+wsl --install
+
+# Set WSL2 as default
+wsl --set-default-version 2
+
+# Install Ubuntu distribution
+wsl --install -d Ubuntu
+```
+
+**Windows Terminal** (Enhanced terminal experience):
+```powershell
+winget install Microsoft.WindowsTerminal
+```
+
+### Linux Configuration
+
+**Docker Compose** (if not included with Docker):
+```bash
+# Install Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+```
+
+## ✅ Verification & Health Check
+
+After setup completion, verify your environment:
+
+```bash
+# Check Docker functionality
+docker --version
+docker-compose --version
+docker run hello-world
+
+# Check Git configuration
+git --version
+git config --list
+
+# Check GitHub CLI
+gh --version
+gh auth status
+
+# Test VS Code
+code --version
+```
+
+## 🚨 Troubleshooting
+
+### Common Issues & Solutions
+
+**Docker Permission Issues (Linux):**
+```bash
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+**Docker Desktop Not Starting (Windows/macOS):**
+- Ensure virtualization is enabled in BIOS/UEFI
+- On Windows: Enable Hyper-V or WSL2
+- Restart Docker Desktop application
+
+**Port Conflicts:**
+```bash
+# Check what's using port 4000
+lsof -ti:4000
+# Kill process if needed
+kill $(lsof -ti:4000)
+```
+
+## 🎯 Next Steps
+
+With your machine setup complete:
+
+1. **🔗 [GitHub Setup](github-setup.md)** - Configure repositories and authentication
+2. **🏗️ [Jekyll Setup](jekyll-setup.md)** - Start your Docker-based Jekyll development
+3. **📖 [Quickstart Overview](index.md)** - Complete development workflow guide
+
+---
+
+## 💡 Pro Tips
+
+- **Use Docker volumes** for persistent data storage
+- **Enable BuildKit** for faster Docker builds: `export DOCKER_BUILDKIT=1`
+- **Configure resource limits** in Docker Desktop for optimal performance
+- **Use .dockerignore** to exclude unnecessary files from build context
+- **Leverage multi-stage builds** for smaller production images
+
+This Docker-first approach ensures you'll have a reliable, consistent development environment that "just works" across all platforms! 🎉
 
 Before you can begin developing, your machine (computer) needs to be configured and loaded with the necessary software and dependencies.
 Each OS (Windows, Mac, Linux) will have its own method to download and install software based on the technology stack you're working with.
