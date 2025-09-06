@@ -1,7 +1,33 @@
-# Dev config override
+# Development Configuration Override
+# This file overrides production settings for local development
 
-# Disable remote theme for initial setup - allows site to build with basic Jekyll functionality
-# Use remote theme only when the theme repository is available and accessible
+# Theme Configuration
+# Disable remote theme for local development - allows site to build with local theme files
 remote_theme             : false
 theme                    : "jekyll-theme-zer0"
+
+# Development URL Configuration
+# Override production URLs for local development server
+url                      : "http://localhost:4000"
+baseurl                  : ""  # Keep baseurl for GitHub Pages compatibility testing
+
+# Development Server Settings
+host                     : "0.0.0.0"  # Allow access from other devices on network
+port                     : 4000
+livereload               : true
+livereload_port          : 35729
+
+# Development Environment
+environment              : "development"
+show_drafts              : true
+future                   : true
+unpublished              : true
+
+# Disable production optimizations for faster builds
+incremental              : true
+profile                  : false
+
+# Development-specific plugins (add any dev-only plugins here)
+# plugins:
+#   - jekyll-admin  # Uncomment if you want to use Jekyll admin interface
 

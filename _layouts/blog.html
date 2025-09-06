@@ -82,7 +82,7 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
     <div class="nav-scroller py-1 mb-3 border-bottom">
         <nav class="nav nav-underline justify-content-between">
             {% for item in site.data.navigation.posts %}
-                <a class="nav-item nav-link link-body-emphasis" href="{{ item.url }}">
+                <a class="nav-item nav-link link-body-emphasis" href="{{ item.url | relative_url }}">
                     {{ item.title }}
                 </a>
             {% endfor %}

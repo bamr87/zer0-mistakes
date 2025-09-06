@@ -25,7 +25,7 @@
 
 # Site Settings ###################################################################
 
-founder                  : "Amr"
+founder                  : "Amr Abdel-Motaleb"
 remote_theme             : "bamr87/zer0-mistakes"
 # theme                    : "jekyll-theme-zer0"
 
@@ -47,13 +47,15 @@ subtitle                 : "Jekyll Theme Dev"
 subtitle_url             : "localhost"
 subtitle_icon            : "code"
 title_separator          : "|" # Appears in the web browser tab name
-domain                   : &domain "github"
-domain_ext               : &domain_ext "io"
-baseurl                  : &baseurl "/zer0-mistakes" # the subpath of your site, e.g. /blog - Use this if you want this whole repo to be a domain branch
+domain                   : &domain "zer0-mistakes"
+domain_ext               : &domain_ext "com"
+baseurl                  : &baseurl "" # the subpath of your site, e.g. /blog - Use this if you want this whole repo to be a domain branch
 url_test                 : &url_test [ 'https', '://', *github_user, '.', *domain, '.', *domain_ext ] # the base hostname & protocol for your site, e.g. http://example.com
-url                      : &url https://bamr87.github.io
+domain_url               : &domain_url [ 'https', '://', *domain, '.', *domain_ext ]
+github_io_url            : &github_io_url [ 'https', '://', *github_user, '.', *domain, '.', *domain_ext, '/', *github_repository ]
+url                      : &url [ *domain_url ]
 public_folder            : assets # path to the public folder
-port                     : 4002 # Jekyll Serve Dev port
+port                     : 4000 # Jekyll Serve Dev port
 dg_port                  : 4001 # TODO: Doppelganger site. Use this if you want to switch between parallel deployments
 og_image                 : '/images/wizard-on-journey.png'
 
@@ -141,7 +143,7 @@ youtube:
 
 powered_by:
   - name: "Ruby"
-    version: "2.7.4"
+    version: "3.2.3"
     url: "https://www.ruby-lang.org/"
     icon: "bi-gem"
   - name: "Jekyll"
@@ -164,7 +166,7 @@ powered_by:
     url: "https://www.mathjax.org/"
     icon: "bi-calculator"
   - name: "GitHub Pages"
-    version: "231"
+    version: "232"
     url: "https://pages.github.com/"
     icon: "bi-github"
   - name: "docker"
@@ -172,7 +174,8 @@ powered_by:
     url: "https://www.docker.com/"
     icon: "bi-docker"
 
-### Plugins 
+### Plugins  #####################################################################
+
 # https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll#plugins
 # http://jekyllrb.com/docs/plugins/
 
@@ -248,7 +251,7 @@ collections:
     permalink: /:collection/:path/:name/
   quickstart:
     output: true
-    permalink: /:collection/:categories/:name/
+    permalink: /:collection/:name/
   about:
     output: true
     permalink: /:collection/:categories/:name/
@@ -343,6 +346,8 @@ defaults:
       author_profile: true
       read_time: true
       comments: # true
+      share: true
+      related: true
       sidebar:
         nav: docs
     # permalink: /docs/:category/:name/
@@ -388,10 +393,6 @@ sass:
   # load_paths:
   #   - /usr/local/bundle/gems/bootstrap-5.3.3/assets/stylesheets
 
-algolia:
-  application_id: 'SP02Z3YYL4'
-  search_only_api_key: '3b9200e21085fbebc263950c157b2682'
-  index_name: dev_it-journey
 
 ## Style Settings -------------------------------------------------------------
 
