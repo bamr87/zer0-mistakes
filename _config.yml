@@ -53,7 +53,7 @@ baseurl                  : &baseurl "" # the subpath of your site, e.g. /blog - 
 url_test                 : &url_test [ 'https', '://', *github_user, '.', *domain, '.', *domain_ext ] # the base hostname & protocol for your site, e.g. http://example.com
 domain_url               : &domain_url [ 'https', '://', *domain, '.', *domain_ext ]
 github_io_url            : &github_io_url [ 'https', '://', *github_user, '.', *domain, '.', *domain_ext, '/', *github_repository ]
-url                      : &url [ *domain_url ]
+url                      : &url https://zer0-mistakes.com
 public_folder            : assets # path to the public folder
 port                     : 4000 # Jekyll Serve Dev port
 dg_port                  : 4001 # TODO: Doppelganger site. Use this if you want to switch between parallel deployments
