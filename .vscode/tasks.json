@@ -10,6 +10,14 @@
       "problemMatcher": []
     },
     {
+      "label": "Docker: Compose Stop",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": ["stop"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
       "label": "Docker: Compose Down",
       "type": "shell",
       "command": "docker-compose",
