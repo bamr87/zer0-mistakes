@@ -1,24 +1,21 @@
-document.addEventListener('DOMContentLoaded', (event) => {
-  let mybutton = document.getElementById("backToTopBtn");
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('backToTopBtn');
+  if (!btn) return;
 
-  function topFunction() {
-    document.body.scrollTop = 0; // For Safari
-    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-    mybutton.style.opacity = "75%";
-  }
+  // Smooth scroll to top and keep accessible
+  const scrollToTop = (e) => {
+    if (e) e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
-  if (mybutton) {
-    mybutton.onclick = topFunction;
-  }
+  btn.addEventListener('click', scrollToTop);
 
-  // When the user scrolls down 20px from the top of the document, show the button
-  window.onscroll = function() {scrollFunction()};
+  const toggle = () => {
+    const y = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    btn.style.display = y > 200 ? 'block' : 'none';
+  };
 
-  function scrollFunction() {
-    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-      mybutton.style.display = "block";
-    } else {
-      mybutton.style.display = "none";
-    }
-  }
+  // Initialize state and bind listener without clobbering
+  toggle();
+  window.addEventListener('scroll', toggle, { passive: true });
 });
