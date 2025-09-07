@@ -1,12 +1,16 @@
-<!-- 
-  file: _intro.html
-  description: This is the intro section of the blog post. It includes the title, author, and excerpt of the post.
+<!--
+  file: _includes/intro.html
+  description: Enhanced intro section with improved share functionality and better button alignment
   path: _includes/intro.html
- -->
-
- {% if page.collection %}
- {% capture page_dir %}{{ site.collections_dir }}{% endcapture %}
- {% assign testvar = "collection exists" %}
+  features:
+    - Responsive share dropdown with multiple social platforms
+    - Properly aligned action buttons at bottom right
+    - Improved accessibility with icons and labels
+    - Clean button grouping with consistent spacing
+--> 
+{% if page.collection %}
+  {% capture page_dir %}{{ site.collections_dir }}{% endcapture %}
+  {% assign testvar = "collection exists" %}
 {% endif %}
 
 <!-- Intro Section -->
@@ -15,54 +19,48 @@
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{{site.baseurl}}/{{ site.public_folder }}/{{ page.preview | default: site.info_banner }}') no-repeat center center / cover;
   color: #fff;">
 
-<!-- Share Icon with Dropdown for Multiple Sharing Options -->
-<div class="position-absolute top-0 end-0 m-3">
-  <div class="dropdown">
-    <button class="btn btn-info dropdown-toggle" type="button" id="shareDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-    <i class="bi bi-share"></i>
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="shareDropdown">
-      <li>
-        <a class="dropdown-item" href="https://reddit.com/submit?url={{ page.url | absolute_url | url_encode }}&amp;title={{ page.title | url_encode }}" target="_blank">
-          Share on Reddit
-        </a>
-      </li>
-      <li>
-        <script src="https://platform.linkedin.com/in.js" type="text/javascript">lang: en_US</script>
-        <script type="IN/Share" data-url="{{ page.url | absolute_url | url_encode }}"></script>
-      </li>
-      <li>
-        <button class="dropdown-item" onclick='navigator.clipboard.writeText("{{ page.url | absolute_url }}");'>
-          Copy Link
-        </button>
-      </li>
-    </ul>
-  </div>
-</div>
-
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-      return new bootstrap.Popover(popoverTriggerEl);
-    });
-
-    // Optional: Check if the clipboard API is supported
-    if (!navigator.clipboard) {
-      console.warn('Clipboard API not supported');
-    }
-  });
-</script>
-
   <br>
   <h1>{{ page.title }}</h1>
   <p>By {{ page.author | default: site.author.name }}</p>
   <p>{{ page.description }}</p>
   <p>Estimated reading time: {{ content | number_of_words | divided_by:200 }} minutes</p>
-  <!-- Edit on Github Button -->
-  <a href="https://github.com/{{ site.repository }}/blob/master/{{ page_dir }}/{{ page.path }}" class="btn btn-dark position-absolute bottom-0 end-0 m-3">
-    <i class="bi bi-github"></i>
-    <span class="d-none d-sm-inline">Edit on Github</span>
-  </a>
+  <!-- Action Buttons Group -->
+  <div class="position-absolute bottom-0 end-0 m-3 d-flex gap-2">
+    <!-- Share Button -->
+    <div class="dropdown">
+      <button class="btn btn-info dropdown-toggle" type="button" id="shareDropdownBottom" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-share"></i>
+        <span class="d-none d-sm-inline ms-1">Share</span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="shareDropdownBottom">
+        <li>
+          <a class="dropdown-item" href="https://reddit.com/submit?url={{ page.url | absolute_url | url_encode }}&amp;title={{ page.title | url_encode }}" target="_blank">
+            <i class="bi bi-reddit me-2"></i>Share on Reddit
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="https://www.linkedin.com/sharing/share-offsite/?url={{ page.url | absolute_url | url_encode }}" target="_blank">
+            <i class="bi bi-linkedin me-2"></i>Share on LinkedIn
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="https://twitter.com/intent/tweet?url={{ page.url | absolute_url | url_encode }}&text={{ page.title | url_encode }}" target="_blank">
+            <i class="bi bi-twitter me-2"></i>Share on Twitter
+          </a>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <button class="dropdown-item" onclick='navigator.clipboard.writeText("{{ page.url | absolute_url }}"); alert("Link copied to clipboard!");'>
+            <i class="bi bi-clipboard me-2"></i>Copy Link
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Edit on Github Button -->
+    <a href="https://github.com/{{ site.repository }}/blob/master/{{ page_dir }}/{{ page.path }}" class="btn btn-dark">
+      <i class="bi bi-github"></i>
+      <span class="d-none d-sm-inline ms-1">Edit on GitHub</span>
+    </a>
+  </div>
 </div>
