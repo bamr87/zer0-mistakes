@@ -54,7 +54,7 @@ layout: root
     <!-- ================================ -->
     <!-- Site navigation, content outline, and offcanvas menu for mobile -->
     <aside class="bd-sidebar">
-        {% include sidebar-left.html %}
+        {% include navigation/sidebar-left.html %}
     </aside>
     
     <!-- ================================ -->
@@ -64,14 +64,14 @@ layout: root
     <main class="bd-main order-1" data-spy="scroll" data-bs-target="toc-content" data-offset="0">
 
         <!-- Page introduction: title, breadcrumbs, metadata -->
-        {% include intro.html %}
+        {% include content/intro.html %}
 
         <!-- =============================== -->
         <!-- RIGHT SIDEBAR - Table of Contents -->
         <!-- =============================== -->
         <!-- Page outline, shortcuts, and related links (hidden on mobile) -->
         <div class="bd-toc text-body-secondary">
-            {% include sidebar-right.html %}
+            {% include navigation/sidebar-right.html %}
         </div>
         
         <!-- =============================== -->

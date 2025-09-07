@@ -56,7 +56,7 @@
     {% if page.sidebar.nav == "dynamic" %}
     <div class="list-group" id="sidebar-content">
       {% assign folders = site.pages | where_exp: "item", "item.path contains 'index.md'" | sort: 'path' %}
-      {% include sidebar-folders.html folders=folders %}
+      {% include navigation/sidebar-folders.html folders=folders %}
     </div>
 
     <!-- ========================== -->
@@ -66,7 +66,7 @@
     {% elsif page.sidebar.nav == "searchCats" %}
     <div class="list-group" id="sidebar-content">
       {% assign categories = site.categories | sort %}
-      {% include sidebar-categories.html categories=categories %}
+      {% include navigation/sidebar-categories.html categories=categories %}
     </div>
     
     <!-- ========================== -->
@@ -75,7 +75,7 @@
     <!-- Uses predefined navigation structure from _data files -->
     {% elsif page.sidebar.nav %}
     <nav class="w-100">
-      {% include nav_list.html nav=page.sidebar.nav %}
+      {% include navigation/nav_list.html nav=page.sidebar.nav %}
     </nav>
     {% endif %}
     

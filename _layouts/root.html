@@ -38,7 +38,7 @@
         <!-- =============================================== -->
         
         <!-- Core site metadata, stylesheets, and external dependencies -->
-        {% include head.html %}
+        {% include core/head.html %}
 
         <!-- Jekyll SEO plugin for enhanced search engine optimization -->
         <!-- Documentation: https://github.com/jekyll/jekyll-seo-tag -->
@@ -51,16 +51,16 @@
         <!-- ============================================== -->
         
         <!-- Inline SVG symbols for consistent iconography throughout the site -->
-        {% include svg.html %}
+        {% include components/svg.html %}
 
         <!-- Google Tag Manager body code for analytics (if configured) -->
         <!-- Note: Currently commented out - uncomment when GTM is needed -->
 
         <!-- Main site header with navigation, branding, and search functionality -->
-        {% include header.html %}
+        {% include core/header.html %}
 
         <!-- Site-wide information banner or announcement section -->
-        {% include info-section.html %}
+        {% include components/info-section.html %}
 
         <!-- ======================== -->
         <!-- MAIN CONTENT AREA        -->
@@ -83,7 +83,7 @@
             <!-- Note: Currently commented out - uncomment when search is implemented -->
 
             <!-- External JavaScript libraries and custom scripts -->
-            {% include js-cdn.html %}
+            {% include components/js-cdn.html %}
         </div>
     </body>
 </html>
