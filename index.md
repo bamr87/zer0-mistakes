@@ -3,8 +3,8 @@ title: "zer0-mistakes Jekyll Theme"
 sub-title: "Docker-Optimized Development with AI-Powered Setup"
 excerpt: "Professional Jekyll theme with automated installation, comprehensive error handling, and zero-configuration Docker development"
 description: "Modern Jekyll theme for developers who value reliability and error-free workflows with Docker-first development and AI automation."
-preview: /zer0-mistakes/assets/images/wizard-on-journey.png
-hero_image: /zer0-mistakes/assets/images/wizard-on-journey.png
+preview: /assets/images/wizard-on-journey.png
+hero_image: /assets/images/wizard-on-journey.png
 layout: landing
 keywords:
   - Jekyll Theme
@@ -126,6 +126,7 @@ Built on industry-standard tools and best practices:
 - **Docker**: Containerized development
 - **Ruby 3+**: Modern Ruby environment
 - **GitHub Pages**: Ready for deployment
+{.}
 
 ### Smart Error Handling
 

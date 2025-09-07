@@ -190,6 +190,18 @@ plugins:
   - jekyll-paginate
   - jekyll-relative-links
 
+# Project resource links (used by landing page and includes)
+resources:
+  github_repo: [ 'https://github.com/', *github_user, '/', *github_repository ]
+  github_fork: [ 'https://github.com/', *github_user, '/', *github_repository, '/fork' ]
+  contributing: [ 'https://github.com/', *github_user, '/', *github_repository, '/blob/', *branch, '/CONTRIBUTING.md' ]
+  rubygems:
+    name: *title
+    url: [ 'https://rubygems.org/gems/', *title ]
+  docker:
+    image: [ *github_user, '/', *github_repository ]
+    hub_url: [ 'https://hub.docker.com/r/', *github_user, '/', *github_repository ]
+
 ## Gisgus Plugin #################################################################
 
 gisgus:

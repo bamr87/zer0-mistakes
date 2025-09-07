@@ -48,8 +48,8 @@ layout: root
 <!-- HERO SECTION                     -->
 <!-- ================================ -->
 <div class="bg-primary text-white">
-    <div class="container-xl py-5">
-        <div class="row align-items-center min-vh-50">
+    <div class="container-xl py-5 px-4 px-md-5">
+        <div class="row align-items-center min-vh-50 g-4 g-lg-5">
             <div class="col-lg-6">
                 <h1 class="display-4 fw-bold mb-3">{{ page.title }}</h1>
                 <p class="lead mb-4">{{ page.description }}</p>
@@ -59,6 +59,9 @@ layout: root
                     </a>
                     <a href="#features" class="btn btn-outline-light btn-lg">
                         <i class="bi bi-list-check me-2"></i>Features
+                    </a>
+                    <a href="{{ site.resources.github_repo }}" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-github me-2"></i>GitHub
                     </a>
                 </div>
             </div>
@@ -79,19 +82,21 @@ layout: root
 <!-- ================================ -->
 <!-- MAIN CONTENT AREA               -->
 <!-- ================================ -->
-<div class="container-xl py-5">
+{% include landing-quick-links.html %}
+
+<div class="container-xl py-5 px-4 px-md-5">
     {{ content }}
 </div>
 
 <!-- ================================ -->
 <!-- FEATURES SECTION                 -->
 <!-- ================================ -->
-<div class="bg-light py-5" id="features">
-    <div class="container-xl">
+<div class="py-5 bg-body-tertiary" id="features">
+    <div class="container-xl px-4 px-md-5">
         <div class="row text-center mb-5">
             <div class="col-lg-8 mx-auto">
-                <h2 class="display-5 fw-bold">Why Choose zer0-mistakes?</h2>
-                <p class="lead text-muted">Built for developers who value reliability, simplicity, and modern workflows</p>
+        <h2 class="display-5 fw-bold text-body-emphasis">Why Choose zer0-mistakes?</h2>
+        <p class="lead text-body-secondary">Built for developers who value reliability, simplicity, and modern workflows</p>
             </div>
         </div>
         
@@ -102,8 +107,8 @@ layout: root
                         <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
                             <i class="bi bi-shield-check fs-4"></i>
                         </div>
-                        <h5 class="card-title">Error-Free Development</h5>
-                        <p class="card-text text-muted">Built-in error handling and self-healing installation process ensures a smooth development experience.</p>
+            <h5 class="card-title text-body-emphasis">Error-Free Development</h5>
+            <p class="card-text text-body-secondary">Built-in error handling and self-healing installation process ensures a smooth development experience.</p>
                     </div>
                 </div>
             </div>
@@ -114,8 +119,8 @@ layout: root
                         <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
                             <i class="bi bi-boxes fs-4"></i>
                         </div>
-                        <h5 class="card-title">Docker-First Approach</h5>
-                        <p class="card-text text-muted">Cross-platform compatibility with zero local configuration. Works on Apple Silicon, Intel, and Linux.</p>
+            <h5 class="card-title text-body-emphasis">Docker-First Approach</h5>
+            <p class="card-text text-body-secondary">Cross-platform compatibility with zero local configuration. Works on Apple Silicon, Intel, and Linux.</p>
                     </div>
                 </div>
             </div>
@@ -126,8 +131,8 @@ layout: root
                         <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
                             <i class="bi bi-lightning-charge fs-4"></i>
                         </div>
-                        <h5 class="card-title">AI-Powered Setup</h5>
-                        <p class="card-text text-muted">Intelligent installation automation that detects and fixes common issues automatically.</p>
+            <h5 class="card-title text-body-emphasis">AI-Powered Setup</h5>
+            <p class="card-text text-body-secondary">Intelligent installation automation that detects and fixes common issues automatically.</p>
                     </div>
                 </div>
             </div>
@@ -138,47 +143,12 @@ layout: root
 <!-- ================================ -->
 <!-- QUICK START SECTION             -->
 <!-- ================================ -->
-<div class="container-xl py-5" id="get-started">
+<div class="container-xl py-5 px-4 px-md-5" id="get-started">
     <div class="row">
-        <div class="col-lg-8 mx-auto text-center">
+        <div class="col-12 col-xl-10 mx-auto text-center">
             <h2 class="display-5 fw-bold mb-4">Ready to Get Started?</h2>
             <p class="lead mb-4">Choose your preferred installation method and be up and running in minutes</p>
-            
-            <div class="row g-4 mt-4">
-                <div class="col-md-6">
-                    <div class="card border-primary h-100">
-                        <div class="card-header bg-primary text-white">
-                            <h5 class="card-title mb-0">
-                                <i class="bi bi-lightning-fill me-2"></i>One-Line Install
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text">Automated installation with AI-powered error recovery</p>
-                            <div class="bg-dark text-light p-3 rounded mb-3">
-                                <code class="text-warning">curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash</code>
-                            </div>
-                            <span class="badge bg-success">Recommended</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-md-6">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">
-                                <i class="bi bi-tools me-2"></i>Manual Setup
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text">Traditional clone and compose approach</p>
-                            <div class="bg-dark text-light p-3 rounded mb-3">
-                                <code class="text-info">gh repo clone bamr87/zer0-mistakes<br>cd zer0-mistakes<br>docker-compose up</code>
-                            </div>
-                            <span class="badge bg-secondary">For Developers</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% include landing-install-cards.html %}
         </div>
     </div>
 </div>
