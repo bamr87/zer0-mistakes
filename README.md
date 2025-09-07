@@ -3,6 +3,7 @@ title: zer0-mistakes
 sub-title: Jekyll Theme
 description: Docker-optimized Jekyll theme with AI-powered installation automation and comprehensive error handling.
 version: 2.0.0
+layout: default
 tags:
   - jekyll
   - docker
@@ -16,8 +17,7 @@ categories:
 created: 2024-02-10T23:51:11.480Z
 lastmod: 2025-07-03T12:00:00.000Z
 draft: false
-sidebar:
-  nav: dynamic
+
 permalink: /zer0/
 slug: zer0
 keywords:

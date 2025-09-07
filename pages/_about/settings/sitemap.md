@@ -7,4 +7,4 @@ slug: sitemap
 
 This is where you can find all the pages on the site.
 
-{% include sitemap.html %}
+{% include content/sitemap.html %}

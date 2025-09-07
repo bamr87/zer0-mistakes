@@ -1,7 +1,7 @@
 <!-- 
   file: sidebar-right.html 
   path: _includes/sidebar-right.html
-  includes: nav_list.html, toc.html
+  includes: nav_list.html, content/toc.html
 -->
 
 <!-- TOC button in mobile view  -->
@@ -32,7 +32,7 @@
     <!-- TOC list -->
 
     <!-- TOC list -->
-      {% include toc.html sanitize=true html=content h_min=1 h_max=3 class="list-group-flush" item_class="list-group-item" anchor_class="" skip_no_ids=true %}
+      {% include content/toc.html sanitize=true html=content h_min=1 h_max=3 class="list-group-flush" item_class="list-group-item" anchor_class="" skip_no_ids=true %}
     </nav>
   </div>
 </div>
