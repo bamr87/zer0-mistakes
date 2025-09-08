@@ -6,6 +6,8 @@ categories: [quickstart, github, deployment]
 slug: github
 lastmod: 2025-01-27T10:00:00.000Z
 draft: false
+sidebar:
+   nav: quickstart
 ---
 
 # 🐙 GitHub Setup & Deployment

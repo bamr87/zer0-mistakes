@@ -7,6 +7,8 @@ categories: null
 slug: machine
 lastmod: 2024-05-20T14:58:30.179Z
 draft: false
+sidebar:
+   nav: quickstart
 ---
 
 # Machine Setup for Zer0-Mistakes Jekyll Theme

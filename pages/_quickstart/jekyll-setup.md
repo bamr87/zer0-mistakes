@@ -6,6 +6,8 @@ categories: [quickstart, jekyll, docker]
 slug: jekyll
 lastmod: 2025-01-27T10:00:00.000Z
 draft: false
+sidebar:
+   nav: quickstart
 ---
 
 # 🚀 Jekyll Setup - Docker-First Development
