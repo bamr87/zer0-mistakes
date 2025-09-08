@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [ main ]
 
-env:
-  RUBY_VERSION: '3.0'
-
 jobs:
   test:
     name: Test on Ruby ${{ matrix.ruby }}
@@ -31,9 +28,15 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y jq
+        gem install bundler
+        bundle install
     
     - name: Make scripts executable
       run: chmod +x scripts/*.sh test/*.sh
+    
+    - name: Create test directories
+      run: |
+        mkdir -p test/results test/coverage test/reports
     
     - name: Run comprehensive tests
       run: ./test/test_runner.sh --verbose --format json
@@ -56,7 +59,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: ${{ env.RUBY_VERSION }}
+        ruby-version: '3.0'
         bundler-cache: true
     
     - name: Install dependencies
@@ -64,6 +67,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y jq
         gem install rubocop
+        bundle install
     
     - name: Make scripts executable
       run: chmod +x scripts/*.sh
@@ -97,11 +101,13 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: ${{ env.RUBY_VERSION }}
+        ruby-version: '3.0'
         bundler-cache: true
     
     - name: Install bundle-audit
-      run: gem install bundle-audit
+      run: |
+        gem install bundle-audit
+        bundle install
     
     - name: Run bundle-audit
       run: |
@@ -119,13 +125,14 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: ${{ env.RUBY_VERSION }}
+        ruby-version: '3.0'
         bundler-cache: true
     
     - name: Install dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y jq
+        bundle install
     
     - name: Make scripts executable
       run: chmod +x scripts/*.sh test/*.sh
