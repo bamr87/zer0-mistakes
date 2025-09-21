@@ -17,7 +17,6 @@ categories:
 created: 2024-02-10T23:51:11.480Z
 lastmod: 2025-07-03T12:00:00.000Z
 draft: false
-
 permalink: /zer0/
 slug: zer0
 keywords:
@@ -103,15 +102,6 @@ docker-compose up  # Just works!
 - **95%+ success rate** - Reliable installation across environments
 - **Comprehensive troubleshooting** - Self-documenting error solutions
 - **Zero manual configuration** - Automated optimization for common scenarios
-
-## 📊 Evolution Metrics
-
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Build Success Rate | ~60% | ~95% | +58% |
-| Setup Time | 15-30 min | 2-5 min | -80% |
-| Docker Compatibility | Limited | Universal | +100% |
-| Error Recovery | Manual | Automatic | +100% |
 
 ## Prerequisites
 
@@ -323,10 +313,12 @@ For detailed setup instructions, see the `INSTALLATION.md` file created during i
 
 ## Environment
 
+{% if site.level == 'her0' %}
+
 ### Set your own environment variables
 
-{% if site.level == 'her0' %}
   {% include zer0-env-var.html %}
+
 {% endif %}
 
 ### Set the default environment variables
@@ -541,47 +533,4 @@ baseurl: null # the subpath of your site, e.g. /blog
 url: null # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: bamr87
 github_username:  bamr87
-```
-
-## Convert zer0.md to zer0.sh using Python
-
-```python
-def convert_md_to_files(md_file_path):
-    language_files = {}
-    language_mode = None
-    language_extensions = {'python': '.py', 'shell': '.sh'}
-    shebang_lines = {'python': '#!/usr/bin/env python3\n', 'shell': '#!/bin/bash\n'}
-
-    with open(md_file_path, 'r') as md_file:
-        for line in md_file:
-            if line.startswith('```'):
-                if language_mode:
-                    # End of a language block, switch back to markdown mode
-                    language_mode = None
-                else:
-                    # Start of a language block, open a new file for this language if not already open
-                    language = line.strip('`\n')
-                    if language in language_extensions:
-                        language_mode = language
-                        if language not in language_files:
-                            language_file = open(md_file_path.replace('.md', language_extensions[language]), 'w')
-                            if language in shebang_lines:
-                                language_file.write(shebang_lines[language])
-                            language_files[language] = language_file
-                continue
-
-            if language_mode:
-                language_files[language_mode].write(line)
-
-    # Close all open language files
-    for language_file in language_files.values():
-        language_file.close()
-
-convert_md_to_files('zer0.md')
-```
-
-## Config file
-
-```yaml
-{% include_relative _config.yml %}
 ```
