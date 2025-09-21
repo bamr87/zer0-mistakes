@@ -7,25 +7,24 @@ layout: default
 tags:
   - jekyll
   - docker
-  - automation
-  - ai-powered
-  - error-handling
+  - remote-theme
+  - github-pages
 categories:
-  - bootstrap
-  - quickstart
+  - jekyll-theme
   - docker
+  - bootstrap
 created: 2024-02-10T23:51:11.480Z
-lastmod: 2025-07-03T12:00:00.000Z
+lastmod: 2025-09-21T12:00:00.000Z
 draft: false
 permalink: /zer0/
 slug: zer0
 keywords:
   - jekyll
   - docker
-  - automation
-  - installation
-date: 2025-07-03T12:00:00.000Z
-snippet: Jekyll theme installation with Docker optimization
+  - remote-theme
+  - github-pages
+date: 2025-09-21T12:00:00.000Z
+snippet: Docker-first Jekyll theme with remote theme support
 comments: true
 preview: /images/zer0-mistakes-docker.png
 ---
@@ -34,503 +33,382 @@ preview: /images/zer0-mistakes-docker.png
 
 [![Gem Version](https://badge.fury.io/rb/jekyll-theme-zer0.svg)](https://badge.fury.io/rb/jekyll-theme-zer0)
 
-# 🌱 Jekyll Theme Seed
-
-This is a **Docker-optimized Jekyll theme** with AI-powered installation automation, and comprehensive error handling. It embodies IT-Journey principles of Design for Failure (DFF), Don't Repeat Yourself (DRY), Keep It Simple (KIS), and AI-Powered Development (AIPD).
+**Docker-optimized Jekyll theme** with AI-powered self-healing installation and
+comprehensive error handling. Built for GitHub Pages compatibility and remote theme usage.
 
 ## 🚀 Quick Start
 
-### Option 1: One-Line Installation (Recommended)
+### Method 1: Remote Theme (Recommended)
+
+Perfect for GitHub Pages and new Jekyll sites:
 
 ```bash
+# Create a new repository or navigate to existing one
+mkdir my-new-site && cd my-new-site
+
+# Initialize with remote theme setup
 curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
 ```
 
-### Option 2: Manual Installation
+### Method 2: Fork & Customize
+
+For extensive customization and theme development:
 
 ```bash
-gh repo clone bamr87/zer0-mistakes
+# Fork the repository on GitHub, then clone
+git clone https://github.com/YOUR-USERNAME/zer0-mistakes.git
 cd zer0-mistakes
+
+# Start development environment
 docker-compose up
 ```
 
 ## ✨ What Makes This Special
 
-### 🐳 **Docker-First Approach**
+### 🐳 **Docker-First Development**
 
 - **Cross-Platform Compatibility** - Works on Apple Silicon, Intel, and Linux
-- **Zero Configuration** - Automatic environment setup and optimization
-- **Port Standardization** - Consistent localhost:4000 across all environments
-- **Platform Isolation** - No local Ruby/Jekyll installation required
+- **Zero Local Dependencies** - No Ruby/Jekyll installation required
+- **Consistent Environment** - Same setup across all development machines
+- **Docker Compose Integration** - Simple `docker-compose up` to start
 
-### 🛡️ **Self-Healing Installation**
+### 🌐 **GitHub Pages Ready**
 
-- **Error Detection** - Automatically identifies and fixes common issues
-- **Content Protection** - Safely handles missing dependencies and broken includes
-- **Configuration Optimization** - Creates Docker-compatible development settings
-- **Comprehensive Documentation** - Auto-generates troubleshooting guides
+- **Remote Theme Support** - Use `remote_theme: "bamr87/zer0-mistakes"` in your `_config.yml`
+- **GitHub Actions Compatible** - Seamless integration with GitHub Pages deployment
+- **Plugin Management** - Includes all GitHub Pages supported plugins
+- **Bootstrap 5 Integration** - Modern responsive design framework
 
-### 🧬 **AI-Enhanced Error Handling**
+### �️ **Self-Healing Installation**
 
-- **Predictive Problem Resolution** - Fixes issues before they cause failures
-- **Context-Aware Configuration** - Adapts to different project structures
-- **Intelligent Fallbacks** - Graceful degradation when components are unavailable
-- **Learning System** - Improves based on common installation patterns
+- **Smart Error Detection** - Automatically identifies and fixes common issues
+- **Content Protection** - Handles missing dependencies gracefully
+- **Configuration Optimization** - Creates Docker-compatible settings automatically
+- **Comprehensive Troubleshooting** - Built-in error recovery and documentation
 
-## 🚀 Core Features
+## 🎯 Remote Theme Setup
 
-### Installation Automation
-
-```bash
-# Installs and configures everything automatically
-curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
-
-# Results in working Docker environment:
-docker-compose up  # Just works!
-```
-
-### Error Prevention
-
-- **Theme Dependency Resolution** - Handles missing gem themes
-- **Include File Protection** - Comments out problematic script includes  
-- **Plugin Management** - Ensures essential Jekyll plugins are configured
-- **Docker Optimization** - Creates container-friendly configurations
-
-### Development Experience
-
-- **2-5 minute setup** - From zero to running site
-- **95%+ success rate** - Reliable installation across environments
-- **Comprehensive troubleshooting** - Self-documenting error solutions
-- **Zero manual configuration** - Automated optimization for common scenarios
-
-## Prerequisites
-
-### Required Tools
-
-- **Docker** - For containerized development environment
-- **Git** - For repository management
-- **curl** - For one-line installation (or manual download)
-
-```shell
-# Confirm your system information
-
-system_profiler SPHardwareDataType | awk '/Model Name:|Model Identifier:|Model Number:|Chip:|System Firmware Version:/ {print $0}'
-system_profiler SPSoftwareDataType | awk '/System Version:|Kernel Version:/ {print $0}'
-
-```
-
-## Prerequisites
-
-Before we begin, make sure you have the following software installed on your machine:
-
-- [VS code](https://code.visualstudio.com/) installed on your machine (if you're smart)
-- [docker](https://docs.docker.com/get-docker/) installed on your machine (if you're a pro)
-- [homebrew](https://brew.sh/) installed on your machine (if you're a cli junkie)
-- [git](https://git-scm.com/) installed on your machine (if you want to track the truth)
-- [gh cli](https://cli.github.com/) installed on your machine (if you want to publish the truth)
-
-For step-by-step instructions on how to install these tools, visit the "Quickstart" section of the site here: [Quickstart](/quickstart)
-
-To use these tools effectively, you need:
-
-- A GitHub account and a repository where you want to maintain and publish your site.
-- A personal access token from GitHub to authenticate with the GitHub API.
-- A cup of coffee or your favorite beverage to keep you energized.
-- A positive attitude and a sense of curiosity.
-- A sense of adventure and a willingness to explore new tools and technologies.
-- A growth mindset and a willingness to embrace challenges and learn from mistakes.
-- A sense of humor and the ability to laugh at unexpected errors and bugs.
-- A supportive community or network of friends and colleagues to ask for help and share your progress.
-- A clear goal and motivation to build this project and share your knowledge with the world.
-- A spirit of creativity and a desire to express yourself through code and technology.
-
-More importantly, you need to:
-
-- Embrace responsibility and ethical, inclusive software development.
-- Cultivate empathy and create tools that benefit others.
-- Appreciate opportunities and resources for learning and growth.
-- Foster curiosity about AI and machine learning.
-- Pursue a purpose that enhances productivity and creativity.
-- Persevere through challenges with determination.
-- Learn from others and share knowledge with humility.
-- Believe in technology's potential to improve lives and create positive change.
-- Make the learning process fun and engaging.
-- Balance work with breaks for well-being.
-- Celebrate achievements and share your work with the world.
-- Anticipate making a difference in the developer community.
-- Find satisfaction and fulfillment in creating value for others.
-- Connect with the global community of developers and creators.
-- Believe in your ability to create something meaningful and impactful.
-- Stand in awe of technology's power to transform ideas into reality.
-
-## Confirm Prerequisites
-
-Make sure you have the following installed on your machine:
-
-```shell
-# Check if git is installed
-if ! git --version > /dev/null 2>&1; then
-  echo "git is not installed. Installing..."
-  brew install git
-else
-  echo "git is already installed."
-fi
-
-# Check if gh is installed
-if ! gh --version > /dev/null 2>&1; then
-  echo "gh is not installed. Installing..."
-  brew install gh
-else
-  echo "gh is already installed."
-fi
-
-# Check if gh is authenticated
-if ! gh auth status > /dev/null 2>&1; then
-  echo "gh is not authenticated. Please authenticate..."
-  gh auth login
-else
-  echo "gh is already authenticated."
-fi
-
-# Check if Docker is installed
-if ! docker --version > /dev/null 2>&1; then
-  echo "Docker is not installed. Installing..."
-  brew install --cask docker
-else
-  echo "Docker is already installed."
-fi
-
-# Check if Visual Studio Code is installed
-if ! code --version > /dev/null 2>&1; then
-  echo "Visual Studio Code is not installed. Installing..."
-  brew install --cask visual-studio-code
-else
-  echo "Visual Studio Code is already installed."
-fi
-```
-
-## Installation
-
-The zer0-mistakes Jekyll theme can be installed in any repository using the included installation script. This script copies all essential theme files and creates the proper directory structure.
-
-### Quick Installation
+### Step 1: Create Your Site Repository
 
 ```bash
-# Clone this repository
-git clone https://github.com/bamr87/zer0-mistakes.git
-cd zer0-mistakes
-
-# Install the theme in a new directory
-./install.sh my-new-site
-
-# Or install in current directory
-./install.sh .
+# Create new repository
+mkdir my-awesome-site
+cd my-awesome-site
+git init
 ```
 
-### What Gets Installed
+### Step 2: Add Remote Theme Configuration
 
-The installation script copies the following essential files:
+Create `_config.yml`:
 
-**Configuration Files:**
+```yaml
+# Remote theme configuration
+remote_theme: "bamr87/zer0-mistakes"
 
-- `_config.yml` - Main Jekyll configuration
-- `_config_dev.yml` - Development configuration  
-- `frontmatter.json` - VS Code frontmatter configuration
+# Site settings
+title: Your Site Title
+email: your-email@example.com
+description: >-
+  Your site description here. This will appear in search engines
+  and social media previews.
 
-**Build & Dependency Files:**
+# GitHub Pages configuration
+plugins:
+  - jekyll-remote-theme
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+  - jekyll-paginate
 
-- `Gemfile` - Ruby dependencies
-- `Rakefile` - Build tasks
-- `package.json` - Node.js dependencies
-
-**Docker Files:**
-
-- `docker-compose.yml` - Multi-container setup
-- `Dockerfile` - Container configuration
-
-**Theme Directories:**
-
-- `_data/` - Site data files and navigation
-- `_sass/` - Sass stylesheets and custom styles
-- `_includes/` - Reusable template components
-- `_layouts/` - Page layout templates  
-- `assets/` - Static assets (CSS, JS, images)
-
-**Static Files:**
-
-- `404.html` - Custom error page
-- `favicon.ico` - Site icon
-- `index.md` - Homepage (only if not exists)
-
-**Additional Files:**
-
-- `.gitignore` - Git ignore rules (only if not exists)
-- `INSTALLATION.md` - Setup instructions
-
-### Installation Options
-
-```bash
-# Show help and usage information
-./install.sh --help
-
-# Install in current directory
-./install.sh
-
-# Install in a specific directory
-./install.sh /path/to/my-site
-
-# Install in a relative directory
-./install.sh ../my-new-site
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: /:categories/:year/:month/:day/:title/
+paginate: 10
+paginate_path: "/blog/page:num/"
 ```
 
-### After Installation
+### Step 3: Add Development Configuration
 
-Once installed, navigate to your new site directory and start developing:
+Create `_config_dev.yml` for local development:
+
+```yaml
+# Development overrides
+url: "http://localhost:4000"
+baseurl: ""
+
+# Development plugins
+plugins:
+  - jekyll-remote-theme
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+  - jekyll-paginate
+  - jekyll-livereload
+
+# Development settings
+incremental: true
+livereload: true
+open_url: true
+```
+
+### Step 4: Create Docker Environment
+
+Create `docker-compose.yml`:
+
+```yaml
+services:
+  jekyll:
+    image: jekyll/jekyll:latest
+    platform: linux/amd64
+    command: jekyll serve --watch --force_polling --config "_config.yml,_config_dev.yml" --host 0.0.0.0 --port 4000
+    volumes:
+      - ./:/app
+    ports:
+      - "4000:4000"
+    working_dir: /app
+    environment:
+      JEKYLL_ENV: development
+```
+
+### Step 5: Add Essential Files
+
+Create `Gemfile`:
+
+```ruby
+source "https://rubygems.org"
+
+gem "github-pages", group: :jekyll_plugins
+gem "jekyll-remote-theme"
+
+group :jekyll_plugins do
+  gem "jekyll-feed"
+  gem "jekyll-sitemap"
+  gem "jekyll-seo-tag"
+  gem "jekyll-paginate"
+end
+```
+
+Create `index.md`:
+
+```markdown
+---
+layout: home
+title: Home
+---
+
+# Welcome to Your Site
+
+Your content goes here. This theme provides a solid foundation
+for your Jekyll site with Bootstrap 5 styling and Docker development.
+```
+
+### Step 6: Start Development
 
 ```bash
-cd my-new-site
-
-# Using Docker (recommended)
+# Start the development server
 docker-compose up
-
-# Or using local Ruby environment
-bundle install
-bundle exec jekyll serve --config _config_dev.yml
 
 # Your site will be available at http://localhost:4000
 ```
 
-### Customization
+## 🚢 Deployment Options
 
-After installation:
+### GitHub Pages (Automatic)
 
-1. **Edit Configuration:** Update `_config.yml` with your site details
-2. **Customize Styles:** Modify `_sass/custom.scss` for custom styling
-3. **Add Content:** Create pages in the `pages/` directory
-4. **Update Navigation:** Edit `_data/navigation/` files for site navigation
+1. Push your repository to GitHub
+2. Go to repository Settings → Pages
+3. Select source branch (usually `main`)
+4. Your site will be automatically built and deployed
 
-For detailed setup instructions, see the `INSTALLATION.md` file created during installation.
+### Manual Deployment
 
-## Environment
+```bash
+# Build production site
+docker-compose run --rm jekyll jekyll build --config "_config.yml"
 
-{% if site.level == 'her0' %}
-
-### Set your own environment variables
-
-  {% include zer0-env-var.html %}
-
-{% endif %}
-
-### Set the default environment variables
-
-```shell
-# Or use the following to set the environment variables
-
-export GITHOME=~/github
-export GHUSER=$(gh api user --jq '.login')
-export GIT_REPO=zer0-mistakes
-export ZREPO=$GITHOME/$GIT_REPO
+# Deploy the _site directory to your hosting provider
 ```
 
-### Add the environment variables to your shell profile (optional)
+## 📦 Installation Script Features
 
-```shell
-#open Code to edit your shell profile and copy the environment variables
+The automated installation script provides:
 
-code ~/.zprofile
+- **Smart Detection** - Identifies existing Jekyll sites vs. new setups
+- **Dependency Resolution** - Installs required gems and configurations
+- **Error Recovery** - Fixes common issues automatically
+- **Docker Setup** - Creates optimized Docker Compose environment
+- **GitHub Pages Prep** - Configures for seamless GitHub Pages deployment
+
+## 🔧 Prerequisites
+
+### Required Software
+
+- **Docker** - For containerized development
+- **Git** - For version control
+- **Text Editor** - VS Code recommended
+
+### Installation Commands
+
+```bash
+# Install Docker (macOS with Homebrew)
+brew install --cask docker
+
+# Install Git (if not already installed)
+brew install git
+
+# Verify installations
+docker --version
+git --version
 ```
 
-```shell
-# Confirm the environment variables by echoing them
+## 🎨 Customization
 
-echo $GITHOME # /Users/bamr87/github
-echo $GHUSER # bamr87
-echo $GIT_REPO # zer0-mistakes
-echo $ZREPO # /Users/bamr87/github/zer0-mistakes
+### Theme Structure
+
+```text
+your-site/
+├── _config.yml          # Main configuration
+├── _config_dev.yml      # Development overrides
+├── docker-compose.yml   # Docker environment
+├── Gemfile             # Ruby dependencies
+├── index.md            # Homepage
+├── _data/              # Site data files
+├── _posts/             # Blog posts
+├── _pages/             # Additional pages
+└── assets/             # Images, CSS, JS
 ```
 
-### Set your Git email and name
+### Custom Styling
 
-```shell
-# Set your Git email and name to tag your commits
+Create `assets/css/custom.css`:
 
-git config --global user.email "$GHUSER@users.noreply.github.com"
-git config --global user.name "$GHUSER"
+```css
+/* Your custom styles here */
+:root {
+  --primary-color: #your-color;
+  --secondary-color: #your-secondary;
+}
+
+/* Override theme styles */
+.navbar-brand {
+  color: var(--primary-color) !important;
+}
 ```
 
-### Set your GitHub email using ID (optional)
+### Navigation Setup
 
-See [here](https://github.com/settings/emails) for details.
-
-```shell
-# If you didnt already set it in the previous step
-# FIXME: quotes in comments dont work
-
-echo "What is your Github ID?"
-read GIT_ID
-```
-
-```shell
-# Set your email using ID
-
-git config --global user.email "$GIT_ID+$GHUSER@users.noreply.github.com"
-```
-
-```shell
-# confirm your email
-
-git config -l
-```
-
-## Initialize your new github repository
-
-[gh cli docs](https://cli.github.com/manual/)
-
-```shell
-# Create your github home directory and repo
-
-mkdir -p $ZREPO
-```
-
-```shell
-# Initialize your github repository
-
-gh repo create $GIT_REPO --gitignore Jekyll -l mit --public
-```
-
-```shell
-# If new repo, initialize it
-
-cd $ZREPO
-git init
-git remote add origin https://github.com/${GHUSER}/${GIT_REPO}.git
-git pull origin main
-curl https://raw.githubusercontent.com/bamr87/it-journey/master/zer0.md > README.md
-git add README.md
-git commit -m "Init $GIT_REPO"
-git branch -M main
-git push -u origin main
-```
-
-### Checkpoint - Github Repo Initialized
-
-Go to your new github repository.
-
-```shell
-# Open your new github repository in the browser
-
-open https://github.com/${GHUSER}/${GIT_REPO}
-
-```
-
-<a id="repo-link"></a>
-
-![Checkpoint 1](/assets/images/zer0-checkpoint-1.png)
-
-## Initialize Jekyll
-
-### Create Gemfile
-
-```shell
-# Create a new Gemfile
-cd $ZREPO
-touch Gemfile
-
-# Write the non-commented lines to the Gemfile
-echo 'source "https://rubygems.org"' >> Gemfile
-echo "gem 'github-pages' , '231'" >> Gemfile
-echo "gem 'jekyll' , '3.9.5'" >> Gemfile
-echo "gem 'jekyll-theme-zer0' , '0.1.2'" >> Gemfile
-echo "group :jekyll_plugins do" >> Gemfile
-echo "  gem 'jekyll-feed', \"~> 0.17\"" >> Gemfile
-echo "  gem 'jekyll-sitemap' , \"~> 1.4.0\"" >> Gemfile
-echo "  gem 'jekyll-seo-tag', \"~> 2.8.0\"" >> Gemfile
-echo "  gem 'jekyll-paginate', '~> 1.1'" >> Gemfile
-echo "end" >> Gemfile
-```
-
-### Configure Jekyll
-
-```shell
-code _config.yml
-```
+Edit `_data/navigation.yml`:
 
 ```yaml
-theme: jekyll-theme-zer0
-
-title: zer0-mistakes
-email: bamr87@zer0-mistakes.com
-description: >- # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
-baseurl: null # the subpath of your site, e.g. /blog
-url: null # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: bamr87
-github_username:  bamr87
+main:
+  - title: "Home"
+    url: /
+  - title: "About"
+    url: /about/
+  - title: "Blog"
+    url: /blog/
+  - title: "Contact"
+    url: /contact/
 ```
 
-### Create Dockerfile
+## 🛠️ Troubleshooting
 
-```shell
-# Create a new Dockerfile
-cd $ZREPO
-touch Dockerfile
+### Common Issues
 
-# Write the content to the Dockerfile
-echo "# Use an official Ruby runtime as a parent image" >> Dockerfile
-echo "FROM ruby:2.7.4" >> Dockerfile
-echo "# escape=\\" >> Dockerfile
-echo "ENV GITHUB_GEM_VERSION 231" >> Dockerfile
-echo "ENV JSON_GEM_VERSION 1.8.6" >> Dockerfile
-echo "ENV GIT_REPO ${GIT_REPO}" >> Dockerfile
-echo "WORKDIR /app" >> Dockerfile
-echo "ADD . /app" >> Dockerfile
-echo "RUN gem update --system 3.3.22" >> Dockerfile
-echo "RUN bundle update" >> Dockerfile
-echo "RUN bundle install" >> Dockerfile
-echo "RUN bundle clean --force" >> Dockerfile
-echo "EXPOSE 4000" >> Dockerfile
-echo 'CMD ["bundle", "exec", "jekyll", "serve", "--host", "0.0.0.0"]' >> Dockerfile
+#### Docker Container Won't Start
+
+```bash
+# Check Docker is running
+docker ps
+
+# Rebuild container
+docker-compose down
+docker-compose up --build
 ```
 
-```shell
-# build the docker image based on the Dockerfile
-docker build -t ${GIT_REPO} .
+#### Theme Not Loading
+
+```bash
+# Verify remote_theme setting in _config.yml
+remote_theme: "bamr87/zer0-mistakes"
+
+# Check Gemfile includes jekyll-remote-theme
+gem "jekyll-remote-theme"
 ```
 
-```shell
-# Run the container in detached mode
-docker run -d -p 4000:4000 -v ${ZREPO}:/app --name zer0_container ${GIT_REPO}
+#### Port Already in Use
 
-# Start the container and run the CMD line from the Dockerfile
-docker start zer0_container
+```bash
+# Find process using port 4000
+lsof -i :4000
 
-# Attach to the running container
-docker exec -it zer0_container /bin/bash
+# Or use different port
+docker-compose run -p 4001:4000 jekyll
 ```
 
-## Checkpoint - Jekyll Initialized
+#### GitHub Pages Build Fails
 
-```shell
-open http://localhost:4000/
+- Ensure `jekyll-remote-theme` plugin is in `_config.yml`
+- Check that all plugins are GitHub Pages compatible
+- Verify `_config.yml` syntax is valid YAML
+
+### Development Tips
+
+```bash
+# View container logs
+docker-compose logs -f jekyll
+
+# Clean Jekyll cache
+docker-compose run --rm jekyll jekyll clean
+
+# Bundle install in container
+docker-compose run --rm jekyll bundle install
+
+# Access container shell
+docker-compose exec jekyll bash
 ```
 
-![](/assets/images/zer0-checkpoint-2.png)
+## 🤝 Contributing
 
-```shell
-code _config.yml
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+
+### Development Setup
+
+```bash
+# Fork and clone the repository
+git clone https://github.com/YOUR-USERNAME/zer0-mistakes.git
+cd zer0-mistakes
+
+# Create feature branch
+git checkout -b feature/amazing-feature
+
+# Make changes and test
+docker-compose up
+
+# Commit and push
+git commit -m "Add amazing feature"
+git push origin feature/amazing-feature
 ```
 
-```yaml
-title: zer0-mistakes
-email: bamr87@zer0-mistakes.com
-description: >- # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
-baseurl: null # the subpath of your site, e.g. /blog
-url: null # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: bamr87
-github_username:  bamr87
-```
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built with [Jekyll](https://jekyllrb.com/) static site generator
+- Styled with [Bootstrap 5](https://getbootstrap.com/) framework
+- Containerized with [Docker](https://docker.com/) for consistent development
+- Inspired by IT-Journey principles of reliable, self-healing software
+
+## 📞 Support
+
+- **Documentation**: [Theme Documentation](https://bamr87.github.io/zer0-mistakes/)
+- **Issues**: [GitHub Issues](https://github.com/bamr87/zer0-mistakes/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/bamr87/zer0-mistakes/discussions)
+- **Email**: [support@zer0-mistakes.com](mailto:support@zer0-mistakes.com)
+
+---
+
+Built with ❤️ for the Jekyll community
