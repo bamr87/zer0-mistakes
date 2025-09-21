@@ -121,15 +121,26 @@ validate_source_directory() {
             "Gemfile"
         )
     else
+        # For full installation, check for core files
         required_files=(
             "_config.yml"
             "Gemfile"
-            "Rakefile"
             "docker-compose.yml"
-            "Dockerfile"
+        )
+        
+        # Additional files that should exist but aren't critical for remote install
+        local optional_files=(
+            "Rakefile"
             "404.html"
             "favicon.ico"
         )
+        
+        # Check optional files and warn if missing
+        for file in "${optional_files[@]}"; do
+            if [[ ! -f "$SOURCE_DIR/$file" ]]; then
+                log_warning "Optional file missing: $file (will be skipped)"
+            fi
+        done
     fi
     
     for file in "${required_files[@]}"; do
@@ -216,8 +227,17 @@ install_build_files() {
     
     # Full installation includes additional build files
     if [[ "$INSTALL_MODE" == "full" ]]; then
-        copy_file_with_backup "$SOURCE_DIR/Rakefile" "$TARGET_DIR/Rakefile"
-        copy_file_with_backup "$SOURCE_DIR/package.json" "$TARGET_DIR/package.json"
+        if [[ -f "$SOURCE_DIR/Rakefile" ]]; then
+            copy_file_with_backup "$SOURCE_DIR/Rakefile" "$TARGET_DIR/Rakefile"
+        else
+            log_warning "Rakefile not found, skipping"
+        fi
+        
+        if [[ -f "$SOURCE_DIR/package.json" ]]; then
+            copy_file_with_backup "$SOURCE_DIR/package.json" "$TARGET_DIR/package.json"
+        else
+            log_warning "package.json not found, skipping"
+        fi
     fi
     
     log_success "Build files installed (${INSTALL_MODE} mode)"
@@ -232,7 +252,6 @@ install_docker_files() {
     log_info "Installing Docker files..."
     
     copy_file_with_backup "$SOURCE_DIR/docker-compose.yml" "$TARGET_DIR/docker-compose.yml"
-    copy_file_with_backup "$SOURCE_DIR/Dockerfile" "$TARGET_DIR/Dockerfile"
     
     log_success "Docker files installed"
 }
@@ -264,12 +283,27 @@ install_static_files() {
     
     log_info "Installing static files..."
     
-    copy_file_with_backup "$SOURCE_DIR/404.html" "$TARGET_DIR/404.html"
-    copy_file_with_backup "$SOURCE_DIR/favicon.ico" "$TARGET_DIR/favicon.ico"
+    # Install optional static files with graceful handling
+    if [[ -f "$SOURCE_DIR/404.html" ]]; then
+        copy_file_with_backup "$SOURCE_DIR/404.html" "$TARGET_DIR/404.html"
+    else
+        log_warning "404.html not found, skipping"
+    fi
+    
+    if [[ -f "$SOURCE_DIR/favicon.ico" ]]; then
+        copy_file_with_backup "$SOURCE_DIR/favicon.ico" "$TARGET_DIR/favicon.ico"
+    else
+        log_warning "favicon.ico not found, skipping"
+    fi
     
     # Copy index.md if it doesn't exist in target
     if [[ ! -f "$TARGET_DIR/index.md" ]]; then
-        copy_file_with_backup "$SOURCE_DIR/index.md" "$TARGET_DIR/index.md"
+        if [[ -f "$SOURCE_DIR/index.md" ]]; then
+            copy_file_with_backup "$SOURCE_DIR/index.md" "$TARGET_DIR/index.md"
+        else
+            log_warning "index.md not found in source, creating basic index"
+            create_minimal_index
+        fi
     else
         log_warning "index.md already exists in target, skipping to preserve content"
     fi
@@ -746,7 +780,6 @@ exclude:
   - build/
   - .github/
   - docker-compose.yml
-  - Dockerfile
   - "*.backup.*"
 
 # Markdown processing
@@ -855,7 +888,7 @@ EXAMPLES:
 FULL INSTALLATION INCLUDES:
     • Configuration: _config.yml, _config_dev.yml, frontmatter.json
     • Dependencies: Gemfile, Rakefile, package.json
-    • Docker: docker-compose.yml, Dockerfile
+    • Docker: docker-compose.yml
     • Theme: _data/, _sass/, _includes/, _layouts/, assets/
     • Static: 404.html, favicon.ico, index.md
     • Git: .gitignore with comprehensive rules
