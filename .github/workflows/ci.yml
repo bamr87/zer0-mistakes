@@ -38,8 +38,8 @@ jobs:
       run: |
         mkdir -p test/results test/coverage test/reports
     
-    - name: Run comprehensive tests
-      run: ./test/test_runner.sh --verbose --format json
+    - name: Run core tests
+      run: ./test/test_runner.sh --suites core --verbose --format json
     
     - name: Upload test results
       uses: actions/upload-artifact@v4

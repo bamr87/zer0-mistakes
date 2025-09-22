@@ -16,3 +16,8 @@ pkg/
 tmp/
 .rspec_status
 assets/.DS_Store
+
+# Test framework results and reports
+test/results/*.json
+test/reports/*
+test/coverage/*

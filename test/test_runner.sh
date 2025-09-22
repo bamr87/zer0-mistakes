@@ -1,7 +1,13 @@
 #!/bin/bash
 
-# Enhanced Test Suite for zer0-mistakes Jekyll Theme
-# This script runs all tests with advanced reporting and analysis capabilities
+# Consolidated Test Runner for zer0-mistakes Jekyll Theme
+# Orchestrates the three main test suites: Core, Deployment, and Quality
+# 
+# This runner provides:
+# - Unified interface for all test suites
+# - Advanced reporting and analysis
+# - Flexible execution options
+# - CI/CD integration support
 
 set -euo pipefail
 
@@ -15,9 +21,11 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 # Test configuration
-TEST_RESULTS_DIR="test/results"
-COVERAGE_DIR="test/coverage"
-REPORTS_DIR="test/reports"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+TEST_RESULTS_DIR="$SCRIPT_DIR/results"
+COVERAGE_DIR="$SCRIPT_DIR/coverage"
+REPORTS_DIR="$SCRIPT_DIR/reports"
 
 # Enhanced default values
 VERBOSE=false
@@ -26,10 +34,54 @@ FORMAT="text"
 PARALLEL=false
 RETRY_FAILED=false
 TIMEOUT=300
-TEST_PATTERN="*"
+TEST_SUITES="all"  # Changed from TEST_PATTERN
 ENVIRONMENT="local"
 FAIL_FAST=false
 BASELINE_COMPARE=false
+SKIP_DOCKER=false
+SKIP_REMOTE=false
+
+# Show help function
+show_help() {
+    cat << EOF
+Consolidated Test Runner for zer0-mistakes Jekyll Theme
+
+USAGE:
+    $0 [OPTIONS]
+
+DESCRIPTION:
+    Orchestrates the three main test suites: Core, Deployment, and Quality.
+    Provides unified interface with advanced reporting and CI/CD integration.
+
+OPTIONS:
+    -v, --verbose         Enable verbose output
+    -c, --coverage        Generate coverage reports  
+    -f, --format          Output format: text, json, xml, html (default: text)
+    -p, --parallel        Run test suites in parallel
+    -r, --retry-failed    Retry failed tests automatically
+    -t, --timeout         Test timeout in seconds (default: 300)
+    -s, --suites          Test suites to run: all, core, deployment, quality (default: all)
+    -e, --environment     Test environment: local, ci, docker (default: local)
+    --fail-fast           Stop on first test suite failure
+    --baseline-compare    Compare results with baseline
+    --skip-docker         Skip Docker-related tests
+    --skip-remote         Skip remote installation tests
+    -h, --help            Show this help message
+
+TEST SUITES:
+    core                  Unit, integration, and validation tests
+    deployment            Installation, Docker, and E2E tests
+    quality               Security, accessibility, compatibility, and performance tests
+    all                   Run all test suites (default)
+
+EXAMPLES:
+    $0                                    # Run all test suites
+    $0 --verbose --format json           # Detailed output with JSON reporting
+    $0 --suites core,deployment          # Run only core and deployment suites
+    $0 --parallel --environment ci       # Parallel execution for CI
+    $0 --suites quality --skip-docker    # Quality tests without Docker
+EOF
+}
 
 # Parse arguments with enhanced options
 while [[ $# -gt 0 ]]; do
@@ -58,8 +110,8 @@ while [[ $# -gt 0 ]]; do
             TIMEOUT="$2"
             shift 2
             ;;
-        --pattern)
-            TEST_PATTERN="$2"
+        --suites|-s)
+            TEST_SUITES="$2"
             shift 2
             ;;
         --environment|-e)
@@ -74,59 +126,65 @@ while [[ $# -gt 0 ]]; do
             BASELINE_COMPARE=true
             shift
             ;;
-        --help|-h)
-            echo "Usage: $0 [OPTIONS]"
-            echo ""
-            echo "Enhanced Test Runner for zer0-mistakes Jekyll Theme"
-            echo ""
-            echo "Options:"
-            echo "  -v, --verbose         Enable verbose output"
-            echo "  -c, --coverage        Generate coverage reports"
-            echo "  -f, --format          Output format: text, json, xml, html (default: text)"
-            echo "  -p, --parallel        Run tests in parallel"
-            echo "  -r, --retry-failed    Retry failed tests automatically"
-            echo "  -t, --timeout         Test timeout in seconds (default: 300)"
-            echo "  --pattern             Test pattern to match (default: *)"
-            echo "  -e, --environment     Test environment: local, ci, docker (default: local)"
-            echo "  --fail-fast           Stop on first test failure"
-            echo "  --baseline-compare    Compare results with baseline"
-            echo "  -h, --help            Show this help message"
-            echo ""
-            echo "Examples:"
-            echo "  $0 --verbose --format json"
-            echo "  $0 --parallel --coverage --environment ci"
-            echo "  $0 --pattern unit --fail-fast"
-            echo ""
-            exit 0
+        --skip-docker)
+            SKIP_DOCKER=true
+            shift
             ;;
-        *)
-            echo "Unknown option: $1"
-            echo "  -v, --verbose     Enable verbose output"
-            echo "  -c, --coverage    Generate coverage reports"
-            echo "  -f, --format      Output format: text, json, xml, html (default: text)"
-            echo "  -p, --parallel    Run tests in parallel"
-            echo "  -h, --help        Show this help message"
+        --skip-remote)
+            SKIP_REMOTE=true
+            shift
+            ;;
+        --help|-h)
+            show_help
             exit 0
             ;;
         *)
             echo -e "${RED}Unknown option: $1${NC}"
+            show_help
             exit 1
             ;;
     esac
 done
 
+# Test suites configuration (using indexed arrays for bash 3.2 compatibility)
+TEST_SUITE_KEYS=("core" "deployment" "quality")
+TEST_SUITE_SCRIPTS=("test_core.sh" "test_deployment.sh" "test_quality.sh")
+TEST_SUITE_NAMES=("Core Tests (Unit, Integration, Validation)" "Deployment Tests (Installation, Docker, E2E)" "Quality Tests (Security, Accessibility, Compatibility, Performance)")
+
+# Helper function to get suite script by name
+get_suite_script() {
+    local suite_name="$1"
+    for i in "${!TEST_SUITE_KEYS[@]}"; do
+        if [[ "${TEST_SUITE_KEYS[$i]}" == "$suite_name" ]]; then
+            echo "${TEST_SUITE_SCRIPTS[$i]}"
+            return 0
+        fi
+    done
+    return 1
+}
+
+# Helper function to get suite description by name
+get_suite_name() {
+    local suite_name="$1"
+    for i in "${!TEST_SUITE_KEYS[@]}"; do
+        if [[ "${TEST_SUITE_KEYS[$i]}" == "$suite_name" ]]; then
+            echo "${TEST_SUITE_NAMES[$i]}"
+            return 0
+        fi
+    done
+    return 1
+}
+
 # Create test directories
 mkdir -p "$TEST_RESULTS_DIR" "$COVERAGE_DIR" "$REPORTS_DIR"
 
 # Test counters
-TESTS_TOTAL=0
-TESTS_PASSED=0
-TESTS_FAILED=0
-TESTS_SKIPPED=0
+SUITES_TOTAL=0
+SUITES_PASSED=0
+SUITES_FAILED=0
+SUITES_SKIPPED=0
 
-# Test categories (using indexed arrays for bash 3.2 compatibility)
-TEST_CATEGORIES=("unit" "integration" "e2e" "performance" "security" "accessibility" "compatibility")
-TEST_CATEGORY_NAMES=("Unit Tests" "Integration Tests" "End-to-End Tests" "Performance Tests" "Security Tests" "Accessibility Tests" "Compatibility Tests")
+# Legacy associative arrays removed for bash 3.2 compatibility
 
 # Function definitions
 log() {
@@ -155,6 +213,36 @@ fail() {
 
 skip() {
     echo -e "${YELLOW}⚠${NC} $1"
+}
+
+# Parse test suites to run
+parse_test_suites() {
+    local suites_input="$1"
+    local -a suites_to_run=()
+    
+    if [[ "$suites_input" == "all" ]]; then
+        suites_to_run=("core" "deployment" "quality")
+    else
+        IFS=',' read -ra suites_to_run <<< "$suites_input"
+    fi
+    
+    # Validate suite names
+    for suite in "${suites_to_run[@]}"; do
+        local valid=false
+        for valid_suite in "${TEST_SUITE_KEYS[@]}"; do
+            if [[ "$suite" == "$valid_suite" ]]; then
+                valid=true
+                break
+            fi
+        done
+        if [[ "$valid" == "false" ]]; then
+            error "Unknown test suite: $suite"
+            error "Available suites: ${TEST_SUITE_KEYS[*]}"
+            exit 1
+        fi
+    done
+    
+    echo "${suites_to_run[@]}"
 }
 
 # Initialize test results
@@ -305,12 +393,16 @@ generate_text_report() {
         echo "Timestamp: $(date)"
         echo ""
         echo "Summary:"
-        echo "  Total Tests: $TESTS_TOTAL"
-        echo "  Passed: $TESTS_PASSED"
-        echo "  Failed: $TESTS_FAILED"
-        echo "  Skipped: $TESTS_SKIPPED"
+        echo "  Total Suites: $SUITES_TOTAL"
+        echo "  Passed: $SUITES_PASSED"
+        echo "  Failed: $SUITES_FAILED"
+        echo "  Skipped: $SUITES_SKIPPED"
         echo ""
-        echo "Success Rate: $(( (TESTS_PASSED * 100) / TESTS_TOTAL ))%"
+        if [[ $SUITES_TOTAL -gt 0 ]]; then
+            echo "Success Rate: $(( (SUITES_PASSED * 100) / SUITES_TOTAL ))%"
+        else
+            echo "Success Rate: N/A"
+        fi
         echo ""
         echo "=========================================="
     } > "$REPORTS_DIR/test_report.txt"
@@ -340,7 +432,7 @@ generate_xml_report() {
     {
         echo '<?xml version="1.0" encoding="UTF-8"?>'
         echo '<testsuites>'
-        echo "  <testsuite name=\"zer0-mistakes\" tests=\"$TESTS_TOTAL\" failures=\"$TESTS_FAILED\" skipped=\"$TESTS_SKIPPED\">"
+        echo "  <testsuite name=\"zer0-mistakes\" tests=\"$SUITES_TOTAL\" failures=\"$SUITES_FAILED\" skipped=\"$SUITES_SKIPPED\">"
 
         for result_file in "$TEST_RESULTS_DIR"/test_*.json; do
             if [[ -f "$result_file" ]]; then
@@ -385,11 +477,15 @@ generate_html_report() {
         echo "  <h1>zer0-mistakes Test Report</h1>"
         echo "  <div class=\"summary\">"
         echo "    <h2>Summary</h2>"
-        echo "    <p><strong>Total Tests:</strong> $TESTS_TOTAL</p>"
-        echo "    <p><strong>Passed:</strong> <span class=\"passed\">$TESTS_PASSED</span></p>"
-        echo "    <p><strong>Failed:</strong> <span class=\"failed\">$TESTS_FAILED</span></p>"
-        echo "    <p><strong>Skipped:</strong> <span class=\"skipped\">$TESTS_SKIPPED</span></p>"
-        echo "    <p><strong>Success Rate:</strong> $(( (TESTS_PASSED * 100) / TESTS_TOTAL ))%</p>"
+            echo "    <p><strong>Total Suites:</strong> $SUITES_TOTAL</p>"
+            echo "    <p><strong>Passed:</strong> <span class=\"passed\">$SUITES_PASSED</span></p>"
+            echo "    <p><strong>Failed:</strong> <span class=\"failed\">$SUITES_FAILED</span></p>"
+            echo "    <p><strong>Skipped:</strong> <span class=\"skipped\">$SUITES_SKIPPED</span></p>"
+            if [[ $SUITES_TOTAL -gt 0 ]]; then
+                echo "    <p><strong>Success Rate:</strong> $(( (SUITES_PASSED * 100) / SUITES_TOTAL ))%</p>"
+            else
+                echo "    <p><strong>Success Rate:</strong> N/A</p>"
+            fi
         echo "    <p><strong>Generated:</strong> $(date)</p>"
         echo "  </div>"
         echo "</body>"
@@ -397,71 +493,191 @@ generate_html_report() {
     } > "$report_file"
 }
 
-# Main test execution
-main() {
-    log "Starting comprehensive test suite for zer0-mistakes..."
+# Run a single test suite
+run_test_suite() {
+    local suite_name="$1"
+    local suite_script
+    local suite_description
+    
+    suite_script=$(get_suite_script "$suite_name")
+    suite_description=$(get_suite_name "$suite_name")
+    
+    info "Running $suite_description..."
+    SUITES_TOTAL=$((SUITES_TOTAL + 1))
+    
+    # Build command arguments
+    local cmd_args=()
+    [[ "$VERBOSE" == "true" ]] && cmd_args+=("--verbose")
+    [[ "$COVERAGE" == "true" ]] && cmd_args+=("--coverage")
+    [[ "$FORMAT" != "text" ]] && cmd_args+=("--format" "$FORMAT")
+    [[ "$TIMEOUT" != "300" ]] && cmd_args+=("--timeout" "$TIMEOUT")
+    
+    # Suite-specific arguments
+    if [[ "$suite_name" == "deployment" || "$suite_name" == "quality" ]]; then
+        [[ "$SKIP_DOCKER" == "true" ]] && cmd_args+=("--skip-docker")
+    fi
+    
+    if [[ "$suite_name" == "deployment" ]]; then
+        [[ "$SKIP_REMOTE" == "true" ]] && cmd_args+=("--skip-remote")
+    fi
+    
+    local start_time=$(date +%s)
+    local suite_result="FAIL"
+    
+    # Execute the test suite
+    if [[ ${#cmd_args[@]} -gt 0 ]]; then
+        if "$SCRIPT_DIR/$suite_script" "${cmd_args[@]}"; then
+            suite_result="PASS"
+        else
+            suite_result="FAIL"
+        fi
+    else
+        if "$SCRIPT_DIR/$suite_script"; then
+            suite_result="PASS"
+        else
+            suite_result="FAIL"
+        fi
+    fi
+    
+    if [[ "$suite_result" == "PASS" ]]; then
+        SUITES_PASSED=$((SUITES_PASSED + 1))
+        success "$suite_description"
+    else
+        SUITES_FAILED=$((SUITES_FAILED + 1))
+        fail "$suite_description"
+        
+        if [[ "$FAIL_FAST" == "true" ]]; then
+            error "Fail-fast enabled, stopping on first suite failure"
+            return 1
+        fi
+    fi
+    
+    local end_time=$(date +%s)
+    local duration=$((end_time - start_time))
+    
+    # Record suite result
+    local result_file="$TEST_RESULTS_DIR/suite_${suite_name}_$(date +%s%N).json"
+    cat > "$result_file" << EOF
+{
+  "suite": "$suite_name",
+  "description": "$suite_description",
+  "result": "$suite_result",
+  "duration": $duration,
+  "timestamp": "$(date -Iseconds)"
+}
+EOF
 
-    # Initialize results
-    init_test_results
+    if [[ "$suite_result" == "FAIL" ]]; then
+        return 1
+    else
+        return 0
+    fi
+}
 
-    # Source test files
-    for test_file in test/test_*.sh; do
-        if [[ -f "$test_file" && "$test_file" != "test/test_runner.sh" ]]; then
-            info "Loading test file: $(basename "$test_file")"
-            source "$test_file"
+# Run test suites in parallel
+run_suites_parallel() {
+    local suites=("$@")
+    local pids=()
+    local results=()
+    
+    info "Running test suites in parallel..."
+    
+    # Start all suites
+    for suite in "${suites[@]}"; do
+        run_test_suite "$suite" &
+        pids+=($!)
+    done
+    
+    # Wait for all suites to complete
+    for pid in "${pids[@]}"; do
+        wait "$pid"
+        results+=($?)
+    done
+    
+    # Check results
+    local failed=0
+    for i in "${!results[@]}"; do
+        if [[ ${results[$i]} -ne 0 ]]; then
+            failed=1
+            if [[ "$FAIL_FAST" == "true" ]]; then
+                break
+            fi
         fi
     done
+    
+    return $failed
+}
 
-    # Run all test categories
-    for i in "${!TEST_CATEGORIES[@]}"; do
-        category="${TEST_CATEGORIES[$i]}"
-        category_name="${TEST_CATEGORY_NAMES[$i]}"
-        info "Running $category_name..."
-
-        # Run category-specific tests
-        case "$category" in
-            "unit")
-                run_unit_tests
-                ;;
-            "integration")
-                run_integration_tests
-                ;;
-            "e2e")
-                run_e2e_tests
-                ;;
-            "performance")
-                run_performance_tests
-                ;;
-            "security")
-                run_security_tests
-                ;;
-            "accessibility")
-                run_accessibility_tests
-                ;;
-            "compatibility")
-                run_compatibility_tests
-                ;;
-        esac
+# Run test suites sequentially  
+run_suites_sequential() {
+    local suites=("$@")
+    local failed=0
+    
+    info "Running test suites sequentially..."
+    
+    for suite in "${suites[@]}"; do
+        if ! run_test_suite "$suite"; then
+            failed=1
+            if [[ "$FAIL_FAST" == "true" ]]; then
+                break
+            fi
+        fi
     done
+    
+    return $failed
+}
 
+# Main test execution
+main() {
+    log "Starting consolidated test suite for zer0-mistakes..."
+    
+    # Parse which suites to run
+    local -a suites_to_run
+    IFS=' ' read -ra suites_to_run <<< "$(parse_test_suites "$TEST_SUITES")"
+    
+    info "Test suites to execute: ${suites_to_run[*]}"
+    info "Environment: $ENVIRONMENT"
+    info "Parallel execution: $PARALLEL"
+    
+    # Initialize results
+    init_test_results
+    
+    # Run test suites
+    local execution_failed=0
+    if [[ "$PARALLEL" == "true" ]]; then
+        if ! run_suites_parallel "${suites_to_run[@]}"; then
+            execution_failed=1
+        fi
+    else
+        if ! run_suites_sequential "${suites_to_run[@]}"; then
+            execution_failed=1
+        fi
+    fi
+    
     # Generate final report
     generate_report "$FORMAT"
-
+    
     # Print summary
     echo ""
     log "Test execution completed!"
     log "Results saved to: $REPORTS_DIR/"
     log "Summary:"
-    log "  Total: $TESTS_TOTAL"
-    log "  Passed: $TESTS_PASSED"
-    log "  Failed: $TESTS_FAILED"
-    log "  Skipped: $TESTS_SKIPPED"
-
-    if [[ $TESTS_FAILED -gt 0 ]]; then
-        error "Some tests failed. Check the reports for details."
+    log "  Total Suites: $SUITES_TOTAL"
+    log "  Passed: $SUITES_PASSED"
+    log "  Failed: $SUITES_FAILED"
+    log "  Skipped: $SUITES_SKIPPED"
+    
+    if [[ $execution_failed -eq 1 || $SUITES_FAILED -gt 0 ]]; then
+        error "Some test suites failed. Check the reports for details."
+        
+        # Show retry command if retry is available
+        if [[ "$RETRY_FAILED" == "true" ]]; then
+            info "Retry failed suites with: $0 --retry-failed"
+        fi
+        
         exit 1
     else
-        success "All tests passed!"
+        success "All test suites passed!"
         exit 0
     fi
 }

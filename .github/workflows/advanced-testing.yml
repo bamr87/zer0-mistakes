@@ -171,10 +171,26 @@ jobs:
           }
           EOF
           
+          # Determine test suites based on scope
+          case "${{ needs.test-planning.outputs.test-scope }}" in
+            smoke)
+              TEST_SUITES="core"
+              ;;
+            comprehensive)
+              TEST_SUITES="all"
+              ;;
+            *)
+              TEST_SUITES="core,deployment"
+              ;;
+          esac
+          
           # Run tests with multiple output formats
-          ./test/test_runner.sh --verbose --format json --coverage > ${{ env.TEST_RESULTS_PATH }}/test-results.json
-          ./test/test_runner.sh --format xml > ${{ env.TEST_RESULTS_PATH }}/test-results.xml
-          ./test/test_runner.sh --format html > ${{ env.TEST_RESULTS_PATH }}/test-report.html
+          ./test/test_runner.sh --suites "$TEST_SUITES" --verbose --format json --environment ci --skip-remote
+          
+          # Copy results to expected locations for compatibility
+          cp test/reports/test_report.json ${{ env.TEST_RESULTS_PATH }}/test-results.json || echo "No JSON report found"
+          ./test/test_runner.sh --suites "$TEST_SUITES" --format xml --environment ci --skip-remote > ${{ env.TEST_RESULTS_PATH }}/test-results.xml || echo "XML generation failed"
+          ./test/test_runner.sh --suites "$TEST_SUITES" --format html --environment ci --skip-remote > ${{ env.TEST_RESULTS_PATH }}/test-report.html || echo "HTML generation failed"
 
       - name: Generate test summary
         if: always()

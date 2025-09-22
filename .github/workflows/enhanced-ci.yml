@@ -127,11 +127,13 @@ jobs:
       - name: Run enhanced test suite
         run: |
           # Enhanced test execution with detailed reporting
-          ./test/test_runner.sh --verbose --coverage --format json
+          ./test/test_runner.sh --suites all --verbose --coverage --format json --environment ci
           
           # Generate test summary
           echo "## Test Results (Ruby ${{ matrix.ruby-version }})" >> $GITHUB_STEP_SUMMARY
-          jq -r '.summary' test-results-${{ matrix.ruby-version }}.json >> $GITHUB_STEP_SUMMARY
+          if [[ -f "test/reports/test_report.json" ]]; then
+            jq -r '.summary | "**Total Suites:** \(.total) | **Passed:** \(.passed) | **Failed:** \(.failed) | **Success Rate:** \(.success_rate)%"' test/reports/test_report.json >> $GITHUB_STEP_SUMMARY
+          fi
       
       - name: Upload test results
         uses: actions/upload-artifact@v4
