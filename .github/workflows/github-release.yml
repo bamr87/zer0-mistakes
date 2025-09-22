@@ -43,7 +43,8 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
       with:
         ref: ${{ inputs.tag }}
     
@@ -59,7 +60,13 @@ jobs:
         sudo apt-get install -y jq
     
     - name: Make scripts executable
-      run: chmod +x scripts/*.sh
+      run: |
+        if [ -d "scripts" ] && [ -n "$(ls -A scripts/*.sh 2>/dev/null)" ]; then
+          chmod +x scripts/*.sh
+          echo "✅ Made scripts executable"
+        else
+          echo "⚠️ No scripts directory or no shell scripts found"
+        fi
     
     - name: Get version from tag
       id: version
@@ -88,7 +95,19 @@ jobs:
     - name: Build gem
       run: |
         echo "Building gem for release..."
-        ./scripts/build.sh
+        if [ -f "./scripts/build.sh" ]; then
+          ./scripts/build.sh
+        else
+          echo "⚠️ No build script found, attempting direct gem build..."
+          gem build jekyll-theme-zer0.gemspec
+        fi
+        
+        # Verify gem was created
+        if [ ! -f "${{ steps.version.outputs.gem-file }}" ]; then
+          echo "❌ Gem file not found: ${{ steps.version.outputs.gem-file }}"
+          exit 1
+        fi
+        echo "✅ Gem built successfully: ${{ steps.version.outputs.gem-file }}"
     
     - name: Extract Release Notes from Changelog
       id: extract_release_notes
@@ -114,12 +133,12 @@ jobs:
             echo "✅ Found release notes for version $VERSION"
           else
             RELEASE_NOTES="### Changed
-- Released version $VERSION"
+        - Released version $VERSION"
             echo "⚠️ No specific release notes found, using default"
           fi
         else
           RELEASE_NOTES="### Changed
-- Released version $VERSION"
+        - Released version $VERSION"
           echo "⚠️ No CHANGELOG.md found, using default release notes"
         fi
         
@@ -249,7 +268,7 @@ jobs:
           
           ---
           
-          **Full Changelog**: https://github.com/bamr87/zer0-mistakes/compare/v${{ steps.version.outputs.version }}...HEAD
+          **Full Changelog**: https://github.com/bamr87/zer0-mistakes/compare/${{ steps.version.outputs.tag }}...HEAD
           
           Built with ❤️ by the Jekyll Theme Zer0 team
         files: |
@@ -282,3 +301,4 @@ jobs:
         echo "- [View Release](${{ steps.create_release.outputs.url }})" >> $GITHUB_STEP_SUMMARY
         echo "- [RubyGems Page](https://rubygems.org/gems/jekyll-theme-zer0)" >> $GITHUB_STEP_SUMMARY
         echo "- [Documentation](https://github.com/bamr87/zer0-mistakes#readme)" >> $GITHUB_STEP_SUMMARY
+
