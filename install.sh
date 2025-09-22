@@ -223,7 +223,8 @@ install_config_files() {
 install_build_files() {
     log_info "Installing build and dependency files..."
     
-    copy_file_with_backup "$SOURCE_DIR/Gemfile" "$TARGET_DIR/Gemfile"
+    # Create site-appropriate Gemfile instead of copying theme's Gemfile
+    create_site_gemfile
     
     # Full installation includes additional build files
     if [[ "$INSTALL_MODE" == "full" ]]; then
@@ -309,6 +310,50 @@ install_static_files() {
     fi
     
     log_success "Static files installed"
+}
+
+create_site_gemfile() {
+    log_info "Creating site-appropriate Gemfile..."
+    
+    if [[ "$INSTALL_MODE" == "minimal" ]]; then
+        cat > "$TARGET_DIR/Gemfile" << 'EOF'
+source "https://rubygems.org"
+
+# Jekyll and essential plugins
+gem "jekyll", "~> 4.3"
+gem "jekyll-feed"
+gem "jekyll-sitemap"
+gem "jekyll-seo-tag"
+
+# Platform compatibility
+gem "ffi", "~> 1.17.0"
+gem "webrick", "~> 1.7"
+
+# GitHub Pages compatibility (uncomment for GitHub Pages)
+# gem "github-pages", group: :jekyll_plugins
+EOF
+    else
+        cat > "$TARGET_DIR/Gemfile" << 'EOF'
+source "https://rubygems.org"
+
+# GitHub Pages gem includes Jekyll and compatible plugins
+gem "github-pages", group: :jekyll_plugins
+
+# Essential plugins (already included in github-pages but listed for clarity)
+gem "jekyll-remote-theme"
+gem "jekyll-feed"
+gem "jekyll-sitemap"
+gem "jekyll-seo-tag"
+gem "jekyll-paginate"
+
+# Platform compatibility and performance
+gem "ffi", "~> 1.17.0"
+gem "webrick", "~> 1.7"
+gem "commonmarker", "0.23.10"  # Fixed version to avoid compatibility issues
+EOF
+    fi
+    
+    log_info "Created Gemfile for ${INSTALL_MODE} installation"
 }
 
 create_minimal_index() {
@@ -790,7 +835,72 @@ kramdown:
   syntax_highlighter: rouge
 EOF
     
+    # Update docker-compose.yml to include repository environment variable
+    update_docker_compose_config
+    
     log_success "Development configuration optimized for Docker"
+}
+
+create_site_gemfile() {
+    log_info "Creating site-appropriate Gemfile..."
+    
+    if [[ "$INSTALL_MODE" == "minimal" ]]; then
+        cat > "$TARGET_DIR/Gemfile" << 'EOF'
+source "https://rubygems.org"
+
+# Jekyll and essential plugins
+gem "jekyll", "~> 4.3"
+gem "jekyll-feed"
+gem "jekyll-sitemap"
+gem "jekyll-seo-tag"
+
+# Platform compatibility
+gem "ffi", "~> 1.17.0"
+gem "webrick", "~> 1.7"
+
+# GitHub Pages compatibility (uncomment for GitHub Pages)
+# gem "github-pages", group: :jekyll_plugins
+EOF
+    else
+        cat > "$TARGET_DIR/Gemfile" << 'EOF'
+source "https://rubygems.org"
+
+# GitHub Pages gem includes Jekyll and compatible plugins
+gem "github-pages", group: :jekyll_plugins
+
+# Essential plugins (already included in github-pages but listed for clarity)
+gem "jekyll-remote-theme"
+gem "jekyll-feed"
+gem "jekyll-sitemap"
+gem "jekyll-seo-tag"
+gem "jekyll-paginate"
+
+# Platform compatibility and performance
+gem "ffi", "~> 1.17.0"
+gem "webrick", "~> 1.7"
+gem "commonmarker", "0.23.10"  # Fixed version to avoid compatibility issues
+EOF
+    fi
+    
+    log_info "Created Gemfile for ${INSTALL_MODE} installation"
+}
+
+update_docker_compose_config() {
+    log_info "Updating Docker Compose configuration..."
+    
+    local docker_config="$TARGET_DIR/docker-compose.yml"
+    
+    # Read the current docker-compose.yml and add environment variable
+    if [[ -f "$docker_config" ]]; then
+        # Check if PAGES_REPO_NWO is already present
+        if ! grep -q "PAGES_REPO_NWO" "$docker_config"; then
+            # Add the environment variable
+            sed -i.bak '/JEKYLL_ENV: development/a\
+      PAGES_REPO_NWO: "bamr87/zer0-mistakes"' "$docker_config"
+            rm -f "${docker_config}.bak"
+            log_info "Added PAGES_REPO_NWO environment variable to docker-compose.yml"
+        fi
+    fi
 }
 
 create_build_directory() {

@@ -1,411 +1,437 @@
-# Comprehensive Test Framework for zer0-mistakes Jekyll Theme
+# Testing Guide for zer0-mistakes Jekyll Theme
 
-This directory contains a comprehensive testing framework designed to ensure
-the quality, security, performance, and accessibility of the zer0-mistakes
-Jekyll theme.
+## 🧪 Comprehensive Testing Framework
 
-## Overview
+This directory contains a comprehensive testing framework for the zer0-mistakes Jekyll theme, covering installation, deployment, Docker functionality, and documentation accuracy.
 
-The test framework provides multiple categories of tests that run automatically
-on every GitHub push and can also be executed locally for development.
+## 📋 Available Test Scripts
 
-## Test Categories
+### 🚀 Quick Validation Scripts
 
-### 1. Unit Tests (`test_unit.sh`)
-
-- **Purpose**: Validates individual components and configurations
-- **Coverage**:
-  - Package.json validation
-  - Gemspec validation
-  - File structure verification
-  - YAML front matter validation
-  - Version consistency checks
-
-### 2. Integration Tests (`test_integration.sh`)
-
-- **Purpose**: Tests component interactions and system integration
-- **Coverage**:
-  - Bundle installation and dependency resolution
-  - Jekyll build process validation
-  - Docker container integration
-  - Plugin functionality verification
-  - Asset pipeline testing
-
-### 3. End-to-End Tests (`test_e2e.sh`)
-
-- **Purpose**: Tests complete user workflows from installation to deployment
-- **Coverage**:
-  - Theme installation process
-  - Docker deployment workflows
-  - Content creation and publishing
-  - Site generation and optimization
-
-### 4. Performance Tests (`test_performance.sh`)
-
-- **Purpose**: Benchmarks build performance and runtime efficiency
-- **Coverage**:
-  - Build time measurement
-  - Memory usage tracking
-  - Asset size optimization
-  - Concurrent request handling
-  - Resource utilization monitoring
-
-### 5. Security Tests (`test_security.sh`)
-
-- **Purpose**: Identifies security vulnerabilities and validates secure
-  configurations
-- **Coverage**:
-  - Dependency vulnerability scanning
-  - Sensitive file detection
-  - HTTPS configuration validation
-  - Security header verification
-  - Plugin security assessment
-
-### 6. Accessibility Tests (`test_accessibility.sh`)
-
-- **Purpose**: Ensures WCAG compliance and inclusive design
-- **Coverage**:
-  - Alt text validation for images
-  - Heading structure verification
-  - Form accessibility checking
-  - ARIA attribute validation
-  - Keyboard navigation support
-  - Color contrast analysis
-
-### 7. Compatibility Tests (`test_compatibility.sh`)
-
-- **Purpose**: Validates cross-platform and cross-environment compatibility
-- **Coverage**:
-  - Ruby version compatibility
-  - Jekyll version validation
-  - Docker compatibility testing
-  - YAML/JSON syntax validation
-  - Shell script compatibility
-  - File encoding verification
-
-## Usage
-
-### Running All Tests
+#### `validate_installation.sh`
+**Purpose:** Quick validation without Docker dependencies  
+**Runtime:** ~30 seconds  
+**Requirements:** Bash, Ruby (optional)
 
 ```bash
-# Run all tests with default settings
-./test/test_runner.sh
+# Quick validation
+./test/validate_installation.sh
 
-# Run with verbose output
-./test/test_runner.sh --verbose
-
-# Generate coverage reports
-./test/test_runner.sh --coverage
-
-# Run tests in parallel
-./test/test_runner.sh --parallel
-
-# Generate different report formats
-./test/test_runner.sh --format json
-./test/test_runner.sh --format xml
-./test/test_runner.sh --format html
+# What it tests:
+✓ Full installation process
+✓ Minimal installation process  
+✓ File structure and permissions
+✓ YAML syntax validation
+✓ Documentation accuracy
 ```
 
-### Running Specific Test Categories
+#### `test_docker_deployment.sh`
+**Purpose:** Docker-specific deployment testing  
+**Runtime:** 2-3 minutes  
+**Requirements:** Docker Desktop
 
 ```bash
-# Run only unit tests
-./test/test_runner.sh unit
+# Docker deployment test
+./test/test_docker_deployment.sh
 
-# Run multiple categories
-./test/test_runner.sh unit integration security
+# With verbose output
+./test/test_docker_deployment.sh --verbose
 
-# Run all except performance tests
-./test/test_runner.sh unit integration e2e security accessibility compatibility
+# Keep test site for inspection
+./test/test_docker_deployment.sh --no-cleanup
+
+# What it tests:
+✓ Docker volume mounting (home directory vs /tmp)
+✓ Gemfile configuration for Jekyll sites
+✓ Environment variable setup
+✓ Jekyll build and serve process
+✓ Live reload functionality
+✓ Site accessibility and content validation
 ```
 
-### Command Line Options
+### 🔬 Comprehensive Test Suites
 
-| Option | Short | Description |
-|--------|-------|-------------|
-| `--verbose` | `-v` | Enable detailed output |
-| `--coverage` | `-c` | Generate coverage reports |
-| `--format` | `-f` | Output format: text, json, xml, html |
-| `--parallel` | `-p` | Run tests in parallel |
-| `--help` | `-h` | Show help message |
-
-## Output and Reports
-
-### Test Results Directory Structure
-
-```text
-test/
-├── results/          # Test execution results
-│   ├── results.json  # Detailed test results
-│   └── *.log         # Individual test logs
-├── coverage/         # Coverage reports (when enabled)
-└── reports/          # Generated reports
-    ├── report.html   # HTML report
-    ├── report.xml    # XML report
-    └── report.json   # JSON report
-```
-
-### Report Formats
-
-#### Text Format (Default)
-
-- Human-readable console output
-- Color-coded results (✓ PASS, ✗ FAIL, ⚠ SKIP)
-- Summary statistics
-
-#### JSON Format
-
-- Machine-readable structured data
-- Detailed test execution information
-- Compatible with CI/CD systems
-
-#### XML Format
-
-- JUnit-compatible format
-- Integrates with test reporting tools
-- Supports test result visualization
-
-#### HTML Format
-
-- Web-based interactive reports
-- Charts and graphs for test metrics
-- Detailed failure analysis
-
-## CI/CD Integration
-
-The test framework is fully integrated with GitHub Actions and runs automatically on:
-
-- **Push events** to main/develop branches
-- **Pull requests** targeting main/develop branches
-- **Manual workflow dispatch** for custom test runs
-
-### Workflow Integration
-
-```yaml
-# Example GitHub Actions step
-- name: Run comprehensive tests
-  run: ./test/test_runner.sh --verbose --format json
-
-- name: Upload test results
-  uses: actions/upload-artifact@v4
-  if: always()
-  with:
-    name: test-results
-    path: test/results/
-    retention-days: 30
-```
-
-## Development Guidelines
-
-### Adding New Tests
-
-1. **Create test file**: `test/test_<category>.sh`
-2. **Implement test function**: `run_<category>_tests()`
-3. **Add test cases**: Use `run_test()` function for individual tests
-4. **Update documentation**: Add new tests to this README
-
-### Test Function Template
+#### `test_installation_complete.sh`
+**Purpose:** Full installation validation across all methods  
+**Runtime:** 3-5 minutes  
+**Requirements:** Bash, Docker (optional), Ruby (optional)
 
 ```bash
-#!/bin/bash
+# Run all installation tests
+./test/test_installation_complete.sh
 
-# Test category description
-run_<category>_tests() {
-    log "Running <category> tests..."
+# Verbose output with detailed logs
+./test/test_installation_complete.sh --verbose
 
-    # Test 1: Description
-    run_test "Test description" "
-        # Test implementation
-        command_to_test
-    " "<category>"
+# Skip remote tests (faster)
+./test/test_installation_complete.sh --skip-remote
 
-    # Test 2: Another test
-    run_test "Another test description" "
-        # Another test implementation
-        another_command
-    " "<category>"
-
-    log "<Category> tests completed."
-}
+# What it tests:
+✓ Local full installation
+✓ Local minimal installation
+✓ Remote installation from GitHub
+✓ Docker environment setup
+✓ Jekyll build process
+✓ Documentation accuracy
+✓ Error handling validation
+✓ Performance benchmarking
 ```
 
-### Test Result Handling
+#### `test_deployment_complete.sh`
+**Purpose:** End-to-end deployment workflow validation  
+**Runtime:** 5-10 minutes  
+**Requirements:** Docker, Git
 
 ```bash
-# Successful test
-run_test "File exists" "
-    [ -f 'package.json' ]
-" "unit"
+# Complete deployment test
+./test/test_deployment_complete.sh
 
-# Test with custom validation
-run_test "Version consistency" "
-    pkg_version=\$(jq -r '.version' package.json)
-    gem_version=\$(grep 'version:' jekyll-theme-zer0.gemspec | cut -d\"'\" -f2)
-    [ \"\$pkg_version\" = \"\$gem_version\" ]
-" "unit"
+# Skip Docker tests if unavailable
+./test/test_deployment_complete.sh --skip-docker
 
-# Test that may be skipped
-run_test "Docker available" "
-    if command -v docker >/dev/null 2>&1; then
-        docker --version >/dev/null 2>&1
-    else
-        echo 'Docker not available - skipping'
-        exit 1  # This will mark test as failed
-    fi
-" "integration"
+# Skip remote installation tests
+./test/test_deployment_complete.sh --skip-remote
+
+# What it tests:
+✓ Fresh installation in isolated environment
+✓ Configuration file validity
+✓ File permissions and structure
+✓ Docker environment functionality
+✓ Jekyll build process
+✓ GitHub Pages readiness
+✓ Documentation accuracy
+✓ Installation performance
 ```
 
-## Dependencies
-
-### Required Tools
-
-- **bash**: Shell environment
-- **jq**: JSON processing (for JSON reports)
-- **Ruby**: Jekyll and gem validation
-- **Docker**: Container testing (optional)
-- **curl**: HTTP testing
-- **time**: Performance measurement
-
-### Optional Tools
-
-- **bundle-audit**: Security vulnerability scanning
-- **htmlproofer**: Link validation
-- **rubocop**: Code quality checking
-
-## Troubleshooting
-
-### Common Issues
-
-#### Tests Failing Due to Missing Dependencies
+#### `test_github_deployment.sh`
+**Purpose:** Real GitHub repository deployment testing  
+**Runtime:** 5-15 minutes  
+**Requirements:** GitHub CLI, Git, Docker
 
 ```bash
-# Install required tools
-sudo apt-get update
-sudo apt-get install -y jq curl
+# Test GitHub deployment (creates real repo)
+./test/test_github_deployment.sh --no-cleanup
 
-# Install Ruby gems
-gem install bundle-audit
+# Test local workflow only
+./test/test_github_deployment.sh --skip-github
+
+# What it tests:
+✓ GitHub repository creation
+✓ Theme installation via remote script
+✓ Local development environment
+✓ GitHub Pages configuration
+✓ Live site deployment
 ```
 
-#### Permission Issues
+### 🏃‍♂️ Legacy Test Scripts
+
+#### `test_local_deployment.sh`
+**Purpose:** Local installation testing  
+**Requirements:** Docker
 
 ```bash
-# Make test scripts executable
-chmod +x test/*.sh
-chmod +x scripts/*.sh
+./test/test_local_deployment.sh --verbose
 ```
 
-#### Docker Not Available
-
-- Docker tests will be skipped if Docker is not installed
-- Install Docker or run tests in a Docker environment
-
-#### Performance Test Variations
-
-- Performance tests may vary based on system resources
-- Use `--verbose` flag to see detailed timing information
-- Consider system load when interpreting results
-
-### Debug Mode
+#### `test_install.sh`
+**Purpose:** Basic installation testing  
+**Requirements:** Bash
 
 ```bash
-# Enable debug output
-export DEBUG=true
-./test/test_runner.sh --verbose
-
-# Run specific test with debug
-bash -x test/test_unit.sh
+./test/test_install.sh
 ```
 
-## Contributing
+## 🎯 Testing Scenarios
 
-### Test Development Guidelines
+### 1. **Developer Workflow Testing**
+Test the complete developer experience:
 
-1. **Follow naming conventions**: `test_<category>.sh`
-2. **Use consistent logging**: `log()`, `info()`, `warn()`, `error()`
-3. **Handle failures gracefully**: Tests should not crash the runner
-4. **Provide meaningful output**: Clear success/failure messages
-5. **Document test purposes**: Comments explaining test objectives
-6. **Consider edge cases**: Test both success and failure scenarios
+```bash
+# Test installation and Docker setup
+./test/test_docker_deployment.sh --verbose --no-cleanup
 
-### Code Quality Standards
+# Test site customization
+cd ~/zer0-docker-test-*
+echo "# Custom Content" >> index.md
+# Check live reload at http://localhost:4000
 
-- **ShellCheck compliance**: Run `shellcheck test/*.sh`
-- **Consistent formatting**: Follow existing code style
-- **Error handling**: Use `set -euo pipefail` in scripts
-- **Documentation**: Update this README for new tests
-- **Testing**: Test your tests before committing
+# Clean up
+docker-compose down && cd ~ && rm -rf zer0-docker-test-*
+```
 
-## Performance Considerations
+### 2. **Installation Method Validation**
+Test all installation methods:
 
-### Test Execution Time
+```bash
+# Test all installation methods
+./test/test_installation_complete.sh --verbose
 
-- **Unit tests**: < 30 seconds
-- **Integration tests**: < 2 minutes
-- **E2E tests**: < 5 minutes
-- **Performance tests**: < 3 minutes
-- **Security tests**: < 1 minute
-- **Accessibility tests**: < 1 minute
-- **Compatibility tests**: < 1 minute
+# Focus on specific methods
+./test/test_installation_complete.sh --pattern local
+./test/test_installation_complete.sh --pattern remote
+```
 
-### Optimization Strategies
+### 3. **Platform Compatibility Testing**
+Test across different environments:
 
-- **Parallel execution**: Use `--parallel` flag for faster runs
-- **Selective testing**: Run only relevant test categories
-- **Caching**: Docker layer caching for faster builds
-- **Resource limits**: Configure appropriate timeouts
+```bash
+# Test Docker volume mounting issues
+./test/test_docker_deployment.sh --use-tmp  # Should show warnings
 
-## Security Considerations
+# Test in proper location
+./test/test_docker_deployment.sh             # Should work perfectly
+```
 
-### Test Environment Security
+### 4. **Performance and Reliability Testing**
+Test system performance and error handling:
 
-- Tests run in isolated environments
-- No production data used in testing
-- Sensitive information masked in logs
-- Security scans use read-only access
+```bash
+# Run comprehensive tests with performance metrics
+./test/test_deployment_complete.sh --verbose
 
-### Vulnerability Management
+# Test error handling
+./test/test_installation_complete.sh --pattern error
+```
 
-- Regular updates of security scanning tools
-- Automated dependency vulnerability checks
-- Security test results integrated into CI/CD
+## 🐳 Docker Testing Best Practices
 
-## Future Enhancements
+### Volume Mounting Validation
 
-### Planned Features
+**✅ Recommended Locations:**
+- User home directory: `~/my-site`
+- User Documents: `~/Documents/my-site`
+- Desktop: `~/Desktop/my-site`
 
-- **Test coverage integration**: Code coverage reporting
-- **Performance regression detection**: Historical performance tracking
-- **Accessibility automation**: Enhanced WCAG compliance testing
-- **Cross-browser testing**: Browser compatibility validation
-- **Load testing**: Stress testing capabilities
-- **Integration with external services**: API testing and mocking
+**⚠️ Problematic Locations:**
+- System temp: `/tmp/my-site` (may not mount properly)
+- System directories: `/var/`, `/usr/` (permission issues)
+- Complex paths with spaces or special characters
 
-### Extension Points
+### Docker Desktop Configuration
 
-- **Custom test categories**: Easy to add new test types
-- **Plugin architecture**: Extensible test framework
-- **Configuration management**: Environment-specific test settings
-- **Result visualization**: Enhanced reporting and dashboards
+**Required Settings:**
+1. **File Sharing:** Ensure home directory is shared
+2. **Resources:** Minimum 2GB RAM, 2 CPU cores
+3. **Experimental Features:** May need to be disabled for stability
+
+### Common Docker Issues and Solutions
+
+**Issue: Volume mounting fails**
+```bash
+# Solution: Use home directory
+mkdir ~/my-test-site
+cd ~/my-test-site
+# Run installation here
+```
+
+**Issue: Port already in use**
+```bash
+# Solution: Use different port
+docker-compose run -p 4001:4000 jekyll
+# Or stop existing containers
+docker ps -q | xargs docker stop
+```
+
+**Issue: Bundle install fails**
+```bash
+# Solution: Clear Docker cache
+docker-compose down
+docker system prune -f
+docker-compose up --build
+```
+
+## 📊 Test Results Interpretation
+
+### Success Indicators
+- ✅ **HTTP 200 OK** from `curl -I http://localhost:4000`
+- ✅ **"Server running"** in Jekyll logs
+- ✅ **Site content** contains theme elements
+- ✅ **Live reload** working (X-Rack-Livereload header present)
+- ✅ **Build time** under 5 seconds for initial build
+
+### Warning Signs
+- ⚠️ **Bundle install** taking over 2 minutes
+- ⚠️ **Volume mounting** empty `/app` directory in container
+- ⚠️ **Port conflicts** preventing server startup
+- ⚠️ **Missing environment variables** causing build failures
+
+### Failure Indicators
+- ❌ **Gemfile errors** with `gemspec` references
+- ❌ **Configuration errors** in YAML files
+- ❌ **Missing files** in installation
+- ❌ **Docker container** exits immediately
+- ❌ **Site not accessible** after startup
+
+## 🔧 Debugging Commands
+
+### Container Inspection
+```bash
+# Check container status
+docker-compose ps
+
+# View Jekyll logs
+docker-compose logs jekyll
+
+# Access container shell
+docker-compose exec jekyll bash
+
+# Check mounted files
+docker-compose run --rm jekyll ls -la /app/
+```
+
+### Site Validation
+```bash
+# Test site accessibility
+curl -I http://localhost:4000
+
+# Get site content preview
+curl -s http://localhost:4000 | head -20
+
+# Check for specific content
+curl -s http://localhost:4000 | grep -i "zer0-mistakes\|jekyll\|welcome"
+```
+
+### Configuration Validation
+```bash
+# Validate YAML syntax
+ruby -e "require 'yaml'; YAML.load_file('_config.yml')"
+
+# Validate Docker Compose
+docker-compose config
+
+# Check Gemfile syntax
+bundle check || bundle install --dry-run
+```
+
+## 📈 Test Coverage Matrix
+
+| Test Category | Quick Validation | Docker Test | Installation Complete | Deployment Complete |
+|---------------|------------------|-------------|----------------------|---------------------|
+| **Installation Process** | ✅ | ✅ | ✅ | ✅ |
+| **File Structure** | ✅ | ✅ | ✅ | ✅ |
+| **Docker Environment** | ❌ | ✅ | ✅ | ✅ |
+| **Jekyll Build** | ❌ | ✅ | ✅ | ✅ |
+| **Site Serving** | ❌ | ✅ | ❌ | ✅ |
+| **Live Reload** | ❌ | ✅ | ❌ | ✅ |
+| **Remote Installation** | ❌ | ❌ | ✅ | ✅ |
+| **GitHub Pages** | ❌ | ❌ | ❌ | ✅ |
+| **Performance** | ❌ | ❌ | ✅ | ✅ |
+| **Error Handling** | ❌ | ❌ | ✅ | ✅ |
+
+## 🚨 Known Issues and Workarounds
+
+### 1. Docker Volume Mounting on macOS
+**Issue:** Files not visible in container when using `/tmp` or system directories  
+**Solution:** Use home directory locations (`~/my-site`)  
+**Test:** `./test/test_docker_deployment.sh --use-tmp` vs normal execution
+
+### 2. Gemfile Configuration
+**Issue:** Theme's Gemfile includes `gemspec` which fails for sites  
+**Solution:** Install script now creates site-appropriate Gemfile  
+**Test:** Check that generated Gemfile doesn't contain `gemspec`
+
+### 3. Repository Environment Variable
+**Issue:** Jekyll SEO plugin requires repository information  
+**Solution:** Install script adds `PAGES_REPO_NWO` to docker-compose.yml  
+**Test:** Verify environment variable is present and Jekyll builds successfully
+
+### 4. Bundle Install Performance
+**Issue:** Initial bundle install can take 60-90 seconds in Docker  
+**Solution:** This is normal - subsequent starts are much faster  
+**Test:** Monitor Jekyll logs for "Server running" message
+
+## 🎯 Recommended Testing Workflow
+
+### For Theme Development
+```bash
+# 1. Quick validation
+./test/validate_installation.sh
+
+# 2. Docker functionality
+./test/test_docker_deployment.sh --verbose
+
+# 3. Full installation testing
+./test/test_installation_complete.sh
+```
+
+### For User Experience Validation
+```bash
+# 1. Test user workflow
+mkdir ~/test-user-experience
+cd ~/test-user-experience
+curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
+
+# 2. Validate Docker startup
+docker-compose up -d
+
+# 3. Test site accessibility
+curl -I http://localhost:4000
+
+# 4. Clean up
+docker-compose down && cd ~ && rm -rf test-user-experience
+```
+
+### For CI/CD Validation
+```bash
+# Run all tests in sequence
+./test/validate_installation.sh && \
+./test/test_docker_deployment.sh && \
+./test/test_installation_complete.sh --skip-remote && \
+echo "All tests passed - ready for production!"
+```
+
+## 📝 Test Report Generation
+
+All test scripts generate JSON reports in `test/results/`:
+
+```bash
+# View latest test results
+ls -la test/results/
+
+# Parse test results (if jq available)
+jq '.summary' test/results/deployment_test_report.json
+
+# View test details
+cat test/results/installation_test_report.json
+```
+
+## 🔄 Continuous Testing
+
+### GitHub Actions Integration
+The repository includes automated testing workflows:
+- **CI Pipeline:** `.github/workflows/ci.yml`
+- **Enhanced CI:** `.github/workflows/enhanced-ci.yml`
+- **Advanced Testing:** `.github/workflows/advanced-testing.yml`
+
+### Local Automation
+Set up automated testing with:
+
+```bash
+# Watch for changes and run tests
+watch -n 300 './test/validate_installation.sh'
+
+# Daily comprehensive test
+echo "0 6 * * * cd /Users/bamr87/github/zer0-mistakes && ./test/test_installation_complete.sh" | crontab -
+```
 
 ---
 
-## Quick Start
+## 🎉 Success Criteria
 
-```bash
-# Clone the repository
-git clone https://github.com/bamr87/zer0-mistakes.git
-cd zer0-mistakes
+A successful test run should show:
 
-# Make scripts executable
-chmod +x test/*.sh scripts/*.sh
+1. **✅ Installation:** All files and directories created correctly
+2. **✅ Configuration:** YAML files valid, no syntax errors
+3. **✅ Docker:** Volume mounting working, containers starting
+4. **✅ Jekyll:** Site builds in under 5 seconds
+5. **✅ Serving:** HTTP 200 OK response from localhost:4000
+6. **✅ Content:** Theme elements visible in site output
+7. **✅ Live Reload:** Automatic updates when files change
 
-# Run all tests
-./test/test_runner.sh --verbose
+**🎯 Target Performance:**
+- Installation: < 30 seconds
+- Docker startup: < 2 minutes (including bundle install)
+- Jekyll build: < 5 seconds
+- Site response: < 100ms
 
-# View results
-cat test/results/results.json
-open test/reports/report.html
-```
-
-For more information, see the individual test files or check the GitHub Actions workflows for CI/CD integration examples.
+**🚀 Ready for Production when all tests pass consistently!**
