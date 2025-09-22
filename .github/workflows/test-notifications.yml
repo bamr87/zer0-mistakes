@@ -11,6 +11,11 @@ jobs:
     name: Notify Test Results
     runs-on: ubuntu-latest
     if: always()
+    permissions:
+      contents: write        # Required to read/write repository content and README
+      issues: write         # Required to create and comment on issues
+      actions: read         # Required to read workflow run artifacts
+      pull-requests: read   # Required to read PR information (if needed)
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -95,59 +100,76 @@ jobs:
           script: |
             const fs = require('fs');
             
-            let body = '## 🚨 Test Failure Alert\n\n';
-            body += `**Workflow**: ${{ github.event.workflow_run.name }}\n`;
-            body += `**Branch**: ${{ github.event.workflow_run.head_branch }}\n`;
-            body += `**Commit**: ${{ github.event.workflow_run.head_sha }}\n`;
-            body += `**Run ID**: ${{ github.event.workflow_run.id }}\n\n`;
-            
-            body += '### Failure Details\n\n';
-            body += 'The automated test suite has detected failures. Please review the logs and take appropriate action.\n\n';
-            
-            // Try to read summary if available
             try {
-              if (fs.existsSync('notifications/summary.md')) {
-                const summary = fs.readFileSync('notifications/summary.md', 'utf8');
-                body += summary;
+              let body = '## 🚨 Test Failure Alert\n\n';
+              body += `**Workflow**: ${{ github.event.workflow_run.name }}\n`;
+              body += `**Branch**: ${{ github.event.workflow_run.head_branch }}\n`;
+              body += `**Commit**: ${{ github.event.workflow_run.head_sha }}\n`;
+              body += `**Run ID**: ${{ github.event.workflow_run.id }}\n\n`;
+              
+              body += '### Failure Details\n\n';
+              body += 'The automated test suite has detected failures. Please review the logs and take appropriate action.\n\n';
+              
+              // Try to read summary if available
+              try {
+                if (fs.existsSync('notifications/summary.md')) {
+                  const summary = fs.readFileSync('notifications/summary.md', 'utf8');
+                  body += summary;
+                }
+              } catch (error) {
+                console.log('Could not read summary:', error.message);
               }
-            } catch (error) {
-              console.log('Could not read summary:', error.message);
-            }
-            
-            body += '\n\n### Actions Required\n\n';
-            body += '- [ ] Review test failures\n';
-            body += '- [ ] Fix identified issues\n';
-            body += '- [ ] Re-run tests\n';
-            body += '- [ ] Close this issue when resolved\n\n';
-            
-            body += `🔗 [View Workflow Run](https://github.com/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }})`;
-            
-            // Check if similar issue already exists
-            const existingIssues = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: 'test-failure,automated',
-              state: 'open'
-            });
-            
-            const recentFailures = existingIssues.data.filter(issue => 
-              issue.title.includes('Test Failure') && 
-              (Date.now() - new Date(issue.created_at).getTime()) < 24 * 60 * 60 * 1000 // 24 hours
-            );
-            
-            if (recentFailures.length === 0) {
-              // Create new issue
-              const issue = await github.rest.issues.create({
+              
+              body += '\n\n### Actions Required\n\n';
+              body += '- [ ] Review test failures\n';
+              body += '- [ ] Fix identified issues\n';
+              body += '- [ ] Re-run tests\n';
+              body += '- [ ] Close this issue when resolved\n\n';
+              
+              body += `🔗 [View Workflow Run](https://github.com/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }})`;
+              
+              // Check if similar issue already exists
+              const existingIssues = await github.rest.issues.listForRepo({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                title: `🚨 Test Failure Alert - ${{ github.event.workflow_run.head_branch }} (${context.payload.workflow_run.head_sha.substring(0, 7)})`,
-                body: body,
-                labels: ['test-failure', 'automated', 'needs-investigation']
+                labels: 'test-failure,automated',
+                state: 'open'
               });
               
-              console.log(`Created issue #${issue.data.number}`);
-            } else {
-              // Comment on existing issue
+              const recentFailures = existingIssues.data.filter(issue => 
+                issue.title.includes('Test Failure') && 
+                (Date.now() - new Date(issue.created_at).getTime()) < 24 * 60 * 60 * 1000 // 24 hours
+              );
+              
+              if (recentFailures.length === 0) {
+                // Create new issue
+                const issue = await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: `🚨 Test Failure Alert - ${{ github.event.workflow_run.head_branch }} (${context.payload.workflow_run.head_sha.substring(0, 7)})`,
+                  body: body,
+                  labels: ['test-failure', 'automated', 'needs-investigation']
+                });
+                
+                console.log(`Created issue #${issue.data.number}`);
+              } else {
+                // Comment on existing issue
+                const latestIssue = recentFailures[0];
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: latestIssue.number,
+                  body: `## Additional Failure\n\n${body}`
+                });
+                
+                console.log(`Updated existing issue #${latestIssue.number}`);
+              }
+            } catch (error) {
+              console.error('Failed to create or update issue:', error.message);
+              console.error('Error details:', error);
+              // Don't fail the entire workflow if issue creation fails
+              core.warning('Could not create/update issue due to permissions or other error');
+            }
               const latestIssue = recentFailures[0];
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
@@ -166,8 +188,8 @@ jobs:
           script: |
             const fs = require('fs');
             
-            // Read current README
             try {
+              // Read current README
               const readme = fs.readFileSync('README.md', 'utf8');
               
               // Determine badge color based on test results
@@ -204,6 +226,13 @@ jobs:
               if (updatedReadme !== readme) {
                 fs.writeFileSync('README.md', updatedReadme);
                 
+                // Get current README SHA
+                const currentReadme = await github.rest.repos.getContent({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  path: 'README.md'
+                });
+                
                 // Commit the change
                 await github.rest.repos.createOrUpdateFileContents({
                   owner: context.repo.owner,
@@ -211,18 +240,16 @@ jobs:
                   path: 'README.md',
                   message: `Update test status badge: ${statusText}`,
                   content: Buffer.from(updatedReadme).toString('base64'),
-                  sha: await github.rest.repos.getContent({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    path: 'README.md'
-                  }).then(result => result.data.sha),
+                  sha: currentReadme.data.sha,
                   branch: 'main'
                 });
                 
                 console.log('Updated README with test status badge');
               }
             } catch (error) {
-              console.log('Could not update README:', error.message);
+              console.error('Could not update README:', error.message);
+              console.error('Error details:', error);
+              core.warning('Failed to update README badge');
             }
 
       - name: Send Slack Notification (if configured)
