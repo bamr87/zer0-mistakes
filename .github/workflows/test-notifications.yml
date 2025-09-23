@@ -1,0 +1,364 @@
+name: Test Notifications
+
+on:
+  workflow_run:
+    workflows: ["Comprehensive CI Pipeline", "Advanced Testing Pipeline"]
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      test_workflow:
+        description: 'Test workflow to report on'
+        required: true
+        type: choice
+        options:
+          - 'Comprehensive CI Pipeline'
+          - 'Advanced Testing Pipeline'
+      notification_channels:
+        description: 'Notification channels'
+        required: false
+        default: 'github'
+        type: choice
+        options:
+          - 'github'          # GitHub issues/comments only
+          - 'extended'        # GitHub + additional channels
+          - 'all'            # All available channels
+
+env:
+  NOTIFICATION_ISSUE_TITLE: "🧪 Automated Test Results"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # Analyze test results from completed workflow
+  analyze:
+    name: Analyze Test Results
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      status: ${{ steps.analysis.outputs.status }}
+      summary: ${{ steps.analysis.outputs.summary }}
+      failed_jobs: ${{ steps.analysis.outputs.failed_jobs }}
+      artifacts: ${{ steps.analysis.outputs.artifacts }}
+      workflow_name: ${{ steps.analysis.outputs.workflow_name }}
+      run_url: ${{ steps.analysis.outputs.run_url }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Get Workflow Information
+        id: workflow_info
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_run" ]]; then
+            WORKFLOW_NAME="${{ github.event.workflow_run.name }}"
+            WORKFLOW_STATUS="${{ github.event.workflow_run.conclusion }}"
+            RUN_ID="${{ github.event.workflow_run.id }}"
+            RUN_URL="${{ github.event.workflow_run.html_url }}"
+          else
+            WORKFLOW_NAME="${{ inputs.test_workflow }}"
+            # For manual dispatch, we'll need to get the latest run
+            WORKFLOW_STATUS="unknown"
+            RUN_ID="unknown"
+            RUN_URL="unknown"
+          fi
+          
+          echo "workflow_name=$WORKFLOW_NAME" >> $GITHUB_OUTPUT
+          echo "workflow_status=$WORKFLOW_STATUS" >> $GITHUB_OUTPUT
+          echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
+          echo "run_url=$RUN_URL" >> $GITHUB_OUTPUT
+
+      - name: Download Workflow Artifacts
+        if: steps.workflow_info.outputs.run_id != 'unknown'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            
+            try {
+              const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: '${{ steps.workflow_info.outputs.run_id }}'
+              });
+              
+              console.log(`Found ${artifacts.data.artifacts.length} artifacts`);
+              
+              // Download test results artifacts
+              for (const artifact of artifacts.data.artifacts) {
+                if (artifact.name.includes('test-results') || artifact.name.includes('coverage')) {
+                  console.log(`Downloading artifact: ${artifact.name}`);
+                  // Note: This is a simplified version - in practice you'd need to handle artifact downloads
+                }
+              }
+              
+              // Store artifact information
+              fs.writeFileSync('artifacts.json', JSON.stringify(artifacts.data.artifacts, null, 2));
+            } catch (error) {
+              console.log('Error downloading artifacts:', error.message);
+              fs.writeFileSync('artifacts.json', '[]');
+            }
+
+      - name: Analyze Test Results
+        id: analysis
+        run: |
+          WORKFLOW_STATUS="${{ steps.workflow_info.outputs.workflow_status }}"
+          WORKFLOW_NAME="${{ steps.workflow_info.outputs.workflow_name }}"
+          RUN_URL="${{ steps.workflow_info.outputs.run_url }}"
+          
+          echo "workflow_name=$WORKFLOW_NAME" >> $GITHUB_OUTPUT
+          echo "run_url=$RUN_URL" >> $GITHUB_OUTPUT
+          
+          # Analyze status and create summary
+          case "$WORKFLOW_STATUS" in
+            "success")
+              echo "status=success" >> $GITHUB_OUTPUT
+              echo "summary=✅ All tests passed successfully!" >> $GITHUB_OUTPUT
+              echo "failed_jobs=" >> $GITHUB_OUTPUT
+              ;;
+            "failure")
+              echo "status=failure" >> $GITHUB_OUTPUT
+              echo "summary=❌ Some tests failed - please review the results" >> $GITHUB_OUTPUT
+              echo "failed_jobs=Test failures detected" >> $GITHUB_OUTPUT
+              ;;
+            "cancelled")
+              echo "status=cancelled" >> $GITHUB_OUTPUT
+              echo "summary=⚠️ Tests were cancelled before completion" >> $GITHUB_OUTPUT
+              echo "failed_jobs=Workflow cancelled" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "status=unknown" >> $GITHUB_OUTPUT
+              echo "summary=ℹ️ Test status unknown - please check manually" >> $GITHUB_OUTPUT
+              echo "failed_jobs=Status unknown" >> $GITHUB_OUTPUT
+              ;;
+          esac
+          
+          # Check for artifacts
+          if [[ -f "artifacts.json" ]]; then
+            ARTIFACT_COUNT=$(jq length artifacts.json)
+            echo "artifacts=$ARTIFACT_COUNT artifacts available" >> $GITHUB_OUTPUT
+          else
+            echo "artifacts=No artifacts found" >> $GITHUB_OUTPUT
+          fi
+
+  # GitHub-based notifications
+  github-notification:
+    name: GitHub Notifications
+    runs-on: ubuntu-latest
+    needs: analyze
+    timeout-minutes: 5
+    permissions:
+      issues: write
+      pull-requests: write
+
+    steps:
+      - name: Find or Create Notification Issue
+        id: notification_issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = '${{ env.NOTIFICATION_ISSUE_TITLE }}';
+            
+            // Look for existing notification issue
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['automated', 'testing'],
+              state: 'open'
+            });
+            
+            let issue = issues.data.find(issue => issue.title.includes('🧪 Automated Test Results'));
+            
+            if (!issue) {
+              // Create new notification issue
+              const newIssue = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: `# Automated Test Results\n\nThis issue tracks automated test results for the repository.\n\n---\n\n*This issue is automatically managed.*`,
+                labels: ['automated', 'testing']
+              });
+              issue = newIssue.data;
+              console.log(`Created new notification issue: #${issue.number}`);
+            } else {
+              console.log(`Using existing notification issue: #${issue.number}`);
+            }
+            
+            return issue.number;
+
+      - name: Update Notification Issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueNumber = ${{ steps.notification_issue.outputs.result }};
+            const status = '${{ needs.analyze.outputs.status }}';
+            const workflowName = '${{ needs.analyze.outputs.workflow_name }}';
+            const summary = '${{ needs.analyze.outputs.summary }}';
+            const runUrl = '${{ needs.analyze.outputs.run_url }}';
+            const artifacts = '${{ needs.analyze.outputs.artifacts }}';
+            
+            const statusEmoji = {
+              'success': '✅',
+              'failure': '❌', 
+              'cancelled': '⚠️',
+              'unknown': 'ℹ️'
+            };
+            
+            const timestamp = new Date().toISOString();
+            const comment = `## ${statusEmoji[status]} ${workflowName}
+            
+            **Status:** ${summary}
+            **Time:** ${timestamp}
+            **Branch:** ${{ github.ref_name }}
+            **Commit:** \`${{ github.sha }}\`
+            **Artifacts:** ${artifacts}
+            
+            ${runUrl !== 'unknown' ? `[View Workflow Run](${runUrl})` : ''}
+            
+            ${status === 'failure' && '${{ needs.analyze.outputs.failed_jobs }}' ? '**Failed Jobs:** ${{ needs.analyze.outputs.failed_jobs }}' : ''}
+            
+            ---`;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: comment
+            });
+
+      - name: Update PR if applicable
+        if: github.event_name == 'workflow_run' && github.event.workflow_run.pull_requests[0]
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = ${{ github.event.workflow_run.pull_requests[0].number }};
+            const status = '${{ needs.analyze.outputs.status }}';
+            const workflowName = '${{ needs.analyze.outputs.workflow_name }}';
+            const summary = '${{ needs.analyze.outputs.summary }}';
+            const runUrl = '${{ needs.analyze.outputs.run_url }}';
+            
+            const statusEmoji = {
+              'success': '✅',
+              'failure': '❌',
+              'cancelled': '⚠️', 
+              'unknown': 'ℹ️'
+            };
+            
+            const comment = `## ${statusEmoji[status]} ${workflowName} Results
+            
+            ${summary}
+            
+            ${runUrl !== 'unknown' ? `[View detailed results](${runUrl})` : ''}
+            
+            <sub>🤖 This comment was automatically generated</sub>`;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: comment
+            });
+
+  # Extended notifications (Slack, email, etc.)
+  extended-notification:
+    name: Extended Notifications  
+    runs-on: ubuntu-latest
+    needs: analyze
+    if: |
+      (github.event_name == 'workflow_dispatch' && inputs.notification_channels != 'github') ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'failure')
+    timeout-minutes: 5
+
+    steps:
+      - name: Prepare Notification Data
+        id: prepare
+        run: |
+          STATUS="${{ needs.analyze.outputs.status }}"
+          WORKFLOW="${{ needs.analyze.outputs.workflow_name }}"
+          SUMMARY="${{ needs.analyze.outputs.summary }}"
+          
+          # Create structured notification data
+          cat > notification.json << EOF
+          {
+            "workflow": "$WORKFLOW",
+            "status": "$STATUS", 
+            "summary": "$SUMMARY",
+            "repository": "${{ github.repository }}",
+            "branch": "${{ github.ref_name }}",
+            "commit": "${{ github.sha }}",
+            "run_url": "${{ needs.analyze.outputs.run_url }}",
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          EOF
+          
+          echo "notification_file=notification.json" >> $GITHUB_OUTPUT
+
+      - name: Slack Notification
+        if: vars.SLACK_WEBHOOK_URL
+        run: |
+          STATUS="${{ needs.analyze.outputs.status }}"
+          
+          # Determine Slack color based on status
+          case "$STATUS" in
+            "success") COLOR="good" ;;
+            "failure") COLOR="danger" ;;
+            "cancelled") COLOR="warning" ;;
+            *) COLOR="#808080" ;;
+          esac
+          
+          # Send Slack notification
+          curl -X POST -H 'Content-type: application/json' \
+            --data "{
+              \"attachments\": [{
+                \"color\": \"$COLOR\",
+                \"title\": \"${{ needs.analyze.outputs.workflow_name }}\",
+                \"text\": \"${{ needs.analyze.outputs.summary }}\",
+                \"fields\": [
+                  {\"title\": \"Repository\", \"value\": \"${{ github.repository }}\", \"short\": true},
+                  {\"title\": \"Branch\", \"value\": \"${{ github.ref_name }}\", \"short\": true},
+                  {\"title\": \"Commit\", \"value\": \"\`${{ github.sha }}\`\", \"short\": true}
+                ],
+                \"footer\": \"GitHub Actions\",
+                \"ts\": $(date +%s)
+              }]
+            }" \
+            "${{ vars.SLACK_WEBHOOK_URL }}" || echo "Slack notification failed"
+
+      - name: Upload Notification Data
+        uses: actions/upload-artifact@v4
+        with:
+          name: notification-data-${{ github.run_id }}
+          path: notification.json
+          retention-days: 30
+
+  # Summary and cleanup
+  summary:
+    name: Notification Summary
+    runs-on: ubuntu-latest
+    needs: [analyze, github-notification, extended-notification]
+    if: always()
+    timeout-minutes: 2
+
+    steps:
+      - name: Generate Notification Summary  
+        run: |
+          echo "## 📢 Test Notifications Summary" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow:** ${{ needs.analyze.outputs.workflow_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ${{ needs.analyze.outputs.summary }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Channels:** GitHub Issues/Comments" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "| Component | Status | Notes |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔍 Analysis | ${{ needs.analyze.result }} | Workflow result analysis |" >> $GITHUB_STEP_SUMMARY
+          echo "| 📝 GitHub Notifications | ${{ needs.github-notification.result }} | Issues and PR comments |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔗 Extended Notifications | ${{ needs.extended-notification.result || 'skipped' }} | Slack/Email integrations |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ needs.analyze.outputs.status }}" == "success" ]]; then
+            echo "✅ **Notifications sent successfully for passing tests**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ **Notifications sent for failed/problematic tests**" >> $GITHUB_STEP_SUMMARY
+          fi

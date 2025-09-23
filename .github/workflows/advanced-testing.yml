@@ -1,0 +1,341 @@
+name: Advanced Testing Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run comprehensive tests daily at 3 AM UTC
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+    inputs:
+      test_level:
+        description: 'Testing level'
+        required: false
+        default: 'comprehensive'
+        type: choice
+        options:
+          - 'smoke'          # Basic functionality tests
+          - 'integration'    # Cross-platform integration
+          - 'comprehensive'  # Full test suite with performance
+      platforms:
+        description: 'Platforms to test'
+        required: false
+        default: 'ubuntu-latest'
+        type: choice
+        options:
+          - 'ubuntu-latest'
+          - 'macos-latest'
+          - 'windows-latest'
+          - 'all'
+
+env:
+  RUBY_VERSIONS: '["3.0", "3.1", "3.2"]'
+  NODE_VERSION: '18'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # Determine test strategy based on inputs and triggers
+  plan:
+    name: Test Planning
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      platforms: ${{ steps.matrix.outputs.platforms }}
+      ruby_versions: ${{ steps.matrix.outputs.ruby_versions }}
+      test_suites: ${{ steps.matrix.outputs.test_suites }}
+      skip_heavy_tests: ${{ steps.matrix.outputs.skip_heavy_tests }}
+
+    steps:
+      - name: Determine Test Matrix
+        id: matrix
+        run: |
+          case "${{ github.event_name }}" in
+            "schedule")
+              echo "platforms=[\"ubuntu-latest\", \"macos-latest\", \"windows-latest\"]" >> $GITHUB_OUTPUT
+              echo "ruby_versions=${{ env.RUBY_VERSIONS }}" >> $GITHUB_OUTPUT
+              echo "test_suites=[\"core\", \"deployment\", \"quality\"]" >> $GITHUB_OUTPUT
+              echo "skip_heavy_tests=false" >> $GITHUB_OUTPUT
+              ;;
+            "workflow_dispatch")
+              if [[ "${{ inputs.platforms }}" == "all" ]]; then
+                echo "platforms=[\"ubuntu-latest\", \"macos-latest\", \"windows-latest\"]" >> $GITHUB_OUTPUT
+              else
+                echo "platforms=[\"${{ inputs.platforms }}\"]" >> $GITHUB_OUTPUT
+              fi
+              
+              case "${{ inputs.test_level }}" in
+                "smoke")
+                  echo "ruby_versions=[\"3.2\"]" >> $GITHUB_OUTPUT
+                  echo "test_suites=[\"core\"]" >> $GITHUB_OUTPUT
+                  echo "skip_heavy_tests=true" >> $GITHUB_OUTPUT
+                  ;;
+                "integration") 
+                  echo "ruby_versions=[\"3.1\", \"3.2\"]" >> $GITHUB_OUTPUT
+                  echo "test_suites=[\"core\", \"deployment\"]" >> $GITHUB_OUTPUT
+                  echo "skip_heavy_tests=true" >> $GITHUB_OUTPUT
+                  ;;
+                *)
+                  echo "ruby_versions=${{ env.RUBY_VERSIONS }}" >> $GITHUB_OUTPUT
+                  echo "test_suites=[\"core\", \"deployment\", \"quality\"]" >> $GITHUB_OUTPUT
+                  echo "skip_heavy_tests=false" >> $GITHUB_OUTPUT
+                  ;;
+              esac
+              ;;
+            *)
+              echo "platforms=[\"ubuntu-latest\"]" >> $GITHUB_OUTPUT
+              echo "ruby_versions=[\"3.2\"]" >> $GITHUB_OUTPUT
+              echo "test_suites=[\"core\"]" >> $GITHUB_OUTPUT
+              echo "skip_heavy_tests=true" >> $GITHUB_OUTPUT
+              ;;
+          esac
+
+  # Multi-platform testing matrix
+  test-matrix:
+    name: Test (${{ matrix.platform }}, Ruby ${{ matrix.ruby }})
+    runs-on: ${{ matrix.platform }}
+    needs: plan
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: ${{ fromJson(needs.plan.outputs.platforms) }}
+        ruby: ${{ fromJson(needs.plan.outputs.ruby_versions) }}
+        exclude:
+          # Exclude problematic combinations
+          - platform: windows-latest
+            ruby: '3.0'  # Windows Ruby 3.0 has known issues
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby Environment
+        uses: ./.github/actions/setup-ruby
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          install-system-deps: ${{ matrix.platform == 'ubuntu-latest' }}
+
+      - name: Setup Node.js (for quality checks)
+        if: contains(fromJson(needs.plan.outputs.test_suites), 'quality')
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Platform-specific Setup
+        run: |
+          case "${{ matrix.platform }}" in
+            "macos-latest")
+              # macOS specific setup
+              if ! command -v jq >/dev/null 2>&1; then
+                brew install jq
+              fi
+              ;;
+            "windows-latest")
+              # Windows specific setup  
+              choco install jq -y --no-progress || true
+              # Ensure Git line endings are handled properly
+              git config --global core.autocrlf false
+              ;;
+            "ubuntu-latest")
+              # Ubuntu setup handled by setup-ruby action
+              ;;
+          esac
+
+      - name: Run Test Suites
+        run: |
+          SUITES="${{ join(fromJson(needs.plan.outputs.test_suites), ',') }}"
+          EXTRA_FLAGS=""
+          
+          if [[ "${{ needs.plan.outputs.skip_heavy_tests }}" == "true" ]]; then
+            EXTRA_FLAGS="$EXTRA_FLAGS --skip-docker --skip-remote"
+          fi
+          
+          if [[ "${{ matrix.platform }}" == "windows-latest" ]]; then
+            # Use different timeout for Windows
+            EXTRA_FLAGS="$EXTRA_FLAGS --timeout 600"
+          fi
+          
+          chmod +x ./test/test_runner.sh
+          ./test/test_runner.sh --suites "$SUITES" --environment ci $EXTRA_FLAGS
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.platform }}-ruby-${{ matrix.ruby }}
+          path: |
+            test/results/
+            test/reports/
+          retention-days: 7
+
+  # Performance benchmarking (Ubuntu only, comprehensive tests)
+  performance:
+    name: Performance Benchmarking
+    runs-on: ubuntu-latest
+    needs: plan
+    if: needs.plan.outputs.skip_heavy_tests == 'false'
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby Environment
+        uses: ./.github/actions/setup-ruby
+        with:
+          ruby-version: '3.2'
+          install-system-deps: true
+
+      - name: Build Performance Test
+        run: |
+          echo "## 🚀 Performance Benchmarking" >> $GITHUB_STEP_SUMMARY
+          echo "### Build Performance" >> $GITHUB_STEP_SUMMARY
+          
+          # Time the gem build process
+          START_TIME=$(date +%s)
+          ./scripts/build.sh
+          END_TIME=$(date +%s)
+          
+          BUILD_TIME=$((END_TIME - START_TIME))
+          echo "- Gem build time: ${BUILD_TIME}s" >> $GITHUB_STEP_SUMMARY
+          
+          # Check gem size
+          if [[ -f "build/jekyll-theme-zer0-0.2.0.gem" ]]; then
+            GEM_SIZE=$(du -h "build/jekyll-theme-zer0-0.2.0.gem" | cut -f1)
+            echo "- Gem file size: ${GEM_SIZE}" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Jekyll Build Performance
+        run: |
+          echo "### Jekyll Performance" >> $GITHUB_STEP_SUMMARY
+          
+          # Create a test site to benchmark Jekyll build
+          mkdir -p test-site
+          cd test-site
+          
+          cat > _config.yml << EOF
+          theme: jekyll-theme-zer0
+          title: Performance Test Site
+          description: Test site for performance benchmarking
+          EOF
+          
+          cat > index.md << EOF
+          ---
+          layout: default
+          title: Home
+          ---
+          # Performance Test
+          This is a test page for performance benchmarking.
+          EOF
+          
+          START_TIME=$(date +%s)
+          timeout 300 bundle exec jekyll build --profile 2>&1 | tee build-profile.txt || true
+          END_TIME=$(date +%s)
+          
+          JEKYLL_TIME=$((END_TIME - START_TIME))
+          echo "- Jekyll build time: ${JEKYLL_TIME}s" >> $GITHUB_STEP_SUMMARY
+          
+          cd ..
+
+      - name: Upload Performance Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-results
+          path: |
+            test-site/build-profile.txt
+          retention-days: 30
+
+  # Cross-platform compatibility verification
+  compatibility:
+    name: Compatibility Check
+    runs-on: ubuntu-latest
+    needs: [plan, test-matrix]
+    if: always() && needs.plan.outputs.skip_heavy_tests == 'false'
+    timeout-minutes: 10
+
+    steps:
+      - name: Download All Test Results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: test-results-*
+          path: ./all-results
+          merge-multiple: true
+
+      - name: Compatibility Analysis
+        run: |
+          echo "## 🔍 Cross-Platform Compatibility Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "### Platform Test Results" >> $GITHUB_STEP_SUMMARY
+          
+          TOTAL_PLATFORMS=0
+          PASSED_PLATFORMS=0
+          
+          for result_dir in ./all-results/*/; do
+            if [[ -d "$result_dir" ]]; then
+              TOTAL_PLATFORMS=$((TOTAL_PLATFORMS + 1))
+              
+              if [[ -f "$result_dir/test_summary.log" ]] && ! grep -q "FAILED" "$result_dir/test_summary.log"; then
+                PASSED_PLATFORMS=$((PASSED_PLATFORMS + 1))
+                echo "✅ $(basename "$result_dir"): Passed" >> $GITHUB_STEP_SUMMARY
+              else
+                echo "❌ $(basename "$result_dir"): Failed" >> $GITHUB_STEP_SUMMARY
+              fi
+            fi
+          done
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Compatibility Rate:** ${PASSED_PLATFORMS}/${TOTAL_PLATFORMS} platforms" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ $PASSED_PLATFORMS -eq $TOTAL_PLATFORMS ]]; then
+            echo "🎉 **Full cross-platform compatibility achieved!**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ **Some platforms failed - see individual test results**" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # Final summary and status
+  summary:
+    name: Advanced Testing Summary
+    runs-on: ubuntu-latest
+    needs: [plan, test-matrix, performance, compatibility]
+    if: always()
+    timeout-minutes: 5
+
+    steps:
+      - name: Generate Advanced Test Summary
+        run: |
+          echo "## 🧪 Advanced Testing Pipeline Results" >> $GITHUB_STEP_SUMMARY
+          echo "**Repository:** ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### Test Configuration" >> $GITHUB_STEP_SUMMARY
+          echo "- **Platforms:** ${{ needs.plan.outputs.platforms }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Ruby Versions:** ${{ needs.plan.outputs.ruby_versions }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Test Suites:** ${{ needs.plan.outputs.test_suites }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Heavy Tests:** ${{ needs.plan.outputs.skip_heavy_tests == 'false' && 'Enabled' || 'Skipped' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "| Component | Status | Notes |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 🎯 Test Planning | ${{ needs.plan.result }} | Matrix configuration |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🧪 Cross-Platform Tests | ${{ needs.test-matrix.result }} | Multi-platform execution |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🚀 Performance | ${{ needs.performance.result || 'skipped' }} | Build & Jekyll benchmarks |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔍 Compatibility | ${{ needs.compatibility.result || 'skipped' }} | Cross-platform analysis |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Determine overall status
+          if [[ "${{ needs.test-matrix.result }}" == "success" && 
+                ("${{ needs.performance.result }}" == "success" || "${{ needs.performance.result }}" == "skipped") &&
+                ("${{ needs.compatibility.result }}" == "success" || "${{ needs.compatibility.result }}" == "skipped") ]]; then
+            echo "## ✅ **Advanced Testing: SUCCESS**" >> $GITHUB_STEP_SUMMARY
+            echo "All critical advanced tests passed successfully!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## ❌ **Advanced Testing: FAILED**" >> $GITHUB_STEP_SUMMARY  
+            echo "Some advanced tests failed. Review the detailed results above." >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi

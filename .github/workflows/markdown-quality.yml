@@ -1,0 +1,507 @@
+name: Markdown Quality Assurance
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - '**/*.md'
+      - '.markdownlint.json'
+      - '.markdown-link-check.json'
+  pull_request:
+    branches: [ main, develop ]  
+    paths:
+      - '**/*.md'
+      - '.markdownlint.json'
+      - '.markdown-link-check.json'
+  schedule:
+    # Weekly markdown quality check on Sundays at 2 AM UTC
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+    inputs:
+      auto_fix:
+        description: 'Automatically fix markdown formatting issues'
+        required: false
+        default: false
+        type: boolean
+      link_check:
+        description: 'Perform comprehensive link checking'
+        required: false
+        default: true
+        type: boolean
+      generate_report:
+        description: 'Generate detailed quality report'
+        required: false
+        default: true
+        type: boolean
+
+env:
+  NODE_VERSION: '18'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # Setup and configuration validation
+  setup:
+    name: Setup and Configuration
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      markdown_files: ${{ steps.find_files.outputs.files }}
+      config_valid: ${{ steps.validate_config.outputs.valid }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Markdown Tools
+        run: |
+          npm install -g \
+            markdownlint-cli2 \
+            markdown-link-check \
+            prettier \
+            @prettier/plugin-markdown
+
+      - name: Find Markdown Files
+        id: find_files
+        run: |
+          # Find all markdown files, excluding vendor and node_modules
+          MARKDOWN_FILES=$(find . -name "*.md" \
+            -not -path "./vendor/*" \
+            -not -path "./node_modules/*" \
+            -not -path "./.git/*" \
+            -type f | head -100)  # Limit for performance
+          
+          FILE_COUNT=$(echo "$MARKDOWN_FILES" | wc -l)
+          echo "Found $FILE_COUNT markdown files"
+          
+          # Convert to JSON array for matrix jobs
+          FILES_JSON=$(echo "$MARKDOWN_FILES" | jq -R -s -c 'split("\n")[:-1]')
+          echo "files=$FILES_JSON" >> $GITHUB_OUTPUT
+          
+          echo "📊 **Markdown Files Found:** $FILE_COUNT" >> $GITHUB_STEP_SUMMARY
+
+      - name: Validate Configuration Files
+        id: validate_config
+        run: |
+          CONFIG_VALID=true
+          
+          echo "## 🔧 Configuration Validation" >> $GITHUB_STEP_SUMMARY
+          
+          # Validate .markdownlint.json
+          if [[ -f ".markdownlint.json" ]]; then
+            if jq empty .markdownlint.json 2>/dev/null; then
+              echo "✅ .markdownlint.json is valid" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "❌ .markdownlint.json is invalid" >> $GITHUB_STEP_SUMMARY
+              CONFIG_VALID=false
+            fi
+          else
+            echo "⚠️ .markdownlint.json not found" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Validate .markdown-link-check.json  
+          if [[ -f ".markdown-link-check.json" ]]; then
+            if jq empty .markdown-link-check.json 2>/dev/null; then
+              echo "✅ .markdown-link-check.json is valid" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "❌ .markdown-link-check.json is invalid" >> $GITHUB_STEP_SUMMARY
+              CONFIG_VALID=false
+            fi
+          else
+            echo "⚠️ .markdown-link-check.json not found" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "valid=$CONFIG_VALID" >> $GITHUB_OUTPUT
+
+  # Markdown linting and formatting
+  linting:
+    name: Markdown Linting
+    runs-on: ubuntu-latest
+    needs: setup
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Markdown Tools
+        run: |
+          npm install -g \
+            markdownlint-cli2 \
+            prettier \
+            @prettier/plugin-markdown
+
+      - name: Run Markdown Linting
+        id: lint
+        run: |
+          echo "## 📝 Markdown Linting Results" >> $GITHUB_STEP_SUMMARY
+          
+          # Run markdownlint-cli2
+          if markdownlint-cli2 "**/*.md" --config .markdownlint.json; then
+            echo "✅ **Linting:** All files pass" >> $GITHUB_STEP_SUMMARY
+            echo "lint_passed=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ **Linting:** Issues found" >> $GITHUB_STEP_SUMMARY
+            echo "lint_passed=false" >> $GITHUB_OUTPUT
+            
+            # Store lint results for later use
+            markdownlint-cli2 "**/*.md" --config .markdownlint.json > lint_results.txt 2>&1 || true
+          fi
+
+      - name: Check Formatting
+        id: format_check
+        run: |
+          # Check if files need formatting
+          if prettier --check "**/*.md" --ignore-path .gitignore; then
+            echo "✅ **Formatting:** All files properly formatted" >> $GITHUB_STEP_SUMMARY
+            echo "format_needed=false" >> $GITHUB_OUTPUT
+          else
+            echo "📝 **Formatting:** Some files need formatting" >> $GITHUB_STEP_SUMMARY
+            echo "format_needed=true" >> $GITHUB_OUTPUT
+            
+            # Show which files need formatting
+            prettier --list-different "**/*.md" --ignore-path .gitignore > format_needed.txt 2>&1 || true
+          fi
+
+      - name: Auto-fix Issues
+        if: |
+          (github.event_name == 'workflow_dispatch' && inputs.auto_fix) ||
+          (github.event_name == 'push' && github.ref == 'refs/heads/main' && 
+           (steps.lint.outputs.lint_passed == 'false' || steps.format_check.outputs.format_needed == 'true'))
+        run: |
+          echo "🔧 Auto-fixing markdown issues..." >> $GITHUB_STEP_SUMMARY
+          
+          # Fix formatting with prettier
+          prettier --write "**/*.md" --ignore-path .gitignore
+          
+          # Run custom formatting script if available
+          if [[ -f "./scripts/fix-markdown-format.sh" ]]; then
+            chmod +x ./scripts/fix-markdown-format.sh
+            ./scripts/fix-markdown-format.sh || true
+          fi
+          
+          echo "✅ Auto-fix completed" >> $GITHUB_STEP_SUMMARY
+
+      - name: Check for Changes
+        id: changes
+        run: |
+          if git diff --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            git diff --name-only > changed_files.txt
+          fi
+
+      - name: Commit Auto-fixes
+        if: |
+          steps.changes.outputs.has_changes == 'true' &&
+          ((github.event_name == 'workflow_dispatch' && inputs.auto_fix) ||
+           (github.event_name == 'push' && github.ref == 'refs/heads/main'))
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit -m "🔧 Auto-fix markdown formatting and linting issues
+
+          - Apply prettier formatting
+          - Fix common markdown issues
+          - Standardize document structure
+
+          [skip ci]"
+          git push
+
+      - name: Upload Lint Results
+        if: steps.lint.outputs.lint_passed == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-results
+          path: |
+            lint_results.txt
+            format_needed.txt
+            changed_files.txt
+          retention-days: 7
+
+  # Link checking
+  link-check:
+    name: Link Validation
+    runs-on: ubuntu-latest
+    needs: setup
+    if: |
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && inputs.link_check) ||
+      github.event_name == 'push'
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Link Checker
+        run: npm install -g markdown-link-check
+
+      - name: Create Link Check Results Directory
+        run: mkdir -p link-check-results
+
+      - name: Check Links in Markdown Files
+        run: |
+          echo "## 🔗 Link Validation Results" >> $GITHUB_STEP_SUMMARY
+          
+          TOTAL_FILES=0
+          FAILED_FILES=0
+          BROKEN_LINKS=0
+          
+          # Process each markdown file
+          while IFS= read -r file; do
+            if [[ -n "$file" && -f "$file" ]]; then
+              TOTAL_FILES=$((TOTAL_FILES + 1))
+              echo "Checking links in: $file"
+              
+              RESULT_FILE="link-check-results/$(basename "$file" .md)-links.txt"
+              
+              if markdown-link-check "$file" --config .markdown-link-check.json > "$RESULT_FILE" 2>&1; then
+                echo "✅ $file" >> $GITHUB_STEP_SUMMARY
+              else
+                echo "❌ $file" >> $GITHUB_STEP_SUMMARY
+                FAILED_FILES=$((FAILED_FILES + 1))
+                
+                # Count broken links in this file
+                BROKEN_IN_FILE=$(grep -c "✖" "$RESULT_FILE" 2>/dev/null || echo "0")
+                BROKEN_LINKS=$((BROKEN_LINKS + BROKEN_IN_FILE))
+              fi
+            fi
+          done <<< "$(echo '${{ needs.setup.outputs.markdown_files }}' | jq -r '.[]')"
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Summary:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Total files checked: $TOTAL_FILES" >> $GITHUB_STEP_SUMMARY
+          echo "- Files with broken links: $FAILED_FILES" >> $GITHUB_STEP_SUMMARY
+          echo "- Total broken links: $BROKEN_LINKS" >> $GITHUB_STEP_SUMMARY
+          
+          # Set job status based on results
+          if [[ $FAILED_FILES -gt 0 ]]; then
+            echo "link_check_status=failed" >> $GITHUB_ENV
+            echo "⚠️ Some links are broken - see detailed results in artifacts" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "link_check_status=passed" >> $GITHUB_ENV
+            echo "🎉 All links are working correctly!" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Upload Link Check Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: link-check-results
+          path: link-check-results/
+          retention-days: 30
+
+      - name: Fail on Broken Links
+        if: env.link_check_status == 'failed'
+        run: |
+          echo "Link validation failed - some links are broken"
+          exit 1
+
+  # Quality reporting and analysis
+  quality-report:
+    name: Quality Report
+    runs-on: ubuntu-latest
+    needs: [setup, linting, link-check]
+    if: |
+      always() && 
+      (github.event_name == 'schedule' || 
+       (github.event_name == 'workflow_dispatch' && inputs.generate_report))
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: '*-results'
+          path: ./quality-artifacts
+          merge-multiple: true
+
+      - name: Generate Quality Report
+        run: |
+          mkdir -p quality-report
+          
+          cat > quality-report/markdown-quality-report.md << 'EOF'
+          # Markdown Quality Report
+          
+          Generated: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          Repository: ${{ github.repository }}
+          Branch: ${{ github.ref_name }}
+          Commit: ${{ github.sha }}
+          
+          ## Overview
+          
+          This report provides a comprehensive analysis of markdown file quality across the repository.
+          
+          ## Linting Results
+          
+          EOF
+          
+          # Add linting results if available
+          if [[ -f "./quality-artifacts/lint_results.txt" ]]; then
+            echo "### Issues Found" >> quality-report/markdown-quality-report.md
+            echo '```' >> quality-report/markdown-quality-report.md
+            cat "./quality-artifacts/lint_results.txt" >> quality-report/markdown-quality-report.md
+            echo '```' >> quality-report/markdown-quality-report.md
+          else
+            echo "✅ No linting issues found" >> quality-report/markdown-quality-report.md
+          fi
+          
+          # Add link check results if available
+          echo "" >> quality-report/markdown-quality-report.md
+          echo "## Link Validation" >> quality-report/markdown-quality-report.md
+          
+          if [[ -d "./quality-artifacts" ]] && [[ $(find ./quality-artifacts -name "*-links.txt" | wc -l) -gt 0 ]]; then
+            echo "### Broken Links by File" >> quality-report/markdown-quality-report.md
+            for link_file in ./quality-artifacts/*-links.txt; do
+              if [[ -f "$link_file" ]] && grep -q "✖" "$link_file"; then
+                echo "#### $(basename "$link_file" -links.txt)" >> quality-report/markdown-quality-report.md
+                echo '```' >> quality-report/markdown-quality-report.md
+                grep "✖" "$link_file" >> quality-report/markdown-quality-report.md
+                echo '```' >> quality-report/markdown-quality-report.md
+              fi
+            done
+          else
+            echo "✅ No broken links found" >> quality-report/markdown-quality-report.md
+          fi
+          
+          # Add recommendations
+          cat >> quality-report/markdown-quality-report.md << 'EOF'
+          
+          ## Recommendations
+          
+          ### For Linting Issues
+          - Run `markdownlint-cli2 --fix "**/*.md"` to auto-fix many issues
+          - Use `prettier --write "**/*.md"` for consistent formatting
+          - Consider using the repository's auto-fix workflow
+          
+          ### For Broken Links
+          - Review and update external links that may have changed
+          - Check internal links for correct paths
+          - Consider using link checking tools in your local development workflow
+          
+          ### Best Practices
+          - Use consistent heading structure (avoid skipping heading levels)
+          - Include alt text for all images
+          - Use meaningful link text instead of "click here"
+          - Keep line lengths reasonable for better readability
+          
+          ---
+          *This report was automatically generated by the Markdown Quality workflow*
+          EOF
+
+      - name: Upload Quality Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: markdown-quality-report
+          path: quality-report/
+          retention-days: 90
+
+      - name: Comment Quality Report on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            
+            if (fs.existsSync('quality-report/markdown-quality-report.md')) {
+              const report = fs.readFileSync('quality-report/markdown-quality-report.md', 'utf8');
+              
+              // Truncate report if too long for GitHub comment
+              const maxLength = 60000;
+              const truncatedReport = report.length > maxLength 
+                ? report.substring(0, maxLength) + '\n\n... (truncated - see full report in artifacts)'
+                : report;
+              
+              const comment = `## 📋 Markdown Quality Report\n\n${truncatedReport}`;
+              
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }
+
+  # Final summary
+  summary:
+    name: Quality Assurance Summary
+    runs-on: ubuntu-latest
+    needs: [setup, linting, link-check, quality-report]
+    if: always()
+    timeout-minutes: 5
+
+    steps:
+      - name: Generate Final Summary
+        run: |
+          echo "## 📋 Markdown Quality Assurance Summary" >> $GITHUB_STEP_SUMMARY
+          echo "**Repository:** ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "| Component | Status | Details |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|---------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔧 Setup | ${{ needs.setup.result }} | Configuration validation |" >> $GITHUB_STEP_SUMMARY
+          echo "| 📝 Linting | ${{ needs.linting.result }} | Markdown syntax and style |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔗 Link Check | ${{ needs.link-check.result }} | URL validation |" >> $GITHUB_STEP_SUMMARY
+          echo "| 📊 Quality Report | ${{ needs.quality-report.result || 'skipped' }} | Comprehensive analysis |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Determine overall status
+          CRITICAL_JOBS=("setup" "linting")
+          FAILED_CRITICAL=false
+          
+          for job in "${CRITICAL_JOBS[@]}"; do
+            case $job in
+              "setup") STATUS="${{ needs.setup.result }}" ;;
+              "linting") STATUS="${{ needs.linting.result }}" ;;
+            esac
+            
+            if [[ "$STATUS" != "success" ]]; then
+              FAILED_CRITICAL=true
+              break
+            fi
+          done
+
+          if [[ "$FAILED_CRITICAL" == "false" ]]; then
+            echo "## ✅ **Markdown Quality: PASSED**" >> $GITHUB_STEP_SUMMARY
+            echo "All critical quality checks passed!" >> $GITHUB_STEP_SUMMARY
+            
+            if [[ "${{ needs.link-check.result }}" == "failure" ]]; then
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "⚠️ Note: Some links are broken but this doesn't fail the quality check" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "## ❌ **Markdown Quality: FAILED**" >> $GITHUB_STEP_SUMMARY
+            echo "Critical quality issues found - please review and fix" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
