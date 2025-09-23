@@ -1,0 +1,87 @@
+# Workflow Configuration for zer0-mistakes Jekyll Theme
+# This file centralizes configuration values used across GitHub Actions workflows
+# to maintain consistency and enable easy updates
+
+# Ruby versions for testing matrix
+ruby:
+  primary: "3.2"        # Primary version for most workflows
+  matrix: ["2.7", "3.0", "3.2"]  # Full matrix for comprehensive testing
+  minimum: "2.7"        # Minimum supported version
+
+# Node.js versions  
+node:
+  primary: "18"         # Primary version for markdown and build tools
+  lts: "18"            # Current LTS version
+
+# Timeouts (in minutes)
+timeouts:
+  fast_checks: 5       # Quick syntax and validation checks
+  standard_tests: 15   # Standard test suite execution
+  build: 10           # Gem build and validation
+  integration: 10     # Docker and integration tests
+  advanced: 30        # Advanced/comprehensive testing
+  notifications: 5    # Notification processing
+  quality: 15         # Quality checks and linting
+
+# Workflow triggers
+triggers:
+  main_branches: ["main", "develop"]
+  schedule:
+    daily_tests: "0 2 * * *"      # 2 AM UTC daily
+    weekly_quality: "0 2 * * 0"   # Sunday 2 AM UTC weekly
+
+# Artifact retention (in days)
+retention:
+  test_results: 7      # Test execution results
+  build_artifacts: 30  # Built gems and packages
+  coverage: 7          # Code coverage reports
+  performance: 30      # Performance benchmarks
+  quality_reports: 90  # Quality and analysis reports
+
+# Environment-specific settings
+environments:
+  local:
+    bundle_cache: true
+    system_deps: true
+  ci:
+    bundle_cache: true
+    system_deps: false
+    parallel: false
+  docker:
+    bundle_cache: false
+    system_deps: false
+    parallel: true
+
+# Platform matrix for advanced testing
+platforms:
+  standard: ["ubuntu-latest"]
+  comprehensive: ["ubuntu-latest", "macos-latest", "windows-latest"]
+
+# Test suite configuration
+test_suites:
+  core: ["unit", "integration", "validation"]
+  deployment: ["installation", "docker", "e2e"]
+  quality: ["security", "accessibility", "compatibility", "performance"]
+
+# Quality thresholds
+quality:
+  coverage:
+    minimum: 80       # Minimum test coverage percentage
+    target: 90        # Target coverage percentage
+  performance:
+    max_build_time: 300  # Maximum build time in seconds
+    max_gem_size: 5      # Maximum gem size in MB
+  links:
+    max_broken: 0        # Maximum allowed broken links
+  markdown:
+    max_issues: 5        # Maximum markdown linting issues
+
+# Notification settings
+notifications:
+  channels:
+    github: true         # GitHub issues and PR comments
+    slack: false         # Slack webhook (requires SLACK_WEBHOOK_URL secret)
+  conditions:
+    on_failure: true     # Always notify on failures
+    on_success: false    # Only notify on success for releases
+    weekly_summary: true # Weekly quality summaries
