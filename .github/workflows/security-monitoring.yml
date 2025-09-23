@@ -1,0 +1,599 @@
+name: Security and Dependency Monitoring
+
+on:
+  schedule:
+    # Run security scans twice weekly (Monday and Friday at 6 AM UTC)
+    - cron: '0 6 * * 1,5'
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'Gemfile*'
+      - 'jekyll-theme-zer0.gemspec'
+      - 'package.json'
+      - '.github/workflows/security-monitoring.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'Gemfile*'
+      - 'jekyll-theme-zer0.gemspec'
+      - 'package.json'
+  workflow_dispatch:
+    inputs:
+      scan_type:
+        description: 'Type of security scan'
+        required: false
+        default: 'comprehensive'
+        type: choice
+        options:
+          - 'quick'         # Basic vulnerability scanning
+          - 'comprehensive' # Full security audit with reporting
+          - 'dependencies'  # Focus on dependency analysis
+      create_issue:
+        description: 'Create GitHub issue for vulnerabilities found'
+        required: false
+        default: true
+        type: boolean
+
+env:
+  RUBY_VERSION: '3.2'
+  NODE_VERSION: '18'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # Ruby dependency vulnerability scanning
+  ruby-security:
+    name: Ruby Security Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      vulnerabilities_found: ${{ steps.audit.outputs.vulnerabilities_found }}
+      vulnerability_count: ${{ steps.audit.outputs.vulnerability_count }}
+      critical_count: ${{ steps.audit.outputs.critical_count }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby Environment
+        uses: ./.github/actions/setup-ruby
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          install-system-deps: true
+
+      - name: Install Bundler Audit
+        run: |
+          gem install bundler-audit --no-document
+          bundle-audit update
+
+      - name: Run Ruby Security Audit
+        id: audit
+        run: |
+          echo "## 💎 Ruby Dependency Security Audit" >> $GITHUB_STEP_SUMMARY
+          
+          # Run bundler-audit and capture output
+          if bundle-audit check --format json --output bundler-audit.json; then
+            echo "✅ **Ruby Dependencies:** No vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+            echo "vulnerabilities_found=false" >> $GITHUB_OUTPUT
+            echo "vulnerability_count=0" >> $GITHUB_OUTPUT
+            echo "critical_count=0" >> $GITHUB_OUTPUT
+          else
+            echo "vulnerabilities_found=true" >> $GITHUB_OUTPUT
+            
+            # Parse JSON output for details
+            if [[ -f "bundler-audit.json" ]]; then
+              VULN_COUNT=$(jq '.vulnerabilities | length' bundler-audit.json 2>/dev/null || echo "0")
+              CRITICAL_COUNT=$(jq '[.vulnerabilities[] | select(.criticality == "Critical")] | length' bundler-audit.json 2>/dev/null || echo "0")
+              
+              echo "vulnerability_count=$VULN_COUNT" >> $GITHUB_OUTPUT
+              echo "critical_count=$CRITICAL_COUNT" >> $GITHUB_OUTPUT
+              
+              echo "⚠️ **Ruby Dependencies:** $VULN_COUNT vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+              echo "- **Critical:** $CRITICAL_COUNT" >> $GITHUB_STEP_SUMMARY
+              
+              # Add detailed vulnerability information
+              echo "### Vulnerability Details" >> $GITHUB_STEP_SUMMARY
+              bundle-audit check --format text | head -20 >> $GITHUB_STEP_SUMMARY || true
+            fi
+          fi
+
+      - name: Generate Ruby Security Report
+        run: |
+          mkdir -p security-reports
+          
+          # Generate detailed security report
+          cat > security-reports/ruby-security-report.md << 'EOF'
+          # Ruby Dependency Security Report
+          
+          Generated: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          Repository: ${{ github.repository }}
+          Scan Type: Ruby Dependencies
+          
+          ## Summary
+          EOF
+          
+          if [[ "${{ steps.audit.outputs.vulnerabilities_found }}" == "true" ]]; then
+            cat >> security-reports/ruby-security-report.md << EOF
+          
+          ⚠️ **Vulnerabilities Found:** ${{ steps.audit.outputs.vulnerability_count }}
+          🔴 **Critical:** ${{ steps.audit.outputs.critical_count }}
+          
+          ## Detailed Results
+          
+          \`\`\`
+          $(bundle-audit check --format text 2>/dev/null || echo "Error generating detailed report")
+          \`\`\`
+          
+          ## Recommendations
+          
+          1. **Immediate Action Required:** Update gems with critical vulnerabilities
+          2. **Review Dependencies:** Consider alternative gems if updates aren't available  
+          3. **Monitor Advisories:** Set up automated monitoring for these dependencies
+          4. **Test Updates:** Thoroughly test gem updates before deploying
+          EOF
+          else
+            cat >> security-reports/ruby-security-report.md << 'EOF'
+          
+          ✅ **No vulnerabilities found in Ruby dependencies**
+          
+          All dependencies are up to date and free from known security vulnerabilities.
+          
+          ## Recommendations
+          
+          - Continue regular security scanning
+          - Keep dependencies updated
+          - Monitor security advisories for used gems
+          EOF
+          fi
+
+      - name: Upload Ruby Security Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ruby-security-report
+          path: |
+            security-reports/
+            bundler-audit.json
+          retention-days: 90
+
+  # JavaScript/Node.js dependency scanning (if applicable)
+  nodejs-security:
+    name: Node.js Security Audit
+    runs-on: ubuntu-latest
+    if: hashFiles('package.json') != ''
+    timeout-minutes: 10
+    outputs:
+      vulnerabilities_found: ${{ steps.audit.outputs.vulnerabilities_found }}
+      vulnerability_count: ${{ steps.audit.outputs.vulnerability_count }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Run npm Security Audit
+        id: audit
+        run: |
+          echo "## 📦 Node.js Dependency Security Audit" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ -f "package-lock.json" ]] || [[ -f "yarn.lock" ]]; then
+            # Run npm audit and capture output
+            if npm audit --audit-level moderate --json > npm-audit.json; then
+              echo "✅ **Node.js Dependencies:** No moderate or higher vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+              echo "vulnerabilities_found=false" >> $GITHUB_OUTPUT
+              echo "vulnerability_count=0" >> $GITHUB_OUTPUT
+            else
+              echo "vulnerabilities_found=true" >> $GITHUB_OUTPUT
+              
+              # Parse vulnerabilities count
+              VULN_COUNT=$(jq '.metadata.vulnerabilities.total' npm-audit.json 2>/dev/null || echo "0")
+              echo "vulnerability_count=$VULN_COUNT" >> $GITHUB_OUTPUT
+              
+              echo "⚠️ **Node.js Dependencies:** $VULN_COUNT vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+              
+              # Add summary
+              HIGH_COUNT=$(jq '.metadata.vulnerabilities.high' npm-audit.json 2>/dev/null || echo "0")
+              CRITICAL_COUNT=$(jq '.metadata.vulnerabilities.critical' npm-audit.json 2>/dev/null || echo "0")
+              
+              echo "- **Critical:** $CRITICAL_COUNT" >> $GITHUB_STEP_SUMMARY
+              echo "- **High:** $HIGH_COUNT" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "ℹ️ **Node.js Dependencies:** No lock file found, skipping detailed audit" >> $GITHUB_STEP_SUMMARY
+            echo "vulnerabilities_found=false" >> $GITHUB_OUTPUT
+            echo "vulnerability_count=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload Node.js Security Artifacts
+        if: steps.audit.outputs.vulnerabilities_found == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: nodejs-security-report
+          path: npm-audit.json
+          retention-days: 90
+
+  # License compliance scanning
+  license-compliance:
+    name: License Compliance Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      compliance_issues: ${{ steps.check.outputs.compliance_issues }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby Environment
+        uses: ./.github/actions/setup-ruby
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          install-system-deps: false
+
+      - name: Install License Finder
+        run: gem install license_finder --no-document
+
+      - name: Run License Compliance Check
+        id: check
+        run: |
+          echo "## 📄 License Compliance Check" >> $GITHUB_STEP_SUMMARY
+          
+          # Run license finder
+          if license_finder --format json > license-report.json; then
+            # Check for any problematic licenses
+            PROBLEMATIC_LICENSES=("GPL" "AGPL" "LGPL")
+            ISSUES_FOUND=false
+            
+            for license in "${PROBLEMATIC_LICENSES[@]}"; do
+              if jq -e --arg lic "$license" '.[] | select(.licenses[] | contains($lic))' license-report.json > /dev/null; then
+                ISSUES_FOUND=true
+                echo "⚠️ **License Issue:** Found dependency with $license license" >> $GITHUB_STEP_SUMMARY
+              fi
+            done
+            
+            if [[ "$ISSUES_FOUND" == "false" ]]; then
+              echo "✅ **License Compliance:** All dependencies use compatible licenses" >> $GITHUB_STEP_SUMMARY
+              echo "compliance_issues=false" >> $GITHUB_OUTPUT
+            else
+              echo "compliance_issues=true" >> $GITHUB_OUTPUT
+            fi
+            
+            # Count dependencies by license type
+            echo "### License Distribution" >> $GITHUB_STEP_SUMMARY
+            jq -r '.[] | .licenses[]' license-report.json | sort | uniq -c | sort -nr | head -10 >> $GITHUB_STEP_SUMMARY || true
+          else
+            echo "❌ **License Check:** Failed to analyze licenses" >> $GITHUB_STEP_SUMMARY
+            echo "compliance_issues=unknown" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload License Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: license-compliance-report
+          path: license-report.json
+          retention-days: 90
+
+  # Code security scanning with CodeQL
+  codeql-analysis:
+    name: CodeQL Security Analysis
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'schedule' ||
+      inputs.scan_type == 'comprehensive' ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    timeout-minutes: 15
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'ruby,javascript'
+          queries: security-and-quality
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:ruby,javascript"
+
+      - name: CodeQL Summary
+        run: |
+          echo "## 🔍 CodeQL Security Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **CodeQL Analysis:** Completed successfully" >> $GITHUB_STEP_SUMMARY
+          echo "- **Languages:** Ruby, JavaScript" >> $GITHUB_STEP_SUMMARY
+          echo "- **Query Pack:** Security and Quality" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Results will appear in the Security tab if any issues are found." >> $GITHUB_STEP_SUMMARY
+
+  # Dependency freshness check
+  dependency-freshness:
+    name: Dependency Freshness Check
+    runs-on: ubuntu-latest
+    if: |
+      inputs.scan_type == 'comprehensive' ||
+      inputs.scan_type == 'dependencies' ||
+      github.event_name == 'schedule'
+    timeout-minutes: 10
+    outputs:
+      outdated_count: ${{ steps.check.outputs.outdated_count }}
+      major_updates: ${{ steps.check.outputs.major_updates }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby Environment
+        uses: ./.github/actions/setup-ruby
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          install-system-deps: true
+
+      - name: Check for Outdated Dependencies
+        id: check
+        run: |
+          echo "## 📦 Dependency Freshness Check" >> $GITHUB_STEP_SUMMARY
+          
+          # Check Ruby dependencies
+          if bundle outdated --parseable > outdated-gems.txt; then
+            OUTDATED_COUNT=$(wc -l < outdated-gems.txt)
+            echo "outdated_count=$OUTDATED_COUNT" >> $GITHUB_OUTPUT
+            
+            if [[ $OUTDATED_COUNT -gt 0 ]]; then
+              echo "⚠️ **Ruby Dependencies:** $OUTDATED_COUNT gems have updates available" >> $GITHUB_STEP_SUMMARY
+              
+              # Check for major version updates
+              MAJOR_UPDATES=$(grep -E '\([0-9]+\.[0-9]+\.[0-9]+ > [0-9]+\.[0-9]+\.[0-9]+\)' outdated-gems.txt | wc -l || echo "0")
+              echo "major_updates=$MAJOR_UPDATES" >> $GITHUB_OUTPUT
+              
+              echo "- **Major Updates Available:** $MAJOR_UPDATES" >> $GITHUB_STEP_SUMMARY
+              
+              echo "### Outdated Dependencies" >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              head -10 outdated-gems.txt >> $GITHUB_STEP_SUMMARY
+              [[ $OUTDATED_COUNT -gt 10 ]] && echo "... and $((OUTDATED_COUNT - 10)) more" >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+            else
+              echo "✅ **Ruby Dependencies:** All gems are up to date" >> $GITHUB_STEP_SUMMARY
+              echo "major_updates=0" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "outdated_count=0" >> $GITHUB_OUTPUT
+            echo "major_updates=0" >> $GITHUB_OUTPUT
+            echo "ℹ️ **Ruby Dependencies:** Unable to check for updates" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Generate Dependency Report
+        run: |
+          mkdir -p security-reports
+          
+          cat > security-reports/dependency-freshness-report.md << 'EOF'
+          # Dependency Freshness Report
+          
+          Generated: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          Repository: ${{ github.repository }}
+          
+          ## Ruby Dependencies
+          EOF
+          
+          if [[ "${{ steps.check.outputs.outdated_count }}" -gt 0 ]]; then
+            cat >> security-reports/dependency-freshness-report.md << 'EOF'
+          
+          ### Outdated Gems
+          
+          The following gems have updates available:
+          
+          ```
+          EOF
+            cat outdated-gems.txt >> security-reports/dependency-freshness-report.md
+            cat >> security-reports/dependency-freshness-report.md << 'EOF'
+          ```
+          
+          ### Recommendations
+          
+          1. **Review Updates:** Check changelogs for breaking changes
+          2. **Test Updates:** Update gems in a development environment first
+          3. **Prioritize Security:** Focus on security-related updates first
+          4. **Monitor Dependencies:** Set up automated dependency monitoring
+          EOF
+          else
+            cat >> security-reports/dependency-freshness-report.md << 'EOF'
+          
+          ✅ All Ruby dependencies are up to date.
+          EOF
+          fi
+
+      - name: Upload Dependency Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-freshness-report
+          path: |
+            security-reports/
+            outdated-gems.txt
+          retention-days: 30
+
+  # Create security issue if vulnerabilities found
+  create-security-issue:
+    name: Create Security Issue
+    runs-on: ubuntu-latest
+    needs: [ruby-security, nodejs-security, license-compliance, dependency-freshness]
+    if: |
+      always() &&
+      inputs.create_issue == true &&
+      (needs.ruby-security.outputs.vulnerabilities_found == 'true' ||
+       needs.nodejs-security.outputs.vulnerabilities_found == 'true' ||
+       needs.license-compliance.outputs.compliance_issues == 'true')
+    timeout-minutes: 5
+    permissions:
+      issues: write
+
+    steps:
+      - name: Create or Update Security Issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = '🚨 Security Vulnerabilities Detected - Automated Scan';
+            const labels = ['security', 'dependencies', 'automated'];
+            
+            // Check for existing security issue
+            const existingIssues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: labels.join(','),
+              state: 'open'
+            });
+            
+            const securityIssue = existingIssues.data.find(issue => 
+              issue.title.includes('Security Vulnerabilities Detected')
+            );
+            
+            const rubyVulns = '${{ needs.ruby-security.outputs.vulnerability_count }}';
+            const nodeVulns = '${{ needs.nodejs-security.outputs.vulnerability_count }}';
+            const licenseIssues = '${{ needs.license-compliance.outputs.compliance_issues }}';
+            const timestamp = new Date().toISOString();
+            
+            const body = `# 🚨 Security Scan Results
+
+            **Last Updated:** ${timestamp}
+            **Scan Trigger:** ${{ github.event_name }}
+            **Branch:** ${{ github.ref_name }}
+            **Commit:** ${{ github.sha }}
+
+            ## Summary
+
+            ${rubyVulns > 0 ? `⚠️ **Ruby Dependencies:** ${rubyVulns} vulnerabilities found` : '✅ **Ruby Dependencies:** No vulnerabilities'}
+            ${nodeVulns > 0 ? `⚠️ **Node.js Dependencies:** ${nodeVulns} vulnerabilities found` : '✅ **Node.js Dependencies:** No vulnerabilities'}
+            ${licenseIssues === 'true' ? '⚠️ **License Compliance:** Issues detected' : '✅ **License Compliance:** No issues'}
+
+            ## Immediate Actions Required
+
+            ${rubyVulns > 0 ? `
+            ### Ruby Dependencies
+            - Review the Ruby security report artifact from the latest workflow run
+            - Update vulnerable gems: \`bundle update [gem-name]\`
+            - Test the application after updates
+            - Deploy security fixes as soon as possible
+            ` : ''}
+
+            ${nodeVulns > 0 ? `
+            ### Node.js Dependencies  
+            - Review the Node.js security report artifact from the latest workflow run
+            - Update vulnerable packages: \`npm audit fix\`
+            - Verify functionality after updates
+            ` : ''}
+
+            ${licenseIssues === 'true' ? `
+            ### License Compliance
+            - Review dependencies with incompatible licenses
+            - Consider alternative packages with compatible licenses
+            - Update legal documentation if necessary
+            ` : ''}
+
+            ## Resources
+
+            - [Security Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            - [Security Advisories](https://github.com/${{ github.repository }}/security/advisories)
+            - [Dependency Graph](https://github.com/${{ github.repository }}/network/dependencies)
+
+            ---
+            *This issue is automatically managed by the Security Monitoring workflow*`;
+
+            if (securityIssue) {
+              // Update existing issue
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: securityIssue.number,
+                body: body
+              });
+              
+              // Add comment about the update
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: securityIssue.number,
+                body: `🔄 **Security scan update** - ${timestamp}\n\nNew vulnerabilities detected. Please review the updated issue description.`
+              });
+              
+              console.log(`Updated existing security issue: #${securityIssue.number}`);
+            } else {
+              // Create new issue
+              const newIssue = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: labels
+              });
+              
+              console.log(`Created new security issue: #${newIssue.data.number}`);
+            }
+
+  # Final security summary
+  summary:
+    name: Security Monitoring Summary
+    runs-on: ubuntu-latest
+    needs: [ruby-security, nodejs-security, license-compliance, codeql-analysis, dependency-freshness, create-security-issue]
+    if: always()
+    timeout-minutes: 5
+
+    steps:
+      - name: Generate Security Summary
+        run: |
+          echo "## 🔒 Security & Dependency Monitoring Summary" >> $GITHUB_STEP_SUMMARY
+          echo "**Repository:** ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Scan Type:** ${{ inputs.scan_type || 'scheduled' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Timestamp:** $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "| Component | Status | Findings |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|----------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 💎 Ruby Security | ${{ needs.ruby-security.result }} | ${{ needs.ruby-security.outputs.vulnerability_count || 0 }} vulnerabilities |" >> $GITHUB_STEP_SUMMARY
+          echo "| 📦 Node.js Security | ${{ needs.nodejs-security.result || 'skipped' }} | ${{ needs.nodejs-security.outputs.vulnerability_count || 0 }} vulnerabilities |" >> $GITHUB_STEP_SUMMARY
+          echo "| 📄 License Compliance | ${{ needs.license-compliance.result }} | ${{ needs.license-compliance.outputs.compliance_issues == 'true' && 'Issues found' || 'Compliant' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔍 CodeQL Analysis | ${{ needs.codeql-analysis.result || 'skipped' }} | Check Security tab for results |" >> $GITHUB_STEP_SUMMARY
+          echo "| 📦 Dependency Freshness | ${{ needs.dependency-freshness.result || 'skipped' }} | ${{ needs.dependency-freshness.outputs.outdated_count || 0 }} outdated |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🚨 Issue Creation | ${{ needs.create-security-issue.result || 'skipped' }} | Automated issue management |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Determine overall security status
+          RUBY_VULNS="${{ needs.ruby-security.outputs.vulnerability_count }}"
+          NODE_VULNS="${{ needs.nodejs-security.outputs.vulnerability_count }}"
+          CRITICAL_RUBY="${{ needs.ruby-security.outputs.critical_count }}"
+          
+          if [[ "$CRITICAL_RUBY" -gt 0 ]]; then
+            echo "## 🚨 **CRITICAL SECURITY ISSUES FOUND**" >> $GITHUB_STEP_SUMMARY
+            echo "Immediate action required! $CRITICAL_RUBY critical vulnerabilities detected." >> $GITHUB_STEP_SUMMARY
+            exit 1
+          elif [[ "$RUBY_VULNS" -gt 0 || "$NODE_VULNS" -gt 0 ]]; then
+            echo "## ⚠️ **Security Issues Detected**" >> $GITHUB_STEP_SUMMARY
+            echo "Vulnerabilities found that should be addressed promptly." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 🔄 Next Steps:" >> $GITHUB_STEP_SUMMARY
+            echo "1. Review detailed security reports in workflow artifacts" >> $GITHUB_STEP_SUMMARY
+            echo "2. Update vulnerable dependencies" >> $GITHUB_STEP_SUMMARY
+            echo "3. Test updates in development environment" >> $GITHUB_STEP_SUMMARY
+            echo "4. Deploy security fixes" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## ✅ **Security Status: GOOD**" >> $GITHUB_STEP_SUMMARY
+            echo "No security vulnerabilities detected in current dependencies." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 🔄 Maintenance Recommendations:" >> $GITHUB_STEP_SUMMARY
+            [[ "${{ needs.dependency-freshness.outputs.outdated_count }}" -gt 0 ]] && echo "- Consider updating ${{ needs.dependency-freshness.outputs.outdated_count }} outdated dependencies" >> $GITHUB_STEP_SUMMARY
+            echo "- Continue regular security monitoring" >> $GITHUB_STEP_SUMMARY
+            echo "- Keep dependencies updated to latest stable versions" >> $GITHUB_STEP_SUMMARY
+          fi

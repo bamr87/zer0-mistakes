@@ -1,0 +1,570 @@
+name: Project Health Dashboard
+
+on:
+  schedule:
+    # Generate dashboard weekly on Sundays at 8 AM UTC
+    - cron: '0 8 * * 0'
+  workflow_dispatch:
+    inputs:
+      include_detailed_metrics:
+        description: 'Include detailed performance and quality metrics'
+        required: false
+        default: true
+        type: boolean
+      timeframe_days:
+        description: 'Analysis timeframe in days'
+        required: false
+        default: '7'
+        type: choice
+        options:
+          - '7'    # Last week
+          - '30'   # Last month
+          - '90'   # Last quarter
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # Collect workflow statistics
+  workflow-analysis:
+    name: Workflow Health Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      ci_success_rate: ${{ steps.analyze.outputs.ci_success_rate }}
+      release_count: ${{ steps.analyze.outputs.release_count }}
+      test_trends: ${{ steps.analyze.outputs.test_trends }}
+      security_status: ${{ steps.analyze.outputs.security_status }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Analyze Workflow Performance
+        id: analyze
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const days = parseInt('${{ inputs.timeframe_days || 7 }}');
+            const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+            
+            // Get workflow runs
+            const workflows = await github.rest.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100,
+              created: `>=${since}`
+            });
+            
+            // Analyze CI pipeline success rate
+            const ciRuns = workflows.data.workflow_runs.filter(run => 
+              run.name === 'Comprehensive CI Pipeline'
+            );
+            const ciSuccessRate = ciRuns.length > 0 
+              ? Math.round((ciRuns.filter(run => run.conclusion === 'success').length / ciRuns.length) * 100)
+              : 100;
+            
+            // Count releases
+            const releaseRuns = workflows.data.workflow_runs.filter(run =>
+              run.name.includes('Release') || run.name.includes('Version Bump')
+            );
+            
+            // Security workflow status
+            const securityRuns = workflows.data.workflow_runs.filter(run =>
+              run.name.includes('Security')
+            );
+            const latestSecurityRun = securityRuns[0];
+            const securityStatus = latestSecurityRun ? latestSecurityRun.conclusion : 'unknown';
+            
+            // Set outputs
+            core.setOutput('ci_success_rate', ciSuccessRate);
+            core.setOutput('release_count', releaseRuns.length);
+            core.setOutput('security_status', securityStatus);
+            
+            // Generate workflow statistics
+            const workflowStats = {};
+            workflows.data.workflow_runs.forEach(run => {
+              if (!workflowStats[run.name]) {
+                workflowStats[run.name] = { total: 0, success: 0, failure: 0 };
+              }
+              workflowStats[run.name].total++;
+              if (run.conclusion === 'success') workflowStats[run.name].success++;
+              if (run.conclusion === 'failure') workflowStats[run.name].failure++;
+            });
+            
+            // Create summary
+            core.summary.addHeading('🔍 Workflow Analysis Results', 2);
+            core.summary.addRaw(`**Analysis Period:** Last ${days} days\n`);
+            core.summary.addRaw(`**Total Workflow Runs:** ${workflows.data.workflow_runs.length}\n`);
+            core.summary.addRaw(`**CI Success Rate:** ${ciSuccessRate}%\n`);
+            core.summary.addRaw(`**Releases:** ${releaseRuns.length}\n`);
+            core.summary.addRaw(`**Security Status:** ${securityStatus}\n\n`);
+            
+            // Add workflow breakdown
+            core.summary.addHeading('Workflow Performance', 3);
+            const tableData = [['Workflow', 'Runs', 'Success Rate']];
+            Object.entries(workflowStats).forEach(([name, stats]) => {
+              const successRate = stats.total > 0 ? Math.round((stats.success / stats.total) * 100) : 0;
+              tableData.push([name, stats.total.toString(), `${successRate}%`]);
+            });
+            core.summary.addTable(tableData);
+
+      - name: Check Recent Issues
+        id: issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const days = parseInt('${{ inputs.timeframe_days || 7 }}');
+            const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+            
+            // Get recent issues
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'all',
+              since: since,
+              per_page: 100
+            });
+            
+            const securityIssues = issues.data.filter(issue =>
+              issue.labels.some(label => label.name.includes('security'))
+            );
+            
+            const bugIssues = issues.data.filter(issue =>
+              issue.labels.some(label => label.name.includes('bug'))
+            );
+            
+            core.summary.addHeading('📋 Issue Analysis', 2);
+            core.summary.addRaw(`**Total Issues (${days} days):** ${issues.data.length}\n`);
+            core.summary.addRaw(`**Security Issues:** ${securityIssues.length}\n`);
+            core.summary.addRaw(`**Bug Reports:** ${bugIssues.length}\n`);
+            
+            return {
+              total: issues.data.length,
+              security: securityIssues.length,
+              bugs: bugIssues.length
+            };
+
+  # Repository metrics analysis
+  repository-metrics:
+    name: Repository Metrics
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      commit_frequency: ${{ steps.metrics.outputs.commit_frequency }}
+      contributor_count: ${{ steps.metrics.outputs.contributor_count }}
+      code_quality_score: ${{ steps.metrics.outputs.code_quality_score }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Analyze Repository Metrics
+        id: metrics
+        run: |
+          DAYS="${{ inputs.timeframe_days || 7 }}"
+          
+          echo "## 📊 Repository Metrics Analysis" >> $GITHUB_STEP_SUMMARY
+          
+          # Commit frequency analysis
+          COMMIT_COUNT=$(git log --since="${DAYS} days ago" --oneline | wc -l)
+          COMMIT_FREQUENCY=$(echo "scale=1; $COMMIT_COUNT / $DAYS" | bc -l 2>/dev/null || echo "0")
+          echo "commit_frequency=$COMMIT_FREQUENCY" >> $GITHUB_OUTPUT
+          
+          # Contributor analysis
+          CONTRIBUTOR_COUNT=$(git log --since="${DAYS} days ago" --format='%ae' | sort | uniq | wc -l)
+          echo "contributor_count=$CONTRIBUTOR_COUNT" >> $GITHUB_OUTPUT
+          
+          # Code quality indicators
+          RUBY_FILES=$(find . -name "*.rb" -not -path "./vendor/*" | wc -l)
+          JS_FILES=$(find . -name "*.js" -not -path "./vendor/*" -not -path "./node_modules/*" | wc -l)
+          MD_FILES=$(find . -name "*.md" -not -path "./vendor/*" | wc -l)
+          
+          # Calculate a simple quality score based on documentation ratio
+          TOTAL_CODE_FILES=$((RUBY_FILES + JS_FILES))
+          if [[ $TOTAL_CODE_FILES -gt 0 ]]; then
+            DOC_RATIO=$(echo "scale=2; $MD_FILES / $TOTAL_CODE_FILES" | bc -l)
+            QUALITY_SCORE=$(echo "scale=0; ($DOC_RATIO * 50) + 50" | bc -l | cut -d. -f1)
+            # Cap at 100
+            [[ $QUALITY_SCORE -gt 100 ]] && QUALITY_SCORE=100
+          else
+            QUALITY_SCORE=50
+          fi
+          echo "code_quality_score=$QUALITY_SCORE" >> $GITHUB_OUTPUT
+          
+          # Generate metrics summary
+          echo "### Metrics Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commits (${DAYS} days):** $COMMIT_COUNT" >> $GITHUB_STEP_SUMMARY
+          echo "- **Daily Commit Rate:** $COMMIT_FREQUENCY" >> $GITHUB_STEP_SUMMARY
+          echo "- **Active Contributors:** $CONTRIBUTOR_COUNT" >> $GITHUB_STEP_SUMMARY
+          echo "- **Ruby Files:** $RUBY_FILES" >> $GITHUB_STEP_SUMMARY
+          echo "- **JavaScript Files:** $JS_FILES" >> $GITHUB_STEP_SUMMARY
+          echo "- **Documentation Files:** $MD_FILES" >> $GITHUB_STEP_SUMMARY
+          echo "- **Quality Score:** $QUALITY_SCORE/100" >> $GITHUB_STEP_SUMMARY
+
+      - name: Analyze File Changes
+        if: inputs.include_detailed_metrics == true
+        run: |
+          DAYS="${{ inputs.timeframe_days || 7 }}"
+          
+          echo "### Recent Changes Analysis" >> $GITHUB_STEP_SUMMARY
+          
+          # Most changed files
+          echo "#### Most Modified Files" >> $GITHUB_STEP_SUMMARY
+          git log --since="${DAYS} days ago" --name-only --pretty=format: | sort | uniq -c | sort -nr | head -10 | while read count file; do
+            [[ -n "$file" ]] && echo "- $file: $count changes" >> $GITHUB_STEP_SUMMARY
+          done
+          
+          # Commit message analysis
+          echo "#### Commit Categories" >> $GITHUB_STEP_SUMMARY
+          git log --since="${DAYS} days ago" --oneline | cut -d' ' -f2- | grep -o '^[a-z]*:' | sort | uniq -c | sort -nr | while read count category; do
+            echo "- $category $count commits" >> $GITHUB_STEP_SUMMARY
+          done
+
+  # Dependency and security health
+  dependency-health:
+    name: Dependency Health Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      dependency_health_score: ${{ steps.health.outputs.health_score }}
+      outdated_count: ${{ steps.health.outputs.outdated_count }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby Environment
+        uses: ./.github/actions/setup-ruby
+        with:
+          ruby-version: '3.2'
+          install-system-deps: true
+
+      - name: Analyze Dependency Health
+        id: health
+        run: |
+          echo "## 📦 Dependency Health Analysis" >> $GITHUB_STEP_SUMMARY
+          
+          # Check for outdated dependencies
+          OUTDATED_COUNT=0
+          if bundle outdated --parseable > /tmp/outdated.txt 2>/dev/null; then
+            OUTDATED_COUNT=$(wc -l < /tmp/outdated.txt 2>/dev/null || echo "0")
+          fi
+          echo "outdated_count=$OUTDATED_COUNT" >> $GITHUB_OUTPUT
+          
+          # Check for security vulnerabilities
+          VULNERABILITIES=0
+          if gem install bundler-audit --no-document >/dev/null 2>&1; then
+            bundle-audit update >/dev/null 2>&1
+            if ! bundle-audit check >/dev/null 2>&1; then
+              VULNERABILITIES=$(bundle-audit check 2>/dev/null | grep -c "Vulnerabilities found" || echo "0")
+            fi
+          fi
+          
+          # Calculate health score (0-100)
+          # Perfect score = no outdated deps, no vulnerabilities
+          HEALTH_SCORE=100
+          
+          # Deduct points for outdated dependencies
+          if [[ $OUTDATED_COUNT -gt 0 ]]; then
+            OUTDATED_PENALTY=$((OUTDATED_COUNT * 2))
+            [[ $OUTDATED_PENALTY -gt 30 ]] && OUTDATED_PENALTY=30
+            HEALTH_SCORE=$((HEALTH_SCORE - OUTDATED_PENALTY))
+          fi
+          
+          # Deduct points for vulnerabilities (more severe)
+          if [[ $VULNERABILITIES -gt 0 ]]; then
+            VULN_PENALTY=$((VULNERABILITIES * 20))
+            HEALTH_SCORE=$((HEALTH_SCORE - VULN_PENALTY))
+          fi
+          
+          [[ $HEALTH_SCORE -lt 0 ]] && HEALTH_SCORE=0
+          
+          echo "health_score=$HEALTH_SCORE" >> $GITHUB_OUTPUT
+          
+          # Generate summary
+          echo "### Dependency Status" >> $GITHUB_STEP_SUMMARY
+          echo "- **Health Score:** $HEALTH_SCORE/100" >> $GITHUB_STEP_SUMMARY
+          echo "- **Outdated Dependencies:** $OUTDATED_COUNT" >> $GITHUB_STEP_SUMMARY
+          echo "- **Security Vulnerabilities:** $VULNERABILITIES" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ $HEALTH_SCORE -ge 90 ]]; then
+            echo "- **Status:** 🟢 Excellent" >> $GITHUB_STEP_SUMMARY
+          elif [[ $HEALTH_SCORE -ge 70 ]]; then
+            echo "- **Status:** 🟡 Good" >> $GITHUB_STEP_SUMMARY
+          elif [[ $HEALTH_SCORE -ge 50 ]]; then
+            echo "- **Status:** 🟠 Needs Attention" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- **Status:** 🔴 Critical" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # Performance metrics
+  performance-metrics:
+    name: Performance Metrics
+    runs-on: ubuntu-latest
+    if: inputs.include_detailed_metrics == true
+    timeout-minutes: 15
+    outputs:
+      build_time: ${{ steps.performance.outputs.build_time }}
+      gem_size: ${{ steps.performance.outputs.gem_size }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby Environment
+        uses: ./.github/actions/setup-ruby
+        with:
+          ruby-version: '3.2'
+          install-system-deps: true
+
+      - name: Performance Benchmarking
+        id: performance
+        run: |
+          echo "## ⚡ Performance Metrics" >> $GITHUB_STEP_SUMMARY
+          
+          # Measure gem build time
+          START_TIME=$(date +%s)
+          chmod +x ./scripts/build.sh
+          ./scripts/build.sh >/dev/null 2>&1
+          END_TIME=$(date +%s)
+          
+          BUILD_TIME=$((END_TIME - START_TIME))
+          echo "build_time=${BUILD_TIME}s" >> $GITHUB_OUTPUT
+          
+          # Get gem size
+          GEM_FILE=$(find build -name "*.gem" | head -1)
+          if [[ -f "$GEM_FILE" ]]; then
+            GEM_SIZE=$(du -h "$GEM_FILE" | cut -f1)
+            echo "gem_size=$GEM_SIZE" >> $GITHUB_OUTPUT
+            
+            # Count files in gem
+            FILE_COUNT=$(gem specification "$GEM_FILE" | grep -c "files:" || echo "unknown")
+          else
+            echo "gem_size=unknown" >> $GITHUB_OUTPUT
+            FILE_COUNT="unknown"
+          fi
+          
+          # Jekyll build performance (if applicable)
+          if [[ -f "_config.yml" ]]; then
+            JEKYLL_START=$(date +%s)
+            timeout 300 bundle exec jekyll build >/dev/null 2>&1 || true
+            JEKYLL_END=$(date +%s)
+            JEKYLL_TIME=$((JEKYLL_END - JEKYLL_START))
+          else
+            JEKYLL_TIME="N/A"
+          fi
+          
+          # Generate performance summary
+          echo "### Performance Results" >> $GITHUB_STEP_SUMMARY
+          echo "- **Gem Build Time:** ${BUILD_TIME}s" >> $GITHUB_STEP_SUMMARY
+          echo "- **Gem Size:** $GEM_SIZE" >> $GITHUB_STEP_SUMMARY
+          echo "- **Files in Gem:** $FILE_COUNT" >> $GITHUB_STEP_SUMMARY
+          [[ "$JEKYLL_TIME" != "N/A" ]] && echo "- **Jekyll Build Time:** ${JEKYLL_TIME}s" >> $GITHUB_STEP_SUMMARY
+
+  # Generate comprehensive dashboard
+  generate-dashboard:
+    name: Generate Health Dashboard
+    runs-on: ubuntu-latest
+    needs: [workflow-analysis, repository-metrics, dependency-health, performance-metrics]
+    if: always()
+    timeout-minutes: 10
+    permissions:
+      issues: write
+
+    steps:
+      - name: Create Dashboard Report
+        id: dashboard
+        run: |
+          # Calculate overall project health score
+          WORKFLOW_SCORE=100
+          [[ "${{ needs.workflow-analysis.outputs.ci_success_rate }}" -lt 90 ]] && WORKFLOW_SCORE=80
+          [[ "${{ needs.workflow-analysis.outputs.ci_success_rate }}" -lt 70 ]] && WORKFLOW_SCORE=60
+          [[ "${{ needs.workflow-analysis.outputs.ci_success_rate }}" -lt 50 ]] && WORKFLOW_SCORE=40
+          
+          REPO_SCORE="${{ needs.repository-metrics.outputs.code_quality_score }}"
+          DEPENDENCY_SCORE="${{ needs.dependency-health.outputs.dependency_health_score }}"
+          
+          # Calculate weighted average
+          OVERALL_SCORE=$(echo "scale=0; ($WORKFLOW_SCORE * 0.4) + ($REPO_SCORE * 0.3) + ($DEPENDENCY_SCORE * 0.3)" | bc -l | cut -d. -f1)
+          
+          # Create comprehensive dashboard
+          cat > dashboard-report.md << 'EOF'
+          # 📊 Project Health Dashboard
+          
+          Generated: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          Analysis Period: ${{ inputs.timeframe_days || 7 }} days
+          Repository: ${{ github.repository }}
+          
+          ## 🎯 Overall Health Score: $(echo "$OVERALL_SCORE")/100
+          
+          $(
+          if [[ $OVERALL_SCORE -ge 90 ]]; then
+            echo "🟢 **Excellent** - Project is in great shape!"
+          elif [[ $OVERALL_SCORE -ge 70 ]]; then
+            echo "🟡 **Good** - Minor improvements recommended"
+          elif [[ $OVERALL_SCORE -ge 50 ]]; then
+            echo "🟠 **Needs Attention** - Several areas require focus"
+          else
+            echo "🔴 **Critical** - Immediate action required"
+          fi
+          )
+          
+          ## 📈 Key Metrics
+          
+          | Category | Score | Details |
+          |----------|-------|---------|
+          | 🔄 Workflow Health | $WORKFLOW_SCORE/100 | CI Success Rate: ${{ needs.workflow-analysis.outputs.ci_success_rate }}% |
+          | 📊 Code Quality | $REPO_SCORE/100 | Contributors: ${{ needs.repository-metrics.outputs.contributor_count }}, Commits/day: ${{ needs.repository-metrics.outputs.commit_frequency }} |
+          | 📦 Dependencies | $DEPENDENCY_SCORE/100 | Outdated: ${{ needs.dependency-health.outputs.outdated_count }} |
+          | 🚀 Releases | - | Recent releases: ${{ needs.workflow-analysis.outputs.release_count }} |
+          | 🔒 Security | - | Status: ${{ needs.workflow-analysis.outputs.security_status }} |
+          EOF
+          
+          # Add performance metrics if available
+          if [[ "${{ needs.performance-metrics.outputs.build_time }}" != "" ]]; then
+            cat >> dashboard-report.md << 'EOF'
+          | ⚡ Performance | - | Build time: ${{ needs.performance-metrics.outputs.build_time }}, Size: ${{ needs.performance-metrics.outputs.gem_size }} |
+          EOF
+          fi
+          
+          cat >> dashboard-report.md << 'EOF'
+          
+          ## 🔍 Detailed Analysis
+          
+          ### Workflow Performance
+          - **CI Pipeline Success Rate:** ${{ needs.workflow-analysis.outputs.ci_success_rate }}%
+          - **Recent Releases:** ${{ needs.workflow-analysis.outputs.release_count }}
+          - **Security Status:** ${{ needs.workflow-analysis.outputs.security_status }}
+          
+          ### Repository Activity
+          - **Daily Commit Rate:** ${{ needs.repository-metrics.outputs.commit_frequency }}
+          - **Active Contributors:** ${{ needs.repository-metrics.outputs.contributor_count }}
+          - **Code Quality Score:** ${{ needs.repository-metrics.outputs.code_quality_score }}/100
+          
+          ### Dependency Health
+          - **Outdated Dependencies:** ${{ needs.dependency-health.outputs.outdated_count }}
+          - **Health Score:** ${{ needs.dependency-health.outputs.dependency_health_score }}/100
+          EOF
+          
+          # Add performance section if available
+          if [[ "${{ needs.performance-metrics.outputs.build_time }}" != "" ]]; then
+            cat >> dashboard-report.md << 'EOF'
+          
+          ### Performance Metrics
+          - **Gem Build Time:** ${{ needs.performance-metrics.outputs.build_time }}
+          - **Gem Size:** ${{ needs.performance-metrics.outputs.gem_size }}
+          EOF
+          fi
+          
+          cat >> dashboard-report.md << 'EOF'
+          
+          ## 🎯 Recommendations
+          EOF
+          
+          # Add specific recommendations based on scores
+          if [[ $WORKFLOW_SCORE -lt 80 ]]; then
+            echo "- **Workflow Health:** Investigate CI failures and improve test reliability" >> dashboard-report.md
+          fi
+          
+          if [[ $REPO_SCORE -lt 70 ]]; then
+            echo "- **Code Quality:** Increase documentation coverage and code comments" >> dashboard-report.md
+          fi
+          
+          if [[ $DEPENDENCY_SCORE -lt 80 ]]; then
+            echo "- **Dependencies:** Update outdated packages and address security vulnerabilities" >> dashboard-report.md
+          fi
+          
+          if [[ $OVERALL_SCORE -ge 80 ]]; then
+            echo "- **Overall:** Project health is good. Continue current practices!" >> dashboard-report.md
+          fi
+          
+          cat >> dashboard-report.md << 'EOF'
+          
+          ## 📊 Historical Trends
+          
+          This dashboard should be generated regularly to track improvements over time.
+          
+          ---
+          *Generated by the Project Health Dashboard workflow*
+          EOF
+          
+          echo "overall_score=$OVERALL_SCORE" >> $GITHUB_OUTPUT
+
+      - name: Create or Update Dashboard Issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const title = '📊 Project Health Dashboard';
+            const dashboardContent = fs.readFileSync('dashboard-report.md', 'utf8');
+            
+            // Look for existing dashboard issue
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['dashboard', 'monitoring'],
+              state: 'open'
+            });
+            
+            const dashboardIssue = issues.data.find(issue => 
+              issue.title.includes('Project Health Dashboard')
+            );
+            
+            if (dashboardIssue) {
+              // Update existing issue
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: dashboardIssue.number,
+                body: dashboardContent
+              });
+              
+              console.log(`Updated dashboard issue: #${dashboardIssue.number}`);
+            } else {
+              // Create new issue
+              const newIssue = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: dashboardContent,
+                labels: ['dashboard', 'monitoring', 'automated']
+              });
+              
+              console.log(`Created dashboard issue: #${newIssue.data.number}`);
+            }
+
+      - name: Upload Dashboard Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: project-health-dashboard
+          path: dashboard-report.md
+          retention-days: 30
+
+      - name: Final Dashboard Summary
+        run: |
+          echo "## 📊 Project Health Dashboard Generated" >> $GITHUB_STEP_SUMMARY
+          echo "**Overall Health Score:** ${{ steps.dashboard.outputs.overall_score }}/100" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          SCORE="${{ steps.dashboard.outputs.overall_score }}"
+          if [[ $SCORE -ge 90 ]]; then
+            echo "🎉 **Excellent project health!** Keep up the great work." >> $GITHUB_STEP_SUMMARY
+          elif [[ $SCORE -ge 70 ]]; then
+            echo "👍 **Good project health.** Minor improvements recommended." >> $GITHUB_STEP_SUMMARY
+          elif [[ $SCORE -ge 50 ]]; then
+            echo "⚠️ **Project needs attention.** Several areas require focus." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "🚨 **Critical project health issues.** Immediate action required." >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📋 **Dashboard Report:** Available in workflow artifacts and GitHub issue" >> $GITHUB_STEP_SUMMARY
