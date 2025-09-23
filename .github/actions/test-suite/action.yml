@@ -1,0 +1,46 @@
+name: 'Run Ruby Test Suite'
+description: 'Complete Ruby test suite with environment setup'
+inputs:
+  ruby-version:
+    description: 'Ruby version to use'
+    default: '3.2'
+    required: false
+  verbose:
+    description: 'Run tests in verbose mode'
+    default: 'true'
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Ruby Environment
+      uses: ./.github/actions/setup-ruby
+      with:
+        ruby-version: ${{ inputs.ruby-version }}
+    
+    - name: Run Test Suite
+      shell: bash
+      run: |
+        chmod +x ./test/test_runner.sh
+        if [[ "${{ inputs.verbose }}" == "true" ]]; then
+          ./test/test_runner.sh --verbose
+        else
+          ./test/test_runner.sh
+        fi
+    
+    - name: Validate Test Results
+      shell: bash
+      run: |
+        if [[ ! -f "./test/results/test_summary.log" ]]; then
+          echo "::warning::Test summary file not found, tests may have failed"
+          exit 1
+        fi
+        
+        # Check for test failures
+        if grep -q "FAILED" "./test/results/test_summary.log"; then
+          echo "::error::Tests failed - check test results"
+          cat "./test/results/test_summary.log"
+          exit 1
+        fi
+        
+        echo "::notice::All tests passed successfully"

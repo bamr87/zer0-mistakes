@@ -1,0 +1,87 @@
+name: 'Prepare Release Assets'
+description: 'Build gem and prepare release assets with comprehensive validation'
+inputs:
+  ruby-version:
+    description: 'Ruby version to use'
+    default: '3.2'
+    required: false
+  validate-assets:
+    description: 'Validate built assets'
+    default: 'true'
+    required: false
+  
+outputs:
+  gem-version:
+    description: 'Built gem version'
+    value: ${{ steps.extract-version.outputs.version }}
+  gem-file:
+    description: 'Built gem filename'
+    value: ${{ steps.extract-version.outputs.gem-file }}
+  asset-directory:
+    description: 'Directory containing built assets'
+    value: ${{ steps.build.outputs.asset-dir }}
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Ruby Environment
+      uses: ./.github/actions/setup-ruby
+      with:
+        ruby-version: ${{ inputs.ruby-version }}
+    
+    - name: Build Release Assets
+      id: build
+      shell: bash
+      run: |
+        chmod +x ./scripts/build.sh
+        ./scripts/build.sh
+        
+        # Set asset directory output
+        echo "asset-dir=./build" >> $GITHUB_OUTPUT
+        
+        # Ensure build directory exists
+        if [[ ! -d "./build" ]]; then
+          echo "::error::Build directory not created by build script"
+          exit 1
+        fi
+        
+        echo "::notice::Release assets built successfully"
+    
+    - name: Extract Version Information
+      id: extract-version
+      shell: bash
+      run: |
+        # Extract version from Ruby code
+        VERSION=$(ruby -e "require './lib/jekyll-theme-zer0/version'; puts JekyllThemeZer0::VERSION")
+        GEM_FILE="jekyll-theme-zer0-${VERSION}.gem"
+        
+        echo "version=${VERSION}" >> $GITHUB_OUTPUT
+        echo "gem-file=${GEM_FILE}" >> $GITHUB_OUTPUT
+        
+        echo "::notice::Extracted version: ${VERSION}"
+        echo "::notice::Gem file: ${GEM_FILE}"
+    
+    - name: Validate Built Assets
+      if: inputs.validate-assets == 'true'
+      shell: bash
+      run: |
+        VERSION="${{ steps.extract-version.outputs.version }}"
+        GEM_FILE="${{ steps.extract-version.outputs.gem-file }}"
+        
+        # Check if gem file exists
+        if [[ ! -f "./build/${GEM_FILE}" ]]; then
+          echo "::error::Expected gem file not found: ./build/${GEM_FILE}"
+          ls -la ./build/
+          exit 1
+        fi
+        
+        # Validate gem file
+        if ! gem spec "./build/${GEM_FILE}" > /dev/null 2>&1; then
+          echo "::error::Built gem file is invalid or corrupted"
+          exit 1
+        fi
+        
+        # Check gem contents
+        gem spec "./build/${GEM_FILE}" | grep -E "(name|version|files)" || true
+        
+        echo "::notice::Asset validation completed successfully"

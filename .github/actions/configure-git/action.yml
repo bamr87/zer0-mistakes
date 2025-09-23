@@ -1,0 +1,49 @@
+name: 'Configure Git Environment'
+description: 'Configure Git with user information and authentication for automated commits'
+inputs:
+  user-name:
+    description: 'Git user name'
+    default: 'github-actions[bot]'
+    required: false
+  user-email:
+    description: 'Git user email'
+    default: 'github-actions[bot]@users.noreply.github.com'
+    required: false
+  github-token:
+    description: 'GitHub token for authentication'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Configure Git User
+      shell: bash
+      run: |
+        git config --global user.name "${{ inputs.user-name }}"
+        git config --global user.email "${{ inputs.user-email }}"
+        
+        echo "::notice::Git configured with user: ${{ inputs.user-name }}"
+    
+    - name: Setup Git Authentication
+      shell: bash
+      run: |
+        # Configure Git to use the GitHub token for authentication
+        git config --global url."https://x-access-token:${{ inputs.github-token }}@github.com/".insteadOf "https://github.com/"
+        
+        # Verify authentication setup
+        if ! git ls-remote --exit-code origin HEAD > /dev/null 2>&1; then
+          echo "::warning::Git authentication verification failed - proceeding anyway"
+        else
+          echo "::notice::Git authentication configured successfully"
+        fi
+    
+    - name: Set Git Safe Directory
+      shell: bash
+      run: |
+        # Mark the current directory as safe for Git operations
+        git config --global --add safe.directory "${GITHUB_WORKSPACE}"
+        
+        # Also mark any subdirectories that might be needed
+        git config --global --add safe.directory '*'
+        
+        echo "::notice::Git safe directory configuration completed"

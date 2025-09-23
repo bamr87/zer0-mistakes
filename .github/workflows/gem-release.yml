@@ -15,47 +15,54 @@ on:
 env:
   RUBY_VERSION: '3.2'
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
+  # Pre-release validation
   test:
-    name: Pre-release Tests
+    name: Pre-release Validation
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout Repository
+      uses: actions/checkout@v4
 
-    - name: Setup Ruby environment
-      uses: ./.github/actions/setup-ruby
+    - name: Run Test Suite
+      uses: ./.github/actions/test-suite
       with:
         ruby-version: ${{ env.RUBY_VERSION }}
-        install-system-deps: true
+        verbose: true
 
-    - name: Run tests
-      run: ./test/test_runner.sh --verbose
-
+  # Build and prepare release assets
   build:
-    name: Build Gem
+    name: Build Release Assets
     runs-on: ubuntu-latest
     needs: test
+    outputs:
+      gem-version: ${{ steps.prepare.outputs.gem-version }}
+      gem-file: ${{ steps.prepare.outputs.gem-file }}
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout Repository
+      uses: actions/checkout@v4
 
-    - name: Setup Ruby environment
-      uses: ./.github/actions/setup-ruby
+    - name: Prepare Release Assets
+      id: prepare
+      uses: ./.github/actions/prepare-release
       with:
         ruby-version: ${{ env.RUBY_VERSION }}
-        install-system-deps: true
+        validate-assets: true
 
-    - name: Build gem
-      run: ./scripts/build.sh
-
-    - name: Upload gem artifact
+    - name: Upload Gem Artifact
       uses: actions/upload-artifact@v4
       with:
         name: gem-${{ github.ref_name }}
-        path: jekyll-theme-zer0-*.gem
+        path: build/jekyll-theme-zer0-*.gem
         retention-days: 30
 
+  # Publish to RubyGems
   publish:
     name: Publish to RubyGems
     runs-on: ubuntu-latest
@@ -66,20 +73,21 @@ jobs:
     environment: production
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout Repository
+      uses: actions/checkout@v4
 
-    - name: Setup Ruby environment
+    - name: Setup Ruby Environment
       uses: ./.github/actions/setup-ruby
       with:
         ruby-version: ${{ env.RUBY_VERSION }}
         install-system-deps: false
 
-    - name: Download gem artifact
+    - name: Download Gem Artifact
       uses: actions/download-artifact@v4
       with:
         name: gem-${{ github.ref_name }}
 
-    - name: Configure RubyGems credentials
+    - name: Configure RubyGems Credentials
       run: |
         mkdir -p ~/.gem
         cat > ~/.gem/credentials << EOF
@@ -88,13 +96,13 @@ jobs:
         EOF
         chmod 600 ~/.gem/credentials
 
-    - name: Publish gem
+    - name: Publish Gem
       run: |
         GEM_FILE=$(ls jekyll-theme-zer0-*.gem)
         gem push "$GEM_FILE"
         echo "✅ Published $GEM_FILE to RubyGems"
 
-    - name: Summary
+    - name: Publish Summary
       run: |
         echo "## 📦 Gem Published Successfully!" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY

@@ -29,6 +29,10 @@ env:
   RUBY_VERSION: '3.2'
   NODE_VERSION: '18'
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   # Fast feedback job for quick validation
   fast-checks:
@@ -37,26 +41,44 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Ruby environment
+      - name: Setup Ruby Environment
         uses: ./.github/actions/setup-ruby
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
           install-system-deps: false
 
-      - name: Quick syntax check
+      - name: Quick Syntax Check
         run: ruby -c lib/jekyll-theme-zer0/version.rb
 
-      - name: Validate gemspec
+      - name: Validate Gemspec
         run: gem specification jekyll-theme-zer0.gemspec > /dev/null
+
+  # Quality control checks
+  quality-checks:
+    name: Quality Control
+    runs-on: ubuntu-latest
+    needs: fast-checks
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run Quality Checks
+        uses: ./.github/actions/quality-checks
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          check-markdown: true
+          fix-formatting: ${{ inputs.fix_markdown }}
 
   # Comprehensive testing across Ruby versions
   test:
-    name: Test (Ruby ${{ matrix.ruby }})
+    name: Test Suite (Ruby ${{ matrix.ruby }})
     runs-on: ubuntu-latest
-    needs: fast-checks
+    needs: [fast-checks, quality-checks]
     timeout-minutes: 15
     strategy:
       fail-fast: false
@@ -67,27 +89,16 @@ jobs:
             coverage: true
 
     steps:
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Ruby environment
-        uses: ./.github/actions/setup-ruby
+      - name: Run Test Suite
+        uses: ./.github/actions/test-suite
         with:
           ruby-version: ${{ matrix.ruby }}
-          install-system-deps: true
+          verbose: true
 
-      - name: Create test directories
-        run: mkdir -p test/results test/coverage test/reports
-
-      - name: Run tests
-        run: |
-          if [[ "${{ inputs.test_scope || 'standard' }}" == "fast" ]]; then
-            ./test/test_runner.sh --suites core --verbose --format json
-          else
-            ./test/test_runner.sh --suites all --verbose --coverage --format json
-          fi
-
-      - name: Upload test results
+      - name: Upload Test Results
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -95,7 +106,7 @@ jobs:
           path: test/results/
           retention-days: 7
 
-      - name: Upload coverage (Ruby 3.0 only)
+      - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         if: matrix.coverage
         with:

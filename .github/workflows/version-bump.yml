@@ -16,55 +16,73 @@ on:
 env:
   RUBY_VERSION: '3.2'
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   version-bump:
-    name: Bump Version
+    name: Bump Version and Create Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
-    - name: Checkout code
+    - name: Checkout Repository
       uses: actions/checkout@v4
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         fetch-depth: 0
 
-    - name: Setup Ruby environment
+    - name: Configure Git Environment
+      uses: ./.github/actions/configure-git
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Run Pre-bump Validation
+      uses: ./.github/actions/test-suite
+      with:
+        ruby-version: ${{ env.RUBY_VERSION }}
+        verbose: true
+
+    - name: Setup Ruby Environment
       uses: ./.github/actions/setup-ruby
       with:
         ruby-version: ${{ env.RUBY_VERSION }}
         install-system-deps: true
 
-    - name: Configure Git
-      run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-
-    - name: Run pre-bump tests
-      run: ./test/test_runner.sh --verbose
-
-    - name: Bump version
+    - name: Bump Version
       id: bump_version
       run: |
+        chmod +x ./scripts/version.sh
         ./scripts/version.sh ${{ inputs.version_type }}
 
         NEW_VERSION=$(grep -o 'VERSION = "[^"]*"' lib/jekyll-theme-zer0/version.rb | sed 's/VERSION = "\(.*\)"/\1/')
         echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
         echo "Bumped version to: $NEW_VERSION"
 
-    - name: Commit and push changes
+    - name: Commit and Push Changes
       run: |
         git add .
-        git commit -m "chore: bump version to ${{ steps.bump_version.outputs.new_version }}"
+        git commit -m "chore: bump version to ${{ steps.bump_version.outputs.new_version }}
+
+        - Version bump: ${{ inputs.version_type }}
+        - Updated version files and changelog
+        - Automated by GitHub Actions"
+        
         git push origin main
 
-    - name: Create and push tag
+    - name: Create and Push Tag
       run: |
         git tag "v${{ steps.bump_version.outputs.new_version }}"
         git push origin --tags
 
-    - name: Summary
+    - name: Version Bump Summary
       run: |
         echo "## 🚀 Version Bump Complete" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "- **Type**: ${{ inputs.version_type }}" >> $GITHUB_STEP_SUMMARY
         echo "- **New Version**: ${{ steps.bump_version.outputs.new_version }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Tag**: v${{ steps.bump_version.outputs.new_version }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Tag push will trigger gem release and GitHub release workflows automatically." >> $GITHUB_STEP_SUMMARY

@@ -24,24 +24,24 @@ on:
 env:
   RUBY_VERSION: '3.2'
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
-  release:
+  create-release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
-    - name: Checkout repository
+    - name: Checkout Repository
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
-    - name: Setup Ruby environment
-      uses: ./.github/actions/setup-ruby
-      with:
-        ruby-version: ${{ env.RUBY_VERSION }}
-        install-system-deps: true
-
-    - name: Get version from tag
+    - name: Get Version from Tag
       id: version
       run: |
         TAG="${{ inputs.tag || github.ref_name }}"
@@ -50,9 +50,15 @@ jobs:
         echo "tag=$TAG" >> $GITHUB_OUTPUT
         echo "gem-file=jekyll-theme-zer0-$VERSION.gem" >> $GITHUB_OUTPUT
 
-    - name: Validate version matches tag
+    - name: Validate Version Consistency
+      uses: ./.github/actions/setup-ruby
+      with:
+        ruby-version: ${{ env.RUBY_VERSION }}
+        install-system-deps: false
+
+    - name: Check Version Match
       run: |
-        FILE_VERSION=$(grep -o 'VERSION = "[^"]*"' lib/jekyll-theme-zer0/version.rb | sed 's/VERSION = "\(.*\)"/\1/')
+        FILE_VERSION=$(ruby -e "require './lib/jekyll-theme-zer0/version'; puts JekyllThemeZer0::VERSION")
         TAG_VERSION="${{ steps.version.outputs.version }}"
 
         if [ "$FILE_VERSION" != "$TAG_VERSION" ]; then
@@ -63,12 +69,15 @@ jobs:
         fi
         echo "✅ Version validation passed: $FILE_VERSION"
 
-    - name: Build gem for release
-      run: ./scripts/build.sh
+    - name: Prepare Release Assets
+      uses: ./.github/actions/prepare-release
+      with:
+        ruby-version: ${{ env.RUBY_VERSION }}
+        validate-assets: true
 
-    - name: Generate installation script
+    - name: Generate Installation Script
       run: |
-        cat > install.sh << 'EOF'
+        cat > build/install.sh << 'EOF'
         #!/bin/bash
         # Jekyll Theme Zer0 Installation Script
 

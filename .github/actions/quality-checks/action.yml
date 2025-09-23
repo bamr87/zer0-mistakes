@@ -1,0 +1,91 @@
+name: 'Quality Control Checks'
+description: 'Run comprehensive quality control checks including linting and formatting'
+inputs:
+  ruby-version:
+    description: 'Ruby version to use'
+    default: '3.2'
+    required: false
+  check-markdown:
+    description: 'Run markdown format checks'
+    default: 'true'
+    required: false
+  fix-formatting:
+    description: 'Automatically fix formatting issues'
+    default: 'false'
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Ruby Environment
+      uses: ./.github/actions/setup-ruby
+      with:
+        ruby-version: ${{ inputs.ruby-version }}
+    
+    - name: Run Quality Checks
+      shell: bash
+      run: |
+        chmod +x ./test/test_quality.sh
+        ./test/test_quality.sh
+        
+        echo "::notice::Quality checks completed"
+    
+    - name: Check Markdown Formatting
+      if: inputs.check-markdown == 'true'
+      shell: bash
+      run: |
+        chmod +x ./scripts/fix-markdown-format.sh
+        
+        if [[ "${{ inputs.fix-formatting }}" == "true" ]]; then
+          # Fix formatting issues automatically
+          ./scripts/fix-markdown-format.sh
+          echo "::notice::Markdown formatting issues fixed automatically"
+        else
+          # Check for formatting issues without fixing
+          ./scripts/fix-markdown-format.sh --dry-run
+          
+          # If there were issues in dry-run, fail the check
+          if [[ $? -ne 0 ]]; then
+            echo "::error::Markdown formatting issues found. Run with fix-formatting=true to auto-fix"
+            exit 1
+          fi
+          
+          echo "::notice::Markdown formatting is correct"
+        fi
+    
+    - name: Validate Project Structure
+      shell: bash
+      run: |
+        # Check for required files
+        REQUIRED_FILES=(
+          "README.md"
+          "CHANGELOG.md" 
+          "LICENSE"
+          "jekyll-theme-zer0.gemspec"
+          "Gemfile"
+        )
+        
+        for file in "${REQUIRED_FILES[@]}"; do
+          if [[ ! -f "$file" ]]; then
+            echo "::error::Required file missing: $file"
+            exit 1
+          fi
+        done
+        
+        # Check for required directories
+        REQUIRED_DIRS=(
+          "_layouts"
+          "_includes"
+          "assets"
+          "scripts"
+          "test"
+        )
+        
+        for dir in "${REQUIRED_DIRS[@]}"; do
+          if [[ ! -d "$dir" ]]; then
+            echo "::error::Required directory missing: $dir"
+            exit 1
+          fi
+        done
+        
+        echo "::notice::Project structure validation passed"

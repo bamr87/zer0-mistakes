@@ -1,0 +1,57 @@
+# Centralized Environment Configuration for GitHub Actions
+# This file defines standard environment variables and versions used across all workflows
+
+# Ruby Configuration
+ruby_version: '3.2'
+bundler_version: '2.7.2'
+
+# Node.js Configuration
+node_version: '18'
+
+# Supported Operating Systems
+supported_os:
+  - ubuntu-latest
+  - macos-latest
+  - windows-latest
+
+# Primary OS for most workflows
+primary_os: ubuntu-latest
+
+# Container Images
+containers:
+  ruby: ruby:3.2-alpine
+  node: node:18-alpine
+  alpine: alpine:latest
+
+# Workflow Settings
+workflow_defaults:
+  timeout_minutes: 30
+  max_parallel_jobs: 3
+  
+# Cache Settings
+cache:
+  ruby_cache_key: ruby-gems-${{ hashFiles('**/Gemfile.lock') }}
+  node_cache_key: node-modules-${{ hashFiles('**/package-lock.json') }}
+  bundler_cache: true
+  
+# Environment Variables
+env_vars:
+  BUNDLE_RETRY: 3
+  BUNDLE_PATH: vendor/bundle
+  BUNDLE_JOBS: 4
+  JEKYLL_ENV: production
+  
+# Security Settings
+security:
+  permissions:
+    contents: write
+    packages: write
+    pull-requests: write
+    
+# Script Paths
+scripts:
+  build: ./scripts/build.sh
+  test_runner: ./test/test_runner.sh
+  version: ./scripts/version.sh
+  release: ./scripts/release.sh
+  markdown_fix: ./scripts/fix-markdown-format.sh

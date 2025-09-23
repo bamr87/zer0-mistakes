@@ -5,7 +5,7 @@ inputs:
   ruby-version:
     description: 'Ruby version to use'
     required: false
-    default: '3.0'
+    default: '3.2'
   install-system-deps:
     description: 'Install system dependencies (jq)'
     required: false
