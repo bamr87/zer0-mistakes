@@ -1,0 +1,507 @@
+name: Deployment Verification
+
+on:
+  workflow_run:
+    workflows: ["Release Gem to RubyGems", "Create GitHub Release"]
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to verify (e.g., 0.2.0)'
+        required: true
+        type: string
+      check_type:
+        description: 'Type of verification check'
+        required: false
+        default: 'full'
+        type: choice
+        options:
+          - 'quick'      # Basic availability checks
+          - 'full'       # Comprehensive verification
+          - 'integration' # End-to-end integration tests
+
+env:
+  RUBY_VERSION: '3.2'
+  NODE_VERSION: '18'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # Determine verification strategy
+  strategy:
+    name: Verification Strategy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      version: ${{ steps.extract_version.outputs.version }}
+      check_type: ${{ steps.extract_version.outputs.check_type }}
+      should_verify_rubygems: ${{ steps.extract_version.outputs.should_verify_rubygems }}
+      should_verify_github: ${{ steps.extract_version.outputs.should_verify_github }}
+
+    steps:
+      - name: Extract Version and Strategy
+        id: extract_version
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_run" ]]; then
+            # Extract version from the completed workflow
+            WORKFLOW_NAME="${{ github.event.workflow_run.name }}"
+            
+            # Try to extract version from tag or branch name
+            if [[ "${{ github.event.workflow_run.head_branch }}" =~ v([0-9]+\.[0-9]+\.[0-9]+) ]]; then
+              VERSION="${BASH_REMATCH[1]}"
+            else
+              # Fallback to latest release
+              VERSION="latest"
+            fi
+            
+            CHECK_TYPE="full"
+            
+            echo "**Trigger:** Automated verification after $WORKFLOW_NAME" >> $GITHUB_STEP_SUMMARY
+          else
+            VERSION="${{ inputs.version }}"
+            CHECK_TYPE="${{ inputs.check_type }}"
+            
+            echo "**Trigger:** Manual verification" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Determine what to verify based on the triggering workflow
+          VERIFY_RUBYGEMS=true
+          VERIFY_GITHUB=true
+          
+          if [[ "${{ github.event_name }}" == "workflow_run" ]]; then
+            case "${{ github.event.workflow_run.name }}" in
+              "Release Gem to RubyGems")
+                VERIFY_RUBYGEMS=true
+                VERIFY_GITHUB=false
+                ;;
+              "Create GitHub Release")
+                VERIFY_RUBYGEMS=false
+                VERIFY_GITHUB=true
+                ;;
+            esac
+          fi
+          
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "check_type=$CHECK_TYPE" >> $GITHUB_OUTPUT
+          echo "should_verify_rubygems=$VERIFY_RUBYGEMS" >> $GITHUB_OUTPUT
+          echo "should_verify_github=$VERIFY_GITHUB" >> $GITHUB_OUTPUT
+          
+          echo "## 🔍 Verification Plan" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version:** $VERSION" >> $GITHUB_STEP_SUMMARY
+          echo "- **Check Type:** $CHECK_TYPE" >> $GITHUB_STEP_SUMMARY
+          echo "- **RubyGems:** $VERIFY_RUBYGEMS" >> $GITHUB_STEP_SUMMARY
+          echo "- **GitHub Release:** $VERIFY_GITHUB" >> $GITHUB_STEP_SUMMARY
+
+  # Verify RubyGems deployment
+  verify-rubygems:
+    name: Verify RubyGems Deployment
+    runs-on: ubuntu-latest
+    needs: strategy
+    if: needs.strategy.outputs.should_verify_rubygems == 'true'
+    timeout-minutes: 10
+    outputs:
+      gem_available: ${{ steps.check_gem.outputs.available }}
+      gem_installable: ${{ steps.install_test.outputs.success }}
+
+    steps:
+      - name: Setup Ruby Environment
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+
+      - name: Check Gem Availability on RubyGems
+        id: check_gem
+        run: |
+          VERSION="${{ needs.strategy.outputs.version }}"
+          
+          echo "## 💎 RubyGems Verification" >> $GITHUB_STEP_SUMMARY
+          
+          # Wait for gem to be available (with retry)
+          for i in {1..10}; do
+            echo "Attempt $i: Checking gem availability..."
+            
+            if [[ "$VERSION" == "latest" ]]; then
+              # Check if gem exists at all
+              if gem list --remote jekyll-theme-zer0 | grep -q "jekyll-theme-zer0"; then
+                LATEST_VERSION=$(gem list --remote jekyll-theme-zer0 | grep "jekyll-theme-zer0" | sed 's/.*(\([^)]*\)).*/\1/' | cut -d',' -f1)
+                echo "available=true" >> $GITHUB_OUTPUT
+                echo "✅ **Availability:** Gem found (latest: $LATEST_VERSION)" >> $GITHUB_STEP_SUMMARY
+                break
+              fi
+            else
+              # Check for specific version
+              if gem list --remote jekyll-theme-zer0 | grep -q "jekyll-theme-zer0 ($VERSION)"; then
+                echo "available=true" >> $GITHUB_OUTPUT
+                echo "✅ **Availability:** Version $VERSION found on RubyGems" >> $GITHUB_STEP_SUMMARY
+                break
+              fi
+            fi
+            
+            if [[ $i -eq 10 ]]; then
+              echo "available=false" >> $GITHUB_OUTPUT
+              echo "❌ **Availability:** Gem not found after 10 attempts" >> $GITHUB_STEP_SUMMARY
+              exit 1
+            fi
+            
+            echo "Gem not yet available, waiting 30 seconds..."
+            sleep 30
+          done
+
+      - name: Test Gem Installation
+        id: install_test
+        run: |
+          VERSION="${{ needs.strategy.outputs.version }}"
+          
+          echo "### Installation Test" >> $GITHUB_STEP_SUMMARY
+          
+          # Test installation
+          if [[ "$VERSION" == "latest" ]]; then
+            if gem install jekyll-theme-zer0 --no-document; then
+              echo "success=true" >> $GITHUB_OUTPUT
+              echo "✅ **Installation:** Gem installs successfully" >> $GITHUB_STEP_SUMMARY
+              
+              # Get installed version
+              INSTALLED_VERSION=$(gem list jekyll-theme-zer0 | grep "jekyll-theme-zer0" | sed 's/.*(\([^)]*\)).*/\1/')
+              echo "- **Installed Version:** $INSTALLED_VERSION" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "success=false" >> $GITHUB_OUTPUT
+              echo "❌ **Installation:** Failed to install gem" >> $GITHUB_STEP_SUMMARY
+              exit 1
+            fi
+          else
+            if gem install jekyll-theme-zer0 -v "$VERSION" --no-document; then
+              echo "success=true" >> $GITHUB_OUTPUT
+              echo "✅ **Installation:** Version $VERSION installs successfully" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "success=false" >> $GITHUB_OUTPUT
+              echo "❌ **Installation:** Failed to install version $VERSION" >> $GITHUB_STEP_SUMMARY
+              exit 1
+            fi
+          fi
+
+      - name: Test Theme Usage
+        if: needs.strategy.outputs.check_type != 'quick'
+        run: |
+          echo "### Theme Usage Test" >> $GITHUB_STEP_SUMMARY
+          
+          # Create a minimal test site
+          mkdir -p test-site
+          cd test-site
+          
+          # Create basic Jekyll site structure
+          cat > _config.yml << 'EOF'
+          theme: jekyll-theme-zer0
+          title: "Test Site"
+          description: "Testing jekyll-theme-zer0 installation"
+          EOF
+          
+          cat > index.md << 'EOF'
+          ---
+          layout: default
+          title: Home
+          ---
+          # Test Page
+          This is a test of the jekyll-theme-zer0 theme.
+          EOF
+          
+          # Test that the theme loads without errors
+          if bundle init && bundle add jekyll jekyll-theme-zer0; then
+            echo "✅ **Theme Setup:** Bundler configuration successful" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Theme Setup:** Bundler configuration failed" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+          
+          # Basic validation that theme files are accessible
+          if bundle exec jekyll build --verbose --trace; then
+            echo "✅ **Build Test:** Theme builds successfully" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Build Test:** Theme build failed" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+  # Verify GitHub Release deployment
+  verify-github:
+    name: Verify GitHub Release
+    runs-on: ubuntu-latest
+    needs: strategy
+    if: needs.strategy.outputs.should_verify_github == 'true'
+    timeout-minutes: 10
+    outputs:
+      release_found: ${{ steps.check_release.outputs.found }}
+      assets_valid: ${{ steps.check_assets.outputs.valid }}
+
+    steps:
+      - name: Check GitHub Release
+        id: check_release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const version = '${{ needs.strategy.outputs.version }}';
+            let tagName = version === 'latest' ? 'latest' : `v${version}`;
+            
+            try {
+              let release;
+              if (version === 'latest') {
+                release = await github.rest.repos.getLatestRelease({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo
+                });
+                tagName = release.data.tag_name;
+              } else {
+                release = await github.rest.repos.getReleaseByTag({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  tag: tagName
+                });
+              }
+              
+              core.setOutput('found', 'true');
+              core.setOutput('tag_name', tagName);
+              core.setOutput('release_id', release.data.id);
+              core.setOutput('assets_count', release.data.assets.length);
+              
+              core.summary.addHeading('📦 GitHub Release Verification', 2);
+              core.summary.addRaw(`✅ **Release Found:** ${tagName}\n`);
+              core.summary.addRaw(`- **Published:** ${release.data.published_at}\n`);
+              core.summary.addRaw(`- **Assets:** ${release.data.assets.length}\n`);
+              core.summary.addRaw(`- **Draft:** ${release.data.draft}\n`);
+              core.summary.addRaw(`- **Prerelease:** ${release.data.prerelease}\n`);
+              
+            } catch (error) {
+              core.setOutput('found', 'false');
+              core.summary.addHeading('📦 GitHub Release Verification', 2);
+              core.summary.addRaw(`❌ **Release Not Found:** ${tagName}\n`);
+              core.summary.addRaw(`Error: ${error.message}\n`);
+              core.setFailed(`GitHub release ${tagName} not found`);
+            }
+
+      - name: Verify Release Assets
+        id: check_assets
+        if: steps.check_release.outputs.found == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const releaseId = '${{ steps.check_release.outputs.release_id }}';
+            
+            try {
+              const assets = await github.rest.repos.listReleaseAssets({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: releaseId
+              });
+              
+              const assetNames = assets.data.map(asset => asset.name);
+              const expectedAssets = ['install.sh'];  // Basic expected assets
+              
+              let valid = true;
+              let missingAssets = [];
+              
+              // Check for gem file
+              const gemFile = assetNames.find(name => name.endsWith('.gem'));
+              if (!gemFile) {
+                valid = false;
+                missingAssets.push('*.gem file');
+              }
+              
+              // Check for other expected assets
+              for (const expected of expectedAssets) {
+                if (!assetNames.includes(expected)) {
+                  missingAssets.push(expected);
+                  valid = false;
+                }
+              }
+              
+              core.setOutput('valid', valid.toString());
+              
+              core.summary.addHeading('Release Assets', 3);
+              if (valid) {
+                core.summary.addRaw('✅ **Assets:** All expected assets present\n');
+                core.summary.addList(assetNames.map(name => `${name} (${assets.data.find(a => a.name === name).size} bytes)`));
+              } else {
+                core.summary.addRaw('❌ **Assets:** Missing expected assets\n');
+                core.summary.addRaw(`Missing: ${missingAssets.join(', ')}\n`);
+                core.summary.addRaw('Found:\n');
+                core.summary.addList(assetNames);
+              }
+              
+            } catch (error) {
+              core.setOutput('valid', 'false');
+              core.summary.addRaw(`❌ **Assets Check Failed:** ${error.message}\n`);
+            }
+
+      - name: Test Release Assets
+        if: |
+          needs.strategy.outputs.check_type != 'quick' &&
+          steps.check_release.outputs.found == 'true' &&
+          steps.check_assets.outputs.valid == 'true'
+        run: |
+          echo "### Asset Download Test" >> $GITHUB_STEP_SUMMARY
+          
+          # Test downloading the installation script
+          TAG_NAME="${{ steps.check_release.outputs.tag_name }}"
+          INSTALL_URL="https://github.com/${{ github.repository }}/releases/download/${TAG_NAME}/install.sh"
+          
+          if curl -fsSL "$INSTALL_URL" -o test-install.sh; then
+            echo "✅ **Download:** Installation script downloaded successfully" >> $GITHUB_STEP_SUMMARY
+            
+            # Check if it's a valid shell script
+            if head -1 test-install.sh | grep -q "#!/"; then
+              echo "✅ **Validation:** Installation script format is valid" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "❌ **Validation:** Installation script format is invalid" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "❌ **Download:** Failed to download installation script" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # Integration testing
+  integration-test:
+    name: Integration Testing
+    runs-on: ubuntu-latest
+    needs: [strategy, verify-rubygems, verify-github]
+    if: |
+      always() &&
+      needs.strategy.outputs.check_type == 'integration' &&
+      (needs.verify-rubygems.result == 'success' || needs.verify-rubygems.result == 'skipped') &&
+      (needs.verify-github.result == 'success' || needs.verify-github.result == 'skipped')
+    timeout-minutes: 15
+
+    steps:
+      - name: Setup Ruby Environment
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+
+      - name: End-to-End Integration Test
+        run: |
+          echo "## 🔗 End-to-End Integration Test" >> $GITHUB_STEP_SUMMARY
+          
+          # Create a new Jekyll site using the theme
+          mkdir integration-test
+          cd integration-test
+          
+          # Initialize new Jekyll site
+          if gem install bundler jekyll --no-document; then
+            echo "✅ **Setup:** Jekyll and Bundler installed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Setup:** Failed to install Jekyll/Bundler" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+          
+          # Create site with theme
+          bundle init
+          bundle add jekyll
+          bundle add jekyll-theme-zer0
+          
+          cat > _config.yml << 'EOF'
+          theme: jekyll-theme-zer0
+          title: "Integration Test Site"
+          description: "Testing jekyll-theme-zer0 end-to-end"
+          baseurl: ""
+          url: "http://localhost:4000"
+          EOF
+          
+          cat > index.md << 'EOF'
+          ---
+          layout: default
+          title: Home
+          ---
+          # Integration Test
+          
+          This is an end-to-end integration test of the jekyll-theme-zer0 theme.
+          
+          ## Features Being Tested
+          - Theme installation via RubyGems
+          - Jekyll build process
+          - Layout rendering
+          - Asset compilation
+          EOF
+          
+          mkdir -p _posts
+          cat > _posts/$(date +%Y-%m-%d)-test-post.md << 'EOF'
+          ---
+          layout: journals
+          title: "Test Post"
+          date: 2025-01-27
+          categories: test
+          ---
+          
+          This is a test post to verify the journals layout works correctly.
+          EOF
+          
+          # Build the site
+          if timeout 300 bundle exec jekyll build --verbose; then
+            echo "✅ **Build:** Site builds successfully with theme" >> $GITHUB_STEP_SUMMARY
+            
+            # Check that expected files were generated
+            if [[ -f "_site/index.html" ]]; then
+              echo "✅ **Output:** Generated index.html" >> $GITHUB_STEP_SUMMARY
+            fi
+            
+            if [[ -d "_site/assets" ]]; then
+              echo "✅ **Assets:** Theme assets compiled" >> $GITHUB_STEP_SUMMARY
+            fi
+            
+            # Count generated files
+            FILE_COUNT=$(find _site -type f | wc -l)
+            echo "- **Files Generated:** $FILE_COUNT" >> $GITHUB_STEP_SUMMARY
+            
+          else
+            echo "❌ **Build:** Site build failed" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+  # Final verification summary
+  summary:
+    name: Verification Summary
+    runs-on: ubuntu-latest
+    needs: [strategy, verify-rubygems, verify-github, integration-test]
+    if: always()
+    timeout-minutes: 5
+
+    steps:
+      - name: Generate Verification Summary
+        run: |
+          echo "## 🔍 Deployment Verification Summary" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ needs.strategy.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Check Type:** ${{ needs.strategy.outputs.check_type }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Repository:** ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "| Component | Status | Details |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|---------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 📋 Strategy | ${{ needs.strategy.result }} | Verification planning |" >> $GITHUB_STEP_SUMMARY
+          echo "| 💎 RubyGems | ${{ needs.verify-rubygems.result || 'skipped' }} | Gem availability & installation |" >> $GITHUB_STEP_SUMMARY
+          echo "| 📦 GitHub Release | ${{ needs.verify-github.result || 'skipped' }} | Release & assets verification |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔗 Integration | ${{ needs.integration-test.result || 'skipped' }} | End-to-end testing |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Determine overall status
+          FAILED_COMPONENTS=()
+          
+          [[ "${{ needs.strategy.result }}" != "success" ]] && FAILED_COMPONENTS+=("Strategy")
+          [[ "${{ needs.verify-rubygems.result }}" == "failure" ]] && FAILED_COMPONENTS+=("RubyGems")
+          [[ "${{ needs.verify-github.result }}" == "failure" ]] && FAILED_COMPONENTS+=("GitHub Release")
+          [[ "${{ needs.integration-test.result }}" == "failure" ]] && FAILED_COMPONENTS+=("Integration")
+
+          if [[ ${#FAILED_COMPONENTS[@]} -eq 0 ]]; then
+            echo "## ✅ **Deployment Verification: SUCCESS**" >> $GITHUB_STEP_SUMMARY
+            echo "All deployment verification checks passed!" >> $GITHUB_STEP_SUMMARY
+            
+            # Add deployment status details
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 🚀 Deployment Status" >> $GITHUB_STEP_SUMMARY
+            [[ "${{ needs.verify-rubygems.outputs.gem_available }}" == "true" ]] && echo "- ✅ RubyGems: Available and installable" >> $GITHUB_STEP_SUMMARY
+            [[ "${{ needs.verify-github.outputs.release_found }}" == "true" ]] && echo "- ✅ GitHub: Release published with assets" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## ❌ **Deployment Verification: FAILED**" >> $GITHUB_STEP_SUMMARY
+            echo "Some verification checks failed:" >> $GITHUB_STEP_SUMMARY
+            for component in "${FAILED_COMPONENTS[@]}"; do
+              echo "- ❌ $component" >> $GITHUB_STEP_SUMMARY
+            done
+            exit 1
+          fi

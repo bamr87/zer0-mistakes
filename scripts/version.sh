@@ -125,12 +125,76 @@ fi
 # Clean up test gem file
 rm -f jekyll-theme-zer0-*.gem
 
-# Update CHANGELOG if it exists
+# Update CHANGELOG with enhanced content
 if [[ -f "CHANGELOG.md" ]]; then
     log "Updating CHANGELOG.md..."
     DATE=$(date +"%Y-%m-%d")
-    sed -i.bak "1s/^/## [$NEW_VERSION] - $DATE\n\n### Changed\n- Version bump to $NEW_VERSION\n\n/" CHANGELOG.md
+    
+    # Generate changelog entry based on git commits since last tag
+    LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+    CHANGELOG_CONTENT=""
+    
+    if [[ -n "$LAST_TAG" ]]; then
+        log "Generating changelog from commits since $LAST_TAG..."
+        
+        # Get commits since last tag and categorize them
+        FEAT_COMMITS=$(git log "$LAST_TAG"..HEAD --oneline --grep="feat:" --grep="feature:" | head -10)
+        FIX_COMMITS=$(git log "$LAST_TAG"..HEAD --oneline --grep="fix:" --grep="bugfix:" | head -10)
+        CHORE_COMMITS=$(git log "$LAST_TAG"..HEAD --oneline --grep="chore:" --grep="docs:" | head -5)
+        BREAKING_COMMITS=$(git log "$LAST_TAG"..HEAD --oneline --grep="BREAKING" --grep="breaking:" | head -5)
+        
+        # Build changelog content
+        if [[ -n "$BREAKING_COMMITS" ]]; then
+            CHANGELOG_CONTENT+="\n### ⚠️ BREAKING CHANGES\n"
+            while IFS= read -r line; do
+                [[ -n "$line" ]] && CHANGELOG_CONTENT+="- ${line#* }\n"
+            done <<< "$BREAKING_COMMITS"
+        fi
+        
+        if [[ -n "$FEAT_COMMITS" ]]; then
+            CHANGELOG_CONTENT+="\n### ✨ Features\n"
+            while IFS= read -r line; do
+                [[ -n "$line" ]] && CHANGELOG_CONTENT+="- ${line#* }\n"
+            done <<< "$FEAT_COMMITS"
+        fi
+        
+        if [[ -n "$FIX_COMMITS" ]]; then
+            CHANGELOG_CONTENT+="\n### 🐛 Bug Fixes\n"
+            while IFS= read -r line; do
+                [[ -n "$line" ]] && CHANGELOG_CONTENT+="- ${line#* }\n"
+            done <<< "$FIX_COMMITS"
+        fi
+        
+        if [[ -n "$CHORE_COMMITS" ]]; then
+            CHANGELOG_CONTENT+="\n### 🔧 Maintenance\n"
+            while IFS= read -r line; do
+                [[ -n "$line" ]] && CHANGELOG_CONTENT+="- ${line#* }\n"
+            done <<< "$CHORE_COMMITS"
+        fi
+    fi
+    
+    # If no categorized commits found, add a generic entry
+    if [[ -z "$CHANGELOG_CONTENT" ]]; then
+        CHANGELOG_CONTENT="\n### Changed\n- Version bump to $NEW_VERSION\n"
+    fi
+    
+    # Create the full changelog entry
+    FULL_ENTRY="## [$NEW_VERSION] - $DATE$CHANGELOG_CONTENT\n"
+    
+    # Insert at the top of CHANGELOG.md (after any header)
+    if head -1 CHANGELOG.md | grep -q "^#"; then
+        # Has header, insert after first line
+        sed -i.bak "2i\\
+$FULL_ENTRY" CHANGELOG.md
+    else
+        # No header, insert at beginning
+        sed -i.bak "1i\\
+$FULL_ENTRY" CHANGELOG.md
+    fi
+    
     rm CHANGELOG.md.bak 2>/dev/null || true
+    
+    log "Changelog updated with $(echo -e "$CHANGELOG_CONTENT" | grep -c "^-") entries"
 fi
 
 # Git operations
