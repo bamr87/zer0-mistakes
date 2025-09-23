@@ -54,7 +54,11 @@ jobs:
         run: ruby -c lib/jekyll-theme-zer0/version.rb
 
       - name: Validate Gemspec
-        run: gem specification jekyll-theme-zer0.gemspec > /dev/null
+        run: |
+          ruby -e "
+            spec = Gem::Specification.load('jekyll-theme-zer0.gemspec')
+            puts '✅ Gemspec valid: #{spec.name} v#{spec.version}'
+          "
 
   # Quality control checks
   quality-checks:
