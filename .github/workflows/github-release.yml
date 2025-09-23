@@ -22,7 +22,7 @@ on:
         type: boolean
 
 env:
-  RUBY_VERSION: '3.0'
+  RUBY_VERSION: '3.2'
 
 jobs:
   release:
