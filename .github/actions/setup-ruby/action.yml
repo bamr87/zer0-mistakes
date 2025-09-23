@@ -1,0 +1,36 @@
+name: 'Setup Ruby Environment'
+description: 'Sets up Ruby with bundler caching and common dependencies'
+
+inputs:
+  ruby-version:
+    description: 'Ruby version to use'
+    required: false
+    default: '3.0'
+  install-system-deps:
+    description: 'Install system dependencies (jq)'
+    required: false
+    default: 'true'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Ruby ${{ inputs.ruby-version }}
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ inputs.ruby-version }}
+        bundler-cache: true
+
+    - name: Install system dependencies
+      if: inputs.install-system-deps == 'true'
+      shell: bash
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -y jq
+
+    - name: Install Ruby dependencies
+      shell: bash
+      run: bundle install --jobs 4 --retry 3
+
+    - name: Make scripts executable
+      shell: bash
+      run: chmod +x scripts/*.sh test/*.sh 2>/dev/null || true

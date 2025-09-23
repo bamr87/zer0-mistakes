@@ -1,26 +1,13 @@
 name: Create GitHub Release
 
 on:
+  push:
+    tags:
+      - 'v*'
   workflow_dispatch:
     inputs:
       tag:
         description: 'Tag to create release for (e.g., v0.2.0)'
-        required: true
-        type: string
-      draft:
-        description: 'Create as draft release'
-        required: false
-        default: false
-        type: boolean
-      prerelease:
-        description: 'Mark as prerelease'
-        required: false
-        default: false
-        type: boolean
-  workflow_call:
-    inputs:
-      tag:
-        description: 'Tag to create release for'
         required: true
         type: string
       draft:
@@ -38,139 +25,57 @@ env:
   RUBY_VERSION: '3.0'
 
 jobs:
-  create-release:
+  release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        ref: ${{ inputs.tag }}
-    
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
+        fetch-depth: 0
+
+    - name: Setup Ruby environment
+      uses: ./.github/actions/setup-ruby
       with:
         ruby-version: ${{ env.RUBY_VERSION }}
-        bundler-cache: true
-    
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y jq
-    
-    - name: Make scripts executable
-      run: |
-        if [ -d "scripts" ] && [ -n "$(ls -A scripts/*.sh 2>/dev/null)" ]; then
-          chmod +x scripts/*.sh
-          echo "✅ Made scripts executable"
-        else
-          echo "⚠️ No scripts directory or no shell scripts found"
-        fi
-    
+        install-system-deps: true
+
     - name: Get version from tag
       id: version
       run: |
-        TAG="${{ inputs.tag }}"
+        TAG="${{ inputs.tag || github.ref_name }}"
         VERSION="${TAG#v}"  # Remove 'v' prefix
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "tag=$TAG" >> $GITHUB_OUTPUT
         echo "gem-file=jekyll-theme-zer0-$VERSION.gem" >> $GITHUB_OUTPUT
-        echo "Version: $VERSION, Tag: $TAG"
-    
+
     - name: Validate version matches tag
       run: |
         FILE_VERSION=$(grep -o 'VERSION = "[^"]*"' lib/jekyll-theme-zer0/version.rb | sed 's/VERSION = "\(.*\)"/\1/')
         TAG_VERSION="${{ steps.version.outputs.version }}"
-        
+
         if [ "$FILE_VERSION" != "$TAG_VERSION" ]; then
           echo "❌ Version mismatch:"
           echo "   File version: $FILE_VERSION"
           echo "   Tag version:  $TAG_VERSION"
           exit 1
         fi
-        
         echo "✅ Version validation passed: $FILE_VERSION"
-    
-    - name: Build gem
+
+    - name: Build gem for release
+      run: ./scripts/build.sh
+
+    - name: Generate installation script
       run: |
-        echo "Building gem for release..."
-        if [ -f "./scripts/build.sh" ]; then
-          ./scripts/build.sh
-        else
-          echo "⚠️ No build script found, attempting direct gem build..."
-          gem build jekyll-theme-zer0.gemspec
-        fi
-        
-        # Verify gem was created
-        if [ ! -f "${{ steps.version.outputs.gem-file }}" ]; then
-          echo "❌ Gem file not found: ${{ steps.version.outputs.gem-file }}"
-          exit 1
-        fi
-        echo "✅ Gem built successfully: ${{ steps.version.outputs.gem-file }}"
-    
-    - name: Extract Release Notes from Changelog
-      id: extract_release_notes
-      run: |
-        VERSION="${{ steps.version.outputs.version }}"
-        
-        # Extract release notes from CHANGELOG.md for this version
-        if [ -f "CHANGELOG.md" ]; then
-          echo "Extracting release notes for version $VERSION from CHANGELOG.md"
-          
-          # Find the section for this version and extract content until next version or end
-          RELEASE_NOTES=$(awk -v version="$VERSION" '
-            /^## \[/ {
-              if (found) exit
-              if ($0 ~ "\\[" version "\\]") found=1
-              next
-            }
-            found && /^## \[/ { exit }
-            found && !/^## \[/ { print }
-          ' CHANGELOG.md | sed '/^$/d')
-          
-          if [ -n "$RELEASE_NOTES" ]; then
-            echo "✅ Found release notes for version $VERSION"
-          else
-            RELEASE_NOTES="### Changed
-        - Released version $VERSION"
-            echo "⚠️ No specific release notes found, using default"
-          fi
-        else
-          RELEASE_NOTES="### Changed
-        - Released version $VERSION"
-          echo "⚠️ No CHANGELOG.md found, using default release notes"
-        fi
-        
-        # Save release notes to file and environment
-        echo "$RELEASE_NOTES" > release_notes.md
-        echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
-        echo "$RELEASE_NOTES" >> $GITHUB_ENV
-        echo "EOF" >> $GITHUB_ENV
-    
-    - name: Generate additional release assets
-      run: |
-        # Create a version info file
-        cat > version_info.json << EOF
-        {
-          "version": "${{ steps.version.outputs.version }}",
-          "tag": "${{ steps.version.outputs.tag }}",
-          "build_date": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
-          "commit_sha": "${{ github.sha }}",
-          "ruby_version": "${{ env.RUBY_VERSION }}",
-          "gem_file": "${{ steps.version.outputs.gem-file }}"
-        }
-        EOF
-        
-        # Create installation script
         cat > install.sh << 'EOF'
         #!/bin/bash
         # Jekyll Theme Zer0 Installation Script
-        
+
         VERSION="${{ steps.version.outputs.version }}"
-        
+
         echo "🚀 Installing Jekyll Theme Zer0 v$VERSION"
-        
+
         if command -v bundle >/dev/null 2>&1; then
           echo "📦 Adding to Gemfile..."
           if [ ! -f Gemfile ]; then
@@ -183,15 +88,14 @@ jobs:
           echo "💎 Installing via gem..."
           gem install jekyll-theme-zer0 -v $VERSION
         fi
-        
+
         echo "✅ Jekyll Theme Zer0 v$VERSION installed successfully!"
         echo "📖 Documentation: https://github.com/bamr87/zer0-mistakes#readme"
         EOF
-        
+
         chmod +x install.sh
-    
-    - name: Create Comprehensive GitHub Release
-      id: create_release
+
+    - name: Create GitHub Release
       uses: softprops/action-gh-release@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -200,54 +104,36 @@ jobs:
         name: "🚀 Jekyll Theme Zer0 v${{ steps.version.outputs.version }}"
         body: |
           # 🎉 Jekyll Theme Zer0 v${{ steps.version.outputs.version }}
-          
+
           A Bootstrap Jekyll theme for headless GitHub Pages CMS with Docker-first development approach.
-          
-          ## 📋 What's Changed
-          
-          ${{ env.RELEASE_NOTES }}
-          
-          ## 📦 Quick Installation
-          
+
+          ## 📦 Installation
+
           ### One-liner Installation
           ```bash
           curl -fsSL https://github.com/bamr87/zer0-mistakes/releases/download/${{ steps.version.outputs.tag }}/install.sh | bash
           ```
-          
+
           ### Via Bundler (Recommended)
           Add this line to your Jekyll site's `Gemfile`:
-          
           ```ruby
           gem "jekyll-theme-zer0", "~> ${{ steps.version.outputs.version }}"
           ```
-          
-          And then execute:
-          ```bash
-          bundle install
-          ```
-          
+
           ### Via RubyGems
           ```bash
           gem install jekyll-theme-zer0 -v ${{ steps.version.outputs.version }}
           ```
-          
+
           ## 🔗 Links
-          
-          - **RubyGems**: https://rubygems.org/gems/jekyll-theme-zer0/versions/${{ steps.version.outputs.version }}
+
+          - **RubyGems**: https://rubygems.org/gems/jekyll-theme-zer0
           - **Documentation**: https://github.com/bamr87/zer0-mistakes#readme
           - **Live Demo**: https://bamr87.github.io/zer0-mistakes/
           - **Issues**: https://github.com/bamr87/zer0-mistakes/issues
-          - **Discussions**: https://github.com/bamr87/zer0-mistakes/discussions
-          
-          ## 📊 Release Assets
-          
-          - `${{ steps.version.outputs.gem-file }}` - The Ruby gem package
-          - `install.sh` - One-click installation script
-          - `release_notes.md` - Detailed release notes
-          - `version_info.json` - Version and build information
-          
+
           ## 🛠️ For Developers
-          
+
           ### Theme Configuration
           In your `_config.yml`:
           ```yaml
@@ -255,50 +141,32 @@ jobs:
           # or for GitHub Pages:
           # remote_theme: bamr87/zer0-mistakes
           ```
-          
+
           ### Docker Development
           ```bash
           git clone https://github.com/bamr87/zer0-mistakes.git
           cd zer0-mistakes
           docker-compose up
           ```
-          
-          ### Contributing
-          We welcome contributions! Please see our [Contributing Guide](https://github.com/bamr87/zer0-mistakes/blob/main/CONTRIBUTING.md) for details.
-          
-          ---
-          
-          **Full Changelog**: https://github.com/bamr87/zer0-mistakes/compare/${{ steps.version.outputs.tag }}...HEAD
-          
-          Built with ❤️ by the Jekyll Theme Zer0 team
         files: |
           ${{ steps.version.outputs.gem-file }}
-          release_notes.md
-          version_info.json
           install.sh
-        draft: ${{ inputs.draft }}
+        draft: ${{ inputs.draft || false }}
         prerelease: ${{ inputs.prerelease || contains(steps.version.outputs.version, 'rc') || contains(steps.version.outputs.version, 'beta') || contains(steps.version.outputs.version, 'alpha') }}
         make_latest: ${{ !inputs.prerelease && !contains(steps.version.outputs.version, 'rc') && !contains(steps.version.outputs.version, 'beta') && !contains(steps.version.outputs.version, 'alpha') }}
         generate_release_notes: true
-    
+
     - name: Release Summary
       run: |
         echo "## 🎉 GitHub Release Created Successfully!" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "- **Version**: ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Tag**: ${{ steps.version.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Release URL**: ${{ steps.create_release.outputs.url }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Draft**: ${{ inputs.draft }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Prerelease**: ${{ inputs.prerelease }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Draft**: ${{ inputs.draft || false }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Prerelease**: ${{ inputs.prerelease || contains(steps.version.outputs.version, 'rc') || contains(steps.version.outputs.version, 'beta') || contains(steps.version.outputs.version, 'alpha') }}" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "### 📦 Assets Included:" >> $GITHUB_STEP_SUMMARY
         echo "- Ruby gem package" >> $GITHUB_STEP_SUMMARY
         echo "- Installation script" >> $GITHUB_STEP_SUMMARY
-        echo "- Release notes" >> $GITHUB_STEP_SUMMARY
-        echo "- Version information" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### 🔗 Quick Links:" >> $GITHUB_STEP_SUMMARY
-        echo "- [View Release](${{ steps.create_release.outputs.url }})" >> $GITHUB_STEP_SUMMARY
-        echo "- [RubyGems Page](https://rubygems.org/gems/jekyll-theme-zer0)" >> $GITHUB_STEP_SUMMARY
-        echo "- [Documentation](https://github.com/bamr87/zer0-mistakes#readme)" >> $GITHUB_STEP_SUMMARY
-
+        fi
+        
