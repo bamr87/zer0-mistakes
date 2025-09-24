@@ -551,6 +551,115 @@ test_javascript_syntax() {
     return 0
 }
 
+# HTMLProofer validation test
+test_htmlproofer_validation() {
+    log_info "Running HTMLProofer validation on built site..."
+    
+    cd "$PROJECT_ROOT"
+    
+    # Check if HTMLProofer is available
+    if ! bundle exec ruby -e "require 'html-proofer'" &>/dev/null; then
+        log_warning "HTMLProofer not available - run 'bundle install' to enable HTML validation"
+        return 0  # Don't fail the test if HTMLProofer isn't installed
+    fi
+    
+    # Build the site first if it doesn't exist
+    if [[ ! -d "_site" ]]; then
+        log_info "Building site for HTMLProofer validation..."
+        if ! bundle exec jekyll build --config _config_dev.yml &>/dev/null; then
+            log_error "Jekyll build failed - cannot run HTMLProofer"
+            return 1
+        fi
+    fi
+    
+    # Define HTMLProofer options for core testing
+    local htmlproofer_opts=(
+        "--check-html"
+        "--check-img-http"
+        "--check-opengraph"
+        "--disable-external"
+        "--allow-hash-href"
+        "--empty-alt-ignore"
+        "--assume-extension"
+        "--swap-urls=/zer0-mistakes/:/"
+    )
+    
+    # Add environment-specific options
+    if [[ "${HTMLPROOFER_EXTERNAL:-false}" == "true" ]]; then
+        htmlproofer_opts=("${htmlproofer_opts[@]/--disable-external}")
+    fi
+    
+    if [[ "${HTMLPROOFER_CHECK_IMAGES:-true}" == "false" ]]; then
+        htmlproofer_opts=("${htmlproofer_opts[@]/--check-img-http}")
+    fi
+    
+    # Run HTMLProofer with timeout
+    log_info "Running HTMLProofer with options: ${htmlproofer_opts[*]}"
+    
+    if timeout 120 bundle exec htmlproofer _site "${htmlproofer_opts[@]}" 2>&1; then
+        log_success "HTMLProofer validation passed"
+        return 0
+    else
+        local exit_code=$?
+        if [[ $exit_code -eq 124 ]]; then
+            log_error "HTMLProofer validation timed out after 120 seconds"
+        else
+            log_error "HTMLProofer validation failed with exit code: $exit_code"
+        fi
+        return 1
+    fi
+}
+
+# Advanced HTMLProofer test (production-ready)
+test_htmlproofer_production() {
+    log_info "Running production-level HTMLProofer validation..."
+    
+    cd "$PROJECT_ROOT"
+    
+    # Check if HTMLProofer is available
+    if ! bundle exec ruby -e "require 'html-proofer'" &>/dev/null; then
+        log_warning "HTMLProofer not available - skipping production validation"
+        return 0
+    fi
+    
+    # Build for production
+    log_info "Building site for production validation..."
+    if ! bundle exec jekyll build --config _config.yml &>/dev/null; then
+        log_error "Production Jekyll build failed"
+        return 1
+    fi
+    
+    # Production HTMLProofer options (more strict)
+    local prod_opts=(
+        "--check-html"
+        "--check-img-http" 
+        "--check-opengraph"
+        "--enforce-https"
+        "--swap-urls=/zer0-mistakes/:/"
+        "--http-status-ignore=999"  # LinkedIn blocks automated requests
+        "--typhoeus-config={\"connecttimeout\":30,\"timeout\":30}"
+    )
+    
+    # Only check external links if explicitly enabled
+    if [[ "${HTMLPROOFER_EXTERNAL:-false}" != "true" ]]; then
+        prod_opts+=("--disable-external")
+    fi
+    
+    # Run production HTMLProofer with extended timeout
+    if timeout 300 bundle exec htmlproofer _site "${prod_opts[@]}" 2>&1; then
+        log_success "Production HTMLProofer validation passed"
+        return 0
+    else
+        local exit_code=$?
+        if [[ $exit_code -eq 124 ]]; then
+            log_error "Production HTMLProofer validation timed out after 300 seconds"
+        else
+            log_error "Production HTMLProofer validation failed with exit code: $exit_code"
+        fi
+        return 1
+    fi
+}
+
 #
 # MAIN TEST EXECUTION
 #
@@ -580,6 +689,19 @@ run_core_tests() {
     run_test "Liquid Template Validation" "test_liquid_templates" "validation"
     run_test "Sass Compilation" "test_sass_compilation" "validation"
     run_test "JavaScript Syntax" "test_javascript_syntax" "validation"
+    
+    # HTML/Site Quality Tests (conditionally run based on availability)
+    if [[ "${SKIP_HTMLPROOFER:-false}" != "true" ]]; then
+        log_info "=== HTML QUALITY TESTS ==="
+        run_test "HTMLProofer Basic Validation" "test_htmlproofer_validation" "quality"
+        
+        # Only run production test if explicitly requested
+        if [[ "${RUN_PRODUCTION_TESTS:-false}" == "true" ]]; then
+            run_test "HTMLProofer Production Validation" "test_htmlproofer_production" "quality"
+        fi
+    else
+        log_warning "Skipping HTMLProofer tests (SKIP_HTMLPROOFER=true)"
+    fi
 }
 
 # Generate test report

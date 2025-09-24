@@ -1,0 +1,189 @@
+name: Jekyll Build and Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      test_level:
+        description: 'Test level to run'
+        required: false
+        default: 'standard'
+        type: choice
+        options:
+        - 'quick'
+        - 'standard'
+        - 'comprehensive'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        ruby-version: ['3.0', '3.1', '3.2']
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Ruby ${{ matrix.ruby-version }}
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+        bundler-cache: true
+        
+    - name: Install dependencies
+      run: |
+        bundle install
+        
+    - name: Run Jekyll build
+      run: |
+        bundle exec jekyll build --config _config_dev.yml
+        
+    - name: Run HTMLProofer tests (Quick)
+      if: github.event.inputs.test_level == 'quick' || (github.event.inputs.test_level == '' && github.event_name == 'pull_request')
+      run: |
+        bundle exec rake test_quick
+      env:
+        SKIP_EXTERNAL: true
+        
+    - name: Run HTMLProofer tests (Standard)
+      if: github.event.inputs.test_level == 'standard' || (github.event.inputs.test_level == '' && github.event_name == 'push')
+      run: |
+        bundle exec rake test_internal
+      env:
+        SKIP_EXTERNAL: true
+        HTMLPROOFER_CHECK_IMAGES: true
+        
+    - name: Run comprehensive tests
+      if: github.event.inputs.test_level == 'comprehensive'
+      run: |
+        bundle exec rake test_full
+      env:
+        HTMLPROOFER_EXTERNAL: true
+        HTMLPROOFER_CHECK_IMAGES: true
+        HTMLPROOFER_ENFORCE_HTTPS: false  # GitHub Pages might not enforce HTTPS in testing
+        
+    - name: Run core test suite
+      run: |
+        ./test/test_runner.sh --suites core --format json
+      env:
+        SKIP_HTMLPROOFER: false
+        RUN_PRODUCTION_TESTS: false
+        
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-ruby-${{ matrix.ruby-version }}
+        path: |
+          test/results/
+          test/reports/
+          _site/
+        retention-days: 7
+        
+    - name: Comment test results on PR
+      if: github.event_name == 'pull_request' && always()
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          
+          // Read test results if available
+          const resultsPath = 'test/results/core_test_report.json';
+          let testSummary = 'Test results not available';
+          
+          try {
+            if (fs.existsSync(resultsPath)) {
+              const results = JSON.parse(fs.readFileSync(resultsPath, 'utf8'));
+              testSummary = `
+              ## Test Results for Ruby ${{ matrix.ruby-version }}
+              
+              - **Total Tests**: ${results.summary.total}
+              - **Passed**: ${results.summary.passed} ✅
+              - **Failed**: ${results.summary.failed} ❌
+              - **Skipped**: ${results.summary.skipped} ⚠️
+              - **Success Rate**: ${results.summary.success_rate}%
+              
+              ${results.summary.failed > 0 ? '❌ Some tests failed. Please check the logs.' : '✅ All tests passed!'}
+              `;
+            }
+          } catch (error) {
+            testSummary = `Error reading test results: ${error.message}`;
+          }
+          
+          // Only comment on first Ruby version to avoid spam
+          if ('${{ matrix.ruby-version }}' === '3.2') {
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: testSummary
+            });
+          }
+
+  lighthouse:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.2'
+        bundler-cache: true
+        
+    - name: Build site
+      run: |
+        bundle install
+        bundle exec jekyll build --config _config.yml
+        
+    - name: Serve site
+      run: |
+        bundle exec jekyll serve --detach --port 4000 &
+        sleep 10  # Wait for server to start
+        
+    - name: Run Lighthouse audit
+      uses: treosh/lighthouse-ci-action@v11
+      with:
+        configPath: '.github/lighthouse/lighthouserc.json'
+        uploadArtifacts: true
+        temporaryPublicStorage: true
+        
+    - name: Upload Lighthouse results
+      uses: actions/upload-artifact@v4
+      with:
+        name: lighthouse-results
+        path: .lighthouseci/
+        retention-days: 7
+
+  security-scan:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push'
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        
+    - name: Upload Trivy scan results
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
