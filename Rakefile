@@ -17,18 +17,12 @@ CONFIG_DEV_FILE = '_config_dev.yml'
 
 # HTMLProofer options - can be customized in _config.yml
 HTMLPROOFER_OPTIONS = {
-  check_html: true,
-  check_img_http: true,
-  check_opengraph: true,
+  checks: ['Links', 'Images', 'Scripts', 'OpenGraph'],
   disable_external: true,
   allow_hash_href: true,
-  empty_alt_ignore: true,
-  assume_extension: true,
-  enforce_https: false,
-  swap_urls: {
-    %r{^/zer0-mistakes/} => '/',
-    %r{^https://bamr87\.github\.io/zer0-mistakes/} => '/'
-  }
+  ignore_empty_alt: true,
+  assume_extension: '.html',
+  enforce_https: false
 }.freeze
 
 desc "Build the Jekyll site"
@@ -57,7 +51,7 @@ if HTMLPROOFER_AVAILABLE
     
     # Allow customization via environment variables
     options[:disable_external] = ENV['HTMLPROOFER_EXTERNAL'] != 'true'
-    options[:check_img_http] = ENV['HTMLPROOFER_CHECK_IMAGES'] != 'false'
+    options[:checks] = ENV['HTMLPROOFER_CHECK_IMAGES'] == 'false' ? ['Links', 'Scripts'] : ['Links', 'Images', 'Scripts']
     options[:enforce_https] = ENV['HTMLPROOFER_ENFORCE_HTTPS'] == 'true'
     
     begin
@@ -75,6 +69,7 @@ if HTMLPROOFER_AVAILABLE
     options = HTMLPROOFER_OPTIONS.dup
     options[:disable_external] = false  # Enable external link checking for production
     options[:enforce_https] = true
+    options[:checks] = ['Links', 'Images', 'Scripts', 'OpenGraph']
     
     begin
       HTMLProofer.check_directory(SITE_DIR, options).run
@@ -89,6 +84,7 @@ if HTMLPROOFER_AVAILABLE
   task :test_external_links => [:build] do
     puts "Testing external links with HTMLProofer..."
     options = {
+      checks: ['Links'],
       external_only: true,
       http_status_ignore: [999],  # LinkedIn blocks automated requests
       typhoeus: {
@@ -111,7 +107,7 @@ if HTMLPROOFER_AVAILABLE
     puts "Testing internal structure with HTMLProofer..."
     options = HTMLPROOFER_OPTIONS.dup
     options[:disable_external] = true
-    options[:check_img_http] = false
+    options[:checks] = ['Links', 'Scripts']  # Skip images for faster testing
     
     begin
       HTMLProofer.check_directory(SITE_DIR, options).run

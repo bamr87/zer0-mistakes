@@ -574,23 +574,20 @@ test_htmlproofer_validation() {
     
     # Define HTMLProofer options for core testing
     local htmlproofer_opts=(
-        "--check-html"
-        "--check-img-http"
-        "--check-opengraph"
-        "--disable-external"
-        "--allow-hash-href"
-        "--empty-alt-ignore"
-        "--assume-extension"
-        "--swap-urls=/zer0-mistakes/:/"
+        "--checks=Links,Images,Scripts"
+        "--disable-external=true"
+        "--allow-hash-href=true"
+        "--ignore-empty-alt=true"
+        "--assume-extension=.html"
     )
     
     # Add environment-specific options
     if [[ "${HTMLPROOFER_EXTERNAL:-false}" == "true" ]]; then
-        htmlproofer_opts=("${htmlproofer_opts[@]/--disable-external}")
+        htmlproofer_opts=("${htmlproofer_opts[@]/--disable-external=true/--disable-external=false}")
     fi
     
     if [[ "${HTMLPROOFER_CHECK_IMAGES:-true}" == "false" ]]; then
-        htmlproofer_opts=("${htmlproofer_opts[@]/--check-img-http}")
+        htmlproofer_opts=("${htmlproofer_opts[@]/--checks=Links,Images,Scripts/--checks=Links,Scripts}")
     fi
     
     # Run HTMLProofer with timeout
@@ -631,18 +628,14 @@ test_htmlproofer_production() {
     
     # Production HTMLProofer options (more strict)
     local prod_opts=(
-        "--check-html"
-        "--check-img-http" 
-        "--check-opengraph"
-        "--enforce-https"
-        "--swap-urls=/zer0-mistakes/:/"
+        "--checks=Links,Images,Scripts,OpenGraph"
+        "--enforce-https=true"
         "--http-status-ignore=999"  # LinkedIn blocks automated requests
-        "--typhoeus-config={\"connecttimeout\":30,\"timeout\":30}"
     )
     
     # Only check external links if explicitly enabled
     if [[ "${HTMLPROOFER_EXTERNAL:-false}" != "true" ]]; then
-        prod_opts+=("--disable-external")
+        prod_opts+=("--disable-external=true")
     fi
     
     # Run production HTMLProofer with extended timeout

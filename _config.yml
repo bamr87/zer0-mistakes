@@ -459,22 +459,15 @@ sitemap_exclude: ["secret.html", "private"]
 # Configuration for automated HTML testing with HTMLProofer
 # These settings can be overridden by environment variables
 htmlproofer:
-  # Basic validation options
-  check_html: true                  # Validate HTML structure
-  check_img_http: true             # Check image sources
-  check_opengraph: true            # Validate Open Graph meta tags
+  # Basic validation options (HTMLProofer 4.x syntax)
+  checks: ['Links', 'Images', 'Scripts', 'OpenGraph']  # Types of validation to run
   disable_external: true           # Disable external link checking (faster for development)
   
   # Advanced options
   allow_hash_href: true            # Allow href="#" links
-  empty_alt_ignore: true           # Allow empty alt attributes
-  assume_extension: true           # Assume .html extension for extensionless URLs
+  ignore_empty_alt: true           # Allow empty alt attributes
+  assume_extension: '.html'        # Assume .html extension for extensionless URLs
   enforce_https: false             # Don't enforce HTTPS (can be enabled for production)
-  
-  # URL transformations (useful for GitHub Pages)
-  swap_urls:
-    "/zer0-mistakes/": "/"         # Map GitHub Pages URL to local
-    "https://bamr87.github.io/zer0-mistakes/": "/"
   
   # Files and directories to ignore
   ignore_files:
@@ -486,8 +479,7 @@ htmlproofer:
     - 999                          # LinkedIn blocks automated requests
     - 403                          # Some sites block crawlers
   
-  # Typhoeus (HTTP client) configuration
+  # Connection settings for external link checking
   typhoeus:
     connecttimeout: 30             # Connection timeout in seconds
     timeout: 30                    # Request timeout in seconds
-    ssl_verifypeer: false          # Disable SSL verification for testing
