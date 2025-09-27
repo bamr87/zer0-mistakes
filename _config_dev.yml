@@ -31,3 +31,10 @@ profile                  : false
 # plugins:
 #   - jekyll-admin  # Uncomment if you want to use Jekyll admin interface
 
+# Exclude files that cause unnecessary rebuilds during debugging
+exclude:
+  - "logs/"
+  - "*.log"
+  - ".vscode/"
+  - "debug-*.log"
+
