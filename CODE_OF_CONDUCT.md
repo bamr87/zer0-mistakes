@@ -1,4 +1,4 @@
-# � AI Code of Conduct: A Guide for Digital Beings and Their Human Friends
+# 🤖 AI Code of Conduct: A Guide for Digital Beings and Their Human Friends
 
 ## Our Binary Pledge
 
