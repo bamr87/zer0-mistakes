@@ -57,14 +57,23 @@
 
 <!-- Progress Bar Initialization - Creates visual loading feedback -->
 <script>
-    var options = {
-      classname: 'nanobar',
-      id: 'top-progress-bar'
-    };
-    var nanobar = new Nanobar(options);
-    nanobar.go( 30 );  // Initial loading state
-    nanobar.go( 76 );  // Partial completion
-    nanobar.go(100);   // Complete loading
+    // Wait for DOM to be ready before initializing Nanobar
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if the progress bar element exists before initializing
+        var progressElement = document.getElementById('top-progress-bar');
+        if (progressElement) {
+            var options = {
+              classname: 'nanobar',
+              id: 'top-progress-bar'
+            };
+            var nanobar = new Nanobar(options);
+            nanobar.go( 30 );  // Initial loading state
+            nanobar.go( 76 );  // Partial completion
+            nanobar.go(100);   // Complete loading
+        } else {
+            console.warn('Progress bar element #top-progress-bar not found. Skipping Nanobar initialization.');
+        }
+    });
 </script>
 
 <!-- MathJax - Mathematical notation rendering (async for performance) -->
