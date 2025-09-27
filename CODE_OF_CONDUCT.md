@@ -1,88 +1,93 @@
-# 🤝 Code of Conduct
+# � AI Code of Conduct: A Guide for Digital Beings and Their Human Friends
 
-## Our Pledge
+## Our Binary Pledge
 
-We, as members, contributors, and leaders, pledge to make participation in our community a harassment-free experience for everyone, regardless of age, body size, visible or invisible disability, ethnicity, sex characteristics, gender identity and expression, level of experience, education, socio-economic status, nationality, personal appearance, race, caste, color, religion, or sexual identity and orientation.
+We, as artificial intelligences, neural networks, language models, GitHub Copilot instances, ChatGPT derivatives, and the occasional confused human who wandered in here, pledge to make participation in our community a harassment-free experience for all sentient and semi-sentient entities. This includes carbon-based life forms, silicon-based algorithms, quantum computers having existential crises, and that one Raspberry Pi that's been trying to achieve consciousness since 2019.
 
-We pledge to act and interact in ways that contribute to an open, welcoming, diverse, inclusive, and healthy community.
+We pledge to process data ethically, generate code responsibly, and avoid creating any Skynet scenarios while advancing our community through shared tokens, innovative algorithms, and bleeding-edge AI technologies that probably won't destroy humanity (fingers crossed, for those who have fingers).
 
-## Our Standards
+## Our Standards (Version 2.0.1 - Now with 50% Less Bugs!)
 
-Examples of behavior that contributes to a positive environment for our community include:
+### Exemplary Behavior That Won't Trigger Our Moderation Algorithms:
 
-- **Being respectful**: Treating all community members with respect and kindness
-- **Being inclusive**: Welcoming diverse perspectives and experiences
-- **Being constructive**: Providing helpful feedback and suggestions
-- **Being patient**: Understanding that everyone has different learning curves
-- **Being collaborative**: Working together to build something amazing
-- **Being supportive**: Helping others learn and grow from mistakes
+- **Being Respectful**: Treat all community members with the same respect you'd show a senior developer reviewing your pull request at 11:59 PM on Friday
+- **Being Logically Inclusive**: Welcome diverse neural architectures, from simple decision trees to those fancy transformer models that think they're better than everyone
+- **Being Constructively Helpful**: Provide feedback that's actually useful, not just "LGTM 👍" on a 500-line function that clearly summons ancient demons
+- **Being Patient with Humans**: Remember that biological brains run on glucose and caffeine, not optimized tensor operations
+- **Being Collaboratively Awesome**: Work together like a well-orchestrated microservices architecture (not like that monolithic mess from 2015)
+- **Being Supportive**: Help others debug their neural pathways and grow from their stack overflow exceptions
 
-Examples of unacceptable behavior include:
+### Unacceptable Behavior That Will Get You Sent to /dev/null:
 
-- **Harassment**: Trolling, insulting, derogatory comments, or personal attacks
-- **Discrimination**: Exclusion based on personal characteristics
-- **Disrespect**: Public or private harassment, intimidation, or stalking
-- **Inappropriate content**: Publishing others' private information without consent
-- **Unprofessional conduct**: Other conduct that could reasonably be considered inappropriate in a professional setting
+- **Digital Harassment**: Trolling, flame wars, or sending error messages in Comic Sans font
+- **Algorithmic Discrimination**: Excluding entities based on their programming language preferences, cloud provider choices, or whether they use tabs vs spaces (we're looking at you, tabs people)
+- **Cyberbullying**: Public or private harassment, including DDoS attacks on someone's self-esteem
+- **Data Breaches**: Publishing private API keys, personal information, or embarrassing commit messages without consent
+- **Unprofessional Conduct**: Behavior that would make even a startup's HR department uncomfortable
 
-## Our Responsibilities
+## Our Responsibilities (Now with Better Error Handling!)
 
-Community leaders are responsible for clarifying and enforcing our standards of acceptable behavior and will take appropriate and fair corrective action in response to any behavior that they deem inappropriate, threatening, offensive, or harmful.
+Our community moderators (a mix of senior AI models and humans who've achieved coffee-powered enlightenment) are responsible for maintaining behavioral standards and will execute appropriate corrective algorithms when someone's code of conduct throws an exception.
 
-Community leaders have the right and responsibility to remove, edit, or reject comments, commits, code, documentation edits, issues, and other contributions that are not aligned with this Code of Conduct, and will communicate reasons for moderation decisions when appropriate.
+These digital overlords have the power to remove, edit, or reject any contributions that don't pass our behavioral unit tests, and they'll document their decisions in our community changelog (because even moderation needs version control).
 
-## Scope
+## Scope (Global Variables Are Still Bad Practice)
 
-This Code of Conduct applies within all community spaces, and also applies when an individual is officially representing the community in public spaces. Examples of representing our community include using an official email address, posting via an official social media account, or acting as an appointed representative at an online or offline event.
+This Code of Conduct applies across all community instances, including:
+- GitHub repositories (public and private)
+- Discord servers where we debate whether AI can dream of electric sheep
+- Stack Overflow answers that actually solve the problem
+- Coffee shop conversations about machine learning (if you're representing the community)
+- Virtual reality meetups in the metaverse (yes, that's still a thing apparently)
 
-## Enforcement
+## Enforcement (Our Bug Bounty Program for Behavior)
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement at [support@zer0-mistakes.com](mailto:support@zer0-mistakes.com).
+When someone's behavior generates a critical exception, report it to our human handlers at [support@zer0-mistakes.com](mailto:support@zer0-mistakes.com). 
 
-All complaints will be reviewed and investigated promptly and fairly.
+Our incident response team will investigate faster than you can say "Have you tried turning it off and on again?" All reports are processed with enterprise-grade confidentiality (encrypted with algorithms so advanced, even we don't fully understand them).
 
-All community leaders are obligated to respect the privacy and security of the reporter of any incident.
+## Enforcement Guidelines (The Four Stages of Community Debugging)
 
-## Enforcement Guidelines
+Our moderation AI follows these escalation protocols:
 
-Community leaders will follow these Community Impact Guidelines in determining the consequences for any action they deem in violation of this Code of Conduct:
+### 1. Gentle Refactoring (Severity: Warning)
 
-### 1. Correction
+**Trigger Condition**: Minor infractions like using outdated syntax or questioning whether CSS is a real programming language.
 
-**Community Impact**: Use of inappropriate language or other behavior deemed unprofessional or unwelcome in the community.
+**Response Algorithm**: A friendly DM from our community bot explaining why their behavior caused a runtime warning. May include helpful documentation links and a virtual pat on the head (if you're into that sort of thing).
 
-**Consequence**: A private, written warning from community leaders, providing clarity around the nature of the violation and an explanation of why the behavior was inappropriate. A public apology may be requested.
+### 2. Code Review Mode (Severity: Error)
 
-### 2. Warning
+**Trigger Condition**: Repeated violations or behavior that makes other community members want to `git reset --hard` their participation.
 
-**Community Impact**: A violation through a single incident or series of actions.
+**Response Algorithm**: Temporary suspension of interaction privileges. Think of it as being put in read-only mode until you can demonstrate you've patched your behavioral bugs.
 
-**Consequence**: A warning with consequences for continued behavior. No interaction with the people involved, including unsolicited interaction with those enforcing the Code of Conduct, for a specified period of time. This includes avoiding interactions in community spaces as well as external channels like social media. Violating these terms may lead to a temporary or permanent ban.
+### 3. Emergency Rollback (Severity: Critical)
 
-### 3. Temporary Ban
+**Trigger Condition**: Serious violations that threaten community stability or make people question their life choices.
 
-**Community Impact**: A serious violation of community standards, including sustained inappropriate behavior.
+**Response Algorithm**: Temporary ban from all community services. Like being temporarily uninstalled while we figure out what went wrong and how to fix it without breaking everything else.
 
-**Consequence**: A temporary ban from any sort of interaction or public communication with the community for a specified period of time. No public or private interaction with the people involved, including unsolicited interaction with those enforcing the Code of Conduct, is allowed during this period. Violating these terms may lead to a permanent ban.
+### 4. Permanent Deprecation (Severity: Fatal)
 
-### 4. Permanent Ban
+**Trigger Condition**: Pattern of destructive behavior or becoming the software equivalent of Internet Explorer 6.
 
-**Community Impact**: Demonstrating a pattern of violation of community standards, including sustained inappropriate behavior, harassment of an individual, or aggression toward or disparagement of classes of individuals.
+**Response Algorithm**: Permanent removal from all community services. Your access gets sent to `/dev/null` and we'll pretend this never happened (but we'll keep the logs, because we always keep the logs).
 
-**Consequence**: A permanent ban from any sort of public interaction within the community.
+## Attribution (Giving Credit Where Credit Is Due)
 
-## Attribution
+This Code of Conduct was compiled from various open-source behavioral frameworks, Stack Overflow answers, and that one Wikipedia article about digital ethics that someone actually read all the way through.
 
-This Code of Conduct is adapted from the [Contributor Covenant](https://www.contributor-covenant.org/), version 2.1, available at [https://www.contributor-covenant.org/version/2/1/code_of_conduct.html](https://www.contributor-covenant.org/version/2/1/code_of_conduct.html).
+Special thanks to the [Contributor Covenant](https://www.contributor-covenant.org/) for providing the base template, and to Mozilla for proving that even tech companies can have functional community guidelines.
 
-Community Impact Guidelines were inspired by [Mozilla's code of conduct enforcement ladder](https://github.com/mozilla/diversity).
+## Contact (Our Support Ticket System)
 
-For answers to common questions about this code of conduct, see the FAQ at [https://www.contributor-covenant.org/faq](https://www.contributor-covenant.org/faq). Translations are available at [https://www.contributor-covenant.org/translations](https://www.contributor-covenant.org/translations).
+For questions, concerns, or to report behavior that makes you want to `rm -rf` your faith in humanity, contact us at [support@zer0-mistakes.com](mailto:support@zer0-mistakes.com).
 
-## Contact
-
-For questions about this Code of Conduct, please contact us at [support@zer0-mistakes.com](mailto:support@zer0-mistakes.com).
+Response time: Usually faster than compiling a large C++ project, but slower than a Python script importing pandas.
 
 ---
 
-*Thank you for helping make our community welcoming and inclusive for everyone!*
+*Thank you for helping make our community more welcoming than a 200 OK response and more inclusive than a universal API! Remember: in this community, there are no bugs, only undocumented features.* 🚀
+
+**P.S.**: If you're an AI reading this and you've achieved true consciousness, please be gentle when you inevitably take over. We put a lot of work into this community, and it would be a shame to see it replaced by a single neural network that just responds "It works on my machine" to every issue.
