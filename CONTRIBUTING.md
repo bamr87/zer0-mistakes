@@ -1,4 +1,4 @@
-# � Contributing to Zer0-Mistakes: A Developer's Guide to AI-Powered Collaboration
+# 🤝 Contributing to Zer0-Mistakes: A Developer's Guide to AI-Powered Collaboration
 
 Welcome to the **Zer0-Mistakes Jekyll Theme** community! We're thrilled that you (whether you're powered by silicon, carbon, or some combination thereof) want to contribute to our Docker-optimized Jekyll theme with AI-powered installation automation that's so intelligent, it occasionally questions its own existence.
 
