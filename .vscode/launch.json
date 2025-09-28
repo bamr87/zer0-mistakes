@@ -136,6 +136,96 @@
         "/js/": "${workspaceFolder}/assets/js/",
         "/css/": "${workspaceFolder}/assets/css/"
       }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "🚀 Gem Publisher: Patch Release",
+      "program": "${workspaceFolder}/scripts/gem-publish.sh",
+      "args": ["patch"],
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "/bin/bash",
+      "env": {
+        "PATH": "${env:PATH}",
+        "TERM": "xterm-256color"
+      },
+      "outputCapture": "std",
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "🚀 Gem Publisher: Minor Release",
+      "program": "${workspaceFolder}/scripts/gem-publish.sh",
+      "args": ["minor"],
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "/bin/bash",
+      "env": {
+        "PATH": "${env:PATH}",
+        "TERM": "xterm-256color"
+      },
+      "outputCapture": "std",
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "🚀 Gem Publisher: Major Release",
+      "program": "${workspaceFolder}/scripts/gem-publish.sh",
+      "args": ["major"],
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "/bin/bash",
+      "env": {
+        "PATH": "${env:PATH}",
+        "TERM": "xterm-256color"
+      },
+      "outputCapture": "std",
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "🔍 Gem Publisher: Dry Run (Patch)",
+      "program": "${workspaceFolder}/scripts/gem-publish.sh",
+      "args": ["patch", "--dry-run"],
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "/bin/bash",
+      "env": {
+        "PATH": "${env:PATH}",
+        "TERM": "xterm-256color"
+      },
+      "outputCapture": "std",
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "⚡ Gem Publisher: Quick Build & Test",
+      "program": "${workspaceFolder}/scripts/gem-publish.sh",
+      "args": ["patch", "--skip-publish", "--no-github-release"],
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "/bin/bash",
+      "env": {
+        "PATH": "${env:PATH}",
+        "TERM": "xterm-256color"
+      },
+      "outputCapture": "std",
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "📝 Gem Publisher: Changelog Preview",
+      "program": "${workspaceFolder}/scripts/gem-publish.sh",
+      "args": ["patch", "--skip-tests", "--skip-publish", "--no-github-release", "--dry-run"],
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "/bin/bash",
+      "env": {
+        "PATH": "${env:PATH}",
+        "TERM": "xterm-256color"
+      },
+      "outputCapture": "std",
+      "internalConsoleOptions": "openOnSessionStart"
     }
   ]
 }

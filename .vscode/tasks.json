@@ -40,6 +40,183 @@
       "args": ["logs", "-f", "jekyll"],
       "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": []
+    },
+    {
+      "label": "🚀 Gem: Patch Release",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/gem-publish.sh",
+      "args": ["patch"],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Publishes a patch version release (0.0.X) with full workflow: changelog generation, version bump, tests, build, and publish to RubyGems"
+    },
+    {
+      "label": "🚀 Gem: Minor Release",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/gem-publish.sh",
+      "args": ["minor"],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Publishes a minor version release (0.X.0) with full workflow: changelog generation, version bump, tests, build, and publish to RubyGems"
+    },
+    {
+      "label": "🚀 Gem: Major Release",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/gem-publish.sh",
+      "args": ["major"],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Publishes a major version release (X.0.0) with full workflow: changelog generation, version bump, tests, build, and publish to RubyGems"
+    },
+    {
+      "label": "🔍 Gem: Dry Run Preview",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/gem-publish.sh",
+      "args": ["patch", "--dry-run"],
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Preview what a patch release would do without making any changes - shows changelog generation and version updates"
+    },
+    {
+      "label": "⚡ Gem: Quick Build & Test",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/gem-publish.sh",
+      "args": ["patch", "--skip-publish", "--no-github-release"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Quick development workflow: changelog generation, version bump, tests, and build - but skip publishing to RubyGems"
+    },
+    {
+      "label": "📝 Gem: Generate Changelog",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/gem-publish.sh",
+      "args": ["patch", "--skip-tests", "--skip-publish", "--no-github-release", "--dry-run"],
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Preview automatic changelog generation from commit history - useful for reviewing changes before release"
+    },
+    {
+      "label": "🧪 Gem: Run Tests Only",
+      "type": "shell",
+      "command": "bundle exec rspec",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": [],
+      "detail": "Run the full test suite without any release actions"
+    },
+    {
+      "label": "🔨 Gem: Build Only",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/build.sh",
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": [],
+      "detail": "Build the gem file without publishing or version changes"
+    },
+    {
+      "label": "📊 Gem: Version Info",
+      "type": "shell",
+      "command": "echo \"Current Version: $(grep -o 'VERSION = \"[^\"]*\"' lib/jekyll-theme-zer0/version.rb | sed 's/VERSION = \"\\(.*\\)\"/\\1/')\" && echo \"Last Tag: $(git describe --tags --abbrev=0 2>/dev/null || echo 'No tags found')\" && echo \"Commits since last tag: $(git rev-list --count $(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD 2>/dev/null || echo '0')\"",
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": [],
+      "detail": "Display current version information and commit status"
     }
   ]
 }
