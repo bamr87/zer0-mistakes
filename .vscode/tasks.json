@@ -217,6 +217,65 @@
       },
       "problemMatcher": [],
       "detail": "Display current version information and commit status"
+    },
+    {
+      "label": "🤖 Analyze Commits for Version Bump",
+      "type": "shell",
+      "command": "./scripts/analyze-commits.sh",
+      "args": ["HEAD~5..HEAD"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": [],
+      "detail": "Analyze recent commits to determine what version bump would be appropriate"
+    },
+    {
+      "label": "🧪 Test Automated Version System",
+      "type": "shell", 
+      "command": "./scripts/test-auto-version.sh",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Run comprehensive tests on the automated version bump system"
+    },
+    {
+      "label": "🔍 Preview Automated Release",
+      "type": "shell",
+      "command": "./scripts/gem-publish.sh",
+      "args": ["patch", "--dry-run", "--automated-release", "--skip-tests", "--skip-publish", "--no-github-release"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": [],
+      "detail": "Preview what an automated release would do without making any changes"
     }
   ]
 }
