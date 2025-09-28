@@ -22,6 +22,8 @@ SKIP_CHANGELOG=false
 SKIP_PUBLISH=false
 CREATE_GITHUB_RELEASE=true
 INTERACTIVE=true
+AUTOMATED_RELEASE=false
+AUTO_COMMIT_RANGE=""
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -48,6 +50,15 @@ while [[ $# -gt 0 ]]; do
             ;;
         --non-interactive)
             INTERACTIVE=false
+            shift
+            ;;
+        --automated-release)
+            AUTOMATED_RELEASE=true
+            INTERACTIVE=false
+            shift
+            ;;
+        --auto-commit-range=*)
+            AUTO_COMMIT_RANGE="${1#*=}"
             shift
             ;;
         patch|minor|major)
@@ -86,6 +97,8 @@ OPTIONS:
     --skip-publish           Skip publishing to RubyGems
     --no-github-release      Skip creating GitHub release
     --non-interactive        Run without user prompts
+    --automated-release      Enable fully automated release mode
+    --auto-commit-range=RANGE Use specific commit range for changelog
     --help                   Show this help message
 
 WORKFLOW:
@@ -242,9 +255,13 @@ generate_changelog() {
     
     step "Generating changelog from commit history..."
     
-    # Get commits since last version
+    # Get commits since last version or use provided range
     local commits
-    if [[ "$last_tag" =~ ^v[0-9] ]]; then
+    if [[ -n "$AUTO_COMMIT_RANGE" ]]; then
+        # Use the provided commit range for automated releases
+        log "Using automated commit range: $AUTO_COMMIT_RANGE"
+        commits=$(git log --pretty=format:"%H|%s|%an|%ad" --date=short "$AUTO_COMMIT_RANGE")
+    elif [[ "$last_tag" =~ ^v[0-9] ]]; then
         commits=$(git log --pretty=format:"%H|%s|%an|%ad" --date=short "${last_tag}..HEAD")
     else
         commits=$(git log --pretty=format:"%H|%s|%an|%ad" --date=short "${last_tag}..HEAD")
@@ -609,8 +626,13 @@ main() {
         exit 0
     fi
     
-    echo -e "${PURPLE}🚀 Jekyll Theme Zer0 - Comprehensive Gem Publication${NC}"
-    echo -e "${PURPLE}Version: $VERSION_TYPE bump${NC}"
+    if [[ "$AUTOMATED_RELEASE" == true ]]; then
+        echo -e "${CYAN}🤖 Automated Release Mode${NC}"
+        echo -e "${CYAN}Version: $VERSION_TYPE bump (automatic)${NC}"
+    else
+        echo -e "${PURPLE}🚀 Comprehensive Gem Publication Script${NC}"
+        echo -e "${PURPLE}Version: $VERSION_TYPE bump${NC}"
+    fi
     echo ""
     
     # Validate environment

@@ -1,0 +1,205 @@
+name: Automated Version Bump and Release
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'CHANGELOG.md'
+      - 'lib/jekyll-theme-zer0/version.rb'
+      - 'package.json'
+      - '.github/workflows/**'
+      - 'README.md'
+      - 'docs/**'
+      - 'release_notes.md'
+      - '*.gem'
+    # Only run if the commit is not from GitHub Actions
+    # This prevents infinite loops from automated version bumps
+
+env:
+  RUBY_VERSION: '3.2'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  analyze-and-bump:
+    name: Analyze Commits and Auto-Version Bump
+    runs-on: ubuntu-latest
+    # Skip if the commit is from GitHub Actions (prevents infinite loops)
+    if: |
+      !contains(github.event.head_commit.message, 'chore: bump version') && 
+      !contains(github.event.head_commit.author.name, 'github-actions')
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+
+    steps:
+    - name: 🌱 Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Full history for commit analysis
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: 🛠️ Setup Ruby Environment  
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ env.RUBY_VERSION }}
+        bundler-cache: true
+
+    - name: 🔍 Analyze Commits for Version Bump Type
+      id: analyze
+      run: |
+        chmod +x ./scripts/analyze-commits.sh
+        
+        # Get the last release tag
+        LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+        
+        if [ -z "$LAST_TAG" ]; then
+          echo "No previous tags found, starting from initial commit"
+          COMMIT_RANGE="$(git rev-list --max-parents=0 HEAD)..HEAD"
+        else
+          echo "Analyzing commits since last tag: $LAST_TAG"
+          COMMIT_RANGE="${LAST_TAG}..HEAD"
+        fi
+        
+        echo "commit_range=$COMMIT_RANGE" >> $GITHUB_OUTPUT
+        
+        # Analyze commits to determine version bump type
+        BUMP_TYPE=$(./scripts/analyze-commits.sh "$COMMIT_RANGE")
+        echo "bump_type=$BUMP_TYPE" >> $GITHUB_OUTPUT
+        
+        # Get commit count for analysis
+        COMMIT_COUNT=$(git rev-list --count $COMMIT_RANGE)
+        echo "commit_count=$COMMIT_COUNT" >> $GITHUB_OUTPUT
+        
+        echo "🔍 Analysis Results:"
+        echo "  - Commit range: $COMMIT_RANGE"
+        echo "  - Commits to analyze: $COMMIT_COUNT"
+        echo "  - Recommended bump type: $BUMP_TYPE"
+
+    - name: 🚫 Skip if No Version Bump Needed
+      if: steps.analyze.outputs.bump_type == 'none'
+      run: |
+        echo "🚫 No version bump needed based on commit analysis"
+        echo "Commits analyzed: ${{ steps.analyze.outputs.commit_count }}"
+        echo "Skipping version bump and release process"
+        exit 0
+
+    - name: 📋 Generate Changelog Preview
+      if: steps.analyze.outputs.bump_type != 'none'
+      id: changelog
+      run: |
+        echo "🔍 Generating changelog preview..."
+        
+        # Create temporary changelog
+        TEMP_CHANGELOG=$(mktemp)
+        
+        # Use existing gem-publish script to generate changelog
+        export DRY_RUN=true
+        export COMMIT_RANGE="${{ steps.analyze.outputs.commit_range }}"
+        
+        ./scripts/gem-publish.sh ${{ steps.analyze.outputs.bump_type }} --dry-run --skip-tests --skip-publish --no-github-release > "$TEMP_CHANGELOG" 2>&1
+        
+        # Extract changelog content
+        if grep -q "Generated changelog:" "$TEMP_CHANGELOG"; then
+          CHANGELOG_CONTENT=$(sed -n '/Generated changelog:/,/^$/p' "$TEMP_CHANGELOG" | tail -n +2)
+          echo "changelog_preview<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG_CONTENT" >> $GITHUB_OUTPUT  
+          echo "EOF" >> $GITHUB_OUTPUT
+        else
+          echo "changelog_preview=No changelog preview available" >> $GITHUB_OUTPUT
+        fi
+        
+        rm -f "$TEMP_CHANGELOG"
+
+    - name: 🧪 Run Pre-Release Validation
+      if: steps.analyze.outputs.bump_type != 'none'
+      run: |
+        echo "🧪 Running validation tests before version bump..."
+        
+        # Run test suite
+        if [ -f "./scripts/test.sh" ]; then
+          ./scripts/test.sh --verbose
+        else
+          echo "⚠️ No test script found, skipping tests"
+        fi
+
+    - name: 📈 Execute Automated Version Bump
+      if: steps.analyze.outputs.bump_type != 'none'
+      id: version_bump
+      run: |
+        echo "📈 Executing automated ${{ steps.analyze.outputs.bump_type }} version bump..."
+        
+        # Configure git for automated commits
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        # Execute version bump with full automation
+        ./scripts/gem-publish.sh ${{ steps.analyze.outputs.bump_type }} \
+          --non-interactive \
+          --skip-tests \
+          --auto-commit-range="${{ steps.analyze.outputs.commit_range }}" \
+          --automated-release
+        
+        # Get the new version that was created
+        NEW_VERSION=$(grep -o 'VERSION = "[^"]*"' lib/jekyll-theme-zer0/version.rb | sed 's/VERSION = "\(.*\)"/\1/')
+        echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+        
+        echo "✅ Version bump completed: $NEW_VERSION"
+
+    - name: 🚀 Create GitHub Release
+      if: steps.analyze.outputs.bump_type != 'none' && steps.version_bump.outputs.new_version != ''
+      uses: softprops/action-gh-release@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ steps.version_bump.outputs.new_version }}
+        name: "Automated Release v${{ steps.version_bump.outputs.new_version }}"
+        body: |
+          🤖 **Automated Release** based on commit analysis
+          
+          **Version Bump Type**: ${{ steps.analyze.outputs.bump_type }}
+          **Commits Analyzed**: ${{ steps.analyze.outputs.commit_count }}
+          
+          ## 📋 Changelog
+          
+          ${{ steps.changelog.outputs.changelog_preview }}
+          
+          ## 🔍 Analysis Details
+          
+          This release was automatically generated by analyzing commits in range: `${{ steps.analyze.outputs.commit_range }}`
+          
+          The system detected changes that warranted a **${{ steps.analyze.outputs.bump_type }}** version increment based on:
+          - Commit message patterns (feat:, fix:, BREAKING CHANGE:, etc.)
+          - File change analysis
+          - Conventional commit standards
+          
+          ---
+          *Generated by automated release workflow on ${{ github.event.head_commit.timestamp }}*
+        draft: false
+        prerelease: false
+        files: |
+          jekyll-theme-zer0-${{ steps.version_bump.outputs.new_version }}.gem
+
+    - name: 📊 Release Summary
+      if: always()
+      run: |
+        echo "🎯 Automated Version Bump Summary"
+        echo "=================================="
+        echo "Trigger: Push to main branch"
+        echo "Commit: ${{ github.event.head_commit.id }}"
+        echo "Commit Range: ${{ steps.analyze.outputs.commit_range }}"
+        echo "Commits Analyzed: ${{ steps.analyze.outputs.commit_count }}"
+        echo "Bump Type: ${{ steps.analyze.outputs.bump_type }}"
+        
+        if [ "${{ steps.analyze.outputs.bump_type }}" != "none" ]; then
+          echo "New Version: ${{ steps.version_bump.outputs.new_version }}"
+          echo "Release Created: ✅"
+          echo "Gem Published: ✅"
+        else
+          echo "Action Taken: No version bump needed"
+        fi
+        
+        echo "=================================="

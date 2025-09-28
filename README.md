@@ -32,13 +32,14 @@ preview: /images/zer0-mistakes-docker.png
 [![pages-build-deployment](https://github.com/bamr87/zer0-mistakes/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/bamr87/zer0-mistakes/actions/workflows/pages/pages-build-deployment)
 [![Gem Version](https://badge.fury.io/rb/jekyll-theme-zer0.svg)](https://badge.fury.io/rb/jekyll-theme-zer0)
 [![CI](https://github.com/bamr87/zer0-mistakes/actions/workflows/ci.yml/badge.svg)](https://github.com/bamr87/zer0-mistakes/actions/workflows/ci.yml)
+[![Auto Version Bump](https://github.com/bamr87/zer0-mistakes/actions/workflows/auto-version-bump.yml/badge.svg)](https://github.com/bamr87/zer0-mistakes/actions/workflows/auto-version-bump.yml)
 [![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://github.com/bamr87/zer0-mistakes/blob/main/docker-compose.yml)
 
 # 🚀 zer0-mistakes Jekyll Theme
 
-**Professional Jekyll theme** with AI-powered installation, Docker-first development, and comprehensive error handling. Built for developers who value reliability, modern workflows, and zero-configuration setup.
+**Professional Jekyll theme** with AI-powered installation, Docker-first development, automated release management, and comprehensive error handling. Built for developers who value reliability, modern workflows, and zero-configuration setup.
 
-> **🎯 95% installation success rate** • **⚡ 2-5 minute setup** • **🐳 Universal Docker compatibility** • **🤖 AI-powered error recovery**
+> **🎯 95% installation success rate** • **⚡ 2-5 minute setup** • **🐳 Universal Docker compatibility** • **🤖 AI-powered error recovery** • **🚀 Automated releases with semantic versioning**
 
 ## 🚀 Quick Start
 
@@ -136,6 +137,17 @@ docker-compose up
 - **Azure Static Web Apps** - Pre-configured CI/CD workflows
 - **Custom Domains** - SSL/TLS and CDN ready
 - **Multiple Hosting** - Works with Netlify, Vercel, and custom servers
+
+### 🤖 **Automated Release Management**
+
+- **Smart Version Bumping** - Analyzes commits and automatically increments versions
+- **Conventional Commits** - Follows semantic versioning based on commit patterns
+- **Automated Changelogs** - Generates release notes from commit history
+- **RubyGems Publishing** - Automatically publishes gem releases
+- **GitHub Releases** - Creates comprehensive release pages with assets
+- **CI/CD Integration** - Seamless automation with GitHub Actions
+
+> 📖 **Learn more**: [Automated Version System Documentation](AUTOMATED_VERSION_SYSTEM.md)
 
 ## 📋 Prerequisites
 
