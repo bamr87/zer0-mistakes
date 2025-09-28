@@ -55,8 +55,9 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --help)
-            show_usage
-            exit 0
+            # show_usage will be called after function definitions
+            SHOW_HELP=true
+            shift
             ;;
         *)
             echo -e "${RED}Unknown option: $1${NC}"
@@ -602,6 +603,12 @@ cleanup() {
 
 # Main execution function
 main() {
+    # Check if help was requested
+    if [[ "${SHOW_HELP:-false}" == true ]]; then
+        show_usage
+        exit 0
+    fi
+    
     echo -e "${PURPLE}🚀 Jekyll Theme Zer0 - Comprehensive Gem Publication${NC}"
     echo -e "${PURPLE}Version: $VERSION_TYPE bump${NC}"
     echo ""
