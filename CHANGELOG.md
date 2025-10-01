@@ -1,3 +1,19 @@
+## [0.2.1] - 2025-09-30
+
+### Added
+- Enhanced markdown linting configuration
+- Improved Jekyll template support for link checking
+- Better configuration for markdown validation
+
+### Changed
+- Updated markdown-link-check configuration with Jekyll-specific patterns
+- Relaxed line length requirements in markdownlint configuration
+- Added support for more HTML elements in markdown
+
+### Fixed
+- Improved markdown validation for Jekyll projects
+- Better handling of Liquid templates in link validation
+
 ## [0.2.0] - 2025-09-01
 
 ### Changed
