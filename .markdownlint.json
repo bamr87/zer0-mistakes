@@ -1,7 +1,7 @@
 {
   "default": true,
   "MD013": {
-    "line_length": 120,
+    "line_length": 4096,
     "code_blocks": false,
     "tables": false,
     "headers": false
@@ -9,12 +9,17 @@
   "MD033": {
     "allowed_elements": [
       "details", "summary", "img", "div", "span", "br",
-      "kbd", "sub", "sup", "ins", "del", "mark"
+      "kbd", "sub", "sup", "ins", "del", "mark", "script",
+      "style", "a", "i", "strong", "em", "code", "pre"
     ]
   },
+  "MD034": false,
   "MD041": false,
   "MD045": false,
   "MD046": {
     "style": "fenced"
+  },
+  "MD024": {
+    "allow_different_nesting": true
   }
 }
