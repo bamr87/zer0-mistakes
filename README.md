@@ -389,6 +389,46 @@ main:
 
 ## 🧪 Testing & Validation
 
+### ⚡ **HTMLProofer Integration** 
+
+The theme includes **built-in automated testing** with HTMLProofer for comprehensive site validation:
+
+```bash
+# Quick HTML validation (recommended for development)
+rake test_quick
+
+# Comprehensive internal testing  
+rake test_internal
+
+# Full test suite (internal + external links)
+rake test_full
+
+# Production-ready testing
+rake test_prod
+```
+
+**HTMLProofer validates:**
+- ✅ **HTML Structure** - Valid HTML5 markup
+- ✅ **Internal Links** - All internal links work correctly  
+- ✅ **Images** - Image sources and alt attributes
+- ✅ **Bootstrap Components** - Responsive design elements
+- ✅ **Open Graph Tags** - Social media meta tags
+- ✅ **Accessibility** - Basic accessibility compliance
+
+**Environment Variables:**
+```bash
+# Enable external link checking
+HTMLPROOFER_EXTERNAL=true rake test_full
+
+# Skip image validation for faster testing
+HTMLPROOFER_CHECK_IMAGES=false rake test
+
+# Skip HTMLProofer in test suite
+SKIP_HTMLPROOFER=true ./test/test_runner.sh
+```
+
+For complete testing documentation, see: [Testing Guide](pages/_docs/testing.md)
+
 ### Quick Health Check
 
 After installation, verify everything is working:

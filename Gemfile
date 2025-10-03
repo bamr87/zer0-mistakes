@@ -23,3 +23,7 @@ gem 'github-pages'
 gem "ffi", "~> 1.17.0"
 gem 'webrick', '~> 1.7'
 gem 'commonmarker', '0.23.10'  # Added to avoid build errors with version 0.23.11
+
+# Testing and validation
+gem 'html-proofer', '~> 4.4', group: [:test, :development]
+gem 'rake', '~> 13.0', group: [:test, :development]
