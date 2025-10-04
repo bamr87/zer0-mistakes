@@ -70,9 +70,14 @@ fi
 
 log "Building jekyll-theme-zer0 version $VERSION"
 
+# Create build directory
+log "Creating build directory..."
+mkdir -p build
+
 # Clean up old gem files
 log "Cleaning up old gem files..."
 rm -f jekyll-theme-zer0-*.gem
+rm -f build/jekyll-theme-zer0-*.gem
 
 # Validate dependencies
 log "Checking dependencies..."
@@ -103,6 +108,8 @@ if [[ "$DRY_RUN" == true ]]; then
     log "Dry run mode - would build jekyll-theme-zer0-${VERSION}.gem"
 else
     if gem build jekyll-theme-zer0.gemspec; then
+        # Move gem to build directory
+        mv jekyll-theme-zer0-${VERSION}.gem build/
         info "✓ Successfully built jekyll-theme-zer0-${VERSION}.gem"
     else
         error "Failed to build gem"
@@ -110,12 +117,12 @@ else
 fi
 
 # List gem contents for verification
-if [[ "$DRY_RUN" != true ]] && [[ -f "jekyll-theme-zer0-${VERSION}.gem" ]]; then
+if [[ "$DRY_RUN" != true ]] && [[ -f "build/jekyll-theme-zer0-${VERSION}.gem" ]]; then
     log "Gem contents:"
     # Use tar to list contents since gem contents only works for installed gems
-    tar -tzf jekyll-theme-zer0-${VERSION}.gem | head -20
+    tar -tzf build/jekyll-theme-zer0-${VERSION}.gem | head -20
     echo "..."
-    echo "Total files: $(tar -tzf jekyll-theme-zer0-${VERSION}.gem | wc -l)"
+    echo "Total files: $(tar -tzf build/jekyll-theme-zer0-${VERSION}.gem | wc -l)"
 fi
 
 # Check if we should publish
@@ -141,7 +148,7 @@ if [[ "$PUBLISH" == true ]]; then
         echo -e "${YELLOW}Are you sure you want to publish jekyll-theme-zer0-${VERSION}.gem to RubyGems? (y/N)${NC}"
         read -r response
         if [[ "$response" =~ ^[Yy]$ ]]; then
-            if gem push jekyll-theme-zer0-${VERSION}.gem; then
+            if gem push build/jekyll-theme-zer0-${VERSION}.gem; then
                 info "✓ Successfully published jekyll-theme-zer0-${VERSION}.gem"
                 log "Gem is now available at: https://rubygems.org/gems/jekyll-theme-zer0"
             else
@@ -161,7 +168,7 @@ if [[ "$PUBLISH" == true ]] && [[ "$DRY_RUN" != true ]]; then
     echo -e "${YELLOW}Remove local gem file? (y/N)${NC}"
     read -r response
     if [[ "$response" =~ ^[Yy]$ ]]; then
-        rm -f jekyll-theme-zer0-${VERSION}.gem
+        rm -f build/jekyll-theme-zer0-${VERSION}.gem
         log "Local gem file removed"
     fi
 fi
