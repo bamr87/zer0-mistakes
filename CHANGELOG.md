@@ -1,3 +1,31 @@
+## [0.3.0] - 2025-01-27
+
+### Added
+- **Mermaid Diagram Integration v2.0**: Complete Mermaid v10 integration with CDN loading
+- **Comprehensive Diagram Support**: Flowcharts, sequence diagrams, class diagrams, state diagrams, ER diagrams, Gantt charts, pie charts, git graphs, journey diagrams, and mindmaps
+- **GitHub Pages Compatibility**: Works seamlessly with both local development and GitHub Pages deployment
+- **Conditional Loading**: Only loads Mermaid when `mermaid: true` in page front matter
+- **Responsive Design**: Diagrams automatically scale across all devices
+- **Dark Mode Support**: Forest theme optimized for dark mode compatibility
+- **FontAwesome Integration**: Icon support in diagrams
+- **Comprehensive Documentation**: Complete user guide with live examples and troubleshooting
+- **Automated Testing**: 16 automated tests covering all functionality with multiple test modes
+- **Custom Styling**: CSS class-based theming for diagrams
+- **Interactive Elements**: Clickable links and tooltips in diagrams
+- **Subgraphs**: Complex diagram organization support
+
+### Changed
+- **File Organization**: 53% reduction in Mermaid-related files (15 → 7) with better organization
+- **Documentation Quality**: Single source of truth for Mermaid usage with comprehensive guides
+- **Performance**: Conditional loading and optimized rendering for better performance
+- **Maintainability**: Clean file structure with clear responsibilities
+
+### Fixed
+- **Conditional Loading**: Fixed missing Mermaid script loading
+- **Build Errors**: Resolved references to deleted files
+- **Documentation**: Fixed broken links and inconsistent references
+- **File Organization**: Eliminated redundant and scattered files
+
 ## [0.2.1] - 2025-09-30
 
 ### Added

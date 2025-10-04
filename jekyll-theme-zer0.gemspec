@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email                    = ["amr@it-journey.dev"]
 
   s.summary                  = "Jekyll theme based on bootstrap and compatible with github pages"
-  s.description              = "Bootstrap Jekyll theme for headless Github Pages CMS with Docker-first development approach"
+  s.description              = "Bootstrap Jekyll theme for headless Github Pages CMS with Docker-first development approach and comprehensive Mermaid diagram integration"
   s.homepage                 = "https://github.com/bamr87/zer0-mistakes"
   s.license                  = "MIT"
   
