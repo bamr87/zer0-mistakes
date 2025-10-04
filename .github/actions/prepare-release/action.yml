@@ -36,14 +36,14 @@ runs:
         chmod +x ./scripts/build.sh
         ./scripts/build.sh
         
-        # Set asset directory output
-        echo "asset-dir=./build" >> $GITHUB_OUTPUT
-        
-        # Ensure build directory exists
+        # Ensure build directory exists after script execution
         if [[ ! -d "./build" ]]; then
           echo "::error::Build directory not created by build script"
           exit 1
         fi
+        
+        # Set asset directory output
+        echo "asset-dir=./build" >> $GITHUB_OUTPUT
         
         echo "::notice::Release assets built successfully"
     
