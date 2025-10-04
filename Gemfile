@@ -23,3 +23,6 @@ gem 'github-pages'
 gem "ffi", "~> 1.17.0"
 gem 'webrick', '~> 1.7'
 gem 'commonmarker', '0.23.10'  # Added to avoid build errors with version 0.23.11
+
+# Mermaid diagram support via native markdown code blocks
+gem 'jekyll-mermaid', '~> 1.0'
