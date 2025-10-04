@@ -1,216 +1,220 @@
 ---
 key: tutorial
-title: Jekyll - Diagram with Mermaid
+title: "Jekyll Mermaid Integration Tutorial"
 subcategory: jekyll
 date: 2023-11-28
 tags:
   - Mermaid
   - Diagram
+  - Tutorial
+  - Jekyll
 mermaid: true
-lastmod: 2023-11-28T18:27:12.988Z
+lastmod: 2025-01-27
 ---
 
-> Use Mermaid in Markdown to draw diagrams.
+# Jekyll Mermaid Integration Tutorial
 
-## 1. Mermaid
-[Mermaid](https://mermaidjs.github.io/) a simple markdown-like script language for generating charts from text via javascript.
-### 1.1 Using Mermaid in Web Page
+> Complete tutorial for integrating Mermaid diagrams in Jekyll sites with GitHub Pages support.
 
-### 1.2 Using Mermaid in Markdown
-You can use Jekyll plugin [jekyll-mermaid](https://github.com/jasonbellamy/jekyll-mermaid) to create diagrams and flowcharts with markdown in your local Jekyll. For example, define a flowchart with 4 nodes as follows.
-~~~markdown
-```mermaid
-graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
+## Overview
+
+This tutorial covers the complete integration of Mermaid diagrams in Jekyll sites, including both the jekyll-mermaid plugin approach and custom implementation for GitHub Pages compatibility.
+
+## Two Implementation Approaches
+
+### 1. Jekyll-Mermaid Plugin (Recommended for Local Development)
+
+**Best for:** Local development, when you control the Jekyll build process.
+
+**Configuration:**
+```yaml
+# _config.yml
+plugins:
+  - jekyll-mermaid
+
+mermaid:
+  src: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js'
 ```
-~~~
-It looks like this.
-<div class="mermaid">
-graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
-</div>
-However, this plugin is `not` officially supported by GitHub Pages. The above markdown diagram definition won't work if you push it to GitHub Pages.
-### 1.3 GitHub Pages
- Unfortunately, GitHub Pages currently doesn't support Mermaid, see the [issue](https://github.com/github/markup/issues/533). The workaround is to use html tag directly in markdown file. Instead of using the `code block`, we can wrap the diagram definition into a `<div>` tag. The following definition of a flowchart works in GitHub Pages.
-~~~markdown
-<div class="mermaid">
-graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
-</div>
-~~~
-The following sections will introduce the details of how to generate diagram in markdown and let it work in GitHub Pages as well.
 
-## 2. Using Mermaid in Jekyll
-### 2.1 Page Template
-Create a file named with `mermaid.html` in `_include` directory as follows:
+**Usage:**
+```markdown
+```mermaid
+graph TD
+    A[Start] --> B{Decision}
+    B -->|Yes| C[Success]
+    B -->|No| D[Try Again]
+```
+```
+
+### 2. Custom Implementation (GitHub Pages Compatible)
+
+**Best for:** GitHub Pages, when you need full control over the implementation.
+
+**Configuration:**
+```yaml
+# _config.yml
+plugins:
+  - jekyll-mermaid  # Still needed for configuration
+
+mermaid:
+  src: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js'
+```
+
+**Include File:** `_includes/components/mermaid.html`
 ```html
-<script type="text/javascript"
-  src="https://unpkg.com/mermaid@8.0.0-rc.8/dist/mermaid.min.js">
-</script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 <script>
-$(document).ready(function() {
+  document.addEventListener('DOMContentLoaded', function() {
     mermaid.initialize({
-        theme: 'forest'
+      startOnLoad: true,
+      theme: 'forest'
     });
-});
+  });
 </script>
 ```
-* Go to https://unpkg.com/mermaid to search the latest version or specific version.
-* Go to https://github.com/knsv/mermaid/tree/master/src/themes to check available `themes`.
 
-Update file `_inlude/head.html`, include the above template file if `page.mermaid` is true.
-```javascript
-{%- raw -%}
+**Head Include:** `_includes/core/head.html`
+```html
 {% if page.mermaid %}
-  {% include mermaid.html %}
+  {% include components/mermaid.html %}
 {% endif %}
-{% endraw %}
 ```
 
-### 2.2 Creating Diagram Definition in Markdown Page
-In order to use Mermaid in markdown page, it must have a variable `mermaid` and set its value to `true`. For example, the following example is a markdown page using mermaid.
-~~~markdown
+**Usage:**
+```html
+<div class="mermaid">
+graph TD
+    A[Start] --> B{Decision}
+    B -->|Yes| C[Success]
+    B -->|No| D[Try Again]
+</div>
+```
+
+## Implementation Details
+
+### File Structure
+
+```
+_includes/
+  └── components/
+      └── mermaid.html          # Mermaid configuration
+  └── core/
+      └── head.html             # Conditional include
+
+_config.yml                     # Plugin configuration
+```
+
+### Page Front Matter
+
+For custom implementation, add to your page front matter:
+
+```yaml
 ---
-layout: post
-key: blog
-title: "Generating Diagrams with Mermaid in Markdown"
-date: 2018-09-15
-tags: [Mermaid]
+title: "My Page"
 mermaid: true
 ---
-~~~
-1) Example One:
-~~~markdown
-<div class="mermaid">
-graph LR
-    A --- B
-    B-->C[Happy]
-    B-->D(Sad);
-</div>
-~~~
-<div class="mermaid">
-graph LR
-    A --- B
-    B-->C[Happy]
-    B-->D(Sad);
-</div>
-2) Example Two:
-~~~markdown
-<div class="mermaid">
-    graph TD
-      B[peace]
-      B-->C[fa:fa-ban forbidden]
-      B-->D(fa:fa-spinner);
-      B-->E(fa:fa-camera-retro perhaps?);
-</div>
-~~~
-<div class="mermaid">
-    graph TD
-      B[peace]
-      B-->C[fa:fa-ban forbidden]
-      B-->D(fa:fa-spinner);
-      B-->E(fa:fa-camera-retro perhaps?);
-</div>
-
-## AI Instructions
-Setting up Jekyll to use the Mermaid diagram tool involves a few steps. Here's a guide to help you through the process:
-
-### 1. Install Jekyll (if you haven't already)
-
-First, ensure you have Jekyll installed. You can install it by running:
-
-```bash
-gem install jekyll bundler
 ```
 
-### 2. Create a New Jekyll Site (if needed)
+### Diagram Examples
 
-If you're starting from scratch, create a new Jekyll site:
-
-```bash
-jekyll new my-awesome-site
-cd my-awesome-site
-```
-
-### 3. Install Mermaid
-
-Mermaid can be included in Jekyll sites via a JavaScript file. You need to add the Mermaid JS to your site.
-
-#### Option 1: Using a CDN
-
-Add the following line to your HTML layout (usually in `_layouts/default.html`):
-
+#### Flowchart
 ```html
-<script src="https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js"></script>
+<div class="mermaid">
+graph TD
+    A[Christmas] -->|Get money| B(Go shopping)
+    B --> C{Let me think}
+    C -->|One| D[Laptop]
+    C -->|Two| E[iPhone]
+    C -->|Three| F[Car]
+</div>
 ```
 
-#### Option 2: Download and Host
-
-1. Download `mermaid.min.js` from the [Mermaid GitHub repository](https://github.com/mermaid-js/mermaid).
-2. Place it in an accessible directory in your Jekyll site, like `/assets/js/`.
-3. Link to it in your HTML layout:
-
+#### Sequence Diagram
 ```html
-<script src="{{ '/assets/js/mermaid.min.js' | relative_url }}"></script>
+<div class="mermaid">
+sequenceDiagram
+    Alice->>John: Hello John, how are you?
+    John-->>Alice: Great!
+    Alice-)John: See you later!
+</div>
 ```
 
-### 4. Initialize Mermaid
-
-You can initialize Mermaid by adding a script tag at the bottom of your layout file (`_layouts/default.html`), just before the closing `</body>` tag:
-
+#### Class Diagram
 ```html
-<script>
-    mermaid.initialize({startOnLoad:true});
-</script>
+<div class="mermaid">
+classDiagram
+    Animal <|-- Duck
+    Animal <|-- Fish
+    Animal : +int age
+    Animal : +String gender
+    Animal: +isMammal()
+    class Duck{
+        +String beakColor
+        +swim()
+        +quack()
+    }
+</div>
 ```
 
-### 5. Add Mermaid Diagrams in Your Content
+## GitHub Pages Compatibility
 
-You can now add Mermaid diagrams directly in your Markdown files. Use code blocks with `mermaid` as the language identifier:
+### Why Custom Implementation?
 
-````
-```mermaid
-graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
-```
-````
+GitHub Pages has limitations on Jekyll plugins. While jekyll-mermaid works locally, it may not render diagrams on GitHub Pages due to:
 
-### 6. Build and Serve Your Site
+1. **Plugin Restrictions**: GitHub Pages only supports specific plugins
+2. **Build Process**: Different build environment
+3. **Security Policies**: Limited JavaScript execution
 
-Finally, build and serve your Jekyll site:
+### Solution: Hybrid Approach
 
-```bash
-bundle exec jekyll serve
-```
+Our implementation uses both approaches:
 
-### Troubleshooting
+1. **Plugin Configuration**: For local development and configuration
+2. **Custom Include**: For GitHub Pages compatibility
+3. **Conditional Loading**: Only loads when needed
 
-- **Check JavaScript Console**: If Mermaid diagrams aren't rendering, check your browser's JavaScript console for errors.
-- **Syntax Errors in Diagrams**: Ensure your Mermaid syntax is correct. Invalid syntax can prevent diagrams from rendering.
+## Troubleshooting
 
-### Additional Customization
+### Common Issues
 
-- **Mermaid Configuration**: Mermaid offers various configuration options. You can customize these in the initialization script.
-- **Styling**: You can apply custom CSS to style your Mermaid diagrams.
+| Issue | Solution |
+|-------|----------|
+| Diagrams not rendering | Check `mermaid: true` in front matter |
+| Plugin not working | Verify jekyll-mermaid is in plugins list |
+| GitHub Pages issues | Use custom implementation with `<div class="mermaid">` |
+| Styling problems | Check theme configuration in mermaid.html |
 
-By following these steps, you should be able to integrate Mermaid diagrams into your Jekyll site. Remember to regularly check for updates to the Mermaid library to ensure compatibility and security.
+### Testing
 
+1. **Local Testing**: Use `bundle exec jekyll serve`
+2. **GitHub Pages**: Push to repository and check live site
+3. **Validation**: Use [Mermaid Live Editor](https://mermaid.live/)
 
-## 3. References
-* [Mermaid Documentation](https://mermaidjs.github.io/)
-* [Mermaid Live Editor](https://mermaidjs.github.io/mermaid-live-editor/)
-* [Mermaid on GitHub](https://github.com/knsv/mermaid)
-* [Embed Mermaid Charts in Jekyll without Plugin](http://kkpattern.github.io/2015/05/15/Embed-Chart-in-Jekyll.html)
-* [Adding Jekyll plugins to a GitHub Pages site](https://help.github.com/articles/adding-jekyll-plugins-to-a-github-pages-site/)
+## Best Practices
+
+### 1. Choose the Right Approach
+- **Local Development**: Use jekyll-mermaid plugin
+- **GitHub Pages**: Use custom implementation
+- **Both**: Use hybrid approach (recommended)
+
+### 2. Performance Optimization
+- Only load Mermaid on pages that need it
+- Use conditional loading with `page.mermaid`
+- Consider lazy loading for large diagrams
+
+### 3. Maintenance
+- Keep Mermaid version updated
+- Test both local and GitHub Pages environments
+- Document any custom configurations
+
+## Resources
+
+- **Main Documentation**: [Mermaid Guide](/docs/jekyll/mermaid/)
+- **Official Docs**: [mermaid.js.org](https://mermaid.js.org/)
+- **Live Editor**: [mermaid.live](https://mermaid.live/)
+- **Plugin Repository**: [jekyll-mermaid](https://github.com/jasonbellamy/jekyll-mermaid)
+
+---
+
+**Next Steps**: See the [complete Mermaid guide](/docs/jekyll/mermaid/) for comprehensive examples and reference.

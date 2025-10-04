@@ -189,6 +189,7 @@ plugins:
   - jekyll-seo-tag
   - jekyll-paginate
   - jekyll-relative-links
+  - jekyll-mermaid
 
 # Project resource links (used by landing page and includes)
 resources:
@@ -209,7 +210,14 @@ gisgus:
   data-repo-id: "MDEwOlJlcG9zaXRvcnkyODM4MjI1NzM"
   data-category-id: "DIC_kwDOEOrJ7c4CAn8D"
 
-# https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/
+## Mermaid Diagram Configuration #################################################
+# Mermaid diagrams now render from native markdown code blocks
+# Usage: ```mermaid ... ``` (no need for mermaid: true in front matter)
+# Plugin: jekyll-mermaid (https://github.com/jasonbellamy/jekyll-mermaid)
+# Documentation: https://mermaid.js.org/
+
+mermaid:
+  src: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js'
 
 ## Conversion
 # Markdown Options https://jekyllrb.com/docs/configuration/markdown/
@@ -395,6 +403,8 @@ exclude:
   - vendor/
   # - "*.sh"
   - submodules/
+  - MERMAID-*.md
+  - MERMAID-*/
 
 # Sass/SCSS
 sass:

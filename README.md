@@ -149,6 +149,18 @@ docker-compose up
 
 > 📖 **Learn more**: [Automated Version System Documentation](AUTOMATED_VERSION_SYSTEM.md)
 
+### 📊 **Mermaid Diagram Integration** *(New in v0.3.0)*
+
+- **Complete Diagram Support** - Flowcharts, sequence diagrams, class diagrams, state diagrams, ER diagrams, Gantt charts, pie charts, git graphs, journey diagrams, and mindmaps
+- **GitHub Pages Compatible** - Works seamlessly with both local development and GitHub Pages deployment
+- **Conditional Loading** - Only loads Mermaid when needed, optimizing performance
+- **Responsive Design** - Diagrams automatically scale across all devices
+- **Dark Mode Support** - Forest theme optimized for dark mode compatibility
+- **Comprehensive Documentation** - Complete user guide with live examples and troubleshooting
+- **Automated Testing** - 16 automated tests covering all aspects of functionality
+
+> 📖 **Learn more**: [Mermaid Documentation](/docs/jekyll/mermaid/) • [Integration Tutorial](/docs/jekyll/jekyll-diagram-with-mermaid/) • [Test Suite](/docs/jekyll/mermaid-test-suite/)
+
 ## 📋 Prerequisites
 
 Before you begin, ensure you have:
