@@ -1,0 +1,180 @@
+<!--
+  ===================================================================
+  STATS NO DATA COMPONENT
+  ===================================================================
+  
+  File: stats-no-data.html
+  Path: _includes/stats/stats-no-data.html
+  Purpose: Error state when statistics data is not available
+  
+  Features:
+  - Clear messaging about missing data
+  - Instructions for generating statistics
+  - Bootstrap styled alert components
+  - Action buttons for getting started
+  
+  Dependencies:
+  - Bootstrap 5 for styling
+  - Bootstrap Icons for iconography
+  ===================================================================
+-->
+
+<!-- ================================================ -->
+<!-- NO DATA AVAILABLE SECTION                       -->
+<!-- Error state when statistics are not generated   -->
+<!-- ================================================ -->
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    
+    <!-- Main Alert -->
+    <div class="alert alert-warning border-0 shadow-sm" role="alert">
+      <div class="text-center py-4">
+        <i class="bi bi-exclamation-triangle display-1 text-warning mb-4"></i>
+        <h2 class="alert-heading mb-3">No Statistics Available</h2>
+        <p class="lead mb-4">
+          Statistics haven't been generated yet. Follow the steps below to create comprehensive analytics for your site.
+        </p>
+      </div>
+    </div>
+    
+    <!-- Instructions Card -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">
+          <i class="bi bi-gear me-2"></i> How to Generate Statistics
+        </h4>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <h5 class="text-primary">
+              <i class="bi bi-1-circle me-2"></i> Run Generator Script
+            </h5>
+            <p class="mb-3">Execute the statistics generation script from your site's root directory:</p>
+            <div class="bg-dark text-light p-3 rounded mb-3">
+              <code>ruby _data/generate_statistics.rb</code>
+            </div>
+            <p class="text-muted small">
+              This script will analyze your content and create the statistics data file.
+            </p>
+          </div>
+          <div class="col-md-6">
+            <h5 class="text-success">
+              <i class="bi bi-2-circle me-2"></i> Refresh This Page
+            </h5>
+            <p class="mb-3">After the script completes, refresh this page to see your statistics:</p>
+            <div class="d-grid">
+              <button class="btn btn-success" onclick="window.location.reload()">
+                <i class="bi bi-arrow-clockwise me-2"></i>
+                Refresh Page
+              </button>
+            </div>
+            <p class="text-muted small mt-2">
+              The statistics will be displayed once the data file is created.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Alternative Setup Information -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-info text-white">
+        <h4 class="mb-0">
+          <i class="bi bi-info-circle me-2"></i> What You'll See
+        </h4>
+      </div>
+      <div class="card-body">
+        <p>Once statistics are generated, this page will display:</p>
+        <div class="row">
+          <div class="col-md-3 text-center mb-3">
+            <i class="bi bi-file-text display-4 text-primary mb-2"></i>
+            <h6>Total Posts</h6>
+            <p class="text-muted small">Count of all published content</p>
+          </div>
+          <div class="col-md-3 text-center mb-3">
+            <i class="bi bi-folder display-4 text-success mb-2"></i>
+            <h6>Categories</h6>
+            <p class="text-muted small">Content organization groups</p>
+          </div>
+          <div class="col-md-3 text-center mb-3">
+            <i class="bi bi-tags display-4 text-info mb-2"></i>
+            <h6>Tags</h6>
+            <p class="text-muted small">Topic labels and keywords</p>
+          </div>
+          <div class="col-md-3 text-center mb-3">
+            <i class="bi bi-graph-up display-4 text-warning mb-2"></i>
+            <h6>Analytics</h6>
+            <p class="text-muted small">Detailed insights and metrics</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Troubleshooting -->
+    <div class="card shadow-sm">
+      <div class="card-header bg-secondary text-white">
+        <h4 class="mb-0">
+          <i class="bi bi-tools me-2"></i> Troubleshooting
+        </h4>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <h6 class="text-danger">
+              <i class="bi bi-x-circle me-2"></i> Script Not Found
+            </h6>
+            <p class="small mb-3">
+              If the generator script doesn't exist, you may need to create it or check your site's documentation for the correct path.
+            </p>
+            
+            <h6 class="text-danger">
+              <i class="bi bi-x-circle me-2"></i> Permission Denied
+            </h6>
+            <p class="small mb-3">
+              Make sure you have write permissions to the <code>_data</code> directory and that Ruby is installed.
+            </p>
+          </div>
+          <div class="col-md-6">
+            <h6 class="text-danger">
+              <i class="bi bi-x-circle me-2"></i> No Content Found
+            </h6>
+            <p class="small mb-3">
+              If you have posts but see no statistics, check that your content has proper front matter with categories and tags.
+            </p>
+            
+            <h6 class="text-success">
+              <i class="bi bi-check-circle me-2"></i> Need Help?
+            </h6>
+            <p class="small">
+              Check the site documentation or contact support for assistance with statistics generation.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<!-- ================================================ -->
+<!-- NO DATA PAGE ACTIONS                            -->
+<!-- Additional helpful actions                      -->
+<!-- ================================================ -->
+<div class="row justify-content-center mt-4">
+  <div class="col-lg-8">
+    <div class="text-center">
+      <div class="btn-group" role="group">
+        <a href="{{ '/' | relative_url }}" class="btn btn-outline-primary">
+          <i class="bi bi-house me-2"></i> Return Home
+        </a>
+        <button type="button" class="btn btn-primary" onclick="window.location.reload()">
+          <i class="bi bi-arrow-clockwise me-2"></i> Check Again
+        </button>
+        <a href="{{ '/docs' | relative_url }}" class="btn btn-outline-info">
+          <i class="bi bi-book me-2"></i> Documentation
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

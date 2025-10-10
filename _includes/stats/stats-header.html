@@ -1,0 +1,123 @@
+<!--
+  ===================================================================
+  STATS HEADER COMPONENT - BOOTSTRAP 5 OPTIMIZED
+  ===================================================================
+  
+  File: stats-header.html
+  Path: _includes/stats/stats-header.html
+  Purpose: Page header for statistics dashboard using Bootstrap 5 classes
+  
+  Features:
+  - Bootstrap 5 utility classes for layout and styling
+  - Responsive design with Bootstrap breakpoints
+  - Bootstrap icons and color system
+  - Minimal custom CSS dependencies
+  
+  Dependencies:
+  - Bootstrap 5 for styling
+  - Bootstrap Icons for iconography
+  - Jekyll data variables
+  ===================================================================
+-->
+
+<!-- ================================================ -->
+<!-- STATS PAGE HEADER                               -->
+<!-- Title, description, and metadata display        -->
+<!-- ================================================ -->
+<div class="row mb-5">
+  <div class="col-12">
+    <div class="text-center mb-4">
+      <!-- Header Icon with Bootstrap classes -->
+      <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-gradient rounded-circle p-4 mb-4 shadow-lg stats-header-icon">
+        <i class="bi bi-graph-up fs-1 text-white stats-icon-rotate"></i>
+      </div>
+      
+      <!-- Title with Bootstrap typography -->
+      <h1 class="display-3 mb-3 fw-bold text-primary">
+        {{ page.title | default: "Site Statistics Portal" }}
+      </h1>
+      
+      <!-- Description with Bootstrap lead class -->
+      <p class="lead text-muted mb-4 fs-4">
+        {{ page.description | default: "Comprehensive analytics and insights from the knowledge base" }}
+      </p>
+    </div>
+    
+    <!-- Last Updated Information using Bootstrap alerts -->
+    {% if site.data.content_statistics and site.data.content_statistics.generated_at %}
+      <div class="alert alert-info border-0 bg-gradient shadow-sm d-flex align-items-center justify-content-between" role="alert">
+        <div class="d-flex align-items-center">
+          <i class="bi bi-clock me-3 fs-4"></i>
+          <span class="fw-medium">
+            <strong>Last updated:</strong> 
+            {{ site.data.content_statistics.generated_at | date: "%B %d, %Y at %I:%M %p" }}
+          </span>
+        </div>
+        <button class="btn btn-outline-info btn-sm" onclick="window.location.reload()">
+          <i class="bi bi-arrow-clockwise me-1"></i>
+          Refresh
+        </button>
+      </div>
+    {% else %}
+      <div class="alert alert-warning border-0 bg-gradient shadow-sm d-flex align-items-center justify-content-between" role="alert">
+        <div class="d-flex align-items-center">
+          <i class="bi bi-exclamation-triangle me-3 fs-4"></i>
+          <span class="fw-medium">
+            <strong>Statistics not yet generated.</strong> 
+            Run <code class="bg-light text-dark px-2 py-1 rounded">ruby _data/generate_statistics.rb</code> to create statistics.
+          </span>
+        </div>
+        <button class="btn btn-outline-warning btn-sm" onclick="window.location.reload()">
+          <i class="bi bi-arrow-clockwise me-1"></i>
+          Check Again
+        </button>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- ================================================ -->
+<!-- STATS NAVIGATION BREADCRUMBS                    -->
+<!-- Quick navigation within the stats page          -->
+<!-- ================================================ -->
+<div class="row mb-5">
+  <div class="col-12">
+    <!-- Bootstrap breadcrumb -->
+    <nav aria-label="Statistics navigation">
+      <ol class="breadcrumb bg-light p-3 rounded shadow-sm">
+        <li class="breadcrumb-item">
+          <a href="{{ '/' | relative_url }}" class="text-decoration-none">
+            <i class="bi bi-house me-1"></i> Home
+          </a>
+        </li>
+        <li class="breadcrumb-item active fw-medium" aria-current="page">
+          <i class="bi bi-graph-up me-1"></i> Statistics
+        </li>
+      </ol>
+    </nav>
+    
+    <!-- Quick Jump Navigation using Bootstrap button group -->
+    {% if site.data.content_statistics %}
+      <div class="text-center">
+        <div class="btn-group btn-group-lg shadow-sm d-flex flex-wrap gap-2" role="group" aria-label="Statistics navigation">
+          <a href="#overview" class="btn btn-outline-primary flex-fill">
+            <i class="bi bi-speedometer2 me-1"></i> 
+            <span class="d-none d-sm-inline">Overview</span>
+          </a>
+          <a href="#categories" class="btn btn-outline-success flex-fill">
+            <i class="bi bi-folder me-1"></i> 
+            <span class="d-none d-sm-inline">Categories</span>
+          </a>
+          <a href="#tags" class="btn btn-outline-info flex-fill">
+            <i class="bi bi-tags me-1"></i> 
+            <span class="d-none d-sm-inline">Tags</span>
+          </a>
+          <a href="#metrics" class="btn btn-outline-warning flex-fill">
+            <i class="bi bi-info-circle me-1"></i> 
+            <span class="d-none d-sm-inline">Metrics</span>
+          </a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>

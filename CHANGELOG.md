@@ -1,3 +1,43 @@
+## [0.4.0] - 2025-10-10
+
+### Added
+- **📊 Comprehensive Site Statistics Dashboard**: Complete analytics system for content insights
+  - Dynamic statistics generation from site content using Ruby script
+  - Real-time analytics showing 61 content pieces, 19 categories, 47 tags, 43,601 words
+  - Interactive Bootstrap 5-based dashboard with responsive design
+  - Modular component architecture with 6 specialized statistics components
+  - Intelligent activity level calculations based on actual data distribution
+  - Professional tag cloud visualization with dynamic sizing
+  - Mobile-optimized layout with smooth animations and transitions
+- **🔧 Advanced Data Processing Engine**: Automated content analysis and metric generation
+  - Ruby-based statistics generator script analyzing posts, pages, and collections
+  - YAML data file generation with comprehensive site metrics
+  - Smart categorization and tagging analysis with usage frequency tracking
+  - Monthly content distribution analysis and trend identification
+- **🎨 Enhanced User Experience Components**: Professional dashboard interface
+  - Bootstrap 5-first design approach with minimal custom CSS
+  - Card-based layout for metric organization and visual hierarchy
+  - Interactive tooltips and progress indicators for enhanced usability
+  - Print-friendly styling and accessibility compliance (ARIA support)
+  - Smooth scroll navigation and fade-in animations for modern UX
+
+### Changed
+- **📈 Activity Level Intelligence**: Dynamic threshold calculation replacing static values
+  - Categories: High activity (≥70% of max), Medium (≥40% of max), Low (remainder)
+  - Tags: Frequently used (≥60% of max), Moderately used (≥20% of max), Occasionally used (remainder)
+  - Real-time adaptation to content distribution patterns
+- **🏗️ Template Architecture**: Modular include system for maintainable code
+  - Separated concerns across 6 specialized components
+  - Clean Liquid template syntax with proper error handling
+  - Optimized data processing without complex sorting operations
+
+### Fixed
+- **🐛 Data Display Issues**: Resolved template rendering and data access problems
+  - Fixed Liquid template syntax errors causing empty displays
+  - Corrected data structure references across all components
+  - Eliminated type conversion errors in sorting operations
+  - Proper handling of nested array data structures
+
 ## [0.2.1] - 2025-09-30
 
 ### Added

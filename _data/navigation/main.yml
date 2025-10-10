@@ -14,6 +14,8 @@
   sublinks:
     - title: All Posts
       url: /posts/
+- title: Stats
+  url: /stats/
 - title: Docs
   url: /docs/
   sublinks:

@@ -1,0 +1,243 @@
+<!--
+  ===================================================================
+  STATS METRICS COMPONENT
+  ===================================================================
+  
+  File: stats-metrics.html
+  Path: _includes/stats/stats-metrics.html
+  Purpose: Additional metrics and quick facts section
+  
+  Features:
+  - Quick facts and summary information
+  - Bootstrap styled info cards
+  - Dynamic calculations
+  - Summary statistics
+  
+  Dependencies:
+  - Bootstrap 5 for styling
+  - Bootstrap Icons for iconography
+  - site.data.content_statistics
+  ===================================================================
+-->
+
+<!-- ================================================ -->
+<!-- ADDITIONAL METRICS SECTION                      -->
+<!-- Quick facts and summary information             -->
+<!-- ================================================ -->
+<div id="metrics" class="row mb-5">
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-header bg-info text-white">
+        <h3 class="mb-0 fw-bold">
+          <i class="bi bi-info-circle me-2"></i> Quick Facts & Insights
+        </h3>
+      </div>
+      
+      <div class="card-body">
+        <div class="row g-4">
+          
+          <!-- Content Overview Column -->
+          <div class="col-md-4">
+            <div class="h-100 p-3 bg-light rounded">
+              <h5 class="text-primary mb-3">
+                <i class="bi bi-file-text me-2"></i> Content Overview
+              </h5>
+              <ul class="list-unstyled">
+                <li class="mb-2">
+                  <strong>Total Posts:</strong> 
+                  <span class="badge bg-primary">{{ site.data.content_statistics.overview.total_posts | default: 0 }}</span>
+                </li>
+                <li class="mb-2">
+                  <strong>Categories:</strong> 
+                  <span class="badge bg-success">{{ site.data.content_statistics.overview.total_categories | default: 0 }}</span>
+                </li>
+                <li class="mb-2">
+                  <strong>Tags:</strong> 
+                  <span class="badge bg-info">{{ site.data.content_statistics.overview.total_tags | default: 0 }}</span>
+                </li>
+                <li class="mb-2">
+                  <strong>Total Words:</strong>
+                  <span class="badge bg-warning">{{ site.data.content_statistics.overview.total_words | number_with_delimiter | default: 0 }}</span>
+                </li>
+                <li class="mb-2">
+                  <strong>Avg Words per Content:</strong>
+                  <span class="badge bg-info">{{ site.data.content_statistics.overview.average_words_per_post | default: 0 }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <!-- Top Performers Column -->
+          <div class="col-md-4">
+            <div class="h-100 p-3 bg-light rounded">
+              <h5 class="text-success mb-3">
+                <i class="bi bi-trophy me-2"></i> Top Performers
+              </h5>
+              
+              {% if site.data.content_statistics.categories and site.data.content_statistics.categories.size > 0 %}
+                {% assign top_category = site.data.content_statistics.categories | first %}
+                <div class="mb-3">
+                  <strong>Most Popular Category:</strong><br>
+                  <span class="text-success fw-bold">{{ top_category[0] | capitalize }}</span><br>
+                  <small class="text-muted">{{ top_category[1] }} posts</small>
+                </div>
+              {% endif %}
+              
+              {% if site.data.content_statistics.tags and site.data.content_statistics.tags.size > 0 %}
+                {% assign top_tag = site.data.content_statistics.tags | first %}
+                <div class="mb-3">
+                  <strong>Most Used Tag:</strong><br>
+                  <span class="text-info fw-bold">{{ top_tag[0] }}</span><br>
+                  <small class="text-muted">{{ top_tag[1] }} uses</small>
+                </div>
+              {% endif %}
+              
+              <!-- Content Distribution -->
+              <div class="mb-3">
+                <strong>Content Distribution:</strong><br>
+                {% if site.data.content_statistics.categories and site.data.content_statistics.categories.size > 0 %}
+                  {% assign top_category = site.data.content_statistics.categories | first %}
+                  {% assign top_category_percentage = top_category[1] | times: 100 | divided_by: site.data.content_statistics.overview.total_content %}
+                  <div class="progress stats-progress">
+                    <div class="progress-bar bg-success" 
+                         role="progressbar" 
+                         aria-valuenow="0"
+                         aria-valuemin="0"
+                         aria-valuemax="100"
+                         aria-label="Content distribution percentage"
+                         data-width="{{ top_category_percentage }}%">
+                      {{ top_category_percentage | round }}%
+                    </div>
+                  </div>
+                  <small class="text-muted">{{ top_category[0] | capitalize }} dominance</small>
+                {% else %}
+                  <small class="text-muted">No data available</small>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          
+          <!-- Data Health Column -->
+          <div class="col-md-4">
+            <div class="h-100 p-3 bg-light rounded">
+              <h5 class="text-warning mb-3">
+                <i class="bi bi-heart-pulse me-2"></i> Data Health
+              </h5>
+              
+              <!-- Last Update Status -->
+              <div class="mb-3">
+                <strong>Last Updated:</strong><br>
+                {% if site.data.content_statistics.generated_at %}
+                  <span class="text-primary">{{ site.data.content_statistics.generated_at | date: "%B %d, %Y" }}</span><br>
+                  <small class="text-muted">{{ site.data.content_statistics.generated_at | date: "%I:%M %p" }}</small>
+                {% else %}
+                  <span class="text-danger">Not Available</span><br>
+                  <small class="text-muted">Statistics not generated</small>
+                {% endif %}
+              </div>
+              
+              <!-- Data Completeness -->
+              <div class="mb-3">
+                <strong>Data Completeness:</strong><br>
+                {% assign completeness_score = 0 %}
+                {% if site.data.content_statistics.overview.total_posts > 0 %}
+                  {% assign completeness_score = completeness_score | plus: 25 %}
+                {% endif %}
+                {% if site.data.content_statistics.overview.total_categories > 0 %}
+                  {% assign completeness_score = completeness_score | plus: 25 %}
+                {% endif %}
+                {% if site.data.content_statistics.overview.total_tags > 0 %}
+                  {% assign completeness_score = completeness_score | plus: 25 %}
+                {% endif %}
+                {% if site.data.content_statistics.generated_at %}
+                  {% assign completeness_score = completeness_score | plus: 25 %}
+                {% endif %}
+                
+                <div class="progress stats-progress">
+                  <div class="progress-bar 
+                    {% if completeness_score == 100 %}bg-success
+                    {% elsif completeness_score >= 75 %}bg-info
+                    {% elsif completeness_score >= 50 %}bg-warning
+                    {% else %}bg-danger{% endif %}" 
+                       role="progressbar" 
+                       aria-valuenow="0"
+                       aria-valuemin="0"
+                       aria-valuemax="100"
+                       aria-label="Data completeness percentage"
+                       data-width="{{ completeness_score }}%">
+                    {{ completeness_score }}%
+                  </div>
+                </div>
+                <small class="text-muted">Overall data quality</small>
+              </div>
+              
+              <!-- Refresh Instructions -->
+              {% unless site.data.content_statistics %}
+                <div class="alert alert-warning alert-sm p-2" role="alert">
+                  <small>
+                    <i class="bi bi-arrow-clockwise"></i> 
+                    Run <code>ruby _data/generate_statistics.rb</code> to refresh
+                  </small>
+                </div>
+              {% endunless %}
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+      <!-- Action Buttons Footer -->
+      <div class="card-footer bg-light text-center">
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-outline-primary" onclick="window.print()">
+            <i class="bi bi-printer"></i> Print Report
+          </button>
+          <button type="button" class="btn btn-outline-success" onclick="window.location.reload()">
+            <i class="bi bi-arrow-clockwise"></i> Refresh Data
+          </button>
+          <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#helpModal">
+            <i class="bi bi-question-circle"></i> Help
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================ -->
+<!-- HELP MODAL                                      -->
+<!-- Information about statistics and data sources   -->
+<!-- ================================================ -->
+<div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="helpModalLabel">
+          <i class="bi bi-question-circle"></i> Statistics Help
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h6>About These Statistics</h6>
+        <p>This dashboard displays comprehensive analytics about your site's content, including posts, categories, and tags.</p>
+        
+        <h6>Data Sources</h6>
+        <ul>
+          <li><strong>Posts:</strong> All published content from your site</li>
+          <li><strong>Categories:</strong> Content groupings and classifications</li>
+          <li><strong>Tags:</strong> Topic labels and keywords</li>
+        </ul>
+        
+        <h6>Updating Statistics</h6>
+        <p>To refresh the data, run the statistics generator:</p>
+        <code>ruby _data/generate_statistics.rb</code>
+        
+        <h6>Data Freshness</h6>
+        <p>Statistics are generated manually and should be updated regularly to reflect the latest content changes.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

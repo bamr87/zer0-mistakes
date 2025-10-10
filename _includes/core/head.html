@@ -147,6 +147,11 @@
 <!-- Custom CSS overrides - Theme customizations and tweaks -->
 <link rel="stylesheet" href="{{'/assets/css/custom.css' | relative_url }}">
 
+<!-- Statistics page specific styles -->
+{% if page.layout == 'stats' %}
+<link rel="stylesheet" href="{{ '/assets/css/stats.css' | relative_url }}">
+{% endif %}
+
 <!-- ========================== -->
 <!-- EXPERIMENTAL FRAMEWORKS   -->
 <!-- ========================== -->

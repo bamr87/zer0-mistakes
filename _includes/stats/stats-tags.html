@@ -1,0 +1,142 @@
+<!--
+  ===================================================================
+  STATS TAGS COMPONENT
+  ===================================================================
+  
+  File: stats-tags.html
+  Path: _includes/stats/stats-tags.html
+  Purpose: Tags analysis section for statistics dashboard
+  
+  Features:
+  - Top tags list with usage counts
+  - Tag cloud visualization
+  - Bootstrap styled card layout
+  - Interactive tag display
+  
+  Dependencies:
+  - Bootstrap 5 for styling
+  - Bootstrap Icons for iconography
+  - site.data.content_statistics.tags
+  ===================================================================
+-->
+
+<!-- ================================================ -->
+<!-- TAGS ANALYSIS SECTION                           -->
+<!-- Top tags with usage counts                      -->
+<!-- ================================================ -->
+<div id="tags" class="card shadow-sm h-100">
+  <div class="card-header bg-success text-white">
+    <div class="d-flex align-items-center justify-content-between">
+      <h3 class="mb-0 fw-bold">
+        <i class="bi bi-tags me-2"></i> Top Tags
+      </h3>
+      <span class="badge bg-light text-success">
+        {{ site.data.content_statistics.overview.total_tags | default: 0 }}
+      </span>
+    </div>
+  </div>
+  
+  <div class="card-body p-0">
+    {% if site.data.content_statistics.tags and site.data.content_statistics.tags.size > 0 %}
+      
+      <!-- Tags List -->
+      <div class="list-group list-group-flush">
+        {% for tag in site.data.content_statistics.tags limit: 15 %}
+          <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+            <div class="d-flex align-items-center">
+              <i class="bi bi-tag text-success me-3"></i>
+              <div>
+                <span class="fw-medium">{{ tag[0] }}</span>
+                {% assign max_tag = site.data.content_statistics.tags | first %}
+                {% assign max_count = max_tag[1] | default: 1 %}
+                {% assign frequent_threshold = max_count | times: 0.6 | round %}
+                {% assign moderate_threshold = max_count | times: 0.2 | round %}
+                {% if tag[1] >= frequent_threshold and tag[1] > 3 %}
+                  <br><small class="text-muted">Frequently used</small>
+                {% elsif tag[1] >= moderate_threshold and tag[1] > 1 %}
+                  <br><small class="text-muted">Moderately used</small>
+                {% else %}
+                  <br><small class="text-muted">Occasionally used</small>
+                {% endif %}
+              </div>
+            </div>
+            <div class="text-end">
+              <span class="badge bg-success rounded-pill fs-6 px-3 py-2">
+                {{ tag[1] }}
+              </span>
+              <br><small class="text-muted">uses</small>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      
+      <!-- Tag Cloud Section -->
+      <div class="card-footer bg-light">
+        <h6 class="mb-3 fw-bold">
+          <i class="bi bi-cloud"></i> Tag Cloud
+        </h6>
+        <div class="tag-cloud">
+          {% for tag in site.data.content_statistics.tags limit: 25 %}
+            {% assign max_tag = site.data.content_statistics.tags | first %}
+            {% assign max_count = max_tag[1] | default: 1 %}
+            {% if max_count == 0 %}
+              {% assign max_count = 1 %}
+            {% endif %}
+            {% assign tag_size = tag[1] | times: 100 | divided_by: max_count %}
+            {% if tag_size > 80 %}
+              {% assign tag_class = "fs-xl" %}
+            {% elsif tag_size > 60 %}
+              {% assign tag_class = "fs-lg" %}
+            {% elsif tag_size > 40 %}
+              {% assign tag_class = "fs-md" %}
+            {% else %}
+              {% assign tag_class = "fs-sm" %}
+            {% endif %}
+            
+            <span class="badge bg-outline-success {{ tag_class }}" 
+                  data-bs-toggle="tooltip" 
+                  title="{{ tag[1] }} posts">
+              {{ tag[0] }}
+            </span>
+          {% endfor %}
+        </div>
+      </div>
+      
+    {% else %}
+      
+      <!-- No Tags Available -->
+      <div class="text-center py-5">
+        <i class="bi bi-tags-fill display-4 text-muted mb-3"></i>
+        <h5 class="text-muted">No tags found</h5>
+        <p class="text-muted">Tags will appear here once content is tagged.</p>
+      </div>
+      
+    {% endif %}
+  </div>
+  
+  <!-- Tags Summary Footer -->
+  {% if site.data.content_statistics.tags and site.data.content_statistics.tags.size > 0 %}
+    <div class="card-footer bg-light">
+      <div class="row text-center">
+        <div class="col-4">
+          <strong class="text-success">{{ site.data.content_statistics.overview.total_tags | default: 0 }}</strong>
+          <br><small class="text-muted">Total Tags</small>
+        </div>
+        <div class="col-4">
+          {% assign top_tag = site.data.content_statistics.tags | first %}
+          <strong class="text-primary">{{ top_tag[1] | default: 0 }}</strong>
+          <br><small class="text-muted">Most Used</small>
+        </div>
+        <div class="col-4">
+          {% assign total_tag_uses = 0 %}
+          {% for tag in site.data.content_statistics.tags %}
+            {% assign total_tag_uses = total_tag_uses | plus: tag[1] %}
+          {% endfor %}
+          {% assign avg_tag_uses = total_tag_uses | divided_by: site.data.content_statistics.tags.size %}
+          <strong class="text-info">{{ avg_tag_uses | default: 0 }}</strong>
+          <br><small class="text-muted">Avg Uses</small>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>

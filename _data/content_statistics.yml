@@ -1,0 +1,401 @@
+---
+generated_at: '2025-10-10 16:52:40'
+overview:
+  total_posts: 2
+  total_pages: 60
+  total_content: 62
+  total_categories: 19
+  total_tags: 47
+  total_words: 45101
+  average_words_per_post: 727.4
+categories:
+- - Documentation
+  - 4
+- - How-To
+  - 3
+- - Development
+  - 3
+- - docker
+  - 2
+- - quickstart
+  - 2
+- - Features
+  - 2
+- - gpt breaking
+  - 1
+- - Testing
+  - 1
+- - Tutorial
+  - 1
+- - News-Demo
+  - 1
+- - deployment
+  - 1
+- - github
+  - 1
+- - jekyll
+  - 1
+- - Quick Start
+  - 1
+- - jekyll-theme
+  - 1
+- - bootstrap
+  - 1
+- - about
+  - 1
+- - development
+  - 1
+- - themes
+  - 1
+tags:
+- - jekyll
+  - 15
+- - mermaid
+  - 4
+- - docker
+  - 4
+- - bootstrap
+  - 3
+- - tutorial
+  - 2
+- - ruby
+  - 2
+- - automation
+  - 2
+- - ci/cd
+  - 2
+- - aipd
+  - 2
+- - devops
+  - 2
+- - dff
+  - 2
+- - dry
+  - 2
+- - kis
+  - 2
+- - news-site
+  - 1
+- - web-development
+  - 1
+- - port
+  - 1
+- - travis ci
+  - 1
+- - github pages
+  - 1
+- - custom domain
+  - 1
+- - netlify
+  - 1
+- - disqus
+  - 1
+- - comments
+  - 1
+- - diagram
+  - 1
+- - highlighting
+  - 1
+- - highlight.js
+  - 1
+- - liquid
+  - 1
+- - mathjax
+  - 1
+- - mathematic
+  - 1
+- - pagination
+  - 1
+- - performance
+  - 1
+- - nanobar
+  - 1
+- - progress bar
+  - 1
+- - security
+  - 1
+- - sharethis
+  - 1
+- - social share
+  - 1
+- - markdown
+  - 1
+- - testing
+  - 1
+- - quality assurance
+  - 1
+- - diagrams
+  - 1
+- - documentation
+  - 1
+- - setup
+  - 1
+- - development
+  - 1
+- - ai-powered
+  - 1
+- - remote-theme
+  - 1
+- - github-pages
+  - 1
+- - about
+  - 1
+- - ai-automation
+  - 1
+content_breakdown:
+  post: 2
+  page: 60
+monthly_distribution:
+  2016-01: 2
+  2016-11: 1
+  2017-08: 2
+  2017-12: 1
+  2018-09: 1
+  2019-06: 7
+  2022-06: 2
+  2023-03: 1
+  2023-11: 1
+  2024-03: 1
+  2024-05: 1
+  2024-06: 1
+  2025-01: 3
+  2025-07: 2
+  2025-09: 3
+  2025-10: 1
+word_statistics:
+  2000-01-01-index.md:
+    words: 1033
+    type: post
+    title: 'Zer0-Mistakes News Network: Building Dynamic News Sites with Jekyll'
+  2024-06-17-wizard-topples-capitalist-dominance-ingeniously.md:
+    words: 298
+    type: post
+    title: Wizard Topples Capitalist Dominance Ingeniously
+  STATS_ENHANCEMENT_SUMMARY.md:
+    words: 801
+    type: page
+    title: STATS_ENHANCEMENT_SUMMARY
+  add-floating-back-to-top-button.md:
+    words: 293
+    type: page
+    title: Add Floating Back-to-Top button
+  automated-version-build-system.md:
+    words: 1027
+    type: page
+    title: Comprehensive Gem Automation System
+  comprehensive-gem-automation-system.md:
+    words: 1363
+    type: page
+    title: Comprehensive Gem Automation System
+  index.md:
+    words: 596
+    type: page
+    title: zer0-mistakes Jekyll Theme
+  jekyll.md:
+    words: 4387
+    type: page
+    title: Jeykll
+  statistics-dashboard.md:
+    words: 1178
+    type: page
+    title: Statistics Dashboard Feature
+  bamr87.md:
+    words: 65
+    type: page
+    title: bamr87
+  config.md:
+    words: 56
+    type: page
+    title: Jekyll Configuration
+  sitemap.md:
+    words: 16
+    type: page
+    title: Sitemap
+  stats.md:
+    words: 161
+    type: page
+    title: Site Statistics Portal
+  theme.md:
+    words: 26
+    type: page
+    title: Bootstrap Theme Examples
+  footer.md:
+    words: 1501
+    type: page
+    title: Footer Layout
+  cannot-start-jekyll-at-specific-port.md:
+    words: 301
+    type: page
+    title: Cannot Start Jekyll at Specific Port
+  continuously-deploy-jekyll-website-to-gitHub-pages-with-travis-ci.md:
+    words: 598
+    type: page
+    title: Continuously Deploy Jekyll to GitHub Pages with Travis-CI
+  deploying-jekyll-website-to-netlify.md:
+    words: 417
+    type: page
+    title: Deploying Jekyll Website to Netlify
+  deploying-personal-website-with-custom-domain.md:
+    words: 273
+    type: page
+    title: Deploying Personal Website with Custom Domain
+  jekyll-comments-with-disqus.md:
+    words: 542
+    type: page
+    title: Jekyll - Comments with Disqus
+  jekyll-config.md:
+    words: 1335
+    type: page
+    title: Configuration Options | Jekyll • Simple, blog-aware, static sites
+  jekyll-diagram-with-mermaid.md:
+    words: 583
+    type: page
+    title: Jekyll Mermaid Integration Tutorial
+  jekyll-frontmatter-cms.md:
+    words: 16
+    type: page
+    title: Jekyll Frontmatter CMS
+  jekyll-highlighting.md:
+    words: 467
+    type: page
+    title: Jekyll - Highlighting
+  jekyll-liquid.md:
+    words: 404
+    type: page
+    title: Jekyll - Liquid
+  jekyll-math-symbols-with-mathjax.md:
+    words: 678
+    type: page
+    title: Jekyll - Math Symbols with MathJax
+  jekyll-pagination.md:
+    words: 493
+    type: page
+    title: Jekyll - Pagination
+  jekyll-performance-optimization.md:
+    words: 243
+    type: page
+    title: Jekyll - Performance Optimization
+  jekyll-progress-bar.md:
+    words: 237
+    type: page
+    title: Jekyll - Progress Bar
+  jekyll-security.md:
+    words: 395
+    type: page
+    title: Jekyll - Security
+  jekyll-social-share-buttons-with-sharethis.md:
+    words: 363
+    type: page
+    title: Jekyll - Social Share Buttons with ShareThis
+  jekyll-social-share-buttons.md:
+    words: 438
+    type: page
+    title: Jekyll - Social Share Buttons
+  jekyll-usage-and-customization.md:
+    words: 1654
+    type: page
+    title: Jekyll - Usage and Customization
+  mermaid-native-markdown.md:
+    words: 747
+    type: page
+    title: Mermaid with Native Markdown Syntax
+  mermaid-test-suite.md:
+    words: 740
+    type: page
+    title: Mermaid Test Suite
+  mermaid.md:
+    words: 995
+    type: page
+    title: Mermaid Diagrams in Jekyll
+  github-setup.md:
+    words: 1046
+    type: page
+    title: GitHub Setup & Deployment
+  jekyll-setup.md:
+    words: 1290
+    type: page
+    title: Jekyll Setup
+  machine-setup.md:
+    words: 3347
+    type: page
+    title: Machine Setup
+  index.html:
+    words: 213
+    type: page
+    title: All posts
+  AUTOMATED_VERSION_SYSTEM.md:
+    words: 734
+    type: page
+    title: AUTOMATED_VERSION_SYSTEM
+  CHANGELOG-MERMAID-v2.md:
+    words: 1410
+    type: page
+    title: CHANGELOG-MERMAID-v2
+  CHANGELOG.md:
+    words: 1122
+    type: page
+    title: CHANGELOG
+  CICD_STATUS_REPORT.md:
+    words: 1161
+    type: page
+    title: CICD_STATUS_REPORT
+  CODE_OF_CONDUCT.md:
+    words: 1004
+    type: page
+    title: CODE_OF_CONDUCT
+  CONTRIBUTING.md:
+    words: 3199
+    type: page
+    title: CONTRIBUTING
+  IMPLEMENTATION_SUMMARY.md:
+    words: 902
+    type: page
+    title: IMPLEMENTATION_SUMMARY
+  README.md:
+    words: 1904
+    type: page
+    title: zer0-mistakes
+  RELEASE-NOTES-v0.3.0.md:
+    words: 1136
+    type: page
+    title: RELEASE-NOTES-v0.3.0
+  URL_CONFIGURATION_GUIDE.md:
+    words: 451
+    type: page
+    title: URL_CONFIGURATION_GUIDE
+  about.md:
+    words: 78
+    type: page
+    title: About
+  blog.md:
+    words: 51
+    type: page
+    title: Blog
+  contact.md:
+    words: 45
+    type: page
+    title: Contact
+  privacy-policy.md:
+    words: 38
+    type: page
+    title: Privacy Policy
+  release_notes.md:
+    words: 38
+    type: page
+    title: release_notes
+  seed_prompt.md:
+    words: 991
+    type: page
+    title: seed_prompt
+  services.md:
+    words: 48
+    type: page
+    title: Services
+  terms-of-service.md:
+    words: 41
+    type: page
+    title: Terms of Service
+  404.html:
+    words: 132
+    type: page
+    title: '404'

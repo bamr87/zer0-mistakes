@@ -1,0 +1,119 @@
+<!--
+  ===================================================================
+  STATS OVERVIEW COMPONENT
+  ===================================================================
+  
+  File: stats-overview.html
+  Path: _includes/stats/stats-overview.html
+  Purpose: Overview metrics cards for statistics dashboard
+  
+  Features:
+  - Key metrics display in card format
+  - Responsive grid layout
+  - Bootstrap styled cards with icons
+  - Dynamic data from Jekyll data files
+  
+  Dependencies:
+  - Bootstrap 5 for styling
+  - Bootstrap Icons for iconography
+  - site.data.content_statistics
+  ===================================================================
+-->
+
+<!-- ================================================ -->
+<!-- OVERVIEW METRICS SECTION                        -->
+<!-- High-level statistics in card format            -->
+<!-- ================================================ -->
+<div id="overview" class="mb-5">
+  <!-- Section Header -->
+  <div class="text-center mb-4">
+    <h2 class="display-5 fw-bold text-primary mb-3">
+      <i class="bi bi-speedometer2 me-2"></i>
+      Quick Overview
+    </h2>
+    <p class="lead text-muted">
+      Key metrics and insights at a glance
+    </p>
+  </div>
+
+  <!-- Stats Cards Grid -->
+  <div class="row g-4">
+  
+  <!-- Total Posts Card -->
+  <div class="col-lg-3 col-md-6">
+    <div class="card h-100 border-primary shadow-sm stats-card">
+      <div class="card-body text-center p-4">
+        <div class="mb-3">
+          <i class="bi bi-file-text display-3 text-primary"></i>
+        </div>
+        <h2 class="card-title mb-2 fw-bold display-6">
+          {{ site.data.content_statistics.overview.total_posts | default: 0 }}
+        </h2>
+        <p class="card-text text-muted mb-2 fw-medium">Total Posts</p>
+        <small class="text-muted d-flex align-items-center justify-content-center">
+          <i class="bi bi-calendar me-1"></i> 
+          All time content
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Total Categories Card -->
+  <div class="col-lg-3 col-md-6">
+    <div class="card h-100 border-success shadow-sm stats-card">
+      <div class="card-body text-center p-4">
+        <div class="mb-3">
+          <i class="bi bi-folder display-3 text-success"></i>
+        </div>
+        <h2 class="card-title mb-2 fw-bold display-6">
+          {{ site.data.content_statistics.overview.total_content | default: 0 }}
+        </h2>
+        <p class="card-text text-muted mb-2 fw-medium">Total Content</p>
+        <small class="text-muted d-flex align-items-center justify-content-center">
+          <i class="bi bi-collection me-1"></i> 
+          Posts & Pages
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Total Tags Card -->
+  <div class="col-lg-3 col-md-6">
+    <div class="card h-100 border-info shadow-sm stats-card">
+      <div class="card-body text-center p-4">
+        <div class="mb-3">
+          <i class="bi bi-tags display-3 text-info"></i>
+        </div>
+        <h2 class="card-title mb-2 fw-bold display-6">
+          {{ site.data.content_statistics.overview.total_categories | default: 0 }}
+        </h2>
+        <p class="card-text text-muted mb-2 fw-medium">Categories</p>
+        <small class="text-muted d-flex align-items-center justify-content-center">
+          <i class="bi bi-tag me-1"></i> 
+          Topic groups
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Total Words Card -->
+  <div class="col-lg-3 col-md-6">
+    <div class="card h-100 border-info shadow-sm stats-card">
+      <div class="card-body text-center p-4">
+        <div class="mb-3">
+          <i class="bi bi-chat-text display-3 text-info"></i>
+        </div>
+        <h2 class="card-title mb-2 fw-bold display-6">
+          {{ site.data.content_statistics.overview.total_words | number_with_delimiter | default: 0 }}
+        </h2>
+        <p class="card-text text-muted mb-2 fw-medium">Total Words</p>
+        <small class="text-muted d-flex align-items-center justify-content-center">
+          <i class="bi bi-pencil me-1"></i> 
+          All content
+        </small>
+      </div>
+    </div>
+  </div>
+
+  </div>
+</div>

@@ -15,6 +15,7 @@ root.html (base template)
 ├── home.html (homepage)
 ├── blog.html (blog homepage)
 ├── landing.html (landing pages)
+├── stats.html (statistics dashboard)
 └── index.html (search pages)
 ```
 
@@ -81,6 +82,13 @@ root.html (base template)
 - **Features**: Full-width container, search optimization
 - **Dependencies**: Search engine integration
 - **Usage**: Search results, site indexes
+
+#### `stats.html`
+
+- **Purpose**: Statistics and analytics dashboard
+- **Features**: Full-width responsive layout, modular statistics components
+- **Dependencies**: Bootstrap 5, Bootstrap Icons, Jekyll data files
+- **Usage**: Site analytics, content metrics, performance dashboards
 
 #### `javascript.html`
 

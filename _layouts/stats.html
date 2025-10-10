@@ -1,0 +1,178 @@
+---
+layout: root
+---
+<!--
+  ===================================================================
+  STATS LAYOUT - Statistics dashboard layout
+  ===================================================================
+  
+  File: stats.html
+  Path: _layouts/stats.html
+  Inherits: root.html
+  Purpose: Dedicated layout for statistics and analytics dashboards
+  
+  Template Logic:
+  - Creates a full-width responsive layout optimized for data visualization
+  - Includes specialized components for statistics display
+  - Uses card-based layout for metric organization
+  - Responsive design that adapts to different screen sizes
+  - Integrates with Jekyll data files for dynamic content
+  
+  Layout Structure:
+  1. Container wrapper with Bootstrap responsive classes
+  2. Page header with title and metadata
+  3. Statistics overview cards section
+  4. Detailed analytics sections
+  5. Interactive components and charts
+  
+  Dependencies:
+  - stats/stats-header.html: Page header and navigation
+  - stats/stats-overview.html: Overview metrics cards
+  - stats/stats-categories.html: Category analysis
+  - stats/stats-tags.html: Tag cloud and analysis
+  - stats/stats-metrics.html: Additional metrics and facts
+  
+  Bootstrap Classes Used:
+  - container-fluid: Full-width container
+  - row/col: Grid system for responsive layout
+  - card: Card components for metric display
+  - badge: Badges for counts and labels
+  ===================================================================
+-->
+
+<!-- ================================================ -->
+<!-- STATS LAYOUT CONTAINER                          -->
+<!-- Full-width responsive container for dashboard    -->
+<!-- ================================================ -->
+<div class="container-fluid py-4">
+  
+  <!-- ================================================ -->
+  <!-- STATS HEADER SECTION                            -->
+  <!-- Page title, description, and metadata           -->
+  <!-- ================================================ -->
+  {% include stats/stats-header.html %}
+  
+  <!-- ================================================ -->
+  <!-- STATS VALIDATION CHECK                          -->
+  <!-- Verify data availability before rendering        -->
+  <!-- ================================================ -->
+  {% if site.data.content_statistics %}
+    
+    <!-- ================================================ -->
+    <!-- OVERVIEW METRICS SECTION                        -->
+    <!-- High-level statistics cards                     -->
+    <!-- ================================================ -->
+    {% include stats/stats-overview.html %}
+    
+    <!-- ================================================ -->
+    <!-- DETAILED ANALYTICS SECTIONS                     -->
+    <!-- Categories, tags, and metrics breakdown         -->
+    <!-- ================================================ -->
+    <div class="row g-4 mb-5">
+      <!-- Categories Analysis -->
+      <div class="col-lg-6">
+        {% include stats/stats-categories.html %}
+      </div>
+      
+      <!-- Tags Analysis -->
+      <div class="col-lg-6">
+        {% include stats/stats-tags.html %}
+      </div>
+    </div>
+    
+    <!-- ================================================ -->
+    <!-- ADDITIONAL METRICS SECTION                      -->
+    <!-- Quick facts and summary information             -->
+    <!-- ================================================ -->
+    {% include stats/stats-metrics.html %}
+    
+  {% else %}
+    
+    <!-- ================================================ -->
+    <!-- NO DATA AVAILABLE SECTION                       -->
+    <!-- Error state when statistics are not generated   -->
+    <!-- ================================================ -->
+    {% include stats/stats-no-data.html %}
+    
+  {% endif %}
+  
+  <!-- ================================================ -->
+  <!-- MAIN CONTENT AREA                               -->
+  <!-- Additional page content below statistics        -->
+  <!-- ================================================ -->
+  {% if content and content != empty %}
+    <div class="row mt-5">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            {{ content }}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+
+<!-- ================================================ -->
+<!-- STATS-SPECIFIC JAVASCRIPT                       -->
+<!-- Initialize charts and interactive components    -->
+<!-- ================================================ -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize tooltips for stats elements
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+  
+  // Add smooth scroll behavior for stats navigation
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth'
+        });
+      }
+    });
+  });
+  
+  // Animate progress bars
+  setTimeout(function() {
+    document.querySelectorAll('.progress-bar').forEach(function(bar) {
+      const width = bar.getAttribute('data-width');
+      if (width) {
+        bar.style.width = width;
+      }
+    });
+  }, 500);
+  
+  // Add fade-in animation to cards
+  setTimeout(function() {
+    document.querySelectorAll('.stats-card').forEach(function(card, index) {
+      setTimeout(function() {
+        card.classList.add('fade-in');
+      }, index * 100);
+    });
+  }, 200);
+  
+  // Add intersection observer for animations
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('slide-up');
+        }
+      });
+    }, {
+      threshold: 0.1
+    });
+    
+    document.querySelectorAll('.card:not(.stats-card)').forEach(function(card) {
+      observer.observe(card);
+    });
+  }
+});
+</script>

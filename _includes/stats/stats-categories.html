@@ -1,0 +1,146 @@
+<!--
+  ===================================================================
+  STATS CATEGORIES COMPONENT
+  ===================================================================
+  
+  File: stats-categories.html
+  Path: _includes/stats/stats-categories.html
+  Purpose: Categories analysis section for statistics dashboard
+  
+  Features:
+  - Top categories list with post counts
+  - Bootstrap styled card layout
+  - Responsive badges for counts
+  - Sortable category data
+  
+  Dependencies:
+  - Bootstrap 5 for styling
+  - Bootstrap Icons for iconography
+  - site.data.content_statistics.categories
+  ===================================================================
+-->
+
+<!-- ================================================ -->
+<!-- CATEGORIES ANALYSIS SECTION                     -->
+<!-- Top categories with post counts                 -->
+<!-- ================================================ -->
+<div id="categories" class="card shadow-sm h-100">
+  <div class="card-header bg-primary text-white">
+    <div class="d-flex align-items-center justify-content-between">
+      <h3 class="mb-0 fw-bold">
+        <i class="bi bi-folder2-open me-2"></i> Top Categories
+      </h3>
+      <span class="badge bg-light text-primary">
+        {{ site.data.content_statistics.overview.total_categories | default: 0 }}
+      </span>
+    </div>
+  </div>
+  
+  <div class="card-body p-0">
+    {% if site.data.content_statistics.categories and site.data.content_statistics.categories.size > 0 %}
+      
+      <!-- Categories List -->
+      <div class="list-group list-group-flush">
+        {% for category in site.data.content_statistics.categories limit: 15 %}
+          <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+            <div class="d-flex align-items-center">
+              <i class="bi bi-folder text-primary me-3"></i>
+              <div>
+                <span class="fw-medium">{{ category[0] | capitalize }}</span>
+                {% assign max_category = site.data.content_statistics.categories | first %}
+                {% assign max_count = max_category[1] | default: 1 %}
+                {% assign high_threshold = max_count | times: 0.7 | round %}
+                {% assign medium_threshold = max_count | times: 0.4 | round %}
+                {% if category[1] >= high_threshold and category[1] > 2 %}
+                  <br><small class="text-muted">High activity</small>
+                {% elsif category[1] >= medium_threshold and category[1] > 1 %}
+                  <br><small class="text-muted">Medium activity</small>
+                {% else %}
+                  <br><small class="text-muted">Low activity</small>
+                {% endif %}
+              </div>
+            </div>
+            <div class="text-end">
+              <span class="badge bg-primary rounded-pill fs-6 px-3 py-2">
+                {{ category[1] }}
+              </span>
+              <br><small class="text-muted">posts</small>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      
+      <!-- Show More Button if there are more categories -->
+      {% if site.data.content_statistics.categories.size > 15 %}
+        <div class="card-footer bg-light text-center">
+          <button class="btn btn-outline-primary btn-sm" 
+                  onclick="toggleAllCategories(this)">
+            <i class="bi bi-chevron-down"></i>
+            Show {{ site.data.content_statistics.categories.size | minus: 15 }} more categories
+          </button>
+        </div>
+      {% endif %}
+      
+    {% else %}
+      
+      <!-- No Categories Available -->
+      <div class="text-center py-5">
+        <i class="bi bi-folder-x display-4 text-muted mb-3"></i>
+        <h5 class="text-muted">No categories found</h5>
+        <p class="text-muted">Categories will appear here once content is categorized.</p>
+      </div>
+      
+    {% endif %}
+  </div>
+  
+  <!-- Categories Summary Footer -->
+  {% if site.data.content_statistics.categories and site.data.content_statistics.categories.size > 0 %}
+    <div class="card-footer bg-light">
+      <div class="row text-center">
+        <div class="col-4">
+          <strong class="text-primary">{{ site.data.content_statistics.overview.total_categories | default: 0 }}</strong>
+          <br><small class="text-muted">Total</small>
+        </div>
+        <div class="col-4">
+          {% assign top_category = site.data.content_statistics.categories | first %}
+          <strong class="text-success">{{ top_category[1] | default: 0 }}</strong>
+          <br><small class="text-muted">Most Posts</small>
+        </div>
+        <div class="col-4">
+          {% assign total_posts = 0 %}
+          {% for category in site.data.content_statistics.categories %}
+            {% assign total_posts = total_posts | plus: category[1] %}
+          {% endfor %}
+          {% assign avg_posts = total_posts | divided_by: site.data.content_statistics.categories.size %}
+          <strong class="text-info">{{ avg_posts | default: 0 }}</strong>
+          <br><small class="text-muted">Avg Posts</small>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+<!-- ================================================ -->
+<!-- CATEGORIES JAVASCRIPT                           -->
+<!-- Interactive functionality for categories        -->
+<!-- ================================================ -->
+<script>
+function toggleAllCategories(button) {
+  // This would expand/collapse additional categories
+  // Implementation depends on whether you want to load more data
+  // or show/hide existing elements
+  
+  const icon = button.querySelector('i');
+  const isExpanded = icon.classList.contains('bi-chevron-up');
+  
+  if (isExpanded) {
+    icon.className = 'bi bi-chevron-down';
+    button.innerHTML = '<i class="bi bi-chevron-down"></i> Show more categories';
+  } else {
+    icon.className = 'bi bi-chevron-up';
+    button.innerHTML = '<i class="bi bi-chevron-up"></i> Show fewer categories';
+  }
+  
+  // Add your expand/collapse logic here
+}
+</script>

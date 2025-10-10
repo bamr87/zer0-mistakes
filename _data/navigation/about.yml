@@ -8,5 +8,7 @@
       url: /terms
     - title: Sitemap
       url: /about/sitemap
+    - title: Stats
+      url: /stats
   url: /about/
 

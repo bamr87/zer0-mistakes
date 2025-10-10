@@ -1,0 +1,392 @@
+/*
+  ===================================================================
+  STATISTICS PAGE STYLES - BOOTSTRAP 5 OPTIMIZED
+  ===================================================================
+  
+  File: stats.css
+  Purpose: Custom styles for the statistics dashboard that cannot be 
+           achieved with Bootstrap 5 utility classes alone.
+  
+  Philosophy: Bootstrap 5 First Approach
+  - Use Bootstrap 5 utility classes for all standard styling
+  - Custom CSS only for:
+    * Animations and transitions
+    * Shimmer effects and loading states
+    * Complex visual effects not available in Bootstrap
+    * Print styles for accessibility
+    * Icon animations and custom dimensions
+  
+  Dependencies:
+  - Bootstrap 5.3.3 (primary framework)
+  - Bootstrap Icons (for iconography)
+  
+  Note: This file should remain minimal. Most styling is handled
+        through Bootstrap 5 utility classes in the HTML components.
+  ===================================================================
+*/
+
+/* ========================================== */
+/* PROGRESS BAR ENHANCEMENTS                 */
+/* ========================================== */
+
+/* Custom progress bar animations */
+.stats-progress {
+  height: 1.25rem;
+  background-color: var(--bs-gray-200);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.stats-progress .progress-bar {
+  transition: width 1.5s ease-in-out;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* Progress bar animation on load */
+.stats-progress-animate .progress-bar {
+  animation: progress-fill 2s ease-in-out;
+}
+
+@keyframes progress-fill {
+  0% { width: 0% !important; }
+  100% { width: var(--progress-width, 0%); }
+}
+
+/* ========================================== */
+/* TAG CLOUD STYLES                          */
+/* ========================================== */
+
+/* Tag cloud interactive effects */
+.tag-cloud .badge {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  margin: 0.25rem;
+}
+
+.tag-cloud .badge:hover {
+  transform: scale(1.1);
+  background-color: var(--bs-success) !important;
+  color: white !important;
+}
+
+/* Outline badge style for tags */
+.bg-outline-success {
+  background-color: transparent;
+  border: 1px solid var(--bs-success);
+  color: var(--bs-success);
+}
+
+/* Tag size variations */
+.tag-cloud .fs-xl { font-size: 1.5rem; }
+.tag-cloud .fs-lg { font-size: 1.25rem; }
+.tag-cloud .fs-md { font-size: 1rem; }
+.tag-cloud .fs-sm { font-size: 0.875rem; }
+
+/* ========================================== */
+/* CUSTOM ICON DIMENSIONS & ANIMATIONS       */
+/* ========================================== */
+
+/* Header icon container - specific dimensions needed */
+.stats-header-icon {
+  width: 100px !important;
+  height: 100px !important;
+}
+
+/* Icon rotation animation for visual appeal */
+.stats-icon-rotate {
+  animation: gentle-rotate 3s ease-in-out infinite;
+}
+
+@keyframes gentle-rotate {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(5deg); }
+}
+
+/* ========================================== */
+/* SHIMMER LOADING ANIMATIONS                 */
+/* ========================================== */
+
+/* Shimmer effect for loading placeholders */
+.stats-shimmer {
+  background: linear-gradient(90deg, 
+    var(--bs-gray-200) 25%, 
+    var(--bs-gray-100) 50%, 
+    var(--bs-gray-200) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ========================================== */
+/* ENHANCED VISUAL EFFECTS                   */
+/* ========================================== */
+
+/* Subtle hover animations for interactive elements */
+.stats-card-hover {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.stats-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Pulse animation for important metrics */
+.stats-pulse {
+  animation: subtle-pulse 2s infinite;
+}
+
+@keyframes subtle-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+/* ========================================== */
+/* RESPONSIVE ENHANCEMENTS                   */
+/* ========================================== */
+
+/* Enhanced mobile spacing for better touch targets */
+@media (max-width: 576px) {
+  .stats-mobile-spacing .btn-group {
+    gap: 0.5rem !important;
+  }
+  
+  .stats-mobile-spacing .btn {
+    min-height: 44px; /* Accessibility touch target */
+  }
+}
+
+/* ========================================== */
+/* ACCESSIBILITY ENHANCEMENTS                */
+/* ========================================== */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .stats-shimmer {
+    background: linear-gradient(90deg, 
+      var(--bs-gray-600) 25%, 
+      var(--bs-gray-400) 50%, 
+      var(--bs-gray-600) 75%
+    );
+  }
+}
+
+/* Reduced motion preference support */
+@media (prefers-reduced-motion: reduce) {
+  .stats-icon-rotate,
+  .stats-shimmer,
+  .stats-pulse,
+  .stats-card-hover {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Focus indicators for keyboard navigation */
+.btn:focus-visible,
+.breadcrumb-item a:focus-visible {
+  outline: 2px solid var(--bs-primary) !important;
+  outline-offset: 2px !important;
+}
+
+/* ========================================== */
+/* PRINT STYLES                              */
+/* ========================================== */
+
+@media print {
+  /* Hide interactive elements */
+  .btn, .alert .btn {
+    display: none !important;
+  }
+  
+  /* Optimize spacing for print */
+  .container-fluid {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+  
+  /* Ensure proper page breaks */
+  .stats-section {
+    page-break-inside: avoid;
+  }
+  
+  /* Print-friendly colors */
+  .bg-primary, .bg-success, .bg-info, .bg-warning {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Typography adjustments for print */
+  .display-1, .display-2, .display-3 {
+    font-size: 2rem !important;
+  }
+  
+  /* Remove shadows and gradients for print clarity */
+  .shadow, .shadow-sm, .shadow-lg,
+  .bg-gradient {
+    box-shadow: none !important;
+    background-image: none !important;
+  }
+}
+
+/* ================================================ */
+/* CUSTOM ANIMATIONS - NOT AVAILABLE IN BOOTSTRAP */
+/* ================================================ */
+
+/* Card hover animations */
+@keyframes cardHover {
+  from {
+    transform: translateY(0) scale(1);
+  }
+  to {
+    transform: translateY(-8px) scale(1.02);
+  }
+}
+
+.stats-card-hover:hover {
+  animation: cardHover 0.3s ease-out forwards;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+}
+
+/* Icon rotation on hover */
+.stats-icon-rotate:hover {
+  transform: rotate(10deg) scale(1.1);
+  transition: transform 0.3s ease;
+}
+
+/* Progress bar shimmer effect */
+@keyframes shimmer {
+  0% { 
+    background-position: -200px 0; 
+  }
+  100% { 
+    background-position: calc(200px + 100%) 0; 
+  }
+}
+
+.progress-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.6),
+    transparent
+  );
+  background-size: 200px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Tag cloud shimmer on hover */
+@keyframes tagShimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+.tag-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.tag-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+  transition: left 0.5s;
+}
+
+.tag-shimmer:hover::before {
+  animation: tagShimmer 0.6s ease-out;
+}
+
+/* ================================================ */
+/* INTERSECTION OBSERVER ANIMATIONS                */
+/* ================================================ */
+
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in-up.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered animation delays */
+.fade-in-up:nth-child(1) { transition-delay: 0.1s; }
+.fade-in-up:nth-child(2) { transition-delay: 0.2s; }
+.fade-in-up:nth-child(3) { transition-delay: 0.3s; }
+.fade-in-up:nth-child(4) { transition-delay: 0.4s; }
+
+/* ================================================ */
+/* RESPONSIVE ADJUSTMENTS FOR MOBILE              */
+/* Only needed where Bootstrap classes aren't enough */
+/* ================================================ */
+
+@media (max-width: 575.98px) {
+  /* Ensure cards don't have excessive padding on mobile */
+  .stats-mobile-compact {
+    padding: 1rem !important;
+  }
+  
+  /* Adjust tag cloud spacing for mobile */
+  .tag-cloud-mobile .badge {
+    margin: 0.2rem 0.3rem !important;
+    font-size: 0.75rem !important;
+  }
+}
+
+/* ================================================ */
+/* PRINT STYLES                                    */
+/* Optimize for printing - Bootstrap doesn't handle this */
+/* ================================================ */
+@media print {
+  .stats-card-hover:hover {
+    animation: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  
+  .btn,
+  .modal,
+  .progress-shimmer::before,
+  .tag-shimmer::before {
+    display: none !important;
+  }
+  
+  .progress-bar {
+    print-color-adjust: exact;
+  }
+}
+
+/* ================================================ */
+/* ACCESSIBILITY ENHANCEMENTS                      */
+/* For users with reduced motion preferences        */
+/* ================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .stats-card-hover:hover,
+  .stats-icon-rotate:hover,
+  .fade-in-up,
+  .progress-shimmer::before,
+  .tag-shimmer::before {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
