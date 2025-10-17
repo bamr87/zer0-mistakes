@@ -27,6 +27,27 @@
 -->
 
 <!-- ================================ -->
+<!-- HTML DOCUMENT META DATA         -->
+<!-- ================================ -->
+<!-- Essential meta tags for proper document rendering and mobile support -->
+<!-- Charset must be the first meta tag for proper encoding -->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Page title for browser tab and SEO -->
+<title>
+    {% if page.title %}
+        {{ page.title }}
+    {% else %}
+        {{ site.title }}
+    {% endif %}
+    {% if page.subtitle %} |
+        {{ page.subtitle }}
+    {% endif %}
+</title>
+
+<!-- ================================ -->
 <!-- ANALYTICS AND TRACKING          -->
 <!-- ================================ -->
 <!-- Google Tag Manager - Must be in head section for proper tracking -->
@@ -47,10 +68,8 @@
 <!-- THIRD PARTY INTEGRATIONS        -->
 <!-- ================================ -->
 
-<!-- Mermaid Diagrams - Conditional loading based on page front matter -->
-{% if page.mermaid %}
-  {% include components/mermaid.html %}
-{% endif %}
+<!-- Mermaid Diagrams - Auto-detection (always included, loads only if needed) -->
+{% include components/mermaid-auto.html %}
 
 <!-- Nano Progress Bar - Visual loading indicator -->
 <script src="{{'/assets/js/nanobar.min.js' | relative_url }}"></script>
@@ -78,14 +97,6 @@
 
 <!-- MathJax - Mathematical notation rendering (async for performance) -->
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-
-<!-- ================================ -->
-<!-- HTML DOCUMENT META DATA         -->
-<!-- ================================ -->
-<!-- Essential meta tags for proper document rendering and mobile support -->
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 <!-- ================================ -->
 <!-- SEO AND SOCIAL MEDIA META TAGS  -->

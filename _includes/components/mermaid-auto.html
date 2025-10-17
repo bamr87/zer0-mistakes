@@ -1,0 +1,135 @@
+<!--
+  ===================================================================
+  MERMAID AUTO-DETECTION & DYNAMIC LOADING
+  ===================================================================
+  
+  File: mermaid-auto.html
+  Path: _includes/components/mermaid-auto.html
+  Purpose: Automatically detect and render Mermaid diagrams without front matter
+  
+  Features:
+  - Detects ```mermaid code blocks in content
+  - Detects <div class="mermaid"> elements
+  - Dynamically loads Mermaid.js only when needed
+  - Backwards compatible with mermaid: true front matter
+  
+  Usage:
+  - No front matter needed - just use ```mermaid blocks
+  - Optional: Set 'mermaid: true' to force loading
+  ===================================================================
+-->
+
+<script>
+  (function() {
+    'use strict';
+    
+    // Wait for DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check for Mermaid content in multiple ways
+      const content = document.body.textContent || document.body.innerText;
+      const hasMermaidCodeFence = /```mermaid/.test(content);
+      const hasMermaidDiv = document.querySelector('.mermaid, div.mermaid, pre > code.language-mermaid');
+      const forceMermaid = {{ page.mermaid | default: false }};
+      
+      if (hasMermaidCodeFence || hasMermaidDiv || forceMermaid) {
+        console.log('Mermaid diagrams detected, loading library...');
+        
+        // Dynamically load Mermaid.js from CDN
+        const mermaidScript = document.createElement('script');
+        mermaidScript.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+        mermaidScript.crossOrigin = 'anonymous';
+        
+        mermaidScript.onload = function() {
+          // Initialize Mermaid with custom configuration
+          mermaid.initialize({
+            startOnLoad: true,
+            theme: 'forest',  // Optimized for dark mode
+            themeVariables: {
+              primaryColor: '#007bff',
+              primaryTextColor: '#fff',
+              primaryBorderColor: '#0056b3',
+              lineColor: '#6c757d',
+              secondaryColor: '#6c757d',
+              tertiaryColor: '#f8f9fa'
+            },
+            flowchart: {
+              useMaxWidth: true,
+              htmlLabels: true,
+              curve: 'basis'
+            },
+            sequence: {
+              diagramMarginX: 50,
+              diagramMarginY: 10,
+              actorMargin: 50,
+              width: 150,
+              height: 65,
+              boxMargin: 10,
+              useMaxWidth: true,
+              mirrorActors: true
+            },
+            gantt: {
+              titleTopMargin: 25,
+              barHeight: 20,
+              barGap: 4,
+              topPadding: 50,
+              leftPadding: 75,
+              fontSize: 11,
+              axisFormat: '%Y-%m-%d'
+            }
+          });
+          
+          console.log('Mermaid.js v10 loaded and initialized successfully');
+        };
+        
+        mermaidScript.onerror = function() {
+          console.error('Failed to load Mermaid.js from CDN');
+        };
+        
+        document.head.appendChild(mermaidScript);
+        
+        // Load FontAwesome for icon support in diagrams
+        const fontAwesome = document.createElement('link');
+        fontAwesome.rel = 'stylesheet';
+        fontAwesome.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+        fontAwesome.crossOrigin = 'anonymous';
+        document.head.appendChild(fontAwesome);
+      } else {
+        console.log('No Mermaid diagrams detected, skipping library load');
+      }
+    });
+  })();
+</script>
+
+<!-- Mermaid diagram styling -->
+<style>
+  .mermaid {
+    text-align: center;
+    margin: 2rem auto;
+    background-color: transparent;
+  }
+  
+  /* Ensure diagrams are responsive */
+  .mermaid svg {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Support for code fence rendering */
+  pre > code.language-mermaid {
+    display: block;
+  }
+  
+  /* Dark mode compatibility */
+  @media (prefers-color-scheme: dark) {
+    .mermaid {
+      filter: brightness(0.9);
+    }
+  }
+  
+  /* Loading state */
+  .mermaid:empty::before {
+    content: 'Loading diagram...';
+    color: #6c757d;
+    font-style: italic;
+  }
+</style>

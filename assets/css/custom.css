@@ -2,6 +2,11 @@
 /* Customize theme
 /* ------------------------------------------------------------------------------------------------------------------- */
 
+/* Progress bar positioning */
+.nanobar {
+    position: fixed;
+}
+
 /* Remove padding so particles fill screen */
 .masthead {
     padding-top: 0rem;
@@ -118,3 +123,22 @@
     margin-top: 56px;
     background: #1cc927;
   }
+
+/* Inline styles moved from HTML for better maintainability */
+
+/* Progress bar positioning */
+.nanobar {
+  position: fixed;
+}
+
+/* Circular icon backgrounds */
+.bg-primary.text-white.rounded-circle.d-inline-flex.align-items-center.justify-content-center.mb-3,
+.bg-info.text-white.rounded-circle.d-inline-flex.align-items-center.justify-content-center.mb-3 {
+  width: 60px;
+  height: 60px;
+}
+
+/* Back to top button initial state */
+#backToTopBtn {
+  display: none;
+}

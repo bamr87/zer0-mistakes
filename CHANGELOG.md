@@ -1,3 +1,31 @@
+## [Unreleased] - 2025-01-27
+
+### Added
+- **🎯 Auto-Detection for Mermaid Diagrams**: Mermaid.js now loads automatically when diagrams are present in content
+- **⚡ Dynamic Library Loading**: Improved performance with on-demand Mermaid.js loading
+- **🔧 Zero Configuration**: No front matter flags required - just use ```mermaid code blocks
+- **📱 Enhanced Responsive Design**: Diagrams automatically scale across all devices
+- **🌙 Dark Mode Optimization**: Forest theme optimized for dark mode compatibility
+- **📚 Comprehensive Documentation**: Complete user guide with live examples and troubleshooting
+- **🔄 Backwards Compatibility**: Existing `mermaid: true` flags still work (deprecated but functional)
+
+### Changed
+- **BREAKING**: `mermaid: true` front matter no longer required (but still supported)
+- **Mermaid.js upgraded to v10** with improved rendering and performance
+- **Auto-detection logic** replaces manual front matter configuration
+- **Performance optimization** - library only loads on pages with diagrams
+
+### Deprecated
+- **Manual `mermaid: true` front matter flag** (still works, but unnecessary)
+- **Legacy mermaid.html component** (redirects to auto-detection)
+
+### Technical Details
+- **Client-side detection** scans content for ```mermaid blocks and <div class="mermaid"> elements
+- **CDN loading** from jsdelivr with FontAwesome icon support
+- **Forest theme** with custom color variables for brand consistency
+- **Error handling** with console logging for debugging
+- **GitHub Pages compatible** - no server-side plugins required
+
 ## [0.4.0] - 2025-10-10
 
 ### Added

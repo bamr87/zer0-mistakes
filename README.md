@@ -149,14 +149,53 @@ docker-compose up
 
 > 📖 **Learn more**: [Automated Version System Documentation](AUTOMATED_VERSION_SYSTEM.md)
 
-### 📊 **Mermaid Diagram Integration** *(New in v0.3.0)*
+### 📊 **Mermaid Diagram Integration** *(Enhanced in v0.5.0)*
 
+- **Auto-Detection** - Automatically detects and renders Mermaid diagrams without front matter configuration
 - **Complete Diagram Support** - Flowcharts, sequence diagrams, class diagrams, state diagrams, ER diagrams, Gantt charts, pie charts, git graphs, journey diagrams, and mindmaps
+- **Performance Optimized** - Library loads only on pages with diagrams (not site-wide)
+- **Zero Configuration** - Just use ```mermaid code blocks - no setup needed
 - **GitHub Pages Compatible** - Works seamlessly with both local development and GitHub Pages deployment
 - **Conditional Loading** - Only loads Mermaid when needed, optimizing performance
 - **Responsive Design** - Diagrams automatically scale across all devices
 - **Dark Mode Support** - Forest theme optimized for dark mode compatibility
 - **Comprehensive Documentation** - Complete user guide with live examples and troubleshooting
+
+#### 🎯 **Quick Mermaid Usage**
+
+Simply use standard markdown code fences - no configuration needed:
+
+````markdown
+```mermaid
+graph TD;
+    A[Start] --> B{Is it working?};
+    B -->|Yes| C[Great!];
+    B -->|No| D[Check console];
+```
+````
+
+The theme automatically:
+- ✅ Detects ```mermaid code blocks in your content
+- ✅ Loads Mermaid.js library on-demand
+- ✅ Renders diagrams with optimized theme settings
+- ✅ Supports all Mermaid diagram types
+
+#### 🔧 **Advanced Configuration**
+
+For advanced users, you can still force Mermaid loading:
+
+````yaml
+---
+title: My Post
+mermaid: true  # Force Mermaid loading (optional)
+---
+````
+
+#### 📚 **Complete Documentation**
+
+- [Mermaid User Guide](pages/_docs/jekyll/mermaid.md) - Comprehensive guide with all diagram types
+- [Integration Tutorial](pages/_docs/jekyll/jekyll-diagram-with-mermaid.md) - Technical implementation details
+- [Migration Guide](pages/_docs/jekyll/mermaid-migration.md) - Upgrading from manual configuration
 - **Automated Testing** - 16 automated tests covering all aspects of functionality
 
 > 📖 **Learn more**: [Mermaid Documentation](/docs/jekyll/mermaid/) • [Integration Tutorial](/docs/jekyll/jekyll-diagram-with-mermaid/) • [Test Suite](/docs/jekyll/mermaid-test-suite/)
