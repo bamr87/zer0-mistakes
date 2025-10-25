@@ -1,0 +1,36 @@
+{
+  "github.copilot.enable": {
+    "*": true,
+    "yaml": true,
+    "markdown": true,
+    "liquid": true,
+    "html": true,
+    "scss": true,
+    "javascript": true
+  },
+  "github.copilot.advanced": {
+    "enableSuggestionAutoTrigger": true,
+    "contextLength": 4096,
+    "enableAutoCompletions": true
+  },
+  "files.associations": {
+    "*.md": "markdown",
+    "*.html": "liquid",
+    "*.yml": "yaml",
+    "*.yaml": "yaml"
+  },
+  "liquid.format.enable": true,
+  "markdown.preview.breaks": true,
+  "markdown.preview.linkify": true,
+  "yaml.format.enable": true,
+  "yaml.completion": true,
+  "yaml.hover": true,
+  "yaml.validate": true,
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": true,
+    "strings": true
+  },
+  "editor.tabCompletion": "on",
+  "editor.wordBasedSuggestions": "matchingDocuments"
+}
