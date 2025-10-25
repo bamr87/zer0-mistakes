@@ -28,6 +28,9 @@
                             href="{{ link.url | relative_url }}"
                             {%- if link.url == page.url -%} aria-current="page"{%- endif -%}
                         >
+                            {%- if link.icon -%}
+                                <i class="{{site.default_icon}} {{ link.icon }} me-2"></i>
+                            {%- endif -%}
                             {{ link.title }}
                         </a>
 
@@ -65,6 +68,9 @@
                             href="{{ link.url | relative_url }}"
                             {%- if link.url == page.url -%} aria-current="page"{%- endif -%}
                         >
+                            {%- if link.icon -%}
+                                <i class="{{site.default_icon}} {{ link.icon }} me-2"></i>
+                            {%- endif -%}
                             {{ link.title }}
                         </a>
                     </li>

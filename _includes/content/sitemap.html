@@ -1,123 +1,950 @@
-<!-- 
-  file: sitemap.html
-  path: _includes/content/sitemap.html
-  description: This is the snippet for the sitemap page.
- -->
+<!--
+  ===================================================================
+  SITEMAP COMPONENT - Comprehensive Site Navigation Index
+  ===================================================================
+  
+  File: sitemap.html
+  Path: _includes/content/sitemap.html
+  Purpose: Interactive sitemap with advanced search, filtering, and sorting
+  
+  Features:
+  - Real-time search across all content fields
+  - Multi-column sorting with visual indicators
+  - Collection-based filtering
+  - Responsive table design with Bootstrap styling
+  - URL query parameter support for direct search
+  - Statistics overview and content discovery tools
+  
+  Dependencies:
+  - Bootstrap 5 for responsive table and styling
+  - Bootstrap Icons for visual elements
+  - Jekyll collections and site data
+  
+  Enhanced Functionality:
+  - Advanced search with debouncing
+  - Collection filters and statistics
+  - Export capabilities (future enhancement)
+  - Keyboard navigation support
+  ===================================================================
+-->
 
-<h1>Sitemap - Index</h1>
-
-<input type="text" id="searchBar" onkeyup="searchFunction()" placeholder="Search for keywords..">
-
-<div class="table-responsive">
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col" data-type="string" data-order="desc">Collection <i class="sort-icon"></i></th>
-                <th scope="col" data-type="string" data-order="desc">Page <i class="sort-icon"></i></th>
-                <th scope="col" data-type="string" data-order="desc">Description<i class="sort-icon"></i></th>
-                <th scope="col" data-type="string" data-order="desc">Excerpt<i class="sort-icon"></i></th>
-                <th scope="col" data-type="string" data-order="desc">Path<i class="sort-icon"></i></th>
-                <th scope="col" data-type="date" data-order="desc">Last Modified Date <i class="sort-icon"></i></th>
-                <th scope="col" data-type="string" data-order="desc">Categories<i class="sort-icon"></i></th>
-                <th scope="col" data-type="string" data-order="desc">Tags<i class="sort-icon"></i></th>
-                <th scope="col" data-type="string" data-order="desc">Absolute URL<i class="sort-icon"></i></th>
-                <th scope="col" data-type="string" data-order="desc">Author <i class="sort-icon"></i></th>
-                
-            </tr>
-        </thead>
-        <tbody>
-            {% for collection in site.collections %}
-            {% for item in collection.docs %}
-            <tr>
-                <td>{{ collection.label }}</td>
-                <td>
-                    <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
-                </td>
-                <td>{{ item.description }}</td>
-                <td>{{ item.excerpt }}</td>
-                <td>{{ item.path }}</td>
-                <td>{{ item.lastmod | date: "%Y/%m/%d" | default: "null" }}</td>
-                <td>{{ item.categories | join: ", " }}</td>
-                <td>{{ item.tags | join: ", " }}</td>
-                <td>
-                    <a href="{{ site.url }}{{ item.url }}">{{ site.url }}{{ item.url }}</a>
-                </td>
-                <td>{{ item.author }}</td>
-            </tr>
-            {% endfor %}
-            {% endfor %}
-        </tbody>
-    </table>
+<!-- ================================ -->
+<!-- SITEMAP OVERVIEW AND STATS      -->
+<!-- ================================ -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h4 class="card-title mb-2">
+                            <i class="bi bi-map text-primary"></i>
+                            Site Navigation Index
+                        </h4>
+                        <p class="card-text text-muted mb-0">
+                            Explore all <span id="totalPages" class="fw-bold text-info">0</span> pages across 
+                            <span id="totalCollections" class="fw-bold text-info">0</span> collections on this site.
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <div class="btn-group" role="group" aria-label="View options">
+                            <button type="button" class="btn btn-outline-secondary" id="toggleStats">
+                                <i class="bi bi-bar-chart"></i> Stats
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" id="resetFilters">
+                                <i class="bi bi-arrow-clockwise"></i> Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- Sorting feature -->
+<!-- ================================ -->
+<!-- COLLECTION STATISTICS           -->
+<!-- ================================ -->
+<div class="row mb-4 d-none" id="statsSection">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-pie-chart"></i>
+                    Content Statistics
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row" id="collectionStats">
+                    <!-- Dynamic collection statistics will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<script>
-    document.querySelectorAll('th').forEach(header => {
-        header.addEventListener('click', () => {
-            const tableElement = document.querySelector('table');
-            const headerIndex = Array.prototype.indexOf.call(header.parentNode.children, header);
-            const currentTbody = tableElement.querySelector('tbody');
-            const newTbody = currentTbody.cloneNode(true);
-            const rows = Array.from(newTbody.querySelectorAll('tr'));
-            const type = header.getAttribute('data-type');
-            const order = header.getAttribute('data-order');
-            const sortedRows = rows.sort((a, b) => {
-                const aValue = a.children[headerIndex].textContent;
-                const bValue = b.children[headerIndex].textContent;
-                if (type === 'date') {
-                    const aDate = aValue === "null" ? new Date(0) : new Date(...aValue.split('/').map((val, idx) => parseInt(val) - (idx === 1 ? 1 : 0))); // subtract 1 from month
-                    const bDate = bValue === "null" ? new Date(0) : new Date(...bValue.split('/').map((val, idx) => parseInt(val) - (idx === 1 ? 1 : 0))); // subtract 1 from month
-                    return order === 'asc' ? aDate - bDate : bDate - aDate;
-                }
-                return order === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
-            });
-            sortedRows.forEach(row => newTbody.appendChild(row));
-            tableElement.replaceChild(newTbody, currentTbody);
-            header.setAttribute('data-order', order === 'asc' ? 'desc' : 'asc');
-            document.querySelectorAll('.sort-icon').forEach(icon => icon.className = 'sort-icon'); // clear all icons
-            header.querySelector('.sort-icon').className = order === 'asc' ? 'sort-icon bi bi-arrow-down' : 'sort-icon bi bi-arrow-up'; // set the icon for the sorted column
+<!-- ================================ -->
+<!-- SEARCH AND FILTER CONTROLS     -->
+<!-- ================================ -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row g-3">
+                    <!-- Search Input -->
+                    <div class="col-md-6">
+                        <label for="searchBar" class="form-label">
+                            <i class="bi bi-search"></i> Search Content
+                        </label>
+                        <div class="input-group">
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="searchBar" 
+                                   placeholder="Search titles, descriptions, tags, or any content..."
+                                   aria-describedby="searchHelp">
+                            <button class="btn btn-outline-secondary" 
+                                    type="button" 
+                                    id="clearSearch"
+                                    title="Clear search"
+                                    aria-label="Clear search">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                        <div id="searchHelp" class="form-text">
+                            Search across titles, descriptions, categories, tags, and more
+                        </div>
+                    </div>
+                    
+                    <!-- Collection Filter -->
+                    <div class="col-md-3">
+                        <label for="collectionFilter" class="form-label">
+                            <i class="bi bi-funnel"></i> Filter by Collection
+                        </label>
+                        <select class="form-select" id="collectionFilter">
+                            <option value="">All Collections</option>
+                            <!-- Dynamic options will be added by JavaScript -->
+                        </select>
+                    </div>
+                    
+                    <!-- Date Range Filter -->
+                    <div class="col-md-3">
+                        <label for="dateFilter" class="form-label">
+                            <i class="bi bi-calendar-range"></i> Date Range
+                        </label>
+                        <select class="form-select" id="dateFilter">
+                            <option value="">All Dates</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="year">This Year</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Results Counter -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                Showing <span id="visibleCount" class="fw-bold">0</span> of 
+                                <span id="totalCount" class="fw-bold">0</span> pages
+                            </small>
+                            <div class="btn-group btn-group-sm" role="group" aria-label="Display options">
+                                <input type="radio" class="btn-check" name="viewMode" id="tableView" checked>
+                                <label class="btn btn-outline-primary" for="tableView">
+                                    <i class="bi bi-table"></i> Table
+                                </label>
+                                <input type="radio" class="btn-check" name="viewMode" id="cardView">
+                                <label class="btn btn-outline-primary" for="cardView">
+                                    <i class="bi bi-grid"></i> Cards
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-        });
-    });
-    </script>
+<!-- ================================ -->
+<!-- RESPONSIVE DATA TABLE           -->
+<!-- ================================ -->
+<div class="row" id="tableViewContainer">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="sitemapTable">
+                        <thead class="table-dark sticky-top">
+                            <tr>
+                                <th scope="col" data-type="string" data-order="asc" class="sitemap-col-collection">
+                                    Collection
+                                    <i class="sort-icon bi bi-arrow-down-up ms-1"></i>
+                                </th>
+                                <th scope="col" data-type="string" data-order="asc" class="sitemap-col-title">
+                                    Page Title
+                                    <i class="sort-icon bi bi-arrow-down-up ms-1"></i>
+                                </th>
+                                <th scope="col" data-type="string" data-order="asc" class="d-none d-md-table-cell">
+                                    Description
+                                    <i class="sort-icon bi bi-arrow-down-up ms-1"></i>
+                                </th>
+                                <th scope="col" data-type="date" data-order="desc" class="sitemap-col-date">
+                                    Last Modified
+                                    <i class="sort-icon bi bi-arrow-down-up ms-1"></i>
+                                </th>
+                                <th scope="col" data-type="string" data-order="asc" class="d-none d-lg-table-cell">
+                                    Categories
+                                    <i class="sort-icon bi bi-arrow-down-up ms-1"></i>
+                                </th>
+                                <th scope="col" data-type="string" data-order="asc" class="d-none d-xl-table-cell">
+                                    Tags
+                                    <i class="sort-icon bi bi-arrow-down-up ms-1"></i>
+                                </th>
+                                <th scope="col" class="text-center sitemap-col-actions">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="sitemapTableBody">
+                            {% assign total_pages = 0 %}
+                            {% assign collections_data = '' %}
+                            
+                            {% comment %} Include regular pages {% endcomment %}
+                            {% for page in site.pages %}
+                                {% unless page.sitemap == false %}
+                                    {% assign total_pages = total_pages | plus: 1 %}
+                                    <tr data-collection="pages" 
+                                        data-title="{{ page.title | default: page.name | escape }}"
+                                        data-description="{{ page.description | escape }}"
+                                        data-categories="{{ page.categories | join: ', ' | escape }}"
+                                        data-tags="{{ page.tags | join: ', ' | escape }}"
+                                        data-date="{{ page.lastmod | default: page.date | date: '%Y-%m-%d' }}"
+                                        data-url="{{ page.url | relative_url }}">
+                                        
+                                        <td>
+                                            <span class="badge bg-primary rounded-pill">Pages</span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ page.url | relative_url }}" 
+                                               class="text-decoration-none fw-medium">
+                                                {{ page.title | default: page.name | truncate: 50 }}
+                                            </a>
+                                            {% if page.description %}
+                                                <br><small class="text-muted d-md-none">{{ page.description | truncate: 80 }}</small>
+                                            {% endif %}
+                                        </td>
+                                        <td class="d-none d-md-table-cell">
+                                            <small class="text-muted">
+                                                {{ page.description | default: "No description available" | truncate: 120 }}
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">
+                                                {{ page.lastmod | default: page.date | date: "%b %d, %Y" | default: "Unknown" }}
+                                            </small>
+                                        </td>
+                                        <td class="d-none d-lg-table-cell">
+                                            {% if page.categories and page.categories.size > 0 %}
+                                                {% for category in page.categories limit: 2 %}
+                                                    <span class="badge bg-secondary me-1">{{ category }}</span>
+                                                {% endfor %}
+                                                {% if page.categories.size > 2 %}
+                                                    <span class="badge bg-light text-dark">+{{ page.categories.size | minus: 2 }}</span>
+                                                {% endif %}
+                                            {% endif %}
+                                        </td>
+                                        <td class="d-none d-xl-table-cell">
+                                            {% if page.tags and page.tags.size > 0 %}
+                                                {% for tag in page.tags limit: 3 %}
+                                                    <span class="badge bg-outline-primary me-1">#{{ tag }}</span>
+                                                {% endfor %}
+                                                {% if page.tags.size > 3 %}
+                                                    <span class="badge bg-light text-dark">+{{ page.tags.size | minus: 3 }}</span>
+                                                {% endif %}
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a href="{{ page.url | relative_url }}" 
+                                                   class="btn btn-outline-primary btn-sm" 
+                                                   title="View page">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <button class="btn btn-outline-secondary btn-sm copy-url" 
+                                                        data-url="{{ site.url }}{{ page.url }}"
+                                                        title="Copy URL">
+                                                    <i class="bi bi-clipboard"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endunless %}
+                            {% endfor %}
+                            
+                            {% comment %} Include collection documents {% endcomment %}
+                            {% for collection in site.collections %}
+                                {% for item in collection.docs %}
+                                    {% unless item.sitemap == false %}
+                                        {% assign total_pages = total_pages | plus: 1 %}
+                                        <tr data-collection="{{ collection.label }}" 
+                                            data-title="{{ item.title | escape }}"
+                                            data-description="{{ item.description | escape }}"
+                                            data-categories="{{ item.categories | join: ', ' | escape }}"
+                                            data-tags="{{ item.tags | join: ', ' | escape }}"
+                                            data-date="{{ item.lastmod | default: item.date | date: '%Y-%m-%d' }}"
+                                            data-url="{{ item.url | relative_url }}">
+                                            
+                                            <td>
+                                                <span class="badge bg-info rounded-pill">{{ collection.label | capitalize }}</span>
+                                            </td>
+                                            <td>
+                                                <a href="{{ item.url | relative_url }}" 
+                                                   class="text-decoration-none fw-medium">
+                                                    {{ item.title | truncate: 50 }}
+                                                </a>
+                                                {% if item.description %}
+                                                    <br><small class="text-muted d-md-none">{{ item.description | truncate: 80 }}</small>
+                                                {% endif %}
+                                            </td>
+                                            <td class="d-none d-md-table-cell">
+                                                <small class="text-muted">
+                                                    {{ item.description | default: item.excerpt | strip_html | default: "No description available" | truncate: 120 }}
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    {{ item.lastmod | default: item.date | date: "%b %d, %Y" | default: "Unknown" }}
+                                                </small>
+                                            </td>
+                                            <td class="d-none d-lg-table-cell">
+                                                {% if item.categories and item.categories.size > 0 %}
+                                                    {% for category in item.categories limit: 2 %}
+                                                        <span class="badge bg-secondary me-1">{{ category }}</span>
+                                                    {% endfor %}
+                                                    {% if item.categories.size > 2 %}
+                                                        <span class="badge bg-light text-dark">+{{ item.categories.size | minus: 2 }}</span>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </td>
+                                            <td class="d-none d-xl-table-cell">
+                                                {% if item.tags and item.tags.size > 0 %}
+                                                    {% for tag in item.tags limit: 3 %}
+                                                        <span class="badge bg-outline-primary me-1">#{{ tag }}</span>
+                                                    {% endfor %}
+                                                    {% if item.tags.size > 3 %}
+                                                        <span class="badge bg-light text-dark">+{{ item.tags.size | minus: 3 }}</span>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <a href="{{ item.url | relative_url }}" 
+                                                       class="btn btn-outline-primary btn-sm" 
+                                                       title="View page">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    <button class="btn btn-outline-secondary btn-sm copy-url" 
+                                                            data-url="{{ site.url }}{{ item.url }}"
+                                                            title="Copy URL">
+                                                        <i class="bi bi-clipboard"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endunless %}
+                                {% endfor %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<!-- searchbar script -->
+<!-- ================================ -->
+<!-- CARDS VIEW CONTAINER            -->
+<!-- ================================ -->
+<div class="row d-none" id="cardViewContainer">
+    <div class="col-12">
+        <div id="sitemapCardsContainer" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+            <!-- Cards will be dynamically generated here -->
+        </div>
+    </div>
+</div>
 
-<script>
-function searchFunction() {
-    var input, filter, table, tr, td, i, j, txtValue;
-    input = document.getElementById("searchBar");
-    filter = input.value.toLowerCase();
-    table = document.getElementsByTagName("table");
-    tr = table[0].getElementsByTagName("tr");
+<!-- ================================ -->
+<!-- ENHANCED SITEMAP FUNCTIONALITY -->
+<!-- ================================ -->
+<style>
+/* Custom Sitemap Styles */
+.sitemap-col-collection { min-width: 120px; }
+.sitemap-col-title { min-width: 200px; }
+.sitemap-col-date { min-width: 120px; }
+.sitemap-col-actions { width: 80px; }
 
-    for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td");
-        for (j = 0; j < td.length; j++) {
-            if (td[j]) {
-                txtValue = td[j].textContent || td[j].innerText;
-                if (txtValue.toLowerCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                    break;
-                } else {
-                    tr[i].style.display = "none";
-                }
-            }
-        }
+.sort-icon {
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+}
+
+th:hover .sort-icon {
+    opacity: 1;
+}
+
+.sort-icon.active {
+    opacity: 1;
+    color: #0d6efd;
+}
+
+#sitemapTable tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.badge.bg-outline-primary {
+    color: #0d6efd;
+    border: 1px solid #0d6efd;
+    background-color: transparent;
+}
+
+/* Cards view styles */
+.sitemap-card {
+    transition: transform 0.2s ease;
+}
+
+.sitemap-card:hover {
+    transform: translateY(-2px);
+}
+
+.sitemap-card .card {
+    border: 1px solid var(--bs-border-color);
+    transition: box-shadow 0.15s ease-in-out;
+}
+
+.sitemap-card .card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.sitemap-card .card-title a {
+    color: inherit;
+    transition: color 0.15s ease;
+}
+
+.sitemap-card .card-title a:hover {
+    color: var(--bs-primary);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sitemap-col-collection,
+    .sitemap-col-title,
+    .sitemap-col-date {
+        min-width: auto;
+    }
+    
+    .sitemap-card .card-body {
+        padding: 0.75rem;
+    }
+    
+    .sitemap-card .card-title {
+        font-size: 0.9rem;
     }
 }
-</script>
+
+/* Dark mode improvements */
+@media (prefers-color-scheme: dark) {
+    .sitemap-card .card {
+        border-color: var(--bs-border-color-translucent);
+    }
+    
+    .badge.bg-light {
+        background-color: var(--bs-gray-600) !important;
+        color: var(--bs-gray-100) !important;
+    }
+}
+</style>
 
 <script>
-    // Parse the URL query parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    // Get the 'q' parameter
-    const searchQuery = urlParams.get('q');
-    // If a search query was provided, set it as the value of the search bar
-    if (searchQuery) {
-        document.getElementById('searchBar').value = searchQuery;
-        // Call the search function
-        searchFunction();
+/**
+ * Enhanced Sitemap Functionality
+ * Features: Advanced search, sorting, filtering, statistics, and card/table views
+ */
+class SitemapManager {
+    constructor() {
+        this.searchInput = document.getElementById('searchBar');
+        this.collectionFilter = document.getElementById('collectionFilter');
+        this.dateFilter = document.getElementById('dateFilter');
+        this.clearSearchBtn = document.getElementById('clearSearch');
+        this.resetFiltersBtn = document.getElementById('resetFilters');
+        this.toggleStatsBtn = document.getElementById('toggleStats');
+        this.statsSection = document.getElementById('statsSection');
+        this.table = document.getElementById('sitemapTable');
+        this.tbody = document.getElementById('sitemapTableBody');
+        this.tableViewContainer = document.getElementById('tableViewContainer');
+        this.cardViewContainer = document.getElementById('cardViewContainer');
+        this.cardsContainer = document.getElementById('sitemapCardsContainer');
+        this.tableViewBtn = document.getElementById('tableView');
+        this.cardViewBtn = document.getElementById('cardView');
+        
+        this.rows = Array.from(this.tbody.querySelectorAll('tr'));
+        this.visibleCount = document.getElementById('visibleCount');
+        this.totalCount = document.getElementById('totalCount');
+        
+        this.searchTimeout = null;
+        this.collections = new Set();
+        this.currentView = 'table';
+        
+        this.init();
     }
+    
+    init() {
+        this.setupCollectionFilter();
+        this.updateCounts();
+        this.updateStatistics();
+        this.generateCards();
+        this.bindEvents();
+        this.handleUrlParams();
+    }
+    
+    setupCollectionFilter() {
+        // Collect unique collections
+        this.rows.forEach(row => {
+            const collection = row.dataset.collection;
+            if (collection) {
+                this.collections.add(collection);
+            }
+        });
+        
+        // Populate collection filter
+        Array.from(this.collections).sort().forEach(collection => {
+            const option = document.createElement('option');
+            option.value = collection;
+            option.textContent = collection.charAt(0).toUpperCase() + collection.slice(1);
+            this.collectionFilter.appendChild(option);
+        });
+    }
+    
+    generateCards() {
+        this.cardsContainer.innerHTML = '';
+        
+        this.rows.forEach(row => {
+            const collection = row.dataset.collection;
+            const title = row.dataset.title;
+            const description = row.dataset.description || 'No description available';
+            const categories = row.dataset.categories;
+            const tags = row.dataset.tags;
+            const date = row.dataset.date;
+            const url = row.dataset.url;
+            
+            const formattedDate = date ? new Date(date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            }) : 'Unknown';
+            
+            const badgeClass = collection === 'pages' ? 'bg-primary' : 'bg-info';
+            
+            const cardHtml = `
+                <div class="col sitemap-card" 
+                     data-collection="${collection}" 
+                     data-title="${title}"
+                     data-description="${description}"
+                     data-categories="${categories}"
+                     data-tags="${tags}"
+                     data-date="${date}">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span class="badge ${badgeClass} rounded-pill">${collection.charAt(0).toUpperCase() + collection.slice(1)}</span>
+                            <small class="text-muted">${formattedDate}</small>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <a href="${url}" class="text-decoration-none">${title}</a>
+                            </h6>
+                            <p class="card-text text-muted small">${description.length > 100 ? description.substring(0, 100) + '...' : description}</p>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="${url}" class="btn btn-outline-primary btn-sm" title="View page">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <button class="btn btn-outline-secondary btn-sm copy-url" 
+                                            data-url="${location.origin}${url}" title="Copy URL">
+                                        <i class="bi bi-clipboard"></i>
+                                    </button>
+                                </div>
+                                ${categories ? `<small class="text-muted">${categories.split(',').slice(0,2).join(', ')}</small>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            this.cardsContainer.insertAdjacentHTML('beforeend', cardHtml);
+        });
+        
+        // Re-attach copy URL event listeners for cards
+        this.cardsContainer.querySelectorAll('.copy-url').forEach(btn => {
+            btn.addEventListener('click', (e) => this.copyUrl(e));
+        });
+    }
+    
+    bindEvents() {
+        // Search with debouncing
+        this.searchInput.addEventListener('input', () => {
+            clearTimeout(this.searchTimeout);
+            this.searchTimeout = setTimeout(() => this.performSearch(), 300);
+        });
+        
+        this.clearSearchBtn.addEventListener('click', () => {
+            this.searchInput.value = '';
+            this.performSearch();
+            this.searchInput.focus();
+        });
+        
+        // Filters
+        this.collectionFilter.addEventListener('change', () => this.applyFilters());
+        this.dateFilter.addEventListener('change', () => this.applyFilters());
+        
+        // Reset filters
+        this.resetFiltersBtn.addEventListener('click', () => this.resetFilters());
+        
+        // Toggle statistics
+        this.toggleStatsBtn.addEventListener('click', () => this.toggleStatistics());
+        
+        // View mode toggle
+        this.tableViewBtn.addEventListener('change', () => {
+            if (this.tableViewBtn.checked) {
+                this.switchToTableView();
+            }
+        });
+        
+        this.cardViewBtn.addEventListener('change', () => {
+            if (this.cardViewBtn.checked) {
+                this.switchToCardView();
+            }
+        });
+        
+        // Column sorting (table view only)
+        this.table.querySelectorAll('th[data-type]').forEach(header => {
+            header.addEventListener('click', () => this.sortTable(header));
+        });
+        
+        // Copy URL functionality
+        document.querySelectorAll('.copy-url').forEach(btn => {
+            btn.addEventListener('click', (e) => this.copyUrl(e));
+        });
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => this.handleKeyboardShortcuts(e));
+    }
+    
+    switchToTableView() {
+        this.currentView = 'table';
+        this.tableViewContainer.classList.remove('d-none');
+        this.cardViewContainer.classList.add('d-none');
+    }
+    
+    switchToCardView() {
+        this.currentView = 'card';
+        this.tableViewContainer.classList.add('d-none');
+        this.cardViewContainer.classList.remove('d-none');
+    }
+    
+    performSearch() {
+        const searchTerm = this.searchInput.value.toLowerCase().trim();
+        
+        if (this.currentView === 'table') {
+            this.rows.forEach(row => {
+                if (!searchTerm) {
+                    row.style.display = '';
+                    return;
+                }
+                
+                const searchableText = [
+                    row.dataset.title,
+                    row.dataset.description,
+                    row.dataset.categories,
+                    row.dataset.tags,
+                    row.dataset.collection
+                ].join(' ').toLowerCase();
+                
+                row.style.display = searchableText.includes(searchTerm) ? '' : 'none';
+            });
+        } else {
+            // Card view search
+            const cards = this.cardsContainer.querySelectorAll('.sitemap-card');
+            cards.forEach(card => {
+                if (!searchTerm) {
+                    card.style.display = '';
+                    return;
+                }
+                
+                const searchableText = [
+                    card.dataset.title,
+                    card.dataset.description,
+                    card.dataset.categories,
+                    card.dataset.tags,
+                    card.dataset.collection
+                ].join(' ').toLowerCase();
+                
+                card.style.display = searchableText.includes(searchTerm) ? '' : 'none';
+            });
+        }
+        
+        this.applyFilters();
+    }
+    
+    applyFilters() {
+        const collectionFilter = this.collectionFilter.value;
+        const dateFilter = this.dateFilter.value;
+        
+        if (this.currentView === 'table') {
+            this.rows.forEach(row => {
+                let show = true;
+                
+                // Skip if already hidden by search
+                if (row.style.display === 'none') return;
+                
+                // Collection filter
+                if (collectionFilter && row.dataset.collection !== collectionFilter) {
+                    show = false;
+                }
+                
+                // Date filter
+                if (dateFilter && show) {
+                    const rowDate = new Date(row.dataset.date);
+                    const now = new Date();
+                    
+                    switch (dateFilter) {
+                        case 'today':
+                            show = this.isSameDay(rowDate, now);
+                            break;
+                        case 'week':
+                            show = this.isWithinDays(rowDate, 7);
+                            break;
+                        case 'month':
+                            show = this.isWithinDays(rowDate, 30);
+                            break;
+                        case 'year':
+                            show = this.isWithinDays(rowDate, 365);
+                            break;
+                    }
+                }
+                
+                row.style.display = show ? '' : 'none';
+            });
+        } else {
+            // Card view filtering
+            const cards = this.cardsContainer.querySelectorAll('.sitemap-card');
+            cards.forEach(card => {
+                let show = true;
+                
+                // Skip if already hidden by search
+                if (card.style.display === 'none') return;
+                
+                // Collection filter
+                if (collectionFilter && card.dataset.collection !== collectionFilter) {
+                    show = false;
+                }
+                
+                // Date filter
+                if (dateFilter && show) {
+                    const cardDate = new Date(card.dataset.date);
+                    const now = new Date();
+                    
+                    switch (dateFilter) {
+                        case 'today':
+                            show = this.isSameDay(cardDate, now);
+                            break;
+                        case 'week':
+                            show = this.isWithinDays(cardDate, 7);
+                            break;
+                        case 'month':
+                            show = this.isWithinDays(cardDate, 30);
+                            break;
+                        case 'year':
+                            show = this.isWithinDays(cardDate, 365);
+                            break;
+                    }
+                }
+                
+                card.style.display = show ? '' : 'none';
+            });
+        }
+        
+        this.updateCounts();
+    }
+    
+    sortTable(header) {
+        const headerIndex = Array.from(header.parentNode.children).indexOf(header);
+        const type = header.getAttribute('data-type');
+        const currentOrder = header.getAttribute('data-order');
+        const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+        
+        // Clear all sort icons
+        this.table.querySelectorAll('.sort-icon').forEach(icon => {
+            icon.className = 'sort-icon bi bi-arrow-down-up ms-1';
+            icon.classList.remove('active');
+        });
+        
+        // Update current header
+        header.setAttribute('data-order', newOrder);
+        const icon = header.querySelector('.sort-icon');
+        icon.className = `sort-icon bi bi-arrow-${newOrder === 'asc' ? 'up' : 'down'} ms-1 active`;
+        
+        // Sort rows
+        const sortedRows = this.rows.sort((a, b) => {
+            let aValue = a.children[headerIndex].textContent.trim();
+            let bValue = b.children[headerIndex].textContent.trim();
+            
+            if (type === 'date') {
+                aValue = aValue === "Unknown" ? new Date(0) : new Date(aValue);
+                bValue = bValue === "Unknown" ? new Date(0) : new Date(bValue);
+                return newOrder === 'asc' ? aValue - bValue : bValue - aValue;
+            }
+            
+            return newOrder === 'asc' ? 
+                aValue.localeCompare(bValue) : 
+                bValue.localeCompare(aValue);
+        });
+        
+        // Reorder DOM
+        sortedRows.forEach(row => this.tbody.appendChild(row));
+    }
+    
+    updateCounts() {
+        let visibleCount = 0;
+        
+        if (this.currentView === 'table') {
+            visibleCount = this.rows.filter(row => row.style.display !== 'none').length;
+        } else {
+            const cards = this.cardsContainer.querySelectorAll('.sitemap-card');
+            visibleCount = Array.from(cards).filter(card => card.style.display !== 'none').length;
+        }
+        
+        this.visibleCount.textContent = visibleCount;
+        this.totalCount.textContent = this.rows.length;
+        
+        // Update page statistics
+        document.getElementById('totalPages').textContent = this.rows.length;
+        document.getElementById('totalCollections').textContent = this.collections.size;
+    }
+    
+    updateStatistics() {
+        const statsContainer = document.getElementById('collectionStats');
+        const collectionCounts = {};
+        
+        this.rows.forEach(row => {
+            const collection = row.dataset.collection;
+            collectionCounts[collection] = (collectionCounts[collection] || 0) + 1;
+        });
+        
+        const statsHtml = Object.entries(collectionCounts)
+            .sort(([,a], [,b]) => b - a)
+            .map(([collection, count]) => `
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">${collection.charAt(0).toUpperCase() + collection.slice(1)}</h5>
+                            <p class="card-text display-6 text-primary">${count}</p>
+                            <small class="text-muted">${((count / this.rows.length) * 100).toFixed(1)}% of total</small>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        
+        statsContainer.innerHTML = statsHtml;
+    }
+    
+    toggleStatistics() {
+        this.statsSection.classList.toggle('d-none');
+        const isVisible = !this.statsSection.classList.contains('d-none');
+        this.toggleStatsBtn.innerHTML = `
+            <i class="bi bi-${isVisible ? 'eye-slash' : 'bar-chart'}"></i> 
+            ${isVisible ? 'Hide' : 'Stats'}
+        `;
+    }
+    
+    resetFilters() {
+        this.searchInput.value = '';
+        this.collectionFilter.value = '';
+        this.dateFilter.value = '';
+        
+        // Reset table rows
+        this.rows.forEach(row => row.style.display = '');
+        
+        // Reset cards
+        const cards = this.cardsContainer.querySelectorAll('.sitemap-card');
+        cards.forEach(card => card.style.display = '');
+        
+        this.updateCounts();
+        
+        // Clear URL parameters
+        const url = new URL(window.location);
+        url.searchParams.delete('q');
+        window.history.replaceState({}, document.title, url);
+    }
+    
+    copyUrl(event) {
+        const url = event.currentTarget.dataset.url;
+        navigator.clipboard.writeText(url).then(() => {
+            const btn = event.currentTarget;
+            const originalIcon = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check"></i>';
+            btn.classList.add('btn-success');
+            btn.classList.remove('btn-outline-secondary');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalIcon;
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-outline-secondary');
+            }, 1500);
+        });
+    }
+    
+    handleUrlParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchQuery = urlParams.get('q');
+        
+        if (searchQuery) {
+            this.searchInput.value = searchQuery;
+            this.performSearch();
+        }
+    }
+    
+    handleKeyboardShortcuts(event) {
+        // Ctrl/Cmd + K to focus search
+        if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+            event.preventDefault();
+            this.searchInput.focus();
+        }
+        
+        // Escape to clear search
+        if (event.key === 'Escape' && document.activeElement === this.searchInput) {
+            this.searchInput.value = '';
+            this.performSearch();
+        }
+    }
+    
+    // Utility functions
+    isSameDay(date1, date2) {
+        return date1.toDateString() === date2.toDateString();
+    }
+    
+    isWithinDays(date, days) {
+        const now = new Date();
+        const diffTime = Math.abs(now - date);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays <= days;
+    }
+}
+
+// Initialize sitemap when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    new SitemapManager();
+});
 </script>

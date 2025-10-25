@@ -1,0 +1,15 @@
+- title: Home
+  icon: bi-house
+  url: /home
+  sublinks:
+    - title: Style
+      url: /home/style/
+- title: Map
+  icon: bi-map
+  url: /sitemap/
+  sublinks:
+    - title: Search
+      url: /search/
+    - title: Roadmap
+      url: /roadmap/
+

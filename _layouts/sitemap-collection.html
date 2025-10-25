@@ -1,0 +1,500 @@
+---
+layout: default
+---
+<!--
+  ===================================================================
+  COMPREHENSIVE SITEMAP COLLECTION LAYOUT
+  ===================================================================
+  
+  File: sitemap-collection.html
+  Path: _layouts/sitemap-collection.html
+  Inherits: default.html
+  Purpose: Unified layout combining collection display with site statistics
+           and comprehensive site structure overview
+  
+  Features:
+  - Complete site overview with statistics
+  - Collection-based content organization
+  - Advanced search and filtering capabilities
+  - Responsive card and table views
+  - Site structure analysis
+  - Content discovery tools
+  
+  Integration:
+  - Merges collection.html functionality
+  - Incorporates stats.html dashboard elements
+  - Enhanced sitemap.html interactive features
+  - Comprehensive site analysis and navigation
+  
+  Dependencies:
+  - Bootstrap 5 for responsive design
+  - Bootstrap Icons for visual elements
+  - Jekyll collections and site data
+  - Content statistics data (if available)
+  ===================================================================
+-->
+
+<!-- ================================================ -->
+<!-- SITEMAP HEADER AND OVERVIEW                     -->
+<!-- ================================================ -->
+<div class="container-fluid px-4">
+  
+  <!-- Page Content -->
+  {{ content }}
+  
+  <!-- ================================================ -->
+  <!-- SITE STATISTICS OVERVIEW                        -->
+  <!-- High-level metrics and site health              -->
+  <!-- ================================================ -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="card border-primary">
+        <div class="card-header bg-primary text-white">
+          <h2 class="mb-0 d-flex align-items-center">
+            <i class="bi bi-speedometer2 me-2"></i>
+            Site Overview & Statistics
+          </h2>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <!-- Total Pages -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+              <div class="text-center p-3 border rounded">
+                <i class="bi bi-file-text display-4 text-primary mb-2"></i>
+                <h3 class="fw-bold">{{ site.pages | size }}</h3>
+                <small class="text-muted">Pages</small>
+              </div>
+            </div>
+            
+            <!-- Total Posts -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+              <div class="text-center p-3 border rounded">
+                <i class="bi bi-journal-text display-4 text-success mb-2"></i>
+                <h3 class="fw-bold">{{ site.posts | size }}</h3>
+                <small class="text-muted">Posts</small>
+              </div>
+            </div>
+            
+            <!-- Collections Count -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+              <div class="text-center p-3 border rounded">
+                <i class="bi bi-collection display-4 text-info mb-2"></i>
+                <h3 class="fw-bold">{{ site.collections | size }}</h3>
+                <small class="text-muted">Collections</small>
+              </div>
+            </div>
+            
+            <!-- Data Files -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+              <div class="text-center p-3 border rounded">
+                <i class="bi bi-database display-4 text-warning mb-2"></i>
+                <h3 class="fw-bold">{{ site.data | size }}</h3>
+                <small class="text-muted">Data Files</small>
+              </div>
+            </div>
+            
+            <!-- Categories -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+              <div class="text-center p-3 border rounded">
+                <i class="bi bi-tags display-4 text-secondary mb-2"></i>
+                {% assign all_categories = site.posts | map: 'categories' | join: ',' | split: ',' | uniq | compact %}
+                <h3 class="fw-bold">{{ all_categories | size }}</h3>
+                <small class="text-muted">Categories</small>
+              </div>
+            </div>
+            
+            <!-- Total Content -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+              <div class="text-center p-3 border rounded">
+                <i class="bi bi-globe display-4 text-danger mb-2"></i>
+                {% assign total_content = site.pages | size | plus: site.posts.size %}
+                {% for collection in site.collections %}
+                  {% assign total_content = total_content | plus: site[collection.label].size %}
+                {% endfor %}
+                <h3 class="fw-bold">{{ total_content }}</h3>
+                <small class="text-muted">Total Items</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ================================================ -->
+  <!-- ENHANCED SITEMAP COMPONENT                      -->
+  <!-- Interactive search, filtering, and navigation   -->
+  <!-- ================================================ -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-0 d-flex align-items-center">
+            <i class="bi bi-map me-2"></i>
+            Interactive Site Map
+          </h3>
+        </div>
+        <div class="card-body">
+          {% include content/sitemap.html %}
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ================================================ -->
+  <!-- COLLECTIONS OVERVIEW                            -->
+  <!-- Detailed view of all Jekyll collections         -->
+  <!-- ================================================ -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-success text-white">
+          <h3 class="mb-0 d-flex align-items-center">
+            <i class="bi bi-collection me-2"></i>
+            Collections Overview
+          </h3>
+        </div>
+        <div class="card-body">
+          {% if site.collections and site.collections.size > 0 %}
+            <div class="row g-4">
+              {% for collection in site.collections %}
+                <div class="col-lg-4 col-md-6">
+                  <div class="card h-100 border">
+                    <div class="card-header">
+                      <h5 class="mb-0 d-flex align-items-center justify-content-between">
+                        <span>
+                          <i class="bi bi-folder me-2"></i>
+                          {{ collection.label | capitalize }}
+                        </span>
+                        <span class="badge bg-primary">{{ site[collection.label] | size }}</span>
+                      </h5>
+                    </div>
+                    <div class="card-body">
+                      {% if collection.description %}
+                        <p class="card-text">{{ collection.description }}</p>
+                      {% endif %}
+                      
+                      {% if site[collection.label] and site[collection.label].size > 0 %}
+                        <h6>Recent Items:</h6>
+                        <ul class="list-unstyled">{% assign recent_items = site[collection.label] | sort: 'date' | reverse | limit: 3 %}{% for item in recent_items %}<li class="mb-1">
+                              <a href="{{ item.url | relative_url }}" class="text-decoration-none">
+                                <i class="bi bi-arrow-right me-1"></i>
+                                {{ item.title | default: item.name | truncate: 30 }}
+                              </a>
+                            </li>{% endfor %}</ul>
+                      {% else %}
+                        <p class="text-muted">No items in this collection yet.</p>
+                      {% endif %}
+                    </div>
+                    <div class="card-footer">
+                      <a href="/{{ collection.label }}/" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-eye me-1"></i>
+                        View Collection
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="text-center py-5">
+              <i class="bi bi-collection-fill display-4 text-muted mb-3"></i>
+              <h5 class="text-muted">No collections found</h5>
+              <p class="text-muted">Jekyll collections will appear here when configured.</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ================================================ -->
+  <!-- SITE STRUCTURE ANALYSIS                         -->
+  <!-- Detailed breakdown of site organization         -->
+  <!-- ================================================ -->
+  <div class="row mb-5">
+    <div class="col-lg-6">
+      <!-- Categories Analysis -->
+      <div class="card h-100">
+        <div class="card-header bg-info text-white">
+          <h4 class="mb-0">
+            <i class="bi bi-tags me-2"></i>
+            Categories Analysis
+          </h4>
+        </div>
+        <div class="card-body">
+          {% assign all_categories = site.posts | map: 'categories' | join: ',' | split: ',' | compact | uniq | sort %}
+          {% if all_categories and all_categories.size > 0 %}
+            <div class="row g-2">
+              {% for category in all_categories limit: 20 %}
+                {% assign category_posts = site.posts | where_exp: "post", "post.categories contains category" %}
+                <div class="col-auto">
+                  <span class="badge bg-info">
+                    {{ category }} ({{ category_posts | size }})
+                  </span>
+                </div>
+              {% endfor %}
+            </div>
+            {% if all_categories.size > 20 %}
+              <p class="mt-3 text-muted">And {{ all_categories.size | minus: 20 }} more categories...</p>
+            {% endif %}
+          {% else %}
+            <p class="text-muted">No categories found.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-6">
+      <!-- Tags Analysis -->
+      <div class="card h-100">
+        <div class="card-header bg-warning text-dark">
+          <h4 class="mb-0">
+            <i class="bi bi-tag me-2"></i>
+            Tags Cloud
+          </h4>
+        </div>
+        <div class="card-body">
+          {% assign all_tags = site.posts | map: 'tags' | join: ',' | split: ',' | compact | uniq | sort %}
+          {% if all_tags and all_tags.size > 0 %}
+            <div class="row g-2">
+              {% for tag in all_tags limit: 30 %}
+                {% assign tag_posts = site.posts | where_exp: "post", "post.tags contains tag" %}
+                <div class="col-auto">
+                  <span class="badge bg-warning text-dark">
+                    {{ tag }} ({{ tag_posts | size }})
+                  </span>
+                </div>
+              {% endfor %}
+            </div>
+            {% if all_tags.size > 30 %}
+              <p class="mt-3 text-muted">And {{ all_tags.size | minus: 30 }} more tags...</p>
+            {% endif %}
+          {% else %}
+            <p class="text-muted">No tags found.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ================================================ -->
+  <!-- RECENT ACTIVITY OVERVIEW                        -->
+  <!-- Latest content and updates                      -->
+  <!-- ================================================ -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-secondary text-white">
+          <h3 class="mb-0">
+            <i class="bi bi-clock-history me-2"></i>
+            Recent Activity
+          </h3>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <!-- Recent Posts -->
+            <div class="col-lg-4">
+              <h5 class="border-bottom pb-2">Recent Posts</h5>
+              {% assign recent_posts = site.posts | sort: 'date' | reverse | limit: 5 %}
+              {% if recent_posts and recent_posts.size > 0 %}
+                <ul class="list-unstyled">{% for post in recent_posts %}<li class="mb-2">
+                      <a href="{{ post.url | relative_url }}" class="text-decoration-none">
+                        <i class="bi bi-journal-text me-1"></i>
+                        {{ post.title | truncate: 40 }}
+                      </a>
+                      <br><small class="text-muted">{{ post.date | date: "%b %d, %Y" }}</small>
+                    </li>{% endfor %}</ul>
+              {% else %}
+                <p class="text-muted">No recent posts.</p>
+              {% endif %}
+            </div>
+            
+            <!-- Recent Pages -->
+            <div class="col-lg-4">
+              <h5 class="border-bottom pb-2">Recent Pages</h5>
+              {% assign recent_pages = site.pages | sort: 'lastmod' | reverse | limit: 5 %}
+              {% if recent_pages and recent_pages.size > 0 %}
+                <ul class="list-unstyled">{% for page in recent_pages %}{% if page.title and page.title != "" %}<li class="mb-2">
+                        <a href="{{ page.url | relative_url }}" class="text-decoration-none">
+                          <i class="bi bi-file-text me-1"></i>
+                          {{ page.title | truncate: 40 }}
+                        </a>
+                        <br><small class="text-muted">{{ page.lastmod | date: "%b %d, %Y" }}</small>
+                      </li>{% endif %}{% endfor %}</ul>
+              {% else %}
+                <p class="text-muted">No recent pages.</p>
+              {% endif %}
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="col-lg-4">
+              <h5 class="border-bottom pb-2">Quick Stats</h5>
+              <ul class="list-unstyled">
+                <li class="mb-2">
+                  <i class="bi bi-calendar-week me-2 text-primary"></i>
+                  <strong>Last Update:</strong> {{ site.time | date: "%B %d, %Y" }}
+                </li>
+                <li class="mb-2">
+                  <i class="bi bi-layers me-2 text-success"></i>
+                  <strong>Layout Types:</strong> {{ site.layouts | size | default: "Multiple" }}
+                </li>
+                <li class="mb-2">
+                  <i class="bi bi-plugin me-2 text-info"></i>
+                  <strong>Plugins:</strong> {{ site.plugins | size | default: "Several" }}
+                </li>
+                <li class="mb-2">
+                  <i class="bi bi-gear me-2 text-warning"></i>
+                  <strong>Environment:</strong> {{ site.environment | default: "production" }}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ================================================ -->
+  <!-- SITE HEALTH & PERFORMANCE                       -->
+  <!-- Optional advanced statistics if data available  -->
+  <!-- ================================================ -->
+  {% if site.data.content_statistics %}
+    <div class="row mb-5">
+      <div class="col-12">
+        <div class="card border-success">
+          <div class="card-header bg-success text-white">
+            <h3 class="mb-0">
+              <i class="bi bi-heart-pulse me-2"></i>
+              Advanced Site Analytics
+            </h3>
+          </div>
+          <div class="card-body">
+            <!-- Include existing stats components if available -->
+            {% include stats/stats-overview.html %}
+            
+            <div class="row mt-4">
+              <div class="col-lg-6">
+                {% include stats/stats-categories.html %}
+              </div>
+              <div class="col-lg-6">
+                {% include stats/stats-tags.html %}
+              </div>
+            </div>
+            
+            <div class="mt-4">
+              {% include stats/stats-metrics.html %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+
+<!-- ================================================ -->
+<!-- ENHANCED SITEMAP JAVASCRIPT                     -->
+<!-- Additional functionality for comprehensive view -->
+<!-- ================================================ -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize tooltips
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+  
+  // Add smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+  
+  // Add fade-in animation to cards
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+  
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, observerOptions);
+  
+  // Observe all cards for animation
+  document.querySelectorAll('.card').forEach(card => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(card);
+  });
+  
+  // Add click tracking for analytics (optional)
+  document.querySelectorAll('a[href]').forEach(link => {
+    link.addEventListener('click', function() {
+      // Add your analytics tracking here if needed
+      console.log('Link clicked:', this.href);
+    });
+  });
+});
+</script>
+
+<!-- ================================================ -->
+<!-- SITEMAP-SPECIFIC STYLES                         -->
+<!-- ================================================ -->
+<style>
+.sitemap-overview {
+  background: linear-gradient(135deg, var(--bs-primary-bg-subtle) 0%, var(--bs-success-bg-subtle) 100%);
+}
+
+.stats-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.stats-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.collection-card {
+  border-left: 4px solid var(--bs-primary);
+}
+
+.category-badge:hover {
+  transform: scale(1.05);
+  transition: transform 0.1s ease;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .sitemap-overview {
+    background: linear-gradient(135deg, rgba(13, 110, 253, 0.1) 0%, rgba(25, 135, 84, 0.1) 100%);
+  }
+}
+
+/* Print styles */
+@media print {
+  .card {
+    break-inside: avoid;
+    margin-bottom: 1rem;
+  }
+  
+  .btn, .badge {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+</style>

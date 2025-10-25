@@ -14,14 +14,11 @@
   sublinks:
     - title: All Posts
       url: /posts/
-- title: Stats
-  url: /stats/
 - title: Docs
   url: /docs/
   sublinks:
     - title: Jekyll
       url: /docs/jekyll/
-
 - title: About
   url: /about/
   sublinks:
@@ -29,5 +26,5 @@
       url: /about/config/
     - title: Theme
       url: /about/theme/
-    - title: Sitemap
-      url: /about/sitemap/
+    - title: Site Map
+      url: /sitemap/

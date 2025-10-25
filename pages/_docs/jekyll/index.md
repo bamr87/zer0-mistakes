@@ -1,11 +1,26 @@
 ---
-title: Jekyll
+title: Jekyll Integration Guide
+description: Comprehensive Jekyll setup, configuration, and development guide optimized for Zer0-Mistakes theme and VS Code Copilot assistance
 permalink: /docs/jekyll/
 redirect_from:
   - /docs/jekyll/home/
   - /docs/jekyll/quickstart/
   - /docs/jekyll/extras/
-lastmod: '2021-12-06T01:41:06.227Z'
+lastmod: '2025-10-19T00:00:00.000Z'
+tags: [jekyll, setup, development, ai-assisted]
+categories: [Documentation, Development]
+ai_content_hints:
+  - "Focus on Docker-first development workflows"
+  - "Include AI-assisted troubleshooting guidance"  
+  - "Emphasize Zer0-Mistakes theme integration"
+  - "Provide clear error handling examples"
+technical_requirements:
+  - "Ruby 2.7+ or Docker environment"
+  - "Jekyll 3.9+ or 4.x compatibility"
+  - "Git for version control"
+  - "VS Code with Copilot (recommended)"
+difficulty_level: "beginner"
+estimated_reading_time: "10 minutes"
 ---
 Jekyll is a static site generator. It takes text written in your
 favorite markup language and uses layouts to create a static website. You can
