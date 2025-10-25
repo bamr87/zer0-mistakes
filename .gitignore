@@ -21,5 +21,4 @@ assets/.DS_Store
 test/results/*.json
 test/reports/*
 test/coverage/*
-logs/*.log
-logs/debug-trace.log
+logs/*
