@@ -1,5 +1,21 @@
 ## [0.4.0] - 2025-10-10
 
+## [0.5.0] - 2025-10-25
+
+### Added
+- comprehensive sitemap integration with unified layout and enhanced statistics
+- Add comprehensive AI-assisted development guide for Zer0-Mistakes theme
+- Add VSCode configuration files for GitHub Copilot and related settings
+
+### Changed
+- Update .gitignore to ignore all log files in the logs directory
+- Bump version to 0.5.0 and add release summary for v0.4.0
+
+### Other
+- removing logs
+
+
+
 ### Added
 - **📊 Comprehensive Site Statistics Dashboard**: Complete analytics system for content insights
   - Dynamic statistics generation from site content using Ruby script
