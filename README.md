@@ -604,7 +604,30 @@ git commit -m "Add amazing feature"
 git push origin feature/amazing-feature
 ```
 
-## 📄 License
+## � Documentation
+
+### 📖 Comprehensive Documentation Center
+All documentation is organized in the [`docs/`](docs/README.md) directory:
+
+- **[📋 Documentation Overview](docs/README.md)** - Complete documentation center with organized structure
+- **[🚀 Release Documentation](docs/releases/README.md)** - Version history and release notes
+- **[⭐ Feature Documentation](docs/features/README.md)** - Detailed feature guides and implementation
+- **[⚙️ System Documentation](docs/systems/README.md)** - Core systems, automation, and CI/CD
+- **[🔧 Configuration Guides](docs/configuration/README.md)** - Setup and hosting configuration
+- **[📝 Documentation Templates](docs/templates/README.md)** - Standardized templates for consistent documentation
+
+### 📊 Recent Releases
+- **[v0.5.0](docs/releases/v0.5.0-release-summary.md)** - Comprehensive Sitemap Integration (Latest)
+- **[v0.4.0](docs/releases/v0.4.0-release-summary.md)** - Statistics Dashboard
+- **[v0.3.0](docs/releases/v0.3.0-release-notes.md)** - Mermaid Integration v2.0
+
+### 🌟 Key Features
+- **[Sitemap Integration](docs/features/sitemap-integration.md)** - Unified site navigation and content discovery
+- **[Automated Version System](docs/systems/automated-version-system.md)** - Intelligent release automation
+- **[CI/CD Pipeline](docs/systems/cicd-status-report.md)** - Comprehensive testing and deployment
+- **[URL Configuration](docs/configuration/url-configuration-guide.md)** - Multi-hosting setup guide
+
+## �📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 

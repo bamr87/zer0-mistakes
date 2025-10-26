@@ -1,25 +1,61 @@
-## [0.4.0] - 2025-10-10
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+- Comprehensive documentation organization system in `/docs/` directory
+- Standardized templates for feature documentation, release notes, and change tracking
+- Organized directory structure for releases, features, systems, and configuration documentation
+
+### Changed
+- Migrated scattered documentation files to organized structure
+- Improved documentation discoverability and maintenance
 
 ## [0.5.0] - 2025-10-25
 
 ### Added
-- comprehensive sitemap integration with unified layout and enhanced statistics
-- Add comprehensive AI-assisted development guide for Zer0-Mistakes theme
-- Add VSCode configuration files for GitHub Copilot and related settings
+- **📊 Comprehensive Sitemap Integration**: Unified layout combining collections, statistics, and navigation
+  - Real-time site statistics dashboard with 6 key performance indicators
+  - Interactive search and filtering across all content types
+  - Collections overview with detailed analysis and recent item previews
+  - Advanced content discovery tools with visual organization
+  - Mobile-optimized responsive design with touch-friendly interface
+  - Dark mode support with theme-aware styling
+- **🔧 Enhanced User Experience Components**: Modern interface with professional design
+  - Bootstrap 5-based responsive layout with hover animations
+  - WCAG 2.1 AA compliant accessibility features
+  - Performance-optimized loading with lazy content rendering
+  - Comprehensive documentation and implementation guides
 
 ### Changed
-- Update .gitignore to ignore all log files in the logs directory
-- Bump version to 0.5.0 and add release summary for v0.4.0
+- **🏗️ Navigation System**: Consolidated duplicate sitemap entries into unified comprehensive view
+- **🎨 Visual Design**: Updated to modern card-based layout with smooth transitions
+- **📱 Mobile Experience**: Enhanced mobile responsiveness and touch interactions
 
-### Other
-- removing logs
+### Fixed
+- **🐛 Dark Mode Compatibility**: Resolved background color issues in dark theme
+- **🔧 Collection Filtering**: Fixed functionality for dynamic content filtering
+- **🔗 Link Navigation**: Corrected internal link behavior and navigation flow
 
+### Technical Details
+- **Files Added**: `_layouts/sitemap-collection.html`, enhanced navigation data files
+- **Files Modified**: Main navigation configuration, sitemap pages
+- **Performance**: Optimized DOM manipulation and content rendering
+- **Accessibility**: Full screen reader support and keyboard navigation
 
+**Full Documentation**: [v0.5.0 Release Summary](docs/releases/v0.5.0-release-summary.md)
+
+## [0.4.0] - 2025-10-10
 
 ### Added
 - **📊 Comprehensive Site Statistics Dashboard**: Complete analytics system for content insights
   - Dynamic statistics generation from site content using Ruby script
-  - Real-time analytics showing 61 content pieces, 19 categories, 47 tags, 43,601 words
+  - Real-time analytics showing content pieces, categories, tags, and word counts
   - Interactive Bootstrap 5-based dashboard with responsive design
   - Modular component architecture with 6 specialized statistics components
   - Intelligent activity level calculations based on actual data distribution
@@ -54,6 +90,40 @@
   - Eliminated type conversion errors in sorting operations
   - Proper handling of nested array data structures
 
+**Full Documentation**: [v0.4.0 Release Summary](docs/releases/v0.4.0-release-summary.md)
+
+## [0.3.0] - 2025-01-27
+
+### Added
+- **🎨 Mermaid Diagram Integration v2.0**: Comprehensive diagramming system
+  - Complete diagram support: flowcharts, sequence diagrams, class diagrams, state diagrams, ER diagrams, Gantt charts, pie charts, git graphs, journey diagrams, and mindmaps
+  - GitHub Pages compatibility with both local development and deployment
+  - Conditional loading for performance optimization
+  - Responsive design with automatic scaling across devices
+  - Dark mode support with forest theme optimization
+- **📚 Comprehensive Documentation**: Complete user and developer guides
+  - Step-by-step user guide with live examples
+  - Developer-focused integration tutorial
+  - Live test suite with validation examples
+  - Comprehensive troubleshooting guide
+- **🧪 Automated Testing Framework**: Complete validation system
+  - 16 automated tests covering all aspects
+  - Multiple test modes: quick, local, Docker, headless
+  - Cross-browser compatibility testing
+  - Performance validation and benchmarking
+
+### Changed
+- **📁 File Organization**: 53% reduction from 15 to 7 Mermaid-related files
+- **🏗️ Architecture**: Modular include system with clear responsibilities
+- **📖 Documentation**: Consolidated and improved documentation structure
+
+### Fixed
+- **🔧 Configuration**: Enhanced Jekyll and GitHub Pages compatibility
+- **⚡ Performance**: Optimized loading and rendering speed
+- **🎯 Usability**: Improved setup process and error handling
+
+**Full Documentation**: [v0.3.0 Release Notes](docs/releases/v0.3.0-release-notes.md)
+
 ## [0.2.1] - 2025-09-30
 
 ### Added
@@ -73,32 +143,7 @@
 ## [0.2.0] - 2025-09-01
 
 ### Changed
-- Version bump to 0.2.0
-
-# Changelog
-
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [Unreleased]
-
-### Added
-- Version control best practices implementation
-- Ruby-standard version management with `lib/jekyll-theme-zer0/version.rb`
-- Enhanced gemspec with proper metadata and security settings
-- Comprehensive version control instructions file
-
-### Changed
-- Migrated from package.json to Ruby version file for version management
-- Updated GitHub Actions workflows to use Ruby version file
-- Enhanced gemspec with proper metadata and constraints
-- Improved version bump script to follow Ruby standards
-
-### Fixed
-- Version management now follows Ruby gem conventions
-- Gemspec security and metadata improvements
+- Version bump to 0.2.0 with improvements
 
 ## [0.1.9] - 2025-01-27
 
@@ -109,13 +154,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Self-healing `_config_dev.yml` generation for Docker compatibility
   - Enhanced `install.sh` with Docker-first optimization functions
   - Comprehensive Docker troubleshooting and platform detection
-
 - **🧠 AI-Powered Self-Healing Configuration**: Intelligent automation and error recovery
   - Auto-detection and resolution of Jekyll theme dependency issues
   - Intelligent platform-specific optimizations (Intel/Apple Silicon)
   - Automatic generation of Docker-compatible development configurations
   - Smart error recovery with detailed logging and guidance
-
 - **🚀 Enhanced Installation System**: Robust, error-tolerant setup process
   - `optimize_development_config()` function for Docker-friendly configs
   - `fix_content_issues()` function to resolve Jekyll include problems
@@ -133,7 +176,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Commented out problematic Jekyll includes in README.md
   - Disabled `remote_theme` in development configuration
   - Added essential Jekyll plugins for Docker compatibility
-
 - **🍎 Apple Silicon Compatibility**: Fixed Docker platform issues
   - Added `platform: linux/amd64` for Apple Silicon compatibility
   - Automatic platform detection and optimization
@@ -142,13 +184,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.8] - 2025-01-03
 
 ### Added
-- **Comprehensive Gem Automation System**: Unified automation ecosystem merging all automation features
-  - Complete documentation consolidation following IT-Journey principles (DFF, DRY, KIS, AIPD)
+- **Comprehensive Gem Automation System**: Unified automation ecosystem
   - Zero-click releases with multi-environment testing
   - Production-ready CI/CD pipeline with GitHub Actions integration
   - Semantic versioning, building, testing, and publishing automation
-
-- **Remote Installation Support**: Direct installation from GitHub using `curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash`
+  - Complete documentation consolidation following IT-Journey principles
+- **Remote Installation Support**: Direct installation from GitHub
 - **Azure Static Web Apps Integration**: Automatic workflow creation for Azure deployment
 - **Build Directory Structure**: Added `build/` directory for logs and temporary files
 - **Enhanced Error Handling**: Comprehensive error handling with colored output
@@ -156,33 +197,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **Feature Documentation Restructure**: Consolidated redundant automation feature entries
-  - Merged `AUTOMATION_SUMMARY.md` and `automated-version-build-system.md`
-  - Created unified `comprehensive-gem-automation-system.md` feature page
-  - Updated features index to eliminate redundancies
-
-- **Simplified Installation Process**: Updated `zer0.md` to use single install command instead of complex manual setup
-- **Azure-Ready Configuration**: Pre-configured directory structure for Azure Static Web Apps (app location: `.`, api location: `api/`, output location: `_site/`)
-- **Enhanced Documentation**: Updated `INSTALLATION.md` with Azure deployment instructions
-- **Improved Help System**: Added remote installation examples to help output
+- **Simplified Installation Process**: Updated to use single install command
+- **Azure-Ready Configuration**: Pre-configured directory structure for Azure Static Web Apps
+- **Enhanced Documentation**: Updated with Azure deployment instructions
+- **Improved Help System**: Added remote installation examples
 
 ### Removed
 - **Redundant Documentation**: Eliminated duplicate automation documentation files
-  - Removed `AUTOMATION_SUMMARY.md` (content merged into comprehensive feature)
-  - Removed `automated-version-build-system.md` (superseded by comprehensive version)
-  - Consolidated 6 separate automation entries into 1 comprehensive feature
 
 ### Fixed
-- **Installation Script Compatibility**: Made `install.sh` compatible with both local and remote execution
-- **Directory Structure**: Optimized for Azure Static Web Apps deployment requirements
+- **Installation Script Compatibility**: Made compatible with both local and remote execution
+- **Directory Structure**: Optimized for Azure Static Web Apps deployment
 - **Markdown Lint Issues**: Fixed all markdown formatting violations
-  - Proper heading spacing and structure
-  - Fixed bare URLs with angle bracket notation
-  - Removed trailing spaces and improved table formatting
 
 ## [0.1.7] - 2024-12-01
 
 ### Added
-- Bootstrap Jekyll theme for headless Github Pages CMS
+- Bootstrap Jekyll theme for headless GitHub Pages CMS
 - Basic theme structure with layouts, includes, and assets
 - Jekyll compatibility with GitHub Pages
 - Scripts for version management, build, and test automation
@@ -194,7 +225,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/bamr87/zer0-mistakes/compare/v0.1.9...HEAD
+## Documentation
+
+For detailed documentation on features, systems, and configuration:
+- **[Documentation Center](docs/README.md)** - Complete documentation overview
+- **[Release Documentation](docs/releases/README.md)** - Historical release information
+- **[Feature Documentation](docs/features/README.md)** - Detailed feature guides
+- **[System Documentation](docs/systems/README.md)** - Core systems and automation
+- **[Configuration Guides](docs/configuration/README.md)** - Setup and configuration
+
+## Links
+
+[Unreleased]: https://github.com/bamr87/zer0-mistakes/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/bamr87/zer0-mistakes/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/bamr87/zer0-mistakes/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/bamr87/zer0-mistakes/compare/v0.2.1...v0.3.0
+[0.2.1]: https://github.com/bamr87/zer0-mistakes/compare/v0.2.0...v0.2.1
+[0.2.0]: https://github.com/bamr87/zer0-mistakes/compare/v0.1.9...v0.2.0
 [0.1.9]: https://github.com/bamr87/zer0-mistakes/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/bamr87/zer0-mistakes/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/bamr87/zer0-mistakes/releases/tag/v0.1.7
