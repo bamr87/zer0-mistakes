@@ -626,6 +626,7 @@ All documentation is organized in the [`docs/`](docs/README.md) directory:
 - **[Automated Version System](docs/systems/automated-version-system.md)** - Intelligent release automation
 - **[CI/CD Pipeline](docs/systems/cicd-status-report.md)** - Comprehensive testing and deployment
 - **[URL Configuration](docs/configuration/url-configuration-guide.md)** - Multi-hosting setup guide
+- **[GitHub Copilot Instructions](.github/instructions/README.md)** - AI-assisted development with comprehensive coding guidelines
 
 ## �📄 License
 

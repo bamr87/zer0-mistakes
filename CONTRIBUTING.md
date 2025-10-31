@@ -28,6 +28,44 @@ This project follows our [AI Code of Conduct](CODE_OF_CONDUCT.md), which is prob
 - **Code Quality**: Strive for excellence so refined that even our linters write poetry
 - **Learning from Exceptions**: Help others debug their way to enlightenment (it's literally in our name!)
 
+## 🤖 GitHub Copilot Integration
+
+This repository is optimized for development with **GitHub Copilot**, featuring comprehensive AI-assisted coding instructions that provide context-aware guidance for contributors (whether powered by silicon or carbon).
+
+### Copilot Instructions Overview
+
+The repository includes detailed instructions in `.github/copilot-instructions.md` and `.github/instructions/` that help both human developers and AI agents understand:
+
+- **Project architecture** and directory structure
+- **Essential commands** for development, testing, and deployment
+- **Coding standards** and patterns specific to Jekyll themes
+- **Bootstrap 5 integration** patterns and components
+- **Security best practices** and input validation
+- **Testing guidelines** and test development standards
+- **File-specific instructions** that automatically apply based on what you're editing
+
+### How It Helps You
+
+When using GitHub Copilot:
+
+1. **Context-aware suggestions**: Copilot understands project conventions and suggests code that matches our style
+2. **Pattern consistency**: Suggestions follow established patterns for layouts, includes, scripts, and tests
+3. **Best practices**: Automatic adherence to security, accessibility, and performance standards
+4. **Reduced onboarding**: New contributors get instant guidance on project structure and workflows
+
+### Available Instruction Files
+
+| File | Applies To | Purpose |
+|------|------------|---------|
+| `copilot-instructions.md` | All files | Project overview, commands, architecture |
+| `layouts.instructions.md` | `_layouts/**` | Jekyll layout development patterns |
+| `includes.instructions.md` | `_includes/**` | Reusable component development |
+| `scripts.instructions.md` | `scripts/**` | Shell script automation standards |
+| `testing.instructions.md` | `test/**` | Testing guidelines and assertions |
+| `version-control.instructions.md` | All files | Git workflow and release management |
+
+For detailed information, see [`.github/instructions/README.md`](.github/instructions/README.md).
+
 ## 🚀 Getting Started (Initializing Your Development Environment)
 
 ### System Requirements (The Dependencies Your AI Overlords Demand)
