@@ -3,9 +3,20 @@
 /**
  * MDX Build Script for Jekyll
  * 
- * This script processes .mdx files and converts them to .html files
- * that Jekyll can process. It maintains front matter and converts
- * JSX components to static HTML.
+ * This script processes .mdx files and converts them to markdown files
+ * that Jekyll can process. It maintains front matter and performs basic
+ * JSX-to-HTML attribute transformations.
+ * 
+ * Design Decision:
+ * Rather than using a full MDX compiler and JSX runtime, this script
+ * performs simple text transformations and outputs markdown files.
+ * This allows Jekyll's native markdown processor to handle the content
+ * while supporting basic HTML/JSX within markdown files.
+ * 
+ * Limitations:
+ * - No support for complex JSX expressions or dynamic content
+ * - No custom React component rendering
+ * - Best suited for static HTML elements with Tailwind CSS classes
  * 
  * Usage: node scripts/build-mdx.js
  */
@@ -14,7 +25,6 @@ const fs = require('fs');
 const path = require('path');
 const { glob } = require('glob');
 const matter = require('gray-matter');
-const { compile } = require('@mdx-js/mdx');
 
 // Configuration
 const MDX_SOURCES = [
@@ -29,21 +39,6 @@ const OUTPUT_DIR = '_mdx-generated';
 if (!fs.existsSync(OUTPUT_DIR)) {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 }
-
-// Simple React components simulation for server-side rendering
-const components = {
-  Button: ({ children, variant = 'primary', ...props }) => 
-    `<button class="tw-btn-${variant} btn btn-${variant}" ${Object.entries(props).map(([k, v]) => `${k}="${v}"`).join(' ')}>${children}</button>`,
-  Card: ({ children, title, ...props }) => 
-    `<div class="card tw-rounded-lg tw-shadow-md tw-p-6" ${Object.entries(props).map(([k, v]) => `${k}="${v}"`).join(' ')}>
-      ${title ? `<h3 class="card-title tw-text-xl tw-font-bold tw-mb-4">${title}</h3>` : ''}
-      <div class="card-body">${children}</div>
-    </div>`,
-  Alert: ({ children, type = 'info', ...props }) => 
-    `<div class="alert alert-${type} tw-p-4 tw-rounded tw-mb-4" role="alert" ${Object.entries(props).map(([k, v]) => `${k}="${v}"`).join(' ')}>
-      ${children}
-    </div>`,
-};
 
 /**
  * Process a single MDX file
@@ -64,13 +59,13 @@ async function processMDXFile(filePath) {
     // Parse front matter
     const { data: frontMatter, content: mdxContent } = matter(content);
     
-    // Convert JSX attributes to HTML attributes
-    // className -> class, htmlFor -> for, etc.
+    // Convert JSX attributes to HTML attributes for Jekyll compatibility
+    // Note: This is a simple transformation for basic MDX usage
+    // Complex JSX expressions are not supported in this implementation
     let processedContent = mdxContent
       .replace(/className=/g, 'class=')
       .replace(/htmlFor=/g, 'for=')
-      .replace(/\{\/\*[\s\S]*?\*\/\}/g, '') // Remove JSX comments
-      .replace(/\{(['"`])([^\1]*?)\1\}/g, '$2'); // Convert {\"text\"} to text
+      .replace(/\{\/\*[\s\S]*?\*\/\}/g, ''); // Remove JSX comments
     
     // Determine output path (keep as .md for Jekyll to process)
     const relativePath = path.relative(process.cwd(), filePath);

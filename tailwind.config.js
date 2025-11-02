@@ -7,8 +7,8 @@ module.exports = {
     './pages/**/*.{md,mdx,html}',
     './*.{html,md,mdx}',
     './assets/js/**/*.js',
-    // Add paths for MDX-generated HTML
-    './_site/**/*.html'
+    // Include MDX-generated markdown files
+    './_mdx-generated/**/*.md'
   ],
   // Prefix Tailwind utilities to avoid conflicts with Bootstrap
   prefix: 'tw-',
