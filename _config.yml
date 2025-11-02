@@ -406,6 +406,10 @@ exclude:
   - MERMAID-*.md
   - MERMAID-*/
 
+# Include MDX-generated HTML files for Jekyll processing
+include:
+  - _mdx-generated
+
 # Sass/SCSS
 sass:
   sass_dir: _sass

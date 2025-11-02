@@ -47,6 +47,12 @@ const components = {
 
 /**
  * Process a single MDX file
+ * 
+ * Strategy: Convert MDX to markdown that Jekyll can process
+ * - Parse front matter
+ * - Convert className to class for HTML compatibility
+ * - Keep markdown syntax for Jekyll to process
+ * - Wrap in a div for styling
  */
 async function processMDXFile(filePath) {
   try {
@@ -58,30 +64,19 @@ async function processMDXFile(filePath) {
     // Parse front matter
     const { data: frontMatter, content: mdxContent } = matter(content);
     
-    // Compile MDX to JSX
-    const compiled = await compile(mdxContent, {
-      outputFormat: 'function-body',
-      development: false,
-    });
+    // Convert JSX attributes to HTML attributes
+    // className -> class, htmlFor -> for, etc.
+    let processedContent = mdxContent
+      .replace(/className=/g, 'class=')
+      .replace(/htmlFor=/g, 'for=')
+      .replace(/\{\/\*[\s\S]*?\*\/\}/g, '') // Remove JSX comments
+      .replace(/\{(['"`])([^\1]*?)\1\}/g, '$2'); // Convert {\"text\"} to text
     
-    // Convert compiled MDX to HTML (simplified)
-    // In a real-world scenario, you'd use a JSX runtime
-    let html = String(compiled);
-    
-    // Basic JSX to HTML conversion for common patterns
-    html = html.replace(/<(\w+)([^>]*)>/g, (match, tag, attrs) => {
-      if (components[tag]) {
-        // Handle custom components
-        return match; // Keep as-is for now, proper runtime needed
-      }
-      return match;
-    });
-    
-    // Determine output path
+    // Determine output path (keep as .md for Jekyll to process)
     const relativePath = path.relative(process.cwd(), filePath);
     const outputPath = path.join(
       OUTPUT_DIR,
-      relativePath.replace('.mdx', '.html')
+      relativePath.replace('.mdx', '.md')
     );
     
     // Ensure output directory exists
@@ -104,11 +99,11 @@ async function processMDXFile(filePath) {
       .join('\n');
     output += '\n---\n\n';
     
-    // Add compiled content
+    // Add processed content with wrapper div
     output += `<!-- Generated from ${relativePath} -->\n`;
-    output += `<div class="mdx-content tw-mdx-content">\n`;
-    output += mdxContent; // For now, use original markdown - proper MDX->HTML conversion needs runtime
-    output += '\n</div>\n';
+    output += `<div class="mdx-content tw-mdx-content" markdown="1">\n\n`;
+    output += processedContent;
+    output += '\n\n</div>\n';
     
     // Write output file
     fs.writeFileSync(outputPath, output);
