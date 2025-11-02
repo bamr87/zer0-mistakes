@@ -2,7 +2,7 @@
   "name": "zer0-mistakes",
   "private": true,
   "version": "0.5.0",
-  "description": "Bootstrap Jekyll theme for headless Github Pages CMS.",
+  "description": "Bootstrap Jekyll theme for headless Github Pages CMS with MDX and Tailwind CSS support.",
   "repository": {
     "type": "git",
     "url": "https://github.com/bamr87/zer0-mistakes.git"
@@ -10,7 +10,9 @@
   "keywords": [
     "jekyll",
     "theme",
-    "zer0"
+    "zer0",
+    "mdx",
+    "tailwindcss"
   ],
   "author": "Amr Abdel-Motaleb",
   "license": "MIT",
@@ -19,6 +21,26 @@
   },
   "homepage": "https://bamr87.github.io/zer0-mistakes/",
   "engines": {
-    "node": ">= 0.10.0"
+    "node": ">= 16.0.0"
+  },
+  "scripts": {
+    "build:mdx": "node scripts/build-mdx.js",
+    "build:css": "npm run build:tailwind",
+    "build:tailwind": "npx tailwindcss -i ./assets/css/tailwind.css -o ./assets/css/tailwind.output.css --minify",
+    "watch:css": "npx tailwindcss -i ./assets/css/tailwind.css -o ./assets/css/tailwind.output.css --watch",
+    "build": "npm run build:mdx && npm run build:css",
+    "dev": "npm run watch:css"
+  },
+  "devDependencies": {
+    "@mdx-js/mdx": "^3.0.1",
+    "@mdx-js/node-loader": "^3.0.1",
+    "@tailwindcss/typography": "^0.5.13",
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3",
+    "glob": "^10.3.12",
+    "gray-matter": "^4.0.3"
   }
 }
