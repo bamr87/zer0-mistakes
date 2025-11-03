@@ -149,6 +149,17 @@ docker-compose up
 - **GitHub Releases** - Creates comprehensive release pages with assets
 - **CI/CD Integration** - Seamless automation with GitHub Actions
 
+### ℹ️ **Automatic Theme Version Display**
+
+- **Zero Configuration** - Theme version displays automatically, no hardcoding needed
+- **System Information** - Shows Jekyll, Ruby, and build environment details
+- **Always Accessible** - Info modal available from header (⚙️) and footer on every page
+- **Dynamic Extraction** - Version pulled from gem specification during build
+- **Comprehensive Details** - Lists active plugins, technology stack, and helpful links
+- **GitHub Pages Compatible** - Works with both local gems and remote themes
+
+[Learn more about the Theme Version Feature →](docs/THEME_VERSION_FEATURE.md)
+
 > 📖 **Learn more**: [Automated Version System Documentation](AUTOMATED_VERSION_SYSTEM.md)
 
 ### 📊 **Mermaid Diagram Integration** *(New in v0.3.0)*

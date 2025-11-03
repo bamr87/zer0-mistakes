@@ -1,0 +1,312 @@
+<!--
+  ===================================================================
+  THEME INFO - Theme Version and System Information Display
+  ===================================================================
+  
+  File: theme-info.html
+  Path: _includes/components/theme-info.html
+  Purpose: Display theme version, Jekyll version, and system information
+  
+  Template Logic:
+  - Automatically extracts theme version from gem specification
+  - Shows Jekyll and Ruby versions
+  - Displays GitHub repository information
+  - Links to theme documentation and changelog
+  
+  Dependencies:
+  - site.remote_theme or site.theme configuration
+  - Jekyll's site.github metadata (for GitHub Pages)
+  
+  Notes:
+  - Version is pulled dynamically during build
+  - No hardcoded version numbers
+  ===================================================================
+-->
+
+<div class="theme-info">
+  <h5 class="border-bottom pb-2 mb-3">
+    <i class="{{ site.default_icon }} bi-info-circle me-2"></i>
+    Theme Information
+  </h5>
+  
+  <div class="row g-3">
+    <!-- Theme Details -->
+    <div class="col-12">
+      <div class="card bg-dark border-secondary">
+        <div class="card-body">
+          <h6 class="card-title">
+            <i class="{{ site.default_icon }} bi-palette me-2"></i>
+            Theme
+          </h6>
+          
+          {% if site.remote_theme %}
+            {% assign theme_parts = site.remote_theme | split: "/" %}
+            {% assign theme_owner = theme_parts[0] %}
+            {% assign theme_repo = theme_parts[1] %}
+            
+            <p class="mb-2">
+              <strong>Name:</strong> 
+              <a href="https://github.com/{{ site.remote_theme }}" 
+                 target="_blank" 
+                 rel="noopener noreferrer"
+                 class="text-info text-decoration-none">
+                {{ theme_repo }}
+              </a>
+            </p>
+            
+            <p class="mb-2">
+              <strong>Repository:</strong> 
+              <code class="text-warning">{{ site.remote_theme }}</code>
+            </p>
+            
+            {% comment %}
+            Try to get version from Gem specification if available
+            This works when the theme is installed as a gem
+            {% endcomment %}
+            {% capture theme_version %}
+              {%- for spec in site.theme_specs -%}
+                {%- if spec.name == "jekyll-theme-zer0" -%}
+                  {{ spec.version }}
+                {%- endif -%}
+              {%- endfor -%}
+            {% endcapture %}
+            
+            {% if theme_version and theme_version != "" %}
+              <p class="mb-2">
+                <strong>Version:</strong> 
+                <span class="badge bg-success">v{{ theme_version | strip }}</span>
+              </p>
+            {% else %}
+              <p class="mb-2">
+                <strong>Version:</strong> 
+                <span class="badge bg-info">Remote (Latest)</span>
+                <small class="text-muted d-block mt-1">
+                  Using latest version from GitHub
+                </small>
+              </p>
+            {% endif %}
+            
+            <div class="mt-3">
+              <a href="https://github.com/{{ site.remote_theme }}/blob/main/CHANGELOG.md" 
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 class="btn btn-sm btn-outline-info me-2">
+                <i class="{{ site.default_icon }} bi-journal-text"></i>
+                Changelog
+              </a>
+              <a href="https://github.com/{{ site.remote_theme }}#readme" 
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 class="btn btn-sm btn-outline-info">
+                <i class="{{ site.default_icon }} bi-book"></i>
+                Documentation
+              </a>
+            </div>
+            
+          {% elsif site.theme %}
+            <p class="mb-2">
+              <strong>Name:</strong> 
+              <code class="text-warning">{{ site.theme }}</code>
+            </p>
+            <p class="mb-2">
+              <strong>Type:</strong> Local Theme
+            </p>
+          {% else %}
+            <p class="text-muted">No theme configured</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    
+    <!-- Build Environment -->
+    <div class="col-12">
+      <div class="card bg-dark border-secondary">
+        <div class="card-body">
+          <h6 class="card-title">
+            <i class="{{ site.default_icon }} bi-cpu me-2"></i>
+            Build Environment
+          </h6>
+          
+          <p class="mb-2">
+            <strong>Jekyll:</strong> 
+            <span class="badge bg-primary">v{{ jekyll.version }}</span>
+          </p>
+          
+          <p class="mb-2">
+            <strong>Ruby:</strong> 
+            <span class="badge bg-danger">v{{ site.powered_by | where: "name", "Ruby" | map: "version" | first | default: "Unknown" }}</span>
+          </p>
+          
+          <p class="mb-2">
+            <strong>Environment:</strong> 
+            <span class="badge bg-secondary">{{ jekyll.environment }}</span>
+          </p>
+          
+          {% if site.github %}
+            <p class="mb-2">
+              <strong>Build:</strong> 
+              <span class="badge bg-info">GitHub Pages</span>
+            </p>
+          {% endif %}
+          
+          <p class="mb-0">
+            <strong>Last Build:</strong> 
+            <small class="text-muted">{{ site.time | date: "%Y-%m-%d %H:%M:%S %Z" }}</small>
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Site Information -->
+    <div class="col-12">
+      <div class="card bg-dark border-secondary">
+        <div class="card-body">
+          <h6 class="card-title">
+            <i class="{{ site.default_icon }} bi-globe me-2"></i>
+            Site Details
+          </h6>
+          
+          <p class="mb-2">
+            <strong>Repository:</strong> 
+            <a href="https://github.com/{{ site.repository }}" 
+               target="_blank"
+               rel="noopener noreferrer"
+               class="text-info text-decoration-none">
+              {{ site.repository }}
+            </a>
+          </p>
+          
+          <p class="mb-2">
+            <strong>Branch:</strong> 
+            <code class="text-warning">{{ site.branch }}</code>
+          </p>
+          
+          <p class="mb-0">
+            <strong>Collections:</strong> 
+            <span class="badge bg-secondary">{{ site.collections | size }} configured</span>
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Plugin Information -->
+    <div class="col-12">
+      <div class="card bg-dark border-secondary">
+        <div class="card-body">
+          <h6 class="card-title">
+            <i class="{{ site.default_icon }} bi-plugin me-2"></i>
+            Active Plugins
+          </h6>
+          
+          <div class="d-flex flex-wrap gap-2">
+            {% for plugin in site.plugins %}
+              <span class="badge bg-info">{{ plugin }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Powered By Framework -->
+    <div class="col-12">
+      <div class="card bg-dark border-secondary">
+        <div class="card-body">
+          <h6 class="card-title">
+            <i class="{{ site.default_icon }} bi-stack me-2"></i>
+            Technology Stack
+          </h6>
+          
+          <div class="table-responsive">
+            <table class="table table-sm table-dark table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>Technology</th>
+                  <th>Version</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for tech in site.powered_by %}
+                  <tr>
+                    <td>
+                      {% if tech.url %}
+                        <a href="{{ tech.url }}" 
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="text-decoration-none">
+                          <i class="{{ site.default_icon }} {{ tech.icon }}"></i>
+                          {{ tech.name }}
+                        </a>
+                      {% else %}
+                        <i class="{{ site.default_icon }} {{ tech.icon }}"></i>
+                        {{ tech.name }}
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if tech.version %}
+                        <code class="text-info">{{ tech.version }}</code>
+                      {% else %}
+                        <span class="text-muted">—</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Help Links -->
+  <div class="mt-4 pt-3 border-top">
+    <p class="text-muted mb-2">
+      <small>
+        <i class="{{ site.default_icon }} bi-question-circle me-1"></i>
+        Need help? Check out these resources:
+      </small>
+    </p>
+    <div class="d-flex flex-wrap gap-2">
+      <a href="https://jekyllrb.com/docs/" 
+         target="_blank"
+         rel="noopener noreferrer"
+         class="btn btn-sm btn-outline-secondary">
+        Jekyll Docs
+      </a>
+      <a href="https://github.com/{{ site.remote_theme }}/issues" 
+         target="_blank"
+         rel="noopener noreferrer"
+         class="btn btn-sm btn-outline-secondary">
+        Report Issue
+      </a>
+      <a href="https://github.com/{{ site.repository }}/discussions" 
+         target="_blank"
+         rel="noopener noreferrer"
+         class="btn btn-sm btn-outline-secondary">
+        Discussions
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+.theme-info .card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.theme-info .card:hover {
+  transform: translateY(-2px);
+}
+
+.theme-info code {
+  font-size: 0.875rem;
+  padding: 0.2rem 0.4rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 0.25rem;
+}
+
+.theme-info .badge {
+  font-size: 0.875rem;
+  padding: 0.35rem 0.65rem;
+}
+</style>
