@@ -1,0 +1,15 @@
+features:
+  - id: ZER0-001
+    title: "Bootstrap theme - Zer0-Mistakes"
+    description: "Jekyll theme with Bootstrap integration and frontmatter conventions"
+    implemented: true
+    link: "/"
+    tags: [jekyll, theme, bootstrap]
+    date: 2025-01-27
+  - id: ZER0-002
+    title: "Docker-first development"
+    description: "Docker compose dev environment for cross-platform development"
+    implemented: true
+    link: "/"
+    tags: [docker, devops]
+    date: 2025-01-27
