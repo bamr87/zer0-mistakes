@@ -1,8 +1,17 @@
 ---
 title: "Blog"
-description: "Latest posts and updates"
+description: "Latest posts and updates from the Zer0-Mistakes community"
 layout: default
 permalink: /blog/
+categories:
+  - blog
+  - content
+tags:
+  - posts
+  - updates
+  - community
+date: 2025-11-16T00:00:00.000Z
+lastmod: 2025-11-16T00:00:00.000Z
 ---
 
 ## Latest posts

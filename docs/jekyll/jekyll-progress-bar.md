@@ -7,7 +7,8 @@ date: 2019-06-04
 tags:
   - Nanobar
   - Progress Bar
-lastmod: 2023-12-03T08:47:34.515Z
+lastmod: 2025-11-16T13:44:13.268Z
+draft: draft
 ---
 
 > Show progress bar when page is loading.

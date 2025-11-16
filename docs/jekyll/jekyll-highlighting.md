@@ -7,7 +7,8 @@ date: 2019-06-18
 tags:
   - Highlighting
   - highlight.js
-lastmod: 2023-01-02T18:49:34.893Z
+lastmod: 2025-11-16T13:44:09.166Z
+draft: draft
 ---
 
 > Highlighting with highlight.js.

@@ -1,3 +1,6 @@
+---
+draft: draft
+---
 # Zer0-Mistakes Documentation Center
 
 This directory contains comprehensive documentation for the Zer0-Mistakes Jekyll theme, organized for easy discovery and maintenance.

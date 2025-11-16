@@ -6,7 +6,8 @@ subcategory: jekyll
 date: 2019-06-21
 tags:
   - Custom Domain
-lastmod: 2023-12-03T08:40:23.773Z
+lastmod: 2025-11-16T13:44:05.558Z
+draft: draft
 ---
 
 > Setup personal website with Github page and custom domain.

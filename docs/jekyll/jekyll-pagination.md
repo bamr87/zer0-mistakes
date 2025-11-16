@@ -6,7 +6,8 @@ subcategory: jekyll
 date: 2019-06-04
 tags:
   - Pagination
-lastmod: 2023-12-03T08:47:33.612Z
+lastmod: 2025-11-16T13:44:15.079Z
+draft: draft
 ---
 
 > Add pagination buttons for every page.

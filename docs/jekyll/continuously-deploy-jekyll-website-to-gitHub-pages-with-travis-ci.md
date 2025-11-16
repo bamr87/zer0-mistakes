@@ -8,7 +8,8 @@ tags:
   - Jekyll
   - Github Pages
   - Travis CI
-lastmod: 2023-12-03T09:00:57.880Z
+lastmod: 2025-11-16T13:44:04.846Z
+draft: draft
 ---
 
 > Start continuous integration with Travis CI for Jekyll website.

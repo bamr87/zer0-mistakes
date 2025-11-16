@@ -5,8 +5,9 @@ index: 8118
 subcategory: jekyll
 date: 2017-08-20
 tags:
-  - ShareThis
-lastmod: 2022-06-11T18:16:53.929Z
+    - ShareThis
+lastmod: 2025-11-16T13:44:23.449Z
+draft: draft
 ---
 
 > Integrate ShareThis to Jekyll website.

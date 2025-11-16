@@ -6,7 +6,8 @@ subcategory: jekyll
 date: 2019-06-28
 tags:
   - Performance
-lastmod: 2022-06-04T17:35:42.096Z
+lastmod: 2025-11-16T13:44:14.128Z
+draft: draft
 ---
 
 > Performance.

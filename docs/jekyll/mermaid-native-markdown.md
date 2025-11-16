@@ -1,16 +1,18 @@
 ---
-title: "Mermaid with Native Markdown Syntax"
-description: "Simple Mermaid diagrams using native markdown code blocks via jekyll-mermaid"
+title: Mermaid with Native Markdown Syntax
+description: Simple Mermaid diagrams using native markdown code blocks via jekyll-mermaid
 date: 2025-01-27
 tags:
-  - Mermaid
-  - Markdown
-  - Jekyll
+    - Mermaid
+    - Markdown
+    - Jekyll
 categories:
-  - Documentation
+    - Documentation
 layout: default
 permalink: /docs/jekyll/mermaid-native-markdown/
 mermaid: true
+draft: draft
+lastmod: 2025-11-16T13:44:24.902Z
 ---
 
 # Mermaid with Native Markdown Syntax

@@ -1,17 +1,18 @@
 ---
-title: "Mermaid Diagrams in Jekyll"
-description: "Complete guide to using Mermaid diagrams in Jekyll with examples and reference"
+title: Mermaid Diagrams in Jekyll
+description: Complete guide to using Mermaid diagrams in Jekyll with examples and reference
 date: 2025-01-27
-lastmod: 2025-01-27
+lastmod: 2025-11-16T13:44:26.408Z
 tags:
-  - Mermaid
-  - Diagrams
-  - Jekyll
-  - Documentation
+    - Mermaid
+    - Diagrams
+    - Jekyll
+    - Documentation
 categories:
-  - Documentation
+    - Documentation
 layout: default
 mermaid: true
+draft: draft
 ---
 
 # Mermaid Diagrams in Jekyll
