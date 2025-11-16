@@ -1,111 +1,5 @@
 ---
 applyTo: "_includes/**"
-description: "Jekyll includes development guidelines for reusable components"
----
-
-# Jekyll Includes Development Guidelines
-
-## 🧩 Overview
-
-This document provides guidelines for developing and maintaining Jekyll include files in the `_includes/` directory. These reusable components are the building blocks of the Zer0-Mistakes theme's modular architecture.
-
-## 📋 Include File Structure
-
-### Core Includes
-
-| Include | Purpose | Used In |
-|---------|---------|---------|
-| `head.html` | HTML head with meta tags, CSS | All layouts |
-| `header.html` | Site navigation and header | All layouts |
-| `footer.html` | Site footer with links | All layouts |
-| `sidebar-left.html` | Left navigation sidebar | Main layouts |
-| `sidebar-right.html` | Right content sidebar | Content pages |
-| `js-cdn.html` | JavaScript CDN resources | All layouts |
-| `nav_list.html` | Navigation list generator | Header |
-| `intro.html` | Page introduction section | Content pages |
-
-## 🎨 Include Development Standards
-
-### Naming Conventions
-
-```
-Format: descriptive-name.html
-Examples:
-  - card-post.html (post card component)
-  - breadcrumb-nav.html (breadcrumb navigation)
-  - social-share.html (social sharing buttons)
-```
-
-### File Structure Template
-
-```html
-<!--
-Include: component-name.html
-Description: Brief description of what this component does
-Parameters:
-  - param_name (required): Description of parameter
-  - param_name (optional): Description with default value
-Usage:
-  {% include component-name.html param_name="value" %}
-Dependencies:
-  - List any required CSS classes
-  - List any required JavaScript
-Bootstrap Components: List Bootstrap components used
-AI Notes: Special considerations for AI development
--->
-
-{% comment %}
-  Component logic and documentation
-  Explain any complex Liquid logic here
-{% endcomment %}
-
-<div class="component-wrapper">
-  <!-- Component HTML -->
-</div>
-```
-
-### Parameter Handling
-
-```liquid
-{% comment %}
-  Handle optional parameters with defaults
-{% endcomment %}
-{% assign title = include.title | default: page.title %}
-{% assign show_date = include.show_date | default: true %}
-{% assign css_class = include.class | default: "default-class" %}
-
-{% comment %}
-  Validate required parameters
-{% endcomment %}
-{% unless include.required_param %}
-  {% assign error = "Error: required_param is missing" %}
-  <!-- Log error or handle gracefully -->
-{% endunless %}
-```
-
-## 🏗️ Component Patterns
-
-### Navigation Components
-
-```liquid
-{% comment %}
-  Navigation list with active state detection
-{% endcomment %}
-<nav class="navigation" aria-label="Main navigation">
-  <ul class="nav-list">
-    {% for item in site.data.navigation %}
-      {% assign active = "" %}
-      {% if page.url contains item.url %}
-        {% assign active = "active" %}
-      {% endif %}
-      
-      <li class="nav-item {{ active }}">
-        <a href="{{ item.url | relative_url }}" class="nav-link">
-          {% if item.icon %}
-            <i class="bi bi-{{ item.icon }}"></i>
-          {% endif %}
-          {{ item.title }}
-        </a>
 description: "Jekyll include development guidelines for Zer0-Mistakes theme"
 ---
 
@@ -322,6 +216,68 @@ Privacy-compliant tracking and measurement:
 </button>
 ```
 
+### Bootstrap Navigation Components
+```liquid
+{% comment %}
+  Bootstrap navbar with responsive collapse
+{% endcomment %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ '/' | relative_url }}">
+      {% if site.logo %}
+        <img src="{{ site.logo | relative_url }}" alt="{{ site.title }}" height="30">
+      {% endif %}
+      {{ site.title }}
+    </a>
+    
+    <button class="navbar-toggler" type="button" 
+            data-bs-toggle="collapse" 
+            data-bs-target="#navbarNav" 
+            aria-controls="navbarNav" 
+            aria-expanded="false" 
+            aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbarNav">
+      {% include nav_list.html %}
+    </div>
+  </div>
+</nav>
+```
+
+### Bootstrap Alert Components
+```liquid
+{% comment %}
+  Bootstrap alert with icon
+  Parameters: type (success|info|warning|danger), message, dismissible
+{% endcomment %}
+{% assign alert_type = include.type | default: "info" %}
+{% assign dismissible = include.dismissible | default: false %}
+
+<div class="alert alert-{{ alert_type }} {% if dismissible %}alert-dismissible fade show{% endif %}" 
+     role="alert">
+  {% case alert_type %}
+    {% when "success" %}
+      <i class="bi bi-check-circle-fill"></i>
+    {% when "info" %}
+      <i class="bi bi-info-circle-fill"></i>
+    {% when "warning" %}
+      <i class="bi bi-exclamation-triangle-fill"></i>
+    {% when "danger" %}
+      <i class="bi bi-x-circle-fill"></i>
+  {% endcase %}
+  
+  {{ include.message }}
+  
+  {% if dismissible %}
+    <button type="button" class="btn-close" 
+            data-bs-dismiss="alert" 
+            aria-label="Close"></button>
+  {% endif %}
+</div>
+```
+
 ## 🔧 Advanced Include Patterns
 
 ### Dynamic Content Generation
@@ -351,7 +307,6 @@ Privacy-compliant tracking and measurement:
 ```
 
 ### Content Card Components
-
 ```liquid
 {% comment %}
   Reusable card component with Bootstrap styling
@@ -391,7 +346,6 @@ Privacy-compliant tracking and measurement:
 ```
 
 ### SEO Components
-
 ```liquid
 {% comment %}
   Open Graph meta tags for social sharing
@@ -412,35 +366,6 @@ Privacy-compliant tracking and measurement:
 <meta name="twitter:image" content="{{ include.image | default: page.preview | absolute_url }}">
 ```
 
-## � **Bootstrap 5 Integration Patterns**
-
-### Bootstrap Navigation Components
-
-```liquid
-{% comment %}
-  Bootstrap navbar with responsive collapse
-{% endcomment %}
-<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="{{ '/' | relative_url }}">
-      {% if site.logo %}
-        <img src="{{ site.logo | relative_url }}" alt="{{ site.title }}" height="30">
-      {% endif %}
-      {{ site.title }}
-    </a>
-    
-    <button class="navbar-toggler" type="button" 
-            data-bs-toggle="collapse" 
-            data-bs-target="#navbarNav" 
-            aria-controls="navbarNav" 
-            aria-expanded="false" 
-            aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    
-    <div class="collapse navbar-collapse" id="navbarNav">
-      {% include nav_list.html %}
-    </div>
 ### Collection Processing
 ```liquid
 {% comment %} Dynamic stats generation {% endcomment %}
@@ -500,7 +425,7 @@ Privacy-compliant tracking and measurement:
 {% endif %}
 ```
 
-## 🔐 Privacy and Analytics Includes
+## 🔐 Privacy and Analytics
 
 ### Privacy-Compliant Analytics
 ```html
@@ -538,7 +463,7 @@ Privacy-compliant tracking and measurement:
 </div>
 ```
 
-## 📱 Responsive Design in Includes
+## 📱 Responsive Design
 
 ### Mobile-First Component Design
 ```html
@@ -569,295 +494,6 @@ Privacy-compliant tracking and measurement:
 </nav>
 ```
 
-### Bootstrap Modal Components
-
-```liquid
-{% comment %}
-  Bootstrap modal for content display
-  Parameters: id, title, content
-{% endcomment %}
-<div class="modal fade" id="{{ include.id }}" tabindex="-1" 
-     aria-labelledby="{{ include.id }}Label" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="{{ include.id }}Label">
-          {{ include.title }}
-        </h5>
-        <button type="button" class="btn-close" 
-                data-bs-dismiss="modal" 
-                aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        {{ include.content }}
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" 
-                data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-```
-
-### Bootstrap Alert Components
-
-```liquid
-{% comment %}
-  Bootstrap alert with icon
-  Parameters: type (success|info|warning|danger), message, dismissible
-{% endcomment %}
-{% assign alert_type = include.type | default: "info" %}
-{% assign dismissible = include.dismissible | default: false %}
-
-<div class="alert alert-{{ alert_type }} {% if dismissible %}alert-dismissible fade show{% endif %}" 
-     role="alert">
-  {% case alert_type %}
-    {% when "success" %}
-      <i class="bi bi-check-circle-fill"></i>
-    {% when "info" %}
-      <i class="bi bi-info-circle-fill"></i>
-    {% when "warning" %}
-      <i class="bi bi-exclamation-triangle-fill"></i>
-    {% when "danger" %}
-      <i class="bi bi-x-circle-fill"></i>
-  {% endcase %}
-  
-  {{ include.message }}
-  
-  {% if dismissible %}
-    <button type="button" class="btn-close" 
-            data-bs-dismiss="alert" 
-            aria-label="Close"></button>
-  {% endif %}
-</div>
-```
-
-## ♿ Accessibility Guidelines
-
-### Semantic HTML
-```liquid
-{% comment %}
-  Use proper semantic elements
-{% endcomment %}
-<nav aria-label="Breadcrumb navigation">
-  <ol class="breadcrumb">
-    <!-- breadcrumb items -->
-  </ol>
-</nav>
-
-<article class="blog-post" role="article">
-  <header>
-    <h1>{{ page.title }}</h1>
-  </header>
-  <main>
-    {{ content }}
-  </main>
-</article>
-```
-
-### ARIA Labels
-```liquid
-{% comment %}
-  Add ARIA labels for screen readers
-{% endcomment %}
-<button type="button" 
-        class="btn btn-primary"
-        aria-label="Open {{ include.title }} dialog">
-  <i class="bi bi-plus" aria-hidden="true"></i>
-</button>
-
-<nav aria-label="Pagination">
-  <!-- pagination controls -->
-</nav>
-```
-
-### Focus Management
-```liquid
-{% comment %}
-  Ensure keyboard navigation works
-{% endcomment %}
-<div class="dropdown">
-  <button class="btn dropdown-toggle" 
-          type="button" 
-          id="dropdownMenu" 
-          data-bs-toggle="dropdown" 
-          aria-expanded="false"
-          aria-haspopup="true">
-    Menu
-  </button>
-  <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
-    <li><a class="dropdown-item" href="#" tabindex="0">Item 1</a></li>
-    <li><a class="dropdown-item" href="#" tabindex="0">Item 2</a></li>
-  </ul>
-</div>
-```
-
-## 🎨 CSS and Styling
-
-### CSS Classes
-```liquid
-{% comment %}
-  Use BEM methodology for custom classes
-{% endcomment %}
-<div class="component-name">
-  <div class="component-name__header">
-    <h2 class="component-name__title">{{ include.title }}</h2>
-  </div>
-  <div class="component-name__body component-name__body--{{ include.variant }}">
-    {{ include.content }}
-  </div>
-</div>
-```
-
-### Responsive Design
-```liquid
-{% comment %}
-  Use Bootstrap responsive utilities
-{% endcomment %}
-<div class="row">
-  <div class="col-12 col-md-6 col-lg-4">
-    <!-- Responsive column -->
-  </div>
-</div>
-
-<div class="d-none d-md-block">
-  <!-- Hidden on mobile, visible on medium+ -->
-</div>
-```
-
-## 🧪 Testing Includes
-
-### Testing Checklist
-- [ ] Test with all parameter combinations
-- [ ] Test with missing optional parameters
-- [ ] Test responsive behavior across breakpoints
-- [ ] Verify accessibility with screen readers
-- [ ] Check Bootstrap component functionality
-- [ ] Validate HTML output
-- [ ] Test in multiple browsers
-- [ ] Verify performance impact
-
-### Manual Testing
-```bash
-# Build site and check specific include
-docker-compose up
-
-# Check HTML output
-curl http://localhost:4000 | grep "include-component"
-
-# Validate HTML
-docker-compose exec jekyll htmlproofer _site --check-html
-```
-
-## 🔒 Security Considerations
-
-### Output Escaping
-```liquid
-{% comment %}
-  Always escape user-provided content
-{% endcomment %}
-<p>{{ include.user_content | escape }}</p>
-
-{% comment %}
-  Be careful with absolute_url to prevent injection
-{% endcomment %}
-<a href="{{ include.url | relative_url }}">Link</a>
-```
-
-### Safe Filters
-```liquid
-{% comment %}
-  Use safe filters for content manipulation
-{% endcomment %}
-{{ content | strip_html | truncate: 150 }}
-{{ page.description | escape | strip_newlines }}
-```
-
-## 📖 Documentation Requirements
-
-### Component Documentation
-Every include file must have:
-- Clear description of purpose
-- List of all parameters (required and optional)
-- Usage examples
-- Dependencies (CSS, JS, data files)
-- Bootstrap components used
-- AI development notes
-
-### Usage Examples
-```liquid
-{% comment %}
-  Include usage examples in file header
-  
-  Basic usage:
-    {% include card-post.html 
-       title=post.title 
-       description=post.excerpt 
-       url=post.url %}
-  
-  With optional parameters:
-    {% include card-post.html 
-       title=post.title 
-       description=post.excerpt 
-       url=post.url 
-       image=post.preview 
-       date=post.date 
-       class="shadow-sm" %}
-{% endcomment %}
-```
-
-## 🚀 Performance Optimization
-
-### Minimize Liquid Complexity
-```liquid
-{% comment %}
-  Assign values once, reuse variables
-{% endcomment %}
-{% assign formatted_date = page.date | date: "%B %d, %Y" %}
-{% assign truncated_desc = page.description | truncate: 150 %}
-
-{% comment %}
-  Avoid nested loops when possible
-{% endcomment %}
-{% assign filtered_posts = site.posts | where: "category", "tech" %}
-{% for post in filtered_posts limit: 5 %}
-  <!-- Loop content -->
-{% endfor %}
-```
-
-### Lazy Loading
-```liquid
-{% comment %}
-  Use lazy loading for images
-{% endcomment %}
-<img src="{{ include.image | relative_url }}" 
-     alt="{{ include.alt }}"
-     loading="lazy"
-     decoding="async">
-```
-
-## 🔄 Maintenance Guidelines
-
-### Version Compatibility
-- Ensure Bootstrap 5 compatibility
-- Test with latest Jekyll version
-- Document any breaking changes
-- Maintain backward compatibility when possible
-
-### Code Review Checklist
-- [ ] Follows naming conventions
-- [ ] Has proper documentation
-- [ ] Uses Bootstrap components correctly
-- [ ] Accessible to screen readers
-- [ ] Responsive design implemented
-- [ ] Parameters validated
-- [ ] Performance optimized
-- [ ] Security considerations addressed
-
----
-
-*These guidelines ensure consistent, accessible, and maintainable include components across the Zer0-Mistakes Jekyll theme. Always test includes thoroughly with various parameter combinations.*
 ### Responsive Content Adaptation
 ```html
 <!-- Responsive sidebar -->
@@ -889,7 +525,7 @@ Every include file must have:
 </div>
 ```
 
-## ♿ Accessibility in Includes
+## ♿ Accessibility
 
 ### Semantic HTML Structure
 ```html
@@ -952,48 +588,157 @@ Every include file must have:
 </div>
 ```
 
-## 🚀 Performance Optimization
+### Focus Management
+```liquid
+{% comment %}
+  Ensure keyboard navigation works
+{% endcomment %}
+<div class="dropdown">
+  <button class="btn dropdown-toggle" 
+          type="button" 
+          id="dropdownMenu" 
+          data-bs-toggle="dropdown" 
+          aria-expanded="false"
+          aria-haspopup="true">
+    Menu
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
+    <li><a class="dropdown-item" href="#" tabindex="0">Item 1</a></li>
+    <li><a class="dropdown-item" href="#" tabindex="0">Item 2</a></li>
+  </ul>
+</div>
+```
 
-### Lazy Loading Components
-```html
-<!-- Lazy-loaded analytics -->
-<script>
-  // Load analytics only after user interaction
-  let analyticsLoaded = false;
-  function loadAnalytics() {
-    if (!analyticsLoaded) {
-      {% include analytics/posthog.html %}
-      analyticsLoaded = true;
-    }
-  }
-  
-  // Load on first user interaction
-  ['click', 'scroll', 'keydown'].forEach(event => {
-    document.addEventListener(event, loadAnalytics, { once: true });
-  });
-  
-  // Fallback: load after 3 seconds
-  setTimeout(loadAnalytics, 3000);
-</script>
+## 🎨 CSS and Styling
 
-<!-- Intersection Observer for lazy components -->
-<div class="lazy-component" data-src="{% include components/heavy-component.html %}">
-  <div class="placeholder">Loading...</div>
+### CSS Classes
+```liquid
+{% comment %}
+  Use BEM methodology for custom classes
+{% endcomment %}
+<div class="component-name">
+  <div class="component-name__header">
+    <h2 class="component-name__title">{{ include.title }}</h2>
+  </div>
+  <div class="component-name__body component-name__body--{{ include.variant }}">
+    {{ include.content }}
+  </div>
+</div>
+```
+
+### Responsive Utilities
+```liquid
+{% comment %}
+  Use Bootstrap responsive utilities
+{% endcomment %}
+<div class="row">
+  <div class="col-12 col-md-6 col-lg-4">
+    <!-- Responsive column -->
+  </div>
 </div>
 
-<script>
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        // Load component when it enters viewport
-        loadComponent(entry.target);
-        observer.unobserve(entry.target);
-      }
-    });
-  });
-  
-  document.querySelectorAll('.lazy-component').forEach(el => observer.observe(el));
-</script>
+<div class="d-none d-md-block">
+  <!-- Hidden on mobile, visible on medium+ -->
+</div>
+```
+
+## 🧪 Testing
+
+### Testing Checklist
+- [ ] Test with all parameter combinations
+- [ ] Test with missing optional parameters
+- [ ] Test responsive behavior across breakpoints
+- [ ] Verify accessibility with screen readers
+- [ ] Check Bootstrap component functionality
+- [ ] Validate HTML output
+- [ ] Test in multiple browsers
+- [ ] Verify performance impact
+
+### Manual Testing Commands
+```bash
+# Build site and check specific include
+docker-compose up
+
+# Check HTML output
+curl http://localhost:4000 | grep "include-component"
+
+# Validate HTML
+docker-compose exec jekyll htmlproofer _site --check-html
+```
+
+### Development Testing Patterns
+```liquid
+{% comment %} Development-only debug information {% endcomment %}
+{% if jekyll.environment == "development" %}
+  <div class="debug-info bg-warning p-2 small">
+    <strong>Debug Info:</strong> {{ include.debug_info | default: "No debug info" }}<br>
+    <strong>Include Path:</strong> _includes/{{ include.file_path | default: "unknown" }}<br>
+    <strong>Parameters:</strong> {{ include | jsonify }}
+  </div>
+{% endif %}
+
+{% comment %} Validation warnings {% endcomment %}
+{% unless include.required_param %}
+  {% if jekyll.environment == "development" %}
+    <div class="alert alert-warning">
+      Warning: required_param not provided to {{ include.component_name }}
+    </div>
+  {% endif %}
+{% endunless %}
+```
+
+## 🔒 Security
+
+### Output Escaping
+```liquid
+{% comment %}
+  Always escape user-provided content
+{% endcomment %}
+<p>{{ include.user_content | escape }}</p>
+
+{% comment %}
+  Be careful with absolute_url to prevent injection
+{% endcomment %}
+<a href="{{ include.url | relative_url }}">Link</a>
+```
+
+### Safe Filters
+```liquid
+{% comment %}
+  Use safe filters for content manipulation
+{% endcomment %}
+{{ content | strip_html | truncate: 150 }}
+{{ page.description | escape | strip_newlines }}
+```
+
+## 🚀 Performance Optimization
+
+### Minimize Liquid Complexity
+```liquid
+{% comment %}
+  Assign values once, reuse variables
+{% endcomment %}
+{% assign formatted_date = page.date | date: "%B %d, %Y" %}
+{% assign truncated_desc = page.description | truncate: 150 %}
+
+{% comment %}
+  Avoid nested loops when possible
+{% endcomment %}
+{% assign filtered_posts = site.posts | where: "category", "tech" %}
+{% for post in filtered_posts limit: 5 %}
+  <!-- Loop content -->
+{% endfor %}
+```
+
+### Lazy Loading
+```liquid
+{% comment %}
+  Use lazy loading for images
+{% endcomment %}
+<img src="{{ include.image | relative_url }}" 
+     alt="{{ include.alt }}"
+     loading="lazy"
+     decoding="async">
 ```
 
 ### Critical CSS Inlining
@@ -1017,150 +762,57 @@ Every include file must have:
 <noscript><link rel="stylesheet" href="/assets/css/non-critical.css"></noscript>
 ```
 
-## 🧪 Testing and Validation
+## 📖 Documentation Requirements
 
-### Include Testing Checklist
-- [ ] **Parameter validation**: Test with various parameter combinations
-- [ ] **Error handling**: Test behavior with missing or invalid data
-- [ ] **Responsive design**: Test across all Bootstrap breakpoints
-- [ ] **Accessibility**: Validate ARIA labels and keyboard navigation
-- [ ] **Performance**: Check loading times and resource usage
-- [ ] **Browser compatibility**: Test across supported browsers
-- [ ] **Integration**: Test with different layouts and parent components
-- [ ] **Conditional rendering**: Test environment and configuration-based loading
+### Component Documentation
+Every include file must have:
+- Clear description of purpose
+- List of all parameters (required and optional)
+- Usage examples
+- Dependencies (CSS, JS, data files)
+- Bootstrap components used
+- AI development notes
 
-### Development Testing Patterns
-```liquid
-{% comment %} Development-only debug information {% endcomment %}
-{% if jekyll.environment == "development" %}
-  <div class="debug-info bg-warning p-2 small">
-    <strong>Debug Info:</strong> {{ include.debug_info | default: "No debug info" }}<br>
-    <strong>Include Path:</strong> _includes/{{ include.file_path | default: "unknown" }}<br>
-    <strong>Parameters:</strong> {{ include | jsonify }}
-  </div>
-{% endif %}
-
-{% comment %} Validation warnings {% endcomment %}
-{% unless include.required_param %}
-  {% if jekyll.environment == "development" %}
-    <div class="alert alert-warning">
-      Warning: required_param not provided to {{ include.component_name }}
-    </div>
-  {% endif %}
-{% endunless %}
-```
-
-## 📊 Analytics and Monitoring
-
-### Include Performance Tracking
-```html
-<!-- Track include usage -->
-<script>
-  if (window.zer0Analytics) {
-    zer0Analytics.track('include_loaded', {
-      'include_name': '{{ include.component_name | default: "unknown" }}',
-      'include_path': '_includes/{{ include.file_path | default: "unknown" }}',
-      'page_url': window.location.pathname,
-      'load_time': performance.now()
-    });
-  }
-</script>
-```
-
-### Error Reporting
-```liquid
-{% comment %} Error boundary for includes {% endcomment %}
-{% capture include_error %}
-  {% include {{ include.component_path }} %}
-{% endcapture %}
-
-{% if include_error contains "Liquid Exception" %}
-  {% if jekyll.environment == "development" %}
-    <div class="alert alert-danger">
-      <strong>Include Error:</strong> {{ include.component_path }}<br>
-      {{ include_error }}
-    </div>
-  {% else %}
-    <div class="alert alert-warning">
-      Content temporarily unavailable.
-    </div>
-  {% endif %}
-{% else %}
-  {{ include_error }}
-{% endif %}
-```
-
-## 🔄 Include Evolution and Maintenance
-
-### Version Management
-```html
-<!-- Component versioning -->
-{% assign component_version = include.version | default: "1.0.0" %}
-<div class="component {{ include.class }}" data-component-version="{{ component_version }}">
-  {% case component_version %}
-    {% when "2.0.0" %}
-      {% include components/new-version.html %}
-    {% when "1.0.0" %}
-      {% include components/legacy-version.html %}
-    {% else %}
-      {% include components/default-version.html %}
-  {% endcase %}
-</div>
-```
-
-### Deprecation Handling
-```liquid
-{% comment %} Deprecation warnings for old parameter names {% endcomment %}
-{% if include.old_param_name %}
-  {% if jekyll.environment == "development" %}
-    <div class="alert alert-warning">
-      <strong>Deprecation Warning:</strong> Parameter 'old_param_name' is deprecated. 
-      Use 'new_param_name' instead.
-    </div>
-  {% endif %}
-  {% assign new_param_value = include.old_param_name %}
-{% endif %}
-
-{% assign final_param = include.new_param_name | default: new_param_value | default: "default_value" %}
-```
-
-### Documentation Standards
+### Usage Examples
 ```liquid
 {% comment %}
-  Component Documentation Template
+  Include usage examples in file header
   
-  Name: Component Name
-  Version: X.Y.Z
-  Description: Brief description of what this component does
+  Basic usage:
+    {% include card-post.html 
+       title=post.title 
+       description=post.excerpt 
+       url=post.url %}
   
-  Parameters:
-  - param1 (required): Description of parameter
-  - param2 (optional): Description of optional parameter
-  
-  Example Usage:
-  {% include components/component-name.html param1="value" param2="optional" %}
-  
-  Dependencies:
-  - Bootstrap 5.3+
-  - site.config_value
-  - Other includes or libraries
-  
-  Browser Support:
-  - Modern browsers (Chrome 90+, Firefox 88+, Safari 14+)
-  - Mobile responsive design
-  
-  Accessibility:
-  - ARIA labels and roles
-  - Keyboard navigation support
-  - Screen reader compatibility
-  
-  Performance:
-  - Lazy loading support
-  - Critical CSS inlining
-  - Optimized for Core Web Vitals
+  With optional parameters:
+    {% include card-post.html 
+       title=post.title 
+       description=post.excerpt 
+       url=post.url 
+       image=post.preview 
+       date=post.date 
+       class="shadow-sm" %}
 {% endcomment %}
 ```
 
+## 🔄 Maintenance
+
+### Version Compatibility
+- Ensure Bootstrap 5 compatibility
+- Test with latest Jekyll version
+- Document any breaking changes
+- Maintain backward compatibility when possible
+
+### Code Review Checklist
+- [ ] Follows naming conventions
+- [ ] Has proper documentation
+- [ ] Uses Bootstrap components correctly
+- [ ] Accessible to screen readers
+- [ ] Responsive design implemented
+- [ ] Parameters validated
+- [ ] Performance optimized
+- [ ] Security considerations addressed
+
 ---
 
-*These guidelines ensure consistent, accessible, and high-performance includes across the Zer0-Mistakes theme. Always test include changes across different layouts, devices, and browsers before deployment.*
+*These guidelines ensure consistent, accessible, and maintainable include components across the Zer0-Mistakes Jekyll theme. Always test includes thoroughly with various parameter combinations.*
