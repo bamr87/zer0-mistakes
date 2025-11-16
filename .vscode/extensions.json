@@ -1,8 +1,57 @@
 {
+  // ==================================================
+  // UNIFIED VS CODE EXTENSIONS - Docker-First Development
+  // ==================================================
+  // Optimized for zer0-mistakes Jekyll theme development
+  // Last Updated: 2025-10-26
+  
   "recommendations": [
+    // ==========================================
+    // CORE DEVELOPMENT TOOLS
+    // ==========================================
     "github.copilot",
     "github.copilot-chat",
+    "ms-azuretools.vscode-docker",
+    
+    // ==========================================
+    // JEKYLL/WEB DEVELOPMENT
+    // ==========================================
+    "shopify.liquid",
     "ms-vscode.vscode-json",
-    "shopify.liquid"
+    "redhat.vscode-yaml",
+    "davidanson.vscode-markdownlint",
+    "yzhang.markdown-all-in-one",
+    
+    // ==========================================
+    // RUBY/GEM DEVELOPMENT
+    // ==========================================
+    "shopify.ruby-lsp",
+    "rebornix.ruby",
+    
+    // ==========================================
+    // UTILITY EXTENSIONS
+    // ==========================================
+    "ms-vscode.vscode-typescript-next",
+    "ms-vscode-remote.remote-containers",
+    "ms-vscode.remote-repositories",
+    "streetsidesoftware.code-spell-checker",
+    "eamodio.gitlens",
+    
+    // ==========================================
+    // OPTIONAL ENHANCEMENTS
+    // ==========================================
+    "ms-vscode.live-server",
+    "bradlc.vscode-tailwindcss",
+    "formulahendry.auto-rename-tag",
+    "christian-kohler.path-intellisense",
+    "esbenp.prettier-vscode"
+  ],
+  
+  // ==========================================
+  // WORKSPACE SPECIFIC RECOMMENDATIONS
+  // ==========================================
+  "unwantedRecommendations": [
+    "ms-vscode.vscode-typescript",
+    "ms-vscode.nodejs-extension-pack"
   ]
 }

@@ -1,36 +1,193 @@
 {
+  // ==================================================
+  // UNIFIED VS CODE SETTINGS - Docker-First Development
+  // ==================================================
+  // Optimized for zer0-mistakes Jekyll theme development
+  // Last Updated: 2025-10-26
+  
+  // ==========================================
+  // GITHUB COPILOT CONFIGURATION
+  // ==========================================
   "github.copilot.enable": {
     "*": true,
-    "yaml": true,
     "markdown": true,
+    "yaml": true,
     "liquid": true,
     "html": true,
     "scss": true,
-    "javascript": true
+    "javascript": true,
+    "python": true,
+    "dockerfile": true,
+    "json": true,
+    "jsonc": true
   },
   "github.copilot.advanced": {
     "enableSuggestionAutoTrigger": true,
     "contextLength": 4096,
     "enableAutoCompletions": true
   },
+
+  // ==========================================
+  // FILE ASSOCIATIONS & LANGUAGE SUPPORT
+  // ==========================================
   "files.associations": {
-    "*.md": "markdown",
     "*.html": "liquid",
+    "*.md": "markdown", 
     "*.yml": "yaml",
-    "*.yaml": "yaml"
+    "*.yaml": "yaml",
+    "_config*.yml": "yaml",
+    "docker-compose*.yml": "yaml",
+    "Dockerfile*": "dockerfile"
   },
-  "liquid.format.enable": true,
-  "markdown.preview.breaks": true,
-  "markdown.preview.linkify": true,
-  "yaml.format.enable": true,
-  "yaml.completion": true,
-  "yaml.hover": true,
-  "yaml.validate": true,
+
+  // ==========================================
+  // EDITOR CONFIGURATION
+  // ==========================================
   "editor.quickSuggestions": {
     "other": true,
     "comments": true,
     "strings": true
   },
   "editor.tabCompletion": "on",
-  "editor.wordBasedSuggestions": "matchingDocuments"
+  "editor.wordBasedSuggestions": "matchingDocuments",
+  "editor.minimap.enabled": false,
+  "editor.fontSize": 14,
+  "editor.lineHeight": 26,
+
+  // ==========================================
+  // MARKDOWN CONFIGURATION
+  // ==========================================
+  "[markdown]": {
+    "editor.fontSize": 14,
+    "editor.lineHeight": 26,
+    "editor.wordWrapColumn": 80,
+    "editor.lineNumbers": "on",
+    "editor.wordWrap": "bounded",
+    "editor.minimap.enabled": false
+  },
+  "markdown.preview.breaks": true,
+  "markdown.preview.linkify": true,
+
+  // ==========================================
+  // YAML CONFIGURATION
+  // ==========================================
+  "[yaml]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.autoIndent": "advanced"
+  },
+  "yaml.format.enable": true,
+  "yaml.completion": true,
+  "yaml.hover": true,
+  "yaml.validate": true,
+
+  // ==========================================
+  // LIQUID TEMPLATE CONFIGURATION
+  // ==========================================
+  "[liquid]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "liquid.format.enable": true,
+  "emmet.includeLanguages": {
+    "liquid": "html"
+  },
+
+  // ==========================================
+  // RUBY CONFIGURATION
+  // ==========================================
+  "[ruby]": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  "ruby.rubocop.onSave": true,
+  "ruby.format": "rubocop",
+
+  // ==========================================
+  // DOCKER CONFIGURATION
+  // ==========================================
+  "docker.images.label": "latest",
+  "docker.commands.compose": "docker-compose",
+
+  // ==========================================
+  // TERMINAL CONFIGURATION
+  // ==========================================
+  "terminal.integrated.env.osx": {
+    "JEKYLL_ENV": "development",
+    "DOCKER_BUILDKIT": "1"
+  },
+  "terminal.integrated.env.linux": {
+    "JEKYLL_ENV": "development", 
+    "DOCKER_BUILDKIT": "1"
+  },
+
+  // ==========================================
+  // FILE WATCHING & PERFORMANCE
+  // ==========================================
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/_site/**": true,
+    "**/.sass-cache/**": true,
+    "**/.jekyll-cache/**": true,
+    "**/vendor/**": true,
+    "**/__pycache__/**": true,
+    "**/*.pyc": true,
+    "**/venv/**": true,
+    "**/env/**": true,
+    "**/build/**": true,
+    "**/*.gem": true
+  },
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/.git": true,
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/_site": true,
+    "**/.sass-cache": true,
+    "**/.jekyll-cache": true,
+    "**/build": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.code-search": true,
+    "**/_site": true,
+    "**/vendor": true,
+    "**/__pycache__": true,
+    "**/build": true
+  },
+
+  // ==========================================
+  // AUTO-SAVE & LIVE RELOAD
+  // ==========================================
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+
+  // ==========================================
+  // SPELL CHECKING
+  // ==========================================
+  "cSpell.words": [
+    "bamr",
+    "endcapture",
+    "endraw",
+    "Groking",
+    "Inkscape",
+    "Jamstack",
+    "Krita",
+    "lastmod",
+    "markdownify",
+    "MERN",
+    "Picade",
+    "sublinks",
+    "winget",
+    "barodybroject",
+    "parodynews",
+    "zer0",
+    "gemspec",
+    "rubocop"
+  ]
 }

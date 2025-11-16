@@ -1,6 +1,6 @@
 # Zer0-Mistakes Copilot Instructions
 
-**Docker-Optimized Jekyll Theme with AI-Powered Self-Healing Installation**
+**Docker-First Jekyll Theme with Automated Release Management & Privacy-Compliant Analytics**
 
 ## 📖 Project Overview
 
@@ -121,7 +121,200 @@ docker-compose down -v
 
 ## 🏗️ Architecture Overview
 
-Zer0-Mistakes is a Jekyll theme built for **Docker-first development** with intelligent automation and comprehensive front matter integration. The codebase follows IT-Journey principles: **Design for Failure (DFF)**, **Don't Repeat Yourself (DRY)**, **Keep It Simple (KIS)**, and **AI-Powered Development (AIPD)**, all enhanced by structured front matter that enables AI agents to understand and optimize the development workflow.
+Zer0-Mistakes is a Jekyll theme designed for **production deployment** with intelligent automation. The codebase follows a **Docker-first, GitHub Pages compatible** approach with comprehensive front matter integration for AI-assisted development.
+
+### Core Architecture Patterns
+
+**Dual Configuration System:**
+- `_config.yml` - Production config with `remote_theme: "bamr87/zer0-mistakes"`
+- `_config_dev.yml` - Development overrides with `remote_theme: false`, loads local theme
+
+**Modular Include System:**
+```
+_includes/
+├── core/           # Essential structure (head.html, header.html, footer.html)
+├── components/     # Reusable UI (cookie-consent.html, theme-info.html)
+├── analytics/      # Privacy-compliant tracking (posthog.html)
+└── navigation/     # Nav components (navbar.html, breadcrumbs.html)
+```
+
+**Layout Hierarchy:**
+```
+root.html (base) → default.html (main) → [journals.html, home.html, etc.]
+```
+
+## 🚀 Critical Developer Workflows
+
+### Essential Commands
+```bash
+# Start development (auto-reloads on file changes)
+docker-compose up
+
+# Access container for debugging
+docker-compose exec jekyll bash
+
+# Clean rebuild with dependency updates  
+docker-compose down && docker-compose up --build
+
+# Test automated release system
+./scripts/gem-publish.sh patch --dry-run
+```
+
+### Automated Release System
+The theme uses semantic versioning with automated commit analysis:
+```bash
+# Publish patch release (0.5.1)
+./scripts/gem-publish.sh patch
+
+# Publish minor release (0.6.0) 
+./scripts/gem-publish.sh minor
+
+# Preview changelog generation
+./scripts/analyze-commits.sh HEAD~5..HEAD
+```
+
+**Key Files:**
+- `lib/jekyll-theme-zer0/version.rb` - Single source of truth for version
+- `scripts/gem-publish.sh` - Full release workflow (changelog → version bump → test → publish)
+- `scripts/analyze-commits.sh` - Analyzes commit messages for version bump type
+
+## 📝 Content Creation Patterns
+
+### Jekyll Collections Structure
+```
+pages/
+├── _posts/         # Blog posts (layout: journals)
+├── _docs/          # Documentation (layout: default)
+├── _about/         # About pages (custom layouts)
+└── _quickstart/    # Tutorial content (layout: default)
+```
+
+### Front Matter Standards
+```yaml
+---
+title: "Your Post Title"
+description: "SEO description (150-160 chars)"
+layout: journals
+categories: [Category1, Subcategory]
+tags: [tag1, tag2]
+date: 2025-01-27T10:00:00.000Z
+lastmod: 2025-01-27T10:00:00.000Z
+permalink: /custom-url/
+---
+```
+
+## 🎨 Bootstrap 5 Integration
+
+**CDN Loading Pattern:**
+- Bootstrap 5.3.3 CSS/JS loaded via CDN in `_includes/core/head.html`
+- Bootstrap Icons 1.10.3 for consistent iconography
+- Custom CSS layered in `/assets/css/main.css`
+
+**Responsive Component Pattern:**
+```html
+<!-- Mobile-first responsive navigation -->
+<nav class="navbar navbar-expand-lg">
+  <button class="navbar-toggler d-lg-none" data-bs-toggle="collapse">
+  <div class="collapse navbar-collapse">
+    <!-- Navigation items -->
+  </div>
+</nav>
+```
+
+## 🔐 Privacy-First Analytics
+
+**PostHog Integration** (`_includes/analytics/posthog.html`):
+- **Environment-aware**: Only loads in production with `jekyll.environment == "production"`
+- **Consent-driven**: Integrates with cookie consent system
+- **Custom events**: Tracks downloads, external links, scroll depth, Jekyll-specific interactions
+
+**Cookie Consent System** (`_includes/components/cookie-consent.html`):
+- GDPR/CCPA compliant with granular permissions
+- 365-day consent expiry with localStorage persistence
+- Bootstrap modal for detailed preference management
+
+**Configuration Pattern:**
+```yaml
+# _config.yml
+posthog:
+  enabled: true
+  api_key: 'phc_your_key_here'
+  custom_events:
+    track_downloads: true
+    track_external_links: true
+
+# _config_dev.yml  
+posthog:
+  enabled: false  # Disabled in development
+```
+
+## 🧩 Include Development Standards
+
+**Standard Header Format:**
+```html
+<!--
+  ===================================================================
+  COMPONENT NAME - Brief Description
+  ===================================================================
+  
+  File: filename.html
+  Path: _includes/category/filename.html
+  Purpose: What this component does and why it exists
+  
+  Dependencies: Required configs, other includes, external libraries
+  Performance: Loading considerations, mobile responsiveness
+  ===================================================================
+-->
+```
+
+**Parameter Pattern:**
+```liquid
+{% comment %} Safe parameter handling with defaults {% endcomment %}
+<div class="{{ include.class | default: 'default-class' }}">
+  {% if include.title %}
+    <h3>{{ include.title }}</h3>
+  {% endif %}
+  {{ include.content | default: content | markdownify }}
+</div>
+```
+
+## 🔧 Docker Optimization
+
+**Key Configuration:**
+```yaml
+# docker-compose.yml
+platform: linux/amd64  # Apple Silicon compatibility
+command: jekyll serve --config "_config.yml,_config_dev.yml"
+volumes: ["./:/app"]
+environment: { JEKYLL_ENV: development }
+```
+
+**Development vs Production:**
+- **Development**: Local theme files, analytics disabled, verbose logging
+- **Production**: GitHub Pages deployment, remote theme, privacy-compliant analytics
+
+## 🚀 GitHub Pages Deployment
+
+**Automatic Deployment:**
+1. Push to `main` branch triggers GitHub Pages build
+2. Jekyll processes with production `_config.yml` 
+3. Remote theme loads from `bamr87/zer0-mistakes`
+4. Analytics activate with user consent
+
+**Theme Publishing:**
+```bash
+# Full release workflow
+./scripts/gem-publish.sh patch  # Auto-detects version bump needed
+```
+
+---
+
+**Key AI Development Principles:**
+- **Front matter drives behavior**: Use comprehensive metadata for AI context
+- **Docker-first development**: All workflows assume containerized environment  
+- **Privacy by design**: Analytics require explicit user consent
+- **Automated releases**: Semantic versioning with commit message analysis
+- **Component modularity**: Includes are self-contained with clear dependencies
 
 ## Front Matter: Structured Metadata for Jekyll Theme Development
 

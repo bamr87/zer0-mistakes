@@ -1,0 +1,41 @@
+/**
+ * Tailwind CSS Base Styles
+ * 
+ * This file is processed by Tailwind CSS to generate utility classes.
+ * The output is saved to assets/css/tailwind.output.css
+ * 
+ * Note: Prefixed with 'tw-' to avoid conflicts with Bootstrap 5
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Custom Tailwind Components
+ * 
+ * Add custom component classes here that use Tailwind's @apply directive
+ */
+@layer components {
+  /* Example: Custom button that combines Tailwind utilities */
+  .tw-btn-primary {
+    @apply tw-px-4 tw-py-2 tw-bg-blue-500 tw-text-white tw-rounded tw-font-semibold hover:tw-bg-blue-600 tw-transition-colors;
+  }
+
+  /* MDX content wrapper with prose styling */
+  .tw-mdx-content {
+    @apply tw-max-w-4xl tw-mx-auto tw-px-4 tw-py-8;
+  }
+}
+
+/**
+ * Custom Utilities
+ * 
+ * Add custom utility classes here
+ */
+@layer utilities {
+  /* Example: Custom gradient utilities */
+  .tw-gradient-brand {
+    @apply tw-bg-gradient-to-r tw-from-blue-500 tw-to-purple-600;
+  }
+}

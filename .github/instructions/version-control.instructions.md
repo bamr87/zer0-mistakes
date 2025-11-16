@@ -1,5 +1,5 @@
 ---
-applyTo: "**"
+applyTo: 'CHANGELOG.md,CHANGES.md,**/version.*,VERSION,**/package.json,**/*.gemspec,**/Cargo.toml,**/go.mod'
 description: "Version control, releases, and publication guidelines for Ruby Gems and GitHub repositories"
 ---
 

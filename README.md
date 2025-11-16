@@ -149,6 +149,17 @@ docker-compose up
 - **GitHub Releases** - Creates comprehensive release pages with assets
 - **CI/CD Integration** - Seamless automation with GitHub Actions
 
+### ℹ️ **Automatic Theme Version Display**
+
+- **Zero Configuration** - Theme version displays automatically, no hardcoding needed
+- **System Information** - Shows Jekyll, Ruby, and build environment details
+- **Always Accessible** - Info modal available from header (⚙️) and footer on every page
+- **Dynamic Extraction** - Version pulled from gem specification during build
+- **Comprehensive Details** - Lists active plugins, technology stack, and helpful links
+- **GitHub Pages Compatible** - Works with both local gems and remote themes
+
+[Learn more about the Theme Version Feature →](docs/THEME_VERSION_FEATURE.md)
+
 > 📖 **Learn more**: [Automated Version System Documentation](AUTOMATED_VERSION_SYSTEM.md)
 
 ### 📊 **Mermaid Diagram Integration** *(New in v0.3.0)*
@@ -622,6 +633,8 @@ All documentation is organized in the [`docs/`](docs/README.md) directory:
 - **[v0.3.0](docs/releases/v0.3.0-release-notes.md)** - Mermaid Integration v2.0
 
 ### 🌟 Key Features
+- **[MDX Support](docs/MDX_TAILWIND_GUIDE.md)** - Write markdown with JSX components for dynamic content
+- **[Tailwind CSS Integration](docs/MDX_TAILWIND_GUIDE.md)** - Utility-first CSS alongside Bootstrap 5
 - **[Sitemap Integration](docs/features/sitemap-integration.md)** - Unified site navigation and content discovery
 - **[Automated Version System](docs/systems/automated-version-system.md)** - Intelligent release automation
 - **[CI/CD Pipeline](docs/systems/cicd-status-report.md)** - Comprehensive testing and deployment
@@ -635,7 +648,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - Built with [Jekyll](https://jekyllrb.com/) static site generator
-- Styled with [Bootstrap 5](https://getbootstrap.com/) framework
+- Styled with [Bootstrap 5](https://getbootstrap.com/) framework and [Tailwind CSS](https://tailwindcss.com/)
+- Enhanced with [MDX](https://mdxjs.com/) for dynamic markdown content
 - Containerized with [Docker](https://docker.com/) for consistent development
 - Inspired by IT-Journey principles of reliable, self-healing software
 

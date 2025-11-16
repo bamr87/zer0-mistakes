@@ -1,10 +1,20 @@
 {
+  // ==================================================
+  // UNIFIED VS CODE LAUNCH CONFIGURATION - Docker-First
+  // ==================================================
+  // Optimized for zer0-mistakes Jekyll theme development
+  // Last Updated: 2025-10-26
+  
   "version": "0.2.0",
   "configurations": [
+    
+    // ==========================================
+    // DOCKER DEVELOPMENT CONFIGURATIONS
+    // ==========================================
     {
+      "name": "� Debug Zer0-Mistakes Theme (Docker)",
       "type": "msedge",
       "request": "launch",
-      "name": "🚀 Edge: Debug Jekyll with Console Integration",
       "url": "http://localhost:4000",
       "webRoot": "${workspaceFolder}",
       "preLaunchTask": "Docker: Compose Up (Detached)",
@@ -16,9 +26,7 @@
       ],
       "sourceMaps": true,
       "smartStep": true,
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "internalConsoleOptions": "openOnSessionStart",
       "trace": {
         "stdio": true,
@@ -31,17 +39,16 @@
         "/css/": "${workspaceFolder}/assets/css/"
       }
     },
+
     {
-      "type": "msedge",
+      "name": "🔗 Attach to Running Jekyll Theme (Docker)",
+      "type": "msedge", 
       "request": "attach",
-      "name": "🔗 Edge: Attach to Running Jekyll (Console)",
       "port": 9222,
       "webRoot": "${workspaceFolder}",
       "sourceMaps": true,
       "smartStep": true,
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "internalConsoleOptions": "openOnSessionStart",
       "urlFilter": "localhost:4000*",
       "trace": {
@@ -55,10 +62,11 @@
         "/css/": "${workspaceFolder}/assets/css/"
       }
     },
+
     {
+      "name": "🔄 Docker Rebuild & Debug Theme",
       "type": "msedge",
-      "request": "launch",
-      "name": "🔧 Edge: Debug + Rebuild Jekyll Site",
+      "request": "launch", 
       "url": "http://localhost:4000",
       "webRoot": "${workspaceFolder}",
       "preLaunchTask": "Docker: Rebuild (Force)",
@@ -70,9 +78,7 @@
       ],
       "sourceMaps": true,
       "smartStep": true,
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "internalConsoleOptions": "openOnSessionStart",
       "trace": {
         "stdio": true,
@@ -85,10 +91,49 @@
         "/css/": "${workspaceFolder}/assets/css/"
       }
     },
+
+    // ==========================================
+    // GEM DEVELOPMENT CONFIGURATIONS
+    // ==========================================
     {
+      "name": "🚀 Gem Publisher: Patch Release",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/gem-publish.sh",
+      "args": ["patch"],
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "/bin/bash",
+      "env": {
+        "PATH": "${env:PATH}",
+        "TERM": "xterm-256color"
+      },
+      "outputCapture": "std",
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+
+    {
+      "name": "� Gem Publisher: Dry Run (Patch)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/gem-publish.sh",
+      "args": ["patch", "--dry-run"],
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "/bin/bash",
+      "env": {
+        "PATH": "${env:PATH}",
+        "TERM": "xterm-256color"
+      },
+      "outputCapture": "std",
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+
+    // ==========================================
+    // MOBILE & RESPONSIVE TESTING
+    // ==========================================
+    {
+      "name": "� Mobile Debug (Docker)",
       "type": "msedge",
       "request": "launch",
-      "name": "📱 Edge: Mobile Debug (Responsive Testing)",
       "url": "http://localhost:4000",
       "webRoot": "${workspaceFolder}",
       "preLaunchTask": "Docker: Compose Up (Detached)",
@@ -108,124 +153,6 @@
         "/js/": "${workspaceFolder}/assets/js/",
         "/css/": "${workspaceFolder}/assets/css/"
       }
-    },
-    {
-      "type": "msedge",
-      "request": "launch",
-      "name": "🎯 Edge: Performance Debug Mode",
-      "url": "http://localhost:4000",
-      "webRoot": "${workspaceFolder}",
-      "preLaunchTask": "Docker: Compose Up (Detached)",
-      "postDebugTask": "Docker: Compose Stop",
-      "runtimeArgs": [
-        "--remote-debugging-port=9222",
-        "--enable-logging=stderr",
-        "--log-level=0",
-        "--enable-features=NetworkService,NetworkServiceLogging"
-      ],
-      "sourceMaps": true,
-      "smartStep": true,
-      "internalConsoleOptions": "openOnSessionStart",
-      "trace": {
-        "stdio": true,
-        "logFile": "${workspaceFolder}/logs/performance-debug.log"
-      },
-      "pathMapping": {
-        "/": "${workspaceFolder}/_site/",
-        "/assets/": "${workspaceFolder}/assets/",
-        "/js/": "${workspaceFolder}/assets/js/",
-        "/css/": "${workspaceFolder}/assets/css/"
-      }
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "🚀 Gem Publisher: Patch Release",
-      "program": "${workspaceFolder}/scripts/gem-publish.sh",
-      "args": ["patch"],
-      "cwd": "${workspaceFolder}",
-      "runtimeExecutable": "/bin/bash",
-      "env": {
-        "PATH": "${env:PATH}",
-        "TERM": "xterm-256color"
-      },
-      "outputCapture": "std",
-      "internalConsoleOptions": "openOnSessionStart"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "🚀 Gem Publisher: Minor Release",
-      "program": "${workspaceFolder}/scripts/gem-publish.sh",
-      "args": ["minor"],
-      "cwd": "${workspaceFolder}",
-      "runtimeExecutable": "/bin/bash",
-      "env": {
-        "PATH": "${env:PATH}",
-        "TERM": "xterm-256color"
-      },
-      "outputCapture": "std",
-      "internalConsoleOptions": "openOnSessionStart"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "🚀 Gem Publisher: Major Release",
-      "program": "${workspaceFolder}/scripts/gem-publish.sh",
-      "args": ["major"],
-      "cwd": "${workspaceFolder}",
-      "runtimeExecutable": "/bin/bash",
-      "env": {
-        "PATH": "${env:PATH}",
-        "TERM": "xterm-256color"
-      },
-      "outputCapture": "std",
-      "internalConsoleOptions": "openOnSessionStart"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "🔍 Gem Publisher: Dry Run (Patch)",
-      "program": "${workspaceFolder}/scripts/gem-publish.sh",
-      "args": ["patch", "--dry-run"],
-      "cwd": "${workspaceFolder}",
-      "runtimeExecutable": "/bin/bash",
-      "env": {
-        "PATH": "${env:PATH}",
-        "TERM": "xterm-256color"
-      },
-      "outputCapture": "std",
-      "internalConsoleOptions": "openOnSessionStart"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "⚡ Gem Publisher: Quick Build & Test",
-      "program": "${workspaceFolder}/scripts/gem-publish.sh",
-      "args": ["patch", "--skip-publish", "--no-github-release"],
-      "cwd": "${workspaceFolder}",
-      "runtimeExecutable": "/bin/bash",
-      "env": {
-        "PATH": "${env:PATH}",
-        "TERM": "xterm-256color"
-      },
-      "outputCapture": "std",
-      "internalConsoleOptions": "openOnSessionStart"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "📝 Gem Publisher: Changelog Preview",
-      "program": "${workspaceFolder}/scripts/gem-publish.sh",
-      "args": ["patch", "--skip-tests", "--skip-publish", "--no-github-release", "--dry-run"],
-      "cwd": "${workspaceFolder}",
-      "runtimeExecutable": "/bin/bash",
-      "env": {
-        "PATH": "${env:PATH}",
-        "TERM": "xterm-256color"
-      },
-      "outputCapture": "std",
-      "internalConsoleOptions": "openOnSessionStart"
     }
   ]
 }

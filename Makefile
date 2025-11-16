@@ -43,6 +43,27 @@ lint: ## Run linting and code quality checks
 	@if [ -f .rubocop.yml ]; then rubocop; else echo "No RuboCop config found"; fi
 	@gem specification jekyll-theme-zer0.gemspec > /dev/null && echo "$(GREEN)✓ Gemspec is valid$(RESET)"
 
+##@ Asset Building
+
+.PHONY: build-css
+build-css: ## Build Tailwind CSS
+	@echo "$(BLUE)Building Tailwind CSS...$(RESET)"
+	@npm run build:css
+
+.PHONY: build-mdx
+build-mdx: ## Process MDX files
+	@echo "$(BLUE)Processing MDX files...$(RESET)"
+	@npm run build:mdx
+
+.PHONY: build-assets
+build-assets: build-css build-mdx ## Build all assets (CSS and MDX)
+	@echo "$(GREEN)All assets built successfully$(RESET)"
+
+.PHONY: watch-css
+watch-css: ## Watch and rebuild Tailwind CSS on changes
+	@echo "$(BLUE)Watching Tailwind CSS...$(RESET)"
+	@npm run dev
+
 ##@ Version Management
 
 .PHONY: version
