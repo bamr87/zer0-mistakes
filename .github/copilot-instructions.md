@@ -2,6 +2,123 @@
 
 **Docker-First Jekyll Theme with Automated Release Management & Privacy-Compliant Analytics**
 
+## 📖 Project Overview
+
+Zer0-Mistakes is a professional Jekyll theme designed for developers who value reliability, modern workflows, and AI-assisted development. Key features include:
+
+- **Docker-First Development**: Universal cross-platform compatibility with containerized environment
+- **AI-Powered Installation**: Self-healing setup with 95% success rate and intelligent error recovery
+- **Remote Theme Support**: Compatible with GitHub Pages and local development
+- **Bootstrap 5 Integration**: Modern, responsive UI framework (v5.3.3)
+- **Automated Release Management**: Semantic versioning with automated gem publishing
+- **Comprehensive Testing**: Full test suite with CI/CD integration
+
+## 📂 Project Structure
+
+```
+zer0-mistakes/
+├── .github/                 # GitHub configurations and workflows
+│   ├── copilot-instructions.md  # Main Copilot instructions (this file)
+│   ├── instructions/        # File-specific instruction files
+│   │   ├── layouts.instructions.md
+│   │   ├── includes.instructions.md
+│   │   ├── scripts.instructions.md
+│   │   ├── testing.instructions.md
+│   │   └── version-control.instructions.md
+│   ├── workflows/           # GitHub Actions CI/CD workflows
+│   └── actions/             # Custom GitHub Actions
+├── _layouts/                # Jekyll layout templates
+├── _includes/               # Reusable Jekyll components
+├── _sass/                   # Sass stylesheets
+├── _data/                   # Data files (YAML, JSON)
+├── assets/                  # Static assets (CSS, JS, images)
+├── pages/                   # Content pages and collections
+│   ├── _posts/              # Blog posts
+│   ├── _docs/               # Documentation
+│   └── _quests/             # Tutorial collections
+├── scripts/                 # Automation scripts
+│   ├── version.sh           # Version management
+│   ├── build.sh             # Build automation
+│   ├── test.sh              # Test execution
+│   └── release.sh           # Release workflow
+├── test/                    # Test suite
+│   ├── test_runner.sh       # Main test orchestrator
+│   ├── test_core.sh         # Core functionality tests
+│   ├── test_deployment.sh   # Deployment tests
+│   └── test_quality.sh      # Code quality tests
+├── _config.yml              # Production Jekyll configuration
+├── _config_dev.yml          # Development configuration overrides
+├── docker-compose.yml       # Docker development environment
+├── Gemfile                  # Ruby dependencies
+├── jekyll-theme-zer0.gemspec # Gem specification
+├── install.sh               # AI-powered installation script
+└── init_setup.sh            # Environment setup script
+```
+
+## 🛠️ Essential Commands and Tooling
+
+### Development Commands
+
+```bash
+# Start development server
+docker-compose up                    # Start with Docker (recommended)
+bundle exec jekyll serve            # Start without Docker
+
+# Build site
+docker-compose exec jekyll jekyll build
+bundle exec jekyll build
+
+# Run tests
+./test/test_runner.sh               # Run all tests
+./test/test_core.sh                 # Run core tests only
+./test/test_runner.sh --verbose     # Verbose output
+
+# Version management
+./scripts/version.sh patch          # Bump patch version (1.0.0 → 1.0.1)
+./scripts/version.sh minor          # Bump minor version (1.0.0 → 1.1.0)
+./scripts/version.sh major          # Bump major version (1.0.0 → 2.0.0)
+
+# Release
+./scripts/release.sh                # Full release workflow
+./scripts/release.sh --dry-run      # Preview release
+```
+
+### Code Quality Commands
+
+```bash
+# Markdown linting
+markdownlint "**/*.md" --ignore node_modules
+
+# YAML linting
+yamllint -c .yamllint.yml .
+
+# HTML validation
+bundle exec jekyll build
+htmlproofer _site --check-html --disable-external
+
+# Jekyll validation
+bundle exec jekyll doctor
+```
+
+### Docker Commands
+
+```bash
+# Start development environment
+docker-compose up
+
+# Rebuild containers
+docker-compose down && docker-compose up --build
+
+# Access container shell
+docker-compose exec jekyll bash
+
+# View logs
+docker-compose logs -f
+
+# Clean up
+docker-compose down -v
+```
+
 ## 🏗️ Architecture Overview
 
 Zer0-Mistakes is a Jekyll theme designed for **production deployment** with intelligent automation. The codebase follows a **Docker-first, GitHub Pages compatible** approach with comprehensive front matter integration for AI-assisted development.
@@ -538,6 +655,148 @@ permalink: /custom-url/
 - **Security**: Validate safe Liquid template usage following front matter security guidelines and Docker compatibility requirements
 - **Performance**: Optimize asset loading and page speed based on front matter performance features and optimization hints
 - **Accessibility**: Ensure WCAG compliance in templates using front matter accessibility specifications and AI development standards
+
+## 🔒 Security Best Practices
+
+### Code Security
+- **Never hardcode credentials**: Use environment variables for sensitive data
+- **Validate user inputs**: Always sanitize and escape user-provided content in Liquid templates
+- **Secure dependencies**: Regularly update gems and check for vulnerabilities with `bundle audit`
+- **Safe file operations**: Validate file paths and use secure temp file creation
+- **HTTPS only**: Use HTTPS for all external resources (CDN, APIs)
+
+### Content Security
+```liquid
+{% comment %}Always escape user content{% endcomment %}
+<p>{{ user_content | escape }}</p>
+
+{% comment %}Use relative_url for internal links{% endcomment %}
+<a href="{{ page.url | relative_url }}">Link</a>
+
+{% comment %}Validate and sanitize HTML{% endcomment %}
+{{ content | strip_html | truncate: 150 }}
+```
+
+### Docker Security
+- Use official, verified base images
+- Specify exact versions for reproducibility
+- Run containers as non-root users when possible
+- Scan images for vulnerabilities
+- Keep Docker and Docker Compose updated
+
+## 🤝 Contributing Guidelines
+
+### Before Contributing
+1. Read [CONTRIBUTING.md](../CONTRIBUTING.md) for detailed guidelines
+2. Review [CODE_OF_CONDUCT.md](../CODE_OF_CONDUCT.md)
+3. Set up local development environment with Docker
+4. Run tests to ensure baseline functionality: `./test/test_runner.sh`
+
+### Contribution Workflow
+1. **Fork and clone** the repository
+2. **Create feature branch** from `main`: `git checkout -b feature/your-feature`
+3. **Make minimal changes** - focus on one issue/feature at a time
+4. **Test thoroughly** - ensure all tests pass
+5. **Document changes** - update relevant docs and CHANGELOG.md
+6. **Commit with clear messages** - follow conventional commits format
+7. **Open pull request** - provide detailed description with context
+
+### Code Review Standards
+- **Functionality**: Does the code work as intended?
+- **Testing**: Are there adequate tests?
+- **Documentation**: Is the code properly documented?
+- **Style**: Does it follow project conventions?
+- **Security**: Are there any security concerns?
+- **Performance**: Is it optimized?
+
+## 📝 File-Specific Instructions
+
+The `.github/instructions/` directory contains specialized guidelines for different file patterns:
+
+- **layouts.instructions.md** (applies to `_layouts/**`): Jekyll layout development guidelines
+- **includes.instructions.md** (applies to `_includes/**`): Reusable component development
+- **scripts.instructions.md** (applies to `scripts/**`): Shell script automation standards
+- **testing.instructions.md** (applies to `test/**`): Testing guidelines and best practices
+- **version-control.instructions.md** (applies to `**`): Git workflow and release management
+
+These instructions are automatically applied by GitHub Copilot based on the files you're working with.
+
+## 🎯 Task Guidance for AI Agents
+
+### When Making Changes
+1. **Understand the context**: Review related files and documentation first
+2. **Make minimal changes**: Change only what's necessary to fix the issue
+3. **Follow existing patterns**: Match the style and structure of existing code
+4. **Test your changes**: Run relevant tests before committing
+5. **Document updates**: Update comments, docs, and CHANGELOG.md as needed
+
+### Common Tasks
+
+#### Adding a New Layout
+1. Create file in `_layouts/` following naming conventions
+2. Add proper front matter documentation
+3. Use Bootstrap 5 components for consistency
+4. Ensure responsive design (mobile-first)
+5. Test across different content types
+6. Update layout documentation
+
+#### Adding a New Include
+1. Create file in `_includes/` with descriptive name
+2. Add parameter documentation in file header
+3. Handle optional parameters with defaults
+4. Use semantic HTML and ARIA labels
+5. Test with various parameter combinations
+6. Document usage examples
+
+#### Fixing a Bug
+1. Write a test that reproduces the bug
+2. Fix the bug with minimal changes
+3. Ensure the test passes
+4. Check for similar issues in related code
+5. Update CHANGELOG.md with fix details
+
+#### Adding a Feature
+1. Review existing features for similar patterns
+2. Design for backward compatibility
+3. Add comprehensive tests
+4. Document the feature thoroughly
+5. Update user-facing documentation
+6. Consider performance impact
+
+## 🚀 Quick Reference
+
+### Jekyll Commands
+```bash
+jekyll build              # Build site
+jekyll serve              # Start dev server
+jekyll doctor             # Check for issues
+jekyll clean              # Clean build artifacts
+```
+
+### Git Commands
+```bash
+git status                # Check working directory
+git diff                  # View changes
+git add -p                # Stage changes interactively
+git commit -m "msg"       # Commit with message
+git push origin branch    # Push changes
+```
+
+### Debugging
+```bash
+# Debug Jekyll build
+bundle exec jekyll build --verbose --trace
+
+# Check Docker logs
+docker-compose logs -f jekyll
+
+# Test specific component
+docker-compose exec jekyll bash
+cd _includes && cat component.html
+
+# Validate configuration
+ruby -ryaml -e "puts YAML.load_file('_config.yml').inspect"
+```
 
 ---
 
