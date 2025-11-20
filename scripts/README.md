@@ -1,31 +1,8 @@
-# Automation Scripts
+# Gem Automation Scripts
 
-This directory contains automation scripts for managing the `jekyll-theme-zer0` gem lifecycle, as well as build scripts for MDX and Tailwind CSS.
+This directory contains automation scripts for managing the `jekyll-theme-zer0` gem lifecycle.
 
 ## Scripts Overview
-
-### 📦 `build-mdx.js`
-Processes MDX (Markdown + JSX) files and converts them to HTML for Jekyll.
-
-**Usage:**
-```bash
-node scripts/build-mdx.js
-# or
-npm run build:mdx
-```
-
-**What it does:**
-- Finds all `.mdx` files in the project
-- Parses front matter from each file
-- Compiles MDX content to HTML
-- Generates HTML files in `_mdx-generated/` directory
-- Maintains Jekyll-compatible front matter
-
-**Output:**
-- Input: `pages/_docs/example.mdx`
-- Output: `_mdx-generated/pages/_docs/example.html`
-
-**See also:** [MDX and Tailwind CSS Guide](../docs/MDX_TAILWIND_GUIDE.md)
 
 ### 🚀 `setup.sh`
 Sets up the development environment for gem development.
