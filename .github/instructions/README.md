@@ -13,6 +13,7 @@ This directory contains file-specific instructions for GitHub Copilot to provide
     ├── includes.instructions.md      # Reusable component development
     ├── scripts.instructions.md       # Shell script automation
     ├── testing.instructions.md       # Testing guidelines
+    ├── documentation.instructions.md # Documentation development
     └── version-control.instructions.md  # Git workflow and releases
 ```
 
@@ -27,6 +28,7 @@ GitHub Copilot automatically applies these instructions based on the files you'r
 | `includes.instructions.md` | `_includes/**` | Reusable components, parameters, accessibility |
 | `scripts.instructions.md` | `scripts/**` | Shell script standards, error handling |
 | `testing.instructions.md` | `test/**` | Test development, assertions, CI/CD |
+| `documentation.instructions.md` | `docs/**,pages/_docs/**,*docs*.md` | Documentation development guidelines |
 | `version-control.instructions.md` | `**` (all files) | Git workflow, semantic versioning, releases |
 
 ## 📖 Main Instructions (copilot-instructions.md)
@@ -127,6 +129,20 @@ Guidelines for version control and releases:
 - Documentation updates
 - Release process
 - Publication to RubyGems.org
+
+### documentation.instructions.md
+
+**Applies to**: `docs/**`, `pages/_docs/**`, `*documentation*.md`, `*docs*.md`
+
+Guidelines for the dual documentation architecture:
+- **Technical Documentation** (`/docs/`) - MDX format for developers/contributors
+- **Public Documentation** (`/pages/_docs/`) - Markdown format for end-users
+- Content conversion workflow (MDX to Markdown)
+- External documentation import processes
+- Documentation testing and validation
+- AI-optimized documentation patterns
+- Cross-reference standards
+- Publication workflows
 
 ## 🚀 Using These Instructions
 
