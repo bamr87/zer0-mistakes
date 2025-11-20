@@ -1,0 +1,382 @@
+<!--
+  ===================================================================
+  COOKIE CONSENT - GDPR/CCPA Compliant Privacy Management
+  ===================================================================
+  
+  File: cookie-consent.html
+  Path: _includes/components/cookie-consent.html
+  Purpose: Privacy-compliant cookie consent banner and management modal
+           with granular user permission controls
+  
+  Template Logic:
+  - Displays consent banner for new visitors after 1-second delay
+  - Provides granular consent options (Essential, Analytics, Marketing)
+  - Stores user preferences in localStorage with 365-day expiry
+  - Integrates with PostHog analytics for consent-based tracking
+  
+  Dependencies:
+  - PostHog analytics integration
+  - Bootstrap 5 modal and form components
+  - Bootstrap Icons for UI elements
+  - site.posthog configuration from _config.yml
+  
+  Privacy Features:
+  - GDPR/CCPA compliance with explicit user consent
+  - Granular permission controls with persistent storage
+  - Automatic consent expiry and re-consent after 365 days
+  - Integration with PostHog opt-in/opt-out mechanisms
+  
+  Accessibility:
+  - ARIA labels for screen readers
+  - Keyboard navigation support
+  - High contrast design for visibility
+  - Semantic HTML structure
+  ===================================================================
+-->
+
+{% comment %}
+Cookie Consent Banner for Zer0-Mistakes Jekyll Theme
+
+Features:
+- GDPR/CCPA compliance
+- Granular consent options (essential, analytics, marketing)
+- PostHog analytics integration
+- Local storage for preferences
+- Bootstrap 5 styling
+- Accessibility compliant
+
+Usage: Include in root.html layout
+Configuration: Uses site.posthog settings from _config.yml
+{% endcomment %}
+
+<div id="cookieConsent" class="cookie-consent-banner position-fixed bottom-0 start-0 end-0 bg-dark text-light p-3 shadow-lg" style="z-index: 9999; transform: translateY(100%); transition: transform 0.3s ease-in-out;">
+  <div class="container-fluid">
+    <div class="row align-items-center">
+      <div class="col-12 col-lg-8">
+        <h6 class="mb-2 mb-lg-0">
+          <i class="bi bi-shield-check me-2"></i>
+          We value your privacy
+        </h6>
+        <p class="mb-2 mb-lg-0 small">
+          This website uses cookies and similar technologies to enhance your browsing experience, analyze traffic, and provide personalized content. 
+          <a href="/privacy-policy/" class="text-light text-decoration-underline">Learn more in our Privacy Policy</a>.
+        </p>
+      </div>
+      <div class="col-12 col-lg-4">
+        <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+          <button type="button" class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#cookieSettingsModal">
+            <i class="bi bi-gear me-1"></i>
+            Manage Cookies
+          </button>
+          <button type="button" class="btn btn-sm btn-secondary" id="rejectAllCookies">
+            Reject All
+          </button>
+          <button type="button" class="btn btn-sm btn-primary" id="acceptAllCookies">
+            Accept All
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cookie Settings Modal -->
+<div class="modal fade" id="cookieSettingsModal" tabindex="-1" aria-labelledby="cookieSettingsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cookieSettingsModalLabel">
+          <i class="bi bi-shield-check me-2"></i>
+          Cookie Preferences
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted">
+          Customize your cookie preferences below. You can change these settings at any time by clicking the cookie preferences link in our footer.
+        </p>
+        
+        <div class="cookie-category mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="mb-0">
+              <i class="bi bi-shield-fill-check text-success me-2"></i>
+              Essential Cookies
+            </h6>
+            <span class="badge bg-success">Always Active</span>
+          </div>
+          <p class="small text-muted mb-0">
+            These cookies are necessary for the website to function properly. They enable core functionality such as navigation, security, and accessibility features.
+          </p>
+        </div>
+
+        <div class="cookie-category mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="mb-0">
+              <i class="bi bi-graph-up me-2"></i>
+              Analytics Cookies
+            </h6>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="analyticsCookies" checked>
+              <label class="form-check-label" for="analyticsCookies">Enable</label>
+            </div>
+          </div>
+          <p class="small text-muted mb-0">
+            These cookies help us understand how visitors interact with our website by collecting anonymous information about page visits, time spent, and user behavior patterns.
+          </p>
+          <details class="mt-2">
+            <summary class="small text-primary cursor-pointer">View analytics providers</summary>
+            <ul class="small text-muted mt-2 ps-3">
+              <li>PostHog Analytics - Website usage analytics and session recording (when enabled)</li>
+              <li>Google Analytics - Traffic analysis and user demographics</li>
+            </ul>
+          </details>
+        </div>
+
+        <div class="cookie-category mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="mb-0">
+              <i class="bi bi-megaphone me-2"></i>
+              Marketing Cookies
+            </h6>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="marketingCookies">
+              <label class="form-check-label" for="marketingCookies">Enable</label>
+            </div>
+          </div>
+          <p class="small text-muted mb-0">
+            These cookies are used to deliver personalized advertisements and marketing content based on your interests and browsing behavior.
+          </p>
+          <p class="small text-muted mt-2">
+            <em>Note: We currently do not use marketing cookies, but this option is provided for future enhancements.</em>
+          </p>
+        </div>
+
+        <div class="bg-light p-3 rounded">
+          <h6 class="text-dark mb-2">
+            <i class="bi bi-info-circle me-2"></i>
+            Your Privacy Rights
+          </h6>
+          <ul class="small text-dark mb-0 ps-3">
+            <li>You can withdraw consent at any time by updating your cookie preferences</li>
+            <li>Essential cookies cannot be disabled as they are necessary for site functionality</li>
+            <li>Disabling analytics cookies will prevent us from improving your experience</li>
+            <li>Your preferences are stored locally and will be remembered for future visits</li>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" id="rejectAllModal">
+          Reject All
+        </button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-primary" id="saveCookiePreferences">
+          Save Preferences
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Cookie Consent Management
+  (function() {
+    'use strict';
+
+    const STORAGE_KEY = 'zer0-cookie-consent';
+    const CONSENT_EXPIRY_DAYS = 365;
+    
+    // Default consent state
+    const defaultConsent = {
+      essential: true,
+      analytics: false,
+      marketing: false,
+      timestamp: Date.now(),
+      version: '1.0'
+    };
+
+    // Get current consent state
+    function getConsentState() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const consent = JSON.parse(stored);
+          // Check if consent is expired (365 days)
+          const isExpired = (Date.now() - consent.timestamp) > (CONSENT_EXPIRY_DAYS * 24 * 60 * 60 * 1000);
+          if (!isExpired) {
+            return consent;
+          }
+        }
+      } catch (e) {
+        console.warn('Error reading cookie consent:', e);
+      }
+      return null;
+    }
+
+    // Save consent state
+    function saveConsentState(consent) {
+      try {
+        consent.timestamp = Date.now();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(consent));
+        applyConsent(consent);
+      } catch (e) {
+        console.warn('Error saving cookie consent:', e);
+      }
+    }
+
+    // Apply consent decisions
+    function applyConsent(consent) {
+      // Analytics consent
+      if (consent.analytics && window.posthog) {
+        window.posthog.opt_in_capturing();
+        console.log('PostHog analytics enabled via consent');
+      } else if (window.posthog) {
+        window.posthog.opt_out_capturing();
+        console.log('PostHog analytics disabled via consent');
+      }
+
+      // Set global consent flags for other scripts
+      window.cookieConsent = consent;
+      
+      // Dispatch consent event for other scripts to listen to
+      document.dispatchEvent(new CustomEvent('cookieConsentChanged', {
+        detail: consent
+      }));
+    }
+
+    // Show consent banner
+    function showConsentBanner() {
+      const banner = document.getElementById('cookieConsent');
+      if (banner) {
+        setTimeout(() => {
+          banner.style.transform = 'translateY(0)';
+        }, 1000); // Show after 1 second
+      }
+    }
+
+    // Hide consent banner
+    function hideConsentBanner() {
+      const banner = document.getElementById('cookieConsent');
+      if (banner) {
+        banner.style.transform = 'translateY(100%)';
+      }
+    }
+
+    // Update modal UI with current preferences
+    function updateModalUI(consent) {
+      document.getElementById('analyticsCookies').checked = consent.analytics;
+      document.getElementById('marketingCookies').checked = consent.marketing;
+    }
+
+    // Get consent from modal UI
+    function getModalConsent() {
+      return {
+        essential: true, // Always true
+        analytics: document.getElementById('analyticsCookies').checked,
+        marketing: document.getElementById('marketingCookies').checked,
+        version: '1.0'
+      };
+    }
+
+    // Initialize on DOM content loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      const existingConsent = getConsentState();
+      
+      if (existingConsent) {
+        // Apply existing consent
+        applyConsent(existingConsent);
+        updateModalUI(existingConsent);
+      } else {
+        // Show consent banner for new visitors
+        showConsentBanner();
+      }
+
+      // Accept all cookies
+      document.getElementById('acceptAllCookies')?.addEventListener('click', function() {
+        const consent = {
+          essential: true,
+          analytics: true,
+          marketing: false, // Keep false until we implement marketing
+          version: '1.0'
+        };
+        saveConsentState(consent);
+        hideConsentBanner();
+      });
+
+      // Reject all cookies
+      document.getElementById('rejectAllCookies')?.addEventListener('click', function() {
+        saveConsentState(defaultConsent);
+        hideConsentBanner();
+      });
+
+      // Reject all from modal
+      document.getElementById('rejectAllModal')?.addEventListener('click', function() {
+        saveConsentState(defaultConsent);
+        updateModalUI(defaultConsent);
+        hideConsentBanner();
+        bootstrap.Modal.getInstance(document.getElementById('cookieSettingsModal')).hide();
+      });
+
+      // Save preferences from modal
+      document.getElementById('saveCookiePreferences')?.addEventListener('click', function() {
+        const consent = getModalConsent();
+        saveConsentState(consent);
+        hideConsentBanner();
+        bootstrap.Modal.getInstance(document.getElementById('cookieSettingsModal')).hide();
+      });
+
+      // Update modal when opened
+      document.getElementById('cookieSettingsModal')?.addEventListener('show.bs.modal', function() {
+        const currentConsent = getConsentState() || defaultConsent;
+        updateModalUI(currentConsent);
+      });
+    });
+
+    // Expose functions globally for external use
+    window.cookieManager = {
+      getConsent: getConsentState,
+      setConsent: saveConsentState,
+      showBanner: showConsentBanner,
+      hideBanner: hideConsentBanner,
+      hasConsent: function(type) {
+        const consent = getConsentState();
+        return consent ? consent[type] : false;
+      }
+    };
+  })();
+</script>
+
+<style>
+  .cookie-consent-banner {
+    background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .cursor-pointer {
+    cursor: pointer;
+  }
+  
+  .cookie-category {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+  }
+  
+  .form-check-input:checked {
+    background-color: var(--bs-success);
+    border-color: var(--bs-success);
+  }
+  
+  @media (max-width: 768px) {
+    .cookie-consent-banner .btn {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+    
+    .cookie-consent-banner .btn:last-child {
+      margin-bottom: 0;
+    }
+  }
+</style>

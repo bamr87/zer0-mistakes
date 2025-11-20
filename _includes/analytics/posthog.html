@@ -1,0 +1,281 @@
+<!--
+  ===================================================================
+  POSTHOG ANALYTICS - Privacy-First Web Analytics Integration
+  ===================================================================
+  
+  File: posthog.html
+  Path: _includes/analytics/posthog.html
+  Purpose: Configurable PostHog analytics implementation with comprehensive
+           privacy controls and GDPR/CCPA compliance
+  
+  Template Logic:
+  - Conditionally loads only in production environment
+  - Respects Do Not Track (DNT) browser settings
+  - Integrates with cookie consent management system
+  - Provides Jekyll-specific event tracking and page properties
+  
+  Dependencies:
+  - site.posthog configuration from _config.yml
+  - Cookie consent system for user permission management
+  - Jekyll environment detection for production loading
+  - PostHog CDN and JavaScript library
+  
+  Privacy Features:
+  - Environment-specific loading (production only by default)
+  - Cookie consent integration with opt-in/opt-out mechanisms
+  - Do Not Track respect with automatic analytics disabling
+  - Session recording controls with input masking
+  - IP anonymization options for enhanced privacy
+  
+  Custom Event Tracking:
+  - File downloads (PDFs, documents, archives)
+  - External link clicks and referral tracking
+  - Search queries and site navigation patterns
+  - Scroll depth analysis and reading engagement
+  - Jekyll-specific interactions (TOC, sidebar, code blocks)
+  ===================================================================
+-->
+
+{% comment %}
+PostHog Analytics Integration for Zer0-Mistakes Jekyll Theme
+
+Features:
+- Environment-specific loading (production only by default)
+- Configurable privacy settings
+- Custom event tracking for Jekyll-specific actions
+- GDPR/CCPA compliance options
+- Session recording controls
+- Cookie consent integration
+
+Configuration: Set posthog settings in _config.yml
+Privacy: Respects Do Not Track and provides opt-out mechanisms
+{% endcomment %}
+
+{% if site.posthog.enabled and jekyll.environment == "production" %}
+<script>
+  {% comment %} PostHog Configuration {% endcomment %}
+  window.posthogConfig = {
+    apiKey: '{{ site.posthog.api_key }}',
+    apiHost: '{{ site.posthog.api_host }}',
+    personProfiles: '{{ site.posthog.person_profiles | default: "identified_only" }}',
+    autocapture: {{ site.posthog.autocapture | default: true }},
+    capturePageview: {{ site.posthog.capture_pageview | default: true }},
+    capturePageleave: {{ site.posthog.capture_pageleave | default: true }},
+    disableCookie: {{ site.posthog.disable_cookie | default: false }},
+    respectDnt: {{ site.posthog.respect_dnt | default: true }},
+    crossSubdomainCookie: {{ site.posthog.cross_subdomain_cookie | default: false }},
+    secureCookie: {{ site.posthog.secure_cookie | default: true }},
+    persistence: '{{ site.posthog.persistence | default: "localStorage+cookie" }}',
+    sessionRecording: {
+      enabled: {{ site.posthog.session_recording | default: false }},
+      maskAllText: {{ site.posthog.privacy.mask_all_text | default: false }},
+      maskAllInputs: {{ site.posthog.privacy.mask_all_inputs | default: true }}
+    }
+  };
+
+  {% comment %} Check for Do Not Track before loading {% endcomment %}
+  if (window.posthogConfig.respectDnt && navigator.doNotTrack === '1') {
+    console.log('PostHog: Respecting Do Not Track setting');
+  } else {
+    {% comment %} PostHog Loading Script {% endcomment %}
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog && window.posthog.__loaded)||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Rr Mr fi Or Ar ci Tr Cr capture Mi calculateEventProperties Lr register register_once register_for_session unregister unregister_for_session Hr getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey displaySurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty Ur jr createPersonProfile zr kr Br opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing get_explicit_consent_status is_capturing clear_opt_in_out_capturing Dr debug M Nr getPageViewId captureTraceFeedback captureTraceMetric $r".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+
+    {% comment %} Initialize PostHog with configuration {% endcomment %}
+    posthog.init(window.posthogConfig.apiKey, {
+      api_host: window.posthogConfig.apiHost,
+      person_profiles: window.posthogConfig.personProfiles,
+      autocapture: window.posthogConfig.autocapture,
+      capture_pageview: window.posthogConfig.capturePageview,
+      capture_pageleave: window.posthogConfig.capturePageleave,
+      disable_cookie: window.posthogConfig.disableCookie,
+      cross_subdomain_cookie: window.posthogConfig.crossSubdomainCookie,
+      secure_cookie: window.posthogConfig.secureCookie,
+      persistence: window.posthogConfig.persistence,
+      session_recording: window.posthogConfig.sessionRecording,
+      {% if site.posthog.privacy.ip_anonymization %}
+      ip: false,
+      {% endif %}
+      loaded: function(posthog) {
+        {% comment %} PostHog loaded successfully {% endcomment %}
+        console.log('PostHog analytics loaded successfully');
+
+        {% comment %} Track Jekyll-specific page properties {% endcomment %}
+        posthog.register({
+          'site_title': '{{ site.title }}',
+          'site_description': '{{ site.description | strip_newlines | strip }}',
+          'jekyll_version': '{{ jekyll.version }}',
+          'theme': '{{ site.remote_theme | default: site.theme }}',
+          'page_layout': '{{ page.layout }}',
+          'page_collection': '{{ page.collection }}',
+          {% if page.categories %}
+          'page_categories': {{ page.categories | jsonify }},
+          {% endif %}
+          {% if page.tags %}
+          'page_tags': {{ page.tags | jsonify }},
+          {% endif %}
+          'page_url': window.location.pathname,
+          'page_title': '{{ page.title | strip_newlines | strip }}',
+          'page_author': '{{ page.author | default: site.author.name }}',
+          {% if page.date %}
+          'page_date': '{{ page.date | date: "%Y-%m-%d" }}',
+          {% endif %}
+          'user_agent': navigator.userAgent,
+          'screen_resolution': screen.width + 'x' + screen.height,
+          'viewport_size': window.innerWidth + 'x' + window.innerHeight
+        });
+
+        {% comment %} Initialize custom event tracking {% endcomment %}
+        initializeCustomTracking();
+      }
+    });
+  }
+
+  {% comment %} Custom Event Tracking Functions {% endcomment %}
+  function initializeCustomTracking() {
+    {% if site.posthog.custom_events.track_downloads %}
+    {% comment %} Track file downloads {% endcomment %}
+    document.addEventListener('click', function(e) {
+      var target = e.target.closest('a');
+      if (target && target.href) {
+        var href = target.href.toLowerCase();
+        var downloadExtensions = ['.pdf', '.zip', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.txt', '.csv'];
+        var isDownload = downloadExtensions.some(ext => href.includes(ext));
+        
+        if (isDownload) {
+          posthog.capture('file_download', {
+            'file_url': target.href,
+            'file_name': target.innerText || target.href.split('/').pop(),
+            'page_url': window.location.pathname
+          });
+        }
+      }
+    });
+    {% endif %}
+
+    {% if site.posthog.custom_events.track_external_links %}
+    {% comment %} Track external link clicks {% endcomment %}
+    document.addEventListener('click', function(e) {
+      var target = e.target.closest('a');
+      if (target && target.href && target.hostname !== window.location.hostname) {
+        posthog.capture('external_link_click', {
+          'link_url': target.href,
+          'link_text': target.innerText,
+          'page_url': window.location.pathname
+        });
+      }
+    });
+    {% endif %}
+
+    {% if site.posthog.custom_events.track_search %}
+    {% comment %} Track search queries {% endcomment %}
+    var searchInputs = document.querySelectorAll('input[type="search"], .search-input, #search');
+    searchInputs.forEach(function(input) {
+      input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && this.value.trim()) {
+          posthog.capture('search_query', {
+            'search_term': this.value.trim(),
+            'page_url': window.location.pathname
+          });
+        }
+      });
+    });
+    {% endif %}
+
+    {% if site.posthog.custom_events.track_scroll_depth %}
+    {% comment %} Track scroll depth {% endcomment %}
+    var scrollDepths = [25, 50, 75, 90];
+    var triggeredDepths = [];
+    
+    window.addEventListener('scroll', function() {
+      var scrollPercent = Math.round((window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100);
+      
+      scrollDepths.forEach(function(depth) {
+        if (scrollPercent >= depth && !triggeredDepths.includes(depth)) {
+          triggeredDepths.push(depth);
+          posthog.capture('scroll_depth', {
+            'depth_percentage': depth,
+            'page_url': window.location.pathname,
+            'page_title': document.title
+          });
+        }
+      });
+    });
+    {% endif %}
+
+    {% comment %} Track Jekyll-specific events {% endcomment %}
+    
+    {% comment %} Track code block interactions {% endcomment %}
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('.highlight, pre, code')) {
+        posthog.capture('code_interaction', {
+          'interaction_type': 'click',
+          'page_url': window.location.pathname
+        });
+      }
+    });
+
+    {% comment %} Track table of contents clicks {% endcomment %}
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('.toc, #TableOfContents, .table-of-contents')) {
+        var target = e.target.closest('a');
+        if (target && target.href) {
+          posthog.capture('toc_click', {
+            'toc_link': target.href,
+            'toc_text': target.innerText,
+            'page_url': window.location.pathname
+          });
+        }
+      }
+    });
+
+    {% comment %} Track sidebar navigation {% endcomment %}
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('.sidebar, .bd-sidebar, nav[class*="sidebar"]')) {
+        var target = e.target.closest('a');
+        if (target && target.href) {
+          posthog.capture('sidebar_navigation', {
+            'nav_link': target.href,
+            'nav_text': target.innerText,
+            'page_url': window.location.pathname
+          });
+        }
+      }
+    });
+  }
+
+  {% comment %} Expose PostHog utilities globally for theme usage {% endcomment %}
+  window.zer0Analytics = {
+    track: function(eventName, properties) {
+      if (window.posthog && typeof window.posthog.capture === 'function') {
+        posthog.capture(eventName, properties);
+      }
+    },
+    identify: function(userId, properties) {
+      if (window.posthog && typeof window.posthog.identify === 'function') {
+        posthog.identify(userId, properties);
+      }
+    },
+    reset: function() {
+      if (window.posthog && typeof window.posthog.reset === 'function') {
+        posthog.reset();
+      }
+    }
+  };
+</script>
+{% else %}
+{% comment %} PostHog disabled or not in production environment {% endcomment %}
+<script>
+  {% comment %} Provide no-op analytics functions for development {% endcomment %}
+  window.zer0Analytics = {
+    track: function(eventName, properties) {
+      console.log('Analytics (disabled):', eventName, properties);
+    },
+    identify: function(userId, properties) {
+      console.log('Analytics identify (disabled):', userId, properties);
+    },
+    reset: function() {
+      console.log('Analytics reset (disabled)');
+    }
+  };
+</script>
+{% endif %}

@@ -27,6 +27,7 @@
 
 founder                  : "Amr Abdel-Motaleb"
 remote_theme             : "bamr87/zer0-mistakes"
+gem                      : &gem "jekyll-theme-zer0"
 # theme                    : "jekyll-theme-zer0"
 
 ## Github Information
@@ -106,6 +107,32 @@ author:
 ## Site Analytics #############################################################
 
 google_analytics         : 'G-ZBDKNMC168'
+
+# PostHog Analytics Configuration
+# https://posthog.com/docs/libraries/js
+posthog:
+  enabled                : true
+  api_key                : 'phc_RRFmtqxRUI4XFDoI4KXUYMbTzPvhiu4A07qdSsAaXgg'
+  api_host               : 'https://us.i.posthog.com'
+  person_profiles        : 'identified_only'  # Options: 'always', 'identified_only', 'never'
+  autocapture            : true   # Automatically capture clicks, form submissions, etc.
+  capture_pageview       : true   # Track page views
+  capture_pageleave      : true   # Track when users leave pages
+  session_recording      : false  # Enable session recordings (privacy consideration)
+  disable_cookie         : false  # Set to true for cookieless tracking
+  respect_dnt            : true    # Respect Do Not Track browser setting
+  cross_subdomain_cookie : false  # Enable if you have multiple subdomains
+  secure_cookie          : true   # Use secure cookies in production
+  persistence            : 'localStorage+cookie'  # Options: 'localStorage+cookie', 'cookie', 'memory'
+  custom_events:
+    track_downloads      : true   # Track PDF, ZIP, etc. downloads
+    track_external_links : true   # Track clicks to external websites
+    track_search         : true   # Track search queries
+    track_scroll_depth   : true   # Track how far users scroll
+  privacy:
+    mask_all_text        : false  # Mask all text in session recordings
+    mask_all_inputs      : true   # Mask form inputs in session recordings
+    ip_anonymization     : false  # Anonymize IP addresses
 
 ## Site verification #############################################################
 
@@ -197,8 +224,8 @@ resources:
   github_fork: [ 'https://github.com/', *github_user, '/', *github_repository, '/fork' ]
   contributing: [ 'https://github.com/', *github_user, '/', *github_repository, '/blob/', *branch, '/CONTRIBUTING.md' ]
   rubygems:
-    name: *title
-    url: [ 'https://rubygems.org/gems/', *title ]
+    name: *gem
+    url: [ 'https://rubygems.org/gems/', *gem ]
   docker:
     image: [ *github_user, '/', *github_repository ]
     hub_url: [ 'https://hub.docker.com/r/', *github_user, '/', *github_repository ]

@@ -23,6 +23,14 @@ show_drafts              : true
 future                   : true
 unpublished              : true
 
+# Analytics Configuration for Development
+# Disable analytics in development to avoid polluting production data
+google_analytics         : null
+posthog:
+  enabled                : false  # Disable PostHog in development
+  api_key                : null
+  api_host               : null
+
 # Disable production optimizations for faster builds
 incremental              : true
 profile                  : false

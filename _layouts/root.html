@@ -77,6 +77,9 @@
         <!-- Site footer with links, copyright, and additional navigation -->
         {%- include core/footer.html -%}
 
+        <!-- Privacy-compliant cookie consent banner -->
+        {%- include components/cookie-consent.html -%}
+
         <!-- JavaScript dependencies and custom scripts -->
         <div>
             <!-- Search functionality (Algolia or similar) -->
@@ -85,5 +88,8 @@
             <!-- External JavaScript libraries and custom scripts -->
             {% include components/js-cdn.html %}
         </div>
+
+        <!-- Analytics Integration -->
+        {%- include analytics/posthog.html -%}
     </body>
 </html>
