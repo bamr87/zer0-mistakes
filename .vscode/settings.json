@@ -189,5 +189,6 @@
     "zer0",
     "gemspec",
     "rubocop"
-  ]
+  ],
+  "containers.images.label": "latest"
 }
