@@ -133,6 +133,15 @@ docker-compose up
 - **SEO Optimized** - Built-in meta tags, structured data, and social sharing
 - **Performance Focused** - Optimized loading, caching, and Core Web Vitals
 
+### 📊 **Privacy-First Analytics & Tracking**
+
+- **PostHog Integration** - Advanced analytics with privacy controls and GDPR/CCPA compliance
+- **Cookie Consent Management** - Granular user permissions with persistent preferences
+- **Custom Event Tracking** - Jekyll-specific events (downloads, navigation, reading engagement)
+- **Development Safety** - Analytics disabled in development environment
+- **User Privacy Controls** - Respect Do Not Track, opt-out mechanisms, data anonymization
+- **Comprehensive Insights** - Page views, user journeys, content engagement, and performance metrics
+
 ### 🌐 **Deployment Ready**
 
 - **GitHub Pages** - Zero-config deployment with remote theme
@@ -173,6 +182,63 @@ docker-compose up
 - **Automated Testing** - 16 automated tests covering all aspects of functionality
 
 > 📖 **Learn more**: [Mermaid Documentation](/docs/jekyll/mermaid/) • [Integration Tutorial](/docs/jekyll/jekyll-diagram-with-mermaid/) • [Test Suite](/docs/jekyll/mermaid-test-suite/)
+
+## 📚 Documentation Architecture
+
+Zer0-Mistakes features a **dual documentation structure** designed for different audiences and use cases:
+
+### 🛠️ **Technical Documentation** → [`/docs/`](docs/)
+**Repository-specific technical documentation** (MDX format) for developers and contributors:
+
+| Directory | Purpose | Target Audience |
+|-----------|---------|----------------|
+| [`/docs/systems/`](docs/systems/) | Infrastructure automation, CI/CD, build processes | DevOps & Contributors |
+| [`/docs/features/`](docs/features/) | Theme feature implementation, component architecture | Developers & Maintainers |
+| [`/docs/configuration/`](docs/configuration/) | Development setup, Docker, environment configuration | Contributors |
+| [`/docs/releases/`](docs/releases/) | Version history, migration guides, technical changes | All Technical Users |
+| [`/docs/jekyll/`](docs/jekyll/) | Jekyll optimization, plugins, advanced configuration | Jekyll Developers |
+
+**Key characteristics:**
+- **MDX format** with interactive components and rich code examples
+- **Source code focused** with direct references to `_layouts/`, `_includes/`, `scripts/`
+- **Architecture documentation** explaining how features are built and maintained
+- **Developer workflows** including testing, deployment, and contribution guidelines
+
+### 📖 **Public Documentation** → [`/pages/_docs/`](pages/_docs/)
+**Published online documentation** (Markdown format) for end-users and general developers:
+
+| Content Type | Purpose | Source |
+|--------------|---------|--------|
+| **Technology Guides** | General Jekyll, Bootstrap, Ruby documentation | Imported & curated external docs |
+| **User Tutorials** | How to use and customize the theme | Original content for users |
+| **Reference Materials** | API docs, configuration options, troubleshooting | Converted from technical docs |
+| **External Imports** | Official documentation from Jekyll, Bootstrap, etc. | Git submodules & processing scripts |
+
+**Key characteristics:**
+- **Markdown format** optimized for Jekyll rendering and online consumption
+- **User-focused** content targeting theme adopters and general developers
+- **Processed content** converted from MDX sources and external documentation
+- **Published online** at [zer0-mistakes.org/docs](https://bamr87.github.io/zer0-mistakes/docs/)
+
+### 🔄 **Content Flow & Conversion**
+
+```mermaid
+graph LR
+    A[Technical Docs<br/>/docs/ *.mdx] --> B[Processing Scripts]
+    B --> C[Public Docs<br/>/pages/_docs/ *.md]
+    D[External Docs<br/>Jekyll, Bootstrap] --> E[Import Scripts]
+    E --> C
+    C --> F[Jekyll Build]
+    F --> G[Published Site]
+```
+
+**Documentation Workflow:**
+1. **Technical implementation** documented in `/docs/` using MDX for rich content
+2. **Processing pipeline** converts and sanitizes content for public consumption
+3. **External documentation** imported from official sources and integrated
+4. **Jekyll rendering** builds and serves final documentation site
+
+> **📍 Quick Navigation**: [Technical Docs](docs/) • [Public Documentation](pages/_docs/) • [GitHub Copilot Instructions](.github/instructions/) • [Contributing Guidelines](CONTRIBUTING.md)
 
 ## 📋 Prerequisites
 
