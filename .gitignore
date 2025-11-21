@@ -22,3 +22,6 @@ test/results/*.json
 test/reports/*
 test/coverage/*
 logs/*
+
+# Front Matter CMS
+.frontmatter/
