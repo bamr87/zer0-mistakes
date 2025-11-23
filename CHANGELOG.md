@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.6.0] - 2025-11-22
+
+### Added
+- Implement PostHog analytics and cookie consent
+- Add code copy functionality and enhance documentation structure
+- Revise copilot instructions and add comprehensive Jekyll include development guidelines
+- Implement automatic theme version display with comprehensive system information
+- Add automatic theme version display and system information integration
+- Enhance Copilot instructions with comprehensive guidelines
+- Enhance CI/CD testing framework with comprehensive documentation and automated workflows
+
+### Changed
+- Ignore .frontmatter directory
+- Update VS Code settings
+- Documentation: Update README with new features and architecture
+- Documentation: Add documentation architecture guidelines
+- Refactor: Clean up redundancies in includes.instructions.md
+- Update version control instructions and add feature documentation
+
+### Other
+- Revert "Merge pull request #10 from bamr87/copilot/plan-mdx-file-handling"
+- Add Mermaid documentation and test suite, enhance site structure
+- Merge pull request #9 from bamr87/copilot/setup-copilot-instructions
+- Merge branch 'main' into copilot/setup-copilot-instructions
+- Merge pull request #10 from bamr87/copilot/plan-mdx-file-handling
+- Address code review feedback and add summary documentation
+- Improve MDX processing and add comprehensive tests
+- Add MDX and Tailwind CSS support to zer0-mistakes theme
+- Initial plan
+- Initial plan
+
+
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
