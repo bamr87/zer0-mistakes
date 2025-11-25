@@ -90,7 +90,7 @@ bundle exec jekyll build
 markdownlint "**/*.md" --ignore node_modules
 
 # YAML linting
-yamllint -c .yamllint.yml .
+yamllint -c .github/config/.yamllint.yml .
 
 # HTML validation
 bundle exec jekyll build

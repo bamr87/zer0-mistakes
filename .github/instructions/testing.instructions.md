@@ -399,7 +399,7 @@ test_yaml_lint() {
     log_test_start "YAML Linting"
     
     if command -v yamllint >/dev/null 2>&1; then
-        if yamllint -c .yamllint.yml .; then
+        if yamllint -c .github/config/.yamllint.yml .; then
             log_test_pass "YAML Linting"
             return 0
         else

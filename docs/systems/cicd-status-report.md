@@ -112,9 +112,9 @@ Your CI/CD testing framework has been successfully enhanced and is **production-
 
 - **Features**: Automated link checking, timeout handling, retry logic
 
-- **Configuration**: `.markdown-link-check.json` with localhost ignoring and proper headers
+- **Configuration**: `.github/config/.markdown-link-check.json` with localhost ignoring and proper headers
 
-### ✅ Linting Configuration (`.markdownlint.json`)
+### ✅ Linting Configuration (`.github/config/.markdownlint.json`)
 
 
 
