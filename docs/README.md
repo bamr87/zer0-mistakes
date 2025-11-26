@@ -23,6 +23,7 @@ This documentation is **source-code focused** and targets technical audiences wh
 
 ### 🏗️ `/systems/` - Core System Architecture
 Documentation for repository infrastructure and automation:
+- **[Release Automation System](systems/release-automation.md)** - Modular release automation v2.0
 - **Automated Version System** - Semantic versioning and release automation
 - **CI/CD Pipelines** - GitHub Actions, testing, and deployment workflows  
 - **Gem Publication System** - Ruby gem packaging and distribution
@@ -141,11 +142,13 @@ Modular documentation components (MDX format):
 ## 📖 Quick Reference
 
 ### Recent Releases
+- [v0.6.0 - Release Automation Modernization](systems/release-automation.md)
 - [v0.5.0 - Comprehensive Sitemap Integration](releases/v0.5.0-release-summary.md)
 - [v0.4.0 - Statistics Dashboard](releases/v0.4.0-release-summary.md)
 - [v0.3.0 - Mermaid Integration](releases/v0.3.0-release-notes.md)
 
 ### Key Features
+- [Release Automation System v2.0](systems/release-automation.md)
 - [Statistics Dashboard](features/statistics-dashboard.md)
 - [Sitemap Integration](features/sitemap-integration.md)
 - [Automated Version System](systems/automated-version-system.md)

@@ -2,7 +2,7 @@
 
 **Last Updated:** 2025-11-25  
 **Applies To:** Release automation scripts (v0.6.0+)  
-**Related:** [Phase 2 Documentation](PHASE_2_COMPLETE.md), [Contributing Guidelines](../CONTRIBUTING.md)
+**Related:** [Release Automation System](systems/release-automation.md), [Contributing Guidelines](../CONTRIBUTING.md)
 
 ## Quick Reference
 
