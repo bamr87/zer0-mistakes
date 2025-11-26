@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.1] - 2025-01-30
+
+### Fixed
+
+- **Directory structure**: Moved category index pages from `posts/` to `_posts/` directory for proper Jekyll collection handling
+
 ## [0.7.0] - 2025-01-30
 
 ### Added
