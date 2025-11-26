@@ -1,5 +1,51 @@
 # Changelog
 
+## [0.7.0] - 2025-01-30
+
+### Added
+
+- **New Layout: `category.html`** - Category archive pages with card grid, featured posts section, and related categories navigation
+- **New Layout: `tag.html`** - Tag archive pages with breadcrumbs, tag cloud, and related tags discovery widget
+- **New Component: `post-card.html`** - Reusable post card component with configurable display (badges, images, metadata, reading time)
+- **New Component: `author-card.html`** - Author profile card with social links and multiple display styles (compact, full, inline)
+- **New Data File: `authors.yml`** - Author profiles configuration with avatar, bio, role, and social links
+- **New Page: `tags.md`** - Tags index page with tag cloud and posts grouped by tag
+- **New Category Pages** - Six category archive pages (Development, Technology, Tutorial, World, Business, Science)
+- **Sample Blog Posts** - Four new demo posts showcasing the blog features:
+  - Docker Jekyll development guide (featured)
+  - Bootstrap 5 components tutorial (featured)
+  - Web accessibility guide (featured)
+  - Getting started with Jekyll
+
+### Changed
+
+- **Complete Redesign: `blog.html`** - Transformed into full-width news homepage with:
+  - Dark header with category navigation
+  - Hero section for breaking/featured news
+  - Category quick navigation with article counts
+  - Featured stories grid layout
+  - Posts organized by category sections
+  - Latest posts horizontal cards
+  - Tags & Archives sidebar widgets
+  - Newsletter signup CTA
+- **Enhanced: `journals.html`** - Major improvements including:
+  - Rich metadata display with author, date, reading time
+  - Inlined author bio section (replaced include to fix nesting)
+  - Inlined related posts section (replaced include to fix nesting)
+  - Card-based post navigation (previous/next)
+  - Giscus comment integration support
+- **Updated: `_data/navigation/posts.yml`** - Reorganized categories with Bootstrap icons and proper hierarchy
+- **Refactored: `sidebar-folders.html`** - Simplified structure with icon support
+- **Refactored: `branding.html`** - Fixed URL references, added comprehensive documentation
+- **Refactored: `js-cdn.html`** - Cleaned up, removed redundant Popper.js (included in Bootstrap bundle)
+
+### Fixed
+
+- **Critical: Liquid "Nesting too deep" error** - Resolved recursive include issues by inlining card content in layouts
+- **Post filtering** - Added `where_exp` filters to exclude index pages from post listings
+- **Script loading performance** - Added `defer` attribute to non-critical scripts in `head.html`
+- **Reading time calculation** - Changed from calculated to front matter `estimated_reading_time` to avoid recursion
+
 ## [0.6.0] - 2025-11-22
 
 ### Added

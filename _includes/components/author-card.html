@@ -1,0 +1,177 @@
+<!--
+  ===================================================================
+  AUTHOR CARD COMPONENT - Display author information
+  ===================================================================
+  
+  File: author-card.html
+  Path: _includes/components/author-card.html
+  Purpose: Reusable author profile display for posts and author pages
+  
+  Parameters:
+  - author (required): Author key from _data/authors.yml OR author name string
+  - style (optional): "compact" | "full" | "inline" (default: "compact")
+  - show_bio (optional): Show author bio (default: true for full, false for compact)
+  - show_social (optional): Show social links (default: true for full, false for compact)
+  
+  Usage:
+    {% include components/author-card.html author=page.author %}
+    {% include components/author-card.html author="bamr87" style="full" %}
+    {% include components/author-card.html author=page.author style="inline" %}
+  
+  Dependencies:
+  - _data/authors.yml: Author data definitions
+  - Bootstrap 5 card and utility classes
+  - Bootstrap Icons
+  ===================================================================
+-->
+
+{% comment %} Parameter defaults {% endcomment %}
+{% assign style = include.style | default: "compact" %}
+
+{% comment %} 
+   Resolve author: can be a key to _data/authors.yml or a plain name string 
+{% endcomment %}
+{% assign author_key = include.author %}
+{% assign author_data = site.data.authors[author_key] %}
+
+{% comment %} If no match in authors.yml, use string as display name {% endcomment %}
+{% unless author_data %}
+  {% assign author_data = site.data.authors.default %}
+  {% if include.author and include.author != "" %}
+    {% capture author_name %}{{ include.author }}{% endcapture %}
+  {% else %}
+    {% assign author_name = author_data.name %}
+  {% endif %}
+{% else %}
+  {% assign author_name = author_data.name %}
+{% endunless %}
+
+{% comment %} Style-specific defaults {% endcomment %}
+{% if style == "full" %}
+  {% assign show_bio = include.show_bio | default: true %}
+  {% assign show_social = include.show_social | default: true %}
+{% elsif style == "inline" %}
+  {% assign show_bio = false %}
+  {% assign show_social = false %}
+{% else %}
+  {% assign show_bio = include.show_bio | default: false %}
+  {% assign show_social = include.show_social | default: false %}
+{% endif %}
+
+<!-- ========================== -->
+<!-- INLINE STYLE               -->
+<!-- ========================== -->
+{% if style == "inline" %}
+<span class="author-inline d-inline-flex align-items-center">
+  {% if author_data.avatar %}
+    <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ author_data.avatar }}" 
+         alt="{{ author_name }}" 
+         class="rounded-circle me-2" 
+         width="24" height="24"
+         style="object-fit: cover;">
+  {% else %}
+    <i class="bi bi-person-circle me-1"></i>
+  {% endif %}
+  <span class="author-name">{{ author_name }}</span>
+</span>
+
+<!-- ========================== -->
+<!-- COMPACT STYLE (default)    -->
+<!-- ========================== -->
+{% elsif style == "compact" %}
+<div class="author-card-compact d-flex align-items-center">
+  {% if author_data.avatar %}
+    <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ author_data.avatar }}" 
+         alt="{{ author_name }}" 
+         class="rounded-circle me-3" 
+         width="48" height="48"
+         style="object-fit: cover;">
+  {% else %}
+    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" 
+         style="width: 48px; height: 48px;">
+      <i class="bi bi-person fs-5"></i>
+    </div>
+  {% endif %}
+  <div>
+    <strong class="d-block">{{ author_name }}</strong>
+    {% if author_data.role %}
+      <small class="text-muted">{{ author_data.role }}</small>
+    {% endif %}
+    {% if show_bio and author_data.bio %}
+      <p class="text-muted small mb-0 mt-1">{{ author_data.bio | truncate: 100 }}</p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- ========================== -->
+<!-- FULL STYLE                 -->
+<!-- ========================== -->
+{% elsif style == "full" %}
+<div class="author-card card border-0 shadow-sm">
+  <div class="card-body">
+    <div class="d-flex align-items-start">
+      {% if author_data.avatar %}
+        <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ author_data.avatar }}" 
+             alt="{{ author_name }}" 
+             class="rounded-circle me-3" 
+             width="80" height="80"
+             style="object-fit: cover;">
+      {% else %}
+        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" 
+             style="width: 80px; height: 80px;">
+          <i class="bi bi-person fs-1"></i>
+        </div>
+      {% endif %}
+      <div class="flex-grow-1">
+        <h5 class="card-title mb-1">{{ author_name }}</h5>
+        {% if author_data.role %}
+          <p class="text-primary mb-2">{{ author_data.role }}</p>
+        {% endif %}
+        {% if show_bio and author_data.bio %}
+          <p class="card-text text-muted">{{ author_data.bio }}</p>
+        {% endif %}
+        
+        {% if show_social %}
+          <div class="author-social d-flex gap-2 mt-2">
+            {% if author_data.github %}
+              <a href="https://github.com/{{ author_data.github }}" 
+                 class="btn btn-sm btn-outline-secondary" 
+                 target="_blank" rel="noopener" title="GitHub">
+                <i class="bi bi-github"></i>
+              </a>
+            {% endif %}
+            {% if author_data.twitter %}
+              <a href="https://twitter.com/{{ author_data.twitter }}" 
+                 class="btn btn-sm btn-outline-secondary" 
+                 target="_blank" rel="noopener" title="Twitter">
+                <i class="bi bi-twitter"></i>
+              </a>
+            {% endif %}
+            {% if author_data.linkedin %}
+              <a href="https://linkedin.com/in/{{ author_data.linkedin }}" 
+                 class="btn btn-sm btn-outline-secondary" 
+                 target="_blank" rel="noopener" title="LinkedIn">
+                <i class="bi bi-linkedin"></i>
+              </a>
+            {% endif %}
+            {% if author_data.website %}
+              <a href="{{ author_data.website }}" 
+                 class="btn btn-sm btn-outline-secondary" 
+                 target="_blank" rel="noopener" title="Website">
+                <i class="bi bi-globe"></i>
+              </a>
+            {% endif %}
+            {% if author_data.email %}
+              <a href="mailto:{{ author_data.email }}" 
+                 class="btn btn-sm btn-outline-secondary" 
+                 title="Email">
+                <i class="bi bi-envelope"></i>
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}

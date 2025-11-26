@@ -1,8 +1,19 @@
-<!-- 
-  file: banding.html
-  path: _includes/branding.html
-  inclues: none
-  description:  
+<!--
+  ===================================================================
+  BRANDING - Site Title and Subtitle Display
+  ===================================================================
+  
+  File: branding.html
+  Path: _includes/core/branding.html
+  Purpose: Display site title and optional subtitle in navbar
+  
+  Dependencies:
+  - site.title: Main site title from _config.yml
+  - site.subtitle: Optional subtitle from _config.yml
+  - site.default_icon: Icon framework class (e.g., 'bi')
+  - site.title_icon: Icon for title display
+  - site.subtitle_icon: Icon for subtitle display
+  ===================================================================
 -->
 <!-- Color Schema Override 
     TODO: Add a poline plug-in to generate color scheme
@@ -22,19 +33,20 @@
 <!-- Title Section  -->
 
 <div class="navbar-brand">
-    <a class="nav-link" href="{{ site.domain_url}}{{ page.url }}">
-        <i class="d-sm-inline d-md-none {{ site.default_icon }} {{ site .default_icon }}-{{ site.title_icon | default: site.powered_by.default }}" aria-hidden="true"></i>
-        <!-- display name if there's enough space, else icon only -->
+    <a class="nav-link" href="{{ page.url | relative_url }}">
+        <i class="d-sm-inline d-md-none {{ site.default_icon }} {{ site.default_icon }}-{{ site.title_icon | default: 'house' }}" aria-hidden="true"></i>
+        <!-- Display name if there's enough space, else icon only -->
         <span class="d-none d-md-inline"> 
-            {{ site.title | default: site.title }}
+            {{ site.title }}
         </span>
+    </a>
 </div>
 
 <div class="navbar-brand">
-    <!-- If a subtitle exsits -->
+    <!-- If a subtitle exists -->
     {%- if site.subtitle -%}
-    <a class="nav-link" href="http://localhost:{{ site.port }}{{ site.baseurl}}{{ page.url }}">
-        <i class="d-sm-inline d-md-none {{ site.default_icon }} {{ site.default_icon }}-{{ site.subtitle_icon | default: site.powered_by.default }}" aria-hidden="true"></i>
+    <a class="nav-link" href="{{ page.url | relative_url }}">
+        <i class="d-sm-inline d-md-none {{ site.default_icon }} {{ site.default_icon }}-{{ site.subtitle_icon | default: 'journal' }}" aria-hidden="true"></i>
         <span class="d-none d-md-inline"> 
             {{ site.subtitle }}
         </span>

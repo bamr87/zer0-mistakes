@@ -1,0 +1,176 @@
+<!--
+  ===================================================================
+  POST CARD COMPONENT - Reusable blog post card
+  ===================================================================
+  
+  File: post-card.html
+  Path: _includes/components/post-card.html
+  Purpose: Consistent post card display across blog, category, and archive pages
+  
+  Parameters:
+  - post (required): The post object to display
+  - show_category (optional): Show category badge (default: true)
+  - show_excerpt (optional): Show post excerpt (default: true)
+  - show_author (optional): Show author name (default: true)
+  - show_reading_time (optional): Show reading time (default: true)
+  - card_class (optional): Additional CSS classes for the card
+  
+  Usage:
+    {% include components/post-card.html post=post %}
+    {% include components/post-card.html post=post show_category=false %}
+    {% include components/post-card.html post=post card_class="shadow-lg" %}
+  
+  Features:
+  - Breaking news badge (red, top-left)
+  - Featured badge (gold star, top-right)
+  - Preview image with fallback
+  - Category badge
+  - Reading time calculation
+  - Author attribution
+  - Publication date
+  - Responsive design
+  
+  Dependencies:
+  - Bootstrap 5 card components
+  - Bootstrap Icons
+  - site.public_folder for image paths
+  - site.teaser for fallback image
+  ===================================================================
+-->
+
+{% comment %} Parameter defaults {% endcomment %}
+{% assign show_category = include.show_category | default: true %}
+{% assign show_excerpt = include.show_excerpt | default: true %}
+{% assign show_author = include.show_author | default: true %}
+{% assign show_reading_time = include.show_reading_time | default: true %}
+{% assign card_class = include.card_class | default: "" %}
+
+{% comment %} 
+   Reading time: Use estimated_reading_time from front matter if available,
+   otherwise skip to avoid accessing post.content which causes nesting issues
+{% endcomment %}
+{% if include.post.estimated_reading_time %}
+  {% assign reading_time = include.post.estimated_reading_time %}
+{% else %}
+  {% assign reading_time = "2 min" %}
+{% endif %}
+
+<div class="col">
+  <div class="card h-100 post-card border-0 shadow-sm {{ card_class }}">
+    
+    <!-- ====================== -->
+    <!-- CARD IMAGE & BADGES    -->
+    <!-- ====================== -->
+    <div class="position-relative">
+      <!-- Breaking News Badge -->
+      {% if include.post.breaking %}
+        <span class="badge bg-danger position-absolute top-0 start-0 m-2 z-1">
+          <i class="bi bi-lightning-fill me-1"></i>Breaking
+        </span>
+      {% endif %}
+      
+      <!-- Featured Badge -->
+      {% if include.post.featured %}
+        <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2 z-1">
+          <i class="bi bi-star-fill me-1"></i>Featured
+        </span>
+      {% endif %}
+      
+      <!-- Preview Image -->
+      <a href="{{ include.post.url | relative_url }}" class="text-decoration-none">
+        {% if include.post.preview %}
+          <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ include.post.preview }}" 
+               class="card-img-top" 
+               alt="Preview image for {{ include.post.title }}"
+               loading="lazy">
+        {% else %}
+          <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ site.teaser }}" 
+               class="card-img-top" 
+               alt="Default preview image"
+               loading="lazy">
+        {% endif %}
+      </a>
+    </div>
+    
+    <!-- ====================== -->
+    <!-- CARD BODY              -->
+    <!-- ====================== -->
+    <div class="card-body d-flex flex-column">
+      
+      <!-- Category Badge -->
+      {% if show_category and include.post.categories.size > 0 %}
+        <div class="mb-2">
+          {% assign primary_category = include.post.categories | first %}
+          <a href="{{ site.baseurl }}/posts/{{ primary_category | slugify }}/" 
+             class="badge bg-primary text-decoration-none">
+            {{ primary_category }}
+          </a>
+        </div>
+      {% endif %}
+      
+      <!-- Post Title -->
+      <h5 class="card-title mb-2">
+        <a href="{{ include.post.url | relative_url }}" 
+           class="text-decoration-none text-body-emphasis stretched-link">
+          {{ include.post.title }}
+        </a>
+      </h5>
+      
+      <!-- Subtitle if available -->
+      {% if include.post.sub-title %}
+        <p class="card-subtitle text-muted small mb-2">
+          {{ include.post.sub-title }}
+        </p>
+      {% endif %}
+      
+      <!-- Post Excerpt -->
+      {% if show_excerpt %}
+        <p class="card-text text-muted small flex-grow-1">
+          {{ include.post.excerpt | strip_html | truncate: 120 }}
+        </p>
+      {% endif %}
+      
+    </div>
+    
+    <!-- ====================== -->
+    <!-- CARD FOOTER            -->
+    <!-- ====================== -->
+    <div class="card-footer bg-transparent border-top-0">
+      <div class="d-flex justify-content-between align-items-center small text-muted">
+        
+        <!-- Left: Author & Date -->
+        <div>
+          {% if show_author and include.post.author %}
+            <span class="me-2">
+              <i class="bi bi-person me-1"></i>{{ include.post.author }}
+            </span>
+          {% endif %}
+          <span>
+            <i class="bi bi-calendar me-1"></i>{{ include.post.date | date: "%b %d, %Y" }}
+          </span>
+        </div>
+        
+        <!-- Right: Reading Time -->
+        {% if show_reading_time %}
+          <span>
+            <i class="bi bi-clock me-1"></i>{{ reading_time }}
+          </span>
+        {% endif %}
+        
+      </div>
+      
+      <!-- Tags (compact) -->
+      {% if include.post.tags.size > 0 %}
+        <div class="mt-2">
+          {% for tag in include.post.tags limit: 3 %}
+            <span class="badge bg-light text-dark border me-1">{{ tag }}</span>
+          {% endfor %}
+          {% if include.post.tags.size > 3 %}
+            <span class="badge bg-light text-muted border">+{{ include.post.tags.size | minus: 3 }}</span>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+    
+  </div>
+</div>

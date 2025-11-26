@@ -1,0 +1,52 @@
+# Authors Data File
+# =================
+# Define author profiles for blog posts
+#
+# Usage in front matter:
+#   author: johndoe  (references the key below)
+#
+# Fields:
+#   name: Display name (required)
+#   bio: Short biography (optional)
+#   avatar: Path to avatar image (optional)
+#   email: Contact email (optional)
+#   twitter: Twitter handle without @ (optional)
+#   github: GitHub username (optional)
+#   linkedin: LinkedIn profile ID (optional)
+#   website: Personal website URL (optional)
+#   role: Job title or role (optional)
+
+default:
+  name: "Zer0-Mistakes Team"
+  bio: "The collective voice of the Zer0-Mistakes Jekyll theme development team."
+  avatar: "/images/default-avatar.png"
+  github: "bamr87"
+  website: "https://bamr87.github.io/zer0-mistakes/"
+  role: "Development Team"
+
+bamr87:
+  name: "Amr Bakri"
+  bio: "Creator of Zer0-Mistakes Jekyll theme. Developer, automation enthusiast, and Docker advocate."
+  avatar: "/images/authors/bamr87.png"
+  github: "bamr87"
+  twitter: "bamr87"
+  role: "Lead Developer"
+
+guest:
+  name: "Guest Author"
+  bio: "A valued contributor to our community."
+  avatar: "/images/default-avatar.png"
+  role: "Guest Contributor"
+
+# Add more authors as needed:
+#
+# author_key:
+#   name: "Author Full Name"
+#   bio: "Short biography about the author."
+#   avatar: "/images/authors/author.png"
+#   email: "author@example.com"
+#   twitter: "twitterhandle"
+#   github: "githubuser"
+#   linkedin: "linkedinprofile"
+#   website: "https://example.com"
+#   role: "Writer"

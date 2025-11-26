@@ -1,0 +1,111 @@
+---
+layout: default
+---
+<!--
+  ===================================================================
+  TAG LAYOUT - Tag archive page displaying posts by tag
+  ===================================================================
+  
+  File: tag.html
+  Path: _layouts/tag.html
+  Inherits: default.html (which inherits root.html)
+  Purpose: Display posts filtered by a specific tag
+  
+  Template Logic:
+  - Filters site.posts by page.tag front matter variable
+  - Displays tag header with post count
+  - Uses post-card.html component for consistent rendering
+  - Shows related tags for discovery
+  
+  Front Matter Variables:
+  - page.tag: Tag name to filter posts (required)
+  - page.title: Display title for the page
+  - page.description: Tag description text (optional)
+  
+  Dependencies:
+  - _includes/components/post-card.html: Reusable post card component
+  - Bootstrap 5 grid and badge components
+  ===================================================================
+-->
+
+<!-- ========================== -->
+<!-- TAG HEADER SECTION         -->
+<!-- ========================== -->
+<header class="tag-header mb-5">
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{{ site.baseurl }}/">Home</a></li>
+      <li class="breadcrumb-item"><a href="{{ site.baseurl }}/tags/">Tags</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ page.tag }}</li>
+    </ol>
+  </nav>
+  
+  <div class="d-flex align-items-center mb-3">
+    <i class="bi bi-tag-fill fs-1 me-3 text-primary"></i>
+    <div>
+      <h1 class="display-5 mb-0">{{ page.title | default: page.tag }}</h1>
+      {% assign tag_posts = site.posts | where_exp: "post", "post.tags contains page.tag" %}
+      <p class="text-muted mb-0">
+        <i class="bi bi-file-earmark-text me-1"></i>
+        {{ tag_posts.size }} {{ tag_posts.size | pluralize: "post", "posts" }} tagged
+      </p>
+    </div>
+  </div>
+  
+  {% if page.description %}
+    <p class="lead text-muted">{{ page.description }}</p>
+  {% endif %}
+  
+  {{ content }}
+</header>
+
+<!-- ========================== -->
+<!-- TAGGED POSTS GRID          -->
+<!-- ========================== -->
+<section class="tagged-posts">
+  {% if tag_posts.size > 0 %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      {% for post in tag_posts %}
+        {% include components/post-card.html post=post %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <!-- Empty state -->
+    <div class="text-center py-5">
+      <i class="bi bi-tag fs-1 text-muted"></i>
+      <p class="text-muted mt-3">No posts with this tag yet.</p>
+      <a href="{{ site.baseurl }}/tags/" class="btn btn-outline-primary">
+        Browse all tags
+      </a>
+    </div>
+  {% endif %}
+</section>
+
+<!-- ========================== -->
+<!-- RELATED TAGS               -->
+<!-- ========================== -->
+{% comment %} Find tags that appear with this tag {% endcomment %}
+{% assign related_tags = "" | split: "" %}
+{% for post in tag_posts %}
+  {% for tag in post.tags %}
+    {% unless tag == page.tag or related_tags contains tag %}
+      {% assign related_tags = related_tags | push: tag %}
+    {% endunless %}
+  {% endfor %}
+{% endfor %}
+
+{% if related_tags.size > 0 %}
+<aside class="related-tags mt-5 pt-4 border-top">
+  <h3 class="h5 mb-3">
+    <i class="bi bi-tags me-2"></i>Related Tags
+  </h3>
+  <div class="d-flex flex-wrap gap-2">
+    {% for tag in related_tags limit: 12 %}
+      <a href="{{ site.baseurl }}/tags/#{{ tag | slugify }}" 
+         class="badge bg-secondary text-decoration-none fs-6">
+        {{ tag }}
+      </a>
+    {% endfor %}
+  </div>
+</aside>
+{% endif %}

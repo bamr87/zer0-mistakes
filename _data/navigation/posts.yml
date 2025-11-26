@@ -1,19 +1,18 @@
-- icon: world
-  url: /posts/world/
-  title: World
+- title: Development
+  icon: code-slash
+  url: /posts/development/
 - title: Technology
-  icon: tech
-  url: /posts/tech/
+  icon: cpu
+  url: /posts/technology/
+- title: Tutorial
+  icon: journal-code
+  url: /posts/tutorial/
+- title: World
+  icon: globe
+  url: /posts/world/
 - title: Business
-  icon: cash
+  icon: briefcase
   url: /posts/business/
 - title: Science
-  icon: flask
+  icon: mortarboard
   url: /posts/science/
-- title: Health
-  icon: heart
-  url: /posts/health/
-- title: Politics
-  icon: politics
-  url: /posts/politics/
-
