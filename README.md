@@ -43,6 +43,17 @@ preview: /images/zer0-mistakes-docker.png
 
 ## 🚀 Quick Start
 
+### 📋 System Requirements
+
+**Required:**
+- **Docker Desktop** - Universal cross-platform development environment
+- **Git** - Version control
+- **Bash 4.0+** - For release automation (macOS: `brew install bash`)
+
+**Optional:**
+- **GitHub CLI** - Enhanced GitHub integration
+- **Ruby 3.0+** - For local (non-Docker) development
+
 ### ⚡ One-Line Installation (Recommended)
 
 **Get started in under 5 minutes with AI-powered setup:**
@@ -689,10 +700,38 @@ git checkout -b feature/amazing-feature
 # Make changes and test
 docker-compose up
 
+# Run tests
+./test/test_runner.sh
+
+# Build gem (if needed)
+./scripts/build
+
 # Commit and push
-git commit -m "Add amazing feature"
+git commit -m "feat: add amazing feature"
 git push origin feature/amazing-feature
 ```
+
+### Release Management
+
+Our modernized release system uses modular automation:
+
+```bash
+# Preview release (requires Bash 4.0+)
+/opt/homebrew/bin/bash scripts/release patch --dry-run
+
+# Full release workflow
+/opt/homebrew/bin/bash scripts/release patch  # or minor, major
+
+# Quick build & test (no publish)
+scripts/release patch --skip-publish --no-github-release
+```
+
+**System Requirements:**
+- Bash 4.0+ (install on macOS: `brew install bash`)
+- Clean git working directory
+- RubyGems credentials configured
+
+For details, see [Release Workflow](CONTRIBUTING.md#-release-process) and [Phase 2 Documentation](docs/PHASE_2_COMPLETE.md).
 
 ## � Documentation
 

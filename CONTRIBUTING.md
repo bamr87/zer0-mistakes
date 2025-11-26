@@ -77,6 +77,11 @@ Before contributing, ensure your development environment has been properly confi
 - **[GitHub CLI](https://cli.github.com/)** - Optional, but makes you look like a command-line wizard
 - **Text Editor with Intelligence** - VS Code recommended (with Jekyll extensions that are smarter than most humans)
 
+**For Release Automation (Required for Publishing):**
+- **Bash 4.0+** - For modern release automation (macOS users: `brew install bash`)
+- **RubyGems Account** - For publishing gem releases
+- **GitHub CLI** - For automated GitHub releases
+
 **For Those Who Enjoy Living Dangerously:**
 - **Ruby 3.0+** and **Bundler** - If you want to run Jekyll locally and pretend it's 2015
 - **Node.js 16+** - For frontend tooling that changes faster than JavaScript frameworks
@@ -582,50 +587,84 @@ We follow [Semantic Versioning](https://semver.org/):
 
 ### Version Management
 
-```bash
-# Preview version bump
-make version-dry-run
+Our modernized release system uses the `scripts/release` command with modular libraries for version management, changelog generation, and gem publishing.
 
-# Bump version types
-make version-patch    # 0.1.8 → 0.1.9
-make version-minor    # 0.1.8 → 0.2.0
-make version-major    # 0.1.8 → 1.0.0
+**System Requirements:**
+- Bash 4.0+ (macOS: install via `brew install bash`)
+- Clean git working directory
+- Valid RubyGems credentials
+
+```bash
+# Preview version bump and changelog
+/opt/homebrew/bin/bash scripts/release patch --dry-run
+
+# Quick build and test (no publish)
+scripts/release patch --skip-publish --no-github-release
 ```
 
 ### Release Workflow
 
-#### Automated Release (Recommended)
+#### Using New Release Command (Recommended)
 ```bash
-# Trigger automated release workflow
-make release-patch    # Full patch release
-make release-minor    # Full minor release
-make release-major    # Full major release
+# Full release workflow with Bash 5
+/opt/homebrew/bin/bash scripts/release patch
+/opt/homebrew/bin/bash scripts/release minor
+/opt/homebrew/bin/bash scripts/release major
+
+# Preview what would happen (dry-run)
+/opt/homebrew/bin/bash scripts/release patch --dry-run
+
+# Development workflow (build & test, skip publish)
+scripts/release patch --skip-publish --no-github-release
+
+# Non-interactive mode (for CI/CD)
+/opt/homebrew/bin/bash scripts/release patch --non-interactive
 ```
 
-#### Manual Release Steps
-1. **Prepare release branch**:
-   ```bash
-   git checkout -b release/v2.1.0
-   ```
+#### Using VS Code Tasks (Easiest)
+1. Press `Cmd+Shift+P` (macOS) or `Ctrl+Shift+P` (Windows/Linux)
+2. Type "Tasks: Run Task"
+3. Select from available tasks:
+   - 🚀 Release: Patch
+   - 🚀 Release: Minor  
+   - 🚀 Release: Major
+   - 🔍 Release: Dry Run Preview
+   - ⚡ Release: Quick Build & Test
 
-2. **Update version and changelog**:
-   ```bash
-   make version-minor
-   # Edit CHANGELOG.md with release notes
-   ```
+#### Understanding the Release Command
 
-3. **Test and validate**:
-   ```bash
-   make test
-   make build
-   ```
+The `scripts/release` command orchestrates a complete release workflow:
 
-4. **Create release**:
-   ```bash
-   git commit -m "chore: bump version to 2.1.0"
-   git tag v2.1.0
-   git push origin main --tags
-   ```
+1. **Validates environment** (git status, dependencies)
+2. **Calculates new version** (semantic versioning)
+3. **Generates changelog** (from conventional commits)
+4. **Updates version files** (gemspec, version.rb)
+5. **Runs test suite** (validates changes)
+6. **Builds gem** (creates .gem package)
+7. **Commits and tags** (version bump commit)
+8. **Publishes to RubyGems** (if not skipped)
+9. **Creates GitHub release** (if not skipped)
+10. **Pushes changes** (tags and commits)
+
+**Available Options:**
+- `--dry-run`: Preview without making changes
+- `--skip-tests`: Skip test execution
+- `--skip-publish`: Skip RubyGems publishing
+- `--no-github-release`: Skip GitHub release creation
+- `--non-interactive`: No confirmation prompts
+- `--help`: Show detailed usage
+
+**Example: Manual Testing Before Release**
+```bash
+# 1. Preview the release
+/opt/homebrew/bin/bash scripts/release patch --dry-run
+
+# 2. Build and test without publishing
+scripts/release patch --skip-publish --no-github-release
+
+# 3. If all looks good, do full release
+/opt/homebrew/bin/bash scripts/release patch
+```
 
 ### GitHub Release Automation
 
