@@ -42,9 +42,9 @@
       "problemMatcher": []
     },
     {
-      "label": "🚀 Gem: Patch Release",
+      "label": "🚀 Release: Patch",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/gem-publish.sh",
+      "command": "${workspaceFolder}/scripts/release",
       "args": ["patch"],
       "group": {
         "kind": "build",
@@ -59,12 +59,12 @@
         "clear": true
       },
       "problemMatcher": [],
-      "detail": "Publishes a patch version release (0.0.X) with full workflow: changelog generation, version bump, tests, build, and publish to RubyGems"
+      "detail": "Publishes a patch version release (0.0.X) with full workflow: changelog generation, version bump, tests, build, and publish to RubyGems - using new modular release command"
     },
     {
-      "label": "🚀 Gem: Minor Release",
+      "label": "🚀 Release: Minor",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/gem-publish.sh",
+      "command": "${workspaceFolder}/scripts/release",
       "args": ["minor"],
       "group": {
         "kind": "build",
@@ -79,12 +79,12 @@
         "clear": true
       },
       "problemMatcher": [],
-      "detail": "Publishes a minor version release (0.X.0) with full workflow: changelog generation, version bump, tests, build, and publish to RubyGems"
+      "detail": "Publishes a minor version release (0.X.0) with full workflow: changelog generation, version bump, tests, build, and publish to RubyGems - using new modular release command"
     },
     {
-      "label": "🚀 Gem: Major Release",
+      "label": "🚀 Release: Major",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/gem-publish.sh",
+      "command": "${workspaceFolder}/scripts/release",
       "args": ["major"],
       "group": {
         "kind": "build",
@@ -99,12 +99,12 @@
         "clear": true
       },
       "problemMatcher": [],
-      "detail": "Publishes a major version release (X.0.0) with full workflow: changelog generation, version bump, tests, build, and publish to RubyGems"
+      "detail": "Publishes a major version release (X.0.0) with full workflow: changelog generation, version bump, tests, build, and publish to RubyGems - using new modular release command"
     },
     {
-      "label": "🔍 Gem: Dry Run Preview",
+      "label": "🔍 Release: Dry Run Preview",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/gem-publish.sh",
+      "command": "${workspaceFolder}/scripts/release",
       "args": ["patch", "--dry-run"],
       "group": {
         "kind": "test",
@@ -119,12 +119,12 @@
         "clear": true
       },
       "problemMatcher": [],
-      "detail": "Preview what a patch release would do without making any changes - shows changelog generation and version updates"
+      "detail": "Preview what a patch release would do without making any changes - shows changelog generation and version updates using new modular release command"
     },
     {
-      "label": "⚡ Gem: Quick Build & Test",
+      "label": "⚡ Release: Quick Build & Test",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/gem-publish.sh",
+      "command": "${workspaceFolder}/scripts/release",
       "args": ["patch", "--skip-publish", "--no-github-release"],
       "group": {
         "kind": "build",
@@ -139,12 +139,12 @@
         "clear": true
       },
       "problemMatcher": [],
-      "detail": "Quick development workflow: changelog generation, version bump, tests, and build - but skip publishing to RubyGems"
+      "detail": "Quick development workflow: changelog generation, version bump, tests, and build - but skip publishing to RubyGems - using new modular release command"
     },
     {
-      "label": "📝 Gem: Generate Changelog",
+      "label": "📝 Release: Generate Changelog Preview",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/gem-publish.sh",
+      "command": "${workspaceFolder}/scripts/release",
       "args": ["patch", "--skip-tests", "--skip-publish", "--no-github-release", "--dry-run"],
       "group": {
         "kind": "test",
@@ -159,7 +159,7 @@
         "clear": true
       },
       "problemMatcher": [],
-      "detail": "Preview automatic changelog generation from commit history - useful for reviewing changes before release"
+      "detail": "Preview automatic changelog generation from commit history - useful for reviewing changes before release - using new modular release command"
     },
     {
       "label": "🧪 Gem: Run Tests Only",
@@ -181,9 +181,9 @@
       "detail": "Run the full test suite without any release actions"
     },
     {
-      "label": "🔨 Gem: Build Only",
+      "label": "🔨 Build: Gem Only",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/build.sh",
+      "command": "${workspaceFolder}/scripts/build",
       "group": {
         "kind": "build",
         "isDefault": false
@@ -197,7 +197,7 @@
         "clear": false
       },
       "problemMatcher": [],
-      "detail": "Build the gem file without publishing or version changes"
+      "detail": "Build the gem file without publishing or version changes - using new modular build command"
     },
     {
       "label": "📊 Gem: Version Info",
@@ -260,8 +260,8 @@
     {
       "label": "🔍 Preview Automated Release",
       "type": "shell",
-      "command": "./scripts/gem-publish.sh",
-      "args": ["patch", "--dry-run", "--automated-release", "--skip-tests", "--skip-publish", "--no-github-release"],
+      "command": "./scripts/release",
+      "args": ["patch", "--dry-run", "--skip-tests", "--skip-publish", "--no-github-release"],
       "options": {
         "cwd": "${workspaceFolder}"
       },
