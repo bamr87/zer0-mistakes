@@ -3,6 +3,14 @@
 # Changelog generation library for zer0-mistakes release scripts
 # Provides automatic changelog generation from git commit history
 
+# Check Bash version (need 4+ for associative arrays)
+if [[ "${BASH_VERSINFO[0]}" -lt 4 ]]; then
+    echo "[ERROR] This script requires Bash 4.0 or higher (current: ${BASH_VERSION})" >&2
+    echo "[INFO] On macOS, install via: brew install bash" >&2
+    echo "[INFO] Then update scripts to use: #!/usr/local/bin/bash" >&2
+    exit 1
+fi
+
 # Source common utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
