@@ -4,15 +4,16 @@ description: "Browse all categories and discover content by topic"
 layout: default
 permalink: /categories/
 ---
+
 <!--
   ===================================================================
   CATEGORIES INDEX PAGE - Browse all categories
   ===================================================================
-  
+
   File: categories.md
   Path: pages/categories.md
   Purpose: Display all categories with post counts and links to categorized posts
-  
+
   This page provides:
   - Alphabetical list of all categories
   - Post count for each category
@@ -33,12 +34,13 @@ permalink: /categories/
 <!-- ========================== -->
 <!-- CATEGORY OVERVIEW          -->
 <!-- ========================== -->
+
 {% comment %} Collect all categories with counts {% endcomment %}
 {% assign all_categories = "" | split: "" %}
 {% for post in site.posts %}
-  {% for category in post.categories %}
-    {% assign all_categories = all_categories | push: category %}
-  {% endfor %}
+{% for category in post.categories %}
+{% assign all_categories = all_categories | push: category %}
+{% endfor %}
 {% endfor %}
 {% assign unique_categories = all_categories | uniq | sort_natural %}
 

@@ -16,16 +16,16 @@ graph TD
     A[New Documentation Content] --> B{Who is the primary audience?}
     B -->|Developers & Contributors| C[Technical Implementation?]
     B -->|End Users & Theme Adopters| D[General Technology Guide?]
-    
+
     C -->|Yes - Build processes, architecture| E[/docs/ - MDX Format]
     C -->|No - User-focused tutorials| F[/pages/_docs/ - Markdown]
-    
+
     D -->|Yes - Jekyll, Bootstrap basics| F
     D -->|No - Repository-specific| G{Content Type?}
-    
+
     G -->|Feature usage for users| F
     G -->|Feature implementation| E
-    
+
     E --> H[Rich MDX with components]
     F --> I[Standard Markdown]
 ```
@@ -47,7 +47,7 @@ graph TD
 
 Technical documentation uses **MDX format** for rich, interactive content:
 
-```mdx
+````mdx
 ---
 title: "Feature Implementation Guide"
 description: "Technical implementation of theme features"
@@ -71,7 +71,8 @@ module JekyllThemeZer0
     end
   end
 end
-```
+````
+
 </CodeBlock>
 
 ## Testing Implementation
@@ -114,7 +115,7 @@ end
 
 Public documentation uses **standard Markdown** for Jekyll compatibility:
 
-```markdown
+````markdown
 ---
 title: "Getting Started with Theme Customization"
 description: "Learn how to customize the Zer0-Mistakes theme"
@@ -142,6 +143,7 @@ theme_config:
   navbar_style: "dark"
   enable_sidebar: true
 ```
+````
 
 ## Customizing Colors
 
@@ -153,19 +155,22 @@ Override Bootstrap variables in your custom CSS:
   --bs-secondary: #your-secondary-color;
 }
 ```
+
 ```
 
 ### File Organization
 
 ```
-/pages/_docs/
-├── index.md              # Documentation library index
-├── jekyll/               # Jekyll user guides
-├── bootstrap/            # Bootstrap usage guides  
-├── customization/        # Theme customization
-├── deployment/           # Hosting and deployment
-└── troubleshooting/      # Common issues and solutions
-```
+
+/pages/\_docs/
+├── index.md # Documentation library index
+├── jekyll/ # Jekyll user guides
+├── bootstrap/ # Bootstrap usage guides  
+├── customization/ # Theme customization
+├── deployment/ # Hosting and deployment
+└── troubleshooting/ # Common issues and solutions
+
+````
 
 ## 🔄 Content Conversion Pipeline
 
@@ -186,7 +191,7 @@ Technical documentation in `/docs/` can be converted to public documentation:
   --audience user \
   --strip-technical-details \
   --add-user-examples
-```
+````
 
 #### 2. Manual Conversion Process
 
@@ -199,6 +204,7 @@ Technical documentation in `/docs/` can be converted to public documentation:
 #### 3. Conversion Guidelines
 
 **Technical → Public Conversion:**
+
 - Remove implementation details and source code references
 - Add explanatory text for user context
 - Convert interactive MDX components to static examples
@@ -257,10 +263,11 @@ git sparse-checkout set docs/_docs
 ### Development Process
 
 1. **Local Development**:
+
    ```bash
    # Start development environment
    docker-compose up
-   
+
    # Test documentation changes
    open http://localhost:4000/docs/
    ```
@@ -272,13 +279,14 @@ git sparse-checkout set docs/_docs
    - Accessibility compliance check
 
 3. **Integration Testing**:
+
    ```bash
    # Validate Jekyll processing
    bundle exec jekyll build
-   
+
    # Test documentation links
    ./scripts/test-doc-links.sh
-   
+
    # Verify MDX conversion
    ./scripts/validate-conversion.sh
    ```

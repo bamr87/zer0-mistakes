@@ -628,7 +628,7 @@ layout: root
       {% include sidebar-left.html %}
     </aside>
     {% endif %}
-    
+
     <main class="col-12 {% if page.sidebar != false %}col-lg-9{% endif %}">
       <article class="content">
         {{ content }}
@@ -655,14 +655,14 @@ layout: default
 <article class="post">
   <header class="post-header">
     <h1 class="post-title">{{ page.title }}</h1>
-    
+
     <div class="post-meta">
       {% if page.author %}
       <span class="author">
         <i class="bi bi-person"></i> {{ page.author }}
       </span>
       {% endif %}
-      
+
       {% if page.date %}
       <span class="date">
         <i class="bi bi-calendar"></i>
@@ -671,7 +671,7 @@ layout: default
         </time>
       </span>
       {% endif %}
-      
+
       {% if page.categories %}
       <span class="categories">
         <i class="bi bi-folder"></i>
@@ -715,7 +715,7 @@ cat > _includes/core/head.html << 'EOF'
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
   <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
-  
+
   {% if page.description %}
   <meta name="description" content="{{ page.description }}">
   {% elsif site.description %}
@@ -724,19 +724,19 @@ cat > _includes/core/head.html << 'EOF'
 
   <!-- Bootstrap 5.3.3 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  
+
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
 
   <!-- Custom CSS -->
   <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
-  
+
   <!-- SEO -->
   {% seo %}
-  
+
   <!-- Feed -->
   {% feed_meta %}
-  
+
   <!-- Analytics -->
   {% if jekyll.environment == "production" %}
     {% include analytics/posthog.html %}
@@ -759,11 +759,11 @@ cat > _includes/core/header.html << 'EOF'
       <a class="navbar-brand" href="{{ '/' | relative_url }}">
         {{ site.title }}
       </a>
-      
+
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      
+
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
@@ -951,7 +951,7 @@ $spacer: 1rem;
 .theme-navigation {
   &__item {
     padding: 0.5rem 1rem;
-    
+
     &--active {
       background-color: $primary;
       color: white;
@@ -1118,7 +1118,7 @@ git commit -m "feat: add Makefile with comprehensive commands"
 
 ### Step 9.1: Create README.md
 
-```bash
+````bash
 # Create comprehensive README
 cat > README.md << 'EOF'
 # 🚀 Zer0-Mistakes Jekyll Theme
@@ -1140,7 +1140,7 @@ cat > README.md << 'EOF'
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
-```
+````
 
 ### Manual Installation
 
@@ -1187,11 +1187,12 @@ MIT License - see [LICENSE](LICENSE)
 - [Documentation](https://bamr87.github.io/zer0-mistakes/)
 - [Issues](https://github.com/bamr87/zer0-mistakes/issues)
 - [Discussions](https://github.com/bamr87/zer0-mistakes/discussions)
-EOF
+  EOF
 
 git add README.md
 git commit -m "docs: add comprehensive README"
-```
+
+````
 
 ### Step 9.2: Create CHANGELOG.md
 
@@ -1234,7 +1235,7 @@ EOF
 
 git add CHANGELOG.md
 git commit -m "docs: add changelog"
-```
+````
 
 ### Step 9.3: Create CONTRIBUTING.md
 
@@ -1294,7 +1295,7 @@ make down
 
 ### Step 10.4: Create Index Page
 
-```bash
+````bash
 # Create index.md
 cat > index.md << 'EOF'
 ---
@@ -1319,14 +1320,15 @@ A professional Jekyll theme featuring Docker-first development, Bootstrap 5 inte
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
-```
+````
 
 [Get Started](/docs/) | [View on GitHub](https://github.com/bamr87/zer0-mistakes)
 EOF
 
 git add index.md
 git commit -m "docs: add homepage"
-```
+
+````
 
 ### Step 10.5: Final Git Push
 
@@ -1337,7 +1339,7 @@ git log --oneline
 # Push to GitHub
 git remote add origin https://github.com/bamr87/zer0-mistakes.git
 git push -u origin main
-```
+````
 
 ---
 

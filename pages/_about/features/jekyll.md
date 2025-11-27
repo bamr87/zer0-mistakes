@@ -66,7 +66,7 @@ bundle exec jekyll serve --baseurl=""
 
 Setting up Jekyll
 
-Inside your folder you need to create the _config.yml file.
+Inside your folder you need to create the \_config.yml file.
 
 permalink: pretty
 
@@ -99,7 +99,7 @@ Linking pages
 
 With permalink: pretty turned on the .html extension can be left off URLs.
 
-*All links & hrefs & srcs should always start with a forward slash: /
+\*All links & hrefs & srcs should always start with a forward slash: /
 
 ```html
 <a href="/plant-eaters/">Plant eaters</a>
@@ -114,13 +114,13 @@ Connecting CSS
 Link CSS files like normal, be sure to start with a /
 
 ```html
-<link href="/css/main.css" rel="stylesheet">
+<link href="/css/main.css" rel="stylesheet" />
 ```
 
 Or for GitHub Pages folder hosting:
 
 ```html
-<link href="{{site.baseurl}}/css/main.css" rel="stylesheet">
+<link href="{{site.baseurl}}/css/main.css" rel="stylesheet" />
 ```
 
 Linking images
@@ -128,35 +128,35 @@ Linking images
 Link images like normal, make sure to start with a /
 
 ```html
-<img src="/images/trex.jpg" alt="">
+<img src="/images/trex.jpg" alt="" />
 ```
 
 Or for GitHub Pages folder hosting:
 
 ```html
-<img src="{{site.baseurl}}/images/trex.jpg" alt="">
+<img src="{{site.baseurl}}/images/trex.jpg" alt="" />
 ```
 
 Layouts
 Common header & footer
 
-First create a new file inside the _layouts folder, name it whatever you want. Inside that file put the common
+First create a new file inside the \_layouts folder, name it whatever you want. Inside that file put the common
 HTML.
 
 `Use {{content}} as the placeholder for the HTML from each page.`
 
-'_layouts/default.html'
+'\_layouts/default.html'
 
 ```html
 <!DOCTYPE html>
 <html lang="en-ca">
-<head>
-  <meta charset="utf-8">
-  <title></title>
-</head>
-<body>
-  {{content}}
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <title></title>
+  </head>
+  <body>
+    {{content}}
+  </body>
 </html>
 ```
 
@@ -164,14 +164,14 @@ At the top of each page use YAML front matter to denote which layout to use:
 
 index.html
 
-```yaml
+````yaml
 ---
 layout: default
 ---
 
 ```html
 <h1>Homepage</h1>
-```
+````
 
 Layouts can be nested by including a different layout at the top of a layout HTML file.
 
@@ -190,14 +190,16 @@ title: Plant Eaters
 
 Then inside the layout, we can use placeholder variables:
 
-_layouts/default.html
+\_layouts/default.html
 
 ```html
 <!DOCTYPE html>
 <html lang="en-ca">
-<head>
-  <meta charset="utf-8">
-  <title>{{page.title}}</title>
+  <head>
+    <meta charset="utf-8" />
+    <title>{{page.title}}</title>
+  </head>
+</html>
 ```
 
 ⋮See the complete list of already included Jekyll page variables.
@@ -207,7 +209,19 @@ Highlighting navigation
 Use an if-statement inside the `<a>` tag to add the .current class.
 
 ```html
-<a href="/plant-eaters/" {% if page.url == '/plant-eaters/' %} class="current" {% endif %}>Plant eaters</a>
+<a
+  href="/plant-eaters/"
+  {%
+  if
+  page.url=""
+  ="/plant-eaters/"
+  %}
+  class="current"
+  {%
+  endif
+  %}
+  >Plant eaters</a
+>
 ```
 
 Data, includes & posts
@@ -215,11 +229,11 @@ Data
 
 Data files allow us to separate content from it’s presentation HTML.
 
-Put data files in the _data folder.
+Put data files in the \_data folder.
 
 All the data is found in the variable site.data
 
- _data/dinos.yml
+\_data/dinos.yml
 
 - name: Tyrannosaurus
   diet: Meat
@@ -230,18 +244,17 @@ All the data is found in the variable site.data
 - name: Velociraptor
   diet: Meat
   size: Small
-Includes
+  Includes
 
 Includes are for making reusable, repeatable HTML blocks.
 
-Put includes int the _includes folder.
+Put includes int the \_includes folder.
 
-_includes/button.html
+\_includes/button.html
 
 ```html
-<a class="btn" href="/go/">Go!</a>
-{% include button.html %}
-{% include button.html %}
+<a class="btn" href="/go/">Go!</a> {% include button.html %} {% include
+button.html %}
 ```
 
 Pass information into includes:
@@ -260,25 +273,25 @@ Posts
 
 Posts are like blog posts or news articles—time based, ordered content.
 
-Posts must be inside the _posts folder.
+Posts must be inside the \_posts folder.
 
 Name posts in the following, strict format: YYYY-MM-DD-file-name.md
 
 All the data is found in the variable site.posts
 
-_posts/
-  2013-09-26-water-in-martian-dirt.md
-  2013-10-06-clouds-on-kepler-7b-mapped.md
-  2013-10-09-planet-without-star.md
+\_posts/
+2013-09-26-water-in-martian-dirt.md
+2013-10-06-clouds-on-kepler-7b-mapped.md
+2013-10-09-planet-without-star.md
 Use the for loop to output posts:
 
 ```html
 <ul>
   {% for post in site.posts %}
-    <li>
-      <a href="{{post.url}}">{{post.title}}</a>
-      <p>{{post.excerpt}}</p>
-    </li>
+  <li>
+    <a href="{{post.url}}">{{post.title}}</a>
+    <p>{{post.excerpt}}</p>
+  </li>
   {% endfor %}
 </ul>
 ```
@@ -288,7 +301,7 @@ Check out the complete Liquid for Designers resource.
 
 Output
 
-The double curly braces, like ````{{ }}```` is to output something—they can be used anywhere to write it into the HTML.
+The double curly braces, like `{{ }}` is to output something—they can be used anywhere to write it into the HTML.
 
 ```html
 {{site.time}}
@@ -302,13 +315,13 @@ The for-loop is used to run over a collection of information like data or posts.
 
 ```html
 {% for dino in site.data.dinos %}
-  <h2>{{dino.name}}</h2>
-  <dl>
-    <dt>Diet</dt>
-    <dd>{{site.diet}}</dd>
-    <dt>Size</dt>
-    <dd>{{site.size}}</dd>
-  </dl>
+<h2>{{dino.name}}</h2>
+<dl>
+  <dt>Diet</dt>
+  <dd>{{site.diet}}</dd>
+  <dt>Size</dt>
+  <dd>{{site.size}}</dd>
+</dl>
 {% endfor %}
 ```
 
@@ -318,9 +331,9 @@ The if-statement can be used to do different things based on certain conditions.
 
 ```html
 {% if page.url == '/' %}
-  <h1>Dinosaurs Rock!</h1>
+<h1>Dinosaurs Rock!</h1>
 {% else %}
-  <strong>Dinosaurs Rock</strong>
+<strong>Dinosaurs Rock</strong>
 {% endif %}
 ```
 
@@ -356,7 +369,7 @@ Markdownify
 Takes Markdown inside YAML and converts it to HTML.
 
 ```html
-    {{site.data.dinos[0].name | markdownify }}
+{{site.data.dinos[0].name | markdownify }}
 ```
 
 Slugify
@@ -380,11 +393,9 @@ Will convert an object or array into JSON.
 ```html
 <h3>Getting Started</h3>
 <ul>
-    {% for doc in site.docs %}
-      {% if doc.category == "getting-started" %}
-        <li><a href="{{ doc.url }}">{{ doc.title }}</a></li>
-      {% endif %}
-    {% endfor %}
+  {% for doc in site.docs %} {% if doc.category == "getting-started" %}
+  <li><a href="{{ doc.url }}">{{ doc.title }}</a></li>
+  {% endif %} {% endfor %}
 </ul>
 ```
 
@@ -403,16 +414,25 @@ https://boringrails.com/tips/jekyll-css-class
 ```html
 {%raw %}
 <div class="sidebar__top">
-  <a href="'''liquid{{site.github.repository_url}}'''/blob/gh-pages/{{page.name}}">
+  <a
+    href="'''liquid{{site.github.repository_url}}'''/blob/gh-pages/{{page.name}}"
+  >
     <i class="fab fa-github-square"></i>
   </a>
-  <a href="vscode://file{{ site.local_git_pc}}/{{ site.local_repo }}/{{ page.path }}">
+  <a
+    href="vscode://file{{ site.local_git_pc}}/{{ site.local_repo }}/{{ page.path }}"
+  >
     <i class="fas fa-laptop-code"></i>
   </a>
-  <a href="vscode://file{{ site.local_git_mac}}/{{ site.local_repo }}/{{ page.path }}">
+  <a
+    href="vscode://file{{ site.local_git_mac}}/{{ site.local_repo }}/{{ page.path }}"
+  >
     <i class="fas fa-laptop-code"></i>
   </a>
-  <a href="#page-title" class="back-to-top">{{ site.data.ui-text[site.locale].back_to_top | default: 'Back to Top' }} &uarr;</a>
+  <a href="#page-title" class="back-to-top"
+    >{{ site.data.ui-text[site.locale].back_to_top | default: 'Back to Top' }}
+    &uarr;</a
+  >
 </div>
 {% endraw %}
 ```
@@ -480,21 +500,22 @@ Options:
 jekyll help serve
 ```
 
-  jekyll serve [options]
+jekyll serve [options]
 
 Options:
-  -B, --detach         Run the server in the background (detach)
-  -P, --port [PORT]    Port to listen on
-  -H, --host [HOST]    Host to bind to
-  -b, --baseurl [URL]  Base URL
-  
+-B, --detach Run the server in the background (detach)
+-P, --port [PORT] Port to listen on
+-H, --host [HOST] Host to bind to
+-b, --baseurl [URL] Base URL
+
 Build Options:
-      --skip-initial-build  Skips the initial site build which occurs before the server is 
-  -w, --[no-]watch     Watch for changes and rebuild
-      --force_polling  Force watch to use polling
-  
-  plus all build options (see build command)
-```
+--skip-initial-build Skips the initial site build which occurs before the server is
+-w, --[no-]watch Watch for changes and rebuild
+--force_polling Force watch to use polling
+
+plus all build options (see build command)
+
+````
 
 
 ## Jekyll Quickstart
@@ -511,7 +532,7 @@ jekyll build
 jekyll serve
      # =>     Server address: http://127.0.0.1:4000/
      #      Server running... press ctrl-c to stop.
-```
+````
 
 Browse your site e.g. open the page @ `http://127.0.0.1:4000`
 
@@ -525,10 +546,10 @@ Minimial:
 |   ├── 2015-01-01-week-1-factbook.md  #   filename format => YEAR-MONTH-DAY-TITLE.MARKUP
 |   ├── 2015-01-08-week-2-hoe.md
 |   └── 2015-01-15-week-3-slideshow.md
-├── _layouts                           
+├── _layouts
 |   ├── default.html                   # master layout template
 |   └── post.html                      # blog post template
-├── css                               
+├── css
 |   └── styles.css                     # styles for pages
 ├── feed.xml                           # web feed template (e.g. in rss or atom format)
 └── index.html                         # index template
@@ -538,7 +559,7 @@ will result in (with `permalink: date`):
 
 ```
 └── _site                                  # output build folder; site gets generated here
-    ├── css                               
+    ├── css
     |   └── styles.css                     # styles for pages (copied 1:1 as is)
     ├── 2015
     |   └── 01
@@ -556,7 +577,7 @@ or result in (with `permalink: /:title.html`):
 
 ```
 └── _site                           # output build folder; site gets generated here
-    ├── css                               
+    ├── css
     |   └── styles.css                     # styles for pages (copied 1:1 as is)
     ├── week-1-factbook.html        # blog post page
     ├── week-2-hoe.html             # another blog post page
@@ -577,10 +598,10 @@ With post drafts, page collections, data stores and shared building blocks:
 |   ├── 2015-01-01-week-1-factbook.md  #  filename format => YEAR-MONTH-DAY-TITLE.MARKUP
 |   ├── 2015-01-08-week-2-hoe.md
 |   └── 2015-01-15-week-3-slideshow.md
-├── _drafts                            # upcoming posts; not yet published 
-|   ├── week-4-kramdown.md             # note: no date required 
+├── _drafts                            # upcoming posts; not yet published
+|   ├── week-4-kramdown.md             # note: no date required
 |   └── week-5-feedparser.md
-├── _layouts                           
+├── _layouts
 |   ├── default.html                   # master layout templates
 |   ├── book.html                      # book listing template
 |   └── post.html                      # blog post template
@@ -592,7 +613,7 @@ With post drafts, page collections, data stores and shared building blocks:
 ├── _books                             # page collection (for books)
 |   ├── ruby-under-a-microscope.md
 |   └── learn-ruby-the-hard-way.md
-├── books                               
+├── books
 |   └── index.html                     # book listing index template
 ├── members.html                       # member listing template
 ├── feed.xml                           # web feed template (e.g. in rss or atom format)
@@ -610,7 +631,7 @@ The permalinks can be customized for each post,
 but the date and markup language are determined by the file name.
 
 ```
-├── _posts             
+├── _posts
 |   ├── 2015-01-01-week-1-factbook.md    # e.g. date=2015-01-01, markup=md
 |   ├── 2015-01-08-week-2-hoe.md         #      date=2015-01-08, markup=md
 |   └── 2015-01-15-week-3-slideshow.md   #      date=2015-01-15, markup=md
@@ -647,7 +668,6 @@ Out-of-excerpt
 [Hoe PDF Booklet](http://docs.seattlerb.org/hoe/Hoe.pdf); 6 Pages
 ```
 
-
 ## `_draft` Folder
 
 Drafts are unpublished posts without a date.
@@ -680,7 +700,7 @@ TBD
 site             -- Sitewide information plus configuration settings from  _config.yml.
 page             -- Page specific information plus the front matter.
                     Custom variables set via the front matter will be available here.
-content          -- In layout files, the rendered content of the Post or Page being wrapped. 
+content          -- In layout files, the rendered content of the Post or Page being wrapped.
                     Not defined in Post or Page files.
 paginator        -- When the paginate configuration option is set variable becomes available.
 ```
@@ -711,8 +731,8 @@ site.tags.TAG              -- The list of all Posts with tag TAG.
 
 **Your Own (Custom)**
 
-All variables set via the command line and 
-in your `_config.yml`  site configuration are available through the `site` variable.
+All variables set via the command line and
+in your `_config.yml` site configuration are available through the `site` variable.
 For example, if you have `url: http://openfootball.github.io` in your configuration file,
 then in your Posts and Pages it will be stored in `site.url`.
 
@@ -733,7 +753,6 @@ site.title   -- your site's title
 Note: Jekyll does not parse changes to `_config.yml` in watch mode,
 you must restart Jekyll to see changes to variables.
 
-
 ## Page Variables
 
 ```
@@ -741,13 +760,13 @@ page.content      --  The content of the Page, rendered or un-rendered depending
                       Liquid is being processedand what page is.
 page.title        --  The title of the Page.
 page.excerpt      --  The un-rendered excerpt of the Page.
-page.url          --  The URL of the Post without the domain, but with a leading slash, 
+page.url          --  The URL of the Post without the domain, but with a leading slash,
                       e.g. /2015/01/15/week-3-slideshow.html
 page.date         --  The Date assigned to the Post. This can be overridden in a Post's front matter
                       by specifying a new date/time in the format YYYY-MM-DD HH:MM:SS (assuming UTC),
                       or YYYY-MM-DD HH:MM:SS +/-TTTT
                       (to specify a time zone using an offset from UTC. e.g. 2015-01-15 11:11:00 +0900).
-page.id           --  An identifier unique to the Post (useful in feeds). 
+page.id           --  An identifier unique to the Post (useful in feeds).
                       e.g. /2015/01/15/week-3-slideshow
 page.categories   --  The list of categories to which this post belongs.
                       Categories are derived from the directory structure above the _posts directory.
@@ -761,8 +780,6 @@ page.next         --  The next post relative to the position of the current post
 page.previous     --  The previous post relative to the position of the current post in site.posts.
                       Returns nil for the first entry.
 ```
-
-
 
 ## Liquid Template Filters n Tags
 
@@ -786,7 +803,7 @@ page.previous     --  The previous post relative to the position of the current 
  # => 'barbar'
 {{ 'barbar' | remove_first:'bar' }}  -- remove the first occurrence
   # => 'bar'
-{{ 'foobarfoobar' | truncate: 5, '.' }}  -- truncate a string down to x characters. 
+{{ 'foobarfoobar' | truncate: 5, '.' }}  -- truncate a string down to x characters.
   # => 'foob.'                              It also accepts a second parameter that will append to the string
 {{ | truncatewords }}               -- truncate a string down to x words
 {{ 'bar' | prepend:'foo' }}         -- prepend a string
@@ -804,7 +821,7 @@ page.previous     --  The previous post relative to the position of the current 
 
 ```liquid
 {% raw %}
-{{ | date }}     -- reformat a date 
+{{ | date }}     -- reformat a date
 {% endraw %}
 ```
 
@@ -844,18 +861,17 @@ page.previous     --  The previous post relative to the position of the current 
 {% endraw %}
 ```
 
-
 ### Jekyll Filters
 
 **Date, Time Filters**
 
 ```liquid
 {% raw %}
-{{ site.time | date_to_rfc822 }}       -- Convert date to RFC-822 format 
+{{ site.time | date_to_rfc822 }}       -- Convert date to RFC-822 format
  # => Mon, 07 Nov 2008 13:07:54 -0800     (e.g. used in rss feeds)
-{{ site.time | date_to_xmlschema }}    -- Convert date to XML Schema (ISO 8601) format 
+{{ site.time | date_to_xmlschema }}    -- Convert date to XML Schema (ISO 8601) format
  # => 2008-11-07T13:07:54-08:00           (e.g. used in atom feeds)
- 
+
 {{ site.time | date_to_string }}       -- Convert date to short format
  # => 07 Nov 2008
 {{ site.time | date_to_long_string }}  -- Convert date to long format
@@ -863,7 +879,7 @@ page.previous     --  The previous post relative to the position of the current 
 {% endraw %}
 ```
 
-**Where, Group By, Sort Filters** 
+**Where, Group By, Sort Filters**
 
 ```liquid
 {% raw %}
@@ -873,7 +889,7 @@ page.previous     --  The previous post relative to the position of the current 
 {{ site.members | group_by:"graduation_year" }}       -- Group an array's items by a given property e.g.
                                                            [{"name"=>"2013", "items"=>[...]},
                                                             {"name"=>"2014", "items"=>[...]}]
-{{ page.tags | sort }}                                -- Sort an array 
+{{ page.tags | sort }}                                -- Sort an array
 {{ site.posts | sort: 'author' }}                     -- Optional args for hashes:
 {{ site.pages | sort: 'title', 'last' }}                  1. property name
                                                           2. nils order (first or last)
@@ -883,7 +899,7 @@ page.previous     --  The previous post relative to the position of the current 
 
 **Escape (XML, CGI, URI) Filters**
 
-```liquid
+````liquid
 {% raw %}
 {{ page.content | xml_escape }}      -- Escape some text for use in XML
 {{ "foo,bar;baz?" | cgi_escape }}    -- CGI escape a string for use in a URL;
@@ -900,12 +916,11 @@ page.previous     --  The previous post relative to the position of the current 
 {{ "foo, bar \baz?" | uri_escape }}  -- URI escape a string
  # => foo,%20bar%20%5Cbaz?
 {% endraw %}
-```
-
+````
 
 **Convert (`markdownify`, `slugify`, `sassify`, `jsonify`) Filters**
 
-```liquid
+````liquid
 {% raw %}
 {{ page.excerpt | markdownify }}        -- Convert a Markdown-formatted string into HTML
 {{ site.data.projects | jsonify }}      -- Convert Hash or Array to JSON
@@ -915,22 +930,22 @@ page.previous     --  The previous post relative to the position of the current 
 {{ "The _config.yml file" | slugify }}            -- Convert a string into a lowercase URL "slug";
  # => the-config-yml-file                            with option 'pretty': spaces and non-alphanumeric chars
 {{ "The _config.yml file" | slugify: 'pretty' }}     except for ._~!$&'()+,;=@
- # => the-_config.yml-file                           
+ # => the-_config.yml-file
 
 {{ "The _config.yml file" | slugify }}            -- Convert a string into a lowercase URL "slug";
  # => the-config-yml-file                            with option 'pretty': spaces and non-alphanumeric chars
 {{ "The _config.yml file" | slugify: 'pretty' }}     except for ._~!$&'()+,;=@
- # => the-_config.yml-file                           
+ # => the-_config.yml-file
 
 {{ "The _config.yml file" | slugify }}            -- Convert a string into a lowercase URL "slug";
  # => the-config-yml-file                            with option 'pretty': spaces and non-alphanumeric chars
 {{ "The _config.yml file" | slugify: 'pretty' }}     except for ._~!$&'()+,;=@
- # => the-_config.yml-file                           
+ # => the-_config.yml-file
 
 {{ "The _config.yml file" | slugify }}            -- Convert a string into a lowercase URL "slug";
  # => the-config-yml-file                            with option 'pretty': spaces and non-alphanumeric chars
 {{ "The _config.yml file" | slugify: 'pretty' }}     except for ._~!$&'()+,;=@
- # => the-_config.yml-file                           
+ # => the-_config.yml-file
 {% endraw %}
 
 ```liquid
@@ -943,9 +958,9 @@ page.previous     --  The previous post relative to the position of the current 
 {{ "The _config.yml file" | slugify }}            -- Convert a string into a lowercase URL "slug";
  # => the-config-yml-file                            with option 'pretty': spaces and non-alphanumeric chars
 {{ "The _config.yml file" | slugify: 'pretty' }}     except for ._~!$&'()+,;=@
- # => the-_config.yml-file   
-{% endraw %}                        
-```
+ # => the-_config.yml-file
+{% endraw %}
+````
 
 **Misc Filters**
 
@@ -958,7 +973,7 @@ page.previous     --  The previous post relative to the position of the current 
 {% endraw %}
 ```
 
-```liquid
+````liquid
 {% raw %}
 {{ page.content | number_of_words }}         -- Count the number of words in some text
  # => 1337
@@ -981,13 +996,13 @@ page.previous     --  The previous post relative to the position of the current 
 {{ page.tags | array_to_sentence_string }}   -- Convert an array into a sentence. Useful for listing tags
  # => foo, bar, and baz
 {% endraw %}
-```
+````
 
 ### Jekyll Tags
 
 **Include Tag**
 
-```liquid
+````liquid
 {% raw %}
 {% include footer.html %}                  -- Searches for include file in _includes folder
 {% include footer.html param="value" %}       You can also pass parameters to an include
@@ -1002,7 +1017,7 @@ page.previous     --  The previous post relative to the position of the current 
 
 {% include_relative somedir/footer.html %} -- Searches for include file relative to the file where used
 {% endraw %}
-```
+````
 
 **Code Syntax Highlighting Tag**
 
@@ -1070,15 +1085,13 @@ pretty                            /2015/01/15/week-3-slideshow/index.html
 /blog/:year/:month/:day/:title    /blog/2015/01/15/week-3-slideshow/index.html
 ```
 
-
 ## CSS Preprocessor Example
-
 
 ```
 ├── _config.yml            # site configuration (add sass settings)
-└── css 
+└── css
     ├── _settings.scss     # include / partial settings
-    └── style.scss         # main styles 
+    └── style.scss         # main styles
 ```
 
 will result in:
@@ -1119,12 +1132,14 @@ body {
 ```
 
 ```yaml
-Note: Front matter (minimal) 
+Note: Front matter (minimal)
+```
 
-```
 ---
+
 ---
-```
+
+````
 
 or with comments
 
@@ -1132,9 +1147,9 @@ or with comments
 ---
 # ensure Jekyll converts scss to css
 ---
-```
+````
 
-required; ensures Jekyll converts `style.scss` to `style.css`; 
+required; ensures Jekyll converts `style.scss` to `style.css`;
 include all partials (e.g. `_settings.scss`, and so on) with `@import` directives.
 
 (Source: [jekyll-sass-converter gem](https://github.com/jekyll/jekyll-sass-converter))
@@ -1146,9 +1161,9 @@ include all partials (e.g. `_settings.scss`, and so on) with `@import` directive
 ```html
 <ul>
   {% for post in site.posts %}
-    <li>
-      <a href="{{ post.url }}">{{ post.title }}</a>
-    </li>
+  <li>
+    <a href="{{ post.url }}">{{ post.title }}</a>
+  </li>
   {% endfor %}
 </ul>
 ```
@@ -1158,10 +1173,10 @@ include all partials (e.g. `_settings.scss`, and so on) with `@import` directive
 ```html
 <ul>
   {% for post in site.posts %}
-    <li>
-      <a href="{{ post.url }}">{{ post.title }}</a>
-      {{ post.excerpt }}
-    </li>
+  <li>
+    <a href="{{ post.url }}">{{ post.title }}</a>
+    {{ post.excerpt }}
+  </li>
   {% endfor %}
 </ul>
 ```
@@ -1201,15 +1216,35 @@ layout: null
 Tip: Add feed auto-discovery to your master layout template in the header. Example:
 
 ```html
-<link rel="alternate" type="application/atom+xml" href="{{ site.url }}/feed.xml" title="News Feeds">
+<link
+  rel="alternate"
+  type="application/atom+xml"
+  href="{{ site.url }}/feed.xml"
+  title="News Feeds"
+/>
 ```
 
 Note: You can add more than one feed, for example:
 
 ```html
-<link rel="alternate" type="..." href="{{ site.url }}/feed.xml"       title="Blog News Feeds">
-<link rel="alternate" type="..." href="{{ site.url }}/books/feed.xml" title="Books News Feed">
-<link rel="alternate" type="..." href="{{ site.url }}/links/feed.xml" title="Links News Feed">
+<link
+  rel="alternate"
+  type="..."
+  href="{{ site.url }}/feed.xml"
+  title="Blog News Feeds"
+/>
+<link
+  rel="alternate"
+  type="..."
+  href="{{ site.url }}/books/feed.xml"
+  title="Books News Feed"
+/>
+<link
+  rel="alternate"
+  type="..."
+  href="{{ site.url }}/links/feed.xml"
+  title="Links News Feed"
+/>
 ```
 
 ## Paginator
@@ -1230,30 +1265,30 @@ paginator.next_page_path      --  The path to the next page
 
 (Source: see jekyll-paginator gem)
 
-***Render the paginated Posts***
+**_Render the paginated Posts_**
 
 ```html
 {% for post in paginator.posts %}
-  <h1><a href="{{ post.url }}">{{ post.title }}</a></h1>
-  <p class="author">
-    <span class="date">{{ post.date }}</span>
-  </p>
-  <div class="content">
-    {{ post.content }}
-  </div>
+<h1><a href="{{ post.url }}">{{ post.title }}</a></h1>
+<p class="author">
+  <span class="date">{{ post.date }}</span>
+</p>
+<div class="content">{{ post.content }}</div>
 {% endfor %}
 
 <div class="pagination">
   {% if paginator.previous_page %}
-    <a href="{{ paginator.previous_page_path }}" class="previous">Previous</a>
+  <a href="{{ paginator.previous_page_path }}" class="previous">Previous</a>
   {% else %}
-    <span class="previous">Previous</span>
+  <span class="previous">Previous</span>
   {% endif %}
-  <span class="page_number ">Page: {{ paginator.page }} of {{ paginator.total_pages }}</span>
+  <span class="page_number "
+    >Page: {{ paginator.page }} of {{ paginator.total_pages }}</span
+  >
   {% if paginator.next_page %}
-    <a href="{{ paginator.next_page_path }}" class="next">Next</a>
+  <a href="{{ paginator.next_page_path }}" class="next">Next</a>
   {% else %}
-    <span class="next ">Next</span>
+  <span class="next ">Next</span>
   {% endif %}
 </div>
 ```

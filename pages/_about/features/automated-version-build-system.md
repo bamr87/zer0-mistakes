@@ -18,8 +18,9 @@ draft: false
 A production-ready automation ecosystem that embodies all IT-Journey core principles (**DFF**, **DRY**, **KIS**, **REnO**, **MVP**, **COLAB**, **AIPD**) for managing the complete Jekyll theme development lifecycle from local development to RubyGems publication.
 
 ### ✨ Key Achievements
+
 - **Zero-click releases** - Fully automated publishing pipeline
-- **Error prevention** - Comprehensive validation at every step  
+- **Error prevention** - Comprehensive validation at every step
 - **Multi-environment testing** - Ruby 2.7, 3.0, 3.1, 3.2 compatibility
 - **Developer productivity** - Simple command interface via Makefile
 - **Collaboration ready** - Git-based workflows with proper versioning
@@ -29,6 +30,7 @@ A production-ready automation ecosystem that embodies all IT-Journey core princi
 ### 🚀 **Core Automation Scripts**
 
 #### Version Management (`scripts/version.sh`)
+
 ```bash
 # Semantic versioning with validation
 ./scripts/version.sh [patch|minor|major] [--dry-run]
@@ -41,6 +43,7 @@ A production-ready automation ecosystem that embodies all IT-Journey core princi
 ```
 
 **What it does:**
+
 - Validates working directory is clean
 - Updates version in `package.json`
 - Updates `CHANGELOG.md` automatically
@@ -48,6 +51,7 @@ A production-ready automation ecosystem that embodies all IT-Journey core princi
 - Creates git tag (`v{version}`)
 
 #### Build System (`scripts/build.sh`)
+
 ```bash
 # Build and optionally publish gems
 ./scripts/build.sh [--publish] [--dry-run]
@@ -59,18 +63,21 @@ A production-ready automation ecosystem that embodies all IT-Journey core princi
 ```
 
 **What it does:**
+
 - Validates dependencies and gemspec
 - Builds the gem file
 - Shows gem contents for verification
 - Optionally publishes to RubyGems (with confirmation)
 
 #### Testing Suite (`scripts/test.sh`)
+
 ```bash
 # Comprehensive validation
 ./scripts/test.sh [--verbose]
 ```
 
 **Tests performed:**
+
 - Package.json syntax and version format validation
 - Gemspec syntax and validity checks
 - Required files existence verification
@@ -81,12 +88,14 @@ A production-ready automation ecosystem that embodies all IT-Journey core princi
 - Bundle install capability testing
 
 #### Development Setup (`scripts/setup.sh`)
+
 ```bash
 # One-time development environment setup
 ./scripts/setup.sh
 ```
 
 **Setup includes:**
+
 - System requirements validation (Ruby, Bundler, jq, Git)
 - Dependencies installation
 - Script permissions configuration
@@ -125,6 +134,7 @@ make status          # Git and version status
 ### 🛡️ **Error Handling & Validation**
 
 #### Design for Failure (DFF) Implementation:
+
 - **Clean working directory validation** prevents conflicts
 - **Comprehensive dependency checking** before operations
 - **Gemspec validation** ensures buildable packages
@@ -132,6 +142,7 @@ make status          # Git and version status
 - **Graceful error messages** with actionable guidance
 
 #### Security & Best Practices:
+
 - Git repository validation
 - RubyGems authentication checking
 - Version format validation
@@ -141,6 +152,7 @@ make status          # Git and version status
 ### 🔄 **CI/CD Integration**
 
 #### GitHub Actions Workflows:
+
 1. **Continuous Integration** (`ci.yml`)
    - Multi-Ruby version testing (2.7, 3.0, 3.1, 3.2)
    - Automated testing on pull requests
@@ -159,6 +171,7 @@ make status          # Git and version status
 ### 📊 **Monitoring & Metrics**
 
 #### Health Monitoring:
+
 ```bash
 make check    # Comprehensive health check
 make status   # Git and version status
@@ -166,6 +179,7 @@ make info     # Project information
 ```
 
 #### Available Metrics:
+
 - Build success rate via GitHub Actions
 - Test coverage via automation scripts
 - Release frequency via git tags
@@ -212,17 +226,20 @@ make publish
 ## Configuration Requirements
 
 ### System Dependencies:
+
 - **Ruby** >= 2.7.0
 - **Bundler** for dependency management
 - **jq** for JSON processing
 - **Git** for version control
 
 ### RubyGems Publishing Setup:
+
 1. **RubyGems account** at [rubygems.org](https://rubygems.org)
 2. **API key** from account settings
 3. **GitHub secret** `RUBYGEMS_API_KEY` in repository
 
 ### Local Authentication:
+
 ```bash
 # Sign in to RubyGems locally
 gem signin
@@ -234,26 +251,31 @@ gem whoami
 ## IT-Journey Principles Implementation
 
 ### 🔒 **Design for Failure (DFF)**
+
 - Comprehensive error handling and validation
 - Fallback mechanisms and graceful degradation
 - Automated backups and cleanup processes
 
 ### 🔄 **Don't Repeat Yourself (DRY)**
+
 - Single source of truth for version management
 - Reusable automation components
 - Modular script architecture
 
 ### ⚡ **Keep It Simple (KIS)**
+
 - Intuitive command interface via Makefile
 - Clear, descriptive error messages
 - Simple workflow patterns
 
 ### 🚀 **Release Early and Often (REnO)**
+
 - Automated release workflows
 - Continuous integration practices
 - Incremental improvement processes
 
 ### 🤖 **AI-Powered Development (AIPD)**
+
 - AI-enhanced automation workflows
 - Intelligent error detection and reporting
 - Automated documentation generation
@@ -266,13 +288,14 @@ gem whoami
 ✅ **Quality assurance** - Multi-environment testing  
 ✅ **Developer productivity** - Simple command interface  
 ✅ **Collaboration ready** - Git-based workflows  
-✅ **Monitoring enabled** - Health checks and metrics  
+✅ **Monitoring enabled** - Health checks and metrics
 
 ## Troubleshooting
 
 ### Common Issues & Solutions:
 
 #### "Working directory is not clean"
+
 ```bash
 git status              # Check status
 git add .              # Stage changes
@@ -280,6 +303,7 @@ git commit -m "fix"    # Commit changes
 ```
 
 #### "Not authenticated with RubyGems"
+
 ```bash
 gem signin             # Sign in to RubyGems
 # or
@@ -288,6 +312,7 @@ chmod 600 ~/.gem/credentials
 ```
 
 #### "jq command not found"
+
 ```bash
 # macOS
 brew install jq
@@ -296,6 +321,7 @@ sudo apt-get install jq
 ```
 
 #### Debug Mode:
+
 ```bash
 ./scripts/test.sh --verbose      # Detailed test output
 ./scripts/build.sh --dry-run     # Preview build process

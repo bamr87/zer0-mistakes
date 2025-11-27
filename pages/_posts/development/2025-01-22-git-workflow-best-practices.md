@@ -6,12 +6,12 @@ date: 2025-01-22T10:00:00.000Z
 author: default
 layout: journals
 categories:
-    - Development
+  - Development
 tags:
-    - git
-    - version-control
-    - workflow
-    - collaboration
+  - git
+  - version-control
+  - workflow
+  - collaboration
 featured: true
 image: /assets/images/posts/git-workflow.jpg
 estimated_reading_time: 10 min
@@ -40,6 +40,7 @@ git merge --no-ff feature/new-login
 ```
 
 **Branch Structure:**
+
 - `main` - Production-ready code
 - `develop` - Integration branch
 - `feature/*` - New features
@@ -75,6 +76,7 @@ Follow the Conventional Commits specification:
 ```
 
 **Types:**
+
 - `feat:` - New feature
 - `fix:` - Bug fix
 - `docs:` - Documentation

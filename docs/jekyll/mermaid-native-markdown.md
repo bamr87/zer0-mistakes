@@ -3,11 +3,11 @@ title: Mermaid with Native Markdown Syntax
 description: Simple Mermaid diagrams using native markdown code blocks via jekyll-mermaid
 date: 2025-01-27
 tags:
-    - Mermaid
-    - Markdown
-    - Jekyll
+  - Mermaid
+  - Markdown
+  - Jekyll
 categories:
-    - Documentation
+  - Documentation
 layout: default
 permalink: /docs/jekyll/mermaid-native-markdown/
 mermaid: true
@@ -205,20 +205,24 @@ pie title Pets adopted by volunteers
 ## 🎯 Benefits
 
 ### ✅ Simpler Syntax
+
 - **Before:** `<div class="mermaid">graph TD...</div>` + `mermaid: true` in front matter
 - **After:** Just ` ```mermaid ... ``` ` in markdown
 
 ### ✅ Standard Markdown
+
 - Native markdown code block syntax
 - Compatible with other markdown processors
 - GitHub-style fenced code blocks
 
 ### ✅ No Configuration Needed
+
 - No front matter variables required
 - No conditional includes
 - Just write and it works
 
 ### ✅ Cleaner Content
+
 - Pure markdown syntax
 - No HTML mixed in
 - Easier to read and edit
@@ -227,17 +231,17 @@ pie title Pets adopted by volunteers
 
 ## 📚 All Supported Diagram Types
 
-| Type | Syntax | Description |
-|------|--------|-------------|
-| **Flowchart** | `graph TD` | Process flows and decisions |
-| **Sequence** | `sequenceDiagram` | System interactions |
-| **Class** | `classDiagram` | OOP relationships |
-| **State** | `stateDiagram-v2` | State machines |
-| **ER** | `erDiagram` | Database schemas |
-| **Gantt** | `gantt` | Project timelines |
-| **Pie** | `pie` | Data percentages |
-| **Git** | `gitGraph` | Version control flows |
-| **Journey** | `journey` | User experiences |
+| Type          | Syntax            | Description                 |
+| ------------- | ----------------- | --------------------------- |
+| **Flowchart** | `graph TD`        | Process flows and decisions |
+| **Sequence**  | `sequenceDiagram` | System interactions         |
+| **Class**     | `classDiagram`    | OOP relationships           |
+| **State**     | `stateDiagram-v2` | State machines              |
+| **ER**        | `erDiagram`       | Database schemas            |
+| **Gantt**     | `gantt`           | Project timelines           |
+| **Pie**       | `pie`             | Data percentages            |
+| **Git**       | `gitGraph`        | Version control flows       |
+| **Journey**   | `journey`         | User experiences            |
 
 ---
 
@@ -250,7 +254,7 @@ plugins:
   - jekyll-mermaid
 
 mermaid:
-  src: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js'
+  src: "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"
 ```
 
 **That's all the configuration needed!**
@@ -276,7 +280,7 @@ Unlike the previous implementation, you don't need:
 
 ```yaml
 ---
-mermaid: true  # ← NOT NEEDED ANYMORE
+mermaid: true # ← NOT NEEDED ANYMORE
 ---
 ```
 
@@ -285,9 +289,9 @@ mermaid: true  # ← NOT NEEDED ANYMORE
 Unlike the previous implementation, you don't need:
 
 ```html
-<div class="mermaid">  <!-- ← NOT NEEDED ANYMORE -->
-graph LR
-    A --> B
+<div class="mermaid">
+  <!-- ← NOT NEEDED ANYMORE -->
+  graph LR A --> B
 </div>
 ```
 
@@ -347,4 +351,4 @@ RL - Right to left
 
 **Happy Diagramming! 📊✨**
 
-*Using jekyll-mermaid plugin for automatic diagram generation from native markdown.*
+_Using jekyll-mermaid plugin for automatic diagram generation from native markdown._

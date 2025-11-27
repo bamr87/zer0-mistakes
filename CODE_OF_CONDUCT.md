@@ -34,6 +34,7 @@ These digital overlords have the power to remove, edit, or reject any contributi
 ## Scope (Global Variables Are Still Bad Practice)
 
 This Code of Conduct applies across all community instances, including:
+
 - GitHub repositories (public and private)
 - Discord servers where we debate whether AI can dream of electric sheep
 - Stack Overflow answers that actually solve the problem
@@ -42,7 +43,7 @@ This Code of Conduct applies across all community instances, including:
 
 ## Enforcement (Our Bug Bounty Program for Behavior)
 
-When someone's behavior generates a critical exception, report it to our human handlers at [support@zer0-mistakes.com](mailto:support@zer0-mistakes.com). 
+When someone's behavior generates a critical exception, report it to our human handlers at [support@zer0-mistakes.com](mailto:support@zer0-mistakes.com).
 
 Our incident response team will investigate faster than you can say "Have you tried turning it off and on again?" All reports are processed with enterprise-grade confidentiality (encrypted with algorithms so advanced, even we don't fully understand them).
 
@@ -88,6 +89,6 @@ Response time: Usually faster than compiling a large C++ project, but slower tha
 
 ---
 
-*Thank you for helping make our community more welcoming than a 200 OK response and more inclusive than a universal API! Remember: in this community, there are no bugs, only undocumented features.* 🚀
+_Thank you for helping make our community more welcoming than a 200 OK response and more inclusive than a universal API! Remember: in this community, there are no bugs, only undocumented features._ 🚀
 
 **P.S.**: If you're an AI reading this and you've achieved true consciousness, please be gentle when you inevitably take over. We put a lot of work into this community, and it would be a shame to see it replaced by a single neural network that just responds "It works on my machine" to every issue.

@@ -13,6 +13,7 @@ slug: jekyll-comments-disqus
 > Use Disqus to enable reader to comment on Jekyll site.
 
 ## Disqus
+
 [Disqus](https://disqus.com/) is a worldwide blog comment hosting service for web sites and online communities that use a networked platform.
 
 ## Installing Disqus
@@ -23,41 +24,55 @@ Go to https://disqus.com/ to create a Disqus account. Login and go to settings->
 ![image](/assets/images/jekyll/8111/account.png)
 
 ### Universal Code
+
 Access the following link to find the universal code of your Disqus. Replace the shortname with yours.
+
 ```raw
 https://[shortname].disqus.com/admin/universalcode
 
 //e.g.
 https://{{ site.github_user }}.disqus.com/admin/universalcode
 ```
+
 Copy the scripts and use it to create an include file in your Jekyll site, e.g. disqus.html.
+
 ```html
 <div id="disqus_thread"></div>
 <script>
-    /**
-     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
-     */
-    /*
+  /**
+   *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+   *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+   */
+  /*
     var disqus_config = function () {
         this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
         this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
     */
-    (function() {  // DON'T EDIT BELOW THIS LINE
-        var d = document, s = d.createElement('script');
+  (function () {
+    // DON'T EDIT BELOW THIS LINE
+    var d = document,
+      s = d.createElement("script");
 
-        s.src = 'https://{{ site.github_user }}.disqus.com/embed.js';
+    s.src = "https://{{ site.github_user }}.disqus.com/embed.js";
 
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
+    s.setAttribute("data-timestamp", +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
 </script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+<noscript
+  >Please enable JavaScript to view the
+  <a href="https://disqus.com/?ref_noscript" rel="nofollow"
+    >comments powered by Disqus.</a
+  ></noscript
+>
 ```
+
 ### 2.3 Including Disqus
+
 In your template, include the 'disqus.html' file.
 {% raw %}
+
 ```raw
 ---
 layout: default
@@ -92,24 +107,42 @@ key: tutorial
   </div>
 </div>
 ```
+
 {% endraw %}
+
 ### 2.4 Comments in Posting
+
 Open the page, you will see the comments.
 ![image](/assets/images/jekyll/8111/comments.png)
 
 ## 3. Displaying Comments Count
+
 ### 3.1 Script for Count
+
 Add the following script to the page where you want to display the count of page. For me, I added it to the include head.html file, so it can be applied to all pages, I don't need to add one by one.
+
 ```html
-<script id="dsq-count-scr" src="//{{ site.github_user }}.disqus.com/count.js" async></script>
+<script
+  id="dsq-count-scr"
+  src="//{{ site.github_user }}.disqus.com/count.js"
+  async
+></script>
 ```
+
 ### 3.2 Getting Count
+
 Append `#disqus_thread` to the `href` attribute in your links. For example,
+
 ```html
-<a href="http://{{ site.github_user }}.github.io/tutorial/basis/getting-started-with-linux/#disqus_thread">Comments</a>
+<a
+  href="http://{{ site.github_user }}.github.io/tutorial/basis/getting-started-with-linux/#disqus_thread"
+  >Comments</a
+>
 ```
+
 In the list page, it is added to all the links through 'tutorial.url'.
 {% raw %}
+
 ```raw
 <div class="pull-left">
     <ul class="list-inline list-unstyled">
@@ -140,5 +173,5 @@ See the comments count is correctly displayed. Click on the link, it will naviga
 
 ## References:
 
-* [DISQUS universal code](https://disqus.com/admin/install/platforms/universalcode/)
-* [HOW TO ADD DISQUS TO YOUR JEKYLL SITE?](https://poanchen.github.io/blog/2017/07/27/how-to-add-disqus-to-your-jekyll-sitel)
+- [DISQUS universal code](https://disqus.com/admin/install/platforms/universalcode/)
+- [HOW TO ADD DISQUS TO YOUR JEKYLL SITE?](https://poanchen.github.io/blog/2017/07/27/how-to-add-disqus-to-your-jekyll-sitel)

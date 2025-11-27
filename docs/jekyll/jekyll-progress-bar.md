@@ -38,8 +38,10 @@ Edit `_layouts/default.html`, add nanobar below the navigation bar.
 ```html
 ...
 <body>
-  <nav class="navbar navbar-expand-lg bg-dark fixed-top navbar-dark navbar-custom">
-   ...
+  <nav
+    class="navbar navbar-expand-lg bg-dark fixed-top navbar-dark navbar-custom"
+  >
+    ...
   </nav>
   <div class="nanobar" id="top-progress-bar" style="position: fixed;">
     <div class="bar"></div>
@@ -67,12 +69,12 @@ Create nanobar with javascript and assign it to div with classname `nanobar`. No
 <!-- add dummy progress bar -->
 <script>
   var options = {
-    classname: 'nanobar',
-    id: 'top-progress-bar'
+    classname: "nanobar",
+    id: "top-progress-bar",
   };
   var nanobar = new Nanobar(options);
-  nanobar.go( 30 );
-  nanobar.go( 76 );
+  nanobar.go(30);
+  nanobar.go(76);
   nanobar.go(100);
 </script>
 ```
@@ -84,7 +86,7 @@ Access any page, there is a green top bar below the navigation bar.
 
 ## 3. Reference
 
-* [Adding Top Progress Bar to Websites](https://blog.webjeda.com/top-bar-website/)
-* [Nanobar - A lightweight progress bar](http://nanobar.jacoborus.codes/)
-* [Pro Sidebar Template with Bootstrap 4](https://bootsnipp.com/snippets/Q0dAX)
-* [Navbar example](https://getbootstrap.com/docs/4.1/examples/navbar-static/?)
+- [Adding Top Progress Bar to Websites](https://blog.webjeda.com/top-bar-website/)
+- [Nanobar - A lightweight progress bar](http://nanobar.jacoborus.codes/)
+- [Pro Sidebar Template with Bootstrap 4](https://bootsnipp.com/snippets/Q0dAX)
+- [Navbar example](https://getbootstrap.com/docs/4.1/examples/navbar-static/?)

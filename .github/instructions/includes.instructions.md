@@ -10,6 +10,7 @@ description: "Jekyll include development guidelines for Zer0-Mistakes theme"
 Zer0-Mistakes uses a modular include system built on Jekyll's powerful templating engine. Includes follow a hierarchical, component-based pattern that ensures reusability, maintainability, and consistency across layouts.
 
 ### Include Directory Structure
+
 ```
 _includes/
 ├── analytics/          # Analytics and tracking components
@@ -25,28 +26,36 @@ _includes/
 ### Core Include Categories
 
 #### Core Includes (`core/`)
+
 Essential structural components that form the foundation of every page:
+
 - `head.html` - Document head with meta tags, styles, scripts
 - `header.html` - Main navigation and site branding
 - `footer.html` - Site footer with links and copyright
 - `branding.html` - Logo and site title display
 
 #### Component Includes (`components/`)
+
 Reusable UI components and interactive elements:
+
 - `cookie-consent.html` - GDPR/CCPA compliant privacy management
 - `theme-info.html` - Dynamic theme and system information
 - `searchbar.html` - Site search functionality
 - `mermaid.html` - Diagram rendering support
 
 #### Navigation Includes (`navigation/`)
+
 Navigation-related components for site structure:
+
 - `navbar.html` - Main navigation menu
 - `breadcrumbs.html` - Hierarchical navigation trail
 - `sidebar-left.html` - Left sidebar with navigation
 - `nav_list.html` - Dynamic navigation list generation
 
 #### Analytics Includes (`analytics/`)
+
 Privacy-compliant tracking and measurement:
+
 - `posthog.html` - PostHog analytics integration
 - `google-analytics.html` - Google Analytics tracking
 - `google-tag-manager-*.html` - GTM implementation
@@ -54,6 +63,7 @@ Privacy-compliant tracking and measurement:
 ## 📝 Include Development Standards
 
 ### Standard Include Header Format
+
 ```html
 <!--
   ===================================================================
@@ -89,6 +99,7 @@ Privacy-compliant tracking and measurement:
 ```
 
 ### Include Parameter Patterns
+
 ```liquid
 {% comment %}
   Include: component-name.html
@@ -103,7 +114,7 @@ Privacy-compliant tracking and measurement:
   {% if include.title %}
     <h3 class="component-title">{{ include.title }}</h3>
   {% endif %}
-  
+
   <div class="component-content">
     {{ include.content | default: content | markdownify }}
   </div>
@@ -111,6 +122,7 @@ Privacy-compliant tracking and measurement:
 ```
 
 ### Conditional Loading Patterns
+
 ```liquid
 {% comment %} Environment-specific loading {% endcomment %}
 {% if jekyll.environment == "production" %}
@@ -133,22 +145,28 @@ Privacy-compliant tracking and measurement:
 ## 🎨 Bootstrap 5 Component Integration
 
 ### Bootstrap Component Patterns
+
 ```html
 <!-- Bootstrap modal component -->
-<div class="modal fade" id="{{ include.modal_id | default: 'defaultModal' }}" tabindex="-1">
+<div
+  class="modal fade"
+  id="{{ include.modal_id | default: 'defaultModal' }}"
+  tabindex="-1"
+>
   <div class="modal-dialog {{ include.modal_size | default: '' }}">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">{{ include.title }}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
       </div>
-      <div class="modal-body">
-        {{ include.content }}
-      </div>
+      <div class="modal-body">{{ include.content }}</div>
       {% if include.footer %}
-        <div class="modal-footer">
-          {{ include.footer }}
-        </div>
+      <div class="modal-footer">{{ include.footer }}</div>
       {% endif %}
     </div>
   </div>
@@ -157,35 +175,27 @@ Privacy-compliant tracking and measurement:
 <!-- Bootstrap card component -->
 <div class="card {{ include.card_class }}">
   {% if include.header %}
-    <div class="card-header {{ include.header_class }}">
-      {{ include.header }}
-    </div>
+  <div class="card-header {{ include.header_class }}">{{ include.header }}</div>
   {% endif %}
   <div class="card-body">
     {% if include.title %}
-      <h5 class="card-title">{{ include.title }}</h5>
+    <h5 class="card-title">{{ include.title }}</h5>
+    {% endif %} {% if include.subtitle %}
+    <h6 class="card-subtitle mb-2 text-muted">{{ include.subtitle }}</h6>
     {% endif %}
-    {% if include.subtitle %}
-      <h6 class="card-subtitle mb-2 text-muted">{{ include.subtitle }}</h6>
-    {% endif %}
-    <div class="card-text">
-      {{ include.content | markdownify }}
-    </div>
+    <div class="card-text">{{ include.content | markdownify }}</div>
   </div>
   {% if include.footer %}
-    <div class="card-footer {{ include.footer_class }}">
-      {{ include.footer }}
-    </div>
+  <div class="card-footer {{ include.footer_class }}">{{ include.footer }}</div>
   {% endif %}
 </div>
 ```
 
 ### Bootstrap Utility Class Usage
+
 ```html
 <!-- Responsive display utilities -->
-<div class="d-none d-md-block">
-  {% include navigation/sidebar-left.html %}
-</div>
+<div class="d-none d-md-block">{% include navigation/sidebar-left.html %}</div>
 
 <!-- Flexbox utilities for layout -->
 <div class="d-flex justify-content-between align-items-center">
@@ -195,28 +205,42 @@ Privacy-compliant tracking and measurement:
 
 <!-- Spacing utilities -->
 <section class="my-4 py-3">
-  <div class="container-fluid">
-    {{ include.content }}
-  </div>
+  <div class="container-fluid">{{ include.content }}</div>
 </section>
 ```
 
 ### Bootstrap Icon Integration
+
 ```html
 <!-- Bootstrap Icons with fallback -->
-<i class="{{ site.default_icon | default: 'bi' }} {{ include.icon | default: 'bi-info-circle' }}" 
-   aria-hidden="true"></i>
+<i
+  class="{{ site.default_icon | default: 'bi' }} {{ include.icon | default: 'bi-info-circle' }}"
+  aria-hidden="true"
+></i>
 <span class="{{ include.text_class | default: '' }}">{{ include.text }}</span>
 
 <!-- Icon button pattern -->
-<button type="button" class="btn {{ include.btn_class | default: 'btn-outline-primary' }}"
-        {% if include.modal_target %}data-bs-toggle="modal" data-bs-target="#{{ include.modal_target }}"{% endif %}>
+<button
+  type="button"
+  class="btn {{ include.btn_class | default: 'btn-outline-primary' }}"
+  {%
+  if
+  include.modal_target
+  %}data-bs-toggle="modal"
+  data-bs-target="#{{ include.modal_target }}"
+  {%
+  endif
+  %}
+>
   <i class="bi {{ include.icon }}" aria-hidden="true"></i>
-  {% if include.text %}<span class="d-none d-sm-inline ms-1">{{ include.text }}</span>{% endif %}
+  {% if include.text %}<span class="d-none d-sm-inline ms-1"
+    >{{ include.text }}</span
+  >{% endif %}
 </button>
 ```
 
 ### Bootstrap Navigation Components
+
 ```liquid
 {% comment %}
   Bootstrap navbar with responsive collapse
@@ -229,16 +253,16 @@ Privacy-compliant tracking and measurement:
       {% endif %}
       {{ site.title }}
     </a>
-    
-    <button class="navbar-toggler" type="button" 
-            data-bs-toggle="collapse" 
-            data-bs-target="#navbarNav" 
-            aria-controls="navbarNav" 
-            aria-expanded="false" 
+
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
             aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    
+
     <div class="collapse navbar-collapse" id="navbarNav">
       {% include nav_list.html %}
     </div>
@@ -247,6 +271,7 @@ Privacy-compliant tracking and measurement:
 ```
 
 ### Bootstrap Alert Components
+
 ```liquid
 {% comment %}
   Bootstrap alert with icon
@@ -255,7 +280,7 @@ Privacy-compliant tracking and measurement:
 {% assign alert_type = include.type | default: "info" %}
 {% assign dismissible = include.dismissible | default: false %}
 
-<div class="alert alert-{{ alert_type }} {% if dismissible %}alert-dismissible fade show{% endif %}" 
+<div class="alert alert-{{ alert_type }} {% if dismissible %}alert-dismissible fade show{% endif %}"
      role="alert">
   {% case alert_type %}
     {% when "success" %}
@@ -267,12 +292,12 @@ Privacy-compliant tracking and measurement:
     {% when "danger" %}
       <i class="bi bi-x-circle-fill"></i>
   {% endcase %}
-  
+
   {{ include.message }}
-  
+
   {% if dismissible %}
-    <button type="button" class="btn-close" 
-            data-bs-dismiss="alert" 
+    <button type="button" class="btn-close"
+            data-bs-dismiss="alert"
             aria-label="Close"></button>
   {% endif %}
 </div>
@@ -281,13 +306,14 @@ Privacy-compliant tracking and measurement:
 ## 🔧 Advanced Include Patterns
 
 ### Dynamic Content Generation
+
 ```liquid
 {% comment %} Dynamic navigation generation {% endcomment %}
 <nav class="navbar {{ include.nav_class }}">
   <ul class="navbar-nav">
     {% for nav_item in site.data.navigation[include.nav_section] %}
       <li class="nav-item {% if nav_item.children %}dropdown{% endif %}">
-        <a class="nav-link {% if nav_item.children %}dropdown-toggle{% endif %}" 
+        <a class="nav-link {% if nav_item.children %}dropdown-toggle{% endif %}"
            href="{% unless nav_item.children %}{{ nav_item.url }}{% else %}#{% endunless %}"
            {% if nav_item.children %}data-bs-toggle="dropdown"{% endif %}>
           {% if nav_item.icon %}<i class="bi {{ nav_item.icon }} me-2"></i>{% endif %}
@@ -307,6 +333,7 @@ Privacy-compliant tracking and measurement:
 ```
 
 ### Content Card Components
+
 ```liquid
 {% comment %}
   Reusable card component with Bootstrap styling
@@ -314,16 +341,16 @@ Privacy-compliant tracking and measurement:
 {% endcomment %}
 <div class="card h-100 {{ include.class }}">
   {% if include.image %}
-    <img src="{{ include.image | relative_url }}" 
-         class="card-img-top" 
+    <img src="{{ include.image | relative_url }}"
+         class="card-img-top"
          alt="{{ include.title }}"
          loading="lazy">
   {% endif %}
-  
+
   <div class="card-body">
     <h5 class="card-title">{{ include.title }}</h5>
     <p class="card-text">{{ include.description | truncate: 150 }}</p>
-    
+
     {% if include.date %}
       <p class="card-text">
         <small class="text-muted">
@@ -334,7 +361,7 @@ Privacy-compliant tracking and measurement:
       </p>
     {% endif %}
   </div>
-  
+
   {% if include.url %}
     <div class="card-footer">
       <a href="{{ include.url | relative_url }}" class="btn btn-primary">
@@ -346,6 +373,7 @@ Privacy-compliant tracking and measurement:
 ```
 
 ### SEO Components
+
 ```liquid
 {% comment %}
   Open Graph meta tags for social sharing
@@ -367,6 +395,7 @@ Privacy-compliant tracking and measurement:
 ```
 
 ### Collection Processing
+
 ```liquid
 {% comment %} Dynamic stats generation {% endcomment %}
 {% assign total_posts = site.posts | size %}
@@ -403,6 +432,7 @@ Privacy-compliant tracking and measurement:
 ```
 
 ### Error Handling and Fallbacks
+
 ```liquid
 {% comment %} Safe data access with fallbacks {% endcomment %}
 {% assign nav_items = site.data.navigation[include.nav_section] | default: site.data.navigation.main | default: empty %}
@@ -418,7 +448,7 @@ Privacy-compliant tracking and measurement:
 {% comment %} Image handling with fallbacks {% endcomment %}
 {% assign image_url = include.image | default: page.image | default: site.default_image %}
 {% if image_url %}
-  <img src="{{ image_url | relative_url }}" 
+  <img src="{{ image_url | relative_url }}"
        alt="{{ include.alt | default: page.title | default: site.title }}"
        class="{{ include.img_class | default: 'img-fluid' }}"
        loading="lazy">
@@ -428,35 +458,49 @@ Privacy-compliant tracking and measurement:
 ## 🔐 Privacy and Analytics
 
 ### Privacy-Compliant Analytics
+
 ```html
 <!-- PostHog analytics with consent management -->
-{% if site.posthog.enabled and jekyll.environment == "production" %}
-  {% comment %} Check for user consent before loading {% endcomment %}
-  <script>
-    if (window.cookieManager && window.cookieManager.hasConsent('analytics')) {
-      // Load PostHog analytics
-      {% include analytics/posthog-script.html %}
-    } else {
-      console.log('Analytics disabled: No user consent');
-    }
-  </script>
+{% if site.posthog.enabled and jekyll.environment == "production" %} {% comment
+%} Check for user consent before loading {% endcomment %}
+<script>
+  if (window.cookieManager && window.cookieManager.hasConsent('analytics')) {
+    // Load PostHog analytics
+    {% include analytics/posthog-script.html %}
+  } else {
+    console.log('Analytics disabled: No user consent');
+  }
+</script>
 {% endif %}
 ```
 
 ### Cookie Consent Integration
+
 ```html
 <!-- Cookie consent banner -->
 <div id="cookieConsent" class="cookie-consent-banner" style="display: none;">
   <div class="container-fluid">
     <div class="row align-items-center">
       <div class="col-lg-8">
-        <p class="mb-0">{{ include.message | default: site.cookie_consent.message }}</p>
+        <p class="mb-0">
+          {{ include.message | default: site.cookie_consent.message }}
+        </p>
       </div>
       <div class="col-lg-4 text-lg-end">
-        <button type="button" class="btn btn-sm btn-outline-light me-2" 
-                onclick="showCookieSettings()">Manage</button>
-        <button type="button" class="btn btn-sm btn-primary" 
-                onclick="acceptAllCookies()">Accept All</button>
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-light me-2"
+          onclick="showCookieSettings()"
+        >
+          Manage
+        </button>
+        <button
+          type="button"
+          class="btn btn-sm btn-primary"
+          onclick="acceptAllCookies()"
+        >
+          Accept All
+        </button>
       </div>
     </div>
   </div>
@@ -466,14 +510,19 @@ Privacy-compliant tracking and measurement:
 ## 📱 Responsive Design
 
 ### Mobile-First Component Design
+
 ```html
 <!-- Responsive navigation component -->
 <nav class="navbar navbar-expand-lg">
   <!-- Mobile brand and toggle -->
   <div class="d-flex d-lg-none w-100 justify-content-between">
     <a class="navbar-brand" href="/">{{ site.title }}</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
-            data-bs-target="#navbarNav">
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
   </div>
@@ -485,9 +534,9 @@ Privacy-compliant tracking and measurement:
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav ms-auto">
       {% for nav_item in include.nav_items %}
-        <li class="nav-item">
-          <a class="nav-link" href="{{ nav_item.url }}">{{ nav_item.title }}</a>
-        </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ nav_item.url }}">{{ nav_item.title }}</a>
+      </li>
       {% endfor %}
     </ul>
   </div>
@@ -495,26 +544,33 @@ Privacy-compliant tracking and measurement:
 ```
 
 ### Responsive Content Adaptation
+
 ```html
 <!-- Responsive sidebar -->
 {% if include.show_mobile == true %}
-  <!-- Mobile: Show as offcanvas -->
-  <div class="d-lg-none">
-    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas" 
-            data-bs-target="#mobileSidebar">
-      <i class="bi bi-list"></i> Menu
-    </button>
-    
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar">
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title">Navigation</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-      </div>
-      <div class="offcanvas-body">
-        {{ include.content }}
-      </div>
+<!-- Mobile: Show as offcanvas -->
+<div class="d-lg-none">
+  <button
+    class="btn btn-outline-secondary"
+    type="button"
+    data-bs-toggle="offcanvas"
+    data-bs-target="#mobileSidebar"
+  >
+    <i class="bi bi-list"></i> Menu
+  </button>
+
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title">Navigation</h5>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="offcanvas"
+      ></button>
     </div>
+    <div class="offcanvas-body">{{ include.content }}</div>
   </div>
+</div>
 {% endif %}
 
 <!-- Desktop: Show as regular sidebar -->
@@ -528,50 +584,81 @@ Privacy-compliant tracking and measurement:
 ## ♿ Accessibility
 
 ### Semantic HTML Structure
+
 ```html
 <!-- Accessible navigation -->
-<nav role="navigation" aria-label="{{ include.nav_label | default: 'Main navigation' }}">
+<nav
+  role="navigation"
+  aria-label="{{ include.nav_label | default: 'Main navigation' }}"
+>
   <ul class="nav-list" role="menubar">
     {% for item in include.nav_items %}
-      <li role="none">
-        <a href="{{ item.url }}" role="menuitem" 
-           {% if item.current %}aria-current="page"{% endif %}>
-          {{ item.title }}
-        </a>
-      </li>
+    <li role="none">
+      <a
+        href="{{ item.url }}"
+        role="menuitem"
+        {%
+        if
+        item.current
+        %}aria-current="page"
+        {%
+        endif
+        %}
+      >
+        {{ item.title }}
+      </a>
+    </li>
     {% endfor %}
   </ul>
 </nav>
 
 <!-- Accessible modal -->
-<div class="modal fade" id="{{ include.modal_id }}" tabindex="-1" 
-     aria-labelledby="{{ include.modal_id }}Label" aria-hidden="true"
-     role="dialog" aria-modal="true">
+<div
+  class="modal fade"
+  id="{{ include.modal_id }}"
+  tabindex="-1"
+  aria-labelledby="{{ include.modal_id }}Label"
+  aria-hidden="true"
+  role="dialog"
+  aria-modal="true"
+>
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="{{ include.modal_id }}Label">{{ include.title }}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" 
-                aria-label="Close modal"></button>
+        <h5 class="modal-title" id="{{ include.modal_id }}Label">
+          {{ include.title }}
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close modal"
+        ></button>
       </div>
-      <div class="modal-body">
-        {{ include.content }}
-      </div>
+      <div class="modal-body">{{ include.content }}</div>
     </div>
   </div>
 </div>
 ```
 
 ### Screen Reader Support
+
 ```html
 <!-- Skip links -->
-<a href="#main-content" class="visually-hidden-focusable">Skip to main content</a>
+<a href="#main-content" class="visually-hidden-focusable"
+  >Skip to main content</a
+>
 <a href="#navigation" class="visually-hidden-focusable">Skip to navigation</a>
 
 <!-- Descriptive text for complex interactions -->
-<button type="button" class="btn btn-primary" onclick="toggleSearch()"
-        aria-expanded="false" aria-controls="searchContainer"
-        aria-label="Toggle search form">
+<button
+  type="button"
+  class="btn btn-primary"
+  onclick="toggleSearch()"
+  aria-expanded="false"
+  aria-controls="searchContainer"
+  aria-label="Toggle search form"
+>
   <i class="bi bi-search" aria-hidden="true"></i>
   <span class="visually-hidden">Search</span>
 </button>
@@ -579,8 +666,13 @@ Privacy-compliant tracking and measurement:
 <div id="searchContainer" class="collapse">
   <form role="search" aria-label="Site search">
     <label for="searchInput" class="visually-hidden">Search terms</label>
-    <input type="search" id="searchInput" class="form-control" 
-           placeholder="Search..." aria-describedby="searchHelp">
+    <input
+      type="search"
+      id="searchInput"
+      class="form-control"
+      placeholder="Search..."
+      aria-describedby="searchHelp"
+    />
     <div id="searchHelp" class="form-text visually-hidden">
       Enter keywords to search the site content
     </div>
@@ -589,15 +681,16 @@ Privacy-compliant tracking and measurement:
 ```
 
 ### Focus Management
+
 ```liquid
 {% comment %}
   Ensure keyboard navigation works
 {% endcomment %}
 <div class="dropdown">
-  <button class="btn dropdown-toggle" 
-          type="button" 
-          id="dropdownMenu" 
-          data-bs-toggle="dropdown" 
+  <button class="btn dropdown-toggle"
+          type="button"
+          id="dropdownMenu"
+          data-bs-toggle="dropdown"
           aria-expanded="false"
           aria-haspopup="true">
     Menu
@@ -612,6 +705,7 @@ Privacy-compliant tracking and measurement:
 ## 🎨 CSS and Styling
 
 ### CSS Classes
+
 ```liquid
 {% comment %}
   Use BEM methodology for custom classes
@@ -627,6 +721,7 @@ Privacy-compliant tracking and measurement:
 ```
 
 ### Responsive Utilities
+
 ```liquid
 {% comment %}
   Use Bootstrap responsive utilities
@@ -645,6 +740,7 @@ Privacy-compliant tracking and measurement:
 ## 🧪 Testing
 
 ### Testing Checklist
+
 - [ ] Test with all parameter combinations
 - [ ] Test with missing optional parameters
 - [ ] Test responsive behavior across breakpoints
@@ -655,6 +751,7 @@ Privacy-compliant tracking and measurement:
 - [ ] Verify performance impact
 
 ### Manual Testing Commands
+
 ```bash
 # Build site and check specific include
 docker-compose up
@@ -667,6 +764,7 @@ docker-compose exec jekyll htmlproofer _site --check-html
 ```
 
 ### Development Testing Patterns
+
 ```liquid
 {% comment %} Development-only debug information {% endcomment %}
 {% if jekyll.environment == "development" %}
@@ -690,6 +788,7 @@ docker-compose exec jekyll htmlproofer _site --check-html
 ## 🔒 Security
 
 ### Output Escaping
+
 ```liquid
 {% comment %}
   Always escape user-provided content
@@ -703,6 +802,7 @@ docker-compose exec jekyll htmlproofer _site --check-html
 ```
 
 ### Safe Filters
+
 ```liquid
 {% comment %}
   Use safe filters for content manipulation
@@ -714,6 +814,7 @@ docker-compose exec jekyll htmlproofer _site --check-html
 ## 🚀 Performance Optimization
 
 ### Minimize Liquid Complexity
+
 ```liquid
 {% comment %}
   Assign values once, reuse variables
@@ -731,41 +832,51 @@ docker-compose exec jekyll htmlproofer _site --check-html
 ```
 
 ### Lazy Loading
+
 ```liquid
 {% comment %}
   Use lazy loading for images
 {% endcomment %}
-<img src="{{ include.image | relative_url }}" 
+<img src="{{ include.image | relative_url }}"
      alt="{{ include.alt }}"
      loading="lazy"
      decoding="async">
 ```
 
 ### Critical CSS Inlining
+
 ```html
 <!-- Critical styles for above-the-fold content -->
 <style>
-  .hero-section { 
-    min-height: 50vh; 
-    display: flex; 
-    align-items: center; 
+  .hero-section {
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
   }
-  .navbar { 
-    background-color: #fff; 
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+  .navbar {
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 </style>
 
 <!-- Defer non-critical CSS -->
-<link rel="preload" href="/assets/css/non-critical.css" as="style" 
-      onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="/assets/css/non-critical.css"></noscript>
+<link
+  rel="preload"
+  href="/assets/css/non-critical.css"
+  as="style"
+  onload="this.onload=null;this.rel='stylesheet'"
+/>
+<noscript
+  ><link rel="stylesheet" href="/assets/css/non-critical.css"
+/></noscript>
 ```
 
 ## 📖 Documentation Requirements
 
 ### Component Documentation
+
 Every include file must have:
+
 - Clear description of purpose
 - List of all parameters (required and optional)
 - Usage examples
@@ -774,23 +885,24 @@ Every include file must have:
 - AI development notes
 
 ### Usage Examples
+
 ```liquid
 {% comment %}
   Include usage examples in file header
-  
+
   Basic usage:
-    {% include card-post.html 
-       title=post.title 
-       description=post.excerpt 
+    {% include card-post.html
+       title=post.title
+       description=post.excerpt
        url=post.url %}
-  
+
   With optional parameters:
-    {% include card-post.html 
-       title=post.title 
-       description=post.excerpt 
-       url=post.url 
-       image=post.preview 
-       date=post.date 
+    {% include card-post.html
+       title=post.title
+       description=post.excerpt
+       url=post.url
+       image=post.preview
+       date=post.date
        class="shadow-sm" %}
 {% endcomment %}
 ```
@@ -798,12 +910,14 @@ Every include file must have:
 ## 🔄 Maintenance
 
 ### Version Compatibility
+
 - Ensure Bootstrap 5 compatibility
 - Test with latest Jekyll version
 - Document any breaking changes
 - Maintain backward compatibility when possible
 
 ### Code Review Checklist
+
 - [ ] Follows naming conventions
 - [ ] Has proper documentation
 - [ ] Uses Bootstrap components correctly
@@ -815,4 +929,4 @@ Every include file must have:
 
 ---
 
-*These guidelines ensure consistent, accessible, and maintainable include components across the Zer0-Mistakes Jekyll theme. Always test includes thoroughly with various parameter combinations.*
+_These guidelines ensure consistent, accessible, and maintainable include components across the Zer0-Mistakes Jekyll theme. Always test includes thoroughly with various parameter combinations._

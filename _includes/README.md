@@ -1,4 +1,4 @@
-# _includes Directory Organization
+# \_includes Directory Organization
 
 This directory has been reorganized for better maintainability and clarity. Files are now grouped by functionality into subdirectories.
 

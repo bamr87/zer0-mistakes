@@ -5,11 +5,11 @@ layout: collection
 permalink: /docs/
 description: Public documentation library for technology guides, tutorials, and general reference materials
 categories:
-    - docs
-    - public-documentation
-    - library
+  - docs
+  - public-documentation
+  - library
 sidebar:
-    nav: docs
+  nav: docs
 toc_sticky: true
 date: 2021-09-24T19:32:44.876Z
 lastmod: 2025-11-17T03:43:52.499Z
@@ -38,18 +38,21 @@ This documentation targets **end-users, theme adopters, and general developers**
 ### 🌟 Current Documentation Collections
 
 **🔧 Jekyll Documentation**
+
 - Comprehensive Jekyll guides sourced from official documentation
-- Theme-specific customization instructions  
+- Theme-specific customization instructions
 - Performance optimization and security best practices
 - Plugin integration and advanced configuration
 
 **🎨 Bootstrap & Frontend**
+
 - Component usage guides and examples
 - Responsive design patterns and utilities
 - Custom CSS integration and theme customization
 - Accessibility and cross-browser compatibility
 
 **⚙️ General Technology Stack**
+
 - Ruby and gem management
 - Liquid templating language reference
 - Docker and containerization guides
@@ -101,7 +104,7 @@ The documentation processing pipeline:
 Currently available technology documentation:
 
 - **[Jekyll](jekyll/)** - Static site generator guides and advanced configuration
-- **[Ruby](ruby/)** - Ruby language and gem management 
+- **[Ruby](ruby/)** - Ruby language and gem management
 - **[Liquid](liquid/)** - Templating language reference and examples
 - **[Bootstrap](bootstrap/)** - Component library and responsive design patterns
 - **[Docker](docker/)** - Containerization and development environment setup
@@ -136,18 +139,19 @@ git sparse-checkout set docs/_docs
 
 This documentation library is part of a larger documentation ecosystem:
 
-| Location | Purpose | Audience | Format |
-|----------|---------|-----------|---------|
-| `pages/_docs/` *(This Library)* | **Public documentation & tutorials** | End Users & General Developers | Markdown |
-| [`/docs/`](../../docs/) | **Technical repository documentation** | Contributors & Maintainers | MDX |
-| [`/.github/instructions/`](../../.github/instructions/) | **AI-assisted development guidance** | GitHub Copilot & Contributors | Markdown |
-| `/README.md` | **Project overview & quick start** | All Users | Markdown |
+| Location                                                | Purpose                                | Audience                       | Format   |
+| ------------------------------------------------------- | -------------------------------------- | ------------------------------ | -------- |
+| `pages/_docs/` _(This Library)_                         | **Public documentation & tutorials**   | End Users & General Developers | Markdown |
+| [`/docs/`](../../docs/)                                 | **Technical repository documentation** | Contributors & Maintainers     | MDX      |
+| [`/.github/instructions/`](../../.github/instructions/) | **AI-assisted development guidance**   | GitHub Copilot & Contributors  | Markdown |
+| `/README.md`                                            | **Project overview & quick start**     | All Users                      | Markdown |
 
 ---
 
 **🎯 Quick Navigation**
+
 - [📚 Browse Jekyll Documentation](jekyll/) - Learn Jekyll fundamentals and advanced techniques
-- [🎨 Explore Bootstrap Components](bootstrap/) - Master responsive design and UI components  
+- [🎨 Explore Bootstrap Components](bootstrap/) - Master responsive design and UI components
 - [⚙️ Technical Implementation](../../docs/) - Repository architecture and development guides
 - [🏠 Return to Homepage](../../) - Main Zer0-Mistakes theme showcase
 

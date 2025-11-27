@@ -262,13 +262,13 @@ graph TD
 
 ## Browser Compatibility
 
-| Browser | Status | Notes |
-|---------|--------|-------|
-| Chrome | ✅ | Full support |
-| Firefox | ✅ | Full support |
-| Safari | ✅ | Full support |
-| Edge | ✅ | Full support |
-| Mobile | ✅ | Responsive design |
+| Browser | Status | Notes             |
+| ------- | ------ | ----------------- |
+| Chrome  | ✅     | Full support      |
+| Firefox | ✅     | Full support      |
+| Safari  | ✅     | Full support      |
+| Edge    | ✅     | Full support      |
+| Mobile  | ✅     | Responsive design |
 
 ---
 

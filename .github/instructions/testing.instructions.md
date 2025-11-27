@@ -25,12 +25,12 @@ test/
 
 ### Test Categories
 
-| Test Suite | Purpose | Command |
-|------------|---------|---------|
-| Core Tests | Jekyll build, theme functionality | `./test/test_core.sh` |
-| Deployment Tests | Docker, GitHub Pages compatibility | `./test/test_deployment.sh` |
-| Quality Tests | Linting, validation, best practices | `./test/test_quality.sh` |
-| Full Suite | Run all tests with reporting | `./test/test_runner.sh` |
+| Test Suite       | Purpose                             | Command                     |
+| ---------------- | ----------------------------------- | --------------------------- |
+| Core Tests       | Jekyll build, theme functionality   | `./test/test_core.sh`       |
+| Deployment Tests | Docker, GitHub Pages compatibility  | `./test/test_deployment.sh` |
+| Quality Tests    | Linting, validation, best practices | `./test/test_quality.sh`    |
+| Full Suite       | Run all tests with reporting        | `./test/test_runner.sh`     |
 
 ## 🔧 Running Tests
 
@@ -71,6 +71,7 @@ docker-compose exec jekyll ./test/test_core.sh
 ### CI/CD Testing
 
 Tests are automatically executed in GitHub Actions:
+
 - On pull requests
 - On pushes to main branch
 - Scheduled nightly runs
@@ -130,10 +131,10 @@ log_test_skip() {
 run_test() {
     local test_name="$1"
     local test_command="$2"
-    
+
     ((TESTS_RUN++))
     log_test_start "$test_name"
-    
+
     if eval "$test_command"; then
         log_test_pass "$test_name"
         return 0
@@ -154,7 +155,7 @@ print_test_summary() {
     echo "❌ Failed: $TESTS_FAILED"
     echo "⏭️  Skipped: $TESTS_SKIPPED"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    
+
     if [ $TESTS_FAILED -eq 0 ]; then
         echo "🎉 All tests passed!"
         return 0
@@ -175,11 +176,11 @@ trap cleanup EXIT
 # Main test execution
 main() {
     echo "🚀 Starting test suite: $(basename "$0")"
-    
+
     # Run tests
     run_test "Test Name 1" "test_function_1"
     run_test "Test Name 2" "test_function_2"
-    
+
     # Print summary and exit
     print_test_summary
 }
@@ -267,10 +268,10 @@ assert_equals() {
 # Test Jekyll build
 test_jekyll_build() {
     log_test_start "Jekyll Build"
-    
+
     # Clean build directory
     rm -rf _site
-    
+
     # Build site
     if bundle exec jekyll build; then
         assert_dir_exists "_site"
@@ -286,10 +287,10 @@ test_jekyll_build() {
 # Test theme configuration
 test_theme_config() {
     log_test_start "Theme Configuration"
-    
+
     # Check _config.yml
     assert_file_exists "_config.yml"
-    
+
     # Validate YAML syntax
     if ruby -ryaml -e "YAML.load_file('_config.yml')" 2>/dev/null; then
         log_test_pass "Theme Configuration"
@@ -303,9 +304,9 @@ test_theme_config() {
 # Test layouts
 test_layouts() {
     log_test_start "Layout Files"
-    
+
     local layouts=("default" "journals" "home" "root")
-    
+
     for layout in "${layouts[@]}"; do
         if assert_file_exists "_layouts/${layout}.html"; then
             echo "✓ Layout found: $layout"
@@ -314,7 +315,7 @@ test_layouts() {
             return 1
         fi
     done
-    
+
     log_test_pass "Layout Files"
     return 0
 }
@@ -326,7 +327,7 @@ test_layouts() {
 # Test Docker build
 test_docker_build() {
     log_test_start "Docker Build"
-    
+
     if docker-compose build; then
         log_test_pass "Docker Build"
         return 0
@@ -339,13 +340,13 @@ test_docker_build() {
 # Test Docker run
 test_docker_run() {
     log_test_start "Docker Run"
-    
+
     # Start container
     docker-compose up -d
-    
+
     # Wait for Jekyll to start
     sleep 10
-    
+
     # Check if site is accessible
     if curl -f http://localhost:4000 >/dev/null 2>&1; then
         log_test_pass "Docker Run"
@@ -361,7 +362,7 @@ test_docker_run() {
 # Test GitHub Pages compatibility
 test_github_pages() {
     log_test_start "GitHub Pages Compatibility"
-    
+
     # Check for remote_theme configuration
     if grep -q "remote_theme:" _config.yml; then
         log_test_pass "GitHub Pages Compatibility"
@@ -379,7 +380,7 @@ test_github_pages() {
 # Test Markdown linting
 test_markdown_lint() {
     log_test_start "Markdown Linting"
-    
+
     if command -v markdownlint >/dev/null 2>&1; then
         if markdownlint "**/*.md" --ignore node_modules; then
             log_test_pass "Markdown Linting"
@@ -397,7 +398,7 @@ test_markdown_lint() {
 # Test YAML linting
 test_yaml_lint() {
     log_test_start "YAML Linting"
-    
+
     if command -v yamllint >/dev/null 2>&1; then
         if yamllint -c .github/config/.yamllint.yml .; then
             log_test_pass "YAML Linting"
@@ -415,10 +416,10 @@ test_yaml_lint() {
 # Test HTML validation
 test_html_validation() {
     log_test_start "HTML Validation"
-    
+
     # Build site first
     bundle exec jekyll build
-    
+
     if command -v htmlproofer >/dev/null 2>&1; then
         if htmlproofer _site --check-html --disable-external; then
             log_test_pass "HTML Validation"
@@ -437,24 +438,28 @@ test_html_validation() {
 ## 🎯 Best Practices
 
 ### Test Isolation
+
 - Each test should be independent
 - Clean up after tests
 - Don't rely on test execution order
 - Use temporary directories for test artifacts
 
 ### Test Coverage
+
 - Test all critical paths
 - Test error conditions
 - Test edge cases
 - Test platform-specific behavior
 
 ### Test Performance
+
 - Keep tests fast (< 5 seconds each)
 - Use mocking when appropriate
 - Parallelize independent tests
 - Cache test dependencies
 
 ### Test Maintenance
+
 - Keep tests simple and readable
 - Update tests with code changes
 - Remove obsolete tests
@@ -468,7 +473,7 @@ test_html_validation() {
 # Generate JSON test report
 generate_test_report() {
     local report_file="$TEST_RESULTS_DIR/test_report_$(date +%Y%m%d_%H%M%S).json"
-    
+
     cat > "$report_file" << EOF
 {
   "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
@@ -482,7 +487,7 @@ generate_test_report() {
   ]
 }
 EOF
-    
+
     echo "📄 Test report saved: $report_file"
 }
 ```
@@ -509,6 +514,7 @@ test:
 ## 🔒 Security Testing
 
 ### Security Checks
+
 - Scan for hardcoded credentials
 - Check for XSS vulnerabilities
 - Validate input sanitization
@@ -520,7 +526,7 @@ test:
 ```bash
 test_no_secrets() {
     log_test_start "No Hardcoded Secrets"
-    
+
     # Scan for potential secrets
     if grep -r "password\|secret\|api_key" --include="*.yml" --include="*.rb" . | grep -v "test/"; then
         log_test_fail "Found potential secrets in code"
@@ -535,7 +541,9 @@ test_no_secrets() {
 ## 📖 Test Documentation
 
 ### Test README.md
+
 Each test file should include:
+
 - Purpose and scope
 - Prerequisites
 - Usage instructions
@@ -543,6 +551,7 @@ Each test file should include:
 - Known issues
 
 ### Inline Documentation
+
 - Document test setup
 - Explain complex assertions
 - Note platform-specific behavior
@@ -551,12 +560,14 @@ Each test file should include:
 ## 🚀 Continuous Improvement
 
 ### Test Metrics
+
 - Track test execution time
 - Monitor test stability
 - Measure code coverage
 - Analyze failure patterns
 
 ### Test Evolution
+
 - Add tests for new features
 - Update tests for bug fixes
 - Refactor tests for clarity
@@ -564,4 +575,4 @@ Each test file should include:
 
 ---
 
-*These testing guidelines ensure reliable, maintainable, and comprehensive test coverage for the Zer0-Mistakes Jekyll theme. Always write tests for new features and bug fixes.*
+_These testing guidelines ensure reliable, maintainable, and comprehensive test coverage for the Zer0-Mistakes Jekyll theme. Always write tests for new features and bug fixes._

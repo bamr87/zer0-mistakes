@@ -1,4 +1,3 @@
-
 ## Getting Started
 
 These instructions will help you understand the data files in this directory.
@@ -17,7 +16,7 @@ Please read [CONTRIBUTING.md](url) for details on our code of conduct, and the p
 
 ## Authors
 
-* **Your Name** - *Initial work* - [YourGithub](url)
+- **Your Name** - _Initial work_ - [YourGithub](url)
 
 See also the list of [contributors](url) who participated in this project.
 
@@ -27,6 +26,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](url) file 
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+- Hat tip to anyone whose code was used
+- Inspiration
+- etc

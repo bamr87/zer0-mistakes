@@ -23,10 +23,13 @@ Statistics are generated using Jekyll's data processing capabilities and updated
 ## Understanding the Metrics
 
 ### Overview Cards
+
 The overview section displays key metrics at a glance, including total posts, categories, tags, and data freshness status.
 
 ### Detailed Analysis
+
 The detailed sections break down categories and tags by usage frequency, helping identify the most popular topics and content themes.
 
 ### Quick Facts
+
 The metrics section provides calculated insights like average tags per post and content distribution patterns.

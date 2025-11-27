@@ -10,6 +10,7 @@ description: "Jekyll layout development guidelines for Zer0-Mistakes theme"
 Zer0-Mistakes uses a hierarchical layout system built on Jekyll's powerful templating engine. Layouts follow a modular, inheritance-based pattern that ensures consistency while allowing flexibility.
 
 ### Layout Hierarchy
+
 ```
 root.html (base)
 ├── default.html (main content)
@@ -21,39 +22,36 @@ root.html (base)
 ### Key Layout Files
 
 #### `root.html` - Base Layout
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  {% include head.html %}
-</head>
-<body>
-  {% include header.html %}
-  <main>{{ content }}</main>
-  {% include footer.html %}
-  {% include js-cdn.html %}
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {% include head.html %}
+  </head>
+  <body>
+    {% include header.html %}
+    <main>{{ content }}</main>
+    {% include footer.html %} {% include js-cdn.html %}
+  </body>
 </html>
 ```
 
 #### `default.html` - Main Content Layout
+
 ```html
 ---
 layout: root
 ---
+
 <div class="container-xxl bd-gutter mt-3 my-md-4 bd-layout">
-  <aside class="bd-sidebar">
-    {% include sidebar-left.html %}
-  </aside>
+  <aside class="bd-sidebar">{% include sidebar-left.html %}</aside>
 
   <main class="bd-main order-1">
-    {% include intro.html %}
-    {% include sidebar-right.html %}
-    <div id="main-content" class="bd-content ps-lg-2">
-      {{ content }}
-    </div>
+    {% include intro.html %} {% include sidebar-right.html %}
+    <div id="main-content" class="bd-content ps-lg-2">{{ content }}</div>
   </main>
 </div>
 ```
@@ -61,9 +59,10 @@ layout: root
 ## 🏗️ Layout Development Patterns
 
 ### Frontmatter Standards
+
 ```yaml
 ---
-layout: default  # Parent layout to inherit from
+layout: default # Parent layout to inherit from
 title: "Page Title"
 description: "SEO description"
 permalink: /custom-url/
@@ -72,6 +71,7 @@ classes: "custom-css-classes"
 ```
 
 ### Responsive Design Implementation
+
 ```html
 <!-- Mobile-first responsive container -->
 <div class="container-fluid">
@@ -83,31 +83,34 @@ classes: "custom-css-classes"
 
     <!-- Main content - full width on mobile, adjusted on lg+ -->
     <div class="col-12 col-lg-9">
-      <article class="bd-article">
-        {{ content }}
-      </article>
+      <article class="bd-article">{{ content }}</article>
     </div>
   </div>
 </div>
 ```
 
 ### SEO Optimization Patterns
+
 ```html
 <!-- Comprehensive meta tags -->
-<meta name="description" content="{{ page.description | default: site.description }}">
-<meta name="keywords" content="{{ page.tags | join: ', ' }}">
-<meta name="author" content="{{ page.author | default: site.author }}">
+<meta
+  name="description"
+  content="{{ page.description | default: site.description }}"
+/>
+<meta name="keywords" content="{{ page.tags | join: ', ' }}" />
+<meta name="author" content="{{ page.author | default: site.author }}" />
 
 <!-- Open Graph for social sharing -->
-<meta property="og:title" content="{{ page.title }}">
-<meta property="og:description" content="{{ page.description }}">
-<meta property="og:image" content="{{ page.preview_image | absolute_url }}">
-<meta property="og:url" content="{{ page.url | absolute_url }}">
+<meta property="og:title" content="{{ page.title }}" />
+<meta property="og:description" content="{{ page.description }}" />
+<meta property="og:image" content="{{ page.preview_image | absolute_url }}" />
+<meta property="og:url" content="{{ page.url | absolute_url }}" />
 ```
 
 ## 🔧 Liquid Templating Best Practices
 
 ### Conditional Content Rendering
+
 ```liquid
 {% if page.layout == 'journals' %}
   <!-- Blog post specific elements -->
@@ -123,6 +126,7 @@ classes: "custom-css-classes"
 ```
 
 ### Loop Patterns for Collections
+
 ```liquid
 {% for post in site.posts limit: 5 %}
   <article class="post-preview">
@@ -134,6 +138,7 @@ classes: "custom-css-classes"
 ```
 
 ### Include Parameter Passing
+
 ```liquid
 <!-- In layout -->
 {% include sidebar-left.html nav_class="bd-links" %}
@@ -147,6 +152,7 @@ classes: "custom-css-classes"
 ## � **Bootstrap 5 Layout Patterns**
 
 ### Bootstrap Grid System Integration
+
 ```html
 <!-- Responsive container with Bootstrap grid -->
 <div class="container-fluid">
@@ -158,21 +164,25 @@ classes: "custom-css-classes"
 
     <!-- Main content - full width on mobile, adjusted on lg+ -->
     <div class="col-12 col-lg-9">
-      <article class="bd-article">
-        {{ content }}
-      </article>
+      <article class="bd-article">{{ content }}</article>
     </div>
   </div>
 </div>
 ```
 
 ### Bootstrap Component Usage in Layouts
+
 ```html
 <!-- Bootstrap navbar integration -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
     <a class="navbar-brand" href="/">Zer0-Mistakes</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
@@ -186,16 +196,16 @@ classes: "custom-css-classes"
   <div class="card-header">
     <h5 class="card-title">{{ page.title }}</h5>
   </div>
-  <div class="card-body">
-    {{ content }}
-  </div>
+  <div class="card-body">{{ content }}</div>
 </div>
 ```
 
 ### Bootstrap Utility Classes
+
 ```html
 <!-- Spacing utilities -->
-<div class="mt-3 mb-4"> <!-- margin-top: 1rem, margin-bottom: 1.5rem -->
+<div class="mt-3 mb-4">
+  <!-- margin-top: 1rem, margin-bottom: 1.5rem -->
   <p class="mb-0">Content with no bottom margin</p>
 </div>
 
@@ -210,6 +220,7 @@ classes: "custom-css-classes"
 ```
 
 ### Bootstrap JavaScript Components
+
 ```html
 <!-- Bootstrap modal integration -->
 <div class="modal fade" id="exampleModal" tabindex="-1">
@@ -217,19 +228,23 @@ classes: "custom-css-classes"
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Modal Title</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+        ></button>
       </div>
-      <div class="modal-body">
-        Modal content here...
-      </div>
+      <div class="modal-body">Modal content here...</div>
     </div>
   </div>
 </div>
 
 <!-- Bootstrap tooltip initialization -->
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  document.addEventListener("DOMContentLoaded", function () {
+    var tooltipTriggerList = [].slice.call(
+      document.querySelectorAll('[data-bs-toggle="tooltip"]'),
+    );
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
       return new bootstrap.Tooltip(tooltipTriggerEl);
     });
@@ -240,19 +255,26 @@ classes: "custom-css-classes"
 ## 📱 **Bootstrap 5 Responsive Design Standards**
 
 ### Bootstrap Breakpoint System
+
 ```scss
 // Bootstrap 5 breakpoints (mobile-first)
 $grid-breakpoints: (
-  xs: 0,    // Extra small devices (portrait phones, < 576px)
-  sm: 576px, // Small devices (landscape phones, ≥ 576px)
-  md: 768px, // Medium devices (tablets, ≥ 768px)
-  lg: 992px, // Large devices (desktops, ≥ 992px)
-  xl: 1200px, // Extra large devices (large desktops, ≥ 1200px)
-  xxl: 1400px // Extra extra large devices (larger desktops, ≥ 1400px)
+  xs: 0,
+  // Extra small devices (portrait phones, < 576px)
+  sm: 576px,
+  // Small devices (landscape phones, ≥ 576px)
+  md: 768px,
+  // Medium devices (tablets, ≥ 768px)
+  lg: 992px,
+  // Large devices (desktops, ≥ 992px)
+  xl: 1200px,
+  // Extra large devices (large desktops, ≥ 1200px)
+  xxl: 1400px, // Extra extra large devices (larger desktops, ≥ 1400px)
 );
 ```
 
 ### Responsive Layout Patterns
+
 ```html
 <!-- Responsive sidebar pattern -->
 <aside class="bd-sidebar col-lg-3 d-none d-lg-block">
@@ -268,7 +290,12 @@ $grid-breakpoints: (
 
 <!-- Responsive navigation -->
 <nav class="navbar navbar-expand-lg">
-  <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+  <button
+    class="navbar-toggler d-lg-none"
+    type="button"
+    data-bs-toggle="collapse"
+    data-bs-target="#navbarNav"
+  >
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
@@ -278,6 +305,7 @@ $grid-breakpoints: (
 ```
 
 ### Bootstrap Responsive Utilities
+
 ```html
 <!-- Display utilities -->
 <div class="d-block d-sm-none">Visible only on xs</div>
@@ -292,6 +320,7 @@ $grid-breakpoints: (
 ```
 
 ### Bootstrap Navigation Patterns
+
 ```html
 <!-- Bootstrap navbar with responsive collapse -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
@@ -302,7 +331,12 @@ $grid-breakpoints: (
     </a>
 
     <!-- Mobile toggle button -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
 
@@ -313,19 +347,29 @@ $grid-breakpoints: (
           <a class="nav-link active" href="/">Home</a>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            data-bs-toggle="dropdown"
+          >
             Documentation
           </a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="/docs/">Getting Started</a></li>
-            <li><a class="dropdown-item" href="/docs/components/">Components</a></li>
+            <li>
+              <a class="dropdown-item" href="/docs/components/">Components</a>
+            </li>
           </ul>
         </li>
       </ul>
 
       <!-- Search form -->
       <form class="d-flex">
-        <input class="form-control me-2" type="search" placeholder="Search...">
+        <input
+          class="form-control me-2"
+          type="search"
+          placeholder="Search..."
+        />
         <button class="btn btn-outline-primary" type="submit">Search</button>
       </form>
     </div>
@@ -345,22 +389,37 @@ $grid-breakpoints: (
 ## ♿ **Bootstrap 5 Accessibility Guidelines**
 
 ### Bootstrap ARIA Integration
+
 ```html
 <!-- Bootstrap components with built-in ARIA support -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+<button
+  type="button"
+  class="btn btn-primary"
+  data-bs-toggle="modal"
+  data-bs-target="#exampleModal"
+>
   Launch Modal
 </button>
 
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div
+  class="modal fade"
+  id="exampleModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Modal Title</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
       </div>
-      <div class="modal-body">
-        Modal content with proper ARIA labeling
-      </div>
+      <div class="modal-body">Modal content with proper ARIA labeling</div>
     </div>
   </div>
 </div>
@@ -368,23 +427,28 @@ $grid-breakpoints: (
 <!-- Accessible form controls -->
 <div class="mb-3">
   <label for="emailInput" class="form-label">Email address</label>
-  <input type="email" class="form-control" id="emailInput" aria-describedby="emailHelp">
-  <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+  <input
+    type="email"
+    class="form-control"
+    id="emailInput"
+    aria-describedby="emailHelp"
+  />
+  <div id="emailHelp" class="form-text">
+    We'll never share your email with anyone else.
+  </div>
 </div>
 ```
 
 ### Bootstrap Focus Management
+
 ```html
 <!-- Bootstrap focus indicators -->
-.btn:focus, .form-control:focus {
-  outline: 2px solid #0d6efd;
-  outline-offset: 2px;
-}
-
-/* Bootstrap provides focus styles by default */
+.btn:focus, .form-control:focus { outline: 2px solid #0d6efd; outline-offset:
+2px; } /* Bootstrap provides focus styles by default */
 ```
 
 ### Screen Reader Support
+
 ```html
 <!-- Bootstrap screen reader utilities -->
 <p class="text-muted">
@@ -393,7 +457,9 @@ $grid-breakpoints: (
 </p>
 
 <!-- Skip links for keyboard navigation -->
-<a href="#main-content" class="visually-hidden-focusable">Skip to main content</a>
+<a href="#main-content" class="visually-hidden-focusable"
+  >Skip to main content</a
+>
 
 <main id="main-content">
   <!-- Main content -->
@@ -403,38 +469,45 @@ $grid-breakpoints: (
 ## 🔍 SEO Optimization Techniques
 
 ### Structured Data Implementation
+
 ```html
 <!-- JSON-LD for articles -->
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": "{{ page.title }}",
-  "description": "{{ page.description }}",
-  "author": {
-    "@type": "Person",
-    "name": "{{ page.author }}"
-  },
-  "datePublished": "{{ page.date | date: '%Y-%m-%d' }}",
-  "dateModified": "{{ page.lastmod | date: '%Y-%m-%d' }}"
-}
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "{{ page.title }}",
+    "description": "{{ page.description }}",
+    "author": {
+      "@type": "Person",
+      "name": "{{ page.author }}"
+    },
+    "datePublished": "{{ page.date | date: '%Y-%m-%d' }}",
+    "dateModified": "{{ page.lastmod | date: '%Y-%m-%d' }}"
+  }
 </script>
 ```
 
 ### Performance Optimization
+
 ```html
 <!-- Lazy loading for images -->
-<img src="{{ page.hero_image }}" alt="{{ page.title }}"
-     loading="lazy" decoding="async">
+<img
+  src="{{ page.hero_image }}"
+  alt="{{ page.title }}"
+  loading="lazy"
+  decoding="async"
+/>
 
 <!-- Preload critical resources -->
-<link rel="preload" href="/assets/css/main.css" as="style">
-<link rel="dns-prefetch" href="//fonts.googleapis.com">
+<link rel="preload" href="/assets/css/main.css" as="style" />
+<link rel="dns-prefetch" href="//fonts.googleapis.com" />
 ```
 
 ## 🧪 Testing and Validation
 
 ### Bootstrap-Specific Testing Checklist
+
 - [ ] **Grid responsiveness**: Test layouts across all Bootstrap breakpoints (xs, sm, md, lg, xl, xxl)
 - [ ] **Component functionality**: Verify Bootstrap JS components (modals, tooltips, dropdowns) work correctly
 - [ ] **Form validation**: Test Bootstrap form validation states and feedback
@@ -445,6 +518,7 @@ $grid-breakpoints: (
 - [ ] **Dark mode**: Test Bootstrap's color mode features if implemented
 
 ### Bootstrap Development Workflow
+
 ```bash
 # Test responsive design across breakpoints
 docker-compose up
@@ -465,6 +539,7 @@ curl -I http://localhost:4000 | grep "bootstrap"
 ## 🚀 Advanced Layout Patterns
 
 ### Conditional Layout Loading
+
 ```liquid
 {% case page.layout %}
   {% when 'journals' %}
@@ -477,6 +552,7 @@ curl -I http://localhost:4000 | grep "bootstrap"
 ```
 
 ### Dynamic Content Sections
+
 ```liquid
 {% for section in page.sections %}
   <section class="content-section {{ section.class }}">
@@ -489,6 +565,7 @@ curl -I http://localhost:4000 | grep "bootstrap"
 ```
 
 ### Theme Customization Hooks
+
 ```html
 <!-- Custom CSS classes for theme overrides -->
 <div class="layout-wrapper {{ page.layout_class | default: 'default-theme' }}">
@@ -497,9 +574,9 @@ curl -I http://localhost:4000 | grep "bootstrap"
 
 <!-- JavaScript hooks for interactivity -->
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener("DOMContentLoaded", function () {
     // Layout-specific JavaScript
-    if (document.body.classList.contains('journals-layout')) {
+    if (document.body.classList.contains("journals-layout")) {
       initializeJournalFeatures();
     }
   });
@@ -509,6 +586,7 @@ curl -I http://localhost:4000 | grep "bootstrap"
 ## 📊 Performance Monitoring
 
 ### Bootstrap Performance Metrics
+
 - **CSS bundle size**: Bootstrap 5.3.3 minified CSS (~22KB gzipped)
 - **JavaScript bundle size**: Bootstrap bundle (~25KB gzipped)
 - **Icon font loading**: Bootstrap Icons (~50KB for complete icon set)
@@ -516,13 +594,26 @@ curl -I http://localhost:4000 | grep "bootstrap"
 - **JavaScript execution**: Monitor Bootstrap JS initialization performance
 
 ### Bootstrap Optimization Techniques
+
 ```html
 <!-- Load Bootstrap CSS with preload for critical rendering -->
-<link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"></noscript>
+<link
+  rel="preload"
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+  as="style"
+  onload="this.onload=null;this.rel='stylesheet'"
+/>
+<noscript
+  ><link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+/></noscript>
 
 <!-- Defer Bootstrap JS to prevent render blocking -->
-<script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script
+  defer
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
 
 <!-- Use Bootstrap utility classes instead of custom CSS when possible -->
 <div class="d-flex justify-content-center align-items-center min-vh-100">
@@ -532,11 +623,15 @@ curl -I http://localhost:4000 | grep "bootstrap"
 <!-- Optimize Bootstrap component initialization -->
 <script>
   // Initialize only needed Bootstrap components
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener("DOMContentLoaded", function () {
     // Initialize tooltips only if they exist
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipTriggerList = document.querySelectorAll(
+      '[data-bs-toggle="tooltip"]',
+    );
     if (tooltipTriggerList.length > 0) {
-      tooltipTriggerList.forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+      tooltipTriggerList.forEach(
+        (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl),
+      );
     }
   });
 </script>
@@ -545,12 +640,14 @@ curl -I http://localhost:4000 | grep "bootstrap"
 ## 🔄 Evolution and Maintenance
 
 ### Layout Version Management
+
 - **Semantic versioning** for layout changes
 - **Deprecation warnings** for layout updates
 - **Migration guides** for breaking changes
 - **Backward compatibility** maintenance
 
 ### Continuous Improvement
+
 - **User feedback integration** for layout enhancements
 - **A/B testing** for layout variations
 - **Performance monitoring** and optimization
@@ -558,4 +655,4 @@ curl -I http://localhost:4000 | grep "bootstrap"
 
 ---
 
-*These guidelines ensure consistent, accessible, and high-performance layouts across the Zer0-Mistakes theme. Always test layout changes across different devices and browsers before deployment.*
+_These guidelines ensure consistent, accessible, and high-performance layouts across the Zer0-Mistakes theme. Always test layout changes across different devices and browsers before deployment._

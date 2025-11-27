@@ -55,14 +55,14 @@ When using GitHub Copilot:
 
 ### Available Instruction Files
 
-| File | Applies To | Purpose |
-|------|------------|---------|
-| `copilot-instructions.md` | All files | Project overview, commands, architecture |
-| `layouts.instructions.md` | `_layouts/**` | Jekyll layout development patterns |
-| `includes.instructions.md` | `_includes/**` | Reusable component development |
-| `scripts.instructions.md` | `scripts/**` | Shell script automation standards |
-| `testing.instructions.md` | `test/**` | Testing guidelines and assertions |
-| `version-control.instructions.md` | All files | Git workflow and release management |
+| File                              | Applies To     | Purpose                                  |
+| --------------------------------- | -------------- | ---------------------------------------- |
+| `copilot-instructions.md`         | All files      | Project overview, commands, architecture |
+| `layouts.instructions.md`         | `_layouts/**`  | Jekyll layout development patterns       |
+| `includes.instructions.md`        | `_includes/**` | Reusable component development           |
+| `scripts.instructions.md`         | `scripts/**`   | Shell script automation standards        |
+| `testing.instructions.md`         | `test/**`      | Testing guidelines and assertions        |
+| `version-control.instructions.md` | All files      | Git workflow and release management      |
 
 For detailed information, see [`.github/instructions/README.md`](.github/instructions/README.md).
 
@@ -78,11 +78,13 @@ Before contributing, ensure your development environment has been properly confi
 - **Text Editor with Intelligence** - VS Code recommended (with Jekyll extensions that are smarter than most humans)
 
 **For Release Automation (Required for Publishing):**
+
 - **Bash 4.0+** - For modern release automation (macOS users: `brew install bash`)
 - **RubyGems Account** - For publishing gem releases
 - **GitHub CLI** - For automated GitHub releases
 
 **For Those Who Enjoy Living Dangerously:**
+
 - **Ruby 3.0+** and **Bundler** - If you want to run Jekyll locally and pretend it's 2015
 - **Node.js 16+** - For frontend tooling that changes faster than JavaScript frameworks
 
@@ -151,7 +153,7 @@ Our Docker configuration gracefully handles the ARM vs x86 eternal struggle:
 ```yaml
 services:
   jekyll:
-    platform: linux/amd64  # Universal compatibility (like USB-C, but it actually works)
+    platform: linux/amd64 # Universal compatibility (like USB-C, but it actually works)
 ```
 
 ### Local Ruby Development (Alternative)
@@ -188,9 +190,10 @@ git checkout -b docs/improve-readme
 ### Making Changes (The Art of Meaningful Commits)
 
 1. **Create atomic commits** with messages so clear, future you will thank present you:
+
    ```bash
    git commit -m "feat: add responsive navigation component that actually responds
-   
+
    - Implement Bootstrap 5 navbar with collapse functionality (it collapses gracefully)
    - Add mobile-first responsive breakpoints (mobile users are people too)
    - Include accessibility ARIA labels (screen readers deserve love)
@@ -227,22 +230,27 @@ make build                   # Build validation (does it actually work?)
 1. **Ensure tests pass**: All automated validators must approve your contribution (they're very picky)
 2. **Update documentation**: Because undocumented code is like a joke without a punchline
 3. **Create a PR so detailed it could win a technical writing award**:
+
    ```markdown
    ## Description
+
    What you built and why it's awesome (sell us on your brilliance).
-   
+
    ## Type of Change (Choose Your Adventure)
+
    - [ ] Bug fix (saving the world, one fix at a time)
    - [ ] New feature (expanding our digital universe)
    - [ ] Breaking change (please handle with care)
    - [ ] Documentation update (the real MVP)
-   
+
    ## Testing (Proof of Life)
+
    - [ ] Tests pass locally (your machine likes it)
    - [ ] Added tests for new functionality (future-proofing)
    - [ ] Manual testing completed (human validation)
-   
+
    ## Screenshots (If Your Code Has a Face)
+
    Visual evidence that your changes don't break the internet.
    ```
 
@@ -255,6 +263,7 @@ make build                   # Build validation (does it actually work?)
 ### Jekyll Theme Architecture (Our Digital Blueprint)
 
 #### Layout Hierarchy (The Template Taxonomy)
+
 ```
 _layouts/
 ├── root.html           # Base HTML structure (the foundation of all existence)
@@ -265,6 +274,7 @@ _layouts/
 ```
 
 #### Include Components (The Modular Building Blocks)
+
 ```
 _includes/
 ├── head.html          # HTML head with SEO magic
@@ -279,20 +289,26 @@ _includes/
 We use **Bootstrap 5.3.3** because it's more reliable than most developers and comes with fewer existential crises:
 
 #### CDN Loading Pattern (Streaming Styles from the Cloud)
+
 ```html
 <!-- In _includes/head.html (where all good stylesheets go to live) -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
-      rel="stylesheet" 
-      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
-      crossorigin="anonymous">
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+  integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+  crossorigin="anonymous"
+/>
 
 <!-- In _includes/js-cdn.html (where JavaScript magic happens) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
-        crossorigin="anonymous"></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+  crossorigin="anonymous"
+></script>
 ```
 
 #### Responsive Design Patterns
+
 ```html
 <!-- Mobile-first responsive grid -->
 <div class="container-fluid">
@@ -308,6 +324,7 @@ We use **Bootstrap 5.3.3** because it's more reliable than most developers and c
 ```
 
 #### Component Usage Guidelines (The Bootstrap Commandments)
+
 - **Use Bootstrap classes** instead of reinventing the CSS wheel (we're not masochists)
 - **Follow mobile-first approach** because smartphones have conquered the world
 - **Implement accessibility** with proper ARIA labels (screen readers have feelings too)
@@ -348,6 +365,7 @@ estimated_reading_time: "X minutes"
 ### Liquid Templating Best Practices
 
 #### Conditional Rendering
+
 ```liquid
 {% if page.layout == 'journals' %}
   <div class="post-meta">
@@ -359,6 +377,7 @@ estimated_reading_time: "X minutes"
 ```
 
 #### Safe Variable Access
+
 ```liquid
 {{ page.title | default: "Default Title" }}
 {{ page.description | truncate: 160 }}
@@ -366,6 +385,7 @@ estimated_reading_time: "X minutes"
 ```
 
 #### Performance Optimization
+
 ```liquid
 {% assign posts = site.posts | where: "categories", "jekyll" | limit: 5 %}
 {% for post in posts %}
@@ -376,6 +396,7 @@ estimated_reading_time: "X minutes"
 ### CSS/SCSS Guidelines
 
 #### File Organization
+
 ```
 _sass/
 ├── _variables.scss     # Custom variables
@@ -386,6 +407,7 @@ _sass/
 ```
 
 #### Custom CSS Standards
+
 ```scss
 // Use Bootstrap variables when possible
 $primary-color: var(--bs-primary);
@@ -395,7 +417,7 @@ $secondary-color: var(--bs-secondary);
 .theme-navigation {
   &__item {
     padding: 0.5rem 1rem;
-    
+
     &--active {
       background-color: $primary-color;
     }
@@ -411,13 +433,16 @@ $secondary-color: var(--bs-secondary);
 ### JavaScript Standards
 
 #### Bootstrap Component Integration
+
 ```javascript
 // Initialize Bootstrap components
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener("DOMContentLoaded", function () {
   // Tooltips
-  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-  const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => 
-    new bootstrap.Tooltip(tooltipTriggerEl)
+  const tooltipTriggerList = document.querySelectorAll(
+    '[data-bs-toggle="tooltip"]',
+  );
+  const tooltipList = [...tooltipTriggerList].map(
+    (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl),
   );
 
   // Theme-specific functionality
@@ -432,6 +457,7 @@ document.addEventListener('DOMContentLoaded', function() {
 Our testing approach is more thorough than airport security and twice as effective:
 
 #### 1. **Automated Tests** (27 different ways to verify excellence)
+
 ```bash
 # Run all tests (the full validation suite)
 make test
@@ -441,6 +467,7 @@ make test-verbose
 ```
 
 **Test Coverage Matrix:**
+
 - Package.json syntax validation (because JSON is picky)
 - Gemspec syntax and Jekyll dependency checks (Ruby gem compatibility)
 - Theme structure integrity (layouts, includes, assets in their proper places)
@@ -452,6 +479,7 @@ make test-verbose
 #### 2. **Manual Testing Checklist** (The Human Touch)
 
 **Responsive Design Testing:**
+
 - [ ] Mobile compatibility (< 576px - the pocket-sized experience)
 - [ ] Tablet optimization (768px - 991px - the in-between zone)
 - [ ] Desktop perfection (> 992px - the big screen treatment)
@@ -459,18 +487,21 @@ make test-verbose
 - [ ] Sidebar behavior across breakpoints (responsive sidebars are tricky creatures)
 
 **Cross-Browser Compatibility Matrix:**
+
 - [ ] Chrome (the Google overlord's choice)
 - [ ] Firefox (the privacy-conscious alternative)
 - [ ] Safari (the Apple ecosystem preference)
 - [ ] Edge (Microsoft's redemption browser)
 
 **Accessibility Validation:**
+
 - [ ] Screen reader compatibility (assistive technology friendliness)
 - [ ] Keyboard navigation (mouse-free browsing support)
 - [ ] Color contrast ratios (readability for everyone)
 - [ ] ARIA label implementation (semantic markup that makes sense)
 
 #### 3. **Performance Testing**
+
 ```bash
 # Build performance
 time make build
@@ -487,7 +518,7 @@ When adding features, include corresponding tests:
 # Add test cases to scripts/test.sh
 test_new_feature() {
     echo "[TEST] Running: Test new feature functionality"
-    
+
     # Test implementation
     if [[ condition ]]; then
         echo "✓ Test new feature functionality"
@@ -517,6 +548,7 @@ docker-compose exec jekyll jekyll doctor
 ### Documentation Types
 
 #### 1. **Code Documentation**
+
 Use clear, comprehensive comments:
 
 ```html
@@ -543,6 +575,7 @@ AI Development Notes:
 ```
 
 #### 2. **README Updates**
+
 Update relevant documentation:
 
 - **README.md**: Main project documentation
@@ -550,20 +583,24 @@ Update relevant documentation:
 - **Component-specific docs**: For new features
 
 #### 3. **Changelog Maintenance**
+
 Follow [Keep a Changelog](https://keepachangelog.com/) format:
 
 ```markdown
 ## [Unreleased]
 
 ### Added
+
 - New responsive navigation component with Bootstrap 5
 - Mobile-first design patterns for all layouts
 
 ### Changed
+
 - Updated Jekyll dependency to latest stable version
 - Improved Docker container performance
 
 ### Fixed
+
 - Fixed responsive sidebar behavior on tablet devices
 ```
 
@@ -590,6 +627,7 @@ We follow [Semantic Versioning](https://semver.org/):
 Our modernized release system uses the `scripts/release` command with modular libraries for version management, changelog generation, and gem publishing.
 
 **System Requirements:**
+
 - Bash 4.0+ (macOS: install via `brew install bash`)
 - Clean git working directory
 - Valid RubyGems credentials
@@ -605,6 +643,7 @@ scripts/release patch --skip-publish --no-github-release
 ### Release Workflow
 
 #### Using New Release Command (Recommended)
+
 ```bash
 # Full release workflow with Bash 5
 /opt/homebrew/bin/bash scripts/release patch
@@ -622,11 +661,12 @@ scripts/release patch --skip-publish --no-github-release
 ```
 
 #### Using VS Code Tasks (Easiest)
+
 1. Press `Cmd+Shift+P` (macOS) or `Ctrl+Shift+P` (Windows/Linux)
 2. Type "Tasks: Run Task"
 3. Select from available tasks:
    - 🚀 Release: Patch
-   - 🚀 Release: Minor  
+   - 🚀 Release: Minor
    - 🚀 Release: Major
    - 🔍 Release: Dry Run Preview
    - ⚡ Release: Quick Build & Test
@@ -647,6 +687,7 @@ The `scripts/release` command orchestrates a complete release workflow:
 10. **Pushes changes** (tags and commits)
 
 **Available Options:**
+
 - `--dry-run`: Preview without making changes
 - `--skip-tests`: Skip test execution
 - `--skip-publish`: Skip RubyGems publishing
@@ -655,6 +696,7 @@ The `scripts/release` command orchestrates a complete release workflow:
 - `--help`: Show detailed usage
 
 **Example: Manual Testing Before Release**
+
 ```bash
 # 1. Preview the release
 /opt/homebrew/bin/bash scripts/release patch --dry-run
@@ -680,12 +722,14 @@ Our GitHub Actions create comprehensive releases with:
 ### Code Contributions (The Building Blocks of Awesomeness)
 
 #### Theme Development (Making Things Beautiful and Functional)
+
 - **Layout improvements**: Enhance existing templates or architect new ones (digital interior design)
 - **Component development**: Build reusable Jekyll includes (modular programming poetry)
 - **Responsive design**: Perfect the mobile/tablet experience (pocket-sized perfection)
 - **Performance optimization**: Make things faster than a caffeinated developer (speed is life)
 
 #### Infrastructure (The Plumbing That Makes Everything Work)
+
 - **Docker improvements**: Enhance our containerization magic (portable development environments)
 - **Build automation**: Improve our Makefile orchestration (one command to rule them all)
 - **CI/CD enhancements**: Optimize our GitHub Actions workflows (automation that actually works)
@@ -724,6 +768,7 @@ Our GitHub Actions create comprehensive releases with:
 ### Maintainer Response Times
 
 We strive to respond to:
+
 - **Critical bugs**: Within 24 hours
 - **General issues**: Within 3-5 business days
 - **Pull requests**: Within 1 week
@@ -743,6 +788,7 @@ Contributors are recognized through:
 ### Common Development Issues
 
 #### Docker Problems
+
 ```bash
 # Container won't start
 docker-compose down && docker-compose up --build
@@ -755,6 +801,7 @@ docker-compose up -p 4001:4000 jekyll
 ```
 
 #### Jekyll Build Issues
+
 ```bash
 # Clear Jekyll cache
 docker-compose exec jekyll bundle exec jekyll clean
@@ -766,6 +813,7 @@ docker-compose up --build
 ```
 
 #### Git Workflow Issues
+
 ```bash
 # Sync with upstream
 git fetch upstream
@@ -837,6 +885,6 @@ Thank you for considering contributing to Zer0-Mistakes! Your contributions help
 
 ---
 
-*Built with ❤️, ☕, and an unhealthy amount of GitHub commits by the Zer0-Mistakes community*
+_Built with ❤️, ☕, and an unhealthy amount of GitHub commits by the Zer0-Mistakes community_
 
 **🚀 Ready to contribute?** [Fork the repository](https://github.com/bamr87/zer0-mistakes/fork) and join our digital collective! Remember: in this community, there are no bugs, only undocumented features waiting to be discovered.

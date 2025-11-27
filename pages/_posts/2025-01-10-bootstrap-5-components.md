@@ -39,7 +39,11 @@ The Bootstrap navbar is perfect for Jekyll sites:
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container">
     <a class="navbar-brand" href="/">{{ site.title }}</a>
-    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#nav">
+    <button
+      class="navbar-toggler"
+      data-bs-toggle="collapse"
+      data-bs-target="#nav"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="nav">
@@ -55,7 +59,7 @@ Cards are versatile containers for blog posts:
 
 ```html
 <div class="card h-100">
-  <img src="{{ post.preview }}" class="card-img-top">
+  <img src="{{ post.preview }}" class="card-img-top" />
   <div class="card-body">
     <h5 class="card-title">{{ post.title }}</h5>
     <p class="card-text">{{ post.excerpt }}</p>

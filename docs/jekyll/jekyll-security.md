@@ -58,6 +58,6 @@ Submit this file, wait for a while to let Netlify deploy the change. Once this f
 
 ## 7. Reference
 
-* [How to Configure Better Web Site Security with Cloudflare and Netlify](https://developer.okta.com/blog/2019/04/11/site-security-cloudflare-netlify)
-* [12 Online Free Tools to Scan Website Security Vulnerabilities & Malware](https://geekflare.com/online-scan-website-security-vulnerabilities/)
-* [The netlify.toml File](https://www.netlify.com/docs/netlify-toml-reference/)
+- [How to Configure Better Web Site Security with Cloudflare and Netlify](https://developer.okta.com/blog/2019/04/11/site-security-cloudflare-netlify)
+- [12 Online Free Tools to Scan Website Security Vulnerabilities & Malware](https://geekflare.com/online-scan-website-security-vulnerabilities/)
+- [The netlify.toml File](https://www.netlify.com/docs/netlify-toml-reference/)

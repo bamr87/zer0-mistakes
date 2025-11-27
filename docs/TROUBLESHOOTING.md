@@ -6,43 +6,46 @@
 
 ## Quick Reference
 
-| Issue | Solution | Section |
-|-------|----------|---------|
-| Bash version error | Install Bash 4.0+ | [Bash Version Issues](#bash-version-issues) |
-| Working directory not clean | Commit or stash changes | [Git Issues](#git-issues) |
-| RubyGems authentication failed | Configure credentials | [RubyGems Issues](#rubygems-issues) |
-| Changelog generation fails | Check commit format | [Changelog Issues](#changelog-issues) |
-| Docker container errors | Rebuild containers | [Docker Issues](#docker-issues) |
+| Issue                          | Solution                | Section                                     |
+| ------------------------------ | ----------------------- | ------------------------------------------- |
+| Bash version error             | Install Bash 4.0+       | [Bash Version Issues](#bash-version-issues) |
+| Working directory not clean    | Commit or stash changes | [Git Issues](#git-issues)                   |
+| RubyGems authentication failed | Configure credentials   | [RubyGems Issues](#rubygems-issues)         |
+| Changelog generation fails     | Check commit format     | [Changelog Issues](#changelog-issues)       |
+| Docker container errors        | Rebuild containers      | [Docker Issues](#docker-issues)             |
 
 ## System Requirements
 
 ### Verified Platforms
 
 ✅ **macOS**
+
 - macOS 12.0+ (Monterey)
 - Apple Silicon (M1/M2/M3) and Intel
 - Bash 4.0+ installed via Homebrew
 
 ✅ **Linux**
+
 - Ubuntu 20.04+
 - Debian 11+
 - Fedora 35+
 - Bash 4.0+ (usually pre-installed)
 
 ✅ **Windows**
+
 - WSL2 (Windows Subsystem for Linux)
 - Ubuntu 20.04+ or Debian 11+
 - Bash 4.0+ in WSL environment
 
 ### Required Software Versions
 
-| Software | Minimum Version | Recommended | Notes |
-|----------|----------------|-------------|-------|
-| Bash | 4.0 | 5.3+ | Required for associative arrays |
-| Docker | 20.10 | 24.0+ | For containerized development |
-| Git | 2.30 | 2.43+ | For version control |
-| Ruby | 3.0 | 3.2+ | For gem building (optional with Docker) |
-| Bundler | 2.0 | 2.5+ | For dependency management |
+| Software | Minimum Version | Recommended | Notes                                   |
+| -------- | --------------- | ----------- | --------------------------------------- |
+| Bash     | 4.0             | 5.3+        | Required for associative arrays         |
+| Docker   | 20.10           | 24.0+       | For containerized development           |
+| Git      | 2.30            | 2.43+       | For version control                     |
+| Ruby     | 3.0             | 3.2+        | For gem building (optional with Docker) |
+| Bundler  | 2.0             | 2.5+        | For dependency management               |
 
 ## Common Issues
 
@@ -51,6 +54,7 @@
 #### Problem: "This script requires Bash 4.0 or higher"
 
 **Error Message:**
+
 ```bash
 [ERROR] This script requires Bash 4.0 or higher (current: 3.2.57)
 [INFO] On macOS, install via: brew install bash
@@ -62,6 +66,7 @@
 **Solutions:**
 
 **Option 1: Install Modern Bash (Recommended)**
+
 ```bash
 # Install Bash 5 via Homebrew
 brew install bash
@@ -75,6 +80,7 @@ brew install bash
 ```
 
 **Option 2: Add to PATH**
+
 ```bash
 # Add to ~/.zshrc or ~/.bashrc
 export PATH="/opt/homebrew/bin:$PATH"
@@ -90,6 +96,7 @@ bash --version
 ```
 
 **Option 3: Create Alias**
+
 ```bash
 # Add to ~/.zshrc
 alias release='/opt/homebrew/bin/bash scripts/release'
@@ -103,6 +110,7 @@ build --dry-run
 #### Problem: "declare: -A: invalid option"
 
 **Error Message:**
+
 ```bash
 /Users/bamr87/github/zer0-mistakes/scripts/lib/changelog.sh: line 115: declare: -A: invalid option
 declare: usage: declare [-afFirtx] [-p] [name[=value] ...]
@@ -117,6 +125,7 @@ declare: usage: declare [-afFirtx] [-p] [name[=value] ...]
 #### Problem: "Working directory is not clean"
 
 **Error Message:**
+
 ```bash
 [ERROR] Working directory is not clean. Please commit or stash changes first.
 ```
@@ -126,6 +135,7 @@ declare: usage: declare [-afFirtx] [-p] [name[=value] ...]
 **Solutions:**
 
 **Option 1: Commit Changes**
+
 ```bash
 # Review changes
 git status
@@ -139,6 +149,7 @@ git commit -m "chore: prepare for release"
 ```
 
 **Option 2: Stash Changes**
+
 ```bash
 # Stash uncommitted changes
 git stash push -u -m "WIP: temp stash for release"
@@ -151,6 +162,7 @@ git stash pop
 ```
 
 **Option 3: Use Dry-Run Mode**
+
 ```bash
 # If just testing, use dry-run (still requires clean directory)
 git stash
@@ -161,6 +173,7 @@ git stash pop
 #### Problem: "No commits found since last tag"
 
 **Error Message:**
+
 ```bash
 [WARN] No commits found since v0.6.0
 ```
@@ -170,12 +183,14 @@ git stash pop
 **Solutions:**
 
 **If this is expected:**
+
 ```bash
 # This is just a warning - release will continue
 # But changelog will be empty
 ```
 
 **If you expect commits:**
+
 ```bash
 # Check commit history
 git log --oneline v0.6.0..HEAD
@@ -189,6 +204,7 @@ git log --pretty=format:"%s" v0.6.0..HEAD
 #### Problem: "RubyGems API key not configured"
 
 **Error Message:**
+
 ```bash
 [ERROR] RubyGems credentials not configured
 ```
@@ -198,6 +214,7 @@ git log --pretty=format:"%s" v0.6.0..HEAD
 **Solutions:**
 
 **Option 1: Configure API Key**
+
 ```bash
 # Get API key from https://rubygems.org/profile/edit
 # Then configure:
@@ -213,6 +230,7 @@ chmod 600 ~/.gem/credentials
 ```
 
 **Option 2: Skip Publishing (for testing)**
+
 ```bash
 # Build and test without publishing
 /opt/homebrew/bin/bash scripts/release patch --skip-publish --no-github-release
@@ -244,6 +262,7 @@ gem owner jekyll-theme-zer0
 **Cause:** Commits don't follow conventional commit format.
 
 **Conventional Commit Format:**
+
 ```
 <type>(<scope>): <subject>
 
@@ -253,6 +272,7 @@ gem owner jekyll-theme-zer0
 ```
 
 **Valid Types:**
+
 - `feat:` - New features → **Added** section
 - `fix:` - Bug fixes → **Fixed** section
 - `docs:` - Documentation → **Changed** section
@@ -266,6 +286,7 @@ gem owner jekyll-theme-zer0
 **Solutions:**
 
 **Check recent commits:**
+
 ```bash
 # View commits since last tag
 git log --oneline v0.6.0..HEAD
@@ -275,12 +296,14 @@ git log --pretty=format:"%s" v0.6.0..HEAD
 ```
 
 **Amend last commit:**
+
 ```bash
 # If last commit needs fixing
 git commit --amend -m "feat: add new feature description"
 ```
 
 **Rewrite commit history (advanced):**
+
 ```bash
 # Interactive rebase to fix multiple commits
 git rebase -i v0.6.0
@@ -294,6 +317,7 @@ git rebase -i v0.6.0
 **Cause:** The changelog generator filters these out automatically, but you might see them in raw git log.
 
 **Expected Behavior:** Commits matching these patterns are automatically excluded:
+
 - `chore: bump version`
 - `chore: release version`
 - `chore: update changelog`
@@ -307,6 +331,7 @@ git rebase -i v0.6.0
 #### Problem: "Docker daemon not running"
 
 **Error Message:**
+
 ```bash
 Cannot connect to the Docker daemon
 ```
@@ -328,6 +353,7 @@ docker ps
 #### Problem: "Port 4000 already in use"
 
 **Error Message:**
+
 ```bash
 Error: bind: address already in use
 ```
@@ -335,6 +361,7 @@ Error: bind: address already in use
 **Solutions:**
 
 **Option 1: Stop conflicting service**
+
 ```bash
 # Find what's using port 4000
 lsof -i :4000
@@ -347,6 +374,7 @@ docker-compose up
 ```
 
 **Option 2: Use different port**
+
 ```bash
 # Edit docker-compose.yml
 ports:
@@ -363,11 +391,13 @@ PORT=4001 docker-compose up
 **Solution:**
 
 Our `docker-compose.yml` already includes:
+
 ```yaml
 platform: linux/amd64
 ```
 
 If still having issues:
+
 ```bash
 # Rebuild with platform flag
 docker-compose down
@@ -380,6 +410,7 @@ docker-compose up
 #### Problem: "Tests fail but release continues"
 
 **Error Message:**
+
 ```bash
 [ERROR] Some tests failed
 [INFO] Use --skip-tests to bypass this check
@@ -390,6 +421,7 @@ docker-compose up
 **Solutions:**
 
 **Option 1: Fix tests (recommended)**
+
 ```bash
 # Run tests to see failures
 ./test/test_runner.sh --verbose
@@ -403,6 +435,7 @@ docker-compose up
 ```
 
 **Option 2: Skip tests (not recommended)**
+
 ```bash
 # Only for emergency hotfixes
 /opt/homebrew/bin/bash scripts/release patch --skip-tests
@@ -470,6 +503,7 @@ git pull origin main .vscode/tasks.json
 **Cause:** Large commit history or complex repository.
 
 **Expected Time:**
+
 - Small repos (<100 commits): <5 seconds
 - Medium repos (100-1000 commits): 5-30 seconds
 - Large repos (>1000 commits): 30-120 seconds
@@ -477,6 +511,7 @@ git pull origin main .vscode/tasks.json
 **Solutions:**
 
 **If unreasonably slow:**
+
 ```bash
 # Check commit count since last tag
 git rev-list --count v0.6.0..HEAD
@@ -491,6 +526,7 @@ git clone --depth 50 <repo-url>
 ### Problem: "Release process takes too long"
 
 **Typical Times:**
+
 1. Validation: 2-5 seconds
 2. Version calculation: <1 second
 3. Changelog generation: 5-30 seconds
@@ -505,6 +541,7 @@ git clone --depth 50 <repo-url>
 **Total Expected Time:** 2-5 minutes
 
 **If significantly slower:**
+
 ```bash
 # Run with timing info
 time /opt/homebrew/bin/bash scripts/release patch --dry-run
@@ -559,30 +596,37 @@ docker-compose config
 
 Include in your issue:
 
-```markdown
+````markdown
 ## Environment
+
 - OS: macOS 14.5 (Sonoma)
 - Bash version: 5.3.3
 - Docker version: 24.0.6
 - Ruby version: 3.2.2
 
 ## Steps to Reproduce
+
 1. Run command: /opt/homebrew/bin/bash scripts/release patch
 2. See error at step 3 (changelog generation)
 
 ## Expected Behavior
+
 Should generate changelog with recent commits
 
 ## Actual Behavior
+
 Error: declare: -A: invalid option
 
 ## Additional Context
+
 ```bash
 $ git log --oneline v0.6.0..HEAD
 32755cd refactor: implement modular release automation
 b7ad237 Update README.md for version 0.6.0
 ```
-```
+````
+
+````
 
 ## Advanced Topics
 
@@ -595,7 +639,7 @@ If you need custom commit categorization, modify `scripts/lib/changelog.sh`:
 # Add custom patterns:
 elif echo "$subject" | grep -qiE "^(breaking|major):"; then
     echo "breaking"
-```
+````
 
 ### Debugging Script Execution
 
@@ -632,6 +676,7 @@ For GitHub Actions or other CI systems:
 ## Changelog
 
 ### 2025-11-25
+
 - Initial troubleshooting guide created
 - Documented Bash version requirements
 - Added common error solutions

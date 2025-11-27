@@ -150,7 +150,7 @@ Each layout file now includes:
 ```html
 <!-- Explain complex logic or conditional statements -->
 {% if condition %}
-    <!-- Why this condition exists and what it affects -->
+<!-- Why this condition exists and what it affects -->
 {% endif %}
 ```
 
@@ -202,5 +202,5 @@ Each layout file now includes:
 
 ---
 
-*These layouts follow the Zer0-Mistakes theme standards for maintainable,  
-documented, and responsive Jekyll templates.*
+_These layouts follow the Zer0-Mistakes theme standards for maintainable,  
+documented, and responsive Jekyll templates._

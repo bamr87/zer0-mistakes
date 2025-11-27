@@ -5,14 +5,17 @@ This directory contains automation scripts for managing the `jekyll-theme-zer0` 
 ## Scripts Overview
 
 ### 🖼️ `generate-preview-images.sh` (Feature: ZER0-003)
+
 AI-powered preview image generator for Jekyll posts and content.
 
 **Usage:**
+
 ```bash
 ./scripts/generate-preview-images.sh [options]
 ```
 
 **Examples:**
+
 ```bash
 ./scripts/generate-preview-images.sh --list-missing    # List files missing previews
 ./scripts/generate-preview-images.sh --dry-run         # Preview without changes
@@ -23,6 +26,7 @@ AI-powered preview image generator for Jekyll posts and content.
 
 **Configuration:**
 Settings in `_config.yml` under `preview_images` section:
+
 ```yaml
 preview_images:
   enabled: true
@@ -36,9 +40,11 @@ preview_images:
 **See:** [Preview Image Generator Documentation](/docs/features/preview-image-generator.md)
 
 ### 📦 `install-preview-generator.sh`
+
 Installer for the AI Preview Image Generator feature.
 
 **Usage:**
+
 ```bash
 # Remote installation (for other Jekyll sites)
 curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/scripts/install-preview-generator.sh | bash
@@ -48,21 +54,25 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/scripts/i
 ```
 
 **Options:**
+
 - `-d, --dry-run` - Preview what would be installed
 - `-f, --force` - Overwrite existing files
 - `-p, --provider PROVIDER` - Set default AI provider
-- `--no-config` - Skip _config.yml modification
+- `--no-config` - Skip \_config.yml modification
 - `--no-tasks` - Skip VS Code tasks installation
 
 ### 🚀 `setup.sh`
+
 Sets up the development environment for gem development.
 
 **Usage:**
+
 ```bash
 ./scripts/setup.sh
 ```
 
 **What it does:**
+
 - Checks system requirements (Ruby, Bundler, jq, Git)
 - Installs dependencies
 - Makes scripts executable
@@ -72,14 +82,17 @@ Sets up the development environment for gem development.
 - Updates .gitignore for gem development
 
 ### 📈 `version.sh`
+
 Manages semantic versioning of the gem.
 
 **Usage:**
+
 ```bash
 ./scripts/version.sh [patch|minor|major] [--dry-run]
 ```
 
 **Examples:**
+
 ```bash
 ./scripts/version.sh patch           # 0.1.8 → 0.1.9
 ./scripts/version.sh minor           # 0.1.8 → 0.2.0
@@ -88,6 +101,7 @@ Manages semantic versioning of the gem.
 ```
 
 **What it does:**
+
 - Validates working directory is clean
 - Updates version in `package.json`
 - Updates `CHANGELOG.md` if it exists
@@ -95,14 +109,17 @@ Manages semantic versioning of the gem.
 - Creates git tag (`v{version}`)
 
 ### 🔨 `build.sh`
+
 Builds and optionally publishes the gem.
 
 **Usage:**
+
 ```bash
 ./scripts/build.sh [--publish] [--dry-run]
 ```
 
 **Examples:**
+
 ```bash
 ./scripts/build.sh                    # Build gem only
 ./scripts/build.sh --publish          # Build and publish to RubyGems
@@ -110,20 +127,24 @@ Builds and optionally publishes the gem.
 ```
 
 **What it does:**
+
 - Validates dependencies and gemspec
 - Builds the gem file
 - Shows gem contents for verification
 - Optionally publishes to RubyGems (with confirmation)
 
 ### 🧪 `test.sh`
+
 Runs comprehensive tests and validations.
 
 **Usage:**
+
 ```bash
 ./scripts/test.sh [--verbose]
 ```
 
 **What it tests:**
+
 - `package.json` syntax and version format
 - Gemspec syntax and validity
 - Required files existence
@@ -136,6 +157,7 @@ Runs comprehensive tests and validations.
 ## Development Workflow
 
 ### Initial Setup
+
 ```bash
 # Clone the repository
 git clone https://github.com/bamr87/zer0-mistakes.git
@@ -146,6 +168,7 @@ cd zer0-mistakes
 ```
 
 ### Making Changes
+
 ```bash
 # Make your changes to the theme files
 
@@ -163,21 +186,25 @@ cd zer0-mistakes
 ```
 
 ### Automated Workflows
+
 The project includes GitHub Actions workflows for automation:
 
 #### CI Workflow (`.github/workflows/ci.yml`)
+
 - Triggers on: Push to main/develop, Pull Requests
 - Tests on multiple Ruby versions (2.7, 3.0, 3.1, 3.2)
 - Runs linting and security scans
 - Validates gem building
 
 #### Release Workflow (`.github/workflows/gem-release.yml`)
+
 - Triggers on: Git tags (`v*`), Manual dispatch
 - Builds and tests the gem
 - Publishes to RubyGems (production environment)
 - Creates GitHub release with gem attached
 
 #### Version Bump Workflow (`.github/workflows/version-bump.yml`)
+
 - Manual trigger with version type selection
 - Runs tests before bumping
 - Creates version bump commit and tag
@@ -186,12 +213,14 @@ The project includes GitHub Actions workflows for automation:
 ## Requirements
 
 ### System Dependencies
+
 - **Ruby**: >= 2.7.0
 - **Bundler**: For dependency management
 - **jq**: For JSON processing
 - **Git**: For version control
 
 ### RubyGems Publishing Setup
+
 To publish gems, you need:
 
 1. **RubyGems account**: Sign up at [rubygems.org](https://rubygems.org)
@@ -199,6 +228,7 @@ To publish gems, you need:
 3. **GitHub secret**: Add `RUBYGEMS_API_KEY` to repository secrets
 
 ### Local Authentication
+
 ```bash
 # Sign in to RubyGems locally
 gem signin
@@ -212,6 +242,7 @@ gem whoami
 The automation system is designed for complete CI/CD integration:
 
 ### Local Development
+
 1. **Setup**: `./scripts/setup.sh`
 2. **Development**: Make changes
 3. **Testing**: `./scripts/test.sh`
@@ -219,6 +250,7 @@ The automation system is designed for complete CI/CD integration:
 5. **Build**: `./scripts/build.sh`
 
 ### Automated Release
+
 1. **Manual trigger**: Version bump workflow
 2. **Automatic testing**: CI workflow validates changes
 3. **Tag creation**: Creates version tag
@@ -230,6 +262,7 @@ The automation system is designed for complete CI/CD integration:
 ### Common Issues
 
 #### "Working directory is not clean"
+
 ```bash
 # Check status
 git status
@@ -240,6 +273,7 @@ git commit -m "Your changes"
 ```
 
 #### "Not authenticated with RubyGems"
+
 ```bash
 # Sign in to RubyGems
 gem signin
@@ -250,6 +284,7 @@ chmod 600 ~/.gem/credentials
 ```
 
 #### "jq command not found"
+
 ```bash
 # macOS
 brew install jq
@@ -259,6 +294,7 @@ sudo apt-get install jq
 ```
 
 #### "Gemspec validation failed"
+
 ```bash
 # Check gemspec syntax
 gem specification jekyll-theme-zer0.gemspec
@@ -272,21 +308,25 @@ gem specification jekyll-theme-zer0.gemspec
 ## Best Practices
 
 ### Version Management
+
 - **Patch**: Bug fixes, small improvements
 - **Minor**: New features, backward compatible
 - **Major**: Breaking changes
 
 ### Testing
+
 - Always run tests before version bumps
 - Use `--dry-run` to preview changes
 - Test builds before publishing
 
 ### Git Workflow
+
 - Keep working directory clean
 - Use descriptive commit messages
 - Tag releases consistently
 
 ### Security
+
 - Never commit API keys
 - Use GitHub secrets for CI/CD
 - Regularly update dependencies
@@ -294,11 +334,13 @@ gem specification jekyll-theme-zer0.gemspec
 ## Monitoring and Maintenance
 
 ### Regular Tasks
+
 - **Weekly**: Run `./scripts/test.sh` to catch issues early
 - **Monthly**: Review and update dependencies
 - **Per release**: Monitor RubyGems downloads and feedback
 
 ### Monitoring Points
+
 - **CI/CD status**: GitHub Actions dashboard
 - **Gem stats**: RubyGems.org gem page
 - **Security**: Dependabot alerts
@@ -307,14 +349,18 @@ gem specification jekyll-theme-zer0.gemspec
 ## Troubleshooting
 
 ### Debug Mode
+
 Most scripts support verbose output:
+
 ```bash
 ./scripts/test.sh --verbose
 ./scripts/build.sh --dry-run
 ```
 
 ### Manual Recovery
+
 If automation fails, you can manually:
+
 ```bash
 # Reset version
 git checkout package.json
@@ -368,27 +414,27 @@ AI-powered preview image generator for Jekyll posts, articles, and quests. Autom
 
 ### Options
 
-| Option | Description |
-|--------|-------------|
-| `-h, --help` | Show help message |
-| `-d, --dry-run` | Preview without making changes |
-| `-v, --verbose` | Enable verbose output |
-| `-f, --file FILE` | Process a specific file only |
-| `-c, --collection NAME` | Process collection (posts, quickstart, docs, all) |
-| `-p, --provider PROVIDER` | AI provider: openai, stability, local |
-| `--output-dir DIR` | Output directory (default: assets/images/previews) |
-| `--force` | Regenerate even if preview exists |
-| `--list-missing` | Only list files with missing previews |
+| Option                    | Description                                        |
+| ------------------------- | -------------------------------------------------- |
+| `-h, --help`              | Show help message                                  |
+| `-d, --dry-run`           | Preview without making changes                     |
+| `-v, --verbose`           | Enable verbose output                              |
+| `-f, --file FILE`         | Process a specific file only                       |
+| `-c, --collection NAME`   | Process collection (posts, quickstart, docs, all)  |
+| `-p, --provider PROVIDER` | AI provider: openai, stability, local              |
+| `--output-dir DIR`        | Output directory (default: assets/images/previews) |
+| `--force`                 | Regenerate even if preview exists                  |
+| `--list-missing`          | Only list files with missing previews              |
 
 ### Environment Variables
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `OPENAI_API_KEY` | For OpenAI | OpenAI API key for DALL-E |
-| `STABILITY_API_KEY` | For Stability | Stability AI API key |
-| `IMAGE_STYLE` | No | Custom style prompt |
-| `IMAGE_SIZE` | No | Image dimensions (default: 1024x1024) |
-| `IMAGE_MODEL` | No | OpenAI model (default: dall-e-3) |
+| Variable            | Required      | Description                           |
+| ------------------- | ------------- | ------------------------------------- |
+| `OPENAI_API_KEY`    | For OpenAI    | OpenAI API key for DALL-E             |
+| `STABILITY_API_KEY` | For Stability | Stability AI API key                  |
+| `IMAGE_STYLE`       | No            | Custom style prompt                   |
+| `IMAGE_SIZE`        | No            | Image dimensions (default: 1024x1024) |
+| `IMAGE_MODEL`       | No            | OpenAI model (default: dall-e-3)      |
 
 ### AI Agent Integration
 
@@ -440,4 +486,3 @@ For issues with the automation system:
 2. **Run locally**: Test scripts on your local machine
 3. **Validate environment**: Ensure all dependencies are installed
 4. **Create issue**: Report bugs with full error output and system info
-

@@ -49,19 +49,20 @@ Execute the complete release pipeline for the zer0-mistakes Jekyll theme. This w
    - For all changes → run comprehensive test suite
 
 2. **Execute Tests**:
+
    ```bash
    # Run comprehensive test suite
    ./test/test_runner.sh
-   
+
    # Run core tests only
    ./test/test_core.sh
-   
+
    # Run tests with verbose output
    ./test/test_runner.sh --verbose
-   
+
    # Build validation with Docker
    docker-compose exec jekyll jekyll build --verbose
-   
+
    # Run Jekyll doctor for config validation
    docker-compose exec jekyll jekyll doctor
    ```
@@ -97,29 +98,36 @@ Execute the complete release pipeline for the zer0-mistakes Jekyll theme. This w
    - **PATCH** (0.0.X): Bug fixes, documentation, minor improvements
 
 2. **Add Changelog Entry** following Keep a Changelog format:
+
    ```markdown
    ## [X.Y.Z] - YYYY-MM-DD
-   
+
    ### Added
+
    - **New Layout: `layout-name.html`** - Description of the layout
    - **New Component: `component.html`** - Description of the component
    - New features or capabilities
-   
+
    ### Changed
+
    - **Enhanced: `filename.html`** - Description of improvements
    - Changes to existing functionality
-   
+
    ### Deprecated
+
    - Features marked for removal
-   
+
    ### Removed
+
    - Removed features or components
-   
+
    ### Fixed
+
    - **Critical: issue description** - Resolution details
    - Bug fixes with context
-   
+
    ### Security
+
    - Security updates
    ```
 
@@ -128,9 +136,10 @@ Execute the complete release pipeline for the zer0-mistakes Jekyll theme. This w
 ## Step 5: Bump Version
 
 1. **Update Version File** (`lib/jekyll-theme-zer0/version.rb`):
+
    ```ruby
    # frozen_string_literal: true
-   
+
    module JekyllThemeZer0
      VERSION = "X.Y.Z"
    end
@@ -142,10 +151,11 @@ Execute the complete release pipeline for the zer0-mistakes Jekyll theme. This w
    - Verify CHANGELOG.md has entry for new version
 
 3. **Alternative: Use Release Script**:
+
    ```bash
    # Preview version bump
    ./scripts/release patch --dry-run
-   
+
    # Or let the script handle version updates
    ./scripts/release patch --skip-publish --no-github-release
    ```
@@ -153,13 +163,14 @@ Execute the complete release pipeline for the zer0-mistakes Jekyll theme. This w
 ## Step 6: Prepare for Publication
 
 1. **Stage All Changes**:
+
    ```bash
    git add -A
    ```
 
 2. **Create Semantic Commit Message**:
    Format: `<type>(<scope>): <description>`
-   
+
    Types:
    - `feat`: New feature (layout, component, functionality)
    - `fix`: Bug fix
@@ -179,6 +190,7 @@ Execute the complete release pipeline for the zer0-mistakes Jekyll theme. This w
    - `scripts`: Automation script changes
 
 3. **Commit Changes**:
+
    ```bash
    git commit -m "<type>(<scope>): <description>
 
@@ -192,27 +204,29 @@ Execute the complete release pipeline for the zer0-mistakes Jekyll theme. This w
    ```
 
 4. **Use Full Release Workflow** (Recommended):
+
    ```bash
    # Full release with gem publishing and GitHub release
    ./scripts/release patch
-   
+
    # Or minor/major releases
    ./scripts/release minor
    ./scripts/release major
    ```
 
 5. **Manual Release Alternative**:
+
    ```bash
    # Build gem
    ./scripts/build
-   
+
    # Create tag
    git tag -a v<X.Y.Z> -m "Release v<X.Y.Z>: <summary>"
-   
+
    # Push changes
    git push origin main
    git push origin --tags
-   
+
    # Publish to RubyGems
    gem push jekyll-theme-zer0-<X.Y.Z>.gem
    ```
@@ -242,34 +256,40 @@ After completing all steps, provide a summary:
 **Date**: YYYY-MM-DD
 
 ### Changes Included
+
 - [ ] New layout: `layout-name.html`
 - [ ] Component update: `component.html`
 - [ ] Bug fix: description
 - [ ] etc.
 
 ### Test Results
+
 - Test Suite: PASSED/FAILED
 - Jekyll Build: SUCCESS/FAILED
 - Jekyll Doctor: OK/WARNINGS
 
 ### Files Modified
-- _layouts/new-layout.html
-- _includes/components/new-component.html
-- _sass/custom.scss
+
+- \_layouts/new-layout.html
+- \_includes/components/new-component.html
+- \_sass/custom.scss
 - assets/js/script.js
 
 ### Documentation Updated
+
 - [ ] README.md
 - [ ] CHANGELOG.md
 - [ ] docs/features/new-feature.md
 - [ ] Component inline documentation
 
 ### Commit Information
+
 - Hash: <commit-hash>
 - Message: <commit-message>
 - Tag: v<version>
 
 ### Publication Status
+
 - RubyGems: https://rubygems.org/gems/jekyll-theme-zer0/versions/<version>
 - GitHub Release: https://github.com/bamr87/zer0-mistakes/releases/tag/v<version>
 ```
@@ -279,17 +299,20 @@ After completing all steps, provide a summary:
 If issues are discovered after publication:
 
 1. **Revert the commit**:
+
    ```bash
    git revert <commit-hash>
    ```
 
 2. **Delete the tag**:
+
    ```bash
    git tag -d v<version>
    git push origin :refs/tags/v<version>
    ```
 
 3. **Yank the gem from RubyGems** (if published):
+
    ```bash
    gem yank jekyll-theme-zer0 -v <version>
    ```

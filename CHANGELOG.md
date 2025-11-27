@@ -145,6 +145,7 @@
 ## [0.6.0] - 2025-11-22
 
 ### Added
+
 - Implement PostHog analytics and cookie consent
 - Add code copy functionality and enhance documentation structure
 - Revise copilot instructions and add comprehensive Jekyll include development guidelines
@@ -154,6 +155,7 @@
 - Enhance CI/CD testing framework with comprehensive documentation and automated workflows
 
 ### Changed
+
 - Ignore .frontmatter directory
 - Update VS Code settings
 - Documentation: Update README with new features and architecture
@@ -162,6 +164,7 @@
 - Update version control instructions and add feature documentation
 
 ### Other
+
 - Revert "Merge pull request #10 from bamr87/copilot/plan-mdx-file-handling"
 - Add Mermaid documentation and test suite, enhance site structure
 - Merge pull request #9 from bamr87/copilot/setup-copilot-instructions
@@ -173,8 +176,6 @@
 - Initial plan
 - Initial plan
 
-
-
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -183,17 +184,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - Comprehensive documentation organization system in `/docs/` directory
 - Standardized templates for feature documentation, release notes, and change tracking
 - Organized directory structure for releases, features, systems, and configuration documentation
 
 ### Changed
+
 - Migrated scattered documentation files to organized structure
 - Improved documentation discoverability and maintenance
 
 ## [0.5.0] - 2025-10-25
 
 ### Added
+
 - **📊 Comprehensive Sitemap Integration**: Unified layout combining collections, statistics, and navigation
   - Real-time site statistics dashboard with 6 key performance indicators
   - Interactive search and filtering across all content types
@@ -208,16 +212,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Comprehensive documentation and implementation guides
 
 ### Changed
+
 - **🏗️ Navigation System**: Consolidated duplicate sitemap entries into unified comprehensive view
 - **🎨 Visual Design**: Updated to modern card-based layout with smooth transitions
 - **📱 Mobile Experience**: Enhanced mobile responsiveness and touch interactions
 
 ### Fixed
+
 - **🐛 Dark Mode Compatibility**: Resolved background color issues in dark theme
 - **🔧 Collection Filtering**: Fixed functionality for dynamic content filtering
 - **🔗 Link Navigation**: Corrected internal link behavior and navigation flow
 
 ### Technical Details
+
 - **Files Added**: `_layouts/sitemap-collection.html`, enhanced navigation data files
 - **Files Modified**: Main navigation configuration, sitemap pages
 - **Performance**: Optimized DOM manipulation and content rendering
@@ -228,6 +235,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.4.0] - 2025-10-10
 
 ### Added
+
 - **📊 Comprehensive Site Statistics Dashboard**: Complete analytics system for content insights
   - Dynamic statistics generation from site content using Ruby script
   - Real-time analytics showing content pieces, categories, tags, and word counts
@@ -249,6 +257,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Smooth scroll navigation and fade-in animations for modern UX
 
 ### Changed
+
 - **📈 Activity Level Intelligence**: Dynamic threshold calculation replacing static values
   - Categories: High activity (≥70% of max), Medium (≥40% of max), Low (remainder)
   - Tags: Frequently used (≥60% of max), Moderately used (≥20% of max), Occasionally used (remainder)
@@ -259,6 +268,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Optimized data processing without complex sorting operations
 
 ### Fixed
+
 - **🐛 Data Display Issues**: Resolved template rendering and data access problems
   - Fixed Liquid template syntax errors causing empty displays
   - Corrected data structure references across all components
@@ -270,6 +280,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.3.0] - 2025-01-27
 
 ### Added
+
 - **🎨 Mermaid Diagram Integration v2.0**: Comprehensive diagramming system
   - Complete diagram support: flowcharts, sequence diagrams, class diagrams, state diagrams, ER diagrams, Gantt charts, pie charts, git graphs, journey diagrams, and mindmaps
   - GitHub Pages compatibility with both local development and deployment
@@ -288,11 +299,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Performance validation and benchmarking
 
 ### Changed
+
 - **📁 File Organization**: 53% reduction from 15 to 7 Mermaid-related files
 - **🏗️ Architecture**: Modular include system with clear responsibilities
 - **📖 Documentation**: Consolidated and improved documentation structure
 
 ### Fixed
+
 - **🔧 Configuration**: Enhanced Jekyll and GitHub Pages compatibility
 - **⚡ Performance**: Optimized loading and rendering speed
 - **🎯 Usability**: Improved setup process and error handling
@@ -302,27 +315,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.1] - 2025-09-30
 
 ### Added
+
 - Enhanced markdown linting configuration
 - Improved Jekyll template support for link checking
 - Better configuration for markdown validation
 
 ### Changed
+
 - Updated markdown-link-check configuration with Jekyll-specific patterns
 - Relaxed line length requirements in markdownlint configuration
 - Added support for more HTML elements in markdown
 
 ### Fixed
+
 - Improved markdown validation for Jekyll projects
 - Better handling of Liquid templates in link validation
 
 ## [0.2.0] - 2025-09-01
 
 ### Changed
+
 - Version bump to 0.2.0 with improvements
 
 ## [0.1.9] - 2025-01-27
 
 ### Added
+
 - **🐳 Docker-First Development Evolution**: Complete transformation to containerized development
   - AI-powered `init_setup.sh` with intelligent environment detection and auto-healing
   - Cross-platform Docker Compose configuration with Apple Silicon optimization
@@ -341,12 +359,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - AI-generated documentation and setup instructions
 
 ### Changed
+
 - **🔧 Installation Philosophy**: Shifted from traditional Ruby/Jekyll setup to Docker-first approach
   - Disabled local theme dependencies to avoid gemspec issues
   - Optimized for containerized development environments
   - Enhanced cross-platform compatibility and consistency
 
 ### Fixed
+
 - **🐛 Theme Dependency Issues**: Resolved Jekyll theme not found errors
   - Commented out problematic Jekyll includes in README.md
   - Disabled `remote_theme` in development configuration
@@ -359,6 +379,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.8] - 2025-01-03
 
 ### Added
+
 - **Comprehensive Gem Automation System**: Unified automation ecosystem
   - Zero-click releases with multi-environment testing
   - Production-ready CI/CD pipeline with GitHub Actions integration
@@ -371,6 +392,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Cleanup Functions**: Automatic cleanup of temporary files after remote installation
 
 ### Changed
+
 - **Feature Documentation Restructure**: Consolidated redundant automation feature entries
 - **Simplified Installation Process**: Updated to use single install command
 - **Azure-Ready Configuration**: Pre-configured directory structure for Azure Static Web Apps
@@ -378,9 +400,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Improved Help System**: Added remote installation examples
 
 ### Removed
+
 - **Redundant Documentation**: Eliminated duplicate automation documentation files
 
 ### Fixed
+
 - **Installation Script Compatibility**: Made compatible with both local and remote execution
 - **Directory Structure**: Optimized for Azure Static Web Apps deployment
 - **Markdown Lint Issues**: Fixed all markdown formatting violations
@@ -388,6 +412,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.7] - 2024-12-01
 
 ### Added
+
 - Bootstrap Jekyll theme for headless GitHub Pages CMS
 - Basic theme structure with layouts, includes, and assets
 - Jekyll compatibility with GitHub Pages
@@ -396,6 +421,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Makefile for simplified command access
 
 ### Changed
+
 - Initial theme implementation and project structure
 
 ---
@@ -403,6 +429,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Documentation
 
 For detailed documentation on features, systems, and configuration:
+
 - **[Documentation Center](docs/README.md)** - Complete documentation overview
 - **[Release Documentation](docs/releases/README.md)** - Historical release information
 - **[Feature Documentation](docs/features/README.md)** - Detailed feature guides

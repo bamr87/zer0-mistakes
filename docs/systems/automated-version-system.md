@@ -5,15 +5,19 @@ This system automatically analyzes commits pushed to the main branch and perform
 ## 🚀 How It Works
 
 ### 1. Trigger Conditions
+
 The automated version bump workflow triggers when:
+
 - Code is pushed to the `main` branch
 - The commit is not from GitHub Actions (prevents infinite loops)
 - Changes are made to significant files (excludes docs, workflows, etc.)
 
 ### 2. Commit Analysis
+
 The system analyzes commit messages and file changes to determine the appropriate version bump:
 
 #### Version Bump Rules
+
 - **MAJOR (X.0.0)**: Breaking changes, major refactors
   - Commit messages: `BREAKING CHANGE:`, `breaking:`, `major:`
   - Significant changes to critical files (Gemfile, gemspec, configs)
@@ -27,7 +31,9 @@ The system analyzes commit messages and file changes to determine the appropriat
   - Small changes, documentation updates, dependency updates
 
 ### 3. Automated Process
+
 When triggered, the system:
+
 1. **Analyzes** all commits since the last version tag
 2. **Determines** the highest appropriate version bump type
 3. **Generates** changelog from commit history using conventional commit patterns
@@ -47,7 +53,7 @@ To ensure proper automatic version bumping, use conventional commit messages:
 git commit -m "feat: add responsive navigation menu"
 git commit -m "feature: implement user authentication"
 
-# Bug fixes (PATCH bump)  
+# Bug fixes (PATCH bump)
 git commit -m "fix: resolve mobile layout issue"
 git commit -m "bug: correct typo in footer"
 
@@ -79,6 +85,7 @@ If you need to manually trigger a version bump or override the automation:
 ## 🔧 Configuration
 
 ### Workflow Configuration
+
 The automation is configured in `.github/workflows/auto-version-bump.yml`:
 
 - **Trigger paths**: Excludes changelog, version files, docs, workflows
@@ -86,6 +93,7 @@ The automation is configured in `.github/workflows/auto-version-bump.yml`:
 - **Error handling**: Comprehensive validation and rollback capabilities
 
 ### Script Configuration
+
 Key scripts and their purposes:
 
 - `scripts/analyze-commits.sh`: Analyzes commit history for version bump determination
@@ -108,6 +116,7 @@ git push origin feature-branch
 ## 📊 Monitoring
 
 The automation system provides:
+
 - **Detailed logs** in GitHub Actions workflow runs
 - **Release notes** automatically generated from commit history
 - **Error notifications** if the automation fails
@@ -164,4 +173,4 @@ Test the automation system locally:
 
 ---
 
-*This automated system follows semantic versioning and conventional commit standards to provide reliable, hands-off release management while maintaining full manual control when needed.*
+_This automated system follows semantic versioning and conventional commit standards to provide reliable, hands-off release management while maintaining full manual control when needed._

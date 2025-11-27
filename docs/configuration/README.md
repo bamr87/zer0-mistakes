@@ -5,29 +5,34 @@ This directory contains comprehensive configuration guides and setup documentati
 ## 🔧 Configuration Guides
 
 ### URL & Hosting Configuration
+
 - [URL Configuration Guide](url-configuration-guide.md) - Complete guide for URL setup across different hosting scenarios
 
 ## 📁 Configuration Categories
 
 ### Environment Setup
+
 - **Development Environment**: Local development setup and configuration
 - **Production Environment**: Production deployment and hosting setup
 - **Docker Configuration**: Container-based development and deployment
 - **CI/CD Configuration**: Automated pipeline setup and configuration
 
 ### Hosting Configuration
+
 - **GitHub Pages**: Standard GitHub Pages hosting setup
 - **Custom Domain**: Custom domain configuration and setup
 - **CDN Configuration**: Content delivery network setup and optimization
 - **SSL/TLS Setup**: Security certificate configuration
 
 ### Theme Configuration
+
 - **Basic Configuration**: Essential theme settings and options
 - **Advanced Configuration**: Advanced customization and optimization
 - **Feature Configuration**: Individual feature setup and customization
 - **Performance Configuration**: Performance optimization settings
 
 ### Integration Configuration
+
 - **Analytics Integration**: Google Analytics and other analytics setup
 - **Social Media**: Social media integration and sharing configuration
 - **Comments System**: Comment system setup and configuration
@@ -36,17 +41,20 @@ This directory contains comprehensive configuration guides and setup documentati
 ## 🛠️ Setup Procedures
 
 ### Initial Setup
+
 1. **Environment Preparation**
+
    ```bash
    # Install dependencies
    bundle install
    npm install
-   
+
    # Setup development environment
    ./init_setup.sh
    ```
 
 2. **Basic Configuration**
+
    ```yaml
    # _config.yml basic setup
    title: "Your Site Title"
@@ -66,6 +74,7 @@ This directory contains comprehensive configuration guides and setup documentati
    ```
 
 ### Development Environment
+
 ```bash
 # Local development with Docker
 docker-compose up -d
@@ -78,6 +87,7 @@ bundle exec jekyll serve --livereload
 ```
 
 ### Production Deployment
+
 ```bash
 # Build for production
 bundle exec jekyll build --config _config.yml
@@ -92,6 +102,7 @@ git push origin main
 ## 🌐 Hosting Scenarios
 
 ### GitHub Pages (Default)
+
 ```yaml
 # Configuration for username.github.io/repository-name
 url: "https://username.github.io"
@@ -100,6 +111,7 @@ custom_domain: ""
 ```
 
 ### Custom Domain
+
 ```yaml
 # Configuration for custom domain
 url: "https://your-domain.com"
@@ -108,6 +120,7 @@ custom_domain: "your-domain.com"
 ```
 
 ### Subdirectory Hosting
+
 ```yaml
 # Configuration for subdirectory hosting
 url: "https://your-domain.com"
@@ -118,6 +131,7 @@ custom_domain: "your-domain.com"
 ## ⚙️ Feature Configuration
 
 ### Statistics Dashboard
+
 ```yaml
 # Enable statistics dashboard
 statistics:
@@ -128,6 +142,7 @@ statistics:
 ```
 
 ### Mermaid Diagrams
+
 ```yaml
 # Enable Mermaid diagrams
 mermaid:
@@ -137,6 +152,7 @@ mermaid:
 ```
 
 ### Search Functionality
+
 ```yaml
 # Enable search
 search:
@@ -146,6 +162,7 @@ search:
 ```
 
 ### Analytics
+
 ```yaml
 # Google Analytics configuration
 google_analytics:
@@ -157,6 +174,7 @@ google_analytics:
 ## 🔧 Customization Options
 
 ### Theme Customization
+
 ```scss
 // Custom CSS variables
 :root {
@@ -168,6 +186,7 @@ google_analytics:
 ```
 
 ### Layout Customization
+
 ```yaml
 # Custom layout settings
 layout_settings:
@@ -178,6 +197,7 @@ layout_settings:
 ```
 
 ### Performance Optimization
+
 ```yaml
 # Performance settings
 performance:
@@ -191,6 +211,7 @@ performance:
 ## 🚀 Advanced Configuration
 
 ### Multi-environment Setup
+
 ```yaml
 # _config.yml (base configuration)
 title: "Site Title"
@@ -208,6 +229,7 @@ minify_html: true
 ```
 
 ### Plugin Configuration
+
 ```yaml
 # Jekyll plugins
 plugins:
@@ -226,6 +248,7 @@ paginate_path: "/page:num/"
 ```
 
 ### Build Configuration
+
 ```yaml
 # Build settings
 markdown: kramdown
@@ -245,6 +268,7 @@ kramdown:
 ### Common Issues
 
 #### URL Configuration Problems
+
 1. **Broken Links in Development**
    - Check `baseurl` setting in `_config_dev.yml`
    - Ensure proper URL construction in templates
@@ -258,6 +282,7 @@ kramdown:
    - Check `custom_domain` setting in configuration
 
 #### Build Configuration Issues
+
 1. **Plugin Errors**
    - Check plugin compatibility and versions
    - Verify plugin configuration syntax
@@ -271,6 +296,7 @@ kramdown:
    - Review Gemfile and package.json
 
 ### Diagnostic Commands
+
 ```bash
 # Check configuration
 bundle exec jekyll doctor
@@ -288,18 +314,21 @@ bundle exec jekyll serve --trace
 ## 📊 Configuration Best Practices
 
 ### Security
+
 - **Sensitive Data**: Use environment variables for sensitive configuration
 - **API Keys**: Store API keys securely and never commit to repository
 - **Permissions**: Configure proper file and directory permissions
 - **SSL/TLS**: Always use HTTPS in production environments
 
 ### Performance
+
 - **Caching**: Configure appropriate caching headers and strategies
 - **Compression**: Enable gzip compression for better performance
 - **CDN**: Use CDN for static assets and improved loading times
 - **Optimization**: Enable asset minification and optimization
 
 ### Maintenance
+
 - **Documentation**: Document all configuration changes and decisions
 - **Version Control**: Track configuration changes in version control
 - **Testing**: Test configuration changes in development environment

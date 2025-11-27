@@ -27,24 +27,28 @@ This tutorial covers the complete integration of Mermaid diagrams in Jekyll site
 **Best for:** Local development, when you control the Jekyll build process.
 
 **Configuration:**
+
 ```yaml
 # _config.yml
 plugins:
   - jekyll-mermaid
 
 mermaid:
-  src: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js'
+  src: "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"
 ```
 
 **Usage:**
-```markdown
+
+````markdown
 ```mermaid
 graph TD
     A[Start] --> B{Decision}
     B -->|Yes| C[Success]
     B -->|No| D[Try Again]
 ```
-```
+````
+
+````
 
 ### 2. Custom Implementation (GitHub Pages Compatible)
 
@@ -58,35 +62,33 @@ plugins:
 
 mermaid:
   src: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js'
-```
+````
 
 **Include File:** `_includes/components/mermaid.html`
+
 ```html
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener("DOMContentLoaded", function () {
     mermaid.initialize({
       startOnLoad: true,
-      theme: 'forest'
+      theme: "forest",
     });
   });
 </script>
 ```
 
 **Head Include:** `_includes/core/head.html`
+
 ```html
-{% if page.mermaid %}
-  {% include components/mermaid.html %}
-{% endif %}
+{% if page.mermaid %} {% include components/mermaid.html %} {% endif %}
 ```
 
 **Usage:**
+
 ```html
 <div class="mermaid">
-graph TD
-    A[Start] --> B{Decision}
-    B -->|Yes| C[Success]
-    B -->|No| D[Try Again]
+  graph TD A[Start] --> B{Decision} B -->|Yes| C[Success] B -->|No| D[Try Again]
 </div>
 ```
 
@@ -118,41 +120,30 @@ mermaid: true
 ### Diagram Examples
 
 #### Flowchart
+
 ```html
 <div class="mermaid">
-graph TD
-    A[Christmas] -->|Get money| B(Go shopping)
-    B --> C{Let me think}
-    C -->|One| D[Laptop]
-    C -->|Two| E[iPhone]
-    C -->|Three| F[Car]
+  graph TD A[Christmas] -->|Get money| B(Go shopping) B --> C{Let me think} C
+  -->|One| D[Laptop] C -->|Two| E[iPhone] C -->|Three| F[Car]
 </div>
 ```
 
 #### Sequence Diagram
+
 ```html
 <div class="mermaid">
-sequenceDiagram
-    Alice->>John: Hello John, how are you?
-    John-->>Alice: Great!
-    Alice-)John: See you later!
+  sequenceDiagram Alice->>John: Hello John, how are you? John-->>Alice: Great!
+  Alice-)John: See you later!
 </div>
 ```
 
 #### Class Diagram
+
 ```html
 <div class="mermaid">
-classDiagram
-    Animal <|-- Duck
-    Animal <|-- Fish
-    Animal : +int age
-    Animal : +String gender
-    Animal: +isMammal()
-    class Duck{
-        +String beakColor
-        +swim()
-        +quack()
-    }
+  classDiagram Animal <|-- Duck Animal <|-- Fish Animal : +int age Animal :
+  +String gender Animal: +isMammal() class Duck{ +String beakColor +swim()
+  +quack() }
 </div>
 ```
 
@@ -178,12 +169,12 @@ Our implementation uses both approaches:
 
 ### Common Issues
 
-| Issue | Solution |
-|-------|----------|
-| Diagrams not rendering | Check `mermaid: true` in front matter |
-| Plugin not working | Verify jekyll-mermaid is in plugins list |
-| GitHub Pages issues | Use custom implementation with `<div class="mermaid">` |
-| Styling problems | Check theme configuration in mermaid.html |
+| Issue                  | Solution                                               |
+| ---------------------- | ------------------------------------------------------ |
+| Diagrams not rendering | Check `mermaid: true` in front matter                  |
+| Plugin not working     | Verify jekyll-mermaid is in plugins list               |
+| GitHub Pages issues    | Use custom implementation with `<div class="mermaid">` |
+| Styling problems       | Check theme configuration in mermaid.html              |
 
 ### Testing
 
@@ -194,16 +185,19 @@ Our implementation uses both approaches:
 ## Best Practices
 
 ### 1. Choose the Right Approach
+
 - **Local Development**: Use jekyll-mermaid plugin
 - **GitHub Pages**: Use custom implementation
 - **Both**: Use hybrid approach (recommended)
 
 ### 2. Performance Optimization
+
 - Only load Mermaid on pages that need it
 - Use conditional loading with `page.mermaid`
 - Consider lazy loading for large diagrams
 
 ### 3. Maintenance
+
 - Keep Mermaid version updated
 - Test both local and GitHub Pages environments
 - Document any custom configurations

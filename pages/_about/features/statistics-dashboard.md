@@ -28,36 +28,43 @@ The Statistics Dashboard is a modular, responsive analytics system that automati
 ### Core Components
 
 #### 1. Statistics Layout (`_layouts/stats.html`)
+
 - Main container for the dashboard
 - Handles data validation and error states
 - Includes JavaScript for animations and interactions
 
 #### 2. Header Component (`_includes/stats/stats-header.html`)
+
 - Page title and metadata display
 - Generation timestamp information
 - Navigation breadcrumbs
 
 #### 3. Overview Component (`_includes/stats/stats-overview.html`)
+
 - High-level metrics cards
 - Total counts for posts, pages, categories, tags
 - Word count statistics and averages
 
 #### 4. Categories Component (`_includes/stats/stats-categories.html`)
+
 - Top categories with post counts
 - Dynamic activity level indicators
 - Summary statistics footer
 
 #### 5. Tags Component (`_includes/stats/stats-tags.html`)
+
 - Tag usage frequency analysis
 - Interactive tag cloud visualization
 - Usage pattern insights
 
 #### 6. Metrics Component (`_includes/stats/stats-metrics.html`)
+
 - Additional quick facts
 - Content distribution information
 - Performance indicators
 
 #### 7. No Data Component (`_includes/stats/stats-no-data.html`)
+
 - Graceful error handling
 - User guidance when statistics unavailable
 - Recovery instructions
@@ -65,6 +72,7 @@ The Statistics Dashboard is a modular, responsive analytics system that automati
 ### Data Generation System
 
 #### Ruby Statistics Generator (`_data/generate_statistics.rb`)
+
 The heart of the system is a comprehensive Ruby script that:
 
 - **Analyzes Content**: Scans all posts, pages, and Jekyll collections
@@ -81,6 +89,7 @@ ruby _data/generate_statistics.rb
 ```
 
 #### Generated Statistics Include:
+
 - **Overview Metrics**: Total posts, pages, categories, tags, words
 - **Content Breakdown**: Distribution by content type
 - **Category Analysis**: Usage frequency and activity levels
@@ -91,6 +100,7 @@ ruby _data/generate_statistics.rb
 ### Styling System
 
 #### Custom CSS (`assets/css/stats.css`)
+
 Minimal custom styles focusing only on features unavailable in Bootstrap 5:
 
 - **Icon Animations**: Smooth rotation and hover effects
@@ -100,7 +110,9 @@ Minimal custom styles focusing only on features unavailable in Bootstrap 5:
 - **Print Optimization**: Clean printing layouts
 
 #### Bootstrap 5 Integration
+
 Leverages Bootstrap 5 utilities for:
+
 - **Grid System**: Responsive layout structure
 - **Card Components**: Metric containers and visual hierarchy
 - **Badge System**: Count indicators and labels
@@ -125,7 +137,6 @@ description: "Comprehensive analytics for site content"
 layout: stats
 permalink: /stats/
 ---
-
 Optional content here will appear below the statistics dashboard.
 ```
 
@@ -205,7 +216,7 @@ Each component can be customized independently:
 The generated YAML file follows this structure:
 
 ```yaml
-generated_at: '2025-10-10 12:00:00'
+generated_at: "2025-10-10 12:00:00"
 overview:
   total_posts: 61
   total_pages: 15

@@ -66,7 +66,7 @@ requirements:
   jekyll_version: "3.9.5"
   bundler_version: "~> 2.3"
   docker_platform: "linux/amd64"
-  node_version: ">= 16.0"  # Optional
+  node_version: ">= 16.0" # Optional
 
 # Core Technologies
 technology_stack:
@@ -114,6 +114,7 @@ technology_stack:
 #### Backend Layer
 
 **Ruby Runtime**
+
 - **Version**: Ruby 2.7.0+ (GitHub Pages compatible)
 - **Purpose**: Jekyll static site generation
 - **Key Gems**:
@@ -132,6 +133,7 @@ technology_stack:
 #### Frontend Layer
 
 **Bootstrap 5.3.3**
+
 - **Loading**: CDN (jsdelivr.net) for performance
 - **Purpose**: Responsive CSS framework with dark mode
 - **Key Features**:
@@ -142,6 +144,7 @@ technology_stack:
 - **Icons**: Bootstrap Icons 1.10.3 via CDN
 
 **JavaScript Stack**
+
 - **Bootstrap Bundle**: 5.3.3 (includes Popper.js)
 - **Mermaid**: 10+ for diagram rendering
 - **Custom Scripts**: Theme-specific enhancements
@@ -150,12 +153,13 @@ technology_stack:
 #### Containerization Layer
 
 **Docker Environment**
+
 ```yaml
 # Platform Specification
-platform: linux/amd64  # Apple Silicon + Intel compatibility
+platform: linux/amd64 # Apple Silicon + Intel compatibility
 
 # Image
-image: jekyll/jekyll:latest  # Official Jekyll Docker image
+image: jekyll/jekyll:latest # Official Jekyll Docker image
 
 # Command
 command: >
@@ -168,11 +172,11 @@ command: >
 
 # Volume Mounting
 volumes:
-  - ./:/app  # Bind mount for live reload
+  - ./:/app # Bind mount for live reload
 
 # Port Mapping
 ports:
-  - "4000:4000"  # Jekyll development server
+  - "4000:4000" # Jekyll development server
 
 # Environment
 environment:
@@ -182,6 +186,7 @@ environment:
 #### Analytics & Privacy Layer
 
 **PostHog Integration**
+
 - **Purpose**: Privacy-first web analytics
 - **Compliance**: GDPR/CCPA compliant
 - **Features**:
@@ -204,6 +209,7 @@ environment:
 The theme uses a layered configuration approach:
 
 **Production Configuration** (`_config.yml`):
+
 ```yaml
 # Remote Theme Configuration (GitHub Pages)
 remote_theme: "bamr87/zer0-mistakes"
@@ -246,9 +252,9 @@ collections:
 # Analytics Configuration
 posthog:
   enabled: true
-  api_key: 'phc_RRFmtqxRUI4XFDoI4KXUYMbTzPvhiu4A07qdSsAaXgg'
-  api_host: 'https://us.i.posthog.com'
-  person_profiles: 'identified_only'
+  api_key: "phc_RRFmtqxRUI4XFDoI4KXUYMbTzPvhiu4A07qdSsAaXgg"
+  api_host: "https://us.i.posthog.com"
+  person_profiles: "identified_only"
   autocapture: true
   capture_pageview: true
   capture_pageleave: true
@@ -267,10 +273,11 @@ posthog:
 ```
 
 **Development Overrides** (`_config_dev.yml`):
+
 ```yaml
 # Local Development Configuration
 url: "http://localhost:4000"
-remote_theme: false  # Use local theme files
+remote_theme: false # Use local theme files
 theme: "jekyll-theme-zer0"
 
 # Development Optimizations
@@ -288,6 +295,7 @@ verbose: true
 ```
 
 **Loading Strategy**:
+
 ```bash
 # Docker Compose Command
 jekyll serve --config "_config.yml,_config_dev.yml"
@@ -301,9 +309,11 @@ jekyll serve --config "_config.yml,_config_dev.yml"
 ## 🎯 Development Principles {#development-principles}
 
 ### 1. Design for Failure (DFF)
+
 **Philosophy**: Anticipate, prevent, and recover from errors gracefully.
 
 **Implementation Patterns**:
+
 ```bash
 #!/bin/bash
 # Error Handling Template
@@ -345,6 +355,7 @@ fallback_operation() {
 ```
 
 **Key Principles**:
+
 - Comprehensive error handling in all scripts
 - Validation checks before destructive operations
 - Automatic backup and rollback mechanisms
@@ -353,11 +364,13 @@ fallback_operation() {
 - Graceful degradation and fallback options
 
 ### 2. Don't Repeat Yourself (DRY)
+
 **Philosophy**: Single source of truth for all data and functionality.
 
 **Implementation**:
 
 **Version Management** (Single Source of Truth):
+
 ```ruby
 # lib/jekyll-theme-zer0/version.rb
 # THIS IS THE ONLY PLACE VERSION IS DEFINED
@@ -367,12 +380,14 @@ end
 ```
 
 **Synchronized Across Files**:
+
 - `jekyll-theme-zer0.gemspec`: `s.version = JekyllThemeZer0::VERSION`
 - `package.json`: Synced by `version.sh` script
 - `_config.yml`: Updated via automation
 - `CHANGELOG.md`: Updated during release
 
 **Reusable Functions**:
+
 ```bash
 # scripts/lib/common.sh
 # Shared function library
@@ -391,15 +406,18 @@ validate_file() {
 ```
 
 **Modular Jekyll Components**:
+
 - Layouts inherit from `root.html`
 - Includes are atomic and reusable
 - Data files eliminate hardcoding
 - Configuration inheritance
 
 ### 3. Keep It Simple (KIS)
+
 **Philosophy**: Complexity is the enemy of reliability.
 
 **Makefile Interface** (Simple Commands):
+
 ```makefile
 make setup           # One command setup
 make test            # Run all tests
@@ -410,6 +428,7 @@ make help            # Show all commands
 ```
 
 **Simple Script Pattern**:
+
 ```bash
 #!/bin/bash
 # One responsibility per script
@@ -419,6 +438,7 @@ make help            # Show all commands
 ```
 
 **Key Principles**:
+
 - One responsibility per script/function
 - Clear, descriptive naming
 - Comprehensive inline documentation
@@ -426,9 +446,11 @@ make help            # Show all commands
 - Avoid premature optimization
 
 ### 4. Docker-First Development (DFD)
+
 **Philosophy**: Universal compatibility through containerization.
 
 **Benefits**:
+
 - **Zero Local Dependencies**: No Ruby/Jekyll installation needed
 - **Universal Compatibility**: Same behavior on all platforms
 - **Isolated Environment**: No conflicts with system packages
@@ -436,15 +458,16 @@ make help            # Show all commands
 - **Platform Agnostic**: Works on Apple Silicon, Intel, Linux
 
 **Implementation**:
+
 ```yaml
 # docker-compose.yml
 services:
   jekyll:
     image: jekyll/jekyll:latest
-    platform: linux/amd64  # Apple Silicon compatibility
+    platform: linux/amd64 # Apple Silicon compatibility
     command: jekyll serve --config "_config.yml,_config_dev.yml"
     volumes:
-      - ./:/app  # Live reload
+      - ./:/app # Live reload
     ports:
       - "4000:4000"
     environment:
@@ -452,6 +475,7 @@ services:
 ```
 
 **Developer Workflow**:
+
 ```bash
 # Single command to start development
 docker-compose up
@@ -464,11 +488,13 @@ docker-compose up
 ```
 
 ### 5. AI-Powered Development (AIPD)
+
 **Philosophy**: Leverage AI to enhance development workflows.
 
 **Implementation**:
 
 **GitHub Copilot Integration**:
+
 - `.github/copilot-instructions.md` (805 lines)
 - File-specific instruction files:
   - `layouts.instructions.md`
@@ -479,6 +505,7 @@ docker-compose up
   - `documentation.instructions.md`
 
 **Structured Front Matter** (AI Context):
+
 ```yaml
 ---
 title: "Component Name"
@@ -494,12 +521,14 @@ ai_hints:
 ```
 
 **Semantic Code Organization**:
+
 - Clear directory structure
 - Descriptive file names
 - Comprehensive comments
 - Pattern documentation
 
 **Automated Analysis**:
+
 ```bash
 # Commit message analysis for version bumping
 ./scripts/analyze-commits.sh HEAD~10..HEAD
@@ -509,9 +538,11 @@ ai_hints:
 ```
 
 ### 6. Self-Healing Configuration (SHC)
+
 **Philosophy**: Systems should diagnose and fix themselves.
 
 **install.sh** (95% Success Rate):
+
 ```bash
 #!/bin/bash
 # AI-Powered Installation with Self-Healing
@@ -551,7 +582,7 @@ validate_and_fix() {
         log "Fixing Jekyll config..."
         fix_yaml "_config.yml"
     fi
-    
+
     # Check Docker config
     if ! validate_docker_compose; then
         log "Fixing Docker Compose config..."
@@ -561,6 +592,7 @@ validate_and_fix() {
 ```
 
 **Features**:
+
 - Platform detection and optimization
 - Missing dependency resolution
 - Configuration validation and auto-correction
@@ -779,7 +811,7 @@ zer0-mistakes/
 # - MINOR version: Add functionality (backwards-compatible)
 # - PATCH version: Bug fixes (backwards-compatible)
 #
-# All other version references (gemspec, package.json, etc.) 
+# All other version references (gemspec, package.json, etc.)
 # are synchronized from this value via automation scripts.
 
 module JekyllThemeZer0
@@ -807,14 +839,14 @@ require "jekyll-theme-zer0/version"
 module JekyllThemeZer0
   # Theme initialization hook
   # Add any theme-specific initialization here
-  
+
   class << self
     # Get the theme version
     # @return [String] Current version string
     def version
       VERSION
     end
-    
+
     # Get the theme root path
     # @return [Pathname] Path to theme root directory
     def root
@@ -839,13 +871,13 @@ Gem::Specification.new do |s|
   s.version                  = JekyllThemeZer0::VERSION
   s.authors                  = ["Amr Abdel"]
   s.email                    = ["amr@it-journey.dev"]
-  
+
   # Description
   s.summary                  = "Jekyll theme based on bootstrap and compatible with github pages"
   s.description              = "Bootstrap Jekyll theme for headless Github Pages CMS with Docker-first development approach"
   s.homepage                 = "https://github.com/bamr87/zer0-mistakes"
   s.license                  = "MIT"
-  
+
   # Metadata
   s.metadata["plugin_type"]       = "theme"
   s.metadata["homepage_uri"]      = s.homepage
@@ -853,21 +885,21 @@ Gem::Specification.new do |s|
   s.metadata["changelog_uri"]     = "#{s.homepage}/blob/main/CHANGELOG.md"
   s.metadata["documentation_uri"] = "#{s.homepage}#readme"
   s.metadata["allowed_push_host"] = "https://rubygems.org"
-  
+
   # Files to include in gem
   s.files = `git ls-files -z`.split("\x0").select do |f|
     f.match(%r{^(assets|_(data|includes|layouts|sass)/|(LICENSE|README|CHANGELOG)((\.(txt|md|markdown)|$)))}i)
   end
-  
+
   # Platform
   s.platform                 = Gem::Platform::RUBY
-  
+
   # Ruby version requirement
   s.required_ruby_version    = ">= 2.7.0"
-  
+
   # Runtime dependencies
   s.add_runtime_dependency "jekyll"
-  
+
   # Development dependencies
   s.add_development_dependency "bundler", "~> 2.3"
   s.add_development_dependency "rake", "~> 13.0"
@@ -1151,25 +1183,24 @@ strict_front_matter: false
 
 ```yaml
 services:
-
   jekyll:
     image: jekyll/jekyll:latest
-    platform: linux/amd64  # Ensures compatibility across different architectures
-    
+    platform: linux/amd64 # Ensures compatibility across different architectures
+
     # Jekyll serve command with config layering
     command: jekyll serve --watch --force_polling --config "_config.yml,_config_dev.yml" --host 0.0.0.0 --port 4000
 
     # Volume mounting for live reload
     volumes:
       - ./:/app
-    
+
     # Port mapping
     ports:
       - "4000:4000"
-    
+
     # Working directory
     working_dir: /app
-    
+
     # Environment variables
     environment:
       JEKYLL_ENV: development

@@ -11,8 +11,6 @@ lastmod: 2025-11-16T13:44:04.009Z
 draft: draft
 ---
 
-
-
 > Handle error 'Address Already in Use' when starting Jekyll.
 
 ## 1. Issue of 'Address Already in Use'
@@ -36,7 +34,7 @@ Kill the process with its id.
 sudo kill -9 <PID>
 ```
 
-![image](/assets/images/jekyll/8105/port.png){:width="700px"}  
+![image](/assets/images/jekyll/8105/port.png){:width="700px"}
 
 Retry 'jekyll serve', the error 'Port Already in Use' is gone.
 
@@ -53,7 +51,7 @@ nxd     11199   nx    4u  IPv6 0x2fad2a115cded5bd      0t0  TCP *:terabase (LIST
 
 Killing the thread won't work, because NoMachine's nxd process will keep restarting, with a new PID. Either you have to change the port for your app. Or, change the service port for NoMachine. NoMachine->Preferences->Connection preferences.
 ![image](/assets/images/jekyll/8105/nomachine_preferences.png){:width="700px"}  
-![image](/assets/images/jekyll/8105/nomachine_port.png){:width="700px"}  
+![image](/assets/images/jekyll/8105/nomachine_port.png){:width="700px"}
 
 We can also shutdown NoMachine and disable the automatic start at next boot via command line.
 
@@ -81,5 +79,5 @@ nxserver --startmode manual
 
 ## 3. References
 
-* [TCPServer Error: Address already in use - bind(2)](https://stackoverflow.com/questions/10261477/tcpserver-error-address-already-in-use-bind2)
-* [Disabling the automatic start-up of NoMachine at boot time](https://www.nomachine.com/AR04L00800)
+- [TCPServer Error: Address already in use - bind(2)](https://stackoverflow.com/questions/10261477/tcpserver-error-address-already-in-use-bind2)
+- [Disabling the automatic start-up of NoMachine at boot time](https://www.nomachine.com/AR04L00800)

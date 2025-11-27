@@ -21,11 +21,13 @@ The seed documentation system provides **four comprehensive layers** of project 
 ## 📚 Seed Documentation Files
 
 ### 1. Master Blueprint
+
 **File**: [`seed.prompt.md`](seed.prompt.md)  
 **Lines**: ~8,000+  
 **Status**: Part 1 Complete
 
 **Contents**:
+
 - Project Identity & Metadata
 - Core Architecture & Technology Stack
 - Development Principles (DFF, DRY, KIS, DFD, AIPD, SHC)
@@ -35,12 +37,14 @@ The seed documentation system provides **four comprehensive layers** of project 
 - Docker Configuration Patterns
 
 **Use When**:
+
 - Starting new project from scratch
 - Understanding overall architecture
 - Learning project structure
 - AI agent initial context loading
 
 **Key Sections**:
+
 ```
 1. Project Identity (metadata, versions, URLs)
 2. Core Architecture (tech stack, dependencies)
@@ -52,11 +56,13 @@ The seed documentation system provides **four comprehensive layers** of project 
 ---
 
 ### 2. Complete Implementation Code
+
 **File**: [`seed.implementation.md`](seed.implementation.md)  
 **Lines**: ~3,000+  
 **Status**: Complete
 
 **Contents**:
+
 - **version.sh** (155 lines) - Semantic version management
 - **build.sh** (175 lines) - Gem building and validation
 - **test.sh** (135 lines) - Comprehensive test suite
@@ -66,12 +72,14 @@ The seed documentation system provides **four comprehensive layers** of project 
 - **.gitignore** - Complete ignore rules
 
 **Use When**:
+
 - Implementing automation scripts
 - Understanding version management logic
 - Creating build/test/release workflows
 - Debugging installation issues
 
 **Key Features**:
+
 ```bash
 # Version Management
 ./scripts/version.sh patch --dry-run  # Preview changes
@@ -89,15 +97,17 @@ The seed documentation system provides **four comprehensive layers** of project 
 ---
 
 ### 3. Step-by-Step Build Instructions
+
 **File**: [`seed.build.md`](seed.build.md)  
 **Lines**: ~2,500+  
 **Status**: Complete
 
 **Contents**:
+
 - **Phase 1**: Initialize Repository (Git, .gitignore, LICENSE)
 - **Phase 2**: Ruby Gem Structure (lib/, version.rb)
 - **Phase 3**: Gem Configuration (gemspec, Gemfile, package.json)
-- **Phase 4**: Jekyll Configuration (_config.yml, _config_dev.yml)
+- **Phase 4**: Jekyll Configuration (\_config.yml, \_config_dev.yml)
 - **Phase 5**: Docker Environment (docker-compose.yml)
 - **Phase 6**: Theme Structure (layouts, includes, assets)
 - **Phase 7**: Automation Scripts (copy from seed.implementation.md)
@@ -106,12 +116,14 @@ The seed documentation system provides **four comprehensive layers** of project 
 - **Phase 10**: Testing & Finalization (validation checklist)
 
 **Use When**:
+
 - Rebuilding project from empty directory
 - Following sequential build process
 - Validating each phase completion
 - Learning project construction flow
 
 **Build Time Estimate**:
+
 - With copy-paste: 30-45 minutes
 - Manual typing: 2-3 hours
 - Automated script: 5-10 minutes
@@ -119,6 +131,7 @@ The seed documentation system provides **four comprehensive layers** of project 
 ---
 
 ### 4. Complete Component Library
+
 **File**: [`seed.components.md`](seed.components.md)  
 **Lines**: ~4,000+  
 **Status**: Complete
@@ -126,29 +139,35 @@ The seed documentation system provides **four comprehensive layers** of project 
 **Contents**:
 
 **Layouts** (4 files):
+
 - `root.html` - Base HTML5 structure
 - `default.html` - Main content wrapper with sidebar
 - `journals.html` - Blog post layout with metadata
 - `home.html` - Homepage with featured content
 
 **Core Includes** (4 files):
+
 - `core/head.html` - HTML head with Bootstrap 5 + analytics
 - `core/header.html` - Responsive navigation navbar
 - `core/footer.html` - Site footer with links
 - `sidebar-left.html` - Sidebar with TOC and widgets
 
 **Analytics** (1 file):
+
 - `analytics/posthog.html` (281 lines) - Privacy-first analytics
 
 **UI Components** (2 files):
+
 - `components/cookie-consent.html` (382 lines) - GDPR/CCPA consent
 - `components/theme-info.html` - Version display
 
 **Styles** (2 files):
+
 - `assets/css/main.css` - Custom theme styles
 - `_sass/custom.scss` - Bootstrap variable overrides
 
 **Use When**:
+
 - Creating theme layouts
 - Implementing includes
 - Adding analytics/privacy features
@@ -177,6 +196,7 @@ The seed documentation system provides **four comprehensive layers** of project 
 
 **...find a specific file's source code**  
 → Check this order:
+
 1. [`seed.components.md`](seed.components.md) for theme files
 2. [`seed.implementation.md`](seed.implementation.md) for scripts
 3. [`seed.prompt.md`](seed.prompt.md) section 5 for critical files
@@ -187,31 +207,36 @@ The seed documentation system provides **four comprehensive layers** of project 
 
 ### For AI Agents: Complete Project Reconstruction
 
-**Step 1**: Load Context  
+**Step 1**: Load Context
+
 ```
 Read: seed.prompt.md (sections 1-5)
 Parse: Project identity, architecture, principles
 ```
 
-**Step 2**: Understand Implementation  
+**Step 2**: Understand Implementation
+
 ```
 Read: seed.implementation.md
 Analyze: Automation patterns, error handling
 ```
 
-**Step 3**: Execute Build  
+**Step 3**: Execute Build
+
 ```
 Follow: seed.build.md phases 1-10
 Validate: After each phase completion
 ```
 
-**Step 4**: Implement Components  
+**Step 4**: Implement Components
+
 ```
 Reference: seed.components.md
 Create: Layouts, includes, styles
 ```
 
-**Step 5**: Validate Completion  
+**Step 5**: Validate Completion
+
 ```
 Run: make test
 Start: docker-compose up
@@ -222,13 +247,13 @@ Verify: http://localhost:4000 accessible
 
 ## 📊 File Statistics
 
-| File | Lines | Size | Purpose |
-|------|-------|------|---------|
-| `seed.prompt.md` | 8,000+ | ~400KB | Master blueprint |
-| `seed.implementation.md` | 3,000+ | ~150KB | Automation code |
-| `seed.build.md` | 2,500+ | ~125KB | Build instructions |
-| `seed.components.md` | 4,000+ | ~200KB | Theme components |
-| **Total** | **17,500+** | **~875KB** | **Complete documentation** |
+| File                     | Lines       | Size       | Purpose                    |
+| ------------------------ | ----------- | ---------- | -------------------------- |
+| `seed.prompt.md`         | 8,000+      | ~400KB     | Master blueprint           |
+| `seed.implementation.md` | 3,000+      | ~150KB     | Automation code            |
+| `seed.build.md`          | 2,500+      | ~125KB     | Build instructions         |
+| `seed.components.md`     | 4,000+      | ~200KB     | Theme components           |
+| **Total**                | **17,500+** | **~875KB** | **Complete documentation** |
 
 ---
 
@@ -237,6 +262,7 @@ Verify: http://localhost:4000 accessible
 After reconstruction, verify:
 
 ### Essential Files Created
+
 - [ ] `lib/jekyll-theme-zer0/version.rb` (SSOT for version)
 - [ ] `jekyll-theme-zer0.gemspec` (gem specification)
 - [ ] `_config.yml` (production config)
@@ -247,6 +273,7 @@ After reconstruction, verify:
 - [ ] `Makefile` (command interface)
 
 ### Directory Structure
+
 - [ ] `_layouts/` (root.html, default.html, journals.html, home.html)
 - [ ] `_includes/core/` (head.html, header.html, footer.html)
 - [ ] `_includes/components/` (cookie-consent.html, theme-info.html)
@@ -254,9 +281,10 @@ After reconstruction, verify:
 - [ ] `_sass/` (custom.scss)
 - [ ] `assets/css/` (main.css)
 - [ ] `scripts/` (version.sh, build.sh, test.sh, gem-publish.sh)
-- [ ] `pages/` (_posts/, _docs/, _quickstart/, _about/)
+- [ ] `pages/` (\_posts/, \_docs/, \_quickstart/, \_about/)
 
 ### Functional Tests
+
 - [ ] `make setup` - Installs dependencies successfully
 - [ ] `make test` - All tests pass
 - [ ] `make version-patch` - Bumps version correctly
@@ -267,6 +295,7 @@ After reconstruction, verify:
 - [ ] Responsive design works on mobile/desktop
 
 ### Git Operations
+
 - [ ] `.gitignore` excludes build artifacts
 - [ ] Initial commit present
 - [ ] Version tag created (v0.6.0)
@@ -279,12 +308,14 @@ After reconstruction, verify:
 ### When to Update Seed Documentation
 
 **Trigger Events**:
+
 - Major version releases (X.0.0)
 - Architecture changes (new principles, patterns)
 - Critical file additions (new automation scripts)
 - Build process changes (new phases, tools)
 
 **Update Process**:
+
 1. Identify changed files/processes
 2. Update relevant seed documentation file
 3. Regenerate this README if structure changes
@@ -293,11 +324,11 @@ After reconstruction, verify:
 
 ### Version Correspondence
 
-| Theme Version | Seed Version | Notable Changes |
-|---------------|--------------|-----------------|
-| 0.6.0 | 1.0 | Initial comprehensive seed documentation |
-| Future 0.7.0 | 1.1 | Headless CMS integration documentation |
-| Future 0.8.0 | 1.2 | Advanced analytics documentation |
+| Theme Version | Seed Version | Notable Changes                          |
+| ------------- | ------------ | ---------------------------------------- |
+| 0.6.0         | 1.0          | Initial comprehensive seed documentation |
+| Future 0.7.0  | 1.1          | Headless CMS integration documentation   |
+| Future 0.8.0  | 1.2          | Advanced analytics documentation         |
 
 ---
 
@@ -314,16 +345,19 @@ After reconstruction, verify:
 ### File Modifications
 
 **Adding New Script**:
+
 1. Add full source to `seed.implementation.md`
 2. Add usage to `seed.build.md` if needed
 3. Update this README's statistics
 
 **Adding New Component**:
+
 1. Add full source to `seed.components.md`
 2. Document dependencies and usage
 3. Include integration examples
 
 **Changing Build Process**:
+
 1. Update affected phase in `seed.build.md`
 2. Update validation checklist
 3. Test complete rebuild from scratch
@@ -335,6 +369,7 @@ After reconstruction, verify:
 ### For AI Agents
 
 If reconstruction fails:
+
 1. Verify exact command execution (no substitutions)
 2. Check prerequisite software installed
 3. Validate file paths are absolute
@@ -344,6 +379,7 @@ If reconstruction fails:
 ### For Human Developers
 
 If documentation unclear:
+
 1. Open issue: [GitHub Issues](https://github.com/bamr87/zer0-mistakes/issues)
 2. Tag with `documentation` label
 3. Reference specific seed file and line number
@@ -387,16 +423,19 @@ If documentation unclear:
 ### Planned Additions
 
 **Version 1.1** (Theme 0.7.0):
+
 - [ ] `seed.cms.md` - Headless CMS integration guide
 - [ ] `seed.api.md` - Content API documentation
 - [ ] `seed.deployment.md` - Multi-platform deployment guide
 
 **Version 1.2** (Theme 0.8.0):
+
 - [ ] `seed.analytics-advanced.md` - A/B testing, funnels
 - [ ] `seed.performance.md` - Optimization techniques
 - [ ] `seed.security.md` - Security best practices
 
 **Version 1.3** (Theme 0.9.0):
+
 - [ ] `seed.tooling.md` - Developer tools and helpers
 - [ ] `seed.testing-advanced.md` - Advanced test patterns
 - [ ] `seed.ci-cd.md` - Complete CI/CD documentation
@@ -406,6 +445,7 @@ If documentation unclear:
 ## 📚 Related Documentation
 
 **In This Repository**:
+
 - `../.seed.md` - Evolutionary context and architectural decisions
 - `../README.md` - User-facing project documentation
 - `../CONTRIBUTING.md` - Contribution guidelines
@@ -413,6 +453,7 @@ If documentation unclear:
 - `../.github/copilot-instructions.md` - AI development instructions
 
 **External Resources**:
+
 - [Jekyll Documentation](https://jekyllrb.com/docs/)
 - [Bootstrap 5 Documentation](https://getbootstrap.com/docs/5.3/)
 - [Docker Documentation](https://docs.docker.com/)
@@ -429,6 +470,7 @@ If documentation unclear:
 **Status**: Complete & Production Ready
 
 **Total Documentation**:
+
 - 4 comprehensive seed files
 - 17,500+ lines of documentation
 - ~875KB of pure knowledge

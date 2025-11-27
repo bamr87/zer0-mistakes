@@ -37,6 +37,7 @@ _about/
 The Zer0-Mistakes documentation focuses on:
 
 ### 🎨 Theme Features
+
 - Bootstrap 5 integration
 - Responsive design system
 - Dark mode implementation
@@ -44,6 +45,7 @@ The Zer0-Mistakes documentation focuses on:
 - Custom styling options
 
 ### 🛠️ Technical Implementation
+
 - Jekyll configuration
 - Liquid templating
 - SASS/SCSS processing
@@ -51,6 +53,7 @@ The Zer0-Mistakes documentation focuses on:
 - Permalink structures
 
 ### 📊 Analytics & Monitoring
+
 - Statistics dashboard
 - Content analysis tools
 - Performance metrics
@@ -58,6 +61,7 @@ The Zer0-Mistakes documentation focuses on:
 - Data visualization
 
 ### 🚀 Automation & DevOps
+
 - Gem build automation
 - Version management
 - CI/CD workflows
@@ -66,6 +70,7 @@ The Zer0-Mistakes documentation focuses on:
 - Makefile commands
 
 ### 🔌 Integrations
+
 - MathJax (equations)
 - Mermaid (diagrams)
 - giscus (comments)
@@ -76,7 +81,9 @@ The Zer0-Mistakes documentation focuses on:
 ## Related Documentation
 
 ### For Learning & Educational Content
+
 Visit the **[IT-Journey Platform](https://it-journey.dev/about/)** for:
+
 - Educational mission and principles
 - Learning paths and quests
 - Community guidelines
@@ -131,14 +138,14 @@ make serve        # Start Jekyll server
 
 Zer0-Mistakes and IT-Journey work together:
 
-| Zer0-Mistakes (Theme) | IT-Journey (Platform) |
-|-----------------------|------------------------|
-| Jekyll theme engine   | Content & curriculum |
-| Bootstrap UI framework | Learning experiences |
-| Technical features    | Educational philosophy |
-| Developer tools       | User engagement |
-| Automation systems    | Community building |
-| Statistics & analytics | Learning outcomes |
+| Zer0-Mistakes (Theme)  | IT-Journey (Platform)  |
+| ---------------------- | ---------------------- |
+| Jekyll theme engine    | Content & curriculum   |
+| Bootstrap UI framework | Learning experiences   |
+| Technical features     | Educational philosophy |
+| Developer tools        | User engagement        |
+| Automation systems     | Community building     |
+| Statistics & analytics | Learning outcomes      |
 
 ## Package Information
 
@@ -150,6 +157,7 @@ Zer0-Mistakes and IT-Journey work together:
 ## Contributing
 
 Contributions to the theme are welcome! See:
+
 - [Contributing Guide](../../CONTRIBUTING.md)
 - [Issue Tracker](https://github.com/bamr87/zer0-mistakes/issues)
 - [Pull Requests](https://github.com/bamr87/zer0-mistakes/pulls)
@@ -167,4 +175,3 @@ Contributions to the theme are welcome! See:
 **Last Updated:** 2025-01-13
 **Maintained by:** Theme Contributors
 **Repository:** [github.com/bamr87/zer0-mistakes](https://github.com/bamr87/zer0-mistakes)
-

@@ -16,7 +16,7 @@ lastmod: 2023-12-03T08:41:00.908Z
 
 I'm using Jekyll to build my personal website [{{ site.github_user }}.github.io]({{ site.github_user }}.github.io). All its content are static, which are built by Jekyll. Currently, it is hosted on [GitHub Pages](https://pages.github.com/). It works fine, however, there are some limitations with GitHub Pages. For example, it is not possible to specify Http Header for caching.
 
-On the other hand, Netlify supports more features than GitHub Pages and it is also free. [Netlify](https://www.netlify.com/) is an online service which builds, deploys, and manages modern web projects.  Netlify basically initiates its own kind of repository that pushes both to a Github repository and its own services. It offers hosting for front-end projects with many options.
+On the other hand, Netlify supports more features than GitHub Pages and it is also free. [Netlify](https://www.netlify.com/) is an online service which builds, deploys, and manages modern web projects. Netlify basically initiates its own kind of repository that pushes both to a Github repository and its own services. It offers hosting for front-end projects with many options.
 
 ## 2. Deploying Application From Github Repository
 
@@ -70,4 +70,4 @@ Access your site with the new URL, it should work.
 
 ## 3. Reference
 
-* [A Step-by-Step Guide: Jekyll 3.0 on Netlify](https://www.netlify.com/blog/2015/10/28/a-step-by-step-guide-jekyll-3.0-on-netlify/)
+- [A Step-by-Step Guide: Jekyll 3.0 on Netlify](https://www.netlify.com/blog/2015/10/28/a-step-by-step-guide-jekyll-3.0-on-netlify/)

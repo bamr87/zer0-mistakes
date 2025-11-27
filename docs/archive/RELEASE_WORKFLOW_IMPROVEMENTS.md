@@ -13,6 +13,7 @@ The project has three main release-related scripts with overlapping functionalit
 ### 1. Script Overlap and Confusion
 
 **Problem**: Three scripts with unclear responsibilities
+
 - `gem-publish.sh` does everything (version bump, changelog, build, publish, GitHub release)
 - `release.sh` duplicates most of this functionality
 - `build.sh` is a subset of both
@@ -22,6 +23,7 @@ The project has three main release-related scripts with overlapping functionalit
 ### 2. Excessive Complexity in gem-publish.sh
 
 **Problem**: Single 700-line script trying to do too much
+
 - 10+ command-line flags
 - Complex argument parsing
 - Difficult to test individual components
@@ -32,13 +34,14 @@ The project has three main release-related scripts with overlapping functionalit
 ### 3. Inconsistent Error Handling
 
 **Problem**: Different validation patterns across scripts
+
 ```bash
 # gem-publish.sh
 if [[ ! -f "$file" ]]; then
     error "Required file not found: $file"
 fi
 
-# release.sh  
+# release.sh
 if [[ ! -f "jekyll-theme-zer0.gemspec" ]]; then
     error "Must be run from the repository root directory"
 fi
@@ -47,6 +50,7 @@ fi
 ### 4. Redundant Functionality
 
 **Problem**: Same operations implemented multiple times
+
 - Version validation (3 places)
 - Git operations (3 places)
 - Gem building (3 places)
@@ -76,6 +80,7 @@ scripts/
 #### 1. Library Functions (scripts/lib/)
 
 **version.sh** - Version management
+
 ```bash
 #!/bin/bash
 # Single responsibility: version operations
@@ -87,6 +92,7 @@ validate_version_format() { ... }
 ```
 
 **changelog.sh** - Changelog generation
+
 ```bash
 #!/bin/bash
 # Single responsibility: changelog operations
@@ -97,6 +103,7 @@ categorize_commit() { ... }
 ```
 
 **validation.sh** - Environment validation
+
 ```bash
 #!/bin/bash
 # Single responsibility: validation checks
@@ -108,6 +115,7 @@ validate_rubygems_auth() { ... }
 ```
 
 **git.sh** - Git operations
+
 ```bash
 #!/bin/bash
 # Single responsibility: git operations
@@ -119,6 +127,7 @@ push_changes() { ... }
 ```
 
 **gem.sh** - Gem operations
+
 ```bash
 #!/bin/bash
 # Single responsibility: gem build/publish
@@ -132,6 +141,7 @@ create_github_release() { ... }
 #### 2. Simple Commands (scripts/)
 
 **release** - Main release command (100 lines max)
+
 ```bash
 #!/bin/bash
 # Main release orchestrator
@@ -146,14 +156,14 @@ main() {
     # Parse simple arguments
     local version_type="${1:-patch}"
     local dry_run="${2:-false}"
-    
+
     # Validate
     validate_environment
-    
+
     # Execute workflow
     local current_version=$(get_current_version)
     local new_version=$(calculate_new_version "$current_version" "$version_type")
-    
+
     generate_changelog "$new_version"
     update_version_files "$new_version"
     build_gem "$new_version"
@@ -167,6 +177,7 @@ main "$@"
 ```
 
 **build** - Build-only command (50 lines max)
+
 ```bash
 #!/bin/bash
 # Simple gem builder
@@ -185,23 +196,27 @@ main "$@"
 ## Migration Plan
 
 ### Phase 1: Extract Libraries (Week 1)
+
 1. Create `scripts/lib/` directory
 2. Extract version operations → `lib/version.sh`
 3. Extract validation → `lib/validation.sh`
 4. Add tests for each library
 
 ### Phase 2: Simplify Commands (Week 2)
+
 1. Create new `scripts/release` using libraries
 2. Test extensively with `--dry-run`
 3. Keep old scripts as `*.legacy.sh`
 
 ### Phase 3: Update Documentation (Week 3)
+
 1. Update CONTRIBUTING.md
 2. Update VS Code tasks
 3. Update GitHub Actions workflows
 4. Deprecate old scripts
 
 ### Phase 4: Remove Legacy (Week 4)
+
 1. Remove `gem-publish.sh`
 2. Remove `release.sh`
 3. Remove `build.sh`
@@ -210,26 +225,31 @@ main "$@"
 ## Benefits of Refactoring
 
 ### 1. Clarity
+
 - Each file has ONE responsibility
 - Easy to understand what each component does
 - Clear entry points for common tasks
 
 ### 2. Testability
+
 - Small, focused functions easy to test
 - Can unit test libraries independently
 - Easier to mock dependencies
 
 ### 3. Maintainability
+
 - Changes isolated to specific files
 - Less duplication means fewer places to update
 - Easier for new contributors
 
 ### 4. Reusability
+
 - Libraries can be used by other scripts
 - GitHub Actions can source specific libraries
 - No need to copy-paste code
 
 ### 5. Simplicity
+
 - Main commands under 100 lines
 - Fewer command-line flags
 - Sensible defaults
@@ -237,6 +257,7 @@ main "$@"
 ## Example: Simplified Release Command
 
 **Before** (gem-publish.sh):
+
 ```bash
 ./scripts/gem-publish.sh patch --dry-run --skip-tests --skip-changelog \
   --skip-publish --no-github-release --non-interactive \
@@ -244,6 +265,7 @@ main "$@"
 ```
 
 **After** (release):
+
 ```bash
 # Most common case (patch release)
 ./scripts/release
@@ -258,6 +280,7 @@ SKIP_TESTS=true ./scripts/release patch
 ## Testing Strategy
 
 ### Unit Tests for Libraries
+
 ```bash
 scripts/lib/test/
 ├── test_version.sh
@@ -268,6 +291,7 @@ scripts/lib/test/
 ```
 
 ### Integration Tests
+
 ```bash
 test/
 ├── test_release_workflow.sh
@@ -278,11 +302,13 @@ test/
 ## Backward Compatibility
 
 ### Transition Period (2 releases)
+
 1. Keep old scripts with deprecation warnings
 2. Redirect to new commands
 3. Log usage to track adoption
 
 **Example deprecation wrapper**:
+
 ```bash
 #!/bin/bash
 # gem-publish.sh (deprecated)
@@ -316,6 +342,7 @@ exec "$(dirname "$0")/release" "$@"
 ## Success Metrics
 
 After refactoring, we should see:
+
 - **70% reduction** in total lines of code
 - **100% test coverage** for library functions
 - **50% reduction** in maintenance time
@@ -339,6 +366,7 @@ After refactoring, we should see:
 ## Recommendation
 
 **Proceed with shell script refactoring** because:
+
 1. Maintains zero external dependencies
 2. Keeps Docker-first approach
 3. Easier for contributors to understand

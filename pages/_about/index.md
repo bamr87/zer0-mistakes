@@ -29,7 +29,7 @@ This world was created by {{ site.founder }} and maintained by:
 Name | Profile
 ---------|----------
 {% for follower in site.maintainers -%}
-  {{ follower.name }} | {{ follower.profile }}
+{{ follower.name }} | {{ follower.profile }}
 {% endfor %}
 
 And, most importantly, Powered By:

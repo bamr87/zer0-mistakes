@@ -4,15 +4,16 @@ description: "Browse all tags and discover content by topic"
 layout: default
 permalink: /tags/
 ---
+
 <!--
   ===================================================================
   TAGS INDEX PAGE - Browse all tags
   ===================================================================
-  
+
   File: tags.md
   Path: pages/tags.md
   Purpose: Display all tags with post counts and links to tagged posts
-  
+
   This page provides:
   - Alphabetical list of all tags
   - Post count for each tag
@@ -33,13 +34,14 @@ permalink: /tags/
 <!-- ========================== -->
 <!-- TAG CLOUD                  -->
 <!-- ========================== -->
+
 {% comment %} Collect all tags with counts {% endcomment %}
 {% assign all_tags = "" | split: "" %}
 {% assign tag_counts = "" | split: "" %}
 {% for post in site.posts %}
-  {% for tag in post.tags %}
-    {% assign all_tags = all_tags | push: tag %}
-  {% endfor %}
+{% for tag in post.tags %}
+{% assign all_tags = all_tags | push: tag %}
+{% endfor %}
 {% endfor %}
 {% assign unique_tags = all_tags | uniq | sort_natural %}
 

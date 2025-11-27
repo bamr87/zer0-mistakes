@@ -10,6 +10,7 @@ description: "Documentation development guidelines for Zer0-Mistakes theme dual 
 Zer0-Mistakes implements a sophisticated dual documentation system designed to serve different audiences with appropriate content formats and complexity levels.
 
 ### Documentation Ecosystem Structure
+
 ```
 Documentation Architecture
 ├── /docs/ (Technical Documentation)
@@ -29,6 +30,7 @@ Documentation Architecture
 ## 🛠️ Technical Documentation (`/docs/`)
 
 ### Purpose & Audience
+
 - **Target Audience**: Developers, contributors, maintainers, technical staff
 - **Content Focus**: Repository architecture, build processes, feature implementation
 - **Format**: MDX (Markdown + JSX) with interactive components
@@ -37,7 +39,8 @@ Documentation Architecture
 ### Directory Structure & Content Types
 
 #### `/docs/systems/` - Infrastructure & Automation
-```mdx
+
+````mdx
 ---
 title: "Automated Version System Architecture"
 description: "Technical implementation of semantic versioning automation"
@@ -56,7 +59,8 @@ dependencies: ["Ruby", "Git", "GitHub Actions"]
   graph LR
     A[Commit Analysis] --> B[Version Calculation]
     B --> C[Gem Publishing]
-  ```
+````
+
 </ArchitectureDiagram>
 
 ## Implementation Details
@@ -71,12 +75,17 @@ end
 ```
 
 #### `/docs/features/` - Component Implementation
-```mdx
+
+````mdx
 ---
 title: "PostHog Analytics Integration"
 description: "Privacy-compliant analytics implementation"
 type: "feature-implementation"
-components: ["_includes/analytics/posthog.html", "_includes/components/cookie-consent.html"]
+components:
+  [
+    "_includes/analytics/posthog.html",
+    "_includes/components/cookie-consent.html",
+  ]
 testing: ["test/test_analytics.sh"]
 ---
 
@@ -95,28 +104,31 @@ testing: ["test/test_analytics.sh"]
 {% if jekyll.environment == "production" and site.posthog.enabled %}
   {% include analytics/posthog.html %}
 {% endif %}
-```
+````
+
 </CodeExample>
 ```
 
 ### Content Standards for Technical Documentation
 
 #### Front Matter Requirements
+
 ```yaml
 ---
 title: "Descriptive Technical Title"
 description: "Technical implementation summary (150-160 chars)"
 type: "system|feature|configuration|release"
 audience: "developers|contributors|maintainers"
-components: ["file1.rb", "file2.html"]  # Related source files
-dependencies: ["Jekyll", "Bootstrap", "Docker"]  # Technical dependencies
-testing: ["test/test_file.sh"]  # Related test files
+components: ["file1.rb", "file2.html"] # Related source files
+dependencies: ["Jekyll", "Bootstrap", "Docker"] # Technical dependencies
+testing: ["test/test_file.sh"] # Related test files
 last_updated: "2025-11-16"
 complexity: "beginner|intermediate|advanced"
 ---
 ```
 
 #### MDX Component Usage
+
 - **CodeBlock**: For syntax-highlighted code with file references
 - **ArchitectureDiagram**: For Mermaid diagrams showing system design
 - **TestingGuide**: For test procedures and validation steps
@@ -124,6 +136,7 @@ complexity: "beginner|intermediate|advanced"
 - **ComponentDiagram**: For component relationship visualization
 
 #### Cross-Reference Patterns
+
 ```mdx
 ## Related Components
 
@@ -136,6 +149,7 @@ complexity: "beginner|intermediate|advanced"
 ## 📖 Public Documentation (`/pages/_docs/`)
 
 ### Purpose & Audience
+
 - **Target Audience**: End-users, theme adopters, general developers
 - **Content Focus**: Usage guides, tutorials, general technology documentation
 - **Format**: Standard Markdown for Jekyll compatibility
@@ -144,7 +158,8 @@ complexity: "beginner|intermediate|advanced"
 ### Content Categories
 
 #### Technology Guides
-```markdown
+
+````markdown
 ---
 title: "Jekyll Fundamentals for Theme Users"
 description: "Essential Jekyll concepts for Zer0-Mistakes theme users"
@@ -169,6 +184,7 @@ title: "Your Site Name"
 description: "Your site description"
 theme: "jekyll-theme-zer0"
 ```
+````
 
 ## Creating Content
 
@@ -183,7 +199,8 @@ layout: journals
 
 Your post content here.
 ```
-```
+
+````
 
 #### User Tutorials
 ```markdown
@@ -211,7 +228,7 @@ Override Bootstrap CSS variables in your custom stylesheet:
   --bs-primary: #3498db;
   --bs-secondary: #2c3e50;
 }
-```
+````
 
 ## Advanced Customization
 
@@ -224,7 +241,8 @@ $secondary: #your-secondary-color;
 
 @import "bootstrap";
 ```
-```
+
+````
 
 ### Content Standards for Public Documentation
 
@@ -242,9 +260,10 @@ estimated_time: "X minutes"
 prerequisites: ["Prerequisite 1", "Prerequisite 2"]
 updated: "2025-11-16"
 ---
-```
+````
 
 #### Content Structure Pattern
+
 1. **Introduction**: Brief overview and purpose
 2. **Prerequisites**: What users need before starting
 3. **Step-by-Step Instructions**: Clear, numbered procedures
@@ -259,6 +278,7 @@ updated: "2025-11-16"
 When converting technical documentation for public consumption:
 
 #### Content Transformation Guidelines
+
 1. **Remove Implementation Details**: Focus on usage rather than architecture
 2. **Simplify Language**: Replace technical jargon with user-friendly terms
 3. **Add Context**: Provide explanatory text for user understanding
@@ -266,7 +286,8 @@ When converting technical documentation for public consumption:
 5. **Update Cross-References**: Link to user documentation rather than source code
 
 #### Example Conversion Process
-```bash
+
+````bash
 # Technical Documentation (docs/features/analytics.mdx)
 ## Implementation Details
 <CodeBlock file="_includes/analytics/posthog.html">
@@ -274,19 +295,23 @@ When converting technical documentation for public consumption:
 {% if jekyll.environment == "production" %}
   <!-- PostHog implementation -->
 {% endif %}
-```
+````
+
 </CodeBlock>
 
-# Converts to Public Documentation (pages/_docs/analytics/setup.md)
+# Converts to Public Documentation (pages/\_docs/analytics/setup.md)
+
 ## Enabling Analytics
+
 To enable PostHog analytics on your site, add this to your `_config.yml`:
 
 ```yaml
 posthog:
   enabled: true
-  api_key: 'your_api_key_here'
+  api_key: "your_api_key_here"
 ```
-```
+
+````
 
 ### External Documentation Import
 
@@ -302,9 +327,10 @@ git sparse-checkout set docs/_docs
 
 # Process content for integration
 ./scripts/import-external-docs.sh jekyll-docs docs/_docs pages/_docs/jekyll/
-```
+````
 
 #### Content Processing Standards
+
 1. **Header Standardization**: Add Zer0-Mistakes front matter
 2. **Navigation Integration**: Update links for site structure
 3. **Brand Neutrality**: Remove external branding elements
@@ -316,6 +342,7 @@ git sparse-checkout set docs/_docs
 ### Validation Procedures
 
 #### Content Quality Checks
+
 ```bash
 # Validate Markdown syntax
 markdownlint pages/_docs/**/*.md
@@ -331,6 +358,7 @@ bundle exec jekyll build --config _config.yml,_config_dev.yml
 ```
 
 #### Cross-Reference Validation
+
 ```bash
 # Check internal link integrity
 ./scripts/validate-internal-links.sh
@@ -343,6 +371,7 @@ bundle exec jekyll build --config _config.yml,_config_dev.yml
 ```
 
 ### Performance Testing
+
 - **Build Time**: Monitor Jekyll build performance impact
 - **File Size**: Track documentation bundle size
 - **Loading Speed**: Test page rendering performance
@@ -353,7 +382,8 @@ bundle exec jekyll build --config _config.yml,_config_dev.yml
 ### Technical Documentation (MDX)
 
 #### Code Example Standards
-```mdx
+
+````mdx
 <CodeBlock 
   language="ruby" 
   file="lib/jekyll-theme-zer0/version.rb"
@@ -364,26 +394,30 @@ module JekyllThemeZer0
   VERSION = "0.5.0"  # Semantic version
   THEME_NAME = "zer0-mistakes"
 end
-```
+````
+
 </CodeBlock>
 ```
 
 #### Architecture Documentation
-```mdx
+
+````mdx
 <ArchitectureDiagram title="Component Relationship">
 ```mermaid
 graph TD
     A[Jekyll Build] --> B[Theme Processing]
     B --> C[Asset Compilation]
     C --> D[Site Generation]
-```
+````
+
 </ArchitectureDiagram>
 ```
 
 ### Public Documentation (Markdown)
 
 #### Step-by-Step Instructions
-```markdown
+
+````markdown
 ## Setting Up Custom Navigation
 
 Follow these steps to customize your site navigation:
@@ -392,8 +426,10 @@ Follow these steps to customize your site navigation:
    ```bash
    touch _data/navigation.yml
    ```
+````
 
 2. **Add navigation items**:
+
    ```yaml
    main:
      - title: "Home"
@@ -403,12 +439,14 @@ Follow these steps to customize your site navigation:
    ```
 
 3. **Test your changes**:
+
    ```bash
    bundle exec jekyll serve
    ```
 
 4. **Verify navigation appears** in your browser at `http://localhost:4000`
-```
+
+````
 
 #### Troubleshooting Sections
 ```markdown
@@ -418,19 +456,20 @@ Follow these steps to customize your site navigation:
 
 **Problem**: Custom navigation doesn't show on the site.
 
-**Solution**: 
+**Solution**:
 1. Check file location: `_data/navigation.yml`
 2. Verify YAML syntax is correct
 3. Restart Jekyll server: `bundle exec jekyll serve`
 
 **Still having issues?** [Open an issue](https://github.com/bamr87/zer0-mistakes/issues) with your configuration details.
-```
+````
 
 ## 🤖 AI-Assisted Documentation Development
 
 ### GitHub Copilot Optimization
 
 #### Context-Rich Front Matter
+
 ```yaml
 ---
 # AI Context Enhancement
@@ -450,6 +489,7 @@ technical_scope:
 ```
 
 #### AI Development Assistance Patterns
+
 - **Template Generation**: Use Copilot for generating documentation templates
 - **Code Example Creation**: Leverage AI for accurate code snippets
 - **Cross-Reference Generation**: AI-assisted linking between related docs
@@ -458,6 +498,7 @@ technical_scope:
 ### Copilot-Optimized Documentation Structure
 
 #### File Organization for AI Context
+
 ```
 docs/
 ├── templates/                    # AI training templates
@@ -476,6 +517,7 @@ docs/
 ### Documentation Release Process
 
 #### Technical Documentation Updates
+
 1. **Content Review**: Technical accuracy and implementation correctness
 2. **Component Testing**: Verify MDX components render properly
 3. **Cross-Reference Validation**: Ensure all links and references work
@@ -483,6 +525,7 @@ docs/
 5. **Integration Testing**: Test with Jekyll build process
 
 #### Public Documentation Release
+
 1. **User Testing**: Verify instructions work for end-users
 2. **Accessibility Check**: Ensure content is inclusive and readable
 3. **Mobile Compatibility**: Test responsive design and navigation
@@ -492,6 +535,7 @@ docs/
 ### Continuous Integration
 
 #### Automated Documentation Testing
+
 ```yaml
 # .github/workflows/documentation.yml
 name: Documentation CI
@@ -512,12 +556,14 @@ jobs:
 ## 📊 Documentation Metrics & Analytics
 
 ### Quality Metrics
+
 - **Content Coverage**: Track documentation completeness
 - **User Feedback**: Monitor documentation effectiveness
 - **Search Analytics**: Understand user documentation patterns
 - **Conversion Success**: Track technical to public doc conversion
 
 ### Performance Monitoring
+
 - **Build Impact**: Monitor Jekyll build time effects
 - **Bundle Size**: Track documentation weight
 - **Loading Performance**: Page speed optimization
@@ -526,6 +572,7 @@ jobs:
 ---
 
 **File Scope**: This instruction file applies to all documentation-related files including:
+
 - `/docs/**` (Technical documentation)
 - `/pages/_docs/**` (Public documentation)
 - `DOCUMENTATION_WORKFLOW.md`

@@ -61,7 +61,7 @@ AI-powered writing assistant for:
 Create stunning visuals from text descriptions:
 
 ```
-/imagine a futuristic city with flying cars, 
+/imagine a futuristic city with flying cars,
 neon lights, cyberpunk aesthetic, 8k resolution
 ```
 
@@ -101,7 +101,7 @@ AI-powered meeting transcription:
 Analyze data with natural language:
 
 ```
-"Show me a bar chart of sales by region 
+"Show me a bar chart of sales by region
 for the last quarter, sorted by revenue"
 ```
 

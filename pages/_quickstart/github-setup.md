@@ -7,7 +7,7 @@ slug: github
 lastmod: 2025-01-27T10:00:00.000Z
 draft: false
 sidebar:
-   nav: quickstart
+  nav: quickstart
 ---
 
 # 🐙 GitHub Setup & Deployment
@@ -40,16 +40,19 @@ Before starting GitHub integration, ensure you have:
 First, confirm your package manager is available:
 
 **macOS:**
+
 ```bash
 brew --version
 ```
 
 **Windows:**
+
 ```powershell
 winget --version
 ```
 
 **Linux (Ubuntu/Debian):**
+
 ```bash
 apt --version
 ```
@@ -59,17 +62,20 @@ apt --version
 Install GitHub CLI for seamless repository management:
 
 **macOS:**
+
 ```bash
 brew install gh git
 ```
 
 **Windows:**
+
 ```powershell
 winget install Git.Git
 winget install GitHub.cli
 ```
 
 **Linux (Ubuntu/Debian):**
+
 ```bash
 sudo apt update
 sudo apt install gh git
@@ -95,6 +101,7 @@ gh auth login
 ```
 
 Follow the interactive prompts:
+
 1. Select **GitHub.com**
 2. Choose **HTTPS** protocol
 3. Authenticate via **web browser** (recommended)
@@ -190,12 +197,14 @@ docker-compose up
 ### Creating Content
 
 **New Blog Post:**
+
 ```bash
 # Create new post with current date
 touch pages/_posts/$(date +%Y-%m-%d)-my-new-post.md
 ```
 
 **Frontmatter Template:**
+
 ```yaml
 ---
 title: "Your Post Title"
@@ -213,6 +222,7 @@ comments: true
 ### Git Workflow
 
 **Feature Development:**
+
 ```bash
 # Create feature branch
 git checkout -b feature/new-awesome-feature
@@ -236,6 +246,7 @@ gh pr create --title "Add awesome new feature" --body "Description of changes"
 ```
 
 **Quick Content Updates:**
+
 ```bash
 # For simple content updates
 git add pages/_posts/your-new-post.md
@@ -273,6 +284,7 @@ git push origin main
 For custom domains:
 
 1. Create `CNAME` file in repository root:
+
    ```
    your-domain.com
    ```
@@ -338,7 +350,7 @@ name: Deploy Jekyll
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   deploy:
@@ -357,6 +369,7 @@ jobs:
 ### Common Issues
 
 **Permission Denied:**
+
 ```bash
 # Check SSH key setup
 ssh -T git@github.com
@@ -366,6 +379,7 @@ gh auth login
 ```
 
 **Deployment Failures:**
+
 ```bash
 # Check GitHub Pages build status
 gh api repos/:owner/:repo/pages/builds
@@ -374,6 +388,7 @@ gh api repos/:owner/:repo/pages/builds
 ```
 
 **Local Development Issues:**
+
 ```bash
 # Restart Docker environment
 docker-compose down && docker-compose up --build

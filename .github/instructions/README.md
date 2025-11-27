@@ -21,39 +21,43 @@ This directory contains file-specific instructions for GitHub Copilot to provide
 
 GitHub Copilot automatically applies these instructions based on the files you're editing:
 
-| Instruction File | Applies To | Purpose |
-|-----------------|------------|---------|
-| `copilot-instructions.md` | **All files** | Project overview, architecture, essential commands |
-| `layouts.instructions.md` | `_layouts/**` | Jekyll layout patterns, Bootstrap integration |
-| `includes.instructions.md` | `_includes/**` | Reusable components, parameters, accessibility |
-| `scripts.instructions.md` | `scripts/**` | Shell script standards, error handling |
-| `testing.instructions.md` | `test/**` | Test development, assertions, CI/CD |
-| `documentation.instructions.md` | `docs/**,pages/_docs/**,*docs*.md` | Documentation development guidelines |
-| `version-control.instructions.md` | `**` (all files) | Git workflow, semantic versioning, releases |
+| Instruction File                  | Applies To                         | Purpose                                            |
+| --------------------------------- | ---------------------------------- | -------------------------------------------------- |
+| `copilot-instructions.md`         | **All files**                      | Project overview, architecture, essential commands |
+| `layouts.instructions.md`         | `_layouts/**`                      | Jekyll layout patterns, Bootstrap integration      |
+| `includes.instructions.md`        | `_includes/**`                     | Reusable components, parameters, accessibility     |
+| `scripts.instructions.md`         | `scripts/**`                       | Shell script standards, error handling             |
+| `testing.instructions.md`         | `test/**`                          | Test development, assertions, CI/CD                |
+| `documentation.instructions.md`   | `docs/**,pages/_docs/**,*docs*.md` | Documentation development guidelines               |
+| `version-control.instructions.md` | `**` (all files)                   | Git workflow, semantic versioning, releases        |
 
 ## 📖 Main Instructions (copilot-instructions.md)
 
 The main instruction file provides:
 
 ### Project Context
+
 - **Project overview**: Purpose, key features, and architecture
 - **Project structure**: Directory layout and file organization
 - **Essential commands**: Development, testing, building, and deployment
 - **Tooling information**: Docker, Jekyll, testing frameworks
 
 ### Development Guidelines
+
 - **Critical workflows**: Setup, development, content creation
 - **Bootstrap 5 integration**: CSS framework usage, components
 - **Front matter standards**: Jekyll metadata for posts, layouts, includes
 - **Docker optimization**: Container configuration, platform support
 
 ### Quality Standards
+
 - **Error handling patterns**: Logging, recovery strategies
 - **Documentation standards**: CHANGELOG, README, inline comments
 - **SEO optimization**: Meta tags, structured data
 - **Accessibility**: WCAG compliance, ARIA labels
 
 ### Best Practices
+
 - **Security**: Input validation, credential management
 - **Performance**: Asset optimization, lazy loading
 - **Testing**: Test coverage, CI/CD integration
@@ -66,6 +70,7 @@ The main instruction file provides:
 **Applies to**: `_layouts/**`
 
 Guidelines for Jekyll layout development:
+
 - Layout hierarchy and inheritance patterns
 - Bootstrap 5 grid system and components
 - Responsive design implementation (mobile-first)
@@ -79,6 +84,7 @@ Guidelines for Jekyll layout development:
 **Applies to**: `_includes/**`
 
 Guidelines for reusable Jekyll components:
+
 - Component naming conventions
 - Parameter handling and defaults
 - Bootstrap component integration
@@ -93,6 +99,7 @@ Guidelines for reusable Jekyll components:
 **Applies to**: `scripts/**`
 
 Guidelines for shell script development:
+
 - Script structure and organization
 - Error handling with `set -euo pipefail`
 - Logging functions (info, success, error)
@@ -107,6 +114,7 @@ Guidelines for shell script development:
 **Applies to**: `test/**`
 
 Guidelines for test development:
+
 - Test suite organization
 - Test script structure
 - Assertion patterns
@@ -121,6 +129,7 @@ Guidelines for test development:
 **Applies to**: All files (`**`)
 
 Guidelines for version control and releases:
+
 - Git workflow strategies (Git Flow, GitHub Flow)
 - Branch management
 - Semantic versioning (MAJOR.MINOR.PATCH)
@@ -135,6 +144,7 @@ Guidelines for version control and releases:
 **Applies to**: `docs/**`, `pages/_docs/**`, `*documentation*.md`, `*docs*.md`
 
 Guidelines for the dual documentation architecture:
+
 - **Technical Documentation** (`/docs/`) - MDX format for developers/contributors
 - **Public Documentation** (`/pages/_docs/`) - Markdown format for end-users
 - Content conversion workflow (MDX to Markdown)
@@ -149,6 +159,7 @@ Guidelines for the dual documentation architecture:
 ### For Developers
 
 When you edit a file, GitHub Copilot automatically:
+
 1. Loads the main `copilot-instructions.md`
 2. Applies relevant file-specific instructions
 3. Provides context-aware suggestions
@@ -157,6 +168,7 @@ When you edit a file, GitHub Copilot automatically:
 ### For AI Agents
 
 These instructions help AI coding agents:
+
 - Understand project architecture and dependencies
 - Follow established patterns and conventions
 - Generate code consistent with project style
@@ -184,29 +196,36 @@ description: "Brief description of what these instructions cover"
 # Title of Instructions
 
 ## Overview
+
 Brief introduction and purpose
 
 ## Structure
+
 Organization of files/components
 
 ## Standards
+
 Coding standards and conventions
 
 ## Patterns
+
 Common patterns and examples
 
 ## Best Practices
+
 Best practices and anti-patterns
 
 ## Testing
+
 How to test these components
 
 ## Documentation
+
 Documentation requirements
 
 ---
 
-*Closing notes or references*
+_Closing notes or references_
 ```
 
 ## 🔄 Maintenance
@@ -255,4 +274,4 @@ If you have questions about these instructions or need help:
 
 ---
 
-*These instructions are designed to help both human developers and AI coding agents work effectively with the Zer0-Mistakes codebase. Keep them updated and comprehensive for the best development experience.*
+_These instructions are designed to help both human developers and AI coding agents work effectively with the Zer0-Mistakes codebase. Keep them updated and comprehensive for the best development experience._

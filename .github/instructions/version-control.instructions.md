@@ -1,5 +1,5 @@
 ---
-applyTo: 'CHANGELOG.md,CHANGES.md,**/version.*,VERSION,**/package.json,**/*.gemspec,**/Cargo.toml,**/go.mod'
+applyTo: "CHANGELOG.md,CHANGES.md,**/version.*,VERSION,**/package.json,**/*.gemspec,**/Cargo.toml,**/go.mod"
 description: "Version control, releases, and publication guidelines for Ruby Gems and GitHub repositories"
 ---
 
@@ -25,12 +25,14 @@ This document outlines best practices for version control, releases, and publica
 ### Recommended Workflows
 
 **Git Flow** (Recommended for gems with multiple supported versions):
+
 - Supports versioned releases
 - Handles features, bug fixes, and hotfixes separately
 - Maintains stable releases
 - Ideal for team collaboration
 
 **GitHub Flow** (For smaller projects or solo development):
+
 - Simpler workflow
 - Work directly on feature branches from main
 - Merge via PR and tag releases from main
@@ -48,6 +50,7 @@ This document outlines best practices for version control, releases, and publica
 ### Commit Message Guidelines
 
 Use descriptive, atomic commits with clear messages:
+
 ```
 Fix bug in method X: add edge case handling
 
@@ -60,18 +63,19 @@ Fix bug in method X: add edge case handling
 
 ### Git Flow Branch Structure
 
-| Branch Type | Purpose | Created From | Merged To | Example Name |
-|-------------|---------|--------------|-----------|--------------|
-| `main` (or `master`) | Stable production code; only merged releases/hotfixes. Tags are created here for versions. | N/A (long-lived) | N/A | `main` |
-| `develop` | Integration of features for the next release; ongoing development. | `main` | `main` (via release branches) | `develop` |
-| `feature/*` | New features or enhancements; isolate work to avoid impacting others. | `develop` | `develop` | `feature/add-authentication` |
-| `bugfix/*` or `fix/*` | Non-urgent bug fixes in development code. | `develop` | `develop` | `bugfix/handle-nil-error` |
-| `hotfix/*` | Urgent fixes for bugs in released (production) versions; quick patches. | `main` (or a specific release tag/branch) | `main` and `develop` | `hotfix/v1.2.3-security-patch` |
-| `release/*` | Preparing a new version: final tweaks, version bump, changelog update. | `develop` | `main` and `develop` | `release/v2.0.0` |
+| Branch Type           | Purpose                                                                                    | Created From                              | Merged To                     | Example Name                   |
+| --------------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------- | ----------------------------- | ------------------------------ |
+| `main` (or `master`)  | Stable production code; only merged releases/hotfixes. Tags are created here for versions. | N/A (long-lived)                          | N/A                           | `main`                         |
+| `develop`             | Integration of features for the next release; ongoing development.                         | `main`                                    | `main` (via release branches) | `develop`                      |
+| `feature/*`           | New features or enhancements; isolate work to avoid impacting others.                      | `develop`                                 | `develop`                     | `feature/add-authentication`   |
+| `bugfix/*` or `fix/*` | Non-urgent bug fixes in development code.                                                  | `develop`                                 | `develop`                     | `bugfix/handle-nil-error`      |
+| `hotfix/*`            | Urgent fixes for bugs in released (production) versions; quick patches.                    | `main` (or a specific release tag/branch) | `main` and `develop`          | `hotfix/v1.2.3-security-patch` |
+| `release/*`           | Preparing a new version: final tweaks, version bump, changelog update.                     | `develop`                                 | `main` and `develop`          | `release/v2.0.0`               |
 
 ### Branch Naming Conventions
 
 Use descriptive, short-lived branches prefixed by type:
+
 - `feature/add-user-authentication`
 - `bugfix/fix-memory-leak`
 - `hotfix/security-vulnerability`
@@ -101,6 +105,7 @@ Follow SemVer strictly: `MAJOR.MINOR.PATCH`
 ### Prerelease Versions
 
 For testing unstable changes, use suffixes:
+
 - `2.0.0.rc1` (release candidate)
 - `1.5.0.beta.3` (beta version)
 - `2.1.0.alpha.1` (alpha version)
@@ -155,6 +160,7 @@ spec/
 ### CI Integration
 
 Set up GitHub Actions to run tests on PRs/pushes:
+
 ```yaml
 name: CI
 on: [push, pull_request]
@@ -163,7 +169,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby-version: ['2.7', '3.0', '3.1', '3.2']
+        ruby-version: ["2.7", "3.0", "3.1", "3.2"]
     steps:
       - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
@@ -190,36 +196,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - New feature descriptions
 
 ### Changed
+
 - Changes in existing functionality
 
 ### Deprecated
+
 - Soon-to-be removed features
 
 ### Removed
+
 - Now removed features
 
 ### Fixed
+
 - Any bug fixes
 
 ### Security
+
 - Vulnerability fixes
 
 ## [2.0.0] - 2025-01-15
 
 ### Added
+
 - User authentication system
 - API rate limiting
 
 ### Changed
+
 - Updated Ruby requirement to 3.0+
 
 ### Removed
+
 - Deprecated legacy methods
 
 ## [1.5.0] - 2024-12-01
+
 ...
 ```
 
@@ -240,7 +256,7 @@ Use YARD syntax for auto-generated docs:
 
 ```ruby
 # Authenticates a user with the given credentials
-# 
+#
 # @param username [String] the user's login name
 # @param password [String] the user's password
 # @return [User, nil] the authenticated user or nil if authentication fails
@@ -290,6 +306,7 @@ yard server
 #### Automated Release (Recommended)
 
 1. **Trigger version bump workflow**:
+
    ```bash
    # Via GitHub Actions UI or API
    # This automatically handles steps 2-7 below
@@ -304,6 +321,7 @@ yard server
 #### Manual Release Process
 
 1. **Create release branch** (Git Flow):
+
    ```bash
    git checkout develop
    git pull origin develop
@@ -311,17 +329,20 @@ yard server
    ```
 
 2. **Bump version**:
+
    ```bash
    ./scripts/version.sh minor  # or patch/major
    ```
 
 3. **Validate and test**:
+
    ```bash
    ./test/test_runner.sh --verbose
    ./scripts/build.sh
    ```
 
 4. **Commit and tag** (if not done by version script):
+
    ```bash
    git add .
    git commit -m "chore: bump version to 2.1.0"
@@ -330,6 +351,7 @@ yard server
    ```
 
 5. **Deploy release**:
+
    ```bash
    ./scripts/release.sh  # Full automated deployment
    # Or step by step:
@@ -374,19 +396,19 @@ Gem::Specification.new do |spec|
   spec.version       = GemName::VERSION
   spec.authors       = ["Your Name"]
   spec.email         = ["your.email@example.com"]
-  
+
   spec.summary       = "Short description"
   spec.description   = "Longer description"
   spec.homepage      = "https://github.com/username/gem_name"
   spec.license       = "MIT"
-  
+
   # Security: restrict push to specific host
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = spec.homepage
   spec.metadata["changelog_uri"] = "#{spec.homepage}/blob/main/CHANGELOG.md"
   spec.metadata["documentation_uri"] = "#{spec.homepage}#readme"
-  
+
   # Dependencies with pessimistic constraints
   spec.add_dependency "rails", "~> 7.0"
   spec.add_development_dependency "rspec", "~> 3.0"
@@ -444,29 +466,32 @@ gem push gem_name-2.1.0.rc1.gem
 ### GitHub Release Features
 
 #### Automatic Release Notes
+
 - Extracts from CHANGELOG.md for the specific version
 - Includes installation instructions and links
 - Adds developer documentation and examples
 
 #### Release Assets
+
 - Ruby gem package (`.gem` file)
 - One-click installation script
 - Detailed release notes (Markdown)
 - Version and build information (JSON)
 
 #### Smart Prerelease Detection
+
 - Automatically detects `alpha`, `beta`, `rc` in version
 - Marks releases appropriately
 - Handles `make_latest` flag correctly
 
 ### Post-Publication
 
-1. **Verify publication**: 
+1. **Verify publication**:
    - Check gem page on RubyGems.org
    - Verify GitHub release creation
    - Test installation from both sources
 
-2. **Update documentation**: 
+2. **Update documentation**:
    - README installation instructions
    - API documentation if changed
    - Usage examples
@@ -524,6 +549,7 @@ gem owner gem_name --remove user@example.com
 For critical bugs in production:
 
 1. **Create hotfix branch** from affected release tag:
+
    ```bash
    git checkout v2.0.1
    git checkout -b hotfix/v2.0.2-critical-fix
@@ -532,6 +558,7 @@ For critical bugs in production:
 2. **Apply minimal fix** and test thoroughly
 
 3. **Release hotfix**:
+
    ```bash
    # Bump patch version (2.0.1 → 2.0.2)
    git commit -m "Hotfix: critical security vulnerability"
@@ -582,4 +609,4 @@ gem yank gem_name -v 2.1.0
 
 ---
 
-*This document should be reviewed and updated regularly to reflect current best practices and team preferences.*
+_This document should be reviewed and updated regularly to reflect current best practices and team preferences._

@@ -26,10 +26,10 @@ Development overrides that are merged with the main config when running locally.
 
 For standard GitHub Pages hosting at `username.github.io/repository-name/`:
 
-**_config.yml**:
+**\_config.yml**:
 
 ```yaml
-custom_domain: ""  # Leave empty for GitHub Pages
+custom_domain: "" # Leave empty for GitHub Pages
 url: "https://bamr87.github.io"
 baseurl: "/zer0-mistakes"
 ```
@@ -43,12 +43,12 @@ baseurl: "/zer0-mistakes"
 
 For hosting with a custom domain like `zer0-mistakes.com`:
 
-**_config.yml**:
+**\_config.yml**:
 
 ```yaml
-custom_domain: "zer0-mistakes.com"  # Your custom domain
+custom_domain: "zer0-mistakes.com" # Your custom domain
 url: "https://zer0-mistakes.com"
-baseurl: ""  # Empty for root domain hosting
+baseurl: "" # Empty for root domain hosting
 ```
 
 **Development URLs**:
@@ -60,12 +60,12 @@ baseurl: ""  # Empty for root domain hosting
 
 For GitHub Pages with a custom domain (CNAME file):
 
-**_config.yml**:
+**\_config.yml**:
 
 ```yaml
-custom_domain: "zer0-mistakes.com"  # Your custom domain
+custom_domain: "zer0-mistakes.com" # Your custom domain
 url: "https://zer0-mistakes.com"
-baseurl: ""  # Empty when using custom domain
+baseurl: "" # Empty when using custom domain
 ```
 
 ## Development Commands

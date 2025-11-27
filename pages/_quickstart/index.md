@@ -5,7 +5,7 @@ layout: default
 description: "Complete setup guide for the Zer0-Mistakes Jekyll theme featuring Docker-first development, AI-powered installation, and cross-platform compatibility"
 permalink: /quickstart/
 sidebar:
-   nav: quickstart
+  nav: quickstart
 lastmod: 2025-02-06T18:18:33.556Z
 preview: "Get started with Zer0-Mistakes Jekyll theme in minutes"
 tags: [jekyll, docker, setup, development, ai-powered]
@@ -34,7 +34,7 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.s
 ## 🎯 What You Get
 
 - **🤖 AI-Powered Setup** - Intelligent error detection and automatic fixes
-- **🐳 Docker Environment** - Consistent development across all platforms  
+- **🐳 Docker Environment** - Consistent development across all platforms
 - **🎨 Bootstrap 5.3** - Modern responsive design with dark mode
 - **📱 Mobile-First** - Optimized for all devices and screen sizes
 - **⚡ Live Reload** - Changes appear instantly during development
@@ -95,31 +95,32 @@ docker-compose up
 
 ### 🏗️ Essential Setup
 
-| Guide | Purpose | Time | Difficulty |
-|-------|---------|------|------------|
-| **[Machine Setup](/quickstart/machine-setup/)** | Install Docker, Git, and platform tools | 10 min | Beginner |
-| **[Jekyll Setup](/quickstart/jekyll-setup/)** | Configure theme and development environment | 5 min | Beginner |
-| **[GitHub Setup](/quickstart/github-setup/)** | Version control and deployment | 10 min | Intermediate |
+| Guide                                           | Purpose                                     | Time   | Difficulty   |
+| ----------------------------------------------- | ------------------------------------------- | ------ | ------------ |
+| **[Machine Setup](/quickstart/machine-setup/)** | Install Docker, Git, and platform tools     | 10 min | Beginner     |
+| **[Jekyll Setup](/quickstart/jekyll-setup/)**   | Configure theme and development environment | 5 min  | Beginner     |
+| **[GitHub Setup](/quickstart/github-setup/)**   | Version control and deployment              | 10 min | Intermediate |
 
 ### 🚀 Advanced Configuration
 
-| Guide | Purpose | Time | Difficulty |
-|-------|---------|------|------------|
-| **Bootstrap Customization** | Modify themes and responsive design | 15 min | Intermediate |
-| **Performance Optimization** | Speed up loading and Core Web Vitals | 20 min | Advanced |
-| **Custom Hosting** | Deploy to Netlify, Vercel, or custom servers | 15 min | Intermediate |
+| Guide                        | Purpose                                      | Time   | Difficulty   |
+| ---------------------------- | -------------------------------------------- | ------ | ------------ |
+| **Bootstrap Customization**  | Modify themes and responsive design          | 15 min | Intermediate |
+| **Performance Optimization** | Speed up loading and Core Web Vitals         | 20 min | Advanced     |
+| **Custom Hosting**           | Deploy to Netlify, Vercel, or custom servers | 15 min | Intermediate |
 
 ### 🔧 Development Tools
 
-| Tool | Purpose | Setup Time |
-|------|---------|------------|
-| **VS Code Extensions** | Enhanced Jekyll development | 5 min |
-| **GitHub CLI** | Repository management | 5 min |
-| **Docker Desktop** | Containerized development | 10 min |
+| Tool                   | Purpose                     | Setup Time |
+| ---------------------- | --------------------------- | ---------- |
+| **VS Code Extensions** | Enhanced Jekyll development | 5 min      |
+| **GitHub CLI**         | Repository management       | 5 min      |
+| **Docker Desktop**     | Containerized development   | 10 min     |
 
 ## 🎯 Development Workflows
 
 ### Local Development
+
 ```bash
 # Start development environment
 docker-compose up
@@ -129,6 +130,7 @@ open http://localhost:4000
 ```
 
 ### Content Creation
+
 ```bash
 # Create new post
 bundle exec jekyll post "My New Post"
@@ -138,6 +140,7 @@ bundle exec jekyll page "About"
 ```
 
 ### Theme Customization
+
 ```bash
 # Customize layouts and includes
 edit _layouts/default.html
@@ -152,6 +155,7 @@ edit assets/css/custom.css
 ### Installation Issues
 
 **Problem: Installation fails**
+
 ```bash
 # Check Docker is running
 docker --version
@@ -161,6 +165,7 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.s
 ```
 
 **Problem: Port 4000 in use**
+
 ```bash
 # Check what's using the port
 lsof -i :4000
@@ -170,6 +175,7 @@ docker-compose run -p 4001:4000 jekyll
 ```
 
 **Problem: Docker platform warnings**
+
 ```bash
 # This is normal on Apple Silicon - the site will still work
 # The docker-compose.yml already includes platform: linux/amd64
@@ -178,6 +184,7 @@ docker-compose run -p 4001:4000 jekyll
 ### Validation Commands
 
 **Test your installation:**
+
 ```bash
 # Verify files were installed
 ls -la _config.yml docker-compose.yml INSTALLATION.md
@@ -191,26 +198,29 @@ docker-compose config
 
 ## 🆘 Need Help?
 
-| Resource | Purpose | Response Time |
-|----------|---------|---------------|
-| **[GitHub Issues](https://github.com/bamr87/zer0-mistakes/issues)** | Bug reports and technical support | 24-48 hours |
+| Resource                                                               | Purpose                            | Response Time    |
+| ---------------------------------------------------------------------- | ---------------------------------- | ---------------- |
+| **[GitHub Issues](https://github.com/bamr87/zer0-mistakes/issues)**    | Bug reports and technical support  | 24-48 hours      |
 | **[Discussions](https://github.com/bamr87/zer0-mistakes/discussions)** | Community Q&A and feature requests | Community-driven |
-| **[Documentation](https://bamr87.github.io/zer0-mistakes/)** | Comprehensive guides and tutorials | Immediate |
-| **AI Diagnostics** | Built-in automated troubleshooting | Immediate |
+| **[Documentation](https://bamr87.github.io/zer0-mistakes/)**           | Comprehensive guides and tutorials | Immediate        |
+| **AI Diagnostics**                                                     | Built-in automated troubleshooting | Immediate        |
 
 ## 🚀 Next Steps
 
 **🎯 Immediate Actions:**
+
 1. Run the [one-command installation](#fastest-start-1-command)
 2. Verify with the [validation commands](#validation-commands)
 3. Start customizing your site content
 
 **📚 Learn More:**
+
 1. Follow the [essential setup guides](#essential-setup)
 2. Explore [advanced configuration options](#advanced-configuration)
 3. Join our [community discussions](https://github.com/bamr87/zer0-mistakes/discussions)
 
 **🚀 Deploy:**
+
 1. Push to GitHub for automatic Pages deployment
 2. Configure custom domain if needed
 3. Monitor performance with built-in tools

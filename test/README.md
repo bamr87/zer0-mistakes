@@ -7,9 +7,11 @@ The zer0-mistakes testing framework has been **consolidated** from 15+ individua
 ## 📋 Test Suite Architecture
 
 ### 🔧 Core Test Suite (`test_core.sh`)
+
 **Purpose:** Fundamental functionality validation  
 **Runtime:** ~2-3 minutes  
 **Focus Areas:**
+
 - **Unit Tests**: File structure, YAML syntax, gemspec validity, version consistency
 - **Integration Tests**: Bundle install, Jekyll build, gem build process
 - **Validation Tests**: Liquid templates, Sass compilation, JavaScript syntax
@@ -26,9 +28,11 @@ The zer0-mistakes testing framework has been **consolidated** from 15+ individua
 ```
 
 ### 🚀 Deployment Test Suite (`test_deployment.sh`)
+
 **Purpose:** Installation and deployment validation  
 **Runtime:** ~5-8 minutes  
 **Focus Areas:**
+
 - **Installation Tests**: Local full/minimal installation, remote installation
 - **Docker Tests**: Environment setup, volume mounting, Jekyll build in Docker
 - **End-to-End Tests**: Complete workflow, GitHub Pages readiness
@@ -48,9 +52,11 @@ The zer0-mistakes testing framework has been **consolidated** from 15+ individua
 ```
 
 ### 🏆 Quality Test Suite (`test_quality.sh`)
+
 **Purpose:** Security, accessibility, and performance validation  
 **Runtime:** ~4-6 minutes  
 **Focus Areas:**
+
 - **Security Tests**: Vulnerability scanning, sensitive files, hardcoded secrets
 - **Accessibility Tests**: Semantic HTML, alt text, color contrast, keyboard navigation
 - **Compatibility Tests**: Ruby/Jekyll versions, cross-platform files, browser compatibility
@@ -69,6 +75,7 @@ The zer0-mistakes testing framework has been **consolidated** from 15+ individua
 The **consolidated test runner** orchestrates all test suites with advanced features:
 
 ### Basic Usage
+
 ```bash
 # Run all test suites
 ./test/test_runner.sh
@@ -83,6 +90,7 @@ The **consolidated test runner** orchestrates all test suites with advanced feat
 ```
 
 ### Advanced Options
+
 ```bash
 # CI/CD Integration
 ./test/test_runner.sh --suites all --environment ci --skip-docker --skip-remote
@@ -100,10 +108,11 @@ The **consolidated test runner** orchestrates all test suites with advanced feat
 ## 🔄 Migration from Legacy Tests
 
 ### Before (Legacy Structure)
+
 ```
 test/
 ├── test_unit.sh              # ❌ Replaced by test_core.sh
-├── test_integration.sh       # ❌ Replaced by test_core.sh  
+├── test_integration.sh       # ❌ Replaced by test_core.sh
 ├── test_e2e.sh              # ❌ Replaced by test_deployment.sh
 ├── test_installation_complete.sh # ❌ Replaced by test_deployment.sh
 ├── test_docker_deployment.sh # ❌ Replaced by test_deployment.sh
@@ -115,6 +124,7 @@ test/
 ```
 
 ### After (Consolidated Structure)
+
 ```
 test/
 ├── test_core.sh             # ✅ Unit + Integration + Validation
@@ -127,6 +137,7 @@ test/
 ## 🚀 Quick Start Guide
 
 ### For Developers
+
 ```bash
 # Quick validation during development
 ./test/test_runner.sh --suites core
@@ -139,6 +150,7 @@ test/
 ```
 
 ### For CI/CD
+
 ```bash
 # Fast feedback in PR checks
 ./test/test_runner.sh --suites core --environment ci
@@ -151,6 +163,7 @@ test/
 ```
 
 ### For Quality Assurance
+
 ```bash
 # Security and accessibility audit
 ./test/test_runner.sh --suites quality --verbose
@@ -165,6 +178,7 @@ test/
 ## 📊 Test Reporting
 
 ### Output Formats
+
 - **Text**: Human-readable console output (default)
 - **JSON**: Machine-readable for CI/CD integration
 - **XML**: JUnit-compatible for test reporting tools
@@ -179,11 +193,12 @@ test/
 
 # All formats
 ./test/test_runner.sh --format json
-./test/test_runner.sh --format xml  
+./test/test_runner.sh --format xml
 ./test/test_runner.sh --format html
 ```
 
 ### Report Locations
+
 ```
 test/
 ├── results/          # Individual test results (JSON)
@@ -194,6 +209,7 @@ test/
 ## 🔧 Configuration & Environment Variables
 
 ### Environment Detection
+
 The test framework automatically detects and adapts to different environments:
 
 - **`local`**: Developer workstation with full toolchain
@@ -201,10 +217,12 @@ The test framework automatically detects and adapts to different environments:
 - **`docker`**: Docker-based testing environment
 
 ### Skip Options
+
 - **`--skip-docker`**: Skip Docker-related tests (when Docker unavailable)
 - **`--skip-remote`**: Skip remote installation tests (for offline/private environments)
 
 ### Timeout Configuration
+
 - **Default**: 300 seconds per test suite
 - **Deployment**: 600 seconds (includes Docker operations)
 - **Custom**: Use `--timeout <seconds>`
@@ -214,12 +232,13 @@ The test framework automatically detects and adapts to different environments:
 ### GitHub Actions Workflows
 
 #### New Consolidated Workflow
+
 ```yaml
 # .github/workflows/consolidated-testing.yml
 - name: Run Core Tests
   run: ./test/test_runner.sh --suites core --environment ci
 
-- name: Run Deployment Tests  
+- name: Run Deployment Tests
   run: ./test/test_runner.sh --suites deployment --environment ci --skip-docker
 
 - name: Run Quality Tests
@@ -227,15 +246,17 @@ The test framework automatically detects and adapts to different environments:
 ```
 
 #### Legacy Workflow Updates
+
 ```yaml
 # Before
 - run: ./test/test_runner.sh --verbose --format json
 
-# After  
+# After
 - run: ./test/test_runner.sh --suites all --verbose --format json --environment ci
 ```
 
 ### Test Matrix Strategy
+
 - **Pull Requests**: Core tests only (fast feedback)
 - **Main Branch**: Core + Deployment tests
 - **Releases**: All test suites (comprehensive validation)
@@ -244,14 +265,16 @@ The test framework automatically detects and adapts to different environments:
 ## 📈 Performance Improvements
 
 ### Execution Time Comparison
-| Test Scope | Legacy Framework | Consolidated Framework | Improvement |
-|------------|------------------|------------------------|-------------|
-| **Core Tests** | ~8-10 minutes | ~2-3 minutes | **65% faster** |
-| **Deployment** | ~12-15 minutes | ~5-8 minutes | **50% faster** |
-| **Quality** | ~10-12 minutes | ~4-6 minutes | **55% faster** |
-| **Full Suite** | ~25-30 minutes | ~8-12 minutes | **60% faster** |
+
+| Test Scope     | Legacy Framework | Consolidated Framework | Improvement    |
+| -------------- | ---------------- | ---------------------- | -------------- |
+| **Core Tests** | ~8-10 minutes    | ~2-3 minutes           | **65% faster** |
+| **Deployment** | ~12-15 minutes   | ~5-8 minutes           | **50% faster** |
+| **Quality**    | ~10-12 minutes   | ~4-6 minutes           | **55% faster** |
+| **Full Suite** | ~25-30 minutes   | ~8-12 minutes          | **60% faster** |
 
 ### Benefits Achieved
+
 - ✅ **Reduced Complexity**: 15+ scripts → 3 main suites
 - ✅ **Faster Execution**: 60% reduction in total runtime
 - ✅ **Better Maintainability**: Unified interfaces and consistent patterns
@@ -263,6 +286,7 @@ The test framework automatically detects and adapts to different environments:
 ### Common Issues
 
 #### "Unknown test suite" Error
+
 ```bash
 # Error: Unknown test suite: xyz
 ./test/test_runner.sh --suites xyz
@@ -272,6 +296,7 @@ The test framework automatically detects and adapts to different environments:
 ```
 
 #### Docker Tests Failing
+
 ```bash
 # Skip Docker tests if Docker unavailable
 ./test/test_runner.sh --suites deployment --skip-docker
@@ -281,12 +306,14 @@ The test framework automatically detects and adapts to different environments:
 ```
 
 #### Remote Installation Timeouts
+
 ```bash
 # Skip remote tests in restricted environments
 ./test/test_runner.sh --suites deployment --skip-remote
 ```
 
 ### Debug Mode
+
 ```bash
 # Keep test environments for inspection
 ./test/test_deployment.sh --no-cleanup --verbose
@@ -297,6 +324,7 @@ cat test/results/core_test_*.json
 ```
 
 ### Performance Issues
+
 ```bash
 # Use parallel execution for faster runs
 ./test/test_runner.sh --suites all --parallel
@@ -308,6 +336,7 @@ cat test/results/core_test_*.json
 ## 🔮 Future Enhancements
 
 ### Planned Features
+
 - **Test Coverage Reporting**: Detailed coverage metrics across all suites
 - **Baseline Comparison**: Performance regression detection
 - **Smart Test Selection**: Run only tests affected by code changes
@@ -315,6 +344,7 @@ cat test/results/core_test_*.json
 - **Visual Test Reports**: Rich HTML dashboards with trends and insights
 
 ### Contributing
+
 The consolidated testing framework is designed for easy extension:
 
 1. **Adding Tests**: Add new test functions to appropriate suite files
@@ -329,7 +359,7 @@ The consolidated testing framework is designed for easy extension:
 The consolidated testing framework is working correctly when:
 
 - ✅ **All three test suites execute successfully**
-- ✅ **CI/CD workflows complete without errors** 
+- ✅ **CI/CD workflows complete without errors**
 - ✅ **Test reports are generated in expected formats**
 - ✅ **Performance targets are met (< 12 minutes for full suite)**
 - ✅ **No regressions in test coverage or quality**

@@ -105,6 +105,7 @@ Create `.vscode/settings.json`:
 #### **Prompt Engineering for Jekyll Features**
 
 **Basic Feature Creation Prompt**:
+
 ```markdown
 // Create a Jekyll theme feature for Zer0-Mistakes that:
 // - Implements [specific functionality]
@@ -116,19 +117,21 @@ Create `.vscode/settings.json`:
 ```
 
 **Advanced Feature Enhancement Prompt**:
+
 ```markdown
 // Enhance this Jekyll feature to:
 // - Improve performance and loading speed
 // - Add mobile-responsive behavior
 // - Include dark mode compatibility
 // - Implement proper ARIA accessibility
-// - Add configuration options in _config.yml
+// - Add configuration options in \_config.yml
 // - Include automated testing capabilities
 ```
 
 #### **AI-Assisted Code Generation Workflow**
 
 **Step 1: Context Setting**
+
 ```markdown
 // Working on Zer0-Mistakes Jekyll theme
 // Current task: [describe specific task]
@@ -138,6 +141,7 @@ Create `.vscode/settings.json`:
 ```
 
 **Step 2: Incremental Development**
+
 ```markdown
 // Generate the basic structure first
 // Then enhance with specific features
@@ -147,6 +151,7 @@ Create `.vscode/settings.json`:
 ```
 
 **Step 3: Quality Assurance**
+
 ```markdown
 // Review generated code for:
 // - Jekyll best practices compliance
@@ -206,6 +211,7 @@ testing_requirements:
 #### **AI-Powered Documentation Workflow**
 
 **Documentation Generation Prompt**:
+
 ```markdown
 // Generate comprehensive documentation for this Jekyll feature:
 // - Include clear installation instructions
@@ -217,6 +223,7 @@ testing_requirements:
 ```
 
 **Code Comment Enhancement**:
+
 ```liquid
 {% comment %}
 AI Context: This Liquid template component handles [functionality]
@@ -236,6 +243,7 @@ Accessibility: [accessibility considerations]
 #### **Establishing Consistent Patterns**
 
 **Component Structure Pattern**:
+
 ```markdown
 // Follow this pattern for all Zer0-Mistakes components:
 // 1. Liquid template with proper comments
@@ -246,6 +254,7 @@ Accessibility: [accessibility considerations]
 ```
 
 **Configuration Pattern**:
+
 ```yaml
 # _config.yml pattern for features
 theme_features:
@@ -264,6 +273,7 @@ theme_features:
 #### **Automated Validation Prompts**
 
 **Code Review Prompt**:
+
 ```markdown
 // Review this Jekyll code for:
 // - Liquid syntax errors and best practices
@@ -275,6 +285,7 @@ theme_features:
 ```
 
 **Configuration Validation Prompt**:
+
 ```markdown
 // Validate this Jekyll configuration:
 // - Check for syntax errors in YAML
@@ -289,6 +300,7 @@ theme_features:
 #### **Performance Analysis Prompts**
 
 **CSS Optimization**:
+
 ```scss
 /* AI Prompt: Optimize this SCSS for performance:
  * - Minimize selector specificity
@@ -300,6 +312,7 @@ theme_features:
 ```
 
 **JavaScript Optimization**:
+
 ```javascript
 /* AI Prompt: Optimize this JavaScript:
  * - Improve loading performance
@@ -319,6 +332,7 @@ theme_features:
 #### **Step-by-Step AI-Assisted Workflow**
 
 **1. Component Planning**
+
 ```markdown
 // Create a new Bootstrap 5 component for Zer0-Mistakes:
 // Component: [component name]
@@ -328,6 +342,7 @@ theme_features:
 ```
 
 **2. Implementation**
+
 ```liquid
 <!-- AI Generated Component Template -->
 {% comment %}
@@ -336,14 +351,15 @@ Purpose: [functionality]
 Usage: {% include components/[name].html %}
 {% endcomment %}
 
-<div class="component-wrapper" 
-     role="[appropriate-role]" 
+<div class="component-wrapper"
+     role="[appropriate-role]"
      aria-label="[descriptive-label]">
   <!-- AI: Generate component structure -->
 </div>
 ```
 
 **3. Styling**
+
 ```scss
 // AI: Generate component styles following Zer0-Mistakes patterns
 .component-wrapper {
@@ -355,14 +371,20 @@ Usage: {% include components/[name].html %}
 ```
 
 **4. Documentation**
+
 ```markdown
 <!-- AI: Generate component documentation -->
+
 ## Component Name
 
 ### Usage
+
 ### Configuration
+
 ### Examples
+
 ### Accessibility
+
 ### Browser Support
 ```
 
@@ -371,11 +393,12 @@ Usage: {% include components/[name].html %}
 #### **AI-Assisted Script Development**
 
 **Enhancement Prompt**:
+
 ```bash
 #!/bin/bash
 # AI Prompt: Enhance this automation script to:
 # - Add comprehensive error handling
-# - Improve logging and user feedback  
+# - Improve logging and user feedback
 # - Add dry-run mode for safe testing
 # - Include validation for all operations
 # - Follow IT-Journey DFF principle
@@ -390,6 +413,7 @@ Usage: {% include components/[name].html %}
 #### **Test Generation Prompts**
 
 **Jekyll Build Testing**:
+
 ```markdown
 // Generate comprehensive tests for Jekyll theme:
 // - Validate all Liquid templates compile correctly
@@ -400,6 +424,7 @@ Usage: {% include components/[name].html %}
 ```
 
 **Component Testing**:
+
 ```javascript
 // AI: Generate tests for this component:
 // - Unit tests for functionality
@@ -417,24 +442,28 @@ Usage: {% include components/[name].html %}
 ## AI-Assisted Code Review Checklist
 
 ### Jekyll/Liquid Code
+
 - [ ] Proper Liquid syntax and filters
 - [ ] Efficient loops and conditionals
 - [ ] Proper variable scoping
 - [ ] Error handling for edge cases
 
 ### HTML/CSS
+
 - [ ] Semantic HTML structure
 - [ ] Bootstrap 5 class usage
 - [ ] Responsive design implementation
 - [ ] Accessibility compliance
 
 ### JavaScript
+
 - [ ] Modern ES6+ syntax
 - [ ] Proper event handling
 - [ ] Error handling and validation
 - [ ] Performance optimization
 
 ### Documentation
+
 - [ ] Clear usage examples
 - [ ] Complete configuration options
 - [ ] Troubleshooting guidance
@@ -458,6 +487,7 @@ Usage: {% include components/[name].html %}
 ### **Success Tracking**
 
 **Development Velocity**:
+
 ```bash
 # Track development metrics
 git log --oneline --since="1 month ago" | wc -l  # Commits
@@ -465,6 +495,7 @@ git diff --shortstat HEAD~10 HEAD                # Code changes
 ```
 
 **Quality Metrics**:
+
 ```bash
 # Automated quality checks
 bundle exec jekyll build --verbose  # Build validation
@@ -526,4 +557,4 @@ lighthouse-cli http://localhost:4000 # Performance audit
 
 ---
 
-*Built with ❤️ following IT-Journey principles: DFF, DRY, KIS, REnO, MVP, COLAB, AIPD with VS Code Copilot optimization*
+_Built with ❤️ following IT-Journey principles: DFF, DRY, KIS, REnO, MVP, COLAB, AIPD with VS Code Copilot optimization_

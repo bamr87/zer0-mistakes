@@ -40,7 +40,7 @@ Add another file named `.travis.yml` to the root of the GitHub Pages repository 
 ```yml
 language: ruby
 rvm:
-- 2.4
+  - 2.4
 script: "bundle exec jekyll build"
 ```
 
@@ -86,6 +86,6 @@ Build history.
 
 ## 7. Reference
 
-* [Travis CI to the Jekyll site](https://jekyllrb.com/docs/continuous-integration/travis-ci/)
-* [Viewing Jekyll build error messages](https://help.github.com/articles/viewing-jekyll-build-error-messages/)  
-* [Build Error Sample](https://travis-ci.org/{{ site.github_user }}/{{ site.github_user }}.github.io/builds/315705267?utm_source=email&utm_medium=notification)
+- [Travis CI to the Jekyll site](https://jekyllrb.com/docs/continuous-integration/travis-ci/)
+- [Viewing Jekyll build error messages](https://help.github.com/articles/viewing-jekyll-build-error-messages/)
+- [Build Error Sample](https://travis-ci.org/{{ site.github_user }}/{{ site.github_user }}.github.io/builds/315705267?utm_source=email&utm_medium=notification)

@@ -33,7 +33,7 @@ Docker provides a consistent development environment across all platforms:
 Here's a basic `docker-compose.yml` configuration:
 
 ```yaml
-version: '3.8'
+version: "3.8"
 services:
   jekyll:
     image: jekyll/jekyll:latest

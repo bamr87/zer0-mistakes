@@ -11,6 +11,7 @@
 ```
 
 The gear icon (⚙️) in the header navigation opens the **Settings & Info** modal containing:
+
 - Theme version and repository
 - System and build information
 - Active plugins
@@ -96,7 +97,7 @@ When you click either button, a modal opens showing:
 ✅ **No Navigation**: Direct access from header/footer  
 ✅ **Comprehensive**: All system info in one place  
 ✅ **Helpful Links**: Quick access to docs and support  
-✅ **Up-to-Date**: Shows actual installed version  
+✅ **Up-to-Date**: Shows actual installed version
 
 ## Keyboard Shortcuts
 
@@ -107,6 +108,7 @@ When you click either button, a modal opens showing:
 ## For Developers
 
 The theme information is generated dynamically by:
+
 1. `_plugins/theme_version.rb` - Extracts version during build
 2. `_includes/components/theme-info.html` - Renders the display
 3. `_includes/components/info-section.html` - Modal container

@@ -8,7 +8,7 @@ slug: machine
 lastmod: 2024-05-20T14:58:30.179Z
 draft: false
 sidebar:
-   nav: quickstart
+  nav: quickstart
 ---
 
 # Machine Setup for Zer0-Mistakes Jekyll Theme
@@ -24,6 +24,7 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.s
 ```
 
 This intelligent installation script:
+
 - ✅ **Auto-detects** your operating system and architecture
 - ✅ **Installs Docker** if not present (with user confirmation)
 - ✅ **Configures environment** with optimal settings
@@ -43,6 +44,7 @@ This intelligent installation script:
 ### Docker Installation
 
 **macOS:**
+
 ```bash
 # Intel Macs
 brew install --cask docker
@@ -53,6 +55,7 @@ brew install --cask docker
 ```
 
 **Windows:**
+
 ```powershell
 # Install Docker Desktop
 winget install Docker.DockerDesktop
@@ -63,6 +66,7 @@ winget install Docker.DockerDesktop
 ```
 
 **Linux:**
+
 ```bash
 # Ubuntu/Debian
 curl -fsSL https://get.docker.com -o get-docker.sh
@@ -90,6 +94,7 @@ docker run hello-world
 ### Essential Tools
 
 **1. Git (Version Control)**
+
 ```bash
 # macOS
 brew install git
@@ -106,6 +111,7 @@ git config --global user.email "your.email@example.com"
 ```
 
 **2. GitHub CLI (Repository Management)**
+
 ```bash
 # macOS
 brew install gh
@@ -124,6 +130,7 @@ gh auth login
 ```
 
 **3. Visual Studio Code (Recommended Editor)**
+
 ```bash
 # macOS
 brew install --cask visual-studio-code
@@ -154,6 +161,7 @@ code --install-extension streetsidesoftware.code-spell-checker
 ```
 
 **Key Extensions:**
+
 - **Remote - Containers**: Develop inside Docker containers
 - **Docker**: Container management and debugging
 - **Liquid**: Jekyll template language support
@@ -166,11 +174,13 @@ code --install-extension streetsidesoftware.code-spell-checker
 ### macOS Configuration
 
 **Xcode Command Line Tools** (for Git and other development tools):
+
 ```bash
 xcode-select --install
 ```
 
 **Homebrew Package Manager**:
+
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
@@ -178,6 +188,7 @@ xcode-select --install
 ### Windows Configuration
 
 **Windows Subsystem for Linux (WSL2)** - Recommended for optimal Docker performance:
+
 ```powershell
 # Enable WSL2
 wsl --install
@@ -190,6 +201,7 @@ wsl --install -d Ubuntu
 ```
 
 **Windows Terminal** (Enhanced terminal experience):
+
 ```powershell
 winget install Microsoft.WindowsTerminal
 ```
@@ -197,6 +209,7 @@ winget install Microsoft.WindowsTerminal
 ### Linux Configuration
 
 **Docker Compose** (if not included with Docker):
+
 ```bash
 # Install Docker Compose
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
@@ -230,17 +243,20 @@ code --version
 ### Common Issues & Solutions
 
 **Docker Permission Issues (Linux):**
+
 ```bash
 sudo usermod -aG docker $USER
 newgrp docker
 ```
 
 **Docker Desktop Not Starting (Windows/macOS):**
+
 - Ensure virtualization is enabled in BIOS/UEFI
 - On Windows: Enable Hyper-V or WSL2
 - Restart Docker Desktop application
 
 **Port Conflicts:**
+
 ```bash
 # Check what's using port 4000
 lsof -ti:4000
@@ -339,8 +355,8 @@ for more information, visit the [Winget website](https://docs.microsoft.com/en-u
 
 Depending on the distribution of Linux you are using, you will have a different package manager. Some of the most popular package managers for Linux are:
 
-- [APT](https://en.wikipedia.org/wiki/APT_(software)) -Debian/Ubuntu
-- [YUM](https://en.wikipedia.org/wiki/Yum_(software)) - Fedora
+- [APT](<https://en.wikipedia.org/wiki/APT_(software)>) -Debian/Ubuntu
+- [YUM](<https://en.wikipedia.org/wiki/Yum_(software)>) - Fedora
 - [RPM](https://en.wikipedia.org/wiki/RPM_Package_Manager) - Redhat/CentOS
 
 ### Source Code Repository
@@ -475,7 +491,7 @@ to pull the latest changes from the submodule, run the following command:
 git submodule update --remote
 ```
 
-***Mac***
+**_Mac_**
 
 Detailed instructions for installing software packages can be found in the [Brewfile](/quickstart/homebrew/) section.
 
@@ -484,7 +500,6 @@ Detailed instructions for installing software packages can be found in the [Brew
 cd ~
 gh repo clone bamr87/brewfile ~/.brew
 ```
-
 
 ```bash
 # Navigate into brew file repo and install packages
@@ -502,7 +517,7 @@ ln ../_quest/init_world/hello-mac/hb-packages.sh _quest/init_world/hello-mac/hb-
 
 ```
 
-***Linux***
+**_Linux_**
 
 ```bash
 # Navigate to your home directory and clone the brewfile
@@ -517,7 +532,7 @@ apt bundle
 apt bundle --file bundles/core/
 ```
 
-***windows***
+**_windows_**
 
 For a list of packages you can download/install using winget, see [here](https://winget.run/)
 
@@ -587,15 +602,16 @@ Get-Content extensions.txt | ForEach-Object {code --install-extension $_}
 
 VS Code is a text editor that integrates well with Github. It is a free and open source software editor.
 
-***Mac***
+**_Mac_**
 
 ```shell
 #install VS Code via Homebrew
 brew cask install visual-studio-code
 ```
+
 [Detailed instructions - Mac](https://jekyllrb.com/docs/installation/macos/)
 
-***windows***
+**_windows_**
 
 ```shell
 #install VS Code via Winget
@@ -604,7 +620,7 @@ winget install Microsoft.VisualStudioCode
 
 [Detailed instructions - Windows](https://jekyllrb.com/docs/installation/windows/)
 
-***Linux***
+**_Linux_**
 
 [Detailed instructions - Linux](https://code.visualstudio.com/docs/setup/linux#_debian-and-ubuntu-based-distributions)
 
@@ -636,14 +652,14 @@ Log into VS code using your github account by clicking on the Account icon on th
 
 Ruby is the programming language of choice for Jekyll, and also manages the dependencies for the Jekyll gem.
 
-***Mac***
+**_Mac_**
 
 ```shell
 # Install Ruby
 brew install ruby@2.7
 ```
 
-***windows***
+**_windows_**
 
 ```powershell
 # Install Ruby (version 2.7 for github pages)
@@ -654,8 +670,7 @@ If this doesn't work, download the MSI file and install manually.
 
 [Ruby Downloads](https://rubyinstaller.org/downloads/)
 
-
-***Linux***
+**_Linux_**
 
 ```shell
 # Install Ruby via APT
@@ -705,7 +720,6 @@ export PATH=`gem environment gemdir`/bin:$PATH
 echo 'export PATH="/usr/local/opt/ruby/bin:/usr/local/lib/ruby/gems/2.7.4/bin:$PATH"' >> ~/.zshrc
 echo 'export PATH=`gem environment gemdir`/bin:$PATH' >> ~/.zshrc
 ```
-
 
 ```bash
 # Add Ruby to your PATH If you're using Bash

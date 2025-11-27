@@ -47,7 +47,7 @@ requirements:
   jekyll: "3.9.5"
   bundler: "~> 2.3"
   docker: "latest"
-  node: ">= 16.0"  # Optional for package.json
+  node: ">= 16.0" # Optional for package.json
 
 # Core Technologies
 tech_stack:
@@ -57,13 +57,14 @@ tech_stack:
   analytics: PostHog (privacy-first)
   ci_cd: GitHub Actions
   automation: Bash/GNU Make
-```  
+```
 
 ## 🏗️ Architecture Foundations
 
 ### Technology Stack
 
 **Core Technologies:**
+
 - **Jekyll 3.9.5**: Static site generator (GitHub Pages compatible)
 - **Ruby 2.7.0+**: Runtime environment
 - **Bootstrap 5.3.3**: Responsive CSS framework
@@ -71,12 +72,14 @@ tech_stack:
 - **PostHog**: Privacy-first analytics with GDPR/CCPA compliance
 
 **Build Tools:**
+
 - **Bundler 2.3+**: Ruby dependency management
 - **GNU Make**: Command orchestration
 - **Bash Scripts**: Automation and release management
 - **GitHub Actions**: CI/CD pipeline
 
 **Development Dependencies:**
+
 ```ruby
 # From Gemfile
 gem 'github-pages'              # GitHub Pages compatibility
@@ -94,6 +97,7 @@ gem 'commonmarker', '0.23.10'   # Markdown processing
 ### Dual Configuration Architecture
 
 **Production Configuration** (`_config.yml`):
+
 ```yaml
 remote_theme: "bamr87/zer0-mistakes"
 url: https://zer0-mistakes.com
@@ -108,10 +112,11 @@ plugins:
 ```
 
 **Development Configuration** (`_config_dev.yml`):
+
 ```yaml
 # Overrides for local development
 url: "http://localhost:4000"
-remote_theme: false  # Use local theme files
+remote_theme: false # Use local theme files
 incremental: true
 livereload: true
 ```
@@ -119,11 +124,12 @@ livereload: true
 ### Docker Development Environment
 
 **Docker Compose Configuration** (`docker-compose.yml`):
+
 ```yaml
 services:
   jekyll:
     image: jekyll/jekyll:latest
-    platform: linux/amd64  # Apple Silicon + Intel compatibility
+    platform: linux/amd64 # Apple Silicon + Intel compatibility
     command: jekyll serve --watch --force_polling --config "_config.yml,_config_dev.yml" --host 0.0.0.0 --port 4000
     volumes:
       - ./:/app
@@ -136,13 +142,14 @@ services:
 
 ## 🎯 Core Development Principles
 
-
 ## 🎯 Core Development Principles
 
 ### 1. Design for Failure (DFF)
+
 **Philosophy**: Anticipate, prevent, and recover from errors gracefully.
 
 **Implementation:**
+
 - Comprehensive error handling in all scripts with `set -euo pipefail`
 - Validation checks before destructive operations
 - Automatic backup and rollback mechanisms
@@ -150,6 +157,7 @@ services:
 - Detailed error messages with actionable recovery steps
 
 **Example Pattern:**
+
 ```bash
 #!/bin/bash
 set -euo pipefail  # Exit on error, undefined vars, pipe failures
@@ -164,9 +172,11 @@ trap 'handle_error $LINENO' ERR
 ```
 
 ### 2. Don't Repeat Yourself (DRY)
+
 **Philosophy**: Single source of truth for all data and functionality.
 
 **Implementation:**
+
 - Version defined once in `lib/jekyll-theme-zer0/version.rb`
 - Synchronized across `package.json`, `_config.yml`, gemspec
 - Reusable Bash functions in shared libraries
@@ -174,6 +184,7 @@ trap 'handle_error $LINENO' ERR
 - Configuration inheritance (production → development)
 
 **Version Management Pattern:**
+
 ```ruby
 # lib/jekyll-theme-zer0/version.rb
 module JekyllThemeZer0
@@ -182,9 +193,11 @@ end
 ```
 
 ### 3. Keep It Simple (KIS)
+
 **Philosophy**: Complexity is the enemy of reliability.
 
 **Implementation:**
+
 - Makefile provides simple command interface
 - Clear, descriptive function and variable names
 - One responsibility per script/function
@@ -192,6 +205,7 @@ end
 - Standard tools and established patterns
 
 **Makefile Interface:**
+
 ```makefile
 make setup           # One command setup
 make test            # Run all tests
@@ -201,9 +215,11 @@ make release-patch   # Complete release workflow
 ```
 
 ### 4. Docker-First Development (DFD)
+
 **Philosophy**: Universal compatibility through containerization.
 
 **Implementation:**
+
 - Docker as primary development environment
 - Platform specification for Apple Silicon compatibility (`linux/amd64`)
 - No local Ruby/Jekyll installation required
@@ -211,9 +227,11 @@ make release-patch   # Complete release workflow
 - Development parity with production
 
 ### 5. AI-Powered Development (AIPD)
+
 **Philosophy**: Leverage AI to enhance development workflows.
 
 **Implementation:**
+
 - Comprehensive `.github/copilot-instructions.md` (805 lines)
 - File-specific instruction files for layouts, includes, scripts, testing
 - Structured front matter for AI context
@@ -221,9 +239,11 @@ make release-patch   # Complete release workflow
 - Automated commit analysis for version bumping
 
 ### 6. Self-Healing Configuration (SHC)
+
 **Philosophy**: Systems should diagnose and fix themselves.
 
 **Implementation:**
+
 - `install.sh` with 95% success rate through intelligent error recovery
 - Automatic platform detection and optimization
 - Content issue detection and automatic fixes
@@ -381,6 +401,7 @@ zer0-mistakes/
 ## 🔨 Critical File Contents
 
 ### 1. Version Management (`lib/jekyll-theme-zer0/version.rb`)
+
 ```ruby
 # frozen_string_literal: true
 
@@ -390,6 +411,7 @@ end
 ```
 
 ### 2. Gem Specification (`jekyll-theme-zer0.gemspec`)
+
 ```ruby
 # frozen_string_literal: true
 
@@ -404,14 +426,14 @@ Gem::Specification.new do |s|
   s.description              = "Bootstrap Jekyll theme for headless Github Pages CMS with Docker-first development approach"
   s.homepage                 = "https://github.com/bamr87/zer0-mistakes"
   s.license                  = "MIT"
-  
+
   s.metadata["plugin_type"]  = "theme"
   s.metadata["allowed_push_host"] = "https://rubygems.org"
-  
+
   s.files                    = `git ls-files -z`.split("\x0").select do |f|
     f.match(%r{^(assets|_(data|includes|layouts|sass)/|(LICENSE|README|CHANGELOG)((\.(txt|md|markdown)|$)))}i)
   end
-  
+
   s.required_ruby_version    = ">= 2.7.0"
   s.add_runtime_dependency "jekyll"
   s.add_development_dependency "bundler", "~> 2.3"
@@ -421,6 +443,7 @@ end
 ```
 
 ### 3. Package Metadata (`package.json`)
+
 ```json
 {
   "name": "zer0-mistakes",
@@ -439,6 +462,7 @@ end
 ```
 
 ### 4. Makefile Interface
+
 ```makefile
 .DEFAULT_GOAL := help
 
@@ -477,6 +501,7 @@ help: ## Display this help
 ## 🚀 Automated Release System
 
 ### Version Bump Automation (`scripts/version.sh`)
+
 ```bash
 #!/bin/bash
 
@@ -633,6 +658,7 @@ log "2. Run './scripts/build.sh' to build and publish the gem"
 ```
 
 ### Gem Publication Automation (`scripts/gem-publish.sh`)
+
 ```bash
 #!/bin/bash
 
@@ -718,6 +744,7 @@ done
 ```
 
 ### Installation Script (`install.sh`)
+
 ```bash
 #!/bin/bash
 

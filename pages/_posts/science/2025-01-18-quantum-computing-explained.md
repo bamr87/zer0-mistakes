@@ -19,11 +19,11 @@ Unlike classical computers that use bits (0 or 1), quantum computers use **qubit
 
 ### Classical vs Quantum
 
-| Classical Bit | Qubit |
-|--------------|-------|
-| Either 0 or 1 | Both 0 and 1 simultaneously |
-| Deterministic | Probabilistic |
-| Linear scaling | Exponential scaling |
+| Classical Bit  | Qubit                       |
+| -------------- | --------------------------- |
+| Either 0 or 1  | Both 0 and 1 simultaneously |
+| Deterministic  | Probabilistic               |
+| Linear scaling | Exponential scaling         |
 
 ## Key Quantum Concepts
 

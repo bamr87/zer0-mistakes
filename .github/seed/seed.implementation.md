@@ -221,10 +221,10 @@ rm -f jekyll-theme-zer0-*.gem
 if [[ -f "CHANGELOG.md" ]]; then
     log "Updating CHANGELOG.md..."
     DATE=$(date +"%Y-%m-%d")
-    
+
     # Create changelog entry
     CHANGELOG_ENTRY="## [$NEW_VERSION] - $DATE\n\n### Changed\n- Version bump to $NEW_VERSION\n\n"
-    
+
     # Insert at top of changelog (after header)
     sed -i.bak "1,/^# Changelog/s/^# Changelog/# Changelog\n\n$CHANGELOG_ENTRY/" CHANGELOG.md
     rm CHANGELOG.md.bak 2>/dev/null || true
@@ -451,19 +451,19 @@ if [[ "$PUBLISH" == true ]]; then
         log "Dry run mode - would publish jekyll-theme-zer0-${VERSION}.gem to RubyGems"
     else
         log "Publishing gem to RubyGems..."
-        
+
         # Check if user is authenticated with RubyGems
         if [[ ! -f ~/.gem/credentials ]]; then
             error "Not authenticated with RubyGems. Run 'gem signin' first."
         fi
-        
+
         # Check if this version already exists on RubyGems
         if gem list --remote jekyll-theme-zer0 | grep -q "jekyll-theme-zer0 (${VERSION})"; then
             warn "Version ${VERSION} already exists on RubyGems"
             echo -e "${YELLOW}You need to bump the version first. Use ./scripts/version.sh [patch|minor|major]${NC}"
             error "Cannot republish existing version ${VERSION}"
         fi
-        
+
         # Confirm publication
         echo -e "${YELLOW}Are you sure you want to publish jekyll-theme-zer0-${VERSION}.gem to RubyGems? (y/N)${NC}"
         read -r response
@@ -594,15 +594,15 @@ TESTS_PASSED=0
 run_test() {
     local test_name="$1"
     local test_command="$2"
-    
+
     TESTS_RUN=$((TESTS_RUN + 1))
-    
+
     log "Running: $test_name"
-    
+
     if [[ "$VERBOSE" == true ]]; then
         echo "Command: $test_command"
     fi
-    
+
     if eval "$test_command" > /dev/null 2>&1; then
         success "$test_name"
         TESTS_PASSED=$((TESTS_PASSED + 1))
@@ -930,7 +930,7 @@ info "New version: $NEW_VERSION"
 
 if [[ "$SKIP_CHANGELOG" != true ]]; then
     log "Generating changelog..."
-    
+
     # Determine commit range
     if [[ -n "$AUTO_COMMIT_RANGE" ]]; then
         COMMIT_RANGE="$AUTO_COMMIT_RANGE"
@@ -942,14 +942,14 @@ if [[ "$SKIP_CHANGELOG" != true ]]; then
             COMMIT_RANGE="HEAD"
         fi
     fi
-    
+
     info "Analyzing commits: $COMMIT_RANGE"
-    
+
     # Generate changelog entries
     CHANGELOG_ADDED=$(git log $COMMIT_RANGE --pretty=format:"%s" | grep -i "^feat:" | sed 's/^feat: /- /')
     CHANGELOG_CHANGED=$(git log $COMMIT_RANGE --pretty=format:"%s" | grep -i "^change\|^refactor:" | sed 's/^change: //; s/^refactor: /- /')
     CHANGELOG_FIXED=$(git log $COMMIT_RANGE --pretty=format:"%s" | grep -i "^fix:" | sed 's/^fix: /- /')
-    
+
     info "Changelog generated"
 fi
 
@@ -1000,7 +1000,7 @@ if [[ "$SKIP_PUBLISH" != true ]] && [[ "$DRY_RUN" != true ]]; then
             exit 0
         fi
     fi
-    
+
     log "Publishing to RubyGems..."
     ./scripts/build.sh --publish || error "Publishing failed"
     success "Published to RubyGems"
@@ -1017,7 +1017,7 @@ fi
 if [[ "$CREATE_GITHUB_RELEASE" == true ]] && [[ "$DRY_RUN" != true ]]; then
     if command -v gh > /dev/null 2>&1; then
         log "Creating GitHub release..."
-        
+
         RELEASE_NOTES="## Release v${NEW_VERSION}
 
 ### Changes
@@ -1033,12 +1033,12 @@ $CHANGELOG_FIXED
 ")
 
 Released: $(date +"%Y-%m-%d")"
-        
+
         gh release create "v${NEW_VERSION}" \
             --title "Release v${NEW_VERSION}" \
             --notes "$RELEASE_NOTES" \
             "build/jekyll-theme-zer0-${NEW_VERSION}.gem#Ruby Gem Package"
-        
+
         success "GitHub release created"
     else
         warn "GitHub CLI not installed. Skipping GitHub release."
@@ -1070,7 +1070,7 @@ info "Gem: https://rubygems.org/gems/jekyll-theme-zer0"
 
 # zer0-mistakes Jekyll Theme Installer
 # AI-Powered Installation with Self-Healing
-# 
+#
 # One-line installation:
 # curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
 #
@@ -1146,7 +1146,7 @@ log_step() {
 # ============================================================
 detect_platform() {
     log_step "Detecting platform..."
-    
+
     # Detect OS
     case "$(uname -s)" in
         Darwin*)
@@ -1166,7 +1166,7 @@ detect_platform() {
             log_warn "Unknown operating system: $(uname -s)"
             ;;
     esac
-    
+
     # Detect Architecture
     case "$(uname -m)" in
         arm64|aarch64)
@@ -1182,7 +1182,7 @@ detect_platform() {
             log_warn "Unknown architecture: $(uname -m)"
             ;;
     esac
-    
+
     PLATFORM="${OS_TYPE}_${ARCH}"
     log_success "Platform detected: $PLATFORM"
 }
@@ -1192,22 +1192,22 @@ detect_platform() {
 # ============================================================
 check_dependencies() {
     log_step "Checking dependencies..."
-    
+
     # Check for Docker
     if command -v docker > /dev/null 2>&1; then
         DOCKER_AVAILABLE=true
         log_success "Docker found: $(docker --version)"
-        
+
         # Check if Docker is running
         if ! docker info > /dev/null 2>&1; then
             log_warn "Docker is installed but not running"
             log_info "Attempting to start Docker..."
-            
+
             if [[ "$OS_TYPE" == "macos" ]]; then
                 open -a Docker
                 log_info "Waiting for Docker to start..."
                 sleep 10
-                
+
                 if docker info > /dev/null 2>&1; then
                     log_success "Docker started successfully"
                 else
@@ -1221,7 +1221,7 @@ check_dependencies() {
         DOCKER_AVAILABLE=false
         offer_docker_installation
     fi
-    
+
     # Check for Git
     if command -v git > /dev/null 2>&1; then
         log_success "Git found: $(git --version)"
@@ -1229,7 +1229,7 @@ check_dependencies() {
         log_error "Git not found. Installing Git..."
         install_git
     fi
-    
+
     # Check for curl
     if command -v curl > /dev/null 2>&1; then
         log_success "curl found"
@@ -1246,7 +1246,7 @@ offer_docker_installation() {
     log_info "Docker is recommended for the best experience."
     echo -n "Would you like to install Docker? (y/N): "
     read -r response
-    
+
     if [[ "$response" =~ ^[Yy]$ ]]; then
         install_docker
     else
@@ -1256,7 +1256,7 @@ offer_docker_installation() {
 
 install_docker() {
     log_step "Installing Docker..."
-    
+
     case "$OS_TYPE" in
         macos)
             log_info "Please download Docker Desktop from:"
@@ -1307,11 +1307,11 @@ install_git() {
 # ============================================================
 download_theme() {
     log_step "Downloading zer0-mistakes theme..."
-    
+
     # Create installation directory
     mkdir -p "$INSTALL_DIR"
     cd "$INSTALL_DIR"
-    
+
     # Clone repository
     if ! git clone "$REPO_URL" .; then
         log_error "Failed to clone repository"
@@ -1324,12 +1324,12 @@ download_theme() {
 
 download_theme_zip() {
     log_info "Downloading theme as ZIP archive..."
-    
+
     curl -L "${REPO_URL}/archive/refs/heads/main.zip" -o theme.zip
     unzip -q theme.zip
     mv zer0-mistakes-main/* .
     rm -rf zer0-mistakes-main theme.zip
-    
+
     log_success "Theme extracted successfully"
 }
 
@@ -1338,7 +1338,7 @@ download_theme_zip() {
 # ============================================================
 setup_configuration() {
     log_step "Setting up configuration..."
-    
+
     # Ensure _config_dev.yml exists
     if [[ ! -f "_config_dev.yml" ]]; then
         log_info "Creating _config_dev.yml..."
@@ -1353,11 +1353,11 @@ posthog:
 EOF
         log_success "Created _config_dev.yml"
     fi
-    
+
     # Validate Docker Compose configuration
     if [[ -f "docker-compose.yml" ]]; then
         log_success "Docker Compose configuration found"
-        
+
         # Platform-specific optimization
         if [[ "$ARCH" == "arm64" ]]; then
             log_info "Optimizing for Apple Silicon..."
@@ -1374,7 +1374,7 @@ EOF
 
 create_docker_compose() {
     log_info "Creating docker-compose.yml..."
-    
+
     cat > docker-compose.yml << 'EOF'
 services:
   jekyll:
@@ -1389,7 +1389,7 @@ services:
     environment:
       JEKYLL_ENV: development
 EOF
-    
+
     log_success "Created docker-compose.yml"
 }
 
@@ -1398,7 +1398,7 @@ EOF
 # ============================================================
 install_dependencies() {
     log_step "Installing dependencies..."
-    
+
     if [[ "$DOCKER_AVAILABLE" == true ]]; then
         log_info "Using Docker for dependency management"
         docker-compose run --rm jekyll bundle install
@@ -1414,9 +1414,9 @@ install_dependencies() {
 # ============================================================
 validate_installation() {
     log_step "Validating installation..."
-    
+
     local validation_passed=true
-    
+
     # Check critical files
     local required_files=(
         "_config.yml"
@@ -1425,7 +1425,7 @@ validate_installation() {
         "Gemfile"
         "jekyll-theme-zer0.gemspec"
     )
-    
+
     for file in "${required_files[@]}"; do
         if [[ -f "$file" ]]; then
             log_success "Found: $file"
@@ -1434,7 +1434,7 @@ validate_installation() {
             validation_passed=false
         fi
     done
-    
+
     # Check directories
     local required_dirs=(
         "_layouts"
@@ -1442,7 +1442,7 @@ validate_installation() {
         "_sass"
         "assets"
     )
-    
+
     for dir in "${required_dirs[@]}"; do
         if [[ -d "$dir" ]]; then
             log_success "Found: $dir/"
@@ -1451,7 +1451,7 @@ validate_installation() {
             validation_passed=false
         fi
     done
-    
+
     if [[ "$validation_passed" == true ]]; then
         log_success "Installation validation passed"
         return 0
@@ -1466,11 +1466,11 @@ validate_installation() {
 # ============================================================
 start_development_server() {
     log_step "Starting development server..."
-    
+
     if [[ "$DOCKER_AVAILABLE" == true ]]; then
         log_info "Starting Docker containers..."
         docker-compose up -d
-        
+
         log_success "Development server started!"
         log_info "Site available at: http://localhost:4000"
         log_info ""
@@ -1489,7 +1489,7 @@ start_development_server() {
 # ============================================================
 recover_from_error() {
     local error_type="$1"
-    
+
     case "$error_type" in
         "docker_not_running")
             log_info "Attempting to start Docker..."
@@ -1538,7 +1538,7 @@ main() {
     echo -e "${BOLD}Version:${NC} $SCRIPT_VERSION"
     echo -e "${BOLD}Repository:${NC} $REPO_URL"
     echo ""
-    
+
     # Installation steps
     detect_platform
     check_dependencies
@@ -1547,7 +1547,7 @@ main() {
     install_dependencies
     validate_installation
     start_development_server
-    
+
     # Success message
     echo ""
     echo -e "${GREEN}${BOLD}════════════════════════════════════════════════════${NC}"
@@ -1709,6 +1709,7 @@ desktop.ini
 **Status**: Part 1 of modular seed documentation complete. This file contains all automation scripts and critical implementations needed for project reconstruction.
 
 **Next Files**:
+
 - `seed.build.md` - Step-by-step build instructions (10 phases)
 - `seed.components.md` - Complete Jekyll theme components
 - `seed/README.md` - Master index and navigation

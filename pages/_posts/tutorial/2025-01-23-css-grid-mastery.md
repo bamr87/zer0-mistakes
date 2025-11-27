@@ -75,13 +75,13 @@ column-gap: 30px;
 
 ```css
 .header {
-  grid-column: 1 / -1;  /* Span all columns */
+  grid-column: 1 / -1; /* Span all columns */
   grid-row: 1;
 }
 
 .sidebar {
   grid-column: 1;
-  grid-row: 2 / 4;  /* Span rows 2 and 3 */
+  grid-row: 2 / 4; /* Span rows 2 and 3 */
 }
 
 .main {
@@ -104,10 +104,18 @@ column-gap: 30px;
   min-height: 100vh;
 }
 
-.header  { grid-area: header; }
-.sidebar { grid-area: sidebar; }
-.main    { grid-area: main; }
-.footer  { grid-area: footer; }
+.header {
+  grid-area: header;
+}
+.sidebar {
+  grid-area: sidebar;
+}
+.main {
+  grid-area: main;
+}
+.footer {
+  grid-area: footer;
+}
 ```
 
 ## Real-World Layout Examples
@@ -135,7 +143,7 @@ column-gap: 30px;
 ```css
 .holy-grail {
   display: grid;
-  grid-template: 
+  grid-template:
     "header header header" auto
     "nav    main   aside" 1fr
     "footer footer footer" auto
@@ -147,9 +155,9 @@ column-gap: 30px;
   .holy-grail {
     grid-template:
       "header" auto
-      "nav"    auto
-      "main"   1fr
-      "aside"  auto
+      "nav" auto
+      "main" 1fr
+      "aside" auto
       "footer" auto
       / 1fr;
   }
@@ -183,9 +191,9 @@ column-gap: 30px;
 ```css
 .container {
   /* Align all items */
-  justify-items: center;  /* horizontal */
-  align-items: center;    /* vertical */
-  
+  justify-items: center; /* horizontal */
+  align-items: center; /* vertical */
+
   /* Align the grid itself */
   justify-content: center;
   align-content: center;

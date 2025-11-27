@@ -4,12 +4,12 @@ description: Complete guide to using Mermaid diagrams in Jekyll with examples an
 date: 2025-01-27
 lastmod: 2025-11-16T13:44:26.408Z
 tags:
-    - Mermaid
-    - Diagrams
-    - Jekyll
-    - Documentation
+  - Mermaid
+  - Diagrams
+  - Jekyll
+  - Documentation
 categories:
-    - Documentation
+  - Documentation
 layout: default
 mermaid: true
 draft: draft
@@ -38,10 +38,7 @@ Use the `<div class="mermaid">` syntax:
 
 ```html
 <div class="mermaid">
-graph TD
-    A[Start] --> B{Decision}
-    B -->|Yes| C[Success]
-    B -->|No| D[Try Again]
+  graph TD A[Start] --> B{Decision} B -->|Yes| C[Success] B -->|No| D[Try Again]
 </div>
 ```
 
@@ -71,12 +68,14 @@ graph LR
 </div>
 
 **Directions:**
+
 - `TD` or `TB` - Top to bottom
-- `BT` - Bottom to top  
+- `BT` - Bottom to top
 - `LR` - Left to right
 - `RL` - Right to left
 
 **Node Shapes:**
+
 - `A[Rectangle]` - Rectangle
 - `A(Rounded)` - Rounded edges
 - `A{Diamond}` - Diamond (decision)
@@ -100,6 +99,7 @@ sequenceDiagram
 </div>
 
 **Arrow Types:**
+
 - `->` - Solid line without arrow
 - `-->` - Dotted line without arrow
 - `->>` - Solid line with arrow
@@ -126,6 +126,7 @@ classDiagram
 </div>
 
 **Relationships:**
+
 - `<|--` - Inheritance
 - `*--` - Composition
 - `o--` - Aggregation
@@ -232,11 +233,11 @@ The Mermaid theme is configured in `_includes/components/mermaid.html`:
 
 ```javascript
 mermaid.initialize({
-  theme: 'forest',  // Options: default, forest, dark, neutral, base
+  theme: "forest", // Options: default, forest, dark, neutral, base
   themeVariables: {
-    primaryColor: '#007bff',
-    primaryTextColor: '#fff'
-  }
+    primaryColor: "#007bff",
+    primaryTextColor: "#fff",
+  },
 });
 ```
 
@@ -297,12 +298,7 @@ graph TB
 ### Comments
 
 ```html
-<div class="mermaid">
-graph TD
-    A --> B
-    %% This is a comment
-    B --> C
-</div>
+<div class="mermaid">graph TD A --> B %% This is a comment B --> C</div>
 ```
 
 ---
@@ -311,13 +307,13 @@ graph TD
 
 ### Common Issues
 
-| Issue | Solution |
-|-------|----------|
-| Diagram not rendering | Add `mermaid: true` to front matter |
-| Syntax error | Validate at [mermaid.live](https://mermaid.live/) |
-| Diagram too small | Diagrams are responsive by default |
-| Wrong colors | Check theme setting in mermaid.html |
-| Console errors | Check browser DevTools for JavaScript errors |
+| Issue                 | Solution                                          |
+| --------------------- | ------------------------------------------------- |
+| Diagram not rendering | Add `mermaid: true` to front matter               |
+| Syntax error          | Validate at [mermaid.live](https://mermaid.live/) |
+| Diagram too small     | Diagrams are responsive by default                |
+| Wrong colors          | Check theme setting in mermaid.html               |
+| Console errors        | Check browser DevTools for JavaScript errors      |
 
 ### Testing Your Diagrams
 
@@ -334,16 +330,10 @@ graph TD
 
 ```html
 <!-- ✅ Good - Clear and focused -->
-<div class="mermaid">
-graph LR
-    A[Input] --> B[Process] --> C[Output]
-</div>
+<div class="mermaid">graph LR A[Input] --> B[Process] --> C[Output]</div>
 
 <!-- ❌ Avoid - Too complex -->
-<div class="mermaid">
-graph TD
-    A --> B --> C --> D --> E --> F --> G --> H
-</div>
+<div class="mermaid">graph TD A --> B --> C --> D --> E --> F --> G --> H</div>
 ```
 
 ### 2. Use Descriptive Labels
@@ -351,10 +341,8 @@ graph TD
 ```html
 <!-- ✅ Good -->
 <div class="mermaid">
-graph TD
-    A[User Login] --> B{Credentials Valid?}
-    B -->|Yes| C[Dashboard]
-    B -->|No| D[Error Message]
+  graph TD A[User Login] --> B{Credentials Valid?} B -->|Yes| C[Dashboard] B
+  -->|No| D[Error Message]
 </div>
 ```
 
@@ -362,15 +350,9 @@ graph TD
 
 ```html
 <div class="mermaid">
-graph TD
-    %% Main authentication flow
-    A[Start] --> B{Auth Type}
-    
-    %% OAuth path
-    B -->|OAuth| C[OAuth Provider]
-    
-    %% Basic auth path
-    B -->|Basic| D[Verify Credentials]
+  graph TD %% Main authentication flow A[Start] --> B{Auth Type} %% OAuth path B
+  -->|OAuth| C[OAuth Provider] %% Basic auth path B -->|Basic| D[Verify
+  Credentials]
 </div>
 ```
 
@@ -379,11 +361,13 @@ graph TD
 ## Resources
 
 ### Official Documentation
+
 - **Website**: [mermaid.js.org](https://mermaid.js.org/)
 - **GitHub**: [mermaid-js/mermaid](https://github.com/mermaid-js/mermaid)
 - **Live Editor**: [mermaid.live](https://mermaid.live/)
 
 ### Learning Path
+
 1. **Start Here**: This guide covers the basics
 2. **Practice**: Use [mermaid.live](https://mermaid.live/) to test diagrams
 3. **Reference**: Keep this page bookmarked for syntax
@@ -408,6 +392,7 @@ _config.yml                     # Plugin configuration
 ### Configuration
 
 The implementation uses:
+
 - **Mermaid v10** - Latest stable version
 - **Conditional Loading** - Only loads when `mermaid: true`
 - **Forest Theme** - Optimized for dark mode
@@ -418,4 +403,4 @@ The implementation uses:
 
 **Happy Diagramming! 📊**
 
-*This implementation is fully functional and GitHub Pages compatible.*
+_This implementation is fully functional and GitHub Pages compatible._

@@ -17,27 +17,30 @@ The way we work has fundamentally changed. This article explores the global remo
 
 Remote work has evolved from emergency measure to permanent fixture:
 
-| Metric | 2019 | 2023 | 2025 |
-|--------|------|------|------|
-| Remote workers globally | 7% | 28% | 35% |
-| Companies offering remote | 16% | 58% | 72% |
-| Hybrid arrangements | 12% | 42% | 55% |
+| Metric                    | 2019 | 2023 | 2025 |
+| ------------------------- | ---- | ---- | ---- |
+| Remote workers globally   | 7%   | 28%  | 35%  |
+| Companies offering remote | 16%  | 58%  | 72%  |
+| Hybrid arrangements       | 12%  | 42%  | 55%  |
 
 ## Global Hotspots for Remote Workers
 
 ### Digital Nomad Hubs
 
 **Europe:**
+
 - 🇵🇹 **Lisbon, Portugal** - Tech scene, great weather, affordable
 - 🇪🇸 **Barcelona, Spain** - Culture, beaches, coworking spaces
 - 🇭🇷 **Split, Croatia** - Digital nomad visa, stunning coast
 
 **Asia:**
+
 - 🇹🇭 **Bangkok, Thailand** - Low cost, excellent food, infrastructure
 - 🇮🇩 **Bali, Indonesia** - Wellness culture, coworking community
 - 🇻🇳 **Da Nang, Vietnam** - Beaches, fast internet, affordability
 
 **Americas:**
+
 - 🇲🇽 **Mexico City, Mexico** - Culture, food, same timezone as US
 - 🇨🇴 **Medellín, Colombia** - Spring climate, growing tech scene
 - 🇧🇷 **Florianópolis, Brazil** - Beaches, quality of life
@@ -67,6 +70,7 @@ Traditional business centers facing adaptation:
 ### For Companies
 
 **Cost Savings:**
+
 ```
 Average per-employee savings:
 - Office space: $10,000/year
@@ -76,6 +80,7 @@ Average per-employee savings:
 ```
 
 **Trade-offs:**
+
 - Home office stipends
 - Collaboration tools
 - In-person retreats
@@ -84,12 +89,14 @@ Average per-employee savings:
 ### For Workers
 
 **Benefits:**
+
 - Eliminated commute (average 41 minutes saved daily)
 - Geographic flexibility
 - Better work-life balance
 - Reduced expenses (clothing, transport, food)
 
 **Challenges:**
+
 - Isolation and loneliness
 - Blurred work-life boundaries
 - Career visibility concerns
@@ -106,13 +113,13 @@ Average per-employee savings:
 
 ### Tools for Global Teams
 
-| Category | Popular Tools |
-|----------|--------------|
-| Video | Zoom, Google Meet, Around |
-| Chat | Slack, Discord, Microsoft Teams |
-| Docs | Notion, Confluence, Google Docs |
-| Project | Linear, Asana, Monday |
-| Whiteboard | Miro, FigJam, Excalidraw |
+| Category   | Popular Tools                   |
+| ---------- | ------------------------------- |
+| Video      | Zoom, Google Meet, Around       |
+| Chat       | Slack, Discord, Microsoft Teams |
+| Docs       | Notion, Confluence, Google Docs |
+| Project    | Linear, Asana, Monday           |
+| Whiteboard | Miro, FigJam, Excalidraw        |
 
 ### Culture at a Distance
 

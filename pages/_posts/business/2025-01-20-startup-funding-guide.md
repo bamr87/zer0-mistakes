@@ -41,11 +41,11 @@ Typical Seed Round:
 
 As your startup grows, you'll progress through additional funding rounds:
 
-| Round | Typical Amount | Focus |
-|-------|---------------|-------|
-| Series A | $2M - $15M | Scaling product-market fit |
-| Series B | $15M - $50M | Expanding market reach |
-| Series C+ | $50M+ | Aggressive growth/IPO prep |
+| Round     | Typical Amount | Focus                      |
+| --------- | -------------- | -------------------------- |
+| Series A  | $2M - $15M     | Scaling product-market fit |
+| Series B  | $15M - $50M    | Expanding market reach     |
+| Series C+ | $50M+          | Aggressive growth/IPO prep |
 
 ## Key Metrics Investors Look For
 

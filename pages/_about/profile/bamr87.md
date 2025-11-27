@@ -51,4 +51,3 @@ git subtree add --prefix=pages/_about/contributors/bamr87 bamr87 main
     GitHubCalendar(".calendar", "bamr87", { responsive: true });
 
 </script>
-

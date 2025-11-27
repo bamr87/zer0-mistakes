@@ -126,10 +126,12 @@ Zer0-Mistakes is a Jekyll theme designed for **production deployment** with inte
 ### Core Architecture Patterns
 
 **Dual Configuration System:**
+
 - `_config.yml` - Production config with `remote_theme: "bamr87/zer0-mistakes"`
 - `_config_dev.yml` - Development overrides with `remote_theme: false`, loads local theme
 
 **Modular Include System:**
+
 ```
 _includes/
 ├── core/           # Essential structure (head.html, header.html, footer.html)
@@ -139,6 +141,7 @@ _includes/
 ```
 
 **Layout Hierarchy:**
+
 ```
 root.html (base) → default.html (main) → [journals.html, home.html, etc.]
 ```
@@ -146,6 +149,7 @@ root.html (base) → default.html (main) → [journals.html, home.html, etc.]
 ## 🚀 Critical Developer Workflows
 
 ### Essential Commands
+
 ```bash
 # Start development (auto-reloads on file changes)
 docker-compose up
@@ -153,7 +157,7 @@ docker-compose up
 # Access container for debugging
 docker-compose exec jekyll bash
 
-# Clean rebuild with dependency updates  
+# Clean rebuild with dependency updates
 docker-compose down && docker-compose up --build
 
 # Test automated release system
@@ -161,12 +165,14 @@ docker-compose down && docker-compose up --build
 ```
 
 ### Automated Release System
+
 The theme uses semantic versioning with automated commit analysis:
+
 ```bash
 # Publish patch release (0.5.1)
 ./scripts/gem-publish.sh patch
 
-# Publish minor release (0.6.0) 
+# Publish minor release (0.6.0)
 ./scripts/gem-publish.sh minor
 
 # Preview changelog generation
@@ -174,6 +180,7 @@ The theme uses semantic versioning with automated commit analysis:
 ```
 
 **Key Files:**
+
 - `lib/jekyll-theme-zer0/version.rb` - Single source of truth for version
 - `scripts/gem-publish.sh` - Full release workflow (changelog → version bump → test → publish)
 - `scripts/analyze-commits.sh` - Analyzes commit messages for version bump type
@@ -181,6 +188,7 @@ The theme uses semantic versioning with automated commit analysis:
 ## 📝 Content Creation Patterns
 
 ### Jekyll Collections Structure
+
 ```
 pages/
 ├── _posts/         # Blog posts (layout: journals)
@@ -190,6 +198,7 @@ pages/
 ```
 
 ### Front Matter Standards
+
 ```yaml
 ---
 title: "Your Post Title"
@@ -206,11 +215,13 @@ permalink: /custom-url/
 ## 🎨 Bootstrap 5 Integration
 
 **CDN Loading Pattern:**
+
 - Bootstrap 5.3.3 CSS/JS loaded via CDN in `_includes/core/head.html`
 - Bootstrap Icons 1.10.3 for consistent iconography
 - Custom CSS layered in `/assets/css/main.css`
 
 **Responsive Component Pattern:**
+
 ```html
 <!-- Mobile-first responsive navigation -->
 <nav class="navbar navbar-expand-lg">
@@ -224,16 +235,19 @@ permalink: /custom-url/
 ## 🔐 Privacy-First Analytics
 
 **PostHog Integration** (`_includes/analytics/posthog.html`):
+
 - **Environment-aware**: Only loads in production with `jekyll.environment == "production"`
 - **Consent-driven**: Integrates with cookie consent system
 - **Custom events**: Tracks downloads, external links, scroll depth, Jekyll-specific interactions
 
 **Cookie Consent System** (`_includes/components/cookie-consent.html`):
+
 - GDPR/CCPA compliant with granular permissions
 - 365-day consent expiry with localStorage persistence
 - Bootstrap modal for detailed preference management
 
 **Configuration Pattern:**
+
 ```yaml
 # _config.yml
 posthog:
@@ -243,7 +257,7 @@ posthog:
     track_downloads: true
     track_external_links: true
 
-# _config_dev.yml  
+# _config_dev.yml
 posthog:
   enabled: false  # Disabled in development
 ```
@@ -251,6 +265,7 @@ posthog:
 ## 🧩 Include Development Standards
 
 **Standard Header Format:**
+
 ```html
 <!--
   ===================================================================
@@ -268,6 +283,7 @@ posthog:
 ```
 
 **Parameter Pattern:**
+
 ```liquid
 {% comment %} Safe parameter handling with defaults {% endcomment %}
 <div class="{{ include.class | default: 'default-class' }}">
@@ -281,27 +297,31 @@ posthog:
 ## 🔧 Docker Optimization
 
 **Key Configuration:**
+
 ```yaml
 # docker-compose.yml
-platform: linux/amd64  # Apple Silicon compatibility
+platform: linux/amd64 # Apple Silicon compatibility
 command: jekyll serve --config "_config.yml,_config_dev.yml"
 volumes: ["./:/app"]
 environment: { JEKYLL_ENV: development }
 ```
 
 **Development vs Production:**
+
 - **Development**: Local theme files, analytics disabled, verbose logging
 - **Production**: GitHub Pages deployment, remote theme, privacy-compliant analytics
 
 ## 🚀 GitHub Pages Deployment
 
 **Automatic Deployment:**
+
 1. Push to `main` branch triggers GitHub Pages build
-2. Jekyll processes with production `_config.yml` 
+2. Jekyll processes with production `_config.yml`
 3. Remote theme loads from `bamr87/zer0-mistakes`
 4. Analytics activate with user consent
 
 **Theme Publishing:**
+
 ```bash
 # Full release workflow
 ./scripts/gem-publish.sh patch  # Auto-detects version bump needed
@@ -310,8 +330,9 @@ environment: { JEKYLL_ENV: development }
 ---
 
 **Key AI Development Principles:**
+
 - **Front matter drives behavior**: Use comprehensive metadata for AI context
-- **Docker-first development**: All workflows assume containerized environment  
+- **Docker-first development**: All workflows assume containerized environment
 - **Privacy by design**: Analytics require explicit user consent
 - **Automated releases**: Semantic versioning with commit message analysis
 - **Component modularity**: Includes are self-contained with clear dependencies
@@ -404,6 +425,7 @@ Docker Compatibility: "Fully compatible with Jekyll container environments"
 ```
 
 ### Front Matter Enhanced Core Components
+
 - **`_layouts/`**: Modular layout system with embedded front matter for component dependencies and performance hints
 - **`_includes/`**: Reusable components documented with front matter specifying usage patterns and integration points
 - **`_config.yml`**: Production configuration enhanced with front matter standards for AI-assisted theme management
@@ -415,6 +437,7 @@ Docker Compatibility: "Fully compatible with Jekyll container environments"
 ### Key Patterns Enhanced with Front Matter
 
 #### 1. Configuration Layering with Front Matter Documentation
+
 ```yaml
 ---
 # Front Matter: Jekyll Configuration
@@ -424,9 +447,10 @@ Docker Compatibility: "Fully compatible with Jekyll container environments"
 ---
 remote_theme: "bamr87/zer0-mistakes"
 
+
 # Development (_config_dev.yml) - Auto-generated with front matter
 ---
-# Front Matter: Development Configuration  
+# Front Matter: Development Configuration
 # Description: Local development overrides for Docker environment
 # Environment: development
 # Docker Notes: Local theme development with live reload
@@ -437,6 +461,7 @@ theme: "jekyll-theme-zer0"
 ```
 
 #### 2. Front Matter Enhanced Docker-First Commands
+
 ```bash
 #!/bin/bash
 # Front Matter: Docker Development Commands
@@ -457,6 +482,7 @@ docker-compose down && docker-compose up --build
 ```
 
 #### 3. Self-Healing Installation with Front Matter
+
 ```bash
 #!/bin/bash
 # Front Matter: Zer0-Mistakes Self-Healing Installation
@@ -472,6 +498,7 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.s
 ## 🔧 Critical Developer Workflows
 
 ### Local Development Setup
+
 1. **Clone repository**: `gh repo clone bamr87/zer0-mistakes`
 2. **Start containers**: `docker-compose up`
 3. **Access site**: Visit `http://localhost:4000`
@@ -479,12 +506,14 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.s
 5. **Debug issues**: Check container logs with `docker-compose logs`
 
 ### Theme Development
+
 - **Local testing**: Use `_config_dev.yml` (remote_theme: false)
 - **Theme updates**: Modify files in `_layouts/`, `_includes/`, `assets/`
 - **Cross-platform testing**: Test on Intel/Apple Silicon via Docker
 - **Dependency management**: Update `Gemfile` for Jekyll plugins
 
 ### Front Matter Enhanced Content Creation
+
 - **Posts**: Create in `pages/_posts/` with comprehensive Jekyll front matter including AI content hints and technical requirements
 - **Pages**: Add to root or `pages/` with custom layouts documented via front matter component specifications
 - **Collections**: Use `pages/_quests/`, `pages/_docs/` with front matter defining content relationships and learning progressions
@@ -493,24 +522,39 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.s
 ## � **Bootstrap 5 Integration**
 
 ### CSS Framework Architecture
+
 - **Bootstrap 5.3.3**: Latest stable version loaded via CDN
 - **Bootstrap Icons 1.10.3**: Icon library for enhanced UI elements
 - **Custom CSS**: Layered on top of Bootstrap in `/assets/css/main.css` and `/assets/css/custom.css`
 - **Responsive Design**: Mobile-first approach with breakpoint system
 
 ### Bootstrap CDN Loading
+
 ```html
 <!-- Bootstrap CSS (loaded in _includes/head.html) -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+  integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+  crossorigin="anonymous"
+/>
 
 <!-- Bootstrap Icons -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
+/>
 
 <!-- Bootstrap JS (loaded in _includes/js-cdn.html) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+  crossorigin="anonymous"
+></script>
 ```
 
 ### Bootstrap Component Usage
+
 - **Grid System**: Use `container`, `row`, `col-*` classes for responsive layouts
 - **Navigation**: Bootstrap navbar components with responsive collapse
 - **Cards**: Content containers with consistent styling
@@ -518,12 +562,14 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.s
 - **Tooltips/Popovers**: Enhanced user experience elements
 
 ### Bootstrap Customization
+
 - **CSS Variables**: Override Bootstrap variables in custom CSS files
 - **Component Classes**: Extend Bootstrap with custom utility classes
 - **Theme Colors**: Use Bootstrap's color system for consistency
 - **Responsive Utilities**: Leverage `d-none`, `d-lg-block`, etc. for responsive behavior
 
 ### Error Handling Patterns
+
 ```bash
 # Always use set -euo pipefail in scripts
 set -euo pipefail
@@ -537,12 +583,14 @@ command || handle_error "Command failed"
 ```
 
 ### Docker Optimization
+
 - **Platform specification**: `platform: linux/amd64` for Apple Silicon
 - **Volume mounting**: `./:/app` for live development
 - **Port consistency**: Always `4000:4000` for localhost access
 - **Environment variables**: `JEKYLL_ENV: development`
 
 ### Documentation Standards
+
 - **CHANGELOG.md**: Semantic versioning with categorized changes
 - **README.md**: Include installation, usage, and troubleshooting
 - **Frontmatter**: Comprehensive metadata for SEO and organization
@@ -551,12 +599,14 @@ command || handle_error "Command failed"
 ## 🔄 Integration Points
 
 ### External Dependencies
+
 - **Jekyll**: Static site generator with custom theme
 - **Docker**: Containerization for cross-platform development
 - **GitHub Pages**: Hosting and deployment platform
 - **Ruby Gems**: Jekyll plugins and dependencies
 
 ### Service Communication
+
 - **Local development**: Jekyll server ↔ Browser (localhost:4000)
 - **Theme loading**: GitHub remote_theme ↔ Local Jekyll build
 - **Asset pipeline**: Sass compilation ↔ CSS optimization
@@ -565,12 +615,14 @@ command || handle_error "Command failed"
 ## 🚀 Deployment Workflows
 
 ### GitHub Pages Deployment
+
 1. **Push to main**: Automatic build triggers
 2. **Jekyll build**: Processes site with production config
 3. **Asset optimization**: Minifies CSS/JS, optimizes images
 4. **CDN delivery**: Fast global content delivery
 
 ### Docker Deployment
+
 ```yaml
 # For production containerization
 FROM jekyll/jekyll:latest
@@ -583,6 +635,7 @@ CMD ["jekyll", "serve", "--host", "0.0.0.0"]
 ## 📋 Quality Assurance
 
 ### Testing Commands
+
 ```bash
 # Local build test
 docker-compose exec jekyll jekyll build
@@ -595,6 +648,7 @@ docker-compose exec jekyll htmlproofer _site
 ```
 
 ### Code Quality
+
 - **Markdown linting**: Consistent formatting across documentation
 - **YAML validation**: Proper configuration file syntax
 - **Liquid templating**: Valid Jekyll template syntax
@@ -603,6 +657,7 @@ docker-compose exec jekyll htmlproofer _site
 ## 🎨 Content Management
 
 ### Frontmatter Standards
+
 ```yaml
 ---
 title: "Page Title"
@@ -617,6 +672,7 @@ permalink: /custom-url/
 ```
 
 ### SEO Optimization
+
 - **Meta descriptions**: Compelling summaries for search results
 - **Open Graph**: Social media sharing optimization
 - **Structured data**: Schema.org markup for rich snippets
@@ -625,12 +681,14 @@ permalink: /custom-url/
 ## 🔄 Evolution Patterns
 
 ### Version Management
+
 - **Semantic versioning**: MAJOR.MINOR.PATCH for releases
 - **Changelog categories**: Added, Changed, Deprecated, Removed, Fixed, Security
 - **Migration guides**: Document breaking changes and upgrade paths
 - **Deprecation warnings**: Clear communication of deprecated features
 
 ### Feature Development
+
 - **Incremental releases**: Small, frequent updates over large changes
 - **Backward compatibility**: Maintain compatibility when possible
 - **Documentation updates**: Update docs with new features
@@ -639,18 +697,21 @@ permalink: /custom-url/
 ## 🤖 AI Integration Guidelines
 
 ### Front Matter Enhanced Code Generation
+
 - **Jekyll patterns**: Generate Liquid templates with front matter documentation specifying component relationships and dependencies
 - **Docker optimization**: Create container-friendly configurations with front matter detailing environment requirements and optimization strategies
 - **Error handling**: Implement comprehensive error recovery guided by front matter fallback strategies and troubleshooting notes
 - **Documentation**: Auto-generate README and troubleshooting guides using front matter content hints and technical requirements
 
 ### Front Matter Guided Development Assistance
+
 - **Theme customization**: Help modify layouts and includes using front matter component specifications and dependency mappings
 - **Content creation**: Assist with Jekyll post/page creation following front matter standards for SEO, performance, and AI integration
 - **Configuration**: Optimize Jekyll and Docker settings based on front matter environment specifications and performance hints
 - **Debugging**: Troubleshoot build and runtime issues using front matter troubleshooting guidance and error recovery strategies
 
 ### Front Matter Enhanced Quality Assurance
+
 - **Code review**: Check for Jekyll best practices using front matter AI development notes and component specifications
 - **Security**: Validate safe Liquid template usage following front matter security guidelines and Docker compatibility requirements
 - **Performance**: Optimize asset loading and page speed based on front matter performance features and optimization hints
@@ -659,6 +720,7 @@ permalink: /custom-url/
 ## 🔒 Security Best Practices
 
 ### Code Security
+
 - **Never hardcode credentials**: Use environment variables for sensitive data
 - **Validate user inputs**: Always sanitize and escape user-provided content in Liquid templates
 - **Secure dependencies**: Regularly update gems and check for vulnerabilities with `bundle audit`
@@ -666,6 +728,7 @@ permalink: /custom-url/
 - **HTTPS only**: Use HTTPS for all external resources (CDN, APIs)
 
 ### Content Security
+
 ```liquid
 {% comment %}Always escape user content{% endcomment %}
 <p>{{ user_content | escape }}</p>
@@ -678,6 +741,7 @@ permalink: /custom-url/
 ```
 
 ### Docker Security
+
 - Use official, verified base images
 - Specify exact versions for reproducibility
 - Run containers as non-root users when possible
@@ -687,12 +751,14 @@ permalink: /custom-url/
 ## 🤝 Contributing Guidelines
 
 ### Before Contributing
+
 1. Read [CONTRIBUTING.md](../CONTRIBUTING.md) for detailed guidelines
 2. Review [CODE_OF_CONDUCT.md](../CODE_OF_CONDUCT.md)
 3. Set up local development environment with Docker
 4. Run tests to ensure baseline functionality: `./test/test_runner.sh`
 
 ### Contribution Workflow
+
 1. **Fork and clone** the repository
 2. **Create feature branch** from `main`: `git checkout -b feature/your-feature`
 3. **Make minimal changes** - focus on one issue/feature at a time
@@ -702,6 +768,7 @@ permalink: /custom-url/
 7. **Open pull request** - provide detailed description with context
 
 ### Code Review Standards
+
 - **Functionality**: Does the code work as intended?
 - **Testing**: Are there adequate tests?
 - **Documentation**: Is the code properly documented?
@@ -724,6 +791,7 @@ These instructions are automatically applied by GitHub Copilot based on the file
 ## 🎯 Task Guidance for AI Agents
 
 ### When Making Changes
+
 1. **Understand the context**: Review related files and documentation first
 2. **Make minimal changes**: Change only what's necessary to fix the issue
 3. **Follow existing patterns**: Match the style and structure of existing code
@@ -733,6 +801,7 @@ These instructions are automatically applied by GitHub Copilot based on the file
 ### Common Tasks
 
 #### Adding a New Layout
+
 1. Create file in `_layouts/` following naming conventions
 2. Add proper front matter documentation
 3. Use Bootstrap 5 components for consistency
@@ -741,6 +810,7 @@ These instructions are automatically applied by GitHub Copilot based on the file
 6. Update layout documentation
 
 #### Adding a New Include
+
 1. Create file in `_includes/` with descriptive name
 2. Add parameter documentation in file header
 3. Handle optional parameters with defaults
@@ -749,6 +819,7 @@ These instructions are automatically applied by GitHub Copilot based on the file
 6. Document usage examples
 
 #### Fixing a Bug
+
 1. Write a test that reproduces the bug
 2. Fix the bug with minimal changes
 3. Ensure the test passes
@@ -756,6 +827,7 @@ These instructions are automatically applied by GitHub Copilot based on the file
 5. Update CHANGELOG.md with fix details
 
 #### Adding a Feature
+
 1. Review existing features for similar patterns
 2. Design for backward compatibility
 3. Add comprehensive tests
@@ -766,6 +838,7 @@ These instructions are automatically applied by GitHub Copilot based on the file
 ## 🚀 Quick Reference
 
 ### Jekyll Commands
+
 ```bash
 jekyll build              # Build site
 jekyll serve              # Start dev server
@@ -774,6 +847,7 @@ jekyll clean              # Clean build artifacts
 ```
 
 ### Git Commands
+
 ```bash
 git status                # Check working directory
 git diff                  # View changes
@@ -783,6 +857,7 @@ git push origin branch    # Push changes
 ```
 
 ### Debugging
+
 ```bash
 # Debug Jekyll build
 bundle exec jekyll build --verbose --trace
@@ -800,5 +875,4 @@ ruby -ryaml -e "puts YAML.load_file('_config.yml').inspect"
 
 ---
 
-*These instructions focus on Zer0-Mistakes' unique Docker-first approach, AI-powered automation, and Jekyll theme architecture enhanced by comprehensive front matter integration. Follow these patterns to maintain consistency with the project's self-healing, cross-platform philosophy while leveraging structured metadata for optimal AI collaboration and theme development.*
-
+_These instructions focus on Zer0-Mistakes' unique Docker-first approach, AI-powered automation, and Jekyll theme architecture enhanced by comprehensive front matter integration. Follow these patterns to maintain consistency with the project's self-healing, cross-platform philosophy while leveraging structured metadata for optimal AI collaboration and theme development._

@@ -10,7 +10,7 @@ draft: draft
 
 # Privacy Policy
 
-*Last updated: January 27, 2025*
+_Last updated: January 27, 2025_
 
 ## Introduction
 
@@ -23,8 +23,9 @@ At {{ site.title }}, we are committed to protecting your privacy and being trans
 When you visit our website, we may automatically collect certain information about your device and usage patterns through analytics services:
 
 **Analytics Data (via PostHog):**
+
 - Page views and navigation patterns
-- Time spent on pages and site sections  
+- Time spent on pages and site sections
 - Device information (browser type, operating system, screen resolution)
 - General location information (country/city level, not precise location)
 - Referral sources (how you found our site)
@@ -33,6 +34,7 @@ When you visit our website, we may automatically collect certain information abo
 - Scroll depth and reading engagement
 
 **Technical Information:**
+
 - IP address (which may be anonymized)
 - Browser type and version
 - Device type (desktop, mobile, tablet)
@@ -42,6 +44,7 @@ When you visit our website, we may automatically collect certain information abo
 ### Information You Provide
 
 We may collect information you voluntarily provide when you:
+
 - Contact us through forms or email
 - Subscribe to newsletters or updates
 - Participate in surveys or feedback requests
@@ -52,17 +55,20 @@ We may collect information you voluntarily provide when you:
 We use the collected information for the following purposes:
 
 ### Website Analytics and Improvement
+
 - Understanding how visitors use our website
 - Identifying popular content and navigation patterns
 - Improving site performance and user experience
 - Detecting and preventing technical issues
 
 ### Content Optimization
+
 - Measuring engagement with different types of content
 - Understanding which topics are most valuable to visitors
 - Optimizing site structure and navigation
 
 ### Communication
+
 - Responding to your inquiries and requests
 - Providing customer support
 - Sending important updates about our services (if you've subscribed)
@@ -74,7 +80,7 @@ We use the collected information for the following purposes:
 We use PostHog for web analytics to better understand how visitors interact with our website. PostHog may collect:
 
 - **Page analytics**: URLs visited, page titles, referrers
-- **User interactions**: Clicks, form submissions, scroll behavior  
+- **User interactions**: Clicks, form submissions, scroll behavior
 - **Session data**: Session duration, pages per session
 - **Technical data**: Browser info, device type, screen resolution
 
@@ -85,6 +91,7 @@ We use PostHog for web analytics to better understand how visitors interact with
 ### Session Recording (Optional)
 
 When enabled and with your explicit consent, we may use PostHog's session recording feature to understand user experience issues. This feature:
+
 - Records mouse movements, clicks, and page interactions
 - Automatically masks sensitive form inputs (passwords, credit cards, etc.)
 - Can be disabled through your cookie preferences
@@ -93,19 +100,25 @@ When enabled and with your explicit consent, we may use PostHog's session record
 ## Cookies and Tracking Technologies
 
 ### Essential Cookies
+
 These cookies are necessary for the website to function properly:
+
 - Site preferences and settings
 - Security and authentication
 - Load balancing and performance
 
-### Analytics Cookies  
+### Analytics Cookies
+
 These cookies help us understand site usage (requires your consent):
+
 - PostHog analytics tracking
 - Page view and interaction measurement
 - User journey analysis
 
 ### Your Cookie Choices
+
 You can manage your cookie preferences through:
+
 1. **Cookie consent banner**: Choose your preferences when first visiting
 2. **Cookie settings modal**: Click "Manage Cookies" to update preferences anytime
 3. **Browser settings**: Configure cookie blocking in your browser
@@ -116,13 +129,17 @@ You can manage your cookie preferences through:
 We do not sell, trade, or rent your personal information to third parties. We may share information in limited circumstances:
 
 ### Service Providers
+
 We may share data with trusted service providers who help operate our website:
+
 - **PostHog**: Analytics and user experience insights
 - **Hosting providers**: Website hosting and content delivery
 - **Email services**: Newsletter delivery (if applicable)
 
 ### Legal Requirements
+
 We may disclose information if required by law or to:
+
 - Comply with legal processes or government requests
 - Protect our rights and property
 - Ensure user safety and security
@@ -140,6 +157,7 @@ We implement appropriate technical and organizational measures to protect your i
 ## International Data Transfers
 
 Our website and analytics services may transfer data internationally. When this occurs:
+
 - We ensure appropriate safeguards are in place
 - We comply with applicable data protection laws
 - PostHog provides adequate protection for EU data under GDPR
@@ -157,20 +175,25 @@ We retain information for the following periods:
 Depending on your location, you may have certain rights regarding your personal information:
 
 ### Access and Portability
+
 - Request access to personal information we have about you
 - Receive a copy of your data in a portable format
 
 ### Correction and Deletion
+
 - Request correction of inaccurate personal information
 - Request deletion of your personal information
 
 ### Opt-Out and Restriction
+
 - Opt out of analytics tracking through cookie preferences
 - Request restriction of how we process your information
 - Unsubscribe from communications
 
 ### Exercising Your Rights
+
 To exercise these rights:
+
 1. **Email us**: {% if site.email %}[{{ site.email }}](mailto:{{ site.email }}){% else %}Contact the site owner{% endif %}
 2. **Cookie preferences**: Use our cookie management tools
 3. **Browser settings**: Configure Do Not Track or cookie blocking
@@ -182,6 +205,7 @@ Our website is not intended for children under 13. We do not knowingly collect p
 ## Privacy Policy Updates
 
 We may update this Privacy Policy periodically. When we make changes:
+
 - We will post the updated policy on this page
 - We will update the "Last updated" date
 - For significant changes, we may provide additional notice
@@ -198,10 +222,11 @@ For PostHog-specific privacy questions, you can also refer to [PostHog's Privacy
 ## Compliance
 
 This Privacy Policy is designed to comply with:
+
 - General Data Protection Regulation (GDPR)
 - California Consumer Privacy Act (CCPA)
 - Other applicable privacy and data protection laws
 
 ---
 
-*By using our website, you acknowledge that you have read and understood this Privacy Policy and agree to the collection and use of your information as described herein.*
+_By using our website, you acknowledge that you have read and understood this Privacy Policy and agree to the collection and use of your information as described herein._

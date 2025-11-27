@@ -16,6 +16,7 @@ cd ~/github/{{ site.local_repo }}
 cp {{ page.config-file }} {{ page.config-dir  }}/config-utf16.txt
 Get-Content {{ page.config-dir  }}/config-utf16.txt | Set-Content -Encoding UTF8 {{ page.config-dir }}/{{ page.config-file }}
 ```
+
 ## Regenerate Config File with Bash
 
 ```bash

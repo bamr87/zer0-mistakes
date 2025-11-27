@@ -9,6 +9,7 @@ The zer0-mistakes Jekyll theme now includes an automatic theme version display s
 ### 1. Automatic Version Detection
 
 The theme automatically detects and displays:
+
 - **Theme Version**: Extracted dynamically from gem specification (no hardcoding)
 - **Jekyll Version**: Current Jekyll version used for build
 - **Ruby Version**: Ruby version from environment
@@ -18,6 +19,7 @@ The theme automatically detects and displays:
 ### 2. Comprehensive System Information
 
 The info modal displays:
+
 - Theme repository and links to documentation
 - Active Jekyll plugins
 - Technology stack with versions
@@ -27,6 +29,7 @@ The info modal displays:
 ### 3. Easy Access
 
 Users can access the theme information via:
+
 - **Gear Icon** in the header navigation (⚙️)
 - **Info Button** in the footer ("Info")
 - Keyboard shortcut (when modal is open, press ESC to close)
@@ -38,6 +41,7 @@ Users can access the theme information via:
 File: `_plugins/theme_version.rb`
 
 This Jekyll plugin runs during build and:
+
 - Scans for installed theme gems
 - Extracts version from Gem specification
 - Makes version data available as `site.theme_specs`
@@ -58,6 +62,7 @@ This Jekyll plugin runs during build and:
 File: `_includes/components/theme-info.html`
 
 The template:
+
 - Reads version from `site.theme_specs`
 - Falls back to "Latest" for remote themes
 - Displays all system and build information
@@ -68,6 +73,7 @@ The template:
 File: `_includes/components/info-section.html`
 
 The existing settings modal was enhanced to include:
+
 - Theme information card
 - System details
 - Technology stack table
@@ -80,6 +86,7 @@ To use this feature in your site using zer0-mistakes theme:
 ### 1. No Configuration Needed!
 
 The feature works automatically when you use:
+
 ```yaml
 remote_theme: "bamr87/zer0-mistakes"
 ```
@@ -91,6 +98,7 @@ Click the gear icon (⚙️) in the header or "Info" in the footer.
 ### 3. Customize (Optional)
 
 You can override the theme-info display by creating:
+
 ```
 your-site/_includes/components/theme-info.html
 ```
@@ -111,6 +119,7 @@ theme_specs << {
 ```
 
 Then display in template:
+
 ```liquid
 {{ site.theme_specs | where: "name", "theme-name" | map: "custom_field" | first }}
 ```
@@ -118,11 +127,13 @@ Then display in template:
 ### Version Update Process
 
 1. Update `lib/jekyll-theme-zer0/version.rb`:
+
    ```ruby
    VERSION = "0.6.0"
    ```
 
 2. Build and publish gem:
+
    ```bash
    gem build jekyll-theme-zer0.gemspec
    gem push jekyll-theme-zer0-0.6.0.gem
@@ -137,19 +148,21 @@ Then display in template:
 ✅ **User-Friendly**: Easy access from any page via header/footer  
 ✅ **Comprehensive**: Shows full system and environment details  
 ✅ **Helpful**: Links to docs, changelog, and support resources  
-✅ **Maintainable**: Single source of truth (gemspec version)  
+✅ **Maintainable**: Single source of truth (gemspec version)
 
 ## Troubleshooting
 
 ### Version Shows "Latest" Instead of Number
 
 This is normal for remote themes. GitHub Pages pulls the latest commit, so there's no fixed version number. To see a specific version:
+
 1. Use the theme as a gem: `gem "jekyll-theme-zer0"`
 2. Or check the theme's CHANGELOG on GitHub
 
 ### Plugin Not Working
 
 Ensure the plugin directory exists:
+
 ```
 _plugins/
   theme_version.rb
@@ -160,6 +173,7 @@ For GitHub Pages, plugins run automatically. For local development, restart Jeky
 ### Modal Not Opening
 
 Check that Bootstrap JavaScript is loaded:
+
 ```html
 <!-- In your layout -->
 {% include components/js-cdn.html %}
@@ -177,6 +191,7 @@ Check that Bootstrap JavaScript is loaded:
 ## Future Enhancements
 
 Potential improvements:
+
 - [ ] Add version comparison (current vs latest available)
 - [ ] Show update notification when new version available
 - [ ] Display theme changelog directly in modal

@@ -13,20 +13,21 @@ This document provides guidelines for developing and maintaining shell scripts i
 
 ### Core Scripts
 
-| Script | Purpose | Usage |
-|--------|---------|-------|
-| `version.sh` | Semantic version management | `./scripts/version.sh [patch\|minor\|major]` |
-| `build.sh` | Build Jekyll site and gem | `./scripts/build.sh` |
-| `test.sh` | Run test suite | `./scripts/test.sh` |
-| `release.sh` | Complete release workflow | `./scripts/release.sh` |
-| `gem-publish.sh` | Publish gem to RubyGems.org | `./scripts/gem-publish.sh` |
-| `setup.sh` | Initial project setup | `./scripts/setup.sh` |
+| Script           | Purpose                     | Usage                                        |
+| ---------------- | --------------------------- | -------------------------------------------- |
+| `version.sh`     | Semantic version management | `./scripts/version.sh [patch\|minor\|major]` |
+| `build.sh`       | Build Jekyll site and gem   | `./scripts/build.sh`                         |
+| `test.sh`        | Run test suite              | `./scripts/test.sh`                          |
+| `release.sh`     | Complete release workflow   | `./scripts/release.sh`                       |
+| `gem-publish.sh` | Publish gem to RubyGems.org | `./scripts/gem-publish.sh`                   |
+| `setup.sh`       | Initial project setup       | `./scripts/setup.sh`                         |
 
 ## 🔧 Script Development Standards
 
 ### Shell Script Best Practices
 
 #### Error Handling
+
 ```bash
 #!/bin/bash
 # Always use strict error handling
@@ -37,6 +38,7 @@ trap 'echo "Error on line $LINENO"' ERR
 ```
 
 #### Logging Functions
+
 ```bash
 # Consistent logging with colors
 log_info() {
@@ -57,6 +59,7 @@ log_error() {
 ```
 
 #### Parameter Validation
+
 ```bash
 # Validate required arguments
 if [ $# -eq 0 ]; then
@@ -77,6 +80,7 @@ esac
 ```
 
 #### Environment Detection
+
 ```bash
 # Detect operating system
 detect_os() {
@@ -130,9 +134,9 @@ trap 'log_error "Error on line $LINENO"' ERR
 # Main function
 main() {
     log_info "Starting script execution..."
-    
+
     # Script logic here
-    
+
     log_success "Script completed successfully"
 }
 
@@ -159,6 +163,7 @@ main "$@"
 ## 🧪 Testing Scripts
 
 ### Testing Checklist
+
 - [ ] Test with valid inputs
 - [ ] Test with invalid/missing inputs
 - [ ] Test error conditions and recovery
@@ -169,6 +174,7 @@ main "$@"
 - [ ] Ensure idempotency where appropriate
 
 ### Manual Testing Commands
+
 ```bash
 # Test script execution
 bash -x ./scripts/script_name.sh  # Debug mode
@@ -186,6 +192,7 @@ shellcheck ./scripts/*.sh
 ### Safe Scripting Practices
 
 1. **Input Validation**: Always validate and sanitize user inputs
+
    ```bash
    # Validate input before using
    if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -195,16 +202,18 @@ shellcheck ./scripts/*.sh
    ```
 
 2. **Avoid Command Injection**: Use arrays for command arguments
+
    ```bash
    # Safe
    args=("--option" "$user_input")
    command "${args[@]}"
-   
+
    # Unsafe
    command --option $user_input
    ```
 
 3. **Secure Temporary Files**: Use proper temp file creation
+
    ```bash
    TEMP_FILE=$(mktemp)
    trap "rm -f $TEMP_FILE" EXIT
@@ -223,7 +232,9 @@ shellcheck ./scripts/*.sh
 ## 📖 Documentation Requirements
 
 ### Script Header Documentation
+
 Every script must include:
+
 - Brief description
 - Usage examples
 - Required dependencies
@@ -231,12 +242,14 @@ Every script must include:
 - Expected inputs and outputs
 
 ### Inline Comments
+
 - Explain complex logic
 - Document non-obvious behavior
 - Provide context for business logic
 - Keep comments up-to-date with code
 
 ### Help/Usage Function
+
 ```bash
 show_help() {
     cat << EOF
@@ -260,6 +273,7 @@ EOF
 ## 🚀 Common Patterns
 
 ### Docker Integration
+
 ```bash
 # Check if running in Docker
 is_docker() {
@@ -273,6 +287,7 @@ docker_exec() {
 ```
 
 ### Git Operations
+
 ```bash
 # Check for uncommitted changes
 check_git_clean() {
@@ -289,6 +304,7 @@ get_current_branch() {
 ```
 
 ### Version Management
+
 ```bash
 # Read version from file
 get_current_version() {
@@ -300,9 +316,9 @@ get_current_version() {
 bump_version() {
     local version="$1"
     local type="$2"
-    
+
     IFS='.' read -r major minor patch <<< "$version"
-    
+
     case "$type" in
         major) echo "$((major + 1)).0.0" ;;
         minor) echo "$major.$((minor + 1)).0" ;;
@@ -314,18 +330,21 @@ bump_version() {
 ## 🔄 Maintenance Guidelines
 
 ### Script Updates
+
 - Keep scripts synchronized with workflow changes
 - Update documentation when changing functionality
 - Test thoroughly after modifications
 - Review shellcheck warnings regularly
 
 ### Deprecation Process
+
 1. Add deprecation warning to script
 2. Update documentation
 3. Notify users through CHANGELOG
 4. Remove after grace period (minimum 2 releases)
 
 ### Performance Optimization
+
 - Minimize external command calls
 - Use bash built-ins when possible
 - Cache expensive operations
@@ -333,4 +352,4 @@ bump_version() {
 
 ---
 
-*These guidelines ensure consistent, reliable, and maintainable shell scripts across the Zer0-Mistakes project. Always test scripts thoroughly before committing.*
+_These guidelines ensure consistent, reliable, and maintainable shell scripts across the Zer0-Mistakes project. Always test scripts thoroughly before committing._

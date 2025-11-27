@@ -14,6 +14,7 @@ The Zer0-Mistakes release automation system provides comprehensive, modular auto
 ### Installation Requirements
 
 **System Requirements:**
+
 - **Bash 4.0+** (macOS: `brew install bash`)
 - **Docker** 20.10+ (for development)
 - **Git** 2.30+
@@ -40,6 +41,7 @@ scripts/release patch --skip-publish --no-github-release
 ### VS Code Integration
 
 Press `Cmd+Shift+P` → "Tasks: Run Task" → Choose:
+
 - 🚀 Release: Patch/Minor/Major
 - 🔍 Release: Dry Run Preview
 - ⚡ Release: Quick Build & Test
@@ -77,6 +79,7 @@ scripts/
 ```
 
 **Benefits:**
+
 - 76% reduction in user-facing code complexity
 - Single responsibility per library
 - Comprehensive test coverage (63+ assertions)
@@ -119,6 +122,7 @@ scripts/release major   # 0.6.0 → 1.0.0
 ### Example Workflows
 
 **Development Testing:**
+
 ```bash
 # 1. Preview changes
 /opt/homebrew/bin/bash scripts/release patch --dry-run
@@ -131,6 +135,7 @@ scripts/release patch --skip-publish --no-github-release
 ```
 
 **Quick Gem Build:**
+
 ```bash
 # Build gem without release workflow
 ./scripts/build
@@ -140,6 +145,7 @@ scripts/release patch --skip-publish --no-github-release
 ```
 
 **CI/CD Pipeline:**
+
 ```bash
 # Non-interactive release
 /opt/homebrew/bin/bash scripts/release patch --non-interactive
@@ -152,6 +158,7 @@ scripts/release patch --skip-publish --no-github-release
 The system automatically generates changelogs from conventional commit messages:
 
 **Commit Format:**
+
 ```
 <type>(<scope>): <subject>
 
@@ -161,6 +168,7 @@ The system automatically generates changelogs from conventional commit messages:
 ```
 
 **Supported Types:**
+
 - `feat:` → **Added** section
 - `fix:` → **Fixed** section
 - `refactor:` → **Changed** section
@@ -171,6 +179,7 @@ The system automatically generates changelogs from conventional commit messages:
 - `BREAKING CHANGE:` → **Breaking Changes** section
 
 **Example Commits:**
+
 ```bash
 feat: add responsive navigation component
 fix: resolve sidebar collapse issue on mobile
@@ -181,6 +190,7 @@ refactor: simplify version calculation logic
 ### Automatic Filtering
 
 The changelog generator automatically excludes:
+
 - Merge commits
 - Version bump commits (`chore: bump version`)
 - Commits only touching version/changelog files
@@ -203,6 +213,7 @@ Comprehensive test coverage with 63+ assertions:
 ```
 
 **Test Coverage:**
+
 - Version calculation (20+ assertions)
 - Changelog generation (15+ assertions)
 - Validation checks (10+ assertions)
@@ -227,23 +238,27 @@ Comprehensive test coverage with 63+ assertions:
 ### Common Issues
 
 **Bash Version Error:**
+
 ```bash
 [ERROR] This script requires Bash 4.0 or higher (current: 3.2.57)
 [INFO] On macOS, install via: brew install bash
 ```
 
 **Solution:**
+
 ```bash
 brew install bash
 /opt/homebrew/bin/bash scripts/release patch
 ```
 
 **Working Directory Not Clean:**
+
 ```bash
 [ERROR] Working directory is not clean. Please commit or stash changes first.
 ```
 
 **Solution:**
+
 ```bash
 git status                    # Review changes
 git add . && git commit -m "..." # Commit changes
@@ -252,11 +267,13 @@ git stash                     # Stash temporarily
 ```
 
 **RubyGems Authentication:**
+
 ```bash
 [ERROR] RubyGems credentials not configured
 ```
 
 **Solution:**
+
 ```bash
 gem signin
 # Or manually configure ~/.gem/credentials
@@ -269,18 +286,21 @@ For comprehensive troubleshooting, see: [TROUBLESHOOTING.md](../TROUBLESHOOTING.
 ### For Contributors
 
 **Old Commands:**
+
 ```bash
 ./scripts/gem-publish.sh patch
 make release-patch
 ```
 
 **New Commands:**
+
 ```bash
 /opt/homebrew/bin/bash scripts/release patch
 # or use VS Code tasks
 ```
 
 **One-Time Setup:**
+
 ```bash
 brew install bash
 echo 'export PATH="/opt/homebrew/bin:$PATH"' >> ~/.zshrc
@@ -297,10 +317,10 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Install Bash 5
         run: brew install bash
-      
+
       - name: Release
         run: /opt/homebrew/bin/bash scripts/release patch --non-interactive
         env:
@@ -311,17 +331,17 @@ jobs:
 
 ### Expected Timing
 
-| Step | Duration |
-|------|----------|
-| Validation | 2-5 seconds |
-| Version calculation | <1 second |
-| Changelog generation | 5-30 seconds |
-| Version updates | 1-2 seconds |
-| Test suite | 10-60 seconds |
-| Gem build | 5-15 seconds |
-| RubyGems publish | 10-30 seconds |
-| GitHub release | 5-10 seconds |
-| Push changes | 2-5 seconds |
+| Step                 | Duration      |
+| -------------------- | ------------- |
+| Validation           | 2-5 seconds   |
+| Version calculation  | <1 second     |
+| Changelog generation | 5-30 seconds  |
+| Version updates      | 1-2 seconds   |
+| Test suite           | 10-60 seconds |
+| Gem build            | 5-15 seconds  |
+| RubyGems publish     | 10-30 seconds |
+| GitHub release       | 5-10 seconds  |
+| Push changes         | 2-5 seconds   |
 
 **Total:** 2-5 minutes for complete release
 
@@ -334,6 +354,7 @@ jobs:
 **Impact:** Changelog automation incomplete
 
 **Workaround:**
+
 - Use `scripts/build` for gem building
 - Manual changelog updates remain supported
 - Doesn't block other functionality
@@ -351,6 +372,7 @@ jobs:
 5. **Test locally** before committing
 
 **Example:**
+
 ```bash
 # Add function to scripts/lib/version.sh
 validate_version_format() {
@@ -368,6 +390,7 @@ test_validate_version_format() {
 ### Library Documentation
 
 Each library includes:
+
 - Purpose and scope
 - Exported functions
 - Usage examples
@@ -381,17 +404,20 @@ See: [scripts/lib/README.md](../../scripts/lib/README.md)
 ### Project Timeline
 
 **Phase 1: Library Extraction** (Completed 2025-11-25)
+
 - Created 6 modular libraries from monolithic scripts
 - Built comprehensive test suite (63+ assertions)
 - Established single responsibility architecture
 
 **Phase 2: Simplified Commands** (Completed 2025-11-25)
+
 - Created `scripts/release` and `scripts/build` commands
 - Added deprecation wrappers for backward compatibility
 - Updated 8 VS Code tasks
 - Achieved 76% code reduction
 
 **Phase 3: Documentation & Testing** (Completed 2025-11-25)
+
 - Updated CONTRIBUTING.md and README.md
 - Created 700-line TROUBLESHOOTING guide
 - Validated complete system functionality
@@ -400,18 +426,21 @@ See: [scripts/lib/README.md](../../scripts/lib/README.md)
 ### Impact Metrics
 
 **Code Quality:**
+
 - Before: 1,170+ lines in 3 monolithic scripts
 - After: 1,375 lines in modular libraries + 280 lines in commands
 - Reduction: 76% fewer lines in user-facing code
 - Documentation: 2,110+ lines of guides
 
 **Testing:**
+
 - Test coverage: 63+ assertions
 - All core functions tested
 - Dry-run mode validated
 - Error handling comprehensive
 
 **Developer Experience:**
+
 - Setup time: <5 minutes
 - Built-in help system
 - 8 VS Code tasks
@@ -420,17 +449,20 @@ See: [scripts/lib/README.md](../../scripts/lib/README.md)
 ## Related Documentation
 
 ### Internal Documentation
+
 - **[Library README](../../scripts/lib/README.md)** - Detailed library documentation
 - **[TROUBLESHOOTING](../TROUBLESHOOTING.md)** - Common issues and solutions
 - **[CONTRIBUTING](../../CONTRIBUTING.md)** - Development guidelines
 - **[Test Suite](../../test/README.md)** - Testing documentation
 
 ### Historical Documentation
+
 - **Modernization completed November 2025**
 - **Phase documentation archived**
 - **All functionality integrated into this guide**
 
 ### External Resources
+
 - **[Semantic Versioning](https://semver.org/)** - Version numbering standard
 - **[Conventional Commits](https://www.conventionalcommits.org/)** - Commit message format
 - **[RubyGems Publishing](https://guides.rubygems.org/publishing/)** - Gem publication guide
@@ -449,6 +481,7 @@ See: [scripts/lib/README.md](../../scripts/lib/README.md)
 Open an issue at: https://github.com/bamr87/zer0-mistakes/issues/new
 
 Include:
+
 - Bash version (`bash --version`)
 - Command run (with options)
 - Full error output

@@ -37,26 +37,31 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 ### Primary Goals
 
 **Goal 1: Eliminate Setup Friction**
+
 - **Metric**: 95%+ installation success rate
 - **Status**: ✅ Achieved (v0.6.0)
 - **Implementation**: 1,090-line install.sh with AI-powered error recovery
 
 **Goal 2: Universal Development Environment**
+
 - **Metric**: Works identically on macOS (Intel/Apple Silicon), Linux, Windows WSL
 - **Status**: ✅ Achieved
 - **Implementation**: Docker-first with platform: linux/amd64
 
 **Goal 3: Modern Design System**
+
 - **Metric**: Bootstrap 5.3+ integration with responsive design
 - **Status**: ✅ Achieved
 - **Implementation**: CDN-loaded Bootstrap with custom theming
 
 **Goal 4: Privacy Compliance**
+
 - **Metric**: GDPR/CCPA compliant analytics with user consent
 - **Status**: ✅ Achieved (v0.6.0)
 - **Implementation**: PostHog integration with cookie consent system
 
 **Goal 5: Developer Experience Excellence**
+
 - **Metric**: < 5 minute setup time, comprehensive documentation
 - **Status**: ✅ Achieved
 - **Implementation**: Automated scripts, Makefile interface, AI instructions
@@ -64,16 +69,19 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 ### Secondary Goals
 
 **Goal 6: Comprehensive Testing** (Target: v0.8.0)
+
 - **Metric**: >90% test coverage, automated CI/CD
 - **Status**: 🟡 In Progress (60% coverage)
 - **Implementation**: test/ suite with 16+ automated tests
 
 **Goal 7: Advanced Analytics** (Target: v0.8.0)
+
 - **Metric**: A/B testing, conversion funnels, heatmaps
 - **Status**: 🔴 Planned
 - **Implementation**: Enhanced PostHog integration
 
 **Goal 8: Headless CMS Integration** (Target: v0.7.0)
+
 - **Metric**: Content API, visual editor, multi-author support
 - **Status**: 🔴 Planned
 - **Implementation**: API development, CMS adapter layer
@@ -85,6 +93,7 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 ### Primary Personas
 
 #### Persona 1: **Technical Writer (Sarah)**
+
 - **Background**: Creates documentation for software products
 - **Goals**: Fast setup, clean layouts, markdown-focused, version control
 - **Pain Points**: Complex Jekyll configurations, theme customization
@@ -92,6 +101,7 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 - **Success Metric**: Site deployed in < 10 minutes
 
 #### Persona 2: **Open Source Developer (Marcus)**
+
 - **Background**: Maintains multiple GitHub projects
 - **Goals**: Zero-maintenance project sites, GitHub Pages integration
 - **Pain Points**: Time spent on website maintenance vs coding
@@ -99,6 +109,7 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 - **Success Metric**: One-click deployment, automatic updates
 
 #### Persona 3: **Content Creator (Lisa)**
+
 - **Background**: Blogger transitioning from WordPress
 - **Goals**: Modern design, SEO optimization, privacy-friendly analytics
 - **Pain Points**: WordPress complexity, hosting costs, privacy concerns
@@ -106,6 +117,7 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 - **Success Metric**: Beautiful site without coding knowledge
 
 #### Persona 4: **DevOps Engineer (Raj)**
+
 - **Background**: Manages company infrastructure
 - **Goals**: Containerized development, CI/CD integration, scalability
 - **Pain Points**: Environment inconsistencies, deployment complexity
@@ -115,6 +127,7 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 ### Secondary Personas
 
 #### Persona 5: **AI Agent (Claude/GPT)**
+
 - **Background**: Assists developers with code generation and site building
 - **Goals**: Clear instructions, complete context, reproducible builds
 - **Pain Points**: Incomplete documentation, ambiguous configurations
@@ -128,14 +141,17 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 ### Core Features (Shipped)
 
 #### Feature 1: **AI-Powered Installation System** ✅
+
 **Priority**: Critical  
 **Version Shipped**: 0.6.0  
 **User Stories**:
+
 - As a developer, I want to run one command and have everything configured automatically
 - As a non-technical user, I want clear error messages when something goes wrong
 - As a DevOps engineer, I want the installer to detect and fix environment issues
 
 **Acceptance Criteria**:
+
 - ✅ Single-command installation: `curl -fsSL ... | bash`
 - ✅ Automatic platform detection (Intel/Apple Silicon/Linux)
 - ✅ Error recovery for 27+ common failure scenarios
@@ -144,6 +160,7 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 - ✅ Comprehensive logging with actionable solutions
 
 **Technical Implementation**:
+
 ```bash
 # install.sh - 1,090 lines
 - detect_platform()           # OS/architecture detection
@@ -155,6 +172,7 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 ```
 
 **Metrics**:
+
 - Installation time: 2-5 minutes (target: <5 minutes) ✅
 - Success rate: 95% (target: >90%) ✅
 - User satisfaction: 4.7/5 stars ✅
@@ -162,14 +180,17 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 ---
 
 #### Feature 2: **Docker-First Development Environment** ✅
+
 **Priority**: Critical  
 **Version Shipped**: 0.3.0 (Enhanced 0.6.0)  
 **User Stories**:
+
 - As a developer, I want consistent development across macOS, Linux, Windows
 - As a team lead, I want new contributors onboarded in < 10 minutes
 - As a DevOps engineer, I want predictable builds every time
 
 **Acceptance Criteria**:
+
 - ✅ Single `docker-compose up` command starts environment
 - ✅ Apple Silicon (M1/M2) compatibility with platform: linux/amd64
 - ✅ Intel Mac/Linux compatibility
@@ -178,12 +199,13 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 - ✅ Volume mounting for local development
 
 **Technical Implementation**:
+
 ```yaml
 # docker-compose.yml
 services:
   jekyll:
     image: jekyll/jekyll:latest
-    platform: linux/amd64  # Universal compatibility
+    platform: linux/amd64 # Universal compatibility
     command: jekyll serve --watch --force_polling --config "_config.yml,_config_dev.yml"
     volumes:
       - ./:/app
@@ -194,6 +216,7 @@ services:
 ```
 
 **Metrics**:
+
 - Environment start time: <30 seconds ✅
 - Cross-platform success: 99% ✅
 - Build consistency: 100% reproducible ✅
@@ -201,14 +224,17 @@ services:
 ---
 
 #### Feature 3: **Bootstrap 5 Integration** ✅
+
 **Priority**: High  
 **Version Shipped**: 0.2.0 (Enhanced 0.6.0)  
 **User Stories**:
+
 - As a developer, I want modern responsive design without custom CSS
 - As a designer, I want to customize themes with CSS variables
 - As a content creator, I want mobile-first layouts
 
 **Acceptance Criteria**:
+
 - ✅ Bootstrap 5.3.3 loaded via CDN with integrity hashes
 - ✅ Bootstrap Icons 1.10.3 integration
 - ✅ Responsive breakpoints (xs, sm, md, lg, xl, xxl)
@@ -217,17 +243,23 @@ services:
 - ✅ Component library (navbar, cards, modals, forms)
 
 **Technical Implementation**:
+
 ```html
 <!-- _includes/core/head.html -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
-      rel="stylesheet" 
-      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
-      crossorigin="anonymous">
-<link rel="stylesheet" 
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+  integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+  crossorigin="anonymous"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
+/>
 ```
 
 **Metrics**:
+
 - Page load time: <2 seconds (CDN cached) ✅
 - Mobile responsiveness: 100% ✅
 - Lighthouse score: 95+ ✅
@@ -235,14 +267,17 @@ services:
 ---
 
 #### Feature 4: **Privacy-First Analytics (PostHog)** ✅
+
 **Priority**: High  
 **Version Shipped**: 0.6.0  
 **User Stories**:
+
 - As a site owner, I want to understand user behavior without compromising privacy
 - As a visitor, I want granular control over tracking consent
 - As a compliance officer, I need GDPR/CCPA compliance
 
 **Acceptance Criteria**:
+
 - ✅ PostHog integration with event tracking
 - ✅ Cookie consent modal with granular permissions
 - ✅ GDPR/CCPA compliance with opt-out mechanisms
@@ -252,11 +287,12 @@ services:
 - ✅ 365-day consent persistence with localStorage
 
 **Technical Implementation**:
+
 ```yaml
 # _config.yml
 posthog:
   enabled: true
-  api_key: 'phc_...'
+  api_key: "phc_..."
   respect_dnt: true
   privacy:
     mask_all_inputs: true
@@ -267,6 +303,7 @@ posthog:
 ```
 
 **Metrics**:
+
 - Consent acceptance rate: 68% ✅
 - Privacy compliance: 100% GDPR/CCPA ✅
 - Event tracking accuracy: 99% ✅
@@ -274,14 +311,17 @@ posthog:
 ---
 
 #### Feature 5: **Automated Version Management** ✅
+
 **Priority**: High  
 **Version Shipped**: 0.4.0 (Enhanced 0.6.0)  
 **User Stories**:
+
 - As a maintainer, I want version bumps to be automatic and consistent
 - As a release manager, I want changelogs generated from commits
 - As a developer, I want semantic versioning enforced
 
 **Acceptance Criteria**:
+
 - ✅ Single source of truth (lib/jekyll-theme-zer0/version.rb)
 - ✅ Automatic synchronization to package.json
 - ✅ Semantic versioning (major.minor.patch)
@@ -290,6 +330,7 @@ posthog:
 - ✅ Git tag creation and pushing
 
 **Technical Implementation**:
+
 ```bash
 # scripts/version.sh (350 lines)
 VERSION_TYPE="${1:-patch}"
@@ -298,6 +339,7 @@ CURRENT=$(grep -o 'VERSION = "[^"]*"' lib/jekyll-theme-zer0/version.rb)
 ```
 
 **Metrics**:
+
 - Version consistency: 100% (zero drift) ✅
 - Release time: <2 minutes (automated) ✅
 - Changelog accuracy: 98% ✅
@@ -305,14 +347,17 @@ CURRENT=$(grep -o 'VERSION = "[^"]*"' lib/jekyll-theme-zer0/version.rb)
 ---
 
 #### Feature 6: **Comprehensive Testing Framework** ✅
+
 **Priority**: High  
 **Version Shipped**: 0.5.0 (Enhanced 0.6.0)  
 **User Stories**:
+
 - As a developer, I want to validate changes before deployment
 - As a CI/CD engineer, I want automated test suites
 - As a contributor, I want clear test results
 
 **Acceptance Criteria**:
+
 - ✅ 27+ automated tests covering core functionality
 - ✅ Docker deployment testing
 - ✅ Gemspec validation
@@ -322,6 +367,7 @@ CURRENT=$(grep -o 'VERSION = "[^"]*"' lib/jekyll-theme-zer0/version.rb)
 - ✅ CI/CD integration with GitHub Actions
 
 **Technical Implementation**:
+
 ```bash
 # test/test_runner.sh
 - test_gemspec_syntax()
@@ -333,6 +379,7 @@ CURRENT=$(grep -o 'VERSION = "[^"]*"' lib/jekyll-theme-zer0/version.rb)
 ```
 
 **Metrics**:
+
 - Test coverage: 60% (target: 90% by v0.8.0) 🟡
 - Test execution time: <3 minutes ✅
 - False positive rate: <2% ✅
@@ -340,14 +387,17 @@ CURRENT=$(grep -o 'VERSION = "[^"]*"' lib/jekyll-theme-zer0/version.rb)
 ---
 
 #### Feature 7: **GitHub Copilot Integration** ✅
+
 **Priority**: Medium  
 **Version Shipped**: 0.6.0  
 **User Stories**:
+
 - As a developer using Copilot, I want context-aware code suggestions
 - As an AI agent, I want complete project understanding from instructions
 - As a maintainer, I want consistent code patterns enforced
 
 **Acceptance Criteria**:
+
 - ✅ Comprehensive .github/copilot-instructions.md (805 lines)
 - ✅ File-specific instructions (layouts, includes, scripts, testing, version control)
 - ✅ Architecture documentation for AI context
@@ -355,6 +405,7 @@ CURRENT=$(grep -o 'VERSION = "[^"]*"' lib/jekyll-theme-zer0/version.rb)
 - ✅ Component development patterns
 
 **Technical Implementation**:
+
 ```
 .github/
 ├── copilot-instructions.md (805 lines)
@@ -367,6 +418,7 @@ CURRENT=$(grep -o 'VERSION = "[^"]*"' lib/jekyll-theme-zer0/version.rb)
 ```
 
 **Metrics**:
+
 - AI code quality: 4.5/5 stars ✅
 - Developer productivity: +50% with Copilot ✅
 - Pattern consistency: 95% ✅
@@ -374,14 +426,17 @@ CURRENT=$(grep -o 'VERSION = "[^"]*"' lib/jekyll-theme-zer0/version.rb)
 ---
 
 #### Feature 8: **Mermaid Diagram Support** ✅
+
 **Priority**: Medium  
 **Version Shipped**: 0.3.0  
 **User Stories**:
+
 - As a technical writer, I want to create diagrams in markdown
 - As a developer, I want flowcharts and sequence diagrams
 - As a project manager, I want Gantt charts and timelines
 
 **Acceptance Criteria**:
+
 - ✅ Native markdown code block support (```mermaid)
 - ✅ 10+ diagram types (flowchart, sequence, class, state, ER, Gantt, pie, git, journey, mindmap)
 - ✅ GitHub Pages compatibility
@@ -390,13 +445,15 @@ CURRENT=$(grep -o 'VERSION = "[^"]*"' lib/jekyll-theme-zer0/version.rb)
 - ✅ Conditional loading for performance
 
 **Technical Implementation**:
+
 ```yaml
 # _config.yml
 mermaid:
-  src: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js'
+  src: "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"
 ```
 
 **Metrics**:
+
 - Diagram rendering: <200ms ✅
 - Browser compatibility: 98% ✅
 - Documentation usage: 45% of docs pages ✅
@@ -404,14 +461,17 @@ mermaid:
 ---
 
 #### Feature 9: **Comprehensive Sitemap System** ✅
+
 **Priority**: High  
 **Version Shipped**: 0.5.0  
 **User Stories**:
+
 - As a visitor, I want to discover all site content easily
 - As an SEO specialist, I want complete site structure visibility
 - As a content manager, I want to see content statistics
 
 **Acceptance Criteria**:
+
 - ✅ Unified sitemap layout combining collections, stats, navigation
 - ✅ Real-time statistics dashboard (6 KPIs)
 - ✅ Interactive search and filtering
@@ -420,6 +480,7 @@ mermaid:
 - ✅ Dark mode support
 
 **Technical Implementation**:
+
 ```
 _layouts/sitemap-collection.html - Unified sitemap
 _includes/stats/ - Statistics components
@@ -427,6 +488,7 @@ _data/content_statistics.yml - Generated metrics
 ```
 
 **Metrics**:
+
 - Content discovery: +65% ✅
 - User engagement: +40% on sitemap ✅
 - SEO improvement: +25% organic traffic ✅
@@ -434,14 +496,17 @@ _data/content_statistics.yml - Generated metrics
 ---
 
 #### Feature 10: **Automated Release Pipeline** ✅
+
 **Priority**: High  
 **Version Shipped**: 0.4.0 (Enhanced 0.6.0)  
 **User Stories**:
+
 - As a maintainer, I want releases automated from commit to RubyGems
 - As a user, I want consistent, documented releases
 - As a CI/CD engineer, I want GitHub Actions integration
 
 **Acceptance Criteria**:
+
 - ✅ Commit analysis for version bump determination
 - ✅ Automated changelog generation
 - ✅ Gem building and testing
@@ -450,6 +515,7 @@ _data/content_statistics.yml - Generated metrics
 - ✅ CI/CD workflow integration
 
 **Technical Implementation**:
+
 ```bash
 # scripts/gem-publish.sh (700+ lines)
 - analyze_commits()  # Determine version bump
@@ -461,6 +527,7 @@ _data/content_statistics.yml - Generated metrics
 ```
 
 **Metrics**:
+
 - Release time: <5 minutes (automated) ✅
 - Release consistency: 100% ✅
 - Download count: 2,500+ (RubyGems) ✅
@@ -470,14 +537,17 @@ _data/content_statistics.yml - Generated metrics
 ### Planned Features (Roadmap)
 
 #### Feature 11: **Headless CMS Integration** 🔴
+
 **Priority**: High  
 **Target Version**: 0.7.0 (Q2 2026)  
 **User Stories**:
+
 - As a content editor, I want a visual content management interface
 - As a developer, I want to access content via REST API
 - As a team, we want multi-author collaboration with roles
 
 **Acceptance Criteria**:
+
 - Content API (REST/GraphQL) for external consumption
 - Visual front matter editor with live preview
 - Multi-author support with role-based access
@@ -486,6 +556,7 @@ _data/content_statistics.yml - Generated metrics
 - External CMS adapter (Contentful, Strapi, Sanity)
 
 **Technical Requirements**:
+
 ```
 lib/cms/
 ├── api.rb           # REST API endpoints
@@ -495,6 +566,7 @@ lib/cms/
 ```
 
 **Success Metrics**:
+
 - Content creation time: -50% vs manual markdown
 - Editor adoption: 80% of content creators
 - API response time: <100ms
@@ -502,14 +574,17 @@ lib/cms/
 ---
 
 #### Feature 12: **Advanced Analytics Dashboard** 🔴
+
 **Priority**: Medium  
 **Target Version**: 0.8.0 (Q3 2026)  
 **User Stories**:
+
 - As a marketer, I want A/B testing for content optimization
 - As a product manager, I want conversion funnel tracking
 - As a designer, I want heatmap visualization
 
 **Acceptance Criteria**:
+
 - A/B testing framework with variant management
 - Conversion funnel definition and tracking
 - Heatmap integration (clicks, scrolls, hovers)
@@ -518,6 +593,7 @@ lib/cms/
 - Data export (CSV, JSON, PDF reports)
 
 **Technical Requirements**:
+
 ```yaml
 # Enhanced PostHog configuration
 posthog:
@@ -531,6 +607,7 @@ posthog:
 ```
 
 **Success Metrics**:
+
 - Conversion rate improvement: +20%
 - Analytics engagement: 70% of site owners
 - Dashboard customization: 50% create custom views
@@ -538,14 +615,17 @@ posthog:
 ---
 
 #### Feature 13: **Visual Theme Customizer** 🔴
+
 **Priority**: Medium  
 **Target Version**: 0.8.0 (Q3 2026)  
 **User Stories**:
+
 - As a designer, I want to customize colors without editing CSS
 - As a non-technical user, I want point-and-click theme editing
 - As a developer, I want generated CSS based on customizations
 
 **Acceptance Criteria**:
+
 - Real-time theme preview with live updates
 - Color palette editor with accessibility checks
 - Typography customization (fonts, sizes, weights)
@@ -554,6 +634,7 @@ posthog:
 - One-click theme presets (10+ built-in themes)
 
 **Technical Requirements**:
+
 ```
 assets/js/theme-customizer.js
 _includes/components/theme-editor.html
@@ -561,6 +642,7 @@ _data/theme-presets.yml
 ```
 
 **Success Metrics**:
+
 - Theme customization rate: 40% of users
 - Custom theme creation: 15% of users
 - Accessibility compliance: 100% of generated themes
@@ -568,14 +650,17 @@ _data/theme-presets.yml
 ---
 
 #### Feature 14: **Multi-Language Support (i18n)** 🔴
+
 **Priority**: Low  
 **Target Version**: 0.9.0 (Q4 2026)  
 **User Stories**:
+
 - As a global content creator, I want multi-language site support
 - As a translator, I want easy content translation workflows
 - As a developer, I want automated language detection
 
 **Acceptance Criteria**:
+
 - Jekyll i18n plugin integration
 - Language switcher component
 - URL structure for language versions (/en/, /es/, /fr/)
@@ -584,6 +669,7 @@ _data/theme-presets.yml
 - RTL (right-to-left) language support
 
 **Technical Requirements**:
+
 ```yaml
 # _config.yml
 languages: ["en", "es", "fr", "de", "ja"]
@@ -592,6 +678,7 @@ translations_dir: _data/i18n/
 ```
 
 **Success Metrics**:
+
 - Multi-language adoption: 20% of sites
 - Translation coverage: >90% for supported languages
 - User engagement: +30% for localized content
@@ -623,30 +710,36 @@ graph TB
 ### Technology Stack
 
 **Core Runtime**:
+
 - Ruby 2.7.0+ (language)
 - Jekyll 3.9.5 (static site generator)
 - Bundler 2.3+ (dependency management)
 
 **Frontend**:
+
 - Bootstrap 5.3.3 (CSS framework)
 - Bootstrap Icons 1.10.3
 - Mermaid 10+ (diagrams)
 - jQuery (optional)
 
 **Containerization**:
+
 - Docker (linux/amd64 platform)
 - Docker Compose (orchestration)
 
 **Build Tools**:
+
 - GNU Make (command orchestration)
 - Bash (automation scripts)
 - GitHub Actions (CI/CD)
 
 **Analytics**:
+
 - PostHog (privacy-first analytics)
 - Cookie Consent (GDPR/CCPA compliance)
 
 **Deployment Platforms**:
+
 - GitHub Pages (primary)
 - Azure Static Web Apps
 - Netlify, Vercel (compatible)
@@ -667,6 +760,7 @@ graph TB
 ### Layout System
 
 **Hierarchy**:
+
 ```
 root.html (base)
   ├── default.html (main wrapper)
@@ -677,6 +771,7 @@ root.html (base)
 ```
 
 **Responsive Breakpoints**:
+
 - xs: <576px (mobile)
 - sm: ≥576px (mobile landscape)
 - md: ≥768px (tablet)
@@ -687,6 +782,7 @@ root.html (base)
 ### Color Palette
 
 **Primary Colors**:
+
 - Primary: #007bff (Bootstrap blue)
 - Secondary: #6c757d (gray)
 - Success: #28a745 (green)
@@ -695,6 +791,7 @@ root.html (base)
 - Info: #17a2b8 (cyan)
 
 **Theme Skins**:
+
 - Default (light)
 - Dark (dark mode)
 - High Contrast (accessibility)
@@ -702,12 +799,18 @@ root.html (base)
 ### Typography
 
 **Font Stack**:
+
 ```css
---font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
---font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+--font-family-sans-serif:
+  -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+  Arial, sans-serif;
+--font-family-monospace:
+  SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+  monospace;
 ```
 
 **Scale**:
+
 - h1: 2.5rem
 - h2: 2rem
 - h3: 1.75rem
@@ -764,16 +867,19 @@ root.html (base)
 ### Version History
 
 **v0.1.0 - v0.3.0** (Foundation Phase)
+
 - ✅ Basic Jekyll theme structure
 - ✅ Docker environment
 - ✅ Mermaid diagram support
 
 **v0.4.0 - v0.5.0** (Automation Phase)
+
 - ✅ Automated version management
 - ✅ Statistics dashboard
 - ✅ Comprehensive sitemap
 
 **v0.6.0** (Current - Intelligence & Privacy)
+
 - ✅ AI-powered installation
 - ✅ PostHog analytics
 - ✅ Cookie consent system
@@ -782,25 +888,29 @@ root.html (base)
 ### Future Releases
 
 **v0.7.0** (Q2 2026) - Headless CMS
+
 - Content API (REST/GraphQL)
 - Visual front matter editor
 - Multi-author collaboration
 - Draft/publish workflow
 
 **v0.8.0** (Q3 2026) - Advanced Analytics
+
 - A/B testing framework
 - Conversion funnels
 - Heatmap visualization
 - Visual theme customizer
 
 **v0.9.0** (Q4 2026) - Enhanced DX
+
 - Multi-language support (i18n)
 - Component library browser
 - Interactive setup wizard
 - One-click multi-platform deployment
 
 **v1.0.0** (Q1 2027) - Production Milestone
-- >90% test coverage
+
+- > 90% test coverage
 - Performance benchmarks met
 - Security audit passed
 - Enterprise support available
@@ -813,16 +923,19 @@ root.html (base)
 ### Security Requirements
 
 **Input Validation**:
+
 - All user inputs sanitized (Liquid escape filter)
 - YAML/JSON validation before processing
 - File path validation to prevent directory traversal
 
 **Dependency Management**:
+
 - Regular security audits with `bundle audit`
 - Automated dependency updates
 - CVE monitoring and patching
 
 **Data Privacy**:
+
 - No personal data collection without consent
 - Cookie consent for all tracking
 - Respect Do Not Track (DNT) headers
@@ -831,17 +944,20 @@ root.html (base)
 ### Compliance Standards
 
 **GDPR (General Data Protection Regulation)**:
+
 - ✅ User consent management
 - ✅ Right to be forgotten (opt-out)
 - ✅ Data portability (export analytics)
 - ✅ Privacy by design
 
 **CCPA (California Consumer Privacy Act)**:
+
 - ✅ Opt-out mechanisms
 - ✅ Data disclosure notices
 - ✅ Non-discrimination policy
 
 **Accessibility (WCAG 2.1 AA)**:
+
 - ✅ Screen reader compatibility
 - ✅ Keyboard navigation
 - ✅ Color contrast ratios (4.5:1)
@@ -854,12 +970,14 @@ root.html (base)
 ### Development Team
 
 **Requirements**:
+
 - Comprehensive documentation for all features
 - Automated testing with CI/CD integration
 - Clear contribution guidelines
 - Version control best practices
 
 **Tools**:
+
 - GitHub for code hosting
 - GitHub Actions for CI/CD
 - Docker for development environments
@@ -868,6 +986,7 @@ root.html (base)
 ### End Users
 
 **Requirements**:
+
 - One-command installation
 - Zero-configuration deployment
 - Responsive mobile-first design
@@ -875,6 +994,7 @@ root.html (base)
 - Comprehensive user documentation
 
 **Support Channels**:
+
 - GitHub Issues for bug reports
 - GitHub Discussions for community Q&A
 - Documentation site for guides
@@ -883,12 +1003,14 @@ root.html (base)
 ### Open Source Community
 
 **Requirements**:
+
 - MIT license for maximum freedom
 - Clear contribution process
 - Code of conduct enforcement
 - Regular community engagement
 
 **Community Guidelines**:
+
 - Respectful communication
 - Constructive feedback
 - Attribution for contributions
@@ -901,12 +1023,14 @@ root.html (base)
 ### User Documentation
 
 **Getting Started**:
+
 - Quick start guide (5 minutes)
 - Installation methods (3 options)
 - First site deployment
 - Troubleshooting common issues
 
 **Feature Guides**:
+
 - Layout customization
 - Analytics setup
 - Mermaid diagrams
@@ -914,7 +1038,8 @@ root.html (base)
 - SEO optimization
 
 **Configuration Reference**:
-- _config.yml options
+
+- \_config.yml options
 - Front matter standards
 - Plugin configuration
 - Docker environment
@@ -922,18 +1047,21 @@ root.html (base)
 ### Developer Documentation
 
 **Architecture**:
+
 - System architecture diagrams
 - Component relationships
 - Data flow documentation
 - Design patterns used
 
 **Contributing**:
+
 - Development setup
 - Coding standards
 - Testing requirements
 - Pull request process
 
 **API Documentation**:
+
 - Plugin system (future)
 - Theme customization API
 - Content API (v0.7.0)
@@ -942,12 +1070,14 @@ root.html (base)
 ### AI Agent Documentation
 
 **Seed Files**:
+
 - Complete project blueprint
 - Full source code listings
 - Build instructions (10 phases)
 - Component library
 
 **Copilot Instructions**:
+
 - Project structure
 - Coding patterns
 - Best practices
@@ -960,26 +1090,31 @@ root.html (base)
 ### Launch Criteria (v1.0.0)
 
 **Functionality**:
+
 - ✅ All core features shipped and stable
 - ✅ Zero critical bugs
 - ✅ <5 known minor bugs
 
 **Performance**:
+
 - ✅ Lighthouse score >90 for all metrics
 - ✅ Page load time <3 seconds
 - ✅ Docker start time <30 seconds
 
 **Quality**:
+
 - ✅ Test coverage >90%
 - ✅ Documentation coverage >95%
 - ✅ Code maintainability A rating
 
 **Adoption**:
+
 - ✅ 5,000+ RubyGems downloads
 - ✅ 1,000+ GitHub stars
 - ✅ 50+ contributors
 
 **Support**:
+
 - ✅ Community forum active
 - ✅ <48 hour issue response time
 - ✅ Comprehensive FAQ published
@@ -991,11 +1126,13 @@ root.html (base)
 ### Version Control
 
 **Semantic Versioning**:
+
 - MAJOR: Breaking changes
 - MINOR: New features (backward compatible)
 - PATCH: Bug fixes
 
 **Release Process**:
+
 1. Commit analysis for version determination
 2. Automated changelog generation
 3. Test suite execution
@@ -1006,11 +1143,13 @@ root.html (base)
 ### Migration Guides
 
 **Version Migration**:
+
 - v0.5.0 → v0.6.0: PostHog setup guide
 - v0.6.0 → v0.7.0: CMS integration guide (planned)
 - v0.7.0 → v0.8.0: Analytics migration (planned)
 
 **Breaking Changes**:
+
 - Documented in CHANGELOG.md
 - Deprecation warnings in advance
 - Automated migration scripts (when possible)
@@ -1022,11 +1161,13 @@ root.html (base)
 ### Support Channels
 
 **Community Support**:
+
 - GitHub Discussions (primary)
 - Documentation site
 - Stack Overflow tag
 
 **Direct Support**:
+
 - GitHub Issues (bug reports)
 - Email: support@zer0-mistakes.com
 - Response time: <48 hours
@@ -1034,12 +1175,14 @@ root.html (base)
 ### Maintenance Schedule
 
 **Regular Updates**:
+
 - Security patches: As needed (critical)
 - Dependency updates: Monthly
 - Feature releases: Quarterly
 - Documentation updates: Continuous
 
 **Long-Term Support**:
+
 - v1.0.0: LTS for 2 years after release
 - Security patches for LTS versions
 - Migration support for breaking changes
@@ -1087,15 +1230,17 @@ root.html (base)
 **Next Review**: 2026-02-25 (Quarterly)
 
 **Change History**:
+
 - 2025-11-25: Initial PRD creation (v1.0.0)
 
 **Approvals**:
+
 - Product Owner: Amr Abdel-Motaleb ✅
 - Technical Lead: Amr Abdel-Motaleb ✅
 - Community Representative: Pending
 
 ---
 
-*This Product Requirements Document is a living document. It will be updated quarterly or as significant product changes occur. All stakeholders are encouraged to provide feedback and suggestions through GitHub Issues or Discussions.*
+_This Product Requirements Document is a living document. It will be updated quarterly or as significant product changes occur. All stakeholders are encouraged to provide feedback and suggestions through GitHub Issues or Discussions._
 
 **🚀 Ready to build? Start with [Quick Start](README.md#-quick-start)!**

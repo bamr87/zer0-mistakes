@@ -7,7 +7,7 @@ slug: jekyll
 lastmod: 2025-01-27T10:00:00.000Z
 draft: false
 sidebar:
-   nav: quickstart
+  nav: quickstart
 ---
 
 # 🚀 Jekyll Setup - Docker-First Development
@@ -50,6 +50,7 @@ docker-compose up
 ```
 
 This command:
+
 - 🐳 Pulls the latest Jekyll Docker image
 - 📦 Installs all Ruby dependencies automatically
 - 🔄 Starts Jekyll server with live reload
@@ -58,10 +59,12 @@ This command:
 ### 2. Verify Setup
 
 Open your browser and visit:
+
 - **Local Site**: [http://localhost:4000](http://localhost:4000)
 - **Live Reload**: Changes automatically refresh the browser
 
 You should see:
+
 ```
 ✅ Jekyll server running on http://localhost:4000
 ✅ Live reload enabled
@@ -141,7 +144,6 @@ lastmod: 2025-01-27T10:00:00.000Z
 permalink: /my-awesome-post/
 comments: true
 ---
-
 # Your Post Content
 
 Write your amazing content here using Markdown!
@@ -158,7 +160,6 @@ layout: default
 permalink: /about/
 description: "Learn more about this site"
 ---
-
 # About This Site
 
 Your page content here...
@@ -183,6 +184,7 @@ collections:
 The Zer0-Mistakes theme uses layered configuration:
 
 #### Production Config (`_config.yml`)
+
 ```yaml
 # Core Jekyll settings
 title: "Your Site Title"
@@ -205,6 +207,7 @@ bootstrap:
 ```
 
 #### Development Config (`_config_dev.yml`)
+
 ```yaml
 # Development overrides
 url: "http://localhost:4000"
@@ -244,15 +247,11 @@ Override theme layouts by creating files in `_layouts/`:
 
 ```html
 <!-- _layouts/custom.html -->
----
-layout: default
----
+--- layout: default ---
 
 <div class="container-fluid">
   <div class="row">
-    <main class="col-12">
-      {{ content }}
-    </main>
+    <main class="col-12">{{ content }}</main>
   </div>
 </div>
 ```
@@ -330,6 +329,7 @@ ls -la _site/
 ### Common Issues
 
 #### Site Not Loading
+
 ```bash
 # Check if container is running
 docker-compose ps
@@ -342,12 +342,14 @@ docker-compose down && docker-compose up --build
 ```
 
 #### Permission Issues (macOS/Linux)
+
 ```bash
 # Fix file permissions
 sudo chown -R $USER:$USER .
 ```
 
 #### Port Already in Use
+
 ```bash
 # Find process using port 4000
 lsof -i :4000
@@ -357,6 +359,7 @@ kill -9 $(lsof -t -i:4000)
 ```
 
 #### Container Build Failures
+
 ```bash
 # Clean Docker system
 docker system prune -f
@@ -385,6 +388,7 @@ After setting up Jekyll development:
 ## 🎯 Quick Reference
 
 ### Essential Commands
+
 ```bash
 # Start development
 docker-compose up
@@ -403,6 +407,7 @@ docker-compose exec jekyll jekyll build
 ```
 
 ### File Structure
+
 ```
 zer0-mistakes/
 ├── _config.yml          # Production config
@@ -425,19 +430,17 @@ zer0-mistakes/
 
 Jekyll is a static site generator. It takes text written in your
 favorite markup language and uses layouts to create a static website. You can
-tweak the site's look and feel, URLs, the data displayed on the page, and more. 
+tweak the site's look and feel, URLs, the data displayed on the page, and more.
 
 ## Prerequisites
 
 Jekyll requires the following:
 
-* Ruby version **{{ site.data.ruby.min_version }}** or higher
-* RubyGems
-* GCC and Make
+- Ruby version **{{ site.data.ruby.min_version }}** or higher
+- RubyGems
+- GCC and Make
 
-If you want to use Github Pages, here are the [dependencies](https://pages.github.com/versions.json) 
-
-
+If you want to use Github Pages, here are the [dependencies](https://pages.github.com/versions.json)
 
 ## Instructions
 
@@ -449,14 +452,18 @@ jekyll new mysite
 ```
 
 4. Change into your new directory.
+
 ```
 cd mysite
 ```
+
 5. Build the site and make it available on a local server.
+
 ```
 bundle exec jekyll serve
 ```
-6. Browse to [http://localhost:4000](http://localhost:4000){:target="_blank"}
+
+6. Browse to [http://localhost:4000](http://localhost:4000){:target="\_blank"}
 
 {: .note .warning}
 If you are using Ruby version 3.0.0 or higher, step 5 [may fail](https://github.com/github/pages-gem/issues/752). You may fix it by adding `webrick` to your dependencies: `bundle add webrick`
@@ -464,8 +471,7 @@ If you are using Ruby version 3.0.0 or higher, step 5 [may fail](https://github.
 {: .note .info}
 Pass the `--livereload` option to `serve` to automatically refresh the page with each change you make to the source files: `bundle exec jekyll serve --livereload`
 
-
-If you encounter any errors during this process, check that you have installed all the prerequisites in [Requirements]({{ '/docs/installation/#requirements' | relative_url }}). 
+If you encounter any errors during this process, check that you have installed all the prerequisites in [Requirements]({{ '/docs/installation/#requirements' | relative_url }}).
 If you still have issues, see [Troubleshooting]({{ '/docs/troubleshooting/#configuration-problems' | relative_url }}).
 
 {: .note .info}

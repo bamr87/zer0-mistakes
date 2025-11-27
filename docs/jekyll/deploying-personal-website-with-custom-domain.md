@@ -31,10 +31,10 @@ After you finish the payment, congratulations, you own the domain!
 
 Now, it's time to setup DNS for your new domain. Add `A` record to point the new domain(eg. {{ site.github_user }}.github.io) to a specific IP. The below four IP addresses are for GitHub Pages.
 
-* 185.199.108.153
-* 185.199.109.153
-* 185.199.110.153
-* 185.199.111.153
+- 185.199.108.153
+- 185.199.109.153
+- 185.199.110.153
+- 185.199.111.153
 
 In addition, add `CNAME` record to point the new domain(eg. {{ site.github_user }}.github.io) to the existing github page domain(eg. {{ site.github_user }}.github.io).
 ![image](/assets/images/jekyll/8142/godaddy_adddns.png)
@@ -51,5 +51,5 @@ Portfolio page.
 
 ## 5. Reference
 
-* [How to Configure GoDaddy Custom Domains with GitHub Pages](https://medium.com/@supriyakankure/how-to-add-a-custom-domain-to-your-github-page-with-godaddy-84495781143e)
-* [Custom domains on GitHub Pages gain support for HTTPS](https://github.blog/2018-05-01-github-pages-custom-domains-https/)
+- [How to Configure GoDaddy Custom Domains with GitHub Pages](https://medium.com/@supriyakankure/how-to-add-a-custom-domain-to-your-github-page-with-godaddy-84495781143e)
+- [Custom domains on GitHub Pages gain support for HTTPS](https://github.blog/2018-05-01-github-pages-custom-domains-https/)

@@ -1,7 +1,7 @@
 ---
 title: Wizard Topples Capitalist Dominance Ingeniously
 description: Story about IT wizardry combating capitalism.
-categories: 
+categories:
   - Technology
   - Development
 date: 2024-06-17 20:03:39
@@ -12,6 +12,7 @@ draft: draft
 featured: true
 breaking: true
 ---
+
 In a stunning turn of events, the world was saved from the clutches of capitalism by a wizard who used non-arcane magic to eliminate the evils of the system while still maintaining shareholder value. The wizard, known only as Merlin Financialis, has been hailed as a hero for his groundbreaking efforts to expose the financial puppeteering that has plagued humanity for generations.
 
 Using a combination of common sense and general ethics, Merlin Financialis was able to unravel the intricate web of corruption and greed that had resulted in widespread inequality and suffering across the globe. Through his magical abilities, he was able to shine a light on the dark underbelly of capitalism, revealing the true extent of the exploitation and manipulation that had been occurring behind closed doors.

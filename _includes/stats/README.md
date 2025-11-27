@@ -35,7 +35,6 @@ description: "Comprehensive analytics and metrics"
 layout: stats
 permalink: /stats/
 ---
-
 Your additional content here (optional).
 ```
 
@@ -57,30 +56,35 @@ tags:
 ### Components Overview
 
 #### stats-header.html
+
 - Displays page title and description
 - Shows last update timestamp
 - Provides navigation breadcrumbs
 - Includes quick jump links to sections
 
 #### stats-overview.html
+
 - Four key metric cards (Posts, Categories, Tags, Data Status)
 - Color-coded cards with Bootstrap styling
 - Data freshness indicators
 - Summary bar below cards
 
 #### stats-categories.html
+
 - Top categories list with post counts
 - Activity level indicators
 - Summary statistics footer
 - Expandable interface for large datasets
 
 #### stats-tags.html
+
 - Top tags list with usage counts
 - Interactive tag cloud visualization
 - Dynamic font sizing based on usage
 - Hover effects and tooltips
 
 #### stats-metrics.html
+
 - Content overview section
 - Top performers analysis
 - Data health indicators
@@ -88,6 +92,7 @@ tags:
 - Help modal with instructions
 
 #### stats-no-data.html
+
 - Error state when data is missing
 - Clear instructions for generating statistics
 - Troubleshooting information
@@ -141,24 +146,28 @@ The layout expects data from `site.data.content_statistics`. You can:
 ## Features
 
 ### Responsive Design
+
 - Mobile-first approach
 - Responsive grid layouts
 - Touch-friendly interactions
 - Optimized for all screen sizes
 
 ### Accessibility
+
 - ARIA labels and roles
 - Keyboard navigation support
 - Screen reader compatibility
 - High contrast mode support
 
 ### Performance
+
 - Lazy loading of non-critical elements
 - Optimized CSS delivery
 - Minimal JavaScript footprint
 - Print-optimized styles
 
 ### Interactive Elements
+
 - Hover effects on cards and tags
 - Smooth animations and transitions
 - Modal dialogs for additional information
@@ -167,6 +176,7 @@ The layout expects data from `site.data.content_statistics`. You can:
 ## Browser Support
 
 The statistics layout supports all modern browsers:
+
 - Chrome 90+
 - Firefox 88+
 - Safari 14+
@@ -240,12 +250,14 @@ permalink: /metrics/
 Our analytics system tracks various metrics to help understand content performance and user engagement.
 
 ### Key Metrics
+
 - Content reach and engagement
 - Category performance trends
 - Tag effectiveness analysis
 - User interaction patterns
 
 ### Data Collection
+
 Statistics are updated daily and include all published content from the past 12 months.
 ```
 

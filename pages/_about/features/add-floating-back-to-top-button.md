@@ -16,7 +16,8 @@ draft: draft
 [w3 schools](https://www.w3schools.com/howto/howto_js_scroll_to_top.asp)
 
 ## How To Create a Scroll To Top Button
-------------------------------------
+
+---
 
 ### Step 1) Add HTML:
 
@@ -25,9 +26,17 @@ Create a button that will take the user to the top of the page when clicked on:
 ```html
 <!-- Sidebar-right.html  -->
 <!-- Back to Top -->
-  <button onclick="backToTopBtn()" id="backToTopBtn" title="Go to top" class="btn btn-primary">{{ site.data.ui-text[site.locale].back_to_top | default: 'Back to Top' }} &uarr;
-  </button>
+<button
+  onclick="backToTopBtn()"
+  id="backToTopBtn"
+  title="Go to top"
+  class="btn btn-primary"
+>
+  {{ site.data.ui-text[site.locale].back_to_top | default: 'Back to Top' }}
+  &uarr;
+</button>
 ```
+
 #### Step 2) Add CSS:
 
 Style the button:
@@ -35,23 +44,23 @@ Style the button:
 ```scss
 // Floating back to top button
 
-#backToTopBtn { 
-    display: block; /* Hidden by default */
-    position: fixed; /* Fixed/sticky position */
-    bottom: 20px; /* Place the button at the bottom of the page */
-    right: 30px; /* Place the button 30px from the right */
-    z-index: 99; /* Make sure it does not overlap */
-    border: none; /* Remove borders */
-    outline: none; /* Remove outline */
-    background-color: $primary; /* Set a background color */
-    color: inherit; /* Text color */
-    opacity: 50%;
-    cursor: pointer; /* Add a mouse pointer on hover */
-    padding: 15px; /* Some padding */
-    border-radius:10px;/* Rounded corners */
-    font-size:18px;/* Increase font size */
-  }
-    
+#backToTopBtn {
+  display: block; /* Hidden by default */
+  position: fixed; /* Fixed/sticky position */
+  bottom: 20px; /* Place the button at the bottom of the page */
+  right: 30px; /* Place the button 30px from the right */
+  z-index: 99; /* Make sure it does not overlap */
+  border: none; /* Remove borders */
+  outline: none; /* Remove outline */
+  background-color: $primary; /* Set a background color */
+  color: inherit; /* Text color */
+  opacity: 50%;
+  cursor: pointer; /* Add a mouse pointer on hover */
+  padding: 15px; /* Some padding */
+  border-radius: 10px; /* Rounded corners */
+  font-size: 18px; /* Increase font size */
+}
+
 #backToTopBtn {
   .text {
     display: inline-block;
@@ -72,10 +81,10 @@ Style the button:
   }
 }
 
-  #backToTopBtn:hover { 
-    background-color: #555; /* Add a dark-grey background on hover */ 
-    opacity: 100%;
-  }
+#backToTopBtn:hover {
+  background-color: #555; /* Add a dark-grey background on hover */
+  opacity: 100%;
+}
 ```
 
 ### Add the JavaScript
@@ -83,7 +92,7 @@ Style the button:
 ```js
 // assets/js/back-to-top.js
 
-document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener("DOMContentLoaded", (event) => {
   let mybutton = document.getElementById("backToTopBtn");
 
   function topFunction() {
@@ -97,10 +106,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
   }
 
   // When the user scrolls down 20px from the top of the document, show the button
-  window.onscroll = function() {scrollFunction()};
+  window.onscroll = function () {
+    scrollFunction();
+  };
 
   function scrollFunction() {
-    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+    if (
+      document.body.scrollTop > 20 ||
+      document.documentElement.scrollTop > 20
+    ) {
       mybutton.style.display = "block";
     } else {
       mybutton.style.display = "none";
@@ -117,6 +131,4 @@ document.addEventListener('DOMContentLoaded', (event) => {
 <!-- Custom JS Scripts -->
 
 <script src="/assets/js/back-to-top.js"></script>
-
 ```
-
