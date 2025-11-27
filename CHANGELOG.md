@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.7.2] - 2025-11-26
+
+### Fixed
+
+- **Critical: Category pages 404 error** - Renamed category index files from `index.md` to `2000-01-01-index.md` to comply with Jekyll's `_posts` collection naming convention (date-prefixed filenames required)
+- Category pages now correctly render at `/posts/technology/`, `/posts/business/`, `/posts/development/`, `/posts/science/`, `/posts/tutorial/`, `/posts/world/`
+
+### Added
+
+- New sample blog posts for each category:
+  - `2025-01-25-ai-tools-productivity.md` (Technology)
+  - `2025-01-20-startup-funding-guide.md` (Business)
+  - `2025-01-22-git-workflow-best-practices.md` (Development)
+  - `2025-01-18-quantum-computing-explained.md` (Science)
+  - `2025-01-23-css-grid-mastery.md` (Tutorial)
+  - `2025-01-21-remote-work-revolution.md` (World)
+- `.github/prompts/commit-publish.prompt.md` - Comprehensive release workflow documentation
+
 ## [0.7.1] - 2025-01-30
 
 ### Fixed
