@@ -48,7 +48,7 @@
   - One-command remote installation for other Jekyll sites
 - **New Plugin: `_plugins/preview_image_generator.rb`** - Jekyll integration with:
   - Liquid filters: `has_preview_image`, `preview_image_path`, `preview_filename`
-  - Liquid tags: `{% preview_image_status %}`, `{% preview_images_missing %}`
+  - Liquid tags: {% raw %}`{% preview_image_status %}`, `{% preview_images_missing %}`{% endraw %}
   - Build hook that reports missing preview images during Jekyll build
 - **New Script: `scripts/generate-preview-images.sh`** - Main CLI for image generation
   - `--list-missing` to find posts without preview images
