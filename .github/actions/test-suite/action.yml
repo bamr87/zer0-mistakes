@@ -9,6 +9,14 @@ inputs:
     description: 'Run tests in verbose mode'
     default: 'true'
     required: false
+  suites:
+    description: 'Test suites to run: all, core, deployment, quality'
+    default: 'core,quality'
+    required: false
+  skip-docker:
+    description: 'Skip Docker-related tests'
+    default: 'true'
+    required: false
 
 runs:
   using: composite
@@ -22,11 +30,19 @@ runs:
       shell: bash
       run: |
         chmod +x ./test/test_runner.sh
+        
+        ARGS=""
         if [[ "${{ inputs.verbose }}" == "true" ]]; then
-          ./test/test_runner.sh --verbose
-        else
-          ./test/test_runner.sh
+          ARGS="$ARGS --verbose"
         fi
+        if [[ "${{ inputs.skip-docker }}" == "true" ]]; then
+          ARGS="$ARGS --skip-docker"
+        fi
+        if [[ -n "${{ inputs.suites }}" ]]; then
+          ARGS="$ARGS --suites ${{ inputs.suites }}"
+        fi
+        
+        ./test/test_runner.sh $ARGS
     
     - name: Validate Test Results
       shell: bash

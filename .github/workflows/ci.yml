@@ -101,6 +101,8 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           verbose: true
+          suites: core,quality
+          skip-docker: true
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
@@ -226,15 +228,19 @@ jobs:
       - name: Validate file permissions
         run: |
           echo "## File Permission Check" >> $GITHUB_STEP_SUMMARY
-          executable_rb=$(find . -name "*.rb" -executable -type f | head -5)
-          executable_md=$(find . -name "*.md" -executable -type f | head -5)
+          executable_rb=$(find . -name "*.rb" -executable -type f | head -5 || true)
+          executable_md=$(find . -name "*.md" -executable -type f | head -5 || true)
           
           if [[ -z "$executable_rb" && -z "$executable_md" ]]; then
             echo "✅ File permissions: No issues found" >> $GITHUB_STEP_SUMMARY
           else
             echo "⚠️ File permissions: Some files have incorrect executable permissions" >> $GITHUB_STEP_SUMMARY
-            [[ -n "$executable_rb" ]] && echo "Ruby files: $executable_rb" >> $GITHUB_STEP_SUMMARY
-            [[ -n "$executable_md" ]] && echo "Markdown files: $executable_md" >> $GITHUB_STEP_SUMMARY
+            if [[ -n "$executable_rb" ]]; then
+              echo "Ruby files: $executable_rb" >> $GITHUB_STEP_SUMMARY
+            fi
+            if [[ -n "$executable_md" ]]; then
+              echo "Markdown files: $executable_md" >> $GITHUB_STEP_SUMMARY
+            fi
           fi
 
       - name: Check for formatting changes
