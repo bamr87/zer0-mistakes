@@ -47,15 +47,42 @@ runs:
     - name: Validate Test Results
       shell: bash
       run: |
-        if [[ ! -f "./test/results/test_summary.log" ]]; then
-          echo "::warning::Test summary file not found, tests may have failed"
-          exit 1
+        # Check for test results - the test_runner creates files in test/results/ and test/reports/
+        RESULTS_DIR="./test/results"
+        REPORTS_DIR="./test/reports"
+        
+        # Check if any result files were created
+        if [[ ! -d "$RESULTS_DIR" ]] || [[ -z "$(ls -A $RESULTS_DIR 2>/dev/null)" ]]; then
+          # Also check for reports directory
+          if [[ ! -d "$REPORTS_DIR" ]] || [[ -z "$(ls -A $REPORTS_DIR 2>/dev/null)" ]]; then
+            echo "::warning::No test results found in $RESULTS_DIR or $REPORTS_DIR"
+            exit 1
+          fi
         fi
         
-        # Check for test failures
-        if grep -q "FAILED" "./test/results/test_summary.log"; then
-          echo "::error::Tests failed - check test results"
-          cat "./test/results/test_summary.log"
+        # Check for JSON result files - look for failure indicators
+        FAILED=false
+        for result_file in "$RESULTS_DIR"/*.json "$REPORTS_DIR"/*.json 2>/dev/null; do
+          if [[ -f "$result_file" ]]; then
+            # Check for failed status in JSON
+            if grep -qE '"status":\s*"failed"|"result":\s*"fail"' "$result_file" 2>/dev/null; then
+              echo "::error::Test failures found in $result_file"
+              cat "$result_file"
+              FAILED=true
+            fi
+          fi
+        done
+        
+        # Also check text reports for FAILED keyword
+        for report_file in "$REPORTS_DIR"/*.txt 2>/dev/null; do
+          if [[ -f "$report_file" ]] && grep -qi "FAILED\|FAILURE" "$report_file" 2>/dev/null; then
+            echo "::error::Test failures found in $report_file"
+            cat "$report_file"
+            FAILED=true
+          fi
+        done
+        
+        if [[ "$FAILED" == "true" ]]; then
           exit 1
         fi
         
