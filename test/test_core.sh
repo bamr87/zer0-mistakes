@@ -480,10 +480,14 @@ test_liquid_templates() {
             local open_tags
             local close_tags
             
-            open_tags=$(grep -c "{%" "$layout" 2>/dev/null || echo "0")
-            close_tags=$(grep -c "%}" "$layout" 2>/dev/null || echo "0")
+            open_tags=$(grep -c "{%" "$layout" 2>/dev/null | tr -d '[:space:]' || echo "0")
+            close_tags=$(grep -c "%}" "$layout" 2>/dev/null | tr -d '[:space:]' || echo "0")
             
-            if [[ $open_tags -ne $close_tags ]]; then
+            # Ensure we have valid numbers
+            [[ -z "$open_tags" ]] && open_tags=0
+            [[ -z "$close_tags" ]] && close_tags=0
+            
+            if [[ "$open_tags" -ne "$close_tags" ]]; then
                 log_error "Unbalanced Liquid tags in $layout"
                 return 1
             fi

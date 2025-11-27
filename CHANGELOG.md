@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.9.1] - 2025-11-27
+
+### Fixed
+
+- **CI: Test suite failures across Ruby versions** - Resolved issues causing CI failures
+  - Fixed `--skip-docker` option error by only passing it to deployment tests (not quality tests)
+  - Fixed bash arithmetic syntax error in Liquid tag validation by sanitizing grep output
+  - Added bundler 2.5 requirement to setup-ruby action for Ruby 3.0 compatibility
+
 ## [0.9.0] - 2025-06-30
 
 ### Changed

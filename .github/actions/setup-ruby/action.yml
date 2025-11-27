@@ -19,6 +19,8 @@ runs:
       with:
         ruby-version: ${{ inputs.ruby-version }}
         bundler-cache: true
+        # Ensure bundler >= 2.3 for compatibility with gemspec requirements
+        bundler: '2.5'
 
     - name: Install system dependencies
       if: inputs.install-system-deps == 'true'

@@ -513,11 +513,8 @@ run_test_suite() {
     [[ "$TIMEOUT" != "300" ]] && cmd_args+=("--timeout" "$TIMEOUT")
     
     # Suite-specific arguments
-    if [[ "$suite_name" == "deployment" || "$suite_name" == "quality" ]]; then
-        [[ "$SKIP_DOCKER" == "true" ]] && cmd_args+=("--skip-docker")
-    fi
-    
     if [[ "$suite_name" == "deployment" ]]; then
+        [[ "$SKIP_DOCKER" == "true" ]] && cmd_args+=("--skip-docker")
         [[ "$SKIP_REMOTE" == "true" ]] && cmd_args+=("--skip-remote")
     fi
     
