@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module JekyllThemeZer0
-  VERSION = "0.8.1"
+  VERSION = "0.8.2"
 end

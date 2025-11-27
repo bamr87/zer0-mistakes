@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.8.2] - 2025-11-27
+
+### Changed
+
+- **Refactored: GitHub Actions Workflows** - Consolidated 5 workflows into 3 streamlined workflows
+  - Merged `auto-version-bump.yml` into `version-bump.yml` with both automatic and manual triggers
+  - Merged `gem-release.yml` and `github-release.yml` into unified `release.yml`
+  - Removed duplicate `quality` job from `ci.yml` (functionality retained in `quality-checks` job)
+  - Updated `ci.yml` build job to use `scripts/build` instead of deprecated `build.sh`
+
+- **Updated: Composite Action `prepare-release`** - Now uses `scripts/build` instead of deprecated `build.sh`
+
+### Added
+
+- **New Documentation: `.github/workflows/README.md`** - Comprehensive workflow documentation
+  - Workflow trigger flow diagram
+  - Job descriptions and timeout configurations
+  - Manual dispatch options and troubleshooting guide
+
+- **New Documentation: `.github/actions/README.md`** - Composite actions documentation
+  - Input/output specifications for all 5 actions
+  - Usage examples and best practices
+  - Action creation guide and troubleshooting
+
+### Removed
+
+- **Deleted: `auto-version-bump.yml`** - Functionality merged into `version-bump.yml`
+- **Deleted: `gem-release.yml`** - Functionality merged into `release.yml`
+- **Deleted: `github-release.yml`** - Functionality merged into `release.yml`
+- **Deleted: Deprecated wrapper scripts** - `build.sh`, `gem-publish.sh`, `release.sh` and their `.legacy` versions
+  - These were deprecated redirects to the new modular commands (`scripts/build`, `scripts/release`)
+
 ## [0.8.1] - 2025-11-27
 
 ### Added

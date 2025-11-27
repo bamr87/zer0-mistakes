@@ -118,191 +118,15 @@ jobs:
         with:
           name: coverage-ruby-${{ matrix.ruby }}
           path: test/coverage/
-          retention-days: 7  # Code quality checks and markdown linting
-  quality:
-    name: Code Quality & Documentation
-    runs-on: ubuntu-latest
-    needs: fast-checks
-    timeout-minutes: 15
-    permissions:
-      contents: write
-      pull-requests: write
+          retention-days: 7
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
-
-      - name: Setup Ruby environment
-        uses: ./.github/actions/setup-ruby
-        with:
-          ruby-version: ${{ env.RUBY_VERSION }}
-          install-system-deps: true
-
-      - name: Setup Node.js for markdown tools
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Install markdown tools
-        run: |
-          npm install -g markdownlint-cli2
-          npm install -g prettier
-
-      - name: Run RuboCop
-        run: |
-          if [ -f .rubocop.yml ]; then
-            echo "## RuboCop Results" >> $GITHUB_STEP_SUMMARY
-            if rubocop --format github; then
-              echo "✅ RuboCop: All files pass style checks" >> $GITHUB_STEP_SUMMARY
-            else
-              echo "❌ RuboCop: Style issues found" >> $GITHUB_STEP_SUMMARY
-            fi
-          else
-            echo "No RuboCop config found, skipping..."
-          fi
-
-      - name: Run security audit
-        run: |
-          echo "## Security Audit" >> $GITHUB_STEP_SUMMARY
-          if bundle audit check --update || bundle audit check; then
-            echo "✅ Security: No vulnerabilities detected" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "⚠️ Security: Potential vulnerabilities found" >> $GITHUB_STEP_SUMMARY
-          fi
-
-      - name: Run markdown linting
-        id: markdown-lint
-        run: |
-          echo "## Markdown Quality Results" >> $GITHUB_STEP_SUMMARY
-          
-          # Count markdown files
-          md_count=$(find . -name "*.md" -not -path "./node_modules/*" -not -path "./.git/*" | wc -l)
-          echo "📊 **Files Analyzed:** $md_count" >> $GITHUB_STEP_SUMMARY
-          
-          # Run markdownlint and capture results
-          if markdownlint-cli2 "**/*.md"; then
-            echo "✅ **Markdown Linting:** All files pass" >> $GITHUB_STEP_SUMMARY
-            echo "lint_passed=true" >> $GITHUB_OUTPUT
-          else
-            echo "❌ **Markdown Linting:** Issues found" >> $GITHUB_STEP_SUMMARY
-            echo "lint_passed=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Check markdown formatting
-        id: markdown-format
-        run: |
-          # Check if files need formatting
-          if prettier --check "**/*.md"; then
-            echo "✅ **Markdown Formatting:** All files properly formatted" >> $GITHUB_STEP_SUMMARY
-            echo "format_needed=false" >> $GITHUB_OUTPUT
-          else
-            echo "📝 **Markdown Formatting:** Files need formatting" >> $GITHUB_STEP_SUMMARY
-            echo "format_needed=true" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Check markdown links
-        run: |
-          echo "## Link Check Results" >> $GITHUB_STEP_SUMMARY
-          # Simple link check without external dependencies
-          if command -v markdown-link-check >/dev/null 2>&1; then
-            find . -name "*.md" -not -path "./node_modules/*" -not -path "./.git/*" -exec markdown-link-check {} \; || echo "⚠️ Some broken links found"
-          else
-            echo "ℹ️ Link checking skipped (markdown-link-check not available)"
-          fi
-
-      - name: Auto-fix markdown formatting
-        if: |
-          (github.event_name == 'workflow_dispatch' && github.event.inputs.fix_markdown == 'true') ||
-          (github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.markdown-format.outputs.format_needed == 'true')
-        run: |
-          echo "🔧 Auto-fixing markdown formatting..."
-          
-          # Fix common formatting issues with prettier
-          prettier --write "**/*.md"
-          
-          echo "✅ Markdown formatting fixes applied" >> $GITHUB_STEP_SUMMARY
-
-      - name: Validate file permissions
-        run: |
-          echo "## File Permission Check" >> $GITHUB_STEP_SUMMARY
-          executable_rb=$(find . -name "*.rb" -executable -type f | head -5 || true)
-          executable_md=$(find . -name "*.md" -executable -type f | head -5 || true)
-          
-          if [[ -z "$executable_rb" && -z "$executable_md" ]]; then
-            echo "✅ File permissions: No issues found" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "⚠️ File permissions: Some files have incorrect executable permissions" >> $GITHUB_STEP_SUMMARY
-            if [[ -n "$executable_rb" ]]; then
-              echo "Ruby files: $executable_rb" >> $GITHUB_STEP_SUMMARY
-            fi
-            if [[ -n "$executable_md" ]]; then
-              echo "Markdown files: $executable_md" >> $GITHUB_STEP_SUMMARY
-            fi
-          fi
-
-      - name: Check for formatting changes
-        id: changes
-        run: |
-          if git diff --quiet; then
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-          else
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Commit formatting fixes
-        if: |
-          steps.changes.outputs.has_changes == 'true' &&
-          ((github.event_name == 'workflow_dispatch' && github.event.inputs.fix_markdown == 'true') ||
-           (github.event_name == 'push' && github.ref == 'refs/heads/main'))
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add -A
-          git commit -m "🔧 Auto-fix markdown formatting
-
-          - Remove trailing whitespace
-          - Fix heading spacing
-          - Standardize list formatting
-
-          [skip ci]"
-          git push
-
-      - name: Comment on PR with quality results
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            let comment = '## 📋 Code Quality & Documentation Results\n\n';
-            
-            // Markdown results
-            if ('${{ steps.markdown-lint.outputs.lint_passed }}' === 'true') {
-              comment += '✅ **Markdown Linting:** All files pass\n';
-            } else {
-              comment += '❌ **Markdown Linting:** Issues found\n';
-            }
-            
-            if ('${{ steps.markdown-format.outputs.format_needed }}' === 'false') {
-              comment += '✅ **Markdown Formatting:** All files properly formatted\n';
-            } else {
-              comment += '📝 **Markdown Formatting:** Some files need formatting\n';
-              comment += '\n💡 **Tip:** Run the workflow manually with "Auto-fix markdown formatting" enabled.\n';
-            }
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: comment
-            });
-
+  # NOTE: Code quality & documentation checks are handled by the quality-checks job above
+  # The duplicate 'quality' job has been removed to avoid redundancy
   # Build validation
   build:
     name: Build & Validate
     runs-on: ubuntu-latest
-    needs: [test, quality]
+    needs: [test, quality-checks]
     timeout-minutes: 10
 
     steps:
@@ -316,18 +140,22 @@ jobs:
           install-system-deps: true
 
       - name: Build gem
-        run: ./scripts/build.sh
+        run: |
+          chmod +x ./scripts/build
+          ./scripts/build
 
       - name: Validate gem
         run: |
-          VERSION=$(jq -r '.version' package.json 2>/dev/null || echo "unknown")
-          GEM_FILE="jekyll-theme-zer0-$VERSION.gem"
+          # Get version from Ruby file (most reliable source)
+          VERSION=$(ruby -e "require './lib/jekyll-theme-zer0/version'; puts JekyllThemeZer0::VERSION")
+          GEM_FILE="jekyll-theme-zer0-${VERSION}.gem"
 
           if [ -f "$GEM_FILE" ]; then
             echo "✅ Gem built successfully: $GEM_FILE"
-            gem contents "$GEM_FILE" | wc -l | xargs echo "Files in gem:"
+            gem spec "$GEM_FILE" | grep -E "(name|version|files)" | head -5
           else
             echo "❌ Gem file not found: $GEM_FILE"
+            ls -la *.gem 2>/dev/null || echo "No .gem files found"
             exit 1
           fi
 
@@ -407,7 +235,7 @@ jobs:
   summary:
     name: CI Pipeline Summary
     runs-on: ubuntu-latest
-    needs: [fast-checks, test, quality, build, performance, integration]
+    needs: [fast-checks, quality-checks, test, build, performance, integration]
     if: always()
     steps:
       - name: Generate comprehensive summary
@@ -421,8 +249,8 @@ jobs:
           echo "| Check | Status | Duration |" >> $GITHUB_STEP_SUMMARY
           echo "|-------|--------|----------|" >> $GITHUB_STEP_SUMMARY
           echo "| 🚀 Fast Checks | ${{ needs.fast-checks.result }} | - |" >> $GITHUB_STEP_SUMMARY
+          echo "| 📋 Quality Checks | ${{ needs.quality-checks.result }} | - |" >> $GITHUB_STEP_SUMMARY
           echo "| 🧪 Tests | ${{ needs.test.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 📋 Quality & Docs | ${{ needs.quality.result }} | - |" >> $GITHUB_STEP_SUMMARY
           echo "| 🔨 Build | ${{ needs.build.result }} | - |" >> $GITHUB_STEP_SUMMARY
           echo "| ⚡ Performance | ${{ needs.performance.result }} | - |" >> $GITHUB_STEP_SUMMARY
           echo "| 🔗 Integration | ${{ needs.integration.result }} | - |" >> $GITHUB_STEP_SUMMARY
@@ -431,7 +259,7 @@ jobs:
           # Check if all required jobs passed
           if [[ "${{ needs.fast-checks.result }}" == "success" && 
                 "${{ needs.test.result }}" == "success" && 
-                "${{ needs.quality.result }}" == "success" && 
+                "${{ needs.quality-checks.result }}" == "success" && 
                 "${{ needs.build.result }}" == "success" ]]; then
             echo "## ✅ **Pipeline Status: SUCCESS**" >> $GITHUB_STEP_SUMMARY
             echo "All critical checks passed! The code is ready for deployment." >> $GITHUB_STEP_SUMMARY
@@ -444,7 +272,7 @@ jobs:
             echo "### Failed Jobs:" >> $GITHUB_STEP_SUMMARY
             [[ "${{ needs.fast-checks.result }}" != "success" ]] && echo "- 🚀 Fast Checks" >> $GITHUB_STEP_SUMMARY
             [[ "${{ needs.test.result }}" != "success" ]] && echo "- 🧪 Tests" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.quality.result }}" != "success" ]] && echo "- 📋 Quality & Documentation" >> $GITHUB_STEP_SUMMARY
+            [[ "${{ needs.quality-checks.result }}" != "success" ]] && echo "- 📋 Quality Checks" >> $GITHUB_STEP_SUMMARY
             [[ "${{ needs.build.result }}" != "success" ]] && echo "- 🔨 Build" >> $GITHUB_STEP_SUMMARY
             [[ "${{ needs.performance.result }}" == "failure" ]] && echo "- ⚡ Performance (non-critical)" >> $GITHUB_STEP_SUMMARY
             [[ "${{ needs.integration.result }}" == "failure" ]] && echo "- 🔗 Integration (non-critical)" >> $GITHUB_STEP_SUMMARY
