@@ -1,15 +1,21 @@
 ---
-title: "Git Workflow Best Practices for Modern Teams"
-description: "Master collaborative development with proven Git workflows and branching strategies"
+title: Git Workflow Best Practices for Modern Teams
+description: Master collaborative development with proven Git workflows and branching strategies
 preview: /images/previews/git-workflow-best-practices-for-modern-teams.png
 date: 2025-01-22T10:00:00.000Z
 author: default
 layout: journals
-categories: [Development]
-tags: [git, version-control, workflow, collaboration]
+categories:
+    - Development
+tags:
+    - git
+    - version-control
+    - workflow
+    - collaboration
 featured: true
 image: /assets/images/posts/git-workflow.jpg
-estimated_reading_time: "10 min"
+estimated_reading_time: 10 min
+lastmod: 2025-11-27T16:18:06.873Z
 ---
 
 Effective version control is the backbone of modern software development. This guide covers Git workflows that will help your team collaborate more efficiently.

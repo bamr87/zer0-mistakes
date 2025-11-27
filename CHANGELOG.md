@@ -1,5 +1,42 @@
 # Changelog
 
+## [0.8.1] - 2025-11-27
+
+### Added
+
+- **New Page: `pages/categories.md`** - Browse all categories with post counts and links
+  - Alphabetical category overview with badge sizing based on post count
+  - Post listing under each category with descriptions and dates
+  - Smooth anchor navigation between categories
+- **New Page: `posts.html`** - Paginated posts index with jekyll-paginate support
+  - Responsive 3-column card grid layout
+  - Smart pagination with ellipsis for many pages
+  - Page jump feature for quick navigation when >10 pages
+- **New Page: `index.html`** - Alternative posts index with client-side pagination
+  - Responsive 5-column compact card grid for high-density display
+  - URL hash-based page state (#page=2) for bookmarkable pages
+  - Empty state handling when no posts exist
+
+### Changed
+
+- **Enhanced: `README.md`** - Consolidated landing page content
+  - Changed layout from `default` to `landing` for proper homepage rendering
+  - Updated permalink from `/zer0/` to `/` for clean root URL
+  - Added hero_image and updated preview image
+  - Added "Welcome to Error-Free Jekyll Development" section with proven results metrics
+  - Added "Perfect For" section highlighting target audiences
+- **Enhanced: `pages/index.html`** - Improved posts archive page
+  - Responsive card grid (1→2→3→4→5 columns as screen grows)
+  - Client-side pagination (10 posts per page)
+  - Compact card design with constrained image height
+  - Category badges and post metadata display
+  - Filter buttons for Categories and Tags pages
+- **Improved: `pages/_posts/development/2025-01-22-git-workflow-best-practices.md`** - Front matter formatting standardization
+
+### Removed
+
+- **Deleted: `index.md`** - Content merged into README.md to avoid duplicate landing pages
+
 ## [0.8.0] - 2025-11-27
 
 ### Added
