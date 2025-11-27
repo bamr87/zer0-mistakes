@@ -10,6 +10,13 @@ env-variables.log
 *.DS_Store
 assets/.DS_Store
 
+# Environment files (NEVER commit secrets!)
+.env
+.env.local
+.env.*.local
+*.env
+!.env.example
+
 # Gem development
 *.gem
 pkg/

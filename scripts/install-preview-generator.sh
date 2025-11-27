@@ -1,0 +1,531 @@
+#!/bin/bash
+#
+# Script Name: install-preview-generator.sh
+# Description: Install the AI Preview Image Generator feature into a Jekyll site
+#              using the zer0-mistakes theme. This script copies required files,
+#              updates configuration, and sets up environment variables.
+#
+# Usage: 
+#   curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/scripts/install-preview-generator.sh | bash
+#   OR
+#   ./scripts/install-preview-generator.sh [options]
+#
+# Options:
+#   -h, --help              Show this help message
+#   -d, --dry-run           Preview what would be installed (no changes)
+#   -f, --force             Overwrite existing files
+#   -p, --provider PROVIDER Set default AI provider (openai, stability, local)
+#   --no-config             Skip _config.yml modification
+#   --no-tasks              Skip VS Code tasks installation
+#
+# Requirements:
+#   - Jekyll site using zer0-mistakes theme
+#   - curl and jq installed
+#   - Git repository (for version tracking)
+#
+
+set -euo pipefail
+
+# =============================================================================
+# Configuration
+# =============================================================================
+
+SCRIPT_NAME="install-preview-generator.sh"
+VERSION="1.0.0"
+
+# Repository URLs
+REPO_OWNER="bamr87"
+REPO_NAME="zer0-mistakes"
+REPO_URL="https://github.com/${REPO_OWNER}/${REPO_NAME}"
+RAW_URL="https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main"
+
+# Files to install
+declare -a SCRIPT_FILES=(
+    "scripts/generate-preview-images.sh"
+    "scripts/lib/preview_generator.py"
+)
+
+declare -a PLUGIN_FILES=(
+    "_plugins/preview_image_generator.rb"
+)
+
+# Default options
+DRY_RUN=false
+FORCE=false
+DEFAULT_PROVIDER="openai"
+INSTALL_CONFIG=true
+INSTALL_TASKS=true
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+# =============================================================================
+# Logging Functions
+# =============================================================================
+
+log() { echo -e "${GREEN}[✓]${NC} $1"; }
+info() { echo -e "${BLUE}[ℹ]${NC} $1"; }
+step() { echo -e "${CYAN}[→]${NC} $1"; }
+warn() { echo -e "${YELLOW}[⚠]${NC} $1"; }
+error() { echo -e "${RED}[✗]${NC} $1" >&2; }
+dry_run_log() { echo -e "${YELLOW}[DRY-RUN]${NC} $1"; }
+
+# =============================================================================
+# Helper Functions
+# =============================================================================
+
+show_help() {
+    cat << EOF
+${CYAN}═══════════════════════════════════════════════════════════════════${NC}
+  ${GREEN}AI Preview Image Generator Installer${NC}
+  ${BLUE}Part of the zer0-mistakes Jekyll theme${NC}
+${CYAN}═══════════════════════════════════════════════════════════════════${NC}
+
+${YELLOW}USAGE:${NC}
+    $SCRIPT_NAME [OPTIONS]
+
+${YELLOW}OPTIONS:${NC}
+    -h, --help              Show this help message
+    -d, --dry-run           Preview what would be installed (no changes)
+    -f, --force             Overwrite existing files
+    -p, --provider PROVIDER Set default AI provider (openai, stability, local)
+    --no-config             Skip _config.yml modification
+    --no-tasks              Skip VS Code tasks installation
+
+${YELLOW}EXAMPLES:${NC}
+    # Install with defaults
+    ./$SCRIPT_NAME
+
+    # Preview installation
+    ./$SCRIPT_NAME --dry-run
+
+    # Install with Stability AI as default provider
+    ./$SCRIPT_NAME --provider stability
+
+    # Force reinstall
+    ./$SCRIPT_NAME --force
+
+${YELLOW}REMOTE INSTALLATION:${NC}
+    curl -fsSL ${RAW_URL}/scripts/$SCRIPT_NAME | bash
+
+${YELLOW}AFTER INSTALLATION:${NC}
+    1. Set your API key in .env file:
+       OPENAI_API_KEY=your-key-here
+
+    2. Generate preview images:
+       ./scripts/generate-preview-images.sh --list-missing
+       ./scripts/generate-preview-images.sh --dry-run
+       ./scripts/generate-preview-images.sh
+
+${YELLOW}DOCUMENTATION:${NC}
+    ${REPO_URL}/blob/main/docs/features/preview-image-generator.md
+
+EOF
+}
+
+# Check if we're in a Jekyll site
+check_jekyll_site() {
+    if [[ ! -f "_config.yml" ]]; then
+        error "Not a Jekyll site (no _config.yml found)"
+        error "Please run this script from your Jekyll site root directory"
+        exit 1
+    fi
+    log "Found Jekyll site"
+}
+
+# Check dependencies
+check_dependencies() {
+    local missing=()
+    
+    for cmd in curl jq; do
+        if ! command -v "$cmd" &> /dev/null; then
+            missing+=("$cmd")
+        fi
+    done
+    
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        error "Missing required dependencies: ${missing[*]}"
+        info "Install them with:"
+        info "  macOS: brew install ${missing[*]}"
+        info "  Ubuntu: sudo apt-get install ${missing[*]}"
+        exit 1
+    fi
+    
+    log "All dependencies satisfied"
+}
+
+# Download a file from the repository
+download_file() {
+    local remote_path="$1"
+    local local_path="$2"
+    local url="${RAW_URL}/${remote_path}"
+    
+    if [[ "$DRY_RUN" == true ]]; then
+        dry_run_log "Would download: $url → $local_path"
+        return 0
+    fi
+    
+    # Create directory if needed
+    local dir=$(dirname "$local_path")
+    if [[ ! -d "$dir" ]]; then
+        mkdir -p "$dir"
+    fi
+    
+    # Check if file exists and not forcing
+    if [[ -f "$local_path" && "$FORCE" != true ]]; then
+        warn "File exists, skipping: $local_path (use --force to overwrite)"
+        return 0
+    fi
+    
+    step "Downloading: $remote_path"
+    if curl -fsSL "$url" -o "$local_path"; then
+        log "Installed: $local_path"
+        
+        # Make scripts executable
+        if [[ "$local_path" == *.sh ]]; then
+            chmod +x "$local_path"
+        fi
+        return 0
+    else
+        error "Failed to download: $url"
+        return 1
+    fi
+}
+
+# Add configuration to _config.yml
+update_config() {
+    if [[ "$INSTALL_CONFIG" != true ]]; then
+        info "Skipping config update (--no-config)"
+        return 0
+    fi
+    
+    # Check if preview_images section already exists
+    if grep -q "^preview_images:" "_config.yml" 2>/dev/null; then
+        warn "preview_images section already exists in _config.yml"
+        info "You may need to merge settings manually"
+        return 0
+    fi
+    
+    if [[ "$DRY_RUN" == true ]]; then
+        dry_run_log "Would add preview_images config to _config.yml"
+        return 0
+    fi
+    
+    step "Adding preview_images configuration to _config.yml"
+    
+    cat >> "_config.yml" << EOF
+
+# =============================================================================
+# AI Preview Image Generator Configuration
+# Feature: ZER0-003
+# Documentation: ${REPO_URL}/blob/main/docs/features/preview-image-generator.md
+# =============================================================================
+preview_images:
+  enabled: true
+  provider: ${DEFAULT_PROVIDER}          # openai, stability, or local
+  model: dall-e-3                        # OpenAI model to use
+  size: "1792x1024"                      # Landscape banner size
+  quality: standard                      # standard or hd
+  style: "retro pixel art, 8-bit video game aesthetic, vibrant colors, nostalgic, clean pixel graphics"
+  style_modifiers: "pixelated, retro gaming style, CRT screen glow effect, limited color palette"
+  output_dir: assets/images/previews     # Where to save generated images
+  auto_generate: false                   # Generate during build (slow, use script instead)
+  collections:                           # Collections to scan for missing previews
+    - posts
+    - docs
+    - quickstart
+EOF
+    
+    log "Added preview_images configuration"
+}
+
+# Create .env.example if it doesn't exist
+create_env_example() {
+    local env_example=".env.example"
+    
+    if [[ -f "$env_example" ]]; then
+        # Check if our keys are already there
+        if grep -q "OPENAI_API_KEY" "$env_example"; then
+            info ".env.example already contains preview generator keys"
+            return 0
+        fi
+    fi
+    
+    if [[ "$DRY_RUN" == true ]]; then
+        dry_run_log "Would add API keys to .env.example"
+        return 0
+    fi
+    
+    step "Updating .env.example"
+    
+    cat >> "$env_example" << 'EOF'
+
+# AI Preview Image Generator API Keys
+# Get your key from: https://platform.openai.com/api-keys
+OPENAI_API_KEY=your-openai-api-key-here
+
+# Stability AI (alternative provider)
+# Get your key from: https://platform.stability.ai/
+STABILITY_API_KEY=your-stability-api-key-here
+EOF
+    
+    log "Updated .env.example"
+}
+
+# Update .gitignore
+update_gitignore() {
+    local gitignore=".gitignore"
+    
+    if [[ ! -f "$gitignore" ]]; then
+        touch "$gitignore"
+    fi
+    
+    # Check if .env is already ignored
+    if grep -q "^\.env$" "$gitignore" 2>/dev/null; then
+        info ".env already in .gitignore"
+        return 0
+    fi
+    
+    if [[ "$DRY_RUN" == true ]]; then
+        dry_run_log "Would add .env to .gitignore"
+        return 0
+    fi
+    
+    step "Adding .env to .gitignore"
+    echo ".env" >> "$gitignore"
+    log "Updated .gitignore"
+}
+
+# Install VS Code tasks
+install_vscode_tasks() {
+    if [[ "$INSTALL_TASKS" != true ]]; then
+        info "Skipping VS Code tasks (--no-tasks)"
+        return 0
+    fi
+    
+    local tasks_file=".vscode/tasks.json"
+    
+    if [[ "$DRY_RUN" == true ]]; then
+        dry_run_log "Would create/update VS Code tasks in $tasks_file"
+        return 0
+    fi
+    
+    step "Installing VS Code tasks"
+    
+    # Create .vscode directory if needed
+    mkdir -p .vscode
+    
+    # If tasks.json doesn't exist, create a new one
+    if [[ ! -f "$tasks_file" ]]; then
+        cat > "$tasks_file" << 'EOF'
+{
+    "version": "2.0.0",
+    "tasks": []
+}
+EOF
+    fi
+    
+    # Check if our tasks already exist
+    if grep -q "Preview Images:" "$tasks_file" 2>/dev/null; then
+        warn "Preview image tasks already exist in tasks.json"
+        return 0
+    fi
+    
+    # Add our tasks using jq
+    local new_tasks='[
+        {
+            "label": "🖼️ Preview Images: List Missing",
+            "type": "shell",
+            "command": "./scripts/generate-preview-images.sh",
+            "args": ["--list-missing"],
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "🖼️ Preview Images: Dry Run",
+            "type": "shell",
+            "command": "./scripts/generate-preview-images.sh",
+            "args": ["--dry-run", "--verbose"],
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "🖼️ Preview Images: Generate for Posts",
+            "type": "shell",
+            "command": "./scripts/generate-preview-images.sh",
+            "args": ["--collection", "posts", "--verbose"],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "🖼️ Preview Images: Generate All",
+            "type": "shell",
+            "command": "./scripts/generate-preview-images.sh",
+            "args": ["--verbose"],
+            "group": "build",
+            "problemMatcher": []
+        }
+    ]'
+    
+    # Merge tasks
+    local temp_file=$(mktemp)
+    jq --argjson new "$new_tasks" '.tasks += $new' "$tasks_file" > "$temp_file" && mv "$temp_file" "$tasks_file"
+    
+    log "Added VS Code tasks"
+}
+
+# Create output directory
+create_output_directory() {
+    local output_dir="assets/images/previews"
+    
+    if [[ -d "$output_dir" ]]; then
+        info "Output directory already exists: $output_dir"
+        return 0
+    fi
+    
+    if [[ "$DRY_RUN" == true ]]; then
+        dry_run_log "Would create directory: $output_dir"
+        return 0
+    fi
+    
+    step "Creating output directory: $output_dir"
+    mkdir -p "$output_dir"
+    
+    # Add a placeholder .gitkeep
+    touch "$output_dir/.gitkeep"
+    
+    log "Created output directory"
+}
+
+# Print post-installation instructions
+print_instructions() {
+    echo ""
+    echo -e "${CYAN}═══════════════════════════════════════════════════════════════════${NC}"
+    echo -e "  ${GREEN}✓ AI Preview Image Generator Installed Successfully!${NC}"
+    echo -e "${CYAN}═══════════════════════════════════════════════════════════════════${NC}"
+    echo ""
+    echo -e "${YELLOW}NEXT STEPS:${NC}"
+    echo ""
+    echo "  1. ${BLUE}Set up your API key:${NC}"
+    echo "     cp .env.example .env"
+    echo "     # Edit .env and add your OPENAI_API_KEY"
+    echo ""
+    echo "  2. ${BLUE}Check for missing preview images:${NC}"
+    echo "     ./scripts/generate-preview-images.sh --list-missing"
+    echo ""
+    echo "  3. ${BLUE}Preview what would be generated:${NC}"
+    echo "     ./scripts/generate-preview-images.sh --dry-run --verbose"
+    echo ""
+    echo "  4. ${BLUE}Generate preview images:${NC}"
+    echo "     ./scripts/generate-preview-images.sh"
+    echo ""
+    echo -e "${YELLOW}VS CODE USERS:${NC}"
+    echo "  Use Command Palette (Cmd+Shift+P) → Tasks: Run Task"
+    echo "  Look for tasks starting with '🖼️ Preview Images:'"
+    echo ""
+    echo -e "${YELLOW}DOCUMENTATION:${NC}"
+    echo "  ${REPO_URL}/blob/main/docs/features/preview-image-generator.md"
+    echo ""
+    echo -e "${YELLOW}CONFIGURATION:${NC}"
+    echo "  Edit 'preview_images' section in _config.yml to customize settings"
+    echo ""
+}
+
+# =============================================================================
+# Main Installation
+# =============================================================================
+
+main() {
+    echo ""
+    echo -e "${CYAN}═══════════════════════════════════════════════════════════════════${NC}"
+    echo -e "  ${GREEN}AI Preview Image Generator Installer v${VERSION}${NC}"
+    echo -e "  ${BLUE}zer0-mistakes Jekyll Theme Feature${NC}"
+    echo -e "${CYAN}═══════════════════════════════════════════════════════════════════${NC}"
+    echo ""
+    
+    if [[ "$DRY_RUN" == true ]]; then
+        warn "DRY RUN MODE - No changes will be made"
+        echo ""
+    fi
+    
+    # Validation
+    check_jekyll_site
+    check_dependencies
+    echo ""
+    
+    # Installation steps
+    info "Installing scripts..."
+    for file in "${SCRIPT_FILES[@]}"; do
+        download_file "$file" "$file"
+    done
+    echo ""
+    
+    info "Installing Jekyll plugin..."
+    for file in "${PLUGIN_FILES[@]}"; do
+        download_file "$file" "$file"
+    done
+    echo ""
+    
+    info "Setting up configuration..."
+    update_config
+    create_env_example
+    update_gitignore
+    create_output_directory
+    echo ""
+    
+    info "Setting up development tools..."
+    install_vscode_tasks
+    echo ""
+    
+    if [[ "$DRY_RUN" != true ]]; then
+        print_instructions
+    else
+        echo ""
+        echo -e "${YELLOW}DRY RUN COMPLETE${NC}"
+        echo "Run without --dry-run to perform actual installation"
+        echo ""
+    fi
+}
+
+# =============================================================================
+# Parse Arguments
+# =============================================================================
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h|--help)
+            show_help
+            exit 0
+            ;;
+        -d|--dry-run)
+            DRY_RUN=true
+            ;;
+        -f|--force)
+            FORCE=true
+            ;;
+        -p|--provider)
+            DEFAULT_PROVIDER="$2"
+            shift
+            ;;
+        --no-config)
+            INSTALL_CONFIG=false
+            ;;
+        --no-tasks)
+            INSTALL_TASKS=false
+            ;;
+        *)
+            error "Unknown option: $1"
+            show_help
+            exit 1
+            ;;
+    esac
+    shift
+done
+
+# Run main installation
+main

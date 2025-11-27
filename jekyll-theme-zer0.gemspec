@@ -20,8 +20,9 @@ Gem::Specification.new do |s|
   s.metadata["documentation_uri"] = "#{s.homepage}#readme"
   s.metadata["allowed_push_host"] = "https://rubygems.org"
   
+  # Include theme files: layouts, includes, sass, assets, data, plugins, and scripts
   s.files                    = `git ls-files -z`.split("\x0").select do |f|
-    f.match(%r{^(assets|_(data|includes|layouts|sass)/|(LICENSE|README|CHANGELOG)((\.(txt|md|markdown)|$)))}i)
+    f.match(%r{^(assets|scripts|_(data|includes|layouts|plugins|sass)/|(LICENSE|README|CHANGELOG|features)((\.(txt|md|markdown|yml)|$)))}i)
   end
   
   s.platform                 = Gem::Platform::RUBY

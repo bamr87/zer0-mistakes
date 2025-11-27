@@ -13,3 +13,27 @@ features:
     link: "/"
     tags: [docker, devops]
     date: 2025-01-27
+  - id: ZER0-003
+    title: "AI Preview Image Generator"
+    description: "AI-powered automatic preview image generation for posts using OpenAI DALL-E, Stability AI, or local placeholders. Configurable via _config.yml with retro pixel art style defaults."
+    implemented: true
+    link: "/docs/features/preview-image-generator/"
+    tags: [ai, images, automation, openai, content]
+    date: 2025-01-28
+    version: "0.8.0"
+    installation:
+      script: "scripts/install-preview-generator.sh"
+      config_section: "preview_images"
+    dependencies:
+      required: [curl, jq]
+      optional: [yq, python3]
+    providers:
+      - name: openai
+        description: "OpenAI DALL-E 3 image generation"
+        env_var: OPENAI_API_KEY
+      - name: stability
+        description: "Stability AI Stable Diffusion"
+        env_var: STABILITY_API_KEY
+      - name: local
+        description: "Local placeholder (no API needed)"
+        env_var: null

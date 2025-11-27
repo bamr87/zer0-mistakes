@@ -1,8 +1,58 @@
 # Gem Automation Scripts
 
-This directory contains automation scripts for managing the `jekyll-theme-zer0` gem lifecycle.
+This directory contains automation scripts for managing the `jekyll-theme-zer0` gem lifecycle and feature modules.
 
 ## Scripts Overview
+
+### 🖼️ `generate-preview-images.sh` (Feature: ZER0-003)
+AI-powered preview image generator for Jekyll posts and content.
+
+**Usage:**
+```bash
+./scripts/generate-preview-images.sh [options]
+```
+
+**Examples:**
+```bash
+./scripts/generate-preview-images.sh --list-missing    # List files missing previews
+./scripts/generate-preview-images.sh --dry-run         # Preview without changes
+./scripts/generate-preview-images.sh --collection posts # Generate for posts only
+./scripts/generate-preview-images.sh -f path/to/file.md # Process specific file
+./scripts/generate-preview-images.sh --provider openai  # Use OpenAI DALL-E
+```
+
+**Configuration:**
+Settings in `_config.yml` under `preview_images` section:
+```yaml
+preview_images:
+  enabled: true
+  provider: openai
+  model: dall-e-3
+  size: "1792x1024"
+  style: "retro pixel art, 8-bit video game aesthetic"
+  output_dir: assets/images/previews
+```
+
+**See:** [Preview Image Generator Documentation](/docs/features/preview-image-generator.md)
+
+### 📦 `install-preview-generator.sh`
+Installer for the AI Preview Image Generator feature.
+
+**Usage:**
+```bash
+# Remote installation (for other Jekyll sites)
+curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/scripts/install-preview-generator.sh | bash
+
+# Local installation with options
+./scripts/install-preview-generator.sh [options]
+```
+
+**Options:**
+- `-d, --dry-run` - Preview what would be installed
+- `-f, --force` - Overwrite existing files
+- `-p, --provider PROVIDER` - Set default AI provider
+- `--no-config` - Skip _config.yml modification
+- `--no-tasks` - Skip VS Code tasks installation
 
 ### 🚀 `setup.sh`
 Sets up the development environment for gem development.
@@ -288,6 +338,100 @@ When contributing to the automation system:
 4. **Error handling**: Include proper error messages and exit codes
 5. **Backwards compatibility**: Ensure existing workflows continue working
 
+---
+
+## 🎨 `generate-preview-images.sh`
+
+AI-powered preview image generator for Jekyll posts, articles, and quests. Automatically scans content files, detects missing preview images, and generates them using AI providers (OpenAI DALL-E, Stability AI).
+
+### Usage
+
+```bash
+# List all files missing preview images
+./scripts/generate-preview-images.sh --list-missing
+
+# Dry run to see what would be generated
+./scripts/generate-preview-images.sh --dry-run --verbose
+
+# Generate images for posts collection
+./scripts/generate-preview-images.sh --collection posts
+
+# Generate image for a specific file
+./scripts/generate-preview-images.sh -f pages/_posts/my-article.md
+
+# Force regenerate all images
+./scripts/generate-preview-images.sh --force
+
+# Use different AI provider
+./scripts/generate-preview-images.sh --provider stability
+```
+
+### Options
+
+| Option | Description |
+|--------|-------------|
+| `-h, --help` | Show help message |
+| `-d, --dry-run` | Preview without making changes |
+| `-v, --verbose` | Enable verbose output |
+| `-f, --file FILE` | Process a specific file only |
+| `-c, --collection NAME` | Process collection (posts, quickstart, docs, all) |
+| `-p, --provider PROVIDER` | AI provider: openai, stability, local |
+| `--output-dir DIR` | Output directory (default: assets/images/previews) |
+| `--force` | Regenerate even if preview exists |
+| `--list-missing` | Only list files with missing previews |
+
+### Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `OPENAI_API_KEY` | For OpenAI | OpenAI API key for DALL-E |
+| `STABILITY_API_KEY` | For Stability | Stability AI API key |
+| `IMAGE_STYLE` | No | Custom style prompt |
+| `IMAGE_SIZE` | No | Image dimensions (default: 1024x1024) |
+| `IMAGE_MODEL` | No | OpenAI model (default: dall-e-3) |
+
+### AI Agent Integration
+
+The script is designed to integrate with AI agents for automated content management:
+
+1. **Content Analysis**: Extracts title, description, categories, and content to generate meaningful prompts
+2. **Smart Prompts**: Creates detailed image generation prompts based on article content
+3. **Front Matter Updates**: Automatically updates the markdown file with the new preview path
+4. **Idempotent**: Won't regenerate images that already exist (unless `--force`)
+
+### Python Alternative
+
+A Python version is available at `scripts/lib/preview_generator.py` with additional features:
+
+```bash
+# Install dependencies
+pip install openai pyyaml requests
+
+# Run Python version
+python3 scripts/lib/preview_generator.py --collection posts --dry-run
+```
+
+### Example Workflow
+
+```bash
+# 1. Check which files need preview images
+./scripts/generate-preview-images.sh --list-missing
+
+# 2. Preview what would be generated
+export OPENAI_API_KEY="your-api-key"
+./scripts/generate-preview-images.sh --dry-run
+
+# 3. Generate images for specific collection
+./scripts/generate-preview-images.sh --collection posts
+
+# 4. Verify results and commit
+git status
+git add assets/images/previews/ pages/
+git commit -m "feat: add AI-generated preview images"
+```
+
+---
+
 ## Support
 
 For issues with the automation system:
@@ -296,3 +440,4 @@ For issues with the automation system:
 2. **Run locally**: Test scripts on your local machine
 3. **Validate environment**: Ensure all dependencies are installed
 4. **Create issue**: Report bugs with full error output and system info
+

@@ -88,6 +88,22 @@ logo_link                : [ *url, *baseurl ] # URL to link the logo to, e.g. "/
 
 teaser                   : '/images/favicon_gpt_computer_retro.png' # path of fallback teaser image, e.g. "/assets/images/500x300.png"
 info_banner              : '/images/info-banner-mountain-wizard.png' # path of fallback teaser image, e.g. "/assets/images/500x300.png"
+
+## Preview Image Generation (AI-powered) #####################################
+# Settings for automatic preview image generation using AI
+# Used by: scripts/generate-preview-images.sh
+
+preview_images:
+  enabled                : true
+  provider               : 'openai'           # openai, stability, local
+  model                  : 'dall-e-3'         # dall-e-3, dall-e-2, stable-diffusion
+  size                   : '1792x1024'        # Landscape for banner: 1792x1024, square: 1024x1024
+  quality                : 'standard'         # standard, hd (hd costs more)
+  style                  : 'retro pixel art, 8-bit video game aesthetic, vibrant colors, nostalgic, clean pixel graphics'
+  output_dir             : 'assets/images/previews'
+  # Additional style modifiers applied to all prompts
+  style_modifiers        : 'pixelated, retro gaming style, CRT screen glow effect, limited color palette'
+
 breadcrumbs              : true # true, false (default)
 words_per_minute         : 200
 _posts_file_structure    : "year-month-day-title.md"

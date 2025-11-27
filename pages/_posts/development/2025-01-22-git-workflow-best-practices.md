@@ -1,6 +1,7 @@
 ---
 title: "Git Workflow Best Practices for Modern Teams"
 description: "Master collaborative development with proven Git workflows and branching strategies"
+preview: /images/previews/git-workflow-best-practices-for-modern-teams.png
 date: 2025-01-22T10:00:00.000Z
 author: default
 layout: journals

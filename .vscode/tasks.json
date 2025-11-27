@@ -276,6 +276,86 @@
       },
       "problemMatcher": [],
       "detail": "Preview what an automated release would do without making any changes"
+    },
+    {
+      "label": "🎨 Preview Images: List Missing",
+      "type": "shell",
+      "command": "./scripts/generate-preview-images.sh",
+      "args": ["--list-missing"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "List all content files that are missing preview images"
+    },
+    {
+      "label": "🎨 Preview Images: Dry Run",
+      "type": "shell",
+      "command": "./scripts/generate-preview-images.sh",
+      "args": ["--dry-run", "--verbose"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Preview what images would be generated without making changes"
+    },
+    {
+      "label": "🎨 Preview Images: Generate for Posts",
+      "type": "shell",
+      "command": "./scripts/generate-preview-images.sh",
+      "args": ["--collection", "posts"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Generate AI preview images for all posts missing previews (requires OPENAI_API_KEY)"
+    },
+    {
+      "label": "🎨 Preview Images: Generate All",
+      "type": "shell",
+      "command": "./scripts/generate-preview-images.sh",
+      "args": ["--collection", "all"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Generate AI preview images for all content missing previews (requires OPENAI_API_KEY)"
     }
   ]
 }

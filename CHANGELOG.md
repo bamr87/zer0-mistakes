@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.8.0] - 2025-11-27
+
+### Added
+
+- **New Feature: AI Preview Image Generator (ZER0-003)** - Automatic AI-powered preview image generation for Jekyll posts
+  - Supports OpenAI DALL-E 3, Stability AI, and local placeholder generation
+  - Configurable via `_config.yml` under `preview_images` section
+  - Default retro pixel art style with 1792x1024 landscape banners
+  - One-command remote installation for other Jekyll sites
+- **New Plugin: `_plugins/preview_image_generator.rb`** - Jekyll integration with:
+  - Liquid filters: `has_preview_image`, `preview_image_path`, `preview_filename`
+  - Liquid tags: `{% preview_image_status %}`, `{% preview_images_missing %}`
+  - Build hook that reports missing preview images during Jekyll build
+- **New Script: `scripts/generate-preview-images.sh`** - Main CLI for image generation
+  - `--list-missing` to find posts without preview images
+  - `--dry-run` to preview without making changes
+  - `--collection` to target specific collections
+  - `--provider` to choose AI provider (openai, stability, local)
+- **New Script: `scripts/install-preview-generator.sh`** - Remote installer for other repos
+  - One-line installation: `curl -fsSL .../install-preview-generator.sh | bash`
+  - Automatic configuration, VS Code tasks, and environment setup
+- **New Script: `scripts/lib/preview_generator.py`** - Python alternative implementation
+- **New Documentation: `docs/features/preview-image-generator.md`** - Comprehensive feature documentation
+- **New Rake Tasks**: `preview:missing`, `preview:generate`, `preview:dry_run`, `preview:posts`, `preview:docs`, `preview:force`, `preview:file`
+- **New VS Code Tasks**: Four preview image tasks for IDE integration
+- **New Config Section**: `preview_images` in `_config.yml` with full customization options
+- **New Feature Entry**: ZER0-003 in `features/features.yml`
+
+### Changed
+
+- **Updated: `jekyll-theme-zer0.gemspec`** - Now includes `_plugins/` and `scripts/` directories in gem distribution
+- **Updated: `Rakefile`** - Added preview image tasks and development/test task namespaces
+- **Updated: `scripts/README.md`** - Documented new preview generator scripts
+- **Updated: `.gitignore`** - Added `.env` for API key security
+
 ## [0.7.2] - 2025-11-26
 
 ### Fixed
