@@ -1,0 +1,203 @@
+#!/bin/bash
+
+# Unified test runner for zer0-mistakes Jekyll theme
+# Usage: ./scripts/bin/test [options]
+#
+# Runs all test suites: library tests, theme tests, and integration tests.
+
+set -euo pipefail
+
+# Get script and library directories
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPTS_ROOT="$SCRIPT_DIR/.."
+LIB_DIR="$SCRIPTS_ROOT/lib"
+TEST_DIR="$SCRIPTS_ROOT/test"
+
+# Source common library for logging
+source "$LIB_DIR/common.sh"
+
+# Aliases for consistent function naming
+log_info() { info "$@"; }
+log_success() { success "$@"; }
+log_warning() { warn "$@"; }
+log_error() { echo -e "${RED}[ERROR]${NC} $@" >&2; }
+
+# Show usage
+show_usage() {
+    cat << EOF
+🧪 Unified Test Runner for zer0-mistakes
+
+USAGE:
+    ./scripts/bin/test [OPTIONS] [TEST_SUITE]
+
+TEST SUITES:
+    all         Run all tests (default)
+    lib         Run library unit tests only
+    theme       Run theme validation tests only
+    integration Run integration tests only
+
+OPTIONS:
+    --verbose, -v    Show detailed test output
+    --dry-run        Preview what tests would run
+    --help, -h       Show this help message
+
+EXAMPLES:
+    ./scripts/bin/test              # Run all tests
+    ./scripts/bin/test lib          # Run library tests only
+    ./scripts/bin/test --verbose    # Run all tests with verbose output
+
+TEST LOCATIONS:
+    Library tests:     scripts/test/lib/
+    Theme tests:       scripts/test/theme/
+    Integration tests: scripts/test/integration/
+EOF
+}
+
+# Parse arguments
+TEST_SUITE="all"
+for arg in "$@"; do
+    case $arg in
+        --help|-h)
+            show_usage
+            exit 0
+            ;;
+        --verbose|-v)
+            export VERBOSE=true
+            ;;
+        --dry-run)
+            export DRY_RUN=true
+            ;;
+        all|lib|theme|integration)
+            TEST_SUITE="$arg"
+            ;;
+        *)
+            error "Unknown option: $arg (use --help for usage)"
+            ;;
+    esac
+done
+
+# Track test results
+TOTAL_TESTS=0
+TOTAL_PASSED=0
+TOTAL_FAILED=0
+
+# Run library tests
+run_lib_tests() {
+    log_info "Running library unit tests..."
+    
+    if [[ -f "$TEST_DIR/lib/run_tests.sh" ]]; then
+        # Use current bash interpreter to ensure bash 4+ features work
+        if "$BASH" "$TEST_DIR/lib/run_tests.sh"; then
+            log_success "Library tests passed"
+            ((TOTAL_PASSED++)) || true
+        else
+            log_error "Library tests failed"
+            ((TOTAL_FAILED++)) || true
+        fi
+        ((TOTAL_TESTS++)) || true
+    else
+        log_warning "Library test runner not found at $TEST_DIR/lib/run_tests.sh"
+    fi
+}
+
+# Run theme validation tests
+run_theme_tests() {
+    log_info "Running theme validation tests..."
+    
+    # Check for theme test script (will be migrated here)
+    if [[ -f "$TEST_DIR/theme/validate" ]]; then
+        if "$TEST_DIR/theme/validate"; then
+            log_success "Theme tests passed"
+            ((TOTAL_PASSED++)) || true
+        else
+            log_error "Theme tests failed"
+            ((TOTAL_FAILED++)) || true
+        fi
+        ((TOTAL_TESTS++)) || true
+    else
+        # Fall back to legacy test.sh in scripts root
+        if [[ -f "$SCRIPTS_ROOT/test.sh" ]]; then
+            log_warning "Using legacy test.sh (will be migrated to test/theme/)"
+            if "$SCRIPTS_ROOT/test.sh"; then
+                log_success "Theme tests passed"
+                ((TOTAL_PASSED++)) || true
+            else
+                log_error "Theme tests failed"
+                ((TOTAL_FAILED++)) || true
+            fi
+            ((TOTAL_TESTS++)) || true
+        else
+            log_warning "Theme tests not found"
+        fi
+    fi
+}
+
+# Run integration tests
+run_integration_tests() {
+    log_info "Running integration tests..."
+    
+    local found_tests=false
+    
+    for test_file in "$TEST_DIR/integration"/*; do
+        if [[ -f "$test_file" && -x "$test_file" ]]; then
+            found_tests=true
+            local test_name
+            test_name=$(basename "$test_file")
+            log_info "Running integration test: $test_name"
+            
+            if "$test_file"; then
+                log_success "$test_name passed"
+                ((TOTAL_PASSED++)) || true
+            else
+                log_error "$test_name failed"
+                ((TOTAL_FAILED++)) || true
+            fi
+            ((TOTAL_TESTS++)) || true
+        fi
+    done
+    
+    if [[ "$found_tests" == "false" ]]; then
+        log_warning "No integration tests found in $TEST_DIR/integration/"
+    fi
+}
+
+# Main execution
+log_info "🧪 Starting test suite: $TEST_SUITE"
+echo ""
+
+case $TEST_SUITE in
+    all)
+        run_lib_tests
+        echo ""
+        run_theme_tests
+        echo ""
+        run_integration_tests
+        ;;
+    lib)
+        run_lib_tests
+        ;;
+    theme)
+        run_theme_tests
+        ;;
+    integration)
+        run_integration_tests
+        ;;
+esac
+
+# Summary
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+log_info "Test Summary"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  Total test suites: $TOTAL_TESTS"
+echo "  Passed: $TOTAL_PASSED"
+echo "  Failed: $TOTAL_FAILED"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+if [[ $TOTAL_FAILED -gt 0 ]]; then
+    log_error "Some tests failed!"
+    exit 1
+else
+    log_success "All tests passed!"
+    exit 0
+fi

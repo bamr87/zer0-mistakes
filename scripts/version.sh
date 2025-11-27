@@ -1,9 +1,35 @@
 #!/bin/bash
 
+# ============================================================================
+# DEPRECATED: This script is deprecated and will be removed in a future release.
+# 
+# Please use the modular release system instead:
+#   - For version management: source scripts/lib/version.sh
+#   - For full release workflow: scripts/bin/release [patch|minor|major]
+#
+# The new system provides:
+#   - Better error handling and dry-run support
+#   - Automatic changelog generation from commits
+#   - Modular library architecture
+#   - Comprehensive testing
+#
+# This script will continue to work but is no longer maintained.
+# ============================================================================
+
 # Version management script for zer0-mistakes Jekyll theme
 # Usage: ./scripts/version.sh [patch|minor|major] [--dry-run]
 
 set -e
+
+# Show deprecation warning
+echo ""
+echo "⚠️  DEPRECATION WARNING: scripts/version.sh is deprecated."
+echo "   Please use 'scripts/bin/release' instead for the full release workflow."
+echo "   Or source 'scripts/lib/version.sh' for version management functions."
+echo ""
+echo "   Continuing in 3 seconds... (Press Ctrl+C to abort)"
+sleep 3
+echo ""
 
 # Colors for output
 RED='\033[0;31m'

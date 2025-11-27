@@ -1,5 +1,59 @@
 # Changelog
 
+## [0.9.0] - 2025-06-30
+
+### Changed
+
+- **Refactored: Scripts Directory Structure** - Complete reorganization for better maintainability
+  - New `bin/` directory for main entry points (`release`, `build`, `test`)
+  - New `utils/` directory for utility scripts (`setup`, `analyze-commits`, `fix-markdown`)
+  - New `features/` directory for feature-specific scripts (`generate-preview-images`, `install-preview-generator`)
+  - New `test/` directory hierarchy with `lib/`, `theme/`, and `integration/` subdirectories
+  - Unified test runner in `bin/test` that runs all test suites with single command
+
+- **Improved: Script Library Integration** - All scripts now use shared `lib/common.sh`
+  - Consistent logging functions (`log`, `info`, `success`, `warn`, `error`, `debug`)
+  - Standardized color output and formatting
+  - Removed duplicate code from individual scripts
+
+- **Updated: Documentation** - Complete rewrite of `scripts/README.md`
+  - Clear directory structure overview
+  - Quick start guide for common operations
+  - Migration table from legacy to new script locations
+  - Dependency graph for library modules
+
+### Added
+
+- **New: `bin/test` Unified Test Runner** - Single command to run all tests
+  - Supports running specific test suites (`lib`, `theme`, `integration`, `all`)
+  - Verbose output mode with `--verbose` flag
+  - Summary of passed/failed test suites
+
+- **New: `test/theme/validate`** - Theme structure validation tests
+  - Validates layouts, includes, and assets directories
+  - Sources shared library for consistent output
+
+- **New: `test/integration/auto-version`** - Auto-version integration tests
+  - Moved from `tests/` directory with updated library paths
+
+### Deprecated
+
+- **Deprecated: `scripts/version.sh`** - Now displays deprecation warning
+  - Recommends using `bin/release` for full workflow
+  - Will be removed in future release
+
+### Migration Guide
+
+| Legacy Script | New Location |
+|--------------|--------------|
+| `version.sh` | `bin/release` |
+| `setup.sh` | `utils/setup` |
+| `test.sh` | `bin/test` or `test/theme/validate` |
+| `analyze-commits.sh` | `utils/analyze-commits` |
+| `fix-markdown-format.sh` | `utils/fix-markdown` |
+| `generate-preview-images.sh` | `features/generate-preview-images` |
+| `install-preview-generator.sh` | `features/install-preview-generator` |
+
 ## [0.8.2] - 2025-11-27
 
 ### Changed

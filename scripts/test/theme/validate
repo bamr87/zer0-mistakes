@@ -1,0 +1,120 @@
+#!/bin/bash
+
+# Theme validation tests for zer0-mistakes Jekyll theme
+# Usage: ./scripts/test/theme/validate
+
+set -euo pipefail
+
+# Get script and library directories
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPTS_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+LIB_DIR="$SCRIPTS_ROOT/lib"
+PROJECT_ROOT="$(cd "$SCRIPTS_ROOT/.." && pwd)"
+
+# Source common library for logging and utilities
+source "$LIB_DIR/common.sh"
+
+# Test counter
+TESTS_RUN=0
+TESTS_PASSED=0
+
+run_test() {
+    local test_name="$1"
+    local test_command="$2"
+    
+    ((TESTS_RUN++)) || true
+    
+    step "Running: $test_name"
+    
+    if [[ "${VERBOSE:-false}" == "true" ]]; then
+        debug "Command: $test_command"
+    fi
+    
+    if eval "$test_command" > /dev/null 2>&1; then
+        success "$test_name"
+        ((TESTS_PASSED++)) || true
+    else
+        warn "$test_name - FAILED"
+        if [[ "${VERBOSE:-false}" == "true" ]]; then
+            echo "Command output:"
+            eval "$test_command" 2>&1 || true
+        fi
+    fi
+}
+
+log "Running theme validation tests for zer0-mistakes..."
+
+cd "$PROJECT_ROOT"
+
+# Test 1: Validate package.json
+run_test "Validate package.json syntax" "jq empty package.json"
+
+# Test 2: Validate package.json version
+run_test "Validate package.json version format" "jq -r '.version' package.json | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$'"
+
+# Test 3: Validate gemspec syntax
+run_test "Validate gemspec syntax" "ruby -c jekyll-theme-zer0.gemspec"
+
+# Test 4: Build gem (test build)
+run_test "Test gem build" "gem build jekyll-theme-zer0.gemspec"
+
+# Test 5: Check for required files
+run_test "Check README.md exists" "test -f README.md"
+run_test "Check LICENSE exists" "test -f LICENSE"
+run_test "Check _layouts directory exists" "test -d _layouts"
+run_test "Check _includes directory exists" "test -d _includes"
+run_test "Check _sass directory exists" "test -d _sass"
+run_test "Check assets directory exists" "test -d assets"
+
+# Test 6: Validate YAML front matter in layouts
+if [[ -d "_layouts" ]]; then
+    for layout in _layouts/*.html; do
+        if [[ -f "$layout" ]]; then
+            layout_name=$(basename "$layout")
+            run_test "Validate front matter in $layout_name" "head -10 '$layout' | grep -q -- '---'"
+        fi
+    done
+fi
+
+# Test 7: Check for common Jekyll requirements
+run_test "Check Jekyll dependency in gemspec" "grep -q 'jekyll' jekyll-theme-zer0.gemspec"
+
+# Test 8: Validate version consistency
+PACKAGE_VERSION=$(jq -r '.version' package.json)
+if [[ -f "jekyll-theme-zer0-${PACKAGE_VERSION}.gem" ]]; then
+    run_test "Version consistency check" "test -f jekyll-theme-zer0-${PACKAGE_VERSION}.gem"
+fi
+
+# Test 9: Check scripts are executable
+if [[ -d "scripts/bin" ]]; then
+    for script in scripts/bin/*; do
+        if [[ -f "$script" ]]; then
+            script_name=$(basename "$script")
+            run_test "Check $script_name is executable" "test -x '$script'"
+        fi
+    done
+fi
+
+# Test 10: Validate bundle install
+run_test "Test bundle install" "bundle install --quiet"
+
+# Clean up test gem file
+rm -f jekyll-theme-zer0-*.gem 2>/dev/null || true
+
+# Test results
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+info "Test Results"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  Tests run: $TESTS_RUN"
+echo "  Tests passed: $TESTS_PASSED"
+echo "  Tests failed: $((TESTS_RUN - TESTS_PASSED))"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+if [[ $TESTS_PASSED -eq $TESTS_RUN ]]; then
+    success "All tests passed!"
+    exit 0
+else
+    error "Some tests failed!"
+    exit 1
+fi
