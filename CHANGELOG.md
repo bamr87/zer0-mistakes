@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.9.2] - 2025-11-28
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 509d705 fix(ci): fix false positive failure detection in test report validation
+- 77dc04b fix(ci): fix shell syntax error in test-suite validation step
+
+
 ## [0.9.1] - 2025-11-27
 
 ### Fixed
