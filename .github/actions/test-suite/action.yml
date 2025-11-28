@@ -75,13 +75,23 @@ runs:
         done
         shopt -u nullglob
         
-        # Also check text reports for FAILED keyword
+        # Also check text reports for actual failure indicators
+        # Note: "Failed: 0" in summary should NOT trigger failure - only actual test failures
         shopt -s nullglob
         for report_file in "$REPORTS_DIR"/*.txt; do
-          if [[ -f "$report_file" ]] && grep -qi "FAILED\|FAILURE" "$report_file" 2>/dev/null; then
-            echo "::error::Test failures found in $report_file"
-            cat "$report_file"
-            FAILED=true
+          if [[ -f "$report_file" ]]; then
+            # Check for failure patterns that indicate actual test failures, not summary lines
+            # Exclude lines like "Failed: 0" which indicate no failures
+            if grep -qiE '(FAILED|FAILURE)' "$report_file" 2>/dev/null && \
+               ! grep -qE 'Failed:\s*0' "$report_file" 2>/dev/null; then
+              # Double-check: look for non-zero failure count
+              if grep -qE 'Failed:\s*[1-9]' "$report_file" 2>/dev/null || \
+                 grep -qiE '\[FAIL\]|\bFAILED\b.*test' "$report_file" 2>/dev/null; then
+                echo "::error::Test failures found in $report_file"
+                cat "$report_file"
+                FAILED=true
+              fi
+            fi
           fi
         done
         shopt -u nullglob
