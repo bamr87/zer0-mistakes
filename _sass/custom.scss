@@ -177,23 +177,31 @@ img {
     height: auto;
 }
 
+// ============================================
+// NAVBAR - Fixed positioning with auto-hide
+// ============================================
+// Uses Bootstrap's fixed-top class for positioning (z-index: 1030)
+// JavaScript adds/removes .navbar-hidden class on scroll
+
 #navbar {
-    // position: fixed;
-    top: 0;
-    width: 100%;
-    transition: transform 0.3s;
+    // Transition for smooth hide/show animation
+    transition: transform 0.3s ease-in-out !important;
+    
+    // Ensure navbar background is opaque
+    background-color: var(--bs-body-bg);
 }
 
-.fixed-navbar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    transition: transform 0.3s;
+// Hidden state - slides up out of view
+// Using higher specificity to override Bootstrap's fixed-top
+#navbar.navbar-hidden {
+    transform: translateY(-100%) !important;
 }
 
-.hide-navbar {
-    transform: translateY(-100%);
-    top: 0px;
+// Respect user's motion preferences
+@media (prefers-reduced-motion: reduce) {
+    #navbar {
+        transition: none !important;
+    }
 }
 
 $enable-cssgrid: true;

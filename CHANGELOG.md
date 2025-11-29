@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.10.2] - 2025-11-28
+
+### Added
+
+- **Enhanced: Navbar Auto-Hide on Scroll** (`assets/js/auto-hide-nav.js`)
+  - Navbar hides when scrolling down past 100px threshold
+  - Navbar reappears immediately when scrolling up
+  - Automatic body padding to prevent content jump under fixed navbar
+  - Performance-optimized with `requestAnimationFrame` throttling
+  - Respects `prefers-reduced-motion` accessibility setting
+
+### Changed
+
+- **Improved: Header Positioning** (`_includes/core/header.html`)
+  - Changed from `z-1` to Bootstrap's `fixed-top` class
+  - Provides proper z-index (1030) and fixed positioning
+
+- **Refactored: Navbar CSS** (`_sass/custom.scss`)
+  - Replaced broken `.hide-navbar` and `.fixed-navbar` classes
+  - New `.navbar-hidden` class with `translateY(-100%)` transform
+  - Added `!important` to override Bootstrap's `fixed-top` positioning
+  - Added explicit background color for opaque navbar
+  - Added `prefers-reduced-motion` media query for accessibility
+
+### Fixed
+
+- **Fixed: Navbar Blocking Content on Scroll Up**
+  - Content no longer obscured when scrolling back to top
+  - Body padding dynamically calculated based on navbar height
+
 ## [0.10.1] - 2025-11-28
 
 ### Added
