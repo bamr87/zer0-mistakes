@@ -1,31 +1,45 @@
 ---
 title: Mermaid with Native Markdown Syntax
-description: Simple Mermaid diagrams using native markdown code blocks via jekyll-mermaid
+description: Simple Mermaid diagrams using native markdown code blocks - GitHub Pages compatible
 date: 2025-01-27
 tags:
   - Mermaid
   - Markdown
   - Jekyll
+  - GitHub Pages
 categories:
   - Documentation
 layout: default
 permalink: /docs/jekyll/mermaid-native-markdown/
 mermaid: true
 draft: draft
-lastmod: 2025-11-16T13:44:24.902Z
+lastmod: 2025-11-28T00:00:00.000Z
 ---
 
 # Mermaid with Native Markdown Syntax
 
 **✨ Simple Implementation:** No HTML tags needed! Just use markdown code blocks.
 
+**🌐 GitHub Pages Compatible:** Works with GitHub Pages without custom plugins!
+
 ---
 
 ## 🚀 Quick Start
 
-### Step 1: Write Markdown Code Blocks
+### Step 1: Enable Mermaid in Front Matter
 
-Simply use triple backticks with `mermaid` as the language:
+Add `mermaid: true` to your page's front matter:
+
+```yaml
+---
+title: My Page with Diagrams
+mermaid: true
+---
+```
+
+### Step 2: Write Markdown Code Blocks
+
+Use triple backticks with `mermaid` as the language:
 
 ````markdown
 ```mermaid
@@ -34,9 +48,9 @@ graph TD
 ```
 ````
 
-### Step 2: That's It!
+### That's It!
 
-No front matter needed, no HTML `<div>` tags, just pure markdown.
+The native markdown syntax is automatically converted to rendered diagrams.
 
 ---
 

@@ -2,12 +2,13 @@
 title: Mermaid Diagrams in Jekyll
 description: Complete guide to using Mermaid diagrams in Jekyll with examples and reference
 date: 2025-01-27
-lastmod: 2025-11-16T13:44:26.408Z
+lastmod: 2025-11-28T00:00:00.000Z
 tags:
   - Mermaid
   - Diagrams
   - Jekyll
   - Documentation
+  - GitHub Pages
 categories:
   - Documentation
 layout: default
@@ -18,6 +19,8 @@ draft: draft
 # Mermaid Diagrams in Jekyll
 
 This guide covers everything you need to know about using Mermaid diagrams in your Jekyll site.
+
+**✅ GitHub Pages Compatible:** Works with GitHub Pages without custom plugins!
 
 ## Quick Start
 
@@ -33,6 +36,21 @@ mermaid: true
 ```
 
 ### 2. Add a Diagram
+
+**Option A: Native Markdown Syntax (Recommended)**
+
+Use triple backticks with `mermaid` as the language:
+
+````markdown
+```mermaid
+graph TD
+    A[Start] --> B{Decision}
+    B -->|Yes| C[Success]
+    B -->|No| D[Try Again]
+```
+````
+
+**Option B: HTML Div Syntax**
 
 Use the `<div class="mermaid">` syntax:
 

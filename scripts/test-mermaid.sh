@@ -13,7 +13,8 @@
 #   --docker     Test Docker container
 ###############################################################################
 
-set -euo pipefail
+# Note: Removed -e flag to avoid SIGPIPE issues with pipelines (curl | grep)
+set -uo pipefail
 
 # Colors for output
 RED='\033[0;31m'
@@ -132,24 +133,63 @@ test_url() {
 test_mermaid_script() {
     local url="$1"
     local description="$2"
+    local response
+    local count
     
-    run_test "$description" "curl -s '$url' | grep -q 'mermaid.min.js'"
+    TOTAL_TESTS=$((TOTAL_TESTS + 1))
+    response=$(curl -s "$url" 2>/dev/null) || true
+    count=$(echo "$response" | grep -c 'mermaid.min.js' || true)
+    if [ "$count" -gt 0 ]; then
+        TESTS_PASSED=$((TESTS_PASSED + 1))
+        log_success "$description"
+        return 0
+    else
+        TESTS_FAILED=$((TESTS_FAILED + 1))
+        log_error "$description"
+        return 1
+    fi
 }
 
 # Test Mermaid initialization
 test_mermaid_init() {
     local url="$1"
     local description="$2"
+    local response
+    local count
     
-    run_test "$description" "curl -s '$url' | grep -q 'mermaid.initialize'"
+    TOTAL_TESTS=$((TOTAL_TESTS + 1))
+    response=$(curl -s "$url" 2>/dev/null) || true
+    count=$(echo "$response" | grep -c 'mermaid.initialize' || true)
+    if [ "$count" -gt 0 ]; then
+        TESTS_PASSED=$((TESTS_PASSED + 1))
+        log_success "$description"
+        return 0
+    else
+        TESTS_FAILED=$((TESTS_FAILED + 1))
+        log_error "$description"
+        return 1
+    fi
 }
 
 # Test diagram rendering
 test_diagram_rendering() {
     local url="$1"
     local description="$2"
+    local response
+    local count
     
-    run_test "$description" "curl -s '$url' | grep -q 'class=\"mermaid\"'"
+    TOTAL_TESTS=$((TOTAL_TESTS + 1))
+    response=$(curl -s "$url" 2>/dev/null) || true
+    count=$(echo "$response" | grep -c 'class="mermaid"' || true)
+    if [ "$count" -gt 0 ]; then
+        TESTS_PASSED=$((TESTS_PASSED + 1))
+        log_success "$description"
+        return 0
+    else
+        TESTS_FAILED=$((TESTS_FAILED + 1))
+        log_error "$description"
+        return 1
+    fi
 }
 
 # Main test execution
@@ -165,9 +205,9 @@ main() {
     log_info "Testing core files..."
     
     test_file_exists "_includes/components/mermaid.html" "Mermaid include file exists"
-    test_file_exists "pages/_docs/jekyll/mermaid.md" "Main documentation exists"
-    test_file_exists "pages/_docs/jekyll/mermaid-test-suite.md" "Test suite exists"
-    test_file_exists "pages/_docs/jekyll/jekyll-diagram-with-mermaid.md" "Tutorial exists"
+    test_file_exists "docs/jekyll/mermaid.md" "Main documentation exists"
+    test_file_exists "docs/jekyll/mermaid-test-suite.md" "Test suite exists"
+    test_file_exists "docs/jekyll/jekyll-diagram-with-mermaid.md" "Tutorial exists"
     
     # Configuration tests
     log_info "Testing configuration..."
@@ -188,10 +228,10 @@ main() {
     # Documentation tests
     log_info "Testing documentation..."
     
-    test_file_content "pages/_docs/jekyll/mermaid.md" "mermaid: true" "Main docs have front matter"
-    test_file_content "pages/_docs/jekyll/mermaid-test-suite.md" "mermaid: true" "Test suite has front matter"
-    test_file_content "pages/_docs/jekyll/mermaid.md" "graph TD" "Main docs have examples"
-    test_file_content "pages/_docs/jekyll/mermaid-test-suite.md" "graph TD" "Test suite has examples"
+    test_file_content "docs/jekyll/mermaid.md" "mermaid: true" "Main docs have front matter"
+    test_file_content "docs/jekyll/mermaid-test-suite.md" "mermaid: true" "Test suite has front matter"
+    test_file_content "docs/jekyll/mermaid.md" "graph TD" "Main docs have examples"
+    test_file_content "docs/jekyll/mermaid-test-suite.md" "graph TD" "Test suite has examples"
     
     # Server tests (if not quick mode)
     if [ "$QUICK" = false ]; then

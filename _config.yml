@@ -232,6 +232,8 @@ plugins:
   - jekyll-seo-tag
   - jekyll-paginate
   - jekyll-relative-links
+  # Note: jekyll-mermaid is NOT in GitHub Pages whitelist - it only provides {% mermaid %} Liquid tag
+  # Mermaid diagrams work without this plugin via client-side JavaScript (see _includes/components/mermaid.html)
   - jekyll-mermaid
 
 # Project resource links (used by landing page and includes)
@@ -254,9 +256,13 @@ gisgus:
   data-category-id: "DIC_kwDOEOrJ7c4CAn8D"
 
 ## Mermaid Diagram Configuration #################################################
-# Mermaid diagrams now render from native markdown code blocks
-# Usage: ```mermaid ... ``` (no need for mermaid: true in front matter)
-# Plugin: jekyll-mermaid (https://github.com/jasonbellamy/jekyll-mermaid)
+# Mermaid diagrams support both native markdown code blocks and div syntax
+# Usage: 
+#   1. Add 'mermaid: true' to page front matter
+#   2. Use ```mermaid ... ``` code blocks OR <div class="mermaid">...</div>
+# 
+# GitHub Pages Compatible: Yes (client-side rendering via CDN)
+# Plugin: jekyll-mermaid is OPTIONAL (not needed for GitHub Pages)
 # Documentation: https://mermaid.js.org/
 
 mermaid:

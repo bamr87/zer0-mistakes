@@ -1,21 +1,39 @@
 <!--
   ===================================================================
-  MERMAID DIAGRAM INTEGRATION
+  MERMAID DIAGRAM INTEGRATION (v2.1 - GitHub Pages Compatible)
   ===================================================================
   
   File: mermaid.html
   Path: _includes/components/mermaid.html
   Purpose: Load and initialize Mermaid.js for diagram rendering
   
-  Usage:
+  Usage (Two syntaxes supported):
+  
+  1. Native Markdown Code Blocks (Recommended):
+     ```mermaid
+     graph TD
+       A[Start] -> B[End]
+     ```
+     
+  2. HTML Div Syntax:
+     <div class="mermaid">
+       graph TD
+         A[Start] -- > B[End]
+     </div>
+  
+  Requirements:
   - Set 'mermaid: true' in page front matter
-  - Use <div class="mermaid">...</div> syntax in content
   - Supports all Mermaid diagram types (flowcharts, sequence, gantt, etc.)
   
   Configuration:
-  - Latest stable version via CDN
+  - Mermaid v10 via CDN (latest stable)
   - Forest theme for dark mode compatibility
-  - Initialized on document ready
+  - Client-side code block conversion for GitHub Pages compatibility
+  
+  GitHub Pages Compatibility:
+  - No custom plugins required (jekyll-mermaid is optional)
+  - All processing done client-side via JavaScript
+  - Works with remote_theme on GitHub Pages
   
   Documentation:
   - https://mermaid.js.org/
@@ -29,9 +47,51 @@
 <!-- Initialize Mermaid with custom configuration -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    // ============================================================
+    // Step 1: Convert native markdown code blocks to mermaid divs
+    // This enables ```mermaid syntax to work with GitHub Pages
+    // ============================================================
+    
+    // Find all code blocks with language-mermaid class (from ```mermaid)
+    var codeBlocks = document.querySelectorAll('pre > code.language-mermaid, code.language-mermaid');
+    
+    codeBlocks.forEach(function(codeBlock) {
+      // Get the mermaid content (decode HTML entities)
+      var content = codeBlock.textContent || codeBlock.innerText;
+      
+      // Create a new mermaid div
+      var mermaidDiv = document.createElement('div');
+      mermaidDiv.className = 'mermaid';
+      mermaidDiv.textContent = content;
+      
+      // Replace the pre/code block with the mermaid div
+      var preElement = codeBlock.closest('pre');
+      if (preElement && preElement.parentNode) {
+        preElement.parentNode.replaceChild(mermaidDiv, preElement);
+      } else if (codeBlock.parentNode) {
+        codeBlock.parentNode.replaceChild(mermaidDiv, codeBlock);
+      }
+    });
+    
+    // Also handle pre elements that might have data-language="mermaid"
+    var preBlocks = document.querySelectorAll('pre[data-language="mermaid"]');
+    preBlocks.forEach(function(preBlock) {
+      var content = preBlock.textContent || preBlock.innerText;
+      var mermaidDiv = document.createElement('div');
+      mermaidDiv.className = 'mermaid';
+      mermaidDiv.textContent = content;
+      if (preBlock.parentNode) {
+        preBlock.parentNode.replaceChild(mermaidDiv, preBlock);
+      }
+    });
+    
+    // ============================================================
+    // Step 2: Initialize Mermaid with custom configuration
+    // ============================================================
+    
     mermaid.initialize({
-      startOnLoad: true,
-      theme: 'forest',  // Options: default, forest, dark, neutral, base
+      startOnLoad: false,  // We'll manually run after conversion
+      theme: 'forest',     // Options: default, forest, dark, neutral, base
       themeVariables: {
         primaryColor: '#007bff',
         primaryTextColor: '#fff',
@@ -69,9 +129,20 @@
         fontSize: 11,
         numberSectionStyles: 4,
         axisFormat: '%Y-%m-%d'
-      }
+      },
+      securityLevel: 'loose'  // Required for some advanced features
     });
-    console.log('Mermaid.js initialized successfully');
+    
+    // ============================================================
+    // Step 3: Render all mermaid diagrams
+    // ============================================================
+    
+    // Run mermaid to render all .mermaid divs
+    mermaid.run().then(function() {
+      console.log('Mermaid.js: All diagrams rendered successfully');
+    }).catch(function(error) {
+      console.warn('Mermaid.js: Some diagrams failed to render', error);
+    });
   });
 </script>
 
@@ -80,10 +151,12 @@
 
 <!-- Custom CSS for Mermaid diagrams -->
 <style>
+  /* Mermaid container styling */
   .mermaid {
     text-align: center;
     margin: 2rem auto;
     background-color: transparent;
+    overflow-x: auto;
   }
   
   /* Ensure diagrams are responsive */
@@ -92,10 +165,26 @@
     height: auto;
   }
   
+  /* Hide code blocks before conversion (prevent flash of unstyled content) */
+  pre > code.language-mermaid,
+  code.language-mermaid {
+    display: block;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  
   /* Dark mode compatibility */
   @media (prefers-color-scheme: dark) {
     .mermaid {
       filter: brightness(0.9);
+    }
+  }
+  
+  /* Print styles */
+  @media print {
+    .mermaid svg {
+      max-width: 100% !important;
+      page-break-inside: avoid;
     }
   }
 </style>

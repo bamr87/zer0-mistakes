@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.10.1] - 2025-11-28
+
+### Added
+
+- **Enhanced: Mermaid v2.1 - GitHub Pages Compatible** (`_includes/components/mermaid.html`)
+  - Client-side conversion of native markdown ` ```mermaid ` code blocks to rendered diagrams
+  - Full GitHub Pages compatibility without custom plugins (all processing client-side)
+  - CSS to hide code blocks during conversion (prevents flash of unstyled content)
+  - Print styles and improved responsive design
+  - Documented dual syntax support (native markdown and HTML div)
+
+### Changed
+
+- **Improved: Mermaid Configuration** (`_config.yml`)
+  - Added clear comments explaining GitHub Pages compatibility
+  - Documented that `jekyll-mermaid` plugin is optional
+  - Updated usage instructions for both syntax options
+
+- **Improved: Mermaid Documentation**
+  - `docs/jekyll/mermaid.md`: Added native markdown syntax as recommended option
+  - `docs/jekyll/mermaid-native-markdown.md`: Fixed documentation about front matter requirements
+  - Added GitHub Pages compatibility badges to documentation
+
+### Fixed
+
+- **Fixed: Native Markdown Mermaid Syntax Not Rendering**
+  - ` ```mermaid ` code blocks now properly convert to diagrams via JavaScript
+  - Works with GitHub Pages remote_theme deployment
+
+- **Fixed: Mermaid Test Script** (`scripts/test-mermaid.sh`)
+  - Corrected file path references from `pages/_docs/jekyll/` to `docs/jekyll/`
+  - Fixed SIGPIPE issues with `curl | grep` pipelines causing false test failures
+  - All 21 tests now pass successfully
+
 ## [0.10.0] - 2025-11-28
 
 ### Added
