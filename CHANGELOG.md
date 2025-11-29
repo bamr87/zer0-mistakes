@@ -6,7 +6,7 @@
 
 - **Critical: Nested Liquid Output Tags in Footer** (`_includes/core/footer.html`)
   - Fixed nested Liquid output tags causing template errors
-  - Used `{% capture %}` blocks to properly combine icon classes
+  - Used `{% raw %}{% capture %}{% endraw %}` blocks to properly combine icon classes
   - Resolved syntax errors in powered-by credits and social links sections
   - Ensures proper icon rendering in Bootstrap 5 components
 
