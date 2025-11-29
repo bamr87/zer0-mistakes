@@ -189,10 +189,15 @@ layout: default
               <div class="card h-100 border-0 shadow-sm">
                 <a href="{{ rpost.url | relative_url }}" class="text-decoration-none">
                   {% if rpost.preview %}
-                    <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ rpost.preview }}" 
-                         class="card-img-top" alt="{{ rpost.title }}" loading="lazy">
+                    {% if rpost.preview contains '/assets' %}
+                      <img src="{{ site.baseurl }}{{ rpost.preview }}" 
+                           class="card-img-top" alt="{{ rpost.title }}" loading="lazy">
+                    {% else %}
+                      <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ rpost.preview }}" 
+                           class="card-img-top" alt="{{ rpost.title }}" loading="lazy">
+                    {% endif %}
                   {% else %}
-                    <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ site.teaser }}" 
+                    <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ site.teaser }}" 
                          class="card-img-top" alt="Preview" loading="lazy">
                   {% endif %}
                 </a>

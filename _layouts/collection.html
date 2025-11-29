@@ -84,10 +84,15 @@ layout: default
                 <!-- ====================== -->
                 <!-- Display preview image with fallback to site teaser -->
                 {% if post.preview %}
-                    <img src="{{site.baseurl}}/{{ site.public_folder }}/{{ post.preview}}" 
-                         class="card-img-top" alt="Preview image for {{ post.title }}">
+                    {% if post.preview contains '/assets' %}
+                        <img src="{{ site.baseurl }}{{ post.preview }}" 
+                             class="card-img-top" alt="Preview image for {{ post.title }}">
+                    {% else %}
+                        <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ post.preview }}" 
+                             class="card-img-top" alt="Preview image for {{ post.title }}">
+                    {% endif %}
                 {% else %}
-                    <img src="{{site.baseurl}}/{{ site.public_folder }}/{{ site.teaser }}" 
+                    <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ site.teaser }}" 
                          class="card-img-top" alt="Default preview image">
                 {% endif %}
                 

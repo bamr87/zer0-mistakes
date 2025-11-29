@@ -57,9 +57,13 @@ lastmod: 2025-11-16T00:00:00.000Z
         {% endif %}
         <a href="{{ post.url | relative_url }}">
           {% if post.preview %}
-            <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ post.preview }}" class="card-img-top" alt="{{ post.title }}" loading="lazy">
+            {% if post.preview contains '/assets' %}
+              <img src="{{ site.baseurl }}{{ post.preview }}" class="card-img-top img-fluid" alt="{{ post.title }}" loading="lazy">
+            {% else %}
+              <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ post.preview }}" class="card-img-top img-fluid" alt="{{ post.title }}" loading="lazy">
+            {% endif %}
           {% else %}
-            <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ site.teaser }}" class="card-img-top" alt="Preview" loading="lazy">
+            <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ site.teaser }}" class="card-img-top img-fluid" alt="Preview" loading="lazy">
           {% endif %}
         </a>
       </div>

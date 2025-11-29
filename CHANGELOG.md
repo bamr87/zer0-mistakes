@@ -1,5 +1,48 @@
 # Changelog
 
+## [0.10.3] - 2025-11-29
+
+### Added
+
+- **New: AI-Generated Preview Images** - 17 new preview images for posts and collections
+  - Business, Development, Science, Technology, Tutorial, World category index pages
+  - Individual post previews: startup funding, quantum computing, AI tools, CSS grid, remote work
+  - Quickstart guide previews: GitHub setup, Jekyll setup, machine setup
+  - Documentation and blog index previews
+
+### Changed
+
+- **Improved: Preview Image Path Handling** (`_layouts/journals.html`, `_layouts/category.html`, `_layouts/collection.html`)
+  - Layouts now support both absolute paths (`/assets/...`) and relative paths
+  - Conditional logic detects path type and constructs URL correctly
+  - Eliminates double-slash issues in image URLs
+
+- **Improved: Intro Section Preview Image Logic** (`_includes/content/intro.html`)
+  - Smart path detection for preview images (absolute vs relative)
+  - Handles URLs with `://` schemes, paths starting with `/`, and relative filenames
+  - Cleaner Liquid template logic with proper variable assignment
+
+- **Improved: Docker Development Setup** (`docker-compose.yml`, `docker/Dockerfile`)
+  - Command now runs `bundle install` before Jekyll serve (fixes volume mount overwrites)
+  - Dockerfile copies gemspec and lib/ for proper dependency resolution
+  - More reliable container startup with dependency installation
+
+- **Improved: Preview Image Generator** (`scripts/lib/preview_generator.py`)
+  - Switched from OpenAI SDK to direct HTTP API calls
+  - Eliminates SDK dependency - only requires `requests` package
+  - Better error handling with HTTP status code parsing
+  - Added request timeouts (120s for generation, 60s for download)
+
+### Fixed
+
+- **Fixed: Asset Paths in Config** (`_config.yml`)
+  - Corrected `teaser` and `info_banner` paths to use `/assets/images/` prefix
+  - Images now load correctly across all pages
+
+- **Fixed: Preview Image Double-Slash URLs**
+  - Removed extra `/` between `public_folder` and `site.teaser` in fallback images
+  - All layouts now generate clean, valid image URLs
+
 ## [0.10.2] - 2025-11-28
 
 ### Added

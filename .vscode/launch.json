@@ -3,7 +3,7 @@
   // UNIFIED VS CODE LAUNCH CONFIGURATION - Docker-First
   // ==================================================
   // Optimized for zer0-mistakes Jekyll theme development
-  // Last Updated: 2025-10-26
+  // Last Updated: 2025-11-29
   
   "version": "0.2.0",
   "configurations": [
@@ -12,7 +12,7 @@
     // DOCKER DEVELOPMENT CONFIGURATIONS
     // ==========================================
     {
-      "name": "� Debug Zer0-Mistakes Theme (Docker)",
+      "name": "🚀 Debug Zer0-Mistakes Theme (Docker)",
       "type": "msedge",
       "request": "launch",
       "url": "http://localhost:4000",
@@ -95,43 +95,19 @@
     // ==========================================
     // GEM DEVELOPMENT CONFIGURATIONS
     // ==========================================
-    {
-      "name": "🚀 Gem Publisher: Patch Release",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceFolder}/scripts/gem-publish.sh",
-      "args": ["patch"],
-      "cwd": "${workspaceFolder}",
-      "runtimeExecutable": "/bin/bash",
-      "env": {
-        "PATH": "${env:PATH}",
-        "TERM": "xterm-256color"
-      },
-      "outputCapture": "std",
-      "internalConsoleOptions": "openOnSessionStart"
-    },
-
-    {
-      "name": "� Gem Publisher: Dry Run (Patch)",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceFolder}/scripts/gem-publish.sh",
-      "args": ["patch", "--dry-run"],
-      "cwd": "${workspaceFolder}",
-      "runtimeExecutable": "/bin/bash",
-      "env": {
-        "PATH": "${env:PATH}",
-        "TERM": "xterm-256color"
-      },
-      "outputCapture": "std",
-      "internalConsoleOptions": "openOnSessionStart"
-    },
+    // NOTE: Gem release operations are handled via VS Code Tasks
+    // Use Cmd+Shift+P → "Tasks: Run Task" and select:
+    // - "🚀 Release: Patch" for patch releases
+    // - "🚀 Release: Minor" for minor releases  
+    // - "🚀 Release: Major" for major releases
+    // - "🔍 Release: Dry Run Preview" to preview changes
+    // The tasks use the modular release script at scripts/release
 
     // ==========================================
     // MOBILE & RESPONSIVE TESTING
     // ==========================================
     {
-      "name": "� Mobile Debug (Docker)",
+      "name": "📱 Mobile Debug (Docker)",
       "type": "msedge",
       "request": "launch",
       "url": "http://localhost:4000",

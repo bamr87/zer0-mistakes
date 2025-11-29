@@ -15,8 +15,20 @@
 
 <!-- Intro Section -->
 
+{% comment %}
+  Determine the preview image path. If page.preview starts with '/' or 'http', 
+  use it directly. Otherwise, prepend the public folder path.
+{% endcomment %}
+{% assign preview_image = page.preview | default: site.info_banner %}
+{% assign preview_first_char = preview_image | slice: 0 %}
+{% if preview_image contains '://' or preview_first_char == '/' %}
+  {% assign preview_path = preview_image %}
+{% else %}
+  {% assign preview_path = '/' | append: site.public_folder | append: '/' | append: preview_image %}
+{% endif %}
+
 <div class="bd-intro pt-5 ps-lg-2 position-relative" style="
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{{site.baseurl}}/{{ site.public_folder }}/{{ page.preview | default: site.info_banner }}') no-repeat center center / cover;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{{ site.baseurl }}{{ preview_path }}') no-repeat center center / cover;
   color: #fff;">
 
   <br>

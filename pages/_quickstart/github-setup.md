@@ -210,7 +210,7 @@ touch pages/_posts/$(date +%Y-%m-%d)-my-new-post.md
 title: "Your Post Title"
 description: "SEO-friendly description (150-160 characters)"
 date: 2025-01-27T10:00:00.000Z
-preview: "Social media preview text"
+preview: /assets/images/previews/github-setup-deployment.png
 tags: [tag1, tag2, tag3]
 categories: [Category, Subcategory]
 layout: journals

@@ -39,7 +39,10 @@ WORKDIR /site
 RUN gem install bundler
 
 # Copy dependency files first for better caching
+# Note: gemspec is required because Gemfile references it via `gemspec` directive
 COPY Gemfile Gemfile.lock* ./
+COPY jekyll-theme-zer0.gemspec ./
+COPY lib/ ./lib/
 
 # Install dependencies - Bundler resolves latest compatible versions
 # Jobs and retry for reliability

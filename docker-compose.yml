@@ -28,14 +28,8 @@ services:
     # Platform specification for Apple Silicon compatibility
     platform: linux/amd64
     
-    command: >
-      bundle exec jekyll serve 
-        --watch 
-        --force_polling 
-        --config "_config.yml,_config_dev.yml" 
-        --host 0.0.0.0 
-        --port 4000
-        --livereload
+    # Run bundle install first since volume mount overwrites container's /site
+    command: ["sh", "-c", "bundle install --jobs 4 --retry 3 && bundle exec jekyll serve --watch --force_polling --config '_config.yml,_config_dev.yml' --host 0.0.0.0 --port 4000 --livereload"]
     
     volumes:
       - .:/site

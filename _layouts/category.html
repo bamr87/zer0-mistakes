@@ -112,10 +112,15 @@ layout: default
             {% endif %}
             <a href="{{ fpost.url | relative_url }}" class="text-decoration-none">
               {% if fpost.preview %}
-                <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ fpost.preview }}" 
-                     class="card-img-top" alt="{{ fpost.title }}" loading="lazy">
+                {% if fpost.preview contains '/assets' %}
+                  <img src="{{ site.baseurl }}{{ fpost.preview }}" 
+                       class="card-img-top" alt="{{ fpost.title }}" loading="lazy">
+                {% else %}
+                  <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ fpost.preview }}" 
+                       class="card-img-top" alt="{{ fpost.title }}" loading="lazy">
+                {% endif %}
               {% else %}
-                <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ site.teaser }}" 
+                <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ site.teaser }}" 
                      class="card-img-top" alt="Preview" loading="lazy">
               {% endif %}
             </a>
@@ -167,10 +172,15 @@ layout: default
               {% endif %}
               <a href="{{ cpost.url | relative_url }}" class="text-decoration-none">
                 {% if cpost.preview %}
-                  <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ cpost.preview }}" 
-                       class="card-img-top" alt="{{ cpost.title }}" loading="lazy">
+                  {% if cpost.preview contains '/assets' %}
+                    <img src="{{ site.baseurl }}{{ cpost.preview }}" 
+                         class="card-img-top" alt="{{ cpost.title }}" loading="lazy">
+                  {% else %}
+                    <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ cpost.preview }}" 
+                         class="card-img-top" alt="{{ cpost.title }}" loading="lazy">
+                  {% endif %}
                 {% else %}
-                  <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ site.teaser }}" 
+                  <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ site.teaser }}" 
                        class="card-img-top" alt="Preview" loading="lazy">
                 {% endif %}
               </a>

@@ -7,7 +7,7 @@ permalink: /quickstart/
 sidebar:
   nav: quickstart
 lastmod: 2025-02-06T18:18:33.556Z
-preview: "Get started with Zer0-Mistakes Jekyll theme in minutes"
+preview: /assets/images/previews/zer0-mistakes-quick-start-guide.png
 tags: [jekyll, docker, setup, development, ai-powered]
 categories: [Documentation, Quick Start]
 keywords:

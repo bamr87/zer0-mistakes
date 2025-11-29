@@ -234,13 +234,13 @@ class PreviewGenerator:
         return safe_name[:50]  # Limit length
     
     def generate_image_openai(self, prompt: str, output_path: Path) -> GenerationResult:
-        """Generate image using OpenAI DALL-E."""
-        if not HAS_OPENAI:
+        """Generate image using OpenAI DALL-E via HTTP API (no SDK required)."""
+        if not HAS_REQUESTS:
             return GenerationResult(
                 success=False,
                 image_path=None,
                 preview_url=None,
-                error="openai package not installed. Run: pip install openai",
+                error="requests package not installed. Run: pip install requests",
                 prompt_used=prompt,
             )
         
@@ -255,8 +255,6 @@ class PreviewGenerator:
             )
         
         try:
-            client = OpenAI(api_key=api_key)
-            
             self.debug(f"Generating with prompt: {prompt[:200]}...")
             
             # Parse size
@@ -267,27 +265,29 @@ class PreviewGenerator:
             }
             size = size_map.get(self.image_size, "1024x1024")
             
-            response = client.images.generate(
-                model="dall-e-3",
-                prompt=prompt,
-                size=size,
-                quality="standard",
-                n=1,
+            # Use HTTP API directly instead of SDK
+            response = requests.post(
+                "https://api.openai.com/v1/images/generations",
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": "dall-e-3",
+                    "prompt": prompt,
+                    "size": size,
+                    "quality": "standard",
+                    "n": 1,
+                },
+                timeout=120,  # 2 minute timeout for image generation
             )
+            response.raise_for_status()
             
-            image_url = response.data[0].url
+            data = response.json()
+            image_url = data['data'][0]['url']
             
             # Download image
-            if not HAS_REQUESTS:
-                return GenerationResult(
-                    success=False,
-                    image_path=None,
-                    preview_url=image_url,
-                    error="requests package not installed. Run: pip install requests",
-                    prompt_used=prompt,
-                )
-            
-            img_response = requests.get(image_url)
+            img_response = requests.get(image_url, timeout=60)
             img_response.raise_for_status()
             
             output_path.write_bytes(img_response.content)
@@ -300,6 +300,21 @@ class PreviewGenerator:
                 prompt_used=prompt,
             )
             
+        except requests.exceptions.HTTPError as e:
+            error_msg = str(e)
+            try:
+                error_data = e.response.json()
+                if 'error' in error_data:
+                    error_msg = error_data['error'].get('message', str(e))
+            except:
+                pass
+            return GenerationResult(
+                success=False,
+                image_path=None,
+                preview_url=None,
+                error=error_msg,
+                prompt_used=prompt,
+            )
         except Exception as e:
             return GenerationResult(
                 success=False,

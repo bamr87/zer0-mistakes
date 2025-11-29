@@ -130,7 +130,7 @@ Use this frontmatter template:
 title: "My Awesome Post"
 description: "Brief description for SEO and social media"
 date: 2025-01-27T10:00:00.000Z
-preview: "Social media preview text"
+preview: /assets/images/previews/jekyll-setup.png
 tags: [jekyll, tutorial, web-development]
 categories: [Development, Tutorial]
 sub-title: "Subtitle for additional context"

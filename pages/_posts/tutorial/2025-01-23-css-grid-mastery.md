@@ -1,6 +1,7 @@
 ---
 title: "CSS Grid Mastery: Build Any Layout You Can Imagine"
 description: "A hands-on tutorial to master CSS Grid with practical examples and real-world layouts"
+preview: /assets/images/previews/css-grid-mastery-build-any-layout-you-can-imagine.png
 date: 2025-01-23T10:00:00.000Z
 author: default
 layout: journals

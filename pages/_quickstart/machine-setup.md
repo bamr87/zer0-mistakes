@@ -3,6 +3,7 @@ title: Machine Setup
 author: null
 layout: default
 description: null
+preview: /assets/images/previews/machine-setup.png
 categories: null
 slug: machine
 lastmod: 2024-05-20T14:58:30.179Z
