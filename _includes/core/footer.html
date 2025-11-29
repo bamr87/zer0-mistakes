@@ -39,14 +39,15 @@
       </span>
       {% for power in site.powered_by %}
         <li class="btn align-items-end">
+          {% capture icon_classes %}{{ site.default_icon }} {{ power.icon | default: site.powered_by.default }}{% endcapture %}
           {% if power.url %}
             <a href="{{ power.url }}" rel="nofollow">
-              <i class="{{ site.default_icon }} {{ power.icon | default: site.powered_by.default }}" aria-hidden="true"></i>
+              <i class="{{ icon_classes }}" aria-hidden="true"></i>
               <span class="d-none d-md-inline">{{ power.name }}</span>
             </a>
           {% else %}
             <span class="text-muted">
-              <i class="{{ site.default_icon }} {{ power.icon | default: site.powered_by.default }}" aria-hidden="true"></i>
+              <i class="{{ icon_classes }}" aria-hidden="true"></i>
               <span class="d-none d-md-inline">{{ power.name }}</span>
             </span>
           {% endif %}
@@ -115,8 +116,9 @@
               {% for link in site.links %}
                 {% if link.url %}
                   <li class="list-inline-item">
+                    {% capture link_icon_classes %}{{ site.default_icon }} {{ link.icon | default: site.links.default }}{% endcapture %}
                     <a href="{{ link.url }}" rel="nofollow" class="text-light text-decoration-none">
-                      <i class="{{ site.default_icon }} {{ link.icon | default: site.links.default }}" aria-hidden="true"></i>
+                      <i class="{{ link_icon_classes }}" aria-hidden="true"></i>
                       <span class="d-none d-md-inline">{{ link.label }}</span>
                     </a>
                   </li>
