@@ -62,7 +62,7 @@ permalink: /categories/
       <a href="#{{ category | slugify }}" 
          class="badge bg-success text-decoration-none {{ badge_class }}">
         {{ category }}
-        <span class="badge bg-light text-dark ms-1">{{ count }}</span>
+        <span class="badge bg-secondary text-body ms-1">{{ count }}</span>
       </a>
     {% endfor %}
   </div>

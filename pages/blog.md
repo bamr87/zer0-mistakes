@@ -57,13 +57,14 @@ lastmod: 2025-11-16T00:00:00.000Z
         {% endif %}
         <a href="{{ post.url | relative_url }}">
           {% if post.preview %}
+            {% assign preview_path = post.preview | remove_first: '/' %}
             {% if post.preview contains '/assets' %}
-              <img src="{{ site.baseurl }}{{ post.preview }}" class="card-img-top img-fluid" alt="{{ post.title }}" loading="lazy">
+              <img src="{{ post.preview | relative_url }}" class="card-img-top img-fluid" alt="Preview image for {{ post.title }}" loading="lazy" style="height: 180px; object-fit: cover;">
             {% else %}
-              <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ post.preview }}" class="card-img-top img-fluid" alt="{{ post.title }}" loading="lazy">
+              <img src="{{ '/' | append: site.public_folder | append: '/' | append: preview_path | relative_url }}" class="card-img-top img-fluid" alt="Preview image for {{ post.title }}" loading="lazy" style="height: 180px; object-fit: cover;">
             {% endif %}
           {% else %}
-            <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ site.teaser }}" class="card-img-top img-fluid" alt="Preview" loading="lazy">
+            <img src="{{ '/' | append: site.public_folder | append: site.teaser | relative_url }}" class="card-img-top img-fluid" alt="Default preview image" loading="lazy" style="height: 180px; object-fit: cover;">
           {% endif %}
         </a>
       </div>

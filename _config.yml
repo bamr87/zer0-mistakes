@@ -454,6 +454,8 @@ exclude:
   - submodules/
   - MERMAID-*.md
   - MERMAID-*/
+  - test/
+  - tests/
 
 # Sass/SCSS
 sass:

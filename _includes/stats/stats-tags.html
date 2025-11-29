@@ -25,12 +25,12 @@
 <!-- Top tags with usage counts                      -->
 <!-- ================================================ -->
 <div id="tags" class="card shadow-sm h-100">
-  <div class="card-header bg-success text-white">
+  <div class="card-header bg-success-subtle">
     <div class="d-flex align-items-center justify-content-between">
-      <h3 class="mb-0 fw-bold">
+      <h3 class="mb-0 fw-bold text-success-emphasis">
         <i class="bi bi-tags me-2"></i> Top Tags
       </h3>
-      <span class="badge bg-light text-success">
+      <span class="badge bg-success">
         {{ site.data.content_statistics.overview.total_tags | default: 0 }}
       </span>
     </div>
@@ -71,7 +71,7 @@
       </div>
       
       <!-- Tag Cloud Section -->
-      <div class="card-footer bg-light">
+      <div class="card-footer">
         <h6 class="mb-3 fw-bold">
           <i class="bi bi-cloud"></i> Tag Cloud
         </h6>
@@ -93,7 +93,7 @@
               {% assign tag_class = "fs-sm" %}
             {% endif %}
             
-            <span class="badge bg-outline-success {{ tag_class }}" 
+            <span class="badge bg-success-subtle text-success-emphasis {{ tag_class }}" 
                   data-bs-toggle="tooltip" 
                   title="{{ tag[1] }} posts">
               {{ tag[0] }}
@@ -116,7 +116,7 @@
   
   <!-- Tags Summary Footer -->
   {% if site.data.content_statistics.tags and site.data.content_statistics.tags.size > 0 %}
-    <div class="card-footer bg-light">
+    <div class="card-footer">
       <div class="row text-center">
         <div class="col-4">
           <strong class="text-success">{{ site.data.content_statistics.overview.total_tags | default: 0 }}</strong>

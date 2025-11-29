@@ -163,10 +163,10 @@
       {% if include.post.tags.size > 0 %}
         <div class="mt-2">
           {% for tag in include.post.tags limit: 3 %}
-            <span class="badge bg-light text-dark border me-1">{{ tag }}</span>
+            <span class="badge bg-secondary text-body border me-1">{{ tag }}</span>
           {% endfor %}
           {% if include.post.tags.size > 3 %}
-            <span class="badge bg-light text-muted border">+{{ include.post.tags.size | minus: 3 }}</span>
+            <span class="badge bg-secondary text-muted border">+{{ include.post.tags.size | minus: 3 }}</span>
           {% endif %}
         </div>
       {% endif %}

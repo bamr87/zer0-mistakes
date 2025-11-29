@@ -1,5 +1,59 @@
 # Changelog
 
+## [0.10.4] - 2025-11-29
+
+### Changed
+
+- **Improved: Bootstrap Theme Color Scheme** (`_includes/stats/`)
+  - Migrated from gradient backgrounds (`bg-gradient`) to Bootstrap 5 subtle variants (`bg-primary-subtle`, `bg-info-subtle`, `bg-warning-subtle`)
+  - Updated text colors to use emphasis variants (`text-primary-emphasis`, `text-info-emphasis`, `text-warning-emphasis`)
+  - Replaced `bg-light` with semantic `bg-body-secondary` for better theme consistency
+  - Updated footer and card backgrounds to use theme-aware classes
+  - Removed `border-0` classes to allow default Bootstrap borders
+  - All statistics components now follow Bootstrap 5 color system conventions
+
+- **Improved: Cookie Consent Component** (`_includes/components/cookie-consent.html`)
+  - Updated modal styling with theme-aware background classes
+  - Better visual consistency with updated color scheme
+
+- **Improved: Post Card Component** (`_includes/components/post-card.html`)
+  - Enhanced visual styling to match theme updates
+
+- **Improved: Sitemap Component** (`_includes/content/sitemap.html`)
+  - Updated styling for consistency with Bootstrap 5 theme
+
+- **Improved: Landing Page Layout** (`_layouts/landing.html`)
+  - Refined layout styling for better visual hierarchy
+
+- **Improved: Blog Layout** (`_layouts/blog.html`)
+  - Updated layout to align with theme improvements
+
+- **Improved: Sitemap Collection Layout** (`_layouts/sitemap-collection.html`)
+  - Enhanced layout for better content presentation
+
+- **Restructured: README.md Documentation**
+  - Reorganized content structure for better readability
+  - Updated version references from 0.9.2 to 0.10.3
+  - Added centered layout with improved badge display
+  - Changed tagline to "The Self-Healing Jekyll Theme"
+  - Updated lastmod date to 2025-11-29
+  - Added mermaid support flag to front matter
+  - Improved navigation structure in documentation
+
+### Removed
+
+- **Deleted: Duplicate Index File** (`pages/index.html`)
+  - Removed 341-line duplicate index file from pages directory
+  - Site now uses single `index.html` at root for cleaner architecture
+
+### Fixed
+
+- **Fixed: Git Workflow Documentation** (`pages/_posts/development/2025-01-22-git-workflow-best-practices.md`)
+  - Corrected formatting and content issues
+
+- **Fixed: Page Navigation** (`pages/blog.md`, `pages/categories.md`, `pages/tags.md`, `index.html`)
+  - Improved navigation consistency across pages
+
 ## [0.10.3] - 2025-11-29
 
 ### Added

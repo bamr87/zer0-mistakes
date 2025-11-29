@@ -28,8 +28,8 @@
   <div class="col-12">
     <div class="text-center mb-4">
       <!-- Header Icon with Bootstrap classes -->
-      <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-gradient rounded-circle p-4 mb-4 shadow-lg stats-header-icon">
-        <i class="bi bi-graph-up fs-1 text-white stats-icon-rotate"></i>
+      <div class="d-inline-flex align-items-center justify-content-center bg-primary-subtle rounded-circle p-4 mb-4 shadow-lg stats-header-icon">
+        <i class="bi bi-graph-up fs-1 text-primary stats-icon-rotate"></i>
       </div>
       
       <!-- Title with Bootstrap typography -->
@@ -38,14 +38,14 @@
       </h1>
       
       <!-- Description with Bootstrap lead class -->
-      <p class="lead text-muted mb-4 fs-4">
+      <p class="lead mb-4 fs-4">
         {{ page.description | default: "Comprehensive analytics and insights from the knowledge base" }}
       </p>
     </div>
     
     <!-- Last Updated Information using Bootstrap alerts -->
     {% if site.data.content_statistics and site.data.content_statistics.generated_at %}
-      <div class="alert alert-info border-0 bg-gradient shadow-sm d-flex align-items-center justify-content-between" role="alert">
+      <div class="alert alert-info shadow-sm d-flex align-items-center justify-content-between" role="alert">
         <div class="d-flex align-items-center">
           <i class="bi bi-clock me-3 fs-4"></i>
           <span class="fw-medium">
@@ -59,12 +59,12 @@
         </button>
       </div>
     {% else %}
-      <div class="alert alert-warning border-0 bg-gradient shadow-sm d-flex align-items-center justify-content-between" role="alert">
+      <div class="alert alert-warning shadow-sm d-flex align-items-center justify-content-between" role="alert">
         <div class="d-flex align-items-center">
           <i class="bi bi-exclamation-triangle me-3 fs-4"></i>
           <span class="fw-medium">
             <strong>Statistics not yet generated.</strong> 
-            Run <code class="bg-light text-dark px-2 py-1 rounded">ruby _data/generate_statistics.rb</code> to create statistics.
+            Run <code class="bg-body-secondary px-2 py-1 rounded">ruby _data/generate_statistics.rb</code> to create statistics.
           </span>
         </div>
         <button class="btn btn-outline-warning btn-sm" onclick="window.location.reload()">
@@ -84,7 +84,7 @@
   <div class="col-12">
     <!-- Bootstrap breadcrumb -->
     <nav aria-label="Statistics navigation">
-      <ol class="breadcrumb bg-light p-3 rounded shadow-sm">
+      <ol class="breadcrumb p-3 rounded shadow-sm">
         <li class="breadcrumb-item">
           <a href="{{ '/' | relative_url }}" class="text-decoration-none">
             <i class="bi bi-house me-1"></i> Home

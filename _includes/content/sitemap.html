@@ -251,7 +251,7 @@
                                                     <span class="badge bg-secondary me-1">{{ category }}</span>
                                                 {% endfor %}
                                                 {% if page.categories.size > 2 %}
-                                                    <span class="badge bg-light text-dark">+{{ page.categories.size | minus: 2 }}</span>
+                                                    <span class="badge">+{{ page.categories.size | minus: 2 }}</span>
                                                 {% endif %}
                                             {% endif %}
                                         </td>
@@ -261,7 +261,7 @@
                                                     <span class="badge bg-outline-primary me-1">#{{ tag }}</span>
                                                 {% endfor %}
                                                 {% if page.tags.size > 3 %}
-                                                    <span class="badge bg-light text-dark">+{{ page.tags.size | minus: 3 }}</span>
+                                                    <span class="badge">+{{ page.tags.size | minus: 3 }}</span>
                                                 {% endif %}
                                             {% endif %}
                                         </td>
@@ -324,7 +324,7 @@
                                                         <span class="badge bg-secondary me-1">{{ category }}</span>
                                                     {% endfor %}
                                                     {% if item.categories.size > 2 %}
-                                                        <span class="badge bg-light text-dark">+{{ item.categories.size | minus: 2 }}</span>
+                                                        <span class="badge">+{{ item.categories.size | minus: 2 }}</span>
                                                     {% endif %}
                                                 {% endif %}
                                             </td>
@@ -334,7 +334,7 @@
                                                         <span class="badge bg-outline-primary me-1">#{{ tag }}</span>
                                                     {% endfor %}
                                                     {% if item.tags.size > 3 %}
-                                                        <span class="badge bg-light text-dark">+{{ item.tags.size | minus: 3 }}</span>
+                                                        <span class="badge">+{{ item.tags.size | minus: 3 }}</span>
                                                     {% endif %}
                                                 {% endif %}
                                             </td>
@@ -457,11 +457,6 @@ th:hover .sort-icon {
 @media (prefers-color-scheme: dark) {
     .sitemap-card .card {
         border-color: var(--bs-border-color-translucent);
-    }
-    
-    .badge.bg-light {
-        background-color: var(--bs-gray-600) !important;
-        color: var(--bs-gray-100) !important;
     }
 }
 </style>

@@ -25,12 +25,12 @@
 <!-- Top categories with post counts                 -->
 <!-- ================================================ -->
 <div id="categories" class="card shadow-sm h-100">
-  <div class="card-header bg-primary text-white">
+  <div class="card-header bg-primary-subtle">
     <div class="d-flex align-items-center justify-content-between">
-      <h3 class="mb-0 fw-bold">
+      <h3 class="mb-0 fw-bold text-primary-emphasis">
         <i class="bi bi-folder2-open me-2"></i> Top Categories
       </h3>
-      <span class="badge bg-light text-primary">
+      <span class="badge bg-primary">
         {{ site.data.content_statistics.overview.total_categories | default: 0 }}
       </span>
     </div>
@@ -72,7 +72,7 @@
       
       <!-- Show More Button if there are more categories -->
       {% if site.data.content_statistics.categories.size > 15 %}
-        <div class="card-footer bg-light text-center">
+        <div class="card-footer text-center">
           <button class="btn btn-outline-primary btn-sm" 
                   onclick="toggleAllCategories(this)">
             <i class="bi bi-chevron-down"></i>
@@ -95,7 +95,7 @@
   
   <!-- Categories Summary Footer -->
   {% if site.data.content_statistics.categories and site.data.content_statistics.categories.size > 0 %}
-    <div class="card-footer bg-light">
+    <div class="card-footer">
       <div class="row text-center">
         <div class="col-4">
           <strong class="text-primary">{{ site.data.content_statistics.overview.total_categories | default: 0 }}</strong>
