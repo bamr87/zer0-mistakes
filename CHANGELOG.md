@@ -1,5 +1,70 @@
 # Changelog
 
+## [0.10.0] - 2025-11-28
+
+### Added
+
+- **New: Zero Version Pin Strategy** - Enterprise-grade dependency management paradigm
+  - Always use latest compatible versions with zero pins anywhere
+  - Fail fast in CI if incompatible → caught early, not in production
+  - Production uses immutable image tags (date+commit hash), never `:latest`
+  - Full documentation in `docs/systems/ZERO_PIN_STRATEGY.md`
+
+- **New: Docker Multi-Stage Dockerfile** (`docker/Dockerfile`)
+  - `base` stage: Ruby slim + build dependencies
+  - `dev-test` stage: Full dev/test gems for CI validation
+  - `build` stage: Production Jekyll build
+  - `production` stage: Minimal runtime for serving
+
+- **New: Docker Compose Configurations**
+  - `docker-compose.yml`: Development environment with live reload
+  - `docker-compose.test.yml`: CI testing overlay with validation
+  - `docker-compose.prod.yml`: Production with immutable tags only
+
+- **New: CI Workflow for Zero Pin Strategy** (`.github/workflows/test-latest.yml`)
+  - Builds with `--no-cache` for latest dependencies
+  - Documents resolved versions in workflow summary
+  - Tags and publishes immutable images on success
+  - Debug information on failure
+
+- **New: `.dockerignore`** - Optimized Docker build context
+  - Excludes development files, tests, logs, and build artifacts
+  - Keeps only files needed for container builds
+
+- **New: VS Code Workspace Configuration** (`zer0-mistakes.code-workspace`)
+  - Copilot settings for all file types
+  - File associations for Jekyll/Liquid
+  - Terminal environment variables for Docker
+
+### Changed
+
+- **Improved: `Gemfile`** - Refactored for zero version pin strategy
+  - Removed all version constraints
+  - Added development/test group with html-proofer, rspec, rake, rubocop
+  - Added platform-specific dependencies for Windows
+  - Comprehensive documentation comments
+
+- **Improved: `docker-compose.yml`** - Enhanced for zero pin strategy
+  - Uses custom Dockerfile instead of jekyll/jekyll image
+  - Added bundle cache volume for faster rebuilds
+  - LiveReload port (35729) exposed
+  - TTY enabled for interactive commands
+
+- **Improved: `jekyll-theme-zer0.gemspec`** - Compatibility updates
+  - Ruby requirement lowered to >= 2.7.0 (from 3.0.0) for broader compatibility
+  - Bundler dependency changed to ~> 2.3 (from >= 2.3)
+
+- **Improved: CI Workflow** (`.github/workflows/ci.yml`)
+  - Added documentation comments explaining version strategy
+  - Clarified that explicit versions are for backwards compatibility testing
+
+### Fixed
+
+- **Fixed: `scripts/generate-preview-images.sh`** - Reverted to simpler collection handling
+  - Removed dynamic collection reading (caused issues in some environments)
+  - Restored hardcoded collection list for reliability
+  - Fixed yq vs sed front matter update logic
+
 ## [0.9.2] - 2025-11-28
 
 ### Changed

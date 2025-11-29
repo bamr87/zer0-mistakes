@@ -1,0 +1,56 @@
+# ==============================================================================
+# Production Configuration Override
+# ==============================================================================
+# This file is used during production Docker builds to override development
+# settings with production-optimized values.
+# 
+# Usage: bundle exec jekyll build --config _config.yml,docker/config/production.yml
+# ==============================================================================
+
+# Environment
+environment: production
+
+# Disable development-only features
+incremental: false
+profile: false
+
+# Optimize for production
+safe: true
+lsi: false
+future: false
+unpublished: false
+
+# Exclude development files from build
+exclude:
+  - docker/
+  - test/
+  - scripts/
+  - "*.gemspec"
+  - Gemfile
+  - Gemfile.lock
+  - Makefile
+  - Rakefile
+  - vendor/
+  - node_modules/
+  - .git/
+  - .github/
+  - logs/
+  - "*.log"
+  - docker-compose*.yml
+  - Dockerfile*
+  - .dockerignore
+  - .env*
+  - "*.sh"
+  - pkg/
+
+# Production URL (override as needed)
+# url: "https://your-production-domain.com"
+
+# Enable compression
+sass:
+  style: compressed
+
+# Liquid settings for production
+liquid:
+  error_mode: strict
+  strict_filters: true

@@ -15,7 +15,7 @@ tags:
 featured: true
 image: /assets/images/posts/git-workflow.jpg
 estimated_reading_time: 10 min
-lastmod: 2025-11-27T16:18:06.873Z
+lastmod: 2025-11-29T05:30:54.045Z
 ---
 
 Effective version control is the backbone of modern software development. This guide covers Git workflows that will help your team collaborate more efficiently.
@@ -40,7 +40,6 @@ git merge --no-ff feature/new-login
 ```
 
 **Branch Structure:**
-
 - `main` - Production-ready code
 - `develop` - Integration branch
 - `feature/*` - New features
@@ -76,7 +75,6 @@ Follow the Conventional Commits specification:
 ```
 
 **Types:**
-
 - `feat:` - New feature
 - `fix:` - Bug fix
 - `docs:` - Documentation

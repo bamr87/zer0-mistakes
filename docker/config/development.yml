@@ -1,0 +1,41 @@
+# ==============================================================================
+# Development Configuration Override
+# ==============================================================================
+# This file provides Docker-specific development settings.
+# Used in combination with _config.yml and _config_dev.yml.
+# 
+# Usage: bundle exec jekyll serve --config _config.yml,_config_dev.yml,docker/config/development.yml
+# ==============================================================================
+
+# Environment
+environment: development
+
+# Enable development features
+incremental: true
+profile: false
+
+# Development settings
+safe: false
+future: true
+unpublished: true
+
+# Verbose output for debugging
+verbose: false
+
+# Liquid settings for development (helpful error messages)
+liquid:
+  error_mode: warn
+  strict_filters: false
+
+# Sass development settings (uncompressed for debugging)
+sass:
+  style: expanded
+  line_comments: true
+
+# Live reload settings
+livereload: true
+
+# Watch additional files
+watch:
+  - _config.yml
+  - _config_dev.yml

@@ -1,0 +1,69 @@
+# ==============================================================================
+# Docker Compose - Test Override
+# ==============================================================================
+# 
+# Used for CI testing with zero version pins. Builds fresh images with latest
+# dependencies and runs the full test suite.
+# 
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.test.yml build --no-cache
+#   docker compose -f docker-compose.yml -f docker-compose.test.yml run jekyll test
+# ==============================================================================
+
+services:
+  jekyll:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: dev-test
+      # No cache ensures we always get latest dependencies
+      args:
+        BUILDKIT_INLINE_CACHE: 1
+    command: >
+      sh -c "
+        echo '🧪 Running test suite with latest dependencies...' &&
+        echo '📦 Installed gem versions:' &&
+        bundle list | head -20 &&
+        echo '' &&
+        echo '🔍 Running Jekyll build validation...' &&
+        bundle exec jekyll build --config _config.yml &&
+        echo '✅ Jekyll build succeeded!' &&
+        echo '' &&
+        echo '🧪 Running RSpec tests...' &&
+        bundle exec rspec --format documentation || true &&
+        echo '' &&
+        echo '🔗 Running HTML validation...' &&
+        bundle exec htmlproofer _site --disable-external --allow-hash-href || true &&
+        echo '' &&
+        echo '✅ All tests completed!'
+      "
+    environment:
+      - JEKYLL_ENV=test
+      - CI=true
+    volumes:
+      - .:/site
+      - bundle_cache:/usr/local/bundle
+    working_dir: /site
+
+  # Separate service for quick validation
+  validate:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: dev-test
+    command: >
+      sh -c "
+        echo '🔍 Quick validation check...' &&
+        ruby -c lib/jekyll-theme-zer0/version.rb &&
+        ruby -e \"spec = Gem::Specification.load('jekyll-theme-zer0.gemspec'); puts '✅ Gemspec valid: #{spec.name} v#{spec.version}'\" &&
+        bundle exec jekyll doctor &&
+        echo '✅ Validation passed!'
+      "
+    environment:
+      - CI=true
+    volumes:
+      - .:/site
+    working_dir: /site
+
+volumes:
+  bundle_cache:

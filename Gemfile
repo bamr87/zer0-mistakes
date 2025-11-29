@@ -1,28 +1,71 @@
+# ==============================================================================
+# Zer0-Mistakes Jekyll Theme - Gemfile
+# ==============================================================================
+# 
+# Philosophy: ZERO VERSION PINS
+# - Let Bundler resolve the latest compatible versions at build time
+# - Build fails immediately if incompatible → caught in CI, not production
+# - Production always gets exactly what passed TEST (via Gemfile.lock)
+# 
+# See: docs/systems/ZERO_PIN_STRATEGY.md for full documentation
+# ==============================================================================
+
 source "https://rubygems.org"
+
+# Load gem specification (contains runtime dependencies)
 gemspec
 
-# This is where you define which Jekyll version to use for your site.
-# This site is using the GitHub Pages gem, which is updated regularly.
-# We recommend you lock your Jekyll version to the one used by GitHub Pages.
+# ------------------------------------------------------------------------------
+# Core Dependencies - No version constraints → always latest compatible
+# ------------------------------------------------------------------------------
 
-# Here are the dependancies from github pages https://pages.github.com/versions/
-# For more detailed instructions, look here
+# GitHub Pages gem (includes jekyll and most plugins)
+# Note: When using GitHub Pages hosting, this provides:
+#   - jekyll-remote-theme
+#   - jekyll-feed
+#   - jekyll-sitemap
+#   - jekyll-seo-tag
+#   - jekyll-paginate
+gem "github-pages", group: :jekyll_plugins
 
-# Github Pages Gems:
-gem 'github-pages'
+# Web server for Ruby 3.0+ (required since WEBrick removed from stdlib)
+gem "webrick"
 
-# Note: The following plugins are already included in the github-pages gem
-# and should not be explicitly declared to avoid version conflicts:
-# - jekyll-remote-theme
-# - jekyll-feed
-# - jekyll-sitemap
-# - jekyll-seo-tag
-# - jekyll-paginate
+# FFI for native extensions
+gem "ffi"
 
-# Docker support (Modify the Dockerfile to include the installation of the ffi gem and its dependencies. Additionally, ensure that all gems are installed for the correct platform.)
-gem "ffi", "~> 1.17.0"
-gem 'webrick', '~> 1.7'
-gem 'commonmarker', '0.23.10'  # Added to avoid build errors with version 0.23.11
+# CommonMarker for Markdown processing
+gem "commonmarker"
 
-# Mermaid diagram support via native markdown code blocks
-gem 'jekyll-mermaid', '~> 1.0'
+# Mermaid diagram support
+gem "jekyll-mermaid"
+
+# ------------------------------------------------------------------------------
+# Development & Test - Only installed in dev/test environments
+# ------------------------------------------------------------------------------
+group :development, :test do
+  # HTML validation and link checking
+  gem "html-proofer"
+  
+  # Testing framework
+  gem "rspec"
+  
+  # Task automation
+  gem "rake"
+  
+  # Code linting (optional but recommended)
+  gem "rubocop"
+  gem "rubocop-rake"
+end
+
+# ------------------------------------------------------------------------------
+# Platform-specific dependencies
+# ------------------------------------------------------------------------------
+# Ensure native gems work across platforms
+platforms :mingw, :x64_mingw, :mswin, :jruby do
+  gem "tzinfo"
+  gem "tzinfo-data"
+end
+
+# Performance booster for watching directories on Windows
+gem "wdm", :platforms => [:mingw, :x64_mingw, :mswin]

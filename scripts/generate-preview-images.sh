@@ -79,13 +79,6 @@ else
     warn() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
     error() { echo -e "${RED}[ERROR]${NC} $1" >&2; exit 1; }
     debug() { [[ "${VERBOSE:-false}" == "true" ]] && echo -e "${PURPLE}[DEBUG]${NC} $1" >&2 || true; }
-    print_header() {
-        echo ""
-        echo -e "${CYAN}════════════════════════════════════════════════════════════════${NC}"
-        echo -e "  ${GREEN}$1${NC}"
-        echo -e "${CYAN}════════════════════════════════════════════════════════════════${NC}"
-        echo ""
-    }
 fi
 
 # =============================================================================
@@ -577,35 +570,27 @@ update_front_matter() {
     # Create backup
     cp "$file" "$file.bak"
     
-    # Always use sed for reliability (yq can fail on complex YAML)
     # Check if preview field exists
     if grep -q "^preview:" "$file"; then
-        # Update existing preview field using sed
-        if [[ "$(uname)" == "Darwin" ]]; then
-            # macOS sed requires empty string for -i
-            sed -i '' "s|^preview:.*|preview: $preview_path|" "$file"
+        # Update existing preview field
+        if [[ "$YAML_PARSER" == "yq" ]]; then
+            # Use yq for in-place update
+            yq -i ".preview = \"$preview_path\"" "$file"
         else
-            sed -i "s|^preview:.*|preview: $preview_path|" "$file"
+            # Use sed for simple replacement
+            sed -i.tmp "s|^preview:.*|preview: $preview_path|" "$file"
+            rm -f "$file.tmp"
         fi
     else
         # Add preview field after description or title
         if grep -q "^description:" "$file"; then
-            if [[ "$(uname)" == "Darwin" ]]; then
-                sed -i '' "/^description:/a\\
+            sed -i.tmp "/^description:/a\\
 preview: $preview_path" "$file"
-            else
-                sed -i "/^description:/a\\
-preview: $preview_path" "$file"
-            fi
         else
-            if [[ "$(uname)" == "Darwin" ]]; then
-                sed -i '' "/^title:/a\\
+            sed -i.tmp "/^title:/a\\
 preview: $preview_path" "$file"
-            else
-                sed -i "/^title:/a\\
-preview: $preview_path" "$file"
-            fi
         fi
+        rm -f "$file.tmp"
     fi
     
     # Remove backup on success
@@ -740,54 +725,6 @@ main() {
     echo "  List Only: $LIST_ONLY"
     echo ""
     
-    # Get configured collections from _config.yml
-    get_configured_collections() {
-        local collections=()
-        local in_preview_images=false
-        local in_collections=false
-        
-        while IFS= read -r line; do
-            if [[ "$line" =~ ^preview_images: ]]; then
-                in_preview_images=true
-                continue
-            fi
-            if [[ "$in_preview_images" == true && "$line" =~ ^[[:space:]]+collections: ]]; then
-                in_collections=true
-                continue
-            fi
-            if [[ "$in_collections" == true && "$line" =~ ^[[:space:]]+- ]]; then
-                local collection="${line#*- }"
-                collection="${collection%%#*}"
-                collection="${collection%"${collection##*[![:space:]]}"}"
-                collections+=("$collection")
-            elif [[ "$in_collections" == true && ! "$line" =~ ^[[:space:]]+-  && ! "$line" =~ ^[[:space:]]*$ ]]; then
-                break
-            fi
-            if [[ "$in_preview_images" == true && "$line" =~ ^[a-zA-Z_]+: && ! "$line" =~ ^[[:space:]] ]]; then
-                break
-            fi
-        done < "$CONFIG_FILE"
-        
-        if [[ ${#collections[@]} -eq 0 ]]; then
-            collections=("posts" "quickstart" "docs")
-        fi
-        
-        echo "${collections[@]}"
-    }
-    
-    # Process a collection by name
-    process_collection_by_name() {
-        local name="$1"
-        local path="$PROJECT_ROOT/pages/_${name}"
-        
-        if [[ -d "$path" ]]; then
-            step "Processing ${name} collection..."
-            process_collection "$path"
-        else
-            warn "Collection directory not found: $path"
-        fi
-    }
-    
     # Process files
     if [[ -n "$SPECIFIC_FILE" ]]; then
         # Process single file
@@ -797,27 +734,35 @@ main() {
         process_file "$PROJECT_ROOT/$SPECIFIC_FILE"
     elif [[ -n "$COLLECTION" ]]; then
         # Process specific collection
-        if [[ "$COLLECTION" == "all" ]]; then
-            step "Processing all configured collections..."
-            for col in $(get_configured_collections); do
-                process_collection_by_name "$col"
-            done
-        else
-            # Check if collection directory exists
-            local collection_path="$PROJECT_ROOT/pages/_${COLLECTION}"
-            if [[ -d "$collection_path" ]]; then
-                process_collection_by_name "$COLLECTION"
-            else
-                local available=$(get_configured_collections | tr ' ' ', ')
-                error "Unknown collection: $COLLECTION. Available: $available, all"
-            fi
-        fi
+        case "$COLLECTION" in
+            posts)
+                step "Processing posts collection..."
+                process_collection "$PROJECT_ROOT/pages/_posts"
+                ;;
+            quickstart)
+                step "Processing quickstart collection..."
+                process_collection "$PROJECT_ROOT/pages/_quickstart"
+                ;;
+            docs)
+                step "Processing docs collection..."
+                process_collection "$PROJECT_ROOT/pages/_docs"
+                ;;
+            all)
+                step "Processing all collections..."
+                process_collection "$PROJECT_ROOT/pages/_posts"
+                process_collection "$PROJECT_ROOT/pages/_quickstart"
+                process_collection "$PROJECT_ROOT/pages/_docs"
+                ;;
+            *)
+                error "Unknown collection: $COLLECTION. Use: posts, quickstart, docs, or all"
+                ;;
+        esac
     else
-        # Process all configured collections by default
-        step "Processing all configured collections..."
-        for col in $(get_configured_collections); do
-            process_collection_by_name "$col"
-        done
+        # Process all content by default
+        step "Processing all content collections..."
+        process_collection "$PROJECT_ROOT/pages/_posts"
+        process_collection "$PROJECT_ROOT/pages/_quickstart"
+        process_collection "$PROJECT_ROOT/pages/_docs"
     fi
     
     # Print summary

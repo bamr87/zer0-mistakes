@@ -25,7 +25,13 @@ on:
         default: false
         type: boolean
 
+# ==============================================================================
+# Note: This workflow uses explicit Ruby versions for testing compatibility.
+# For the zero-pin strategy (latest everything), see test-latest.yml
+# ==============================================================================
 env:
+  # These are used for backwards compatibility testing
+  # The test-latest.yml workflow uses actual latest versions
   RUBY_VERSION: '3.2'
   NODE_VERSION: '18'
 

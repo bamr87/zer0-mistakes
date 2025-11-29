@@ -1,0 +1,72 @@
+# ==============================================================================
+# Docker Ignore File
+# ==============================================================================
+# Exclude files that shouldn't be copied into Docker builds
+# ==============================================================================
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# GitHub
+.github
+
+# Documentation (not needed in container)
+docs/
+*.md
+!README.md
+
+# Development files
+.env*
+.editorconfig
+.vscode/
+.idea/
+
+# Test artifacts
+test/results/
+test/coverage/
+coverage/
+
+# Build artifacts
+_site/
+.jekyll-cache/
+.jekyll-metadata
+.sass-cache/
+pkg/
+*.gem
+
+# Logs
+logs/
+*.log
+
+# Node modules (if any)
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker files (prevent recursive copying)
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Ruby
+vendor/bundle/
+.bundle/
+
+# Lock files (we want fresh resolution)
+# Gemfile.lock  # Keep this - it's generated during build
+
+# Local development configs
+_config_local.yml

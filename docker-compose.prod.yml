@@ -1,0 +1,74 @@
+# ==============================================================================
+# Docker Compose - Production
+# ==============================================================================
+# 
+# Used for production deployments with immutable image tags.
+# NEVER use :latest in production - always use specific image tags that
+# have passed CI testing.
+# 
+# Usage:
+#   # Deploy with specific tested version
+#   IMAGE_TAG=20251128-1420-a1b2c3d docker compose -f docker-compose.prod.yml up -d
+# 
+#   # Or set in .env file
+#   echo "IMAGE_TAG=20251128-1420-a1b2c3d" > .env.prod
+#   docker compose --env-file .env.prod -f docker-compose.prod.yml up -d
+# ==============================================================================
+
+services:
+  jekyll:
+    # Use immutable image tag from CI - NEVER use :latest in production
+    # The tag format is: YYYYMMDD-HHMM-<short-commit-hash>
+    image: bamr87/zer0-mistakes:${IMAGE_TAG:-latest}
+    
+    # Restart policy for production stability
+    restart: unless-stopped
+    
+    ports:
+      - "${PORT:-4000}:4000"
+    
+    environment:
+      - JEKYLL_ENV=production
+    
+    # Health check for production monitoring
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    
+    # Resource limits for production
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# Optional: Reverse proxy for HTTPS (uncomment if needed)
+#  nginx:
+#    image: nginx:alpine
+#    restart: unless-stopped
+#    ports:
+#      - "80:80"
+#      - "443:443"
+#    volumes:
+#      - ./docker/config/nginx.conf:/etc/nginx/nginx.conf:ro
+#      - /etc/letsencrypt:/etc/letsencrypt:ro
+#    depends_on:
+#      - jekyll

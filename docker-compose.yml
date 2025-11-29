@@ -1,15 +1,62 @@
+# ==============================================================================
+# Docker Compose - Development
+# ==============================================================================
+# 
+# Zero Version Pin Strategy - Development Environment
+# 
+# Philosophy:
+#   - No version pins anywhere → always use latest compatible versions
+#   - Bundler + Docker Hub resolve latest compatible at build time
+#   - Production gets exactly what passed TEST (via immutable image tags)
+# 
+# Usage:
+#   docker compose up              # Start development server
+#   docker compose up --build      # Rebuild with latest dependencies
+#   docker compose exec jekyll bash  # Access container shell
+# 
+# For testing: docker compose -f docker-compose.yml -f docker-compose.test.yml up
+# For production: See docker-compose.prod.yml (use immutable tags only!)
+# ==============================================================================
+
 services:
-
   jekyll:
-    image: jekyll/jekyll:latest
-    platform: linux/amd64  # Ensures compatibility across different architectures
-    command: jekyll serve --watch --force_polling --config "_config.yml,_config_dev.yml" --host 0.0.0.0 --port 4000
-
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: dev-test
+    
+    # Platform specification for Apple Silicon compatibility
+    platform: linux/amd64
+    
+    command: >
+      bundle exec jekyll serve 
+        --watch 
+        --force_polling 
+        --config "_config.yml,_config_dev.yml" 
+        --host 0.0.0.0 
+        --port 4000
+        --livereload
+    
     volumes:
-      - ./:/app
+      - .:/site
+      # Named volume for bundle cache (faster rebuilds)
+      - bundle_cache:/usr/local/bundle
+    
     ports:
       - "4000:4000"
-    working_dir: /app
+      - "35729:35729"  # LiveReload port
+    
+    working_dir: /site
+    
     environment:
-      JEKYLL_ENV: development
+      - JEKYLL_ENV=development
+      - BUNDLE_PATH=/usr/local/bundle
+    
+    # Enable TTY for interactive commands
+    stdin_open: true
+    tty: true
+
+volumes:
+  bundle_cache:
+    driver: local
 

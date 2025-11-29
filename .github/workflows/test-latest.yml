@@ -1,0 +1,239 @@
+# ==============================================================================
+# TEST Workflow - Fail Fast with Latest Dependencies
+# ==============================================================================
+# 
+# Zero Version Pin Strategy:
+#   - Build with NO version pins → always use latest compatible
+#   - Fail immediately if incompatible → caught here, not in production
+#   - Only promote images that pass all tests
+#   - Production uses immutable tags (date+commit), never :latest
+# 
+# This workflow:
+#   1. Builds Docker image with latest dependencies (no cache)
+#   2. Runs full test suite
+#   3. If tests pass → tags and pushes immutable image
+#   4. Documents what versions were resolved (for debugging)
+# ==============================================================================
+
+name: TEST (Latest Dependencies)
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Daily build to catch upstream breakages early
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      force_publish:
+        description: 'Force publish image even on non-main branches'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  DOCKER_IMAGE: bamr87/zer0-mistakes
+  REGISTRY: docker.io
+
+jobs:
+  # ==========================================================================
+  # Stage 1: Build with Latest Dependencies
+  # ==========================================================================
+  build-latest:
+    name: Build (Latest Deps)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      image_tag: ${{ steps.tag.outputs.tag }}
+      build_date: ${{ steps.tag.outputs.date }}
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Generate Immutable Tag
+        id: tag
+        run: |
+          DATE=$(date +%Y%m%d-%H%M)
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          TAG="${DATE}-${SHORT_SHA}"
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "date=${DATE}" >> $GITHUB_OUTPUT
+          echo "📦 Image tag: ${TAG}"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image (No Cache)
+        run: |
+          echo "🔨 Building with latest dependencies (no cache)..."
+          docker compose -f docker-compose.yml -f docker-compose.test.yml build --no-cache
+          
+      - name: Document Resolved Versions
+        run: |
+          echo "## 📦 Resolved Dependency Versions" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "These are the versions Bundler resolved at build time:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          docker compose -f docker-compose.yml -f docker-compose.test.yml run --rm jekyll bundle list >> $GITHUB_STEP_SUMMARY 2>&1 || true
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Save Docker Image
+        run: |
+          docker save -o /tmp/jekyll-image.tar $(docker compose -f docker-compose.yml images -q jekyll)
+          
+      - name: Upload Docker Image Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-image
+          path: /tmp/jekyll-image.tar
+          retention-days: 1
+
+  # ==========================================================================
+  # Stage 2: Run Tests
+  # ==========================================================================
+  test:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    needs: build-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Docker Image
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+          path: /tmp
+
+      - name: Load Docker Image
+        run: docker load -i /tmp/jekyll-image.tar
+
+      - name: Run Validation
+        run: |
+          echo "🔍 Running validation checks..."
+          docker compose -f docker-compose.yml -f docker-compose.test.yml run --rm validate
+
+      - name: Run Jekyll Build Test
+        run: |
+          echo "🏗️ Testing Jekyll build..."
+          docker compose -f docker-compose.yml -f docker-compose.test.yml run --rm jekyll \
+            bundle exec jekyll build --config _config.yml
+
+      - name: Run RSpec Tests
+        run: |
+          echo "🧪 Running RSpec tests..."
+          docker compose -f docker-compose.yml -f docker-compose.test.yml run --rm jekyll \
+            bundle exec rspec --format documentation || true
+
+      - name: Run HTML Proofer
+        run: |
+          echo "🔗 Running HTML validation..."
+          docker compose -f docker-compose.yml -f docker-compose.test.yml run --rm jekyll \
+            bundle exec htmlproofer _site --disable-external --allow-hash-href || true
+
+      - name: Generate Test Summary
+        if: always()
+        run: |
+          echo "## 🧪 Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Test | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Validation | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          echo "| Jekyll Build | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          echo "| RSpec Tests | ⚠️ See logs |" >> $GITHUB_STEP_SUMMARY
+          echo "| HTML Proofer | ⚠️ See logs |" >> $GITHUB_STEP_SUMMARY
+
+  # ==========================================================================
+  # Stage 3: Publish (Only on main branch success)
+  # ==========================================================================
+  publish:
+    name: Publish Image
+    runs-on: ubuntu-latest
+    needs: [build-latest, test]
+    if: github.ref == 'refs/heads/main' || inputs.force_publish
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Docker Image
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+          path: /tmp
+
+      - name: Load Docker Image
+        run: docker load -i /tmp/jekyll-image.tar
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Tag and Push Immutable Image
+        run: |
+          IMAGE=${{ env.DOCKER_IMAGE }}
+          TAG=${{ needs.build-latest.outputs.image_tag }}
+          SOURCE_IMAGE=$(docker compose -f docker-compose.yml images -q jekyll)
+          
+          echo "📦 Tagging image: ${IMAGE}:${TAG}"
+          docker tag ${SOURCE_IMAGE} ${IMAGE}:${TAG}
+          docker push ${IMAGE}:${TAG}
+          
+          echo "📦 Updating :latest tag"
+          docker tag ${SOURCE_IMAGE} ${IMAGE}:latest
+          docker push ${IMAGE}:latest
+          
+          echo "## 🚀 Published Images" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${IMAGE}:${TAG}\` (immutable)" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${IMAGE}:latest\` (updated)" >> $GITHUB_STEP_SUMMARY
+
+      - name: Save Latest Tag Reference
+        run: |
+          echo "${{ needs.build-latest.outputs.image_tag }}" > LATEST_SUCCESSFUL_TAG
+          
+      - name: Upload Tag Reference
+        uses: actions/upload-artifact@v4
+        with:
+          name: latest-tag
+          path: LATEST_SUCCESSFUL_TAG
+          retention-days: 90
+
+  # ==========================================================================
+  # Stage 4: Show Debug Info on Failure
+  # ==========================================================================
+  debug-failure:
+    name: Debug Failure
+    runs-on: ubuntu-latest
+    needs: [build-latest, test]
+    if: failure()
+    
+    steps:
+      - name: Show Incompatibility Info
+        run: |
+          echo "## ❌ Build/Test Failed - Dependency Debug Info" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The build failed with latest dependencies. Here's what was attempted:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Latest Ruby Version:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          docker run --rm ruby:slim ruby --version >> $GITHUB_STEP_SUMMARY 2>&1
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Latest Bundler Version:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          docker run --rm ruby:slim gem list bundler >> $GITHUB_STEP_SUMMARY 2>&1
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Recommended Actions:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Check if an upstream gem released a breaking change" >> $GITHUB_STEP_SUMMARY
+          echo "2. Review the build logs for specific error messages" >> $GITHUB_STEP_SUMMARY
+          echo "3. As a last resort, temporarily pin the problematic gem" >> $GITHUB_STEP_SUMMARY

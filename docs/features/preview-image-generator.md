@@ -4,8 +4,7 @@ layout: default
 description: Automatically generate AI-powered preview images for Jekyll posts using OpenAI DALL-E, Stability AI, or local placeholders.
 permalink: /docs/features/preview-image-generator/
 feature_id: ZER0-003
-version: "0.8.1"
-lastmod: 2025-05-31
+version: "0.8.0"
 ---
 
 # AI Preview Image Generator
@@ -81,29 +80,29 @@ Add these options to your `_config.yml`:
 preview_images:
   # Enable/disable the feature
   enabled: true
-
+  
   # AI Provider: openai, stability, or local
   provider: openai
-
+  
   # OpenAI-specific settings
-  model: dall-e-3 # dall-e-2 or dall-e-3
-  quality: standard # standard or hd (dall-e-3 only)
-
+  model: dall-e-3                    # dall-e-2 or dall-e-3
+  quality: standard                  # standard or hd (dall-e-3 only)
+  
   # Image dimensions (landscape banner format)
   size: "1792x1024"
-
+  
   # Default style for generated images
   style: "retro pixel art, 8-bit video game aesthetic, vibrant colors, nostalgic, clean pixel graphics"
-
+  
   # Additional style modifiers appended to prompts
   style_modifiers: "pixelated, retro gaming style, CRT screen glow effect, limited color palette"
-
+  
   # Output directory for generated images (relative to site root)
   output_dir: assets/images/previews
-
+  
   # Auto-generate during Jekyll build (slow, not recommended)
   auto_generate: false
-
+  
   # Collections to scan for missing preview images
   collections:
     - posts
@@ -155,17 +154,17 @@ The main script provides a comprehensive CLI:
 
 ### CLI Options
 
-| Option                    | Description                            |
-| ------------------------- | -------------------------------------- |
-| `-h, --help`              | Show help message                      |
-| `-d, --dry-run`           | Preview without making changes         |
-| `-v, --verbose`           | Enable verbose output                  |
-| `-f, --file FILE`         | Process specific file only             |
-| `-c, --collection NAME`   | Process specific collection            |
+| Option | Description |
+|--------|-------------|
+| `-h, --help` | Show help message |
+| `-d, --dry-run` | Preview without making changes |
+| `-v, --verbose` | Enable verbose output |
+| `-f, --file FILE` | Process specific file only |
+| `-c, --collection NAME` | Process specific collection |
 | `-p, --provider PROVIDER` | AI provider (openai, stability, local) |
-| `--output-dir DIR`        | Custom output directory                |
-| `--force`                 | Regenerate existing images             |
-| `--list-missing`          | Only list files missing previews       |
+| `--output-dir DIR` | Custom output directory |
+| `--force` | Regenerate existing images |
+| `--list-missing` | Only list files missing previews |
 
 ### VS Code Integration
 
@@ -184,7 +183,6 @@ The installer adds VS Code tasks for easy access:
 The Jekyll plugin provides Liquid filters and tags:
 
 {% raw %}
-
 ```liquid
 {% comment %} Check if page has preview image {% endcomment %}
 {% if page | has_preview_image %}
@@ -197,7 +195,6 @@ The Jekyll plugin provides Liquid filters and tags:
 {% comment %} List all missing previews {% endcomment %}
 {% preview_images_missing %}
 ```
-
 {% endraw %}
 
 ### Rake Tasks
@@ -252,8 +249,8 @@ When the script generates an image, it automatically:
 preview_images:
   provider: openai
   model: dall-e-3
-  quality: standard # or hd
-  size: "1792x1024" # or 1024x1024, 1024x1792
+  quality: standard  # or hd
+  size: "1792x1024"  # or 1024x1024, 1024x1792
 ```
 
 ### Stability AI
@@ -293,28 +290,24 @@ style_modifiers: "pixelated, retro gaming style, CRT screen glow effect, limited
 ### Alternative Styles
 
 **Minimalist Tech:**
-
 ```yaml
 style: "minimalist, clean lines, tech aesthetic, gradient backgrounds, modern"
 style_modifiers: "simple shapes, professional, subtle shadows"
 ```
 
 **Watercolor:**
-
 ```yaml
 style: "watercolor painting, soft edges, artistic, flowing colors"
 style_modifiers: "hand-painted feel, paper texture, artistic brush strokes"
 ```
 
 **Cyberpunk:**
-
 ```yaml
 style: "cyberpunk, neon lights, futuristic city, dark atmosphere"
 style_modifiers: "glowing elements, rain reflections, high contrast"
 ```
 
 **Flat Design:**
-
 ```yaml
 style: "flat design, vector illustration, bold colors, simple shapes"
 style_modifiers: "material design inspired, clean, modern icons"
@@ -340,124 +333,31 @@ Style: retro pixel art, 8-bit video game aesthetic, vibrant colors, nostalgic, c
 Modifiers: pixelated, retro gaming style, CRT screen glow effect, limited color palette
 ```
 
-## Installing in Other Repositories
-
-The AI Preview Image Generator can be installed in any Jekyll site. Here's a complete walkthrough tested with the [it-journey](https://github.com/bamr87/it-journey) repository.
-
-### Step 1: Run the Installer
-
-```bash
-# From your Jekyll project root
-curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/scripts/install-preview-generator.sh | bash
-
-# Or if you have zer0-mistakes cloned locally:
-cd /path/to/zer0-mistakes
-./scripts/install-preview-generator.sh --target /path/to/your-jekyll-site
-
-# Use --force to overwrite existing files
-./scripts/install-preview-generator.sh --force
-```
-
-### Step 2: Configure Your API Key
-
-```bash
-# Create .env file in your project root
-echo "OPENAI_API_KEY=sk-your-actual-key-here" >> .env
-echo ".env" >> .gitignore
-```
-
-### Step 3: Configure Collections
-
-Add to your `_config.yml`:
-
-```yaml
-preview_images:
-  enabled: true
-  provider: openai
-  model: dall-e-3
-  size: "1792x1024"
-  quality: standard
-  style: "retro pixel art, 8-bit video game aesthetic, vibrant colors, nostalgic, clean pixel graphics"
-  output_dir: assets/images/previews
-  collections:
-    - posts # Standard Jekyll posts
-    - quests # Custom collection (adjust for your site)
-    - docs # Documentation pages
-```
-
-### Step 4: Generate Images
-
-```bash
-# List what needs images
-./scripts/generate-preview-images.sh --list-missing
-
-# Dry run to preview
-./scripts/generate-preview-images.sh --collection posts --dry-run
-
-# Generate for real
-./scripts/generate-preview-images.sh --collection posts
-```
-
-### What Gets Installed
-
-The installer copies these files to your project:
-
-| File                                  | Purpose                  |
-| ------------------------------------- | ------------------------ |
-| `scripts/generate-preview-images.sh`  | Main CLI script          |
-| `scripts/lib/preview_generator.py`    | Python alternative       |
-| `_plugins/preview_image_generator.rb` | Jekyll Liquid filters    |
-| `.env.example`                        | Template for API keys    |
-| `.vscode/tasks.json`                  | VS Code task integration |
-
-### Custom Collections
-
-The script dynamically reads collections from your `_config.yml`. To add a new collection:
-
-1. Add it to `preview_images.collections` in `_config.yml`
-2. Ensure the collection path exists (e.g., `pages/_quests/`)
-3. Run with `--collection your_collection_name`
-
 ## Troubleshooting
 
 ### Common Issues
 
 **"API key not set"**
-
 ```bash
 # Check if .env is loaded
 cat .env | grep OPENAI
 
 # Verify environment variable
 echo $OPENAI_API_KEY
-
-# Source .env manually if needed
-source .env
 ```
 
-**"Unknown collection"**
-
-- Ensure collection is listed in `preview_images.collections` in `_config.yml`
-- Check the collection directory exists
-- Run `--list-missing` to see recognized collections
-
 **"Rate limit exceeded"**
-
 - OpenAI has rate limits; wait a few minutes
 - Consider using `--dry-run` first to plan
-- Process one collection at a time
 
 **"Image generation failed"**
-
 - Check your API key is valid and has credits
 - Verify network connectivity
 - Check API status at status.openai.com
 
-**"Front matter not updated" or yq errors**
-
-- The script uses `sed` for front matter updates (more reliable than yq)
-- If you see "mapping values not allowed" or "unknown anchor" errors with yq, the sed fallback should handle it
+**"Front matter not updated"**
 - Ensure the script has write permission to post files
+- Check the preview path doesn't already exist
 
 ### Debug Mode
 
@@ -475,16 +375,7 @@ Run with verbose output for detailed diagnostics:
 
 ## Changelog
 
-### Version 0.8.1 (Latest)
-
-- **Fixed**: `print_header` function missing in fallback logging
-- **Fixed**: Dynamic collection reading from `_config.yml` (no more hardcoded lists)
-- **Fixed**: Front matter updates now use `sed` instead of `yq` for better compatibility with complex YAML (anchors, aliases)
-- **Added**: macOS/Linux compatibility for `sed -i` flag differences
-- **Added**: Comprehensive installation documentation with real-world testing
-
-### Version 0.8.0
-
+### Version 0.8.0 (Current)
 - Initial release as installable module
 - OpenAI DALL-E 3 support
 - Stability AI support
@@ -500,4 +391,4 @@ Part of the zer0-mistakes Jekyll theme. MIT License.
 
 ---
 
-_Built with ❤️ for the Jekyll community_
+*Built with ❤️ for the Jekyll community*
