@@ -32,8 +32,6 @@ hero_image: /assets/images/wizard-on-journey.png
 excerpt: "Professional Jekyll theme with automated installation, comprehensive error handling, and zero-configuration Docker development"
 ---
 
-<div align="center">
-
 [![pages-build-deployment](https://github.com/bamr87/zer0-mistakes/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/bamr87/zer0-mistakes/actions/workflows/pages/pages-build-deployment)
 [![Gem Version](https://badge.fury.io/rb/jekyll-theme-zer0.svg)](https://badge.fury.io/rb/jekyll-theme-zer0)
 [![CI](https://github.com/bamr87/zer0-mistakes/actions/workflows/ci.yml/badge.svg)](https://github.com/bamr87/zer0-mistakes/actions/workflows/ci.yml)
@@ -49,7 +47,6 @@ excerpt: "Professional Jekyll theme with automated installation, comprehensive e
 
 [Quick Start](#-quick-start) • [Features](#-key-features) • [Documentation](#-documentation) • [Contributing](CONTRIBUTING.md)
 
-</div>
 
 ---
 
