@@ -456,6 +456,7 @@ exclude:
   - MERMAID-*/
   - test/
   - tests/
+  - _site/lib/
 
 # Sass/SCSS
 sass:

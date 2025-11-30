@@ -1,12 +1,37 @@
 # Changelog
 
+## [0.10.6] - 2025-11-29
+
+### Changed
+
+- **Improved: Version Definition** (`lib/jekyll-theme-zer0/version.rb`)
+  - Added conditional version definition to prevent reinitialization warnings
+  - Uses `unless defined?` guard to safely handle multiple requires
+  - Improves compatibility with various Jekyll plugin loading scenarios
+
+- **Enhanced: Dependency Management** (`Gemfile`)
+  - Added `faraday-retry` gem for Faraday v2.0+ compatibility
+  - Resolves "To use retry middleware with Faraday v2.0+, install `faraday-retry` gem" warning
+  - Ensures robust HTTP client functionality for API integrations
+
+### Fixed
+
+- **Build Optimization** (`_config.yml`)
+  - Added `_site/lib/` to exclude list to prevent recursive gem building
+  - Reduces build size and prevents unnecessary file processing
+  - Improves build performance and artifact cleanliness
+
+- **Documentation: CHANGELOG Formatting**
+  - Removed raw Liquid syntax markers from CHANGELOG for better readability
+  - Cleaned up technical implementation details in previous entries
+
 ## [0.10.5] - 2025-11-29
 
 ### Fixed
 
 - **Critical: Nested Liquid Output Tags in Footer** (`_includes/core/footer.html`)
   - Fixed nested Liquid output tags causing template errors
-  - Used `{% raw %}{% capture %}{% endraw %}` blocks to properly combine icon classes
+  - Used capture blocks to properly combine icon classes
   - Resolved syntax errors in powered-by credits and social links sections
   - Ensures proper icon rendering in Bootstrap 5 components
 

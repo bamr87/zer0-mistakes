@@ -40,6 +40,9 @@ gem "commonmarker"
 # Mermaid diagram support
 gem "jekyll-mermaid"
 
+# Faraday retry middleware for Faraday v2.0+
+gem "faraday-retry"
+
 # ------------------------------------------------------------------------------
 # Development & Test - Only installed in dev/test environments
 # ------------------------------------------------------------------------------
