@@ -1,5 +1,89 @@
 # Changelog
 
+## [0.11.0] - 2025-11-30
+
+### Added
+
+- **New Feature: Jupyter Notebook Support** - Complete integration for data science and computational content
+  - **New Layout: `notebook.html`** (`_layouts/notebook.html`, 294 lines)
+    - Dedicated layout for converted notebooks with metadata display
+    - Author, date, kernel info, and reading time display
+    - Previous/next navigation between notebooks
+    - Related notebooks section
+    - Schema.org TechArticle markup for SEO
+    - Download original `.ipynb` link
+    - Giscus comments integration
+    
+  - **New Stylesheet: `notebooks.scss`** (`_sass/notebooks.scss`, 450+ lines)
+    - Code cell styling with execution counts
+    - Output area formatting (text, images, tables, errors)
+    - MathJax equation styling
+    - Responsive design with mobile breakpoints (@media max-width: 768px)
+    - Dark mode support
+    - Bootstrap 5 variable integration
+    
+  - **New Conversion Script: `convert-notebooks.sh`** (`scripts/convert-notebooks.sh`, 408 lines)
+    - Converts `.ipynb` files to Jekyll-compatible Markdown
+    - Extracts images to `/assets/images/notebooks/`
+    - Generates proper front matter with title, description, date, permalink
+    - JSON-based metadata parsing to avoid delimiter issues
+    - CLI options: `--force`, `--dry-run`, `--list`, `--clean`, `--verbose`
+    - Follows project script patterns with colored logging
+    
+  - **New GitHub Actions Workflow** (`.github/workflows/convert-notebooks.yml`, 220+ lines)
+    - Triggers on push/PR to `pages/_notebooks/**.ipynb`
+    - Dry-run mode for pull requests
+    - Automatic conversion and commit on main/develop branches
+    - Validation job checks markdown and image references
+    - Commits with `[skip ci]` to prevent loops
+    
+  - **New Documentation** (`docs/JUPYTER_NOTEBOOKS.md`)
+    - Complete feature documentation
+    - Usage examples and workflow
+    - Troubleshooting guide
+    - Architecture explanation
+    - File manifest
+    
+  - **New Test Suite** (`test-notebook-conversion.sh`, 150+ lines)
+    - 8-step automated validation
+    - Docker status, Python/nbconvert checks
+    - Conversion validation
+    - Front matter and image verification
+
+- **Makefile Targets** - Added notebook conversion commands
+  - `convert-notebooks` - Convert all notebooks
+  - `convert-notebooks-dry-run` - Preview conversions
+  - `convert-notebooks-force` - Force reconvert all
+  - `list-notebooks` - List available notebooks
+  - `clean-notebooks` - Remove converted markdown
+
+- **Sample Content** (`pages/_notebooks/test-notebook.ipynb`)
+  - Comprehensive demonstration notebook with 10 cells
+  - LaTeX equations, matplotlib plots, pandas DataFrames
+  - Fibonacci function example
+  - All outputs rendered (text, images, HTML tables)
+
+### Changed
+
+- **Enhanced: Docker Environment** (`docker/Dockerfile`)
+  - Added Python 3.13.5, pip, jupyter, nbconvert
+  - Used `--break-system-packages` flag for PEP 668 compatibility
+  - Multi-stage build preserves Python tooling
+
+- **Enhanced: Jekyll Configuration** (`_config.yml`)
+  - Added notebooks collection defaults
+  - Set `layout: notebook`, `jupyter_metadata: true`
+  - Configured sidebar navigation for notebooks
+
+- **Enhanced: Sass Import** (`_sass/custom.scss`)
+  - Added `@import "notebooks";` at top of file
+  - Ensures notebook styles load properly
+
+- **Documentation** (`README.md`)
+  - Added "Jupyter Notebook Support" feature section
+  - Installation and usage examples
+  - Feature highlights: automatic conversion, output rendering, GitHub Actions
+
 ## [0.10.6] - 2025-11-29
 
 ### Changed

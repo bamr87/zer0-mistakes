@@ -433,6 +433,23 @@ defaults:
       sidebar:
         nav: dynamic
 
+  # pages/_notebooks
+  - 
+    scope:
+      path: pages/_notebooks
+      type: notebooks
+    values:
+      layout: notebook
+      collection: notebooks
+      author_profile: true
+      read_time: true
+      comments: true
+      share: true
+      related: true
+      jupyter_metadata: true
+      sidebar:
+        nav: dynamic
+
 # Exclude from processing.
 # The following items will not be processed, by default.
 # Any item listed under the `exclude:` key here will be automatically added to

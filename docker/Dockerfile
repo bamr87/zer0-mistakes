@@ -28,8 +28,12 @@ RUN apt-get update -qq && \
         libvips \
         nodejs \
         npm \
-        curl && \
+        curl \
+        python3 \
+        python3-pip \
+        python3-venv && \
     npm install -g @mermaid-js/mermaid-cli && \
+    pip3 install --break-system-packages jupyter nbconvert && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 

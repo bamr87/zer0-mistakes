@@ -43,6 +43,31 @@ lint: ## Run linting and code quality checks
 	@if [ -f .rubocop.yml ]; then rubocop; else echo "No RuboCop config found"; fi
 	@gem specification jekyll-theme-zer0.gemspec > /dev/null && echo "$(GREEN)✓ Gemspec is valid$(RESET)"
 
+.PHONY: convert-notebooks
+convert-notebooks: ## Convert Jupyter notebooks to Jekyll-compatible Markdown
+	@echo "$(BLUE)Converting Jupyter notebooks...$(RESET)"
+	@./scripts/convert-notebooks.sh
+
+.PHONY: convert-notebooks-dry-run
+convert-notebooks-dry-run: ## Preview notebook conversion without making changes
+	@echo "$(BLUE)Previewing notebook conversion...$(RESET)"
+	@./scripts/convert-notebooks.sh --dry-run
+
+.PHONY: convert-notebooks-force
+convert-notebooks-force: ## Force reconversion of all notebooks
+	@echo "$(BLUE)Force converting all notebooks...$(RESET)"
+	@./scripts/convert-notebooks.sh --force
+
+.PHONY: list-notebooks
+list-notebooks: ## List all notebooks to be converted
+	@echo "$(BLUE)Listing notebooks...$(RESET)"
+	@./scripts/convert-notebooks.sh --list
+
+.PHONY: clean-notebooks
+clean-notebooks: ## Remove converted notebook markdown files
+	@echo "$(YELLOW)Cleaning converted notebooks...$(RESET)"
+	@./scripts/convert-notebooks.sh --clean
+
 ##@ Version Management
 
 .PHONY: version

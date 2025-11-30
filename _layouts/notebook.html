@@ -1,0 +1,296 @@
+---
+layout: default
+---
+<!--
+  ===================================================================
+  NOTEBOOK LAYOUT - Jupyter Notebook Display
+  ===================================================================
+  
+  File: notebook.html
+  Path: _layouts/notebook.html
+  Inherits: default.html (which inherits root.html)
+  Purpose: Display Jupyter notebooks with code cells, outputs, and metadata
+  
+  Template Logic:
+  - Displays notebook content with proper syntax highlighting
+  - Shows notebook metadata (kernel, execution count)
+  - Provides responsive code cells and output areas
+  - Integrates MathJax for mathematical notation
+  - Uses Schema.org TechArticle markup for SEO
+  
+  Features:
+  - Syntax highlighting via Rouge (Jekyll default)
+  - MathJax support for LaTeX equations (already configured in theme)
+  - Responsive code blocks and outputs
+  - Execution count display
+  - Kernel and notebook metadata
+  - Bootstrap 5 styling for consistent appearance
+  
+  Dependencies:
+  - MathJax 3 (loaded in _includes/core/head.html)
+  - Rouge syntax highlighter (Jekyll default)
+  - Bootstrap 5 components
+  ===================================================================
+-->
+
+<article id="main" class="notebook-article h-entry" role="main" itemscope itemtype="https://schema.org/TechArticle">
+  
+  <!-- ================================ -->
+  <!-- NOTEBOOK HEADER                  -->
+  <!-- ================================ -->
+  <header class="notebook-header mb-4">
+    <h1 id="page-title" class="notebook-title p-name" itemprop="headline">
+      {{ page.title }}
+    </h1>
+    
+    <!-- Notebook Metadata -->
+    <div class="notebook-meta text-muted mb-3">
+      <!-- Author -->
+      {% if page.author %}
+        <span class="notebook-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
+          <i class="bi bi-person me-1"></i>
+          <span itemprop="name">{{ page.author }}</span>
+        </span>
+        <span class="mx-2">•</span>
+      {% endif %}
+      
+      <!-- Publication Date -->
+      {% if page.date %}
+        <time class="notebook-date dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
+          <i class="bi bi-calendar me-1"></i>
+          {{ page.date | date: "%B %d, %Y" }}
+        </time>
+        <span class="mx-2">•</span>
+      {% endif %}
+      
+      <!-- Reading Time -->
+      {% assign words = content | number_of_words %}
+      {% assign minutes = words | divided_by: 200 %}
+      {% if minutes < 1 %}{% assign minutes = 1 %}{% endif %}
+      <span class="reading-time">
+        <i class="bi bi-clock me-1"></i>
+        {{ minutes }} min read
+      </span>
+      
+      <!-- Last Modified -->
+      {% if page.lastmod %}
+        <span class="mx-2">•</span>
+        <span class="notebook-updated" itemprop="dateModified" content="{{ page.lastmod | date_to_xmlschema }}">
+          <i class="bi bi-pencil me-1"></i>
+          Updated: {{ page.lastmod | date: "%B %d, %Y" }}
+        </span>
+      {% endif %}
+      
+      <!-- Kernel Info -->
+      {% if page.jupyter_metadata %}
+        <span class="mx-2">•</span>
+        <span class="notebook-kernel">
+          <i class="bi bi-terminal me-1"></i>
+          Jupyter Notebook
+        </span>
+      {% endif %}
+    </div>
+    
+    <!-- Tags -->
+    {% if page.tags and page.tags.size > 0 %}
+      <div class="notebook-tags mb-3">
+        {% for tag in page.tags %}
+          <a href="{{ site.baseurl }}/tags/{{ tag | slugify }}/" class="badge bg-secondary text-decoration-none me-1">
+            {{ tag }}
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+    
+    <!-- Categories -->
+    {% if page.categories and page.categories.size > 0 %}
+      <div class="notebook-categories mb-3">
+        <i class="bi bi-folder me-1"></i>
+        {% for category in page.categories %}
+          <a href="{{ site.baseurl }}/categories/{{ category | slugify }}/" class="text-decoration-none">
+            {{ category }}
+          </a>
+          {% unless forloop.last %}<span class="mx-1">/</span>{% endunless %}
+        {% endfor %}
+      </div>
+    {% endif %}
+    
+    <!-- Description -->
+    {% if page.description %}
+      <div class="notebook-description lead mb-4" itemprop="description">
+        {{ page.description }}
+      </div>
+    {% endif %}
+  </header>
+  
+  <!-- ================================ -->
+  <!-- NOTEBOOK CONTENT                 -->
+  <!-- ================================ -->
+  <div class="notebook-content e-content" itemprop="articleBody">
+    {{ content }}
+  </div>
+  
+  <!-- ================================ -->
+  <!-- NOTEBOOK FOOTER                  -->
+  <!-- ================================ -->
+  <footer class="notebook-footer mt-5 pt-4 border-top">
+    
+    <!-- Share Buttons -->
+    {% if page.share != false %}
+      <div class="share-buttons mb-4">
+        <h5 class="mb-3">Share this notebook</h5>
+        <div class="d-flex gap-2">
+          <a href="https://twitter.com/intent/tweet?text={{ page.title | uri_escape }}&url={{ page.url | absolute_url | uri_escape }}" 
+             class="btn btn-outline-primary btn-sm" target="_blank" rel="noopener noreferrer">
+            <i class="bi bi-twitter"></i> Twitter
+          </a>
+          <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ page.url | absolute_url | uri_escape }}" 
+             class="btn btn-outline-primary btn-sm" target="_blank" rel="noopener noreferrer">
+            <i class="bi bi-linkedin"></i> LinkedIn
+          </a>
+          <a href="mailto:?subject={{ page.title | uri_escape }}&body={{ page.url | absolute_url | uri_escape }}" 
+             class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-envelope"></i> Email
+          </a>
+        </div>
+      </div>
+    {% endif %}
+    
+    <!-- Download Original Notebook -->
+    <div class="download-notebook mb-4">
+      <a href="{{ site.baseurl }}/pages/_notebooks/{{ page.slug }}.ipynb" 
+         class="btn btn-outline-secondary btn-sm" download>
+        <i class="bi bi-download"></i> Download Original Notebook
+      </a>
+    </div>
+    
+    <!-- Related Notebooks -->
+    {% if site.notebooks.size > 1 %}
+      <div class="related-notebooks mt-5">
+        <h5 class="mb-3">Related Notebooks</h5>
+        <div class="row">
+          {% assign related_count = 0 %}
+          {% for notebook in site.notebooks %}
+            {% if notebook.url != page.url and related_count < 3 %}
+              {% assign has_common_tag = false %}
+              {% for tag in page.tags %}
+                {% if notebook.tags contains tag %}
+                  {% assign has_common_tag = true %}
+                {% endif %}
+              {% endfor %}
+              
+              {% if has_common_tag %}
+                {% assign related_count = related_count | plus: 1 %}
+                <div class="col-md-4 mb-3">
+                  <div class="card h-100">
+                    <div class="card-body">
+                      <h6 class="card-title">
+                        <a href="{{ notebook.url | relative_url }}" class="text-decoration-none">
+                          {{ notebook.title }}
+                        </a>
+                      </h6>
+                      {% if notebook.description %}
+                        <p class="card-text small text-muted">
+                          {{ notebook.description | truncate: 100 }}
+                        </p>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </footer>
+  
+  <!-- ================================ -->
+  <!-- COMMENTS SECTION                 -->
+  <!-- ================================ -->
+  {% if page.comments != false and site.giscus.enabled %}
+    <div class="notebook-comments mt-5 pt-4 border-top">
+      <h5 class="mb-4">Comments</h5>
+      {% include content/giscus.html %}
+    </div>
+  {% endif %}
+  
+</article>
+
+<!-- ================================ -->
+<!-- NAVIGATION                       -->
+<!-- ================================ -->
+<!-- Previous/Next Notebook Navigation -->
+{% assign notebooks = site.notebooks | sort: 'date' | reverse %}
+{% assign current_index = nil %}
+{% for notebook in notebooks %}
+  {% if notebook.url == page.url %}
+    {% assign current_index = forloop.index0 %}
+    {% break %}
+  {% endif %}
+{% endfor %}
+
+{% if current_index %}
+  {% assign last_index = notebooks.size | minus: 1 %}
+  <nav class="notebook-navigation mt-5" aria-label="Notebook navigation">
+    <ul class="pagination justify-content-between">
+      <li class="page-item {% if current_index == last_index %}disabled{% endif %}">
+        {% if current_index < last_index %}
+          {% assign next_index = current_index | plus: 1 %}
+          {% assign prev_notebook = notebooks[next_index] %}
+          <a class="page-link" href="{{ prev_notebook.url | relative_url }}" rel="prev">
+            <i class="bi bi-arrow-left me-2"></i>{{ prev_notebook.title | truncate: 50 }}
+          </a>
+        {% else %}
+          <span class="page-link disabled">
+            <i class="bi bi-arrow-left me-2"></i>No previous notebook
+          </span>
+        {% endif %}
+      </li>
+      
+      <li class="page-item {% if current_index == 0 %}disabled{% endif %}">
+        {% if current_index > 0 %}
+          {% assign prev_index = current_index | minus: 1 %}
+          {% assign next_notebook = notebooks[prev_index] %}
+          <a class="page-link" href="{{ next_notebook.url | relative_url }}" rel="next">
+            {{ next_notebook.title | truncate: 50 }}<i class="bi bi-arrow-right ms-2"></i>
+          </a>
+        {% else %}
+          <span class="page-link disabled">
+            No next notebook<i class="bi bi-arrow-right ms-2"></i>
+          </span>
+        {% endif %}
+      </li>
+    </ul>
+  </nav>
+{% endif %}
+
+<!-- Schema.org metadata -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": {{ page.title | jsonify }},
+  "description": {{ page.description | default: page.excerpt | jsonify }},
+  "author": {
+    "@type": "Person",
+    "name": {{ page.author | default: site.author.name | jsonify }}
+  },
+  "datePublished": {{ page.date | date_to_xmlschema | jsonify }},
+  {% if page.lastmod %}
+  "dateModified": {{ page.lastmod | date_to_xmlschema | jsonify }},
+  {% endif %}
+  "publisher": {
+    "@type": "Organization",
+    "name": {{ site.title | jsonify }},
+    "logo": {
+      "@type": "ImageObject",
+      "url": {{ site.logo | absolute_url | jsonify }}
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": {{ page.url | absolute_url | jsonify }}
+  }
+}
+</script>

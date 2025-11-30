@@ -1,3 +1,10 @@
+// ==============================================================================
+// CUSTOM STYLES - Zer0-Mistakes Theme Customizations
+// ==============================================================================
+
+// Import notebook-specific styles
+@import "notebooks";
+
 html, body {
     max-width: 100%;
     // overflow-x: hidden;

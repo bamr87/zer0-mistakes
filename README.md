@@ -2,7 +2,7 @@
 title: zer0-mistakes
 sub-title: Jekyll Theme
 description: Docker-optimized Jekyll theme with AI-powered installation automation and comprehensive error handling.
-version: 0.10.3
+version: 0.11.0
 layout: landing
 tags:
   - jekyll
@@ -310,6 +310,29 @@ stateDiagram-v2
 | Gantt | `gantt` | Timelines |
 | Pie | `pie` | Distributions |
 | Git | `gitGraph` | Branch history |
+
+### 📓 Jupyter Notebook Support
+
+Seamless integration for data science and computational content:
+
+- **Automatic Conversion**: `.ipynb` → Markdown with front matter
+- **Output Rendering**: Code execution results, plots, tables preserved
+- **Image Extraction**: Matplotlib/PNG outputs → `/assets/images/notebooks/`
+- **GitHub Actions**: Automated conversion on push to `pages/_notebooks/`
+- **MathJax Support**: LaTeX equations rendered with `$$` syntax
+- **Syntax Highlighting**: Code cells with Rouge highlighting
+- **Responsive Layout**: Mobile-friendly notebook viewer
+
+```bash
+# Convert notebooks
+./scripts/convert-notebooks.sh
+
+# Add to _config.yml
+collections:
+  notebooks:
+    output: true
+    permalink: /notebooks/:name/
+```
 
 ---
 
