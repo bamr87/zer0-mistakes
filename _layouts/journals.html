@@ -188,18 +188,8 @@ layout: default
             <div class="col">
               <div class="card h-100 border-0 shadow-sm">
                 <a href="{{ rpost.url | relative_url }}" class="text-decoration-none">
-                  {% if rpost.preview %}
-                    {% if rpost.preview contains '/assets' %}
-                      <img src="{{ site.baseurl }}{{ rpost.preview }}" 
-                           class="card-img-top" alt="{{ rpost.title }}" loading="lazy">
-                    {% else %}
-                      <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ rpost.preview }}" 
-                           class="card-img-top" alt="{{ rpost.title }}" loading="lazy">
-                    {% endif %}
-                  {% else %}
-                    <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ site.teaser }}" 
-                         class="card-img-top" alt="Preview" loading="lazy">
-                  {% endif %}
+                  {% assign rpost_img = rpost.preview | default: site.teaser %}
+                  {% include components/preview-image.html src=rpost_img alt=rpost.title class="card-img-top" %}
                 </a>
                 <div class="card-body">
                   <h6 class="card-title mb-1">

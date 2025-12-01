@@ -1,5 +1,61 @@
 # Changelog
 
+## [0.12.0] - 2025-11-30
+
+### Added
+
+- **New Component: `preview-image.html`** (`_includes/components/preview-image.html`)
+  - Centralized preview image rendering component
+  - Consistent handling of absolute paths and external URLs
+  - Supports custom classes, styles, and lazy loading
+  - Eliminates duplicated image rendering logic across layouts
+  
+- **New Script: `validate_preview_urls.py`** (`scripts/lib/validate_preview_urls.py`, 400+ lines)
+  - Python-based validation for preview image URLs in frontmatter
+  - Checks URL format (must start with `/`)
+  - Validates image extensions (`.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`, `.svg`)
+  - Verifies file existence on disk
+  - Detects empty, null, or malformed preview values
+  - JSON output support for CI integration
+  - Standalone CLI tool with `--verbose`, `--suggestions`, `--list-missing` options
+  
+- **New Test Category: Content Quality Tests** in Quality Assurance Suite
+  - Added `test_preview_image_urls()` function to `test/test_quality.sh`
+  - Validates all preview URLs in content frontmatter during test runs
+  - Integrated into main test runner with new "📄 Content" category
+  - Reports missing files and format errors with suggestions
+
+### Changed
+
+- **Refactored: Layout Image Handling** - Simplified preview image logic
+  - **`_layouts/blog.html`** - Replaced 5 separate image blocks with `preview-image.html` include
+  - **`_layouts/journals.html`** - Unified preview image rendering
+  - **`_layouts/category.html`** - Consistent image component usage
+  - **`_layouts/collection.html`** - Streamlined image rendering
+  - **`_includes/components/post-card.html`** - Uses centralized component
+  - **`_includes/content/intro.html`** - Simplified image handling
+  - **`index.html`** - Updated to use preview-image component
+  - **`posts.html`** - Consistent preview image rendering
+  - **`pages/blog.md`** - Updated image handling
+
+- **Enhanced: Quality Test Suite** (`test/test_quality.sh`)
+  - Added Content Quality Tests section with preview URL validation
+  - Updated help text and summary to include content category
+  - Extended JSON report generation with content test metrics
+
+- **Fixed: Preview URL Paths** - Corrected several preview paths in content
+  - `pages/_posts/2024-06-17-wizard-topples-capitalist-dominance-ingeniously.md`
+  - `pages/_posts/2025-01-01-getting-started-jekyll.md`
+  - `pages/_posts/2025-01-05-web-accessibility-guide.md`
+  - `pages/_posts/2025-01-10-bootstrap-5-components.md`
+  - `pages/_posts/2025-01-15-docker-jekyll-guide.md`
+
+### Documentation
+
+- Updated `_includes/README.md` with `preview-image.html` component documentation
+
+---
+
 ## [0.11.0] - 2025-11-30
 
 ### Added

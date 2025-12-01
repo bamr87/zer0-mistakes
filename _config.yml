@@ -58,7 +58,7 @@ url                      : &url https://zer0-mistakes.com
 public_folder            : assets # path to the public folder
 port                     : 4000 # Jekyll Serve Dev port
 dg_port                  : 4001 # TODO: Doppelganger site. Use this if you want to switch between parallel deployments
-og_image                 : '/images/wizard-on-journey.png'
+og_image                 : '/assets/images/wizard-on-journey.png'
 
 ### Owner Information -------------------------------------------------------------
 

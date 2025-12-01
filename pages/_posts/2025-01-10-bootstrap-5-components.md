@@ -11,7 +11,7 @@ tags:
   - responsive
 date: 2025-01-10T14:30:00.000Z
 layout: journals
-preview: /images/info-banner-mountain-wizard.png
+preview: /assets/images/info-banner-mountain-wizard.png
 author: "Zer0-Mistakes Team"
 featured: true
 estimated_reading_time: "10 minutes"

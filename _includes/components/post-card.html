@@ -78,17 +78,8 @@
       
       <!-- Preview Image -->
       <a href="{{ include.post.url | relative_url }}" class="text-decoration-none">
-        {% if include.post.preview %}
-          <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ include.post.preview }}" 
-               class="card-img-top" 
-               alt="Preview image for {{ include.post.title }}"
-               loading="lazy">
-        {% else %}
-          <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ site.teaser }}" 
-               class="card-img-top" 
-               alt="Default preview image"
-               loading="lazy">
-        {% endif %}
+        {% assign card_img = include.post.preview | default: site.teaser %}
+        {% include components/preview-image.html src=card_img alt=include.post.title class="card-img-top" %}
       </a>
     </div>
     

@@ -1,6 +1,6 @@
 ---
 title: "Docker for Jekyll Development: A Complete Guide"
-description: "Learn how to set up a Docker-based development environment for Jekyll projects with optimized configurations for cross-platform compatibility."
+description: Learn how to set up a Docker-based development environment for Jekyll projects with optimized configurations for cross-platform compatibility.
 categories:
   - Development
   - Tutorial
@@ -11,10 +11,12 @@ tags:
   - containerization
 date: 2025-01-15T10:00:00.000Z
 layout: journals
-preview: /images/favicon_gpt_computer_retro.png
-author: "Zer0-Mistakes Team"
+preview: /assets/images/favicon_gpt_computer_retro.png
+author: Zer0-Mistakes Team
 featured: true
-estimated_reading_time: "8 minutes"
+estimated_reading_time: 8 minutes
+draft: true
+lastmod: 2025-12-01T02:20:52.649Z
 ---
 
 Docker has revolutionized how developers work with Jekyll sites. This comprehensive guide will walk you through setting up an optimized Docker development environment for your Jekyll projects.

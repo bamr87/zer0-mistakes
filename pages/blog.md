@@ -56,16 +56,8 @@ lastmod: 2025-11-16T00:00:00.000Z
           <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2 z-1">Featured</span>
         {% endif %}
         <a href="{{ post.url | relative_url }}">
-          {% if post.preview %}
-            {% assign preview_path = post.preview | remove_first: '/' %}
-            {% if post.preview contains '/assets' %}
-              <img src="{{ post.preview | relative_url }}" class="card-img-top img-fluid" alt="Preview image for {{ post.title }}" loading="lazy" style="height: 180px; object-fit: cover;">
-            {% else %}
-              <img src="{{ '/' | append: site.public_folder | append: '/' | append: preview_path | relative_url }}" class="card-img-top img-fluid" alt="Preview image for {{ post.title }}" loading="lazy" style="height: 180px; object-fit: cover;">
-            {% endif %}
-          {% else %}
-            <img src="{{ '/' | append: site.public_folder | append: site.teaser | relative_url }}" class="card-img-top img-fluid" alt="Default preview image" loading="lazy" style="height: 180px; object-fit: cover;">
-          {% endif %}
+          {% assign blog_img = post.preview | default: site.teaser %}
+          {% include components/preview-image.html src=blog_img alt=post.title class="card-img-top img-fluid" style="height: 180px; object-fit: cover;" %}
         </a>
       </div>
       <div class="card-body">

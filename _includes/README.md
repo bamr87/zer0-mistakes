@@ -46,6 +46,8 @@ Reusable UI components and widgets:
 - `zer0-env-var.html` - Environment variable configuration
 - `svg.html` - SVG icon definitions
 - `js-cdn.html` - CDN JavaScript libraries
+- `preview-image.html` - Consistent preview image rendering with lazy loading
+- `post-card.html` - Reusable post card component for listings
 
 ### `content/`
 

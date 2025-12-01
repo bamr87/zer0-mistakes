@@ -81,19 +81,8 @@ keywords:
             
             <!-- Card Image -->
             <a href="{{ post.url | relative_url }}" class="text-decoration-none">
-              {% if post.preview %}
-                <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ post.preview }}" 
-                     class="card-img-top" 
-                     alt="Preview image for {{ post.title | escape }}"
-                     loading="lazy"
-                     style="height: 140px; object-fit: cover;">
-              {% else %}
-                <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ site.teaser }}" 
-                     class="card-img-top" 
-                     alt="Default preview image"
-                     loading="lazy"
-                     style="height: 140px; object-fit: cover;">
-              {% endif %}
+              {% assign post_img = post.preview | default: site.teaser %}
+              {% include components/preview-image.html src=post_img alt=post.title class="card-img-top" style="height: 140px; object-fit: cover;" %}
             </a>
             
             <!-- Card Body -->

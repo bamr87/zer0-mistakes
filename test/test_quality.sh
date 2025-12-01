@@ -77,6 +77,7 @@ EXAMPLES:
 QUALITY AREAS TESTED:
     🔒 Security       - Vulnerability scanning, dependency audit, secure configurations
     ♿ Accessibility  - WCAG compliance, screen reader compatibility, semantic HTML
+    📄 Content        - Preview image URLs, frontmatter validation
     🌐 Compatibility - Cross-platform, browser support, Jekyll versions
     ⚡ Performance   - Build times, asset optimization, runtime efficiency
 EOF
@@ -404,6 +405,74 @@ test_keyboard_navigation() {
 }
 
 #
+# CONTENT QUALITY TESTS
+#
+
+test_preview_image_urls() {
+    log_step "Validating preview image URLs in frontmatter"
+    
+    cd "$PROJECT_ROOT"
+    
+    local errors=0
+    local checked=0
+    local missing_files=0
+    local format_errors=0
+    
+    # Find all markdown files with preview frontmatter
+    while IFS= read -r file; do
+        checked=$((checked + 1))
+        
+        # Extract preview value from frontmatter
+        local preview
+        preview=$(sed -n '/^---$/,/^---$/p' "$file" | grep '^preview:' | sed 's/^preview:[[:space:]]*//' | tr -d '"' | tr -d "'")
+        
+        # Skip if empty or null
+        if [[ -z "$preview" ]] || [[ "$preview" == "null" ]] || [[ "$preview" == "~" ]]; then
+            continue
+        fi
+        
+        # Check URL format - should start with /
+        if [[ ! "$preview" =~ ^/ ]]; then
+            log_warning "Invalid preview URL format in $(basename "$file"): $preview (should start with /)"
+            format_errors=$((format_errors + 1))
+            errors=$((errors + 1))
+            continue
+        fi
+        
+        # Check for valid image extension
+        if [[ ! "$preview" =~ \.(png|jpg|jpeg|gif|webp|svg)$ ]]; then
+            log_warning "Invalid preview image extension in $(basename "$file"): $preview"
+            format_errors=$((format_errors + 1))
+            errors=$((errors + 1))
+            continue
+        fi
+        
+        # Check if file exists
+        local clean_path="${preview#/}"
+        if [[ ! -f "$clean_path" ]]; then
+            log_warning "Preview image not found for $(basename "$file"): $preview"
+            missing_files=$((missing_files + 1))
+            errors=$((errors + 1))
+        fi
+    done < <(find pages -name "*.md" 2>/dev/null)
+    
+    if [[ $checked -eq 0 ]]; then
+        log_warning "No markdown files found to check"
+        return 0
+    fi
+    
+    log_info "Checked $checked files for preview URL validity"
+    
+    if [[ $errors -eq 0 ]]; then
+        log_success "All preview image URLs are valid"
+        return 0
+    else
+        log_error "Found $errors preview URL errors ($missing_files missing files, $format_errors format errors)"
+        return 1
+    fi
+}
+
+#
 # COMPATIBILITY TESTS
 #
 
@@ -704,6 +773,10 @@ run_quality_tests() {
     run_test "Color Contrast" "test_color_contrast" "accessibility"
     run_test "Keyboard Navigation" "test_keyboard_navigation" "accessibility"
     
+    # Content Quality Tests
+    log_info "=== CONTENT QUALITY TESTS ==="
+    run_test "Preview Image URLs" "test_preview_image_urls" "content"
+    
     # Compatibility Tests
     log_info "=== COMPATIBILITY TESTS ==="
     run_test "Ruby Version Compatibility" "test_ruby_version_compatibility" "compatibility"
@@ -755,6 +828,12 @@ generate_test_report() {
               total_tests: ([.[] | select(.category == "accessibility")] | length),
               passed_tests: ([.[] | select(.category == "accessibility" and .result == "PASS")] | length),
               failed_tests: ([.[] | select(.category == "accessibility" and .result == "FAIL")] | length)
+            },
+            {
+              name: "Content Quality Tests",
+              total_tests: ([.[] | select(.category == "content")] | length),
+              passed_tests: ([.[] | select(.category == "content" and .result == "PASS")] | length),
+              failed_tests: ([.[] | select(.category == "content" and .result == "FAIL")] | length)
             },
             {
               name: "Compatibility Tests",
@@ -834,6 +913,7 @@ print_test_summary() {
     echo "Quality Areas Tested:"
     echo "  🔒 Security       - Vulnerability scanning, secure configurations"
     echo "  ♿ Accessibility  - WCAG compliance, semantic HTML"
+    echo "  📄 Content        - Preview image URLs, frontmatter validation"
     echo "  🌐 Compatibility - Cross-platform, version compatibility"
     echo "  ⚡ Performance   - Build times, asset optimization"
     echo ""

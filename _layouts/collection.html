@@ -83,18 +83,8 @@ layout: default
                 <!-- CARD IMAGE SECTION     -->
                 <!-- ====================== -->
                 <!-- Display preview image with fallback to site teaser -->
-                {% if post.preview %}
-                    {% if post.preview contains '/assets' %}
-                        <img src="{{ site.baseurl }}{{ post.preview }}" 
-                             class="card-img-top" alt="Preview image for {{ post.title }}">
-                    {% else %}
-                        <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ post.preview }}" 
-                             class="card-img-top" alt="Preview image for {{ post.title }}">
-                    {% endif %}
-                {% else %}
-                    <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ site.teaser }}" 
-                         class="card-img-top" alt="Default preview image">
-                {% endif %}
+                {% assign coll_img = post.preview | default: site.teaser %}
+                {% include components/preview-image.html src=coll_img alt=post.title class="card-img-top" %}
                 
                 <!-- ====================== -->
                 <!-- CARD CONTENT SECTION   -->

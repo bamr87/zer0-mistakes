@@ -1,6 +1,6 @@
 ---
-title: "Building Accessible Web Applications"
-description: "A comprehensive guide to web accessibility best practices, WCAG compliance, and creating inclusive digital experiences."
+title: Building Accessible Web Applications
+description: A comprehensive guide to web accessibility best practices, WCAG compliance, and creating inclusive digital experiences.
 categories:
   - Development
   - Technology
@@ -11,10 +11,12 @@ tags:
   - inclusive-design
 date: 2025-01-05T09:00:00.000Z
 layout: journals
-preview: /images/wizard-on-journey.png
-author: "Zer0-Mistakes Team"
+preview: /assets/images/wizard-on-journey.png
+author: Zer0-Mistakes Team
 featured: true
-estimated_reading_time: "12 minutes"
+estimated_reading_time: 12 minutes
+draft: true
+lastmod: 2025-12-01T02:20:51.166Z
 ---
 
 Web accessibility isn't just a legal requirement—it's about creating inclusive experiences for everyone. This guide covers essential accessibility practices for modern web development.

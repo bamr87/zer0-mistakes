@@ -1,6 +1,6 @@
 ---
 title: "Getting Started with Jekyll: Your First Static Site"
-description: "A beginner-friendly tutorial on creating your first Jekyll website from scratch with step-by-step instructions."
+description: A beginner-friendly tutorial on creating your first Jekyll website from scratch with step-by-step instructions.
 categories:
   - Tutorial
   - Development
@@ -11,10 +11,12 @@ tags:
   - getting-started
 date: 2025-01-01T08:00:00.000Z
 layout: journals
-preview: /images/favicon_gpt_computer_retro.png
-author: "Zer0-Mistakes Team"
+author: Zer0-Mistakes Team
 featured: false
-estimated_reading_time: "15 minutes"
+estimated_reading_time: 15 minutes
+draft: true
+lastmod: 2025-12-01T02:21:11.238Z
+preview: /assets/images/previews/business.png
 ---
 
 Welcome to Jekyll! This tutorial will guide you through creating your first static website using Jekyll, the popular static site generator.

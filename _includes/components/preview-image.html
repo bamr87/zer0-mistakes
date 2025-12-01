@@ -1,0 +1,32 @@
+{% comment %}
+  PREVIEW IMAGE - Simple, Consistent Image Rendering
+  
+  Usage:
+    {%- include components/preview-image.html 
+       src=post.preview 
+       alt=post.title 
+       class="card-img-top" 
+       style="height: 180px; object-fit: cover;" 
+    -%}
+  
+  Convention: All preview paths should be absolute (e.g., /assets/images/preview.png)
+  External URLs (https://...) are also supported.
+{% endcomment %}
+{% assign img = include.src | default: site.teaser %}
+{% assign alt = include.alt | default: "Preview image" %}
+{% assign class = include.class | default: "card-img-top" %}
+{% assign style = include.style %}
+{% assign loading = include.loading | default: "lazy" %}
+
+{% comment %} External URL or internal path {% endcomment %}
+{% if img contains '://' %}
+  {% assign final_src = img %}
+{% else %}
+  {% assign final_src = img | relative_url %}
+{% endif %}
+
+<img src="{{ final_src }}" 
+     class="{{ class }}" 
+     alt="{{ alt | escape }}"
+     {% if style %}style="{{ style }}"{% endif %}
+     loading="{{ loading }}">

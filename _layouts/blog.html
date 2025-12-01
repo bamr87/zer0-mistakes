@@ -105,15 +105,13 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
         </a>
       </div>
       <div class="col-lg-6">
-        {% if hero_post.preview %}
-          <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ hero_post.preview }}" 
-               class="w-100 h-100" style="object-fit: cover; min-height: 400px;" 
-               alt="{{ hero_post.title }}" loading="lazy">
-        {% else %}
-          <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ site.og_image }}" 
-               class="w-100 h-100" style="object-fit: cover; min-height: 400px;" 
-               alt="Featured image" loading="lazy">
-        {% endif %}
+        {% assign hero_img = hero_post.preview | default: site.og_image %}
+        {% include components/preview-image.html 
+           src=hero_img 
+           alt=hero_post.title 
+           class="w-100 h-100" 
+           style="object-fit: cover; min-height: 400px;" 
+        %}
       </div>
     </div>
   </section>
@@ -162,15 +160,8 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
               <i class="bi bi-star-fill me-1"></i>Featured
             </span>
             <a href="{{ main_featured.url | relative_url }}">
-              {% if main_featured.preview %}
-                <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ main_featured.preview }}" 
-                     class="card-img-top" style="height: 300px; object-fit: cover;" 
-                     alt="{{ main_featured.title }}" loading="lazy">
-              {% else %}
-                <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ site.teaser }}" 
-                     class="card-img-top" style="height: 300px; object-fit: cover;" 
-                     alt="Preview" loading="lazy">
-              {% endif %}
+              {% assign main_img = main_featured.preview | default: site.teaser %}
+              {% include components/preview-image.html src=main_img alt=main_featured.title class="card-img-top" style="height: 300px; object-fit: cover;" %}
             </a>
           </div>
           <div class="card-body">
@@ -206,15 +197,8 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
             <div class="col">
               <div class="card h-100 border-0 shadow-sm hover-lift">
                 <a href="{{ fpost.url | relative_url }}">
-                  {% if fpost.preview %}
-                    <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ fpost.preview }}" 
-                         class="card-img-top" style="height: 120px; object-fit: cover;" 
-                         alt="{{ fpost.title }}" loading="lazy">
-                  {% else %}
-                    <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ site.teaser }}" 
-                         class="card-img-top" style="height: 120px; object-fit: cover;" 
-                         alt="Preview" loading="lazy">
-                  {% endif %}
+                  {% assign fpost_img = fpost.preview | default: site.teaser %}
+                  {% include components/preview-image.html src=fpost_img alt=fpost.title class="card-img-top" style="height: 120px; object-fit: cover;" %}
                 </a>
                 <div class="card-body py-3">
                   <h6 class="card-title mb-1">
@@ -254,15 +238,8 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
           <div class="col-md-6 col-lg-3">
             <div class="card h-100 border-0 shadow-sm hover-lift">
               <a href="{{ cpost.url | relative_url }}">
-                {% if cpost.preview %}
-                  <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ cpost.preview }}" 
-                       class="card-img-top" style="height: 140px; object-fit: cover;" 
-                       alt="{{ cpost.title }}" loading="lazy">
-                {% else %}
-                  <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ site.teaser }}" 
-                       class="card-img-top" style="height: 140px; object-fit: cover;" 
-                       alt="Preview" loading="lazy">
-                {% endif %}
+                {% assign cpost_img = cpost.preview | default: site.teaser %}
+                {% include components/preview-image.html src=cpost_img alt=cpost.title class="card-img-top" style="height: 140px; object-fit: cover;" %}
               </a>
               <div class="card-body">
                 <h6 class="card-title">
@@ -305,15 +282,8 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
             <div class="row g-0">
               <div class="col-4">
                 <a href="{{ lpost.url | relative_url }}">
-                  {% if lpost.preview %}
-                    <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ lpost.preview }}" 
-                         class="rounded-start h-100 w-100" style="object-fit: cover; min-height: 120px;" 
-                         alt="{{ lpost.title }}" loading="lazy">
-                  {% else %}
-                    <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ site.teaser }}" 
-                         class="rounded-start h-100 w-100" style="object-fit: cover; min-height: 120px;" 
-                         alt="Preview" loading="lazy">
-                  {% endif %}
+                  {% assign lpost_img = lpost.preview | default: site.teaser %}
+                  {% include components/preview-image.html src=lpost_img alt=lpost.title class="rounded-start h-100 w-100" style="object-fit: cover; min-height: 120px;" %}
                 </a>
               </div>
               <div class="col-8">

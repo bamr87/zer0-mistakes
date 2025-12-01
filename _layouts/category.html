@@ -111,18 +111,8 @@ layout: default
               </span>
             {% endif %}
             <a href="{{ fpost.url | relative_url }}" class="text-decoration-none">
-              {% if fpost.preview %}
-                {% if fpost.preview contains '/assets' %}
-                  <img src="{{ site.baseurl }}{{ fpost.preview }}" 
-                       class="card-img-top" alt="{{ fpost.title }}" loading="lazy">
-                {% else %}
-                  <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ fpost.preview }}" 
-                       class="card-img-top" alt="{{ fpost.title }}" loading="lazy">
-                {% endif %}
-              {% else %}
-                <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ site.teaser }}" 
-                     class="card-img-top" alt="Preview" loading="lazy">
-              {% endif %}
+              {% assign fpost_img = fpost.preview | default: site.teaser %}
+              {% include components/preview-image.html src=fpost_img alt=fpost.title class="card-img-top" %}
             </a>
           </div>
           <div class="card-body">
@@ -171,18 +161,8 @@ layout: default
                 </span>
               {% endif %}
               <a href="{{ cpost.url | relative_url }}" class="text-decoration-none">
-                {% if cpost.preview %}
-                  {% if cpost.preview contains '/assets' %}
-                    <img src="{{ site.baseurl }}{{ cpost.preview }}" 
-                         class="card-img-top" alt="{{ cpost.title }}" loading="lazy">
-                  {% else %}
-                    <img src="{{ site.baseurl }}/{{ site.public_folder }}/{{ cpost.preview }}" 
-                         class="card-img-top" alt="{{ cpost.title }}" loading="lazy">
-                  {% endif %}
-                {% else %}
-                  <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ site.teaser }}" 
-                       class="card-img-top" alt="Preview" loading="lazy">
-                {% endif %}
+                {% assign cpost_img = cpost.preview | default: site.teaser %}
+                {% include components/preview-image.html src=cpost_img alt=cpost.title class="card-img-top" %}
               </a>
             </div>
             <div class="card-body d-flex flex-column">
