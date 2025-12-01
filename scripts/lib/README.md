@@ -143,20 +143,20 @@ create_github_release "1.2.0"
 
 ## Testing
 
-Each library has comprehensive unit tests in `test/`.
+Each library has comprehensive unit tests in `scripts/test/lib/`.
 
 ### Run All Tests
 
 ```bash
-./scripts/lib/test/run_tests.sh
+./scripts/test/lib/run_tests.sh
 ```
 
 ### Run Individual Tests
 
 ```bash
-./scripts/lib/test/test_version.sh
-./scripts/lib/test/test_changelog.sh
-./scripts/lib/test/test_git.sh
+./scripts/test/lib/test_version.sh
+./scripts/test/lib/test_changelog.sh
+./scripts/test/lib/test_git.sh
 ```
 
 ### Test Coverage

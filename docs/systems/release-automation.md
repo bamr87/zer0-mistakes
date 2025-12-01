@@ -204,12 +204,12 @@ Comprehensive test coverage with 63+ assertions:
 
 ```bash
 # Run all tests
-./scripts/lib/test/run_tests.sh
+./scripts/test/lib/run_tests.sh
 
 # Test specific library
-./scripts/lib/test/test_version.sh
-./scripts/lib/test/test_changelog.sh
-./scripts/lib/test/test_git.sh
+./scripts/test/lib/test_version.sh
+./scripts/test/lib/test_changelog.sh
+./scripts/test/lib/test_git.sh
 ```
 
 **Test Coverage:**
@@ -380,7 +380,7 @@ validate_version_format() {
     [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
 }
 
-# Add test to scripts/lib/test/test_version.sh
+# Add test to scripts/test/lib/test_version.sh
 test_validate_version_format() {
     assert_success validate_version_format "1.2.3"
     assert_failure validate_version_format "1.2"

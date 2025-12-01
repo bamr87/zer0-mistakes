@@ -17,27 +17,6 @@ source "$LIB_DIR/validation.sh"
 source "$LIB_DIR/version.sh"
 source "$LIB_DIR/gem.sh"
 
-# Parse arguments
-while [[ $# -gt 0 ]]; do
-    case $1 in
-        --dry-run)
-            export DRY_RUN=true
-            shift
-            ;;
-        --verbose)
-            export VERBOSE=true
-            shift
-            ;;
-        --help|-h)
-            show_usage
-            exit 0
-            ;;
-        *)
-            error "Unknown option: $1 (use --help for usage)"
-            ;;
-    esac
-done
-
 # Show usage
 show_usage() {
     cat << EOF
@@ -58,7 +37,7 @@ OPTIONS:
 EXAMPLES:
     ./scripts/bin/build                # Build gem with current version
     ./scripts/bin/build --dry-run      # Preview what would be built
-    ./scripts/build --verbose      # Build with debug output
+    ./scripts/bin/build --verbose      # Build with debug output
 
 ENVIRONMENT VARIABLES:
     DRY_RUN=true     Enable dry run mode
@@ -70,6 +49,27 @@ OUTPUT:
 For full release workflow, use: ./scripts/release
 EOF
 }
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --dry-run)
+            export DRY_RUN=true
+            shift
+            ;;
+        --verbose)
+            export VERBOSE=true
+            shift
+            ;;
+        --help|-h)
+            show_usage
+            exit 0
+            ;;
+        *)
+            error "Unknown option: $1 (use --help for usage)"
+            ;;
+    esac
+done
 
 # Main build workflow
 main() {

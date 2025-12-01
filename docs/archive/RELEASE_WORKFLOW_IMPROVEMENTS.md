@@ -282,7 +282,7 @@ SKIP_TESTS=true ./scripts/release patch
 ### Unit Tests for Libraries
 
 ```bash
-scripts/lib/test/
+scripts/test/lib/
 ├── test_version.sh
 ├── test_changelog.sh
 ├── test_validation.sh

@@ -2,164 +2,187 @@
 
 This directory contains automation scripts for managing the `jekyll-theme-zer0` gem lifecycle and feature modules.
 
+## Directory Structure
+
+```
+scripts/
+├── bin/                    # Entry point commands (use these!)
+│   ├── build              # Build gem without releasing
+│   ├── release            # Full release workflow
+│   └── test               # Run all test suites
+├── lib/                   # Shared libraries (sourced, not executed)
+│   ├── common.sh          # Logging, utilities, dry-run support
+│   ├── version.sh         # Version management functions
+│   ├── validation.sh      # Environment validation
+│   ├── git.sh             # Git operations
+│   ├── changelog.sh       # Changelog generation
+│   ├── gem.sh             # Gem build/publish
+│   └── preview_generator.py  # Python preview image generator
+├── features/              # Feature-specific scripts
+│   ├── generate-preview-images     # AI preview image generator
+│   ├── install-preview-generator   # Preview generator installer
+│   └── validate_preview_urls.py    # Preview URL validator
+├── utils/                 # Utility scripts
+│   ├── analyze-commits    # Commit analyzer for version bumps
+│   ├── fix-markdown       # Markdown formatting fixer
+│   └── setup              # Development environment setup
+├── test/                  # Test suites
+│   ├── lib/               # Library unit tests
+│   ├── theme/             # Theme validation tests
+│   └── integration/       # Integration tests
+└── *.sh (wrappers)        # Backward-compatible wrappers
+```
+
+## Quick Start
+
+```bash
+# Build gem
+./scripts/bin/build
+
+# Full release workflow
+./scripts/bin/release patch   # or minor/major
+
+# Run tests
+./scripts/bin/test
+```
+
 ## Scripts Overview
 
-### 🖼️ `generate-preview-images.sh` (Feature: ZER0-003)
-AI-powered preview image generator for Jekyll posts and content.
+### Main Commands (scripts/bin/)
 
-**Usage:**
+#### `bin/build`
+Build the gem without the full release workflow.
+
 ```bash
-./scripts/generate-preview-images.sh [options]
+./scripts/bin/build [--dry-run] [--verbose]
 ```
 
-**Examples:**
+#### `bin/release`
+Full release workflow with changelog, version bump, and publishing.
+
 ```bash
-./scripts/generate-preview-images.sh --list-missing    # List files missing previews
-./scripts/generate-preview-images.sh --dry-run         # Preview without changes
-./scripts/generate-preview-images.sh --collection posts # Generate for posts only
-./scripts/generate-preview-images.sh -f path/to/file.md # Process specific file
-./scripts/generate-preview-images.sh --provider openai  # Use OpenAI DALL-E
+./scripts/bin/release [patch|minor|major] [options]
+
+Options:
+  --dry-run           Preview without making changes
+  --skip-tests        Skip test execution
+  --skip-publish      Skip RubyGems publishing
+  --no-github-release Skip GitHub release creation
+  --non-interactive   No confirmation prompts
 ```
 
-**Configuration:**
-Settings in `_config.yml` under `preview_images` section:
-```yaml
-preview_images:
-  enabled: true
-  provider: openai
-  model: dall-e-3
-  size: "1792x1024"
-  style: "retro pixel art, 8-bit video game aesthetic"
-  output_dir: assets/images/previews
-```
+#### `bin/test`
+Unified test runner for all test suites.
 
-**See:** [Preview Image Generator Documentation](/docs/features/preview-image-generator.md)
-
-### 📦 `install-preview-generator.sh`
-Installer for the AI Preview Image Generator feature.
-
-**Usage:**
 ```bash
-# Remote installation (for other Jekyll sites)
-curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/scripts/install-preview-generator.sh | bash
-
-# Local installation with options
-./scripts/install-preview-generator.sh [options]
+./scripts/bin/test [all|lib|theme|integration] [--verbose]
 ```
 
-**Options:**
-- `-d, --dry-run` - Preview what would be installed
-- `-f, --force` - Overwrite existing files
-- `-p, --provider PROVIDER` - Set default AI provider
-- `--no-config` - Skip _config.yml modification
-- `--no-tasks` - Skip VS Code tasks installation
+### Feature Scripts (scripts/features/)
 
-### 🚀 `setup.sh`
-Sets up the development environment for gem development.
+#### `generate-preview-images`
+AI-powered preview image generator for Jekyll posts.
 
-**Usage:**
 ```bash
-./scripts/setup.sh
+./scripts/features/generate-preview-images [options]
+
+Options:
+  --list-missing      List files missing previews
+  --dry-run           Preview without changes
+  --collection TYPE   Generate for specific collection (posts, docs, etc.)
+  -f, --file PATH     Process specific file
+  --provider PROVIDER Use specific AI provider (openai)
 ```
 
-**What it does:**
-- Checks system requirements (Ruby, Bundler, jq, Git)
-- Installs dependencies
-- Makes scripts executable
-- Validates gemspec
-- Creates CHANGELOG.md if missing
-- Sets up Git hooks for validation
-- Updates .gitignore for gem development
+#### `install-preview-generator`
+Install the preview image generator feature.
 
-### 📈 `version.sh`
-Manages semantic versioning of the gem.
-
-**Usage:**
 ```bash
-./scripts/version.sh [patch|minor|major] [--dry-run]
+./scripts/features/install-preview-generator [options]
 ```
 
-**Examples:**
+#### `validate_preview_urls.py`
+Validate preview image URLs in frontmatter.
+
 ```bash
-./scripts/version.sh patch           # 0.1.8 → 0.1.9
-./scripts/version.sh minor           # 0.1.8 → 0.2.0
-./scripts/version.sh major           # 0.1.8 → 1.0.0
-./scripts/version.sh patch --dry-run # Preview changes without applying
+python3 scripts/features/validate_preview_urls.py [--verbose] [--suggestions]
 ```
 
-**What it does:**
-- Validates working directory is clean
-- Updates version in `package.json`
-- Updates `CHANGELOG.md` if it exists
-- Creates git commit with version bump
-- Creates git tag (`v{version}`)
+### Utility Scripts (scripts/utils/)
 
-### 🔨 `build.sh`
-Builds and optionally publishes the gem.
+#### `setup`
+Set up the development environment.
 
-**Usage:**
 ```bash
-./scripts/build.sh [--publish] [--dry-run]
+./scripts/utils/setup
 ```
 
-**Examples:**
+#### `analyze-commits`
+Analyze commits to determine version bump type.
+
 ```bash
-./scripts/build.sh                    # Build gem only
-./scripts/build.sh --publish          # Build and publish to RubyGems
-./scripts/build.sh --publish --dry-run # Preview publish process
+./scripts/utils/analyze-commits [range]
 ```
 
-**What it does:**
-- Validates dependencies and gemspec
-- Builds the gem file
-- Shows gem contents for verification
-- Optionally publishes to RubyGems (with confirmation)
+#### `fix-markdown`
+Fix markdown formatting issues.
 
-### 🧪 `test.sh`
-Runs comprehensive tests and validations.
-
-**Usage:**
 ```bash
-./scripts/test.sh [--verbose]
+./scripts/utils/fix-markdown [files...]
 ```
 
-**What it tests:**
-- `package.json` syntax and version format
-- Gemspec syntax and validity
-- Required files existence
-- YAML front matter in layouts
-- Jekyll dependencies
-- Version consistency
-- Script permissions
-- Bundle install capability
+### Libraries (scripts/lib/)
+
+These are sourced by other scripts, not executed directly:
+
+- `common.sh` - Logging utilities, colors, dry-run support
+- `version.sh` - Version parsing, calculation, file updates
+- `validation.sh` - Environment and dependency validation
+- `git.sh` - Git operations (tags, commits, branches)
+- `changelog.sh` - Changelog generation from commits
+- `gem.sh` - Gem build/publish operations
+- `preview_generator.py` - Python preview image generator
+
+### Test Suites (scripts/test/)
+
+```bash
+# Run all library unit tests
+./scripts/test/lib/run_tests.sh
+
+# Run theme validation
+./scripts/test/theme/validate
+
+# Run integration tests
+./scripts/test/integration/auto-version
+./scripts/test/integration/mermaid
+```
+
+## Backward Compatibility
+
+Legacy script paths (e.g., `./scripts/build.sh`) are maintained as thin wrappers
+that forward to the canonical locations in `bin/`, `utils/`, `features/`, or `test/`.
 
 ## Development Workflow
 
 ### Initial Setup
 ```bash
-# Clone the repository
 git clone https://github.com/bamr87/zer0-mistakes.git
 cd zer0-mistakes
-
-# Set up development environment
-./scripts/setup.sh
+./scripts/utils/setup
 ```
 
 ### Making Changes
 ```bash
-# Make your changes to the theme files
+# Make your changes
 
-# Run tests to validate changes
-./scripts/test.sh
+# Run tests
+./scripts/bin/test
 
-# If tests pass, bump version
-./scripts/version.sh patch
+# Build (without publish)
+./scripts/bin/build
 
-# Build the gem
-./scripts/build.sh
-
-# Publish to RubyGems (when ready)
-./scripts/build.sh --publish
+# Full release
+./scripts/bin/release patch
 ```
 
 ### Automated Workflows

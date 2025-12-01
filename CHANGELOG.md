@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.12.1] - 2025-11-30
+
+### Changed
+
+- **Refactored: Scripts Directory Structure** - Consolidated and organized automation scripts
+  - Entry point scripts (`build`, `release`) in `scripts/` are now thin wrappers to `scripts/bin/`
+  - Test scripts (`test.sh`, `test-auto-version.sh`, `test-mermaid.sh`) forward to `scripts/test/`
+  - Utility scripts (`setup.sh`, `analyze-commits.sh`, `fix-markdown-format.sh`) forward to `scripts/utils/`
+  - Feature scripts (`generate-preview-images.sh`, `install-preview-generator.sh`) forward to `scripts/features/`
+  - Maintains backward compatibility while establishing canonical locations
+
+- **Moved: `validate_preview_urls.py`** from `scripts/lib/` to `scripts/features/`
+  - Better organization as a feature-specific validator rather than core library
+
+- **Updated: Documentation** - Corrected all script path references
+  - `scripts/README.md` - New directory structure documentation
+  - `scripts/lib/README.md` - Updated test paths
+  - `docs/systems/release-automation.md` - Updated test paths
+  - `docs/TROUBLESHOOTING.md` - Updated test paths
+  - `docs/archive/PHASE_1_COMPLETE.md` - Updated historical references
+  - `docs/archive/RELEASE_WORKFLOW_IMPROVEMENTS.md` - Updated historical references
+
+### Removed
+
+- **Deleted: `scripts/lib/test/`** - Redundant test directory (tests are in `scripts/test/lib/`)
+- **Deleted: `scripts/features/preview_generator.py`** - Duplicate of `scripts/lib/preview_generator.py`
+- **Deleted: `scripts/version.sh`** - Deprecated (use `scripts/lib/version.sh` or `scripts/bin/release`)
+
+### Fixed
+
+- **Fixed: Function ordering in `scripts/bin/build`** - Moved `show_usage()` definition before it's called
+
 ## [0.12.0] - 2025-11-30
 
 ### Added

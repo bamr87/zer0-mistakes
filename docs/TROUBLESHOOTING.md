@@ -652,7 +652,7 @@ export DEBUG=true
 /opt/homebrew/bin/bash -x scripts/release patch --dry-run 2>&1 | less
 
 # Check specific library
-/opt/homebrew/bin/bash scripts/lib/test/run_tests.sh
+/opt/homebrew/bin/bash scripts/test/lib/run_tests.sh
 ```
 
 ### CI/CD Integration

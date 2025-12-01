@@ -29,7 +29,7 @@ scripts/lib/
 Created full test coverage with 6 test files:
 
 ```
-scripts/lib/test/
+scripts/test/lib/
 ├── run_tests.sh         - Test runner with reporting
 ├── test_version.sh      - Version calculation tests (20+ assertions)
 ├── test_changelog.sh    - Changelog generation tests (15+ assertions)
@@ -146,10 +146,10 @@ success "Version updated to $new"
 
 ```bash
 # Run all tests
-./scripts/lib/test/run_tests.sh
+./scripts/test/lib/run_tests.sh
 
 # Test specific library
-./scripts/lib/test/test_version.sh
+./scripts/test/lib/test_version.sh
 ```
 
 ### Environment Control
@@ -198,12 +198,12 @@ VERBOSE=true ./scripts/release
 
 ### Tests (7 files)
 
-1. `scripts/lib/test/run_tests.sh`
-2. `scripts/lib/test/test_version.sh`
-3. `scripts/lib/test/test_validation.sh`
-4. `scripts/lib/test/test_git.sh`
-5. `scripts/lib/test/test_changelog.sh`
-6. `scripts/lib/test/test_gem.sh`
+1. `scripts/test/lib/run_tests.sh`
+2. `scripts/test/lib/test_version.sh`
+3. `scripts/test/lib/test_validation.sh`
+4. `scripts/test/lib/test_git.sh`
+5. `scripts/test/lib/test_changelog.sh`
+6. `scripts/test/lib/test_gem.sh`
 
 ### Documentation (2 files)
 
@@ -258,7 +258,7 @@ To verify Phase 1 implementation:
 
 ```bash
 # 1. Run library tests
-./scripts/lib/test/run_tests.sh
+./scripts/test/lib/run_tests.sh
 
 # 2. Test dry-run mode
 DRY_RUN=true source scripts/lib/version.sh
@@ -273,7 +273,7 @@ warn "Warning message"
 
 # 4. Verify all files executable
 ls -la scripts/lib/*.sh
-ls -la scripts/lib/test/*.sh
+ls -la scripts/test/lib/*.sh
 ```
 
 ## Questions & Answers
