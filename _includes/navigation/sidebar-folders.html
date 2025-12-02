@@ -11,12 +11,13 @@
   - Gets the current page's collection
   - Sorts documents by path to maintain folder hierarchy
   - Displays folder names and document links
-  - Uses Bootstrap list-group for styling
+  - Uses Bootstrap list-group for styling with Bootstrap Icons
   
   Dependencies:
   - page.collection: Current collection name from page front matter
   - site.collections: Jekyll collections configuration
   - Bootstrap 5 list-group component
+  - Bootstrap Icons for folder/file indicators
   
   Usage:
   - Include in sidebar when page.sidebar.nav == "dynamic"
@@ -27,8 +28,8 @@
 {% assign root_folder = site.collections | where: "label", page.collection | first %}
 
 {% if root_folder %}
-  <h2 class="h5 mb-3">
-    <i class="bi bi-folder me-2"></i>
+  <h2 class="h5 mb-3 d-flex align-items-center">
+    <i class="bi bi-folder2-open me-2"></i>
     {{ root_folder.label | capitalize }}
   </h2>
   
@@ -42,8 +43,8 @@
       {% if current_path != prev_path %}
         {% for folder in current_path %}
           {% if forloop.index != 1 %}
-            <li class="folder list-group-item bg-body-tertiary fw-semibold">
-              <i class="bi bi-folder2 me-1"></i>
+            <li class="folder list-group-item bg-body-tertiary fw-semibold d-flex align-items-center">
+              <i class="bi bi-folder2 me-2"></i>
               {{ folder }}
             </li>
           {% endif %}
@@ -52,8 +53,8 @@
       {% endif %}
       
       <li class="file list-group-item list-group-item-action{% if page.url == doc.url %} active{% endif %}">
-        <a href="{{ doc.url | relative_url }}" class="text-decoration-none">
-          <i class="bi bi-file-text me-1"></i>
+        <a href="{{ doc.url | relative_url }}" class="text-decoration-none d-flex align-items-center">
+          <i class="bi bi-file-earmark-text me-2"></i>
           {{ doc.title }}
         </a>
       </li>

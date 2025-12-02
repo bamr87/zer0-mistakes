@@ -13,6 +13,7 @@
   - Offcanvas sidebars for mobile navigation
   - Brand logo and home navigation integration
   - Settings modal and navigation toggles
+  - Skip-to-content link for accessibility
   
   Dependencies:
   - branding.html: Site title and logo display
@@ -24,9 +25,22 @@
   - Mobile: Collapsed navigation with hamburger menu
   - Offcanvas panels for sidebar and navigation
   
+  Accessibility:
+  - Skip-to-content link for keyboard navigation
+  - ARIA labels for screen readers
+  - Focus management for offcanvas
+  
   TODO: Fix Nanobar progress bar positioning and animation
   ===================================================================
 -->
+
+<!-- ================================ -->
+<!-- SKIP TO CONTENT LINK            -->
+<!-- ================================ -->
+<!-- Accessibility: allows keyboard users to skip navigation -->
+<a href="#main-content" class="visually-hidden-focusable position-absolute top-0 start-0 z-3 m-3 btn btn-primary">
+  Skip to main content
+</a>
 
 <header id="navbar" class="container-fluid text-center fixed-top" role="navigation">
 

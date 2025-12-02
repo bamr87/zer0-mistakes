@@ -1,18 +1,29 @@
 <!-- sidebar-categories.html -->
-<div class="d-flex flex-column flex-shrink-0" style="width: 280px;">
-    <a href="/" class="d-flex align-items-center text-decoration-none">
+<div class="d-flex flex-column flex-shrink-0 w-100">
+    <a href="/" class="d-flex align-items-center text-decoration-none mb-3">
+        <i class="bi bi-folder2-open me-2 fs-4"></i>
         <span class="fs-4">Categories</span>
     </a>
-    <hr>
+    <hr class="my-2">
     {% for category in site.categories %}
-        <div class="">
-            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#{{category[0]}}-list" aria-expanded="false">
-                {{ category[0] }}
+        <div class="mb-1">
+            <button class="btn btn-toggle d-flex align-items-center w-100 rounded collapsed" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#{{category[0] | slugify}}-list" 
+                    aria-expanded="false"
+                    aria-controls="{{category[0] | slugify}}-list">
+                <i class="bi bi-folder me-2"></i>
+                <span>{{ category[0] }}</span>
             </button>
-            <div class="collapse" id="{{category[0]}}-list">
-                <ul class="btn-toggle-nav list-unstyled fw-normal small">
+            <div class="collapse" id="{{category[0] | slugify}}-list">
+                <ul class="btn-toggle-nav list-unstyled fw-normal small ps-4">
                     {% for post in category[1] %}
-                        <li class="link-light"><a href="{{ post.url }}" class=" rounded">{{ post.title }}</a></li>
+                        <li class="py-1">
+                            <a href="{{ post.url | relative_url }}" class="text-decoration-none rounded d-block py-1 px-2{% if page.url == post.url %} active{% endif %}">
+                                <i class="bi bi-file-earmark-text me-1"></i>
+                                {{ post.title }}
+                            </a>
+                        </li>
                     {% endfor %}
                 </ul>
             </div>

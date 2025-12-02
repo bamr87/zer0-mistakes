@@ -107,30 +107,60 @@ html, body {
 }
 
 
-@media (min-width: 992px) {
-    .sidebar {
-        position: -webkit-sticky;
-        position: sticky;
-        top: 5rem;
-        display: block !important;
-        height: calc(100vh - 6rem);
-        padding-left: .25rem;
-        margin-left: -.25rem;
-        overflow-y: auto
+// Sidebar classes consolidated in _sass/core/_docs.scss for consistency
+
+// ==============================================================================
+// SIDEBAR & TOC ENHANCEMENTS
+// ==============================================================================
+
+// Mobile TOC FAB transitions and positioning
+.bd-toc-toggle {
+    transition: all 0.3s ease;
+    
+    &:hover {
+        transform: scale(1.05);
+    }
+    
+    &:active {
+        transform: scale(0.95);
     }
 }
 
-@media (max-width: 991.98px) {
-    .sidebar .offcanvas-lg {
-        border-right-color:var(--bs-border-color);
-        box-shadow: 0 1rem 3rem rgba(var(--bs-body-color-rgb), 0.175)
+// Mobile FAB positioning (TOC button above back-to-top)
+.bd-toc-fab {
+    // On mobile, ensure proper spacing above back-to-top button
+    @media (max-width: 991.98px) {
+        bottom: 90px !important; // 20px (back-to-top) + 56px (button height) + 14px (spacing)
     }
 }
 
-.bd-sidebar {
-    grid-area: sidebar
+// Active TOC link highlighting
+.bd-toc nav a.active {
+    font-weight: 600;
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+    border-left-color: var(--bs-primary) !important;
 }
 
+// Smooth scroll behavior
+html {
+    scroll-behavior: smooth;
+}
+
+// Category active state
+.btn-toggle-nav a.active {
+    font-weight: 600;
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+    color: var(--bs-primary);
+}
+
+// Improve sidebar link hover states
+.bd-sidebar .list-group-item:hover,
+.bd-sidebar .list-group-item-action:hover {
+    background-color: rgba(var(--bs-primary-rgb), 0.05);
+    transition: background-color 0.2s ease;
+}
+
+// ==============================================================================
 // https://designkojo.com/add-ellipse-truncated-text-css-single-line-and-multi-line-options
 
 
@@ -141,7 +171,7 @@ html, body {
     position: fixed; /* Fixed/sticky position */
     bottom: 20px; /* Place the button at the bottom of the page */
     right: 20px; /* Place the button 30px from the right */
-    z-index: 99; /* Make sure it does not overlap */
+    z-index: 1020; /* Below TOC button (1030) but above other content */
     border: none; /* Remove borders */
     outline: none; /* Remove outline */
     background-color: $primary; /* Set a background color */

@@ -4,11 +4,17 @@
   includes: nav_list.html, content/toc.html
 -->
 
-<!-- TOC button in mobile view  -->
-<div class="d-flex justify-content-end position-fixed top-50 end-0 translate-middle-y me-3">
-
-  <button class="btn bg-opacity-2 bd-toc-toggle d-lg-none border z-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocContents" aria-controls="tocContents">
-    <i class="bi bi-list-ul"></i>
+<!-- TOC button in mobile view - Floating Action Button pattern -->
+<!-- Positioned above back-to-top button to prevent overlap -->
+<div class="d-lg-none position-fixed bd-toc-fab" style="bottom: 90px; right: 20px; z-index: 1030;">
+  <button class="btn btn-primary rounded-circle shadow-lg bd-toc-toggle" 
+          type="button" 
+          data-bs-toggle="offcanvas" 
+          data-bs-target="#tocContents" 
+          aria-controls="tocContents"
+          aria-label="Toggle Table of Contents"
+          style="width: 56px; height: 56px;">
+    <i class="bi bi-list-ul fs-5"></i>
   </button>
 </div>
 
@@ -20,11 +26,11 @@
   </div>
   <div class="offcanvas-body">
     <!-- Table of contents -->
-    <nav id="TableOfContents">
-      <!-- TOC tile -->
-      <div>
-        <strong>
-          <i class="fas fa-file-alt"></i>
+    <nav id="TableOfContents" role="navigation" aria-label="Table of Contents">
+      <!-- TOC title -->
+      <div class="mb-3">
+        <strong class="d-flex align-items-center">
+          <i class="bi bi-file-text me-2"></i>
           On this page
         </strong>
       </div>

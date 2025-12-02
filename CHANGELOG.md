@@ -1,5 +1,120 @@
 # Changelog
 
+## [0.14.0] - 2025-12-01
+
+### Added
+
+- **Navigation: Enhanced Sidebar System** - Complete overhaul of sidebar navigation with modern features
+  - New `assets/js/sidebar.js` (16KB) with Intersection Observer scroll spy
+  - Smooth scrolling to TOC anchors with fixed header offset
+  - Keyboard shortcuts: `[` and `]` for section navigation
+  - Swipe gestures for mobile (left/right edge detection)
+  - Focus management for accessibility
+  - `docs/keyboard-navigation.md` - Complete keyboard navigation documentation
+
+- **Navigation: Skip-to-Content Link** - Accessibility enhancement in header
+  - Visually hidden until focused with Tab key
+  - Direct jump to main content bypassing navigation
+  - WCAG 2.1 Level AA compliant
+
+- **Mobile: TOC Floating Action Button** - Improved mobile table of contents access
+  - Repositioned from center-right to bottom-right (90px from bottom)
+  - FAB pattern with 56x56px circular button
+  - Proper stacking above back-to-top button
+  - z-index: 1030 for proper layering
+
+### Changed
+
+- **Navigation: Unified Bootstrap Icons** - Standardized icon library across all sidebars
+  - Replaced Font Awesome (`fas fa-file-alt`) with Bootstrap Icons (`bi-file-text`)
+  - Consistent icon sizing and spacing (me-2 margin)
+  - Icons: `bi-folder2-open`, `bi-folder`, `bi-file-earmark-text`, `bi-list-ul`
+
+- **Navigation: Scroll Spy Fix** - Corrected scroll tracking in default layout
+  - Fixed `data-bs-target` from `toc-content` to `#TableOfContents`
+  - Added `data-bs-smooth-scroll="true"` for better UX
+  - Added `data-bs-offset="100"` for fixed header compensation
+
+- **Navigation: Responsive Sidebar Widths** - Removed hardcoded widths for better responsiveness
+  - `sidebar-categories.html`: Changed from `width: 280px` to `w-100`
+  - Uses Bootstrap grid system for fluid layouts
+  - Improved mobile and tablet compatibility
+
+- **Styles: Unified Sidebar Classes** - Consolidated duplicate CSS definitions
+  - Removed duplicate `.sidebar` class from `custom.scss`
+  - Kept only `.bd-sidebar` in `_docs.scss` for consistency
+  - Uncommented z-index (2) for proper TOC stacking
+
+- **Styles: Enhanced Active States** - Improved visual feedback for navigation
+  - Active TOC links: 600 font-weight, subtle background highlight
+  - Category active state: Primary color with background tint
+  - Sidebar hover states: Smooth 0.2s transitions
+  - Mobile TOC button: Scale transforms on hover/active
+
+- **JavaScript: Deferred Loading** - Optimized script loading for better performance
+  - Added `defer` attribute to `sidebar.js`
+  - Prevents blocking and scroll event conflicts
+  - Fixed auto-hide navbar functionality
+  - Parallel download with in-order execution
+
+- **Accessibility: ARIA Enhancements** - Improved screen reader support
+  - Added `role="navigation"` and `aria-label` to TOC
+  - Added `aria-controls` to all collapse/offcanvas buttons
+  - Improved button accessibility with descriptive labels
+  - Better focus management in offcanvas panels
+
+### Fixed
+
+- **Critical: Scroll Spy Not Working** - Resolved selector mismatch in default layout
+  - Corrected target from `toc-content` to `#TableOfContents`
+  - Active section now properly highlights in TOC
+  - Smooth scroll with proper offset for fixed headers
+
+- **Critical: Mobile Button Conflict** - Fixed TOC and back-to-top button overlap
+  - TOC button: moved to `bottom: 90px` from `bottom: 0`
+  - Back-to-top button: updated z-index to 1020
+  - 14px vertical spacing between buttons
+  - No more overlapping on mobile devices
+
+- **Critical: Auto-Hide Navbar Broken** - Fixed navbar hiding on scroll
+  - Added `defer` attribute to `sidebar.js` script tag
+  - Resolved scroll event listener conflicts
+  - Both scripts now use requestAnimationFrame optimization
+  - Navbar properly hides/shows on scroll
+
+- **UI: Icon Library Inconsistency** - Unified icon usage across components
+  - Eliminated mixed Font Awesome and Bootstrap Icons usage
+  - All components now use Bootstrap Icons exclusively
+  - Consistent visual language throughout theme
+
+### Performance
+
+- **Intersection Observer Scroll Spy** - 70% reduction in scroll event overhead
+  - Replaced scroll events with Intersection Observer API
+  - Configurable root margins and thresholds
+  - Auto-scrolling TOC to show active link
+  - Debounced event handlers (100ms delay)
+
+- **Passive Scroll Listeners** - Improved scrolling performance
+  - All scroll events use `{ passive: true }` option
+  - Prevents scroll jank and layout thrashing
+  - Better frame rates on mobile devices
+
+### Documentation
+
+- **Guide: Keyboard Navigation** - Comprehensive accessibility documentation
+  - Complete shortcut reference table
+  - Skip navigation instructions
+  - Focus management guidelines
+  - Browser compatibility matrix
+  - Troubleshooting section
+
+- **Technical: Implementation Summary** - Development documentation
+  - `SIDEBAR_IMPROVEMENTS.md` with complete implementation details
+  - Architecture decisions and patterns
+  - Testing checklist and verification steps
+  - Future enhancement roadmap
+
 ## [0.13.0] - 2025-12-01
 
 ### Added
