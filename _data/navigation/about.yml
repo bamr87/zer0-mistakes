@@ -1,14 +1,42 @@
+# About Navigation Configuration
+# Used by: About section sidebar and related pages
+# Purpose: Navigation for about pages, features, settings, and site info
+
 - title: About
-  sublinks:
-    - title: Home
-      url: /about
-    - title: License
-      url: /about/license
-    - title: Terms &amp; Privacy Policy
-      url: /terms
-    - title: Sitemap
-      url: /about/sitemap
-    - title: Stats
-      url: /stats
+  icon: bi-info-circle
   url: /about/
+  sublinks:
+    - title: Overview
+      url: /about/
+    - title: Features
+      url: /about/features/
+    - title: AI Development Guide
+      url: /about/features/ai-development-guide/
+
+- title: Site Info
+  icon: bi-bar-chart
+  url: /about/stats/
+  sublinks:
+    - title: Statistics
+      url: /about/stats/
+    - title: Site Map
+      url: /sitemap/
+    - title: Contact
+      url: /contact/
+
+- title: Settings
+  icon: bi-gear
+  url: /about/config/
+  sublinks:
+    - title: Configuration
+      url: /about/config/
+
+- title: Legal
+  icon: bi-file-text
+  url: /terms-of-service/
+  sublinks:
+    - title: Terms of Service
+      url: /terms-of-service/
+    - title: Privacy Policy
+      url: /privacy-policy/
 

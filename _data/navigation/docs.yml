@@ -1,27 +1,57 @@
-- title: Setup
+# Documentation Navigation Configuration
+# Used by: Docs sidebar and documentation pages
+# Purpose: Organize documentation by topic area
+
+- title: Jekyll
+  icon: bi-journal-code
+  url: /docs/jekyll/
   sublinks:
-    - title: Configuration
-      url: /docs/configuration
-    - title: Overriding Theme Defaults
-      url: /docs/overriding-theme-defaults
-- title: Programming
+    - title: Jekyll Guide
+      url: /docs/jekyll/
+    - title: Mermaid Diagrams
+      url: /docs/jekyll/mermaid-native-markdown/
+    - title: Math with MathJax
+      url: /docs/jekyll/jekyll-math-symbols-with-mathjax/
+    - title: Liquid Templating
+      url: /docs/jekyll/jekyll-liquid/
+    - title: Frontmatter CMS
+      url: /docs/jekyll/jekyll-frontmatter-cms/
+    - title: Syntax Highlighting
+      url: /docs/jekyll/jekyll-highlighting/
+
+- title: Features
+  icon: bi-stars
+  url: /about/features/
   sublinks:
-    - title: Liquid
-      url: /
-      source: null
-- title: Headless CMS
+    - title: All Features
+      url: /about/features/
+    - title: Preview Image Generator
+      url: /docs/features/preview-image-generator/
+    - title: Statistics Dashboard
+      url: /about/features/statistics-dashboard/
+    - title: AI Development Guide
+      url: /about/features/ai-development-guide/
+
+- title: Deployment
+  icon: bi-cloud-upload
+  url: /quickstart/github-setup/
   sublinks:
-    - title: Working with Posts
-      url: /docs/posts
-    - title: Working with Collections
-      url: /docs/collections
-    - title: Helpers
-      url: /docs/helpers
-    - title: Utility Classes
-      url: /docs/utility-classes
-- title: Design
+    - title: GitHub Pages
+      url: /quickstart/github-setup/
+    - title: Netlify
+      url: /docs/jekyll/deploying-jekyll-website-to-netlify/
+    - title: Custom Domain
+      url: /docs/jekyll/deploying-personal-website-with-custom-domain/
+
+- title: Configuration
+  icon: bi-gear
+  url: /about/config/
   sublinks:
-    - title: Stylesheets
-      url: /docs/stylesheets
-    - title: JavaScript
-      url: /docs/javascript
+    - title: Site Config
+      url: /about/config/
+    - title: Jekyll Config
+      url: /docs/jekyll/jekyll-config/
+    - title: Performance
+      url: /docs/jekyll/jekyll-performance-optimization/
+    - title: Security
+      url: /docs/jekyll/jekyll-security/

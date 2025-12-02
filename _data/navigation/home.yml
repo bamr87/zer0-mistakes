@@ -1,15 +1,33 @@
+# Home Navigation Configuration
+# Used by: Header navigation and homepage quick links
+# Purpose: Quick access links for the home/landing area
+
 - title: Home
   icon: bi-house
-  url: /home
+  url: /
   sublinks:
-    - title: Style
-      url: /home/style/
-- title: Map
-  icon: bi-map
+    - title: Blog
+      url: /blog/
+    - title: Quick Start
+      url: /quickstart/
+
+- title: Discover
+  icon: bi-compass
   url: /sitemap/
   sublinks:
-    - title: Search
-      url: /search/
-    - title: Roadmap
-      url: /roadmap/
+    - title: Site Map
+      url: /sitemap/
+    - title: Categories
+      url: /categories/
+    - title: Tags
+      url: /tags/
+
+- title: Connect
+  icon: bi-envelope
+  url: /contact/
+  sublinks:
+    - title: Contact
+      url: /contact/
+    - title: About
+      url: /about/
 

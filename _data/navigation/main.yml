@@ -1,30 +1,49 @@
+# Main Navigation Configuration
+# Used by: _includes/navigation/navbar.html
+# Purpose: Primary site navigation with dropdown sublinks
+
 - title: Quick Start
+  icon: bi-rocket-takeoff
   url: /quickstart/
   sublinks:
-    - title: zer0
-      url: /zer0/
     - title: Machine Setup
       url: /quickstart/machine-setup/
-    - title: "Jekyll Setup"
+    - title: Jekyll Setup
       url: /quickstart/jekyll-setup/
-    - title: "GitHub Setup"
+    - title: GitHub Setup
       url: /quickstart/github-setup/
+
 - title: Blog
+  icon: bi-journal-text
   url: /blog/
   sublinks:
     - title: All Posts
       url: /posts/
+    - title: Categories
+      url: /categories/
+    - title: Tags
+      url: /tags/
+
 - title: Docs
+  icon: bi-journal-bookmark
   url: /docs/
   sublinks:
-    - title: Jekyll
+    - title: Jekyll Guide
       url: /docs/jekyll/
+    - title: Features
+      url: /about/features/
+
 - title: About
+  icon: bi-info-circle
   url: /about/
   sublinks:
+    - title: Features
+      url: /about/features/
+    - title: Statistics
+      url: /about/stats/
     - title: Config
       url: /about/config/
-    - title: Theme
-      url: /about/theme/
     - title: Site Map
       url: /sitemap/
+    - title: Contact
+      url: /contact/

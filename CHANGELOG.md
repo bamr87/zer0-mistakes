@@ -1,5 +1,52 @@
 # Changelog
 
+## [0.13.0] - 2025-12-01
+
+### Added
+
+- **Navigation: Bootstrap Icons** - Added icons to all main navigation items
+  - Quick Start: `bi-rocket-takeoff`
+  - Blog: `bi-journal-text`
+  - Docs: `bi-journal-bookmark`
+  - About: `bi-info-circle`
+
+- **Navigation: New Links** - Enhanced navigation structure with additional pages
+  - Categories page (`/categories/`)
+  - Tags page (`/tags/`)
+  - Contact page (`/contact/`)
+  - Features page (`/about/features/`)
+  - Statistics page (`/about/stats/`)
+
+- **Frontmatter CMS: Navigation Data Type** - Enhanced data schema for navigation management
+  - Added optional `description` field for parent and child links
+  - Added optional `icon` field for sublinks
+  - Registered all 6 navigation files (main, quickstart, about, docs, posts, home)
+  - Improved schema validation with proper required fields
+
+### Changed
+
+- **Navigation: Restructured All Files** - Aligned navigation with actual site content
+  - `main.yml` - Updated Quick Start, Blog, Docs, and About sections
+  - `quickstart.yml` - Added icons to setup steps
+  - `docs.yml` - Reorganized into Jekyll, Features, Deployment, Configuration sections
+  - `about.yml` - Structured into About, Site Info, Settings, Legal sections
+  - `posts.yml` - Fixed icon prefixes (added `bi-`), added descriptions
+  - `home.yml` - Added Discover and Connect navigation groups
+
+- **Frontmatter: Website Configuration** - Updated preview and website hosts
+  - Changed preview host from `localhost:4002` to `localhost:4000`
+  - Changed website host from `it-journey.dev` to `zer0-mistakes.com`
+
+### Removed
+
+- **Navigation: Dead Link** - Removed orphaned `/zer0/` link from Quick Start menu
+- **Navigation: Unused Entry** - Removed Theme page link (replaced with Features)
+
+### Fixed
+
+- **Navigation: Icon Consistency** - Standardized Bootstrap icon class format across all files
+- **Navigation: URL Completeness** - Ensured all top-level navigation items have required URL field
+
 ## [0.12.1] - 2025-11-30
 
 ### Changed

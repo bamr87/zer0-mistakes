@@ -1,18 +1,34 @@
+# Posts/Blog Category Navigation Configuration
+# Used by: Blog layout, category pages, and post navigation
+# Purpose: Category-based navigation for blog posts
+# Note: Categories match folders in pages/_posts/
+
 - title: Development
-  icon: code-slash
+  icon: bi-code-slash
   url: /posts/development/
+  description: "Software development, coding practices, and programming tutorials"
+
 - title: Technology
-  icon: cpu
+  icon: bi-cpu
   url: /posts/technology/
+  description: "Tech news, tools, and emerging technologies"
+
 - title: Tutorial
-  icon: journal-code
+  icon: bi-journal-code
   url: /posts/tutorial/
+  description: "Step-by-step guides and how-to articles"
+
 - title: World
-  icon: globe
+  icon: bi-globe
   url: /posts/world/
+  description: "Global trends, remote work, and industry insights"
+
 - title: Business
-  icon: briefcase
+  icon: bi-briefcase
   url: /posts/business/
+  description: "Business strategies, startups, and entrepreneurship"
+
 - title: Science
-  icon: mortarboard
+  icon: bi-mortarboard
   url: /posts/science/
+  description: "Scientific discoveries, research, and innovation"
