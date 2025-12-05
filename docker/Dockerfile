@@ -48,10 +48,11 @@ COPY Gemfile Gemfile.lock* ./
 COPY jekyll-theme-zer0.gemspec ./
 COPY lib/ ./lib/
 
-# Install dependencies - Bundler resolves latest compatible versions
-# Jobs and retry for reliability
+# Update lockfile to match Bundler version, then install
+# This allows using latest Bundler while preserving dependency versions
 RUN bundle config set --local deployment false && \
     bundle config set --local without '' && \
+    bundle update --bundler && \
     bundle install --jobs 4 --retry 3
 
 # ------------------------------------------------------------------------------

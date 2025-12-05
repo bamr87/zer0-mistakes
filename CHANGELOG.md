@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.14.1] - 2025-12-04
+
+### Fixed
+
+- **Docker: Bundler Version Compatibility** - Resolved CI/CD build failure
+  - Added `bundle update --bundler` step in Dockerfile to auto-update lockfile
+  - Allows using latest Bundler (4.0.0) while maintaining dependency stability
+  - Preserves all gem versions from `Gemfile.lock`
+  - Aligns with project's "zero version pin" philosophy
+  - Fixes GitHub Actions "Build (Latest Deps)" workflow failure
+
 ## [0.14.0] - 2025-12-01
 
 ### Added
