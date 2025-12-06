@@ -39,8 +39,9 @@ RUN apt-get update -qq && \
 
 WORKDIR /site
 
-# Install latest Bundler - no version pin
-RUN gem install bundler
+# Install Bundler matching Gemfile.lock version (2.3.25)
+# This matches the "BUNDLED WITH" version in Gemfile.lock
+RUN gem install bundler -v '~> 2.3'
 
 # Copy dependency files first for better caching
 # Note: gemspec is required because Gemfile references it via `gemspec` directive
@@ -48,8 +49,7 @@ COPY Gemfile Gemfile.lock* ./
 COPY jekyll-theme-zer0.gemspec ./
 COPY lib/ ./lib/
 
-# Install dependencies with latest Bundler
-# Bundler 4.0 can read lockfiles created by 2.x
+# Install dependencies with compatible Bundler version
 RUN bundle config set --local deployment false && \
     bundle config set --local without '' && \
     bundle install --jobs 4 --retry 3
