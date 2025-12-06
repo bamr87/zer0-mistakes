@@ -1,0 +1,154 @@
+# ==============================================================================
+# Automated Dependency Updates - Zero Pin Strategy
+# ==============================================================================
+# 
+# Purpose: Systematically update Gemfile.lock to latest compatible versions
+# 
+# How it works:
+#   1. Runs weekly (configurable schedule)
+#   2. Updates all gems to latest compatible versions
+#   3. Creates a PR with changes
+#   4. Existing CI validates the update
+#   5. If tests pass → merge; if fail → investigate
+# 
+# Benefits:
+#   - Proactive dependency management
+#   - Automated security updates
+#   - Catch breaking changes early
+#   - Clear audit trail via PRs
+# ==============================================================================
+
+name: Update Dependencies
+
+on:
+  schedule:
+    # Weekly on Monday at 9 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+    inputs:
+      update_type:
+        description: 'Update type'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - conservative
+          - patch
+
+jobs:
+  update-gems:
+    name: Update Gemfile.lock
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: false
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Update Dependencies
+        id: update
+        run: |
+          # Store current versions for comparison
+          echo "## Before Update" > /tmp/versions-before.txt
+          bundle list >> /tmp/versions-before.txt || true
+          
+          # Update based on type
+          UPDATE_TYPE="${{ github.event.inputs.update_type || 'all' }}"
+          
+          case "$UPDATE_TYPE" in
+            conservative)
+              echo "Performing conservative update (patch only)..."
+              bundle update --patch
+              ;;
+            patch)
+              echo "Performing patch update only..."
+              bundle update --patch
+              ;;
+            *)
+              echo "Performing full update..."
+              bundle update
+              ;;
+          esac
+          
+          # Store new versions
+          echo "## After Update" > /tmp/versions-after.txt
+          bundle list >> /tmp/versions-after.txt
+          
+          # Check for changes
+          if git diff --quiet Gemfile.lock; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No dependency updates available"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            
+            # Generate summary of changes
+            echo "## Dependency Updates" > /tmp/pr-body.md
+            echo "" >> /tmp/pr-body.md
+            echo "This PR updates Ruby gems to their latest compatible versions." >> /tmp/pr-body.md
+            echo "" >> /tmp/pr-body.md
+            echo "### Changes" >> /tmp/pr-body.md
+            echo "\`\`\`diff" >> /tmp/pr-body.md
+            git diff Gemfile.lock | grep "^[-+]    " | head -50 >> /tmp/pr-body.md || true
+            echo "\`\`\`" >> /tmp/pr-body.md
+            echo "" >> /tmp/pr-body.md
+            echo "### Validation" >> /tmp/pr-body.md
+            echo "- [ ] CI tests pass" >> /tmp/pr-body.md
+            echo "- [ ] Docker build succeeds" >> /tmp/pr-body.md
+            echo "- [ ] Manual testing completed (if needed)" >> /tmp/pr-body.md
+            echo "" >> /tmp/pr-body.md
+            echo "---" >> /tmp/pr-body.md
+            echo "*Automated by [update-dependencies workflow](../.github/workflows/update-dependencies.yml)*" >> /tmp/pr-body.md
+          fi
+
+      - name: Create Pull Request
+        if: steps.update.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: |
+            chore(deps): update Ruby gem dependencies
+            
+            Automated weekly dependency update to latest compatible versions.
+            
+            - Updated via bundle update
+            - All gems updated to latest compatible with constraints
+            - CI will validate compatibility
+          branch: deps/automated-update-${{ github.run_number }}
+          delete-branch: true
+          title: "chore(deps): update Ruby gem dependencies"
+          body-path: /tmp/pr-body.md
+          labels: |
+            dependencies
+            automated
+          assignees: bamr87
+          reviewers: bamr87
+
+      - name: Comment on Issue if Failed
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Dependency Update Failed',
+              body: `The automated dependency update workflow failed.
+              
+              **Workflow Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+              
+              Please investigate the failure and update dependencies manually if needed.`,
+              labels: ['dependencies', 'bug']
+            });
