@@ -167,7 +167,10 @@ jobs:
 
       - name: Test gem installation
         run: |
-          gem install ./jekyll-theme-zer0-*.gem --local --no-document
+          # Install dependencies first (Jekyll is required by the gem)
+          bundle install --quiet
+          # Now install our gem locally (dependencies already satisfied)
+          gem install ./jekyll-theme-zer0-*.gem --local --no-document --ignore-dependencies
           echo "✅ Gem installs successfully"
 
   # Performance testing (conditional)
