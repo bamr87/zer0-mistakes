@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.14.2] - 2025-12-07
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 82d7441 fix(build): improve gem info retrieval error handling
+- 67a8e5b fix(ci): remove Ruby 3.0 from test matrix
+- afe057d chore(deps): update Ruby gem dependencies (#11)
+- 64ee1c9 fix(ci): add proper permissions for PR creation
+- 3b55b60 feat(ci): add automated dependency update workflow
+- a3197b3 fix(deps): commit Gemfile.lock for reproducible builds
+- d8188dd fix(docker): install bundler 2.3 to match Gemfile.lock requirement
+- 04d7c26 fix(docker): remove bundle update --bundler that requires existing bundle
+
+
 ## [0.14.1] - 2025-12-04
 
 ### Fixed
