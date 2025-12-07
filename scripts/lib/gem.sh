@@ -47,15 +47,27 @@ build_gem() {
         error "Gem file not found after build: $gem_file"
     fi
     
-    # Show gem info
-    local file_count
-    file_count=$(tar -tzf "$gem_file" 2>/dev/null | wc -l | tr -d ' ')
-    local file_size
-    file_size=$(ls -lh "$gem_file" | awk '{print $5}')
+    # Show gem info (with error handling for tar extraction)
+    local file_count="unknown"
+    local file_size="unknown"
+    
+    # Try to get file count (may fail on some platforms/tar versions)
+    if command -v tar &> /dev/null; then
+        file_count=$(tar -tzf "$gem_file" 2>/dev/null | wc -l | tr -d ' ') || file_count="unknown"
+    fi
+    
+    # Get file size (should always work)
+    if command -v ls &> /dev/null; then
+        file_size=$(ls -lh "$gem_file" 2>/dev/null | awk '{print $5}') || file_size="unknown"
+    fi
     
     success "Built $gem_file"
-    info "  Files: $file_count"
-    info "  Size: $file_size"
+    if [[ "$file_count" != "unknown" ]]; then
+        info "  Files: $file_count"
+    fi
+    if [[ "$file_size" != "unknown" ]]; then
+        info "  Size: $file_size"
+    fi
 }
 
 # Check if gem version exists on RubyGems
