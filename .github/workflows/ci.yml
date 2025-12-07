@@ -93,7 +93,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ['3.0', '3.2', '3.3']
+        ruby: ['3.2', '3.3']
         include:
           - ruby: '3.2'
             coverage: true
