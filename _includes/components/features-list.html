@@ -1,0 +1,229 @@
+<!--
+  ===================================================================
+  FEATURES LIST COMPONENT
+  ===================================================================
+  
+  File: features-list.html
+  Path: _includes/components/features-list.html
+  Purpose: Dynamically render features from features.yml data file
+           with filtering by category, tags, and implementation status
+  
+  Dependencies:
+  - features/features.yml data file
+  - Bootstrap 5 for styling
+  - Bootstrap Icons for visual indicators
+  
+  Usage:
+    {% include components/features-list.html %}
+    {% include components/features-list.html category="Development" %}
+    {% include components/features-list.html tag="automation" %}
+    {% include components/features-list.html show_all=true %}
+  
+  Parameters:
+  - category: Filter by specific category (optional)
+  - tag: Filter by specific tag (optional)
+  - show_all: Show all features regardless of implementation status (default: true)
+  - limit: Limit number of features displayed (optional)
+  - style: Display style - "table", "cards", "list" (default: "cards")
+  ===================================================================
+-->
+
+{% comment %} Load features data {% endcomment %}
+{% assign all_features = site.data.features.features %}
+
+{% comment %} Apply filters {% endcomment %}
+{% assign filtered_features = all_features %}
+
+{% if include.category %}
+  {% assign filtered_features = filtered_features | where: "category", include.category %}
+{% endif %}
+
+{% if include.tag %}
+  {% assign temp_features = "" | split: "" %}
+  {% for feature in filtered_features %}
+    {% if feature.tags contains include.tag %}
+      {% assign temp_features = temp_features | push: feature %}
+    {% endif %}
+  {% endfor %}
+  {% assign filtered_features = temp_features %}
+{% endif %}
+
+{% unless include.show_all == false %}
+  {% assign filtered_features = filtered_features | where: "implemented", true %}
+{% endunless %}
+
+{% if include.limit %}
+  {% assign filtered_features = filtered_features | slice: 0, include.limit %}
+{% endif %}
+
+{% comment %} Set display style {% endcomment %}
+{% assign display_style = include.style | default: "cards" %}
+
+{% comment %} Render features based on style {% endcomment %}
+{% case display_style %}
+
+{% when "table" %}
+  <!-- Table Display Style -->
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Feature</th>
+          <th scope="col">Category</th>
+          <th scope="col">Status</th>
+          <th scope="col">Version</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for feature in filtered_features %}
+        <tr>
+          <td><code>{{ feature.id }}</code></td>
+          <td>
+            <strong>{{ feature.title }}</strong><br>
+            <small class="text-muted">{{ feature.description | truncate: 100 }}</small>
+          </td>
+          <td><span class="badge bg-secondary">{{ feature.category }}</span></td>
+          <td>
+            {% if feature.implemented %}
+              <span class="badge bg-success"><i class="bi bi-check-circle"></i> Active</span>
+            {% else %}
+              <span class="badge bg-warning"><i class="bi bi-clock"></i> Planned</span>
+            {% endif %}
+          </td>
+          <td>{{ feature.version | default: "—" }}</td>
+          <td>
+            {% if feature.link %}
+              <a href="{{ feature.link | relative_url }}" class="btn btn-sm btn-outline-primary" title="View Feature">
+                <i class="bi bi-eye"></i>
+              </a>
+            {% endif %}
+            {% if feature.documentation %}
+              <a href="{{ feature.documentation | relative_url }}" class="btn btn-sm btn-outline-info" title="Documentation">
+                <i class="bi bi-book"></i>
+              </a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+{% when "list" %}
+  <!-- List Display Style -->
+  <div class="list-group">
+    {% for feature in filtered_features %}
+    <div class="list-group-item list-group-item-action">
+      <div class="d-flex w-100 justify-content-between align-items-start">
+        <div class="flex-grow-1">
+          <h5 class="mb-1">
+            {{ feature.title }}
+            {% if feature.implemented %}
+              <span class="badge bg-success ms-2"><i class="bi bi-check-circle"></i></span>
+            {% endif %}
+          </h5>
+          <p class="mb-1 text-muted">{{ feature.description }}</p>
+          <div class="d-flex flex-wrap gap-1 mt-2">
+            <small><span class="badge bg-secondary">{{ feature.category }}</span></small>
+            {% for tag in feature.tags limit:3 %}
+              <small><span class="badge bg-light text-dark">{{ tag }}</span></small>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="ms-3">
+          {% if feature.link %}
+            <a href="{{ feature.link | relative_url }}" class="btn btn-sm btn-outline-primary mb-1" title="View">
+              <i class="bi bi-eye"></i> View
+            </a>
+          {% endif %}
+          {% if feature.documentation %}
+            <a href="{{ feature.documentation | relative_url }}" class="btn btn-sm btn-outline-info" title="Docs">
+              <i class="bi bi-book"></i> Docs
+            </a>
+          {% endif %}
+        </div>
+      </div>
+      {% if feature.version %}
+        <small class="text-muted">
+          <i class="bi bi-tag"></i> Version {{ feature.version }}
+          {% if feature.date %} | {{ feature.date | date: "%b %Y" }}{% endif %}
+        </small>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+{% else %}
+  <!-- Cards Display Style (Default) -->
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for feature in filtered_features %}
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <div class="d-flex justify-content-between align-items-center">
+            <h6 class="mb-0 text-truncate">{{ feature.title }}</h6>
+            {% if feature.implemented %}
+              <i class="bi bi-check-circle-fill"></i>
+            {% else %}
+              <i class="bi bi-clock-fill"></i>
+            {% endif %}
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="card-text">{{ feature.description | truncate: 120 }}</p>
+          
+          <div class="mb-2">
+            <span class="badge bg-secondary">{{ feature.category }}</span>
+            {% if feature.version %}
+              <span class="badge bg-info">v{{ feature.version }}</span>
+            {% endif %}
+          </div>
+          
+          {% if feature.tags.size > 0 %}
+            <div class="d-flex flex-wrap gap-1 mb-3">
+              {% for tag in feature.tags limit:4 %}
+                <span class="badge bg-light text-dark small">{{ tag }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        <div class="card-footer bg-transparent">
+          <div class="d-flex justify-content-between">
+            {% if feature.link %}
+              <a href="{{ feature.link | relative_url }}" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-eye"></i> View
+              </a>
+            {% endif %}
+            {% if feature.documentation %}
+              <a href="{{ feature.documentation | relative_url }}" class="btn btn-sm btn-outline-info">
+                <i class="bi bi-book"></i> Docs
+              </a>
+            {% endif %}
+            <small class="text-muted align-self-center">
+              <code>{{ feature.id }}</code>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% endcase %}
+
+{% comment %} Display message if no features found {% endcomment %}
+{% if filtered_features.size == 0 %}
+  <div class="alert alert-info" role="alert">
+    <i class="bi bi-info-circle"></i>
+    <strong>No features found</strong> matching the specified criteria.
+  </div>
+{% endif %}
+
+{% comment %} Display feature count {% endcomment %}
+<div class="mt-3 text-muted">
+  <small>
+    <i class="bi bi-list-check"></i> 
+    Showing {{ filtered_features.size }} of {{ all_features.size }} total features
+  </small>
+</div>
