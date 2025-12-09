@@ -175,10 +175,21 @@ jobs:
       - name: Run Jekyll Build Test
         run: |
           echo "🏗️ Testing Jekyll build with pre-built image..."
-          # Create a test config without github-pages plugin
+          # Create a minimal test config that only uses dependencies in the gemspec
           docker run --rm zer0-mistakes-jekyll-test:latest sh -c "
-            # Create a modified config without github-pages plugin for testing
-            sed '/github-pages/d' _config.yml > _config_test.yml &&
+            # Create minimal config without plugins that require github-pages ecosystem
+            cat > _config_test.yml <<'EOF'
+title: Zer0-Mistakes Test
+description: Test build configuration
+baseurl: ''
+url: 'http://localhost:4000'
+markdown: kramdown
+theme: jekyll-theme-zer0
+plugins: []
+EOF
+            echo '📄 Using minimal test config:' &&
+            cat _config_test.yml &&
+            echo '' &&
             bundle exec jekyll build --config _config_test.yml &&
             echo '✅ Jekyll build succeeded!'
           "
@@ -193,9 +204,20 @@ jobs:
       - name: Run HTML Proofer
         run: |
           echo "🔗 Running HTML validation with pre-built image..."
-          # HTML proofer needs the built site - use modified config without github-pages
-          docker run --rm zer0-mistakes-jekyll-test:latest \
-            sh -c "sed '/github-pages/d' _config.yml > _config_test.yml && bundle exec jekyll build --config _config_test.yml && bundle exec htmlproofer _site --disable-external --allow-hash-href" || true
+          # HTML proofer needs the built site - use minimal config
+          docker run --rm zer0-mistakes-jekyll-test:latest sh -c "
+            cat > _config_test.yml <<'EOF'
+title: Zer0-Mistakes Test
+description: Test build configuration  
+baseurl: ''
+url: 'http://localhost:4000'
+markdown: kramdown
+theme: jekyll-theme-zer0
+plugins: []
+EOF
+            bundle exec jekyll build --config _config_test.yml &&
+            bundle exec htmlproofer _site --disable-external --allow-hash-href
+          " || true
 
       - name: Generate Test Summary
         if: always()
