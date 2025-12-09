@@ -151,11 +151,14 @@ jobs:
 
       - name: Load Docker Image
         run: |
+          # Load the image and capture its ID
           docker load -i /tmp/jekyll-image.tar
-          # Tag the loaded image so docker-compose can find it
-          IMAGE_ID=$(docker images --format "{{.Repository}}:{{.Tag}}\t{{.ID}}" | grep -v '<none>' | head -1 | awk '{print $2}')
+          # Get the image ID from docker images
+          IMAGE_ID=$(docker images --format "{{.ID}}" | head -1)
           echo "📋 Loaded image ID: $IMAGE_ID"
+          # Tag it for easy reference
           docker tag $IMAGE_ID zer0-mistakes-jekyll-test:latest
+          echo "✅ Tagged as zer0-mistakes-jekyll-test:latest"
 
       - name: Run Validation
         run: |
