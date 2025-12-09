@@ -69,15 +69,19 @@ jobs:
       - name: Update Dependencies to Latest
         run: |
           echo "📦 Updating dependencies to latest versions..."
-          # Remove old Gemfile.lock and resolve latest compatible versions
+          # Remove old Gemfile.lock and github-pages gem constraint (uses ancient Jekyll)
           rm -f Gemfile.lock
+          # Temporarily exclude github-pages to test with modern Jekyll
+          sed -i.bak 's/^gem "github-pages"/# gem "github-pages" # Excluded for latest testing/' Gemfile
           docker run --rm -v "$PWD:/site" -w /site ruby:3.3-slim bash -c '
             apt-get update -qq && apt-get install -y --no-install-recommends build-essential git libyaml-dev zlib1g-dev && 
             git config --global --add safe.directory /site && 
             gem install bundler -v "~> 2.3" && 
             bundle install
           '
-          echo "✅ Dependencies resolved to latest compatible versions"
+          # Restore Gemfile
+          mv Gemfile.bak Gemfile
+          echo "✅ Dependencies resolved to latest compatible versions (without github-pages constraint)"
           
       - name: Build Docker Image (No Cache)
         run: |
