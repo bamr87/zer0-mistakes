@@ -2,19 +2,27 @@
 # Zer0-Mistakes Jekyll Theme - Zero Version Pin Dockerfile
 # ==============================================================================
 # 
-# Philosophy: Never pin any version → always use latest compatible versions
+# Philosophy: Never pin gem versions → always use latest compatible versions
 # Build fails immediately if incompatible → caught in CI, not production
 # 
+# Ruby Version Strategy:
+#   - Uses Ruby 3.3 (not :latest/3.4) for ecosystem compatibility
+#   - Ruby 3.4 breaks many gems with native C extensions (posix-spawn, etc.)
+#   - Aligns with CI test matrix (Ruby 3.2, 3.3)
+#   - Will upgrade to 3.4 once gem ecosystem stabilizes
+# 
 # Multi-stage build:
-#   - base: Latest Ruby slim + build dependencies
+#   - base: Ruby 3.3 slim + build dependencies
 #   - dev-test: Includes test gems for CI validation
 #   - production: Optimized for serving built site
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# Stage 1: Base Image - Latest Ruby with build dependencies
+# Stage 1: Base Image - Ruby 3.3 with build dependencies
 # ------------------------------------------------------------------------------
-FROM ruby:slim AS base
+# Note: Using Ruby 3.3 instead of :latest (3.4) for compatibility with gems
+# Ruby 3.4 breaks compatibility with some older native extensions
+FROM ruby:3.3-slim AS base
 
 # Install system dependencies without version pins
 # Let apt resolve latest compatible versions
@@ -83,7 +91,7 @@ RUN bundle exec jekyll build --config _config.yml
 # ------------------------------------------------------------------------------
 # Stage 4: Production Runtime Stage
 # ------------------------------------------------------------------------------
-FROM ruby:slim AS production
+FROM ruby:3.3-slim AS production
 
 RUN apt-get update -qq && \
     apt-get install -y --no-install-recommends \
