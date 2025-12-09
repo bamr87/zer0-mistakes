@@ -71,9 +71,16 @@ jobs:
           echo "📦 Updating dependencies to latest versions..."
           # Remove old Gemfile.lock and github-pages gem constraint (uses ancient Jekyll)
           rm -f Gemfile.lock
-          # Temporarily exclude github-pages to test with modern Jekyll
+          # Temporarily exclude github-pages but ADD essential plugins directly
           cp Gemfile Gemfile.original
           sed -i 's/^gem "github-pages"/# gem "github-pages" # Excluded for latest testing/' Gemfile
+          # Add essential plugins that github-pages normally provides
+          echo '' >> Gemfile
+          echo '# Essential plugins for test-latest (normally via github-pages)' >> Gemfile
+          echo 'gem "jekyll-seo-tag"' >> Gemfile
+          echo 'gem "jekyll-feed"' >> Gemfile
+          echo 'gem "jekyll-sitemap"' >> Gemfile
+          echo 'gem "jekyll-paginate"' >> Gemfile
           docker run --rm -v "$PWD:/site" -w /site ruby:3.3-slim bash -c '
             apt-get update -qq && apt-get install -y --no-install-recommends build-essential git libyaml-dev zlib1g-dev && 
             git config --global --add safe.directory /site && 
@@ -175,17 +182,21 @@ jobs:
       - name: Run Jekyll Build Test
         run: |
           echo "🏗️ Testing Jekyll build with pre-built image..."
-          # Create a minimal test config that only uses dependencies in the gemspec
+          # Create a test config with plugins that are actually installed
           docker run --rm zer0-mistakes-jekyll-test:latest sh -c '
-            # Create minimal config without plugins that require github-pages ecosystem
+            # Create test config with installed plugins
             echo "title: Zer0-Mistakes Test" > _config_test.yml
             echo "description: Test build configuration" >> _config_test.yml
             echo "baseurl: \"\"" >> _config_test.yml
             echo "url: http://localhost:4000" >> _config_test.yml
             echo "markdown: kramdown" >> _config_test.yml
             echo "theme: jekyll-theme-zer0" >> _config_test.yml
-            echo "plugins: []" >> _config_test.yml
-            echo "📄 Using minimal test config:" &&
+            echo "plugins:" >> _config_test.yml
+            echo "  - jekyll-seo-tag" >> _config_test.yml
+            echo "  - jekyll-feed" >> _config_test.yml
+            echo "  - jekyll-sitemap" >> _config_test.yml
+            echo "  - jekyll-paginate" >> _config_test.yml
+            echo "📄 Using test config:" &&
             cat _config_test.yml &&
             echo "" &&
             bundle exec jekyll build --config _config_test.yml &&
@@ -202,7 +213,7 @@ jobs:
       - name: Run HTML Proofer
         run: |
           echo "🔗 Running HTML validation with pre-built image..."
-          # HTML proofer needs the built site - use minimal config
+          # HTML proofer needs the built site - use test config with installed plugins
           docker run --rm zer0-mistakes-jekyll-test:latest sh -c '
             echo "title: Zer0-Mistakes Test" > _config_test.yml
             echo "description: Test build configuration" >> _config_test.yml
@@ -210,7 +221,11 @@ jobs:
             echo "url: http://localhost:4000" >> _config_test.yml
             echo "markdown: kramdown" >> _config_test.yml
             echo "theme: jekyll-theme-zer0" >> _config_test.yml
-            echo "plugins: []" >> _config_test.yml
+            echo "plugins:" >> _config_test.yml
+            echo "  - jekyll-seo-tag" >> _config_test.yml
+            echo "  - jekyll-feed" >> _config_test.yml
+            echo "  - jekyll-sitemap" >> _config_test.yml
+            echo "  - jekyll-paginate" >> _config_test.yml
             bundle exec jekyll build --config _config_test.yml &&
             bundle exec htmlproofer _site --disable-external --allow-hash-href
           ' || true
