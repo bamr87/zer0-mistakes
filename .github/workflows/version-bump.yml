@@ -216,6 +216,17 @@ jobs:
         echo "tag=v$NEW_VERSION" >> $GITHUB_OUTPUT
         echo "✅ Version files updated to $NEW_VERSION"
 
+    - name: Update Gemfile.lock
+      if: ${{ inputs.dry_run != true }}
+      run: |
+        NEW_VERSION="${{ steps.bump.outputs.new_version }}"
+        
+        # The gemspec version changed, so we need to update Gemfile.lock
+        # Run bundle install to regenerate lockfile with new gemspec version
+        bundle install
+        
+        echo "✅ Gemfile.lock updated for version $NEW_VERSION"
+
     - name: Update Changelog
       if: ${{ inputs.dry_run != true }}
       run: |
@@ -271,13 +282,13 @@ jobs:
         NEW_VERSION="${{ steps.bump.outputs.new_version }}"
         BUMP_TYPE="${{ needs.analyze.outputs.bump_type }}"
         
-        git add lib/jekyll-theme-zer0/version.rb package.json CHANGELOG.md 2>/dev/null || true
+        git add lib/jekyll-theme-zer0/version.rb package.json CHANGELOG.md Gemfile.lock 2>/dev/null || true
         git add -A
         
         git commit -m "chore: bump version to $NEW_VERSION
 
         - Version bump type: $BUMP_TYPE
-        - Updated version files and changelog
+        - Updated version files, gemfile.lock, and changelog
         - Automated by GitHub Actions
         
         [skip ci]" || echo "Nothing to commit"
