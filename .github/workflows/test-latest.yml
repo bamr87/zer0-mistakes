@@ -164,20 +164,24 @@ jobs:
         run: |
           echo "🔍 Running validation checks with pre-built image..."
           # Run validation using the built image (don't mount local files which have old Gemfile.lock)
+          # Skip jekyll doctor as it requires github-pages gem which we excluded for test-latest
           docker run --rm zer0-mistakes-jekyll-test:latest sh -c "
             echo '🔍 Quick validation check...' &&
             ruby -c lib/jekyll-theme-zer0/version.rb &&
-            ruby -e \"spec = Gem::Specification.load('jekyll-theme-zer0.gemspec'); puts '✅ Gemspec valid: #{spec.name} v#{spec.version}'\" &&
-            bundle exec jekyll doctor &&
-            echo '✅ Validation passed!'
+            ruby -e \"spec = Gem::Specification.load('jekyll-theme-zer0.gemspec'); puts '✅ Gemspec valid: \#{spec.name} v\#{spec.version}'\" &&
+            echo '✅ Validation passed (skipping jekyll doctor - github-pages excluded)!'
           "
 
       - name: Run Jekyll Build Test
         run: |
           echo "🏗️ Testing Jekyll build with pre-built image..."
-          # Use the image's built-in files, not local repo
-          docker run --rm zer0-mistakes-jekyll-test:latest \
-            bundle exec jekyll build --config _config.yml
+          # Create a test config without github-pages plugin
+          docker run --rm zer0-mistakes-jekyll-test:latest sh -c "
+            # Create a modified config without github-pages plugin for testing
+            sed '/github-pages/d' _config.yml > _config_test.yml &&
+            bundle exec jekyll build --config _config_test.yml &&
+            echo '✅ Jekyll build succeeded!'
+          "
 
       - name: Run RSpec Tests
         run: |
@@ -189,9 +193,9 @@ jobs:
       - name: Run HTML Proofer
         run: |
           echo "🔗 Running HTML validation with pre-built image..."
-          # HTML proofer needs the built site
+          # HTML proofer needs the built site - use modified config without github-pages
           docker run --rm zer0-mistakes-jekyll-test:latest \
-            sh -c "bundle exec jekyll build && bundle exec htmlproofer _site --disable-external --allow-hash-href" || true
+            sh -c "sed '/github-pages/d' _config.yml > _config_test.yml && bundle exec jekyll build --config _config_test.yml && bundle exec htmlproofer _site --disable-external --allow-hash-href" || true
 
       - name: Generate Test Summary
         if: always()
