@@ -69,13 +69,15 @@ jobs:
       - name: Update Dependencies to Latest
         run: |
           echo "📦 Updating dependencies to latest versions..."
-          # Update Gemfile.lock to latest compatible versions
+          # Remove old Gemfile.lock and resolve latest compatible versions
+          rm -f Gemfile.lock
           docker run --rm -v "$PWD:/site" -w /site ruby:3.3-slim bash -c '
             apt-get update -qq && apt-get install -y --no-install-recommends build-essential git libyaml-dev zlib1g-dev && 
+            git config --global --add safe.directory /site && 
             gem install bundler -v "~> 2.3" && 
-            bundle update --all
+            bundle install
           '
-          echo "✅ Dependencies updated"
+          echo "✅ Dependencies resolved to latest compatible versions"
           
       - name: Build Docker Image (No Cache)
         run: |
