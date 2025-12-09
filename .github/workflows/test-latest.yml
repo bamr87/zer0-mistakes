@@ -99,7 +99,21 @@ jobs:
 
       - name: Save Docker Image
         run: |
-          docker save -o /tmp/jekyll-image.tar $(docker compose -f docker-compose.yml -f docker-compose.test.yml images -q jekyll)
+          # List all images to debug
+          echo "📋 Available images:"
+          docker images | grep -E "(zer0-mistakes|jekyll)" || true
+          echo ""
+          echo "📋 Docker compose images:"
+          docker compose -f docker-compose.yml -f docker-compose.test.yml images || true
+          echo ""
+          # Get the image ID
+          IMAGE_ID=$(docker compose -f docker-compose.yml -f docker-compose.test.yml images -q jekyll)
+          if [ -z "$IMAGE_ID" ]; then
+            echo "⚠️  No image found with 'docker compose images -q jekyll', trying docker images..."
+            IMAGE_ID=$(docker images --format "{{.ID}}" | head -1)
+          fi
+          echo "💾 Saving image: $IMAGE_ID"
+          docker save -o /tmp/jekyll-image.tar $IMAGE_ID
       
       - name: Restore Original Gemfile
         if: always()
