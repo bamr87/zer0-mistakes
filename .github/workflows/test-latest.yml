@@ -176,23 +176,21 @@ jobs:
         run: |
           echo "🏗️ Testing Jekyll build with pre-built image..."
           # Create a minimal test config that only uses dependencies in the gemspec
-          docker run --rm zer0-mistakes-jekyll-test:latest sh -c "
+          docker run --rm zer0-mistakes-jekyll-test:latest sh -c '
             # Create minimal config without plugins that require github-pages ecosystem
-            cat > _config_test.yml <<'EOF'
-title: Zer0-Mistakes Test
-description: Test build configuration
-baseurl: ''
-url: 'http://localhost:4000'
-markdown: kramdown
-theme: jekyll-theme-zer0
-plugins: []
-EOF
-            echo '📄 Using minimal test config:' &&
+            echo "title: Zer0-Mistakes Test" > _config_test.yml
+            echo "description: Test build configuration" >> _config_test.yml
+            echo "baseurl: \"\"" >> _config_test.yml
+            echo "url: http://localhost:4000" >> _config_test.yml
+            echo "markdown: kramdown" >> _config_test.yml
+            echo "theme: jekyll-theme-zer0" >> _config_test.yml
+            echo "plugins: []" >> _config_test.yml
+            echo "📄 Using minimal test config:" &&
             cat _config_test.yml &&
-            echo '' &&
+            echo "" &&
             bundle exec jekyll build --config _config_test.yml &&
-            echo '✅ Jekyll build succeeded!'
-          "
+            echo "✅ Jekyll build succeeded!"
+          '
 
       - name: Run RSpec Tests
         run: |
@@ -205,19 +203,17 @@ EOF
         run: |
           echo "🔗 Running HTML validation with pre-built image..."
           # HTML proofer needs the built site - use minimal config
-          docker run --rm zer0-mistakes-jekyll-test:latest sh -c "
-            cat > _config_test.yml <<'EOF'
-title: Zer0-Mistakes Test
-description: Test build configuration  
-baseurl: ''
-url: 'http://localhost:4000'
-markdown: kramdown
-theme: jekyll-theme-zer0
-plugins: []
-EOF
+          docker run --rm zer0-mistakes-jekyll-test:latest sh -c '
+            echo "title: Zer0-Mistakes Test" > _config_test.yml
+            echo "description: Test build configuration" >> _config_test.yml
+            echo "baseurl: \"\"" >> _config_test.yml
+            echo "url: http://localhost:4000" >> _config_test.yml
+            echo "markdown: kramdown" >> _config_test.yml
+            echo "theme: jekyll-theme-zer0" >> _config_test.yml
+            echo "plugins: []" >> _config_test.yml
             bundle exec jekyll build --config _config_test.yml &&
             bundle exec htmlproofer _site --disable-external --allow-hash-href
-          " || true
+          ' || true
 
       - name: Generate Test Summary
         if: always()
