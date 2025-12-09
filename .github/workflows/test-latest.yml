@@ -99,7 +99,7 @@ jobs:
 
       - name: Save Docker Image
         run: |
-          docker save -o /tmp/jekyll-image.tar $(docker compose -f docker-compose.yml images -q jekyll)
+          docker save -o /tmp/jekyll-image.tar $(docker compose -f docker-compose.yml -f docker-compose.test.yml images -q jekyll)
       
       - name: Restore Original Gemfile
         if: always()
