@@ -72,16 +72,16 @@ jobs:
           # Remove old Gemfile.lock and github-pages gem constraint (uses ancient Jekyll)
           rm -f Gemfile.lock
           # Temporarily exclude github-pages to test with modern Jekyll
-          sed -i.bak 's/^gem "github-pages"/# gem "github-pages" # Excluded for latest testing/' Gemfile
+          cp Gemfile Gemfile.original
+          sed -i 's/^gem "github-pages"/# gem "github-pages" # Excluded for latest testing/' Gemfile
           docker run --rm -v "$PWD:/site" -w /site ruby:3.3-slim bash -c '
             apt-get update -qq && apt-get install -y --no-install-recommends build-essential git libyaml-dev zlib1g-dev && 
             git config --global --add safe.directory /site && 
             gem install bundler -v "~> 2.3" && 
             bundle install
           '
-          # Restore Gemfile
-          mv Gemfile.bak Gemfile
           echo "✅ Dependencies resolved to latest compatible versions (without github-pages constraint)"
+          echo "📝 Modified Gemfile and new Gemfile.lock will be used for Docker build"
           
       - name: Build Docker Image (No Cache)
         run: |
@@ -100,6 +100,14 @@ jobs:
       - name: Save Docker Image
         run: |
           docker save -o /tmp/jekyll-image.tar $(docker compose -f docker-compose.yml images -q jekyll)
+      
+      - name: Restore Original Gemfile
+        if: always()
+        run: |
+          if [ -f Gemfile.original ]; then
+            mv Gemfile.original Gemfile
+            echo "✅ Restored original Gemfile"
+          fi
           
       - name: Upload Docker Image Artifact
         uses: actions/upload-artifact@v4
