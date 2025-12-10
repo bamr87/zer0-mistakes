@@ -26,7 +26,9 @@ gemspec
 #   - jekyll-sitemap
 #   - jekyll-seo-tag
 #   - jekyll-paginate
-gem "github-pages", group: :jekyll_plugins
+# Note: github-pages uses Jekyll 3.x (not 4.x) - this is by design for GitHub Pages stability
+# We use >= 228 to ensure we get a version compatible with Ruby 3.x
+gem "github-pages", ">= 228", group: :jekyll_plugins
 
 # Web server for Ruby 3.0+ (required since WEBrick removed from stdlib)
 gem "webrick"
