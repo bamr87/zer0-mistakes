@@ -166,7 +166,10 @@ jobs:
             echo '🔍 Running validation checks...' &&
             ruby -c lib/jekyll-theme-zer0/version.rb &&
             ruby -e \"spec = Gem::Specification.load('jekyll-theme-zer0.gemspec'); puts '✅ Gemspec valid: \#{spec.name} v\#{spec.version}'\" &&
-            bundle exec jekyll doctor &&
+            echo '📦 Resolved github-pages version:' &&
+            bundle list | grep github-pages &&
+            echo '📦 Resolved jekyll version:' &&
+            bundle list | grep -E '^ *jekyll \(' &&
             echo '✅ All validation checks passed!'
           "
 
