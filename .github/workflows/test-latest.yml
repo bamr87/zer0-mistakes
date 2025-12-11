@@ -176,7 +176,10 @@ jobs:
       - name: Run Jekyll Build Test
         run: |
           echo "🏗️ Testing Jekyll build with pre-built image..."
-          docker run --rm zer0-mistakes-jekyll-test:latest sh -c '
+          docker run --rm \
+            -e PAGES_REPO_NWO=bamr87/zer0-mistakes \
+            -e JEKYLL_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+            zer0-mistakes-jekyll-test:latest sh -c '
             bundle exec jekyll build &&
             echo "✅ Jekyll build succeeded!"
           '
@@ -191,7 +194,10 @@ jobs:
       - name: Run HTML Proofer
         run: |
           echo "🔗 Running HTML validation with pre-built image..."
-          docker run --rm zer0-mistakes-jekyll-test:latest sh -c '
+          docker run --rm \
+            -e PAGES_REPO_NWO=bamr87/zer0-mistakes \
+            -e JEKYLL_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+            zer0-mistakes-jekyll-test:latest sh -c '
             bundle exec jekyll build &&
             bundle exec htmlproofer _site --disable-external --allow-hash-href
           ' || true
