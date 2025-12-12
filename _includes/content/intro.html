@@ -45,23 +45,23 @@
       </button>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="shareDropdownBottom">
         <li>
-          <a class="dropdown-item" href="https://reddit.com/submit?url={{ page.url | absolute_url | url_encode }}&amp;title={{ page.title | url_encode }}" target="_blank">
+          <a class="dropdown-item" href="https://reddit.com/submit?url={{ site.url | append: page.url | url_encode }}&amp;title={{ page.title | url_encode }}" target="_blank">
             <i class="bi bi-reddit me-2"></i>Share on Reddit
           </a>
         </li>
         <li>
-          <a class="dropdown-item" href="https://www.linkedin.com/sharing/share-offsite/?url={{ page.url | absolute_url | url_encode }}" target="_blank">
+          <a class="dropdown-item" href="https://www.linkedin.com/sharing/share-offsite/?url={{ site.url | append: page.url | url_encode }}" target="_blank">
             <i class="bi bi-linkedin me-2"></i>Share on LinkedIn
           </a>
         </li>
         <li>
-          <a class="dropdown-item" href="https://twitter.com/intent/tweet?url={{ page.url | absolute_url | url_encode }}&text={{ page.title | url_encode }}" target="_blank">
+          <a class="dropdown-item" href="https://twitter.com/intent/tweet?url={{ site.url | append: page.url | url_encode }}&text={{ page.title | url_encode }}" target="_blank">
             <i class="bi bi-twitter me-2"></i>Share on Twitter
           </a>
         </li>
         <li><hr class="dropdown-divider"></li>
         <li>
-          <button class="dropdown-item" onclick='navigator.clipboard.writeText("{{ page.url | absolute_url }}"); alert("Link copied to clipboard!");'>
+          <button class="dropdown-item" onclick='navigator.clipboard.writeText("{{ site.url | append: page.url }}"); alert("Link copied to clipboard!");'>
             <i class="bi bi-clipboard me-2"></i>Copy Link
           </button>
         </li>
