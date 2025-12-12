@@ -140,15 +140,15 @@ layout: default
       <div class="share-buttons mb-4">
         <h5 class="mb-3">Share this notebook</h5>
         <div class="d-flex gap-2">
-          <a href="https://twitter.com/intent/tweet?text={{ page.title | uri_escape }}&url={{ page.url | absolute_url | uri_escape }}" 
+          <a href="https://twitter.com/intent/tweet?text={{ page.title | uri_escape }}&url={{ site.url | append: page.url | uri_escape }}" 
              class="btn btn-outline-primary btn-sm" target="_blank" rel="noopener noreferrer">
             <i class="bi bi-twitter"></i> Twitter
           </a>
-          <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ page.url | absolute_url | uri_escape }}" 
+          <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ site.url | append: page.url | uri_escape }}" 
              class="btn btn-outline-primary btn-sm" target="_blank" rel="noopener noreferrer">
             <i class="bi bi-linkedin"></i> LinkedIn
           </a>
-          <a href="mailto:?subject={{ page.title | uri_escape }}&body={{ page.url | absolute_url | uri_escape }}" 
+          <a href="mailto:?subject={{ page.title | uri_escape }}&body={{ site.url | append: page.url | uri_escape }}" 
              class="btn btn-outline-primary btn-sm">
             <i class="bi bi-envelope"></i> Email
           </a>
