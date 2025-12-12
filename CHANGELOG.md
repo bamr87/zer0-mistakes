@@ -1,5 +1,44 @@
 # Changelog
 
+## [0.15.0] - 2025-12-11
+
+### Added
+
+- **Documentation: Product Requirements Document** - Comprehensive PRD detailing product vision, goals, and architecture
+  - Added `docs/PRD.md` with complete product specifications
+  - Includes vision statement, key differentiators, and metrics
+  - Documents AI-powered features and privacy-first principles
+  
+- **Documentation: Sidebar Improvements Summary** - Complete implementation documentation for sidebar enhancements
+  - Added `docs/SIDEBAR_IMPROVEMENTS.md` documenting UI/UX modernization
+  - Details scroll spy fixes, mobile TOC button positioning
+  - Documents responsive design improvements and accessibility features
+  
+- **Documentation: Theme Version Implementation** - Theme version display system documentation
+  - Added `docs/THEME_VERSION_IMPLEMENTATION.md` 
+  - Documents automatic version extraction from gem specification
+  - Explains modal integration and footer access points
+  
+- **Content: Privacy Policy Page** - GDPR/CCPA compliant privacy policy
+  - Added `pages/privacy-policy.md` with comprehensive privacy documentation
+  - Details PostHog analytics data collection practices
+  - Explains user rights and data protection measures
+  
+- **Content: Terms of Service Page** - Legal terms for site usage
+  - Added `pages/terms-of-service.md` 
+  - Provides basic terms framework for site operators
+  
+- **Testing: Notebook Conversion Test Script** - Automated testing for Jupyter notebook conversion
+  - Added `test/test-notebook-conversion.sh` for notebook workflow testing
+  - Validates Python/nbconvert installation in Docker
+  - Tests notebook listing and conversion processes
+
+### Documentation
+
+- All new files are fully documented with appropriate frontmatter
+- Privacy policy provides transparency for analytics usage
+- PRD serves as single source of truth for product direction
+
 ## [0.14.2] - 2025-12-07
 
 ### Changed
