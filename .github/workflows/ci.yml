@@ -224,7 +224,7 @@ jobs:
 
       - name: Start Jekyll in Docker
         run: |
-          docker-compose up -d
+          docker compose up -d
           timeout 60 bash -c 'until curl -s http://localhost:4000 > /dev/null; do sleep 2; done' || true
 
       - name: Test site accessibility
@@ -238,7 +238,7 @@ jobs:
 
       - name: Cleanup
         if: always()
-        run: docker-compose down || true
+        run: docker compose down || true
 
   # Final status report
   summary:
