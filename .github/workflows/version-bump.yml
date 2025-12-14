@@ -222,6 +222,9 @@ jobs:
         NEW_VERSION="${{ steps.bump.outputs.new_version }}"
         
         # The gemspec version changed, so we need to update Gemfile.lock
+        # Unfreeze bundler to allow Gemfile.lock update
+        bundle config set frozen false
+        
         # Run bundle install to regenerate lockfile with new gemspec version
         bundle install
         
