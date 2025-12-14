@@ -3,8 +3,7 @@
 # Test runner for library unit tests
 # Usage: ./scripts/test/lib/run_tests.sh
 #
-# Note: Requires Bash 4.0+ (for associative arrays in changelog.sh)
-# On macOS: brew install bash
+# Compatible with Bash 3.2+ (macOS default) and Bash 4+
 
 # Note: We intentionally don't use set -e here because test assertions 
 # may return non-zero and we want to continue running tests
