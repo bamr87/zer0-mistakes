@@ -858,9 +858,12 @@ export SDKROOT=$(xcrun --show-sdk-path)
 
 Update your OS settings to allow shell scripts to execute and to install winget (if applicable). Without this setting, you may run into issues later on.
 
-![dev settings](/assets/gif/windows-developer-settings.gif)
+**To enable Developer Mode:**
+1. Open Windows Settings
+2. Navigate to "Update & Security" > "For developers"
+3. Enable "Developer Mode"
 
-NOTE: This change opens up a lot of security vualnerabilities so proceed with caution.
+NOTE: This change opens up a lot of security vulnerabilities so proceed with caution.
 
 ### Install Winget (Windows 10 only)
 
