@@ -2,14 +2,7 @@
 
 # Changelog generation library for zer0-mistakes release scripts
 # Provides automatic changelog generation from git commit history
-
-# Check Bash version (need 4+ for associative arrays)
-if [[ "${BASH_VERSINFO[0]}" -lt 4 ]]; then
-    echo "[ERROR] This script requires Bash 4.0 or higher (current: ${BASH_VERSION})" >&2
-    echo "[INFO] On macOS, install via: brew install bash" >&2
-    echo "[INFO] Then update scripts to use: #!/usr/local/bin/bash" >&2
-    exit 1
-fi
+# Compatible with Bash 3.2+ (macOS default) and Bash 4+
 
 # Source common utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -119,18 +112,19 @@ generate_changelog() {
         return 0
     fi
     
-    # Parse and categorize commits
-    declare -A categories
-    categories=(
-        ["breaking"]=""
-        ["added"]=""
-        ["changed"]=""
-        ["deprecated"]=""
-        ["removed"]=""
-        ["fixed"]=""
-        ["security"]=""
-        ["other"]=""
-    )
+    # Parse and categorize commits using parallel indexed arrays (Bash 3.2 compatible)
+    # Category names in order
+    local category_names=("breaking" "added" "changed" "deprecated" "removed" "fixed" "security" "other")
+    
+    # Initialize category content arrays
+    local cat_breaking=""
+    local cat_added=""
+    local cat_changed=""
+    local cat_deprecated=""
+    local cat_removed=""
+    local cat_fixed=""
+    local cat_security=""
+    local cat_other=""
     
     local commit_count=0
     while IFS='|' read -r hash subject author date; do
@@ -176,10 +170,41 @@ generate_changelog() {
         local clean_msg
         clean_msg=$(clean_commit_message "$subject")
         
-        if [[ -n "${categories[$category]}" ]]; then
-            categories[$category]+=$'\n'
-        fi
-        categories[$category]+="- $clean_msg"
+        # Append to appropriate category variable
+        case "$category" in
+            "breaking")
+                [[ -n "$cat_breaking" ]] && cat_breaking+=$'\n'
+                cat_breaking+="- $clean_msg"
+                ;;
+            "added")
+                [[ -n "$cat_added" ]] && cat_added+=$'\n'
+                cat_added+="- $clean_msg"
+                ;;
+            "changed")
+                [[ -n "$cat_changed" ]] && cat_changed+=$'\n'
+                cat_changed+="- $clean_msg"
+                ;;
+            "deprecated")
+                [[ -n "$cat_deprecated" ]] && cat_deprecated+=$'\n'
+                cat_deprecated+="- $clean_msg"
+                ;;
+            "removed")
+                [[ -n "$cat_removed" ]] && cat_removed+=$'\n'
+                cat_removed+="- $clean_msg"
+                ;;
+            "fixed")
+                [[ -n "$cat_fixed" ]] && cat_fixed+=$'\n'
+                cat_fixed+="- $clean_msg"
+                ;;
+            "security")
+                [[ -n "$cat_security" ]] && cat_security+=$'\n'
+                cat_security+="- $clean_msg"
+                ;;
+            "other")
+                [[ -n "$cat_other" ]] && cat_other+=$'\n'
+                cat_other+="- $clean_msg"
+                ;;
+        esac
         
     done <<< "$commits_raw"
     
@@ -192,39 +217,46 @@ generate_changelog() {
     
     changelog_entry+="## [$new_version] - $date"$'\n\n'
     
-    # Add sections in order
-    for category in "breaking" "added" "changed" "deprecated" "removed" "fixed" "security" "other"; do
-        if [[ -n "${categories[$category]}" ]]; then
-            case "$category" in
-                "breaking")
-                    changelog_entry+="### ⚠️  BREAKING CHANGES"$'\n'
-                    ;;
-                "added")
-                    changelog_entry+="### Added"$'\n'
-                    ;;
-                "changed")
-                    changelog_entry+="### Changed"$'\n'
-                    ;;
-                "deprecated")
-                    changelog_entry+="### Deprecated"$'\n'
-                    ;;
-                "removed")
-                    changelog_entry+="### Removed"$'\n'
-                    ;;
-                "fixed")
-                    changelog_entry+="### Fixed"$'\n'
-                    ;;
-                "security")
-                    changelog_entry+="### Security"$'\n'
-                    ;;
-                "other")
-                    changelog_entry+="### Other"$'\n'
-                    ;;
-            esac
-            
-            changelog_entry+="${categories[$category]}"$'\n\n'
-        fi
-    done
+    # Add sections in order (using individual variables instead of associative array)
+    if [[ -n "$cat_breaking" ]]; then
+        changelog_entry+="### ⚠️  BREAKING CHANGES"$'\n'
+        changelog_entry+="$cat_breaking"$'\n\n'
+    fi
+    
+    if [[ -n "$cat_added" ]]; then
+        changelog_entry+="### Added"$'\n'
+        changelog_entry+="$cat_added"$'\n\n'
+    fi
+    
+    if [[ -n "$cat_changed" ]]; then
+        changelog_entry+="### Changed"$'\n'
+        changelog_entry+="$cat_changed"$'\n\n'
+    fi
+    
+    if [[ -n "$cat_deprecated" ]]; then
+        changelog_entry+="### Deprecated"$'\n'
+        changelog_entry+="$cat_deprecated"$'\n\n'
+    fi
+    
+    if [[ -n "$cat_removed" ]]; then
+        changelog_entry+="### Removed"$'\n'
+        changelog_entry+="$cat_removed"$'\n\n'
+    fi
+    
+    if [[ -n "$cat_fixed" ]]; then
+        changelog_entry+="### Fixed"$'\n'
+        changelog_entry+="$cat_fixed"$'\n\n'
+    fi
+    
+    if [[ -n "$cat_security" ]]; then
+        changelog_entry+="### Security"$'\n'
+        changelog_entry+="$cat_security"$'\n\n'
+    fi
+    
+    if [[ -n "$cat_other" ]]; then
+        changelog_entry+="### Other"$'\n'
+        changelog_entry+="$cat_other"$'\n\n'
+    fi
     
     # Preview changelog
     info "Changelog preview:"
