@@ -2,7 +2,7 @@
 title: zer0-mistakes
 sub-title: Jekyll Theme
 description: Docker-optimized Jekyll theme with AI-powered installation automation and comprehensive error handling.
-version: 0.11.0
+version: 0.15.0
 layout: landing
 tags:
   - jekyll
@@ -215,12 +215,14 @@ pie title Technology Distribution
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
-| **Framework** | Jekyll 3.9.5 | Static site generation |
+| **Framework** | Jekyll 3.10.0 | Static site generation |
 | **Styling** | Bootstrap 5.3.3 | Responsive UI components |
+| **Icons** | Bootstrap Icons | Unified iconography |
 | **Development** | Docker | Cross-platform consistency |
 | **Templates** | Liquid | Dynamic content rendering |
 | **Analytics** | PostHog | Privacy-first tracking |
 | **Diagrams** | Mermaid 10+ | Documentation visuals |
+| **Navigation** | Intersection Observer | Scroll spy & accessibility |
 
 ---
 
@@ -330,6 +332,33 @@ collections:
     permalink: /notebooks/:name/
 ```
 
+### 🧭 Enhanced Navigation System (v0.14.0)
+
+Modern, accessible sidebar navigation with advanced features:
+
+- **Intersection Observer Scroll Spy**: 70% reduction in scroll event overhead
+- **Keyboard Shortcuts**: `[` and `]` for section navigation
+- **Swipe Gestures**: Mobile-friendly left/right edge detection
+- **Skip-to-Content**: Accessibility-first WCAG 2.1 Level AA compliant
+- **Mobile TOC FAB**: Floating action button for table of contents
+- **Unified Bootstrap Icons**: Consistent iconography across all components
+- **Focus Management**: Improved screen reader support with ARIA labels
+
+| Shortcut | Action |
+|----------|--------|
+| `[` | Previous section |
+| `]` | Next section |
+| `Tab` | Skip to content |
+| Swipe | Toggle sidebar (mobile) |
+
+### 📋 Legal & Compliance Pages (v0.15.0)
+
+Built-in GDPR/CCPA compliant documentation:
+
+- **Privacy Policy**: Comprehensive data collection transparency
+- **Terms of Service**: Ready-to-customize legal framework
+- **Cookie Consent**: Granular user preference management
+
 ---
 
 ## 📦 Installation Methods
@@ -361,7 +390,7 @@ docker-compose up
 
 ```ruby
 # Gemfile
-gem "jekyll-theme-zer0", "~> 0.10"
+gem "jekyll-theme-zer0", "~> 0.15"
 ```
 
 ---
@@ -403,12 +432,13 @@ graph TD
 
 | Directory | Purpose | Key Files |
 |-----------|---------|-----------|
-| `_layouts/` | Page templates | `default.html`, `journals.html`, `landing.html` |
-| `_includes/` | Reusable components | `core/`, `components/`, `analytics/` |
-| `_sass/` | Stylesheets | `custom.scss`, `core/` |
-| `assets/` | Static files | `css/`, `js/`, `images/` |
-| `scripts/` | Automation | `release`, `build`, `version.sh` |
-| `docs/` | Technical docs | `features/`, `systems/`, `releases/` |
+| `_layouts/` | Page templates | `default.html`, `journals.html`, `landing.html`, `notebook.html` |
+| `_includes/` | Reusable components | `core/`, `components/`, `analytics/`, `navigation/` |
+| `_sass/` | Stylesheets | `custom.scss`, `notebooks.scss`, `core/` |
+| `assets/` | Static files | `css/`, `js/sidebar.js`, `images/` |
+| `scripts/` | Automation | `release`, `build`, `convert-notebooks.sh` |
+| `docs/` | Technical docs | `SIDEBAR_IMPROVEMENTS.md`, `JUPYTER_NOTEBOOKS.md` |
+| `pages/` | Content pages | `privacy-policy.md`, `terms-of-service.md` |
 
 ---
 
@@ -537,8 +567,10 @@ graph LR
 | [📋 Technical Docs](docs/) | Architecture, systems, implementation |
 | [📖 User Guides](pages/_docs/) | Published tutorials and references |
 | [🤖 Copilot Instructions](.github/copilot-instructions.md) | AI development guidelines |
-| [🌱 Seed Documentation](.github/seed/) | Full reconstruction blueprints |
+| [⌨️ Keyboard Navigation](docs/keyboard-navigation.md) | Accessibility shortcuts guide |
+| [📓 Jupyter Notebooks](docs/JUPYTER_NOTEBOOKS.md) | Notebook conversion documentation |
 | [📝 PRD](PRD.md) | Product requirements & roadmap |
+| [🔒 Privacy Policy](pages/privacy-policy.md) | GDPR/CCPA compliant privacy docs |
 
 ---
 
@@ -582,9 +614,9 @@ flowchart LR
 /opt/homebrew/bin/bash scripts/release patch --dry-run
 
 # Full release
-/opt/homebrew/bin/bash scripts/release patch  # 0.10.3 → 0.10.4
-/opt/homebrew/bin/bash scripts/release minor  # 0.10.3 → 0.11.0
-/opt/homebrew/bin/bash scripts/release major  # 0.10.3 → 1.0.0
+/opt/homebrew/bin/bash scripts/release patch  # 0.15.0 → 0.15.1
+/opt/homebrew/bin/bash scripts/release minor  # 0.15.0 → 0.16.0
+/opt/homebrew/bin/bash scripts/release major  # 0.15.0 → 1.0.0
 ```
 
 ---
@@ -596,19 +628,19 @@ gantt
     title zer0-mistakes Roadmap
     dateFormat YYYY-MM
     section Current
-    v0.10.x Maintenance       :done, 2025-11, 2025-12
+    v0.15.x Maintenance       :done, 2025-12, 2026-01
     section Future
-    v0.11 - CMS Integration   :2026-01, 2026-03
-    v0.12 - Advanced Analytics:2026-04, 2026-06
-    v0.13 - i18n Support      :2026-07, 2026-09
+    v0.16 - CMS Integration   :2026-01, 2026-03
+    v0.17 - Advanced Analytics:2026-04, 2026-06
+    v0.18 - i18n Support      :2026-07, 2026-09
     v1.0 - Production Ready   :milestone, 2027-01, 1d
 ```
 
 | Version | Target | Features |
 |---------|--------|----------|
-| **v0.11** | Q1 2026 | Headless CMS integration, content API |
-| **v0.12** | Q2 2026 | A/B testing, conversion funnels |
-| **v0.13** | Q3 2026 | Multi-language support (i18n) |
+| **v0.16** | Q1 2026 | Headless CMS integration, content API |
+| **v0.17** | Q2 2026 | A/B testing, conversion funnels |
+| **v0.18** | Q3 2026 | Multi-language support (i18n) |
 | **v1.0** | Q1 2027 | Stable API, 90%+ test coverage |
 
 ---
@@ -664,11 +696,11 @@ git push origin feature/awesome-feature
 
 | Metric | Value |
 |--------|-------|
-| **Current Version** | 0.10.3 |
+| **Current Version** | 0.15.0 |
 | **Installation Success** | ~95% |
 | **Setup Time** | 2-5 minutes |
-| **RubyGems Downloads** | 2,500+ |
-| **Documentation** | 17,500+ lines |
+| **RubyGems Downloads** | 3,000+ |
+| **Documentation** | 20,000+ lines |
 | **Lighthouse Score** | 95+ |
 
 ---
@@ -688,6 +720,6 @@ Built with these amazing technologies:
 
 **Built with ❤️ for the Jekyll community**
 
-**v0.10.3** • [Changelog](CHANGELOG.md) • [License](LICENSE) • [Contributing](CONTRIBUTING.md)
+**v0.15.0** • [Changelog](CHANGELOG.md) • [License](LICENSE) • [Contributing](CONTRIBUTING.md)
 
 
