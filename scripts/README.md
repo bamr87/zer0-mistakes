@@ -209,10 +209,13 @@ The project includes GitHub Actions workflows for automation:
 ## Requirements
 
 ### System Dependencies
+- **Bash**: >= 3.2 (macOS default supported - no Homebrew Bash required!)
 - **Ruby**: >= 2.7.0
 - **Bundler**: For dependency management
 - **jq**: For JSON processing
 - **Git**: For version control
+
+**Note on Bash Compatibility**: All scripts are compatible with Bash 3.2+ (the default version on macOS). You do NOT need to install Homebrew Bash. The release automation, changelog generation, and all CI/CD workflows work seamlessly with the system-provided Bash on macOS and standard Bash installations on Linux.
 
 ### RubyGems Publishing Setup
 To publish gems, you need:
