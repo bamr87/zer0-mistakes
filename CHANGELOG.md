@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.15.1] - 2025-12-14
+
+### Changed
+-  update test runner documentation for Bash 3.2 compatibility
+-  update version to 0.15.0 and enhance documentation with new features
+
+### Fixed
+-  refactor changelog.sh for Bash 3.2 compatibility (macOS default)
+
+### Other
+-  document Bash 3.2 compatibility in automation
+-  unfreeze bundler before updating Gemfile.lock in version-bump workflow
+-  update Windows Developer Mode instructions and correct spelling errors
+-  Social sharing buttons use production URLs instead of localhost
+-  update Gemfile.lock for v0.15.0
+
+
+
 ## [0.15.0] - 2025-12-11
 
 ### Added
