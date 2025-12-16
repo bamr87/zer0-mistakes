@@ -21,10 +21,10 @@
 
 - title: Features
   icon: bi-stars
-  url: /about/features/
+  url: /features/
   sublinks:
     - title: All Features
-      url: /about/features/
+      url: /features/
     - title: Preview Image Generator
       url: /docs/features/preview-image-generator/
     - title: Statistics Dashboard

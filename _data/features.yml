@@ -1,0 +1,676 @@
+# zer0-mistakes Theme Features Registry
+# Comprehensive feature tracking for the zer0-mistakes Jekyll theme
+# Version: 0.15.1
+# Last Updated: 2025-12-16
+
+features:
+  # ============================================================================
+  # CORE INFRASTRUCTURE
+  # ============================================================================
+  
+  - id: ZER0-001
+    title: "Bootstrap 5.3.3 Theme Integration"
+    description: "Professional Jekyll theme with Bootstrap 5.3.3 CDN integration, responsive design, and custom styling"
+    implemented: true
+    version: "0.1.0"
+    link: "/"
+    docs: "README.md"
+    tags: [jekyll, theme, bootstrap, ui, responsive]
+    date: 2025-01-27
+    references:
+      layouts: ["_layouts/root.html", "_layouts/default.html"]
+      includes: ["_includes/core/head.html"]
+      styles: ["_sass/custom.scss", "_sass/core/"]
+      config: "_config.yml"
+    components:
+      - "Bootstrap 5.3.3 CSS/JS via CDN"
+      - "Bootstrap Icons 1.10.3"
+      - "Custom SCSS theming"
+      - "Responsive grid system"
+      - "Mobile-first design"
+    
+  - id: ZER0-002
+    title: "Docker-First Development Environment"
+    description: "Universal cross-platform development with Docker Compose. Supports macOS (Intel/Apple Silicon), Linux, and Windows WSL with zero local dependencies"
+    implemented: true
+    version: "0.1.0"
+    link: "/"
+    docs: "README.md"
+    tags: [docker, devops, development, cross-platform]
+    date: 2025-01-27
+    references:
+      config: ["docker-compose.yml", "docker-compose.prod.yml", "docker-compose.test.yml"]
+      dockerfile: "docker/Dockerfile"
+      scripts: ["scripts/setup.sh"]
+    features:
+      - "Platform specification: linux/amd64 for Apple Silicon compatibility"
+      - "Live reload with volume mounting"
+      - "Port 4000:4000 mapping"
+      - "Development and production configurations"
+      - "Automated dependency installation"
+  
+  - id: ZER0-003
+    title: "AI-Powered Installation System"
+    description: "Self-healing installation script with 95% success rate. 1,090-line Bash script with intelligent error recovery, platform detection, and automated fixes for 27+ common scenarios"
+    implemented: true
+    version: "0.6.0"
+    link: "/"
+    docs: "README.md"
+    tags: [ai, automation, installation, error-handling, bash]
+    date: 2025-01-27
+    references:
+      script: "install.sh"
+      init: "init_setup.sh"
+    features:
+      - "One-line installation command"
+      - "Automatic platform detection"
+      - "Docker dependency validation"
+      - "Self-healing error recovery"
+      - "Comprehensive logging"
+      - "Rollback capability"
+      - "Progress indicators"
+  
+  # ============================================================================
+  # AI-POWERED FEATURES
+  # ============================================================================
+  
+  - id: ZER0-004
+    title: "AI Preview Image Generator"
+    description: "AI-powered automatic preview image generation for posts using OpenAI DALL-E, Stability AI, or local placeholders. Configurable via _config.yml with retro pixel art style defaults"
+    implemented: true
+    version: "0.8.0"
+    link: "/docs/features/preview-image-generator/"
+    docs: "README.md"
+    tags: [ai, images, automation, openai, content]
+    date: 2025-01-28
+    references:
+      plugin: "_plugins/preview_image_generator.rb"
+      script: "scripts/generate-preview-images.sh"
+      install: "scripts/install-preview-generator.sh"
+      config: "_config.yml"
+      include: "_includes/components/preview-image.html"
+    installation:
+      script: "scripts/install-preview-generator.sh"
+      config_section: "preview_images"
+    dependencies:
+      required: [curl, jq]
+      optional: [yq, python3]
+    providers:
+      - name: openai
+        description: "OpenAI DALL-E 3 image generation"
+        env_var: OPENAI_API_KEY
+      - name: stability
+        description: "Stability AI Stable Diffusion"
+        env_var: STABILITY_API_KEY
+      - name: local
+        description: "Local placeholder (no API needed)"
+        env_var: null
+    features:
+      - "Multiple AI provider support"
+      - "Automatic image optimization"
+      - "Retro pixel art default style"
+      - "Front matter integration"
+      - "Batch processing"
+  
+  - id: ZER0-005
+    title: "GitHub Copilot Integration"
+    description: "Comprehensive AI development assistance with structured instructions, file-specific guidance, and front matter optimization for maximum AI productivity"
+    implemented: true
+    version: "0.15.0"
+    link: "/.github/copilot-instructions.md"
+    docs: ".github/copilot-instructions.md"
+    tags: [ai, copilot, development, documentation]
+    date: 2025-11-15
+    references:
+      instructions:
+        - ".github/copilot-instructions.md"
+        - ".github/instructions/layouts.instructions.md"
+        - ".github/instructions/includes.instructions.md"
+        - ".github/instructions/scripts.instructions.md"
+        - ".github/instructions/testing.instructions.md"
+        - ".github/instructions/version-control.instructions.md"
+        - ".github/instructions/documentation.instructions.md"
+    features:
+      - "File-pattern specific instructions"
+      - "Development workflow guidance"
+      - "Best practices documentation"
+      - "AI-optimized front matter"
+      - "Automated code generation helpers"
+  
+  # ============================================================================
+  # ANALYTICS & PRIVACY
+  # ============================================================================
+  
+  - id: ZER0-006
+    title: "PostHog Privacy-First Analytics"
+    description: "GDPR/CCPA compliant analytics with PostHog integration. Environment-aware loading with granular user consent management"
+    implemented: true
+    version: "0.6.0"
+    link: "/"
+    docs: "pages/privacy-policy.md"
+    tags: [analytics, privacy, gdpr, ccpa, posthog]
+    date: 2025-11-15
+    references:
+      include: "_includes/analytics/posthog.html"
+      config: "_config.yml"
+      privacy: "pages/privacy-policy.md"
+    features:
+      - "Production-only loading"
+      - "Custom event tracking"
+      - "Download tracking"
+      - "External link tracking"
+      - "Scroll depth measurement"
+      - "Session recording (opt-in)"
+      - "Feature flags"
+      - "A/B testing ready"
+  
+  - id: ZER0-007
+    title: "Cookie Consent Management"
+    description: "GDPR/CCPA compliant cookie consent system with granular permissions, 365-day persistence, and Bootstrap modal preferences"
+    implemented: true
+    version: "0.6.0"
+    link: "/"
+    docs: "pages/privacy-policy.md"
+    tags: [privacy, gdpr, ccpa, cookies, consent]
+    date: 2025-11-15
+    references:
+      include: "_includes/components/cookie-consent.html"
+      config: "_config.yml"
+    features:
+      - "Granular consent categories"
+      - "LocalStorage persistence"
+      - "Bootstrap modal UI"
+      - "Accept/Decline/Manage options"
+      - "DNT (Do Not Track) support"
+      - "Analytics integration"
+  
+  # ============================================================================
+  # NAVIGATION & USER INTERFACE
+  # ============================================================================
+  
+  - id: ZER0-008
+    title: "Enhanced Sidebar Navigation System"
+    description: "Modern sidebar with Intersection Observer scroll spy, smooth scrolling, keyboard shortcuts, and swipe gestures. 70% reduction in scroll event overhead"
+    implemented: true
+    version: "0.14.0"
+    link: "/"
+    docs: "docs/SIDEBAR_IMPROVEMENTS.md"
+    tags: [navigation, ui, accessibility, performance, sidebar]
+    date: 2025-12-01
+    references:
+      javascript: "assets/js/sidebar.js"
+      layouts: ["_layouts/default.html"]
+      includes:
+        - "_includes/navigation/sidebar-left.html"
+        - "_includes/navigation/sidebar-right.html"
+        - "_includes/navigation/sidebar-categories.html"
+        - "_includes/navigation/sidebar-folders.html"
+      styles: ["_sass/core/_docs.scss", "_sass/custom.scss"]
+      docs: "docs/SIDEBAR_IMPROVEMENTS.md"
+    features:
+      - "Intersection Observer scroll spy"
+      - "Smooth scrolling with offset"
+      - "Keyboard shortcuts ([/] navigation)"
+      - "Swipe gestures for mobile"
+      - "Unified Bootstrap Icons"
+      - "Active section highlighting"
+      - "Focus management"
+      - "Responsive design"
+  
+  - id: ZER0-009
+    title: "Keyboard Navigation System"
+    description: "Comprehensive keyboard shortcuts for power users. Navigate sections, toggle sidebars, and access features without mouse"
+    implemented: true
+    version: "0.14.0"
+    link: "/"
+    docs: "docs/keyboard-navigation.md"
+    tags: [accessibility, keyboard, navigation, ux]
+    date: 2025-12-01
+    references:
+      javascript: "assets/js/sidebar.js"
+      docs: "docs/keyboard-navigation.md"
+    shortcuts:
+      - key: "["
+        action: "Previous section"
+      - key: "]"
+        action: "Next section"
+      - key: "Tab"
+        action: "Skip to content"
+      - key: "Swipe"
+        action: "Toggle sidebar (mobile)"
+  
+  - id: ZER0-010
+    title: "Mobile TOC Floating Action Button"
+    description: "Redesigned mobile table of contents access with FAB pattern. Bottom-right positioned 56x56px circular button with proper z-index stacking"
+    implemented: true
+    version: "0.14.0"
+    link: "/"
+    docs: "docs/SIDEBAR_IMPROVEMENTS.md"
+    tags: [mobile, navigation, ui, toc, fab]
+    date: 2025-12-01
+    references:
+      include: "_includes/navigation/sidebar-right.html"
+      styles: "_sass/custom.scss"
+    features:
+      - "FAB pattern design"
+      - "Bottom-right positioning"
+      - "56x56px circular button"
+      - "Shadow elevation"
+      - "z-index: 1030"
+      - "Bootstrap Icons"
+  
+  - id: ZER0-011
+    title: "Skip-to-Content Accessibility Link"
+    description: "WCAG 2.1 Level AA compliant skip link. Visually hidden until Tab focus, direct jump to main content bypassing navigation"
+    implemented: true
+    version: "0.14.0"
+    link: "/"
+    docs: "docs/SIDEBAR_IMPROVEMENTS.md"
+    tags: [accessibility, wcag, navigation, a11y]
+    date: 2025-12-01
+    references:
+      include: "_includes/core/header.html"
+      styles: "_sass/custom.scss"
+  
+  # ============================================================================
+  # CONTENT MANAGEMENT
+  # ============================================================================
+  
+  - id: ZER0-012
+    title: "Jupyter Notebook Integration"
+    description: "Full Jupyter notebook support with GitHub Pages compatibility. Automated nbconvert conversion, rich content rendering, and responsive design"
+    implemented: true
+    version: "0.13.0"
+    link: "/"
+    docs: "docs/JUPYTER_NOTEBOOKS.md"
+    tags: [jupyter, notebooks, python, data-science, content]
+    date: 2025-11-29
+    references:
+      script: "scripts/convert-notebooks.sh"
+      layout: "_layouts/notebook.html"
+      styles: "_sass/notebooks.scss"
+      workflow: ".github/workflows/convert-notebooks.yml"
+      config: "_config.yml"
+      collection: "pages/_notebooks/"
+      docs: "docs/JUPYTER_NOTEBOOKS.md"
+      makefile: "Makefile"
+    features:
+      - "Automatic .ipynb to Markdown conversion"
+      - "Image extraction to assets/"
+      - "MathJax LaTeX rendering"
+      - "Code syntax highlighting"
+      - "Matplotlib/PNG output support"
+      - "Pandas DataFrame tables"
+      - "GitHub Actions automation"
+      - "Responsive mobile layout"
+      - "Makefile targets"
+  
+  - id: ZER0-013
+    title: "Mermaid Diagram Support"
+    description: "Client-side Mermaid.js integration for 10+ diagram types. GitHub Pages compatible with no build plugins required"
+    implemented: true
+    version: "0.3.0"
+    link: "/"
+    docs: "README.md"
+    tags: [mermaid, diagrams, visualization, documentation]
+    date: 2025-01-27
+    references:
+      include: "_includes/components/mermaid.html"
+      config: "_config.yml"
+    diagram_types:
+      - "Flowchart (graph TD)"
+      - "Sequence Diagram"
+      - "Class Diagram"
+      - "State Diagram"
+      - "ER Diagram"
+      - "Gantt Chart"
+      - "Pie Chart"
+      - "Git Graph"
+      - "User Journey"
+      - "Requirement Diagram"
+  
+  - id: ZER0-014
+    title: "Jekyll Collections System"
+    description: "Organized content collections for posts, docs, notebooks, about pages, and quickstart guides with custom permalinks and front matter defaults"
+    implemented: true
+    version: "0.1.0"
+    link: "/"
+    docs: "_config.yml"
+    tags: [jekyll, collections, content, organization]
+    date: 2025-01-27
+    references:
+      config: "_config.yml"
+      collections:
+        - "pages/_posts/"
+        - "pages/_docs/"
+        - "pages/_notebooks/"
+        - "pages/_about/"
+        - "pages/_quickstart/"
+    features:
+      - "Custom permalinks per collection"
+      - "Front matter defaults"
+      - "Collection-specific layouts"
+      - "Organized content structure"
+  
+  # ============================================================================
+  # DEVELOPER EXPERIENCE
+  # ============================================================================
+  
+  - id: ZER0-015
+    title: "Automated Release Management"
+    description: "Semantic versioning with automated commit analysis, changelog generation, gem publishing, and GitHub releases. Full release pipeline automation"
+    implemented: true
+    version: "0.5.0"
+    link: "/"
+    docs: ".github/instructions/version-control.instructions.md"
+    tags: [release, automation, semver, ci-cd, versioning]
+    date: 2025-11-15
+    references:
+      scripts:
+        - "scripts/release"
+        - "scripts/analyze-commits.sh"
+      version: "lib/jekyll-theme-zer0/version.rb"
+      workflow: ".github/workflows/release.yml"
+      changelog: "CHANGELOG.md"
+    features:
+      - "Semantic version bumping"
+      - "Commit message analysis"
+      - "Automatic changelog updates"
+      - "Gem building and publishing"
+      - "GitHub release creation"
+      - "Tag management"
+      - "Dry-run mode"
+  
+  - id: ZER0-016
+    title: "Comprehensive Testing Suite"
+    description: "Automated testing with core, deployment, and quality test suites. Docker-based testing, CI/CD integration, and detailed reporting"
+    implemented: true
+    version: "0.10.0"
+    link: "/"
+    docs: ".github/instructions/testing.instructions.md"
+    tags: [testing, quality, ci-cd, automation]
+    date: 2025-11-15
+    references:
+      tests:
+        - "test/test_runner.sh"
+        - "test/test_core.sh"
+        - "test/test_deployment.sh"
+        - "test/test_quality.sh"
+      workflow: ".github/workflows/ci.yml"
+    features:
+      - "Core functionality tests"
+      - "Deployment validation"
+      - "Code quality checks"
+      - "Markdown linting"
+      - "YAML validation"
+      - "HTML validation"
+      - "Docker tests"
+  
+  - id: ZER0-017
+    title: "Automated Version Bump Workflow"
+    description: "GitHub Actions workflow for manual version bumping with test execution, changelog updates, and automated tagging"
+    implemented: true
+    version: "0.14.2"
+    link: "/"
+    docs: ".github/workflows/version-bump.yml"
+    tags: [github-actions, automation, versioning, ci-cd]
+    date: 2025-12-07
+    references:
+      workflow: ".github/workflows/version-bump.yml"
+      version: "lib/jekyll-theme-zer0/version.rb"
+    features:
+      - "Manual workflow dispatch"
+      - "Version type selection (patch/minor/major)"
+      - "Automated testing"
+      - "Changelog updates"
+      - "Git tagging"
+      - "Bundler unfreezing"
+  
+  - id: ZER0-018
+    title: "CodeQL Security Scanning"
+    description: "Automated security vulnerability scanning with GitHub CodeQL for Ruby and JavaScript code"
+    implemented: true
+    version: "0.10.0"
+    link: "/"
+    docs: ".github/workflows/codeql.yml"
+    tags: [security, codeql, scanning, ci-cd]
+    date: 2025-11-15
+    references:
+      workflow: ".github/workflows/codeql.yml"
+    features:
+      - "Ruby code analysis"
+      - "JavaScript code analysis"
+      - "Automated vulnerability detection"
+      - "Security advisories"
+  
+  # ============================================================================
+  # LAYOUTS & TEMPLATES
+  # ============================================================================
+  
+  - id: ZER0-019
+    title: "Comprehensive Layout System"
+    description: "15+ specialized layouts for different content types with consistent hierarchy and Bootstrap integration"
+    implemented: true
+    version: "0.1.0"
+    link: "/"
+    docs: ".github/instructions/layouts.instructions.md"
+    tags: [layouts, templates, jekyll, bootstrap]
+    date: 2025-01-27
+    references:
+      layouts:
+        - "_layouts/root.html"
+        - "_layouts/default.html"
+        - "_layouts/journals.html"
+        - "_layouts/home.html"
+        - "_layouts/landing.html"
+        - "_layouts/notebook.html"
+        - "_layouts/blog.html"
+        - "_layouts/category.html"
+        - "_layouts/collection.html"
+        - "_layouts/index.html"
+        - "_layouts/sitemap-collection.html"
+        - "_layouts/stats.html"
+        - "_layouts/tag.html"
+      docs: ".github/instructions/layouts.instructions.md"
+    layout_hierarchy:
+      - "root.html (base HTML structure)"
+      - "default.html (main content wrapper)"
+      - "journals.html (blog posts)"
+      - "notebook.html (Jupyter notebooks)"
+      - "landing.html (homepage)"
+  
+  - id: ZER0-020
+    title: "Modular Include Components"
+    description: "70+ reusable include components organized by category for maximum flexibility and maintainability"
+    implemented: true
+    version: "0.1.0"
+    link: "/"
+    docs: ".github/instructions/includes.instructions.md"
+    tags: [includes, components, modular, jekyll]
+    date: 2025-01-27
+    references:
+      includes:
+        - "_includes/core/"
+        - "_includes/components/"
+        - "_includes/navigation/"
+        - "_includes/analytics/"
+        - "_includes/content/"
+        - "_includes/docs/"
+        - "_includes/landing/"
+        - "_includes/stats/"
+      docs: ".github/instructions/includes.instructions.md"
+    categories:
+      core: ["head.html", "header.html", "footer.html", "branding.html"]
+      components: ["cookie-consent.html", "theme-info.html", "mermaid.html", "searchbar.html"]
+      navigation: ["navbar.html", "breadcrumbs.html", "sidebar-left.html", "sidebar-right.html"]
+      analytics: ["posthog.html", "google-analytics.html"]
+  
+  # ============================================================================
+  # PLUGINS & EXTENSIONS
+  # ============================================================================
+  
+  - id: ZER0-021
+    title: "Theme Version Display Plugin"
+    description: "Automatic theme version extraction from gem specification with modal display and footer integration"
+    implemented: true
+    version: "0.11.0"
+    link: "/"
+    docs: "docs/THEME_VERSION_IMPLEMENTATION.md"
+    tags: [plugin, version, jekyll, metadata]
+    date: 2025-11-20
+    references:
+      plugin: "_plugins/theme_version.rb"
+      include: "_includes/components/theme-info.html"
+      docs: "docs/THEME_VERSION_IMPLEMENTATION.md"
+    features:
+      - "Gem specification parsing"
+      - "Remote theme support"
+      - "Version modal display"
+      - "Footer access point"
+      - "Multiple theme detection"
+  
+  # ============================================================================
+  # LEGAL & COMPLIANCE
+  # ============================================================================
+  
+  - id: ZER0-022
+    title: "Privacy Policy Page"
+    description: "GDPR/CCPA compliant privacy policy with comprehensive data collection transparency and PostHog analytics disclosure"
+    implemented: true
+    version: "0.15.0"
+    link: "/privacy-policy/"
+    docs: "pages/privacy-policy.md"
+    tags: [legal, privacy, gdpr, ccpa, compliance]
+    date: 2025-12-11
+    references:
+      page: "pages/privacy-policy.md"
+    features:
+      - "Data collection disclosure"
+      - "User rights explanation"
+      - "Cookie usage details"
+      - "Third-party services list"
+      - "Contact information"
+  
+  - id: ZER0-023
+    title: "Terms of Service Page"
+    description: "Legal terms of service framework for site usage with customizable sections"
+    implemented: true
+    version: "0.15.0"
+    link: "/terms-of-service/"
+    docs: "pages/terms-of-service.md"
+    tags: [legal, terms, compliance]
+    date: 2025-12-11
+    references:
+      page: "pages/terms-of-service.md"
+  
+  # ============================================================================
+  # DOCUMENTATION
+  # ============================================================================
+  
+  - id: ZER0-024
+    title: "Product Requirements Document (PRD)"
+    description: "Comprehensive PRD detailing product vision, goals, architecture, personas, and feature requirements"
+    implemented: true
+    version: "0.15.0"
+    link: "/"
+    docs: "docs/PRD.md"
+    tags: [documentation, prd, product, planning]
+    date: 2025-11-25
+    references:
+      doc: "docs/PRD.md"
+    features:
+      - "Vision statement"
+      - "Target personas"
+      - "Feature requirements"
+      - "Success metrics"
+      - "Roadmap"
+  
+  - id: ZER0-025
+    title: "Dual Documentation Architecture"
+    description: "Separate technical (/docs/) and public (/pages/_docs/) documentation with MDX support and conversion workflow"
+    implemented: true
+    version: "0.15.0"
+    link: "/"
+    docs: ".github/instructions/documentation.instructions.md"
+    tags: [documentation, mdx, markdown, workflow]
+    date: 2025-11-16
+    references:
+      technical: "docs/"
+      public: "pages/_docs/"
+      instructions: ".github/instructions/documentation.instructions.md"
+    features:
+      - "MDX for technical docs"
+      - "Markdown for public docs"
+      - "Conversion workflow"
+      - "Cross-references"
+      - "AI optimization"
+  
+  # ============================================================================
+  # AUTOMATION & WORKFLOWS
+  # ============================================================================
+  
+  - id: ZER0-026
+    title: "Automated Dependency Updates"
+    description: "GitHub Actions workflow for automated Ruby gem dependency updates with PR creation"
+    implemented: true
+    version: "0.14.2"
+    link: "/"
+    docs: ".github/workflows/update-dependencies.yml"
+    tags: [automation, dependencies, github-actions, maintenance]
+    date: 2025-12-07
+    references:
+      workflow: ".github/workflows/update-dependencies.yml"
+    features:
+      - "Automated gem updates"
+      - "PR creation"
+      - "Bundler compatibility"
+      - "Security updates"
+  
+  - id: ZER0-027
+    title: "Continuous Integration (CI) Workflow"
+    description: "Comprehensive CI pipeline with multi-Ruby version testing, quality checks, and automated deployment validation"
+    implemented: true
+    version: "0.10.0"
+    link: "/"
+    docs: ".github/workflows/ci.yml"
+    tags: [ci-cd, testing, automation, github-actions]
+    date: 2025-11-15
+    references:
+      workflow: ".github/workflows/ci.yml"
+    features:
+      - "Multi-Ruby version testing"
+      - "Jekyll build validation"
+      - "Gem build testing"
+      - "Quality checks"
+      - "Deployment validation"
+  
+  # ============================================================================
+  # UTILITY SCRIPTS
+  # ============================================================================
+  
+  - id: ZER0-028
+    title: "Shell Script Automation Library"
+    description: "Collection of 15+ automation scripts for building, testing, releasing, and managing the theme"
+    implemented: true
+    version: "0.5.0"
+    link: "/"
+    docs: ".github/instructions/scripts.instructions.md"
+    tags: [scripts, automation, bash, utilities]
+    date: 2025-11-15
+    references:
+      scripts:
+        - "scripts/build"
+        - "scripts/release"
+        - "scripts/setup.sh"
+        - "scripts/convert-notebooks.sh"
+        - "scripts/generate-preview-images.sh"
+        - "scripts/analyze-commits.sh"
+        - "scripts/fix-markdown-format.sh"
+      docs: ".github/instructions/scripts.instructions.md"
+    features:
+      - "Build automation"
+      - "Release management"
+      - "Testing utilities"
+      - "Content conversion"
+      - "Error handling"
+      - "Platform detection"
