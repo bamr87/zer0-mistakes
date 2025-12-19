@@ -1,15 +1,23 @@
 ---
-title: Machine Setup
-author: null
+title: "Machine Setup"
+author: "Zer0-Mistakes Development Team"
 layout: default
-description: null
+description: "Install Docker, Git, and essential development tools for the Zer0-Mistakes Jekyll theme. Cross-platform setup for macOS, Windows, and Linux."
+permalink: /quickstart/machine-setup/
 preview: /assets/images/previews/machine-setup.png
-categories: null
-slug: machine
-lastmod: 2024-05-20T14:58:30.179Z
+categories: [Documentation, Quick Start]
+tags: [docker, git, setup, development, cross-platform]
+keywords:
+  primary: ["docker installation", "development environment setup"]
+  secondary: ["homebrew", "winget", "git configuration", "vs code"]
+lastmod: 2025-12-19T00:00:00.000Z
 draft: false
 sidebar:
   nav: quickstart
+quickstart:
+  step: 1
+  next: /quickstart/jekyll-setup/
+  prev: /quickstart/
 ---
 
 # Machine Setup for Zer0-Mistakes Jekyll Theme
@@ -267,11 +275,11 @@ kill $(lsof -ti:4000)
 
 ## 🎯 Next Steps
 
-With your machine setup complete:
+With your machine setup complete, you're ready to:
 
-1. **🔗 [GitHub Setup](github-setup.md)** - Configure repositories and authentication
-2. **🏗️ [Jekyll Setup](jekyll-setup.md)** - Start your Docker-based Jekyll development
-3. **📖 [Quickstart Overview](index.md)** - Complete development workflow guide
+1. **[Jekyll Setup](/quickstart/jekyll-setup/)** - Start your Docker-based Jekyll development server
+2. **[GitHub Setup](/quickstart/github-setup/)** - Configure version control and deployment
+3. **[Personalization](/quickstart/personalization/)** - Customize your site's identity and branding
 
 ---
 
@@ -283,13 +291,16 @@ With your machine setup complete:
 - **Use .dockerignore** to exclude unnecessary files from build context
 - **Leverage multi-stage builds** for smaller production images
 
-This Docker-first approach ensures you'll have a reliable, consistent development environment that "just works" across all platforms! 🎉
+---
 
-Before you can begin developing, your machine (computer) needs to be configured and loaded with the necessary software and dependencies.
-Each OS (Windows, Mac, Linux) will have its own method to download and install software based on the technology stack you're working with.
-In this guide, we will focus on how to build a Minimal Viable Product (MVP) to prep your machine to create a Static Website Generator using Jekyll.
-
-## Core Setup Overview
+<div class="d-flex justify-content-between mt-5">
+  <a href="/quickstart/" class="btn btn-outline-primary">
+    <i class="bi bi-arrow-left"></i> Previous: Quick Start Overview
+  </a>
+  <a href="/quickstart/jekyll-setup/" class="btn btn-primary">
+    Next: Jekyll Setup <i class="bi bi-arrow-right"></i>
+  </a>
+</div>
 
 For this guide, we will be using the following tools:
 

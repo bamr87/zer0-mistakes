@@ -1,17 +1,25 @@
 # Quick Start Navigation Configuration
 # Used by: Quick Start sidebar and related pages
 # Purpose: Step-by-step guide navigation for new users
+# Order: Overview → Machine → Jekyll → GitHub → Personalization
 
 - title: "Quick Start"
   icon: bi-flag
   url: /quickstart/
   sublinks:
-    - title: "Machine Setup"
+    - title: "1. Machine Setup"
       url: /quickstart/machine-setup/
       icon: bi-laptop
-    - title: "Jekyll Setup"
+      description: "Install Docker, Git, and development tools"
+    - title: "2. Jekyll Setup"
       url: /quickstart/jekyll-setup/
       icon: bi-code-square
-    - title: "GitHub Setup"
+      description: "Configure Jekyll development environment"
+    - title: "3. GitHub Setup"
       url: /quickstart/github-setup/
       icon: bi-github
+      description: "Version control and deployment"
+    - title: "4. Personalization"
+      url: /quickstart/personalization/
+      icon: bi-palette
+      description: "Customize site identity and branding"

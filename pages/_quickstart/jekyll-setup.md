@@ -1,13 +1,23 @@
 ---
-title: Jekyll Setup
+title: "Jekyll Setup"
+author: "Zer0-Mistakes Development Team"
 layout: default
-description: "Complete Docker-first Jekyll setup guide for Zer0-Mistakes theme development"
-categories: [quickstart, jekyll, docker]
-slug: jekyll
-lastmod: 2025-01-27T10:00:00.000Z
+description: "Configure your Docker-first Jekyll development environment. Start the development server, create content, and customize your theme."
+permalink: /quickstart/jekyll-setup/
+preview: /assets/images/previews/jekyll-setup.png
+categories: [Documentation, Quick Start]
+tags: [jekyll, docker, development, configuration, theme]
+keywords:
+  primary: ["jekyll development", "docker compose"]
+  secondary: ["live reload", "content creation", "theme customization"]
+lastmod: 2025-12-19T00:00:00.000Z
 draft: false
 sidebar:
   nav: quickstart
+quickstart:
+  step: 2
+  next: /quickstart/github-setup/
+  prev: /quickstart/machine-setup/
 ---
 
 # 🚀 Jekyll Setup - Docker-First Development
@@ -28,12 +38,15 @@ The Zer0-Mistakes theme embraces a **Docker-first development philosophy** that 
 
 ## 🛠️ Prerequisites
 
-Before starting Jekyll development, ensure you have:
+Before starting Jekyll development, ensure you have completed:
 
-1. **Docker Desktop** (installed via [Machine Setup](./machine-setup.md))
-2. **Git & GitHub CLI** (configured via [GitHub Setup](./github-setup.md))
-3. **VS Code** with recommended extensions
-4. **Zer0-Mistakes repository** forked and cloned
+1. **[Machine Setup](/quickstart/machine-setup/)** - Docker Desktop, Git, and VS Code installed
+2. **Repository cloned** - Either forked or using the install script
+
+<div class="alert alert-info" role="alert">
+  <i class="bi bi-info-circle"></i> <strong>Haven't set up your machine yet?</strong>
+  Complete the <a href="/quickstart/machine-setup/">Machine Setup</a> guide first to install Docker and essential tools.
+</div>
 
 ## 🏗️ Jekyll Development Workflow
 
@@ -426,47 +439,24 @@ zer0-mistakes/
 
 ---
 
-**Ready to start developing?** Run `docker-compose up` and visit [http://localhost:4000](http://localhost:4000) to see your site in action! 🎉
+## 🚀 Next Steps
 
-Jekyll is a static site generator. It takes text written in your
-favorite markup language and uses layouts to create a static website. You can
-tweak the site's look and feel, URLs, the data displayed on the page, and more.
+Now that your Jekyll development environment is running:
 
-## Prerequisites
+1. **[Set up GitHub](/quickstart/github-setup/)** for version control and deployment
+2. **[Personalize your site](/quickstart/personalization/)** with custom branding and configuration
+3. **Create your first post** using the frontmatter template above
 
-Jekyll requires the following:
+---
 
-- Ruby version **{{ site.data.ruby.min_version }}** or higher
-- RubyGems
-- GCC and Make
-
-If you want to use Github Pages, here are the [dependencies](https://pages.github.com/versions.json)
-
-## Instructions
-
-1. Create a new Jekyll site at `./mysite`.
-
-```
-cd ~/github/
-jekyll new mysite
-```
-
-4. Change into your new directory.
-
-```
-cd mysite
-```
-
-5. Build the site and make it available on a local server.
-
-```
-bundle exec jekyll serve
-```
-
-6. Browse to [http://localhost:4000](http://localhost:4000){:target="\_blank"}
-
-{: .note .warning}
-If you are using Ruby version 3.0.0 or higher, step 5 [may fail](https://github.com/github/pages-gem/issues/752). You may fix it by adding `webrick` to your dependencies: `bundle add webrick`
+<div class="d-flex justify-content-between mt-5">
+  <a href="/quickstart/machine-setup/" class="btn btn-outline-primary">
+    <i class="bi bi-arrow-left"></i> Previous: Machine Setup
+  </a>
+  <a href="/quickstart/github-setup/" class="btn btn-primary">
+    Next: GitHub Setup <i class="bi bi-arrow-right"></i>
+  </a>
+</div>
 
 {: .note .info}
 Pass the `--livereload` option to `serve` to automatically refresh the page with each change you make to the source files: `bundle exec jekyll serve --livereload`

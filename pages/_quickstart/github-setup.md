@@ -1,13 +1,23 @@
 ---
-title: GitHub Setup & Deployment
+title: "GitHub Setup & Deployment"
+author: "Zer0-Mistakes Development Team"
 layout: default
-description: "Complete GitHub integration guide for Zer0-Mistakes theme development and deployment"
-categories: [quickstart, github, deployment]
-slug: github
-lastmod: 2025-01-27T10:00:00.000Z
+description: "Configure GitHub integration for version control and automated deployment. Fork the theme, set up SSH keys, and deploy to GitHub Pages."
+permalink: /quickstart/github-setup/
+preview: /assets/images/previews/github-setup.png
+categories: [Documentation, Quick Start]
+tags: [github, git, deployment, github-pages, version-control]
+keywords:
+  primary: ["github pages deployment", "git workflow"]
+  secondary: ["ssh keys", "github cli", "fork repository", "pull requests"]
+lastmod: 2025-12-19T00:00:00.000Z
 draft: false
 sidebar:
   nav: quickstart
+quickstart:
+  step: 3
+  next: /quickstart/personalization/
+  prev: /quickstart/jekyll-setup/
 ---
 
 # 🐙 GitHub Setup & Deployment
@@ -26,12 +36,16 @@ GitHub integration with Zer0-Mistakes provides:
 
 ## 🛠️ Prerequisites
 
-Before starting GitHub integration, ensure you have:
+Before starting GitHub integration, ensure you have completed:
 
-1. **Docker Desktop** (installed via [Machine Setup](./machine-setup.md))
-2. **Git** and **package manager** (Homebrew on macOS, Winget on Windows)
-3. **Code editor** (VS Code recommended)
-4. **GitHub account** with proper configuration
+1. **[Machine Setup](/quickstart/machine-setup/)** - Docker Desktop, Git, and GitHub CLI installed
+2. **[Jekyll Setup](/quickstart/jekyll-setup/)** - Development environment running
+3. **GitHub account** - [Create one](https://github.com/signup) if needed
+
+<div class="alert alert-info" role="alert">
+  <i class="bi bi-info-circle"></i> <strong>Haven't set up your machine yet?</strong>
+  Complete the <a href="/quickstart/machine-setup/">Machine Setup</a> guide first to install Git and GitHub CLI.
+</div>
 
 ## 📦 Development Tools Installation
 
@@ -407,12 +421,24 @@ docker-compose exec jekyll jekyll clean
 
 After completing GitHub setup:
 
-1. **Customize your theme** by modifying layouts and styles
+1. **[Personalize your site](/quickstart/personalization/)** - Configure site identity, branding, and analytics
 2. **Create your first post** using the provided templates
-3. **Configure SEO settings** in `_config.yml`
-4. **Set up analytics** and monitoring tools
-5. **Explore advanced features** in the Jekyll documentation
+3. **Set up analytics** and monitoring tools
+4. **Explore the documentation** for advanced customization
 
 ---
+
+**🏆 Congratulations!** You now have a complete GitHub-integrated Jekyll development environment with automated deployment. Continue to [Personalization](/quickstart/personalization/) to customize your site!
+
+---
+
+<div class="d-flex justify-content-between mt-5">
+  <a href="/quickstart/jekyll-setup/" class="btn btn-outline-primary">
+    <i class="bi bi-arrow-left"></i> Previous: Jekyll Setup
+  </a>
+  <a href="/quickstart/personalization/" class="btn btn-primary">
+    Next: Personalization <i class="bi bi-arrow-right"></i>
+  </a>
+</div>---
 
 **🏆 Congratulations!** You now have a complete GitHub-integrated Jekyll development environment with automated deployment. Start creating amazing content!

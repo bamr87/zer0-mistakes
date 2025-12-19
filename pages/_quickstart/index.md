@@ -1,18 +1,22 @@
 ---
-title: "Zer0-Mistakes Quick Start Guide"
+title: "Quick Start Guide"
 author: "Zer0-Mistakes Development Team"
 layout: default
-description: "Complete setup guide for the Zer0-Mistakes Jekyll theme featuring Docker-first development, AI-powered installation, and cross-platform compatibility"
+description: "Get your Jekyll site running in under 5 minutes with Docker-first development, AI-powered installation, and cross-platform compatibility."
 permalink: /quickstart/
-sidebar:
-  nav: quickstart
-lastmod: 2025-02-06T18:18:33.556Z
 preview: /assets/images/previews/zer0-mistakes-quick-start-guide.png
-tags: [jekyll, docker, setup, development, ai-powered]
 categories: [Documentation, Quick Start]
+tags: [jekyll, docker, setup, development, ai-powered]
 keywords:
   primary: ["jekyll theme setup", "docker development"]
   secondary: ["ai installation", "cross-platform", "bootstrap 5"]
+lastmod: 2025-12-19T00:00:00.000Z
+sidebar:
+  nav: quickstart
+quickstart:
+  step: 0
+  next: /quickstart/machine-setup/
+  prev: null
 ---
 
 # 🚀 Quick Start Guide
@@ -153,13 +157,16 @@ If you’re developing the theme repo itself, follow `QUICKSTART.md` for the com
 
 ## 📚 Comprehensive Setup Guides
 
-### 🏗️ Essential Setup
+Follow these guides in order for the best experience:
 
-| Guide                                           | Purpose                                     | Time   | Difficulty   |
-| ----------------------------------------------- | ------------------------------------------- | ------ | ------------ |
-| **[Machine Setup](/quickstart/machine-setup/)** | Install Docker, Git, and platform tools     | 10 min | Beginner     |
-| **[Jekyll Setup](/quickstart/jekyll-setup/)**   | Configure theme and development environment | 5 min  | Beginner     |
-| **[GitHub Setup](/quickstart/github-setup/)**   | Version control and deployment              | 10 min | Intermediate |
+### 🏗️ Essential Setup (Recommended Order)
+
+| Step | Guide                                               | Purpose                                      | Time   | Difficulty   |
+| ---- | --------------------------------------------------- | -------------------------------------------- | ------ | ------------ |
+| 1    | **[Machine Setup](/quickstart/machine-setup/)**     | Install Docker, Git, and development tools   | 10 min | Beginner     |
+| 2    | **[Jekyll Setup](/quickstart/jekyll-setup/)**       | Start development server and create content  | 5 min  | Beginner     |
+| 3    | **[GitHub Setup](/quickstart/github-setup/)**       | Version control and deployment to GitHub Pages | 10 min | Intermediate |
+| 4    | **[Personalization](/quickstart/personalization/)** | Customize site identity, branding, analytics | 15 min | Beginner     |
 
 ### 🚀 Advanced Configuration
 
@@ -276,7 +283,15 @@ docker-compose config
 
 ---
 
-**Ready to build something amazing?** Start with the [fastest installation](#fastest-start-1-command) above!
+**Ready to build something amazing?** Start with the [fastest installation](#fastest-start-1-command) above, or follow the step-by-step guides starting with **[Machine Setup](/quickstart/machine-setup/)**!
+
+---
+
+<div class="d-flex justify-content-center mt-5">
+  <a href="/quickstart/machine-setup/" class="btn btn-primary btn-lg">
+    Start Setup Guide <i class="bi bi-arrow-right"></i>
+  </a>
+</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
