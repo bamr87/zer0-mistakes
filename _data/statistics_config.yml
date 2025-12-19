@@ -1,0 +1,203 @@
+# Configuration for content statistics generation
+# This file defines the mappings and categories used to analyze posts
+# Used by: _data/generate_statistics.rb
+# Purpose: Configurable keyword mappings for content analysis
+
+# Focus area mappings - maps keywords to focus areas
+focus_areas:
+  "AI & Machine Learning":
+    - ai
+    - ml
+    - machine-learning
+    - artificial-intelligence
+    - ai-assisted
+    - gpt
+    - chatgpt
+    - neural
+    - automation
+    - aipd
+  
+  "Web Development":
+    - web
+    - javascript
+    - html
+    - css
+    - react
+    - angular
+    - django
+    - flask
+    - jekyll
+    - frontend
+    - backend
+    - fullstack
+    - api
+    - rest
+    - bootstrap
+  
+  "DevOps & Infrastructure":
+    - devops
+    - docker
+    - kubernetes
+    - ci/cd
+    - deployment
+    - infrastructure
+    - containers
+    - orchestration
+    - pipeline
+    - github-actions
+    - travis
+    - netlify
+  
+  "System Administration":
+    - linux
+    - windows
+    - macos
+    - server
+    - admin
+    - system
+    - dual-boot
+    - installation
+    - configuration
+  
+  "Programming & Scripting":
+    - programming
+    - scripting
+    - python
+    - bash
+    - shell
+    - coding
+    - development
+    - refactoring
+    - architecture
+    - ruby
+    - typescript
+  
+  "Data & Analytics":
+    - data
+    - database
+    - analytics
+    - scraping
+    - analysis
+    - processing
+    - statistics
+  
+  "Tools & Development Environment":
+    - tools
+    - vscode
+    - editor
+    - environment
+    - productivity
+    - extension
+    - workflow
+  
+  "Documentation & Content":
+    - documentation
+    - docs
+    - tutorial
+    - guide
+    - how-to
+    - mermaid
+    - diagram
+  
+  "Creative & Experimental":
+    - creative
+    - experimental
+    - art
+    - music
+    - fiction
+    - storytelling
+    - themes
+
+# Skill level mappings
+skill_levels:
+  beginner:
+    - beginner
+    - intro
+    - introduction
+    - getting-started
+    - basics
+    - fundamentals
+    - first
+    - setup
+    - quickstart
+  
+  intermediate:
+    - intermediate
+    - advanced-beginner
+    - practical
+    - hands-on
+    - implementation
+    - building
+  
+  advanced:
+    - advanced
+    - deep-dive
+    - optimization
+    - performance
+    - architecture
+    - complex
+    - sophisticated
+  
+  expert:
+    - expert
+    - research
+    - cutting-edge
+    - innovation
+    - meta
+    - engine
+    - evolution
+
+# Content type mappings
+content_types:
+  "Tutorial":
+    - tutorial
+    - guide
+    - how-to
+    - step-by-step
+    - walkthrough
+    - setup
+  
+  "Article":
+    - article
+    - analysis
+    - insights
+    - deep-dive
+    - discussion
+    - overview
+  
+  "Journal Entry":
+    - journal
+    - learning-journey
+    - diary
+    - chronicle
+    - post
+  
+  "Documentation":
+    - documentation
+    - reference
+    - api
+    - manual
+    - specification
+  
+  "News/Update":
+    - news
+    - update
+    - announcement
+    - release
+    - changelog
+
+# Display preferences for statistics
+display:
+  # Maximum items to show in top lists
+  max_categories: 10
+  max_tags: 15
+  max_authors: 5
+  
+  # Whether to show percentages
+  show_percentages: true
+  
+  # Minimum count to display an item
+  min_count_threshold: 1
+  
+  # Highlight threshold for "popular" items
+  popular_threshold: 5

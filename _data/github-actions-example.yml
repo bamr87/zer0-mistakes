@@ -1,0 +1,210 @@
+# Example GitHub Actions workflow for automated content statistics
+# Save this as .github/workflows/update-statistics.yml
+#
+# This workflow automatically updates content_statistics.yml when:
+# - Posts or documentation content changes
+# - The statistics configuration is updated
+# - Manually triggered via workflow_dispatch
+# - Weekly scheduled run for maintenance
+#
+# For the Zer0-Mistakes Jekyll theme
+
+name: Update Content Statistics
+
+on:
+  # Run when content changes
+  push:
+    paths:
+      - 'pages/_posts/**'
+      - 'pages/_docs/**'
+      - 'pages/_quickstart/**'
+      - '_data/statistics_config.yml'
+    branches: [main]
+  
+  # Allow manual trigger with options
+  workflow_dispatch:
+    inputs:
+      force_update:
+        description: 'Force update even if no changes detected'
+        required: false
+        default: 'false'
+        type: boolean
+      skip_push:
+        description: 'Generate stats but do not commit/push'
+        required: false
+        default: 'false'
+        type: boolean
+  
+  # Run weekly to catch any missed updates
+  schedule:
+    - cron: '0 6 * * 1'  # Every Monday at 6 AM UTC
+
+env:
+  RUBY_VERSION: '3.2'
+  YQ_VERSION: 'v4.40.5'
+
+jobs:
+  update-statistics:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write  # Allow the workflow to commit changes
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+      
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+      
+      - name: Install yq (for YAML processing)
+        run: |
+          sudo wget -qO /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/download/${{ env.YQ_VERSION }}/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+          yq --version
+      
+      - name: Verify required files exist
+        run: |
+          echo "🔍 Checking required files..."
+          
+          if [ ! -f "_data/generate_statistics.rb" ]; then
+            echo "❌ Missing: _data/generate_statistics.rb"
+            exit 1
+          fi
+          
+          if [ ! -f "_data/update_statistics.sh" ]; then
+            echo "❌ Missing: _data/update_statistics.sh"
+            exit 1
+          fi
+          
+          echo "✅ All required files present"
+      
+      - name: Update content statistics
+        env:
+          CI: true
+          AUTO_PUSH: ${{ github.event.inputs.skip_push != 'true' }}
+          FORCE_UPDATE: ${{ github.event.inputs.force_update == 'true' }}
+        run: |
+          # Make scripts executable
+          chmod +x _data/update_statistics.sh
+          chmod +x _data/generate_statistics.sh 2>/dev/null || true
+          
+          # Run the update script
+          bash _data/update_statistics.sh
+      
+      - name: Display statistics summary
+        if: always()
+        run: |
+          if [ -f "_data/content_statistics.yml" ]; then
+            echo ""
+            echo "📊 Content Statistics Summary"
+            echo "════════════════════════════════════════════════════"
+            echo ""
+            
+            # Basic counts
+            echo "📝 Content Overview:"
+            echo "  Total Posts:  $(yq '.total_posts // 0' _data/content_statistics.yml)"
+            echo "  Published:    $(yq '.published // 0' _data/content_statistics.yml)"
+            echo "  Drafts:       $(yq '.drafts // 0' _data/content_statistics.yml)"
+            echo "  Categories:   $(yq '.category_count // 0' _data/content_statistics.yml)"
+            echo "  Tags:         $(yq '.tag_count // 0' _data/content_statistics.yml)"
+            echo ""
+            
+            # Focus areas if present
+            if yq -e '.focus_areas' _data/content_statistics.yml > /dev/null 2>&1; then
+              echo "🎯 Top Focus Areas:"
+              yq '.focus_areas | to_entries | sort_by(-.value) | .[0:5] | .[] | "  • " + .key + ": " + (.value | tostring)' \
+                _data/content_statistics.yml 2>/dev/null || echo "  (none)"
+              echo ""
+            fi
+            
+            # Skill levels if present
+            if yq -e '.skill_levels' _data/content_statistics.yml > /dev/null 2>&1; then
+              echo "📈 Skill Level Distribution:"
+              yq '.skill_levels | to_entries | .[] | "  • " + .key + ": " + (.value | tostring)' \
+                _data/content_statistics.yml 2>/dev/null || echo "  (none)"
+              echo ""
+            fi
+            
+            # Authors if present
+            if yq -e '.authors' _data/content_statistics.yml > /dev/null 2>&1; then
+              echo "✍️  Top Authors:"
+              yq '.authors | to_entries | sort_by(-.value) | .[0:3] | .[] | "  • " + .key + ": " + (.value | tostring) + " posts"' \
+                _data/content_statistics.yml 2>/dev/null || echo "  (none)"
+              echo ""
+            fi
+            
+            # Content freshness
+            if yq -e '.content_freshness' _data/content_statistics.yml > /dev/null 2>&1; then
+              echo "🕐 Content Freshness:"
+              yq '.content_freshness | to_entries | .[] | "  • " + .key + ": " + (.value | tostring)' \
+                _data/content_statistics.yml 2>/dev/null || echo "  (none)"
+              echo ""
+            fi
+            
+            # Derived stats
+            if yq -e '.derived_stats' _data/content_statistics.yml > /dev/null 2>&1; then
+              echo "📊 Derived Statistics:"
+              AVG_TAGS=$(yq '.derived_stats.avg_tags_per_post // "N/A"' _data/content_statistics.yml)
+              AVG_CATS=$(yq '.derived_stats.avg_categories_per_post // "N/A"' _data/content_statistics.yml)
+              TOP_CAT=$(yq '.derived_stats.most_common_category // "N/A"' _data/content_statistics.yml)
+              echo "  • Avg tags/post: ${AVG_TAGS}"
+              echo "  • Avg categories/post: ${AVG_CATS}"
+              echo "  • Most common category: ${TOP_CAT}"
+              echo ""
+            fi
+            
+            # Last updated
+            echo "🕒 Last Updated: $(yq '.generated_at // "unknown"' _data/content_statistics.yml)"
+            echo ""
+            echo "════════════════════════════════════════════════════"
+          else
+            echo "⚠️ Statistics file not found: _data/content_statistics.yml"
+          fi
+      
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet _data/content_statistics.yml; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Commit and push changes
+        if: steps.changes.outputs.has_changes == 'true' && github.event.inputs.skip_push != 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          git add _data/content_statistics.yml
+          git commit -m "chore(stats): update content statistics [skip ci]"
+          git push
+          
+          echo "✅ Statistics updated and pushed to repository"
+      
+      - name: Job summary
+        run: |
+          echo "## 📊 Content Statistics Update" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -f "_data/content_statistics.yml" ]; then
+            echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Total Posts | $(yq '.total_posts // 0' _data/content_statistics.yml) |" >> $GITHUB_STEP_SUMMARY
+            echo "| Published | $(yq '.published // 0' _data/content_statistics.yml) |" >> $GITHUB_STEP_SUMMARY
+            echo "| Drafts | $(yq '.drafts // 0' _data/content_statistics.yml) |" >> $GITHUB_STEP_SUMMARY
+            echo "| Categories | $(yq '.category_count // 0' _data/content_statistics.yml) |" >> $GITHUB_STEP_SUMMARY
+            echo "| Tags | $(yq '.tag_count // 0' _data/content_statistics.yml) |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "_Last updated: $(yq '.generated_at // "unknown"' _data/content_statistics.yml)_" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Statistics file not generated" >> $GITHUB_STEP_SUMMARY
+          fi

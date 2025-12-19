@@ -1,0 +1,153 @@
+# Configuration for organizing posts by section
+# Used by: Content organization scripts and category-based navigation
+# Purpose: Define valid sections for blog posts and their directory/URL mappings
+
+sections:
+  "Development":
+    directory: "development"
+    icon: "bi-code-slash"
+    color: "#28a745"
+    aliases:
+      - "coding"
+      - "programming"
+      - "software"
+  
+  "Web Development":
+    directory: "web-development"
+    icon: "bi-globe"
+    color: "#17a2b8"
+    aliases:
+      - "web"
+      - "frontend"
+      - "backend"
+  
+  "DevOps":
+    directory: "devops"
+    icon: "bi-gear"
+    color: "#fd7e14"
+    aliases:
+      - "deployment"
+      - "ci/cd"
+      - "infrastructure"
+  
+  "AI & Machine Learning":
+    directory: "ai-ml"
+    icon: "bi-robot"
+    color: "#6f42c1"
+    aliases:
+      - "ai"
+      - "machine learning"
+      - "artificial intelligence"
+  
+  "System Administration":
+    directory: "sysadmin"
+    icon: "bi-server"
+    color: "#20c997"
+    aliases:
+      - "sysadmin"
+      - "administration"
+      - "systems"
+  
+  "Data & Analytics":
+    directory: "data-analytics"
+    icon: "bi-bar-chart"
+    color: "#e83e8c"
+    aliases:
+      - "data"
+      - "analytics"
+      - "analysis"
+  
+  "Tools & Environment":
+    directory: "tools"
+    icon: "bi-tools"
+    color: "#6c757d"
+    aliases:
+      - "tools"
+      - "environment"
+      - "setup"
+  
+  "Tutorials":
+    directory: "tutorials"
+    icon: "bi-book"
+    color: "#007bff"
+    aliases:
+      - "tutorial"
+      - "guide"
+      - "how-to"
+  
+  "Documentation":
+    directory: "documentation"
+    icon: "bi-journal-text"
+    color: "#343a40"
+    aliases:
+      - "docs"
+      - "reference"
+      - "manual"
+  
+  "News & Updates":
+    directory: "news"
+    icon: "bi-newspaper"
+    color: "#dc3545"
+    aliases:
+      - "news"
+      - "updates"
+      - "announcements"
+  
+  "Features":
+    directory: "features"
+    icon: "bi-stars"
+    color: "#ffc107"
+    aliases:
+      - "feature"
+      - "showcase"
+      - "highlight"
+  
+  "Jekyll":
+    directory: "jekyll"
+    icon: "bi-gem"
+    color: "#cc0000"
+    aliases:
+      - "jekyll-theme"
+      - "static-site"
+      - "ruby"
+  
+  "Docker":
+    directory: "docker"
+    icon: "bi-box"
+    color: "#2496ed"
+    aliases:
+      - "container"
+      - "containerization"
+      - "docker-compose"
+  
+  "Bootstrap":
+    directory: "bootstrap"
+    icon: "bi-bootstrap"
+    color: "#7952b3"
+    aliases:
+      - "css-framework"
+      - "responsive"
+      - "ui"
+
+# Default section for posts without a clear section
+default_section: "development"
+
+# Fallback mapping for categories to sections
+category_to_section:
+  "How-To": "Tutorials"
+  "Testing": "Development"
+  "Tutorial": "Tutorials"
+  "deployment": "DevOps"
+  "github": "DevOps"
+  "jekyll-theme": "Jekyll"
+  "bootstrap": "Bootstrap"
+  "Quick Start": "Tutorials"
+  "quickstart": "Tutorials"
+  "about": "Documentation"
+  "themes": "Jekyll"
+
+# URL patterns for sections
+url_patterns:
+  use_section_in_url: true
+  section_separator: "/"
+  date_format: "/:year/:month/:day"

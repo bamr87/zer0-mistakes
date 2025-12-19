@@ -1,0 +1,321 @@
+# User interface text and labels
+# Used by: Various includes and layouts throughout the theme
+# Purpose: Multilingual UI strings for internationalization (i18n)
+
+# English (default)
+# -----------------
+en: &DEFAULT_EN
+  skip_links                 : "Skip links"
+  skip_primary_nav           : "Skip to primary navigation"
+  skip_content               : "Skip to content"
+  skip_footer                : "Skip to footer"
+  page                       : "Page"
+  pagination_previous        : "Previous"
+  pagination_next            : "Next"
+  breadcrumb_home_label      : "Home"
+  breadcrumb_separator       : "/"
+  menu_label                 : "Toggle menu"
+  search_label               : "Toggle search"
+  toc_label                  : "On this page"
+  ext_link_label             : "Direct link"
+  less_than                  : "less than"
+  minute_read                : "minute read"
+  share_on_label             : "Share on"
+  meta_label                 :
+  tags_label                 : "Tags:"
+  categories_label           : "Categories:"
+  date_label                 : "Updated:"
+  author_label               : "Author:"
+  comments_label             : "Leave a comment"
+  comments_title             : "Comments"
+  more_label                 : "Learn more"
+  related_label              : "You may also enjoy"
+  follow_label               : "Follow:"
+  feed_label                 : "Feed"
+  powered_by                 : "Powered by"
+  website_label              : "Website"
+  email_label                : "Email"
+  recent_posts               : "Recent posts"
+  undefined_wpm              : "Undefined parameter words_per_minute at _config.yml"
+  comment_form_info          : "Your email address will not be published. Required fields are marked"
+  comment_form_comment_label : "Comment"
+  comment_form_md_info       : "Markdown is supported."
+  comment_form_name_label    : "Name"
+  comment_form_email_label   : "Email address"
+  comment_form_website_label : "Website (optional)"
+  comment_btn_submit         : "Submit comment"
+  comment_btn_submitted      : "Submitted"
+  comment_success_msg        : "Thanks for your comment! It will show on the site once it has been approved."
+  comment_error_msg          : "Sorry, there was an error with your submission. Please make sure all required fields have been completed and try again."
+  loading_label              : "Loading..."
+  search_label_text          : "Enter your search term..."
+  search_placeholder_text    : "Enter your search term..."
+  search_algolia_no_results  : "No results"
+  results_found              : "Result(s) found"
+  back_to_top                : "Back to top"
+  # Statistics labels
+  stats_total_posts          : "Total Posts"
+  stats_total_pages          : "Total Pages"
+  stats_categories           : "Categories"
+  stats_tags                 : "Tags"
+  stats_last_updated         : "Last Updated"
+  stats_overview             : "Overview"
+  stats_content_breakdown    : "Content Breakdown"
+  # Theme-specific labels
+  theme_toggle               : "Toggle theme"
+  dark_mode                  : "Dark mode"
+  light_mode                 : "Light mode"
+  view_source                : "View source"
+  edit_page                  : "Edit this page"
+  report_issue               : "Report an issue"
+  
+en-US:
+  <<: *DEFAULT_EN
+en-CA:
+  <<: *DEFAULT_EN
+en-GB:
+  <<: *DEFAULT_EN
+en-AU:
+  <<: *DEFAULT_EN
+
+# Spanish
+# -------
+es: &DEFAULT_ES
+  skip_links                 : "Saltar enlaces"
+  skip_primary_nav           : "Saltar a navegación principal"
+  skip_content               : "Saltar a contenido"
+  skip_footer                : "Saltar a pie"
+  page                       : "Página"
+  pagination_previous        : "Anterior"
+  pagination_next            : "Siguiente"
+  breadcrumb_home_label      : "Inicio"
+  breadcrumb_separator       : "/"
+  menu_label                 : "Alternar menú"
+  search_label               : "Alternar búsqueda"
+  toc_label                  : "En esta página"
+  ext_link_label             : "Enlace directo"
+  less_than                  : "menos de"
+  minute_read                : "minuto(s) de lectura"
+  share_on_label             : "Compartir en"
+  meta_label                 :
+  tags_label                 : "Etiquetas:"
+  categories_label           : "Categorías:"
+  date_label                 : "Actualizado:"
+  author_label               : "Autor:"
+  comments_label             : "Deja un comentario"
+  comments_title             : "Comentarios"
+  more_label                 : "Ver más"
+  related_label              : "Puede que también te interese"
+  follow_label               : "Seguir:"
+  feed_label                 : "Feed"
+  powered_by                 : "Funciona con"
+  website_label              : "Sitio web"
+  email_label                : "Correo electrónico"
+  recent_posts               : "Entradas recientes"
+  undefined_wpm              : "El parámetro words_per_minute (palabras por minuto) no está definido en _config.yml"
+  comment_form_info          : "Tu dirección de correo electrónico no se publicará. Los campos obligatorios están marcados"
+  comment_form_comment_label : "Comentario"
+  comment_form_md_info       : "Puedes utilizar Markdown"
+  comment_form_name_label    : "Nombre"
+  comment_form_email_label   : "Dirección de correo electrónico"
+  comment_form_website_label : "Sitio web (opcional)"
+  comment_btn_submit         : "Enviar comentario"
+  comment_btn_submitted      : "Enviado"
+  comment_success_msg        : "¡Gracias por tu comentario! Se mostrará en el sitio una vez que haya sido aprobado."
+  comment_error_msg          : "Lo sentimos, ha habido un error con tu envío. Por favor, asegúrate de que todos los campos obligatorios se han completado e inténtalo de nuevo."
+  loading_label              : "Cargando..."
+  search_label_text          : "Introduce tu término de búsqueda..."
+  search_placeholder_text    : "Introduce tu término de búsqueda..."
+  search_algolia_no_results  : "Sin resultados"
+  results_found              : "Resultado(s) encontrado(s)"
+  back_to_top                : "Volver arriba"
+  # Statistics labels
+  stats_total_posts          : "Total de Publicaciones"
+  stats_total_pages          : "Total de Páginas"
+  stats_categories           : "Categorías"
+  stats_tags                 : "Etiquetas"
+  stats_last_updated         : "Última Actualización"
+  stats_overview             : "Resumen"
+  stats_content_breakdown    : "Desglose de Contenido"
+  # Theme-specific labels
+  theme_toggle               : "Cambiar tema"
+  dark_mode                  : "Modo oscuro"
+  light_mode                 : "Modo claro"
+  view_source                : "Ver código fuente"
+  edit_page                  : "Editar esta página"
+  report_issue               : "Reportar un problema"
+
+es-ES:
+  <<: *DEFAULT_ES
+es-MX:
+  <<: *DEFAULT_ES
+
+# French
+# ------
+fr: &DEFAULT_FR
+  skip_links                 : "Liens de saut"
+  skip_primary_nav           : "Aller à la navigation principale"
+  skip_content               : "Aller au contenu"
+  skip_footer                : "Aller au pied de page"
+  page                       : "Page"
+  pagination_previous        : "Précédent"
+  pagination_next            : "Suivant"
+  breadcrumb_home_label      : "Accueil"
+  breadcrumb_separator       : "/"
+  menu_label                 : "Basculer le menu"
+  search_label               : "Basculer la recherche"
+  toc_label                  : "Sur cette page"
+  ext_link_label             : "Lien direct"
+  less_than                  : "moins de"
+  minute_read                : "minute(s) de lecture"
+  share_on_label             : "Partager sur"
+  meta_label                 :
+  tags_label                 : "Tags :"
+  categories_label           : "Catégories :"
+  date_label                 : "Mis à jour :"
+  author_label               : "Auteur :"
+  comments_label             : "Laisser un commentaire"
+  comments_title             : "Commentaires"
+  more_label                 : "En savoir plus"
+  related_label              : "Vous pourriez aussi aimer"
+  follow_label               : "Suivre :"
+  feed_label                 : "Flux"
+  powered_by                 : "Propulsé par"
+  website_label              : "Site web"
+  email_label                : "Email"
+  recent_posts               : "Articles récents"
+  back_to_top                : "Retour en haut"
+  # Statistics labels
+  stats_total_posts          : "Total des Publications"
+  stats_total_pages          : "Total des Pages"
+  stats_categories           : "Catégories"
+  stats_tags                 : "Tags"
+  stats_last_updated         : "Dernière Mise à Jour"
+  stats_overview             : "Aperçu"
+  stats_content_breakdown    : "Répartition du Contenu"
+  # Theme-specific labels
+  theme_toggle               : "Changer de thème"
+  dark_mode                  : "Mode sombre"
+  light_mode                 : "Mode clair"
+  view_source                : "Voir la source"
+  edit_page                  : "Modifier cette page"
+  report_issue               : "Signaler un problème"
+
+fr-FR:
+  <<: *DEFAULT_FR
+fr-CA:
+  <<: *DEFAULT_FR
+
+# German
+# ------
+de: &DEFAULT_DE
+  skip_links                 : "Links überspringen"
+  skip_primary_nav           : "Zur Hauptnavigation springen"
+  skip_content               : "Zum Inhalt springen"
+  skip_footer                : "Zur Fußzeile springen"
+  page                       : "Seite"
+  pagination_previous        : "Zurück"
+  pagination_next            : "Weiter"
+  breadcrumb_home_label      : "Startseite"
+  breadcrumb_separator       : "/"
+  menu_label                 : "Menü umschalten"
+  search_label               : "Suche umschalten"
+  toc_label                  : "Auf dieser Seite"
+  ext_link_label             : "Direktlink"
+  less_than                  : "weniger als"
+  minute_read                : "Minute(n) Lesezeit"
+  share_on_label             : "Teilen auf"
+  meta_label                 :
+  tags_label                 : "Tags:"
+  categories_label           : "Kategorien:"
+  date_label                 : "Aktualisiert:"
+  author_label               : "Autor:"
+  comments_label             : "Einen Kommentar hinterlassen"
+  comments_title             : "Kommentare"
+  more_label                 : "Mehr erfahren"
+  related_label              : "Das könnte Sie auch interessieren"
+  follow_label               : "Folgen:"
+  feed_label                 : "Feed"
+  powered_by                 : "Betrieben mit"
+  website_label              : "Webseite"
+  email_label                : "E-Mail"
+  recent_posts               : "Neueste Beiträge"
+  back_to_top                : "Nach oben"
+  # Statistics labels
+  stats_total_posts          : "Gesamte Beiträge"
+  stats_total_pages          : "Gesamte Seiten"
+  stats_categories           : "Kategorien"
+  stats_tags                 : "Tags"
+  stats_last_updated         : "Zuletzt Aktualisiert"
+  stats_overview             : "Übersicht"
+  stats_content_breakdown    : "Inhaltsaufschlüsselung"
+  # Theme-specific labels
+  theme_toggle               : "Thema wechseln"
+  dark_mode                  : "Dunkler Modus"
+  light_mode                 : "Heller Modus"
+  view_source                : "Quelle ansehen"
+  edit_page                  : "Diese Seite bearbeiten"
+  report_issue               : "Ein Problem melden"
+
+de-DE:
+  <<: *DEFAULT_DE
+de-AT:
+  <<: *DEFAULT_DE
+de-CH:
+  <<: *DEFAULT_DE
+
+# Arabic
+# ------
+ar: &DEFAULT_AR
+  skip_links                 : "تخطي الروابط"
+  skip_primary_nav           : "انتقل إلى التنقل الرئيسي"
+  skip_content               : "انتقل إلى المحتوى"
+  skip_footer                : "انتقل إلى التذييل"
+  page                       : "صفحة"
+  pagination_previous        : "السابق"
+  pagination_next            : "التالي"
+  breadcrumb_home_label      : "الرئيسية"
+  breadcrumb_separator       : "/"
+  menu_label                 : "تبديل القائمة"
+  search_label               : "تبديل البحث"
+  toc_label                  : "في هذه الصفحة"
+  ext_link_label             : "رابط مباشر"
+  less_than                  : "أقل من"
+  minute_read                : "دقيقة للقراءة"
+  share_on_label             : "مشاركة على"
+  meta_label                 :
+  tags_label                 : "الوسوم:"
+  categories_label           : "الأقسام:"
+  date_label                 : "تاريخ التحديث:"
+  author_label               : "الكاتب:"
+  comments_label             : "اترك تعليقاً"
+  comments_title             : "التعليقات"
+  more_label                 : "اقرأ المزيد"
+  related_label              : "قد يعجبك أيضاً"
+  follow_label               : "تابعنا:"
+  feed_label                 : "الخلاصة"
+  powered_by                 : "يعمل بواسطة"
+  website_label              : "الموقع"
+  email_label                : "البريد الإلكتروني"
+  recent_posts               : "المنشورات الأخيرة"
+  back_to_top                : "العودة للأعلى"
+  # Statistics labels
+  stats_total_posts          : "إجمالي المنشورات"
+  stats_total_pages          : "إجمالي الصفحات"
+  stats_categories           : "الأقسام"
+  stats_tags                 : "الوسوم"
+  stats_last_updated         : "آخر تحديث"
+  stats_overview             : "نظرة عامة"
+  stats_content_breakdown    : "تفصيل المحتوى"
+  # Theme-specific labels
+  theme_toggle               : "تبديل المظهر"
+  dark_mode                  : "الوضع الداكن"
+  light_mode                 : "الوضع الفاتح"
+  view_source                : "عرض المصدر"
+  edit_page                  : "تحرير هذه الصفحة"
+  report_issue               : "الإبلاغ عن مشكلة"
+
+ar-SA:
+  <<: *DEFAULT_AR
+ar-EG:
+  <<: *DEFAULT_AR

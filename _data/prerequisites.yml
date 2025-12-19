@@ -1,0 +1,112 @@
+# Prerequisites Data File
+# Used by: Content that requires prerequisite knowledge checks
+# Purpose: Define common prerequisites for tutorials, guides, and educational content
+
+prerequisites:
+  - title: "Basic command-line interface knowledge"
+    description: "Comfortable using terminal/command prompt"
+    level: "foundation"
+    category: "systems"
+  
+  - title: "Git version control basics"
+    description: "Understanding of git clone, add, commit, push"
+    level: "foundation"
+    category: "development"
+  
+  - title: "Text editor or IDE familiarity"
+    description: "Comfortable editing code in preferred editor"
+    level: "foundation"
+    category: "tools"
+  
+  - title: "Basic programming concepts"
+    description: "Variables, functions, loops, conditionals"
+    level: "foundation"
+    category: "programming"
+  
+  - title: "Web development basics"
+    description: "Understanding of HTML, CSS, and HTTP"
+    level: "web-foundation"
+    category: "web"
+  
+  - title: "JavaScript fundamentals"
+    description: "ES6+ syntax, async/await, DOM manipulation"
+    level: "frontend"
+    category: "web"
+  
+  - title: "Ruby basics"
+    description: "Basic Ruby syntax, gems, and Bundler"
+    level: "backend"
+    category: "programming"
+  
+  - title: "Jekyll fundamentals"
+    description: "Understanding Jekyll structure, Liquid templating"
+    level: "framework"
+    category: "web"
+  
+  - title: "Docker containerization"
+    description: "Container concepts, Dockerfile, docker-compose"
+    level: "devops"
+    category: "infrastructure"
+  
+  - title: "Linux/Unix command line"
+    description: "File navigation, permissions, process management"
+    level: "systems"
+    category: "infrastructure"
+  
+  - title: "HTTP/REST API concepts"
+    description: "Request/response, status codes, JSON"
+    level: "api"
+    category: "web"
+  
+  - title: "YAML syntax"
+    description: "Understanding YAML structure for configuration files"
+    level: "foundation"
+    category: "tools"
+  
+  - title: "Markdown formatting"
+    description: "Writing content with Markdown syntax"
+    level: "foundation"
+    category: "content"
+  
+  - title: "Bootstrap 5 basics"
+    description: "Understanding Bootstrap grid, components, utilities"
+    level: "frontend"
+    category: "web"
+  
+  - title: "Sass/SCSS fundamentals"
+    description: "CSS preprocessing with variables, mixins, nesting"
+    level: "frontend"
+    category: "web"
+  
+  - title: "GitHub Pages understanding"
+    description: "Static site hosting, custom domains, deployment"
+    level: "deployment"
+    category: "infrastructure"
+  
+  - title: "Testing methodologies"
+    description: "Unit tests, integration tests, TDD concepts"
+    level: "quality"
+    category: "development"
+
+# Prerequisite levels (ordered by complexity)
+levels:
+  - foundation
+  - web-foundation
+  - frontend
+  - backend
+  - framework
+  - devops
+  - systems
+  - api
+  - deployment
+  - quality
+
+# Prerequisite categories
+categories:
+  - systems
+  - development
+  - tools
+  - programming
+  - web
+  - infrastructure
+  - content
