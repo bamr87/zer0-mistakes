@@ -2,6 +2,7 @@
   "name": "zer0-mistakes",
   "private": true,
   "version": "0.15.5",
+  "version": "0.16.0",
   "description": "Bootstrap Jekyll theme for headless Github Pages CMS.",
   "repository": {
     "type": "git",

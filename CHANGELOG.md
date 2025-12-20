@@ -65,6 +65,14 @@
 - e1342ab Add configuration files for content organization, prerequisites, statistics, and UI text
 - 366e8a2 chore(deps): update Ruby gem dependencies (#16)
 
+## [0.16.0] - 2025-12-19
+
+### Other
+-  add personalization page and refactor quickstart tutorial
+- Add configuration files for content organization, prerequisites, statistics, and UI text
+-  update Ruby gem dependencies (#16)
+
+
 
 ## [0.15.1] - 2025-12-14
 
