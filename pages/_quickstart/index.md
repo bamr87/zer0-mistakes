@@ -6,8 +6,8 @@ description: Complete setup guide for the Zer0-Mistakes Jekyll theme featuring D
 permalink: /quickstart/
 sidebar:
   nav: quickstart
-lastmod: 2025-12-20T04:30:03.243Z
-preview: /assets/images/previews/zer0-mistakes-quick-start-guide.png
+lastmod: 2025-12-20T04:40:44.549Z
+preview: /images/previews/zer0-mistakes-quick-start-guide.png
 tags:
   - jekyll
   - docker
@@ -25,6 +25,7 @@ keywords:
     - ai installation
     - cross-platform
     - bootstrap 5
+draft: draft
 ---
 
 # 🚀 Quick Start Guide

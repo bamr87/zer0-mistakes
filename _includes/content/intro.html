@@ -16,12 +16,21 @@
 <!-- Intro Section -->
 
 {% comment %}
-  Determine the preview image path. All preview paths should be absolute
-  starting with /assets/ or external URLs starting with ://
+  Determine the preview image path. Preview paths can omit the /assets/ prefix.
+  The component will auto-prepend the assets_prefix from _config.yml.
 {% endcomment %}
 {% assign preview_image = page.preview | default: site.info_banner %}
+{% assign assets_prefix = site.preview_images.assets_prefix | default: '/assets' %}
+{% assign auto_prefix = site.preview_images.auto_prefix | default: true %}
+
 {% if preview_image contains '://' %}
   {% assign preview_path = preview_image %}
+{% elsif auto_prefix and preview_image != blank %}
+  {% if preview_image contains assets_prefix %}
+    {% assign preview_path = preview_image | relative_url %}
+  {% else %}
+    {% assign preview_path = assets_prefix | append: preview_image | relative_url %}
+  {% endif %}
 {% else %}
   {% assign preview_path = preview_image | relative_url %}
 {% endif %}

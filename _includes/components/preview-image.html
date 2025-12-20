@@ -9,8 +9,12 @@
        style="height: 180px; object-fit: cover;" 
     -%}
   
-  Convention: All preview paths should be absolute (e.g., /assets/images/preview.png)
-  External URLs (https://...) are also supported.
+  Convention: Preview paths can omit the /assets/ prefix.
+  The component will auto-prepend the assets_prefix from _config.yml.
+  Examples:
+    - /images/previews/my-image.png → /assets/images/previews/my-image.png
+    - /assets/images/previews/my-image.png → unchanged
+    - https://example.com/image.png → unchanged (external URL)
 {% endcomment %}
 {% assign img = include.src | default: site.teaser %}
 {% assign alt = include.alt | default: "Preview image" %}
@@ -18,9 +22,22 @@
 {% assign style = include.style %}
 {% assign loading = include.loading | default: "lazy" %}
 
-{% comment %} External URL or internal path {% endcomment %}
+{% comment %} Get assets prefix configuration {% endcomment %}
+{% assign assets_prefix = site.preview_images.assets_prefix | default: '/assets' %}
+{% assign auto_prefix = site.preview_images.auto_prefix | default: true %}
+
+{% comment %} Determine final image source {% endcomment %}
 {% if img contains '://' %}
+  {% comment %} External URL - use as-is {% endcomment %}
   {% assign final_src = img %}
+{% elsif auto_prefix and img != blank %}
+  {% comment %} Check if path already has the assets prefix {% endcomment %}
+  {% if img contains assets_prefix %}
+    {% assign final_src = img | relative_url %}
+  {% else %}
+    {% comment %} Prepend assets prefix to the path {% endcomment %}
+    {% assign final_src = assets_prefix | append: img | relative_url %}
+  {% endif %}
 {% else %}
   {% assign final_src = img | relative_url %}
 {% endif %}

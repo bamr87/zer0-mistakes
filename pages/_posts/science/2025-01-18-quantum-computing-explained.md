@@ -1,7 +1,7 @@
 ---
 title: "Quantum Computing Explained: From Qubits to Quantum Advantage"
 description: "A beginner-friendly introduction to quantum computing and its revolutionary potential"
-preview: /assets/images/previews/quantum-computing-explained-from-qubits-to-quantum.png
+preview: /images/previews/quantum-computing-explained-from-qubits-to-quantum.png
 date: 2025-01-18T10:00:00.000Z
 author: default
 layout: journals

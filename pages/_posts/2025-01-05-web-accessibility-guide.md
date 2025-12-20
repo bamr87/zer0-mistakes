@@ -11,7 +11,7 @@ tags:
   - inclusive-design
 date: 2025-01-05T09:00:00.000Z
 layout: journals
-preview: /assets/images/wizard-on-journey.png
+preview: /images/wizard-on-journey.png
 author: Zer0-Mistakes Team
 featured: true
 estimated_reading_time: 12 minutes

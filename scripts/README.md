@@ -91,7 +91,14 @@ Options:
   --dry-run           Preview without changes
   --collection TYPE   Generate for specific collection (posts, docs, etc.)
   -f, --file PATH     Process specific file
-  --provider PROVIDER Use specific AI provider (openai)
+  --provider PROVIDER Use specific AI provider (openai, stability, xai)
+  --assets-prefix     Custom assets path prefix (default: /assets)
+  --no-auto-prefix    Disable automatic path prefixing
+
+AI Providers:
+  openai    - OpenAI DALL-E (requires OPENAI_API_KEY)
+  stability - Stability AI (requires STABILITY_API_KEY)
+  xai       - xAI Grok image generation (requires XAI_API_KEY)
 ```
 
 #### `install-preview-generator`

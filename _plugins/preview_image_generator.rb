@@ -33,6 +33,8 @@ module Jekyll
       'style' => 'retro pixel art, 8-bit video game aesthetic, vibrant colors, nostalgic, clean pixel graphics',
       'style_modifiers' => 'pixelated, retro gaming style, CRT screen glow effect, limited color palette',
       'output_dir' => 'assets/images/previews',
+      'assets_prefix' => '/assets',
+      'auto_prefix' => true,
       'auto_generate' => false,
       'collections' => ['posts', 'docs', 'quickstart']
     }.freeze
@@ -52,16 +54,35 @@ module Jekyll
       site = doc.site
       config = self.config(site)
       
+      # Normalize the preview path using assets_prefix
+      normalized_preview = normalize_preview_path(preview, config)
+      
       # Build the full path
-      preview_path = if preview.start_with?('/')
-                       File.join(site.source, preview)
-                     elsif preview.start_with?('http')
+      preview_path = if normalized_preview.start_with?('/')
+                       File.join(site.source, normalized_preview.sub(/^\//, ''))
+                     elsif normalized_preview.start_with?('http')
                        return true  # External URL, assume it exists
                      else
-                       File.join(site.source, config['output_dir'], preview)
+                       File.join(site.source, config['output_dir'], normalized_preview)
                      end
       
       File.exist?(preview_path)
+    end
+
+    # Normalize a preview path by adding assets_prefix if needed
+    def self.normalize_preview_path(preview, config)
+      return preview if preview.nil? || preview.to_s.strip.empty?
+      return preview if preview.start_with?('http')
+      
+      assets_prefix = config['assets_prefix'] || '/assets'
+      auto_prefix = config['auto_prefix'] != false  # Default to true
+      
+      # If auto_prefix is enabled and path doesn't already contain assets_prefix
+      if auto_prefix && !preview.include?(assets_prefix)
+        "#{assets_prefix}#{preview}"
+      else
+        preview
+      end
     end
 
     # Get the preview image path for a document
@@ -72,11 +93,11 @@ module Jekyll
       site = doc.site
       config = self.config(site)
       
-      # If it's already a full path or URL, return as-is
-      return preview if preview.start_with?('/') || preview.start_with?('http')
+      # If it's an external URL, return as-is
+      return preview if preview.start_with?('http')
       
-      # Build relative path from output_dir
-      "#{config['output_dir']}/#{preview}"
+      # Normalize path with assets_prefix
+      normalize_preview_path(preview, config)
     end
 
     # Get list of documents missing preview images

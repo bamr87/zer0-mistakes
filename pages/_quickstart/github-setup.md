@@ -1,16 +1,29 @@
 ---
-title: "GitHub Setup & Deployment"
-author: "Zer0-Mistakes Development Team"
+title: GitHub Setup & Deployment
+author: Zer0-Mistakes Development Team
 layout: default
-description: "Configure GitHub integration for version control and automated deployment. Fork the theme, set up SSH keys, and deploy to GitHub Pages."
+description: Configure GitHub integration for version control and automated deployment. Fork the theme, set up SSH keys, and deploy to GitHub Pages.
 permalink: /quickstart/github-setup/
-preview: /assets/images/previews/github-setup-deployment.png
-categories: [Documentation, Quick Start]
-tags: [github, git, deployment, github-pages, version-control]
+preview: /images/previews/github-setup-deployment.png
+categories:
+  - Documentation
+  - Quick Start
+tags:
+  - github
+  - git
+  - deployment
+  - github-pages
+  - version-control
 keywords:
-  primary: ["github pages deployment", "git workflow"]
-  secondary: ["ssh keys", "github cli", "fork repository", "pull requests"]
-lastmod: 2025-12-19T00:00:00.000Z
+  primary:
+    - github pages deployment
+    - git workflow
+  secondary:
+    - ssh keys
+    - github cli
+    - fork repository
+    - pull requests
+lastmod: 2025-12-20T04:30:52.666Z
 draft: false
 sidebar:
   nav: quickstart
@@ -224,7 +237,7 @@ touch pages/_posts/$(date +%Y-%m-%d)-my-new-post.md
 title: "Your Post Title"
 description: "SEO-friendly description (150-160 characters)"
 date: 2025-01-27T10:00:00.000Z
-preview: /assets/images/previews/github-setup-deployment.png
+preview: /images/previews/github-setup-deployment.png
 tags: [tag1, tag2, tag3]
 categories: [Category, Subcategory]
 layout: journals

@@ -7,7 +7,7 @@ categories:
 date: 2024-06-17 20:03:39
 layout: journals
 lastmod: 2024-06-18T02:05:18.613Z
-preview: /assets/images/wizard-on-journey.png
+preview: /images/wizard-on-journey.png
 draft: draft
 featured: true
 breaking: true

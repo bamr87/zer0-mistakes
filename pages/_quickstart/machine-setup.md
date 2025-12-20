@@ -4,7 +4,7 @@ author: "Zer0-Mistakes Development Team"
 layout: default
 description: "Install Docker, Git, and essential development tools for the Zer0-Mistakes Jekyll theme. Cross-platform setup for macOS, Windows, and Linux."
 permalink: /quickstart/machine-setup/
-preview: /assets/images/previews/machine-setup.png
+preview: /images/previews/machine-setup.png
 categories: [Documentation, Quick Start]
 tags: [docker, git, setup, development, cross-platform]
 keywords:

@@ -4,7 +4,7 @@ author: "Zer0-Mistakes Development Team"
 layout: default
 description: "Configure your Docker-first Jekyll development environment. Start the development server, create content, and customize your theme."
 permalink: /quickstart/jekyll-setup/
-preview: /assets/images/previews/jekyll-setup.png
+preview: /images/previews/jekyll-setup.png
 categories: [Documentation, Quick Start]
 tags: [jekyll, docker, development, configuration, theme]
 keywords:
@@ -143,7 +143,7 @@ Use this frontmatter template:
 title: "My Awesome Post"
 description: "Brief description for SEO and social media"
 date: 2025-01-27T10:00:00.000Z
-preview: /assets/images/previews/jekyll-setup.png
+preview: /images/previews/jekyll-setup.png
 tags: [jekyll, tutorial, web-development]
 categories: [Development, Tutorial]
 sub-title: "Subtitle for additional context"

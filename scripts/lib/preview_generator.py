@@ -101,6 +101,8 @@ class PreviewGenerator:
         output_dir: str = "assets/images/previews",
         image_style: str = "digital art, professional blog illustration",
         image_size: str = "1024x1024",
+        assets_prefix: str = "/assets",
+        auto_prefix: bool = True,
         dry_run: bool = False,
         verbose: bool = False,
         force: bool = False,
@@ -110,6 +112,8 @@ class PreviewGenerator:
         self.output_dir = project_root / output_dir
         self.image_style = image_style
         self.image_size = image_size
+        self.assets_prefix = assets_prefix
+        self.auto_prefix = auto_prefix
         self.dry_run = dry_run
         self.verbose = verbose
         self.force = force
@@ -128,6 +132,27 @@ class PreviewGenerator:
         """Print debug message if verbose mode is enabled."""
         if self.verbose:
             log(msg, "debug")
+    
+    def normalize_preview_path(self, preview_path: Optional[str]) -> Optional[str]:
+        """Normalize a preview path by adding assets_prefix if needed.
+        
+        This allows users to omit the /assets/ prefix in frontmatter:
+        - /images/previews/my-image.png -> /assets/images/previews/my-image.png
+        - /assets/images/previews/my-image.png -> unchanged
+        - https://example.com/image.png -> unchanged (external URL)
+        """
+        if not preview_path:
+            return preview_path
+        
+        # External URLs pass through unchanged
+        if preview_path.startswith('http://') or preview_path.startswith('https://'):
+            return preview_path
+        
+        # If auto_prefix is enabled and path doesn't contain assets_prefix
+        if self.auto_prefix and self.assets_prefix not in preview_path:
+            return f"{self.assets_prefix}{preview_path}"
+        
+        return preview_path
     
     def parse_front_matter(self, file_path: Path) -> Optional[ContentFile]:
         """Parse front matter and content from a markdown file."""
@@ -178,17 +203,17 @@ class PreviewGenerator:
         if not preview_path:
             return False
         
+        # Normalize the path first (adds assets_prefix if needed)
+        normalized_path = self.normalize_preview_path(preview_path)
+        if not normalized_path:
+            return False
+        
         # Handle absolute and relative paths
-        clean_path = preview_path.lstrip('/')
+        clean_path = normalized_path.lstrip('/')
         
         # Check direct path
         full_path = self.project_root / clean_path
         if full_path.exists():
-            return True
-        
-        # Check in assets directory
-        assets_path = self.project_root / 'assets' / clean_path
-        if assets_path.exists():
             return True
         
         return False
@@ -395,12 +420,131 @@ class PreviewGenerator:
                 prompt_used=prompt,
             )
     
+    def generate_image_xai(self, prompt: str, output_path: Path) -> GenerationResult:
+        """Generate image using xAI Grok API."""
+        if not HAS_REQUESTS:
+            return GenerationResult(
+                success=False,
+                image_path=None,
+                preview_url=None,
+                error="requests package not installed. Run: pip install requests",
+                prompt_used=prompt,
+            )
+        
+        api_key = os.environ.get('XAI_API_KEY')
+        if not api_key:
+            return GenerationResult(
+                success=False,
+                image_path=None,
+                preview_url=None,
+                error="XAI_API_KEY environment variable not set",
+                prompt_used=prompt,
+            )
+        
+        try:
+            # xAI has a max prompt length of 1024 characters
+            truncated_prompt = prompt[:1000] if len(prompt) > 1000 else prompt
+            self.debug(f"Generating with xAI Grok, prompt: {truncated_prompt[:200]}...")
+            
+            # xAI uses OpenAI-compatible API format
+            response = requests.post(
+                "https://api.x.ai/v1/images/generations",
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": "grok-2-image",
+                    "prompt": truncated_prompt,
+                    "n": 1,
+                },
+                timeout=120,  # 2 minute timeout for image generation
+            )
+            response.raise_for_status()
+            
+            data = response.json()
+            
+            # xAI returns base64-encoded images
+            if 'data' not in data or not data['data']:
+                return GenerationResult(
+                    success=False,
+                    image_path=None,
+                    preview_url=None,
+                    error="No image data in response",
+                    prompt_used=prompt,
+                )
+            
+            image_data = data['data'][0]
+            
+            # Check if it's a URL or base64
+            if 'url' in image_data:
+                # Download from URL
+                img_response = requests.get(image_data['url'], timeout=60)
+                img_response.raise_for_status()
+                output_path.write_bytes(img_response.content)
+            elif 'b64_json' in image_data:
+                # Decode base64
+                import base64
+                image_bytes = base64.b64decode(image_data['b64_json'])
+                output_path.write_bytes(image_bytes)
+            else:
+                return GenerationResult(
+                    success=False,
+                    image_path=None,
+                    preview_url=None,
+                    error="Unexpected response format from xAI",
+                    prompt_used=prompt,
+                )
+            
+            return GenerationResult(
+                success=True,
+                image_path=str(output_path),
+                preview_url=str(output_path.relative_to(self.project_root)),
+                error=None,
+                prompt_used=prompt,
+            )
+            
+        except requests.exceptions.HTTPError as e:
+            error_msg = str(e)
+            try:
+                error_data = e.response.json()
+                self.debug(f"xAI error response: {error_data}")
+                if 'error' in error_data:
+                    error_msg = error_data['error'].get('message', str(error_data['error']))
+                elif 'detail' in error_data:
+                    error_msg = str(error_data['detail'])
+                else:
+                    error_msg = str(error_data)
+            except:
+                # Try to get raw text
+                try:
+                    error_msg = e.response.text[:500]
+                except:
+                    pass
+            return GenerationResult(
+                success=False,
+                image_path=None,
+                preview_url=None,
+                error=f"xAI API error: {error_msg}",
+                prompt_used=prompt,
+            )
+        except Exception as e:
+            return GenerationResult(
+                success=False,
+                image_path=None,
+                preview_url=None,
+                error=str(e),
+                prompt_used=prompt,
+            )
+    
     def generate_image(self, prompt: str, output_path: Path) -> GenerationResult:
         """Generate image using configured provider."""
         if self.provider == "openai":
             return self.generate_image_openai(prompt, output_path)
         elif self.provider == "stability":
             return self.generate_image_stability(prompt, output_path)
+        elif self.provider == "xai":
+            return self.generate_image_xai(prompt, output_path)
         else:
             return GenerationResult(
                 success=False,
@@ -559,9 +703,9 @@ def main():
     )
     parser.add_argument(
         '-p', '--provider',
-        choices=['openai', 'stability'],
+        choices=['openai', 'stability', 'xai'],
         default='openai',
-        help="AI provider for image generation"
+        help="AI provider for image generation (openai, stability, xai)"
     )
     parser.add_argument(
         '-d', '--dry-run',
@@ -593,6 +737,16 @@ def main():
         default='digital art, professional blog illustration, clean design',
         help="Image style prompt"
     )
+    parser.add_argument(
+        '--assets-prefix',
+        default='/assets',
+        help="Prefix to prepend to relative preview paths (default: /assets)"
+    )
+    parser.add_argument(
+        '--no-auto-prefix',
+        action='store_true',
+        help="Disable automatic assets prefix prepending"
+    )
     
     args = parser.parse_args()
     
@@ -606,6 +760,8 @@ def main():
         provider=args.provider,
         output_dir=args.output_dir,
         image_style=args.style,
+        assets_prefix=args.assets_prefix,
+        auto_prefix=not args.no_auto_prefix,
         dry_run=args.dry_run,
         verbose=args.verbose,
         force=args.force,

@@ -16,7 +16,7 @@ featured: false
 estimated_reading_time: 15 minutes
 draft: true
 lastmod: 2025-12-01T02:21:11.238Z
-preview: /assets/images/previews/business.png
+preview: /images/previews/business.png
 ---
 
 Welcome to Jekyll! This tutorial will guide you through creating your first static website using Jekyll, the popular static site generator.

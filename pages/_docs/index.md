@@ -4,7 +4,7 @@ author: Amr Abdel Eissa
 layout: collection
 permalink: /docs/
 description: Public documentation library for technology guides, tutorials, and general reference materials
-preview: /assets/images/previews/published-documentation-library.png
+preview: /images/previews/published-documentation-library.png
 categories:
   - docs
   - public-documentation

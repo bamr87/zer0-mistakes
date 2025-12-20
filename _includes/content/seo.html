@@ -23,8 +23,19 @@
 {%- assign page_large_image = page.header.og_image | default: page.header.overlay_image | default: page.header.image | absolute_url -%}
 {%- assign page_large_image = page_large_image | escape -%}
 
+{%- comment -%} Handle preview image with configurable assets prefix {%- endcomment -%}
 {%- assign page_teaser_image = page.preview | default: site.og_image -%}
-{%- assign page_teaser_image = {{ site.public_folder }}/page_teaser_image | escape -%}
+{%- assign assets_prefix = site.preview_images.assets_prefix | default: '/assets' -%}
+{%- assign auto_prefix = site.preview_images.auto_prefix | default: true -%}
+
+{%- if page_teaser_image contains '://' -%}
+  {%- comment -%} External URL - use as-is {%- endcomment -%}
+{%- elsif auto_prefix and page_teaser_image != blank -%}
+  {%- unless page_teaser_image contains assets_prefix -%}
+    {%- assign page_teaser_image = assets_prefix | append: page_teaser_image -%}
+  {%- endunless -%}
+{%- endif -%}
+{%- assign page_teaser_image = page_teaser_image | absolute_url | escape -%}
 
 {%- assign site_og_image = site.og_image | absolute_url -%}
 {%- assign site_og_image = site_og_image | escape -%}

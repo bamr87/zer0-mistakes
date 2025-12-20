@@ -101,6 +101,10 @@ preview_images:
   quality                : 'standard'         # standard, hd (hd costs more)
   style                  : 'retro pixel art, 8-bit video game aesthetic, vibrant colors, nostalgic, clean pixel graphics'
   output_dir             : 'assets/images/previews'
+  # Path normalization: allows omitting /assets/ prefix in frontmatter
+  # e.g., preview: /images/previews/my-image.png becomes /assets/images/previews/my-image.png
+  assets_prefix          : '/assets'          # Prefix to prepend to relative preview paths
+  auto_prefix            : true               # Auto-add assets_prefix if path doesn't start with it
   # Additional style modifiers applied to all prompts
   style_modifiers        : 'pixelated, retro gaming style, CRT screen glow effect, limited color palette'
 

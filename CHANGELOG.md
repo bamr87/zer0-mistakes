@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.16.0] - 2025-12-20
+
+### Added
+- **Configurable Assets Prefix**: New `assets_prefix` and `auto_prefix` configuration options for preview images
+  - Allows shorter frontmatter paths like `/images/previews/image.png` instead of `/assets/images/previews/image.png`
+  - Automatic path normalization in Liquid templates detects external URLs vs local paths
+  - Configured via `_config.yml` under `preview_images.assets_prefix` and `preview_images.auto_prefix`
+- **xAI Grok Image Provider**: Added xAI as a new AI provider for preview image generation
+  - Uses `grok-2-image` model at `https://api.x.ai/v1/images/generations`
+  - Set `XAI_API_KEY` environment variable and use `--provider xai` flag
+- **Preview Path Migration Script**: New `scripts/update-preview-paths.sh` for migrating existing frontmatter
+  - Supports dry-run and apply modes
+  - Removes `/assets/` prefix from preview paths in markdown files
+
+### Changed
+- Updated `preview-image.html` include with path normalization logic
+- Updated `intro.html` include with assets prefix support for hero backgrounds
+- Updated `seo.html` include with assets prefix normalization for og:image meta tags
+- Enhanced `preview_image_generator.rb` Ruby plugin with `normalize_preview_path` method
+- Enhanced `preview_generator.py` with xAI provider, `--assets-prefix`, and `--no-auto-prefix` CLI options
+- Migrated 24 markdown files to use shorter preview paths (without `/assets/` prefix)
+- Updated scripts/README.md documentation with new provider and prefix options
+
+### Fixed
+- **Critical: Liquid syntax error in `seo.html`** - Fixed invalid nested curly braces on line 27
+
 ## [0.15.5] - 2025-12-20
 
 ### Changed
