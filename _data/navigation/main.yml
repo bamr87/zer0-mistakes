@@ -31,14 +31,14 @@
     - title: Jekyll Guide
       url: /docs/jekyll/
     - title: Features
-      url: /about/features/
+      url: /features/
 
 - title: About
   icon: bi-info-circle
   url: /about/
   sublinks:
     - title: Features
-      url: /about/features/
+      url: /features/
     - title: Statistics
       url: /about/stats/
     - title: Config
