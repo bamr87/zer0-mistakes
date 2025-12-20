@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.15.2] - 2025-12-19
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- e1342ab Add configuration files for content organization, prerequisites, statistics, and UI text
+- 366e8a2 chore(deps): update Ruby gem dependencies (#16)
+
+
 ## [0.15.1] - 2025-12-14
 
 ### Changed
