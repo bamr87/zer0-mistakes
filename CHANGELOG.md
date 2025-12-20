@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.15.5] - 2025-12-20
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- d46cdb1 Merge branch 'main' of https://github.com/bamr87/zer0-mistakes
+- 36767cd fix: update last modified timestamp in quick start guide
+- f606096 fix: update quick start guide for clarity and consistency
+
+
 ## [0.15.4] - 2025-12-20
 
 ### Changed
