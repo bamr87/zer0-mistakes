@@ -6,7 +6,7 @@ description: Complete setup guide for the Zer0-Mistakes Jekyll theme featuring D
 permalink: /quickstart/
 sidebar:
   nav: quickstart
-lastmod: 2025-12-20T04:29:15.891Z
+lastmod: 2025-12-20T04:30:03.243Z
 preview: /assets/images/previews/zer0-mistakes-quick-start-guide.png
 tags:
   - jekyll
