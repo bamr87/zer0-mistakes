@@ -1,0 +1,52 @@
+{
+  "name": "zer0-mistakes Jekyll Theme",
+  "image": "mcr.microsoft.com/devcontainers/jekyll:2-bullseye",
+  
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    }
+  },
+
+  "postCreateCommand": "bundle install --jobs 4 --retry 3",
+  "postStartCommand": "bundle exec jekyll serve --config '_config.yml,_config_dev.yml' --host 0.0.0.0 --port 4000 --livereload &",
+
+  "forwardPorts": [4000, 35729],
+  "portsAttributes": {
+    "4000": {
+      "label": "Jekyll Site",
+      "onAutoForward": "openBrowser"
+    },
+    "35729": {
+      "label": "LiveReload",
+      "onAutoForward": "silent"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "sissel.shopify-liquid",
+        "mechatroner.rainbow-csv",
+        "yzhang.markdown-all-in-one",
+        "DavidAnson.vscode-markdownlint",
+        "streetsidesoftware.code-spell-checker",
+        "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "files.associations": {
+          "*.html": "liquid"
+        },
+        "emmet.includeLanguages": {
+          "liquid": "html"
+        }
+      }
+    }
+  },
+
+  "remoteUser": "vscode"
+}

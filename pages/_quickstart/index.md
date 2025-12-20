@@ -6,7 +6,7 @@ description: Complete setup guide for the Zer0-Mistakes Jekyll theme featuring D
 permalink: /quickstart/
 sidebar:
   nav: quickstart
-lastmod: 2025-12-20T04:40:44.549Z
+lastmod: 2025-12-20T16:59:24.227Z
 preview: /images/previews/zer0-mistakes-quick-start-guide.png
 tags:
   - jekyll
@@ -57,58 +57,70 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.s
 - **⚡ Live Reload** - Changes appear instantly during development
 - **🛡️ Error Recovery** - Self-healing installation with detailed diagnostics
 
-## 🔄 Step-by-Step Installation
+## 🔄 Installation Options
 
-### Option 1: Automated Setup (Recommended)
+| Path | Method | Best For |
+|------|--------|----------|
+| **A** | AI Install Wizard | Creating a new site (recommended) |
+| **B** | GitHub Template | One-click copy of the entire repo |
+| **C** | GitHub Codespaces | Zero-install cloud development |
+| **D** | Fork/Clone | Theme development & customization |
+| **E** | Remote Theme | GitHub Pages without copying files |
+| **F** | Ruby Gem | Traditional Jekyll workflow |
 
-**For new sites:**
+### Option A: AI Install Wizard (Recommended)
 
 ```bash
-# 1. Create project directory
-mkdir my-awesome-site && cd my-awesome-site
-
-# 2. Run intelligent installer
+mkdir my-site && cd my-site
 curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
-
-# 3. Start development server
 docker-compose up
-
-# 4. Open in browser
-open http://localhost:4000
 ```
 
-### Option 2: GitHub Pages Setup
+### Option B: GitHub Template Repository
 
-**For GitHub Pages hosting:**
+1. Go to [github.com/bamr87/zer0-mistakes](https://github.com/bamr87/zer0-mistakes)
+2. Click **"Use this template"** → **"Create a new repository"**
+3. Clone your new repo and run `docker-compose up`
+
+Or via CLI:
 
 ```bash
-# 1. Create repository on GitHub
-gh repo create my-site --public
-
-# 2. Clone and setup
-git clone https://github.com/USERNAME/my-site.git
-cd my-site
-
-# 3. Add remote theme to _config.yml
-echo "remote_theme: bamr87/zer0-mistakes" > _config.yml
-
-# 4. Enable GitHub Pages in repository settings
+gh repo create my-site --template bamr87/zer0-mistakes --clone
+cd my-site && docker-compose up
 ```
 
-### Option 3: Local Development
+### Option C: GitHub Codespaces (Zero Install)
 
-**For theme development:**
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/bamr87/zer0-mistakes)
+
+Or from the repo page: **Code** → **Codespaces** → **Create codespace on main**
+
+### Option D: Fork/Clone (Theme Development)
 
 ```bash
-# 1. Fork and clone
 gh repo fork bamr87/zer0-mistakes --clone
 cd zer0-mistakes
-
-# 2. Start development
 docker-compose up
 ```
 
-If you’re developing the theme repo itself, follow `QUICKSTART.md` for the complete set of dev commands, testing, and configuration details.
+### Option E: Remote Theme (GitHub Pages)
+
+```bash
+gh repo create my-site --public --clone
+cd my-site
+echo "remote_theme: bamr87/zer0-mistakes" > _config.yml
+# Enable GitHub Pages in repository Settings
+```
+
+### Option F: Ruby Gem
+
+```bash
+echo 'gem "jekyll-theme-zer0"' >> Gemfile
+bundle install
+# Set theme: jekyll-theme-zer0 in _config.yml
+```
+
+For the complete setup guide with all options and troubleshooting, see [QUICKSTART.md]({{ site.resources.github_repo }}/blob/{{ site.branch }}/QUICKSTART.md).
 
 ## 📚 Comprehensive Setup Guides
 
