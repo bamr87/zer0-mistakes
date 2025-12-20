@@ -422,9 +422,23 @@ test_preview_image_urls() {
     while IFS= read -r file; do
         checked=$((checked + 1))
         
-        # Extract preview value from frontmatter
+        # Extract preview value from frontmatter (only the first YAML block)
+        # Use awk to properly handle only the first frontmatter block
         local preview
-        preview=$(sed -n '/^---$/,/^---$/p' "$file" | grep '^preview:' | sed 's/^preview:[[:space:]]*//' | tr -d '"' | tr -d "'")
+        preview=$(awk '
+            BEGIN { in_frontmatter = 0; found_first = 0 }
+            /^---$/ { 
+                if (!found_first) { in_frontmatter = !in_frontmatter; found_first = 1; next }
+                else if (in_frontmatter) { exit }
+            }
+            in_frontmatter && /^preview:/ { 
+                sub(/^preview:[[:space:]]*/, "")
+                gsub(/"/, "")
+                gsub(/'\''/, "")
+                print
+                exit
+            }
+        ' "$file")
         
         # Skip if empty or null
         if [[ -z "$preview" ]] || [[ "$preview" == "null" ]] || [[ "$preview" == "~" ]]; then

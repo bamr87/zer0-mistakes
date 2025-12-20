@@ -4,7 +4,7 @@ author: "Zer0-Mistakes Development Team"
 layout: default
 description: "Customize your Jekyll site with interactive forms. Configure site identity, branding, analytics, social links, and generate your complete _config.yml."
 permalink: /quickstart/personalization/
-preview: /assets/images/previews/personalization.png
+preview: null
 categories: [Documentation, Quick Start]
 tags: [jekyll, configuration, personalization, customization, yaml]
 keywords:

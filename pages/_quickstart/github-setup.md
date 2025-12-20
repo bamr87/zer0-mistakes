@@ -4,7 +4,7 @@ author: "Zer0-Mistakes Development Team"
 layout: default
 description: "Configure GitHub integration for version control and automated deployment. Fork the theme, set up SSH keys, and deploy to GitHub Pages."
 permalink: /quickstart/github-setup/
-preview: /assets/images/previews/github-setup.png
+preview: /assets/images/previews/github-setup-deployment.png
 categories: [Documentation, Quick Start]
 tags: [github, git, deployment, github-pages, version-control]
 keywords:
