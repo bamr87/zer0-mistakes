@@ -11,17 +11,14 @@ If you’re **building a new site**, use the **AI Install Wizard** (recommended)
 
 ## Choose Your Path
 
-### A) Create a new site (recommended)
-Use the **AI Install Wizard** to generate a complete, ready-to-run site folder.
-
-### B) Develop/customize the theme repo
-Clone/fork **this repository** and run it as a theme workspace.
-
-### C) Use as a GitHub Pages remote theme
-Use `remote_theme: bamr87/zer0-mistakes` in your own repo.
-
-### D) Use as a Ruby gem theme
-Use `gem "jekyll-theme-zer0"` + `theme: jekyll-theme-zer0`.
+| Path | Method | Best For |
+|------|--------|----------|
+| **A** | AI Install Wizard | Creating a new site (recommended) |
+| **B** | GitHub Template Repo | One-click copy of the entire repo |
+| **C** | GitHub Codespaces | Zero-install cloud development |
+| **D** | Fork/Clone | Theme development & customization |
+| **E** | Remote Theme | GitHub Pages without copying files |
+| **F** | Ruby Gem | Traditional Jekyll workflow |
 
 ---
 
@@ -81,6 +78,55 @@ If you are working inside this theme repo (or you copied it into your site), you
 
 ## First Personalization Checklist (do this early)
 
+---
+
+## Path B — GitHub Template Repository
+
+One-click to create your own copy of the entire repo.
+
+### Option 1: GitHub UI
+
+1. Go to [github.com/bamr87/zer0-mistakes](https://github.com/bamr87/zer0-mistakes)
+2. Click **"Use this template"** → **"Create a new repository"**
+3. Clone your new repo and start developing
+
+### Option 2: GitHub CLI
+
+```bash
+gh repo create my-site --template bamr87/zer0-mistakes --clone
+cd my-site
+docker-compose up
+```
+
+> **Note:** You must enable "Template repository" in repo Settings → General for this to work.
+
+---
+
+## Path C — GitHub Codespaces (zero-install)
+
+Develop entirely in the cloud — no local Docker or Ruby required.
+
+### Option 1: One-click
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/bamr87/zer0-mistakes)
+
+### Option 2: From the repo
+
+1. Go to [github.com/bamr87/zer0-mistakes](https://github.com/bamr87/zer0-mistakes)
+2. Click **Code** → **Codespaces** → **Create codespace on main**
+3. Wait for the environment to build (~2 min)
+4. Site auto-starts at port 4000
+
+### Option 3: VS Code
+
+1. Install the [GitHub Codespaces extension](https://marketplace.visualstudio.com/items?itemName=GitHub.codespaces)
+2. Open Command Palette → **Codespaces: Create New Codespace**
+3. Select `bamr87/zer0-mistakes`
+
+---
+
+## First Personalization Checklist (do this early)
+
 Most customization starts in `_config.yml` (production) and `_config_dev.yml` (development overrides).
 
 ### 1) Update your site identity (`_config.yml`)
@@ -117,7 +163,7 @@ Typical content locations:
 
 ---
 
-## Path B — Run this repository (theme development)
+## Path D — Fork/Clone (theme development)
 
 ### Prerequisites
 - Docker Desktop
@@ -156,7 +202,7 @@ docker-compose down
 
 ---
 
-## Path C — GitHub Pages Remote Theme
+## Path E — GitHub Pages Remote Theme
 
 Use this if you want your own repo to reference the theme without copying files.
 
@@ -174,7 +220,7 @@ Notes:
 
 ---
 
-## Path D — Ruby Gem Theme
+## Path F — Ruby Gem Theme
 
 Use this if you prefer installing the theme as a gem.
 
