@@ -1,10 +1,16 @@
 ---
 title: Enhanced Sitemap Feature
-lastmod: 2025-10-25T10:47:33.067Z
+lastmod: 2025-12-20T22:15:46.563Z
 description: Comprehensive site navigation with advanced search, filtering, and discovery tools
 layout: default
-categories: [Features, Navigation]
-tags: [sitemap, navigation, search, discovery]
+categories:
+    - Features
+    - Navigation
+tags:
+    - sitemap
+    - navigation
+    - search
+    - discovery
 ---
 
 # 🗺️ Enhanced Sitemap Feature
@@ -167,10 +173,10 @@ Override CSS custom properties to match your theme:
 
 ## 📚 Related Documentation
 
-- [Navigation System](./navigation.md)
-- [Search Functionality](./search.md)
-- [Content Organization](./content-organization.md)
-- [Mobile Experience](./mobile-optimization.md)
+- Navigation system
+- Search functionality
+- Content organization
+- Mobile experience
 
 ---
 

@@ -5,26 +5,26 @@ layout: default
 description: Complete setup guide for the Zer0-Mistakes Jekyll theme featuring Docker-first development, AI-powered installation, and cross-platform compatibility
 permalink: /quickstart/
 sidebar:
-  nav: quickstart
-lastmod: 2025-12-20T16:59:24.227Z
+    nav: quickstart
+lastmod: 2025-12-20T22:15:45.842Z
 preview: /images/previews/zer0-mistakes-quick-start-guide.png
 tags:
-  - jekyll
-  - docker
-  - setup
-  - development
-  - ai-powered
+    - jekyll
+    - docker
+    - setup
+    - development
+    - ai-powered
 categories:
-  - Documentation
-  - Quick Start
+    - Documentation
+    - Quick Start
 keywords:
-  primary:
-    - jekyll theme setup
-    - docker development
-  secondary:
-    - ai installation
-    - cross-platform
-    - bootstrap 5
+    primary:
+        - jekyll theme setup
+        - docker development
+    secondary:
+        - ai installation
+        - cross-platform
+        - bootstrap 5
 draft: draft
 ---
 
@@ -34,9 +34,9 @@ Get your **zer0-mistakes** Jekyll site running in under 5 minutes with our intel
 
 For the full install + personalization workflow (all methods, config layering, and troubleshooting), use the canonical repo guide:
 
-- `{{ site.resources.github_repo }}/blob/{{ site.branch }}/QUICKSTART.md`
+- `{{ site.resources.github_repo | default: '' | join: '' }}/blob/{{ site.branch }}/QUICKSTART.md`
 
-## ⚡ Fastest Start (1 Command)
+<h2 id="fastest-start-1-command">⚡ Fastest Start (1 Command)</h2>
 
 **For immediate results:**
 
@@ -120,11 +120,11 @@ bundle install
 # Set theme: jekyll-theme-zer0 in _config.yml
 ```
 
-For the complete setup guide with all options and troubleshooting, see [QUICKSTART.md]({{ site.resources.github_repo }}/blob/{{ site.branch }}/QUICKSTART.md).
+For the complete setup guide with all options and troubleshooting, see [QUICKSTART.md]({{ site.resources.github_repo | default: '' | join: '' }}/blob/{{ site.branch }}/QUICKSTART.md).
 
 ## 📚 Comprehensive Setup Guides
 
-### 🏗️ Essential Setup
+<h3 id="essential-setup">🏗️ Essential Setup</h3>
 
 | Guide                                           | Purpose                                     | Time   | Difficulty   |
 | ----------------------------------------------- | ------------------------------------------- | ------ | ------------ |
@@ -132,7 +132,7 @@ For the complete setup guide with all options and troubleshooting, see [QUICKSTA
 | **[Jekyll Setup](/quickstart/jekyll-setup/)**   | Configure theme and development environment | 5 min  | Beginner     |
 | **[GitHub Setup](/quickstart/github-setup/)**   | Version control and deployment              | 10 min | Intermediate |
 
-### 🚀 Advanced Configuration
+<h3 id="advanced-configuration">🚀 Advanced Configuration</h3>
 
 | Guide                        | Purpose                                      | Time   | Difficulty   |
 | ---------------------------- | -------------------------------------------- | ------ | ------------ |
@@ -202,7 +202,7 @@ docker-compose run -p 4001:4000 jekyll
 # The docker-compose.yml already includes platform: linux/amd64
 ```
 
-### Validation Commands
+<h3 id="validation-commands">Validation Commands</h3>
 
 **Test your installation:**
 

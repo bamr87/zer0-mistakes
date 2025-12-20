@@ -6,14 +6,14 @@ permalink: /docs/
 description: Public documentation library for technology guides, tutorials, and general reference materials
 preview: /images/previews/published-documentation-library.png
 categories:
-  - docs
-  - public-documentation
-  - library
+    - docs
+    - public-documentation
+    - library
 sidebar:
-  nav: docs
+    nav: docs
 toc_sticky: true
 date: 2021-09-24T19:32:44.876Z
-lastmod: 2025-11-17T03:43:52.499Z
+lastmod: 2025-12-20T22:15:45.807Z
 ---
 
 # 📚 Zer0-Mistakes Documentation Library
@@ -32,7 +32,7 @@ The `/pages/_docs/` collection serves as the **public documentation hub** contai
 
 This documentation targets **end-users, theme adopters, and general developers** who want to use or learn about the technologies in our stack.
 
-> **🛠️ For Technical Documentation**: See [`/docs/`](../../docs/) for repository-specific technical documentation targeting contributors and maintainers.
+> **🛠️ For Technical Documentation**: See the repository `docs/` folder on GitHub: {{ site.resources.github_repo | default: '' | join: '' }}/tree/{{ site.branch }}/docs/
 
 ## 📖 Content Organization
 
@@ -63,7 +63,7 @@ This documentation targets **end-users, theme adopters, and general developers**
 
 This documentation library aggregates content from multiple sources:
 
-1. **Converted MDX Files**: Technical documentation from [`/docs/`](../../docs/) converted to Markdown for public consumption
+1. **Converted MDX Files**: Technical documentation from `docs/` in the repo: {{ site.resources.github_repo | default: '' | join: '' }}/tree/{{ site.branch }}/docs/
 2. **Imported External Docs**: Official documentation from Jekyll, Bootstrap, and other technologies
 3. **Original Tutorials**: Theme-specific guides and tutorials written specifically for users
 4. **Community Contributions**: User-submitted guides and best practices
@@ -143,8 +143,8 @@ This documentation library is part of a larger documentation ecosystem:
 | Location                                                | Purpose                                | Audience                       | Format   |
 | ------------------------------------------------------- | -------------------------------------- | ------------------------------ | -------- |
 | `pages/_docs/` _(This Library)_                         | **Public documentation & tutorials**   | End Users & General Developers | Markdown |
-| [`/docs/`](../../docs/)                                 | **Technical repository documentation** | Contributors & Maintainers     | MDX      |
-| [`/.github/instructions/`](../../.github/instructions/) | **AI-assisted development guidance**   | GitHub Copilot & Contributors  | Markdown |
+| `docs/` (GitHub)                                        | **Technical repository documentation** | Contributors & Maintainers     | MDX      |
+| `.github/instructions/` (GitHub)                        | **AI-assisted development guidance**   | GitHub Copilot & Contributors  | Markdown |
 | `/README.md`                                            | **Project overview & quick start**     | All Users                      | Markdown |
 
 ---
@@ -153,8 +153,8 @@ This documentation library is part of a larger documentation ecosystem:
 
 - [📚 Browse Jekyll Documentation](jekyll/) - Learn Jekyll fundamentals and advanced techniques
 - [🎨 Explore Bootstrap Components](bootstrap/) - Master responsive design and UI components
-- [⚙️ Technical Implementation](../../docs/) - Repository architecture and development guides
-- [🏠 Return to Homepage](../../) - Main Zer0-Mistakes theme showcase
+- [⚙️ Technical Implementation]({{ site.resources.github_repo | default: '' | join: '' }}/tree/{{ site.branch }}/docs/) - Repository architecture and development guides
+- [🏠 Return to Homepage]({{ '/' | relative_url }}) - Main Zer0-Mistakes theme showcase
 
 **Last Updated**: November 16, 2025  
 **Maintained By**: Zer0-Mistakes Community

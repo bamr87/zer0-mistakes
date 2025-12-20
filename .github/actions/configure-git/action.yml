@@ -28,7 +28,7 @@ runs:
       shell: bash
       run: |
         # Configure Git to use the GitHub token for authentication
-        git config --global url."https://x-access-token:${{ inputs.github-token }}@github.com/".insteadOf "https://github.com/"
+        git config --local url."https://x-access-token:${{ inputs.github-token }}@github.com/".insteadOf "https://github.com/"
         
         # Verify authentication setup
         if ! git ls-remote --exit-code origin HEAD > /dev/null 2>&1; then
@@ -42,8 +42,5 @@ runs:
       run: |
         # Mark the current directory as safe for Git operations
         git config --global --add safe.directory "${GITHUB_WORKSPACE}"
-        
-        # Also mark any subdirectories that might be needed
-        git config --global --add safe.directory '*'
         
         echo "::notice::Git safe directory configuration completed"

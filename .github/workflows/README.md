@@ -33,7 +33,7 @@ The comprehensive CI pipeline that validates code quality, runs tests, and build
 |-----|-------------|---------|
 | `fast-checks` | Quick syntax validation | 5 min |
 | `quality-checks` | Linting, security audit, markdown checks | 10 min |
-| `test` | Full test suite across Ruby 3.0, 3.2, 3.3 | 15 min |
+| `test` | Full test suite across Ruby 3.2, 3.3 | 15 min |
 | `build` | Gem build and validation | 10 min |
 | `performance` | Jekyll build performance (scheduled/comprehensive) | 15 min |
 | `integration` | Docker integration tests (main branch) | 10 min |
@@ -100,6 +100,41 @@ Unified release workflow that publishes to RubyGems and creates GitHub releases.
 #### Environment Requirements:
 - **`production`** environment approval for RubyGems publishing
 - **`RUBYGEMS_API_KEY`** secret for gem publishing
+
+---
+
+### 4. `test-latest.yml` - Latest Dependency Canary
+
+**Triggers:** Push/PR to `main`/`develop`, Daily schedule, Manual dispatch
+
+Builds with the latest resolved dependencies (no pins), runs a Docker-based validation + test suite, and publishes an immutable Docker tag on success.
+
+Notes:
+- This workflow is intended to **fail** if RSpec or HTMLProofer fails (canary behavior).
+
+---
+
+### 5. `update-dependencies.yml` - Automated Gemfile.lock Updates
+
+**Triggers:** Weekly schedule, Manual dispatch
+
+Runs `bundle update` and opens an automated PR for review.
+
+---
+
+### 6. `convert-notebooks.yml` - Notebook Conversion
+
+**Triggers:** `.ipynb` changes (push/PR), Manual dispatch
+
+Converts notebooks to Jekyll-friendly Markdown and (on push events) commits/pushes the converted artifacts.
+
+---
+
+### 7. `codeql.yml` - CodeQL Security Scanning
+
+**Triggers:** Push/PR to `main`, Weekly schedule
+
+Runs CodeQL analysis for Actions, JS/TS, Python, and Ruby.
 
 ---
 

@@ -60,7 +60,7 @@ layout: root
                     <a href="#features" class="btn btn-outline-light btn-lg">
                         <i class="bi bi-list-check me-2"></i>Features
                     </a>
-                    <a href="{{ site.resources.github_repo }}" class="btn btn-outline-light btn-lg">
+                        <a href="{{ site.resources.github_repo | default: '' | join: '' }}" class="btn btn-outline-light btn-lg">
                         <i class="bi bi-github me-2"></i>GitHub
                     </a>
                 </div>

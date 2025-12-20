@@ -1,5 +1,12 @@
 name: Release (Gem + GitHub)
 
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 # Unified release workflow that handles both RubyGems publishing and GitHub release creation
 # Triggered by version tags (v*) or manual dispatch for testing
 

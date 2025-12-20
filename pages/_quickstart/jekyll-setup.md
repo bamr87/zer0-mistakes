@@ -1,23 +1,35 @@
 ---
-title: "Jekyll Setup"
-author: "Zer0-Mistakes Development Team"
+title: Jekyll Setup
+author: Zer0-Mistakes Development Team
 layout: default
-description: "Configure your Docker-first Jekyll development environment. Start the development server, create content, and customize your theme."
+description: Configure your Docker-first Jekyll development environment. Start the development server, create content, and customize your theme.
 permalink: /quickstart/jekyll-setup/
 preview: /images/previews/jekyll-setup.png
-categories: [Documentation, Quick Start]
-tags: [jekyll, docker, development, configuration, theme]
+categories:
+    - Documentation
+    - Quick Start
+tags:
+    - jekyll
+    - docker
+    - development
+    - configuration
+    - theme
 keywords:
-  primary: ["jekyll development", "docker compose"]
-  secondary: ["live reload", "content creation", "theme customization"]
-lastmod: 2025-12-19T00:00:00.000Z
+    primary:
+        - jekyll development
+        - docker compose
+    secondary:
+        - live reload
+        - content creation
+        - theme customization
+lastmod: 2025-12-20T22:15:46.433Z
 draft: false
 sidebar:
-  nav: quickstart
+    nav: quickstart
 quickstart:
-  step: 2
-  next: /quickstart/github-setup/
-  prev: /quickstart/machine-setup/
+    step: 2
+    next: /quickstart/github-setup/
+    prev: /quickstart/machine-setup/
 ---
 
 # 🚀 Jekyll Setup - Docker-First Development
@@ -73,7 +85,7 @@ This command:
 
 Open your browser and visit:
 
-- **Local Site**: [http://localhost:4000](http://localhost:4000)
+- **Local Site**: `http://localhost:4000`
 - **Live Reload**: Changes automatically refresh the browser
 
 You should see:

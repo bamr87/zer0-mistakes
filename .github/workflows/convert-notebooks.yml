@@ -1,5 +1,12 @@
 name: Convert Jupyter Notebooks
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 # Automatically convert Jupyter notebooks to Jekyll-compatible Markdown
 # when .ipynb files are added or modified in the pages/_notebooks directory
 on:
@@ -35,6 +42,8 @@ jobs:
     name: Convert Jupyter Notebooks to Markdown
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout Repository
@@ -154,6 +163,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'
     timeout-minutes: 5
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout Repository (after conversion)

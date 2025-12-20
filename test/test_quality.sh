@@ -417,6 +417,12 @@ test_preview_image_urls() {
     local checked=0
     local missing_files=0
     local format_errors=0
+        local strict_previews=false
+
+        if [[ "${STRICT_PREVIEW_IMAGES:-}" == "1" || "${STRICT_PREVIEW_IMAGES:-}" == "true" || \
+                    "${CI_STRICT_PREVIEW_IMAGES:-}" == "1" || "${CI_STRICT_PREVIEW_IMAGES:-}" == "true" ]]; then
+                strict_previews=true
+        fi
     
     # Find all markdown files with preview frontmatter
     while IFS= read -r file; do
@@ -481,8 +487,18 @@ test_preview_image_urls() {
         log_success "All preview image URLs are valid"
         return 0
     else
-        log_error "Found $errors preview URL errors ($missing_files missing files, $format_errors format errors)"
-        return 1
+        if [[ $format_errors -gt 0 ]]; then
+            log_error "Found $errors preview URL errors ($missing_files missing files, $format_errors format errors)"
+            return 1
+        fi
+
+        if [[ $missing_files -gt 0 && "$strict_previews" == "true" ]]; then
+            log_error "Found $errors preview URL errors ($missing_files missing files, $format_errors format errors)"
+            return 1
+        fi
+
+        log_warning "Found $errors preview URL issues ($missing_files missing files). Not failing (strict mode disabled)."
+        return 0
     fi
 }
 

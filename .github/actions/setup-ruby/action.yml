@@ -29,9 +29,10 @@ runs:
         sudo apt-get update -qq
         sudo apt-get install -y jq
 
-    - name: Install Ruby dependencies
+    - name: Ensure Ruby dependencies are installed
       shell: bash
-      run: bundle install --jobs 4 --retry 3
+      run: |
+        bundle check || bundle install --jobs 4 --retry 3
 
     - name: Make scripts executable
       shell: bash

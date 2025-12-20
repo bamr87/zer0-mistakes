@@ -19,7 +19,7 @@
 default:
   name: "Zer0-Mistakes Team"
   bio: "The collective voice of the Zer0-Mistakes Jekyll theme development team."
-  avatar: "/images/default-avatar.png"
+  avatar: "/images/gravatar-small.png"
   github: "bamr87"
   website: "https://bamr87.github.io/zer0-mistakes/"
   role: "Development Team"
@@ -35,7 +35,7 @@ bamr87:
 guest:
   name: "Guest Author"
   bio: "A valued contributor to our community."
-  avatar: "/images/default-avatar.png"
+  avatar: "/images/gravatar-small.png"
   role: "Guest Contributor"
 
 # Add more authors as needed:

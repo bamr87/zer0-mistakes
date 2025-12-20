@@ -53,5 +53,5 @@ To publish Docker images, configure these secrets in GitHub:
 
 ## Related Documentation
 
-- [Zero Pin Strategy](../docs/systems/ZERO_PIN_STRATEGY.md)
+- [Zero Pin Strategy](https://github.com/bamr87/zer0-mistakes/blob/main/docs/systems/ZERO_PIN_STRATEGY.md)
 - [Main docker-compose.yml](../docker-compose.yml)

@@ -20,6 +20,10 @@
 
 name: Update Dependencies
 
+concurrency:
+  group: update-dependencies
+  cancel-in-progress: true
+
 # Required permissions for creating PRs
 permissions:
   contents: write

@@ -35,13 +35,15 @@ permalink: /tags/
 <!-- TAG CLOUD                  -->
 <!-- ========================== -->
 
-{% comment %} Collect all tags with counts {% endcomment %}
+{% comment %} Collect all tags with counts (posts + notebooks) {% endcomment %}
+{% assign tag_sources = site.posts | concat: site.notebooks %}
 {% assign all_tags = "" | split: "" %}
-{% assign tag_counts = "" | split: "" %}
-{% for post in site.posts %}
-{% for tag in post.tags %}
-{% assign all_tags = all_tags | push: tag %}
-{% endfor %}
+{% for doc in tag_sources %}
+  {% if doc.tags %}
+    {% for tag in doc.tags %}
+      {% assign all_tags = all_tags | push: tag %}
+    {% endfor %}
+  {% endif %}
 {% endfor %}
 {% assign unique_tags = all_tags | uniq | sort_natural %}
 
@@ -78,7 +80,7 @@ permalink: /tags/
   </h2>
   
   {% for tag in unique_tags %}
-    {% assign tagged_posts = site.posts | where_exp: "post", "post.tags contains tag" %}
+    {% assign tagged_posts = tag_sources | where_exp: "post", "post.tags contains tag" %}
     
     <article class="tag-section mb-5" id="{{ tag | slugify }}">
       <!-- Tag Header -->
@@ -112,7 +114,7 @@ permalink: /tags/
               {% endif %}
               <br>
               <small class="text-muted">
-                {{ post.excerpt | strip_html | truncate: 100 }}
+                {{ post.excerpt | default: post.description | default: "" | strip_html | truncate: 100 }}
               </small>
             </div>
             <span class="text-muted small text-nowrap ms-3">

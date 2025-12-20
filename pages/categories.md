@@ -35,12 +35,15 @@ permalink: /categories/
 <!-- CATEGORY OVERVIEW          -->
 <!-- ========================== -->
 
-{% comment %} Collect all categories with counts {% endcomment %}
+{% comment %} Collect all categories with counts (posts + notebooks) {% endcomment %}
+{% assign category_sources = site.posts | concat: site.notebooks %}
 {% assign all_categories = "" | split: "" %}
-{% for post in site.posts %}
-{% for category in post.categories %}
-{% assign all_categories = all_categories | push: category %}
-{% endfor %}
+{% for post in category_sources %}
+  {% if post.categories %}
+    {% for category in post.categories %}
+      {% assign all_categories = all_categories | push: category %}
+    {% endfor %}
+  {% endif %}
 {% endfor %}
 {% assign unique_categories = all_categories | uniq | sort_natural %}
 
@@ -77,7 +80,7 @@ permalink: /categories/
   </h2>
   
   {% for category in unique_categories %}
-    {% assign categorized_posts = site.posts | where_exp: "post", "post.categories contains category" %}
+    {% assign categorized_posts = category_sources | where_exp: "post", "post.categories contains category" %}
     
     <article class="category-section mb-5" id="{{ category | slugify }}">
       <!-- Category Header -->
@@ -129,7 +132,7 @@ permalink: /categories/
 <!-- BACK TO TOP LINK           -->
 <!-- ========================== -->
 <div class="text-center mt-5" id="top">
-  <a href="{{ '/pages/' | relative_url }}" class="btn btn-outline-primary">
+  <a href="{{ '/posts/' | relative_url }}" class="btn btn-outline-primary">
     <i class="bi bi-arrow-left me-1"></i>Back to All Posts
   </a>
 </div>

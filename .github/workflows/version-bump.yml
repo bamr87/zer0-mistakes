@@ -1,5 +1,12 @@
 name: Version Bump
 
+permissions:
+  contents: read
+
+concurrency:
+  group: version-bump-main
+  cancel-in-progress: false
+
 # Unified version bump workflow supporting both manual and automatic triggers
 # - Manual: Use workflow_dispatch to select version type
 # - Automatic: Analyzes commits on push to main to determine version bump

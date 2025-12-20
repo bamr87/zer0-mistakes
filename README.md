@@ -2,7 +2,7 @@
 title: zer0-mistakes
 sub-title: Jekyll Theme
 description: Docker-optimized Jekyll theme with AI-powered installation automation and comprehensive error handling.
-version: 0.15.0
+version: 0.16.1
 layout: landing
 tags:
   - jekyll
@@ -564,13 +564,13 @@ graph LR
 
 | Resource | Description |
 |----------|-------------|
-| [📋 Technical Docs](docs/) | Architecture, systems, implementation |
-| [📖 User Guides](pages/_docs/) | Published tutorials and references |
-| [🤖 Copilot Instructions](.github/copilot-instructions.md) | AI development guidelines |
-| [⌨️ Keyboard Navigation](docs/keyboard-navigation.md) | Accessibility shortcuts guide |
-| [📓 Jupyter Notebooks](docs/JUPYTER_NOTEBOOKS.md) | Notebook conversion documentation |
+| [📋 Technical Docs]({{ site.resources.github_repo | default: '' | join: '' }}/tree/{{ site.branch }}/docs/) | Architecture, systems, implementation |
+| [📖 User Guides]({{ '/docs/' | relative_url }}) | Published tutorials and references |
+| [🤖 Copilot Instructions]({{ site.resources.github_repo | default: '' | join: '' }}/blob/{{ site.branch }}/.github/copilot-instructions.md) | AI development guidelines |
+| [⌨️ Keyboard Navigation]({{ site.resources.github_repo | default: '' | join: '' }}/blob/{{ site.branch }}/docs/keyboard-navigation.md) | Accessibility shortcuts guide |
+| [📓 Jupyter Notebooks]({{ site.resources.github_repo | default: '' | join: '' }}/blob/{{ site.branch }}/docs/JUPYTER_NOTEBOOKS.md) | Notebook conversion documentation |
 | [📝 PRD](PRD.md) | Product requirements & roadmap |
-| [🔒 Privacy Policy](pages/privacy-policy.md) | GDPR/CCPA compliant privacy docs |
+| [🔒 Privacy Policy]({{ '/privacy-policy/' | relative_url }}) | GDPR/CCPA compliant privacy docs |
 
 ---
 

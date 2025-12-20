@@ -10,14 +10,37 @@
   <ol itemscope itemtype="https://schema.org/BreadcrumbList">
     <i class="bi bi-folder"></i>
     {% assign crumbs = page.url | remove:'/index.html' | split: '/' %}
-    <a href="/">root</a>
-    {% for crumb in crumbs offset: 1 %}
-    {% if forloop.last %}
-    / {{ page.title }}
+    {% assign section = crumbs[1] | default: '' %}
+    <a href="{{ '/' | relative_url }}">root</a>
+
+    {% comment %}
+      Avoid linking to intermediate directories that don't have index pages.
+      Example: posts are /posts/YYYY/MM/DD/slug/ (only /posts/ and the leaf page exist).
+    {% endcomment %}
+    {% if section == 'posts' %}
+      / <a href="{{ '/posts/' | relative_url }}">Posts</a>
+      / {{ page.title }}
+    {% elsif section == 'notebooks' %}
+      / <a href="{{ '/notebooks/' | relative_url }}">Notebooks</a>
+      / {{ page.title }}
+    {% elsif section == 'notes' %}
+      / <a href="{{ '/notes/' | relative_url }}">Notes</a>
+      / {{ page.title }}
+    {% elsif section == 'docs' %}
+      / <a href="{{ '/docs/' | relative_url }}">Docs</a>
+      / {{ page.title }}
     {% else %}
-    / <a href="{% assign crumb_limit = forloop.index | plus: 1 %}{% for crumb in crumbs limit: crumb_limit %}{{ crumb | append: '/' }}{% endfor %}">{{ crumb | replace:'-',' ' | remove:'.html' | capitalize }}</a>
+      {% for crumb in crumbs offset: 1 %}
+        {% if forloop.last %}
+          / {{ page.title }}
+        {% elsif forloop.first %}
+          / <a href="{{ '/' | append: crumb | append: '/' | relative_url }}">{{ crumb | replace:'-',' ' | remove:'.html' | capitalize }}</a>
+        {% else %}
+          {% comment %} Keep intermediate crumbs as plain text to avoid dead links {% endcomment %}
+          / {{ crumb | replace:'-',' ' | remove:'.html' | capitalize }}
+        {% endif %}
+      {% endfor %}
     {% endif %}
-    {% endfor %}
   </ol>
 </nav>
 <!-- Secret Search bar  -->

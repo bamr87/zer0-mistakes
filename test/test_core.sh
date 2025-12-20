@@ -370,21 +370,19 @@ test_jekyll_build() {
             return 0
         fi
         
-        # Create temporary test site
-        local temp_site=$(mktemp -d -t jekyll-test-XXXXXX)
-        
-        # Copy theme files to test site
-        cp -r . "$temp_site/"
-        cd "$temp_site"
-        
-        # Remove existing _site to ensure clean build
-        rm -rf _site
-        
-        if bundle exec jekyll build --quiet; then
+        # Build into a temp destination (avoid copying the whole repo, which can be memory-heavy)
+        local temp_site
+        temp_site=$(mktemp -d -t jekyll-build-test-XXXXXX)
+
+        if JEKYLL_ENV=production bundle exec jekyll build \
+            --config "$PROJECT_ROOT/_config.yml" \
+            --source "$PROJECT_ROOT" \
+            --destination "$temp_site/_site" \
+            --quiet; then
             log_success "Jekyll build completed successfully"
             
             # Test that essential files were generated
-            if [[ -f "_site/index.html" ]]; then
+            if [[ -f "$temp_site/_site/index.html" ]]; then
                 log_success "index.html generated correctly"
             else
                 log_error "index.html not generated"
@@ -394,7 +392,7 @@ test_jekyll_build() {
             fi
             
             # Test that assets were processed
-            if find "_site/assets" -name "*.css" | head -1 | grep -q .; then
+            if find "$temp_site/_site/assets" -name "*.css" 2>/dev/null | head -1 | grep -q .; then
                 log_success "CSS assets processed correctly"
             else
                 log_warning "No CSS assets found in _site/assets"
@@ -408,7 +406,6 @@ test_jekyll_build() {
         fi
         
         # Cleanup
-        cd "$PROJECT_ROOT"
         rm -rf "$temp_site"
     else
         log_warning "Jekyll not available for build test"

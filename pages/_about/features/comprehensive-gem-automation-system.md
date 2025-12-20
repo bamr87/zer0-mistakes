@@ -1,15 +1,28 @@
 ---
 title: Comprehensive Gem Automation System
-description: "Complete automation ecosystem for Jekyll theme versioning, testing, building, and publishing with CI/CD integration"
+description: Complete automation ecosystem for Jekyll theme versioning, testing, building, and publishing with CI/CD integration
+permalink: /about/features/comprehensive-gem-automation-system/
 date: 2025-07-03T12:00:00.000Z
 preview: null
-tags: [Automation, CI/CD, Ruby, Jekyll, DevOps, DFF, DRY, KIS, AIPD]
-categories: [How-To, Development, Features]
-sub-title: "Zero-click releases with comprehensive validation"
+tags:
+    - Automation
+    - CI/CD
+    - Ruby
+    - Jekyll
+    - DevOps
+    - DFF
+    - DRY
+    - KIS
+    - AIPD
+categories:
+    - How-To
+    - Development
+    - Features
+sub-title: Zero-click releases with comprehensive validation
 author: null
 excerpt: Production-ready automation system implementing IT-Journey principles for semantic versioning, multi-environment testing, and automated gem publishing.
 snippet: null
-lastmod: 2025-07-03T12:00:00.000Z
+lastmod: 2025-12-20T22:15:46.245Z
 draft: false
 ---
 
@@ -395,5 +408,5 @@ Your `zer0-mistakes` gem now has a production-ready automation system that embod
 
 - [Scripts README](/scripts/README.md) - Detailed script documentation
 - [CHANGELOG.md](/CHANGELOG.md) - Version history and changes
-- [GitHub Actions Workflows](/.github/workflows/) - CI/CD pipeline details
+- [GitHub Actions Workflows](https://github.com/bamr87/zer0-mistakes/tree/main/.github/workflows) - CI/CD pipeline details
 - [Makefile](/Makefile) - Command reference and usage

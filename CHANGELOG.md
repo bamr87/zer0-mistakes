@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.16.1] - 2025-12-20
+
+### Changed
+- Hardened CI workflows with least-privilege `permissions` and `concurrency`
+- Updated landing/repo links to render correctly with YAML-array URL config
+- Excluded repo technical `docs/` from the published site build (GitHub links used instead)
+
+### Fixed
+- Removed false-green behavior in `test-latest.yml` (RSpec/HTMLProofer now fail the workflow)
+- Fixed broken internal links/hashes and aligned navigation anchors (strict HTMLProofer-compatible)
+
 ## [0.16.0] - 2025-12-20
 
 ### Added
@@ -64,16 +75,6 @@
 ### Commits in this release
 - e1342ab Add configuration files for content organization, prerequisites, statistics, and UI text
 - 366e8a2 chore(deps): update Ruby gem dependencies (#16)
-
-## [0.16.0] - 2025-12-19
-
-### Other
--  add personalization page and refactor quickstart tutorial
-- Add configuration files for content organization, prerequisites, statistics, and UI text
--  update Ruby gem dependencies (#16)
-
-
-
 ## [0.15.1] - 2025-12-14
 
 ### Changed
@@ -1112,7 +1113,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Performance**: Optimized DOM manipulation and content rendering
 - **Accessibility**: Full screen reader support and keyboard navigation
 
-**Full Documentation**: [v0.5.0 Release Summary](docs/releases/v0.5.0-release-summary.md)
+**Full Documentation**: [v0.5.0 Release Summary](https://github.com/bamr87/zer0-mistakes/blob/main/docs/releases/v0.5.0-release-summary.md)
 
 ## [0.4.0] - 2025-10-10
 
@@ -1157,7 +1158,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Eliminated type conversion errors in sorting operations
   - Proper handling of nested array data structures
 
-**Full Documentation**: [v0.4.0 Release Summary](docs/releases/v0.4.0-release-summary.md)
+**Full Documentation**: [v0.4.0 Release Summary](https://github.com/bamr87/zer0-mistakes/blob/main/docs/releases/v0.4.0-release-summary.md)
 
 ## [0.3.0] - 2025-01-27
 
@@ -1192,7 +1193,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **⚡ Performance**: Optimized loading and rendering speed
 - **🎯 Usability**: Improved setup process and error handling
 
-**Full Documentation**: [v0.3.0 Release Notes](docs/releases/v0.3.0-release-notes.md)
+**Full Documentation**: [v0.3.0 Release Notes](https://github.com/bamr87/zer0-mistakes/blob/main/docs/releases/v0.3.0-release-notes.md)
 
 ## [0.2.1] - 2025-09-30
 
@@ -1312,11 +1313,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 For detailed documentation on features, systems, and configuration:
 
-- **[Documentation Center](docs/README.md)** - Complete documentation overview
-- **[Release Documentation](docs/releases/README.md)** - Historical release information
-- **[Feature Documentation](docs/features/README.md)** - Detailed feature guides
-- **[System Documentation](docs/systems/README.md)** - Core systems and automation
-- **[Configuration Guides](docs/configuration/README.md)** - Setup and configuration
+- **[Documentation Center](https://github.com/bamr87/zer0-mistakes/tree/main/docs)** - Complete documentation overview
+- **[Release Documentation](https://github.com/bamr87/zer0-mistakes/tree/main/docs/releases)** - Historical release information
+- **[Feature Documentation](https://github.com/bamr87/zer0-mistakes/tree/main/docs/features)** - Detailed feature guides
+- **[System Documentation](https://github.com/bamr87/zer0-mistakes/tree/main/docs/systems)** - Core systems and automation
+- **[Configuration Guides](https://github.com/bamr87/zer0-mistakes/tree/main/docs/configuration)** - Setup and configuration
 
 ## Links
 

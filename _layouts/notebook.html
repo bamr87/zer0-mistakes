@@ -95,7 +95,7 @@ layout: default
     {% if page.tags and page.tags.size > 0 %}
       <div class="notebook-tags mb-3">
         {% for tag in page.tags %}
-          <a href="{{ site.baseurl }}/tags/{{ tag | slugify }}/" class="badge bg-secondary text-decoration-none me-1">
+          <a href="{{ '/tags/' | relative_url }}#{{ tag | slugify }}" class="badge bg-secondary text-decoration-none me-1">
             {{ tag }}
           </a>
         {% endfor %}
@@ -107,7 +107,7 @@ layout: default
       <div class="notebook-categories mb-3">
         <i class="bi bi-folder me-1"></i>
         {% for category in page.categories %}
-          <a href="{{ site.baseurl }}/categories/{{ category | slugify }}/" class="text-decoration-none">
+          <a href="{{ '/categories/' | relative_url }}#{{ category | slugify }}" class="text-decoration-none">
             {{ category }}
           </a>
           {% unless forloop.last %}<span class="mx-1">/</span>{% endunless %}
@@ -148,7 +148,7 @@ layout: default
              class="btn btn-outline-primary btn-sm" target="_blank" rel="noopener noreferrer">
             <i class="bi bi-linkedin"></i> LinkedIn
           </a>
-          <a href="mailto:?subject={{ page.title | uri_escape }}&body={{ site.url | append: page.url | uri_escape }}" 
+          <a href="mailto:{{ site.email | escape }}?subject={{ page.title | uri_escape }}&body={{ site.url | append: page.url | uri_escape }}" 
              class="btn btn-outline-primary btn-sm">
             <i class="bi bi-envelope"></i> Email
           </a>
@@ -158,7 +158,7 @@ layout: default
     
     <!-- Download Original Notebook -->
     <div class="download-notebook mb-4">
-      <a href="{{ site.baseurl }}/pages/_notebooks/{{ page.slug }}.ipynb" 
+      <a href="https://raw.githubusercontent.com/{{ site.repository }}/{{ site.branch | default: 'main' }}/pages/_notebooks/{{ page.slug }}.ipynb" 
          class="btn btn-outline-secondary btn-sm" download>
         <i class="bi bi-download"></i> Download Original Notebook
       </a>

@@ -17,6 +17,13 @@
 
 name: TEST (Latest Dependencies)
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 on:
   push:
     branches: [main, develop]
@@ -160,6 +167,7 @@ jobs:
           echo "✅ Tagged as zer0-mistakes-jekyll-test:latest"
 
       - name: Run Validation
+        id: validation
         run: |
           echo "🔍 Running validation checks with pre-built image..."
           docker run --rm zer0-mistakes-jekyll-test:latest sh -c "
@@ -174,6 +182,7 @@ jobs:
           "
 
       - name: Run Jekyll Build Test
+        id: jekyll_build
         run: |
           echo "🏗️ Testing Jekyll build with pre-built image..."
           docker run --rm \
@@ -185,13 +194,15 @@ jobs:
           '
 
       - name: Run RSpec Tests
+        id: rspec
         run: |
           echo "🧪 Running RSpec tests with pre-built image..."
           # Use the image's built-in files
           docker run --rm zer0-mistakes-jekyll-test:latest \
-            bundle exec rspec --format documentation || true
+            bundle exec rspec --format documentation
 
       - name: Run HTML Proofer
+        id: htmlproofer
         run: |
           echo "🔗 Running HTML validation with pre-built image..."
           docker run --rm \
@@ -200,7 +211,7 @@ jobs:
             zer0-mistakes-jekyll-test:latest sh -c '
             bundle exec jekyll build &&
             bundle exec htmlproofer _site --disable-external --allow-hash-href
-          ' || true
+          '
 
       - name: Generate Test Summary
         if: always()
@@ -209,10 +220,10 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Test | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Validation | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
-          echo "| Jekyll Build | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
-          echo "| RSpec Tests | ⚠️ See logs |" >> $GITHUB_STEP_SUMMARY
-          echo "| HTML Proofer | ⚠️ See logs |" >> $GITHUB_STEP_SUMMARY
+          echo "| Validation | ${{ steps.validation.outcome }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Jekyll Build | ${{ steps.jekyll_build.outcome }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| RSpec Tests | ${{ steps.rspec.outcome }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| HTML Proofer | ${{ steps.htmlproofer.outcome }} |" >> $GITHUB_STEP_SUMMARY
 
   # ==========================================================================
   # Stage 3: Publish (Only on main branch success)
@@ -235,7 +246,20 @@ jobs:
           path: /tmp
 
       - name: Load Docker Image
-        run: docker load -i /tmp/jekyll-image.tar
+        id: load
+        run: |
+          set -euo pipefail
+          OUTPUT=$(docker load -i /tmp/jekyll-image.tar)
+          echo "$OUTPUT"
+
+          IMAGE_ID=$(echo "$OUTPUT" | awk '/Loaded image ID:/ {print $4}' | head -1)
+          if [[ -z "${IMAGE_ID}" ]]; then
+            # Fallback: take the most recent image ID
+            IMAGE_ID=$(docker images --format "{{.ID}}" | head -1)
+          fi
+
+          echo "image_id=${IMAGE_ID}" >> "$GITHUB_OUTPUT"
+          docker tag "${IMAGE_ID}" zer0-mistakes-jekyll-test:latest
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -247,7 +271,7 @@ jobs:
         run: |
           IMAGE=${{ env.DOCKER_IMAGE }}
           TAG=${{ needs.build-latest.outputs.image_tag }}
-          SOURCE_IMAGE=$(docker compose -f docker-compose.yml images -q jekyll)
+          SOURCE_IMAGE=${{ steps.load.outputs.image_id }}
           
           echo "📦 Tagging image: ${IMAGE}:${TAG}"
           docker tag ${SOURCE_IMAGE} ${IMAGE}:${TAG}

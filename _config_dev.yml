@@ -45,4 +45,5 @@ exclude:
   - "*.log"
   - ".vscode/"
   - "debug-*.log"
+  - "docs/"
 

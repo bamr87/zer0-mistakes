@@ -466,6 +466,7 @@ exclude:
   - .sass-cache/
   - .jekyll-cache/
   - .obsidian
+  - docs/
   - Gemfile.lock
   - gemfiles/
   - Gemfile
