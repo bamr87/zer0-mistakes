@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.15.3] - 2025-12-20
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 2f8b580 chore: merge branch and version bump to 0.15.2
+- a239892 chore: bump version to 0.15.2
+
+
 ## [0.15.2] - 2025-12-19
 
 ### Changed
