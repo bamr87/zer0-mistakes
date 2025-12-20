@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.15.4] - 2025-12-20
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- bafb5ea fix: resolve CI quality check failures for preview images
+
+
 ## [0.15.3] - 2025-12-20
 
 ### Changed
