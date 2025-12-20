@@ -1,37 +1,94 @@
 # Documentation Navigation Configuration
 # Used by: Docs sidebar and documentation pages
-# Purpose: Organize documentation by topic area
+# Purpose: Organize documentation by topic area for _docs collection
 
+# ============================================================
+# Getting Started
+# ============================================================
+- title: Getting Started
+  icon: bi-rocket-takeoff
+  url: /docs/
+  sublinks:
+    - title: Documentation Home
+      url: /docs/
+    - title: Installation
+      url: /docs/installation/
+    - title: Troubleshooting
+      url: /docs/troubleshooting/
+
+# ============================================================
+# Core Technologies
+# ============================================================
 - title: Jekyll
   icon: bi-journal-code
   url: /docs/jekyll/
   sublinks:
-    - title: Jekyll Guide
+    - title: Jekyll Overview
       url: /docs/jekyll/
-    - title: Mermaid Diagrams
-      url: /docs/jekyll/mermaid-native-markdown/
-    - title: Math with MathJax
-      url: /docs/jekyll/jekyll-math-symbols-with-mathjax/
+    - title: Configuration
+      url: /docs/jekyll/jekyll-config/
+    - title: Front Matter
+      url: /docs/front-matter/
     - title: Liquid Templating
       url: /docs/jekyll/jekyll-liquid/
-    - title: Frontmatter CMS
-      url: /docs/jekyll/jekyll-frontmatter-cms/
     - title: Syntax Highlighting
       url: /docs/jekyll/jekyll-highlighting/
+    - title: Performance
+      url: /docs/jekyll/jekyll-performance-optimization/
+    - title: Security
+      url: /docs/jekyll/jekyll-security/
 
+- title: Ruby & Bundler
+  icon: bi-gem
+  url: /docs/ruby/
+  sublinks:
+    - title: Ruby Overview
+      url: /docs/ruby/
+    - title: Ruby 101
+      url: /docs/ruby-101/
+
+- title: Liquid
+  icon: bi-droplet
+  url: /docs/liquid/
+  sublinks:
+    - title: Liquid Overview
+      url: /docs/liquid/
+
+- title: Docker
+  icon: bi-box-seam
+  url: /docs/docker/
+  sublinks:
+    - title: Docker Overview
+      url: /docs/docker/
+
+- title: Bootstrap
+  icon: bi-bootstrap
+  url: /docs/bootstrap/
+  sublinks:
+    - title: Bootstrap Overview
+      url: /docs/bootstrap/
+
+# ============================================================
+# Theme Features
+# ============================================================
 - title: Features
   icon: bi-stars
   url: /features/
   sublinks:
     - title: All Features
       url: /features/
+    - title: Mermaid Diagrams
+      url: /docs/jekyll/mermaid-native-markdown/
+    - title: Math with MathJax
+      url: /docs/jekyll/jekyll-math-symbols-with-mathjax/
     - title: Preview Image Generator
       url: /docs/features/preview-image-generator/
-    - title: Statistics Dashboard
-      url: /about/features/statistics-dashboard/
-    - title: AI Development Guide
-      url: /about/features/ai-development-guide/
+    - title: Frontmatter CMS
+      url: /docs/jekyll/jekyll-frontmatter-cms/
 
+# ============================================================
+# Deployment
+# ============================================================
 - title: Deployment
   icon: bi-cloud-upload
   url: /quickstart/github-setup/
@@ -42,16 +99,3 @@
       url: /docs/jekyll/deploying-jekyll-website-to-netlify/
     - title: Custom Domain
       url: /docs/jekyll/deploying-personal-website-with-custom-domain/
-
-- title: Configuration
-  icon: bi-gear
-  url: /about/config/
-  sublinks:
-    - title: Site Config
-      url: /about/config/
-    - title: Jekyll Config
-      url: /docs/jekyll/jekyll-config/
-    - title: Performance
-      url: /docs/jekyll/jekyll-performance-optimization/
-    - title: Security
-      url: /docs/jekyll/jekyll-security/

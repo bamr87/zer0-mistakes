@@ -21,7 +21,10 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
 ## 🏗 Core Infrastructure
 
 <div class="row row-cols-1 row-cols-md-2 g-4 mb-4">
-{% assign core_features = site.data.features.features | where_exp: "item", "item.tags contains 'jekyll' or item.tags contains 'docker' or item.tags contains 'bootstrap'" | where_exp: "item", "item.id < 'ZER0-004'" %}
+{% assign jekyll_features = site.data.features.features | where_exp: "item", "item.tags contains 'jekyll'" %}
+{% assign docker_features = site.data.features.features | where_exp: "item", "item.tags contains 'docker'" %}
+{% assign bootstrap_features = site.data.features.features | where_exp: "item", "item.tags contains 'bootstrap'" %}
+{% assign core_features = jekyll_features | concat: docker_features | concat: bootstrap_features | uniq | slice: 0, 3 %}
 {% for feature in core_features %}
 <div class="col">
   <div class="card h-100">
@@ -123,7 +126,9 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
 ## 🔒 Analytics & Privacy
 
 <div class="row row-cols-1 row-cols-md-2 g-4 mb-4">
-{% assign privacy_features = site.data.features.features | where_exp: "item", "item.tags contains 'privacy' or item.tags contains 'analytics'" %}
+{% assign privacy_only = site.data.features.features | where_exp: "item", "item.tags contains 'privacy'" %}
+{% assign analytics_only = site.data.features.features | where_exp: "item", "item.tags contains 'analytics'" %}
+{% assign privacy_features = privacy_only | concat: analytics_only | uniq %}
 {% for feature in privacy_features %}
 <div class="col">
   <div class="card h-100 border-success">
@@ -170,7 +175,10 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
 ## 🧭 Navigation & User Interface
 
 <div class="row row-cols-1 row-cols-md-2 g-4 mb-4">
-{% assign nav_features = site.data.features.features | where_exp: "item", "item.tags contains 'navigation' or item.tags contains 'accessibility' or item.tags contains 'ui'" %}
+{% assign nav_only = site.data.features.features | where_exp: "item", "item.tags contains 'navigation'" %}
+{% assign access_only = site.data.features.features | where_exp: "item", "item.tags contains 'accessibility'" %}
+{% assign ui_only = site.data.features.features | where_exp: "item", "item.tags contains 'ui'" %}
+{% assign nav_features = nav_only | concat: access_only | concat: ui_only | uniq %}
 {% for feature in nav_features %}
 <div class="col">
   <div class="card h-100">
@@ -217,7 +225,10 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
 ## 📓 Content Management
 
 <div class="row row-cols-1 row-cols-md-2 g-4 mb-4">
-{% assign content_features = site.data.features.features | where_exp: "item", "item.tags contains 'content' or item.tags contains 'jupyter' or item.tags contains 'mermaid'" %}
+{% assign content_only = site.data.features.features | where_exp: "item", "item.tags contains 'content'" %}
+{% assign jupyter_only = site.data.features.features | where_exp: "item", "item.tags contains 'jupyter'" %}
+{% assign mermaid_only = site.data.features.features | where_exp: "item", "item.tags contains 'mermaid'" %}
+{% assign content_features = content_only | concat: jupyter_only | concat: mermaid_only | uniq %}
 {% for feature in content_features %}
 <div class="col">
   <div class="card h-100">
@@ -264,7 +275,11 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
 ## 🔧 Developer Experience
 
 <div class="row row-cols-1 row-cols-md-2 g-4 mb-4">
-{% assign dev_features = site.data.features.features | where_exp: "item", "item.tags contains 'testing' or item.tags contains 'ci-cd' or item.tags contains 'automation' or item.tags contains 'release'" %}
+{% assign testing_only = site.data.features.features | where_exp: "item", "item.tags contains 'testing'" %}
+{% assign cicd_only = site.data.features.features | where_exp: "item", "item.tags contains 'ci-cd'" %}
+{% assign auto_only = site.data.features.features | where_exp: "item", "item.tags contains 'automation'" %}
+{% assign release_only = site.data.features.features | where_exp: "item", "item.tags contains 'release'" %}
+{% assign dev_features = testing_only | concat: cicd_only | concat: auto_only | concat: release_only | uniq %}
 {% for feature in dev_features %}
 <div class="col">
   <div class="card h-100 border-danger">
@@ -387,7 +402,9 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
   <div class="col-6 col-md-3">
     <div class="card">
       <div class="card-body">
-        {% assign privacy_count = site.data.features.features | where_exp: "item", "item.tags contains 'privacy' or item.tags contains 'gdpr'" | size %}
+        {% assign priv_tags = site.data.features.features | where_exp: "item", "item.tags contains 'privacy'" %}
+        {% assign gdpr_tags = site.data.features.features | where_exp: "item", "item.tags contains 'gdpr'" %}
+        {% assign privacy_count = priv_tags | concat: gdpr_tags | uniq | size %}
         <h3 class="display-4">{{ privacy_count }}</h3>
         <p class="text-muted">Privacy-First</p>
       </div>

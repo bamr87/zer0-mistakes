@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.16.3] - 2025-01-27
+
+### Changed
+- **Documentation Navigation**: Restructured `_data/navigation/docs.yml` with logical sections (Getting Started, Core Technologies, Theme Features, Deployment)
+- **Main Navigation**: Updated `_data/navigation/main.yml` with expanded Docs dropdown entries (Documentation Home, Installation, Docker, Troubleshooting)
+
+### Fixed
+- **Liquid Syntax Error**: Fixed pre-existing bug in `pages/features.md` where `where_exp` filters used unsupported `or` conditions (Liquid 4.x compatibility)
+
+### Documentation
+- **Installation Guide**: Expanded with platform-specific guides (macOS, Windows, Linux), Docker quick start, verification steps
+- **Docker Guide**: Added essential commands, container workflows, configuration files, Apple Silicon support, troubleshooting
+- **Troubleshooting Guide**: Added sections for Docker issues, Jekyll build errors, front matter problems, performance optimization
+- **Jekyll Guide**: Added directory structure, configuration files, content collections, essential commands, topic index
+- **Bootstrap Guide**: Added CDN loading patterns, key components, responsive breakpoints, custom styles, icons
+- **Liquid Guide**: Added syntax examples with `{% raw %}` tags, filters, control flow, includes
+- **Ruby Guide**: Added version commands, common commands, key files, Docker usage, troubleshooting
+- **Front Matter Guide**: Added required/optional fields, layout options, collection-specific fields, complete examples
+- All documentation pages now include `sidebar: nav: docs` for consistent navigation
+
 ## [0.16.2] - 2025-12-20
 
 ### Changed

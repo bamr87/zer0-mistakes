@@ -28,10 +28,18 @@
   icon: bi-journal-bookmark
   url: /docs/
   sublinks:
+    - title: Documentation Home
+      url: /docs/
+    - title: Installation
+      url: /docs/installation/
     - title: Jekyll Guide
       url: /docs/jekyll/
+    - title: Docker
+      url: /docs/docker/
     - title: Features
       url: /features/
+    - title: Troubleshooting
+      url: /docs/troubleshooting/
 
 - title: About
   icon: bi-info-circle
