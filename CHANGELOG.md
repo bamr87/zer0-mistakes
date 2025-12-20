@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.16.2] - 2025-12-20
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 2a0057e Comprehensive features.yml with references, documentation, and showcase page (#17)
+
+
 ## [0.16.1] - 2025-12-20
 
 ### Changed
