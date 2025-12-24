@@ -3,6 +3,7 @@
     path: /includes/navbar.html
     includes:
     purpose: Offcanvas main navigation following Bootstrap 5 best practices
+             with hover-activated dropdowns for desktop
  -->
 
 <!-- Navigation Links - Offcanvas -->
@@ -18,10 +19,10 @@
     <div class="offcanvas-body">
         <ul class="navbar-nav justify-content-lg-center text-start flex-grow-1">
             {%- for link in site.data.navigation.main -%}
-                {%- assign has_children = link.sublinks and link.sublinks.size > 0 -%}
+                {%- assign has_children = link.children and link.children.size > 0 -%}
 
                 {%- if has_children -%}
-                    <li class="nav-item dropdown d-flex align-items-center">
+                    <li class="nav-item dropdown d-flex align-items-center nav-hover-dropdown">
                         <!-- Parent link navigates directly -->
                         <a
                             class="nav-link"
@@ -34,28 +35,32 @@
                             {{ link.title }}
                         </a>
 
-                        <!-- Split toggle opens the dropdown -->
+                        <!-- Split toggle opens the dropdown (click on mobile, hover on desktop) -->
                         <a
-                            class="nav-link dropdown-toggle dropdown-toggle-split ms-2"
+                            class="nav-link dropdown-toggle dropdown-toggle-split ms-1 px-1"
                             href="#"
                             id="dropdown-{{ link.title | slugify }}"
                             role="button"
                             data-bs-toggle="dropdown"
+                            data-bs-auto-close="outside"
                             aria-expanded="false"
                             aria-label="Toggle {{ link.title }} menu"
                         >
                             <span class="visually-hidden">Toggle dropdown</span>
                         </a>
 
-                        <ul class="dropdown-menu dropdown-menu-start w-100" aria-labelledby="dropdown-{{ link.title | slugify }}">
-                            {%- for sublink in link.sublinks -%}
+                        <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="dropdown-{{ link.title | slugify }}">
+                            {%- for child in link.children -%}
                                 <li>
                                     <a
                                         class="dropdown-item"
-                                        href="{{ sublink.url | relative_url }}"
-                                        {%- if sublink.url == page.url -%} aria-current="page"{%- endif -%}
+                                        href="{{ child.url | relative_url }}"
+                                        {%- if child.url == page.url -%} aria-current="page"{%- endif -%}
                                     >
-                                        {{ sublink.title }}
+                                        {%- if child.icon -%}
+                                            <i class="{{site.default_icon}} {{ child.icon }} me-2"></i>
+                                        {%- endif -%}
+                                        {{ child.title }}
                                     </a>
                                 </li>
                             {%- endfor -%}
@@ -80,6 +85,168 @@
     </div>
 </div>
 
+<!-- Styles for hover-activated dropdowns on desktop -->
+<style>
+/* Desktop: Show navigation inline in header (not offcanvas) */
+@media (min-width: 992px) {
+    /* Make offcanvas behave as regular inline content on desktop */
+    #bdNavbar {
+        position: static !important;
+        transform: none !important;
+        visibility: visible !important;
+        background: transparent !important;
+        border: none !important;
+        width: auto !important;
+        flex-grow: 0 !important;
+    }
+    
+    #bdNavbar .offcanvas-header {
+        display: none !important;
+    }
+    
+    #bdNavbar .offcanvas-body {
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+    
+    /* Horizontal nav layout */
+    #bdNavbar .navbar-nav {
+        flex-direction: row !important;
+        gap: 0.25rem;
+    }
+    
+    /* Dropdown positioning - ensure it appears BELOW the nav item */
+    .nav-hover-dropdown {
+        position: relative;
+    }
+    
+    .nav-hover-dropdown > .dropdown-menu {
+        position: absolute;
+        top: 100% !important;
+        left: 0;
+        margin-top: 0.125rem !important;
+        min-width: 12rem;
+        z-index: 1050;
+    }
+    
+    /* Hover behavior for dropdowns */
+    .nav-hover-dropdown:hover > .dropdown-menu {
+        display: block;
+    }
+    
+    /* Smooth fade-in animation */
+    .nav-hover-dropdown .dropdown-menu {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.15s ease-in-out, visibility 0.15s ease-in-out;
+        display: block !important;
+    }
+    
+    .nav-hover-dropdown:hover .dropdown-menu,
+    .nav-hover-dropdown .dropdown-menu.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    /* Ensure dropdown toggle caret is subtle */
+    .nav-hover-dropdown .dropdown-toggle-split {
+        padding-left: 0.25rem;
+        padding-right: 0.5rem;
+    }
+    
+    .nav-hover-dropdown .dropdown-toggle-split::after {
+        vertical-align: 0.15em;
+        font-size: 0.75em;
+    }
+}
+
+/* Mobile: Standard offcanvas behavior with stacked dropdowns */
+@media (max-width: 991.98px) {
+    #bdNavbar .navbar-nav {
+        flex-direction: column !important;
+    }
+    
+    /* Fix mobile nav item layout - keep toggle next to link text */
+    .nav-hover-dropdown {
+        flex-wrap: wrap !important;
+        justify-content: flex-start !important;
+    }
+    
+    /* Parent link should not stretch - stay with its content width */
+    .nav-hover-dropdown > .nav-link:first-child {
+        flex: 0 0 auto !important;
+    }
+    
+    /* Toggle button stays next to link */
+    .nav-hover-dropdown > .dropdown-toggle-split {
+        flex: 0 0 auto;
+    }
+    
+    /* Rotate caret on open */
+    .nav-hover-dropdown > .dropdown-toggle-split::after {
+        transition: transform 0.25s ease;
+    }
+    
+    .nav-hover-dropdown > .dropdown-toggle-split.show::after {
+        transform: rotate(180deg);
+    }
+    
+    /* Stack dropdown below parent in mobile offcanvas - full width on new row */
+    .nav-hover-dropdown .dropdown-menu {
+        position: static !important;
+        float: none;
+        flex-basis: 100% !important;
+        width: 100%;
+        margin-top: 0;
+        border: none;
+        box-shadow: none;
+        background-color: var(--bs-tertiary-bg);
+        padding-left: 1rem;
+        /* Transition for smooth open/close */
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: max-height 0.3s ease, opacity 0.25s ease, padding 0.3s ease;
+        padding-top: 0;
+        padding-bottom: 0;
+        display: block !important;
+    }
+    
+    /* Show dropdown on click with animation */
+    .nav-hover-dropdown .dropdown-menu.show {
+        max-height: 500px;
+        opacity: 1;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+}
+
+/* Active dropdown item styling */
+.dropdown-item[aria-current="page"] {
+    background-color: var(--bs-primary);
+    color: var(--bs-white);
+}
+
+.dropdown-item[aria-current="page"]:hover {
+    background-color: var(--bs-primary);
+    filter: brightness(0.9);
+}
+
+/* Dropdown menu styling */
+.nav-hover-dropdown .dropdown-menu {
+    border-radius: 0.375rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.nav-hover-dropdown .dropdown-item {
+    padding: 0.5rem 1rem;
+}
+
+.nav-hover-dropdown .dropdown-item:hover {
+    background-color: var(--bs-tertiary-bg);
+}
+</style>
+
 <!-- Script to handle offcanvas navigation -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -96,6 +263,92 @@ document.addEventListener('DOMContentLoaded', function() {
                     offcanvas.hide();
                 }
             }, 100);
+        });
+    });
+    
+    // Desktop: Add keyboard accessibility for hover dropdowns
+    const hoverDropdowns = document.querySelectorAll('.nav-hover-dropdown');
+    hoverDropdowns.forEach(dropdown => {
+        const toggle = dropdown.querySelector('.dropdown-toggle');
+        const menu = dropdown.querySelector('.dropdown-menu');
+        
+        // Show on focus (keyboard navigation)
+        toggle?.addEventListener('focus', () => {
+            menu?.classList.add('show');
+        });
+        
+        // Hide when focus leaves the dropdown entirely
+        dropdown.addEventListener('focusout', (e) => {
+            if (!dropdown.contains(e.relatedTarget)) {
+                menu?.classList.remove('show');
+            }
+        });
+    });
+    
+    // Mobile: Custom dropdown handling to prevent glitches
+    // Only apply on mobile breakpoint
+    const isMobile = () => window.innerWidth < 992;
+    
+    hoverDropdowns.forEach(dropdown => {
+        const toggle = dropdown.querySelector('.dropdown-toggle-split');
+        const menu = dropdown.querySelector('.dropdown-menu');
+        
+        if (!toggle || !menu) return;
+        
+        // Prevent Bootstrap's default dropdown behavior on mobile
+        toggle.addEventListener('click', function(e) {
+            if (!isMobile()) return; // Let desktop use default behavior
+            
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Toggle this dropdown
+            const isOpen = menu.classList.contains('show');
+            
+            if (isOpen) {
+                // Close this dropdown
+                menu.classList.remove('show');
+                toggle.classList.remove('show');
+                toggle.setAttribute('aria-expanded', 'false');
+            } else {
+                // Open this dropdown (don't close others - allow multiple open)
+                menu.classList.add('show');
+                toggle.classList.add('show');
+                toggle.setAttribute('aria-expanded', 'true');
+            }
+        });
+    });
+    
+    // Close dropdowns when clicking outside on mobile
+    document.addEventListener('click', function(e) {
+        if (!isMobile()) return;
+        
+        // If click is outside all dropdowns, close them all
+        const clickedInsideDropdown = e.target.closest('.nav-hover-dropdown');
+        if (!clickedInsideDropdown) {
+            hoverDropdowns.forEach(dropdown => {
+                const toggle = dropdown.querySelector('.dropdown-toggle-split');
+                const menu = dropdown.querySelector('.dropdown-menu');
+                if (menu && toggle) {
+                    menu.classList.remove('show');
+                    toggle.classList.remove('show');
+                    toggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+    });
+    
+    // Reset dropdowns when offcanvas closes
+    const offcanvasEl = document.getElementById('bdNavbar');
+    offcanvasEl?.addEventListener('hide.bs.offcanvas', function() {
+        hoverDropdowns.forEach(dropdown => {
+            const toggle = dropdown.querySelector('.dropdown-toggle-split');
+            const menu = dropdown.querySelector('.dropdown-menu');
+            if (menu && toggle) {
+                menu.classList.remove('show');
+                toggle.classList.remove('show');
+                toggle.setAttribute('aria-expanded', 'false');
+            }
         });
     });
 });

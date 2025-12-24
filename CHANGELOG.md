@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.17.0] - 2025-12-23
+
+### Added
+- **Navbar Hover Dropdowns**: Desktop users can now hover over navigation items to reveal sub-menus with smooth fade transitions
+- **ES6 Navigation Modules**: Complete rewrite of navigation JavaScript using native ES6 modules (`type="module"`)
+  - `config.js` - Centralized configuration with CSS custom properties
+  - `scroll-spy.js` - Table of contents highlighting
+  - `smooth-scroll.js` - Animated scrolling to anchors
+  - `keyboard.js` - Full keyboard navigation support
+  - `gestures.js` - Touch gesture support for mobile
+  - `focus.js` - Focus management and accessibility
+  - `sidebar-state.js` - Persistent expand/collapse state
+  - `index.js` - Module orchestration and initialization
+- **Nav Tree Component**: New `_includes/navigation/nav-tree.html` for rendering hierarchical YAML navigation (2 levels deep)
+- **Navigation Schema Documentation**: Added `_data/navigation/README.md` with complete schema definition
+- **Migration Script**: Added `scripts/migrate-nav-modes.sh` to update front matter from old to new nav modes
+
+### Changed
+- **Navigation YAML Schema**: Standardized on `children` key (previously `sublinks`) across all navigation files
+- **Navigation Modes**: Simplified to 3 standard modes:
+  - `auto` - Auto-generates from collection documents (replaces `dynamic`)
+  - `tree` - Uses YAML data files for hierarchical navigation
+  - `categories` - Groups content by Jekyll categories (replaces `searchCats`)
+- **Sidebar Component**: Refactored `_includes/navigation/sidebar-left.html` to use new nav modes
+- **Script Loading**: Updated `_includes/components/js-cdn.html` to use `type="module"` for ES6 modules
+- **Default Collection Config**: Updated `_config.yml` with new navigation mode defaults
+
+### Removed
+- **Legacy sidebar.js**: Deleted 512-line IIFE-based sidebar script, replaced by modular ES6 architecture
+
+### Fixed
+- **Mobile Dropdown Behavior**: Fixed glitch where opening one dropdown would close others; each now operates independently
+- **Dropdown Positioning**: Fixed desktop hover dropdowns appearing on top of parent links (now correctly appear below)
+
 ## [0.16.3] - 2025-01-27
 
 ### Changed

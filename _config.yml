@@ -351,7 +351,7 @@ defaults:
       share: true
       related: true
       sidebar:
-        nav: main
+        nav: tree
     permalink: /:collection/:name/
 
   # pages
@@ -367,7 +367,7 @@ defaults:
       related: true
       toc_sticky: true
       sidebar:
-        nav: searchCats
+        nav: categories
     permalink: /:path/:name/
 
   # pages/_about
@@ -380,7 +380,7 @@ defaults:
       share: true
       related: true
       sidebar:
-        nav: about
+        nav: tree
 
   # pages/_quickstart
   - 
@@ -392,7 +392,7 @@ defaults:
       share: true
       related: true
       sidebar:
-        nav: quickstart
+        nav: tree
 
   # pages/_posts
   - 
@@ -406,7 +406,7 @@ defaults:
       share: true
       related: true
       sidebar:
-        nav: dynamic
+        nav: auto
       # permalink: /:collection/:name/
 
   # pages/_docs
@@ -418,11 +418,11 @@ defaults:
       # category: docs
       author_profile: true
       read_time: true
+      sidebar:
+        nav: tree
       comments: # true
       share: true
       related: true
-      sidebar:
-        nav: docs
     # permalink: /docs/:category/:name/
 
   # pages/_notes
@@ -435,7 +435,7 @@ defaults:
       share: false
       author_profile: false
       sidebar:
-        nav: dynamic
+        nav: auto
 
   # pages/_notebooks
   - 
@@ -452,7 +452,7 @@ defaults:
       related: true
       jupyter_metadata: true
       sidebar:
-        nav: dynamic
+        nav: auto
 
 # Exclude from processing.
 # The following items will not be processed, by default.

@@ -1,11 +1,13 @@
 # About Navigation Configuration
-# Used by: About section sidebar and related pages
+# Used by: About section sidebar (nav: tree)
 # Purpose: Navigation for about pages, features, settings, and site info
+# Schema: See README.md for full documentation
 
 - title: About
   icon: bi-info-circle
   url: /about/
-  sublinks:
+  expanded: true
+  children:
     - title: Overview
       url: /about/
     - title: Features
@@ -16,7 +18,7 @@
 - title: Site Info
   icon: bi-bar-chart
   url: /about/stats/
-  sublinks:
+  children:
     - title: Statistics
       url: /about/stats/
     - title: Site Map
@@ -27,14 +29,14 @@
 - title: Settings
   icon: bi-gear
   url: /about/config/
-  sublinks:
+  children:
     - title: Configuration
       url: /about/config/
 
 - title: Legal
   icon: bi-file-text
   url: /terms-of-service/
-  sublinks:
+  children:
     - title: Terms of Service
       url: /terms-of-service/
     - title: Privacy Policy

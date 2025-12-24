@@ -4,7 +4,7 @@ description: This page provides information about the site, its purpose, and the
 excerpt: This page provides information about the site, its configuration, and the variables guiding its development.
 layout: default
 sidebar:
-  nav: dynamic
+  nav: auto
 categories:
   - about
 tags:

@@ -1,0 +1,181 @@
+<!--
+  ===================================================================
+  NAV TREE - Flat YAML Navigation Renderer
+  ===================================================================
+  
+  File: nav-tree.html
+  Path: _includes/navigation/nav-tree.html
+  Purpose: Render hierarchical navigation from YAML data files
+  
+  Parameters:
+  - nav: Name of navigation file in _data/navigation/ (e.g., "docs", "main")
+  
+  Data Schema (expected in _data/navigation/*.yml):
+  - title: string (required) - Display text
+  - url: string (optional) - Link URL
+  - icon: string (optional) - Bootstrap Icons class (e.g., "bi-folder")
+  - expanded: boolean (optional) - Default expanded state (default: false)
+  - children: array (optional) - Nested navigation items (max 2 levels)
+  
+  Note: This implementation supports 2 levels of nesting to avoid Jekyll's
+  include depth limit. For deeper nesting, consider a plugin approach.
+  
+  Dependencies:
+  - site.data.navigation[nav]: Navigation YAML data
+  - Bootstrap 5 collapse component
+  - Bootstrap Icons for visual indicators
+  
+  Usage:
+  include navigation/nav-tree.html nav="docs"
+  ===================================================================
+-->
+
+{% assign navigation = site.data.navigation[include.nav] %}
+
+{% if navigation %}
+<ul class="list-unstyled fw-normal pb-2 small nav-tree-root">
+  {% for item in navigation %}
+    {% assign item_id = item.title | slugify | prepend: "nav-" %}
+    {% assign is_active = page.url == item.url %}
+    {% assign is_expanded = item.expanded | default: false %}
+    {% assign has_children = item.children and item.children.size > 0 %}
+    
+    <li class="mb-1 nav-tree-item" data-depth="0">
+      {% if has_children %}
+        <!-- Parent item with children - collapsible -->
+        <div class="d-flex align-items-center">
+          {% if item.url %}
+            <a href="{{ item.url | relative_url }}" 
+               class="nav-tree-link flex-grow-1 d-inline-flex align-items-center rounded py-1 px-2 text-decoration-none{% if is_active %} active{% endif %}">
+              {% if item.icon %}<i class="{{ item.icon }} me-2"></i>{% endif %}
+              <span>{{ item.title }}</span>
+            </a>
+            <button class="btn btn-sm btn-link nav-tree-toggle p-1{% unless is_expanded %} collapsed{% endunless %}"
+                    type="button"
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#{{ item_id }}" 
+                    aria-expanded="{{ is_expanded }}"
+                    aria-controls="{{ item_id }}"
+                    aria-label="Toggle {{ item.title }} submenu">
+              <i class="bi bi-chevron-down"></i>
+            </button>
+          {% else %}
+            <button class="btn btn-link nav-tree-toggle w-100 d-flex align-items-center text-start fw-semibold py-1 px-2{% unless is_expanded %} collapsed{% endunless %}"
+                    type="button"
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#{{ item_id }}" 
+                    aria-expanded="{{ is_expanded }}"
+                    aria-controls="{{ item_id }}">
+              {% if item.icon %}<i class="{{ item.icon }} me-2"></i>{% endif %}
+              <span class="flex-grow-1">{{ item.title }}</span>
+              <i class="bi bi-chevron-down nav-tree-chevron"></i>
+            </button>
+          {% endif %}
+        </div>
+        
+        <!-- Children container (Level 1) -->
+        <div class="collapse{% if is_expanded %} show{% endif %}" id="{{ item_id }}">
+          <ul class="list-unstyled fw-normal ps-3 nav-tree-children">
+            {% for child in item.children %}
+              {% assign child_id = child.title | slugify | prepend: "nav-" %}
+              {% assign child_active = page.url == child.url %}
+              {% assign child_expanded = child.expanded | default: false %}
+              {% assign child_has_children = child.children and child.children.size > 0 %}
+              
+              <li class="mb-1 nav-tree-item" data-depth="1">
+                {% if child_has_children %}
+                  <!-- Level 1 parent with children -->
+                  <div class="d-flex align-items-center">
+                    {% if child.url %}
+                      <a href="{{ child.url | relative_url }}" 
+                         class="nav-tree-link flex-grow-1 d-inline-flex align-items-center rounded py-1 px-2 text-decoration-none{% if child_active %} active{% endif %}">
+                        {% if child.icon %}<i class="{{ child.icon }} me-2"></i>{% endif %}
+                        <span>{{ child.title }}</span>
+                      </a>
+                      <button class="btn btn-sm btn-link nav-tree-toggle p-1{% unless child_expanded %} collapsed{% endunless %}"
+                              type="button"
+                              data-bs-toggle="collapse" 
+                              data-bs-target="#{{ child_id }}" 
+                              aria-expanded="{{ child_expanded }}"
+                              aria-controls="{{ child_id }}">
+                        <i class="bi bi-chevron-down"></i>
+                      </button>
+                    {% else %}
+                      <button class="btn btn-link nav-tree-toggle w-100 d-flex align-items-center text-start py-1 px-2{% unless child_expanded %} collapsed{% endunless %}"
+                              type="button"
+                              data-bs-toggle="collapse" 
+                              data-bs-target="#{{ child_id }}" 
+                              aria-expanded="{{ child_expanded }}"
+                              aria-controls="{{ child_id }}">
+                        {% if child.icon %}<i class="{{ child.icon }} me-2"></i>{% endif %}
+                        <span class="flex-grow-1">{{ child.title }}</span>
+                        <i class="bi bi-chevron-down nav-tree-chevron"></i>
+                      </button>
+                    {% endif %}
+                  </div>
+                  
+                  <!-- Children container (Level 2) -->
+                  <div class="collapse{% if child_expanded %} show{% endif %}" id="{{ child_id }}">
+                    <ul class="list-unstyled fw-normal ps-3 nav-tree-children">
+                      {% for grandchild in child.children %}
+                        {% assign gc_active = page.url == grandchild.url %}
+                        <li class="mb-1 nav-tree-item" data-depth="2">
+                          {% if grandchild.url %}
+                            <a href="{{ grandchild.url | relative_url }}" 
+                               class="nav-tree-link d-inline-flex align-items-center rounded py-1 px-2 text-decoration-none{% if gc_active %} active{% endif %}">
+                              {% if grandchild.icon %}<i class="{{ grandchild.icon }} me-2"></i>{% endif %}
+                              <span>{{ grandchild.title }}</span>
+                            </a>
+                          {% else %}
+                            <span class="nav-tree-text d-inline-flex align-items-center py-1 px-2 text-muted">
+                              {% if grandchild.icon %}<i class="{{ grandchild.icon }} me-2"></i>{% endif %}
+                              <span>{{ grandchild.title }}</span>
+                            </span>
+                          {% endif %}
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                {% else %}
+                  <!-- Level 1 leaf item -->
+                  {% if child.url %}
+                    <a href="{{ child.url | relative_url }}" 
+                       class="nav-tree-link d-inline-flex align-items-center rounded py-1 px-2 text-decoration-none{% if child_active %} active{% endif %}">
+                      {% if child.icon %}<i class="{{ child.icon }} me-2"></i>{% endif %}
+                      <span>{{ child.title }}</span>
+                    </a>
+                  {% else %}
+                    <span class="nav-tree-text d-inline-flex align-items-center py-1 px-2 text-muted">
+                      {% if child.icon %}<i class="{{ child.icon }} me-2"></i>{% endif %}
+                      <span>{{ child.title }}</span>
+                    </span>
+                  {% endif %}
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% else %}
+        <!-- Root level leaf item -->
+        {% if item.url %}
+          <a href="{{ item.url | relative_url }}" 
+             class="nav-tree-link d-inline-flex align-items-center rounded py-1 px-2 text-decoration-none{% if is_active %} active{% endif %}">
+            {% if item.icon %}<i class="{{ item.icon }} me-2"></i>{% endif %}
+            <span>{{ item.title }}</span>
+          </a>
+        {% else %}
+          <span class="nav-tree-text d-inline-flex align-items-center py-1 px-2 text-muted">
+            {% if item.icon %}<i class="{{ item.icon }} me-2"></i>{% endif %}
+            <span>{{ item.title }}</span>
+          </span>
+        {% endif %}
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="text-muted small">
+  <i class="bi bi-exclamation-triangle me-1"></i>
+  Navigation "{{ include.nav }}" not found in _data/navigation/
+</p>
+{% endif %}

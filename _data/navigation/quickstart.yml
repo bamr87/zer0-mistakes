@@ -1,12 +1,14 @@
 # Quick Start Navigation Configuration
-# Used by: Quick Start sidebar and related pages
+# Used by: Quick Start sidebar (nav: tree)
 # Purpose: Step-by-step guide navigation for new users
 # Order: Overview → Machine → Jekyll → GitHub → Personalization
+# Schema: See README.md for full documentation
 
 - title: "Quick Start"
   icon: bi-flag
   url: /quickstart/
-  sublinks:
+  expanded: true
+  children:
     - title: "1. Machine Setup"
       url: /quickstart/machine-setup/
       icon: bi-laptop

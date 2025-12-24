@@ -1,0 +1,145 @@
+// ===================================================================
+// NAV TREE - Sidebar Navigation Tree Styles
+// ===================================================================
+//
+// File: _nav-tree.scss
+// Path: _sass/core/_nav-tree.scss
+// Purpose: Styles for the hierarchical navigation tree component
+//
+// Features:
+// - Collapsible tree nodes with smooth transitions
+// - Active state highlighting
+// - Hover effects
+// - Chevron rotation on expand/collapse
+// - Nested indentation
+//
+// ===================================================================
+
+// Navigation Tree Container
+.nav-tree {
+  font-size: 0.875rem;
+}
+
+.nav-tree-root {
+  margin: 0;
+  padding: 0;
+}
+
+// Navigation Tree Items
+.nav-tree-item {
+  margin-bottom: 0.125rem;
+  
+  // Nested items get additional indentation via ps-3 class
+}
+
+// Navigation Tree Links
+.nav-tree-link {
+  color: var(--bs-body-color);
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+  
+  &:hover {
+    color: var(--bs-primary);
+    background-color: var(--bs-tertiary-bg);
+  }
+  
+  &.active {
+    color: var(--bs-primary);
+    background-color: var(--bs-primary-bg-subtle);
+    font-weight: 500;
+  }
+}
+
+// Navigation Tree Text (non-link items)
+.nav-tree-text {
+  color: var(--bs-secondary-color);
+}
+
+// Navigation Tree Toggle Buttons
+.nav-tree-toggle {
+  color: var(--bs-body-color);
+  text-decoration: none;
+  border: none;
+  background: transparent;
+  transition: color 0.15s ease-in-out;
+  
+  &:hover {
+    color: var(--bs-primary);
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+  }
+  
+  // Chevron rotation
+  .bi-chevron-down,
+  .nav-tree-chevron {
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  &.collapsed {
+    .bi-chevron-down,
+    .nav-tree-chevron {
+      transform: rotate(-90deg);
+    }
+  }
+}
+
+// Children container
+.nav-tree-children {
+  margin-top: 0.25rem;
+  border-left: 1px solid var(--bs-border-color);
+  margin-left: 0.5rem;
+  padding-left: 0.75rem;
+}
+
+// Collapse animation
+.nav-tree .collapse {
+  transition: height 0.2s ease-in-out;
+}
+
+// Depth-based styling
+.nav-tree-item[data-depth="0"] > .nav-tree-link,
+.nav-tree-item[data-depth="0"] > div > .nav-tree-link,
+.nav-tree-item[data-depth="0"] > .nav-tree-toggle {
+  font-weight: 500;
+}
+
+.nav-tree-item[data-depth="1"] > .nav-tree-link,
+.nav-tree-item[data-depth="1"] > div > .nav-tree-link {
+  font-weight: normal;
+}
+
+.nav-tree-item[data-depth="2"] > .nav-tree-link,
+.nav-tree-item[data-depth="2"] > div > .nav-tree-link {
+  font-size: 0.8125rem;
+  color: var(--bs-secondary-color);
+  
+  &.active {
+    color: var(--bs-primary);
+  }
+}
+
+// Keyboard navigation focus state
+.keyboard-nav .nav-tree-link:focus,
+.keyboard-nav .nav-tree-toggle:focus {
+  outline: 2px solid var(--bs-primary);
+  outline-offset: 2px;
+}
+
+// Dark mode adjustments
+[data-bs-theme="dark"] {
+  .nav-tree-link {
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    &.active {
+      background-color: rgba(var(--bs-primary-rgb), 0.15);
+    }
+  }
+  
+  .nav-tree-children {
+    border-left-color: var(--bs-border-color);
+  }
+}

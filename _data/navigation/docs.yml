@@ -1,6 +1,7 @@
 # Documentation Navigation Configuration
-# Used by: Docs sidebar and documentation pages
+# Used by: Docs sidebar (nav: tree)
 # Purpose: Organize documentation by topic area for _docs collection
+# Schema: See README.md for full documentation
 
 # ============================================================
 # Getting Started
@@ -8,7 +9,8 @@
 - title: Getting Started
   icon: bi-rocket-takeoff
   url: /docs/
-  sublinks:
+  expanded: true
+  children:
     - title: Documentation Home
       url: /docs/
     - title: Installation
@@ -22,7 +24,7 @@
 - title: Jekyll
   icon: bi-journal-code
   url: /docs/jekyll/
-  sublinks:
+  children:
     - title: Jekyll Overview
       url: /docs/jekyll/
     - title: Configuration
@@ -41,7 +43,7 @@
 - title: Ruby & Bundler
   icon: bi-gem
   url: /docs/ruby/
-  sublinks:
+  children:
     - title: Ruby Overview
       url: /docs/ruby/
     - title: Ruby 101
@@ -50,21 +52,21 @@
 - title: Liquid
   icon: bi-droplet
   url: /docs/liquid/
-  sublinks:
+  children:
     - title: Liquid Overview
       url: /docs/liquid/
 
 - title: Docker
   icon: bi-box-seam
   url: /docs/docker/
-  sublinks:
+  children:
     - title: Docker Overview
       url: /docs/docker/
 
 - title: Bootstrap
   icon: bi-bootstrap
   url: /docs/bootstrap/
-  sublinks:
+  children:
     - title: Bootstrap Overview
       url: /docs/bootstrap/
 
@@ -74,7 +76,7 @@
 - title: Features
   icon: bi-stars
   url: /features/
-  sublinks:
+  children:
     - title: All Features
       url: /features/
     - title: Mermaid Diagrams
@@ -92,7 +94,7 @@
 - title: Deployment
   icon: bi-cloud-upload
   url: /quickstart/github-setup/
-  sublinks:
+  children:
     - title: GitHub Pages
       url: /quickstart/github-setup/
     - title: Netlify

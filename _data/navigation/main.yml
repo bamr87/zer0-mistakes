@@ -1,11 +1,12 @@
 # Main Navigation Configuration
 # Used by: _includes/navigation/navbar.html
-# Purpose: Primary site navigation with dropdown sublinks
+# Purpose: Primary site navigation with dropdown children
+# Schema: See README.md for full documentation
 
 - title: Quick Start
   icon: bi-rocket-takeoff
   url: /quickstart/
-  sublinks:
+  children:
     - title: Machine Setup
       url: /quickstart/machine-setup/
     - title: Jekyll Setup
@@ -16,7 +17,7 @@
 - title: Blog
   icon: bi-journal-text
   url: /blog/
-  sublinks:
+  children:
     - title: All Posts
       url: /posts/
     - title: Categories
@@ -27,7 +28,7 @@
 - title: Docs
   icon: bi-journal-bookmark
   url: /docs/
-  sublinks:
+  children:
     - title: Documentation Home
       url: /docs/
     - title: Installation
@@ -44,7 +45,7 @@
 - title: About
   icon: bi-info-circle
   url: /about/
-  sublinks:
+  children:
     - title: Features
       url: /features/
     - title: Statistics

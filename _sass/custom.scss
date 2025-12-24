@@ -5,6 +5,9 @@
 // Import notebook-specific styles
 @import "notebooks";
 
+// Import navigation tree styles
+@import "core/nav-tree";
+
 html, body {
     max-width: 100%;
     // overflow-x: hidden;

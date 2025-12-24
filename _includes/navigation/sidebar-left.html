@@ -4,27 +4,26 @@
   ===================================================================
   
   File: sidebar-left.html 
-  Path: _includes/sidebar-left.html
-  Purpose: Left sidebar navigation with multiple content modes including
-           dynamic page listing, category browsing, and manual navigation
+  Path: _includes/navigation/sidebar-left.html
+  Purpose: Left sidebar navigation with three standardized content modes
   
   Template Logic:
   - Responsive offcanvas sidebar for mobile devices
   - Three navigation modes based on page.sidebar.nav:
-    * "dynamic": Auto-generated folder structure from pages
-    * "searchCats": Category-based navigation from site categories
-    * Manual: Predefined navigation from _data files
+    * "auto": Auto-generated folder structure from collection documents
+    * "tree": YAML-defined hierarchical navigation from _data/navigation/
+    * "categories": Category-based navigation from site categories
   
   Dependencies:
-  - sidebar-folders.html: Dynamic folder structure generation
-  - sidebar-categories.html: Category-based navigation
-  - nav_list.html: Manual navigation list rendering
+  - sidebar-folders.html: Dynamic folder structure generation (auto mode)
+  - sidebar-categories.html: Category-based navigation (categories mode)
+  - nav-tree.html: YAML-based hierarchical tree (tree mode)
   - Bootstrap 5 offcanvas component
   
   Navigation Modes:
-  1. Dynamic: Scans site.pages for index.md files to build folder structure
-  2. Categories: Groups content by Jekyll categories
-  3. Manual: Uses predefined navigation from _data/navigation.yml
+  1. auto: Scans collection documents to build folder structure
+  2. tree: Uses predefined YAML navigation from _data/navigation/*.yml
+  3. categories: Groups content by Jekyll categories
   ===================================================================
 -->
 
@@ -50,32 +49,32 @@
   <div class="offcanvas-body overflow-auto">
 
     <!-- ========================== -->
-    <!-- DYNAMIC PAGE LISTING      -->
+    <!-- AUTO MODE: Collection Docs -->
     <!-- ========================== -->
-    <!-- Auto-generates folder structure from pages containing index.md -->
-    {% if page.sidebar.nav == "dynamic" %}
-    <div class="list-group" id="sidebar-content">
+    <!-- Auto-generates folder structure from collection documents -->
+    {% if page.sidebar.nav == "auto" %}
+    <div class="list-group nav-tree" id="sidebar-content" data-nav-tree>
       {% assign folders = site.pages | where_exp: "item", "item.path contains 'index.md'" | sort: 'path' %}
       {% include navigation/sidebar-folders.html folders=folders %}
     </div>
 
     <!-- ========================== -->
-    <!-- CATEGORY-BASED NAVIGATION -->
+    <!-- CATEGORIES MODE           -->
     <!-- ========================== -->
     <!-- Creates navigation from Jekyll post/page categories -->
-    {% elsif page.sidebar.nav == "searchCats" %}
-    <div class="list-group" id="sidebar-content">
+    {% elsif page.sidebar.nav == "categories" %}
+    <div class="list-group nav-tree" id="sidebar-content" data-nav-tree>
       {% assign categories = site.categories | sort %}
       {% include navigation/sidebar-categories.html categories=categories %}
     </div>
     
     <!-- ========================== -->
-    <!-- MANUAL NAVIGATION LIST    -->
+    <!-- TREE MODE: YAML Navigation -->
     <!-- ========================== -->
-    <!-- Uses predefined navigation structure from _data files -->
+    <!-- Uses predefined YAML navigation structure from _data files -->
     {% elsif page.sidebar.nav %}
-    <nav class="w-100">
-      {% include navigation/nav_list.html nav=page.sidebar.nav %}
+    <nav class="w-100 nav-tree" data-nav-tree>
+      {% include navigation/nav-tree.html nav=page.sidebar.nav %}
     </nav>
     {% endif %}
     

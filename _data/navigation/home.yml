@@ -1,11 +1,12 @@
 # Home Navigation Configuration
 # Used by: Header navigation and homepage quick links
 # Purpose: Quick access links for the home/landing area
+# Schema: See README.md for full documentation
 
 - title: Home
   icon: bi-house
   url: /
-  sublinks:
+  children:
     - title: Blog
       url: /blog/
     - title: Quick Start
@@ -14,7 +15,7 @@
 - title: Discover
   icon: bi-compass
   url: /sitemap/
-  sublinks:
+  children:
     - title: Site Map
       url: /sitemap/
     - title: Categories
@@ -25,7 +26,7 @@
 - title: Connect
   icon: bi-envelope
   url: /contact/
-  sublinks:
+  children:
     - title: Contact
       url: /contact/
     - title: About
