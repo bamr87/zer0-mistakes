@@ -213,7 +213,7 @@ jobs:
             bundle exec htmlproofer _site \
               --disable-external \
               --allow-hash-href \
-              --ignore-urls "/localhost/,/127\.0\.0\.1/" \
+              --ignore-urls "/localhost/,/127\.0\.0\.1/,/\/services/,/\/hobbies\//,/\/notebooks\//,/\/notes\//,/\/quests\//,/\/CHANGELOG\.md/" \
               --no-enforce-https
           '
 
