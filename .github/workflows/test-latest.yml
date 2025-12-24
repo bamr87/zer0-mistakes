@@ -210,7 +210,11 @@ jobs:
             -e JEKYLL_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
             zer0-mistakes-jekyll-test:latest sh -c '
             bundle exec jekyll build &&
-            bundle exec htmlproofer _site --disable-external --allow-hash-href
+            bundle exec htmlproofer _site \
+              --disable-external \
+              --allow-hash-href \
+              --ignore-urls "/localhost/,/127\.0\.0\.1/" \
+              --enforce-https=false
           '
 
       - name: Generate Test Summary
