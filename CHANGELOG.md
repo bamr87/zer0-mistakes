@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.17.1] - 2025-12-24
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- d56de0b fix(ci): update Gemfile.lock for v0.17.0 and improve HTMLProofer config
+
+
 ## [0.17.0] - 2025-12-23
 
 ### Added
