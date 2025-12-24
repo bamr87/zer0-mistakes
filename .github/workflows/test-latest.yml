@@ -214,7 +214,7 @@ jobs:
               --disable-external \
               --allow-hash-href \
               --ignore-urls "/localhost/,/127\.0\.0\.1/" \
-              --enforce-https=false
+              --no-enforce-https
           '
 
       - name: Generate Test Summary
