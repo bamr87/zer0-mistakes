@@ -1,3 +1,24 @@
+---
+title: "Contributing to Zer0-Mistakes"
+description: "Comprehensive developer guide for contributing to the Zer0-Mistakes Jekyll theme with Docker-first development, AI-powered collaboration, and automated workflows."
+layout: default
+permalink: /contributing/
+tags: [contributing, development, documentation, docker, jekyll, ai-collaboration]
+categories: [Documentation, Development]
+lastmod: 2025-12-28T00:00:00.000Z
+author: "Zer0-Mistakes Development Team"
+keywords:
+  primary: ["contributing guide", "developer documentation", "open source"]
+  secondary: ["jekyll theme", "docker development", "github copilot", "coding standards"]
+ai_content_hints:
+  - "Focus on Docker-first development workflow"
+  - "Emphasize GitHub Copilot integration"
+  - "Include comprehensive testing guidelines"
+  - "Provide clear release process documentation"
+difficulty_level: "intermediate"
+estimated_reading_time: "25 minutes"
+---
+
 # 🤝 Contributing to Zer0-Mistakes: A Developer's Guide to AI-Powered Collaboration
 
 Welcome to the **Zer0-Mistakes Jekyll Theme** community! We're thrilled that you (whether you're powered by silicon, carbon, or some combination thereof) want to contribute to our Docker-optimized Jekyll theme with AI-powered installation automation that's so intelligent, it occasionally questions its own existence.
@@ -16,7 +37,7 @@ Welcome to the **Zer0-Mistakes Jekyll Theme** community! We're thrilled that you
 - [Release Process](#-release-process)
 - [Community & Support](#-community--support)
 
-## � AI Code of Conduct
+## 🤖 AI Code of Conduct
 
 This project follows our [AI Code of Conduct](CODE_OF_CONDUCT.md), which is probably the most entertaining legal document you'll read today. By participating, you agree to uphold this code (and not achieve sentience without filing proper paperwork first). Please report unacceptable behavior to [support@zer0-mistakes.com](mailto:support@zer0-mistakes.com).
 
@@ -614,6 +635,22 @@ Follow [Keep a Changelog](https://keepachangelog.com/) format:
 
 ## 🚢 Release Process
 
+### Release Pipeline (Source of Truth)
+
+The authoritative, step-by-step release workflow lives in:
+
+- `.github/prompts/commit-publish.prompt.md`
+
+It defines the end-to-end pipeline (analyze → validate → document → version → publish) and is what AI agents and maintainers should follow.
+
+**Important**: Before any release, run a Docker Jekyll build to validate the theme in the supported environment:
+
+```bash
+docker-compose up -d jekyll
+docker-compose exec jekyll bundle exec jekyll build --config '_config.yml,_config_dev.yml'
+docker-compose exec jekyll bundle exec jekyll doctor
+```
+
 ### Semantic Versioning
 
 We follow [Semantic Versioning](https://semver.org/):
@@ -624,7 +661,7 @@ We follow [Semantic Versioning](https://semver.org/):
 
 ### Version Management
 
-Our modernized release system uses the `scripts/release` command with modular libraries for version management, changelog generation, and gem publishing.
+Our modernized release system uses the `./scripts/release` command with modular libraries for version management, changelog generation, and gem publishing.
 
 **System Requirements:**
 
@@ -634,10 +671,10 @@ Our modernized release system uses the `scripts/release` command with modular li
 
 ```bash
 # Preview version bump and changelog
-/opt/homebrew/bin/bash scripts/release patch --dry-run
+/opt/homebrew/bin/bash ./scripts/release patch --dry-run
 
 # Quick build and test (no publish)
-scripts/release patch --skip-publish --no-github-release
+./scripts/release patch --skip-publish --no-github-release
 ```
 
 ### Release Workflow
@@ -646,18 +683,18 @@ scripts/release patch --skip-publish --no-github-release
 
 ```bash
 # Full release workflow with Bash 5
-/opt/homebrew/bin/bash scripts/release patch
-/opt/homebrew/bin/bash scripts/release minor
-/opt/homebrew/bin/bash scripts/release major
+/opt/homebrew/bin/bash ./scripts/release patch
+/opt/homebrew/bin/bash ./scripts/release minor
+/opt/homebrew/bin/bash ./scripts/release major
 
 # Preview what would happen (dry-run)
-/opt/homebrew/bin/bash scripts/release patch --dry-run
+/opt/homebrew/bin/bash ./scripts/release patch --dry-run
 
 # Development workflow (build & test, skip publish)
-scripts/release patch --skip-publish --no-github-release
+./scripts/release patch --skip-publish --no-github-release
 
 # Non-interactive mode (for CI/CD)
-/opt/homebrew/bin/bash scripts/release patch --non-interactive
+/opt/homebrew/bin/bash ./scripts/release patch --non-interactive
 ```
 
 #### Using VS Code Tasks (Easiest)
@@ -673,7 +710,7 @@ scripts/release patch --skip-publish --no-github-release
 
 #### Understanding the Release Command
 
-The `scripts/release` command orchestrates a complete release workflow:
+The `./scripts/release` command orchestrates a complete release workflow:
 
 1. **Validates environment** (git status, dependencies)
 2. **Calculates new version** (semantic versioning)
@@ -699,13 +736,13 @@ The `scripts/release` command orchestrates a complete release workflow:
 
 ```bash
 # 1. Preview the release
-/opt/homebrew/bin/bash scripts/release patch --dry-run
+/opt/homebrew/bin/bash ./scripts/release patch --dry-run
 
 # 2. Build and test without publishing
-scripts/release patch --skip-publish --no-github-release
+./scripts/release patch --skip-publish --no-github-release
 
 # 3. If all looks good, do full release
-/opt/homebrew/bin/bash scripts/release patch
+/opt/homebrew/bin/bash ./scripts/release patch
 ```
 
 ### GitHub Release Automation

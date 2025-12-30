@@ -1,354 +1,250 @@
 ---
 agent: agent
 mode: agent
-description: "Review changes, run tests, update documentation, bump version, and publish Jekyll theme gem"
+description: "Complete release pipeline: analyze changes → test → document → version → publish"
+tools: [run_in_terminal, read_file, apply_patch, get_changed_files, grep_search]
 ---
 
-# Commit & Publish Workflow for Zer0-Mistakes Jekyll Theme
+# Release Pipeline for Zer0-Mistakes Jekyll Theme
 
-Review open changes, run appropriate tests, create/update documentation, update the changelog, bump the version according to semantic versioning, and publish the Ruby gem.
+Execute a complete release: analyze changes, run tests, update docs/changelog, bump version, and publish gem.
 
-## Task Overview
+## Choose a Release Mode
 
-Execute the complete release pipeline for the zer0-mistakes Jekyll theme. This workflow handles Docker-first development, Jekyll theme validation, and Ruby gem publishing to RubyGems.org.
+- **Recommended (Automated)**: `./scripts/release [patch|minor|major]` (updates changelog + version, runs tests, builds gem, tags, pushes, publishes)
+- **Manual (Advanced)**: Follow Phases 1–5 below (use when you need fine-grained control)
 
-## Step 1: Review Open Changes
+Even in automated mode, run **Phase 2: Validate** first (the release script runs `bundle exec rspec`, but it does not guarantee a Docker Jekyll build).
 
-1. **Analyze Git Changes**:
-   - Run `git status` to identify all modified, added, and deleted files
-   - Run `git diff --cached` for staged changes and `git diff` for unstaged changes
-   - Categorize changes by type:
-     - **Features**: New layouts, includes, components, or functionality
-     - **Bug Fixes**: Issues resolved in templates, styles, or scripts
-     - **Breaking Changes**: Changes that break backward compatibility (layout renames, config changes)
-     - **Documentation**: README, CHANGELOG, or `/docs/` updates
-     - **Refactoring**: Code improvements without functionality changes
-     - **Dependencies**: Gemfile or gemspec updates
-     - **Tests**: Test additions or modifications in `/test/`
-     - **UI/UX**: Layout, include, CSS, or JavaScript changes
+## Prerequisites
 
-2. **Summarize Changes**:
-   - Create a concise summary of all changes
-   - Use `./scripts/analyze-commits.sh HEAD~5..HEAD` to determine impact level
-   - Note any breaking changes that require migration
+- Docker running and service available:
+  - Check: `docker-compose ps`
+  - Start: `docker-compose up -d jekyll`
+- Clean working directory preferred (stash uncommitted work if needed)
+- RubyGems credentials configured for publishing
 
-3. **Jekyll-Specific Change Categories**:
-   - **Layouts** (`_layouts/`): Template structure changes
-   - **Includes** (`_includes/`): Component changes
-   - **Sass** (`_sass/`): Style changes
-   - **Assets** (`assets/`): Static file changes
-   - **Data** (`_data/`): Configuration data changes
-   - **Config** (`_config*.yml`): Jekyll configuration changes
+---
 
-## Step 2: Run Appropriate Tests
+## Phase 1: Analyze Changes
 
-1. **Identify Test Requirements**:
-   - Based on changed files, determine which tests to run
-   - For layout/include changes → run Jekyll build tests
-   - For config changes → run full validation suite
-   - For all changes → run comprehensive test suite
+### 1.1 Gather Change Information
 
-2. **Execute Tests**:
+```bash
+# Get current status and diff summary
+git status
+git diff --stat
+git log --oneline -5
+```
 
-   ```bash
-   # Run comprehensive test suite
-   ./test/test_runner.sh
+### 1.2 Categorize Changes
 
-   # Run core tests only
-   ./test/test_core.sh
+Classify each changed file into ONE primary category:
 
-   # Run tests with verbose output
-   ./test/test_runner.sh --verbose
+| Category | Files | Version Impact |
+|----------|-------|----------------|
+| **Breaking** | Layout renames, config schema changes, removed features | MAJOR |
+| **Feature** | New `_layouts/`, `_includes/`, `assets/js/modules/` | MINOR |
+| **Enhancement** | Improved existing components, new options | MINOR |
+| **Fix** | Bug fixes, corrections | PATCH |
+| **Docs** | `README.md`, `docs/`, `CHANGELOG.md` only | PATCH |
+| **Chore** | CI, scripts, dependencies, configs | PATCH |
 
-   # Build validation with Docker
-   docker-compose exec jekyll jekyll build --verbose
+### 1.3 Determine Version Bump
 
-   # Run Jekyll doctor for config validation
-   docker-compose exec jekyll jekyll doctor
-   ```
+```
+MAJOR (X.0.0): Any breaking change exists
+MINOR (0.X.0): New features/enhancements, no breaking changes  
+PATCH (0.0.X): Fixes, docs, chores only
+```
 
-3. **Verify Test Results**:
-   - Ensure all tests pass before proceeding
-   - If tests fail, stop and report the failures
-   - Document any test warnings or deprecation notices
+**Current version**: Check `lib/jekyll-theme-zer0/version.rb`
 
-## Step 3: Create/Update Documentation
+---
 
-1. **Update Affected README Files**:
-   - Update `README.md` for user-facing changes
-   - Update `scripts/README.md` for automation changes
-   - Update component-specific READMEs in `_layouts/README.md`, `_includes/README.md`
-   - Ensure all new features are documented
+## Phase 2: Validate
 
-2. **Update Component Documentation**:
-   - Add front matter documentation headers to new layouts/includes
-   - Document parameters and dependencies for new components
-   - Update usage examples in the `/docs/` directory
+### 2.1 Run Tests
 
-3. **Update Theme Documentation**:
-   - If layout changes, update `docs/jekyll/` documentation
-   - If configuration changes, update `docs/configuration/`
-   - If new features, add to `docs/features/`
+```bash
+# Primary: Docker Jekyll build (REQUIRED)
+docker-compose exec jekyll bundle exec jekyll build --config '_config.yml,_config_dev.yml'
 
-## Step 4: Update CHANGELOG.md
+# Secondary: Jekyll doctor (warnings OK)
+docker-compose exec jekyll bundle exec jekyll doctor
+```
 
-1. **Determine Version Type** based on changes:
-   - **MAJOR** (X.0.0): Breaking changes, layout renames, config incompatibilities
-   - **MINOR** (0.X.0): New layouts, components, features (backward-compatible)
-   - **PATCH** (0.0.X): Bug fixes, documentation, minor improvements
+### 2.2 Front Matter Quick Check (Required)
 
-2. **Add Changelog Entry** following Keep a Changelog format:
+Before publishing, run a quick front matter review on changed content files using:
 
-   ```markdown
-   ## [X.Y.Z] - YYYY-MM-DD
+- `.github/prompts/frontmatter-maintainer.prompt.md`
 
-   ### Added
+Focus on changed `*.md`, `*.markdown`, and `*.html` (exclude `_site/**`, `vendor/**`, `pkg/**`). Fix invalid YAML front matter, add missing required keys where appropriate, and update `lastmod` when content changed.
 
-   - **New Layout: `layout-name.html`** - Description of the layout
-   - **New Component: `component.html`** - Description of the component
-   - New features or capabilities
+### 2.3 Validation Criteria
 
-   ### Changed
+| Check | Command | Must Pass |
+|-------|---------|-----------|
+| Jekyll Build | `jekyll build` | ✅ Yes |
+| Jekyll Doctor | `jekyll doctor` | ⚠️ Warnings OK |
+| YAML Syntax | `docker-compose exec jekyll ruby -ryaml -e "YAML.load_file('_config.yml'); YAML.load_file('_config_dev.yml')"` | ✅ Yes |
 
-   - **Enhanced: `filename.html`** - Description of improvements
-   - Changes to existing functionality
+**If tests fail**: Stop and report failures. Do not proceed.
 
-   ### Deprecated
+---
 
-   - Features marked for removal
+## Phase 3: Update Documentation
 
-   ### Removed
+### 3.1 Update CHANGELOG.md
 
-   - Removed features or components
+Add entry at TOP of file, after `# Changelog` header:
 
-   ### Fixed
+```markdown
+## [X.Y.Z] - YYYY-MM-DD
 
-   - **Critical: issue description** - Resolution details
-   - Bug fixes with context
+### Added
+- **Component**: `name.html` - Description
 
-   ### Security
+### Changed
+- **Enhanced**: `file.html` - What improved
 
-   - Security updates
-   ```
+### Fixed
+- **Issue**: Description - How fixed
 
-3. **Reference Issues/PRs** if applicable
+### Removed
+- Removed features (MAJOR version only)
+```
 
-## Step 5: Bump Version
+**Categories to include**: Added, Changed, Fixed, Removed, Security (use only relevant ones)
 
-1. **Update Version File** (`lib/jekyll-theme-zer0/version.rb`):
+### 3.2 Update Component Docs (if applicable)
 
-   ```ruby
-   # frozen_string_literal: true
+- New layouts/includes: Add front matter documentation header
+- New features: Update relevant `docs/` pages
+- API changes: Update `README.md` usage examples
 
-   module JekyllThemeZer0
-     VERSION = "X.Y.Z"
-   end
-   ```
+---
 
-2. **Verify Version Consistency**:
-   - Ensure `lib/jekyll-theme-zer0/version.rb` has correct version
-   - Check `jekyll-theme-zer0.gemspec` reads from version.rb correctly
-   - Verify CHANGELOG.md has entry for new version
+## Phase 4: Bump Version
 
-3. **Alternative: Use Release Script**:
+If you used `./scripts/release ...`, it handles version + changelog updates; skip **Phase 4** and go to **Output: Release Summary**.
 
-   ```bash
-   # Preview version bump
-   ./scripts/release patch --dry-run
+### 4.1 Update Version File
 
-   # Or let the script handle version updates
-   ./scripts/release patch --skip-publish --no-github-release
-   ```
+Edit `lib/jekyll-theme-zer0/version.rb`:
 
-## Step 6: Prepare for Publication
+```ruby
+# frozen_string_literal: true
 
-1. **Stage All Changes**:
+module JekyllThemeZer0
+  VERSION = "X.Y.Z" unless defined?(JekyllThemeZer0::VERSION)
+end
+```
 
-   ```bash
-   git add -A
-   ```
+### 4.2 Update Gemfile.lock
 
-2. **Create Semantic Commit Message**:
-   Format: `<type>(<scope>): <description>`
+```bash
+# Use Docker to regenerate with correct version
+docker-compose exec jekyll bundle install
+```
 
-   Types:
-   - `feat`: New feature (layout, component, functionality)
-   - `fix`: Bug fix
-   - `docs`: Documentation changes
-   - `style`: Code style changes (formatting, CSS)
-   - `refactor`: Code refactoring
-   - `test`: Test additions/changes
-   - `chore`: Maintenance tasks (deps, configs)
-   - `breaking`: Breaking changes
+---
 
-   Scopes (Jekyll-specific):
-   - `layouts`: Layout template changes
-   - `includes`: Component changes
-   - `sass`: Style changes
-   - `assets`: Static file changes
-   - `config`: Configuration changes
-   - `scripts`: Automation script changes
+## Phase 5: Commit & Publish
 
-3. **Commit Changes**:
+### 5.1 Stage and Commit
 
-   ```bash
-   git commit -m "<type>(<scope>): <description>
+```bash
+git add -A
+git commit -m "<type>(<scope>): <summary>
 
-   <detailed description of changes>
+<body - detailed description>
 
-   - Change 1
-   - Change 2
-   - Change 3
+- Change 1
+- Change 2
 
-   Closes #<issue-number> (if applicable)"
-   ```
+Version: <old> → <new>"
+```
 
-4. **Use Full Release Workflow** (Recommended):
+**Commit Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+**Scopes**: `navigation`, `layouts`, `includes`, `sass`, `config`, `ci`, `scripts`
 
-   ```bash
-   # Full release with gem publishing and GitHub release
-   ./scripts/release patch
+### 5.2 Sync with Remote
 
-   # Or minor/major releases
-   ./scripts/release minor
-   ./scripts/release major
-   ```
+```bash
+# Pull any remote changes first
+git pull --rebase origin main
+```
 
-5. **Manual Release Alternative**:
+### 5.3 Create Tag and Push
 
-   ```bash
-   # Build gem
-   ./scripts/build
+```bash
+git tag -a vX.Y.Z -m "Release vX.Y.Z: <summary>"
+git push origin main
+git push origin vX.Y.Z
+```
 
-   # Create tag
-   git tag -a v<X.Y.Z> -m "Release v<X.Y.Z>: <summary>"
+### 5.4 Build and Publish Gem
 
-   # Push changes
-   git push origin main
-   git push origin --tags
+```bash
+# Build in Docker (ensures Ruby toolchain is present)
+docker-compose exec jekyll gem build jekyll-theme-zer0.gemspec
 
-   # Publish to RubyGems
-   gem push jekyll-theme-zer0-<X.Y.Z>.gem
-   ```
+# Publish from the environment that has RubyGems credentials configured
+gem push jekyll-theme-zer0-X.Y.Z.gem
 
-## Success Criteria
+# Alternative (if RubyGems credentials are configured inside the container)
+docker-compose exec jekyll gem push jekyll-theme-zer0-X.Y.Z.gem
+```
 
-- [ ] All tests pass with no failures (`./test/test_runner.sh`)
-- [ ] Jekyll builds successfully (`docker-compose exec jekyll jekyll build`)
-- [ ] All changed code has proper documentation
-- [ ] CHANGELOG.md updated with new version entry
-- [ ] `lib/jekyll-theme-zer0/version.rb` updated to new version
-- [ ] Gemspec validates correctly (`bundle exec gem build`)
-- [ ] Git commit follows semantic commit format
-- [ ] Git tag created: `v<version>`
-- [ ] Gem published to RubyGems (optional)
-- [ ] GitHub release created (optional)
+---
 
-## Output Format
+## Output: Release Summary
 
-After completing all steps, provide a summary:
+Provide this summary after completion:
 
 ```markdown
 ## Release Summary
 
-**Version**: X.Y.Z (from X.Y.Z)
-**Type**: MAJOR | MINOR | PATCH
-**Date**: YYYY-MM-DD
+**Version**: X.Y.Z (from X.Y.Z) | **Type**: PATCH/MINOR/MAJOR | **Date**: YYYY-MM-DD
 
-### Changes Included
+### Changes
+- [x] Change description 1
+- [x] Change description 2
 
-- [ ] New layout: `layout-name.html`
-- [ ] Component update: `component.html`
-- [ ] Bug fix: description
-- [ ] etc.
+### Validation
+| Check | Status |
+|-------|--------|
+| Jekyll Build | ✅ Pass |
+| Gemspec | ✅ Valid |
 
-### Test Results
-
-- Test Suite: PASSED/FAILED
-- Jekyll Build: SUCCESS/FAILED
-- Jekyll Doctor: OK/WARNINGS
-
-### Files Modified
-
-- \_layouts/new-layout.html
-- \_includes/components/new-component.html
-- \_sass/custom.scss
-- assets/js/script.js
-
-### Documentation Updated
-
-- [ ] README.md
-- [ ] CHANGELOG.md
-- [ ] docs/features/new-feature.md
-- [ ] Component inline documentation
-
-### Commit Information
-
-- Hash: <commit-hash>
-- Message: <commit-message>
-- Tag: v<version>
-
-### Publication Status
-
-- RubyGems: https://rubygems.org/gems/jekyll-theme-zer0/versions/<version>
-- GitHub Release: https://github.com/bamr87/zer0-mistakes/releases/tag/v<version>
+### Publication
+- **Commit**: `<hash>` 
+- **Tag**: `vX.Y.Z`
+- **RubyGems**: https://rubygems.org/gems/jekyll-theme-zer0/versions/X.Y.Z
 ```
-
-## Rollback Procedure
-
-If issues are discovered after publication:
-
-1. **Revert the commit**:
-
-   ```bash
-   git revert <commit-hash>
-   ```
-
-2. **Delete the tag**:
-
-   ```bash
-   git tag -d v<version>
-   git push origin :refs/tags/v<version>
-   ```
-
-3. **Yank the gem from RubyGems** (if published):
-
-   ```bash
-   gem yank jekyll-theme-zer0 -v <version>
-   ```
-
-4. **Create a patch release** with the fix:
-   ```bash
-   ./scripts/release patch
-   ```
 
 ---
 
-## Quick Reference Commands
+## Quick Reference
+
+| Action | Command |
+|--------|---------|
+| Start Docker | `docker-compose up -d` |
+| Jekyll build | `docker-compose exec jekyll bundle exec jekyll build --config '_config.yml,_config_dev.yml'` |
+| Check version | `cat lib/jekyll-theme-zer0/version.rb` |
+| Automated release | `./scripts/release patch` |
+| macOS (Homebrew bash) | `/opt/homebrew/bin/bash ./scripts/release patch` |
+| Preview release | `./scripts/release patch --dry-run` |
+| Build gem | `docker-compose exec jekyll gem build jekyll-theme-zer0.gemspec` |
+| Publish gem | `gem push jekyll-theme-zer0-X.Y.Z.gem` |
+
+## Rollback (if needed)
 
 ```bash
-# Docker development
-docker-compose up                    # Start dev server
-docker-compose exec jekyll bash      # Shell access
-
-# Testing
-./test/test_runner.sh               # Full test suite
-./test/test_runner.sh --verbose     # Verbose output
-
-# Version analysis
-./scripts/analyze-commits.sh HEAD~5..HEAD
-
-# Release workflow
-./scripts/release patch --dry-run    # Preview release
-./scripts/release patch              # Patch release
-./scripts/release minor              # Minor release
-./scripts/release major              # Major release
-
-# Build only (no publish)
-./scripts/build
-./scripts/release patch --skip-publish --no-github-release
+git revert <hash>                          # Revert commit
+git tag -d vX.Y.Z                          # Delete local tag
+git push origin :refs/tags/vX.Y.Z          # Delete remote tag
+gem yank jekyll-theme-zer0 -v X.Y.Z        # Unpublish gem
 ```
-
----
-
-**Note**: Always run tests and validate Jekyll builds before publishing. Use Docker for consistent environment. The `./scripts/release` command handles the complete workflow including changelog generation, version bumping, testing, building, tagging, and publishing.
