@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.17.2] - 2025-12-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 92fd9c9 feat(docs): enhance contributing guide and release pipeline documentation
+- 8598d7a fix(ci): make HTMLProofer non-blocking for pre-existing link issues
+- f052878 fix(ci): ignore known pre-existing dead links in HTMLProofer
+- 1f76739 fix(ci): correct HTMLProofer flag syntax --no-enforce-https
+
+
 ## [0.17.1] - 2025-12-24
 
 ### Changed
