@@ -1,16 +1,28 @@
 # Changelog
 
-## [0.17.2] - 2025-12-30
+## [0.17.2] - 2025-12-31
+
+### Fixed
+- **Mermaid Dark Mode**: Fixed diagram rendering issues in dark mode by dynamically detecting Bootstrap theme (`data-bs-theme`) and switching Mermaid theme accordingly
+- **Cookie Consent Banner**: Fixed banner appearing twice on initial page load by implementing CSS-first visibility control and removing inline style conflicts
+
+### Enhanced
+- **UI/UX Improvements**: Comprehensive frontend enhancements including:
+  - Smooth scroll animations with Intersection Observer
+  - Enhanced card hover effects with 3D parallax on desktop
+  - Improved button styles with ripple effects and better transitions
+  - Better code block styling with enhanced copy functionality
+  - Mobile-responsive improvements with touch-friendly tap targets
+  - Improved focus states for accessibility
+  - Hero section animations with staggered fade-in effects
+
+### Added
+- **UI Enhancements Module**: New `assets/js/ui-enhancements.js` for scroll animations, card interactions, and smooth scrolling
+- **Enhanced Code Copy**: Improved copy-to-clipboard functionality with better visual feedback and fallback support
 
 ### Changed
-- Version bump: patch release
-
-### Commits in this release
-- 92fd9c9 feat(docs): enhance contributing guide and release pipeline documentation
-- 8598d7a fix(ci): make HTMLProofer non-blocking for pre-existing link issues
-- f052878 fix(ci): ignore known pre-existing dead links in HTMLProofer
-- 1f76739 fix(ci): correct HTMLProofer flag syntax --no-enforce-https
-
+- **CI Configuration**: Made HTMLProofer non-blocking for pre-existing link issues
+- **Documentation**: Enhanced contributing guide and release pipeline documentation 4630c33 (fix(ui): fix Mermaid dark mode and cookie banner rendering)
 
 ## [0.17.1] - 2025-12-24
 

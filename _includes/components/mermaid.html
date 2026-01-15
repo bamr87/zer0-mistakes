@@ -48,6 +48,108 @@
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     // ============================================================
+    // Helper function to detect Bootstrap theme
+    // ============================================================
+    function getBootstrapTheme() {
+      // Check data-bs-theme attribute on html element
+      var htmlTheme = document.documentElement.getAttribute('data-bs-theme');
+      if (htmlTheme === 'dark' || htmlTheme === 'light') {
+        return htmlTheme;
+      }
+      // Fallback to prefers-color-scheme
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
+      return 'light';
+    }
+    
+    // ============================================================
+    // Helper function to get Mermaid theme configuration
+    // ============================================================
+    function getMermaidConfig(theme) {
+      var isDark = theme === 'dark';
+      
+      if (isDark) {
+        // Dark mode configuration
+        return {
+          theme: 'dark',
+          themeVariables: {
+            primaryColor: '#0d6efd',
+            primaryTextColor: '#ffffff',
+            primaryBorderColor: '#0a58ca',
+            lineColor: '#6c757d',
+            secondaryColor: '#6c757d',
+            tertiaryColor: '#212529',
+            background: '#212529',
+            mainBkg: '#212529',
+            secondBkg: '#343a40',
+            tertiaryBkg: '#495057',
+            textColor: '#ffffff',
+            secondaryTextColor: '#adb5bd',
+            tertiaryTextColor: '#6c757d',
+            lineColor: '#6c757d',
+            border1: '#495057',
+            border2: '#6c757d',
+            noteBkgColor: '#343a40',
+            noteTextColor: '#ffffff',
+            noteBorderColor: '#6c757d',
+            actorBkg: '#0d6efd',
+            actorBorder: '#0a58ca',
+            actorTextColor: '#ffffff',
+            actorLineColor: '#ffffff',
+            signalColor: '#ffffff',
+            signalTextColor: '#ffffff',
+            labelBoxBkgColor: '#343a40',
+            labelBoxBorderColor: '#6c757d',
+            labelTextColor: '#ffffff',
+            loopTextColor: '#ffffff',
+            activationBorderColor: '#0d6efd',
+            activationBkgColor: '#0d6efd',
+            sequenceNumberColor: '#ffffff',
+            sectionBkgColor: '#343a40',
+            altSectionBkgColor: '#495057',
+            excludeBkgColor: '#495057',
+            taskBorderColor: '#0d6efd',
+            taskBkgColor: '#0d6efd',
+            taskTextLightColor: '#ffffff',
+            taskTextColor: '#ffffff',
+            taskTextDarkColor: '#000000',
+            taskTextOutsideColor: '#ffffff',
+            taskTextClickableColor: '#0d6efd',
+            activeTaskBorderColor: '#0a58ca',
+            activeTaskBkgColor: '#0a58ca',
+            gridColor: '#6c757d',
+            doneTaskBkgColor: '#198754',
+            doneTaskBorderColor: '#146c43',
+            critBorderColor: '#dc3545',
+            critBkgColor: '#dc3545',
+            todayLineColor: '#ffc107'
+          }
+        };
+      } else {
+        // Light mode configuration
+        return {
+          theme: 'default',
+          themeVariables: {
+            primaryColor: '#007bff',
+            primaryTextColor: '#fff',
+            primaryBorderColor: '#0056b3',
+            lineColor: '#6c757d',
+            secondaryColor: '#6c757d',
+            tertiaryColor: '#f8f9fa',
+            background: '#ffffff',
+            mainBkg: '#ffffff',
+            secondBkg: '#f8f9fa',
+            tertiaryBkg: '#e9ecef',
+            textColor: '#212529',
+            secondaryTextColor: '#6c757d',
+            tertiaryTextColor: '#adb5bd'
+          }
+        };
+      }
+    }
+    
+    // ============================================================
     // Step 1: Convert native markdown code blocks to mermaid divs
     // This enables ```mermaid syntax to work with GitHub Pages
     // ============================================================
@@ -86,20 +188,16 @@
     });
     
     // ============================================================
-    // Step 2: Initialize Mermaid with custom configuration
+    // Step 2: Initialize Mermaid with theme-aware configuration
     // ============================================================
+    
+    var bootstrapTheme = getBootstrapTheme();
+    var mermaidThemeConfig = getMermaidConfig(bootstrapTheme);
     
     mermaid.initialize({
       startOnLoad: false,  // We'll manually run after conversion
-      theme: 'forest',     // Options: default, forest, dark, neutral, base
-      themeVariables: {
-        primaryColor: '#007bff',
-        primaryTextColor: '#fff',
-        primaryBorderColor: '#0056b3',
-        lineColor: '#6c757d',
-        secondaryColor: '#6c757d',
-        tertiaryColor: '#f8f9fa'
-      },
+      theme: mermaidThemeConfig.theme,
+      themeVariables: mermaidThemeConfig.themeVariables,
       flowchart: {
         useMaxWidth: true,
         htmlLabels: true,
@@ -139,9 +237,81 @@
     
     // Run mermaid to render all .mermaid divs
     mermaid.run().then(function() {
-      console.log('Mermaid.js: All diagrams rendered successfully');
+      console.log('Mermaid.js: All diagrams rendered successfully with theme:', bootstrapTheme);
     }).catch(function(error) {
       console.warn('Mermaid.js: Some diagrams failed to render', error);
+    });
+    
+    // ============================================================
+    // Step 4: Watch for theme changes and re-render diagrams
+    // ============================================================
+    
+    // Create a MutationObserver to watch for theme changes
+    var themeObserver = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'data-bs-theme') {
+          var newTheme = getBootstrapTheme();
+          var newMermaidConfig = getMermaidConfig(newTheme);
+          
+          // Update Mermaid configuration
+          mermaid.initialize({
+            startOnLoad: false,
+            theme: newMermaidConfig.theme,
+            themeVariables: newMermaidConfig.themeVariables,
+            flowchart: {
+              useMaxWidth: true,
+              htmlLabels: true,
+              curve: 'basis'
+            },
+            sequence: {
+              diagramMarginX: 50,
+              diagramMarginY: 10,
+              actorMargin: 50,
+              width: 150,
+              height: 65,
+              boxMargin: 10,
+              boxTextMargin: 5,
+              noteMargin: 10,
+              messageMargin: 35,
+              mirrorActors: true,
+              bottomMarginAdj: 1,
+              useMaxWidth: true
+            },
+            gantt: {
+              titleTopMargin: 25,
+              barHeight: 20,
+              barGap: 4,
+              topPadding: 50,
+              leftPadding: 75,
+              gridLineStartPadding: 35,
+              fontSize: 11,
+              numberSectionStyles: 4,
+              axisFormat: '%Y-%m-%d'
+            },
+            securityLevel: 'loose'
+          });
+          
+          // Re-render all diagrams with new theme
+          var mermaidDivs = document.querySelectorAll('.mermaid');
+          mermaidDivs.forEach(function(div) {
+            var content = div.textContent || div.innerText;
+            div.innerHTML = '';
+            div.textContent = content;
+          });
+          
+          mermaid.run().then(function() {
+            console.log('Mermaid.js: Diagrams re-rendered with theme:', newTheme);
+          }).catch(function(error) {
+            console.warn('Mermaid.js: Some diagrams failed to re-render', error);
+          });
+        }
+      });
+    });
+    
+    // Start observing the html element for theme changes
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-bs-theme']
     });
   });
 </script>
@@ -157,12 +327,17 @@
     margin: 2rem auto;
     background-color: transparent;
     overflow-x: auto;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s ease;
   }
   
   /* Ensure diagrams are responsive */
   .mermaid svg {
     max-width: 100%;
     height: auto;
+    display: block;
+    margin: 0 auto;
   }
   
   /* Hide code blocks before conversion (prevent flash of unstyled content) */
@@ -173,15 +348,86 @@
     transition: opacity 0.2s;
   }
   
-  /* Dark mode compatibility */
+  /* Dark mode compatibility - Bootstrap theme aware */
+  [data-bs-theme="dark"] .mermaid {
+    background-color: rgba(33, 37, 41, 0.5);
+    border: 1px solid rgba(108, 117, 125, 0.2);
+  }
+  
+  [data-bs-theme="dark"] .mermaid svg {
+    /* Ensure SVG elements are visible in dark mode */
+    color-scheme: dark;
+  }
+  
+  [data-bs-theme="dark"] .mermaid svg text {
+    fill: #ffffff !important;
+  }
+  
+  [data-bs-theme="dark"] .mermaid svg .node rect,
+  [data-bs-theme="dark"] .mermaid svg .node polygon,
+  [data-bs-theme="dark"] .mermaid svg .cluster rect {
+    fill: #343a40 !important;
+    stroke: #6c757d !important;
+  }
+  
+  [data-bs-theme="dark"] .mermaid svg .edgePath .path {
+    stroke: #6c757d !important;
+  }
+  
+  [data-bs-theme="dark"] .mermaid svg .edgeLabel {
+    background-color: #212529 !important;
+    color: #ffffff !important;
+  }
+  
+  [data-bs-theme="dark"] .mermaid svg .edgeLabel text {
+    fill: #ffffff !important;
+  }
+  
+  /* Light mode styling */
+  [data-bs-theme="light"] .mermaid {
+    background-color: rgba(248, 249, 250, 0.5);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  [data-bs-theme="light"] .mermaid svg text {
+    fill: #212529 !important;
+  }
+  
+  /* Fallback for prefers-color-scheme if data-bs-theme is not set */
   @media (prefers-color-scheme: dark) {
-    .mermaid {
-      filter: brightness(0.9);
+    html:not([data-bs-theme]) .mermaid {
+      background-color: rgba(33, 37, 41, 0.5);
+      border: 1px solid rgba(108, 117, 125, 0.2);
     }
+  }
+  
+  /* Smooth theme transition */
+  .mermaid svg {
+    transition: opacity 0.3s ease;
+  }
+  
+  /* Loading state */
+  .mermaid:not(:has(svg)) {
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .mermaid:not(:has(svg))::after {
+    content: 'Loading diagram...';
+    color: var(--bs-secondary);
+    font-size: 0.875rem;
   }
   
   /* Print styles */
   @media print {
+    .mermaid {
+      background-color: transparent !important;
+      border: none !important;
+      page-break-inside: avoid;
+    }
+    
     .mermaid svg {
       max-width: 100% !important;
       page-break-inside: avoid;

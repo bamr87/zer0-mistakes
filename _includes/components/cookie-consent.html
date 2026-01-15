@@ -49,7 +49,7 @@ Usage: Include in root.html layout
 Configuration: Uses site.posthog settings from _config.yml
 {% endcomment %}
 
-<div id="cookieConsent" class="cookie-consent-banner position-fixed bottom-0 start-0 end-0 bg-dark text-light p-3 shadow-lg" style="z-index: 9999; transform: translateY(100%); transition: transform 0.3s ease-in-out;">
+<div id="cookieConsent" class="cookie-consent-banner position-fixed bottom-0 start-0 end-0 bg-dark text-light p-3 shadow-lg">
   <div class="container-fluid">
     <div class="row align-items-center">
       <div class="col-12 col-lg-8">
@@ -248,18 +248,42 @@ Configuration: Uses site.posthog settings from _config.yml
     // Show consent banner
     function showConsentBanner() {
       const banner = document.getElementById('cookieConsent');
-      if (banner) {
-        setTimeout(() => {
-          banner.style.transform = 'translateY(0)';
-        }, 1000); // Show after 1 second
-      }
+      if (!banner) return;
+      
+      // Ensure banner starts completely hidden - remove all classes and inline styles
+      banner.classList.remove('cookie-banner-showing', 'cookie-banner-visible');
+      banner.removeAttribute('style'); // Remove all inline styles to let CSS take over
+      
+      // Wait for the delay, then show and animate in one smooth motion
+      setTimeout(() => {
+        // First, make it visible but still off-screen (using class for CSS control)
+        banner.classList.add('cookie-banner-showing');
+        
+        // Force a reflow to ensure the display change is applied
+        void banner.offsetHeight;
+        
+        // On the next frame, animate it in smoothly
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            banner.classList.add('cookie-banner-visible');
+          });
+        });
+      }, 1000); // Show after 1 second
     }
 
     // Hide consent banner
     function hideConsentBanner() {
       const banner = document.getElementById('cookieConsent');
       if (banner) {
-        banner.style.transform = 'translateY(100%)';
+        // Remove visible class to trigger transition out
+        banner.classList.remove('cookie-banner-visible');
+        
+        // Hide after transition completes
+        banner.addEventListener('transitionend', function hideAfterTransition() {
+          banner.classList.remove('cookie-banner-showing');
+          banner.removeAttribute('style'); // Clean up inline styles
+          banner.removeEventListener('transitionend', hideAfterTransition);
+        }, { once: true });
       }
     }
 
@@ -281,14 +305,27 @@ Configuration: Uses site.posthog settings from _config.yml
 
     // Initialize on DOM content loaded
     document.addEventListener('DOMContentLoaded', function() {
+      const banner = document.getElementById('cookieConsent');
+      
+      // Ensure banner starts completely hidden BEFORE any checks
+      // Remove all classes and inline styles - let CSS handle hiding
+      if (banner) {
+        banner.classList.remove('cookie-banner-showing', 'cookie-banner-visible');
+        banner.removeAttribute('style');
+      }
+      
       const existingConsent = getConsentState();
       
       if (existingConsent) {
-        // Apply existing consent
+        // Apply existing consent and ensure banner stays hidden
         applyConsent(existingConsent);
         updateModalUI(existingConsent);
+        if (banner) {
+          banner.classList.remove('cookie-banner-showing', 'cookie-banner-visible');
+          banner.removeAttribute('style');
+        }
       } else {
-        // Show consent banner for new visitors
+        // Show consent banner for new visitors (with delay)
         showConsentBanner();
       }
 
@@ -348,10 +385,38 @@ Configuration: Uses site.posthog settings from _config.yml
 </script>
 
 <style>
+  /* Banner base styles */
+  #cookieConsent {
+    z-index: 9999;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Banner starts completely hidden - CSS enforces this */
+  #cookieConsent:not(.cookie-banner-showing) {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    transform: translateY(100%) !important;
+  }
+  
   .cookie-consent-banner {
     background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
     backdrop-filter: blur(10px);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  /* Only show banner when explicitly enabled via JavaScript class */
+  #cookieConsent.cookie-banner-showing {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  
+  /* Animate in when visible class is added */
+  #cookieConsent.cookie-banner-showing.cookie-banner-visible {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
   }
   
   .cursor-pointer {
@@ -377,6 +442,13 @@ Configuration: Uses site.posthog settings from _config.yml
     
     .cookie-consent-banner .btn:last-child {
       margin-bottom: 0;
+    }
+  }
+  
+  /* Respect reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    .cookie-consent-banner {
+      transition: none !important;
     }
   }
 </style>
