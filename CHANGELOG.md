@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.17.3] - 2026-01-15
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- a0c1df4 fix(ui): fix Mermaid dark mode and cookie banner rendering
+
+
 ## [0.17.2] - 2025-12-31
 
 ### Fixed
