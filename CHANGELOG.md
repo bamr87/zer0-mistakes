@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.17.4] - 2026-01-16
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 226b0a5 chore(structure): reorganize root directory for better maintainability
+
+
 ## [0.17.3] - 2026-01-15
 
 ### Changed
