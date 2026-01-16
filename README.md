@@ -569,7 +569,7 @@ graph LR
 | [🤖 Copilot Instructions]({{ site.resources.github_repo | default: '' | join: '' }}/blob/{{ site.branch }}/.github/copilot-instructions.md) | AI development guidelines |
 | [⌨️ Keyboard Navigation]({{ site.resources.github_repo | default: '' | join: '' }}/blob/{{ site.branch }}/docs/keyboard-navigation.md) | Accessibility shortcuts guide |
 | [📓 Jupyter Notebooks]({{ site.resources.github_repo | default: '' | join: '' }}/blob/{{ site.branch }}/docs/JUPYTER_NOTEBOOKS.md) | Notebook conversion documentation |
-| [📝 PRD](PRD.md) | Product requirements & roadmap |
+| [📝 PRD](docs/PRD.md) | Product requirements & roadmap |
 | [🔒 Privacy Policy]({{ '/privacy-policy/' | relative_url }}) | GDPR/CCPA compliant privacy docs |
 
 ---

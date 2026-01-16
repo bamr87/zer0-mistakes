@@ -34,7 +34,7 @@ Get your **zer0-mistakes** Jekyll site running in under 5 minutes with our intel
 
 For the full install + personalization workflow (all methods, config layering, and troubleshooting), use the canonical repo guide:
 
-- `{{ site.resources.github_repo | default: '' | join: '' }}/blob/{{ site.branch }}/QUICKSTART.md`
+- `{{ site.resources.github_repo | default: '' | join: '' }}/blob/{{ site.branch }}/docs/QUICKSTART.md`
 
 <h2 id="fastest-start-1-command">⚡ Fastest Start (1 Command)</h2>
 
@@ -120,7 +120,7 @@ bundle install
 # Set theme: jekyll-theme-zer0 in _config.yml
 ```
 
-For the complete setup guide with all options and troubleshooting, see [QUICKSTART.md]({{ site.resources.github_repo | default: '' | join: '' }}/blob/{{ site.branch }}/QUICKSTART.md).
+For the complete setup guide with all options and troubleshooting, see [QUICKSTART.md]({{ site.resources.github_repo | default: '' | join: '' }}/blob/{{ site.branch }}/docs/QUICKSTART.md).
 
 ## 📚 Comprehensive Setup Guides
 

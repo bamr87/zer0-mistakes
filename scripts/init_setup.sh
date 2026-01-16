@@ -322,8 +322,8 @@ A modern, Docker-first Jekyll theme with intelligent automation and self-healing
 
 ```bash
 # Initialize and start development environment
-./init_setup.sh init
-./init_setup.sh start
+./scripts/init_setup.sh init
+./scripts/init_setup.sh start
 ```
 
 ### Manual Setup
@@ -365,7 +365,7 @@ This theme is optimized for Docker-first development with:
 ├── _config.yml           # Production configuration
 ├── _config_dev.yml       # Development configuration (auto-generated)
 ├── docker-compose.yml    # Docker development environment
-├── init_setup.sh         # AI-powered setup script
+├── scripts/init_setup.sh # AI-powered setup script
 ├── install.sh           # Enhanced installation script
 └── pages/               # Content pages
 ```
@@ -373,10 +373,10 @@ This theme is optimized for Docker-first development with:
 ## 🔧 Available Commands
 
 ```bash
-./init_setup.sh init     # Initialize development environment
-./init_setup.sh start    # Start development server
-./init_setup.sh test     # Test Docker setup
-./init_setup.sh help     # Show usage information
+./scripts/init_setup.sh init     # Initialize development environment
+./scripts/init_setup.sh start    # Start development server
+./scripts/init_setup.sh test     # Test Docker setup
+./scripts/init_setup.sh help     # Show usage information
 ```
 
 ## 🐛 Troubleshooting
@@ -401,7 +401,7 @@ This theme is optimized for Docker-first development with:
 1. Check `setup.log` for detailed logs
 2. Ensure all prerequisites are installed
 3. Verify Docker Desktop is running
-4. Try running `./init_setup.sh test` to diagnose issues
+4. Try running `./scripts/init_setup.sh test` to diagnose issues
 
 ## 🤝 Contributing
 

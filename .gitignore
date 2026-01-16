@@ -21,6 +21,7 @@ assets/.DS_Store
 
 # Gem development
 *.gem
+/*.gem
 pkg/
 tmp/
 .rspec_status
