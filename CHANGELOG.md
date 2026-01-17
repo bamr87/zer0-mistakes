@@ -5,9 +5,12 @@
 ### Changed
 - Version bump: patch release
 
+### Fixed
+- **UI/UX**: Removed cursor-based 3D parallax tilt effect on cards to prevent perspective shifts on hover
+- **Config YAML**: Corrected anchor definitions used by gravatar and local repo settings to pass YAML validation
+
 ### Commits in this release
 - 226b0a5 chore(structure): reorganize root directory for better maintainability
-
 
 ## [0.17.3] - 2026-01-15
 

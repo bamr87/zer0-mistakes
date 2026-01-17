@@ -34,7 +34,7 @@ gem                      : &gem "jekyll-theme-zer0"
 github_user              : &github_user "bamr87"
 repository_name          : &github_repository "zer0-mistakes"
 repository               : [*github_user, "/", *github_repository] # GitHub username/repo-name
-local_repo               : *github_repository
+local_repo               : &local_repo "zer0-mistakes"
 branch                   : &branch "main"
 repo_map                 : "/sitemap/"
 portfolio                : &portfolio [*github_user, '.', 'github.io']
@@ -117,7 +117,7 @@ _posts_file_structure    : "year-month-day-title.md"
 author:
   name                   : *name # *name is a YAML reference pointing to the &anchor earlier
   avatar                 : "/assets/images/gravatar-small.png"
-  email_hash             : '71d7a4fc9712df49e13d606e620f89c7' # https://en.gravatar.com/site/check/{ site.email }
+  email_hash             : &email_hash '71d7a4fc9712df49e13d606e620f89c7' # https://en.gravatar.com/site/check/{ site.email }
   gravatar               : [ 'https://s.gravatar.com/avatar/', *email_hash, '?s=80' ]
   bio                    : "IT nerd trying to be an IT hero"
   location               : "Denver, CO"

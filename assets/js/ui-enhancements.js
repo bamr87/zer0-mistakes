@@ -43,35 +43,6 @@
   }
 
   /**
-   * Enhance card interactions with parallax effect
-   */
-  function initCardParallax() {
-    if (prefersReducedMotion) return;
-
-    const cards = document.querySelectorAll('.feature-card, .card');
-    
-    cards.forEach(card => {
-      card.addEventListener('mousemove', function(e) {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        
-        const rotateX = (y - centerY) / 20;
-        const rotateY = (centerX - x) / 20;
-        
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
-      });
-      
-      card.addEventListener('mouseleave', function() {
-        card.style.transform = '';
-      });
-    });
-  }
-
-  /**
    * Smooth scroll for anchor links
    */
   function initSmoothScroll() {
@@ -181,7 +152,6 @@
     }
 
     initScrollAnimations();
-    initCardParallax();
     initSmoothScroll();
     initImageLoading();
     initButtonRipples();
