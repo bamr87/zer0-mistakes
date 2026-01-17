@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.17.5] - 2026-01-17
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- eeb8ea3 fix(ui): remove cursor tilt and prep v0.17.4
+
+
 ## [0.17.4] - 2026-01-16
 
 ### Changed
