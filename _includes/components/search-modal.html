@@ -1,0 +1,56 @@
+<!--
+  ===================================================================
+  SEARCH MODAL - Site-wide Search Popup
+  ===================================================================
+  
+  File: search-modal.html
+  Path: _includes/components/search-modal.html
+  Purpose: Provide a modal search experience with keyboard shortcut support
+  
+  Notes:
+  - Uses /sitemap/ for query-based search results
+  - Keyboard shortcut handled by navigation keyboard module ("/")
+  ===================================================================
+-->
+
+{%- assign ui_text = site.data.ui-text[site.locale] | default: site.data.ui-text.en -%}
+{%- assign search_placeholder = ui_text.search_placeholder_text | default: "Enter your search term..." -%}
+
+<div class="modal fade search-modal" id="siteSearchModal" tabindex="-1" aria-labelledby="siteSearchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="siteSearchModalLabel">
+                    <i class="bi bi-search me-2"></i>Search
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ '/sitemap/' | relative_url }}" method="get" data-search-form>
+                    <label class="visually-hidden" for="site-search-input">Search</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-search" aria-hidden="true"></i>
+                        </span>
+                        <input
+                            id="site-search-input"
+                            type="search"
+                            name="q"
+                            class="form-control"
+                            placeholder="{{ search_placeholder }}"
+                            autocomplete="off"
+                            data-search-input
+                        >
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
+                    <div class="form-text mt-2">
+                        Press <kbd>/</kbd> or <kbd>⌘</kbd>/<kbd>Ctrl</kbd>+<kbd>K</kbd> to open search, <kbd>Esc</kbd> to close.
+                    </div>
+                </form>
+                <div class="search-results mt-3" data-search-results>
+                    <div class="text-muted small" data-search-empty>Start typing to see results.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

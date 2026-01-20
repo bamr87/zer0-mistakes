@@ -231,6 +231,21 @@ img {
     background-color: var(--bs-body-bg);
 }
 
+#navbar .navbar-main {
+    align-items: center;
+}
+
+#navbar .site-title-text,
+#navbar .site-subtitle-text {
+    display: inline-block;
+}
+
+#navbar .nav-search-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
 // Hidden state - slides up out of view
 // Using higher specificity to override Bootstrap's fixed-top
 #navbar.navbar-hidden {
@@ -242,6 +257,73 @@ img {
     #navbar {
         transition: none !important;
     }
+}
+
+@media (max-width: 991.98px) {
+    #navbar .navbar-main {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    #navbar .navbar-brand-group {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    #navbar .site-title .nav-link {
+        padding: 0;
+    }
+
+    #navbar .site-title-text {
+        max-width: 45vw;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    #navbar .navbar-brand img {
+        width: 28px;
+        height: 28px;
+    }
+
+    #navbar .navbar-toggler {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    #navbar .nav-search-button {
+        width: 2.5rem;
+        height: 2.5rem;
+        padding: 0;
+        justify-content: center;
+    }
+}
+
+.search-modal .modal-content {
+    border-radius: 0.75rem;
+}
+
+.search-modal .input-group-text {
+    background-color: var(--bs-tertiary-bg);
+    border-color: var(--bs-border-color);
+}
+
+.search-modal kbd {
+    background-color: var(--bs-tertiary-bg);
+    color: var(--bs-body-color);
+}
+
+.search-modal .search-results {
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.search-modal .list-group-item {
+    border-color: var(--bs-border-color-translucent);
 }
 
 $enable-cssgrid: true;

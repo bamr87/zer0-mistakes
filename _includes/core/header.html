@@ -60,39 +60,53 @@
         <!-- ========================== -->
         <!-- MAIN NAVIGATION CONTAINER -->
         <!-- ========================== -->
-        <nav class="container-xl order-2 order-lg-1 grid gap-1">
+        <nav class="container-xl order-2 order-lg-1 grid gap-1 navbar-main">
 
             <!-- ========================== -->
             <!-- MOBILE MENU CONTROLS      -->
             <!-- ========================== -->
             
             <!-- Left Sidebar Toggle - Mobile view only -->
+            {% assign sidebar_nav = page.sidebar.nav | default: nil %}
+            {% assign sidebar_has_content = false %}
+            {% if sidebar_nav %}
+                {% if sidebar_nav == "auto" or sidebar_nav == "categories" %}
+                    {% assign sidebar_has_content = true %}
+                {% elsif site.data.navigation[sidebar_nav] %}
+                    {% assign sidebar_has_content = true %}
+                {% endif %}
+            {% endif %}
+
+            {% if sidebar_has_content %}
             <div class="bd-navbar-toggle">
                 <button class="navbar-toggler p-2" 
                         type="button" 
                         data-bs-toggle="offcanvas" 
                         data-bs-target="#bdSidebar" 
                         aria-controls="bdSidebar" 
-                        aria-label="Toggle navigation">
+                        aria-label="Toggle sidebar navigation">
                     <span class="bi bi-list"></span>
                 </button>
             </div>
+            {% endif %}
 
             <!-- ========================== -->
             <!-- BRAND AND HOME NAVIGATION -->
             <!-- ========================== -->
-            <div class="container d-inline-flex text-center">
-                <!-- Home Navigation Button -->
-                {%- for home in site.data.navigation.home -%}
-                <a class="btn" href="{{ home.url | relative_url }}">
-                    <i class="{{ site.default_icon}} {{ home.icon }}"></i>
-                </a>
-                {% endfor %}
+            <div class="navbar-brand-group d-inline-flex align-items-center gap-2">
+                <!-- Home Navigation Button (Desktop only) -->
+                <div class="navbar-home-links d-none d-lg-inline-flex">
+                    {%- for home in site.data.navigation.home -%}
+                    <a class="btn" href="{{ home.url | relative_url }}" aria-label="{{ home.title }}" title="{{ home.title }}">
+                        <i class="{{ site.default_icon}} {{ home.icon }}"></i>
+                    </a>
+                    {% endfor %}
+                </div>
                 
                 <!-- Brand Logo Link to Root -->
                 <!-- Logo path configured in _config.yml -->
                 {% capture logo_path %}{{ site.logo }}{% endcapture %}
-                <a class="navbar-brand" href="{{ site.baseurl }}/">
+                <a class="navbar-brand" href="{{ site.baseurl }}/" aria-label="Home">
                     <img src="{{ logo_path | relative_url }}" alt="Logo" width="30" height="30">
                 </a>
             </div>
@@ -113,8 +127,21 @@
             <!-- UTILITY CONTROLS          -->
             <!-- ========================== -->
             
+            <!-- Search Modal Toggle -->
+            <button
+                class="btn nav-search-button"
+                type="button"
+                data-bs-toggle="modal"
+                data-bs-target="#siteSearchModal"
+                data-search-toggle
+                aria-label="Open search"
+            >
+                <i class="{{site.default_icon}} bi-search"></i>
+                <span class="d-none d-lg-inline ms-1">Search</span>
+            </button>
+
             <!-- Settings Modal Toggle -->
-            <div class="btn"
+            <div class="btn d-none d-lg-flex nav-settings"
                 data-bs-toggle="modal" 
                 data-bs-target="#info-section" 
                 aria-expanded="false" 

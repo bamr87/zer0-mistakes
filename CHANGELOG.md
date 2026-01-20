@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.18.0] - 2026-01-19
+
+### Added
+- **Search Modal**: New site-wide search popup with live results, keyboard shortcuts (`/`, `Cmd/Ctrl+K`), and offcanvas entry
+- **Search Index**: Generated `search.json` index including page content for client-side search
+
+### Changed
+- **Navigation**: Added search button to the main navbar with improved mobile layout support
+
+### Fixed
+- **Search UX**: Highlight query matches and show content-based snippets where the match occurs
+
 ## [0.17.5] - 2026-01-17
 
 ### Changed
@@ -7,7 +19,6 @@
 
 ### Commits in this release
 - eeb8ea3 fix(ui): remove cursor tilt and prep v0.17.4
-
 
 ## [0.17.4] - 2026-01-16
 

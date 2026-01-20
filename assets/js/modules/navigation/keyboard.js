@@ -103,6 +103,11 @@ export class KeyboardShortcuts {
                     this._toggleToc();
                 }
                 break;
+            default:
+                if (event.code === 'Slash' && keys.search === '/') {
+                    event.preventDefault();
+                    this._focusSearch();
+                }
         }
     }
 
@@ -169,10 +174,12 @@ export class KeyboardShortcuts {
      */
     _focusSearch() {
         const searchInput = document.querySelector('#search-input, [data-search-input]');
-        if (searchInput) {
+        const searchModal = searchInput?.closest('.modal');
+        const modalVisible = searchModal?.classList.contains('show');
+
+        if (searchInput && (!searchModal || modalVisible)) {
             searchInput.focus();
         } else {
-            console.log('KeyboardShortcuts: Search not yet implemented');
             // Dispatch event so other modules can handle
             document.dispatchEvent(new CustomEvent('navigation:searchRequest'));
         }

@@ -1,0 +1,27 @@
+---
+layout: null
+permalink: /search.json
+---
+[
+{%- assign search_pages = site.pages | where_exp: "item", "item.title" -%}
+{%- assign search_posts = site.posts -%}
+{%- assign search_docs = site.documents -%}
+{%- assign search_items = search_pages | concat: search_posts | concat: search_docs -%}
+{%- assign first = true -%}
+{%- for item in search_items -%}
+    {%- if item.url and item.title -%}
+        {%- if item.url contains '/assets/' or item.url == '/search.json' -%}
+            {%- continue -%}
+        {%- endif -%}
+        {%- unless first -%},{%- endunless -%}
+        {
+            "title": {{ item.title | strip_newlines | jsonify }},
+            "url": {{ item.url | relative_url | jsonify }},
+            "description": {{ item.description | default: item.excerpt | default: "" | strip_html | strip_newlines | jsonify }},
+            "content": {{ item.content | strip_html | strip_newlines | truncate: 1000 | jsonify }},
+            "collection": {{ item.collection | default: "pages" | jsonify }}
+        }
+        {%- assign first = false -%}
+    {%- endif -%}
+{%- endfor -%}
+]

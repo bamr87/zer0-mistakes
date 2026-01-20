@@ -32,24 +32,23 @@
 
 <!-- Title Section  -->
 
-<div class="navbar-brand">
-    <a class="nav-link" href="{{ page.url | relative_url }}">
-        <i class="d-sm-inline d-md-none {{ site.default_icon }} {{ site.default_icon }}-{{ site.title_icon | default: 'house' }}" aria-hidden="true"></i>
-        <!-- Display name if there's enough space, else icon only -->
-        <span class="d-none d-md-inline"> 
+<div class="navbar-brand site-title">
+    <a class="nav-link" href="{{ '/' | relative_url }}">
+        <i class="d-none d-md-inline {{ site.default_icon }} {{ site.default_icon }}-{{ site.title_icon | default: 'house' }}" aria-hidden="true"></i>
+        <!-- Always show the title on mobile; truncate if space is tight -->
+        <span class="site-title-text">
             {{ site.title }}
         </span>
     </a>
 </div>
 
-<div class="navbar-brand">
-    <!-- If a subtitle exists -->
-    {%- if site.subtitle -%}
-    <a class="nav-link" href="{{ page.url | relative_url }}">
-        <i class="d-sm-inline d-md-none {{ site.default_icon }} {{ site.default_icon }}-{{ site.subtitle_icon | default: 'journal' }}" aria-hidden="true"></i>
-        <span class="d-none d-md-inline"> 
+<!-- If a subtitle exists -->
+{%- if site.subtitle -%}
+<div class="navbar-brand site-subtitle d-none d-lg-inline">
+    <a class="nav-link" href="{{ '/' | relative_url }}">
+        <span class="site-subtitle-text">
             {{ site.subtitle }}
         </span>
     </a>
-    {% endif %}
 </div>
+{% endif %}

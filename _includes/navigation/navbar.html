@@ -18,6 +18,12 @@
     <!-- Main Navigation Body - Offcanvas -->
     <div class="offcanvas-body">
         <ul class="navbar-nav justify-content-lg-center text-start flex-grow-1">
+            <li class="nav-item d-lg-none">
+                <a class="nav-link" href="{{ '/' | relative_url }}">
+                    <i class="{{site.default_icon}} bi-house me-2"></i>
+                    Home
+                </a>
+            </li>
             {%- for link in site.data.navigation.main -%}
                 {%- assign has_children = link.children and link.children.size > 0 -%}
 
@@ -81,6 +87,31 @@
                     </li>
                 {%- endif -%}
             {%- endfor -%}
+            <li class="nav-item d-lg-none">
+                <button
+                    class="nav-link btn btn-link text-start w-100"
+                    type="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#siteSearchModal"
+                    data-search-toggle
+                    aria-label="Open search"
+                >
+                    <i class="{{site.default_icon}} bi-search me-2"></i>
+                    Search
+                </button>
+            </li>
+            <li class="nav-item d-lg-none">
+                <button
+                    class="nav-link btn btn-link text-start w-100"
+                    type="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#info-section"
+                    aria-controls="info-section"
+                >
+                    <i class="{{site.default_icon}} bi-gear me-2"></i>
+                    Settings
+                </button>
+            </li>
         </ul>
     </div>
 </div>
