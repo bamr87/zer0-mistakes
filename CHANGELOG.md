@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.18.1] - 2026-01-24
+
+### Changed
+- **Documentation**: Complete refactoring of Jekyll documentation from 22 tutorial-style files into 13 consolidated feature-focused guides
+
+### Added
+- `docs/jekyll/theme-guide.md` - Comprehensive theme setup and customization (461 lines)
+- `docs/jekyll/diagrams-mermaid.md` - Mermaid diagrams integration guide (454 lines)
+- `docs/jekyll/analytics-posthog.md` - PostHog privacy-first analytics setup (323 lines)
+- `docs/jekyll/math-mathjax.md` - MathJax mathematical notation guide (257 lines)
+- `docs/jekyll/comments-giscus.md` - GitHub Discussions-powered comments (223 lines)
+- `docs/jekyll/code-highlighting.md` - Syntax highlighting with Rouge/highlight.js (151 lines)
+- `docs/jekyll/liquid-reference.md` - Liquid templating quick reference (132 lines)
+- `docs/jekyll/pagination.md` - Pagination implementation guide (130 lines)
+- `docs/jekyll/config-reference.md` - Jekyll configuration options reference (102 lines)
+- `docs/jekyll/troubleshooting-port.md` - Port 4000 troubleshooting guide (89 lines)
+- `docs/jekyll/deploy-netlify.md` - Netlify deployment guide (84 lines)
+- `docs/jekyll/security-headers.md` - Netlify security headers configuration (70 lines)
+- `docs/jekyll/custom-domain.md` - GitHub Pages custom domain setup (65 lines)
+
+### Removed
+- Deprecated Jekyll tutorial files replaced by new consolidated guides:
+  - `jekyll-pagination.md`, `jekyll-performance-optimization.md`, `jekyll-progress-bar.md`
+  - `jekyll-search-function-for-static-website.md`, `jekyll-security.md`
+  - `jekyll-social-share-buttons-with-sharethis.md`, `jekyll-social-share-buttons.md`
+  - `jekyll-usage-and-customization.md`, `jekyll-highlighting.md`, `jekyll-liquid.md`
+  - `jekyll-math-symbols-with-mathjax.md`, `jekyll-diagram-with-mermaid.md`
+  - `jekyll-comments-with-disqus.md`, `jekyll-google-analytics.md`, `jekyll-config.md`
+  - `jekyll-frontmatter-cms.md`, `mermaid-native-markdown.md`, `mermaid-test-suite.md`, `mermaid.md`
+  - `deploying-jekyll-website-to-netlify.md`, `deploying-personal-website-with-custom-domain.md`
+  - `continuously-deploy-jekyll-website-to-gitHub-pages-with-travis-ci.md`
+  - `cannot-start-jekyll-at-specific-port.md`
+
 ## [0.18.0] - 2026-01-19
 
 ### Added

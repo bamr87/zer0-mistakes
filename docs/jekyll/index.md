@@ -1,86 +1,116 @@
 ---
-title: Jekyll Integration Guide
-description: Comprehensive Jekyll setup, configuration, and development guide optimized for Zer0-Mistakes theme and VS Code Copilot assistance
+title: Jekyll Documentation
+description: "Complete technical documentation for Jekyll development with the Zer0-Mistakes theme — guides, tutorials, and reference material."
+date: 2026-01-24T00:00:00.000Z
+lastmod: 2026-01-24T00:00:00.000Z
 permalink: /docs/jekyll/
-redirect_from:
-  - /docs/jekyll/home/
-  - /docs/jekyll/quickstart/
-  - /docs/jekyll/extras/
-lastmod: 2025-11-16T13:44:06.604Z
 tags:
   - jekyll
-  - setup
-  - development
-  - ai-assisted
+  - documentation
+  - index
 categories:
   - Documentation
-  - Development
-ai_content_hints:
-  - Focus on Docker-first development workflows
-  - Include AI-assisted troubleshooting guidance
-  - Emphasize Zer0-Mistakes theme integration
-  - Provide clear error handling examples
-technical_requirements:
-  - Ruby 2.7+ or Docker environment
-  - Jekyll 3.9+ or 4.x compatibility
-  - Git for version control
-  - VS Code with Copilot (recommended)
+layout: default
 difficulty_level: beginner
-estimated_reading_time: 10 minutes
-draft: draft
+estimated_time: "5 minutes"
 ---
 
-Jekyll is a static site generator. It takes text written in your
-favorite markup language and uses layouts to create a static website. You can
-tweak the site's look and feel, URLs, the data displayed on the page, and more.
+# Jekyll Documentation
 
-## Prerequisites
+> Technical documentation for Jekyll development with the Zer0-Mistakes theme.
 
-Jekyll requires the following:
+## Getting Started
 
-- Ruby version **{{ site.data.ruby.min_version }}** or higher
-- RubyGems
-- GCC and Make
+| Guide | Description | Time |
+|-------|-------------|------|
+| [Theme Guide](theme-guide.md) | Complete setup and customization guide | 30 min |
+| [Netlify Deployment](deploy-netlify.md) | Deploy to Netlify with CI/CD | 15 min |
+| [Custom Domain](custom-domain.md) | Set up your own domain | 20 min |
 
-See [Requirements]({{ '/docs/installation/#requirements' | relative_url }}) for guides and details.
+## Features & Integrations
 
-## Instructions
+### Comments & Analytics
 
-1. Install all [prerequisites]({{ '/docs/installation/' | relative_url }}).
-2. Install the jekyll and bundler [gems]({{ '/docs/ruby-101/#gems' | relative_url }}).
+| Guide | Description | Difficulty |
+|-------|-------------|------------|
+| [Giscus Comments](comments-giscus.md) | GitHub Discussions-powered comments | Beginner |
+| [PostHog Analytics](analytics-posthog.md) | Privacy-first analytics | Intermediate |
+
+### Content Enhancement
+
+| Guide | Description | Difficulty |
+|-------|-------------|------------|
+| [Mermaid Diagrams](diagrams-mermaid.md) | Flowcharts, sequence diagrams, and more | Beginner |
+| [MathJax Formulas](math-mathjax.md) | Mathematical notation | Beginner |
+| [Code Highlighting](code-highlighting.md) | Syntax highlighting for code | Beginner |
+
+### Development
+
+| Guide | Description | Difficulty |
+|-------|-------------|------------|
+| [Liquid Templating](liquid-reference.md) | Liquid template language reference | Intermediate |
+| [Pagination](pagination.md) | Add navigation between posts | Beginner |
+| [Security Headers](security-headers.md) | Harden your site with proper headers | Intermediate |
+
+## Quick Reference
+
+### Development Commands
+
+```bash
+# Start development server (Docker)
+docker-compose up
+
+# Start development server (Ruby)
+bundle exec jekyll serve --config "_config.yml,_config_dev.yml"
+
+# Build for production
+bundle exec jekyll build
+
+# Check configuration
+bundle exec jekyll doctor
+```
+
+### Essential Front Matter
+
+```yaml
+---
+title: "Page Title"
+description: "SEO description (150-160 chars)"
+layout: default  # or journals, home
+date: 2026-01-24T00:00:00.000Z
+categories: [Category]
+tags: [tag1, tag2]
+permalink: /custom-url/
+
+# Feature flags
+mermaid: true    # Enable Mermaid diagrams
+mathjax: true    # Enable MathJax formulas
+comments: false  # Disable Giscus comments
+---
+```
+
+### Project Structure
 
 ```
-gem install jekyll bundler
+zer0-mistakes/
+├── _config.yml          # Production config
+├── _config_dev.yml      # Development overrides
+├── _layouts/            # Page templates
+├── _includes/           # Reusable components
+├── _sass/               # Stylesheets
+├── assets/              # Static files
+├── pages/_posts/        # Blog posts
+├── pages/_docs/         # Documentation
+└── docs/jekyll/         # Technical docs (you are here)
 ```
 
-3. Create a new Jekyll site at `./myblog`.
+## External Resources
 
-```
-jekyll new myblog
-```
+- [Jekyll Documentation](https://jekyllrb.com/docs/)
+- [Liquid Template Language](https://shopify.github.io/liquid/)
+- [Kramdown Syntax](https://kramdown.gettalong.org/syntax.html)
+- [GitHub Pages Documentation](https://docs.github.com/en/pages)
 
-4. Change into your new directory.
+---
 
-```
-cd myblog
-```
-
-5. Build the site and make it available on a local server.
-
-```
-bundle exec jekyll serve
-```
-
-6. Browse to [http://localhost:4000](http://localhost:4000){:target="\_blank"}
-
-{: .note .warning}
-If you are using Ruby version 3.0.0 or higher, step 5 [may fail](https://github.com/github/pages-gem/issues/752). You may fix it by adding `webrick` to your dependencies: `bundle add webrick`
-
-{: .note .info}
-Pass the `--livereload` option to `serve` to automatically refresh the page with each change you make to the source files: `bundle exec jekyll serve --livereload`
-
-If you encounter any errors during this process, check that you have installed all the prerequisites in [Requirements]({{ '/docs/installation/#requirements' | relative_url }}).
-If you still have issues, see [Troubleshooting]({{ '/docs/troubleshooting/#configuration-problems' | relative_url }}).
-
-{: .note .info}
-Installation varies based on your operating system. See our [guides]({{ '/docs/installation/#guides' | relative_url }}) for OS-specific instructions.
+*Part of the [Zer0-Mistakes Jekyll Theme](https://github.com/bamr87/zer0-mistakes) documentation.*

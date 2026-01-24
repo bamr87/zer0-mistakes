@@ -1,14 +1,20 @@
 ---
-key: tutorial
-title: Cannot Start Jekyll at Specific Port
-index: 8105
-subcategory: jekyll
-date: 2016-01-17
+title: Jekyll Port Troubleshooting
+description: "Fix 'Address already in use' error when starting Jekyll on port 4000."
+date: 2026-01-24T00:00:00.000Z
+lastmod: 2026-01-24T00:00:00.000Z
 tags:
+  - troubleshooting
+  - jekyll
+  - port
+  - docker
+categories:
   - Jekyll
-  - Port
-lastmod: 2025-11-16T13:44:04.009Z
-draft: draft
+  - Troubleshooting
+layout: default
+permalink: /docs/jekyll/port-troubleshooting/
+difficulty_level: beginner
+estimated_time: "5 minutes"
 ---
 
 > Handle error 'Address Already in Use' when starting Jekyll.

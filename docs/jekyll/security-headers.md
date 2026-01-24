@@ -1,13 +1,20 @@
 ---
-key: tutorial
-title: Jekyll - Security
-index: 8133
-subcategory: jekyll
-date: 2019-06-29
+title: Jekyll Security Headers
+description: "Harden your Jekyll site with proper security headers using Netlify configuration."
+date: 2026-01-24T00:00:00.000Z
+lastmod: 2026-01-24T00:00:00.000Z
 tags:
+  - security
+  - jekyll
+  - netlify
+  - headers
+categories:
+  - Jekyll
   - Security
-lastmod: 2024-05-15T16:10:03.496Z
-preview: null
+layout: default
+permalink: /docs/jekyll/security-headers/
+difficulty_level: intermediate
+estimated_time: "15 minutes"
 ---
 
 > Scan website security vulnerabilities and fix them.

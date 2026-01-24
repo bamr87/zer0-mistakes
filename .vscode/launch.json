@@ -129,6 +129,38 @@
         "/js/": "${workspaceFolder}/assets/js/",
         "/css/": "${workspaceFolder}/assets/css/"
       }
+    },
+
+    // ==========================================
+    // PERFORMANCE DEBUGGING
+    // ==========================================
+    {
+      "name": "🎯 Performance Debug (Docker)",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:4000",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "Docker: Compose Up (Detached)",
+      "postDebugTask": "Docker: Compose Stop",
+      "runtimeArgs": [
+        "--remote-debugging-port=9222",
+        "--enable-logging=stderr",
+        "--log-level=0",
+        "--enable-features=NetworkService,NetworkServiceLogging"
+      ],
+      "sourceMaps": true,
+      "smartStep": true,
+      "internalConsoleOptions": "openOnSessionStart",
+      "trace": {
+        "stdio": true,
+        "logFile": "${workspaceFolder}/logs/performance-debug.log"
+      },
+      "pathMapping": {
+        "/": "${workspaceFolder}/_site/",
+        "/assets/": "${workspaceFolder}/assets/",
+        "/js/": "${workspaceFolder}/assets/js/",
+        "/css/": "${workspaceFolder}/assets/css/"
+      }
     }
   ]
 }

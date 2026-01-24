@@ -1,14 +1,20 @@
 ---
-key: tutorial
-title: Jekyll - Highlighting
-index: 8123
-subcategory: jekyll
-date: 2019-06-18
+title: Jekyll Code Highlighting
+description: "Configure syntax highlighting for code blocks in Jekyll using Rouge and Kramdown."
+date: 2026-01-24T00:00:00.000Z
+lastmod: 2026-01-24T00:00:00.000Z
 tags:
-  - Highlighting
-  - highlight.js
-lastmod: 2025-11-16T13:44:09.166Z
-draft: draft
+  - highlighting
+  - jekyll
+  - syntax
+  - rouge
+categories:
+  - Jekyll
+  - Features
+layout: default
+permalink: /docs/jekyll/code-highlighting/
+difficulty_level: beginner
+estimated_time: "10 minutes"
 ---
 
 > Highlighting with highlight.js.

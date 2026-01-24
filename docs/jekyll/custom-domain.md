@@ -1,13 +1,23 @@
 ---
-key: tutorial
-title: Deploying Personal Website with Custom Domain
-index: 8142
-subcategory: jekyll
-date: 2019-06-21
+title: Jekyll Custom Domain Setup
+description: "Configure a custom domain for your Jekyll site hosted on GitHub Pages or Netlify."
+date: 2026-01-24T00:00:00.000Z
+lastmod: 2026-01-24T00:00:00.000Z
 tags:
-  - Custom Domain
-lastmod: 2025-11-16T13:44:05.558Z
-draft: draft
+  - custom-domain
+  - dns
+  - jekyll
+  - deployment
+categories:
+  - Jekyll
+  - Deployment
+layout: default
+permalink: /docs/jekyll/custom-domain/
+difficulty_level: intermediate
+estimated_time: "20 minutes"
+prerequisites:
+  - Domain registrar account
+  - GitHub Pages or Netlify hosting
 ---
 
 > Setup personal website with Github page and custom domain.

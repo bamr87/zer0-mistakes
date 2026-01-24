@@ -1,13 +1,24 @@
 ---
-key: tutorial
-title: Deploying Jekyll Website to Netlify
-index: 8143
-subcategory: jekyll
-date: 2019-06-22
+title: Deploy Jekyll to Netlify
+description: "Deploy your Jekyll site to Netlify with continuous deployment from GitHub and custom headers."
+date: 2026-01-24T00:00:00.000Z
+lastmod: 2026-01-24T00:00:00.000Z
 tags:
+  - deployment
+  - netlify
+  - jekyll
+  - ci-cd
+categories:
   - Jekyll
-  - Netlify
-lastmod: 2023-12-03T08:41:00.908Z
+  - Deployment
+layout: default
+permalink: /docs/jekyll/deploy-netlify/
+difficulty_level: beginner
+estimated_time: "15 minutes"
+prerequisites:
+  - GitHub account
+  - Netlify account
+  - Jekyll site in Git repository
 ---
 
 > Deploy static website built with Jekyll to Netlify.

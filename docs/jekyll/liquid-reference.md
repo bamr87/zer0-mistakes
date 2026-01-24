@@ -1,19 +1,22 @@
 ---
-title: Jekyll - Liquid
-key: tutorial
-index: 8111
-subcategory: jekyll
-status: published
-date: 2016-01-19
+title: Jekyll Liquid Templating
+description: "Reference guide for Liquid templating language in Jekyll - variables, loops, conditionals, and filters."
+date: 2026-01-24T00:00:00.000Z
+lastmod: 2026-01-24T00:00:00.000Z
 tags:
+  - liquid
+  - jekyll
+  - templating
+categories:
   - Jekyll
-  - Liquid
-lastmod: 2024-05-16T19:50:34.990Z
-sources:
+  - Reference
+layout: default
+permalink: /docs/jekyll/liquid-reference/
+difficulty_level: intermediate
+estimated_time: "15 minutes"
+resources:
   - https://shopify.github.io/liquid/
-  - https://help.shopify.com/themes/liquid/objects/for-loops
   - https://jekyllrb.com/docs/liquid/filters/
-draft: draft
 ---
 
 > Useful tricks of Liquid, which are used in Jekyll.

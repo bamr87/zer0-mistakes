@@ -1,13 +1,19 @@
 ---
-key: tutorial
-title: Jekyll - Pagination
-index: 8122
-subcategory: jekyll
-date: 2019-06-04
+title: Jekyll Pagination
+description: "Implement previous/next navigation buttons and paginated post lists in your Jekyll site."
+date: 2026-01-24T00:00:00.000Z
+lastmod: 2026-01-24T00:00:00.000Z
 tags:
-  - Pagination
-lastmod: 2025-11-16T13:44:15.079Z
-draft: draft
+  - pagination
+  - jekyll
+  - navigation
+categories:
+  - Jekyll
+  - Features
+layout: default
+permalink: /docs/jekyll/pagination/
+difficulty_level: beginner
+estimated_time: "10 minutes"
 ---
 
 > Add pagination buttons for every page.
