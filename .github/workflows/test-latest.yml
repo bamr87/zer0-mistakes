@@ -41,7 +41,7 @@ on:
         type: boolean
 
 env:
-  DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/zer0-mistakes
+  DOCKER_IMAGE: amrabdel/zer0-mistakes
   REGISTRY: docker.io
 
 jobs:
