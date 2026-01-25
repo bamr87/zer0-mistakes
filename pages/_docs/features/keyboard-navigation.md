@@ -1,13 +1,24 @@
 ---
-title: Keyboard Navigation Guide
-description: Complete guide to keyboard shortcuts and navigation accessibility features in the Zer0-Mistakes theme
+title: Keyboard Navigation
+description: Complete guide to keyboard shortcuts and navigation accessibility features in the Zer0-Mistakes theme.
 layout: default
-permalink: /docs/keyboard-navigation/
-categories: [Documentation, Accessibility]
-tags: [keyboard, shortcuts, accessibility, navigation]
+categories:
+    - docs
+    - features
+    - accessibility
+tags:
+    - keyboard
+    - shortcuts
+    - accessibility
+    - navigation
+permalink: /docs/features/keyboard-navigation/
+difficulty: beginner
+estimated_time: 5 minutes
+sidebar:
+    nav: docs
 ---
 
-# Keyboard Navigation Guide
+# Keyboard Navigation
 
 The Zer0-Mistakes theme includes comprehensive keyboard navigation support to enhance accessibility and improve navigation efficiency for all users.
 
@@ -124,17 +135,6 @@ Keyboard navigation features work in:
 - Firefox 55+
 - Safari 12.1+
 - All modern mobile browsers
-
-## Future Enhancements
-
-Planned keyboard navigation improvements:
-
-- **Search shortcut** (`/`): Quick access to site search
-- **Theme toggle** (`t`): Switch between light/dark themes
-- **Print shortcut** (`p`): Print current page
-- **Bookmark** (`b`): Bookmark current page
-- **Go to top** (`g` then `t`): Scroll to page top
-- **Go to bottom** (`g` then `b`): Scroll to page bottom
 
 ## Troubleshooting
 

@@ -1,28 +1,25 @@
 ---
 title: Jekyll Theme Guide
-description: "Comprehensive guide to using and customizing the Zer0-Mistakes Jekyll theme with Docker-first development, Bootstrap 5, and modern integrations."
-date: 2026-01-24T00:00:00.000Z
-lastmod: 2026-01-24T00:00:00.000Z
-tags:
-  - jekyll
-  - tutorial
-  - customization
-  - docker
-  - bootstrap
-categories:
-  - Jekyll
-  - Getting Started
+description: Comprehensive guide to using and customizing the Zer0-Mistakes Jekyll theme with Docker-first development, Bootstrap 5, and modern integrations.
 layout: default
-permalink: /docs/jekyll/theme-guide/
-difficulty_level: beginner
-estimated_time: "30 minutes"
+categories:
+    - docs
+    - getting-started
+tags:
+    - jekyll
+    - tutorial
+    - customization
+    - docker
+    - bootstrap
+permalink: /docs/getting-started/theme-guide/
+difficulty: beginner
+estimated_time: 30 minutes
 prerequisites:
-  - Docker Desktop installed
-  - Basic command line knowledge
-  - Text editor (VS Code recommended)
-keywords:
-  primary: ["jekyll theme", "zer0-mistakes", "static site"]
-  secondary: ["docker development", "bootstrap 5", "customization"]
+    - Docker Desktop installed
+    - Basic command line knowledge
+    - Text editor (VS Code recommended)
+sidebar:
+    nav: docs
 ---
 
 # Jekyll Theme Guide
@@ -190,7 +187,7 @@ title: "Documentation Page"
 description: "What this page covers"
 layout: default
 permalink: /docs/section/page-name/
-difficulty_level: beginner
+difficulty: beginner
 estimated_time: "10 minutes"
 ---
 ```
@@ -380,11 +377,11 @@ $primary-color: #007bff;
 
 | Feature | Documentation | Front Matter |
 |---------|---------------|--------------|
-| Comments | [Giscus Guide](comments-giscus.md) | `comments: true` |
-| Analytics | [PostHog Guide](analytics-posthog.md) | (auto) |
-| Diagrams | [Mermaid Guide](diagrams-mermaid.md) | `mermaid: true` |
-| Math | [MathJax Guide](math-mathjax.md) | `mathjax: true` |
-| Pagination | [Pagination Guide](pagination.md) | (auto) |
+| Comments | [Giscus Guide](/docs/features/giscus-comments/) | `comments: true` |
+| Analytics | [PostHog Guide](/docs/features/posthog-analytics/) | (auto) |
+| Diagrams | [Mermaid Guide](/docs/features/mermaid-diagrams/) | `mermaid: true` |
+| Math | [MathJax Guide](/docs/features/mathjax-math/) | `mathjax: true` |
+| Pagination | [Pagination Guide](/docs/jekyll/pagination/) | (auto) |
 
 ---
 
@@ -406,7 +403,7 @@ $primary-color: #007bff;
 
 ### Custom Domain
 
-See [Custom Domain Setup](custom-domain.md).
+See [Custom Domain Setup](/docs/deployment/custom-domain/).
 
 ---
 
@@ -451,10 +448,10 @@ bundle exec jekyll clean
 
 ## Next Steps
 
-- **[Giscus Comments](jekyll-comments-with-giscus.md)** — Add comment functionality
-- **[PostHog Analytics](jekyll-analytics-with-posthog.md)** — Track site usage
-- **[Mermaid Diagrams](jekyll-diagrams-with-mermaid.md)** — Create visual documentation
-- **[Security Headers](jekyll-security.md)** — Harden your site
+- **[Giscus Comments](/docs/features/giscus-comments/)** — Add comment functionality
+- **[PostHog Analytics](/docs/features/posthog-analytics/)** — Track site usage
+- **[Mermaid Diagrams](/docs/features/mermaid-diagrams/)** — Create visual documentation
+- **[Keyboard Navigation](/docs/features/keyboard-navigation/)** — Accessibility features
 
 ---
 

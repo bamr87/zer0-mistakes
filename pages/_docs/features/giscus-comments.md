@@ -1,30 +1,26 @@
 ---
-title: Jekyll Comments with Giscus
-description: "Integrate GitHub Discussions-powered comments into your Jekyll site using Giscus - a modern, privacy-friendly alternative to Disqus."
-date: 2026-01-24T00:00:00.000Z
-lastmod: 2026-01-24T00:00:00.000Z
-tags:
-  - giscus
-  - jekyll
-  - comments
-  - github-discussions
-categories:
-  - Jekyll
-  - Integration
+title: Giscus Comments
+description: Integrate GitHub Discussions-powered comments into your Jekyll site using Giscus - a modern, privacy-friendly alternative to Disqus.
 layout: default
-permalink: /docs/jekyll/comments-giscus/
-difficulty_level: beginner
-estimated_time: "15 minutes"
+categories:
+    - docs
+    - features
+tags:
+    - giscus
+    - jekyll
+    - comments
+    - github-discussions
+permalink: /docs/features/giscus-comments/
+difficulty: beginner
+estimated_time: 15 minutes
 prerequisites:
-  - GitHub account
-  - Jekyll site repository on GitHub
-  - Basic understanding of Jekyll includes
-keywords:
-  primary: ["giscus", "jekyll comments", "github discussions"]
-  secondary: ["comment system", "static site comments", "privacy-friendly"]
+    - GitHub account
+    - Jekyll site repository on GitHub
+sidebar:
+    nav: docs
 ---
 
-# Jekyll Comments with Giscus
+# Giscus Comments
 
 > Add a GitHub Discussions-powered comment system to your Jekyll site with automatic theme detection and privacy-friendly design.
 
@@ -78,53 +74,13 @@ Add the Giscus configuration to your `_config.yml`:
 
 ```yaml
 # Giscus Comment System Configuration
-# https://giscus.app/
 giscus:
   enabled: true
-  data-repo-id: "YOUR_REPO_ID"        # From giscus.app configuration
-  data-category-id: "YOUR_CATEGORY_ID" # From giscus.app configuration
+  data-repo-id: "YOUR_REPO_ID"
+  data-category-id: "YOUR_CATEGORY_ID"
 ```
 
-> **Note**: The Zer0-Mistakes theme uses `gisgus` (with typo) for backward compatibility. Check your theme's actual key name.
-
-### Step 5: Create the Include File
-
-Create `_includes/content/giscus.html`:
-
-```html
-<!--
-  Giscus Comment System - GitHub Discussions Integration
-  Documentation: https://giscus.app/
--->
-
-<script src="https://giscus.app/client.js"
-        data-repo="{{ site.repository }}"
-        data-repo-id="{{ site.giscus.data-repo-id }}"
-        data-category-id="{{ site.giscus.data-category-id }}"
-        data-mapping="pathname"
-        data-strict="1"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="preferred_color_scheme"
-        data-lang="en"
-        crossorigin="anonymous"
-        async>
-</script>
-```
-
-### Step 6: Include in Your Layout
-
-Add the Giscus include to your post/page layout (e.g., `_layouts/journals.html`):
-
-```liquid
-{% raw %}{% if site.giscus.enabled and page.comments != false %}
-  <div class="comments-section mt-5">
-    <h3>Comments</h3>
-    {% include content/giscus.html %}
-  </div>
-{% endif %}{% endraw %}
-```
+---
 
 ## Configuration Options
 
@@ -165,6 +121,8 @@ comments: false
 ---
 ```
 
+---
+
 ## Migration from Disqus
 
 If migrating from Disqus:
@@ -174,6 +132,8 @@ If migrating from Disqus:
 3. **Delete Disqus configuration** from `_config.yml`
 4. **Follow the installation steps** above
 5. **Note**: Existing Disqus comments won't transfer to Giscus
+
+---
 
 ## Troubleshooting
 
@@ -204,6 +164,8 @@ If pages are creating duplicate discussions:
 2. Check `data-mapping` is consistent
 3. Verify page URLs are stable (no trailing slashes issues)
 
+---
+
 ## Best Practices
 
 1. **Use pathname mapping** — most reliable for Jekyll sites
@@ -211,6 +173,8 @@ If pages are creating duplicate discussions:
 3. **Create a dedicated category** — keeps comments organized
 4. **Test locally** — comments won't work on localhost but verify the script loads
 5. **Consider lazy loading** — add `loading="lazy"` for performance
+
+---
 
 ## Further Reading
 

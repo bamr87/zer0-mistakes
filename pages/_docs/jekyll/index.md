@@ -14,8 +14,6 @@ difficulty: beginner
 estimated_time: 10 minutes
 prerequisites:
     - Docker Desktop (recommended) or Ruby + Bundler
-updated: 2025-12-20
-lastmod: 2025-12-20T22:15:45.976Z
 sidebar:
     nav: docs
 ---
@@ -93,23 +91,27 @@ docker-compose exec jekyll jekyll clean
 
 ### Configuration & Setup
 
-- [Jekyll Configuration](/docs/jekyll/jekyll-config/) - Site settings and options
-- [Front Matter](/docs/front-matter/) - Page metadata and options
-- [Performance Optimization](/docs/jekyll/jekyll-performance-optimization/)
-- [Security Best Practices](/docs/jekyll/jekyll-security/)
+- [Jekyll Configuration](/docs/jekyll/jekyll-config/) — Site settings and options
+- [Front Matter](/docs/front-matter/) — Page metadata and options
+- [Code Highlighting](/docs/jekyll/code-highlighting/) — Syntax highlighting
+- [Pagination](/docs/jekyll/pagination/) — Post navigation
 
-### Templating & Content
+### Features
 
-- [Liquid Templating](/docs/jekyll/jekyll-liquid/) - Template language basics
-- [Syntax Highlighting](/docs/jekyll/jekyll-highlighting/) - Code blocks and syntax colors
-- [Mermaid Diagrams](/docs/jekyll/mermaid-native-markdown/) - Diagrams in Markdown
-- [Math with MathJax](/docs/jekyll/jekyll-math-symbols-with-mathjax/)
+See the [Features](/docs/features/) section for:
+
+- [Mermaid Diagrams](/docs/features/mermaid-diagrams/) — Flowcharts and diagrams
+- [MathJax Math](/docs/features/mathjax-math/) — Mathematical notation
+- [Giscus Comments](/docs/features/giscus-comments/) — GitHub Discussions comments
+- [PostHog Analytics](/docs/features/posthog-analytics/) — Privacy-first analytics
 
 ### Deployment
 
-- [GitHub Pages](/quickstart/github-setup/) - Deploy to GitHub
-- [Netlify](/docs/jekyll/deploying-jekyll-website-to-netlify/) - Deploy to Netlify
-- [Custom Domain](/docs/jekyll/deploying-personal-website-with-custom-domain/)
+See the [Deployment](/docs/deployment/) section for:
+
+- [GitHub Pages](/docs/deployment/github-pages/) — Free hosting with GitHub
+- [Netlify](/docs/deployment/netlify/) — Advanced hosting features
+- [Custom Domain](/docs/deployment/custom-domain/) — Use your own domain
 
 ## Resources
 
@@ -119,6 +121,6 @@ docker-compose exec jekyll jekyll clean
 
 ## Related
 
-- [Ruby & Bundler](/docs/ruby/) - Ruby dependency management
-- [Liquid Templating](/docs/liquid/) - Template language reference
-- [Docker Development](/docs/docker/) - Container-based workflow
+- [Ruby & Bundler](/docs/ruby/) — Ruby dependency management
+- [Liquid Templating](/docs/liquid/) — Template language reference
+- [Docker Development](/docs/docker/) — Container-based workflow

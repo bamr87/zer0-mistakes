@@ -1,27 +1,24 @@
 ---
-title: Jekyll Math with MathJax
-description: "Display mathematical equations and formulas in Jekyll pages using MathJax - LaTeX-style notation for the web."
-date: 2026-01-24T00:00:00.000Z
-lastmod: 2026-01-24T00:00:00.000Z
-tags:
-  - mathjax
-  - math
-  - jekyll
-  - latex
-categories:
-  - Jekyll
-  - Features
+title: MathJax Math
+description: Display mathematical equations and formulas in Jekyll pages using MathJax - LaTeX-style notation for the web.
 layout: default
-permalink: /docs/jekyll/mathjax/
+categories:
+    - docs
+    - features
+tags:
+    - mathjax
+    - math
+    - jekyll
+    - latex
+permalink: /docs/features/mathjax-math/
 mathjax: true
-difficulty_level: beginner
-estimated_time: "10 minutes"
-keywords:
-  primary: ["mathjax jekyll", "math equations", "latex web"]
-  secondary: ["mathematical notation", "formulas", "scientific writing"]
+difficulty: beginner
+estimated_time: 10 minutes
+sidebar:
+    nav: docs
 ---
 
-# Jekyll Math with MathJax
+# MathJax Math
 
 > Display mathematical equations and formulas using LaTeX-style syntax with MathJax.
 
@@ -60,7 +57,7 @@ $$
 
 ### Theme Integration
 
-The Zer0-Mistakes theme includes MathJax support. The include file loads MathJax conditionally:
+The theme includes MathJax support. The include file loads MathJax conditionally:
 
 ```html
 {% raw %}{% if page.mathjax %}
@@ -78,20 +75,6 @@ The Zer0-Mistakes theme includes MathJax support. The include file loads MathJax
 </script>
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
 {% endif %}{% endraw %}
-```
-
-### CDN Options
-
-**MathJax 3** (recommended):
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
-```
-
-**MathJax 2** (legacy):
-
-```html
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
 ```
 
 ---
@@ -154,16 +137,6 @@ a & b \\
 c & d
 \end{pmatrix}
 $$
-
-**Equation Numbering:**
-
-```markdown
-$$
-\begin{equation}
-E = mc^2
-\end{equation}
-$$
-```
 
 ---
 

@@ -1,36 +1,32 @@
 ---
-title: Jekyll Diagrams with Mermaid
-description: "Complete guide to integrating Mermaid diagrams in Jekyll sites - flowcharts, sequence diagrams, class diagrams and more with GitHub Pages compatibility."
-date: 2026-01-24T00:00:00.000Z
-lastmod: 2026-01-24T00:00:00.000Z
-tags:
-  - mermaid
-  - diagrams
-  - jekyll
-  - flowchart
-  - documentation
-  - github-pages
-categories:
-  - Jekyll
-  - Documentation
+title: Mermaid Diagrams
+description: Complete guide to integrating Mermaid diagrams in Jekyll sites - flowcharts, sequence diagrams, class diagrams and more with GitHub Pages compatibility.
 layout: default
-permalink: /docs/jekyll/mermaid-diagrams/
+categories:
+    - docs
+    - features
+tags:
+    - mermaid
+    - diagrams
+    - jekyll
+    - flowchart
+    - documentation
+permalink: /docs/features/mermaid-diagrams/
 mermaid: true
-difficulty_level: beginner
-estimated_time: "15 minutes"
+difficulty: beginner
+estimated_time: 15 minutes
 prerequisites:
-  - Jekyll site with Bootstrap 5
-  - Basic Markdown knowledge
-keywords:
-  primary: ["mermaid diagrams", "jekyll diagrams", "flowchart"]
-  secondary: ["sequence diagram", "github pages diagrams", "documentation visualization"]
+    - Jekyll site with Bootstrap 5
+    - Basic Markdown knowledge
+sidebar:
+    nav: docs
 ---
 
-# Jekyll Diagrams with Mermaid
+# Mermaid Diagrams
 
 > Create flowcharts, sequence diagrams, class diagrams and more in your Jekyll site using Mermaid's simple text-based syntax.
 
-**✅ GitHub Pages Compatible** — Works without custom server-side plugins!
+**GitHub Pages Compatible** — Works without custom server-side plugins!
 
 ## Quick Start
 
@@ -66,11 +62,9 @@ graph TD
 
 ### Site Configuration
 
-The Zer0-Mistakes theme includes Mermaid support in `_config.yml`:
+The theme includes Mermaid support in `_config.yml`:
 
 ```yaml
-# Mermaid Diagram Configuration
-# GitHub Pages Compatible: Yes (client-side rendering via CDN)
 mermaid:
   src: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js'
 ```
@@ -81,25 +75,6 @@ mermaid:
 2. **Conditional loading** — Script only loads when needed
 3. **Client-side rendering** — No server-side plugin required
 4. **Auto-initialization** — Diagrams render on page load
-
-### Include Implementation
-
-The theme uses `_includes/components/mermaid.html`:
-
-```html
-{% raw %}{% if page.mermaid %}
-<script src="{{ site.mermaid.src }}"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    mermaid.initialize({
-      startOnLoad: true,
-      theme: 'default',
-      securityLevel: 'loose'
-    });
-  });
-</script>
-{% endif %}{% endraw %}
-```
 
 ---
 
@@ -340,70 +315,6 @@ mermaid.initialize({
 | `neutral` | Grayscale |
 | `base` | Minimal styling |
 
-### Custom Styling
-
-Add CSS to style diagrams:
-
-```css
-/* Style all Mermaid diagrams */
-.mermaid {
-  text-align: center;
-  margin: 2rem 0;
-}
-
-/* Style nodes */
-.mermaid .node rect {
-  fill: #f9f9f9;
-  stroke: #333;
-}
-```
-
----
-
-## GitHub Pages Compatibility
-
-### Why This Works
-
-Unlike many Jekyll plugins, Mermaid renders **client-side** via JavaScript:
-
-1. **No server-side processing** required
-2. **Works with any static host** (GitHub Pages, Netlify, etc.)
-3. **CDN delivery** — fast and reliable
-4. **No build restrictions** — GitHub Pages whitelist doesn't apply
-
-### The jekyll-mermaid Plugin
-
-The `jekyll-mermaid` plugin is **optional**:
-
-```yaml
-plugins:
-  - jekyll-mermaid  # Only provides {% mermaid %} Liquid tag
-```
-
-For GitHub Pages, use the client-side approach documented here instead.
-
----
-
-## Best Practices
-
-### 1. Performance
-
-- **Only enable when needed** — use `mermaid: true` only on pages with diagrams
-- **Keep diagrams simple** — complex diagrams slow rendering
-- **Use lazy loading** for pages with many diagrams
-
-### 2. Accessibility
-
-- **Add descriptions** — complex diagrams need text explanations
-- **Use clear labels** — avoid abbreviations
-- **Provide alternative views** — tables for data-heavy diagrams
-
-### 3. Maintenance
-
-- **Test diagrams** — use [Mermaid Live Editor](https://mermaid.live/) first
-- **Keep syntax updated** — Mermaid evolves, check docs for new features
-- **Document custom themes** — if using non-default themes
-
 ---
 
 ## Troubleshooting
@@ -420,14 +331,14 @@ For GitHub Pages, use the client-side approach documented here instead.
 ### Common Syntax Errors
 
 ```markdown
-❌ Wrong: graph TD A -> B      (single arrow)
-✅ Right: graph TD A --> B     (double arrow)
+Wrong: graph TD A -> B      (single arrow)
+Right: graph TD A --> B     (double arrow)
 
-❌ Wrong: graph TD A[Text]B    (no arrow between nodes)
-✅ Right: graph TD A[Text] --> B
+Wrong: graph TD A[Text]B    (no arrow between nodes)
+Right: graph TD A[Text] --> B
 
-❌ Wrong: flowchart TD         (in older Mermaid versions)
-✅ Right: graph TD             (more compatible)
+Wrong: flowchart TD         (in older Mermaid versions)
+Right: graph TD             (more compatible)
 ```
 
 ### Testing Locally
@@ -439,6 +350,16 @@ docker-compose up
 # Check browser console for errors
 # Open http://localhost:4000/your-page
 ```
+
+---
+
+## Best Practices
+
+1. **Only enable when needed** — use `mermaid: true` only on pages with diagrams
+2. **Keep diagrams simple** — complex diagrams slow rendering
+3. **Test in Live Editor** — use [mermaid.live](https://mermaid.live/) first
+4. **Add descriptions** — complex diagrams need text explanations
+5. **Use clear labels** — avoid abbreviations
 
 ---
 

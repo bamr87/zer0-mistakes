@@ -1,189 +1,99 @@
----
-draft: draft
----
+# Developer Documentation
 
-# 🛠️ Zer0-Mistakes Technical Documentation Center
+Technical documentation for contributors and maintainers of the Zer0-Mistakes Jekyll theme.
 
-This directory contains **repository-specific technical documentation** for the Zer0-Mistakes Jekyll theme, designed for maintainers, contributors, and developers working with the theme's source code.
+## Purpose
 
-## 🎯 Purpose & Scope
+This `/docs/` directory contains **developer-focused documentation** for the Zer0-Mistakes Jekyll theme:
 
-The `/docs/` directory serves as the **developer documentation hub** containing:
+- **Architecture** — Codebase structure and design decisions
+- **Systems** — CI/CD, release automation, gem publication
+- **Implementation** — Feature implementation details and changelogs
+- **Development** — Setup guides and coding conventions
+- **Releases** — Version history and release notes
 
-- **Repository Architecture**: Build processes, component structure, and system design
-- **Technical Implementation**: How features are built, maintained, and tested
-- **Development Workflows**: CI/CD, testing, release processes, and automation
-- **Stack Technologies**: Jekyll, Bootstrap, Docker, Ruby, and framework specifics
-- **MDX Source Files**: Rich documentation with interactive components and code examples
+> **For Users:** If you're looking for documentation on **using** the theme, see [`pages/_docs/`](../pages/_docs/) which contains user-facing guides and tutorials.
 
-This documentation is **source-code focused** and targets technical audiences who need to understand, modify, or extend the theme itself.
+## Directory Structure
 
-> **📍 For Published Documentation**: See [`pages/_docs/`](../pages/_docs/) for rendered online documentation targeting end-users and general technology guides.
+```
+docs/
+├── architecture/           # Codebase architecture
+│   ├── project-structure.md
+│   ├── layouts-includes.md
+│   └── build-system.md
+├── systems/                # Automation and CI/CD
+│   ├── release-automation.md
+│   ├── automated-version-system.md
+│   └── gem-publication-system.md
+├── implementation/         # Feature implementation details
+│   ├── mermaid-integration-v2.md
+│   ├── posthog-analytics-integration.md
+│   └── sitemap-integration.md
+├── development/            # Development guides
+│   ├── local-setup.md
+│   ├── testing.md
+│   └── code-style.md
+├── releases/               # Release notes and history
+│   └── v*.md
+├── configuration/          # Configuration guides
+│   └── url-configuration-guide.md
+├── templates/              # Documentation templates
+└── archive/                # Historical documentation
+```
 
-## 📁 Directory Structure & Content Types
+## Quick Links
 
-### 🏗️ `/systems/` - Core System Architecture
+### Getting Started (Contributors)
 
-Documentation for repository infrastructure and automation:
+- [Local Development Setup](development/local-setup.md)
+- [Testing Guide](development/testing.md)
+- [Code Style Guide](development/code-style.md)
 
-- **[Release Automation System](systems/release-automation.md)** - Modular release automation v2.0
-- **Automated Version System** - Semantic versioning and release automation
-- **CI/CD Pipelines** - GitHub Actions, testing, and deployment workflows
-- **Gem Publication System** - Ruby gem packaging and distribution
-- **Build & Testing** - Docker, Jekyll compilation, and quality assurance
+### Understanding the Codebase
 
-### ✨ `/features/` - Theme Feature Implementation
+- [Project Structure](architecture/project-structure.md)
+- [Layouts and Includes](architecture/layouts-includes.md)
+- [Build System](architecture/build-system.md)
 
-Technical documentation for theme features and components:
+### Release Process
 
-- **Component Architecture** - How `_layouts/` and `_includes/` are structured
-- **Feature Implementation** - Mermaid integration, PostHog analytics, sitemaps
-- **Enhancement Guides** - Adding new features and extending functionality
-- **Integration Instructions** - Bootstrap 5, Jekyll plugins, and third-party services
+- [Release Automation v2.0](systems/release-automation.md)
+- [Gem Publication System](systems/gem-publication-system.md)
 
-### 🔧 `/configuration/` - Development & Setup Guides
+## Documentation Locations
 
-Environment setup and configuration for contributors:
+| Location | Purpose | Audience |
+|----------|---------|----------|
+| `/docs/` (this directory) | Developer/contributor documentation | Maintainers |
+| `/pages/_docs/` | User-facing theme documentation | End users |
+| `README.md` | Project overview | All users |
+| `CONTRIBUTING.md` | Contribution guidelines | Contributors |
 
-- **Development Environment** - Docker, local Jekyll setup, and tooling
-- **URL Configuration** - Routing, permalinks, and hosting setup
-- **Theme Customization** - Overriding defaults and extending styles
-- **Integration Patterns** - How to integrate with external services
+## Contributing to Documentation
 
-### 📦 `/releases/` - Version & Release Documentation
+### Adding Developer Documentation
 
-Historical documentation tracking theme evolution:
+1. Choose the appropriate subdirectory
+2. Follow existing formatting conventions
+3. Link from relevant README files
+4. Update this README if adding new sections
 
-- **Release Notes** - Version-specific changes and feature additions
-- **Migration Guides** - Breaking changes and upgrade instructions
-- **Publication Records** - RubyGems releases and distribution
-- **Version Summaries** - High-level overviews of major releases
+### Documentation Standards
 
-### 📝 `/templates/` - Documentation Standards
+- **Markdown format** with clear headers
+- **Code examples** for technical content
+- **Tables** for reference information
+- **Links** to related documentation
 
-Standardized templates for maintaining documentation quality:
+## Recent Updates
 
-- **Feature Documentation Template** - Standard format for new features
-- **Release Notes Template** - Consistent changelog and release structure
-- **Change Tracking Template** - How to document modifications
-- **Issue Templates** - Bug reports and feature request formats
-
-### 🧩 `/jekyll/` - Jekyll Ecosystem Documentation
-
-Jekyll-specific technical implementation guides:
-
-- **Performance Optimization** - Speed and efficiency improvements
-- **Security Best Practices** - Safe Liquid templating and input validation
-- **Plugin Integration** - Custom plugins and third-party extensions
-- **Advanced Configuration** - Complex Jekyll setups and customizations
-
-### 🎨 `/_includes/` - Reusable Documentation Components
-
-Modular documentation components (MDX format):
-
-- **Code Examples** - Interactive code snippets and demos
-- **Diagrams & Charts** - Technical architecture visualizations
-- **Reusable Sections** - Shared content across multiple docs
-- **Footer & Navigation** - Documentation site structure
-
-## 📋 Documentation Standards & Formats
-
-### 🔧 Technical Documentation Format
-
-- **Primary Format**: MDX (Markdown + JSX) for rich, interactive content
-- **Code Examples**: Live, executable examples with syntax highlighting
-- **Architecture Diagrams**: Mermaid diagrams and technical visualizations
-- **Interactive Components**: Collapsible sections, tabs, and dynamic content
-
-### 📝 Naming Conventions
-
-- **Systems**: `system-name-architecture.mdx`, `automation-workflow.mdx`
-- **Features**: `feature-name-implementation.mdx`, `component-guide.mdx`
-- **Releases**: `vX.Y.Z-release-notes.md`, `vX.Y.Z-technical-summary.mdx`
-- **Configuration**: `setup-guide.mdx`, `integration-pattern.mdx`
-- **Templates**: `documentation-template.mdx`, `feature-template.mdx`
-
-### 🏗️ Content Guidelines for Technical Documentation
-
-- **Architecture First**: Start with system design and component relationships
-- **Implementation Details**: Include actual code from `_layouts/`, `_includes/`, and `_sass/`
-- **Testing Instructions**: How to test changes and validate functionality
-- **Performance Considerations**: Impact on build time, runtime, and user experience
-- **Security Implications**: Validate Liquid templates, input sanitization, and dependencies
-- **Maintainer Notes**: Context for future developers about design decisions
-
-### 🔗 Cross-Reference Standards
-
-- **Internal Links**: Link to related technical documentation within `/docs/`
-- **Source Code References**: Direct links to files in `_layouts/`, `_includes/`, `scripts/`
-- **External Dependencies**: Document Bootstrap, Jekyll, Ruby gem dependencies
-- **API References**: Jekyll APIs, Liquid filters, and custom plugin interfaces
-
-## 🔄 Documentation Workflow & Contribution
-
-### 📝 Adding New Technical Documentation
-
-1. **Choose Directory**: Place in appropriate subdirectory based on content type
-2. **Use MDX Format**: Create `.mdx` files for rich, interactive documentation
-3. **Follow Templates**: Use templates from `/templates/` for consistency
-4. **Include Front Matter**: Add metadata for proper categorization and SEO
-5. **Test Locally**: Verify MDX rendering and component functionality
-6. **Cross-Reference**: Link to related source code and documentation
-
-### 🔧 Working with Source Code Documentation
-
-- **Component Documentation**: Document `_layouts/` and `_includes/` with usage examples
-- **Script Documentation**: Explain automation scripts in `/scripts/` with parameter details
-- **Testing Documentation**: Document test cases and validation procedures
-- **Configuration Documentation**: Explain Jekyll configs, Docker setup, and environment variables
-
-### 🚀 Publishing Process
-
-1. **Technical Review**: Ensure accuracy of implementation details
-2. **Code Examples**: Verify all code snippets are current and functional
-3. **Testing**: Validate that documented procedures work correctly
-4. **Version Control**: Tag documentation with appropriate version numbers
-
-## 🌐 Documentation Ecosystem
-
-### 📚 Related Documentation Locations
-
-| Location                                             | Purpose                                 | Format   | Audience                   |
-| ---------------------------------------------------- | --------------------------------------- | -------- | -------------------------- |
-| `/docs/` _(This Directory)_                          | **Technical repository documentation**  | MDX      | Developers & Contributors  |
-| [`/pages/_docs/`](../pages/_docs/)                   | **Published online documentation**      | Markdown | End Users & General Public |
-| [`/.github/instructions/`](../.github/instructions/) | **GitHub Copilot development guidance** | Markdown | AI Agents & Contributors   |
-| `/README.md`                                         | **Project overview and quick start**    | Markdown | All Users                  |
-
-### 🔀 Content Flow & Conversion
-
-- **Source**: Technical documentation written in MDX format in `/docs/`
-- **Processing**: MDX files converted to Markdown for public consumption
-- **Publication**: Processed content placed in `/pages/_docs/` for online rendering
-- **Distribution**: Jekyll builds and serves content to users via GitHub Pages
-
-## 📖 Quick Reference
-
-### Recent Releases
-
-- [v0.6.0 - Release Automation Modernization](systems/release-automation.md)
-- [v0.5.0 - Comprehensive Sitemap Integration](releases/v0.5.0-release-summary.md)
-- [v0.4.0 - Statistics Dashboard](releases/v0.4.0-release-summary.md)
-- [v0.3.0 - Mermaid Integration](releases/v0.3.0-release-notes.md)
-
-### Key Features
-
-- [Release Automation System v2.0](systems/release-automation.md)
-- [Statistics Dashboard](features/statistics-dashboard.md)
-- [Sitemap Integration](features/sitemap-integration.md)
-- [Automated Version System](systems/automated-version-system.md)
-
-### Configuration
-
-- [URL Configuration](configuration/url-configuration-guide.md)
-- [Development Setup](configuration/development-setup.md)
+- **v0.18.x** — Documentation refactoring (user vs developer docs separation)
+- **v0.6.0** — Release automation modernization
+- **v0.5.0** — Comprehensive sitemap integration
+- **v0.4.0** — Statistics dashboard
 
 ---
 
-**Last Updated**: October 26, 2025  
-**Maintained By**: Zer0-Mistakes Development Team
+**Last Updated:** January 2026
+**Maintained By:** Zer0-Mistakes Contributors

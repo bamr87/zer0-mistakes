@@ -1,11 +1,24 @@
-# QUICKSTART — zer0-mistakes
+---
+title: Quick Start Guide
+description: Multiple installation methods for the Zer0-Mistakes Jekyll theme - from AI wizard to manual setup.
+layout: default
+categories:
+    - docs
+    - getting-started
+tags:
+    - quickstart
+    - installation
+    - docker
+permalink: /docs/getting-started/quick-start/
+difficulty: beginner
+estimated_time: 15 minutes
+sidebar:
+    nav: docs
+---
 
-This guide is the starting point for installing, running, and personalizing **zer0-mistakes**.
+# Quick Start Guide
 
-Published (site) version of this guide:
-- `/quickstart/` (source: `pages/_quickstart/index.md`)
-
-If you’re **building a new site**, use the **AI Install Wizard** (recommended). If you’re **developing the theme itself**, fork/clone this repo and run it with Docker.
+This guide covers all installation methods for the Zer0-Mistakes Jekyll theme.
 
 ---
 
@@ -39,7 +52,7 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.s
 
 Notes:
 - `--full` is the default; it installs the full theme structure, Docker config, and development overrides.
-- The installer runs in “remote mode” when it’s executed via `curl` and downloads the theme files automatically.
+- The installer runs in "remote mode" when it's executed via `curl` and downloads the theme files automatically.
 - The installer creates a project-local `INSTALLATION.md` inside the generated site folder.
 
 ### 2) Start the dev server (Docker)
@@ -66,17 +79,6 @@ You can upgrade a minimal install to full later:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash -s -- --full
 ```
-
-### 4) (Optional) Run the self-healing setup
-If you are working inside this theme repo (or you copied it into your site), you can run `init_setup.sh`:
-
-```bash
-./init_setup.sh
-```
-
----
-
-## First Personalization Checklist (do this early)
 
 ---
 
@@ -125,44 +127,6 @@ Develop entirely in the cloud — no local Docker or Ruby required.
 
 ---
 
-## First Personalization Checklist (do this early)
-
-Most customization starts in `_config.yml` (production) and `_config_dev.yml` (development overrides).
-
-### 1) Update your site identity (`_config.yml`)
-Common fields to change:
-- `title`, `subtitle`, `description`
-- `url` and `baseurl`
-- `author.*` / `name` / `email`
-- `logo` / `teaser` / `og_image`
-
-Important:
-- `_config.yml` changes are **not hot-reloaded** by Jekyll; restart your dev server after edits.
-
-### 2) Disable or replace analytics (`_config.yml`)
-This repo ships with analytics settings (Google Analytics + PostHog). For your own site:
-- set `google_analytics: null` (or your own ID)
-- for PostHog, either set `posthog.enabled: false` or replace `posthog.api_key` + `posthog.api_host`
-
-In development, analytics are already disabled in `_config_dev.yml`.
-
-### 3) Customize navigation
-Navigation data lives under:
-- `_data/navigation/`
-
-If you want to change menus/sidebars, start there, then check:
-- `_includes/navigation/`
-
-### 4) Add/replace content
-Typical content locations:
-- `index.html` / `index.md` (homepage)
-- `pages/` (site pages)
-- `pages/_posts/` (blog posts, if you use posts)
-- `pages/_docs/` (published end-user documentation)
-- `docs/` (technical/maintainer documentation)
-
----
-
 ## Path D — Fork/Clone (theme development)
 
 ### Prerequisites
@@ -206,7 +170,7 @@ docker-compose down
 
 Use this if you want your own repo to reference the theme without copying files.
 
-In your site repo’s `_config.yml`:
+In your site repo's `_config.yml`:
 
 ```yaml
 remote_theme: "bamr87/zer0-mistakes"
@@ -245,54 +209,40 @@ bundle exec jekyll serve --config "_config.yml,_config_dev.yml"
 
 ---
 
-## Optional Features
+## First Personalization Checklist
 
-### Jupyter Notebooks
-- Put notebooks in `pages/_notebooks/`
-- Convert:
+Most customization starts in `_config.yml` (production) and `_config_dev.yml` (development overrides).
 
-```bash
-make convert-notebooks
-```
+### 1) Update your site identity (`_config.yml`)
+Common fields to change:
+- `title`, `subtitle`, `description`
+- `url` and `baseurl`
+- `author.*` / `name` / `email`
+- `logo` / `teaser` / `og_image`
 
-Docs:
-- `docs/JUPYTER_NOTEBOOKS.md`
+Important:
+- `_config.yml` changes are **not hot-reloaded** by Jekyll; restart your dev server after edits.
 
-### AI Preview Image Generation
-The theme includes preview-image generation settings under `preview_images:` in `_config.yml`.
+### 2) Disable or replace analytics (`_config.yml`)
+This repo ships with analytics settings (Google Analytics + PostHog). For your own site:
+- set `google_analytics: null` (or your own ID)
+- for PostHog, either set `posthog.enabled: false` or replace `posthog.api_key` + `posthog.api_host`
 
-To list missing previews:
+In development, analytics are already disabled in `_config_dev.yml`.
 
-```bash
-./scripts/generate-preview-images.sh --list-missing
-```
+### 3) Customize navigation
+Navigation data lives under:
+- `_data/navigation/`
 
-To generate previews you’ll typically need an API key available in your environment (the repo scripts reference `OPENAI_API_KEY`).
+If you want to change menus/sidebars, start there, then check:
+- `_includes/navigation/`
 
----
-
-## Testing & Validation
-
-### Run the consolidated test runner
-
-```bash
-./test/test_runner.sh
-```
-
-Examples:
-
-```bash
-./test/test_runner.sh --suites core,deployment --verbose
-./test/test_runner.sh --suites quality --skip-docker
-```
-
-### Handy Make targets
-
-```bash
-make test
-make test-verbose
-make lint
-```
+### 4) Add/replace content
+Typical content locations:
+- `index.html` / `index.md` (homepage)
+- `pages/` (site pages)
+- `pages/_posts/` (blog posts, if you use posts)
+- `pages/_docs/` (published end-user documentation)
 
 ---
 
@@ -307,12 +257,12 @@ ports:
 ```
 
 ### Apple Silicon (M-series Macs)
-This repo’s Docker config uses `platform: linux/amd64` for compatibility. If Docker warns, it’s usually safe to proceed.
+This repo's Docker config uses `platform: linux/amd64` for compatibility. If Docker warns, it's usually safe to proceed.
 
 ### Theme not found / remote theme issues
 For local Docker development, `_config_dev.yml` disables `remote_theme` to avoid requiring GitHub theme fetches.
 
-### Config changes don’t show up
+### Config changes don't show up
 - `_config.yml` changes require restarting the Jekyll server.
 - Try:
 
@@ -323,8 +273,9 @@ docker-compose up
 
 ---
 
-## Where to Go Next
+## Next Steps
 
-- Start with `README.md` for architecture and feature overview.
-- Use `/pages/_docs/` for user-facing docs you’ll publish.
-- Use `/docs/` for technical notes as you customize the theme.
+- [Theme Guide](../theme-guide/) — Complete customization guide
+- [Front Matter](/docs/front-matter/) — Configure page metadata
+- [Features](/docs/features/) — Enable Mermaid diagrams, comments, analytics
+- [Deployment](/docs/deployment/) — Publish your site

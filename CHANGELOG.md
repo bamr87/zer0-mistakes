@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.18.2] - 2026-01-25
+
+### Changed
+- **Documentation Architecture**: Major restructure separating user documentation (`pages/_docs/`) from developer documentation (`docs/`)
+- **Navigation**: Updated `_data/navigation/docs.yml` with new section structure
+
+### Added
+- **User Documentation** (`pages/_docs/`):
+  - `getting-started/` - Installation guides, quick start, theme guide
+  - `features/` - Mermaid diagrams, MathJax, Giscus comments, PostHog analytics, keyboard navigation
+  - `deployment/` - GitHub Pages, Netlify, custom domain guides
+  - `customization/` - Layouts, styles, navigation customization guides
+- **Developer Documentation** (`docs/`):
+  - `architecture/` - Project structure, layouts/includes, build system
+  - `development/` - Local setup, testing, code style guides
+  - `implementation/` - Feature implementation changelogs (renamed from `features/`)
+
+### Removed
+- Duplicate user-facing documentation from `docs/jekyll/` (moved to `pages/_docs/`)
+- Legacy `docs/QUICKSTART.md` and `docs/keyboard-navigation.md` (content moved to user docs)
+
 ## [0.18.1] - 2026-01-24
 
 ### Changed

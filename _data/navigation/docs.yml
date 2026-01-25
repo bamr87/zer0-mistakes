@@ -1,7 +1,6 @@
 # Documentation Navigation Configuration
-# Used by: Docs sidebar (nav: tree)
-# Purpose: Organize documentation by topic area for _docs collection
-# Schema: See README.md for full documentation
+# Used by: Docs sidebar (nav: docs)
+# Purpose: Organize user documentation for the Zer0-Mistakes theme
 
 # ============================================================
 # Getting Started
@@ -15,11 +14,69 @@
       url: /docs/
     - title: Installation
       url: /docs/installation/
-    - title: Troubleshooting
-      url: /docs/troubleshooting/
+    - title: Quick Start
+      url: /docs/getting-started/quick-start/
+    - title: Theme Guide
+      url: /docs/getting-started/theme-guide/
+    - title: Front Matter
+      url: /docs/front-matter/
 
 # ============================================================
-# Core Technologies
+# Features
+# ============================================================
+- title: Features
+  icon: bi-stars
+  url: /docs/features/
+  children:
+    - title: Features Overview
+      url: /docs/features/
+    - title: Mermaid Diagrams
+      url: /docs/features/mermaid-diagrams/
+    - title: MathJax Math
+      url: /docs/features/mathjax-math/
+    - title: Giscus Comments
+      url: /docs/features/giscus-comments/
+    - title: PostHog Analytics
+      url: /docs/features/posthog-analytics/
+    - title: Keyboard Navigation
+      url: /docs/features/keyboard-navigation/
+    - title: Preview Images
+      url: /docs/features/preview-image-generator/
+
+# ============================================================
+# Customization
+# ============================================================
+- title: Customization
+  icon: bi-palette
+  url: /docs/customization/
+  children:
+    - title: Customization Overview
+      url: /docs/customization/
+    - title: Layouts
+      url: /docs/customization/layouts/
+    - title: Styles
+      url: /docs/customization/styles/
+    - title: Navigation
+      url: /docs/customization/navigation/
+
+# ============================================================
+# Deployment
+# ============================================================
+- title: Deployment
+  icon: bi-cloud-upload
+  url: /docs/deployment/
+  children:
+    - title: Deployment Overview
+      url: /docs/deployment/
+    - title: GitHub Pages
+      url: /docs/deployment/github-pages/
+    - title: Netlify
+      url: /docs/deployment/netlify/
+    - title: Custom Domain
+      url: /docs/deployment/custom-domain/
+
+# ============================================================
+# Jekyll Reference
 # ============================================================
 - title: Jekyll
   icon: bi-journal-code
@@ -29,17 +86,20 @@
       url: /docs/jekyll/
     - title: Configuration
       url: /docs/jekyll/jekyll-config/
-    - title: Front Matter
-      url: /docs/front-matter/
     - title: Liquid Templating
       url: /docs/jekyll/jekyll-liquid/
-    - title: Syntax Highlighting
-      url: /docs/jekyll/jekyll-highlighting/
+    - title: Code Highlighting
+      url: /docs/jekyll/code-highlighting/
+    - title: Pagination
+      url: /docs/jekyll/pagination/
     - title: Performance
       url: /docs/jekyll/jekyll-performance-optimization/
     - title: Security
       url: /docs/jekyll/jekyll-security/
 
+# ============================================================
+# Other Technologies
+# ============================================================
 - title: Ruby & Bundler
   icon: bi-gem
   url: /docs/ruby/
@@ -71,33 +131,11 @@
       url: /docs/bootstrap/
 
 # ============================================================
-# Theme Features
+# Help
 # ============================================================
-- title: Features
-  icon: bi-stars
-  url: /features/
+- title: Help
+  icon: bi-question-circle
+  url: /docs/troubleshooting/
   children:
-    - title: All Features
-      url: /features/
-    - title: Mermaid Diagrams
-      url: /docs/jekyll/mermaid-native-markdown/
-    - title: Math with MathJax
-      url: /docs/jekyll/jekyll-math-symbols-with-mathjax/
-    - title: Preview Image Generator
-      url: /docs/features/preview-image-generator/
-    - title: Frontmatter CMS
-      url: /docs/jekyll/jekyll-frontmatter-cms/
-
-# ============================================================
-# Deployment
-# ============================================================
-- title: Deployment
-  icon: bi-cloud-upload
-  url: /quickstart/github-setup/
-  children:
-    - title: GitHub Pages
-      url: /quickstart/github-setup/
-    - title: Netlify
-      url: /docs/jekyll/deploying-jekyll-website-to-netlify/
-    - title: Custom Domain
-      url: /docs/jekyll/deploying-personal-website-with-custom-domain/
+    - title: Troubleshooting
+      url: /docs/troubleshooting/
