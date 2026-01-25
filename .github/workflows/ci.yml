@@ -135,6 +135,47 @@ jobs:
 
   # NOTE: Code quality & documentation checks are handled by the quality-checks job above
   # The duplicate 'quality' job has been removed to avoid redundancy
+
+  # Docker-based deployment tests (runs actual Docker tests)
+  docker-tests:
+    name: Docker Deployment Tests
+    runs-on: ubuntu-latest
+    needs: [fast-checks, quality-checks]
+    # Skip on scheduled runs (handled by test-latest.yml) and when test_scope is 'fast'
+    if: github.event_name != 'schedule' && inputs.test_scope != 'fast'
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-deploy-${{ hashFiles('docker/Dockerfile', 'Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-deploy-
+
+      - name: Run Deployment Test Suite
+        uses: ./.github/actions/test-suite
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          verbose: true
+          suites: deployment
+          skip-docker: false
+
+      - name: Upload Deployment Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: deployment-test-results
+          path: test/results/
+          retention-days: 7
+
   # Build validation
   build:
     name: Build & Validate
@@ -222,44 +263,92 @@ jobs:
     name: Integration Tests
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || inputs.test_scope == 'comprehensive')
-    timeout-minutes: 15
+    # Run on PRs to main/develop AND pushes to main, or when comprehensive scope selected
+    if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/main' && github.event_name == 'push') || inputs.test_scope == 'comprehensive'
+    timeout-minutes: 12
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ hashFiles('docker/Dockerfile', 'Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
       - name: Build and start Jekyll in Docker
         run: |
-          echo "🔨 Building Docker image..."
-          docker compose build
+          echo "🔨 Building Docker image with layer caching..."
+          docker buildx build \
+            --cache-from type=local,src=/tmp/.buildx-cache \
+            --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max \
+            --load \
+            -t zer0-mistakes-jekyll:latest \
+            -f docker/Dockerfile \
+            --target dev-test \
+            .
+          
+          # Move cache to avoid unbounded growth
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache || true
           
           echo "🚀 Starting Jekyll container..."
           docker compose up -d
           
-          echo "⏳ Waiting for Jekyll to start (up to 180 seconds)..."
-          TIMEOUT=180
+          echo "⏳ Waiting for Jekyll to start with adaptive timeout..."
+          MAX_WAIT=120
           ELAPSED=0
-          INTERVAL=5
+          INTERVAL=2
           
-          while [ $ELAPSED -lt $TIMEOUT ]; do
-            if curl -s http://localhost:4000 > /dev/null 2>&1; then
-              echo "✅ Site is accessible after ${ELAPSED}s"
-              exit 0
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            # Check container health status first
+            CONTAINER_STATUS=$(docker compose ps --format json 2>/dev/null | grep -o '"State":"[^"]*"' | head -1 || echo "")
+            if echo "$CONTAINER_STATUS" | grep -q "running"; then
+              # Container is running, check HTTP accessibility
+              if curl -sf --max-time 3 http://localhost:4000 > /dev/null 2>&1; then
+                echo "✅ Site is accessible after ${ELAPSED}s"
+                break
+              fi
             fi
             
-            # Show container status every 30 seconds
+            # Check for container crash
+            if docker compose ps | grep -q "exited\|dead"; then
+              echo "❌ Container crashed!"
+              docker compose logs --tail=50
+              exit 1
+            fi
+            
+            # Show progress every 30 seconds
             if [ $((ELAPSED % 30)) -eq 0 ] && [ $ELAPSED -gt 0 ]; then
-              echo "📊 Container status after ${ELAPSED}s:"
+              echo "📊 Still waiting... (${ELAPSED}s elapsed)"
               docker compose ps
             fi
             
             sleep $INTERVAL
             ELAPSED=$((ELAPSED + INTERVAL))
+            
+            # Exponential backoff: increase interval up to 10 seconds
+            if [ $INTERVAL -lt 10 ]; then
+              INTERVAL=$((INTERVAL + 1))
+            fi
           done
           
-          echo "❌ Timeout: Site not accessible after ${TIMEOUT}s"
-          exit 1
+          # Final check after loop
+          if [ $ELAPSED -ge $MAX_WAIT ]; then
+            if curl -sf --max-time 5 http://localhost:4000 > /dev/null 2>&1; then
+              echo "✅ Site became accessible at ${ELAPSED}s"
+            else
+              echo "❌ Timeout: Site not accessible after ${MAX_WAIT}s"
+              docker compose logs --tail=100
+              exit 1
+            fi
+          fi
 
       - name: Show Docker logs on failure
         if: failure()
@@ -267,27 +356,68 @@ jobs:
           echo "📋 Docker container logs:"
           docker compose logs --tail=100
 
-      - name: Test site accessibility
+      - name: Test critical pages
         run: |
-          echo "🔍 Testing site accessibility..."
+          echo "🔍 Testing critical page accessibility..."
           
-          # Test homepage
-          if curl -sf http://localhost:4000 > /dev/null; then
-            echo "✅ Homepage accessible"
-          else
-            echo "❌ Homepage not accessible"
+          # Critical paths that MUST be accessible (fail if not)
+          CRITICAL_PATHS=(
+            "/"
+            "/docs/"
+            "/about/"
+            "/search.json"
+            "/sitemap.xml"
+            "/feed.xml"
+          )
+          
+          # Optional paths (warn if not accessible)
+          OPTIONAL_PATHS=(
+            "/blog/"
+            "/features/"
+            "/categories/"
+            "/tags/"
+          )
+          
+          FAILED=0
+          
+          echo "## Critical Pages Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "| Path | Status | Response |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|--------|----------|" >> $GITHUB_STEP_SUMMARY
+          
+          # Test critical paths - fail on any error
+          for path in "${CRITICAL_PATHS[@]}"; do
+            STATUS=$(curl -sf -o /dev/null -w "%{http_code}" --max-time 10 "http://localhost:4000${path}" 2>/dev/null || echo "000")
+            if [[ "$STATUS" == "200" ]]; then
+              echo "✅ CRITICAL: ${path} (HTTP ${STATUS})"
+              echo "| ${path} | ✅ OK | ${STATUS} |" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "❌ CRITICAL FAIL: ${path} (HTTP ${STATUS})"
+              echo "| ${path} | ❌ FAIL | ${STATUS} |" >> $GITHUB_STEP_SUMMARY
+              FAILED=$((FAILED + 1))
+            fi
+          done
+          
+          # Test optional paths - warn only
+          for path in "${OPTIONAL_PATHS[@]}"; do
+            STATUS=$(curl -sf -o /dev/null -w "%{http_code}" --max-time 10 "http://localhost:4000${path}" 2>/dev/null || echo "000")
+            if [[ "$STATUS" == "200" ]]; then
+              echo "✅ OPTIONAL: ${path} (HTTP ${STATUS})"
+              echo "| ${path} | ✅ OK | ${STATUS} |" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "⚠️ OPTIONAL: ${path} (HTTP ${STATUS})"
+              echo "| ${path} | ⚠️ Warning | ${STATUS} |" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+          
+          if [[ $FAILED -gt 0 ]]; then
+            echo ""
+            echo "::error::${FAILED} critical page(s) failed accessibility test"
             docker compose logs --tail=50
             exit 1
           fi
           
-          # Test a few key pages
-          for path in "/docs/" "/about/" "/features/"; do
-            if curl -sf "http://localhost:4000${path}" > /dev/null 2>&1; then
-              echo "✅ ${path} accessible"
-            else
-              echo "⚠️ ${path} not accessible (may not exist)"
-            fi
-          done
+          echo ""
+          echo "✅ All critical pages are accessible"
 
       - name: Cleanup
         if: always()
@@ -297,7 +427,7 @@ jobs:
   summary:
     name: CI Pipeline Summary
     runs-on: ubuntu-latest
-    needs: [fast-checks, quality-checks, test, build, performance, integration]
+    needs: [fast-checks, quality-checks, test, docker-tests, build, performance, integration]
     if: always()
     steps:
       - name: Generate comprehensive summary
@@ -313,6 +443,7 @@ jobs:
           echo "| 🚀 Fast Checks | ${{ needs.fast-checks.result }} | - |" >> $GITHUB_STEP_SUMMARY
           echo "| 📋 Quality Checks | ${{ needs.quality-checks.result }} | - |" >> $GITHUB_STEP_SUMMARY
           echo "| 🧪 Tests | ${{ needs.test.result }} | - |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🐳 Docker Tests | ${{ needs.docker-tests.result }} | - |" >> $GITHUB_STEP_SUMMARY
           echo "| 🔨 Build | ${{ needs.build.result }} | - |" >> $GITHUB_STEP_SUMMARY
           echo "| ⚡ Performance | ${{ needs.performance.result }} | - |" >> $GITHUB_STEP_SUMMARY
           echo "| 🔗 Integration | ${{ needs.integration.result }} | - |" >> $GITHUB_STEP_SUMMARY
@@ -336,6 +467,7 @@ jobs:
             [[ "${{ needs.test.result }}" != "success" ]] && echo "- 🧪 Tests" >> $GITHUB_STEP_SUMMARY
             [[ "${{ needs.quality-checks.result }}" != "success" ]] && echo "- 📋 Quality Checks" >> $GITHUB_STEP_SUMMARY
             [[ "${{ needs.build.result }}" != "success" ]] && echo "- 🔨 Build" >> $GITHUB_STEP_SUMMARY
+            [[ "${{ needs.docker-tests.result }}" == "failure" ]] && echo "- 🐳 Docker Tests (non-critical)" >> $GITHUB_STEP_SUMMARY
             [[ "${{ needs.performance.result }}" == "failure" ]] && echo "- ⚡ Performance (non-critical)" >> $GITHUB_STEP_SUMMARY
             [[ "${{ needs.integration.result }}" == "failure" ]] && echo "- 🔗 Integration (non-critical)" >> $GITHUB_STEP_SUMMARY
             

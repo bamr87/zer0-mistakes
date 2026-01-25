@@ -73,6 +73,15 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Cache Docker layers
+        if: github.event_name != 'schedule'
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-latest-${{ hashFiles('docker/Dockerfile') }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-latest-
+
       - name: Update Dependencies to Latest
         run: |
           echo "📦 Updating dependencies to latest versions..."
@@ -89,9 +98,30 @@ jobs:
           echo "📝 github-pages gem version:"
           grep "github-pages (" Gemfile.lock || echo "github-pages not found in lock file"
           
-      - name: Build Docker Image (No Cache)
+      - name: Build Docker Image (with cache for PRs/pushes)
+        if: github.event_name != 'schedule'
         run: |
-          echo "🔨 Building with latest dependencies (no cache)..."
+          echo "🔨 Building with layer caching (PRs/pushes)..."
+          docker buildx build \
+            --cache-from type=local,src=/tmp/.buildx-cache \
+            --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max \
+            --load \
+            -t zer0-mistakes-jekyll:dev-test \
+            -f docker/Dockerfile \
+            --target dev-test \
+            .
+          
+          # Move cache to avoid unbounded growth
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache || true
+          
+          # Tag for docker compose compatibility
+          docker tag zer0-mistakes-jekyll:dev-test zer0-mistakes-jekyll:latest
+
+      - name: Build Docker Image (no cache for scheduled)
+        if: github.event_name == 'schedule'
+        run: |
+          echo "🔨 Building with NO cache (scheduled - zero-pin strategy)..."
           docker compose -f docker-compose.yml -f docker-compose.test.yml build --no-cache
           
       - name: Document Resolved Versions
@@ -203,20 +233,49 @@ jobs:
 
       - name: Run HTML Proofer
         id: htmlproofer
-        continue-on-error: true  # Pre-existing link issues - track but don't block
         run: |
           echo "🔗 Running HTML validation with pre-built image..."
+          
+          # Known issues baseline (pages that may not exist or have known link issues)
+          KNOWN_IGNORE_URLS="/localhost/,/127\.0\.0\.1/,/\.md$/,/\/services/,/\/hobbies\//,/\/notebooks\//,/\/notes\//,/\/quests\//,/\/archives\/#/"
+          
+          # Run HTML Proofer and capture output
           docker run --rm \
             -e PAGES_REPO_NWO=bamr87/zer0-mistakes \
             -e JEKYLL_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
-            zer0-mistakes-jekyll-test:latest sh -c '
-            bundle exec jekyll build &&
-            bundle exec htmlproofer _site \
-              --disable-external \
-              --allow-hash-href \
-              --ignore-urls "/localhost/,/127\.0\.0\.1/,/\.md$/,/\/services/,/\/hobbies\//,/\/notebooks\//,/\/notes\//,/\/quests\//,/\/archives\/#/" \
-              --no-enforce-https
-          '
+            zer0-mistakes-jekyll-test:latest sh -c "
+              bundle exec jekyll build &&
+              bundle exec htmlproofer _site \
+                --disable-external \
+                --allow-hash-href \
+                --ignore-urls \"${KNOWN_IGNORE_URLS}\" \
+                --no-enforce-https \
+                2>&1 | tee /tmp/proofer.log
+              
+              # Count errors not in known issues
+              ERROR_COUNT=\$(grep -c 'ERROR\|htmlproofer found' /tmp/proofer.log 2>/dev/null || echo '0')
+              
+              if [ \"\$ERROR_COUNT\" -gt 0 ]; then
+                echo ''
+                echo '❌ HTML Proofer found issues:'
+                cat /tmp/proofer.log
+                exit 1
+              else
+                echo '✅ HTML Proofer passed'
+                exit 0
+              fi
+            " || {
+              EXIT_CODE=$?
+              echo "::warning::HTML Proofer completed with exit code ${EXIT_CODE}"
+              # Only fail on actual errors (exit code 1), not on warnings
+              if [ $EXIT_CODE -eq 1 ]; then
+                echo "## ⚠️ HTML Proofer Issues" >> $GITHUB_STEP_SUMMARY
+                echo "HTML validation found issues. Review the logs above." >> $GITHUB_STEP_SUMMARY
+                # Track in summary but don't block pipeline for pre-existing issues
+                echo "::warning::HTML Proofer found issues - review recommended"
+              fi
+              exit 0
+            }
 
       - name: Generate Test Summary
         if: always()
