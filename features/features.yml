@@ -14,7 +14,7 @@ features:
     implemented: true
     version: "0.1.0"
     link: "/"
-    docs: "README.md"
+    docs: "/docs/bootstrap/"
     tags: [jekyll, theme, bootstrap, ui, responsive]
     date: 2025-01-27
     references:
@@ -35,7 +35,7 @@ features:
     implemented: true
     version: "0.1.0"
     link: "/"
-    docs: "README.md"
+    docs: "/docs/docker/"
     tags: [docker, devops, development, cross-platform]
     date: 2025-01-27
     references:
@@ -55,7 +55,7 @@ features:
     implemented: true
     version: "0.6.0"
     link: "/"
-    docs: "README.md"
+    docs: "/docs/installation/"
     tags: [ai, automation, installation, error-handling, bash]
     date: 2025-01-27
     references:
@@ -80,7 +80,7 @@ features:
     implemented: true
     version: "0.8.0"
     link: "/docs/features/preview-image-generator/"
-    docs: "README.md"
+    docs: "/docs/features/preview-image-generator/"
     tags: [ai, images, automation, openai, content]
     date: 2025-01-28
     references:
@@ -117,8 +117,8 @@ features:
     description: "Comprehensive AI development assistance with structured instructions, file-specific guidance, and front matter optimization for maximum AI productivity"
     implemented: true
     version: "0.15.0"
-    link: "/.github/copilot-instructions.md"
-    docs: ".github/copilot-instructions.md"
+    link: "https://github.com/bamr87/zer0-mistakes/blob/main/.github/copilot-instructions.md"
+    docs: "/docs/features/copilot-integration/"
     tags: [ai, copilot, development, documentation]
     date: 2025-11-15
     references:
@@ -147,7 +147,7 @@ features:
     implemented: true
     version: "0.6.0"
     link: "/"
-    docs: "pages/privacy-policy.md"
+    docs: "/docs/features/posthog-analytics/"
     tags: [analytics, privacy, gdpr, ccpa, posthog]
     date: 2025-11-15
     references:
@@ -170,7 +170,7 @@ features:
     implemented: true
     version: "0.6.0"
     link: "/"
-    docs: "pages/privacy-policy.md"
+    docs: "/docs/features/cookie-consent/"
     tags: [privacy, gdpr, ccpa, cookies, consent]
     date: 2025-11-15
     references:
@@ -194,7 +194,7 @@ features:
     implemented: true
     version: "0.14.0"
     link: "/"
-    docs: "docs/SIDEBAR_IMPROVEMENTS.md"
+    docs: "/docs/features/sidebar-navigation/"
     tags: [navigation, ui, accessibility, performance, sidebar]
     date: 2025-12-01
     references:
@@ -223,7 +223,7 @@ features:
     implemented: true
     version: "0.14.0"
     link: "/"
-    docs: "docs/keyboard-navigation.md"
+    docs: "/docs/features/keyboard-navigation/"
     tags: [accessibility, keyboard, navigation, ux]
     date: 2025-12-01
     references:
@@ -245,7 +245,7 @@ features:
     implemented: true
     version: "0.14.0"
     link: "/"
-    docs: "docs/SIDEBAR_IMPROVEMENTS.md"
+    docs: "/docs/features/mobile-toc/"
     tags: [mobile, navigation, ui, toc, fab]
     date: 2025-12-01
     references:
@@ -265,7 +265,7 @@ features:
     implemented: true
     version: "0.14.0"
     link: "/"
-    docs: "docs/SIDEBAR_IMPROVEMENTS.md"
+    docs: "/docs/features/skip-to-content/"
     tags: [accessibility, wcag, navigation, a11y]
     date: 2025-12-01
     references:
@@ -282,7 +282,7 @@ features:
     implemented: true
     version: "0.13.0"
     link: "/"
-    docs: "docs/JUPYTER_NOTEBOOKS.md"
+    docs: "/docs/features/jupyter-notebooks/"
     tags: [jupyter, notebooks, python, data-science, content]
     date: 2025-11-29
     references:
@@ -311,7 +311,7 @@ features:
     implemented: true
     version: "0.3.0"
     link: "/"
-    docs: "README.md"
+    docs: "/docs/features/mermaid-diagrams/"
     tags: [mermaid, diagrams, visualization, documentation]
     date: 2025-01-27
     references:
@@ -335,7 +335,7 @@ features:
     implemented: true
     version: "0.1.0"
     link: "/"
-    docs: "_config.yml"
+    docs: "/docs/jekyll/collections/"
     tags: [jekyll, collections, content, organization]
     date: 2025-01-27
     references:
@@ -362,7 +362,7 @@ features:
     implemented: true
     version: "0.5.0"
     link: "/"
-    docs: ".github/instructions/version-control.instructions.md"
+    docs: "/docs/development/release-management/"
     tags: [release, automation, semver, ci-cd, versioning]
     date: 2025-11-15
     references:
@@ -387,7 +387,7 @@ features:
     implemented: true
     version: "0.10.0"
     link: "/"
-    docs: ".github/instructions/testing.instructions.md"
+    docs: "/docs/development/testing/"
     tags: [testing, quality, ci-cd, automation]
     date: 2025-11-15
     references:
@@ -412,7 +412,7 @@ features:
     implemented: true
     version: "0.14.2"
     link: "/"
-    docs: ".github/workflows/version-bump.yml"
+    docs: "/docs/development/version-bump/"
     tags: [github-actions, automation, versioning, ci-cd]
     date: 2025-12-07
     references:
@@ -432,7 +432,7 @@ features:
     implemented: true
     version: "0.10.0"
     link: "/"
-    docs: ".github/workflows/codeql.yml"
+    docs: "/docs/development/security/"
     tags: [security, codeql, scanning, ci-cd]
     date: 2025-11-15
     references:
@@ -453,7 +453,7 @@ features:
     implemented: true
     version: "0.1.0"
     link: "/"
-    docs: ".github/instructions/layouts.instructions.md"
+    docs: "/docs/customization/layouts/"
     tags: [layouts, templates, jekyll, bootstrap]
     date: 2025-01-27
     references:
@@ -485,7 +485,7 @@ features:
     implemented: true
     version: "0.1.0"
     link: "/"
-    docs: ".github/instructions/includes.instructions.md"
+    docs: "/docs/customization/includes/"
     tags: [includes, components, modular, jekyll]
     date: 2025-01-27
     references:
@@ -515,7 +515,7 @@ features:
     implemented: true
     version: "0.11.0"
     link: "/"
-    docs: "docs/THEME_VERSION_IMPLEMENTATION.md"
+    docs: "/docs/features/theme-version/"
     tags: [plugin, version, jekyll, metadata]
     date: 2025-11-20
     references:
@@ -539,7 +539,7 @@ features:
     implemented: true
     version: "0.15.0"
     link: "/privacy-policy/"
-    docs: "pages/privacy-policy.md"
+    docs: "/privacy-policy/"
     tags: [legal, privacy, gdpr, ccpa, compliance]
     date: 2025-12-11
     references:
@@ -557,7 +557,7 @@ features:
     implemented: true
     version: "0.15.0"
     link: "/terms-of-service/"
-    docs: "pages/terms-of-service.md"
+    docs: "/terms-of-service/"
     tags: [legal, terms, compliance]
     date: 2025-12-11
     references:
@@ -573,7 +573,7 @@ features:
     implemented: true
     version: "0.15.0"
     link: "/"
-    docs: "docs/PRD.md"
+    docs: "/docs/development/prd/"
     tags: [documentation, prd, product, planning]
     date: 2025-11-25
     references:
@@ -591,7 +591,7 @@ features:
     implemented: true
     version: "0.15.0"
     link: "/"
-    docs: ".github/instructions/documentation.instructions.md"
+    docs: "/docs/development/documentation/"
     tags: [documentation, mdx, markdown, workflow]
     date: 2025-11-16
     references:
@@ -615,7 +615,7 @@ features:
     implemented: true
     version: "0.14.2"
     link: "/"
-    docs: ".github/workflows/update-dependencies.yml"
+    docs: "/docs/development/dependency-updates/"
     tags: [automation, dependencies, github-actions, maintenance]
     date: 2025-12-07
     references:
@@ -632,7 +632,7 @@ features:
     implemented: true
     version: "0.10.0"
     link: "/"
-    docs: ".github/workflows/ci.yml"
+    docs: "/docs/development/ci-cd/"
     tags: [ci-cd, testing, automation, github-actions]
     date: 2025-11-15
     references:
@@ -654,7 +654,7 @@ features:
     implemented: true
     version: "0.5.0"
     link: "/"
-    docs: ".github/instructions/scripts.instructions.md"
+    docs: "/docs/development/scripts/"
     tags: [scripts, automation, bash, utilities]
     date: 2025-11-15
     references:
@@ -674,3 +674,325 @@ features:
       - "Content conversion"
       - "Error handling"
       - "Platform detection"
+
+  # ============================================================================
+  # UI COMPONENTS (Discovered Features)
+  # ============================================================================
+  
+  - id: ZER0-029
+    title: "Back to Top Button"
+    description: "Floating button that appears on scroll, allowing users to quickly return to the top of the page with smooth scrolling animation"
+    implemented: true
+    version: "0.1.0"
+    link: "/"
+    docs: "/docs/features/back-to-top/"
+    tags: [ui, navigation, scroll, accessibility]
+    date: 2025-01-01
+    references:
+      scripts:
+        - "assets/js/back-to-top.js"
+    features:
+      - "Smooth scroll animation"
+      - "Appears after 200px scroll"
+      - "Passive scroll listener for performance"
+      - "Accessible button with proper focus"
+
+  - id: ZER0-030
+    title: "Code Copy Button"
+    description: "One-click copy functionality for code blocks with visual feedback and clipboard API integration"
+    implemented: true
+    version: "0.1.0"
+    link: "/"
+    docs: "/docs/features/code-copy/"
+    tags: [ui, code, clipboard, developer-experience]
+    date: 2025-01-01
+    references:
+      scripts:
+        - "assets/js/code-copy.js"
+    features:
+      - "Automatic button injection on code blocks"
+      - "Clipboard API integration"
+      - "Visual feedback on copy"
+      - "Accessible with ARIA labels"
+      - "Bootstrap Icons integration"
+
+  - id: ZER0-031
+    title: "Dark/Light Mode Toggle"
+    description: "Theme color mode switcher supporting light, dark, and auto modes with system preference detection and localStorage persistence"
+    implemented: true
+    version: "0.1.0"
+    link: "/"
+    docs: "/docs/features/color-modes/"
+    tags: [ui, theme, dark-mode, accessibility]
+    date: 2025-01-01
+    references:
+      scripts:
+        - "assets/js/color-modes.js"
+    features:
+      - "Light, dark, and auto modes"
+      - "System preference detection"
+      - "LocalStorage persistence"
+      - "Bootstrap 5.3 data-bs-theme integration"
+      - "Smooth theme transitions"
+
+  - id: ZER0-032
+    title: "Site Search"
+    description: "Client-side search functionality with modal interface, JSON index, and keyboard shortcut activation"
+    implemented: true
+    version: "0.1.0"
+    link: "/"
+    docs: "/docs/features/site-search/"
+    tags: [search, navigation, modal, keyboard]
+    date: 2025-01-01
+    references:
+      scripts:
+        - "assets/js/search-modal.js"
+      includes:
+        - "_includes/components/search-modal.html"
+      data:
+        - "search.json"
+    features:
+      - "Client-side JSON search index"
+      - "Bootstrap modal interface"
+      - "Keyboard shortcut (/) activation"
+      - "Real-time search results"
+      - "Accessible search input"
+
+  - id: ZER0-033
+    title: "Auto-hide Navigation"
+    description: "Smart navigation bar that hides on scroll down and reappears on scroll up for maximum content visibility"
+    implemented: true
+    version: "0.1.0"
+    link: "/"
+    docs: "/docs/features/auto-hide-nav/"
+    tags: [ui, navigation, scroll, mobile]
+    date: 2025-01-01
+    references:
+      scripts:
+        - "assets/js/auto-hide-nav.js"
+    features:
+      - "Hide on scroll down"
+      - "Show on scroll up"
+      - "Smooth CSS transitions"
+      - "Mobile-optimized behavior"
+
+  - id: ZER0-034
+    title: "Particles Background"
+    description: "Interactive particle animation background using particles.js for visual enhancement on landing pages"
+    implemented: true
+    version: "0.1.0"
+    link: "/"
+    docs: "/docs/features/particles-background/"
+    tags: [ui, animation, visual, landing]
+    date: 2025-01-01
+    references:
+      scripts:
+        - "assets/js/particles.js"
+        - "assets/js/particles-source.js"
+      config:
+        - "assets/particles.json"
+    features:
+      - "Configurable particle count and behavior"
+      - "Interactive mouse effects"
+      - "JSON configuration"
+      - "Performance optimized"
+
+  # ============================================================================
+  # CONTENT FEATURES (Discovered Features)
+  # ============================================================================
+
+  - id: ZER0-035
+    title: "Giscus Comments"
+    description: "GitHub Discussions-powered comment system with theme-aware styling and reaction support"
+    implemented: true
+    version: "0.1.0"
+    link: "/"
+    docs: "/docs/features/giscus-comments/"
+    tags: [comments, github, discussions, engagement]
+    date: 2025-01-01
+    references:
+      includes:
+        - "_includes/content/giscus.html"
+      docs:
+        - "pages/_docs/features/giscus-comments.md"
+    features:
+      - "GitHub Discussions integration"
+      - "Automatic theme detection"
+      - "Pathname-based mapping"
+      - "Reaction support"
+      - "Top-positioned input"
+
+  - id: ZER0-036
+    title: "MathJax Math Rendering"
+    description: "LaTeX-style mathematical equation rendering with MathJax integration for technical documentation"
+    implemented: true
+    version: "0.1.0"
+    link: "/"
+    docs: "/docs/features/mathjax-math/"
+    tags: [math, latex, equations, documentation]
+    date: 2025-01-01
+    references:
+      docs:
+        - "pages/_docs/features/mathjax-math.md"
+    features:
+      - "Inline and block equations"
+      - "LaTeX syntax support"
+      - "Per-page enablement"
+      - "Responsive rendering"
+
+  - id: ZER0-037
+    title: "Table of Contents"
+    description: "Automatic table of contents generation from page headings with scroll spy and smooth scrolling"
+    implemented: true
+    version: "0.1.0"
+    link: "/"
+    docs: "/docs/features/toc/"
+    tags: [navigation, toc, headings, documentation]
+    date: 2025-01-01
+    references:
+      includes:
+        - "_includes/content/toc.html"
+    features:
+      - "Automatic heading extraction"
+      - "Scroll spy integration"
+      - "Smooth scroll navigation"
+      - "Responsive sidebar display"
+      - "Active section highlighting"
+
+  # ============================================================================
+  # ANALYTICS FEATURES (Discovered Features)
+  # ============================================================================
+
+  - id: ZER0-038
+    title: "Google Analytics"
+    description: "Google Analytics 4 integration for website traffic analysis with privacy-conscious configuration"
+    implemented: true
+    version: "0.1.0"
+    link: "/"
+    docs: "/docs/analytics/google-analytics/"
+    tags: [analytics, google, tracking, metrics]
+    date: 2025-01-01
+    references:
+      includes:
+        - "_includes/analytics/google-analytics.html"
+    features:
+      - "GA4 measurement ID support"
+      - "Environment-aware loading"
+      - "Privacy policy integration"
+      - "Cookie consent compatibility"
+
+  - id: ZER0-039
+    title: "Google Tag Manager"
+    description: "Google Tag Manager integration for centralized tag management and marketing analytics"
+    implemented: true
+    version: "0.1.0"
+    link: "/"
+    docs: "/docs/analytics/google-tag-manager/"
+    tags: [analytics, gtm, tracking, marketing]
+    date: 2025-01-01
+    references:
+      includes:
+        - "_includes/analytics/google-tag-manager-head.html"
+        - "_includes/analytics/google-tag-manager-body.html"
+    features:
+      - "Container ID configuration"
+      - "Head and body script injection"
+      - "Environment-aware loading"
+      - "Noscript fallback support"
+
+  # ============================================================================
+  # NAVIGATION FEATURES (Discovered Features)
+  # ============================================================================
+
+  - id: ZER0-040
+    title: "Breadcrumbs Navigation"
+    description: "Hierarchical breadcrumb navigation with Schema.org structured data for SEO and user orientation"
+    implemented: true
+    version: "0.1.0"
+    link: "/"
+    docs: "/docs/features/breadcrumbs/"
+    tags: [navigation, breadcrumbs, seo, accessibility]
+    date: 2025-01-01
+    references:
+      includes:
+        - "_includes/navigation/breadcrumbs.html"
+    features:
+      - "Automatic path generation"
+      - "Schema.org BreadcrumbList markup"
+      - "Collection-aware paths"
+      - "Configurable via site.breadcrumbs"
+      - "Bootstrap Icons integration"
+
+  # ============================================================================
+  # SEO FEATURES (Discovered Features)
+  # ============================================================================
+
+  - id: ZER0-041
+    title: "SEO Optimization"
+    description: "Comprehensive SEO meta tag generation including Open Graph, Twitter Cards, and JSON-LD structured data"
+    implemented: true
+    version: "0.1.0"
+    link: "/"
+    docs: "/docs/seo/meta-tags/"
+    tags: [seo, meta, opengraph, twitter-cards]
+    date: 2025-01-01
+    references:
+      includes:
+        - "_includes/content/seo.html"
+    features:
+      - "Dynamic title and description"
+      - "Open Graph meta tags"
+      - "Twitter Card support"
+      - "Canonical URL generation"
+      - "Author and date metadata"
+      - "Preview image handling"
+
+  - id: ZER0-042
+    title: "Sitemap Generation"
+    description: "Automatic XML sitemap and JSON search index generation for search engine discovery and site search"
+    implemented: true
+    version: "0.1.0"
+    link: "/"
+    docs: "/docs/seo/sitemap/"
+    tags: [seo, sitemap, search, indexing]
+    date: 2025-01-01
+    references:
+      includes:
+        - "_includes/content/sitemap.html"
+      files:
+        - "search.json"
+        - "sitemap.xml"
+    features:
+      - "XML sitemap for search engines"
+      - "JSON search index for site search"
+      - "Automatic page discovery"
+      - "Configurable exclusions"
+
+  # ============================================================================
+  # DASHBOARD FEATURES (Discovered Features)
+  # ============================================================================
+
+  - id: ZER0-043
+    title: "Statistics Dashboard"
+    description: "Content statistics dashboard layout with metrics visualization for posts, categories, and tags"
+    implemented: true
+    version: "0.1.0"
+    link: "/"
+    docs: "/docs/features/statistics-dashboard/"
+    tags: [dashboard, statistics, metrics, visualization]
+    date: 2025-01-01
+    references:
+      layouts:
+        - "_layouts/stats.html"
+      includes:
+        - "_includes/stats/stats-header.html"
+        - "_includes/stats/stats-overview.html"
+        - "_includes/stats/stats-categories.html"
+        - "_includes/stats/stats-tags.html"
+        - "_includes/stats/stats-metrics.html"
+    features:
+      - "Post count metrics"
+      - "Category distribution"
+      - "Tag cloud visualization"
+      - "Content statistics"
+      - "Responsive card layout"

@@ -1,5 +1,67 @@
 # Changelog
 
+## [0.19.0] - 2026-01-25
+
+### Added
+- **Feature Discovery**: Identified and documented 15 previously unlisted features (ZER0-029 through ZER0-043):
+  - `back-to-top.md` - Floating scroll-to-top button
+  - `code-copy.md` - One-click code block copy
+  - `color-modes.md` - Dark/light mode toggle with system preference detection
+  - `site-search.md` - Client-side search with modal and keyboard shortcut
+  - `toc.md` - Table of contents with scroll spy
+  - `breadcrumbs.md` - Hierarchical navigation with Schema.org markup
+  - `statistics-dashboard.md` - Content metrics visualization
+  - Google Analytics and Google Tag Manager integrations
+  - Auto-hide navigation, particles background, SEO optimization, sitemap generation
+
+- **Development Documentation** (`pages/_docs/development/`):
+  - `index.md` - Development section overview
+  - `release-management.md` - Semantic versioning and gem publishing guide
+  - `testing.md` - Comprehensive test suite documentation
+  - `version-bump.md` - Automated version workflow guide
+  - `security.md` - CodeQL scanning documentation
+  - `ci-cd.md` - CI/CD pipeline guide
+  - `dependency-updates.md` - Automated dependency management
+  - `scripts.md` - Shell script automation library
+  - `documentation.md` - Dual documentation architecture guide
+  - `prd.md` - Product requirements document
+
+- **Feature Documentation** (`pages/_docs/features/`):
+  - `copilot-integration.md` - GitHub Copilot integration guide
+  - `cookie-consent.md` - GDPR/CCPA compliant consent system
+  - `sidebar-navigation.md` - Enhanced sidebar with scroll spy
+  - `mobile-toc.md` - Mobile TOC floating action button
+  - `skip-to-content.md` - WCAG 2.1 accessibility link
+  - `jupyter-notebooks.md` - Jupyter notebook support
+  - `theme-version.md` - Theme version display plugin
+
+- **Analytics Section** (`pages/_docs/analytics/`):
+  - `index.md` - Analytics overview
+  - `google-analytics.md` - GA4 integration guide
+  - `google-tag-manager.md` - GTM setup guide
+
+- **SEO Section** (`pages/_docs/seo/`):
+  - `index.md` - SEO features overview
+  - `meta-tags.md` - Open Graph, Twitter Cards, JSON-LD
+  - `sitemap.md` - XML sitemap and search index generation
+
+- **Jekyll Documentation**:
+  - `collections.md` - Jekyll collections organization guide
+
+- **Customization Documentation**:
+  - `includes.md` - 70+ include components guide
+
+### Changed
+- **features.yml**: Added 15 new features (ZER0-029 to ZER0-043) with complete metadata
+- **features.yml**: Updated all documentation links from GitHub URLs to local `/docs/` pages
+- **bootstrap/index.md**: Expanded with comprehensive examples (grid, components, utilities)
+- **preview-image-generator.md**: Complete rewrite with AI provider details and configuration
+
+### Documentation Stats
+- **43 total features** now fully documented
+- **40+ new/updated documentation pages** created
+- All features linked to `/docs/` pages (no external GitHub links for docs)
+
 ## [0.18.2] - 2026-01-25
 
 ### Changed
