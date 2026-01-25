@@ -223,29 +223,75 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || inputs.test_scope == 'comprehensive')
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Start Jekyll in Docker
+      - name: Build and start Jekyll in Docker
         run: |
+          echo "🔨 Building Docker image..."
+          docker compose build
+          
+          echo "🚀 Starting Jekyll container..."
           docker compose up -d
-          timeout 60 bash -c 'until curl -s http://localhost:4000 > /dev/null; do sleep 2; done' || true
+          
+          echo "⏳ Waiting for Jekyll to start (up to 180 seconds)..."
+          TIMEOUT=180
+          ELAPSED=0
+          INTERVAL=5
+          
+          while [ $ELAPSED -lt $TIMEOUT ]; do
+            if curl -s http://localhost:4000 > /dev/null 2>&1; then
+              echo "✅ Site is accessible after ${ELAPSED}s"
+              exit 0
+            fi
+            
+            # Show container status every 30 seconds
+            if [ $((ELAPSED % 30)) -eq 0 ] && [ $ELAPSED -gt 0 ]; then
+              echo "📊 Container status after ${ELAPSED}s:"
+              docker compose ps
+            fi
+            
+            sleep $INTERVAL
+            ELAPSED=$((ELAPSED + INTERVAL))
+          done
+          
+          echo "❌ Timeout: Site not accessible after ${TIMEOUT}s"
+          exit 1
+
+      - name: Show Docker logs on failure
+        if: failure()
+        run: |
+          echo "📋 Docker container logs:"
+          docker compose logs --tail=100
 
       - name: Test site accessibility
         run: |
-          if curl -f http://localhost:4000 > /dev/null 2>&1; then
-            echo "✅ Site is accessible"
+          echo "🔍 Testing site accessibility..."
+          
+          # Test homepage
+          if curl -sf http://localhost:4000 > /dev/null; then
+            echo "✅ Homepage accessible"
           else
-            echo "❌ Site is not accessible"
+            echo "❌ Homepage not accessible"
+            docker compose logs --tail=50
             exit 1
           fi
+          
+          # Test a few key pages
+          for path in "/docs/" "/about/" "/features/"; do
+            if curl -sf "http://localhost:4000${path}" > /dev/null 2>&1; then
+              echo "✅ ${path} accessible"
+            else
+              echo "⚠️ ${path} not accessible (may not exist)"
+            fi
+          done
 
       - name: Cleanup
         if: always()
-        run: docker compose down || true
+        run: docker compose down --volumes --remove-orphans || true
 
   # Final status report
   summary:
