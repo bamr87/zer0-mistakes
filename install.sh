@@ -254,6 +254,14 @@ install_docker_files() {
     
     copy_file_with_backup "$SOURCE_DIR/docker-compose.yml" "$TARGET_DIR/docker-compose.yml"
     
+    # Copy the docker directory with Dockerfile (required by docker-compose.yml)
+    if [[ -d "$SOURCE_DIR/docker" ]]; then
+        copy_directory_with_backup "$SOURCE_DIR/docker" "$TARGET_DIR/docker"
+        log_info "Docker directory with Dockerfile installed"
+    else
+        log_warning "docker/ directory not found, skipping"
+    fi
+    
     log_success "Docker files installed"
 }
 
