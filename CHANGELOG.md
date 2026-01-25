@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.19.1] - 2026-01-25
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 516e56b fix(install): include docker/ directory in full installation
+- c8a3dbb ci: optimize CI pipeline performance and integration tests
+- 93fce7b ci: enhance CI workflow for Jekyll with improved Docker handling and site accessibility checks
+
+
 ## [0.19.0] - 2026-01-25
 
 ### Added
