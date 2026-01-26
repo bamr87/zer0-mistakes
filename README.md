@@ -1,8 +1,8 @@
 ---
 title: zer0-mistakes
 sub-title: Jekyll Theme
-description: Docker-optimized Jekyll theme with AI-powered installation automation and comprehensive error handling.
-version: 0.16.1
+description: GitHub Pages compatible Jekyll theme with Bootstrap 5.3, featuring automated installation and comprehensive documentation.
+version: 0.19.1
 layout: landing
 tags:
   - jekyll
@@ -14,7 +14,7 @@ categories:
   - docker
   - bootstrap
 created: 2024-02-10T23:51:11.480Z
-lastmod: 2025-11-29T00:00:00.000Z
+lastmod: 2026-01-25T00:00:00.000Z
 draft: false
 permalink: /
 slug: zer0
@@ -23,13 +23,13 @@ keywords:
   - docker
   - remote-theme
   - github-pages
-date: 2025-11-29T12:00:00.000Z
-snippet: Docker-first Jekyll theme with remote theme support
+date: 2026-01-25T12:00:00.000Z
+snippet: GitHub Pages compatible Jekyll theme with Bootstrap 5
 comments: true
 mermaid: true
 preview: /assets/images/wizard-on-journey.png
 hero_image: /assets/images/wizard-on-journey.png
-excerpt: "Professional Jekyll theme with automated installation, comprehensive error handling, and zero-configuration Docker development"
+excerpt: "Professional Jekyll theme for GitHub Pages with Bootstrap 5.3, automated installation, and 43 documented features"
 ---
 
 [![pages-build-deployment](https://github.com/bamr87/zer0-mistakes/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/bamr87/zer0-mistakes/actions/workflows/pages/pages-build-deployment)
@@ -41,9 +41,9 @@ excerpt: "Professional Jekyll theme with automated installation, comprehensive e
 
 # 🚀 zer0-mistakes
 
-### The Self-Healing Jekyll Theme
+### GitHub Pages & Bootstrap 5 Ready
 
-**Docker-first • AI-powered • Privacy-compliant • Zero-configuration**
+**GitHub Pages compatible • Bootstrap 5.3 • Privacy-compliant • Zero-configuration**
 
 [Quick Start](#-quick-start) • [Features](#-key-features) • [Documentation](#-documentation) • [Contributing](CONTRIBUTING.md)
 
@@ -69,7 +69,7 @@ excerpt: "Professional Jekyll theme with automated installation, comprehensive e
 
 ## Overview
 
-**zer0-mistakes** is a professional Jekyll theme engineered to eliminate setup friction and provide a seamless development experience. With AI-powered error recovery, Docker containerization, and comprehensive automation, you can go from zero to deployed in under 5 minutes.
+**zer0-mistakes** is a professional Jekyll theme engineered to eliminate setup friction and provide a seamless development experience. With Docker containerization, 43 documented features, and comprehensive automation, you can go from zero to deployed in under 5 minutes.
 
 ```mermaid
 graph LR
@@ -101,7 +101,7 @@ graph LR
 | **Setup Time** | 15-30 minutes | **2-5 minutes** |
 | **Success Rate** | ~60% | **~95%** |
 | **Platform Support** | Limited | **Universal** |
-| **Error Handling** | Manual debugging | **Self-healing** |
+| **Error Handling** | Manual debugging | **Automated** |
 | **Dependencies** | Ruby + Bundler + Jekyll | **Docker only** |
 
 ---
@@ -215,14 +215,15 @@ pie title Technology Distribution
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
-| **Framework** | Jekyll 3.10.0 | Static site generation |
+| **Framework** | Jekyll 3.9.5 | Static site generation |
 | **Styling** | Bootstrap 5.3.3 | Responsive UI components |
 | **Icons** | Bootstrap Icons | Unified iconography |
 | **Development** | Docker | Cross-platform consistency |
 | **Templates** | Liquid | Dynamic content rendering |
 | **Analytics** | PostHog | Privacy-first tracking |
 | **Diagrams** | Mermaid 10+ | Documentation visuals |
-| **Navigation** | Intersection Observer | Scroll spy & accessibility |
+| **Navigation** | ES6 Modules | Modular JavaScript architecture |
+| **Search** | Client-side JSON | Fast in-browser search |
 
 ---
 
@@ -230,7 +231,7 @@ pie title Technology Distribution
 
 ### 🤖 AI-Powered Installation
 
-The 1,090-line `install.sh` script provides intelligent error recovery with 27+ automated fix scenarios:
+The ~1,100-line `install.sh` script provides intelligent platform detection and Docker configuration:
 
 ```mermaid
 flowchart TD
@@ -238,21 +239,16 @@ flowchart TD
     DETECT --> CHECK{Prerequisites OK?}
     
     CHECK -->|Yes| DOWNLOAD[Download Theme]
-    CHECK -->|No| FIX[Auto-Fix Issues]
-    FIX --> CHECK
+    CHECK -->|No| GUIDE[Show Requirements]
     
     DOWNLOAD --> CONFIG[Configure Docker]
     CONFIG --> VALIDATE{Build Success?}
     
     VALIDATE -->|Yes| DONE([✅ Ready!])
-    VALIDATE -->|No| DIAGNOSE[Diagnose Error]
-    DIAGNOSE --> RECOVER[Apply Fix]
-    RECOVER --> VALIDATE
+    VALIDATE -->|No| LOGS[Show Error Logs]
     
     style START fill:#e3f2fd
     style DONE fill:#c8e6c9
-    style FIX fill:#fff3e0
-    style RECOVER fill:#fff3e0
 ```
 
 ### 🐳 Docker-First Development
@@ -332,17 +328,18 @@ collections:
     permalink: /notebooks/:name/
 ```
 
-### 🧭 Enhanced Navigation System (v0.14.0)
+### 🧭 Enhanced Navigation System (v0.17.0)
 
-Modern, accessible sidebar navigation with advanced features:
+Modern, accessible sidebar navigation with ES6 modular architecture:
 
+- **ES6 Navigation Modules**: Modular JavaScript with native ES6 imports
+- **Navbar Hover Dropdowns**: Desktop hover support with smooth fade transitions
 - **Intersection Observer Scroll Spy**: 70% reduction in scroll event overhead
 - **Keyboard Shortcuts**: `[` and `]` for section navigation
 - **Swipe Gestures**: Mobile-friendly left/right edge detection
 - **Skip-to-Content**: Accessibility-first WCAG 2.1 Level AA compliant
 - **Mobile TOC FAB**: Floating action button for table of contents
-- **Unified Bootstrap Icons**: Consistent iconography across all components
-- **Focus Management**: Improved screen reader support with ARIA labels
+- **Nav Tree Component**: Hierarchical YAML navigation rendering
 
 | Shortcut | Action |
 |----------|--------|
@@ -350,6 +347,30 @@ Modern, accessible sidebar navigation with advanced features:
 | `]` | Next section |
 | `Tab` | Skip to content |
 | Swipe | Toggle sidebar (mobile) |
+
+### 🔍 Site Search (v0.18.0)
+
+Client-side search with modal interface and keyboard shortcuts:
+
+- **Keyboard Activation**: Press `/` or `Cmd/Ctrl+K` to open search
+- **Real-time Results**: Instant search across all content
+- **JSON Index**: Auto-generated search index for fast queries
+- **Bootstrap Modal**: Responsive modal interface
+
+| Shortcut | Action |
+|----------|--------|
+| `/` | Open search modal |
+| `Cmd/Ctrl+K` | Open search modal |
+| `Escape` | Close search |
+
+### 🎨 Dark/Light Mode Toggle
+
+Theme color mode switcher with system preference detection:
+
+- **Three Modes**: Light, dark, and auto (system preference)
+- **Persistence**: LocalStorage saves user preference
+- **Smooth Transitions**: CSS transitions between themes
+- **Bootstrap Integration**: Uses `data-bs-theme` attribute
 
 ### 📋 Legal & Compliance Pages (v0.15.0)
 
@@ -390,7 +411,7 @@ docker-compose up
 
 ```ruby
 # Gemfile
-gem "jekyll-theme-zer0", "~> 0.15"
+gem "jekyll-theme-zer0", "~> 0.19"
 ```
 
 ---
@@ -566,8 +587,9 @@ graph LR
 |----------|-------------|
 | [📋 Technical Docs]({{ site.resources.github_repo | default: '' | join: '' }}/tree/{{ site.branch }}/docs/) | Architecture, systems, implementation |
 | [📖 User Guides]({{ '/docs/' | relative_url }}) | Published tutorials and references |
-| [🤖 Copilot Instructions]({{ site.resources.github_repo | default: '' | join: '' }}/blob/{{ site.branch }}/.github/copilot-instructions.md) | AI development guidelines |
-| [⌨️ Keyboard Navigation]({{ site.resources.github_repo | default: '' | join: '' }}/blob/{{ site.branch }}/docs/keyboard-navigation.md) | Accessibility shortcuts guide |
+| [🎨 Customization]({{ '/docs/customization/' | relative_url }}) | Layouts, styles, navigation guides |
+| [📊 Analytics]({{ '/docs/analytics/' | relative_url }}) | PostHog, Google Analytics setup |
+| [🔍 SEO]({{ '/docs/seo/' | relative_url }}) | Meta tags, sitemap, structured data |
 | [📓 Jupyter Notebooks]({{ site.resources.github_repo | default: '' | join: '' }}/blob/{{ site.branch }}/docs/JUPYTER_NOTEBOOKS.md) | Notebook conversion documentation |
 | [📝 PRD](docs/PRD.md) | Product requirements & roadmap |
 | [🔒 Privacy Policy]({{ '/privacy-policy/' | relative_url }}) | GDPR/CCPA compliant privacy docs |
@@ -614,9 +636,9 @@ flowchart LR
 /opt/homebrew/bin/bash scripts/release patch --dry-run
 
 # Full release
-/opt/homebrew/bin/bash scripts/release patch  # 0.15.0 → 0.15.1
-/opt/homebrew/bin/bash scripts/release minor  # 0.15.0 → 0.16.0
-/opt/homebrew/bin/bash scripts/release major  # 0.15.0 → 1.0.0
+/opt/homebrew/bin/bash scripts/release patch  # 0.19.1 → 0.19.2
+/opt/homebrew/bin/bash scripts/release minor  # 0.19.1 → 0.20.0
+/opt/homebrew/bin/bash scripts/release major  # 0.19.1 → 1.0.0
 ```
 
 ---
@@ -627,20 +649,23 @@ flowchart LR
 gantt
     title zer0-mistakes Roadmap
     dateFormat YYYY-MM
+    section Completed
+    v0.17 ES6 Navigation      :done, 2025-12, 2025-12
+    v0.18 Site Search         :done, 2026-01, 2026-01
+    v0.19 Feature Discovery   :done, 2026-01, 2026-01
     section Current
-    v0.15.x Maintenance       :done, 2025-12, 2026-01
+    v0.19.x Maintenance       :active, 2026-01, 2026-02
     section Future
-    v0.16 - CMS Integration   :2026-01, 2026-03
-    v0.17 - Advanced Analytics:2026-04, 2026-06
-    v0.18 - i18n Support      :2026-07, 2026-09
-    v1.0 - Production Ready   :milestone, 2027-01, 1d
+    v0.20 CMS Integration     :2026-02, 2026-04
+    v0.21 i18n Support        :2026-05, 2026-07
+    v1.0 Production Ready     :milestone, 2027-01, 1d
 ```
 
 | Version | Target | Features |
 |---------|--------|----------|
-| **v0.16** | Q1 2026 | Headless CMS integration, content API |
-| **v0.17** | Q2 2026 | A/B testing, conversion funnels |
-| **v0.18** | Q3 2026 | Multi-language support (i18n) |
+| **v0.19** | Current | 43 documented features, comprehensive documentation |
+| **v0.20** | Q1 2026 | Headless CMS integration, content API |
+| **v0.21** | Q2 2026 | Multi-language support (i18n) |
 | **v1.0** | Q1 2027 | Stable API, 90%+ test coverage |
 
 ---
@@ -696,11 +721,11 @@ git push origin feature/awesome-feature
 
 | Metric | Value |
 |--------|-------|
-| **Current Version** | 0.15.0 |
-| **Installation Success** | ~95% |
+| **Current Version** | 0.19.1 |
+| **Documented Features** | 43 |
 | **Setup Time** | 2-5 minutes |
+| **Documentation Pages** | 70+ |
 | **RubyGems Downloads** | 3,000+ |
-| **Documentation** | 20,000+ lines |
 | **Lighthouse Score** | 95+ |
 
 ---
@@ -720,6 +745,6 @@ Built with these amazing technologies:
 
 **Built with ❤️ for the Jekyll community**
 
-**v0.15.0** • [Changelog](CHANGELOG.md) • [License](LICENSE) • [Contributing](CONTRIBUTING.md)
+**v0.19.1** • [Changelog](CHANGELOG.md) • [License](LICENSE) • [Contributing](CONTRIBUTING.md)
 
 
