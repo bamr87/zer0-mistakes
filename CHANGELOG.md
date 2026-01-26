@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.20.1] - 2026-01-26
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 80ee1da feat(release): prepare 0.20.0
+- 8c74a60 Merge branch 'main' of https://github.com/bamr87/zer0-mistakes
+- 4d1c28c chore: update README for version 0.19.1
+- 8157508 chore(deps): update Ruby gem dependencies (#22)
+- 0f9d100 Merge branch 'main' of https://github.com/bamr87/zer0-mistakes
+- 0cf42e9 chore: update Docker image reference in CI workflow
+
+
 ## [0.20.0] - 2026-01-26
 
 ### Added
