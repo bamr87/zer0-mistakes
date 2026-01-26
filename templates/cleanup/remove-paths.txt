@@ -1,0 +1,80 @@
+# =========================================================================
+# Fork Mode: Paths to Remove
+# =========================================================================
+# This file lists paths that should be removed when creating a clean fork
+# of the zer0-mistakes theme for use as a starting template.
+#
+# Lines starting with # are comments and ignored.
+# Glob patterns are supported (*.gem, **/*.backup)
+# =========================================================================
+
+# ---------------------------------------------------------------------
+# Example Blog Content
+# ---------------------------------------------------------------------
+# Sample blog posts demonstrating theme features
+pages/_posts
+
+# ---------------------------------------------------------------------
+# Jupyter Notebook Examples
+# ---------------------------------------------------------------------
+# Test notebooks for notebook layout feature
+pages/_notebooks
+
+# ---------------------------------------------------------------------
+# Site-Specific Profile Content
+# ---------------------------------------------------------------------
+# Creator profile and personal pages
+pages/_about/profile
+pages/_about/stats.md
+
+# ---------------------------------------------------------------------
+# AI-Generated Preview Images
+# ---------------------------------------------------------------------
+# Generated images for demo posts
+assets/images/previews
+
+# ---------------------------------------------------------------------
+# Site-Specific Assets
+# ---------------------------------------------------------------------
+# Personal avatars and branding
+assets/images/gravatar.png
+assets/images/gravatar-small.png
+
+# ---------------------------------------------------------------------
+# Generated Data Files
+# ---------------------------------------------------------------------
+# Auto-generated statistics for demo site
+_data/content_statistics.yml
+
+# ---------------------------------------------------------------------
+# Domain Configuration
+# ---------------------------------------------------------------------
+# Custom domain file (users will set their own)
+CNAME
+
+# ---------------------------------------------------------------------
+# Build Artifacts
+# ---------------------------------------------------------------------
+# Built gem packages (should be built fresh)
+jekyll-theme-zer0-*.gem
+
+# Jekyll build output
+_site
+
+# Build logs
+logs
+
+# Generated reports
+reports
+
+# Bundler vendor directory
+vendor
+
+# ---------------------------------------------------------------------
+# Backup and Temporary Files
+# ---------------------------------------------------------------------
+*.backup.*
+*.bak
+*~
+.DS_Store
+Thumbs.db

@@ -423,11 +423,110 @@ jobs:
         if: always()
         run: docker compose down --volumes --remove-orphans || true
 
+  # Installation Matrix Tests
+  installation-matrix-tests:
+    name: Installation Tests (${{ matrix.os }}, ${{ matrix.mode }})
+    runs-on: ${{ matrix.os }}
+    needs: [fast-checks, quality-checks]
+    if: github.event_name != 'schedule' && inputs.test_scope != 'fast'
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        mode: [full, minimal]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby Environment
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Make test scripts executable
+        run: chmod +x test/*.sh test/lib/*.sh
+
+      - name: Run Installation Tests
+        run: |
+          ./test/test_installation.sh --verbose
+        env:
+          INSTALL_MODE: ${{ matrix.mode }}
+
+      - name: Run Site Generation Tests
+        run: |
+          ./test/test_site_generation.sh --mode ${{ matrix.mode }} --verbose
+
+      - name: Upload Installation Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: installation-test-results-${{ matrix.os }}-${{ matrix.mode }}
+          path: test/results/
+          retention-days: 7
+
+  # Visual Regression Tests (runs only on comprehensive scope)
+  visual-tests:
+    name: Visual Regression Tests
+    runs-on: ubuntu-latest
+    needs: [installation-matrix-tests]
+    if: inputs.test_scope == 'comprehensive'
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby Environment
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright
+        run: |
+          npm install -D @playwright/test
+          npx playwright install --with-deps chromium
+
+      - name: Make test scripts executable
+        run: chmod +x test/*.sh test/lib/*.sh
+
+      - name: Run Visual Tests
+        run: |
+          ./test/test_visual.sh --mode full --verbose || true
+        continue-on-error: true
+
+      - name: Upload Visual Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: visual-test-results
+          path: |
+            test/visual/current/
+            test/visual/diff/
+            test/visual-results/
+          retention-days: 7
+
+      - name: Upload Visual Baseline
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: visual-baseline
+          path: test/visual/baseline/
+          retention-days: 30
+
   # Final status report
   summary:
     name: CI Pipeline Summary
     runs-on: ubuntu-latest
-    needs: [fast-checks, quality-checks, test, docker-tests, build, performance, integration]
+    needs: [fast-checks, quality-checks, test, docker-tests, build, performance, integration, installation-matrix-tests, visual-tests]
     if: always()
     steps:
       - name: Generate comprehensive summary
@@ -447,6 +546,8 @@ jobs:
           echo "| 🔨 Build | ${{ needs.build.result }} | - |" >> $GITHUB_STEP_SUMMARY
           echo "| ⚡ Performance | ${{ needs.performance.result }} | - |" >> $GITHUB_STEP_SUMMARY
           echo "| 🔗 Integration | ${{ needs.integration.result }} | - |" >> $GITHUB_STEP_SUMMARY
+          echo "| 📦 Installation Matrix | ${{ needs.installation-matrix-tests.result }} | - |" >> $GITHUB_STEP_SUMMARY
+          echo "| 👁️ Visual Tests | ${{ needs.visual-tests.result }} | - |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           # Check if all required jobs passed
@@ -470,6 +571,8 @@ jobs:
             [[ "${{ needs.docker-tests.result }}" == "failure" ]] && echo "- 🐳 Docker Tests (non-critical)" >> $GITHUB_STEP_SUMMARY
             [[ "${{ needs.performance.result }}" == "failure" ]] && echo "- ⚡ Performance (non-critical)" >> $GITHUB_STEP_SUMMARY
             [[ "${{ needs.integration.result }}" == "failure" ]] && echo "- 🔗 Integration (non-critical)" >> $GITHUB_STEP_SUMMARY
+            [[ "${{ needs.installation-matrix-tests.result }}" == "failure" ]] && echo "- 📦 Installation Matrix (non-critical)" >> $GITHUB_STEP_SUMMARY
+            [[ "${{ needs.visual-tests.result }}" == "failure" ]] && echo "- 👁️ Visual Tests (non-critical)" >> $GITHUB_STEP_SUMMARY
             
             exit 1
           fi

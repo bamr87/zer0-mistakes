@@ -27,19 +27,32 @@ TEST_RESULTS_DIR="$SCRIPT_DIR/results"
 COVERAGE_DIR="$SCRIPT_DIR/coverage"
 REPORTS_DIR="$SCRIPT_DIR/reports"
 
-# Enhanced default values
-VERBOSE=false
-COVERAGE=false
-FORMAT="text"
-PARALLEL=false
-RETRY_FAILED=false
-TIMEOUT=300
-TEST_SUITES="all"  # Changed from TEST_PATTERN
-ENVIRONMENT="local"
-FAIL_FAST=false
-BASELINE_COMPARE=false
-SKIP_DOCKER=false
-SKIP_REMOTE=false
+# Load test configuration from test.conf if available
+_load_test_config() {
+    local config_file="${SCRIPT_DIR}/test.conf"
+    if [[ -f "$config_file" ]]; then
+        # shellcheck source=/dev/null
+        source "$config_file"
+        echo -e "${BLUE}[CONFIG]${NC} Loaded configuration from test.conf"
+    fi
+}
+
+# Load configuration first
+_load_test_config
+
+# Enhanced default values (can be overridden by test.conf)
+VERBOSE="${VERBOSE:-false}"
+COVERAGE="${COVERAGE:-false}"
+FORMAT="${FORMAT:-text}"
+PARALLEL="${PARALLEL:-false}"
+RETRY_FAILED="${RETRY_FAILED:-false}"
+TIMEOUT="${TEST_TIMEOUT_DEFAULT:-300}"
+TEST_SUITES="${TEST_SUITES:-all}"
+ENVIRONMENT="${ENVIRONMENT:-local}"
+FAIL_FAST="${FAIL_FAST:-false}"
+BASELINE_COMPARE="${BASELINE_COMPARE:-false}"
+SKIP_DOCKER="${SKIP_DOCKER_TESTS:-false}"
+SKIP_REMOTE="${SKIP_REMOTE_TESTS:-false}"
 
 # Show help function
 show_help() {
@@ -50,7 +63,8 @@ USAGE:
     $0 [OPTIONS]
 
 DESCRIPTION:
-    Orchestrates the three main test suites: Core, Deployment, and Quality.
+    Orchestrates all test suites including Core, Deployment, Quality,
+    Installation, Site Generation, and Visual tests.
     Provides unified interface with advanced reporting and CI/CD integration.
 
 OPTIONS:
@@ -60,7 +74,7 @@ OPTIONS:
     -p, --parallel        Run test suites in parallel
     -r, --retry-failed    Retry failed tests automatically
     -t, --timeout         Test timeout in seconds (default: 300)
-    -s, --suites          Test suites to run: all, core, deployment, quality (default: all)
+    -s, --suites          Test suites to run (see TEST SUITES below)
     -e, --environment     Test environment: local, ci, docker (default: local)
     --fail-fast           Stop on first test suite failure
     --baseline-compare    Compare results with baseline
@@ -72,12 +86,18 @@ TEST SUITES:
     core                  Unit, integration, and validation tests
     deployment            Installation, Docker, and E2E tests
     quality               Security, accessibility, compatibility, and performance tests
-    all                   Run all test suites (default)
+    installation          Install script CLI, modes, error handling, edge cases
+    site_generation       Configuration matrix site generation and build tests
+    visual                Browser-based screenshot and visual regression tests
+    all                   Run core suites (excludes visual for speed)
+    full                  Run all suites including visual tests
 
 EXAMPLES:
-    $0                                    # Run all test suites
+    $0                                    # Run all core test suites
     $0 --verbose --format json           # Detailed output with JSON reporting
     $0 --suites core,deployment          # Run only core and deployment suites
+    $0 --suites full                     # Run all suites including visual
+    $0 --suites installation             # Run installation tests only
     $0 --parallel --environment ci       # Parallel execution for CI
     $0 --suites quality --skip-docker    # Quality tests without Docker
 EOF
@@ -147,9 +167,9 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Test suites configuration (using indexed arrays for bash 3.2 compatibility)
-TEST_SUITE_KEYS=("core" "deployment" "quality")
-TEST_SUITE_SCRIPTS=("test_core.sh" "test_deployment.sh" "test_quality.sh")
-TEST_SUITE_NAMES=("Core Tests (Unit, Integration, Validation)" "Deployment Tests (Installation, Docker, E2E)" "Quality Tests (Security, Accessibility, Compatibility, Performance)")
+TEST_SUITE_KEYS=("core" "deployment" "quality" "installation" "site_generation" "visual")
+TEST_SUITE_SCRIPTS=("test_core.sh" "test_deployment.sh" "test_quality.sh" "test_installation.sh" "test_site_generation.sh" "test_visual.sh")
+TEST_SUITE_NAMES=("Core Tests (Unit, Integration, Validation)" "Deployment Tests (Installation, Docker, E2E)" "Quality Tests (Security, Accessibility, Compatibility, Performance)" "Installation Tests (CLI, Modes, Errors, Edge Cases)" "Site Generation Tests (Config Matrix, Jekyll Build)" "Visual Tests (Screenshots, Responsive, Dark Mode)")
 
 # Helper function to get suite script by name
 get_suite_script() {
@@ -221,7 +241,11 @@ parse_test_suites() {
     local -a suites_to_run=()
     
     if [[ "$suites_input" == "all" ]]; then
-        suites_to_run=("core" "deployment" "quality")
+        # Run core test suites by default (visual tests are optional and slow)
+        suites_to_run=("core" "deployment" "quality" "installation" "site_generation")
+    elif [[ "$suites_input" == "full" ]]; then
+        # Run all suites including visual tests
+        suites_to_run=("core" "deployment" "quality" "installation" "site_generation" "visual")
     else
         IFS=',' read -ra suites_to_run <<< "$suites_input"
     fi

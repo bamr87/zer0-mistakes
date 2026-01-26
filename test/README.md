@@ -2,9 +2,20 @@
 
 ## 🎯 Overview
 
-The zer0-mistakes testing framework has been **consolidated** from 15+ individual test scripts into **3 main test suites** for better maintainability, faster execution, and clearer CI/CD integration.
+The zer0-mistakes testing framework provides **6 comprehensive test suites** for validating the Jekyll theme across installation modes, site generation, and visual rendering.
 
 ## 📋 Test Suite Architecture
+
+### Quick Reference
+
+| Suite | Script | Purpose | Runtime |
+|-------|--------|---------|---------|
+| Core | `test_core.sh` | Unit, integration, validation | ~2-3 min |
+| Deployment | `test_deployment.sh` | Docker, E2E workflows | ~5-8 min |
+| Quality | `test_quality.sh` | Security, accessibility | ~4-6 min |
+| Installation | `test_installation.sh` | CLI, modes, edge cases | ~3-5 min |
+| Site Generation | `test_site_generation.sh` | Config matrix builds | ~5-10 min |
+| Visual | `test_visual.sh` | Screenshots, responsive | ~10-15 min |
 
 ### 🔧 Core Test Suite (`test_core.sh`)
 
@@ -70,6 +81,79 @@ The zer0-mistakes testing framework has been **consolidated** from 15+ individua
 ./test/test_quality.sh --verbose
 ```
 
+### 📦 Installation Test Suite (`test_installation.sh`)
+
+**Purpose:** Comprehensive install.sh script validation  
+**Runtime:** ~3-5 minutes  
+**Focus Areas:**
+
+- **CLI Tests**: All argument combinations (-h, --help, -f, --full, -m, --minimal)
+- **Mode Tests**: Full vs minimal installation file verification
+- **Error Handling**: Read-only directories, missing files, graceful failures
+- **Edge Cases**: Backups, path with spaces, symlinks, existing files
+- **Upgrade Scenarios**: Minimal to full, idempotent reinstalls, customization preservation
+
+```bash
+# Run installation tests
+./test/test_installation.sh
+
+# Skip remote installation tests (faster)
+./test/test_installation.sh --skip-remote
+
+# Keep test workspaces for debugging
+./test/test_installation.sh --no-cleanup --verbose
+```
+
+### 🔧 Site Generation Test Suite (`test_site_generation.sh`)
+
+**Purpose:** Configuration matrix site building and validation  
+**Runtime:** ~5-10 minutes  
+**Focus Areas:**
+
+- **Full Mode**: Complete theme installation with all files
+- **Minimal Mode**: Essential files only
+- **Remote Theme Mode**: GitHub Pages remote_theme configuration
+- **Gem Mode**: Ruby gem-based theme installation
+- **Build Validation**: Jekyll build success, HTML generation, asset compilation
+
+```bash
+# Test all installation modes
+./test/test_site_generation.sh --all
+
+# Test specific mode
+./test/test_site_generation.sh --mode full
+
+# Keep generated sites for inspection
+./test/test_site_generation.sh --mode minimal --keep
+```
+
+### 👁️ Visual Test Suite (`test_visual.sh`)
+
+**Purpose:** Browser-based screenshot and visual regression testing  
+**Runtime:** ~10-15 minutes  
+**Focus Areas:**
+
+- **Screenshot Capture**: Homepage, docs, about pages
+- **Responsive Testing**: Desktop (1280px), tablet (768px), mobile (375px)
+- **Theme Verification**: Dark/light mode toggle
+- **Visual Regression**: Baseline comparison with diff generation
+
+**Prerequisites:** Node.js 18+, Playwright
+
+```bash
+# Run visual tests for all modes
+./test/test_visual.sh --all-modes
+
+# Test specific mode
+./test/test_visual.sh --mode full
+
+# Update baseline screenshots
+./test/test_visual.sh --mode full --update-baseline
+
+# Verbose output
+./test/test_visual.sh --verbose
+```
+
 ## 🎮 Unified Test Runner (`test_runner.sh`)
 
 The **consolidated test runner** orchestrates all test suites with advanced features:
@@ -77,13 +161,16 @@ The **consolidated test runner** orchestrates all test suites with advanced feat
 ### Basic Usage
 
 ```bash
-# Run all test suites
+# Run all core test suites (excludes visual for speed)
 ./test/test_runner.sh
+
+# Run ALL suites including visual tests
+./test/test_runner.sh --suites full
 
 # Run specific suites
 ./test/test_runner.sh --suites core
 ./test/test_runner.sh --suites core,deployment
-./test/test_runner.sh --suites quality
+./test/test_runner.sh --suites installation,site_generation
 
 # Run with advanced options
 ./test/test_runner.sh --suites all --verbose --format json --parallel
@@ -130,8 +217,21 @@ test/
 ├── test_core.sh             # ✅ Unit + Integration + Validation
 ├── test_deployment.sh       # ✅ Installation + Docker + E2E
 ├── test_quality.sh          # ✅ Security + Accessibility + Compatibility + Performance
+├── test_installation.sh     # ✅ CLI + Modes + Error Handling + Edge Cases
+├── test_site_generation.sh  # ✅ Config Matrix + Jekyll Build + Content Validation
+├── test_visual.sh           # ✅ Screenshots + Responsive + Visual Regression
 ├── test_runner.sh           # ✅ Orchestrates all suites
-└── results/                 # ✅ Unified reporting
+├── playwright.config.js     # ✅ Playwright visual test configuration
+├── lib/                     # ✅ Shared test utilities
+│   ├── install_test_utils.sh
+│   └── config_matrix_generator.sh
+├── visual/                  # ✅ Visual test artifacts
+│   ├── baseline/            # Reference screenshots by mode
+│   ├── current/             # Current run screenshots
+│   └── diff/                # Visual diff images
+├── results/                 # ✅ Test results (JSON)
+├── reports/                 # ✅ Aggregated reports
+└── coverage/                # ✅ Coverage reports
 ```
 
 ## 🚀 Quick Start Guide
@@ -292,7 +392,7 @@ The test framework automatically detects and adapts to different environments:
 ./test/test_runner.sh --suites xyz
 
 # Solution: Use valid suite names
-./test/test_runner.sh --suites core,deployment,quality
+./test/test_runner.sh --suites core,deployment,quality,installation,site_generation,visual
 ```
 
 #### Docker Tests Failing
@@ -333,6 +433,42 @@ cat test/results/core_test_*.json
 ./test/test_runner.sh --suites all --timeout 900
 ```
 
+## 🧰 Configuration Matrix Generator
+
+The `config_matrix_generator.sh` utility creates Jekyll sites for each installation mode:
+
+### Available Modes
+
+| Mode | Description | Use Case |
+|------|-------------|----------|
+| `full` | Complete theme with all files | Local development |
+| `minimal` | Essential files only | Lightweight setup |
+| `remote_theme` | GitHub Pages remote_theme | GitHub Pages deployment |
+| `gem` | Ruby gem-based installation | Gem distribution |
+
+### Usage
+
+```bash
+# Generate a site for a specific mode
+./test/lib/config_matrix_generator.sh --mode full --output ./my-test-site
+
+# Generate sites for all modes
+./test/lib/config_matrix_generator.sh --all --output-base ./test-sites
+
+# List available modes
+./test/lib/config_matrix_generator.sh --list
+```
+
+### Generated Files
+
+Each mode generates:
+- `_config.yml` - Mode-specific Jekyll configuration
+- `Gemfile` - Appropriate gem dependencies
+- `index.md` - Sample homepage
+- `pages/about.md` - Sample about page
+- `pages/_docs/getting-started.md` - Sample docs
+- `pages/_posts/` - Sample blog post
+
 ## 🔮 Future Enhancements
 
 ### Planned Features
@@ -342,6 +478,8 @@ cat test/results/core_test_*.json
 - **Smart Test Selection**: Run only tests affected by code changes
 - **Enhanced Parallel Execution**: Fine-grained parallel test execution
 - **Visual Test Reports**: Rich HTML dashboards with trends and insights
+- **Cross-Browser Testing**: Firefox, Safari visual tests
+- **Accessibility Automation**: WCAG compliance checking in visual tests
 
 ### Contributing
 
@@ -349,8 +487,10 @@ The consolidated testing framework is designed for easy extension:
 
 1. **Adding Tests**: Add new test functions to appropriate suite files
 2. **New Test Categories**: Extend existing suites or propose new ones
-3. **CI/CD Integration**: Update workflow files to leverage new features
-4. **Documentation**: Keep this README updated with changes
+3. **New Installation Modes**: Add to `config_matrix_generator.sh`
+4. **Visual Baselines**: Update with `--update-baseline` flag
+5. **CI/CD Integration**: Update workflow files to leverage new features
+6. **Documentation**: Keep this README updated with changes
 
 ---
 
@@ -358,16 +498,26 @@ The consolidated testing framework is designed for easy extension:
 
 The consolidated testing framework is working correctly when:
 
-- ✅ **All three test suites execute successfully**
+- ✅ **All six test suites execute successfully**
 - ✅ **CI/CD workflows complete without errors**
 - ✅ **Test reports are generated in expected formats**
-- ✅ **Performance targets are met (< 12 minutes for full suite)**
+- ✅ **Performance targets are met (< 20 minutes for full suite)**
 - ✅ **No regressions in test coverage or quality**
+- ✅ **All installation modes (full, minimal, remote_theme, gem) build successfully**
+- ✅ **Visual tests show no unexpected regressions**
 
 **Ready for production use!** 🚀
 
 ---
 
-**Test Framework Version**: 2.0 (Consolidated)  
-**Last Updated**: December 2024  
-**Compatibility**: Jekyll 4.0+, Ruby 2.7+, Docker (optional)
+## 📚 Additional Documentation
+
+- [Installation Test Plan](../docs/systems/testing-framework.md)
+- [Configuration Matrix](lib/config_matrix_generator.sh)
+- [Playwright Configuration](playwright.config.js)
+
+---
+
+**Test Framework Version**: 3.0 (Extended with Installation & Visual Tests)  
+**Last Updated**: January 2026  
+**Compatibility**: Jekyll 4.0+, Ruby 3.0+, Node.js 18+, Docker (optional), Playwright (for visual tests)

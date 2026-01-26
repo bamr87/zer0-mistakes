@@ -1,0 +1,16 @@
+source "https://rubygems.org"
+
+# GitHub Pages gem includes Jekyll and compatible plugins
+gem "github-pages", group: :jekyll_plugins
+
+# Essential plugins (already included in github-pages but listed for clarity)
+gem "jekyll-remote-theme"
+gem "jekyll-feed"
+gem "jekyll-sitemap"
+gem "jekyll-seo-tag"
+gem "jekyll-paginate"
+
+# Platform compatibility and performance
+gem "ffi", "{{FFI_VERSION}}"
+gem "webrick", "{{WEBRICK_VERSION}}"
+gem "commonmarker", "{{COMMONMARKER_VERSION}}"  # Fixed version to avoid compatibility issues

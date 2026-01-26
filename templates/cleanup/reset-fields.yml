@@ -1,0 +1,81 @@
+# =========================================================================
+# Fork Mode: Configuration Fields to Reset
+# =========================================================================
+# This file defines which fields in configuration files should be reset
+# to placeholder/template values when creating a clean fork.
+#
+# Format:
+#   file_path:
+#     field.path: "replacement value"
+#
+# Use {{VAR_NAME}} for dynamic substitution
+# =========================================================================
+
+# _config.yml fields to reset
+_config.yml:
+  # Site identity
+  founder: "Your Name"
+  github_user: "your-username"
+  repository_name: "your-repo"
+  title: "My Jekyll Site"
+  subtitle: "Built with {{THEME_NAME}}"
+  name: "Your Name"
+  email: "your@email.com"
+  description: "A Jekyll site built with the {{THEME_DISPLAY_NAME}}"
+  
+  # URLs (cleared for GitHub Pages auto-detection)
+  domain: ""
+  url: ""
+  
+  # Social/external links
+  twitter_username: ""
+  github_username: "your-username"
+  linkedin_username: ""
+  
+  # Images
+  og_image: "/assets/images/og-default.png"
+  logo: ""
+  
+  # Analytics (MUST be cleared)
+  google_analytics: ""
+  posthog.enabled: false
+  posthog.api_key: ""
+
+# _data/authors.yml reset
+_data/authors.yml:
+  _replace_entire_file: true
+  content: |
+    # Site Authors
+    # Add your author information here
+    
+    default:
+      name: "Site Author"
+      bio: "Update this in _data/authors.yml"
+      avatar: "/assets/images/avatar-placeholder.png"
+      github: "your-username"
+      twitter: ""
+      email: "your@email.com"
+      role: "Site Owner"
+
+# _data/navigation/main.yml reset (simplified)
+_data/navigation/main.yml:
+  _replace_entire_file: true
+  content: |
+    # Main Navigation
+    # Customize this for your site structure
+    
+    - title: Home
+      icon: bi-house
+      url: /
+    
+    - title: Blog
+      icon: bi-journal-text
+      url: /blog/
+    
+    - title: Docs
+      icon: bi-book
+      url: /docs/
+    
+    - title: About
+      icon: bi-info-circle
+      url: /about/

@@ -1,0 +1,87 @@
+---
+layout: default
+title: Documentation
+permalink: /docs/
+---
+
+# Documentation
+
+Welcome to the {{THEME_NAME}} theme documentation. Here you'll find everything you need to build and customize your Jekyll site.
+
+## Getting Started
+
+<div class="row">
+<div class="col-md-6 mb-3">
+
+### Installation
+
+The theme supports multiple installation methods:
+
+- **Docker** (Recommended) - Zero dependencies
+- **Remote Theme** - For GitHub Pages
+- **Gem** - Traditional Ruby installation
+
+[View Installation Guide →](/quickstart/)
+
+</div>
+<div class="col-md-6 mb-3">
+
+### Configuration
+
+Customize your site with `_config.yml`:
+
+- Site title and description
+- Navigation menus
+- Social links
+- Analytics integration
+
+[View Configuration Guide →](/docs/configuration/)
+
+</div>
+</div>
+
+## Core Features
+
+| Feature | Description |
+|---------|-------------|
+| **Bootstrap 5.3** | Modern, responsive design framework |
+| **Dark Mode** | Automatic light/dark theme switching |
+| **Search** | Client-side search with keyboard shortcuts |
+| **Mermaid Diagrams** | Flowcharts, sequences, and more |
+| **Code Highlighting** | Syntax highlighting with Rouge |
+
+## Documentation Structure
+
+```
+pages/
+├── _docs/           # Documentation pages
+├── _posts/          # Blog posts
+├── _quickstart/     # Quick start guides
+└── _about/          # About pages
+```
+
+## Creating Content
+
+### Blog Posts
+
+Create files in `pages/_posts/` with format:
+```
+YYYY-MM-DD-title.md
+```
+
+### Documentation
+
+Create files in `pages/_docs/` with YAML front matter:
+```yaml
+---
+layout: default
+title: Your Page Title
+permalink: /docs/your-page/
+---
+```
+
+## Need Help?
+
+- [Troubleshooting Guide](/docs/troubleshooting/)
+- [GitHub Issues]({{GITHUB_URL}}/issues)
+- [GitHub Discussions]({{GITHUB_URL}}/discussions)

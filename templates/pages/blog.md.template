@@ -1,0 +1,43 @@
+---
+layout: default
+title: Blog
+permalink: /blog/
+---
+
+# Blog
+
+Welcome to the blog. Create your first post to get started!
+
+## Creating Posts
+
+Create markdown files in `pages/_posts/` with the format:
+
+```
+YYYY-MM-DD-your-post-title.md
+```
+
+### Example Post
+
+Create `pages/_posts/{{CURRENT_DATE}}-hello-world.md`:
+
+```yaml
+---
+layout: default
+title: Hello World
+date: {{CURRENT_DATE}}
+categories: [general]
+tags: [welcome, first-post]
+---
+
+Your post content here...
+```
+
+## Recent Posts
+
+{% for post in site.posts limit:5 %}
+- [{{ post.title }}]({{ post.url }}) - {{ post.date | date: "%B %d, %Y" }}
+{% endfor %}
+
+{% if site.posts.size == 0 %}
+*No posts yet. Create your first post to see it here!*
+{% endif %}

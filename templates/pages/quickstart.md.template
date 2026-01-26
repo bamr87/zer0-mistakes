@@ -1,0 +1,59 @@
+---
+layout: default
+title: Quick Start
+permalink: /quickstart/
+---
+
+# Quick Start Guide
+
+Get your site up and running in just a few minutes!
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- **Docker Desktop** installed ([download](https://www.docker.com/products/docker-desktop))
+- **Git** installed ([download](https://git-scm.com/))
+
+## 1. Start Development Server
+
+### Using Docker (Recommended)
+
+```bash
+docker-compose up
+```
+
+Your site will be available at **{{DEFAULT_URL}}**
+
+### Using Local Ruby
+
+```bash
+bundle install
+bundle exec jekyll serve
+```
+
+## 2. Customize Your Site
+
+Edit `_config.yml` to personalize your site:
+
+```yaml
+title: Your Site Title
+description: Your site description
+author: Your Name
+```
+
+## 3. Add Content
+
+- Create posts in `pages/_posts/`
+- Create documentation in `pages/_docs/`
+- Add static pages in `pages/`
+
+## Next Steps
+
+- [Read the Documentation](/docs/) - Learn about all features
+- [Explore Configuration](/docs/configuration/) - Customize your site
+- [Learn about Layouts](/docs/layouts/) - Understand page layouts
+
+---
+
+Need help? Check the [troubleshooting guide](/docs/troubleshooting/) or [open an issue]({{GITHUB_URL}}/issues).

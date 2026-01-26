@@ -1,0 +1,25 @@
+# Main Navigation Configuration
+# Customize this file to change your site navigation
+
+- title: Quick Start
+  icon: bi-rocket-takeoff
+  url: /quickstart/
+
+- title: Blog
+  icon: bi-journal-text
+  url: /blog/
+
+- title: Docs
+  icon: bi-book
+  url: /docs/
+  children:
+    - title: Documentation Home
+      url: /docs/
+    - title: Configuration
+      url: /docs/configuration/
+    - title: Troubleshooting
+      url: /docs/troubleshooting/
+
+- title: About
+  icon: bi-info-circle
+  url: /about/

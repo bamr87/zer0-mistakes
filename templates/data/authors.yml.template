@@ -1,0 +1,11 @@
+# Site Authors
+# Add your author information here
+
+default:
+  name: "{{SITE_AUTHOR}}"
+  bio: "Update this in _data/authors.yml"
+  avatar: "/assets/images/avatar-placeholder.png"
+  github: "{{GITHUB_USER}}"
+  twitter: ""
+  email: "{{SITE_EMAIL}}"
+  role: "Site Owner"

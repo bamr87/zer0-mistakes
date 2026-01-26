@@ -1,0 +1,111 @@
+# =========================================================================
+# {{THEME_DISPLAY_NAME}} - Fork Template Configuration
+# =========================================================================
+# This is a template configuration for users who fork the repository.
+# Replace placeholder values with your own settings.
+# =========================================================================
+
+# Site Settings
+title: "{{SITE_TITLE}}"
+subtitle: "Built with {{THEME_NAME}}"
+description: "{{SITE_DESCRIPTION}}"
+author: "{{SITE_AUTHOR}}"
+email: "{{SITE_EMAIL}}"
+
+# Repository Information
+founder: "{{SITE_AUTHOR}}"
+github_user: "{{GITHUB_USER}}"
+repository_name: "{{THEME_NAME}}"
+
+# URLs - Leave empty for GitHub Pages auto-detection
+domain: ""
+url: ""
+baseurl: ""
+
+# Theme Configuration
+# For remote theme (GitHub Pages)
+remote_theme: "{{GITHUB_REPO}}"
+
+# Social Links (add your own)
+twitter_username: ""
+github_username: "{{GITHUB_USER}}"
+linkedin_username: ""
+
+# Analytics - Configure your own or leave disabled
+google_analytics: ""
+posthog:
+  enabled: false
+  api_key: ""
+  custom_events:
+    track_downloads: false
+    track_external_links: false
+    track_scroll_depth: false
+
+# Build Settings
+markdown: kramdown
+highlighter: rouge
+permalink: /:categories/:title/
+
+# Jekyll SEO Tag defaults
+logo: ""
+og_image: "/assets/images/og-default.png"
+
+# Collections
+collections:
+  posts:
+    output: true
+    permalink: /posts/:title/
+  docs:
+    output: true
+    permalink: /docs/:path/
+  about:
+    output: true
+    permalink: /about/:path/
+
+# Default Front Matter
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "journals"
+      author: "default"
+  - scope:
+      path: ""
+      type: "docs"
+    values:
+      layout: "default"
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+  - jekyll-remote-theme
+
+# Exclude from processing
+exclude:
+  - .sass-cache/
+  - .jekyll-cache/
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+  - vendor/
+  - scripts/
+  - test/
+  - "*.gem"
+  - "*.gemspec"
+  - docker-compose*.yml
+  - Dockerfile
+  - Makefile
+  - Rakefile
+  - README.md
+  - CONTRIBUTING.md
+  - CODE_OF_CONDUCT.md
+  - CHANGELOG.md
+  - LICENSE

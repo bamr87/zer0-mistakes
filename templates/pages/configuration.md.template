@@ -1,0 +1,103 @@
+---
+layout: default
+title: Configuration Guide
+permalink: /docs/configuration/
+---
+
+# Configuration Guide
+
+This guide covers the main configuration options for your site.
+
+## Site Settings
+
+Edit `_config.yml` to configure your site:
+
+```yaml
+# Basic Information
+title: My Awesome Site
+description: A Jekyll site using {{THEME_NAME}} theme
+author: Your Name
+email: your@email.com
+
+# URLs
+url: https://yourdomain.com
+baseurl: ""  # or "/repo-name" for project pages
+```
+
+## Navigation
+
+Navigation is configured in `_data/navigation/main.yml`:
+
+```yaml
+- title: Home
+  url: /
+- title: Docs
+  url: /docs/
+  children:
+    - title: Getting Started
+      url: /docs/getting-started/
+```
+
+## Collections
+
+The theme uses Jekyll collections for content:
+
+```yaml
+collections:
+  docs:
+    output: true
+    permalink: /docs/:path/
+  posts:
+    output: true
+    permalink: /posts/:title/
+```
+
+## Plugins
+
+Essential plugins are configured in `_config.yml`:
+
+```yaml
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+  - jekyll-remote-theme
+```
+
+## Theme Settings
+
+### Dark Mode
+
+Dark mode is enabled by default. Users can toggle between light and dark themes.
+
+### Search
+
+Search is enabled by default with keyboard shortcuts:
+- Press `/` or `Cmd+K` to open search
+
+### Analytics
+
+Add your analytics configuration:
+
+```yaml
+analytics:
+  provider: posthog  # or google
+  posthog:
+    api_key: your-api-key
+```
+
+## Development Configuration
+
+For local development, use `_config_dev.yml`:
+
+```yaml
+url: ""
+baseurl: ""
+livereload: true
+incremental: true
+```
+
+Start with both configs:
+```bash
+bundle exec jekyll serve --config _config.yml,_config_dev.yml
+```

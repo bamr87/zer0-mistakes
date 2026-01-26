@@ -1,0 +1,104 @@
+---
+layout: default
+title: Troubleshooting
+permalink: /docs/troubleshooting/
+---
+
+# Troubleshooting Guide
+
+Common issues and solutions for the {{THEME_NAME}} theme.
+
+## Docker Issues
+
+### Container won't start
+
+```bash
+# Clean up and rebuild
+docker-compose down
+docker system prune -f
+docker-compose up --build
+```
+
+### Port {{DEFAULT_PORT}} already in use
+
+Edit `docker-compose.yml` and change the port:
+
+```yaml
+ports:
+  - "4001:{{DEFAULT_PORT}}"  # Use port 4001 instead
+```
+
+### Apple Silicon (M1/M2) Issues
+
+The Docker configuration includes platform specification for compatibility. If you still have issues:
+
+```yaml
+services:
+  jekyll:
+    platform: linux/amd64
+```
+
+## Jekyll Issues
+
+### Bundle install fails
+
+```bash
+# Update bundler
+gem update bundler
+
+# Clean and reinstall
+bundle clean --force
+bundle install
+```
+
+### Missing dependencies
+
+```bash
+# Install system dependencies (macOS)
+brew install ruby
+
+# Install system dependencies (Ubuntu)
+sudo apt-get install ruby-full build-essential
+```
+
+### Theme not found
+
+If you see "theme could not be found":
+
+1. For remote theme, ensure `_config.yml` has:
+   ```yaml
+   remote_theme: {{GITHUB_REPO}}
+   ```
+
+2. For gem-based, ensure `Gemfile` has:
+   ```ruby
+   gem "{{THEME_GEM_NAME}}"
+   ```
+
+## Build Issues
+
+### Liquid syntax errors
+
+Check for unclosed tags:
+```liquid
+{% raw %}
+{% if condition %}
+  Content here
+{% endif %}  <!-- Don't forget this! -->
+{% endraw %}
+```
+
+### Markdown not rendering
+
+Ensure files have YAML front matter:
+```yaml
+---
+layout: default
+title: Your Title
+---
+```
+
+## Still Need Help?
+
+- [GitHub Issues]({{GITHUB_URL}}/issues)
+- [GitHub Discussions]({{GITHUB_URL}}/discussions)

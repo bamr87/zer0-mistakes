@@ -24,10 +24,22 @@ NC='\033[0m' # No Color
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 TEST_RESULTS_DIR="$SCRIPT_DIR/results"
-VERBOSE=false
-COVERAGE=false
-FORMAT="text"
-TIMEOUT=300
+
+# Load test configuration from test.conf if available
+_load_test_config() {
+    local config_file="${SCRIPT_DIR}/test.conf"
+    if [[ -f "$config_file" ]]; then
+        # shellcheck source=/dev/null
+        source "$config_file"
+    fi
+}
+_load_test_config
+
+# Default values (can be overridden by test.conf or command line)
+VERBOSE="${VERBOSE:-false}"
+COVERAGE="${COVERAGE:-false}"
+FORMAT="${FORMAT:-text}"
+TIMEOUT="${TEST_TIMEOUT_DEFAULT:-300}"
 
 # Test counters
 TESTS_TOTAL=0
@@ -71,7 +83,7 @@ OPTIONS:
     -v, --verbose      Enable verbose output
     -c, --coverage     Generate coverage reports
     -f, --format       Output format: text, json, xml (default: text)
-    -t, --timeout      Test timeout in seconds (default: 300)
+    -t, --timeout      Test timeout in seconds (default: ${TEST_TIMEOUT_DEFAULT:-300})
     -h, --help         Show this help message
 
 EXAMPLES:

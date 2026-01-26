@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.20.0] - 2026-01-26
+
+### Added
+- **Scaffolding templates**: New templates directory and helper scripts for fork cleanup and content setup.
+- **Testing assets**: New test helpers and configs including installation, site generation, and visual suites.
+
+### Changed
+- **CI**: Expanded workflow coverage for the updated test suite and automation paths.
+- **Install**: Enhanced installation flow for template-based setup and post-install configuration.
+- **Docs**: Updated Jekyll documentation index.
+
+### Fixed
+- **Dev build**: Exclude templates from Jekyll processing to prevent invalid date parsing.
+
 ## [0.19.1] - 2026-01-25
 
 ### Changed

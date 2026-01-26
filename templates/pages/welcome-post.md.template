@@ -1,0 +1,53 @@
+---
+layout: journals
+title: "Welcome to Your New Site"
+date: {{CURRENT_DATE}}
+categories: [General]
+tags: [welcome, getting-started]
+author: {{SITE_AUTHOR}}
+description: "Your first blog post on your new Jekyll site"
+---
+
+# Welcome!
+
+This is your first blog post. Congratulations on setting up your new Jekyll site with the **{{THEME_DISPLAY_NAME}}**!
+
+## Getting Started
+
+Here are some things you can do next:
+
+1. **Customize your site** - Edit `_config.yml` to set your site title, description, and other settings
+2. **Add more posts** - Create new files in `pages/_posts/` using the format `YYYY-MM-DD-title.md`
+3. **Create documentation** - Add pages to `pages/_docs/` for your documentation
+4. **Personalize the theme** - Modify styles in `_sass/custom.scss`
+
+## Writing Posts
+
+Posts are written in Markdown with YAML front matter. Here's an example structure:
+
+```yaml
+---
+layout: journals
+title: "Your Post Title"
+date: YYYY-MM-DD
+categories: [Category]
+tags: [tag1, tag2]
+---
+
+Your content here...
+```
+
+## Features Available
+
+- **Code highlighting** - Use fenced code blocks with language identifiers
+- **Mermaid diagrams** - Create flowcharts and diagrams
+- **Bootstrap components** - Full access to Bootstrap 5.3 classes
+- **Dark mode** - Automatic theme switching based on user preference
+
+## Next Steps
+
+- Check out the [Quick Start Guide](/quickstart/)
+- Read the [Documentation](/docs/)
+- Explore the [Configuration Options](/docs/configuration/)
+
+Happy writing! 🚀

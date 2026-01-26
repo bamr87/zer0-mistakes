@@ -1,0 +1,14 @@
+source "https://rubygems.org"
+
+# Jekyll and essential plugins
+gem "jekyll", "{{JEKYLL_VERSION}}"
+gem "jekyll-feed"
+gem "jekyll-sitemap"
+gem "jekyll-seo-tag"
+
+# Platform compatibility
+gem "ffi", "{{FFI_VERSION}}"
+gem "webrick", "{{WEBRICK_VERSION}}"
+
+# GitHub Pages compatibility (uncomment for GitHub Pages)
+# gem "github-pages", group: :jekyll_plugins
