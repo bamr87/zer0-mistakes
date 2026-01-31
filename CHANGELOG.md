@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.20.2] - 2026-01-30
+
+### Added
+- **GitHub Pages Compatible Search**: New out-of-box search functionality that works with GitHub Pages safe mode
+  - `_includes/search-data.json` - Liquid template for generating search index
+  - `_layouts/search.html` - Layout wrapper for search.json generation
+  - Enhanced search index with `date`, `categories`, and `tags` fields
+  - Configurable content length via `site.search.content_length`
+
+### Changed
+- **search.json**: Now uses layout-based approach instead of inline Liquid for better theme integration
+- Theme users only need a 5-line `search.json` file to enable search functionality
+
+### Technical Details
+- Works in GitHub Pages safe mode (no Ruby plugins required)
+- Indexes pages, posts, and all collection documents
+- Produces valid JSON with 131+ items indexed
+- Automatically included in gem via `_includes/` and `_layouts/` directories
+
 ## [0.20.1] - 2026-01-26
 
 ### Changed
