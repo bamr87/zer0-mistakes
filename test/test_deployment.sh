@@ -114,8 +114,14 @@ cleanup_test_environment() {
         log_info "Cleaning up test workspace: $TEST_WORKSPACE"
         
         # Stop any running Docker containers first
+        # Use docker compose (plugin) or docker-compose (standalone)
         find "$TEST_WORKSPACE" -name "docker-compose.yml" -exec dirname {} \; | while read -r dir; do
-            cd "$dir" && docker-compose down &>/dev/null || true
+            cd "$dir"
+            if docker compose version &>/dev/null 2>&1; then
+                docker compose down &>/dev/null || true
+            elif command -v docker-compose &>/dev/null; then
+                docker-compose down &>/dev/null || true
+            fi
         done
         
         rm -rf "$TEST_WORKSPACE"
@@ -358,8 +364,21 @@ test_docker_environment() {
     fi
     
     # Validate docker-compose configuration
-    if ! docker-compose config &>/dev/null; then
-        log_error "docker-compose.yml is invalid"
+    # Try docker compose (plugin) first, fall back to docker-compose (standalone)
+    local compose_cmd="docker compose"
+    if ! command -v docker &>/dev/null || ! docker compose version &>/dev/null 2>&1; then
+        if command -v docker-compose &>/dev/null; then
+            compose_cmd="docker-compose"
+        else
+            log_warning "Neither 'docker compose' nor 'docker-compose' found, skipping validation"
+            return 0
+        fi
+    fi
+    
+    if ! $compose_cmd config &>/dev/null; then
+        # Show actual error for debugging
+        log_error "docker-compose.yml validation failed:"
+        $compose_cmd config 2>&1 | head -20 || true
         return 1
     fi
     
@@ -386,9 +405,21 @@ test_docker_volume_mounting() {
     
     cd "$test_dir"
     
+    # Determine compose command
+    local compose_cmd="docker compose"
+    if ! docker compose version &>/dev/null 2>&1; then
+        if command -v docker-compose &>/dev/null; then
+            compose_cmd="docker-compose"
+        else
+            log_warning "Neither 'docker compose' nor 'docker-compose' found, skipping volume test"
+            rm -rf "$test_dir"
+            return 0
+        fi
+    fi
+    
     # Test that files are visible inside container (using /site not /app as per Dockerfile)
-    # Note: docker-compose run creates a new container with volumes mounted per docker-compose.yml
-    if docker-compose run --rm jekyll ls -la /site/_config.yml &>/dev/null; then
+    # Note: docker compose run creates a new container with volumes mounted per docker-compose.yml
+    if $compose_cmd run --rm jekyll ls -la /site/_config.yml &>/dev/null; then
         log_success "Docker volume mounting working correctly"
     else
         # This may fail if Docker image hasn't been built yet, which is acceptable
@@ -421,11 +452,23 @@ test_jekyll_docker_build() {
     
     cd "$test_dir"
     
+    # Determine compose command
+    local compose_cmd="docker compose"
+    if ! docker compose version &>/dev/null 2>&1; then
+        if command -v docker-compose &>/dev/null; then
+            compose_cmd="docker-compose"
+        else
+            log_warning "Neither 'docker compose' nor 'docker-compose' found, skipping Jekyll build test"
+            rm -rf "$test_dir"
+            return 0
+        fi
+    fi
+    
     # Start Jekyll in detached mode
     if [[ "$VERBOSE" == "true" ]]; then
-        docker-compose up -d
+        $compose_cmd up -d
     else
-        docker-compose up -d &>/dev/null
+        $compose_cmd up -d &>/dev/null
     fi
     
     # Wait for Jekyll to start (bundle install can take time)
@@ -434,13 +477,13 @@ test_jekyll_docker_build() {
     local attempt=0
     
     while [[ $attempt -lt $max_attempts ]]; do
-        if docker-compose logs jekyll | grep -q "Server running"; then
+        if $compose_cmd logs jekyll | grep -q "Server running"; then
             log_success "Jekyll server started successfully"
             break
-        elif docker-compose logs jekyll | grep -q "ERROR\|FATAL"; then
+        elif $compose_cmd logs jekyll | grep -q "ERROR\|FATAL"; then
             log_error "Jekyll build failed"
-            docker-compose logs jekyll | tail -10
-            docker-compose down &>/dev/null || true
+            $compose_cmd logs jekyll | tail -10
+            $compose_cmd down &>/dev/null || true
             rm -rf "$test_dir"
             return 1
         fi
@@ -455,8 +498,8 @@ test_jekyll_docker_build() {
     
     if [[ $attempt -eq $max_attempts ]]; then
         log_warning "Jekyll failed to start within timeout - this is acceptable for resource-constrained environments"
-        docker-compose logs jekyll | tail -20
-        docker-compose down &>/dev/null || true
+        $compose_cmd logs jekyll | tail -20
+        $compose_cmd down &>/dev/null || true
         rm -rf "$test_dir"
         return 0
     fi
@@ -476,7 +519,7 @@ test_jekyll_docker_build() {
     
     if [[ $site_attempt -eq $site_attempts ]]; then
         log_warning "Site not accessible after Jekyll startup - this is acceptable for slow Docker builds"
-        docker-compose down &>/dev/null || true
+        $compose_cmd down &>/dev/null || true
         rm -rf "$test_dir"
         return 0
     fi
@@ -493,7 +536,7 @@ test_jekyll_docker_build() {
     fi
     
     # Clean up
-    docker-compose down &>/dev/null || true
+    $compose_cmd down &>/dev/null || true
     rm -rf "$test_dir"
     
     log_success "Jekyll Docker build test passed"
@@ -551,12 +594,24 @@ test_complete_workflow() {
         log_info "Testing Docker workflow..."
         
         # Validate docker-compose configuration
-        if ! docker-compose config &>/dev/null; then
-            log_error "Docker Compose configuration invalid"
-            return 1
+        # Try docker compose (plugin) first, fall back to docker-compose (standalone)
+        local compose_cmd="docker compose"
+        if ! docker compose version &>/dev/null 2>&1; then
+            if command -v docker-compose &>/dev/null; then
+                compose_cmd="docker-compose"
+            else
+                log_warning "Neither 'docker compose' nor 'docker-compose' found, skipping Docker validation"
+                compose_cmd=""
+            fi
         fi
         
-        log_success "Docker workflow validation passed"
+        if [[ -n "$compose_cmd" ]]; then
+            if ! $compose_cmd config &>/dev/null; then
+                log_error "Docker Compose configuration invalid"
+                return 1
+            fi
+            log_success "Docker workflow validation passed"
+        fi
     fi
     
     log_success "Complete workflow test passed"
