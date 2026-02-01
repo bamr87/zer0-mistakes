@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.20.4] - 2026-02-01
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- a71e7a3 fix(ci): add PAGES_REPO_NWO env var and skip-remote for Jekyll builds
+- 74e0929 fix(ci): ensure Gemfile.lock is updated during version bumps
+- e06520e docs(prompts): enhance release pipeline documentation with best practices
+
+
 ## [0.20.3] - 2026-02-01
 
 ### Added
