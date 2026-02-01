@@ -1,0 +1,74 @@
+<!--
+  ===================================================================
+  POST TYPE BADGE COMPONENT - Visual indicator for article types
+  ===================================================================
+  
+  File: post-type-badge.html
+  Path: _includes/components/post-type-badge.html
+  Purpose: Display Bootstrap badge based on post_type front matter
+  
+  Parameters:
+  - post_type (required): The type of post to display badge for
+  
+  Supported post_type values:
+  - standard: No badge (default behavior)
+  - featured: Gold star badge (bg-warning)
+  - breaking: Red urgent badge (bg-danger)
+  - opinion: Gray editorial badge (bg-secondary)
+  - review: Blue review badge (bg-info)
+  - tutorial: Green learning badge (bg-success)
+  - listicle: Primary list badge (bg-primary)
+  - interview: Dark Q&A badge (bg-dark)
+  
+  Usage:
+    {% include components/post-type-badge.html post_type=page.post_type %}
+    {% include components/post-type-badge.html post_type=post.post_type %}
+  
+  Dependencies:
+  - Bootstrap 5 badge component
+  - Bootstrap Icons
+  ===================================================================
+-->
+
+{% assign type = include.post_type | default: "standard" %}
+
+{% case type %}
+  {% when "featured" %}
+    <span class="badge bg-warning text-dark">
+      <i class="bi bi-star-fill me-1"></i>Featured
+    </span>
+  
+  {% when "breaking" %}
+    <span class="badge bg-danger">
+      <i class="bi bi-lightning-fill me-1"></i>Breaking
+    </span>
+  
+  {% when "opinion" %}
+    <span class="badge bg-secondary">
+      <i class="bi bi-pencil-square me-1"></i>Opinion
+    </span>
+  
+  {% when "review" %}
+    <span class="badge bg-info text-dark">
+      <i class="bi bi-star-half me-1"></i>Review
+    </span>
+  
+  {% when "tutorial" %}
+    <span class="badge bg-success">
+      <i class="bi bi-book me-1"></i>Tutorial
+    </span>
+  
+  {% when "listicle" %}
+    <span class="badge bg-primary">
+      <i class="bi bi-list-ol me-1"></i>Listicle
+    </span>
+  
+  {% when "interview" %}
+    <span class="badge bg-dark">
+      <i class="bi bi-mic me-1"></i>Interview
+    </span>
+  
+  {% when "standard" %}
+    {% comment %} No badge for standard posts {% endcomment %}
+  
+{% endcase %}

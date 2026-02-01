@@ -10,7 +10,7 @@ tags:
   - wcag
   - inclusive-design
 date: 2025-01-05T09:00:00.000Z
-layout: journals
+layout: article
 preview: /images/wizard-on-journey.png
 author: Zer0-Mistakes Team
 featured: true

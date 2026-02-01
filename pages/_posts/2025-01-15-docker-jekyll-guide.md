@@ -10,7 +10,7 @@ tags:
   - devops
   - containerization
 date: 2025-01-15T10:00:00.000Z
-layout: journals
+layout: article
 preview: /images/favicon_gpt_computer_retro.png
 author: Zer0-Mistakes Team
 featured: true

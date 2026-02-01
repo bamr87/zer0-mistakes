@@ -1,0 +1,307 @@
+---
+layout: default
+---
+<!--
+  ===================================================================
+  NOTE LAYOUT - Quick Notes and Reference Display
+  ===================================================================
+  
+  File: note.html
+  Path: _layouts/note.html
+  Inherits: default.html (which inherits root.html)
+  Purpose: Display quick notes, cheatsheets, TILs, and reference content
+  
+  Template Logic:
+  - Displays note content with compact, scannable header
+  - Shows note metadata (author, date, reading time, last modified)
+  - Provides tag and category badges for organization
+  - Integrates related notes and prev/next navigation
+  - Uses Schema.org Article markup for SEO
+  
+  Features:
+  - Reading time calculation
+  - Related notes by tag matching
+  - Previous/Next navigation
+  - Share buttons (optional)
+  - Giscus comments integration
+  - Difficulty badge display
+  - Responsive Bootstrap 5 styling
+  
+  Dependencies:
+  - Bootstrap Icons (loaded in root.html)
+  - Bootstrap 5 components
+  - Giscus comments (optional)
+  ===================================================================
+-->
+
+<article id="main" class="note-article h-entry" role="main" itemscope itemtype="https://schema.org/Article">
+  
+  <!-- ================================ -->
+  <!-- NOTE HEADER                      -->
+  <!-- ================================ -->
+  <header class="note-header mb-4">
+    <h1 id="page-title" class="note-title p-name" itemprop="headline">
+      {{ page.title }}
+    </h1>
+    
+    <!-- Note Metadata -->
+    <div class="note-meta text-muted mb-3">
+      <!-- Author -->
+      {% if page.author %}
+        <span class="note-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
+          <i class="bi bi-person me-1"></i>
+          <span itemprop="name">{{ page.author }}</span>
+        </span>
+        <span class="mx-2">•</span>
+      {% endif %}
+      
+      <!-- Publication Date -->
+      {% if page.date %}
+        <time class="note-date dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
+          <i class="bi bi-calendar me-1"></i>
+          {{ page.date | date: "%B %d, %Y" }}
+        </time>
+        <span class="mx-2">•</span>
+      {% endif %}
+      
+      <!-- Reading Time -->
+      {% assign words = content | number_of_words %}
+      {% assign minutes = words | divided_by: 200 %}
+      {% if minutes < 1 %}{% assign minutes = 1 %}{% endif %}
+      <span class="reading-time">
+        <i class="bi bi-clock me-1"></i>
+        {{ minutes }} min read
+      </span>
+      
+      <!-- Last Modified -->
+      {% if page.lastmod %}
+        <span class="mx-2">•</span>
+        <span class="note-updated" itemprop="dateModified" content="{{ page.lastmod | date_to_xmlschema }}">
+          <i class="bi bi-pencil me-1"></i>
+          Updated: {{ page.lastmod | date: "%B %d, %Y" }}
+        </span>
+      {% endif %}
+      
+      <!-- Difficulty Badge -->
+      {% if page.difficulty %}
+        <span class="mx-2">•</span>
+        <span class="note-difficulty">
+          {% case page.difficulty %}
+            {% when 'beginner' %}
+              <span class="badge bg-success"><i class="bi bi-bar-chart me-1"></i>Beginner</span>
+            {% when 'intermediate' %}
+              <span class="badge bg-warning text-dark"><i class="bi bi-bar-chart-fill me-1"></i>Intermediate</span>
+            {% when 'advanced' %}
+              <span class="badge bg-danger"><i class="bi bi-bar-chart-fill me-1"></i>Advanced</span>
+            {% else %}
+              <span class="badge bg-secondary"><i class="bi bi-bar-chart me-1"></i>{{ page.difficulty | capitalize }}</span>
+          {% endcase %}
+        </span>
+      {% endif %}
+    </div>
+    
+    <!-- Tags -->
+    {% if page.tags and page.tags.size > 0 %}
+      <div class="note-tags mb-3">
+        {% for tag in page.tags %}
+          <a href="{{ '/tags/' | relative_url }}#{{ tag | slugify }}" class="badge bg-secondary text-decoration-none me-1">
+            {{ tag }}
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+    
+    <!-- Categories -->
+    {% if page.categories and page.categories.size > 0 %}
+      <div class="note-categories mb-3">
+        <i class="bi bi-folder me-1"></i>
+        {% for category in page.categories %}
+          <a href="{{ '/categories/' | relative_url }}#{{ category | slugify }}" class="text-decoration-none">
+            {{ category }}
+          </a>
+          {% unless forloop.last %}<span class="mx-1">/</span>{% endunless %}
+        {% endfor %}
+      </div>
+    {% endif %}
+    
+    <!-- Description -->
+    {% if page.description %}
+      <div class="note-description lead mb-4" itemprop="description">
+        {{ page.description }}
+      </div>
+    {% endif %}
+  </header>
+  
+  <!-- ================================ -->
+  <!-- NOTE CONTENT                     -->
+  <!-- ================================ -->
+  <div class="note-content e-content" itemprop="articleBody">
+    {{ content }}
+  </div>
+  
+  <!-- ================================ -->
+  <!-- NOTE FOOTER                      -->
+  <!-- ================================ -->
+  <footer class="note-footer mt-5 pt-4 border-top">
+    
+    <!-- Share Buttons -->
+    {% if page.share != false %}
+      <div class="share-buttons mb-4">
+        <h5 class="mb-3">Share this note</h5>
+        <div class="d-flex gap-2">
+          <a href="https://twitter.com/intent/tweet?text={{ page.title | uri_escape }}&url={{ site.url | append: page.url | uri_escape }}" 
+             class="btn btn-outline-primary btn-sm" target="_blank" rel="noopener noreferrer">
+            <i class="bi bi-twitter"></i> Twitter
+          </a>
+          <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ site.url | append: page.url | uri_escape }}" 
+             class="btn btn-outline-primary btn-sm" target="_blank" rel="noopener noreferrer">
+            <i class="bi bi-linkedin"></i> LinkedIn
+          </a>
+          <a href="mailto:?subject={{ page.title | uri_escape }}&body={{ site.url | append: page.url | uri_escape }}" 
+             class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-envelope"></i> Email
+          </a>
+        </div>
+      </div>
+    {% endif %}
+    
+    <!-- Related Notes -->
+    {% if site.notes.size > 1 %}
+      <div class="related-notes mt-5">
+        <h5 class="mb-3">Related Notes</h5>
+        <div class="row">
+          {% assign related_count = 0 %}
+          {% for note in site.notes %}
+            {% if note.url != page.url and related_count < 3 %}
+              {% assign has_common_tag = false %}
+              {% for tag in page.tags %}
+                {% if note.tags contains tag %}
+                  {% assign has_common_tag = true %}
+                {% endif %}
+              {% endfor %}
+              
+              {% if has_common_tag %}
+                {% assign related_count = related_count | plus: 1 %}
+                <div class="col-md-4 mb-3">
+                  <div class="card h-100">
+                    <div class="card-body">
+                      <h6 class="card-title">
+                        <a href="{{ note.url | relative_url }}" class="text-decoration-none">
+                          {{ note.title }}
+                        </a>
+                      </h6>
+                      {% if note.description %}
+                        <p class="card-text small text-muted">
+                          {{ note.description | truncate: 100 }}
+                        </p>
+                      {% endif %}
+                      {% if note.tags and note.tags.size > 0 %}
+                        <div class="note-card-tags mt-2">
+                          {% for tag in note.tags limit: 3 %}
+                            <span class="badge bg-light text-dark me-1">{{ tag }}</span>
+                          {% endfor %}
+                        </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </footer>
+  
+  <!-- ================================ -->
+  <!-- COMMENTS SECTION                 -->
+  <!-- ================================ -->
+  {% if page.comments != false and site.giscus.enabled %}
+    <div class="note-comments mt-5 pt-4 border-top">
+      <h5 class="mb-4">Comments</h5>
+      {% include content/giscus.html %}
+    </div>
+  {% endif %}
+  
+</article>
+
+<!-- ================================ -->
+<!-- NAVIGATION                       -->
+<!-- ================================ -->
+<!-- Previous/Next Note Navigation -->
+{% assign notes = site.notes | sort: 'date' | reverse %}
+{% assign current_index = nil %}
+{% for note in notes %}
+  {% if note.url == page.url %}
+    {% assign current_index = forloop.index0 %}
+    {% break %}
+  {% endif %}
+{% endfor %}
+
+{% if current_index %}
+  {% assign last_index = notes.size | minus: 1 %}
+  <nav class="note-navigation mt-5" aria-label="Note navigation">
+    <ul class="pagination justify-content-between">
+      <li class="page-item {% if current_index == last_index %}disabled{% endif %}">
+        {% if current_index < last_index %}
+          {% assign next_index = current_index | plus: 1 %}
+          {% assign prev_note = notes[next_index] %}
+          <a class="page-link" href="{{ prev_note.url | relative_url }}" rel="prev">
+            <i class="bi bi-arrow-left me-2"></i>{{ prev_note.title | truncate: 50 }}
+          </a>
+        {% else %}
+          <span class="page-link disabled">
+            <i class="bi bi-arrow-left me-2"></i>No previous note
+          </span>
+        {% endif %}
+      </li>
+      
+      <li class="page-item {% if current_index == 0 %}disabled{% endif %}">
+        {% if current_index > 0 %}
+          {% assign prev_index = current_index | minus: 1 %}
+          {% assign next_note = notes[prev_index] %}
+          <a class="page-link" href="{{ next_note.url | relative_url }}" rel="next">
+            {{ next_note.title | truncate: 50 }}<i class="bi bi-arrow-right ms-2"></i>
+          </a>
+        {% else %}
+          <span class="page-link disabled">
+            No next note<i class="bi bi-arrow-right ms-2"></i>
+          </span>
+        {% endif %}
+      </li>
+    </ul>
+  </nav>
+{% endif %}
+
+<!-- Schema.org metadata -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": {{ page.title | jsonify }},
+  "description": {{ page.description | default: page.excerpt | jsonify }},
+  "author": {
+    "@type": "Person",
+    "name": {{ page.author | default: site.author.name | jsonify }}
+  },
+  "datePublished": {{ page.date | date_to_xmlschema | jsonify }},
+  {% if page.lastmod %}
+  "dateModified": {{ page.lastmod | date_to_xmlschema | jsonify }},
+  {% endif %}
+  "publisher": {
+    "@type": "Organization",
+    "name": {{ site.title | jsonify }},
+    "logo": {
+      "@type": "ImageObject",
+      "url": {{ site.logo | absolute_url | jsonify }}
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": {{ page.url | absolute_url | jsonify }}
+  }
+  {% if page.tags and page.tags.size > 0 %}
+  ,"keywords": {{ page.tags | join: ", " | jsonify }}
+  {% endif %}
+}
+</script>

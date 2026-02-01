@@ -178,6 +178,7 @@ required_status_checks:
 
 ### Jekyll Build Cache
 
+{% raw %}
 ```yaml
 - uses: actions/cache@v4
   with:
@@ -186,6 +187,7 @@ required_status_checks:
       _site
     key: jekyll-${{ hashFiles('_config.yml') }}
 ```
+{% endraw %}
 
 ## Artifacts
 

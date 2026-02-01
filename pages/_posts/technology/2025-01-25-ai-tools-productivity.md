@@ -4,7 +4,7 @@ description: "Discover the best AI-powered tools to supercharge your workflow an
 preview: /images/previews/10-ai-tools-that-will-transform-your-productivity-.png
 date: 2025-01-25T10:00:00.000Z
 author: default
-layout: journals
+layout: article
 categories: [Technology]
 tags: [ai, productivity, tools, automation]
 featured: true

@@ -1,0 +1,50 @@
+date,city,temperature_f,temperature_c,humidity,precipitation_in,wind_speed_mph,condition
+2025-01-01,Seattle,42,5.6,78,0.15,8,Rainy
+2025-01-02,Seattle,38,3.3,82,0.22,12,Rainy
+2025-01-03,Seattle,35,1.7,75,0.00,6,Cloudy
+2025-01-04,Seattle,33,0.6,70,0.00,4,Cloudy
+2025-01-05,Seattle,36,2.2,68,0.00,5,Partly Cloudy
+2025-01-06,Seattle,40,4.4,72,0.08,7,Rainy
+2025-01-07,Seattle,45,7.2,80,0.31,15,Rainy
+2025-02-01,Seattle,44,6.7,76,0.18,9,Rainy
+2025-02-02,Seattle,46,7.8,74,0.05,8,Cloudy
+2025-02-03,Seattle,48,8.9,70,0.00,6,Partly Cloudy
+2025-02-04,Seattle,50,10.0,65,0.00,5,Sunny
+2025-02-05,Seattle,52,11.1,62,0.00,4,Sunny
+2025-02-06,Seattle,49,9.4,68,0.00,7,Partly Cloudy
+2025-02-07,Seattle,47,8.3,75,0.12,10,Rainy
+2025-03-01,Seattle,52,11.1,68,0.10,8,Rainy
+2025-03-02,Seattle,55,12.8,65,0.00,6,Cloudy
+2025-03-03,Seattle,58,14.4,60,0.00,5,Partly Cloudy
+2025-03-04,Seattle,60,15.6,55,0.00,4,Sunny
+2025-03-05,Seattle,62,16.7,52,0.00,6,Sunny
+2025-03-06,Seattle,59,15.0,58,0.00,8,Partly Cloudy
+2025-03-07,Seattle,56,13.3,65,0.08,10,Cloudy
+2025-04-01,Seattle,58,14.4,62,0.05,7,Cloudy
+2025-04-02,Seattle,62,16.7,58,0.00,5,Partly Cloudy
+2025-04-03,Seattle,65,18.3,55,0.00,4,Sunny
+2025-04-04,Seattle,68,20.0,50,0.00,6,Sunny
+2025-04-05,Seattle,70,21.1,48,0.00,5,Sunny
+2025-04-06,Seattle,67,19.4,52,0.00,7,Partly Cloudy
+2025-04-07,Seattle,64,17.8,60,0.12,9,Rainy
+2025-05-01,Seattle,68,20.0,55,0.00,6,Sunny
+2025-05-02,Seattle,72,22.2,50,0.00,5,Sunny
+2025-05-03,Seattle,75,23.9,48,0.00,4,Sunny
+2025-05-04,Seattle,78,25.6,45,0.00,5,Sunny
+2025-05-05,Seattle,76,24.4,50,0.00,6,Partly Cloudy
+2025-05-06,Seattle,73,22.8,55,0.00,7,Cloudy
+2025-05-07,Seattle,70,21.1,60,0.08,8,Rainy
+2025-06-01,Seattle,75,23.9,52,0.00,5,Sunny
+2025-06-02,Seattle,78,25.6,48,0.00,4,Sunny
+2025-06-03,Seattle,82,27.8,45,0.00,5,Sunny
+2025-06-04,Seattle,85,29.4,42,0.00,4,Sunny
+2025-06-05,Seattle,88,31.1,40,0.00,5,Sunny
+2025-06-06,Seattle,84,28.9,45,0.00,6,Partly Cloudy
+2025-06-07,Seattle,80,26.7,50,0.00,7,Cloudy
+2025-07-01,Seattle,82,27.8,48,0.00,5,Sunny
+2025-07-02,Seattle,86,30.0,44,0.00,4,Sunny
+2025-07-03,Seattle,90,32.2,40,0.00,3,Sunny
+2025-07-04,Seattle,92,33.3,38,0.00,4,Sunny
+2025-07-05,Seattle,88,31.1,42,0.00,5,Sunny
+2025-07-06,Seattle,85,29.4,45,0.00,6,Partly Cloudy
+2025-07-07,Seattle,82,27.8,50,0.00,5,Cloudy

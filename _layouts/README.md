@@ -9,11 +9,12 @@ structure, and usage patterns.
 ```text
 root.html (base template)
 ├── default.html (sidebar layout)
-│   ├── journals.html (blog posts)
+│   ├── article.html (single articles/posts)
+│   ├── section.html (section index pages)
 │   ├── collection.html (collection pages)
 │   └── javascript.html (JavaScript demos)
 ├── home.html (homepage)
-├── blog.html (blog homepage)
+├── news.html (news homepage - magazine/grid/list styles)
 ├── landing.html (landing pages)
 ├── stats.html (statistics dashboard)
 └── index.html (search pages)
@@ -34,17 +35,37 @@ root.html (base template)
 
 - **Purpose**: Standard content layout with sidebars
 - **Features**: Three-column responsive layout, navigation, table of contents
+- **Features (Updated)**: Sidebar toggle via `page.sidebar: false` front matter
 - **Dependencies**: sidebar-left.html, intro.html, sidebar-right.html
 - **Usage**: Documentation pages, standard content
 
-### 📝 Content Layouts
+### 📰 News & Article Layouts
 
-#### `journals.html`
+#### `news.html`
 
-- **Purpose**: Blog post and article display
-- **Features**: Article structure, post navigation, comment system
-- **Dependencies**: giscus.html for comments
-- **Usage**: Individual blog posts and articles
+- **Purpose**: News homepage with multiple display styles
+- **Features**: Magazine, grid, and list layouts via `section_style` front matter
+- **Front Matter**: `section_style: magazine|grid|list` (required)
+- **Dependencies**: post-card.html, post-type-badge.html
+- **Usage**: Main news index at /news/
+
+#### `article.html`
+
+- **Purpose**: Single article display with post_type variations
+- **Features**: Conditional rendering based on `post_type` front matter
+- **Post Types**: standard, featured, breaking, opinion, review, tutorial, listicle, interview
+- **Dependencies**: post-type-badge.html, giscus.html for comments
+- **Usage**: Individual news articles and blog posts
+
+#### `section.html`
+
+- **Purpose**: Section index pages for content categories
+- **Features**: Path-based article discovery, multiple display styles
+- **Front Matter**: `section_style: magazine|grid|list` (required)
+- **Dependencies**: post-card.html, post-type-badge.html
+- **Usage**: Section landing pages (e.g., /news/technology/, /news/business/)
+
+### 📝 Collection Layouts
 
 #### `collection.html`
 
@@ -52,13 +73,6 @@ root.html (base template)
 - **Features**: Responsive cards, sorting, preview images
 - **Dependencies**: Bootstrap card components
 - **Usage**: Portfolio, projects, grouped content
-
-#### `blog.html`
-
-- **Purpose**: Magazine-style blog homepage
-- **Features**: Featured posts, sidebar, responsive design
-- **Dependencies**: sidebar-categories.html, navigation data
-- **Usage**: Blog index and homepage
 
 ### 🎯 Specialized Layouts
 
@@ -96,6 +110,45 @@ root.html (base template)
 - **Features**: Interactive elements, code examples
 - **Dependencies**: Custom JavaScript functions
 - **Usage**: Tutorials, interactive demos
+
+## Front Matter Reference
+
+### Article Layout (`article.html`)
+
+```yaml
+layout: article
+post_type: standard|featured|breaking|opinion|review|tutorial|listicle|interview
+sidebar: true|false  # Optional, defaults to true (false for featured/breaking)
+```
+
+### Section/News Layouts (`section.html`, `news.html`)
+
+```yaml
+layout: section|news
+section_style: magazine|grid|list  # Required - no default
+index: true  # Marks page as index (excluded from listings)
+```
+
+### Display Styles
+
+| Style | Description |
+|-------|-------------|
+| `magazine` | Hero article + grid of remaining posts |
+| `grid` | 3-column card grid layout |
+| `list` | Horizontal row layout with thumbnails |
+
+### Post Types with Badge Colors
+
+| Type | Badge Color | Description |
+|------|-------------|-------------|
+| `featured` | Yellow (warning) | Featured/highlighted content |
+| `breaking` | Red (danger) | Breaking news |
+| `opinion` | Purple | Opinion/editorial pieces |
+| `review` | Cyan (info) | Product/service reviews |
+| `tutorial` | Green (success) | How-to guides |
+| `listicle` | Secondary | List-style articles |
+| `interview` | Dark | Interview content |
+| `standard` | Light | Default article type |
 
 ## Comment Organization Standards
 

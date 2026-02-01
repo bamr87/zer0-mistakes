@@ -53,9 +53,12 @@ layout: root
     <!-- LEFT SIDEBAR - Navigation       -->
     <!-- ================================ -->
     <!-- Site navigation, content outline, and offcanvas menu for mobile -->
+    <!-- Sidebar visibility controlled by page.sidebar front matter -->
+    {% unless page.sidebar == false %}
     <aside class="bd-sidebar">
         {% include navigation/sidebar-left.html %}
     </aside>
+    {% endunless %}
     
     <!-- ================================ -->
     <!-- MAIN CONTENT AREA               -->
@@ -70,9 +73,12 @@ layout: root
         <!-- RIGHT SIDEBAR - Table of Contents -->
         <!-- =============================== -->
         <!-- Page outline, shortcuts, and related links (hidden on mobile) -->
+        <!-- Right sidebar visibility also controlled by page.sidebar -->
+        {% unless page.sidebar == false %}
         <div class="bd-toc text-body-secondary">
             {% include navigation/sidebar-right.html %}
         </div>
+        {% endunless %}
         
         <!-- =============================== -->
         <!-- MAIN CONTENT BODY              -->

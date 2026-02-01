@@ -10,7 +10,7 @@ tags:
   - static-site
   - getting-started
 date: 2025-01-01T08:00:00.000Z
-layout: journals
+layout: article
 author: Zer0-Mistakes Team
 featured: false
 estimated_reading_time: 15 minutes

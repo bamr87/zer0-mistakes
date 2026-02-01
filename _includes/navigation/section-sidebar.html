@@ -1,0 +1,242 @@
+<!--
+  ===================================================================
+  SECTION SIDEBAR - Fixed Topic Navigation
+  ===================================================================
+  
+  File: section-sidebar.html
+  Path: _includes/navigation/section-sidebar.html
+  Purpose: Fixed sticky sidebar for section/topic navigation
+  
+  Parameters:
+  - section_posts: Array of posts in the current section
+  - sub_categories: Array of unique tags/topics from section posts
+  - page_title: Title of the current section
+  - sidebar_id: Unique ID for the sidebar (default: "sectionSidebar")
+  
+  Features:
+  - Desktop: Fixed sticky sidebar on the left
+  - Mobile: Offcanvas drawer
+  - Topic navigation with article counts
+  - Section statistics
+  - Smooth scroll to sections
+  
+  Dependencies:
+  - Bootstrap 5 offcanvas component
+  - Bootstrap Icons
+  ===================================================================
+-->
+
+{% assign sidebar_id = include.sidebar_id | default: "sectionSidebar" %}
+{% assign section_posts = include.section_posts %}
+{% assign sub_categories = include.sub_categories %}
+{% assign page_title = include.page_title | default: page.title %}
+
+<!-- ================================ -->
+<!-- DESKTOP SIDEBAR (Fixed Sticky)   -->
+<!-- ================================ -->
+<aside class="section-sidebar-desktop d-none d-lg-block">
+  <div class="position-sticky" style="top: 80px;">
+    
+    <!-- Topics Card -->
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+          <i class="bi bi-bookmark me-2"></i>Topics
+        </h5>
+        <span class="badge bg-light text-primary">{{ sub_categories.size }}</span>
+      </div>
+      <div class="card-body p-0">
+        <nav class="nav flex-column sidebar-nav">
+          <a class="nav-link active" href="#all-posts" data-section="all-posts">
+            <i class="bi bi-grid me-2"></i>
+            <span class="nav-text">All Articles</span>
+            <span class="badge bg-secondary ms-auto">{{ section_posts.size }}</span>
+          </a>
+          {% for subcat in sub_categories limit: 15 %}
+            {% assign subcat_posts = section_posts | where_exp: "post", "post.tags contains subcat" %}
+            {% if subcat_posts.size > 0 %}
+            <a class="nav-link" href="#{{ subcat | slugify }}" data-section="{{ subcat | slugify }}">
+              <i class="bi bi-tag me-2"></i>
+              <span class="nav-text">{{ subcat | capitalize }}</span>
+              <span class="badge bg-light text-dark ms-auto">{{ subcat_posts.size }}</span>
+            </a>
+            {% endif %}
+          {% endfor %}
+        </nav>
+      </div>
+      {% if sub_categories.size > 15 %}
+      <div class="card-footer bg-transparent">
+        <a href="{{ site.baseurl }}/tags/" class="btn btn-sm btn-outline-secondary w-100">
+          View All Tags <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+      {% endif %}
+    </div>
+    
+    <!-- Section Stats -->
+    <div class="card border-0 shadow-sm mt-3">
+      <div class="card-body">
+        <h6 class="text-muted mb-3">
+          <i class="bi bi-graph-up me-2"></i>Section Stats
+        </h6>
+        <div class="d-flex justify-content-between mb-2">
+          <small class="text-muted">Total Articles</small>
+          <strong>{{ section_posts.size }}</strong>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+          <small class="text-muted">Topics</small>
+          <strong>{{ sub_categories.size }}</strong>
+        </div>
+        {% assign featured_count = section_posts | where: "featured", true | size %}
+        <div class="d-flex justify-content-between">
+          <small class="text-muted">Featured</small>
+          <strong>{{ featured_count }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ================================ -->
+<!-- MOBILE OFFCANVAS SIDEBAR         -->
+<!-- ================================ -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="{{ sidebar_id }}" aria-labelledby="{{ sidebar_id }}Label">
+  <div class="offcanvas-header bg-primary text-white">
+    <h5 class="offcanvas-title" id="{{ sidebar_id }}Label">
+      <i class="bi bi-bookmark me-2"></i>{{ page_title }} Topics
+    </h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body p-0">
+    <nav class="nav flex-column">
+      <a class="nav-link active bg-light py-3 border-bottom" href="#all-posts" data-bs-dismiss="offcanvas">
+        <i class="bi bi-grid me-2"></i>All Articles
+        <span class="badge bg-secondary float-end">{{ section_posts.size }}</span>
+      </a>
+      {% for subcat in sub_categories %}
+        {% assign subcat_posts = section_posts | where_exp: "post", "post.tags contains subcat" %}
+        {% if subcat_posts.size > 0 %}
+        <a class="nav-link text-body-secondary py-3 border-bottom" href="#{{ subcat | slugify }}" data-bs-dismiss="offcanvas">
+          <i class="bi bi-tag me-2"></i>{{ subcat | capitalize }}
+          <span class="badge bg-light text-dark float-end">{{ subcat_posts.size }}</span>
+        </a>
+        {% endif %}
+      {% endfor %}
+    </nav>
+    <div class="p-3">
+      <a href="{{ site.baseurl }}/tags/" class="btn btn-outline-primary w-100">
+        <i class="bi bi-tags me-2"></i>Browse All Tags
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ================================ -->
+<!-- SIDEBAR STYLES                   -->
+<!-- ================================ -->
+<style>
+  /* Sidebar Navigation */
+  .sidebar-nav .nav-link {
+    padding: 0.75rem 1rem;
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    color: var(--bs-body-color);
+  }
+  
+  .sidebar-nav .nav-link:hover {
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+    border-left-color: var(--bs-primary);
+  }
+  
+  .sidebar-nav .nav-link.active {
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+    border-left-color: var(--bs-primary);
+    font-weight: 500;
+  }
+  
+  .sidebar-nav .nav-text {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Offcanvas mobile styling */
+  .offcanvas .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+</style>
+
+<!-- ================================ -->
+<!-- SIDEBAR JAVASCRIPT               -->
+<!-- ================================ -->
+<script>
+(function() {
+  // Smooth scroll for sidebar links
+  function setupSmoothScroll() {
+    document.querySelectorAll('.sidebar-nav a[href^="#"], .offcanvas a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (href.length > 1) {
+          e.preventDefault();
+          const target = document.querySelector(href);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+            
+            // Update active state in sidebar
+            document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
+              link.classList.remove('active');
+            });
+            
+            // Find and activate the corresponding link in desktop sidebar
+            const desktopLink = document.querySelector(`.sidebar-nav a[href="${href}"]`);
+            if (desktopLink) {
+              desktopLink.classList.add('active');
+            }
+          }
+        }
+      });
+    });
+  }
+  
+  // Intersection Observer for active section highlighting
+  function setupScrollSpy() {
+    const sections = document.querySelectorAll('section[id]');
+    
+    if (sections.length === 0) return;
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id');
+          document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${id}`) {
+              link.classList.add('active');
+            }
+          });
+        }
+      });
+    }, {
+      rootMargin: '-20% 0px -80% 0px'
+    });
+    
+    sections.forEach(section => observer.observe(section));
+  }
+  
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      setupSmoothScroll();
+      setupScrollSpy();
+    });
+  } else {
+    setupSmoothScroll();
+    setupScrollSpy();
+  }
+})();
+</script>

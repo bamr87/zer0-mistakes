@@ -5,7 +5,7 @@ categories:
   - Technology
   - Development
 date: 2024-06-17 20:03:39
-layout: journals
+layout: article
 lastmod: 2024-06-18T02:05:18.613Z
 preview: /images/wizard-on-journey.png
 draft: draft

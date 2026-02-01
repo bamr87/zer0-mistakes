@@ -1,0 +1,519 @@
+---
+layout: default
+---
+<!--
+  ===================================================================
+  ARTICLE LAYOUT - Blog Post and Article Display with Post Type Support
+  ===================================================================
+  
+  File: article.html
+  Path: _layouts/article.html
+  Inherits: default.html (which inherits root.html)
+  Purpose: Display blog posts with rich metadata, navigation, and post type variations
+  
+  Front Matter Variables:
+  - post_type: Article type (standard, featured, breaking, opinion, review, tutorial, listicle, interview)
+  - sidebar: Override sidebar visibility (true/false)
+  
+  Post Type Variations:
+  - standard (default): Normal article with sidebar
+  - featured: Full-width hero, no sidebar, large typography
+  - breaking: Red alert banner, timestamp prominence, no sidebar
+  - opinion: Author emphasis box, pull quote styling, sidebar
+  - review: Star rating display, pros/cons grid, verdict box, sidebar
+  - tutorial: Step numbering, progress indicator, sidebar
+  - listicle: Numbered sections, quick-nav TOC, sidebar
+  - interview: Q&A formatting, speaker labels, sidebar
+  
+  Template Logic:
+  - Displays article content with semantic HTML5 markup
+  - Shows post metadata (author, date, reading time, tags)
+  - Provides previous/next post navigation
+  - Integrates Giscus comment system (when enabled)
+  - Uses Schema.org BlogPosting markup for SEO
+  - Conditional rendering based on post_type
+  
+  Dependencies:
+  - components/post-type-badge.html: Post type badge display
+  - content/giscus.html: GitHub Discussions comment system
+  - site.giscus configuration for comment system
+  - Bootstrap 5 components
+  ===================================================================
+-->
+
+{% comment %} Determine post type and sidebar visibility {% endcomment %}
+{% assign post_type = page.post_type | default: "standard" %}
+{% assign show_sidebar = page.sidebar %}
+
+{% comment %} Auto-disable sidebar for certain post types unless explicitly enabled {% endcomment %}
+{% if show_sidebar == nil %}
+  {% if post_type == "featured" or post_type == "breaking" %}
+    {% assign show_sidebar = false %}
+  {% else %}
+    {% assign show_sidebar = true %}
+  {% endif %}
+{% endif %}
+
+<article id="main" class="post h-entry" role="main" itemscope itemtype="https://schema.org/BlogPosting">
+  
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} BREAKING NEWS ALERT BANNER      {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
+  {% if post_type == "breaking" %}
+  <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+    <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+    <div>
+      <strong>Breaking News</strong> — This story is developing. Last updated: 
+      <time datetime="{{ page.lastmod | default: page.date | date_to_xmlschema }}">
+        {{ page.lastmod | default: page.date | date: "%B %d, %Y at %I:%M %p" }}
+      </time>
+    </div>
+  </div>
+  {% endif %}
+  
+  <!-- ================================ -->
+  <!-- ARTICLE HEADER                   -->
+  <!-- ================================ -->
+  <header class="post-header mb-4">
+    
+    {% comment %} Post Type Badge {% endcomment %}
+    {% if post_type != "standard" %}
+    <div class="mb-2">
+      {% include components/post-type-badge.html post_type=post_type %}
+    </div>
+    {% endif %}
+    
+    <h1 id="page-title" class="post-title p-name {% if post_type == 'featured' %}display-4{% endif %}" itemprop="headline">
+      {{ page.title }}
+    </h1>
+    
+    {% comment %} Subtitle for featured/opinion articles {% endcomment %}
+    {% if page.sub-title and post_type == "featured" or post_type == "opinion" %}
+    <p class="lead text-muted">{{ page.sub-title }}</p>
+    {% endif %}
+    
+    <!-- Post Metadata -->
+    <div class="post-meta text-muted mb-3">
+      <!-- Author -->
+      {% if page.author %}
+        <span class="post-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
+          <i class="bi bi-person me-1"></i>
+          <span itemprop="name">{{ page.author }}</span>
+        </span>
+        <span class="mx-2">•</span>
+      {% endif %}
+      
+      <!-- Publication Date -->
+      {% if page.date %}
+        <time class="post-date dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
+          <i class="bi bi-calendar me-1"></i>
+          {{ page.date | date: "%B %d, %Y" }}
+        </time>
+        <span class="mx-2">•</span>
+      {% endif %}
+      
+      <!-- Reading Time -->
+      {% assign words = content | number_of_words %}
+      {% assign minutes = words | divided_by: 200 %}
+      {% if minutes < 1 %}{% assign minutes = 1 %}{% endif %}
+      <span class="reading-time">
+        <i class="bi bi-clock me-1"></i>
+        {{ minutes }} min read
+      </span>
+      
+      <!-- Last Modified -->
+      {% if page.lastmod %}
+        <span class="mx-2">•</span>
+        <span class="post-updated" itemprop="dateModified" content="{{ page.lastmod | date_to_xmlschema }}">
+          <i class="bi bi-pencil me-1"></i>
+          Updated: {{ page.lastmod | date: "%B %d, %Y" }}
+        </span>
+      {% endif %}
+    </div>
+    
+    <!-- Category Link -->
+    {% if page.categories.size > 0 %}
+    <div class="mb-3">
+      <a href="{{ site.baseurl }}/news/{{ page.categories | first | slugify }}/" 
+         class="badge bg-primary text-decoration-none fs-6">
+        <i class="bi bi-folder me-1"></i>{{ page.categories | first }}
+      </a>
+    </div>
+    {% endif %}
+    
+    <!-- Tags -->
+    {% if page.tags and page.tags.size > 0 %}
+      <div class="post-tags mb-3">
+        {% for tag in page.tags %}
+          <a href="{{ site.baseurl }}/tags/#{{ tag | slugify }}" class="badge bg-secondary text-decoration-none me-1">
+            <i class="bi bi-tag me-1"></i>{{ tag }}
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </header>
+  
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} FEATURED HERO IMAGE             {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
+  {% if post_type == "featured" and page.preview %}
+  <figure class="featured-hero mb-5">
+    {% include components/preview-image.html 
+       src=page.preview 
+       alt=page.title 
+       class="w-100 rounded-3 shadow" 
+       style="max-height: 500px; object-fit: cover;" 
+    %}
+    {% if page.preview_caption %}
+    <figcaption class="text-muted small mt-2 text-center">{{ page.preview_caption }}</figcaption>
+    {% endif %}
+  </figure>
+  {% endif %}
+  
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} OPINION AUTHOR BOX              {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
+  {% if post_type == "opinion" and page.author %}
+  <aside class="opinion-author-box alert alert-secondary mb-4">
+    <div class="d-flex align-items-center">
+      <i class="bi bi-pencil-square fs-3 me-3 text-secondary"></i>
+      <div>
+        <strong>Opinion</strong>
+        <p class="mb-0 small">The views expressed in this article are those of the author, {{ page.author }}, and do not necessarily reflect the editorial position.</p>
+      </div>
+    </div>
+  </aside>
+  {% endif %}
+  
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} REVIEW RATING HEADER            {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
+  {% if post_type == "review" %}
+  <aside class="review-summary card border-0 bg-body-tertiary mb-4">
+    <div class="card-body">
+      <div class="row align-items-center">
+        <div class="col-md-4 text-center mb-3 mb-md-0">
+          {% if page.rating %}
+          <div class="rating-score">
+            <span class="display-3 fw-bold text-primary">{{ page.rating }}</span>
+            <span class="text-muted">/10</span>
+          </div>
+          <div class="rating-stars">
+            {% assign full_stars = page.rating | divided_by: 2 %}
+            {% assign half_star = page.rating | modulo: 2 %}
+            {% for i in (1..full_stars) %}
+              <i class="bi bi-star-fill text-warning"></i>
+            {% endfor %}
+            {% if half_star >= 1 %}
+              <i class="bi bi-star-half text-warning"></i>
+            {% endif %}
+          </div>
+          {% endif %}
+        </div>
+        <div class="col-md-8">
+          {% if page.verdict %}
+          <h5 class="mb-2"><i class="bi bi-check-circle me-2"></i>Verdict</h5>
+          <p class="mb-0">{{ page.verdict }}</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </aside>
+  {% endif %}
+  
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} TUTORIAL PROGRESS INDICATOR     {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
+  {% if post_type == "tutorial" %}
+  <aside class="tutorial-info alert alert-success mb-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap">
+      <div>
+        <i class="bi bi-book me-2"></i>
+        <strong>Tutorial</strong>
+        {% if page.difficulty %}
+        <span class="badge bg-light text-dark ms-2">{{ page.difficulty }}</span>
+        {% endif %}
+      </div>
+      <div class="text-muted small">
+        {% if page.estimated_reading_time %}
+        <i class="bi bi-clock me-1"></i>{{ page.estimated_reading_time }}
+        {% endif %}
+      </div>
+    </div>
+    {% if page.learning_outcomes %}
+    <hr class="my-2">
+    <p class="mb-1 small"><strong>What you'll learn:</strong></p>
+    <ul class="mb-0 small">
+      {% for outcome in page.learning_outcomes limit: 3 %}
+        <li>{{ outcome }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </aside>
+  {% endif %}
+  
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} LISTICLE QUICK NAV              {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
+  {% if post_type == "listicle" %}
+  <nav class="listicle-nav card border-0 bg-body-tertiary mb-4">
+    <div class="card-body">
+      <h6 class="card-title mb-2">
+        <i class="bi bi-list-ol me-2"></i>Quick Navigation
+      </h6>
+      <p class="small text-muted mb-0">Use the table of contents on the right to jump to specific items.</p>
+    </div>
+  </nav>
+  {% endif %}
+  
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} INTERVIEW NOTICE                {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
+  {% if post_type == "interview" %}
+  <aside class="interview-notice alert alert-dark mb-4">
+    <div class="d-flex align-items-center">
+      <i class="bi bi-mic fs-3 me-3"></i>
+      <div>
+        <strong>Interview</strong>
+        {% if page.interviewee %}
+        <p class="mb-0 small">A conversation with <strong>{{ page.interviewee }}</strong>{% if page.interviewee_title %}, {{ page.interviewee_title }}{% endif %}</p>
+        {% endif %}
+      </div>
+    </div>
+  </aside>
+  {% endif %}
+  
+  <!-- ================================ -->
+  <!-- ARTICLE CONTENT                  -->
+  <!-- ================================ -->
+  <div class="post-content e-content {% if post_type == 'featured' %}fs-5{% endif %}" itemprop="articleBody">
+    {{ content }}
+  </div>
+  
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} REVIEW PROS/CONS BOX            {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
+  {% if post_type == "review" and page.pros or page.cons %}
+  <aside class="review-pros-cons my-5">
+    <div class="row g-4">
+      {% if page.pros %}
+      <div class="col-md-6">
+        <div class="card border-success h-100">
+          <div class="card-header bg-success text-white">
+            <i class="bi bi-hand-thumbs-up me-2"></i>Pros
+          </div>
+          <ul class="list-group list-group-flush">
+            {% for pro in page.pros %}
+              <li class="list-group-item"><i class="bi bi-check-lg text-success me-2"></i>{{ pro }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+      {% if page.cons %}
+      <div class="col-md-6">
+        <div class="card border-danger h-100">
+          <div class="card-header bg-danger text-white">
+            <i class="bi bi-hand-thumbs-down me-2"></i>Cons
+          </div>
+          <ul class="list-group list-group-flush">
+            {% for con in page.cons %}
+              <li class="list-group-item"><i class="bi bi-x-lg text-danger me-2"></i>{{ con }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </aside>
+  {% endif %}
+  
+  <!-- ================================ -->
+  <!-- AUTHOR BIO SECTION               -->
+  <!-- ================================ -->
+  {% if page.author %}
+    {% assign author_key = page.author %}
+    {% assign author_data = site.data.authors[author_key] %}
+    {% unless author_data %}
+      {% assign author_data = site.data.authors.default %}
+      {% assign author_name = page.author %}
+    {% else %}
+      {% assign author_name = author_data.name %}
+    {% endunless %}
+    
+    <aside class="author-section my-5 pt-4 border-top">
+      <h3 class="h5 mb-3">
+        <i class="bi bi-person-badge me-2"></i>About the Author
+      </h3>
+      <div class="author-card card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex align-items-start">
+            {% if author_data.avatar %}
+              <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ author_data.avatar }}" 
+                   alt="{{ author_name }}" 
+                   class="rounded-circle me-3" 
+                   width="80" height="80"
+                   style="object-fit: cover;">
+            {% else %}
+              <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" 
+                   style="width: 80px; height: 80px;">
+                <i class="bi bi-person fs-1"></i>
+              </div>
+            {% endif %}
+            <div class="flex-grow-1">
+              <h5 class="card-title mb-1">{{ author_name }}</h5>
+              {% if author_data.role %}
+                <p class="text-primary mb-2">{{ author_data.role }}</p>
+              {% endif %}
+              {% if author_data.bio %}
+                <p class="card-text text-muted">{{ author_data.bio }}</p>
+              {% endif %}
+              <div class="author-social d-flex gap-2 mt-2">
+                {% if author_data.github %}
+                  <a href="https://github.com/{{ author_data.github }}" 
+                     class="btn btn-sm btn-outline-secondary" 
+                     target="_blank" rel="noopener" title="GitHub">
+                    <i class="bi bi-github"></i>
+                  </a>
+                {% endif %}
+                {% if author_data.twitter %}
+                  <a href="https://twitter.com/{{ author_data.twitter }}" 
+                     class="btn btn-sm btn-outline-secondary" 
+                     target="_blank" rel="noopener" title="Twitter">
+                    <i class="bi bi-twitter"></i>
+                  </a>
+                {% endif %}
+                {% if author_data.website %}
+                  <a href="{{ author_data.website }}" 
+                     class="btn btn-sm btn-outline-secondary" 
+                     target="_blank" rel="noopener" title="Website">
+                    <i class="bi bi-globe"></i>
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  {% endif %}
+  
+  <!-- ================================ -->
+  <!-- RELATED POSTS SECTION            -->
+  <!-- ================================ -->
+  {% if page.tags.size > 0 %}
+    {% assign related_posts = "" | split: "" %}
+    {% for tag in page.tags %}
+      {% assign tagged = site.posts | where_exp: "post", "post.tags contains tag" | where_exp: "post", "post.url != page.url" | where_exp: "post", "post.index != true" %}
+      {% for post in tagged %}
+        {% unless related_posts contains post %}
+          {% assign related_posts = related_posts | push: post %}
+        {% endunless %}
+      {% endfor %}
+    {% endfor %}
+    {% assign related_posts = related_posts | slice: 0, 3 %}
+    
+    {% if related_posts.size > 0 %}
+      <aside class="related-posts my-5 pt-4 border-top">
+        <h3 class="h5 mb-3">
+          <i class="bi bi-journal-text me-2"></i>Related Posts
+        </h3>
+        <div class="row row-cols-1 row-cols-md-3 g-3">
+          {% for rpost in related_posts %}
+            <div class="col">
+              <div class="card h-100 border-0 shadow-sm">
+                <div class="position-relative">
+                  {% if rpost.post_type and rpost.post_type != "standard" %}
+                    <span class="position-absolute top-0 start-0 m-2 z-1">
+                      {% include components/post-type-badge.html post_type=rpost.post_type %}
+                    </span>
+                  {% endif %}
+                  <a href="{{ rpost.url | relative_url }}" class="text-decoration-none">
+                    {% assign rpost_img = rpost.preview | default: site.teaser %}
+                    {% include components/preview-image.html src=rpost_img alt=rpost.title class="card-img-top" %}
+                  </a>
+                </div>
+                <div class="card-body">
+                  <h6 class="card-title mb-1">
+                    <a href="{{ rpost.url | relative_url }}" class="text-decoration-none text-body-emphasis">
+                      {{ rpost.title | truncate: 60 }}
+                    </a>
+                  </h6>
+                  <small class="text-muted">
+                    <i class="bi bi-calendar me-1"></i>{{ rpost.date | date: "%b %d, %Y" }}
+                  </small>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </aside>
+    {% endif %}
+  {% endif %}
+  
+  <!-- ================================ -->
+  <!-- POST NAVIGATION                  -->
+  <!-- ================================ -->
+  <nav class="post-navigation my-5 pt-4 border-top" aria-label="Post navigation">
+    <div class="row g-3">
+      <!-- Previous Post -->
+      <div class="col-md-6">
+        {% if page.previous %}
+          <a href="{{ page.previous.url | relative_url }}" class="card h-100 text-decoration-none border-0 shadow-sm">
+            <div class="card-body">
+              <small class="text-muted d-block mb-1">
+                <i class="bi bi-chevron-left me-1"></i>Previous
+              </small>
+              <span class="text-body-emphasis">{{ page.previous.title | truncate: 50 }}</span>
+            </div>
+          </a>
+        {% else %}
+          <div class="card h-100 border-0 bg-body-tertiary opacity-50">
+            <div class="card-body">
+              <small class="text-muted d-block mb-1">
+                <i class="bi bi-chevron-left me-1"></i>Previous
+              </small>
+              <span class="text-muted">No previous post</span>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      
+      <!-- Next Post -->
+      <div class="col-md-6">
+        {% if page.next %}
+          <a href="{{ page.next.url | relative_url }}" class="card h-100 text-decoration-none border-0 shadow-sm">
+            <div class="card-body text-end">
+              <small class="text-muted d-block mb-1">
+                Next<i class="bi bi-chevron-right ms-1"></i>
+              </small>
+              <span class="text-body-emphasis">{{ page.next.title | truncate: 50 }}</span>
+            </div>
+          </a>
+        {% else %}
+          <div class="card h-100 border-0 bg-body-tertiary opacity-50">
+            <div class="card-body text-end">
+              <small class="text-muted d-block mb-1">
+                Next<i class="bi bi-chevron-right ms-1"></i>
+              </small>
+              <span class="text-muted">No next post</span>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+  
+  <!-- ================================ -->
+  <!-- COMMENT SYSTEM                   -->
+  <!-- ================================ -->
+  {% if page.comments != false and site.giscus %}
+    <section class="post-comments mt-5 pt-4 border-top" id="comments">
+      <h2 class="h4 mb-4">
+        <i class="bi bi-chat-dots me-2"></i>Comments
+      </h2>
+      {% include content/giscus.html %}
+    </section>
+  {% endif %}
+  
+</article>

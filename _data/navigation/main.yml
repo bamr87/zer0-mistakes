@@ -14,16 +14,48 @@
     - title: GitHub Setup
       url: /quickstart/github-setup/
 
-- title: Blog
-  icon: bi-journal-text
-  url: /blog/
+- title: News
+  icon: bi-newspaper
+  url: /news/
   children:
-    - title: All Posts
-      url: /posts/
+    - title: All News
+      url: /news/
     - title: Categories
       url: /categories/
     - title: Tags
       url: /tags/
+
+- title: Notes
+  icon: bi-journal-text
+  url: /notes/
+  children:
+    - title: All Notes
+      url: /notes/
+    - title: Git Cheatsheet
+      url: /notes/git-cheatsheet/
+    - title: Docker Commands
+      url: /notes/docker-commands/
+    - title: Jekyll Front Matter
+      url: /notes/jekyll-front-matter/
+    - title: Markdown Tips
+      url: /notes/markdown-tips/
+    - title: Bash Shortcuts
+      url: /notes/bash-shortcuts/
+
+- title: Notebooks
+  icon: bi-journal-code
+  url: /notebooks/
+  children:
+    - title: All Notebooks
+      url: /notebooks/
+    - title: Pandas Data Analysis
+      url: /notebooks/pandas-data-analysis/
+    - title: Matplotlib Visualization
+      url: /notebooks/matplotlib-visualization/
+    - title: Python Statistics
+      url: /notebooks/python-statistics/
+    - title: API Requests
+      url: /notebooks/api-requests/
 
 - title: Docs
   icon: bi-journal-bookmark

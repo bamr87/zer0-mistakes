@@ -519,7 +519,7 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.s
 - **Collections**: Use `pages/_quests/`, `pages/_docs/` with front matter defining content relationships and learning progressions
 - **Front Matter Standards**: Include complete metadata: `layout`, `title`, `date`, `categories`, `tags`, plus AI directives, SEO optimization, and performance hints
 
-## � **Bootstrap 5 Integration**
+## 🎨 Bootstrap 5 Integration
 
 ### CSS Framework Architecture
 
@@ -775,6 +775,214 @@ permalink: /custom-url/
 - **Style**: Does it follow project conventions?
 - **Security**: Are there any security concerns?
 - **Performance**: Is it optimized?
+
+## 📦 Commit and Release Workflow (REQUIRED)
+
+**IMPORTANT**: When the user asks to "commit", "push", "release", or "publish" changes, ALWAYS follow this structured workflow. This ensures proper validation, documentation, and version management.
+
+### When to Use This Workflow
+
+This workflow is **REQUIRED** when the user requests any of the following:
+- "Commit my changes"
+- "Push these changes"
+- "Release a new version"
+- "Publish the gem"
+- "Create a release"
+- Any variation of committing or releasing code
+
+### Commit Workflow Phases
+
+#### Phase 0: Prerequisites Check
+
+```bash
+# 1. Verify Docker is running
+docker-compose ps
+
+# 2. If not running, start it
+docker-compose up -d jekyll && sleep 5
+
+# 3. Check git status
+git status --short
+
+# 4. Get current version
+cat lib/jekyll-theme-zer0/version.rb | grep VERSION
+git describe --tags --abbrev=0 2>/dev/null || echo "No tags found"
+```
+
+#### Phase 1: Analyze Changes
+
+Before committing, categorize all changes:
+
+| Category | Example Files | Version Impact |
+|----------|---------------|----------------|
+| **Breaking** | Layout renames, config schema changes, removed features | MAJOR |
+| **Feature** | New `_layouts/`, `_includes/`, `assets/js/modules/` | MINOR |
+| **Enhancement** | Improved existing components, new options | MINOR |
+| **Fix** | Bug fixes, corrections, error handling | PATCH |
+| **Docs** | `README.md`, `docs/`, `CHANGELOG.md` only | PATCH |
+| **Chore** | CI, scripts, dependencies, configs | PATCH |
+
+**Version Bump Rules**:
+- `MAJOR (X.0.0)`: Any breaking change exists
+- `MINOR (0.X.0)`: New features/enhancements, no breaking changes
+- `PATCH (0.0.X)`: Fixes, docs, chores only
+
+#### Phase 2: Validate (REQUIRED - Never Skip)
+
+```bash
+# Primary validation - MUST PASS
+docker-compose exec -T jekyll bundle exec jekyll build --config '_config.yml,_config_dev.yml'
+
+# Check for configuration issues
+docker-compose exec -T jekyll bundle exec jekyll doctor
+
+# Validate YAML configs
+docker-compose exec -T jekyll ruby -ryaml -e "
+  YAML.load_file('_config.yml')
+  YAML.load_file('_config_dev.yml')
+  puts '✓ YAML configs valid'
+"
+```
+
+> 🛑 **STOP if validation fails.** Fix issues before proceeding to commit.
+
+#### Phase 3: Update Documentation
+
+**Update CHANGELOG.md** (add at TOP of file, after `# Changelog` header):
+
+```markdown
+## [X.Y.Z] - YYYY-MM-DD
+
+### Added
+- **Component**: `filename.ext` - Description of what was added
+
+### Changed
+- **Enhanced**: `filename.ext` - Description of improvement
+
+### Fixed
+- **Issue**: Description - How it was fixed
+```
+
+**Update version file** (`lib/jekyll-theme-zer0/version.rb`):
+
+```ruby
+# frozen_string_literal: true
+
+module JekyllThemeZer0
+  VERSION = "X.Y.Z" unless defined?(JekyllThemeZer0::VERSION)
+end
+```
+
+#### Phase 4: Commit Changes
+
+```bash
+# Stage all changes
+git add -A
+git status --short
+
+# Create semantic commit
+git commit -m "<type>(<scope>): <summary>
+
+<detailed description of what changed and why>
+
+- Change 1
+- Change 2
+- Change 3
+
+Bump version to X.Y.Z"
+```
+
+**Commit Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`
+
+**Scopes**: `search`, `navigation`, `layouts`, `includes`, `sass`, `config`, `ci`, `scripts`, `analytics`
+
+#### Phase 5: Push and Tag (For Releases)
+
+```bash
+# Push commits
+git pull --rebase origin main
+git push origin main
+
+# Create and push tag (for releases only)
+git tag -a vX.Y.Z -m "vX.Y.Z - Brief description"
+git push origin vX.Y.Z
+```
+
+#### Phase 6: Publish Gem (For Releases)
+
+```bash
+# Build the gem
+gem build jekyll-theme-zer0.gemspec
+
+# Publish to RubyGems
+gem push jekyll-theme-zer0-X.Y.Z.gem
+
+# Clean up
+mkdir -p pkg && mv jekyll-theme-zer0-X.Y.Z.gem pkg/
+```
+
+#### Phase 7: Verify Publication
+
+```bash
+# Verify on RubyGems
+curl -s "https://rubygems.org/api/v1/gems/jekyll-theme-zer0.json" | \
+  python3 -c "import json,sys; d=json.load(sys.stdin); print(f'✓ Version: {d[\"version\"]}')"
+```
+
+### Automated Release Commands
+
+For standard releases, use the automated release script:
+
+```bash
+# Automated release (recommended)
+./scripts/release patch    # Patch release (0.0.X)
+./scripts/release minor    # Minor release (0.X.0)
+./scripts/release major    # Major release (X.0.0)
+
+# Preview what would happen
+./scripts/release patch --dry-run
+
+# macOS with Homebrew bash (if needed)
+/opt/homebrew/bin/bash ./scripts/release patch
+```
+
+### Quick Commit Checklist
+
+When committing, always verify:
+
+- [ ] Docker Jekyll build passes
+- [ ] CHANGELOG.md updated with changes
+- [ ] Version file updated (if releasing)
+- [ ] Semantic commit message used
+- [ ] All tests pass
+
+### Release Summary Template
+
+After completing a release, provide this summary:
+
+```markdown
+## Release Summary
+
+**Version**: X.Y.Z (from W.V.U) | **Type**: PATCH/MINOR/MAJOR | **Date**: YYYY-MM-DD
+
+### Changes Included
+- [x] Change description 1
+- [x] Change description 2
+
+### Validation Results
+| Check | Status |
+|-------|--------|
+| Jekyll Build | ✅ Pass |
+| Jekyll Doctor | ✅ Pass |
+| YAML Syntax | ✅ Valid |
+
+### Publication Status
+| Item | Status |
+|------|--------|
+| Git Commit | ✅ |
+| Git Tag | ✅ vX.Y.Z |
+| RubyGems | ✅ Published |
+```
 
 ## 📝 File-Specific Instructions
 

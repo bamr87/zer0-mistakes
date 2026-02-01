@@ -5,7 +5,7 @@
   
   File: post-card.html
   Path: _includes/components/post-card.html
-  Purpose: Consistent post card display across blog, category, and archive pages
+  Purpose: Consistent post card display across news, section, and archive pages
   
   Parameters:
   - post (required): The post object to display
@@ -13,6 +13,7 @@
   - show_excerpt (optional): Show post excerpt (default: true)
   - show_author (optional): Show author name (default: true)
   - show_reading_time (optional): Show reading time (default: true)
+  - show_post_type (optional): Show post_type badge (default: true)
   - card_class (optional): Additional CSS classes for the card
   
   Usage:
@@ -23,6 +24,7 @@
   Features:
   - Breaking news badge (red, top-left)
   - Featured badge (gold star, top-right)
+  - Post type badge (contextual colors)
   - Preview image with fallback
   - Category badge
   - Reading time calculation
@@ -33,6 +35,8 @@
   Dependencies:
   - Bootstrap 5 card components
   - Bootstrap Icons
+  - components/post-type-badge.html
+  - components/preview-image.html
   - site.public_folder for image paths
   - site.teaser for fallback image
   ===================================================================
@@ -43,6 +47,7 @@
 {% assign show_excerpt = include.show_excerpt | default: true %}
 {% assign show_author = include.show_author | default: true %}
 {% assign show_reading_time = include.show_reading_time | default: true %}
+{% assign show_post_type = include.show_post_type | default: true %}
 {% assign card_class = include.card_class | default: "" %}
 
 {% comment %} 
@@ -76,6 +81,13 @@
         </span>
       {% endif %}
       
+      <!-- Post Type Badge -->
+      {% if show_post_type and include.post.post_type and include.post.post_type != "standard" and include.post.post_type != "featured" and include.post.post_type != "breaking" %}
+        <span class="position-absolute bottom-0 start-0 m-2 z-1">
+          {% include components/post-type-badge.html post_type=include.post.post_type %}
+        </span>
+      {% endif %}
+      
       <!-- Preview Image -->
       <a href="{{ include.post.url | relative_url }}" class="text-decoration-none">
         {% assign card_img = include.post.preview | default: site.teaser %}
@@ -92,7 +104,7 @@
       {% if show_category and include.post.categories.size > 0 %}
         <div class="mb-2">
           {% assign primary_category = include.post.categories | first %}
-          <a href="{{ site.baseurl }}/posts/{{ primary_category | slugify }}/" 
+          <a href="{{ site.baseurl }}/news/{{ primary_category | slugify }}/" 
              class="badge bg-primary text-decoration-none">
             {{ primary_category }}
           </a>

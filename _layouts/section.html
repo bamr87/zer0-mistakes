@@ -1,0 +1,573 @@
+---
+layout: root
+---
+<!--
+  ===================================================================
+  SECTION LAYOUT - News Section with Collapsible Sub-Category Sidebar
+  ===================================================================
+  
+  File: section.html
+  Path: _layouts/section.html
+  Inherits: root.html (full-width, like news.html)
+  Purpose: Display section posts with collapsible sub-category sidebar
+  
+  Front Matter Variables:
+  - section_style (REQUIRED): Display style (grid, list, magazine)
+  - category: Category name for filtering (fallback if path-based fails)
+  - icon: Bootstrap Icon class for section header
+  
+  Section Styles:
+  - grid: Bootstrap card grid, 3 columns desktop, 2 tablet, 1 mobile
+  - list: Vertical list with left thumbnails, full-width rows
+  - magazine: Featured hero card (first/featured post) + sub-category grids
+  
+  Layout Structure:
+  1. Section Header: Dark header with title and navigation back to news
+  2. Collapsible Sidebar: Sub-categories extracted from post tags (minimizable)
+  3. Hero Section: Featured/breaking post highlight (magazine style)
+  4. Sub-Category Sections: Posts organized by sub-category
+  5. All Posts Grid: Remaining posts in card grid
+  
+  Sub-Category Discovery:
+  - Extracts unique tags from section posts as sub-categories
+  - Groups posts by primary tag for sub-category sections
+  
+  Dependencies:
+  - navigation/section-sidebar.html: Collapsible sidebar component
+  - components/post-type-badge.html: Post type badge display
+  - components/preview-image.html: Image display component
+  - Bootstrap 5 grid, card, and offcanvas components
+  - Bootstrap Icons
+  ===================================================================
+-->
+
+{% comment %} ================================ {% endcomment %}
+{% comment %} SECTION DISCOVERY LOGIC         {% endcomment %}
+{% comment %} ================================ {% endcomment %}
+
+{% assign path_parts = page.path | split: "/" %}
+{% assign section_name = "" %}
+{% for part in path_parts %}
+  {% if part != "pages" and part != "_posts" and part != "" %}
+    {% unless part contains ".md" or part contains ".html" %}
+      {% assign section_name = part %}
+    {% endunless %}
+  {% endif %}
+{% endfor %}
+
+{% assign all_site_posts = site.posts | where_exp: "post", "post.index != true" %}
+
+{% assign section_posts = "" | split: "" %}
+{% if section_name != "" %}
+  {% for post in all_site_posts %}
+    {% if post.path contains section_name %}
+      {% assign section_posts = section_posts | push: post %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+{% if section_posts.size == 0 and page.category %}
+  {% assign section_posts = all_site_posts | where_exp: "post", "post.categories contains page.category" %}
+{% endif %}
+
+{% assign section_style = page.section_style | default: "grid" %}
+
+{% comment %} Extract sub-categories from tags {% endcomment %}
+{% assign sub_categories = "" | split: "" %}
+{% for post in section_posts %}
+  {% for tag in post.tags %}
+    {% unless sub_categories contains tag %}
+      {% assign sub_categories = sub_categories | push: tag %}
+    {% endunless %}
+  {% endfor %}
+{% endfor %}
+{% assign sub_categories = sub_categories | sort %}
+
+<!-- ================================ -->
+<!-- SECTION HEADER                   -->
+<!-- ================================ -->
+<div class="container-fluid bg-dark text-white py-3 mb-0">
+  <div class="container-fluid px-4">
+    <div class="row align-items-center">
+      <div class="col-auto d-lg-none">
+        <button class="btn btn-outline-light btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#sectionSidebar" aria-controls="sectionSidebar">
+          <i class="bi bi-list me-1"></i>Topics
+        </button>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+              <a href="{{ site.baseurl }}/news/" class="text-white-50 text-decoration-none">
+                <i class="bi bi-newspaper me-1"></i>News
+              </a>
+            </li>
+            <li class="breadcrumb-item active text-white" aria-current="page">
+              {% if page.icon %}<i class="bi bi-{{ page.icon }} me-1"></i>{% endif %}
+              {{ page.title }}
+            </li>
+          </ol>
+        </nav>
+      </div>
+      <div class="col-auto">
+        <span class="badge bg-secondary">
+          <i class="bi bi-file-text me-1"></i>{{ section_posts.size }} article{% if section_posts.size != 1 %}s{% endif %}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sub-navigation for other sections -->
+<div class="container-fluid bg-body-tertiary border-bottom py-2 mb-4">
+  <div class="container-fluid px-4">
+    <nav class="nav nav-pills flex-nowrap overflow-auto" style="scrollbar-width: none;">
+      {% for item in site.data.navigation.posts %}
+        {% assign is_active = false %}
+        {% if item.title == page.category or item.title == page.title %}
+          {% assign is_active = true %}
+        {% endif %}
+        <a class="nav-link text-nowrap {% if is_active %}active{% else %}text-body-secondary{% endif %}" 
+           href="{{ item.url | replace: '/posts/', '/news/' | relative_url }}">
+          {% if item.icon %}<i class="bi {{ item.icon }} me-1"></i>{% endif %}
+          {{ item.title }}
+        </a>
+      {% endfor %}
+    </nav>
+  </div>
+</div>
+
+<div class="container-fluid px-4">
+  <div class="row">
+    
+    <!-- ================================ -->
+    <!-- FIXED SIDEBAR COMPONENT          -->
+    <!-- ================================ -->
+    <div class="col-lg-3 col-xl-2">
+      {% include navigation/section-sidebar.html 
+         section_posts=section_posts 
+         sub_categories=sub_categories 
+         page_title=page.title 
+         sidebar_id="sectionSidebar" 
+      %}
+    </div>
+
+    <!-- ================================ -->
+    <!-- MAIN CONTENT AREA                -->
+    <!-- ================================ -->
+    <main class="col-lg-9 col-xl-10">
+      
+      <!-- Section Header -->
+      <header class="section-header mb-4">
+        <div class="d-flex align-items-center mb-3">
+          {% if page.icon %}
+            <i class="bi bi-{{ page.icon }} fs-1 me-3 text-primary"></i>
+          {% endif %}
+          <div>
+            <h1 class="display-5 mb-0">{{ page.title }}</h1>
+            {% if page.description %}
+              <p class="lead text-muted mb-0">{{ page.description }}</p>
+            {% endif %}
+          </div>
+        </div>
+        
+        {% if content != blank %}
+          <div class="section-description mb-4">
+            {{ content }}
+          </div>
+        {% endif %}
+      </header>
+
+      {% if section_posts.size > 0 %}
+
+      {% comment %} ================================ {% endcomment %}
+      {% comment %} MAGAZINE STYLE                  {% endcomment %}
+      {% comment %} ================================ {% endcomment %}
+      {% if section_style == "magazine" %}
+
+        <!-- Hero Section -->
+        {% assign featured_in_section = section_posts | where: "featured", true | first %}
+        {% unless featured_in_section %}
+          {% assign featured_in_section = section_posts | first %}
+        {% endunless %}
+        
+        <section id="hero" class="hero-section mb-5 scroll-mt-5">
+          <div class="row g-0 bg-body-secondary rounded-4 overflow-hidden shadow">
+            <div class="col-lg-6 p-4 p-lg-5 d-flex flex-column justify-content-center">
+              {% if featured_in_section.breaking %}
+              <span class="badge bg-danger mb-3 align-self-start">
+                <i class="bi bi-lightning-fill me-1"></i>Breaking
+              </span>
+              {% elsif featured_in_section.featured %}
+              <span class="badge bg-warning text-dark mb-3 align-self-start">
+                <i class="bi bi-star-fill me-1"></i>Featured
+              </span>
+              {% endif %}
+              {% if featured_in_section.post_type and featured_in_section.post_type != "standard" %}
+                <span class="mb-2">
+                  {% include components/post-type-badge.html post_type=featured_in_section.post_type %}
+                </span>
+              {% endif %}
+              <h2 class="display-6 fw-bold mb-3">{{ featured_in_section.title }}</h2>
+              <p class="lead text-muted mb-4">{{ featured_in_section.excerpt | strip_html | truncate: 180 }}</p>
+              <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+                <small class="text-muted">
+                  <i class="bi bi-calendar me-1"></i>{{ featured_in_section.date | date: "%B %d, %Y" }}
+                </small>
+                {% if featured_in_section.author %}
+                  <small class="text-muted">
+                    <i class="bi bi-person me-1"></i>{{ featured_in_section.author }}
+                  </small>
+                {% endif %}
+              </div>
+              <a href="{{ featured_in_section.url | relative_url }}" class="btn btn-primary btn-lg align-self-start">
+                Read Article <i class="bi bi-arrow-right ms-2"></i>
+              </a>
+            </div>
+            <div class="col-lg-6">
+              {% assign hero_img = featured_in_section.preview | default: site.og_image %}
+              {% include components/preview-image.html 
+                 src=hero_img 
+                 alt=featured_in_section.title 
+                 class="w-100 h-100" 
+                 style="object-fit: cover; min-height: 350px;" 
+              %}
+            </div>
+          </div>
+        </section>
+
+        <!-- Sub-Category Sections -->
+        {% for subcat in sub_categories limit: 5 %}
+          {% assign subcat_posts = section_posts | where_exp: "post", "post.tags contains subcat" %}
+          {% assign subcat_posts_filtered = "" | split: "" %}
+          {% for p in subcat_posts %}
+            {% unless p.url == featured_in_section.url %}
+              {% assign subcat_posts_filtered = subcat_posts_filtered | push: p %}
+            {% endunless %}
+          {% endfor %}
+          
+          {% if subcat_posts_filtered.size > 0 %}
+          <section id="{{ subcat | slugify }}" class="subcategory-section mb-5 pb-4 border-bottom scroll-mt-5">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h3 class="h4 mb-0">
+                <i class="bi bi-tag text-primary me-2"></i>{{ subcat | capitalize }}
+              </h3>
+              <a href="{{ site.baseurl }}/tags/#{{ subcat | slugify }}" class="btn btn-outline-secondary btn-sm">
+                View All <i class="bi bi-arrow-right ms-1"></i>
+              </a>
+            </div>
+            
+            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+              {% for spost in subcat_posts_filtered limit: 3 %}
+                <div class="col">
+                  <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="position-relative">
+                      {% if spost.featured %}
+                        <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2 z-1">
+                          <i class="bi bi-star-fill"></i>
+                        </span>
+                      {% endif %}
+                      {% if spost.post_type and spost.post_type != "standard" %}
+                        <span class="position-absolute bottom-0 start-0 m-2 z-1">
+                          {% include components/post-type-badge.html post_type=spost.post_type %}
+                        </span>
+                      {% endif %}
+                      <a href="{{ spost.url | relative_url }}">
+                        {% assign spost_img = spost.preview | default: site.teaser %}
+                        {% include components/preview-image.html src=spost_img alt=spost.title class="card-img-top" style="height: 160px; object-fit: cover;" %}
+                      </a>
+                    </div>
+                    <div class="card-body">
+                      <h5 class="card-title mb-2">
+                        <a href="{{ spost.url | relative_url }}" class="text-decoration-none text-body-emphasis">
+                          {{ spost.title | truncate: 55 }}
+                        </a>
+                      </h5>
+                      <p class="card-text text-muted small">
+                        {{ spost.excerpt | strip_html | truncate: 80 }}
+                      </p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 pt-0">
+                      <small class="text-muted">
+                        <i class="bi bi-calendar me-1"></i>{{ spost.date | date: "%b %d, %Y" }}
+                      </small>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </section>
+          {% endif %}
+        {% endfor %}
+
+        <!-- All Posts Section -->
+        <section id="all-posts" class="all-posts-section mb-5 scroll-mt-5">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="h4 mb-0">
+              <i class="bi bi-grid text-secondary me-2"></i>All {{ page.title }} Articles
+            </h3>
+          </div>
+          
+          <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+            {% for apost in section_posts %}
+              {% unless apost.url == featured_in_section.url %}
+              <div class="col">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                  <div class="position-relative">
+                    {% if apost.breaking %}
+                      <span class="badge bg-danger position-absolute top-0 start-0 m-2 z-1">
+                        <i class="bi bi-lightning-fill"></i>
+                      </span>
+                    {% endif %}
+                    {% if apost.featured %}
+                      <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2 z-1">
+                        <i class="bi bi-star-fill"></i>
+                      </span>
+                    {% endif %}
+                    <a href="{{ apost.url | relative_url }}">
+                      {% assign apost_img = apost.preview | default: site.teaser %}
+                      {% include components/preview-image.html src=apost_img alt=apost.title class="card-img-top" style="height: 160px; object-fit: cover;" %}
+                    </a>
+                  </div>
+                  <div class="card-body">
+                    <div class="d-flex gap-1 mb-2 flex-wrap">
+                      {% if apost.post_type and apost.post_type != "standard" %}
+                        {% include components/post-type-badge.html post_type=apost.post_type %}
+                      {% endif %}
+                      {% if apost.tags.size > 0 %}
+                        <span class="badge bg-light text-dark">{{ apost.tags | first }}</span>
+                      {% endif %}
+                    </div>
+                    <h5 class="card-title mb-2">
+                      <a href="{{ apost.url | relative_url }}" class="text-decoration-none text-body-emphasis">
+                        {{ apost.title | truncate: 55 }}
+                      </a>
+                    </h5>
+                    <p class="card-text text-muted small">
+                      {{ apost.excerpt | strip_html | truncate: 80 }}
+                    </p>
+                  </div>
+                  <div class="card-footer bg-transparent border-0 pt-0">
+                    <small class="text-muted">
+                      <i class="bi bi-calendar me-1"></i>{{ apost.date | date: "%b %d, %Y" }}
+                    </small>
+                  </div>
+                </div>
+              </div>
+              {% endunless %}
+            {% endfor %}
+          </div>
+        </section>
+
+      {% comment %} ================================ {% endcomment %}
+      {% comment %} GRID STYLE                      {% endcomment %}
+      {% comment %} ================================ {% endcomment %}
+      {% elsif section_style == "grid" %}
+
+        <!-- Topic Filter Pills -->
+        <div class="topic-filters mb-4">
+          <div class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="text-muted me-2">Filter:</span>
+            <button class="btn btn-primary btn-sm active" data-filter="all">All</button>
+            {% for subcat in sub_categories limit: 8 %}
+              <button class="btn btn-outline-secondary btn-sm" data-filter="{{ subcat | slugify }}">
+                {{ subcat | capitalize }}
+              </button>
+            {% endfor %}
+          </div>
+        </div>
+
+        <section id="all-posts" class="grid-section mb-5 scroll-mt-5">
+          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for gpost in section_posts %}
+              <div class="col" data-tags="{{ gpost.tags | join: ' ' | slugify }}">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                  <div class="position-relative">
+                    {% if gpost.breaking %}
+                      <span class="badge bg-danger position-absolute top-0 start-0 m-2 z-1">
+                        <i class="bi bi-lightning-fill me-1"></i>Breaking
+                      </span>
+                    {% endif %}
+                    {% if gpost.featured %}
+                      <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2 z-1">
+                        <i class="bi bi-star-fill me-1"></i>Featured
+                      </span>
+                    {% endif %}
+                    {% if gpost.post_type and gpost.post_type != "standard" and gpost.post_type != "featured" and gpost.post_type != "breaking" %}
+                      <span class="position-absolute bottom-0 start-0 m-2 z-1">
+                        {% include components/post-type-badge.html post_type=gpost.post_type %}
+                      </span>
+                    {% endif %}
+                    <a href="{{ gpost.url | relative_url }}" class="text-decoration-none">
+                      {% assign gpost_img = gpost.preview | default: site.teaser %}
+                      {% include components/preview-image.html src=gpost_img alt=gpost.title class="card-img-top" style="height: 180px; object-fit: cover;" %}
+                    </a>
+                  </div>
+                  <div class="card-body d-flex flex-column">
+                    <div class="d-flex gap-1 mb-2 flex-wrap">
+                      {% for tag in gpost.tags limit: 2 %}
+                        <span class="badge bg-light text-dark">{{ tag }}</span>
+                      {% endfor %}
+                    </div>
+                    <h5 class="card-title mb-2">
+                      <a href="{{ gpost.url | relative_url }}" class="text-decoration-none text-body-emphasis">
+                        {{ gpost.title | truncate: 60 }}
+                      </a>
+                    </h5>
+                    <p class="card-text text-muted small flex-grow-1">
+                      {{ gpost.excerpt | strip_html | truncate: 100 }}
+                    </p>
+                  </div>
+                  <div class="card-footer bg-transparent border-top-0">
+                    <div class="d-flex justify-content-between align-items-center small text-muted">
+                      <span>
+                        <i class="bi bi-calendar me-1"></i>{{ gpost.date | date: "%b %d, %Y" }}
+                      </span>
+                      {% if gpost.author %}
+                        <span>
+                          <i class="bi bi-person me-1"></i>{{ gpost.author | truncate: 15 }}
+                        </span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </section>
+
+      {% comment %} ================================ {% endcomment %}
+      {% comment %} LIST STYLE                      {% endcomment %}
+      {% comment %} ================================ {% endcomment %}
+      {% elsif section_style == "list" %}
+
+        <section id="all-posts" class="list-section mb-5 scroll-mt-5">
+          {% for lpost in section_posts %}
+            <article class="card border-0 shadow-sm mb-3 hover-lift">
+              <div class="row g-0">
+                <div class="col-md-3">
+                  <a href="{{ lpost.url | relative_url }}">
+                    {% assign lpost_img = lpost.preview | default: site.teaser %}
+                    {% include components/preview-image.html src=lpost_img alt=lpost.title class="rounded-start h-100 w-100" style="object-fit: cover; min-height: 150px;" %}
+                  </a>
+                </div>
+                <div class="col-md-9">
+                  <div class="card-body">
+                    <div class="d-flex gap-2 mb-2 flex-wrap">
+                      {% if lpost.breaking %}
+                        <span class="badge bg-danger"><i class="bi bi-lightning-fill me-1"></i>Breaking</span>
+                      {% endif %}
+                      {% if lpost.featured %}
+                        <span class="badge bg-warning text-dark"><i class="bi bi-star-fill me-1"></i>Featured</span>
+                      {% endif %}
+                      {% if lpost.post_type and lpost.post_type != "standard" %}
+                        {% include components/post-type-badge.html post_type=lpost.post_type %}
+                      {% endif %}
+                      {% for tag in lpost.tags limit: 2 %}
+                        <span class="badge bg-light text-dark">{{ tag }}</span>
+                      {% endfor %}
+                    </div>
+                    <h5 class="card-title">
+                      <a href="{{ lpost.url | relative_url }}" class="text-decoration-none text-body-emphasis">
+                        {{ lpost.title }}
+                      </a>
+                    </h5>
+                    <p class="card-text text-muted">{{ lpost.excerpt | strip_html | truncate: 200 }}</p>
+                    <div class="d-flex gap-3 text-muted small">
+                      <span><i class="bi bi-calendar me-1"></i>{{ lpost.date | date: "%B %d, %Y" }}</span>
+                      {% if lpost.author %}
+                        <span><i class="bi bi-person me-1"></i>{{ lpost.author }}</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
+          {% endfor %}
+        </section>
+
+      {% endif %}
+
+      {% else %}
+        <!-- Empty state -->
+        <div class="text-center py-5">
+          <i class="bi bi-inbox fs-1 text-muted"></i>
+          <p class="text-muted mt-3">No articles in this section yet.</p>
+          <a href="{{ site.baseurl }}/news/" class="btn btn-outline-primary">
+            Browse all news
+          </a>
+        </div>
+      {% endif %}
+
+      <!-- ========================== -->
+      <!-- RELATED SECTIONS           -->
+      <!-- ========================== -->
+      <aside class="related-sections mt-5 pt-4 border-top">
+        <h3 class="h5 mb-3">
+          <i class="bi bi-compass me-2"></i>Explore Other Sections
+        </h3>
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-3">
+          {% for nav_item in site.data.navigation.posts %}
+            {% unless nav_item.title == page.category or nav_item.title == page.title %}
+              {% assign other_section_posts = all_site_posts | where_exp: "post", "post.categories contains nav_item.title" %}
+              <div class="col">
+                <a href="{{ nav_item.url | replace: '/posts/', '/news/' | relative_url }}" 
+                   class="card text-center h-100 text-decoration-none border-0 shadow-sm hover-lift">
+                  <div class="card-body py-3">
+                    <i class="bi {{ nav_item.icon | default: 'bi-folder' }} fs-4 text-primary mb-2 d-block"></i>
+                    <h6 class="card-title mb-1 small">{{ nav_item.title }}</h6>
+                    <small class="text-muted">{{ other_section_posts.size }} articles</small>
+                  </div>
+                </a>
+              </div>
+            {% endunless %}
+          {% endfor %}
+        </div>
+      </aside>
+
+    </main>
+  </div>
+</div>
+
+<style>
+  .hover-lift {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  }
+  .scroll-mt-5 {
+    scroll-margin-top: 5rem;
+  }
+  /* Hide scrollbar for section nav */
+  .nav::-webkit-scrollbar {
+    display: none;
+  }
+</style>
+
+<script>
+  // Topic filter functionality (for grid style)
+  document.querySelectorAll('[data-filter]').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const filter = this.dataset.filter;
+      
+      // Update active button
+      document.querySelectorAll('[data-filter]').forEach(b => {
+        b.classList.remove('btn-primary', 'active');
+        b.classList.add('btn-outline-secondary');
+      });
+      this.classList.remove('btn-outline-secondary');
+      this.classList.add('btn-primary', 'active');
+      
+      // Filter cards
+      document.querySelectorAll('[data-tags]').forEach(card => {
+        if (filter === 'all' || card.dataset.tags.includes(filter)) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>

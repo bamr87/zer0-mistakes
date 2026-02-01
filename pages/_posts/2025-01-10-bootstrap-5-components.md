@@ -10,7 +10,7 @@ tags:
   - web-design
   - responsive
 date: 2025-01-10T14:30:00.000Z
-layout: journals
+layout: article
 preview: /images/info-banner-mountain-wizard.png
 author: "Zer0-Mistakes Team"
 featured: true

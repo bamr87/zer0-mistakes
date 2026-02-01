@@ -1,0 +1,76 @@
+respondent_id,age,gender,education,employment,income_bracket,product_satisfaction,service_rating,would_recommend,purchase_frequency,category_preference,feedback_length,response_date
+1,28,Female,Bachelor's,Full-time,50000-75000,4,5,Yes,Monthly,Electronics,142,2025-01-15
+2,35,Male,Master's,Full-time,75000-100000,5,4,Yes,Weekly,Electronics,89,2025-01-16
+3,42,Female,Bachelor's,Part-time,25000-50000,3,3,Maybe,Quarterly,Furniture,156,2025-01-17
+4,23,Male,High School,Student,Under 25000,4,4,Yes,Monthly,Electronics,45,2025-01-18
+5,51,Female,Doctorate,Full-time,100000+,5,5,Yes,Weekly,Electronics,203,2025-01-19
+6,31,Non-binary,Bachelor's,Full-time,50000-75000,4,4,Yes,Monthly,Furniture,78,2025-01-20
+7,45,Male,Master's,Self-employed,75000-100000,3,2,No,Rarely,Electronics,312,2025-01-21
+8,27,Female,Bachelor's,Full-time,50000-75000,5,5,Yes,Monthly,Electronics,67,2025-01-22
+9,38,Male,Bachelor's,Full-time,75000-100000,4,4,Yes,Quarterly,Furniture,95,2025-01-23
+10,56,Female,High School,Retired,25000-50000,4,5,Yes,Monthly,Furniture,124,2025-01-24
+11,29,Male,Master's,Full-time,75000-100000,5,4,Yes,Weekly,Electronics,56,2025-01-25
+12,33,Female,Bachelor's,Part-time,25000-50000,3,3,Maybe,Quarterly,Furniture,187,2025-01-26
+13,41,Male,Doctorate,Full-time,100000+,4,5,Yes,Monthly,Electronics,143,2025-01-27
+14,24,Female,Bachelor's,Full-time,50000-75000,5,4,Yes,Monthly,Electronics,72,2025-01-28
+15,48,Male,Master's,Self-employed,100000+,2,2,No,Rarely,Furniture,298,2025-01-29
+16,36,Female,Bachelor's,Full-time,75000-100000,4,4,Yes,Monthly,Electronics,88,2025-01-30
+17,52,Male,High School,Full-time,50000-75000,4,3,Maybe,Quarterly,Furniture,165,2025-01-31
+18,26,Non-binary,Master's,Full-time,50000-75000,5,5,Yes,Weekly,Electronics,54,2025-02-01
+19,44,Female,Bachelor's,Part-time,25000-50000,3,4,Yes,Monthly,Furniture,112,2025-02-02
+20,30,Male,Bachelor's,Full-time,75000-100000,4,4,Yes,Monthly,Electronics,79,2025-02-03
+21,58,Female,Master's,Retired,50000-75000,5,5,Yes,Monthly,Furniture,189,2025-02-04
+22,25,Male,Bachelor's,Full-time,50000-75000,4,3,Maybe,Quarterly,Electronics,67,2025-02-05
+23,39,Female,Doctorate,Full-time,100000+,5,5,Yes,Weekly,Electronics,245,2025-02-06
+24,47,Male,Bachelor's,Self-employed,75000-100000,3,3,Maybe,Rarely,Furniture,134,2025-02-07
+25,32,Female,Master's,Full-time,75000-100000,5,4,Yes,Monthly,Electronics,98,2025-02-08
+26,55,Male,High School,Full-time,25000-50000,4,4,Yes,Monthly,Furniture,156,2025-02-09
+27,22,Female,Bachelor's,Student,Under 25000,4,5,Yes,Quarterly,Electronics,43,2025-02-10
+28,43,Male,Master's,Full-time,100000+,4,4,Yes,Monthly,Electronics,87,2025-02-11
+29,37,Female,Bachelor's,Part-time,50000-75000,3,3,Maybe,Quarterly,Furniture,198,2025-02-12
+30,49,Male,Doctorate,Full-time,100000+,5,5,Yes,Weekly,Electronics,267,2025-02-13
+31,28,Female,Bachelor's,Full-time,50000-75000,4,4,Yes,Monthly,Electronics,76,2025-02-14
+32,34,Male,Master's,Full-time,75000-100000,5,4,Yes,Monthly,Electronics,92,2025-02-15
+33,61,Female,High School,Retired,25000-50000,4,5,Yes,Quarterly,Furniture,145,2025-02-16
+34,26,Male,Bachelor's,Full-time,50000-75000,3,3,Maybe,Monthly,Electronics,58,2025-02-17
+35,40,Female,Master's,Self-employed,75000-100000,5,5,Yes,Weekly,Electronics,178,2025-02-18
+36,53,Male,Bachelor's,Full-time,50000-75000,4,4,Yes,Monthly,Furniture,123,2025-02-19
+37,31,Female,Doctorate,Full-time,100000+,5,5,Yes,Weekly,Electronics,234,2025-02-20
+38,46,Male,Bachelor's,Part-time,25000-50000,3,2,No,Rarely,Furniture,289,2025-02-21
+39,29,Female,Master's,Full-time,75000-100000,4,4,Yes,Monthly,Electronics,65,2025-02-22
+40,38,Male,Bachelor's,Full-time,75000-100000,4,4,Yes,Monthly,Furniture,98,2025-02-23
+41,24,Female,Bachelor's,Full-time,50000-75000,5,5,Yes,Monthly,Electronics,54,2025-02-24
+42,50,Male,Master's,Self-employed,100000+,4,3,Maybe,Quarterly,Electronics,176,2025-02-25
+43,33,Non-binary,Bachelor's,Full-time,50000-75000,4,4,Yes,Monthly,Furniture,87,2025-02-26
+44,57,Female,High School,Retired,25000-50000,5,5,Yes,Monthly,Furniture,167,2025-02-27
+45,27,Male,Master's,Full-time,75000-100000,5,4,Yes,Weekly,Electronics,72,2025-02-28
+46,42,Female,Doctorate,Full-time,100000+,4,5,Yes,Monthly,Electronics,198,2025-03-01
+47,35,Male,Bachelor's,Full-time,75000-100000,4,4,Yes,Monthly,Furniture,89,2025-03-02
+48,21,Female,High School,Student,Under 25000,4,4,Yes,Quarterly,Electronics,38,2025-03-03
+49,48,Male,Master's,Full-time,100000+,3,3,Maybe,Rarely,Electronics,245,2025-03-04
+50,30,Female,Bachelor's,Part-time,25000-50000,5,5,Yes,Monthly,Furniture,112,2025-03-05
+51,54,Male,Bachelor's,Full-time,50000-75000,4,4,Yes,Monthly,Furniture,134,2025-03-06
+52,36,Female,Master's,Full-time,75000-100000,5,5,Yes,Weekly,Electronics,156,2025-03-07
+53,23,Male,Bachelor's,Full-time,50000-75000,4,3,Maybe,Monthly,Electronics,45,2025-03-08
+54,45,Female,Doctorate,Self-employed,100000+,5,5,Yes,Weekly,Electronics,278,2025-03-09
+55,39,Male,Bachelor's,Full-time,75000-100000,4,4,Yes,Monthly,Furniture,98,2025-03-10
+56,62,Female,Master's,Retired,50000-75000,4,5,Yes,Monthly,Furniture,189,2025-03-11
+57,28,Male,Bachelor's,Full-time,50000-75000,5,4,Yes,Monthly,Electronics,67,2025-03-12
+58,41,Female,Bachelor's,Part-time,25000-50000,3,3,Maybe,Quarterly,Furniture,145,2025-03-13
+59,34,Male,Master's,Full-time,100000+,4,4,Yes,Monthly,Electronics,87,2025-03-14
+60,52,Female,High School,Full-time,25000-50000,4,5,Yes,Monthly,Furniture,123,2025-03-15
+61,26,Non-binary,Bachelor's,Full-time,50000-75000,5,4,Yes,Weekly,Electronics,54,2025-03-16
+62,47,Male,Doctorate,Full-time,100000+,4,4,Yes,Monthly,Electronics,167,2025-03-17
+63,32,Female,Master's,Full-time,75000-100000,5,5,Yes,Monthly,Furniture,98,2025-03-18
+64,59,Male,Bachelor's,Retired,25000-50000,3,3,Maybe,Rarely,Furniture,234,2025-03-19
+65,25,Female,Bachelor's,Full-time,50000-75000,4,4,Yes,Monthly,Electronics,56,2025-03-20
+66,43,Male,Master's,Self-employed,100000+,5,4,Yes,Weekly,Electronics,145,2025-03-21
+67,37,Female,Bachelor's,Full-time,75000-100000,4,4,Yes,Monthly,Furniture,89,2025-03-22
+68,20,Male,High School,Student,Under 25000,5,5,Yes,Monthly,Electronics,32,2025-03-23
+69,49,Female,Doctorate,Full-time,100000+,4,5,Yes,Monthly,Electronics,198,2025-03-24
+70,31,Male,Bachelor's,Full-time,50000-75000,4,3,Maybe,Quarterly,Furniture,76,2025-03-25
+71,56,Female,Master's,Part-time,50000-75000,5,5,Yes,Monthly,Furniture,167,2025-03-26
+72,29,Male,Bachelor's,Full-time,75000-100000,5,4,Yes,Weekly,Electronics,65,2025-03-27
+73,44,Female,Bachelor's,Full-time,75000-100000,4,4,Yes,Monthly,Furniture,112,2025-03-28
+74,38,Male,Doctorate,Self-employed,100000+,3,2,No,Rarely,Electronics,289,2025-03-29
+75,22,Female,Bachelor's,Full-time,50000-75000,4,5,Yes,Monthly,Electronics,43,2025-03-30

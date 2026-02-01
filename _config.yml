@@ -399,14 +399,15 @@ defaults:
     scope:
       path: pages/_posts
     values:
-      layout: journals
+      layout: article
+      post_type: standard
+      index: false
+      sidebar: true
       author_profile: true
       read_time: true
       comments: # true
       share: true
       related: true
-      sidebar:
-        nav: auto
       # permalink: /:collection/:name/
 
   # pages/_docs
@@ -431,9 +432,13 @@ defaults:
       path: pages/_notes
       type: notes
     values:
-      layout: *pages
-      share: false
-      author_profile: false
+      layout: note
+      collection: notes
+      author_profile: true
+      read_time: true
+      comments: true
+      share: true
+      related: true
       sidebar:
         nav: auto
 

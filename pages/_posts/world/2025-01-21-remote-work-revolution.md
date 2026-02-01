@@ -4,7 +4,7 @@ description: "Exploring the worldwide shift to remote work and its impact on com
 preview: /images/previews/the-remote-work-revolution-how-global-teams-are-re.png
 date: 2025-01-21T10:00:00.000Z
 author: default
-layout: journals
+layout: article
 categories: [World]
 tags: [remote-work, global, business, future-of-work]
 featured: true

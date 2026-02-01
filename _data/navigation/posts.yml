@@ -1,34 +1,34 @@
-# Posts/Blog Category Navigation Configuration
-# Used by: Blog layout, category pages, and post navigation
-# Purpose: Category-based navigation for blog posts
-# Note: Categories match folders in pages/_posts/
+# News Section Navigation Configuration
+# Used by: News layout, section pages, and article navigation
+# Purpose: Section-based navigation for news content
+# Note: Sections match folders in pages/_posts/
 
 - title: Development
   icon: bi-code-slash
-  url: /posts/development/
+  url: /news/development/
   description: "Software development, coding practices, and programming tutorials"
 
 - title: Technology
   icon: bi-cpu
-  url: /posts/technology/
+  url: /news/technology/
   description: "Tech news, tools, and emerging technologies"
 
 - title: Tutorial
   icon: bi-journal-code
-  url: /posts/tutorial/
+  url: /news/tutorial/
   description: "Step-by-step guides and how-to articles"
 
 - title: World
   icon: bi-globe
-  url: /posts/world/
+  url: /news/world/
   description: "Global trends, remote work, and industry insights"
 
 - title: Business
   icon: bi-briefcase
-  url: /posts/business/
+  url: /news/business/
   description: "Business strategies, startups, and entrepreneurship"
 
 - title: Science
   icon: bi-mortarboard
-  url: /posts/science/
+  url: /news/science/
   description: "Scientific discoveries, research, and innovation"

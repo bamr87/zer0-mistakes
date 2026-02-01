@@ -4,7 +4,7 @@ description: "A hands-on tutorial to master CSS Grid with practical examples and
 preview: /images/previews/css-grid-mastery-build-any-layout-you-can-imagine.png
 date: 2025-01-23T10:00:00.000Z
 author: default
-layout: journals
+layout: article
 categories: [Tutorial]
 tags: [css, grid, layout, web-design, frontend]
 featured: true

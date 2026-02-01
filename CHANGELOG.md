@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.20.3] - 2026-02-01
+
+### Added
+- **Notes Collection**: 5 new developer reference notes
+  - `bash-shortcuts.md` - Essential terminal keyboard shortcuts
+  - `docker-commands.md` - Docker and Docker Compose command reference
+  - `git-cheatsheet.md` - Git commands quick reference
+  - `jekyll-front-matter.md` - Jekyll front matter variables guide
+  - `markdown-tips.md` - Advanced Markdown formatting tricks
+- **Python Statistics Notebook**: New `python-statistics.ipynb` Jupyter notebook with scipy, pandas, and statistical analysis examples
+- **Enhanced Notes page**: Added tag filtering and improved card-based layout
+- **Enhanced Notebooks page**: Added difficulty filtering and improved card-based layout with download links
+
+### Changed
+- **Layout Standardization**: Updated all posts from `layout: journals` to `layout: article` for consistency
+- **Section Index Pages**: Updated category index pages to use `layout: section` with proper section_style settings
+- **News URL Structure**: Changed permalinks from `/posts/` to `/news/` across all news sections
+- **Removed**: Deleted unused `pages/blog.md` page
+
+### Fixed
+- **Layout consistency**: Standardized layouts across Business, Development, Science, Technology, Tutorial, and World news sections
+
 ## [0.20.2] - 2026-01-30
 
 ### Added

@@ -14,20 +14,12 @@
       "path": "[[workspace]]/pages/_quickstart"
     },
     {
-      "title": "notes",
-      "path": "[[workspace]]/pages/_notes"
-    },
-    {
       "title": "about",
       "path": "[[workspace]]/pages/_about"
     },
     {
       "title": "docs",
       "path": "[[workspace]]/pages/_docs"
-    },
-    {
-      "title": "quests",
-      "path": "[[workspace]]/pages/_quests"
     }
   ],
   "frontMatter.templates.enabled": true,
