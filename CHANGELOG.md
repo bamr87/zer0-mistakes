@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.20.6] - 2026-02-01
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- af25fc8 fix(ci): improve Docker compose compatibility for CI environments
+
+
 ## [0.20.5] - 2026-02-01
 
 ### Changed
