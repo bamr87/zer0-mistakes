@@ -74,15 +74,17 @@ create_commit() {
         return 0
     fi
     
-    # Add files
+    # Add files (including Gemfile.lock which is updated when version changes)
     git add lib/jekyll-theme-zer0/version.rb CHANGELOG.md
     [[ -f "package.json" ]] && git add package.json
+    [[ -f "Gemfile.lock" ]] && git add Gemfile.lock
     
     # Create commit
     git commit -m "chore: release version $version
 
 - Version bump to $version
 - Updated changelog with commit history
+- Regenerated Gemfile.lock for version sync
 - Automated release via release script" || error "Failed to create commit"
     
     success "Created commit for version $version"

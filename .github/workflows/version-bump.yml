@@ -156,6 +156,8 @@ jobs:
       with:
         ruby-version: ${{ env.RUBY_VERSION }}
         install-system-deps: true
+        # Disable bundler cache for version bump - we need to modify Gemfile.lock
+        bundler-cache: false
 
     - name: Run Pre-bump Validation
       if: ${{ !inputs.skip_tests }}
@@ -228,14 +230,23 @@ jobs:
       run: |
         NEW_VERSION="${{ steps.bump.outputs.new_version }}"
         
-        # The gemspec version changed, so we need to update Gemfile.lock
-        # Unfreeze bundler to allow Gemfile.lock update
-        bundle config set frozen false
+        echo "📦 Regenerating Gemfile.lock for version $NEW_VERSION..."
+        
+        # Ensure bundler is not in frozen/deployment mode
+        bundle config set --local frozen false
+        bundle config unset deployment 2>/dev/null || true
         
         # Run bundle install to regenerate lockfile with new gemspec version
-        bundle install
+        bundle install --jobs 4 --retry 3
         
-        echo "✅ Gemfile.lock updated for version $NEW_VERSION"
+        # Verify the lockfile was updated correctly
+        if grep -q "jekyll-theme-zer0 ($NEW_VERSION)" Gemfile.lock; then
+          echo "✅ Gemfile.lock updated and verified for version $NEW_VERSION"
+        else
+          echo "⚠️ Warning: Gemfile.lock may not reflect new version"
+          echo "Current gem version in lockfile:"
+          grep "jekyll-theme-zer0" Gemfile.lock | head -3 || true
+        fi
 
     - name: Update Changelog
       if: ${{ inputs.dry_run != true }}

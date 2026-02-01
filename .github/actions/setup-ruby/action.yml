@@ -10,6 +10,10 @@ inputs:
     description: 'Install system dependencies (jq)'
     required: false
     default: 'true'
+  bundler-cache:
+    description: 'Enable bundler caching (set to false for version bump workflows)'
+    required: false
+    default: 'true'
 
 runs:
   using: 'composite'
@@ -18,7 +22,7 @@ runs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ inputs.ruby-version }}
-        bundler-cache: true
+        bundler-cache: ${{ inputs.bundler-cache }}
         # Ensure bundler >= 2.3 for compatibility with gemspec requirements
         bundler: '2.5'
 
@@ -28,6 +32,13 @@ runs:
       run: |
         sudo apt-get update -qq
         sudo apt-get install -y jq
+
+    - name: Disable frozen mode for development workflows
+      if: inputs.bundler-cache != 'true'
+      shell: bash
+      run: |
+        bundle config set --local frozen false
+        bundle config unset deployment 2>/dev/null || true
 
     - name: Ensure Ruby dependencies are installed
       shell: bash

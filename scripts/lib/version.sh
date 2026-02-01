@@ -133,6 +133,38 @@ update_package_json() {
     debug "✓ Updated $PACKAGE_JSON"
 }
 
+# Update Gemfile.lock to reflect new gem version
+# This is CRITICAL - when version.rb changes, Gemfile.lock must be regenerated
+# because the gem is listed as a PATH dependency in Gemfile
+update_gemfile_lock() {
+    local new_version="$1"
+    
+    debug "Regenerating Gemfile.lock for version $new_version..."
+    
+    if [[ "$DRY_RUN" == "true" ]]; then
+        info "[DRY RUN] Would regenerate Gemfile.lock"
+        return 0
+    fi
+    
+    # Unfreeze bundler to allow lockfile update
+    bundle config set --local frozen false 2>/dev/null || true
+    bundle config unset deployment 2>/dev/null || true
+    
+    # Regenerate lockfile
+    if ! bundle install --quiet; then
+        warn "bundle install returned non-zero, but may have succeeded"
+    fi
+    
+    # Verify the lockfile was updated
+    if grep -q "jekyll-theme-zer0 ($new_version)" Gemfile.lock 2>/dev/null; then
+        debug "✓ Gemfile.lock updated to version $new_version"
+    else
+        warn "Gemfile.lock may not have been updated correctly"
+        info "Current Gemfile.lock gem version:"
+        grep "jekyll-theme-zer0" Gemfile.lock | head -3 || true
+    fi
+}
+
 # Update version in all files
 update_version_files() {
     local new_version="$1"
@@ -143,6 +175,7 @@ update_version_files() {
     
     update_version_rb "$new_version"
     update_package_json "$new_version"
+    update_gemfile_lock "$new_version"
     
     success "Version files updated to $new_version"
 }
@@ -173,6 +206,7 @@ export -f validate_version_format
 export -f calculate_new_version
 export -f update_version_rb
 export -f update_package_json
+export -f update_gemfile_lock
 export -f update_version_files
 export -f version_less_than
 export -f get_version_from_tag
