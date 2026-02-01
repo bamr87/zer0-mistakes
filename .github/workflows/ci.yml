@@ -42,7 +42,8 @@ env:
   RUBY_VERSION: '3.2'
   NODE_VERSION: '18'
   # Required for jekyll-github-metadata gem during CI builds
-  PAGES_REPO_NWO: 'bamr87/zer0-mistakes'
+  # Uses repository variable if set, otherwise falls back to github.repository
+  PAGES_REPO_NWO: ${{ vars.PAGES_REPO_NWO || github.repository }}
 
 defaults:
   run:

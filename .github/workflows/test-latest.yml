@@ -41,10 +41,12 @@ on:
         type: boolean
 
 env:
-  DOCKER_IMAGE: amrabdel/zer0-mistakes
+  # Docker image name - uses repository variable if set, otherwise default
+  DOCKER_IMAGE: ${{ vars.DOCKER_IMAGE || 'amrabdel/zer0-mistakes' }}
   REGISTRY: docker.io
   # Required for jekyll-github-metadata gem during CI builds
-  PAGES_REPO_NWO: 'bamr87/zer0-mistakes'
+  # Uses repository variable if set, otherwise falls back to github.repository
+  PAGES_REPO_NWO: ${{ vars.PAGES_REPO_NWO || github.repository }}
 
 jobs:
   # ==========================================================================
@@ -218,7 +220,7 @@ jobs:
         run: |
           echo "🏗️ Testing Jekyll build with pre-built image..."
           docker run --rm \
-            -e PAGES_REPO_NWO=bamr87/zer0-mistakes \
+            -e PAGES_REPO_NWO=${{ env.PAGES_REPO_NWO }} \
             -e JEKYLL_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
             zer0-mistakes-jekyll-test:latest sh -c '
             bundle exec jekyll build &&
@@ -243,7 +245,7 @@ jobs:
           
           # Run HTML Proofer and capture output
           docker run --rm \
-            -e PAGES_REPO_NWO=bamr87/zer0-mistakes \
+            -e PAGES_REPO_NWO=${{ env.PAGES_REPO_NWO }} \
             -e JEKYLL_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
             zer0-mistakes-jekyll-test:latest sh -c "
               bundle exec jekyll build &&

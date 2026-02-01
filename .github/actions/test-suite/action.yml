@@ -34,7 +34,8 @@ runs:
       shell: bash
       run: |
         # Set PAGES_REPO_NWO for jekyll-github-metadata gem
-        echo "PAGES_REPO_NWO=bamr87/zer0-mistakes" >> $GITHUB_ENV
+        # Uses existing env var if set, otherwise falls back to github.repository
+        echo "PAGES_REPO_NWO=${PAGES_REPO_NWO:-${{ github.repository }}}" >> $GITHUB_ENV
     
     - name: Run Test Suite
       shell: bash
