@@ -41,6 +41,8 @@ env:
   # The test-latest.yml workflow uses actual latest versions
   RUBY_VERSION: '3.2'
   NODE_VERSION: '18'
+  # Required for jekyll-github-metadata gem during CI builds
+  PAGES_REPO_NWO: 'bamr87/zer0-mistakes'
 
 defaults:
   run:
@@ -167,6 +169,8 @@ jobs:
           verbose: true
           suites: deployment
           skip-docker: false
+          # Skip remote installation tests in CI (curl piped to bash is unreliable)
+          skip-remote: true
 
       - name: Upload Deployment Test Results
         uses: actions/upload-artifact@v4

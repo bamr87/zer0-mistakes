@@ -17,6 +17,10 @@ inputs:
     description: 'Skip Docker-related tests'
     default: 'true'
     required: false
+  skip-remote:
+    description: 'Skip remote installation tests (for CI environments)'
+    default: 'false'
+    required: false
 
 runs:
   using: composite
@@ -25,6 +29,12 @@ runs:
       uses: ./.github/actions/setup-ruby
       with:
         ruby-version: ${{ inputs.ruby-version }}
+    
+    - name: Set PAGES_REPO_NWO for Jekyll builds
+      shell: bash
+      run: |
+        # Set PAGES_REPO_NWO for jekyll-github-metadata gem
+        echo "PAGES_REPO_NWO=bamr87/zer0-mistakes" >> $GITHUB_ENV
     
     - name: Run Test Suite
       shell: bash
@@ -37,6 +47,9 @@ runs:
         fi
         if [[ "${{ inputs.skip-docker }}" == "true" ]]; then
           ARGS="$ARGS --skip-docker"
+        fi
+        if [[ "${{ inputs.skip-remote }}" == "true" ]]; then
+          ARGS="$ARGS --skip-remote"
         fi
         if [[ -n "${{ inputs.suites }}" ]]; then
           ARGS="$ARGS --suites ${{ inputs.suites }}"

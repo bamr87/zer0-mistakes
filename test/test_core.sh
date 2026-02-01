@@ -386,6 +386,9 @@ test_jekyll_build() {
         local temp_site
         temp_site=$(mktemp -d -t jekyll-build-test-XXXXXX)
 
+        # Set PAGES_REPO_NWO for jekyll-github-metadata gem (required in CI environments)
+        export PAGES_REPO_NWO="${PAGES_REPO_NWO:-bamr87/zer0-mistakes}"
+        
         if JEKYLL_ENV=production bundle exec jekyll build \
             --config "$PROJECT_ROOT/_config.yml" \
             --source "$PROJECT_ROOT" \

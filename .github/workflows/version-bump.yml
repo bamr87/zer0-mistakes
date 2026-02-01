@@ -48,6 +48,8 @@ on:
 
 env:
   RUBY_VERSION: '3.2'
+  # Required for jekyll-github-metadata gem during CI builds
+  PAGES_REPO_NWO: 'bamr87/zer0-mistakes'
 
 defaults:
   run:

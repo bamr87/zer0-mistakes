@@ -43,6 +43,8 @@ on:
 env:
   DOCKER_IMAGE: amrabdel/zer0-mistakes
   REGISTRY: docker.io
+  # Required for jekyll-github-metadata gem during CI builds
+  PAGES_REPO_NWO: 'bamr87/zer0-mistakes'
 
 jobs:
   # ==========================================================================
