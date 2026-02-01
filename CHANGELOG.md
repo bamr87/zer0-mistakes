@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.20.7] - 2026-02-01
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 969ce94 refactor(ci): abstract hardcoded values to GitHub variables and secrets
+
+
 ## [0.20.6] - 2026-02-01
 
 ### Changed
