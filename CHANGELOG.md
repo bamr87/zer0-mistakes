@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.20.5] - 2026-02-01
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 7a2eeaf fix(docker): add PAGES_REPO_NWO environment variable for Jekyll builds
+
+
 ## [0.20.4] - 2026-02-01
 
 ### Changed
