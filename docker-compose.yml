@@ -29,7 +29,8 @@ services:
     platform: linux/amd64
     
     # Run bundle install first since volume mount overwrites container's /site
-    command: ["sh", "-c", "bundle install --jobs 4 --retry 3 && bundle exec jekyll serve --watch --force_polling --config '_config.yml,_config_dev.yml' --host 0.0.0.0 --port 4000 --livereload"]
+    # Also configure git safe.directory to avoid ownership warnings in CI
+    command: ["sh", "-c", "git config --global --add safe.directory /site 2>/dev/null || true && bundle install --jobs 4 --retry 3 && bundle exec jekyll serve --watch --force_polling --config '_config.yml,_config_dev.yml' --host 0.0.0.0 --port 4000 --livereload"]
     
     volumes:
       - .:/site
@@ -45,6 +46,8 @@ services:
     environment:
       - JEKYLL_ENV=development
       - BUNDLE_PATH=/usr/local/bundle
+      # Repository info for jekyll-github-metadata gem
+      - PAGES_REPO_NWO=bamr87/zer0-mistakes
     
     # Enable TTY for interactive commands
     stdin_open: true
