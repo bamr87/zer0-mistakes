@@ -1,0 +1,212 @@
+<!--
+  ===================================================================
+  ENVIRONMENT SWITCHER - Dev/Prod URL Display and Toggle
+  ===================================================================
+  
+  File: env-switcher.html
+  Path: _includes/components/env-switcher.html
+  Purpose: Display current environment and provide URL switching
+  
+  Dependencies:
+  - jekyll.environment: Current build environment
+  - site.url: Production URL
+  - site.port: Development port (default 4000)
+  - Bootstrap 5 components
+  ===================================================================
+-->
+
+{% assign current_env = jekyll.environment | default: "development" %}
+{% assign is_production = current_env == "production" %}
+{% assign prod_url = site.url | append: site.baseurl %}
+{% assign dev_url = "http://localhost:" | append: site.port | default: 4000 | append: site.baseurl %}
+
+<!-- Environment Status Card -->
+<div class="card border-{{ is_production | if: 'success', 'warning' }} mb-3">
+  <div class="card-header d-flex align-items-center justify-content-between py-2 bg-{{ is_production | if: 'success', 'warning' }} bg-opacity-10">
+    <span class="fw-semibold">
+      <i class="bi bi-{{ is_production | if: 'cloud-check', 'pc-display' }} me-2"></i>
+      Current Environment
+    </span>
+    {% if is_production %}
+      <span class="badge bg-success">
+        <i class="bi bi-globe me-1"></i>Production
+      </span>
+    {% else %}
+      <span class="badge bg-warning text-dark">
+        <i class="bi bi-code-slash me-1"></i>Development
+      </span>
+    {% endif %}
+  </div>
+  <div class="card-body">
+    <!-- Active URL Display -->
+    <div class="mb-3">
+      <label class="form-label small text-body-secondary mb-1">
+        <i class="bi bi-link-45deg me-1"></i>Current Page URL
+      </label>
+      <div class="input-group input-group-sm">
+        <span class="input-group-text">
+          <i class="bi bi-{{ is_production | if: 'lock', 'unlock' }}"></i>
+        </span>
+        <input type="text" 
+               class="form-control font-monospace" 
+               value="{{ is_production | if: prod_url, dev_url }}{{ page.url }}" 
+               readonly 
+               id="currentUrlInput">
+        <button class="btn btn-outline-secondary" 
+                type="button" 
+                onclick="copyToClipboard('currentUrlInput', this)"
+                title="Copy to clipboard">
+          <i class="bi bi-clipboard"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Build Info -->
+    <div class="row g-2 text-center mb-3">
+      <div class="col-6">
+        <div class="p-2 bg-body-tertiary rounded">
+          <small class="text-body-secondary d-block">Build Time</small>
+          <strong class="small">{{ site.time | date: "%b %d, %H:%M" }}</strong>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="p-2 bg-body-tertiary rounded">
+          <small class="text-body-secondary d-block">Jekyll</small>
+          <strong class="small">v{{ jekyll.version }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick URL Links -->
+<div class="card border-secondary">
+  <div class="card-header py-2 bg-body-tertiary">
+    <span class="fw-semibold small">
+      <i class="bi bi-signpost-2 me-2"></i>Quick Links
+    </span>
+  </div>
+  <ul class="list-group list-group-flush">
+    <!-- Production URL -->
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
+        <span class="badge bg-success me-2">Prod</span>
+        <a href="{{ prod_url }}{{ page.url }}" 
+           target="_blank" 
+           rel="noopener" 
+           class="text-decoration-none font-monospace small text-truncate"
+           style="max-width: 180px;"
+           title="{{ prod_url }}{{ page.url }}">
+          {{ site.url | remove: "https://" | remove: "http://" | truncate: 25 }}{{ page.url | truncate: 15 }}
+        </a>
+      </div>
+      <div class="btn-group btn-group-sm">
+        <a href="{{ prod_url }}{{ page.url }}" 
+           target="_blank" 
+           rel="noopener" 
+           class="btn btn-outline-success" 
+           title="Open in new tab">
+          <i class="bi bi-box-arrow-up-right"></i>
+        </a>
+        <button class="btn btn-outline-secondary" 
+                type="button"
+                onclick="copyUrl('{{ prod_url }}{{ page.url }}', this)"
+                title="Copy URL">
+          <i class="bi bi-clipboard"></i>
+        </button>
+      </div>
+    </li>
+
+    <!-- Development URL -->
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
+        <span class="badge bg-warning text-dark me-2">Dev</span>
+        <a href="{{ dev_url }}{{ page.url }}" 
+           target="_blank" 
+           rel="noopener" 
+           class="text-decoration-none font-monospace small text-truncate"
+           style="max-width: 180px;"
+           title="{{ dev_url }}{{ page.url }}">
+          localhost:{{ site.port | default: 4000 }}{{ page.url | truncate: 15 }}
+        </a>
+      </div>
+      <div class="btn-group btn-group-sm">
+        <a href="{{ dev_url }}{{ page.url }}" 
+           target="_blank" 
+           rel="noopener" 
+           class="btn btn-outline-warning" 
+           title="Open in new tab">
+          <i class="bi bi-box-arrow-up-right"></i>
+        </a>
+        <button class="btn btn-outline-secondary" 
+                type="button"
+                onclick="copyUrl('{{ dev_url }}{{ page.url }}', this)"
+                title="Copy URL">
+          <i class="bi bi-clipboard"></i>
+        </button>
+      </div>
+    </li>
+
+    {% if site.repository %}
+    <!-- GitHub Source -->
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
+        <span class="badge bg-dark me-2">Source</span>
+        <span class="font-monospace small text-truncate" style="max-width: 180px;">
+          {{ page.path | split: "/" | last }}
+        </span>
+      </div>
+      <a href="https://github.com/{{ site.repository }}/blob/{{ site.branch | default: 'main' }}/{% if page.collection %}{{ site.collections_dir }}/{% endif %}{{ page.path }}" 
+         target="_blank" 
+         rel="noopener" 
+         class="btn btn-sm btn-outline-dark" 
+         title="View on GitHub">
+        <i class="bi bi-github"></i>
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+</div>
+
+<!-- Environment Tip -->
+<div class="alert alert-{{ is_production | if: 'success', 'warning' }} alert-dismissible fade show mt-3 py-2 small" role="alert">
+  <i class="bi bi-info-circle me-1"></i>
+  {% if is_production %}
+    Viewing <strong>production</strong> build. Changes require deployment.
+  {% else %}
+    <strong>Development</strong> mode. Changes auto-reload on save.
+  {% endif %}
+  <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="alert" aria-label="Close" style="padding: 0.5rem;"></button>
+</div>
+
+<script>
+function copyToClipboard(inputId, btn) {
+  const input = document.getElementById(inputId);
+  navigator.clipboard.writeText(input.value).then(() => {
+    showCopyFeedback(btn, true);
+  }).catch(() => {
+    showCopyFeedback(btn, false);
+  });
+}
+
+function copyUrl(url, btn) {
+  navigator.clipboard.writeText(url).then(() => {
+    showCopyFeedback(btn, true);
+  }).catch(() => {
+    showCopyFeedback(btn, false);
+  });
+}
+
+function showCopyFeedback(btn, success) {
+  const originalHtml = btn.innerHTML;
+  btn.innerHTML = success ? '<i class="bi bi-check2"></i>' : '<i class="bi bi-x"></i>';
+  btn.classList.add(success ? 'btn-success' : 'btn-danger');
+  btn.classList.remove('btn-outline-secondary');
+  
+  setTimeout(() => {
+    btn.innerHTML = originalHtml;
+    btn.classList.remove('btn-success', 'btn-danger');
+    btn.classList.add('btn-outline-secondary');
+  }, 1500);
+}
+</script>

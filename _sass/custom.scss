@@ -8,6 +8,9 @@
 // Import navigation tree styles
 @import "core/nav-tree";
 
+// Import navbar styles (extracted from navbar.html)
+@import "core/navbar";
+
 html, body {
     max-width: 100%;
     // overflow-x: hidden;

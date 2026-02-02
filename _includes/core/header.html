@@ -126,40 +126,44 @@
             <!-- ========================== -->
             <!-- UTILITY CONTROLS          -->
             <!-- ========================== -->
-            
-            <!-- Search Modal Toggle -->
-            <button
-                class="btn nav-search-button"
-                type="button"
-                data-bs-toggle="modal"
-                data-bs-target="#siteSearchModal"
-                data-search-toggle
-                aria-label="Open search"
-            >
-                <i class="{{site.default_icon}} bi-search"></i>
-                <span class="d-none d-lg-inline ms-1">Search</span>
-            </button>
-
-            <!-- Settings Modal Toggle -->
-            <div class="btn d-none d-lg-flex nav-settings"
-                data-bs-toggle="modal" 
-                data-bs-target="#info-section" 
-                aria-expanded="false" 
-                aria-controls="#info-section"
-                role="button">
-                <i type="button" class="{{site.default_icon}} bi-gear"></i>
-            </div>
-
-            <!-- Navigation Menu Toggle - Mobile view -->
-            <div class="bd-navbar-toggle">
-                <button class="navbar-toggler p-2" 
-                        type="button" 
-                        data-bs-toggle="offcanvas" 
-                        data-bs-target="#bdNavbar" 
-                        aria-controls="bdNavbar" 
-                        aria-label="Toggle navigation">
-                    <span class="bi bi-three-dots"></span>
+            <div class="navbar-utility-controls d-flex align-items-center">
+                <!-- Search Modal Toggle -->
+                <button
+                    class="btn nav-search-button"
+                    type="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#siteSearchModal"
+                    data-search-toggle
+                    aria-label="Open search"
+                    title="Search"
+                >
+                    <i class="{{site.default_icon}} bi-search"></i>
+                    <span class="nav-link-text d-none d-xl-inline ms-1">Search</span>
                 </button>
+
+                <!-- Settings Modal Toggle -->
+                <button
+                    class="btn nav-settings-button d-none d-lg-inline-flex"
+                    type="button"
+                    data-bs-toggle="modal" 
+                    data-bs-target="#info-section" 
+                    aria-label="Settings"
+                    title="Settings"
+                >
+                    <i class="{{site.default_icon}} bi-gear"></i>
+                </button>
+
+                <!-- Navigation Menu Toggle - Mobile view -->
+                <div class="bd-navbar-toggle d-lg-none">
+                    <button class="navbar-toggler p-2" 
+                            type="button" 
+                            data-bs-toggle="offcanvas" 
+                            data-bs-target="#bdNavbar" 
+                            aria-controls="bdNavbar" 
+                            aria-label="Toggle navigation">
+                        <span class="bi bi-three-dots"></span>
+                    </button>
+                </div>
             </div>
         </nav>
     </div>

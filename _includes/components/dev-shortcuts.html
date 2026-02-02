@@ -1,57 +1,104 @@
 <!--
-    Title: Dev Shortcuts
-    Description: This file contains the dev shortcuts for the site.
-    file: dev-shortcuts.html
-    variables: 
-        - site.repository
-        - site.default_icon
-        - site.collections_dir
-        - site.repository_name
-        - site.nav-file
-        - site.local_git_pc
-        - site.local_git_mac
-        - page.collection
-        - page_dir
-        - testvar
-    references:
-        - https://shopify.github.io/liquid/tags/variable/#capture
-        - https://getbootstrap.com/docs/5.3/components/collapse/
-    tutorial: 
-        - https://jekyllcodex.org/without-plugin/hidden-settings/
-        - https://jekyllcodex.org/without-plugin/hidden-settings/#collapse-feature
- -->
+  ===================================================================
+  DEV SHORTCUTS - Source Code Quick Access Links
+  ===================================================================
+  
+  File: dev-shortcuts.html
+  Path: _includes/components/dev-shortcuts.html
+  Purpose: Provide quick access to source code editing in various IDEs
+  
+  Dependencies:
+  - site.repository, site.branch, site.collections_dir
+  - page.collection, page.path
+  ===================================================================
+-->
 
- <!-- TODO: Article about the collapse feature in Bootstrap https://getbootstrap.com/docs/5.3/components/collapse/--> 
- <!-- TODO: Write tutorial on creating this hidden settings feature -->
+{% comment %} Determine page directory for collections {% endcomment %}
+{% if page.collection %}
+  {% capture page_dir %}{{ site.collections_dir }}{% endcapture %}
+{% else %}
+  {% assign page_dir = "" %}
+{% endif %}
 
- <!-- Source Code Control Shortcuts - Page -->
- <div class="container text-center">
-
-    {% if page.collection %}
-        {% capture page_dir %}{{ site.collections_dir }}{% endcapture %}
-        {% assign testvar = "collection exists" %}
-    {% endif %}
+<div class="dev-shortcuts">
+  <div class="d-flex flex-column gap-2">
     
-    <!-- Source Code Control Shortcuts - Page -->
-        <a class="btn bg-primary" href="https://github.com/{{site.repository}}/blob/{{site.branch}}/{{ page_dir }}/{{page.path}}">
-            <i class="{{site.default_icon}} {{site.default_icon}}-github"></i>
-            <!-- https://icons.getbootstrap.com/icons/github/ -->
-        </a>
-        <a class="btn bg-primary" href="https://github.dev/{{site.repository}}/blob/{{site.branch}}/{{ page_dir }}/{{ page.path }}">
-            <i class="{{site.default_icon}} {{site.default_icon}}-cloud"></i>
-            <!-- https://icons.getbootstrap.com/icons/microsoft/ -->
-        </a>
+    <!-- Section Label -->
+    <small class="text-body-secondary fw-medium text-uppercase">
+      <i class="bi bi-code-slash me-1"></i>Source Code
+    </small>
     
-    <!-- Source Code Control Shortcuts - Site and Nav -->
+    <!-- Button Group -->
+    <div class="btn-group-vertical" role="group" aria-label="Source code shortcuts">
+      
+      <!-- View on GitHub -->
+      <a href="https://github.com/{{ site.repository }}/blob/{{ site.branch }}/{{ page_dir }}/{{ page.path }}" 
+         target="_blank"
+         rel="noopener"
+         class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-between"
+         data-bs-toggle="tooltip"
+         data-bs-placement="left"
+         title="View source file on GitHub">
+        <span>
+          <i class="bi bi-github me-2"></i>
+          View on GitHub
+        </span>
+        <i class="bi bi-box-arrow-up-right text-body-secondary small"></i>
+      </a>
+      
+      <!-- Edit in GitHub.dev -->
+      <a href="https://github.dev/{{ site.repository }}/blob/{{ site.branch }}/{{ page_dir }}/{{ page.path }}" 
+         target="_blank"
+         rel="noopener"
+         class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-between"
+         data-bs-toggle="tooltip"
+         data-bs-placement="left"
+         title="Open in browser-based VS Code editor">
+        <span>
+          <i class="bi bi-cloud me-2"></i>
+          Edit in GitHub.dev
+        </span>
+        <i class="bi bi-box-arrow-up-right text-body-secondary small"></i>
+      </a>
+      
+      <!-- Open in Local VS Code -->
+      <a href="vscode://file{{ site.local_git }}/{{ site.repository_name }}/{{ page_dir }}/{{ page.path }}"
+         class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-between"
+         data-bs-toggle="tooltip"
+         data-bs-placement="left"
+         title="Open in local VS Code (requires local clone)">
+        <span>
+          <i class="bi bi-code-square me-2"></i>
+          Open in VS Code
+        </span>
+        <i class="bi bi-window text-body-secondary small"></i>
+      </a>
+      
+    </div>
     
-        <a class="btn bg-primary" href="vscode://file{{ site.local_git}}/{{ site.repository_name }}/{{ page_dir }}/{{ page.path }}">
-            <i class="{{site.default_icon}} {{site.default_icon}}-code"></i>
-        </a>
-
-        <!-- site config -->
-        <a class="btn bg-primary" href="https://github.com/{{site.repository}}/blob/{{site.branch}}/_config.yml">
-            <i class="bi bi-gear"></i>
-            <!-- https://icons.getbootstrap.com/icons/gear/ -->
-        </a>
-
+    <!-- Config Links -->
+    <small class="text-body-secondary fw-medium text-uppercase mt-2">
+      <i class="bi bi-sliders me-1"></i>Configuration
+    </small>
+    
+    <div class="btn-group-vertical" role="group" aria-label="Configuration shortcuts">
+      
+      <!-- Site Config -->
+      <a href="https://github.com/{{ site.repository }}/blob/{{ site.branch }}/_config.yml" 
+         target="_blank"
+         rel="noopener"
+         class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-between"
+         data-bs-toggle="tooltip"
+         data-bs-placement="left"
+         title="View Jekyll site configuration">
+        <span>
+          <i class="bi bi-gear me-2"></i>
+          Site Config
+        </span>
+        <code class="small ms-2">_config.yml</code>
+      </a>
+      
+    </div>
+    
+  </div>
 </div>

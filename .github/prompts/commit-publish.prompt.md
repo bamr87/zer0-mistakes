@@ -2,7 +2,6 @@
 agent: agent
 mode: agent
 description: "Complete release pipeline: analyze changes → validate → document → version → publish → verify"
-tools: [run_in_terminal, read_file, replace_string_in_file, get_changed_files, grep_search, manage_todo_list]
 ---
 
 # Release Pipeline for Zer0-Mistakes Jekyll Theme

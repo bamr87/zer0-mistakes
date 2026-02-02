@@ -43,8 +43,8 @@ portfolio                : &portfolio [*github_user, '.', 'github.io']
 
 title                    : &title "zer0-mistakes"
 title_url                : "/"
-title_icon               : "globe"
-subtitle                 : "Jekyll Theme Dev"
+title_icon               : "robot"
+subtitle                 : ""
 subtitle_url             : "localhost"
 subtitle_icon            : "code"
 title_separator          : "|" # Appears in the web browser tab name

@@ -1,40 +1,181 @@
 <!--
-  file: info-section.html
-  path: _includes/info-section.html
-  includes: breadcrumbs.html, searchbar.html, dev-shortcuts.html
-  references: 
-    - https://getbootstrap.com/docs/5.3/components/modal/
- -->
+  ===================================================================
+  INFO SECTION - Settings Modal with Tabbed Interface
+  ===================================================================
+  
+  File: info-section.html
+  Path: _includes/components/info-section.html
+  Purpose: Unified settings modal with tabs for Settings, Environment, Developer
+  
+  Dependencies:
+  - Bootstrap 5 Modal, Tabs
+  - _includes/components/env-switcher.html
+  - _includes/components/theme-info.html
+  - _includes/components/dev-shortcuts.html
+  - _includes/components/halfmoon.html
+  - _includes/navigation/breadcrumbs.html
+  
+  References:
+  - https://getbootstrap.com/docs/5.3/components/modal/
+  - https://getbootstrap.com/docs/5.3/components/navs-tabs/
+  ===================================================================
+-->
 
-    <!-- Modal -->
-    <div class="modal fade" id="info-section" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-      <div class="modal-dialog">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h1 class="modal-title fs-5" id="staticBackdropLabel">Settings and Source</h1>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-
-                <div class="container">
-                <!-- _include/breadcrumbs.html -->
-                  {% include navigation/breadcrumbs.html %}
-                  {% include components/searchbar.html %}
-
-                  <!-- Theme and System Information -->
-                  <div class="my-4">
-                    {% include components/theme-info.html %}
-                  </div>
-
-                  <!-- Shortcuts to source bode -->
-                  {% include components/dev-shortcuts.html %}
-                  <!-- Dark Mode Switch -->
-                  {% include components/halfmoon.html %}
-                </div>
-            </div>
-          <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+<!-- Settings Modal -->
+<div class="modal fade" id="info-section" tabindex="-1" aria-labelledby="infoSectionLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      
+      <!-- Modal Header -->
+      <div class="modal-header border-bottom-0 pb-0">
+        <div class="w-100">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <h5 class="modal-title" id="infoSectionLabel">
+              <i class="bi bi-gear-wide-connected me-2"></i>Settings
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          
+          <!-- Tab Navigation -->
+          <ul class="nav nav-tabs" id="infoTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings-pane" type="button" role="tab" aria-controls="settings-pane" aria-selected="true">
+                <i class="bi bi-sliders me-1"></i>
+                <span class="d-none d-sm-inline">Settings</span>
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="environment-tab" data-bs-toggle="tab" data-bs-target="#environment-pane" type="button" role="tab" aria-controls="environment-pane" aria-selected="false">
+                <i class="bi bi-hdd-network me-1"></i>
+                <span class="d-none d-sm-inline">Environment</span>
+                {% if jekyll.environment == "development" %}
+                  <span class="badge bg-warning text-dark ms-1 d-none d-md-inline-block">Dev</span>
+                {% else %}
+                  <span class="badge bg-success ms-1 d-none d-md-inline-block">Prod</span>
+                {% endif %}
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="developer-tab" data-bs-toggle="tab" data-bs-target="#developer-pane" type="button" role="tab" aria-controls="developer-pane" aria-selected="false">
+                <i class="bi bi-code-slash me-1"></i>
+                <span class="d-none d-sm-inline">Developer</span>
+              </button>
+            </li>
+          </ul>
+        </div>
       </div>
+      
+      <!-- Modal Body with Tab Content -->
+      <div class="modal-body">
+        <div class="tab-content" id="infoTabContent">
+          
+          <!-- Settings Tab -->
+          <div class="tab-pane fade show active" id="settings-pane" role="tabpanel" aria-labelledby="settings-tab" tabindex="0">
+            
+            <!-- Search -->
+            <div class="mb-4">
+              <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
+                <i class="bi bi-search me-1"></i>Search
+              </h6>
+              {% include components/searchbar.html %}
+            </div>
+            
+            <!-- Theme Toggle -->
+            <div class="mb-4">
+              <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
+                <i class="bi bi-moon-stars me-1"></i>Appearance
+              </h6>
+              <div class="d-flex align-items-center justify-content-between p-3 bg-body-tertiary rounded">
+                <span>Theme Mode</span>
+                {% include components/halfmoon.html %}
+              </div>
+            </div>
+            
+            <!-- Theme Info (Collapsible) -->
+            <div class="mb-3">
+              <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
+                <i class="bi bi-info-circle me-1"></i>About
+              </h6>
+              <button class="btn btn-outline-secondary btn-sm w-100 d-flex justify-content-between align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#themeInfoCollapse" aria-expanded="false" aria-controls="themeInfoCollapse">
+                <span>Theme & Build Info</span>
+                <i class="bi bi-chevron-down"></i>
+              </button>
+              <div class="collapse mt-2" id="themeInfoCollapse">
+                {% include components/theme-info.html %}
+              </div>
+            </div>
+          </div>
+          
+          <!-- Environment Tab -->
+          <div class="tab-pane fade" id="environment-pane" role="tabpanel" aria-labelledby="environment-tab" tabindex="0">
+            {% include components/env-switcher.html %}
+          </div>
+          
+          <!-- Developer Tab -->
+          <div class="tab-pane fade" id="developer-pane" role="tabpanel" aria-labelledby="developer-tab" tabindex="0">
+            
+            <!-- Page Location -->
+            <div class="mb-4">
+              <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
+                <i class="bi bi-signpost-split me-1"></i>Page Location
+              </h6>
+              {% include navigation/breadcrumbs.html %}
+            </div>
+            
+            <!-- Source Code Shortcuts -->
+            <div class="mb-4">
+              <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
+                <i class="bi bi-code-square me-1"></i>Source Code
+              </h6>
+              {% include components/dev-shortcuts.html %}
+            </div>
+            
+            <!-- Page Metadata -->
+            <div class="mb-3">
+              <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
+                <i class="bi bi-file-earmark-code me-1"></i>Page Info
+              </h6>
+              <div class="table-responsive">
+                <table class="table table-sm table-hover mb-0 small">
+                  <tbody>
+                    <tr>
+                      <td class="text-body-secondary" style="width: 30%;">Layout</td>
+                      <td><code>{{ page.layout | default: "none" }}</code></td>
+                    </tr>
+                    <tr>
+                      <td class="text-body-secondary">Collection</td>
+                      <td><code>{{ page.collection | default: "none" }}</code></td>
+                    </tr>
+                    <tr>
+                      <td class="text-body-secondary">Path</td>
+                      <td><code class="text-break">{{ page.path }}</code></td>
+                    </tr>
+                    <tr>
+                      <td class="text-body-secondary">URL</td>
+                      <td><code class="text-break">{{ page.url }}</code></td>
+                    </tr>
+                    {% if page.date %}
+                    <tr>
+                      <td class="text-body-secondary">Date</td>
+                      <td><code>{{ page.date | date: "%Y-%m-%d" }}</code></td>
+                    </tr>
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="bi bi-x-lg me-1"></i>Close
+        </button>
+      </div>
+      
     </div>
   </div>
 </div>

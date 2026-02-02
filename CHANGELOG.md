@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.21.0] - 2026-02-01
+
+### Added
+- **Environment Switcher**: New settings modal tab with dev/prod URL shortcuts and copy actions
+- **Navigation Assets**: Extracted navigation styles and scripts into `_sass/core/_navbar.scss` and `assets/js/navigation.js`
+
+### Changed
+- **Settings Modal**: Redesigned info section with tabbed layout and compact theme info
+- **Navigation UI**: Refined header utility controls, navbar labels/icons, and loaded navigation JS via js-cdn include
+- **Dev Shortcuts**: Updated source shortcuts layout and labeling for clarity
+- **Theme Branding**: Updated default title icon and subtitle in `_config.yml`
+
 ## [0.20.8] - 2026-02-02
 
 ### Changed
