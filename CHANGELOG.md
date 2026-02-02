@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.20.8] - 2026-02-02
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- d71a42a feat(docker): add local Docker publishing capability
+
+
 ## [0.20.7] - 2026-02-01
 
 ### Changed
