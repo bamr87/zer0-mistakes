@@ -44,10 +44,10 @@ services:
     working_dir: /site
     
     environment:
-      - JEKYLL_ENV=development
+      - JEKYLL_ENV=${JEKYLL_ENV:-development}
       - BUNDLE_PATH=/usr/local/bundle
       # Repository info for jekyll-github-metadata gem
-      - PAGES_REPO_NWO=bamr87/zer0-mistakes
+      - PAGES_REPO_NWO=${PAGES_REPO_NWO:-bamr87/zer0-mistakes}
     
     # Enable TTY for interactive commands
     stdin_open: true

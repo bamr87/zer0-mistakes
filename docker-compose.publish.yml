@@ -1,0 +1,41 @@
+# ==============================================================================
+# Docker Compose - Local Publishing Configuration
+# ==============================================================================
+#
+# This compose file extends the base configuration for building and publishing
+# Docker images locally. Uses credentials from .env file.
+#
+# Usage:
+#   # Build the publishable image
+#   docker compose -f docker-compose.yml -f docker-compose.publish.yml build publish
+#
+#   # Build and tag for publishing
+#   docker compose -f docker-compose.yml -f docker-compose.publish.yml build --push publish
+#
+# Or use the convenience script:
+#   ./scripts/docker-publish
+#
+# ==============================================================================
+
+services:
+  # Publishable image configuration
+  publish:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: dev-test
+      args:
+        BUILDKIT_INLINE_CACHE: "1"
+    image: ${DOCKER_IMAGE:-amrabdel/zer0-mistakes}:${IMAGE_TAG:-latest}
+    platform: linux/amd64
+
+  # Build for multiple platforms (requires buildx)
+  publish-multiarch:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: dev-test
+      platforms:
+        - linux/amd64
+        - linux/arm64
+    image: ${DOCKER_IMAGE:-amrabdel/zer0-mistakes}:${IMAGE_TAG:-latest}

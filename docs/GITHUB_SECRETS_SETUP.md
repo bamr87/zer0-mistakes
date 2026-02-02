@@ -140,6 +140,69 @@ If you fork this repository, you'll need to:
 - ❌ Never commit secrets to code
 - ❌ Never log secret values in workflows
 
+## Local Docker Publishing
+
+You can also publish Docker images locally using your `.env` file.
+
+### Setup Local Publishing
+
+1. **Configure `.env` file**
+   ```bash
+   # Copy example and edit
+   cp .env.example .env
+   
+   # Add your Docker Hub credentials
+   DOCKER_USERNAME=yourusername
+   DOCKER_TOKEN=dckr_pat_your_token_here
+   DOCKER_IMAGE=yourusername/zer0-mistakes
+   ```
+
+2. **Get Docker Hub Access Token**
+   - Go to [Docker Hub Security Settings](https://hub.docker.com/settings/security)
+   - Click **New Access Token**
+   - Name: `local-development`
+   - Permissions: `Read, Write`
+   - Copy token to `.env` file
+
+### Publish Commands
+
+```bash
+# Build and push with auto-generated tag (recommended)
+./scripts/docker-publish
+
+# Build and push with specific tag
+./scripts/docker-publish --tag v0.20.5
+
+# Also update :latest tag
+./scripts/docker-publish --latest
+
+# Preview without making changes
+./scripts/docker-publish --dry-run
+
+# Build only (don't push)
+./scripts/docker-publish --build-only
+```
+
+### Using Docker Compose
+
+```bash
+# Build publishable image
+docker compose -f docker-compose.yml -f docker-compose.publish.yml build publish
+
+# Set custom tag
+IMAGE_TAG=v0.20.5 docker compose -f docker-compose.yml -f docker-compose.publish.yml build publish
+```
+
+### Verify Publication
+
+```bash
+# Check Docker Hub for your image
+open "https://hub.docker.com/r/$(grep DOCKER_IMAGE .env | cut -d= -f2)/tags"
+
+# Pull and test the image
+docker pull yourusername/zer0-mistakes:latest
+```
+
 ## Quick Reference
 
 ```bash
@@ -160,4 +223,7 @@ gh secret delete SECRET_NAME
 
 # Delete a variable
 gh variable delete VAR_NAME
+
+# Local Docker publishing
+./scripts/docker-publish --help
 ```
