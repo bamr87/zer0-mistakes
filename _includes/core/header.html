@@ -42,7 +42,7 @@
   Skip to main content
 </a>
 
-<header id="navbar" class="container-fluid text-center fixed-top" role="navigation">
+<header id="navbar" class="container-fluid text-center fixed-top" role="banner">
 
     <!-- ================================ -->
     <!-- TOP NAVIGATION BAR              -->
@@ -53,14 +53,14 @@
         <!-- PROGRESS BAR INDICATOR    -->
         <!-- ========================== -->
         <!-- Fixed position progress bar for page loading feedback -->
-        <div class="nanobar" id="top-progress-bar" style="position: fixed;">
+        <div class="nanobar" id="top-progress-bar" style="position: fixed;" role="progressbar" aria-label="Page loading progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
             <div class="bar"></div>
         </div>
         
         <!-- ========================== -->
         <!-- MAIN NAVIGATION CONTAINER -->
         <!-- ========================== -->
-        <nav class="container-xl order-2 order-lg-1 grid gap-1 navbar-main">
+        <nav class="container-xl order-2 order-lg-1 grid gap-1 navbar-main" aria-label="Primary navigation">
 
             <!-- ========================== -->
             <!-- MOBILE MENU CONTROLS      -->
@@ -84,8 +84,9 @@
                         data-bs-toggle="offcanvas" 
                         data-bs-target="#bdSidebar" 
                         aria-controls="bdSidebar" 
-                        aria-label="Toggle sidebar navigation">
-                    <span class="bi bi-list"></span>
+                        aria-label="Toggle sidebar navigation"
+                        aria-expanded="false">
+                    <span class="bi bi-list" aria-hidden="true"></span>
                 </button>
             </div>
             {% endif %}
@@ -95,9 +96,9 @@
             <!-- ========================== -->
             <div class="navbar-brand-group d-inline-flex align-items-center gap-2">
                 <!-- Home Navigation Button (Desktop only) -->
-                <div class="navbar-home-links d-none d-lg-inline-flex">
+                <div class="navbar-home-links d-none d-lg-inline-flex" role="navigation" aria-label="Quick navigation">
                     {%- for home in site.data.navigation.home -%}
-                    <a class="btn" href="{{ home.url | relative_url }}" aria-label="{{ home.title }}" title="{{ home.title }}">
+                    <a class="btn" href="{{ home.url | relative_url }}" aria-label="{{ home.title }}" title="{{ home.title }}" {% if home.url == page.url %}aria-current="page"{% endif %}>
                         <i class="{{ site.default_icon}} {{ home.icon }}"></i>
                     </a>
                     {% endfor %}
@@ -106,8 +107,8 @@
                 <!-- Brand Logo Link to Root -->
                 <!-- Logo path configured in _config.yml -->
                 {% capture logo_path %}{{ site.logo }}{% endcapture %}
-                <a class="navbar-brand" href="{{ site.baseurl }}/" aria-label="Home">
-                    <img src="{{ logo_path | relative_url }}" alt="Logo" width="30" height="30">
+                <a class="navbar-brand" href="{{ site.baseurl }}/" aria-label="Home - {{ site.title }}" {% if page.url == '/' %}aria-current="page"{% endif %}>
+                    <img src="{{ logo_path | relative_url }}" alt="{{ site.title }} logo" width="30" height="30">
                 </a>
             </div>
             
@@ -126,7 +127,7 @@
             <!-- ========================== -->
             <!-- UTILITY CONTROLS          -->
             <!-- ========================== -->
-            <div class="navbar-utility-controls d-flex align-items-center">
+            <div class="navbar-utility-controls d-flex align-items-center" role="group" aria-label="Utility controls">
                 <!-- Search Modal Toggle -->
                 <button
                     class="btn nav-search-button"
@@ -135,9 +136,10 @@
                     data-bs-target="#siteSearchModal"
                     data-search-toggle
                     aria-label="Open search"
-                    title="Search"
+                    aria-haspopup="dialog"
+                    title="Search site content"
                 >
-                    <i class="{{site.default_icon}} bi-search"></i>
+                    <i class="{{site.default_icon}} bi-search" aria-hidden="true"></i>
                     <span class="nav-link-text d-none d-xl-inline ms-1">Search</span>
                 </button>
 
@@ -147,10 +149,11 @@
                     type="button"
                     data-bs-toggle="modal" 
                     data-bs-target="#info-section" 
-                    aria-label="Settings"
-                    title="Settings"
+                    aria-label="Open settings"
+                    aria-haspopup="dialog"
+                    title="Site settings and information"
                 >
-                    <i class="{{site.default_icon}} bi-gear"></i>
+                    <i class="{{site.default_icon}} bi-gear" aria-hidden="true"></i>
                 </button>
 
                 <!-- Navigation Menu Toggle - Mobile view -->
@@ -160,8 +163,9 @@
                             data-bs-toggle="offcanvas" 
                             data-bs-target="#bdNavbar" 
                             aria-controls="bdNavbar" 
-                            aria-label="Toggle navigation">
-                        <span class="bi bi-three-dots"></span>
+                            aria-label="Toggle main navigation"
+                            aria-expanded="false">
+                        <span class="bi bi-three-dots" aria-hidden="true"></span>
                     </button>
                 </div>
             </div>
