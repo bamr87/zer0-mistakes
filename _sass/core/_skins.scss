@@ -1,0 +1,841 @@
+/* ==========================================================================
+   Theme Skins - 18 Color Variants (9 skins × light/dark modes)
+   ========================================================================== 
+   
+   Each skin provides both light and dark mode variants using compound
+   CSS attribute selectors: [data-bs-theme="skin"][data-bs-mode="light|dark"]
+   
+   Skins:
+   - air:      Clean, professional blue
+   - aqua:     Ocean/water inspired cyan
+   - contrast: WCAG AAA accessibility compliant
+   - dark:     Default dark theme (Bootstrap-like)
+   - dirt:     Earthy, warm tones
+   - neon:     Cyberpunk/vibrant purple
+   - mint:     Fresh green theme
+   - plum:     Rich violet/purple
+   - sunrise:  Warm orange/yellow
+   
+   Usage in HTML:
+     <html data-bs-theme="mint" data-bs-mode="dark">
+   
+   ========================================================================== */
+
+// ==========================================================================
+// AIR SKIN - Clean, professional blue
+// ==========================================================================
+
+[data-bs-theme="air"][data-bs-mode="light"] {
+  // Core colors
+  --bs-primary: #3b82f6;
+  --bs-primary-rgb: 59, 130, 246;
+  --bs-secondary: #64748b;
+  --bs-secondary-rgb: 100, 116, 139;
+  
+  // Body
+  --bs-body-bg: #ffffff;
+  --bs-body-bg-rgb: 255, 255, 255;
+  --bs-body-color: #1e293b;
+  --bs-body-color-rgb: 30, 41, 59;
+  
+  // Emphasis
+  --bs-emphasis-color: #0f172a;
+  --bs-emphasis-color-rgb: 15, 23, 42;
+  
+  // Secondary colors
+  --bs-secondary-bg: #f1f5f9;
+  --bs-secondary-bg-rgb: 241, 245, 249;
+  --bs-secondary-color: #475569;
+  --bs-secondary-color-rgb: 71, 85, 105;
+  
+  // Tertiary
+  --bs-tertiary-bg: #e2e8f0;
+  --bs-tertiary-bg-rgb: 226, 232, 240;
+  --bs-tertiary-color: #64748b;
+  --bs-tertiary-color-rgb: 100, 116, 139;
+  
+  // Borders
+  --bs-border-color: #cbd5e1;
+  --bs-border-color-translucent: rgba(148, 163, 184, 0.3);
+  
+  // Links
+  --bs-link-color: #2563eb;
+  --bs-link-color-rgb: 37, 99, 235;
+  --bs-link-hover-color: #1d4ed8;
+  --bs-link-hover-color-rgb: 29, 78, 216;
+  
+  // Code
+  --bs-code-color: #7c3aed;
+  
+  // Theme-specific
+  --skin-accent: #60a5fa;
+  --skin-accent-rgb: 96, 165, 250;
+  --skin-surface: #f8fafc;
+  --skin-surface-rgb: 248, 250, 252;
+}
+
+[data-bs-theme="air"][data-bs-mode="dark"] {
+  // Core colors
+  --bs-primary: #60a5fa;
+  --bs-primary-rgb: 96, 165, 250;
+  --bs-secondary: #94a3b8;
+  --bs-secondary-rgb: 148, 163, 184;
+  
+  // Body
+  --bs-body-bg: #0f172a;
+  --bs-body-bg-rgb: 15, 23, 42;
+  --bs-body-color: #e2e8f0;
+  --bs-body-color-rgb: 226, 232, 240;
+  
+  // Emphasis
+  --bs-emphasis-color: #f8fafc;
+  --bs-emphasis-color-rgb: 248, 250, 252;
+  
+  // Secondary colors
+  --bs-secondary-bg: #1e293b;
+  --bs-secondary-bg-rgb: 30, 41, 59;
+  --bs-secondary-color: #cbd5e1;
+  --bs-secondary-color-rgb: 203, 213, 225;
+  
+  // Tertiary
+  --bs-tertiary-bg: #334155;
+  --bs-tertiary-bg-rgb: 51, 65, 85;
+  --bs-tertiary-color: #94a3b8;
+  --bs-tertiary-color-rgb: 148, 163, 184;
+  
+  // Borders
+  --bs-border-color: #475569;
+  --bs-border-color-translucent: rgba(148, 163, 184, 0.2);
+  
+  // Links
+  --bs-link-color: #93c5fd;
+  --bs-link-color-rgb: 147, 197, 253;
+  --bs-link-hover-color: #bfdbfe;
+  --bs-link-hover-color-rgb: 191, 219, 254;
+  
+  // Code
+  --bs-code-color: #a78bfa;
+  
+  // Theme-specific
+  --skin-accent: #3b82f6;
+  --skin-accent-rgb: 59, 130, 246;
+  --skin-surface: #1e293b;
+  --skin-surface-rgb: 30, 41, 59;
+}
+
+// ==========================================================================
+// AQUA SKIN - Ocean/water inspired
+// ==========================================================================
+
+[data-bs-theme="aqua"][data-bs-mode="light"] {
+  --bs-primary: #06b6d4;
+  --bs-primary-rgb: 6, 182, 212;
+  --bs-secondary: #64748b;
+  --bs-secondary-rgb: 100, 116, 139;
+  
+  --bs-body-bg: #ecfeff;
+  --bs-body-bg-rgb: 236, 254, 255;
+  --bs-body-color: #164e63;
+  --bs-body-color-rgb: 22, 78, 99;
+  
+  --bs-emphasis-color: #083344;
+  --bs-emphasis-color-rgb: 8, 51, 68;
+  
+  --bs-secondary-bg: #cffafe;
+  --bs-secondary-bg-rgb: 207, 250, 254;
+  --bs-secondary-color: #155e75;
+  --bs-secondary-color-rgb: 21, 94, 117;
+  
+  --bs-tertiary-bg: #a5f3fc;
+  --bs-tertiary-bg-rgb: 165, 243, 252;
+  --bs-tertiary-color: #0e7490;
+  --bs-tertiary-color-rgb: 14, 116, 144;
+  
+  --bs-border-color: #67e8f9;
+  --bs-border-color-translucent: rgba(6, 182, 212, 0.3);
+  
+  --bs-link-color: #0891b2;
+  --bs-link-color-rgb: 8, 145, 178;
+  --bs-link-hover-color: #0e7490;
+  --bs-link-hover-color-rgb: 14, 116, 144;
+  
+  --bs-code-color: #0d9488;
+  
+  --skin-accent: #22d3ee;
+  --skin-accent-rgb: 34, 211, 238;
+  --skin-surface: #f0fdfa;
+  --skin-surface-rgb: 240, 253, 250;
+}
+
+[data-bs-theme="aqua"][data-bs-mode="dark"] {
+  --bs-primary: #22d3ee;
+  --bs-primary-rgb: 34, 211, 238;
+  --bs-secondary: #94a3b8;
+  --bs-secondary-rgb: 148, 163, 184;
+  
+  --bs-body-bg: #083344;
+  --bs-body-bg-rgb: 8, 51, 68;
+  --bs-body-color: #cffafe;
+  --bs-body-color-rgb: 207, 250, 254;
+  
+  --bs-emphasis-color: #ecfeff;
+  --bs-emphasis-color-rgb: 236, 254, 255;
+  
+  --bs-secondary-bg: #164e63;
+  --bs-secondary-bg-rgb: 22, 78, 99;
+  --bs-secondary-color: #a5f3fc;
+  --bs-secondary-color-rgb: 165, 243, 252;
+  
+  --bs-tertiary-bg: #155e75;
+  --bs-tertiary-bg-rgb: 21, 94, 117;
+  --bs-tertiary-color: #67e8f9;
+  --bs-tertiary-color-rgb: 103, 232, 249;
+  
+  --bs-border-color: #0e7490;
+  --bs-border-color-translucent: rgba(34, 211, 238, 0.2);
+  
+  --bs-link-color: #67e8f9;
+  --bs-link-color-rgb: 103, 232, 249;
+  --bs-link-hover-color: #a5f3fc;
+  --bs-link-hover-color-rgb: 165, 243, 252;
+  
+  --bs-code-color: #5eead4;
+  
+  --skin-accent: #06b6d4;
+  --skin-accent-rgb: 6, 182, 212;
+  --skin-surface: #164e63;
+  --skin-surface-rgb: 22, 78, 99;
+}
+
+// ==========================================================================
+// CONTRAST SKIN - WCAG AAA Accessibility
+// ==========================================================================
+
+[data-bs-theme="contrast"][data-bs-mode="light"] {
+  --bs-primary: #000000;
+  --bs-primary-rgb: 0, 0, 0;
+  --bs-secondary: #404040;
+  --bs-secondary-rgb: 64, 64, 64;
+  
+  --bs-body-bg: #ffffff;
+  --bs-body-bg-rgb: 255, 255, 255;
+  --bs-body-color: #000000;
+  --bs-body-color-rgb: 0, 0, 0;
+  
+  --bs-emphasis-color: #000000;
+  --bs-emphasis-color-rgb: 0, 0, 0;
+  
+  --bs-secondary-bg: #f5f5f5;
+  --bs-secondary-bg-rgb: 245, 245, 245;
+  --bs-secondary-color: #1a1a1a;
+  --bs-secondary-color-rgb: 26, 26, 26;
+  
+  --bs-tertiary-bg: #e5e5e5;
+  --bs-tertiary-bg-rgb: 229, 229, 229;
+  --bs-tertiary-color: #262626;
+  --bs-tertiary-color-rgb: 38, 38, 38;
+  
+  --bs-border-color: #000000;
+  --bs-border-color-translucent: rgba(0, 0, 0, 0.5);
+  
+  --bs-link-color: #0000cc;
+  --bs-link-color-rgb: 0, 0, 204;
+  --bs-link-hover-color: #000066;
+  --bs-link-hover-color-rgb: 0, 0, 102;
+  
+  --bs-code-color: #7c3aed;
+  
+  --skin-accent: #0000ff;
+  --skin-accent-rgb: 0, 0, 255;
+  --skin-surface: #ffffff;
+  --skin-surface-rgb: 255, 255, 255;
+  
+  // High contrast specific
+  --contrast-focus-outline: 3px solid #000000;
+  --contrast-focus-offset: 2px;
+}
+
+[data-bs-theme="contrast"][data-bs-mode="dark"] {
+  --bs-primary: #ffffff;
+  --bs-primary-rgb: 255, 255, 255;
+  --bs-secondary: #cccccc;
+  --bs-secondary-rgb: 204, 204, 204;
+  
+  --bs-body-bg: #000000;
+  --bs-body-bg-rgb: 0, 0, 0;
+  --bs-body-color: #ffffff;
+  --bs-body-color-rgb: 255, 255, 255;
+  
+  --bs-emphasis-color: #ffffff;
+  --bs-emphasis-color-rgb: 255, 255, 255;
+  
+  --bs-secondary-bg: #1a1a1a;
+  --bs-secondary-bg-rgb: 26, 26, 26;
+  --bs-secondary-color: #e5e5e5;
+  --bs-secondary-color-rgb: 229, 229, 229;
+  
+  --bs-tertiary-bg: #262626;
+  --bs-tertiary-bg-rgb: 38, 38, 38;
+  --bs-tertiary-color: #d4d4d4;
+  --bs-tertiary-color-rgb: 212, 212, 212;
+  
+  --bs-border-color: #ffffff;
+  --bs-border-color-translucent: rgba(255, 255, 255, 0.5);
+  
+  --bs-link-color: #99ccff;
+  --bs-link-color-rgb: 153, 204, 255;
+  --bs-link-hover-color: #ccffff;
+  --bs-link-hover-color-rgb: 204, 255, 255;
+  
+  --bs-code-color: #fbbf24;
+  
+  --skin-accent: #ffff00;
+  --skin-accent-rgb: 255, 255, 0;
+  --skin-surface: #1a1a1a;
+  --skin-surface-rgb: 26, 26, 26;
+  
+  // High contrast specific
+  --contrast-focus-outline: 3px solid #ffff00;
+  --contrast-focus-offset: 2px;
+}
+
+// ==========================================================================
+// DARK SKIN - Default dark theme (Bootstrap-like)
+// ==========================================================================
+
+[data-bs-theme="dark"][data-bs-mode="light"] {
+  --bs-primary: #3b82f6;
+  --bs-primary-rgb: 59, 130, 246;
+  --bs-secondary: #6c757d;
+  --bs-secondary-rgb: 108, 117, 125;
+  
+  --bs-body-bg: #f8fafc;
+  --bs-body-bg-rgb: 248, 250, 252;
+  --bs-body-color: #212529;
+  --bs-body-color-rgb: 33, 37, 41;
+  
+  --bs-emphasis-color: #000000;
+  --bs-emphasis-color-rgb: 0, 0, 0;
+  
+  --bs-secondary-bg: #e9ecef;
+  --bs-secondary-bg-rgb: 233, 236, 239;
+  --bs-secondary-color: #6c757d;
+  --bs-secondary-color-rgb: 108, 117, 125;
+  
+  --bs-tertiary-bg: #f8f9fa;
+  --bs-tertiary-bg-rgb: 248, 249, 250;
+  --bs-tertiary-color: #495057;
+  --bs-tertiary-color-rgb: 73, 80, 87;
+  
+  --bs-border-color: #dee2e6;
+  --bs-border-color-translucent: rgba(0, 0, 0, 0.175);
+  
+  --bs-link-color: #0d6efd;
+  --bs-link-color-rgb: 13, 110, 253;
+  --bs-link-hover-color: #0a58ca;
+  --bs-link-hover-color-rgb: 10, 88, 202;
+  
+  --bs-code-color: #d63384;
+  
+  --skin-accent: #0d6efd;
+  --skin-accent-rgb: 13, 110, 253;
+  --skin-surface: #ffffff;
+  --skin-surface-rgb: 255, 255, 255;
+}
+
+[data-bs-theme="dark"][data-bs-mode="dark"] {
+  --bs-primary: #3b82f6;
+  --bs-primary-rgb: 59, 130, 246;
+  --bs-secondary: #6c757d;
+  --bs-secondary-rgb: 108, 117, 125;
+  
+  --bs-body-bg: #1e293b;
+  --bs-body-bg-rgb: 30, 41, 59;
+  --bs-body-color: #dee2e6;
+  --bs-body-color-rgb: 222, 226, 230;
+  
+  --bs-emphasis-color: #ffffff;
+  --bs-emphasis-color-rgb: 255, 255, 255;
+  
+  --bs-secondary-bg: #343a40;
+  --bs-secondary-bg-rgb: 52, 58, 64;
+  --bs-secondary-color: #adb5bd;
+  --bs-secondary-color-rgb: 173, 181, 189;
+  
+  --bs-tertiary-bg: #2b3035;
+  --bs-tertiary-bg-rgb: 43, 48, 53;
+  --bs-tertiary-color: #dee2e6;
+  --bs-tertiary-color-rgb: 222, 226, 230;
+  
+  --bs-border-color: #495057;
+  --bs-border-color-translucent: rgba(255, 255, 255, 0.15);
+  
+  --bs-link-color: #6ea8fe;
+  --bs-link-color-rgb: 110, 168, 254;
+  --bs-link-hover-color: #9ec5fe;
+  --bs-link-hover-color-rgb: 158, 197, 254;
+  
+  --bs-code-color: #e685b5;
+  
+  --skin-accent: #0d6efd;
+  --skin-accent-rgb: 13, 110, 253;
+  --skin-surface: #212529;
+  --skin-surface-rgb: 33, 37, 41;
+}
+
+// ==========================================================================
+// DIRT SKIN - Earthy, warm tones
+// ==========================================================================
+
+[data-bs-theme="dirt"][data-bs-mode="light"] {
+  --bs-primary: #92400e;
+  --bs-primary-rgb: 146, 64, 14;
+  --bs-secondary: #78716c;
+  --bs-secondary-rgb: 120, 113, 108;
+  
+  --bs-body-bg: #fef3c7;
+  --bs-body-bg-rgb: 254, 243, 199;
+  --bs-body-color: #451a03;
+  --bs-body-color-rgb: 69, 26, 3;
+  
+  --bs-emphasis-color: #1c0a00;
+  --bs-emphasis-color-rgb: 28, 10, 0;
+  
+  --bs-secondary-bg: #fde68a;
+  --bs-secondary-bg-rgb: 253, 230, 138;
+  --bs-secondary-color: #78350f;
+  --bs-secondary-color-rgb: 120, 53, 15;
+  
+  --bs-tertiary-bg: #fcd34d;
+  --bs-tertiary-bg-rgb: 252, 211, 77;
+  --bs-tertiary-color: #92400e;
+  --bs-tertiary-color-rgb: 146, 64, 14;
+  
+  --bs-border-color: #d97706;
+  --bs-border-color-translucent: rgba(217, 119, 6, 0.3);
+  
+  --bs-link-color: #b45309;
+  --bs-link-color-rgb: 180, 83, 9;
+  --bs-link-hover-color: #92400e;
+  --bs-link-hover-color-rgb: 146, 64, 14;
+  
+  --bs-code-color: #059669;
+  
+  --skin-accent: #f59e0b;
+  --skin-accent-rgb: 245, 158, 11;
+  --skin-surface: #fffbeb;
+  --skin-surface-rgb: 255, 251, 235;
+}
+
+[data-bs-theme="dirt"][data-bs-mode="dark"] {
+  --bs-primary: #fbbf24;
+  --bs-primary-rgb: 251, 191, 36;
+  --bs-secondary: #a8a29e;
+  --bs-secondary-rgb: 168, 162, 158;
+  
+  --bs-body-bg: #292524;
+  --bs-body-bg-rgb: 41, 37, 36;
+  --bs-body-color: #fef3c7;
+  --bs-body-color-rgb: 254, 243, 199;
+  
+  --bs-emphasis-color: #fffbeb;
+  --bs-emphasis-color-rgb: 255, 251, 235;
+  
+  --bs-secondary-bg: #44403c;
+  --bs-secondary-bg-rgb: 68, 64, 60;
+  --bs-secondary-color: #fde68a;
+  --bs-secondary-color-rgb: 253, 230, 138;
+  
+  --bs-tertiary-bg: #57534e;
+  --bs-tertiary-bg-rgb: 87, 83, 78;
+  --bs-tertiary-color: #fcd34d;
+  --bs-tertiary-color-rgb: 252, 211, 77;
+  
+  --bs-border-color: #78350f;
+  --bs-border-color-translucent: rgba(251, 191, 36, 0.2);
+  
+  --bs-link-color: #fcd34d;
+  --bs-link-color-rgb: 252, 211, 77;
+  --bs-link-hover-color: #fde68a;
+  --bs-link-hover-color-rgb: 253, 230, 138;
+  
+  --bs-code-color: #34d399;
+  
+  --skin-accent: #f59e0b;
+  --skin-accent-rgb: 245, 158, 11;
+  --skin-surface: #44403c;
+  --skin-surface-rgb: 68, 64, 60;
+}
+
+// ==========================================================================
+// NEON SKIN - Cyberpunk/vibrant purple
+// ==========================================================================
+
+[data-bs-theme="neon"][data-bs-mode="light"] {
+  --bs-primary: #a855f7;
+  --bs-primary-rgb: 168, 85, 247;
+  --bs-secondary: #71717a;
+  --bs-secondary-rgb: 113, 113, 122;
+  
+  --bs-body-bg: #faf5ff;
+  --bs-body-bg-rgb: 250, 245, 255;
+  --bs-body-color: #3b0764;
+  --bs-body-color-rgb: 59, 7, 100;
+  
+  --bs-emphasis-color: #1e003d;
+  --bs-emphasis-color-rgb: 30, 0, 61;
+  
+  --bs-secondary-bg: #f3e8ff;
+  --bs-secondary-bg-rgb: 243, 232, 255;
+  --bs-secondary-color: #581c87;
+  --bs-secondary-color-rgb: 88, 28, 135;
+  
+  --bs-tertiary-bg: #e9d5ff;
+  --bs-tertiary-bg-rgb: 233, 213, 255;
+  --bs-tertiary-color: #6b21a8;
+  --bs-tertiary-color-rgb: 107, 33, 168;
+  
+  --bs-border-color: #c084fc;
+  --bs-border-color-translucent: rgba(192, 132, 252, 0.3);
+  
+  --bs-link-color: #9333ea;
+  --bs-link-color-rgb: 147, 51, 234;
+  --bs-link-hover-color: #7c3aed;
+  --bs-link-hover-color-rgb: 124, 58, 237;
+  
+  --bs-code-color: #ec4899;
+  
+  --skin-accent: #c084fc;
+  --skin-accent-rgb: 192, 132, 252;
+  --skin-surface: #fdf4ff;
+  --skin-surface-rgb: 253, 244, 255;
+}
+
+[data-bs-theme="neon"][data-bs-mode="dark"] {
+  --bs-primary: #c084fc;
+  --bs-primary-rgb: 192, 132, 252;
+  --bs-secondary: #a1a1aa;
+  --bs-secondary-rgb: 161, 161, 170;
+  
+  --bs-body-bg: #0f172a;
+  --bs-body-bg-rgb: 15, 23, 42;
+  --bs-body-color: #e9d5ff;
+  --bs-body-color-rgb: 233, 213, 255;
+  
+  --bs-emphasis-color: #faf5ff;
+  --bs-emphasis-color-rgb: 250, 245, 255;
+  
+  --bs-secondary-bg: #1e1b4b;
+  --bs-secondary-bg-rgb: 30, 27, 75;
+  --bs-secondary-color: #d8b4fe;
+  --bs-secondary-color-rgb: 216, 180, 254;
+  
+  --bs-tertiary-bg: #312e81;
+  --bs-tertiary-bg-rgb: 49, 46, 129;
+  --bs-tertiary-color: #c4b5fd;
+  --bs-tertiary-color-rgb: 196, 181, 253;
+  
+  --bs-border-color: #581c87;
+  --bs-border-color-translucent: rgba(192, 132, 252, 0.2);
+  
+  --bs-link-color: #d8b4fe;
+  --bs-link-color-rgb: 216, 180, 254;
+  --bs-link-hover-color: #e9d5ff;
+  --bs-link-hover-color-rgb: 233, 213, 255;
+  
+  --bs-code-color: #f472b6;
+  
+  --skin-accent: #a855f7;
+  --skin-accent-rgb: 168, 85, 247;
+  --skin-surface: #1e1b4b;
+  --skin-surface-rgb: 30, 27, 75;
+  
+  // Neon glow effects
+  --neon-glow: 0 0 10px rgba(192, 132, 252, 0.5), 0 0 20px rgba(192, 132, 252, 0.3);
+  --neon-text-glow: 0 0 10px rgba(192, 132, 252, 0.8);
+}
+
+// ==========================================================================
+// MINT SKIN - Fresh green theme
+// ==========================================================================
+
+[data-bs-theme="mint"][data-bs-mode="light"] {
+  --bs-primary: #10b981;
+  --bs-primary-rgb: 16, 185, 129;
+  --bs-secondary: #64748b;
+  --bs-secondary-rgb: 100, 116, 139;
+  
+  --bs-body-bg: #ecfdf5;
+  --bs-body-bg-rgb: 236, 253, 245;
+  --bs-body-color: #064e3b;
+  --bs-body-color-rgb: 6, 78, 59;
+  
+  --bs-emphasis-color: #022c22;
+  --bs-emphasis-color-rgb: 2, 44, 34;
+  
+  --bs-secondary-bg: #d1fae5;
+  --bs-secondary-bg-rgb: 209, 250, 229;
+  --bs-secondary-color: #065f46;
+  --bs-secondary-color-rgb: 6, 95, 70;
+  
+  --bs-tertiary-bg: #a7f3d0;
+  --bs-tertiary-bg-rgb: 167, 243, 208;
+  --bs-tertiary-color: #047857;
+  --bs-tertiary-color-rgb: 4, 120, 87;
+  
+  --bs-border-color: #6ee7b7;
+  --bs-border-color-translucent: rgba(16, 185, 129, 0.3);
+  
+  --bs-link-color: #059669;
+  --bs-link-color-rgb: 5, 150, 105;
+  --bs-link-hover-color: #047857;
+  --bs-link-hover-color-rgb: 4, 120, 87;
+  
+  --bs-code-color: #0891b2;
+  
+  --skin-accent: #34d399;
+  --skin-accent-rgb: 52, 211, 153;
+  --skin-surface: #f0fdf4;
+  --skin-surface-rgb: 240, 253, 244;
+}
+
+[data-bs-theme="mint"][data-bs-mode="dark"] {
+  --bs-primary: #34d399;
+  --bs-primary-rgb: 52, 211, 153;
+  --bs-secondary: #94a3b8;
+  --bs-secondary-rgb: 148, 163, 184;
+  
+  --bs-body-bg: #022c22;
+  --bs-body-bg-rgb: 2, 44, 34;
+  --bs-body-color: #d1fae5;
+  --bs-body-color-rgb: 209, 250, 229;
+  
+  --bs-emphasis-color: #ecfdf5;
+  --bs-emphasis-color-rgb: 236, 253, 245;
+  
+  --bs-secondary-bg: #064e3b;
+  --bs-secondary-bg-rgb: 6, 78, 59;
+  --bs-secondary-color: #a7f3d0;
+  --bs-secondary-color-rgb: 167, 243, 208;
+  
+  --bs-tertiary-bg: #065f46;
+  --bs-tertiary-bg-rgb: 6, 95, 70;
+  --bs-tertiary-color: #6ee7b7;
+  --bs-tertiary-color-rgb: 110, 231, 183;
+  
+  --bs-border-color: #047857;
+  --bs-border-color-translucent: rgba(52, 211, 153, 0.2);
+  
+  --bs-link-color: #6ee7b7;
+  --bs-link-color-rgb: 110, 231, 183;
+  --bs-link-hover-color: #a7f3d0;
+  --bs-link-hover-color-rgb: 167, 243, 208;
+  
+  --bs-code-color: #22d3ee;
+  
+  --skin-accent: #10b981;
+  --skin-accent-rgb: 16, 185, 129;
+  --skin-surface: #064e3b;
+  --skin-surface-rgb: 6, 78, 59;
+}
+
+// ==========================================================================
+// PLUM SKIN - Rich violet/purple
+// ==========================================================================
+
+[data-bs-theme="plum"][data-bs-mode="light"] {
+  --bs-primary: #7c3aed;
+  --bs-primary-rgb: 124, 58, 237;
+  --bs-secondary: #6b7280;
+  --bs-secondary-rgb: 107, 114, 128;
+  
+  --bs-body-bg: #faf5ff;
+  --bs-body-bg-rgb: 250, 245, 255;
+  --bs-body-color: #4c1d95;
+  --bs-body-color-rgb: 76, 29, 149;
+  
+  --bs-emphasis-color: #2e1065;
+  --bs-emphasis-color-rgb: 46, 16, 101;
+  
+  --bs-secondary-bg: #ede9fe;
+  --bs-secondary-bg-rgb: 237, 233, 254;
+  --bs-secondary-color: #5b21b6;
+  --bs-secondary-color-rgb: 91, 33, 182;
+  
+  --bs-tertiary-bg: #ddd6fe;
+  --bs-tertiary-bg-rgb: 221, 214, 254;
+  --bs-tertiary-color: #6d28d9;
+  --bs-tertiary-color-rgb: 109, 40, 217;
+  
+  --bs-border-color: #a78bfa;
+  --bs-border-color-translucent: rgba(167, 139, 250, 0.3);
+  
+  --bs-link-color: #7c3aed;
+  --bs-link-color-rgb: 124, 58, 237;
+  --bs-link-hover-color: #6d28d9;
+  --bs-link-hover-color-rgb: 109, 40, 217;
+  
+  --bs-code-color: #db2777;
+  
+  --skin-accent: #a78bfa;
+  --skin-accent-rgb: 167, 139, 250;
+  --skin-surface: #fdf4ff;
+  --skin-surface-rgb: 253, 244, 255;
+}
+
+[data-bs-theme="plum"][data-bs-mode="dark"] {
+  --bs-primary: #a78bfa;
+  --bs-primary-rgb: 167, 139, 250;
+  --bs-secondary: #9ca3af;
+  --bs-secondary-rgb: 156, 163, 175;
+  
+  --bs-body-bg: #1e1b4b;
+  --bs-body-bg-rgb: 30, 27, 75;
+  --bs-body-color: #ede9fe;
+  --bs-body-color-rgb: 237, 233, 254;
+  
+  --bs-emphasis-color: #faf5ff;
+  --bs-emphasis-color-rgb: 250, 245, 255;
+  
+  --bs-secondary-bg: #312e81;
+  --bs-secondary-bg-rgb: 49, 46, 129;
+  --bs-secondary-color: #ddd6fe;
+  --bs-secondary-color-rgb: 221, 214, 254;
+  
+  --bs-tertiary-bg: #3730a3;
+  --bs-tertiary-bg-rgb: 55, 48, 163;
+  --bs-tertiary-color: #c4b5fd;
+  --bs-tertiary-color-rgb: 196, 181, 253;
+  
+  --bs-border-color: #4c1d95;
+  --bs-border-color-translucent: rgba(167, 139, 250, 0.2);
+  
+  --bs-link-color: #c4b5fd;
+  --bs-link-color-rgb: 196, 181, 253;
+  --bs-link-hover-color: #ddd6fe;
+  --bs-link-hover-color-rgb: 221, 214, 254;
+  
+  --bs-code-color: #f472b6;
+  
+  --skin-accent: #7c3aed;
+  --skin-accent-rgb: 124, 58, 237;
+  --skin-surface: #312e81;
+  --skin-surface-rgb: 49, 46, 129;
+}
+
+// ==========================================================================
+// SUNRISE SKIN - Warm orange/yellow
+// ==========================================================================
+
+[data-bs-theme="sunrise"][data-bs-mode="light"] {
+  --bs-primary: #f97316;
+  --bs-primary-rgb: 249, 115, 22;
+  --bs-secondary: #78716c;
+  --bs-secondary-rgb: 120, 113, 108;
+  
+  --bs-body-bg: #fffbeb;
+  --bs-body-bg-rgb: 255, 251, 235;
+  --bs-body-color: #7c2d12;
+  --bs-body-color-rgb: 124, 45, 18;
+  
+  --bs-emphasis-color: #431407;
+  --bs-emphasis-color-rgb: 67, 20, 7;
+  
+  --bs-secondary-bg: #fef3c7;
+  --bs-secondary-bg-rgb: 254, 243, 199;
+  --bs-secondary-color: #9a3412;
+  --bs-secondary-color-rgb: 154, 52, 18;
+  
+  --bs-tertiary-bg: #fed7aa;
+  --bs-tertiary-bg-rgb: 254, 215, 170;
+  --bs-tertiary-color: #c2410c;
+  --bs-tertiary-color-rgb: 194, 65, 12;
+  
+  --bs-border-color: #fb923c;
+  --bs-border-color-translucent: rgba(249, 115, 22, 0.3);
+  
+  --bs-link-color: #ea580c;
+  --bs-link-color-rgb: 234, 88, 12;
+  --bs-link-hover-color: #c2410c;
+  --bs-link-hover-color-rgb: 194, 65, 12;
+  
+  --bs-code-color: #0891b2;
+  
+  --skin-accent: #fb923c;
+  --skin-accent-rgb: 251, 146, 60;
+  --skin-surface: #fff7ed;
+  --skin-surface-rgb: 255, 247, 237;
+}
+
+[data-bs-theme="sunrise"][data-bs-mode="dark"] {
+  --bs-primary: #fb923c;
+  --bs-primary-rgb: 251, 146, 60;
+  --bs-secondary: #a8a29e;
+  --bs-secondary-rgb: 168, 162, 158;
+  
+  --bs-body-bg: #1c1917;
+  --bs-body-bg-rgb: 28, 25, 23;
+  --bs-body-color: #fed7aa;
+  --bs-body-color-rgb: 254, 215, 170;
+  
+  --bs-emphasis-color: #fffbeb;
+  --bs-emphasis-color-rgb: 255, 251, 235;
+  
+  --bs-secondary-bg: #292524;
+  --bs-secondary-bg-rgb: 41, 37, 36;
+  --bs-secondary-color: #fef3c7;
+  --bs-secondary-color-rgb: 254, 243, 199;
+  
+  --bs-tertiary-bg: #44403c;
+  --bs-tertiary-bg-rgb: 68, 64, 60;
+  --bs-tertiary-color: #fdba74;
+  --bs-tertiary-color-rgb: 253, 186, 116;
+  
+  --bs-border-color: #7c2d12;
+  --bs-border-color-translucent: rgba(251, 146, 60, 0.2);
+  
+  --bs-link-color: #fdba74;
+  --bs-link-color-rgb: 253, 186, 116;
+  --bs-link-hover-color: #fed7aa;
+  --bs-link-hover-color-rgb: 254, 215, 170;
+  
+  --bs-code-color: #22d3ee;
+  
+  --skin-accent: #f97316;
+  --skin-accent-rgb: 249, 115, 22;
+  --skin-surface: #292524;
+  --skin-surface-rgb: 41, 37, 36;
+}
+
+// ==========================================================================
+// LEGACY COMPATIBILITY - Map old theme values to new system
+// ==========================================================================
+
+// Support for old data-bs-theme="light" and data-bs-theme="dark" without mode
+// These act as aliases to the "dark" skin with respective modes
+[data-bs-theme="light"]:not([data-bs-mode]) {
+  @extend [data-bs-theme="dark"][data-bs-mode="light"];
+}
+
+[data-bs-theme="dark"]:not([data-bs-mode]) {
+  @extend [data-bs-theme="dark"][data-bs-mode="dark"];
+}
+
+// ==========================================================================
+// SHARED SKIN UTILITIES
+// ==========================================================================
+
+// Focus states for accessibility
+[data-bs-theme][data-bs-mode] {
+  --bs-focus-ring-color: rgba(var(--bs-primary-rgb), 0.25);
+  --bs-focus-ring-width: 0.25rem;
+  --bs-focus-ring-opacity: 0.25;
+}
+
+// High contrast skin focus enhancement
+[data-bs-theme="contrast"] {
+  *:focus-visible {
+    outline: var(--contrast-focus-outline, 3px solid currentColor) !important;
+    outline-offset: var(--contrast-focus-offset, 2px) !important;
+  }
+}

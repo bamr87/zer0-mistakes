@@ -10,11 +10,17 @@
   Purpose: Base HTML structure that all other layouts inherit from
   
   Template Logic:
-  - Sets up the HTML document structure with Bootstrap 5 dark theme
+  - Sets up the HTML document structure with configurable theme skin & mode
+  - Supports 18 theme variants (9 skins × light/dark modes)
+  - Uses compound attributes: data-bs-theme (skin) + data-bs-mode (light/dark)
   - Includes essential meta tags and SEO optimization
   - Loads external dependencies (CSS, JS, fonts)
   - Provides the main content wrapper for child layouts
   - Implements scroll spy for table of contents navigation
+  
+  Theme Configuration (in _config.yml):
+  - theme_skin: air, aqua, contrast, dark, dirt, neon, mint, plum, sunrise
+  - theme_mode: light, dark (default: light)
   
   Dependencies:
   - head.html: Meta tags, stylesheets, and external resources
@@ -31,7 +37,7 @@
 -->
 
 <!doctype html>
-<html lang="{{ site.locale | slice: 0,2 | default: 'en' }}" class="no-js" data-bs-theme="dark">
+<html lang="{{ site.locale | slice: 0,2 | default: 'en' }}" class="no-js" data-bs-theme="{{ site.theme_skin | default: 'dark' }}" data-bs-mode="{{ site.theme_mode | default: 'dark' }}">
     <head>
         <!-- =============================================== -->
         <!-- HEAD SECTION: Meta tags, styles, and SEO setup -->

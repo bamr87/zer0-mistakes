@@ -1,0 +1,66 @@
+/* ==========================================================================
+   Shadow Design Tokens
+   ========================================================================== 
+   
+   Standardized shadow system replacing 20+ hardcoded box-shadow values.
+   Use these tokens instead of raw rgba() shadow values.
+   
+   Usage:
+     box-shadow: $shadow-sm;
+     box-shadow: $shadow-md;
+     box-shadow: $shadow-lg;
+     box-shadow: $shadow-xl;
+   
+   ========================================================================== */
+
+// Shadow opacity variables for consistency
+$shadow-color: rgba(0, 0, 0, 0.08) !default;
+$shadow-color-md: rgba(0, 0, 0, 0.12) !default;
+$shadow-color-lg: rgba(0, 0, 0, 0.15) !default;
+$shadow-color-xl: rgba(0, 0, 0, 0.18) !default;
+
+// Core shadow tokens
+$shadow-none: none !default;
+$shadow-sm: 0 2px 4px $shadow-color !default;
+$shadow-md: 0 4px 8px $shadow-color-md !default;
+$shadow-lg: 0 8px 16px $shadow-color-lg !default;
+$shadow-xl: 0 12px 24px $shadow-color-xl !default;
+
+// Elevated shadows (for modals, dropdowns)
+$shadow-elevated: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !default;
+$shadow-dropdown: 0 0.5rem 1rem rgba(0, 0, 0, 0.175) !default;
+
+// Inset shadows (for inputs, pressed states)
+$shadow-inset-sm: inset 0 1px 2px rgba(0, 0, 0, 0.075) !default;
+$shadow-inset: inset 0 1px 1px rgba(0, 0, 0, 0.125) !default;
+
+// Focus shadows (accessibility)
+$shadow-focus: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25) !default;
+$shadow-focus-primary: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !default;
+
+// Button shadows
+$shadow-btn: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 1px rgba(0, 0, 0, 0.075) !default;
+$shadow-btn-active: inset 0 3px 5px rgba(0, 0, 0, 0.125) !default;
+
+// Card/component shadows
+$shadow-card: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !default;
+$shadow-card-hover: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !default;
+
+// CSS Custom Properties for runtime theming
+:root {
+  --shadow-sm: #{$shadow-sm};
+  --shadow-md: #{$shadow-md};
+  --shadow-lg: #{$shadow-lg};
+  --shadow-xl: #{$shadow-xl};
+  --shadow-elevated: #{$shadow-elevated};
+  --shadow-focus: #{$shadow-focus};
+}
+
+// Dark mode shadow adjustments
+[data-bs-mode="dark"] {
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.35);
+  --shadow-elevated: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
+}

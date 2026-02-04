@@ -1,0 +1,261 @@
+---
+layout: root
+title: "Typography Scale - Test Fixture"
+description: "Test fixture displaying typography scale for visual testing"
+permalink: /test/typography-scale/
+published: false
+sitemap: false
+---
+
+<!--
+  ===================================================================
+  TYPOGRAPHY SCALE - Test Fixture for Visual Testing
+  ===================================================================
+  
+  Purpose: Display all typography tokens ($type-size-*, $h-size-*)
+  for visual regression testing and consistency validation.
+  
+  Used by:
+  - test/playwright/typography.spec.js
+  - test/playwright/visual-matrix.spec.js
+  
+  ===================================================================
+-->
+
+<div class="container py-5">
+  <h1 class="mb-4">Typography Scale</h1>
+  <p class="lead">Complete typography system for testing</p>
+
+  <!-- Type Scale -->
+  <section class="mb-5" id="type-scale">
+    <h2>Type Scale ($type-size-*)</h2>
+    <div class="card mt-3">
+      <div class="card-body">
+        <p class="type-size-1" style="font-size: 2.441em;">Type Size 1 - 2.441em (~39px)</p>
+        <p class="type-size-2" style="font-size: 1.953em;">Type Size 2 - 1.953em (~31px)</p>
+        <p class="type-size-3" style="font-size: 1.563em;">Type Size 3 - 1.563em (~25px)</p>
+        <p class="type-size-4" style="font-size: 1.25em;">Type Size 4 - 1.25em (~20px)</p>
+        <p class="type-size-5" style="font-size: 1em;">Type Size 5 - 1em (~16px) - Base</p>
+        <p class="type-size-6" style="font-size: 0.75em;">Type Size 6 - 0.75em (~12px)</p>
+        <p class="type-size-7" style="font-size: 0.6875em;">Type Size 7 - 0.6875em (~11px)</p>
+        <p class="type-size-8" style="font-size: 0.625em;">Type Size 8 - 0.625em (~10px)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Headline Scale -->
+  <section class="mb-5" id="headline-scale">
+    <h2>Headline Scale ($h-size-*)</h2>
+    <div class="card mt-3">
+      <div class="card-body">
+        <div class="mb-4">
+          <h1 data-test="h1">Heading 1 - $h-size-1 (1.563em ~25px)</h1>
+          <small class="text-muted">Default H1 styling</small>
+        </div>
+        <div class="mb-4">
+          <h2 data-test="h2">Heading 2 - $h-size-2 (1.25em ~20px)</h2>
+          <small class="text-muted">Default H2 styling</small>
+        </div>
+        <div class="mb-4">
+          <h3 data-test="h3">Heading 3 - $h-size-3 (1.125em ~18px)</h3>
+          <small class="text-muted">Default H3 styling</small>
+        </div>
+        <div class="mb-4">
+          <h4 data-test="h4">Heading 4 - $h-size-4 (1.0625em ~17px)</h4>
+          <small class="text-muted">Default H4 styling</small>
+        </div>
+        <div class="mb-4">
+          <h5 data-test="h5">Heading 5 - $h-size-5 (1.03125em ~16.5px)</h5>
+          <small class="text-muted">Default H5 styling</small>
+        </div>
+        <div class="mb-4">
+          <h6 data-test="h6">Heading 6 - $h-size-6 (1em ~16px)</h6>
+          <small class="text-muted">Default H6 styling</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bootstrap Display Classes -->
+  <section class="mb-5" id="display-classes">
+    <h2>Bootstrap Display Classes</h2>
+    <div class="card mt-3">
+      <div class="card-body">
+        <p class="display-1" data-test="display-1">Display 1</p>
+        <p class="display-2" data-test="display-2">Display 2</p>
+        <p class="display-3" data-test="display-3">Display 3</p>
+        <p class="display-4" data-test="display-4">Display 4</p>
+        <p class="display-5" data-test="display-5">Display 5</p>
+        <p class="display-6" data-test="display-6">Display 6</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lead & Body Text -->
+  <section class="mb-5" id="body-text">
+    <h2>Body Text Variants</h2>
+    <div class="card mt-3">
+      <div class="card-body">
+        <p class="lead" data-test="lead">Lead paragraph - Used for introductory text with larger font size and lighter weight.</p>
+        
+        <p data-test="body">Body text - Standard paragraph with default font size and weight. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis risus eget urna mollis ornare vel eu leo.</p>
+        
+        <p class="small" data-test="small">Small text - Reduced font size for less prominent content.</p>
+        
+        <p class="text-muted" data-test="muted">Muted text - Lighter color for secondary information.</p>
+        
+        <p><strong data-test="strong">Strong/Bold text</strong> - For emphasis within paragraphs.</p>
+        
+        <p><em data-test="em">Italic/Emphasis text</em> - For stylistic emphasis.</p>
+        
+        <p><mark data-test="mark">Marked/Highlighted text</mark> - For highlighting content.</p>
+        
+        <p><del data-test="del">Deleted text</del> and <ins data-test="ins">Inserted text</ins></p>
+        
+        <p><abbr title="Abbreviation" data-test="abbr">Abbr</abbr> - For abbreviations with tooltips</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Font Weights -->
+  <section class="mb-5" id="font-weights">
+    <h2>Font Weights</h2>
+    <div class="card mt-3">
+      <div class="card-body">
+        <p class="fw-lighter" data-test="fw-lighter">Font weight lighter</p>
+        <p class="fw-light" data-test="fw-light">Font weight light (300)</p>
+        <p class="fw-normal" data-test="fw-normal">Font weight normal (400)</p>
+        <p class="fw-medium" data-test="fw-medium">Font weight medium (500)</p>
+        <p class="fw-semibold" data-test="fw-semibold">Font weight semibold (600)</p>
+        <p class="fw-bold" data-test="fw-bold">Font weight bold (700)</p>
+        <p class="fw-bolder" data-test="fw-bolder">Font weight bolder</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Font Sizes (Bootstrap) -->
+  <section class="mb-5" id="bootstrap-font-sizes">
+    <h2>Bootstrap Font Size Classes</h2>
+    <div class="card mt-3">
+      <div class="card-body">
+        <p class="fs-1" data-test="fs-1">fs-1 (calc(1.375rem + 1.5vw))</p>
+        <p class="fs-2" data-test="fs-2">fs-2 (calc(1.325rem + 0.9vw))</p>
+        <p class="fs-3" data-test="fs-3">fs-3 (calc(1.3rem + 0.6vw))</p>
+        <p class="fs-4" data-test="fs-4">fs-4 (calc(1.275rem + 0.3vw))</p>
+        <p class="fs-5" data-test="fs-5">fs-5 (1.25rem)</p>
+        <p class="fs-6" data-test="fs-6">fs-6 (1rem)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Line Heights -->
+  <section class="mb-5" id="line-heights">
+    <h2>Line Heights</h2>
+    <div class="card mt-3">
+      <div class="card-body">
+        <p class="lh-1 mb-3" data-test="lh-1" style="max-width: 400px;">Line height 1 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis risus eget urna mollis ornare vel eu leo.</p>
+        <p class="lh-sm mb-3" data-test="lh-sm" style="max-width: 400px;">Line height sm (1.25) - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis risus eget urna mollis ornare vel eu leo.</p>
+        <p class="lh-base mb-3" data-test="lh-base" style="max-width: 400px;">Line height base (1.5) - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis risus eget urna mollis ornare vel eu leo.</p>
+        <p class="lh-lg mb-3" data-test="lh-lg" style="max-width: 400px;">Line height lg (2) - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis risus eget urna mollis ornare vel eu leo.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lists -->
+  <section class="mb-5" id="lists">
+    <h2>Lists</h2>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5>Unordered List</h5>
+            <ul data-test="ul">
+              <li>List item one</li>
+              <li>List item two
+                <ul>
+                  <li>Nested item</li>
+                  <li>Nested item</li>
+                </ul>
+              </li>
+              <li>List item three</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5>Ordered List</h5>
+            <ol data-test="ol">
+              <li>First item</li>
+              <li>Second item</li>
+              <li>Third item</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5>Unstyled List</h5>
+            <ul class="list-unstyled" data-test="list-unstyled">
+              <li>Item without bullet</li>
+              <li>Another item</li>
+              <li>Third item</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blockquotes -->
+  <section class="mb-5" id="blockquotes">
+    <h2>Blockquotes</h2>
+    <div class="card mt-3">
+      <div class="card-body">
+        <figure data-test="blockquote">
+          <blockquote class="blockquote">
+            <p>A well-known quote, contained in a blockquote element.</p>
+          </blockquote>
+          <figcaption class="blockquote-footer">
+            Someone famous in <cite title="Source Title">Source Title</cite>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Code Typography -->
+  <section class="mb-5" id="code-typography">
+    <h2>Code Typography</h2>
+    <div class="card mt-3">
+      <div class="card-body">
+        <p>Inline code: <code data-test="inline-code">const theme = 'dark';</code></p>
+        
+        <p>Keyboard input: <kbd data-test="kbd">Ctrl</kbd> + <kbd>C</kbd></p>
+        
+        <p>Sample output: <samp data-test="samp">This is sample output</samp></p>
+        
+        <p>Variable: <var data-test="var">x</var> = <var>y</var> + 2</p>
+        
+        <pre data-test="pre"><code>// Preformatted code block
+function example() {
+  return 'Hello, World!';
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Text Alignment -->
+  <section class="mb-5" id="text-alignment">
+    <h2>Text Alignment</h2>
+    <div class="card mt-3">
+      <div class="card-body">
+        <p class="text-start" data-test="text-start">Start aligned text (left in LTR).</p>
+        <p class="text-center" data-test="text-center">Center aligned text.</p>
+        <p class="text-end" data-test="text-end">End aligned text (right in LTR).</p>
+      </div>
+    </div>
+  </section>
+</div>

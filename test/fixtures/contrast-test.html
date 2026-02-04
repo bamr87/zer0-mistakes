@@ -1,0 +1,303 @@
+---
+layout: root
+title: "Contrast Test - WCAG Validation Fixture"
+description: "Test fixture for WCAG contrast ratio validation across all theme skins"
+permalink: /test/contrast-test/
+published: false
+sitemap: false
+---
+
+<!--
+  ===================================================================
+  CONTRAST TEST - WCAG Accessibility Validation Fixture
+  ===================================================================
+  
+  Purpose: Display text/background combinations for automated WCAG
+  contrast ratio testing using axe-playwright.
+  
+  WCAG Standards:
+  - Level AA: 4.5:1 for normal text, 3:1 for large text (18pt+ or 14pt+ bold)
+  - Level AAA: 7:1 for normal text, 4.5:1 for large text
+  
+  Used by:
+  - test/playwright/contrast.spec.js
+  - test/playwright/accessibility.spec.js
+  
+  ===================================================================
+-->
+
+<div class="container py-5">
+  <h1 class="mb-4">WCAG Contrast Validation</h1>
+  <p class="lead">Testing color contrast ratios across theme skins</p>
+
+  <!-- Current Theme Info -->
+  <div class="alert alert-info mb-4" id="theme-info">
+    <strong>Current Theme:</strong> 
+    <span id="current-skin">-</span> / 
+    <span id="current-mode">-</span>
+  </div>
+
+  <!-- Body Text on Body Background -->
+  <section class="mb-5" id="body-contrast" data-test="body-contrast">
+    <h2>Body Text Contrast</h2>
+    <p class="text-muted">Testing --bs-body-color on --bs-body-bg</p>
+    
+    <div class="card mt-3">
+      <div class="card-body">
+        <p class="fs-6" data-contrast="body-normal">
+          Normal text (16px) - This text must meet WCAG AA (4.5:1) and ideally AAA (7:1) 
+          contrast ratio against the body background.
+        </p>
+        <p class="fs-4" data-contrast="body-large">
+          Large text (20px) - This text must meet WCAG AA (3:1) and ideally AAA (4.5:1) 
+          contrast ratio.
+        </p>
+        <p class="small" data-contrast="body-small">
+          Small text (14px) - Critical for readability, must meet WCAG AA (4.5:1).
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Primary Color Contrast -->
+  <section class="mb-5" id="primary-contrast" data-test="primary-contrast">
+    <h2>Primary Color Contrast</h2>
+    <p class="text-muted">Testing --bs-primary usage</p>
+    
+    <div class="row g-3 mt-3">
+      <div class="col-md-6">
+        <div class="p-4 rounded" style="background: var(--bs-primary); color: white;" data-contrast="primary-on-white">
+          <h3 class="h5">White on Primary</h3>
+          <p>White text on primary background for buttons and badges.</p>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="p-4 rounded border" style="color: var(--bs-primary);" data-contrast="primary-text">
+          <h3 class="h5" style="color: var(--bs-primary);">Primary Text</h3>
+          <p style="color: var(--bs-primary);">Primary colored text on body background.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Link Contrast -->
+  <section class="mb-5" id="link-contrast" data-test="link-contrast">
+    <h2>Link Contrast</h2>
+    <p class="text-muted">Testing --bs-link-color against body background</p>
+    
+    <div class="card mt-3">
+      <div class="card-body">
+        <p data-contrast="link-in-text">
+          Paragraph with <a href="#" data-contrast="link">link text that must be distinguishable</a> 
+          from surrounding body text. Links must have 3:1 contrast against surrounding text AND 
+          meet text contrast requirements.
+        </p>
+        <p data-contrast="link-standalone">
+          <a href="#">Standalone link text</a> - Must meet WCAG AA for text contrast.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Secondary & Muted Text -->
+  <section class="mb-5" id="secondary-contrast" data-test="secondary-contrast">
+    <h2>Secondary & Muted Text</h2>
+    <p class="text-muted">Testing secondary color variants</p>
+    
+    <div class="card mt-3">
+      <div class="card-body">
+        <p class="text-secondary" data-contrast="secondary-text">
+          Secondary text color - Used for less prominent content. Must still meet WCAG AA (4.5:1).
+        </p>
+        <p class="text-muted" data-contrast="muted-text">
+          Muted text color - Used for hints and captions. Must meet minimum contrast.
+        </p>
+        <p style="color: var(--bs-tertiary-color);" data-contrast="tertiary-text">
+          Tertiary text color - Lowest emphasis text. Verify readability.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Background Layers -->
+  <section class="mb-5" id="background-contrast" data-test="background-contrast">
+    <h2>Background Layer Contrast</h2>
+    <p class="text-muted">Testing text on different background layers</p>
+    
+    <div class="row g-3 mt-3">
+      <div class="col-md-4">
+        <div class="p-3 rounded" style="background: var(--bs-secondary-bg); color: var(--bs-secondary-color);" 
+             data-contrast="secondary-bg">
+          <h3 class="h6">Secondary Background</h3>
+          <p class="mb-0 small">Text on --bs-secondary-bg</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-3 rounded" style="background: var(--bs-tertiary-bg); color: var(--bs-tertiary-color);" 
+             data-contrast="tertiary-bg">
+          <h3 class="h6">Tertiary Background</h3>
+          <p class="mb-0 small">Text on --bs-tertiary-bg</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-3 rounded" style="background: var(--bs-emphasis-color); color: var(--bs-body-bg);" 
+             data-contrast="emphasis-bg">
+          <h3 class="h6">Emphasis Background</h3>
+          <p class="mb-0 small">Inverted text/bg</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Form Controls -->
+  <section class="mb-5" id="form-contrast" data-test="form-contrast">
+    <h2>Form Control Contrast</h2>
+    <p class="text-muted">Testing form element readability</p>
+    
+    <div class="card mt-3">
+      <div class="card-body">
+        <div class="mb-3">
+          <label class="form-label" data-contrast="form-label">Form Label</label>
+          <input type="text" class="form-control" value="Input text value" data-contrast="form-input">
+          <div class="form-text" data-contrast="form-text">Help text below input</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Placeholder Contrast</label>
+          <input type="text" class="form-control" placeholder="Placeholder text" data-contrast="form-placeholder">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Disabled Input</label>
+          <input type="text" class="form-control" value="Disabled value" disabled data-contrast="form-disabled">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Button Contrast -->
+  <section class="mb-5" id="button-contrast" data-test="button-contrast">
+    <h2>Button Contrast</h2>
+    <p class="text-muted">Testing button text against button backgrounds</p>
+    
+    <div class="card mt-3">
+      <div class="card-body">
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <button class="btn btn-primary" data-contrast="btn-primary">Primary</button>
+          <button class="btn btn-secondary" data-contrast="btn-secondary">Secondary</button>
+          <button class="btn btn-success" data-contrast="btn-success">Success</button>
+          <button class="btn btn-danger" data-contrast="btn-danger">Danger</button>
+          <button class="btn btn-warning" data-contrast="btn-warning">Warning</button>
+          <button class="btn btn-info" data-contrast="btn-info">Info</button>
+          <button class="btn btn-light" data-contrast="btn-light">Light</button>
+          <button class="btn btn-dark" data-contrast="btn-dark">Dark</button>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <button class="btn btn-outline-primary" data-contrast="btn-outline-primary">Outline Primary</button>
+          <button class="btn btn-outline-secondary" data-contrast="btn-outline-secondary">Outline Secondary</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Alert Contrast -->
+  <section class="mb-5" id="alert-contrast" data-test="alert-contrast">
+    <h2>Alert Contrast</h2>
+    <p class="text-muted">Testing alert text readability</p>
+    
+    <div class="mt-3">
+      <div class="alert alert-primary" data-contrast="alert-primary">
+        <strong>Primary Alert:</strong> Text must be readable against this background.
+      </div>
+      <div class="alert alert-secondary" data-contrast="alert-secondary">
+        <strong>Secondary Alert:</strong> Text must be readable against this background.
+      </div>
+      <div class="alert alert-success" data-contrast="alert-success">
+        <strong>Success Alert:</strong> Text must be readable against this background.
+      </div>
+      <div class="alert alert-danger" data-contrast="alert-danger">
+        <strong>Danger Alert:</strong> Text must be readable against this background.
+      </div>
+      <div class="alert alert-warning" data-contrast="alert-warning">
+        <strong>Warning Alert:</strong> Text must be readable against this background.
+      </div>
+      <div class="alert alert-info" data-contrast="alert-info">
+        <strong>Info Alert:</strong> Text must be readable against this background.
+      </div>
+    </div>
+  </section>
+
+  <!-- Border Contrast -->
+  <section class="mb-5" id="border-contrast" data-test="border-contrast">
+    <h2>Border Contrast</h2>
+    <p class="text-muted">Testing border visibility (3:1 minimum for UI components)</p>
+    
+    <div class="row g-3 mt-3">
+      <div class="col-md-4">
+        <div class="p-3 rounded border" data-contrast="default-border">
+          <p class="mb-0">Default border</p>
+          <small class="text-muted">--bs-border-color</small>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-3 rounded border border-primary" data-contrast="primary-border">
+          <p class="mb-0">Primary border</p>
+          <small class="text-muted">border-primary</small>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-3 rounded border border-secondary" data-contrast="secondary-border">
+          <p class="mb-0">Secondary border</p>
+          <small class="text-muted">border-secondary</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Code Contrast -->
+  <section class="mb-5" id="code-contrast" data-test="code-contrast">
+    <h2>Code Block Contrast</h2>
+    <p class="text-muted">Testing code readability</p>
+    
+    <div class="card mt-3">
+      <div class="card-body">
+        <p data-contrast="inline-code">
+          Inline code: <code>const theme = 'dark';</code>
+        </p>
+        <pre data-contrast="code-block"><code>// Code block
+function setTheme(skin, mode) {
+  document.documentElement.setAttribute('data-bs-theme', skin);
+  document.documentElement.setAttribute('data-bs-mode', mode);
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Focus Indicators -->
+  <section class="mb-5" id="focus-contrast" data-test="focus-contrast">
+    <h2>Focus Indicator Contrast</h2>
+    <p class="text-muted">Testing keyboard focus visibility (3:1 minimum)</p>
+    
+    <div class="card mt-3">
+      <div class="card-body">
+        <p>Tab through these elements to test focus ring visibility:</p>
+        <div class="d-flex flex-wrap gap-3">
+          <button class="btn btn-primary" data-contrast="focus-button">Button Focus</button>
+          <a href="#" class="btn btn-outline-secondary" data-contrast="focus-link">Link Focus</a>
+          <input type="text" class="form-control" style="width: 200px;" placeholder="Input Focus" data-contrast="focus-input">
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  // Update current theme display
+  function updateThemeInfo() {
+    document.getElementById('current-skin').textContent = 
+      document.documentElement.getAttribute('data-bs-theme') || 'unknown';
+    document.getElementById('current-mode').textContent = 
+      document.documentElement.getAttribute('data-bs-mode') || 'unknown';
+  }
+  
+  window.addEventListener('themechange', updateThemeInfo);
+  document.addEventListener('DOMContentLoaded', updateThemeInfo);
+</script>

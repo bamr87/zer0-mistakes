@@ -1,0 +1,379 @@
+---
+layout: root
+title: "Theme Skin Showcase - Test Fixture"
+description: "Test fixture displaying all 18 theme skin variants for visual testing"
+permalink: /test/skin-showcase/
+published: false
+sitemap: false
+---
+
+<!--
+  ===================================================================
+  SKIN SHOWCASE - Test Fixture for Visual Testing
+  ===================================================================
+  
+  Purpose: Display all 18 theme skin variants (9 skins × light/dark modes)
+  for visual regression testing and WCAG contrast validation.
+  
+  Used by:
+  - test/playwright/skins.spec.js
+  - test/playwright/contrast.spec.js
+  - test/playwright/visual-matrix.spec.js
+  
+  ===================================================================
+-->
+
+<div class="container py-5">
+  <h1 class="mb-4">Theme Skin Showcase</h1>
+  <p class="lead">All 18 theme variants for visual testing</p>
+  
+  <!-- Theme Controls -->
+  <div class="card mb-4" id="theme-controls">
+    <div class="card-header">
+      <h2 class="h5 mb-0">Theme Controls</h2>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Skin</label>
+          <div class="btn-group flex-wrap" role="group" aria-label="Skin selector">
+            <button type="button" class="btn btn-outline-primary" data-bs-skin-value="air">Air</button>
+            <button type="button" class="btn btn-outline-primary" data-bs-skin-value="aqua">Aqua</button>
+            <button type="button" class="btn btn-outline-primary" data-bs-skin-value="contrast">Contrast</button>
+            <button type="button" class="btn btn-outline-primary" data-bs-skin-value="dark">Dark</button>
+            <button type="button" class="btn btn-outline-primary" data-bs-skin-value="dirt">Dirt</button>
+            <button type="button" class="btn btn-outline-primary" data-bs-skin-value="neon">Neon</button>
+            <button type="button" class="btn btn-outline-primary" data-bs-skin-value="mint">Mint</button>
+            <button type="button" class="btn btn-outline-primary" data-bs-skin-value="plum">Plum</button>
+            <button type="button" class="btn btn-outline-primary" data-bs-skin-value="sunrise">Sunrise</button>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Mode</label>
+          <div class="btn-group" role="group" aria-label="Mode selector">
+            <button type="button" class="btn btn-outline-secondary" data-bs-theme-value="light">
+              <i class="bi bi-sun-fill me-1"></i> Light
+            </button>
+            <button type="button" class="btn btn-outline-secondary" data-bs-theme-value="dark">
+              <i class="bi bi-moon-fill me-1"></i> Dark
+            </button>
+            <button type="button" class="btn btn-outline-secondary" data-bs-theme-value="auto">
+              <i class="bi bi-circle-half me-1"></i> Auto
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="mt-3">
+        <small class="text-secondary">
+          Current: <code id="current-theme-display">Loading...</code>
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Color Swatches -->
+  <section class="mb-5" id="color-swatches">
+    <h2>Color Swatches</h2>
+    <div class="row g-3 mt-3">
+      <div class="col-6 col-md-3">
+        <div class="p-3 rounded" style="background: var(--bs-primary); color: white;">
+          <strong>Primary</strong>
+          <div class="small">--bs-primary</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="p-3 rounded" style="background: var(--bs-secondary); color: white;">
+          <strong>Secondary</strong>
+          <div class="small">--bs-secondary</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="p-3 rounded" style="background: var(--bs-body-bg); color: var(--bs-body-color); border: 1px solid var(--bs-border-color);">
+          <strong>Body BG</strong>
+          <div class="small">--bs-body-bg</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="p-3 rounded" style="background: var(--bs-body-color); color: var(--bs-body-bg);">
+          <strong>Body Color</strong>
+          <div class="small">--bs-body-color</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="p-3 rounded" style="background: var(--bs-secondary-bg); color: var(--bs-secondary-color); border: 1px solid var(--bs-border-color);">
+          <strong>Secondary BG</strong>
+          <div class="small">--bs-secondary-bg</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="p-3 rounded" style="background: var(--bs-tertiary-bg); color: var(--bs-tertiary-color); border: 1px solid var(--bs-border-color);">
+          <strong>Tertiary BG</strong>
+          <div class="small">--bs-tertiary-bg</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="p-3 rounded" style="background: var(--bs-emphasis-color); color: var(--bs-body-bg);">
+          <strong>Emphasis</strong>
+          <div class="small">--bs-emphasis-color</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="p-3 rounded" style="background: var(--skin-accent, var(--bs-primary)); color: white;">
+          <strong>Accent</strong>
+          <div class="small">--skin-accent</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Typography -->
+  <section class="mb-5" id="typography-section">
+    <h2>Typography</h2>
+    <div class="card mt-3">
+      <div class="card-body">
+        <h1>Heading 1</h1>
+        <h2>Heading 2</h2>
+        <h3>Heading 3</h3>
+        <h4>Heading 4</h4>
+        <h5>Heading 5</h5>
+        <h6>Heading 6</h6>
+        <hr>
+        <p>This is body text. <strong>Bold text.</strong> <em>Italic text.</em></p>
+        <p><a href="#">This is a link</a> within paragraph text.</p>
+        <p class="text-secondary">Secondary text for less emphasis.</p>
+        <p><small class="text-muted">Small muted text for captions.</small></p>
+        <p><code>Inline code sample</code></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Buttons -->
+  <section class="mb-5" id="buttons-section">
+    <h2>Buttons</h2>
+    <div class="card mt-3">
+      <div class="card-body">
+        <h5>Solid Buttons</h5>
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <button class="btn btn-primary">Primary</button>
+          <button class="btn btn-secondary">Secondary</button>
+          <button class="btn btn-success">Success</button>
+          <button class="btn btn-danger">Danger</button>
+          <button class="btn btn-warning">Warning</button>
+          <button class="btn btn-info">Info</button>
+          <button class="btn btn-light">Light</button>
+          <button class="btn btn-dark">Dark</button>
+        </div>
+        <h5>Outline Buttons</h5>
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <button class="btn btn-outline-primary">Primary</button>
+          <button class="btn btn-outline-secondary">Secondary</button>
+          <button class="btn btn-outline-success">Success</button>
+          <button class="btn btn-outline-danger">Danger</button>
+          <button class="btn btn-outline-warning">Warning</button>
+          <button class="btn btn-outline-info">Info</button>
+        </div>
+        <h5>Button States</h5>
+        <div class="d-flex flex-wrap gap-2">
+          <button class="btn btn-primary" disabled>Disabled</button>
+          <button class="btn btn-primary active">Active</button>
+          <button class="btn btn-lg btn-primary">Large</button>
+          <button class="btn btn-sm btn-primary">Small</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cards -->
+  <section class="mb-5" id="cards-section">
+    <h2>Cards</h2>
+    <div class="row g-4 mt-3">
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-header">Card Header</div>
+          <div class="card-body">
+            <h5 class="card-title">Card Title</h5>
+            <p class="card-text">Card body text demonstrating content within a card component.</p>
+            <a href="#" class="btn btn-primary">Action</a>
+          </div>
+          <div class="card-footer text-secondary">
+            <small>Card footer</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 border-primary">
+          <div class="card-body">
+            <h5 class="card-title text-primary">Primary Border</h5>
+            <p class="card-text">Card with primary border styling.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 text-bg-primary">
+          <div class="card-body">
+            <h5 class="card-title">Primary Background</h5>
+            <p class="card-text">Card with primary background color.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Form Controls -->
+  <section class="mb-5" id="forms-section">
+    <h2>Form Controls</h2>
+    <div class="card mt-3">
+      <div class="card-body">
+        <form>
+          <div class="mb-3">
+            <label for="exampleInput" class="form-label">Text Input</label>
+            <input type="text" class="form-control" id="exampleInput" placeholder="Enter text">
+          </div>
+          <div class="mb-3">
+            <label for="exampleSelect" class="form-label">Select</label>
+            <select class="form-select" id="exampleSelect">
+              <option>Option 1</option>
+              <option>Option 2</option>
+              <option>Option 3</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="exampleTextarea" class="form-label">Textarea</label>
+            <textarea class="form-control" id="exampleTextarea" rows="3"></textarea>
+          </div>
+          <div class="mb-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="exampleCheck">
+              <label class="form-check-label" for="exampleCheck">Checkbox</label>
+            </div>
+          </div>
+          <div class="mb-3">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="exampleRadio" id="exampleRadio1" checked>
+              <label class="form-check-label" for="exampleRadio1">Radio 1</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="exampleRadio" id="exampleRadio2">
+              <label class="form-check-label" for="exampleRadio2">Radio 2</label>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Alerts -->
+  <section class="mb-5" id="alerts-section">
+    <h2>Alerts</h2>
+    <div class="mt-3">
+      <div class="alert alert-primary" role="alert">Primary alert message</div>
+      <div class="alert alert-secondary" role="alert">Secondary alert message</div>
+      <div class="alert alert-success" role="alert">Success alert message</div>
+      <div class="alert alert-danger" role="alert">Danger alert message</div>
+      <div class="alert alert-warning" role="alert">Warning alert message</div>
+      <div class="alert alert-info" role="alert">Info alert message</div>
+    </div>
+  </section>
+
+  <!-- Code Blocks -->
+  <section class="mb-5" id="code-section">
+    <h2>Code Blocks</h2>
+    <div class="mt-3">
+      <p>Inline code: <code>const theme = 'dark';</code></p>
+      <pre><code>// Code block example
+function setTheme(skin, mode) {
+  document.documentElement.setAttribute('data-bs-theme', skin);
+  document.documentElement.setAttribute('data-bs-mode', mode);
+}</code></pre>
+    </div>
+  </section>
+
+  <!-- Navigation -->
+  <section class="mb-5" id="navigation-section">
+    <h2>Navigation Components</h2>
+    <div class="card mt-3">
+      <div class="card-body">
+        <h5>Tabs</h5>
+        <ul class="nav nav-tabs mb-3">
+          <li class="nav-item">
+            <a class="nav-link active" href="#">Active</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+          </li>
+        </ul>
+        
+        <h5>Pills</h5>
+        <ul class="nav nav-pills mb-3">
+          <li class="nav-item">
+            <a class="nav-link active" href="#">Active</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+          </li>
+        </ul>
+
+        <h5>Breadcrumb</h5>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Category</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Current</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <!-- Badges & Progress -->
+  <section class="mb-5" id="badges-section">
+    <h2>Badges & Progress</h2>
+    <div class="card mt-3">
+      <div class="card-body">
+        <h5>Badges</h5>
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <span class="badge bg-primary">Primary</span>
+          <span class="badge bg-secondary">Secondary</span>
+          <span class="badge bg-success">Success</span>
+          <span class="badge bg-danger">Danger</span>
+          <span class="badge bg-warning text-dark">Warning</span>
+          <span class="badge bg-info text-dark">Info</span>
+        </div>
+        
+        <h5>Progress Bars</h5>
+        <div class="progress mb-2" role="progressbar">
+          <div class="progress-bar" style="width: 25%">25%</div>
+        </div>
+        <div class="progress mb-2" role="progressbar">
+          <div class="progress-bar bg-success" style="width: 50%">50%</div>
+        </div>
+        <div class="progress mb-2" role="progressbar">
+          <div class="progress-bar bg-warning" style="width: 75%">75%</div>
+        </div>
+        <div class="progress" role="progressbar">
+          <div class="progress-bar bg-danger" style="width: 100%">100%</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  // Update current theme display
+  function updateThemeDisplay() {
+    const skin = document.documentElement.getAttribute('data-bs-theme');
+    const mode = document.documentElement.getAttribute('data-bs-mode');
+    document.getElementById('current-theme-display').textContent = `${skin} / ${mode}`;
+  }
+  
+  // Listen for theme changes
+  window.addEventListener('themechange', updateThemeDisplay);
+  document.addEventListener('DOMContentLoaded', updateThemeDisplay);
+</script>

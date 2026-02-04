@@ -5,18 +5,36 @@
 
 @charset "utf-8";
 
-// Styling Variables
+// ==========================================================================
+// Zer0-Mistakes Jekyll Theme - Main Stylesheet
+// ==========================================================================
+// 
+// Import order matters! Variables and tokens must come before components.
+// 
+// Structure:
+// 1. Variables & Design Tokens (foundations)
+// 2. Theme Skins (18 variants: 9 skins × light/dark)
+// 3. Bootstrap Docs Framework
+// 4. Custom Components
+// 5. Features (code-copy, syntax highlighting)
+// ==========================================================================
+
+// 1. Variables & Design Tokens
 @import "core/variables";
+@import "core/shadows";
+@import "core/transitions";
+
+// 2. Bootstrap Docs Framework & Legacy Theme
 @import "core/docs";
 @import "core/theme";
 
-// Bootstrap Styles
-// @import "bootstrap.scss";
+// 3. Theme Skins (18 variants)
+@import "core/skins";
 
-// Custom Styles
+// 4. Custom Styles
 @import "custom.scss";
 
-// Custom Features
+// 5. Custom Features
 @import "core/code-copy";
 @import "core/syntax";
 

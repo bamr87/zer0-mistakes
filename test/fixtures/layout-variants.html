@@ -1,0 +1,322 @@
+---
+layout: root
+title: "Layout Variants Test Fixture"
+description: "Test page showcasing all 8 post_type layout variants for visual testing"
+published: false
+permalink: /test/fixtures/layout-variants/
+---
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="{{ site.theme_skin | default: 'dark' }}" data-bs-mode="{{ site.theme_mode | default: 'light' }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layout Variants Test Fixture</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+</head>
+<body>
+  <div class="container py-5">
+    <h1 class="display-4 mb-5">Layout Variants Test Fixture</h1>
+    <p class="lead">This page demonstrates all 8 <code>post_type</code> layout variants for visual regression testing.</p>
+
+    <!-- Standard Post Type -->
+    <section id="post-type-standard" class="mb-5 p-4 border rounded" data-testid="post-type-standard">
+      <span class="badge bg-secondary mb-2">post_type: standard</span>
+      <h2>Standard Article Layout</h2>
+      <div class="post-meta text-muted mb-3">
+        <span class="date"><i class="bi bi-calendar"></i> January 15, 2026</span>
+        <span class="ms-3"><i class="bi bi-clock"></i> 5 min read</span>
+        <span class="ms-3"><i class="bi bi-person"></i> Author Name</span>
+      </div>
+      <p>The standard layout includes a sidebar, normal typography, and traditional blog post formatting. This is the default post type used for most content.</p>
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="content-area bg-light p-3 rounded">Main Content Area</div>
+        </div>
+        <div class="col-lg-4">
+          <div class="sidebar-area bg-secondary text-white p-3 rounded">Sidebar</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Post Type -->
+    <section id="post-type-featured" class="mb-5 p-4 border rounded bg-primary bg-opacity-10" data-testid="post-type-featured">
+      <span class="badge bg-primary mb-2">post_type: featured</span>
+      <h2 class="display-4">Featured Article Layout</h2>
+      <p class="fs-5">Full-width hero section, no sidebar, large typography with <code>display-4</code> headings and <code>fs-5</code> content text.</p>
+      <div class="hero-image bg-dark text-white p-5 rounded text-center mb-3">
+        <i class="bi bi-image display-1"></i>
+        <p class="mt-3">Full-width Hero Image Area</p>
+      </div>
+      <div class="content-area">
+        <p class="lead">Featured articles span the full width without sidebars for maximum visual impact.</p>
+      </div>
+    </section>
+
+    <!-- Breaking Post Type -->
+    <section id="post-type-breaking" class="mb-5 p-4 border border-danger rounded" data-testid="post-type-breaking">
+      <span class="badge bg-danger mb-2">post_type: breaking</span>
+      <div class="alert alert-danger d-flex align-items-center" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <strong>BREAKING NEWS</strong>
+      </div>
+      <h2>Breaking News Layout</h2>
+      <div class="post-meta mb-3">
+        <span class="text-danger fw-bold"><i class="bi bi-clock-fill"></i> Updated 5 minutes ago</span>
+      </div>
+      <p>Breaking news layout features a red alert banner, timestamp prominence, and no sidebar. Designed for urgent, time-sensitive content.</p>
+      <div class="live-updates bg-light p-3 rounded">
+        <h5><i class="bi bi-broadcast"></i> Live Updates</h5>
+        <ul class="list-unstyled mb-0">
+          <li class="mb-2"><small class="text-muted">10:45 AM</small> - Update 3</li>
+          <li class="mb-2"><small class="text-muted">10:30 AM</small> - Update 2</li>
+          <li><small class="text-muted">10:15 AM</small> - Update 1</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Opinion Post Type -->
+    <section id="post-type-opinion" class="mb-5 p-4 border rounded" data-testid="post-type-opinion">
+      <span class="badge bg-info mb-2">post_type: opinion</span>
+      <h2>Opinion Article Layout</h2>
+      <div class="author-emphasis card mb-3">
+        <div class="card-body d-flex align-items-center">
+          <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+            <i class="bi bi-person-fill fs-3"></i>
+          </div>
+          <div class="ms-3">
+            <h5 class="mb-0">Author Name</h5>
+            <small class="text-muted">Senior Columnist</small>
+          </div>
+        </div>
+      </div>
+      <blockquote class="blockquote border-start border-4 border-info ps-4 my-4">
+        <p class="mb-0 fst-italic">"This is a pull quote demonstrating the opinion post type's emphasis on author voice and perspective."</p>
+      </blockquote>
+      <p>Opinion layouts emphasize the author with a prominent bio box and stylized pull quotes throughout the content.</p>
+    </section>
+
+    <!-- Review Post Type -->
+    <section id="post-type-review" class="mb-5 p-4 border rounded" data-testid="post-type-review">
+      <span class="badge bg-warning text-dark mb-2">post_type: review</span>
+      <h2>Review Article Layout</h2>
+      <div class="rating mb-3">
+        <span class="fs-4">
+          <i class="bi bi-star-fill text-warning"></i>
+          <i class="bi bi-star-fill text-warning"></i>
+          <i class="bi bi-star-fill text-warning"></i>
+          <i class="bi bi-star-fill text-warning"></i>
+          <i class="bi bi-star-half text-warning"></i>
+        </span>
+        <span class="ms-2 fw-bold">8.5/10</span>
+      </div>
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <div class="card h-100 border-success">
+            <div class="card-header bg-success text-white">
+              <i class="bi bi-plus-circle"></i> Pros
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"><i class="bi bi-check text-success"></i> Pro item 1</li>
+              <li class="list-group-item"><i class="bi bi-check text-success"></i> Pro item 2</li>
+              <li class="list-group-item"><i class="bi bi-check text-success"></i> Pro item 3</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card h-100 border-danger">
+            <div class="card-header bg-danger text-white">
+              <i class="bi bi-dash-circle"></i> Cons
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"><i class="bi bi-x text-danger"></i> Con item 1</li>
+              <li class="list-group-item"><i class="bi bi-x text-danger"></i> Con item 2</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="verdict alert alert-primary">
+        <h5><i class="bi bi-award"></i> Verdict</h5>
+        <p class="mb-0">An excellent product that delivers on its promises with only minor drawbacks.</p>
+      </div>
+    </section>
+
+    <!-- Tutorial Post Type -->
+    <section id="post-type-tutorial" class="mb-5 p-4 border rounded" data-testid="post-type-tutorial">
+      <span class="badge bg-success mb-2">post_type: tutorial</span>
+      <h2>Tutorial Article Layout</h2>
+      <div class="tutorial-meta d-flex flex-wrap gap-3 mb-4">
+        <span class="badge bg-warning text-dark fs-6">
+          <i class="bi bi-speedometer2"></i> Intermediate
+        </span>
+        <span class="badge bg-light text-dark fs-6">
+          <i class="bi bi-clock"></i> 30 minutes
+        </span>
+        <span class="badge bg-light text-dark fs-6">
+          <i class="bi bi-list-check"></i> 5 steps
+        </span>
+      </div>
+      <div class="learning-outcomes card mb-4">
+        <div class="card-header bg-success text-white">
+          <i class="bi bi-mortarboard"></i> Learning Outcomes
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item"><i class="bi bi-check-circle text-success"></i> Understand concept A</li>
+          <li class="list-group-item"><i class="bi bi-check-circle text-success"></i> Implement feature B</li>
+          <li class="list-group-item"><i class="bi bi-check-circle text-success"></i> Debug issue C</li>
+        </ul>
+      </div>
+      <div class="progress mb-4" style="height: 25px;" role="progressbar" aria-label="Tutorial progress">
+        <div class="progress-bar bg-success" style="width: 40%;">Step 2 of 5</div>
+      </div>
+      <div class="tutorial-steps">
+        <div class="step mb-3 d-flex">
+          <span class="step-number bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 36px; height: 36px; flex-shrink: 0;">1</span>
+          <div>
+            <h5>Step Title</h5>
+            <p class="text-muted mb-0">Step description with code examples and detailed instructions.</p>
+          </div>
+        </div>
+        <div class="step mb-3 d-flex">
+          <span class="step-number bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 36px; height: 36px; flex-shrink: 0;">2</span>
+          <div>
+            <h5>Step Title</h5>
+            <p class="text-muted mb-0">Another step with its own content and examples.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Listicle Post Type -->
+    <section id="post-type-listicle" class="mb-5 p-4 border rounded" data-testid="post-type-listicle">
+      <span class="badge bg-purple mb-2" style="background-color: #6f42c1;">post_type: listicle</span>
+      <h2>Listicle Article Layout</h2>
+      <nav class="quick-nav mb-4">
+        <h6 class="text-muted text-uppercase small">Quick Navigation</h6>
+        <div class="d-flex flex-wrap gap-2">
+          <a href="#item-1" class="btn btn-sm btn-outline-secondary">1. Item One</a>
+          <a href="#item-2" class="btn btn-sm btn-outline-secondary">2. Item Two</a>
+          <a href="#item-3" class="btn btn-sm btn-outline-secondary">3. Item Three</a>
+        </div>
+      </nav>
+      <div class="listicle-items">
+        <article id="item-1" class="listicle-item mb-4 p-3 bg-light rounded">
+          <h3><span class="badge bg-primary me-2">1</span>Item One Title</h3>
+          <p>Description for the first item in the listicle with supporting details.</p>
+        </article>
+        <article id="item-2" class="listicle-item mb-4 p-3 bg-light rounded">
+          <h3><span class="badge bg-primary me-2">2</span>Item Two Title</h3>
+          <p>Description for the second item in the listicle with supporting details.</p>
+        </article>
+        <article id="item-3" class="listicle-item mb-4 p-3 bg-light rounded">
+          <h3><span class="badge bg-primary me-2">3</span>Item Three Title</h3>
+          <p>Description for the third item in the listicle with supporting details.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Interview Post Type -->
+    <section id="post-type-interview" class="mb-5 p-4 border rounded" data-testid="post-type-interview">
+      <span class="badge bg-dark mb-2">post_type: interview</span>
+      <h2>Interview Article Layout</h2>
+      <div class="interviewee-card card mb-4">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+              <i class="bi bi-person-fill fs-1"></i>
+            </div>
+            <div class="ms-4">
+              <h4 class="mb-1">Interviewee Name</h4>
+              <p class="text-muted mb-0">CEO, Tech Company Inc.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="interview-qa">
+        <div class="question mb-3">
+          <p class="fw-bold mb-1"><span class="badge bg-primary me-2">Q</span>What inspired you to start this company?</p>
+        </div>
+        <div class="answer mb-4 ps-4 border-start border-3">
+          <p class="mb-1"><span class="badge bg-secondary me-2">A</span>The answer to the question goes here with detailed response from the interviewee.</p>
+        </div>
+        <div class="question mb-3">
+          <p class="fw-bold mb-1"><span class="badge bg-primary me-2">Q</span>Where do you see the industry heading?</p>
+        </div>
+        <div class="answer mb-4 ps-4 border-start border-3">
+          <p class="mb-1"><span class="badge bg-secondary me-2">A</span>Another detailed response with the interviewee's perspective and insights.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Summary Table -->
+    <section class="mt-5">
+      <h2>Post Type Summary</h2>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover" data-testid="post-type-summary">
+          <thead class="table-dark">
+            <tr>
+              <th>Post Type</th>
+              <th>Sidebar</th>
+              <th>Key Features</th>
+              <th>Use Case</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>standard</code></td>
+              <td>Yes</td>
+              <td>Normal typography, traditional layout</td>
+              <td>General blog posts</td>
+            </tr>
+            <tr>
+              <td><code>featured</code></td>
+              <td>No</td>
+              <td>Full-width hero, large typography</td>
+              <td>Highlighted articles</td>
+            </tr>
+            <tr>
+              <td><code>breaking</code></td>
+              <td>No</td>
+              <td>Alert banner, live updates</td>
+              <td>Time-sensitive news</td>
+            </tr>
+            <tr>
+              <td><code>opinion</code></td>
+              <td>Yes</td>
+              <td>Author emphasis, pull quotes</td>
+              <td>Editorial content</td>
+            </tr>
+            <tr>
+              <td><code>review</code></td>
+              <td>Yes</td>
+              <td>Star rating, pros/cons grid</td>
+              <td>Product reviews</td>
+            </tr>
+            <tr>
+              <td><code>tutorial</code></td>
+              <td>Yes</td>
+              <td>Step numbering, progress indicator</td>
+              <td>How-to guides</td>
+            </tr>
+            <tr>
+              <td><code>listicle</code></td>
+              <td>No</td>
+              <td>Numbered sections, quick-nav</td>
+              <td>List-based content</td>
+            </tr>
+            <tr>
+              <td><code>interview</code></td>
+              <td>Yes</td>
+              <td>Q&A formatting, speaker labels</td>
+              <td>Interview transcripts</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

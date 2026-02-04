@@ -1,0 +1,86 @@
+/* ==========================================================================
+   Transition Design Tokens
+   ========================================================================== 
+   
+   Standardized transition system for consistent animations.
+   Consolidates 20+ different transition definitions.
+   
+   Usage:
+     transition: $transition-base;
+     transition: $transition-fade;
+     transition: color $transition-duration $transition-timing;
+   
+   ========================================================================== */
+
+// Timing functions
+$transition-timing-ease: ease !default;
+$transition-timing-ease-in: ease-in !default;
+$transition-timing-ease-out: ease-out !default;
+$transition-timing-ease-in-out: ease-in-out !default;
+$transition-timing-linear: linear !default;
+
+// Duration tokens
+$transition-duration-fast: 0.15s !default;
+$transition-duration-base: 0.2s !default;
+$transition-duration-slow: 0.3s !default;
+$transition-duration-slower: 0.5s !default;
+
+// Complete transition tokens
+$transition-base: all $transition-duration-base $transition-timing-ease-in-out !default;
+$transition-fast: all $transition-duration-fast $transition-timing-ease-in-out !default;
+$transition-slow: all $transition-duration-slow $transition-timing-ease-in-out !default;
+
+// Specific property transitions
+$transition-fade: opacity $transition-duration-fast $transition-timing-linear !default;
+$transition-collapse: height $transition-duration-slow $transition-timing-ease !default;
+$transition-collapse-width: width $transition-duration-slow $transition-timing-ease !default;
+
+// Navigation transitions
+$transition-nav-link: color $transition-duration-fast $transition-timing-ease-in-out,
+                      background-color $transition-duration-fast $transition-timing-ease-in-out,
+                      border-color $transition-duration-fast $transition-timing-ease-in-out !default;
+
+// Transform transitions
+$transition-transform: transform $transition-duration-base $transition-timing-ease-in-out !default;
+$transition-transform-fast: transform $transition-duration-fast $transition-timing-ease-out !default;
+
+// Button transitions
+$transition-btn: color $transition-duration-fast $transition-timing-ease-in-out,
+                 background-color $transition-duration-fast $transition-timing-ease-in-out,
+                 border-color $transition-duration-fast $transition-timing-ease-in-out,
+                 box-shadow $transition-duration-fast $transition-timing-ease-in-out !default;
+
+// Input transitions
+$transition-input: border-color $transition-duration-fast $transition-timing-ease-in-out,
+                   box-shadow $transition-duration-fast $transition-timing-ease-in-out !default;
+
+// Card/component transitions
+$transition-card: box-shadow $transition-duration-base $transition-timing-ease-in-out,
+                  transform $transition-duration-base $transition-timing-ease-in-out !default;
+
+// CSS Custom Properties for runtime theming
+:root {
+  --transition-base: #{$transition-base};
+  --transition-fast: #{$transition-fast};
+  --transition-slow: #{$transition-slow};
+  --transition-fade: #{$transition-fade};
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-base: none;
+    --transition-fast: none;
+    --transition-slow: none;
+    --transition-fade: none;
+  }
+  
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
