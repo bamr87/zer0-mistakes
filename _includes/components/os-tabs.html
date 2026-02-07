@@ -1,0 +1,101 @@
+<!--
+  ===================================================================
+  OS TABS - Operating System Tabbed Code Blocks
+  ===================================================================
+  
+  File: os-tabs.html
+  Path: _includes/components/os-tabs.html
+  Purpose: Renders Bootstrap 5 nav-tabs for OS-specific code blocks.
+           Allows markdown pages to present code snippets organized
+           by operating system (macOS, Windows, Linux) in a clean,
+           tabbed interface.
+  
+  Parameters:
+    - id        (required): Unique identifier for this tab group
+    - mac       (optional): macOS code snippet (raw text)
+    - win       (optional): Windows code snippet (raw text)
+    - linux     (optional): Linux code snippet (raw text)
+    - mac_lang  (optional): Language hint for macOS (default: bash)
+    - win_lang  (optional): Language hint for Windows (default: powershell)
+    - linux_lang(optional): Language hint for Linux (default: bash)
+  
+  Dependencies:
+    - Bootstrap 5.3.3 (nav-tabs, tab-content components)
+    - Bootstrap Icons (bi-apple, bi-windows, bi-ubuntu)
+    - assets/css/custom.css (.os-tabs styles)
+  ===================================================================
+-->
+
+{% assign tab_id = include.id %}
+{% assign mac_lang = include.mac_lang | default: "bash" %}
+{% assign win_lang = include.win_lang | default: "powershell" %}
+{% assign linux_lang = include.linux_lang | default: "bash" %}
+
+{% assign has_mac = false %}
+{% assign has_win = false %}
+{% assign has_linux = false %}
+
+{% if include.mac and include.mac != "" %}{% assign has_mac = true %}{% endif %}
+{% if include.win and include.win != "" %}{% assign has_win = true %}{% endif %}
+{% if include.linux and include.linux != "" %}{% assign has_linux = true %}{% endif %}
+
+{% comment %} Determine which tab is active (first available) {% endcomment %}
+{% assign first_active = "" %}
+{% if has_mac and first_active == "" %}{% assign first_active = "mac" %}{% endif %}
+{% if has_win and first_active == "" %}{% assign first_active = "win" %}{% endif %}
+{% if has_linux and first_active == "" %}{% assign first_active = "linux" %}{% endif %}
+
+<div class="os-tabs mb-4">
+  <ul class="nav nav-tabs" id="os-tab-{{ tab_id }}" role="tablist">
+    {% if has_mac %}
+    <li class="nav-item" role="presentation">
+      <button class="nav-link{% if first_active == 'mac' %} active{% endif %}" id="mac-tab-{{ tab_id }}"
+              data-bs-toggle="tab" data-bs-target="#mac-pane-{{ tab_id }}"
+              type="button" role="tab" aria-controls="mac-pane-{{ tab_id }}"
+              aria-selected="{% if first_active == 'mac' %}true{% else %}false{% endif %}">
+        <i class="bi bi-apple" aria-hidden="true"></i> macOS
+      </button>
+    </li>
+    {% endif %}
+    {% if has_win %}
+    <li class="nav-item" role="presentation">
+      <button class="nav-link{% if first_active == 'win' %} active{% endif %}" id="win-tab-{{ tab_id }}"
+              data-bs-toggle="tab" data-bs-target="#win-pane-{{ tab_id }}"
+              type="button" role="tab" aria-controls="win-pane-{{ tab_id }}"
+              aria-selected="{% if first_active == 'win' %}true{% else %}false{% endif %}">
+        <i class="bi bi-windows" aria-hidden="true"></i> Windows
+      </button>
+    </li>
+    {% endif %}
+    {% if has_linux %}
+    <li class="nav-item" role="presentation">
+      <button class="nav-link{% if first_active == 'linux' %} active{% endif %}" id="linux-tab-{{ tab_id }}"
+              data-bs-toggle="tab" data-bs-target="#linux-pane-{{ tab_id }}"
+              type="button" role="tab" aria-controls="linux-pane-{{ tab_id }}"
+              aria-selected="{% if first_active == 'linux' %}true{% else %}false{% endif %}">
+        <i class="bi bi-ubuntu" aria-hidden="true"></i> Linux
+      </button>
+    </li>
+    {% endif %}
+  </ul>
+  <div class="tab-content" id="os-tabContent-{{ tab_id }}">
+    {% if has_mac %}
+    <div class="tab-pane fade{% if first_active == 'mac' %} show active{% endif %}" id="mac-pane-{{ tab_id }}"
+         role="tabpanel" aria-labelledby="mac-tab-{{ tab_id }}" tabindex="0">
+      <pre><code class="language-{{ mac_lang }}">{{ include.mac | strip | escape }}</code></pre>
+    </div>
+    {% endif %}
+    {% if has_win %}
+    <div class="tab-pane fade{% if first_active == 'win' %} show active{% endif %}" id="win-pane-{{ tab_id }}"
+         role="tabpanel" aria-labelledby="win-tab-{{ tab_id }}" tabindex="0">
+      <pre><code class="language-{{ win_lang }}">{{ include.win | strip | escape }}</code></pre>
+    </div>
+    {% endif %}
+    {% if has_linux %}
+    <div class="tab-pane fade{% if first_active == 'linux' %} show active{% endif %}" id="linux-pane-{{ tab_id }}"
+         role="tabpanel" aria-labelledby="linux-tab-{{ tab_id }}" tabindex="0">
+      <pre><code class="language-{{ linux_lang }}">{{ include.linux | strip | escape }}</code></pre>
+    </div>
+    {% endif %}
+  </div>
+</div>
