@@ -118,3 +118,43 @@
     margin-top: 56px;
     background: #1cc927;
   }
+
+  /* ------------------------------------------------------------------------------------------------------------------- */
+  /* OS Tabs - Tabbed code blocks for OS-specific content (macOS, Windows, Linux)
+  /* ------------------------------------------------------------------------------------------------------------------- */
+
+  .os-tabs .nav-tabs {
+    border-bottom: 2px solid var(--bs-border-color);
+  }
+
+  .os-tabs .nav-tabs .nav-link {
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    color: var(--bs-body-color);
+    border-radius: var(--bs-border-radius) var(--bs-border-radius) 0 0;
+  }
+
+  .os-tabs .nav-tabs .nav-link i {
+    margin-right: 0.25rem;
+  }
+
+  .os-tabs .tab-content {
+    border: 1px solid var(--bs-border-color);
+    border-top: none;
+    border-radius: 0 0 var(--bs-border-radius) var(--bs-border-radius);
+    background-color: var(--bs-tertiary-bg);
+  }
+
+  .os-tabs .tab-content pre {
+    margin: 0;
+    border: none;
+    border-radius: 0 0 var(--bs-border-radius) var(--bs-border-radius);
+    background-color: transparent;
+  }
+
+  .os-tabs .tab-content pre code {
+    display: block;
+    padding: 1rem;
+    font-size: 0.875rem;
+  }
