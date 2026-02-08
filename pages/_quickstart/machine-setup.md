@@ -52,21 +52,32 @@ This intelligent installation script:
 
 ### Docker Installation
 
-{% include components/os-tabs.html
-   id="docker-install"
-   mac="# Intel Macs
+**macOS:**
+
+```bash
+# Intel Macs
 brew install --cask docker
 
 # Apple Silicon Macs (M1/M2/M3)
 brew install --cask docker
-# Docker Desktop automatically handles ARM64 compatibility"
-   win="# Install Docker Desktop
+# Docker Desktop automatically handles ARM64 compatibility
+```
+
+**Windows:**
+
+```powershell
+# Install Docker Desktop
 winget install Docker.DockerDesktop
 
 # Alternative: Use Windows Subsystem for Linux (WSL2)
 wsl --install
-winget install Docker.DockerDesktop"
-   linux="# Ubuntu/Debian
+winget install Docker.DockerDesktop
+```
+
+**Linux:**
+
+```bash
+# Ubuntu/Debian
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 sudo usermod -aG docker $USER
@@ -74,11 +85,8 @@ sudo usermod -aG docker $USER
 # CentOS/RHEL/Fedora
 sudo dnf install docker docker-compose
 sudo systemctl enable --now docker
-sudo usermod -aG docker $USER"
-   mac_lang="bash"
-   win_lang="powershell"
-   linux_lang="bash"
-%}
+sudo usermod -aG docker $USER
+```
 
 ### Verify Docker Installation
 
@@ -96,72 +104,52 @@ docker run hello-world
 
 **1. Git (Version Control)**
 
-{% include components/os-tabs.html
-   id="install-git"
-   mac="# Install git via Homebrew
+```bash
+# macOS
 brew install git
 
-# Configure Git
-git config --global user.name &quot;Your Name&quot;
-git config --global user.email &quot;your.email@example.com&quot;"
-   win="# Install git via Winget
+# Windows
 winget install Git.Git
 
-# Configure Git
-git config --global user.name &quot;Your Name&quot;
-git config --global user.email &quot;your.email@example.com&quot;"
-   linux="# Install git via APT (Ubuntu/Debian)
+# Linux (Ubuntu/Debian)
 sudo apt install git
 
 # Configure Git
-git config --global user.name &quot;Your Name&quot;
-git config --global user.email &quot;your.email@example.com&quot;"
-   mac_lang="bash"
-   win_lang="powershell"
-   linux_lang="bash"
-%}
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+```
 
 **2. GitHub CLI (Repository Management)**
 
-{% include components/os-tabs.html
-   id="install-gh-cli"
-   mac="# Install GitHub CLI via Homebrew
+```bash
+# macOS
 brew install gh
 
-# Authenticate with GitHub
-gh auth login"
-   win="# Install GitHub CLI via Winget
+# Windows
 winget install GitHub.cli
 
-# Authenticate with GitHub
-gh auth login"
-   linux="# Install GitHub CLI via APT
+# Linux
 curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-echo &quot;deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main&quot; | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
 sudo apt update
 sudo apt install gh
 
 # Authenticate with GitHub
-gh auth login"
-   mac_lang="bash"
-   win_lang="powershell"
-   linux_lang="bash"
-%}
+gh auth login
+```
 
 **3. Visual Studio Code (Recommended Editor)**
 
-{% include components/os-tabs.html
-   id="install-vscode"
-   mac="# Install VS Code via Homebrew
-brew install --cask visual-studio-code"
-   win="# Install VS Code via Winget
-winget install Microsoft.VisualStudioCode"
-   linux="# Install VS Code via Snap
-sudo snap install code --classic"
-   mac_lang="bash"
-   win_lang="powershell"
-   linux_lang="bash"
-%}
+```bash
+# macOS
+brew install --cask visual-studio-code
+
+# Windows
+winget install Microsoft.VisualStudioCode
+
+# Linux
+sudo snap install code --classic
+```
 
 ### VS Code Extensions for Jekyll Development
 
