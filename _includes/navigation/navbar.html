@@ -3,24 +3,24 @@
     path: /includes/navbar.html
     includes:
     purpose: Offcanvas main navigation following Bootstrap 5 best practices
-             with hover-activated dropdowns for desktop
+             with hover-activated dropdowns for desktop and accessible interactions
  -->
 
 <!-- Navigation Links - Offcanvas -->
-<div class="offcanvas offcanvas-end col-lg-2" tabindex="-1" id="bdNavbar" aria-labelledby="mainNavOffcanvasLabel">
+<div class="offcanvas offcanvas-end col-lg-2" tabindex="-1" id="bdNavbar" aria-labelledby="mainNavOffcanvasLabel" aria-modal="true" role="dialog">
 
     <!-- Main Navigation Header - Offcanvas -->
     <div class="offcanvas-header border-bottom">
-        <h5 class="offcanvas-title" id="mainNavOffcanvasLabel">Main Navigation</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" data-bs-target="#bdNavbar"></button>
+        <h2 class="offcanvas-title h5" id="mainNavOffcanvasLabel">Main Navigation</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close navigation menu" data-bs-target="#bdNavbar"></button>
     </div>
 
     <!-- Main Navigation Body - Offcanvas -->
     <div class="offcanvas-body">
-        <ul class="navbar-nav justify-content-lg-center text-start flex-grow-1">
-            <li class="nav-item d-lg-none">
-                <a class="nav-link" href="{{ '/' | relative_url }}">
-                    <i class="{{site.default_icon}} bi-house me-2"></i>
+        <ul class="navbar-nav justify-content-lg-center text-start flex-grow-1" role="menubar">
+            <li class="nav-item d-lg-none" role="none">
+                <a class="nav-link" href="{{ '/' | relative_url }}" role="menuitem" {% if page.url == '/' %}aria-current="page"{% endif %}>
+                    <i class="{{site.default_icon}} bi-house me-2" aria-hidden="true"></i>
                     Home
                 </a>
             </li>
@@ -28,44 +28,46 @@
                 {%- assign has_children = link.children and link.children.size > 0 -%}
 
                 {%- if has_children -%}
-                    <li class="nav-item dropdown d-flex align-items-center nav-hover-dropdown">
+                    <li class="nav-item dropdown d-flex align-items-center nav-hover-dropdown" role="none">
                         <!-- Parent link navigates directly -->
                         <a
                             class="nav-link"
                             href="{{ link.url | relative_url }}"
+                            role="menuitem"
                             {%- if link.url == page.url -%} aria-current="page"{%- endif -%}
                             title="{{ link.title }}"
                         >
                             {%- if link.icon -%}
-                                <i class="{{site.default_icon}} {{ link.icon }}"></i>
+                                <i class="{{site.default_icon}} {{ link.icon }}" aria-hidden="true"></i>
                             {%- endif -%}
                             <span class="nav-link-text">{{ link.title }}</span>
                         </a>
 
                         <!-- Split toggle opens the dropdown (click on mobile, hover on desktop) -->
-                        <a
-                            class="nav-link dropdown-toggle dropdown-toggle-split ms-1 px-1"
-                            href="#"
+                        <button
+                            class="nav-link dropdown-toggle dropdown-toggle-split ms-1 px-1 btn"
+                            type="button"
                             id="dropdown-{{ link.title | slugify }}"
-                            role="button"
                             data-bs-toggle="dropdown"
                             data-bs-auto-close="outside"
                             aria-expanded="false"
-                            aria-label="Toggle {{ link.title }} menu"
+                            aria-label="Toggle {{ link.title }} submenu"
+                            aria-haspopup="true"
                         >
-                            <span class="visually-hidden">Toggle dropdown</span>
-                        </a>
+                            <span class="visually-hidden">Toggle {{ link.title }} submenu</span>
+                        </button>
 
-                        <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="dropdown-{{ link.title | slugify }}">
+                        <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="dropdown-{{ link.title | slugify }}" role="menu">
                             {%- for child in link.children -%}
-                                <li>
+                                <li role="none">
                                     <a
                                         class="dropdown-item"
                                         href="{{ child.url | relative_url }}"
+                                        role="menuitem"
                                         {%- if child.url == page.url -%} aria-current="page"{%- endif -%}
                                     >
                                         {%- if child.icon -%}
-                                            <i class="{{site.default_icon}} {{ child.icon }} me-2"></i>
+                                            <i class="{{site.default_icon}} {{ child.icon }} me-2" aria-hidden="true"></i>
                                         {%- endif -%}
                                         {{ child.title }}
                                     </a>
@@ -74,22 +76,23 @@
                         </ul>
                     </li>
                 {%- else -%}
-                    <li class="nav-item">
+                    <li class="nav-item" role="none">
                         <a
                             class="nav-link"
                             href="{{ link.url | relative_url }}"
+                            role="menuitem"
                             {%- if link.url == page.url -%} aria-current="page"{%- endif -%}
                             title="{{ link.title }}"
                         >
                             {%- if link.icon -%}
-                                <i class="{{site.default_icon}} {{ link.icon }}"></i>
+                                <i class="{{site.default_icon}} {{ link.icon }}" aria-hidden="true"></i>
                             {%- endif -%}
                             <span class="nav-link-text">{{ link.title }}</span>
                         </a>
                     </li>
                 {%- endif -%}
             {%- endfor -%}
-            <li class="nav-item d-lg-none">
+            <li class="nav-item d-lg-none" role="none">
                 <button
                     class="nav-link btn btn-link text-start w-100"
                     type="button"
@@ -97,20 +100,22 @@
                     data-bs-target="#siteSearchModal"
                     data-search-toggle
                     aria-label="Open search"
+                    aria-haspopup="dialog"
                 >
-                    <i class="{{site.default_icon}} bi-search me-2"></i>
+                    <i class="{{site.default_icon}} bi-search me-2" aria-hidden="true"></i>
                     Search
                 </button>
             </li>
-            <li class="nav-item d-lg-none">
+            <li class="nav-item d-lg-none" role="none">
                 <button
                     class="nav-link btn btn-link text-start w-100"
                     type="button"
                     data-bs-toggle="modal"
                     data-bs-target="#info-section"
                     aria-controls="info-section"
+                    aria-haspopup="dialog"
                 >
-                    <i class="{{site.default_icon}} bi-gear me-2"></i>
+                    <i class="{{site.default_icon}} bi-gear me-2" aria-hidden="true"></i>
                     Settings
                 </button>
             </li>
