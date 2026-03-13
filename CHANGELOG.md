@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.21.1] - 2026-03-13
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 9665afd feat(templates): add README.md for templates directory and usage instructions
+- cc81bd9 chore(deps): update Ruby gem dependencies (#24)
+
+
 ## [0.21.0] - 2026-02-01
 
 ### Added
