@@ -165,14 +165,18 @@ posthog:
 ai_chat:
   enabled                : true
   provider               : 'openai'           # AI provider (openai)
+  auth_mode              : 'proxy'            # 'proxy' (recommended) or 'direct'
+  proxy_ready            : false              # Set true only when your proxy endpoint is deployed
   model                  : 'gpt-4o-mini'      # Chat model to use
   api_key                : ''                  # Leave empty in source. Inject at build time:
                                                # 1. Store as GitHub secret: OPENAI_API_KEY
                                                # 2. In CI, create _config_secrets.yml with the key
                                                # 3. Build: jekyll build --config _config.yml,_config_secrets.yml
-  endpoint               : 'https://api.openai.com/v1/chat/completions'
+  endpoint               : '/api/chat'        # Proxy endpoint (same-origin) for production safety
   max_tokens             : 1024               # Max response length
   temperature            : 0.7                # Response creativity (0-1)
+  strict_context         : true               # Ground answers to current page context only
+  out_of_scope_message   : "I can only answer from the content on this page."
   system_prompt          : >-
     You are a helpful assistant for the Zer0-Mistakes website,
     a Jekyll theme and developer blog. Answer questions about the

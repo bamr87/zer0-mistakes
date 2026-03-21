@@ -35,7 +35,11 @@
   ===================================================================
 -->
 
-{% if site.ai_chat.enabled and site.ai_chat.api_key != '' and site.ai_chat.api_key != nil %}
+{% assign ai_auth_mode = site.ai_chat.auth_mode | default: 'proxy' %}
+{% assign ai_has_key = site.ai_chat.api_key != '' and site.ai_chat.api_key != nil %}
+{% assign ai_proxy_ready = site.ai_chat.proxy_ready | default: false %}
+{% assign ai_proxy_enabled = ai_auth_mode == 'proxy' and ai_proxy_ready %}
+{% if site.ai_chat.enabled and (ai_proxy_enabled or ai_has_key) %}
 
 <!-- AI Chat Toggle Button -->
 <button id="aiChatToggle"
@@ -127,11 +131,14 @@
 
   // Configuration from Jekyll
   const CONFIG = {
-    endpoint: {{ site.ai_chat.endpoint | default: "https://api.openai.com/v1/chat/completions" | jsonify }},
+    endpoint: {{ site.ai_chat.endpoint | default: "/api/chat" | jsonify }},
+    authMode: {{ site.ai_chat.auth_mode | default: "proxy" | jsonify }},
     apiKey: {{ site.ai_chat.api_key | jsonify }},
     model: {{ site.ai_chat.model | default: "gpt-4o-mini" | jsonify }},
     maxTokens: {{ site.ai_chat.max_tokens | default: 1024 }},
     temperature: {{ site.ai_chat.temperature | default: 0.7 }},
+    strictContext: {{ site.ai_chat.strict_context | default: true | jsonify }},
+    outOfScopeMessage: {{ site.ai_chat.out_of_scope_message | default: "I can only answer from the content on this page." | jsonify }},
     systemPrompt: {{ site.ai_chat.system_prompt | default: "You are a helpful assistant." | jsonify }},
     welcomeMessage: {{ site.ai_chat.welcome_message | default: "Hi! Ask me anything about this page." | jsonify }}
   };
@@ -181,10 +188,42 @@
   function getSystemMessage() {
     const pageContext = getPageContext();
     let systemContent = CONFIG.systemPrompt;
+    if (CONFIG.strictContext) {
+      systemContent += '\n\nGrounding rules:\n'
+        + '- Answer ONLY using the provided page context.\n'
+        + '- If the answer is not in the page context, reply exactly with: "' + CONFIG.outOfScopeMessage + '"\n'
+        + '- Do not invent facts, links, or features.\n';
+    }
     if (pageContext) {
       systemContent += '\n\n' + pageContext;
     }
     return { role: 'system', content: systemContent };
+  }
+
+  function escapeHtml(text) {
+    return String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/\"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function renderAssistantMarkdown(raw) {
+    // Escape first, then allow a small markdown subset safely.
+    let safe = escapeHtml(raw || '');
+
+    safe = safe
+      .replace(/^###\s+(.+)$/gm, '<strong>$1</strong>')
+      .replace(/^##\s+(.+)$/gm, '<strong>$1</strong>')
+      .replace(/^#\s+(.+)$/gm, '<strong>$1</strong>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      .replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+      .replace(/^\s*[-*]\s+(.+)$/gm, '• $1')
+      .replace(/\n/g, '<br>');
+
+    return safe;
   }
 
   // Create a message element
@@ -194,7 +233,11 @@
 
     const bubble = document.createElement('div');
     bubble.className = 'ai-chat-bubble p-2 rounded-3 small';
-    bubble.textContent = content;
+    if (role === 'assistant') {
+      bubble.innerHTML = renderAssistantMarkdown(content);
+    } else {
+      bubble.textContent = content;
+    }
 
     wrapper.appendChild(bubble);
     return wrapper;
@@ -245,10 +288,15 @@
     try {
       const response = await fetch(CONFIG.endpoint, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + CONFIG.apiKey
-        },
+        headers: (function() {
+          const requestHeaders = {
+            'Content-Type': 'application/json'
+          };
+          if (CONFIG.authMode === 'direct' && CONFIG.apiKey) {
+            requestHeaders.Authorization = 'Bearer ' + CONFIG.apiKey;
+          }
+          return requestHeaders;
+        })(),
         body: JSON.stringify({
           model: CONFIG.model,
           messages: [getSystemMessage(), ...messages],
@@ -271,7 +319,8 @@
       }
 
       const data = await response.json();
-      const assistantMessage = data.choices?.[0]?.message?.content || 'Sorry, I could not generate a response.';
+      let assistantMessage = data.choices?.[0]?.message?.content || 'Sorry, I could not generate a response.';
+      assistantMessage = String(assistantMessage).trim() || CONFIG.outOfScopeMessage;
 
       // Add assistant message to UI and history
       appendMessage('assistant', assistantMessage);
