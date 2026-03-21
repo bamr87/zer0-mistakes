@@ -487,7 +487,7 @@ exclude:
   - test/
   - tests/
   - _site/lib/
-  # Build & development artifacts - not needed in published site
+  # Build system files - not needed in published site
   - Makefile
   - Rakefile
   - package.json
@@ -502,6 +502,7 @@ exclude:
   - lib/
   - features/
   - install.sh
+  # IDE and CI/CD configurations
   - zer0-mistakes.code-workspace
   - .github/
   - .devcontainer/
@@ -511,7 +512,7 @@ exclude:
   - .env.example
   - CODE_OF_CONDUCT.md
   - CONTRIBUTING.md
-  # Development artifacts
+  # Runtime logs
   - "logs/"
   - "*.log"
   - "debug-*.log"

@@ -43,4 +43,5 @@ profile                  : false
 # When using --config '_config.yml,_config_dev.yml', later config files
 # REPLACE (not merge) array values like 'exclude'. The main _config.yml
 # exclude list already includes all necessary exclusions.
+# If dev-specific exclusions are needed, add them to _config.yml directly.
 
