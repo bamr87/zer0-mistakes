@@ -31,6 +31,12 @@ posthog:
   api_key                : null
   api_host               : null
 
+# AI Chat Configuration for Development
+# Disabled by default in development - set api_key to test locally
+ai_chat:
+  enabled                : false
+  api_key                : null
+
 # Disable production optimizations for faster builds
 incremental              : true
 profile                  : false
