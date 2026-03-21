@@ -69,9 +69,17 @@ validate_rubygems_auth() {
     fi
     
     debug "Validating RubyGems authentication..."
+
+    # Load API key from environment or .env when available.
+    prepare_rubygems_api_key
+
+    if [[ -n "${GEM_HOST_API_KEY:-}" ]]; then
+        debug "✓ RubyGems API key available via GEM_HOST_API_KEY"
+        return 0
+    fi
     
     if [[ ! -f ~/.gem/credentials ]]; then
-        error "Not authenticated with RubyGems. Run 'gem signin' first."
+        error "RubyGems authentication missing. Set GEM_HOST_API_KEY (or RUBY_API_KEY in .env) or run 'gem signin'."
     fi
     
     debug "✓ RubyGems authentication present"

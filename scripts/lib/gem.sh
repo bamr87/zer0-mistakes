@@ -101,6 +101,13 @@ publish_gem() {
     if [[ ! -f "$gem_file" ]]; then
         error "Gem file not found: $gem_file (run build first)"
     fi
+
+    # Load API-key auth from environment or .env before publish.
+    prepare_rubygems_api_key
+
+    if [[ -z "${GEM_HOST_API_KEY:-}" ]] && [[ ! -f ~/.gem/credentials ]]; then
+        error "RubyGems authentication missing. Set GEM_HOST_API_KEY (or RUBY_API_KEY in .env) or run 'gem signin'."
+    fi
     
     # Check if version already exists
     if gem_version_exists "$version"; then
