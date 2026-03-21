@@ -697,7 +697,6 @@ zer0-mistakes/
 │   │   ├── custom.css                    # Custom styles
 │   │   └── stats.css                     # Statistics page styles
 │   ├── js/                               # JavaScript files
-│   │   ├── myScript.js                   # Custom theme JS
 │   │   ├── auto-hide-nav.js              # Navigation behavior
 │   │   ├── back-to-top.js                # Scroll to top
 │   │   ├── code-copy.js                  # Code block copying

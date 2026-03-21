@@ -237,7 +237,8 @@
     
     navLinks.forEach(link => {
       const tooltip = new bootstrap.Tooltip(link, {
-        trigger: 'hover focus',
+        // Only trigger tooltip in compact desktop (992-1199px) where text labels are hidden
+        trigger: 'manual',
         placement: 'bottom',
         delay: TOOLTIP_DELAY,
         boundary: 'window',
@@ -245,6 +246,16 @@
         customClass: 'nav-tooltip'
       });
       tooltips.push(tooltip);
+
+      // Manually show/hide based on viewport
+      link.addEventListener('mouseenter', () => {
+        if (isCompactDesktop()) tooltip.show();
+      });
+      link.addEventListener('mouseleave', () => tooltip.hide());
+      link.addEventListener('focus', () => {
+        if (isCompactDesktop()) tooltip.show();
+      });
+      link.addEventListener('blur', () => tooltip.hide());
     });
     
     // Update tooltip state on window resize

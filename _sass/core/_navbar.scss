@@ -608,8 +608,10 @@
   }
   
   .navbar-brand img {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    max-width: none; // Prevent img-fluid override
   }
 }
 
