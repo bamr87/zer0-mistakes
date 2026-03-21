@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jekyll-theme-zer0 (0.21.0)
+    jekyll-theme-zer0 (0.21.1)
       jekyll
 
 GEM
@@ -56,8 +56,9 @@ GEM
     em-websocket (0.5.3)
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0)
-    ethon (0.15.0)
+    ethon (0.18.0)
       ffi (>= 1.15.0)
+      logger
     eventmachine (1.2.7)
     execjs (2.10.0)
     faraday (2.14.1)
@@ -151,7 +152,7 @@ GEM
     http_parser.rb (0.8.1)
     i18n (1.14.8)
       concurrent-ruby (~> 1.0)
-    io-event (1.14.3)
+    io-event (1.14.4)
     jekyll (3.10.0)
       addressable (~> 2.4)
       colorator (~> 1.0)
@@ -359,7 +360,7 @@ GEM
       rubocop-ast (>= 1.49.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 4.0)
-    rubocop-ast (1.49.0)
+    rubocop-ast (1.49.1)
       parser (>= 3.3.7.2)
       prism (~> 1.7)
     rubocop-rake (0.7.1)
@@ -383,8 +384,8 @@ GEM
     traces (0.18.2)
     ttfunk (1.8.0)
       bigdecimal (~> 3.1)
-    typhoeus (1.5.0)
-      ethon (>= 0.9.0, < 0.16.0)
+    typhoeus (1.6.0)
+      ethon (>= 0.18.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (3.2.0)
