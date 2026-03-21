@@ -30,13 +30,13 @@ git subtree add --prefix=pages/_about/contributors/bamr87 bamr87 main
 
 <!-- Include the library. -->
 <script
-  src="https://unpkg.com/github-calendar@latest/dist/github-calendar.min.js">
+  src="{{ '/assets/vendor/github-calendar/github-calendar.min.js' | relative_url }}">
 </script>
 
 <!-- Optionally, include the theme (if you don't want to struggle to write the CSS) -->
 <link
   rel="stylesheet"
-  href="https://unpkg.com/github-calendar@latest/dist/github-calendar-responsive.css"
+  href="{{ '/assets/vendor/github-calendar/github-calendar-responsive.css' | relative_url }}"
 />
 
 <!-- Prepare a container for your calendar. -->

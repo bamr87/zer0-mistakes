@@ -26,7 +26,7 @@
   - Supports all Mermaid diagram types (flowcharts, sequence, gantt, etc.)
   
   Configuration:
-  - Mermaid v10 via CDN (latest stable)
+  - Mermaid v10 bundled locally
   - Forest theme for dark mode compatibility
   - Client-side code block conversion for GitHub Pages compatibility
   
@@ -41,8 +41,8 @@
   ===================================================================
 -->
 
-<!-- Load Mermaid.js from CDN (latest stable version) -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<!-- Load Mermaid.js (bundled locally) -->
+<script type="text/javascript" src="{{ '/assets/vendor/mermaid/mermaid.min.js' | relative_url }}"></script>
 
 <!-- Initialize Mermaid with custom configuration -->
 <script>
@@ -317,7 +317,7 @@
 </script>
 
 <!-- FontAwesome for Mermaid icon support (optional) -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="{{ '/assets/vendor/font-awesome/css/all.min.css' | relative_url }}">
 
 <!-- Custom CSS for Mermaid diagrams -->
 <style>
