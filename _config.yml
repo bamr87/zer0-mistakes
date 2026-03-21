@@ -166,7 +166,10 @@ ai_chat:
   enabled                : true
   provider               : 'openai'           # AI provider (openai)
   model                  : 'gpt-4o-mini'      # Chat model to use
-  api_key                : ''                  # Injected at build time from GitHub secrets
+  api_key                : ''                  # Leave empty in source. Inject at build time:
+                                               # 1. Store as GitHub secret: OPENAI_API_KEY
+                                               # 2. In CI, create _config_secrets.yml with the key
+                                               # 3. Build: jekyll build --config _config.yml,_config_secrets.yml
   endpoint               : 'https://api.openai.com/v1/chat/completions'
   max_tokens             : 1024               # Max response length
   temperature            : 0.7                # Response creativity (0-1)

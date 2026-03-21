@@ -24,7 +24,9 @@
   
   Security:
   - API key is injected at build time, not stored in source
-  - For production, consider using a server-side proxy endpoint
+  - IMPORTANT: Client-side API keys are visible in page source.
+    For production, route requests through a server-side proxy
+    by changing the 'endpoint' config to your proxy URL.
   
   Accessibility:
   - ARIA labels for screen readers
@@ -75,12 +77,11 @@
   <!-- Chat Input -->
   <div class="ai-chat-input p-3">
     <form id="aiChatForm" class="d-flex gap-2" autocomplete="off">
-      <label for="aiChatInput" class="visually-hidden">Type your message</label>
+      <label for="aiChatInput" class="visually-hidden">Chat message</label>
       <input type="text"
              id="aiChatInput"
              class="form-control form-control-sm"
              placeholder="{{ site.ai_chat.placeholder | default: 'Ask about this page...' }}"
-             aria-label="Chat message"
              maxlength="500"
              required>
       <button type="submit"
@@ -116,7 +117,8 @@
   HTML is stripped to send clean text to the AI.
 {% endcomment %}
 {% capture page_text %}{{ content | strip_html | strip_newlines | normalize_whitespace }}{% endcapture %}
-<script id="aiChatPageContent" type="text/plain">{{ page_text | truncate: site.ai_chat.context_max_length | default: 2000 }}</script>
+{% assign context_length = site.ai_chat.context_max_length | default: 2000 %}
+<script id="aiChatPageContent" type="text/plain">{{ page_text | truncate: context_length }}</script>
 
 <script>
 // AI Chat Widget
@@ -259,7 +261,13 @@
 
       if (!response.ok) {
         const errorData = await response.json().catch(function() { return {}; });
-        throw new Error(errorData.error?.message || 'API request failed (' + response.status + ')');
+        var statusMessages = {
+          401: 'Authentication failed. The API key may be invalid or missing.',
+          429: 'Rate limit exceeded. Please wait a moment and try again.',
+          500: 'The AI service is temporarily unavailable. Please try again later.',
+          503: 'The AI service is temporarily unavailable. Please try again later.'
+        };
+        throw new Error(errorData.error?.message || statusMessages[response.status] || 'API request failed (' + response.status + ')');
       }
 
       const data = await response.json();
@@ -290,8 +298,8 @@
     iconClose.classList.toggle('d-none', !isOpen);
 
     if (isOpen) {
-      // Focus input when opening
-      setTimeout(function() { input.focus(); }, 200);
+      // Focus input when opening (short delay for CSS transition to start)
+      setTimeout(function() { input.focus(); }, 50);
     }
   }
 
@@ -309,7 +317,7 @@
     // Event: form submit
     form.addEventListener('submit', function(e) {
       e.preventDefault();
-      var msg = input.value.trim();
+      const msg = input.value.trim();
       if (msg) {
         input.value = '';
         sendMessage(msg);
