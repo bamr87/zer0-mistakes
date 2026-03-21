@@ -44,12 +44,12 @@
                         </a>
 
                         <!-- Split toggle opens the dropdown (click on mobile, hover on desktop) -->
+                        <!-- Note: No data-bs-toggle="dropdown" — custom JS handles all interactions
+                             to avoid Bootstrap's native handler conflicting with our toggle logic -->
                         <button
                             class="nav-link dropdown-toggle dropdown-toggle-split ms-1 px-1 btn"
                             type="button"
                             id="dropdown-{{ link.title | slugify }}"
-                            data-bs-toggle="dropdown"
-                            data-bs-auto-close="outside"
                             aria-expanded="false"
                             aria-label="Toggle {{ link.title }} submenu"
                             aria-haspopup="true"

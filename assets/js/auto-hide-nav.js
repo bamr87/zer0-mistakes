@@ -87,12 +87,13 @@
         }
 
         // Optimized scroll listener using requestAnimationFrame
-        window.addEventListener('scroll', function() {
+        function onScroll() {
             if (!ticking) {
                 window.requestAnimationFrame(handleScroll);
                 ticking = true;
             }
-        }, { passive: true });
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
 
         // Apply smooth transition (unless user prefers reduced motion)
         if (!prefersReducedMotion) {
@@ -110,11 +111,22 @@
                     transform: translateY(-100%);
                     box-shadow: none;
                 }
-                #navbar {
-                    will-change: transform;
-                }
             `;
             document.head.appendChild(style);
+        }
+
+        // Pause auto-hide when offcanvas is open so fixed positioning works
+        const offcanvasEl = document.getElementById('bdNavbar');
+        if (offcanvasEl) {
+            offcanvasEl.addEventListener('show.bs.offcanvas', function() {
+                navbar.classList.remove('navbar-hidden');
+                isNavbarHidden = false;
+                window.removeEventListener('scroll', onScroll);
+            });
+            offcanvasEl.addEventListener('hidden.bs.offcanvas', function() {
+                lastScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                window.addEventListener('scroll', onScroll, { passive: true });
+            });
         }
     });
 })();
