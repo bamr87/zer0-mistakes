@@ -239,6 +239,7 @@ plugins:
   # Note: jekyll-mermaid is NOT in GitHub Pages whitelist - it only provides {% mermaid %} Liquid tag
   # Mermaid diagrams work without this plugin via client-side JavaScript (see _includes/components/mermaid.html)
   - jekyll-mermaid
+  - jekyll-include-cache
 
 # Project resource links (used by landing page and includes)
 resources:
@@ -478,6 +479,7 @@ exclude:
   - node_modules/
   - templates/
   - vendor/
+  - .vendor/
   # - "*.sh"
   - submodules/
   - MERMAID-*.md
@@ -485,11 +487,40 @@ exclude:
   - test/
   - tests/
   - _site/lib/
+  # Build system files - not needed in published site
+  - Makefile
+  - Rakefile
+  - package.json
+  - frontmatter.json
+  - jekyll-theme-zer0.gemspec
+  - docker-compose.yml
+  - docker-compose.prod.yml
+  - docker-compose.publish.yml
+  - docker-compose.test.yml
+  - docker/
+  - scripts/
+  - lib/
+  - features/
+  - install.sh
+  # IDE and CI/CD configurations
+  - zer0-mistakes.code-workspace
+  - .github/
+  - .devcontainer/
+  - .vscode/
+  - .cursor/
+  - .dockerignore
+  - .env.example
+  - CODE_OF_CONDUCT.md
+  - CONTRIBUTING.md
+  # Runtime logs
+  - "logs/"
+  - "*.log"
+  - "debug-*.log"
 
 # Sass/SCSS
 sass:
   sass_dir: _sass
-  style: expanded
+  style: compressed
 
 #  TODO: Fix bootstrap plugin
   # load_paths:
