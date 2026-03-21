@@ -1,11 +1,11 @@
 <!--
   ===================================================================
-  JAVASCRIPT CDN - External JavaScript Library Loading
+  JAVASCRIPT LIBRARIES - External JavaScript Library Loading
   ===================================================================
   
   File: js-cdn.html
   Path: _includes/components/js-cdn.html
-  Purpose: Load JavaScript libraries from CDN for site functionality
+  Purpose: Load JavaScript libraries (bundled locally) for site functionality
   
   Libraries:
   - jQuery 3.7.1 - DOM manipulation and AJAX
@@ -19,14 +19,10 @@
 -->
 
 <!-- jQuery 3.7.1 -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" 
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" 
-        crossorigin="anonymous"></script>
+<script src="{{ '/assets/vendor/jquery/jquery-3.7.1.min.js' | relative_url }}"></script>
 
 <!-- Bootstrap 5.3.3 Bundle (includes Popper.js) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
-        crossorigin="anonymous"></script>
+<script src="{{ '/assets/vendor/bootstrap/js/bootstrap.bundle.min.js' | relative_url }}"></script>
 
 <!-- Navigation scripts - Offcanvas, dropdowns, mobile interactions -->
 <script src="{{ '/assets/js/navigation.js' | relative_url }}"></script>

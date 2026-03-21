@@ -265,12 +265,12 @@ gisgus:
 #   1. Add 'mermaid: true' to page front matter
 #   2. Use ```mermaid ... ``` code blocks OR <div class="mermaid">...</div>
 # 
-# GitHub Pages Compatible: Yes (client-side rendering via CDN)
+# GitHub Pages Compatible: Yes (client-side rendering, bundled locally)
 # Plugin: jekyll-mermaid is OPTIONAL (not needed for GitHub Pages)
 # Documentation: https://mermaid.js.org/
 
 mermaid:
-  src: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js'
+  src: '/assets/vendor/mermaid/mermaid.min.js'
 
 ## Conversion
 # Markdown Options https://jekyllrb.com/docs/configuration/markdown/
