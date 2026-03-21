@@ -1,4 +1,5 @@
 _site/
+_site_proxycheck/
 .sass-cache/
 .jekyll-cache/
 .jekyll-metadata
@@ -35,3 +36,4 @@ logs/*
 
 # Front Matter CMS
 .frontmatter/
+vendor/
