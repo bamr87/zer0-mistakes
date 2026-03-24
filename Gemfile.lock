@@ -25,7 +25,7 @@ GEM
       public_suffix (>= 2.0.2, < 8.0)
     afm (1.0.0)
     ast (2.4.3)
-    async (2.38.0)
+    async (2.37.0)
       console (~> 1.29)
       fiber-annotation
       io-event (~> 1.11)
@@ -152,7 +152,7 @@ GEM
     http_parser.rb (0.8.1)
     i18n (1.14.8)
       concurrent-ruby (~> 1.0)
-    io-event (1.14.4)
+    io-event (1.14.3)
     jekyll (3.10.0)
       addressable (~> 2.4)
       colorator (~> 1.0)
@@ -264,7 +264,7 @@ GEM
       gemoji (>= 3, < 5)
       html-pipeline (~> 2.2)
       jekyll (>= 3.0, < 5.0)
-    json (2.19.1)
+    json (2.19.2)
     json-schema (6.2.0)
       addressable (~> 2.8)
       bigdecimal (>= 3.1, < 5)
@@ -415,8 +415,8 @@ DEPENDENCIES
   html-proofer
   jekyll-mermaid
   jekyll-theme-zer0!
-  rake (~> 13.0, >= 0)
-  rspec (~> 3.0, >= 0)
+  rake
+  rspec
   rubocop
   rubocop-rake
   tzinfo
@@ -425,4 +425,4 @@ DEPENDENCIES
   webrick
 
 BUNDLED WITH
-   2.7.2
+   2.5.23
