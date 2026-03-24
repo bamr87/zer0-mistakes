@@ -49,9 +49,9 @@
 </div>
 
 <!-- If a subtitle exists -->
-{%- if site.subtitle -%}
+{%- if site.subtitle and site.subtitle != "" -%}
 <div class="navbar-brand site-subtitle d-none d-lg-inline">
-    <a class="nav-link" href="{{ '/' | relative_url }}">
+    <a class="nav-link" href="{{ '/' | relative_url }}" aria-label="{{ site.subtitle }}">
         <span class="site-subtitle-text">
             {{ site.subtitle }}
         </span>

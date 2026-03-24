@@ -64,18 +64,38 @@ test.describe('Analytics & Cookie Consent', () => {
     await expect(modal).toBeVisible({ timeout: 2000 });
   });
 
-  test('banner does not reappear after consent is given', async ({ page }) => {
-    await page.goto('/');
-    await page.locator('#cookieConsent').waitFor({ state: 'visible', timeout: 5000 });
-    await page.locator('#acceptAllCookies').click();
-    await page.waitForTimeout(500);
+  test('banner does not reappear after consent is given', async ({ browser }) => {
+    // Use a fresh context without the addInitScript that clears consent,
+    // so that localStorage persists across navigations.
+    const context = await browser.newContext();
+    const freshPage = await context.newPage();
 
-    // Reload page
-    await page.reload();
-    await page.waitForTimeout(2000);
+    // Navigate first to have a valid origin, then clear consent
+    await freshPage.goto('/');
+    await freshPage.evaluate(() => localStorage.removeItem('zer0-cookie-consent'));
+    await freshPage.reload();
+    await freshPage.locator('#cookieConsent').waitFor({ state: 'visible', timeout: 5000 });
+    await freshPage.locator('#acceptAllCookies').click();
+    await freshPage.waitForTimeout(1000);
 
-    // Banner should not be visible
-    await expect(page.locator('#cookieConsent.cookie-banner-visible')).toBeHidden();
+    // Verify consent was stored
+    const consentBefore = await freshPage.evaluate(() =>
+      localStorage.getItem('zer0-cookie-consent')
+    );
+    expect(consentBefore).toBeTruthy();
+
+    // Reload page — consent should persist
+    await freshPage.reload();
+    await freshPage.waitForTimeout(3000);
+
+    // Banner should not be in the showing+visible state
+    const isShowing = await freshPage.locator('#cookieConsent').evaluate((el) =>
+      el.classList.contains('cookie-banner-showing') &&
+      el.classList.contains('cookie-banner-visible')
+    ).catch(() => false);
+    expect(isShowing).toBe(false);
+
+    await context.close();
   });
 
   test('PostHog script is not loaded without consent', async ({ page }) => {
