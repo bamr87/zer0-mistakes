@@ -21,11 +21,9 @@ Gem::Specification.new do |s|
   s.metadata["allowed_push_host"] = "https://rubygems.org"
   
   # Include theme files: layouts, includes, sass, assets, data, plugins, and scripts
-  # Vendor assets are .gitignored so we add them via Dir.glob
-  git_files = `git ls-files -z`.split("\x0").select do |f|
+  s.files                    = `git ls-files -z`.split("\x0").select do |f|
     f.match(%r{^(assets|scripts|_(data|includes|layouts|plugins|sass)/|(LICENSE|README|CHANGELOG|features)((\.(txt|md|markdown|yml)|$)))}i)
   end
-  s.files                    = (git_files + Dir.glob("assets/vendor/**/*").select { |f| File.file?(f) }).uniq
   
   s.platform                 = Gem::Platform::RUBY
 
