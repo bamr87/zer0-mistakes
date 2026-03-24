@@ -15,7 +15,9 @@
   - Collects current page metadata (title, description, content,
     URL, categories, tags) as system context for the AI
   - Sends messages to the configured AI provider endpoint
-  - Only renders when ai_chat.enabled is true and api_key is set
+  - Rendering is gated by ai_chat.enabled and either:
+      - Proxy mode: auth_mode: "proxy" with proxy_ready: true (recommended), or
+      - Direct mode: a non-empty ai_chat.api_key for client-side API access
   
   Dependencies:
   - Bootstrap 5 for UI components and styling
