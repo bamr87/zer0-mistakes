@@ -39,7 +39,8 @@
 {% assign ai_has_key = site.ai_chat.api_key != '' and site.ai_chat.api_key != nil %}
 {% assign ai_proxy_ready = site.ai_chat.proxy_ready | default: false %}
 {% assign ai_proxy_enabled = ai_auth_mode == 'proxy' and ai_proxy_ready %}
-{% if site.ai_chat.enabled and (ai_proxy_enabled or ai_has_key) %}
+{% assign ai_direct_enabled = ai_auth_mode == 'direct' and ai_has_key %}
+{% if site.ai_chat.enabled and (ai_proxy_enabled or ai_direct_enabled) %}
 
 <!-- AI Chat Toggle Button -->
 <button id="aiChatToggle"
