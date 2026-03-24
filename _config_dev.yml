@@ -32,10 +32,12 @@ posthog:
   api_host               : null
 
 # AI Chat Configuration for Development
-# Disabled by default in development - set api_key to test locally
+# Disabled by default in development. To test locally, set enabled: true,
+# provide an api_key, and use auth_mode: direct so the key is sent directly.
 ai_chat:
   enabled                : false
   api_key                : null
+  auth_mode              : direct
 
 # Disable production optimizations for faster builds
 incremental              : true
