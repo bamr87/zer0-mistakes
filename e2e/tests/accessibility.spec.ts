@@ -5,18 +5,23 @@ import { isBootstrapCSSLoaded } from './helpers';
 test.describe('Accessibility — WCAG 2.1 AA', () => {
   test('homepage has no critical accessibility violations', async ({ page }) => {
     await page.goto('/');
+    const hasCSS = await isBootstrapCSSLoaded(page);
+    const disabledRules = [
+      'aria-hidden-focus', // Bootstrap 5 modals use aria-hidden with focusable children
+      'link-in-text-block', // Links styled via hover underline — design choice
+      'list', // Bootstrap utility classes on <ul> (list-unstyled)
+    ];
+    // Only disable color-contrast when Bootstrap CSS isn't loaded
+    if (!hasCSS) {
+      disabledRules.push('color-contrast');
+    }
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa'])
       .exclude('#cookieConsent') // Consent banner may not be visible
       .exclude('#siteSearchModal') // Hidden modal — Bootstrap pattern
       .exclude('#info-section') // Hidden modal — Bootstrap pattern
       .exclude('#cookieSettingsModal') // Hidden modal — Bootstrap pattern
-      .disableRules([
-        'aria-hidden-focus', // Bootstrap 5 modals use aria-hidden with focusable children
-        'link-in-text-block', // Links styled via hover underline — design choice
-        'color-contrast', // Depends on Bootstrap CSS being loaded (CDN)
-        'list', // Bootstrap utility classes on <ul> (list-unstyled)
-      ])
+      .disableRules(disabledRules)
       .analyze();
 
     const critical = results.violations.filter(
@@ -27,18 +32,22 @@ test.describe('Accessibility — WCAG 2.1 AA', () => {
 
   test('about page has no critical accessibility violations', async ({ page }) => {
     await page.goto('/about/');
+    const hasCSS = await isBootstrapCSSLoaded(page);
+    const disabledRules = [
+      'aria-hidden-focus',
+      'link-in-text-block',
+      'list',
+    ];
+    if (!hasCSS) {
+      disabledRules.push('color-contrast');
+    }
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa'])
       .exclude('#cookieConsent')
       .exclude('#siteSearchModal')
       .exclude('#info-section')
       .exclude('#cookieSettingsModal')
-      .disableRules([
-        'aria-hidden-focus',
-        'link-in-text-block',
-        'color-contrast',
-        'list',
-      ])
+      .disableRules(disabledRules)
       .analyze();
 
     const critical = results.violations.filter(
