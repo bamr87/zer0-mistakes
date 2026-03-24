@@ -147,8 +147,24 @@
   // State
   let isOpen = false;
   let isLoading = false;
-  const messages = [];
+  const MAX_MESSAGES = 40; // Maximum number of messages to retain in history
+  const _messages = [];
+  const messages = new Proxy(_messages, {
+    set(target, prop, value) {
+      const result = Reflect.set(target, prop, value);
 
+      // When the array grows (numeric index or length change), enforce the cap
+      if (prop === 'length' || !Number.isNaN(Number(prop))) {
+        const excess = target.length - MAX_MESSAGES;
+        if (excess > 0) {
+          // Remove oldest messages, keep only the most recent MAX_MESSAGES
+          target.splice(0, excess);
+        }
+      }
+
+      return result;
+    }
+  });
   // DOM Elements
   const toggle = document.getElementById('aiChatToggle');
   const panel = document.getElementById('aiChatPanel');
