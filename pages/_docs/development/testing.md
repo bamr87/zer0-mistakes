@@ -1,6 +1,6 @@
 ---
 title: Testing
-description: Comprehensive testing guide including test suite structure, test development standards, and CI/CD integration.
+description: Comprehensive testing guide including RSpec unit/integration tests, Playwright E2E tests, and CI/CD integration.
 layout: default
 categories:
     - docs
@@ -14,265 +14,204 @@ difficulty: intermediate
 estimated_time: 15 minutes
 prerequisites:
     - Docker Desktop
-    - Basic shell scripting
+    - Ruby with Bundler
 sidebar:
     nav: docs
 ---
 
 # Testing Guide
 
-This guide covers the comprehensive testing infrastructure for the Zer0-Mistakes Jekyll theme, ensuring reliability across all features and platforms.
+This guide covers the testing infrastructure for the Zer0-Mistakes Jekyll theme, built on **RSpec** for unit/integration tests and **Playwright** for end-to-end browser tests.
 
 ## Test Suite Structure
 
 ```
-test/
-├── test_runner.sh       # Main test orchestration
-├── test_core.sh         # Core functionality tests
-├── test_deployment.sh   # Deployment and build tests
-├── test_quality.sh      # Code quality and linting
-├── results/             # Test results and reports
-└── README.md            # Test documentation
+spec/
+├── spec_helper.rb           # RSpec configuration & shared context
+├── build/                   # Jekyll build & output tests
+├── content/                 # Content validation tests
+├── features/                # Theme feature tests
+├── integration/             # Cross-component integration tests
+├── plugins/                 # Jekyll plugin tests
+├── quality/                 # Code quality & security tests
+└── schemas/                 # Data file schema validation
+
+e2e/
+├── playwright.config.ts     # Playwright configuration
+├── tests/                   # E2E browser test specs
+│   ├── navigation.spec.ts
+│   ├── search.spec.ts
+│   ├── dark-mode.spec.ts
+│   ├── responsive.spec.ts
+│   ├── accessibility.spec.ts
+│   ├── analytics.spec.ts
+│   └── visual-regression.spec.ts
+└── baselines/               # Visual regression baselines
 ```
 
 ## Running Tests
 
-### Quick Start
+### RSpec Tests
 
 ```bash
 # Run all tests
-./test/test_runner.sh
+bundle exec rspec
 
-# Run specific test suite
-./test/test_core.sh
-./test/test_deployment.sh
-./test/test_quality.sh
+# Run with detailed output
+bundle exec rspec --format documentation
 
-# Run with verbose output
-./test/test_runner.sh --verbose
+# Run specific category
+bundle exec rspec spec/build/
+bundle exec rspec spec/quality/
+bundle exec rspec spec/features/
 
-# Generate detailed report
-./test/test_runner.sh --report
+# Run a single spec file
+bundle exec rspec spec/build/jekyll_build_spec.rb
+
+# Run in Docker
+docker-compose exec jekyll bundle exec rspec
 ```
 
-### Docker-Based Testing
+### Playwright E2E Tests
 
 ```bash
-# Run tests in Docker environment
-docker-compose up -d
-docker-compose exec jekyll ./test/test_runner.sh
+# Install dependencies
+cd e2e && npm install && npx playwright install chromium
 
-# Run tests on clean container
-docker-compose down
-docker-compose up --build
-docker-compose exec jekyll ./test/test_core.sh
+# Run all E2E tests
+npx playwright test
+
+# Run specific project (desktop, tablet, mobile)
+npx playwright test --project=desktop
+npx playwright test --project=mobile
+
+# Run with UI mode
+npx playwright test --ui
+```
+
+### Rake Tasks
+
+```bash
+rake spec              # All RSpec tests
+rake spec:build        # Build tests only
+rake spec:quality      # Quality tests only
+rake e2e:all           # All Playwright tests
+rake e2e:desktop       # Desktop E2E tests
+rake e2e:a11y          # Accessibility E2E tests
 ```
 
 ## Test Categories
 
-### Core Tests (`test_core.sh`)
+### Build Tests (`spec/build/`)
 
-Tests for Jekyll build and theme functionality:
-
-| Test | Description |
+| Spec | Description |
 |------|-------------|
-| Jekyll Build | Verifies site builds without errors |
-| Theme Configuration | Validates `_config.yml` syntax |
-| Layout Files | Checks all required layouts exist |
-| Include Components | Verifies include files are present |
-| Asset Compilation | Tests CSS/JS asset processing |
+| `jekyll_build_spec.rb` | Verifies site builds, checks file structure |
+| `asset_compilation_spec.rb` | Tests CSS/JS asset processing |
+| `html_output_spec.rb` | Validates HTML output quality |
+| `version_consistency_spec.rb` | Checks version across all files |
 
-### Deployment Tests (`test_deployment.sh`)
+### Quality Tests (`spec/quality/`)
 
-Tests for deployment compatibility:
-
-| Test | Description |
+| Spec | Description |
 |------|-------------|
-| Docker Build | Verifies Docker image builds |
-| Docker Run | Tests site accessibility in container |
-| GitHub Pages | Checks remote_theme compatibility |
-| Gem Build | Validates gem package creation |
+| `security_spec.rb` | Checks for hardcoded secrets, sensitive files |
+| `accessibility_spec.rb` | Validates ARIA attributes, semantic HTML |
+| `compatibility_spec.rb` | Cross-platform and browser compatibility |
 
-### Quality Tests (`test_quality.sh`)
+### Feature Tests (`spec/features/`)
 
-Code quality and linting tests:
-
-| Test | Description |
+| Spec | Description |
 |------|-------------|
-| Markdown Linting | Validates Markdown syntax |
-| YAML Linting | Checks YAML file validity |
-| HTML Validation | Validates generated HTML |
-| Link Checking | Verifies internal links work |
+| `search_spec.rb` | Search functionality validation |
+| `navigation_spec.rb` | Navigation component tests |
+| `dark_mode_spec.rb` | Dark mode theme switching |
+| `cookie_consent_spec.rb` | GDPR consent system |
+
+### Schema Tests (`spec/schemas/`)
+
+| Spec | Description |
+|------|-------------|
+| `config_schema_spec.rb` | Validates `_config.yml` structure |
+| `data_files_spec.rb` | Validates YAML data files |
+| `front_matter_spec.rb` | Checks front matter in content |
 
 ## Writing Tests
 
-### Test Script Template
+### RSpec Example
 
-```bash
-#!/bin/bash
-set -euo pipefail
+```ruby
+# spec/features/my_feature_spec.rb
+RSpec.describe "My Feature" do
+  let(:site_dir) { File.join(PROJECT_ROOT, "_site") }
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+  it "generates expected output" do
+    expect(File.exist?(File.join(site_dir, "expected-file.html"))).to be true
+  end
 
-# Test counters
-TESTS_RUN=0
-TESTS_PASSED=0
-TESTS_FAILED=0
-
-# Logging functions
-log_test_pass() {
-    ((TESTS_PASSED++))
-    echo -e "✅ PASS: $1"
-}
-
-log_test_fail() {
-    ((TESTS_FAILED++))
-    echo -e "❌ FAIL: $1"
-}
-
-# Test execution wrapper
-run_test() {
-    local test_name="$1"
-    local test_command="$2"
-    
-    ((TESTS_RUN++))
-    if eval "$test_command"; then
-        log_test_pass "$test_name"
-    else
-        log_test_fail "$test_name"
-    fi
-}
-
-# Your tests here
-run_test "My Test" "[ -f _config.yml ]"
-
-# Summary
-echo "Tests: $TESTS_RUN, Passed: $TESTS_PASSED, Failed: $TESTS_FAILED"
-exit $TESTS_FAILED
+  it "includes required content" do
+    html = File.read(File.join(site_dir, "index.html"))
+    expect(html).to include("expected-content")
+  end
+end
 ```
 
-### Common Assertions
+### Playwright Example
 
-```bash
-# Assert file exists
-assert_file_exists() {
-    [ -f "$1" ] || { echo "File not found: $1"; return 1; }
-}
+```typescript
+// e2e/tests/my-feature.spec.ts
+import { test, expect } from '@playwright/test';
 
-# Assert directory exists
-assert_dir_exists() {
-    [ -d "$1" ] || { echo "Directory not found: $1"; return 1; }
-}
-
-# Assert command succeeds
-assert_command_success() {
-    eval "$1" >/dev/null 2>&1 || { echo "Command failed: $1"; return 1; }
-}
-
-# Assert string contains
-assert_contains() {
-    echo "$1" | grep -q "$2" || { echo "'$2' not found"; return 1; }
-}
+test('feature works correctly', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('.feature')).toBeVisible();
+});
 ```
 
 ## CI/CD Integration
 
-Tests run automatically via GitHub Actions:
-
-- On pull requests
-- On pushes to main branch
-- Scheduled nightly runs
-- Before releases
+Tests run automatically via GitHub Actions on pull requests and pushes to main.
 
 ### GitHub Actions Configuration
 
 ```yaml
 test:
   runs-on: ubuntu-latest
+  strategy:
+    matrix:
+      ruby-version: ['3.2', '3.3']
   steps:
-    - uses: actions/checkout@v3
-    - name: Run test suite
-      run: ./test/test_runner.sh --report
-    - name: Upload test results
-      uses: actions/upload-artifact@v3
-      if: always()
+    - uses: actions/checkout@v4
+    - uses: ruby/setup-ruby@v1
       with:
-        name: test-results
-        path: test/results/
+        ruby-version: ${{ matrix.ruby-version }}
+        bundler-cache: true
+    - run: bundle exec jekyll build
+    - run: bundle exec rspec --format documentation
 ```
 
 ## Best Practices
 
-### Test Isolation
-
-- Each test should be independent
-- Clean up after tests
-- Don't rely on test execution order
-- Use temporary directories for artifacts
-
-### Test Coverage
-
-- Test all critical paths
-- Test error conditions
-- Test edge cases
-- Test platform-specific behavior
-
-### Test Performance
-
-- Keep tests fast (< 5 seconds each)
-- Parallelize independent tests
-- Cache test dependencies
-- Use mocking when appropriate
-
-## Test Reports
-
-### JSON Report Format
-
-```json
-{
-  "timestamp": "2025-01-25T05:00:00Z",
-  "total": 15,
-  "passed": 14,
-  "failed": 1,
-  "skipped": 0,
-  "duration": "45 seconds"
-}
-```
-
-### HTML Reports
-
-Generate HTML reports for visual inspection:
-
-```bash
-./test/test_runner.sh --report --format html
-```
+- Each test should be independent — don't rely on execution order
+- Use `let` and `before` blocks for shared setup
+- Test both positive and negative cases
+- Keep tests fast — mock external dependencies when possible
+- Use meaningful `describe`/`it` descriptions
 
 ## Troubleshooting
 
 ### Tests Fail Locally but Pass in CI
 
-1. Check Docker version differences
-2. Verify environment variables
-3. Check for timing-sensitive tests
-4. Review path differences
-
-### Flaky Tests
-
-1. Add retry logic for network tests
-2. Increase timeouts for slow operations
-3. Mock external dependencies
-4. Check for race conditions
+1. Ensure `_site/` is built: `bundle exec jekyll build`
+2. Check Ruby version matches CI matrix
+3. Verify environment variables
 
 ### Missing Dependencies
 
 ```bash
-# Install test dependencies
-bundle install --with test
-
-# Install linting tools
-npm install -g markdownlint-cli
-pip install yamllint
+bundle install                              # Ruby dependencies
+cd e2e && npm install                       # Node dependencies
+npx playwright install chromium             # Browser binary
 ```
 
 ## Related

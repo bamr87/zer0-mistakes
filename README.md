@@ -489,7 +489,7 @@ docker-compose up
 # Edit files in _layouts/, _includes/, pages/
 
 # Run tests
-./test/test_runner.sh
+bundle exec rspec
 
 # Commit changes
 git commit -m "feat: add new component"
@@ -498,14 +498,14 @@ git commit -m "feat: add new component"
 ### Testing Commands
 
 ```bash
-# Quick validation
-./test/validate_installation.sh
+# Run RSpec test suite
+bundle exec rspec --format documentation
 
-# Full test suite
-./test/test_runner.sh --verbose
+# Run quality specs only
+bundle exec rspec spec/quality/
 
-# Docker-specific tests
-./test/test_docker_deployment.sh
+# Run Playwright E2E tests
+cd e2e && npx playwright test
 ```
 
 ---
@@ -698,7 +698,7 @@ git checkout -b feature/awesome-feature
 
 # Make changes and test
 docker-compose up
-./test/test_runner.sh
+bundle exec rspec
 
 # Submit PR
 git push origin feature/awesome-feature

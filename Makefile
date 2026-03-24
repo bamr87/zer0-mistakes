@@ -28,14 +28,24 @@ install: setup ## Alias for setup
 ##@ Development Commands
 
 .PHONY: test
-test: ## Run all tests and validations
-	@echo "$(BLUE)Running tests...$(RESET)"
-	@./scripts/test.sh
+test: ## Run RSpec test suite
+	@echo "$(BLUE)Running RSpec tests...$(RESET)"
+	@bundle exec rspec --format documentation
 
 .PHONY: test-verbose
-test-verbose: ## Run tests with verbose output
-	@echo "$(BLUE)Running tests (verbose)...$(RESET)"
-	@./scripts/test.sh --verbose
+test-verbose: ## Run RSpec tests with full output
+	@echo "$(BLUE)Running RSpec tests (verbose)...$(RESET)"
+	@bundle exec rspec --format documentation --backtrace
+
+.PHONY: test-quality
+test-quality: ## Run quality specs only
+	@echo "$(BLUE)Running quality specs...$(RESET)"
+	@bundle exec rspec spec/quality/ --format documentation
+
+.PHONY: test-e2e
+test-e2e: ## Run Playwright E2E tests
+	@echo "$(BLUE)Running Playwright E2E tests...$(RESET)"
+	@cd e2e && npx playwright test
 
 .PHONY: lint
 lint: ## Run linting and code quality checks

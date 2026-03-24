@@ -1,0 +1,400 @@
+# =============================================================================
+# Design Tokens: Colors
+# =============================================================================
+# Single source of truth for all color values used across the theme.
+# Maps to SCSS variables in _sass/core/_variables.scss and CSS custom properties.
+#
+# Format:
+#   name: Token name (becomes SCSS $token-{name} and CSS --zer0-{name})
+#   value: Light mode hex value
+#   dark: Dark mode hex value (optional, for theme-aware tokens)
+#   scss-var: Existing SCSS variable name this maps to
+#   bootstrap-var: Bootstrap CSS variable equivalent (if any)
+#   usage: Where this token is used
+#   category: Grouping for documentation
+# =============================================================================
+
+tokens:
+
+  # ---------------------------------------------------------------------------
+  # Gray Scale
+  # ---------------------------------------------------------------------------
+  - name: white
+    value: "#ffffff"
+    scss-var: "$white"
+    category: gray-scale
+
+  - name: gray-100
+    value: "#f8f9fa"
+    scss-var: "$gray-100"
+    bootstrap-var: "--bs-gray-100"
+    category: gray-scale
+
+  - name: gray-200
+    value: "#e9ecef"
+    scss-var: "$gray-200"
+    bootstrap-var: "--bs-gray-200"
+    category: gray-scale
+
+  - name: gray-300
+    value: "#dee2e6"
+    scss-var: "$gray-300"
+    bootstrap-var: "--bs-gray-300"
+    category: gray-scale
+
+  - name: gray-400
+    value: "#ced4da"
+    scss-var: "$gray-400"
+    bootstrap-var: "--bs-gray-400"
+    category: gray-scale
+
+  - name: gray-500
+    value: "#adb5bd"
+    scss-var: "$gray-500"
+    bootstrap-var: "--bs-gray-500"
+    category: gray-scale
+
+  - name: gray-600
+    value: "#6c757d"
+    scss-var: "$gray-600"
+    bootstrap-var: "--bs-gray-600"
+    category: gray-scale
+
+  - name: gray-700
+    value: "#495057"
+    scss-var: "$gray-700"
+    bootstrap-var: "--bs-gray-700"
+    category: gray-scale
+
+  - name: gray-800
+    value: "#343a40"
+    scss-var: "$gray-800"
+    bootstrap-var: "--bs-gray-800"
+    category: gray-scale
+
+  - name: gray-900
+    value: "#212529"
+    scss-var: "$gray-900"
+    bootstrap-var: "--bs-gray-900"
+    category: gray-scale
+
+  - name: black
+    value: "#000000"
+    scss-var: "$black"
+    category: gray-scale
+
+  # Legacy gray scale (theme-specific)
+  - name: gray
+    value: "#7a8288"
+    scss-var: "$gray"
+    category: gray-scale
+    usage: [theme-accents]
+
+  # ---------------------------------------------------------------------------
+  # Brand Colors (Bootstrap palette)
+  # ---------------------------------------------------------------------------
+  - name: blue
+    value: "#0d6efd"
+    scss-var: "$blue"
+    bootstrap-var: "--bs-blue"
+    category: brand
+
+  - name: indigo
+    value: "#6610f2"
+    scss-var: "$indigo"
+    bootstrap-var: "--bs-indigo"
+    category: brand
+
+  - name: purple
+    value: "#6f42c1"
+    scss-var: "$purple"
+    bootstrap-var: "--bs-purple"
+    category: brand
+
+  - name: pink
+    value: "#d63384"
+    scss-var: "$pink"
+    bootstrap-var: "--bs-pink"
+    category: brand
+
+  - name: red
+    value: "#dc3545"
+    scss-var: "$red"
+    bootstrap-var: "--bs-red"
+    category: brand
+
+  - name: orange
+    value: "#fd7e14"
+    scss-var: "$orange"
+    bootstrap-var: "--bs-orange"
+    category: brand
+
+  - name: yellow
+    value: "#ffc107"
+    scss-var: "$yellow"
+    bootstrap-var: "--bs-yellow"
+    category: brand
+
+  - name: green
+    value: "#198754"
+    scss-var: "$green"
+    bootstrap-var: "--bs-green"
+    category: brand
+
+  - name: teal
+    value: "#20c997"
+    scss-var: "$teal"
+    bootstrap-var: "--bs-teal"
+    category: brand
+
+  - name: cyan
+    value: "#0dcaf0"
+    scss-var: "$cyan"
+    bootstrap-var: "--bs-cyan"
+    category: brand
+
+  # ---------------------------------------------------------------------------
+  # Semantic / Theme Colors
+  # ---------------------------------------------------------------------------
+  - name: primary
+    value: "#0d6efd"
+    scss-var: "$primary"
+    bootstrap-var: "--bs-primary"
+    usage: [buttons, links, active-states, focus-rings]
+    category: semantic
+
+  - name: secondary
+    value: "#6c757d"
+    scss-var: "$secondary"
+    bootstrap-var: "--bs-secondary"
+    usage: [secondary-buttons, muted-text]
+    category: semantic
+
+  - name: success
+    value: "#198754"
+    scss-var: "$success"
+    bootstrap-var: "--bs-success"
+    usage: [alerts, badges, validation]
+    category: semantic
+
+  - name: info
+    value: "#0dcaf0"
+    scss-var: "$info"
+    bootstrap-var: "--bs-info"
+    usage: [info-alerts, tooltips]
+    category: semantic
+
+  - name: warning
+    value: "#ffc107"
+    scss-var: "$warning"
+    bootstrap-var: "--bs-warning"
+    usage: [warning-alerts, notices]
+    category: semantic
+
+  - name: danger
+    value: "#dc3545"
+    scss-var: "$danger"
+    bootstrap-var: "--bs-danger"
+    usage: [error-alerts, destructive-actions]
+    category: semantic
+
+  - name: light
+    value: "#f8f9fa"
+    scss-var: "$light"
+    bootstrap-var: "--bs-light"
+    category: semantic
+
+  - name: dark
+    value: "#212529"
+    scss-var: "$dark"
+    bootstrap-var: "--bs-dark"
+    category: semantic
+
+  # ---------------------------------------------------------------------------
+  # Surface & Background Colors
+  # ---------------------------------------------------------------------------
+  - name: body-bg
+    value: "#ffffff"
+    dark: "#212529"
+    scss-var: "$body-bg"
+    bootstrap-var: "--bs-body-bg"
+    usage: [page-background]
+    category: surface
+
+  - name: body-color
+    value: "#212529"
+    dark: "#dee2e6"
+    scss-var: "$body-color"
+    bootstrap-var: "--bs-body-color"
+    usage: [body-text]
+    category: surface
+
+  - name: background-color
+    value: "#ffffff"
+    scss-var: "$background-color"
+    usage: [page-background]
+    category: surface
+
+  - name: code-background
+    value: "#fafafa"
+    scss-var: "$code-background-color"
+    usage: [code-blocks, inline-code]
+    category: surface
+
+  - name: border-color
+    value: "#e9ecef"
+    scss-var: "$border-color"
+    bootstrap-var: "--bs-border-color"
+    usage: [dividers, card-borders, form-borders]
+    category: surface
+
+  - name: form-background
+    value: "#e9ecef"
+    scss-var: "$form-background-color"
+    usage: [form-inputs]
+    category: surface
+
+  - name: footer-background
+    value: "#e9ecef"
+    scss-var: "$footer-background-color"
+    usage: [footer]
+    category: surface
+
+  # ---------------------------------------------------------------------------
+  # Link Colors
+  # ---------------------------------------------------------------------------
+  - name: link-color
+    value: "#0d6efd"
+    scss-var: "$link-color"
+    bootstrap-var: "--bs-link-color"
+    usage: [text-links]
+    category: links
+
+  - name: link-hover-color
+    value: "#0a58ca"
+    scss-var: "$link-hover-color"
+    bootstrap-var: "--bs-link-hover-color"
+    usage: [link-hover-state]
+    category: links
+
+  # ---------------------------------------------------------------------------
+  # Theme-Specific Colors (legacy theme variables)
+  # ---------------------------------------------------------------------------
+  - name: primary-color
+    value: "#6f777d"
+    scss-var: "$primary-color"
+    usage: [masthead-links, navicons]
+    category: theme
+
+  - name: success-color
+    value: "#3fa63f"
+    scss-var: "$success-color"
+    usage: [success-notices]
+    category: theme
+
+  - name: warning-color
+    value: "#d67f05"
+    scss-var: "$warning-color"
+    usage: [warning-notices]
+    category: theme
+
+  - name: danger-color
+    value: "#ee5f5b"
+    scss-var: "$danger-color"
+    usage: [danger-notices]
+    category: theme
+
+  - name: info-color
+    value: "#3b9cba"
+    scss-var: "$info-color"
+    usage: [info-notices, link-color-base]
+    category: theme
+
+  # ---------------------------------------------------------------------------
+  # Syntax Highlighting (Base16 Material)
+  # ---------------------------------------------------------------------------
+  - name: syntax-bg
+    value: "#263238"
+    scss-var: "$base00"
+    category: syntax
+
+  - name: syntax-selection
+    value: "#314549"
+    scss-var: "$base02"
+    category: syntax
+
+  - name: syntax-comment
+    value: "#546e7a"
+    scss-var: "$base03"
+    category: syntax
+
+  - name: syntax-fg
+    value: "#eeffff"
+    scss-var: "$base05"
+    category: syntax
+
+  - name: syntax-red
+    value: "#f07178"
+    scss-var: "$base08"
+    category: syntax
+
+  - name: syntax-orange
+    value: "#f78c6c"
+    scss-var: "$base09"
+    category: syntax
+
+  - name: syntax-yellow
+    value: "#ffcb6b"
+    scss-var: "$base0a"
+    category: syntax
+
+  - name: syntax-green
+    value: "#c3e88d"
+    scss-var: "$base0b"
+    category: syntax
+
+  - name: syntax-cyan
+    value: "#89ddff"
+    scss-var: "$base0c"
+    category: syntax
+
+  - name: syntax-blue
+    value: "#82aaff"
+    scss-var: "$base0d"
+    category: syntax
+
+  - name: syntax-purple
+    value: "#c792ea"
+    scss-var: "$base0e"
+    category: syntax
+
+  # ---------------------------------------------------------------------------
+  # Dark Theme Overrides (via data-bs-theme="dark")
+  # ---------------------------------------------------------------------------
+  - name: dark-violet
+    value: "#9461fb"
+    dark: "#9461fb"
+    scss-var: "--bd-violet"
+    usage: [dark-theme-accent]
+    category: dark-theme
+
+  - name: dark-pre-bg
+    value: "#1b1f22"
+    scss-var: "--bd-pre-bg"
+    usage: [dark-code-blocks]
+    category: dark-theme
+
+  # ---------------------------------------------------------------------------
+  # Wizard Theme (custom color mode)
+  # ---------------------------------------------------------------------------
+  - name: wizard-blue-400
+    value: "#073781"
+    scss-var: "$blue-400"
+    usage: [wizard-theme]
+    category: wizard-theme
+
+  - name: wizard-blue-600
+    value: "#346182"
+    scss-var: "$blue-600"
+    usage: [wizard-theme-tertiary-bg]
+    category: wizard-theme

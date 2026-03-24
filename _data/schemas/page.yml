@@ -1,0 +1,130 @@
+# Schema: Standalone Pages
+# Validates front matter for top-level pages and generic content
+# Layout: root.html or default.html
+# Feature: ZER0-019 (Layout System)
+
+collection: pages
+layout: root
+description: "Standalone pages and generic content"
+permalink_pattern: "/:collection/:name/"
+
+fields:
+  # --- Required Fields ---
+  - name: title
+    type: string
+    required: true
+    max_length: 200
+    description: "Page title"
+
+  # --- Layout & Display ---
+  - name: layout
+    type: string
+    required: false
+    default: root
+    enum: [root, default, home, landing, news, section, search, stats, collection, sitemap-collection]
+    description: "Layout template to use"
+    feature_id: ZER0-019
+
+  # --- SEO & Preview ---
+  - name: description
+    type: string
+    required: false
+    max_length: 320
+    description: "SEO meta description"
+
+  - name: preview
+    type: image
+    required: false
+    description: "Preview/banner image path"
+    feature_id: ZER0-004
+
+  - name: permalink
+    type: string
+    required: false
+    pattern: "^/.*/$"
+    description: "Custom URL path override"
+
+  # --- Content Organization ---
+  - name: categories
+    type: array
+    required: false
+    description: "Page categories"
+
+  - name: tags
+    type: array
+    required: false
+    description: "Content tags"
+
+  # --- Author & Dates ---
+  - name: author
+    type: string
+    required: false
+    description: "Author username"
+
+  - name: date
+    type: date
+    required: false
+    description: "Publication date"
+
+  - name: lastmod
+    type: date
+    required: false
+    description: "Last modification date"
+
+  # --- Display Controls ---
+  - name: sidebar
+    type: object
+    required: false
+    default:
+      nav: tree
+    description: "Sidebar navigation configuration"
+    feature_id: ZER0-008
+
+  - name: author_profile
+    type: boolean
+    required: false
+    default: false
+    description: "Show author profile card"
+
+  - name: read_time
+    type: boolean
+    required: false
+    default: true
+    description: "Show estimated reading time"
+
+  - name: comments
+    type: boolean
+    required: false
+    default: false
+    description: "Enable Giscus comments"
+    feature_id: ZER0-029
+
+  - name: share
+    type: boolean
+    required: false
+    default: true
+    description: "Show social share buttons"
+
+  - name: related
+    type: boolean
+    required: false
+    default: true
+    description: "Show related content section"
+
+  - name: order
+    type: integer
+    required: false
+    description: "Display order for sorted listings"
+
+  - name: mermaid
+    type: boolean
+    required: false
+    default: false
+    description: "Enable Mermaid diagram rendering"
+    feature_id: ZER0-013
+
+  - name: draft
+    type: string
+    required: false
+    enum: [draft, "in progress", published]
+    description: "Content status"

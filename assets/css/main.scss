@@ -7,6 +7,9 @@
 
 // Styling Variables
 @import "core/variables";
+
+// Design Tokens (auto-generated from _data/tokens/)
+@import "generated/tokens";
 @import "core/docs";
 @import "core/theme";
 

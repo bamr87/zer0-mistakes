@@ -1,0 +1,56 @@
+# Pre-commit hooks for Zer0-Mistakes Jekyll Theme
+# Install: pip install pre-commit && pre-commit install
+# Run manually: pre-commit run --all-files
+# Skip: SKIP=validate-schemas git commit -m "..."
+#
+# These hooks provide fast local feedback before commits.
+# The same validations run in CI via .github/workflows/ci.yml.
+
+repos:
+  # YAML syntax validation
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-yaml
+        name: Validate YAML syntax
+        files: \.(yml|yaml)$
+        exclude: ^(_site/|vendor/|node_modules/)
+
+      - id: end-of-file-fixer
+        name: Fix end of file
+        exclude: ^(_site/|vendor/|node_modules/|\.min\.)
+
+      - id: trailing-whitespace
+        name: Trim trailing whitespace
+        exclude: ^(_site/|vendor/|node_modules/|\.min\.)
+
+      - id: check-merge-conflict
+        name: Check for merge conflicts
+
+      - id: check-added-large-files
+        name: Check for large files
+        args: ['--maxkb=1024']
+
+  # Component header validation
+  - repo: local
+    hooks:
+      - id: validate-component-headers
+        name: Validate @zer0-component headers
+        entry: ruby scripts/validate-component-headers.rb
+        language: ruby
+        files: ^(_layouts/.*\.html|_includes/.*\.html)$
+        pass_filenames: true
+
+      - id: validate-schema-fields
+        name: Validate front matter against schemas
+        entry: ruby scripts/validate-front-matter.rb
+        language: ruby
+        files: ^pages/.*\.(md|markdown|html)$
+        pass_filenames: true
+
+      - id: validate-feature-ids
+        name: Validate feature ID format
+        entry: ruby scripts/validate-feature-ids.rb
+        language: ruby
+        files: \.(html|rb|sh|yml)$
+        pass_filenames: true

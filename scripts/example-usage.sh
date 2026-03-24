@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# @zer0-component
+#   feature-id: ZER0-020
+#   type: script
+#   dependencies: []
+#
 # Example script demonstrating library usage
 # This shows how simple release workflows become with the new libraries
 

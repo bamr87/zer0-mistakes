@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# @zer0-component
+#   feature-id: ZER0-015
+#   type: script
+#   dependencies: []
+#
 # Changelog generation library for zer0-mistakes release scripts
 # Provides automatic changelog generation from git commit history
 # Compatible with Bash 3.2+ (macOS default) and Bash 4+

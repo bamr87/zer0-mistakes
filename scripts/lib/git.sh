@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# @zer0-component
+#   feature-id: ZER0-015
+#   type: script
+#   dependencies: []
+#
 # Git operations library for zer0-mistakes release scripts
 # Provides functions for tags, commits, and repository operations
 

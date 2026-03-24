@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# @zer0-component
+#   feature-id: ZER0-015
+#   type: script
+#   dependencies: []
+#
 # Simplified release command for zer0-mistakes Jekyll theme
 # Usage: ./scripts/release [patch|minor|major] [options]
 #

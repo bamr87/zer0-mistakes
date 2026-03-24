@@ -24,6 +24,12 @@
   - Requires page to be part of a Jekyll collection
   ===================================================================
 -->
+<!-- @zer0-component
+  feature-id: ZER0-008
+  type: include
+  dependencies: [ZER0-001]
+  styles: [sidebar, list-group]
+-->
 
 {% assign root_folder = site.collections | where: "label", page.collection | first %}
 

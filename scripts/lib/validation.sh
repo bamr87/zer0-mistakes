@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# @zer0-component
+#   feature-id: ZER0-015
+#   type: script
+#   dependencies: [ZER0-002]
+#
 # Validation library for zer0-mistakes release scripts
 # Provides environment, git, and dependency validation functions
 

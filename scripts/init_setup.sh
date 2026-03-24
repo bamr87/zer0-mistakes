@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# @zer0-component
+#   feature-id: ZER0-003
+#   type: script
+#   dependencies: [ZER0-002]
+#
 # AI-Powered Self-Healing Jekyll Theme Setup Script
 # Part of the IT-Journey AI Evolution Engine Seed
 # Designed for Docker-first development with intelligent error recovery

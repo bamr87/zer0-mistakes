@@ -1,4 +1,9 @@
 #!/bin/bash
+# @zer0-component
+#   feature-id: ZER0-004
+#   type: script
+#   dependencies: []
+#
 #
 # Script Name: install-preview-generator
 # Description: Install the AI Preview Image Generator feature into a Jekyll site

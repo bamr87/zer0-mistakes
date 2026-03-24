@@ -469,6 +469,16 @@ defaults:
 
 exclude:
   - .sass-cache/
+  - .cursor
+  - .devcontainer/
+  - .docker/
+  - .github/
+  - .git/
+  - .gitignore
+  - .lib/
+  - .vscode/
+  - .frontmatter
+  
   - .jekyll-cache/
   - .obsidian
   - docs/

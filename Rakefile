@@ -68,24 +68,92 @@ namespace :dev do
 end
 
 # =============================================================================
-# Test Tasks
+# RSpec Test Tasks
 # =============================================================================
-namespace :test do
-  desc "Run all tests"
+require "rspec/core/rake_task"
+
+RSpec::Core::RakeTask.new(:spec) do |t|
+  t.pattern = "spec/**/*_spec.rb"
+end
+
+namespace :spec do
+  RSpec::Core::RakeTask.new(:schemas) do |t|
+    t.pattern = "spec/schemas/**/*_spec.rb"
+  end
+
+  RSpec::Core::RakeTask.new(:plugins) do |t|
+    t.pattern = "spec/plugins/**/*_spec.rb"
+  end
+
+  RSpec::Core::RakeTask.new(:features) do |t|
+    t.pattern = "spec/features/**/*_spec.rb"
+  end
+
+  RSpec::Core::RakeTask.new(:build) do |t|
+    t.pattern = "spec/build/**/*_spec.rb"
+  end
+
+  RSpec::Core::RakeTask.new(:content) do |t|
+    t.pattern = "spec/content/**/*_spec.rb"
+  end
+
+  RSpec::Core::RakeTask.new(:integration) do |t|
+    t.pattern = "spec/integration/**/*_spec.rb"
+  end
+
+  RSpec::Core::RakeTask.new(:tokens) do |t|
+    t.pattern = "spec/tokens/**/*_spec.rb"
+  end
+
+  RSpec::Core::RakeTask.new(:quality) do |t|
+    t.pattern = "spec/quality/**/*_spec.rb"
+  end
+end
+
+# =============================================================================
+# Design Token Tasks
+# =============================================================================
+namespace :tokens do
+  desc "Generate SCSS from design token YAML files"
+  task :generate do
+    sh "ruby scripts/generate-tokens.rb"
+  end
+
+  desc "Check if generated tokens are up to date"
+  task :check do
+    sh "ruby scripts/generate-tokens.rb --check"
+  end
+end
+
+# =============================================================================
+# Playwright E2E Test Tasks
+# =============================================================================
+namespace :e2e do
+  desc "Run all Playwright E2E tests"
   task :all do
-    sh "./test/test_runner.sh"
+    sh "cd e2e && npx playwright test"
   end
 
-  desc "Run core tests"
-  task :core do
-    sh "./test/test_core.sh"
+  desc "Run Playwright desktop tests"
+  task :desktop do
+    sh "cd e2e && npx playwright test --project=desktop"
   end
 
-  desc "Run verbose tests"
-  task :verbose do
-    sh "./test/test_runner.sh --verbose"
+  desc "Run Playwright mobile tests"
+  task :mobile do
+    sh "cd e2e && npx playwright test --project=mobile"
+  end
+
+  desc "Run Playwright accessibility tests"
+  task :a11y do
+    sh "cd e2e && npx playwright test tests/accessibility.spec.ts"
+  end
+
+  desc "Install Playwright browsers"
+  task :install do
+    sh "cd e2e && npm install && npx playwright install --with-deps chromium"
   end
 end
 
 # Default task
-task default: 'test:all'
+task default: :spec

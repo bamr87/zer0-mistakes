@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+# @zer0-component
+#   feature-id: ZER0-004
+#   type: plugin
+#   dependencies: []
+#
 #
 # File: preview_image_generator.rb
 # Path: _plugins/preview_image_generator.rb

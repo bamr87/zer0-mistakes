@@ -173,7 +173,7 @@ To test workflows locally before pushing:
 ./scripts/build
 
 # Run tests
-./test/test_runner.sh --verbose
+bundle exec rspec --format documentation
 
 # Analyze commits for version bump type
 ./scripts/analyze-commits.sh HEAD~5..HEAD
@@ -197,5 +197,5 @@ To test workflows locally before pushing:
 
 ### CI failures
 - Check individual job logs for specific errors
-- Run tests locally: `./test/test_runner.sh`
+- Run tests locally: `bundle exec rspec`
 - Validate gem: `./scripts/build && gem spec jekyll-theme-zer0-*.gem`

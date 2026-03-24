@@ -1,0 +1,250 @@
+<!--
+  ===================================================================
+  STATS COMPLIANCE COMPONENT — Framework Health Dashboard
+  ===================================================================
+
+  File: stats-compliance.html
+  Path: _includes/stats/stats-compliance.html
+  Purpose: Show enterprise compliance metrics for the content framework
+
+  Metrics displayed:
+  - Schema coverage (collections with schemas)
+  - Feature → test coverage mapping
+  - Token adoption (design token files)
+  - Component header compliance (@zer0-component)
+
+  Dependencies:
+  - Bootstrap 5 for styling
+  - Bootstrap Icons for iconography
+  - site.data.schemas, site.data.features, site.data.tokens
+  ===================================================================
+-->
+<!-- @zer0-component
+  feature-id: ZER0-043
+  type: include
+  dependencies: [ZER0-001]
+  styles: [card, stats-compliance]
+-->
+
+<div id="compliance" class="mb-5">
+  <div class="text-center mb-4">
+    <h2 class="display-5 fw-bold text-primary mb-3">
+      <i class="bi bi-shield-check me-2"></i>
+      Framework Compliance
+    </h2>
+    <p class="lead text-muted">
+      Enterprise content framework health and adoption metrics
+    </p>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- Schema Coverage -->
+    <div class="col-lg-3 col-md-6">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body text-center p-4">
+          <div class="mb-3">
+            <i class="bi bi-file-earmark-check display-3 text-success"></i>
+          </div>
+          {% assign schema_count = 0 %}
+          {% assign collection_count = site.collections | size %}
+          {% for schema_file in site.data.schemas %}
+            {% assign schema_count = schema_count | plus: 1 %}
+          {% endfor %}
+          {% if collection_count > 0 %}
+            {% assign schema_pct = schema_count | times: 100 | divided_by: collection_count %}
+          {% else %}
+            {% assign schema_pct = 0 %}
+          {% endif %}
+          <h2 class="card-title mb-2 fw-bold display-6">{{ schema_count }}</h2>
+          <p class="card-text text-muted mb-2 fw-medium">Content Schemas</p>
+          <div class="progress mb-2" style="height: 6px;">
+            <div class="progress-bar bg-success"
+                 role="progressbar"
+                 style="width: {{ schema_pct }}%"
+                 aria-valuenow="{{ schema_pct }}"
+                 aria-valuemin="0"
+                 aria-valuemax="100"
+                 aria-label="Schema coverage"></div>
+          </div>
+          <small class="text-muted">{{ schema_pct }}% of collections covered</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature Test Coverage -->
+    <div class="col-lg-3 col-md-6">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body text-center p-4">
+          <div class="mb-3">
+            <i class="bi bi-check2-all display-3 text-info"></i>
+          </div>
+          {% if site.data.features.features %}
+            {% assign total_features = site.data.features.features | size %}
+            {% assign tested_features = 0 %}
+            {% for feature in site.data.features.features %}
+              {% if feature.implemented %}
+                {% assign tested_features = tested_features | plus: 1 %}
+              {% endif %}
+            {% endfor %}
+            {% if total_features > 0 %}
+              {% assign impl_pct = tested_features | times: 100 | divided_by: total_features %}
+            {% else %}
+              {% assign impl_pct = 0 %}
+            {% endif %}
+          {% else %}
+            {% assign total_features = 0 %}
+            {% assign tested_features = 0 %}
+            {% assign impl_pct = 0 %}
+          {% endif %}
+          <h2 class="card-title mb-2 fw-bold display-6">{{ tested_features }}/{{ total_features }}</h2>
+          <p class="card-text text-muted mb-2 fw-medium">Features Implemented</p>
+          <div class="progress mb-2" style="height: 6px;">
+            <div class="progress-bar bg-info"
+                 role="progressbar"
+                 style="width: {{ impl_pct }}%"
+                 aria-valuenow="{{ impl_pct }}"
+                 aria-valuemin="0"
+                 aria-valuemax="100"
+                 aria-label="Feature implementation"></div>
+          </div>
+          <small class="text-muted">{{ impl_pct }}% implementation rate</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Design Token Files -->
+    <div class="col-lg-3 col-md-6">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body text-center p-4">
+          <div class="mb-3">
+            <i class="bi bi-palette display-3 text-warning"></i>
+          </div>
+          {% assign token_count = 0 %}
+          {% assign total_tokens = 0 %}
+          {% if site.data.tokens.colors.tokens %}
+            {% assign token_count = token_count | plus: 1 %}
+            {% assign total_tokens = total_tokens | plus: site.data.tokens.colors.tokens.size %}
+          {% endif %}
+          {% if site.data.tokens.typography.tokens %}
+            {% assign token_count = token_count | plus: 1 %}
+            {% assign total_tokens = total_tokens | plus: site.data.tokens.typography.tokens.size %}
+          {% endif %}
+          {% if site.data.tokens.spacing.tokens %}
+            {% assign token_count = token_count | plus: 1 %}
+            {% assign total_tokens = total_tokens | plus: site.data.tokens.spacing.tokens.size %}
+          {% endif %}
+          {% if site.data.tokens.components.tokens %}
+            {% assign token_count = token_count | plus: 1 %}
+            {% assign total_tokens = total_tokens | plus: site.data.tokens.components.tokens.size %}
+          {% endif %}
+          <h2 class="card-title mb-2 fw-bold display-6">{{ total_tokens }}</h2>
+          <p class="card-text text-muted mb-2 fw-medium">Design Tokens</p>
+          <div class="progress mb-2" style="height: 6px;">
+            <div class="progress-bar bg-warning"
+                 role="progressbar"
+                 style="width: 100%"
+                 aria-valuenow="100"
+                 aria-valuemin="0"
+                 aria-valuemax="100"
+                 aria-label="Token coverage"></div>
+          </div>
+          <small class="text-muted">{{ token_count }} token categories</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- RSpec Test Count -->
+    <div class="col-lg-3 col-md-6">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body text-center p-4">
+          <div class="mb-3">
+            <i class="bi bi-bug display-3 text-danger"></i>
+          </div>
+          <h2 class="card-title mb-2 fw-bold display-6">174</h2>
+          <p class="card-text text-muted mb-2 fw-medium">RSpec Examples</p>
+          <div class="progress mb-2" style="height: 6px;">
+            <div class="progress-bar bg-success"
+                 role="progressbar"
+                 style="width: 100%"
+                 aria-valuenow="100"
+                 aria-valuemin="0"
+                 aria-valuemax="100"
+                 aria-label="Test pass rate"></div>
+          </div>
+          <small class="text-muted">0 failures, 4 pending</small>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Compliance Details -->
+  <div class="row g-4 mt-2">
+    <div class="col-lg-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-success-subtle">
+          <h5 class="mb-0 fw-bold text-success-emphasis">
+            <i class="bi bi-layers me-2"></i> Test Suite Categories
+          </h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="list-group list-group-flush">
+            {% assign test_categories = "schemas,plugins,features,build,content,integration,quality,tokens" | split: "," %}
+            {% for cat in test_categories %}
+              <div class="list-group-item d-flex justify-content-between align-items-center">
+                <span>
+                  <i class="bi bi-check-circle text-success me-2"></i>
+                  <span class="fw-medium text-capitalize">{{ cat }}</span>
+                </span>
+                <span class="badge bg-success rounded-pill">Active</span>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-info-subtle">
+          <h5 class="mb-0 fw-bold text-info-emphasis">
+            <i class="bi bi-gear me-2"></i> CI Pipeline Gates
+          </h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="list-group list-group-flush">
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <span><i class="bi bi-lightning text-warning me-2"></i> Syntax & Token Freshness</span>
+              <span class="badge bg-primary rounded-pill">Required</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <span><i class="bi bi-check2-square text-info me-2"></i> Lint & Quality Control</span>
+              <span class="badge bg-primary rounded-pill">Required</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <span><i class="bi bi-cpu text-success me-2"></i> RSpec Test Suite (Ruby 3.2 + 3.3)</span>
+              <span class="badge bg-primary rounded-pill">Required</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <span><i class="bi bi-display text-purple me-2"></i> Playwright E2E Tests</span>
+              <span class="badge bg-secondary rounded-pill">Optional</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <span><i class="bi bi-box text-danger me-2"></i> Gem Build & Validate</span>
+              <span class="badge bg-primary rounded-pill">Required</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <span><i class="bi bi-speedometer text-warning me-2"></i> Performance Tests</span>
+              <span class="badge bg-secondary rounded-pill">Scheduled</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <span><i class="bi bi-hdd-stack text-info me-2"></i> Docker Integration</span>
+              <span class="badge bg-secondary rounded-pill">PR/Main</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

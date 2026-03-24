@@ -39,6 +39,13 @@ layout: root
   - badge: Badges for counts and labels
   ===================================================================
 -->
+<!-- @zer0-component
+  feature-id: ZER0-043
+  type: layout
+  dependencies: [ZER0-001, ZER0-019]
+  schema-fields: [title, layout]
+  styles: [assets/css/stats.css, _sass/custom.scss]
+-->
 
 <!-- ================================================ -->
 <!-- STATS LAYOUT CONTAINER                          -->
@@ -63,6 +70,12 @@ layout: root
     <!-- High-level statistics cards                     -->
     <!-- ================================================ -->
     {% include stats/stats-overview.html %}
+    
+    <!-- ================================================ -->
+    <!-- FRAMEWORK COMPLIANCE SECTION                    -->
+    <!-- Schema, token, test coverage metrics            -->
+    <!-- ================================================ -->
+    {% include stats/stats-compliance.html %}
     
     <!-- ================================================ -->
     <!-- DETAILED ANALYTICS SECTIONS                     -->

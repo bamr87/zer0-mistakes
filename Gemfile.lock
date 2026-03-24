@@ -415,6 +415,7 @@ DEPENDENCIES
   html-proofer
   jekyll-mermaid
   jekyll-theme-zer0!
+  nokogiri
   rake (~> 13.0, >= 0)
   rspec (~> 3.0, >= 0)
   rubocop

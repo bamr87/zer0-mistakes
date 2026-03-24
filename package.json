@@ -20,5 +20,13 @@
   "homepage": "https://bamr87.github.io/zer0-mistakes/",
   "engines": {
     "node": ">= 0.10.0"
+  },
+  "scripts": {
+    "test:e2e": "cd e2e && npx playwright test",
+    "test:e2e:desktop": "cd e2e && npx playwright test --project=desktop",
+    "test:e2e:mobile": "cd e2e && npx playwright test --project=mobile",
+    "test:e2e:a11y": "cd e2e && npx playwright test tests/accessibility.spec.ts",
+    "test:e2e:visual": "cd e2e && npx playwright test tests/visual-regression.spec.ts",
+    "test:e2e:install": "cd e2e && npm install && npx playwright install --with-deps chromium"
   }
 }

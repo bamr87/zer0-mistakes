@@ -1,0 +1,132 @@
+# =============================================================================
+# Design Tokens: Components
+# =============================================================================
+# Component-specific tokens for borders, shadows, transitions, and
+# other UI element properties.
+# Maps to SCSS variables in _sass/core/_variables.scss.
+# =============================================================================
+
+tokens:
+
+  # ---------------------------------------------------------------------------
+  # Border Radius
+  # ---------------------------------------------------------------------------
+  - name: border-radius
+    value: "4px"
+    scss-var: "$border-radius"
+    bootstrap-var: "--bs-border-radius"
+    usage: [cards, buttons, inputs, modals]
+    category: borders
+
+  # ---------------------------------------------------------------------------
+  # Box Shadows
+  # ---------------------------------------------------------------------------
+  - name: box-shadow
+    value: "0 1px 1px rgba(0, 0, 0, 0.125)"
+    scss-var: "$box-shadow"
+    usage: [cards, dropdowns]
+    category: shadows
+
+  - name: box-shadow-bottom
+    value: "0 0.5rem 1rem rgba(0, 0, 0, 0.35), inset 0 -1px 0 rgba(0, 0, 0, 0.15)"
+    description: "Strong bottom shadow for sticky nav"
+    usage: [sticky-navbar]
+    category: shadows
+
+  # ---------------------------------------------------------------------------
+  # Transitions
+  # ---------------------------------------------------------------------------
+  - name: transition-global
+    value: "all 0.2s ease-in-out"
+    scss-var: "$global-transition"
+    usage: [hover-effects, state-changes]
+    category: transitions
+
+  - name: transition-intro
+    value: "intro 0.3s both"
+    scss-var: "$intro-transition"
+    usage: [page-load-animation]
+    category: transitions
+
+  - name: transition-card-hover
+    value: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out"
+    usage: [card-hover-effects]
+    category: transitions
+
+  # ---------------------------------------------------------------------------
+  # Notices / Alerts
+  # ---------------------------------------------------------------------------
+  - name: notice-bg-mix
+    value: "80%"
+    scss-var: "$notice-background-mix"
+    description: "Percentage to mix notice color with background"
+    usage: [notice-backgrounds]
+    category: notices
+
+  - name: code-notice-bg-mix
+    value: "90%"
+    scss-var: "$code-notice-background-mix"
+    description: "Percentage to mix code notice color with background"
+    usage: [code-notice-backgrounds]
+    category: notices
+
+  # ---------------------------------------------------------------------------
+  # Active / Focus States
+  # ---------------------------------------------------------------------------
+  - name: component-active-color
+    value: "#ffffff"
+    scss-var: "$component-active-color"
+    usage: [active-item-text]
+    category: states
+
+  - name: component-active-bg
+    value: "#0d6efd"
+    scss-var: "$component-active-bg"
+    usage: [active-item-background]
+    category: states
+
+  # ---------------------------------------------------------------------------
+  # Link Decoration
+  # ---------------------------------------------------------------------------
+  - name: link-decoration
+    value: "underline"
+    scss-var: "$link-decoration"
+    usage: [text-links]
+    category: links
+
+  - name: link-shade-percentage
+    value: "20%"
+    scss-var: "$link-shade-percentage"
+    usage: [link-hover-darkening]
+    category: links
+
+  # ---------------------------------------------------------------------------
+  # Stats Dashboard
+  # ---------------------------------------------------------------------------
+  - name: stats-progress-height
+    value: "1.25rem"
+    usage: [stats-progress-bars]
+    category: stats
+
+  - name: stats-icon-size
+    value: "100px"
+    usage: [stats-header-icon]
+    category: stats
+
+  # ---------------------------------------------------------------------------
+  # Back to Top Button
+  # ---------------------------------------------------------------------------
+  - name: back-to-top-opacity
+    value: "25%"
+    usage: [back-to-top-button]
+    category: ui-elements
+
+  - name: back-to-top-padding
+    value: "15px"
+    usage: [back-to-top-button]
+    category: ui-elements
+
+  - name: back-to-top-radius
+    value: "10px"
+    usage: [back-to-top-button]
+    category: ui-elements

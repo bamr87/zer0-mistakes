@@ -55,6 +55,9 @@ group :development, :test do
   # Testing framework
   gem "rspec"
   
+  # HTML parsing for test assertions
+  gem "nokogiri"
+
   # Task automation
   gem "rake"
   

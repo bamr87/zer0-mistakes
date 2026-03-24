@@ -40,6 +40,13 @@ layout: default
   - Bootstrap 5 components
   ===================================================================
 -->
+<!-- @zer0-component
+  feature-id: ZER0-019
+  type: layout
+  dependencies: [ZER0-001, ZER0-008, ZER0-014]
+  schema-fields: [post_type, title, author, date, lastmod, tags, categories, preview, sidebar, comments, related, share, featured, breaking, sub-title, read_time]
+  styles: [_sass/custom.scss]
+-->
 
 {% comment %} Determine post type and sidebar visibility {% endcomment %}
 {% assign post_type = page.post_type | default: "standard" %}

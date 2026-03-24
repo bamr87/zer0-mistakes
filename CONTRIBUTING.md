@@ -535,20 +535,23 @@ curl -w "@curl-format.txt" -o /dev/null -s "http://localhost:4000"
 
 When adding features, include corresponding tests:
 
-```bash
-# Add test cases to scripts/test.sh
-test_new_feature() {
-    echo "[TEST] Running: Test new feature functionality"
-
+```ruby
+# Add a spec file to spec/<category>/
+# spec/features/new_feature_spec.rb
+RSpec.describe "New Feature" do
+  it "works as expected" do
     # Test implementation
-    if [[ condition ]]; then
-        echo "✓ Test new feature functionality"
-        return 0
-    else
-        echo "✗ Test new feature functionality"
-        return 1
-    fi
-}
+    expect(something).to eq(expected_value)
+  end
+end
+```
+
+Run the test suite:
+
+```bash
+bundle exec rspec                          # All tests
+bundle exec rspec spec/features/           # Feature tests only
+bundle exec rspec spec/features/new_feature_spec.rb  # Single file
 ```
 
 ### Docker Testing

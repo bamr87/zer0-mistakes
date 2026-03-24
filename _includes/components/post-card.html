@@ -41,6 +41,13 @@
   - site.teaser for fallback image
   ===================================================================
 -->
+<!-- @zer0-component
+  feature-id: ZER0-014
+  type: include
+  dependencies: [ZER0-001, ZER0-004]
+  schema-fields: [title, date, categories, tags, preview]
+  styles: [card, post-card]
+-->
 
 {% comment %} Parameter defaults {% endcomment %}
 {% assign show_category = include.show_category | default: true %}

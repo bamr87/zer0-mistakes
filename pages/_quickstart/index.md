@@ -213,7 +213,7 @@ ls -la
 docker-compose config
 
 # Theme repo (this repository):
-./test/test_runner.sh
+bundle exec rspec
 ```
 
 ## 🆘 Need Help?

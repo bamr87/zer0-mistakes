@@ -1,4 +1,9 @@
 #!/bin/bash
+# @zer0-component
+#   feature-id: ZER0-004
+#   type: script
+#   dependencies: []
+#
 #
 # Script Name: generate-preview-images
 # Description: AI-powered preview image generator for Jekyll posts/articles/quests

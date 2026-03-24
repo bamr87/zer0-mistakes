@@ -1,5 +1,5 @@
 name: 'Run Ruby Test Suite'
-description: 'Complete Ruby test suite with environment setup'
+description: 'RSpec-based test suite with environment setup'
 inputs:
   ruby-version:
     description: 'Ruby version to use'
@@ -10,15 +10,15 @@ inputs:
     default: 'true'
     required: false
   suites:
-    description: 'Test suites to run: all, core, deployment, quality'
-    default: 'core,quality'
+    description: 'RSpec tag filter: all, schemas, plugins, features, build, content, integration, quality'
+    default: 'all'
     required: false
   skip-docker:
-    description: 'Skip Docker-related tests'
+    description: 'Skip Docker-related tests (unused, kept for backward compat)'
     default: 'true'
     required: false
   skip-remote:
-    description: 'Skip remote installation tests (for CI environments)'
+    description: 'Skip remote installation tests (unused, kept for backward compat)'
     default: 'false'
     required: false
 
@@ -29,85 +29,47 @@ runs:
       uses: ./.github/actions/setup-ruby
       with:
         ruby-version: ${{ inputs.ruby-version }}
-    
+
     - name: Set PAGES_REPO_NWO for Jekyll builds
       shell: bash
       run: |
         # Set PAGES_REPO_NWO for jekyll-github-metadata gem
-        # Uses existing env var if set, otherwise falls back to github.repository
         echo "PAGES_REPO_NWO=${PAGES_REPO_NWO:-${{ github.repository }}}" >> $GITHUB_ENV
-    
-    - name: Run Test Suite
+
+    - name: Run RSpec Test Suite
       shell: bash
       run: |
-        chmod +x ./test/test_runner.sh
-        
-        ARGS=""
+        FORMAT_FLAG=""
         if [[ "${{ inputs.verbose }}" == "true" ]]; then
-          ARGS="$ARGS --verbose"
+          FORMAT_FLAG="--format documentation"
         fi
-        if [[ "${{ inputs.skip-docker }}" == "true" ]]; then
-          ARGS="$ARGS --skip-docker"
+
+        SUITE="${{ inputs.suites }}"
+        if [[ "$SUITE" == "all" || -z "$SUITE" ]]; then
+          bundle exec rspec $FORMAT_FLAG
+        else
+          # Run specific spec directories based on suite name
+          SPEC_PATHS=""
+          IFS=',' read -ra SUITES <<< "$SUITE"
+          for s in "${SUITES[@]}"; do
+            s=$(echo "$s" | xargs)  # trim whitespace
+            case "$s" in
+              core)        SPEC_PATHS="$SPEC_PATHS spec/build/ spec/plugins/" ;;
+              quality)     SPEC_PATHS="$SPEC_PATHS spec/quality/" ;;
+              schemas)     SPEC_PATHS="$SPEC_PATHS spec/schemas/" ;;
+              plugins)     SPEC_PATHS="$SPEC_PATHS spec/plugins/" ;;
+              features)    SPEC_PATHS="$SPEC_PATHS spec/features/" ;;
+              build)       SPEC_PATHS="$SPEC_PATHS spec/build/" ;;
+              content)     SPEC_PATHS="$SPEC_PATHS spec/content/" ;;
+              integration) SPEC_PATHS="$SPEC_PATHS spec/integration/" ;;
+              tokens)      SPEC_PATHS="$SPEC_PATHS spec/tokens/" ;;
+              *)           echo "::warning::Unknown suite: $s, running all specs"
+                           SPEC_PATHS="spec/"
+                           break ;;
+            esac
+          done
+          bundle exec rspec $FORMAT_FLAG $SPEC_PATHS
         fi
-        if [[ "${{ inputs.skip-remote }}" == "true" ]]; then
-          ARGS="$ARGS --skip-remote"
-        fi
-        if [[ -n "${{ inputs.suites }}" ]]; then
-          ARGS="$ARGS --suites ${{ inputs.suites }}"
-        fi
-        
-        ./test/test_runner.sh $ARGS
-    
-    - name: Validate Test Results
-      shell: bash
-      run: |
-        # Check for test results - the test_runner creates files in test/results/ and test/reports/
-        RESULTS_DIR="./test/results"
-        REPORTS_DIR="./test/reports"
-        
-        # Check if any result files were created
-        if [[ ! -d "$RESULTS_DIR" ]] || [[ -z "$(ls -A $RESULTS_DIR 2>/dev/null)" ]]; then
-          # Also check for reports directory
-          if [[ ! -d "$REPORTS_DIR" ]] || [[ -z "$(ls -A $REPORTS_DIR 2>/dev/null)" ]]; then
-            echo "::warning::No test results found in $RESULTS_DIR or $REPORTS_DIR"
-            exit 1
-          fi
-        fi
-        
-        # Check for JSON result files - look for failure indicators
-        FAILED=false
-        shopt -s nullglob
-        for result_file in "$RESULTS_DIR"/*.json "$REPORTS_DIR"/*.json; do
-          if [[ -f "$result_file" ]]; then
-            # Check for failed status in JSON (case-insensitive)
-            if grep -qiE '"status":\s*"failed"|"result":\s*"fail"' "$result_file" 2>/dev/null; then
-              echo "::error::Test failures found in $result_file"
-              cat "$result_file"
-              FAILED=true
-            fi
-          fi
-        done
-        shopt -u nullglob
-        
-        # Also check text reports for actual failure indicators
-        # Note: "Failed: 0" in summary should NOT trigger failure - only actual test failures
-        shopt -s nullglob
-        for report_file in "$REPORTS_DIR"/*.txt; do
-          if [[ -f "$report_file" ]]; then
-            # Check for failure patterns that indicate actual test failures, not summary lines
-            # Exclude lines like "Failed: 0" which indicate no failures
-            if grep -qiE '(FAILED|FAILURE)' "$report_file" 2>/dev/null && \
-               ! grep -qE 'Failed:\s*0' "$report_file" 2>/dev/null; then
-              # Double-check: look for non-zero failure count
-              if grep -qE 'Failed:\s*[1-9]' "$report_file" 2>/dev/null || \
-                 grep -qiE '\[FAIL\]|\bFAILED\b.*test' "$report_file" 2>/dev/null; then
-                echo "::error::Test failures found in $report_file"
-                cat "$report_file"
-                FAILED=true
-              fi
-            fi
-          fi
-        done
         shopt -u nullglob
         
         if [[ "$FAILED" == "true" ]]; then

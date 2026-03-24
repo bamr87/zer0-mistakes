@@ -69,6 +69,9 @@ jobs:
       - name: Quick Syntax Check
         run: ruby -c lib/jekyll-theme-zer0/version.rb
 
+      - name: Verify Design Tokens
+        run: ruby scripts/generate-tokens.rb --check
+
       - name: Validate Gemspec
         run: |
           ruby -e "
@@ -94,9 +97,9 @@ jobs:
           check-markdown: true
           fix-formatting: ${{ inputs.fix_markdown }}
 
-  # Comprehensive testing across Ruby versions
+  # Comprehensive RSpec testing across Ruby versions
   test:
-    name: Test Suite (Ruby ${{ matrix.ruby }})
+    name: RSpec (Ruby ${{ matrix.ruby }})
     runs-on: ubuntu-latest
     needs: [fast-checks, quality-checks]
     timeout-minutes: 15
@@ -112,73 +115,66 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Run Test Suite
+      - name: Run RSpec Suite
         uses: ./.github/actions/test-suite
         with:
           ruby-version: ${{ matrix.ruby }}
           verbose: true
-          suites: core,quality
-          skip-docker: true
-
-      - name: Upload Test Results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-results-ruby-${{ matrix.ruby }}
-          path: test/results/
-          retention-days: 7
+          suites: all
 
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         if: matrix.coverage
         with:
           name: coverage-ruby-${{ matrix.ruby }}
-          path: test/coverage/
+          path: coverage/
           retention-days: 7
 
-  # NOTE: Code quality & documentation checks are handled by the quality-checks job above
-  # The duplicate 'quality' job has been removed to avoid redundancy
-
-  # Docker-based deployment tests (runs actual Docker tests)
-  docker-tests:
-    name: Docker Deployment Tests
+  # Playwright E2E tests
+  playwright:
+    name: Playwright E2E
     runs-on: ubuntu-latest
     needs: [fast-checks, quality-checks]
-    # Skip on scheduled runs (handled by test-latest.yml) and when test_scope is 'fast'
     if: github.event_name != 'schedule' && inputs.test_scope != 'fast'
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-deploy-${{ hashFiles('docker/Dockerfile', 'Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-deploy-
-
-      - name: Run Deployment Test Suite
-        uses: ./.github/actions/test-suite
+      - name: Setup Ruby Environment
+        uses: ./.github/actions/setup-ruby
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
-          verbose: true
-          suites: deployment
-          skip-docker: false
-          # Skip remote installation tests in CI (curl piped to bash is unreliable)
-          skip-remote: true
+          install-system-deps: true
 
-      - name: Upload Deployment Test Results
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install E2E Dependencies
+        working-directory: e2e
+        run: |
+          npm ci || npm install
+          npx playwright install --with-deps chromium
+
+      - name: Run Playwright Tests
+        working-directory: e2e
+        run: npx playwright test --project=desktop
+        env:
+          CI: true
+          SKIP_SERVER: false
+
+      - name: Upload Playwright Report
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: deployment-test-results
-          path: test/results/
+          name: playwright-report
+          path: |
+            e2e/results/
+            e2e/test-results/
+            e2e/playwright-report/
           retention-days: 7
 
   # Build validation
@@ -428,110 +424,11 @@ jobs:
         if: always()
         run: docker compose down --volumes --remove-orphans || true
 
-  # Installation Matrix Tests
-  installation-matrix-tests:
-    name: Installation Tests (${{ matrix.os }}, ${{ matrix.mode }})
-    runs-on: ${{ matrix.os }}
-    needs: [fast-checks, quality-checks]
-    if: github.event_name != 'schedule' && inputs.test_scope != 'fast'
-    timeout-minutes: 15
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-        mode: [full, minimal]
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Ruby Environment
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.2'
-          bundler-cache: true
-
-      - name: Make test scripts executable
-        run: chmod +x test/*.sh test/lib/*.sh
-
-      - name: Run Installation Tests
-        run: |
-          ./test/test_installation.sh --verbose
-        env:
-          INSTALL_MODE: ${{ matrix.mode }}
-
-      - name: Run Site Generation Tests
-        run: |
-          ./test/test_site_generation.sh --mode ${{ matrix.mode }} --verbose
-
-      - name: Upload Installation Test Results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: installation-test-results-${{ matrix.os }}-${{ matrix.mode }}
-          path: test/results/
-          retention-days: 7
-
-  # Visual Regression Tests (runs only on comprehensive scope)
-  visual-tests:
-    name: Visual Regression Tests
-    runs-on: ubuntu-latest
-    needs: [installation-matrix-tests]
-    if: inputs.test_scope == 'comprehensive'
-    timeout-minutes: 20
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Ruby Environment
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.2'
-          bundler-cache: true
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Playwright
-        run: |
-          npm install -D @playwright/test
-          npx playwright install --with-deps chromium
-
-      - name: Make test scripts executable
-        run: chmod +x test/*.sh test/lib/*.sh
-
-      - name: Run Visual Tests
-        run: |
-          ./test/test_visual.sh --mode full --verbose || true
-        continue-on-error: true
-
-      - name: Upload Visual Test Results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: visual-test-results
-          path: |
-            test/visual/current/
-            test/visual/diff/
-            test/visual-results/
-          retention-days: 7
-
-      - name: Upload Visual Baseline
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: visual-baseline
-          path: test/visual/baseline/
-          retention-days: 30
-
   # Final status report
   summary:
     name: CI Pipeline Summary
     runs-on: ubuntu-latest
-    needs: [fast-checks, quality-checks, test, docker-tests, build, performance, integration, installation-matrix-tests, visual-tests]
+    needs: [fast-checks, quality-checks, test, playwright, build, performance, integration]
     if: always()
     steps:
       - name: Generate comprehensive summary
@@ -542,17 +439,16 @@ jobs:
           echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
-          echo "| Check | Status | Duration |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------|--------|----------|" >> $GITHUB_STEP_SUMMARY
-          echo "| 🚀 Fast Checks | ${{ needs.fast-checks.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 📋 Quality Checks | ${{ needs.quality-checks.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🧪 Tests | ${{ needs.test.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🐳 Docker Tests | ${{ needs.docker-tests.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🔨 Build | ${{ needs.build.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| ⚡ Performance | ${{ needs.performance.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🔗 Integration | ${{ needs.integration.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 📦 Installation Matrix | ${{ needs.installation-matrix-tests.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 👁️ Visual Tests | ${{ needs.visual-tests.result }} | - |" >> $GITHUB_STEP_SUMMARY
+          echo "### Enforcement Gates" >> $GITHUB_STEP_SUMMARY
+          echo "| Gate | Job | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-----|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔍 Syntax & Tokens | Fast Checks | ${{ needs.fast-checks.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 📋 Lint & Quality | Quality Control | ${{ needs.quality-checks.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🧪 Schema + Token + Unit Tests | RSpec Tests | ${{ needs.test.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🎭 E2E Tests | Playwright | ${{ needs.playwright.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔨 Build & Gem | Build & Validate | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| ⚡ Performance | Performance Tests | ${{ needs.performance.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔗 Docker Integration | Integration Tests | ${{ needs.integration.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           # Check if all required jobs passed
@@ -561,23 +457,20 @@ jobs:
                 "${{ needs.quality-checks.result }}" == "success" && 
                 "${{ needs.build.result }}" == "success" ]]; then
             echo "## ✅ **Pipeline Status: SUCCESS**" >> $GITHUB_STEP_SUMMARY
-            echo "All critical checks passed! The code is ready for deployment." >> $GITHUB_STEP_SUMMARY
+            echo "All critical checks passed!" >> $GITHUB_STEP_SUMMARY
           else
             echo "## ❌ **Pipeline Status: FAILED**" >> $GITHUB_STEP_SUMMARY
             echo "Some critical checks failed. Please review the results above." >> $GITHUB_STEP_SUMMARY
             
-            # List failed jobs
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "### Failed Jobs:" >> $GITHUB_STEP_SUMMARY
             [[ "${{ needs.fast-checks.result }}" != "success" ]] && echo "- 🚀 Fast Checks" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.test.result }}" != "success" ]] && echo "- 🧪 Tests" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.quality-checks.result }}" != "success" ]] && echo "- 📋 Quality Checks" >> $GITHUB_STEP_SUMMARY
+            [[ "${{ needs.test.result }}" != "success" ]] && echo "- 🧪 RSpec Tests" >> $GITHUB_STEP_SUMMARY
+            [[ "${{ needs.quality-checks.result }}" != "success" ]] && echo "- 📋 Quality" >> $GITHUB_STEP_SUMMARY
             [[ "${{ needs.build.result }}" != "success" ]] && echo "- 🔨 Build" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.docker-tests.result }}" == "failure" ]] && echo "- 🐳 Docker Tests (non-critical)" >> $GITHUB_STEP_SUMMARY
+            [[ "${{ needs.playwright.result }}" == "failure" ]] && echo "- 🎭 Playwright E2E (non-critical)" >> $GITHUB_STEP_SUMMARY
             [[ "${{ needs.performance.result }}" == "failure" ]] && echo "- ⚡ Performance (non-critical)" >> $GITHUB_STEP_SUMMARY
             [[ "${{ needs.integration.result }}" == "failure" ]] && echo "- 🔗 Integration (non-critical)" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.installation-matrix-tests.result }}" == "failure" ]] && echo "- 📦 Installation Matrix (non-critical)" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.visual-tests.result }}" == "failure" ]] && echo "- 👁️ Visual Tests (non-critical)" >> $GITHUB_STEP_SUMMARY
             
             exit 1
           fi

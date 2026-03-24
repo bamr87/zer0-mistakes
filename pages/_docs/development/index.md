@@ -58,7 +58,7 @@ Before contributing, ensure you have:
 
 ```bash
 # Run all tests
-./test/test_runner.sh
+bundle exec rspec
 
 # Build the gem
 ./scripts/build.sh

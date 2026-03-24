@@ -11,7 +11,10 @@
     },
     {
       "title": "quickstart",
-      "path": "[[workspace]]/pages/_quickstart"
+      "path": "[[workspace]]/pages/_quickstart",
+      "contentTypes": [
+        "docs"
+      ]
     },
     {
       "title": "about",
@@ -19,7 +22,24 @@
     },
     {
       "title": "docs",
-      "path": "[[workspace]]/pages/_docs"
+      "path": "[[workspace]]/pages/_docs",
+      "contentTypes": [
+        "docs"
+      ]
+    },
+    {
+      "title": "notebooks",
+      "path": "[[workspace]]/pages/_notebooks",
+      "contentTypes": [
+        "notebooks"
+      ]
+    },
+    {
+      "title": "notes",
+      "path": "[[workspace]]/pages/_notes",
+      "contentTypes": [
+        "notes"
+      ]
     }
   ],
   "frontMatter.templates.enabled": true,
@@ -111,8 +131,10 @@
           "type": "choice",
           "choices": [
             "default",
-            "journal",
-            "home"
+            "article",
+            "home",
+            "root",
+            "section"
           ],
           "default": null
         },
@@ -198,6 +220,22 @@
           "type": "categories"
         },
         {
+          "title": "Post Type",
+          "name": "post_type",
+          "type": "choice",
+          "choices": [
+            "standard",
+            "featured",
+            "breaking",
+            "opinion",
+            "review",
+            "tutorial",
+            "listicle",
+            "interview"
+          ],
+          "default": "standard"
+        },
+        {
           "title": "sub-title",
           "name": "sub-title",
           "type": "string",
@@ -224,8 +262,31 @@
         {
           "title": "layout",
           "name": "layout",
-          "type": "string",
+          "type": "choice",
+          "choices": [
+            "article",
+            "default",
+            "root"
+          ],
+          "default": "article"
+        },
+        {
+          "title": "Difficulty Level",
+          "name": "difficulty_level",
+          "type": "choice",
+          "choices": [
+            "beginner",
+            "intermediate",
+            "advanced",
+            "expert"
+          ],
           "default": null
+        },
+        {
+          "title": "Mermaid Diagrams",
+          "name": "mermaid",
+          "type": "boolean",
+          "default": false
         },
         {
           "title": "keywords",
@@ -260,6 +321,196 @@
             "mp4",
             "wav"
           ]
+        }
+      ]
+    },
+    {
+      "name": "docs",
+      "pageBundle": false,
+      "previewPath": null,
+      "fields": [
+        {
+          "title": "Title",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "title": "Description",
+          "name": "description",
+          "type": "string",
+          "default": null
+        },
+        {
+          "title": "Layout",
+          "name": "layout",
+          "type": "choice",
+          "choices": [
+            "default",
+            "article",
+            "root",
+            "section"
+          ],
+          "default": "default"
+        },
+        {
+          "title": "Publishing date",
+          "name": "date",
+          "type": "datetime",
+          "default": "{{now}}"
+        },
+        {
+          "title": "Preview",
+          "name": "preview",
+          "type": "image",
+          "default": null
+        },
+        {
+          "title": "Tags",
+          "name": "tags",
+          "type": "tags"
+        },
+        {
+          "title": "Categories",
+          "name": "categories",
+          "type": "categories"
+        },
+        {
+          "title": "Permalink",
+          "name": "permalink",
+          "type": "string",
+          "default": null
+        },
+        {
+          "title": "Difficulty",
+          "name": "difficulty",
+          "type": "choice",
+          "choices": [
+            "beginner",
+            "intermediate",
+            "advanced"
+          ],
+          "default": null
+        },
+        {
+          "title": "Mermaid Diagrams",
+          "name": "mermaid",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "title": "Draft",
+          "name": "draft",
+          "type": "draft",
+          "default": false
+        },
+        {
+          "title": "lastmod",
+          "name": "lastmod",
+          "type": "datetime"
+        },
+        {
+          "title": "Author",
+          "name": "author",
+          "type": "string",
+          "default": "bamr87"
+        }
+      ]
+    },
+    {
+      "name": "notebooks",
+      "pageBundle": false,
+      "previewPath": null,
+      "fields": [
+        {
+          "title": "Title",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "title": "Description",
+          "name": "description",
+          "type": "string",
+          "default": null
+        },
+        {
+          "title": "Layout",
+          "name": "layout",
+          "type": "string",
+          "default": "notebook"
+        },
+        {
+          "title": "Publishing date",
+          "name": "date",
+          "type": "datetime",
+          "default": "{{now}}"
+        },
+        {
+          "title": "Tags",
+          "name": "tags",
+          "type": "tags"
+        },
+        {
+          "title": "Categories",
+          "name": "categories",
+          "type": "categories"
+        },
+        {
+          "title": "Kernel",
+          "name": "kernel",
+          "type": "string",
+          "default": null
+        },
+        {
+          "title": "Draft",
+          "name": "draft",
+          "type": "draft",
+          "default": false
+        }
+      ]
+    },
+    {
+      "name": "notes",
+      "pageBundle": false,
+      "previewPath": null,
+      "fields": [
+        {
+          "title": "Title",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "title": "Description",
+          "name": "description",
+          "type": "string",
+          "default": null
+        },
+        {
+          "title": "Layout",
+          "name": "layout",
+          "type": "string",
+          "default": "note"
+        },
+        {
+          "title": "Publishing date",
+          "name": "date",
+          "type": "datetime",
+          "default": "{{now}}"
+        },
+        {
+          "title": "Tags",
+          "name": "tags",
+          "type": "tags"
+        },
+        {
+          "title": "Categories",
+          "name": "categories",
+          "type": "categories"
+        },
+        {
+          "title": "Draft",
+          "name": "draft",
+          "type": "draft",
+          "default": false
         }
       ]
     }

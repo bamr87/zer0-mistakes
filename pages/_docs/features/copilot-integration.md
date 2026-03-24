@@ -113,7 +113,7 @@ Copilot suggests correct commands:
 docker-compose up
 
 # Testing
-./test/test_runner.sh
+bundle exec rspec
 
 # Release
 ./scripts/release.sh

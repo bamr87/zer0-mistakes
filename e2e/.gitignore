@@ -1,0 +1,7 @@
+# Playwright
+node_modules/
+results/
+test-results/
+playwright-report/
+
+# Do NOT ignore baselines/ — those are committed for visual regression

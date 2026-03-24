@@ -16,6 +16,13 @@
     - /assets/images/previews/my-image.png → unchanged
     - https://example.com/image.png → unchanged (external URL)
 {% endcomment %}
+<!-- @zer0-component
+  feature-id: ZER0-004
+  type: include
+  dependencies: [ZER0-001]
+  schema-fields: [preview]
+  styles: [img-fluid, card-img]
+-->
 {% assign img = include.src | default: site.teaser %}
 {% assign alt = include.alt | default: "Preview image" %}
 {% assign class = include.class | default: "card-img-top" %}

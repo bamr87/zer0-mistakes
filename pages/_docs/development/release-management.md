@@ -152,7 +152,7 @@ This automatically:
 3. **Validate and test**:
 
    ```bash
-   ./test/test_runner.sh --verbose
+   bundle exec rspec
    ./scripts/build.sh
    ```
 

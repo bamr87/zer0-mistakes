@@ -1,0 +1,189 @@
+# Schema: Posts Collection
+# Validates front matter for pages/_posts/**
+# Layout: article.html
+# Feature: ZER0-014 (Collections System), ZER0-019 (Layout System)
+
+collection: posts
+layout: article
+description: "Blog posts and articles with post type variants"
+permalink_pattern: "/:collection/:year/:month/:day/:slug/"
+
+fields:
+  # --- Required Fields ---
+  - name: title
+    type: string
+    required: true
+    max_length: 200
+    description: "Post title displayed in header and SEO"
+
+  - name: date
+    type: date
+    required: true
+    description: "Publication date (ISO 8601 or YYYY-MM-DD)"
+
+  # --- Layout & Display ---
+  - name: layout
+    type: string
+    required: false
+    default: article
+    enum: [article, default, root]
+    description: "Layout template to use"
+    feature_id: ZER0-019
+
+  - name: post_type
+    type: string
+    required: false
+    default: standard
+    enum: [standard, featured, breaking, opinion, review, tutorial, listicle, interview]
+    description: "Post type variant controlling display style"
+    feature_id: ZER0-019
+
+  # --- SEO & Preview ---
+  - name: description
+    type: string
+    required: false
+    max_length: 320
+    description: "SEO meta description (150-160 chars recommended)"
+
+  - name: preview
+    type: image
+    required: false
+    description: "Preview/banner image path"
+    feature_id: ZER0-004
+
+  - name: excerpt
+    type: string
+    required: false
+    description: "Short summary for listings and cards"
+
+  - name: snippet
+    type: string
+    required: false
+    max_length: 280
+    description: "Very short snippet (1-2 sentences)"
+
+  - name: keywords
+    type: object
+    required: false
+    description: "SEO keywords with primary and secondary arrays"
+
+  - name: og_image
+    type: string
+    required: false
+    description: "Open Graph image for social sharing"
+
+  - name: permalink
+    type: string
+    required: false
+    pattern: "^/.*/$"
+    description: "Custom URL path override"
+
+  # --- Content Organization ---
+  - name: categories
+    type: array
+    required: false
+    description: "Content categories/taxonomy"
+
+  - name: tags
+    type: array
+    required: false
+    description: "Content tags for discovery"
+
+  - name: sub-title
+    type: string
+    required: false
+    description: "Secondary title line for featured posts"
+
+  # --- Author & Dates ---
+  - name: author
+    type: string
+    required: false
+    default: bamr87
+    description: "Author username (matches _data/authors.yml)"
+
+  - name: lastmod
+    type: date
+    required: false
+    description: "Last modification date"
+
+  # --- Display Controls ---
+  - name: sidebar
+    type: boolean
+    required: false
+    default: true
+    description: "Show sidebar navigation"
+    feature_id: ZER0-008
+
+  - name: author_profile
+    type: boolean
+    required: false
+    default: true
+    description: "Show author profile card"
+
+  - name: read_time
+    type: boolean
+    required: false
+    default: true
+    description: "Show estimated reading time"
+
+  - name: comments
+    type: boolean
+    required: false
+    default: false
+    description: "Enable Giscus comments"
+    feature_id: ZER0-029
+
+  - name: share
+    type: boolean
+    required: false
+    default: true
+    description: "Show social share buttons"
+
+  - name: related
+    type: boolean
+    required: false
+    default: true
+    description: "Show related posts section"
+
+  - name: featured
+    type: boolean
+    required: false
+    default: false
+    description: "Highlight in featured listings"
+
+  - name: breaking
+    type: boolean
+    required: false
+    default: false
+    description: "Show breaking news alert banner"
+
+  - name: index
+    type: boolean
+    required: false
+    default: false
+    description: "Include in site index/archives"
+
+  # --- Content Hints ---
+  - name: draft
+    type: string
+    required: false
+    enum: [draft, "in progress", published]
+    description: "Content status"
+
+  - name: estimated_reading_time
+    type: string
+    required: false
+    description: "Manual reading time override (e.g., '15 minutes')"
+
+  - name: difficulty_level
+    type: string
+    required: false
+    enum: [beginner, intermediate, advanced]
+    description: "Content difficulty level"
+
+  - name: mermaid
+    type: boolean
+    required: false
+    default: false
+    description: "Enable Mermaid diagram rendering"
+    feature_id: ZER0-013

@@ -1,4 +1,9 @@
 #!/bin/bash
+# @zer0-component
+#   feature-id: ZER0-008
+#   type: script
+#   dependencies: []
+#
 # ===================================================================
 # MIGRATE NAV MODES - Update Front Matter Navigation Values
 # ===================================================================

@@ -1,3 +1,8 @@
+<!-- @zer0-component
+  feature-id: ZER0-032
+  type: include
+  dependencies: [ZER0-042]
+-->
 [
 {%- assign search_pages = site.pages | where_exp: "item", "item.title" -%}
 {%- assign search_posts = site.posts -%}

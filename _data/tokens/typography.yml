@@ -1,0 +1,234 @@
+# =============================================================================
+# Design Tokens: Typography
+# =============================================================================
+# Single source of truth for font families, sizes, weights, and line heights.
+# Maps to SCSS variables in _sass/core/_variables.scss.
+# =============================================================================
+
+tokens:
+
+  # ---------------------------------------------------------------------------
+  # Font Families
+  # ---------------------------------------------------------------------------
+  - name: font-sans-serif
+    value: "-apple-system, BlinkMacSystemFont, 'Roboto', 'Segoe UI', 'Helvetica Neue', 'Lucida Grande', Arial, sans-serif"
+    scss-var: "$sans-serif"
+    usage: [body-text, headings, navigation]
+    category: family
+
+  - name: font-serif
+    value: "Georgia, Times, serif"
+    scss-var: "$serif"
+    usage: [captions]
+    category: family
+
+  - name: font-monospace
+    value: "Monaco, Consolas, 'Lucida Console', monospace"
+    scss-var: "$monospace"
+    usage: [code-blocks, inline-code]
+    category: family
+
+  - name: font-body
+    value: "$sans-serif"
+    scss-var: "$global-font-family"
+    usage: [body-text]
+    category: family
+
+  - name: font-heading
+    value: "$sans-serif"
+    scss-var: "$header-font-family"
+    usage: [headings]
+    category: family
+
+  - name: font-caption
+    value: "$serif"
+    scss-var: "$caption-font-family"
+    usage: [image-captions, figure-captions]
+    category: family
+
+  # ---------------------------------------------------------------------------
+  # Font Sizes — Base
+  # ---------------------------------------------------------------------------
+  - name: font-size-root
+    value: "16px"
+    scss-var: "$doc-font-size"
+    usage: [root-font-size]
+    category: size
+
+  - name: font-size-base
+    value: "1rem"
+    scss-var: "$font-size-base"
+    usage: [body-text]
+    category: size
+
+  - name: font-size-sm
+    value: "0.875rem"
+    scss-var: "$font-size-sm"
+    usage: [small-text, meta-info]
+    category: size
+
+  - name: font-size-lg
+    value: "1.25rem"
+    scss-var: "$font-size-lg"
+    usage: [lead-text]
+    category: size
+
+  # ---------------------------------------------------------------------------
+  # Font Sizes — Type Scale
+  # ---------------------------------------------------------------------------
+  - name: type-size-1
+    value: "2.441em"
+    description: "~39px — largest display text"
+    scss-var: "$type-size-1"
+    category: type-scale
+
+  - name: type-size-2
+    value: "1.953em"
+    description: "~31px"
+    scss-var: "$type-size-2"
+    category: type-scale
+
+  - name: type-size-3
+    value: "1.563em"
+    description: "~25px"
+    scss-var: "$type-size-3"
+    category: type-scale
+
+  - name: type-size-4
+    value: "1.25em"
+    description: "~20px"
+    scss-var: "$type-size-4"
+    category: type-scale
+
+  - name: type-size-5
+    value: "1em"
+    description: "~16px — base size"
+    scss-var: "$type-size-5"
+    category: type-scale
+
+  - name: type-size-6
+    value: "0.75em"
+    description: "~12px"
+    scss-var: "$type-size-6"
+    category: type-scale
+
+  - name: type-size-7
+    value: "0.6875em"
+    description: "~11px"
+    scss-var: "$type-size-7"
+    category: type-scale
+
+  - name: type-size-8
+    value: "0.625em"
+    description: "~10px — smallest"
+    scss-var: "$type-size-8"
+    category: type-scale
+
+  # ---------------------------------------------------------------------------
+  # Font Sizes — Heading Scale
+  # ---------------------------------------------------------------------------
+  - name: h-size-1
+    value: "1.563em"
+    description: "~25px"
+    scss-var: "$h-size-1"
+    category: heading-scale
+
+  - name: h-size-2
+    value: "1.25em"
+    description: "~20px"
+    scss-var: "$h-size-2"
+    category: heading-scale
+
+  - name: h-size-3
+    value: "1.125em"
+    description: "~18px"
+    scss-var: "$h-size-3"
+    category: heading-scale
+
+  - name: h-size-4
+    value: "1.0625em"
+    description: "~17px"
+    scss-var: "$h-size-4"
+    category: heading-scale
+
+  - name: h-size-5
+    value: "1.03125em"
+    description: "~16.5px"
+    scss-var: "$h-size-5"
+    category: heading-scale
+
+  - name: h-size-6
+    value: "1em"
+    description: "~16px"
+    scss-var: "$h-size-6"
+    category: heading-scale
+
+  # ---------------------------------------------------------------------------
+  # Font Weights
+  # ---------------------------------------------------------------------------
+  - name: font-weight-lighter
+    value: "lighter"
+    scss-var: "$font-weight-lighter"
+    category: weight
+
+  - name: font-weight-light
+    value: "300"
+    scss-var: "$font-weight-light"
+    category: weight
+
+  - name: font-weight-normal
+    value: "400"
+    scss-var: "$font-weight-normal"
+    category: weight
+
+  - name: font-weight-bold
+    value: "700"
+    scss-var: "$font-weight-bold"
+    category: weight
+
+  - name: font-weight-bolder
+    value: "bolder"
+    scss-var: "$font-weight-bolder"
+    category: weight
+
+  - name: font-weight-base
+    value: "400"
+    scss-var: "$font-weight-base"
+    usage: [body-text-default]
+    category: weight
+
+  # ---------------------------------------------------------------------------
+  # Line Heights
+  # ---------------------------------------------------------------------------
+  - name: line-height-base
+    value: "1.5"
+    scss-var: "$line-height-base"
+    usage: [body-text]
+    category: line-height
+
+  - name: line-height-sm
+    value: "1.25"
+    scss-var: "$line-height-sm"
+    usage: [compact-text, buttons]
+    category: line-height
+
+  - name: line-height-lg
+    value: "2"
+    scss-var: "$line-height-lg"
+    usage: [spacious-text]
+    category: line-height
+
+  # ---------------------------------------------------------------------------
+  # Paragraph
+  # ---------------------------------------------------------------------------
+  - name: paragraph-indent
+    value: "false"
+    description: "Whether to indent first line of paragraphs"
+    scss-var: "$paragraph-indent"
+    category: paragraph
+
+  - name: indent-size
+    value: "1.3em"
+    scss-var: "$indent-var"
+    usage: [paragraph-indent-amount]
+    category: paragraph

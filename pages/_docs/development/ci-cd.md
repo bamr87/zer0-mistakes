@@ -86,7 +86,7 @@ steps:
       bundler-cache: true
   
   - name: Run tests
-    run: ./test/test_runner.sh
+    run: bundle exec rspec
   
   - name: Build Jekyll site
     run: bundle exec jekyll build

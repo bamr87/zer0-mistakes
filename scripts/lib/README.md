@@ -143,20 +143,14 @@ create_github_release "1.2.0"
 
 ## Testing
 
-Each library has comprehensive unit tests in `scripts/test/lib/`.
+Tests have been migrated to the RSpec suite in `spec/`.
 
-### Run All Tests
-
-```bash
-./scripts/test/lib/run_tests.sh
-```
-
-### Run Individual Tests
+### Run Tests
 
 ```bash
-./scripts/test/lib/test_version.sh
-./scripts/test/lib/test_changelog.sh
-./scripts/test/lib/test_git.sh
+bundle exec rspec                    # All tests
+bundle exec rspec spec/build/        # Build & release tests
+bundle exec rspec spec/plugins/      # Plugin tests
 ```
 
 ### Test Coverage

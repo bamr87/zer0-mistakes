@@ -3,7 +3,7 @@
   // UNIFIED VS CODE LAUNCH CONFIGURATION - Docker-First
   // ==================================================
   // Optimized for zer0-mistakes Jekyll theme development
-  // Last Updated: 2025-11-29
+  // Last Updated: 2026-03-22
   
   "version": "0.2.0",
   "configurations": [
@@ -28,10 +28,7 @@
       "smartStep": true,
       "skipFiles": ["<node_internals>/**"],
       "internalConsoleOptions": "openOnSessionStart",
-      "trace": {
-        "stdio": true,
-        "logFile": "${workspaceFolder}/logs/debug-trace.log"
-      },
+      "trace": true,
       "pathMapping": {
         "/": "${workspaceFolder}/_site/",
         "/assets/": "${workspaceFolder}/assets/",
@@ -51,10 +48,7 @@
       "skipFiles": ["<node_internals>/**"],
       "internalConsoleOptions": "openOnSessionStart",
       "urlFilter": "localhost:4000*",
-      "trace": {
-        "stdio": true,
-        "logFile": "${workspaceFolder}/logs/debug-attach-trace.log"
-      },
+      "trace": true,
       "pathMapping": {
         "/": "${workspaceFolder}/_site/",
         "/assets/": "${workspaceFolder}/assets/",
@@ -80,10 +74,7 @@
       "smartStep": true,
       "skipFiles": ["<node_internals>/**"],
       "internalConsoleOptions": "openOnSessionStart",
-      "trace": {
-        "stdio": true,
-        "logFile": "${workspaceFolder}/logs/debug-rebuild-trace.log"
-      },
+      "trace": true,
       "pathMapping": {
         "/": "${workspaceFolder}/_site/",
         "/assets/": "${workspaceFolder}/assets/",
@@ -122,7 +113,9 @@
       ],
       "sourceMaps": true,
       "smartStep": true,
+      "skipFiles": ["<node_internals>/**"],
       "internalConsoleOptions": "openOnSessionStart",
+      "trace": true,
       "pathMapping": {
         "/": "${workspaceFolder}/_site/",
         "/assets/": "${workspaceFolder}/assets/",
@@ -150,11 +143,9 @@
       ],
       "sourceMaps": true,
       "smartStep": true,
+      "skipFiles": ["<node_internals>/**"],
       "internalConsoleOptions": "openOnSessionStart",
-      "trace": {
-        "stdio": true,
-        "logFile": "${workspaceFolder}/logs/performance-debug.log"
-      },
+      "trace": true,
       "pathMapping": {
         "/": "${workspaceFolder}/_site/",
         "/assets/": "${workspaceFolder}/assets/",

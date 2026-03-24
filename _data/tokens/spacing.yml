@@ -1,0 +1,120 @@
+# =============================================================================
+# Design Tokens: Spacing & Layout
+# =============================================================================
+# Single source of truth for breakpoints, spacing scale, and grid dimensions.
+# Maps to SCSS variables in _sass/core/_variables.scss.
+# =============================================================================
+
+tokens:
+
+  # ---------------------------------------------------------------------------
+  # Breakpoints
+  # ---------------------------------------------------------------------------
+  - name: breakpoint-sm
+    value: "600px"
+    scss-var: "$small"
+    description: "Small screens — phones landscape"
+    category: breakpoints
+
+  - name: breakpoint-md
+    value: "768px"
+    scss-var: "$medium"
+    description: "Medium screens — tablets portrait"
+    category: breakpoints
+
+  - name: breakpoint-md-wide
+    value: "900px"
+    scss-var: "$medium-wide"
+    description: "Medium-wide — tablets landscape"
+    category: breakpoints
+
+  - name: breakpoint-lg
+    value: "1024px"
+    scss-var: "$large"
+    description: "Large screens — desktops"
+    category: breakpoints
+
+  - name: breakpoint-xl
+    value: "1280px"
+    scss-var: "$x-large"
+    description: "Extra-large screens — wide desktops"
+    category: breakpoints
+
+  - name: max-width
+    value: "1280px"
+    scss-var: "$max-width"
+    description: "Maximum content width"
+    usage: [page-container]
+    category: breakpoints
+
+  # ---------------------------------------------------------------------------
+  # Grid / Sidebar
+  # ---------------------------------------------------------------------------
+  - name: sidebar-width-narrow
+    value: "200px"
+    scss-var: "$right-sidebar-width-narrow"
+    usage: [sidebar-narrow]
+    category: grid
+
+  - name: sidebar-width
+    value: "300px"
+    scss-var: "$right-sidebar-width"
+    usage: [sidebar-default]
+    category: grid
+
+  - name: sidebar-width-wide
+    value: "400px"
+    scss-var: "$right-sidebar-width-wide"
+    usage: [sidebar-wide]
+    category: grid
+
+  # ---------------------------------------------------------------------------
+  # Navigation Dimensions
+  # ---------------------------------------------------------------------------
+  - name: nav-height
+    value: "2em"
+    scss-var: "$nav-height"
+    usage: [navigation-bar]
+    category: navigation
+
+  - name: nav-toggle-height
+    value: "2rem"
+    scss-var: "$nav-toggle-height"
+    usage: [mobile-nav-toggle]
+    category: navigation
+
+  - name: navicon-width
+    value: "1.5rem"
+    scss-var: "$navicon-width"
+    usage: [hamburger-icon]
+    category: navigation
+
+  - name: navicon-height
+    value: "0.25rem"
+    scss-var: "$navicon-height"
+    usage: [hamburger-icon-bar]
+    category: navigation
+
+  # ---------------------------------------------------------------------------
+  # Border Width Scale
+  # ---------------------------------------------------------------------------
+  - name: border-width-1
+    value: "1px"
+    scss-var: "$border-width"
+    category: borders
+
+  - name: border-width-2
+    value: "2px"
+    category: borders
+
+  - name: border-width-3
+    value: "3px"
+    category: borders
+
+  - name: border-width-4
+    value: "4px"
+    category: borders
+
+  - name: border-width-5
+    value: "5px"
+    category: borders

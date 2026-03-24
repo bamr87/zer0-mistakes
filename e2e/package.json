@@ -1,0 +1,20 @@
+{
+  "name": "zer0-mistakes-e2e",
+  "private": true,
+  "description": "E2E and visual regression tests for zer0-mistakes Jekyll theme",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:desktop": "npx playwright test --project=desktop",
+    "test:mobile": "npx playwright test --project=mobile",
+    "test:tablet": "npx playwright test --project=tablet",
+    "test:a11y": "npx playwright test tests/accessibility.spec.ts",
+    "test:visual": "npx playwright test tests/visual-regression.spec.ts",
+    "update-snapshots": "npx playwright test --update-snapshots",
+    "report": "npx playwright show-report results/html-report",
+    "install-browsers": "npx playwright install --with-deps chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.45.0",
+    "@axe-core/playwright": "^4.9.0"
+  }
+}

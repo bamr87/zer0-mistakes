@@ -1,0 +1,63 @@
+# =============================================================================
+# Design Token Schema
+# =============================================================================
+# Defines the structure that all token files must follow.
+# Used by RSpec tests to validate token definitions.
+# =============================================================================
+
+token_schema:
+  required_fields:
+    - name        # Token identifier (kebab-case)
+    - value       # Default/light-mode value
+    - category    # Grouping for documentation
+
+  optional_fields:
+    - description   # Human-readable description
+    - dark          # Dark mode value override
+    - scss-var      # Existing SCSS variable this maps to
+    - bootstrap-var # Bootstrap CSS variable equivalent
+    - usage         # List of component/context references
+    - deprecated    # Boolean, marks token for removal
+
+  naming_convention: "kebab-case"
+  name_pattern: "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+
+  categories:
+    colors:
+      - gray-scale
+      - brand
+      - semantic
+      - surface
+      - links
+      - theme
+      - syntax
+      - dark-theme
+      - wizard-theme
+    typography:
+      - family
+      - size
+      - type-scale
+      - heading-scale
+      - weight
+      - line-height
+      - paragraph
+    spacing:
+      - breakpoints
+      - grid
+      - navigation
+      - borders
+    components:
+      - borders
+      - shadows
+      - transitions
+      - notices
+      - states
+      - links
+      - stats
+      - ui-elements
+
+  files:
+    - colors.yml
+    - typography.yml
+    - spacing.yml
+    - components.yml

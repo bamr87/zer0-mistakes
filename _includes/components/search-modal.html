@@ -12,6 +12,12 @@
   - Keyboard shortcut handled by navigation keyboard module ("/")
   ===================================================================
 -->
+<!-- @zer0-component
+  feature-id: ZER0-032
+  type: include
+  dependencies: [ZER0-001]
+  styles: [modal, form-control]
+-->
 
 {%- assign ui_text = site.data.ui-text[site.locale] | default: site.data.ui-text.en -%}
 {%- assign search_placeholder = ui_text.search_placeholder_text | default: "Enter your search term..." -%}

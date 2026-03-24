@@ -346,6 +346,13 @@ features:
         - "pages/_notebooks/"
         - "pages/_about/"
         - "pages/_quickstart/"
+      schemas:
+        - "_data/schemas/post.yml"
+        - "_data/schemas/doc.yml"
+        - "_data/schemas/note.yml"
+        - "_data/schemas/notebook.yml"
+        - "_data/schemas/quest.yml"
+        - "_data/schemas/page.yml"
     features:
       - "Custom permalinks per collection"
       - "Front matter defaults"
@@ -996,3 +1003,41 @@ features:
       - "Tag cloud visualization"
       - "Content statistics"
       - "Responsive card layout"
+
+  # ============================================================================
+  # INFRASTRUCTURE & VALIDATION (New in Phase 1)
+  # ============================================================================
+
+  - id: ZER0-044
+    title: "Cross-Reference Validation Infrastructure"
+    description: "CI-enforced bidirectional traceability between features, components, schemas, and tests. @zer0-component machine-readable headers on all theme files"
+    implemented: true
+    version: "0.16.0"
+    link: "/"
+    docs: "/docs/development/cross-references/"
+    tags: [infrastructure, validation, ci, traceability, schemas]
+    date: 2025-06-18
+    references:
+      scripts:
+        - "scripts/validate-component-headers.rb"
+        - "scripts/validate-references.rb"
+        - "scripts/validate-feature-ids.rb"
+        - "scripts/validate-front-matter.rb"
+      plugins:
+        - "_plugins/schema_validator.rb"
+      schemas:
+        - "_data/schemas/post.yml"
+        - "_data/schemas/doc.yml"
+        - "_data/schemas/note.yml"
+        - "_data/schemas/notebook.yml"
+        - "_data/schemas/quest.yml"
+        - "_data/schemas/page.yml"
+      config:
+        - ".pre-commit-config.yaml"
+    features:
+      - "@zer0-component machine-readable headers"
+      - "Content schema validation (build-time)"
+      - "Pre-commit hook enforcement"
+      - "Bidirectional reference validation"
+      - "Feature ID format validation"
+      - "Schema field cross-checking"

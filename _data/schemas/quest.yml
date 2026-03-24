@@ -1,0 +1,140 @@
+# Schema: Quests Collection
+# Validates front matter for pages/_quests/**
+# Layout: default.html
+# Feature: ZER0-014 (Collections System)
+
+collection: quests
+layout: default
+description: "Tutorial collections and learning paths"
+permalink_pattern: "/:collection/:categories/:name/"
+
+fields:
+  # --- Required Fields ---
+  - name: title
+    type: string
+    required: true
+    max_length: 200
+    description: "Quest/tutorial title"
+
+  # --- Layout & Display ---
+  - name: layout
+    type: string
+    required: false
+    default: default
+    enum: [default, root, collection]
+    description: "Layout template to use"
+    feature_id: ZER0-019
+
+  # --- SEO & Preview ---
+  - name: description
+    type: string
+    required: false
+    max_length: 320
+    description: "SEO meta description"
+
+  - name: preview
+    type: image
+    required: false
+    description: "Preview/banner image path"
+    feature_id: ZER0-004
+
+  - name: permalink
+    type: string
+    required: false
+    pattern: "^/.*/$"
+    description: "Custom URL path override"
+
+  # --- Content Organization ---
+  - name: categories
+    type: array
+    required: false
+    description: "Quest categories"
+
+  - name: tags
+    type: array
+    required: false
+    description: "Content tags for discovery"
+
+  # --- Author & Dates ---
+  - name: author
+    type: string
+    required: false
+    description: "Author username"
+
+  - name: date
+    type: date
+    required: false
+    description: "Publication date"
+
+  - name: lastmod
+    type: date
+    required: false
+    description: "Last modification date"
+
+  # --- Display Controls ---
+  - name: sidebar
+    type: object
+    required: false
+    default:
+      nav: tree
+    description: "Sidebar navigation configuration"
+    feature_id: ZER0-008
+
+  - name: author_profile
+    type: boolean
+    required: false
+    default: false
+    description: "Show author profile card"
+
+  - name: read_time
+    type: boolean
+    required: false
+    default: true
+    description: "Show estimated reading time"
+
+  - name: share
+    type: boolean
+    required: false
+    default: true
+    description: "Show social share buttons"
+
+  - name: related
+    type: boolean
+    required: false
+    default: true
+    description: "Show related content section"
+
+  # --- Quest-Specific ---
+  - name: difficulty
+    type: string
+    required: false
+    enum: [beginner, intermediate, advanced]
+    description: "Content difficulty level"
+
+  - name: estimated_time
+    type: string
+    required: false
+    description: "Estimated completion time"
+
+  - name: prerequisites
+    type: array
+    required: false
+    description: "List of prerequisite quests or topics"
+
+  - name: order
+    type: integer
+    required: false
+    description: "Display order within the collection"
+
+  - name: mermaid
+    type: boolean
+    required: false
+    default: false
+    description: "Enable Mermaid diagram rendering"
+    feature_id: ZER0-013
+
+  - name: draft
+    type: string
+    required: false
+    enum: [draft, "in progress", published]
+    description: "Content status"

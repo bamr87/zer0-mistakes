@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+# @zer0-component
+#   feature-id: ZER0-021
+#   type: plugin
+#   dependencies: []
+#
 #
 # File: theme_version.rb
 # Path: _plugins/theme_version.rb

@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# @zer0-component
+#   feature-id: ZER0-004
+#   type: script
+#   dependencies: []
+#
 # ============================================================================
 # WRAPPER: This script forwards to scripts/features/install-preview-generator
 # 
