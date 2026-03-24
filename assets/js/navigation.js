@@ -340,7 +340,19 @@
       const dropdowns = document.querySelectorAll('.nav-hover-dropdown .dropdown-menu');
       dropdowns.forEach(menu => {
         if (!isMobile()) {
+          // Close the dropdown menu
           menu.classList.remove('show');
+
+          // Also reset the corresponding toggle state for accessibility
+          const dropdown = menu.closest('.dropdown');
+          const toggle = dropdown
+            ? dropdown.querySelector('[data-bs-toggle="dropdown"], .dropdown-toggle')
+            : null;
+
+          if (toggle) {
+            toggle.classList.remove('show');
+            toggle.setAttribute('aria-expanded', 'false');
+          }
         }
       });
     }, 250);
