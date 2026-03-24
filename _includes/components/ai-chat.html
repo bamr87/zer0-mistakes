@@ -123,7 +123,7 @@
 {% endcomment %}
 {% capture page_text %}{{ content | strip_html | strip_newlines | normalize_whitespace }}{% endcapture %}
 {% assign context_length = site.ai_chat.context_max_length | default: 2000 %}
-<script id="aiChatPageContent" type="text/plain">{{ page_text | truncate: context_length }}</script>
+<script id="aiChatPageContent" type="text/plain">{{ page_text | truncate: context_length | replace: '</script>', '<\/script>' }}</script>
 
 <script>
 // AI Chat Widget
