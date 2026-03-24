@@ -62,6 +62,12 @@ RUN bundle config set --local deployment false && \
     bundle config set --local without '' && \
     bundle install --jobs 4 --retry 3
 
+# Download vendor assets (JS/CSS libraries)
+COPY vendor-manifest.json ./
+COPY scripts/vendor-install.sh ./scripts/
+COPY scripts/lib/common.sh ./scripts/lib/
+RUN bash ./scripts/vendor-install.sh
+
 # ------------------------------------------------------------------------------
 # Stage 2: Development & Test Stage
 # ------------------------------------------------------------------------------

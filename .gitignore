@@ -20,6 +20,9 @@ assets/.DS_Store
 *.env
 !.env.example
 
+# Vendor assets (downloaded at build time via scripts/vendor-install.sh)
+assets/vendor/
+
 # Gem development
 *.gem
 /*.gem

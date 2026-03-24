@@ -198,6 +198,9 @@ jobs:
           ruby-version: ${{ env.RUBY_VERSION }}
           install-system-deps: true
 
+      - name: Install vendor assets
+        run: bash ./scripts/vendor-install.sh
+
       - name: Build gem
         run: |
           chmod +x ./scripts/build

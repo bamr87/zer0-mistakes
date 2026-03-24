@@ -17,13 +17,31 @@ VERSION := $(shell jq -r '.version' package.json 2>/dev/null || echo "unknown")
 ##@ Setup Commands
 
 .PHONY: setup
-setup: ## Set up development environment
+setup: vendor ## Set up development environment
 	@echo "$(GREEN)Setting up development environment...$(RESET)"
 	@chmod +x scripts/*.sh
 	@./scripts/setup.sh
 
 .PHONY: install
 install: setup ## Alias for setup
+
+##@ Vendor Commands
+
+.PHONY: vendor
+vendor: ## Download vendor assets from manifest
+	@echo "$(BLUE)Installing vendor assets...$(RESET)"
+	@./scripts/vendor-install.sh
+
+.PHONY: vendor-clean
+vendor-clean: ## Remove downloaded vendor assets
+	@echo "$(YELLOW)Removing vendor assets...$(RESET)"
+	@rm -rf assets/vendor/
+	@echo "$(GREEN)Vendor assets removed$(RESET)"
+
+.PHONY: vendor-update
+vendor-update: ## Force re-download all vendor assets
+	@echo "$(BLUE)Updating vendor assets...$(RESET)"
+	@./scripts/vendor-install.sh --force
 
 ##@ Development Commands
 

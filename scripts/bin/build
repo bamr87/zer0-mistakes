@@ -83,7 +83,17 @@ main() {
     success "Environment validated"
     echo ""
     
-    # Step 2: Get current version
+    # Step 2: Install vendor assets
+    step "Installing vendor assets..."
+    local vendor_script="$SCRIPT_DIR/../vendor-install.sh"
+    if [[ -f "$vendor_script" ]]; then
+        bash "$vendor_script"
+    else
+        warn "vendor-install.sh not found, skipping vendor install"
+    fi
+    echo ""
+    
+    # Step 3: Get current version
     step "Reading version..."
     local version
     version=$(get_current_version)
@@ -91,7 +101,7 @@ main() {
     info "Gem file: jekyll-theme-zer0-${version}.gem"
     echo ""
     
-    # Step 3: Build gem
+    # Step 4: Build gem
     build_gem "$version"
     echo ""
     
