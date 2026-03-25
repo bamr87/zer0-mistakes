@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.21.2] - 2026-03-21
+
+### Changed
+- Version bump: patch release
+- Release tooling: RubyGems publishing now supports API-key auth via `.env` (`RUBY_API_KEY` mapped to `GEM_HOST_API_KEY`)
+
+### Commits in this release
+- 34bed37 chore(deps): update Ruby gem dependencies (#31)
+- 50ebdd4 chore(deps): update Ruby gem dependencies (#32)
+
+## [0.21.1] - 2026-03-13
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 9665afd feat(templates): add README.md for templates directory and usage instructions
+- cc81bd9 chore(deps): update Ruby gem dependencies (#24)
+
+
 ## [0.21.0] - 2026-02-01
 
 ### Added
