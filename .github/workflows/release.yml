@@ -37,7 +37,7 @@ on:
         type: boolean
 
 env:
-  RUBY_VERSION: '3.2'
+  RUBY_VERSION: '3.3'
 
 defaults:
   run:
