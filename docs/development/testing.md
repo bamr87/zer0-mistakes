@@ -62,6 +62,22 @@ Tests include:
 - HTML validation
 - Accessibility checks
 
+### Frontend styling tests (Playwright)
+
+Automated checks for the theme CSS stack (Jekyll `main.css`, same-origin CSS HTTP 200, Bootstrap CSS variables) and layout chrome (header, navbar structure, mobile menu toggle, `bd-main` / `bd-content` on a default-layout page).
+
+```bash
+# Starts Jekyll on 127.0.0.1:4011 unless BASE_URL is already set
+./test/test_runner.sh --suites styling
+
+# Or with Docker already serving on 4000:
+BASE_URL=http://127.0.0.1:4000 npm run test:styling
+```
+
+Core tests also validate that a production Jekyll build emits `main.css` containing docs-layout rules (e.g. `bd-layout`).
+
+Third-party CSS/JS are bundled under `assets/vendor/`; see `pages/_docs/development/vendor-assets.md` (site: `/docs/development/vendor-assets/`) and `npm run vendor:install` to refresh.
+
 ## Manual Testing
 
 ### Local Preview

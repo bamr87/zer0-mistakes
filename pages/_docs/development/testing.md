@@ -104,6 +104,18 @@ Code quality and linting tests:
 | HTML Validation | Validates generated HTML |
 | Link Checking | Verifies internal links work |
 
+### Styling tests (`test_styling.sh` + Playwright)
+
+Browser checks for the theme stylesheet stack and layout: same-origin CSS returns 200, `main.css` is linked, Bootstrap `--bs-*` variables resolve on `:root`, header/navbar structure, mobile nav toggler, and `bd-main` / `bd-content` on `/faq/`. Core tests also assert compiled `main.css` includes docs-layout rules (`bd-layout`).
+
+```bash
+./test/test_runner.sh --suites styling
+# With Docker already on port 4000:
+BASE_URL=http://127.0.0.1:4000 npm run test:styling
+```
+
+Bundled libraries live under `assets/vendor/`; see [Vendor assets](/docs/development/vendor-assets/) (`npm run vendor:install` / `scripts/vendor-install.sh`).
+
 ## Writing Tests
 
 ### Test Script Template

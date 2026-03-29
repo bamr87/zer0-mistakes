@@ -66,7 +66,7 @@ The theme includes Mermaid support in `_config.yml`:
 
 ```yaml
 mermaid:
-  src: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js'
+  src: '/assets/vendor/mermaid/mermaid.min.js'
 ```
 
 ### How It Works

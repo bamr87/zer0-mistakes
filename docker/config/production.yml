@@ -5,6 +5,7 @@
 # settings with production-optimized values.
 # 
 # Usage: bundle exec jekyll build --config _config.yml,docker/config/production.yml
+# Docker image builds use docker/config/docker-build.yml (local theme, no remote_theme fetch).
 # ==============================================================================
 
 # Environment

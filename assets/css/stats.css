@@ -4,6 +4,9 @@
   ===================================================================
   
   File: stats.css
+  Loaded only when `page.layout == 'stats'` (_includes/core/head.html).
+  Kept separate so dashboard CSS is not bundled into every page’s main.css.
+
   Purpose: Custom styles for the statistics dashboard that cannot be 
            achieved with Bootstrap 5 utility classes alone.
   

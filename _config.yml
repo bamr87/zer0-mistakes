@@ -190,34 +190,32 @@ youtube:
 
 powered_by:
   - name: "Ruby"
-    version: "3.2.3"
+    version: "3.3"
     url: "https://www.ruby-lang.org/"
     icon: "bi-gem"
   - name: "Jekyll"
-    version: "3.9.5"
+    version: "3.10"
     url: "https://jekyllrb.com/"
     icon: "bi-joystick"
   - name: "Bootstrap"
-    version: "5.2.0"
+    version: "5.3.3"
     url: "https://getbootstrap.com/"
     icon: "bi-bootstrap"
   - name: "Algolia"
     version: 
     url: "https://algolia.com/"
     icon: "bi-search"
-  - name: "JQuery"
+  - name: "jQuery"
     url: "https://jquery.com/"
     icon: "bi-filetype-js"
   - name: "MathJax"
-    version: "1.0"
     url: "https://www.mathjax.org/"
     icon: "bi-calculator"
   - name: "GitHub Pages"
     version: "232"
     url: "https://pages.github.com/"
     icon: "bi-github"
-  - name: "docker"
-    version: "20.10.8"
+  - name: "Docker"
     url: "https://www.docker.com/"
     icon: "bi-docker"
 
@@ -230,6 +228,7 @@ powered_by:
 
 plugins:
   - github-pages
+  - jekyll-include-cache
   - jekyll-remote-theme
   - jekyll-feed
   - jekyll-sitemap
@@ -265,12 +264,13 @@ gisgus:
 #   1. Add 'mermaid: true' to page front matter
 #   2. Use ```mermaid ... ``` code blocks OR <div class="mermaid">...</div>
 # 
-# GitHub Pages Compatible: Yes (client-side rendering via CDN)
+# GitHub Pages Compatible: Yes (client-side; script bundled under assets/vendor/)
+# Update file: npm install && npm run vendor:mermaid (copies from node_modules/mermaid, not jsDelivr)
 # Plugin: jekyll-mermaid is OPTIONAL (not needed for GitHub Pages)
 # Documentation: https://mermaid.js.org/
 
 mermaid:
-  src: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js'
+  src: '/assets/vendor/mermaid/mermaid.min.js'
 
 ## Conversion
 # Markdown Options https://jekyllrb.com/docs/configuration/markdown/
@@ -477,7 +477,8 @@ exclude:
   - Gemfile
   - node_modules/
   - templates/
-  - vendor/
+  # Do not exclude "vendor/" — that would skip assets/vendor/ (bundled Bootstrap, etc.).
+  # Jekyll defaults already exclude vendor/bundle, vendor/cache, vendor/ruby, …
   # - "*.sh"
   - submodules/
   - MERMAID-*.md

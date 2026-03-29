@@ -2,9 +2,32 @@
  * Search Modal Controller
  * - Opens modal on navigation:searchRequest event ("/" shortcut)
  * - Focuses search input on open
+ * - Mutually exclusive with Settings (#info-section) and cookie settings modal so Bootstrap
+ *   does not stack multiple .modal-backdrop layers (search vs About/Settings conflict).
  */
 (function() {
     'use strict';
+
+    /**
+     * If modal is visible, hide it and run next() on hidden.bs.modal; else run next() now.
+     */
+    function afterModalClosed(modalEl, next) {
+        if (!modalEl || typeof bootstrap === 'undefined') {
+            next();
+            return;
+        }
+        if (!modalEl.classList.contains('show')) {
+            next();
+            return;
+        }
+        const inst = bootstrap.Modal.getInstance(modalEl);
+        if (!inst) {
+            next();
+            return;
+        }
+        modalEl.addEventListener('hidden.bs.modal', next, { once: true });
+        inst.hide();
+    }
 
     function initSearchModal() {
         const modalEl = document.getElementById('siteSearchModal');
@@ -19,15 +42,35 @@
         let searchIndexPromise = null;
         let searchTimeout = null;
 
-        const openModal = () => {
-            const modalInstance = typeof bootstrap !== 'undefined'
-                ? bootstrap.Modal.getOrCreateInstance(modalEl)
-                : null;
-
-            if (modalInstance) {
-                modalInstance.show();
-            }
+        const showSearchModal = () => {
+            if (typeof bootstrap === 'undefined') return;
+            bootstrap.Modal.getOrCreateInstance(modalEl).show();
         };
+
+        const openModal = () => {
+            if (typeof bootstrap === 'undefined') return;
+            const cookieEl = document.getElementById('cookieSettingsModal');
+            const infoEl = document.getElementById('info-section');
+            afterModalClosed(cookieEl, () => {
+                afterModalClosed(infoEl, showSearchModal);
+            });
+        };
+
+        const infoSectionEl = document.getElementById('info-section');
+        if (infoSectionEl) {
+            infoSectionEl.addEventListener(
+                'show.bs.modal',
+                (e) => {
+                    if (!modalEl.classList.contains('show')) return;
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    afterModalClosed(modalEl, () => {
+                        bootstrap.Modal.getOrCreateInstance(infoSectionEl).show();
+                    });
+                },
+                true,
+            );
+        }
 
         // Open modal when keyboard shortcut requests search
         document.addEventListener('navigation:searchRequest', openModal);

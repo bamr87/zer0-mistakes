@@ -2,7 +2,7 @@
 title: zer0-mistakes
 sub-title: Jekyll Theme
 description: GitHub Pages compatible Jekyll theme with Bootstrap 5.3, featuring automated installation and comprehensive documentation.
-version: 0.21.2
+version: 0.21.3
 layout: landing
 tags:
   - jekyll
@@ -14,7 +14,7 @@ categories:
   - docker
   - bootstrap
 created: 2024-02-10T23:51:11.480Z
-lastmod: 2026-01-25T00:00:00.000Z
+lastmod: 2026-03-29T00:00:00.000Z
 draft: false
 permalink: /
 slug: zer0
@@ -23,7 +23,7 @@ keywords:
   - docker
   - remote-theme
   - github-pages
-date: 2026-01-25T12:00:00.000Z
+date: 2026-03-29T12:00:00.000Z
 snippet: GitHub Pages compatible Jekyll theme with Bootstrap 5
 comments: true
 mermaid: true
@@ -132,22 +132,22 @@ docker-compose up
 ```mermaid
 sequenceDiagram
     participant You
-    participant Install Script
+    participant InstallScript as Install Script
     participant Docker
     participant Browser
-    
-    You->>Install Script: curl ... | bash
-    Install Script->>Install Script: Detect platform
-    Install Script->>Install Script: Download theme files
-    Install Script->>Install Script: Configure Docker
-    Install Script-->>You: ✅ Ready!
-    
+
+    You->>InstallScript: curl ... | bash
+    InstallScript->>InstallScript: Detect platform
+    InstallScript->>InstallScript: Download theme files
+    InstallScript->>InstallScript: Configure Docker
+    InstallScript-->>You: ✅ Ready
+
     You->>Docker: docker-compose up
     Docker->>Docker: Build Jekyll container
     Docker->>Docker: Install dependencies
     Docker-->>Browser: Serve on :4000
-    
-    Browser-->>You: 🎉 Live site!
+
+    Browser-->>You: 🎉 Live site
 ```
 
 ---
@@ -458,9 +458,9 @@ graph TD
 |-----------|---------|-----------|
 | `_layouts/` | Page templates | `default.html`, `journals.html`, `landing.html`, `notebook.html` |
 | `_includes/` | Reusable components | `core/`, `components/`, `analytics/`, `navigation/` |
-| `_sass/` | Stylesheets | `custom.scss`, `notebooks.scss`, `core/` |
-| `assets/` | Static files | `css/`, `js/sidebar.js`, `images/` |
-| `scripts/` | Automation | `release`, `build`, `convert-notebooks.sh` |
+| `_sass/` | Stylesheets | `custom.scss`, `notebooks.scss`, `core/` (`_variables`, `_docs-layout`, …), `theme/` (`_css-variables`, `_wizard-mode`) |
+| `assets/` | Static files | `css/`, `js/`, `images/`, **`vendor/`** (Bootstrap, jQuery, MathJax, Mermaid, … — committed for GitHub Pages) |
+| `scripts/` | Automation | `release`, `build`, `vendor-install.sh`, `convert-notebooks.sh` |
 | `docs/` | Technical docs | `SIDEBAR_IMPROVEMENTS.md`, `JUPYTER_NOTEBOOKS.md` |
 | `pages/` | Content pages | `privacy-policy.md`, `terms-of-service.md` |
 
@@ -509,6 +509,19 @@ git commit -m "feat: add new component"
 
 # Docker-specific tests
 ./test/test_docker_deployment.sh
+
+# Visual / styling checks (Playwright; optional BASE_URL if site already running)
+npm run test:styling
+```
+
+### Vendor assets (maintainers)
+
+Third-party CSS and JavaScript live under `assets/vendor/` so GitHub Pages builds work without npm at publish time. To refresh bundles after changing versions, see [Vendor assets](pages/_docs/development/vendor-assets.md) (published at `/docs/development/vendor-assets/`). Short version:
+
+```bash
+npm install
+npm run vendor:install    # manifest downloads (+ Mermaid copy when node_modules present)
+# or: ./scripts/vendor-install.sh
 ```
 
 ---
@@ -729,7 +742,7 @@ git push origin feature/awesome-feature
 
 | Metric | Value |
 |--------|-------|
-| **Current Version** | 0.21.2 ([RubyGems](https://rubygems.org/gems/jekyll-theme-zer0), [CHANGELOG](/CHANGELOG)) |
+| **Current Version** | 0.21.3 ([RubyGems](https://rubygems.org/gems/jekyll-theme-zer0), [CHANGELOG](/CHANGELOG)) |
 | **Documented Features** | 43 ([Feature Registry](https://github.com/bamr87/zer0-mistakes/blob/main/_data/features.yml)) |
 | **Setup Time** | 2-5 minutes ([install.sh benchmarks](https://github.com/bamr87/zer0-mistakes/blob/main/install.sh)) |
 | **Documentation Pages** | 70+ ([browse docs](/pages/)) |
@@ -772,6 +785,6 @@ Built with these amazing technologies:
 
 **Built with ❤️ for the Jekyll community**
 
-**v0.21.2** • [Changelog](CHANGELOG.md) • [License](LICENSE) • [Contributing](CONTRIBUTING.md)
+**v0.21.3** • [Changelog](CHANGELOG.md) • [License](LICENSE) • [Contributing](CONTRIBUTING.md)
 
 

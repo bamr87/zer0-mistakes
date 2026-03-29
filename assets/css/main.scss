@@ -5,10 +5,14 @@
 
 @charset "utf-8";
 
-// Styling Variables
+// Theme layer on top of bundled Bootstrap CSS (assets/vendor/bootstrap/css/bootstrap.min.css in head.html).
+// Advanced: npm run css:bootstrap can emit a custom Bootstrap build; swap the head <link> — never load two full Bootstraps.
+
+// Design tokens + theme (CSS variables / wizard mode)
 @import "core/variables";
-@import "core/docs";
 @import "core/theme";
+// Bootstrap-docs-style layout (trimmed; was ~3.2k-line vendor snapshot)
+@import "core/docs-layout";
 
 // Bootstrap Styles
 // @import "bootstrap.scss";

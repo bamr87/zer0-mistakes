@@ -10,6 +10,7 @@
 
 // Import navbar styles (extracted from navbar.html)
 @import "core/navbar";
+@import "core/offcanvas-panels";
 
 html, body {
     max-width: 100%;
@@ -113,7 +114,7 @@ html, body {
 }
 
 
-// Sidebar classes consolidated in _sass/core/_docs.scss for consistency
+// Sidebar / docs layout: _sass/core/_docs-layout.scss
 
 // ==============================================================================
 // SIDEBAR & TOC ENHANCEMENTS
@@ -134,10 +135,22 @@ html, body {
 
 // Mobile FAB positioning (TOC button above back-to-top)
 .bd-toc-fab {
-    // On mobile, ensure proper spacing above back-to-top button
+    right: 20px;
+    z-index: 1030;
+
     @media (max-width: 991.98px) {
         bottom: 90px !important; // 20px (back-to-top) + 56px (button height) + 14px (spacing)
     }
+}
+
+.bd-toc-fab .bd-toc-toggle {
+    width: 56px;
+    height: 56px;
+}
+
+// Cookie banner: above fixed navbar (1030), below offcanvas (1045) so drawers cover it
+.cookie-consent-banner {
+    z-index: 1036;
 }
 
 // Active TOC link highlighting
@@ -180,7 +193,7 @@ html {
     z-index: 1020; /* Below TOC button (1030) but above other content */
     border: none; /* Remove borders */
     outline: none; /* Remove outline */
-    background-color: $primary; /* Set a background color */
+    background-color: var(--bs-primary); /* Match Bootstrap theme primary */
     color: inherit; /* Text color */
     opacity: 25%;
     cursor: pointer; /* Add a mouse pointer on hover */
@@ -220,6 +233,21 @@ img {
     height: auto;
 }
 
+// Navbar logo: global img { max-width: 100% } shrinks it inside tight flex/grid cells on small viewports
+// (Use a.navbar-brand only — div.navbar-brand.site-title should still shrink/truncate.)
+#navbar a.navbar-brand {
+    flex-shrink: 0;
+}
+#navbar .navbar-brand img {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    min-height: 30px;
+    max-width: none;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
 // ============================================
 // NAVBAR - Fixed positioning with auto-hide
 // ============================================
@@ -232,6 +260,12 @@ img {
     
     // Ensure navbar background is opaque
     background-color: var(--bs-body-bg);
+}
+
+// Keep the outer Bootstrap navbar shell on one row (nanobar + nav); avoids rare wrap on wide pages
+#navbar > .navbar.navbar-expand-lg {
+    flex-wrap: nowrap !important;
+    align-items: center;
 }
 
 #navbar .navbar-main {
@@ -247,6 +281,83 @@ img {
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
+}
+
+// Desktop (lg+): 3-column grid — [brand/title | main nav | utilities] so nav cannot paint over Search/Settings
+@media (min-width: 992px) {
+    #navbar .navbar-main {
+        display: grid !important;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        align-items: center;
+        column-gap: 0.5rem;
+        row-gap: 0.25rem;
+        flex-wrap: unset !important;
+    }
+
+    #navbar .navbar-main-start {
+        grid-column: 1;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    #navbar #bdNavbar {
+        grid-column: 2;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    #navbar .navbar-utility-controls {
+        grid-column: 3;
+        justify-self: end;
+        flex-shrink: 1;
+        min-width: 0;
+        max-width: 100%;
+        display: inline-flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 0.25rem;
+        padding-left: 0.25rem;
+    }
+
+    #navbar .navbar-utility-controls .nav-search-button,
+    #navbar .navbar-utility-controls .nav-settings-button {
+        flex: 0 1 auto;
+        min-width: 0;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    // Brand + title column yields when the bar is crowded
+    #navbar .navbar-brand-group,
+    #navbar .site-title,
+    #navbar .site-subtitle {
+        flex-shrink: 1;
+        min-width: 0;
+    }
+
+    #navbar .site-title .site-title-text {
+        max-width: min(14rem, 20vw);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: bottom;
+    }
+
+    @media (min-width: 1200px) {
+        #navbar .site-title .site-title-text {
+            max-width: min(20rem, 28vw);
+        }
+    }
+
+    #navbar .site-subtitle .site-subtitle-text {
+        max-width: min(10rem, 14vw);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: inline-block;
+        vertical-align: bottom;
+    }
 }
 
 // Hidden state - slides up out of view
@@ -279,20 +390,17 @@ img {
 
     #navbar .site-title .nav-link {
         padding: 0;
+        min-height: 2.5rem;
+        align-items: center;
     }
 
+    // Cap width so title doesn’t crowd toggles; full hide only via @container nav-brand-start
     #navbar .site-title-text {
-        max-width: 45vw;
+        max-width: min(12rem, 38vw);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-    }
-
-    #navbar .navbar-brand img {
-        width: 30px;
-        height: 30px;
-        object-fit: contain;
-        max-width: none; // Override img-fluid if accidentally applied
+        vertical-align: middle;
     }
 
     #navbar .navbar-toggler {
@@ -330,130 +438,6 @@ img {
 .search-modal .list-group-item {
     border-color: var(--bs-border-color-translucent);
 }
-
-$enable-cssgrid: true;
-$enable-grid-classes: false;
-
-// #box {
-//     background:url('data:image/gif;base64,R0lGODlhBgAGAIAAAO7u7t7e3iH5BAAAAAAALAAAAAAGAAYAAAIKhIOXgKGuDIOzAAA7') #eeeff1;
-//   }
-
-// body {font-size:12px; background:#ffe;}
-//   body,
-//   textarea		{text-align:center; font-family:arial;}
-
-//   input			{}
-//   input[type='number'],
-//   input[type='color']	{width:5em;}
-//   input[type='number']	{padding:0.25em; text-align:right;}
-//   select			{width:9em; font-size:11px; padding:0.25em 0.2em;}
-//   option			{padding:0.25em 0.2em;}
-//   textarea		{resize:none; padding:2.5em; color:#358; background:#eef2f4; font-size:2em; border:0; width:100%;}
-
-  
-
-//   #set			{user-select:none; background:#fff; overflow:hidden;}
-//   #set table		{border-collapse:collapse; padding:2em; font-size:11px; text-transform:uppercase; margin:2em auto;}
-//   #set th,
-//   #set td			{padding:0.4em 0.5em;}
-//   #set th			{text-align:right; color:#567;}
-//   #set td			{text-align:left;}
-
-
-//   /* res beautifier */
-//   #res		    	{color:#789; padding:2em; text-align:left; font-family:'Lucida Console', Monaco, monospace;}
-//   #res b			{font-weight:normal;}
-//   #res i			{font-style:normal;}
-//   #res .obj	    	{color:#789;}
-//   #res .obj b		{color:#345; font-weight:bold;}
-//   #res .key	    	{color:#45a;}
-//   #res .num	    	{color:#12a;}
-//   #res .txt	    	{color:#9ab;}
-//   #res .txt i		{color:#384;}
-//   #res .clr	    	{color:#9ab;}
-//   #res .clr i		{color:#731;}
-//   #res a			{color:#67a;}
-//   #res a:hover		{color:#67e;}
-
-
-//   #box			{overflow:hidden; position:relative; height:300px; padding:3em;}
-//   #box svg		{display:block; position:absolute; right:50%; bottom:50%; transform:translate( 50%, 50%); cursor:pointer;}
-//   #box svg		{max-width:100%; max-height:100%;}
-
-
-//   /* minimized options for small screen */
-//   .opt			{display:block; padding:1em; background:#0ae; color:#fff; text-decoration:none;}
-//   .opt:hover		{background:#0af;}
-
-//   #op2.opt		{background:#ea0;}
-//   #op2.opt:hover		{background:#fa0;}
-
-//   #set table,
-//   #set .legend,
-//   #set #op2.opt,
-//   #set.show #op1.opt	{display:none;}
-
-//   #set.show table		{display:table;}
-//   #set.show #op2.opt	{display:block;}
-
-// @media (min-width: 620px) {
-
-//   html,
-//   body,			
-//   #box,
-//   #set,
-//   #txt,
-//   #msg,
-//   #hnt			{display:block; position:absolute; top:0; right:0; left:0; bottom:0;}
-
-//   html,
-//   body			{overflow:hidden;}
-//   #box			{height:auto;}
-
-//   #txt,
-//   #hnt			{height:250px; top:auto; border-top:3px #eee solid;}
-
-//   #set,
-//   #hnt			{width:270px; left:auto;}
-//   #set table		{font-size:10px;}
-
-//   #box,
-//   #txt			{right:270px}
-
-//   #box,
-//   #set			{bottom:250px;}
-
-//   #hnt			{overflow:auto;}
-//   #msg			{width:100%; height:100%;}
-
-//   #set			{overflow-y:auto;}
-//   #set .legend		{display:block;}
-//   #set table		{display:table;}
-//   #set .opt		{display:none !important;}
-// }
-
-// @media (min-width:900px) {
-
-//   #set,
-//   #hnt			{width:30%}
-//   #box,
-//   #txt			{right:30%}
-// }
-
-// @media (min-width:1024px) {
-
-//   #set table		{font-size:11px;}
-// }
-
-// @media (min-width:1600px) {
-
-//   #set,
-//   #hnt			{width:480px}
-//   #box,
-//   #txt			{right:480px}
-// }
-
-//   .legend			{padding:1.5em 0.5em; border-bottom:1px #eee solid;}
 
 .nested-list-group {
     display: none;

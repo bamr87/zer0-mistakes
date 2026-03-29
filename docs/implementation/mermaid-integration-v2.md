@@ -131,7 +131,7 @@ plugins:
 
 # Added Mermaid configuration
 mermaid:
-  src: "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"
+  src: "/assets/vendor/mermaid/mermaid.min.js"
 
 # Added exclusions for cleanup
 exclude:
@@ -232,7 +232,7 @@ mermaid: true
 
 ### External Dependencies
 
-- **Mermaid.js v10**: https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js
+- **Mermaid.js v10**: committed under `assets/vendor/mermaid/mermaid.min.js`; refresh with `npm run vendor:mermaid`
 - **FontAwesome 6.4.0**: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css
 
 ### Jekyll Plugins

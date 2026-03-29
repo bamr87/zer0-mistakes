@@ -24,31 +24,38 @@ The Zer0-Mistakes theme is built on **Bootstrap 5.3.3**, providing responsive la
 
 ## How Bootstrap is Loaded
 
-### CSS (via CDN)
+The theme ships **Bootstrap 5.3.3**, **jQuery**, and **Bootstrap Icons** under [`assets/vendor/`]({{ '/assets/vendor/' | relative_url }}) so **GitHub Pages** builds need no `npm` or network at publish time. Refresh files with `./scripts/vendor-install.sh` (see [Vendor assets]({{ '/docs/development/vendor-assets/' | relative_url }})).
 
-```html
+### CSS (bundled — default)
+
+```liquid
+{% raw %}
 <!-- In _includes/core/head.html -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
-      rel="stylesheet"
-      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
-      crossorigin="anonymous">
+<link href="{{ '/assets/vendor/bootstrap/css/bootstrap.min.css' | relative_url }}" rel="stylesheet">
+{% endraw %}
 ```
 
 ### JavaScript
 
-```html
+```liquid
+{% raw %}
 <!-- In _includes/components/js-cdn.html -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
+<script src="{{ '/assets/vendor/jquery/jquery-3.7.1.min.js' | relative_url }}"></script>
+<script src="{{ '/assets/vendor/bootstrap/js/bootstrap.bundle.min.js' | relative_url }}"></script>
+{% endraw %}
 ```
 
 ### Bootstrap Icons
 
-```html
-<link rel="stylesheet" 
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+```liquid
+{% raw %}
+<link rel="stylesheet" href="{{ '/assets/vendor/bootstrap-icons/font/bootstrap-icons.css' | relative_url }}">
+{% endraw %}
 ```
+
+### Optional: CDN example (forks only)
+
+If you prefer a public CDN instead of committed vendor files, you can swap the links above for jsDelivr URLs (not the default for this theme).
 
 ## Grid System
 

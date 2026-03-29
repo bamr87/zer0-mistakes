@@ -693,9 +693,9 @@ zer0-mistakes/
 │
 ├── assets/                               # Static assets
 │   ├── css/                              # Compiled stylesheets
-│   │   ├── main.css                      # Main stylesheet
-│   │   ├── custom.css                    # Custom styles
-│   │   └── stats.css                     # Statistics page styles
+│   │   ├── main.css                      # Main stylesheet (from main.scss + _sass)
+│   │   ├── stats.css                     # Stats layout only (conditional in head)
+│   │   └── user-overrides.css            # Optional (not in repo); fork hook in head.html
 │   ├── js/                               # JavaScript files
 │   │   ├── auto-hide-nav.js              # Navigation behavior
 │   │   ├── back-to-top.js                # Scroll to top
