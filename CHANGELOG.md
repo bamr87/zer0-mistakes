@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.21.3] - 2026-03-29
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 1fd2061 Enhance navigation UX: responsive design, accessibility, and interaction polish (#25)
+- 9a27ad7 feat(aieo): add structured data, E-E-A-T signals, FAQ, glossary, and roadmap pages (#38)
+- 96a31f9 chore(deps): update Ruby gem dependencies (#37)
+
+
 ## [0.21.2] - 2026-03-21
 
 ### Changed

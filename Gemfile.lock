@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jekyll-theme-zer0 (0.21.2)
+    jekyll-theme-zer0 (0.21.3)
       jekyll
 
 GEM
@@ -133,7 +133,6 @@ GEM
     http_parser.rb (0.8.1)
     i18n (1.14.8)
       concurrent-ruby (~> 1.0)
-    io-event (1.14.5)
     jekyll (3.10.0)
       addressable (~> 2.4)
       colorator (~> 1.0)
