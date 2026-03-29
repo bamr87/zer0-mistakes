@@ -53,6 +53,12 @@ exclude:
   - Gemfile
   - node_modules/
   - templates/
+  # Exclude Bundler's vendor dir (Ruby gems). assets/vendor/ is a different path
+  # and is intentionally committed for GitHub Pages (Bootstrap, jQuery, etc.).
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
   - submodules/
   - MERMAID-*.md
   - MERMAID-*/
