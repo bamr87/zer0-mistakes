@@ -1,0 +1,121 @@
+<!--
+  ===================================================================
+  JSON-LD STRUCTURED DATA - SoftwareApplication + WebPage Schema
+  ===================================================================
+
+  File: jsonld-software.html
+  Path: _includes/content/jsonld-software.html
+  Purpose: Provides rich structured data for AI engines and search
+           engines to accurately cite and describe the zer0-mistakes
+           Jekyll theme as a SoftwareApplication entity.
+
+  Template Logic:
+  - Renders SoftwareApplication schema on the homepage only
+  - Links to a WebPage wrapper via @id references
+  - Pulls version, author, and description from site config
+
+  Dependencies:
+  - _config.yml: site.url, site.title, site.description, site.author
+  - lib/jekyll-theme-zer0/version.rb (version referenced in config)
+
+  Usage:
+  - Included automatically in _includes/core/head.html
+  - Conditional: only renders when page.permalink == "/"
+  ===================================================================
+-->
+
+{% if page.permalink == "/" or page.url == "/" %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "{{ site.url }}/#webpage",
+      "url": "{{ site.url }}/",
+      "name": "{{ site.title }} — {{ page.description | default: site.description | strip_html | strip_newlines | escape }}",
+      "isPartOf": {
+        "@id": "{{ site.url }}/#website"
+      },
+      "about": {
+        "@id": "{{ site.url }}/#software"
+      },
+      "datePublished": "{{ page.created | default: '2024-02-10' }}",
+      "dateModified": "{{ page.lastmod | default: site.time | date: '%Y-%m-%d' }}",
+      "description": "{{ page.description | default: site.description | strip_html | strip_newlines | escape }}",
+      "inLanguage": "{{ site.locale | default: 'en-US' }}"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "{{ site.url }}/#website",
+      "url": "{{ site.url }}/",
+      "name": "{{ site.title }}",
+      "publisher": {
+        "@id": "{{ site.url }}/#author"
+      },
+      "inLanguage": "{{ site.locale | default: 'en-US' }}"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "{{ site.url }}/#software",
+      "name": "{{ site.title }}",
+      "alternateName": "jekyll-theme-zer0",
+      "description": "GitHub Pages compatible Jekyll theme with Bootstrap 5.3, featuring Docker-first development, automated installation, and comprehensive documentation.",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Cross-platform (macOS, Linux, Windows via Docker)",
+      "url": "{{ site.url }}/",
+      "downloadUrl": "https://rubygems.org/gems/jekyll-theme-zer0",
+      "installUrl": "https://github.com/bamr87/zer0-mistakes#-quick-start",
+      "softwareVersion": "{{ page.version | default: site.version | default: '0.21.2' }}",
+      "datePublished": "2024-02-10",
+      "dateModified": "{{ site.time | date: '%Y-%m-%d' }}",
+      "license": "https://opensource.org/licenses/MIT",
+      "isAccessibleForFree": true,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@id": "{{ site.url }}/#author"
+      },
+      "publisher": {
+        "@id": "{{ site.url }}/#author"
+      },
+      "codeRepository": "https://github.com/bamr87/zer0-mistakes",
+      "programmingLanguage": ["Ruby", "Liquid", "HTML", "SCSS", "JavaScript"],
+      "runtimePlatform": "Jekyll",
+      "featureList": [
+        "Bootstrap 5.3.3 responsive UI framework",
+        "Docker-first cross-platform development",
+        "AI-powered self-healing installation",
+        "GitHub Pages native compatibility",
+        "Privacy-compliant PostHog analytics",
+        "Mermaid diagram rendering",
+        "MathJax mathematical notation",
+        "Automated semantic versioning and release pipeline",
+        "Client-side search functionality",
+        "Cookie consent (GDPR/CCPA compliant)",
+        "Progressive Web App support",
+        "43 documented features with comprehensive tests"
+      ],
+      "screenshot": "{{ site.url }}/assets/images/wizard-on-journey.png",
+      "softwareRequirements": "Docker Desktop or Ruby >= 2.7 with Bundler"
+    },
+    {
+      "@type": "Person",
+      "@id": "{{ site.url }}/#author",
+      "name": "{{ site.founder | default: 'Amr Abdel-Motaleb' }}",
+      "alternateName": "bamr87",
+      "url": "https://github.com/bamr87",
+      "sameAs": [
+        "https://github.com/bamr87",
+        "https://twitter.com/bamr87"
+      ],
+      "jobTitle": "Software Developer",
+      "knowsAbout": ["Jekyll", "Docker", "Bootstrap", "GitHub Pages", "Static Site Generation"]
+    }
+  ]
+}
+</script>
+{% endif %}

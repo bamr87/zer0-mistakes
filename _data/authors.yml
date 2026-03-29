@@ -25,12 +25,21 @@ default:
   role: "Development Team"
 
 bamr87:
-  name: "Amr Bakri"
-  bio: "Creator of Zer0-Mistakes Jekyll theme. Developer, automation enthusiast, and Docker advocate."
+  name: "Amr Abdel-Motaleb"
+  display_name: "Amr Abdel (bamr87)"
+  bio: "Creator of zer0-mistakes and the AIEO methodology. Developer, automation enthusiast, and Docker advocate building tools for the Jekyll community."
   avatar: "/images/authors/bamr87.png"
   github: "bamr87"
   twitter: "bamr87"
-  role: "Lead Developer"
+  linkedin: "bamr87"
+  website: "https://zer0-mistakes.com"
+  role: "Creator & Lead Developer"
+  expertise:
+    - "Jekyll theme development"
+    - "Docker containerization"
+    - "AI Engine Optimization (AIEO)"
+    - "GitHub Pages deployment"
+    - "Bootstrap UI frameworks"
 
 guest:
   name: "Guest Author"

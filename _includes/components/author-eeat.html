@@ -1,0 +1,133 @@
+<!--
+  ===================================================================
+  AUTHOR E-E-A-T BLOCK - Experience, Expertise, Authority, Trust
+  ===================================================================
+
+  File: author-eeat.html
+  Path: _includes/components/author-eeat.html
+  Purpose: Displays a visible author credibility block for AIEO
+           (AI Engine Optimization) and E-E-A-T signals.
+
+  Parameters:
+  - author_key (optional): Key from _data/authors.yml (default: "bamr87")
+  - style (optional): "banner" | "card" (default: "banner")
+
+  Usage:
+    include components/author-eeat.html
+    include components/author-eeat.html author_key="bamr87" style="card"
+
+  Dependencies:
+  - _data/authors.yml: Author data
+  - Bootstrap 5 utility classes
+  ===================================================================
+-->
+
+{% assign author_key = include.author_key | default: "bamr87" %}
+{% assign author = site.data.authors[author_key] %}
+{% assign eeat_style = include.style | default: "banner" %}
+
+{% if author %}
+
+{% if eeat_style == "banner" %}
+<!-- E-E-A-T Author Banner -->
+<div class="bg-body-secondary border-top border-bottom py-4 mt-5" itemscope itemtype="https://schema.org/Person">
+  <div class="container-xl px-4 px-md-5">
+    <div class="row align-items-center g-3">
+      <div class="col-auto">
+        {% if author.avatar %}
+          <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ author.avatar }}"
+               alt="{{ author.display_name | default: author.name }}"
+               class="rounded-circle border border-2 border-primary"
+               width="64" height="64"
+               style="object-fit: cover;"
+               itemprop="image">
+        {% else %}
+          <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+               style="width: 64px; height: 64px;">
+            <i class="bi bi-person fs-3"></i>
+          </div>
+        {% endif %}
+      </div>
+      <div class="col">
+        <p class="mb-1 fw-semibold" itemprop="name">
+          Built by <strong>{{ author.display_name | default: author.name }}</strong>
+          {% if author.role %}<span class="text-body-secondary"> — {{ author.role }}</span>{% endif %}
+        </p>
+        <p class="mb-0 text-body-secondary small" itemprop="description">
+          {{ author.bio }}
+        </p>
+        <div class="mt-2 d-flex gap-2 flex-wrap">
+          {% if author.github %}
+            <a href="https://github.com/{{ author.github }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" itemprop="sameAs">
+              <i class="bi bi-github me-1"></i>GitHub
+            </a>
+          {% endif %}
+          {% if author.twitter %}
+            <a href="https://twitter.com/{{ author.twitter }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" itemprop="sameAs">
+              <i class="bi bi-twitter me-1"></i>Twitter
+            </a>
+          {% endif %}
+          {% if author.linkedin %}
+            <a href="https://linkedin.com/in/{{ author.linkedin }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" itemprop="sameAs">
+              <i class="bi bi-linkedin me-1"></i>LinkedIn
+            </a>
+          {% endif %}
+          {% if author.website %}
+            <a href="{{ author.website }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" itemprop="url">
+              <i class="bi bi-globe me-1"></i>Website
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% elsif eeat_style == "card" %}
+<!-- E-E-A-T Author Card -->
+<div class="card border-0 shadow-sm" itemscope itemtype="https://schema.org/Person">
+  <div class="card-body p-4">
+    <div class="d-flex align-items-start">
+      {% if author.avatar %}
+        <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ author.avatar }}"
+             alt="{{ author.display_name | default: author.name }}"
+             class="rounded-circle me-3 border border-2 border-primary"
+             width="72" height="72"
+             style="object-fit: cover;"
+             itemprop="image">
+      {% else %}
+        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3"
+             style="width: 72px; height: 72px;">
+          <i class="bi bi-person fs-2"></i>
+        </div>
+      {% endif %}
+      <div class="flex-grow-1">
+        <h5 class="card-title mb-1" itemprop="name">{{ author.display_name | default: author.name }}</h5>
+        {% if author.role %}
+          <p class="text-primary mb-2 small" itemprop="jobTitle">{{ author.role }}</p>
+        {% endif %}
+        <p class="card-text text-body-secondary small mb-2" itemprop="description">{{ author.bio }}</p>
+        <div class="d-flex gap-2 flex-wrap">
+          {% if author.github %}
+            <a href="https://github.com/{{ author.github }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" itemprop="sameAs">
+              <i class="bi bi-github"></i>
+            </a>
+          {% endif %}
+          {% if author.twitter %}
+            <a href="https://twitter.com/{{ author.twitter }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" itemprop="sameAs">
+              <i class="bi bi-twitter"></i>
+            </a>
+          {% endif %}
+          {% if author.linkedin %}
+            <a href="https://linkedin.com/in/{{ author.linkedin }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" itemprop="sameAs">
+              <i class="bi bi-linkedin"></i>
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% endif %}
