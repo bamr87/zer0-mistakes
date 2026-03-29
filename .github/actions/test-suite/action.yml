@@ -10,7 +10,7 @@ inputs:
     default: 'true'
     required: false
   suites:
-    description: 'Test suites to run: all, core, deployment, quality'
+    description: 'Test suites to run: all, full, core, deployment, quality, styling, visual, etc.'
     default: 'core,quality'
     required: false
   skip-docker:

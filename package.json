@@ -1,24 +1,18 @@
 {
-  "name": "zer0-mistakes",
-  "private": true,
+  "name": "zer0-mistakes-theme-tools",
   "version": "0.21.3",
-  "description": "Bootstrap Jekyll theme for headless Github Pages CMS.",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bamr87/zer0-mistakes.git"
+  "private": true,
+  "description": "Theme tooling: Playwright tests; vendor:mermaid copies Mermaid from node_modules (no jsDelivr); optional css:bootstrap for advanced Bootstrap SCSS. Committed assets/vendor/ is GitHub Pages–safe.",
+  "scripts": {
+    "vendor:install": "bash scripts/vendor-install.sh",
+    "vendor:mermaid": "mkdir -p assets/vendor/mermaid && cp node_modules/mermaid/dist/mermaid.min.js assets/vendor/mermaid/mermaid.min.js",
+    "css:bootstrap": "mkdir -p assets/css/vendor && sass --load-path=node_modules --no-source-map --style=compressed assets/css/theme-npm-entry.scss:assets/css/vendor/bootstrap-from-npm.css",
+    "test:styling": "playwright test --config=test/playwright.styling.config.js"
   },
-  "keywords": [
-    "jekyll",
-    "theme",
-    "zer0"
-  ],
-  "author": "Amr Abdel-Motaleb",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/bamr87/zer0-mistakes/issues"
-  },
-  "homepage": "https://bamr87.github.io/zer0-mistakes/",
-  "engines": {
-    "node": ">= 0.10.0"
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "bootstrap": "5.3.3",
+    "mermaid": "10.9.5",
+    "sass": "^1.80.0"
   }
 }

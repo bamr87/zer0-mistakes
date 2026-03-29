@@ -3,6 +3,8 @@ title: Comprehensive Site Map & Overview
 lastmod: 2025-10-25T02:15:03.067Z
 description: Complete site overview with statistics, collections, content analysis, and interactive navigation tools
 layout: sitemap-collection
+# Override pages/ default (sidebar.nav: categories) — this layout is full-width with no docs sidebar; the extra toggler widens the navbar and can force a second row.
+sidebar: false
 slug: sitemap
 permalink: /sitemap/
 collection: all

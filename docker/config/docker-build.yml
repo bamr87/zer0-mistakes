@@ -1,0 +1,13 @@
+# ==============================================================================
+# Docker / in-repo production build overlay
+# ==============================================================================
+# Merged after _config.yml so Jekyll uses the local theme gem instead of
+# fetching remote_theme from GitHub during `docker build` (faster, offline-friendly).
+#
+# Usage: bundle exec jekyll build --config _config.yml,docker/config/docker-build.yml
+#
+# Docker builds: set PAGES_REPO_NWO when .git is unavailable (see docker/Dockerfile).
+# ==============================================================================
+
+remote_theme: false
+theme: "jekyll-theme-zer0"

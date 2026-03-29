@@ -62,7 +62,7 @@ giscus:
 
 # Diagrams
 mermaid:
-  src: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js'
+  src: '/assets/vendor/mermaid/mermaid.min.js'
 ```
 
 ## Feature Guides

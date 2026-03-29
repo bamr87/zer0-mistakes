@@ -51,7 +51,7 @@
         <!-- ============================================== -->
         
         <!-- Inline SVG symbols for consistent iconography throughout the site -->
-        {% include components/svg.html %}
+        {% include_cached components/svg.html %}
 
         <!-- Google Tag Manager body code for analytics (if configured) -->
         <!-- Note: Currently commented out - uncomment when GTM is needed -->
@@ -60,7 +60,7 @@
         {% include core/header.html %}
 
         <!-- Search modal (site-wide) -->
-        {% include components/search-modal.html %}
+        {% include_cached components/search-modal.html %}
 
         <!-- Site-wide information banner or announcement section -->
         {% include components/info-section.html %}
@@ -81,7 +81,7 @@
         {%- include core/footer.html -%}
 
         <!-- Privacy-compliant cookie consent banner -->
-        {%- include components/cookie-consent.html -%}
+        {%- include_cached components/cookie-consent.html -%}
 
         <!-- JavaScript dependencies and custom scripts -->
         <div>
@@ -89,7 +89,7 @@
             <!-- Note: Currently commented out - uncomment when search is implemented -->
 
             <!-- External JavaScript libraries and custom scripts -->
-            {% include components/js-cdn.html %}
+            {% include_cached components/js-cdn.html %}
         </div>
 
         <!-- Analytics Integration -->

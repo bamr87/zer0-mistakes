@@ -214,10 +214,9 @@ permalink: /custom-url/
 
 ## 🎨 Bootstrap 5 Integration
 
-**CDN Loading Pattern:**
+**Local vendor pattern:**
 
-- Bootstrap 5.3.3 CSS/JS loaded via CDN in `_includes/core/head.html`
-- Bootstrap Icons 1.10.3 for consistent iconography
+- Bootstrap 5.3.3 CSS/JS and Bootstrap Icons under `assets/vendor/` (linked from `_includes/core/head.html` and `js-cdn.html`); refresh with `./scripts/vendor-install.sh`
 - Custom CSS layered in `/assets/css/main.css`
 
 **Responsive Component Pattern:**
@@ -523,34 +522,17 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.s
 
 ### CSS Framework Architecture
 
-- **Bootstrap 5.3.3**: Latest stable version loaded via CDN
-- **Bootstrap Icons 1.10.3**: Icon library for enhanced UI elements
-- **Custom CSS**: Layered on top of Bootstrap in `/assets/css/main.css` and `/assets/css/custom.css`
+- **Bootstrap 5.3.3** and **Bootstrap Icons**: Loaded from committed `assets/vendor/` (GitHub Pages–safe), then `/assets/css/main.css` (from `main.scss` + `_sass/`). Refresh vendor files with `./scripts/vendor-install.sh` or `npm run vendor:install`. Optional fork overrides: `assets/css/user-overrides.css` linked from `_includes/core/head.html`.
 - **Responsive Design**: Mobile-first approach with breakpoint system
 
-### Bootstrap CDN Loading
+### Bootstrap and icon asset links (Liquid)
 
-```html
-<!-- Bootstrap CSS (loaded in _includes/head.html) -->
-<link
-  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-  rel="stylesheet"
-  integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-  crossorigin="anonymous"
-/>
-
-<!-- Bootstrap Icons -->
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
-/>
-
-<!-- Bootstrap JS (loaded in _includes/js-cdn.html) -->
-<script
-  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-  crossorigin="anonymous"
-></script>
+```liquid
+{% raw %}
+<link href="{{ '/assets/vendor/bootstrap/css/bootstrap.min.css' | relative_url }}" rel="stylesheet">
+<link rel="stylesheet" href="{{ '/assets/vendor/bootstrap-icons/font/bootstrap-icons.css' | relative_url }}">
+<script src="{{ '/assets/vendor/bootstrap/js/bootstrap.bundle.min.js' | relative_url }}"></script>
+{% endraw %}
 ```
 
 ### Bootstrap Component Usage

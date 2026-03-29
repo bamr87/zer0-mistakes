@@ -60,14 +60,22 @@
         <!-- ========================== -->
         <!-- MAIN NAVIGATION CONTAINER -->
         <!-- ========================== -->
-        <nav class="container-xl order-2 order-lg-1 grid gap-1 navbar-main" aria-label="Primary navigation">
+        <nav class="container-xl order-2 order-lg-1 d-flex align-items-center gap-1 flex-wrap flex-lg-nowrap navbar-main" aria-label="Primary navigation">
+
+            <!-- Leading cluster: sidebar toggle + brand + titles (grid column 1 on lg+) -->
+            <div class="navbar-main-start d-flex align-items-center gap-1 gap-lg-2 min-w-0 flex-shrink-1">
 
             <!-- ========================== -->
             <!-- MOBILE MENU CONTROLS      -->
             <!-- ========================== -->
             
-            <!-- Left Sidebar Toggle - Mobile view only -->
-            {% assign sidebar_nav = page.sidebar.nav | default: nil %}
+            <!-- Left Sidebar Toggle - Mobile view only (omit when page.sidebar: false — matches default layout aside) -->
+            {% assign sidebar_nav = nil %}
+            {% if page.sidebar != false %}
+              {% if page.sidebar and page.sidebar.nav %}
+                {% assign sidebar_nav = page.sidebar.nav %}
+              {% endif %}
+            {% endif %}
             {% assign sidebar_has_content = false %}
             {% if sidebar_nav %}
                 {% if sidebar_nav == "auto" or sidebar_nav == "categories" %}
@@ -117,6 +125,8 @@
             <!-- ========================== -->
             <!-- Site title and subtitle display -->
             {% include core/branding.html %}
+
+            </div>
     
             <!-- ========================== -->
             <!-- MAIN NAVIGATION MENU      -->
@@ -132,8 +142,6 @@
                 <button
                     class="btn nav-search-button"
                     type="button"
-                    data-bs-toggle="modal"
-                    data-bs-target="#siteSearchModal"
                     data-search-toggle
                     aria-label="Open search"
                     aria-haspopup="dialog"

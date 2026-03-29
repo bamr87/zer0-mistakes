@@ -3,7 +3,12 @@
 ## [0.21.3] - 2026-03-29
 
 ### Changed
+- **Test runner**: When `test.conf` sets a non-default `TEST_TIMEOUT_DEFAULT`, pass `--timeout` only to suites whose scripts accept it (`core`, `deployment`, `quality`). Avoids `Unknown option: --timeout` on installation and site-generation suites.
+- **Vendor assets (GitHub Pages)**: Bootstrap, jQuery, Bootstrap Icons, MathJax, Mermaid, Font Awesome, and GitHub Calendar load from committed `assets/vendor/` with `relative_url` (no runtime CDN for core assets). Added `vendor-manifest.json`, `scripts/vendor-install.sh`, and `npm run vendor:install`. `.gitignore` uses `/vendor/` for Bundler only; removed blanket `vendor/` from Jekyll `exclude` so `assets/vendor/` is published. Docker base image includes `jq` for vendor installs; `scripts/bin/build` runs vendor-install before gem build.
+- **Mermaid vendor source**: `mermaid` is a devDependency; `npm run vendor:mermaid` copies `node_modules/mermaid/dist/mermaid.min.js` into `assets/vendor/mermaid/`. The jsDelivr Mermaid entry was removed from `vendor-manifest.json`; `vendor-install.sh` copies from npm when `node_modules` is present.
 - Version bump: patch release
+- **CSS architecture**: Removed unused `assets/css/custom.css` (legacy `#mainNav`); overrides use `_sass/custom.scss` or optional `user-overrides.css`. Replaced vendored `_sass/core/_docs.scss` (~3.2k lines) with trimmed `_sass/core/_docs-layout.scss`. Theme modes: `_sass/theme/_color-modes.scss` re-exports `_wizard-mode.scss` (wizard Sass/CSS) and `_css-variables.scss` (`--bd-*` tokens); dropped duplicate blocks from `_theme.scss`, duplicate Bootstrap font/line-height block in `_variables.scss`, and unused social/base16 duplicates from `_variables.scss`. Feature metadata now points styles at `_docs-layout.scss`.
+- **Optional npm Bootstrap**: Added `package.json` with `npm run css:bootstrap` (Dart Sass + Bootstrap 5.3.3) producing `assets/css/vendor/bootstrap-from-npm.css`; documented alternate `<link>` in `_includes/core/head.html`. `stats.css` remains a conditional stylesheet for the stats layout only.
 
 ### Commits in this release
 - 1fd2061 Enhance navigation UX: responsive design, accessibility, and interaction polish (#25)

@@ -309,24 +309,11 @@ _includes/
 
 We use **Bootstrap 5.3.3** because it's more reliable than most developers and comes with fewer existential crises:
 
-#### CDN Loading Pattern (Streaming Styles from the Cloud)
+#### Local vendor loading (default — GitHub Pages compatible)
 
-```html
-<!-- In _includes/head.html (where all good stylesheets go to live) -->
-<link
-  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-  rel="stylesheet"
-  integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-  crossorigin="anonymous"
-/>
+Bootstrap, jQuery, and icons live under `assets/vendor/` and are linked with `relative_url` in [`_includes/core/head.html`](_includes/core/head.html) and [`_includes/components/js-cdn.html`](_includes/components/js-cdn.html). Update vendored files with `./scripts/vendor-install.sh` (see `docs/development/vendor-assets.md`).
 
-<!-- In _includes/js-cdn.html (where JavaScript magic happens) -->
-<script
-  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-  crossorigin="anonymous"
-></script>
-```
+Forks may switch to a CDN by replacing those links with jsDelivr URLs if they accept a runtime dependency on third-party hosts.
 
 #### Responsive Design Patterns
 

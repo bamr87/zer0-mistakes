@@ -50,7 +50,7 @@ layout: root
 <div class="bg-primary text-white position-relative overflow-hidden">
     <div class="container-xl py-5 px-4 px-md-5">
         <div class="row align-items-center min-vh-50 g-4 g-lg-5">
-            <div class="col-lg-6 order-2 order-lg-1">
+            <div class="col-lg-6 order-1">
                 <h1 class="display-4 fw-bold mb-3 animate-on-scroll">{{ page.title }}</h1>
                 <p class="lead mb-4 animate-on-scroll" style="animation-delay: 0.1s;">{{ page.description }}</p>
                 <div class="d-flex flex-column flex-md-row gap-3 animate-on-scroll" style="animation-delay: 0.2s;">
@@ -65,7 +65,7 @@ layout: root
                     </a>
                 </div>
             </div>
-            <div class="col-lg-6 text-center order-1 order-lg-2">
+            <div class="col-lg-6 text-center order-2">
                 {% if page.hero_image %}
                 <img src="{{ page.hero_image }}" alt="{{ page.title }}" class="img-fluid rounded shadow-lg animate-on-scroll" loading="eager" style="animation-delay: 0.3s;">
                 {% else %}

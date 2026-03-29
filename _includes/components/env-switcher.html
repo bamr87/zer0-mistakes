@@ -8,23 +8,36 @@
   Purpose: Display current environment and provide URL switching
   
   Dependencies:
-  - jekyll.environment: Current build environment
-  - site.url: Production URL
+  - jekyll.environment: Build-time Jekyll env (production | development)
+  - site.domain_url: Canonical production origin (YAML array joined in Liquid); not overridden by jekyll serve
+  - site.url: Overwritten during jekyll serve — do not use alone for “Prod” quick links
   - site.port: Development port (default 4000)
   - Bootstrap 5 components
+  
+  Note: Docker / JEKYLL_ENV=production on localhost would show "Production"
+  while you are clearly on a dev machine. We treat localhost / 127.0.0.1 / 0.0.0.0
+  in site.url as development context for the badge and card styling.
   ===================================================================
 -->
 
-{% assign current_env = jekyll.environment | default: "development" %}
-{% assign is_production = current_env == "production" %}
-{% assign prod_url = site.url | append: site.baseurl %}
-{% assign dev_url = "http://localhost:" | append: site.port | default: 4000 | append: site.baseurl %}
+{% comment %}is_production / build_env / is_local_url: set by env-detect.html in info-section.html{% endcomment %}
+{% assign dev_port = site.port | default: 4000 %}
+{% comment %}Prod links must not use site.url during serve (Jekyll sets it to 0.0.0.0:4000 etc.){% endcomment %}
+{% if site.domain_url %}
+  {% assign canonical_prod_origin = site.domain_url | join: "" %}
+{% elsif site.production_url %}
+  {% assign canonical_prod_origin = site.production_url %}
+{% else %}
+  {% assign canonical_prod_origin = site.url %}
+{% endif %}
+{% assign prod_url = canonical_prod_origin | append: site.baseurl %}
+{% assign dev_url = "http://localhost:" | append: dev_port | append: site.baseurl %}
 
 <!-- Environment Status Card -->
-<div class="card border-{{ is_production | if: 'success', 'warning' }} mb-3">
-  <div class="card-header d-flex align-items-center justify-content-between py-2 bg-{{ is_production | if: 'success', 'warning' }} bg-opacity-10">
+<div class="card mb-3 {% if is_production %}border-success{% else %}border-warning{% endif %}">
+  <div class="card-header d-flex align-items-center justify-content-between py-2 {% if is_production %}bg-success{% else %}bg-warning{% endif %} bg-opacity-10">
     <span class="fw-semibold">
-      <i class="bi bi-{{ is_production | if: 'cloud-check', 'pc-display' }} me-2"></i>
+      <i class="bi {% if is_production %}bi-cloud-check{% else %}bi-pc-display{% endif %} me-2"></i>
       Current Environment
     </span>
     {% if is_production %}
@@ -33,7 +46,7 @@
       </span>
     {% else %}
       <span class="badge bg-warning text-dark">
-        <i class="bi bi-code-slash me-1"></i>Development
+        <i class="bi bi-code-slash me-1"></i>Dev
       </span>
     {% endif %}
   </div>
@@ -45,11 +58,11 @@
       </label>
       <div class="input-group input-group-sm">
         <span class="input-group-text">
-          <i class="bi bi-{{ is_production | if: 'lock', 'unlock' }}"></i>
+          <i class="bi {% if is_production %}bi-lock{% else %}bi-unlock{% endif %}"></i>
         </span>
         <input type="text" 
                class="form-control font-monospace" 
-               value="{{ is_production | if: prod_url, dev_url }}{{ page.url }}" 
+               value="{% if is_production %}{{ prod_url }}{% else %}{{ dev_url }}{% endif %}{{ page.url }}" 
                readonly 
                id="currentUrlInput">
         <button class="btn btn-outline-secondary" 
@@ -75,6 +88,15 @@
           <strong class="small">v{{ jekyll.version }}</strong>
         </div>
       </div>
+      <div class="col-12">
+        <div class="p-2 bg-body-tertiary rounded text-start">
+          <small class="text-body-secondary d-block">Build env (JEKYLL_ENV)</small>
+          <strong class="small font-monospace text-body">{{ build_env }}</strong>
+          {% if is_local_url and build_env == "production" %}
+            <div class="small text-body-secondary mt-1">Serving on a local URL — UI shows <strong>Dev</strong> above.</div>
+          {% endif %}
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -97,7 +119,7 @@
            class="text-decoration-none font-monospace small text-truncate"
            style="max-width: 180px;"
            title="{{ prod_url }}{{ page.url }}">
-          {{ site.url | remove: "https://" | remove: "http://" | truncate: 25 }}{{ page.url | truncate: 15 }}
+          {{ canonical_prod_origin | remove: "https://" | remove: "http://" | truncate: 25 }}{{ page.url | truncate: 15 }}
         </a>
       </div>
       <div class="btn-group btn-group-sm">
@@ -127,7 +149,7 @@
            class="text-decoration-none font-monospace small text-truncate"
            style="max-width: 180px;"
            title="{{ dev_url }}{{ page.url }}">
-          localhost:{{ site.port | default: 4000 }}{{ page.url | truncate: 15 }}
+          localhost:{{ dev_port }}{{ page.url | truncate: 15 }}
         </a>
       </div>
       <div class="btn-group btn-group-sm">
@@ -169,12 +191,12 @@
 </div>
 
 <!-- Environment Tip -->
-<div class="alert alert-{{ is_production | if: 'success', 'warning' }} alert-dismissible fade show mt-3 py-2 small" role="alert">
+<div class="alert {% if is_production %}alert-success{% else %}alert-warning{% endif %} alert-dismissible fade show mt-3 py-2 small" role="alert">
   <i class="bi bi-info-circle me-1"></i>
   {% if is_production %}
     Viewing <strong>production</strong> build. Changes require deployment.
   {% else %}
-    <strong>Development</strong> mode. Changes auto-reload on save.
+    <strong>Dev</strong> context{% if is_local_url and build_env == "production" %} (local URL; JEKYLL_ENV is production){% endif %}. Changes auto-reload when using <code>jekyll serve</code>.
   {% endif %}
   <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="alert" aria-label="Close" style="padding: 0.5rem;"></button>
 </div>

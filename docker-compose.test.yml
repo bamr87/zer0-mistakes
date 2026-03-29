@@ -26,7 +26,7 @@ services:
         bundle list | head -20 &&
         echo '' &&
         echo '🔍 Running Jekyll build validation...' &&
-        bundle exec jekyll build --config _config.yml &&
+        JEKYLL_ENV=production bundle exec jekyll build --config _config.yml,docker/config/docker-build.yml &&
         echo '✅ Jekyll build succeeded!' &&
         echo '' &&
         echo '🧪 Running RSpec tests...' &&

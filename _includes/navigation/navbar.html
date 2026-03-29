@@ -11,12 +11,14 @@
 
     <!-- Main Navigation Header - Offcanvas -->
     <div class="offcanvas-header border-bottom">
-        <h2 class="offcanvas-title h5" id="mainNavOffcanvasLabel">Main Navigation</h2>
+        <h2 class="offcanvas-title h5 mb-0" id="mainNavOffcanvasLabel">Main Navigation</h2>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close navigation menu" data-bs-target="#bdNavbar"></button>
     </div>
 
     <!-- Main Navigation Body - Offcanvas -->
     <div class="offcanvas-body">
+        <!-- Desktop: width is the grid middle track; labels ellipsis or icon-only via container query -->
+        <div class="bd-navbar-nav-viewport">
         <ul class="navbar-nav justify-content-lg-center text-start flex-grow-1" role="menubar">
             <li class="nav-item d-lg-none" role="none">
                 <a class="nav-link" href="{{ '/' | relative_url }}" role="menuitem" {% if page.url == '/' %}aria-current="page"{% endif %}>
@@ -96,8 +98,6 @@
                 <button
                     class="nav-link btn btn-link text-start w-100"
                     type="button"
-                    data-bs-toggle="modal"
-                    data-bs-target="#siteSearchModal"
                     data-search-toggle
                     aria-label="Open search"
                     aria-haspopup="dialog"
@@ -120,6 +120,7 @@
                 </button>
             </li>
         </ul>
+        </div>
     </div>
 </div>
 

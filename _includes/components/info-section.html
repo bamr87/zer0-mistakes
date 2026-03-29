@@ -21,6 +21,7 @@
   ===================================================================
 -->
 
+{% include components/env-detect.html %}
 <!-- Settings Modal -->
 <div class="modal fade" id="info-section" tabindex="-1" aria-labelledby="infoSectionLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -48,10 +49,10 @@
               <button class="nav-link" id="environment-tab" data-bs-toggle="tab" data-bs-target="#environment-pane" type="button" role="tab" aria-controls="environment-pane" aria-selected="false">
                 <i class="bi bi-hdd-network me-1"></i>
                 <span class="d-none d-sm-inline">Environment</span>
-                {% if jekyll.environment == "development" %}
-                  <span class="badge bg-warning text-dark ms-1 d-none d-md-inline-block">Dev</span>
-                {% else %}
+                {% if is_production %}
                   <span class="badge bg-success ms-1 d-none d-md-inline-block">Prod</span>
+                {% else %}
+                  <span class="badge bg-warning text-dark ms-1 d-none d-md-inline-block">Dev</span>
                 {% endif %}
               </button>
             </li>

@@ -167,8 +167,9 @@ open http://localhost:4000
 edit _layouts/default.html
 edit _includes/header.html
 
-# Modify styles
-edit assets/css/custom.css
+# Modify styles (SCSS pipeline)
+edit _sass/custom.scss
+# or add assets/css/user-overrides.css and link it in _includes/core/head.html
 ```
 
 ## 🔧 Quick Troubleshooting

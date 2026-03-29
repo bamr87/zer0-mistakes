@@ -17,7 +17,7 @@ Comprehensive modernization of the sidebar navigation system with critical bug f
 **Files Modified:**
 - `_layouts/default.html` - Fixed `data-bs-target` to point to `#TableOfContents`
 - `_sass/custom.scss` - Removed duplicate `.sidebar` class definitions
-- `_sass/core/_docs.scss` - Uncommented z-index for proper TOC stacking
+- `_sass/core/_docs-layout.scss` - TOC/sidebar stacking (trimmed docs layout CSS)
 - `_includes/navigation/sidebar-categories.html` - Removed hardcoded `width: 280px`
 
 **Key Changes:**
@@ -157,7 +157,7 @@ Comprehensive modernization of the sidebar navigation system with critical bug f
 5. `_includes/navigation/sidebar-categories.html` - Responsive width, Bootstrap Icons, ARIA
 6. `_includes/navigation/sidebar-folders.html` - Bootstrap Icons, better structure
 7. `_sass/custom.scss` - Removed duplicates, added enhancements
-8. `_sass/core/_docs.scss` - Fixed z-index
+8. `_sass/core/_docs-layout.scss` - Layout / z-index for sidebars and TOC
 
 ---
 

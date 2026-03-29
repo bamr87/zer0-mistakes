@@ -48,14 +48,8 @@
   children:
     - title: All Notebooks
       url: /notebooks/
-    - title: Pandas Data Analysis
-      url: /notebooks/pandas-data-analysis/
-    - title: Matplotlib Visualization
-      url: /notebooks/matplotlib-visualization/
-    - title: Python Statistics
-      url: /notebooks/python-statistics/
-    - title: API Requests
-      url: /notebooks/api-requests/
+    - title: Test Notebook
+      url: /notebooks/test-notebook/
 
 - title: Docs
   icon: bi-journal-bookmark

@@ -26,7 +26,7 @@
   - Supports all Mermaid diagram types (flowcharts, sequence, gantt, etc.)
   
   Configuration:
-  - Mermaid v10 via CDN (latest stable)
+  - Mermaid v10 bundled locally (_config.yml mermaid.src)
   - Forest theme for dark mode compatibility
   - Client-side code block conversion for GitHub Pages compatibility
   
@@ -41,8 +41,8 @@
   ===================================================================
 -->
 
-<!-- Load Mermaid.js from CDN (latest stable version) -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<!-- Load Mermaid.js (bundled locally) -->
+<script type="text/javascript" src="{{ site.mermaid.src | relative_url }}"></script>
 
 <!-- Initialize Mermaid with custom configuration -->
 <script>
@@ -53,8 +53,11 @@
     function getBootstrapTheme() {
       // Check data-bs-theme attribute on html element
       var htmlTheme = document.documentElement.getAttribute('data-bs-theme');
-      if (htmlTheme === 'dark' || htmlTheme === 'light') {
-        return htmlTheme;
+      if (htmlTheme === 'dark' || htmlTheme === 'wizard') {
+        return 'dark';
+      }
+      if (htmlTheme === 'light') {
+        return 'light';
       }
       // Fallback to prefers-color-scheme
       if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
@@ -200,7 +203,8 @@
       themeVariables: mermaidThemeConfig.themeVariables,
       flowchart: {
         useMaxWidth: true,
-        htmlLabels: true,
+        // SVG labels avoid foreignObject clipping/position bugs with theme CSS
+        htmlLabels: false,
         curve: 'basis'
       },
       sequence: {
@@ -260,7 +264,7 @@
             themeVariables: newMermaidConfig.themeVariables,
             flowchart: {
               useMaxWidth: true,
-              htmlLabels: true,
+              htmlLabels: false,
               curve: 'basis'
             },
             sequence: {
@@ -316,8 +320,8 @@
   });
 </script>
 
-<!-- FontAwesome for Mermaid icon support (optional) -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+<!-- Font Awesome for Mermaid icon support (bundled) -->
+<link rel="stylesheet" href="{{ '/assets/vendor/font-awesome/css/all.min.css' | relative_url }}">
 
 <!-- Custom CSS for Mermaid diagrams -->
 <style>

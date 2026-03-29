@@ -205,7 +205,7 @@ features:
         - "_includes/navigation/sidebar-right.html"
         - "_includes/navigation/sidebar-categories.html"
         - "_includes/navigation/sidebar-folders.html"
-      styles: ["_sass/core/_docs.scss", "_sass/custom.scss"]
+      styles: ["_sass/core/_docs-layout.scss", "_sass/custom.scss"]
       docs: "docs/SIDEBAR_IMPROVEMENTS.md"
     features:
       - "Intersection Observer scroll spy"
