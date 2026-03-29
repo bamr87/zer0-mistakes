@@ -23,8 +23,7 @@ test.describe('Theme stylesheets', () => {
       if (!isSameOriginStylesheet(url, baseURL)) return;
       if (res.status() !== 200) failures.push(`${res.status()} ${url}`);
     });
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
+    await page.goto('/', { waitUntil: 'networkidle' });
     expect(failures, failures.join('; ')).toEqual([]);
   });
 
