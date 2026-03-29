@@ -113,6 +113,12 @@
     <meta itemprop="dateModified" content="{{ page.lastmod | date_to_xmlschema }}">
 {% endif %}
 
+<!-- JSON-LD SoftwareApplication schema (homepage only) -->
+{% include content/jsonld-software.html %}
+
+<!-- JSON-LD FAQ schema (pages with faq_items front matter) -->
+{% include content/jsonld-faq.html %}
+
 <!-- ========================== -->
 <!-- ANALYTICS INTEGRATION     -->
 <!-- ========================== -->
