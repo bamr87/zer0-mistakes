@@ -37,3 +37,4 @@ logs/*
 
 # Front Matter CMS
 .frontmatter/
+vendor/
