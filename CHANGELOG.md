@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.21.4] - 2026-03-29
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 3c96620 feat: vendor assets, theme architecture, CI and docs (v0.21.3) (#39)
+
+
 ## [0.21.3] - 2026-03-29
 
 ### Changed
