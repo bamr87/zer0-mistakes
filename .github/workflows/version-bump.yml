@@ -47,7 +47,7 @@ on:
         type: boolean
 
 env:
-  RUBY_VERSION: '3.2'
+  RUBY_VERSION: '3.3'
   # Required for jekyll-github-metadata gem during CI builds
   # Uses repository variable if set, otherwise falls back to github.repository
   PAGES_REPO_NWO: ${{ vars.PAGES_REPO_NWO || github.repository }}

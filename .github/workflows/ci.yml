@@ -39,7 +39,7 @@ on:
 env:
   # These are used for backwards compatibility testing
   # The test-latest.yml workflow uses actual latest versions
-  RUBY_VERSION: '3.2'
+  RUBY_VERSION: '3.3'
   NODE_VERSION: '18'
   # Required for jekyll-github-metadata gem during CI builds
   # Uses repository variable if set, otherwise falls back to github.repository
@@ -103,9 +103,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ['3.2', '3.3']
+        ruby: ['3.3']
         include:
-          - ruby: '3.2'
+          - ruby: '3.3'
             coverage: true
 
     steps:
@@ -448,7 +448,7 @@ jobs:
       - name: Setup Ruby Environment
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
+          ruby-version: '3.3'
           bundler-cache: true
 
       - name: Make test scripts executable
@@ -487,7 +487,7 @@ jobs:
       - name: Setup Ruby Environment
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
+          ruby-version: '3.3'
           bundler-cache: true
 
       - name: Setup Node.js
