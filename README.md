@@ -602,13 +602,13 @@ graph LR
 | Resource | Description |
 |----------|-------------|
 | [📋 Technical Docs](https://github.com/bamr87/zer0-mistakes/tree/main/docs/) | Architecture, systems, implementation |
-| [📖 User Guides](https://bamr87.github.io/zer0-mistakes/docs/) | Published tutorials and references |
-| [🎨 Customization](https://bamr87.github.io/zer0-mistakes/docs/customization/) | Layouts, styles, navigation guides |
-| [📊 Analytics](https://bamr87.github.io/zer0-mistakes/docs/analytics/) | PostHog, Google Analytics setup |
-| [🔍 SEO](https://bamr87.github.io/zer0-mistakes/docs/seo/) | Meta tags, sitemap, structured data |
+| [📖 User Guides](https://zer0-mistakes.com/docs/) | Published tutorials and references |
+| [🎨 Customization](https://zer0-mistakes.com/docs/customization/) | Layouts, styles, navigation guides |
+| [📊 Analytics](https://zer0-mistakes.com/docs/analytics/) | PostHog, Google Analytics setup |
+| [🔍 SEO](https://zer0-mistakes.com/docs/seo/) | Meta tags, sitemap, structured data |
 | [📓 Jupyter Notebooks](https://github.com/bamr87/zer0-mistakes/blob/main/docs/JUPYTER_NOTEBOOKS.md) | Notebook conversion documentation |
 | [📝 PRD](docs/PRD.md) | Product requirements & roadmap |
-| [🔒 Privacy Policy](https://bamr87.github.io/zer0-mistakes/privacy-policy/) | GDPR/CCPA compliant privacy docs |
+| [🔒 Privacy Policy](https://zer0-mistakes.com/privacy-policy/) | GDPR/CCPA compliant privacy docs |
 
 ---
 

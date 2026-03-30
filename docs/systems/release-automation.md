@@ -15,7 +15,7 @@ The Zer0-Mistakes release automation system provides comprehensive, modular auto
 
 **System Requirements:**
 
-- **Bash 4.0+** (macOS: `brew install bash`)
+- **Bash 3.2+** (macOS default is supported — no Homebrew Bash required)
 - **Docker** 20.10+ (for development)
 - **Git** 2.30+
 - **Ruby** 3.0+ (optional with Docker)
@@ -24,10 +24,6 @@ The Zer0-Mistakes release automation system provides comprehensive, modular auto
 ### Basic Usage
 
 ```bash
-# Install Bash 5 on macOS (one-time)
-brew install bash
-export PATH="/opt/homebrew/bin:$PATH"
-
 # Preview release
 bash scripts/release patch --dry-run
 
@@ -237,19 +233,15 @@ bash scripts/release patch --dry-run --non-interactive
 
 ### Common Issues
 
-**Bash Version Error:**
+**Bash Not Found:**
 
 ```bash
-[ERROR] This script requires Bash 4.0 or higher (current: 3.2.57)
-[INFO] On macOS, install via: brew install bash
+[ERROR] bash: command not found
 ```
 
 **Solution:**
 
-```bash
-brew install bash
-bash scripts/release patch
-```
+Install Bash via your system package manager (e.g., `sudo apt install bash` on Debian/Ubuntu) or use the system-provided Bash which is available by default on macOS and Linux.
 
 **Working Directory Not Clean:**
 
@@ -299,14 +291,6 @@ bash scripts/release patch
 # or use VS Code tasks
 ```
 
-**One-Time Setup:**
-
-```bash
-brew install bash
-echo 'export PATH="/opt/homebrew/bin:$PATH"' >> ~/.zshrc
-source ~/.zshrc
-```
-
 ### For CI/CD Pipelines
 
 Update GitHub Actions:
@@ -314,12 +298,9 @@ Update GitHub Actions:
 ```yaml
 jobs:
   release:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install Bash 5
-        run: brew install bash
 
       - name: Release
         run: bash scripts/release patch --non-interactive
