@@ -300,19 +300,43 @@ jobs:
         rm -f "$TEMP_FILE"
         echo "✅ Changelog updated"
 
+    - name: Update Documentation References
+      if: ${{ inputs.dry_run != true }}
+      run: |
+        NEW_VERSION="${{ steps.bump.outputs.new_version }}"
+        TODAY=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
+
+        if [[ -f "README.md" ]]; then
+          # Update front matter version field
+          sed -i "s/^version: .*/version: $NEW_VERSION/" README.md
+
+          # Update lastmod field in front matter
+          sed -i "s/^lastmod: .*/lastmod: $TODAY/" README.md
+
+          # Update stats table current version reference
+          sed -i "s/| \*\*Current Version\*\* | [0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*/| **Current Version** | $NEW_VERSION/" README.md
+
+          # Update footer version badge
+          sed -i "s/\*\*v[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\*\*/**v${NEW_VERSION}**/" README.md
+
+          echo "✅ README.md updated to $NEW_VERSION"
+        else
+          echo "⚠️ README.md not found, skipping documentation update"
+        fi
+
     - name: Commit and Push Changes
       if: ${{ inputs.dry_run != true }}
       run: |
         NEW_VERSION="${{ steps.bump.outputs.new_version }}"
         BUMP_TYPE="${{ needs.analyze.outputs.bump_type }}"
         
-        git add lib/jekyll-theme-zer0/version.rb package.json CHANGELOG.md Gemfile.lock 2>/dev/null || true
+        git add lib/jekyll-theme-zer0/version.rb package.json CHANGELOG.md Gemfile.lock README.md 2>/dev/null || true
         git add -A
         
         git commit -m "chore: bump version to $NEW_VERSION
 
         - Version bump type: $BUMP_TYPE
-        - Updated version files, gemfile.lock, and changelog
+        - Updated version files, gemfile.lock, changelog, and documentation
         - Automated by GitHub Actions
         
         [skip ci]" || echo "Nothing to commit"
