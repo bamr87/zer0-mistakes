@@ -138,6 +138,7 @@ jobs:
     if: needs.analyze.outputs.should_release == 'true' && needs.analyze.outputs.bump_type != 'none'
     permissions:
       contents: write
+      actions: write
     outputs:
       new_version: ${{ steps.bump.outputs.new_version }}
       tag: ${{ steps.bump.outputs.tag }}
@@ -339,8 +340,24 @@ jobs:
         git tag "$TAG"
         git push origin "$TAG"
         echo "✅ Tag $TAG created and pushed"
-        echo ""
-        echo "🚀 This tag push will trigger the release workflow automatically."
+
+    - name: Trigger Release Workflow
+      if: ${{ inputs.dry_run != true }}
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        TAG="${{ steps.bump.outputs.tag }}"
+        
+        # GITHUB_TOKEN tag pushes do not trigger other workflows (GitHub security restriction).
+        # Explicitly dispatch the release workflow so the gem is published and a GitHub
+        # release is created for every version bump.
+        echo "🚀 Dispatching release workflow for $TAG..."
+        gh workflow run release.yml \
+          --repo "${{ github.repository }}" \
+          --ref "$TAG" \
+          --field tag="$TAG" \
+          --field publish_gem=true
+        echo "✅ Release workflow dispatched for $TAG"
 
     - name: Version Bump Summary
       run: |
@@ -362,7 +379,8 @@ jobs:
         echo "" >> $GITHUB_STEP_SUMMARY
         
         if [[ "${{ inputs.dry_run }}" != "true" ]]; then
-          echo "✅ Tag push will trigger the release workflow to publish to RubyGems and create GitHub release." >> $GITHUB_STEP_SUMMARY
+          echo "✅ Release workflow dispatched via \`gh workflow run\` — gem will be published to RubyGems and a GitHub release will be created." >> $GITHUB_STEP_SUMMARY
+          echo "- [Release workflow runs](https://github.com/${{ github.repository }}/actions/workflows/release.yml)" >> $GITHUB_STEP_SUMMARY
         else
           echo "🔍 Dry run complete - no changes were made." >> $GITHUB_STEP_SUMMARY
         fi
