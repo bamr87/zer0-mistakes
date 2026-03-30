@@ -414,7 +414,7 @@ docker-compose up
 
 ```ruby
 # Gemfile
-gem "jekyll-theme-zer0", "~> 0.19"
+gem "jekyll-theme-zer0", "~> 0.21"
 ```
 
 ---
@@ -601,14 +601,14 @@ graph LR
 
 | Resource | Description |
 |----------|-------------|
-| [📋 Technical Docs]({{ site.resources.github_repo | default: '' | join: '' }}/tree/{{ site.branch }}/docs/) | Architecture, systems, implementation |
-| [📖 User Guides]({{ '/docs/' | relative_url }}) | Published tutorials and references |
-| [🎨 Customization]({{ '/docs/customization/' | relative_url }}) | Layouts, styles, navigation guides |
-| [📊 Analytics]({{ '/docs/analytics/' | relative_url }}) | PostHog, Google Analytics setup |
-| [🔍 SEO]({{ '/docs/seo/' | relative_url }}) | Meta tags, sitemap, structured data |
-| [📓 Jupyter Notebooks]({{ site.resources.github_repo | default: '' | join: '' }}/blob/{{ site.branch }}/docs/JUPYTER_NOTEBOOKS.md) | Notebook conversion documentation |
+| [📋 Technical Docs](https://github.com/bamr87/zer0-mistakes/tree/main/docs/) | Architecture, systems, implementation |
+| [📖 User Guides](https://zer0-mistakes.com/docs/) | Published tutorials and references |
+| [🎨 Customization](https://zer0-mistakes.com/docs/customization/) | Layouts, styles, navigation guides |
+| [📊 Analytics](https://zer0-mistakes.com/docs/analytics/) | PostHog, Google Analytics setup |
+| [🔍 SEO](https://zer0-mistakes.com/docs/seo/) | Meta tags, sitemap, structured data |
+| [📓 Jupyter Notebooks](https://github.com/bamr87/zer0-mistakes/blob/main/docs/JUPYTER_NOTEBOOKS.md) | Notebook conversion documentation |
 | [📝 PRD](docs/PRD.md) | Product requirements & roadmap |
-| [🔒 Privacy Policy]({{ '/privacy-policy/' | relative_url }}) | GDPR/CCPA compliant privacy docs |
+| [🔒 Privacy Policy](https://zer0-mistakes.com/privacy-policy/) | GDPR/CCPA compliant privacy docs |
 
 ---
 
@@ -649,12 +649,12 @@ flowchart LR
 
 ```bash
 # Preview release
-/opt/homebrew/bin/bash scripts/release patch --dry-run
+bash scripts/release patch --dry-run
 
 # Full release
-/opt/homebrew/bin/bash scripts/release patch  # 0.19.1 → 0.19.2
-/opt/homebrew/bin/bash scripts/release minor  # 0.19.1 → 0.20.0
-/opt/homebrew/bin/bash scripts/release major  # 0.19.1 → 1.0.0
+bash scripts/release patch  # 0.21.5 → 0.21.6
+bash scripts/release minor  # 0.21.5 → 0.22.0
+bash scripts/release major  # 0.21.5 → 1.0.0
 ```
 
 ---
@@ -731,7 +731,7 @@ git push origin feature/awesome-feature
 
 | Channel | Link |
 |---------|------|
-| 📖 Documentation | [zer0-mistakes.org](https://bamr87.github.io/zer0-mistakes/) |
+| 📖 Documentation | [zer0-mistakes.com](https://zer0-mistakes.com/) |
 | 🐛 Issues | [GitHub Issues](https://github.com/bamr87/zer0-mistakes/issues) |
 | 💬 Discussions | [GitHub Discussions](https://github.com/bamr87/zer0-mistakes/discussions) |
 | 📧 Email | [support@zer0-mistakes.com](mailto:support@zer0-mistakes.com) |
