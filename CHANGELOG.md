@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.21.5] - 2026-03-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- c74f26d Automate README.md version sync and fix GitHub release dispatch in release workflow (#40)
+
+
 ## [0.21.4] - 2026-03-29
 
 ### Changed
