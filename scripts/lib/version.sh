@@ -185,21 +185,21 @@ update_readme() {
     local today
     today=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
 
-    # Update front matter version field
-    sed -i.tmp "s/^version: .*/version: $new_version/" "$readme_file"
+    # Update all version patterns in a single sed pass
+    sed -i.tmp \
+        -e "s/^version: .*/version: $new_version/" \
+        -e "s/^lastmod: .*/lastmod: $today/" \
+        -e "s/| \*\*Current Version\*\* | [0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*/| **Current Version** | $new_version/" \
+        -e "s/\*\*v[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\*\*/**v${new_version}**/" \
+        "$readme_file"
     rm -f "${readme_file}.tmp"
 
-    # Update lastmod field in front matter
-    sed -i.tmp "s/^lastmod: .*/lastmod: $today/" "$readme_file"
-    rm -f "${readme_file}.tmp"
-
-    # Update stats table current version reference
-    sed -i.tmp "s/| \*\*Current Version\*\* | [0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*/| **Current Version** | $new_version/" "$readme_file"
-    rm -f "${readme_file}.tmp"
-
-    # Update footer version badge
-    sed -i.tmp "s/\*\*v[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\*\*/**v${new_version}**/" "$readme_file"
-    rm -f "${readme_file}.tmp"
+    # Log which references were updated for visibility
+    if grep -q "^version: $new_version" "$readme_file"; then
+        debug "✓ Front matter version updated"
+    else
+        debug "⚠ Front matter version pattern not found"
+    fi
 
     debug "✓ Updated $readme_file"
 }
