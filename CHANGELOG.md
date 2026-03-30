@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.21.6] - 2026-03-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 56c70b8 docs: fix Quick Links, harmonize bash commands, and update version references across READMEs (#42)
+
+
 ## [0.21.5] - 2026-03-30
 
 ### Changed
