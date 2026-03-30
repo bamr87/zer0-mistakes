@@ -100,7 +100,7 @@ Before contributing, ensure your development environment has been properly confi
 
 **For Release Automation (Required for Publishing):**
 
-- **Bash 4.0+** - For modern release automation (macOS users: `brew install bash`)
+- **Bash 3.2+** - Compatible with the macOS default Bash (no Homebrew Bash required)
 - **RubyGems Account** - For publishing gem releases
 - **GitHub CLI** - For automated GitHub releases
 
@@ -652,13 +652,13 @@ Our modernized release system uses the `./scripts/release` command with modular 
 
 **System Requirements:**
 
-- Bash 4.0+ (macOS: install via `brew install bash`)
+- Bash 3.2+ (macOS default is supported — no Homebrew Bash required)
 - Clean git working directory
 - Valid RubyGems credentials
 
 ```bash
 # Preview version bump and changelog
-/opt/homebrew/bin/bash ./scripts/release patch --dry-run
+bash ./scripts/release patch --dry-run
 
 # Quick build and test (no publish)
 ./scripts/release patch --skip-publish --no-github-release
@@ -669,19 +669,19 @@ Our modernized release system uses the `./scripts/release` command with modular 
 #### Using New Release Command (Recommended)
 
 ```bash
-# Full release workflow with Bash 5
-/opt/homebrew/bin/bash ./scripts/release patch
-/opt/homebrew/bin/bash ./scripts/release minor
-/opt/homebrew/bin/bash ./scripts/release major
+# Full release workflow
+bash ./scripts/release patch
+bash ./scripts/release minor
+bash ./scripts/release major
 
 # Preview what would happen (dry-run)
-/opt/homebrew/bin/bash ./scripts/release patch --dry-run
+bash ./scripts/release patch --dry-run
 
 # Development workflow (build & test, skip publish)
 ./scripts/release patch --skip-publish --no-github-release
 
 # Non-interactive mode (for CI/CD)
-/opt/homebrew/bin/bash ./scripts/release patch --non-interactive
+bash ./scripts/release patch --non-interactive
 ```
 
 #### Using VS Code Tasks (Easiest)
@@ -723,13 +723,13 @@ The `./scripts/release` command orchestrates a complete release workflow:
 
 ```bash
 # 1. Preview the release
-/opt/homebrew/bin/bash ./scripts/release patch --dry-run
+bash ./scripts/release patch --dry-run
 
 # 2. Build and test without publishing
 ./scripts/release patch --skip-publish --no-github-release
 
 # 3. If all looks good, do full release
-/opt/homebrew/bin/bash ./scripts/release patch
+bash ./scripts/release patch
 ```
 
 ### GitHub Release Automation

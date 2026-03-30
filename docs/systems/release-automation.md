@@ -29,13 +29,13 @@ brew install bash
 export PATH="/opt/homebrew/bin:$PATH"
 
 # Preview release
-/opt/homebrew/bin/bash scripts/release patch --dry-run
+bash scripts/release patch --dry-run
 
 # Build and test (no publish)
 scripts/release patch --skip-publish --no-github-release
 
 # Full release
-/opt/homebrew/bin/bash scripts/release patch
+bash scripts/release patch
 ```
 
 ### VS Code Integration
@@ -125,13 +125,13 @@ scripts/release major   # 0.6.0 → 1.0.0
 
 ```bash
 # 1. Preview changes
-/opt/homebrew/bin/bash scripts/release patch --dry-run
+bash scripts/release patch --dry-run
 
 # 2. Build and test locally
 scripts/release patch --skip-publish --no-github-release
 
 # 3. If all good, do full release
-/opt/homebrew/bin/bash scripts/release patch
+bash scripts/release patch
 ```
 
 **Quick Gem Build:**
@@ -148,7 +148,7 @@ scripts/release patch --skip-publish --no-github-release
 
 ```bash
 # Non-interactive release
-/opt/homebrew/bin/bash scripts/release patch --non-interactive
+bash scripts/release patch --non-interactive
 ```
 
 ## Changelog Generation
@@ -230,7 +230,7 @@ Comprehensive test coverage with 63+ assertions:
 ./scripts/build --dry-run
 
 # Test full workflow (safe)
-/opt/homebrew/bin/bash scripts/release patch --dry-run --non-interactive
+bash scripts/release patch --dry-run --non-interactive
 ```
 
 ## Troubleshooting
@@ -248,7 +248,7 @@ Comprehensive test coverage with 63+ assertions:
 
 ```bash
 brew install bash
-/opt/homebrew/bin/bash scripts/release patch
+bash scripts/release patch
 ```
 
 **Working Directory Not Clean:**
@@ -295,7 +295,7 @@ make release-patch
 **New Commands:**
 
 ```bash
-/opt/homebrew/bin/bash scripts/release patch
+bash scripts/release patch
 # or use VS Code tasks
 ```
 
@@ -322,7 +322,7 @@ jobs:
         run: brew install bash
 
       - name: Release
-        run: /opt/homebrew/bin/bash scripts/release patch --non-interactive
+        run: bash scripts/release patch --non-interactive
         env:
           RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
 ```
