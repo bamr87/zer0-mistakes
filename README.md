@@ -731,7 +731,7 @@ git push origin feature/awesome-feature
 
 | Channel | Link |
 |---------|------|
-| 📖 Documentation | [zer0-mistakes.com](https://bamr87.github.io/zer0-mistakes/) |
+| 📖 Documentation | [zer0-mistakes.com](https://zer0-mistakes.com/) |
 | 🐛 Issues | [GitHub Issues](https://github.com/bamr87/zer0-mistakes/issues) |
 | 💬 Discussions | [GitHub Discussions](https://github.com/bamr87/zer0-mistakes/discussions) |
 | 📧 Email | [support@zer0-mistakes.com](mailto:support@zer0-mistakes.com) |
