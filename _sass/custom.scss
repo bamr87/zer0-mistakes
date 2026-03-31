@@ -35,6 +35,28 @@ html, body {
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, .35), inset 0 -1px 0 rgba(0, 0, 0, .15);
 }
 
+// Vendored Bootstrap build may omit vh utilities; landing hero uses this for stable min height
+.min-vh-50 {
+    min-height: 50vh;
+}
+
+// Landing layout: stable hero media slot (ratio) + no reliance on scroll script for first paint
+.landing-hero {
+    .landing-hero-media {
+        max-width: min(100%, 28rem);
+    }
+
+    .landing-hero-media.ratio > img {
+        object-position: center;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .landing-hero .landing-hero-media {
+        transition: none;
+    }
+}
+
 #TableOfContents {
     overflow: hidden;
     text-overflow: ellipsis;

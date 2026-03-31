@@ -12,6 +12,16 @@
   /**
    * Initialize scroll animations for elements with animate-on-scroll class
    */
+  /**
+   * True if any part of the element is in the viewport (avoids hiding above-the-fold
+   * content until IntersectionObserver runs — that caused layout “jumps” on the landing hero).
+   */
+  function isInViewport(el) {
+    const rect = el.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    return rect.bottom > 0 && rect.top < vh;
+  }
+
   function initScrollAnimations() {
     if (prefersReducedMotion) return;
 
@@ -35,6 +45,9 @@
     }, observerOptions);
 
     animatedElements.forEach(el => {
+      if (isInViewport(el)) {
+        return;
+      }
       el.style.opacity = '0';
       el.style.transform = 'translateY(30px)';
       el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
