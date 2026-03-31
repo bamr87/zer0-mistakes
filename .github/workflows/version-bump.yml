@@ -385,18 +385,5 @@ jobs:
           echo "🔍 Dry run complete - no changes were made." >> $GITHUB_STEP_SUMMARY
         fi
 
-  # Skip notification when no release needed
-  skip-notification:
-    name: No Release Needed
-    runs-on: ubuntu-latest
-    needs: analyze
-    if: needs.analyze.outputs.should_release != 'true' || needs.analyze.outputs.bump_type == 'none'
-
-    steps:
-    - name: Skip Summary
-      run: |
-        echo "## 🚫 No Version Bump Needed" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "No releasable changes detected in commit analysis." >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "To force a release, use the manual workflow dispatch with a specific version type." >> $GITHUB_STEP_SUMMARY
+  # Note: If no release is needed, the workflow simply ends after the analyze job.
+  # The analyze job outputs are visible in the GitHub Actions UI.

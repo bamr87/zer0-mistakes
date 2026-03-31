@@ -1,4 +1,4 @@
-name: Comprehensive CI Pipeline
+name: CI
 
 permissions:
   contents: read
@@ -7,14 +7,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+# Daily scheduled testing is handled by test-latest.yml (zero-pin strategy).
+# This workflow focuses on push/PR validation.
 on:
   push:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
-  schedule:
-    # Run full tests daily at 2 AM UTC
-    - cron: '0 2 * * *'
   workflow_dispatch:
     inputs:
       test_scope:
@@ -23,34 +22,31 @@ on:
         default: 'standard'
         type: choice
         options:
-          - 'fast'        # Quick feedback tests
-          - 'standard'    # Full test suite
-          - 'comprehensive' # All tests + performance
+          - 'fast'        # Quick feedback (skip Docker)
+          - 'standard'    # Full test suite + Docker integration
       fix_markdown:
         description: 'Auto-fix markdown formatting'
         required: false
         default: false
         type: boolean
 
-# ==============================================================================
-# Note: This workflow uses explicit Ruby versions for testing compatibility.
-# For the zero-pin strategy (latest everything), see test-latest.yml
-# ==============================================================================
 env:
-  # These are used for backwards compatibility testing
-  # The test-latest.yml workflow uses actual latest versions
   RUBY_VERSION: '3.3'
   NODE_VERSION: '18'
-  # Required for jekyll-github-metadata gem during CI builds
-  # Uses repository variable if set, otherwise falls back to github.repository
   PAGES_REPO_NWO: ${{ vars.PAGES_REPO_NWO || github.repository }}
 
 defaults:
   run:
     shell: bash
 
+# ==============================================================================
+# Job dependency graph:
+#
+#   fast-checks
+#     └── quality-checks ─┬── test ── build
+#                          └── integration (skipped on fast scope)
+# ==============================================================================
 jobs:
-  # Fast feedback job for quick validation
   fast-checks:
     name: Fast Checks
     runs-on: ubuntu-latest
@@ -76,7 +72,6 @@ jobs:
             puts '✅ Gemspec valid: #{spec.name} v#{spec.version}'
           "
 
-  # Quality control checks
   quality-checks:
     name: Quality Control
     runs-on: ubuntu-latest
@@ -94,19 +89,11 @@ jobs:
           check-markdown: true
           fix-formatting: ${{ inputs.fix_markdown }}
 
-  # Comprehensive testing across Ruby versions
   test:
-    name: Test Suite (Ruby ${{ matrix.ruby }})
+    name: Test Suite
     runs-on: ubuntu-latest
-    needs: [fast-checks, quality-checks]
+    needs: quality-checks
     timeout-minutes: 25
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: ['3.3']
-        include:
-          - ruby: '3.3'
-            coverage: true
 
     steps:
       - name: Checkout Repository
@@ -115,7 +102,7 @@ jobs:
       - name: Run Test Suite
         uses: ./.github/actions/test-suite
         with:
-          ruby-version: ${{ matrix.ruby }}
+          ruby-version: ${{ env.RUBY_VERSION }}
           verbose: true
           suites: core,quality
           skip-docker: true
@@ -138,68 +125,22 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: test-results-ruby-${{ matrix.ruby }}
+          name: test-results
           path: test/results/
           retention-days: 7
 
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
-        if: matrix.coverage
+        if: always()
         with:
-          name: coverage-ruby-${{ matrix.ruby }}
+          name: coverage-report
           path: test/coverage/
           retention-days: 7
 
-  # NOTE: Code quality & documentation checks are handled by the quality-checks job above
-  # The duplicate 'quality' job has been removed to avoid redundancy
-
-  # Docker-based deployment tests (runs actual Docker tests)
-  docker-tests:
-    name: Docker Deployment Tests
-    runs-on: ubuntu-latest
-    needs: [fast-checks, quality-checks]
-    # Skip on scheduled runs (handled by test-latest.yml) and when test_scope is 'fast'
-    if: github.event_name != 'schedule' && inputs.test_scope != 'fast'
-    timeout-minutes: 15
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-deploy-${{ hashFiles('docker/Dockerfile', 'Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-deploy-
-
-      - name: Run Deployment Test Suite
-        uses: ./.github/actions/test-suite
-        with:
-          ruby-version: ${{ env.RUBY_VERSION }}
-          verbose: true
-          suites: deployment
-          skip-docker: false
-          # Skip remote installation tests in CI (curl piped to bash is unreliable)
-          skip-remote: true
-
-      - name: Upload Deployment Test Results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: deployment-test-results
-          path: test/results/
-          retention-days: 7
-
-  # Build validation
   build:
     name: Build & Validate
     runs-on: ubuntu-latest
-    needs: [test, quality-checks]
+    needs: test
     timeout-minutes: 10
 
     steps:
@@ -219,7 +160,6 @@ jobs:
 
       - name: Validate gem
         run: |
-          # Get version from Ruby file (most reliable source)
           VERSION=$(ruby -e "require './lib/jekyll-theme-zer0/version'; puts JekyllThemeZer0::VERSION")
           GEM_FILE="jekyll-theme-zer0-${VERSION}.gem"
 
@@ -234,57 +174,16 @@ jobs:
 
       - name: Test gem installation
         run: |
-          # Install dependencies first (Jekyll is required by the gem)
           bundle install --quiet
-          # Now install our gem locally (dependencies already satisfied)
           gem install ./jekyll-theme-zer0-*.gem --local --no-document --ignore-dependencies
           echo "✅ Gem installs successfully"
 
-  # Performance testing (conditional)
-  performance:
-    name: Performance Tests
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.event_name == 'schedule' || inputs.test_scope == 'comprehensive'
-    timeout-minutes: 15
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Ruby environment
-        uses: ./.github/actions/setup-ruby
-        with:
-          ruby-version: ${{ env.RUBY_VERSION }}
-          install-system-deps: false
-
-      - name: Run Jekyll build performance test
-        run: |
-          echo "## Performance Results" >> $GITHUB_STEP_SUMMARY
-          echo "### Build Performance" >> $GITHUB_STEP_SUMMARY
-
-          START_TIME=$(date +%s)
-          bundle exec jekyll build --profile 2>&1 | tee build-profile.txt
-          END_TIME=$(date +%s)
-
-          BUILD_TIME=$((END_TIME - START_TIME))
-          echo "- Build completed in: ${BUILD_TIME}s" >> $GITHUB_STEP_SUMMARY
-
-      - name: Upload performance results
-        uses: actions/upload-artifact@v4
-        with:
-          name: performance-results
-          path: build-profile.txt
-          retention-days: 30
-
-  # Integration testing with Docker
   integration:
     name: Integration Tests
     runs-on: ubuntu-latest
-    needs: build
-    # Run on PRs to main/develop AND pushes to main, or when comprehensive scope selected
-    if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/main' && github.event_name == 'push') || inputs.test_scope == 'comprehensive'
-    timeout-minutes: 12
+    needs: quality-checks
+    if: inputs.test_scope != 'fast'
+    timeout-minutes: 15
 
     steps:
       - name: Checkout code
@@ -320,45 +219,38 @@ jobs:
           echo "🚀 Starting Jekyll container..."
           docker compose up -d
           
-          echo "⏳ Waiting for Jekyll to start with adaptive timeout..."
+          echo "⏳ Waiting for Jekyll to start..."
           MAX_WAIT=120
           ELAPSED=0
           INTERVAL=2
           
           while [ $ELAPSED -lt $MAX_WAIT ]; do
-            # Check container health status first
             CONTAINER_STATUS=$(docker compose ps --format json 2>/dev/null | grep -o '"State":"[^"]*"' | head -1 || echo "")
             if echo "$CONTAINER_STATUS" | grep -q "running"; then
-              # Container is running, check HTTP accessibility
               if curl -sf --max-time 3 http://localhost:4000 > /dev/null 2>&1; then
                 echo "✅ Site is accessible after ${ELAPSED}s"
                 break
               fi
             fi
             
-            # Check for container crash
             if docker compose ps | grep -q "exited\|dead"; then
               echo "❌ Container crashed!"
               docker compose logs --tail=50
               exit 1
             fi
             
-            # Show progress every 30 seconds
             if [ $((ELAPSED % 30)) -eq 0 ] && [ $ELAPSED -gt 0 ]; then
               echo "📊 Still waiting... (${ELAPSED}s elapsed)"
-              docker compose ps
             fi
             
             sleep $INTERVAL
             ELAPSED=$((ELAPSED + INTERVAL))
             
-            # Exponential backoff: increase interval up to 10 seconds
             if [ $INTERVAL -lt 10 ]; then
               INTERVAL=$((INTERVAL + 1))
             fi
           done
           
-          # Final check after loop
           if [ $ELAPSED -ge $MAX_WAIT ]; then
             if curl -sf --max-time 5 http://localhost:4000 > /dev/null 2>&1; then
               echo "✅ Site became accessible at ${ELAPSED}s"
@@ -371,15 +263,12 @@ jobs:
 
       - name: Show Docker logs on failure
         if: failure()
-        run: |
-          echo "📋 Docker container logs:"
-          docker compose logs --tail=100
+        run: docker compose logs --tail=100
 
       - name: Test critical pages
         run: |
           echo "🔍 Testing critical page accessibility..."
           
-          # Critical paths that MUST be accessible (fail if not)
           CRITICAL_PATHS=(
             "/"
             "/docs/"
@@ -389,7 +278,6 @@ jobs:
             "/feed.xml"
           )
           
-          # Optional paths (warn if not accessible)
           OPTIONAL_PATHS=(
             "/blog/"
             "/features/"
@@ -399,199 +287,33 @@ jobs:
           
           FAILED=0
           
-          echo "## Critical Pages Test Results" >> $GITHUB_STEP_SUMMARY
-          echo "| Path | Status | Response |" >> $GITHUB_STEP_SUMMARY
-          echo "|------|--------|----------|" >> $GITHUB_STEP_SUMMARY
-          
-          # Test critical paths - fail on any error
           for path in "${CRITICAL_PATHS[@]}"; do
             STATUS=$(curl -sf -o /dev/null -w "%{http_code}" --max-time 10 "http://localhost:4000${path}" 2>/dev/null || echo "000")
             if [[ "$STATUS" == "200" ]]; then
               echo "✅ CRITICAL: ${path} (HTTP ${STATUS})"
-              echo "| ${path} | ✅ OK | ${STATUS} |" >> $GITHUB_STEP_SUMMARY
             else
               echo "❌ CRITICAL FAIL: ${path} (HTTP ${STATUS})"
-              echo "| ${path} | ❌ FAIL | ${STATUS} |" >> $GITHUB_STEP_SUMMARY
               FAILED=$((FAILED + 1))
             fi
           done
           
-          # Test optional paths - warn only
           for path in "${OPTIONAL_PATHS[@]}"; do
             STATUS=$(curl -sf -o /dev/null -w "%{http_code}" --max-time 10 "http://localhost:4000${path}" 2>/dev/null || echo "000")
             if [[ "$STATUS" == "200" ]]; then
               echo "✅ OPTIONAL: ${path} (HTTP ${STATUS})"
-              echo "| ${path} | ✅ OK | ${STATUS} |" >> $GITHUB_STEP_SUMMARY
             else
               echo "⚠️ OPTIONAL: ${path} (HTTP ${STATUS})"
-              echo "| ${path} | ⚠️ Warning | ${STATUS} |" >> $GITHUB_STEP_SUMMARY
             fi
           done
           
           if [[ $FAILED -gt 0 ]]; then
-            echo ""
             echo "::error::${FAILED} critical page(s) failed accessibility test"
             docker compose logs --tail=50
             exit 1
           fi
           
-          echo ""
           echo "✅ All critical pages are accessible"
 
       - name: Cleanup
         if: always()
         run: docker compose down --volumes --remove-orphans || true
-
-  # Installation Matrix Tests
-  installation-matrix-tests:
-    name: Installation Tests (${{ matrix.os }}, ${{ matrix.mode }})
-    runs-on: ${{ matrix.os }}
-    needs: [fast-checks, quality-checks]
-    if: github.event_name != 'schedule' && inputs.test_scope != 'fast'
-    timeout-minutes: 15
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-        mode: [full, minimal]
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Ruby Environment
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3'
-          bundler-cache: true
-
-      - name: Make test scripts executable
-        run: chmod +x test/*.sh test/lib/*.sh
-
-      - name: Run Installation Tests
-        run: |
-          ./test/test_installation.sh --verbose
-        env:
-          INSTALL_MODE: ${{ matrix.mode }}
-
-      - name: Run Site Generation Tests
-        run: |
-          ./test/test_site_generation.sh --mode ${{ matrix.mode }} --verbose
-
-      - name: Upload Installation Test Results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: installation-test-results-${{ matrix.os }}-${{ matrix.mode }}
-          path: test/results/
-          retention-days: 7
-
-  # Visual Regression Tests (runs only on comprehensive scope)
-  visual-tests:
-    name: Visual Regression Tests
-    runs-on: ubuntu-latest
-    needs: [installation-matrix-tests]
-    if: inputs.test_scope == 'comprehensive'
-    timeout-minutes: 20
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Ruby Environment
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3'
-          bundler-cache: true
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Playwright
-        run: |
-          npm install -D @playwright/test
-          npx playwright install --with-deps chromium
-
-      - name: Make test scripts executable
-        run: chmod +x test/*.sh test/lib/*.sh
-
-      - name: Run Visual Tests
-        run: |
-          ./test/test_visual.sh --mode full --verbose || true
-        continue-on-error: true
-
-      - name: Upload Visual Test Results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: visual-test-results
-          path: |
-            test/visual/current/
-            test/visual/diff/
-            test/visual-results/
-          retention-days: 7
-
-      - name: Upload Visual Baseline
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: visual-baseline
-          path: test/visual/baseline/
-          retention-days: 30
-
-  # Final status report
-  summary:
-    name: CI Pipeline Summary
-    runs-on: ubuntu-latest
-    needs: [fast-checks, quality-checks, test, docker-tests, build, performance, integration, installation-matrix-tests, visual-tests]
-    if: always()
-    steps:
-      - name: Generate comprehensive summary
-        run: |
-          echo "## 🏗️ CI Pipeline Summary" >> $GITHUB_STEP_SUMMARY
-          echo "**Repository:** ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          echo "| Check | Status | Duration |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------|--------|----------|" >> $GITHUB_STEP_SUMMARY
-          echo "| 🚀 Fast Checks | ${{ needs.fast-checks.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 📋 Quality Checks | ${{ needs.quality-checks.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🧪 Tests | ${{ needs.test.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🐳 Docker Tests | ${{ needs.docker-tests.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🔨 Build | ${{ needs.build.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| ⚡ Performance | ${{ needs.performance.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🔗 Integration | ${{ needs.integration.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 📦 Installation Matrix | ${{ needs.installation-matrix-tests.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 👁️ Visual Tests | ${{ needs.visual-tests.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          # Check if all required jobs passed
-          if [[ "${{ needs.fast-checks.result }}" == "success" && 
-                "${{ needs.test.result }}" == "success" && 
-                "${{ needs.quality-checks.result }}" == "success" && 
-                "${{ needs.build.result }}" == "success" ]]; then
-            echo "## ✅ **Pipeline Status: SUCCESS**" >> $GITHUB_STEP_SUMMARY
-            echo "All critical checks passed! The code is ready for deployment." >> $GITHUB_STEP_SUMMARY
-          else
-            echo "## ❌ **Pipeline Status: FAILED**" >> $GITHUB_STEP_SUMMARY
-            echo "Some critical checks failed. Please review the results above." >> $GITHUB_STEP_SUMMARY
-            
-            # List failed jobs
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "### Failed Jobs:" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.fast-checks.result }}" != "success" ]] && echo "- 🚀 Fast Checks" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.test.result }}" != "success" ]] && echo "- 🧪 Tests" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.quality-checks.result }}" != "success" ]] && echo "- 📋 Quality Checks" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.build.result }}" != "success" ]] && echo "- 🔨 Build" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.docker-tests.result }}" == "failure" ]] && echo "- 🐳 Docker Tests (non-critical)" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.performance.result }}" == "failure" ]] && echo "- ⚡ Performance (non-critical)" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.integration.result }}" == "failure" ]] && echo "- 🔗 Integration (non-critical)" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.installation-matrix-tests.result }}" == "failure" ]] && echo "- 📦 Installation Matrix (non-critical)" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.visual-tests.result }}" == "failure" ]] && echo "- 👁️ Visual Tests (non-critical)" >> $GITHUB_STEP_SUMMARY
-            
-            exit 1
-          fi

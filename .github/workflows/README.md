@@ -24,23 +24,29 @@ This directory contains the CI/CD workflows for the zer0-mistakes Jekyll theme.
 
 ### 1. `ci.yml` - Continuous Integration Pipeline
 
-**Triggers:** Push to `main`/`develop`, Pull Requests, Daily schedule, Manual dispatch
+**Triggers:** Push to `main`/`develop`, Pull Requests, Manual dispatch
 
-The comprehensive CI pipeline that validates code quality, runs tests, and builds the gem.
+The CI pipeline validates code quality, runs tests, builds the gem, and runs Docker integration tests.
+Daily scheduled testing is handled separately by `test-latest.yml`.
 
 #### Jobs:
 | Job | Description | Timeout |
 |-----|-------------|---------|
 | `fast-checks` | Quick syntax validation | 5 min |
-| `quality-checks` | Linting, security audit, markdown checks | 10 min |
-| `test` | Full test suite across Ruby 3.2, 3.3 | 15 min |
-| `build` | Gem build and validation | 10 min |
-| `performance` | Jekyll build performance (scheduled/comprehensive) | 15 min |
-| `integration` | Docker integration tests (main branch) | 10 min |
-| `summary` | Final status report | - |
+| `quality-checks` | Linting, markdown checks | 10 min |
+| `test` | Full test suite (Ruby 3.3) | 25 min |
+| `build` | Gem build, validate, and install test | 10 min |
+| `integration` | Docker build + Jekyll serve + page tests | 15 min |
+
+#### Job Dependency Graph:
+```
+fast-checks
+  └── quality-checks ─┬── test ── build
+                       └── integration (skipped on fast scope)
+```
 
 #### Manual Dispatch Options:
-- **test_scope**: `fast`, `standard`, or `comprehensive`
+- **test_scope**: `fast` or `standard`
 - **fix_markdown**: Auto-fix markdown formatting issues
 
 ---
@@ -87,7 +93,6 @@ Unified release workflow that publishes to RubyGems and creates GitHub releases.
 | `build` | Build gem, generate install script | After validate |
 | `publish-gem` | Publish to RubyGems | Tag push or manual with publish_gem |
 | `github-release` | Create GitHub release with assets | After build |
-| `summary` | Release pipeline summary | Always |
 
 #### Manual Dispatch Options:
 | Input | Type | Description |
@@ -134,7 +139,7 @@ Converts notebooks to Jekyll-friendly Markdown and (on push events) commits/push
 
 **Triggers:** Push/PR to `main`, Weekly schedule
 
-Runs CodeQL analysis for Actions, JS/TS, Python, and Ruby.
+Runs CodeQL analysis for Actions, JS/TS, and Ruby.
 
 ---
 
@@ -157,7 +162,6 @@ All workflows use shared composite actions from `.github/actions/`:
 - `configure-git` - Git configuration for automated commits
 - `test-suite` - Comprehensive test execution
 - `quality-checks` - Code quality validation
-- `prepare-release` - Build gem and prepare release assets
 
 See [`.github/actions/README.md`](../actions/README.md) for action documentation.
 
