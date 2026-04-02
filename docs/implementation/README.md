@@ -6,6 +6,7 @@ Technical implementation details and changelogs for theme features. This documen
 
 | Document | Description |
 |----------|-------------|
+| [Copilot Agent Prompt Button](copilot-agent-prompt-button.md) | Prompt-driven GitHub issue button in intro section |
 | [Mermaid Integration v2](mermaid-integration-v2.md) | Mermaid diagram implementation changelog |
 | [PostHog Analytics Integration](posthog-analytics-integration.md) | Analytics implementation details |
 | [Preview Image Generator](preview-image-generator.md) | AI-powered preview image generation |

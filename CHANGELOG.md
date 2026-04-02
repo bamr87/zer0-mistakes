@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.22.0] - 2026-04-01
+
+### Added
+- **Copilot Agent dropdown**: New `btn-success` dropdown in the intro section action button group that lists AI prompt templates, each opening a pre-filled GitHub issue assigned to `@copilot` with the selected prompt body, page context, and environment metadata
+- **`_data/prompts.yml`**: Data-driven prompt registry with 9 built-in templates (article-review, code-implementation, code-refactoring, debugging, documentation, requirements-analysis, system-design, test-generation, prompt-engineering)
+- **`docs/implementation/copilot-agent-prompt-button.md`**: Full implementation guide covering architecture, configuration, prompt registry, issue body structure, customization, troubleshooting, and FAQ
+
+### Changed
+- **`_includes/content/intro.html`**: Replaced single Copilot Agent link with a prompt-selection dropdown; `repo_branch` now sourced from `site.branch | default: "main"` (fixes hardcoded `master`); file path uses dedicated `file_path` variable; issue title format is `[Prompt Label] Page Title` with `ai-agent` label pre-applied
+- **`docs/implementation/README.md`**: Added Copilot Agent Prompt Button entry to contents table
+
 ## [0.21.6] - 2026-03-30
 
 ### Changed
