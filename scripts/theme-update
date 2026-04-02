@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# ============================================================================
+# WRAPPER: This script forwards to scripts/bin/theme-update
+#
+# The canonical location is scripts/bin/theme-update. This wrapper exists for
+# convenience and consistency with other scripts (release, build).
+# ============================================================================
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec "$SCRIPT_DIR/bin/theme-update" "$@"

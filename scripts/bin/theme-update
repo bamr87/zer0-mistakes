@@ -1,0 +1,468 @@
+#!/bin/bash
+
+# Theme Update command for zer0-mistakes Jekyll theme
+# Usage: ./scripts/bin/theme-update [options]
+#
+# Safely updates theme-managed configuration (_config.theme.yml) while
+# preserving user customizations in _config.yml.
+
+set -euo pipefail
+
+# Get script and library directories
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_DIR="$SCRIPT_DIR/../lib"
+
+# Source required libraries
+source "$LIB_DIR/common.sh"
+source "$LIB_DIR/config-utils.sh"
+
+# =========================================================================
+# Usage
+# =========================================================================
+
+show_usage() {
+    cat << EOF
+🔄 Theme Update Command for zer0-mistakes
+
+Updates theme-managed configuration while preserving your customizations.
+
+USAGE:
+    ./scripts/theme-update [OPTIONS]
+
+OPTIONS:
+    --dry-run          Preview changes without modifying files
+    --from-gem         Use config from locally installed gem (offline)
+    --from-github      Fetch latest config from GitHub (default)
+    --version TAG      Target a specific theme version/tag (e.g., v0.22.0)
+    --migrate          Convert legacy single-config to layered config
+    --check            Check for local overrides and config drift
+    --force            Skip interactive confirmations
+    --verbose          Show detailed debug output
+    --help, -h         Show this help message
+
+EXAMPLES:
+    ./scripts/theme-update                     # Update from GitHub (latest)
+    ./scripts/theme-update --dry-run           # Preview what would change
+    ./scripts/theme-update --version v0.22.0   # Update to specific version
+    ./scripts/theme-update --migrate           # Migrate legacy config
+    ./scripts/theme-update --check             # Check for overrides/drift
+    ./scripts/theme-update --from-gem          # Update from installed gem
+
+CONFIG CHAIN:
+    _config.theme.yml → _config.yml → _config_dev.yml → _config.custom.yml
+    (theme-managed)     (your site)   (dev overrides)    (advanced overrides)
+
+FILES:
+    _config.theme.yml  - Replaced entirely during updates (theme-owned)
+    _config.yml        - Never modified by this script (user-owned)
+    _config.custom.yml - Optional override file (user-owned, create if needed)
+
+For more information, see: docs/THEME_UPDATE_GUIDE.md
+EOF
+}
+
+# =========================================================================
+# Default Configuration
+# =========================================================================
+
+SOURCE="github"       # github | gem | templates
+TARGET_VERSION="main" # branch, tag, or commit
+MIGRATE=false
+CHECK_ONLY=false
+
+# =========================================================================
+# Parse Arguments
+# =========================================================================
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --help|-h)
+            show_usage
+            exit 0
+            ;;
+        --dry-run)
+            DRY_RUN=true
+            shift
+            ;;
+        --from-gem)
+            SOURCE="gem"
+            shift
+            ;;
+        --from-github)
+            SOURCE="github"
+            shift
+            ;;
+        --from-templates)
+            SOURCE="templates"
+            shift
+            ;;
+        --version)
+            TARGET_VERSION="$2"
+            shift 2
+            ;;
+        --migrate)
+            MIGRATE=true
+            shift
+            ;;
+        --check)
+            CHECK_ONLY=true
+            shift
+            ;;
+        --force)
+            INTERACTIVE=false
+            shift
+            ;;
+        --verbose)
+            VERBOSE=true
+            shift
+            ;;
+        --non-interactive)
+            INTERACTIVE=false
+            shift
+            ;;
+        *)
+            warn "Unknown option: $1"
+            show_usage
+            exit 1
+            ;;
+    esac
+done
+
+# =========================================================================
+# Check-Only Mode
+# =========================================================================
+
+run_check() {
+    echo ""
+    echo "=========================================="
+    echo "  Theme Config Health Check"
+    echo "=========================================="
+    echo ""
+
+    # 1. Detect config layout
+    local layout
+    layout=$(detect_config_layout)
+    info "Config layout: $layout"
+
+    if [[ "$layout" == "legacy" ]]; then
+        local theme_key_count
+        theme_key_count=$(count_theme_managed_keys "$USER_CONFIG")
+        warn "Legacy config detected: $USER_CONFIG contains $theme_key_count theme-managed key(s)"
+        info "Run with --migrate to convert to layered config"
+    elif [[ "$layout" == "layered" ]]; then
+        local current_version
+        current_version=$(get_theme_config_version "$THEME_CONFIG")
+        success "Layered config detected (theme_config_version: ${current_version:-unknown})"
+    elif [[ "$layout" == "missing" ]]; then
+        error "No configuration files found. Run install.sh first."
+    fi
+
+    # 2. Check for overrides
+    echo ""
+    detect_theme_overrides
+
+    # 3. Validate YAML
+    echo ""
+    info "Validating YAML syntax..."
+    local valid=true
+    [[ -f "$THEME_CONFIG" ]] && { validate_yaml "$THEME_CONFIG" || valid=false; }
+    [[ -f "$USER_CONFIG" ]] && { validate_yaml "$USER_CONFIG" || valid=false; }
+    [[ -f "$DEV_CONFIG" ]] && { validate_yaml "$DEV_CONFIG" || valid=false; }
+    [[ -f "$CUSTOM_CONFIG" ]] && { validate_yaml "$CUSTOM_CONFIG" || valid=false; }
+
+    # 4. Check docker-compose config chain
+    echo ""
+    if docker_compose_has_theme_config; then
+        success "docker-compose.yml includes _config.theme.yml in config chain"
+    else
+        if [[ -f "docker-compose.yml" ]]; then
+            warn "docker-compose.yml does NOT include _config.theme.yml"
+            info "Update the --config flag to: '_config.theme.yml,_config.yml,_config_dev.yml'"
+        fi
+    fi
+
+    echo ""
+    echo "=========================================="
+    success "Health check complete"
+    echo "=========================================="
+}
+
+# =========================================================================
+# Migration: Legacy → Layered
+# =========================================================================
+
+run_migrate() {
+    echo ""
+    echo "=========================================="
+    echo "  Migrate to Layered Config"
+    echo "=========================================="
+    echo ""
+
+    local layout
+    layout=$(detect_config_layout)
+
+    if [[ "$layout" == "layered" ]] && [[ -f "$THEME_CONFIG" ]]; then
+        success "Already using layered config. Nothing to migrate."
+        return 0
+    fi
+
+    if [[ "$layout" == "missing" ]]; then
+        error "No configuration files found. Run install.sh first."
+    fi
+
+    local theme_key_count
+    theme_key_count=$(count_theme_managed_keys "$USER_CONFIG")
+    info "Found $theme_key_count theme-managed key(s) in $USER_CONFIG"
+
+    if [[ "$theme_key_count" -eq 0 ]]; then
+        info "No theme-managed keys found in $USER_CONFIG"
+        info "Fetching theme config to create $THEME_CONFIG..."
+    fi
+
+    # Fetch the theme config
+    local source_file=""
+    case "$SOURCE" in
+        github)
+            info "Fetching theme config from GitHub ($TARGET_VERSION)..."
+            source_file=$(fetch_theme_config_github "$TARGET_VERSION") || {
+                warn "Failed to fetch from GitHub, trying installed gem..."
+                source_file=$(fetch_theme_config_gem) || {
+                    warn "Failed to fetch from gem, trying templates..."
+                    source_file=$(fetch_theme_config_templates "$SCRIPT_DIR") || {
+                        error "Could not find theme config from any source"
+                    }
+                }
+            }
+            ;;
+        gem)
+            source_file=$(fetch_theme_config_gem) || error "Theme config not found in installed gem"
+            ;;
+        templates)
+            source_file=$(fetch_theme_config_templates "$SCRIPT_DIR") || error "Theme config template not found"
+            ;;
+    esac
+
+    info "Source: $source_file"
+    local new_version
+    new_version=$(yaml_read_key "$source_file" "theme_config_version" 2>/dev/null || echo "unknown")
+    info "Theme config version: $new_version"
+
+    # Confirm
+    if [[ "$INTERACTIVE" != "false" ]] && [[ "$DRY_RUN" != "true" ]]; then
+        echo ""
+        info "This will:"
+        echo "  1. Back up $USER_CONFIG"
+        echo "  2. Create $THEME_CONFIG from theme source"
+        if [[ "$theme_key_count" -gt 0 ]]; then
+            echo "  3. Remove $theme_key_count theme-managed key(s) from $USER_CONFIG"
+        fi
+        echo ""
+        confirm "Proceed with migration?" || {
+            info "Migration cancelled"
+            return 0
+        }
+    fi
+
+    # Backup
+    backup_file "$USER_CONFIG"
+    [[ -f "$THEME_CONFIG" ]] && backup_file "$THEME_CONFIG"
+
+    # Install theme config
+    if [[ "$DRY_RUN" == "true" ]]; then
+        info "[DRY RUN] Would create $THEME_CONFIG from $source_file"
+    else
+        cp "$source_file" "$THEME_CONFIG"
+        success "Created $THEME_CONFIG"
+    fi
+
+    # Remove theme-managed keys from _config.yml if present
+    if [[ "$theme_key_count" -gt 0 ]]; then
+        info "Note: Please manually review $USER_CONFIG and remove duplicated theme keys:"
+        for key in "${THEME_MANAGED_KEYS[@]}"; do
+            if yaml_key_exists "$USER_CONFIG" "$key"; then
+                warn "  - $key (now in $THEME_CONFIG)"
+            fi
+        done
+        echo ""
+        info "These keys are now provided by $THEME_CONFIG and should be removed from $USER_CONFIG"
+        info "to avoid conflicts. Keys in $USER_CONFIG override $THEME_CONFIG (later files win)."
+    fi
+
+    # Check docker-compose
+    if ! docker_compose_has_theme_config; then
+        echo ""
+        warn "docker-compose.yml needs updating:"
+        info "  Change --config flag to: '_config.theme.yml,_config.yml,_config_dev.yml'"
+    fi
+
+    # Clean up temp file if we downloaded from GitHub
+    if [[ "$SOURCE" == "github" ]] && [[ "$source_file" == /tmp/* ]]; then
+        rm -f "$source_file"
+    fi
+
+    echo ""
+    success "Migration complete!"
+    info "Test with: bundle exec jekyll build --config '$THEME_CONFIG,$USER_CONFIG'"
+}
+
+# =========================================================================
+# Update: Replace theme config with latest
+# =========================================================================
+
+run_update() {
+    echo ""
+    echo "=========================================="
+    echo "  Theme Config Update"
+    echo "=========================================="
+    echo ""
+
+    # Check current state
+    local layout
+    layout=$(detect_config_layout)
+
+    if [[ "$layout" == "legacy" ]]; then
+        warn "Legacy config detected. Run with --migrate first."
+        info "Usage: ./scripts/theme-update --migrate"
+        exit 1
+    fi
+
+    if [[ "$layout" == "missing" ]]; then
+        error "No configuration files found. Run install.sh first."
+    fi
+
+    # Get current version
+    local current_version=""
+    if [[ -f "$THEME_CONFIG" ]]; then
+        current_version=$(get_theme_config_version "$THEME_CONFIG")
+        info "Current theme config version: ${current_version:-unknown}"
+    else
+        info "No existing $THEME_CONFIG found (will create)"
+    fi
+
+    # Fetch latest theme config
+    local source_file=""
+    case "$SOURCE" in
+        github)
+            info "Fetching latest theme config from GitHub ($TARGET_VERSION)..."
+            source_file=$(fetch_theme_config_github "$TARGET_VERSION") || {
+                warn "Failed to fetch from GitHub, trying installed gem..."
+                source_file=$(fetch_theme_config_gem) || {
+                    error "Could not fetch theme config. Check your internet connection or use --from-gem"
+                }
+            }
+            ;;
+        gem)
+            info "Fetching theme config from installed gem..."
+            source_file=$(fetch_theme_config_gem) || error "Theme config not found in installed gem. Try --from-github"
+            ;;
+        templates)
+            info "Fetching theme config from templates..."
+            source_file=$(fetch_theme_config_templates "$SCRIPT_DIR") || error "Theme config template not found"
+            ;;
+    esac
+
+    local new_version
+    new_version=$(yaml_read_key "$source_file" "theme_config_version" 2>/dev/null || echo "unknown")
+    info "New theme config version: $new_version"
+
+    # Compare versions
+    if [[ -n "$current_version" ]] && [[ "$current_version" == "$new_version" ]]; then
+        # Check if content actually differs
+        if [[ -f "$THEME_CONFIG" ]] && diff -q "$THEME_CONFIG" "$source_file" &>/dev/null; then
+            success "Theme config is already up to date (version $current_version)"
+            # Clean up temp
+            [[ "$source_file" == /tmp/* ]] && rm -f "$source_file"
+            return 0
+        fi
+        info "Same version ($new_version) but content differs — updating"
+    fi
+
+    # Warn on major version change
+    if [[ -n "$current_version" ]] && [[ "$new_version" != "unknown" ]]; then
+        if [[ "$current_version" != "$new_version" ]]; then
+            local current_major="${current_version%%.*}"
+            local new_major="${new_version%%.*}"
+            if [[ "$current_major" != "$new_major" ]] && [[ "$INTERACTIVE" != "false" ]]; then
+                warn "Major schema version change detected: $current_version → $new_version"
+                warn "This may include breaking changes to the config structure."
+                confirm "Proceed with update?" || {
+                    info "Update cancelled"
+                    [[ "$source_file" == /tmp/* ]] && rm -f "$source_file"
+                    return 0
+                }
+            fi
+        fi
+    fi
+
+    # Show diff if verbose
+    if [[ "$VERBOSE" == "true" ]] && [[ -f "$THEME_CONFIG" ]]; then
+        echo ""
+        info "Changes:"
+        diff --unified=3 "$THEME_CONFIG" "$source_file" || true
+        echo ""
+    fi
+
+    # Confirm
+    if [[ "$INTERACTIVE" != "false" ]] && [[ "$DRY_RUN" != "true" ]]; then
+        echo ""
+        info "This will replace $THEME_CONFIG with the latest theme version"
+        info "Your $USER_CONFIG will NOT be modified"
+        confirm "Proceed with update?" || {
+            info "Update cancelled"
+            [[ "$source_file" == /tmp/* ]] && rm -f "$source_file"
+            return 0
+        }
+    fi
+
+    # Backup existing
+    [[ -f "$THEME_CONFIG" ]] && backup_file "$THEME_CONFIG"
+
+    # Replace
+    if [[ "$DRY_RUN" == "true" ]]; then
+        info "[DRY RUN] Would replace $THEME_CONFIG"
+        if [[ -f "$THEME_CONFIG" ]]; then
+            info "[DRY RUN] Diff:"
+            diff --unified=3 "$THEME_CONFIG" "$source_file" || true
+        fi
+    else
+        cp "$source_file" "$THEME_CONFIG"
+        success "Updated $THEME_CONFIG (version: $new_version)"
+    fi
+
+    # Validate the result
+    echo ""
+    validate_config_chain
+
+    # Check for overrides
+    echo ""
+    detect_theme_overrides
+
+    # Clean up temp
+    [[ "$source_file" == /tmp/* ]] && rm -f "$source_file"
+
+    echo ""
+    echo "=========================================="
+    success "Theme update complete!"
+    echo "=========================================="
+    echo ""
+    info "Next steps:"
+    echo "  1. Review changes: git diff $THEME_CONFIG"
+    echo "  2. Test build:     bundle exec jekyll build --config '$THEME_CONFIG,$USER_CONFIG'"
+    echo "  3. Commit:         git add $THEME_CONFIG && git commit -m 'chore: update theme config'"
+}
+
+# =========================================================================
+# Main
+# =========================================================================
+
+main() {
+    if [[ "$CHECK_ONLY" == "true" ]]; then
+        run_check
+    elif [[ "$MIGRATE" == "true" ]]; then
+        run_migrate
+    else
+        run_update
+    fi
+}
+
+main

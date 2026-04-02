@@ -3,19 +3,15 @@
 # YAML docs at: https://yaml.org/spec/1.2.2/
 # ---------------------------------------------------------------------------------
 #
-# This config file is meant for settings that affect your whole blog, values
-# which you are expected to set up once and rarely edit after that. If you find
-# yourself editing this file very often, consider using Jekyll's data files
-# feature for the data you need to update frequently.
+# This file contains YOUR site-specific settings: identity, branding, analytics,
+# feature flags, and deployment config. Theme infrastructure (plugins, collections,
+# defaults, markdown) lives in _config.theme.yml (managed by the theme).
+#
+# Config merge order (later files win):
+#   _config.theme.yml → _config.yml → _config_dev.yml → _config.custom.yml
 #
 # For technical reasons, this file is *NOT* reloaded automatically when you use
 # 'bundle exec jekyll serve'. If you change this file, please restart the server.
-#
-# If you need help with YAML syntax, here are some quick references for you: 
-# https://learn-the-web.algonquindesign.ca/topics/markdown-yaml-cheat-sheet/#yaml
-# https://learnxinyminutes.com/docs/yaml/
-#
-# You can find config options at: https://jekyllrb.com/docs/configuration/options/
 #
 # These are used to personalize your new site. If you look in the HTML files,
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
@@ -55,7 +51,6 @@ url_test                 : &url_test [ 'https', '://', *github_user, '.', *domai
 domain_url               : &domain_url [ 'https', '://', *domain, '.', *domain_ext ]
 github_io_url            : &github_io_url [ 'https', '://', *github_user, '.', *domain, '.', *domain_ext, '/', *github_repository ]
 url                      : &url https://zer0-mistakes.com
-public_folder            : assets # path to the public folder
 port                     : 4000 # Jekyll Serve Dev port
 dg_port                  : 4001 # TODO: Doppelganger site. Use this if you want to switch between parallel deployments
 og_image                 : '/assets/images/wizard-on-journey.png'
@@ -110,7 +105,6 @@ preview_images:
 
 breadcrumbs              : true # true, false (default)
 words_per_minute         : 200
-_posts_file_structure    : "year-month-day-title.md"
 
 ## Identity #####################################################################
 
@@ -165,8 +159,6 @@ baidu_site_verification  : null
 
 ## Affiliations ##############################################################
 
-default_icon: "bi" ## Bootstrap Icons https://icons.getbootstrap.com/
-
 links:
   - label: "Portfolio"
     url: [ 'https://', *github_user, '.github.io/']
@@ -219,26 +211,6 @@ powered_by:
     url: "https://www.docker.com/"
     icon: "bi-docker"
 
-### Plugins  #####################################################################
-
-# https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll#plugins
-# http://jekyllrb.com/docs/plugins/
-
-# All plugins are enabled by default for GitHub Pages. https://pages.github.com/versions/
-
-plugins:
-  - github-pages
-  - jekyll-include-cache
-  - jekyll-remote-theme
-  - jekyll-feed
-  - jekyll-sitemap
-  - jekyll-seo-tag
-  - jekyll-paginate
-  - jekyll-relative-links
-  # Note: jekyll-mermaid is NOT in GitHub Pages whitelist - it only provides {% mermaid %} Liquid tag
-  # Mermaid diagrams work without this plugin via client-side JavaScript (see _includes/components/mermaid.html)
-  - jekyll-mermaid
-
 # Project resource links (used by landing page and includes)
 resources:
   github_repo: [ 'https://github.com/', *github_user, '/', *github_repository ]
@@ -258,248 +230,11 @@ gisgus:
   data-repo-id: "MDEwOlJlcG9zaXRvcnkyODM4MjI1NzM"
   data-category-id: "DIC_kwDOEOrJ7c4CAn8D"
 
-## Mermaid Diagram Configuration #################################################
-# Mermaid diagrams support both native markdown code blocks and div syntax
-# Usage: 
-#   1. Add 'mermaid: true' to page front matter
-#   2. Use ```mermaid ... ``` code blocks OR <div class="mermaid">...</div>
-# 
-# GitHub Pages Compatible: Yes (client-side; script bundled under assets/vendor/)
-# Update file: npm install && npm run vendor:mermaid (copies from node_modules/mermaid, not jsDelivr)
-# Plugin: jekyll-mermaid is OPTIONAL (not needed for GitHub Pages)
-# Documentation: https://mermaid.js.org/
-
-mermaid:
-  src: '/assets/vendor/mermaid/mermaid.min.js'
-
-## Conversion
-# Markdown Options https://jekyllrb.com/docs/configuration/markdown/
-# https://github.com/github/jekyll-commonmark-ghpages
-
-markdown: kramdown
-# highlighter: rouge
-# lsi: false
-# excerpt_separator: "\n\n"
-# incremental: false
-
-# Markdown Processing https://jekyllrb.com/docs/configuration/markdown/
-kramdown: # https://kramdown.gettalong.org/options.html
-  input: GFM
-  header_offset: 0
-  # hard_wrap: false
-  # auto_ids: true
-  # footnote_nr: 1
-  # entity_output: as_char
-  toc_levels: 1..6
-  # smart_quotes: lsquo,rsquo,ldquo,rdquo
-  # enable_coderay: false
-
-# Collections: https://jekyllrb.com/docs/collections/
-  # Permalinks: https://jekyllrb.com/docs/permalinks/
-
-collections_dir: &collections_dir pages
-local_repo_path: [ *collections_dir, '/', *local_repo ]
-
-collections:
-  pages:
-    output: true
-    permalink: /:collection/:name/
-  posts:
-    output: true
-    permalink: /:collection/:year/:month/:day/:slug/
-  docs:
-    output: true
-    permalink: /:collection/:categories/:name/
-  quests:
-    output: true
-    permalink: /:collection/:categories/:name/
-  hobbies:
-    output: true
-    permalink: /:collection/:categories/:name/
-  notebooks:
-    output: true
-    permalink: /:collection/:path/:name/
-  notes:
-    output: true
-    permalink: /:collection/:path/:name/
-  quickstart:
-    output: true
-    permalink: /:collection/:name/
-  about:
-    output: true
-    permalink: /:collection/:categories/:name/
-
-permalink: pretty
-
-#  pagination https://jekyllrb.com/docs/pagination/
-
-paginate: 10
-paginate_path: "/pages/:num/"
-
-# Defaults https://jekyllrb.com/docs/configuration/front-matter-defaults/
-
-defaults:
-  # ALL
-  - 
-    scope:
-      path: ""
-    values:
-      layout: root
-      author_profile: false
-      read_time: true
-      comments: false # true
-      share: true
-      related: true
-      sidebar:
-        nav: tree
-    permalink: /:collection/:name/
-
-  # pages
-  - 
-    scope:
-      path: pages
-    values:
-      layout: &pages default
-      author_profile: true
-      read_time: true
-      comments: # true
-      share: true
-      related: true
-      toc_sticky: true
-      sidebar:
-        nav: categories
-    permalink: /:path/:name/
-
-  # pages/_about
-  - 
-    scope:
-      path: pages/_about
-    values:
-      layout: *pages
-      collection: about
-      share: true
-      related: true
-      sidebar:
-        nav: tree
-
-  # pages/_quickstart
-  - 
-    scope:
-      path: pages/_quickstart
-    values:
-      layout: default
-      collection: quickstart
-      share: true
-      related: true
-      sidebar:
-        nav: tree
-
-  # pages/_posts
-  - 
-    scope:
-      path: pages/_posts
-    values:
-      layout: article
-      post_type: standard
-      index: false
-      sidebar: true
-      author_profile: true
-      read_time: true
-      comments: # true
-      share: true
-      related: true
-      # permalink: /:collection/:name/
-
-  # pages/_docs
-  - 
-    scope:
-      path: pages/_docs
-    values:
-      layout: *pages
-      # category: docs
-      author_profile: true
-      read_time: true
-      sidebar:
-        nav: tree
-      comments: # true
-      share: true
-      related: true
-    # permalink: /docs/:category/:name/
-
-  # pages/_notes
-  - 
-    scope:
-      path: pages/_notes
-      type: notes
-    values:
-      layout: note
-      collection: notes
-      author_profile: true
-      read_time: true
-      comments: true
-      share: true
-      related: true
-      sidebar:
-        nav: auto
-
-  # pages/_notebooks
-  - 
-    scope:
-      path: pages/_notebooks
-      type: notebooks
-    values:
-      layout: notebook
-      collection: notebooks
-      author_profile: true
-      read_time: true
-      comments: true
-      share: true
-      related: true
-      jupyter_metadata: true
-      sidebar:
-        nav: auto
-
-# Exclude from processing.
-# The following items will not be processed, by default.
-# Any item listed under the `exclude:` key here will be automatically added to
-# the internal "default list".
-#
-# Excluded items can be processed by explicitly listing the directories or
-# their entries' file path in the `include:` list.
-
-exclude:
-  - .sass-cache/
-  - .jekyll-cache/
-  - .obsidian
-  - docs/
-  - Gemfile.lock
-  - gemfiles/
-  - Gemfile
-  - node_modules/
-  - templates/
-  # Exclude Bundler's vendor dir (Ruby gems). assets/vendor/ is a different path
-  # and is intentionally committed for GitHub Pages (Bootstrap, jQuery, etc.).
-  - vendor/bundle/
-  - vendor/cache/
-  - vendor/gems/
-  - vendor/ruby/
-  # - "*.sh"
-  - submodules/
-  - MERMAID-*.md
-  - MERMAID-*/
-  - test/
-  - tests/
-  - _site/lib/
-
-# Sass/SCSS
-sass:
-  sass_dir: _sass
-  style: expanded
-
-#  TODO: Fix bootstrap plugin
-  # load_paths:
-  #   - /usr/local/bundle/gems/bootstrap-5.3.3/assets/stylesheets
-
+# ==============================================================================
+# NOTE: Theme-managed settings (plugins, collections, defaults, markdown,
+# exclude, sass, pagination) now live in _config.theme.yml.
+# Do NOT duplicate them here — they are loaded first in the config chain.
+# ==============================================================================
 
 ## Style Settings -------------------------------------------------------------
 

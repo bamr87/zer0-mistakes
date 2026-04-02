@@ -1,5 +1,8 @@
 # Development Configuration Override
 # This file overrides production settings for local development
+#
+# Config merge order (later files win):
+#   _config.theme.yml → _config.yml → _config_dev.yml → _config.custom.yml
 
 # Theme Configuration
 # Disable remote theme for local development - allows site to build with local theme files

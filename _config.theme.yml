@@ -1,0 +1,267 @@
+# ==============================================================================
+# Zer0-Mistakes Theme Configuration (THEME-MANAGED)
+# ==============================================================================
+#
+# THIS FILE IS MANAGED BY THE THEME — do not edit manually.
+# It will be replaced during theme updates via `scripts/theme-update`.
+#
+# Your site-specific settings belong in _config.yml (never overwritten).
+# For advanced overrides of these defaults, create _config.custom.yml.
+#
+# Config merge order (later files win):
+#   _config.theme.yml → _config.yml → _config_dev.yml → _config.custom.yml
+#
+# Schema version — used by theme-update to detect compatibility
+# ==============================================================================
+
+theme_config_version: 1
+
+# ==============================================================================
+# Plugins
+# ==============================================================================
+# https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll#plugins
+# All plugins are enabled by default for GitHub Pages. https://pages.github.com/versions/
+
+plugins:
+  - github-pages
+  - jekyll-include-cache
+  - jekyll-remote-theme
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+  - jekyll-paginate
+  - jekyll-relative-links
+  # Note: jekyll-mermaid is NOT in GitHub Pages whitelist - it only provides {% mermaid %} Liquid tag
+  # Mermaid diagrams work without this plugin via client-side JavaScript (see _includes/components/mermaid.html)
+  - jekyll-mermaid
+
+# ==============================================================================
+# Markdown / Kramdown
+# ==============================================================================
+# https://jekyllrb.com/docs/configuration/markdown/
+
+markdown: kramdown
+
+kramdown:
+  input: GFM
+  header_offset: 0
+  toc_levels: 1..6
+
+# ==============================================================================
+# Mermaid Diagram Configuration
+# ==============================================================================
+# Usage: Add 'mermaid: true' to page front matter and use ```mermaid code blocks
+# GitHub Pages Compatible: Yes (client-side; script bundled under assets/vendor/)
+
+mermaid:
+  src: '/assets/vendor/mermaid/mermaid.min.js'
+
+# ==============================================================================
+# Collections
+# ==============================================================================
+# https://jekyllrb.com/docs/collections/
+
+collections_dir: pages
+
+collections:
+  pages:
+    output: true
+    permalink: /:collection/:name/
+  posts:
+    output: true
+    permalink: /:collection/:year/:month/:day/:slug/
+  docs:
+    output: true
+    permalink: /:collection/:categories/:name/
+  quests:
+    output: true
+    permalink: /:collection/:categories/:name/
+  hobbies:
+    output: true
+    permalink: /:collection/:categories/:name/
+  notebooks:
+    output: true
+    permalink: /:collection/:path/:name/
+  notes:
+    output: true
+    permalink: /:collection/:path/:name/
+  quickstart:
+    output: true
+    permalink: /:collection/:name/
+  about:
+    output: true
+    permalink: /:collection/:categories/:name/
+
+permalink: pretty
+
+# ==============================================================================
+# Pagination
+# ==============================================================================
+# https://jekyllrb.com/docs/pagination/
+
+paginate: 10
+paginate_path: "/pages/:num/"
+
+# ==============================================================================
+# Front Matter Defaults
+# ==============================================================================
+# https://jekyllrb.com/docs/configuration/front-matter-defaults/
+
+defaults:
+  # ALL
+  -
+    scope:
+      path: ""
+    values:
+      layout: root
+      author_profile: false
+      read_time: true
+      comments: false
+      share: true
+      related: true
+      sidebar:
+        nav: tree
+    permalink: /:collection/:name/
+
+  # pages
+  -
+    scope:
+      path: pages
+    values:
+      layout: &pages default
+      author_profile: true
+      read_time: true
+      comments:
+      share: true
+      related: true
+      toc_sticky: true
+      sidebar:
+        nav: categories
+    permalink: /:path/:name/
+
+  # pages/_about
+  -
+    scope:
+      path: pages/_about
+    values:
+      layout: *pages
+      collection: about
+      share: true
+      related: true
+      sidebar:
+        nav: tree
+
+  # pages/_quickstart
+  -
+    scope:
+      path: pages/_quickstart
+    values:
+      layout: default
+      collection: quickstart
+      share: true
+      related: true
+      sidebar:
+        nav: tree
+
+  # pages/_posts
+  -
+    scope:
+      path: pages/_posts
+    values:
+      layout: article
+      post_type: standard
+      index: false
+      sidebar: true
+      author_profile: true
+      read_time: true
+      comments:
+      share: true
+      related: true
+
+  # pages/_docs
+  -
+    scope:
+      path: pages/_docs
+    values:
+      layout: *pages
+      author_profile: true
+      read_time: true
+      sidebar:
+        nav: tree
+      comments:
+      share: true
+      related: true
+
+  # pages/_notes
+  -
+    scope:
+      path: pages/_notes
+      type: notes
+    values:
+      layout: note
+      collection: notes
+      author_profile: true
+      read_time: true
+      comments: true
+      share: true
+      related: true
+      sidebar:
+        nav: auto
+
+  # pages/_notebooks
+  -
+    scope:
+      path: pages/_notebooks
+      type: notebooks
+    values:
+      layout: notebook
+      collection: notebooks
+      author_profile: true
+      read_time: true
+      comments: true
+      share: true
+      related: true
+      jupyter_metadata: true
+      sidebar:
+        nav: auto
+
+# ==============================================================================
+# Build Exclusions
+# ==============================================================================
+
+exclude:
+  - .sass-cache/
+  - .jekyll-cache/
+  - .obsidian
+  - docs/
+  - Gemfile.lock
+  - gemfiles/
+  - Gemfile
+  - node_modules/
+  - templates/
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - submodules/
+  - MERMAID-*.md
+  - MERMAID-*/
+  - test/
+  - tests/
+  - _site/lib/
+
+# ==============================================================================
+# Sass/SCSS
+# ==============================================================================
+
+sass:
+  sass_dir: _sass
+  style: expanded
+
+# ==============================================================================
+# Theme Infrastructure
+# ==============================================================================
+
+public_folder: assets
+default_icon: "bi"
+_posts_file_structure: "year-month-day-title.md"
