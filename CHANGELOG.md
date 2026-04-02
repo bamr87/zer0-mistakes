@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.22.2] - 2026-04-02
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- a9b8daf docs(prompts): update commit-publish workflow with PR branching and CI fix guidance
+
+
 ## [0.22.1] - 2026-04-02
 
 ### Changed
