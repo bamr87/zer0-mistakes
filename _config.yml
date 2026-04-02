@@ -288,6 +288,7 @@ nanobar:
   border_radius    : "0"             # Bar border-radius (CSS length)
   shadow           : "none"          # Box-shadow on the bar (e.g. "0 0 8px rgba(13,110,253,.6)")
   # Animation timing — sequential percentages fed to nanobar.go()
+  # Values should be ascending integers between 0 and 100 (step1 ≤ step2 ≤ step3)
   animation:
     step1          : 30              # First progress jump (0-100)
     step2          : 76              # Second progress jump
