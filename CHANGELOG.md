@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.22.3] - 2026-04-02
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 059244d fix(landing): stabilize hero layout and scroll animations (#44)
+
+
 ## [0.22.2] - 2026-04-02
 
 ### Changed
