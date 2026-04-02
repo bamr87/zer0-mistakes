@@ -8,7 +8,7 @@ description: "Complete release pipeline: analyze changes → validate → docume
 
 Execute a complete release: analyze changes, validate builds, update docs/changelog, bump version, publish gem, and verify publication.
 
-> **Last Updated**: 2026-02-01 | **Current Version**: Check `lib/jekyll-theme-zer0/version.rb`
+> **Last Updated**: 2026-04-01 | **Current Version**: Check `lib/jekyll-theme-zer0/version.rb`
 
 ## 🎯 Release Checklist (Track Progress)
 
@@ -16,12 +16,17 @@ Use `manage_todo_list` to track progress through the release:
 
 ```
 1. Review and analyze changes
-2. Validate Docker Jekyll build
-3. Update CHANGELOG.md
-4. Bump version in version.rb
-5. Commit and tag changes
-6. Publish to RubyGems
-7. Verify publication
+2. Create release branch (release/vX.Y.Z)
+3. Validate Docker Jekyll build
+4. Update CHANGELOG.md
+5. Bump version in version.rb
+6. Regenerate Gemfile.lock via Docker
+7. Commit changes to release branch
+8. Open pull request → main
+9. Wait for CI to pass, then merge
+10. Tag merge commit on main
+11. Publish to RubyGems
+12. Verify publication
 ```
 
 ### Quick Status Checks
@@ -54,19 +59,35 @@ docker-compose exec -T jekyll bundle exec jekyll build --config '_config.yml,_co
 ```
 > 🛑 **STOP if build fails.** Do not proceed until fixed.
 
-### Step 3: Update Documentation
+### Step 3: Create Release Branch
+```bash
+git switch -c release/vX.Y.Z
+```
+
+### Step 4: Update Documentation and Regenerate Lockfile
 1. Add changelog entry to top of `CHANGELOG.md`
 2. Bump version in `lib/jekyll-theme-zer0/version.rb`
+3. **Regenerate `Gemfile.lock`** (REQUIRED after every version bump):
+```bash
+docker-compose exec -T jekyll bundle install
+```
 
-### Step 4: Commit, Tag, Push
+### Step 5: Commit and Open Pull Request
 ```bash
 git add -A && git status --short
 git commit -m "feat(scope): summary - Bump version to X.Y.Z"
+git push origin release/vX.Y.Z
+gh pr create --base main --title "Release vX.Y.Z" --body "See CHANGELOG.md for details"
+```
+Wait for CI to pass, then merge:
+```bash
+gh pr merge --squash --delete-branch
+git switch main && git pull
 git tag -a vX.Y.Z -m "vX.Y.Z - Brief description"
-git push origin main --tags
+git push origin --tags
 ```
 
-### Step 5: Publish and Verify
+### Step 6: Publish and Verify
 ```bash
 gem build jekyll-theme-zer0.gemspec
 gem push jekyll-theme-zer0-X.Y.Z.gem
@@ -247,13 +268,43 @@ docker-compose exec -T jekyll ruby -ryaml -e "
 "
 ```
 
-### 2.4 Validation Gate
+### 2.4 Gemfile.lock Consistency Check (REQUIRED)
+
+After bumping the version, ensure `Gemfile.lock` is regenerated. A stale lockfile causes CI bundle install to fail in deployment mode.
+
+```bash
+# Verify Gemfile.lock references the new version
+grep "jekyll-theme-zer0" Gemfile.lock | head -2
+```
+
+**Expected**: `jekyll-theme-zer0 (X.Y.Z)` matches the version in `version.rb`.  
+**If mismatched**: Regenerate with:
+```bash
+docker-compose exec -T jekyll bundle install
+```
+
+### 2.5 CI Action Version Check (Periodic)
+
+GitHub deprecates older Node.js runtimes used by Actions pinned to old major versions. Check periodically:
+
+```bash
+# List all pinned action versions in workflows
+grep -rh "uses: actions/" .github/workflows/*.yml | sort -u
+```
+
+If any action shows a Node.js deprecation warning in CI logs, upgrade to the latest major version (e.g., `actions/checkout@v4` → `actions/checkout@v5`):
+```bash
+LC_ALL=C sed -i '' 's|actions/checkout@v4|actions/checkout@v5|g' .github/workflows/*.yml
+```
+
+### 2.6 Validation Gate
 
 | Check | Command | Required |
 |-------|---------|----------|
 | Jekyll Build | `docker-compose exec -T jekyll bundle exec jekyll build...` | ✅ **YES** |
 | Jekyll Doctor | `docker-compose exec -T jekyll bundle exec jekyll doctor` | ⚠️ Warnings OK |
 | YAML Syntax | Ruby validation | ✅ **YES** |
+| Gemfile.lock version | `grep "jekyll-theme-zer0" Gemfile.lock` | ✅ **YES** (after version bump) |
 
 > 🛑 **STOP if Jekyll build fails.** Fix all errors before proceeding to Phase 3.
 
@@ -305,9 +356,36 @@ end
 
 **Use `replace_string_in_file` tool** to update the version string.
 
+### 3.3 Regenerate Gemfile.lock (REQUIRED)
+
+> ⚠️ **Critical**: After every version bump in `version.rb`, you MUST regenerate `Gemfile.lock`. Skipping this causes CI to fail because `bundle install --deployment` enforces that the lockfile matches the gemspec exactly.
+
+```bash
+# Regenerate lockfile inside Docker (uses correct Ruby/bundler versions)
+docker-compose exec -T jekyll bundle install
+
+# Confirm the new version is in the lockfile
+grep "jekyll-theme-zer0" Gemfile.lock | head -2
+# Expected: jekyll-theme-zer0 (X.Y.Z)
+```
+
+> ✅ **Both `version.rb` and `Gemfile.lock` must reference the same version before committing.**
+
 ---
 
-## Phase 4: Commit Changes
+## Phase 4: Create Release Branch and Commit
+
+### 4.0 Create Release Branch
+
+Never commit release changes directly to `main`. Work on a dedicated release branch so CI validates before merging:
+
+```bash
+# Ensure main is up to date first
+git switch main && git pull origin main
+
+# Create release branch from main
+git switch -c release/vX.Y.Z
+```
 
 ### 4.1 Stage All Changes
 
@@ -316,7 +394,10 @@ git add -A
 git status --short
 ```
 
-Review the output to ensure all expected files are staged.
+Review the output to ensure all expected files are staged. The following files should always be present:
+- `CHANGELOG.md` — updated with new version entry
+- `lib/jekyll-theme-zer0/version.rb` — bumped to X.Y.Z
+- `Gemfile.lock` — regenerated to reference X.Y.Z
 
 ### 4.2 Create Semantic Commit
 
@@ -347,36 +428,72 @@ git commit -m "fix(search): correct JSON syntax in search index - Bump version t
 git commit -m "chore(deps): update Ruby dependencies - Bump version to 0.19.5"
 ```
 
-### 4.3 Push to Main Branch
+### 4.3 Push Release Branch
 
 ```bash
-# Always pull first to avoid conflicts
-git pull --rebase origin main
-
-# Push commits
-git push origin main
+# Push release branch (NOT main)
+git push origin release/vX.Y.Z
 ```
 
 ---
 
-## Phase 5: Create and Push Tag
+## Phase 5: Pull Request, Merge, and Tag
 
-### 5.1 Create Annotated Tag
+### 5.1 Open Pull Request
+
+```bash
+# Create PR using GitHub CLI
+gh pr create \
+  --base main \
+  --head release/vX.Y.Z \
+  --title "Release vX.Y.Z" \
+  --body "## Release vX.Y.Z
+
+See [CHANGELOG.md](CHANGELOG.md) for full details.
+
+### Checklist
+- [x] Jekyll build passes
+- [x] CHANGELOG.md updated
+- [x] version.rb bumped
+- [x] Gemfile.lock regenerated"
+```
+
+**Alternative**: Open the PR manually at `https://github.com/bamr87/zer0-mistakes/compare/main...release/vX.Y.Z`
+
+### 5.2 Wait for CI to Pass
+
+```bash
+# Monitor CI status
+gh pr checks
+
+# View specific run if needed
+gh run list --limit 3
+```
+
+> 🛑 **Do not merge or tag until all CI checks pass.** If CI fails, fix on the release branch and push again.
+
+### 5.3 Merge Pull Request
+
+```bash
+# Merge (squash or merge commit — keep history clean)
+gh pr merge --merge --delete-branch
+
+# Pull the updated main locally
+git switch main && git pull origin main
+```
+
+### 5.4 Create and Push Tag on Main
+
+Tag is applied to `main` **after** the PR is merged:
 
 ```bash
 git tag -a vX.Y.Z -m "vX.Y.Z - Brief description of release"
+git push origin --tags
 ```
 
 **Tag naming**: Always prefix with `v` (e.g., `v0.20.3`)
 
-### 5.2 Push Commits and Tag Together
-
-```bash
-# Push both commits and tags in one command
-git push origin main --tags
-```
-
-### 5.3 Verify Tag
+### 5.5 Verify Tag
 
 ```bash
 git describe --tags --abbrev=0
@@ -499,10 +616,19 @@ Provide this summary after completing a release:
 | Jekyll build | `docker-compose exec -T jekyll bundle exec jekyll build --config '_config.yml,_config_dev.yml'` |
 | Current version | `grep VERSION lib/jekyll-theme-zer0/version.rb` |
 | Last tag | `git describe --tags --abbrev=0` |
+| Create release branch | `git switch main && git pull && git switch -c release/vX.Y.Z` |
+| Regenerate lockfile | `docker-compose exec -T jekyll bundle install` |
+| Verify lockfile | `grep "jekyll-theme-zer0" Gemfile.lock` |
 | Stage all | `git add -A && git status --short` |
 | Commit | `git commit -m "type(scope): summary - Bump version to X.Y.Z"` |
+| Push branch | `git push origin release/vX.Y.Z` |
+| Open PR | `gh pr create --base main --title "Release vX.Y.Z"` |
+| Check CI | `gh pr checks` |
+| Merge PR | `gh pr merge --merge --delete-branch` |
+| Pull main | `git switch main && git pull origin main` |
 | Tag | `git tag -a vX.Y.Z -m "vX.Y.Z - Description"` |
-| Push all | `git push origin main --tags` |
+| Push tags | `git push origin --tags` |
+| Check action versions | `grep -rh "uses: actions/" .github/workflows/*.yml \| sort -u` |
 | Build gem | `gem build jekyll-theme-zer0.gemspec` |
 | Publish gem | `gem push jekyll-theme-zer0-X.Y.Z.gem` |
 | Verify publish | `curl -s "https://rubygems.org/api/v1/gems/jekyll-theme-zer0.json" \| python3 -c "import json,sys; print(json.load(sys.stdin)['version'])"` |
@@ -562,13 +688,15 @@ gem yank jekyll-theme-zer0 -v X.Y.Z
 | Build hangs | `docker-compose restart jekyll` |
 | Permission errors | Check volume mounts in `docker-compose.yml` |
 
-### Git Issues
+### Git / PR Issues
 
 | Problem | Solution |
 |---------|----------|
 | Push rejected | `git pull --rebase origin main` then push again |
-| Tag already exists | `git tag -d vX.Y.Z` then recreate |
+| Tag already exists | `git tag -d vX.Y.Z && git push origin :refs/tags/vX.Y.Z` then recreate |
 | Commit message issues | Use single-line messages to avoid terminal problems |
+| CI fails on PR | Fix on release branch, `git push origin release/vX.Y.Z`; CI reruns automatically |
+| PR already merged but tag missing | `git switch main && git pull && git tag -a vX.Y.Z -m "..." && git push origin --tags` |
 
 ### Gem Issues
 
@@ -579,13 +707,31 @@ gem yank jekyll-theme-zer0 -v X.Y.Z
 | Push fails - version | Version already published; bump version and retry |
 | Version mismatch | Ensure `version.rb`, tag, and CHANGELOG all match |
 
+### Gemfile.lock Issues
+
+| Problem | Solution |
+|---------|----------|
+| CI fails: `Could not find 'bundler' (X.Y.Z)` | Run `docker-compose exec -T jekyll bundle install` and commit the updated `Gemfile.lock` |
+| CI fails: locked to old version | Same — regenerate lockfile inside Docker after bumping `version.rb` |
+| Local `bundle install` fails (wrong Ruby/bundler) | Always use `docker-compose exec -T jekyll bundle install` — never rely on system Ruby |
+
+### CI Action Version Issues
+
+| Problem | Solution |
+|---------|----------|
+| Warning: "Node.js 20 deprecated" in Actions logs | Upgrade `actions/checkout@v4` → `@v5` (or latest) across all workflow files |
+| Batch upgrade all workflows | `LC_ALL=C sed -i '' 's\|actions/checkout@v4\|actions/checkout@v5\|g' .github/workflows/*.yml` |
+| Check which version is current | `grep -rh "uses: actions/checkout" .github/workflows/*.yml \| sort -u` |
+
 ### Version Verification
 
 ```bash
-# Check all version sources match
+# Check all version sources match (run on main after merge)
 echo "CHANGELOG: $(head -3 CHANGELOG.md | grep -o '\[.*\]' | tr -d '[]')"
 echo "version.rb: $(grep -o '[0-9.]*' lib/jekyll-theme-zer0/version.rb | head -1)"
+echo "Gemfile.lock: $(grep 'jekyll-theme-zer0 (' Gemfile.lock | head -1 | grep -o '[0-9.]*')"
 echo "Git tag: $(git describe --tags --abbrev=0)"
-curl -s "https://rubygems.org/api/v1/gems/jekyll-theme-zer0.json" | python3 -c "import json,sys; print(f'RubyGems: {json.load(sys.stdin)[\"version\"]}')"
+curl -s "https://rubygems.org/api/v1/gems/jekyll-theme-zer0.json" | python3 -c "import json,sys; print(f'RubyGems: {json.load(sys.stdin)[\"version\"]}')"```
+
 ```
 
