@@ -272,6 +272,27 @@ gisgus:
 mermaid:
   src: '/assets/vendor/mermaid/mermaid.min.js'
 
+## Nanobar Progress Bar ############################################################
+# Visual page-loading progress indicator displayed at the top of the viewport.
+# All properties are optional; sensible defaults are applied when omitted.
+
+nanobar:
+  enabled          : true            # Set to false to disable the progress bar entirely
+  color            : "#0d6efd"       # Bar colour (any valid CSS colour value)
+  height           : "3px"           # Bar thickness (CSS length)
+  z_index          : 9999            # Stacking order
+  opacity          : 1               # Bar opacity (0 – 1)
+  position         : "fixed"         # CSS position: fixed | absolute | relative
+  transition_speed : "0.3s"          # Width animation duration (CSS time value)
+  easing           : "ease"          # Transition timing function
+  border_radius    : "0"             # Bar border-radius (CSS length)
+  shadow           : "none"          # Box-shadow on the bar (e.g. "0 0 8px rgba(13,110,253,.6)")
+  # Animation timing — sequential percentages fed to nanobar.go()
+  animation:
+    step1          : 30              # First progress jump (0-100)
+    step2          : 76              # Second progress jump
+    step3          : 100             # Final completion value
+
 ## Conversion
 # Markdown Options https://jekyllrb.com/docs/configuration/markdown/
 # https://github.com/github/jekyll-commonmark-ghpages

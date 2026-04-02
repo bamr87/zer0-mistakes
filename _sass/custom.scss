@@ -12,6 +12,9 @@
 @import "core/navbar";
 @import "core/offcanvas-panels";
 
+// Import nanobar progress bar styles
+@import "core/nanobar";
+
 html, body {
     max-width: 100%;
     // overflow-x: hidden;

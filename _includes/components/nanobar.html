@@ -1,0 +1,76 @@
+<!--
+  ===================================================================
+  NANOBAR PROGRESS BAR - Configurable Page Loading Indicator
+  ===================================================================
+
+  File: nanobar.html
+  Path: _includes/components/nanobar.html
+  Purpose: Loads and initialises the Nanobar progress bar with
+           user-configurable appearance and animation from _config.yml.
+
+  Configuration (site.nanobar):
+    enabled          : true/false (default true)
+    color            : CSS colour value (default "#0d6efd")
+    height           : CSS length (default "3px")
+    z_index          : integer (default 9999)
+    opacity          : 0-1 (default 1)
+    position         : fixed | absolute | relative (default "fixed")
+    transition_speed : CSS time (default "0.3s")
+    easing           : CSS timing function (default "ease")
+    border_radius    : CSS length (default "0")
+    shadow           : CSS box-shadow (default "none")
+    animation.step1  : 0-100 (default 30)
+    animation.step2  : 0-100 (default 76)
+    animation.step3  : 0-100 (default 100)
+
+  Dependencies:
+    - assets/js/nanobar.min.js (library)
+    - _sass/core/_nanobar.scss (base styles with CSS custom properties)
+
+  Performance Notes:
+    - Script is deferred; init waits for DOMContentLoaded
+    - CSS custom properties are set via a single inline style block
+  ===================================================================
+-->
+
+{% assign nb = site.nanobar %}
+
+{% comment %} ---- CSS custom-property overrides ---- {% endcomment %}
+<style>
+:root {
+  {%- if nb.color            %} --nanobar-color: {{ nb.color }};                       {%- endif %}
+  {%- if nb.height           %} --nanobar-height: {{ nb.height }};                     {%- endif %}
+  {%- if nb.z_index          %} --nanobar-z-index: {{ nb.z_index }};                   {%- endif %}
+  {%- if nb.opacity          %} --nanobar-opacity: {{ nb.opacity }};                   {%- endif %}
+  {%- if nb.transition_speed %} --nanobar-transition-speed: {{ nb.transition_speed }}; {%- endif %}
+  {%- if nb.easing           %} --nanobar-easing: {{ nb.easing }};                     {%- endif %}
+  {%- if nb.border_radius    %} --nanobar-border-radius: {{ nb.border_radius }};       {%- endif %}
+  {%- if nb.shadow           %} --nanobar-shadow: {{ nb.shadow }};                     {%- endif %}
+}
+</style>
+
+{% comment %} ---- Load nanobar library ---- {% endcomment %}
+<script defer src="{{ '/assets/js/nanobar.min.js' | relative_url }}"></script>
+
+{% comment %} ---- Initialise once DOM is ready ---- {% endcomment %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var el = document.getElementById('top-progress-bar');
+  if (!el) {
+    console.warn('Nanobar: #top-progress-bar element not found — skipping init.');
+    return;
+  }
+
+  var nanobar = new Nanobar({
+    classname: 'nanobar',
+    id: 'top-progress-bar'
+  });
+
+  {% assign s1 = nb.animation.step1 | default: 30 %}
+  {% assign s2 = nb.animation.step2 | default: 76 %}
+  {% assign s3 = nb.animation.step3 | default: 100 %}
+  nanobar.go({{ s1 }});
+  nanobar.go({{ s2 }});
+  nanobar.go({{ s3 }});
+});
+</script>

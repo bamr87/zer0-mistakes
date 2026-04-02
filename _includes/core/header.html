@@ -30,7 +30,7 @@
   - ARIA labels for screen readers
   - Focus management for offcanvas
   
-  TODO: Fix Nanobar progress bar positioning and animation
+  Nanobar progress bar is configurable via site.nanobar in _config.yml
   ===================================================================
 -->
 
@@ -52,10 +52,14 @@
         <!-- ========================== -->
         <!-- PROGRESS BAR INDICATOR    -->
         <!-- ========================== -->
-        <!-- Fixed position progress bar for page loading feedback -->
-        <div class="nanobar" id="top-progress-bar" style="position: fixed;" role="progressbar" aria-label="Page loading progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+        <!-- Fixed position progress bar for page loading feedback (configurable via site.nanobar) -->
+        {% assign nb_enabled = site.nanobar.enabled | default: true %}
+        {% if nb_enabled %}
+        {% assign nb_position = site.nanobar.position | default: "fixed" %}
+        <div class="nanobar" id="top-progress-bar" style="position: {{ nb_position }};" role="progressbar" aria-label="Page loading progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
             <div class="bar"></div>
         </div>
+        {% endif %}
         
         <!-- ========================== -->
         <!-- MAIN NAVIGATION CONTAINER -->

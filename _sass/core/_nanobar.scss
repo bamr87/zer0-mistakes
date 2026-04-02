@@ -1,0 +1,45 @@
+// ==============================================================================
+// NANOBAR PROGRESS BAR - Configurable page-loading indicator
+// ==============================================================================
+//
+// Overrides the inline CSS that nanobar.min.js injects via its #nanobarcss
+// style tag.  Because that tag is inserted at the very top of <head>, any
+// stylesheet loaded later (like this one via main.css) wins at equal
+// specificity thanks to CSS cascade order.
+//
+// All visual properties are driven by CSS custom properties set in the
+// _includes/components/nanobar.html include, which reads values from
+// site.nanobar in _config.yml.  The custom properties declared here act as
+// fallback defaults when the include does not set them.
+// ==============================================================================
+
+:root {
+  // Defaults — overridden inline by the nanobar include when config values exist
+  --nanobar-color: #0d6efd;
+  --nanobar-height: 3px;
+  --nanobar-z-index: 9999;
+  --nanobar-opacity: 1;
+  --nanobar-transition-speed: 0.3s;
+  --nanobar-easing: ease;
+  --nanobar-border-radius: 0;
+  --nanobar-shadow: none;
+}
+
+// Outer wrapper injected by the nanobar library
+.nanobar {
+  width: 100%;
+  height: var(--nanobar-height);
+  z-index: var(--nanobar-z-index);
+  opacity: var(--nanobar-opacity);
+  top: 0;
+}
+
+// Individual animated bar stripe
+.nanobar .bar {
+  width: 0;
+  height: 100%;
+  background: var(--nanobar-color);
+  transition: width var(--nanobar-transition-speed) var(--nanobar-easing);
+  border-radius: var(--nanobar-border-radius);
+  box-shadow: var(--nanobar-shadow);
+}
