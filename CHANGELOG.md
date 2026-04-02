@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.22.1] - 2026-04-02
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- a82f670 chore(ci): update Gemfile.lock to v0.22.0 and upgrade actions/checkout to v5
+
+
 ## [0.22.0] - 2026-04-01
 
 ### Added
