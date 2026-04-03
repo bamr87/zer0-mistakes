@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.22.7] - 2026-04-03
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- a70ae8a chore: consolidate configuration, dependencies, and installation (PRs #48, #51, #52, #53) (#51)
+
+
 ## [Unreleased] — Universal Installer
 
 ### Added
