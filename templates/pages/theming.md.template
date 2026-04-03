@@ -1,0 +1,210 @@
+---
+layout: default
+title: Theming Guide
+permalink: /docs/theming/
+description: Customize colors, typography, dark mode, and Bootstrap overrides in the Zer0-Mistakes theme.
+---
+
+# Theming Guide
+
+The {{THEME_DISPLAY_NAME}} is built on **Bootstrap 5.3** with full dark-mode support. This guide shows how to customize your site's look and feel.
+
+---
+
+## Quick Customization
+
+### Site-Wide SCSS Overrides
+
+Create or edit `assets/css/main.scss`:
+
+```scss
+---
+# Front matter required for Jekyll to process SCSS
+---
+
+// Override Bootstrap variables BEFORE the import
+$primary:       #4a90d9;
+$font-family-base: 'Inter', system-ui, sans-serif;
+
+// Import the theme (includes Bootstrap + custom styles)
+@import "zer0";
+
+// Your custom rules AFTER the import
+.my-custom-class {
+  border-radius: 1rem;
+}
+```
+
+### Common Variables to Override
+
+| Variable | Default | Description |
+|---|---|---|
+| `$primary` | `#0d6efd` | Primary brand color |
+| `$secondary` | `#6c757d` | Secondary accent color |
+| `$success` | `#198754` | Success / positive state |
+| `$danger` | `#dc3545` | Error / dangerous action |
+| `$body-bg` | `#fff` | Page background (light) |
+| `$body-color` | `#212529` | Default text color (light) |
+| `$font-family-base` | system stack | Base font family |
+| `$font-size-base` | `1rem` | Base font size |
+| `$border-radius` | `0.375rem` | Default border radius |
+| `$navbar-padding-y` | `0.5rem` | Navbar vertical padding |
+
+## Dark Mode
+
+The theme supports Bootstrap 5.3's **color-mode** system:
+
+- Users toggle via the sun/moon button in the navbar
+- The preference is saved to `localStorage`
+- The `<html>` element gets `data-bs-theme="dark"` or `data-bs-theme="light"`
+
+### Customizing Dark Mode Colors
+
+Use CSS custom properties scoped to the dark theme:
+
+```scss
+[data-bs-theme="dark"] {
+  --bs-body-bg:    #1a1a2e;
+  --bs-body-color: #e0e0e0;
+  --bs-primary:    #6db3f2;
+}
+```
+
+### Disabling Dark Mode
+
+If you don't want the toggle, remove or hide the color-mode switcher in your config or layout override.
+
+## Typography
+
+### Using Google Fonts
+
+Add a font link in `_includes/core/head.html` (or a custom head include):
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+```
+
+Then set the variable:
+
+```scss
+$font-family-base: 'Inter', system-ui, sans-serif;
+```
+
+### Code Font
+
+Override the monospace stack:
+
+```scss
+$font-family-code: 'JetBrains Mono', 'Fira Code', monospace;
+```
+
+## Layout Customization
+
+### Layout Hierarchy
+
+```
+root.html          ← bare HTML shell
+  └── default.html ← header + footer + main content area
+        ├── journals.html   ← blog post layout (sidebar, meta)
+        ├── home.html       ← landing page
+        └── (your custom)   ← extend default for new layouts
+```
+
+### Creating a Custom Layout
+
+Create `_layouts/my-layout.html`:
+
+```html
+---
+layout: default
+---
+
+<div class="container py-4">
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <h1>{{ "{{ page.title " }}}}</h1>
+      {{ "{{ content " }}}}
+    </div>
+  </div>
+</div>
+```
+
+Then use it in your page front matter:
+
+```yaml
+---
+layout: my-layout
+title: My Custom Page
+---
+```
+
+## Bootstrap Components
+
+The full Bootstrap 5.3 component library is available. Common patterns:
+
+### Alerts
+
+```html
+<div class="alert alert-info" role="alert">
+  <i class="bi bi-info-circle"></i> This is an informational note.
+</div>
+```
+
+### Cards
+
+```html
+<div class="card mb-3">
+  <div class="card-body">
+    <h5 class="card-title">Card Title</h5>
+    <p class="card-text">Card content here.</p>
+  </div>
+</div>
+```
+
+### Tabs (great for platform-specific instructions)
+
+```html
+<ul class="nav nav-pills mb-3" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#mac">macOS</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#linux">Linux</button>
+  </li>
+</ul>
+<div class="tab-content">
+  <div class="tab-pane fade show active" id="mac">macOS instructions...</div>
+  <div class="tab-pane fade" id="linux">Linux instructions...</div>
+</div>
+```
+
+## Custom CSS File
+
+For overrides that don't need Sass variables, create `assets/css/user-overrides.css`:
+
+```css
+/* Custom overrides — loaded after theme CSS */
+.navbar-brand {
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.footer {
+  border-top: 2px solid var(--bs-primary);
+}
+```
+
+Then link it in `_includes/core/head.html` (after Bootstrap):
+
+```html
+<link rel="stylesheet" href="{{ '{{' }} '/assets/css/user-overrides.css' | relative_url {{ '}}' }}">
+```
+
+---
+
+## Next Steps
+
+- [Configuration Guide](/docs/configuration/) — All `_config.yml` options
+- [Quick Start](/quickstart/) — Get running fast
+- [Bootstrap 5.3 Docs](https://getbootstrap.com/docs/5.3/) — Full component reference

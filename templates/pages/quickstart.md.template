@@ -2,20 +2,122 @@
 layout: default
 title: Quick Start
 permalink: /quickstart/
+description: Get your Zer0-Mistakes site running in minutes on macOS, Linux, Windows (WSL), or GitHub.
 ---
 
 # Quick Start Guide
 
-Get your site up and running in just a few minutes!
+Get your site up and running in just a few minutes — on **any platform**.
 
-## Prerequisites
+---
 
-Before you begin, make sure you have:
+## 1. Install Prerequisites
 
-- **Docker Desktop** installed ([download](https://www.docker.com/products/docker-desktop))
-- **Git** installed ([download](https://git-scm.com/))
+Choose your operating system below.
 
-## 1. Start Development Server
+<ul class="nav nav-pills mb-3" id="os-tabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="tab-mac" data-bs-toggle="pill" data-bs-target="#pane-mac" type="button" role="tab">macOS</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="tab-linux" data-bs-toggle="pill" data-bs-target="#pane-linux" type="button" role="tab">Linux</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="tab-wsl" data-bs-toggle="pill" data-bs-target="#pane-wsl" type="button" role="tab">Windows (WSL)</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="tab-gh" data-bs-toggle="pill" data-bs-target="#pane-gh" type="button" role="tab">GitHub Fork</button>
+  </li>
+</ul>
+
+<div class="tab-content" id="os-tabs-content">
+
+<!-- ── macOS ─────────────────────────────────────────────── -->
+<div class="tab-pane fade show active" id="pane-mac" role="tabpanel">
+
+```bash
+# Install Homebrew (if not already installed)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install prerequisites
+brew install git ruby docker
+
+# Or run the automated setup script
+curl -fsSL {{RAW_GITHUB_URL}}/scripts/platform/setup-macos.sh | bash
+```
+
+</div>
+
+<!-- ── Linux ─────────────────────────────────────────────── -->
+<div class="tab-pane fade" id="pane-linux" role="tabpanel">
+
+```bash
+# Debian / Ubuntu
+sudo apt update && sudo apt install -y git ruby-full docker.io docker-compose
+
+# Fedora / RHEL
+sudo dnf install -y git ruby docker docker-compose
+
+# Or run the automated setup script
+curl -fsSL {{RAW_GITHUB_URL}}/scripts/platform/setup-linux.sh | bash
+```
+
+</div>
+
+<!-- ── Windows (WSL) ─────────────────────────────────────── -->
+<div class="tab-pane fade" id="pane-wsl" role="tabpanel">
+
+> **Note:** Zer0-Mistakes works on Windows through WSL 2 (Windows Subsystem for Linux).
+
+```powershell
+# Install WSL 2 from PowerShell (Admin)
+wsl --install -d Ubuntu
+```
+
+After WSL is set up, open your Ubuntu terminal and run:
+
+```bash
+# Inside WSL
+curl -fsSL {{RAW_GITHUB_URL}}/scripts/platform/setup-wsl.sh | bash
+```
+
+Make sure **Docker Desktop** → Settings → Resources → WSL Integration is enabled for your distro.
+
+</div>
+
+<!-- ── GitHub Fork ───────────────────────────────────────── -->
+<div class="tab-pane fade" id="pane-gh" role="tabpanel">
+
+Fork the theme directly on GitHub — no local tools required for setup:
+
+```bash
+# Using GitHub CLI (recommended)
+gh repo fork {{GITHUB_REPO}} --clone --remote
+cd {{REPOSITORY_NAME}}
+
+# Or click "Fork" on https://github.com/{{GITHUB_REPO}}
+```
+
+Then run the post-fork install:
+
+```bash
+./install.sh --fork
+```
+
+</div>
+</div>
+
+---
+
+## 2. Get the Theme
+
+```bash
+# Clone the repo
+git clone https://github.com/{{GITHUB_REPO}}.git
+cd {{REPOSITORY_NAME}}
+```
+
+## 3. Start Development Server
 
 ### Using Docker (Recommended)
 
@@ -29,31 +131,49 @@ Your site will be available at **{{DEFAULT_URL}}**
 
 ```bash
 bundle install
-bundle exec jekyll serve
+bundle exec jekyll serve --config _config.yml,_config_dev.yml
 ```
 
-## 2. Customize Your Site
+---
 
-Edit `_config.yml` to personalize your site:
+## 4. Customize Your Site
+
+Edit `_config.yml` to personalize your site — or use the **[Setup Wizard](/setup/)** to generate configuration interactively.
 
 ```yaml
 title: Your Site Title
 description: Your site description
-author: Your Name
+founder: Your Name
+url: https://your-username.github.io
 ```
 
-## 3. Add Content
+## 5. Add Content
 
-- Create posts in `pages/_posts/`
-- Create documentation in `pages/_docs/`
-- Add static pages in `pages/`
+| Content Type | Location | Example Filename |
+|---|---|---|
+| Blog posts | `pages/_posts/` | `2025-01-27-my-first-post.md` |
+| Documentation | `pages/_docs/` | `getting-started.md` |
+| Static pages | `pages/` | `about.md` |
 
-## Next Steps
+## 6. Deploy to GitHub Pages
 
-- [Read the Documentation](/docs/) - Learn about all features
-- [Explore Configuration](/docs/configuration/) - Customize your site
-- [Learn about Layouts](/docs/layouts/) - Understand page layouts
+```bash
+git add -A
+git commit -m "feat: initial site setup"
+git push origin main
+```
+
+Your site will deploy automatically at `https://<username>.github.io/<repo>/`.
 
 ---
 
-Need help? Check the [troubleshooting guide](/docs/troubleshooting/) or [open an issue]({{GITHUB_URL}}/issues).
+## Next Steps
+
+- [Configuration Guide](/docs/configuration/) — Customize every setting
+- [Theming Guide](/docs/theming/) — Colors, dark mode, Bootstrap overrides
+- [Documentation](/docs/) — Full feature reference
+- [Troubleshooting](/docs/troubleshooting/) — Common issues
+
+---
+
+Need help? [Open an issue]({{GITHUB_URL}}/issues) or start a [discussion]({{GITHUB_URL}}/discussions).

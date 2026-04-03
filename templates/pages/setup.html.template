@@ -1,0 +1,31 @@
+---
+layout: default
+title: Setup Wizard
+description: Interactive configuration wizard for your Zer0-Mistakes site
+permalink: /setup/
+sitemap: false
+exclude_from_search: true
+---
+
+{% if jekyll.environment == "development" %}
+
+<div class="container py-4">
+  <div class="text-center mb-4">
+    <h1><i class="bi bi-gear-wide-connected"></i> Site Setup Wizard</h1>
+    <p class="lead text-muted">
+      Configure your <strong>{{THEME_NAME}}</strong> site in a few steps and download a ready-made <code>_config.yml</code>.
+    </p>
+  </div>
+
+  {% include setup/wizard.html %}
+</div>
+
+<script src="{{ '/assets/js/setup-wizard.js' | relative_url }}"></script>
+
+{% else %}
+<div class="container py-5 text-center">
+  <h2>Setup Wizard</h2>
+  <p class="text-muted">This page is only available in development mode.</p>
+  <p>Run <code>jekyll serve --config "_config.yml,_config_dev.yml"</code> to access.</p>
+</div>
+{% endif %}

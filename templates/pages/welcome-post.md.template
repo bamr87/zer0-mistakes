@@ -3,51 +3,118 @@ layout: journals
 title: "Welcome to Your New Site"
 date: {{CURRENT_DATE}}
 categories: [General]
-tags: [welcome, getting-started]
+tags: [welcome, getting-started, tutorial]
 author: {{SITE_AUTHOR}}
-description: "Your first blog post on your new Jekyll site"
+description: "Day 1 — set up your site, understand the folder structure, and publish your first change."
 ---
 
 # Welcome!
 
-This is your first blog post. Congratulations on setting up your new Jekyll site with the **{{THEME_DISPLAY_NAME}}**!
+Congratulations on setting up your new Jekyll site with the **{{THEME_DISPLAY_NAME}}**! This post walks you through everything you need on Day 1.
 
-## Getting Started
-
-Here are some things you can do next:
-
-1. **Customize your site** - Edit `_config.yml` to set your site title, description, and other settings
-2. **Add more posts** - Create new files in `pages/_posts/` using the format `YYYY-MM-DD-title.md`
-3. **Create documentation** - Add pages to `pages/_docs/` for your documentation
-4. **Personalize the theme** - Modify styles in `_sass/custom.scss`
-
-## Writing Posts
-
-Posts are written in Markdown with YAML front matter. Here's an example structure:
-
-```yaml
----
-layout: journals
-title: "Your Post Title"
-date: YYYY-MM-DD
-categories: [Category]
-tags: [tag1, tag2]
 ---
 
-Your content here...
+## Your Folder Structure
+
+Here's what the installer created for you:
+
+```
+your-site/
+├── _config.yml          ← main configuration
+├── _config_dev.yml      ← development overrides
+├── docker-compose.yml   ← one-command dev server
+├── Gemfile              ← Ruby dependencies
+├── pages/
+│   ├── _posts/          ← blog posts (like this one!)
+│   ├── _docs/           ← documentation pages
+│   └── _about/          ← about / profile pages
+├── assets/
+│   ├── css/             ← stylesheets
+│   ├── js/              ← scripts
+│   └── images/          ← media files
+└── _data/
+    └── navigation/      ← menu configuration
 ```
 
-## Features Available
+## Writing Your First Post
 
-- **Code highlighting** - Use fenced code blocks with language identifiers
-- **Mermaid diagrams** - Create flowcharts and diagrams
-- **Bootstrap components** - Full access to Bootstrap 5.3 classes
-- **Dark mode** - Automatic theme switching based on user preference
+1. Create a new file in `pages/_posts/`:
+
+   ```
+   pages/_posts/2025-01-28-my-first-real-post.md
+   ```
+
+2. Add front matter at the top:
+
+   ```yaml
+   ---
+   layout: journals
+   title: "My First Real Post"
+   date: 2025-01-28
+   categories: [Tutorial]
+   tags: [jekyll, writing]
+   description: "A short summary for SEO"
+   ---
+
+   Your content goes here. Use **Markdown** for formatting.
+   ```
+
+3. Save the file and check your browser — Docker will live-reload the page.
+
+## Customizing the Look
+
+### Colors & Dark Mode
+
+The theme uses Bootstrap 5.3 with automatic dark-mode support. Toggle the
+sun/moon icon in the navbar to try it.
+
+Override Bootstrap variables in `assets/css/main.scss`:
+
+```scss
+// Custom primary color
+$primary: #4a90d9;
+@import "zer0";
+```
+
+### Navigation
+
+Edit `_data/navigation/main.yml` to add or reorder menu items:
+
+```yaml
+- title: Home
+  url: /
+- title: Blog
+  url: /posts/
+- title: Docs
+  url: /docs/
+```
+
+## Useful Commands
+
+| Task | Command |
+|---|---|
+| Start dev server | `docker-compose up` |
+| Rebuild from scratch | `docker-compose down && docker-compose up --build` |
+| Build site (no server) | `docker-compose exec jekyll jekyll build` |
+| Stop server | `docker-compose down` |
+| View logs | `docker-compose logs -f` |
+
+## Theme Features at a Glance
+
+- **Code highlighting** — Use fenced code blocks with language identifiers
+- **Mermaid diagrams** — Create flowcharts, sequence diagrams, etc.
+- **Bootstrap 5.3** — Full access to Bootstrap utility classes and components
+- **Dark mode** — Automatic or user-toggled theme switching
+- **Search** — Press `/` or `Cmd+K` to search site content
+- **SEO** — Automatic meta tags, Open Graph, sitemap, RSS feed
+- **Cookie consent** — GDPR/CCPA-ready consent banner
 
 ## Next Steps
 
-- Check out the [Quick Start Guide](/quickstart/)
-- Read the [Documentation](/docs/)
-- Explore the [Configuration Options](/docs/configuration/)
+- [ ] Edit `_config.yml` with your site title and URL
+- [ ] Replace this post with your own content
+- [ ] Explore the [Quick Start Guide](/quickstart/)
+- [ ] Read the [Configuration Guide](/docs/configuration/)
+- [ ] Try the [Setup Wizard](/setup/) (dev mode only)
 
 Happy writing! 🚀

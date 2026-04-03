@@ -1,0 +1,19 @@
+---
+layout: default
+title: Site Setup Wizard
+description: Interactive configuration wizard for your zer0-mistakes site.
+permalink: /setup/
+sitemap: false
+exclude_from_search: true
+---
+
+{% if jekyll.environment == "development" or site.show_setup_wizard %}
+{% include setup/wizard.html %}
+{% else %}
+<div class="container py-5 text-center">
+  <h1>Setup Wizard</h1>
+  <p class="lead text-muted">The setup wizard is only available in development mode.</p>
+  <p>Start your development server with <code>docker-compose up</code> to access this page.</p>
+  <a href="/" class="btn btn-primary mt-3">Go Home</a>
+</div>
+{% endif %}
