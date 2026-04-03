@@ -2,8 +2,7 @@
 # Content Rules Configuration
 # =========================================================================
 # Behavioral rules for content validation. Separates rules from schema.
-# Referenced by scripts/lint-pages, scripts/validate-templates,
-# and the test suite.
+# Referenced by scripts/lint-pages and the test suite.
 # =========================================================================
 
 # -------------------------------------------------------------------------

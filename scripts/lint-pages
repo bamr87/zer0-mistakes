@@ -255,7 +255,7 @@ validate_file() {
         local canonical_name="${mapping#*=}"
         if echo "$fields_present" | grep -qx "$deprecated_name"; then
             if [[ "$FIX_MODE" == "true" ]]; then
-                report_fix "$filepath" "$deprecated_name" "Would rename to '$canonical_name'"
+                fix_rename_field "$filepath" "$deprecated_name" "$canonical_name"
             else
                 report_violation "$filepath" "$deprecated_name" "Deprecated field — use '$canonical_name' instead" "$severity"
             fi
@@ -273,10 +273,19 @@ fix_add_lastmod() {
 
     report_fix "$filepath" "lastmod" "Adding lastmod: $today"
     if [[ "$DRY_RUN" != "true" ]]; then
-        # Insert lastmod after the opening ---
-        sed -i.bak "0,/^---[[:space:]]*$/{ /^---[[:space:]]*$/a\\
-lastmod: $today
-        }" "$filepath"
+        # Insert lastmod after the opening --- (portable across macOS & Linux)
+        perl -pi -e 'if (/^---\s*$/ && !$done) { $done=1; $_ .= "lastmod: '"$today"'\n" }' "$filepath"
+    fi
+}
+
+fix_rename_field() {
+    local filepath="$1"
+    local old_name="$2"
+    local new_name="$3"
+
+    report_fix "$filepath" "$old_name" "Renaming to '$new_name'"
+    if [[ "$DRY_RUN" != "true" ]]; then
+        sed -i.bak "s|^${old_name}:|${new_name}:|" "$filepath"
         rm -f "${filepath}.bak"
     fi
 }
@@ -394,6 +403,27 @@ main() {
     local schema_full_path
     schema_full_path="$(load_schema "$SCHEMA_PATH")" || exit 1
     debug "Schema: $schema_full_path"
+
+    # Load content rules (if available)
+    local rules_full_path="$REPO_ROOT/$RULES_PATH"
+    if [[ -f "$rules_full_path" ]]; then
+        debug "Content rules: $rules_full_path"
+
+        # Apply strictness from content rules when no explicit CLI mode was given
+        if [[ "$MODE" == "warn" ]] && [[ "${FRONTMATTER_STRICT:-}" == "true" ]]; then
+            local env_strictness
+            env_strictness="$(ruby -ryaml -e "
+                rules = YAML.load_file('$rules_full_path')
+                puts rules.dig('strictness', 'ci') || ''
+            " 2>/dev/null)"
+            if [[ "$env_strictness" == "strict" ]]; then
+                MODE="strict"
+                debug "Strictness set to 'strict' via content rules"
+            fi
+        fi
+    else
+        debug "Content rules file not found: $rules_full_path (skipping)"
+    fi
 
     # Get collections to scan
     local collections

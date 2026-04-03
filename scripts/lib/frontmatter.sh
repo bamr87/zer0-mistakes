@@ -75,8 +75,9 @@ get_required_fields() {
 
     ruby -ryaml -e "
         schema = YAML.load_file('$full_path')
-        fields = schema.dig('collections', '$collection', 'required') || []
-        fields.each { |f| puts f }
+        global_required = schema.dig('global', 'required_fields') || []
+        collection_required = schema.dig('collections', '$collection', 'required') || []
+        (global_required + collection_required).uniq.each { |f| puts f }
     " 2>/dev/null
 }
 
@@ -392,13 +393,13 @@ fix_date_format() {
     local date_str="$1"
 
     # Already ISO 8601 with time
-    if echo "$date_str" | grep -qE '^\d{4}-\d{2}-\d{2}T'; then
+    if echo "$date_str" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}T'; then
         echo "$date_str"
         return 0
     fi
 
     # Simple date: append time
-    if echo "$date_str" | grep -qE '^\d{4}-\d{2}-\d{2}$'; then
+    if echo "$date_str" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'; then
         echo "${date_str}T00:00:00.000Z"
         return 0
     fi
