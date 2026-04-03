@@ -751,7 +751,7 @@ test_fork_creates_welcome_post() {
     
     # Check that pages/_posts directory has at least one post
     local post_count
-    post_count=$(find "$workspace/pages/_posts" -name "*.md" -o -name "*.markdown" 2>/dev/null | wc -l)
+    post_count=$(find "$workspace/pages/_posts" \( -name "*.md" -o -name "*.markdown" \) 2>/dev/null | wc -l)
     
     if [[ "$post_count" -gt 0 ]]; then
         test_log_success "Welcome post created in pages/_posts"

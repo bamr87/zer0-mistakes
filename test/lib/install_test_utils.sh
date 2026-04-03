@@ -658,7 +658,7 @@ validate_fork_installation() {
     local posts_dir="$install_dir/pages/_posts"
     if [[ -d "$posts_dir" ]]; then
         local post_count
-        post_count=$(find "$posts_dir" -name "*.md" -o -name "*.markdown" 2>/dev/null | wc -l)
+        post_count=$(find "$posts_dir" \( -name "*.md" -o -name "*.markdown" \) 2>/dev/null | wc -l)
         if [[ "$post_count" -eq 0 ]]; then
             test_log_error "Fork install: no welcome post found in pages/_posts"
             errors=$((errors + 1))

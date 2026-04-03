@@ -1356,7 +1356,7 @@ update_docker_compose_config() {
         if ! grep -q "PAGES_REPO_NWO" "$docker_config"; then
             # Add the environment variable after JEKYLL_ENV line
             # Use perl for cross-platform compatibility (BSD sed and GNU sed differ on in-place syntax)
-            perl -pi -e 's|(.*JEKYLL_ENV: development.*)|\1\n      PAGES_REPO_NWO: "bamr87/zer0-mistakes"|' "$docker_config"
+            perl -pi -e '$_ .= "      PAGES_REPO_NWO: \"bamr87/zer0-mistakes\"\n" if /JEKYLL_ENV: development/' "$docker_config"
             log_info "Added PAGES_REPO_NWO environment variable to docker-compose.yml"
         fi
     fi
