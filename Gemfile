@@ -8,7 +8,7 @@
 #   - github-pages < 232 (v232 requires nokogiri >= 1.16.2 → Ruby >= 3.0)
 #   - commonmarker ~> 0.23 (1.x requires Ruby >= 3.1)
 #   - html-proofer ~> 4.0 (5.x requires Ruby >= 3.1)
-#   - rubocop < 1.73 (>= 1.73 requires Ruby >= 2.7)
+#   - rubocop < 1.73 (>= 1.73 requires Ruby >= 2.7; >= 1.86 requires Ruby >= 3.1)
 #
 # Production always gets exactly what passed TEST (via Gemfile.lock)
 # 
