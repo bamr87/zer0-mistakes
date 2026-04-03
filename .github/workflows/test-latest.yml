@@ -27,8 +27,40 @@ concurrency:
 on:
   push:
     branches: [main, develop]
+    paths:
+      - '_layouts/**'
+      - '_includes/**'
+      - '_sass/**'
+      - '_plugins/**'
+      - 'assets/**'
+      - 'lib/**'
+      - '*.gemspec'
+      - 'Gemfile*'
+      - 'Rakefile'
+      - 'scripts/**'
+      - 'test/**'
+      - '_config*.yml'
+      - 'docker/**'
+      - 'docker-compose*.yml'
+      - 'Dockerfile'
   pull_request:
     branches: [main, develop]
+    paths:
+      - '_layouts/**'
+      - '_includes/**'
+      - '_sass/**'
+      - '_plugins/**'
+      - 'assets/**'
+      - 'lib/**'
+      - '*.gemspec'
+      - 'Gemfile*'
+      - 'Rakefile'
+      - 'scripts/**'
+      - 'test/**'
+      - '_config*.yml'
+      - 'docker/**'
+      - 'docker-compose*.yml'
+      - 'Dockerfile'
   schedule:
     # Daily build to catch upstream breakages early
     - cron: '0 6 * * *'

@@ -9,7 +9,6 @@ Composite actions encapsulate common workflow steps into reusable components, re
 ```
 .github/actions/
 ├── configure-git/     # Git identity configuration
-├── prepare-release/   # Build gem and prepare release assets
 ├── quality-checks/    # Code quality validation
 ├── setup-ruby/        # Ruby environment setup
 └── test-suite/        # Test execution
@@ -115,42 +114,6 @@ Runs code quality checks including linting and formatting validation.
 - Project structure validation (required files/directories)
 
 **Used by:** `ci.yml`
-
----
-
-### 5. `prepare-release`
-
-Builds the gem and prepares release assets.
-
-**Usage:**
-```yaml
-- uses: ./.github/actions/prepare-release
-  with:
-    ruby-version: '3.2'
-    validate-assets: true
-```
-
-**Inputs:**
-| Input | Required | Default | Description |
-|-------|----------|---------|-------------|
-| `ruby-version` | No | `'3.2'` | Ruby version for build |
-| `validate-assets` | No | `'true'` | Validate built assets |
-
-**Outputs:**
-| Output | Description |
-|--------|-------------|
-| `gem-version` | Built gem version (e.g., `0.8.0`) |
-| `gem-file` | Gem filename (e.g., `jekyll-theme-zer0-0.8.0.gem`) |
-| `asset-directory` | Directory containing built assets (`./build`) |
-
-**What it does:**
-1. Sets up Ruby environment
-2. Runs `scripts/build` to create the gem
-3. Copies gem to `./build` directory
-4. Extracts version information
-5. Validates gem file (if enabled)
-
-**Used by:** `release.yml`
 
 ---
 

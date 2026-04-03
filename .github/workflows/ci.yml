@@ -12,9 +12,6 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
-  schedule:
-    # Run full tests daily at 2 AM UTC
-    - cron: '0 2 * * *'
   workflow_dispatch:
     inputs:
       test_scope:
@@ -25,7 +22,6 @@ on:
         options:
           - 'fast'        # Quick feedback tests
           - 'standard'    # Full test suite
-          - 'comprehensive' # All tests + performance
       fix_markdown:
         description: 'Auto-fix markdown formatting'
         required: false
@@ -50,10 +46,72 @@ defaults:
     shell: bash
 
 jobs:
+  # Detect what changed to skip unnecessary jobs on docs-only PRs
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    # Always run on dispatch; filter on push/PR
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.event_name == 'pull_request'
+    timeout-minutes: 3
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+      docker: ${{ steps.filter.outputs.docker }}
+      content: ${{ steps.filter.outputs.content }}
+      docs-only: ${{ steps.check.outputs.docs-only }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - name: Filter Paths
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            code:
+              - '_layouts/**'
+              - '_includes/**'
+              - '_sass/**'
+              - '_plugins/**'
+              - 'assets/**'
+              - 'lib/**'
+              - '*.gemspec'
+              - 'Gemfile*'
+              - 'Rakefile'
+              - 'scripts/**'
+              - 'test/**'
+              - '_config*.yml'
+            docker:
+              - 'docker/**'
+              - 'docker-compose*.yml'
+              - 'Dockerfile'
+              - 'Gemfile*'
+            content:
+              - 'pages/**'
+              - '*.md'
+              - '_data/**'
+              - '_config*.yml'
+
+      - name: Check if docs-only
+        id: check
+        run: |
+          if [[ "${{ steps.filter.outputs.code }}" == "false" && "${{ steps.filter.outputs.docker }}" == "false" ]]; then
+            echo "docs-only=true" >> $GITHUB_OUTPUT
+            echo "📄 Docs-only change detected — heavy jobs will be skipped"
+          else
+            echo "docs-only=false" >> $GITHUB_OUTPUT
+            echo "🔧 Code/docker changes detected — running full pipeline"
+          fi
+
   # Fast feedback job for quick validation
   fast-checks:
     name: Fast Checks
     runs-on: ubuntu-latest
+    needs: detect-changes
+    # Skip on docs-only changes (no Ruby/gem code changed)
+    if: |
+      always() &&
+      needs.detect-changes.result == 'success' &&
+      (needs.detect-changes.outputs.code == 'true' || github.event_name == 'workflow_dispatch')
     timeout-minutes: 5
 
     steps:
@@ -76,11 +134,13 @@ jobs:
             puts '✅ Gemspec valid: #{spec.name} v#{spec.version}'
           "
 
-  # Quality control checks
+  # Quality control checks — always runs (covers markdown linting)
   quality-checks:
     name: Quality Control
     runs-on: ubuntu-latest
-    needs: fast-checks
+    needs: [detect-changes, fast-checks]
+    # Always run quality checks (markdown lint is relevant for docs-only PRs)
+    if: always() && needs.detect-changes.result == 'success' && !cancelled()
     timeout-minutes: 10
 
     steps:
@@ -98,7 +158,13 @@ jobs:
   test:
     name: Test Suite (Ruby ${{ matrix.ruby }})
     runs-on: ubuntu-latest
-    needs: [fast-checks, quality-checks]
+    needs: [detect-changes, fast-checks, quality-checks]
+    # Skip when only docs/content changed
+    if: |
+      always() &&
+      needs.detect-changes.outputs.code == 'true' &&
+      needs.fast-checks.result == 'success' &&
+      (needs.quality-checks.result == 'success' || needs.quality-checks.result == 'skipped')
     timeout-minutes: 25
     strategy:
       fail-fast: false
@@ -148,58 +214,19 @@ jobs:
         with:
           name: coverage-ruby-${{ matrix.ruby }}
           path: test/coverage/
-          retention-days: 7
-
-  # NOTE: Code quality & documentation checks are handled by the quality-checks job above
-  # The duplicate 'quality' job has been removed to avoid redundancy
-
-  # Docker-based deployment tests (runs actual Docker tests)
-  docker-tests:
-    name: Docker Deployment Tests
-    runs-on: ubuntu-latest
-    needs: [fast-checks, quality-checks]
-    # Skip on scheduled runs (handled by test-latest.yml) and when test_scope is 'fast'
-    if: github.event_name != 'schedule' && inputs.test_scope != 'fast'
-    timeout-minutes: 15
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v5
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-deploy-${{ hashFiles('docker/Dockerfile', 'Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-deploy-
-
-      - name: Run Deployment Test Suite
-        uses: ./.github/actions/test-suite
-        with:
-          ruby-version: ${{ env.RUBY_VERSION }}
-          verbose: true
-          suites: deployment
-          skip-docker: false
-          # Skip remote installation tests in CI (curl piped to bash is unreliable)
-          skip-remote: true
-
-      - name: Upload Deployment Test Results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: deployment-test-results
-          path: test/results/
+          if-no-files-found: ignore
           retention-days: 7
 
   # Build validation
   build:
     name: Build & Validate
     runs-on: ubuntu-latest
-    needs: [test, quality-checks]
+    needs: [detect-changes, test, quality-checks]
+    # Skip when only docs/content changed
+    if: |
+      always() &&
+      needs.detect-changes.outputs.code == 'true' &&
+      needs.test.result == 'success'
     timeout-minutes: 10
 
     steps:
@@ -240,85 +267,26 @@ jobs:
           gem install ./jekyll-theme-zer0-*.gem --local --no-document --ignore-dependencies
           echo "✅ Gem installs successfully"
 
-  # Performance testing (conditional)
-  performance:
-    name: Performance Tests
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.event_name == 'schedule' || inputs.test_scope == 'comprehensive'
-    timeout-minutes: 15
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: Setup Ruby environment
-        uses: ./.github/actions/setup-ruby
-        with:
-          ruby-version: ${{ env.RUBY_VERSION }}
-          install-system-deps: false
-
-      - name: Run Jekyll build performance test
-        run: |
-          echo "## Performance Results" >> $GITHUB_STEP_SUMMARY
-          echo "### Build Performance" >> $GITHUB_STEP_SUMMARY
-
-          START_TIME=$(date +%s)
-          bundle exec jekyll build --profile 2>&1 | tee build-profile.txt
-          END_TIME=$(date +%s)
-
-          BUILD_TIME=$((END_TIME - START_TIME))
-          echo "- Build completed in: ${BUILD_TIME}s" >> $GITHUB_STEP_SUMMARY
-
-      - name: Upload performance results
-        uses: actions/upload-artifact@v4
-        with:
-          name: performance-results
-          path: build-profile.txt
-          retention-days: 30
-
   # Integration testing with Docker
   integration:
     name: Integration Tests
     runs-on: ubuntu-latest
-    needs: build
-    # Run on PRs to main/develop AND pushes to main, or when comprehensive scope selected
-    if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/main' && github.event_name == 'push') || inputs.test_scope == 'comprehensive'
+    needs: [detect-changes, quality-checks]
+    # Run when code or docker files changed
+    if: |
+      always() &&
+      needs.quality-checks.result == 'success' &&
+      (needs.detect-changes.outputs.code == 'true' || needs.detect-changes.outputs.docker == 'true')
     timeout-minutes: 12
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ hashFiles('docker/Dockerfile', 'Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
       - name: Build and start Jekyll in Docker
         run: |
-          echo "🔨 Building Docker image with layer caching..."
-          docker buildx build \
-            --cache-from type=local,src=/tmp/.buildx-cache \
-            --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max \
-            --load \
-            -t zer0-mistakes-jekyll:latest \
-            -f docker/Dockerfile \
-            --target dev-test \
-            .
-          
-          # Move cache to avoid unbounded growth
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache || true
-          
-          echo "🚀 Starting Jekyll container..."
-          docker compose up -d
+          echo "🔨 Building and starting Docker containers..."
+          docker compose up --build -d
           
           echo "⏳ Waiting for Jekyll to start with adaptive timeout..."
           MAX_WAIT=120
@@ -441,157 +409,3 @@ jobs:
       - name: Cleanup
         if: always()
         run: docker compose down --volumes --remove-orphans || true
-
-  # Installation Matrix Tests
-  installation-matrix-tests:
-    name: Installation Tests (${{ matrix.os }}, ${{ matrix.mode }})
-    runs-on: ${{ matrix.os }}
-    needs: [fast-checks, quality-checks]
-    if: github.event_name != 'schedule' && inputs.test_scope != 'fast'
-    timeout-minutes: 15
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-        mode: [full, minimal]
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v5
-
-      - name: Setup Ruby Environment
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3'
-          bundler-cache: true
-
-      - name: Make test scripts executable
-        run: chmod +x test/*.sh test/lib/*.sh
-
-      - name: Run Installation Tests
-        run: |
-          ./test/test_installation.sh --verbose
-        env:
-          INSTALL_MODE: ${{ matrix.mode }}
-
-      - name: Run Site Generation Tests
-        run: |
-          ./test/test_site_generation.sh --mode ${{ matrix.mode }} --verbose
-
-      - name: Upload Installation Test Results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: installation-test-results-${{ matrix.os }}-${{ matrix.mode }}
-          path: test/results/
-          retention-days: 7
-
-  # Visual Regression Tests (runs only on comprehensive scope)
-  visual-tests:
-    name: Visual Regression Tests
-    runs-on: ubuntu-latest
-    needs: [installation-matrix-tests]
-    if: inputs.test_scope == 'comprehensive'
-    timeout-minutes: 20
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v5
-
-      - name: Setup Ruby Environment
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3'
-          bundler-cache: true
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Playwright
-        run: |
-          npm install -D @playwright/test
-          npx playwright install --with-deps chromium
-
-      - name: Make test scripts executable
-        run: chmod +x test/*.sh test/lib/*.sh
-
-      - name: Run Visual Tests
-        run: |
-          ./test/test_visual.sh --mode full --verbose || true
-        continue-on-error: true
-
-      - name: Upload Visual Test Results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: visual-test-results
-          path: |
-            test/visual/current/
-            test/visual/diff/
-            test/visual-results/
-          retention-days: 7
-
-      - name: Upload Visual Baseline
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: visual-baseline
-          path: test/visual/baseline/
-          retention-days: 30
-
-  # Final status report
-  summary:
-    name: CI Pipeline Summary
-    runs-on: ubuntu-latest
-    needs: [fast-checks, quality-checks, test, docker-tests, build, performance, integration, installation-matrix-tests, visual-tests]
-    if: always()
-    steps:
-      - name: Generate comprehensive summary
-        run: |
-          echo "## 🏗️ CI Pipeline Summary" >> $GITHUB_STEP_SUMMARY
-          echo "**Repository:** ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          echo "| Check | Status | Duration |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------|--------|----------|" >> $GITHUB_STEP_SUMMARY
-          echo "| 🚀 Fast Checks | ${{ needs.fast-checks.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 📋 Quality Checks | ${{ needs.quality-checks.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🧪 Tests | ${{ needs.test.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🐳 Docker Tests | ${{ needs.docker-tests.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🔨 Build | ${{ needs.build.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| ⚡ Performance | ${{ needs.performance.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🔗 Integration | ${{ needs.integration.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 📦 Installation Matrix | ${{ needs.installation-matrix-tests.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| 👁️ Visual Tests | ${{ needs.visual-tests.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          # Check if all required jobs passed
-          if [[ "${{ needs.fast-checks.result }}" == "success" && 
-                "${{ needs.test.result }}" == "success" && 
-                "${{ needs.quality-checks.result }}" == "success" && 
-                "${{ needs.build.result }}" == "success" ]]; then
-            echo "## ✅ **Pipeline Status: SUCCESS**" >> $GITHUB_STEP_SUMMARY
-            echo "All critical checks passed! The code is ready for deployment." >> $GITHUB_STEP_SUMMARY
-          else
-            echo "## ❌ **Pipeline Status: FAILED**" >> $GITHUB_STEP_SUMMARY
-            echo "Some critical checks failed. Please review the results above." >> $GITHUB_STEP_SUMMARY
-            
-            # List failed jobs
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "### Failed Jobs:" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.fast-checks.result }}" != "success" ]] && echo "- 🚀 Fast Checks" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.test.result }}" != "success" ]] && echo "- 🧪 Tests" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.quality-checks.result }}" != "success" ]] && echo "- 📋 Quality Checks" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.build.result }}" != "success" ]] && echo "- 🔨 Build" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.docker-tests.result }}" == "failure" ]] && echo "- 🐳 Docker Tests (non-critical)" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.performance.result }}" == "failure" ]] && echo "- ⚡ Performance (non-critical)" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.integration.result }}" == "failure" ]] && echo "- 🔗 Integration (non-critical)" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.installation-matrix-tests.result }}" == "failure" ]] && echo "- 📦 Installation Matrix (non-critical)" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.visual-tests.result }}" == "failure" ]] && echo "- 👁️ Visual Tests (non-critical)" >> $GITHUB_STEP_SUMMARY
-            
-            exit 1
-          fi

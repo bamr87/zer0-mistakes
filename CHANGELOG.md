@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.22.5] - 2026-04-03
+
+### Changed
+- **CI**: Streamlined `ci.yml` — added path-based change detection to skip heavy jobs on docs-only PRs, removed scheduled cron runs and `comprehensive` test scope
+- **CI**: Simplified `codeql.yml` workflow
+- **CI**: Added `test-latest.yml` for latest dependency testing
+- **CI**: Removed redundant summary job from `release.yml`
+- **CI**: Simplified `version-bump.yml`
+- **Docs**: Updated `.github/workflows/README.md` and `.github/actions/README.md`
+
+### Removed
+- **CI**: Removed `.github/actions/prepare-release/action.yml` composite action
+
 ## [0.22.4] - 2026-04-03
 
 ### Changed
