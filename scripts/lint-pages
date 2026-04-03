@@ -285,8 +285,7 @@ fix_rename_field() {
 
     report_fix "$filepath" "$old_name" "Renaming to '$new_name'"
     if [[ "$DRY_RUN" != "true" ]]; then
-        sed -i.bak "s|^${old_name}:|${new_name}:|" "$filepath"
-        rm -f "${filepath}.bak"
+        perl -pi -e "s/^\Q${old_name}\E:/${new_name}:/" "$filepath"
     fi
 }
 
@@ -300,8 +299,7 @@ fix_date_in_file() {
     if [[ "$new_value" != "$old_value" ]]; then
         report_fix "$filepath" "$field" "Normalizing '$old_value' → '$new_value'"
         if [[ "$DRY_RUN" != "true" ]]; then
-            sed -i.bak "s|^${field}:.*|${field}: ${new_value}|" "$filepath"
-            rm -f "${filepath}.bak"
+            perl -pi -e "s/^\Q${field}\E:.*/${field}: ${new_value}/" "$filepath"
         fi
     fi
 }
@@ -315,8 +313,7 @@ fix_draft_in_file() {
     if [[ "$new_value" != "$old_value" ]]; then
         report_fix "$filepath" "draft" "Converting '$old_value' → $new_value"
         if [[ "$DRY_RUN" != "true" ]]; then
-            sed -i.bak "s|^draft:.*|draft: ${new_value}|" "$filepath"
-            rm -f "${filepath}.bak"
+            perl -pi -e "s/^draft:.*$/draft: ${new_value}/" "$filepath"
         fi
     fi
 }

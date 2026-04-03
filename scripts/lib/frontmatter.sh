@@ -77,7 +77,7 @@ get_required_fields() {
         schema = YAML.load_file('$full_path')
         global_required = schema.dig('global', 'required_fields') || []
         collection_required = schema.dig('collections', '$collection', 'required') || []
-        (global_required + collection_required).uniq.each { |f| puts f }
+        (global_required | collection_required).each { |f| puts f }
     " 2>/dev/null
 }
 
