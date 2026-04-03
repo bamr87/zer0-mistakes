@@ -12,7 +12,7 @@ tags:
   - economic-reform
 date: 2024-06-17T20:03:39.000Z
 layout: article
-lastmod: 2024-06-18T02:05:18.613Z
+lastmod: 2026-04-03T00:00:00.000Z
 preview: /images/wizard-on-journey.png
 author: Amr
 draft: true
