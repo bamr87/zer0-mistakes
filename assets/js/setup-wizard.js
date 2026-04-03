@@ -15,7 +15,12 @@
 
   // ── helpers ────────────────────────────────────────────────────────
 
-  /** Escape a YAML string value (wrap in quotes if needed). */
+  /**
+   * Escape a YAML scalar string value (wrap in quotes if needed).
+   * Multi-line input (e.g., textarea newlines) is intentionally collapsed to
+   * a single line with spaces so the generated _config.yml remains valid YAML.
+   * All form fields in this wizard expect single-line values.
+   */
   function yamlValue(val) {
     if (val === '' || val === null || val === undefined) return '""';
 

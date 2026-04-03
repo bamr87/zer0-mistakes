@@ -47,7 +47,7 @@ brew install --cask docker
 open -a Docker
 
 # Or run the automated setup script
-bash -c "$(curl -fsSL {{RAW_GITHUB_URL}}/scripts/platform/setup-macos.sh)"; setup_macos
+source <(curl -fsSL {{RAW_GITHUB_URL}}/scripts/platform/setup-macos.sh) && setup_macos
 ```
 
 </div>
@@ -63,7 +63,7 @@ sudo apt update && sudo apt install -y git ruby-full docker.io docker-compose
 sudo dnf install -y git ruby docker docker-compose
 
 # Or run the automated setup script
-bash -c "$(curl -fsSL {{RAW_GITHUB_URL}}/scripts/platform/setup-linux.sh)"; setup_linux
+source <(curl -fsSL {{RAW_GITHUB_URL}}/scripts/platform/setup-linux.sh) && setup_linux
 ```
 
 </div>

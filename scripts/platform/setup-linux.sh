@@ -115,7 +115,7 @@ install_docker_linux() {
             # Docker only publishes repos for 'ubuntu' and 'debian'; other
             # derivatives (pop, linuxmint, etc.) should use their base distro.
             case "$docker_distro_id" in
-                debian) : ;;           # use 'debian' repo
+                debian) ;;             # already 'debian', use Docker's debian repo
                 *)      docker_distro_id="ubuntu" ;;  # fallback for Ubuntu derivatives
             esac
 

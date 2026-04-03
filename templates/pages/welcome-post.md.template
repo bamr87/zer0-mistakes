@@ -30,17 +30,7 @@ your-site/
     └── navigation/      ← menu configuration
 ```
 
-{% if page.install_mode == "full" or site.install_mode == "full" %}
-Full installation also includes:
-```
-├── _config_dev.yml      ← development overrides
-├── docker-compose.yml   ← one-command dev server
-└── assets/
-    ├── css/             ← stylesheets
-    ├── js/              ← scripts
-    └── images/          ← media files
-```
-{% endif %}
+> **Full installation** also includes `_config_dev.yml`, `docker-compose.yml`, and an `assets/` directory for custom CSS/JS/images.
 
 ## Writing Your First Post
 

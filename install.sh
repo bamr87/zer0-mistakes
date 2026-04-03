@@ -1677,13 +1677,13 @@ EOF
 
     # ── Step 5: Initial commit ─────────────────────────────────────────────
     # Ensure git user identity is configured (needed on fresh envs / Codespaces)
-    if ! git config user.name &>/dev/null; then
+    if [[ -z "$(git config user.name 2>/dev/null)" ]]; then
         local commit_name="${FORK_AUTHOR:-$(gh api user --jq '.name' 2>/dev/null || echo "${gh_user}")}"
-        git config user.name "$commit_name"
+        git config user.name "$commit_name" || log_warning "Could not set git user.name"
     fi
-    if ! git config user.email &>/dev/null; then
+    if [[ -z "$(git config user.email 2>/dev/null)" ]]; then
         local commit_email="${FORK_EMAIL:-$(gh api user --jq '.email' 2>/dev/null || echo "${gh_user}@users.noreply.github.com")}"
-        git config user.email "$commit_email"
+        git config user.email "$commit_email" || log_warning "Could not set git user.email"
     fi
 
     git add -A
