@@ -228,7 +228,6 @@ powered_by:
 
 plugins:
   - github-pages
-  - jekyll-include-cache
   - jekyll-remote-theme
   - jekyll-feed
   - jekyll-sitemap
