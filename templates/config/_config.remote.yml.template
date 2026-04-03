@@ -1,0 +1,81 @@
+# =============================================================================
+# Zer0-Mistakes Remote Theme Configuration
+# =============================================================================
+# This is a minimal _config.yml for GitHub Pages sites that load the
+# zer0-mistakes theme remotely. No local theme files are needed — layouts,
+# includes, assets, and styles are all pulled from the remote theme repo.
+#
+# Theme: https://github.com/{{GITHUB_REPO}}
+# Docs:  https://{{FORK_GITHUB_USER}}.github.io/{{REPOSITORY_NAME}}/docs/
+# =============================================================================
+
+# ── Site Identity ─────────────────────────────────────────────────────────────
+title                    : "{{SITE_TITLE}}"
+subtitle                 : "A site built with {{THEME_DISPLAY_NAME}}"
+description              : "{{SITE_DESCRIPTION}}"
+founder                  : "{{SITE_AUTHOR}}"
+email                    : "{{SITE_EMAIL}}"
+
+# ── GitHub ────────────────────────────────────────────────────────────────────
+github_user              : &github_user "{{FORK_GITHUB_USER}}"
+repository_name          : &github_repository "{{REPOSITORY_NAME}}"
+
+# ── URLs & Deployment ─────────────────────────────────────────────────────────
+url                      : "https://{{FORK_GITHUB_USER}}.github.io"
+baseurl                  : "/{{REPOSITORY_NAME}}"
+remote_theme             : "{{GITHUB_REPO}}"
+permalink                : /:categories/:title/
+
+# ── Build Settings ────────────────────────────────────────────────────────────
+markdown                 : kramdown
+highlighter              : rouge
+pages_dir                : pages
+
+# ── Collections ───────────────────────────────────────────────────────────────
+collections:
+  posts:
+    output               : true
+    permalink            : /posts/:title/
+  docs:
+    output               : true
+    permalink            : /docs/:path/
+  about:
+    output               : true
+    permalink            : /about/:path/
+
+# ── Default Front Matter ─────────────────────────────────────────────────────
+defaults:
+  - scope:
+      path               : ""
+      type               : "posts"
+    values:
+      layout             : "article"
+      author             : "default"
+  - scope:
+      path               : ""
+      type               : "docs"
+    values:
+      layout             : "default"
+  - scope:
+      path               : ""
+      type               : "about"
+    values:
+      layout             : "default"
+  - scope:
+      path               : ""
+      type               : "pages"
+    values:
+      layout             : "default"
+
+# ── Plugins ───────────────────────────────────────────────────────────────────
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+  - jekyll-remote-theme
+
+# ── Exclude from Build ────────────────────────────────────────────────────────
+exclude:
+  - Gemfile.lock
+  - README.md
+  - LICENSE

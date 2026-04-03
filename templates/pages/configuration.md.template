@@ -2,27 +2,52 @@
 layout: default
 title: Configuration Guide
 permalink: /docs/configuration/
+description: Complete reference for every _config.yml option in the Zer0-Mistakes theme.
 ---
 
 # Configuration Guide
 
-This guide covers the main configuration options for your site.
+This guide walks through every section of `_config.yml`. You can also generate a
+config interactively with the **[Setup Wizard](/setup/)**.
 
-## Site Settings
+---
 
-Edit `_config.yml` to configure your site:
+## Site Identity
+
+These fields appear in the header, footer, meta tags, and RSS feed.
 
 ```yaml
-# Basic Information
-title: My Awesome Site
-description: A Jekyll site using {{THEME_NAME}} theme
-author: Your Name
-email: your@email.com
-
-# URLs
-url: https://yourdomain.com
-baseurl: ""  # or "/repo-name" for project pages
+title:         "My Awesome Site"           # Browser tab & header
+subtitle:      "Tagline goes here"         # Optional subtitle
+description:   "A short SEO summary"       # Meta description (≤ 160 chars)
+founder:       "Your Name"                 # Used in footer & copyright
+email:         "your@email.com"            # Contact link in footer
 ```
+
+## URLs & Deployment
+
+```yaml
+url:           "https://yourdomain.com"    # Production domain (no trailing /)
+baseurl:       ""                          # "" for root, "/repo" for project pages
+remote_theme:  "bamr87/zer0-mistakes"      # GitHub Pages remote theme
+permalink:     /:categories/:title/        # Post URL pattern
+port:          4000                        # Local dev server port
+```
+
+| Scenario | `url` | `baseurl` |
+|---|---|---|
+| User/Org site (`<user>.github.io`) | `https://<user>.github.io` | `""` |
+| Project site (`<user>.github.io/repo`) | `https://<user>.github.io` | `"/repo"` |
+| Custom domain | `https://yourdomain.com` | `""` |
+
+## GitHub Settings
+
+```yaml
+github_user:       &github_user       "your-username"
+repository_name:   &github_repository "your-repo"
+```
+
+These anchors are referenced elsewhere in the config.
 
 ## Navigation
 
@@ -36,20 +61,49 @@ Navigation is configured in `_data/navigation/main.yml`:
   children:
     - title: Getting Started
       url: /docs/getting-started/
+    - title: Configuration
+      url: /docs/configuration/
 ```
 
 ## Collections
 
-The theme uses Jekyll collections for content:
+Collections define content types. Enable only what you need:
 
 ```yaml
 collections:
-  docs:
-    output: true
-    permalink: /docs/:path/
   posts:
     output: true
     permalink: /posts/:title/
+  docs:
+    output: true
+    permalink: /docs/:path/
+  about:
+    output: true
+    permalink: /about/:path/
+```
+
+### Default Front Matter
+
+Set default values per collection so you don't repeat them in every file:
+
+```yaml
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "article"
+      author: "default"
+  - scope:
+      path: ""
+      type: "docs"
+    values:
+      layout: "default"
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
 ```
 
 ## Plugins
@@ -58,46 +112,99 @@ Essential plugins are configured in `_config.yml`:
 
 ```yaml
 plugins:
-  - jekyll-feed
-  - jekyll-sitemap
-  - jekyll-seo-tag
-  - jekyll-remote-theme
+  - jekyll-feed          # RSS feed at /feed.xml
+  - jekyll-sitemap       # sitemap.xml for search engines
+  - jekyll-seo-tag       # <meta> tags for SEO & social
+  - jekyll-remote-theme  # Load theme from GitHub
 ```
 
-## Theme Settings
+## Theme Features
 
 ### Dark Mode
 
-Dark mode is enabled by default. Users can toggle between light and dark themes.
+Dark mode is enabled by default. Users can toggle between light and dark themes
+via the navbar button. The preference is saved to `localStorage`.
 
 ### Search
 
-Search is enabled by default with keyboard shortcuts:
-- Press `/` or `Cmd+K` to open search
+Search is enabled by default:
+- Press `/` or `Cmd+K` to open the search modal.
+- Results are indexed from `search.json`.
 
-### Analytics
+### Cookie Consent
 
-Add your analytics configuration:
+GDPR/CCPA-compliant cookie consent banner:
 
 ```yaml
-analytics:
-  provider: posthog  # or google
-  posthog:
-    api_key: your-api-key
+cookie_consent:
+  enabled: true
+  expiry_days: 365
 ```
+
+## Analytics
+
+### Google Analytics
+
+```yaml
+google_analytics: "G-XXXXXXXXXX"   # GA4 Measurement ID
+```
+
+### PostHog
+
+```yaml
+posthog:
+  enabled: true
+  api_key: "phc_your_key_here"
+  custom_events:
+    track_downloads: true
+    track_external_links: true
+```
+
+Analytics only loads when `jekyll.environment == "production"` **and** the user accepts cookies.
 
 ## Development Configuration
 
-For local development, use `_config_dev.yml`:
+For local development, create `_config_dev.yml` with overrides:
 
 ```yaml
-url: ""
-baseurl: ""
-livereload: true
-incremental: true
+url:             ""
+baseurl:         ""
+remote_theme:    false          # Use local theme files
+livereload:      true
+incremental:     true
 ```
 
 Start with both configs:
+
 ```bash
+# Docker (recommended)
+docker-compose up
+
+# Local Ruby
 bundle exec jekyll serve --config _config.yml,_config_dev.yml
 ```
+
+## Build Exclusions
+
+Files and directories excluded from the Jekyll build:
+
+```yaml
+exclude:
+  - .sass-cache/
+  - .jekyll-cache/
+  - node_modules/
+  - vendor/
+  - Gemfile.lock
+  - scripts/
+  - test/
+  - templates/
+  - "*.log"
+```
+
+---
+
+## Next Steps
+
+- [Quick Start](/quickstart/) — Get running in minutes
+- [Setup Wizard](/setup/) — Generate your configuration interactively
+- [Troubleshooting](/docs/troubleshooting/) — Common issues
