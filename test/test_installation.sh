@@ -676,6 +676,184 @@ test_remote_temp_cleanup_on_error() {
 }
 
 # =============================================================================
+# CATEGORY G: FORK MODE TESTS
+# =============================================================================
+
+test_fork_flag() {
+    test_log_info "Testing --fork flag is recognized"
+    
+    # Verify the script supports --fork flag
+    run_install_script --help
+    
+    assert_output_contains "$INSTALL_STDOUT" "--fork" "Help should document --fork flag"
+}
+
+test_fork_creates_theme_files() {
+    test_log_info "Testing fork mode creates theme files"
+    
+    local workspace
+    workspace=$(create_test_workspace "fork-files")
+    
+    run_install_expect_success --fork "$workspace" \
+        --site-name "Test Fork Site" \
+        --github-user "testuser" \
+        --author "Test Author" \
+        --email "test@example.com" \
+        --non-interactive
+    
+    # Verify core theme directories exist (fork starts as full theme)
+    assert_dir_exists "$workspace/_layouts" "Fork install should include _layouts"
+    assert_dir_exists "$workspace/_includes" "Fork install should include _includes"
+    assert_dir_exists "$workspace/_sass" "Fork install should include _sass"
+    assert_file_exists "$workspace/docker-compose.yml" "Fork install should include docker-compose.yml"
+}
+
+test_fork_resets_config_title() {
+    test_log_info "Testing fork mode resets site title in _config.yml"
+    
+    local workspace
+    workspace=$(create_test_workspace "fork-title")
+    
+    run_install_expect_success --fork "$workspace" \
+        --site-name "My Custom Blog" \
+        --github-user "myuser" \
+        --non-interactive
+    
+    assert_file_contains "$workspace/_config.yml" "My Custom Blog" \
+        "Fork install should set custom site title in _config.yml"
+}
+
+test_fork_resets_config_github_user() {
+    test_log_info "Testing fork mode resets github_user in _config.yml"
+    
+    local workspace
+    workspace=$(create_test_workspace "fork-ghuser")
+    
+    run_install_expect_success --fork "$workspace" \
+        --site-name "Test Site" \
+        --github-user "mynewuser" \
+        --non-interactive
+    
+    assert_file_contains "$workspace/_config.yml" "mynewuser" \
+        "Fork install should set github_user in _config.yml"
+}
+
+test_fork_creates_welcome_post() {
+    test_log_info "Testing fork mode creates a welcome post"
+    
+    local workspace
+    workspace=$(create_test_workspace "fork-post")
+    
+    run_install_expect_success --fork "$workspace" \
+        --site-name "Welcome Test" \
+        --github-user "testuser" \
+        --non-interactive
+    
+    # Check that pages/_posts directory has at least one post
+    local post_count
+    post_count=$(find "$workspace/pages/_posts" -name "*.md" -o -name "*.markdown" 2>/dev/null | wc -l)
+    
+    if [[ "$post_count" -gt 0 ]]; then
+        test_log_success "Welcome post created in pages/_posts"
+        return 0
+    else
+        test_log_error "No welcome post found in pages/_posts after fork install"
+        return 1
+    fi
+}
+
+test_fork_removes_example_content() {
+    test_log_info "Testing fork mode removes example/creator content"
+    
+    local workspace
+    workspace=$(create_test_workspace "fork-cleanup")
+    
+    run_install_expect_success --fork "$workspace" \
+        --site-name "Clean Fork" \
+        --github-user "testuser" \
+        --non-interactive
+    
+    # Verify creator-specific directories were removed
+    assert_dir_not_exists "$workspace/pages/_about/profile" \
+        "Fork install should remove creator profile directory"
+    
+    # CNAME should be removed (site-specific domain)
+    assert_file_not_exists "$workspace/CNAME" \
+        "Fork install should remove CNAME file"
+}
+
+test_fork_validation() {
+    test_log_info "Testing fork mode full validation"
+    
+    local workspace
+    workspace=$(create_test_workspace "fork-validate")
+    
+    run_install_expect_success --fork "$workspace" \
+        --site-name "Validated Site" \
+        --github-user "validuser" \
+        --author "Valid Author" \
+        --non-interactive
+    
+    validate_fork_installation "$workspace" "Validated Site" "validuser"
+}
+
+test_fork_gemfile_platform_sections() {
+    test_log_info "Testing installed Gemfile contains platform-specific sections"
+    
+    local workspace
+    workspace=$(create_test_workspace "fork-gemfile-platform")
+    
+    run_install_expect_success --fork "$workspace" \
+        --site-name "Platform Test" \
+        --github-user "testuser" \
+        --non-interactive
+    
+    # The full installation Gemfile template should include Windows/JRuby platform sections
+    assert_file_contains "$workspace/Gemfile" "platforms :windows" \
+        "Gemfile should include Windows platform section"
+    assert_file_contains "$workspace/Gemfile" "tzinfo" \
+        "Gemfile should include tzinfo for Windows/JRuby"
+    assert_file_contains "$workspace/Gemfile" "wdm" \
+        "Gemfile should include wdm for Windows directory watching"
+}
+
+# =============================================================================
+# CATEGORY H: GEMFILE PLATFORM COMPATIBILITY TESTS
+# =============================================================================
+
+test_full_gemfile_has_platform_sections() {
+    test_log_info "Testing full installation Gemfile has platform-specific sections"
+    
+    local workspace
+    workspace=$(create_test_workspace "full-gemfile-platform")
+    
+    run_install_expect_success --full "$workspace"
+    
+    assert_file_contains "$workspace/Gemfile" "platforms :windows" \
+        "Full install Gemfile should include Windows platform section"
+    assert_file_contains "$workspace/Gemfile" "tzinfo" \
+        "Full install Gemfile should include tzinfo gem"
+    assert_file_contains "$workspace/Gemfile" "wdm" \
+        "Full install Gemfile should include wdm gem for Windows"
+}
+
+test_minimal_gemfile_has_platform_sections() {
+    test_log_info "Testing minimal installation Gemfile has platform-specific sections"
+    
+    local workspace
+    workspace=$(create_test_workspace "minimal-gemfile-platform")
+    
+    run_install_expect_success --minimal "$workspace"
+    
+    assert_file_contains "$workspace/Gemfile" "platforms :windows" \
+        "Minimal install Gemfile should include Windows platform section"
+    assert_file_contains "$workspace/Gemfile" "tzinfo" \
+        "Minimal install Gemfile should include tzinfo gem"
+    assert_file_contains "$workspace/Gemfile" "wdm" \
+        "Minimal install Gemfile should include wdm gem for Windows"
+}
+
+# =============================================================================
 # MAIN TEST EXECUTION
 # =============================================================================
 
@@ -741,6 +919,26 @@ run_remote_tests() {
     run_test "Remote temp cleanup on error" "test_remote_temp_cleanup_on_error" "remote"
 }
 
+run_fork_tests() {
+    test_log_info "=== FORK MODE TESTS ==="
+    
+    run_test "Fork flag recognized" "test_fork_flag" "fork"
+    run_test "Fork creates theme files" "test_fork_creates_theme_files" "fork"
+    run_test "Fork resets config title" "test_fork_resets_config_title" "fork"
+    run_test "Fork resets config github_user" "test_fork_resets_config_github_user" "fork"
+    run_test "Fork creates welcome post" "test_fork_creates_welcome_post" "fork"
+    run_test "Fork removes example content" "test_fork_removes_example_content" "fork"
+    run_test "Fork validation" "test_fork_validation" "fork"
+    run_test "Fork Gemfile platform sections" "test_fork_gemfile_platform_sections" "fork"
+}
+
+run_platform_tests() {
+    test_log_info "=== GEMFILE PLATFORM COMPATIBILITY TESTS ==="
+    
+    run_test "Full Gemfile platform sections" "test_full_gemfile_has_platform_sections" "platform"
+    run_test "Minimal Gemfile platform sections" "test_minimal_gemfile_has_platform_sections" "platform"
+}
+
 main() {
     parse_arguments "$@"
     
@@ -769,6 +967,8 @@ main() {
     run_edge_tests
     run_upgrade_tests
     run_remote_tests
+    run_fork_tests
+    run_platform_tests
     
     # Print summary
     print_test_summary

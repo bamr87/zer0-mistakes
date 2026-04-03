@@ -12,3 +12,12 @@ gem "webrick", "{{WEBRICK_VERSION}}"
 
 # GitHub Pages compatibility (uncomment for GitHub Pages)
 # gem "github-pages", group: :jekyll_plugins
+
+# Platform-specific dependencies
+platforms :windows, :jruby do
+  gem "tzinfo"
+  gem "tzinfo-data"
+end
+
+# Performance booster for watching directories on Windows
+gem "wdm", :platforms => [:windows]

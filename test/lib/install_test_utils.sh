@@ -596,6 +596,78 @@ validate_minimal_installation() {
     return $errors
 }
 
+# Validate fork mode installation created expected files and reset config
+# Usage: validate_fork_installation "/path/to/install" "expected_site_name" "expected_github_user"
+validate_fork_installation() {
+    local install_dir="$1"
+    local expected_site_name="${2:-}"
+    local expected_github_user="${3:-}"
+    local errors=0
+    
+    # Required files for fork installation (should have full theme files)
+    local required_files=(
+        "_config.yml"
+        "docker-compose.yml"
+        "Gemfile"
+        ".gitignore"
+    )
+    
+    # Required directories for fork installation
+    local required_dirs=(
+        "_layouts"
+        "_includes"
+        "_sass"
+        "assets"
+        "pages/_posts"
+    )
+    
+    # Check required files exist
+    for file in "${required_files[@]}"; do
+        if [[ ! -f "$install_dir/$file" ]]; then
+            test_log_error "Missing required file in fork install: $file"
+            errors=$((errors + 1))
+        fi
+    done
+    
+    # Check required directories exist
+    for dir in "${required_dirs[@]}"; do
+        if [[ ! -d "$install_dir/$dir" ]]; then
+            test_log_error "Missing required directory in fork install: $dir"
+            errors=$((errors + 1))
+        fi
+    done
+    
+    # Verify config was reset with expected values
+    local config_file="$install_dir/_config.yml"
+    if [[ -f "$config_file" ]]; then
+        if [[ -n "$expected_site_name" ]]; then
+            if ! grep -qF "$expected_site_name" "$config_file"; then
+                test_log_error "Fork install: site name '$expected_site_name' not found in _config.yml"
+                errors=$((errors + 1))
+            fi
+        fi
+        if [[ -n "$expected_github_user" ]]; then
+            if ! grep -qF "$expected_github_user" "$config_file"; then
+                test_log_error "Fork install: github_user '$expected_github_user' not found in _config.yml"
+                errors=$((errors + 1))
+            fi
+        fi
+    fi
+    
+    # Verify a welcome post was created
+    local posts_dir="$install_dir/pages/_posts"
+    if [[ -d "$posts_dir" ]]; then
+        local post_count
+        post_count=$(find "$posts_dir" -name "*.md" -o -name "*.markdown" 2>/dev/null | wc -l)
+        if [[ "$post_count" -eq 0 ]]; then
+            test_log_error "Fork install: no welcome post found in pages/_posts"
+            errors=$((errors + 1))
+        fi
+    fi
+    
+    return $errors
+}
+
 # =============================================================================
 # PLATFORM DETECTION HELPERS
 # =============================================================================
@@ -658,5 +730,5 @@ export -f assert_file_contains assert_file_not_contains assert_backup_created
 export -f assert_exit_code assert_equals assert_not_empty assert_output_contains
 export -f run_install_script run_install_expect_success run_install_expect_failure
 export -f run_test skip_test print_test_summary
-export -f validate_full_installation validate_minimal_installation
+export -f validate_full_installation validate_minimal_installation validate_fork_installation
 export -f get_platform is_docker_available is_ci_environment

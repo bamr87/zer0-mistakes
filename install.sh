@@ -1302,6 +1302,15 @@ gem "webrick", "~> 1.7"
 
 # GitHub Pages compatibility (uncomment for GitHub Pages)
 # gem "github-pages", group: :jekyll_plugins
+
+# Platform-specific dependencies
+platforms :windows, :jruby do
+  gem "tzinfo"
+  gem "tzinfo-data"
+end
+
+# Performance booster for watching directories on Windows
+gem "wdm", :platforms => [:windows]
 EOF
     else
         cat > "$TARGET_DIR/Gemfile" << 'EOF'
@@ -1321,6 +1330,15 @@ gem "jekyll-paginate"
 gem "ffi", "~> 1.17.0"
 gem "webrick", "~> 1.7"
 gem "commonmarker", "0.23.10"  # Fixed version to avoid compatibility issues
+
+# Platform-specific dependencies
+platforms :windows, :jruby do
+  gem "tzinfo"
+  gem "tzinfo-data"
+end
+
+# Performance booster for watching directories on Windows
+gem "wdm", :platforms => [:windows]
 EOF
     fi
     
@@ -1336,10 +1354,9 @@ update_docker_compose_config() {
     if [[ -f "$docker_config" ]]; then
         # Check if PAGES_REPO_NWO is already present
         if ! grep -q "PAGES_REPO_NWO" "$docker_config"; then
-            # Add the environment variable
-            sed -i.bak '/JEKYLL_ENV: development/a\
-      PAGES_REPO_NWO: "bamr87/zer0-mistakes"' "$docker_config"
-            rm -f "${docker_config}.bak"
+            # Add the environment variable after JEKYLL_ENV line
+            # Use perl for cross-platform compatibility (BSD sed and GNU sed differ on in-place syntax)
+            perl -pi -e 's|(.*JEKYLL_ENV: development.*)|\1\n      PAGES_REPO_NWO: "bamr87/zer0-mistakes"|' "$docker_config"
             log_info "Added PAGES_REPO_NWO environment variable to docker-compose.yml"
         fi
     fi
@@ -1800,18 +1817,21 @@ reset_fork_configuration() {
         # Create backup
         cp "$config_file" "${config_file}.bak"
         
-        # Update configuration values using sed
-        # Note: Patterns handle various YAML formats (with/without spaces, quotes, etc.)
-        sed -i.tmp "s/^title[[:space:]]*:.*/title                    : \"${FORK_SITE_NAME:-My Jekyll Site}\"/" "$config_file"
-        sed -i.tmp "s/^subtitle[[:space:]]*:.*/subtitle                 : \"A Jekyll site built with zer0-mistakes\"/" "$config_file"
-        sed -i.tmp "s/^founder[[:space:]]*:.*/founder                  : \"${FORK_AUTHOR:-Site Author}\"/" "$config_file"
-        sed -i.tmp "s/^github_user[[:space:]]*:.*/github_user              : \&github_user \"${FORK_GITHUB_USER:-your-username}\"/" "$config_file"
+        # Update configuration values using perl for cross-platform compatibility
+        # (BSD sed and GNU sed differ in in-place edit syntax on macOS vs Linux)
+        local site_name="${FORK_SITE_NAME:-My Jekyll Site}"
+        local site_author="${FORK_AUTHOR:-Site Author}"
+        local github_user="${FORK_GITHUB_USER:-your-username}"
+        
+        perl -pi -e "s/^title[[:space:]]*:.*/title                    : \"${site_name}\"/" "$config_file"
+        perl -pi -e 's/^subtitle[[:space:]]*:.*/subtitle                 : "A Jekyll site built with zer0-mistakes"/' "$config_file"
+        perl -pi -e "s/^founder[[:space:]]*:.*/founder                  : \"${site_author}\"/" "$config_file"
+        perl -pi -e "s/^github_user[[:space:]]*:.*/github_user              : \&github_user \"${github_user}\"/" "$config_file"
         
         # Clear analytics IDs
-        sed -i.tmp "s/^google_analytics[[:space:]]*:.*/google_analytics         :/" "$config_file"
-        sed -i.tmp "s/^posthog_api_key[[:space:]]*:.*/posthog_api_key          :/" "$config_file"
+        perl -pi -e 's/^google_analytics[[:space:]]*:.*/google_analytics         :/' "$config_file"
+        perl -pi -e 's/^posthog_api_key[[:space:]]*:.*/posthog_api_key          :/' "$config_file"
         
-        rm -f "${config_file}.tmp"
         log_info "Updated _config.yml"
     fi
     
