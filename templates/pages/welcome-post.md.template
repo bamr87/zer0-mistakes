@@ -21,20 +21,26 @@ Here's what the installer created for you:
 ```
 your-site/
 ├── _config.yml          ← main configuration
-├── _config_dev.yml      ← development overrides
-├── docker-compose.yml   ← one-command dev server
 ├── Gemfile              ← Ruby dependencies
 ├── pages/
 │   ├── _posts/          ← blog posts (like this one!)
 │   ├── _docs/           ← documentation pages
 │   └── _about/          ← about / profile pages
-├── assets/
-│   ├── css/             ← stylesheets
-│   ├── js/              ← scripts
-│   └── images/          ← media files
 └── _data/
     └── navigation/      ← menu configuration
 ```
+
+{% if page.install_mode == "full" or site.install_mode == "full" %}
+Full installation also includes:
+```
+├── _config_dev.yml      ← development overrides
+├── docker-compose.yml   ← one-command dev server
+└── assets/
+    ├── css/             ← stylesheets
+    ├── js/              ← scripts
+    └── images/          ← media files
+```
+{% endif %}
 
 ## Writing Your First Post
 
@@ -93,11 +99,17 @@ Edit `_data/navigation/main.yml` to add or reorder menu items:
 
 | Task | Command |
 |---|---|
+| Start dev server | `bundle exec jekyll serve` |
+| Build site (no server) | `bundle exec jekyll build` |
+| Install dependencies | `bundle install` |
+
+If you're using Docker (full installation):
+
+| Task | Command |
+|---|---|
 | Start dev server | `docker-compose up` |
 | Rebuild from scratch | `docker-compose down && docker-compose up --build` |
-| Build site (no server) | `docker-compose exec jekyll jekyll build` |
 | Stop server | `docker-compose down` |
-| View logs | `docker-compose logs -f` |
 
 ## Theme Features at a Glance
 

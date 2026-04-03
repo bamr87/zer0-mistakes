@@ -9,7 +9,19 @@
 #        setup_wsl [--install-missing]
 # =========================================================================
 
-set -euo pipefail
+# Only enable strict mode when executed directly (not sourced), so we don't
+# mutate the caller's shell options.
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    set -euo pipefail
+fi
+
+# ── Fallback logging helpers (used when not sourced from install.sh) ─────
+if ! declare -F log_info >/dev/null 2>&1; then
+    log_info()    { echo "[INFO]    $*"; }
+    log_success() { echo "[SUCCESS] $*"; }
+    log_warning() { echo "[WARNING] $*"; }
+    log_error()   { echo "[ERROR]   $*" >&2; }
+fi
 
 # -------------------------------------------------------------------------
 # WSL detection helpers
@@ -111,10 +123,10 @@ setup_wsl() {
     elif [[ "$wsl_ver" == "1" ]]; then
         log_error "WSL 1 detected — Docker Desktop requires WSL 2."
         echo
-        log_info "Upgrade to WSL 2:"
-        echo "  1. Open PowerShell as Administrator"
-        echo "  2. Run: wsl --set-version $(detect_wsl_distro | awk '{print $1}') 2"
-        echo "  3. Or:  wsl --set-default-version 2"
+        log_info "Upgrade to WSL 2 (run from Windows PowerShell / Command Prompt):"
+        echo "  1. wsl.exe -l -v                    # list distros and their WSL versions"
+        echo "  2. wsl.exe --set-version <DistroName> 2   # upgrade a specific distro"
+        echo "  3. wsl.exe --set-default-version 2  # make WSL 2 the default for new distros"
         echo
         return 1
     fi
@@ -177,3 +189,8 @@ setup_wsl() {
         return 1
     fi
 }
+
+# ── Entrypoint (when executed directly, not sourced) ─────────────────────
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    setup_wsl "$@"
+fi

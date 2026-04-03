@@ -206,5 +206,5 @@ exclude:
 ## Next Steps
 
 - [Quick Start](/quickstart/) — Get running in minutes
-- [Theming Guide](/docs/theming/) — Customize colors and layout
+- [Setup Wizard](/setup/) — Generate your configuration interactively
 - [Troubleshooting](/docs/troubleshooting/) — Common issues

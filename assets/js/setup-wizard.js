@@ -18,19 +18,37 @@
   /** Escape a YAML string value (wrap in quotes if needed). */
   function yamlValue(val) {
     if (val === '' || val === null || val === undefined) return '""';
-    if (val === 'true' || val === 'false') return val;
-    if (/^[0-9]+$/.test(val)) return val;
+
+    // Normalize newlines and collapse whitespace to keep scalar values single-line
+    var normalized = String(val)
+      .replace(/\r\n|\r|\n/g, ' ')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+
+    if (normalized === '') return '""';
+    if (normalized === 'true' || normalized === 'false') return normalized;
+    if (/^[0-9]+$/.test(normalized)) return normalized;
     // Wrap in quotes if it contains special chars
-    if (/[:#{}[\],&*?|>!%@`]/.test(val) || val.includes("'") || val.includes('"')) {
-      return '"' + val.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
+    if (/[:#{}[\],&*?|>!%@`]/.test(normalized) || normalized.includes("'") || normalized.includes('"')) {
+      return '"' + normalized.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
     }
-    return '"' + val + '"';
+    return '"' + normalized + '"';
   }
 
   /** Pad a YAML key to 25 chars for alignment. */
   function pad(key, width) {
     width = width || 25;
     return (key + ' '.repeat(width)).slice(0, width);
+  }
+
+  /** Return the permalink pattern for a given collection name. */
+  function collectionPermalink(col) {
+    switch (col) {
+      case 'posts':  return '/posts/:title/';
+      case 'docs':   return '/docs/:path/';
+      case 'about':  return '/about/:path/';
+      default:       return '/' + col + '/:path/';
+    }
   }
 
   // ── YAML builder ──────────────────────────────────────────────────
@@ -84,8 +102,9 @@
     // GitHub
     lines.push('# ── GitHub ─────────────────────────────────────────────────────────');
     var ghUser = fields.github_user || 'your-username';
+    var repoName = fields.repository_name || (ghUser !== 'your-username' ? ghUser + '-site' : 'my-site');
     lines.push(pad('github_user') + ': &github_user ' + yamlValue(ghUser));
-    lines.push(pad('repository_name') + ': &github_repository ' + yamlValue('zer0-mistakes'));
+    lines.push(pad('repository_name') + ': &github_repository ' + yamlValue(repoName));
     lines.push('');
 
     // URLs
@@ -103,7 +122,7 @@
     collections.forEach(function (col) {
       lines.push('  ' + col + ':');
       lines.push('    output: true');
-      lines.push('    permalink: /' + col + '/:path/');
+      lines.push('    permalink: ' + collectionPermalink(col));
     });
     lines.push('');
 

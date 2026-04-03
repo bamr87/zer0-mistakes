@@ -9,7 +9,19 @@
 #        setup_macos [--install-missing]
 # =========================================================================
 
-set -euo pipefail
+# Only enable strict mode when executed directly (not sourced), so we don't
+# mutate the caller's shell options.
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    set -euo pipefail
+fi
+
+# ── Fallback logging helpers (used when not sourced from install.sh) ─────
+if ! declare -F log_info >/dev/null 2>&1; then
+    log_info()    { echo "[INFO]    $*"; }
+    log_success() { echo "[SUCCESS] $*"; }
+    log_warning() { echo "[WARNING] $*"; }
+    log_error()   { echo "[ERROR]   $*" >&2; }
+fi
 
 # -------------------------------------------------------------------------
 # Detect macOS architecture
@@ -168,3 +180,8 @@ setup_macos() {
         return 1
     fi
 }
+
+# ── Entrypoint (when executed directly, not sourced) ─────────────────────
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    setup_macos "$@"
+fi

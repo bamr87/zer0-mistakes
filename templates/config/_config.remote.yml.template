@@ -6,7 +6,7 @@
 # includes, assets, and styles are all pulled from the remote theme repo.
 #
 # Theme: https://github.com/{{GITHUB_REPO}}
-# Docs:  {{GITHUB_PAGES_URL}}/docs/
+# Docs:  https://{{FORK_GITHUB_USER}}.github.io/{{REPOSITORY_NAME}}/docs/
 # =============================================================================
 
 # ── Site Identity ─────────────────────────────────────────────────────────────

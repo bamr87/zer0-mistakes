@@ -9,7 +9,19 @@
 #        setup_linux [--install-missing]
 # =========================================================================
 
-set -euo pipefail
+# Only enable strict mode when executed directly (not sourced), so we don't
+# mutate the caller's shell options.
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    set -euo pipefail
+fi
+
+# ── Fallback logging helpers (used when not sourced from install.sh) ─────
+if ! declare -F log_info >/dev/null 2>&1; then
+    log_info()    { echo "[INFO]    $*"; }
+    log_success() { echo "[SUCCESS] $*"; }
+    log_warning() { echo "[WARNING] $*"; }
+    log_error()   { echo "[ERROR]   $*" >&2; }
+fi
 
 # -------------------------------------------------------------------------
 # Detect Linux distribution
@@ -96,13 +108,25 @@ install_docker_linux() {
     log_info "Installing Docker Engine..."
     case "$distro" in
         debian)
+            # Determine the correct distro ID for the Docker repo URL
+            local docker_distro_id
+            # shellcheck source=/dev/null
+            docker_distro_id="$(. /etc/os-release 2>/dev/null && echo "${ID:-ubuntu}")"
+            # Docker only publishes repos for 'ubuntu' and 'debian'; other
+            # derivatives (pop, linuxmint, etc.) should use their base distro.
+            case "$docker_distro_id" in
+                debian) : ;;           # use 'debian' repo
+                *)      docker_distro_id="ubuntu" ;;  # fallback for Ubuntu derivatives
+            esac
+
             sudo apt-get update -qq
             sudo apt-get install -y -qq ca-certificates curl gnupg
             sudo install -m 0755 -d /etc/apt/keyrings
-            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg 2>/dev/null || true
+            curl -fsSL "https://download.docker.com/linux/${docker_distro_id}/gpg" | \
+                sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg 2>/dev/null || true
             sudo chmod a+r /etc/apt/keyrings/docker.gpg
             # shellcheck source=/dev/null
-            echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/${docker_distro_id} $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
                 sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
             sudo apt-get update -qq
             sudo apt-get install -y -qq docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
@@ -213,3 +237,8 @@ setup_linux() {
         return 1
     fi
 }
+
+# ── Entrypoint (when executed directly, not sourced) ─────────────────────
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    setup_linux "$@"
+fi

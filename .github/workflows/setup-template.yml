@@ -31,7 +31,8 @@ jobs:
       - name: Check if setup already completed
         id: check
         run: |
-          # If _config.yml already has a non-default github_user, skip
+          # If _config.yml still has the upstream default github_user (bamr87),
+          # the repo was just forked and needs initial personalisation.
           if grep -q 'github_user.*bamr87' _config.yml 2>/dev/null; then
             echo "needs_setup=true" >> "$GITHUB_OUTPUT"
           else

@@ -77,9 +77,11 @@ render_template() {
         -e "s|{{SITE_EMAIL}}|${FORK_EMAIL:-${SITE_EMAIL:-your@email.com}}|g" \
         -e "s|{{CURRENT_DATE}}|$(date +%Y-%m-%d)|g" \
         -e "s|{{CURRENT_YEAR}}|$(date +%Y)|g" \
-        -e "s|{{REPOSITORY_NAME}}|${THEME_NAME}|g" \
+        -e "s|{{REPOSITORY_NAME}}|${REPOSITORY_NAME:-$THEME_NAME}|g" \
         -e "s|{{RAW_GITHUB_URL}}|${GITHUB_RAW_URL}|g" \
-        -e "s|{{FORK_GITHUB_USER}}|${FORK_GITHUB_USER:-${GITHUB_USER}}|g")
+        -e "s|{{FORK_GITHUB_USER}}|${FORK_GITHUB_USER:-${GITHUB_USER}}|g" \
+        -e "s|{{INSTALL_MODE}}|${INSTALL_MODE:-full}|g" \
+        -e "s|{{GITHUB_PAGES_URL}}|https://${FORK_GITHUB_USER:-${GITHUB_USER}}.github.io/${REPOSITORY_NAME:-$THEME_NAME}|g")
     
     if [[ -n "$output_file" ]]; then
         mkdir -p "$(dirname "$output_file")"
@@ -216,6 +218,7 @@ SITE_TITLE=""
 SITE_AUTHOR=""
 SITE_EMAIL=""
 FORK_GITHUB_USER=""
+FORK_REPO_NAME=""
 
 # Parse command line arguments
 parse_arguments() {
@@ -243,6 +246,10 @@ parse_arguments() {
                 ;;
             --site-name)
                 FORK_SITE_NAME="$2"
+                shift 2
+                ;;
+            --repo-name)
+                FORK_REPO_NAME="$2"
                 shift 2
                 ;;
             --github-user)
@@ -1443,25 +1450,52 @@ install_github_mode() {
 
     # Optionally run platform setup
     local platform_script=""
+    local platform_setup_function=""
     case "$DETECTED_PLATFORM" in
-        macos)  platform_script="$SOURCE_DIR/scripts/platform/setup-macos.sh" ;;
-        linux)  platform_script="$SOURCE_DIR/scripts/platform/setup-linux.sh" ;;
-        wsl)    platform_script="$SOURCE_DIR/scripts/platform/setup-wsl.sh"   ;;
+        macos)
+            platform_script="$SOURCE_DIR/scripts/platform/setup-macos.sh"
+            platform_setup_function="setup_macos"
+            ;;
+        linux)
+            platform_script="$SOURCE_DIR/scripts/platform/setup-linux.sh"
+            platform_setup_function="setup_linux"
+            ;;
+        wsl)
+            platform_script="$SOURCE_DIR/scripts/platform/setup-wsl.sh"
+            platform_setup_function="setup_wsl"
+            ;;
     esac
 
     if [[ -n "$platform_script" && -f "$platform_script" ]]; then
         log_info "Running platform setup for $DETECTED_PLATFORM..."
         # shellcheck source=/dev/null
         source "$platform_script"
+
+        if [[ -n "$platform_setup_function" ]] && declare -F "$platform_setup_function" >/dev/null 2>&1; then
+            "$platform_setup_function"
+        else
+            log_error "Platform setup function '$platform_setup_function' not found after sourcing $platform_script"
+            return 1
+        fi
     fi
 
     # Delegate to github-setup.sh if available
     local gh_setup="$SOURCE_DIR/scripts/github-setup.sh"
     if [[ -f "$gh_setup" ]]; then
         log_info "Launching GitHub setup script..."
-        bash "$gh_setup" \
-            ${FORK_GITHUB_USER:+--github-user "$FORK_GITHUB_USER"} \
-            ${FORK_SITE_NAME:+--repo-name "$FORK_SITE_NAME"}
+
+        # Keep repository name separate from the human-readable site title.
+        local repo_name="${FORK_REPO_NAME:-${FORK_SITE_NAME:-}}"
+        local site_name="${FORK_SITE_NAME:-}"
+        local gh_args=()
+
+        [[ -n "${FORK_GITHUB_USER:-}" ]] && gh_args+=(--github-user "$FORK_GITHUB_USER")
+        [[ -n "$repo_name" ]]            && gh_args+=(--repo-name "$repo_name")
+        [[ -n "$site_name" ]]            && gh_args+=(--site-name "$site_name")
+        [[ -n "${FORK_AUTHOR:-}" ]]      && gh_args+=(--author "$FORK_AUTHOR")
+        [[ -n "${FORK_EMAIL:-}" ]]       && gh_args+=(--email "$FORK_EMAIL")
+
+        bash "$gh_setup" "${gh_args[@]}"
     else
         # Inline fallback — use fork mode logic
         log_info "github-setup.sh not found, falling back to fork mode"
@@ -1499,8 +1533,8 @@ install_remote_mode() {
         gather_fork_user_input
     fi
 
-    # Derive repo name
-    local repo_name="${FORK_SITE_NAME:-my-site}"
+    # Derive repo name — prefer explicit --repo-name, fall back to --site-name derived slug
+    local repo_name="${FORK_REPO_NAME:-${FORK_SITE_NAME:-my-site}}"
     repo_name=$(echo "$repo_name" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd '[:alnum:]-')
     export REPOSITORY_NAME="$repo_name"
 
@@ -1521,20 +1555,20 @@ install_remote_mode() {
     fi
 
     # ── Step 1: Fork the repository ────────────────────────────────────────
-    log_info "Forking ${GITHUB_REPO} to ${gh_user}/${THEME_NAME}..."
-    if gh repo fork "${GITHUB_REPO}" --clone=false 2>/dev/null; then
+    log_info "Forking ${GITHUB_REPO} as ${gh_user}/${repo_name}..."
+    if gh repo fork "${GITHUB_REPO}" --clone=false --fork-name "${repo_name}" 2>/dev/null; then
         log_info "Repository forked successfully"
     else
-        log_warn "Fork may already exist — continuing"
+        log_warning "Fork may already exist — continuing"
     fi
 
     # ── Step 2: Clone fork (shallow) into target directory ─────────────────
     log_info "Cloning fork to ${TARGET_DIR}..."
     if [[ -d "$TARGET_DIR" && -n "$(ls -A "$TARGET_DIR" 2>/dev/null)" ]]; then
-        log_warn "Target directory not empty, using existing directory"
+        log_warning "Target directory not empty, using existing directory"
     else
-        gh repo clone "${gh_user}/${THEME_NAME}" "$TARGET_DIR" -- --depth=1 2>/dev/null || \
-            git clone --depth=1 "https://github.com/${gh_user}/${THEME_NAME}.git" "$TARGET_DIR"
+        gh repo clone "${gh_user}/${repo_name}" "$TARGET_DIR" -- --depth=1 2>/dev/null || \
+            git clone --depth=1 "https://github.com/${gh_user}/${repo_name}.git" "$TARGET_DIR"
     fi
 
     pushd "$TARGET_DIR" > /dev/null || { log_error "Cannot enter $TARGET_DIR"; exit 1; }
@@ -1571,7 +1605,7 @@ permalink: /404.html
 
 The page you're looking for doesn't exist.
 
-[Go Home →](/)
+[Go Home →]({{ '/' | relative_url }})
 FOUROHFOUR
 
     # pages/ content stubs
@@ -1642,6 +1676,16 @@ settings and set the source to the \`${branch}\` branch.
 EOF
 
     # ── Step 5: Initial commit ─────────────────────────────────────────────
+    # Ensure git user identity is configured (needed on fresh envs / Codespaces)
+    if ! git config user.name &>/dev/null; then
+        local commit_name="${FORK_AUTHOR:-$(gh api user --jq '.name' 2>/dev/null || echo "${gh_user}")}"
+        git config user.name "$commit_name"
+    fi
+    if ! git config user.email &>/dev/null; then
+        local commit_email="${FORK_EMAIL:-$(gh api user --jq '.email' 2>/dev/null || echo "${gh_user}@users.noreply.github.com")}"
+        git config user.email "$commit_email"
+    fi
+
     git add -A
     git commit -m "feat: initial site from ${THEME_NAME} remote theme
 
@@ -1659,11 +1703,11 @@ are loaded from ${GITHUB_REPO}."
         read -r -p "Enable GitHub Pages on the '${branch}' branch? (Y/n): " enable_pages
         if [[ ! "$enable_pages" =~ ^[Nn] ]]; then
             log_info "Enabling GitHub Pages..."
-            gh api -X PUT "repos/${gh_user}/${THEME_NAME}/pages" \
+            gh api -X PUT "repos/${gh_user}/${repo_name}/pages" \
                 --field "source[branch]=${branch}" \
                 --field "source[path]=/" 2>/dev/null && \
-                log_success "GitHub Pages enabled at https://${gh_user}.github.io/${THEME_NAME}/" || \
-                log_warn "Could not enable Pages automatically. Enable it in Settings → Pages."
+                log_success "GitHub Pages enabled at https://${gh_user}.github.io/${repo_name}/" || \
+                log_warning "Could not enable Pages automatically. Enable it in Settings → Pages."
         fi
     fi
 
@@ -1671,9 +1715,9 @@ are loaded from ${GITHUB_REPO}."
 
     echo
     log_success "Remote mode installation completed!"
-    log_info "Repository: https://github.com/${gh_user}/${THEME_NAME}"
+    log_info "Repository: https://github.com/${gh_user}/${repo_name}"
     log_info "Branch: ${branch}"
-    log_info "Site URL: https://${gh_user}.github.io/${THEME_NAME}/"
+    log_info "Site URL: https://${gh_user}.github.io/${repo_name}/"
     echo
     log_info "Next steps:"
     echo "  1. cd ${TARGET_DIR}"
@@ -2073,7 +2117,7 @@ fork_with_gh_cli() {
     if gh repo fork "${GITHUB_REPO}" --clone=false 2>/dev/null; then
         log_info "Repository forked to ${FORK_GITHUB_USER:-$(gh api user --jq '.login')}/${repo_name}"
     else
-        log_warn "Fork may already exist or fork failed, attempting clone..."
+        log_warning "Fork may already exist or fork failed, attempting clone..."
     fi
     
     # Clone the forked repository
@@ -2084,11 +2128,11 @@ fork_with_gh_cli() {
         log_info "Cloning forked repository..."
         if ! gh repo clone "${fork_user}/${THEME_NAME}" "$TARGET_DIR" 2>/dev/null; then
             # Fallback to original repo clone
-            log_warn "Could not clone fork, cloning original repository..."
+            log_warning "Could not clone fork, cloning original repository..."
             gh repo clone "${GITHUB_REPO}" "$TARGET_DIR"
         fi
     else
-        log_warn "Target directory not empty, skipping clone"
+        log_warning "Target directory not empty, skipping clone"
     fi
 }
 
@@ -2106,7 +2150,7 @@ fork_with_clone() {
     fi
     
     if [[ "$(ls -A "$TARGET_DIR" 2>/dev/null)" != "" ]]; then
-        log_warn "Target directory not empty"
+        log_warning "Target directory not empty"
         if [[ "$NON_INTERACTIVE" != "true" ]]; then
             read -r -p "Proceed with clone in existing directory? (y/N): " confirm
             if [[ ! "$confirm" =~ ^[Yy] ]]; then

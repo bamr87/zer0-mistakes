@@ -124,8 +124,7 @@ exclude:
 
 # ── Include ───────────────────────────────────────────────────────────────────
 # Files / dirs that start with _ or . are excluded by default. List exceptions.
-include:
-  - _pages
+include: []
 
 # =============================================================================
 # For development overrides (livereload, no remote theme), see _config_dev.yml.

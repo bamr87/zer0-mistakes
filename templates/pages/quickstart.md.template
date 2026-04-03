@@ -39,11 +39,15 @@ Choose your operating system below.
 # Install Homebrew (if not already installed)
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# Install prerequisites
-brew install git ruby docker
+# Install prerequisites (--cask installs the Docker Desktop GUI with the daemon)
+brew install git ruby
+brew install --cask docker
+
+# Launch Docker Desktop so the daemon starts running
+open -a Docker
 
 # Or run the automated setup script
-curl -fsSL {{RAW_GITHUB_URL}}/scripts/platform/setup-macos.sh | bash
+bash -c "$(curl -fsSL {{RAW_GITHUB_URL}}/scripts/platform/setup-macos.sh)"; setup_macos
 ```
 
 </div>
@@ -59,7 +63,7 @@ sudo apt update && sudo apt install -y git ruby-full docker.io docker-compose
 sudo dnf install -y git ruby docker docker-compose
 
 # Or run the automated setup script
-curl -fsSL {{RAW_GITHUB_URL}}/scripts/platform/setup-linux.sh | bash
+bash -c "$(curl -fsSL {{RAW_GITHUB_URL}}/scripts/platform/setup-linux.sh)"; setup_linux
 ```
 
 </div>
@@ -77,8 +81,8 @@ wsl --install -d Ubuntu
 After WSL is set up, open your Ubuntu terminal and run:
 
 ```bash
-# Inside WSL
-curl -fsSL {{RAW_GITHUB_URL}}/scripts/platform/setup-wsl.sh | bash
+# Inside WSL: load the setup function and run it
+source <(curl -fsSL {{RAW_GITHUB_URL}}/scripts/platform/setup-wsl.sh) && setup_wsl
 ```
 
 Make sure **Docker Desktop** → Settings → Resources → WSL Integration is enabled for your distro.
@@ -170,7 +174,6 @@ Your site will deploy automatically at `https://<username>.github.io/<repo>/`.
 ## Next Steps
 
 - [Configuration Guide](/docs/configuration/) — Customize every setting
-- [Theming Guide](/docs/theming/) — Colors, dark mode, Bootstrap overrides
 - [Documentation](/docs/) — Full feature reference
 - [Troubleshooting](/docs/troubleshooting/) — Common issues
 
