@@ -2,10 +2,15 @@
 # Zer0-Mistakes Jekyll Theme - Gemfile
 # ==============================================================================
 # 
-# Philosophy: ZERO VERSION PINS
-# - Let Bundler resolve the latest compatible versions at build time
-# - Build fails immediately if incompatible → caught in CI, not production
-# - Production always gets exactly what passed TEST (via Gemfile.lock)
+# Compatibility: Ruby >= 2.6.0, GitHub Pages (github-pages gem 228–231)
+#
+# Version constraints applied for broad Ruby compatibility:
+#   - github-pages < 232 (v232 requires nokogiri >= 1.16.2 → Ruby >= 3.0)
+#   - commonmarker ~> 0.23 (1.x requires Ruby >= 3.1)
+#   - html-proofer ~> 4.0 (5.x requires Ruby >= 3.1)
+#   - rubocop < 1.73 (>= 1.73 requires Ruby >= 2.7)
+#
+# Production always gets exactly what passed TEST (via Gemfile.lock)
 # 
 # See: docs/systems/ZERO_PIN_STRATEGY.md for full documentation
 # ==============================================================================
@@ -16,7 +21,7 @@ source "https://rubygems.org"
 gemspec
 
 # ------------------------------------------------------------------------------
-# Core Dependencies - No version constraints → always latest compatible
+# Core Dependencies - Version-capped for Ruby 2.6+ / GitHub Pages compat
 # ------------------------------------------------------------------------------
 
 # GitHub Pages gem (includes jekyll and most plugins)
@@ -27,8 +32,9 @@ gemspec
 #   - jekyll-seo-tag
 #   - jekyll-paginate
 # Note: github-pages uses Jekyll 3.x (not 4.x) - this is by design for GitHub Pages stability
-# We use >= 228 to ensure we get a version compatible with Ruby 3.x
-gem "github-pages", ">= 228", group: :jekyll_plugins
+# Cap < 232: v232 requires nokogiri >= 1.16.2 which needs Ruby >= 3.0
+# Floor >= 228 ensures Ruby 3.x compat; ceiling < 232 preserves Ruby 2.6+ compat
+gem "github-pages", ">= 228", "< 232", group: :jekyll_plugins
 
 # Web server for Ruby 3.0+ (required since WEBrick removed from stdlib)
 gem "webrick"
@@ -37,7 +43,8 @@ gem "webrick"
 gem "ffi"
 
 # CommonMarker for Markdown processing
-gem "commonmarker"
+# Pin to 0.23.x: commonmarker 1.x requires Ruby >= 3.1
+gem "commonmarker", "~> 0.23"
 
 # Mermaid diagram support
 gem "jekyll-mermaid"
@@ -50,7 +57,8 @@ gem "faraday-retry"
 # ------------------------------------------------------------------------------
 group :development, :test do
   # HTML validation and link checking
-  gem "html-proofer"
+  # Pin to 4.x: html-proofer 5.x requires Ruby >= 3.1 (async, zeitwerk)
+  gem "html-proofer", "~> 4.0"
   
   # Testing framework
   gem "rspec"
@@ -59,7 +67,8 @@ group :development, :test do
   gem "rake"
   
   # Code linting (optional but recommended)
-  gem "rubocop"
+  # Pin < 1.73: rubocop >= 1.73 requires Ruby >= 2.7; >= 1.86 requires Ruby >= 3.1
+  gem "rubocop", "< 1.73"
   gem "rubocop-rake"
 end
 
