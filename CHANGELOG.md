@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.22.4] - 2026-04-03
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 9c56fe0 Review article: fix front matter and expand content for wizard-topples post (#47)
+
+
 ## [0.22.3] - 2026-04-02
 
 ### Changed
