@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.22.6] - 2026-04-03
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 0117620 chore(ci): streamline CI workflows with path-based change detection - Bump version to 0.22.5
+
+
 ## [0.22.5] - 2026-04-03
 
 ### Changed
