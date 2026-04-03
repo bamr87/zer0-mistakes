@@ -45,7 +45,7 @@ excerpt: "Professional Jekyll theme for GitHub Pages with Bootstrap 5.3, automat
 
 **GitHub Pages compatible • Bootstrap 5.3 • Privacy-compliant • Zero-configuration**
 
-[Quick Start](#-quick-start) • [Features](#-key-features) • [Documentation](#-documentation) • [Contributing](CONTRIBUTING.md)
+[Quick Start](#-quick-start) • [Features](#-key-features) • [Component Showcase](#-live-component-showcase) • [Documentation](#-documentation) • [Contributing](CONTRIBUTING.md)
 
 ---
 
@@ -55,6 +55,7 @@ excerpt: "Professional Jekyll theme for GitHub Pages with Bootstrap 5.3, automat
 - [Quick Start](#-quick-start)
 - [Architecture](#-architecture)
 - [Key Features](#-key-features)
+- [Live Component Showcase](#-live-component-showcase)
 - [Installation Methods](#-installation-methods)
 - [Project Structure](#-project-structure)
 - [Development Workflow](#-development-workflow)
@@ -382,6 +383,489 @@ Built-in GDPR/CCPA compliant documentation:
 - **Privacy Policy**: Comprehensive data collection transparency
 - **Terms of Service**: Ready-to-customize legal framework
 - **Cookie Consent**: Granular user preference management
+
+---
+
+## 🎨 Live Component Showcase
+
+The zer0-mistakes theme ships with a rich set of Bootstrap 5.3 components ready to use in your pages. Below are live examples rendered directly from this page.
+
+### Alerts
+
+Contextual feedback messages for user actions and system status:
+
+<div class="row g-3 mb-4">
+  <div class="col-md-6">
+    <div class="alert alert-success d-flex align-items-center" role="alert">
+      <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+      <div><strong>Build Passed!</strong> Your Jekyll site compiled successfully with zero errors.</div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="alert alert-info d-flex align-items-center" role="alert">
+      <i class="bi bi-info-circle-fill me-2 fs-5"></i>
+      <div><strong>Tip:</strong> Use <code>docker-compose up</code> for live reload during development.</div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="alert alert-warning d-flex align-items-center" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+      <div><strong>Deprecation Notice:</strong> The <code>journals</code> layout will be renamed to <code>article</code> in v1.0.</div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="alert alert-danger d-flex align-items-center" role="alert">
+      <i class="bi bi-x-circle-fill me-2 fs-5"></i>
+      <div><strong>Error:</strong> Missing <code>_config.yml</code> — run the install script to generate one.</div>
+    </div>
+  </div>
+</div>
+
+### Buttons
+
+A complete button system with contextual colors, outlines, and sizes:
+
+<div class="mb-4">
+  <div class="d-flex flex-wrap gap-2 mb-3">
+    <button type="button" class="btn btn-primary"><i class="bi bi-rocket-takeoff me-1"></i>Primary</button>
+    <button type="button" class="btn btn-secondary"><i class="bi bi-gear me-1"></i>Secondary</button>
+    <button type="button" class="btn btn-success"><i class="bi bi-check-lg me-1"></i>Success</button>
+    <button type="button" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Danger</button>
+    <button type="button" class="btn btn-warning"><i class="bi bi-exclamation-triangle me-1"></i>Warning</button>
+    <button type="button" class="btn btn-info"><i class="bi bi-info-circle me-1"></i>Info</button>
+  </div>
+  <div class="d-flex flex-wrap gap-2 mb-3">
+    <button type="button" class="btn btn-outline-primary">Outline Primary</button>
+    <button type="button" class="btn btn-outline-secondary">Outline Secondary</button>
+    <button type="button" class="btn btn-outline-success">Outline Success</button>
+    <button type="button" class="btn btn-outline-danger">Outline Danger</button>
+  </div>
+  <div class="d-flex flex-wrap gap-2 align-items-center">
+    <button type="button" class="btn btn-primary btn-lg">Large</button>
+    <button type="button" class="btn btn-primary">Default</button>
+    <button type="button" class="btn btn-primary btn-sm">Small</button>
+    <div class="btn-group" role="group" aria-label="Button group">
+      <button type="button" class="btn btn-outline-primary"><i class="bi bi-list"></i></button>
+      <button type="button" class="btn btn-outline-primary"><i class="bi bi-grid-3x3-gap"></i></button>
+      <button type="button" class="btn btn-outline-primary"><i class="bi bi-card-text"></i></button>
+    </div>
+  </div>
+</div>
+
+### Badges
+
+Contextual labels, status indicators, and notification counters:
+
+<div class="mb-4">
+  <div class="d-flex flex-wrap gap-2 mb-3">
+    <span class="badge bg-primary">Jekyll</span>
+    <span class="badge bg-secondary">Bootstrap 5</span>
+    <span class="badge bg-success">Deployed</span>
+    <span class="badge bg-danger">Breaking</span>
+    <span class="badge bg-warning text-dark">Beta</span>
+    <span class="badge bg-info">Docker</span>
+    <span class="badge bg-dark">v0.22.6</span>
+  </div>
+  <div class="d-flex flex-wrap gap-2 mb-3">
+    <span class="badge rounded-pill bg-primary">12 Posts</span>
+    <span class="badge rounded-pill bg-success">5 Releases</span>
+    <span class="badge rounded-pill bg-info">43 Features</span>
+    <span class="badge rounded-pill bg-warning text-dark">3 Open Issues</span>
+  </div>
+  <div class="d-flex flex-wrap gap-2">
+    <button type="button" class="btn btn-primary position-relative">
+      Notifications <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">9+</span>
+    </button>
+    <button type="button" class="btn btn-outline-secondary position-relative">
+      Pull Requests <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">3</span>
+    </button>
+  </div>
+</div>
+
+### Cards
+
+Responsive card layouts for organizing content — the building block of post listings, feature displays, and documentation:
+
+<div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+  <div class="col">
+    <div class="card h-100 border-0 shadow-sm">
+      <div class="card-body text-center p-4">
+        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 56px; height: 56px;">
+          <i class="bi bi-palette fs-4"></i>
+        </div>
+        <h5 class="card-title">15+ Layouts</h5>
+        <p class="card-text text-muted">From landing pages to blog articles, notebooks to statistics dashboards — a layout for every content type.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card h-100 border-0 shadow-sm">
+      <div class="card-body text-center p-4">
+        <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 56px; height: 56px;">
+          <i class="bi bi-puzzle fs-4"></i>
+        </div>
+        <h5 class="card-title">54+ Includes</h5>
+        <p class="card-text text-muted">Modular, reusable components — navbars, sidebars, analytics, search, cookie consent, and more.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card h-100 border-0 shadow-sm">
+      <div class="card-body text-center p-4">
+        <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 56px; height: 56px;">
+          <i class="bi bi-braces fs-4"></i>
+        </div>
+        <h5 class="card-title">19 JS Modules</h5>
+        <p class="card-text text-muted">ES6 navigation, code-copy, search modal, color modes, scroll spy, and gesture support.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-2 g-4 mb-4">
+  <div class="col">
+    <div class="card border-start border-primary border-4">
+      <div class="card-body">
+        <h5 class="card-title"><i class="bi bi-journal-richtext text-primary me-2"></i>Blog Post Card</h5>
+        <p class="card-text">Full-featured post cards with preview images, category badges, reading time, author attribution, and tag display. Supports featured and breaking news indicators.</p>
+        <a href="/pages/" class="btn btn-sm btn-outline-primary">View Posts →</a>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card border-start border-success border-4">
+      <div class="card-body">
+        <h5 class="card-title"><i class="bi bi-book text-success me-2"></i>Documentation Card</h5>
+        <p class="card-text">Clean documentation layout with left sidebar navigation, table of contents, breadcrumbs, and responsive typography for technical content.</p>
+        <a href="/docs/" class="btn btn-sm btn-outline-success">View Docs →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+### Accordion
+
+Collapsible content sections — ideal for FAQs and detailed documentation:
+
+<div class="accordion mb-4" id="showcaseAccordion">
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        <i class="bi bi-boxes me-2 text-primary"></i> Docker-First Development
+      </button>
+    </h2>
+    <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#showcaseAccordion">
+      <div class="accordion-body">
+        The theme includes a complete Docker setup with <code>docker-compose.yml</code> for local development. Run <code>docker-compose up</code> and your site is live at <strong>localhost:4000</strong> with auto-reload. Supports Apple Silicon, Intel, and Linux with zero local Ruby dependencies.
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+        <i class="bi bi-moon-stars me-2 text-primary"></i> Dark/Light Mode Toggle
+      </button>
+    </h2>
+    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#showcaseAccordion">
+      <div class="accordion-body">
+        Three-way theme switching: <strong>light</strong>, <strong>dark</strong>, or <strong>auto</strong> (follows system preference). User selection persists in localStorage. Powered by Bootstrap's native <code>data-bs-theme</code> attribute with smooth CSS transitions.
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+        <i class="bi bi-shield-lock me-2 text-primary"></i> Privacy-First Analytics
+      </button>
+    </h2>
+    <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#showcaseAccordion">
+      <div class="accordion-body">
+        GDPR/CCPA compliant PostHog integration with a granular cookie consent banner. Analytics only load in production after explicit user consent. Three permission levels: essential, analytics, and marketing — each independently toggleable.
+      </div>
+    </div>
+  </div>
+</div>
+
+### Tabs
+
+Tabbed content panels for organizing related information without scrolling:
+
+<ul class="nav nav-tabs mb-0" id="showcaseTabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="remote-tab" data-bs-toggle="tab" data-bs-target="#remote-pane" type="button" role="tab" aria-controls="remote-pane" aria-selected="true">
+      <i class="bi bi-cloud me-1"></i>Remote Theme
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="docker-tab" data-bs-toggle="tab" data-bs-target="#docker-pane" type="button" role="tab" aria-controls="docker-pane" aria-selected="false">
+      <i class="bi bi-box-seam me-1"></i>Docker
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="gem-tab" data-bs-toggle="tab" data-bs-target="#gem-pane" type="button" role="tab" aria-controls="gem-pane" aria-selected="false">
+      <i class="bi bi-gem me-1"></i>Ruby Gem
+    </button>
+  </li>
+</ul>
+<div class="tab-content border border-top-0 rounded-bottom p-3 mb-4">
+  <div class="tab-pane fade show active" id="remote-pane" role="tabpanel" aria-labelledby="remote-tab">
+    <p class="mb-2">Add to your <code>_config.yml</code> for GitHub Pages:</p>
+    <pre class="bg-dark text-light p-3 rounded small"><code>remote_theme: "bamr87/zer0-mistakes"
+plugins:
+  - jekyll-remote-theme</code></pre>
+  </div>
+  <div class="tab-pane fade" id="docker-pane" role="tabpanel" aria-labelledby="docker-tab">
+    <p class="mb-2">Run locally with Docker — no Ruby needed:</p>
+    <pre class="bg-dark text-light p-3 rounded small"><code>git clone https://github.com/bamr87/zer0-mistakes.git
+cd zer0-mistakes
+docker-compose up
+# Open http://localhost:4000</code></pre>
+  </div>
+  <div class="tab-pane fade" id="gem-pane" role="tabpanel" aria-labelledby="gem-tab">
+    <p class="mb-2">Install as a Ruby gem for classic Jekyll projects:</p>
+    <pre class="bg-dark text-light p-3 rounded small"><code># Gemfile
+gem "jekyll-theme-zer0", "~> 0.22"
+
+# _config.yml
+theme: jekyll-theme-zer0</code></pre>
+  </div>
+</div>
+
+### Progress Bars
+
+Visual indicators for build status, completion tracking, and loading states:
+
+<div class="mb-4">
+  <div class="mb-3">
+    <div class="d-flex justify-content-between mb-1">
+      <small class="fw-medium">Lighthouse Performance</small>
+      <small class="text-muted">95%</small>
+    </div>
+    <div class="progress" style="height: 8px;">
+      <div class="progress-bar bg-success" role="progressbar" style="width: 95%" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+  </div>
+  <div class="mb-3">
+    <div class="d-flex justify-content-between mb-1">
+      <small class="fw-medium">Accessibility Score</small>
+      <small class="text-muted">92%</small>
+    </div>
+    <div class="progress" style="height: 8px;">
+      <div class="progress-bar bg-info" role="progressbar" style="width: 92%" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+  </div>
+  <div class="mb-3">
+    <div class="d-flex justify-content-between mb-1">
+      <small class="fw-medium">SEO Score</small>
+      <small class="text-muted">98%</small>
+    </div>
+    <div class="progress" style="height: 8px;">
+      <div class="progress-bar bg-primary" role="progressbar" style="width: 98%" aria-valuenow="98" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+  </div>
+  <div class="mb-3">
+    <div class="d-flex justify-content-between mb-1">
+      <small class="fw-medium">Best Practices</small>
+      <small class="text-muted">100%</small>
+    </div>
+    <div class="progress" style="height: 8px;">
+      <div class="progress-bar" role="progressbar" style="width: 100%; background: linear-gradient(90deg, #0d6efd, #198754);" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+  </div>
+</div>
+
+### Breadcrumbs
+
+Hierarchical navigation trail showing current page position within the site structure:
+
+<nav aria-label="breadcrumb example" class="mb-4">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/" class="text-decoration-none"><i class="bi bi-house me-1"></i>Home</a></li>
+    <li class="breadcrumb-item"><a href="/docs/" class="text-decoration-none">Documentation</a></li>
+    <li class="breadcrumb-item"><a href="/docs/customization/" class="text-decoration-none">Customization</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Theme Colors</li>
+  </ol>
+</nav>
+
+### Responsive Table
+
+Styled tables with Bootstrap for data-rich content — all standard Markdown tables automatically receive Bootstrap styling:
+
+<div class="table-responsive mb-4">
+  <table class="table table-striped table-hover align-middle">
+    <thead class="table-dark">
+      <tr>
+        <th><i class="bi bi-puzzle me-1"></i>Component</th>
+        <th><i class="bi bi-folder me-1"></i>Location</th>
+        <th><i class="bi bi-tag me-1"></i>Type</th>
+        <th class="text-center"><i class="bi bi-check-circle me-1"></i>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Offcanvas Navbar</strong></td>
+        <td><code>_includes/navigation/navbar.html</code></td>
+        <td><span class="badge bg-primary">Navigation</span></td>
+        <td class="text-center"><span class="badge bg-success rounded-pill">Active</span></td>
+      </tr>
+      <tr>
+        <td><strong>Cookie Consent</strong></td>
+        <td><code>_includes/components/cookie-consent.html</code></td>
+        <td><span class="badge bg-info">Privacy</span></td>
+        <td class="text-center"><span class="badge bg-success rounded-pill">Active</span></td>
+      </tr>
+      <tr>
+        <td><strong>Mermaid Diagrams</strong></td>
+        <td><code>_includes/components/mermaid.html</code></td>
+        <td><span class="badge bg-warning text-dark">Content</span></td>
+        <td class="text-center"><span class="badge bg-success rounded-pill">Active</span></td>
+      </tr>
+      <tr>
+        <td><strong>Search Modal</strong></td>
+        <td><code>_includes/components/search-modal.html</code></td>
+        <td><span class="badge bg-secondary">UI</span></td>
+        <td class="text-center"><span class="badge bg-success rounded-pill">Active</span></td>
+      </tr>
+      <tr>
+        <td><strong>PostHog Analytics</strong></td>
+        <td><code>_includes/analytics/posthog.html</code></td>
+        <td><span class="badge bg-danger">Analytics</span></td>
+        <td class="text-center"><span class="badge bg-success rounded-pill">Active</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+### Tooltips & Popovers
+
+Interactive hints and contextual information on hover or click:
+
+<div class="d-flex flex-wrap gap-3 mb-4">
+  <button type="button" class="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Press / or Cmd+K to search">
+    <i class="bi bi-search me-1"></i>Search Shortcut
+  </button>
+  <button type="button" class="btn btn-outline-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Toggle between light, dark, and auto modes">
+    <i class="bi bi-moon-stars me-1"></i>Theme Toggle
+  </button>
+  <button type="button" class="btn btn-outline-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Uses Bootstrap Icons 1.10.3">
+    <i class="bi bi-emoji-smile me-1"></i>2,000+ Icons
+  </button>
+  <button type="button" class="btn btn-outline-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Keyboard [ and ] for section navigation">
+    <i class="bi bi-keyboard me-1"></i>Keyboard Nav
+  </button>
+</div>
+
+### List Group
+
+Organized content lists with icons, badges, and action states:
+
+<div class="row g-4 mb-4">
+  <div class="col-md-6">
+    <div class="list-group">
+      <a href="/pages/" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-journal-richtext text-primary me-2"></i>Blog Posts</span>
+        <span class="badge bg-primary rounded-pill">12</span>
+      </a>
+      <a href="/docs/" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-book text-success me-2"></i>Documentation</span>
+        <span class="badge bg-success rounded-pill">8</span>
+      </a>
+      <a href="/categories/" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-collection text-info me-2"></i>Categories</span>
+        <span class="badge bg-info rounded-pill">6</span>
+      </a>
+      <a href="/tags/" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-tags text-warning me-2"></i>Tags</span>
+        <span class="badge bg-warning text-dark rounded-pill">24</span>
+      </a>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="list-group">
+      <div class="list-group-item list-group-item-success d-flex align-items-center">
+        <i class="bi bi-check-circle-fill me-2"></i> Bootstrap 5.3.3 integrated
+      </div>
+      <div class="list-group-item list-group-item-success d-flex align-items-center">
+        <i class="bi bi-check-circle-fill me-2"></i> Docker development ready
+      </div>
+      <div class="list-group-item list-group-item-success d-flex align-items-center">
+        <i class="bi bi-check-circle-fill me-2"></i> GitHub Pages compatible
+      </div>
+      <div class="list-group-item list-group-item-success d-flex align-items-center">
+        <i class="bi bi-check-circle-fill me-2"></i> Privacy-first analytics
+      </div>
+    </div>
+  </div>
+</div>
+
+### Mermaid Diagram (Live)
+
+Diagrams render automatically with `mermaid: true` in front matter — 10+ chart types supported:
+
+```mermaid
+graph TB
+    subgraph Theme["🎨 Theme Components"]
+        L[Layouts] --> D[default]
+        L --> A[article]
+        L --> N[notebook]
+        L --> LA[landing]
+        I[Includes] --> NAV[Navigation]
+        I --> COMP[Components]
+        I --> ANALYTICS[Analytics]
+    end
+    
+    subgraph Features["⚡ Key Features"]
+        SEARCH[🔍 Site Search]
+        DARK[🌙 Dark Mode]
+        MERMAID[📊 Diagrams]
+        CONSENT[🔒 Cookie Consent]
+    end
+    
+    subgraph Output["🚀 Output"]
+        SITE[Static Site]
+        SITE --> GHP[GitHub Pages]
+        SITE --> DOCK[Docker]
+    end
+    
+    Theme --> Features
+    Features --> Output
+    
+    style Theme fill:#e3f2fd
+    style Features fill:#fff3e0
+    style Output fill:#e8f5e9
+```
+
+### Code Blocks with Copy
+
+All code blocks include a one-click copy button — powered by `assets/js/code-copy.js`:
+
+```yaml
+# _config.yml — Theme Configuration
+title: "My Awesome Site"
+description: "Built with zer0-mistakes Jekyll theme"
+remote_theme: "bamr87/zer0-mistakes"
+
+plugins:
+  - jekyll-remote-theme
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Enable features
+mermaid: true
+posthog:
+  enabled: true
+  api_key: "your_key_here"
+```
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+    new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+});
+</script>
 
 ---
 
