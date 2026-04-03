@@ -842,7 +842,7 @@ All code blocks include a one-click copy button — powered by `assets/js/code-c
 ```yaml
 # _config.yml — Theme Configuration
 title: "My Awesome Site"
-description: "Built with zer0-mistakes Jekyll theme"
+description: "Built with Zer0-Mistakes Jekyll theme"
 remote_theme: "bamr87/zer0-mistakes"
 
 plugins:
@@ -859,11 +859,9 @@ posthog:
 ```
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-  tooltipTriggerList.forEach(function (tooltipTriggerEl) {
-    new bootstrap.Tooltip(tooltipTriggerEl);
-  });
+document.addEventListener('DOMContentLoaded', () => {
+  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+  tooltipTriggerList.forEach((el) => new bootstrap.Tooltip(el));
 });
 </script>
 
