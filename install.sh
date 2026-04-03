@@ -1391,50 +1391,6 @@ EOF
     log_success "Development configuration optimized for Docker"
 }
 
-create_site_gemfile() {
-    log_info "Creating site-appropriate Gemfile..."
-    
-    if [[ "$INSTALL_MODE" == "minimal" ]]; then
-        cat > "$TARGET_DIR/Gemfile" << 'EOF'
-source "https://rubygems.org"
-
-# Jekyll and essential plugins
-gem "jekyll", "~> 4.3"
-gem "jekyll-feed"
-gem "jekyll-sitemap"
-gem "jekyll-seo-tag"
-
-# Platform compatibility
-gem "ffi", "~> 1.17.0"
-gem "webrick", "~> 1.7"
-
-# GitHub Pages compatibility (uncomment for GitHub Pages)
-# gem "github-pages", group: :jekyll_plugins
-EOF
-    else
-        cat > "$TARGET_DIR/Gemfile" << 'EOF'
-source "https://rubygems.org"
-
-# GitHub Pages gem includes Jekyll and compatible plugins
-gem "github-pages", group: :jekyll_plugins
-
-# Essential plugins (already included in github-pages but listed for clarity)
-gem "jekyll-remote-theme"
-gem "jekyll-feed"
-gem "jekyll-sitemap"
-gem "jekyll-seo-tag"
-gem "jekyll-paginate"
-
-# Platform compatibility and performance
-gem "ffi", "~> 1.17.0"
-gem "webrick", "~> 1.7"
-gem "commonmarker", "0.23.10"  # Fixed version to avoid compatibility issues
-EOF
-    fi
-    
-    log_info "Created Gemfile for ${INSTALL_MODE} installation"
-}
-
 update_docker_compose_config() {
     log_info "Updating Docker Compose configuration..."
     
