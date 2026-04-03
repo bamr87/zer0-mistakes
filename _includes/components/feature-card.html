@@ -17,6 +17,7 @@
   - icon_color (string): Icon text-color class, e.g. "text-success" (optional, default: "text-success")
   - show_refs (bool)  : Show file references list (optional, default: false)
   - compact  (bool)   : Compact mode — hides sub-features list (optional, default: false)
+  - features_limit (int) : Max sub-features shown in the list (optional, default: 5)
 
   Usage:
     {% assign f = site.data.features.features | where: "id", "ZER0-001" | first %}
@@ -24,12 +25,13 @@
   ===================================================================
 -->
 {% assign f = include.feature %}
-{% assign border = include.style | default: "" %}
+{% assign border = include.style %}
 {% assign icon = include.icon | default: "bi-check-circle-fill" %}
 {% assign icon_color = include.icon_color | default: "text-success" %}
 {% assign show_refs = include.show_refs | default: false %}
 {% assign compact = include.compact | default: false %}
-<div class="card h-100 {% if border != '' %}border-{{ border }}{% endif %}">
+{% assign features_limit = include.features_limit | default: 5 %}
+<div class="card h-100 {% unless border == blank %}border-{{ border }}{% endunless %}">
   <div class="card-body">
     <h5 class="card-title">
       <i class="bi {{ icon }} {{ icon_color }} me-2"></i>
@@ -42,7 +44,7 @@
       <div class="mt-3">
         <h6 class="text-muted small">Key Features:</h6>
         <ul class="small mb-0">
-          {% for item in f.features limit:5 %}
+          {% for item in f.features limit:features_limit %}
           <li>{{ item }}</li>
           {% endfor %}
         </ul>
@@ -79,7 +81,7 @@
   </div>
   {% if f.docs %}
   <div class="card-footer">
-    <a href="{{ f.docs }}" class="btn btn-sm btn-outline-{{ border | default: 'primary' }}">
+    <a href="{{ f.docs }}" class="btn btn-sm btn-outline-{% unless border == blank %}{{ border }}{% else %}primary{% endunless %}">
       <i class="bi bi-book me-1"></i>Documentation
     </a>
     {% if f.link and f.link != "/" %}
