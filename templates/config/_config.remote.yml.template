@@ -9,6 +9,11 @@
 # Docs:  https://{{FORK_GITHUB_USER}}.github.io/{{REPOSITORY_NAME}}/docs/
 # =============================================================================
 
+# ── Setup Flag ────────────────────────────────────────────────────────────────
+# Set to true once you've personalised the fields below.
+# While false (or absent), the theme shows a setup guide on the 404 page.
+site_configured          : true
+
 # ── Site Identity ─────────────────────────────────────────────────────────────
 title                    : "{{SITE_TITLE}}"
 subtitle                 : "A site built with {{THEME_DISPLAY_NAME}}"
@@ -21,6 +26,19 @@ github_user              : &github_user "{{FORK_GITHUB_USER}}"
 repository_name          : &github_repository "{{REPOSITORY_NAME}}"
 
 # ── URLs & Deployment ─────────────────────────────────────────────────────────
+#
+#   Scenario A — User/Org site  (<user>.github.io repo):
+#     url:     "https://<user>.github.io"
+#     baseurl: ""
+#
+#   Scenario B — Project site   (any other repo name):
+#     url:     "https://<user>.github.io"
+#     baseurl: "/repo-name"
+#
+#   Scenario C — Custom domain:
+#     url:     "https://yourdomain.com"
+#     baseurl: ""
+#
 url                      : "https://{{FORK_GITHUB_USER}}.github.io"
 baseurl                  : "/{{REPOSITORY_NAME}}"
 remote_theme             : "{{GITHUB_REPO}}"

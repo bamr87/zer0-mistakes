@@ -17,15 +17,22 @@ _config.yml:
   founder: "Your Name"
   github_user: "your-username"
   repository_name: "your-repo"
+  local_repo: "your-repo"
   title: "My Jekyll Site"
   subtitle: "Built with {{THEME_NAME}}"
   name: "Your Name"
   email: "your@email.com"
   description: "A Jekyll site built with the {{THEME_DISPLAY_NAME}}"
   
-  # URLs (cleared for GitHub Pages auto-detection)
-  domain: ""
-  url: ""
+  # URLs (configured for username.github.io user site fork)
+  domain: "github"
+  domain_ext: "io"
+  url: "https://{{GITHUB_USER}}.github.io"
+  # Note: baseurl stays empty because the recommended fork approach uses a
+  # GitHub Pages user site (username.github.io), which deploys at the domain root.
+  # For project sites, set baseurl to "/your-repo".
+  # See docs/FORKING.md for the full fork workflow.
+  baseurl: ""
   
   # Social/external links
   twitter_username: ""
@@ -40,6 +47,11 @@ _config.yml:
   google_analytics: ""
   posthog.enabled: false
   posthog.api_key: ""
+  
+  # Comments (MUST be cleared)
+  gisgus.enabled: false
+  gisgus.data-repo-id: ""
+  gisgus.data-category-id: ""
 
 # _data/authors.yml reset
 _data/authors.yml:
