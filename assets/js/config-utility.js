@@ -55,21 +55,22 @@
       var sections = document.querySelectorAll('.cfg-section');
 
       if (!q) {
-        rows.forEach(function (r) { r.style.display = ''; });
-        sections.forEach(function (s) { s.style.display = ''; });
+        rows.forEach(function (r) { r.classList.remove('d-none'); });
+        sections.forEach(function (s) { s.classList.remove('d-none'); });
         return;
       }
 
       rows.forEach(function (r) {
         var key = (r.getAttribute('data-key') || '').toLowerCase();
         var val = (r.getAttribute('data-value') || '').toLowerCase();
-        r.style.display = (key.indexOf(q) !== -1 || val.indexOf(q) !== -1) ? '' : 'none';
+        var match = key.indexOf(q) !== -1 || val.indexOf(q) !== -1;
+        r.classList.toggle('d-none', !match);
       });
 
       /* hide sections that have zero visible rows */
       sections.forEach(function (s) {
-        var visible = s.querySelectorAll('.cfg-row:not([style*="display: none"])');
-        s.style.display = visible.length ? '' : 'none';
+        var visible = s.querySelectorAll('.cfg-row:not(.d-none)');
+        s.classList.toggle('d-none', !visible.length);
       });
     });
 
@@ -161,6 +162,7 @@
 
   function yamlEscape(val) {
     if (val === '' || val === null || val === undefined) return '""';
+    if (val === true || val === false) return String(val);
     var s = String(val).replace(/\r\n|\r|\n/g, ' ').replace(/\s{2,}/g, ' ').trim();
     if (s === '') return '""';
     if (s === 'true' || s === 'false') return s;

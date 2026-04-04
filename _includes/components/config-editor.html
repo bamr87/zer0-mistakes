@@ -46,8 +46,9 @@
             <label for="edit-description" class="form-label">Description <small class="text-muted">(≤ 160 chars)</small></label>
             <textarea class="form-control form-control-sm edit-field" id="edit-description" rows="2"
                       maxlength="160" data-key="description"
-                      data-char-counter="edit-desc-count">{{ site.description | strip_html | escape }}</textarea>
-            <div class="form-text"><span id="edit-desc-count">0</span>/160</div>
+                      data-char-counter="edit-desc-count"
+                      aria-describedby="edit-desc-help">{{ site.description | strip_html | escape }}</textarea>
+            <div class="form-text" id="edit-desc-help"><span id="edit-desc-count">0</span>/160 characters</div>
           </div>
         </div>
       </div>
