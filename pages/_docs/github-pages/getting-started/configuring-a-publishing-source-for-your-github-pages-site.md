@@ -1,6 +1,6 @@
 ---
 title: "Configuring a publishing source for your GitHub Pages site"
-description: "You can configure your GitHub Pages site to publish when changes are pushed to a specific branch, or you can write a GitHub Actions workflow to publish your sit"
+description: "You can configure your GitHub Pages site to publish when changes are pushed to a specific branch, or you can write a GitHub Actions workflow to publish your..."
 layout: default
 categories:
     - docs

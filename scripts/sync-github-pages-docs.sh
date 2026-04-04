@@ -142,7 +142,8 @@ get_source_sha() {
     fi
 
     if [[ -z "$sha" ]]; then
-        # Fallback: use date-based identifier when API is unavailable
+        # When GitHub API is rate-limited or unavailable (e.g., in CI without tokens),
+        # fall back to a date-based identifier for tracking sync state.
         echo "sync-$(date -u +%Y%m%d)" # date-based fallback
     else
         echo "$sha"
@@ -275,6 +276,19 @@ convert_content() {
         s/\{%-?\s*(?:windows|endwindows|mac|endmac|linux|endlinux|cli|endcli|webui|endwebui)\s*-?%\}//g;
         s/\{%-?\s*indented_data_reference\s+[^%]*-?%\}//g;
     ')
+
+    # Post-processing: deduplicate lines that result from version-conditional stripping
+    # e.g., "  uses: actions/x@v4\n  uses: actions/x@v2" → keep only the first (newer) line
+    content=$(echo "$content" | awk '
+        /^\s+uses:/ {
+            key = $0; sub(/@[^ ]*/, "", key);
+            if (seen[key]++) next;
+        }
+        {print}
+    ')
+
+    # Replace reusable content comments used as action values
+    content=$(echo "$content" | sed 's/uses: <!-- See official GitHub docs for full instructions -->/uses: actions\/checkout@v4/')
 
     echo "$content"
 }
@@ -428,8 +442,11 @@ process_file() {
     if [[ -z "$description" ]]; then
         description="GitHub Pages documentation: ${title}"
     fi
-    # Truncate description to 160 chars and clean YAML escaping
-    description="${description:0:160}"
+    # Truncate description to 160 chars at word boundary and clean YAML escaping
+    if [[ ${#description} -gt 160 ]]; then
+        description="${description:0:157}"
+        description="${description% *}..."
+    fi
     # Fix doubled single quotes from YAML escaping
     description="${description//\'\'/\'}"
 

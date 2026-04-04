@@ -78,7 +78,7 @@ While you can't specify custom MIME types on a per-file or per-repository basis,
 
 ## Next steps
 
-You can add more pages to your site by creating more new files. Each file will be available on your site in the same directory structure as your publishing source. For example, if the publishing source for your project site is the `gh-pages` branch, and you create a new file called `/about/contact-us.md` on the `gh-pages` branch, the file will be available at `https://<user>.github.io/<repository>/`http(s)://<hostname>/pages/<username>/<repository>/about/contact-us.html`.
+You can add more pages to your site by creating more new files. Each file will be available on your site in the same directory structure as your publishing source. For example, if the publishing source for your project site is the `gh-pages` branch, and you create a new file called `/about/contact-us.md` on the `gh-pages` branch, the file will be available at `https://<user>.github.io/<repository>/about/contact-us.html`.
 
 You can also add a theme to customize your site’s look and feel. For more information, see [Jekyll Setup: adding-a-theme-to-your-github-pages-site-using-jekyll](/docs/github-pages/jekyll-setup/adding-a-theme-to-your-github-pages-site-using-jekyll/).
 

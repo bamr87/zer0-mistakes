@@ -1,6 +1,6 @@
 ---
 title: "Securing your GitHub Pages site with HTTPS"
-description: "HTTPS adds a layer of encryption that prevents others from snooping on or tampering with traffic to your site. You can enforce HTTPS for your GitHub Pages site "
+description: "HTTPS adds a layer of encryption that prevents others from snooping on or tampering with traffic to your site. You can enforce HTTPS for your GitHub Pages..."
 layout: default
 categories:
     - docs

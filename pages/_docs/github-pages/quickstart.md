@@ -1,6 +1,6 @@
 ---
 title: "Quickstart for GitHub Pages"
-description: "You can use GitHub Pages to showcase some open source projects, host a blog, or even share your résumé. This guide will help get you started on creating your ne"
+description: "You can use GitHub Pages to showcase open source projects, host a blog, or even share your résumé. This guide will help get you started."
 layout: default
 categories:
     - docs

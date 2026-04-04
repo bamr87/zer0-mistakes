@@ -1,6 +1,6 @@
 ---
 title: "Unpublishing a GitHub Pages site"
-description: "You can unpublish your GitHub Pages site so that your current deployment is removed and the site is no longer available. This is different from deleting the sit"
+description: "You can unpublish your GitHub Pages site so that your current deployment is removed and the site is no longer available."
 layout: default
 categories:
     - docs

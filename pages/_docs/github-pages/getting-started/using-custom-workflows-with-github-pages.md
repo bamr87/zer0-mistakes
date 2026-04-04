@@ -46,7 +46,6 @@ To use the action in your current workflow place this snippet under `jobs`.
 ```yaml
 - name: Upload GitHub Pages artifact
   uses: actions/upload-pages-artifact@v4
-  uses: actions/upload-pages-artifact@v2
 ```
 
 ## Deploying GitHub Pages artifacts
@@ -78,7 +77,6 @@ jobs:
       - name: Deploy artifact
         id: deployment
         uses: actions/deploy-pages@v4
-        uses: actions/deploy-pages@v3
 # ...
 ```
 
@@ -95,7 +93,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: <!-- See official GitHub docs for full instructions -->
+        uses: actions/checkout@v4
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
@@ -106,7 +104,6 @@ jobs:
           destination: ./_site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
-        uses: actions/upload-pages-artifact@v2
 
   # Deployment job
   deploy:
@@ -119,7 +116,6 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        uses: actions/deploy-pages@v3
 # ...
 ```
 
@@ -137,19 +133,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: <!-- See official GitHub docs for full instructions -->
+        uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v4
-        uses: actions/upload-pages-artifact@v2
         with:
           # upload entire directory
           path: '.'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        uses: actions/deploy-pages@v3
 
 # ...
 ```
