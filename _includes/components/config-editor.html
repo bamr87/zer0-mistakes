@@ -1,0 +1,206 @@
+<!--
+  ===================================================================
+  CONFIG EDITOR — Form-based configuration builder
+  ===================================================================
+
+  File: config-editor.html
+  Path: _includes/components/config-editor.html
+  Purpose: Form UI to edit key configuration values with a live
+           YAML preview panel, plus download / copy actions.
+
+  Dependencies: Bootstrap 5.3, assets/js/config-utility.js
+  Data source: site.* variables pre-populate fields
+  ===================================================================
+-->
+
+<div id="configEditor">
+  <div class="row">
+
+    <!-- ── Left: Form ────────────────────────────────────────────────── -->
+    <div class="col-lg-6 mb-4 mb-lg-0">
+
+      <!-- Site Identity -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <i class="bi bi-person-badge me-1"></i> Site Identity
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label for="edit-title" class="form-label">Site Title</label>
+            <input type="text" class="form-control form-control-sm edit-field" id="edit-title"
+                   data-key="title" value="{{ site.title | escape }}">
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="edit-founder" class="form-label">Founder / Owner</label>
+              <input type="text" class="form-control form-control-sm edit-field" id="edit-founder"
+                     data-key="founder" value="{{ site.founder | escape }}">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="edit-email" class="form-label">Email</label>
+              <input type="email" class="form-control form-control-sm edit-field" id="edit-email"
+                     data-key="email" value="{{ site.email | escape }}">
+            </div>
+          </div>
+          <div class="mb-0">
+            <label for="edit-description" class="form-label">Description <small class="text-muted">(≤ 160 chars)</small></label>
+            <textarea class="form-control form-control-sm edit-field" id="edit-description" rows="2"
+                      maxlength="160" data-key="description"
+                      data-char-counter="edit-desc-count">{{ site.description | strip_html | escape }}</textarea>
+            <div class="form-text"><span id="edit-desc-count">0</span>/160</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GitHub -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <i class="bi bi-github me-1"></i> GitHub
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="edit-github-user" class="form-label">GitHub Username</label>
+              <input type="text" class="form-control form-control-sm edit-field" id="edit-github-user"
+                     data-key="github_user" value="{{ site.github_user | escape }}">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="edit-repo-name" class="form-label">Repository Name</label>
+              <input type="text" class="form-control form-control-sm edit-field" id="edit-repo-name"
+                     data-key="repository_name" value="{{ site.repository_name | escape }}">
+            </div>
+          </div>
+          <div class="mb-0">
+            <label for="edit-branch" class="form-label">Branch</label>
+            <input type="text" class="form-control form-control-sm edit-field" id="edit-branch"
+                   data-key="branch" value="{{ site.branch | default: 'main' | escape }}">
+          </div>
+        </div>
+      </div>
+
+      <!-- URLs & Deployment -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <i class="bi bi-link-45deg me-1"></i> URLs &amp; Deployment
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label for="edit-url" class="form-label">Site URL</label>
+            <input type="url" class="form-control form-control-sm edit-field" id="edit-url"
+                   data-key="url" value="{{ site.url | escape }}" placeholder="https://yourdomain.com">
+            <div class="form-text">Production URL. For GitHub Pages: <code>https://USERNAME.github.io</code></div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="edit-baseurl" class="form-label">Base URL</label>
+              <input type="text" class="form-control form-control-sm edit-field" id="edit-baseurl"
+                     data-key="baseurl" value="{{ site.baseurl | escape }}">
+              <div class="form-text">Leave empty for apex domains</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="edit-port" class="form-label">Dev Port</label>
+              <input type="number" class="form-control form-control-sm edit-field" id="edit-port"
+                     data-key="port" value="{{ site.port | default: 4000 }}">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="edit-remote-theme" class="form-label">Remote Theme</label>
+            <input type="text" class="form-control form-control-sm edit-field" id="edit-remote-theme"
+                   data-key="remote_theme" value="{{ site.remote_theme | escape }}">
+          </div>
+          <div class="mb-0">
+            <label for="edit-permalink" class="form-label">Permalink Style</label>
+            <select class="form-select form-select-sm edit-field" id="edit-permalink" data-key="permalink">
+              <option value="pretty" {% if site.permalink == "pretty" %}selected{% endif %}>Pretty (/:categories/:year/:month/:day/:title/)</option>
+              <option value="/:categories/:title/" {% if site.permalink == "/:categories/:title/" %}selected{% endif %}>/:categories/:title/</option>
+              <option value="/blog/:year/:month/:day/:title/" {% if site.permalink == "/blog/:year/:month/:day/:title/" %}selected{% endif %}>Date-based</option>
+              <option value="/:title/" {% if site.permalink == "/:title/" %}selected{% endif %}>Title only</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Personalization -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <i class="bi bi-palette me-1"></i> Personalization
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="edit-locale" class="form-label">Locale</label>
+              <input type="text" class="form-control form-control-sm edit-field" id="edit-locale"
+                     data-key="locale" value="{{ site.locale | default: 'en-US' | escape }}">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="edit-theme-skin" class="form-label">Theme Skin</label>
+              <select class="form-select form-select-sm edit-field" id="edit-theme-skin" data-key="theme_skin">
+                {% assign skins = "air,aqua,contrast,dark,dirt,neon,mint,plum,sunrise" | split: "," %}
+                {% for skin in skins %}
+                <option value="{{ skin }}" {% if site.theme_skin == skin %}selected{% endif %}>{{ skin | capitalize }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="mb-0">
+            <label for="edit-logo" class="form-label">Logo Path</label>
+            <input type="text" class="form-control form-control-sm edit-field" id="edit-logo"
+                   data-key="logo" value="{{ site.logo | escape }}" placeholder="/assets/images/logo.png">
+          </div>
+        </div>
+      </div>
+
+      <!-- Analytics -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <i class="bi bi-graph-up me-1"></i> Analytics
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label for="edit-ga" class="form-label">Google Analytics ID</label>
+            <input type="text" class="form-control form-control-sm edit-field" id="edit-ga"
+                   data-key="google_analytics" value="{{ site.google_analytics | escape }}" placeholder="G-XXXXXXXXXX">
+          </div>
+          <div class="form-check form-switch mb-2">
+            <input class="form-check-input edit-field" type="checkbox" id="edit-posthog-enabled"
+                   data-key="posthog.enabled" {% if site.posthog.enabled %}checked{% endif %}>
+            <label class="form-check-label" for="edit-posthog-enabled">Enable PostHog</label>
+          </div>
+          <div class="mb-0">
+            <input type="text" class="form-control form-control-sm edit-field" id="edit-posthog-key"
+                   data-key="posthog.api_key" value="{{ site.posthog.api_key | escape }}" placeholder="phc_your_key">
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /col form -->
+
+    <!-- ── Right: Live YAML Preview ──────────────────────────────────── -->
+    <div class="col-lg-6">
+      <div class="sticky-top" style="top:80px">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-file-earmark-code me-1"></i> Live Preview</span>
+            <div class="btn-group btn-group-sm">
+              <button class="btn btn-outline-secondary" id="editor-copy" title="Copy YAML">
+                <i class="bi bi-clipboard"></i> Copy
+              </button>
+              <button class="btn btn-outline-primary" id="editor-download" title="Download _config.yml">
+                <i class="bi bi-download"></i> Download
+              </button>
+            </div>
+          </div>
+          <div class="card-body p-0">
+            <pre class="bg-dark text-light p-3 mb-0 rounded-bottom" style="max-height:600px;overflow:auto;font-size:.8rem"><code id="editor-yaml-preview">Loading…</code></pre>
+          </div>
+        </div>
+
+        <div class="alert alert-info mt-3 small" role="alert">
+          <i class="bi bi-info-circle me-1"></i>
+          <strong>Tip:</strong> Changes are reflected instantly in the preview. Download the file and replace your project's <code>_config.yml</code>, then restart your dev server.
+        </div>
+      </div>
+    </div><!-- /col preview -->
+
+  </div><!-- /row -->
+</div>

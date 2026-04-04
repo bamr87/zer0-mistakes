@@ -1,0 +1,479 @@
+<!--
+  ===================================================================
+  CONFIG VIEWER — Accordion-based live configuration browser
+  ===================================================================
+
+  File: config-viewer.html
+  Path: _includes/components/config-viewer.html
+  Purpose: Renders the current _config.yml values in organised,
+           browsable accordion sections with copy-per-value buttons,
+           search/filter, and section-copy support.
+
+  Dependencies: Bootstrap 5.3, assets/js/config-utility.js
+  Data source: site.* variables (Liquid at build time)
+  ===================================================================
+-->
+
+<!-- ── Search bar ─────────────────────────────────────────────────── -->
+<div class="input-group mb-3">
+  <span class="input-group-text"><i class="bi bi-search"></i></span>
+  <input type="text" class="form-control" id="cfg-search"
+         placeholder="Search config keys or values…" aria-label="Search configuration">
+  <button class="btn btn-outline-secondary" type="button" id="cfg-search-clear" title="Clear search">
+    <i class="bi bi-x-lg"></i>
+  </button>
+</div>
+
+<!-- ── Toolbar ─────────────────────────────────────────────────────── -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="btn-group btn-group-sm" role="group">
+    <button class="btn btn-outline-secondary" id="cfg-expand-all" title="Expand all sections">
+      <i class="bi bi-arrows-expand"></i> Expand All
+    </button>
+    <button class="btn btn-outline-secondary" id="cfg-collapse-all" title="Collapse all sections">
+      <i class="bi bi-arrows-collapse"></i> Collapse All
+    </button>
+  </div>
+  <button class="btn btn-sm btn-outline-primary" id="cfg-copy-full" title="Copy full config">
+    <i class="bi bi-clipboard"></i> Copy Full Config
+  </button>
+</div>
+
+<!-- ── Accordion ───────────────────────────────────────────────────── -->
+<div class="accordion" id="configAccordion">
+
+  {% comment %} ──────────── Section: Site Identity ──────────── {% endcomment %}
+  <div class="accordion-item cfg-section">
+    <h2 class="accordion-header">
+      <button class="accordion-button" type="button"
+              data-bs-toggle="collapse" data-bs-target="#cfgSiteIdentity"
+              aria-expanded="true">
+        <i class="bi bi-person-badge me-2"></i> Site Identity
+      </button>
+    </h2>
+    <div id="cfgSiteIdentity" class="accordion-collapse collapse show" data-bs-parent="#configAccordion">
+      <div class="accordion-body p-0">
+        <div class="d-flex justify-content-end p-2 border-bottom">
+          <button class="btn btn-sm btn-outline-secondary cfg-copy-section" data-section="cfgSiteIdentity" title="Copy section">
+            <i class="bi bi-clipboard"></i> Copy Section
+          </button>
+        </div>
+        <table class="table table-hover table-sm mb-0 align-middle">
+          <tbody>
+            {% assign identity_keys = "title,founder,email,description,name,level,locale" | split: "," %}
+            {% for k in identity_keys %}
+              {% assign v = site[k] %}
+              {% if v %}
+              <tr class="cfg-row" data-key="{{ k }}" data-value="{{ v }}">
+                <td class="ps-3 text-nowrap fw-semibold" style="width:30%"><code>{{ k }}</code></td>
+                <td class="text-break small">{{ v | escape }}</td>
+                <td style="width:50px" class="text-end pe-3">
+                  <button class="btn btn-sm btn-outline-secondary cfg-copy-val py-0 px-1" data-value="{{ v | escape }}" title="Copy value">
+                    <i class="bi bi-clipboard"></i>
+                  </button>
+                </td>
+              </tr>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  {% comment %} ──────────── Section: GitHub ──────────── {% endcomment %}
+  <div class="accordion-item cfg-section">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button"
+              data-bs-toggle="collapse" data-bs-target="#cfgGitHub">
+        <i class="bi bi-github me-2"></i> GitHub
+      </button>
+    </h2>
+    <div id="cfgGitHub" class="accordion-collapse collapse" data-bs-parent="#configAccordion">
+      <div class="accordion-body p-0">
+        <div class="d-flex justify-content-end p-2 border-bottom">
+          <button class="btn btn-sm btn-outline-secondary cfg-copy-section" data-section="cfgGitHub" title="Copy section">
+            <i class="bi bi-clipboard"></i> Copy Section
+          </button>
+        </div>
+        <table class="table table-hover table-sm mb-0 align-middle">
+          <tbody>
+            {% assign gh_keys = "github_user,repository_name,branch,local_repo,repo_map" | split: "," %}
+            {% for k in gh_keys %}
+              {% assign v = site[k] %}
+              {% if v %}
+              <tr class="cfg-row" data-key="{{ k }}" data-value="{{ v }}">
+                <td class="ps-3 text-nowrap fw-semibold" style="width:30%"><code>{{ k }}</code></td>
+                <td class="text-break small">{{ v | escape }}</td>
+                <td style="width:50px" class="text-end pe-3">
+                  <button class="btn btn-sm btn-outline-secondary cfg-copy-val py-0 px-1" data-value="{{ v | escape }}" title="Copy value">
+                    <i class="bi bi-clipboard"></i>
+                  </button>
+                </td>
+              </tr>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  {% comment %} ──────────── Section: URLs & Deployment ──────────── {% endcomment %}
+  <div class="accordion-item cfg-section">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button"
+              data-bs-toggle="collapse" data-bs-target="#cfgURLs">
+        <i class="bi bi-link-45deg me-2"></i> URLs &amp; Deployment
+      </button>
+    </h2>
+    <div id="cfgURLs" class="accordion-collapse collapse" data-bs-parent="#configAccordion">
+      <div class="accordion-body p-0">
+        <div class="d-flex justify-content-end p-2 border-bottom">
+          <button class="btn btn-sm btn-outline-secondary cfg-copy-section" data-section="cfgURLs" title="Copy section">
+            <i class="bi bi-clipboard"></i> Copy Section
+          </button>
+        </div>
+        <table class="table table-hover table-sm mb-0 align-middle">
+          <tbody>
+            {% assign url_keys = "url,baseurl,remote_theme,port,permalink,public_folder" | split: "," %}
+            {% for k in url_keys %}
+              {% assign v = site[k] %}
+              {% unless v == nil %}
+              <tr class="cfg-row" data-key="{{ k }}" data-value="{{ v }}">
+                <td class="ps-3 text-nowrap fw-semibold" style="width:30%"><code>{{ k }}</code></td>
+                <td class="text-break small">{{ v | escape }}</td>
+                <td style="width:50px" class="text-end pe-3">
+                  <button class="btn btn-sm btn-outline-secondary cfg-copy-val py-0 px-1" data-value="{{ v | escape }}" title="Copy value">
+                    <i class="bi bi-clipboard"></i>
+                  </button>
+                </td>
+              </tr>
+              {% endunless %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  {% comment %} ──────────── Section: Personalization ──────────── {% endcomment %}
+  <div class="accordion-item cfg-section">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button"
+              data-bs-toggle="collapse" data-bs-target="#cfgPersonal">
+        <i class="bi bi-palette me-2"></i> Personalization
+      </button>
+    </h2>
+    <div id="cfgPersonal" class="accordion-collapse collapse" data-bs-parent="#configAccordion">
+      <div class="accordion-body p-0">
+        <div class="d-flex justify-content-end p-2 border-bottom">
+          <button class="btn btn-sm btn-outline-secondary cfg-copy-section" data-section="cfgPersonal" title="Copy section">
+            <i class="bi bi-clipboard"></i> Copy Section
+          </button>
+        </div>
+        <table class="table table-hover table-sm mb-0 align-middle">
+          <tbody>
+            {% assign personal_keys = "locale,logo,teaser,og_image,theme_skin,breadcrumbs,words_per_minute" | split: "," %}
+            {% for k in personal_keys %}
+              {% assign v = site[k] %}
+              {% if v %}
+              <tr class="cfg-row" data-key="{{ k }}" data-value="{{ v }}">
+                <td class="ps-3 text-nowrap fw-semibold" style="width:30%"><code>{{ k }}</code></td>
+                <td class="text-break small">{{ v | escape }}</td>
+                <td style="width:50px" class="text-end pe-3">
+                  <button class="btn btn-sm btn-outline-secondary cfg-copy-val py-0 px-1" data-value="{{ v | escape }}" title="Copy value">
+                    <i class="bi bi-clipboard"></i>
+                  </button>
+                </td>
+              </tr>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  {% comment %} ──────────── Section: Analytics ──────────── {% endcomment %}
+  <div class="accordion-item cfg-section">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button"
+              data-bs-toggle="collapse" data-bs-target="#cfgAnalytics">
+        <i class="bi bi-graph-up me-2"></i> Analytics
+      </button>
+    </h2>
+    <div id="cfgAnalytics" class="accordion-collapse collapse" data-bs-parent="#configAccordion">
+      <div class="accordion-body p-0">
+        <div class="d-flex justify-content-end p-2 border-bottom">
+          <button class="btn btn-sm btn-outline-secondary cfg-copy-section" data-section="cfgAnalytics" title="Copy section">
+            <i class="bi bi-clipboard"></i> Copy Section
+          </button>
+        </div>
+        <table class="table table-hover table-sm mb-0 align-middle">
+          <tbody>
+            <tr class="cfg-row" data-key="google_analytics" data-value="{{ site.google_analytics }}">
+              <td class="ps-3 text-nowrap fw-semibold" style="width:30%"><code>google_analytics</code></td>
+              <td class="text-break small">{{ site.google_analytics | escape }}</td>
+              <td style="width:50px" class="text-end pe-3">
+                <button class="btn btn-sm btn-outline-secondary cfg-copy-val py-0 px-1" data-value="{{ site.google_analytics | escape }}" title="Copy value">
+                  <i class="bi bi-clipboard"></i>
+                </button>
+              </td>
+            </tr>
+            {% if site.posthog %}
+            <tr class="cfg-row" data-key="posthog.enabled" data-value="{{ site.posthog.enabled }}">
+              <td class="ps-3 text-nowrap fw-semibold"><code>posthog.enabled</code></td>
+              <td class="small">
+                {% if site.posthog.enabled %}
+                  <span class="badge bg-success">true</span>
+                {% else %}
+                  <span class="badge bg-secondary">false</span>
+                {% endif %}
+              </td>
+              <td style="width:50px" class="text-end pe-3">
+                <button class="btn btn-sm btn-outline-secondary cfg-copy-val py-0 px-1" data-value="{{ site.posthog.enabled }}" title="Copy value">
+                  <i class="bi bi-clipboard"></i>
+                </button>
+              </td>
+            </tr>
+            <tr class="cfg-row" data-key="posthog.api_host" data-value="{{ site.posthog.api_host }}">
+              <td class="ps-3 text-nowrap fw-semibold"><code>posthog.api_host</code></td>
+              <td class="text-break small">{{ site.posthog.api_host | escape }}</td>
+              <td style="width:50px" class="text-end pe-3">
+                <button class="btn btn-sm btn-outline-secondary cfg-copy-val py-0 px-1" data-value="{{ site.posthog.api_host | escape }}" title="Copy value">
+                  <i class="bi bi-clipboard"></i>
+                </button>
+              </td>
+            </tr>
+            <tr class="cfg-row" data-key="posthog.respect_dnt" data-value="{{ site.posthog.respect_dnt }}">
+              <td class="ps-3 text-nowrap fw-semibold"><code>posthog.respect_dnt</code></td>
+              <td class="small">
+                {% if site.posthog.respect_dnt %}
+                  <span class="badge bg-success">true</span>
+                {% else %}
+                  <span class="badge bg-secondary">false</span>
+                {% endif %}
+              </td>
+              <td style="width:50px" class="text-end pe-3">
+                <button class="btn btn-sm btn-outline-secondary cfg-copy-val py-0 px-1" data-value="{{ site.posthog.respect_dnt }}" title="Copy value">
+                  <i class="bi bi-clipboard"></i>
+                </button>
+              </td>
+            </tr>
+            <tr class="cfg-row" data-key="posthog.session_recording" data-value="{{ site.posthog.session_recording }}">
+              <td class="ps-3 text-nowrap fw-semibold"><code>posthog.session_recording</code></td>
+              <td class="small">
+                {% if site.posthog.session_recording %}
+                  <span class="badge bg-success">true</span>
+                {% else %}
+                  <span class="badge bg-secondary">false</span>
+                {% endif %}
+              </td>
+              <td style="width:50px" class="text-end pe-3">
+                <button class="btn btn-sm btn-outline-secondary cfg-copy-val py-0 px-1" data-value="{{ site.posthog.session_recording }}" title="Copy value">
+                  <i class="bi bi-clipboard"></i>
+                </button>
+              </td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  {% comment %} ──────────── Section: Collections ──────────── {% endcomment %}
+  <div class="accordion-item cfg-section">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button"
+              data-bs-toggle="collapse" data-bs-target="#cfgCollections">
+        <i class="bi bi-collection me-2"></i> Collections
+      </button>
+    </h2>
+    <div id="cfgCollections" class="accordion-collapse collapse" data-bs-parent="#configAccordion">
+      <div class="accordion-body p-0">
+        <table class="table table-hover table-sm mb-0 align-middle">
+          <thead class="table-light">
+            <tr>
+              <th class="ps-3">Collection</th>
+              <th>Output</th>
+              <th>Items</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for collection in site.collections %}
+            <tr class="cfg-row" data-key="collections.{{ collection.label }}" data-value="{{ collection.label }}">
+              <td class="ps-3 fw-semibold"><code>{{ collection.label }}</code></td>
+              <td>
+                {% if collection.output %}
+                  <span class="badge bg-success">yes</span>
+                {% else %}
+                  <span class="badge bg-secondary">no</span>
+                {% endif %}
+              </td>
+              <td><span class="badge bg-primary">{{ collection.docs.size }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  {% comment %} ──────────── Section: Plugins ──────────── {% endcomment %}
+  <div class="accordion-item cfg-section">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button"
+              data-bs-toggle="collapse" data-bs-target="#cfgPlugins">
+        <i class="bi bi-plug me-2"></i> Plugins
+      </button>
+    </h2>
+    <div id="cfgPlugins" class="accordion-collapse collapse" data-bs-parent="#configAccordion">
+      <div class="accordion-body p-0">
+        <div class="d-flex justify-content-end p-2 border-bottom">
+          <button class="btn btn-sm btn-outline-secondary cfg-copy-section" data-section="cfgPlugins" title="Copy section">
+            <i class="bi bi-clipboard"></i> Copy Section
+          </button>
+        </div>
+        <ul class="list-group list-group-flush">
+          {% for plugin in site.plugins %}
+          <li class="list-group-item cfg-row d-flex justify-content-between align-items-center" data-key="plugins" data-value="{{ plugin }}">
+            <code>{{ plugin }}</code>
+            <button class="btn btn-sm btn-outline-secondary cfg-copy-val py-0 px-1" data-value="{{ plugin }}" title="Copy plugin name">
+              <i class="bi bi-clipboard"></i>
+            </button>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  {% comment %} ──────────── Section: Build & Markdown ──────────── {% endcomment %}
+  <div class="accordion-item cfg-section">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button"
+              data-bs-toggle="collapse" data-bs-target="#cfgBuild">
+        <i class="bi bi-hammer me-2"></i> Build &amp; Markdown
+      </button>
+    </h2>
+    <div id="cfgBuild" class="accordion-collapse collapse" data-bs-parent="#configAccordion">
+      <div class="accordion-body p-0">
+        <div class="d-flex justify-content-end p-2 border-bottom">
+          <button class="btn btn-sm btn-outline-secondary cfg-copy-section" data-section="cfgBuild" title="Copy section">
+            <i class="bi bi-clipboard"></i> Copy Section
+          </button>
+        </div>
+        <table class="table table-hover table-sm mb-0 align-middle">
+          <tbody>
+            {% assign build_keys = "markdown,collections_dir,paginate,paginate_path" | split: "," %}
+            {% for k in build_keys %}
+              {% assign v = site[k] %}
+              {% unless v == nil %}
+              <tr class="cfg-row" data-key="{{ k }}" data-value="{{ v }}">
+                <td class="ps-3 text-nowrap fw-semibold" style="width:30%"><code>{{ k }}</code></td>
+                <td class="text-break small">{{ v | escape }}</td>
+                <td style="width:50px" class="text-end pe-3">
+                  <button class="btn btn-sm btn-outline-secondary cfg-copy-val py-0 px-1" data-value="{{ v | escape }}" title="Copy value">
+                    <i class="bi bi-clipboard"></i>
+                  </button>
+                </td>
+              </tr>
+              {% endunless %}
+            {% endfor %}
+            {% if site.kramdown %}
+            <tr class="cfg-row" data-key="kramdown.input" data-value="{{ site.kramdown.input }}">
+              <td class="ps-3 text-nowrap fw-semibold"><code>kramdown.input</code></td>
+              <td class="text-break small">{{ site.kramdown.input | escape }}</td>
+              <td style="width:50px" class="text-end pe-3">
+                <button class="btn btn-sm btn-outline-secondary cfg-copy-val py-0 px-1" data-value="{{ site.kramdown.input | escape }}" title="Copy value">
+                  <i class="bi bi-clipboard"></i>
+                </button>
+              </td>
+            </tr>
+            <tr class="cfg-row" data-key="kramdown.toc_levels" data-value="{{ site.kramdown.toc_levels }}">
+              <td class="ps-3 text-nowrap fw-semibold"><code>kramdown.toc_levels</code></td>
+              <td class="text-break small">{{ site.kramdown.toc_levels | escape }}</td>
+              <td style="width:50px" class="text-end pe-3">
+                <button class="btn btn-sm btn-outline-secondary cfg-copy-val py-0 px-1" data-value="{{ site.kramdown.toc_levels | escape }}" title="Copy value">
+                  <i class="bi bi-clipboard"></i>
+                </button>
+              </td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  {% comment %} ──────────── Section: Theme Colors ──────────── {% endcomment %}
+  {% if site.theme_color %}
+  <div class="accordion-item cfg-section">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button"
+              data-bs-toggle="collapse" data-bs-target="#cfgColors">
+        <i class="bi bi-paint-bucket me-2"></i> Theme Colors
+      </button>
+    </h2>
+    <div id="cfgColors" class="accordion-collapse collapse" data-bs-parent="#configAccordion">
+      <div class="accordion-body p-0">
+        <div class="d-flex justify-content-end p-2 border-bottom">
+          <button class="btn btn-sm btn-outline-secondary cfg-copy-section" data-section="cfgColors" title="Copy section">
+            <i class="bi bi-clipboard"></i> Copy Section
+          </button>
+        </div>
+        <div class="row g-2 p-3">
+          {% for color in site.theme_color %}
+          <div class="col-6 col-md-4 col-lg-3 cfg-row" data-key="theme_color.{{ color[0] }}" data-value="{{ color[1] }}">
+            <div class="d-flex align-items-center p-2 border rounded">
+              <span class="d-inline-block rounded me-2" style="width:24px;height:24px;background:{{ color[1] }};border:1px solid rgba(0,0,0,.15)"></span>
+              <div class="small">
+                <div class="fw-semibold">{{ color[0] }}</div>
+                <code class="text-muted" style="font-size:.75rem">{{ color[1] }}</code>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% comment %} ──────────── Section: Powered By ──────────── {% endcomment %}
+  {% if site.powered_by %}
+  <div class="accordion-item cfg-section">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button"
+              data-bs-toggle="collapse" data-bs-target="#cfgPoweredBy">
+        <i class="bi bi-lightning-charge me-2"></i> Powered By
+      </button>
+    </h2>
+    <div id="cfgPoweredBy" class="accordion-collapse collapse" data-bs-parent="#configAccordion">
+      <div class="accordion-body p-0">
+        <div class="row g-2 p-3">
+          {% for tech in site.powered_by %}
+          <div class="col-6 col-md-4 cfg-row" data-key="powered_by" data-value="{{ tech.name }}">
+            <div class="d-flex align-items-center p-2 border rounded">
+              <i class="{{ site.default_icon | default: 'bi' }} {{ tech.icon | default: 'bi-box' }} me-2 fs-5"></i>
+              <div class="small">
+                <a href="{{ tech.url }}" target="_blank" rel="noopener" class="fw-semibold text-decoration-none">
+                  {{ tech.name }}
+                </a>
+                {% if tech.version %}<span class="text-muted ms-1">v{{ tech.version }}</span>{% endif %}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+</div><!-- /configAccordion -->
+
+<!-- ── Hidden full YAML for copy-all (populated by parent page) ──── -->
+<!-- The parent page must render: <pre id="cfg-full-yaml" class="d-none">…</pre> -->
