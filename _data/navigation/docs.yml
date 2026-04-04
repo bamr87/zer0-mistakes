@@ -76,6 +76,40 @@
       url: /docs/deployment/custom-domain/
 
 # ============================================================
+# GitHub Pages Reference
+# ============================================================
+- title: GitHub Pages Reference
+  icon: bi-github
+  url: /docs/github-pages/
+  children:
+    - title: Overview
+      url: /docs/github-pages/
+    - title: Quickstart
+      url: /docs/github-pages/quickstart/
+    - title: What is GitHub Pages?
+      url: /docs/github-pages/getting-started/what-is-github-pages/
+    - title: Creating a Site
+      url: /docs/github-pages/getting-started/creating-a-github-pages-site/
+    - title: Publishing Source
+      url: /docs/github-pages/getting-started/configuring-a-publishing-source-for-your-github-pages-site/
+    - title: Custom Workflows
+      url: /docs/github-pages/getting-started/using-custom-workflows-with-github-pages/
+    - title: GitHub Pages & Jekyll
+      url: /docs/github-pages/jekyll-setup/about-github-pages-and-jekyll/
+    - title: Creating a Jekyll Site
+      url: /docs/github-pages/jekyll-setup/creating-a-github-pages-site-with-jekyll/
+    - title: Adding a Theme
+      url: /docs/github-pages/jekyll-setup/adding-a-theme-to-your-github-pages-site-using-jekyll/
+    - title: Local Testing
+      url: /docs/github-pages/jekyll-setup/testing-your-github-pages-site-locally-with-jekyll/
+    - title: Troubleshooting Builds
+      url: /docs/github-pages/jekyll-setup/troubleshooting-jekyll-build-errors-for-github-pages-sites/
+    - title: Custom Domains
+      url: /docs/github-pages/custom-domains/about-custom-domains-and-github-pages/
+    - title: Managing Domains
+      url: /docs/github-pages/custom-domains/managing-a-custom-domain-for-your-github-pages-site/
+
+# ============================================================
 # Jekyll Reference
 # ============================================================
 - title: Jekyll

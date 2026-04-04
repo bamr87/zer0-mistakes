@@ -63,6 +63,16 @@ Publish your site:
 - [Netlify](deployment/netlify/) — Advanced hosting features
 - [Custom Domain](deployment/custom-domain/) — Use your own domain
 
+### GitHub Pages Reference
+
+Official GitHub Pages documentation, synced from [github/docs](https://github.com/github/docs):
+
+- [GitHub Pages Overview](github-pages/) — Complete GitHub Pages documentation
+- [Quickstart](github-pages/quickstart/) — Create your first site
+- [Getting Started](github-pages/getting-started/what-is-github-pages/) — What is GitHub Pages?
+- [Jekyll Setup](github-pages/jekyll-setup/about-github-pages-and-jekyll/) — Jekyll with GitHub Pages
+- [Custom Domains](github-pages/custom-domains/about-custom-domains-and-github-pages/) — Domain configuration
+
 ## Technology Guides
 
 Reference documentation for the underlying technologies:
