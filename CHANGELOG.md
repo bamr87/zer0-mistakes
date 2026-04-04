@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.22.8] - 2026-04-04
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- e0b4f13 fix: cross-platform installation compatibility — Gemfile platform sections, fork mode tests, portable sed replacements (#55)
+
+
 ## [0.22.7] - 2026-04-03
 
 ### Changed
