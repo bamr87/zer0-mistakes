@@ -26,9 +26,9 @@ With access control for GitHub Pages, you can restrict access to your project si
 
 <!-- See official GitHub docs for full instructions -->
 
-If your enterprise uses {% data variables.product.prodname_emus %}, GitHub Pages sites can only be published as private, and all GitHub Pages sites are only accessible to other enterprise members. For more information about {% data variables.product.prodname_emus %}, see [Getting Started: github-pages-limits#limits-for-enterprise-managed-users](/docs/github-pages/getting-started/github-pages-limits#limits-for-enterprise-managed-users/).
+If your enterprise uses Enterprise Managed Users, GitHub Pages sites can only be published as private, and all GitHub Pages sites are only accessible to other enterprise members. For more information about Enterprise Managed Users, see [Getting Started: github-pages-limits#limits-for-enterprise-managed-users](/docs/github-pages/getting-started/github-pages-limits#limits-for-enterprise-managed-users/).
 
-If your organization uses GitHub Enterprise Cloud without {% data variables.product.prodname_emus %}, you can choose to publish your project sites privately or publicly to anyone on the internet.
+If your organization uses GitHub Enterprise Cloud without Enterprise Managed Users, you can choose to publish your project sites privately or publicly to anyone on the internet.
 
 Access control is available for project sites that are published from a private or internal repository that are owned by the organization. You cannot manage access control for an organization site. For more information about the types of GitHub Pages sites, see [Getting Started: what-is-github-pages#types-of-github-pages-sites](/docs/github-pages/getting-started/what-is-github-pages#types-of-github-pages-sites/).
 

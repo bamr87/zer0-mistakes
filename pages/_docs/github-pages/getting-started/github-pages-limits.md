@@ -36,19 +36,19 @@ GitHub Pages sites are subject to the following usage limits:
 * GitHub Pages sites have a _soft_ limit of 10 builds per hour. This limit does not apply if you build and publish your site with a custom GitHub Actions workflow.
 * In order to provide consistent quality of service for all GitHub Pages sites, rate limits may apply. These rate limits are not intended to interfere with legitimate uses of GitHub Pages. If your request triggers rate limiting, you will receive an appropriate response with an HTTP status code of `429`, along with an informative HTML body.
 
-If your site exceeds these usage quotas, we may not be able to serve your site, or you may receive a polite email from {% data variables.contact.github_support %} suggesting strategies for reducing your site's impact on our servers, including putting a third-party content distribution network (CDN) in front of your site, making use of other GitHub features such as releases, or moving to a different hosting service that might better fit your needs.
+If your site exceeds these usage quotas, we may not be able to serve your site, or you may receive a polite email from  suggesting strategies for reducing your site's impact on our servers, including putting a third-party content distribution network (CDN) in front of your site, making use of other GitHub features such as releases, or moving to a different hosting service that might better fit your needs.
 
 
 
-## Limits for {% data variables.product.prodname_emus %}
+## Limits for Enterprise Managed Users
 
-If you're a {% data variables.enterprise.prodname_managed_user %}, your use of GitHub Pages is limited.
+If you're a , your use of GitHub Pages is limited.
 
 * GitHub Pages sites can only be published from repositories owned by organizations.
 * GitHub Pages sites are always privately published, and you cannot change this visibility. For more information, see [Getting Started: changing-the-visibility-of-your-github-pages-site](/docs/github-pages/getting-started/changing-the-visibility-of-your-github-pages-site/).
 * You cannot create an organization site (a site published from a repository named `<organization>.github.io`)
 
-For more information about {% data variables.product.prodname_emus %}, see [admin/identity-and-access-management/using-enterprise-managed-users-for-iam/about-enterprise-managed-users](https://docs.github.com/en/admin/identity-and-access-management/using-enterprise-managed-users-for-iam/about-enterprise-managed-users).
+For more information about Enterprise Managed Users, see [admin/identity-and-access-management/using-enterprise-managed-users-for-iam/about-enterprise-managed-users](https://docs.github.com/en/admin/identity-and-access-management/using-enterprise-managed-users-for-iam/about-enterprise-managed-users).
 
 
 ## Educational exercises

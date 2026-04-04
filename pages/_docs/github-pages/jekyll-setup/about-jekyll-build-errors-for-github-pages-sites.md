@@ -1,6 +1,6 @@
 ---
 title: "About Jekyll build errors for GitHub Pages sites"
-description: "If Jekyll encounters an error building your GitHub Pages site locally or on GitHub, you''ll receive an error message with more information."
+description: "If Jekyll encounters an error building your GitHub Pages site locally or on GitHub, you'll receive an error message with more information."
 layout: default
 categories:
     - docs
@@ -30,7 +30,6 @@ If you are publishing from a branch, sometimes GitHub Pages will not attempt to 
 > [!NOTE]
 > It can take up to 10 minutes for changes to your site to publish after you push the changes to GitHub.
 
-{% ifversion build-pages-with-actions %}
 If Jekyll does attempt to build your site and encounters an error, you will receive a build error message.
 If Jekyll does attempt to build your site and encounters an error, you will receive a build error message. There are two main types of Jekyll build error messages.
 * A "Page build warning" message means your build completed successfully, but you may need to make changes to prevent future problems.
@@ -38,13 +37,12 @@ If Jekyll does attempt to build your site and encounters an error, you will rece
 
 For more information about troubleshooting build errors, see [Jekyll Setup: troubleshooting-jekyll-build-errors-for-github-pages-sites](/docs/github-pages/jekyll-setup/troubleshooting-jekyll-build-errors-for-github-pages-sites/).
 
-{% ifversion build-pages-with-actions %}
 
 ## Viewing Jekyll build error messages with GitHub Actions
 
 By default, your GitHub Pages site is built and deployed with a GitHub Actions workflow run unless you've configured your GitHub Pages site to use a different CI tool. To find potential build errors, you can check the workflow run for your GitHub Pages site by reviewing your repository's workflow runs. For more information, see [actions/monitoring-and-troubleshooting-workflows/viewing-workflow-run-history](https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/viewing-workflow-run-history). For more information about how to re-run the workflow in case of an error, see [actions/managing-workflow-runs/re-running-workflows-and-jobs](https://docs.github.com/en/actions/managing-workflow-runs/re-running-workflows-and-jobs).
 
-{% ifversion build-pages-with-actions %}
+
 ## Viewing your repository's build failures on GitHub
 
 You can see build failures (but not build warnings) for your site in the **Settings** tab of your site's repository.

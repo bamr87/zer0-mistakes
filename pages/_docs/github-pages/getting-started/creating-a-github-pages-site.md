@@ -28,7 +28,7 @@ synced_date: "2026-04-04"
 
 <!-- See official GitHub docs for full instructions -->
 <!-- See official GitHub docs for full instructions -->
-{% indented_data_reference reusables.pages.emu-org-only spaces=3 %}
+<!-- See official GitHub docs for full details -->
 <!-- See official GitHub docs for full instructions -->
 <!-- See official GitHub docs for full instructions -->
 <!-- See official GitHub docs for full instructions -->
@@ -52,11 +52,9 @@ synced_date: "2026-04-04"
 
 <!-- See official GitHub docs for full instructions -->
 <!-- See official GitHub docs for full instructions -->
-{%- ifversion ghec %}
 1. Optionally, if you're publishing a project site from a private or internal repository, choose the visibility for your site. Under "GitHub Pages," select the visibility dropdown menu, then select public or private.
    <!-- Image: Screenshot of Pages settings for a repository. The visibility dropdown, currently set to "Private," is outlined in dark orange. -->
-   {% indented_data_reference reusables.pages.privately-publish-ghec-only spaces=3 %}
-{%- endif %}
+   <!-- See official GitHub docs for full details -->
 1. To see your published site, under "GitHub Pages," click **● Visit site**.
 
 <!-- See official GitHub docs for full instructions -->

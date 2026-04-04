@@ -67,7 +67,6 @@ There are two types of GitHub Pages sites. Sites associated with a user or organ
 
 If you publish your site privately, the URL for your site will be different. For more information, see [Getting Started: changing-the-visibility-of-your-github-pages-site](/docs/github-pages/getting-started/changing-the-visibility-of-your-github-pages-site/).
 
-{% ifversion ghes %}
 For more information, see [admin/configuration/configuring-network-settings/enabling-subdomain-isolation](https://docs.github.com/en/admin/configuration/configuring-network-settings/enabling-subdomain-isolation) or contact your site administrator.
 
 

@@ -1,6 +1,6 @@
 ---
 title: "Using submodules with GitHub Pages"
-description: "You can use submodules with GitHub Pages to include other projects in your site''s code."
+description: "You can use submodules with GitHub Pages to include other projects in your site's code."
 layout: default
 categories:
     - docs

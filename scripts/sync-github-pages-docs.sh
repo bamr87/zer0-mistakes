@@ -213,20 +213,34 @@ convert_content() {
         s/\{%\s*data\s+variables\.product\.prodname_pro\s*%\}/GitHub Pro/g;
         s/\{%\s*data\s+variables\.product\.prodname_ghe_cloud\s*%\}/GitHub Enterprise Cloud/g;
         s/\{%\s*data\s+variables\.product\.prodname_learning\s*%\}/GitHub Skills/g;
+        s/\{%\s*data\s+variables\.product\.prodname_team\s*%\}/GitHub Team/g;
+        s/\{%\s*data\s+variables\.product\.prodname_emus\s*%\}/Enterprise Managed Users/g;
+        s/\{%\s*data\s+variables\.product\.prodname_github_community\s*%\}/GitHub Community/g;
+        s/\{%\s*data\s+variables\.product\.[^\}]+\}/GitHub/g;
 
         # Remove reusable content references (these are expanded includes)
         s/\{%\s*data\s+reusables\.[^\}]+\}/<!-- See official GitHub docs for full instructions -->/g;
 
+        # Remove indented data references
+        s/\{%\s*indented_data_reference\s+[^\}]+\}/<!-- See official GitHub docs for full details -->/g;
+
         # Remove version conditionals - keep the fpt/ghec content (most relevant)
-        s/\{%\s*ifversion\s+fpt\s+or\s+ghec\s*%\}\n?//g;
-        s/\{%\s*ifversion\s+fpt\s*%\}\n?//g;
-        s/\{%\s*ifversion\s+ghec\s*%\}\n?//g;
-        s/\{%\s*endif\s*%\}\n?//g;
+        s/\{%-?\s*ifversion\s+fpt\s+or\s+ghec\s*-?%\}\n?//g;
+        s/\{%-?\s*ifversion\s+fpt\s*-?%\}\n?//g;
+        s/\{%-?\s*ifversion\s+ghec\s*-?%\}\n?//g;
+        s/\{%-?\s*endif\s*-?%\}\n?//g;
+        s/\{%-?\s*else\s*-?%\}\n?//g;
+        s/\{%-?\s*elsif\s+[^%]*-?%\}\n?//g;
 
         # Remove ghes-only content blocks (less relevant for GitHub Pages users)
-        # This is a simplified approach - complex blocks may need manual review
-        s/\{%\s*ifversion\s+ghes\s*%\}.*?\{%\s*endif\s*%\}//gs;
-        s/\{%\s*else\s*%\}\n?//g;
+        s/\{%-?\s*ifversion\s+ghes\s*-?%\}.*?\{%-?\s*endif\s*-?%\}//gs;
+
+        # Remove any remaining platform-specific blocks
+        s/\{%\s*windows\s*%\}.*?\{%\s*endwindows\s*%\}//gs;
+        s/\{%\s*mac\s*%\}.*?\{%\s*endmac\s*%\}//gs;
+        s/\{%\s*linux\s*%\}.*?\{%\s*endlinux\s*%\}//gs;
+        s/\{%\s*cli\s*%\}.*?\{%\s*endcli\s*%\}//gs;
+        s/\{%\s*webui\s*%\}.*?\{%\s*endwebui\s*%\}//gs;
 
         # Convert AUTOTITLE links to readable links
         s/\[AUTOTITLE\]\(\/pages\/getting-started-with-github-pages\/([^)]+)\)/[Getting Started: \1](\/docs\/github-pages\/getting-started\/\1\/)/g;
@@ -244,6 +258,22 @@ convert_content() {
 
         # Remove image references to GitHub assets (not available locally)
         s/!\[([^\]]*)\]\(\/assets\/images\/[^)]+\)/<!-- Image: \1 -->/g;
+
+        # Catch-all: remove any remaining data variable references
+        s/\{%\s*data\s+[^\}]+\}//g;
+
+        # Remove any remaining ifversion/endif pairs that were not caught
+        s/\{%-?\s*ifversion\s+[^%]*-?%\}\n?//g;
+    ')
+
+    # Final cleanup: remove any remaining Liquid-like tags that would break Jekyll
+    # Preserve {% raw %} / {% endraw %} blocks
+    content=$(echo "$content" | perl -pe '
+        # Skip raw/endraw tags
+        next if /\{%\s*(?:raw|endraw)\s*%\}/;
+        # Remove any remaining GitHub docs custom tags (not standard Liquid)
+        s/\{%-?\s*(?:windows|endwindows|mac|endmac|linux|endlinux|cli|endcli|webui|endwebui)\s*-?%\}//g;
+        s/\{%-?\s*indented_data_reference\s+[^%]*-?%\}//g;
     ')
 
     echo "$content"
@@ -359,7 +389,7 @@ check_updates() {
     synced_sha=$(get_synced_sha)
 
     log_info "Source commit: ${source_sha:0:12}"
-    log_info "Synced commit: ${synced_sha:0:12:-"(none)"}"
+    log_info "Synced commit: ${synced_sha:-"(none)"}"
 
     if [[ "$source_sha" == "$synced_sha" ]]; then
         log_success "Documentation is up-to-date."
@@ -398,8 +428,10 @@ process_file() {
     if [[ -z "$description" ]]; then
         description="GitHub Pages documentation: ${title}"
     fi
-    # Truncate description to 160 chars
+    # Truncate description to 160 chars and clean YAML escaping
     description="${description:0:160}"
+    # Fix doubled single quotes from YAML escaping
+    description="${description//\'\'/\'}"
 
     # Extract and convert body
     local body

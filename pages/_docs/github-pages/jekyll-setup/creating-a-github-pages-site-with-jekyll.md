@@ -38,7 +38,7 @@ Before you can use Jekyll to create a GitHub Pages site, you must install Jekyll
 
 <!-- See official GitHub docs for full instructions -->
 <!-- See official GitHub docs for full instructions -->
-{% indented_data_reference reusables.pages.emu-org-only spaces=3 %}
+<!-- See official GitHub docs for full details -->
 <!-- See official GitHub docs for full instructions -->
 <!-- See official GitHub docs for full instructions -->
 
@@ -131,7 +131,7 @@ Before you can use Jekyll to create a GitHub Pages site, you must install Jekyll
    git commit -m 'Initial GitHub pages site with Jekyll'
    ```
 
-1. Add your repository on {% data variables.location.product_location %} as a remote, replacing {% ifversion ghes %}HOSTNAME with your enterprise's hostname, USER with the account that owns the repository{% ifversion ghes %}, and REPOSITORY with the name of the repository.
+1. Add your repository on  as a remote, replacing HOSTNAME with your enterprise's hostname, USER with the account that owns the repository, and REPOSITORY with the name of the repository.
 
    ```shell
       git remote add origin https://github.com/USER/REPOSITORY.git

@@ -1,6 +1,6 @@
 ---
 title: "About custom domains and GitHub Pages"
-description: "GitHub Pages supports using custom domains, or changing the root of your site''s URL from the default, like `octocat.github.io`, to any domain you own."
+description: "GitHub Pages supports using custom domains, or changing the root of your site's URL from the default, like `octocat.github.io`, to any domain you own."
 layout: default
 categories:
     - docs

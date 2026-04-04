@@ -47,7 +47,6 @@ synced_date: "2026-04-04"
 
 If you choose the `docs` folder on any branch as your publishing source, then later remove the `/docs` folder from that branch in your repository, your site won't build and you'll get a page build error message for a missing `/docs` folder. For more information, see [Jekyll Setup: troubleshooting-jekyll-build-errors-for-github-pages-sites#missing-docs-folder](/docs/github-pages/jekyll-setup/troubleshooting-jekyll-build-errors-for-github-pages-sites#missing-docs-folder/).
 
-{% ifversion build-pages-with-actions %}
 
 Your GitHub Pages site will always be deployed with a GitHub Actions workflow run, even if you've configured your GitHub Pages site to be built using a different CI tool. Most external CI workflows "deploy" to GitHub Pages by committing the build output to the `gh-pages` branch of the repository, and typically include a `.nojekyll` file. When this happens, the GitHub Actions workflow will detect the state that the branch does not need a build step, and will execute only the steps necessary to deploy the site to GitHub Pages servers.
 

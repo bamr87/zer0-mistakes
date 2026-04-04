@@ -28,11 +28,11 @@ People with admin permissions for a repository can configure a custom domain for
 
 Make sure you add your custom domain to your GitHub Pages site before configuring your custom domain with your DNS provider. Configuring your custom domain with your DNS provider without adding your custom domain to GitHub could result in someone else being able to host a site on one of your subdomains.
 
-{% windows %}
+
 
 The `dig` command, which can be used to verify correct configuration of DNS records, is not included in Windows. To verify that your DNS records are configured correctly, you can use the `Resolve-DnsName` PowerShell command or install [BIND](https://www.isc.org/bind/).
 
-{% endwindows %}
+
 
 > [!NOTE]
 > DNS changes can take up to 24 hours to propagate.
@@ -68,7 +68,7 @@ To set up an apex domain, such as `example.com`, you must configure a custom dom
 > [!NOTE]
 > If your DNS provider automatically sets a default record, remove it before continuing.
 
-{% indented_data_reference reusables.pages.wildcard-dns-warning spaces=3 %}
+<!-- See official GitHub docs for full details -->
 <!-- See official GitHub docs for full instructions -->
 1. To confirm that your DNS record configured correctly, use the `dig` command, replacing _EXAMPLE.COM_ with your apex domain. Confirm that the results match the IP addresses for GitHub Pages above.
    * For `A` records:
@@ -121,7 +121,7 @@ To set up a `www` or custom subdomain, such as `www.example.com` or `blog.exampl
 
 1. Navigate to your DNS provider and create a `CNAME` record that points your subdomain to the default domain for your site. For example, if you want to use the subdomain `www.example.com` for your user site, create a `CNAME` record that points `www.example.com` to `<user>.github.io`. If you want to use the subdomain `another.example.com` for your organization site, create a `CNAME` record that points `another.example.com` to `<organization>.github.io`. The `CNAME` record should always point to `<user>.github.io` or `<organization>.github.io`, excluding the repository name. <!-- See official GitHub docs for full instructions --> <!-- See official GitHub docs for full instructions -->
 
-{% indented_data_reference reusables.pages.wildcard-dns-warning spaces=3 %}
+<!-- See official GitHub docs for full details -->
 <!-- See official GitHub docs for full instructions -->
 1. To confirm that your DNS record configured correctly, use the `dig` command, replacing _WWW.EXAMPLE.COM_ with your subdomain.
 
