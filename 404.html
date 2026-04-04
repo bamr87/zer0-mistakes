@@ -1,8 +1,168 @@
 ---
 permalink: /404.html
 layout: root
+sitemap: false
 ---
 
+{% include components/setup-check.html %}
+
+{% if site_needs_setup %}
+<!-- ================================================================== -->
+<!-- SETUP MODE: Site is not yet configured — guide the user            -->
+<!-- ================================================================== -->
+<div class="container-lg py-5">
+  <div class="text-center mb-5">
+    <i class="bi bi-gear-wide-connected display-1 text-primary"></i>
+    <h1 class="display-4 fw-bold mt-3">Welcome to Zer0-Mistakes</h1>
+    <p class="lead text-body-secondary">
+      Your site is live but needs a little configuration.
+      Follow the steps below to make it yours.
+    </p>
+  </div>
+
+  <!-- Quick-detect: user site vs project site -->
+  <div class="row justify-content-center mb-4">
+    <div class="col-lg-8">
+      <div class="alert alert-info d-flex align-items-start" role="alert">
+        <i class="bi bi-info-circle-fill me-3 fs-4 mt-1"></i>
+        <div>
+          <strong>Detected deployment type:</strong>
+          {% if site_is_user_repo %}
+            <span class="badge bg-success">User / Org Site</span>
+            <code>{{ site.url }}</code>
+            <br><small>Your site resolves at the root — <code>baseurl</code> should be <code>""</code>.</small>
+          {% else %}
+            <span class="badge bg-warning text-dark">Project Site</span>
+            <code>{{ site.url }}{{ site.baseurl }}</code>
+            <br><small>Your site lives under a subpath — <code>baseurl</code> should be <code>"{{ site.baseurl | default: '/your-repo' }}"</code>.</small>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step-by-step setup instructions -->
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+
+      <div class="card mb-4 border-primary">
+        <div class="card-header bg-primary text-white">
+          <i class="bi bi-1-circle me-2"></i>Step 1 — Update <code class="text-white">_config.yml</code>
+        </div>
+        <div class="card-body">
+          <p>Open <code>_config.yml</code> in your repository and update these essential fields:</p>
+<pre class="bg-dark text-light p-3 rounded"><code># ── Site Identity
+title:       "Your Site Name"
+description: "A short description of your site"
+founder:     "Your Name"
+email:       "you@example.com"
+
+# ── GitHub
+github_user:      "{{ 'your-username' }}"
+repository_name:  "{{ 'your-repo' }}"
+
+# ── URLs &amp; Deployment
+{% if site_is_user_repo -%}
+# User/Org site (username.github.io)
+url:      "https://your-username.github.io"
+baseurl:  ""
+{%- else -%}
+# Project site (username.github.io/repo-name)
+url:      "https://your-username.github.io"
+baseurl:  "/your-repo-name"
+{%- endif %}
+
+remote_theme: "bamr87/zer0-mistakes"
+
+# ── Mark as configured (removes this setup page)
+site_configured: true</code></pre>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-header">
+          <i class="bi bi-2-circle me-2"></i>Step 2 — Add a Home Page
+        </div>
+        <div class="card-body">
+          <p>If you don't have one yet, create <code>pages/index.html</code> (or <code>index.md</code>) with:</p>
+<pre class="bg-dark text-light p-3 rounded"><code>---
+layout: home
+title: Home
+---
+
+Welcome to my site!</code></pre>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-header">
+          <i class="bi bi-3-circle me-2"></i>Step 3 — Commit &amp; Push
+        </div>
+        <div class="card-body">
+<pre class="bg-dark text-light p-3 rounded"><code>git add _config.yml pages/index.html
+git commit -m "feat: configure site identity and home page"
+git push origin main</code></pre>
+          <p class="mb-0 mt-2">
+            GitHub Pages will rebuild your site automatically. Within a few
+            minutes, your configured site will be live.
+          </p>
+        </div>
+      </div>
+
+      <div class="card mb-4 border-secondary">
+        <div class="card-header">
+          <i class="bi bi-lightbulb me-2"></i>Optional — Advanced Setup
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <h6><i class="bi bi-palette me-1"></i> Personalization</h6>
+              <p class="small text-body-secondary mb-0">
+                Customise colors, navigation, analytics, and more.
+              </p>
+              <a href="{{ '/quickstart/personalization/' | relative_url }}" class="btn btn-sm btn-outline-primary mt-2">Personalization Guide</a>
+            </div>
+            <div class="col-md-6">
+              <h6><i class="bi bi-collection me-1"></i> Content Collections</h6>
+              <p class="small text-body-secondary mb-0">
+                Set up posts, docs, quests, and more content types.
+              </p>
+              <a href="{{ '/quickstart/' | relative_url }}" class="btn btn-sm btn-outline-primary mt-2">Quick Start Guide</a>
+            </div>
+          </div>
+          {% if jekyll.environment == "development" %}
+          <hr>
+          <p class="mb-0 small">
+            <i class="bi bi-tools me-1"></i>
+            <strong>Dev mode:</strong> You can use the
+            <a href="{{ '/setup/' | relative_url }}">interactive Setup Wizard</a>
+            to generate your config file.
+          </p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Resources -->
+      <div class="text-center mt-4">
+        <a href="https://github.com/bamr87/zer0-mistakes" class="btn btn-dark me-2" target="_blank" rel="noopener">
+          <i class="bi bi-github me-1"></i> Theme Repository
+        </a>
+        <a href="https://github.com/bamr87/zer0-mistakes/blob/main/README.md" class="btn btn-outline-secondary me-2" target="_blank" rel="noopener">
+          <i class="bi bi-book me-1"></i> Documentation
+        </a>
+        <a href="https://github.com/bamr87/zer0-mistakes/issues" class="btn btn-outline-danger" target="_blank" rel="noopener">
+          <i class="bi bi-bug me-1"></i> Report Issue
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% else %}
+<!-- ================================================================== -->
+<!-- NORMAL 404: Site is configured — show standard error page          -->
+<!-- ================================================================== -->
 <div class="container text-center mt-5">
   <h1 class="display-1 text-danger">404</h1>
 
@@ -11,10 +171,9 @@ layout: root
 
   <div class="my-4">
     <p class="h5">Try searching for what you are looking for:</p>
-    <form class="d-flex justify-content-center" action="/search" method="get">
-      <input class="form-control me-2" type="search" name="q" placeholder="Search..." aria-label="Search">
-      <button class="btn btn-danger" type="submit">Search</button>
-    </form>
+    <button class="btn btn-danger" type="button" data-search-toggle aria-label="Open search">
+      <i class="bi bi-search me-1"></i> Search
+    </button>
   </div>
 
   <div class="my-4">
@@ -23,11 +182,10 @@ layout: root
       <a class="nav-link" href="{{ '/' | relative_url }}">Home</a>
       <a class="nav-link" href="{{ '/about/' | relative_url }}">About</a>
       <a class="nav-link" href="{{ '/contact/' | relative_url }}">Contact</a>
-      <a class="nav-link" href="{{ '/news/' | relative_url }}">News</a>
     </div>
   </div>
 
-  <a class="btn btn-danger mt-4" href="/">Return to Homepage</a>
+  <a class="btn btn-danger mt-4" href="{{ '/' | relative_url }}">Return to Homepage</a>
   <div class="mt-3">
     <a id="github-issue-link" class="btn btn-secondary" href="#">
       Submit an Issue on GitHub
@@ -38,8 +196,16 @@ layout: root
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     var githubIssueLink = document.getElementById('github-issue-link');
-    var currentUrl = window.location.href;
-    var githubUrl = `https://github.com/{{site.repository}}/issues/new?title=404%20Error%20on%20${encodeURIComponent(currentUrl)}&body=I%20encountered%20a%20404%20error%20on%20the%20following%20page:%20${encodeURIComponent(currentUrl)}.%20Please%20investigate.`;
-    githubIssueLink.href = githubUrl;
+    var githubUser = '{{ site.github_user }}';
+    var repoName = '{{ site.repository_name }}';
+    if (githubUser && repoName) {
+      var currentUrl = window.location.href;
+      var repoSlug = githubUser + '/' + repoName;
+      var githubUrl = 'https://github.com/' + repoSlug + '/issues/new?title=404%20Error%20on%20' + encodeURIComponent(currentUrl) + '&body=I%20encountered%20a%20404%20error%20on%20the%20following%20page:%20' + encodeURIComponent(currentUrl) + '.%20Please%20investigate.';
+      githubIssueLink.href = githubUrl;
+    } else {
+      githubIssueLink.style.display = 'none';
+    }
   });
 </script>
+{% endif %}
