@@ -14,3 +14,12 @@ gem "jekyll-paginate"
 gem "ffi", "{{FFI_VERSION}}"
 gem "webrick", "{{WEBRICK_VERSION}}"
 gem "commonmarker", "{{COMMONMARKER_VERSION}}"  # Fixed version to avoid compatibility issues
+
+# Platform-specific dependencies
+platforms :windows, :jruby do
+  gem "tzinfo"
+  gem "tzinfo-data"
+end
+
+# Performance booster for watching directories on Windows
+gem "wdm", :platforms => [:windows]
