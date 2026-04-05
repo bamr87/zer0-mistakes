@@ -1,0 +1,42 @@
+<!--
+  ===================================================================
+  SVG-BACKGROUND — Apply fffuel-style SVG background to a zone
+  ===================================================================
+  
+  File: svg-background.html
+  Path: _includes/components/svg-background.html
+  Purpose: Adds a CSS class for the background zone and injects
+           per-skin CSS custom-property overrides from _config.yml.
+  
+  Parameters:
+    zone  — "hero" | "body" | "surface" | "footer" (default: "body")
+  
+  Usage:
+    include components/svg-background.html zone="hero"
+    <div class="zer0-bg-hero"> ... </div>
+  
+  Dependencies:
+    - _sass/theme/_backgrounds.scss  (utility classes)
+    - _data/theme_backgrounds.yml    (asset paths)
+    - _config.yml theme_background   (opacity / blend settings)
+  ===================================================================
+-->
+
+{% assign zone = include.zone | default: "body" %}
+{% assign skin = site.theme_skin | default: "dark" %}
+{% assign bg   = site.theme_background %}
+
+{% comment %}
+  Inject runtime overrides from _config.yml into inline <style> once per page.
+  These override the SCSS defaults so site owners can tune via config alone.
+{% endcomment %}
+{% if bg.enabled != false %}
+<style data-zer0-bg-overrides>
+  [data-theme-skin="{{ skin }}"] {
+    {% if bg.gradient_opacity %}--zer0-bg-gradient-opacity: {{ bg.gradient_opacity }};{% endif %}
+    {% if bg.texture_opacity %}--zer0-bg-texture-opacity: {{ bg.texture_opacity }};{% endif %}
+    {% if bg.pattern_opacity %}--zer0-bg-pattern-opacity: {{ bg.pattern_opacity }};{% endif %}
+    {% if bg.blend_mode %}--zer0-bg-blend: {{ bg.blend_mode }};{% endif %}
+  }
+</style>
+{% endif %}
