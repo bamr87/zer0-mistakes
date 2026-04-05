@@ -64,7 +64,7 @@
             {% for k in identity_keys %}
               {% assign v = site[k] %}
               {% if v %}
-              <tr class="cfg-row" data-key="{{ k }}" data-value="{{ v }}">
+              <tr class="cfg-row" data-key="{{ k }}" data-value="{{ v | escape }}">
                 <td class="ps-3 text-nowrap fw-semibold" style="width:30%"><code>{{ k }}</code></td>
                 <td class="text-break small">{{ v | escape }}</td>
                 <td style="width:50px" class="text-end pe-3">
@@ -102,7 +102,7 @@
             {% for k in gh_keys %}
               {% assign v = site[k] %}
               {% if v %}
-              <tr class="cfg-row" data-key="{{ k }}" data-value="{{ v }}">
+              <tr class="cfg-row" data-key="{{ k }}" data-value="{{ v | escape }}">
                 <td class="ps-3 text-nowrap fw-semibold" style="width:30%"><code>{{ k }}</code></td>
                 <td class="text-break small">{{ v | escape }}</td>
                 <td style="width:50px" class="text-end pe-3">
@@ -140,7 +140,7 @@
             {% for k in url_keys %}
               {% assign v = site[k] %}
               {% unless v == nil %}
-              <tr class="cfg-row" data-key="{{ k }}" data-value="{{ v }}">
+              <tr class="cfg-row" data-key="{{ k }}" data-value="{{ v | escape }}">
                 <td class="ps-3 text-nowrap fw-semibold" style="width:30%"><code>{{ k }}</code></td>
                 <td class="text-break small">{{ v | escape }}</td>
                 <td style="width:50px" class="text-end pe-3">
@@ -178,7 +178,7 @@
             {% for k in personal_keys %}
               {% assign v = site[k] %}
               {% if v %}
-              <tr class="cfg-row" data-key="{{ k }}" data-value="{{ v }}">
+              <tr class="cfg-row" data-key="{{ k }}" data-value="{{ v | escape }}">
                 <td class="ps-3 text-nowrap fw-semibold" style="width:30%"><code>{{ k }}</code></td>
                 <td class="text-break small">{{ v | escape }}</td>
                 <td style="width:50px" class="text-end pe-3">
@@ -371,7 +371,7 @@
             {% for k in build_keys %}
               {% assign v = site[k] %}
               {% unless v == nil %}
-              <tr class="cfg-row" data-key="{{ k }}" data-value="{{ v }}">
+              <tr class="cfg-row" data-key="{{ k }}" data-value="{{ v | escape }}">
                 <td class="ps-3 text-nowrap fw-semibold" style="width:30%"><code>{{ k }}</code></td>
                 <td class="text-break small">{{ v | escape }}</td>
                 <td style="width:50px" class="text-end pe-3">

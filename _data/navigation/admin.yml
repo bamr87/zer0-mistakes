@@ -1,0 +1,53 @@
+# Admin Navigation Configuration
+# Used by: _includes/navigation/admin-nav.html
+# Purpose: Data-driven sidebar navigation for admin/settings pages
+# Schema: title, url, icon, description, badge (optional), external (optional)
+
+# ── Admin Pages ──────────────────────────────────────────────────
+
+- title: Configuration
+  url: /about/config/
+  icon: bi-gear
+  description: View and export site configuration
+
+- title: Statistics
+  url: /about/stats/
+  icon: bi-bar-chart-line
+  description: Content analytics and metrics
+
+- title: Theme Customizer
+  url: /about/settings/theme/
+  icon: bi-palette
+  description: Skin, colors, and typography
+
+- title: Navigation Editor
+  url: /about/settings/navigation/
+  icon: bi-signpost-2
+  description: Menu structure and links
+
+- title: Collection Manager
+  url: /about/settings/collections/
+  icon: bi-collection
+  description: Jekyll collections overview
+
+- title: Analytics Dashboard
+  url: /about/settings/analytics/
+  icon: bi-graph-up
+  description: PostHog and tracking settings
+
+- title: Environment & Build
+  url: /about/settings/environment/
+  icon: bi-hdd-network
+  description: Jekyll, Ruby, and build info
+
+# ── External Links ───────────────────────────────────────────────
+
+- title: Repository
+  url: https://github.com/{github_user}/{repository_name}
+  icon: bi-github
+  external: true
+
+- title: Jekyll Docs
+  url: https://jekyllrb.com/docs/configuration/
+  icon: bi-book
+  external: true

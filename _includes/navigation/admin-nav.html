@@ -1,0 +1,95 @@
+<!--
+  ===================================================================
+  ADMIN NAV — Data-driven sidebar navigation for admin/settings pages
+  ===================================================================
+
+  File: admin-nav.html
+  Path: _includes/navigation/admin-nav.html
+  Purpose: Renders a vertical nav list for administrative pages.
+           Items are read from _data/navigation/admin.yml.
+           Highlights the active page based on page.url or
+           page.admin_section matching.
+
+  Dependencies: Bootstrap 5 nav component, Bootstrap Icons,
+                _data/navigation/admin.yml
+  Used by: _layouts/admin.html
+  ===================================================================
+-->
+
+{% assign current_path = page.url %}
+{% assign admin_items = site.data.navigation.admin %}
+
+<ul class="nav nav-pills flex-column">
+
+  {% assign rendered_separator = false %}
+  {% for item in admin_items %}
+
+    {% if item.external and rendered_separator == false %}
+      {% assign rendered_separator = true %}
+      <hr class="my-2">
+    {% endif %}
+
+    {% comment %} Active detection: exact URL match or admin_section match {% endcomment %}
+    {% assign is_active = false %}
+    {% if current_path == item.url %}
+      {% assign is_active = true %}
+    {% elsif page.admin_section and page.admin_section == item.title %}
+      {% assign is_active = true %}
+    {% endif %}
+
+    {% comment %} Dynamic badges when no static badge is set {% endcomment %}
+    {% assign dynamic_badge = nil %}
+    {% assign badge_class = "bg-secondary" %}
+    {% unless item.badge or item.external %}
+      {% if item.url == "/about/settings/collections/" %}
+        {% assign dynamic_badge = site.collections | size %}
+      {% elsif item.url == "/about/settings/analytics/" %}
+        {% if site.posthog.enabled %}
+          {% assign dynamic_badge = "On" %}
+          {% assign badge_class = "bg-success" %}
+        {% else %}
+          {% assign dynamic_badge = "Off" %}
+          {% assign badge_class = "bg-secondary" %}
+        {% endif %}
+      {% elsif item.url == "/about/settings/environment/" %}
+        {% if jekyll.environment == "production" %}
+          {% assign dynamic_badge = "Prod" %}
+          {% assign badge_class = "bg-success" %}
+        {% else %}
+          {% assign dynamic_badge = "Dev" %}
+          {% assign badge_class = "bg-warning text-dark" %}
+        {% endif %}
+      {% endif %}
+    {% endunless %}
+
+    <li class="nav-item">
+      {% if item.external %}
+        {% comment %} Resolve placeholder tokens for external URLs {% endcomment %}
+        {% assign resolved_url = item.url
+             | replace: '{github_user}', site.github_user
+             | replace: '{repository_name}', site.repository_name %}
+        <a class="nav-link d-flex align-items-center text-body-secondary"
+           href="{{ resolved_url }}"
+           target="_blank" rel="noopener">
+          <i class="{{ item.icon }} me-2"></i>
+          {{ item.title }}
+          <i class="bi bi-box-arrow-up-right ms-auto small"></i>
+        </a>
+      {% else %}
+        <a class="nav-link d-flex align-items-center{% if is_active %} active{% endif %}"
+           href="{{ item.url | relative_url }}"
+           {% if item.description %}title="{{ item.description }}"{% endif %}>
+          <i class="{{ item.icon }} me-2"></i>
+          {{ item.title }}
+          {% if item.badge %}
+            <span class="badge bg-secondary ms-auto">{{ item.badge }}</span>
+          {% elsif dynamic_badge %}
+            <span class="badge {{ badge_class }} ms-auto">{{ dynamic_badge }}</span>
+          {% endif %}
+        </a>
+      {% endif %}
+    </li>
+
+  {% endfor %}
+
+</ul>

@@ -1,0 +1,59 @@
+<!--
+  ===================================================================
+  ADMIN TABS — Reusable tabbed interface for admin pages
+  ===================================================================
+
+  File: admin-tabs.html
+  Path: _includes/components/admin-tabs.html
+  Purpose: Renders a Bootstrap 5 tabbed interface from structured
+           parameters. Each admin page can define its own tabs via
+           the include parameter or front matter.
+
+  Parameters (via include):
+    tabs  - A string of tab definitions, pipe-separated:
+            "id:label:icon:active" per tab
+            e.g., "view:View Config:bi-eye:true|edit:Edit:bi-pencil:false"
+    id    - Unique prefix for this tab group (default: "admin")
+
+  Usage:
+    {% include components/admin-tabs.html
+       id="config"
+       tabs="view:View Config:bi-eye:true|edit:Edit & Export:bi-pencil-square:false|raw:Raw YAML:bi-file-earmark-code:false"
+    %}
+    <div class="tab-content pt-4" id="configTabContent">
+      <div class="tab-pane fade show active" id="pane-view" role="tabpanel">
+        ... content ...
+      </div>
+    </div>
+
+  Dependencies: Bootstrap 5 tab/nav components, Bootstrap Icons
+  Used by: Admin pages (config.md, theme.md, navigation.md, etc.)
+  ===================================================================
+-->
+
+{% assign tab_prefix = include.id | default: "admin" %}
+{% assign tab_list = include.tabs | split: "|" %}
+
+<ul class="nav nav-tabs" id="{{ tab_prefix }}Tabs" role="tablist">
+  {% for tab_def in tab_list %}
+    {% assign parts = tab_def | split: ":" %}
+    {% assign tab_id = parts[0] %}
+    {% assign tab_label = parts[1] %}
+    {% assign tab_icon = parts[2] %}
+    {% assign tab_active = parts[3] %}
+
+    <li class="nav-item" role="presentation">
+      <button class="nav-link{% if tab_active == 'true' %} active{% endif %}"
+              id="tab-{{ tab_id }}"
+              data-bs-toggle="tab"
+              data-bs-target="#pane-{{ tab_id }}"
+              type="button"
+              role="tab"
+              aria-controls="pane-{{ tab_id }}"
+              aria-selected="{{ tab_active | default: 'false' }}">
+        {% if tab_icon %}<i class="{{ tab_icon }} me-1"></i>{% endif %}
+        {{ tab_label }}
+      </button>
+    </li>
+  {% endfor %}
+</ul>

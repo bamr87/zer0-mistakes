@@ -105,11 +105,36 @@
                 {% include components/theme-info.html %}
               </div>
             </div>
+
+            <!-- Admin Quick Links -->
+            <div class="mb-3">
+              <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
+                <i class="bi bi-speedometer2 me-1"></i>Admin Dashboard
+              </h6>
+              <div class="list-group list-group-flush small">
+                <a href="{{ '/about/config/' | relative_url }}" class="list-group-item list-group-item-action d-flex align-items-center px-0">
+                  <i class="bi bi-gear me-2 text-body-secondary"></i>Configuration
+                </a>
+                <a href="{{ '/about/settings/theme/' | relative_url }}" class="list-group-item list-group-item-action d-flex align-items-center px-0">
+                  <i class="bi bi-palette me-2 text-body-secondary"></i>Theme Customizer
+                </a>
+                <a href="{{ '/about/settings/navigation/' | relative_url }}" class="list-group-item list-group-item-action d-flex align-items-center px-0">
+                  <i class="bi bi-signpost-2 me-2 text-body-secondary"></i>Navigation Editor
+                </a>
+              </div>
+            </div>
           </div>
           
           <!-- Environment Tab -->
           <div class="tab-pane fade" id="environment-pane" role="tabpanel" aria-labelledby="environment-tab" tabindex="0">
             {% include components/env-switcher.html %}
+
+            <!-- Admin Link -->
+            <div class="mt-4 pt-3 border-top">
+              <a href="{{ '/about/settings/environment/' | relative_url }}" class="btn btn-outline-secondary btn-sm w-100">
+                <i class="bi bi-box-arrow-up-right me-1"></i>Full Environment &amp; Build Info
+              </a>
+            </div>
           </div>
           
           <!-- Developer Tab -->
@@ -171,7 +196,10 @@
       </div>
       
       <!-- Modal Footer -->
-      <div class="modal-footer">
+      <div class="modal-footer d-flex justify-content-between">
+        <a href="{{ '/about/config/' | relative_url }}" class="btn btn-outline-primary btn-sm">
+          <i class="bi bi-speedometer2 me-1"></i>Open Admin Dashboard
+        </a>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
           <i class="bi bi-x-lg me-1"></i>Close
         </button>

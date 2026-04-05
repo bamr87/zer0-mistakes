@@ -1,10 +1,13 @@
 ---
 title: Configuration Utility
+layout: admin
+icon: bi-gear
 excerpt: View, manage, and update your Jekyll theme configuration from one place.
 lastmod: 2026-04-04T00:00:00.000Z
 config-dir: pages/_about/settings
 config-file: _config.yml
 permalink: /about/config/
+sidebar: false
 ---
 
 <!-- Quick-reference cards -->
