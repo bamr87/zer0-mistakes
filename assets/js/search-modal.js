@@ -2,8 +2,8 @@
  * Search Modal Controller
  * - Opens modal on navigation:searchRequest event ("/" shortcut)
  * - Focuses search input on open
- * - Mutually exclusive with Settings (#info-section) and cookie settings modal so Bootstrap
- *   does not stack multiple .modal-backdrop layers (search vs About/Settings conflict).
+ * - Mutually exclusive with Settings (#info-section offcanvas) and cookie settings modal so Bootstrap
+ *   does not stack multiple backdrop layers (search vs Settings conflict).
  */
 (function() {
     'use strict';
@@ -26,6 +26,27 @@
             return;
         }
         modalEl.addEventListener('hidden.bs.modal', next, { once: true });
+        inst.hide();
+    }
+
+    /**
+     * If offcanvas is visible, hide it and run next() on hidden.bs.offcanvas; else run next() now.
+     */
+    function afterOffcanvasClosed(offcanvasEl, next) {
+        if (!offcanvasEl || typeof bootstrap === 'undefined') {
+            next();
+            return;
+        }
+        if (!offcanvasEl.classList.contains('show')) {
+            next();
+            return;
+        }
+        const inst = bootstrap.Offcanvas.getInstance(offcanvasEl);
+        if (!inst) {
+            next();
+            return;
+        }
+        offcanvasEl.addEventListener('hidden.bs.offcanvas', next, { once: true });
         inst.hide();
     }
 
@@ -52,20 +73,20 @@
             const cookieEl = document.getElementById('cookieSettingsModal');
             const infoEl = document.getElementById('info-section');
             afterModalClosed(cookieEl, () => {
-                afterModalClosed(infoEl, showSearchModal);
+                afterOffcanvasClosed(infoEl, showSearchModal);
             });
         };
 
         const infoSectionEl = document.getElementById('info-section');
         if (infoSectionEl) {
             infoSectionEl.addEventListener(
-                'show.bs.modal',
+                'show.bs.offcanvas',
                 (e) => {
                     if (!modalEl.classList.contains('show')) return;
                     e.preventDefault();
                     e.stopImmediatePropagation();
                     afterModalClosed(modalEl, () => {
-                        bootstrap.Modal.getOrCreateInstance(infoSectionEl).show();
+                        bootstrap.Offcanvas.getOrCreateInstance(infoSectionEl).show();
                     });
                 },
                 true,
