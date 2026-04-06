@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.22.10] - 2026-04-06
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 27550da feat(admin): add admin layout and configuration dashboards (#57)
+
+
 ## [0.22.9] - 2026-04-05
 
 ### Added
