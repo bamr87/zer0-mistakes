@@ -56,29 +56,6 @@
   }
 
   /**
-   * Smooth scroll for anchor links
-   */
-  function initSmoothScroll() {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function(e) {
-        const href = this.getAttribute('href');
-        if (href === '#' || href === '') return;
-        
-        const target = document.querySelector(href);
-        if (target) {
-          e.preventDefault();
-          const offsetTop = target.offsetTop - 80; // Account for fixed navbar
-          
-          window.scrollTo({
-            top: offsetTop,
-            behavior: prefersReducedMotion ? 'auto' : 'smooth'
-          });
-        }
-      });
-    });
-  }
-
-  /**
    * Add loading state to images
    */
   function initImageLoading() {
@@ -165,7 +142,8 @@
     }
 
     initScrollAnimations();
-    initSmoothScroll();
+    // Note: Smooth scrolling for anchor links is handled entirely by CSS
+    // (scroll-behavior: smooth + scroll-padding-top: 80px in custom.scss)
     initImageLoading();
     initButtonRipples();
     initScrollSpy();
