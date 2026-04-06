@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
           }, 2000);
         }).catch(function(err) {
           console.error('Failed to copy:', err);
-          button.innerHTML = '<i class="bi bi-x-circle me-1"></i>Failed';
+          button.innerHTML = '<i class="bi bi-x-circle me-1"></i>Copy failed';
           setTimeout(function () {
             button.innerHTML = '<i class="bi bi-clipboard me-1"></i>' + copyText;
           }, 2000);
