@@ -50,6 +50,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* ── YAML Export ──────────────────────────────────────────── */
   function rebuildYaml() {
+    // If palette-generator.js provides a full YAML builder, use it
+    if (typeof rebuildFullYaml === 'function') {
+      rebuildFullYaml();
+      return;
+    }
     var lines = [];
     // Skin
     var skin = selectedSkin ? selectedSkin.dataset.skin : 'dark';

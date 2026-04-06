@@ -26,7 +26,7 @@
 
     {% if item.external and rendered_separator == false %}
       {% assign rendered_separator = true %}
-      <hr class="my-2">
+      <li role="separator"><hr class="my-2"></li>
     {% endif %}
 
     {% comment %} Active detection: exact URL match or admin_section match {% endcomment %}
