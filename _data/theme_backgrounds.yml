@@ -1,0 +1,121 @@
+# Theme Background Presets
+# Maps each skin to gradient, pattern, and noise texture assets.
+# Generated using fffuel.co tools: ffflux (gradients), rrrepeat (patterns), nnnoise (noise).
+# See: https://www.fffuel.co
+#
+# Zones define where backgrounds are applied:
+#   hero    — header/hero banner area
+#   body    — page body subtle texture overlay
+#   surface — cards, sidebars, panels
+#   footer  — footer area
+
+defaults:
+  texture_opacity: 0.04
+  blend_mode: overlay
+  gradient_opacity: 0.6
+  pattern_opacity: 0.08
+
+zones:
+  hero:
+    layer: gradient
+    fallback_color: var(--bs-body-bg)
+  body:
+    layer: noise
+    fallback_color: var(--bs-body-bg)
+  surface:
+    layer: pattern
+    fallback_color: var(--bs-tertiary-bg)
+  footer:
+    layer: noise
+    fallback_color: var(--bs-body-bg)
+
+skins:
+  air:
+    label: "Air"
+    colors:
+      primary: "#e8f4f8"
+      secondary: "#b8d4e3"
+      accent: "#6fa8dc"
+    gradient: "assets/backgrounds/gradients/air.svg"
+    pattern: "assets/backgrounds/patterns/air.svg"
+    noise: "assets/backgrounds/noise/air.svg"
+
+  aqua:
+    label: "Aqua"
+    colors:
+      primary: "#0077b6"
+      secondary: "#00b4d8"
+      accent: "#90e0ef"
+    gradient: "assets/backgrounds/gradients/aqua.svg"
+    pattern: "assets/backgrounds/patterns/aqua.svg"
+    noise: "assets/backgrounds/noise/aqua.svg"
+
+  contrast:
+    label: "Contrast"
+    colors:
+      primary: "#000000"
+      secondary: "#ffffff"
+      accent: "#ffcc00"
+    gradient: "assets/backgrounds/gradients/contrast.svg"
+    pattern: "assets/backgrounds/patterns/contrast.svg"
+    noise: "assets/backgrounds/noise/contrast.svg"
+
+  dark:
+    label: "Dark"
+    colors:
+      primary: "#1a1a2e"
+      secondary: "#16213e"
+      accent: "#0f3460"
+    gradient: "assets/backgrounds/gradients/dark.svg"
+    pattern: "assets/backgrounds/patterns/dark.svg"
+    noise: "assets/backgrounds/noise/dark.svg"
+
+  dirt:
+    label: "Dirt"
+    colors:
+      primary: "#5c4033"
+      secondary: "#8b6914"
+      accent: "#d4a574"
+    gradient: "assets/backgrounds/gradients/dirt.svg"
+    pattern: "assets/backgrounds/patterns/dirt.svg"
+    noise: "assets/backgrounds/noise/dirt.svg"
+
+  neon:
+    label: "Neon"
+    colors:
+      primary: "#ff006e"
+      secondary: "#8338ec"
+      accent: "#3a86ff"
+    gradient: "assets/backgrounds/gradients/neon.svg"
+    pattern: "assets/backgrounds/patterns/neon.svg"
+    noise: "assets/backgrounds/noise/neon.svg"
+
+  mint:
+    label: "Mint"
+    colors:
+      primary: "#2d6a4f"
+      secondary: "#52b788"
+      accent: "#95d5b2"
+    gradient: "assets/backgrounds/gradients/mint.svg"
+    pattern: "assets/backgrounds/patterns/mint.svg"
+    noise: "assets/backgrounds/noise/mint.svg"
+
+  plum:
+    label: "Plum"
+    colors:
+      primary: "#4a0e4e"
+      secondary: "#812f85"
+      accent: "#c77dff"
+    gradient: "assets/backgrounds/gradients/plum.svg"
+    pattern: "assets/backgrounds/patterns/plum.svg"
+    noise: "assets/backgrounds/noise/plum.svg"
+
+  sunrise:
+    label: "Sunrise"
+    colors:
+      primary: "#ff6b35"
+      secondary: "#f7c59f"
+      accent: "#efefd0"
+    gradient: "assets/backgrounds/gradients/sunrise.svg"
+    pattern: "assets/backgrounds/patterns/sunrise.svg"
+    noise: "assets/backgrounds/noise/sunrise.svg"

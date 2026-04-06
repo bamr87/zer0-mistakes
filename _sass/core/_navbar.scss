@@ -743,7 +743,7 @@
 }
 
 // -----------------------------------------------------------------------------
-// Info Section Modal Tabs
+// Info Section Offcanvas Tabs
 // -----------------------------------------------------------------------------
 
 #info-section {
@@ -775,7 +775,7 @@
     padding-top: 1rem;
   }
 
-  // Theme switcher (halfmoon): avoid stretched static menu inside scrollable modal; Popper uses strategy fixed from markup
+  // Theme switcher (halfmoon): keep dropdown positioned within offcanvas panel
   .bd-theme-dropdown {
     position: relative;
   }

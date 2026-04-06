@@ -1,0 +1,166 @@
+---
+layout: root
+---
+<!--
+  ===================================================================
+  ADMIN LAYOUT - Administrative and configuration page layout
+  ===================================================================
+  
+  File: admin.html
+  Path: _layouts/admin.html
+  Inherits: root.html
+  Purpose: Dedicated layout for administrative, settings, and
+           configuration utility pages. Provides a dashboard-style
+           presentation without article-oriented metadata.
+  
+  Template Logic:
+  - Full-width container with optional collapsible admin sidebar
+  - Admin header with page icon, title, and breadcrumb navigation
+  - No author byline, reading time, or share buttons
+  - Responsive: sidebar collapses to offcanvas on mobile
+  - Supports front matter: icon, admin_nav (true/false)
+  
+  Front Matter Variables:
+  - icon: Bootstrap Icon class for header (e.g., "bi-gear")
+  - admin_nav: Show admin sidebar navigation (default: true)
+  - admin_section: Active section name for sidebar highlighting
+  - admin_actions: Array of {label, url, icon, style} for header buttons
+  
+  Layout Structure:
+  1. Admin header with breadcrumbs, icon, title, description, actions
+  2. Optional admin sidebar with navigation links (data-driven)
+  3. Full-width main content area
+  
+  Dependencies:
+  - Bootstrap 5 grid, offcanvas, nav components
+  - Bootstrap Icons
+  ===================================================================
+-->
+
+{% comment %} ════════════════════════════════════════════════════════ {% endcomment %}
+{% comment %} ADMIN NAV DATA                                          {% endcomment %}
+{% comment %} Collect pages in the about collection that have         {% endcomment %}
+{% comment %} admin_nav_order set, or fall back to a sensible list.   {% endcomment %}
+{% comment %} ════════════════════════════════════════════════════════ {% endcomment %}
+
+{% assign show_sidebar = page.admin_nav | default: true %}
+
+<!-- ================================================ -->
+<!-- ADMIN PAGE HEADER                                -->
+<!-- Breadcrumbs + title bar (no author/read-time)    -->
+<!-- ================================================ -->
+<div class="bg-body-tertiary border-bottom">
+  <div class="container-xxl py-3">
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-2 small">
+        <li class="breadcrumb-item"><a href="{{ '/' | relative_url }}"><i class="bi bi-house-door"></i> Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ '/about/' | relative_url }}">About</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ page.title }}</li>
+      </ol>
+    </nav>
+
+    <!-- Title row -->
+    <div class="d-flex align-items-center">
+      {% if page.icon %}
+        <i class="{{ page.icon }} fs-2 me-3 text-primary"></i>
+      {% else %}
+        <i class="bi bi-gear fs-2 me-3 text-primary"></i>
+      {% endif %}
+      <div class="me-auto">
+        <h1 class="h3 mb-0">{{ page.title }}</h1>
+        {% if page.excerpt and page.excerpt != empty %}
+          <p class="text-body-secondary mb-0 small">{{ page.excerpt | strip_html }}</p>
+        {% endif %}
+        {% if page.lastmod %}
+          <small class="text-body-tertiary"><i class="bi bi-clock me-1"></i>Updated {{ page.lastmod | date: "%b %d, %Y" }}</small>
+        {% endif %}
+      </div>
+
+      <!-- Page-level action buttons (from front matter admin_actions) -->
+      {% if page.admin_actions %}
+      <div class="d-none d-md-flex gap-2 ms-3">
+        {% for action in page.admin_actions %}
+          <a href="{{ action.url | relative_url }}"
+             class="btn btn-sm {{ action.style | default: 'btn-outline-secondary' }}">
+            {% if action.icon %}<i class="{{ action.icon }} me-1"></i>{% endif %}
+            {{ action.label }}
+          </a>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Mobile sidebar toggle -->
+      {% if show_sidebar %}
+      <button class="btn btn-outline-secondary ms-3 d-lg-none"
+              type="button"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#adminSidebar"
+              aria-controls="adminSidebar"
+              aria-label="Toggle admin navigation">
+        <i class="bi bi-list"></i>
+      </button>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- ================================================ -->
+<!-- MAIN LAYOUT: SIDEBAR + CONTENT                   -->
+<!-- ================================================ -->
+<div class="container-xxl py-4">
+  <div class="row">
+
+    {% if show_sidebar %}
+    <!-- ════════════════════════════════ -->
+    <!-- ADMIN SIDEBAR                   -->
+    <!-- Desktop: sticky column           -->
+    <!-- Mobile: offcanvas                -->
+    <!-- ════════════════════════════════ -->
+
+    <!-- Desktop sidebar (lg+) -->
+    <div class="col-lg-3 d-none d-lg-block">
+      <div class="position-sticky" style="top: 5rem;">
+        <nav class="admin-sidebar" aria-label="Admin navigation">
+          <h6 class="text-uppercase text-body-secondary fw-semibold small mb-3">
+            <i class="bi bi-sliders me-1"></i> Administration
+          </h6>
+          {% include navigation/admin-nav.html %}
+        </nav>
+      </div>
+    </div>
+
+    <!-- Mobile offcanvas sidebar -->
+    <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1"
+         id="adminSidebar" aria-labelledby="adminSidebarLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="adminSidebarLabel">
+          <i class="bi bi-sliders me-1"></i> Administration
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        {% include navigation/admin-nav.html %}
+      </div>
+    </div>
+
+    <!-- Main content area (with sidebar) -->
+    <div class="col-lg-9">
+      <div id="admin-content">
+        {{ content }}
+      </div>
+    </div>
+
+    {% else %}
+
+    <!-- Full-width content (no sidebar) -->
+    <div class="col-12">
+      <div id="admin-content">
+        {{ content }}
+      </div>
+    </div>
+
+    {% endif %}
+
+  </div>
+</div>

@@ -1,0 +1,99 @@
+<!--
+  ===================================================================
+  NAV EDITOR — Read-only navigation tree view
+  ===================================================================
+
+  File: nav-editor.html
+  Path: _includes/components/nav-editor.html
+  Purpose: Renders all navigation data files as expandable card trees.
+           Each nav file becomes a card; items with children are nested.
+
+  Dependencies: Bootstrap 5 card/list-group, Bootstrap Icons,
+                _data/navigation/*.yml
+  Used by: pages/_about/settings/navigation.md
+  ===================================================================
+-->
+
+{% assign nav_files = "main,home,about,docs,posts,quickstart,admin" | split: "," %}
+
+<div class="row g-3 mb-3">
+  <div class="col-lg-4">
+    <div class="card text-center border-primary">
+      <div class="card-body py-3">
+        <i class="bi bi-signpost-2 fs-3 text-primary"></i>
+        <div class="fw-semibold mt-1">{{ nav_files | size }}</div>
+        <small class="text-body-secondary">Navigation Files</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card text-center border-primary">
+      <div class="card-body py-3">
+        <i class="bi bi-list-nested fs-3 text-primary"></i>
+        {% assign total_items = 0 %}
+        {% for nf in nav_files %}
+          {% assign items = site.data.navigation[nf] %}
+          {% if items %}{% assign total_items = total_items | plus: items.size %}{% endif %}
+        {% endfor %}
+        <div class="fw-semibold mt-1">{{ total_items }}</div>
+        <small class="text-body-secondary">Top-Level Items</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card text-center border-primary">
+      <div class="card-body py-3">
+        <i class="bi bi-folder2-open fs-3 text-primary"></i>
+        <div class="fw-semibold mt-1">_data/navigation/</div>
+        <small class="text-body-secondary">Source Directory</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="accordion" id="navAccordion">
+  {% for nf in nav_files %}
+    {% assign items = site.data.navigation[nf] %}
+    {% assign nf_id = nf | replace: '.', '-' %}
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button {% unless forloop.first %}collapsed{% endunless %}" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navAcc-{{ nf_id }}">
+          <i class="bi bi-file-earmark-text me-2"></i>
+          <strong>{{ nf }}.yml</strong>
+          {% if items %}
+            <span class="badge bg-secondary ms-2">{{ items | size }} items</span>
+          {% else %}
+            <span class="badge bg-warning ms-2">not found</span>
+          {% endif %}
+        </button>
+      </h2>
+      <div id="navAcc-{{ nf_id }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
+           data-bs-parent="#navAccordion">
+        <div class="accordion-body p-0">
+          {% if items %}
+            <ul class="list-group list-group-flush">
+              {% for item in items %}
+                <li class="list-group-item">
+                  <div class="d-flex align-items-center">
+                    {% if item.icon %}<i class="{{ item.icon }} me-2 text-primary"></i>{% endif %}
+                    <div>
+                      <strong>{{ item.title }}</strong>
+                      {% if item.url %}<code class="ms-2 small">{{ item.url }}</code>{% endif %}
+                    </div>
+                    {% if item.external %}<span class="badge bg-info ms-auto">external</span>{% endif %}
+                  </div>
+                  {% if item.children %}
+                    <small class="text-body-secondary ms-4">{{ item.children | size }} sub-items</small>
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <div class="p-3 text-body-secondary small">No data file found for <code>{{ nf }}.yml</code></div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>

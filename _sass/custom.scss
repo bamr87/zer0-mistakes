@@ -476,7 +476,8 @@ img {
 // ==============================================================================
 
 // Hero Section Enhancements
-.bg-primary {
+// NOTE: Exclude .zer0-bg-hero so skin-specific gradients from _backgrounds.scss take precedence
+.bg-primary:not(.zer0-bg-hero) {
   position: relative;
   overflow: hidden;
   

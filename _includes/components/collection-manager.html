@@ -1,0 +1,151 @@
+<!--
+  ===================================================================
+  COLLECTION MANAGER — Jekyll collections overview
+  ===================================================================
+
+  File: collection-manager.html
+  Path: _includes/components/collection-manager.html
+  Purpose: Displays all Jekyll collections with item counts,
+           output status, permalink patterns, and default configs.
+
+  Dependencies: Bootstrap 5 table/card/badge, site.collections
+  Used by: pages/_about/settings/collections.md
+  ===================================================================
+-->
+
+<!-- Summary cards -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3">
+    <div class="card text-center h-100 border-primary">
+      <div class="card-body py-3">
+        <i class="bi bi-collection fs-3 text-primary"></i>
+        <div class="fw-semibold mt-1">{{ site.collections | size }}</div>
+        <small class="text-body-secondary">Total Collections</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card text-center h-100 border-primary">
+      <div class="card-body py-3">
+        <i class="bi bi-file-earmark-richtext fs-3 text-primary"></i>
+        {% assign total_docs = 0 %}
+        {% for c in site.collections %}
+          {% assign total_docs = total_docs | plus: c.docs.size %}
+        {% endfor %}
+        <div class="fw-semibold mt-1">{{ total_docs }}</div>
+        <small class="text-body-secondary">Total Documents</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card text-center h-100 border-primary">
+      <div class="card-body py-3">
+        <i class="bi bi-check-circle fs-3 text-primary"></i>
+        {% assign output_count = 0 %}
+        {% for c in site.collections %}
+          {% if c.output %}{% assign output_count = output_count | plus: 1 %}{% endif %}
+        {% endfor %}
+        <div class="fw-semibold mt-1">{{ output_count }}</div>
+        <small class="text-body-secondary">With Output</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card text-center h-100 border-primary">
+      <div class="card-body py-3">
+        <i class="bi bi-folder2 fs-3 text-primary"></i>
+        <div class="fw-semibold mt-1">pages/</div>
+        <small class="text-body-secondary">Collections Dir</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Collections table -->
+<div class="table-responsive">
+  <table class="table table-hover align-middle">
+    <thead class="table-dark">
+      <tr>
+        <th>Collection</th>
+        <th class="text-center">Documents</th>
+        <th class="text-center">Output</th>
+        <th>Directory</th>
+        <th>Permalink</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for collection in site.collections %}
+        <tr>
+          <td>
+            <i class="bi bi-folder-fill text-primary me-1"></i>
+            <strong>{{ collection.label }}</strong>
+          </td>
+          <td class="text-center">
+            <span class="badge bg-secondary">{{ collection.docs | size }}</span>
+          </td>
+          <td class="text-center">
+            {% if collection.output %}
+              <i class="bi bi-check-circle-fill text-success"></i>
+            {% else %}
+              <i class="bi bi-x-circle text-body-secondary"></i>
+            {% endif %}
+          </td>
+          <td><code class="small">{{ collection.relative_directory }}</code></td>
+          <td>
+            {% if collection.permalink %}
+              <code class="small">{{ collection.permalink }}</code>
+            {% else %}
+              <span class="text-body-tertiary small">default</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Collection defaults from _config.yml -->
+<h5 class="mt-4 mb-3"><i class="bi bi-sliders me-1"></i> Collection Defaults</h5>
+<div class="accordion" id="collDefaultsAccordion">
+  {% for collection in site.collections %}
+    {% assign coll_id = collection.label | slugify %}
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button"
+                data-bs-toggle="collapse" data-bs-target="#collDef-{{ coll_id }}">
+          <i class="bi bi-folder me-2"></i>
+          {{ collection.label }}
+          <span class="badge bg-secondary ms-2">{{ collection.docs | size }} docs</span>
+        </button>
+      </h2>
+      <div id="collDef-{{ coll_id }}" class="accordion-collapse collapse" data-bs-parent="#collDefaultsAccordion">
+        <div class="accordion-body">
+          <dl class="row mb-0 small">
+            <dt class="col-sm-4">Output</dt>
+            <dd class="col-sm-8">{{ collection.output | default: false }}</dd>
+            <dt class="col-sm-4">Directory</dt>
+            <dd class="col-sm-8"><code>{{ collection.relative_directory }}</code></dd>
+            {% if collection.permalink %}
+              <dt class="col-sm-4">Permalink</dt>
+              <dd class="col-sm-8"><code>{{ collection.permalink }}</code></dd>
+            {% endif %}
+          </dl>
+          {% if collection.docs.size > 0 %}
+            <hr>
+            <p class="text-body-secondary small mb-1">Recent documents:</p>
+            <ul class="list-unstyled mb-0 small">
+              {% for doc in collection.docs limit: 5 %}
+                <li>
+                  <a href="{{ doc.url | relative_url }}">{{ doc.title | default: doc.slug }}</a>
+                </li>
+              {% endfor %}
+              {% if collection.docs.size > 5 %}
+                <li class="text-body-tertiary">… and {{ collection.docs.size | minus: 5 }} more</li>
+              {% endif %}
+            </ul>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>

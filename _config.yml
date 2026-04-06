@@ -506,6 +506,14 @@ sass:
 # remote_theme           : "bamr87/zer0-mistakes"
 theme_skin               : "dark" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
 
+# SVG background layers (fffuel.co style) — gradient, pattern, noise per skin
+theme_background:
+  enabled: true           # Master toggle for SVG backgrounds
+  gradient_opacity: 0.6   # Hero/header gradient layer opacity
+  texture_opacity: 0.04   # Body noise texture overlay opacity
+  pattern_opacity: 0.08   # Surface/card pattern overlay opacity
+  blend_mode: overlay     # CSS mix-blend-mode for all layers
+
 # style                  : "default" # "default", "dark", "light", "solarized-dark", "solarized-light"
 # remote_style           : "bamr87/zer0-mistakes"
 
