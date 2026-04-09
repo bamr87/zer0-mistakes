@@ -50,23 +50,31 @@ module Jekyll
       preview = doc.data['preview']
       return false if preview.nil? || preview.to_s.strip.empty?
       
+      # Reject non-path values (text descriptions used as preview)
+      return false unless preview.match?(/\.(png|jpe?g|gif|svg|webp)$/i) || preview.start_with?('http')
+      
       # Check if the preview file actually exists
       site = doc.site
       config = self.config(site)
       
+      # External URL — assume it exists
+      return true if preview.start_with?('http')
+      
       # Normalize the preview path using assets_prefix
       normalized_preview = normalize_preview_path(preview, config)
       
-      # Build the full path
-      preview_path = if normalized_preview.start_with?('/')
-                       File.join(site.source, normalized_preview.sub(/^\//, ''))
-                     elsif normalized_preview.start_with?('http')
-                       return true  # External URL, assume it exists
-                     else
-                       File.join(site.source, config['output_dir'], normalized_preview)
-                     end
+      # Build candidate file paths to check
+      candidates = []
+      if normalized_preview.start_with?('/')
+        candidates << File.join(site.source, normalized_preview.sub(/^\//, ''))
+        candidates << File.join(site.source, 'assets', normalized_preview.sub(/^\//, ''))
+      else
+        candidates << File.join(site.source, 'assets', normalized_preview)
+        candidates << File.join(site.source, normalized_preview)
+        candidates << File.join(site.source, config['output_dir'], normalized_preview)
+      end
       
-      File.exist?(preview_path)
+      candidates.any? { |path| File.exist?(path) }
     end
 
     # Normalize a preview path by adding assets_prefix if needed
@@ -89,6 +97,9 @@ module Jekyll
     def self.preview_path(doc)
       preview = doc.data['preview']
       return nil if preview.nil? || preview.to_s.strip.empty?
+      
+      # Reject non-path values
+      return nil unless preview.match?(/\.(png|jpe?g|gif|svg|webp)$/i) || preview.start_with?('http')
       
       site = doc.site
       config = self.config(site)
@@ -162,7 +173,9 @@ module Jekyll
       # Handle both Hash (from assign) and Document objects
       if doc.is_a?(Hash)
         preview = doc['preview']
-        !preview.nil? && !preview.to_s.strip.empty?
+        return false if preview.nil? || preview.to_s.strip.empty?
+        # Only consider values that look like image paths or URLs
+        preview.to_s.match?(/\.(png|jpe?g|gif|svg|webp)$/i) || preview.to_s.start_with?('http')
       else
         PreviewImageGenerator.has_preview?(doc)
       end
@@ -176,12 +189,13 @@ module Jekyll
       if doc.is_a?(Hash)
         preview = doc['preview']
         return nil if preview.nil? || preview.to_s.strip.empty?
+        return nil unless preview.to_s.match?(/\.(png|jpe?g|gif|svg|webp)$/i) || preview.to_s.start_with?('http')
+        
+        return preview if preview.start_with?('/') || preview.start_with?('http')
         
         # Get config from context if available
         site_config = @context.registers[:site].config['preview_images'] || {}
         output_dir = site_config['output_dir'] || 'assets/images/previews'
-        
-        return preview if preview.start_with?('/') || preview.start_with?('http')
         "#{output_dir}/#{preview}"
       else
         PreviewImageGenerator.preview_path(doc)
