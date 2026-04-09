@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.22.11] - 2026-04-09
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 8e83a51 Create SECURITY.md for security policy and reporting
+
+
 ## [0.22.10] - 2026-04-06
 
 ### Changed
