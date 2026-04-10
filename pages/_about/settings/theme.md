@@ -5,6 +5,7 @@ icon: bi-palette
 permalink: /about/settings/theme/
 excerpt: Preview theme skins, generate palettes, customize CSS variables, and export YAML configuration.
 lastmod: 2026-04-05T00:00:00.000Z
+draft: draft
 ---
 
 <!-- chroma.js — color manipulation library (BSD-3, 36 KB min) -->
