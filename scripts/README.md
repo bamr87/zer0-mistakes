@@ -115,6 +115,50 @@ Validate preview image URLs in frontmatter.
 python3 scripts/features/validate_preview_urls.py [--verbose] [--suggestions]
 ```
 
+### Content Validation
+
+#### `lint-pages`
+Config-driven frontmatter validator for all Jekyll collections.
+
+```bash
+./scripts/lint-pages [options]
+
+Options:
+  --strict              Exit non-zero on any violation
+  --warn                Print warnings only (default)
+  --fix                 Auto-fix safe violations (dates, drafts, field renames)
+  --dry-run             Preview fixes without modifying files
+  --report              Output structured report summary
+  --verbose, -v         Detailed output
+  --collection NAME     Validate only the named collection
+  --schema PATH         Path to schema YAML (default: .github/config/frontmatter_schema.yml)
+  --rules PATH          Path to content rules YAML (default: .github/config/content_rules.yml)
+
+Environment Variables:
+  FRONTMATTER_SCHEMA_PATH   Alternate schema path
+  CONTENT_RULES_PATH        Alternate content rules path
+  FRONTMATTER_STRICT        Set to "true" for strict mode
+```
+
+**Configuration files:**
+- `.github/config/frontmatter_schema.yml` — Defines required/optional fields, layout constraints, field types, and canonical field mappings per collection.
+- `.github/config/content_rules.yml` — Behavioral rules such as strictness per environment, auto-fixable violation types, and template-to-collection mappings.
+
+**Examples:**
+```bash
+# Validate all pages (warn mode)
+./scripts/lint-pages
+
+# CI: fail on violations
+./scripts/lint-pages --strict
+
+# Preview auto-fixes without modifying files
+./scripts/lint-pages --fix --dry-run
+
+# Debug a specific collection
+./scripts/lint-pages --collection posts --verbose
+```
+
 ### Utility Scripts (scripts/utils/)
 
 #### `setup`
@@ -143,6 +187,7 @@ Fix markdown formatting issues.
 These are sourced by other scripts, not executed directly:
 
 - `common.sh` - Logging utilities, colors, dry-run support
+- `frontmatter.sh` - Config-aware frontmatter extraction, validation, and fix helpers
 - `version.sh` - Version parsing, calculation, file updates
 - `validation.sh` - Environment and dependency validation
 - `git.sh` - Git operations (tags, commits, branches)
