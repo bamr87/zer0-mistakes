@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.22.13] - 2026-04-10
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 3c00a3d refactor: remove duplicate code — use standard libraries and existing plugins (#59)
+
+
 ## [0.22.12] - 2026-04-10
 
 ### Changed
