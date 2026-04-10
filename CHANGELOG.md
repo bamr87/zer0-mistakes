@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.22.12] - 2026-04-10
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 7ba0f83 feat(news): add data-driven feature showcase & live Bootstrap components to news index (#54)
+
+
 ## [0.22.11] - 2026-04-09
 
 ### Changed
