@@ -214,12 +214,11 @@
         }
 
         function escapeHtml(value) {
-            return String(value)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
+            // Use the browser's built-in text escaping via DOM API
+            // instead of manual regex replacement chains (more secure, handles all edge cases)
+            const div = document.createElement('div');
+            div.textContent = String(value);
+            return div.innerHTML;
         }
 
         function highlightText(text, query) {
