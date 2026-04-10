@@ -59,14 +59,37 @@
 
     document.getElementById('submit').addEventListener('click', function() {
         const rows = document.querySelectorAll('#envTable tbody tr');
-        let codeBlockText = '';
-        rows.forEach(row => {
+        const codeBlock = document.getElementById('codeBlock');
+        // Clear previous content safely
+        codeBlock.textContent = '';
+        rows.forEach((row, index) => {
             const key = row.querySelector('td:nth-child(1) input').value;
             const value = row.querySelector('td:nth-child(2) input').value;
             sessionStorage.setItem(key, value);
-            codeBlockText += `<span class="nb">export </span><span class="nv">${key}</span><span class="o">=</span>${value}\n`;
+
+            // Create a line for "export KEY=VALUE" using safe text assignment
+            const line = document.createElement('div');
+
+            const exportSpan = document.createElement('span');
+            exportSpan.className = 'nb';
+            exportSpan.textContent = 'export ';
+            line.appendChild(exportSpan);
+
+            const keySpan = document.createElement('span');
+            keySpan.className = 'nv';
+            keySpan.textContent = key;
+            line.appendChild(keySpan);
+
+            const equalsSpan = document.createElement('span');
+            equalsSpan.className = 'o';
+            equalsSpan.textContent = '=';
+            line.appendChild(equalsSpan);
+
+            // Value is appended as plain text to avoid HTML interpretation
+            line.appendChild(document.createTextNode(value));
+
+            codeBlock.appendChild(line);
         });
-        document.getElementById('codeBlock').innerHTML = codeBlockText;
 
         // Get the environment variables from the session storage
         const GHUSER = sessionStorage.getItem('GHUSER');
