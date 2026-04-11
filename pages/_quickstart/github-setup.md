@@ -174,7 +174,19 @@ cat ~/.ssh/id_ed25519.pub | clip
 
 ### Fork the Zer0-Mistakes Theme
 
-Create your own copy of the theme for development:
+The recommended approach is to fork into a repository named `<your-username>.github.io`. This creates a **GitHub Pages user site** that deploys at the domain root — no `baseurl` configuration needed.
+
+> **Prerequisites:**
+> - You **do not** already have a repository named `<your-username>.github.io`. Each GitHub account gets one free user site. If you already have one, fork into a different name and set `baseurl` manually (see [Troubleshooting](#troubleshooting)).
+> - This will become your **primary GitHub Pages site** — the one free `username.github.io` domain per account.
+
+**Fork via GitHub UI:**
+
+1. Go to [bamr87/zer0-mistakes](https://github.com/bamr87/zer0-mistakes) → **Fork**
+2. Set **Repository name** to `<your-username>.github.io`
+3. Click **Create fork**
+
+**Then clone locally:**
 
 ```bash
 # Navigate to your development directory
@@ -182,12 +194,26 @@ cd ~
 mkdir -p github
 cd github
 
-# Fork and clone the repository
-gh repo fork bamr87/zer0-mistakes --clone=true
+# Clone your fork
+git clone https://github.com/<your-username>/<your-username>.github.io.git
 
-# Navigate to your forked repository
-cd zer0-mistakes
+# Navigate to your repository
+cd <your-username>.github.io
 ```
+
+**Or fork via GitHub CLI:**
+
+```bash
+cd ~
+mkdir -p github
+cd github
+
+# Fork and clone with a custom name
+gh repo fork bamr87/zer0-mistakes --clone --remote-name origin
+# Then rename via GitHub: Settings → General → Repository name → <your-username>.github.io
+```
+
+> See [docs/FORKING.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/FORKING.md) for the full progressive fork → configure → personalize workflow.
 
 ### Repository Structure
 
@@ -302,9 +328,15 @@ git checkout main
 git merge feature/your-feature
 git push origin main
 
-# Your site deploys automatically to:
-# https://yourusername.github.io/zer0-mistakes
+# If you forked into <username>.github.io, your site deploys to:
+# https://<your-username>.github.io
+#
+# If you used a different repo name, your site deploys to:
+# https://<your-username>.github.io/<repo-name>
+# (and you'll need to set baseurl: "/<repo-name>" in _config.yml)
 ```
+
+> **Recommended:** Fork into `<your-username>.github.io` to avoid `baseurl` issues entirely. See [docs/FORKING.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/FORKING.md) for the complete guide.
 
 ### Custom Domain (Optional)
 
@@ -367,29 +399,6 @@ For sensitive configuration, use GitHub repository secrets:
    - `GOOGLE_ANALYTICS_ID`
    - `DISQUS_SHORTNAME`
    - `CONTACT_EMAIL`
-
-### GitHub Actions (Optional)
-
-Create `.github/workflows/deploy.yml` for advanced deployment:
-
-```yaml
-name: Deploy Jekyll
-
-on:
-  push:
-    branches: [main]
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./_site
-```
 
 ## 🔍 Troubleshooting
 

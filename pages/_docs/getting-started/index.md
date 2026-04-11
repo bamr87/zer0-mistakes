@@ -27,7 +27,7 @@ Welcome to Zer0-Mistakes! Choose your path to get started with the theme.
 | **A** | [AI Install Wizard](quick-start/) | Creating a new site (recommended) |
 | **B** | GitHub Template Repo | One-click copy of the entire repo |
 | **C** | GitHub Codespaces | Zero-install cloud development |
-| **D** | Fork/Clone | Theme development & customization |
+| **D** | Fork/Clone | Personal site & theme customization |
 | **E** | Remote Theme | GitHub Pages without copying files |
 | **F** | Ruby Gem | Traditional Jekyll workflow |
 
