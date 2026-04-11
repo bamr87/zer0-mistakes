@@ -54,7 +54,9 @@ layout: default
 <!-- ========================== -->
 <!-- Extract and sort collection entries based on page configuration -->
 {% assign entries = site[page.collection] %}
-{% assign entries = entries | sort: page.sort_order %}
+{% if page.sort_order and page.sort_order != 'reverse' %}
+    {% assign entries = entries | sort: page.sort_order %}
+{% endif %}
 
 <!-- Handle reverse sorting if specified -->
 {% if page.sort_order == 'reverse' %}

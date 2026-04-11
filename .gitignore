@@ -48,3 +48,10 @@ logs/*
 .vscode/chrome-debug-profile/
 .vscode/chrome-debug-profile-mobile/
 .vscode/edge-debug-profile/
+vendor/
+
+# Python cache
+**/__pycache__/
+*.pyc
+*.pyo
+_config_secrets_local.yml

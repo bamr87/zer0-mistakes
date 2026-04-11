@@ -7,6 +7,7 @@ Technical implementation details and changelogs for theme features. This documen
 | Document | Description |
 |----------|-------------|
 | [Copilot Agent Prompt Button](copilot-agent-prompt-button.md) | Prompt-driven GitHub issue button in intro section |
+| [AI Chat Assistant](ai-chat-assistant.md) | Proxy-first AI chat implementation and grounding strategy |
 | [Mermaid Integration v2](mermaid-integration-v2.md) | Mermaid diagram implementation changelog |
 | [PostHog Analytics Integration](posthog-analytics-integration.md) | Analytics implementation details |
 | [Preview Image Generator](preview-image-generator.md) | AI-powered preview image generation |
@@ -26,6 +27,7 @@ This directory contains:
 If you're looking for **how to use** these features, see the user documentation:
 
 - [Features Documentation](/docs/features/) — User guides for theme features
+- [AI Chat Assistant](/docs/features/ai-chat-assistant/) — GitHub Pages-compatible AI chat setup
 - [Mermaid Diagrams](/docs/features/mermaid-diagrams/)
 - [PostHog Analytics](/docs/features/posthog-analytics/)
 

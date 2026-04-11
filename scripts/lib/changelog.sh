@@ -84,8 +84,8 @@ categorize_commit() {
 clean_commit_message() {
     local subject="$1"
     
-    # Remove conventional commit prefix
-    subject=$(echo "$subject" | sed -E 's/^(feat|feature|fix|bugfix|bug|patch|perf|performance|refactor|style|docs|doc|test|chore|ci|build|revert|remove|delete|deprecate|deprecated|security|sec)(\([^)]*\))?:\s*//')
+    # Remove conventional commit prefix (use [[:space:]]* for BSD/POSIX sed compatibility)
+    subject=$(echo "$subject" | sed -E 's/^(feat|feature|fix|bugfix|bug|patch|perf|performance|refactor|style|docs|doc|test|chore|ci|build|revert|remove|delete|deprecate|deprecated|security|sec)(\([^)]*\))?:[[:space:]]*//')
     
     # Capitalize first letter
     subject="$(echo "${subject:0:1}" | tr '[:lower:]' '[:upper:]')${subject:1}"

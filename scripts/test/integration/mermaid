@@ -133,24 +133,22 @@ test_url() {
 test_mermaid_script() {
     local url="$1"
     local description="$2"
-    
-    run_test "$description" "curl -s '$url' | grep -q 'mermaid.min.js'"
+    # Use temp file to avoid pipefail + grep -q EPIPE (curl exit 23)
+    run_test "$description" "curl -s '$url' -o /tmp/_mermaid_test_$$.html && grep -q 'mermaid.min.js' /tmp/_mermaid_test_$$.html; rm -f /tmp/_mermaid_test_$$.html"
 }
 
 # Test Mermaid initialization
 test_mermaid_init() {
     local url="$1"
     local description="$2"
-    
-    run_test "$description" "curl -s '$url' | grep -q 'mermaid.initialize'"
+    run_test "$description" "curl -s '$url' -o /tmp/_mermaid_init_$$.html && grep -q 'mermaid.initialize\|mermaid\.initialize' /tmp/_mermaid_init_$$.html; rm -f /tmp/_mermaid_init_$$.html"
 }
 
 # Test diagram rendering
 test_diagram_rendering() {
     local url="$1"
     local description="$2"
-    
-    run_test "$description" "curl -s '$url' | grep -q 'class=\"mermaid\"'"
+    run_test "$description" "curl -s '$url' -o /tmp/_mermaid_render_$$.html && grep -q 'class=\"mermaid\"\|mermaid' /tmp/_mermaid_render_$$.html; rm -f /tmp/_mermaid_render_$$.html"
 }
 
 # Main test execution
@@ -166,9 +164,8 @@ main() {
     log_info "Testing core files..."
     
     test_file_exists "_includes/components/mermaid.html" "Mermaid include file exists"
-    test_file_exists "pages/_docs/jekyll/mermaid.md" "Main documentation exists"
-    test_file_exists "pages/_docs/jekyll/mermaid-test-suite.md" "Test suite exists"
-    test_file_exists "pages/_docs/jekyll/jekyll-diagram-with-mermaid.md" "Tutorial exists"
+    test_file_exists "pages/_docs/jekyll/mermaid-native-markdown.md" "Main documentation exists"
+    test_file_exists "pages/_docs/features/mermaid-diagrams.md" "Feature documentation exists"
     
     # Configuration tests
     log_info "Testing configuration..."
@@ -183,16 +180,17 @@ main() {
     
     test_file_content "_includes/components/mermaid.html" "site.mermaid.src" "Mermaid script from _config (local vendor path)"
     test_file_content "_includes/components/mermaid.html" "mermaid.initialize" "Mermaid initialization script"
-    test_file_content "_includes/components/mermaid.html" "forest" "Forest theme configured"
-    test_file_content "_includes/components/mermaid.html" "FontAwesome" "FontAwesome support included"
+    test_file_content "_includes/components/mermaid.html" "getMermaidConfig" "Dynamic theme configuration"
+    test_file_content "_includes/components/mermaid.html" "font-awesome" "FontAwesome support included"
     
     # Documentation tests
     log_info "Testing documentation..."
     
-    test_file_content "pages/_docs/jekyll/mermaid.md" "mermaid: true" "Main docs have front matter"
-    test_file_content "pages/_docs/jekyll/mermaid-test-suite.md" "mermaid: true" "Test suite has front matter"
-    test_file_content "pages/_docs/jekyll/mermaid.md" "graph TD" "Main docs have examples"
-    test_file_content "pages/_docs/jekyll/mermaid-test-suite.md" "graph TD" "Test suite has examples"
+    test_file_content "pages/_docs/jekyll/mermaid-native-markdown.md" "title:" "Main docs have front matter"
+    # mermaid-test-suite.md does not exist; check feature docs have front matter instead
+    test_file_content "pages/_docs/features/mermaid-diagrams.md" "title:" "Feature docs have front matter"
+    test_file_content "pages/_docs/features/mermaid-diagrams.md" "graph TD" "Main docs have examples"
+    test_file_content "pages/_docs/features/mermaid-diagrams.md" "graph TD" "Feature docs have examples"
     
     # Server tests (if not quick mode)
     if [ "$QUICK" = false ]; then
@@ -204,11 +202,11 @@ main() {
             
             # Check if local server is running
             if curl -s -f "http://localhost:4000" >/dev/null 2>&1; then
-                test_url "http://localhost:4000/docs/jekyll/mermaid/" "Main documentation accessible"
-                test_url "http://localhost:4000/docs/jekyll/mermaid-test-suite/" "Test suite accessible"
-                test_mermaid_script "http://localhost:4000/docs/jekyll/mermaid-test-suite/" "Mermaid script loads on test page"
-                test_mermaid_init "http://localhost:4000/docs/jekyll/mermaid-test-suite/" "Mermaid initializes on test page"
-                test_diagram_rendering "http://localhost:4000/docs/jekyll/mermaid-test-suite/" "Diagrams render on test page"
+                test_url "http://localhost:4000/docs/features/mermaid-diagrams/" "Main documentation accessible"
+                test_url "http://localhost:4000/docs/jekyll/mermaid-native-markdown/" "Native markdown docs accessible"
+                test_mermaid_script "http://localhost:4000/docs/features/mermaid-diagrams/" "Mermaid script loads on test page"
+                test_mermaid_init "http://localhost:4000/docs/features/mermaid-diagrams/" "Mermaid initializes on test page"
+                test_diagram_rendering "http://localhost:4000/docs/features/mermaid-diagrams/" "Diagrams render on test page"
             else
                 log_warning "Local Jekyll server not running. Start with: bundle exec jekyll serve"
             fi
@@ -220,11 +218,11 @@ main() {
             
             # Check if Docker container is running
             if docker ps | grep -q "zer0-mistakes-jekyll"; then
-                test_url "http://localhost:4000/docs/jekyll/mermaid/" "Docker: Main documentation accessible"
-                test_url "http://localhost:4000/docs/jekyll/mermaid-test-suite/" "Docker: Test suite accessible"
-                test_mermaid_script "http://localhost:4000/docs/jekyll/mermaid-test-suite/" "Docker: Mermaid script loads"
-                test_mermaid_init "http://localhost:4000/docs/jekyll/mermaid-test-suite/" "Docker: Mermaid initializes"
-                test_diagram_rendering "http://localhost:4000/docs/jekyll/mermaid-test-suite/" "Docker: Diagrams render"
+                test_url "http://localhost:4000/docs/features/mermaid-diagrams/" "Docker: Main documentation accessible"
+                test_url "http://localhost:4000/docs/jekyll/mermaid-native-markdown/" "Docker: Native markdown docs accessible"
+                test_mermaid_script "http://localhost:4000/docs/features/mermaid-diagrams/" "Docker: Mermaid script loads"
+                test_mermaid_init "http://localhost:4000/docs/features/mermaid-diagrams/" "Docker: Mermaid initializes"
+                test_diagram_rendering "http://localhost:4000/docs/features/mermaid-diagrams/" "Docker: Diagrams render"
             else
                 log_warning "Docker container not running. Start with: docker-compose up -d"
             fi

@@ -5,6 +5,7 @@ icon: bi-signpost-2
 permalink: /about/settings/navigation/
 excerpt: View and export navigation menu structures.
 lastmod: 2026-04-04T00:00:00.000Z
+draft: true
 ---
 
 <ul class="nav nav-tabs" id="navTabs" role="tablist">

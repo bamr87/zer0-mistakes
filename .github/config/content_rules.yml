@@ -1,0 +1,47 @@
+# =========================================================================
+# Content Rules Configuration
+# =========================================================================
+# Behavioral rules for content validation. Separates rules from schema.
+# Referenced by scripts/lint-pages and the test suite.
+# =========================================================================
+
+# -------------------------------------------------------------------------
+# Template-to-collection mapping
+# -------------------------------------------------------------------------
+# Maps template files to their target collection schema for validation.
+# Adding a mapping here automatically enables template validation.
+template_mappings:
+  "templates/pages/welcome-post.md.template": posts
+  "templates/pages/docs-index.md.template": docs
+  "templates/pages/quickstart.md.template": quickstart
+  "templates/pages/about.md.template": about
+  "templates/pages/blog.md.template": posts
+  "templates/pages/index.md.template": pages
+  "templates/pages/configuration.md.template": docs
+  "templates/pages/troubleshooting.md.template": docs
+
+# -------------------------------------------------------------------------
+# Auto-fixable violations
+# -------------------------------------------------------------------------
+# These violation types can be safely auto-corrected with --fix
+auto_fixable:
+  - date_format_normalization
+  - draft_string_to_boolean
+  - field_rename
+  - add_missing_lastmod
+
+# -------------------------------------------------------------------------
+# Strictness per environment
+# -------------------------------------------------------------------------
+strictness:
+  ci: strict
+  local: warn
+  pre_commit: strict
+
+# -------------------------------------------------------------------------
+# Report output format
+# -------------------------------------------------------------------------
+report:
+  format: text
+  include_passing: false
+  group_by: collection

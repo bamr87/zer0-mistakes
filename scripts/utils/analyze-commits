@@ -14,6 +14,12 @@ LIB_DIR="$SCRIPT_DIR/../lib"
 # Source common library for logging and utilities
 source "$LIB_DIR/common.sh"
 
+# Aliases for backward compatibility with logging function names
+log_info() { info "$@"; }
+log_success() { success "$@"; }
+log_warning() { warn "$@"; }
+log_error() { error "$@"; }
+
 # Default values
 COMMIT_RANGE="${1:-HEAD~1..HEAD}"
 DEBUG=${DEBUG:-false}

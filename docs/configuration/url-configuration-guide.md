@@ -4,11 +4,12 @@ This guide explains how to configure URLs for the Zer0-Mistakes Jekyll theme in 
 
 ## Overview
 
-The URL configuration has been simplified to automatically handle different hosting environments:
+The URL configuration supports different hosting environments. The recommended approach for forks is a **GitHub Pages user site**:
 
-- **GitHub Pages hosting**: `https://username.github.io/repository-name/`
-- **Custom domain hosting**: `https://your-custom-domain.com/`
-- **Local development**: `http://localhost:4000/repository-name/`
+- **User site (recommended for forks)**: `https://username.github.io/` — fork into `username.github.io`, `baseurl: ""`
+- **Project site**: `https://username.github.io/repository-name/` — requires `baseurl: "/repository-name"`
+- **Custom domain**: `https://your-custom-domain.com/` — `baseurl: ""`
+- **Local development**: `http://localhost:4000/`
 
 ## Configuration Files
 
@@ -22,22 +23,39 @@ Development overrides that are merged with the main config when running locally.
 
 ## Hosting Scenarios
 
-### 1. GitHub Pages Hosting (Default)
+### 1. GitHub Pages User Site (Recommended for Forks)
 
-For standard GitHub Pages hosting at `username.github.io/repository-name/`:
+Fork the repo as `<your-username>.github.io`. The site deploys at the domain root — no `baseurl` needed:
+
+**\_config.yml** (no changes required from upstream defaults):
+
+```yaml
+url: "https://username.github.io"
+baseurl: ""  # Empty — user site deploys at root
+```
+
+**URLs**:
+
+- Local: `http://localhost:4000/`
+- Production: `https://username.github.io/`
+
+See [docs/FORKING.md](../FORKING.md) for the full fork guide.
+
+### 2. GitHub Pages Project Site
+
+For repos with any other name (e.g. `zer0-mistakes`):
 
 **\_config.yml**:
 
 ```yaml
-custom_domain: "" # Leave empty for GitHub Pages
-url: "https://bamr87.github.io"
+url: "https://username.github.io"
 baseurl: "/zer0-mistakes"
 ```
 
-**Development URLs**:
+**URLs**:
 
 - Local: `http://localhost:4000/zer0-mistakes/`
-- Production: `https://bamr87.github.io/zer0-mistakes/`
+- Production: `https://username.github.io/zer0-mistakes/`
 
 ### 2. Custom Domain Hosting
 

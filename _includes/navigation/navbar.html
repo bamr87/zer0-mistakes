@@ -26,7 +26,17 @@
                     Home
                 </a>
             </li>
-            {%- for link in site.data.navigation.main -%}
+            {%- comment -%}
+              Navigation: data-driven when _data/navigation/main.yml exists;
+              otherwise auto-generated from site.collections as a fallback so
+              a consumer repo needs only markdown files and _config.yml.
+              Exclude a collection from auto-nav by setting nav_exclude: true
+              under its entry in _config.yml collections:.
+            {%- endcomment -%}
+            {%- assign nav_main = site.data.navigation.main -%}
+            {%- if nav_main and nav_main.size > 0 -%}
+
+              {%- for link in nav_main -%}
                 {%- assign has_children = link.children and link.children.size > 0 -%}
 
                 {%- if has_children -%}
@@ -93,7 +103,35 @@
                         </a>
                     </li>
                 {%- endif -%}
-            {%- endfor -%}
+              {%- endfor -%}
+
+            {%- else -%}
+              {%- comment -%}
+                Dynamic navigation: one nav item per collection that has output
+                documents. The "pages" collection is skipped (structural only).
+                Set nav_exclude: true on a collection in _config.yml to hide it.
+              {%- endcomment -%}
+              {%- for collection in site.collections -%}
+                {%- unless collection.label == "pages" or collection.nav_exclude -%}
+                  {%- if collection.docs.size > 0 -%}
+                    {%- assign col_title = collection.label | replace: "-", " " | replace: "_", " " | capitalize -%}
+                    {%- assign col_url = "/" | append: collection.label | append: "/" -%}
+                    <li class="nav-item" role="none">
+                        <a
+                            class="nav-link"
+                            href="{{ col_url | relative_url }}"
+                            role="menuitem"
+                            title="{{ col_title }}"
+                            {%- if page.collection == collection.label -%} aria-current="page"{%- endif -%}
+                        >
+                            <span class="nav-link-text">{{ col_title }}</span>
+                        </a>
+                    </li>
+                  {%- endif -%}
+                {%- endunless -%}
+              {%- endfor -%}
+
+            {%- endif -%}
             <li class="nav-item d-lg-none" role="none">
                 <button
                     class="nav-link btn btn-link text-start w-100"

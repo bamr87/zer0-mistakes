@@ -161,7 +161,7 @@ docker-compose exec jekyll bash
 docker-compose down && docker-compose up --build
 
 # Test automated release system
-./scripts/gem-publish.sh patch --dry-run
+./scripts/release patch --dry-run
 ```
 
 ### Automated Release System
@@ -170,10 +170,10 @@ The theme uses semantic versioning with automated commit analysis:
 
 ```bash
 # Publish patch release (0.5.1)
-./scripts/gem-publish.sh patch
+./scripts/release patch
 
 # Publish minor release (0.6.0)
-./scripts/gem-publish.sh minor
+./scripts/release minor
 
 # Preview changelog generation
 ./scripts/analyze-commits.sh HEAD~5..HEAD
@@ -182,7 +182,7 @@ The theme uses semantic versioning with automated commit analysis:
 **Key Files:**
 
 - `lib/jekyll-theme-zer0/version.rb` - Single source of truth for version
-- `scripts/gem-publish.sh` - Full release workflow (changelog → version bump → test → publish)
+- `scripts/release` - Full release workflow (changelog → version bump → test → publish)
 - `scripts/analyze-commits.sh` - Analyzes commit messages for version bump type
 
 ## 📝 Content Creation Patterns
@@ -323,7 +323,7 @@ environment: { JEKYLL_ENV: development }
 
 ```bash
 # Full release workflow
-./scripts/gem-publish.sh patch  # Auto-detects version bump needed
+./scripts/release patch  # Auto-detects version bump needed
 ```
 
 ---

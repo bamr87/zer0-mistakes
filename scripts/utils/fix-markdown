@@ -31,28 +31,9 @@ fix_markdown_file() {
     # Create backup
     cp "$file" "${file}.backup"
     
-    # Apply fixes using sed (macOS compatible)
+    # Apply initial fixes using sed (cross-platform compatible)
+    # Blank-line insertion around headings/lists is handled by the awk block below
     sed -e 's/[[:space:]]*$//' \
-        -e '/^#/a\
-' \
-        -e '/^##/a\
-' \
-        -e '/^###/a\
-' \
-        -e '/^####/a\
-' \
-        -e '/^#####/a\
-' \
-        -e '/^######/a\
-' \
-        -e '/^- /i\
-' \
-        -e '/^* /i\
-' \
-        -e '/^+ /i\
-' \
-        -e '/^[0-9]/i\
-' \
         -e 's/```$/```bash/' \
         -e 's/^```[[:space:]]*$/```bash/' \
         "$file" > "$temp_file"
@@ -110,8 +91,8 @@ remove_trailing_whitespace() {
     local file="$1"
     log_info "Removing trailing whitespace from: $file"
     
-    # Remove trailing whitespace
-    sed -i '' 's/[[:space:]]*$//' "$file"
+    # Remove trailing whitespace (cross-platform: -i.bak works on both macOS and Linux)
+    sed -i.bak 's/[[:space:]]*$//' "$file" && rm -f "${file}.bak"
     
     log_success "Removed trailing whitespace from: $file"
 }
@@ -121,8 +102,8 @@ fix_heading_punctuation() {
     local file="$1"
     log_info "Fixing heading punctuation in: $file"
     
-    # Remove trailing punctuation from headings
-    sed -i '' 's/^\(#\+[[:space:]]*.*\)[.!?:;,]*[[:space:]]*$/\1/' "$file"
+    # Remove trailing punctuation from headings (cross-platform sed)
+    sed -i.bak 's/^\(#\+[[:space:]]*.*\)[.!?:;,]*[[:space:]]*$/\1/' "$file" && rm -f "${file}.bak"
     
     log_success "Fixed heading punctuation in: $file"
 }

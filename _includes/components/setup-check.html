@@ -1,0 +1,52 @@
+{% comment %}
+  ===================================================================
+  SETUP CHECK - Detect unconfigured site state
+  ===================================================================
+
+  File: setup-check.html
+  Path: _includes/components/setup-check.html
+  Purpose: Provides Liquid variables to detect whether the site has been
+           configured by the user or is still running on theme defaults.
+
+  Usage:
+    {% include components/setup-check.html %}
+    {% if site_needs_setup %}
+      ... show setup guidance ...
+    {% endif %}
+
+  Detection Logic:
+    The include sets site_needs_setup to true when
+    site.site_configured is explicitly set to false in _config.yml.
+    Sites without the flag, or with site_configured: true, are
+    treated as configured.
+
+  Output Variables:
+    - site_needs_setup  : true if site_configured is false
+    - site_is_user_repo : true if this appears to be a <user>.github.io repo
+  ===================================================================
+{% endcomment %}
+
+{% comment %}
+  ── Determine if this is a user/org site (username.github.io) ──
+  User sites have an empty baseurl and a url ending in .github.io
+{% endcomment %}
+{% assign site_is_user_repo = false %}
+{% if site.baseurl == "" or site.baseurl == nil %}
+  {% if site.url contains ".github.io" %}
+    {% assign _url_path = site.url | split: "/" | last %}
+    {% unless _url_path contains "/" %}
+      {% assign site_is_user_repo = true %}
+    {% endunless %}
+  {% endif %}
+{% endif %}
+
+{% comment %}
+  ── Check if the site has been configured ──
+  Priority 1: Explicit flag in _config.yml
+  Priority 2: Heuristic — title/founder still match theme defaults
+{% endcomment %}
+{% assign site_needs_setup = false %}
+
+{% if site.site_configured == false %}
+  {% assign site_needs_setup = true %}
+{% endif %}

@@ -47,7 +47,7 @@ layout: default
       {% assign tag_posts = site.posts | where_exp: "post", "post.tags contains page.tag" %}
       <p class="text-muted mb-0">
         <i class="bi bi-file-earmark-text me-1"></i>
-        {{ tag_posts.size }} {{ tag_posts.size | pluralize: "post", "posts" }} tagged
+        {{ tag_posts.size }} post{% if tag_posts.size != 1 %}s{% endif %} tagged
       </p>
     </div>
   </div>

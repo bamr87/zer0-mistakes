@@ -2,7 +2,7 @@
 title: zer0-mistakes
 sub-title: Jekyll Theme
 description: GitHub Pages compatible Jekyll theme with Bootstrap 5.3, featuring automated installation and comprehensive documentation.
-version: 0.22.13
+version: 1.0.0
 layout: landing
 tags:
   - jekyll
@@ -402,13 +402,25 @@ plugins:
   - jekyll-remote-theme
 ```
 
-### Method 3: Fork & Customize
+### Method 3: Fork & Deploy as Your Site
+
+Fork into `<your-username>.github.io` for a working site in minutes:
+
+1. Go to [bamr87/zer0-mistakes](https://github.com/bamr87/zer0-mistakes) → **Fork**
+2. Set repository name to **`<your-username>.github.io`**
+3. Enable **Settings → Pages → Deploy from branch: `main`**
+4. Visit `https://<your-username>.github.io`
+
+Then personalize locally:
 
 ```bash
-gh repo fork bamr87/zer0-mistakes --clone
-cd zer0-mistakes
+git clone https://github.com/<your-username>/<your-username>.github.io.git
+cd <your-username>.github.io
+./scripts/fork-cleanup.sh   # interactive config wizard
 docker-compose up
 ```
+
+See [docs/FORKING.md](docs/FORKING.md) for the full progressive workflow.
 
 ### Method 4: Ruby Gem
 
@@ -460,9 +472,43 @@ graph TD
 | `_includes/` | Reusable components | `core/`, `components/`, `analytics/`, `navigation/` |
 | `_sass/` | Stylesheets | `custom.scss`, `notebooks.scss`, `core/` (`_variables`, `_docs-layout`, …), `theme/` (`_css-variables`, `_wizard-mode`) |
 | `assets/` | Static files | `css/`, `js/`, `images/`, **`vendor/`** (Bootstrap, jQuery, MathJax, Mermaid, … — committed for GitHub Pages) |
-| `scripts/` | Automation | `release`, `build`, `vendor-install.sh`, `convert-notebooks.sh` |
+| `scripts/` | Automation | `release`, `build`, `migrate.sh`, `vendor-install.sh`, `convert-notebooks.sh` |
+| `templates/` | Installable templates | `pages/admin/` (6 admin page templates), `config/install.conf` |
 | `docs/` | Technical docs | `SIDEBAR_IMPROVEMENTS.md`, `JUPYTER_NOTEBOOKS.md` |
 | `pages/` | Content pages | `privacy-policy.md`, `terms-of-service.md` |
+
+---
+
+## Migration Utility
+
+Add the admin settings UI to an existing consumer site using the migration script:
+
+```bash
+# From the zer0-mistakes repo — install into another site
+./scripts/migrate.sh /path/to/your-site
+
+# Preview without making changes
+./scripts/migrate.sh --dry-run /path/to/your-site
+
+# Overwrite existing admin pages
+./scripts/migrate.sh --force /path/to/your-site
+
+# Verify an existing installation
+./scripts/migrate.sh --verify /path/to/your-site
+```
+
+This installs 6 admin pages to `pages/_about/settings/`:
+
+| Page | URL | Description |
+|------|-----|-------------|
+| Theme Customizer | `/about/settings/theme/` | Skins, palette generator, skin editor, live preview, color editing, YAML export |
+| Configuration | `/about/config/` | View/edit `_config.yml`, quick actions, environment info |
+| Navigation Editor | `/about/settings/navigation/` | Edit header/footer/sidebar menus, export YAML |
+| Collection Manager | `/about/settings/collections/` | Browse and manage Jekyll collections |
+| Analytics | `/about/settings/analytics/` | Site analytics and performance metrics |
+| Environment | `/about/settings/environment/` | Jekyll build info and environment details |
+
+> **Note:** Admin pages require theme version ≥ 0.22.10 for the `admin` layout and component includes.
 
 ---
 
@@ -528,25 +574,26 @@ npm run vendor:install    # manifest downloads (+ Mermaid copy when node_modules
 
 ## 🚀 Deployment
 
-### GitHub Pages (Automatic)
+### GitHub Pages (User Site — Recommended)
+
+Fork the repo as `<your-username>.github.io` and enable GitHub Pages:
+
+1. Push to `main` branch
+2. GitHub Pages builds automatically
+3. Site deploys to `https://<your-username>.github.io`
+
+No workflows or `baseurl` configuration needed. See [docs/FORKING.md](docs/FORKING.md) for details.
 
 ```mermaid
 sequenceDiagram
     participant Dev as Developer
     participant GH as GitHub
-    participant Actions as GitHub Actions
     participant Pages as GitHub Pages
     
     Dev->>GH: git push main
-    GH->>Actions: Trigger workflow
-    Actions->>Actions: jekyll build
-    Actions->>Pages: Deploy _site/
-    Pages-->>Dev: 🌐 Site live!
+    GH->>Pages: Auto-build Jekyll
+    Pages-->>Dev: 🌐 Site live at username.github.io
 ```
-
-1. Push to `main` branch
-2. GitHub Actions builds automatically
-3. Site deploys to GitHub Pages
 
 ### Docker Production
 
@@ -742,7 +789,7 @@ git push origin feature/awesome-feature
 
 | Metric | Value |
 |--------|-------|
-| **Current Version** | 0.22.13 ([RubyGems](https://rubygems.org/gems/jekyll-theme-zer0), [CHANGELOG](/CHANGELOG)) |
+| **Current Version** | 1.0.0 ([RubyGems](https://rubygems.org/gems/jekyll-theme-zer0), [CHANGELOG](/CHANGELOG)) |
 | **Documented Features** | 43 ([Feature Registry](https://github.com/bamr87/zer0-mistakes/blob/main/_data/features.yml)) |
 | **Setup Time** | 2-5 minutes ([install.sh benchmarks](https://github.com/bamr87/zer0-mistakes/blob/main/install.sh)) |
 | **Documentation Pages** | 70+ ([browse docs](/pages/)) |

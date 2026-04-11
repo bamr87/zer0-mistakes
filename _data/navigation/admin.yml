@@ -10,6 +10,11 @@
   icon: bi-gear
   description: View and export site configuration
 
+- title: Feature Registry
+  url: /about/features/
+  icon: bi-stars
+  description: All theme features with references and docs
+
 - title: Statistics
   url: /about/stats/
   icon: bi-bar-chart-line

@@ -1,8 +1,9 @@
 <!-- Google Tag Manager (noscript) -->
+{% if site.google_tag_manager %}
     <noscript>
-        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NN8P7RZ" 
+        <iframe src="https://www.googletagmanager.com/ns.html?id={{ site.google_tag_manager }}" 
                 height="0" width="0" style="display:none;visibility:hidden">
         </iframe>
     </noscript>
 <!-- End Google Tag Manager (noscript) -->
-<!-- source https://tagmanager.google.com/#/admin/accounts/6005859084/containers/58386588/install?containerDraftId=2 -->
+{% endif %}

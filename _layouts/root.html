@@ -68,6 +68,9 @@
         <!-- Site-wide information banner or announcement section -->
         {% include components/info-section.html %}
 
+        <!-- Setup banner for unconfigured sites -->
+        {% include components/setup-banner.html %}
+
         <!-- ======================== -->
         <!-- MAIN CONTENT AREA        -->
         <!-- ======================== -->
@@ -86,6 +89,9 @@
         <!-- Privacy-compliant cookie consent banner -->
         {%- include components/cookie-consent.html -%}
 
+        <!-- AI Chat Assistant -->
+        {%- include components/ai-chat.html -%}
+
         <!-- JavaScript dependencies and custom scripts -->
         <div>
             <!-- Search functionality (Algolia or similar) -->
@@ -96,6 +102,7 @@
         </div>
 
         <!-- Analytics Integration -->
+        {%- include analytics/google-tag-manager-body.html -%}
         {%- include analytics/posthog.html -%}
     </body>
 </html>

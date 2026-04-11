@@ -95,8 +95,13 @@ if [[ -d "scripts/bin" ]]; then
     done
 fi
 
-# Test 10: Validate bundle install
-run_test "Test bundle install" "bundle install --quiet"
+# Test 10: Validate bundle install (requires Ruby 3.x or CI environment)
+_ruby_major=$(ruby --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+' | head -1 | cut -d. -f1)
+if [[ "${CI:-false}" == "true" ]] || [[ "${_ruby_major:-0}" -ge 3 ]]; then
+    run_test "Test bundle install" "bundle install --quiet"
+else
+    warn "Skipping bundle install test (requires Ruby 3.x, found: $(ruby --version 2>/dev/null | head -1))"
+fi
 
 # Clean up test gem file
 rm -f jekyll-theme-zer0-*.gem 2>/dev/null || true
