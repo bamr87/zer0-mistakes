@@ -5,6 +5,9 @@
 # Replace placeholder values with your own settings.
 # =========================================================================
 
+# Setup Flag — set to true once you've personalised the fields below
+site_configured: true
+
 # Site Settings
 title: "{{SITE_TITLE}}"
 subtitle: "Built with {{THEME_NAME}}"
