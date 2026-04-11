@@ -355,22 +355,36 @@ reset_config() {
     # Create backup
     cp "$config_file" "${config_file}.backup.$(date +%Y%m%d%H%M%S)"
     
-    # Use sed to replace specific values
-    # Site identity
-    sed -i.tmp "s/^founder:.*/founder: \"$SITE_AUTHOR\"/" "$config_file"
-    sed -i.tmp "s/^github_user:.*/github_user: \"$GITHUB_USER_INPUT\"/" "$config_file"
-    sed -i.tmp "s/^title:.*/title: \"$SITE_TITLE\"/" "$config_file"
-    sed -i.tmp "s/^description:.*/description: \"$SITE_DESCRIPTION\"/" "$config_file"
-    sed -i.tmp "s/^author:.*/author: \"$SITE_AUTHOR\"/" "$config_file"
-    sed -i.tmp "s/^email:.*/email: \"$SITE_EMAIL\"/" "$config_file"
-    sed -i.tmp "s/^name:.*/name: \"$SITE_AUTHOR\"/" "$config_file"
+    # Derive repository name from the git remote or current directory
+    local repo_name
+    repo_name=$(basename "$(git -C "$REPO_ROOT" remote get-url origin 2>/dev/null | sed 's/\.git$//')" 2>/dev/null || basename "$REPO_ROOT")
     
-    # Clear analytics
-    sed -i.tmp "s/^google_analytics:.*/google_analytics: \"\"/" "$config_file"
+    # Note: sed patterns use [[:space:]]*: to match the YAML format where
+    # there may be spaces between the key name and the colon.
+    # Anchors (&anchor_name) are preserved where they exist so that
+    # YAML alias references (*anchor_name) throughout the file keep working.
     
-    # Clear domain for auto-detection
-    sed -i.tmp "s/^domain:.*/domain: \"\"/" "$config_file"
-    sed -i.tmp "s/^url:.*/url: \"\"/" "$config_file"
+    # --- Site identity (preserve YAML anchors) ---
+    sed -i.tmp "s|^\(founder[[:space:]]*:[[:space:]]*\).*|\1\"$SITE_AUTHOR\"|" "$config_file"
+    sed -i.tmp "s|^\(github_user[[:space:]]*:[[:space:]]*&github_user[[:space:]]*\).*|\1\"$GITHUB_USER_INPUT\"|" "$config_file"
+    sed -i.tmp "s|^\(repository_name[[:space:]]*:[[:space:]]*&github_repository[[:space:]]*\).*|\1\"$repo_name\"|" "$config_file"
+    sed -i.tmp "s|^\(local_repo[[:space:]]*:[[:space:]]*&local_repo[[:space:]]*\).*|\1\"$repo_name\"|" "$config_file"
+    sed -i.tmp "s|^\(title[[:space:]]*:[[:space:]]*&title[[:space:]]*\).*|\1\"$SITE_TITLE\"|" "$config_file"
+    sed -i.tmp "s|^\(name[[:space:]]*:[[:space:]]*&name[[:space:]]*\).*|\1\"$SITE_AUTHOR\"|" "$config_file"
+    sed -i.tmp "s|^\(email[[:space:]]*:[[:space:]]*\)\"[^\"]*\"|\1\"$SITE_EMAIL\"|" "$config_file"
+    
+    # --- URLs (set for username.github.io user site deployment) ---
+    sed -i.tmp "s|^\(domain[[:space:]]*:[[:space:]]*&domain[[:space:]]*\).*|\1\"github\"|" "$config_file"
+    sed -i.tmp "s|^\(domain_ext[[:space:]]*:[[:space:]]*&domain_ext[[:space:]]*\).*|\1\"io\"|" "$config_file"
+    sed -i.tmp "s|^\(url[[:space:]]*:[[:space:]]*&url[[:space:]]*\).*|\1\"https://${GITHUB_USER_INPUT}.github.io\"|" "$config_file"
+    # baseurl stays empty — forking into username.github.io means the site
+    # deploys at the domain root, so no baseurl prefix is needed.
+    
+    # --- Analytics (MUST be cleared for forks) ---
+    sed -i.tmp "s|^\(google_analytics[[:space:]]*:[[:space:]]*\).*|\1\"\"|" "$config_file"
+    # Disable PostHog
+    sed -i.tmp "s|^\([[:space:]]*enabled[[:space:]]*:[[:space:]]*\)true|\1false|" "$config_file"
+    sed -i.tmp "s|^\([[:space:]]*api_key[[:space:]]*:[[:space:]]*\)'[^']*'|\1''|" "$config_file"
     
     # Clean up temp files
     rm -f "${config_file}.tmp"
