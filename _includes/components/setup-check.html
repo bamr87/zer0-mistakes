@@ -15,14 +15,13 @@
     {% endif %}
 
   Detection Logic:
-    The include sets site_needs_setup to true when the site appears
-    to be running with default/unconfigured values. It checks:
-      1. Explicit site_configured: true flag (fastest path)
-      2. Whether the title is still the theme default
-      3. Whether founder/name are still theme defaults
+    The include sets site_needs_setup to true when
+    site.site_configured is explicitly set to false in _config.yml.
+    Sites without the flag, or with site_configured: true, are
+    treated as configured.
 
   Output Variables:
-    - site_needs_setup  : true if the site hasn't been personalised
+    - site_needs_setup  : true if site_configured is false
     - site_is_user_repo : true if this appears to be a <user>.github.io repo
   ===================================================================
 {% endcomment %}

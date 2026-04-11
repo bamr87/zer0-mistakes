@@ -73,24 +73,6 @@
 ### Commits in this release
 - 27550da feat(admin): add admin layout and configuration dashboards (#57)
 
-## [Unreleased]
-
-### Added
-- **Migration Utility**: New `scripts/migrate.sh` for installing admin settings pages into consumer Jekyll sites
-  - Detects Jekyll sites, validates theme connection (remote, gem, local path)
-  - Warns about version gaps when theme version < 0.22.10
-  - Supports `--force`, `--verify`, `--dry-run`, `--verbose`, `--non-interactive` flags
-- **Migration Library**: New `scripts/lib/migrate.sh` with reusable migration functions
-  - `detect_jekyll_site()`, `validate_theme_connection()`, `install_admin_pages()`, `verify_admin_pages()`, `detect_version_gap()`
-- **Admin Page Templates**: 6 new templates in `templates/pages/admin/`
-  - `theme.md.template` — Theme Customizer (skins, palette generator, skin editor, live preview, color editor, export)
-  - `config.md.template` — Configuration Utility (view, edit, raw YAML, quick actions)
-  - `navigation.md.template` — Navigation Editor (overview, edit menus, export YAML)
-  - `collections.md.template` — Collection Manager
-  - `analytics.md.template` — Analytics Dashboard
-  - `environment.md.template` — Environment Dashboard
-- **install.sh Integration**: Admin pages are now created during `install.sh` for both full and remote install modes
-
 ## [0.22.9] - 2026-04-05
 
 ### Added

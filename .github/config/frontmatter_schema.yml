@@ -35,7 +35,7 @@ field_types:
     allowed:
       - true
       - false
-    fix: "string_to_boolean"
+    fix: "fix_draft_to_boolean"
   string:
     pattern: '.+'
   array:

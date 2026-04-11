@@ -534,8 +534,8 @@ test_frontmatter_lint() {
     fi
 
     if [[ ! -x "$lint_script" ]]; then
-        log_warning "Making lint script executable: $lint_script"
-        chmod +x "$lint_script"
+        log_error "Frontmatter lint script is not executable: $lint_script (run: chmod +x $lint_script)"
+        return 1
     fi
 
     # Validate schema file exists

@@ -14,7 +14,7 @@ tags:
     - strategy
 featured: true
 estimated_reading_time: 12 min
-draft: draft
+draft: true
 ---
 
 Something big is happening in the manufacturing sector, and most mid-market companies are not moving fast enough to respond. The gap between what AI can actually do today and what most business leaders believe it can do has become dangerously wide—and it is widening every quarter.

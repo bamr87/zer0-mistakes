@@ -13,7 +13,7 @@ tags:
     - proxy
 permalink: /docs/features/ai-chat-assistant/
 difficulty: intermediate
-estimated_time: 20 minutes
+estimated_reading_time: 20 minutes
 prerequisites:
     - A deployed proxy endpoint for chat completions
     - OpenAI API key stored outside the static site

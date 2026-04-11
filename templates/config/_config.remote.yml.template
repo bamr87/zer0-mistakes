@@ -11,7 +11,7 @@
 
 # ── Setup Flag ────────────────────────────────────────────────────────────────
 # Set to true once you've personalised the fields below.
-# While false (or absent), the theme shows a setup guide on the 404 page.
+# While false, the theme shows a setup guide on the 404 page.
 site_configured          : true
 
 # ── Site Identity ─────────────────────────────────────────────────────────────
