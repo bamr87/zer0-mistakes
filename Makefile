@@ -77,44 +77,44 @@ version: ## Show current version
 .PHONY: version-patch
 version-patch: test ## Bump patch version (0.1.8 → 0.1.9)
 	@echo "$(YELLOW)Bumping patch version...$(RESET)"
-	@./scripts/version.sh patch
+	@./scripts/release patch
 
 .PHONY: version-minor
 version-minor: test ## Bump minor version (0.1.8 → 0.2.0)
 	@echo "$(YELLOW)Bumping minor version...$(RESET)"
-	@./scripts/version.sh minor
+	@./scripts/release minor
 
 .PHONY: version-major
 version-major: test ## Bump major version (0.1.8 → 1.0.0)
 	@echo "$(YELLOW)Bumping major version...$(RESET)"
-	@./scripts/version.sh major
+	@./scripts/release major
 
 .PHONY: version-dry-run
 version-dry-run: ## Preview version bump without applying changes
 	@echo "$(BLUE)Version bump preview (patch):$(RESET)"
-	@./scripts/version.sh patch --dry-run
+	@./scripts/release patch --dry-run
 
 ##@ Build Commands
 
 .PHONY: build
 build: test ## Build the gem
 	@echo "$(GREEN)Building gem...$(RESET)"
-	@./scripts/build.sh
+	@./scripts/build
 
 .PHONY: build-dry-run
 build-dry-run: ## Preview build process without creating gem
 	@echo "$(BLUE)Build preview:$(RESET)"
-	@./scripts/build.sh --dry-run
+	@./scripts/build --dry-run
 
 .PHONY: publish
 publish: build ## Build and publish gem to RubyGems
 	@echo "$(RED)$(BOLD)Publishing gem to RubyGems...$(RESET)"
-	@./scripts/build.sh --publish
+	@./scripts/build --publish
 
 .PHONY: publish-dry-run
 publish-dry-run: ## Preview publish process without uploading
 	@echo "$(BLUE)Publish preview:$(RESET)"
-	@./scripts/build.sh --publish --dry-run
+	@./scripts/build --publish --dry-run
 
 ##@ Release Workflow
 

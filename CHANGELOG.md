@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0.0] - 2026-04-11
+## [1.0.0] - 2026-04-10
 
 ### ⚠ BREAKING CHANGES
 - Major version release consolidating all open PRs into a single release
@@ -112,32 +112,6 @@
 ### Commits in this release
 - a70ae8a chore: consolidate configuration, dependencies, and installation (PRs #48, #51, #52, #53) (#51)
 
-
-## [Unreleased] — Universal Installer
-
-### Added
-- **Installer**: New `--remote` install mode — forks repo and creates an orphan `gh-pages` branch with only the bare minimum files needed to render via `remote_theme` (no local theme source)
-- **Installer**: New `--github` install mode — interactive fork via `gh` CLI with automatic platform detection and setup
-- **Installer**: New `--codespaces` flag — adds `.devcontainer/devcontainer.json` for GitHub Codespaces support (auto-included in remote mode, opt-in for full/minimal)
-- **Installer**: Cross-platform setup scripts: `scripts/platform/setup-macos.sh`, `setup-linux.sh`, `setup-wsl.sh`
-- **Installer**: GitHub CLI fork/clone helper: `scripts/github-setup.sh`
-- **Installer**: Platform auto-detection (`detect_platform()`) for macOS, Linux, and WSL
-- **Templates**: `_config.remote.yml.template` — minimal config for remote-theme consumer sites
-- **Templates**: `_config.starter.yml.template` — heavily annotated full starter config
-- **Templates**: `Gemfile.remote.template` — minimal Gemfile (github-pages + jekyll-remote-theme)
-- **Templates**: `devcontainer.json.template` — lightweight devcontainer for consumer sites
-- **Templates**: `theming.md.template` — Bootstrap 5 customization guide (dark mode, typography, layouts)
-- **Templates**: `setup.html.template` — dev-only setup wizard page
-- **Wizard**: Interactive browser-based config wizard (`pages/setup.html`, `_includes/setup/wizard.html`, `assets/js/setup-wizard.js`) for generating `_config.yml` via a 5-step Bootstrap form
-- **CI**: `.github/workflows/setup-template.yml` — auto-detects non-upstream repos and creates PR with prefilled config
-
-### Changed
-- **Installer**: `install.sh` — added `--remote`, `--github`, `--codespaces` flags and corresponding mode dispatchers
-- **Installer**: `render_template()` now substitutes `REPOSITORY_NAME`, `RAW_GITHUB_URL`, `FORK_GITHUB_USER` variables
-- **Installer**: `install.conf` — added `remote` and `github` to `VALID_INSTALL_MODES`, platform detection vars, wizard config, expanded `TEMPLATE_VARS`
-- **Templates**: `quickstart.md.template` — enhanced with Bootstrap pill tabs for macOS/Linux/WSL/GitHub Fork platform-specific instructions
-- **Templates**: `configuration.md.template` — comprehensive rewrite with URL tables, all config sections, cookie consent, dev config
-- **Templates**: `welcome-post.md.template` — enhanced Day 1 tutorial with folder structure diagram, commands table, feature checklist
 
 ## [0.22.6] - 2026-04-03
 

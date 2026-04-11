@@ -1,6 +1,6 @@
 # Troubleshooting Guide: Release Automation System
 
-**Last Updated:** 2025-11-25  
+**Last Updated:** 2026-04-10  
 **Applies To:** Release automation scripts (v0.6.0+)  
 **Related:** [Release Automation System](systems/release-automation.md), [Contributing Guidelines](../CONTRIBUTING.md)
 
@@ -8,7 +8,7 @@
 
 | Issue                          | Solution                | Section                                     |
 | ------------------------------ | ----------------------- | ------------------------------------------- |
-| Bash version error             | Install Bash 4.0+       | [Bash Version Issues](#bash-version-issues) |
+| Bash version error             | ~~Resolved in v1.0.0~~ —  scripts now run on macOS default bash | [Bash Version Issues](#bash-version-issues) |
 | Working directory not clean    | Commit or stash changes | [Git Issues](#git-issues)                   |
 | RubyGems authentication failed | Configure credentials   | [RubyGems Issues](#rubygems-issues)         |
 | Changelog generation fails     | Check commit format     | [Changelog Issues](#changelog-issues)       |
@@ -22,20 +22,20 @@
 
 - macOS 12.0+ (Monterey)
 - Apple Silicon (M1/M2/M3) and Intel
-- Bash 4.0+ installed via Homebrew
+- Bash 3.2+ (macOS default — no Homebrew Bash required)
 
 ✅ **Linux**
 
 - Ubuntu 20.04+
 - Debian 11+
 - Fedora 35+
-- Bash 4.0+ (usually pre-installed)
+- Bash 3.2+ (usually pre-installed)
 
 ✅ **Windows**
 
 - WSL2 (Windows Subsystem for Linux)
 - Ubuntu 20.04+ or Debian 11+
-- Bash 4.0+ in WSL environment
+- Bash 3.2+ in WSL environment
 
 ### Required Software Versions
 
@@ -51,74 +51,11 @@
 
 ### Bash Version Issues
 
-#### Problem: "This script requires Bash 4.0 or higher"
+> ✅ **Resolved in v1.0.0**: The release automation scripts were refactored to work with macOS's default Bash 3.2. Bash 4.0+ is **no longer required**.
 
-**Error Message:**
+#### Legacy Issue (pre-v1.0.0): "This script requires Bash 4.0 or higher"
 
-```bash
-[ERROR] This script requires Bash 4.0 or higher (current: 3.2.57)
-[INFO] On macOS, install via: brew install bash
-[INFO] Then run with: /opt/homebrew/bin/bash scripts/release
-```
-
-**Cause:** macOS ships with Bash 3.2 (released 2006) due to GPL licensing. The release automation uses associative arrays, which require Bash 4.0+.
-
-**Solutions:**
-
-**Option 1: Install Modern Bash (Recommended)**
-
-```bash
-# Install Bash 5 via Homebrew
-brew install bash
-
-# Verify installation
-/opt/homebrew/bin/bash --version
-# Should show: GNU bash, version 5.3.3 or higher
-
-# Run release command with Bash 5
-/opt/homebrew/bin/bash scripts/release patch --dry-run
-```
-
-**Option 2: Add to PATH**
-
-```bash
-# Add to ~/.zshrc or ~/.bashrc
-export PATH="/opt/homebrew/bin:$PATH"
-
-# Reload shell
-source ~/.zshrc
-
-# Verify (should show Bash 5)
-bash --version
-
-# Now can run normally
-./scripts/release patch --dry-run
-```
-
-**Option 3: Create Alias**
-
-```bash
-# Add to ~/.zshrc
-alias release='/opt/homebrew/bin/bash scripts/release'
-alias build='/opt/homebrew/bin/bash scripts/build'
-
-# Usage
-release patch --dry-run
-build --dry-run
-```
-
-#### Problem: "declare: -A: invalid option"
-
-**Error Message:**
-
-```bash
-/Users/bamr87/github/zer0-mistakes/scripts/lib/changelog.sh: line 115: declare: -A: invalid option
-declare: usage: declare [-afFirtx] [-p] [name[=value] ...]
-```
-
-**Cause:** Script running with Bash 3.2 instead of Bash 4.0+.
-
-**Solution:** Same as above - install and use Bash 5.
+If you encounter this on an older version, upgrade to v1.0.0 or later. The scripts no longer use associative arrays (`declare -A`) and run on any Bash 3.2+ environment.
 
 ### Git Issues
 

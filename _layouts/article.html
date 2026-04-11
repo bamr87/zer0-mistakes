@@ -88,7 +88,7 @@ layout: default
     </h1>
     
     {% comment %} Subtitle for featured/opinion articles {% endcomment %}
-    {% if page.sub-title and post_type == "featured" or post_type == "opinion" %}
+    {% if page.sub-title and (post_type == "featured" or post_type == "opinion") %}
     <p class="lead text-muted">{{ page.sub-title }}</p>
     {% endif %}
     
@@ -349,7 +349,7 @@ layout: default
         <div class="card-body">
           <div class="d-flex align-items-start">
             {% if author_data.avatar %}
-              <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ author_data.avatar }}" 
+              <img src="{{ author_data.avatar | relative_url }}" 
                    alt="{{ author_name }}" 
                    class="rounded-circle me-3" 
                    width="80" height="80"

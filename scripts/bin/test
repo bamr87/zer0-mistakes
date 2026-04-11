@@ -138,23 +138,21 @@ run_integration_tests() {
     
     local found_tests=false
     
-    for test_file in "$TEST_DIR/integration"/*; do
-        if [[ -f "$test_file" && -x "$test_file" ]]; then
-            found_tests=true
-            local test_name
-            test_name=$(basename "$test_file")
-            log_info "Running integration test: $test_name"
-            
-            if "$test_file"; then
-                log_success "$test_name passed"
-                ((TOTAL_PASSED++)) || true
-            else
-                log_error "$test_name failed"
-                ((TOTAL_FAILED++)) || true
-            fi
-            ((TOTAL_TESTS++)) || true
+    while IFS= read -r -d '' test_file; do
+        found_tests=true
+        local test_name
+        test_name=$(basename "$test_file")
+        log_info "Running integration test: $test_name"
+
+        if "$test_file"; then
+            log_success "$test_name passed"
+            ((TOTAL_PASSED++)) || true
+        else
+            log_error "$test_name failed"
+            ((TOTAL_FAILED++)) || true
         fi
-    done
+        ((TOTAL_TESTS++)) || true
+    done < <(find "$TEST_DIR/integration" -type f -perm +0111 -print0 2>/dev/null)
     
     if [[ "$found_tests" == "false" ]]; then
         log_warning "No integration tests found in $TEST_DIR/integration/"

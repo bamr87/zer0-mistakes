@@ -48,7 +48,7 @@
 {% assign repo_owner = repo_parts[0] %}
 
 <div class="bd-intro pt-5 ps-lg-2 position-relative" style="
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{{ preview_path | relative_url }}') no-repeat center center / cover;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{{ preview_path }}') no-repeat center center / cover;
   color: #fff;">
 
   <br>
@@ -66,23 +66,23 @@
       </button>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="shareDropdownBottom">
         <li>
-          <a class="dropdown-item" href="https://reddit.com/submit?url={{ site.url | append: page.url | url_encode }}&amp;title={{ page.title | url_encode }}" target="_blank">
+          <a class="dropdown-item" href="https://reddit.com/submit?url={{ site.url | append: page.url | url_encode }}&amp;title={{ page.title | url_encode }}" target="_blank" rel="noopener noreferrer">
             <i class="bi bi-reddit me-2"></i>Share on Reddit
           </a>
         </li>
         <li>
-          <a class="dropdown-item" href="https://www.linkedin.com/sharing/share-offsite/?url={{ site.url | append: page.url | url_encode }}" target="_blank">
+          <a class="dropdown-item" href="https://www.linkedin.com/sharing/share-offsite/?url={{ site.url | append: page.url | url_encode }}" target="_blank" rel="noopener noreferrer">
             <i class="bi bi-linkedin me-2"></i>Share on LinkedIn
           </a>
         </li>
         <li>
-          <a class="dropdown-item" href="https://twitter.com/intent/tweet?url={{ site.url | append: page.url | url_encode }}&text={{ page.title | url_encode }}" target="_blank">
+          <a class="dropdown-item" href="https://twitter.com/intent/tweet?url={{ site.url | append: page.url | url_encode }}&text={{ page.title | url_encode }}" target="_blank" rel="noopener noreferrer">
             <i class="bi bi-twitter me-2"></i>Share on Twitter
           </a>
         </li>
         <li><hr class="dropdown-divider"></li>
         <li>
-          <button class="dropdown-item" onclick='navigator.clipboard.writeText("{{ site.url | append: page.url }}"); alert("Link copied to clipboard!");'>
+          <button class="dropdown-item" data-copy-url="{{ site.url | append: page.url | escape }}" onclick="navigator.clipboard.writeText(this.dataset.copyUrl).then(function(){alert('Link copied to clipboard!');});">
             <i class="bi bi-clipboard me-2"></i>Copy Link
           </button>
         </li>

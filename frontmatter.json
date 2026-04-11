@@ -20,6 +20,22 @@
     {
       "title": "docs",
       "path": "[[workspace]]/pages/_docs"
+    },
+    {
+      "title": "quests",
+      "path": "[[workspace]]/pages/_quests"
+    },
+    {
+      "title": "hobbies",
+      "path": "[[workspace]]/pages/_hobbies"
+    },
+    {
+      "title": "notebooks",
+      "path": "[[workspace]]/pages/_notebooks"
+    },
+    {
+      "title": "notes",
+      "path": "[[workspace]]/pages/_notes"
     }
   ],
   "frontMatter.templates.enabled": true,
