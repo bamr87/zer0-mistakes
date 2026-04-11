@@ -40,7 +40,7 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 
 - **Metric**: 95%+ installation success rate
 - **Status**: ✅ Achieved (v0.6.0, enhanced through v0.22.13)
-- **Implementation**: 2,397-line install.sh with AI-powered error recovery, 3 install modes (full/minimal/fork), remote/github/codespaces support
+- **Implementation**: ~2,400-line install.sh with AI-powered error recovery, 3 install modes (full/minimal/fork), remote/github/codespaces support
 
 **Goal 2: Universal Development Environment**
 
@@ -162,7 +162,7 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 **Technical Implementation**:
 
 ```bash
-# install.sh - 2,397 lines
+# install.sh - ~2,400 lines
 - detect_platform()           # OS/architecture detection (macOS/Linux/WSL)
 - check_prerequisites()       # Docker, Git, curl validation
 - fix_docker_issues()         # Auto-restart, permission fixes
@@ -891,9 +891,11 @@ root.html (base)
 
 **v0.7.0 - v0.14.0** (Content & Infrastructure)
 
-- ✅ Changelog automation
-- ✅ Gem publishing pipeline
-- ✅ Content organization improvements
+- ✅ Changelog automation and release pipeline
+- ✅ Gem publishing workflow (RubyGems.org)
+- ✅ Content organization and collections improvements
+- ✅ Preview image generator (multi-AI provider: OpenAI, xAI Grok)
+- ✅ CI/CD pipeline hardening and workflow optimization
 
 **v0.15.0 - v0.16.0** (Features & Polish)
 

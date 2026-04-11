@@ -6,7 +6,7 @@ This directory contains comprehensive release documentation for all versions of 
 
 ### v0.7.0 - Changelog Automation (November 2025)
 
-- [Release Summary](v0.7.0-release-summary.md) - Automated changelog and release pipeline enhancements
+- See [CHANGELOG.md](../../CHANGELOG.md#070) for full release details
 
 ### v0.5.0 - Comprehensive Sitemap Integration (October 25, 2025)
 
@@ -54,7 +54,7 @@ This documentation is automatically generated as part of the release process:
 4. **Publication**: Publication confirmation and post-release documentation
 5. **Archive**: Documentation archived in this directory
 
-> **Note**: Detailed per-version changes are tracked in [CHANGELOG.md](../../CHANGELOG.md) which is the authoritative source for all 85+ releases from v0.1.0 through v0.22.13.
+> **Note**: Detailed per-version changes are tracked in [CHANGELOG.md](../../CHANGELOG.md) which is the authoritative source for all releases from v0.1.0 through v0.22.13.
 
 ## 📊 Release History
 
