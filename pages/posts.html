@@ -287,11 +287,15 @@ keywords:
         <script>
           function goToPage(event) {
             event.preventDefault();
-            const pageNum = document.getElementById('page-jump').value;
+            const pageInput = document.getElementById('page-jump');
+            const rawValue = pageInput.value;
+            const pageNum = parseInt(rawValue, 10);
             const maxPages = {{ paginator.total_pages }};
-            if (pageNum >= 1 && pageNum <= maxPages) {
+            if (Number.isFinite(pageNum) && pageNum >= 1 && pageNum <= maxPages) {
+              // normalize the value back into the input
+              pageInput.value = String(pageNum);
               const basePath = '{{ "/posts/" | relative_url }}';
-              window.location.href = pageNum == 1 ? basePath : basePath + pageNum + '/';
+              window.location.href = pageNum === 1 ? basePath : basePath + pageNum + '/';
             }
             return false;
           }
