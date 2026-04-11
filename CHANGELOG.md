@@ -1,5 +1,43 @@
 # Changelog
 
+## [1.0.0] - 2026-04-11
+
+### ⚠ BREAKING CHANGES
+- Major version release consolidating all open PRs into a single release
+- Background image paths in `_sass/theme/_backgrounds.scss` changed from absolute (`/assets/backgrounds/...`) to CSS-relative (`../backgrounds/...`) — custom skins referencing absolute paths will need updating
+
+### Added
+- **Dynamic Navigation Fallback** (PR #64): Auto-generates navbar from Jekyll collections when `_data/navigation/` files are absent — enables zero-config sites
+- **AI Chat Widget** (PR #33): Frontend AI chat assistant with page context, OpenAI API integration, and proxy-first architecture
+- **Config-Driven Frontmatter Validation** (PR #34): `scripts/lint-pages` linter with schema (`.github/config/frontmatter_schema.yml`), content rules, `--fix`/`--strict`/`--dry-run` modes
+- **Site Setup Detection & Smart 404** (PR #58): Guides new users through configuration with `_includes/components/setup-check.html`, setup banner, and dual-mode 404 page
+- **Fork-to-Deploy Documentation** (PR #56): Comprehensive `docs/FORKING.md` and updated guides for `username.github.io` deployment workflow
+- **Admin Panel Components** (PR #64): Config editor, theme customizer, nav editor, collection manager, analytics and environment dashboards
+- **Migration Utility**: `scripts/migrate.sh` for installing admin settings pages into consumer Jekyll sites
+- **Preview Image Generator Fixes** (PR #61): Fixed YAML parsing bugs (`sed` → `awk`), added dotenv loading, macOS bash 3.2 compatibility
+
+### Fixed
+- **Security: DOM text reinterpreted as HTML** (PR #62): Safe DOM node creation in `_includes/components/zer0-env-var.html`
+- **Security: DOM text reinterpreted as HTML** (PR #63): Input validation with `parseInt` in `pages/posts.html` page jumper
+- **Background image 404s** on subdirectory deployments (GitHub Pages project pages)
+- **YAML parsing** in preview generator — apostrophes in titles no longer break extraction
+
+### Changed
+- **Ruby gem dependencies updated** (PR #60): addressable 2.9.0, async 2.39.0, bigdecimal 4.1.1, io-event 1.15.1, regexp_parser 2.12.0
+- Home quick-link button falls back to `bi-house` icon when `_data/navigation/home.yml` is absent
+- Config templates now include `site_configured: true` for guided setup
+
+### Consolidated PRs
+- PR #60: chore(deps): update Ruby gem dependencies
+- PR #62: fix(security): DOM text reinterpreted as HTML (zer0-env-var)
+- PR #63: fix(security): DOM text reinterpreted as HTML (posts.html)
+- PR #56: docs(fork): add fork-to-deploy workflow and user site guidance
+- PR #34: feat: add config-driven frontmatter validation system
+- PR #33: feat(chat): add AI chatbot widget with page context
+- PR #58: feat(setup): add site configuration detection and smart 404 page
+- PR #61: fix(preview): fix YAML parsing bugs and add dotenv loading
+- PR #64: feat(nav): dynamic collection-based navigation fallback (superset of #61)
+
 ## [0.22.13] - 2026-04-10
 
 ### Changed
