@@ -76,9 +76,8 @@ permalink: /notes/
           <small class="text-muted">
             <i class="bi bi-calendar3 me-1"></i>
             {{ note.date | date: "%b %d, %Y" }}
-            {% if note.read_time %}
-            <span class="ms-2"><i class="bi bi-clock me-1"></i>{{ note.read_time }} min</span>
-            {% endif %}
+            {% assign reading_mins = note.content | number_of_words | divided_by: 200 | at_least: 1 %}
+            <span class="ms-2"><i class="bi bi-clock me-1"></i>{{ reading_mins }} min read</span>
           </small>
         </div>
       </div>

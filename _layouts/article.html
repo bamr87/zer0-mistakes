@@ -88,8 +88,10 @@ layout: default
     </h1>
     
     {% comment %} Subtitle for featured/opinion articles {% endcomment %}
-    {% if page.sub-title and (post_type == "featured" or post_type == "opinion") %}
-    <p class="lead text-muted">{{ page.sub-title }}</p>
+    {% if post_type == "featured" or post_type == "opinion" %}
+      {% if page["sub-title"] %}
+    <p class="lead text-muted">{{ page["sub-title"] }}</p>
+      {% endif %}
     {% endif %}
     
     <!-- Post Metadata -->

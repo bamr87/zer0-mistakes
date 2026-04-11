@@ -43,7 +43,11 @@
   Build the file path, branch, and repo owner for action buttons.
 {% endcomment %}
 {% assign repo_branch = site.branch | default: "main" %}
-{% assign file_path = page_dir | append: "/" | append: page.path %}
+{% if page.collection %}
+  {% assign file_path = page_dir | append: "/" | append: page.path %}
+{% else %}
+  {% assign file_path = page.path %}
+{% endif %}
 {% assign repo_parts = site.repository | split: "/" %}
 {% assign repo_owner = repo_parts[0] %}
 
@@ -55,7 +59,7 @@
   <h1>{{ page.title }}</h1>
   <p>By {{ page.author | default: site.author.name }}</p>
   <p>{{ page.description }}</p>
-  <p>Estimated reading time: {{ content | number_of_words | divided_by:200 }} minutes</p>
+  <p>Estimated reading time: {{ content | number_of_words | divided_by:200 | at_least: 1 }} min</p>
   <!-- Action Buttons Group -->
   <div class="position-absolute bottom-0 end-0 m-3 d-flex gap-2">
     <!-- Share Button -->
