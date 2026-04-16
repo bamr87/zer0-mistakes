@@ -56,8 +56,7 @@
         <!-- Inline SVG symbols for consistent iconography throughout the site -->
         {% include components/svg.html %}
 
-        <!-- Google Tag Manager body code for analytics (if configured) -->
-        <!-- Note: Currently commented out - uncomment when GTM is needed -->
+        {% comment %} Google Tag Manager body code can be inserted here when needed. {% endcomment %}
 
         <!-- Main site header with navigation, branding, and search functionality -->
         {% include core/header.html %}
@@ -88,8 +87,7 @@
 
         <!-- JavaScript dependencies and custom scripts -->
         <div>
-            <!-- Search functionality (Algolia or similar) -->
-            <!-- Note: Currently commented out - uncomment when search is implemented -->
+            {% comment %} Search functionality (Algolia or similar) can be inserted here when implemented. {% endcomment %}
 
             <!-- External JavaScript libraries and custom scripts -->
             {% include components/js-cdn.html %}
