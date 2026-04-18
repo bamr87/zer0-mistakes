@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:58.000Z
 title: Breadcrumbs Navigation
 description: Hierarchical breadcrumb navigation with Schema.org structured data for SEO and user orientation.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - accessibility
 permalink: /docs/features/breadcrumbs/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---

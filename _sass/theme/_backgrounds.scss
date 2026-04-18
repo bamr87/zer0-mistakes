@@ -1,0 +1,156 @@
+// ==========================================================================
+// Backgrounds — fffuel-style SVG background system for zer0-mistakes theme
+// ==========================================================================
+// Each skin maps to gradient, pattern, and noise SVGs.
+// CSS custom properties drive the layering; mixins in _background-mixins.scss
+// apply them to layout zones.
+// ==========================================================================
+
+@import "background-mixins";
+
+// --------------------------------------------------------------------------
+// Default custom properties (no skin / fallback)
+// --------------------------------------------------------------------------
+:root {
+  --zer0-bg-gradient: none;
+  --zer0-bg-pattern: none;
+  --zer0-bg-noise: none;
+  --zer0-bg-gradient-opacity: 0.6;
+  --zer0-bg-texture-opacity: 0.04;
+  --zer0-bg-pattern-opacity: 0.08;
+  --zer0-bg-blend: overlay;
+  --zer0-bg-pattern-size: 60px 60px;
+  --zer0-bg-enabled: 1; // 1 = on, 0 = off
+}
+
+// --------------------------------------------------------------------------
+// Per-skin custom properties
+// Use #{} interpolation so legacy sass-converter passes url() through as-is.
+// Paths are relative to assets/css/main.css so they resolve correctly under
+// any baseurl (e.g. /zer0-pages-remote/ on GitHub Pages subdirectory deploys).
+// --------------------------------------------------------------------------
+
+[data-theme-skin="air"] {
+  --zer0-bg-gradient: #{"url('../backgrounds/gradients/air.svg')"};
+  --zer0-bg-pattern: #{"url('../backgrounds/patterns/air.svg')"};
+  --zer0-bg-noise: #{"url('../backgrounds/noise/air.svg')"};
+  --zer0-bg-pattern-size: 50px 50px;
+}
+
+[data-theme-skin="aqua"] {
+  --zer0-bg-gradient: #{"url('../backgrounds/gradients/aqua.svg')"};
+  --zer0-bg-pattern: #{"url('../backgrounds/patterns/aqua.svg')"};
+  --zer0-bg-noise: #{"url('../backgrounds/noise/aqua.svg')"};
+  --zer0-bg-pattern-size: 48px 48px;
+}
+
+[data-theme-skin="contrast"] {
+  --zer0-bg-gradient: #{"url('../backgrounds/gradients/contrast.svg')"};
+  --zer0-bg-pattern: #{"url('../backgrounds/patterns/contrast.svg')"};
+  --zer0-bg-noise: #{"url('../backgrounds/noise/contrast.svg')"};
+  --zer0-bg-pattern-size: 40px 40px;
+}
+
+[data-theme-skin="dark"] {
+  --zer0-bg-gradient: #{"url('../backgrounds/gradients/dark.svg')"};
+  --zer0-bg-pattern: #{"url('../backgrounds/patterns/dark.svg')"};
+  --zer0-bg-noise: #{"url('../backgrounds/noise/dark.svg')"};
+  --zer0-bg-pattern-size: 60px 60px;
+}
+
+[data-theme-skin="dirt"] {
+  --zer0-bg-gradient: #{"url('../backgrounds/gradients/dirt.svg')"};
+  --zer0-bg-pattern: #{"url('../backgrounds/patterns/dirt.svg')"};
+  --zer0-bg-noise: #{"url('../backgrounds/noise/dirt.svg')"};
+  --zer0-bg-pattern-size: 50px 50px;
+}
+
+[data-theme-skin="neon"] {
+  --zer0-bg-gradient: #{"url('../backgrounds/gradients/neon.svg')"};
+  --zer0-bg-pattern: #{"url('../backgrounds/patterns/neon.svg')"};
+  --zer0-bg-noise: #{"url('../backgrounds/noise/neon.svg')"};
+  --zer0-bg-pattern-size: 48px 48px;
+}
+
+[data-theme-skin="mint"] {
+  --zer0-bg-gradient: #{"url('../backgrounds/gradients/mint.svg')"};
+  --zer0-bg-pattern: #{"url('../backgrounds/patterns/mint.svg')"};
+  --zer0-bg-noise: #{"url('../backgrounds/noise/mint.svg')"};
+  --zer0-bg-pattern-size: 50px 50px;
+}
+
+[data-theme-skin="plum"] {
+  --zer0-bg-gradient: #{"url('../backgrounds/gradients/plum.svg')"};
+  --zer0-bg-pattern: #{"url('../backgrounds/patterns/plum.svg')"};
+  --zer0-bg-noise: #{"url('../backgrounds/noise/plum.svg')"};
+  --zer0-bg-pattern-size: 55px 55px;
+}
+
+[data-theme-skin="sunrise"] {
+  --zer0-bg-gradient: #{"url('../backgrounds/gradients/sunrise.svg')"};
+  --zer0-bg-pattern: #{"url('../backgrounds/patterns/sunrise.svg')"};
+  --zer0-bg-noise: #{"url('../backgrounds/noise/sunrise.svg')"};
+  --zer0-bg-pattern-size: 50px 50px;
+}
+
+// --------------------------------------------------------------------------
+// Utility classes — apply these to layout zones
+// --------------------------------------------------------------------------
+
+.zer0-bg-hero {
+  @include zer0-bg-layered;
+
+  > * { position: relative; z-index: 1; }
+}
+
+.zer0-bg-body {
+  @include zer0-bg-noise;
+
+  // Elevate children above the ::before / ::after pseudo-element backgrounds,
+  // but exclude fixed-position, offcanvas, and modal elements whose
+  // positioning must not be overridden.
+  > *:not(.fixed-top):not(.offcanvas):not(.modal) { position: relative; z-index: 1; }
+}
+
+.zer0-bg-surface {
+  @include zer0-bg-pattern;
+
+  > * { position: relative; z-index: 1; }
+}
+
+.zer0-bg-footer {
+  @include zer0-bg-noise;
+
+  > * { position: relative; z-index: 1; }
+}
+
+// --------------------------------------------------------------------------
+// Accessibility: respect reduced-motion
+// --------------------------------------------------------------------------
+@media (prefers-reduced-motion: reduce) {
+  .zer0-bg-hero,
+  .zer0-bg-body,
+  .zer0-bg-surface,
+  .zer0-bg-footer {
+    &::before,
+    &::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Kill switch: when backgrounds are disabled
+// --------------------------------------------------------------------------
+[data-zer0-bg="off"] {
+  .zer0-bg-hero,
+  .zer0-bg-body,
+  .zer0-bg-surface,
+  .zer0-bg-footer {
+    &::before,
+    &::after {
+      display: none !important;
+    }
+  }
+}

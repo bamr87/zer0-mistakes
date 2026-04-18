@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:30:02.000Z
 title: Google Analytics
 description: Google Analytics 4 integration for website traffic analysis with privacy-conscious configuration.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - ga4
 permalink: /docs/analytics/google-analytics/
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 prerequisites:
     - Google Analytics account
 sidebar:

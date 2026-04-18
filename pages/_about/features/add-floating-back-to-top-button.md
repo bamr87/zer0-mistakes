@@ -11,7 +11,7 @@ author: null
 excerpt: Steps to add a floating back-to-top button to a website.
 snippet: null
 lastmod: 2025-12-20T22:15:46.273Z
-draft: draft
+draft: true
 ---
 
 [w3 schools](https://www.w3schools.com/howto/howto_js_scroll_to_top.asp)

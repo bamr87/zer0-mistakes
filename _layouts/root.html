@@ -31,7 +31,7 @@
 -->
 
 <!doctype html>
-<html lang="{{ site.locale | slice: 0,2 | default: 'en' }}" class="no-js" data-bs-theme="dark">
+<html lang="{{ site.locale | slice: 0,2 | default: 'en' }}" class="no-js" data-bs-theme="dark" data-theme-skin="{{ site.theme_skin | default: 'dark' }}" data-zer0-bg="{{ site.theme_background.enabled | default: true }}">
     <head>
         <!-- =============================================== -->
         <!-- HEAD SECTION: Meta tags, styles, and SEO setup -->
@@ -43,9 +43,12 @@
         <!-- Jekyll SEO plugin for enhanced search engine optimization -->
         <!-- Documentation: https://github.com/jekyll/jekyll-seo-tag -->
         {% seo %}
+
+        <!-- fffuel-style SVG background config overrides -->
+        {% include components/svg-background.html zone="body" %}
     </head>
     
-    <body data-bs-spy="scroll" data-bs-target="#TableOfContents">
+    <body class="zer0-bg-body" data-bs-spy="scroll" data-bs-target="#TableOfContents">
         <!-- ============================================== -->
         <!-- BODY SECTION: Site structure and content area -->
         <!-- ============================================== -->
@@ -64,6 +67,9 @@
 
         <!-- Site-wide information banner or announcement section -->
         {% include components/info-section.html %}
+
+        <!-- Setup banner for unconfigured sites -->
+        {% include components/setup-banner.html %}
 
         <!-- ======================== -->
         <!-- MAIN CONTENT AREA        -->

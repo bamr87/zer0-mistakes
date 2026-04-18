@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:55.000Z
 title: Version Bump Workflow
 description: Guide to the automated version bump workflow for managing semantic versioning and releases.
 layout: default
@@ -11,7 +12,7 @@ tags:
     - github-actions
 permalink: /docs/development/version-bump/
 difficulty: intermediate
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 prerequisites:
     - GitHub repository access
     - Understanding of semantic versioning

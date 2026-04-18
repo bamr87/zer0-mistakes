@@ -2,7 +2,7 @@
 title: zer0-mistakes
 sub-title: Jekyll Theme
 description: GitHub Pages compatible Jekyll theme with Bootstrap 5.3, featuring automated installation and comprehensive documentation.
-version: 0.22.8
+version: 0.22.18
 layout: landing
 tags:
   - jekyll
@@ -14,7 +14,7 @@ categories:
   - docker
   - bootstrap
 created: 2024-02-10T23:51:11.480Z
-lastmod: 2026-04-04T14:10:23.000Z
+lastmod: 2026-04-18T21:12:39.000Z
 draft: false
 permalink: /
 slug: zer0
@@ -472,13 +472,47 @@ graph TD
 | `_includes/` | Reusable components | `core/`, `components/`, `analytics/`, `navigation/` |
 | `_sass/` | Stylesheets | `custom.scss`, `notebooks.scss`, `core/` (`_variables`, `_docs-layout`, …), `theme/` (`_css-variables`, `_wizard-mode`) |
 | `assets/` | Static files | `css/`, `js/`, `images/`, **`vendor/`** (Bootstrap, jQuery, MathJax, Mermaid, … — committed for GitHub Pages) |
-| `scripts/` | Automation | `release`, `build`, `vendor-install.sh`, `convert-notebooks.sh` |
+| `scripts/` | Automation | `release`, `build`, `migrate.sh`, `vendor-install.sh`, `convert-notebooks.sh` |
+| `templates/` | Installable templates | `pages/admin/` (6 admin page templates), `config/install.conf` |
 | `docs/` | Technical docs | `SIDEBAR_IMPROVEMENTS.md`, `JUPYTER_NOTEBOOKS.md` |
 | `pages/` | Content pages | `privacy-policy.md`, `terms-of-service.md` |
 
 ---
 
-## 🔄 Development Workflow
+## �️ Migration Utility
+
+Add the admin settings UI to an existing consumer site using the migration script:
+
+```bash
+# From the zer0-mistakes repo — install into another site
+./scripts/migrate.sh /path/to/your-site
+
+# Preview without making changes
+./scripts/migrate.sh --dry-run /path/to/your-site
+
+# Overwrite existing admin pages
+./scripts/migrate.sh --force /path/to/your-site
+
+# Verify an existing installation
+./scripts/migrate.sh --verify /path/to/your-site
+```
+
+This installs 6 admin pages to `pages/_about/settings/`:
+
+| Page | URL | Description |
+|------|-----|-------------|
+| Theme Customizer | `/about/settings/theme/` | Skins, palette generator, skin editor, live preview, color editing, YAML export |
+| Configuration | `/about/config/` | View/edit `_config.yml`, quick actions, environment info |
+| Navigation Editor | `/about/settings/navigation/` | Edit header/footer/sidebar menus, export YAML |
+| Collection Manager | `/about/settings/collections/` | Browse and manage Jekyll collections |
+| Analytics | `/about/settings/analytics/` | Site analytics and performance metrics |
+| Environment | `/about/settings/environment/` | Jekyll build info and environment details |
+
+> **Note:** Admin pages require theme version ≥ 0.22.10 for the `admin` layout and component includes.
+
+---
+
+## �🔄 Development Workflow
 
 ```mermaid
 gitGraph
@@ -755,7 +789,7 @@ git push origin feature/awesome-feature
 
 | Metric | Value |
 |--------|-------|
-| **Current Version** | 0.22.8 ([RubyGems](https://rubygems.org/gems/jekyll-theme-zer0), [CHANGELOG](/CHANGELOG)) |
+| **Current Version** | 0.22.18 ([RubyGems](https://rubygems.org/gems/jekyll-theme-zer0), [CHANGELOG](/CHANGELOG)) |
 | **Documented Features** | 43 ([Feature Registry](https://github.com/bamr87/zer0-mistakes/blob/main/_data/features.yml)) |
 | **Setup Time** | 2-5 minutes ([install.sh benchmarks](https://github.com/bamr87/zer0-mistakes/blob/main/install.sh)) |
 | **Documentation Pages** | 70+ ([browse docs](/pages/)) |
@@ -798,6 +832,6 @@ Built with these amazing technologies:
 
 **Built with ❤️ for the Jekyll community**
 
-**v0.22.8** • [Changelog](CHANGELOG.md) • [License](LICENSE) • [Contributing](CONTRIBUTING.md)
+**v0.22.18** • [Changelog](CHANGELOG.md) • [License](LICENSE) • [Contributing](CONTRIBUTING.md)
 
 

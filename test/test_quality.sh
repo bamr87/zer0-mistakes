@@ -28,6 +28,16 @@ TEST_SITE_DIR=""
 VERBOSE=false
 TIMEOUT=300
 
+# Load test configuration from test.conf if available
+_load_test_config() {
+    local config_file="${SCRIPT_DIR}/test.conf"
+    if [[ -f "$config_file" ]]; then
+        # shellcheck source=/dev/null
+        source "$config_file"
+    fi
+}
+_load_test_config
+
 # Test counters
 TESTS_TOTAL=0
 TESTS_PASSED=0
@@ -502,6 +512,61 @@ test_preview_image_urls() {
     fi
 }
 
+test_frontmatter_lint() {
+    log_step "Running frontmatter schema validation"
+
+    cd "$PROJECT_ROOT"
+
+    # Check skip condition from test.conf
+    if [[ "${SKIP_FRONTMATTER_TESTS:-false}" == "true" ]]; then
+        log_warning "Frontmatter tests skipped via SKIP_FRONTMATTER_TESTS"
+        TESTS_SKIPPED=$((TESTS_SKIPPED + 1))
+        return 0
+    fi
+
+    local lint_script="${FRONTMATTER_LINT_SCRIPT:-scripts/lint-pages}"
+    local schema_path="${FRONTMATTER_SCHEMA_PATH:-.github/config/frontmatter_schema.yml}"
+
+    # Validate lint script exists and is executable
+    if [[ ! -f "$lint_script" ]]; then
+        log_error "Frontmatter lint script not found: $lint_script"
+        return 1
+    fi
+
+    if [[ ! -x "$lint_script" ]]; then
+        log_warning "Making lint script executable: $lint_script"
+        chmod +x "$lint_script"
+    fi
+
+    # Validate schema file exists
+    if [[ ! -f "$schema_path" ]]; then
+        log_error "Frontmatter schema not found: $schema_path"
+        return 1
+    fi
+
+    # Build lint command with appropriate strictness
+    local lint_args=("--schema" "$schema_path" "--report")
+    if [[ "${FRONTMATTER_STRICT:-false}" == "true" ]]; then
+        lint_args+=("--strict")
+    fi
+
+    log_info "Running: $lint_script ${lint_args[*]}"
+
+    local lint_output
+    if lint_output=$("./$lint_script" "${lint_args[@]}" 2>&1); then
+        log_success "Frontmatter validation passed"
+        if [[ "$VERBOSE" == "true" ]]; then
+            echo "$lint_output"
+        fi
+        return 0
+    else
+        local exit_code=$?
+        log_error "Frontmatter validation failed (exit code: $exit_code)"
+        echo "$lint_output"
+        return 1
+    fi
+}
+
 #
 # COMPATIBILITY TESTS
 #
@@ -806,6 +871,7 @@ run_quality_tests() {
     # Content Quality Tests
     log_info "=== CONTENT QUALITY TESTS ==="
     run_test "Preview Image URLs" "test_preview_image_urls" "content"
+    run_test "Frontmatter Schema Validation" "test_frontmatter_lint" "content"
     
     # Compatibility Tests
     log_info "=== COMPATIBILITY TESTS ==="

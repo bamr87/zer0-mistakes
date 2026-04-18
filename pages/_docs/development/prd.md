@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:54.000Z
 title: Product Requirements Document
 description: Product vision, goals, and requirements for the Zer0-Mistakes Jekyll theme.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - vision
 permalink: /docs/development/prd/
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 sidebar:
     nav: docs
 ---

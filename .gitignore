@@ -15,10 +15,12 @@ _site_proxycheck/
 .vendor/
 # Note: We COMMIT Gemfile.lock for reproducible builds
 # See: docs/systems/ZERO_PIN_STRATEGY.md
-# Gemfile.lock  # <- REMOVED: lockfile must be committed
-env-variables.log
+
+# Node
+node_modules/
+
+# OS files
 *.DS_Store
-assets/.DS_Store
 
 # Environment files (NEVER commit secrets!)
 .env
@@ -26,14 +28,13 @@ assets/.DS_Store
 .env.*.local
 *.env
 !.env.example
+env-variables.log
 
 # Gem development
 *.gem
-/*.gem
 pkg/
 tmp/
 .rspec_status
-assets/.DS_Store
 
 # Test framework results and reports
 test/results/*.json
@@ -48,3 +49,8 @@ logs/*
 .vscode/chrome-debug-profile/
 .vscode/chrome-debug-profile-mobile/
 .vscode/edge-debug-profile/
+
+# Python cache
+**/__pycache__/
+*.pyc
+*.pyo

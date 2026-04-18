@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:53.000Z
 title: Layouts
 description: Create and customize page layouts in the Zer0-Mistakes Jekyll theme.
 layout: default
@@ -11,7 +12,7 @@ tags:
     - jekyll
 permalink: /docs/customization/layouts/
 difficulty: intermediate
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 sidebar:
     nav: docs
 ---
@@ -94,7 +95,7 @@ layout: default
 title: "Getting Started Tutorial"
 layout: tutorial
 difficulty: beginner
-estimated_time: "15 minutes"
+estimated_reading_time: "15 minutes"
 next_tutorial: /tutorials/part-2/
 ---
 ```

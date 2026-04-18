@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:49.000Z
 title: "The Remote Work Revolution: How Global Teams Are Reshaping Business"
 description: "Exploring the worldwide shift to remote work and its impact on companies, workers, and cities"
 preview: /images/previews/the-remote-work-revolution-how-global-teams-are-re.png

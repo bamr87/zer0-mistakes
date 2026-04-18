@@ -1,0 +1,154 @@
+<!--
+  ===================================================================
+  ENV DASHBOARD — Full environment and build information
+  ===================================================================
+
+  File: env-dashboard.html
+  Path: _includes/components/env-dashboard.html
+  Purpose: Consolidates environment, build, theme, and plugin info
+           into a full admin page. Extends the data shown in the
+           gear modal's Environment tab.
+
+  Dependencies: Bootstrap 5 card/table, Jekyll variables
+  Used by: pages/_about/settings/environment.md
+  ===================================================================
+-->
+
+<!-- Environment Overview Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3">
+    <div class="card text-center h-100 border-primary">
+      <div class="card-body py-3">
+        <i class="bi bi-diamond fs-3 text-primary"></i>
+        <div class="fw-semibold mt-1">Jekyll {{ jekyll.version | default: "?" }}</div>
+        <small class="text-body-secondary">Jekyll Version</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card text-center h-100 border-primary">
+      <div class="card-body py-3">
+        <i class="bi bi-gem fs-3 text-primary"></i>
+        <div class="fw-semibold mt-1">{{ site.ruby_version | default: "?" }}</div>
+        <small class="text-body-secondary">Ruby Version</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card text-center h-100 {% if jekyll.environment == 'production' %}border-success{% else %}border-warning{% endif %}">
+      <div class="card-body py-3">
+        <i class="bi bi-lightning-charge fs-3 {% if jekyll.environment == 'production' %}text-success{% else %}text-warning{% endif %}"></i>
+        <div class="fw-semibold mt-1 text-capitalize">{{ jekyll.environment }}</div>
+        <small class="text-body-secondary">Environment</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card text-center h-100 border-primary">
+      <div class="card-body py-3">
+        <i class="bi bi-clock-history fs-3 text-primary"></i>
+        <div class="fw-semibold mt-1">{{ site.time | date: "%b %d, %Y" }}</div>
+        <small class="text-body-secondary">Build Time</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+
+  <!-- Site Configuration -->
+  <div class="col-lg-6">
+    <div class="card h-100">
+      <div class="card-header"><i class="bi bi-globe me-1"></i> Site Configuration</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <tbody>
+            <tr><td class="fw-semibold">Title</td><td>{{ site.title | escape }}</td></tr>
+            <tr><td class="fw-semibold">URL</td><td><code class="small">{{ site.url }}</code></td></tr>
+            <tr><td class="fw-semibold">Base URL</td><td><code class="small">{{ site.baseurl | default: "/" }}</code></td></tr>
+            <tr><td class="fw-semibold">Description</td><td class="small">{{ site.description | truncate: 80 | escape }}</td></tr>
+            <tr><td class="fw-semibold">Locale</td><td>{{ site.locale | default: "en_US" }}</td></tr>
+            <tr><td class="fw-semibold">Markdown</td><td><code class="small">{{ site.markdown | default: "kramdown" }}</code></td></tr>
+            <tr><td class="fw-semibold">Theme Skin</td><td>{{ site.theme_skin | default: "dark" }}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Theme & Repository Info -->
+  <div class="col-lg-6">
+    <div class="card h-100">
+      <div class="card-header"><i class="bi bi-palette me-1"></i> Theme & Repository</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <tbody>
+            <tr>
+              <td class="fw-semibold">Theme</td>
+              <td>{{ site.theme | default: "remote" }} {% if site.remote_theme %}<span class="badge bg-info">remote</span>{% endif %}</td>
+            </tr>
+            {% if site.remote_theme %}
+              <tr><td class="fw-semibold">Remote Theme</td><td><code class="small">{{ site.remote_theme }}</code></td></tr>
+            {% endif %}
+            <tr><td class="fw-semibold">GitHub User</td><td>{{ site.github_user | escape }}</td></tr>
+            <tr><td class="fw-semibold">Repository</td><td><code class="small">{{ site.repository_name }}</code></td></tr>
+            <tr><td class="fw-semibold">Local Repo</td><td><code class="small">{{ site.local_repo | default: "n/a" }}</code></td></tr>
+            <tr>
+              <td class="fw-semibold">Collections Dir</td>
+              <td><code class="small">{{ site.collections_dir | default: "." }}</code></td>
+            </tr>
+            <tr><td class="fw-semibold">Build Time</td><td><code class="small">{{ site.time | date: "%Y-%m-%d %H:%M:%S %Z" }}</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Plugins List -->
+<h5 class="mt-4 mb-3"><i class="bi bi-plug me-1"></i> Active Plugins</h5>
+{% if site.plugins %}
+  <div class="row g-2">
+    {% for plugin in site.plugins %}
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="card">
+          <div class="card-body py-2 px-3">
+            <i class="bi bi-puzzle me-1 text-primary"></i>
+            <span class="small fw-semibold">{{ plugin }}</span>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="text-body-secondary">No plugins configured.</p>
+{% endif %}
+
+<!-- URL Comparison (Dev vs Production) -->
+<h5 class="mt-4 mb-3"><i class="bi bi-link-45deg me-1"></i> URL Configuration</h5>
+<div class="table-responsive">
+  <table class="table table-sm">
+    <thead class="table-dark">
+      <tr>
+        <th>Setting</th>
+        <th>Current Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="fw-semibold">site.url</td><td><code>{{ site.url }}</code></td></tr>
+      <tr><td class="fw-semibold">site.baseurl</td><td><code>{{ site.baseurl | default: '""' }}</code></td></tr>
+      <tr><td class="fw-semibold">jekyll.environment</td><td><code>{{ jekyll.environment }}</code></td></tr>
+      <tr><td class="fw-semibold">Full base path</td><td><code>{{ site.url }}{{ site.baseurl }}</code></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Quick links back to admin -->
+<div class="mt-4">
+  <a href="{{ '/about/config/' | relative_url }}" class="btn btn-outline-secondary btn-sm me-2">
+    <i class="bi bi-gear me-1"></i> Full Configuration
+  </a>
+  <a href="{{ '/about/settings/analytics/' | relative_url }}" class="btn btn-outline-secondary btn-sm">
+    <i class="bi bi-graph-up me-1"></i> Analytics Dashboard
+  </a>
+</div>

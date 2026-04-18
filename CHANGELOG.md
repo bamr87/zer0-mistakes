@@ -19,6 +19,111 @@
 - **Fork cleanup**: `scripts/fork-cleanup.sh` — `posthog`/`giscus` blocks reset only within their own YAML range (no stray matches in unrelated blocks)
 - **Welcome post**: `templates/pages/welcome-post.md.template` and embedded fallback in `scripts/fork-cleanup.sh` — corrected `layout: journals` → `layout: article` so the generated welcome post builds without “Layout does not exist” warnings on a freshly cleaned fork
 
+## [0.22.18] - 2026-04-18
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 02d0295 feat(setup): add site configuration detection and smart 404 page (#58)
+
+
+## [0.22.17] - 2026-04-18
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 10ba722 Add config-driven frontmatter validation system with review fixes (#34)
+
+
+## [0.22.16] - 2026-04-18
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- bc41b0d Add AGENTS.md and refresh stale agent instructions (#70)
+
+
+## [0.22.15] - 2026-04-18
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 939af77 feat(nav): dynamic collection-based navigation fallback for zero-config sites (#64)
+- ca7da2e docs: align project documentation with v0.22.13 (#66)
+- 9b23b63 chore(deps-dev): bump dompurify from 3.3.3 to 3.4.0 (#68)
+
+
+## [0.22.14] - 2026-04-18
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- f0a1cac fix: correct comments for clarity in SEO-related files
+- d1998ff chore(deps): update Ruby gem dependencies (#67)
+
+
+## [0.22.13] - 2026-04-10
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 3c00a3d refactor: remove duplicate code — use standard libraries and existing plugins (#59)
+
+
+## [0.22.12] - 2026-04-10
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 7ba0f83 feat(news): add data-driven feature showcase & live Bootstrap components to news index (#54)
+
+
+## [0.22.11] - 2026-04-09
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 8e83a51 Create SECURITY.md for security policy and reporting
+
+
+## [0.22.10] - 2026-04-06
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 27550da feat(admin): add admin layout and configuration dashboards (#57)
+
+
+## [0.22.9] - 2026-04-05
+
+### Added
+- **Skin Editor**: New colorffy-inspired skin editor (`assets/js/skin-editor.js`) for creating and customizing theme skins from the browser
+  - Edit all 9 built-in skin gradient colors with live color pickers
+  - Auto-generated palettes: primary tints, surface, tonal surface, semantic colors (success/warning/danger/info)
+  - WCAG contrast ratio badges on all palette swatches
+  - Random skin generation, save/load custom skins to localStorage
+  - Export SVGs and copy CSS custom properties to clipboard
+  - Advanced SVG filter controls (turbulence, octaves, seed, scale, overlay opacity)
+- **Palette Generator**: New standalone palette generator (`assets/js/palette-generator.js`) with chroma.js-powered color mixing and live CSS variable editor
+- **Playwright Tests**: 12 new visual regression test specs (skins, backgrounds, accessibility, admin layout, config editor/viewer, env dashboard, security, theme colors)
+
+### Fixed
+- **Skin Rendering**: Added `.zer0-bg-hero` class to landing layout to prevent Bootstrap `.bg-primary` from overriding skin background gradients
+- **CSS Scoping**: Added `.bg-primary:not(.zer0-bg-hero)` in custom SCSS to isolate skin backgrounds from Bootstrap utility classes
+
+### Changed
+- **Theme Customizer**: Expanded to 6 tabs — added Skin Editor between Skins and Palette Generator
+- **Admin Navigation**: Minor layout adjustment
+- **Environment Dashboard**: Minor component update
 
 ## [0.22.8] - 2026-04-04
 

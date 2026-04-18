@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:30:02.000Z
 title: Sitemap Generation
 description: Automatic XML sitemap and JSON search index generation for search engine discovery and site search.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - indexing
 permalink: /docs/seo/sitemap/
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 sidebar:
     nav: docs
 ---

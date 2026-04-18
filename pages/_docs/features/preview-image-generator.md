@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:56.000Z
 title: AI Preview Image Generator
 description: AI-powered automatic preview image generation for posts using OpenAI DALL-E, Stability AI, or local placeholders.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - dall-e
 permalink: /docs/features/preview-image-generator/
 difficulty: intermediate
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 prerequisites:
     - OpenAI API key (for DALL-E)
     - Or Stability AI API key

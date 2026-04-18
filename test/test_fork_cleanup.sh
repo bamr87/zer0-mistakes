@@ -167,7 +167,7 @@ test_real_cleanup_in_workspace() {
     assert "Config backup created"              "ls '$ws'/_config.yml.backup.* >/dev/null 2>&1"
 
     # YAML still valid
-    assert "_config.yml is valid YAML"          "ruby -ryaml -e \"YAML.load_file('$ws/_config.yml')\" 2>/dev/null"
+    assert "_config.yml is valid YAML"          "ruby -ryaml -e \"YAML.safe_load_file('$ws/_config.yml', aliases: true)\" 2>/dev/null"
 
     # Field substitutions
     local cfg="$ws/_config.yml"
@@ -178,8 +178,8 @@ test_real_cleanup_in_workspace() {
     assert "url set to user-site URL"           "grep -q 'url.*: &url \"https://testuser.github.io\"' '$cfg'"
     assert "email reset"                        "grep -q 'email.*: \"test@example.com\"' '$cfg'"
     assert "google_analytics cleared"           "grep -qE 'google_analytics[[:space:]]*: \"\"' '$cfg'"
-    assert "posthog.enabled = false"            "ruby -ryaml -e \"exit YAML.load_file('$cfg')['posthog']['enabled'] == false ? 0 : 1\""
-    assert "posthog.api_key cleared"            "ruby -ryaml -e \"exit YAML.load_file('$cfg')['posthog']['api_key'].to_s.empty? ? 0 : 1\""
+    assert "posthog.enabled = false"            "ruby -ryaml -e \"exit YAML.safe_load_file('$cfg', aliases: true)['posthog']['enabled'] == false ? 0 : 1\""
+    assert "posthog.api_key cleared"            "ruby -ryaml -e \"exit YAML.safe_load_file('$cfg', aliases: true)['posthog']['api_key'].to_s.empty? ? 0 : 1\""
 
     # YAML anchors preserved (so *aliases keep working)
     assert "Anchor &github_user preserved"      "grep -q '&github_user' '$cfg'"
@@ -216,7 +216,7 @@ test_idempotency() {
         || exit_code=$?
 
     assert "Second run exits 0"                 "[[ $exit_code -eq 0 ]]"
-    assert "_config.yml still valid YAML"       "ruby -ryaml -e \"YAML.load_file('$ws/_config.yml')\" 2>/dev/null"
+    assert "_config.yml still valid YAML"       "ruby -ryaml -e \"YAML.safe_load_file('$ws/_config.yml', aliases: true)\" 2>/dev/null"
 }
 
 # -----------------------------------------------------------------------------

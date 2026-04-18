@@ -725,7 +725,23 @@ create_starter_pages() {
     # Create Blog page
     create_blog_page
     
+    # Create Admin settings pages
+    create_admin_pages
+    
     log_success "Starter pages created"
+}
+
+create_admin_pages() {
+    local admin_dir="$TARGET_DIR/pages/_about/settings"
+    mkdir -p "$admin_dir"
+
+    log_info "Creating admin settings pages..."
+
+    local admin_pages=("theme" "config" "navigation" "collections" "analytics" "environment")
+    local page
+    for page in "${admin_pages[@]}"; do
+        create_from_template "pages/admin/${page}.md.template" "$admin_dir/${page}.md" ""
+    done
 }
 
 create_quickstart_page() {
@@ -1662,6 +1678,13 @@ FOUROHFOUR
 
     # Quickstart
     create_from_template "pages/quickstart.md.template" "pages/quickstart.md" ""
+
+    # Admin settings pages
+    mkdir -p pages/_about/settings
+    local admin_page
+    for admin_page in theme config navigation collections analytics environment; do
+        create_from_template "pages/admin/${admin_page}.md.template" "pages/_about/settings/${admin_page}.md" ""
+    done
 
     # Navigation data
     mkdir -p _data/navigation

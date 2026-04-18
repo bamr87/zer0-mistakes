@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:30:00.000Z
 title: Quick Start Guide
 description: Multiple installation methods for the Zer0-Mistakes Jekyll theme - from AI wizard to manual setup.
 layout: default
@@ -11,7 +12,7 @@ tags:
     - docker
 permalink: /docs/getting-started/quick-start/
 difficulty: beginner
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 sidebar:
     nav: docs
 ---

@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:56.000Z
 title: Security Scanning
 description: Guide to CodeQL security scanning and security best practices for the Zer0-Mistakes theme.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - scanning
 permalink: /docs/development/security/
 difficulty: intermediate
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 prerequisites:
     - GitHub repository access
 sidebar:

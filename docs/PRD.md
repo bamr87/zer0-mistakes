@@ -1,8 +1,8 @@
 ---
 title: "Product Requirements Document (PRD)"
 subtitle: "zer0-mistakes Jekyll Theme"
-version: "1.0.0"
-date: "2025-11-25"
+version: "2.0.0"
+date: "2026-04-11"
 author: "Amr Abdel-Motaleb"
 status: "Active"
 document_type: "Product Requirements Document"
@@ -14,7 +14,7 @@ document_type: "Product Requirements Document"
 
 **Product Name**: zer0-mistakes Jekyll Theme  
 **Product Type**: Ruby Gem + Jekyll Theme + GitHub Pages Remote Theme  
-**Current Version**: 0.6.0  
+**Current Version**: 0.22.13  
 **Target Market**: Developers, Technical Writers, Content Creators, Open Source Projects  
 **Primary Goal**: Provide a production-ready Jekyll theme with zero-configuration deployment, AI-powered installation, and comprehensive developer experience
 
@@ -39,8 +39,8 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 **Goal 1: Eliminate Setup Friction**
 
 - **Metric**: 95%+ installation success rate
-- **Status**: ✅ Achieved (v0.6.0)
-- **Implementation**: 1,090-line install.sh with AI-powered error recovery
+- **Status**: ✅ Achieved (v0.6.0, enhanced through v0.22.13)
+- **Implementation**: ~2,400-line install.sh with AI-powered error recovery, 3 install modes (full/minimal/fork), remote/github/codespaces support
 
 **Goal 2: Universal Development Environment**
 
@@ -57,7 +57,7 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 **Goal 4: Privacy Compliance**
 
 - **Metric**: GDPR/CCPA compliant analytics with user consent
-- **Status**: ✅ Achieved (v0.6.0)
+- **Status**: ✅ Achieved (v0.6.0, enhanced through v0.22.13)
 - **Implementation**: PostHog integration with cookie consent system
 
 **Goal 5: Developer Experience Excellence**
@@ -71,8 +71,8 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 **Goal 6: Comprehensive Testing** (Target: v0.8.0)
 
 - **Metric**: >90% test coverage, automated CI/CD
-- **Status**: 🟡 In Progress (60% coverage)
-- **Implementation**: test/ suite with 16+ automated tests
+- **Status**: 🟡 In Progress — significantly expanded since v0.6.0
+- **Implementation**: test/ suite with 27+ automated tests, Playwright visual regression tests (12 specs), CI/CD with path-based change detection
 
 **Goal 7: Advanced Analytics** (Target: v0.8.0)
 
@@ -80,11 +80,11 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 - **Status**: 🔴 Planned
 - **Implementation**: Enhanced PostHog integration
 
-**Goal 8: Headless CMS Integration** (Target: v0.7.0)
+**Goal 8: Visual Theme Customizer** (Partially Achieved)
 
-- **Metric**: Content API, visual editor, multi-author support
-- **Status**: 🔴 Planned
-- **Implementation**: API development, CMS adapter layer
+- **Metric**: Browser-based skin editing, palette generation
+- **Status**: 🟡 Partially Achieved (v0.22.9)
+- **Implementation**: Skin editor with live color pickers, WCAG contrast badges, palette generator with chroma.js, SVG filter controls
 
 ---
 
@@ -143,32 +143,34 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 #### Feature 1: **AI-Powered Installation System** ✅
 
 **Priority**: Critical  
-**Version Shipped**: 0.6.0  
+**Version Shipped**: 0.6.0 (Enhanced through 0.22.13 — 3 install modes, remote/github/codespaces support)  
 **User Stories**:
-
-- As a developer, I want to run one command and have everything configured automatically
-- As a non-technical user, I want clear error messages when something goes wrong
-- As a DevOps engineer, I want the installer to detect and fix environment issues
 
 **Acceptance Criteria**:
 
 - ✅ Single-command installation: `curl -fsSL ... | bash`
-- ✅ Automatic platform detection (Intel/Apple Silicon/Linux)
+- ✅ Automatic platform detection (Intel/Apple Silicon/Linux/WSL)
 - ✅ Error recovery for 27+ common failure scenarios
 - ✅ Docker environment auto-configuration
 - ✅ 95%+ installation success rate
 - ✅ Comprehensive logging with actionable solutions
+- ✅ Three install modes: `--full`, `--minimal`, `--fork`
+- ✅ Remote install via `--remote`, `--github`, `--codespaces`
+- ✅ Template rendering with variable substitution
+- ✅ Browser-based setup wizard
 
 **Technical Implementation**:
 
 ```bash
-# install.sh - 1,090 lines
-- detect_platform()           # OS/architecture detection
+# install.sh - ~2,400 lines
+- detect_platform()           # OS/architecture detection (macOS/Linux/WSL)
 - check_prerequisites()       # Docker, Git, curl validation
 - fix_docker_issues()         # Auto-restart, permission fixes
 - optimize_development_config() # Generate _config_dev.yml
 - setup_docker_environment()  # Create docker-compose.yml
 - error_recovery()            # Self-healing for common errors
+- render_template()           # Template variable substitution
+- create_site_gemfile()       # Platform-aware Gemfile generation
 ```
 
 **Metrics**:
@@ -182,7 +184,7 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 #### Feature 2: **Docker-First Development Environment** ✅
 
 **Priority**: Critical  
-**Version Shipped**: 0.3.0 (Enhanced 0.6.0)  
+**Version Shipped**: 0.3.0 (Enhanced through 0.22.13)  
 **User Stories**:
 
 - As a developer, I want consistent development across macOS, Linux, Windows
@@ -226,7 +228,7 @@ services:
 #### Feature 3: **Bootstrap 5 Integration** ✅
 
 **Priority**: High  
-**Version Shipped**: 0.2.0 (Enhanced 0.6.0)  
+**Version Shipped**: 0.2.0 (Enhanced through 0.22.13 — vendored assets, skin editor)  
 **User Stories**:
 
 - As a developer, I want modern responsive design without custom CSS
@@ -235,27 +237,21 @@ services:
 
 **Acceptance Criteria**:
 
-- ✅ Bootstrap 5.3.3 loaded via CDN with integrity hashes
-- ✅ Bootstrap Icons 1.10.3 integration
+- ✅ Bootstrap 5.3.3 loaded from committed `assets/vendor/` (GitHub Pages compatible)
+- ✅ Bootstrap Icons integration
 - ✅ Responsive breakpoints (xs, sm, md, lg, xl, xxl)
-- ✅ Dark mode support with theme switcher
-- ✅ Custom CSS layering system
+- ✅ Dark mode support with theme switcher and color modes
+- ✅ Custom CSS layering system (`_sass/`, `assets/css/main.css`)
 - ✅ Component library (navbar, cards, modals, forms)
+- ✅ 9 built-in theme skins with gradient backgrounds
 
 **Technical Implementation**:
 
 ```html
-<!-- _includes/core/head.html -->
-<link
-  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-  rel="stylesheet"
-  integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-  crossorigin="anonymous"
-/>
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
-/>
+<!-- _includes/core/head.html — vendor assets (no runtime CDN) -->
+<link href="{{ '/assets/vendor/bootstrap/css/bootstrap.min.css' | relative_url }}" rel="stylesheet">
+<link rel="stylesheet" href="{{ '/assets/vendor/bootstrap-icons/font/bootstrap-icons.css' | relative_url }}">
+<script src="{{ '/assets/vendor/bootstrap/js/bootstrap.bundle.min.js' | relative_url }}"></script>
 ```
 
 **Metrics**:
@@ -269,12 +265,8 @@ services:
 #### Feature 4: **Privacy-First Analytics (PostHog)** ✅
 
 **Priority**: High  
-**Version Shipped**: 0.6.0  
+**Version Shipped**: 0.6.0 (Enhanced through 0.22.13)  
 **User Stories**:
-
-- As a site owner, I want to understand user behavior without compromising privacy
-- As a visitor, I want granular control over tracking consent
-- As a compliance officer, I need GDPR/CCPA compliance
 
 **Acceptance Criteria**:
 
@@ -313,12 +305,8 @@ posthog:
 #### Feature 5: **Automated Version Management** ✅
 
 **Priority**: High  
-**Version Shipped**: 0.4.0 (Enhanced 0.6.0)  
+**Version Shipped**: 0.4.0 (Enhanced through 0.22.13)  
 **User Stories**:
-
-- As a maintainer, I want version bumps to be automatic and consistent
-- As a release manager, I want changelogs generated from commits
-- As a developer, I want semantic versioning enforced
 
 **Acceptance Criteria**:
 
@@ -349,12 +337,8 @@ CURRENT=$(grep -o 'VERSION = "[^"]*"' lib/jekyll-theme-zer0/version.rb)
 #### Feature 6: **Comprehensive Testing Framework** ✅
 
 **Priority**: High  
-**Version Shipped**: 0.5.0 (Enhanced 0.6.0)  
+**Version Shipped**: 0.5.0 (Enhanced through 0.22.13)  
 **User Stories**:
-
-- As a developer, I want to validate changes before deployment
-- As a CI/CD engineer, I want automated test suites
-- As a contributor, I want clear test results
 
 **Acceptance Criteria**:
 
@@ -365,6 +349,8 @@ CURRENT=$(grep -o 'VERSION = "[^"]*"' lib/jekyll-theme-zer0/version.rb)
 - ✅ Version consistency validation
 - ✅ Build process verification
 - ✅ CI/CD integration with GitHub Actions
+- ✅ Playwright visual regression tests (12 specs)
+- ✅ Installation and fork mode test coverage
 
 **Technical Implementation**:
 
@@ -389,7 +375,7 @@ CURRENT=$(grep -o 'VERSION = "[^"]*"' lib/jekyll-theme-zer0/version.rb)
 #### Feature 7: **GitHub Copilot Integration** ✅
 
 **Priority**: Medium  
-**Version Shipped**: 0.6.0  
+**Version Shipped**: 0.6.0 (Enhanced 0.22.0 — Copilot Agent prompt button)  
 **User Stories**:
 
 - As a developer using Copilot, I want context-aware code suggestions
@@ -498,7 +484,7 @@ _data/content_statistics.yml - Generated metrics
 #### Feature 10: **Automated Release Pipeline** ✅
 
 **Priority**: High  
-**Version Shipped**: 0.4.0 (Enhanced 0.6.0)  
+**Version Shipped**: 0.4.0 (Enhanced through 0.22.13)  
 **User Stories**:
 
 - As a maintainer, I want releases automated from commit to RubyGems
@@ -539,7 +525,7 @@ _data/content_statistics.yml - Generated metrics
 #### Feature 11: **Headless CMS Integration** 🔴
 
 **Priority**: High  
-**Target Version**: 0.7.0 (Q2 2026)  
+**Target Version**: 0.23.0+ (Q2–Q3 2026)  
 **User Stories**:
 
 - As a content editor, I want a visual content management interface
@@ -614,23 +600,31 @@ posthog:
 
 ---
 
-#### Feature 13: **Visual Theme Customizer** 🔴
+#### Feature 13: **Visual Theme Customizer** 🟡
 
 **Priority**: Medium  
-**Target Version**: 0.8.0 (Q3 2026)  
+**Partially Shipped**: v0.22.9 (Skin Editor & Palette Generator)  
+**Target for Full Completion**: v0.8.0 (Q3 2026)  
 **User Stories**:
 
 - As a designer, I want to customize colors without editing CSS
 - As a non-technical user, I want point-and-click theme editing
 - As a developer, I want generated CSS based on customizations
 
-**Acceptance Criteria**:
+**Shipped (v0.22.9)**:
 
-- Real-time theme preview with live updates
-- Color palette editor with accessibility checks
+- ✅ Skin editor with live color pickers for 9 gradient colors
+- ✅ Auto-generated palettes (primary tints, surface, semantic colors)
+- ✅ WCAG contrast ratio badges on all palette swatches
+- ✅ Random skin generation, save/load to localStorage
+- ✅ Export SVGs and copy CSS custom properties
+- ✅ Advanced SVG filter controls
+
+**Remaining**:
+
+- Real-time full theme preview with live updates
 - Typography customization (fonts, sizes, weights)
 - Layout adjustments (sidebar, header, footer)
-- Export custom theme as CSS variables
 - One-click theme presets (10+ built-in themes)
 
 **Technical Requirements**:
@@ -711,15 +705,16 @@ graph TB
 
 **Core Runtime**:
 
-- Ruby 2.7.0+ (language)
+- Ruby 2.7.0+ (language); Docker uses Ruby 3.3-slim
 - Jekyll 3.9.5 (static site generator)
 - Bundler 2.3+ (dependency management)
 
 **Frontend**:
 
-- Bootstrap 5.3.3 (CSS framework)
-- Bootstrap Icons 1.10.3
-- Mermaid 10+ (diagrams)
+- Bootstrap 5.3.3 (CSS framework — vendored in `assets/vendor/`)
+- Bootstrap Icons (vendored)
+- Mermaid 10+ (diagrams — vendored)
+- MathJax (mathematical notation — vendored)
 - jQuery (optional)
 
 **Containerization**:
@@ -765,9 +760,18 @@ graph TB
 root.html (base)
   ├── default.html (main wrapper)
   │   ├── home.html (homepage)
-  │   ├── journals.html (blog posts)
-  │   └── collection.html (content collections)
-  └── landing.html (marketing pages)
+  │   ├── article.html (blog posts — replaces journals)
+  │   ├── collection.html (content collections)
+  │   ├── section.html (section index pages)
+  │   ├── search.html (search results)
+  │   ├── stats.html (statistics dashboard)
+  │   ├── tag.html (tag pages)
+  │   ├── note.html (developer notes)
+  │   ├── notebook.html (Jupyter notebooks)
+  │   └── sitemap-collection.html (sitemap)
+  ├── landing.html (marketing pages)
+  ├── admin.html (admin dashboards)
+  └── news.html (news index)
 ```
 
 **Responsive Breakpoints**:
@@ -878,16 +882,56 @@ root.html (base)
 - ✅ Statistics dashboard
 - ✅ Comprehensive sitemap
 
-**v0.6.0** (Current - Intelligence & Privacy)
+**v0.6.0** (Intelligence & Privacy)
 
 - ✅ AI-powered installation
 - ✅ PostHog analytics
 - ✅ Cookie consent system
 - ✅ GitHub Copilot integration
 
+**v0.7.0 - v0.14.0** (Content & Infrastructure)
+
+- ✅ Changelog automation and release pipeline
+- ✅ Gem publishing workflow (RubyGems.org)
+- ✅ Content organization and collections improvements
+- ✅ Preview image generator (multi-AI provider: OpenAI, xAI Grok)
+- ✅ CI/CD pipeline hardening and workflow optimization
+
+**v0.15.0 - v0.16.0** (Features & Polish)
+
+- ✅ Preview image generator (multi-AI provider)
+- ✅ Configurable assets prefix
+- ✅ Comprehensive features.yml (43 features documented)
+- ✅ CI workflow hardening
+
+**v0.17.0 - v0.18.0** (Navigation & Documentation)
+
+- ✅ ES6 navigation modules
+- ✅ Hover dropdowns, keyboard nav, touch gestures
+- ✅ Search modal with keyboard shortcuts
+- ✅ Dual documentation architecture (developer vs user docs)
+
+**v0.19.0 - v0.20.0** (Documentation & Testing)
+
+- ✅ 43 features fully documented with user-facing pages
+- ✅ Scaffolding templates and fork cleanup
+- ✅ GitHub Pages compatible search
+- ✅ Notes collection and Jupyter notebook support
+
+**v0.21.0 - v0.22.13** (Current — Platform & Customization)
+
+- ✅ Environment switcher and settings modal redesign
+- ✅ Vendored assets (Bootstrap, Icons, Mermaid — no runtime CDN)
+- ✅ AIEO structured data, E-E-A-T signals, FAQ, glossary
+- ✅ Copilot Agent prompt button with data-driven prompt registry
+- ✅ Admin layout and configuration dashboards
+- ✅ Skin editor with live color pickers and palette generator
+- ✅ Playwright visual regression tests
+- ✅ Universal installer (remote/github/codespaces modes)
+
 ### Future Releases
 
-**v0.7.0** (Q2 2026) - Headless CMS
+**v0.23.0+** (Q2 2026) - Headless CMS
 
 - Content API (REST/GraphQL)
 - Visual front matter editor
@@ -1145,8 +1189,11 @@ root.html (base)
 **Version Migration**:
 
 - v0.5.0 → v0.6.0: PostHog setup guide
-- v0.6.0 → v0.7.0: CMS integration guide (planned)
-- v0.7.0 → v0.8.0: Analytics migration (planned)
+- v0.17.0: Navigation YAML schema standardized on `children` key (was `sublinks`)
+- v0.20.3: Layouts standardized from `journals` to `article`
+- v0.21.3: Vendor assets — Bootstrap/Icons loaded from `assets/vendor/` instead of CDN
+- v0.22.0: Copilot Agent prompt button replaces single link
+- v0.23.0+: CMS integration guide (planned)
 
 **Breaking Changes**:
 
@@ -1223,14 +1270,15 @@ root.html (base)
 
 ## 📊 Document Metadata
 
-**Document Version**: 1.0.0  
-**Last Updated**: 2025-11-25  
+**Document Version**: 2.0.0  
+**Last Updated**: 2026-04-11  
 **Author**: Amr Abdel-Motaleb  
 **Status**: Active  
-**Next Review**: 2026-02-25 (Quarterly)
+**Next Review**: 2026-07-11 (Quarterly)
 
 **Change History**:
 
+- 2026-04-11: Major update to v2.0.0 — align with v0.22.13 reality, update all version refs, add shipped features (v0.7–v0.22), update roadmap and technology stack
 - 2025-11-25: Initial PRD creation (v1.0.0)
 
 **Approvals**:

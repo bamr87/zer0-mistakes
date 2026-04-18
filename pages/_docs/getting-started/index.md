@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:30:01.000Z
 title: Getting Started
 description: Quick start guides and initial setup for the Zer0-Mistakes Jekyll theme.
 layout: default
@@ -11,7 +12,7 @@ tags:
     - installation
 permalink: /docs/getting-started/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---

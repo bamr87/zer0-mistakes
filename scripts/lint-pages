@@ -1,0 +1,505 @@
+#!/usr/bin/env bash
+
+# =========================================================================
+# lint-pages — Config-driven frontmatter validator
+# =========================================================================
+# Validates frontmatter across all Jekyll collections using schemas
+# defined in .github/config/frontmatter_schema.yml
+#
+# Usage:
+#   scripts/lint-pages                    # Validate all pages (warn mode)
+#   scripts/lint-pages --strict           # Fail on any violation
+#   scripts/lint-pages --fix              # Auto-fix safe violations
+#   scripts/lint-pages --fix --dry-run    # Preview fixes without modifying
+#   scripts/lint-pages --report           # Output structured report
+#   scripts/lint-pages --collection posts # Validate only posts
+#   scripts/lint-pages --verbose          # Detailed output
+#   scripts/lint-pages --schema PATH      # Use alternate schema
+#
+# All validation rules come from config files — nothing is hardcoded.
+# =========================================================================
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/common.sh"
+source "$SCRIPT_DIR/lib/frontmatter.sh"
+
+# -------------------------------------------------------------------------
+# Defaults (overridable via environment or flags)
+# -------------------------------------------------------------------------
+SCHEMA_PATH="${FRONTMATTER_SCHEMA_PATH:-.github/config/frontmatter_schema.yml}"
+RULES_PATH="${CONTENT_RULES_PATH:-.github/config/content_rules.yml}"
+MODE="warn"       # warn | strict
+FIX_MODE=false
+REPORT_MODE=false
+TARGET_COLLECTION=""
+REPO_ROOT="$(get_repo_root)"
+
+# Counters
+TOTAL_FILES=0
+TOTAL_ERRORS=0
+TOTAL_WARNINGS=0
+TOTAL_FIXED=0
+TOTAL_SKIPPED=0
+
+# Schema cache (populated once per run by load_schema_cache)
+SCHEMA_DATETIME_PATTERN=""
+SCHEMA_DRAFT_TYPE=""
+SCHEMA_CATEGORY_CASING=""
+SCHEMA_CANONICAL_FIELDS=""
+
+# Per-collection cache (populated by ensure_collection_cache)
+CACHED_COLLECTION=""
+CACHED_REQUIRED_FIELDS=""
+CACHED_ALLOWED_LAYOUTS=""
+
+# -------------------------------------------------------------------------
+# CLI argument parsing
+# -------------------------------------------------------------------------
+parse_args() {
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --strict)       MODE="strict"; shift ;;
+            --warn)         MODE="warn"; shift ;;
+            --fix)          FIX_MODE=true; shift ;;
+            --report)       REPORT_MODE=true; shift ;;
+            --dry-run)      DRY_RUN=true; shift ;;
+            --verbose|-v)   VERBOSE=true; shift ;;
+            --collection)   TARGET_COLLECTION="$2"; shift 2 ;;
+            --schema)       SCHEMA_PATH="$2"; shift 2 ;;
+            --rules)        RULES_PATH="$2"; shift 2 ;;
+            --help|-h)      show_help; exit 0 ;;
+            *)              error "Unknown option: $1" ;;
+        esac
+    done
+}
+
+show_help() {
+    cat << 'EOF'
+lint-pages — Config-driven frontmatter validator
+
+USAGE:
+    scripts/lint-pages [OPTIONS]
+
+OPTIONS:
+    --strict              Exit non-zero on any violation
+    --warn                Print warnings only (default)
+    --fix                 Auto-fix safe violations (dates, drafts, field renames)
+    --report              Output structured report summary
+    --dry-run             Preview fixes without modifying files
+    --verbose, -v         Detailed output
+    --collection NAME     Validate only the named collection
+    --schema PATH         Path to schema YAML (default: .github/config/frontmatter_schema.yml)
+    --rules PATH          Path to content rules YAML (default: .github/config/content_rules.yml)
+    --help, -h            Show this help
+
+ENVIRONMENT VARIABLES:
+    FRONTMATTER_SCHEMA_PATH   Alternate schema path
+    CONTENT_RULES_PATH        Alternate content rules path
+    FRONTMATTER_STRICT        Set to "true" for strict mode
+
+EXAMPLES:
+    scripts/lint-pages --strict                    # CI: fail on violations
+    scripts/lint-pages --fix --dry-run             # Preview auto-fixes
+    scripts/lint-pages --collection posts --verbose # Debug post frontmatter
+    FRONTMATTER_SCHEMA_PATH=test.yml scripts/lint-pages  # Custom schema
+EOF
+}
+
+# -------------------------------------------------------------------------
+# Violation reporting
+# -------------------------------------------------------------------------
+report_violation() {
+    local filepath="$1"
+    local field="$2"
+    local message="$3"
+    local severity="${4:-warning}"
+
+    local rel_path
+    rel_path="${filepath#$REPO_ROOT/}"
+
+    if [[ "$severity" == "error" ]]; then
+        TOTAL_ERRORS=$((TOTAL_ERRORS + 1))
+        echo -e "${RED}  ✗ ERROR${NC} [$rel_path] $field: $message"
+    else
+        TOTAL_WARNINGS=$((TOTAL_WARNINGS + 1))
+        echo -e "${YELLOW}  ⚠ WARN${NC}  [$rel_path] $field: $message"
+    fi
+}
+
+report_fix() {
+    local filepath="$1"
+    local field="$2"
+    local message="$3"
+
+    local rel_path
+    rel_path="${filepath#$REPO_ROOT/}"
+
+    TOTAL_FIXED=$((TOTAL_FIXED + 1))
+    if [[ "$DRY_RUN" == "true" ]]; then
+        echo -e "${CYAN}  ⬡ DRY${NC}  [$rel_path] $field: would fix — $message"
+    else
+        echo -e "${GREEN}  ✓ FIX${NC}  [$rel_path] $field: $message"
+    fi
+}
+
+# -------------------------------------------------------------------------
+# Schema caching (one Ruby invocation per run instead of per-file)
+# -------------------------------------------------------------------------
+
+# Load global schema settings once into shell variables.
+load_schema_cache() {
+    local schema_full_path="$1"
+    local cache
+    cache="$(ruby -ryaml -e "
+        s = YAML.load_file('$schema_full_path')
+        puts 'DATETIME_PATTERN=' + (s.dig('field_types','datetime','pattern') || '').to_s
+        puts 'DRAFT_TYPE=' + (s.dig('global','draft_type') || '').to_s
+        puts 'CATEGORY_CASING=' + (s.dig('global','category_casing') || '').to_s
+        puts '---CANONICAL---'
+        (s.dig('global','canonical_fields') || {}).each { |k,v| puts \"#{k}=#{v}\" }
+    " 2>/dev/null)"
+
+    SCHEMA_DATETIME_PATTERN="$(echo "$cache" | sed -n 's/^DATETIME_PATTERN=//p')"
+    SCHEMA_DRAFT_TYPE="$(echo "$cache" | sed -n 's/^DRAFT_TYPE=//p')"
+    SCHEMA_CATEGORY_CASING="$(echo "$cache" | sed -n 's/^CATEGORY_CASING=//p')"
+    SCHEMA_CANONICAL_FIELDS="$(echo "$cache" | awk '/^---CANONICAL---$/{flag=1;next} flag')"
+}
+
+# Load per-collection schema once on first use (memoized).
+ensure_collection_cache() {
+    local collection="$1"
+    [[ "$CACHED_COLLECTION" == "$collection" ]] && return 0
+
+    local schema_full_path="$REPO_ROOT/$SCHEMA_PATH"
+    local cache
+    cache="$(ruby -ryaml -e "
+        s = YAML.load_file('$schema_full_path')
+        global_req = s.dig('global','required_fields') || []
+        col_req    = s.dig('collections','$collection','required') || []
+        layouts    = s.dig('collections','$collection','layout','allowed') || []
+        puts '---REQUIRED---'
+        (global_req | col_req).each { |f| puts f }
+        puts '---LAYOUTS---'
+        layouts.each { |l| puts l }
+    " 2>/dev/null)"
+
+    CACHED_REQUIRED_FIELDS="$(echo "$cache" | awk '/^---REQUIRED---$/{f=1;next} /^---LAYOUTS---$/{f=0} f')"
+    CACHED_ALLOWED_LAYOUTS="$(echo "$cache" | awk '/^---LAYOUTS---$/{f=1;next} f')"
+    CACHED_COLLECTION="$collection"
+}
+
+# -------------------------------------------------------------------------
+# Per-file validation
+# -------------------------------------------------------------------------
+validate_file() {
+    local filepath="$1"
+    local collection="$2"
+    local severity="warning"
+
+    [[ "$MODE" == "strict" ]] && severity="error"
+
+    TOTAL_FILES=$((TOTAL_FILES + 1))
+
+    debug "Validating: ${filepath#$REPO_ROOT/} (collection: $collection)"
+
+    # Ensure per-collection schema cache is loaded
+    ensure_collection_cache "$collection"
+
+    # Single-pass parse: emits FIELD/LAYOUT/DATE/LASTMOD/DRAFT/CATEGORY lines
+    local parsed
+    parsed="$(parse_file_frontmatter_all "$filepath")"
+
+    if echo "$parsed" | head -1 | grep -q "^__NO_FRONTMATTER__$"; then
+        report_violation "$filepath" "frontmatter" "No frontmatter block found" "$severity"
+        return
+    fi
+    if echo "$parsed" | head -1 | grep -q "^__PARSE_ERROR__"; then
+        report_violation "$filepath" "frontmatter" "YAML parse error" "$severity"
+        return
+    fi
+
+    local fields_present
+    fields_present="$(echo "$parsed" | sed -n 's/^FIELD://p')"
+
+    # --- Deprecated field renames (run FIRST so renames satisfy required-field checks) ---
+    local renamed_any=false
+    while IFS= read -r mapping; do
+        [[ -z "$mapping" ]] && continue
+        local deprecated_name="${mapping%%=*}"
+        local canonical_name="${mapping#*=}"
+        if echo "$fields_present" | grep -qx "$deprecated_name"; then
+            if [[ "$FIX_MODE" == "true" ]]; then
+                if echo "$fields_present" | grep -qx "$canonical_name"; then
+                    report_violation "$filepath" "$deprecated_name" "Deprecated field — '$canonical_name' already present, manual cleanup needed" "$severity"
+                else
+                    fix_rename_field "$filepath" "$deprecated_name" "$canonical_name"
+                    renamed_any=true
+                fi
+            else
+                report_violation "$filepath" "$deprecated_name" "Deprecated field — use '$canonical_name' instead" "$severity"
+            fi
+        fi
+    done <<< "$SCHEMA_CANONICAL_FIELDS"
+
+    # Re-parse if any rename happened so subsequent checks see post-rename state
+    if [[ "$renamed_any" == "true" ]] && [[ "$DRY_RUN" != "true" ]]; then
+        parsed="$(parse_file_frontmatter_all "$filepath")"
+        fields_present="$(echo "$parsed" | sed -n 's/^FIELD://p')"
+    fi
+
+    # --- Required field checks ---
+    while IFS= read -r req_field; do
+        [[ -z "$req_field" ]] && continue
+        if ! echo "$fields_present" | grep -qx "$req_field"; then
+            if [[ "$req_field" == "lastmod" ]] && [[ "$FIX_MODE" == "true" ]]; then
+                fix_add_lastmod "$filepath"
+            else
+                report_violation "$filepath" "$req_field" "Required field missing" "$severity"
+            fi
+        fi
+    done <<< "$CACHED_REQUIRED_FIELDS"
+
+    # --- Layout validation ---
+    local layout_value
+    layout_value="$(echo "$parsed" | sed -n 's/^LAYOUT://p' | head -1)"
+    if [[ -n "$layout_value" ]] && [[ -n "$CACHED_ALLOWED_LAYOUTS" ]]; then
+        if ! echo "$CACHED_ALLOWED_LAYOUTS" | grep -qx "$layout_value"; then
+            report_violation "$filepath" "layout" "Value '$layout_value' not in allowed: [$(echo "$CACHED_ALLOWED_LAYOUTS" | tr '\n' ',' | sed 's/,$//' )]" "$severity"
+        fi
+    fi
+
+    # --- Date format validation ---
+    if [[ -n "$SCHEMA_DATETIME_PATTERN" ]]; then
+        local date_field date_value date_tag
+        for date_field in date lastmod; do
+            date_tag="$(printf '%s' "$date_field" | tr '[:lower:]' '[:upper:]')"
+            date_value="$(echo "$parsed" | sed -n "s/^${date_tag}://p" | head -1)"
+            if [[ -n "$date_value" ]]; then
+                if ! validate_field_pattern "$date_value" "$SCHEMA_DATETIME_PATTERN"; then
+                    if [[ "$FIX_MODE" == "true" ]]; then
+                        fix_date_in_file "$filepath" "$date_field" "$date_value"
+                    else
+                        report_violation "$filepath" "$date_field" "Date format '$date_value' does not match pattern" "$severity"
+                    fi
+                fi
+            fi
+        done
+    fi
+
+    # --- Draft field type validation ---
+    local draft_value
+    draft_value="$(echo "$parsed" | sed -n 's/^DRAFT://p' | head -1)"
+    if [[ -n "$draft_value" ]] && [[ "$SCHEMA_DRAFT_TYPE" == "boolean" ]]; then
+        if ! validate_boolean "$draft_value"; then
+            if [[ "$FIX_MODE" == "true" ]]; then
+                fix_draft_in_file "$filepath" "$draft_value"
+            else
+                report_violation "$filepath" "draft" "Expected boolean, got '$draft_value'" "$severity"
+            fi
+        fi
+    fi
+
+    # --- Category casing validation ---
+    if [[ -n "$SCHEMA_CATEGORY_CASING" ]]; then
+        local cat_value
+        while IFS= read -r cat_value; do
+            [[ -z "$cat_value" ]] && continue
+            if ! validate_category_casing "$cat_value" "$SCHEMA_CATEGORY_CASING"; then
+                report_violation "$filepath" "categories" "Category '$cat_value' does not follow $SCHEMA_CATEGORY_CASING casing" "$severity"
+            fi
+        done < <(echo "$parsed" | sed -n 's/^CATEGORY://p')
+    fi
+}
+
+# -------------------------------------------------------------------------
+# Fix helpers
+# -------------------------------------------------------------------------
+fix_add_lastmod() {
+    local filepath="$1"
+    local today
+    today="$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
+
+    report_fix "$filepath" "lastmod" "Adding lastmod: $today"
+    if [[ "$DRY_RUN" != "true" ]]; then
+        # Insert lastmod after the opening --- (portable across macOS & Linux)
+        perl -pi -e 'if (/^---\s*$/ && !$done) { $done=1; $_ .= "lastmod: '"$today"'\n" }' "$filepath"
+    fi
+}
+
+fix_rename_field() {
+    local filepath="$1"
+    local old_name="$2"
+    local new_name="$3"
+
+    report_fix "$filepath" "$old_name" "Renaming to '$new_name'"
+    if [[ "$DRY_RUN" != "true" ]]; then
+        perl -pi -e "s/^\Q${old_name}\E:/${new_name}:/" "$filepath"
+    fi
+}
+
+fix_date_in_file() {
+    local filepath="$1"
+    local field="$2"
+    local old_value="$3"
+    local new_value
+    new_value="$(fix_date_format "$old_value")"
+
+    if [[ "$new_value" != "$old_value" ]]; then
+        report_fix "$filepath" "$field" "Normalizing '$old_value' → '$new_value'"
+        if [[ "$DRY_RUN" != "true" ]]; then
+            perl -pi -e "s/^\Q${field}\E:.*/${field}: ${new_value}/" "$filepath"
+        fi
+    fi
+}
+
+fix_draft_in_file() {
+    local filepath="$1"
+    local old_value="$2"
+    local new_value
+    new_value="$(fix_draft_to_boolean "$old_value")"
+
+    if [[ "$new_value" != "$old_value" ]]; then
+        report_fix "$filepath" "draft" "Converting '$old_value' → $new_value"
+        if [[ "$DRY_RUN" != "true" ]]; then
+            perl -pi -e "s/^draft:.*$/draft: ${new_value}/" "$filepath"
+        fi
+    fi
+}
+
+# -------------------------------------------------------------------------
+# Collection scanning
+# -------------------------------------------------------------------------
+scan_collection() {
+    local collection="$1"
+    local pattern
+    pattern="$(get_path_pattern "$collection" "$SCHEMA_PATH")"
+
+    if [[ -z "$pattern" ]]; then
+        warn "No path_pattern for collection: $collection"
+        return
+    fi
+
+    info "Scanning collection: $collection ($pattern)"
+
+    # Use find to match the glob pattern
+    local search_dir="$REPO_ROOT"
+    local files_found=0
+
+    while IFS= read -r -d '' filepath; do
+        validate_file "$filepath" "$collection"
+        files_found=$((files_found + 1))
+    done < <(find "$REPO_ROOT" -path "$REPO_ROOT/$pattern" -name "*.md" -print0 2>/dev/null || true)
+
+    # Fallback: use a simpler find if the glob didn't work
+    if [[ $files_found -eq 0 ]]; then
+        local dir_part="${pattern%%/**}"
+        if [[ -d "$REPO_ROOT/$dir_part" ]]; then
+            while IFS= read -r -d '' filepath; do
+                validate_file "$filepath" "$collection"
+                files_found=$((files_found + 1))
+            done < <(find "$REPO_ROOT/$dir_part" -name "*.md" -print0 2>/dev/null)
+        fi
+    fi
+
+    debug "  Found $files_found files in $collection"
+}
+
+# -------------------------------------------------------------------------
+# Report generation
+# -------------------------------------------------------------------------
+print_report() {
+    echo ""
+    echo -e "${BLUE}════════════════════════════════════════════${NC}"
+    echo -e "${BLUE}  Frontmatter Lint Report${NC}"
+    echo -e "${BLUE}════════════════════════════════════════════${NC}"
+    echo ""
+    echo "  Files scanned:  $TOTAL_FILES"
+    echo -e "  Errors:         ${RED}$TOTAL_ERRORS${NC}"
+    echo -e "  Warnings:       ${YELLOW}$TOTAL_WARNINGS${NC}"
+    if [[ "$FIX_MODE" == "true" ]]; then
+        echo -e "  Fixed:          ${GREEN}$TOTAL_FIXED${NC}"
+    fi
+    echo ""
+
+    if [[ $TOTAL_ERRORS -gt 0 ]] && [[ "$MODE" == "strict" ]]; then
+        echo -e "${RED}  ✗ FAILED — $TOTAL_ERRORS error(s) found in strict mode${NC}"
+    elif [[ $TOTAL_WARNINGS -gt 0 ]] || [[ $TOTAL_ERRORS -gt 0 ]]; then
+        echo -e "${YELLOW}  ⚠ Issues found — run with --fix to auto-correct safe violations${NC}"
+    else
+        echo -e "${GREEN}  ✓ All pages pass frontmatter validation${NC}"
+    fi
+    echo ""
+}
+
+# -------------------------------------------------------------------------
+# Main
+# -------------------------------------------------------------------------
+main() {
+    parse_args "$@"
+
+    print_header "lint-pages — Frontmatter Validator"
+
+    # Validate prerequisites
+    if ! command_exists ruby; then
+        error "Ruby is required for YAML parsing. Install Ruby first."
+    fi
+
+    # Load and validate schema
+    local schema_full_path
+    schema_full_path="$(load_schema "$SCHEMA_PATH")" || exit 1
+    debug "Schema: $schema_full_path"
+
+    # Cache global schema settings (one Ruby call instead of per-file)
+    load_schema_cache "$schema_full_path"
+
+    # Load content rules (if available)
+    local rules_full_path="$REPO_ROOT/$RULES_PATH"
+    if [[ -f "$rules_full_path" ]]; then
+        debug "Content rules: $rules_full_path"
+
+        # Apply strictness from content rules when no explicit CLI mode was given
+        if [[ "$MODE" == "warn" ]] && [[ "${FRONTMATTER_STRICT:-}" == "true" ]]; then
+            local env_strictness
+            env_strictness="$(ruby -ryaml -e "
+                rules = YAML.load_file('$rules_full_path')
+                puts rules.dig('strictness', 'ci') || ''
+            " 2>/dev/null)"
+            if [[ "$env_strictness" == "strict" ]]; then
+                MODE="strict"
+                debug "Strictness set to 'strict' via content rules"
+            fi
+        fi
+    else
+        debug "Content rules file not found: $rules_full_path (skipping)"
+    fi
+
+    # Get collections to scan
+    local collections
+    if [[ -n "$TARGET_COLLECTION" ]]; then
+        collections="$TARGET_COLLECTION"
+    else
+        collections="$(get_collections "$SCHEMA_PATH")"
+    fi
+
+    # Scan each collection
+    while IFS= read -r collection; do
+        [[ -z "$collection" ]] && continue
+        scan_collection "$collection"
+    done <<< "$collections"
+
+    # Print report
+    if [[ "$REPORT_MODE" == "true" ]] || [[ "$VERBOSE" == "true" ]] || [[ $TOTAL_ERRORS -gt 0 ]] || [[ $TOTAL_WARNINGS -gt 0 ]]; then
+        print_report
+    else
+        success "Validated $TOTAL_FILES pages — no issues found"
+    fi
+
+    # Exit code
+    if [[ "$MODE" == "strict" ]] && [[ $TOTAL_ERRORS -gt 0 ]]; then
+        exit 1
+    fi
+}
+
+main "$@"

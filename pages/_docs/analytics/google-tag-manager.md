@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:30:03.000Z
 title: Google Tag Manager
 description: Google Tag Manager integration for centralized tag management and marketing analytics.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - marketing
 permalink: /docs/analytics/google-tag-manager/
 difficulty: intermediate
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 prerequisites:
     - Google Tag Manager account
 sidebar:

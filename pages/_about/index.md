@@ -10,7 +10,7 @@ categories:
 tags:
   - about
   - site-info
-draft: published
+draft: false
 date: 2024-05-31T01:35:49.414Z
 lastmod: 2025-11-16T14:41:40.537Z
 permalink: /about/

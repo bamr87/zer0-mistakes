@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:52.000Z
 title: Bootstrap Integration
 description: Bootstrap 5.3.3 usage patterns, components, and customization in the Zer0-Mistakes theme.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - components
 permalink: /docs/bootstrap/
 difficulty: beginner
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 prerequisites: []
 sidebar:
     nav: docs

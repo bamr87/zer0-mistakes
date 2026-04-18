@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:58.000Z
 title: Cookie Consent Management
 description: GDPR/CCPA compliant cookie consent system with granular permissions and Bootstrap modal preferences.
 layout: default
@@ -13,7 +14,7 @@ tags:
     - consent
 permalink: /docs/features/cookie-consent/
 difficulty: intermediate
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 sidebar:
     nav: docs
 ---

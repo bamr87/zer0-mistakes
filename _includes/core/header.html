@@ -105,11 +105,18 @@
             <div class="navbar-brand-group d-inline-flex align-items-center gap-2">
                 <!-- Home Navigation Button (Desktop only) -->
                 <div class="navbar-home-links d-none d-lg-inline-flex" role="navigation" aria-label="Quick navigation">
-                    {%- for home in site.data.navigation.home -%}
-                    <a class="btn" href="{{ home.url | relative_url }}" aria-label="{{ home.title }}" title="{{ home.title }}" {% if home.url == page.url %}aria-current="page"{% endif %}>
-                        <i class="{{ site.default_icon}} {{ home.icon }}"></i>
-                    </a>
-                    {% endfor %}
+                    {%- assign nav_home = site.data.navigation.home -%}
+                    {%- if nav_home and nav_home.size > 0 -%}
+                      {%- for home in nav_home -%}
+                      <a class="btn" href="{{ home.url | relative_url }}" aria-label="{{ home.title }}" title="{{ home.title }}" {%- if home.url == page.url %} aria-current="page"{% endif %}>
+                          <i class="{{ site.default_icon}} {{ home.icon }}"></i>
+                      </a>
+                      {%- endfor -%}
+                    {%- else -%}
+                      <a class="btn" href="{{ '/' | relative_url }}" aria-label="Home" title="Home — {{ site.title }}">
+                          <i class="{{ site.default_icon }} bi-house"></i>
+                      </a>
+                    {%- endif -%}
                 </div>
                 
                 <!-- Brand Logo Link to Root -->
@@ -151,11 +158,11 @@
                     <span class="nav-link-text d-none d-xl-inline ms-1">Search</span>
                 </button>
 
-                <!-- Settings Modal Toggle -->
+                <!-- Settings Offcanvas Toggle -->
                 <button
                     class="btn nav-settings-button d-none d-lg-inline-flex"
                     type="button"
-                    data-bs-toggle="modal" 
+                    data-bs-toggle="offcanvas" 
                     data-bs-target="#info-section" 
                     aria-label="Open settings"
                     aria-haspopup="dialog"

@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:30:00.000Z
 title: Jupyter Notebook Integration
 description: Full Jupyter notebook support with GitHub Pages compatibility, automated conversion, and responsive design.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - data-science
 permalink: /docs/features/jupyter-notebooks/
 difficulty: intermediate
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 prerequisites:
     - Docker Desktop
     - Jupyter notebooks to convert

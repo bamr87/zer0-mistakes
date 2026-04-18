@@ -3,7 +3,7 @@ title: Jeykll
 permalink: /notes/jekyll/
 lastmod: 2025-12-20T22:15:46.473Z
 published: false
-draft: draft
+draft: true
 ---
 
 # Jeykll

@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:30:00.000Z
 title: Jekyll Theme Guide
 description: Comprehensive guide to using and customizing the Zer0-Mistakes Jekyll theme with Docker-first development, Bootstrap 5, and modern integrations.
 layout: default
@@ -13,7 +14,7 @@ tags:
     - bootstrap
 permalink: /docs/getting-started/theme-guide/
 difficulty: beginner
-estimated_time: 30 minutes
+estimated_reading_time: 30 minutes
 prerequisites:
     - Docker Desktop installed
     - Basic command line knowledge
@@ -188,7 +189,7 @@ description: "What this page covers"
 layout: default
 permalink: /docs/section/page-name/
 difficulty: beginner
-estimated_time: "10 minutes"
+estimated_reading_time: "10 minutes"
 ---
 ```
 

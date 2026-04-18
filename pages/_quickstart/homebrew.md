@@ -10,7 +10,7 @@ categories:
 tags:
     - macos
     - homebrew
-draft: draft
+draft: true
 ---
 
 # Homebrew Setup
