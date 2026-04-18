@@ -182,10 +182,7 @@ html, body {
     border-left-color: var(--bs-primary) !important;
 }
 
-// Smooth scroll behavior
-html {
-    scroll-behavior: smooth;
-}
+// Smooth scroll behavior is declared once below (see "Smooth Scroll Enhancement")
 
 // Category active state
 .btn-toggle-nav a.active {
@@ -640,8 +637,10 @@ html {
 }
 
 // Section Spacing Improvements
+// Ensure anchored elements clear the fixed navbar when scrolled to
 section,
-.py-5 {
+.py-5,
+[id] {
   scroll-margin-top: 80px;
 }
 

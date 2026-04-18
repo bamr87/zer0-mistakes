@@ -1,22 +1,50 @@
 # Changelog
 
-## [Unreleased]
+## [0.22.14] - 2026-04-18
 
-### Added
-- **Migration Utility**: New `scripts/migrate.sh` for installing admin settings pages into consumer Jekyll sites
-  - Detects Jekyll sites, validates theme connection (remote, gem, local path)
-  - Warns about version gaps when theme version < 0.22.10
-  - Supports `--force`, `--verify`, `--dry-run`, `--verbose`, `--non-interactive` flags
-- **Migration Library**: New `scripts/lib/migrate.sh` with reusable migration functions
-  - `detect_jekyll_site()`, `validate_theme_connection()`, `install_admin_pages()`, `verify_admin_pages()`, `detect_version_gap()`
-- **Admin Page Templates**: 6 new templates in `templates/pages/admin/`
-  - `theme.md.template` — Theme Customizer (skins, palette generator, skin editor, live preview, color editor, export)
-  - `config.md.template` — Configuration Utility (view, edit, raw YAML, quick actions)
-  - `navigation.md.template` — Navigation Editor (overview, edit menus, export YAML)
-  - `collections.md.template` — Collection Manager
-  - `analytics.md.template` — Analytics Dashboard
-  - `environment.md.template` — Environment Dashboard
-- **install.sh Integration**: Admin pages are now created during `install.sh` for both full and remote install modes
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- f0a1cac fix: correct comments for clarity in SEO-related files
+- d1998ff chore(deps): update Ruby gem dependencies (#67)
+
+
+## [0.22.13] - 2026-04-10
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 3c00a3d refactor: remove duplicate code — use standard libraries and existing plugins (#59)
+
+
+## [0.22.12] - 2026-04-10
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 7ba0f83 feat(news): add data-driven feature showcase & live Bootstrap components to news index (#54)
+
+
+## [0.22.11] - 2026-04-09
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 8e83a51 Create SECURITY.md for security policy and reporting
+
+
+## [0.22.10] - 2026-04-06
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 27550da feat(admin): add admin layout and configuration dashboards (#57)
+
 
 ## [0.22.9] - 2026-04-05
 

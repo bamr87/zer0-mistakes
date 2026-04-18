@@ -27,8 +27,11 @@ docs/
 │   ├── automated-version-system.md
 │   └── gem-publication-system.md
 ├── implementation/         # Feature implementation details
+│   ├── copilot-agent-prompt-button.md
 │   ├── mermaid-integration-v2.md
 │   ├── posthog-analytics-integration.md
+│   ├── preview-image-generator.md
+│   ├── sitemap-enhancement-summary.md
 │   └── sitemap-integration.md
 ├── development/            # Development guides
 │   ├── local-setup.md
@@ -38,6 +41,10 @@ docs/
 │   └── v*.md
 ├── configuration/          # Configuration guides
 │   └── url-configuration-guide.md
+├── jekyll/                 # Jekyll-specific documentation
+│   ├── config-reference.md
+│   ├── security-headers.md
+│   └── troubleshooting-port.md
 ├── templates/              # Documentation templates
 └── archive/                # Historical documentation
 ```
@@ -88,12 +95,16 @@ docs/
 
 ## Recent Updates
 
+- **v0.22.9** — Skin editor, palette generator, Playwright visual tests
+- **v0.22.0** — Copilot Agent prompt button with data-driven prompt registry
+- **v0.21.3** — Vendor assets (Bootstrap, Icons, Mermaid), AIEO structured data
+- **v0.20.0** — Scaffolding templates, expanded test suite
+- **v0.19.0** — 43 features documented, 40+ user-facing doc pages
 - **v0.18.x** — Documentation refactoring (user vs developer docs separation)
 - **v0.6.0** — Release automation modernization
 - **v0.5.0** — Comprehensive sitemap integration
-- **v0.4.0** — Statistics dashboard
 
 ---
 
-**Last Updated:** March 2026
+**Last Updated:** April 2026
 **Maintained By:** Zer0-Mistakes Contributors
