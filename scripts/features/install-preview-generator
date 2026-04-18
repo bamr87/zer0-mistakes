@@ -39,13 +39,15 @@ REPO_NAME="zer0-mistakes"
 REPO_URL="https://github.com/${REPO_OWNER}/${REPO_NAME}"
 RAW_URL="https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main"
 
-# Files to install
-declare -a SCRIPT_FILES=(
+# Files to install: source_path -> destination_path (parallel arrays)
+SOURCE_FILES=(
+    "scripts/features/generate-preview-images"
+    "scripts/lib/preview_generator.py"
+    "_plugins/preview_image_generator.rb"
+)
+DEST_FILES=(
     "scripts/generate-preview-images.sh"
     "scripts/lib/preview_generator.py"
-)
-
-declare -a PLUGIN_FILES=(
     "_plugins/preview_image_generator.rb"
 )
 
@@ -55,6 +57,7 @@ FORCE=false
 DEFAULT_PROVIDER="openai"
 INSTALL_CONFIG=true
 INSTALL_TASKS=true
+LOCAL_THEME_DIR=""
 
 # Colors for output
 RED='\033[0;31m'
@@ -96,6 +99,7 @@ ${YELLOW}OPTIONS:${NC}
     -p, --provider PROVIDER Set default AI provider (openai, stability, local)
     --no-config             Skip _config.yml modification
     --no-tasks              Skip VS Code tasks installation
+    -l, --local PATH        Copy files from local theme directory instead of downloading
 
 ${YELLOW}EXAMPLES:${NC}
     # Install with defaults
@@ -159,42 +163,58 @@ check_dependencies() {
     log "All dependencies satisfied"
 }
 
-# Download a file from the repository
-download_file() {
-    local remote_path="$1"
-    local local_path="$2"
-    local url="${RAW_URL}/${remote_path}"
+# Install a file (download from repo or copy from local theme)
+install_file() {
+    local source_path="$1"
+    local dest_path="$2"
     
     if [[ "$DRY_RUN" == true ]]; then
-        dry_run_log "Would download: $url → $local_path"
+        if [[ -n "$LOCAL_THEME_DIR" ]]; then
+            dry_run_log "Would copy: $LOCAL_THEME_DIR/$source_path → $dest_path"
+        else
+            dry_run_log "Would download: ${RAW_URL}/$source_path → $dest_path"
+        fi
         return 0
     fi
     
     # Create directory if needed
-    local dir=$(dirname "$local_path")
+    local dir=$(dirname "$dest_path")
     if [[ ! -d "$dir" ]]; then
         mkdir -p "$dir"
     fi
     
     # Check if file exists and not forcing
-    if [[ -f "$local_path" && "$FORCE" != true ]]; then
-        warn "File exists, skipping: $local_path (use --force to overwrite)"
+    if [[ -f "$dest_path" && "$FORCE" != true ]]; then
+        warn "File exists, skipping: $dest_path (use --force to overwrite)"
         return 0
     fi
     
-    step "Downloading: $remote_path"
-    if curl -fsSL "$url" -o "$local_path"; then
-        log "Installed: $local_path"
-        
-        # Make scripts executable
-        if [[ "$local_path" == *.sh ]]; then
-            chmod +x "$local_path"
+    if [[ -n "$LOCAL_THEME_DIR" ]]; then
+        # Copy from local theme directory
+        local local_src="${LOCAL_THEME_DIR}/${source_path}"
+        if [[ ! -f "$local_src" ]]; then
+            error "Source file not found: $local_src"
+            return 1
         fi
-        return 0
+        step "Copying: $source_path → $dest_path"
+        cp "$local_src" "$dest_path"
     else
-        error "Failed to download: $url"
-        return 1
+        # Download from repository
+        local url="${RAW_URL}/${source_path}"
+        step "Downloading: $source_path"
+        if ! curl -fsSL "$url" -o "$dest_path"; then
+            error "Failed to download: $url"
+            return 1
+        fi
     fi
+    
+    log "Installed: $dest_path"
+    
+    # Make scripts executable
+    if [[ "$dest_path" == *.sh ]] || head -1 "$dest_path" 2>/dev/null | grep -q '^#!/'; then
+        chmod +x "$dest_path"
+    fi
+    return 0
 }
 
 # Add configuration to _config.yml
@@ -459,15 +479,9 @@ main() {
     echo ""
     
     # Installation steps
-    info "Installing scripts..."
-    for file in "${SCRIPT_FILES[@]}"; do
-        download_file "$file" "$file"
-    done
-    echo ""
-    
-    info "Installing Jekyll plugin..."
-    for file in "${PLUGIN_FILES[@]}"; do
-        download_file "$file" "$file"
+    info "Installing preview generator files..."
+    for i in "${!SOURCE_FILES[@]}"; do
+        install_file "${SOURCE_FILES[$i]}" "${DEST_FILES[$i]}"
     done
     echo ""
     
@@ -517,6 +531,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --no-tasks)
             INSTALL_TASKS=false
+            ;;
+        -l|--local)
+            LOCAL_THEME_DIR="$2"
+            shift
             ;;
         *)
             error "Unknown option: $1"

@@ -460,13 +460,47 @@ graph TD
 | `_includes/` | Reusable components | `core/`, `components/`, `analytics/`, `navigation/` |
 | `_sass/` | Stylesheets | `custom.scss`, `notebooks.scss`, `core/` (`_variables`, `_docs-layout`, …), `theme/` (`_css-variables`, `_wizard-mode`) |
 | `assets/` | Static files | `css/`, `js/`, `images/`, **`vendor/`** (Bootstrap, jQuery, MathJax, Mermaid, … — committed for GitHub Pages) |
-| `scripts/` | Automation | `release`, `build`, `vendor-install.sh`, `convert-notebooks.sh` |
+| `scripts/` | Automation | `release`, `build`, `migrate.sh`, `vendor-install.sh`, `convert-notebooks.sh` |
+| `templates/` | Installable templates | `pages/admin/` (6 admin page templates), `config/install.conf` |
 | `docs/` | Technical docs | `SIDEBAR_IMPROVEMENTS.md`, `JUPYTER_NOTEBOOKS.md` |
 | `pages/` | Content pages | `privacy-policy.md`, `terms-of-service.md` |
 
 ---
 
-## 🔄 Development Workflow
+## �️ Migration Utility
+
+Add the admin settings UI to an existing consumer site using the migration script:
+
+```bash
+# From the zer0-mistakes repo — install into another site
+./scripts/migrate.sh /path/to/your-site
+
+# Preview without making changes
+./scripts/migrate.sh --dry-run /path/to/your-site
+
+# Overwrite existing admin pages
+./scripts/migrate.sh --force /path/to/your-site
+
+# Verify an existing installation
+./scripts/migrate.sh --verify /path/to/your-site
+```
+
+This installs 6 admin pages to `pages/_about/settings/`:
+
+| Page | URL | Description |
+|------|-----|-------------|
+| Theme Customizer | `/about/settings/theme/` | Skins, palette generator, skin editor, live preview, color editing, YAML export |
+| Configuration | `/about/config/` | View/edit `_config.yml`, quick actions, environment info |
+| Navigation Editor | `/about/settings/navigation/` | Edit header/footer/sidebar menus, export YAML |
+| Collection Manager | `/about/settings/collections/` | Browse and manage Jekyll collections |
+| Analytics | `/about/settings/analytics/` | Site analytics and performance metrics |
+| Environment | `/about/settings/environment/` | Jekyll build info and environment details |
+
+> **Note:** Admin pages require theme version ≥ 0.22.10 for the `admin` layout and component includes.
+
+---
+
+## �🔄 Development Workflow
 
 ```mermaid
 gitGraph

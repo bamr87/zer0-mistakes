@@ -1,0 +1,10 @@
+---
+title: Collection Manager
+layout: admin
+icon: bi-collection
+permalink: /about/settings/collections/
+excerpt: Manage and browse your Jekyll collections.
+lastmod: {{CURRENT_DATE}}T00:00:00.000Z
+---
+
+{% include components/collection-manager.html %}

@@ -26,68 +26,70 @@
 // --------------------------------------------------------------------------
 // Per-skin custom properties
 // Use #{} interpolation so legacy sass-converter passes url() through as-is.
+// Paths are relative to assets/css/main.css so they resolve correctly under
+// any baseurl (e.g. /zer0-pages-remote/ on GitHub Pages subdirectory deploys).
 // --------------------------------------------------------------------------
 
 [data-theme-skin="air"] {
-  --zer0-bg-gradient: #{"url('/assets/backgrounds/gradients/air.svg')"};
-  --zer0-bg-pattern: #{"url('/assets/backgrounds/patterns/air.svg')"};
-  --zer0-bg-noise: #{"url('/assets/backgrounds/noise/air.svg')"};
+  --zer0-bg-gradient: #{"url('../backgrounds/gradients/air.svg')"};
+  --zer0-bg-pattern: #{"url('../backgrounds/patterns/air.svg')"};
+  --zer0-bg-noise: #{"url('../backgrounds/noise/air.svg')"};
   --zer0-bg-pattern-size: 50px 50px;
 }
 
 [data-theme-skin="aqua"] {
-  --zer0-bg-gradient: #{"url('/assets/backgrounds/gradients/aqua.svg')"};
-  --zer0-bg-pattern: #{"url('/assets/backgrounds/patterns/aqua.svg')"};
-  --zer0-bg-noise: #{"url('/assets/backgrounds/noise/aqua.svg')"};
+  --zer0-bg-gradient: #{"url('../backgrounds/gradients/aqua.svg')"};
+  --zer0-bg-pattern: #{"url('../backgrounds/patterns/aqua.svg')"};
+  --zer0-bg-noise: #{"url('../backgrounds/noise/aqua.svg')"};
   --zer0-bg-pattern-size: 48px 48px;
 }
 
 [data-theme-skin="contrast"] {
-  --zer0-bg-gradient: #{"url('/assets/backgrounds/gradients/contrast.svg')"};
-  --zer0-bg-pattern: #{"url('/assets/backgrounds/patterns/contrast.svg')"};
-  --zer0-bg-noise: #{"url('/assets/backgrounds/noise/contrast.svg')"};
+  --zer0-bg-gradient: #{"url('../backgrounds/gradients/contrast.svg')"};
+  --zer0-bg-pattern: #{"url('../backgrounds/patterns/contrast.svg')"};
+  --zer0-bg-noise: #{"url('../backgrounds/noise/contrast.svg')"};
   --zer0-bg-pattern-size: 40px 40px;
 }
 
 [data-theme-skin="dark"] {
-  --zer0-bg-gradient: #{"url('/assets/backgrounds/gradients/dark.svg')"};
-  --zer0-bg-pattern: #{"url('/assets/backgrounds/patterns/dark.svg')"};
-  --zer0-bg-noise: #{"url('/assets/backgrounds/noise/dark.svg')"};
+  --zer0-bg-gradient: #{"url('../backgrounds/gradients/dark.svg')"};
+  --zer0-bg-pattern: #{"url('../backgrounds/patterns/dark.svg')"};
+  --zer0-bg-noise: #{"url('../backgrounds/noise/dark.svg')"};
   --zer0-bg-pattern-size: 60px 60px;
 }
 
 [data-theme-skin="dirt"] {
-  --zer0-bg-gradient: #{"url('/assets/backgrounds/gradients/dirt.svg')"};
-  --zer0-bg-pattern: #{"url('/assets/backgrounds/patterns/dirt.svg')"};
-  --zer0-bg-noise: #{"url('/assets/backgrounds/noise/dirt.svg')"};
+  --zer0-bg-gradient: #{"url('../backgrounds/gradients/dirt.svg')"};
+  --zer0-bg-pattern: #{"url('../backgrounds/patterns/dirt.svg')"};
+  --zer0-bg-noise: #{"url('../backgrounds/noise/dirt.svg')"};
   --zer0-bg-pattern-size: 50px 50px;
 }
 
 [data-theme-skin="neon"] {
-  --zer0-bg-gradient: #{"url('/assets/backgrounds/gradients/neon.svg')"};
-  --zer0-bg-pattern: #{"url('/assets/backgrounds/patterns/neon.svg')"};
-  --zer0-bg-noise: #{"url('/assets/backgrounds/noise/neon.svg')"};
+  --zer0-bg-gradient: #{"url('../backgrounds/gradients/neon.svg')"};
+  --zer0-bg-pattern: #{"url('../backgrounds/patterns/neon.svg')"};
+  --zer0-bg-noise: #{"url('../backgrounds/noise/neon.svg')"};
   --zer0-bg-pattern-size: 48px 48px;
 }
 
 [data-theme-skin="mint"] {
-  --zer0-bg-gradient: #{"url('/assets/backgrounds/gradients/mint.svg')"};
-  --zer0-bg-pattern: #{"url('/assets/backgrounds/patterns/mint.svg')"};
-  --zer0-bg-noise: #{"url('/assets/backgrounds/noise/mint.svg')"};
+  --zer0-bg-gradient: #{"url('../backgrounds/gradients/mint.svg')"};
+  --zer0-bg-pattern: #{"url('../backgrounds/patterns/mint.svg')"};
+  --zer0-bg-noise: #{"url('../backgrounds/noise/mint.svg')"};
   --zer0-bg-pattern-size: 50px 50px;
 }
 
 [data-theme-skin="plum"] {
-  --zer0-bg-gradient: #{"url('/assets/backgrounds/gradients/plum.svg')"};
-  --zer0-bg-pattern: #{"url('/assets/backgrounds/patterns/plum.svg')"};
-  --zer0-bg-noise: #{"url('/assets/backgrounds/noise/plum.svg')"};
+  --zer0-bg-gradient: #{"url('../backgrounds/gradients/plum.svg')"};
+  --zer0-bg-pattern: #{"url('../backgrounds/patterns/plum.svg')"};
+  --zer0-bg-noise: #{"url('../backgrounds/noise/plum.svg')"};
   --zer0-bg-pattern-size: 55px 55px;
 }
 
 [data-theme-skin="sunrise"] {
-  --zer0-bg-gradient: #{"url('/assets/backgrounds/gradients/sunrise.svg')"};
-  --zer0-bg-pattern: #{"url('/assets/backgrounds/patterns/sunrise.svg')"};
-  --zer0-bg-noise: #{"url('/assets/backgrounds/noise/sunrise.svg')"};
+  --zer0-bg-gradient: #{"url('../backgrounds/gradients/sunrise.svg')"};
+  --zer0-bg-pattern: #{"url('../backgrounds/patterns/sunrise.svg')"};
+  --zer0-bg-noise: #{"url('../backgrounds/noise/sunrise.svg')"};
   --zer0-bg-pattern-size: 50px 50px;
 }
 
