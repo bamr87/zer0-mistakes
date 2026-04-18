@@ -64,7 +64,7 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.s
 | **A** | AI Install Wizard | Creating a new site (recommended) |
 | **B** | GitHub Template | One-click copy of the entire repo |
 | **C** | GitHub Codespaces | Zero-install cloud development |
-| **D** | Fork/Clone | Theme development & customization |
+| **D** | Fork/Clone | Personal site & theme customization |
 | **E** | Remote Theme | GitHub Pages without copying files |
 | **F** | Ruby Gem | Traditional Jekyll workflow |
 
@@ -95,13 +95,23 @@ cd my-site && docker-compose up
 
 Or from the repo page: **Code** → **Codespaces** → **Create codespace on main**
 
-### Option D: Fork/Clone (Theme Development)
+### Option D: Fork/Clone (Personal Site)
+
+Fork into `<your-username>.github.io` to deploy your own site:
+
+1. Go to [bamr87/zer0-mistakes](https://github.com/bamr87/zer0-mistakes) → **Fork**
+2. Set repository name to **`<your-username>.github.io`**
+3. Enable **Settings → Pages → Deploy from branch: `main`**
+4. Clone locally and personalize:
 
 ```bash
-gh repo fork bamr87/zer0-mistakes --clone
-cd zer0-mistakes
+git clone https://github.com/<your-username>/<your-username>.github.io.git
+cd <your-username>.github.io
+./scripts/fork-cleanup.sh   # interactive config wizard
 docker-compose up
 ```
+
+See [docs/FORKING.md]({{ site.resources.github_repo | default: '' | join: '' }}/blob/{{ site.branch }}/docs/FORKING.md) for the full fork → configure → personalize guide.
 
 ### Option E: Remote Theme (GitHub Pages)
 
