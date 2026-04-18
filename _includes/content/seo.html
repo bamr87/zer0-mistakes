@@ -7,7 +7,7 @@
   Path: _includes/content/seo.html
   Purpose: Outputs ONLY meta tags that the jekyll-seo-tag plugin does
            not generate. The bulk of SEO (title, description, og:*,
-           twitter:*, canonical, JSON-LD) is handled by {% seo %} in
+           twitter:*, canonical, JSON-LD) is handled by seo tags in
            _layouts/root.html.
 
   What this file adds:
@@ -18,7 +18,7 @@
   - Non-Google site verification tags (Bing, Yandex, Naver, Baidu)
 
   Dependencies:
-  - jekyll-seo-tag plugin (loaded in _layouts/root.html via {% seo %})
+  - jekyll-seo-tag plugin (loaded in _layouts/root.html via seo tags)
   - site.preview_images config in _config.yml
   ===================================================================
 -->
