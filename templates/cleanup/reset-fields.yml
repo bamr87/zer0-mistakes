@@ -49,9 +49,9 @@ _config.yml:
   posthog.api_key: ""
   
   # Comments (MUST be cleared)
-  gisgus.enabled: false
-  gisgus.data-repo-id: ""
-  gisgus.data-category-id: ""
+  giscus.enabled: false
+  giscus.data-repo-id: ""
+  giscus.data-category-id: ""
 
 # _data/authors.yml reset
 _data/authors.yml:
