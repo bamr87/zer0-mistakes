@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.22.16] - 2026-04-18
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- bc41b0d Add AGENTS.md and refresh stale agent instructions (#70)
+
+
 ## [0.22.15] - 2026-04-18
 
 ### Changed
