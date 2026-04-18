@@ -22,7 +22,7 @@ The gear icon (⚙️) in the header navigation opens the **Settings & Info** mo
 
 ```
 ┌──────────────────────────────────────────────────┐
-│  © 2025 IT-Journey — Powered by:                 │
+│  © 2026 IT-Journey — Powered by:                 │
 │  [Ruby] [Jekyll] [Bootstrap] [GitHub] [Info] ←   │ Click here!
 └──────────────────────────────────────────────────┘
 ```
@@ -46,21 +46,21 @@ When you click either button, a modal opens showing:
 ║  │ 🎨 Theme                         │  ║
 ║  │   Name: zer0-mistakes            │  ║
 ║  │   Repository: bamr87/zer0-...    │  ║
-║  │   Version: v0.5.0 or Latest      │  ║
+║  │   Version: v0.22.13 or Latest    │  ║
 ║  │   [Changelog] [Documentation]    │  ║
 ║  └─────────────────────────────────┘  ║
 ║                                        ║
 ║  ┌─────────────────────────────────┐  ║
 ║  │ 💻 Build Environment             │  ║
 ║  │   Jekyll: v3.9.5                 │  ║
-║  │   Ruby: v3.2.3                   │  ║
+║  │   Ruby: v3.3.x                   │  ║
 ║  │   Environment: production        │  ║
-║  │   Last Build: 2025-11-02...      │  ║
+║  │   Last Build: (dynamic)          │  ║
 ║  └─────────────────────────────────┘  ║
 ║                                        ║
 ║  ┌─────────────────────────────────┐  ║
 ║  │ 🌐 Site Details                  │  ║
-║  │   Repository: bamr87/it-journey  │  ║
+║  │   Repository: bamr87/zer0-...    │  ║
 ║  │   Branch: main                   │  ║
 ║  │   Collections: 8 configured      │  ║
 ║  └─────────────────────────────────┘  ║
@@ -73,10 +73,10 @@ When you click either button, a modal opens showing:
 ║                                        ║
 ║  ┌─────────────────────────────────┐  ║
 ║  │ 📚 Technology Stack              │  ║
-║  │   Ruby      → 3.2.3              │  ║
+║  │   Ruby      → 3.3.x              │  ║
 ║  │   Jekyll    → 3.9.5              │  ║
-║  │   Bootstrap → 5.2.0              │  ║
-║  │   Docker    → 20.10.8            │  ║
+║  │   Bootstrap → 5.3.3              │  ║
+║  │   Docker    → 20.10+             │  ║
 ║  └─────────────────────────────────┘  ║
 ║                                        ║
 ║  🔗 Quick Links:                       ║
