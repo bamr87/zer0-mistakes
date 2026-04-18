@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:53.000Z
 title: Include Components
 description: Guide to the 70+ reusable include components organized by category for maximum flexibility.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - jekyll
 permalink: /docs/customization/includes/
 difficulty: intermediate
-estimated_time: 20 minutes
+estimated_reading_time: 20 minutes
 sidebar:
     nav: docs
 ---

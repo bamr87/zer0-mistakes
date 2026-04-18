@@ -11,7 +11,7 @@ tags:
     - gems
 permalink: /docs/ruby-101/
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 prerequisites:
     - Ruby installed
 updated: 2025-12-20

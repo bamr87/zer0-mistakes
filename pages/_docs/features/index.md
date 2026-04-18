@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:58.000Z
 title: Features
 description: Enable and configure theme features including diagrams, comments, analytics, and more.
 layout: default
@@ -10,7 +11,7 @@ tags:
     - configuration
 permalink: /docs/features/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---

@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:58.000Z
 title: Table of Contents
 description: Automatic table of contents generation from page headings with scroll spy and smooth scrolling.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - documentation
 permalink: /docs/features/toc/
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 sidebar:
     nav: docs
 ---

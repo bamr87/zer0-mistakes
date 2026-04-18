@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:52.000Z
 title: Code Highlighting
 description: Configure syntax highlighting for code blocks in Jekyll using Rouge and Kramdown.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - rouge
 permalink: /docs/jekyll/code-highlighting/
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 sidebar:
     nav: docs
 ---

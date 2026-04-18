@@ -10,7 +10,7 @@ categories:
 tags:
     - windows
     - winget
-draft: draft
+draft: true
 ---
 
 # Winget Setup

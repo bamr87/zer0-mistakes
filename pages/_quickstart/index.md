@@ -25,7 +25,7 @@ keywords:
         - ai installation
         - cross-platform
         - bootstrap 5
-draft: draft
+draft: true
 ---
 
 # 🚀 Quick Start Guide

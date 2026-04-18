@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:55.000Z
 title: Documentation
 description: Guide to the dual documentation architecture with technical docs, public docs, and AI instructions.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - architecture
 permalink: /docs/development/documentation/
 difficulty: intermediate
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 sidebar:
     nav: docs
 ---
@@ -104,7 +105,7 @@ categories: [docs, features]
 tags: [relevant, tags]
 permalink: /docs/category/feature-name/
 difficulty: beginner|intermediate|advanced
-estimated_time: X minutes
+estimated_reading_time: X minutes
 prerequisites: []
 sidebar:
     nav: docs

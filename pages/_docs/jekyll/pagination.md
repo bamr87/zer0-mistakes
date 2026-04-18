@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:50.000Z
 title: Pagination
 description: Implement previous/next navigation buttons and paginated post lists in your Jekyll site.
 layout: default
@@ -11,7 +12,7 @@ tags:
     - navigation
 permalink: /docs/jekyll/pagination/
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 sidebar:
     nav: docs
 ---
