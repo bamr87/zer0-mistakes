@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.22.18] - 2026-04-18
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 02d0295 feat(setup): add site configuration detection and smart 404 page (#58)
+
+
 ## [0.22.17] - 2026-04-18
 
 ### Changed
