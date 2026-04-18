@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module JekyllThemeZer0
-  VERSION = "0.22.18" unless defined?(JekyllThemeZer0::VERSION)
+  VERSION = "0.22.19" unless defined?(JekyllThemeZer0::VERSION)
 end

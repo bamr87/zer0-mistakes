@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.22.19] - 2026-04-18
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 1b3993e docs(fork): add fork-to-deploy workflow and user site guidance (#56)
+
+
 ## [Unreleased]
 
 ### Added
