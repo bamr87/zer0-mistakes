@@ -131,6 +131,18 @@
       url: /docs/bootstrap/
 
 # ============================================================
+# Development
+# ============================================================
+- title: Development
+  icon: bi-tools
+  url: /docs/development/testing/
+  children:
+    - title: Testing
+      url: /docs/development/testing/
+    - title: Vendor assets
+      url: /docs/development/vendor-assets/
+
+# ============================================================
 # Help
 # ============================================================
 - title: Help

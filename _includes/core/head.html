@@ -36,7 +36,6 @@
 <!-- JAVASCRIPT LIBRARIES            -->
 <!-- ================================ -->
 <!-- Custom theme JavaScript - Deferred for performance -->
-<script defer src="{{ '/assets/js/myScript.js' | relative_url }}"></script>
 <script defer src="{{ '/assets/js/auto-hide-nav.js' | relative_url }}"></script>
 <script defer src="{{ '/assets/js/back-to-top.js' | relative_url }}"></script>
 <script defer src="{{ '/assets/js/halfmoon.js' | relative_url }}"></script>
@@ -77,8 +76,8 @@
     });
 </script>
 
-<!-- MathJax - Mathematical notation rendering (async for performance) -->
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- MathJax - Mathematical notation rendering (async; bundled under assets/vendor) -->
+<script id="MathJax-script" async src="{{ '/assets/vendor/mathjax/es5/tex-mml-chtml.js' | relative_url }}"></script>
 
 <!-- ================================ -->
 <!-- HTML DOCUMENT META DATA         -->
@@ -89,9 +88,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 <!-- ================================ -->
-<!-- SEO AND SOCIAL MEDIA META TAGS  -->
+<!-- SEO SUPPLEMENT                  -->
 <!-- ================================ -->
-<!-- Comprehensive SEO optimization including Open Graph and Twitter Cards -->
+<!-- Additional SEO tags not covered by jekyll-seo-tag plugin ( in root.html).
+     Outputs custom og:image with assets_prefix normalisation and non-Google site verification. -->
 {% include content/seo.html %}
 
 <!-- ========================== -->
@@ -110,8 +110,16 @@
     <meta itemprop="datePublished" content="{{ page.date | date_to_xmlschema }}">
 {% endif %}
 {% if page.last_modified_at %}
+    <meta itemprop="dateModified" content="{{ page.last_modified_at | date_to_xmlschema }}">
+{% elsif page.lastmod %}
     <meta itemprop="dateModified" content="{{ page.lastmod | date_to_xmlschema }}">
 {% endif %}
+
+<!-- JSON-LD SoftwareApplication schema (homepage only) -->
+{% include content/jsonld-software.html %}
+
+<!-- JSON-LD FAQ schema (pages with faq_items front matter) -->
+{% include content/jsonld-faq.html %}
 
 <!-- ========================== -->
 <!-- ANALYTICS INTEGRATION     -->
@@ -127,26 +135,22 @@
 <!-- ========================== -->
 <!-- BOOTSTRAP 5 FRAMEWORK     -->
 <!-- ========================== -->
-<!-- Bootstrap 5.3.3 - Primary CSS framework via CDN for performance -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
-<!-- Local Bootstrap Installation - Alternative for offline development -->
-<!-- <script src="/assets/js/bootstrap.js"></script> -->
+<!-- Bootstrap 5.3.3 - bundled locally (GitHub Pages–safe; refresh via scripts/vendor-install.sh) -->
+<link href="{{ '/assets/vendor/bootstrap/css/bootstrap.min.css' | relative_url }}" rel="stylesheet">
 
 <!-- ========================== -->
 <!-- ICON LIBRARIES             -->
 <!-- ========================== -->
-<!-- Bootstrap Icons 1.10.3 - Complete icon set for UI elements -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+<!-- Bootstrap Icons (bundled with theme; fonts use relative paths in CSS) -->
+<link rel="stylesheet" href="{{ '/assets/vendor/bootstrap-icons/font/bootstrap-icons.css' | relative_url }}">
 
 <!-- ========================== -->
 <!-- CUSTOM THEME STYLES       -->
 <!-- ========================== -->
-<!-- Primary theme stylesheet - Core styling and layout -->
+<!-- Primary theme stylesheet - Core styling and layout (SCSS pipeline) -->
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
 
-<!-- Custom CSS overrides - Theme customizations and tweaks -->
-<link rel="stylesheet" href="{{'/assets/css/custom.css' | relative_url }}">
+<!-- Optional fork overrides: add assets/css/user-overrides.css locally if needed (not shipped by default). -->
 
 <!-- Statistics page specific styles -->
 {% if page.layout == 'stats' %}
@@ -161,4 +165,4 @@
 
 <!-- Docs CSS - Alternative stylesheet, currently disabled due to scroll spy issues -->
 <!-- TODO: Replace with compiled Sass when scroll spy functionality is fixed -->
-<!-- <link rel="stylesheet" href="/assets/css/docs.css"> -->
+<!-- Optional docs.css link removed; use _sass/core/_docs-layout.scss → main.css -->

@@ -145,7 +145,7 @@ posthog:
   api_key: "YOUR_API_KEY"
 
 mermaid:
-  src: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js'
+  src: '/assets/vendor/mermaid/mermaid.min.js'
 ```
 
 ---

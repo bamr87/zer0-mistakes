@@ -7,8 +7,8 @@
   icon: bi-house
   url: /
   children:
-    - title: Blog
-      url: /blog/
+    - title: News
+      url: /news/
     - title: Quick Start
       url: /quickstart/
 

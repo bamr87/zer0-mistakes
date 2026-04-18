@@ -8,31 +8,36 @@
   Purpose: Provide quick access to source code editing in various IDEs
   
   Dependencies:
-  - site.repository, site.branch, site.collections_dir
+  - site.repository, site.branch, site.collections_dir, site.local_git, site.repository_name
   - page.collection, page.path
+  - is_production (from env-detect.html in info-section.html) — vscode:// link only when not production
   ===================================================================
 -->
 
-{% comment %} Determine page directory for collections {% endcomment %}
+{% comment %} Determine page directory for collections (same segments as GitHub blob links) {% endcomment %}
 {% if page.collection %}
   {% capture page_dir %}{{ site.collections_dir }}{% endcapture %}
 {% else %}
   {% assign page_dir = "" %}
 {% endif %}
 
+{% assign rel_site_path = page.path %}
+{% if page_dir != "" %}
+  {% assign rel_site_path = page_dir | append: "/" | append: page.path %}
+{% endif %}
+
+{% assign git_home = site.local_git | join: "" %}
+{% assign vscode_full_path = git_home | append: "/" | append: site.repository_name | append: "/" | append: rel_site_path %}
+{% assign vscode_full_path = vscode_full_path | replace: "//", "/" | replace: "//", "/" %}
+
 <div class="dev-shortcuts">
   <div class="d-flex flex-column gap-2">
-    
-    <!-- Section Label -->
-    <small class="text-body-secondary fw-medium text-uppercase">
-      <i class="bi bi-code-slash me-1"></i>Source Code
-    </small>
-    
-    <!-- Button Group -->
+
+    <!-- Button Group (section title is the parent h6 in info-section.html) -->
     <div class="btn-group-vertical" role="group" aria-label="Source code shortcuts">
-      
+
       <!-- View on GitHub -->
-      <a href="https://github.com/{{ site.repository }}/blob/{{ site.branch }}/{{ page_dir }}/{{ page.path }}" 
+      <a href="https://github.com/{{ site.repository }}/blob/{{ site.branch }}/{{ rel_site_path }}"
          target="_blank"
          rel="noopener"
          class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-between"
@@ -45,9 +50,9 @@
         </span>
         <i class="bi bi-box-arrow-up-right text-body-secondary small"></i>
       </a>
-      
+
       <!-- Edit in GitHub.dev -->
-      <a href="https://github.dev/{{ site.repository }}/blob/{{ site.branch }}/{{ page_dir }}/{{ page.path }}" 
+      <a href="https://github.dev/{{ site.repository }}/blob/{{ site.branch }}/{{ rel_site_path }}"
          target="_blank"
          rel="noopener"
          class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-between"
@@ -60,31 +65,35 @@
         </span>
         <i class="bi bi-box-arrow-up-right text-body-secondary small"></i>
       </a>
-      
-      <!-- Open in Local VS Code -->
-      <a href="vscode://file{{ site.local_git }}/{{ site.repository_name }}/{{ page_dir }}/{{ page.path }}"
-         class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-between"
-         data-bs-toggle="tooltip"
-         data-bs-placement="left"
-         title="Open in local VS Code (requires local clone)">
+
+      {% comment %}Local vscode:// only when not deployed production, and local_git is configured{% endcomment %}
+      {% unless is_production %}
+        {% if git_home != "" %}
+      <a href="vscode://file{{ vscode_full_path }}"
+          class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-between"
+          data-bs-toggle="tooltip"
+          data-bs-placement="left"
+          title="Open in local VS Code (requires local clone at this path)">
         <span>
           <i class="bi bi-code-square me-2"></i>
           Open in VS Code
         </span>
         <i class="bi bi-window text-body-secondary small"></i>
       </a>
-      
+        {% endif %}
+      {% endunless %}
+
     </div>
-    
+
     <!-- Config Links -->
     <small class="text-body-secondary fw-medium text-uppercase mt-2">
       <i class="bi bi-sliders me-1"></i>Configuration
     </small>
-    
+
     <div class="btn-group-vertical" role="group" aria-label="Configuration shortcuts">
-      
+
       <!-- Site Config -->
-      <a href="https://github.com/{{ site.repository }}/blob/{{ site.branch }}/_config.yml" 
+      <a href="https://github.com/{{ site.repository }}/blob/{{ site.branch }}/_config.yml"
          target="_blank"
          rel="noopener"
          class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-between"
@@ -97,8 +106,8 @@
         </span>
         <code class="small ms-2">_config.yml</code>
       </a>
-      
+
     </div>
-    
+
   </div>
 </div>

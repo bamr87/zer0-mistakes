@@ -251,16 +251,15 @@ future: true
 
 ### Custom Styling
 
-Add custom CSS in `assets/css/custom.css`:
+Prefer editing `_sass/custom.scss` (compiled into `assets/css/main.css`) or add `assets/css/user-overrides.css` and a `<link>` after `main.css` in `_includes/core/head.html`.
 
 ```css
-/* Custom Bootstrap 5 overrides */
+/* user-overrides.css — Custom Bootstrap 5 overrides */
 :root {
   --bs-primary: #your-color;
   --bs-secondary: #your-secondary-color;
 }
 
-/* Custom component styles */
 .custom-header {
   background: linear-gradient(135deg, var(--bs-primary), var(--bs-secondary));
 }

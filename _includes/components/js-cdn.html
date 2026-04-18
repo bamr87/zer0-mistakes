@@ -1,38 +1,34 @@
 <!--
   ===================================================================
-  JAVASCRIPT CDN - External JavaScript Library Loading
+  JAVASCRIPT - Local vendor libraries
   ===================================================================
   
   File: js-cdn.html
   Path: _includes/components/js-cdn.html
-  Purpose: Load JavaScript libraries from CDN for site functionality
+  Purpose: Load jQuery and Bootstrap from assets/vendor (no runtime CDN).
   
   Libraries:
-  - jQuery 3.7.1 - DOM manipulation and AJAX
-  - Bootstrap 5.3.3 Bundle - UI components (includes Popper.js)
+  - jQuery 3.7.1
+  - Bootstrap 5.3.3 bundle (includes Popper.js)
   
-  Note: Bootstrap 5 bundle includes Popper.js, so separate Popper
-  loading is not needed and can cause conflicts.
-  
-  Source: https://getbootstrap.com/docs/5.3/getting-started/contents/
+  Refresh: ./scripts/vendor-install.sh (see vendor-manifest.json)
   ===================================================================
 -->
 
 <!-- jQuery 3.7.1 -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" 
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" 
-        crossorigin="anonymous"></script>
+<script src="{{ '/assets/vendor/jquery/jquery-3.7.1.min.js' | relative_url }}"></script>
 
 <!-- Bootstrap 5.3.3 Bundle (includes Popper.js) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
-        crossorigin="anonymous"></script>
+<script src="{{ '/assets/vendor/bootstrap/js/bootstrap.bundle.min.js' | relative_url }}"></script>
 
 <!-- Navigation scripts - Offcanvas, dropdowns, mobile interactions -->
-<script src="{{ '/assets/js/navigation.js' | relative_url }}"></script>
+<script src="{{ '/assets/js/navigation.js' | relative_url }}?t={{ site.time | date: '%s' }}"></script>
 
 <!-- Navigation ES6 Modules - Enhanced sidebar, scroll spy, keyboard shortcuts, gestures -->
 <script type="module" src="{{ '/assets/js/modules/navigation/index.js' | relative_url }}"></script>
 
 <!-- Search modal controller -->
 <script src="{{ '/assets/js/search-modal.js' | relative_url }}"></script>
+
+<!-- fffuel-style background customizer (skin switching, toggle, opacity) -->
+<script src="{{ '/assets/js/background-customizer.js' | relative_url }}"></script>

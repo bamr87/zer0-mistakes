@@ -1,5 +1,239 @@
 # Changelog
 
+## [0.22.14] - 2026-04-18
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- f0a1cac fix: correct comments for clarity in SEO-related files
+- d1998ff chore(deps): update Ruby gem dependencies (#67)
+
+
+## [0.22.13] - 2026-04-10
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 3c00a3d refactor: remove duplicate code — use standard libraries and existing plugins (#59)
+
+
+## [0.22.12] - 2026-04-10
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 7ba0f83 feat(news): add data-driven feature showcase & live Bootstrap components to news index (#54)
+
+
+## [0.22.11] - 2026-04-09
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 8e83a51 Create SECURITY.md for security policy and reporting
+
+
+## [0.22.10] - 2026-04-06
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 27550da feat(admin): add admin layout and configuration dashboards (#57)
+
+
+## [0.22.9] - 2026-04-05
+
+### Added
+- **Skin Editor**: New colorffy-inspired skin editor (`assets/js/skin-editor.js`) for creating and customizing theme skins from the browser
+  - Edit all 9 built-in skin gradient colors with live color pickers
+  - Auto-generated palettes: primary tints, surface, tonal surface, semantic colors (success/warning/danger/info)
+  - WCAG contrast ratio badges on all palette swatches
+  - Random skin generation, save/load custom skins to localStorage
+  - Export SVGs and copy CSS custom properties to clipboard
+  - Advanced SVG filter controls (turbulence, octaves, seed, scale, overlay opacity)
+- **Palette Generator**: New standalone palette generator (`assets/js/palette-generator.js`) with chroma.js-powered color mixing and live CSS variable editor
+- **Playwright Tests**: 12 new visual regression test specs (skins, backgrounds, accessibility, admin layout, config editor/viewer, env dashboard, security, theme colors)
+
+### Fixed
+- **Skin Rendering**: Added `.zer0-bg-hero` class to landing layout to prevent Bootstrap `.bg-primary` from overriding skin background gradients
+- **CSS Scoping**: Added `.bg-primary:not(.zer0-bg-hero)` in custom SCSS to isolate skin backgrounds from Bootstrap utility classes
+
+### Changed
+- **Theme Customizer**: Expanded to 6 tabs — added Skin Editor between Skins and Palette Generator
+- **Admin Navigation**: Minor layout adjustment
+- **Environment Dashboard**: Minor component update
+
+## [0.22.8] - 2026-04-04
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- e0b4f13 fix: cross-platform installation compatibility — Gemfile platform sections, fork mode tests, portable sed replacements (#55)
+
+
+## [0.22.7] - 2026-04-03
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- a70ae8a chore: consolidate configuration, dependencies, and installation (PRs #48, #51, #52, #53) (#51)
+
+
+## [Unreleased] — Universal Installer
+
+### Added
+- **Installer**: New `--remote` install mode — forks repo and creates an orphan `gh-pages` branch with only the bare minimum files needed to render via `remote_theme` (no local theme source)
+- **Installer**: New `--github` install mode — interactive fork via `gh` CLI with automatic platform detection and setup
+- **Installer**: New `--codespaces` flag — adds `.devcontainer/devcontainer.json` for GitHub Codespaces support (auto-included in remote mode, opt-in for full/minimal)
+- **Installer**: Cross-platform setup scripts: `scripts/platform/setup-macos.sh`, `setup-linux.sh`, `setup-wsl.sh`
+- **Installer**: GitHub CLI fork/clone helper: `scripts/github-setup.sh`
+- **Installer**: Platform auto-detection (`detect_platform()`) for macOS, Linux, and WSL
+- **Templates**: `_config.remote.yml.template` — minimal config for remote-theme consumer sites
+- **Templates**: `_config.starter.yml.template` — heavily annotated full starter config
+- **Templates**: `Gemfile.remote.template` — minimal Gemfile (github-pages + jekyll-remote-theme)
+- **Templates**: `devcontainer.json.template` — lightweight devcontainer for consumer sites
+- **Templates**: `theming.md.template` — Bootstrap 5 customization guide (dark mode, typography, layouts)
+- **Templates**: `setup.html.template` — dev-only setup wizard page
+- **Wizard**: Interactive browser-based config wizard (`pages/setup.html`, `_includes/setup/wizard.html`, `assets/js/setup-wizard.js`) for generating `_config.yml` via a 5-step Bootstrap form
+- **CI**: `.github/workflows/setup-template.yml` — auto-detects non-upstream repos and creates PR with prefilled config
+
+### Changed
+- **Installer**: `install.sh` — added `--remote`, `--github`, `--codespaces` flags and corresponding mode dispatchers
+- **Installer**: `render_template()` now substitutes `REPOSITORY_NAME`, `RAW_GITHUB_URL`, `FORK_GITHUB_USER` variables
+- **Installer**: `install.conf` — added `remote` and `github` to `VALID_INSTALL_MODES`, platform detection vars, wizard config, expanded `TEMPLATE_VARS`
+- **Templates**: `quickstart.md.template` — enhanced with Bootstrap pill tabs for macOS/Linux/WSL/GitHub Fork platform-specific instructions
+- **Templates**: `configuration.md.template` — comprehensive rewrite with URL tables, all config sections, cookie consent, dev config
+- **Templates**: `welcome-post.md.template` — enhanced Day 1 tutorial with folder structure diagram, commands table, feature checklist
+
+## [0.22.6] - 2026-04-03
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 0117620 chore(ci): streamline CI workflows with path-based change detection - Bump version to 0.22.5
+
+
+## [0.22.5] - 2026-04-03
+
+### Changed
+- **CI**: Streamlined `ci.yml` — added path-based change detection to skip heavy jobs on docs-only PRs, removed scheduled cron runs and `comprehensive` test scope
+- **CI**: Simplified `codeql.yml` workflow
+- **CI**: Added `test-latest.yml` for latest dependency testing
+- **CI**: Removed redundant summary job from `release.yml`
+- **CI**: Simplified `version-bump.yml`
+- **Docs**: Updated `.github/workflows/README.md` and `.github/actions/README.md`
+
+### Removed
+- **CI**: Removed `.github/actions/prepare-release/action.yml` composite action
+
+## [0.22.4] - 2026-04-03
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 9c56fe0 Review article: fix front matter and expand content for wizard-topples post (#47)
+
+
+## [0.22.3] - 2026-04-02
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 059244d fix(landing): stabilize hero layout and scroll animations (#44)
+
+
+## [0.22.2] - 2026-04-02
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- a9b8daf docs(prompts): update commit-publish workflow with PR branching and CI fix guidance
+
+
+## [0.22.1] - 2026-04-02
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- a82f670 chore(ci): update Gemfile.lock to v0.22.0 and upgrade actions/checkout to v5
+
+
+## [0.22.0] - 2026-04-01
+
+### Added
+- **Copilot Agent dropdown**: New `btn-success` dropdown in the intro section action button group that lists AI prompt templates, each opening a pre-filled GitHub issue assigned to `@copilot` with the selected prompt body, page context, and environment metadata
+- **`_data/prompts.yml`**: Data-driven prompt registry with 9 built-in templates (article-review, code-implementation, code-refactoring, debugging, documentation, requirements-analysis, system-design, test-generation, prompt-engineering)
+- **`docs/implementation/copilot-agent-prompt-button.md`**: Full implementation guide covering architecture, configuration, prompt registry, issue body structure, customization, troubleshooting, and FAQ
+
+### Changed
+- **`_includes/content/intro.html`**: Replaced single Copilot Agent link with a prompt-selection dropdown; `repo_branch` now sourced from `site.branch | default: "main"` (fixes hardcoded `master`); file path uses dedicated `file_path` variable; issue title format is `[Prompt Label] Page Title` with `ai-agent` label pre-applied
+- **`docs/implementation/README.md`**: Added Copilot Agent Prompt Button entry to contents table
+
+## [0.21.6] - 2026-03-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 56c70b8 docs: fix Quick Links, harmonize bash commands, and update version references across READMEs (#42)
+
+
+## [0.21.5] - 2026-03-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- c74f26d Automate README.md version sync and fix GitHub release dispatch in release workflow (#40)
+
+
+## [0.21.4] - 2026-03-29
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 3c96620 feat: vendor assets, theme architecture, CI and docs (v0.21.3) (#39)
+
+
+## [0.21.3] - 2026-03-29
+
+### Changed
+- **Test runner**: When `test.conf` sets a non-default `TEST_TIMEOUT_DEFAULT`, pass `--timeout` only to suites whose scripts accept it (`core`, `deployment`, `quality`). Avoids `Unknown option: --timeout` on installation and site-generation suites.
+- **Vendor assets (GitHub Pages)**: Bootstrap, jQuery, Bootstrap Icons, MathJax, Mermaid, Font Awesome, and GitHub Calendar load from committed `assets/vendor/` with `relative_url` (no runtime CDN for core assets). Added `vendor-manifest.json`, `scripts/vendor-install.sh`, and `npm run vendor:install`. `.gitignore` uses `/vendor/` for Bundler only; removed blanket `vendor/` from Jekyll `exclude` so `assets/vendor/` is published. Docker base image includes `jq` for vendor installs; `scripts/bin/build` runs vendor-install before gem build.
+- **Mermaid vendor source**: `mermaid` is a devDependency; `npm run vendor:mermaid` copies `node_modules/mermaid/dist/mermaid.min.js` into `assets/vendor/mermaid/`. The jsDelivr Mermaid entry was removed from `vendor-manifest.json`; `vendor-install.sh` copies from npm when `node_modules` is present.
+- Version bump: patch release
+- **CSS architecture**: Removed unused `assets/css/custom.css` (legacy `#mainNav`); overrides use `_sass/custom.scss` or optional `user-overrides.css`. Replaced vendored `_sass/core/_docs.scss` (~3.2k lines) with trimmed `_sass/core/_docs-layout.scss`. Theme modes: `_sass/theme/_color-modes.scss` re-exports `_wizard-mode.scss` (wizard Sass/CSS) and `_css-variables.scss` (`--bd-*` tokens); dropped duplicate blocks from `_theme.scss`, duplicate Bootstrap font/line-height block in `_variables.scss`, and unused social/base16 duplicates from `_variables.scss`. Feature metadata now points styles at `_docs-layout.scss`.
+- **Optional npm Bootstrap**: Added `package.json` with `npm run css:bootstrap` (Dart Sass + Bootstrap 5.3.3) producing `assets/css/vendor/bootstrap-from-npm.css`; documented alternate `<link>` in `_includes/core/head.html`. `stats.css` remains a conditional stylesheet for the stats layout only.
+
+### Commits in this release
+- 1fd2061 Enhance navigation UX: responsive design, accessibility, and interaction polish (#25)
+- 9a27ad7 feat(aieo): add structured data, E-E-A-T signals, FAQ, glossary, and roadmap pages (#38)
+- 96a31f9 chore(deps): update Ruby gem dependencies (#37)
+
+
+## [0.21.2] - 2026-03-21
+
+### Changed
+- Version bump: patch release
+- Release tooling: RubyGems publishing now supports API-key auth via `.env` (`RUBY_API_KEY` mapped to `GEM_HOST_API_KEY`)
+
+### Commits in this release
+- 34bed37 chore(deps): update Ruby gem dependencies (#31)
+- 50ebdd4 chore(deps): update Ruby gem dependencies (#32)
+
 ## [0.21.1] - 2026-03-13
 
 ### Changed

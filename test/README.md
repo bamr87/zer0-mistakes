@@ -220,12 +220,15 @@ test/
 ├── test_installation.sh     # ✅ CLI + Modes + Error Handling + Edge Cases
 ├── test_site_generation.sh  # ✅ Config Matrix + Jekyll Build + Content Validation
 ├── test_visual.sh           # ✅ Screenshots + Responsive + Visual Regression
+├── test_styling.sh          # ✅ Playwright: CSS load, Bootstrap tokens, layout chrome
 ├── test_runner.sh           # ✅ Orchestrates all suites
 ├── playwright.config.js     # ✅ Playwright visual test configuration
+├── playwright.styling.config.js  # ✅ Playwright styling-only (Chromium, fast CI)
 ├── lib/                     # ✅ Shared test utilities
 │   ├── install_test_utils.sh
 │   └── config_matrix_generator.sh
-├── visual/                  # ✅ Visual test artifacts
+├── visual/                  # ✅ Playwright specs + visual artifacts
+│   ├── styling.spec.js      # Frontend stylesheet & layout smoke tests
 │   ├── baseline/            # Reference screenshots by mode
 │   ├── current/             # Current run screenshots
 │   └── diff/                # Visual diff images
@@ -247,6 +250,10 @@ test/
 
 # Complete quality check
 ./test/test_runner.sh --suites all
+
+# Frontend styling (Playwright; starts Jekyll on port 4011 unless BASE_URL is set)
+./test/test_runner.sh --suites styling
+# or: npm run test:styling   (with BASE_URL=http://127.0.0.1:4000 if site already running)
 ```
 
 ### For CI/CD

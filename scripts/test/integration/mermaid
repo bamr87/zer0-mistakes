@@ -181,7 +181,7 @@ main() {
     # Mermaid include file tests
     log_info "Testing Mermaid include file..."
     
-    test_file_content "_includes/components/mermaid.html" "mermaid@10" "Mermaid v10 CDN link"
+    test_file_content "_includes/components/mermaid.html" "site.mermaid.src" "Mermaid script from _config (local vendor path)"
     test_file_content "_includes/components/mermaid.html" "mermaid.initialize" "Mermaid initialization script"
     test_file_content "_includes/components/mermaid.html" "forest" "Forest theme configured"
     test_file_content "_includes/components/mermaid.html" "FontAwesome" "FontAwesome support included"

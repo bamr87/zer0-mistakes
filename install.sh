@@ -71,12 +71,20 @@ render_template() {
         -e "s|{{FFI_VERSION}}|${FFI_VERSION}|g" \
         -e "s|{{WEBRICK_VERSION}}|${WEBRICK_VERSION}|g" \
         -e "s|{{COMMONMARKER_VERSION}}|${COMMONMARKER_VERSION}|g" \
+        -e "s|{{GITHUB_PAGES_MAX_VERSION}}|${GITHUB_PAGES_MAX_VERSION:-232}|g" \
+        -e "s|{{COMMONMARKER_MACOS_VERSION}}|${COMMONMARKER_MACOS_VERSION:-~> 0.23}|g" \
+        -e "s|{{RUBY_MIN_VERSION_MACOS}}|${RUBY_MIN_VERSION_MACOS:-2.6.0}|g" \
         -e "s|{{SITE_TITLE}}|${FORK_SITE_NAME:-${SITE_TITLE:-My Jekyll Site}}|g" \
         -e "s|{{SITE_DESCRIPTION}}|${SITE_DESCRIPTION:-A Jekyll site built with ${THEME_NAME}}|g" \
         -e "s|{{SITE_AUTHOR}}|${FORK_AUTHOR:-${SITE_AUTHOR:-Site Author}}|g" \
         -e "s|{{SITE_EMAIL}}|${FORK_EMAIL:-${SITE_EMAIL:-your@email.com}}|g" \
         -e "s|{{CURRENT_DATE}}|$(date +%Y-%m-%d)|g" \
-        -e "s|{{CURRENT_YEAR}}|$(date +%Y)|g")
+        -e "s|{{CURRENT_YEAR}}|$(date +%Y)|g" \
+        -e "s|{{REPOSITORY_NAME}}|${REPOSITORY_NAME:-$THEME_NAME}|g" \
+        -e "s|{{RAW_GITHUB_URL}}|${GITHUB_RAW_URL}|g" \
+        -e "s|{{FORK_GITHUB_USER}}|${FORK_GITHUB_USER:-${GITHUB_USER}}|g" \
+        -e "s|{{INSTALL_MODE}}|${INSTALL_MODE:-full}|g" \
+        -e "s|{{GITHUB_PAGES_URL}}|https://${FORK_GITHUB_USER:-${GITHUB_USER}}.github.io/${REPOSITORY_NAME:-$THEME_NAME}|g")
     
     if [[ -n "$output_file" ]]; then
         mkdir -p "$(dirname "$output_file")"
@@ -139,6 +147,47 @@ templates_available() {
 }
 
 # =========================================================================
+# Platform / Ruby Detection (bash 3.2-compatible — no declare -A, no =~ captures)
+# =========================================================================
+
+# Returns: Darwin | Linux | CYGWIN | MINGW | unknown
+detect_os() {
+    uname -s 2>/dev/null || echo "unknown"
+}
+
+# Returns the ruby version string (e.g. "2.6.8"), or "none" if ruby is absent.
+detect_ruby_version() {
+    if ! command -v ruby >/dev/null 2>&1; then
+        echo "none"
+        return
+    fi
+    # ruby --version prints: ruby 2.6.8p205 (2021-07-07 ...) [platform]
+    # We want "2.6.8" — strip the trailing pNNN patch indicator via sed.
+    ruby --version 2>/dev/null | awk '{print $2}' | sed 's/p[0-9]*//' | sed 's/-.*//' | tr -d '\r'
+}
+
+# Returns 0 (true) if the current Ruby version is < 2.7.0, 1 (false) otherwise.
+# Uses awk so arithmetic is safe even with partial version strings (bash 3.2 compatible).
+ruby_version_lt_27() {
+    local ver
+    ver=$(detect_ruby_version)
+    [ "$ver" = "none" ] && return 1  # no ruby → don't apply macOS caps
+    awk -v ver="$ver" 'BEGIN {
+        n = split(ver, a, ".")
+        if (a[1]+0 == 2 && a[2]+0 < 7) exit 0
+        exit 1
+    }'
+}
+
+# Returns 0 (true) when running on macOS with system Ruby < 2.7.
+# This is the condition that triggers use of Gemfile.macos.template.
+needs_macos_gemfile() {
+    local os
+    os=$(detect_os)
+    [ "$os" = "Darwin" ] && ruby_version_lt_27
+}
+
+# =========================================================================
 
 # Configuration - moved after logging functions to avoid undefined function calls
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd 2>/dev/null || echo "$(pwd)")"
@@ -177,11 +226,36 @@ _load_install_config() {
     FFI_VERSION="${FFI_VERSION:-~> 1.17.0}"
     WEBRICK_VERSION="${WEBRICK_VERSION:-~> 1.7}"
     COMMONMARKER_VERSION="${COMMONMARKER_VERSION:-0.23.10}"
+    GITHUB_PAGES_MAX_VERSION="${GITHUB_PAGES_MAX_VERSION:-232}"
+    COMMONMARKER_MACOS_VERSION="${COMMONMARKER_MACOS_VERSION:-~> 0.23}"
+    RUBY_MIN_VERSION_MACOS="${RUBY_MIN_VERSION_MACOS:-2.6.0}"
     return 1
 }
 
 # Load configuration
 _load_install_config
+
+# =========================================================================
+# Platform Detection
+# =========================================================================
+detect_platform() {
+    if [[ "${PLATFORM:-auto}" != "auto" ]]; then
+        echo "$PLATFORM"
+        return
+    fi
+    # WSL detection (check before generic Linux)
+    if grep -qiE '(microsoft|wsl)' /proc/version 2>/dev/null; then
+        echo "wsl"
+    elif [[ "$(uname -s)" == "Darwin" ]]; then
+        echo "macos"
+    elif [[ "$(uname -s)" == "Linux" ]]; then
+        echo "linux"
+    else
+        echo "unknown"
+    fi
+}
+
+DETECTED_PLATFORM="$(detect_platform)"
 
 # Installation mode
 INSTALL_MODE="${DEFAULT_INSTALL_MODE:-full}"
@@ -191,6 +265,7 @@ SITE_TITLE=""
 SITE_AUTHOR=""
 SITE_EMAIL=""
 FORK_GITHUB_USER=""
+FORK_REPO_NAME=""
 
 # Parse command line arguments
 parse_arguments() {
@@ -208,8 +283,20 @@ parse_arguments() {
                 INSTALL_MODE="fork"
                 shift
                 ;;
+            --github)
+                INSTALL_MODE="github"
+                shift
+                ;;
+            --remote)
+                INSTALL_MODE="remote"
+                shift
+                ;;
             --site-name)
                 FORK_SITE_NAME="$2"
+                shift 2
+                ;;
+            --repo-name)
+                FORK_REPO_NAME="$2"
                 shift 2
                 ;;
             --github-user)
@@ -223,6 +310,10 @@ parse_arguments() {
             --email)
                 FORK_EMAIL="$2"
                 shift 2
+                ;;
+            --codespaces)
+                INCLUDE_CODESPACES=true
+                shift
                 ;;
             --non-interactive)
                 NON_INTERACTIVE=true
@@ -496,8 +587,25 @@ create_site_gemfile() {
     
     local template_path
     local fallback_content
-    
-    if [[ "$INSTALL_MODE" == "minimal" ]]; then
+
+    # On macOS with system Ruby < 2.7, use the compatibility-capped template.
+    # All other environments (Linux, Docker, Ruby >= 2.7) stay zero-pin.
+    if needs_macos_gemfile; then
+        log_info "Detected macOS + Ruby < 2.7 — using macOS compatibility template"
+        template_path="config/Gemfile.macos.template"
+        fallback_content='source "https://rubygems.org"
+
+# macOS system Ruby 2.6 compatibility caps (generated by install.sh)
+gem "github-pages", ">= 228", "< '"${GITHUB_PAGES_MAX_VERSION:-232}"'", group: :jekyll_plugins
+gem "jekyll-remote-theme"
+gem "jekyll-feed"
+gem "jekyll-sitemap"
+gem "jekyll-seo-tag"
+gem "jekyll-paginate"
+gem "ffi", "'"${FFI_VERSION}"'"
+gem "webrick", "'"${WEBRICK_VERSION}"'"
+gem "commonmarker", "'"${COMMONMARKER_MACOS_VERSION:-~> 0.23}"'"'
+    elif [[ "$INSTALL_MODE" == "minimal" ]]; then
         template_path="config/Gemfile.minimal.template"
         fallback_content='source "https://rubygems.org"
 
@@ -512,7 +620,16 @@ gem "ffi", "'"${FFI_VERSION}"'"
 gem "webrick", "'"${WEBRICK_VERSION}"'"
 
 # GitHub Pages compatibility (uncomment for GitHub Pages)
-# gem "github-pages", group: :jekyll_plugins'
+# gem "github-pages", group: :jekyll_plugins
+
+# Platform-specific dependencies
+platforms :windows, :jruby do
+  gem "tzinfo"
+  gem "tzinfo-data"
+end
+
+# Performance booster for watching directories on Windows
+gem "wdm", :platforms => [:windows]'
     else
         template_path="config/Gemfile.full.template"
         fallback_content='source "https://rubygems.org"
@@ -530,7 +647,16 @@ gem "jekyll-paginate"
 # Platform compatibility and performance
 gem "ffi", "'"${FFI_VERSION}"'"
 gem "webrick", "'"${WEBRICK_VERSION}"'"
-gem "commonmarker", "'"${COMMONMARKER_VERSION}"'"  # Fixed version to avoid compatibility issues'
+gem "commonmarker", "'"${COMMONMARKER_VERSION}"'"  # Fixed version to avoid compatibility issues
+
+# Platform-specific dependencies
+platforms :windows, :jruby do
+  gem "tzinfo"
+  gem "tzinfo-data"
+end
+
+# Performance booster for watching directories on Windows
+gem "wdm", :platforms => [:windows]'
     fi
     
     create_from_template "$template_path" "$TARGET_DIR/Gemfile" "$fallback_content"
@@ -1283,50 +1409,6 @@ EOF
     log_success "Development configuration optimized for Docker"
 }
 
-create_site_gemfile() {
-    log_info "Creating site-appropriate Gemfile..."
-    
-    if [[ "$INSTALL_MODE" == "minimal" ]]; then
-        cat > "$TARGET_DIR/Gemfile" << 'EOF'
-source "https://rubygems.org"
-
-# Jekyll and essential plugins
-gem "jekyll", "~> 4.3"
-gem "jekyll-feed"
-gem "jekyll-sitemap"
-gem "jekyll-seo-tag"
-
-# Platform compatibility
-gem "ffi", "~> 1.17.0"
-gem "webrick", "~> 1.7"
-
-# GitHub Pages compatibility (uncomment for GitHub Pages)
-# gem "github-pages", group: :jekyll_plugins
-EOF
-    else
-        cat > "$TARGET_DIR/Gemfile" << 'EOF'
-source "https://rubygems.org"
-
-# GitHub Pages gem includes Jekyll and compatible plugins
-gem "github-pages", group: :jekyll_plugins
-
-# Essential plugins (already included in github-pages but listed for clarity)
-gem "jekyll-remote-theme"
-gem "jekyll-feed"
-gem "jekyll-sitemap"
-gem "jekyll-seo-tag"
-gem "jekyll-paginate"
-
-# Platform compatibility and performance
-gem "ffi", "~> 1.17.0"
-gem "webrick", "~> 1.7"
-gem "commonmarker", "0.23.10"  # Fixed version to avoid compatibility issues
-EOF
-    fi
-    
-    log_info "Created Gemfile for ${INSTALL_MODE} installation"
-}
-
 update_docker_compose_config() {
     log_info "Updating Docker Compose configuration..."
     
@@ -1336,10 +1418,9 @@ update_docker_compose_config() {
     if [[ -f "$docker_config" ]]; then
         # Check if PAGES_REPO_NWO is already present
         if ! grep -q "PAGES_REPO_NWO" "$docker_config"; then
-            # Add the environment variable
-            sed -i.bak '/JEKYLL_ENV: development/a\
-      PAGES_REPO_NWO: "bamr87/zer0-mistakes"' "$docker_config"
-            rm -f "${docker_config}.bak"
+            # Add the environment variable after JEKYLL_ENV line
+            # Use perl for cross-platform compatibility (BSD sed and GNU sed differ on in-place syntax)
+            perl -pi -e '$_ .= "      PAGES_REPO_NWO: \"bamr87/zer0-mistakes\"\n" if /JEKYLL_ENV: development/' "$docker_config"
             log_info "Added PAGES_REPO_NWO environment variable to docker-compose.yml"
         fi
     fi
@@ -1397,6 +1478,378 @@ cleanup_temp_dir() {
 }
 
 # Help function
+# =========================================================================
+# GitHub Mode — interactive gh CLI fork + install
+# =========================================================================
+install_github_mode() {
+    log_info "Starting GitHub mode installation..."
+    log_info "Detected platform: $DETECTED_PLATFORM"
+
+    # Optionally run platform setup
+    local platform_script=""
+    local platform_setup_function=""
+    case "$DETECTED_PLATFORM" in
+        macos)
+            platform_script="$SOURCE_DIR/scripts/platform/setup-macos.sh"
+            platform_setup_function="setup_macos"
+            ;;
+        linux)
+            platform_script="$SOURCE_DIR/scripts/platform/setup-linux.sh"
+            platform_setup_function="setup_linux"
+            ;;
+        wsl)
+            platform_script="$SOURCE_DIR/scripts/platform/setup-wsl.sh"
+            platform_setup_function="setup_wsl"
+            ;;
+    esac
+
+    if [[ -n "$platform_script" && -f "$platform_script" ]]; then
+        log_info "Running platform setup for $DETECTED_PLATFORM..."
+        # shellcheck source=/dev/null
+        source "$platform_script"
+
+        if [[ -n "$platform_setup_function" ]] && declare -F "$platform_setup_function" >/dev/null 2>&1; then
+            "$platform_setup_function"
+        else
+            log_error "Platform setup function '$platform_setup_function' not found after sourcing $platform_script"
+            return 1
+        fi
+    fi
+
+    # Delegate to github-setup.sh if available
+    local gh_setup="$SOURCE_DIR/scripts/github-setup.sh"
+    if [[ -f "$gh_setup" ]]; then
+        log_info "Launching GitHub setup script..."
+
+        # Keep repository name separate from the human-readable site title.
+        local repo_name="${FORK_REPO_NAME:-${FORK_SITE_NAME:-}}"
+        local site_name="${FORK_SITE_NAME:-}"
+        local gh_args=()
+
+        [[ -n "${FORK_GITHUB_USER:-}" ]] && gh_args+=(--github-user "$FORK_GITHUB_USER")
+        [[ -n "$repo_name" ]]            && gh_args+=(--repo-name "$repo_name")
+        [[ -n "$site_name" ]]            && gh_args+=(--site-name "$site_name")
+        [[ -n "${FORK_AUTHOR:-}" ]]      && gh_args+=(--author "$FORK_AUTHOR")
+        [[ -n "${FORK_EMAIL:-}" ]]       && gh_args+=(--email "$FORK_EMAIL")
+
+        bash "$gh_setup" "${gh_args[@]}"
+    else
+        # Inline fallback — use fork mode logic
+        log_info "github-setup.sh not found, falling back to fork mode"
+        install_fork_mode
+        return $?
+    fi
+}
+
+# =========================================================================
+# Remote Mode — fork repo + create orphan gh-pages branch with bare minimum
+# =========================================================================
+# This mode creates a GitHub Pages site that uses remote_theme to load
+# zer0-mistakes. The gh-pages branch contains ONLY consumer files:
+#   _config.yml, Gemfile, index.md, 404.html, starter pages, navigation data
+# No theme source (_layouts, _includes, _sass, assets) is included.
+# =========================================================================
+install_remote_mode() {
+    log_info "Starting remote mode installation..."
+    log_info "This creates a lightweight GitHub Pages site using remote_theme."
+
+    # Require gh CLI for this mode
+    if ! command -v gh &> /dev/null; then
+        log_error "Remote mode requires the GitHub CLI (gh)."
+        log_error "Install it: https://cli.github.com/"
+        exit 1
+    fi
+
+    if ! gh auth status &> /dev/null 2>&1; then
+        log_error "GitHub CLI is not authenticated. Run: gh auth login"
+        exit 1
+    fi
+
+    # Gather user input if not provided
+    if [[ "$NON_INTERACTIVE" != "true" ]]; then
+        gather_fork_user_input
+    fi
+
+    # Derive repo name — prefer explicit --repo-name, fall back to --site-name derived slug
+    local repo_name="${FORK_REPO_NAME:-${FORK_SITE_NAME:-my-site}}"
+    repo_name=$(echo "$repo_name" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd '[:alnum:]-')
+    export REPOSITORY_NAME="$repo_name"
+
+    # Detect the current GitHub user
+    local gh_user="${FORK_GITHUB_USER:-$(gh api user --jq '.login' 2>/dev/null)}"
+    if [[ -z "$gh_user" ]]; then
+        log_error "Could not determine GitHub username."
+        exit 1
+    fi
+    export FORK_GITHUB_USER="$gh_user"
+
+    # Resolve the branch name (default: gh-pages)
+    local branch="${REMOTE_BRANCH:-gh-pages}"
+
+    # Make TARGET_DIR absolute
+    if [[ ! "$TARGET_DIR" = /* ]]; then
+        TARGET_DIR="$(pwd)/$TARGET_DIR"
+    fi
+
+    # ── Step 1: Fork the repository ────────────────────────────────────────
+    log_info "Forking ${GITHUB_REPO} as ${gh_user}/${repo_name}..."
+    if gh repo fork "${GITHUB_REPO}" --clone=false --fork-name "${repo_name}" 2>/dev/null; then
+        log_info "Repository forked successfully"
+    else
+        log_warning "Fork may already exist — continuing"
+    fi
+
+    # ── Step 2: Clone fork (shallow) into target directory ─────────────────
+    log_info "Cloning fork to ${TARGET_DIR}..."
+    if [[ -d "$TARGET_DIR" && -n "$(ls -A "$TARGET_DIR" 2>/dev/null)" ]]; then
+        log_warning "Target directory not empty, using existing directory"
+    else
+        gh repo clone "${gh_user}/${repo_name}" "$TARGET_DIR" -- --depth=1 2>/dev/null || \
+            git clone --depth=1 "https://github.com/${gh_user}/${repo_name}.git" "$TARGET_DIR"
+    fi
+
+    pushd "$TARGET_DIR" > /dev/null || { log_error "Cannot enter $TARGET_DIR"; exit 1; }
+
+    # ── Step 3: Create orphan branch ───────────────────────────────────────
+    log_info "Creating orphan branch '${branch}'..."
+    git checkout --orphan "$branch"
+    # Remove all tracked files from the index (we'll add back only what we need)
+    git rm -rf . > /dev/null 2>&1 || true
+
+    # ── Step 4: Populate with bare-minimum files ───────────────────────────
+    log_info "Populating ${branch} branch with minimal consumer files..."
+
+    # _config.yml  (remote_theme config)
+    create_from_template "config/_config.remote.yml.template" "_config.yml" ""
+
+    # Gemfile  (github-pages + remote theme)
+    create_from_template "config/Gemfile.remote.template" "Gemfile" \
+        "$(printf 'source \"https://rubygems.org\"\ngem \"github-pages\", group: :jekyll_plugins\ngem \"jekyll-remote-theme\"\n')"
+
+    # index.md  (home page)
+    create_from_template "pages/index.md.template" "index.md" ""
+
+    # 404.html
+    mkdir -p "$(dirname "404.html")"
+    cat > 404.html << 'FOUROHFOUR'
+---
+layout: default
+title: "Page Not Found"
+permalink: /404.html
+---
+
+# 404 — Page Not Found
+
+The page you're looking for doesn't exist.
+
+[Go Home →]({{ '/' | relative_url }})
+FOUROHFOUR
+
+    # pages/ content stubs
+    mkdir -p pages/_posts pages/_docs pages/_about
+
+    # Welcome post
+    create_from_template "pages/welcome-post.md.template" "pages/_posts/$(date +%Y-%m-%d)-welcome.md" ""
+
+    # About page
+    create_from_template "pages/about.md.template" "pages/_about/index.md" ""
+
+    # Docs index
+    create_from_template "pages/docs-index.md.template" "pages/_docs/index.md" ""
+
+    # Blog listing page
+    create_from_template "pages/blog.md.template" "pages/blog.md" ""
+
+    # Quickstart
+    create_from_template "pages/quickstart.md.template" "pages/quickstart.md" ""
+
+    # Navigation data
+    mkdir -p _data/navigation
+    create_from_template "data/navigation-main.yml.template" "_data/navigation/main.yml" ""
+
+    # Authors data
+    create_from_template "data/authors.yml.template" "_data/authors.yml" ""
+
+    # Codespaces / devcontainer support
+    install_codespaces_config
+
+    # .gitignore
+    cat > .gitignore << 'GITIGNORE'
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+Gemfile.lock
+*.gem
+GITIGNORE
+
+    # README for the branch
+    cat > README.md << EOF
+# ${FORK_SITE_NAME:-My Site}
+
+This site is built with [${THEME_DISPLAY_NAME}](${GITHUB_URL}) using \`remote_theme\`.
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/${gh_user}/${THEME_NAME}?quickstart=1&ref=${branch})
+
+## Local Development
+
+\`\`\`bash
+bundle install
+bundle exec jekyll serve
+\`\`\`
+
+Visit \`http://localhost:4000/${repo_name}/\` to preview your site.
+
+## GitHub Codespaces
+
+Click the badge above or go to **Code → Codespaces → New codespace** to launch
+a browser-based development environment. Jekyll starts automatically and the
+site preview opens in a forwarded port.
+
+## Deployment
+
+This branch is configured for GitHub Pages. Enable Pages in your repository
+settings and set the source to the \`${branch}\` branch.
+EOF
+
+    # ── Step 5: Initial commit ─────────────────────────────────────────────
+    # Ensure git user identity is configured (needed on fresh envs / Codespaces)
+    if [[ -z "$(git config user.name 2>/dev/null)" ]]; then
+        local commit_name="${FORK_AUTHOR:-$(gh api user --jq '.name' 2>/dev/null || echo "${gh_user}")}"
+        git config user.name "$commit_name" || log_warning "Could not set git user.name"
+    fi
+    if [[ -z "$(git config user.email 2>/dev/null)" ]]; then
+        local commit_email="${FORK_EMAIL:-$(gh api user --jq '.email' 2>/dev/null || echo "${gh_user}@users.noreply.github.com")}"
+        git config user.email "$commit_email" || log_warning "Could not set git user.email"
+    fi
+
+    git add -A
+    git commit -m "feat: initial site from ${THEME_NAME} remote theme
+
+Bare-minimum GitHub Pages site using remote_theme.
+No local theme files — layouts, includes, and assets
+are loaded from ${GITHUB_REPO}."
+
+    # ── Step 6: Push the branch ────────────────────────────────────────────
+    log_info "Pushing ${branch} branch to origin..."
+    git push -u origin "$branch"
+
+    # ── Step 7: Optionally enable GitHub Pages ─────────────────────────────
+    if [[ "$NON_INTERACTIVE" != "true" ]]; then
+        echo
+        read -r -p "Enable GitHub Pages on the '${branch}' branch? (Y/n): " enable_pages
+        if [[ ! "$enable_pages" =~ ^[Nn] ]]; then
+            log_info "Enabling GitHub Pages..."
+            gh api -X PUT "repos/${gh_user}/${repo_name}/pages" \
+                --field "source[branch]=${branch}" \
+                --field "source[path]=/" 2>/dev/null && \
+                log_success "GitHub Pages enabled at https://${gh_user}.github.io/${repo_name}/" || \
+                log_warning "Could not enable Pages automatically. Enable it in Settings → Pages."
+        fi
+    fi
+
+    popd > /dev/null
+
+    echo
+    log_success "Remote mode installation completed!"
+    log_info "Repository: https://github.com/${gh_user}/${repo_name}"
+    log_info "Branch: ${branch}"
+    log_info "Site URL: https://${gh_user}.github.io/${repo_name}/"
+    echo
+    log_info "Next steps:"
+    echo "  1. cd ${TARGET_DIR}"
+    echo "  2. git checkout ${branch}"
+    echo "  3. Edit _config.yml with your site details"
+    echo "  4. Create posts in pages/_posts/"
+    echo "  5. Push changes — GitHub Pages will rebuild automatically"
+    echo
+    log_info "The site uses remote_theme — no local theme files to maintain!"
+}
+
+# =========================================================================
+# Codespaces / Devcontainer — add .devcontainer/ config to target site
+# =========================================================================
+install_codespaces_config() {
+    # In remote mode, always include devcontainer; in other modes, require flag
+    if [[ "$INSTALL_MODE" != "remote" && "${INCLUDE_CODESPACES:-false}" != "true" ]]; then
+        return 0
+    fi
+
+    log_info "Installing GitHub Codespaces configuration..."
+
+    mkdir -p ".devcontainer"
+
+    # Try the template first; fall back to embedded JSON
+    if ! create_from_template "config/devcontainer.json.template" ".devcontainer/devcontainer.json" ""; then
+        cat > ".devcontainer/devcontainer.json" << 'DEVCONTAINER'
+{
+  "name": "Jekyll Site",
+  "image": "mcr.microsoft.com/devcontainers/jekyll:2-bullseye",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "postCreateCommand": "bundle install --jobs 4 --retry 3",
+  "postStartCommand": "bundle exec jekyll serve --host 0.0.0.0 --port 4000 --livereload &",
+  "forwardPorts": [4000, 35729],
+  "portsAttributes": {
+    "4000": { "label": "Jekyll Site", "onAutoForward": "openBrowser" },
+    "35729": { "label": "LiveReload", "onAutoForward": "silent" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "sissel.shopify-liquid",
+        "yzhang.markdown-all-in-one",
+        "DavidAnson.vscode-markdownlint"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "files.associations": { "*.html": "liquid" }
+      }
+    }
+  },
+  "remoteUser": "vscode"
+}
+DEVCONTAINER
+        log_info "Created .devcontainer/devcontainer.json from fallback"
+    fi
+
+    log_success "Codespaces configuration installed"
+}
+
+# =========================================================================
+# Setup Wizard — install dev-only wizard page and assets
+# =========================================================================
+install_setup_wizard() {
+    if [[ "${WIZARD_ENABLED:-true}" != "true" ]]; then
+        return 0
+    fi
+    log_info "Installing setup wizard page (dev-only)..."
+
+    # Setup page
+    create_from_template "pages/setup.html.template" "$TARGET_DIR/pages/setup.html" ""
+
+    # Wizard include
+    if [[ -n "$TEMPLATES_DIR" ]] && [[ -d "$TEMPLATES_DIR" ]]; then
+        local wizard_src="$SOURCE_DIR/_includes/setup/wizard.html"
+        if [[ -f "$wizard_src" ]]; then
+            mkdir -p "$TARGET_DIR/_includes/setup"
+            cp "$wizard_src" "$TARGET_DIR/_includes/setup/wizard.html"
+            log_info "Copied wizard include"
+        fi
+    fi
+
+    # Wizard JS
+    local wizard_js="$SOURCE_DIR/assets/js/setup-wizard.js"
+    if [[ -f "$wizard_js" ]]; then
+        mkdir -p "$TARGET_DIR/assets/js"
+        cp "$wizard_js" "$TARGET_DIR/assets/js/setup-wizard.js"
+        log_info "Copied setup-wizard.js"
+    fi
+
+    log_success "Setup wizard installed (visible in development mode only)"
+}
+
 show_help() {
     cat << EOF
 zer0-mistakes Jekyll Theme Installer
@@ -1416,6 +1869,9 @@ INSTALLATION MODES:
                        for users who want to start with a basic Jekyll setup
     --fork             Fork mode - clone/fork repository as a clean starting template
                        with example content removed and configuration reset
+    --github           GitHub mode - interactive fork via gh CLI with platform setup
+    --remote           Remote mode - fork repo and create a gh-pages branch with only
+                       the bare minimum files to render via remote_theme (requires gh CLI)
 
 ARGUMENTS:
     TARGET_DIRECTORY   Directory where theme will be installed (default: current directory)
@@ -1424,7 +1880,10 @@ OPTIONS:
     -f, --full         Full installation (default)
     -m, --minimal      Minimal installation
     --fork             Fork as template (removes example content)
-    --site-name NAME   Set site title (for fork mode)
+    --github           Interactive GitHub fork via gh CLI
+    --remote           Remote fork — gh-pages branch with bare minimum files
+    --codespaces       Include .devcontainer/ config for GitHub Codespaces
+    --site-name NAME   Set site title (for fork/remote mode)
     --github-user USER Set GitHub username (for fork mode)
     --author NAME      Set author name (for fork mode)
     --email EMAIL      Set contact email (for fork mode)
@@ -1444,6 +1903,12 @@ EXAMPLES:
     # Fork mode (clean template)
     $0 --fork my-site --site-name "My Blog" --github-user "myuser"
     
+    # Remote mode (bare minimum gh-pages branch via remote_theme)
+    $0 --remote --site-name "My Blog" --github-user "myuser"
+    
+    # Full install with Codespaces support
+    $0 --full --codespaces my-site
+    
     # Remote installation
     curl -fsSL ${GITHUB_RAW_URL}/install.sh | bash -s -- --full
     curl -fsSL ${GITHUB_RAW_URL}/install.sh | bash -s -- --fork
@@ -1458,6 +1923,7 @@ FULL INSTALLATION INCLUDES:
     • Navigation: Working navigation configuration
     • Git: .gitignore with comprehensive rules
     • Azure: .github/workflows/azure-static-web-apps.yml
+    • Codespaces: .devcontainer/ (when --codespaces is used)
 
 MINIMAL INSTALLATION INCLUDES:
     • Configuration: _config.yml only
@@ -1474,6 +1940,16 @@ FORK MODE INCLUDES:
     • Welcome post created as starting point
     • Analytics IDs cleared
     • Ready for customization
+
+REMOTE MODE INCLUDES:
+    • _config.yml with remote_theme referencing ${GITHUB_REPO}
+    • Minimal Gemfile (github-pages + jekyll-remote-theme)
+    • Starter content pages (home, blog, docs, about, quickstart)
+    • Welcome post as a starting point
+    • Navigation data
+    • .devcontainer/ config for GitHub Codespaces (auto-included)
+    • Orphan gh-pages branch (no theme source code)
+    • Optional automatic GitHub Pages enablement
 
 UPGRADE PATH:
     You can upgrade from minimal to full installation at any time by running:
@@ -1499,6 +1975,18 @@ main() {
         install_fork_mode
         return $?
     fi
+
+    # GitHub mode — platform detection + gh CLI fork
+    if [[ "$INSTALL_MODE" == "github" ]]; then
+        install_github_mode
+        return $?
+    fi
+
+    # Remote mode — fork + orphan gh-pages branch with bare minimum files
+    if [[ "$INSTALL_MODE" == "remote" ]]; then
+        install_remote_mode
+        return $?
+    fi
     
     # Download theme files if running remotely
     download_theme_files
@@ -1522,12 +2010,17 @@ main() {
         # Create starter pages and navigation (uses theme navigation if copied, otherwise creates new)
         create_starter_pages
         create_starter_navigation
+        # Install interactive setup wizard (dev-only)
+        install_setup_wizard
     else
         install_static_files  # This handles minimal index.md creation
         # For minimal installation, still create basic pages and navigation
         create_starter_pages
         create_starter_navigation
     fi
+    
+    # Codespaces support (when --codespaces flag is used)
+    install_codespaces_config
     
     create_gitignore
     create_readme_instructions
@@ -1661,7 +2154,7 @@ fork_with_gh_cli() {
     if gh repo fork "${GITHUB_REPO}" --clone=false 2>/dev/null; then
         log_info "Repository forked to ${FORK_GITHUB_USER:-$(gh api user --jq '.login')}/${repo_name}"
     else
-        log_warn "Fork may already exist or fork failed, attempting clone..."
+        log_warning "Fork may already exist or fork failed, attempting clone..."
     fi
     
     # Clone the forked repository
@@ -1672,11 +2165,11 @@ fork_with_gh_cli() {
         log_info "Cloning forked repository..."
         if ! gh repo clone "${fork_user}/${THEME_NAME}" "$TARGET_DIR" 2>/dev/null; then
             # Fallback to original repo clone
-            log_warn "Could not clone fork, cloning original repository..."
+            log_warning "Could not clone fork, cloning original repository..."
             gh repo clone "${GITHUB_REPO}" "$TARGET_DIR"
         fi
     else
-        log_warn "Target directory not empty, skipping clone"
+        log_warning "Target directory not empty, skipping clone"
     fi
 }
 
@@ -1694,7 +2187,7 @@ fork_with_clone() {
     fi
     
     if [[ "$(ls -A "$TARGET_DIR" 2>/dev/null)" != "" ]]; then
-        log_warn "Target directory not empty"
+        log_warning "Target directory not empty"
         if [[ "$NON_INTERACTIVE" != "true" ]]; then
             read -r -p "Proceed with clone in existing directory? (y/N): " confirm
             if [[ ! "$confirm" =~ ^[Yy] ]]; then
@@ -1800,18 +2293,21 @@ reset_fork_configuration() {
         # Create backup
         cp "$config_file" "${config_file}.bak"
         
-        # Update configuration values using sed
-        # Note: Patterns handle various YAML formats (with/without spaces, quotes, etc.)
-        sed -i.tmp "s/^title[[:space:]]*:.*/title                    : \"${FORK_SITE_NAME:-My Jekyll Site}\"/" "$config_file"
-        sed -i.tmp "s/^subtitle[[:space:]]*:.*/subtitle                 : \"A Jekyll site built with zer0-mistakes\"/" "$config_file"
-        sed -i.tmp "s/^founder[[:space:]]*:.*/founder                  : \"${FORK_AUTHOR:-Site Author}\"/" "$config_file"
-        sed -i.tmp "s/^github_user[[:space:]]*:.*/github_user              : \&github_user \"${FORK_GITHUB_USER:-your-username}\"/" "$config_file"
+        # Update configuration values using perl for cross-platform compatibility
+        # (BSD sed and GNU sed differ in in-place edit syntax on macOS vs Linux)
+        local site_name="${FORK_SITE_NAME:-My Jekyll Site}"
+        local site_author="${FORK_AUTHOR:-Site Author}"
+        local github_user="${FORK_GITHUB_USER:-your-username}"
+        
+        perl -pi -e "s/^title[[:space:]]*:.*/title                    : \"${site_name}\"/" "$config_file"
+        perl -pi -e 's/^subtitle[[:space:]]*:.*/subtitle                 : "A Jekyll site built with zer0-mistakes"/' "$config_file"
+        perl -pi -e "s/^founder[[:space:]]*:.*/founder                  : \"${site_author}\"/" "$config_file"
+        perl -pi -e "s/^github_user[[:space:]]*:.*/github_user              : \&github_user \"${github_user}\"/" "$config_file"
         
         # Clear analytics IDs
-        sed -i.tmp "s/^google_analytics[[:space:]]*:.*/google_analytics         :/" "$config_file"
-        sed -i.tmp "s/^posthog_api_key[[:space:]]*:.*/posthog_api_key          :/" "$config_file"
+        perl -pi -e 's/^google_analytics[[:space:]]*:.*/google_analytics         :/' "$config_file"
+        perl -pi -e 's/^posthog_api_key[[:space:]]*:.*/posthog_api_key          :/' "$config_file"
         
-        rm -f "${config_file}.tmp"
         log_info "Updated _config.yml"
     fi
     

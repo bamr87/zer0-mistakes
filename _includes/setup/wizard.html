@@ -1,0 +1,330 @@
+<!--
+  ===================================================================
+  SETUP WIZARD — Interactive _config.yml Generator
+  ===================================================================
+
+  File: wizard.html
+  Path: _includes/setup/wizard.html
+  Purpose: Multi-step Bootstrap form that builds a complete _config.yml
+           and lets the user download or copy it.
+
+  Dependencies: Bootstrap 5.3, assets/js/setup-wizard.js
+  Environment: Development only (guarded by calling page)
+  ===================================================================
+-->
+
+<div class="container py-4" id="setup-wizard">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+
+      <h1 class="mb-2"><i class="bi bi-gear-wide-connected"></i> Site Setup Wizard</h1>
+      <p class="lead text-muted mb-4">
+        Fill in the form to generate a personalised <code>_config.yml</code>.
+        Download it and replace the one in your project root.
+      </p>
+
+      <!-- ============================================================ -->
+      <!-- Progress Tabs                                                 -->
+      <!-- ============================================================ -->
+      <ul class="nav nav-pills nav-fill mb-4" id="wizardTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="tab-identity"
+                  data-bs-toggle="pill" data-bs-target="#step-identity"
+                  type="button" role="tab">
+            <i class="bi bi-person-badge"></i> Identity
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tab-urls"
+                  data-bs-toggle="pill" data-bs-target="#step-urls"
+                  type="button" role="tab">
+            <i class="bi bi-link-45deg"></i> URLs
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tab-collections"
+                  data-bs-toggle="pill" data-bs-target="#step-collections"
+                  type="button" role="tab">
+            <i class="bi bi-collection"></i> Collections
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tab-analytics"
+                  data-bs-toggle="pill" data-bs-target="#step-analytics"
+                  type="button" role="tab">
+            <i class="bi bi-graph-up"></i> Analytics
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tab-review"
+                  data-bs-toggle="pill" data-bs-target="#step-review"
+                  type="button" role="tab">
+            <i class="bi bi-file-earmark-code"></i> Review
+          </button>
+        </li>
+      </ul>
+
+      <!-- ============================================================ -->
+      <!-- Step Panels                                                   -->
+      <!-- ============================================================ -->
+      <div class="tab-content" id="wizardTabContent">
+
+        <!-- ───── Step 1: Identity ───── -->
+        <div class="tab-pane fade show active" id="step-identity" role="tabpanel">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title mb-3">Site Identity</h4>
+
+              <div class="mb-3">
+                <label for="cfg-title" class="form-label">Site Title</label>
+                <input type="text" class="form-control cfg-field" id="cfg-title"
+                       placeholder="My Awesome Site" data-key="title">
+              </div>
+
+              <div class="mb-3">
+                <label for="cfg-subtitle" class="form-label">Subtitle <small class="text-muted">(optional)</small></label>
+                <input type="text" class="form-control cfg-field" id="cfg-subtitle"
+                       placeholder="A short tagline" data-key="subtitle">
+              </div>
+
+              <div class="mb-3">
+                <label for="cfg-description" class="form-label">Description <small class="text-muted">(SEO, ≤ 160 chars)</small></label>
+                <textarea class="form-control cfg-field" id="cfg-description" rows="2"
+                          maxlength="160" data-key="description"
+                          placeholder="Brief description of your site for search engines"></textarea>
+                <div class="form-text"><span id="desc-count">0</span>/160</div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="cfg-author" class="form-label">Author / Owner</label>
+                  <input type="text" class="form-control cfg-field" id="cfg-author"
+                         placeholder="Your Name" data-key="founder">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="cfg-email" class="form-label">Email</label>
+                  <input type="email" class="form-control cfg-field" id="cfg-email"
+                         placeholder="you@example.com" data-key="email">
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="cfg-github-user" class="form-label">GitHub Username</label>
+                <input type="text" class="form-control cfg-field" id="cfg-github-user"
+                       placeholder="your-username" data-key="github_user">
+              </div>
+
+              <div class="mb-3">
+                <label for="cfg-repo-name" class="form-label">Repository Name</label>
+                <input type="text" class="form-control cfg-field" id="cfg-repo-name"
+                       placeholder="my-site" data-key="repository_name">
+                <div class="form-text">The GitHub repository name for this site (e.g. <code>my-site</code>).</div>
+              </div>
+
+              <div class="text-end">
+                <button class="btn btn-primary btn-next" data-next="tab-urls">
+                  Next: URLs <i class="bi bi-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ───── Step 2: URLs ───── -->
+        <div class="tab-pane fade" id="step-urls" role="tabpanel">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title mb-3">URLs &amp; Deployment</h4>
+
+              <div class="mb-3">
+                <label for="cfg-url" class="form-label">Site URL</label>
+                <input type="url" class="form-control cfg-field" id="cfg-url"
+                       placeholder="https://yourdomain.com" data-key="url">
+                <div class="form-text">Your production URL. For GitHub Pages: <code>https://USERNAME.github.io</code></div>
+              </div>
+
+              <div class="mb-3">
+                <label for="cfg-baseurl" class="form-label">Base URL <small class="text-muted">(path prefix)</small></label>
+                <input type="text" class="form-control cfg-field" id="cfg-baseurl"
+                       placeholder="/repo-name" data-key="baseurl">
+                <div class="form-text">Leave empty for apex domains. Use <code>/repo-name</code> for project pages.</div>
+              </div>
+
+              <div class="mb-3">
+                <label for="cfg-remote-theme" class="form-label">Remote Theme</label>
+                <input type="text" class="form-control cfg-field" id="cfg-remote-theme"
+                       value="bamr87/zer0-mistakes" data-key="remote_theme">
+                <div class="form-text">Used by GitHub Pages. Set to <code>false</code> for local development.</div>
+              </div>
+
+              <div class="mb-3">
+                <label for="cfg-permalink" class="form-label">Permalink Style</label>
+                <select class="form-select cfg-field" id="cfg-permalink" data-key="permalink">
+                  <option value="/:categories/:title/">/:categories/:title/</option>
+                  <option value="/blog/:year/:month/:day/:title/">Date-based</option>
+                  <option value="/:title/">Title only</option>
+                  <option value="pretty">Pretty (/:categories/:year/:month/:day/:title/)</option>
+                </select>
+              </div>
+
+              <div class="d-flex justify-content-between">
+                <button class="btn btn-outline-secondary btn-prev" data-prev="tab-identity">
+                  <i class="bi bi-arrow-left"></i> Back
+                </button>
+                <button class="btn btn-primary btn-next" data-next="tab-collections">
+                  Next: Collections <i class="bi bi-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ───── Step 3: Collections ───── -->
+        <div class="tab-pane fade" id="step-collections" role="tabpanel">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title mb-3">Content Collections</h4>
+              <p class="text-muted">Toggle which content collections to enable.</p>
+
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input cfg-collection" type="checkbox" id="col-posts" checked data-col="posts">
+                <label class="form-check-label" for="col-posts">
+                  <strong>Blog Posts</strong> — <code>pages/_posts/</code>
+                </label>
+              </div>
+
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input cfg-collection" type="checkbox" id="col-docs" checked data-col="docs">
+                <label class="form-check-label" for="col-docs">
+                  <strong>Documentation</strong> — <code>pages/_docs/</code>
+                </label>
+              </div>
+
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input cfg-collection" type="checkbox" id="col-about" checked data-col="about">
+                <label class="form-check-label" for="col-about">
+                  <strong>About Pages</strong> — <code>pages/_about/</code>
+                </label>
+              </div>
+
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input cfg-collection" type="checkbox" id="col-notes" data-col="notes">
+                <label class="form-check-label" for="col-notes">
+                  <strong>Notes</strong> — <code>pages/_notes/</code>
+                </label>
+              </div>
+
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input cfg-collection" type="checkbox" id="col-notebooks" data-col="notebooks">
+                <label class="form-check-label" for="col-notebooks">
+                  <strong>Notebooks</strong> — <code>pages/_notebooks/</code>
+                </label>
+              </div>
+
+              <div class="d-flex justify-content-between">
+                <button class="btn btn-outline-secondary btn-prev" data-prev="tab-urls">
+                  <i class="bi bi-arrow-left"></i> Back
+                </button>
+                <button class="btn btn-primary btn-next" data-next="tab-analytics">
+                  Next: Analytics <i class="bi bi-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ───── Step 4: Analytics ───── -->
+        <div class="tab-pane fade" id="step-analytics" role="tabpanel">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title mb-3">Analytics &amp; Integrations</h4>
+
+              <div class="mb-3">
+                <label for="cfg-ga" class="form-label">Google Analytics ID <small class="text-muted">(optional)</small></label>
+                <input type="text" class="form-control cfg-field" id="cfg-ga"
+                       placeholder="G-XXXXXXXXXX" data-key="google_analytics">
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label">PostHog Analytics</label>
+                <div class="form-check form-switch mb-2">
+                  <input class="form-check-input" type="checkbox" id="cfg-posthog-enabled" data-key="posthog.enabled">
+                  <label class="form-check-label" for="cfg-posthog-enabled">Enable PostHog</label>
+                </div>
+                <input type="text" class="form-control cfg-field" id="cfg-posthog-key"
+                       placeholder="phc_your_key_here" data-key="posthog.api_key">
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Social Links <small class="text-muted">(optional)</small></label>
+                <div class="row g-2">
+                  <div class="col-md-6">
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-twitter-x"></i></span>
+                      <input type="text" class="form-control cfg-field" placeholder="username" data-key="twitter_username">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-linkedin"></i></span>
+                      <input type="text" class="form-control cfg-field" placeholder="username" data-key="linkedin_username">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-between">
+                <button class="btn btn-outline-secondary btn-prev" data-prev="tab-collections">
+                  <i class="bi bi-arrow-left"></i> Back
+                </button>
+                <button class="btn btn-primary btn-next" data-next="tab-review">
+                  Review &amp; Download <i class="bi bi-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ───── Step 5: Review & Download ───── -->
+        <div class="tab-pane fade" id="step-review" role="tabpanel">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title mb-3">Review Your Configuration</h4>
+              <p class="text-muted">This is the <code>_config.yml</code> that will be generated. Review it, then download or copy.</p>
+
+              <div class="position-relative">
+                <pre class="bg-dark text-light p-3 rounded" style="max-height:450px;overflow:auto"><code id="yaml-preview">Loading…</code></pre>
+                <button class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2" id="btn-copy"
+                        title="Copy to clipboard">
+                  <i class="bi bi-clipboard"></i>
+                </button>
+              </div>
+
+              <div class="d-flex justify-content-between mt-3">
+                <button class="btn btn-outline-secondary btn-prev" data-prev="tab-analytics">
+                  <i class="bi bi-arrow-left"></i> Back
+                </button>
+                <div>
+                  <button class="btn btn-outline-primary me-2" id="btn-copy-full">
+                    <i class="bi bi-clipboard"></i> Copy YAML
+                  </button>
+                  <button class="btn btn-primary" id="btn-download">
+                    <i class="bi bi-download"></i> Download _config.yml
+                  </button>
+                </div>
+              </div>
+
+              <div class="alert alert-info mt-4" role="alert">
+                <i class="bi bi-info-circle"></i>
+                <strong>Next step:</strong> Replace the <code>_config.yml</code> in your project root with the downloaded file, then restart your dev server.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /tab-content -->
+    </div>
+  </div>
+</div>
+
+<script src="{{ '/assets/js/setup-wizard.js' | relative_url }}"></script>

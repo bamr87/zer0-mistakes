@@ -47,13 +47,13 @@ layout: root
 <!-- ================================ -->
 <!-- HERO SECTION                     -->
 <!-- ================================ -->
-<div class="bg-primary text-white position-relative overflow-hidden">
+<div class="bg-primary zer0-bg-hero text-white position-relative overflow-hidden landing-hero">
     <div class="container-xl py-5 px-4 px-md-5">
         <div class="row align-items-center min-vh-50 g-4 g-lg-5">
-            <div class="col-lg-6 order-2 order-lg-1">
-                <h1 class="display-4 fw-bold mb-3 animate-on-scroll">{{ page.title }}</h1>
-                <p class="lead mb-4 animate-on-scroll" style="animation-delay: 0.1s;">{{ page.description }}</p>
-                <div class="d-flex flex-column flex-md-row gap-3 animate-on-scroll" style="animation-delay: 0.2s;">
+            <div class="col-lg-6 order-1 landing-hero-copy">
+                <h1 class="display-4 fw-bold mb-3">{{ page.title }}</h1>
+                <p class="lead mb-4">{{ page.description }}</p>
+                <div class="d-flex flex-column flex-md-row gap-3 flex-wrap">
                     <a href="#get-started" class="btn btn-light btn-lg">
                         <i class="bi bi-rocket-takeoff me-2"></i>Get Started
                     </a>
@@ -65,13 +65,27 @@ layout: root
                     </a>
                 </div>
             </div>
-            <div class="col-lg-6 text-center order-1 order-lg-2">
+            <div class="col-lg-6 text-center order-2">
                 {% if page.hero_image %}
-                <img src="{{ page.hero_image }}" alt="{{ page.title }}" class="img-fluid rounded shadow-lg animate-on-scroll" loading="eager" style="animation-delay: 0.3s;">
+                <div class="landing-hero-media ratio ratio-4x3 mx-auto shadow-lg rounded overflow-hidden">
+                    <img
+                        src="{{ page.hero_image | relative_url }}"
+                        alt="{{ page.title }}"
+                        class="w-100 h-100"
+                        width="800"
+                        height="600"
+                        loading="eager"
+                        decoding="async"
+                        fetchpriority="high"
+                        style="object-fit: contain;"
+                    >
+                </div>
                 {% else %}
-                <div class="bg-secondary rounded p-5 text-body animate-on-scroll">
-                    <i class="bi bi-code-square display-1"></i>
-                    <p class="mt-3 mb-0">Jekyll Theme</p>
+                <div class="landing-hero-media ratio ratio-4x3 mx-auto shadow-lg rounded overflow-hidden">
+                    <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center bg-secondary bg-opacity-25 text-body rounded">
+                        <i class="bi bi-code-square display-1"></i>
+                        <p class="mt-3 mb-0 px-3">Jekyll Theme</p>
+                    </div>
                 </div>
                 {% endif %}
             </div>
@@ -152,3 +166,8 @@ layout: root
         </div>
     </div>
 </div>
+
+<!-- ================================ -->
+<!-- AUTHOR / E-E-A-T SECTION        -->
+<!-- ================================ -->
+{% include components/author-eeat.html %}

@@ -1,12 +1,4 @@
-function myFunction() {
-    myVar = 1;
-    myVar = myVar + 1;
-    document.getElementById("demo").innerHTML = myVar;
-  }
-
-// Updates each img tag with the class img-fluid
-
-  var imgs = document.getElementsByTagName('img');
-  for (var i = 0; i < imgs.length; i++) {
-    imgs[i].classList.add('img-fluid');
-  }
+/**
+ * Legacy asset path — not used by the current theme (see _includes/core/head.html).
+ * Kept so older builds, cached HTML, or bookmarks that still reference this URL do not 404.
+ */

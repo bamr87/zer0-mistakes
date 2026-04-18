@@ -39,12 +39,34 @@ profile                  : false
 # plugins:
 #   - jekyll-admin  # Uncomment if you want to use Jekyll admin interface
 
-# Exclude files that cause unnecessary rebuilds during debugging
+# Exclude — MUST include everything from _config.yml plus dev-only paths.
+# When using --config _config.yml,_config_dev.yml, Jekyll applies this file
+# last; a short list here *replaces* the base exclude and would skip
+# node_modules/, causing Liquid to parse README.md samples under npm packages.
 exclude:
-  - "logs/"
+  - .sass-cache/
+  - .jekyll-cache/
+  - .obsidian
+  - docs/
+  - Gemfile.lock
+  - gemfiles/
+  - Gemfile
+  - node_modules/
+  - templates/
+  # Exclude Bundler's vendor dir (Ruby gems). assets/vendor/ is a different path
+  # and is intentionally committed for GitHub Pages (Bootstrap, jQuery, etc.).
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - submodules/
+  - MERMAID-*.md
+  - MERMAID-*/
+  - test/
+  - tests/
+  - _site/lib/
+  - logs/
   - "*.log"
-  - ".vscode/"
-  - "debug-*.log"
-  - "docs/"
-  - "templates/"
+  - .vscode/
+  - debug-*.log
 

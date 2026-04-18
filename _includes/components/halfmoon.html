@@ -1,34 +1,45 @@
 <!-- 
   file: halfmoon.html
   path: _includes/halfmoon.html
-  description: This is the snippet for the dark mode switch.
+  description: Dark / light / auto theme switcher for the settings modal (Bootstrap dropdown).
  -->
 
- <div class="justify-content-end">
-  <i class="btn dropdown-toggle" id="bd-theme" type="button" aria-expanded="true" data-bs-toggle="dropdown" data-bs-display="static" aria-label="Toggle theme (dark)">
-    <i class="bi bi-circle-half theme-icon-active"><use href="#moon-stars-fill"></use></i>
-    <span class="d-none ms-2" id="bd-theme-text">Toggle theme</span>
-  </i>
-  <ul class="dropdown-menu" aria-labelledby="bd-theme-text" data-bs-popper="static">
+<div class="dropdown bd-theme-dropdown">
+  <button
+    type="button"
+    class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center justify-content-center px-2 py-2"
+    id="bd-theme"
+    data-bs-toggle="dropdown"
+    data-bs-popper-config='{"strategy":"fixed"}'
+    aria-expanded="false"
+    aria-haspopup="true"
+    aria-label="Toggle theme (dark)"
+  >
+    <svg class="bi theme-icon-active flex-shrink-0" width="1.15em" height="1.15em" fill="currentColor" aria-hidden="true">
+      <use href="#moon-stars-fill"></use>
+    </svg>
+    <span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end shadow-sm bd-theme-menu py-1" aria-labelledby="bd-theme">
     <li>
-      <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
-        <svg class="bi me-2 opacity-50"><use href="#sun-fill"></use></svg>
-        Light
-        <svg class="bi ms-auto d-none"><use href="#check2"></use></svg>
+      <button type="button" class="dropdown-item d-flex align-items-center gap-2" data-bs-theme-value="light" aria-pressed="false">
+        <svg class="bi flex-shrink-0 opacity-50" width="1em" height="1em" fill="currentColor" aria-hidden="true"><use href="#sun-fill"></use></svg>
+        <span>Light</span>
+        <svg class="bi ms-auto flex-shrink-0 d-none" width="1em" height="1em" fill="currentColor" aria-hidden="true"><use href="#check2"></use></svg>
       </button>
     </li>
     <li>
-      <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="dark" aria-pressed="true">
-        <svg class="bi me-2 opacity-50"><use href="#moon-stars-fill"></use></svg>
-        Dark
-        <svg class="bi ms-auto d-none"><use href="#check2"></use></svg>
+      <button type="button" class="dropdown-item d-flex align-items-center gap-2 active" data-bs-theme-value="dark" aria-pressed="true">
+        <svg class="bi flex-shrink-0 opacity-50" width="1em" height="1em" fill="currentColor" aria-hidden="true"><use href="#moon-stars-fill"></use></svg>
+        <span>Dark</span>
+        <svg class="bi ms-auto flex-shrink-0 d-none" width="1em" height="1em" fill="currentColor" aria-hidden="true"><use href="#check2"></use></svg>
       </button>
     </li>
     <li>
-      <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto" aria-pressed="false">
-        <svg class="bi me-2 opacity-50"><use href="#circle-half"></use></svg>
-        Auto
-        <svg class="bi ms-auto d-none"><use href="#check2"></use></svg>
+      <button type="button" class="dropdown-item d-flex align-items-center gap-2" data-bs-theme-value="auto" aria-pressed="false">
+        <svg class="bi flex-shrink-0 opacity-50" width="1em" height="1em" fill="currentColor" aria-hidden="true"><use href="#circle-half"></use></svg>
+        <span>Auto</span>
+        <svg class="bi ms-auto flex-shrink-0 d-none" width="1em" height="1em" fill="currentColor" aria-hidden="true"><use href="#check2"></use></svg>
       </button>
     </li>
   </ul>

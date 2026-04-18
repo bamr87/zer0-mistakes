@@ -12,6 +12,16 @@
   /**
    * Initialize scroll animations for elements with animate-on-scroll class
    */
+  /**
+   * True if any part of the element is in the viewport (avoids hiding above-the-fold
+   * content until IntersectionObserver runs — that caused layout “jumps” on the landing hero).
+   */
+  function isInViewport(el) {
+    const rect = el.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    return rect.bottom > 0 && rect.top < vh;
+  }
+
   function initScrollAnimations() {
     if (prefersReducedMotion) return;
 
@@ -35,33 +45,13 @@
     }, observerOptions);
 
     animatedElements.forEach(el => {
+      if (isInViewport(el)) {
+        return;
+      }
       el.style.opacity = '0';
       el.style.transform = 'translateY(30px)';
       el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
       observer.observe(el);
-    });
-  }
-
-  /**
-   * Smooth scroll for anchor links
-   */
-  function initSmoothScroll() {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function(e) {
-        const href = this.getAttribute('href');
-        if (href === '#' || href === '') return;
-        
-        const target = document.querySelector(href);
-        if (target) {
-          e.preventDefault();
-          const offsetTop = target.offsetTop - 80; // Account for fixed navbar
-          
-          window.scrollTo({
-            top: offsetTop,
-            behavior: prefersReducedMotion ? 'auto' : 'smooth'
-          });
-        }
-      });
     });
   }
 
@@ -152,7 +142,8 @@
     }
 
     initScrollAnimations();
-    initSmoothScroll();
+    // Note: Smooth scrolling for anchor links is handled entirely by CSS
+    // (scroll-behavior: smooth + scroll-padding-top: 80px in custom.scss)
     initImageLoading();
     initButtonRipples();
     initScrollSpy();

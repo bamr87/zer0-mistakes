@@ -1,13 +1,16 @@
 ---
 title: Bootstrap Theme Examples
-layout: root
-lastmod: 2024-05-31T01:40:37.133Z
+layout: admin
+icon: bi-palette
+lastmod: 2026-04-04T00:00:00.000Z
 source: https://getbootstrap.com/docs/5.3/examples/cheatsheet/
-draft: draft
+permalink: /about/theme/
+excerpt: Preview Bootstrap 5 theme components and examples.
+admin_section: Theme Customizer
 ---
 
-## Iframe from Bootstrap
+## Bootstrap Cheatsheet
 
-The following is an iframe from the Bootstrap website. It is a cheatsheet for the Bootstrap framework.
+The following iframe loads Bootstrap's official cheatsheet for quick reference on available components, utilities, and helpers.
 
-<iframe src="{{ page.source }}" width="100%" height="1000"></iframe>
+<iframe src="{{ page.source }}" width="100%" height="1000" class="border rounded"></iframe>

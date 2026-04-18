@@ -1,0 +1,101 @@
+name: "🚀 New Site Setup"
+
+# Runs once after a user creates a repo from this template (or forks).
+# Creates a PR with a prefilled _config.yml so the owner can merge and go.
+
+on:
+  # Trigger on the first push to main (template instantiation)
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  setup:
+    # Only run if this repo is NOT the upstream theme itself
+    if: github.repository != 'bamr87/zer0-mistakes'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Detect owner info
+        id: info
+        run: |
+          echo "owner=${{ github.repository_owner }}" >> "$GITHUB_OUTPUT"
+          echo "repo=${{ github.event.repository.name }}" >> "$GITHUB_OUTPUT"
+
+      - name: Check if setup already completed
+        id: check
+        run: |
+          # If _config.yml still has the upstream default github_user (bamr87),
+          # the repo was just forked and needs initial personalisation.
+          if grep -q 'github_user.*bamr87' _config.yml 2>/dev/null; then
+            echo "needs_setup=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "needs_setup=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Generate site config
+        if: steps.check.outputs.needs_setup == 'true'
+        run: |
+          OWNER="${{ steps.info.outputs.owner }}"
+          REPO="${{ steps.info.outputs.repo }}"
+
+          # Update _config.yml with owner's values
+          sed -i "s/github_user.*/github_user              : \&github_user \"${OWNER}\"/" _config.yml
+          sed -i "s/repository_name.*/repository_name          : \&github_repository \"${REPO}\"/" _config.yml
+          sed -i "s|^url[[:space:]]*:.*|url                      : \"https://${OWNER}.github.io\"|" _config.yml
+          sed -i "s|^baseurl[[:space:]]*:.*|baseurl                  : \"/${REPO}\"|" _config.yml
+          sed -i "s|^remote_theme[[:space:]]*:.*|remote_theme             : \"bamr87/zer0-mistakes\"|" _config.yml
+
+          # Clear analytics
+          sed -i "s/^google_analytics[[:space:]]*:.*/google_analytics         :/" _config.yml
+          sed -i "/posthog:/,/api_key:/{s/api_key:.*/api_key                : \"\"/}" _config.yml
+
+          echo "✅ Config updated for ${OWNER}/${REPO}"
+
+      - name: Create setup PR
+        if: steps.check.outputs.needs_setup == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          OWNER="${{ steps.info.outputs.owner }}"
+          REPO="${{ steps.info.outputs.repo }}"
+          BRANCH="setup/initial-config"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git checkout -b "$BRANCH"
+          git add _config.yml
+          git commit -m "chore: configure site for ${OWNER}/${REPO}"
+          git push origin "$BRANCH"
+
+          gh pr create \
+            --title "🚀 Welcome! Configure your new site" \
+            --body "$(cat <<'EOF'
+          ## Welcome to your new Zer0-Mistakes site! 🎉
+
+          This PR updates `_config.yml` with your GitHub username and repository name so your site deploys correctly.
+
+          ### What changed
+          - `github_user` → **${{ steps.info.outputs.owner }}**
+          - `repository_name` → **${{ steps.info.outputs.repo }}**
+          - `url` / `baseurl` → correct GitHub Pages URLs
+          - Analytics IDs cleared (add your own later)
+
+          ### Next steps
+          1. **Merge this PR** to apply configuration
+          2. Enable **GitHub Pages** in Settings → Pages → Source: `main` branch
+          3. Edit `_config.yml` to set your site title, description, and author
+          4. Start adding content in `pages/_posts/`
+
+          For a detailed walkthrough, see the [Quick Start Guide](/quickstart/) after your site is live.
+          EOF
+          )" \
+            --base main \
+            --head "$BRANCH"

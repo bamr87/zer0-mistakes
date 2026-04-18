@@ -6,24 +6,24 @@
   display: inline-block;
   margin: 0 0.5em;
   padding: 0.5em 1em;
-  color: white;
-  background-color: black;
+  color: var(--bs-light);
+  background-color: var(--bs-dark);
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
   
   &:focus {
-    outline: none; // remove default focus outline
-    box-shadow: 0 0 0 3px rgba(21, 156, 228, 0.4); // add custom focus style
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), 0.35);
   }
   
   &:hover {
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: color-mix(in srgb, var(--bs-dark) 85%, transparent);
     transform: translateY(-1px);
   }
   
   &.copied {
-    background-color: #28a745;
+    background-color: var(--bs-success);
     animation: pulse 0.3s ease;
   }
 }

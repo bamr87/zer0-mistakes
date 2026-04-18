@@ -100,7 +100,7 @@ Before contributing, ensure your development environment has been properly confi
 
 **For Release Automation (Required for Publishing):**
 
-- **Bash 4.0+** - For modern release automation (macOS users: `brew install bash`)
+- **Bash 3.2+** - Compatible with the macOS default Bash (no Homebrew Bash required)
 - **RubyGems Account** - For publishing gem releases
 - **GitHub CLI** - For automated GitHub releases
 
@@ -309,24 +309,11 @@ _includes/
 
 We use **Bootstrap 5.3.3** because it's more reliable than most developers and comes with fewer existential crises:
 
-#### CDN Loading Pattern (Streaming Styles from the Cloud)
+#### Local vendor loading (default — GitHub Pages compatible)
 
-```html
-<!-- In _includes/head.html (where all good stylesheets go to live) -->
-<link
-  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-  rel="stylesheet"
-  integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-  crossorigin="anonymous"
-/>
+Bootstrap, jQuery, and icons live under `assets/vendor/` and are linked with `relative_url` in [`_includes/core/head.html`](_includes/core/head.html) and [`_includes/components/js-cdn.html`](_includes/components/js-cdn.html). Update vendored files with `./scripts/vendor-install.sh` (see `docs/development/vendor-assets.md`).
 
-<!-- In _includes/js-cdn.html (where JavaScript magic happens) -->
-<script
-  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-  crossorigin="anonymous"
-></script>
-```
+Forks may switch to a CDN by replacing those links with jsDelivr URLs if they accept a runtime dependency on third-party hosts.
 
 #### Responsive Design Patterns
 
@@ -665,13 +652,13 @@ Our modernized release system uses the `./scripts/release` command with modular 
 
 **System Requirements:**
 
-- Bash 4.0+ (macOS: install via `brew install bash`)
+- Bash 3.2+ (macOS default is supported — no Homebrew Bash required)
 - Clean git working directory
 - Valid RubyGems credentials
 
 ```bash
 # Preview version bump and changelog
-/opt/homebrew/bin/bash ./scripts/release patch --dry-run
+bash ./scripts/release patch --dry-run
 
 # Quick build and test (no publish)
 ./scripts/release patch --skip-publish --no-github-release
@@ -682,19 +669,19 @@ Our modernized release system uses the `./scripts/release` command with modular 
 #### Using New Release Command (Recommended)
 
 ```bash
-# Full release workflow with Bash 5
-/opt/homebrew/bin/bash ./scripts/release patch
-/opt/homebrew/bin/bash ./scripts/release minor
-/opt/homebrew/bin/bash ./scripts/release major
+# Full release workflow
+bash ./scripts/release patch
+bash ./scripts/release minor
+bash ./scripts/release major
 
 # Preview what would happen (dry-run)
-/opt/homebrew/bin/bash ./scripts/release patch --dry-run
+bash ./scripts/release patch --dry-run
 
 # Development workflow (build & test, skip publish)
 ./scripts/release patch --skip-publish --no-github-release
 
 # Non-interactive mode (for CI/CD)
-/opt/homebrew/bin/bash ./scripts/release patch --non-interactive
+bash ./scripts/release patch --non-interactive
 ```
 
 #### Using VS Code Tasks (Easiest)
@@ -736,13 +723,13 @@ The `./scripts/release` command orchestrates a complete release workflow:
 
 ```bash
 # 1. Preview the release
-/opt/homebrew/bin/bash ./scripts/release patch --dry-run
+bash ./scripts/release patch --dry-run
 
 # 2. Build and test without publishing
 ./scripts/release patch --skip-publish --no-github-release
 
 # 3. If all looks good, do full release
-/opt/homebrew/bin/bash ./scripts/release patch
+bash ./scripts/release patch
 ```
 
 ### GitHub Release Automation
