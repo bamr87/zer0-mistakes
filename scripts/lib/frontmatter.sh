@@ -382,9 +382,15 @@ validate_category_casing() {
 
     case "$casing" in
         title)
-            # Title case: first letter of each word is uppercase
-            local expected
-            expected=$(echo "$value" | ruby -e "puts STDIN.read.strip.split(/\s+/).map(&:capitalize).join(' ')" 2>/dev/null)
+            # Title case: first letter of each whitespace-separated word uppercase, rest lowercase
+            local expected="" word first rest
+            for word in $value; do
+                first="${word:0:1}"
+                rest="${word:1}"
+                first="$(printf '%s' "$first" | tr '[:lower:]' '[:upper:]')"
+                rest="$(printf '%s' "$rest" | tr '[:upper:]' '[:lower:]')"
+                expected+="${expected:+ }${first}${rest}"
+            done
             [[ "$value" == "$expected" ]]
             ;;
         lower)
@@ -397,6 +403,88 @@ validate_category_casing() {
             return 0
             ;;
     esac
+}
+
+# -------------------------------------------------------------------------
+# Bulk frontmatter parsing (performance-optimized)
+# -------------------------------------------------------------------------
+
+# Parse a file's frontmatter and emit ALL needed validation data in a
+# single Ruby invocation. Output is line-prefixed for easy bash parsing:
+#
+#   FIELD:<name>            (one line per top-level key present)
+#   LAYOUT:<value>
+#   DATE:<iso8601>
+#   LASTMOD:<iso8601>
+#   DRAFT:<value>
+#   CATEGORY:<value>        (one line per category)
+#
+# Special outputs:
+#   __NO_FRONTMATTER__      file lacks a leading frontmatter block
+#   __PARSE_ERROR__:<msg>   YAML parse failure
+#
+# Usage: parse_file_frontmatter_all <filepath>
+parse_file_frontmatter_all() {
+    local filepath="$1"
+
+    # Cheap pre-check: must start with --- on line 1
+    local first_line
+    IFS= read -r first_line < "$filepath" || true
+    if [[ ! "$first_line" =~ ^---[[:space:]]*$ ]]; then
+        echo "__NO_FRONTMATTER__"
+        return 0
+    fi
+
+    ruby -ryaml -rdate -e '
+        path = ARGV[0]
+        # Extract frontmatter block (between first pair of --- on their own lines)
+        content = File.read(path)
+        unless content =~ /\A---\s*\n(.*?)\n---\s*$/m
+            puts "__NO_FRONTMATTER__"
+            exit 0
+        end
+        fm_text = $1
+
+        begin
+            data = YAML.safe_load(fm_text, permitted_classes: [Date, Time, Symbol], aliases: true) || {}
+        rescue => e
+            puts "__PARSE_ERROR__:#{e.message}"
+            exit 0
+        end
+
+        unless data.is_a?(Hash)
+            puts "__PARSE_ERROR__:frontmatter is not a mapping"
+            exit 0
+        end
+
+        fmt = lambda do |v|
+            case v
+            when Time then v.utc.strftime("%Y-%m-%dT%H:%M:%S.") + format("%03d", v.usec / 1000) + "Z"
+            when Date then v.strftime("%Y-%m-%d")
+            else v.to_s
+            end
+        end
+
+        data.keys.each { |k| puts "FIELD:#{k}" }
+
+        ["layout", "date", "lastmod", "draft"].each do |key|
+            v = data[key]
+            next if v.nil?
+            tag = key.upcase
+            if v.is_a?(Array)
+                v.each { |item| puts "#{tag}:#{fmt.call(item)}" }
+            else
+                puts "#{tag}:#{fmt.call(v)}"
+            end
+        end
+
+        cats = data["categories"]
+        if cats.is_a?(Array)
+            cats.each { |c| puts "CATEGORY:#{fmt.call(c)}" }
+        elsif !cats.nil?
+            puts "CATEGORY:#{fmt.call(cats)}"
+        end
+    ' "$filepath" 2>/dev/null || echo "__PARSE_ERROR__:ruby failed"
 }
 
 # -------------------------------------------------------------------------
@@ -452,3 +540,4 @@ export -f get_template_mappings get_auto_fixable_rules
 export -f detect_collection extract_frontmatter get_frontmatter_field
 export -f list_frontmatter_fields validate_field_pattern validate_boolean
 export -f validate_category_casing fix_date_format fix_draft_to_boolean
+export -f parse_file_frontmatter_all

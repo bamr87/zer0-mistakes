@@ -43,6 +43,17 @@ TOTAL_WARNINGS=0
 TOTAL_FIXED=0
 TOTAL_SKIPPED=0
 
+# Schema cache (populated once per run by load_schema_cache)
+SCHEMA_DATETIME_PATTERN=""
+SCHEMA_DRAFT_TYPE=""
+SCHEMA_CATEGORY_CASING=""
+SCHEMA_CANONICAL_FIELDS=""
+
+# Per-collection cache (populated by ensure_collection_cache)
+CACHED_COLLECTION=""
+CACHED_REQUIRED_FIELDS=""
+CACHED_ALLOWED_LAYOUTS=""
+
 # -------------------------------------------------------------------------
 # CLI argument parsing
 # -------------------------------------------------------------------------
@@ -134,6 +145,52 @@ report_fix() {
 }
 
 # -------------------------------------------------------------------------
+# Schema caching (one Ruby invocation per run instead of per-file)
+# -------------------------------------------------------------------------
+
+# Load global schema settings once into shell variables.
+load_schema_cache() {
+    local schema_full_path="$1"
+    local cache
+    cache="$(ruby -ryaml -e "
+        s = YAML.load_file('$schema_full_path')
+        puts 'DATETIME_PATTERN=' + (s.dig('field_types','datetime','pattern') || '').to_s
+        puts 'DRAFT_TYPE=' + (s.dig('global','draft_type') || '').to_s
+        puts 'CATEGORY_CASING=' + (s.dig('global','category_casing') || '').to_s
+        puts '---CANONICAL---'
+        (s.dig('global','canonical_fields') || {}).each { |k,v| puts \"#{k}=#{v}\" }
+    " 2>/dev/null)"
+
+    SCHEMA_DATETIME_PATTERN="$(echo "$cache" | sed -n 's/^DATETIME_PATTERN=//p')"
+    SCHEMA_DRAFT_TYPE="$(echo "$cache" | sed -n 's/^DRAFT_TYPE=//p')"
+    SCHEMA_CATEGORY_CASING="$(echo "$cache" | sed -n 's/^CATEGORY_CASING=//p')"
+    SCHEMA_CANONICAL_FIELDS="$(echo "$cache" | awk '/^---CANONICAL---$/{flag=1;next} flag')"
+}
+
+# Load per-collection schema once on first use (memoized).
+ensure_collection_cache() {
+    local collection="$1"
+    [[ "$CACHED_COLLECTION" == "$collection" ]] && return 0
+
+    local schema_full_path="$REPO_ROOT/$SCHEMA_PATH"
+    local cache
+    cache="$(ruby -ryaml -e "
+        s = YAML.load_file('$schema_full_path')
+        global_req = s.dig('global','required_fields') || []
+        col_req    = s.dig('collections','$collection','required') || []
+        layouts    = s.dig('collections','$collection','layout','allowed') || []
+        puts '---REQUIRED---'
+        (global_req | col_req).each { |f| puts f }
+        puts '---LAYOUTS---'
+        layouts.each { |l| puts l }
+    " 2>/dev/null)"
+
+    CACHED_REQUIRED_FIELDS="$(echo "$cache" | awk '/^---REQUIRED---$/{f=1;next} /^---LAYOUTS---$/{f=0} f')"
+    CACHED_ALLOWED_LAYOUTS="$(echo "$cache" | awk '/^---LAYOUTS---$/{f=1;next} f')"
+    CACHED_COLLECTION="$collection"
+}
+
+# -------------------------------------------------------------------------
 # Per-file validation
 # -------------------------------------------------------------------------
 validate_file() {
@@ -147,32 +204,26 @@ validate_file() {
 
     debug "Validating: ${filepath#$REPO_ROOT/} (collection: $collection)"
 
-    # Extract frontmatter
-    local fm
-    fm="$(extract_frontmatter "$filepath" || true)"
-    if [[ -z "$fm" ]]; then
+    # Ensure per-collection schema cache is loaded
+    ensure_collection_cache "$collection"
+
+    # Single-pass parse: emits FIELD/LAYOUT/DATE/LASTMOD/DRAFT/CATEGORY lines
+    local parsed
+    parsed="$(parse_file_frontmatter_all "$filepath")"
+
+    if echo "$parsed" | head -1 | grep -q "^__NO_FRONTMATTER__$"; then
         report_violation "$filepath" "frontmatter" "No frontmatter block found" "$severity"
         return
     fi
-
-    # Get fields present in the file
-    local fields_present
-    fields_present="$(echo "$fm" | ruby -ryaml -rdate -e "
-        begin
-            data = YAML.safe_load(STDIN.read, permitted_classes: [Date, Time, Symbol], aliases: true) || {}
-            data.keys.each { |k| puts k }
-        rescue => e
-            STDERR.puts \"YAML parse error: #{e.message}\"
-            exit 1
-        end
-    " 2>/dev/null)" || {
+    if echo "$parsed" | head -1 | grep -q "^__PARSE_ERROR__"; then
         report_violation "$filepath" "frontmatter" "YAML parse error" "$severity"
         return
-    }
+    fi
+
+    local fields_present
+    fields_present="$(echo "$parsed" | sed -n 's/^FIELD://p')"
 
     # --- Deprecated field renames (run FIRST so renames satisfy required-field checks) ---
-    local canonical_fields_pre
-    canonical_fields_pre="$(get_canonical_fields "$SCHEMA_PATH")"
     local renamed_any=false
     while IFS= read -r mapping; do
         [[ -z "$mapping" ]] && continue
@@ -180,7 +231,6 @@ validate_file() {
         local canonical_name="${mapping#*=}"
         if echo "$fields_present" | grep -qx "$deprecated_name"; then
             if [[ "$FIX_MODE" == "true" ]]; then
-                # Skip rename if canonical already exists (would create duplicate key)
                 if echo "$fields_present" | grep -qx "$canonical_name"; then
                     report_violation "$filepath" "$deprecated_name" "Deprecated field — '$canonical_name' already present, manual cleanup needed" "$severity"
                 else
@@ -191,93 +241,76 @@ validate_file() {
                 report_violation "$filepath" "$deprecated_name" "Deprecated field — use '$canonical_name' instead" "$severity"
             fi
         fi
-    done <<< "$canonical_fields_pre"
+    done <<< "$SCHEMA_CANONICAL_FIELDS"
 
-    # Re-extract fields if any rename happened so required-check sees post-rename state
+    # Re-parse if any rename happened so subsequent checks see post-rename state
     if [[ "$renamed_any" == "true" ]] && [[ "$DRY_RUN" != "true" ]]; then
-        fm="$(extract_frontmatter "$filepath" || true)"
-        fields_present="$(echo "$fm" | ruby -ryaml -rdate -e "
-            data = YAML.safe_load(STDIN.read, permitted_classes: [Date, Time, Symbol], aliases: true) || {}
-            data.keys.each { |k| puts k }
-        " 2>/dev/null)" || true
+        parsed="$(parse_file_frontmatter_all "$filepath")"
+        fields_present="$(echo "$parsed" | sed -n 's/^FIELD://p')"
     fi
 
     # --- Required field checks ---
-    local required_fields
-    required_fields="$(get_required_fields "$collection" "$SCHEMA_PATH")"
     while IFS= read -r req_field; do
         [[ -z "$req_field" ]] && continue
         if ! echo "$fields_present" | grep -qx "$req_field"; then
-            # Check if auto-fix can add it
             if [[ "$req_field" == "lastmod" ]] && [[ "$FIX_MODE" == "true" ]]; then
                 fix_add_lastmod "$filepath"
             else
                 report_violation "$filepath" "$req_field" "Required field missing" "$severity"
             fi
         fi
-    done <<< "$required_fields"
+    done <<< "$CACHED_REQUIRED_FIELDS"
 
     # --- Layout validation ---
     local layout_value
-    layout_value="$(get_frontmatter_field "$filepath" "layout")"
-    if [[ -n "$layout_value" ]]; then
-        local allowed_layouts
-        allowed_layouts="$(get_allowed_layouts "$collection" "$SCHEMA_PATH")"
-        if [[ -n "$allowed_layouts" ]]; then
-            if ! echo "$allowed_layouts" | grep -qx "$layout_value"; then
-                report_violation "$filepath" "layout" "Value '$layout_value' not in allowed: [$(echo "$allowed_layouts" | tr '\n' ',' | sed 's/,$//' )]" "$severity"
-            fi
+    layout_value="$(echo "$parsed" | sed -n 's/^LAYOUT://p' | head -1)"
+    if [[ -n "$layout_value" ]] && [[ -n "$CACHED_ALLOWED_LAYOUTS" ]]; then
+        if ! echo "$CACHED_ALLOWED_LAYOUTS" | grep -qx "$layout_value"; then
+            report_violation "$filepath" "layout" "Value '$layout_value' not in allowed: [$(echo "$CACHED_ALLOWED_LAYOUTS" | tr '\n' ',' | sed 's/,$//' )]" "$severity"
         fi
     fi
 
     # --- Date format validation ---
-    local date_pattern
-    date_pattern="$(get_field_type_pattern "datetime" "$SCHEMA_PATH")"
-    for date_field in date lastmod; do
-        local date_value
-        date_value="$(get_frontmatter_field "$filepath" "$date_field")"
-        if [[ -n "$date_value" ]] && [[ -n "$date_pattern" ]]; then
-            if ! validate_field_pattern "$date_value" "$date_pattern"; then
-                if [[ "$FIX_MODE" == "true" ]]; then
-                    fix_date_in_file "$filepath" "$date_field" "$date_value"
-                else
-                    report_violation "$filepath" "$date_field" "Date format '$date_value' does not match pattern" "$severity"
+    if [[ -n "$SCHEMA_DATETIME_PATTERN" ]]; then
+        local date_field date_value date_tag
+        for date_field in date lastmod; do
+            date_tag="$(printf '%s' "$date_field" | tr '[:lower:]' '[:upper:]')"
+            date_value="$(echo "$parsed" | sed -n "s/^${date_tag}://p" | head -1)"
+            if [[ -n "$date_value" ]]; then
+                if ! validate_field_pattern "$date_value" "$SCHEMA_DATETIME_PATTERN"; then
+                    if [[ "$FIX_MODE" == "true" ]]; then
+                        fix_date_in_file "$filepath" "$date_field" "$date_value"
+                    else
+                        report_violation "$filepath" "$date_field" "Date format '$date_value' does not match pattern" "$severity"
+                    fi
                 fi
             fi
-        fi
-    done
+        done
+    fi
 
     # --- Draft field type validation ---
     local draft_value
-    draft_value="$(get_frontmatter_field "$filepath" "draft")"
-    if [[ -n "$draft_value" ]]; then
-        local draft_type
-        draft_type="$(get_global_setting "draft_type" "$SCHEMA_PATH")"
-        if [[ "$draft_type" == "boolean" ]]; then
-            if ! validate_boolean "$draft_value"; then
-                if [[ "$FIX_MODE" == "true" ]]; then
-                    fix_draft_in_file "$filepath" "$draft_value"
-                else
-                    report_violation "$filepath" "draft" "Expected boolean, got '$draft_value'" "$severity"
-                fi
+    draft_value="$(echo "$parsed" | sed -n 's/^DRAFT://p' | head -1)"
+    if [[ -n "$draft_value" ]] && [[ "$SCHEMA_DRAFT_TYPE" == "boolean" ]]; then
+        if ! validate_boolean "$draft_value"; then
+            if [[ "$FIX_MODE" == "true" ]]; then
+                fix_draft_in_file "$filepath" "$draft_value"
+            else
+                report_violation "$filepath" "draft" "Expected boolean, got '$draft_value'" "$severity"
             fi
         fi
     fi
 
     # --- Category casing validation ---
-    local casing_rule
-    casing_rule="$(get_global_setting "category_casing" "$SCHEMA_PATH")"
-    local categories
-    categories="$(get_frontmatter_field "$filepath" "categories")"
-    if [[ -n "$categories" ]] && [[ -n "$casing_rule" ]]; then
+    if [[ -n "$SCHEMA_CATEGORY_CASING" ]]; then
+        local cat_value
         while IFS= read -r cat_value; do
             [[ -z "$cat_value" ]] && continue
-            if ! validate_category_casing "$cat_value" "$casing_rule"; then
-                report_violation "$filepath" "categories" "Category '$cat_value' does not follow $casing_rule casing" "$severity"
+            if ! validate_category_casing "$cat_value" "$SCHEMA_CATEGORY_CASING"; then
+                report_violation "$filepath" "categories" "Category '$cat_value' does not follow $SCHEMA_CATEGORY_CASING casing" "$severity"
             fi
-        done <<< "$categories"
+        done < <(echo "$parsed" | sed -n 's/^CATEGORY://p')
     fi
-
 }
 
 # -------------------------------------------------------------------------
@@ -417,6 +450,9 @@ main() {
     local schema_full_path
     schema_full_path="$(load_schema "$SCHEMA_PATH")" || exit 1
     debug "Schema: $schema_full_path"
+
+    # Cache global schema settings (one Ruby call instead of per-file)
+    load_schema_cache "$schema_full_path"
 
     # Load content rules (if available)
     local rules_full_path="$REPO_ROOT/$RULES_PATH"
