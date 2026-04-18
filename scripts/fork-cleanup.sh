@@ -350,7 +350,7 @@ get_reset_field_value() {
 
     local value
     if value="$(ruby -ryaml -e '
-data = YAML.load_file(ARGV[0]) || {}
+data = YAML.safe_load_file(ARGV[0], aliases: true) || {}
 section = data[ARGV[1]] || {}
 if section.is_a?(Hash) && section.key?(ARGV[2])
   current = section[ARGV[2]]
@@ -390,7 +390,9 @@ reset_config() {
     remote_url="$(git -C "$REPO_ROOT" remote get-url origin 2>/dev/null || true)"
 
     if [[ -n "$remote_url" ]]; then
-        repo_name="$(basename "$(printf '%s' "$remote_url" | sed 's/\.git$//')")"
+        local remote_url_clean
+        remote_url_clean="${remote_url%.git}"
+        repo_name="$(basename "$remote_url_clean")"
     else
         repo_name="$(basename "$REPO_ROOT")"
     fi
