@@ -5,15 +5,10 @@
   
   File: svg-background.html
   Path: _includes/components/svg-background.html
-  Purpose: Adds a CSS class for the background zone and injects
-           per-skin CSS custom-property overrides from _config.yml.
-  
-  Parameters:
-    zone  — "hero" | "body" | "surface" | "footer" (default: "body")
+  Purpose: Injects per-skin CSS custom-property overrides from _config.yml.
   
   Usage:
-    include components/svg-background.html zone="hero"
-    <div class="zer0-bg-hero"> ... </div>
+    include components/svg-background.html
   
   Dependencies:
     - _sass/theme/_backgrounds.scss  (utility classes)
@@ -22,7 +17,6 @@
   ===================================================================
 -->
 
-{% assign zone = include.zone | default: "body" %}
 {% assign skin = site.theme_skin | default: "dark" %}
 {% assign bg   = site.theme_background %}
 

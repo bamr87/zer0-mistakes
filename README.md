@@ -467,7 +467,7 @@ graph TD
 
 ---
 
-## �️ Migration Utility
+## 🛠️ Migration Utility
 
 Add the admin settings UI to an existing consumer site using the migration script:
 
@@ -500,7 +500,7 @@ This installs 6 admin pages to `pages/_about/settings/`:
 
 ---
 
-## �🔄 Development Workflow
+## 🔄 Development Workflow
 
 ```mermaid
 gitGraph
@@ -820,5 +820,4 @@ Built with these amazing technologies:
 **Built with ❤️ for the Jekyll community**
 
 **v0.22.8** • [Changelog](CHANGELOG.md) • [License](LICENSE) • [Contributing](CONTRIBUTING.md)
-
 

@@ -230,6 +230,30 @@ verify_admin_pages() {
 # Version Detection
 # -------------------------------------------------------------------------
 
+# Return 0 when version_a < version_b (SemVer MAJOR.MINOR.PATCH), else 1.
+semver_lt() {
+    local version_a="${1:-0.0.0}"
+    local version_b="${2:-0.0.0}"
+    local a_major a_minor a_patch
+    local b_major b_minor b_patch
+
+    IFS='.' read -r a_major a_minor a_patch <<< "$version_a"
+    IFS='.' read -r b_major b_minor b_patch <<< "$version_b"
+
+    a_major="${a_major:-0}"; a_minor="${a_minor:-0}"; a_patch="${a_patch:-0}"
+    b_major="${b_major:-0}"; b_minor="${b_minor:-0}"; b_patch="${b_patch:-0}"
+
+    if (( a_major != b_major )); then
+        (( a_major < b_major ))
+        return
+    fi
+    if (( a_minor != b_minor )); then
+        (( a_minor < b_minor ))
+        return
+    fi
+    (( a_patch < b_patch ))
+}
+
 # Detect the installed theme version and warn if admin features may be missing
 # Usage: detect_version_gap "/path/to/site"
 detect_version_gap() {
@@ -252,8 +276,7 @@ detect_version_gap() {
 
     info "Installed theme version: $installed_version"
 
-    # Simple version comparison (works for same-major versions)
-    if [[ "$(printf '%s\n' "$min_admin_version" "$installed_version" | sort -V | head -1)" != "$min_admin_version" ]]; then
+    if semver_lt "$installed_version" "$min_admin_version"; then
         warn "Theme version $installed_version may not include admin layout/includes."
         warn "Admin pages require version >= $min_admin_version."
         warn "Consider updating: bundle update jekyll-theme-zer0"

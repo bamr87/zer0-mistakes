@@ -5,7 +5,7 @@ const { defineConfig, devices } = require('@playwright/test');
 
 module.exports = defineConfig({
   testDir: './visual',
-  testMatch: '**/*.spec.js',
+  testMatch: '**/styling.spec.js',
   timeout: 45000,
   expect: { timeout: 15000 },
   forbidOnly: !!process.env.CI,

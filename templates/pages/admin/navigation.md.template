@@ -35,7 +35,7 @@ lastmod: {{CURRENT_DATE}}T00:00:00.000Z
 
   <!-- Overview -->
   <div class="tab-pane fade show active" id="pane-overview" role="tabpanel">
-    {% include components/nav-overview.html %}
+    {% include components/nav-editor.html %}
   </div>
 
   <!-- Edit Menus -->
@@ -44,12 +44,15 @@ lastmod: {{CURRENT_DATE}}T00:00:00.000Z
     <!-- File selector for navigation files -->
     <div class="d-flex flex-wrap align-items-end gap-3 mb-4">
       <div>
-        <label class="form-label small fw-semibold" for="navFileSelect">Navigation file</label>
-        <select class="form-select form-select-sm" id="navFileSelect" style="min-width:200px">
-          <option value="header" selected>Header</option>
-          <option value="footer">Footer</option>
-          <option value="sidebar">Sidebar</option>
-          <option value="admin">Admin</option>
+        <label class="form-label small fw-semibold" for="nav-file-select">Navigation file</label>
+        <select class="form-select form-select-sm" id="nav-file-select" style="min-width:200px">
+          <option value="main" selected>main.yml</option>
+          <option value="home">home.yml</option>
+          <option value="about">about.yml</option>
+          <option value="docs">docs.yml</option>
+          <option value="posts">posts.yml</option>
+          <option value="quickstart">quickstart.yml</option>
+          <option value="admin">admin.yml</option>
         </select>
       </div>
       <button class="btn btn-sm btn-outline-primary" id="addNavItem">
@@ -62,7 +65,13 @@ lastmod: {{CURRENT_DATE}}T00:00:00.000Z
 
   <!-- Export YAML -->
   <div class="tab-pane fade" id="pane-export-yaml" role="tabpanel">
-    {% include components/nav-export.html %}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="mb-0"><i class="bi bi-filetype-yml me-1"></i> Navigation YAML</h5>
+      <button class="btn btn-sm btn-outline-primary" id="nav-copy-yaml" title="Copy YAML">
+        <i class="bi bi-clipboard me-1"></i> Copy
+      </button>
+    </div>
+    <pre class="bg-dark text-light p-3 rounded" style="max-height:500px;overflow:auto;font-size:.85rem"><code id="nav-yaml-output">Select a navigation file to view its YAML.</code></pre>
   </div>
 
 </div>

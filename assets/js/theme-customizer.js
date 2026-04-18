@@ -65,7 +65,8 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('[data-color-key]').forEach(function (el) {
       var key = el.dataset.colorKey;
       var val = el.value;
-      lines.push('  ' + key + ': ' + val);
+      var escapedVal = String(val).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      lines.push('  ' + key + ': "' + escapedVal + '"');
     });
     var yaml = lines.join('\n');
     var output = document.getElementById('theme-yaml-output');

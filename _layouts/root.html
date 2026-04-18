@@ -31,7 +31,11 @@
 -->
 
 <!doctype html>
-<html lang="{{ site.locale | slice: 0,2 | default: 'en' }}" class="no-js" data-bs-theme="dark" data-theme-skin="{{ site.theme_skin | default: 'dark' }}" data-zer0-bg="{{ site.theme_background.enabled | default: true }}">
+{% assign zer0_bg_state = "on" %}
+{% if site.theme_background.enabled == false %}
+  {% assign zer0_bg_state = "off" %}
+{% endif %}
+<html lang="{{ site.locale | slice: 0,2 | default: 'en' }}" class="no-js" data-bs-theme="dark" data-theme-skin="{{ site.theme_skin | default: 'dark' }}" data-zer0-bg="{{ zer0_bg_state }}">
     <head>
         <!-- =============================================== -->
         <!-- HEAD SECTION: Meta tags, styles, and SEO setup -->
@@ -45,7 +49,7 @@
         {% seo %}
 
         <!-- fffuel-style SVG background config overrides -->
-        {% include components/svg-background.html zone="body" %}
+        {% include components/svg-background.html %}
     </head>
     
     <body class="zer0-bg-body" data-bs-spy="scroll" data-bs-target="#TableOfContents">
