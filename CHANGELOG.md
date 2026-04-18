@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.22.15] - 2026-04-18
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 939af77 feat(nav): dynamic collection-based navigation fallback for zero-config sites (#64)
+- ca7da2e docs: align project documentation with v0.22.13 (#66)
+- 9b23b63 chore(deps-dev): bump dompurify from 3.3.3 to 3.4.0 (#68)
+
+
 ## [0.22.14] - 2026-04-18
 
 ### Changed
