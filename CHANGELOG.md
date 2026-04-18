@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.22.17] - 2026-04-18
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 10ba722 Add config-driven frontmatter validation system with review fixes (#34)
+
+
 ## [0.22.16] - 2026-04-18
 
 ### Changed
