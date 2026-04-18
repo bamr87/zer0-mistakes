@@ -1,5 +1,5 @@
 ---
-layout: journals
+layout: article
 title: "Welcome to Your New Site"
 date: {{CURRENT_DATE}}
 categories: [General]

@@ -20,8 +20,15 @@
 #
 # This script can be run:
 #   1. After using "Use this template" button on GitHub
-#   2. After manually forking the repository
-#   3. Via install.sh --fork mode
+#   2. After manually forking the repository (recommended: into
+#      <username>.github.io for a GitHub Pages user site)
+#   3. After cloning your fork locally — see docs/FORKING.md
+#
+# Companion files:
+#   - templates/cleanup/remove-paths.txt   (paths to delete)
+#   - templates/cleanup/reset-fields.yml   (config field replacements)
+#   - templates/data/authors.yml.template  (authors file replacement)
+#   - templates/pages/welcome-post.md.template (first blog post)
 # =========================================================================
 
 set -euo pipefail
@@ -310,7 +317,7 @@ create_welcome_post() {
         # Fallback embedded content
         cat > "$post_file" << EOF
 ---
-layout: journals
+layout: article
 title: "Welcome to Your New Site"
 date: $post_date
 categories: [General]

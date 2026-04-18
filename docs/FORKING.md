@@ -221,7 +221,32 @@ Run `./scripts/fork-cleanup.sh` or manually clear `google_analytics` and `postho
 | Fork the repo | Fork → name it `username.github.io` |
 | Enable Pages | Settings → Pages → Deploy from branch → `main` |
 | Configure identity | `./scripts/fork-cleanup.sh` |
+| Preview cleanup safely | `./scripts/fork-cleanup.sh --dry-run` |
 | Start local dev | `docker-compose up` |
 | Build locally | `bundle exec jekyll build` |
 | Add a blog post | Create `pages/_posts/YYYY-MM-DD-title.md` |
 | Set custom domain | Add `CNAME` file + update `url` in `_config.yml` |
+
+---
+
+## Verifying the Cleanup Script
+
+If you're modifying or auditing `scripts/fork-cleanup.sh` itself, run the test suite:
+
+```bash
+./test/test_fork_cleanup.sh           # 32 assertions, ~30 seconds
+./test/test_fork_cleanup.sh --verbose # show failure details
+./test/test_fork_cleanup.sh --no-cleanup  # keep temp workspaces for inspection
+```
+
+The suite snapshots the working tree into a throwaway `/tmp` workspace, runs the
+cleanup script, and asserts that:
+
+- Required example paths (`pages/_posts`, `CNAME`, `assets/images/previews`, …) are removed
+- A welcome post is generated under `pages/_posts/`
+- `_config.yml` remains valid YAML and identity / URL / analytics fields are reset
+- YAML anchors (`&github_user`, `&title`, `&url`, …) are preserved so existing alias references keep working
+- Re-running the cleanup is idempotent (safe to invoke twice)
+
+A backup of the original `_config.yml` is written next to it as
+`_config.yml.backup.YYYYMMDDHHMMSS` on every real (non-dry) run.

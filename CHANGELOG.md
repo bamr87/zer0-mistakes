@@ -1,5 +1,25 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- **Docs**: `docs/FORKING.md` — progressive fork → configure → personalize workflow for the `username.github.io` user-site pattern
+- **Tests**: `test/test_fork_cleanup.sh` — 32-assertion suite covering CLI parsing, dry-run, real cleanup, YAML anchor preservation, and idempotency
+
+### Changed
+- **Landing page**: `_includes/landing/landing-install-cards.html` — “Fork & Deploy” card now guides users to fork into `<username>.github.io` and run `scripts/fork-cleanup.sh`; safer `github_fork` URL handling
+- **README**: `README.md` — Method 3 (Fork & Customize) reframed as “Fork & Deploy as Your Site” with a 4-step path; deployment section updated for user-site flow
+- **Docs**: `pages/_quickstart/github-setup.md`, `pages/_quickstart/index.md`, `pages/_docs/getting-started/quick-start.md`, `pages/_docs/deployment/github-pages.md`, `docs/configuration/url-configuration-guide.md` — aligned with the user-site fork pattern (`baseurl: ""`)
+- **Templates**: `templates/cleanup/reset-fields.yml` — annotated `baseurl` reasoning; clarified user-site vs. project-site behavior
+- **Templates**: `templates/config/install.conf` — minor consistency tweaks
+
+### Fixed
+- **Fork cleanup**: `scripts/fork-cleanup.sh` — `get_reset_field_value()` now uses `YAML.safe_load_file(..., aliases: true)` so anchors in `reset-fields.yml` no longer break parsing under newer Ruby
+- **Fork cleanup**: `scripts/fork-cleanup.sh` — repository name derivation now strips `.git` suffix and falls back gracefully when `origin` is missing (no `set -euo pipefail` aborts)
+- **Fork cleanup**: `scripts/fork-cleanup.sh` — `posthog`/`giscus` blocks reset only within their own YAML range (no stray matches in unrelated blocks)
+- **Welcome post**: `templates/pages/welcome-post.md.template` and embedded fallback in `scripts/fork-cleanup.sh` — corrected `layout: journals` → `layout: article` so the generated welcome post builds without “Layout does not exist” warnings on a freshly cleaned fork
+
+
 ## [0.22.8] - 2026-04-04
 
 ### Changed
