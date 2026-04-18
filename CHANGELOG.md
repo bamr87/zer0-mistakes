@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.22.14] - 2026-04-18
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- f0a1cac fix: correct comments for clarity in SEO-related files
+- d1998ff chore(deps): update Ruby gem dependencies (#67)
+
+
 ## [0.22.13] - 2026-04-10
 
 ### Changed
