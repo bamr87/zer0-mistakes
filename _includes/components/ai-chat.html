@@ -149,6 +149,8 @@
   // State
   let isOpen = false;
   let isLoading = false;
+  let lastSendTime = 0;
+  const SEND_COOLDOWN_MS = 1000; // Minimum time between sends
   const MAX_MESSAGES = 40; // Maximum number of messages to retain in history
   const _messages = [];
   const messages = new Proxy(_messages, {
@@ -294,6 +296,11 @@
   async function sendMessage(userMessage) {
     if (isLoading || !userMessage.trim()) return;
 
+    // Enforce cooldown between sends
+    const now = Date.now();
+    if (now - lastSendTime < SEND_COOLDOWN_MS) return;
+    lastSendTime = now;
+
     // Add user message to UI and history
     appendMessage('user', userMessage);
     messages.push({ role: 'user', content: userMessage });
@@ -418,10 +425,11 @@
 
 <style>
   /* AI Chat Toggle Button */
+  /* Stacking level 1: above back-to-top (1.25rem), below TOC FAB (10rem) */
   .ai-chat-toggle {
     position: fixed;
-    bottom: 5rem;
-    right: 1.5rem;
+    bottom: 6rem;
+    right: 1.25rem;
     z-index: 1050;
     width: 3rem;
     height: 3rem;
@@ -439,8 +447,8 @@
   /* AI Chat Panel */
   .ai-chat-panel {
     position: fixed;
-    bottom: 9rem;
-    right: 1.5rem;
+    bottom: 10rem;
+    right: 1.25rem;
     z-index: 1049;
     width: 360px;
     max-height: 500px;

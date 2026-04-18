@@ -32,11 +32,15 @@ posthog:
   api_host               : null
 
 # AI Chat Configuration for Development
-# Disabled by default in development. To test locally, set enabled: true,
-# provide an api_key, and use auth_mode: direct so the key is sent directly.
+# The chat widget renders only when a valid auth method is configured.
+# To test locally, create _config_secrets_local.yml with:
+#   ai_chat:
+#     enabled: true
+#     auth_mode: 'direct'
+#     api_key: '<your-openai-key>'
+#     endpoint: 'https://api.openai.com/v1/chat/completions'
+# The docker-compose command auto-includes this file when it exists.
 ai_chat:
-  enabled                : false
-  api_key                : null
   auth_mode              : direct
 
 # Disable production optimizations for faster builds
@@ -48,7 +52,25 @@ profile                  : false
 #   - jekyll-admin  # Uncomment if you want to use Jekyll admin interface
 
 # Exclude files that cause unnecessary rebuilds during debugging
+# IMPORTANT: This list OVERRIDES (not merges with) _config.yml's exclude list,
+# so it must include all production excludes plus dev-specific ones.
 exclude:
+  # Production excludes (from _config.yml)
+  - .sass-cache/
+  - .jekyll-cache/
+  - .obsidian
+  - Gemfile.lock
+  - gemfiles/
+  - Gemfile
+  - node_modules/
+  - vendor/
+  - submodules/
+  - MERMAID-*.md
+  - MERMAID-*/
+  - test/
+  - tests/
+  - _site/lib/
+  # Dev-specific excludes
   - "logs/"
   - "*.log"
   - ".vscode/"

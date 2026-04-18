@@ -5,8 +5,8 @@
 -->
 
 <!-- TOC button in mobile view - Floating Action Button pattern -->
-<!-- Positioned above back-to-top button to prevent overlap -->
-<div class="d-lg-none position-fixed bd-toc-fab" style="bottom: 90px; right: 20px; z-index: 1030;">
+<!-- Stacking order (bottom-up): back-to-top (1.25rem) → chat toggle (6rem) → TOC FAB (10rem) -->
+<div class="d-lg-none position-fixed bd-toc-fab" style="bottom: 10rem; right: 1.25rem; z-index: 1055;">
   <button class="btn btn-primary rounded-circle shadow-lg bd-toc-toggle" 
           type="button" 
           data-bs-toggle="offcanvas" 

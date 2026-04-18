@@ -20,6 +20,9 @@ assets/.DS_Store
 *.env
 !.env.example
 
+# Local secrets config (API keys injected from .env)
+_config_secrets_local.yml
+
 # Gem development
 *.gem
 /*.gem

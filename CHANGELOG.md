@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased] - AI Chat Integration (PR #33)
+
+### Fixed
+- **Floating Buttons**: Resolved overlapping fixed-position buttons (back-to-top, AI chat toggle, TOC FAB) by establishing a consistent vertical stacking order with 16px gaps
+- **AI Chat Config**: Switched from proxy mode to direct API mode; removed `enabled: false` from dev config so widget renders consistently on all pages
+- **Back-to-Top Button**: Removed conflicting Bootstrap position classes (`bottom-0 end-0 m-3`) from footer.html; positioning now handled solely by SCSS
+
+### Changed
+- **Floating Button Stack**: Standardized right offset to `1.25rem` and defined stacking order: back-to-top (1.25rem) → chat toggle (6rem) → TOC FAB (10rem)
+- **Docker Compose**: Auto-detects and includes `_config_secrets_local.yml` when present for local API key injection
+- **Dev Config Excludes**: Added production excludes to `_config_dev.yml` to prevent override gaps
+- **Send Cooldown**: Added 1-second cooldown between chat sends to prevent rapid-fire API calls
+
+### Security
+- **Secrets Management**: Added `_config_secrets_local.yml` to `.gitignore` and untracked from git to prevent API key leakage
+
 ## [0.21.1] - 2026-03-13
 
 ### Changed

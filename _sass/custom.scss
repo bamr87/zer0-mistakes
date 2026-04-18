@@ -132,11 +132,11 @@ html, body {
     }
 }
 
-// Mobile FAB positioning (TOC button above back-to-top)
+// Mobile FAB positioning (TOC button above chat toggle and back-to-top)
+// Stacking order (bottom-up): back-to-top (1.25rem) → chat toggle (6rem) → TOC FAB (10rem)
 .bd-toc-fab {
-    // On mobile, ensure proper spacing above back-to-top button
     @media (max-width: 991.98px) {
-        bottom: 90px !important; // 20px (back-to-top) + 56px (button height) + 14px (spacing)
+        bottom: 10rem !important; // Above chat toggle (6rem + 48px button + 16px gap ≈ 10rem)
     }
 }
 
@@ -175,9 +175,9 @@ html {
 #backToTopBtn { 
     display: none; /* Hidden by default */
     position: fixed; /* Fixed/sticky position */
-    bottom: 20px; /* Place the button at the bottom of the page */
-    right: 20px; /* Place the button 30px from the right */
-    z-index: 1020; /* Below TOC button (1030) but above other content */
+    bottom: 1.25rem; /* Stacking level 0: lowest floating button */
+    right: 1.25rem; /* Consistent with other floating buttons */
+    z-index: 1020; /* Below chat (1050) and TOC (1055) */
     border: none; /* Remove borders */
     outline: none; /* Remove outline */
     background-color: $primary; /* Set a background color */
@@ -185,8 +185,8 @@ html {
     opacity: 25%;
     cursor: pointer; /* Add a mouse pointer on hover */
     padding: 15px; /* Some padding */
-    border-radius:10px;/* Rounded corners */
-    font-size:18px;/* Increase font size */
+    border-radius: 10px; /* Rounded corners */
+    font-size: 18px; /* Increase font size */
   }
 
 #backToTopBtn {
