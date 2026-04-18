@@ -37,3 +37,7 @@ logs/*
 # Front Matter CMS
 .frontmatter/
 vendor/
+
+node_modules
+
+chrome-debug-profile
