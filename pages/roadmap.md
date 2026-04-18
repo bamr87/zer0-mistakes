@@ -3,8 +3,8 @@ title: "Roadmap"
 description: "Development roadmap for the zer0-mistakes Jekyll theme — past releases, current focus, and future plans."
 layout: default
 permalink: /roadmap/
-date: 2026-03-28T00:00:00.000Z
-lastmod: 2026-03-28T00:00:00.000Z
+date: 2026-04-18T00:00:00.000Z
+lastmod: 2026-04-18T00:00:00.000Z
 mermaid: true
 tags:
   - roadmap
@@ -16,7 +16,11 @@ categories:
 
 # {{ page.title }}
 
-The zer0-mistakes development roadmap tracks completed milestones, the current release focus, and planned future work. All versions follow [Semantic Versioning](https://semver.org/).
+{{ site.data.roadmap.meta.tagline }} All versions follow [Semantic Versioning](https://semver.org/).
+
+> **Single source of truth.** This page and the [README roadmap section](https://github.com/bamr87/zer0-mistakes#-roadmap) are both rendered from [`_data/roadmap.yml`](https://github.com/bamr87/zer0-mistakes/blob/main/_data/roadmap.yml). Edit that file (and run `./scripts/generate-roadmap.sh` to refresh the README) to update the roadmap everywhere.
+>
+> _Last reviewed: {{ site.data.roadmap.meta.updated }}_
 
 ---
 
@@ -24,94 +28,82 @@ The zer0-mistakes development roadmap tracks completed milestones, the current r
 
 ```mermaid
 gantt
-    title zer0-mistakes Roadmap
+    title {{ site.data.roadmap.meta.title }}
     dateFormat YYYY-MM
-    section Completed
-    v0.17 ES6 Navigation      :done, 2025-12, 2025-12
-    v0.18 Site Search          :done, 2026-01, 2026-01
-    v0.19 Feature Discovery    :done, 2026-01, 2026-01
-    v0.20 Navigation Redesign  :done, 2026-02, 2026-02
-    v0.21 Env Switcher         :done, 2026-02, 2026-03
-    section Current
-    v0.22 AIEO Optimization    :active, 2026-03, 2026-04
-    section Future
-    v0.23 CMS Integration      :2026-05, 2026-07
-    v0.24 i18n Support         :2026-07, 2026-09
-    v1.0 Stable Release        :milestone, 2027-01, 1d
+{%- assign sections = "" | split: "" -%}
+{%- for m in site.data.roadmap.milestones -%}
+  {%- unless sections contains m.section -%}
+    {%- assign sections = sections | push: m.section -%}
+  {%- endunless -%}
+{%- endfor %}
+{%- for section in sections %}
+    section {{ section }}
+{%- for m in site.data.roadmap.milestones -%}
+{%- if m.section == section %}
+{%- if m.status == "completed" %}{% assign prefix = "done, " %}
+{%- elsif m.status == "active" %}{% assign prefix = "active, " %}
+{%- elsif m.status == "milestone" %}{% assign prefix = "milestone, " %}
+{%- else %}{% assign prefix = "" %}{% endif -%}
+{%- if m.status == "milestone" %}{% assign range = m.start | append: ", 1d" %}
+{%- else %}{% assign range = m.start | append: ", " | append: m.end %}{% endif %}
+    v{{ m.version }} {{ m.title }} :{{ prefix }}{{ range }}
+{%- endif -%}
+{%- endfor -%}
+{%- endfor %}
 ```
 
 ---
 
-## Release History
+## Release Summary
 
-| Version | Date | Highlights |
-|---------|------|------------|
-| **v0.21.2** | 2026-03-21 | RubyGems API-key auth, dependency updates |
-| **v0.21.0** | 2026-02-01 | Environment switcher, navigation redesign, settings modal tabs |
-| **v0.20.7** | 2026-02-01 | Local Docker publishing, CI variable abstraction |
-| **v0.19.0** | 2026-01-25 | 43 documented features, comprehensive feature registry |
-| **v0.18.0** | 2026-01-15 | Client-side site search, search modal |
-| **v0.17.0** | 2025-12-15 | ES6 modular navigation, auto-hide navbar |
+| Version | Status | Target | Summary |
+|---------|--------|--------|---------|
+{%- for m in site.data.roadmap.milestones %}
+{%- case m.status %}
+{%- when "completed" %}{% assign status_label = "✅ Completed" %}{% assign target_label = m.released | default: m.target %}
+{%- when "active" %}{% assign status_label = "🚧 In Progress" %}{% assign target_label = m.target %}
+{%- when "milestone" %}{% assign status_label = "🎯 Milestone" %}{% assign target_label = m.target %}
+{%- else %}{% assign status_label = "🗓 Planned" %}{% assign target_label = m.target %}
+{%- endcase %}
+| **v{{ m.version }}** | {{ status_label }} | {{ target_label }} | {{ m.summary }} |
+{%- endfor %}
 
 See the full [CHANGELOG](/CHANGELOG) for detailed release notes.
 
 ---
 
-## Current Focus: v0.22 — AIEO Optimization
+## Milestone Detail
 
-**Target**: March–April 2026
+{% for m in site.data.roadmap.milestones %}
+### v{{ m.version }} — {{ m.title }}
 
-| Feature | Status |
-|---------|--------|
-| JSON-LD SoftwareApplication schema | ✅ Complete |
-| Author E-E-A-T visibility block | ✅ Complete |
-| FAQ page with FAQPage schema | ✅ Complete |
-| Glossary with key term definitions | ✅ Complete |
-| Roadmap page with temporal anchoring | ✅ Complete |
-| Citation hooks on project stats | ✅ Complete |
+{% case m.status -%}
+{% when "completed" %}**Status:** ✅ Completed{% if m.released %} ({{ m.released }}){% endif %}
+{% when "active" %}**Status:** 🚧 In Progress &nbsp;·&nbsp; **Target:** {{ m.target }}
+{% when "milestone" %}**Status:** 🎯 Milestone &nbsp;·&nbsp; **Target:** {{ m.target }}
+{% else %}**Status:** 🗓 Planned &nbsp;·&nbsp; **Target:** {{ m.target }}
+{% endcase %}
 
----
+{{ m.summary }}
 
-## Planned: v0.23 — CMS Integration
+{% if m.features and m.features.size > 0 -%}
+**Highlights:**
 
-**Target**: Q2 2026
-
-- Headless CMS integration (Decap CMS or Tina)
-- Content API for programmatic access
-- Admin dashboard for content management
-- Draft preview workflow
+{% for feature in m.features -%}
+- {{ feature }}
+{% endfor %}
+{%- endif %}
 
 ---
-
-## Planned: v0.24 — Internationalization (i18n)
-
-**Target**: Q3 2026
-
-- Multi-language content support
-- Locale-aware routing
-- Translated UI strings via `_data/ui-text.yml`
-- Right-to-left (RTL) layout support
-
----
-
-## Planned: v1.0 — Stable Release
-
-**Target**: Q1 2027
-
-- Stable public API for theme customization
-- 90%+ automated test coverage
-- Migration guide from Minima and other themes
-- Long-term support (LTS) commitment
-
----
+{% endfor %}
 
 ## How We Prioritize
 
 Roadmap priorities are informed by:
 
-1. **Community feedback** — [GitHub Issues](https://github.com/bamr87/zer0-mistakes/issues) and [Discussions](https://github.com/bamr87/zer0-mistakes/discussions)
-2. **Usage analytics** — Privacy-compliant PostHog data on feature adoption
-3. **Ecosystem changes** — Jekyll, Bootstrap, and GitHub Pages updates
-4. **Contributor interest** — Open feature requests that attract PRs
+{% for signal in site.data.roadmap.prioritization -%}
+{{ forloop.index }}. {{ signal }}
+{% endfor %}
 
-Want to influence the roadmap? [Open a discussion](https://github.com/bamr87/zer0-mistakes/discussions) with your use case.
+Want to influence the roadmap? [Open a discussion](https://github.com/bamr87/zer0-mistakes/discussions) with your use case, or [propose an edit](https://github.com/bamr87/zer0-mistakes/edit/main/_data/roadmap.yml) to `_data/roadmap.yml` directly.
+

@@ -695,33 +695,43 @@ bash scripts/release major  # 0.21.5 → 1.0.0
 
 ## 🗺 Roadmap
 
-See the full [Roadmap page](/roadmap/) for detailed plans and timeline.
+The diagram and table below are auto-generated from [`_data/roadmap.yml`](_data/roadmap.yml) by [`scripts/generate-roadmap.sh`](scripts/generate-roadmap.sh). See the full [Roadmap page](/roadmap/) for per-version detail and the [PRD](docs/PRD.md) for product context.
 
+<!-- ROADMAP_MERMAID:START -->
 ```mermaid
 gantt
     title zer0-mistakes Roadmap
     dateFormat YYYY-MM
     section Completed
-    v0.17 ES6 Navigation      :done, 2025-12, 2025-12
-    v0.18 Site Search         :done, 2026-01, 2026-01
-    v0.19 Feature Discovery   :done, 2026-01, 2026-01
-    v0.20 Navigation Redesign :done, 2026-02, 2026-02
-    v0.21 Env Switcher        :done, 2026-02, 2026-03
+    v0.17 ES6 Navigation         :done, 2025-12, 2025-12
+    v0.18 Site Search            :done, 2026-01, 2026-01
+    v0.19 Feature Discovery      :done, 2026-01, 2026-01
+    v0.20 Navigation Redesign    :done, 2026-02, 2026-02
+    v0.21 Env Switcher           :done, 2026-02, 2026-03
     section Current
-    v0.22 AIEO Optimization   :active, 2026-03, 2026-04
+    v0.22 AIEO & Customization   :active, 2026-03, 2026-04
     section Future
-    v0.23 CMS Integration     :2026-05, 2026-07
-    v0.24 i18n Support        :2026-07, 2026-09
-    v1.0 Stable Release       :milestone, 2027-01, 1d
+    v0.23 CMS Integration        :2026-05, 2026-07
+    v0.24 i18n Support           :2026-07, 2026-09
+    v0.25 Advanced Analytics     :2026-09, 2026-11
+    v1.0 Stable Release          :milestone, 2027-01, 1d
 ```
+<!-- ROADMAP_MERMAID:END -->
 
-| Version | Target | Features |
-|---------|--------|----------|
-| **v0.21** | Completed | Environment switcher, navigation redesign, settings modal |
-| **v0.22** | Q1 2026 | AIEO optimization, structured data, FAQ, glossary |
-| **v0.23** | Q2 2026 | Headless CMS integration, content API |
-| **v0.24** | Q3 2026 | Multi-language support (i18n) |
-| **v1.0** | Q1 2027 | Stable API, 90%+ test coverage |
+<!-- ROADMAP_TABLE:START -->
+| Version | Status | Target | Highlights |
+|---------|--------|--------|------------|
+| **v0.17** | ✅ Completed | Dec 2025 | ES6 modular navigation with auto-hide navbar, hover dropdowns, keyboard navigation, and touch gestures. |
+| **v0.18** | ✅ Completed | Jan 2026 | Client-side site search with a keyboard-shortcut search modal. |
+| **v0.19** | ✅ Completed | Jan 2026 | 43 documented features with a comprehensive feature registry. |
+| **v0.20** | ✅ Completed | Feb 2026 | Local Docker publishing pipeline and CI variable abstraction. |
+| **v0.21** | ✅ Completed | Feb 2026 | Environment switcher, settings modal redesign, and RubyGems API-key auth. |
+| **v0.22** | 🚧 In Progress | Q1–Q2 2026 | AI Engine Optimization (AIEO), structured data, and visual customization tools. |
+| **v0.23** | 🗓 Planned | Q2 2026 | Headless CMS integration with a content API and admin dashboard. |
+| **v0.24** | 🗓 Planned | Q3 2026 | Multi-language content support with locale-aware routing. |
+| **v0.25** | 🗓 Planned | Q4 2026 | Visual theme customizer, A/B testing, and conversion funnels. |
+| **v1.0** | 🎯 Milestone | Q1 2027 | Stable public API, 90%+ test coverage, and long-term support commitment. |
+<!-- ROADMAP_TABLE:END -->
 
 ---
 

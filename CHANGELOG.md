@@ -1,5 +1,17 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- **Roadmap data file**: `_data/roadmap.yml` is now the single source of truth for the project roadmap (versions, status, dates, targets, and feature highlights).
+- **Roadmap generator**: `scripts/generate-roadmap.rb` (and shell wrapper `scripts/generate-roadmap.sh`) renders a Mermaid gantt diagram and summary table from `_data/roadmap.yml` and injects them into `README.md` between `<!-- ROADMAP_MERMAID:START/END -->` and `<!-- ROADMAP_TABLE:START/END -->` markers. Supports `--check` mode for CI drift detection and `--stdout` for previewing.
+- **Roadmap sync workflow**: `.github/workflows/roadmap-sync.yml` regenerates the README on push to `main` when the data file or generator changes, and verifies sync on PRs that touch those files.
+
+### Changed
+- **README roadmap section** is now auto-generated from `_data/roadmap.yml` instead of being hand-maintained, and includes status, target, and detailed highlight columns.
+- **`pages/roadmap.md`** rewritten to render the Mermaid gantt chart, release summary, and per-version detail sections directly from `_data/roadmap.yml` via Liquid — so the Jekyll page is always live with the canonical data.
+- **`_data/README.md`** documents the new `roadmap.yml` data file.
+
 ## [0.22.15] - 2026-04-18
 
 ### Changed
