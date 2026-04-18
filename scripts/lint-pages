@@ -149,7 +149,7 @@ validate_file() {
 
     # Extract frontmatter
     local fm
-    fm="$(extract_frontmatter "$filepath")"
+    fm="$(extract_frontmatter "$filepath" || true)"
     if [[ -z "$fm" ]]; then
         report_violation "$filepath" "frontmatter" "No frontmatter block found" "$severity"
         return
@@ -157,9 +157,9 @@ validate_file() {
 
     # Get fields present in the file
     local fields_present
-    fields_present="$(echo "$fm" | ruby -ryaml -e "
+    fields_present="$(echo "$fm" | ruby -ryaml -rdate -e "
         begin
-            data = YAML.safe_load(STDIN.read) || {}
+            data = YAML.safe_load(STDIN.read, permitted_classes: [Date, Time, Symbol], aliases: true) || {}
             data.keys.each { |k| puts k }
         rescue => e
             STDERR.puts \"YAML parse error: #{e.message}\"
@@ -169,6 +169,38 @@ validate_file() {
         report_violation "$filepath" "frontmatter" "YAML parse error" "$severity"
         return
     }
+
+    # --- Deprecated field renames (run FIRST so renames satisfy required-field checks) ---
+    local canonical_fields_pre
+    canonical_fields_pre="$(get_canonical_fields "$SCHEMA_PATH")"
+    local renamed_any=false
+    while IFS= read -r mapping; do
+        [[ -z "$mapping" ]] && continue
+        local deprecated_name="${mapping%%=*}"
+        local canonical_name="${mapping#*=}"
+        if echo "$fields_present" | grep -qx "$deprecated_name"; then
+            if [[ "$FIX_MODE" == "true" ]]; then
+                # Skip rename if canonical already exists (would create duplicate key)
+                if echo "$fields_present" | grep -qx "$canonical_name"; then
+                    report_violation "$filepath" "$deprecated_name" "Deprecated field — '$canonical_name' already present, manual cleanup needed" "$severity"
+                else
+                    fix_rename_field "$filepath" "$deprecated_name" "$canonical_name"
+                    renamed_any=true
+                fi
+            else
+                report_violation "$filepath" "$deprecated_name" "Deprecated field — use '$canonical_name' instead" "$severity"
+            fi
+        fi
+    done <<< "$canonical_fields_pre"
+
+    # Re-extract fields if any rename happened so required-check sees post-rename state
+    if [[ "$renamed_any" == "true" ]] && [[ "$DRY_RUN" != "true" ]]; then
+        fm="$(extract_frontmatter "$filepath" || true)"
+        fields_present="$(echo "$fm" | ruby -ryaml -rdate -e "
+            data = YAML.safe_load(STDIN.read, permitted_classes: [Date, Time, Symbol], aliases: true) || {}
+            data.keys.each { |k| puts k }
+        " 2>/dev/null)" || true
+    fi
 
     # --- Required field checks ---
     local required_fields
@@ -246,21 +278,6 @@ validate_file() {
         done <<< "$categories"
     fi
 
-    # --- Deprecated field detection ---
-    local canonical_fields
-    canonical_fields="$(get_canonical_fields "$SCHEMA_PATH")"
-    while IFS= read -r mapping; do
-        [[ -z "$mapping" ]] && continue
-        local deprecated_name="${mapping%%=*}"
-        local canonical_name="${mapping#*=}"
-        if echo "$fields_present" | grep -qx "$deprecated_name"; then
-            if [[ "$FIX_MODE" == "true" ]]; then
-                fix_rename_field "$filepath" "$deprecated_name" "$canonical_name"
-            else
-                report_violation "$filepath" "$deprecated_name" "Deprecated field — use '$canonical_name' instead" "$severity"
-            fi
-        fi
-    done <<< "$canonical_fields"
 }
 
 # -------------------------------------------------------------------------

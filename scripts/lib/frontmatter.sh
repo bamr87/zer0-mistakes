@@ -268,6 +268,15 @@ extract_frontmatter() {
         return 1
     fi
 
+    # Frontmatter must START on the first line with ---
+    # Otherwise mid-document horizontal rules would be misread as frontmatter.
+    local first_line
+    IFS= read -r first_line < "$filepath" || true
+    if [[ ! "$first_line" =~ ^---[[:space:]]*$ ]]; then
+        echo ""
+        return 1
+    fi
+
     # Extract content between first pair of ---
     awk '
         /^---[[:space:]]*$/ {
@@ -291,16 +300,23 @@ get_frontmatter_field() {
         return 1
     fi
 
-    echo "$fm" | ruby -ryaml -e "
+    echo "$fm" | ruby -ryaml -rdate -e "
         begin
-            data = YAML.safe_load(STDIN.read) || {}
+            data = YAML.safe_load(STDIN.read, permitted_classes: [Date, Time, Symbol], aliases: true) || {}
             val = data['$field']
+            format = lambda do |v|
+                case v
+                when Time then v.utc.strftime('%Y-%m-%dT%H:%M:%S.') + format('%03d', v.usec / 1000) + 'Z'
+                when Date then v.strftime('%Y-%m-%d')
+                else v.to_s
+                end
+            end
             if val.is_a?(Array)
-                val.each { |v| puts v }
+                val.each { |v| puts format.call(v) }
             elsif val.nil?
                 # output nothing
             else
-                puts val
+                puts format.call(val)
             end
         rescue => e
             STDERR.puts \"YAML parse error: #{e.message}\"
@@ -320,9 +336,9 @@ list_frontmatter_fields() {
         return 1
     fi
 
-    echo "$fm" | ruby -ryaml -e "
+    echo "$fm" | ruby -ryaml -rdate -e "
         begin
-            data = YAML.safe_load(STDIN.read) || {}
+            data = YAML.safe_load(STDIN.read, permitted_classes: [Date, Time, Symbol], aliases: true) || {}
             data.keys.each { |k| puts k }
         rescue => e
             STDERR.puts \"YAML parse error: #{e.message}\"
