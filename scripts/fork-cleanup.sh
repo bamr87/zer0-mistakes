@@ -68,6 +68,7 @@ VERBOSE="${VERBOSE:-false}"
 # Paths
 TEMPLATES_DIR="$REPO_ROOT/templates"
 REMOVE_PATHS_FILE="$TEMPLATES_DIR/cleanup/remove-paths.txt"
+RESET_FIELDS_FILE="$TEMPLATES_DIR/cleanup/reset-fields.yml"
 
 # -------------------------------------------------------------------------
 # Argument Parsing
@@ -337,6 +338,33 @@ EOF
 }
 
 # Reset _config.yml with placeholder values
+get_reset_field_value() {
+    local file_key="$1"
+    local field_key="$2"
+    local default_value="${3:-}"
+
+    if [[ ! -f "$RESET_FIELDS_FILE" ]] || ! command -v ruby >/dev/null 2>&1; then
+        printf '%s' "$default_value"
+        return 0
+    fi
+
+    local value
+    if value="$(ruby -ryaml -e '
+data = YAML.load_file(ARGV[0]) || {}
+section = data[ARGV[1]] || {}
+if section.is_a?(Hash) && section.key?(ARGV[2])
+  current = section[ARGV[2]]
+  print(current == true ? "true" : current == false ? "false" : current.to_s)
+  exit 0
+end
+exit 1
+' "$RESET_FIELDS_FILE" "$file_key" "$field_key" 2>/dev/null)"; then
+        printf '%s' "$value"
+    else
+        printf '%s' "$default_value"
+    fi
+}
+
 reset_config() {
     info "Resetting _config.yml..."
     
@@ -355,9 +383,26 @@ reset_config() {
     # Create backup
     cp "$config_file" "${config_file}.backup.$(date +%Y%m%d%H%M%S)"
     
-    # Derive repository name from the git remote or current directory
+    # Derive repository name from the git remote or current directory.
+    # Under `set -euo pipefail`, missing `origin` should not terminate.
     local repo_name
-    repo_name=$(basename "$(git -C "$REPO_ROOT" remote get-url origin 2>/dev/null | sed 's/\.git$//')" 2>/dev/null || basename "$REPO_ROOT")
+    local remote_url
+    remote_url="$(git -C "$REPO_ROOT" remote get-url origin 2>/dev/null || true)"
+
+    if [[ -n "$remote_url" ]]; then
+        repo_name="$(basename "$(printf '%s' "$remote_url" | sed 's/\.git$//')")"
+    else
+        repo_name="$(basename "$REPO_ROOT")"
+    fi
+
+    local posthog_enabled_reset posthog_api_key_reset
+    posthog_enabled_reset="$(get_reset_field_value "_config.yml" "posthog.enabled" "false")"
+    posthog_api_key_reset="$(get_reset_field_value "_config.yml" "posthog.api_key" "")"
+
+    local giscus_enabled_reset giscus_repo_id_reset giscus_category_id_reset
+    giscus_enabled_reset="$(get_reset_field_value "_config.yml" "giscus.enabled" "false")"
+    giscus_repo_id_reset="$(get_reset_field_value "_config.yml" "giscus.data-repo-id" "")"
+    giscus_category_id_reset="$(get_reset_field_value "_config.yml" "giscus.data-category-id" "")"
     
     # Note: sed patterns use [[:space:]]*: to match the YAML format where
     # there may be spaces between the key name and the colon.
@@ -382,9 +427,14 @@ reset_config() {
     
     # --- Analytics (MUST be cleared for forks) ---
     sed -i.tmp "s|^\(google_analytics[[:space:]]*:[[:space:]]*\).*|\1\"\"|" "$config_file"
-    # Disable PostHog
-    sed -i.tmp "s|^\([[:space:]]*enabled[[:space:]]*:[[:space:]]*\)true|\1false|" "$config_file"
-    sed -i.tmp "s|^\([[:space:]]*api_key[[:space:]]*:[[:space:]]*\)'[^']*'|\1''|" "$config_file"
+    # Disable PostHog in the posthog block only
+    sed -i.tmp "/^posthog[[:space:]]*:/,/^[^[:space:]]/ s|^\([[:space:]]*enabled[[:space:]]*:[[:space:]]*\).*|\1${posthog_enabled_reset}|" "$config_file"
+    sed -i.tmp "/^posthog[[:space:]]*:/,/^[^[:space:]]/ s|^\([[:space:]]*api_key[[:space:]]*:[[:space:]]*\).*|\1'${posthog_api_key_reset}'|" "$config_file"
+
+    # --- Comments (MUST be cleared for forks) ---
+    sed -i.tmp "/^giscus[[:space:]]*:/,/^[^[:space:]]/ s|^\([[:space:]]*enabled[[:space:]]*:[[:space:]]*\).*|\1${giscus_enabled_reset}|" "$config_file"
+    sed -i.tmp "/^giscus[[:space:]]*:/,/^[^[:space:]]/ s|^\([[:space:]]*data-repo-id[[:space:]]*:[[:space:]]*\).*|\1\"${giscus_repo_id_reset}\"|" "$config_file"
+    sed -i.tmp "/^giscus[[:space:]]*:/,/^[^[:space:]]/ s|^\([[:space:]]*data-category-id[[:space:]]*:[[:space:]]*\).*|\1\"${giscus_category_id_reset}\"|" "$config_file"
     
     # Clean up temp files
     rm -f "${config_file}.tmp"
