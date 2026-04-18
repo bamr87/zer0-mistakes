@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:56.000Z
 title: Code Copy Button
 description: One-click copy functionality for code blocks with visual feedback and clipboard API integration.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - ui
 permalink: /docs/features/code-copy/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---

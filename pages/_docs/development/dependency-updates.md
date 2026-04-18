@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:54.000Z
 title: Dependency Updates
 description: Guide to automated dependency management and Ruby gem updates for the Zer0-Mistakes theme.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - security
 permalink: /docs/development/dependency-updates/
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 prerequisites:
     - GitHub repository access
 sidebar:

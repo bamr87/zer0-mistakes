@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:30:00.000Z
 title: Sidebar Navigation System
 description: Modern sidebar with Intersection Observer scroll spy, smooth scrolling, keyboard shortcuts, and swipe gestures.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - accessibility
 permalink: /docs/features/sidebar-navigation/
 difficulty: intermediate
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 sidebar:
     nav: docs
 ---

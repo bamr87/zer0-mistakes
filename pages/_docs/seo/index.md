@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:30:02.000Z
 title: SEO
 description: Search engine optimization features including meta tags, structured data, and sitemap generation.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - search
 permalink: /docs/seo/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---

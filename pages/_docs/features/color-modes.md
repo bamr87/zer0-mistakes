@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:56.000Z
 title: Dark/Light Mode Toggle
 description: Theme color mode switcher supporting light, dark, and auto modes with system preference detection.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - ui
 permalink: /docs/features/color-modes/
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 sidebar:
     nav: docs
 ---

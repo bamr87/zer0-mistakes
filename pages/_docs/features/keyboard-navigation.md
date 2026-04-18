@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:57.000Z
 title: Keyboard Navigation
 description: Complete guide to keyboard shortcuts and navigation accessibility features in the Zer0-Mistakes theme.
 layout: default
@@ -13,7 +14,7 @@ tags:
     - navigation
 permalink: /docs/features/keyboard-navigation/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---

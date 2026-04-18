@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:53.000Z
 title: Customization
 description: Customize the Zer0-Mistakes Jekyll theme - layouts, styles, navigation, and more.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - navigation
 permalink: /docs/customization/
 difficulty: intermediate
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---

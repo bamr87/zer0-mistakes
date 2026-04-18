@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:30:02.000Z
 title: SEO Meta Tags
 description: Comprehensive SEO meta tag generation including Open Graph, Twitter Cards, and JSON-LD structured data.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - twitter-cards
 permalink: /docs/seo/meta-tags/
 difficulty: intermediate
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 sidebar:
     nav: docs
 ---

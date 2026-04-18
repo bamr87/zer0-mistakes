@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:50.000Z
 title: Jekyll
 description: Jekyll basics and Zer0-Mistakes development workflow (Docker-first).
 layout: default
@@ -11,7 +12,7 @@ tags:
     - docker
 permalink: /docs/jekyll/
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 prerequisites:
     - Docker Desktop (recommended) or Ruby + Bundler
 sidebar:

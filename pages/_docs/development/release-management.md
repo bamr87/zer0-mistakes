@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:54.000Z
 title: Release Management
 description: Comprehensive guide to semantic versioning, changelog management, and gem publishing for the Zer0-Mistakes theme.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - rubygems
 permalink: /docs/development/release-management/
 difficulty: advanced
-estimated_time: 20 minutes
+estimated_reading_time: 20 minutes
 prerequisites:
     - Git knowledge
     - RubyGems.org account

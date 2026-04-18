@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:30:01.000Z
 title: Deployment
 description: Deploy your Zer0-Mistakes Jekyll site to various hosting platforms.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - netlify
 permalink: /docs/deployment/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---

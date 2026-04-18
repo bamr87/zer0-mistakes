@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:49.000Z
 title: Jekyll Collections
 description: Organized content collections for posts, docs, notebooks, and other content types with custom permalinks.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - organization
 permalink: /docs/jekyll/collections/
 difficulty: intermediate
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 sidebar:
     nav: docs
 ---
@@ -117,7 +118,7 @@ title: "Getting Started"
 description: "Quick start guide for new users"
 permalink: /docs/getting-started/
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 ---
 
 Documentation content...
