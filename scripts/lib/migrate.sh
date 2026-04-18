@@ -243,6 +243,11 @@ semver_lt() {
     a_major="${a_major:-0}"; a_minor="${a_minor:-0}"; a_patch="${a_patch:-0}"
     b_major="${b_major:-0}"; b_minor="${b_minor:-0}"; b_patch="${b_patch:-0}"
 
+    if [[ ! "$a_major" =~ ^[0-9]+$ || ! "$a_minor" =~ ^[0-9]+$ || ! "$a_patch" =~ ^[0-9]+$ ||
+          ! "$b_major" =~ ^[0-9]+$ || ! "$b_minor" =~ ^[0-9]+$ || ! "$b_patch" =~ ^[0-9]+$ ]]; then
+        return 2
+    fi
+
     if (( a_major != b_major )); then
         (( a_major < b_major ))
         return
@@ -276,11 +281,18 @@ detect_version_gap() {
 
     info "Installed theme version: $installed_version"
 
-    if semver_lt "$installed_version" "$min_admin_version"; then
+    local compare_result=0
+    semver_lt "$installed_version" "$min_admin_version"
+    compare_result=$?
+
+    if [[ "$compare_result" -eq 0 ]]; then
         warn "Theme version $installed_version may not include admin layout/includes."
         warn "Admin pages require version >= $min_admin_version."
         warn "Consider updating: bundle update jekyll-theme-zer0"
         return 1
+    elif [[ "$compare_result" -eq 2 ]]; then
+        debug "Could not compare versions '$installed_version' and '$min_admin_version'"
+        return 0
     fi
 
     debug "Theme version $installed_version >= $min_admin_version — admin features supported"
