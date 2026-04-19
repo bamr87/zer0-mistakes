@@ -132,7 +132,11 @@ def replace_block(content, marker_start, marker_end, replacement)
     raise "Markers not found in README: #{marker_start} ... #{marker_end}"
   end
 
-  content.sub(pattern, "\\1\n#{replacement}\n\\3")
+  # Surround the replacement with blank lines so kramdown parses the following
+  # markdown (especially tables) instead of treating it as part of the HTML
+  # comment block. Without the blank line after `<!-- ... -->`, GFM tables
+  # collapse into a single paragraph.
+  content.sub(pattern, "\\1\n\n#{replacement}\n\n\\3")
 end
 
 # ---------------------------------------------------------------------------

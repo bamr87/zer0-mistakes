@@ -698,6 +698,7 @@ bash scripts/release major  # 0.21.5 → 1.0.0
 The diagram and table below are auto-generated from [`_data/roadmap.yml`](_data/roadmap.yml) by [`scripts/generate-roadmap.sh`](scripts/generate-roadmap.sh). See the full [Roadmap page](/roadmap/) for per-version detail and the [PRD](docs/PRD.md) for product context.
 
 <!-- ROADMAP_MERMAID:START -->
+
 ```mermaid
 gantt
     title zer0-mistakes Roadmap
@@ -716,9 +717,11 @@ gantt
     v0.25 Advanced Analytics     :2026-09, 2026-11
     v1.0 Stable Release          :milestone, 2027-01, 1d
 ```
+
 <!-- ROADMAP_MERMAID:END -->
 
 <!-- ROADMAP_TABLE:START -->
+
 | Version | Status | Target | Highlights |
 |---------|--------|--------|------------|
 | **v0.17** | ✅ Completed | Dec 2025 | ES6 modular navigation with auto-hide navbar, hover dropdowns, keyboard navigation, and touch gestures. |
@@ -731,6 +734,7 @@ gantt
 | **v0.24** | 🗓 Planned | Q3 2026 | Multi-language content support with locale-aware routing. |
 | **v0.25** | 🗓 Planned | Q4 2026 | Visual theme customizer, A/B testing, and conversion funnels. |
 | **v1.0** | 🎯 Milestone | Q1 2027 | Stable public API, 90%+ test coverage, and long-term support commitment. |
+
 <!-- ROADMAP_TABLE:END -->
 
 ---
