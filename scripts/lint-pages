@@ -383,24 +383,27 @@ scan_collection() {
 
     info "Scanning collection: $collection ($pattern)"
 
-    # Use find to match the glob pattern
-    local search_dir="$REPO_ROOT"
     local files_found=0
 
-    while IFS= read -r -d '' filepath; do
-        validate_file "$filepath" "$collection"
-        files_found=$((files_found + 1))
-    done < <(find "$REPO_ROOT" -path "$REPO_ROOT/$pattern" -name "*.md" -print0 2>/dev/null || true)
+    # Derive the base directory by stripping everything from the first glob
+    # character onward. e.g. "pages/_notes/**/*.md" → "pages/_notes"
+    # (${pattern%%\**} strips the longest suffix starting with *)
+    local prefix="${pattern%%\**}"
+    local dir_part="${prefix%/}"   # strip trailing slash
 
-    # Fallback: use a simpler find if the glob didn't work
-    if [[ $files_found -eq 0 ]]; then
-        local dir_part="${pattern%%/**}"
-        if [[ -d "$REPO_ROOT/$dir_part" ]]; then
-            while IFS= read -r -d '' filepath; do
-                validate_file "$filepath" "$collection"
-                files_found=$((files_found + 1))
-            done < <(find "$REPO_ROOT/$dir_part" -name "*.md" -print0 2>/dev/null)
-        fi
+    # For flat patterns like "pages/*.md" limit to the single directory level
+    # so we don't accidentally recurse into sub-collections.
+    local find_depth_flag=""
+    if [[ "$pattern" != *"**"* ]]; then
+        find_depth_flag="-maxdepth 1"
+    fi
+
+    if [[ -d "$REPO_ROOT/$dir_part" ]]; then
+        while IFS= read -r -d '' filepath; do
+            validate_file "$filepath" "$collection"
+            files_found=$((files_found + 1))
+        # shellcheck disable=SC2086
+        done < <(find "$REPO_ROOT/$dir_part" $find_depth_flag -name "*.md" -print0 2>/dev/null)
     fi
 
     debug "  Found $files_found files in $collection"

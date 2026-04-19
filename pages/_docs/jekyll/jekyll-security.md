@@ -12,7 +12,7 @@ permalink: /docs/jekyll/jekyll-security/
 difficulty: intermediate
 estimated_reading_time: 10 minutes
 prerequisites: []
-updated: 2025-12-20
+lastmod: 2025-12-20
 lastmod: 2025-12-20T22:15:46.922Z
 ---
 

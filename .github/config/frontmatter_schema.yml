@@ -16,7 +16,6 @@ schema_version: "1.0"
 global:
   date_format: "iso8601"
   draft_type: "boolean"
-  category_casing: "title"
   canonical_fields:
     estimated_time: estimated_reading_time
     updated: lastmod
@@ -75,6 +74,8 @@ collections:
     layout:
       allowed:
         - article
+        - section
+        - news
 
   docs:
     path_pattern: "pages/_docs/**/*.md"
@@ -97,6 +98,7 @@ collections:
     layout:
       allowed:
         - default
+        - collection
 
   notes:
     path_pattern: "pages/_notes/**/*.md"
@@ -182,6 +184,7 @@ collections:
         - default
         - root
         - stats
+        - admin
 
   pages:
     path_pattern: "pages/*.md"

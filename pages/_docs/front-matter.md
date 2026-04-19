@@ -12,7 +12,7 @@ permalink: /docs/front-matter/
 difficulty: beginner
 estimated_reading_time: 10 minutes
 prerequisites: []
-updated: 2025-12-20
+lastmod: 2025-12-20
 lastmod: 2025-12-20T22:15:46.744Z
 sidebar:
     nav: docs
@@ -120,7 +120,7 @@ estimated_reading_time: "10 minutes"
 prerequisites:
     - Docker installed
     - Basic Jekyll knowledge
-updated: 2025-01-15
+lastmod: 2025-01-15
 ---
 ```
 
@@ -170,7 +170,7 @@ difficulty: beginner
 estimated_reading_time: "10 minutes"
 prerequisites:
     - Docker Desktop
-updated: 2025-01-15
+lastmod: 2025-01-15
 sidebar:
     nav: docs
 ---
