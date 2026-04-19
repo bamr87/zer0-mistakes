@@ -24,9 +24,20 @@ const RESOLVER_SRC = fs.readFileSync(
 );
 
 // --- Minimal DOM shim -----------------------------------------------------
-// We don't need full JSDOM for the unit-level checks; we just need TextNode
-// processing + Element basics. We use a hand-rolled tree just rich enough
-// for rewriteContainer + rewriteCallouts to operate.
+// We deliberately do NOT depend on jsdom here. Reasons:
+//   1. The repo has no other Node test dependencies — adding jsdom would
+//      pull ~3MB of transitive deps and an `npm install` step into the
+//      test runner, which currently has zero npm prerequisites.
+//   2. The resolver only uses a tiny subset of DOM APIs (treeWalker over
+//      text nodes, blockquote queries, basic element creation, dataset).
+//      A ~150-line shim covers the surface and keeps the test self-
+//      contained / deterministic.
+//   3. Faithful HTML parsing isn't needed: we control the input strings.
+//
+// If the resolver ever starts touching real-world DOM features the shim
+// doesn't model (e.g. CSS selectors beyond simple tag/class/id, MutationObserver,
+// Range APIs, contenteditable behaviors), switch to jsdom — at that point
+// the dependency cost is justified.
 function makeShim() {
   const NODE_TYPES = { ELEMENT: 1, TEXT: 3 };
 
