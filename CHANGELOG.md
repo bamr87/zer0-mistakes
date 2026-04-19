@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.22.20] - 2026-04-19
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- f5d5e97 fix(ui): UI/UX fixes — navbar dropdown, landing hero, cookie banner, nanobar, footer (#72)
+
+
 ## [0.22.19] - 2026-04-18
 
 ### Changed
