@@ -149,7 +149,15 @@ def main
 
   # The roadmap data only contains scalars and Date values; Symbol is not used,
   # but Date/Time must be permitted because YAML's safe loader rejects them by default.
-  data    = YAML.load_file(DATA_FILE, permitted_classes: [Date, Time])
+  # Ruby >= 3.1 supports `permitted_classes:` on `YAML.load_file`. On older Rubies
+  # (e.g. macOS system Ruby 2.6), fall back to `safe_load` which accepted the
+  # keyword earlier, so the generator works for contributors without rbenv/rvm.
+  data =
+    begin
+      YAML.load_file(DATA_FILE, permitted_classes: [Date, Time])
+    rescue ArgumentError
+      YAML.safe_load(File.read(DATA_FILE), permitted_classes: [Date, Time], aliases: false)
+    end
   mermaid = render_mermaid(data)
   table   = render_table(data)
 
