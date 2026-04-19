@@ -267,11 +267,23 @@ Configuration: Uses site.posthog settings from _config.yml
       if (!banner) return;
 
       banner.classList.remove('cookie-banner-visible');
-      banner.addEventListener('transitionend', function hideAfterTransition(e) {
-        if (e.target !== banner || (e.propertyName !== 'transform' && e.propertyName !== 'opacity')) return;
+
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
         banner.hidden = true;
-        banner.removeEventListener('transitionend', hideAfterTransition);
-      });
+        banner.removeEventListener('transitionend', onEnd);
+      };
+      const onEnd = (e) => {
+        if (e.target !== banner) return;
+        if (e.propertyName !== 'transform' && e.propertyName !== 'opacity') return;
+        finish();
+      };
+      banner.addEventListener('transitionend', onEnd);
+      // Fallback in case transitionend never fires (reduced-motion, interrupted transition,
+      // background tab, etc.). Slightly longer than the longest CSS transition (0.4s).
+      setTimeout(finish, 500);
     }
 
     // Update modal UI with current preferences

@@ -54,3 +54,4 @@ logs/*
 **/__pycache__/
 *.pyc
 *.pyo
+_config_secrets_local.yml
