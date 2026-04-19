@@ -86,6 +86,15 @@ layout: root
         <!-- Where the actual page content is rendered -->
         <div class="bd-content ps-lg-2">
             {{ content }}
+
+            {%- comment -%}
+              Optional Obsidian-style backlinks panel. Opt-in for the generic
+              default layout via `backlinks: true` in front matter (the `note`
+              layout enables it by default).
+            {%- endcomment -%}
+            {% if page.backlinks == true %}
+              {% include content/backlinks.html %}
+            {% endif %}
         </div>
     </main>
 </div>

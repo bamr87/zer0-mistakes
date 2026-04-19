@@ -308,6 +308,30 @@ stateDiagram-v2
 | Pie | `pie` | Distributions |
 | Git | `gitGraph` | Branch history |
 
+### 🧠 Obsidian Vault Integration
+
+Edit your content as an [Obsidian](https://obsidian.md) vault — same files,
+same git history, identical rendering on the published site:
+
+- **Open repo as a vault**: shared `.obsidian/` config commits with the repo.
+- **Wiki-links** `[[Page Title]]` and aliases `[[Page|Alias]]` resolve to permalinks.
+- **Embeds**: `![[image.png|400]]` for images, `![[Note Title]]` for note transclusion.
+- **Callouts** `> [!note] …` map to Bootstrap alert components.
+- **Backlinks panel** auto-renders on every note (and on any page with `backlinks: true`).
+- **Inline tags** `#topic` link to the tag index, hierarchical tags supported.
+- **Zero plugin requirements**: works on the default GitHub Pages
+  `remote_theme` build via a client-side resolver
+  (`assets/js/obsidian-wiki-links.js`) backed by a Liquid-generated
+  `assets/data/wiki-index.json`.
+
+```bash
+# Open the repo root as an Obsidian vault, edit, then commit & push
+git commit -am "note: today's thinking" && git push
+```
+
+Read the [Obsidian docs](pages/_docs/obsidian/) for setup, syntax reference,
+authoring workflow, and troubleshooting.
+
 ### 📓 Jupyter Notebook Support
 
 Seamless integration for data science and computational content:

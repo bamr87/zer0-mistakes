@@ -1,0 +1,11 @@
+{
+  "_comment": "Light-touch appearance defaults aligned with the zer0-mistakes Bootstrap theme. Override locally without committing.",
+  "baseFontSize": 16,
+  "showViewHeader": true,
+  "showInlineTitle": true,
+  "showLineNumber": true,
+  "readableLineLength": true,
+  "nativeMenus": false,
+  "translucency": false,
+  "theme": "obsidian"
+}

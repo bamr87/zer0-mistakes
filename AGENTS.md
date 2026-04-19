@@ -39,6 +39,7 @@ files you are about to touch — do **not** load everything up front.
 | **File-scoped instructions** | `.github/instructions/*.instructions.md` | When editing files matching the `applyTo:` glob in each file's front matter |
 | **Reusable prompts (chat/agent modes)** | `.github/prompts/*.prompt.md` | When asked to perform a multi-step task that matches a prompt |
 | **Project "seed" blueprint** | `.github/seed/*.md` | For deep architectural decisions or rebuilding subsystems from scratch |
+| **Obsidian vault docs** | `pages/_docs/obsidian/` | When working with `[[wiki-links]]`, `![[embeds]]`, callouts, or the wiki-index/JS resolver |
 | **Cursor slash-commands** | `.cursor/commands/*.md` | Auto-loaded by Cursor; mirrors the prompts above |
 | **CI / quality config** | `.github/config/`, `.github/workflows/` | When changing lint rules, tests, or release automation |
 

@@ -1,0 +1,103 @@
+{%- comment -%}
+  ===================================================================
+  BACKLINKS — Pages that wiki-link or markdown-link to the current page
+  ===================================================================
+
+  File: backlinks.html
+  Path: _includes/content/backlinks.html
+  Purpose: Render an Obsidian-style "Linked mentions" panel.
+
+  Strategy:
+    - Iterate every collection document + standalone page.
+    - Match either the current page's permalink in the body, or its title /
+      basename inside `[[…]]` wiki-link syntax (case-insensitive, whitespace
+      collapsed — same normalization as _plugins/obsidian_links.rb).
+    - Skip self-references and drafts.
+
+  Toggle:
+    - Set `backlinks: false` in front matter to suppress.
+    - Default: ON for `_layouts/note.html`, OFF for `_layouts/default.html`
+      (opt-in via `backlinks: true`).
+  ===================================================================
+{%- endcomment -%}
+
+{%- if page.backlinks != false -%}
+  {%- assign _self_url = page.url -%}
+  {%- assign _self_title = page.title | default: "" | downcase | strip -%}
+  {%- assign _self_basename = page.path | split: "/" | last | replace: ".md", "" | replace: ".markdown", "" | downcase -%}
+
+  {%- assign _candidates = "" | split: "" -%}
+  {%- for _coll in site.collections -%}
+    {%- for _doc in _coll.docs -%}
+      {%- assign _candidates = _candidates | push: _doc -%}
+    {%- endfor -%}
+  {%- endfor -%}
+  {%- for _pg in site.pages -%}
+    {%- if _pg.output_ext == ".html" -%}
+      {%- assign _candidates = _candidates | push: _pg -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- assign _backlinks = "" | split: "" -%}
+  {%- for _doc in _candidates -%}
+    {%- if _doc.url == _self_url -%}{%- continue -%}{%- endif -%}
+    {%- assign _body = _doc.content | default: "" -%}
+    {%- assign _body_lower = _body | downcase -%}
+    {%- assign _matched = false -%}
+
+    {%- if _self_url and _self_url != "" and _self_url != "/" -%}
+      {%- if _body contains _self_url -%}
+        {%- assign _matched = true -%}
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- unless _matched -%}
+      {%- if _self_title != "" -%}
+        {%- assign _needle = "[[" | append: _self_title -%}
+        {%- if _body_lower contains _needle -%}
+          {%- assign _matched = true -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endunless -%}
+
+    {%- unless _matched -%}
+      {%- if _self_basename != "" -%}
+        {%- assign _needle2 = "[[" | append: _self_basename -%}
+        {%- if _body_lower contains _needle2 -%}
+          {%- assign _matched = true -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endunless -%}
+
+    {%- if _matched -%}
+      {%- assign _backlinks = _backlinks | push: _doc -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- if _backlinks.size > 0 -%}
+    <section class="obsidian-backlinks mt-5 pt-4 border-top" aria-labelledby="backlinks-heading">
+      <h3 id="backlinks-heading" class="h5 mb-3">
+        <i class="bi bi-link-45deg me-1" aria-hidden="true"></i>
+        Linked mentions
+        <span class="badge bg-secondary ms-2">{{ _backlinks.size }}</span>
+      </h3>
+      <ul class="list-unstyled obsidian-backlinks-list">
+        {%- for _ref in _backlinks -%}
+          <li class="obsidian-backlink mb-2">
+            <a href="{{ _ref.url | relative_url }}" class="obsidian-backlink-link">
+              <strong>{{ _ref.title | default: _ref.path | split: "/" | last }}</strong>
+            </a>
+            {%- if _ref.collection -%}
+              <span class="badge bg-light text-dark ms-1">{{ _ref.collection }}</span>
+            {%- endif -%}
+            {%- if _ref.description -%}
+              <div class="obsidian-backlink-excerpt small text-muted">
+                {{ _ref.description | strip_html | truncate: 160 }}
+              </div>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    </section>
+  {%- endif -%}
+{%- endif -%}

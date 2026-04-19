@@ -236,6 +236,9 @@ plugins:
   - jekyll-seo-tag
   - jekyll-paginate
   - jekyll-relative-links
+  # jekyll-redirect-from is on the GitHub Pages whitelist and powers Obsidian
+  # `aliases:` → URL redirects (see pages/_docs/obsidian/syntax-reference.md).
+  - jekyll-redirect-from
   # Note: jekyll-mermaid is NOT in GitHub Pages whitelist - it only provides {% mermaid %} Liquid tag
   # Mermaid diagrams work without this plugin via client-side JavaScript (see _includes/components/mermaid.html)
   - jekyll-mermaid
@@ -472,6 +475,9 @@ exclude:
   - .sass-cache/
   - .jekyll-cache/
   - .obsidian
+  # Obsidian working files that shouldn't leak into the build
+  - "*.canvas"
+  - "*.excalidraw.md"
   - docs/
   - Gemfile.lock
   - gemfiles/
@@ -491,6 +497,11 @@ exclude:
   - test/
   - tests/
   - _site/lib/
+  # Obsidian working files (canvas + Excalidraw) are not part of the rendered site.
+  - "*.canvas"
+  - "*.excalidraw.md"
+  # Obsidian note templates are authoring scaffolding, not publishable content.
+  - pages/_notes/_templates/
 
 # Sass/SCSS
 sass:

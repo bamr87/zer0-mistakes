@@ -1,0 +1,152 @@
+// ============================================================================
+// _obsidian.scss — Styles for Obsidian-flavoured Markdown features.
+// Imported from _sass/custom.scss.
+//
+// Covers:
+//   - Wiki-links (resolved + broken state)
+//   - Inline tags
+//   - Note transclusion / image embeds
+//   - Callout cards beyond what Bootstrap's `.alert` provides
+//   - Backlinks panel
+// ============================================================================
+
+// --- Wiki-links ------------------------------------------------------------
+.wiki-link {
+  text-decoration: none;
+  border-bottom: 1px dashed currentColor;
+  font-weight: 500;
+
+  &:hover {
+    text-decoration: underline;
+    border-bottom-color: transparent;
+  }
+
+  &[aria-current="page"] {
+    background-color: rgba(var(--bs-primary-rgb), 0.08);
+    padding: 0 0.15rem;
+    border-radius: 0.2rem;
+  }
+}
+
+.wiki-link-broken {
+  color: var(--bs-danger);
+  border-bottom-style: dotted;
+  cursor: help;
+
+  &:hover {
+    color: var(--bs-danger);
+    background-color: rgba(var(--bs-danger-rgb), 0.05);
+  }
+}
+
+// --- Inline tags -----------------------------------------------------------
+.obsidian-tag {
+  display: inline-block;
+  padding: 0.05rem 0.45rem;
+  margin: 0 0.1rem;
+  font-size: 0.85em;
+  font-weight: 500;
+  color: var(--bs-secondary);
+  background-color: rgba(var(--bs-secondary-rgb), 0.1);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+
+  &:hover,
+  &:focus {
+    background-color: rgba(var(--bs-secondary-rgb), 0.2);
+    color: var(--bs-primary);
+    text-decoration: none;
+  }
+}
+
+// --- Embeds (image + note transclusion) -----------------------------------
+.obsidian-embed-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1rem auto;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.obsidian-embed-note {
+  border-left: 3px solid var(--bs-primary);
+
+  .obsidian-embed-source {
+    font-size: 0.875rem;
+    color: var(--bs-secondary);
+  }
+
+  .obsidian-embed-body {
+    background-color: rgba(var(--bs-light-rgb), 0.5);
+  }
+
+  [data-bs-theme="dark"] & .obsidian-embed-body {
+    background-color: rgba(var(--bs-dark-rgb), 0.4);
+  }
+}
+
+.obsidian-embed-broken {
+  font-size: 0.9rem;
+
+  code {
+    background-color: rgba(0, 0, 0, 0.06);
+    padding: 0.1rem 0.3rem;
+    border-radius: 0.25rem;
+  }
+}
+
+// --- Callouts -------------------------------------------------------------
+.obsidian-callout {
+  border-left-width: 4px;
+  border-left-style: solid;
+  margin: 1.25rem 0;
+  padding: 0.85rem 1rem;
+
+  .obsidian-callout-title {
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .obsidian-callout-body {
+    margin: 0;
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &[data-collapsed="true"] .obsidian-callout-body {
+    display: none;
+  }
+}
+
+// --- Backlinks panel -------------------------------------------------------
+.obsidian-backlinks {
+  .obsidian-backlinks-list {
+    margin-bottom: 0;
+  }
+
+  .obsidian-backlink {
+    padding: 0.5rem 0.75rem;
+    border-left: 2px solid transparent;
+    border-radius: 0 0.25rem 0.25rem 0;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+
+    &:hover {
+      background-color: rgba(var(--bs-primary-rgb), 0.05);
+      border-left-color: var(--bs-primary);
+    }
+  }
+
+  .obsidian-backlink-link {
+    text-decoration: none;
+  }
+
+  .obsidian-backlink-excerpt {
+    margin-top: 0.2rem;
+  }
+}

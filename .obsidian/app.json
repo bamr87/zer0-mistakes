@@ -1,0 +1,18 @@
+{
+  "_comment": "Shared Obsidian vault settings for zer0-mistakes. Local-only files (workspace*, cache, plugin data) are gitignored.",
+  "alwaysUpdateLinks": true,
+  "newLinkFormat": "shortest",
+  "useMarkdownLinks": false,
+  "attachmentFolderPath": "assets/images/notes",
+  "newFileLocation": "folder",
+  "newFileFolderPath": "pages/_notes",
+  "showLineNumber": true,
+  "spellcheck": true,
+  "strictLineBreaks": false,
+  "useTab": false,
+  "tabSize": 2,
+  "promptDelete": true,
+  "trashOption": "system",
+  "showFrontmatter": true,
+  "propertiesInDocument": "visible"
+}

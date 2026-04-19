@@ -12,6 +12,23 @@
 ## [Unreleased]
 
 ### Added
+- **Obsidian Integration** — The repo's markdown content is now editable as an [Obsidian](https://obsidian.md) vault and rendered identically on GitHub Pages.
+  - Shared vault config (`.obsidian/app.json`, `core-plugins.json`, `community-plugins.json`, `appearance.json`, `hotkeys.json`, `templates.json`) and a Templates-compatible note template at `pages/_notes/_templates/note-template.md`.
+  - Liquid-generated `assets/data/wiki-index.json` listing every collection document and standalone page (title, basename, permalink, tags, aliases, excerpt) — works on the default GitHub Pages remote_theme build, no plugin whitelist changes required.
+  - `assets/js/obsidian-wiki-links.js` — client-side resolver that rewrites `[[wiki-links]]` (with aliases, header anchors, broken-link styling), `![[embeds]]` (image with width modifiers, note transclusion), inline `#tags`, and Obsidian callout blockquotes (`> [!note] Title …`) into Bootstrap-styled HTML.
+  - `_includes/content/backlinks.html` — server-side backlinks panel auto-rendered on every `note` layout (and on any page with `backlinks: true`); fully indexable by search engines.
+  - `_includes/content/transclude.html` — note embed renderer used by both the JS resolver and the Ruby converter.
+  - `_sass/core/_obsidian.scss` (imported via `_sass/custom.scss`) — styles for wiki-links, broken links, callouts, embeds, and the backlinks panel.
+  - `_plugins/obsidian_links.rb` — opt-in Ruby converter that performs the same transformations server-side for forks that build with vanilla Jekyll (without the `github-pages` gem) or use a custom GH Actions workflow that bypasses the plugin whitelist.
+  - `pages/_docs/obsidian/` — full documentation section: index, getting started, syntax reference, authoring workflow, troubleshooting.
+  - `_config.yml` — added `*.canvas` and `*.excalidraw.md` to `exclude:`; `jekyll-redirect-from` enabled to map Obsidian `aliases:` to URL redirects.
+  - `.gitignore` — ignore Obsidian's local-only state (`workspace*`, `cache`, `plugins/*/data.json`, `graph.json`, `.trash/`).
+- **Tests**:
+  - `test/test_ruby_converter.rb` — 18-test, 65-assertion Minitest suite for `_plugins/obsidian_links.rb` covering wiki-links, embeds, callouts (including fold markers and unknown-type fallback), inline tags, code-block isolation, and a plain-markdown regression guard.
+  - `test/test_resolver.js` — 16-assertion Node test for `assets/js/obsidian-wiki-links.js` using a hand-rolled DOM shim; exercises wiki-link resolution, embeds, tags, and DOM-level callout rewriting.
+  - `test/test_obsidian.sh` — orchestrator that runs both unit suites and validates that the Jekyll build emits a well-formed `wiki-index.json`. Wired into `test/test_runner.sh`.
+  - `test/fixtures/obsidian/sample-note.md` — representative Obsidian note exercising every supported feature.
+- **Docs**: `README.md` and `AGENTS.md` updated with an Obsidian vault section pointing to the new docs.
 - **Docs**: `docs/FORKING.md` — progressive fork → configure → personalize workflow for the `username.github.io` user-site pattern
 - **Tests**: `test/test_fork_cleanup.sh` — 32-assertion suite covering CLI parsing, dry-run, real cleanup, YAML anchor preservation, and idempotency
 
