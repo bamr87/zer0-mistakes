@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.22.21] - 2026-04-19
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 7f00e4d docs(roadmap): data-driven roadmap with auto-generated README mermaid diagram (#71)
+
+
 ## [Unreleased]
 
 ### Added
