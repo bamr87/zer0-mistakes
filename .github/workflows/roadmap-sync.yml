@@ -1,0 +1,69 @@
+name: Roadmap Sync
+
+# Keep README.md's auto-generated roadmap section in sync with `_data/roadmap.yml`.
+#
+# - On push to main: regenerate README and commit the diff if anything changed.
+# - On pull requests touching the data file or generator: fail if the README
+#   is stale, so contributors run the generator locally before merge.
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '_data/roadmap.yml'
+      - 'scripts/generate-roadmap.rb'
+      - 'scripts/generate-roadmap.sh'
+      - '.github/workflows/roadmap-sync.yml'
+  pull_request:
+    paths:
+      - '_data/roadmap.yml'
+      - 'scripts/generate-roadmap.rb'
+      - 'scripts/generate-roadmap.sh'
+      - 'README.md'
+      - '.github/workflows/roadmap-sync.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: roadmap-sync-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Need a token that can push commits back on the main branch.
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+
+      - name: Verify roadmap is in sync (PRs)
+        if: github.event_name == 'pull_request'
+        run: ruby scripts/generate-roadmap.rb --check
+
+      - name: Regenerate roadmap (push / manual)
+        if: github.event_name != 'pull_request'
+        run: ruby scripts/generate-roadmap.rb
+
+      - name: Commit README changes
+        if: github.event_name != 'pull_request'
+        # The commit message includes `[skip ci]` so this push does not retrigger
+        # the workflow (and other CI workflows that respect the convention).
+        run: |
+          if git diff --quiet README.md; then
+            echo "README.md already in sync — nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "docs(roadmap): regenerate README from _data/roadmap.yml [skip ci]"
+          git push

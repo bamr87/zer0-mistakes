@@ -9,6 +9,7 @@ This directory contains YAML data files that power the Zer0-Mistakes Jekyll them
 | `navigation/` | Site navigation menus | No |
 | `authors.yml` | Author profile information | No |
 | `content_statistics.yml` | Site content analytics | **Yes** |
+| `roadmap.yml` | Single source of truth for the project roadmap (drives the README mermaid diagram and the `/roadmap/` Jekyll page) | No |
 | `statistics_config.yml` | Statistics generation config | No |
 | `ui-text.yml` | Multilingual UI text labels | No |
 | `prerequisites.yml` | Educational prerequisites | No |
