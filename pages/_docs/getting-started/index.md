@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:30:01.000Z
 title: Getting Started
 description: Quick start guides and initial setup for the Zer0-Mistakes Jekyll theme.
 layout: default
@@ -11,7 +12,7 @@ tags:
     - installation
 permalink: /docs/getting-started/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---
@@ -27,7 +28,7 @@ Welcome to Zer0-Mistakes! Choose your path to get started with the theme.
 | **A** | [AI Install Wizard](quick-start/) | Creating a new site (recommended) |
 | **B** | GitHub Template Repo | One-click copy of the entire repo |
 | **C** | GitHub Codespaces | Zero-install cloud development |
-| **D** | Fork/Clone | Theme development & customization |
+| **D** | Fork/Clone | Personal site & theme customization |
 | **E** | Remote Theme | GitHub Pages without copying files |
 | **F** | Ruby Gem | Traditional Jekyll workflow |
 

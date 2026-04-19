@@ -38,6 +38,7 @@
 
               {%- for link in nav_main -%}
                 {%- assign has_children = link.children and link.children.size > 0 -%}
+                {%- assign items_remaining = nav_main.size | minus: forloop.index -%}
 
                 {%- if has_children -%}
                     <li class="nav-item dropdown d-flex align-items-center nav-hover-dropdown" role="none">
@@ -69,7 +70,7 @@
                             <span class="visually-hidden">Toggle {{ link.title }} submenu</span>
                         </button>
 
-                        <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="dropdown-{{ link.title | slugify }}" role="menu">
+                        <ul class="dropdown-menu {% if items_remaining < 2 %}dropdown-menu-end{% else %}dropdown-menu-start{% endif %}" aria-labelledby="dropdown-{{ link.title | slugify }}" role="menu">
                             {%- for child in link.children -%}
                                 <li role="none">
                                     <a

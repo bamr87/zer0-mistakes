@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:59.000Z
 title: Back to Top Button
 description: Floating button that appears on scroll, allowing users to quickly return to the top of the page.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - accessibility
 permalink: /docs/features/back-to-top/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---

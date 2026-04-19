@@ -10,9 +10,9 @@ tags:
     - yaml
 permalink: /docs/front-matter/
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 prerequisites: []
-updated: 2025-12-20
+lastmod: 2025-12-20
 lastmod: 2025-12-20T22:15:46.744Z
 sidebar:
     nav: docs
@@ -116,11 +116,11 @@ Available layouts in Zer0-Mistakes:
 ```yaml
 ---
 difficulty: beginner          # beginner, intermediate, advanced
-estimated_time: "10 minutes"
+estimated_reading_time: "10 minutes"
 prerequisites:
     - Docker installed
     - Basic Jekyll knowledge
-updated: 2025-01-15
+lastmod: 2025-01-15
 ---
 ```
 
@@ -167,10 +167,10 @@ tags:
     - docker
 permalink: /docs/installation/
 difficulty: beginner
-estimated_time: "10 minutes"
+estimated_reading_time: "10 minutes"
 prerequisites:
     - Docker Desktop
-updated: 2025-01-15
+lastmod: 2025-01-15
 sidebar:
     nav: docs
 ---

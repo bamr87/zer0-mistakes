@@ -2,7 +2,7 @@
 title: zer0-mistakes
 sub-title: Jekyll Theme
 description: GitHub Pages compatible Jekyll theme with Bootstrap 5.3, featuring automated installation and comprehensive documentation.
-version: 0.22.15
+version: 0.22.20
 layout: landing
 tags:
   - jekyll
@@ -14,7 +14,7 @@ categories:
   - docker
   - bootstrap
 created: 2024-02-10T23:51:11.480Z
-lastmod: 2026-04-18T16:20:29.000Z
+lastmod: 2026-04-19T16:29:09.000Z
 draft: false
 permalink: /
 slug: zer0
@@ -402,13 +402,25 @@ plugins:
   - jekyll-remote-theme
 ```
 
-### Method 3: Fork & Customize
+### Method 3: Fork & Deploy as Your Site
+
+Fork into `<your-username>.github.io` for a working site in minutes:
+
+1. Go to [bamr87/zer0-mistakes](https://github.com/bamr87/zer0-mistakes) → **Fork**
+2. Set repository name to **`<your-username>.github.io`**
+3. Enable **Settings → Pages → Deploy from branch: `main`**
+4. Visit `https://<your-username>.github.io`
+
+Then personalize locally:
 
 ```bash
-gh repo fork bamr87/zer0-mistakes --clone
-cd zer0-mistakes
+git clone https://github.com/<your-username>/<your-username>.github.io.git
+cd <your-username>.github.io
+./scripts/fork-cleanup.sh   # interactive config wizard
 docker-compose up
 ```
+
+See [docs/FORKING.md](docs/FORKING.md) for the full progressive workflow.
 
 ### Method 4: Ruby Gem
 
@@ -562,25 +574,26 @@ npm run vendor:install    # manifest downloads (+ Mermaid copy when node_modules
 
 ## 🚀 Deployment
 
-### GitHub Pages (Automatic)
+### GitHub Pages (User Site — Recommended)
+
+Fork the repo as `<your-username>.github.io` and enable GitHub Pages:
+
+1. Push to `main` branch
+2. GitHub Pages builds automatically
+3. Site deploys to `https://<your-username>.github.io`
+
+No workflows or `baseurl` configuration needed. See [docs/FORKING.md](docs/FORKING.md) for details.
 
 ```mermaid
 sequenceDiagram
     participant Dev as Developer
     participant GH as GitHub
-    participant Actions as GitHub Actions
     participant Pages as GitHub Pages
     
     Dev->>GH: git push main
-    GH->>Actions: Trigger workflow
-    Actions->>Actions: jekyll build
-    Actions->>Pages: Deploy _site/
-    Pages-->>Dev: 🌐 Site live!
+    GH->>Pages: Auto-build Jekyll
+    Pages-->>Dev: 🌐 Site live at username.github.io
 ```
-
-1. Push to `main` branch
-2. GitHub Actions builds automatically
-3. Site deploys to GitHub Pages
 
 ### Docker Production
 
@@ -790,7 +803,7 @@ git push origin feature/awesome-feature
 
 | Metric | Value |
 |--------|-------|
-| **Current Version** | 0.22.15 ([RubyGems](https://rubygems.org/gems/jekyll-theme-zer0), [CHANGELOG](/CHANGELOG)) |
+| **Current Version** | 0.22.20 ([RubyGems](https://rubygems.org/gems/jekyll-theme-zer0), [CHANGELOG](/CHANGELOG)) |
 | **Documented Features** | 43 ([Feature Registry](https://github.com/bamr87/zer0-mistakes/blob/main/_data/features.yml)) |
 | **Setup Time** | 2-5 minutes ([install.sh benchmarks](https://github.com/bamr87/zer0-mistakes/blob/main/install.sh)) |
 | **Documentation Pages** | 70+ ([browse docs](/pages/)) |
@@ -833,6 +846,6 @@ Built with these amazing technologies:
 
 **Built with ❤️ for the Jekyll community**
 
-**v0.22.15** • [Changelog](CHANGELOG.md) • [License](LICENSE) • [Contributing](CONTRIBUTING.md)
+**v0.22.20** • [Changelog](CHANGELOG.md) • [License](LICENSE) • [Contributing](CONTRIBUTING.md)
 
 

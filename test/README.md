@@ -14,6 +14,7 @@ The zer0-mistakes testing framework provides **6 comprehensive test suites** for
 | Deployment | `test_deployment.sh` | Docker, E2E workflows | ~5-8 min |
 | Quality | `test_quality.sh` | Security, accessibility | ~4-6 min |
 | Installation | `test_installation.sh` | CLI, modes, edge cases | ~3-5 min |
+| Fork Cleanup | `test_fork_cleanup.sh` | `scripts/fork-cleanup.sh` behavior | ~30 sec |
 | Site Generation | `test_site_generation.sh` | Config matrix builds | ~5-10 min |
 | Visual | `test_visual.sh` | Screenshots, responsive | ~10-15 min |
 

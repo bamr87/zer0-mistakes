@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:59.000Z
 title: Theme Version Display Plugin
 description: Automatic theme version extraction from gem specification with modal display and footer integration.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - gem
 permalink: /docs/features/theme-version/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---

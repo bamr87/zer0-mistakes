@@ -10,10 +10,10 @@ tags:
     - docker-compose
 permalink: /docs/docker/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 prerequisites:
     - Docker Desktop
-updated: 2025-12-20
+lastmod: 2025-12-20
 lastmod: 2025-12-20T22:15:46.186Z
 sidebar:
     nav: docs

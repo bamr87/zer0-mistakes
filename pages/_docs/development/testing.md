@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:55.000Z
 title: Testing
 description: Comprehensive testing guide including test suite structure, test development standards, and CI/CD integration.
 layout: default
@@ -11,7 +12,7 @@ tags:
     - quality
 permalink: /docs/development/testing/
 difficulty: intermediate
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 prerequisites:
     - Docker Desktop
     - Basic shell scripting

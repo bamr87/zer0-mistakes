@@ -20,8 +20,15 @@
 #
 # This script can be run:
 #   1. After using "Use this template" button on GitHub
-#   2. After manually forking the repository
-#   3. Via install.sh --fork mode
+#   2. After manually forking the repository (recommended: into
+#      <username>.github.io for a GitHub Pages user site)
+#   3. After cloning your fork locally — see docs/FORKING.md
+#
+# Companion files:
+#   - templates/cleanup/remove-paths.txt   (paths to delete)
+#   - templates/cleanup/reset-fields.yml   (config field replacements)
+#   - templates/data/authors.yml.template  (authors file replacement)
+#   - templates/pages/welcome-post.md.template (first blog post)
 # =========================================================================
 
 set -euo pipefail
@@ -68,6 +75,7 @@ VERBOSE="${VERBOSE:-false}"
 # Paths
 TEMPLATES_DIR="$REPO_ROOT/templates"
 REMOVE_PATHS_FILE="$TEMPLATES_DIR/cleanup/remove-paths.txt"
+RESET_FIELDS_FILE="$TEMPLATES_DIR/cleanup/reset-fields.yml"
 
 # -------------------------------------------------------------------------
 # Argument Parsing
@@ -309,7 +317,7 @@ create_welcome_post() {
         # Fallback embedded content
         cat > "$post_file" << EOF
 ---
-layout: journals
+layout: article
 title: "Welcome to Your New Site"
 date: $post_date
 categories: [General]
@@ -337,6 +345,33 @@ EOF
 }
 
 # Reset _config.yml with placeholder values
+get_reset_field_value() {
+    local file_key="$1"
+    local field_key="$2"
+    local default_value="${3:-}"
+
+    if [[ ! -f "$RESET_FIELDS_FILE" ]] || ! command -v ruby >/dev/null 2>&1; then
+        printf '%s' "$default_value"
+        return 0
+    fi
+
+    local value
+    if value="$(ruby -ryaml -e '
+data = YAML.safe_load_file(ARGV[0], aliases: true) || {}
+section = data[ARGV[1]] || {}
+if section.is_a?(Hash) && section.key?(ARGV[2])
+  current = section[ARGV[2]]
+  print(current == true ? "true" : current == false ? "false" : current.to_s)
+  exit 0
+end
+exit 1
+' "$RESET_FIELDS_FILE" "$file_key" "$field_key" 2>/dev/null)"; then
+        printf '%s' "$value"
+    else
+        printf '%s' "$default_value"
+    fi
+}
+
 reset_config() {
     info "Resetting _config.yml..."
     
@@ -355,22 +390,60 @@ reset_config() {
     # Create backup
     cp "$config_file" "${config_file}.backup.$(date +%Y%m%d%H%M%S)"
     
-    # Use sed to replace specific values
-    # Site identity
-    sed -i.tmp "s/^founder:.*/founder: \"$SITE_AUTHOR\"/" "$config_file"
-    sed -i.tmp "s/^github_user:.*/github_user: \"$GITHUB_USER_INPUT\"/" "$config_file"
-    sed -i.tmp "s/^title:.*/title: \"$SITE_TITLE\"/" "$config_file"
-    sed -i.tmp "s/^description:.*/description: \"$SITE_DESCRIPTION\"/" "$config_file"
-    sed -i.tmp "s/^author:.*/author: \"$SITE_AUTHOR\"/" "$config_file"
-    sed -i.tmp "s/^email:.*/email: \"$SITE_EMAIL\"/" "$config_file"
-    sed -i.tmp "s/^name:.*/name: \"$SITE_AUTHOR\"/" "$config_file"
+    # Derive repository name from the git remote or current directory.
+    # Under `set -euo pipefail`, missing `origin` should not terminate.
+    local repo_name
+    local remote_url
+    remote_url="$(git -C "$REPO_ROOT" remote get-url origin 2>/dev/null || true)"
+
+    if [[ -n "$remote_url" ]]; then
+        local remote_url_clean
+        remote_url_clean="${remote_url%.git}"
+        repo_name="$(basename "$remote_url_clean")"
+    else
+        repo_name="$(basename "$REPO_ROOT")"
+    fi
+
+    local posthog_enabled_reset posthog_api_key_reset
+    posthog_enabled_reset="$(get_reset_field_value "_config.yml" "posthog.enabled" "false")"
+    posthog_api_key_reset="$(get_reset_field_value "_config.yml" "posthog.api_key" "")"
+
+    local giscus_enabled_reset giscus_repo_id_reset giscus_category_id_reset
+    giscus_enabled_reset="$(get_reset_field_value "_config.yml" "giscus.enabled" "false")"
+    giscus_repo_id_reset="$(get_reset_field_value "_config.yml" "giscus.data-repo-id" "")"
+    giscus_category_id_reset="$(get_reset_field_value "_config.yml" "giscus.data-category-id" "")"
     
-    # Clear analytics
-    sed -i.tmp "s/^google_analytics:.*/google_analytics: \"\"/" "$config_file"
+    # Note: sed patterns use [[:space:]]*: to match the YAML format where
+    # there may be spaces between the key name and the colon.
+    # Anchors (&anchor_name) are preserved where they exist so that
+    # YAML alias references (*anchor_name) throughout the file keep working.
     
-    # Clear domain for auto-detection
-    sed -i.tmp "s/^domain:.*/domain: \"\"/" "$config_file"
-    sed -i.tmp "s/^url:.*/url: \"\"/" "$config_file"
+    # --- Site identity (preserve YAML anchors) ---
+    sed -i.tmp "s|^\(founder[[:space:]]*:[[:space:]]*\).*|\1\"$SITE_AUTHOR\"|" "$config_file"
+    sed -i.tmp "s|^\(github_user[[:space:]]*:[[:space:]]*&github_user[[:space:]]*\).*|\1\"$GITHUB_USER_INPUT\"|" "$config_file"
+    sed -i.tmp "s|^\(repository_name[[:space:]]*:[[:space:]]*&github_repository[[:space:]]*\).*|\1\"$repo_name\"|" "$config_file"
+    sed -i.tmp "s|^\(local_repo[[:space:]]*:[[:space:]]*&local_repo[[:space:]]*\).*|\1\"$repo_name\"|" "$config_file"
+    sed -i.tmp "s|^\(title[[:space:]]*:[[:space:]]*&title[[:space:]]*\).*|\1\"$SITE_TITLE\"|" "$config_file"
+    sed -i.tmp "s|^\(name[[:space:]]*:[[:space:]]*&name[[:space:]]*\).*|\1\"$SITE_AUTHOR\"|" "$config_file"
+    sed -i.tmp "s|^\(email[[:space:]]*:[[:space:]]*\)\"[^\"]*\"|\1\"$SITE_EMAIL\"|" "$config_file"
+    
+    # --- URLs (set for username.github.io user site deployment) ---
+    sed -i.tmp "s|^\(domain[[:space:]]*:[[:space:]]*&domain[[:space:]]*\).*|\1\"github\"|" "$config_file"
+    sed -i.tmp "s|^\(domain_ext[[:space:]]*:[[:space:]]*&domain_ext[[:space:]]*\).*|\1\"io\"|" "$config_file"
+    sed -i.tmp "s|^\(url[[:space:]]*:[[:space:]]*&url[[:space:]]*\).*|\1\"https://${GITHUB_USER_INPUT}.github.io\"|" "$config_file"
+    # baseurl stays empty — forking into username.github.io means the site
+    # deploys at the domain root, so no baseurl prefix is needed.
+    
+    # --- Analytics (MUST be cleared for forks) ---
+    sed -i.tmp "s|^\(google_analytics[[:space:]]*:[[:space:]]*\).*|\1\"\"|" "$config_file"
+    # Disable PostHog in the posthog block only
+    sed -i.tmp "/^posthog[[:space:]]*:/,/^[^[:space:]]/ s|^\([[:space:]]*enabled[[:space:]]*:[[:space:]]*\).*|\1${posthog_enabled_reset}|" "$config_file"
+    sed -i.tmp "/^posthog[[:space:]]*:/,/^[^[:space:]]/ s|^\([[:space:]]*api_key[[:space:]]*:[[:space:]]*\).*|\1'${posthog_api_key_reset}'|" "$config_file"
+
+    # --- Comments (MUST be cleared for forks) ---
+    sed -i.tmp "/^giscus[[:space:]]*:/,/^[^[:space:]]/ s|^\([[:space:]]*enabled[[:space:]]*:[[:space:]]*\).*|\1${giscus_enabled_reset}|" "$config_file"
+    sed -i.tmp "/^giscus[[:space:]]*:/,/^[^[:space:]]/ s|^\([[:space:]]*data-repo-id[[:space:]]*:[[:space:]]*\).*|\1\"${giscus_repo_id_reset}\"|" "$config_file"
+    sed -i.tmp "/^giscus[[:space:]]*:/,/^[^[:space:]]/ s|^\([[:space:]]*data-category-id[[:space:]]*:[[:space:]]*\).*|\1\"${giscus_category_id_reset}\"|" "$config_file"
     
     # Clean up temp files
     rm -f "${config_file}.tmp"

@@ -1,0 +1,28 @@
+{% comment %}
+  ===================================================================
+  SETUP BANNER - Persistent notification for unconfigured sites
+  ===================================================================
+
+  File: setup-banner.html
+  Path: _includes/components/setup-banner.html
+  Purpose: Shows a dismissible top-bar when the site still needs
+           configuration. Disappears once site_configured is true.
+
+  Usage (add to root.html or any layout):
+    include components/setup-banner.html
+
+  Dependencies: components/setup-check.html (auto-included)
+  ===================================================================
+{% endcomment %}
+
+{% include components/setup-check.html %}
+
+{% if site_needs_setup %}
+<div class="alert alert-primary alert-dismissible fade show rounded-0 mb-0 py-2 text-center" role="alert" id="setup-banner">
+  <i class="bi bi-gear-wide-connected me-1"></i>
+  <strong>Almost there!</strong>
+  Your site is running with default settings.
+  <a href="{{ '/404.html' | relative_url }}" class="alert-link">Complete setup &rarr;</a>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}

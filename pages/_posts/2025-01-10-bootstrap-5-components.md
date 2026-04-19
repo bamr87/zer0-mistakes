@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:30:07.000Z
 title: "Bootstrap 5 Components for Modern Jekyll Themes"
 description: "Explore essential Bootstrap 5 components and patterns for building responsive Jekyll themes with professional UI design."
 categories:

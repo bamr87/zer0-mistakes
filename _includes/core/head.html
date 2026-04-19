@@ -12,7 +12,7 @@
   - Loads critical JavaScript libraries before page render
   - Includes SEO optimization and social media meta tags
   - Configures third-party integrations (Analytics, MathJax)
-  - Sets up progress bar and UI enhancement scripts
+  - Sets up progress bar via components/nanobar.html include
   
   Dependencies:
   - seo.html: SEO meta tags and Open Graph data
@@ -22,7 +22,7 @@
   Performance Notes:
   - Scripts loaded in head for immediate availability
   - MathJax loaded asynchronously to prevent render blocking
-  - Nanobar provides visual loading feedback
+  - Nanobar provides visual loading feedback (see components/nanobar.html)
   ===================================================================
 -->
 
@@ -52,29 +52,8 @@
   {% include components/mermaid.html %}
 {% endif %}
 
-<!-- Nano Progress Bar - Visual loading indicator -->
-<script defer src="{{'/assets/js/nanobar.min.js' | relative_url }}"></script>
-
-<!-- Progress Bar Initialization - Creates visual loading feedback -->
-<script>
-    // Wait for DOM to be ready before initializing Nanobar
-    document.addEventListener('DOMContentLoaded', function() {
-        // Check if the progress bar element exists before initializing
-        var progressElement = document.getElementById('top-progress-bar');
-        if (progressElement) {
-            var options = {
-              classname: 'nanobar',
-              id: 'top-progress-bar'
-            };
-            var nanobar = new Nanobar(options);
-            nanobar.go( 30 );  // Initial loading state
-            nanobar.go( 76 );  // Partial completion
-            nanobar.go(100);   // Complete loading
-        } else {
-            console.warn('Progress bar element #top-progress-bar not found. Skipping Nanobar initialization.');
-        }
-    });
-</script>
+<!-- Nano Progress Bar - Visual loading indicator (config-driven) -->
+{% include components/nanobar.html %}
 
 <!-- MathJax - Mathematical notation rendering (async; bundled under assets/vendor) -->
 <script id="MathJax-script" async src="{{ '/assets/vendor/mathjax/es5/tex-mml-chtml.js' | relative_url }}"></script>

@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:52.000Z
 title: Styles
 description: Customize CSS and SCSS styles in the Zer0-Mistakes Jekyll theme.
 layout: default
@@ -12,7 +13,7 @@ tags:
     - bootstrap
 permalink: /docs/customization/styles/
 difficulty: intermediate
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 sidebar:
     nav: docs
 ---

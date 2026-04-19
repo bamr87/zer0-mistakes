@@ -10,9 +10,9 @@ tags:
     - bundler
 permalink: /docs/ruby/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 prerequisites: []
-updated: 2025-12-20
+lastmod: 2025-12-20
 lastmod: 2025-12-20T22:15:46.090Z
 sidebar:
     nav: docs

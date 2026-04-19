@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:30:03.000Z
 title: Analytics
 description: Analytics integration options for the Zer0-Mistakes theme including PostHog, Google Analytics, and Tag Manager.
 layout: default
@@ -11,7 +12,7 @@ tags:
     - privacy
 permalink: /docs/analytics/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---

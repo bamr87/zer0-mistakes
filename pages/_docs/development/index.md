@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:55.000Z
 title: Development
 description: Developer guides for contributing to and extending the Zer0-Mistakes Jekyll theme.
 layout: default
@@ -11,7 +12,7 @@ tags:
     - ci-cd
 permalink: /docs/development/
 difficulty: intermediate
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---

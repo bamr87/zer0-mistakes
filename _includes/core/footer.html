@@ -30,10 +30,10 @@
   ===================================================================
 -->
 
-<footer class="bd-footer container-xl border-top" role="contentinfo">
+<footer class="bd-footer border-top" role="contentinfo">
   <!-- Powered by Row -->
-  <div class="container row my-3">
-    <ul class="nav col-sm justify-content-end list-unstyled d-flex align-items-center" aria-label="Powered by technologies">
+  <div class="container-xl my-3">
+    <ul class="nav justify-content-end list-unstyled d-flex align-items-center flex-wrap" aria-label="Powered by technologies">
       <span class="align-start">
         &copy; {{ site.time | date: "%Y" }} {{ site.name | default: site.title }} — Powered by:
       </span>
@@ -67,10 +67,9 @@
     </ul>
   </div>
 
-  <!-- Branding and Navigation Block -->
-  <div class="container row">
-    <div class="container bg-dark text-light py-5 rounded-3">
-      <div class="container">
+  <!-- Branding and Navigation Block — full-width dark background -->
+  <div class="bg-dark text-light py-5">
+    <div class="container-xl">
         <!-- Top: Site info + Quick Links + Social -->
         <div class="row mb-4">
           <!-- Site Info -->
@@ -163,10 +162,9 @@
           </div>
         </div>
 
-        <!-- Bottom: Copyright -->
-        <div class="text-center">
-          <p class="mb-0">&copy; {{ site.time | date: "%Y" }} {{ site.title | default: site.name }}. All Rights Reserved.</p>
-        </div>
+      <!-- Bottom: Copyright -->
+      <div class="text-center">
+        <p class="mb-0">&copy; {{ site.time | date: "%Y" }} {{ site.title | default: site.name }}. All Rights Reserved.</p>
       </div>
     </div>
   </div>

@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:53.000Z
 title: Navigation
 description: Configure navigation menus and sidebars in the Zer0-Mistakes Jekyll theme.
 layout: default
@@ -11,7 +12,7 @@ tags:
     - sidebar
 permalink: /docs/customization/navigation/
 difficulty: intermediate
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 sidebar:
     nav: docs
 ---

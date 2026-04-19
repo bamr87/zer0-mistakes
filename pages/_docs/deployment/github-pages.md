@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:30:01.000Z
 title: Deploy to GitHub Pages
 description: Deploy your Zer0-Mistakes Jekyll site to GitHub Pages with automatic builds.
 layout: default
@@ -11,7 +12,7 @@ tags:
     - hosting
 permalink: /docs/deployment/github-pages/
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 prerequisites:
     - GitHub account
     - Jekyll site in a GitHub repository
@@ -42,9 +43,13 @@ GitHub Pages provides free hosting for Jekyll sites with automatic builds on eve
 Update your `_config.yml` for GitHub Pages:
 
 ```yaml
-# Site URL (replace with your actual URL)
+# For user sites (username.github.io) — recommended for forks:
 url: "https://username.github.io"
-baseurl: "/repository-name"  # Empty if using user/org site
+baseurl: ""  # Empty — user site deploys at root
+
+# For project sites (username.github.io/repo-name):
+# url: "https://username.github.io"
+# baseurl: "/repository-name"
 
 # Use remote theme for GitHub Pages compatibility
 remote_theme: "bamr87/zer0-mistakes"
@@ -56,6 +61,8 @@ plugins:
   - jekyll-sitemap
   - jekyll-seo-tag
 ```
+
+> **Tip:** Fork into `<your-username>.github.io` so you don't need to change `baseurl` at all. See [docs/FORKING.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/FORKING.md) for the recommended workflow.
 
 ### Step 3: Push and Deploy
 
@@ -69,17 +76,19 @@ GitHub will automatically build and deploy your site.
 
 ## Repository Types
 
-### User/Organization Site
+### User/Organization Site (Recommended for Forks)
 
 - Repository name: `username.github.io`
 - URL: `https://username.github.io`
 - `baseurl: ""`
+- No additional configuration needed — works out of the box with the theme defaults
+- See [Forking Guide](https://github.com/bamr87/zer0-mistakes/blob/main/docs/FORKING.md)
 
 ### Project Site
 
-- Repository name: Any name
+- Repository name: Any other name
 - URL: `https://username.github.io/repository-name`
-- `baseurl: "/repository-name"`
+- `baseurl: "/repository-name"` (must be set in `_config.yml`)
 
 ## Custom Domain
 

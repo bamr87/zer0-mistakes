@@ -1,3 +1,8 @@
+---
+title: Stats Page Enhancement Summary
+layout: default
+lastmod: 2025-01-27T00:00:00.000Z
+---
 # Stats Page Enhancement Summary
 
 ## Overview

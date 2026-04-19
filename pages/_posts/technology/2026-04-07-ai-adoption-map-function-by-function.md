@@ -2,6 +2,7 @@
 title: "The AI Adoption Map: Where AI Will Augment, Replace, and Transform Every Business Function"
 description: A department-by-department assessment of how AI is reshaping work inside mid-market manufacturers and distributors—from sales and marketing to the production floor.
 date: 2026-04-07T12:00:00.000Z
+lastmod: 2026-04-07T12:00:00.000Z
 author: default
 layout: article
 categories:

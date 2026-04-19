@@ -19,7 +19,7 @@ type: default
 slug: features
 permalink: /about/features/
 lastmod: 2025-10-19T00:00:00.000Z
-draft: published
+draft: false
 inspiration:
   - features are the foundation of the future
 comments: true
