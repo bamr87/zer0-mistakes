@@ -96,7 +96,13 @@
         <span class="d-none d-sm-inline ms-1">Copilot Agent</span>
       </button>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="copilotAgentDropdown">
+        {% assign current_group = "" %}
         {% for prompt in site.data.prompts %}
+        {% if prompt.group and prompt.group != current_group %}
+        {% unless forloop.first %}<li><hr class="dropdown-divider"></li>{% endunless %}
+        <li><h6 class="dropdown-header">{{ prompt.group }}</h6></li>
+        {% assign current_group = prompt.group %}
+        {% endif %}
         {% capture issue_title %}[{{ prompt.label }}] {{ page.title }}{% endcapture %}
         {% capture issue_body %}{{ prompt.body }}
 ---

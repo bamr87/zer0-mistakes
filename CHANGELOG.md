@@ -11,6 +11,24 @@
 
 ## [Unreleased]
 
+### Changed
+- **Copilot Agent prompts (`_data/prompts.yml`)**: rewritten to focus on
+  frontend/CMS workflows for the Jekyll theme. Replaced the previous
+  general-purpose software-engineering templates with 10 prompts split into
+  two scopes: **Page Improvements** (`improve-page`, `expand-page`,
+  `update-page`, `fix-page`, `seo-optimize`, `accessibility-audit`) that act
+  on the current page, and **Site Improvements** (`ui-ux-improvement`,
+  `new-feature`, `component-enhancement`, `performance-optimization`) for
+  theme-wide changes. Every prompt explicitly references the auto-injected
+  Page Context table.
+- **Intro component (`_includes/content/intro.html`)**: the Copilot Agent
+  dropdown now renders Bootstrap `dropdown-header` section labels and
+  dividers when prompt entries declare a `group`. Entries without a
+  `group` continue to render as plain items (backward compatible).
+- **Docs (`docs/implementation/copilot-agent-prompt-button.md`)**: updated
+  the prompt registry table and YAML schema to document the new `group`
+  field and the new template set.
+
 ### Added
 - **Roadmap data file**: `_data/roadmap.yml` is now the single source of truth for the project roadmap (versions, status, dates, targets, and feature highlights).
 - **Roadmap generator**: `scripts/generate-roadmap.rb` (and shell wrapper `scripts/generate-roadmap.sh`) renders a Mermaid gantt diagram and summary table from `_data/roadmap.yml` and injects them into `README.md` between `<!-- ROADMAP_MERMAID:START/END -->` and `<!-- ROADMAP_TABLE:START/END -->` markers. Supports `--check` mode for CI drift detection and `--stdout` for previewing.
