@@ -45,8 +45,10 @@ test_idempotent_minimal() {
     assert_file_exists "$ws/_config.yml" "Config gone after second install" || return 1
 
     # Prefer Ruby (always present in a Jekyll project; YAML is in stdlib).
+    # Use unsafe_load_file when available so YAML anchors/aliases in the
+    # theme's _config.yml don't trip the default safe loader (Ruby 3.1+).
     if command -v ruby >/dev/null 2>&1; then
-        ruby -ryaml -e "YAML.load_file(ARGV[0])" "$ws/_config.yml" 2>/dev/null || {
+        ruby -ryaml -e 'begin; YAML.unsafe_load_file(ARGV[0]); rescue NoMethodError; YAML.load_file(ARGV[0]); end' "$ws/_config.yml" 2>/dev/null || {
             test_log_error "_config.yml became invalid after second install"
             return 1
         }

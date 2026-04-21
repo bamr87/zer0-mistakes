@@ -40,8 +40,11 @@ deploy_target() {
 assert_yaml_parses() {
     local file="$1"
     # Prefer Ruby (always present in a Jekyll project; YAML is in stdlib).
+    # Use unsafe_load_file when available (Psych 4+ / Ruby 3.1+) so YAML
+    # anchors/aliases (used heavily in the theme config) don't trip the
+    # default safe loader.
     if command -v ruby >/dev/null 2>&1; then
-        ruby -ryaml -e "YAML.load_file(ARGV[0])" "$file" 2>/dev/null
+        ruby -ryaml -e 'begin; YAML.unsafe_load_file(ARGV[0]); rescue NoMethodError; YAML.load_file(ARGV[0]); end' "$file" 2>/dev/null
         return $?
     fi
     # Fall back to python3 + PyYAML if available; otherwise skip the check.
