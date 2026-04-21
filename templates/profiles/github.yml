@@ -1,0 +1,25 @@
+# jekyll-theme-zer0 install profile: github
+#
+# GitHub Pages remote_theme installation — _config.yml uses
+# `remote_theme: bamr87/zer0-mistakes` so the site builds on Pages
+# without a Gemfile dependency on the theme gem.
+name: github
+display_name: GitHub Pages (remote_theme)
+description: GitHub Pages compatible install using remote_theme directive.
+legacy_flag: --github
+recommended_for: GitHub Pages deployments without custom plugins
+includes:
+  - Gemfile (github-pages gem)
+  - _config.yml with remote_theme directive
+  - .github/workflows/pages.yml
+  - pages/index.md
+  - .gitignore
+excludes:
+  - Local theme assets (loaded from remote_theme)
+deploy_targets:
+  - github-pages
+
+# Phase 5 — AI agent guidance to install by default.
+# Override with: install agents [target] [--cursor|--claude|--aider|--all]
+ai_features:
+  agent_files: [copilot, claude]

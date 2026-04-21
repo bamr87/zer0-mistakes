@@ -1,5 +1,50 @@
 # Changelog
 
+## [Unreleased — targeting 1.0.0]
+
+### ⚠️ Breaking changes (1.0.0 prep)
+
+- **Modular installer.** The 2,400-line monolithic `install.sh` is decomposed into a CLI dispatcher (`scripts/bin/install`) backed by focused library modules (`scripts/lib/install/*.sh`) and declarative YAML profiles (`templates/profiles/*.yml`). The legacy `curl | bash` one-liner still works — it bootstraps the same pipeline.
+- **Legacy mode flags deprecated.** `--full`, `--minimal`, `--fork`, `--remote`, `--github` continue to work in 1.0.x with a one-line deprecation warning. They map 1:1 to `install init --profile <name>`. Targeted removal: 2.0.
+- **`--azure` flag removed.** Replaced by `install deploy azure-swa`. Old flag emits a clear error pointing at the new command.
+- **Templates are the single source of truth.** Embedded heredoc fallbacks in `install.sh` are gone. A stripped distribution (theme tarball without `templates/`) will fail; the bootstrap downloads the templates tarball alongside `install.sh` for `curl | bash`.
+
+See [`docs/installation/migration-from-0.x.md`](docs/installation/migration-from-0.x.md) for the full flag-by-flag mapping.
+
+### Added (Phases 1-7 of the installer refactor)
+
+- **`scripts/bin/install`** — canonical CLI with subcommands: `init`, `wizard [--ai]`, `agents`, `deploy`, `doctor [--ai] [--quiet] [--json]`, `diagnose [--ai]`, `upgrade`, `list-profiles`, `list-targets`, `version`, `help`.
+- **`scripts/lib/install/`** — focused modules: `core`, `platform`, `template`, `fs`, `config`, `pages`, `profile`, `wizard_interactive`, `doctor`, `upgrade`, `agents`, `ai/{openai,wizard,diagnose,suggest}`, `deploy/{registry,github-pages,azure-swa,docker-prod}`. All bash 3.2 compatible.
+- **`templates/profiles/*.yml`** — declarative profile manifests (`full`, `minimal`, `fork`, `remote`, `github`).
+- **`templates/deploy/<target>/`** — pluggable deploy templates (workflow YAMLs, Dockerfile, nginx.conf).
+- **`templates/agents/`** — distributable AI agent guidance (CLAUDE.md, aider.conf.yml templates).
+- **`templates/ai/prompts/`** — system prompts for AI subcommands.
+- **`.zer0-installed` marker file** — tracks installed theme version for idempotent `install upgrade`.
+- **AI integration (opt-in, sandboxed):** `install wizard --ai` (OpenAI-backed `_config.yml` generation), `install diagnose --ai` (unified-diff patch proposals), `install deploy --ai-suggest` (deploy-target recommendation). Honors `ZER0_NO_AI=1` kill switch. All payloads sanitized; all writes diffed before confirmation.
+- **`install doctor`** — platform/tooling/site/AI health check with PASS/WARN/FAIL counters, `--quiet` and `--json` modes. Used as preflight in `install init` (opt out with `--skip-doctor`).
+- **`install upgrade`** — idempotent in-place upgrade tracked via `.zer0-installed`. `--from`, `--force`, `--dry-run`, `--auto-accept`. Refreshes agents and checks deploy-workflow drift.
+- **`docs/installation/`** — full doc tree: `index`, `architecture`, `profiles`, `deploy-targets`, `ai-features`, `migration-from-0.x`, `customization`.
+- **`.github/instructions/install.instructions.md`** — agent guidance for installer code (`applyTo: scripts/lib/install/**, scripts/bin/install, install.sh, templates/{profiles,deploy,agents,ai}/**`).
+- **`.github/workflows/doctor.yml`** — CI matrix (ubuntu-latest, macos-latest) running `install doctor --json` on every push/PR touching installer code.
+- **`.github/workflows/install-matrix.yml`** — full installer e2e matrix (ubuntu-latest + macos-latest × ruby 2.7/3.0/3.2) plus a `curl|bash` bootstrap smoke job. Runs on installer-touching PRs, weekly drift schedule, and `workflow_dispatch`.
+- **Installer e2e suites** under `test/`:
+  - `test_install_profiles.sh` — every profile produces its expected file tree
+  - `test_install_deploy.sh` — every deploy target writes valid workflow YAML / Dockerfile
+  - `test_install_ai_mock.sh` — `doctor --ai` and `diagnose` survive without `OPENAI_API_KEY`
+  - `test_install_legacy_flags.sh` — `install.sh --minimal` / `--full` still produce expected layouts
+  - `test_install_idempotency.sh` — re-running install is safe; `_config.yml` stays parseable; backup creep guarded
+- **`scripts/bin/test install`** — new test-suite group that executes all `test/test_install_*.sh` files.
+
+### Fixed
+
+- `install.sh` — `gh_args[@]: unbound variable` crash when invoking the github profile with no fork environment variables set (`set -u` + empty array). Guarded with `${gh_args[@]+"${gh_args[@]}"}`.
+
+### Changed
+
+- `README.md` Installation Methods section now references the modular CLI alongside the legacy one-liner.
+- `docs/FORKING.md` includes an `install init --profile fork` flow alongside the standalone `fork-cleanup.sh` script.
+- `AGENTS.md` instruction map adds the new install instructions row.
+
 ## [0.22.21] - 2026-04-19
 
 ### Changed
