@@ -18,10 +18,17 @@ source "$LIB_DIR/common.sh"
 COMMIT_RANGE="${1:-HEAD~1..HEAD}"
 DEBUG=${DEBUG:-false}
 
-# Override debug function to use DEBUG flag
+# ----------------------------------------------------------------------------
+# IMPORTANT: stdout is reserved for the bump-type result (patch|minor|major|none).
+# All log output MUST go to stderr or it will be captured by callers like the
+# version-bump workflow that uses `BUMP_TYPE=$(./analyze-commits ...)`.
+# ----------------------------------------------------------------------------
+log_info()    { echo -e "${BLUE}[INFO]${NC} $*" >&2; }
+log_warning() { echo -e "${YELLOW}[WARN]${NC} $*" >&2; }
+log_error()   { echo -e "${RED}[ERROR]${NC} $*" >&2; }
 log_debug() {
-    if [[ "$DEBUG" == "true" ]]; then
-        debug "$1"
+    if [[ "$DEBUG" == "true" ]] || [[ "${VERBOSE:-false}" == "true" ]]; then
+        echo -e "${PURPLE}[DEBUG]${NC} $*" >&2
     fi
 }
 
@@ -38,14 +45,14 @@ analyze_commit() {
     log_debug "Analyzing commit: $commit_hash"
     log_debug "Message: $(echo "$commit_message" | head -1)"
     
-    # Check for breaking changes (MAJOR)
-    if echo "$commit_message" | grep -qi "BREAKING CHANGE\|breaking:"; then
+    # Check for breaking changes in body (MAJOR) — Conventional Commits spec
+    if echo "$commit_message" | grep -qiE "^BREAKING[ -]CHANGE:|^BREAKING:"; then
         echo "major"
         return 0
     fi
     
     # Check for major version indicators in commit message
-    if echo "$commit_message" | grep -qE "^(major|MAJOR|breaking|BREAKING)[\s:]"; then
+    if echo "$commit_message" | grep -qE "^(major|MAJOR|breaking|BREAKING)[[:space:]:]"; then
         echo "major"
         return 0
     fi
@@ -53,32 +60,39 @@ analyze_commit() {
     # Check commit message patterns for conventional commits
     local subject_line=$(echo "$commit_message" | head -1)
     
-    # MAJOR changes
-    if echo "$subject_line" | grep -qE "^(revert|remove|delete)[\s:].*[Bb]reaking"; then
+    # Conventional Commits "!" breaking-change marker (MAJOR)
+    # Matches: feat!:, fix!:, feat(scope)!:, refactor(api)!:, etc.
+    if echo "$subject_line" | grep -qE "^[a-zA-Z]+(\([^)]+\))?!:"; then
         echo "major"
         return 0
     fi
     
-    # MINOR changes (new features)
-    if echo "$subject_line" | grep -qE "^(feat|feature|add|new)[\s:]"; then
+    # MAJOR changes
+    if echo "$subject_line" | grep -qE "^(revert|remove|delete)(\([^)]+\))?:.*[Bb]reaking"; then
+        echo "major"
+        return 0
+    fi
+    
+    # MINOR changes (new features) — supports optional scope, e.g. feat(api):
+    if echo "$subject_line" | grep -qE "^(feat|feature|add|new)(\([^)]+\))?:"; then
         echo "minor"
         return 0
     fi
     
     # MINOR changes - significant additions
-    if echo "$subject_line" | grep -qE "^(enhance|improve|update)[\s:].*[Ff]eature"; then
+    if echo "$subject_line" | grep -qiE "^(enhance|improve|update)(\([^)]+\))?:.*feature"; then
         echo "minor"
         return 0
     fi
     
-    # PATCH changes (bug fixes, small improvements)
-    if echo "$subject_line" | grep -qE "^(fix|bug|patch|hotfix|chore|docs|style|refactor|test|perf)[\s:]"; then
+    # PATCH changes (bug fixes, small improvements) — supports optional scope
+    if echo "$subject_line" | grep -qE "^(fix|bug|patch|hotfix|chore|docs|style|refactor|test|perf|ci|build)(\([^)]+\))?:"; then
         echo "patch"
         return 0
     fi
     
     # PATCH changes - maintenance and small improvements
-    if echo "$subject_line" | grep -qE "^(update|improve|enhance|optimize|clean)[\s:]"; then
+    if echo "$subject_line" | grep -qE "^(update|improve|enhance|optimize|clean)(\([^)]+\))?:"; then
         echo "patch"
         return 0
     fi
@@ -288,10 +302,16 @@ ENVIRONMENT:
     DEBUG=true                  # Enable debug output
 
 CONVENTIONAL COMMIT PATTERNS:
-    feat:, feature:, add:       → minor
-    fix:, bug:, patch:          → patch
-    BREAKING CHANGE, breaking:  → major
-    chore:, docs:, style:       → patch
+    feat:, feature:, add:           → minor
+    feat(scope):                    → minor
+    fix:, bug:, patch:              → patch
+    feat!:, fix!:, refactor(api)!:  → major  (Conventional Commits "!" marker)
+    BREAKING CHANGE:, BREAKING:     → major  (commit body footer)
+    chore:, docs:, style:, ci:      → patch
+
+OUTPUT CONTRACT:
+    Only the bump type is written to stdout. All progress/log output goes to
+    stderr so callers can safely use \`BUMP=\$(./analyze-commits ...)\`.
 EOF
     exit 0
 fi

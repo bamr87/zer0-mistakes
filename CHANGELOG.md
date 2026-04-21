@@ -1,5 +1,19 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+- **Versioning automation no longer silently swallows analyzer crashes.** `scripts/utils/analyze-commits` called `log_info` / `log_warning` / `log_debug` / `log_error` helpers that were never defined in `scripts/lib/common.sh`, causing the script to exit 127 with empty stdout. The version-bump workflow then fell back to `patch` via `2>/dev/null || echo "patch"`, which is exactly what shipped v0.22.22 instead of the intended v1.0.0 for the breaking-change installer rewrite (PR #76). The analyzer now defines stderr-only logging helpers, and the workflow refuses to publish on analyzer failure or invalid output.
+- **Conventional Commits `!` breaking-change marker is now recognised.** `feat!:`, `fix(scope)!:`, and `refactor(api)!:` correctly trigger a major bump in both the version analyzer and changelog categoriser. Previously only the long-form `BREAKING CHANGE:` footer was detected.
+- **Scoped types are recognised everywhere.** `feat(auth):`, `fix(api):`, `chore(deps):`, etc. are now properly classified by `analyze-commits` and grouped correctly in `changelog.sh`.
+
+### Changed
+- `scripts/utils/analyze-commits` now guarantees that **only** the bump type (`patch|minor|major|none`) is written to stdout. All progress and debug output is sent to stderr, so callers can safely use `BUMP=$(./analyze-commits ...)`.
+- `.github/workflows/version-bump.yml` streams the analyzer's stderr into a collapsible job-log group and validates the returned bump type, failing the run with an annotated error if the analyzer crashes or returns garbage.
+
+### Added
+- New unit-test file `scripts/test/lib/test_analyze_commits.sh` (15 assertions) covering: scoped conventional types, `!` breaking-change marker, `BREAKING CHANGE` / `BREAKING-CHANGE` footers, and stdout/stderr separation. Wired into `scripts/test/lib/run_tests.sh`.
+
 ## [0.22.22] - 2026-04-21
 
 ### Changed
