@@ -39,6 +39,8 @@ docs/
 │   └── code-style.md
 ├── releases/               # Release notes and history
 │   └── v*.md
+├── features/               # Feature documentation
+│   └── nanobar-component.md
 ├── configuration/          # Configuration guides
 │   └── url-configuration-guide.md
 ├── jekyll/                 # Jekyll-specific documentation
@@ -95,6 +97,7 @@ docs/
 
 ## Recent Updates
 
+- **v0.22.21** — Nanobar component refactoring, footer full-width fix, UI/UX improvements
 - **v0.22.9** — Skin editor, palette generator, Playwright visual tests
 - **v0.22.0** — Copilot Agent prompt button with data-driven prompt registry
 - **v0.21.3** — Vendor assets (Bootstrap, Icons, Mermaid), AIEO structured data

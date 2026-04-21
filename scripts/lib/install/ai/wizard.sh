@@ -1,0 +1,160 @@
+#!/usr/bin/env bash
+# scripts/lib/install/ai/wizard.sh
+#
+# `install wizard --ai` — opt-in OpenAI-powered config generation.
+#
+# Flow:
+#   1. ai_enabled() check (ZER0_NO_AI kill-switch)
+#   2. ai_require_key() check (OPENAI_API_KEY)
+#   3. Prompt user for: site description, target audience, deploy preference
+#   4. Read system prompt from templates/ai/prompts/wizard-system.md
+#   5. ai_estimate_cost() → user sees price estimate
+#   6. ai_call_chat() → returns JSON: {title, description, tagline, navigation,
+#                                       welcome_post_outline, suggested_deploy_target}
+#   7. ai_show_diff_confirm() per generated file (_config.yml, navigation,
+#                                                  welcome post)
+#   8. On any failure → fall back to non-AI wizard (delegated to caller).
+#
+# Public API:
+#     wizard_ai_run <target_dir> <repo_root> [--auto-accept]
+#
+# Returns 0 on success, 1 on failure (caller should fall back).
+
+# shellcheck disable=SC2034
+AI_WIZARD_LIB_VERSION="1.0.0"
+
+wizard_ai_run() {
+    local target_dir="$1" repo_root="$2"
+    shift 2 || true
+
+    local auto_accept=0
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --auto-accept) auto_accept=1 ;;
+            *) log_warning "wizard_ai_run: ignoring unknown flag: $1" ;;
+        esac
+        shift
+    done
+
+    if ! ai_enabled; then
+        log_warning "AI is disabled (ZER0_NO_AI=1) — cannot run --ai wizard."
+        return 1
+    fi
+    if ! ai_require_key; then
+        return 1
+    fi
+
+    # 1. Gather user inputs
+    log_info "AI Wizard — describe your site in a sentence or two."
+    log_info "Examples: 'Personal blog about Rust performance' or 'Docs site for an open-source CLI'."
+    printf "Site description: "
+    local site_desc audience deploy_pref
+    read -r site_desc
+    if [[ -z "$site_desc" ]]; then
+        log_error "Empty description — aborting AI wizard."
+        return 1
+    fi
+    printf "Target audience (e.g., 'developers', 'data scientists', 'general'): "
+    read -r audience
+    [[ -z "$audience" ]] && audience="developers"
+    printf "Deploy preference (github-pages | azure-swa | docker-prod | unsure): "
+    read -r deploy_pref
+    [[ -z "$deploy_pref" ]] && deploy_pref="unsure"
+
+    # 2. Load system prompt
+    local sys_prompt_file="$repo_root/templates/ai/prompts/wizard-system.md"
+    if [[ ! -f "$sys_prompt_file" ]]; then
+        log_error "System prompt missing: $sys_prompt_file"
+        return 1
+    fi
+    local system_prompt
+    system_prompt="$(cat "$sys_prompt_file")"
+
+    # 3. Build user prompt
+    local user_prompt
+    user_prompt="Site description: ${site_desc}
+Target audience: ${audience}
+Deploy preference: ${deploy_pref}
+
+Return ONLY a JSON object with keys: title, description, tagline, suggested_deploy_target, navigation (array of {label, url}), welcome_post_outline (string of 3-5 bullet points)."
+
+    # Sanitize (paranoid — user input could contain pasted secrets)
+    user_prompt="$(printf '%s' "$user_prompt" | ai_sanitize_text)"
+
+    # 4. Cost estimate + confirm
+    local model
+    model="$(ai_default_model wizard)"
+    local in_chars=$(( ${#system_prompt} + ${#user_prompt} ))
+    log_info "About to call OpenAI:"
+    ai_estimate_cost "$model" "$in_chars" 800
+    if [[ "$auto_accept" != "1" ]]; then
+        printf "Proceed with API call? [y/N] "
+        local go
+        read -r go
+        if [[ ! "$go" =~ ^[Yy]$ ]]; then
+            log_warning "Aborted by user."
+            return 1
+        fi
+    fi
+
+    # 5. Call API
+    log_info "Calling $model ..."
+    local raw
+    if ! raw="$(ai_call_chat "$model" "$system_prompt" "$user_prompt" 1024 0.4)"; then
+        log_error "OpenAI call failed."
+        return 1
+    fi
+
+    # 6. Parse JSON (strip code-fence if present)
+    local json
+    json="$(printf '%s' "$raw" | sed -E '/^```(json)?$/d')"
+    if ! command -v python3 >/dev/null 2>&1; then
+        log_error "python3 required to parse wizard response."
+        return 1
+    fi
+
+    # Extract fields safely
+    local title description tagline suggested_deploy
+    title="$(printf '%s' "$json" | python3 -c 'import json,sys;d=json.load(sys.stdin);print(d.get("title",""))' 2>/dev/null || echo "")"
+    description="$(printf '%s' "$json" | python3 -c 'import json,sys;d=json.load(sys.stdin);print(d.get("description",""))' 2>/dev/null || echo "")"
+    tagline="$(printf '%s' "$json" | python3 -c 'import json,sys;d=json.load(sys.stdin);print(d.get("tagline",""))' 2>/dev/null || echo "")"
+    suggested_deploy="$(printf '%s' "$json" | python3 -c 'import json,sys;d=json.load(sys.stdin);print(d.get("suggested_deploy_target",""))' 2>/dev/null || echo "")"
+
+    if [[ -z "$title" ]]; then
+        log_error "Failed to parse AI response (missing 'title' field)."
+        log_info  "Raw response: $raw"
+        return 1
+    fi
+
+    # 7. Build proposed _config.yml fragment + diff
+    local cfg_file="$target_dir/_config.yml"
+    local proposed
+    proposed="$(cat <<EOF
+# Generated by install wizard --ai
+title: "$title"
+description: "$description"
+tagline: "$tagline"
+EOF
+)"
+    log_info "AI suggests deploy target: ${suggested_deploy:-(none)}"
+    if [[ -f "$cfg_file" ]]; then
+        log_warning "_config.yml already exists. The AI suggestions above won't be merged automatically."
+        log_info  "Recommended: cp the values you like into _config.yml manually."
+    else
+        local accepted_path
+        if accepted_path="$(ai_show_diff_confirm "$cfg_file" "$proposed" "Create _config.yml" "$auto_accept")"; then
+            mv "$accepted_path" "$cfg_file"
+            log_success "Wrote $cfg_file"
+        fi
+    fi
+
+    # 8. Print full JSON for user reference (so welcome post outline + nav
+    #    aren't lost). User can manually convert to files.
+    echo
+    log_info "Full AI response (use these to flesh out navigation + a welcome post):"
+    echo "─────────────────────────────────────────────────────────────"
+    printf '%s\n' "$json"
+    echo "─────────────────────────────────────────────────────────────"
+
+    return 0
+}

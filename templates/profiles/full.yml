@@ -1,0 +1,33 @@
+# jekyll-theme-zer0 install profile: full
+#
+# Default profile. Installs everything a new author needs to start writing
+# immediately: starter pages, navigation, admin settings, and the dev-only
+# setup wizard.
+name: full
+display_name: Full
+description: Default. Starter pages, navigation, admin settings, setup wizard.
+legacy_flag: --full
+recommended_for: most new sites, learning the theme
+includes:
+  - Gemfile
+  - _config.yml
+  - _data/navigation/main.yml
+  - pages/index.md
+  - pages/quickstart/
+  - pages/_docs/
+  - pages/_about/
+  - pages/blog.md
+  - pages/_about/settings/ (admin)
+  - pages/setup.html (dev-only wizard)
+  - INSTALLATION.md
+  - .gitignore
+excludes: []
+deploy_targets:
+  - github-pages
+  - azure-swa
+  - docker-prod
+
+# Phase 5 — AI agent guidance to install by default.
+# Override with: install agents [target] [--cursor|--claude|--aider|--all]
+ai_features:
+  agent_files: [copilot, claude]

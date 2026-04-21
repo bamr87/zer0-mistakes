@@ -66,6 +66,8 @@ cd <your-username>.github.io
 
 ### Step 2: Run the Fork Cleanup Script (Recommended)
 
+> **New in 1.0:** you can also run `./scripts/bin/install init --profile fork .` from inside the cloned fork — it dispatches to the same fork-cleanup pipeline through the modular CLI and lets you opt into AI agent guidance (`install agents --all`) and a deploy target (`install deploy github-pages`) in one flow. See [docs/installation/profiles.md](installation/profiles.md) for the full profile reference.
+
 ```bash
 # Interactive mode — prompts you for each value
 ./scripts/fork-cleanup.sh
@@ -79,6 +81,11 @@ cd <your-username>.github.io
 
 # Preview changes first without making edits
 ./scripts/fork-cleanup.sh --dry-run
+
+# Or via the new modular CLI (1.0+)
+./scripts/bin/install init --profile fork .
+./scripts/bin/install agents . --all
+./scripts/bin/install deploy github-pages .
 ```
 
 The script:

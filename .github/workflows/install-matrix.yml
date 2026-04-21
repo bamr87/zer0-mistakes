@@ -1,0 +1,119 @@
+---
+name: Install Matrix
+
+# Validate the modular installer across OSes, Ruby versions, and profiles.
+# Triggered on PRs that touch installer code or weekly to catch drift.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - install.sh
+      - scripts/bin/install
+      - scripts/lib/install/**
+      - templates/profiles/**
+      - templates/deploy/**
+      - test/test_install_*.sh
+      - test/lib/install_test_utils.sh
+      - .github/workflows/install-matrix.yml
+  pull_request:
+    paths:
+      - install.sh
+      - scripts/bin/install
+      - scripts/lib/install/**
+      - templates/profiles/**
+      - templates/deploy/**
+      - test/test_install_*.sh
+      - test/lib/install_test_utils.sh
+  schedule:
+    # Mondays @ 06:00 UTC — weekly drift check
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  matrix:
+    name: ${{ matrix.os }} · ruby-${{ matrix.ruby }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        ruby: ['3.0', '3.2']
+        include:
+          # Ubuntu also gets the legacy floor we still claim to support.
+          - os: ubuntu-latest
+            ruby: '2.7'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: false
+
+      - name: Install jq + python3 (assertion helpers)
+        shell: bash
+        run: |
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq jq python3-yaml
+          else
+            brew install jq python3 || true
+            python3 -m pip install --user pyyaml || true
+          fi
+
+      - name: Show toolchain
+        run: |
+          ruby --version
+          bundle --version
+          bash --version | head -1
+          jq --version || true
+          python3 --version || true
+
+      - name: Run installer e2e test suite
+        env:
+          # Skip interactive paths in CI (gh auth, fork prompts).
+          INSTALL_TEST_INCLUDE_INTERACTIVE: '0'
+          INSTALL_TEST_INCLUDE_REMOTE: '0'
+        run: |
+          chmod +x scripts/bin/install scripts/bin/test test/test_install_*.sh
+          ./scripts/bin/test install
+
+      - name: Upload installer test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: install-test-results-${{ matrix.os }}-ruby${{ matrix.ruby }}
+          path: |
+            test/results/
+            test/reports/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  curl-bash-bootstrap:
+    name: curl|bash bootstrap (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Simulate remote install (no source files in target)
+        shell: bash
+        run: |
+          set -euo pipefail
+          TARGET="$RUNNER_TEMP/remote-bootstrap"
+          mkdir -p "$TARGET"
+          cd "$TARGET"
+          # Run install.sh out of the checkout against a clean target
+          bash "$GITHUB_WORKSPACE/install.sh" --minimal "$TARGET"
+          test -f "$TARGET/_config.yml"
+          test -f "$TARGET/Gemfile"
+          test -f "$TARGET/index.md"
+          echo "✅ curl|bash-equivalent bootstrap produced a minimal site"

@@ -1,0 +1,29 @@
+# jekyll-theme-zer0 install profile: minimal
+#
+# Smallest viable site — useful for evaluating the theme or building from
+# a near-empty baseline. Currently consumed by scripts/bin/install for
+# metadata + legacy_flag dispatch. Phases 4-6 will make install.sh read
+# the `steps:` block directly.
+name: minimal
+display_name: Minimal
+description: Smallest viable site (Gemfile, _config.yml, index.md only)
+legacy_flag: --minimal
+recommended_for: quick demos, evaluating the theme, custom builds
+includes:
+  - Gemfile
+  - _config.yml
+  - index.md
+  - .gitignore
+excludes:
+  - starter pages
+  - admin settings
+  - setup wizard
+  - example navigation
+deploy_targets:
+  - github-pages
+  - docker-prod
+
+# Phase 5 — AI agent guidance to install by default.
+# Override with: install agents [target] [--cursor|--claude|--aider|--all]
+ai_features:
+  agent_files: [copilot]

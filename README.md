@@ -504,11 +504,26 @@ Built-in GDPR/CCPA compliant documentation:
 
 ## 📦 Installation Methods
 
+> **New in 1.0:** the installer is now a modular CLI (`scripts/bin/install`) with subcommands and declarative profiles. The classic `curl | bash` one-liner still works — it bootstraps the same pipeline. See [docs/installation/](docs/installation/index.md) for the full guide and [docs/installation/migration-from-0.x.md](docs/installation/migration-from-0.x.md) for the 0.x → 1.0 flag mapping.
+
 ### Method 1: AI-Powered Install (Recommended)
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
 ```
+
+### Method 1b: Modular CLI (Local Clone)
+
+```bash
+git clone https://github.com/bamr87/zer0-mistakes.git
+./zer0-mistakes/scripts/bin/install help
+./zer0-mistakes/scripts/bin/install init --profile full /path/to/new-site
+./zer0-mistakes/scripts/bin/install deploy github-pages,docker-prod /path/to/new-site
+./zer0-mistakes/scripts/bin/install doctor /path/to/new-site     # health check
+./zer0-mistakes/scripts/bin/install agents /path/to/new-site --all   # AI agent guidance
+```
+
+Available subcommands: `init`, `wizard [--ai]`, `agents`, `deploy`, `doctor`, `diagnose [--ai]`, `upgrade`, `list-profiles`, `list-targets`, `version`, `help`.
 
 ### Method 2: Remote Theme (GitHub Pages)
 
