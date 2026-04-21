@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.22.22] - 2026-04-21
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 36cd015 feat(installer)!: modular installer + AI + deploy targets + test matrix (#76)
+- 555bead docs(readme): add AI-native branding and GitHub Actions automation section
+
+
 ## [Unreleased — targeting 1.0.0]
 
 ### ⚠️ Breaking changes (1.0.0 prep)
