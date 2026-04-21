@@ -110,17 +110,17 @@ analyze_commit() {
             
             # Critical/breaking change files (MAJOR)
             if echo "$file" | grep -qE "(Gemfile|gemspec|_config\.yml|docker-compose\.yml|Dockerfile)$"; then
-                ((critical_files++))
+                critical_files=$((critical_files + 1))
                 log_debug "Critical file detected: $file"
             
             # Feature files (MINOR)  
             elif echo "$file" | grep -qE "(_layouts/|_includes/|assets/|pages/.*\.md$|\.rb$|\.js$)"; then
-                ((feature_files++))
+                feature_files=$((feature_files + 1))
                 log_debug "Feature file detected: $file"
             
             # Documentation and minor files (PATCH)
             elif echo "$file" | grep -qE "(README|CHANGELOG|\.md$|\.txt$|\.yml$|\.yaml$|test/)"; then
-                ((patch_files++))
+                patch_files=$((patch_files + 1))
                 log_debug "Patch file detected: $file"
             fi
         done <<< "$commit_files"
@@ -171,17 +171,17 @@ determine_overall_bump() {
         
         case "$bump_level" in
             "major")
-                ((major_count++))
+                major_count=$((major_count + 1))
                 highest_bump="major"
                 ;;
             "minor")
-                ((minor_count++))
+                minor_count=$((minor_count + 1))
                 if [[ "$highest_bump" != "major" ]]; then
                     highest_bump="minor"
                 fi
                 ;;
             "patch")
-                ((patch_count++))
+                patch_count=$((patch_count + 1))
                 if [[ "$highest_bump" == "none" ]]; then
                     highest_bump="patch"
                 fi

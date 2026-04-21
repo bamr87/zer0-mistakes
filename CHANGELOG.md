@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+- **Version-bump workflow no longer crashes on bash 5.x runners.** `scripts/utils/analyze-commits` (and `scripts/lib/changelog.sh`, `scripts/lib/migrate.sh`) used the `((var++))` post-increment idiom. On bash 5.x, when `var` is 0 the expression evaluates to 0 → exit code 1 → `set -euo pipefail` terminates the script silently. macOS bash 3.2 was more forgiving, so the bug only surfaced in CI. Replaced all release-path sites with `var=$((var + 1))`, which always returns 0. Added a static regression check to the unit tests so the pattern can't return.
+
 ## [1.0.0] - 2026-04-20
 
 First stable major release. Consolidates the breaking-change installer rewrite

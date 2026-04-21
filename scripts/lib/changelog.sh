@@ -137,7 +137,7 @@ generate_changelog() {
     while IFS='|' read -r hash subject author date; do
         [[ -z "$hash" ]] && continue
         
-        ((commit_count++))
+        commit_count=$((commit_count + 1))
         
         # Skip merge commits
         if echo "$subject" | grep -qE "^Merge (branch|pull request|remote-tracking branch)"; then

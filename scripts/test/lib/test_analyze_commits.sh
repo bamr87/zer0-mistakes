@@ -107,3 +107,23 @@ tmp=$(mktemp -d)
 ) && assert_true "true" "Logs are written to stderr" \
    || assert_true "false" "Logs are written to stderr"
 rm -rf "$tmp"
+
+echo -e "\nTesting safety against ((var++)) + set -e crash on bash 5.x..."
+
+# Regression test: in bash 5.x, ((var++)) when var is 0 returns exit code 1,
+# which under `set -euo pipefail` (used by both the analyzer and the CI workflow
+# step that calls it) terminates the script silently. The fix is to use
+# var=$((var + 1)) which always returns 0. This static check ensures we never
+# reintroduce the ((var++)) pattern in the release-path scripts.
+if grep -qE '\(\([a-zA-Z_][a-zA-Z0-9_]*\+\+\)\)' "$ANALYZER"; then
+    assert_true "false" "analyze-commits is free of ((var++)) post-increments"
+else
+    assert_true "true"  "analyze-commits is free of ((var++)) post-increments"
+fi
+
+CHANGELOG_LIB="$(cd "$SCRIPT_DIR/../../lib" && pwd)/changelog.sh"
+if grep -qE '\(\([a-zA-Z_][a-zA-Z0-9_]*\+\+\)\)' "$CHANGELOG_LIB"; then
+    assert_true "false" "changelog.sh is free of ((var++)) post-increments"
+else
+    assert_true "true"  "changelog.sh is free of ((var++)) post-increments"
+fi
