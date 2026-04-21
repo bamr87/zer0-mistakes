@@ -1,32 +1,12 @@
 # Changelog
 
-## [Unreleased]
+## [1.0.0] - 2026-04-20
 
-### Fixed
-- **Versioning automation no longer silently swallows analyzer crashes.** `scripts/utils/analyze-commits` called `log_info` / `log_warning` / `log_debug` / `log_error` helpers that were never defined in `scripts/lib/common.sh`, causing the script to exit 127 with empty stdout. The version-bump workflow then fell back to `patch` via `2>/dev/null || echo "patch"`, which is exactly what shipped v0.22.22 instead of the intended v1.0.0 for the breaking-change installer rewrite (PR #76). The analyzer now defines stderr-only logging helpers, and the workflow refuses to publish on analyzer failure or invalid output.
-- **Conventional Commits `!` breaking-change marker is now recognised.** `feat!:`, `fix(scope)!:`, and `refactor(api)!:` correctly trigger a major bump in both the version analyzer and changelog categoriser. Previously only the long-form `BREAKING CHANGE:` footer was detected.
-- **Scoped types are recognised everywhere.** `feat(auth):`, `fix(api):`, `chore(deps):`, etc. are now properly classified by `analyze-commits` and grouped correctly in `changelog.sh`.
+First stable major release. Consolidates the breaking-change installer rewrite
+(shipped in error as v0.22.22 due to a silent bug in the version analyzer) and
+the fix that restored the release automation.
 
-### Changed
-- `scripts/utils/analyze-commits` now guarantees that **only** the bump type (`patch|minor|major|none`) is written to stdout. All progress and debug output is sent to stderr, so callers can safely use `BUMP=$(./analyze-commits ...)`.
-- `.github/workflows/version-bump.yml` streams the analyzer's stderr into a collapsible job-log group and validates the returned bump type, failing the run with an annotated error if the analyzer crashes or returns garbage.
-
-### Added
-- New unit-test file `scripts/test/lib/test_analyze_commits.sh` (15 assertions) covering: scoped conventional types, `!` breaking-change marker, `BREAKING CHANGE` / `BREAKING-CHANGE` footers, and stdout/stderr separation. Wired into `scripts/test/lib/run_tests.sh`.
-
-## [0.22.22] - 2026-04-21
-
-### Changed
-- Version bump: patch release
-
-### Commits in this release
-- 36cd015 feat(installer)!: modular installer + AI + deploy targets + test matrix (#76)
-- 555bead docs(readme): add AI-native branding and GitHub Actions automation section
-
-
-## [Unreleased — targeting 1.0.0]
-
-### ⚠️ Breaking changes (1.0.0 prep)
+### ⚠️ Breaking changes
 
 - **Modular installer.** The 2,400-line monolithic `install.sh` is decomposed into a CLI dispatcher (`scripts/bin/install`) backed by focused library modules (`scripts/lib/install/*.sh`) and declarative YAML profiles (`templates/profiles/*.yml`). The legacy `curl | bash` one-liner still works — it bootstraps the same pipeline.
 - **Legacy mode flags deprecated.** `--full`, `--minimal`, `--fork`, `--remote`, `--github` continue to work in 1.0.x with a one-line deprecation warning. They map 1:1 to `install init --profile <name>`. Targeted removal: 2.0.
@@ -35,7 +15,9 @@
 
 See [`docs/installation/migration-from-0.x.md`](docs/installation/migration-from-0.x.md) for the full flag-by-flag mapping.
 
-### Added (Phases 1-7 of the installer refactor)
+### Added
+
+#### Modular installer (Phases 1-7 of the refactor)
 
 - **`scripts/bin/install`** — canonical CLI with subcommands: `init`, `wizard [--ai]`, `agents`, `deploy`, `doctor [--ai] [--quiet] [--json]`, `diagnose [--ai]`, `upgrade`, `list-profiles`, `list-targets`, `version`, `help`.
 - **`scripts/lib/install/`** — focused modules: `core`, `platform`, `template`, `fs`, `config`, `pages`, `profile`, `wizard_interactive`, `doctor`, `upgrade`, `agents`, `ai/{openai,wizard,diagnose,suggest}`, `deploy/{registry,github-pages,azure-swa,docker-prod}`. All bash 3.2 compatible.
@@ -48,26 +30,39 @@ See [`docs/installation/migration-from-0.x.md`](docs/installation/migration-from
 - **`install doctor`** — platform/tooling/site/AI health check with PASS/WARN/FAIL counters, `--quiet` and `--json` modes. Used as preflight in `install init` (opt out with `--skip-doctor`).
 - **`install upgrade`** — idempotent in-place upgrade tracked via `.zer0-installed`. `--from`, `--force`, `--dry-run`, `--auto-accept`. Refreshes agents and checks deploy-workflow drift.
 - **`docs/installation/`** — full doc tree: `index`, `architecture`, `profiles`, `deploy-targets`, `ai-features`, `migration-from-0.x`, `customization`.
-- **`.github/instructions/install.instructions.md`** — agent guidance for installer code (`applyTo: scripts/lib/install/**, scripts/bin/install, install.sh, templates/{profiles,deploy,agents,ai}/**`).
+- **`.github/instructions/install.instructions.md`** — agent guidance for installer code.
 - **`.github/workflows/doctor.yml`** — CI matrix (ubuntu-latest, macos-latest) running `install doctor --json` on every push/PR touching installer code.
-- **`.github/workflows/install-matrix.yml`** — full installer e2e matrix (ubuntu-latest + macos-latest × ruby 2.7/3.0/3.2) plus a `curl|bash` bootstrap smoke job. Runs on installer-touching PRs, weekly drift schedule, and `workflow_dispatch`.
-- **Installer e2e suites** under `test/`:
-  - `test_install_profiles.sh` — every profile produces its expected file tree
-  - `test_install_deploy.sh` — every deploy target writes valid workflow YAML / Dockerfile
-  - `test_install_ai_mock.sh` — `doctor --ai` and `diagnose` survive without `OPENAI_API_KEY`
-  - `test_install_legacy_flags.sh` — `install.sh --minimal` / `--full` still produce expected layouts
-  - `test_install_idempotency.sh` — re-running install is safe; `_config.yml` stays parseable; backup creep guarded
-- **`scripts/bin/test install`** — new test-suite group that executes all `test/test_install_*.sh` files.
+- **`.github/workflows/install-matrix.yml`** — full installer e2e matrix (ubuntu-latest + macos-latest × ruby 2.7/3.0/3.2) plus a `curl|bash` bootstrap smoke job.
+- **Installer e2e suites** under `test/`: `test_install_profiles.sh`, `test_install_deploy.sh`, `test_install_ai_mock.sh`, `test_install_legacy_flags.sh`, `test_install_idempotency.sh`.
+- **`scripts/bin/test install`** — new test-suite group that executes all installer e2e tests.
+
+#### Versioning & release automation (new in 1.0.0)
+
+- New unit-test file `scripts/test/lib/test_analyze_commits.sh` (15 assertions) covering: scoped conventional types, `!` breaking-change marker, `BREAKING CHANGE` / `BREAKING-CHANGE` footers, and stdout/stderr separation. Wired into `scripts/test/lib/run_tests.sh`.
 
 ### Fixed
 
+- **Versioning automation no longer silently swallows analyzer crashes.** `scripts/utils/analyze-commits` called `log_info` / `log_warning` / `log_debug` / `log_error` helpers that were never defined in `scripts/lib/common.sh`, causing the script to exit 127 with empty stdout. The version-bump workflow then fell back to `patch` via `2>/dev/null || echo "patch"`, which is exactly what shipped v0.22.22 instead of the intended v1.0.0 for the breaking-change installer rewrite (PR #76). The analyzer now defines stderr-only logging helpers, and the workflow refuses to publish on analyzer failure or invalid output.
+- **Conventional Commits `!` breaking-change marker is now recognised.** `feat!:`, `fix(scope)!:`, and `refactor(api)!:` correctly trigger a major bump in both the version analyzer and changelog categoriser. Previously only the long-form `BREAKING CHANGE:` footer was detected.
+- **Scoped types are recognised everywhere.** `feat(auth):`, `fix(api):`, `chore(deps):`, etc. are now properly classified by `analyze-commits` and grouped correctly in `changelog.sh`.
 - `install.sh` — `gh_args[@]: unbound variable` crash when invoking the github profile with no fork environment variables set (`set -u` + empty array). Guarded with `${gh_args[@]+"${gh_args[@]}"}`.
 
 ### Changed
 
+- `scripts/utils/analyze-commits` now guarantees that **only** the bump type (`patch|minor|major|none`) is written to stdout. All progress and debug output is sent to stderr, so callers can safely use `BUMP=$(./analyze-commits ...)`.
+- `.github/workflows/version-bump.yml` streams the analyzer's stderr into a collapsible job-log group and validates the returned bump type, failing the run with an annotated error if the analyzer crashes or returns garbage.
 - `README.md` Installation Methods section now references the modular CLI alongside the legacy one-liner.
 - `docs/FORKING.md` includes an `install init --profile fork` flow alongside the standalone `fork-cleanup.sh` script.
 - `AGENTS.md` instruction map adds the new install instructions row.
+
+## [0.22.22] - 2026-04-21
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 36cd015 feat(installer)!: modular installer + AI + deploy targets + test matrix (#76)
+- 555bead docs(readme): add AI-native branding and GitHub Actions automation section
 
 ## [0.22.21] - 2026-04-19
 
