@@ -44,7 +44,13 @@ test_idempotent_minimal() {
     # _config.yml must still exist & parse
     assert_file_exists "$ws/_config.yml" "Config gone after second install" || return 1
 
-    if command -v python3 >/dev/null 2>&1; then
+    # Prefer Ruby (always present in a Jekyll project; YAML is in stdlib).
+    if command -v ruby >/dev/null 2>&1; then
+        ruby -ryaml -e "YAML.load_file(ARGV[0])" "$ws/_config.yml" 2>/dev/null || {
+            test_log_error "_config.yml became invalid after second install"
+            return 1
+        }
+    elif command -v python3 >/dev/null 2>&1 && python3 -c 'import yaml' >/dev/null 2>&1; then
         python3 -c "import yaml,sys; yaml.safe_load(open(sys.argv[1]))" "$ws/_config.yml" 2>/dev/null || {
             test_log_error "_config.yml became invalid after second install"
             return 1

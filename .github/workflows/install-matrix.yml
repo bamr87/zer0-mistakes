@@ -41,11 +41,9 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        ruby: ['3.0', '3.2']
-        include:
-          # Ubuntu also gets the legacy floor we still claim to support.
-          - os: ubuntu-latest
-            ruby: '2.7'
+        # Ruby 3.2+ required: Bundler 2.7.x (pinned in Gemfile.lock) needs >= 3.2.0.
+        # Ruby 2.7 / 3.0 / 3.1 are EOL upstream; project floor moved with Bundler.
+        ruby: ['3.2', '3.3']
 
     steps:
       - uses: actions/checkout@v4

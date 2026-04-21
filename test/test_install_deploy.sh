@@ -39,10 +39,17 @@ deploy_target() {
 
 assert_yaml_parses() {
     local file="$1"
-    if ! command -v python3 >/dev/null 2>&1; then
-        return 0  # skip if no python
+    # Prefer Ruby (always present in a Jekyll project; YAML is in stdlib).
+    if command -v ruby >/dev/null 2>&1; then
+        ruby -ryaml -e "YAML.load_file(ARGV[0])" "$file" 2>/dev/null
+        return $?
     fi
-    python3 -c "import sys, yaml; yaml.safe_load(open(sys.argv[1]))" "$file" 2>/dev/null
+    # Fall back to python3 + PyYAML if available; otherwise skip the check.
+    if command -v python3 >/dev/null 2>&1 && python3 -c 'import yaml' >/dev/null 2>&1; then
+        python3 -c "import sys, yaml; yaml.safe_load(open(sys.argv[1]))" "$file" 2>/dev/null
+        return $?
+    fi
+    return 0
 }
 
 test_github_pages() {
