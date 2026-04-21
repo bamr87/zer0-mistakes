@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.1.0] - 2026-04-21
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 3d91006 fix(release): replace ((var++)) with var=$((var + 1)) in release path
+- d33e5e6 feat(intro): refocus Copilot Agent prompts on frontend/CMS workflows (#74)
+
+
 ## [Unreleased]
 
 ### Fixed
