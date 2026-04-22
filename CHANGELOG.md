@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.2.1] - 2026-04-22
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 5c04e62 fix(footer,welcome,info): eliminate broken links on bare-minimum sites
+
+
 ## [1.2.0] - 2026-04-22
 
 ### Changed
