@@ -108,35 +108,51 @@
           </div>
         </div>
 
-        <!-- Admin Quick Links -->
+        <!-- Admin Quick Links — only render links to pages that actually exist
+             in the build (prevents 404s on bare-minimum / remote-theme sites
+             that haven't created the admin pages). -->
+        {% assign _cfg_page = site.html_pages | where: "url", "/about/config/" | first %}
+        {% assign _theme_page = site.html_pages | where: "url", "/about/settings/theme/" | first %}
+        {% assign _nav_page = site.html_pages | where: "url", "/about/settings/navigation/" | first %}
+        {% if _cfg_page or _theme_page or _nav_page %}
         <div class="mb-3">
           <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
             <i class="bi bi-speedometer2 me-1"></i>Admin Dashboard
           </h6>
           <div class="list-group list-group-flush small">
+            {% if _cfg_page %}
             <a href="{{ '/about/config/' | relative_url }}" class="list-group-item list-group-item-action d-flex align-items-center px-0">
               <i class="bi bi-gear me-2 text-body-secondary"></i>Configuration
             </a>
+            {% endif %}
+            {% if _theme_page %}
             <a href="{{ '/about/settings/theme/' | relative_url }}" class="list-group-item list-group-item-action d-flex align-items-center px-0">
               <i class="bi bi-palette me-2 text-body-secondary"></i>Theme Customizer
             </a>
+            {% endif %}
+            {% if _nav_page %}
             <a href="{{ '/about/settings/navigation/' | relative_url }}" class="list-group-item list-group-item-action d-flex align-items-center px-0">
               <i class="bi bi-signpost-2 me-2 text-body-secondary"></i>Navigation Editor
             </a>
+            {% endif %}
           </div>
         </div>
+        {% endif %}
       </div>
       
       <!-- Environment Tab -->
       <div class="tab-pane fade" id="environment-pane" role="tabpanel" aria-labelledby="environment-tab" tabindex="0">
         {% include components/env-switcher.html %}
 
-        <!-- Admin Link -->
+        <!-- Admin Link — only when target page exists -->
+        {% assign _env_page = site.html_pages | where: "url", "/about/settings/environment/" | first %}
+        {% if _env_page %}
         <div class="mt-4 pt-3 border-top">
           <a href="{{ '/about/settings/environment/' | relative_url }}" class="btn btn-outline-secondary btn-sm w-100">
             <i class="bi bi-box-arrow-up-right me-1"></i>Full Environment &amp; Build Info
           </a>
         </div>
+        {% endif %}
       </div>
       
       <!-- Developer Tab -->

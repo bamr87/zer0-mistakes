@@ -59,7 +59,11 @@ Configuration: Uses site.posthog settings from _config.yml
         </p>
         <p class="mb-2 mb-lg-0 small text-white-50">
           This website uses cookies and similar technologies to enhance your browsing experience, analyze traffic, and provide personalized content.
-          <a href="{{ '/privacy-policy/' | relative_url }}" class="text-white text-decoration-underline">Learn more in our Privacy Policy</a>.
+          {% assign _pp = site.html_pages | where: "url", "/privacy-policy/" | first %}
+          {% unless _pp %}{% assign _pp = site.html_pages | where: "url", "/privacy-policy" | first %}{% endunless %}
+          {% if _pp or site.privacy_policy_url %}
+            <a href="{{ site.privacy_policy_url | default: '/privacy-policy/' | relative_url }}" class="text-white text-decoration-underline">Learn more in our Privacy Policy</a>.
+          {% endif %}
         </p>
       </div>
       <div class="col-12 col-lg-4">

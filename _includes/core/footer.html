@@ -80,16 +80,33 @@
             {% if site.email %}<p class="mb-0"><a href="mailto:{{ site.email }}" class="text-light text-decoration-none">{{ site.email }}</a></p>{% endif %}
           </div>
 
-          <!-- Quick Links -->
+          <!-- Quick Links
+               Resolution order:
+                 1. site.footer_quick_links  (array of {label, url}) — explicit override
+                 2. Auto-detection: only render links whose target pages
+                    actually exist in the build. Prevents 404s on bare-minimum
+                    sites that haven't created /about/, /services/, etc. -->
           <div class="col-12 col-md-6 col-lg-3 mb-3">
             <h5 class="text-uppercase mb-3">Quick Links</h5>
             <ul class="list-unstyled" aria-label="Footer quick links">
-              <li><a href="{{ '/' | relative_url }}" class="text-light text-decoration-none">Home</a></li>
-              <li><a href="{{ '/about/' | relative_url }}" class="text-light text-decoration-none">About</a></li>
-              <li><a href="{{ '/services/' | relative_url }}" class="text-light text-decoration-none">Services</a></li>
-              <li><a href="{{ '/news/' | relative_url }}" class="text-light text-decoration-none">News</a></li>
-              <li><a href="{{ '/contact/' | relative_url }}" class="text-light text-decoration-none">Contact</a></li>
-              <li><a href="{{ '/sitemap.xml' | relative_url }}" class="text-light text-decoration-none">Sitemap (XML)</a></li>
+              {% if site.footer_quick_links %}
+                {% for link in site.footer_quick_links %}
+                  <li><a href="{{ link.url | relative_url }}" class="text-light text-decoration-none">{{ link.label }}</a></li>
+                {% endfor %}
+              {% else %}
+                <li><a href="{{ '/' | relative_url }}" class="text-light text-decoration-none">Home</a></li>
+                {% assign _candidate_links = "About,/about/|Services,/services/|News,/news/|Contact,/contact/" | split: "|" %}
+                {% for entry in _candidate_links %}
+                  {% assign _parts = entry | split: "," %}
+                  {% assign _label = _parts[0] %}
+                  {% assign _url   = _parts[1] %}
+                  {% assign _page  = site.html_pages | where: "url", _url | first %}
+                  {% if _page %}
+                    <li><a href="{{ _url | relative_url }}" class="text-light text-decoration-none">{{ _label }}</a></li>
+                  {% endif %}
+                {% endfor %}
+                <li><a href="{{ '/sitemap.xml' | relative_url }}" class="text-light text-decoration-none">Sitemap (XML)</a></li>
+              {% endif %}
             </ul>
           </div>
 
@@ -151,8 +168,17 @@
           </div>
           <div class="col-md-4 text-md-end">
             <ul class="list-inline mb-0">
-              <li class="list-inline-item"><a href="{{ '/privacy-policy' | relative_url }}" class="text-light text-decoration-none">Privacy Policy</a></li>
-              <li class="list-inline-item"><a href="{{ '/terms-of-service' | relative_url }}" class="text-light text-decoration-none">Terms of Service</a></li>
+              {% comment %} Only render policy links whose pages exist (or that are explicitly configured). {% endcomment %}
+              {% assign _privacy = site.html_pages | where: "url", "/privacy-policy/" | first %}
+              {% unless _privacy %}{% assign _privacy = site.html_pages | where: "url", "/privacy-policy" | first %}{% endunless %}
+              {% if _privacy or site.privacy_policy_url %}
+                <li class="list-inline-item"><a href="{{ site.privacy_policy_url | default: '/privacy-policy' | relative_url }}" class="text-light text-decoration-none">Privacy Policy</a></li>
+              {% endif %}
+              {% assign _terms = site.html_pages | where: "url", "/terms-of-service/" | first %}
+              {% unless _terms %}{% assign _terms = site.html_pages | where: "url", "/terms-of-service" | first %}{% endunless %}
+              {% if _terms or site.terms_of_service_url %}
+                <li class="list-inline-item"><a href="{{ site.terms_of_service_url | default: '/terms-of-service' | relative_url }}" class="text-light text-decoration-none">Terms of Service</a></li>
+              {% endif %}
               <li class="list-inline-item">
                 <a href="#" class="text-light text-decoration-none" data-bs-toggle="modal" data-bs-target="#cookieSettingsModal">
                   Cookie Preferences

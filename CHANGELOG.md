@@ -37,6 +37,37 @@
   `Your Site Title`, `My Awesome Site`, `Welcome`, `Untitled`, or empty).
 
 ### Fixed
+- **Footer Quick Links no longer 404 on bare-minimum sites.**
+  `_includes/core/footer.html` previously hard-coded links to
+  `/about/`, `/services/`, `/news/`, `/contact/`, `/privacy-policy`, and
+  `/terms-of-service` — none of which exist in a 3-file remote-theme
+  consumer. Quick Links are now resolved in this order:
+  1. `site.footer_quick_links` (array of `{label, url}`) — explicit override
+  2. Auto-detection: each candidate link only renders if the target page
+     exists in `site.html_pages`
+  3. Fallback to `Home` + `Sitemap (XML)` only.
+  Privacy Policy / Terms of Service links use the same existence check and
+  optionally read from `site.privacy_policy_url` / `site.terms_of_service_url`.
+- **Welcome layout external links now point to existing README anchors.**
+  The "Next steps" cards in `_layouts/welcome.html` linked to
+  `#content-creation` and `#customisation`, which don't exist in the theme
+  README. They now point to `README.md#-quick-start` and
+  `README.md#-key-features` respectively.
+- **Theme info admin links are conditional.**
+  `_includes/components/info-section.html` previously rendered Admin
+  Dashboard links to `/about/config/`, `/about/settings/theme/`,
+  `/about/settings/navigation/`, and `/about/settings/environment/`
+  unconditionally — guaranteed 404s on bare-minimum sites. The links and
+  surrounding section now only render when the corresponding page exists.
+- **Source Code shortcuts skip GitHub buttons when repository is unknown.**
+  `_includes/components/dev-shortcuts.html` rendered `https://github.com//blob//`
+  URLs when `site.repository` and `site.branch` were empty (typical on bare
+  consumer sites). It now hides the GitHub-based buttons and shows a hint
+  to set `repository: USER/REPO` in `_config.yml`.
+- **Cookie-consent privacy link is conditional.** The "Learn more in our
+  Privacy Policy" anchor in `_includes/components/cookie-consent.html` only
+  renders if a `/privacy-policy/` page exists or `site.privacy_policy_url` is
+  configured.
 - **Setup banner link.** `_includes/components/setup-banner.html` no longer
   points at the non-existent `/404.html`; it now links to
   `/#setup-wizard`, which is provided by the new welcome layout.
