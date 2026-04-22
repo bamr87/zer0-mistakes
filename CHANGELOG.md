@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.2.0] - 2026-04-22
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 4bd3e36 feat(welcome): add bare-minimum 3-file remote-theme starter
+
+
 ## [1.1.0] - 2026-04-21
 
 ### Changed
