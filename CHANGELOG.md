@@ -12,7 +12,25 @@
 
 ## [Unreleased]
 
+### Added
+- **Bare-minimum 3-file remote-theme starter.** Consumers can now publish a
+  fully styled site to GitHub Pages with only `_config.yml`, `Gemfile`, and
+  `index.md` — no installer required. The new `_layouts/welcome.html` shipped
+  by the theme detects unconfigured sites and renders an onboarding screen
+  with a hero checklist, a 3-step starter accordion, and the embedded
+  `_includes/setup/wizard.html` that generates a personalised `_config.yml`
+  on the fly. README gained a "Bare-Minimum Starter" section documenting the
+  pattern.
+- **Smarter setup detection** in `_includes/components/setup-check.html`.
+  When `site_configured` is not set, the heuristic now flags a site as
+  unconfigured if it has no owner (`founder`/`author`/`email`) or its title
+  matches a known placeholder (`zer0-mistakes`, `zer0-pages-remote`,
+  `Your Site Title`, `My Awesome Site`, `Welcome`, `Untitled`, or empty).
+
 ### Fixed
+- **Setup banner link.** `_includes/components/setup-banner.html` no longer
+  points at the non-existent `/404.html`; it now links to
+  `/#setup-wizard`, which is provided by the new welcome layout.
 - **Version-bump workflow no longer crashes on bash 5.x runners.** `scripts/utils/analyze-commits` (and `scripts/lib/changelog.sh`, `scripts/lib/migrate.sh`) used the `((var++))` post-increment idiom. On bash 5.x, when `var` is 0 the expression evaluates to 0 → exit code 1 → `set -euo pipefail` terminates the script silently. macOS bash 3.2 was more forgiving, so the bug only surfaced in CI. Replaced all release-path sites with `var=$((var + 1))`, which always returns 0. Added a static regression check to the unit tests so the pattern can't return.
 
 ## [1.0.0] - 2026-04-20

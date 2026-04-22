@@ -158,25 +158,73 @@ docker-compose up
 # 🌐 Open http://localhost:4000
 ```
 
+### Bare-Minimum Starter (3 files, zero install)
+
+Don't want to run the installer? You can publish a working site to GitHub
+Pages with **just three files** in your repo. The remote theme provides every
+layout, style, and even an in-browser configuration wizard.
+
+```text
+my-site/
+├── _config.yml      ← site configuration (remote_theme: bamr87/zer0-mistakes)
+├── Gemfile          ← github-pages + jekyll-remote-theme
+└── index.md         ← layout: welcome
+```
+
+`_config.yml`:
+
+```yaml
+title:        "My Site"
+description:  "A site rendered by the zer0-mistakes remote theme."
+remote_theme: bamr87/zer0-mistakes
+plugins:
+  - jekyll-remote-theme
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+site_configured: false   # show the welcome wizard until you flip this to true
+```
+
+`Gemfile`:
+
+```ruby
+source "https://rubygems.org"
+gem "github-pages", group: :jekyll_plugins
+gem "jekyll-remote-theme"
+gem "webrick", "~> 1.7"
+```
+
+`index.md`:
+
+```markdown
+---
+layout: welcome
+title: Home
+---
+
+# Welcome to my site
+```
+
+Push to a GitHub Pages–enabled repository and visit your site. Until you set
+`site_configured: true`, the home page renders the **welcome layout** —
+a hero card listing your three files, a 3-step starter accordion, and a full
+in-browser wizard that generates a personalised `_config.yml` you can
+download. Once you flip the flag (or fill in `title`/`founder`/`email`), the
+welcome screen is replaced by your own content.
+
 ```mermaid
 sequenceDiagram
     participant You
-    participant InstallScript as Install Script
-    participant Docker
-    participant Browser
+    participant GitHubPages as GitHub Pages
+    participant RemoteTheme as bamr87/zer0-mistakes
 
-    You->>InstallScript: curl ... | bash
-    InstallScript->>InstallScript: Detect platform
-    InstallScript->>InstallScript: Download theme files
-    InstallScript->>InstallScript: Configure Docker
-    InstallScript-->>You: ✅ Ready
-
-    You->>Docker: docker-compose up
-    Docker->>Docker: Build Jekyll container
-    Docker->>Docker: Install dependencies
-    Docker-->>Browser: Serve on :4000
-
-    Browser-->>You: 🎉 Live site
+    You->>GitHubPages: push 3 files
+    GitHubPages->>RemoteTheme: fetch layouts/includes/assets
+    RemoteTheme-->>GitHubPages: welcome.html + setup wizard
+    GitHubPages-->>You: 🎉 onboarding screen at /
+    You->>You: use wizard to generate _config.yml
+    You->>GitHubPages: replace _config.yml + set site_configured: true
+    GitHubPages-->>You: 🚀 your customised site
 ```
 
 ---
