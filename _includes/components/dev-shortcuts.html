@@ -33,6 +33,11 @@
 <div class="dev-shortcuts">
   <div class="d-flex flex-column gap-2">
 
+    {% comment %} Skip all GitHub-based shortcuts on bare/unconfigured sites where
+       site.repository or site.branch are empty (otherwise we render
+       https://github.com//blob//path → 404). {% endcomment %}
+    {% if site.repository and site.branch %}
+
     <!-- Button Group (section title is the parent h6 in info-section.html) -->
     <div class="btn-group-vertical" role="group" aria-label="Source code shortcuts">
 
@@ -108,6 +113,14 @@
       </a>
 
     </div>
+
+    {% else %}
+      <p class="small text-body-secondary mb-0">
+        <i class="bi bi-info-circle me-1"></i>
+        Set <code>repository: USER/REPO</code> in your <code>_config.yml</code>
+        to enable source-code shortcuts.
+      </p>
+    {% endif %}
 
   </div>
 </div>

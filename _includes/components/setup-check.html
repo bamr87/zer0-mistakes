@@ -48,6 +48,37 @@
 {% endcomment %}
 {% assign site_needs_setup = false %}
 
+{% comment %} Explicit opt-out (configured sites set this to true). {% endcomment %}
 {% if site.site_configured == false %}
   {% assign site_needs_setup = true %}
 {% endif %}
+
+{% comment %}
+  ── Heuristic detection (when site_configured is not set explicitly) ──
+  Treat the site as "needs setup" if any of these are true:
+    • No founder/author/email configured
+    • Title is empty or matches a known placeholder
+    • The site has no content collections beyond the defaults
+{% endcomment %}
+{% unless site.site_configured %}
+  {% assign _has_owner = false %}
+  {% if site.founder or site.author or site.email %}
+    {% assign _has_owner = true %}
+  {% endif %}
+
+  {% assign _placeholder_titles = "zer0-mistakes,zer0-pages-remote,Your Site Title,My Awesome Site,Welcome,Untitled" | split: "," %}
+  {% assign _title_is_placeholder = false %}
+  {% if site.title == nil or site.title == "" %}
+    {% assign _title_is_placeholder = true %}
+  {% else %}
+    {% for _t in _placeholder_titles %}
+      {% if site.title == _t %}
+        {% assign _title_is_placeholder = true %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {% if _has_owner == false or _title_is_placeholder %}
+    {% assign site_needs_setup = true %}
+  {% endif %}
+{% endunless %}

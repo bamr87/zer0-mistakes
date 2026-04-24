@@ -1,0 +1,27 @@
+# jekyll-theme-zer0 install profile: fork
+#
+# Fork-friendly install. Resets site identity (title, github_user) and
+# strips creator-specific example content so a forked clone immediately
+# feels like the new owner's project.
+name: fork
+display_name: Fork
+description: Fork-friendly install. Resets site identity, removes creator content, seeds a welcome post.
+legacy_flag: --fork
+recommended_for: forking the theme repo to start your own site
+includes:
+  - Full profile output
+  - Reset _config.yml (title, github_user)
+  - Welcome post in pages/_posts/
+  - Gemfile with platform-specific sections
+excludes:
+  - Creator's example posts
+  - Creator's About page content
+deploy_targets:
+  - github-pages
+  - azure-swa
+  - docker-prod
+
+# Phase 5 — AI agent guidance to install by default.
+# Override with: install agents [target] [--cursor|--claude|--aider|--all]
+ai_features:
+  agent_files: [copilot, claude]

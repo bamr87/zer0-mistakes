@@ -126,6 +126,7 @@ main() {
     source "$TEST_DIR/test_git.sh"
     source "$TEST_DIR/test_changelog.sh"
     source "$TEST_DIR/test_gem.sh"
+    source "$TEST_DIR/test_analyze_commits.sh"
     
     # Summary
     echo -e "\n${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"

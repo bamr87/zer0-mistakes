@@ -15,245 +15,337 @@
 
 set -euo pipefail  # Exit on error, undefined vars, pipe failures
 
-# Color codes for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-# Logging functions
-log_info() {
-    echo -e "${BLUE}[INFO]${NC} $1"
-}
-
-log_success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
-}
-
-log_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
-}
-
-log_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
-
 # =========================================================================
-# Template Rendering Functions
+# Bootstrap script directory + library loading
+# =========================================================================
+# install.sh delegates platform detection, template rendering, file copy,
+# and configuration loading to focused modules under
+# scripts/lib/install/. When templates aren't bundled (curl|bash remote
+# install), the libraries fall back to embedded defaults.
 # =========================================================================
 
-# Render a template file, replacing {{VAR_NAME}} placeholders
-# Usage: render_template "template_file" ["output_file"]
-render_template() {
-    local template_file="$1"
-    local output_file="${2:-}"
-    
-    if [[ ! -f "$template_file" ]]; then
-        return 1
-    fi
-    
-    local content
-    content=$(cat "$template_file")
-    
-    # Replace all known placeholders
-    content=$(echo "$content" | sed \
-        -e "s|{{THEME_NAME}}|${THEME_NAME}|g" \
-        -e "s|{{THEME_GEM_NAME}}|${THEME_GEM_NAME}|g" \
-        -e "s|{{THEME_DISPLAY_NAME}}|${THEME_DISPLAY_NAME}|g" \
-        -e "s|{{GITHUB_USER}}|${FORK_GITHUB_USER:-$GITHUB_USER}|g" \
-        -e "s|{{GITHUB_REPO}}|${GITHUB_REPO}|g" \
-        -e "s|{{GITHUB_URL}}|${GITHUB_URL}|g" \
-        -e "s|{{GITHUB_RAW_URL}}|${GITHUB_RAW_URL}|g" \
-        -e "s|{{DEFAULT_PORT}}|${DEFAULT_PORT}|g" \
-        -e "s|{{DEFAULT_URL}}|${DEFAULT_URL}|g" \
-        -e "s|{{JEKYLL_VERSION}}|${JEKYLL_VERSION}|g" \
-        -e "s|{{FFI_VERSION}}|${FFI_VERSION}|g" \
-        -e "s|{{WEBRICK_VERSION}}|${WEBRICK_VERSION}|g" \
-        -e "s|{{COMMONMARKER_VERSION}}|${COMMONMARKER_VERSION}|g" \
-        -e "s|{{GITHUB_PAGES_MAX_VERSION}}|${GITHUB_PAGES_MAX_VERSION:-232}|g" \
-        -e "s|{{COMMONMARKER_MACOS_VERSION}}|${COMMONMARKER_MACOS_VERSION:-~> 0.23}|g" \
-        -e "s|{{RUBY_MIN_VERSION_MACOS}}|${RUBY_MIN_VERSION_MACOS:-2.6.0}|g" \
-        -e "s|{{SITE_TITLE}}|${FORK_SITE_NAME:-${SITE_TITLE:-My Jekyll Site}}|g" \
-        -e "s|{{SITE_DESCRIPTION}}|${SITE_DESCRIPTION:-A Jekyll site built with ${THEME_NAME}}|g" \
-        -e "s|{{SITE_AUTHOR}}|${FORK_AUTHOR:-${SITE_AUTHOR:-Site Author}}|g" \
-        -e "s|{{SITE_EMAIL}}|${FORK_EMAIL:-${SITE_EMAIL:-your@email.com}}|g" \
-        -e "s|{{CURRENT_DATE}}|$(date +%Y-%m-%d)|g" \
-        -e "s|{{CURRENT_YEAR}}|$(date +%Y)|g" \
-        -e "s|{{REPOSITORY_NAME}}|${REPOSITORY_NAME:-$THEME_NAME}|g" \
-        -e "s|{{RAW_GITHUB_URL}}|${GITHUB_RAW_URL}|g" \
-        -e "s|{{FORK_GITHUB_USER}}|${FORK_GITHUB_USER:-${GITHUB_USER}}|g" \
-        -e "s|{{INSTALL_MODE}}|${INSTALL_MODE:-full}|g" \
-        -e "s|{{GITHUB_PAGES_URL}}|https://${FORK_GITHUB_USER:-${GITHUB_USER}}.github.io/${REPOSITORY_NAME:-$THEME_NAME}|g")
-    
-    if [[ -n "$output_file" ]]; then
-        mkdir -p "$(dirname "$output_file")"
-        echo "$content" > "$output_file"
-    else
-        echo "$content"
-    fi
-}
-
-# Create a file from template with automatic fallback to embedded content
-# Usage: create_from_template "template_path" "output_file" "fallback_content"
-create_from_template() {
-    local template_path="$1"
-    local output_file="$2"
-    local fallback_content="${3:-}"
-    
-    # Skip if output already exists
-    if [[ -f "$output_file" ]]; then
-        log_warning "$(basename "$output_file") already exists, skipping to preserve content"
-        return 0
-    fi
-    
-    # Try local template first
-    if [[ -n "$TEMPLATES_DIR" ]] && [[ -f "$TEMPLATES_DIR/$template_path" ]]; then
-        render_template "$TEMPLATES_DIR/$template_path" "$output_file"
-        log_info "Created $(basename "$output_file") from template"
-        return 0
-    fi
-    
-    # Try to fetch from GitHub for remote installs
-    if [[ "$REMOTE_INSTALL" == "true" ]]; then
-        local remote_url="${GITHUB_RAW_URL}/templates/$template_path"
-        local remote_content
-        if remote_content=$(curl -fsSL "$remote_url" 2>/dev/null); then
-            local temp_file
-            temp_file=$(mktemp)
-            echo "$remote_content" > "$temp_file"
-            render_template "$temp_file" "$output_file"
-            rm -f "$temp_file"
-            log_info "Created $(basename "$output_file") from remote template"
-            return 0
-        fi
-    fi
-    
-    # Use fallback content if provided
-    if [[ -n "$fallback_content" ]]; then
-        mkdir -p "$(dirname "$output_file")"
-        echo "$fallback_content" > "$output_file"
-        log_info "Created $(basename "$output_file") from fallback"
-        return 0
-    fi
-    
-    log_warning "Could not create $(basename "$output_file") (no template or fallback)"
-    return 1
-}
-
-# Check if templates are available
-templates_available() {
-    [[ -n "$TEMPLATES_DIR" ]] && [[ -d "$TEMPLATES_DIR" ]]
-}
-
-# =========================================================================
-# Platform / Ruby Detection (bash 3.2-compatible — no declare -A, no =~ captures)
-# =========================================================================
-
-# Returns: Darwin | Linux | CYGWIN | MINGW | unknown
-detect_os() {
-    uname -s 2>/dev/null || echo "unknown"
-}
-
-# Returns the ruby version string (e.g. "2.6.8"), or "none" if ruby is absent.
-detect_ruby_version() {
-    if ! command -v ruby >/dev/null 2>&1; then
-        echo "none"
-        return
-    fi
-    # ruby --version prints: ruby 2.6.8p205 (2021-07-07 ...) [platform]
-    # We want "2.6.8" — strip the trailing pNNN patch indicator via sed.
-    ruby --version 2>/dev/null | awk '{print $2}' | sed 's/p[0-9]*//' | sed 's/-.*//' | tr -d '\r'
-}
-
-# Returns 0 (true) if the current Ruby version is < 2.7.0, 1 (false) otherwise.
-# Uses awk so arithmetic is safe even with partial version strings (bash 3.2 compatible).
-ruby_version_lt_27() {
-    local ver
-    ver=$(detect_ruby_version)
-    [ "$ver" = "none" ] && return 1  # no ruby → don't apply macOS caps
-    awk -v ver="$ver" 'BEGIN {
-        n = split(ver, a, ".")
-        if (a[1]+0 == 2 && a[2]+0 < 7) exit 0
-        exit 1
-    }'
-}
-
-# Returns 0 (true) when running on macOS with system Ruby < 2.7.
-# This is the condition that triggers use of Gemfile.macos.template.
-needs_macos_gemfile() {
-    local os
-    os=$(detect_os)
-    [ "$os" = "Darwin" ] && ruby_version_lt_27
-}
-
-# =========================================================================
-
-# Configuration - moved after logging functions to avoid undefined function calls
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd 2>/dev/null || echo "$(pwd)")"
 SOURCE_DIR="$SCRIPT_DIR"
 TARGET_DIR=""
 TEMP_DIR=""
 TEMPLATES_DIR=""
 
-# Try to load configuration from templates/config/install.conf
-_load_install_config() {
-    local config_paths=(
-        "$SCRIPT_DIR/templates/config/install.conf"
-        "$SOURCE_DIR/templates/config/install.conf"
-    )
-    
-    for config_path in "${config_paths[@]}"; do
-        if [[ -f "$config_path" ]]; then
-            # shellcheck source=/dev/null
-            source "$config_path"
-            TEMPLATES_DIR="$(dirname "$(dirname "$config_path")")"
+# Source library modules when running from a checkout. Remote (curl|bash)
+# installs use the inlined fallbacks below.
+_INSTALL_LIB_DIR="$SCRIPT_DIR/scripts/lib/install"
+if [[ -d "$_INSTALL_LIB_DIR" ]]; then
+    # shellcheck source=scripts/lib/install/logging.sh
+    source "$_INSTALL_LIB_DIR/logging.sh"
+    # shellcheck source=scripts/lib/install/platform.sh
+    source "$_INSTALL_LIB_DIR/platform.sh"
+    # shellcheck source=scripts/lib/install/fs.sh
+    source "$_INSTALL_LIB_DIR/fs.sh"
+    # shellcheck source=scripts/lib/install/template.sh
+    source "$_INSTALL_LIB_DIR/template.sh"
+    # shellcheck source=scripts/lib/install/config.sh
+    source "$_INSTALL_LIB_DIR/config.sh"
+    # shellcheck source=scripts/lib/install/pages.sh
+    source "$_INSTALL_LIB_DIR/pages.sh"
+    # Use the lib loader (same behavior as the previous private function).
+    load_install_config "$SCRIPT_DIR" "$SOURCE_DIR" || true
+else
+    # ---------------------------------------------------------------------
+    # Inlined fallbacks — used only when scripts/lib/install/ is absent
+    # (e.g. running install.sh from a downloaded one-liner without the
+    # bundled libraries). Keep these IDENTICAL to the lib copies above.
+    # ---------------------------------------------------------------------
+    RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
+    BLUE='\033[0;34m'; NC='\033[0m'
+
+    log_info()    { echo -e "${BLUE}[INFO]${NC} $1"; }
+    log_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
+    log_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
+    log_error()   { echo -e "${RED}[ERROR]${NC} $1"; }
+
+    detect_os() { uname -s 2>/dev/null || echo "unknown"; }
+
+    detect_ruby_version() {
+        if ! command -v ruby >/dev/null 2>&1; then echo "none"; return; fi
+        ruby --version 2>/dev/null | awk '{print $2}' | sed 's/p[0-9]*//' | sed 's/-.*//' | tr -d '\r'
+    }
+
+    ruby_version_lt_27() {
+        local ver; ver=$(detect_ruby_version)
+        [ "$ver" = "none" ] && return 1
+        awk -v ver="$ver" 'BEGIN { n=split(ver,a,"."); if (a[1]+0==2 && a[2]+0<7) exit 0; exit 1 }'
+    }
+
+    needs_macos_gemfile() {
+        local os; os=$(detect_os)
+        [ "$os" = "Darwin" ] && ruby_version_lt_27
+    }
+
+    detect_platform() {
+        if [[ "${PLATFORM:-auto}" != "auto" ]]; then echo "$PLATFORM"; return; fi
+        if grep -qiE '(microsoft|wsl)' /proc/version 2>/dev/null; then echo "wsl"
+        elif [[ "$(uname -s)" == "Darwin" ]]; then echo "macos"
+        elif [[ "$(uname -s)" == "Linux" ]]; then echo "linux"
+        else echo "unknown"; fi
+    }
+
+    copy_file_with_backup() {
+        local src="$1" dest="$2"
+        local relative_path="${dest#${TARGET_DIR:-}/}"
+        mkdir -p "$(dirname "$dest")"
+        if [[ -f "$dest" ]]; then
+            local backup_file="${dest}.backup.$(date +%Y%m%d_%H%M%S)"
+            log_warning "File exists, creating backup: $relative_path -> ${backup_file##*/}"
+            cp "$dest" "$backup_file"
+        fi
+        cp "$src" "$dest"
+        log_info "Copied: $relative_path"
+    }
+
+    copy_directory_with_backup() {
+        local src="$1" dest="$2"
+        local relative_path="${dest#${TARGET_DIR:-}/}"
+        if [[ -d "$dest" ]]; then
+            local backup_dir="${dest}.backup.$(date +%Y%m%d_%H%M%S)"
+            log_warning "Directory exists, creating backup: $relative_path -> ${backup_dir##*/}"
+            cp -r "$dest" "$backup_dir"
+            rm -rf "$dest"
+        fi
+        cp -r "$src" "$dest"
+        log_info "Copied directory: $relative_path"
+    }
+
+    render_template() {
+        local template_file="$1" output_file="${2:-}"
+        [[ ! -f "$template_file" ]] && return 1
+        local content; content=$(cat "$template_file")
+        content=$(echo "$content" | sed \
+            -e "s|{{THEME_NAME}}|${THEME_NAME}|g" \
+            -e "s|{{THEME_GEM_NAME}}|${THEME_GEM_NAME}|g" \
+            -e "s|{{THEME_DISPLAY_NAME}}|${THEME_DISPLAY_NAME}|g" \
+            -e "s|{{GITHUB_USER}}|${FORK_GITHUB_USER:-$GITHUB_USER}|g" \
+            -e "s|{{GITHUB_REPO}}|${GITHUB_REPO}|g" \
+            -e "s|{{GITHUB_URL}}|${GITHUB_URL}|g" \
+            -e "s|{{GITHUB_RAW_URL}}|${GITHUB_RAW_URL}|g" \
+            -e "s|{{DEFAULT_PORT}}|${DEFAULT_PORT}|g" \
+            -e "s|{{DEFAULT_URL}}|${DEFAULT_URL}|g" \
+            -e "s|{{JEKYLL_VERSION}}|${JEKYLL_VERSION}|g" \
+            -e "s|{{FFI_VERSION}}|${FFI_VERSION}|g" \
+            -e "s|{{WEBRICK_VERSION}}|${WEBRICK_VERSION}|g" \
+            -e "s|{{COMMONMARKER_VERSION}}|${COMMONMARKER_VERSION}|g" \
+            -e "s|{{GITHUB_PAGES_MAX_VERSION}}|${GITHUB_PAGES_MAX_VERSION:-232}|g" \
+            -e "s|{{COMMONMARKER_MACOS_VERSION}}|${COMMONMARKER_MACOS_VERSION:-~> 0.23}|g" \
+            -e "s|{{RUBY_MIN_VERSION_MACOS}}|${RUBY_MIN_VERSION_MACOS:-2.6.0}|g" \
+            -e "s|{{SITE_TITLE}}|${FORK_SITE_NAME:-${SITE_TITLE:-My Jekyll Site}}|g" \
+            -e "s|{{SITE_DESCRIPTION}}|${SITE_DESCRIPTION:-A Jekyll site built with ${THEME_NAME}}|g" \
+            -e "s|{{SITE_AUTHOR}}|${FORK_AUTHOR:-${SITE_AUTHOR:-Site Author}}|g" \
+            -e "s|{{SITE_EMAIL}}|${FORK_EMAIL:-${SITE_EMAIL:-your@email.com}}|g" \
+            -e "s|{{CURRENT_DATE}}|$(date +%Y-%m-%d)|g" \
+            -e "s|{{CURRENT_YEAR}}|$(date +%Y)|g" \
+            -e "s|{{REPOSITORY_NAME}}|${REPOSITORY_NAME:-$THEME_NAME}|g" \
+            -e "s|{{RAW_GITHUB_URL}}|${GITHUB_RAW_URL}|g" \
+            -e "s|{{FORK_GITHUB_USER}}|${FORK_GITHUB_USER:-${GITHUB_USER}}|g" \
+            -e "s|{{INSTALL_MODE}}|${INSTALL_MODE:-full}|g" \
+            -e "s|{{GITHUB_PAGES_URL}}|https://${FORK_GITHUB_USER:-${GITHUB_USER}}.github.io/${REPOSITORY_NAME:-$THEME_NAME}|g")
+        if [[ -n "$output_file" ]]; then
+            mkdir -p "$(dirname "$output_file")"
+            echo "$content" > "$output_file"
+        else
+            echo "$content"
+        fi
+    }
+
+    create_from_template() {
+        local template_path="$1" output_file="$2" fallback_content="${3:-}"
+        if [[ -f "$output_file" ]]; then
+            log_warning "$(basename "$output_file") already exists, skipping to preserve content"
             return 0
         fi
-    done
-    
-    # Fallback defaults when templates not available
-    THEME_NAME="${THEME_NAME:-zer0-mistakes}"
-    THEME_GEM_NAME="${THEME_GEM_NAME:-jekyll-theme-zer0}"
-    THEME_DISPLAY_NAME="${THEME_DISPLAY_NAME:-Zer0-Mistakes Jekyll Theme}"
-    GITHUB_USER="${GITHUB_USER:-bamr87}"
-    GITHUB_REPO="${GITHUB_REPO:-bamr87/zer0-mistakes}"
-    GITHUB_URL="${GITHUB_URL:-https://github.com/bamr87/zer0-mistakes}"
-    GITHUB_RAW_URL="${GITHUB_RAW_URL:-https://raw.githubusercontent.com/bamr87/zer0-mistakes/main}"
-    DEFAULT_PORT="${DEFAULT_PORT:-4000}"
-    DEFAULT_URL="${DEFAULT_URL:-http://localhost:4000}"
-    JEKYLL_VERSION="${JEKYLL_VERSION:-~> 4.3}"
-    FFI_VERSION="${FFI_VERSION:-~> 1.17.0}"
-    WEBRICK_VERSION="${WEBRICK_VERSION:-~> 1.7}"
-    COMMONMARKER_VERSION="${COMMONMARKER_VERSION:-0.23.10}"
-    GITHUB_PAGES_MAX_VERSION="${GITHUB_PAGES_MAX_VERSION:-232}"
-    COMMONMARKER_MACOS_VERSION="${COMMONMARKER_MACOS_VERSION:-~> 0.23}"
-    RUBY_MIN_VERSION_MACOS="${RUBY_MIN_VERSION_MACOS:-2.6.0}"
-    return 1
-}
+        if [[ -n "${TEMPLATES_DIR:-}" ]] && [[ -f "$TEMPLATES_DIR/$template_path" ]]; then
+            render_template "$TEMPLATES_DIR/$template_path" "$output_file"
+            log_info "Created $(basename "$output_file") from template"
+            return 0
+        fi
+        if [[ "${REMOTE_INSTALL:-false}" == "true" ]]; then
+            local remote_url="${GITHUB_RAW_URL}/templates/$template_path"
+            local remote_content
+            if remote_content=$(curl -fsSL "$remote_url" 2>/dev/null); then
+                local temp_file; temp_file=$(mktemp)
+                echo "$remote_content" > "$temp_file"
+                render_template "$temp_file" "$output_file"
+                rm -f "$temp_file"
+                log_info "Created $(basename "$output_file") from remote template"
+                return 0
+            fi
+        fi
+        if [[ -n "$fallback_content" ]]; then
+            mkdir -p "$(dirname "$output_file")"
+            echo "$fallback_content" > "$output_file"
+            log_info "Created $(basename "$output_file") from fallback"
+            return 0
+        fi
+        log_warning "Could not create $(basename "$output_file") (no template or fallback)"
+        return 1
+    }
 
-# Load configuration
-_load_install_config
+    templates_available() { [[ -n "${TEMPLATES_DIR:-}" ]] && [[ -d "$TEMPLATES_DIR" ]]; }
 
-# =========================================================================
-# Platform Detection
-# =========================================================================
-detect_platform() {
-    if [[ "${PLATFORM:-auto}" != "auto" ]]; then
-        echo "$PLATFORM"
-        return
-    fi
-    # WSL detection (check before generic Linux)
-    if grep -qiE '(microsoft|wsl)' /proc/version 2>/dev/null; then
-        echo "wsl"
-    elif [[ "$(uname -s)" == "Darwin" ]]; then
-        echo "macos"
-    elif [[ "$(uname -s)" == "Linux" ]]; then
-        echo "linux"
-    else
-        echo "unknown"
-    fi
-}
+    # Inline config loader (same defaults as scripts/lib/install/config.sh).
+    _load_install_config() {
+        local config_paths=(
+            "$SCRIPT_DIR/templates/config/install.conf"
+            "$SOURCE_DIR/templates/config/install.conf"
+        )
+        local config_path
+        for config_path in "${config_paths[@]}"; do
+            if [[ -f "$config_path" ]]; then
+                # shellcheck source=/dev/null
+                source "$config_path"
+                TEMPLATES_DIR="$(dirname "$(dirname "$config_path")")"
+                return 0
+            fi
+        done
+        THEME_NAME="${THEME_NAME:-zer0-mistakes}"
+        THEME_GEM_NAME="${THEME_GEM_NAME:-jekyll-theme-zer0}"
+        THEME_DISPLAY_NAME="${THEME_DISPLAY_NAME:-Zer0-Mistakes Jekyll Theme}"
+        GITHUB_USER="${GITHUB_USER:-bamr87}"
+        GITHUB_REPO="${GITHUB_REPO:-bamr87/zer0-mistakes}"
+        GITHUB_URL="${GITHUB_URL:-https://github.com/bamr87/zer0-mistakes}"
+        GITHUB_RAW_URL="${GITHUB_RAW_URL:-https://raw.githubusercontent.com/bamr87/zer0-mistakes/main}"
+        DEFAULT_PORT="${DEFAULT_PORT:-4000}"
+        DEFAULT_URL="${DEFAULT_URL:-http://localhost:4000}"
+        JEKYLL_VERSION="${JEKYLL_VERSION:-~> 4.3}"
+        FFI_VERSION="${FFI_VERSION:-~> 1.17.0}"
+        WEBRICK_VERSION="${WEBRICK_VERSION:-~> 1.7}"
+        COMMONMARKER_VERSION="${COMMONMARKER_VERSION:-0.23.10}"
+        GITHUB_PAGES_MAX_VERSION="${GITHUB_PAGES_MAX_VERSION:-232}"
+        COMMONMARKER_MACOS_VERSION="${COMMONMARKER_MACOS_VERSION:-~> 0.23}"
+        RUBY_MIN_VERSION_MACOS="${RUBY_MIN_VERSION_MACOS:-2.6.0}"
+        return 1
+    }
+    _load_install_config
+
+    # ---------------------------------------------------------------------
+    # Inlined starter-page renderer (mirror of scripts/lib/install/pages.sh).
+    # Manifest-driven: replaces the legacy 8 create_*_page functions.
+    # ---------------------------------------------------------------------
+    _starter_pages_manifest() {
+        cat <<'MANIFEST'
+pages/quickstart.md.template|pages/quickstart/index.md|pages/quickstart|_fallback_quickstart
+pages/docs-index.md.template|pages/_docs/index.md|pages/_docs|_fallback_docs_index
+pages/configuration.md.template|pages/_docs/configuration/index.md|pages/_docs/configuration|
+pages/troubleshooting.md.template|pages/_docs/troubleshooting.md|pages/_docs|
+pages/about.md.template|pages/_about/index.md|pages/_about|_fallback_about
+pages/blog.md.template|pages/blog.md||_fallback_blog
+MANIFEST
+    }
+    _admin_settings_pages() { echo "theme config navigation collections analytics environment"; }
+
+    _fallback_quickstart() {
+        cat <<EOF
+---
+layout: default
+title: Quick Start
+permalink: /quickstart/
+---
+
+# Quick Start Guide
+
+Get your site up and running in just a few minutes!
+
+Start with: \`docker-compose up\` — site will be available at **${DEFAULT_URL}**.
+
+See [docs](/docs/) and [troubleshooting](/docs/troubleshooting/), or [open an issue](${GITHUB_URL}/issues).
+EOF
+    }
+
+    _fallback_docs_index() {
+        cat <<EOF
+---
+layout: default
+title: Documentation
+permalink: /docs/
+---
+
+# Documentation
+
+Welcome to the ${THEME_NAME} theme documentation.
+
+- [Quick Start](/quickstart/)
+- [Configuration](/docs/configuration/)
+- [Troubleshooting](/docs/troubleshooting/)
+- [GitHub](${GITHUB_URL})
+EOF
+    }
+
+    _fallback_about() {
+        cat <<EOF
+---
+layout: default
+title: About
+permalink: /about/
+---
+
+# About
+
+This site is built with **${THEME_DISPLAY_NAME}**.
+
+- [Documentation](/docs/) · [GitHub](${GITHUB_URL}) · [Issues](${GITHUB_URL}/issues)
+EOF
+    }
+
+    _fallback_blog() {
+        cat <<'EOF'
+---
+layout: default
+title: Blog
+permalink: /blog/
+---
+
+# Blog
+
+{% for post in site.posts limit:5 %}
+- [{{ post.title }}]({{ post.url }}) - {{ post.date | date: "%B %d, %Y" }}
+{% endfor %}
+
+{% if site.posts.size == 0 %}
+*No posts yet. Create your first post to see it here!*
+{% endif %}
+EOF
+    }
+
+    render_admin_settings_pages() {
+        local admin_dir="$TARGET_DIR/pages/_about/settings"
+        mkdir -p "$admin_dir"
+        log_info "Creating admin settings pages..."
+        local page
+        for page in $(_admin_settings_pages); do
+            create_from_template "pages/admin/${page}.md.template" "$admin_dir/${page}.md" ""
+        done
+    }
+
+    render_starter_pages() {
+        log_info "Creating essential starter pages..."
+        mkdir -p "$TARGET_DIR/pages"
+        local tmpl dest mkdir_rel fb_func fallback
+        while IFS='|' read -r tmpl dest mkdir_rel fb_func; do
+            [ -z "$tmpl" ] && continue
+            [ -n "$mkdir_rel" ] && mkdir -p "$TARGET_DIR/$mkdir_rel"
+            if [ -n "$fb_func" ] && declare -f "$fb_func" >/dev/null 2>&1; then
+                fallback="$("$fb_func")"
+            else
+                fallback=""
+            fi
+            create_from_template "$tmpl" "$TARGET_DIR/$dest" "$fallback"
+        done <<MANIFEST_EOF
+$(_starter_pages_manifest)
+MANIFEST_EOF
+        render_admin_settings_pages
+        log_success "Starter pages created"
+    }
+
+    create_starter_pages() { render_starter_pages "$@"; }
+    create_admin_pages()   { render_admin_settings_pages "$@"; }
+fi
 
 DETECTED_PLATFORM="$(detect_platform)"
 
@@ -430,42 +522,9 @@ validate_target_directory() {
     log_success "Target directory validation passed"
 }
 
-# File copying functions
-copy_file_with_backup() {
-    local src="$1"
-    local dest="$2"
-    local relative_path="${dest#$TARGET_DIR/}"
-    
-    # Create destination directory if it doesn't exist
-    mkdir -p "$(dirname "$dest")"
-    
-    # Backup existing file if it exists
-    if [[ -f "$dest" ]]; then
-        local backup_file="${dest}.backup.$(date +%Y%m%d_%H%M%S)"
-        log_warning "File exists, creating backup: $relative_path -> ${backup_file##*/}"
-        cp "$dest" "$backup_file"
-    fi
-    
-    # Copy the file
-    cp "$src" "$dest"
-    log_info "Copied: $relative_path"
-}
-
-copy_directory_with_backup() {
-    local src="$1"
-    local dest="$2"
-    local relative_path="${dest#$TARGET_DIR/}"
-    
-    if [[ -d "$dest" ]]; then
-        local backup_dir="${dest}.backup.$(date +%Y%m%d_%H%M%S)"
-        log_warning "Directory exists, creating backup: $relative_path -> ${backup_dir##*/}"
-        cp -r "$dest" "$backup_dir"
-        rm -rf "$dest"
-    fi
-    
-    cp -r "$src" "$dest"
-    log_info "Copied directory: $relative_path"
-}
+# File copying functions: copy_file_with_backup / copy_directory_with_backup
+# are provided by scripts/lib/install/fs.sh (or the inlined fallback at the
+# top of this script when the lib directory isn't present).
 
 # Installation functions
 install_config_files() {
@@ -707,235 +766,11 @@ This site was created using the **'"${THEME_DISPLAY_NAME}"'**.
     create_from_template "pages/index.md.template" "$TARGET_DIR/index.md" "$fallback_content"
 }
 
-create_starter_pages() {
-    log_info "Creating essential starter pages..."
-    
-    # Create pages directory
-    mkdir -p "$TARGET_DIR/pages"
-    
-    # Create Quick Start page
-    create_quickstart_page
-    
-    # Create Docs index page
-    create_docs_page
-    
-    # Create About page
-    create_about_page
-    
-    # Create Blog page
-    create_blog_page
-    
-    # Create Admin settings pages
-    create_admin_pages
-    
-    log_success "Starter pages created"
-}
-
-create_admin_pages() {
-    local admin_dir="$TARGET_DIR/pages/_about/settings"
-    mkdir -p "$admin_dir"
-
-    log_info "Creating admin settings pages..."
-
-    local admin_pages=("theme" "config" "navigation" "collections" "analytics" "environment")
-    local page
-    for page in "${admin_pages[@]}"; do
-        create_from_template "pages/admin/${page}.md.template" "$admin_dir/${page}.md" ""
-    done
-}
-
-create_quickstart_page() {
-    mkdir -p "$TARGET_DIR/pages/quickstart"
-    
-    local fallback_content='---
-layout: default
-title: Quick Start
-permalink: /quickstart/
----
-
-# Quick Start Guide
-
-Get your site up and running in just a few minutes!
-
-## Prerequisites
-
-Before you begin, make sure you have:
-
-- **Docker Desktop** installed ([download](https://www.docker.com/products/docker-desktop))
-- **Git** installed ([download](https://git-scm.com/))
-
-## 1. Start Development Server
-
-### Using Docker (Recommended)
-
-```bash
-docker-compose up
-```
-
-Your site will be available at **'"${DEFAULT_URL}"'**
-
-### Using Local Ruby
-
-```bash
-bundle install
-bundle exec jekyll serve
-```
-
-## 2. Customize Your Site
-
-Edit `_config.yml` to personalize your site:
-
-```yaml
-title: Your Site Title
-description: Your site description
-author: Your Name
-```
-
-## 3. Add Content
-
-- Create posts in `pages/_posts/`
-- Create documentation in `pages/_docs/`
-- Add static pages in `pages/`
-
-## Next Steps
-
-- [Read the Documentation](/docs/) - Learn about all features
-- [Explore Configuration](/docs/configuration/) - Customize your site
-- [Learn about Layouts](/docs/layouts/) - Understand page layouts
-
----
-
-Need help? Check the [troubleshooting guide](/docs/troubleshooting/) or [open an issue]('"${GITHUB_URL}"'/issues).'
-
-    create_from_template "pages/quickstart.md.template" "$TARGET_DIR/pages/quickstart/index.md" "$fallback_content"
-}
-
-create_docs_page() {
-    mkdir -p "$TARGET_DIR/pages/_docs"
-    mkdir -p "$TARGET_DIR/pages/_docs/configuration"
-    
-    local docs_index_fallback='---
-layout: default
-title: Documentation
-permalink: /docs/
----
-
-# Documentation
-
-Welcome to the '"${THEME_NAME}"' theme documentation. Here you'\''ll find everything you need to build and customize your Jekyll site.
-
-## Getting Started
-
-<div class="row">
-<div class="col-md-6 mb-3">
-
-### Installation
-
-The theme supports multiple installation methods:
-
-- **Docker** (Recommended) - Zero dependencies
-- **Remote Theme** - For GitHub Pages
-- **Gem** - Traditional Ruby installation
-
-[View Installation Guide →](/quickstart/)
-
-</div>
-<div class="col-md-6 mb-3">
-
-### Configuration
-
-Customize your site with `_config.yml`:
-
-- Site title and description
-- Navigation menus
-- Social links
-- Analytics integration
-
-[View Configuration Guide →](/docs/configuration/)
-
-</div>
-</div>
-
-## Need Help?
-
-- [Troubleshooting Guide](/docs/troubleshooting/)
-- [GitHub Issues]('"${GITHUB_URL}"'/issues)
-- [GitHub Discussions]('"${GITHUB_URL}"'/discussions)'
-
-    create_from_template "pages/docs-index.md.template" "$TARGET_DIR/pages/_docs/index.md" "$docs_index_fallback"
-    
-    # Create configuration page
-    create_from_template "pages/configuration.md.template" "$TARGET_DIR/pages/_docs/configuration/index.md" ""
-    
-    # Create troubleshooting page
-    create_from_template "pages/troubleshooting.md.template" "$TARGET_DIR/pages/_docs/troubleshooting.md" ""
-}
-
-create_about_page() {
-    mkdir -p "$TARGET_DIR/pages/_about"
-    
-    local fallback_content='---
-layout: default
-title: About
-permalink: /about/
----
-
-# About This Site
-
-This site is built with the **'"${THEME_DISPLAY_NAME}"'** - a professional Jekyll theme designed for GitHub Pages with Bootstrap 5.3.
-
-## Theme Features
-
-- ✅ Bootstrap 5.3 integration
-- ✅ Dark/Light mode toggle
-- ✅ Docker support
-- ✅ GitHub Pages compatible
-- ✅ SEO optimized
-
-## Learn More
-
-- [Theme Documentation](/docs/)
-- [GitHub Repository]('"${GITHUB_URL}"')
-- [Report an Issue]('"${GITHUB_URL}"'/issues)
-
-## Customizing This Page
-
-Edit `pages/_about/index.md` to customize this page with your own content.'
-
-    create_from_template "pages/about.md.template" "$TARGET_DIR/pages/_about/index.md" "$fallback_content"
-}
-
-create_blog_page() {
-    local fallback_content='---
-layout: default
-title: Blog
-permalink: /blog/
----
-
-# Blog
-
-Welcome to the blog. Create your first post to get started!
-
-## Creating Posts
-
-Create markdown files in `pages/_posts/` with the format:
-
-```
-YYYY-MM-DD-your-post-title.md
-```
-
-## Recent Posts
-
-{% for post in site.posts limit:5 %}
-- [{{ post.title }}]({{ post.url }}) - {{ post.date | date: "%B %d, %Y" }}
-{% endfor %}
-
-{% if site.posts.size == 0 %}
-*No posts yet. Create your first post to see it here!*
-{% endif %}'
-
-    create_from_template "pages/blog.md.template" "$TARGET_DIR/pages/blog.md" "$fallback_content"
-}
+# NOTE: create_starter_pages, create_admin_pages, create_quickstart_page,
+# create_docs_page, create_about_page, and create_blog_page used to live
+# here as 8 near-identical heredoc functions (~245 lines). They are now
+# provided by scripts/lib/install/pages.sh (with an inlined fallback near
+# the top of this file for remote curl|bash installs).
 
 create_starter_navigation() {
     log_info "Creating navigation configuration..."
@@ -1548,7 +1383,8 @@ install_github_mode() {
         [[ -n "${FORK_AUTHOR:-}" ]]      && gh_args+=(--author "$FORK_AUTHOR")
         [[ -n "${FORK_EMAIL:-}" ]]       && gh_args+=(--email "$FORK_EMAIL")
 
-        bash "$gh_setup" "${gh_args[@]}"
+        # `${arr[@]}` on an empty array is unbound under `set -u` in bash 4.x; guard with `+`
+        bash "$gh_setup" ${gh_args[@]+"${gh_args[@]}"}
     else
         # Inline fallback — use fork mode logic
         log_info "github-setup.sh not found, falling back to fork mode"

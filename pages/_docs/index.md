@@ -7,6 +7,9 @@ description: User documentation for the Zer0-Mistakes Jekyll theme - installatio
 preview: /images/previews/published-documentation-library.png
 categories:
     - docs
+tags:
+    - documentation
+    - jekyll
 sidebar:
     nav: docs
 toc_sticky: true

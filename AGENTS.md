@@ -54,6 +54,7 @@ should load them manually):
 | `_layouts/**` | `.github/instructions/layouts.instructions.md` |
 | `_includes/**` | `.github/instructions/includes.instructions.md` |
 | `scripts/**` | `.github/instructions/scripts.instructions.md` |
+| `scripts/lib/install/**`, `scripts/bin/install`, `install.sh`, `templates/{profiles,deploy,agents,ai}/**` | `.github/instructions/install.instructions.md` |
 | `test/**` | `.github/instructions/testing.instructions.md` |
 | `docs/**`, `pages/_docs/**`, `*docs*.md` | `.github/instructions/documentation.instructions.md` |
 | `CHANGELOG.md`, `**/version.*`, `*.gemspec`, `package.json` | `.github/instructions/version-control.instructions.md` |

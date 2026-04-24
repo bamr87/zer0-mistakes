@@ -55,19 +55,8 @@ logs/*
 *.pyc
 *.pyo
 
-# Obsidian — keep shared config (.obsidian/app.json, core-plugins.json, etc.)
-# but ignore per-user runtime/cache state.
-.obsidian/workspace
-.obsidian/workspace.json
-.obsidian/workspace-mobile.json
-.obsidian/cache
-.obsidian/plugins/*/data.json
-.obsidian/themes/
-.obsidian/snippets/
-
-# Obsidian working files that should not be published by Jekyll
-*.canvas
-*.excalidraw.md
+# Local secrets (never commit)
+_config_secrets_local.yml
 
 # --- Obsidian (vault local-only state) -------------------------------------
 # We commit a curated subset of `.obsidian/` (app, core-plugins, etc.) so the
@@ -83,4 +72,10 @@ logs/*
 .obsidian/plugins/*/main.js
 .obsidian/plugins/*/manifest.json
 .obsidian/plugins/*/styles.css
+.obsidian/themes/
+.obsidian/snippets/
 .trash/
+
+# Obsidian working files that should not be published by Jekyll
+*.canvas
+*.excalidraw.md

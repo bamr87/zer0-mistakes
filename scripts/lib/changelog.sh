@@ -28,50 +28,57 @@ categorize_commit() {
     local commit_full
     commit_full=$(get_commit_message "$commit_hash")
     
-    if echo "$commit_full" | grep -qi "BREAKING CHANGE\|breaking:"; then
+    # Conventional Commits "BREAKING CHANGE:" / "BREAKING:" footer
+    if echo "$commit_full" | grep -qiE "^BREAKING[ -]CHANGE:|^BREAKING:"; then
         echo "breaking"
         return 0
     fi
     
-    # Conventional commit patterns
+    # Conventional Commits "!" subject marker (e.g. feat!:, refactor(api)!:)
+    if echo "$subject" | grep -qE "^[a-zA-Z]+(\([^)]+\))?!:"; then
+        echo "breaking"
+        return 0
+    fi
+    
+    # Conventional commit patterns (allow optional scope)
     case "$subject_lower" in
-        feat:*|feature:*|add:*|new:*)
+        feat:*|feat\(*|feature:*|feature\(*|add:*|add\(*|new:*|new\(*)
             echo "added"
             ;;
-        fix:*|bugfix:*|bug:*|patch:*)
+        fix:*|fix\(*|bugfix:*|bugfix\(*|bug:*|bug\(*|patch:*|patch\(*)
             echo "fixed"
             ;;
-        perf:*|performance:*)
+        perf:*|perf\(*|performance:*|performance\(*)
             echo "changed"
             ;;
-        refactor:*)
+        refactor:*|refactor\(*)
             echo "changed"
             ;;
-        style:*)
+        style:*|style\(*)
             echo "changed"
             ;;
-        docs:*|doc:*)
+        docs:*|docs\(*|doc:*|doc\(*)
             echo "changed"
             ;;
-        test:*)
+        test:*|test\(*)
             echo "changed"
             ;;
-        chore:*)
+        chore:*|chore\(*)
             echo "changed"
             ;;
-        ci:*)
+        ci:*|ci\(*)
             echo "changed"
             ;;
-        build:*)
+        build:*|build\(*)
             echo "changed"
             ;;
-        revert:*|remove:*|delete:*)
+        revert:*|revert\(*|remove:*|remove\(*|delete:*|delete\(*)
             echo "removed"
             ;;
-        deprecate:*|deprecated:*)
+        deprecate:*|deprecate\(*|deprecated:*|deprecated\(*)
             echo "deprecated"
             ;;
-        security:*|sec:*)
+        security:*|security\(*|sec:*|sec\(*)
             echo "security"
             ;;
         *)
@@ -84,8 +91,8 @@ categorize_commit() {
 clean_commit_message() {
     local subject="$1"
     
-    # Remove conventional commit prefix
-    subject=$(echo "$subject" | sed -E 's/^(feat|feature|fix|bugfix|bug|patch|perf|performance|refactor|style|docs|doc|test|chore|ci|build|revert|remove|delete|deprecate|deprecated|security|sec)(\([^)]*\))?:\s*//')
+    # Remove conventional commit prefix (with optional scope and ! breaking marker)
+    subject=$(echo "$subject" | sed -E 's/^(feat|feature|fix|bugfix|bug|patch|perf|performance|refactor|style|docs|doc|test|chore|ci|build|revert|remove|delete|deprecate|deprecated|security|sec)(\([^)]*\))?!?:[[:space:]]*//')
     
     # Capitalize first letter
     subject="$(echo "${subject:0:1}" | tr '[:lower:]' '[:upper:]')${subject:1}"
@@ -130,7 +137,7 @@ generate_changelog() {
     while IFS='|' read -r hash subject author date; do
         [[ -z "$hash" ]] && continue
         
-        ((commit_count++))
+        commit_count=$((commit_count + 1))
         
         # Skip merge commits
         if echo "$subject" | grep -qE "^Merge (branch|pull request|remote-tracking branch)"; then

@@ -106,10 +106,16 @@ A YAML array. Each entry:
 - id: string            # unique slug, matches .github/prompts/{id}.prompt.md
   label: string         # display label in dropdown
   icon: string          # Bootstrap Icons class (e.g. "bi-bug")
+  group: string         # optional section header in the dropdown
+                        # (e.g. "Page Improvements", "Site Improvements")
   description: string   # short subtitle shown under the label
   body: |               # multi-line prompt instruction text (YAML block scalar)
     ...
 ```
+
+When `group` is present, `intro.html` renders a Bootstrap `dropdown-header`
+the first time a new group value is seen, and an `dropdown-divider` between
+groups. Entries without a `group` render as plain items.
 
 ---
 
@@ -136,19 +142,33 @@ repository: "bamr87/zer0-mistakes"
 
 ## Prompt Registry
 
-`_data/prompts.yml` ships with 9 built-in templates:
+`_data/prompts.yml` ships with 10 built-in templates, focused on
+frontend / CMS work and grouped into two scopes that surface as dropdown
+section headers:
+
+### Page Improvements (act on the current page)
 
 | ID | Label | Icon | Description |
 |---|---|---|---|
-| `article-review` | Article Review | `bi-file-text` | Review article structure, metadata, and SEO |
-| `code-implementation` | Code Implementation | `bi-code-slash` | Implement a feature with production-ready code |
-| `code-refactoring` | Code Refactoring | `bi-arrow-repeat` | Refactor code for quality and readability |
-| `debugging` | Debugging | `bi-bug` | Diagnose and fix issues |
-| `documentation` | Documentation | `bi-journal-text` | Generate or improve technical documentation |
-| `requirements-analysis` | Requirements Analysis | `bi-list-check` | Convert ideas into structured requirements |
-| `system-design` | System Design | `bi-diagram-3` | Design a scalable system architecture |
-| `test-generation` | Test Generation | `bi-check2-square` | Generate comprehensive tests |
-| `prompt-engineering` | Prompt Engineering | `bi-lightning` | Craft an effective AI prompt |
+| `improve-page` | Improve Page | `bi-stars` | Polish content, structure, and presentation of this page |
+| `expand-page` | Expand Page | `bi-arrows-angle-expand` | Add depth, examples, and missing sections to this page |
+| `update-page` | Update Page | `bi-arrow-clockwise` | Refresh outdated content, versions, links, and screenshots |
+| `fix-page` | Fix Page Issue | `bi-bug` | Report a typo, broken link, layout glitch, or content bug |
+| `seo-optimize` | SEO Optimize | `bi-graph-up-arrow` | Improve discoverability, metadata, and structured data |
+| `accessibility-audit` | Accessibility Audit | `bi-universal-access` | Audit this page for WCAG 2.1 AA compliance |
+
+### Site Improvements (theme-wide UI/UX, components, features)
+
+| ID | Label | Icon | Description |
+|---|---|---|---|
+| `ui-ux-improvement` | UI/UX Improvement | `bi-palette` | Propose a design or UX refinement for the theme |
+| `new-feature` | New Feature | `bi-lightbulb` | Propose a new site-wide feature or capability |
+| `component-enhancement` | Component Enhancement | `bi-puzzle` | Improve a Jekyll layout, include, or shared component |
+| `performance-optimization` | Performance Optimization | `bi-speedometer2` | Improve load time, Core Web Vitals, and asset delivery |
+
+Every prompt body explicitly references the **Page Context** table that
+`intro.html` injects below it, so the agent always knows which page the
+request came from.
 
 ---
 

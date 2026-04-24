@@ -1,0 +1,717 @@
+#!/usr/bin/env bash
+# scripts/bin/install
+#
+# Canonical CLI entrypoint for jekyll-theme-zer0 installer.
+# Sibling of scripts/bin/{build,release,test}.
+#
+# This is the Phase 2 dispatcher. Subcommands progressively delegate to
+# scripts/lib/install/* modules. Until each subcommand's backing module
+# lands (Phases 3-6), most subcommands print a clear "not yet wired"
+# notice and exit non-zero.
+#
+# The legacy install.sh remains the supported entrypoint for `init`
+# (the default subcommand). This shim translates the new subcommand
+# surface into legacy flags where possible.
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+LEGACY_INSTALL="$REPO_ROOT/install.sh"
+LIB_DIR="$REPO_ROOT/scripts/lib/install"
+
+# Source minimal logging if available; otherwise inline shim.
+if [[ -f "$LIB_DIR/logging.sh" ]]; then
+    # shellcheck source=../lib/install/logging.sh
+    source "$LIB_DIR/logging.sh"
+else
+    RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BLUE='\033[0;34m'; NC='\033[0m'
+    log_info()    { echo -e "${BLUE}[INFO]${NC} $1"; }
+    log_success() { echo -e "${GREEN}[OK]${NC} $1"; }
+    log_warning() { echo -e "${YELLOW}[WARN]${NC} $1"; }
+    log_error()   { echo -e "${RED}[ERROR]${NC} $1" >&2; }
+fi
+
+# Source profile loader (Phase 3). Falls back to a minimal stub when missing.
+if [[ -f "$LIB_DIR/profile.sh" ]]; then
+    # shellcheck source=../lib/install/profile.sh
+    source "$LIB_DIR/profile.sh"
+    _HAS_PROFILE_LOADER=1
+else
+    _HAS_PROFILE_LOADER=0
+fi
+
+# Source deploy registry (Phase 4). Optional — list-targets/deploy degrade
+# to a static help message when missing.
+if [[ -f "$LIB_DIR/deploy/registry.sh" ]]; then
+    # shellcheck source=../lib/install/deploy/registry.sh
+    source "$LIB_DIR/deploy/registry.sh"
+    _HAS_DEPLOY_REGISTRY=1
+else
+    _HAS_DEPLOY_REGISTRY=0
+fi
+
+# Source agents copier (Phase 5). Optional.
+if [[ -f "$LIB_DIR/agents.sh" ]]; then
+    # shellcheck source=../lib/install/agents.sh
+    source "$LIB_DIR/agents.sh"
+    _HAS_AGENTS_LIB=1
+else
+    _HAS_AGENTS_LIB=0
+fi
+
+# Source AI modules (Phase 5). All optional and gated behind explicit flags.
+_HAS_AI_LIBS=0
+if [[ -f "$LIB_DIR/ai/openai.sh" ]]; then
+    # shellcheck source=../lib/install/ai/openai.sh
+    source "$LIB_DIR/ai/openai.sh"
+    [[ -f "$LIB_DIR/ai/wizard.sh"   ]] && source "$LIB_DIR/ai/wizard.sh"
+    [[ -f "$LIB_DIR/ai/diagnose.sh" ]] && source "$LIB_DIR/ai/diagnose.sh"
+    [[ -f "$LIB_DIR/ai/suggest.sh"  ]] && source "$LIB_DIR/ai/suggest.sh"
+    _HAS_AI_LIBS=1
+fi
+
+# Source Phase 6 modules (doctor / upgrade / non-AI wizard). All optional.
+_HAS_DOCTOR_LIB=0
+[[ -f "$LIB_DIR/doctor.sh"  ]] && { source "$LIB_DIR/doctor.sh";  _HAS_DOCTOR_LIB=1; }
+_HAS_UPGRADE_LIB=0
+[[ -f "$LIB_DIR/upgrade.sh" ]] && { source "$LIB_DIR/upgrade.sh"; _HAS_UPGRADE_LIB=1; }
+_HAS_WIZARD_INTERACTIVE_LIB=0
+[[ -f "$LIB_DIR/wizard_interactive.sh" ]] && { source "$LIB_DIR/wizard_interactive.sh"; _HAS_WIZARD_INTERACTIVE_LIB=1; }
+
+# ---------- Help text -------------------------------------------------------
+show_usage() {
+    cat <<'EOF'
+🚀 jekyll-theme-zer0 installer (scripts/bin/install)
+
+USAGE:
+    ./scripts/bin/install <subcommand> [options] [target-dir]
+
+SUBCOMMANDS:
+    init [target]          Install / scaffold a site (default subcommand)
+                           Maps to legacy install.sh with --full / --minimal /
+                           --fork / --github / --remote selected via --profile.
+
+    wizard [target]        Interactive guided setup. Add --ai for OpenAI-
+                           powered config generation (requires OPENAI_API_KEY).
+    deploy <target>        Configure a deployment target
+                           (github-pages | azure-swa | docker-prod). Comma-
+                           separate to install multiple in one run.
+                           Use --ai-suggest to ask for a recommendation first.
+    diagnose [target]      Analyze the last `jekyll build` output for known
+                           errors. Add --ai for OpenAI-powered patch suggestions.
+    doctor [target]        Environment + site health check (platform tools,
+                           Docker, Ruby, gh CLI; --ai for OpenAI connectivity)
+    upgrade [target]       Re-run installer over an existing site (refreshes
+                           agent files + flags drifted workflows; never touches
+                           user content). Use --from <ver> to override detection.
+    list-profiles          Print available install profiles
+    list-targets           Print available deploy targets
+    agents [target]        Install AI agent guidance files (AGENTS.md +
+                           .github/copilot-instructions.md + instructions/
+                           + prompts/). Add --cursor / --claude / --aider /
+                           --all to include extra integrations.
+    version                Print theme version
+    help                   Show this help
+
+GLOBAL OPTIONS:
+    -p, --profile <name>   Profile to apply: minimal|full|fork|github|remote
+                           (default: full)
+    -f, --force            Skip safety prompts
+    -n, --dry-run          Print actions without executing (when supported)
+    -v, --verbose          Enable verbose logging
+    -h, --help             Show help for a subcommand
+
+EXAMPLES:
+    ./scripts/bin/install init                       # full install in CWD
+    ./scripts/bin/install init --profile minimal /tmp/demo
+    ./scripts/bin/install init --profile fork
+    ./scripts/bin/install agents
+    ./scripts/bin/install version
+
+NOTES:
+    • This is the Phase 2 dispatcher. Subcommands marked "Phase N" emit a
+      clear notice and exit non-zero until that phase lands.
+    • The legacy install.sh remains the supported low-level entrypoint and
+      is invoked by `init` under the hood.
+
+EOF
+}
+
+# ---------- Helpers ---------------------------------------------------------
+require_legacy_install() {
+    if [[ ! -x "$LEGACY_INSTALL" ]]; then
+        log_error "Cannot find executable install.sh at: $LEGACY_INSTALL"
+        exit 1
+    fi
+}
+
+print_phase_stub() {
+    local name="$1" phase="$2"
+    log_warning "Subcommand '$name' is not yet wired (planned for $phase)."
+    log_info "Track progress in scripts/lib/install/README.md (Roadmap)."
+    exit 2
+}
+
+print_version() {
+    local vfile="$REPO_ROOT/lib/jekyll-theme-zer0/version.rb"
+    if [[ -f "$vfile" ]]; then
+        # Extract the VERSION = "x.y.z" line
+        local v
+        v="$(grep -E 'VERSION\s*=' "$vfile" | head -n1 | sed -E 's/.*"([^"]+)".*/\1/')"
+        echo "jekyll-theme-zer0 ${v:-unknown}"
+    else
+        echo "jekyll-theme-zer0 (version file not found)"
+    fi
+}
+
+print_agents_index() {
+    local agents_file="$REPO_ROOT/AGENTS.md"
+    if [[ -f "$agents_file" ]]; then
+        log_info "AGENTS.md (cross-tool entry point):"
+        echo "  $agents_file"
+        echo
+        log_info "Detailed Copilot instructions:"
+        echo "  $REPO_ROOT/.github/copilot-instructions.md"
+        echo
+        log_info "File-scoped instruction sets:"
+        if [[ -d "$REPO_ROOT/.github/instructions" ]]; then
+            ls "$REPO_ROOT/.github/instructions"/*.instructions.md 2>/dev/null \
+                | sed "s#$REPO_ROOT/#  #"
+        fi
+    else
+        log_warning "AGENTS.md not found at $agents_file"
+    fi
+}
+
+# Run the `agents` subcommand: copy agent guidance into a target dir.
+# Falls back to print_agents_index if no target given (or `--index` flag).
+run_agents() {
+    local target="" with_cursor="" with_claude="" with_aider="" with_all="" force="" want_index=0
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --cursor) with_cursor="--cursor" ;;
+            --claude) with_claude="--claude" ;;
+            --aider)  with_aider="--aider" ;;
+            --all)    with_all="--all" ;;
+            -f|--force) force="--force" ;;
+            --index)  want_index=1 ;;
+            -h|--help)
+                cat <<EOF
+Usage: ./scripts/bin/install agents [target-dir] [options]
+
+Copies AI agent guidance files from this theme into TARGET-DIR (defaults to CWD):
+  - AGENTS.md
+  - .github/copilot-instructions.md
+  - .github/instructions/*.md
+  - .github/prompts/*.md
+
+Options:
+  --cursor       Also copy .cursor/commands/*.md
+  --claude       Also write CLAUDE.md stub
+  --aider        Also write .aider.conf.yml
+  --all          Shortcut for --cursor --claude --aider
+  --force, -f    Overwrite existing files (default: skip + warn)
+  --index        Print the agent guidance index (legacy behavior) and exit
+
+Examples:
+  ./scripts/bin/install agents                # Copy core set into CWD
+  ./scripts/bin/install agents /tmp/site --all
+  ./scripts/bin/install agents --index        # Just print where files live
+EOF
+                exit 0 ;;
+            -*) log_error "Unknown option: $1"; exit 1 ;;
+            *)
+                if [[ -z "$target" ]]; then target="$1"
+                else log_error "Unexpected argument: $1"; exit 1
+                fi ;;
+        esac
+        shift
+    done
+
+    if [[ "$want_index" = "1" ]]; then
+        print_agents_index
+        return 0
+    fi
+
+    if [[ "$_HAS_AGENTS_LIB" != "1" ]]; then
+        log_error "agents.sh module not found at $LIB_DIR/agents.sh"
+        exit 1
+    fi
+
+    [[ -z "$target" ]] && target="$PWD"
+    agents_install "$target" "$REPO_ROOT" $with_cursor $with_claude $with_aider $with_all $force
+}
+
+# Run the `wizard` subcommand. With --ai, delegates to wizard_ai_run.
+# Without --ai, currently still routes to legacy install.sh --full as a
+# scaffolding fallback (Phase 5 ships AI path; non-AI wizard is Phase 6).
+run_wizard() {
+    local use_ai=0 auto_accept=0 target=""
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --ai) use_ai=1 ;;
+            --auto-accept) auto_accept=1 ;;
+            -h|--help)
+                cat <<EOF
+Usage: ./scripts/bin/install wizard [target-dir] [--ai] [--auto-accept]
+
+  --ai            Use OpenAI to generate site title, description, navigation,
+                  and a welcome-post outline (requires OPENAI_API_KEY).
+  --auto-accept   Skip confirmation prompts (for CI use).
+
+Without --ai, runs an interactive prompt-based scaffold (no network calls).
+The wizard auto-skips the doctor preflight when dispatching to 'init'.
+EOF
+                exit 0 ;;
+            -*) log_error "Unknown option: $1"; exit 1 ;;
+            *)
+                if [[ -z "$target" ]]; then target="$1"
+                else log_error "Unexpected argument: $1"; exit 1
+                fi ;;
+        esac
+        shift
+    done
+    [[ -z "$target" ]] && target="$PWD"
+
+    if [[ "$use_ai" = "1" ]]; then
+        if [[ "$_HAS_AI_LIBS" != "1" ]]; then
+            log_error "AI modules not found at $LIB_DIR/ai/"
+            exit 1
+        fi
+        local extra=""
+        [[ "$auto_accept" = "1" ]] && extra="--auto-accept"
+        if wizard_ai_run "$target" "$REPO_ROOT" $extra; then
+            return 0
+        fi
+        log_warning "AI wizard failed — falling back to interactive scaffold."
+    fi
+
+    # Non-AI interactive wizard (Phase 6). Falls back to legacy behavior
+    # if the module is missing.
+    if [[ "$_HAS_WIZARD_INTERACTIVE_LIB" = "1" ]]; then
+        local extra=""
+        [[ "$auto_accept" = "1" ]] && extra="--auto-accept"
+        wizard_interactive_run "$target" "$REPO_ROOT" $extra
+        return $?
+    fi
+
+    log_warning "Interactive wizard module not available; running 'init --profile full' instead."
+    run_init --profile full "$target"
+}
+
+# Run the `diagnose` subcommand.
+run_diagnose() {
+    if [[ "$_HAS_AI_LIBS" != "1" ]]; then
+        log_error "Diagnose modules not found at $LIB_DIR/ai/"
+        exit 1
+    fi
+    local args=() target=""
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -h|--help)
+                cat <<EOF
+Usage: ./scripts/bin/install diagnose [target-dir] [--log <file>] [--ai] [--auto-accept]
+
+Pattern-matches a Jekyll build log against a curated list of known errors.
+With --ai, also sends a sanitized log + _config.yml + Gemfile to OpenAI for
+a proposed fix (requires OPENAI_API_KEY).
+
+Options:
+  --log <file>     Use an existing log file instead of running 'jekyll build'.
+  --ai             Enable AI analysis (opt-in; sanitized).
+  --auto-accept    Skip the API-call confirmation prompt.
+
+Examples:
+  ./scripts/bin/install diagnose
+  ./scripts/bin/install diagnose --log build.log --ai
+EOF
+                exit 0 ;;
+            --log)
+                args+=("--log" "${2:-}")
+                shift ;;
+            --ai|--auto-accept) args+=("$1") ;;
+            -*) log_error "Unknown option: $1"; exit 1 ;;
+            *)
+                if [[ -z "$target" ]]; then target="$1"
+                else args+=("$1")
+                fi ;;
+        esac
+        shift
+    done
+    [[ -z "$target" ]] && target="$PWD"
+    diagnose_run "$target" "$REPO_ROOT" ${args[@]+"${args[@]}"}
+}
+
+# Run the `doctor` subcommand (Phase 6).
+run_doctor() {
+    if [[ "$_HAS_DOCTOR_LIB" != "1" ]]; then
+        log_error "doctor.sh module not found at $LIB_DIR/doctor.sh"
+        exit 1
+    fi
+    local target="" args=()
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -h|--help)
+                cat <<EOF
+Usage: ./scripts/bin/install doctor [target-dir] [--ai] [--quiet] [--json]
+
+Runs platform + tooling + site health checks. Exits 0 when no FAIL,
+1 otherwise. Use --ai to also probe OpenAI API connectivity (opt-in;
+honors ZER0_NO_AI=1 kill-switch).
+
+Options:
+  --ai      Include OpenAI connectivity check (requires OPENAI_API_KEY)
+  --quiet   Suppress section headers (still prints summary)
+  --json    Emit a machine-readable {"pass":N,"warn":N,"fail":N} summary
+EOF
+                exit 0 ;;
+            --ai|--quiet|--json) args+=("$1") ;;
+            -*) log_error "Unknown option: $1"; exit 1 ;;
+            *)
+                if [[ -z "$target" ]]; then target="$1"
+                else log_error "Unexpected argument: $1"; exit 1
+                fi ;;
+        esac
+        shift
+    done
+    [[ -z "$target" ]] && target="$PWD"
+    doctor_run "$target" "$REPO_ROOT" ${args[@]+"${args[@]}"}
+}
+
+# Run the `upgrade` subcommand (Phase 6).
+run_upgrade() {
+    if [[ "$_HAS_UPGRADE_LIB" != "1" ]]; then
+        log_error "upgrade.sh module not found at $LIB_DIR/upgrade.sh"
+        exit 1
+    fi
+    local target="" args=()
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -h|--help)
+                cat <<EOF
+Usage: ./scripts/bin/install upgrade [target-dir] [--from <version>]
+                                     [--force] [--dry-run] [--auto-accept]
+
+Re-runs the installer over an existing site. Refreshes AI agent files
+(always additive), flags drifted .github/workflows/, and writes a
+.zer0-installed marker. Never touches user content under pages/, _posts/,
+_drafts/.
+
+Options:
+  --from <ver>    Override detected installed version
+  -f, --force     Re-run even if already on the latest version
+  -n, --dry-run   Show what would change without writing files
+  --auto-accept   Skip the interactive confirmation prompt
+EOF
+                exit 0 ;;
+            --from)
+                args+=("--from" "${2:-}"); shift ;;
+            -f|--force|-n|--dry-run|--auto-accept) args+=("$1") ;;
+            -*) log_error "Unknown option: $1"; exit 1 ;;
+            *)
+                if [[ -z "$target" ]]; then target="$1"
+                else log_error "Unexpected argument: $1"; exit 1
+                fi ;;
+        esac
+        shift
+    done
+    [[ -z "$target" ]] && target="$PWD"
+    upgrade_run "$target" "$REPO_ROOT" ${args[@]+"${args[@]}"}
+}
+
+list_profiles() {
+    if [[ "$_HAS_PROFILE_LOADER" == "1" ]] && [[ -d "$(profiles_dir "$REPO_ROOT")" ]]; then
+        echo "Available install profiles (from templates/profiles/):"
+        echo
+        local p path
+        while IFS= read -r p; do
+            [ -z "$p" ] && continue
+            path="$(profile_path "$REPO_ROOT" "$p")" || continue
+            profile_print_summary "$path"
+        done < <(list_profile_names "$REPO_ROOT")
+        return
+    fi
+    cat <<EOF
+Available install profiles (Phase 3 — profile loader not available, showing static map):
+
+  minimal   Smallest viable site (Gemfile, _config.yml, index.md)
+              → install.sh --minimal
+  full      Default. All starter pages, navigation, admin settings, wizard
+              → install.sh --full
+  fork      Fork-friendly install: cleans creator content, seeds welcome post
+              → install.sh --fork
+  github    GitHub Pages remote_theme installation
+              → install.sh --github
+  remote    Bootstrap from raw.githubusercontent.com (curl|bash style)
+              → install.sh --remote
+EOF
+}
+
+list_targets() {
+    if [[ "$_HAS_DEPLOY_REGISTRY" == "1" ]]; then
+        echo "Available deploy targets:"
+        echo
+        local t
+        for t in $DEPLOY_TARGETS_LIST; do
+            deploy_print_summary "$t" "$REPO_ROOT"
+        done
+        echo "Usage: ./scripts/bin/install deploy <target>[,<target>...] [target-dir]"
+        return
+    fi
+    cat <<EOF
+Available deploy targets (Phase 4 — registry not available, showing static map):
+
+  github-pages   GitHub Pages with peaceiris/actions-gh-pages workflow
+  azure-swa      Azure Static Web Apps (workflow + staticwebapp.config.json)
+  docker-prod    Self-hosted production Docker image (Ruby builder + nginx:alpine)
+EOF
+}
+
+# Translate `deploy <target>[,<target>...] [dir]` into registry calls.
+run_deploy() {
+    if [[ "$_HAS_DEPLOY_REGISTRY" != "1" ]]; then
+        log_error "Deploy registry not available at $LIB_DIR/deploy/registry.sh"
+        exit 1
+    fi
+
+    local targets_arg=""
+    local target_dir=""
+    local force=0
+    local ai_suggest=0
+    local auto_accept=0
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -f|--force) force=1; shift ;;
+            --ai-suggest) ai_suggest=1; shift ;;
+            --auto-accept) auto_accept=1; shift ;;
+            -h|--help)
+                cat <<EOF
+Usage: ./scripts/bin/install deploy <target>[,<target>...] [target-dir]
+
+Targets:
+  github-pages, azure-swa, docker-prod
+
+Options:
+  -f, --force       Overwrite existing files (default: skip + warn)
+  --ai-suggest      Recommend a target before installing (rule-based;
+                    add OPENAI_API_KEY for AI-assisted rationale)
+  --auto-accept     Skip API-call confirmation prompts
+  -h, --help        Show this help
+
+Examples:
+  ./scripts/bin/install deploy github-pages
+  ./scripts/bin/install deploy --ai-suggest /tmp/site
+  ./scripts/bin/install deploy github-pages,docker-prod /tmp/site
+EOF
+                exit 0
+                ;;
+            -*)
+                log_error "Unknown option: $1"
+                exit 1
+                ;;
+            *)
+                if [[ -z "$targets_arg" ]]; then
+                    targets_arg="$1"
+                elif [[ -z "$target_dir" ]]; then
+                    target_dir="$1"
+                else
+                    log_error "Unexpected argument: $1"
+                    exit 1
+                fi
+                shift
+                ;;
+        esac
+    done
+
+    # AI-suggest mode: recommend a target, then either install or just print.
+    if [[ "$ai_suggest" = "1" ]]; then
+        if [[ "$_HAS_AI_LIBS" != "1" ]]; then
+            log_error "AI modules not found at $LIB_DIR/ai/"
+            exit 1
+        fi
+        # If no target arg, treat the first positional as the dir instead.
+        if [[ -z "$target_dir" ]] && [[ -n "$targets_arg" ]] && [[ -d "$targets_arg" ]]; then
+            target_dir="$targets_arg"
+            targets_arg=""
+        fi
+        [[ -z "$target_dir" ]] && target_dir="$PWD"
+
+        local ai_args=()
+        # Use OpenAI path only if key present; otherwise rule-based (no flag).
+        [[ -n "${OPENAI_API_KEY:-}" ]] && ai_args+=("--ai")
+        [[ "$auto_accept" = "1" ]] && ai_args+=("--auto-accept")
+
+        local recommended
+        if ! recommended="$(suggest_deploy_target "$target_dir" "$REPO_ROOT" ${ai_args[@]+"${ai_args[@]}"})"; then
+            log_error "Suggestion failed."
+            exit 1
+        fi
+        echo
+        log_info "Recommended target: $recommended"
+        if [[ -z "$targets_arg" ]]; then
+            log_info "Re-run with the slug to install: ./scripts/bin/install deploy $recommended ${target_dir}"
+            return 0
+        fi
+        # If user also provided an explicit slug, honor that.
+    fi
+
+    if [[ -z "$targets_arg" ]]; then
+        log_error "No deploy target specified. Run 'install list-targets' to see options."
+        exit 1
+    fi
+
+    [[ -z "$target_dir" ]] && target_dir="$PWD"
+    [[ "$force" = "1" ]] && export DEPLOY_FORCE=1
+
+    # Default site name from target dir for placeholder substitution.
+    [[ -z "${DEPLOY_SITE_NAME:-}" ]] && export DEPLOY_SITE_NAME="$(basename "$target_dir")"
+
+    local IFS=','
+    # Capture into a positional array, then restore IFS before dispatching
+    # so registry helpers (which split space-separated lists) work correctly.
+    set -- $targets_arg
+    unset IFS
+    local t fail=0
+    for t in "$@"; do
+        [ -z "$t" ] && continue
+        deploy_run_target "$t" "$target_dir" "$REPO_ROOT" || fail=1
+        echo
+    done
+    [ "$fail" = "0" ] || exit 1
+}
+
+# Translate `init` subcommand options into legacy install.sh flags.
+run_init() {
+    require_legacy_install
+    local profile="full"
+    local target=""
+    local extra_args=()
+    local skip_doctor=0
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -p|--profile)
+                profile="${2:-}"
+                if [[ -z "$profile" ]]; then
+                    log_error "--profile requires a value"
+                    exit 1
+                fi
+                shift 2
+                ;;
+            --skip-doctor)
+                skip_doctor=1
+                shift
+                ;;
+            -h|--help)
+                cat <<EOF
+Usage: ./scripts/bin/install init [options] [target-dir]
+
+  -p, --profile <name>   minimal | full | fork | github | remote (default: full)
+      --skip-doctor      Skip the doctor preflight (faster but no env validation)
+  -h, --help             Show this help
+
+Any other flags are forwarded to install.sh as-is.
+EOF
+                exit 0
+                ;;
+            --)
+                shift
+                extra_args+=("$@")
+                break
+                ;;
+            -*)
+                extra_args+=("$1")
+                shift
+                ;;
+            *)
+                if [[ -z "$target" ]]; then
+                    target="$1"
+                else
+                    extra_args+=("$1")
+                fi
+                shift
+                ;;
+        esac
+    done
+
+    local profile_flag=""
+
+    # Prefer the profile YAML for legacy_flag resolution when available.
+    if [[ "$_HAS_PROFILE_LOADER" == "1" ]]; then
+        local profile_file
+        if profile_file="$(profile_path "$REPO_ROOT" "$profile" 2>/dev/null)"; then
+            profile_flag="$(profile_get_scalar "$profile_file" legacy_flag)"
+        fi
+    fi
+
+    if [[ -z "$profile_flag" ]]; then
+        # Fallback to the static map (also used when profile.sh is absent).
+        case "$profile" in
+            minimal) profile_flag="--minimal" ;;
+            full)    profile_flag="--full" ;;
+            fork)    profile_flag="--fork" ;;
+            github)  profile_flag="--github" ;;
+            remote)  profile_flag="--remote" ;;
+            *)
+                log_error "Unknown profile: $profile (use list-profiles to see options)"
+                exit 1
+                ;;
+        esac
+    fi
+
+    log_info "Dispatching to install.sh ($profile profile, $profile_flag)${target:+ → $target}"
+
+    # Phase 6: doctor preflight. Quick (--quiet) sanity check before
+    # invoking the heavy installer. Skipped on --skip-doctor or when the
+    # module is unavailable. FAILs are surfaced but never block install
+    # (user can still proceed; doctor is advisory at this stage).
+    if [[ "$skip_doctor" != "1" ]] && [[ "$_HAS_DOCTOR_LIB" = "1" ]]; then
+        local doctor_target="${target:-$PWD}"
+        log_info "Running doctor preflight (skip with --skip-doctor)..."
+        if ! doctor_run "$doctor_target" "$REPO_ROOT" --quiet; then
+            log_warning "Doctor reported FAILs — proceeding anyway. Re-run 'install doctor' for details."
+        fi
+        echo
+    fi
+
+    if [[ -n "$target" ]]; then
+        exec "$LEGACY_INSTALL" "$profile_flag" ${extra_args[@]+"${extra_args[@]}"} "$target"
+    else
+        exec "$LEGACY_INSTALL" "$profile_flag" ${extra_args[@]+"${extra_args[@]}"}
+    fi
+}
+
+# ---------- Dispatcher ------------------------------------------------------
+main() {
+    if [[ $# -eq 0 ]]; then
+        show_usage
+        exit 0
+    fi
+
+    local subcmd="$1"
+    shift || true
+
+    case "$subcmd" in
+        init)            run_init "$@" ;;
+        wizard)          run_wizard "$@" ;;
+        deploy)          run_deploy "$@" ;;
+        diagnose)        run_diagnose "$@" ;;
+        doctor)          run_doctor "$@" ;;
+        upgrade)         run_upgrade "$@" ;;
+        list-profiles)   list_profiles ;;
+        list-targets)    list_targets ;;
+        agents)          run_agents "$@" ;;
+        version|--version|-V) print_version ;;
+        help|--help|-h)  show_usage ;;
+        *)
+            log_error "Unknown subcommand: $subcmd"
+            echo
+            show_usage
+            exit 1
+            ;;
+    esac
+}
+
+main "$@"

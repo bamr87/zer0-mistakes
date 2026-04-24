@@ -1,12 +1,31 @@
 # Changelog
 
-## [0.22.19] - 2026-04-18
+## [1.2.1] - 2026-04-22
 
 ### Changed
 - Version bump: patch release
 
 ### Commits in this release
-- 1b3993e docs(fork): add fork-to-deploy workflow and user site guidance (#56)
+- 5c04e62 fix(footer,welcome,info): eliminate broken links on bare-minimum sites
+
+
+## [1.2.0] - 2026-04-22
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 4bd3e36 feat(welcome): add bare-minimum 3-file remote-theme starter
+
+
+## [1.1.0] - 2026-04-21
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 3d91006 fix(release): replace ((var++)) with var=$((var + 1)) in release path
+- d33e5e6 feat(intro): refocus Copilot Agent prompts on frontend/CMS workflows (#74)
 
 
 ## [Unreleased]
@@ -33,6 +52,154 @@
   - `assets/js/obsidian-graph.js` — vanilla-JS renderer (~330 lines, no build step). Mirrors the resolver's normalization (`toLowerCase().trim()` + whitespace collapse) so wiki-index keys match. `cose` force layout, hover-highlight neighborhood, click-to-navigate (⌘/Ctrl-click for new tab), search-driven node fading, orphans hidden by default with a Bootstrap switch toggle. Broken targets render as dashed red nodes prefixed `__broken__:` in the graph model.
   - `assets/data/wiki-index.json` — extended each entry with an `outgoing: [...]` array of normalized wiki-link targets, extracted at build time via Liquid (masks `![[…]]` embeds, splits on `[[`/`]]`/`|`/`#`/`^`, downcases, dedupes).
 - **Docs**: `README.md` and `AGENTS.md` updated with an Obsidian vault section pointing to the new docs.
+- **Bare-minimum 3-file remote-theme starter.** Consumers can now publish a
+  fully styled site to GitHub Pages with only `_config.yml`, `Gemfile`, and
+  `index.md` — no installer required. The new `_layouts/welcome.html` shipped
+  by the theme detects unconfigured sites and renders an onboarding screen
+  with a hero checklist, a 3-step starter accordion, and the embedded
+  `_includes/setup/wizard.html` that generates a personalised `_config.yml`
+  on the fly. README gained a "Bare-Minimum Starter" section documenting the
+  pattern.
+- **Smarter setup detection** in `_includes/components/setup-check.html`.
+  When `site_configured` is not set, the heuristic now flags a site as
+  unconfigured if it has no owner (`founder`/`author`/`email`) or its title
+  matches a known placeholder (`zer0-mistakes`, `zer0-pages-remote`,
+  `Your Site Title`, `My Awesome Site`, `Welcome`, `Untitled`, or empty).
+
+### Fixed
+- **Footer Quick Links no longer 404 on bare-minimum sites.**
+  `_includes/core/footer.html` previously hard-coded links to
+  `/about/`, `/services/`, `/news/`, `/contact/`, `/privacy-policy`, and
+  `/terms-of-service` — none of which exist in a 3-file remote-theme
+  consumer. Quick Links are now resolved in this order:
+  1. `site.footer_quick_links` (array of `{label, url}`) — explicit override
+  2. Auto-detection: each candidate link only renders if the target page
+     exists in `site.html_pages`
+  3. Fallback to `Home` + `Sitemap (XML)` only.
+  Privacy Policy / Terms of Service links use the same existence check and
+  optionally read from `site.privacy_policy_url` / `site.terms_of_service_url`.
+- **Welcome layout external links now point to existing README anchors.**
+  The "Next steps" cards in `_layouts/welcome.html` linked to
+  `#content-creation` and `#customisation`, which don't exist in the theme
+  README. They now point to `README.md#-quick-start` and
+  `README.md#-key-features` respectively.
+- **Theme info admin links are conditional.**
+  `_includes/components/info-section.html` previously rendered Admin
+  Dashboard links to `/about/config/`, `/about/settings/theme/`,
+  `/about/settings/navigation/`, and `/about/settings/environment/`
+  unconditionally — guaranteed 404s on bare-minimum sites. The links and
+  surrounding section now only render when the corresponding page exists.
+- **Source Code shortcuts skip GitHub buttons when repository is unknown.**
+  `_includes/components/dev-shortcuts.html` rendered `https://github.com//blob//`
+  URLs when `site.repository` and `site.branch` were empty (typical on bare
+  consumer sites). It now hides the GitHub-based buttons and shows a hint
+  to set `repository: USER/REPO` in `_config.yml`.
+- **Cookie-consent privacy link is conditional.** The "Learn more in our
+  Privacy Policy" anchor in `_includes/components/cookie-consent.html` only
+  renders if a `/privacy-policy/` page exists or `site.privacy_policy_url` is
+  configured.
+- **Setup banner link.** `_includes/components/setup-banner.html` no longer
+  points at the non-existent `/404.html`; it now links to
+  `/#setup-wizard`, which is provided by the new welcome layout.
+- **Version-bump workflow no longer crashes on bash 5.x runners.** `scripts/utils/analyze-commits` (and `scripts/lib/changelog.sh`, `scripts/lib/migrate.sh`) used the `((var++))` post-increment idiom. On bash 5.x, when `var` is 0 the expression evaluates to 0 → exit code 1 → `set -euo pipefail` terminates the script silently. macOS bash 3.2 was more forgiving, so the bug only surfaced in CI. Replaced all release-path sites with `var=$((var + 1))`, which always returns 0. Added a static regression check to the unit tests so the pattern can't return.
+
+## [1.0.0] - 2026-04-20
+
+First stable major release. Consolidates the breaking-change installer rewrite
+(shipped in error as v0.22.22 due to a silent bug in the version analyzer) and
+the fix that restored the release automation.
+
+### ⚠️ Breaking changes
+
+- **Modular installer.** The 2,400-line monolithic `install.sh` is decomposed into a CLI dispatcher (`scripts/bin/install`) backed by focused library modules (`scripts/lib/install/*.sh`) and declarative YAML profiles (`templates/profiles/*.yml`). The legacy `curl | bash` one-liner still works — it bootstraps the same pipeline.
+- **Legacy mode flags deprecated.** `--full`, `--minimal`, `--fork`, `--remote`, `--github` continue to work in 1.0.x with a one-line deprecation warning. They map 1:1 to `install init --profile <name>`. Targeted removal: 2.0.
+- **`--azure` flag removed.** Replaced by `install deploy azure-swa`. Old flag emits a clear error pointing at the new command.
+- **Templates are the single source of truth.** Embedded heredoc fallbacks in `install.sh` are gone. A stripped distribution (theme tarball without `templates/`) will fail; the bootstrap downloads the templates tarball alongside `install.sh` for `curl | bash`.
+
+See [`docs/installation/migration-from-0.x.md`](docs/installation/migration-from-0.x.md) for the full flag-by-flag mapping.
+
+### Added
+
+#### Modular installer (Phases 1-7 of the refactor)
+
+- **`scripts/bin/install`** — canonical CLI with subcommands: `init`, `wizard [--ai]`, `agents`, `deploy`, `doctor [--ai] [--quiet] [--json]`, `diagnose [--ai]`, `upgrade`, `list-profiles`, `list-targets`, `version`, `help`.
+- **`scripts/lib/install/`** — focused modules: `core`, `platform`, `template`, `fs`, `config`, `pages`, `profile`, `wizard_interactive`, `doctor`, `upgrade`, `agents`, `ai/{openai,wizard,diagnose,suggest}`, `deploy/{registry,github-pages,azure-swa,docker-prod}`. All bash 3.2 compatible.
+- **`templates/profiles/*.yml`** — declarative profile manifests (`full`, `minimal`, `fork`, `remote`, `github`).
+- **`templates/deploy/<target>/`** — pluggable deploy templates (workflow YAMLs, Dockerfile, nginx.conf).
+- **`templates/agents/`** — distributable AI agent guidance (CLAUDE.md, aider.conf.yml templates).
+- **`templates/ai/prompts/`** — system prompts for AI subcommands.
+- **`.zer0-installed` marker file** — tracks installed theme version for idempotent `install upgrade`.
+- **AI integration (opt-in, sandboxed):** `install wizard --ai` (OpenAI-backed `_config.yml` generation), `install diagnose --ai` (unified-diff patch proposals), `install deploy --ai-suggest` (deploy-target recommendation). Honors `ZER0_NO_AI=1` kill switch. All payloads sanitized; all writes diffed before confirmation.
+- **`install doctor`** — platform/tooling/site/AI health check with PASS/WARN/FAIL counters, `--quiet` and `--json` modes. Used as preflight in `install init` (opt out with `--skip-doctor`).
+- **`install upgrade`** — idempotent in-place upgrade tracked via `.zer0-installed`. `--from`, `--force`, `--dry-run`, `--auto-accept`. Refreshes agents and checks deploy-workflow drift.
+- **`docs/installation/`** — full doc tree: `index`, `architecture`, `profiles`, `deploy-targets`, `ai-features`, `migration-from-0.x`, `customization`.
+- **`.github/instructions/install.instructions.md`** — agent guidance for installer code.
+- **`.github/workflows/doctor.yml`** — CI matrix (ubuntu-latest, macos-latest) running `install doctor --json` on every push/PR touching installer code.
+- **`.github/workflows/install-matrix.yml`** — full installer e2e matrix (ubuntu-latest + macos-latest × ruby 2.7/3.0/3.2) plus a `curl|bash` bootstrap smoke job.
+- **Installer e2e suites** under `test/`: `test_install_profiles.sh`, `test_install_deploy.sh`, `test_install_ai_mock.sh`, `test_install_legacy_flags.sh`, `test_install_idempotency.sh`.
+- **`scripts/bin/test install`** — new test-suite group that executes all installer e2e tests.
+
+#### Versioning & release automation (new in 1.0.0)
+
+- New unit-test file `scripts/test/lib/test_analyze_commits.sh` (15 assertions) covering: scoped conventional types, `!` breaking-change marker, `BREAKING CHANGE` / `BREAKING-CHANGE` footers, and stdout/stderr separation. Wired into `scripts/test/lib/run_tests.sh`.
+
+### Fixed
+
+- **Versioning automation no longer silently swallows analyzer crashes.** `scripts/utils/analyze-commits` called `log_info` / `log_warning` / `log_debug` / `log_error` helpers that were never defined in `scripts/lib/common.sh`, causing the script to exit 127 with empty stdout. The version-bump workflow then fell back to `patch` via `2>/dev/null || echo "patch"`, which is exactly what shipped v0.22.22 instead of the intended v1.0.0 for the breaking-change installer rewrite (PR #76). The analyzer now defines stderr-only logging helpers, and the workflow refuses to publish on analyzer failure or invalid output.
+- **Conventional Commits `!` breaking-change marker is now recognised.** `feat!:`, `fix(scope)!:`, and `refactor(api)!:` correctly trigger a major bump in both the version analyzer and changelog categoriser. Previously only the long-form `BREAKING CHANGE:` footer was detected.
+- **Scoped types are recognised everywhere.** `feat(auth):`, `fix(api):`, `chore(deps):`, etc. are now properly classified by `analyze-commits` and grouped correctly in `changelog.sh`.
+- `install.sh` — `gh_args[@]: unbound variable` crash when invoking the github profile with no fork environment variables set (`set -u` + empty array). Guarded with `${gh_args[@]+"${gh_args[@]}"}`.
+
+### Changed
+
+- `scripts/utils/analyze-commits` now guarantees that **only** the bump type (`patch|minor|major|none`) is written to stdout. All progress and debug output is sent to stderr, so callers can safely use `BUMP=$(./analyze-commits ...)`.
+- `.github/workflows/version-bump.yml` streams the analyzer's stderr into a collapsible job-log group and validates the returned bump type, failing the run with an annotated error if the analyzer crashes or returns garbage.
+- `README.md` Installation Methods section now references the modular CLI alongside the legacy one-liner.
+- `docs/FORKING.md` includes an `install init --profile fork` flow alongside the standalone `fork-cleanup.sh` script.
+- `AGENTS.md` instruction map adds the new install instructions row.
+
+## [0.22.22] - 2026-04-21
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 36cd015 feat(installer)!: modular installer + AI + deploy targets + test matrix (#76)
+- 555bead docs(readme): add AI-native branding and GitHub Actions automation section
+
+## [0.22.21] - 2026-04-19
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 7f00e4d docs(roadmap): data-driven roadmap with auto-generated README mermaid diagram (#71)
+
+
+## [Unreleased]
+
+### Changed
+- **Copilot Agent prompts (`_data/prompts.yml`)**: rewritten to focus on
+  frontend/CMS workflows for the Jekyll theme. Replaced the previous
+  general-purpose software-engineering templates with 10 prompts split into
+  two scopes: **Page Improvements** (`improve-page`, `expand-page`,
+  `update-page`, `fix-page`, `seo-optimize`, `accessibility-audit`) that act
+  on the current page, and **Site Improvements** (`ui-ux-improvement`,
+  `new-feature`, `component-enhancement`, `performance-optimization`) for
+  theme-wide changes. Every prompt explicitly references the auto-injected
+  Page Context table.
+- **Intro component (`_includes/content/intro.html`)**: the Copilot Agent
+  dropdown now renders Bootstrap `dropdown-header` section labels and
+  dividers when prompt entries declare a `group`. Entries without a
+  `group` continue to render as plain items (backward compatible).
+- **Docs (`docs/implementation/copilot-agent-prompt-button.md`)**: updated
+  the prompt registry table and YAML schema to document the new `group`
+  field and the new template set.
+
+### Added
+- **Roadmap data file**: `_data/roadmap.yml` is now the single source of truth for the project roadmap (versions, status, dates, targets, and feature highlights).
+- **Roadmap generator**: `scripts/generate-roadmap.rb` (and shell wrapper `scripts/generate-roadmap.sh`) renders a Mermaid gantt diagram and summary table from `_data/roadmap.yml` and injects them into `README.md` between `<!-- ROADMAP_MERMAID:START/END -->` and `<!-- ROADMAP_TABLE:START/END -->` markers. Supports `--check` mode for CI drift detection and `--stdout` for previewing.
+- **Roadmap sync workflow**: `.github/workflows/roadmap-sync.yml` regenerates the README on push to `main` when the data file or generator changes, and verifies sync on PRs that touch those files.
 - **Docs**: `docs/FORKING.md` — progressive fork → configure → personalize workflow for the `username.github.io` user-site pattern
 - **Tests**: `test/test_fork_cleanup.sh` — 32-assertion suite covering CLI parsing, dry-run, real cleanup, YAML anchor preservation, and idempotency
 
@@ -40,6 +207,9 @@
 - **Obsidian docs**: `pages/_docs/obsidian/syntax-reference.md` — graph view now marked **Available** (was "Not yet implemented"); `pages/_docs/obsidian/index.md` — added Graph view row to the section table.
 - **Documentation cross-linking**: appended a `## See also` block of `[[wiki-links]]` to every page in `pages/_docs/` (76 files — section indexes, leaf pages, and the obsidian cluster) so the graph view shows real cluster structure. Edge count grew from 12 → 292 with 90+ visible nodes after orphan filtering.
 - **Obsidian Graph View polish**: removed the white pill backgrounds behind labels (now halo-only outlines that match the canvas color, so edges read through cleanly); labels hide by default and reveal on zoom-in or hover, while the 37 hub nodes (degree ≥ 6 — Docker, Front Matter, Jeykll, Layouts, Customization, Release Management, etc.) keep their labels always-on as landmarks; loosened `cose` layout (`nodeRepulsion` 8000→18000, `idealEdgeLength` 80→130, added `nodeOverlap: 24` and `componentSpacing: 80`, dropped gravity 0.25→0.18, `numIter` 2500); taller canvas (`82vh` / `620px` min, was `75vh` / `520px`); bigger `cy.fit()` padding (40→70 default, 80→100 for search matches) so top-row labels don't clip the canvas edge.
+- **README roadmap section** is now auto-generated from `_data/roadmap.yml` instead of being hand-maintained, and includes status, target, and detailed highlight columns.
+- **`pages/roadmap.md`** rewritten to render the Mermaid gantt chart, release summary, and per-version detail sections directly from `_data/roadmap.yml` via Liquid — so the Jekyll page is always live with the canonical data.
+- **`_data/README.md`** documents the new `roadmap.yml` data file.
 - **Landing page**: `_includes/landing/landing-install-cards.html` — “Fork & Deploy” card now guides users to fork into `<username>.github.io` and run `scripts/fork-cleanup.sh`; safer `github_fork` URL handling
 - **README**: `README.md` — Method 3 (Fork & Customize) reframed as “Fork & Deploy as Your Site” with a 4-step path; deployment section updated for user-site flow
 - **Docs**: `pages/_quickstart/github-setup.md`, `pages/_quickstart/index.md`, `pages/_docs/getting-started/quick-start.md`, `pages/_docs/deployment/github-pages.md`, `docs/configuration/url-configuration-guide.md` — aligned with the user-site fork pattern (`baseurl: ""`)
@@ -51,6 +221,24 @@
 - **Fork cleanup**: `scripts/fork-cleanup.sh` — repository name derivation now strips `.git` suffix and falls back gracefully when `origin` is missing (no `set -euo pipefail` aborts)
 - **Fork cleanup**: `scripts/fork-cleanup.sh` — `posthog`/`giscus` blocks reset only within their own YAML range (no stray matches in unrelated blocks)
 - **Welcome post**: `templates/pages/welcome-post.md.template` and embedded fallback in `scripts/fork-cleanup.sh` — corrected `layout: journals` → `layout: article` so the generated welcome post builds without “Layout does not exist” warnings on a freshly cleaned fork
+
+## [0.22.20] - 2026-04-19
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- f5d5e97 fix(ui): UI/UX fixes — navbar dropdown, landing hero, cookie banner, nanobar, footer (#72)
+
+
+## [0.22.19] - 2026-04-18
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 1b3993e docs(fork): add fork-to-deploy workflow and user site guidance (#56)
+
 
 ## [0.22.18] - 2026-04-18
 

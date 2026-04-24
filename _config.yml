@@ -156,6 +156,28 @@ posthog:
     mask_all_inputs      : true   # Mask form inputs in session recordings
     ip_anonymization     : false  # Anonymize IP addresses
 
+# Nanobar - Page Loading Progress Bar #############################################
+# Visual loading indicator shown on every page load.
+# Library: https://github.com/jacoborus/nanobar
+nanobar:
+  enabled       : true              # Master switch — set false to disable entirely
+  # Visual styling (any valid CSS values; CSS variables / var() are supported)
+  color         : "var(--bs-primary)" # Bar (progress) color
+  background    : "transparent"      # Track background behind the bar
+  height        : "3px"              # Bar thickness (e.g. 2px, 4px, 0.25rem)
+  # Placement
+  position      : "navbar"           # top | bottom | navbar (under header)
+  z_index       : 9999               # Stacking order
+  # Loading simulation — percentages applied in order on DOMContentLoaded.
+  # With step_delay_ms = 0 the bar fills instantly and is essentially invisible
+  # on fast pages. Increase to slow / make the animation perceivable.
+  steps         : [20, 55, 85, 100]
+  step_delay_ms : 180                # Delay between steps in ms (0 = instant burst)
+  # Advanced (rarely needs changing)
+  classname     : "nanobar"          # Class added to the injected element
+  id            : "top-progress-bar" # DOM id of the injected element
+  target        : ""                 # CSS selector to mount inside; "" = fixed to viewport
+
 ## Site verification #############################################################
 
 google_site_verification : null

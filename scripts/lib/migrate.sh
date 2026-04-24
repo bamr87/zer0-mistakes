@@ -146,18 +146,18 @@ install_admin_pages() {
 
         if [[ ! -f "$template_file" ]]; then
             warn "Template not found: $template_file — skipping"
-            ((skipped++))
+            skipped=$((skipped + 1))
             continue
         fi
 
         if [[ -f "$output_file" ]] && [[ "$force" != "true" ]]; then
             info "Already exists (use --force to overwrite): $output_file"
-            ((skipped++))
+            skipped=$((skipped + 1))
             continue
         fi
 
         dry_run_exec "Render ${page}.md" render_template "$template_file" "$output_file"
-        ((installed++))
+        installed=$((installed + 1))
         debug "Installed: $output_file"
     done
 
@@ -193,24 +193,24 @@ verify_admin_pages() {
     local page page_file
     for page in "${ADMIN_PAGES[@]}"; do
         page_file="$output_dir/${page}.md"
-        ((total++))
+        total=$((total + 1))
 
         if [[ ! -f "$page_file" ]]; then
             warn "Missing: $page_file"
-            ((errors++))
+            errors=$((errors + 1))
             continue
         fi
 
         # Check required front matter fields
         if ! grep -q 'layout: admin' "$page_file" 2>/dev/null; then
             warn "Missing 'layout: admin' in $page_file"
-            ((errors++))
+            errors=$((errors + 1))
             continue
         fi
 
         if ! grep -q 'permalink:' "$page_file" 2>/dev/null; then
             warn "Missing 'permalink' in $page_file"
-            ((errors++))
+            errors=$((errors + 1))
             continue
         fi
 

@@ -1,0 +1,117 @@
+<!--
+  ===================================================================
+  NANOBAR - Config-Driven Page Loading Progress Bar
+  ===================================================================
+
+  File: nanobar.html
+  Path: _includes/components/nanobar.html
+  Purpose: Visual loading indicator shown on every page load,
+           fully configurable via site.nanobar in _config.yml
+
+  Template Logic:
+  - Conditionally renders only when site.nanobar.enabled != false
+  - Injects CSS custom properties from _config.yml values
+  - Loads nanobar.min.js (library) and nanobar-init.js (initializer)
+  - Passes config to JS via window.zer0Nanobar object
+
+  Dependencies:
+  - assets/js/nanobar.min.js  — third-party Nanobar library
+  - assets/js/nanobar-init.js — theme initializer script
+  - _includes/core/header.html — #top-progress-target mount point
+    (rendered only when position == "navbar")
+
+  Configuration (_config.yml → nanobar):
+    enabled       : true | false          # master switch
+    color         : CSS color value       # bar fill colour
+    background    : CSS color value       # track background
+    height        : CSS length            # bar thickness
+    position      : top | bottom | navbar # placement mode
+    z_index       : integer               # stacking order
+    steps         : [int, …]              # progress percentages
+    step_delay_ms : integer               # ms between steps
+    classname     : string                # CSS class on wrapper
+    id            : string                # DOM id
+    target        : CSS selector | ""     # explicit mount target
+
+  Performance Notes:
+  - Both scripts loaded with `defer` to avoid blocking rendering
+  - CSS custom properties keep the inline <style> minimal
+  - Library injects its own baseline CSS; theme overrides via
+    specificity and !important where needed
+
+  Library: https://github.com/jacoborus/nanobar
+  ===================================================================
+-->
+
+{%- assign nb = site.nanobar | default: empty -%}
+{%- if nb == empty or nb.enabled != false -%}
+
+{%- comment -%} ── Resolve config with safe defaults ── {%- endcomment -%}
+{%- assign nb_color      = nb.color         | default: "var(--bs-primary)" -%}
+{%- assign nb_bg         = nb.background    | default: "transparent" -%}
+{%- assign nb_height     = nb.height        | default: "3px" -%}
+{%- assign nb_position   = nb.position      | default: "top" -%}
+{%- assign nb_zindex     = nb.z_index       | default: 9999 -%}
+{%- assign nb_classname  = nb.classname     | default: "nanobar" -%}
+{%- assign nb_id         = nb.id            | default: "top-progress-bar" -%}
+{%- assign nb_target     = nb.target        | default: "" -%}
+{%- assign nb_step_delay = nb.step_delay_ms | default: 0 -%}
+{%- assign nb_steps      = nb.steps -%}
+{%- if nb_steps == nil or nb_steps == empty -%}
+  {%- assign nb_steps = "30,76,100" | split: "," -%}
+{%- endif -%}
+
+<!-- ── Nanobar theme CSS (config-driven custom properties) ── -->
+<style id="nanobar-theme">
+  :root {
+    --nanobar-color:  {{ nb_color }};
+    --nanobar-bg:     {{ nb_bg }};
+    --nanobar-height: {{ nb_height }};
+    --nanobar-z:      {{ nb_zindex }};
+  }
+
+  /* Override library defaults with theme values */
+  .{{ nb_classname }} {
+    height: var(--nanobar-height) !important;
+    background: var(--nanobar-bg);
+    z-index: var(--nanobar-z);
+  }
+  .{{ nb_classname }} .bar {
+    background: var(--nanobar-color) !important;
+    transition: width .2s ease, height .3s ease;
+  }
+
+  /* Position modifiers */
+  .{{ nb_classname }}--bottom { top: auto !important; bottom: 0; }
+
+  /* Navbar mount: inline strip under the header */
+  .nanobar-mount {
+    position: relative;
+    width: 100%;
+    height: var(--nanobar-height);
+    overflow: hidden;
+  }
+  .nanobar-mount > .{{ nb_classname }}--navbar {
+    position: absolute !important;
+    top: 0; left: 0; right: 0;
+    width: 100%;
+  }
+</style>
+
+<!-- ── Nanobar scripts ── -->
+<script defer src="{{ '/assets/js/nanobar.min.js' | relative_url }}"></script>
+<script defer src="{{ '/assets/js/nanobar-init.js' | relative_url }}"></script>
+
+<!-- ── Bridge _config.yml values to JS ── -->
+<script>
+  window.zer0Nanobar = {
+    classname: {{ nb_classname | jsonify }},
+    id:        {{ nb_id        | jsonify }},
+    position:  {{ nb_position  | jsonify }},
+    target:    {{ nb_target    | jsonify }},
+    steps:     [{% for s in nb_steps %}{{ s | strip | plus: 0 }}{% unless forloop.last %},{% endunless %}{% endfor %}],
+    stepDelay: {{ nb_step_delay | plus: 0 }}
+  };
+</script>
+
+{%- endif -%}

@@ -1,0 +1,337 @@
+---
+layout: root
+---
+<!--
+  ===================================================================
+  WELCOME LAYOUT — Onboarding landing page for new sites
+  ===================================================================
+
+  File: welcome.html
+  Path: _layouts/welcome.html
+  Inherits: root.html
+  Purpose: First-run experience for sites that have just installed the
+           bamr87/zer0-mistakes remote theme but haven't configured
+           anything yet. Shows the configuration wizard, the minimal
+           starter checklist, and links to docs.
+
+  Behaviour:
+    • If the site is unconfigured (see components/setup-check.html),
+      the wizard + instructions REPLACE the page content.
+    • Once site.site_configured == true (or the heuristic passes),
+      the page renders the user's content normally.
+
+  Recommended usage in a brand-new repo:
+
+      # index.md (one of the only three files you need)
+      ---
+      layout: welcome
+      title: Home
+      ---
+
+      Welcome to my new site!  ← shown after configuration is complete
+
+  Companion files in a minimal starter:
+      _config.yml   (just `remote_theme: bamr87/zer0-mistakes`)
+      Gemfile       (github-pages + jekyll-remote-theme)
+      index.md      (this layout)
+  ===================================================================
+-->
+
+{% include components/setup-check.html %}
+
+{% if site_needs_setup %}
+
+  <!-- ============================================================ -->
+  <!-- HERO                                                          -->
+  <!-- ============================================================ -->
+  <section class="bg-body-tertiary border-bottom">
+    <div class="container-lg py-5">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+          <span class="badge text-bg-primary mb-2">
+            <i class="bi bi-stars"></i> zer0-mistakes remote theme
+          </span>
+          <h1 class="display-5 fw-bold mb-3">
+            Welcome — your site is live!
+          </h1>
+          <p class="lead mb-3">
+            GitHub Pages built this page from <strong>just three files</strong>
+            in your repository. The layout, styles, and this entire onboarding
+            screen are served by the remote theme.
+          </p>
+          <p class="text-body-secondary mb-4">
+            Use the wizard below to generate a personalised
+            <code>_config.yml</code>, drop it into your repo, and your site
+            will look like <em>your</em> site instead of this welcome page.
+          </p>
+          <div class="d-flex flex-wrap gap-2">
+            <a href="#setup-wizard" class="btn btn-primary btn-lg">
+              <i class="bi bi-magic"></i> Start the wizard
+            </a>
+            <a href="#minimal-starter" class="btn btn-outline-secondary btn-lg">
+              <i class="bi bi-list-check"></i> Minimal starter
+            </a>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="card shadow-sm">
+            <div class="card-header bg-body">
+              <i class="bi bi-folder2-open"></i>
+              <strong>Your repository right now</strong>
+            </div>
+            <div class="card-body p-0">
+              <ul class="list-group list-group-flush small mb-0">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <span><i class="bi bi-file-earmark-text"></i> <code>_config.yml</code></span>
+                  <span class="badge text-bg-success rounded-pill">required</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <span><i class="bi bi-gem"></i> <code>Gemfile</code></span>
+                  <span class="badge text-bg-success rounded-pill">required</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <span><i class="bi bi-house-door"></i> <code>index.md</code></span>
+                  <span class="badge text-bg-success rounded-pill">required</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center text-body-secondary">
+                  <span><i class="bi bi-folder"></i> <code>pages/</code></span>
+                  <span class="badge text-bg-secondary rounded-pill">optional</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center text-body-secondary">
+                  <span><i class="bi bi-folder"></i> <code>assets/</code></span>
+                  <span class="badge text-bg-secondary rounded-pill">optional</span>
+                </li>
+              </ul>
+            </div>
+            <div class="card-footer text-body-secondary small">
+              Everything else — layouts, styles, navigation, search —
+              is provided by the remote theme.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- MINIMAL STARTER INSTRUCTIONS                                  -->
+  <!-- ============================================================ -->
+  <section id="minimal-starter" class="container-lg py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <h2 class="mb-3"><i class="bi bi-list-check"></i> The 3-file starter</h2>
+        <p class="text-body-secondary">
+          The only files you need in your repository for GitHub Pages to
+          render a full site through the <code>bamr87/zer0-mistakes</code>
+          remote theme.
+        </p>
+
+        <div class="accordion mt-4" id="starterAccordion">
+
+          <!-- _config.yml -->
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#starter-config">
+                <i class="bi bi-1-circle me-2"></i>
+                <code>_config.yml</code>
+                <span class="text-body-secondary ms-2">— site configuration</span>
+              </button>
+            </h3>
+            <div id="starter-config" class="accordion-collapse collapse show"
+                 data-bs-parent="#starterAccordion">
+              <div class="accordion-body">
+                <p>The minimum viable configuration:</p>
+{% highlight yaml %}
+# _config.yml
+title:        "My Site"
+description:  "A site rendered by the zer0-mistakes remote theme."
+url:          ""
+baseurl:      ""
+
+# Pull layouts/includes/assets from the published theme
+remote_theme: bamr87/zer0-mistakes
+
+# GitHub Pages whitelisted plugins
+plugins:
+  - jekyll-remote-theme
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Hide this welcome screen once you're configured
+site_configured: true
+{% endhighlight %}
+                <p class="small text-body-secondary mb-0">
+                  Use the wizard below to generate a richer file with
+                  collections, analytics, and social links.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gemfile -->
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#starter-gemfile">
+                <i class="bi bi-2-circle me-2"></i>
+                <code>Gemfile</code>
+                <span class="text-body-secondary ms-2">— Ruby dependencies</span>
+              </button>
+            </h3>
+            <div id="starter-gemfile" class="accordion-collapse collapse"
+                 data-bs-parent="#starterAccordion">
+              <div class="accordion-body">
+                <p>Required when building locally; GitHub Pages installs these for you in CI.</p>
+{% highlight ruby %}
+# Gemfile
+source "https://rubygems.org"
+
+gem "github-pages", group: :jekyll_plugins
+gem "jekyll-remote-theme"
+gem "webrick", "~> 1.7"
+{% endhighlight %}
+              </div>
+            </div>
+          </div>
+
+          <!-- index.md -->
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#starter-index">
+                <i class="bi bi-3-circle me-2"></i>
+                <code>index.md</code>
+                <span class="text-body-secondary ms-2">— your home page</span>
+              </button>
+            </h3>
+            <div id="starter-index" class="accordion-collapse collapse"
+                 data-bs-parent="#starterAccordion">
+              <div class="accordion-body">
+                <p>
+                  While the site is unconfigured, <code>layout: welcome</code>
+                  shows this onboarding screen. Once you set
+                  <code>site_configured: true</code> in <code>_config.yml</code>,
+                  the same file renders your own home-page content.
+                </p>
+{% highlight markdown %}
+---
+layout: welcome
+title: Home
+---
+
+# Welcome to my site
+
+Replace this with your own content. The setup wizard
+will disappear automatically once `site_configured: true`
+is set in `_config.yml`.
+{% endhighlight %}
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /accordion -->
+
+        <div class="alert alert-info d-flex align-items-start mt-4" role="alert">
+          <i class="bi bi-info-circle-fill me-2 mt-1"></i>
+          <div>
+            <strong>Local development?</strong>
+            Run <code>bundle install &amp;&amp; bundle exec jekyll serve</code>
+            (or <code>docker compose up</code> if you have a
+            <code>docker-compose.yml</code>). Browse to
+            <a href="http://localhost:4000/">http://localhost:4000/</a>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SETUP WIZARD                                                  -->
+  <!-- ============================================================ -->
+  <section id="setup-wizard" class="bg-body-tertiary border-top py-5">
+    {% include setup/wizard.html %}
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- NEXT STEPS / RESOURCES                                        -->
+  <!-- ============================================================ -->
+  <section class="container-lg py-5">
+    <h2 class="mb-4"><i class="bi bi-signpost-2"></i> Next steps</h2>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="bi bi-pencil-square text-primary"></i> Add content
+            </h5>
+            <p class="card-text small">
+              Create a <code>pages/</code> folder with collections like
+              <code>_posts/</code>, <code>_docs/</code>, or
+              <code>_about/</code>. Enable them in <code>_config.yml</code>.
+            </p>
+            <a class="btn btn-sm btn-outline-primary"
+               href="https://github.com/bamr87/zer0-mistakes/blob/main/README.md#-quick-start"
+               target="_blank" rel="noopener">
+              Content guide <i class="bi bi-box-arrow-up-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="bi bi-palette text-success"></i> Customise styles
+            </h5>
+            <p class="card-text small">
+              Drop an <code>assets/css/user-overrides.css</code> file in
+              your repo to override theme styles without forking.
+            </p>
+            <a class="btn btn-sm btn-outline-success"
+               href="https://github.com/bamr87/zer0-mistakes/blob/main/README.md#-key-features"
+               target="_blank" rel="noopener">
+              Customisation <i class="bi bi-box-arrow-up-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="bi bi-github text-body"></i> Source &amp; issues
+            </h5>
+            <p class="card-text small">
+              File issues, submit PRs, or fork the theme on GitHub.
+              Contributions welcome.
+            </p>
+            <a class="btn btn-sm btn-outline-dark"
+               href="https://github.com/bamr87/zer0-mistakes"
+               target="_blank" rel="noopener">
+              Repository <i class="bi bi-box-arrow-up-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% else %}
+
+  <!-- ============================================================ -->
+  <!-- CONFIGURED SITE — render the user's content                   -->
+  <!-- ============================================================ -->
+  <div class="container-lg py-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        {% if page.title %}
+          <h1 class="mb-3">{{ page.title }}</h1>
+        {% endif %}
+        {{ content }}
+      </div>
+    </div>
+  </div>
+
+{% endif %}

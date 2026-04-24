@@ -30,11 +30,12 @@ show_usage() {
 USAGE:
     ./scripts/bin/test [OPTIONS] [TEST_SUITE]
 
-TEST SUITES:
+TEST_SUITES:
     all         Run all tests (default)
     lib         Run library unit tests only
     theme       Run theme validation tests only
     integration Run integration tests only
+    install     Run installer e2e suites only (test/test_install_*.sh)
 
 OPTIONS:
     --verbose, -v    Show detailed test output
@@ -67,7 +68,7 @@ for arg in "$@"; do
         --dry-run)
             export DRY_RUN=true
             ;;
-        all|lib|theme|integration)
+        all|lib|theme|integration|install)
             TEST_SUITE="$arg"
             ;;
         *)
@@ -161,6 +162,43 @@ run_integration_tests() {
     fi
 }
 
+# Run installer e2e tests (test/test_install_*.sh in repo root)
+run_install_tests() {
+    log_info "Running installer e2e tests..."
+
+    # Repo root is two levels up from scripts/bin/
+    local repo_root
+    repo_root="$(cd "$SCRIPTS_ROOT/.." && pwd)"
+    local install_test_dir="$repo_root/test"
+
+    if [[ ! -d "$install_test_dir" ]]; then
+        log_warning "Installer test dir not found: $install_test_dir"
+        return
+    fi
+
+    local found=false
+    for test_file in "$install_test_dir"/test_install_*.sh; do
+        [[ -f "$test_file" ]] || continue
+        found=true
+        local test_name
+        test_name=$(basename "$test_file")
+        log_info "Running installer suite: $test_name"
+
+        if bash "$test_file"; then
+            log_success "$test_name passed"
+            ((TOTAL_PASSED++)) || true
+        else
+            log_error "$test_name failed"
+            ((TOTAL_FAILED++)) || true
+        fi
+        ((TOTAL_TESTS++)) || true
+    done
+
+    if [[ "$found" == "false" ]]; then
+        log_warning "No installer test suites found (test_install_*.sh)"
+    fi
+}
+
 # Main execution
 log_info "🧪 Starting test suite: $TEST_SUITE"
 echo ""
@@ -172,6 +210,8 @@ case $TEST_SUITE in
         run_theme_tests
         echo ""
         run_integration_tests
+        echo ""
+        run_install_tests
         ;;
     lib)
         run_lib_tests
@@ -181,6 +221,9 @@ case $TEST_SUITE in
         ;;
     integration)
         run_integration_tests
+        ;;
+    install)
+        run_install_tests
         ;;
 esac
 
