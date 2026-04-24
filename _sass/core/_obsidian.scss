@@ -150,3 +150,20 @@
     margin-top: 0.2rem;
   }
 }
+
+// ----------------------------------------------------------------------------
+// Local graph widget (left sidebar) — small Obsidian-style local graph view.
+// Rendered by _includes/navigation/local-graph.html via assets/js/obsidian-local-graph.js.
+// ----------------------------------------------------------------------------
+.obsidian-local-graph-widget {
+  #obsidian-local-graph {
+    width: 100%;
+    height: 220px;
+    min-height: 180px;
+    border: 1px solid var(--bs-border-color, #dee2e6);
+    border-radius: var(--bs-border-radius, 0.375rem);
+    background: var(--bs-tertiary-bg, #f8f9fa);
+    overflow: hidden;
+    position: relative;
+  }
+}
