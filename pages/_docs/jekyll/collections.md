@@ -351,3 +351,9 @@ layout: default
 - [Jekyll Configuration](/docs/jekyll/jekyll-config/)
 - [Layouts](/docs/customization/layouts/)
 - [Front Matter](/docs/front-matter/)
+
+## See also
+
+- [[Jekyll]]
+- [[front-matter]]
+- [[Liquid]]

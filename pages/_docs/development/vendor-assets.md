@@ -63,3 +63,9 @@ After upgrading versions, update `package.json` / lockfile for Mermaid or the ma
 - `_includes/components/js-cdn.html` — jQuery, Bootstrap bundle
 - `_includes/components/mermaid.html` — Mermaid + Font Awesome (when `mermaid: true`)
 - `_config.yml` — `mermaid.src` points at the local `mermaid.min.js` path
+
+## See also
+
+- [[Development]]
+- [[Bootstrap Integration]]
+- [[Dependency Updates]]

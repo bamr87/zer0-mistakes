@@ -130,3 +130,11 @@ with:
 - The exact Markdown source that misbehaves.
 - The rendered HTML (View Source on the live page).
 - The output of `./test/test_obsidian.sh`.
+
+## See also
+
+- [[Obsidian Vault Integration]]
+- [[Obsidian Syntax Reference]]
+- [[Obsidian Authoring Workflow]]
+- [[Obsidian Graph View]]
+- [[Getting Started with the Obsidian Vault]]

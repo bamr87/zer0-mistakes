@@ -283,3 +283,9 @@ Add responsive wrapper:
 - [MathJax Math](/docs/features/mathjax-math/)
 - [Code Highlighting](/docs/jekyll/code-highlighting/)
 - [Mermaid Diagrams](/docs/features/mermaid-diagrams/)
+
+## See also
+
+- [[Features]]
+- [[Mermaid Diagrams]]
+- [[MathJax Math]]

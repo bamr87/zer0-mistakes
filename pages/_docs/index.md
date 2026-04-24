@@ -96,3 +96,14 @@ Looking to contribute to the theme? See the developer documentation in the repos
 - [Deployment](deployment/) — Go live
 
 **Last Updated:** January 2026
+
+## See also
+
+- [[Installation]]
+- [[Features]]
+- [[Customization]]
+- [[Deployment]]
+- [[Obsidian Vault Integration]]
+- [[Jekyll]]
+- [[Docker]]
+- [[Bootstrap Integration]]

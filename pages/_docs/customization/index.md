@@ -108,3 +108,10 @@ Example: Override the footer by creating `_includes/core/footer.html`.
 - [Layouts Guide](layouts/) — Page templates
 - [Styles Guide](styles/) — CSS customization
 - [Navigation Guide](navigation/) — Menu configuration
+
+## See also
+
+- [[Bootstrap Integration]]
+- [[Features]]
+- [[Liquid]]
+- [[Jekyll]]

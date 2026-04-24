@@ -20,3 +20,9 @@ lastmod: 2025-12-20T22:15:46.859Z
 
 - Production: `_config.yml`
 - Development: `_config_dev.yml`
+
+## See also
+
+- [[Jekyll]]
+- [[front-matter]]
+- [[Customization]]

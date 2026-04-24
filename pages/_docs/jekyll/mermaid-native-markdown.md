@@ -19,3 +19,9 @@ lastmod: 2025-12-20T22:15:46.631Z
 # Mermaid Native Markdown
 
 See the repo docs for implementation details: https://github.com/bamr87/zer0-mistakes
+
+## See also
+
+- [[Jekyll]]
+- [[Mermaid Diagrams]]
+- [[MathJax Math]]

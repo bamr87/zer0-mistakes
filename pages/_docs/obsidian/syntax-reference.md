@@ -112,8 +112,17 @@ indexable by search engines.
 | Excalidraw `.excalidraw.md` | Excluded from the build | Embed exported PNG/SVG |
 | Dataview queries | Obsidian-only | Use Liquid loops on the site |
 | Live block references (`^block-id`) | Degrades to plain link | Use heading anchors instead |
-| Interactive global graph view | Not yet implemented | Use Obsidian's graph view locally |
+| Interactive global graph view | Available at [/docs/obsidian/graph/]({{ "/docs/obsidian/graph/" | relative_url }}) | Force-directed cytoscape view of every wiki-link |
 
 These are all candidates for a v2 follow-up. None of them break a build
 when present in source — they are simply hidden from the published site
 or rendered without the interactive layer.
+
+## See also
+
+- [[Obsidian Vault Integration]]
+- [[Getting Started with the Obsidian Vault]]
+- [[Obsidian Authoring Workflow]]
+- [[Obsidian Graph View]]
+- [[Obsidian Integration Troubleshooting]]
+- [[front-matter]]

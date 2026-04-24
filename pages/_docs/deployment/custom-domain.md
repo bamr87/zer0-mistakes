@@ -252,3 +252,9 @@ Configure a redirect in your hosting platform:
 
 - [GitHub Pages Guide](/docs/deployment/github-pages/)
 - [Netlify Guide](/docs/deployment/netlify/)
+
+## See also
+
+- [[Deployment]]
+- [[Deploy to GitHub Pages]]
+- [[Deploy to Netlify]]

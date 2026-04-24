@@ -161,3 +161,9 @@ Use includes for reusable parts:
 
 - [Jekyll Layouts Documentation](https://jekyllrb.com/docs/layouts/)
 - [Liquid Template Language](https://shopify.github.io/liquid/)
+
+## See also
+
+- [[Customization]]
+- [[Include Components]]
+- [[Liquid]]

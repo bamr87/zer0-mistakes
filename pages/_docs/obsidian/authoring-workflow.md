@@ -87,3 +87,12 @@ Obsidian is exactly what readers will see on the site.
 > Obsidian's paid Sync service operates outside git, so it can drift
 > from what's deployed. Stick with `git push`/`git pull` (manual or via
 > the Obsidian Git plugin) so the vault and the live site never diverge.
+
+## See also
+
+- [[Obsidian Vault Integration]]
+- [[Getting Started with the Obsidian Vault]]
+- [[Obsidian Syntax Reference]]
+- [[Obsidian Graph View]]
+- [[Obsidian Integration Troubleshooting]]
+- [[Docker]]

@@ -38,6 +38,26 @@ sitemap: false
       {%- assign basename = doc.path | split: "/" | last | replace: ".md", "" | replace: ".markdown", "" | replace: ".html", "" -%}
       {%- assign body = doc.content | default: "" | strip_html -%}
       {%- assign body_excerpt = body | strip_newlines | truncate: 240 -%}
+      {%- comment -%}
+        Extract outgoing wiki-link targets so the graph view
+        (assets/js/obsidian-graph.js) can render edges without re-parsing
+        every page client-side. We mask `![[…]]` embeds first so they don't
+        also get split as `[[…]]`, then split on `[[`, take everything
+        before `]]`, and strip the optional `|alias` and `#anchor` parts.
+      {%- endcomment -%}
+      {%- assign masked = body | replace: "![[", "@@OBSEMBED@@" -%}
+      {%- assign chunks = masked | split: "[[" -%}
+      {%- assign outgoing = "" | split: "" -%}
+      {%- for chunk in chunks offset: 1 -%}
+        {%- assign target_raw = chunk | split: "]]" | first -%}
+        {%- if target_raw and target_raw != "" -%}
+          {%- assign target = target_raw | split: "|" | first | split: "#" | first | split: "^" | first | strip | downcase -%}
+          {%- if target != "" and target.size < 200 -%}
+            {%- assign outgoing = outgoing | push: target -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- assign outgoing = outgoing | uniq -%}
       {
         "title": {{ doc.title | default: basename | jsonify }},
         "basename": {{ basename | jsonify }},
@@ -46,6 +66,7 @@ sitemap: false
         "tags": {{ doc.tags | default: empty | jsonify }},
         "categories": {{ doc.categories | default: empty | jsonify }},
         "aliases": {{ doc.aliases | default: empty | jsonify }},
+        "outgoing": {{ outgoing | jsonify }},
         "excerpt": {{ body_excerpt | jsonify }}
       }{% unless forloop.last %},{% endunless %}
     {%- endfor -%}

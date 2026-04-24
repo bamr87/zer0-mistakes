@@ -20,3 +20,9 @@ lastmod: 2025-12-20T22:15:46.892Z
 
 - Prefer smaller pages and optimized images
 - Avoid expensive Liquid loops in layouts
+
+## See also
+
+- [[Jekyll]]
+- [[Customization]]
+- [[Vendor assets]]

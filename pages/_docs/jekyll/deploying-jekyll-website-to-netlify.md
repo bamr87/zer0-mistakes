@@ -19,3 +19,9 @@ lastmod: 2025-12-20T22:15:46.802Z
 # Deploying to Netlify
 
 Netlify supports static Jekyll builds; see Netlify docs for the latest steps.
+
+## See also
+
+- [[Jekyll]]
+- [[Deploy to Netlify]]
+- [[Deployment]]

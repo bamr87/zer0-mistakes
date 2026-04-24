@@ -305,3 +305,9 @@ bundle show jekyll-theme-zer0
 - [Layouts](/docs/customization/layouts/)
 - [Jekyll Liquid](/docs/jekyll/jekyll-liquid/)
 - [Bootstrap Integration](/docs/bootstrap/)
+
+## See also
+
+- [[Customization]]
+- [[Layouts]]
+- [[Bootstrap Integration]]

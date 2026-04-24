@@ -228,3 +228,8 @@ The link should announce:
 - [Keyboard Navigation](/docs/features/keyboard-navigation/)
 - [Sidebar Navigation](/docs/features/sidebar-navigation/)
 - [Accessibility Standards](https://www.w3.org/WAI/WCAG21/quickref/)
+
+## See also
+
+- [[Features]]
+- [[Keyboard Navigation]]

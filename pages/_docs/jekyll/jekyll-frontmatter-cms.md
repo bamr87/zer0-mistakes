@@ -19,3 +19,9 @@ lastmod: 2025-12-20T22:15:46.717Z
 # Front Matter
 
 See: {{ '/docs/front-matter/' | relative_url }}
+
+## See also
+
+- [[Jekyll]]
+- [[front-matter]]
+- [[Customization]]

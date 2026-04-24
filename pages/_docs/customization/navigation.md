@@ -203,3 +203,9 @@ Show navigation items based on conditions:
 
 - [Jekyll Data Files](https://jekyllrb.com/docs/datafiles/)
 - [Bootstrap Navigation](https://getbootstrap.com/docs/5.3/components/navs-tabs/)
+
+## See also
+
+- [[Customization]]
+- [[Sidebar Navigation System]]
+- [[Breadcrumbs Navigation]]

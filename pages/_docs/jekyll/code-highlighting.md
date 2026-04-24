@@ -151,3 +151,9 @@ Popular themes:
 - [Rouge Documentation](https://github.com/rouge-ruby/rouge)
 - [Kramdown Syntax](https://kramdown.gettalong.org/syntax.html)
 - [highlight.js](https://highlightjs.org/)
+
+## See also
+
+- [[Jekyll]]
+- [[Syntax Highlighting]]
+- [[Code Copy Button]]

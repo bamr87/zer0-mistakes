@@ -160,3 +160,9 @@ Explore Liquid usage in Zer0-Mistakes:
 - [Jekyll Guide](/docs/jekyll/)
 - [Front Matter](/docs/front-matter/)
 - [Jekyll Liquid Templating](/docs/jekyll/jekyll-liquid/)
+
+## See also
+
+- [[Jekyll]]
+- [[Customization]]
+- [[front-matter]]

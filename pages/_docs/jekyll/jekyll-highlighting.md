@@ -19,3 +19,9 @@ lastmod: 2025-12-20T22:15:46.772Z
 # Syntax Highlighting
 
 Jekyll uses Rouge for highlighting by default.
+
+## See also
+
+- [[Jekyll]]
+- [[Code Highlighting]]
+- [[Code Copy Button]]

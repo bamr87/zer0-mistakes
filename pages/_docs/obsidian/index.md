@@ -22,6 +22,7 @@ equivalent presentation — no duplication, no separate sync step.
 | --- | --- |
 | [Getting started]({{ "/docs/obsidian/getting-started/" | relative_url }}) | Open the repo as a vault, recommended plugins, frontmatter rules. |
 | [Syntax reference]({{ "/docs/obsidian/syntax-reference/" | relative_url }}) | Every Obsidian feature and how it renders on the site. |
+| [Graph view]({{ "/docs/obsidian/graph/" | relative_url }}) | Interactive force-directed map of every page and wiki-link. |
 | [Authoring workflow]({{ "/docs/obsidian/authoring-workflow/" | relative_url }}) | Daily note → commit → publish loop. |
 | [Troubleshooting]({{ "/docs/obsidian/troubleshooting/" | relative_url }}) | Broken links, missing embeds, conflicts. |
 
@@ -46,3 +47,13 @@ opt-in Ruby plugin (`_plugins/obsidian_links.rb`) performs the same
 transformations server-side for slightly better SEO. See the
 [syntax reference]({{ "/docs/obsidian/syntax-reference/" | relative_url }})
 for the complete feature matrix.
+
+## See also
+
+- [[Getting Started with the Obsidian Vault]]
+- [[Obsidian Syntax Reference]]
+- [[Obsidian Graph View]]
+- [[Obsidian Authoring Workflow]]
+- [[Obsidian Integration Troubleshooting]]
+- [[front-matter]]
+- [[Installation]]
