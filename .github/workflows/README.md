@@ -186,7 +186,7 @@ The workflow exits early when:
 **Triggers:** `push` of a `v*` tag, `workflow_dispatch`.
 
 Unified release flow that publishes to RubyGems and produces a GitHub Release
-with build artefacts attached.
+with build artifacts attached.
 
 ### Jobs
 
@@ -247,7 +247,7 @@ validates the update; merge if green, investigate if not.
 
 Converts notebooks to Jekyll-friendly Markdown via
 [`scripts/convert-notebooks.sh`](../../scripts/convert-notebooks.sh). On `push`
-events, the converted artefacts are committed back to the branch.
+events, the converted artifacts are committed back to the branch.
 
 ---
 
@@ -288,7 +288,7 @@ installer tests, or this workflow file. Also: weekly drift cron (Mondays
 
 | Job | Matrix | What it does |
 |-----|--------|--------------|
-| `matrix` | OS ∈ {ubuntu-latest, macos-latest} × Ruby ∈ {3.2, 3.3} | Runs `./scripts/bin/test install` (full installer e2e suite); uploads `test/results` and `test/reports` artefacts. |
+| `matrix` | OS ∈ {ubuntu-latest, macos-latest} × Ruby ∈ {3.2, 3.3} | Runs `./scripts/bin/test install` (full installer e2e suite); uploads `test/results` and `test/reports` artifacts. |
 | `curl-bash-bootstrap` | OS ∈ {ubuntu-latest, macos-latest} | Simulates a remote install by running `install.sh --minimal` against a clean target directory. Verifies `_config.yml`, `Gemfile`, and `index.md` are produced. |
 
 > Ruby ≥ 3.2 is required because Bundler 2.7.x (pinned in `Gemfile.lock`) drops
