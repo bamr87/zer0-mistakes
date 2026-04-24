@@ -222,7 +222,13 @@ layout: default
       {% include content/giscus.html %}
     </div>
   {% endif %}
-  
+    <!-- ================================ -->
+  <!-- BACKLINKS — "Linked mentions"    -->
+  <!-- ================================ -->
+  <!-- Obsidian-style panel of pages that wiki-link or markdown-link to this note. -->
+  <!-- Disable per-page with `backlinks: false` in front matter. -->
+  {% include content/backlinks.html %}
+
 </article>
 
 <!-- ================================ -->

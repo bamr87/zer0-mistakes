@@ -311,3 +311,9 @@ Shows:
 - [Google Analytics](/docs/analytics/google-analytics/)
 - [PostHog Analytics](/docs/features/posthog-analytics/)
 - [Cookie Consent](/docs/features/cookie-consent/)
+
+## See also
+
+- [[Analytics]]
+- [[Google Analytics]]
+- [[PostHog Analytics]]

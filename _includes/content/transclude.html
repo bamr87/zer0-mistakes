@@ -1,0 +1,62 @@
+{%- comment -%}
+  ===================================================================
+  TRANSCLUDE — Inline render of an embedded note (![[Note Title]])
+  ===================================================================
+
+  File: transclude.html
+  Path: _includes/content/transclude.html
+  Purpose: Render the body of another collection document inline.
+
+  Parameters:
+    - target (required): canonical title or basename of the embedded note
+    - url (required): resolved permalink (provided by _plugins/obsidian_links.rb)
+
+  Used by:
+    - _plugins/obsidian_links.rb (Ruby converter for `![[Note Title]]`)
+
+  Notes:
+    - We deliberately do NOT recursively run the Obsidian converter on the
+      embedded body to avoid transclusion loops.
+    - Falls back to a "broken embed" alert if the URL doesn't resolve to a
+      known site.documents entry.
+  ===================================================================
+{%- endcomment -%}
+
+{%- assign _embed_target = include.target -%}
+{%- assign _embed_url = include.url | split: "#" | first -%}
+{%- assign _embedded = nil -%}
+{%- for _doc in site.documents -%}
+  {%- if _doc.url == _embed_url -%}
+    {%- assign _embedded = _doc -%}
+    {%- break -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- if _embedded == nil -%}
+  {%- for _page in site.pages -%}
+    {%- if _page.url == _embed_url -%}
+      {%- assign _embedded = _page -%}
+      {%- break -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+
+{% if _embedded %}
+<aside class="obsidian-embed obsidian-embed-note card my-3" aria-label="Embedded note: {{ _embedded.title | default: _embed_target }}">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <span class="obsidian-embed-source">
+      <i class="bi bi-link-45deg me-1" aria-hidden="true"></i>
+      Embedded: <a href="{{ include.url | relative_url }}">{{ _embedded.title | default: _embed_target }}</a>
+    </span>
+    {% if _embedded.date %}
+      <small class="text-muted">{{ _embedded.date | date: "%Y-%m-%d" }}</small>
+    {% endif %}
+  </div>
+  <div class="card-body obsidian-embed-body">
+    {{ _embedded.content | strip_html | truncate: 800 | markdownify }}
+  </div>
+</aside>
+{% else %}
+<div class="obsidian-embed obsidian-embed-broken alert alert-warning" role="alert">
+  Embed not found: <code>{{ _embed_target | escape }}</code>
+</div>
+{% endif %}

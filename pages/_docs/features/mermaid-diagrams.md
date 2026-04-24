@@ -374,3 +374,9 @@ docker-compose up
 ---
 
 *This guide is part of the [Zer0-Mistakes Jekyll Theme](https://github.com/bamr87/zer0-mistakes) documentation.*
+
+## See also
+
+- [[Features]]
+- [[MathJax Math]]
+- [[Jupyter Notebook Integration]]

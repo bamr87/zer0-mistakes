@@ -121,3 +121,10 @@ Choose a feature to learn more:
 - [MathJax Math](mathjax-math/) — Mathematical notation
 - [Giscus Comments](giscus-comments/) — User engagement
 - [PostHog Analytics](posthog-analytics/) — Site insights
+
+## See also
+
+- [[Customization]]
+- [[Bootstrap Integration]]
+- [[Analytics]]
+- [[SEO]]

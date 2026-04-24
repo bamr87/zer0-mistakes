@@ -31,6 +31,27 @@
 ## [Unreleased]
 
 ### Added
+- **Obsidian Integration** — The repo's markdown content is now editable as an [Obsidian](https://obsidian.md) vault and rendered identically on GitHub Pages.
+  - Shared vault config (`.obsidian/app.json`, `core-plugins.json`, `community-plugins.json`, `appearance.json`, `hotkeys.json`, `templates.json`) and a Templates-compatible note template at `pages/_notes/_templates/note-template.md`.
+  - Liquid-generated `assets/data/wiki-index.json` listing every collection document and standalone page (title, basename, permalink, tags, aliases, excerpt) — works on the default GitHub Pages remote_theme build, no plugin whitelist changes required.
+  - `assets/js/obsidian-wiki-links.js` — client-side resolver that rewrites `[[wiki-links]]` (with aliases, header anchors, broken-link styling), `![[embeds]]` (image with width modifiers, note transclusion), inline `#tags`, and Obsidian callout blockquotes (`> [!note] Title …`) into Bootstrap-styled HTML.
+  - `_includes/content/backlinks.html` — server-side backlinks panel auto-rendered on every `note` layout (and on any page with `backlinks: true`); fully indexable by search engines.
+  - `_includes/content/transclude.html` — note embed renderer used by both the JS resolver and the Ruby converter.
+  - `_sass/core/_obsidian.scss` (imported via `_sass/custom.scss`) — styles for wiki-links, broken links, callouts, embeds, and the backlinks panel.
+  - `_plugins/obsidian_links.rb` — opt-in Ruby converter that performs the same transformations server-side for forks that build with vanilla Jekyll (without the `github-pages` gem) or use a custom GH Actions workflow that bypasses the plugin whitelist.
+  - `pages/_docs/obsidian/` — full documentation section: index, getting started, syntax reference, authoring workflow, troubleshooting.
+  - `_config.yml` — added `*.canvas` and `*.excalidraw.md` to `exclude:`; `jekyll-redirect-from` enabled to map Obsidian `aliases:` to URL redirects.
+  - `.gitignore` — ignore Obsidian's local-only state (`workspace*`, `cache`, `plugins/*/data.json`, `graph.json`, `.trash/`).
+- **Tests**:
+  - `test/test_ruby_converter.rb` — 18-test, 65-assertion Minitest suite for `_plugins/obsidian_links.rb` covering wiki-links, embeds, callouts (including fold markers and unknown-type fallback), inline tags, code-block isolation, and a plain-markdown regression guard.
+  - `test/test_resolver.js` — 16-assertion Node test for `assets/js/obsidian-wiki-links.js` using a hand-rolled DOM shim; exercises wiki-link resolution, embeds, tags, and DOM-level callout rewriting.
+  - `test/test_obsidian.sh` — orchestrator that runs both unit suites and validates that the Jekyll build emits a well-formed `wiki-index.json`. Wired into `test/test_runner.sh`.
+  - `test/fixtures/obsidian/sample-note.md` — representative Obsidian note exercising every supported feature.
+- **Obsidian Graph View** — Live, force-directed knowledge graph at `/docs/obsidian/graph/` mirroring Obsidian's local graph view. Built from the same `assets/data/wiki-index.json` that powers the resolver and backlinks panel.
+  - `pages/_docs/obsidian/graph.md` — graph page (Bootstrap toolbar with title filter, "Show orphans" switch, "Reset view" button; collection-color legend; usage tips). Cytoscape.js loaded only on this page via CDN with SRI + `crossorigin="anonymous"`.
+  - `assets/js/obsidian-graph.js` — vanilla-JS renderer (~330 lines, no build step). Mirrors the resolver's normalization (`toLowerCase().trim()` + whitespace collapse) so wiki-index keys match. `cose` force layout, hover-highlight neighborhood, click-to-navigate (⌘/Ctrl-click for new tab), search-driven node fading, orphans hidden by default with a Bootstrap switch toggle. Broken targets render as dashed red nodes prefixed `__broken__:` in the graph model.
+  - `assets/data/wiki-index.json` — extended each entry with an `outgoing: [...]` array of normalized wiki-link targets, extracted at build time via Liquid (masks `![[…]]` embeds, splits on `[[`/`]]`/`|`/`#`/`^`, downcases, dedupes).
+- **Docs**: `README.md` and `AGENTS.md` updated with an Obsidian vault section pointing to the new docs.
 - **Bare-minimum 3-file remote-theme starter.** Consumers can now publish a
   fully styled site to GitHub Pages with only `_config.yml`, `Gemfile`, and
   `index.md` — no installer required. The new `_layouts/welcome.html` shipped
@@ -179,10 +200,18 @@ See [`docs/installation/migration-from-0.x.md`](docs/installation/migration-from
 - **Roadmap data file**: `_data/roadmap.yml` is now the single source of truth for the project roadmap (versions, status, dates, targets, and feature highlights).
 - **Roadmap generator**: `scripts/generate-roadmap.rb` (and shell wrapper `scripts/generate-roadmap.sh`) renders a Mermaid gantt diagram and summary table from `_data/roadmap.yml` and injects them into `README.md` between `<!-- ROADMAP_MERMAID:START/END -->` and `<!-- ROADMAP_TABLE:START/END -->` markers. Supports `--check` mode for CI drift detection and `--stdout` for previewing.
 - **Roadmap sync workflow**: `.github/workflows/roadmap-sync.yml` regenerates the README on push to `main` when the data file or generator changes, and verifies sync on PRs that touch those files.
+- **Local Graph Sidebar Widget** — Per-page mini Obsidian-style local graph rendered at the top of the left sidebar on every page that has one.
+  - `_includes/navigation/local-graph.html` — small widget with a "Local graph" heading, a "full ›" link to `/docs/obsidian/graph/`, and a `#obsidian-local-graph` container. Honors `local_graph: false` and `local_graph_depth: N` (default 1) in page front matter.
+  - `assets/js/obsidian-local-graph.js` — fetches `wiki-index.json`, finds the current page by `window.location.pathname` (with title/basename fallback), BFS through both outgoing and incoming wiki-links to the configured depth, renders the subgraph with cytoscape.js (`cose` layout sized for ~220px sidebar canvas). Highlights the current page with an orange border + larger node + bold label. Click navigates (⌘/Ctrl-click opens new tab). Hides itself silently if the page isn't in the wiki-index or has no neighbors. Cytoscape is lazy-loaded from CDN with SRI + `crossorigin="anonymous"` and de-duplicated against the full graph page's existing load.
+  - `_includes/navigation/sidebar-left.html` — includes the new widget at the top of `.offcanvas-body`, before the nav-mode chain.
+  - `_sass/core/_obsidian.scss` — added `.obsidian-local-graph-widget` styles for the 220px container with theme-aware borders/background.
 - **Docs**: `docs/FORKING.md` — progressive fork → configure → personalize workflow for the `username.github.io` user-site pattern
 - **Tests**: `test/test_fork_cleanup.sh` — 32-assertion suite covering CLI parsing, dry-run, real cleanup, YAML anchor preservation, and idempotency
 
 ### Changed
+- **Obsidian docs**: `pages/_docs/obsidian/syntax-reference.md` — graph view now marked **Available** (was "Not yet implemented"); `pages/_docs/obsidian/index.md` — added Graph view row to the section table.
+- **Documentation cross-linking**: appended a `## See also` block of `[[wiki-links]]` to every page in `pages/_docs/` (76 files — section indexes, leaf pages, and the obsidian cluster) so the graph view shows real cluster structure. Edge count grew from 12 → 292 with 90+ visible nodes after orphan filtering.
+- **Obsidian Graph View polish**: removed the white pill backgrounds behind labels (now halo-only outlines that match the canvas color, so edges read through cleanly); labels hide by default and reveal on zoom-in or hover, while the 37 hub nodes (degree ≥ 6 — Docker, Front Matter, Jeykll, Layouts, Customization, Release Management, etc.) keep their labels always-on as landmarks; loosened `cose` layout (`nodeRepulsion` 8000→18000, `idealEdgeLength` 80→130, added `nodeOverlap: 24` and `componentSpacing: 80`, dropped gravity 0.25→0.18, `numIter` 2500); taller canvas (`82vh` / `620px` min, was `75vh` / `520px`); bigger `cy.fit()` padding (40→70 default, 80→100 for search matches) so top-row labels don't clip the canvas edge.
 - **README roadmap section** is now auto-generated from `_data/roadmap.yml` instead of being hand-maintained, and includes status, target, and detailed highlight columns.
 - **`pages/roadmap.md`** rewritten to render the Mermaid gantt chart, release summary, and per-version detail sections directly from `_data/roadmap.yml` via Liquid — so the Jekyll page is always live with the canonical data.
 - **`_data/README.md`** documents the new `roadmap.yml` data file.

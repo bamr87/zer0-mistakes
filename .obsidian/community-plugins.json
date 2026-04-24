@@ -1,0 +1,35 @@
+{
+  "_comment": "Recommended community plugins (NOT auto-installed). Open Settings → Community plugins → Browse to install. Each plugin enhances the round-trip with the rendered GitHub Pages site.",
+  "_recommended": [
+    {
+      "id": "dataview",
+      "name": "Dataview",
+      "purpose": "Query notes by frontmatter (Jekyll defaults like layout, categories, tags map directly).",
+      "url": "https://github.com/blacksmithgu/obsidian-dataview"
+    },
+    {
+      "id": "templater-obsidian",
+      "name": "Templater",
+      "purpose": "Apply pages/_notes/_templates/note-template.md when creating new notes.",
+      "url": "https://github.com/SilentVoid13/Templater"
+    },
+    {
+      "id": "obsidian-git",
+      "name": "Obsidian Git",
+      "purpose": "Commit and push from inside the vault — drives the GitHub Pages publish loop.",
+      "url": "https://github.com/Vinzent03/obsidian-git"
+    },
+    {
+      "id": "obsidian-excalidraw-plugin",
+      "name": "Excalidraw",
+      "purpose": "Author diagrams as .excalidraw.md (excluded from the Jekyll build by default).",
+      "url": "https://github.com/zsviczian/obsidian-excalidraw-plugin"
+    },
+    {
+      "id": "obsidian-admonition",
+      "name": "Admonition",
+      "purpose": "Optional richer callouts; native > [!note] callouts already render via the theme.",
+      "url": "https://github.com/javalent/admonitions"
+    }
+  ]
+}

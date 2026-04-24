@@ -12,6 +12,9 @@
 @import "core/navbar";
 @import "core/offcanvas-panels";
 
+// Obsidian-flavoured markdown features (wiki-links, callouts, backlinks, …)
+@import "core/obsidian";
+
 html, body {
     max-width: 100%;
     // overflow-x: hidden;

@@ -202,3 +202,10 @@ comments: true
 - [Jekyll Guide](/docs/jekyll/)
 - [Jekyll Configuration](/docs/jekyll/jekyll-config/)
 - [Liquid Templating](/docs/liquid/)
+
+## See also
+
+- [[Jekyll]]
+- [[Liquid]]
+- [[SEO]]
+- [[Customization]]

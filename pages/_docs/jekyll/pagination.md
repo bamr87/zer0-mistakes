@@ -178,3 +178,9 @@ Add CSS for pagination buttons:
 
 - [Jekyll Pagination Documentation](https://jekyllrb.com/docs/pagination/)
 - [Previous/Next Links in Collections](http://stories.upthebuzzard.com/jekyll_notes/2017-02-19-prev-and-next-within-a-jekyll-collection.html)
+
+## See also
+
+- [[Jekyll]]
+- [[Liquid]]
+- [[front-matter]]

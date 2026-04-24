@@ -1,0 +1,74 @@
+---
+# Generated wiki-link index for Obsidian-style [[…]] resolution on the
+# rendered site. Consumed by:
+#   - assets/js/obsidian-wiki-links.js (client-side fallback used on the
+#     GitHub Pages remote_theme build, where _plugins/obsidian_links.rb
+#     does not run)
+#   - _includes/content/backlinks.html (per-page backlinks panel)
+#
+# Output: assets/data/wiki-index.json
+#
+# Layout: null so Jekyll just renders the body verbatim.
+layout: null
+permalink: /assets/data/wiki-index.json
+sitemap: false
+---
+{%- comment -%}
+  Build a flat array of every renderable document with title, basename,
+  permalink, collection, tags, and the body's outgoing wiki-link targets.
+  The JS resolver normalizes lookup keys to lowercase + collapsed whitespace
+  (matching _plugins/obsidian_links.rb#normalize).
+{%- endcomment -%}
+{%- assign all_docs = "" | split: "" -%}
+{%- for collection in site.collections -%}
+  {%- for doc in collection.docs -%}
+    {%- assign all_docs = all_docs | push: doc -%}
+  {%- endfor -%}
+{%- endfor -%}
+{%- for page in site.pages -%}
+  {%- if page.output_ext == ".html" and page.url -%}
+    {%- assign all_docs = all_docs | push: page -%}
+  {%- endif -%}
+{%- endfor -%}
+{
+  "generated_at": {{ site.time | date_to_xmlschema | jsonify }},
+  "count": {{ all_docs.size | jsonify }},
+  "entries": [
+    {%- for doc in all_docs -%}
+      {%- assign basename = doc.path | split: "/" | last | replace: ".md", "" | replace: ".markdown", "" | replace: ".html", "" -%}
+      {%- assign body = doc.content | default: "" | strip_html -%}
+      {%- assign body_excerpt = body | strip_newlines | truncate: 240 -%}
+      {%- comment -%}
+        Extract outgoing wiki-link targets so the graph view
+        (assets/js/obsidian-graph.js) can render edges without re-parsing
+        every page client-side. We mask `![[…]]` embeds first so they don't
+        also get split as `[[…]]`, then split on `[[`, take everything
+        before `]]`, and strip the optional `|alias` and `#anchor` parts.
+      {%- endcomment -%}
+      {%- assign masked = body | replace: "![[", "@@OBSEMBED@@" -%}
+      {%- assign chunks = masked | split: "[[" -%}
+      {%- assign outgoing = "" | split: "" -%}
+      {%- for chunk in chunks offset: 1 -%}
+        {%- assign target_raw = chunk | split: "]]" | first -%}
+        {%- if target_raw and target_raw != "" -%}
+          {%- assign target = target_raw | split: "|" | first | split: "#" | first | split: "^" | first | strip | downcase -%}
+          {%- if target != "" and target.size < 200 -%}
+            {%- assign outgoing = outgoing | push: target -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- assign outgoing = outgoing | uniq -%}
+      {
+        "title": {{ doc.title | default: basename | jsonify }},
+        "basename": {{ basename | jsonify }},
+        "url": {{ doc.url | jsonify }},
+        "collection": {{ doc.collection | default: nil | jsonify }},
+        "tags": {{ doc.tags | default: empty | jsonify }},
+        "categories": {{ doc.categories | default: empty | jsonify }},
+        "aliases": {{ doc.aliases | default: empty | jsonify }},
+        "outgoing": {{ outgoing | jsonify }},
+        "excerpt": {{ body_excerpt | jsonify }}
+      }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ]
+}

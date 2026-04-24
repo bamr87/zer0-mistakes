@@ -1,0 +1,44 @@
+{%- comment -%}
+  ===================================================================
+  LOCAL GRAPH WIDGET — sidebar mini graph
+  ===================================================================
+
+  File: local-graph.html
+  Path: _includes/navigation/local-graph.html
+  Purpose: Renders a small "local graph" of the current page and its
+           immediate wiki-link neighbors in the left sidebar (Obsidian-
+           style local graph view).
+
+  Behavior:
+  - Reads /assets/data/wiki-index.json
+  - Finds the current page by window.location.pathname (with title/basename
+    fallback for permalink quirks)
+  - BFS depth=1 by default (current + direct neighbors, in & out)
+  - Hides itself if the current page is not in the wiki-index, has no
+    neighbors, or the index can't be loaded
+  - Lazily loads cytoscape.js from CDN with SRI + crossorigin
+
+  Opt-out: set `local_graph: false` in page front matter.
+
+  Configurable depth: `local_graph_depth: 2` in page front matter (default 1).
+  ===================================================================
+{%- endcomment -%}
+{%- if page.local_graph != false -%}
+{%- assign lg_depth = page.local_graph_depth | default: 1 -%}
+<div class="obsidian-local-graph-widget mb-3" aria-label="Local graph">
+  <div class="d-flex align-items-center justify-content-between mb-1">
+    <span class="text-uppercase fw-semibold small text-secondary">
+      <i class="bi bi-diagram-3 me-1" aria-hidden="true"></i>Local graph
+    </span>
+    <a href="{{ '/docs/obsidian/graph/' | relative_url }}"
+       class="small text-decoration-none"
+       title="Open the full site graph">full&nbsp;&rsaquo;</a>
+  </div>
+  <div id="obsidian-local-graph"
+       data-depth="{{ lg_depth }}"
+       data-index-url="{{ '/assets/data/wiki-index.json' | relative_url }}"
+       role="img"
+       aria-label="Local graph of pages linked to this page"></div>
+</div>
+<script src="{{ '/assets/js/obsidian-local-graph.js' | relative_url }}" defer></script>
+{%- endif -%}

@@ -373,3 +373,10 @@ document.querySelectorAll('.needs-validation').forEach(form => {
 - [Color Modes](/docs/features/color-modes/)
 - [Layouts](/docs/customization/layouts/)
 - [Include Components](/docs/customization/includes/)
+
+## See also
+
+- [[Customization]]
+- [[Features]]
+- [[Jekyll]]
+- [[Liquid]]

@@ -262,3 +262,8 @@ if (lang) {
 
 - [Code Highlighting](/docs/jekyll/code-highlighting/)
 - [Mermaid Diagrams](/docs/features/mermaid-diagrams/)
+
+## See also
+
+- [[Features]]
+- [[Code Highlighting]]

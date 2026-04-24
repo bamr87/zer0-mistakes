@@ -54,4 +54,28 @@ logs/*
 **/__pycache__/
 *.pyc
 *.pyo
+
+# Local secrets (never commit)
 _config_secrets_local.yml
+
+# --- Obsidian (vault local-only state) -------------------------------------
+# We commit a curated subset of `.obsidian/` (app, core-plugins, etc.) so the
+# vault opens with consistent settings, but ignore Obsidian's per-user state.
+# See pages/_docs/obsidian/getting-started.md for the rationale.
+.obsidian/workspace
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/workspaces.json
+.obsidian/cache
+.obsidian/graph.json
+.obsidian/plugins/*/data.json
+.obsidian/plugins/*/main.js
+.obsidian/plugins/*/manifest.json
+.obsidian/plugins/*/styles.css
+.obsidian/themes/
+.obsidian/snippets/
+.trash/
+
+# Obsidian working files that should not be published by Jekyll
+*.canvas
+*.excalidraw.md

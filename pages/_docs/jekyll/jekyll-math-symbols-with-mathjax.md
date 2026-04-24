@@ -19,3 +19,9 @@ lastmod: 2025-12-20T22:15:46.660Z
 # MathJax
 
 This site loads MathJax via CDN when enabled.
+
+## See also
+
+- [[Jekyll]]
+- [[MathJax Math]]
+- [[Mermaid Diagrams]]

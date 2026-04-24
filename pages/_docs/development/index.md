@@ -98,3 +98,10 @@ See [CONTRIBUTING.md](https://github.com/bamr87/zer0-mistakes/blob/main/CONTRIBU
 - [Installation Guide](/docs/installation/)
 - [Docker Development](/docs/docker/)
 - [Customization](/docs/customization/)
+
+## See also
+
+- [[Docker]]
+- [[Jekyll]]
+- [[Customization]]
+- [[Installation]]

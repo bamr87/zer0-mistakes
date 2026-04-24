@@ -19,3 +19,9 @@ lastmod: 2025-12-20T22:15:46.689Z
 # Jekyll + Liquid
 
 - Start with: {{ '/docs/liquid/' | relative_url }}
+
+## See also
+
+- [[Jekyll]]
+- [[Liquid]]
+- [[Customization]]

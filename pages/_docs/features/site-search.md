@@ -308,3 +308,8 @@ searchInput.addEventListener('input', () => {
 
 - [Keyboard Navigation](/docs/features/keyboard-navigation/)
 - [Modal Components](/docs/bootstrap/)
+
+## See also
+
+- [[Features]]
+- [[Keyboard Navigation]]

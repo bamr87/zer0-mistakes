@@ -33,3 +33,9 @@ If you are running from the repo:
 ```bash
 bundle install
 ```
+
+## See also
+
+- [[Ruby]]
+- [[Jekyll]]
+- [[Installation]]

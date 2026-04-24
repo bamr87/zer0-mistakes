@@ -20,3 +20,9 @@ lastmod: 2025-12-20T22:15:46.922Z
 
 - Avoid leaking secrets into front matter
 - Keep dependencies up to date
+
+## See also
+
+- [[Jekyll]]
+- [[Security Scanning]]
+- [[Dependency Updates]]

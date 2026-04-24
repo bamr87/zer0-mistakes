@@ -253,3 +253,9 @@ Position to not interfere with mobile TOC button:
 
 - [Sidebar Navigation](/docs/features/sidebar-navigation/)
 - [Keyboard Navigation](/docs/features/keyboard-navigation/)
+
+## See also
+
+- [[Features]]
+- [[Keyboard Navigation]]
+- [[Mobile TOC Floating Action Button]]
