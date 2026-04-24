@@ -6,6 +6,7 @@ permalink: /docs/obsidian/troubleshooting/
 categories: [Documentation, Obsidian]
 tags: [obsidian, troubleshooting, debugging]
 backlinks: true
+lastmod: "2026-04-24T15:06:30Z"
 ---
 
 # Obsidian Integration Troubleshooting

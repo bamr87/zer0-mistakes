@@ -6,6 +6,7 @@ permalink: /docs/obsidian/getting-started/
 categories: [Documentation, Obsidian]
 tags: [obsidian, setup, vault]
 backlinks: true
+lastmod: "2026-04-24T15:06:30Z"
 ---
 
 # Getting Started with the Obsidian Vault

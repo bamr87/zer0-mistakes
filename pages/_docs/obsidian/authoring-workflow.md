@@ -6,6 +6,7 @@ permalink: /docs/obsidian/authoring-workflow/
 categories: [Documentation, Obsidian]
 tags: [obsidian, workflow, authoring]
 backlinks: true
+lastmod: "2026-04-24T15:06:30Z"
 ---
 
 # Obsidian Authoring Workflow

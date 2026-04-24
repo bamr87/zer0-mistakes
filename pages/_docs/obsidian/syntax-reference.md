@@ -6,6 +6,7 @@ permalink: /docs/obsidian/syntax-reference/
 categories: [Documentation, Obsidian]
 tags: [obsidian, syntax, reference]
 backlinks: true
+lastmod: "2026-04-24T15:06:30Z"
 ---
 
 # Obsidian Syntax Reference

@@ -400,6 +400,12 @@ scan_collection() {
 
     if [[ -d "$REPO_ROOT/$dir_part" ]]; then
         while IFS= read -r -d '' filepath; do
+            # Skip Obsidian/Jekyll template directories — these contain
+            # placeholder front matter ({{title}}, {{date}}) that is never
+            # rendered as a real page.
+            case "$filepath" in
+                */_templates/*) continue ;;
+            esac
             validate_file "$filepath" "$collection"
             files_found=$((files_found + 1))
         # shellcheck disable=SC2086

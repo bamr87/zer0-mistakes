@@ -177,13 +177,17 @@ function makeShim() {
           if (stack.length > 1) stack.pop();
           return;
         }
-        // Text content — decode the entities we emit.
-        const text = tok
-          .replace(/&amp;/g, '&')
-          .replace(/&lt;/g, '<')
-          .replace(/&gt;/g, '>')
-          .replace(/&quot;/g, '"')
-          .replace(/&#39;/g, "'");
+        // Text content — decode the entities we emit. Use a single-pass
+        // replacement so we never double-unescape (e.g. `&amp;lt;` must stay
+        // `&lt;`, not become `<`). CodeQL js/double-escaping safe.
+        const ENTITY_MAP = {
+          'amp': '&',
+          'lt': '<',
+          'gt': '>',
+          'quot': '"',
+          '#39': "'",
+        };
+        const text = tok.replace(/&(amp|lt|gt|quot|#39);/g, (_m, k) => ENTITY_MAP[k]);
         top.appendChild(new TextNode(text));
       });
     }
