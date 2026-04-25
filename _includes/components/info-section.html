@@ -22,6 +22,7 @@
 -->
 
 {% include components/env-detect.html %}
+{% assign info_section_page_urls = site.html_pages | map: "url" | join: "|" | prepend: "|" | append: "|" %}
 <!-- Settings Offcanvas -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="info-section" aria-labelledby="infoSectionLabel">
   
@@ -111,9 +112,12 @@
         <!-- Admin Quick Links — only render links to pages that actually exist
              in the build (prevents 404s on bare-minimum / remote-theme sites
              that haven't created the admin pages). -->
-        {% assign _cfg_page = site.html_pages | where: "url", "/about/config/" | first %}
-        {% assign _theme_page = site.html_pages | where: "url", "/about/settings/theme/" | first %}
-        {% assign _nav_page = site.html_pages | where: "url", "/about/settings/navigation/" | first %}
+        {% assign _cfg_page = false %}
+        {% assign _theme_page = false %}
+        {% assign _nav_page = false %}
+        {% if info_section_page_urls contains "|/about/config/|" %}{% assign _cfg_page = true %}{% endif %}
+        {% if info_section_page_urls contains "|/about/settings/theme/|" %}{% assign _theme_page = true %}{% endif %}
+        {% if info_section_page_urls contains "|/about/settings/navigation/|" %}{% assign _nav_page = true %}{% endif %}
         {% if _cfg_page or _theme_page or _nav_page %}
         <div class="mb-3">
           <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
@@ -145,7 +149,8 @@
         {% include components/env-switcher.html %}
 
         <!-- Admin Link — only when target page exists -->
-        {% assign _env_page = site.html_pages | where: "url", "/about/settings/environment/" | first %}
+        {% assign _env_page = false %}
+        {% if info_section_page_urls contains "|/about/settings/environment/|" %}{% assign _env_page = true %}{% endif %}
         {% if _env_page %}
         <div class="mt-4 pt-3 border-top">
           <a href="{{ '/about/settings/environment/' | relative_url }}" class="btn btn-outline-secondary btn-sm w-100">

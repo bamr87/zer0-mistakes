@@ -28,9 +28,9 @@ services:
     # Platform specification for Apple Silicon compatibility
     platform: linux/amd64
     
-    # Run bundle install first since volume mount overwrites container's /site
+    # Run bundle install only when needed since volume mount overwrites container's /site
     # Also configure git safe.directory to avoid ownership warnings in CI
-    command: ["sh", "-c", "git config --global --add safe.directory /site 2>/dev/null || true && bundle install --jobs 4 --retry 3 && bundle exec jekyll serve --watch --force_polling --config '_config.yml,_config_dev.yml' --host 0.0.0.0 --port 4000 --livereload"]
+    command: ["sh", "-c", "git config --global --add safe.directory /site 2>/dev/null || true && bundle check || bundle install --jobs 4 --retry 3 && bundle exec jekyll serve --watch --force_polling --config '_config.yml,_config_dev.yml' --host 0.0.0.0 --port 4000 --livereload"]
     
     volumes:
       - .:/site
