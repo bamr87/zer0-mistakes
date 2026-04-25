@@ -37,8 +37,9 @@
      remote_theme GH Pages build, where _plugins/obsidian_links.rb cannot run). -->
 {%- assign obsidian_attachments_path = site.obsidian.attachments_path | default: '/assets/images/notes' -%}
 <script>
-  window.OBSIDIAN_WIKI_INDEX_URL = {{ '/assets/data/wiki-index.json' | relative_url | jsonify }};
-  window.OBSIDIAN_ATTACHMENTS_PATH = {{ obsidian_attachments_path | relative_url | jsonify }};
-  window.OBSIDIAN_TAG_BASE = {{ '/tags/' | relative_url | jsonify }};
+  window.OBSIDIAN_CONFIG = window.OBSIDIAN_CONFIG || {};
+  window.OBSIDIAN_CONFIG.wikiIndexUrl = {{ '/assets/data/wiki-index.json' | relative_url | jsonify }};
+  window.OBSIDIAN_CONFIG.attachmentsPath = {{ obsidian_attachments_path | relative_url | jsonify }};
+  window.OBSIDIAN_CONFIG.tagBase = {{ '/tags/' | relative_url | jsonify }};
 </script>
 <script defer src="{{ '/assets/js/obsidian-wiki-links.js' | relative_url }}"></script>
