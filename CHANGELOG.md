@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.4.0] - 2026-04-25
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- d39dfa9 Add standalone Obsidian local graph panel (#77)
+
+
 ## [1.3.0] - 2026-04-24
 
 ### Changed
