@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.3.0] - 2026-04-24
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 31e042c feat: Obsidian vault integration with client-side wiki-link resolver and backlinks (#73)
+
+
 ## [1.2.1] - 2026-04-22
 
 ### Changed
