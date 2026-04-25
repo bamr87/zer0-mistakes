@@ -56,7 +56,7 @@ runs:
           ARGS="$ARGS --suites ${{ inputs.suites }}"
         fi
         
-        ./test/test_runner.sh $ARGS
+        ./scripts/bin/test $ARGS
     
     - name: Validate Test Results
       shell: bash

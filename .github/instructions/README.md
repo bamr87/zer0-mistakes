@@ -16,6 +16,8 @@ This directory contains file-specific instructions for GitHub Copilot to provide
 │   ├── scripts.instructions.md       # Shell script automation
 │   ├── testing.instructions.md       # Testing guidelines
 │   ├── documentation.instructions.md # Documentation development
+│   ├── obsidian.instructions.md      # Obsidian vault integration (wiki-links, JS resolver, Ruby plugin)
+│   ├── sass.instructions.md          # Sass partials, Bootstrap overrides, CSS custom properties
 │   └── version-control.instructions.md  # Git workflow and releases
 ├── prompts/                         # Reusable agent/chat prompts (.prompt.md)
 │   ├── commit-publish.prompt.md      # Full release pipeline
@@ -41,6 +43,8 @@ GitHub Copilot automatically applies these instructions based on the files you'r
 | `scripts.instructions.md`         | `scripts/**`                       | Shell script standards, error handling             |
 | `testing.instructions.md`         | `test/**`                          | Test development, assertions, CI/CD                |
 | `documentation.instructions.md`   | `docs/**,pages/_docs/**,*docs*.md` | Documentation development guidelines               |
+| `obsidian.instructions.md`        | `_plugins/obsidian_links.rb`, `assets/js/obsidian-*.js`, `assets/data/wiki-index.json`, `_includes/content/backlinks.html`, `pages/_docs/obsidian/**`, Obsidian tests | Wiki-link/embed/callout contract across Liquid index, JS resolver, and Ruby plugin |
+| `sass.instructions.md`            | `_sass/**`, `assets/css/**`        | Sass partial layering, Bootstrap variable overrides, no-double-Bootstrap rule |
 | `version-control.instructions.md` | `**` (all files)                   | Git workflow, semantic versioning, releases        |
 
 ## 📖 Main Instructions (copilot-instructions.md)

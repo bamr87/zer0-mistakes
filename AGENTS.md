@@ -55,6 +55,8 @@ should load them manually):
 | `_includes/**` | `.github/instructions/includes.instructions.md` |
 | `scripts/**` | `.github/instructions/scripts.instructions.md` |
 | `scripts/lib/install/**`, `scripts/bin/install`, `install.sh`, `templates/{profiles,deploy,agents,ai}/**` | `.github/instructions/install.instructions.md` |
+| `_plugins/obsidian_links.rb`, `assets/js/obsidian-*.js`, `assets/data/wiki-index.json`, `_includes/content/backlinks.html`, `pages/_docs/obsidian/**`, `test/test_obsidian.sh`, `test/test_ruby_converter.rb`, `test/test_resolver.js` | `.github/instructions/obsidian.instructions.md` |
+| `_sass/**`, `assets/css/**` | `.github/instructions/sass.instructions.md` |
 | `test/**` | `.github/instructions/testing.instructions.md` |
 | `docs/**`, `pages/_docs/**`, `*docs*.md` | `.github/instructions/documentation.instructions.md` |
 | `CHANGELOG.md`, `**/version.*`, `*.gemspec`, `package.json` | `.github/instructions/version-control.instructions.md` |
@@ -64,6 +66,7 @@ should load them manually):
 | Task | Prompt |
 | --- | --- |
 | Full release pipeline (analyze → validate → version → publish → verify) | `.github/prompts/commit-publish.prompt.md` |
+| Add a new Obsidian wiki-link / embed / callout syntax across all rendering paths | `.github/prompts/obsidian-add-syntax.prompt.md` |
 | Front matter audit / fix across content | `.github/prompts/frontmatter-maintainer.prompt.md` |
 | Rebuild the theme from scratch (deep blueprint) | `.github/prompts/seed.prompt.md` |
 

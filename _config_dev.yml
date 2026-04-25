@@ -47,6 +47,8 @@ exclude:
   - .sass-cache/
   - .jekyll-cache/
   - .obsidian
+  - "*.canvas"
+  - "*.excalidraw.md"
   - docs/
   - Gemfile.lock
   - gemfiles/
@@ -67,6 +69,7 @@ exclude:
   - _site/lib/
   - logs/
   - "*.log"
+  - pages/_notes/_templates/
   - .vscode/
   - debug-*.log
 

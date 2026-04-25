@@ -124,15 +124,8 @@ jobs:
           ruby-version: ${{ env.RUBY_VERSION }}
           install-system-deps: false
 
-      - name: Quick Syntax Check
-        run: ruby -c lib/jekyll-theme-zer0/version.rb
-
-      - name: Validate Gemspec
-        run: |
-          ruby -e "
-            spec = Gem::Specification.load('jekyll-theme-zer0.gemspec')
-            puts '✅ Gemspec valid: #{spec.name} v#{spec.version}'
-          "
+      - name: Run Quick Validator
+        run: ./scripts/bin/validate --quick
 
   # Quality control checks — always runs (covers markdown linting)
   quality-checks:

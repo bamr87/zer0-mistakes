@@ -2,13 +2,33 @@
 
 Run tests and validate changes before submitting pull requests.
 
+## Preflight Validation
+
+Use the canonical validator before larger refactors and before preparing a PR.
+It runs fast repository checks, version consistency, YAML/data validation,
+active configuration contract checks, config-file classification, navigation
+schema validation, the Docker/local Jekyll build, Jekyll doctor, and compiled
+asset checks.
+
+```bash
+# Standard preflight; uses Docker Compose when the jekyll service is running,
+# otherwise falls back to local bundle exec.
+./scripts/validate
+
+# Fast host-only checks used by CI fast-checks
+./scripts/validate --quick
+
+# Start Docker if needed and include optional test layers
+./scripts/validate --full --start-docker
+```
+
 ## Test Suite
 
 The theme includes a comprehensive test suite:
 
 ```bash
-# Run all tests
-./test/test_runner.sh
+# Run all canonical tests
+./scripts/bin/test
 
 # Run specific test suites
 ./test/test_runner.sh --suites core,deployment

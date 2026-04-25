@@ -8,6 +8,7 @@ This directory contains automation scripts for managing the `jekyll-theme-zer0` 
 scripts/
 ├── bin/                    # Entry point commands (use these!)
 │   ├── build              # Build gem without releasing
+│   ├── validate           # Preflight checks for local/CI validation
 │   ├── release            # Full release workflow
 │   └── test               # Run all test suites
 ├── lib/                   # Shared libraries (sourced, not executed)
@@ -39,6 +40,10 @@ scripts/
 # Build gem
 ./scripts/bin/build
 
+# Preflight validation
+./scripts/bin/validate --quick
+./scripts/bin/validate --start-docker
+
 # Full release workflow
 ./scripts/bin/release patch   # or minor/major
 
@@ -55,6 +60,23 @@ Build the gem without the full release workflow.
 
 ```bash
 ./scripts/bin/build [--dry-run] [--verbose]
+```
+
+#### `bin/validate`
+Run preflight validation before refactors, pull requests, and releases. The
+quick path validates repository files, version consistency, YAML parsing, active
+configuration contracts, config-file classification, and navigation data before
+the Docker/local build stages run.
+
+```bash
+./scripts/bin/validate [options]
+
+Options:
+  --quick             Host-only checks for CI fast feedback
+  --full              Include tests, Obsidian tests, and HTMLProofer
+  --start-docker      Start the jekyll Docker Compose service if needed
+  --docker            Require Docker Compose for Jekyll commands
+  --local             Require local bundle exec for Jekyll commands
 ```
 
 #### `bin/release`

@@ -176,6 +176,10 @@ See [`.github/actions/README.md`](../actions/README.md) for action documentation
 To test workflows locally before pushing:
 
 ```bash
+# Canonical preflight validation
+./scripts/validate --quick
+./scripts/validate --start-docker
+
 # Preview version bump
 ./scripts/release patch --dry-run
 
@@ -183,7 +187,7 @@ To test workflows locally before pushing:
 ./scripts/build
 
 # Run tests
-./test/test_runner.sh --verbose
+./scripts/bin/test --verbose
 
 # Analyze commits for version bump type
 ./scripts/analyze-commits.sh HEAD~5..HEAD
@@ -207,5 +211,6 @@ To test workflows locally before pushing:
 
 ### CI failures
 - Check individual job logs for specific errors
-- Run tests locally: `./test/test_runner.sh`
+- Run quick validation locally: `./scripts/validate --quick`
+- Run tests locally: `./scripts/bin/test`
 - Validate gem: `./scripts/build && gem spec jekyll-theme-zer0-*.gem`

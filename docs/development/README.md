@@ -50,8 +50,14 @@ docker-compose up
 ## Testing
 
 ```bash
+# Run preflight validation
+./scripts/validate
+
+# Run quick host-only validation
+./scripts/validate --quick
+
 # Run test suite
-./test/test_runner.sh
+./scripts/bin/test
 
 # Run specific tests
 ./test/test_runner.sh --suites core

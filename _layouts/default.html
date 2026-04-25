@@ -5,20 +5,21 @@ layout: root
   ===================================================================
   DEFAULT LAYOUT - Standard content layout with sidebars
   ===================================================================
-  
+
   File: default.html
   Path: _layouts/default.html
   Inherits: root.html
   Purpose: Primary content layout with sidebar navigation and table of contents
-  
+
   Template Logic:
   - Creates a responsive three-column layout using Bootstrap grid
   - Left sidebar: Site navigation and content outline (collapsible on mobile)
+  - Local graph: Independent Obsidian side panel with its own collapsible control
   - Center: Main content area with page title and body content
   - Right sidebar: Table of contents and page shortcuts (hidden on mobile)
   - Implements scroll spy for navigation highlighting
   - Responsive design that stacks vertically on mobile devices
-  
+
   Layout Structure:
   1. Container wrapper with Bootstrap responsive classes
   2. Left sidebar (bd-sidebar) - Navigation and outline
@@ -26,12 +27,12 @@ layout: root
      - Intro section (page title, metadata)
      - Right sidebar (bd-toc) - Table of contents
      - Content area (bd-content) - Main page content
-  
+
   Dependencies:
   - sidebar-left.html: Site navigation and content outline
   - intro.html: Page title, breadcrumbs, and metadata
   - sidebar-right.html: Table of contents and page shortcuts
-  
+
   Bootstrap Classes Used:
   - container-xxl: Extra large responsive container
   - bd-gutter: Custom Bootstrap spacing
@@ -58,8 +59,11 @@ layout: root
     <aside class="bd-sidebar">
         {% include navigation/sidebar-left.html %}
     </aside>
+
+    <!-- Separate Obsidian local graph panel; intentionally outside bdSidebar. -->
+    {% include navigation/local-graph.html %}
     {% endunless %}
-    
+
     <!-- ================================ -->
     <!-- MAIN CONTENT AREA               -->
     <!-- ================================ -->
@@ -79,7 +83,7 @@ layout: root
             {% include navigation/sidebar-right.html %}
         </div>
         {% endunless %}
-        
+
         <!-- =============================== -->
         <!-- MAIN CONTENT BODY              -->
         <!-- =============================== -->
@@ -96,5 +100,5 @@ layout: root
               {% include content/backlinks.html %}
             {% endif %}
         </div>
-    </main>
-</div>
+      </main>
+    </div>

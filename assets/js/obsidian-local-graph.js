@@ -1,13 +1,13 @@
 /*
  * obsidian-local-graph.js
  *
- * Renders a small "local graph" (current page + immediate neighbors) into
+ * Renders a focused "local graph" (current page + immediate neighbors) into
  * the element with id `obsidian-local-graph`. Mirrors Obsidian's local
  * graph view: a focused, page-scoped subgraph instead of the full site map.
  *
- * Loaded by _includes/navigation/local-graph.html on every page that has
- * a left sidebar. Cytoscape.js is loaded lazily (and only once) from the
- * same CDN as the full graph page.
+ * Loaded by _includes/navigation/local-graph.html inside a dedicated
+ * collapsible side panel. Cytoscape.js is loaded lazily (and only once) from
+ * the same CDN as the full graph page.
  *
  * Subgraph:
  *   - center  = current page (matched against entry.url, falling back to
@@ -15,16 +15,51 @@
  *   - depth   = configurable via data-depth attribute (default 1)
  *   - direction = both incoming and outgoing wiki-links
  *
- * If the current page is not in the wiki-index (e.g. dynamically-built
- * routes, the homepage with no edges, or excluded pages), the container
- * is hidden and the script is a no-op.
+ * If the current page is in the wiki-index but has no local links, the panel
+ * stays available and renders a single-node graph for the current page.
+ * Pages outside the wiki-index still hide the panel.
  */
 (function () {
   'use strict';
 
   var CONTAINER_ID = 'obsidian-local-graph';
+  var PANEL_SELECTOR = '[data-obsidian-local-graph-panel]';
+  var TOGGLE_SELECTOR = '[data-obsidian-local-graph-toggle]';
+  var STATUS_SELECTOR = '[data-obsidian-local-graph-status]';
   var CYTOSCAPE_URL = 'https://cdn.jsdelivr.net/npm/cytoscape@3.30.0/dist/cytoscape.min.js';
   var CYTOSCAPE_SRI = 'sha384-kpMsYllYzyaWU69Piok08rPNktpnjqAoDMdB00fjqUkEk3lkuUbSuwJ+oXrjvN6B';
+
+  function companionElements(container) {
+    return {
+      panel: container.closest(PANEL_SELECTOR),
+      toggle: document.querySelector(TOGGLE_SELECTOR),
+      status: document.querySelector(STATUS_SELECTOR)
+    };
+  }
+
+  function setStatus(container, message, isError) {
+    var status = companionElements(container).status;
+    if (!status) return;
+    status.textContent = message || '';
+    status.hidden = !message;
+    status.classList.toggle('text-danger', !!isError);
+    status.classList.toggle('text-secondary', !isError);
+  }
+
+  function setPanelAvailable(container, available) {
+    var companions = companionElements(container);
+    [companions.panel, companions.toggle].forEach(function (element) {
+      if (!element) return;
+      element.hidden = !available;
+    });
+  }
+
+  function resizeGraph(container) {
+    var cy = container.__obsidianLocalGraph;
+    if (!cy) return;
+    cy.resize();
+    cy.fit(cy.elements(), 24);
+  }
 
   function normalize(value) {
     return String(value || '').toLowerCase().trim().replace(/\s+/g, ' ');
@@ -252,7 +287,7 @@
           style: {
             'background-color': 'data(color)',
             'label': 'data(label)',
-            'font-size': '10px',
+            'font-size': '11px',
             'font-weight': 500,
             'color': theme.label,
             'text-outline-color': theme.labelOutline,
@@ -262,8 +297,8 @@
             'text-valign': 'bottom',
             'text-margin-y': 4,
             'text-wrap': 'ellipsis',
-            'text-max-width': '110px',
-            'width': 14, 'height': 14,
+            'text-max-width': '140px',
+            'width': 16, 'height': 16,
             'border-width': 1.5,
             'border-color': theme.nodeBorder,
             'transition-property': 'background-color, border-color, width, height',
@@ -319,6 +354,8 @@
       }
     });
 
+    container.__obsidianLocalGraph = cy;
+
     cy.on('tap', 'node', function (evt) {
       var d = evt.target.data();
       if (!d.url || d.broken) return;
@@ -336,12 +373,30 @@
       evt.target.style('z-index', 99);
     });
 
+    requestAnimationFrame(function () {
+      resizeGraph(container);
+    });
+
     return cy;
   }
 
   function init() {
     var container = document.getElementById(CONTAINER_ID);
     if (!container) return;
+    setPanelAvailable(container, true);
+    setStatus(container, 'Loading graph...', false);
+
+    var panel = container.closest(PANEL_SELECTOR);
+    if (panel) {
+      panel.addEventListener('shown.bs.offcanvas', function () {
+        resizeGraph(container);
+      });
+    }
+
+    window.addEventListener('resize', function () {
+      resizeGraph(container);
+    });
+
     var depth = parseInt(container.getAttribute('data-depth') || '1', 10);
     if (!isFinite(depth) || depth < 1) depth = 1;
     var indexUrl = container.getAttribute('data-index-url') ||
@@ -352,25 +407,22 @@
       .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
       .then(function (data) {
         var entries = Array.isArray(data && data.entries) ? data.entries : [];
-        if (!entries.length) { container.style.display = 'none'; return; }
+        if (!entries.length) { setPanelAvailable(container, false); return; }
         var lookup = buildLookup(entries);
         var current = findCurrentEntry(lookup);
-        if (!current) { container.style.display = 'none'; return; }
+        if (!current) { setPanelAvailable(container, false); return; }
         var elements = buildSubgraph(entries, lookup, current, depth);
-        // If the current page has no neighbors, show a tiny "no links yet"
-        // hint instead of a single dot.
-        if (elements.length <= 1) {
-          container.style.display = 'none';
-          return;
-        }
         loadCytoscape(function () {
           render(container, elements, current.url);
+          var nodeCount = elements.filter(function (element) { return element.group === 'nodes'; }).length;
+          var edgeCount = elements.filter(function (element) { return element.group === 'edges'; }).length;
+          setStatus(container, nodeCount + ' pages · ' + edgeCount + ' links', false);
         });
       })
       .catch(function (err) {
-        // Sidebar widget failing is non-fatal — hide and stay quiet.
+        // Sidebar panel failing is non-fatal — hide and stay quiet.
         console.warn('[obsidian-local-graph] init failed:', err);
-        container.style.display = 'none';
+        setPanelAvailable(container, false);
       });
   }
 
