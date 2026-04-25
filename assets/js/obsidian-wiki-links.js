@@ -26,13 +26,18 @@
     return;
   }
 
+  function trimTrailingSlash(value) {
+    return String(value || '').replace(/\/$/, '');
+  }
+
   function assetPath(path) {
     var script = document.currentScript || document.querySelector('script[src*="obsidian-wiki-links.js"]');
     var src = script && script.getAttribute('src');
-    var marker = '/assets/js/obsidian-wiki-links.js';
-    var markerIndex = src ? src.indexOf(marker) : -1;
-    var base = markerIndex === -1 ? '' : src.slice(0, markerIndex);
-    return base + path;
+    var match = src && src.match(/^(.*?)(?:assets\/js\/obsidian-wiki-links\.js)(?:[?#].*)?$/);
+    if (match) return trimTrailingSlash(match[1]) + path;
+
+    var baseHref = (document.querySelector('base') || {}).href;
+    return trimTrailingSlash(baseHref) + path;
   }
 
   var CONFIG = {

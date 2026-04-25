@@ -41,6 +41,7 @@
   {%- assign _backlinks = "" | split: "" -%}
   {%- for _doc in _candidates -%}
     {%- if _doc.url == _self_url -%}{%- continue -%}{%- endif -%}
+    {%- comment -%} Hide draft/unpublished references unless this build includes drafts. {%- endcomment -%}
     {%- unless site.show_drafts == true -%}
       {%- if _doc.published == false or _doc.draft == true -%}{%- continue -%}{%- endif -%}
     {%- endunless -%}

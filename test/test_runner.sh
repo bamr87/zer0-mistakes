@@ -170,9 +170,9 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Test suites configuration (using indexed arrays for bash 3.2 compatibility)
-TEST_SUITE_KEYS=("core" "deployment" "quality" "installation" "site_generation" "styling" "visual" "obsidian")
-TEST_SUITE_SCRIPTS=("test_core.sh" "test_deployment.sh" "test_quality.sh" "test_installation.sh" "test_site_generation.sh" "test_styling.sh" "test_visual.sh" "test_obsidian.sh")
-TEST_SUITE_NAMES=("Core Tests (Unit, Integration, Validation)" "Deployment Tests (Installation, Docker, E2E)" "Quality Tests (Security, Accessibility, Compatibility, Performance)" "Installation Tests (CLI, Modes, Errors, Edge Cases)" "Site Generation Tests (Config Matrix, Jekyll Build)" "Styling Tests (Playwright: CSS, layout, responsive chrome)" "Visual Tests (Screenshots, Responsive, Dark Mode)" "Obsidian Tests (Wiki Links, Graph, Backlinks)")
+TEST_SUITE_KEYS=("core" "deployment" "quality" "installation" "site_generation" "obsidian" "visual" "styling")
+TEST_SUITE_SCRIPTS=("test_core.sh" "test_deployment.sh" "test_quality.sh" "test_installation.sh" "test_site_generation.sh" "test_obsidian.sh" "test_visual.sh" "test_styling.sh")
+TEST_SUITE_NAMES=("Core Tests (Unit, Integration, Validation)" "Deployment Tests (Installation, Docker, E2E)" "Quality Tests (Security, Accessibility, Compatibility, Performance)" "Installation Tests (CLI, Modes, Errors, Edge Cases)" "Site Generation Tests (Config Matrix, Jekyll Build)" "Obsidian Tests (Wiki Links, Graph, Backlinks)" "Visual Tests (Screenshots, Responsive, Dark Mode)" "Styling Tests (Playwright: CSS, layout, responsive chrome)")
 
 # Helper function to get suite script by name
 get_suite_script() {
@@ -248,7 +248,7 @@ parse_test_suites() {
         suites_to_run=("core" "deployment" "quality" "installation" "site_generation")
     elif [[ "$suites_input" == "full" ]]; then
         # Run all suites including Obsidian, styling, and visual tests
-        suites_to_run=("core" "deployment" "quality" "installation" "site_generation" "styling" "visual" "obsidian")
+        suites_to_run=("core" "deployment" "quality" "installation" "site_generation" "obsidian" "visual" "styling")
     else
         IFS=',' read -ra suites_to_run <<< "$suites_input"
     fi
