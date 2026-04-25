@@ -27,13 +27,13 @@
   }
 
   function trimTrailingSlash(value) {
-    return String(value || '').replace(/\/$/, '');
+    return (value == null ? '' : String(value)).replace(/\/$/, '');
   }
 
   function assetPath(path) {
     var script = document.currentScript || document.querySelector('script[src*="obsidian-wiki-links.js"]');
     var src = script && script.getAttribute('src');
-    var match = src && src.match(/^(.*?)(?:assets\/js\/obsidian-wiki-links\.js)(?:[?#].*)?$/);
+    var match = src && src.match(/^(.*?)assets\/js\/obsidian-wiki-links\.js(?:[?#].*)?$/);
     if (match) return trimTrailingSlash(match[1]) + path;
 
     var baseHref = (document.querySelector('base') || {}).href;
