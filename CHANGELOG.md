@@ -87,6 +87,15 @@
   and resize-on-open behavior so Cytoscape renders cleanly. Pages with no
   local wiki-link neighbors now keep the graph control visible and render a
   current-page-only graph instead of hiding the panel.
+- **Obsidian Resolver**: The client-side wiki-link resolver now receives
+  baseurl-safe index, attachment, and tag URLs from Liquid and derives a safe
+  fallback from its script path for GitHub Pages project sites.
+- **Backlinks**: The linked-mentions include now skips draft and unpublished
+  candidates unless `site.show_drafts` is enabled.
+- **Validation**: `scripts/bin/validate --quick` now accepts YAML anchors and
+  date values used by repository config/data files.
+- **Tests**: `test/test_runner.sh` now includes an `obsidian` suite key/name so
+  suite keys, scripts, and labels stay aligned.
 - **Footer Quick Links no longer 404 on bare-minimum sites.**
   `_includes/core/footer.html` previously hard-coded links to
   `/about/`, `/services/`, `/news/`, `/contact/`, `/privacy-policy`, and

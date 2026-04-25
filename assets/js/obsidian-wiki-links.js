@@ -26,11 +26,19 @@
     return;
   }
 
+  function assetPath(path) {
+    var script = document.currentScript || document.querySelector('script[src*="obsidian-wiki-links.js"]');
+    var src = script && script.getAttribute('src');
+    var marker = '/assets/js/obsidian-wiki-links.js';
+    var markerIndex = src ? src.indexOf(marker) : -1;
+    var base = markerIndex === -1 ? '' : src.slice(0, markerIndex);
+    return base + path;
+  }
+
   var CONFIG = {
-    indexUrl: (window.OBSIDIAN_WIKI_INDEX_URL ||
-      ((document.querySelector('base') || {}).href || '/') + 'assets/data/wiki-index.json'),
-    attachmentsPath: window.OBSIDIAN_ATTACHMENTS_PATH || '/assets/images/notes',
-    tagBase: window.OBSIDIAN_TAG_BASE || '/tags/',
+    indexUrl: window.OBSIDIAN_WIKI_INDEX_URL || assetPath('/assets/data/wiki-index.json'),
+    attachmentsPath: window.OBSIDIAN_ATTACHMENTS_PATH || assetPath('/assets/images/notes'),
+    tagBase: window.OBSIDIAN_TAG_BASE || assetPath('/tags/'),
     wikiLinkClass: 'wiki-link',
     brokenLinkClass: 'wiki-link wiki-link-broken'
   };

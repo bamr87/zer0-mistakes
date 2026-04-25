@@ -257,6 +257,7 @@ validate_yaml_files() {
     step "Validating YAML configs and data..."
 
     ruby <<'RUBY'
+require 'date'
 require 'yaml'
 
 files = []
@@ -266,7 +267,7 @@ files.concat(Dir.glob('.github/config/*.{yml,yaml}'))
 files = files.uniq.sort
 
 files.each do |file|
-  YAML.load_file(file)
+  YAML.load_file(file, aliases: true, permitted_classes: [Date, Time])
 end
 
 puts "YAML files valid: #{files.length}"
@@ -280,6 +281,7 @@ validate_configuration_contract() {
 
     ruby <<'RUBY'
 require 'find'
+require 'date'
 require 'yaml'
 
 def assert(condition, message)
@@ -300,8 +302,8 @@ end
 
 root_file = '_config.yml'
 dev_file = '_config_dev.yml'
-root_config = YAML.load_file(root_file)
-dev_config = YAML.load_file(dev_file)
+root_config = YAML.load_file(root_file, aliases: true, permitted_classes: [Date, Time])
+dev_config = YAML.load_file(dev_file, aliases: true, permitted_classes: [Date, Time])
 
 assert(root_config['site_configured'] == true, "#{root_file}: site_configured must be true")
 assert(root_config['remote_theme'] == 'bamr87/zer0-mistakes', "#{root_file}: remote_theme must stay on bamr87/zer0-mistakes")
@@ -408,6 +410,7 @@ validate_navigation_data() {
     step "Validating navigation data shape..."
 
     ruby <<'RUBY'
+require 'date'
 require 'yaml'
 
 def validate_item(item, file, path)
@@ -444,7 +447,7 @@ end
 
 files = Dir.glob('_data/navigation/*.yml').sort
 files.each do |file|
-  data = YAML.load_file(file)
+  data = YAML.load_file(file, aliases: true, permitted_classes: [Date, Time])
   unless data.is_a?(Array)
     raise "#{file}: root must be a list of navigation items"
   end

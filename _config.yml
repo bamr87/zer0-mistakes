@@ -519,9 +519,6 @@ exclude:
   - test/
   - tests/
   - _site/lib/
-  # Obsidian working files (canvas + Excalidraw) are not part of the rendered site.
-  - "*.canvas"
-  - "*.excalidraw.md"
   # Obsidian note templates are authoring scaffolding, not publishable content.
   - pages/_notes/_templates/
 
