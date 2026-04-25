@@ -1,0 +1,596 @@
+#!/bin/bash
+
+# Canonical preflight validator for zer0-mistakes.
+# Usage: ./scripts/bin/validate [options]
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_DIR="$SCRIPT_DIR/../lib"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+source "$LIB_DIR/common.sh"
+source "$LIB_DIR/validation.sh"
+
+SKIP_JEKYLL=false
+SKIP_DOCTOR=false
+SKIP_ASSETS=false
+RUN_TESTS=false
+RUN_OBSIDIAN=false
+RUN_HTMLPROOFER=false
+START_DOCKER=false
+EXECUTION_MODE="auto"
+
+show_usage() {
+    cat << EOF
+Preflight Validator for zer0-mistakes
+
+USAGE:
+    ./scripts/bin/validate [OPTIONS]
+
+DESCRIPTION:
+    Runs the fast, deterministic checks that should gate refactors and CI,
+    with optional Jekyll, test, Obsidian, and HTML validation stages.
+
+DEFAULT CHECKS:
+    - Required repository files
+    - Gemspec parse
+    - Version consistency between version.rb, package.json, and gemspec
+    - YAML parse for root config, _data, and .github/config files
+    - Active configuration contract and config-file classification
+    - Navigation data shape
+    - Jekyll build and doctor
+    - Compiled asset existence
+
+OPTIONS:
+    --quick             Run host-only checks; skip Jekyll, doctor, assets, tests
+    --full              Include theme tests, Obsidian tests, and HTMLProofer
+    --with-tests        Run ./scripts/bin/test after build checks
+    --with-obsidian     Run ./test/test_obsidian.sh after build checks
+    --with-htmlproofer  Run HTMLProofer against _site after build checks
+    --skip-jekyll       Skip Jekyll build
+    --skip-doctor       Skip Jekyll doctor
+    --skip-assets       Skip compiled asset checks
+    --docker            Require Docker Compose for Jekyll commands
+    --local             Require local bundle exec for Jekyll commands
+    --start-docker      Start docker-compose service jekyll when needed
+    --verbose           Show debug output
+    --help, -h          Show this help message
+
+EXAMPLES:
+    ./scripts/bin/validate --quick
+    ./scripts/bin/validate --start-docker
+    ./scripts/bin/validate --full --start-docker
+
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --quick)
+            SKIP_JEKYLL=true
+            SKIP_DOCTOR=true
+            SKIP_ASSETS=true
+            RUN_TESTS=false
+            RUN_OBSIDIAN=false
+            RUN_HTMLPROOFER=false
+            shift
+            ;;
+        --full)
+            RUN_TESTS=true
+            RUN_OBSIDIAN=true
+            RUN_HTMLPROOFER=true
+            shift
+            ;;
+        --with-tests)
+            RUN_TESTS=true
+            shift
+            ;;
+        --with-obsidian)
+            RUN_OBSIDIAN=true
+            shift
+            ;;
+        --with-htmlproofer)
+            RUN_HTMLPROOFER=true
+            shift
+            ;;
+        --skip-jekyll)
+            SKIP_JEKYLL=true
+            shift
+            ;;
+        --skip-doctor)
+            SKIP_DOCTOR=true
+            shift
+            ;;
+        --skip-assets)
+            SKIP_ASSETS=true
+            shift
+            ;;
+        --docker)
+            EXECUTION_MODE="docker"
+            shift
+            ;;
+        --local)
+            EXECUTION_MODE="local"
+            shift
+            ;;
+        --start-docker)
+            START_DOCKER=true
+            shift
+            ;;
+        --verbose)
+            export VERBOSE=true
+            shift
+            ;;
+        --help|-h)
+            show_usage
+            exit 0
+            ;;
+        *)
+            error "Unknown option: $1 (use --help for usage)"
+            ;;
+    esac
+done
+
+cd "$REPO_ROOT"
+
+docker_compose_available() {
+    if command_exists docker-compose; then
+        return 0
+    fi
+
+    if command_exists docker && docker compose version >/dev/null 2>&1; then
+        return 0
+    fi
+
+    return 1
+}
+
+docker_compose() {
+    if command_exists docker-compose; then
+        docker-compose "$@"
+    else
+        docker compose "$@"
+    fi
+}
+
+docker_jekyll_running() {
+    docker_compose_available || return 1
+
+    local container_id
+    container_id="$(docker_compose ps -q jekyll 2>/dev/null || true)"
+    [[ -n "$container_id" ]] || return 1
+
+    docker inspect -f '{{.State.Running}}' "$container_id" 2>/dev/null | grep -q true
+}
+
+use_docker_for_jekyll() {
+    case "$EXECUTION_MODE" in
+        local)
+            return 1
+            ;;
+        docker)
+            if [[ "$START_DOCKER" == "true" ]]; then
+                docker_compose_available || error "Docker Compose is required but was not found"
+                docker_compose up -d jekyll
+            fi
+
+            if docker_jekyll_running; then
+                return 0
+            fi
+
+            error "Docker mode requested but the jekyll service is not running. Run docker-compose up -d jekyll or pass --start-docker."
+            ;;
+        auto)
+            if [[ "$START_DOCKER" == "true" ]]; then
+                docker_compose_available || error "--start-docker requested but Docker Compose was not found"
+                docker_compose up -d jekyll
+                return 0
+            fi
+
+            if docker_jekyll_running; then
+                return 0
+            fi
+
+            return 1
+            ;;
+        *)
+            error "Invalid execution mode: $EXECUTION_MODE"
+            ;;
+    esac
+}
+
+run_bundle_command() {
+    if use_docker_for_jekyll; then
+        debug "Running via Docker Compose: bundle exec $*"
+        docker_compose exec -T jekyll bundle exec "$@"
+    else
+        debug "Running locally: bundle exec $*"
+        bundle exec "$@"
+    fi
+}
+
+validate_core_files() {
+    step "Validating repository files..."
+    validate_git_repo
+    validate_required_files
+    require_command ruby "Install from https://www.ruby-lang.org/"
+    validate_gemspec
+    success "Repository files validated"
+}
+
+validate_version_consistency() {
+    step "Validating version consistency..."
+
+    ruby <<'RUBY'
+require 'json'
+require './lib/jekyll-theme-zer0/version'
+
+ruby_version = JekyllThemeZer0::VERSION.to_s
+spec = Gem::Specification.load('jekyll-theme-zer0.gemspec')
+abort 'Unable to load jekyll-theme-zer0.gemspec' unless spec
+
+versions = {
+  'lib/jekyll-theme-zer0/version.rb' => ruby_version,
+  'jekyll-theme-zer0.gemspec' => spec.version.to_s
+}
+
+if File.file?('package.json')
+  versions['package.json'] = JSON.parse(File.read('package.json')).fetch('version').to_s
+end
+
+expected = versions.values.first
+mismatches = versions.select { |_file, version| version != expected }
+
+unless mismatches.empty?
+  warn_lines = versions.map { |file, version| "  #{file}: #{version}" }
+  abort "Version mismatch detected:\n#{warn_lines.join("\n")}"
+end
+
+puts "Version consistent: #{expected}"
+RUBY
+
+    success "Version files are consistent"
+}
+
+validate_yaml_files() {
+    step "Validating YAML configs and data..."
+
+    ruby <<'RUBY'
+require 'date'
+require 'yaml'
+
+files = []
+files.concat(%w[_config.yml _config_dev.yml _config_secrets_local.yml].select { |file| File.file?(file) })
+files.concat(Dir.glob('_data/**/*.{yml,yaml}'))
+files.concat(Dir.glob('.github/config/*.{yml,yaml}'))
+files = files.uniq.sort
+
+files.each do |file|
+  YAML.load_file(file, aliases: true, permitted_classes: [Date, Time])
+end
+
+puts "YAML files valid: #{files.length}"
+RUBY
+
+    success "YAML configs and data are valid"
+}
+
+validate_configuration_contract() {
+    step "Validating configuration contract..."
+
+    ruby <<'RUBY'
+require 'find'
+require 'date'
+require 'yaml'
+
+def assert(condition, message)
+  abort message unless condition
+end
+
+def require_hash(data, key, file)
+  value = data[key]
+  assert(value.is_a?(Hash), "#{file}: #{key} must be a mapping")
+  value
+end
+
+def require_string(data, key, file)
+  value = data[key]
+  assert(value.is_a?(String) && !value.strip.empty?, "#{file}: #{key} must be a non-empty string")
+  value
+end
+
+root_file = '_config.yml'
+dev_file = '_config_dev.yml'
+root_config = YAML.load_file(root_file, aliases: true, permitted_classes: [Date, Time])
+dev_config = YAML.load_file(dev_file, aliases: true, permitted_classes: [Date, Time])
+
+assert(root_config['site_configured'] == true, "#{root_file}: site_configured must be true")
+assert(root_config['remote_theme'] == 'bamr87/zer0-mistakes', "#{root_file}: remote_theme must stay on bamr87/zer0-mistakes")
+assert(dev_config['remote_theme'] == false, "#{dev_file}: remote_theme must be false for local theme development")
+assert(dev_config['theme'] == 'jekyll-theme-zer0', "#{dev_file}: theme must be jekyll-theme-zer0")
+
+require_string(root_config, 'title', root_file)
+require_string(root_config, 'url', root_file)
+require_string(root_config, 'domain', root_file)
+
+required_plugins = %w[
+    github-pages
+    jekyll-remote-theme
+    jekyll-feed
+    jekyll-sitemap
+    jekyll-seo-tag
+    jekyll-paginate
+    jekyll-relative-links
+    jekyll-redirect-from
+]
+plugins = Array(root_config['plugins'])
+missing_plugins = required_plugins.reject { |plugin| plugins.include?(plugin) }
+assert(missing_plugins.empty?, "#{root_file}: missing required plugins: #{missing_plugins.join(', ')}")
+
+preview_images = require_hash(root_config, 'preview_images', root_file)
+%w[enabled provider model size output_dir assets_prefix].each do |key|
+    assert(preview_images.key?(key), "#{root_file}: preview_images.#{key} is required")
+end
+
+posthog = require_hash(root_config, 'posthog', root_file)
+assert([true, false].include?(posthog['enabled']), "#{root_file}: posthog.enabled must be boolean")
+dev_posthog = require_hash(dev_config, 'posthog', dev_file)
+assert(dev_posthog['enabled'] == false, "#{dev_file}: posthog.enabled must be false")
+
+assert(root_config['collections_dir'] == 'pages', "#{root_file}: collections_dir must be pages")
+collections = require_hash(root_config, 'collections', root_file)
+required_collections = %w[pages posts docs quests hobbies notebooks notes quickstart about]
+required_collections.each do |collection_name|
+  collection = collections[collection_name]
+  assert(collection.is_a?(Hash), "#{root_file}: collections.#{collection_name} must be configured")
+  assert(collection['output'] == true, "#{root_file}: collections.#{collection_name}.output must be true")
+  assert(collection['permalink'].is_a?(String), "#{root_file}: collections.#{collection_name}.permalink must be configured")
+end
+
+required_exclusions = [
+  '.obsidian',
+  '*.canvas',
+  '*.excalidraw.md',
+  'docs/',
+  'node_modules/',
+  'vendor/bundle/',
+  'test/',
+  'pages/_notes/_templates/'
+]
+
+{
+  root_file => Array(root_config['exclude']),
+  dev_file => Array(dev_config['exclude'])
+}.each do |file, exclusions|
+  missing_exclusions = required_exclusions.reject { |entry| exclusions.include?(entry) }
+  assert(missing_exclusions.empty?, "#{file}: exclude is missing #{missing_exclusions.join(', ')}")
+end
+
+if File.file?('_config_secrets_local.yml')
+  tracked = system('git', 'ls-files', '--error-unmatch', '_config_secrets_local.yml', out: File::NULL, err: File::NULL)
+  assert(!tracked, '_config_secrets_local.yml must remain untracked and ignored')
+end
+
+ignored_dirs = %w[.git _site node_modules vendor .jekyll-cache .sass-cache]
+config_like_files = []
+
+Find.find('.') do |path|
+    relative_path = path.sub(%r{\A\./}, '')
+
+    if File.directory?(path)
+        Find.prune if ignored_dirs.include?(relative_path)
+        next
+    end
+
+    basename = File.basename(relative_path)
+    next unless basename.match?(/config.*\.ya?ml\z/) || basename.match?(/_config.*\.ya?ml\z/)
+
+    config_like_files << relative_path
+end
+
+classified_files = %w[
+    _config.yml
+    _config_dev.yml
+    _config_secrets_local.yml
+    pages/_about/settings/_config.yml
+]
+classified_files.concat(Dir.glob('_data/**/*config*.{yml,yaml}'))
+
+unclassified_files = config_like_files.sort - classified_files.select { |file| File.file?(file) }
+assert(unclassified_files.empty?, "Unclassified config-like YAML files found: #{unclassified_files.join(', ')}")
+
+puts "Configuration contract valid"
+RUBY
+
+    success "Configuration contract is valid"
+}
+
+validate_navigation_data() {
+    step "Validating navigation data shape..."
+
+    ruby <<'RUBY'
+require 'date'
+require 'yaml'
+
+def validate_item(item, file, path)
+  unless item.is_a?(Hash)
+    raise "#{file}: #{path} must be a mapping"
+  end
+
+  title = item['title']
+  unless title.is_a?(String) && !title.strip.empty?
+    raise "#{file}: #{path}.title is required"
+  end
+
+  url = item['url']
+  unless url.nil? || url.is_a?(String)
+    raise "#{file}: #{path}.url must be a string when present"
+  end
+
+  icon = item['icon']
+  unless icon.nil? || icon.is_a?(String)
+    raise "#{file}: #{path}.icon must be a string when present"
+  end
+
+  children = item['children']
+  return if children.nil?
+
+  unless children.is_a?(Array)
+    raise "#{file}: #{path}.children must be a list"
+  end
+
+  children.each_with_index do |child, child_index|
+    validate_item(child, file, "#{path}.children[#{child_index}]")
+  end
+end
+
+files = Dir.glob('_data/navigation/*.yml').sort
+files.each do |file|
+  data = YAML.load_file(file, aliases: true, permitted_classes: [Date, Time])
+  unless data.is_a?(Array)
+    raise "#{file}: root must be a list of navigation items"
+  end
+
+  data.each_with_index do |item, index|
+    validate_item(item, file, "items[#{index}]")
+  end
+end
+
+puts "Navigation files valid: #{files.length}"
+RUBY
+
+    success "Navigation data is valid"
+}
+
+run_jekyll_build() {
+    if [[ "$SKIP_JEKYLL" == "true" ]]; then
+        warn "Skipping Jekyll build"
+        return 0
+    fi
+
+    step "Running Jekyll build..."
+    run_bundle_command jekyll build --config '_config.yml,_config_dev.yml'
+    success "Jekyll build passed"
+}
+
+run_jekyll_doctor() {
+    if [[ "$SKIP_DOCTOR" == "true" ]]; then
+        warn "Skipping Jekyll doctor"
+        return 0
+    fi
+
+    step "Running Jekyll doctor..."
+    run_bundle_command jekyll doctor
+    success "Jekyll doctor passed"
+}
+
+validate_compiled_assets() {
+    if [[ "$SKIP_ASSETS" == "true" ]]; then
+        warn "Skipping compiled asset checks"
+        return 0
+    fi
+
+    step "Validating compiled assets..."
+
+    local required_assets=(
+        "_site/assets/css/main.css"
+        "_site/assets/data/wiki-index.json"
+        "_site/feed.xml"
+        "_site/sitemap.xml"
+    )
+
+    local asset_path
+    for asset_path in "${required_assets[@]}"; do
+        if [[ ! -s "$asset_path" ]]; then
+            error "Compiled asset missing or empty: $asset_path"
+        fi
+        debug "Found compiled asset: $asset_path"
+    done
+
+    success "Compiled assets are present"
+}
+
+run_theme_tests() {
+    if [[ "$RUN_TESTS" != "true" ]]; then
+        debug "Theme tests not requested"
+        return 0
+    fi
+
+    step "Running canonical test suite..."
+    "$REPO_ROOT/scripts/bin/test"
+    success "Canonical test suite passed"
+}
+
+run_obsidian_tests() {
+    if [[ "$RUN_OBSIDIAN" != "true" ]]; then
+        debug "Obsidian tests not requested"
+        return 0
+    fi
+
+    step "Running Obsidian integration tests..."
+    if use_docker_for_jekyll; then
+        docker_compose exec -T jekyll ./test/test_obsidian.sh
+    else
+        "$REPO_ROOT/test/test_obsidian.sh"
+    fi
+    success "Obsidian integration tests passed"
+}
+
+run_html_validation() {
+    if [[ "$RUN_HTMLPROOFER" != "true" ]]; then
+        debug "HTMLProofer not requested"
+        return 0
+    fi
+
+    step "Running HTMLProofer..."
+    run_bundle_command htmlproofer _site --disable-external --allow-hash-href
+    success "HTMLProofer passed"
+}
+
+main() {
+    print_header "Preflight Validation"
+
+    validate_core_files
+    echo ""
+
+    validate_version_consistency
+    echo ""
+
+    validate_yaml_files
+    echo ""
+
+    validate_configuration_contract
+    echo ""
+
+    validate_navigation_data
+    echo ""
+
+    run_jekyll_build
+    echo ""
+
+    run_jekyll_doctor
+    echo ""
+
+    validate_compiled_assets
+    echo ""
+
+    run_theme_tests
+    run_obsidian_tests
+    run_html_validation
+
+    print_summary "Validation Complete" \
+        "Repository files: pass" \
+        "Version consistency: pass" \
+        "YAML, config contract, and navigation data: pass" \
+        "Jekyll build: $([[ "$SKIP_JEKYLL" == "true" ]] && echo skipped || echo pass)" \
+        "Jekyll doctor: $([[ "$SKIP_DOCTOR" == "true" ]] && echo skipped || echo pass)" \
+        "Compiled assets: $([[ "$SKIP_ASSETS" == "true" ]] && echo skipped || echo pass)" \
+        "Theme tests: $([[ "$RUN_TESTS" == "true" ]] && echo pass || echo skipped)" \
+        "Obsidian tests: $([[ "$RUN_OBSIDIAN" == "true" ]] && echo pass || echo skipped)" \
+        "HTMLProofer: $([[ "$RUN_HTMLPROOFER" == "true" ]] && echo pass || echo skipped)"
+
+    success "Preflight validation passed"
+}
+
+main "$@"

@@ -4,13 +4,15 @@
 // =============================================================================
 
 #bdSidebar .offcanvas-header,
-#tocContents .offcanvas-header {
+#tocContents .offcanvas-header,
+#obsidianLocalGraphPanel .offcanvas-header {
   border-bottom: 2px solid var(--bs-border-color);
   padding: 1.25rem 1rem;
 }
 
 #bdSidebar .offcanvas-title,
-#tocContents .offcanvas-title {
+#tocContents .offcanvas-title,
+#obsidianLocalGraphPanel .offcanvas-title {
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--bs-emphasis-color);
@@ -19,7 +21,8 @@
 
 @media (max-width: 991.98px) {
   #bdSidebar .offcanvas-header .btn-close,
-  #tocContents .offcanvas-header .btn-close {
+  #tocContents .offcanvas-header .btn-close,
+  #obsidianLocalGraphPanel .offcanvas-header .btn-close {
     width: 48px;
     height: 48px;
     padding: 0;
@@ -36,7 +39,8 @@
     }
   }
 
-  #tocContents .offcanvas-body {
+  #tocContents .offcanvas-body,
+  #obsidianLocalGraphPanel .offcanvas-body {
     padding: 1rem;
   }
 

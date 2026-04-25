@@ -40,6 +40,12 @@
 ## [Unreleased]
 
 ### Added
+- **Development Automation**: Added `scripts/bin/validate` and `scripts/validate`
+  as the canonical preflight validation command for repository files, version
+  consistency, YAML/data parsing, active configuration contracts, config-file
+  classification, navigation data shape, Jekyll build/doctor, compiled assets,
+  and optional tests/Obsidian/HTMLProofer checks. CI fast checks now call
+  `./scripts/bin/validate --quick`.
 - **Obsidian Integration** — The repo's markdown content is now editable as an [Obsidian](https://obsidian.md) vault and rendered identically on GitHub Pages.
   - Shared vault config (`.obsidian/app.json`, `core-plugins.json`, `community-plugins.json`, `appearance.json`, `hotkeys.json`, `templates.json`) and a Templates-compatible note template at `pages/_notes/_templates/note-template.md`.
   - Liquid-generated `assets/data/wiki-index.json` listing every collection document and standalone page (title, basename, permalink, tags, aliases, excerpt) — works on the default GitHub Pages remote_theme build, no plugin whitelist changes required.
@@ -76,6 +82,20 @@
   `Your Site Title`, `My Awesome Site`, `Welcome`, `Untitled`, or empty).
 
 ### Fixed
+- **Obsidian Local Graph**: Moved the local graph out of the documentation
+  navigation sidebar into its own collapsible side panel with a larger canvas
+  and resize-on-open behavior so Cytoscape renders cleanly. Pages with no
+  local wiki-link neighbors now keep the graph control visible and render a
+  current-page-only graph instead of hiding the panel.
+- **Obsidian Resolver**: The client-side wiki-link resolver now receives
+  baseurl-safe index, attachment, and tag URLs from Liquid and derives a safe
+  fallback from its script path for GitHub Pages project sites.
+- **Backlinks**: The linked-mentions include now skips draft and unpublished
+  candidates unless `site.show_drafts` is enabled.
+- **Validation**: `scripts/bin/validate --quick` now accepts YAML anchors and
+  date values used by repository config/data files.
+- **Tests**: `test/test_runner.sh` now includes an `obsidian` suite key/name so
+  suite keys, scripts, and labels stay aligned.
 - **Footer Quick Links no longer 404 on bare-minimum sites.**
   `_includes/core/footer.html` previously hard-coded links to
   `/about/`, `/services/`, `/news/`, `/contact/`, `/privacy-policy`, and

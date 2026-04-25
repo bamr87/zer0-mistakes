@@ -63,7 +63,17 @@ namespace :dev do
 
   desc "Run Jekyll doctor"
   task :doctor do
-    sh "docker-compose exec jekyll jekyll doctor"
+    sh "docker-compose exec -T jekyll bundle exec jekyll doctor"
+  end
+
+  desc "Run canonical preflight validation"
+  task :validate do
+    sh "./scripts/validate"
+  end
+
+  desc "Run host-only quick validation"
+  task :validate_quick do
+    sh "./scripts/validate --quick"
   end
 end
 
@@ -73,7 +83,7 @@ end
 namespace :test do
   desc "Run all tests"
   task :all do
-    sh "./test/test_runner.sh"
+    sh "./scripts/bin/test"
   end
 
   desc "Run core tests"
@@ -83,7 +93,7 @@ namespace :test do
 
   desc "Run verbose tests"
   task :verbose do
-    sh "./test/test_runner.sh --verbose"
+    sh "./scripts/bin/test --verbose"
   end
 end
 

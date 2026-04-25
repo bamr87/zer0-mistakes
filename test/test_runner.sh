@@ -88,16 +88,17 @@ TEST SUITES:
     quality               Security, accessibility, compatibility, and performance tests
     installation          Install script CLI, modes, error handling, edge cases
     site_generation       Configuration matrix site generation and build tests
+    obsidian              Wiki-link resolver, graph index, and backlinks tests
     visual                Browser-based screenshot and visual regression tests
     styling               Playwright smoke tests for CSS load, tokens, and layout chrome
     all                   Run core suites (excludes visual/styling for speed)
-    full                  Run all suites including styling and visual tests
+    full                  Run all suites including Obsidian, styling, and visual tests
 
 EXAMPLES:
     $0                                    # Run all core test suites
     $0 --verbose --format json           # Detailed output with JSON reporting
     $0 --suites core,deployment          # Run only core and deployment suites
-    $0 --suites full                     # Run all suites including styling + visual
+    $0 --suites full                     # Run all suites including Obsidian, styling + visual
     $0 --suites styling                  # Frontend CSS/layout tests only
     $0 --suites installation             # Run installation tests only
     $0 --parallel --environment ci       # Parallel execution for CI
@@ -169,9 +170,9 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Test suites configuration (using indexed arrays for bash 3.2 compatibility)
-TEST_SUITE_KEYS=("core" "deployment" "quality" "installation" "site_generation" "styling" "visual")
-TEST_SUITE_SCRIPTS=("test_core.sh" "test_deployment.sh" "test_quality.sh" "test_installation.sh" "test_site_generation.sh" "test_styling.sh" "test_visual.sh" "test_obsidian.sh")
-TEST_SUITE_NAMES=("Core Tests (Unit, Integration, Validation)" "Deployment Tests (Installation, Docker, E2E)" "Quality Tests (Security, Accessibility, Compatibility, Performance)" "Installation Tests (CLI, Modes, Errors, Edge Cases)" "Site Generation Tests (Config Matrix, Jekyll Build)" "Styling Tests (Playwright: CSS, layout, responsive chrome)" "Visual Tests (Screenshots, Responsive, Dark Mode)")
+TEST_SUITE_KEYS=("core" "deployment" "quality" "installation" "site_generation" "obsidian" "visual" "styling")
+TEST_SUITE_SCRIPTS=("test_core.sh" "test_deployment.sh" "test_quality.sh" "test_installation.sh" "test_site_generation.sh" "test_obsidian.sh" "test_visual.sh" "test_styling.sh")
+TEST_SUITE_NAMES=("Core Tests (Unit, Integration, Validation)" "Deployment Tests (Installation, Docker, E2E)" "Quality Tests (Security, Accessibility, Compatibility, Performance)" "Installation Tests (CLI, Modes, Errors, Edge Cases)" "Site Generation Tests (Config Matrix, Jekyll Build)" "Obsidian Tests (Wiki Links, Graph, Backlinks)" "Visual Tests (Screenshots, Responsive, Dark Mode)" "Styling Tests (Playwright: CSS, layout, responsive chrome)")
 
 # Helper function to get suite script by name
 get_suite_script() {
@@ -246,8 +247,8 @@ parse_test_suites() {
         # Run core test suites by default (visual tests are optional and slow)
         suites_to_run=("core" "deployment" "quality" "installation" "site_generation")
     elif [[ "$suites_input" == "full" ]]; then
-        # Run all suites including styling + visual tests
-        suites_to_run=("core" "deployment" "quality" "installation" "site_generation" "styling" "visual")
+        # Run all suites including Obsidian, styling, and visual tests
+        suites_to_run=("core" "deployment" "quality" "installation" "site_generation" "obsidian" "visual" "styling")
     else
         IFS=',' read -ra suites_to_run <<< "$suites_input"
     fi

@@ -12,6 +12,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPTS_ROOT="$SCRIPT_DIR/.."
 LIB_DIR="$SCRIPTS_ROOT/lib"
 TEST_DIR="$SCRIPTS_ROOT/test"
+REPO_ROOT="$(cd "$SCRIPTS_ROOT/.." && pwd)"
+THEME_TEST_RUNNER="$REPO_ROOT/test/test_runner.sh"
 
 # Source common library for logging
 source "$LIB_DIR/common.sh"
@@ -37,6 +39,10 @@ TEST_SUITES:
     integration Run integration tests only
     install     Run installer e2e suites only (test/test_install_*.sh)
 
+THEME SUITES:
+    core, deployment, quality, installation, site_generation, styling,
+    visual, full, or --suites <list> are forwarded to test/test_runner.sh.
+
 OPTIONS:
     --verbose, -v    Show detailed test output
     --dry-run        Preview what tests would run
@@ -53,6 +59,62 @@ TEST LOCATIONS:
     Integration tests: scripts/test/integration/
 EOF
 }
+
+# Pass the repository-level theme runner's interface through this canonical
+# command so CI, docs, and local users can converge on scripts/bin/test without
+# breaking existing --suites calls.
+maybe_delegate_to_theme_runner() {
+    [[ -f "$THEME_TEST_RUNNER" ]] || return 0
+
+    local should_delegate=false
+    local positional_suites=""
+    local delegated_args=()
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --suites|-s)
+                should_delegate=true
+                delegated_args+=("$1")
+                shift
+                [[ $# -gt 0 ]] || error "--suites requires a value"
+                delegated_args+=("$1")
+                ;;
+            core|deployment|quality|installation|site_generation|styling|visual|full)
+                should_delegate=true
+                if [[ -n "$positional_suites" ]]; then
+                    positional_suites="${positional_suites},$1"
+                else
+                    positional_suites="$1"
+                fi
+                ;;
+            --skip-docker|--skip-remote|--coverage|-c|--parallel|-p|--retry-failed|-r|--fail-fast|--baseline-compare)
+                should_delegate=true
+                delegated_args+=("$1")
+                ;;
+            --format|-f|--timeout|-t|--environment|-e)
+                should_delegate=true
+                local option_name="$1"
+                delegated_args+=("$1")
+                shift
+                [[ $# -gt 0 ]] || error "$option_name requires a value"
+                delegated_args+=("$1")
+                ;;
+            --verbose|-v)
+                delegated_args+=("$1")
+                ;;
+        esac
+        shift
+    done
+
+    if [[ "$should_delegate" == "true" ]]; then
+        if [[ -n "$positional_suites" ]]; then
+            delegated_args+=("--suites" "$positional_suites")
+        fi
+        exec "$THEME_TEST_RUNNER" "${delegated_args[@]}"
+    fi
+}
+
+maybe_delegate_to_theme_runner "$@"
 
 # Parse arguments
 TEST_SUITE="all"
