@@ -36,14 +36,38 @@ sitemap: false
   "entries": [
     {%- for doc in all_docs -%}
       {%- assign basename = doc.path | split: "/" | last | replace: ".md", "" | replace: ".markdown", "" | replace: ".html", "" -%}
-      {%- assign body = doc.content | default: "" | strip_html -%}
+      {%- assign body_source = doc.content | default: "" -%}
+      {%- assign body_without_fences = "" -%}
+      {%- assign fence_parts = body_source | split: "```" -%}
+      {%- for fence_part in fence_parts -%}
+        {%- assign fence_mod = forloop.index0 | modulo: 2 -%}
+        {%- if fence_mod == 0 -%}
+          {%- assign body_without_fences = body_without_fences | append: fence_part -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- assign body_without_code = "" -%}
+      {%- assign inline_code_parts = body_without_fences | split: "`" -%}
+      {%- for inline_code_part in inline_code_parts -%}
+        {%- assign inline_code_mod = forloop.index0 | modulo: 2 -%}
+        {%- if inline_code_mod == 0 -%}
+          {%- assign body_without_code = body_without_code | append: inline_code_part -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- assign body = body_without_code | strip_html -%}
       {%- assign body_excerpt = body | strip_newlines | truncate: 240 -%}
+      {%- assign aliases = "" | split: "," -%}
+      {%- if doc.aliases -%}
+        {%- assign aliases_blob = doc.aliases | join: "||" -%}
+        {%- assign aliases = aliases_blob | split: "||" -%}
+      {%- endif -%}
       {%- comment -%}
         Extract outgoing wiki-link targets so the graph view
         (assets/js/obsidian-graph.js) can render edges without re-parsing
-        every page client-side. We mask `![[…]]` embeds first so they don't
-        also get split as `[[…]]`, then split on `[[`, take everything
-        before `]]`, and strip the optional `|alias` and `#anchor` parts.
+        every page client-side. Fenced and inline code are removed first so
+        Bash `[[ ... ]]` tests and literal examples don't become graph edges.
+        We mask `![[…]]` embeds so they don't also get split as `[[…]]`, then
+        strip optional `|alias` and `#anchor` / `^block` parts. Operator-heavy
+        targets are discarded as table examples rather than Obsidian page names.
       {%- endcomment -%}
       {%- assign masked = body | replace: "![[", "@@OBSEMBED@@" -%}
       {%- assign chunks = masked | split: "[[" -%}
@@ -52,7 +76,21 @@ sitemap: false
         {%- assign target_raw = chunk | split: "]]" | first -%}
         {%- if target_raw and target_raw != "" -%}
           {%- assign target = target_raw | split: "|" | first | split: "#" | first | split: "^" | first | strip | downcase -%}
-          {%- if target != "" and target.size < 200 -%}
+          {%- assign target_is_code = false -%}
+          {%- assign first_char = target | slice: 0 -%}
+          {%- if target contains "$" or target contains "==" or target contains "!=" or target contains "=~" -%}
+            {%- assign target_is_code = true -%}
+          {%- endif -%}
+          {%- if target contains "&&" or target contains "||" or target contains "&amp;&amp;" or target contains "&lt;" or target contains "&gt;" -%}
+            {%- assign target_is_code = true -%}
+          {%- endif -%}
+          {%- if target contains " -eq " or target contains " -ne " or target contains " -lt " or target contains " -le " or target contains " -gt " or target contains " -ge " -%}
+            {%- assign target_is_code = true -%}
+          {%- endif -%}
+          {%- if first_char == "-" or target contains "{" or target contains "}" or target contains "(" or target contains ")" or target contains '"' or target contains "'" -%}
+            {%- assign target_is_code = true -%}
+          {%- endif -%}
+          {%- if target != "" and target.size < 200 and target_is_code == false -%}
             {%- assign outgoing = outgoing | push: target -%}
           {%- endif -%}
         {%- endif -%}
@@ -65,7 +103,7 @@ sitemap: false
         "collection": {{ doc.collection | default: nil | jsonify }},
         "tags": {{ doc.tags | default: empty | jsonify }},
         "categories": {{ doc.categories | default: empty | jsonify }},
-        "aliases": {{ doc.aliases | default: empty | jsonify }},
+        "aliases": {{ aliases | jsonify }},
         "outgoing": {{ outgoing | jsonify }},
         "excerpt": {{ body_excerpt | jsonify }}
       }{% unless forloop.last %},{% endunless %}

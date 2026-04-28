@@ -1,12 +1,18 @@
 ---
-title: "Obsidian Integration Troubleshooting"
-description: "Common issues with the Obsidian + Jekyll integration and how to fix them."
+title: Obsidian Integration Troubleshooting
+description: Common issues with the Obsidian + Jekyll integration and how to fix them.
 layout: default
 permalink: /docs/obsidian/troubleshooting/
-categories: [Documentation, Obsidian]
-tags: [obsidian, troubleshooting, debugging]
+categories:
+  - Documentation
+  - Obsidian
+tags:
+  - obsidian
+  - troubleshooting
+  - debugging
 backlinks: true
-lastmod: "2026-04-24T15:06:30Z"
+lastmod: 2026-04-24T15:06:30Z
+draft: draft
 ---
 
 # Obsidian Integration Troubleshooting

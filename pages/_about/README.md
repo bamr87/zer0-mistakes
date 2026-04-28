@@ -3,6 +3,7 @@ title: Zer0-Mistakes About Section
 description: Organization of the Zer0-Mistakes theme documentation and technical features
 permalink: /about/readme/
 lastmod: 2025-01-13T00:00:00.000Z
+draft: draft
 ---
 
 # Zer0-Mistakes Theme Documentation
