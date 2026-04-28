@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.4.1] - 2026-04-28
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 9830d3d refactor(obsidian): extract full graph include and sync docs (#82)
+
+
 ## [1.4.0] - 2026-04-25
 
 ### Changed
