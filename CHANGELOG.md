@@ -48,6 +48,9 @@
 
 ## [Unreleased]
 
+### Changed
+- **Docker/Jekyll build performance** — Reduced repeated full-page Liquid scans in the footer, settings offcanvas, and cookie consent includes; cached preview image checks during generation; skipped server-side Obsidian rewrites for documents without Obsidian syntax; and changed Docker dev startup to run `bundle install` only when `bundle check` reports missing dependencies. The profiled Docker build improved from 119.2s to 86.8s in local validation.
+
 ### Added
 - **Development Automation**: Added `scripts/bin/validate` and `scripts/validate`
   as the canonical preflight validation command for repository files, version

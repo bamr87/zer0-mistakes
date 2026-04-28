@@ -31,6 +31,7 @@
 -->
 
 <footer class="bd-footer border-top" role="contentinfo">
+  {% assign footer_page_urls = site.html_pages | map: "url" | join: "|" | prepend: "|" | append: "|" %}
   <!-- Powered by Row -->
   <div class="container-xl my-3">
     <ul class="nav justify-content-end list-unstyled d-flex align-items-center flex-wrap" aria-label="Powered by technologies">
@@ -100,8 +101,8 @@
                   {% assign _parts = entry | split: "," %}
                   {% assign _label = _parts[0] %}
                   {% assign _url   = _parts[1] %}
-                  {% assign _page  = site.html_pages | where: "url", _url | first %}
-                  {% if _page %}
+                  {% assign _needle = "|" | append: _url | append: "|" %}
+                  {% if footer_page_urls contains _needle %}
                     <li><a href="{{ _url | relative_url }}" class="text-light text-decoration-none">{{ _label }}</a></li>
                   {% endif %}
                 {% endfor %}
@@ -169,14 +170,14 @@
           <div class="col-md-4 text-md-end">
             <ul class="list-inline mb-0">
               {% comment %} Only render policy links whose pages exist (or that are explicitly configured). {% endcomment %}
-              {% assign _privacy = site.html_pages | where: "url", "/privacy-policy/" | first %}
-              {% unless _privacy %}{% assign _privacy = site.html_pages | where: "url", "/privacy-policy" | first %}{% endunless %}
-              {% if _privacy or site.privacy_policy_url %}
+              {% assign _privacy_needle = "|/privacy-policy/|" %}
+              {% assign _privacy_alt_needle = "|/privacy-policy|" %}
+              {% if site.privacy_policy_url or footer_page_urls contains _privacy_needle or footer_page_urls contains _privacy_alt_needle %}
                 <li class="list-inline-item"><a href="{{ site.privacy_policy_url | default: '/privacy-policy' | relative_url }}" class="text-light text-decoration-none">Privacy Policy</a></li>
               {% endif %}
-              {% assign _terms = site.html_pages | where: "url", "/terms-of-service/" | first %}
-              {% unless _terms %}{% assign _terms = site.html_pages | where: "url", "/terms-of-service" | first %}{% endunless %}
-              {% if _terms or site.terms_of_service_url %}
+              {% assign _terms_needle = "|/terms-of-service/|" %}
+              {% assign _terms_alt_needle = "|/terms-of-service|" %}
+              {% if site.terms_of_service_url or footer_page_urls contains _terms_needle or footer_page_urls contains _terms_alt_needle %}
                 <li class="list-inline-item"><a href="{{ site.terms_of_service_url | default: '/terms-of-service' | relative_url }}" class="text-light text-decoration-none">Terms of Service</a></li>
               {% endif %}
               <li class="list-inline-item">

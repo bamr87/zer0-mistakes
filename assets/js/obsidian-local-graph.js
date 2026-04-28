@@ -277,7 +277,6 @@
     var cy = window.cytoscape({
       container: container,
       elements: elements,
-      wheelSensitivity: 0.2,
       minZoom: 0.3,
       maxZoom: 3,
       autoungrabify: false,

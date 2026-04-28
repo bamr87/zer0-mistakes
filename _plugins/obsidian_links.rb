@@ -416,9 +416,14 @@ module Jekyll
 
       def rewrite_document(doc)
         return unless index
+        return unless needs_rewrite?(doc.content)
 
         converter = Converter.new(nil, index, config)
         doc.content = converter.convert(doc.content, current_url: doc.url)
+      end
+
+      def needs_rewrite?(content)
+        content.include?('[[') || content.include?('> [!') || content.match?(Converter::INLINE_TAG_RE)
       end
     end
   end
