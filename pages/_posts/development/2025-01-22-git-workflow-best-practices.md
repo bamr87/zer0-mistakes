@@ -1,6 +1,6 @@
 ---
 title: "Git Workflow Best Practices for Modern Teams"
-description: "Master Git workflow best practices for modern teams: branching strategies, conventional commits, code reviews, and merge conflict tactics that scale."
+description: "Master Git workflow best practices for modern teams: branching strategies, conventional commits, code review, and merge conflict tactics that truly scale."
 preview: /images/previews/git-workflow-best-practices-for-modern-teams.png
 date: 2025-01-22T10:00:00.000Z
 author: default
@@ -131,4 +131,10 @@ git push --force-with-lease
 
 ## Conclusion
 
-A well-defined Git workflow reduces friction, improves code quality, and makes collaboration enjoyable. Choose the workflow that fits your team's needs and iterate as you learn.
+A well-defined **Git workflow** reduces friction, improves code quality, and makes collaboration enjoyable. Pick the branching model that fits your release cadence, codify your commit conventions, and treat code review as a shared craft — then iterate as your team grows.
+
+## Related Reading
+
+- [Getting started with Jekyll: your first static site](/posts/2025/01/01/getting-started-jekyll/) — apply this workflow to your first Jekyll project.
+- [Docker for Jekyll development: a complete guide](/posts/2025/01/15/docker-jekyll-guide/) — pair Git branching with reproducible containerized builds.
+- [Bootstrap 5 components for modern Jekyll themes](/posts/2025/01/10/bootstrap-5-components/) — review-friendly UI patterns for collaborative front-end work.
