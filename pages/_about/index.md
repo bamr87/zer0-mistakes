@@ -1,7 +1,8 @@
 ---
 title: About
 description: Learn about Zer0-Mistakes — a Docker-first Jekyll theme with Bootstrap 5, AI-powered installation, automated releases, and privacy-compliant analytics. Includes site philosophy, tech stack, quick-start examples, and FAQ.
-excerpt: This page provides information about the site, its configuration, and the variables guiding its development.
+excerpt: The story, stack, and quick-start guide for the Zer0-Mistakes Jekyll theme — Docker-first, Bootstrap 5, GitHub Pages compatible.
+preview: /images/previews/about.png
 layout: default
 sidebar:
   nav: auto
@@ -24,6 +25,12 @@ order: 1
 ---
 
 {{ site.description }}
+
+<p class="lead text-body-secondary mb-4">
+  A Docker-first Jekyll theme with Bootstrap 5, an AI-powered installer, and
+  automated semantic releases — built so your first <code>docker-compose up</code>
+  just works, on any machine.
+</p>
 
 ## What is Zer0-Mistakes?
 
@@ -195,9 +202,27 @@ Now that you know what Zer0-Mistakes is, here's where to go next:
 - 🎨 [**Theme features**](/about/features/) — full list of components, layouts, and integrations
 - 🧩 [**Bootstrap component examples**](/about/theme/) — copy-pasteable UI snippets
 - 📊 [**Site statistics dashboard**](/about/stats/) — live content metrics
-- ⚙️ [**Configuration reference**](/about/settings/config/) — every `_config.yml` option explained
+- ⚙️ [**Configuration reference**](/about/config/) — every `_config.yml` option explained
 - 🤖 [**AI development guide**](/about/features/ai-development-guide/) — how to work on this theme with Copilot, Codex, Cursor, and friends
 - 🚀 [**Automated release system**](/about/features/comprehensive-gem-automation-system/) — how versions, changelogs, and gem pushes are produced
+
+<div class="alert alert-primary d-flex flex-column flex-md-row align-items-md-center gap-3 mt-4" role="note">
+  <div class="flex-grow-1">
+    <h3 class="h5 mb-1">Ready to ship your own site?</h3>
+    <p class="mb-0">
+      Spin up a new Zer0-Mistakes site in under a minute with the one-line
+      installer — no Ruby setup required.
+    </p>
+  </div>
+  <div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-primary" href="https://github.com/bamr87/zer0-mistakes#quick-start">
+      Get started
+    </a>
+    <a class="btn btn-outline-primary" href="https://github.com/bamr87/zer0-mistakes">
+      Star on GitHub
+    </a>
+  </div>
+</div>
 
 ## Related
 
