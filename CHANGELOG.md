@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.6.1] - 2026-04-29
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- e1999c6 Improve About page: tighten copy, add preview image, fix CTA and broken link (#90)
+
+
 ## [1.6.0] - 2026-04-29
 
 ### Changed
