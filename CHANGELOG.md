@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.6.0] - 2026-04-29
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 3dbfcad Expand About page with prerequisites, quick start, FAQ, and architecture diagram (#88)
+- f969fc0 perf(jekyll): cache page-url lookups and short-circuit obsidian rewrites (#80)
+- d50b04c chore(deps): update Ruby gem dependencies (#81)
+- b6de350 Expand "Wizard Topples Capitalist Dominance" post with examples, diagram, and reference sections (#85)
+- 21eb458 feat(search,components): remove Algolia and fix Powered By links to open in new tab (#86)
+
+
 ## [1.5.1] - 2026-04-29
 
 ### Changed

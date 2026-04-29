@@ -2,7 +2,7 @@
 title: zer0-mistakes
 sub-title: AI-Native Jekyll Theme
 description: AI-native Jekyll theme for GitHub Pages — Docker-first development, AI-powered installation, multi-agent integration (Copilot, Codex, Cursor, Claude), AI preview-image generation, and AIEO content optimization with Bootstrap 5.3.
-version: 1.5.1
+version: 1.6.0
 layout: landing
 tags:
   - jekyll
@@ -20,7 +20,7 @@ categories:
   - bootstrap
   - ai-tooling
 created: 2024-02-10T23:51:11.480Z
-lastmod: 2026-04-29T03:34:02.000Z
+lastmod: 2026-04-29T04:04:32.000Z
 draft: false
 permalink: /
 slug: zer0
@@ -1138,7 +1138,7 @@ git push origin feature/awesome-feature
 
 | Metric | Value |
 |--------|-------|
-| **Current Version** | 1.5.1 ([RubyGems](https://rubygems.org/gems/jekyll-theme-zer0), [CHANGELOG](/CHANGELOG)) |
+| **Current Version** | 1.6.0 ([RubyGems](https://rubygems.org/gems/jekyll-theme-zer0), [CHANGELOG](/CHANGELOG)) |
 | **Documented Features** | 43 ([Feature Registry](https://github.com/bamr87/zer0-mistakes/blob/main/_data/features.yml)) |
 | **Setup Time** | 2-5 minutes ([install.sh benchmarks](https://github.com/bamr87/zer0-mistakes/blob/main/install.sh)) |
 | **Documentation Pages** | 70+ ([browse docs](/pages/)) |
@@ -1189,6 +1189,6 @@ And these AI partners that make zer0-mistakes truly AI-native:
 
 **Built with ❤️ — and a little help from our AI partners — for the Jekyll community**
 
-**v1.5.1** • [Changelog](CHANGELOG.md) • [License](LICENSE) • [Contributing](CONTRIBUTING.md) • [AI Agent Guide](AGENTS.md)
+**v1.6.0** • [Changelog](CHANGELOG.md) • [License](LICENSE) • [Contributing](CONTRIBUTING.md) • [AI Agent Guide](AGENTS.md)
 
 
