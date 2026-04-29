@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.5.0] - 2026-04-29
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- ffdc1eb feat(posts): add 12 example posts and regenerate all previews with gpt-image-2 (#83)
+
+
 ## [1.4.1] - 2026-04-28
 
 ### Changed
