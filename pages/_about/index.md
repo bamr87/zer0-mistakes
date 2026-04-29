@@ -38,7 +38,7 @@ And, most importantly, Powered By:
 Name | Link
 ---------|----------
 {% for power in site.powered_by -%}
-{{ power.name }} | {{ power.url }}
+{{ power.name }} | <a href="{{ power.url }}" target="_blank" rel="nofollow noopener noreferrer">{{ power.url }}</a>
 {% endfor %}
 
 ## Contact Information

@@ -128,7 +128,6 @@ Every feature embodies our core principles:
 | **MathJax Support** | ✅ Active | Mathematical equations |
 | **Mermaid Diagrams** | ✅ Active | Flowcharts and diagrams |
 | **giscus Comments** | ✅ Active | GitHub-based discussions |
-| **Algolia Search** | ✅ Active | Fast content search |
 | **Google Analytics** | ✅ Active | Traffic tracking |
 | **Social Share Buttons** | ✅ Active | Content sharing |
 | **RSS/Atom Feeds** | ✅ Active | Content syndication |

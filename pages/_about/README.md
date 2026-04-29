@@ -75,7 +75,6 @@ The Zer0-Mistakes documentation focuses on:
 - MathJax (equations)
 - Mermaid (diagrams)
 - giscus (comments)
-- Algolia (search)
 - Google Analytics
 - Social sharing
 
