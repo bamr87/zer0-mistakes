@@ -98,9 +98,9 @@ info_banner              : '/assets/images/info-banner-mountain-wizard.png' # pa
 preview_images:
   enabled                : true
   provider               : 'openai'           # openai, stability, local
-  model                  : 'dall-e-3'         # dall-e-3, dall-e-2, stable-diffusion
-  size                   : '1792x1024'        # Landscape for banner: 1792x1024, square: 1024x1024
-  quality                : 'standard'         # standard, hd (hd costs more)
+  model                  : 'gpt-image-2'      # gpt-image-2, dall-e-3, dall-e-2, stable-diffusion
+  size                   : '1536x1024'        # Landscape for GPT Image banners; DALL-E 3 also supports 1792x1024
+  quality                : 'auto'             # auto for GPT Image models; standard/hd for DALL-E 3
   style                  : 'retro pixel art, 8-bit video game aesthetic, vibrant colors, nostalgic, clean pixel graphics'
   output_dir             : 'assets/images/previews'
   # Path normalization: allows omitting /assets/ prefix in frontmatter

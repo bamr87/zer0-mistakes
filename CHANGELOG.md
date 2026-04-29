@@ -61,6 +61,9 @@
 - **Docker/Jekyll build performance** — Reduced repeated full-page Liquid scans in the footer, settings offcanvas, and cookie consent includes; cached preview image checks during generation; skipped server-side Obsidian rewrites for documents without Obsidian syntax; and changed Docker dev startup to run `bundle install` only when `bundle check` reports missing dependencies. The profiled Docker build improved from 119.2s to 86.8s in local validation.
 
 ### Added
+- **Example Posts**: Added twelve new section examples across Business,
+  Development, Science, Technology, Tutorial, and World posts to provide
+  richer sample content for `_posts` category sections.
 - **Development Automation**: Added `scripts/bin/validate` and `scripts/validate`
   as the canonical preflight validation command for repository files, version
   consistency, YAML/data parsing, active configuration contracts, config-file
@@ -103,6 +106,11 @@
   `Your Site Title`, `My Awesome Site`, `Welcome`, `Untitled`, or empty).
 
 ### Fixed
+- **Preview Image Generator**: Fixed `scripts/features/generate-preview-images`
+  project-root detection when invoked through the wrapper and added support for
+  OpenAI GPT image generation responses that return `b64_json` instead of URL
+  downloads. The generator now reports the active image model and defaults to
+  `gpt-image-2` with GPT-image-friendly size and quality settings.
 - **Obsidian Local Graph**: Moved the local graph out of the documentation
   navigation sidebar into its own collapsible side panel with a larger canvas
   and resize-on-open behavior so Cytoscape renders cleanly. Pages with no

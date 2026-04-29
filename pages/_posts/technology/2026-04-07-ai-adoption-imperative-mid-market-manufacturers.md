@@ -1,6 +1,7 @@
 ---
 title: "The AI Adoption Imperative: Why Mid-Market Manufacturers Have 18 Months to Act"
 description: The gap between what AI can do and what most companies believe it can do is dangerously wide. For mid-market manufacturers and distributors, the next 12-18 months represent a critical window.
+preview: /images/previews/the-ai-adoption-imperative-why-mid-market-manufact.png
 date: 2026-04-07T10:00:00.000Z
 lastmod: 2026-04-07T10:00:00.000Z
 author: default
