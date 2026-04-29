@@ -1,6 +1,7 @@
 ---
 title: "From AI Awareness to Action: The Skills, Systems, and Partnership Model That Close the Gap"
 description: "Most mid-market companies know AI matters but lack the people, skills, and bandwidth to adopt it. Here are the four capabilities needed and a practical model for getting there."
+preview: /images/previews/from-ai-awareness-to-action-the-skills-systems-and.png
 date: 2026-04-07T14:00:00.000Z
 lastmod: 2026-04-07T14:00:00.000Z
 author: default
