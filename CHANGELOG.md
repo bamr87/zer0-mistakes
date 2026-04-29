@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.5.1] - 2026-04-29
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- ad00bf3 [WIP] Optimize Git workflow page for SEO best practices (#79)
+
+
 ## [1.5.0] - 2026-04-29
 
 ### Changed
