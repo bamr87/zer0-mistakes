@@ -50,7 +50,7 @@ en: &DEFAULT_EN
   loading_label              : "Loading..."
   search_label_text          : "Enter your search term..."
   search_placeholder_text    : "Enter your search term..."
-  search_algolia_no_results  : "No results"
+  search_no_results          : "No results"
   results_found              : "Result(s) found"
   back_to_top                : "Back to top"
   # Statistics labels
@@ -126,7 +126,7 @@ es: &DEFAULT_ES
   loading_label              : "Cargando..."
   search_label_text          : "Introduce tu término de búsqueda..."
   search_placeholder_text    : "Introduce tu término de búsqueda..."
-  search_algolia_no_results  : "Sin resultados"
+  search_no_results          : "Sin resultados"
   results_found              : "Resultado(s) encontrado(s)"
   back_to_top                : "Volver arriba"
   # Statistics labels

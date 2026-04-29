@@ -42,7 +42,7 @@
         <li class="btn align-items-end">
           {% capture icon_classes %}{{ site.default_icon }} {{ power.icon | default: "bi-question-circle" }}{% endcapture %}
           {% if power.url %}
-            <a href="{{ power.url }}" rel="nofollow">
+            <a href="{{ power.url }}" target="_blank" rel="nofollow noopener noreferrer">
               <i class="{{ icon_classes }}" aria-hidden="true"></i>
               <span class="d-none d-md-inline">{{ power.name }}</span>
             </a>

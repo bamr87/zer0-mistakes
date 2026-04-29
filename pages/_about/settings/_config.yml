@@ -159,10 +159,6 @@ powered_by:
     version: "5.2.0"
     url: "https://getbootstrap.com/"
     icon: "bi-bootstrap"
-  - name: "Algolia"
-    version: 
-    url: "https://algolia.com/"
-    icon: "bi-search"
   - name: "JQuery"
     url: "https://jquery.com/"
     icon: "bi-filetype-js"
@@ -192,7 +188,6 @@ plugins:
   - jekyll-seo-tag
   - jekyll-paginate
   # - jekyll-assets
-  - jekyll-algolia
   # - jekyll-mermaid  # https://mermaidjs.github.io/
   # - jekyll-admin # https://github.com/jekyll/jekyll-admin
   # - jekyll-redirect-from
@@ -428,11 +423,6 @@ sass:
 #  TODO: Fix bootstrap plugin
   # load_paths:
   #   - /usr/local/bundle/gems/bootstrap-5.3.3/assets/stylesheets
-
-algolia:
-  application_id: 'SP02Z3YYL4'
-  search_only_api_key: '3b9200e21085fbebc263950c157b2682'
-  index_name: dev_it-journey
 
 atom_feed:
 path                   : # blank (default) uses feed.xml

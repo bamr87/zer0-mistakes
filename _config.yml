@@ -225,10 +225,6 @@ powered_by:
     version: "5.3.3"
     url: "https://getbootstrap.com/"
     icon: "bi-bootstrap"
-  - name: "Algolia"
-    version: 
-    url: "https://algolia.com/"
-    icon: "bi-search"
   - name: "jQuery"
     url: "https://jquery.com/"
     icon: "bi-filetype-js"
