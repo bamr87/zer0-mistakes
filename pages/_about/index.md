@@ -206,7 +206,7 @@ Now that you know what Zer0-Mistakes is, here's where to go next:
 - 🤖 [**AI development guide**](/about/features/ai-development-guide/) — how to work on this theme with Copilot, Codex, Cursor, and friends
 - 🚀 [**Automated release system**](/about/features/comprehensive-gem-automation-system/) — how versions, changelogs, and gem pushes are produced
 
-<div class="alert alert-primary d-flex flex-column flex-md-row align-items-md-center gap-3 mt-4" role="note">
+<div class="alert alert-primary d-flex flex-column flex-md-row align-items-md-center gap-3 mt-4">
   <div class="flex-grow-1">
     <h3 class="h5 mb-1">Ready to ship your own site?</h3>
     <p class="mb-0">
