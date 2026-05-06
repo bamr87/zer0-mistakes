@@ -53,7 +53,7 @@ features:
     title: "Modular AI-Powered Installer"
     description: "Self-healing installer rebuilt as a modular CLI dispatcher with declarative profiles, deploy plugins (Docker, GitHub Pages, custom), AI agent integration, and a cross-platform test matrix. Replaces the monolithic install.sh while preserving the one-line install UX"
     implemented: true
-    version: "0.22.22"
+    version: "1.0.0"
     link: "/"
     docs: "/docs/installation/"
     tags: [ai, automation, installation, error-handling, bash, installer]
@@ -1037,12 +1037,12 @@ features:
     references:
       plugin: "_plugins/obsidian_links.rb"
       scripts:
-        - "assets/js/obsidian-resolver.js"
+        - "assets/js/obsidian-wiki-links.js"
         - "assets/js/obsidian-graph.js"
       data: "assets/data/wiki-index.json"
       includes:
         - "_includes/content/backlinks.html"
-        - "_includes/content/wiki-graph.html"
+        - "_includes/obsidian/full-graph.html"
       docs: "pages/_docs/obsidian/"
       tests:
         - "test/test_obsidian.sh"
@@ -1069,8 +1069,8 @@ features:
     date: 2026-03-25
     references:
       includes:
-        - "_includes/content/wiki-graph.html"
-        - "_includes/content/wiki-graph-local.html"
+        - "_includes/obsidian/full-graph.html"
+        - "_includes/navigation/local-graph.html"
       scripts:
         - "assets/js/obsidian-graph.js"
 
@@ -1088,11 +1088,10 @@ features:
     tags: [setup, quickstart, remote-theme, github-pages]
     date: 2026-02-25
     references:
-      starter: "../zer0-pages-remote/"
       includes:
-        - "_includes/welcome.html"
-        - "_includes/info.html"
+        - "_includes/components/info-section.html"
         - "_includes/core/footer.html"
+      layout: "_layouts/welcome.html"
 
   - id: ZER0-047
     title: "Site Configuration Detection & Smart 404"
@@ -1117,8 +1116,8 @@ features:
     tags: [validation, frontmatter, content, ci-cd, automation]
     date: 2026-01-25
     references:
-      script: "scripts/validate-frontmatter.sh"
-      config: "_data/frontmatter-schema.yml"
+      script: "scripts/bin/validate"
+      config: ".github/config/frontmatter_schema.yml"
       prompt: ".github/prompts/frontmatter-maintainer.prompt.md"
 
   - id: ZER0-049
@@ -1147,7 +1146,8 @@ features:
     references:
       layout: "_layouts/admin.html"
       includes:
-        - "_includes/admin/"
+        - "_includes/navigation/admin-nav.html"
+        - "_includes/components/admin-tabs.html"
 
   - id: ZER0-051
     title: "AGENTS.md Cross-Tool Agent Entry Point"
@@ -1238,7 +1238,6 @@ features:
     references:
       config:
         - ".devcontainer/devcontainer.json"
-        - ".devcontainer/Dockerfile"
 
   - id: ZER0-057
     title: "Local Docker Publishing Pipeline"
@@ -1261,7 +1260,7 @@ features:
     implemented: true
     version: "0.20.0"
     link: "/notes/"
-    docs: "/docs/content/notes/"
+    docs: "/notes/"
     tags: [content, collections, notes, jekyll]
     date: 2025-12-15
     references:
