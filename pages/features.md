@@ -5,7 +5,7 @@ description: "Comprehensive list of zer0-mistakes Jekyll theme features with doc
 layout: default
 permalink: /features/
 date: 2025-12-16
-lastmod: 2025-12-16
+lastmod: 2026-05-05
 tags: [features, documentation, reference]
 categories: [Documentation]
 comments: false

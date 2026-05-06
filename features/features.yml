@@ -1,7 +1,7 @@
 # zer0-mistakes Theme Features Registry
 # Comprehensive feature tracking for the zer0-mistakes Jekyll theme
-# Version: 0.15.1
-# Last Updated: 2025-12-16
+# Version: 1.6.1
+# Last Updated: 2026-05-05
 
 features:
   # ============================================================================
@@ -50,25 +50,32 @@ features:
       - "Automated dependency installation"
   
   - id: ZER0-003
-    title: "AI-Powered Installation System"
-    description: "Self-healing installation script with 95% success rate. 1,090-line Bash script with intelligent error recovery, platform detection, and automated fixes for 27+ common scenarios"
+    title: "Modular AI-Powered Installer"
+    description: "Self-healing installer rebuilt as a modular CLI dispatcher with declarative profiles, deploy plugins (Docker, GitHub Pages, custom), AI agent integration, and a cross-platform test matrix. Replaces the monolithic install.sh while preserving the one-line install UX"
     implemented: true
-    version: "0.6.0"
+    version: "0.22.22"
     link: "/"
     docs: "/docs/installation/"
-    tags: [ai, automation, installation, error-handling, bash]
-    date: 2025-01-27
+    tags: [ai, automation, installation, error-handling, bash, installer]
+    date: 2026-02-15
     references:
       script: "install.sh"
-      init: "init_setup.sh"
+      cli: "scripts/bin/install"
+      lib: "scripts/lib/install/"
+      profiles: "templates/profiles/"
+      deploy: "templates/deploy/"
+      agents: "templates/agents/"
+      ai: "templates/ai/"
+      instructions: ".github/instructions/install.instructions.md"
     features:
-      - "One-line installation command"
-      - "Automatic platform detection"
-      - "Docker dependency validation"
+      - "Modular library architecture (scripts/lib/install/)"
+      - "Declarative profile templates"
+      - "Pluggable deploy targets (Docker, GitHub Pages, custom)"
+      - "Cross-platform test matrix"
+      - "AI agent integration scaffolding"
+      - "Backwards-compatible one-line install"
       - "Self-healing error recovery"
-      - "Comprehensive logging"
-      - "Rollback capability"
-      - "Progress indicators"
+      - "Platform detection (macOS / Linux / Windows WSL)"
   
   # ============================================================================
   # AI-POWERED FEATURES
@@ -76,9 +83,9 @@ features:
   
   - id: ZER0-004
     title: "AI Preview Image Generator"
-    description: "AI-powered automatic preview image generation for posts using OpenAI DALL-E, Stability AI, or local placeholders. Configurable via _config.yml with retro pixel art style defaults"
+    description: "AI-powered automatic preview image generation for posts using OpenAI gpt-image-2 / DALL-E, Stability AI, xAI, or local placeholders. Configurable assets prefix, retro pixel art defaults, batch regeneration"
     implemented: true
-    version: "0.8.0"
+    version: "1.5.0"
     link: "/docs/features/preview-image-generator/"
     docs: "/docs/features/preview-image-generator/"
     tags: [ai, images, automation, openai, content]
@@ -97,11 +104,14 @@ features:
       optional: [yq, python3]
     providers:
       - name: openai
-        description: "OpenAI DALL-E 3 image generation"
+        description: "OpenAI gpt-image-2 / DALL-E 3 image generation"
         env_var: OPENAI_API_KEY
       - name: stability
         description: "Stability AI Stable Diffusion"
         env_var: STABILITY_API_KEY
+      - name: xai
+        description: "xAI Grok image generation"
+        env_var: XAI_API_KEY
       - name: local
         description: "Local placeholder (no API needed)"
         env_var: null
@@ -113,28 +123,40 @@ features:
       - "Batch processing"
   
   - id: ZER0-005
-    title: "GitHub Copilot Integration"
-    description: "Comprehensive AI development assistance with structured instructions, file-specific guidance, and front matter optimization for maximum AI productivity"
+    title: "AI Agent Integration (Copilot + AGENTS.md)"
+    description: "Comprehensive AI development assistance with the cross-tool AGENTS.md entry point, file-scoped instruction files (layouts, includes, scripts, sass, obsidian, install, features, version-control, testing, documentation), reusable prompts, and Cursor slash-commands"
     implemented: true
-    version: "0.15.0"
-    link: "https://github.com/bamr87/zer0-mistakes/blob/main/.github/copilot-instructions.md"
+    version: "1.6.0"
+    link: "https://github.com/bamr87/zer0-mistakes/blob/main/AGENTS.md"
     docs: "/docs/features/copilot-integration/"
-    tags: [ai, copilot, development, documentation]
-    date: 2025-11-15
+    tags: [ai, copilot, agents, development, documentation]
+    date: 2026-04-18
     references:
+      entry_point: "AGENTS.md"
+      main: ".github/copilot-instructions.md"
       instructions:
-        - ".github/copilot-instructions.md"
         - ".github/instructions/layouts.instructions.md"
         - ".github/instructions/includes.instructions.md"
         - ".github/instructions/scripts.instructions.md"
+        - ".github/instructions/sass.instructions.md"
+        - ".github/instructions/obsidian.instructions.md"
+        - ".github/instructions/install.instructions.md"
+        - ".github/instructions/features.instructions.md"
         - ".github/instructions/testing.instructions.md"
-        - ".github/instructions/version-control.instructions.md"
         - ".github/instructions/documentation.instructions.md"
+        - ".github/instructions/version-control.instructions.md"
+      prompts:
+        - ".github/prompts/commit-publish.prompt.md"
+        - ".github/prompts/frontmatter-maintainer.prompt.md"
+        - ".github/prompts/obsidian-add-syntax.prompt.md"
+        - ".github/prompts/seed.prompt.md"
+      cursor: ".cursor/commands/"
     features:
-      - "File-pattern specific instructions"
-      - "Development workflow guidance"
-      - "Best practices documentation"
-      - "AI-optimized front matter"
+      - "AGENTS.md cross-tool entry point (Copilot, Codex, Cursor, Aider, …)"
+      - "File-pattern specific instructions via applyTo globs"
+      - "Reusable agent/chat prompts"
+      - "Cursor IDE slash-commands mirror"
+      - "AI-optimized front matter standards"
       - "Automated code generation helpers"
   
   # ============================================================================
@@ -736,19 +758,20 @@ features:
       - "Smooth theme transitions"
 
   - id: ZER0-032
-    title: "Site Search"
-    description: "Client-side search functionality with modal interface, JSON index, and keyboard shortcut activation"
+    title: "GitHub Pages-Compatible Live Search"
+    description: "Self-contained client-side search with live modal, JSON index, and keyboard shortcut activation. Algolia-free — works on bare GitHub Pages with no external service or API key"
     implemented: true
-    version: "0.1.0"
+    version: "1.5.1"
     link: "/"
     docs: "/docs/features/site-search/"
     tags: [search, navigation, modal, keyboard]
-    date: 2025-01-01
+    date: 2026-04-10
     references:
       scripts:
         - "assets/js/search-modal.js"
       includes:
         - "_includes/components/search-modal.html"
+        - "_includes/components/searchbar.html"
       data:
         - "search.json"
     features:
@@ -757,6 +780,7 @@ features:
       - "Keyboard shortcut (/) activation"
       - "Real-time search results"
       - "Accessible search input"
+      - "No external dependency (Algolia removed v1.5.1)"
 
   - id: ZER0-033
     title: "Auto-hide Navigation"
@@ -996,3 +1020,266 @@ features:
       - "Tag cloud visualization"
       - "Content statistics"
       - "Responsive card layout"
+
+  # ============================================================================
+  # OBSIDIAN VAULT INTEGRATION (v1.3.0+)
+  # ============================================================================
+
+  - id: ZER0-044
+    title: "Obsidian Vault Integration"
+    description: "Render an Obsidian vault as a Jekyll site without losing wiki-links, embeds, callouts, or backlinks. Includes a Liquid wiki-index, JS client-side resolver, optional Ruby plugin, and a contract that keeps GitHub Pages and self-build deployments rendering identically"
+    implemented: true
+    version: "1.3.0"
+    link: "/docs/obsidian/"
+    docs: "/docs/obsidian/"
+    tags: [obsidian, content, wiki-links, knowledge-base, jekyll]
+    date: 2026-03-12
+    references:
+      plugin: "_plugins/obsidian_links.rb"
+      scripts:
+        - "assets/js/obsidian-resolver.js"
+        - "assets/js/obsidian-graph.js"
+      data: "assets/data/wiki-index.json"
+      includes:
+        - "_includes/content/backlinks.html"
+        - "_includes/content/wiki-graph.html"
+      docs: "pages/_docs/obsidian/"
+      tests:
+        - "test/test_obsidian.sh"
+        - "test/test_ruby_converter.rb"
+        - "test/test_resolver.js"
+      instructions: ".github/instructions/obsidian.instructions.md"
+    features:
+      - "[[Wiki-links]] resolution"
+      - "![[Embeds]] rendering"
+      - "Callout blocks"
+      - "Automatic backlinks panel"
+      - "Graph view (full + local)"
+      - "GitHub Pages compatible (no plugin required)"
+      - "Optional Ruby plugin for self-builds"
+
+  - id: ZER0-045
+    title: "Obsidian Local Graph Panel"
+    description: "Standalone neighborhood graph view for the current note, extracted as a reusable include for sidebars and modals"
+    implemented: true
+    version: "1.4.0"
+    link: "/docs/obsidian/graph/"
+    docs: "/docs/obsidian/graph/"
+    tags: [obsidian, graph, visualization, navigation]
+    date: 2026-03-25
+    references:
+      includes:
+        - "_includes/content/wiki-graph.html"
+        - "_includes/content/wiki-graph-local.html"
+      scripts:
+        - "assets/js/obsidian-graph.js"
+
+  # ============================================================================
+  # SETUP, NAVIGATION & DEVELOPER UX (v0.20+)
+  # ============================================================================
+
+  - id: ZER0-046
+    title: "Bare-Minimum Remote-Theme Starter"
+    description: "Three-file welcome starter (_config.yml + Gemfile + index.md) that bootstraps a working remote-theme site with no scaffolding required. Footer, welcome, and info partials degrade gracefully when collections are empty"
+    implemented: true
+    version: "1.2.0"
+    link: "/"
+    docs: "/docs/quickstart/bare-minimum/"
+    tags: [setup, quickstart, remote-theme, github-pages]
+    date: 2026-02-25
+    references:
+      starter: "../zer0-pages-remote/"
+      includes:
+        - "_includes/welcome.html"
+        - "_includes/info.html"
+        - "_includes/core/footer.html"
+
+  - id: ZER0-047
+    title: "Site Configuration Detection & Smart 404"
+    description: "Auto-detects whether the site is a fork, remote-theme consumer, or full clone, and renders a smart 404 page that guides users back to a working entry point"
+    implemented: true
+    version: "0.22.18"
+    link: "/404.html"
+    docs: "/docs/features/smart-404/"
+    tags: [setup, 404, configuration, ux]
+    date: 2026-01-30
+    references:
+      page: "404.html"
+      docs: "pages/_docs/features/smart-404.md"
+
+  - id: ZER0-048
+    title: "Config-Driven Frontmatter Validation"
+    description: "Schema-driven frontmatter validation system with configurable rules per collection. Catches missing required fields, bad date formats, and unknown layouts before Jekyll builds"
+    implemented: true
+    version: "0.22.17"
+    link: "/"
+    docs: "/docs/development/frontmatter-validation/"
+    tags: [validation, frontmatter, content, ci-cd, automation]
+    date: 2026-01-25
+    references:
+      script: "scripts/validate-frontmatter.sh"
+      config: "_data/frontmatter-schema.yml"
+      prompt: ".github/prompts/frontmatter-maintainer.prompt.md"
+
+  - id: ZER0-049
+    title: "Dynamic Collection-Based Navigation Fallback"
+    description: "Zero-config navigation: when no _data/navigation entry exists, the navbar auto-populates from Jekyll collections so brand-new sites have a usable nav out of the box"
+    implemented: true
+    version: "0.22.15"
+    link: "/"
+    docs: "/docs/features/dynamic-navigation/"
+    tags: [navigation, ui, zero-config, jekyll]
+    date: 2026-01-15
+    references:
+      includes:
+        - "_includes/navigation/navbar.html"
+        - "_includes/navigation/menu-collections.html"
+
+  - id: ZER0-050
+    title: "Admin Layout & Configuration Dashboards"
+    description: "Admin-style layout and dashboard partials for surfacing site configuration, build info, and feature flags in a single place"
+    implemented: true
+    version: "0.21.4"
+    link: "/admin/"
+    docs: "/docs/features/admin-dashboard/"
+    tags: [admin, dashboard, ui, configuration]
+    date: 2025-12-28
+    references:
+      layout: "_layouts/admin.html"
+      includes:
+        - "_includes/admin/"
+
+  - id: ZER0-051
+    title: "AGENTS.md Cross-Tool Agent Entry Point"
+    description: "Repository-root entry point for AI coding agents (Copilot, Codex, Cursor, Aider, Jules, Continue, Claude Code, \u2026) that links into the layered guidance under .github/. Single source of truth, no per-tool duplication"
+    implemented: true
+    version: "0.22.16"
+    link: "https://github.com/bamr87/zer0-mistakes/blob/main/AGENTS.md"
+    docs: "/docs/development/agents/"
+    tags: [ai, agents, documentation, copilot, cursor]
+    date: 2026-01-20
+    references:
+      file: "AGENTS.md"
+      instructions_index: ".github/instructions/README.md"
+
+  - id: ZER0-052
+    title: "Data-Driven Roadmap with Auto-Generated Diagram"
+    description: "Roadmap page rendered from a YAML data source, with an auto-generated Mermaid diagram embedded in README.md"
+    implemented: true
+    version: "0.22.21"
+    link: "/roadmap/"
+    docs: "/roadmap/"
+    tags: [roadmap, documentation, mermaid, automation]
+    date: 2026-02-08
+    references:
+      data: "_data/roadmap.yml"
+      page: "pages/roadmap.md"
+      script: "scripts/generate-roadmap-diagram.sh"
+
+  - id: ZER0-053
+    title: "Vendored Bootstrap & Icon Assets"
+    description: "Bootstrap 5.3.3 CSS/JS and Bootstrap Icons committed under assets/vendor/ for GitHub Pages safety and offline development. Refreshable via scripts/vendor-install.sh"
+    implemented: true
+    version: "0.21.3"
+    link: "/"
+    docs: "/docs/features/vendored-assets/"
+    tags: [bootstrap, assets, vendor, github-pages, performance]
+    date: 2025-12-20
+    references:
+      script: "scripts/vendor-install.sh"
+      manifest: "vendor-manifest.json"
+      assets:
+        - "assets/vendor/bootstrap/"
+        - "assets/vendor/bootstrap-icons/"
+
+  - id: ZER0-054
+    title: "AIEO Structured Data, FAQ & Glossary"
+    description: "AI-Engine Optimization toolkit: Schema.org JSON-LD, E-E-A-T signals, FAQ page, and glossary collection for stronger AI search and LLM grounding"
+    implemented: true
+    version: "0.21.5"
+    link: "/glossary/"
+    docs: "/docs/seo/aieo/"
+    tags: [seo, aieo, structured-data, faq, glossary, ai]
+    date: 2025-12-30
+    references:
+      includes:
+        - "_includes/content/structured-data.html"
+        - "_includes/content/eeat-signals.html"
+      pages:
+        - "pages/faq.md"
+        - "pages/glossary.md"
+
+  - id: ZER0-055
+    title: "ES6 Modular Navigation Architecture"
+    description: "Navigation JavaScript refactored into ES6 modules with hover dropdowns, settings modal, and a navbar that degrades gracefully on slow connections"
+    implemented: true
+    version: "0.18.0"
+    link: "/"
+    docs: "/docs/features/navigation-architecture/"
+    tags: [navigation, javascript, es6, ui, performance]
+    date: 2025-12-12
+    references:
+      scripts:
+        - "assets/js/modules/"
+        - "assets/js/navigation.js"
+      includes:
+        - "_includes/navigation/navbar.html"
+        - "_includes/components/settings-modal.html"
+
+  - id: ZER0-056
+    title: "DevContainer Configuration"
+    description: "VS Code Dev Container configuration for one-click cloud development environments (GitHub Codespaces, JetBrains Gateway, etc.) with Jekyll, Ruby, and Bootstrap toolchain pre-installed"
+    implemented: true
+    version: "0.17.0"
+    link: "/"
+    docs: "/docs/development/devcontainer/"
+    tags: [devcontainer, codespaces, development, docker]
+    date: 2025-12-10
+    references:
+      config:
+        - ".devcontainer/devcontainer.json"
+        - ".devcontainer/Dockerfile"
+
+  - id: ZER0-057
+    title: "Local Docker Publishing Pipeline"
+    description: "Publish the gem from a clean Docker container locally, mirroring the CI release path for reproducible releases without polluting the host Ruby environment"
+    implemented: true
+    version: "0.21.1"
+    link: "/"
+    docs: "/docs/development/docker-publishing/"
+    tags: [docker, release, ci-cd, gem, automation]
+    date: 2025-12-22
+    references:
+      compose:
+        - "docker-compose.publish.yml"
+        - "docker-compose.prod.yml"
+      script: "scripts/bin/release"
+
+  - id: ZER0-058
+    title: "Notes Collection & Notebook Layout"
+    description: "Dedicated _notes collection alongside _notebooks, with shared standardized layouts for short-form knowledge capture distinct from blog posts"
+    implemented: true
+    version: "0.20.0"
+    link: "/notes/"
+    docs: "/docs/content/notes/"
+    tags: [content, collections, notes, jekyll]
+    date: 2025-12-15
+    references:
+      collection: "pages/_notes/"
+      layouts:
+        - "_layouts/note.html"
+      config: "_config.yml"
+
+  - id: ZER0-059
+    title: "Performance: Page-URL Cache for Obsidian Resolver"
+    description: "Cached page-URL lookups and short-circuited rewrites in the Obsidian Liquid pipeline. Measurable build-time improvement on vaults with hundreds of cross-links"
+    implemented: true
+    version: "1.6.0"
+    link: "/docs/obsidian/performance/"
+    docs: "/docs/obsidian/performance/"
+    tags: [obsidian, performance, jekyll, optimization]
+    date: 2026-04-30
+    references:
+      plugin: "_plugins/obsidian_links.rb"
+      includes:
+        - "_includes/content/backlinks.html"
