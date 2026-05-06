@@ -1261,7 +1261,7 @@ features:
     implemented: true
     version: "0.20.0"
     link: "/notes/"
-    docs: "/docs/content/notes/"
+    docs: "/notes/"
     tags: [content, collections, notes, jekyll]
     date: 2025-12-15
     references:
