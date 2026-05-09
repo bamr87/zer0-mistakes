@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+- Frontmatter validation: changed `draft: draft` (string) to `draft: true` (boolean) in `pages/_docs/jekyll/index.md`, `pages/_docs/obsidian/troubleshooting.md`, and `pages/_about/README.md` to resolve CI Quality Control failures.
+
+### Changed
+- Updated `required_ruby_version` in gemspec from `>= 2.7.0` to `>= 3.2` to align with modern dependency requirements (nokogiri ≥ 1.19.3 requires Ruby ≥ 3.2) and resolve Dependabot update failures.
+
 ## [1.6.1] - 2026-04-29
 
 ### Changed
