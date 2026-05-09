@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
   
   s.platform                 = Gem::Platform::RUBY
 
-  s.required_ruby_version    = ">= 2.7.0"
+  s.required_ruby_version    = ">= 3.2"
 
   s.add_runtime_dependency "jekyll"
   # s.add_runtime_dependency "jekyll-feed", "~> 0.15"
