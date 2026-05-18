@@ -16,6 +16,7 @@ difficulty: beginner
 estimated_reading_time: 6 minutes
 sidebar:
   nav: docs
+mermaid: true
 ---
 
 # Dynamic Collection-Based Navigation

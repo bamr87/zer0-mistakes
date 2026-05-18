@@ -16,6 +16,7 @@ difficulty: beginner
 estimated_reading_time: 5 minutes
 sidebar:
   nav: docs
+mermaid: true
 ---
 
 # Smart 404 & Site Configuration Detection

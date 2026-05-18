@@ -17,6 +17,7 @@ difficulty: intermediate
 estimated_reading_time: 8 minutes
 sidebar:
   nav: docs
+mermaid: true
 ---
 
 # Config-Driven Frontmatter Validation
@@ -57,7 +58,7 @@ collections:
       - date
       - lastmod
     allowed_layouts:
-      - journals
+      - article
       - default
 
   _docs:

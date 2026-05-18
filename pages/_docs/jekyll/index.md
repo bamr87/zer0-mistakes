@@ -17,7 +17,7 @@ prerequisites:
     - Docker Desktop (recommended) or Ruby + Bundler
 sidebar:
     nav: docs
-draft: draft
+draft: false
 ---
 
 # Jekyll

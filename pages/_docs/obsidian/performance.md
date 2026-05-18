@@ -16,6 +16,7 @@ difficulty: advanced
 estimated_reading_time: 8 minutes
 sidebar:
   nav: docs
+mermaid: true
 ---
 
 # Obsidian Resolver — Performance & Caching
