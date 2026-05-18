@@ -76,7 +76,7 @@ so renames don't break inbound links.
 | --- | --- |
 | `pages/_notes/` | Personal notes (renders with `layout: note`, backlinks on). |
 | `pages/_docs/` | Long-form documentation pages. |
-| `pages/_posts/` | Blog posts (renders with `layout: journals`). |
+| `pages/_posts/` | Blog posts (renders with `layout: article`). |
 | `assets/images/notes/` | Default attachment folder for `![[image]]` embeds. |
 | `pages/_notes/_templates/` | Obsidian Templates plugin source. |
 

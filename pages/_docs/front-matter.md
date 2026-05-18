@@ -50,7 +50,7 @@ layout: default          # Required: Template to use from _layouts/
 ```yaml
 ---
 title: "Post Title"
-layout: journals
+layout: article
 date: 2025-01-15         # Required for posts: Publication date
 ---
 ```
@@ -182,7 +182,7 @@ sidebar:
 ---
 title: "Getting Started with Jekyll"
 description: "Learn the basics of Jekyll static site generation"
-layout: journals
+layout: article
 date: 2025-01-15
 lastmod: 2025-01-20
 author: "Amr"

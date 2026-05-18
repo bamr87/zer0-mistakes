@@ -194,7 +194,7 @@ Add new blog posts in the `_posts/` directory:
 ---
 title: "Your Post Title"
 date: 2025-11-16
-layout: journals
+layout: article
 ---
 
 Your post content here.

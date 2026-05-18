@@ -266,7 +266,7 @@ date: 2025-01-27T10:00:00.000Z
 preview: /images/previews/github-setup-deployment.png
 tags: [tag1, tag2, tag3]
 categories: [Category, Subcategory]
-layout: journals
+layout: article
 permalink: /your-post-url/
 comments: true
 ---
