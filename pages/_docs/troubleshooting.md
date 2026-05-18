@@ -133,7 +133,7 @@ Ensure the layout exists in `_layouts/`:
 
 ```yaml
 ---
-layout: journals    # Must match a file in _layouts/
+layout: article    # Must match a file in _layouts/
 ---
 ```
 

@@ -47,7 +47,7 @@ zer0-mistakes/
 ├── assets/                  # Static assets (CSS, JS, images, vendor/)
 ├── lib/                     # Ruby library (jekyll-theme-zer0/version.rb)
 ├── pages/                   # Content pages and collections
-│   ├── _posts/              # Blog posts (layout: journals)
+│   ├── _posts/              # Blog posts (layout: article)
 │   ├── _docs/               # Documentation pages
 │   ├── _about/              # About pages
 │   ├── _notebooks/          # Jupyter notebook content
@@ -217,7 +217,7 @@ The theme uses semantic versioning with automated commit analysis:
 
 ```
 pages/
-├── _posts/         # Blog posts (layout: journals)
+├── _posts/         # Blog posts (layout: article)
 ├── _docs/          # Documentation (layout: default)
 ├── _about/         # About pages (custom layouts)
 └── _quickstart/    # Tutorial content (layout: default)
@@ -229,7 +229,7 @@ pages/
 ---
 title: "Your Post Title"
 description: "SEO description (150-160 chars)"
-layout: journals
+layout: article
 categories: [Category1, Subcategory]
 tags: [tag1, tag2]
 date: 2025-01-27T10:00:00.000Z
@@ -389,7 +389,7 @@ sub-title: "From development to production with Docker containers"
 excerpt: "Master containerization for scalable web application deployment"
 snippet: "Containers transform how we build and deploy applications"
 author: "Zer0-Mistakes Development Team"
-layout: journals
+layout: article
 keywords:
   primary: ["docker containers", "web application deployment"]
   secondary: ["containerization", "production ready", "scalable architecture"]
@@ -674,7 +674,7 @@ date: 2025-01-27T10:00:00.000Z
 preview: "Social media preview text"
 tags: [tag1, tag2]
 categories: [Category1, Subcategory]
-layout: journals
+layout: article
 permalink: /custom-url/
 ---
 ```

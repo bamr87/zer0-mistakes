@@ -66,7 +66,7 @@ defaults:
       path: "pages/_posts"
       type: posts
     values:
-      layout: journals
+      layout: article
       author: default
       
   # Documentation
