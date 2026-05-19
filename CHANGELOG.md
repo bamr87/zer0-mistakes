@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.6.4] - 2026-05-19
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- d6ecf4e fix(features): correct stale file references in feature registry (#98)
+
+
 ## [1.6.3] - 2026-05-21
 
 ### Fixed
