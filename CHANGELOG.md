@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.6.2] - 2026-05-19
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 6651b38 fix(docs): update layout references from journals to article, add docs pages, and update feature registry (#97)
+
+
 ## [1.6.1] - 2026-04-29
 
 ### Changed
