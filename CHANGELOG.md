@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.6.3] - 2026-05-21
+
+### Fixed
+- **Feature Registry**: Remove stale `_includes/navigation/menu-collections.html` reference from ZER0-049
+- **Feature Registry**: Fix roadmap script path from `generate-roadmap-diagram.sh` → `generate-roadmap.sh` in ZER0-052
+- **Feature Registry**: Replace non-existent `structured-data.html`/`eeat-signals.html` with correct `seo.html`, `jsonld-faq.html`, `author-eeat.html` in ZER0-054
+- **Feature Registry**: Remove stale `_includes/components/settings-modal.html` reference from ZER0-055
+
+### Commits in this release
+- fix(features): correct stale file references in ZER0-049/052/054/055
+
+
 ## [1.6.2] - 2026-05-19
 
 ### Changed
