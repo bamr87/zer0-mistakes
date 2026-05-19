@@ -168,7 +168,7 @@ YYYY-MM-DD-title-slug.md
 title: "My Blog Post"
 description: "A brief description (150-160 chars)"
 date: 2026-01-24T10:00:00.000Z
-layout: journals
+layout: article
 categories: [Category, Subcategory]
 tags: [tag1, tag2, tag3]
 author: "Your Name"

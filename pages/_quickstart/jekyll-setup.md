@@ -161,7 +161,7 @@ categories: [Development, Tutorial]
 sub-title: "Subtitle for additional context"
 excerpt: "One-sentence summary of the post"
 author: "Your Name"
-layout: journals
+layout: article
 keywords:
   primary: ["main keyword", "secondary keyword"]
   secondary: ["supporting terms", "related topics"]

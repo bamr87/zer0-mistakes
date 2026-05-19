@@ -12,7 +12,7 @@ tags:
   - debugging
 backlinks: true
 lastmod: 2026-04-24T15:06:30Z
-draft: draft
+draft: false
 ---
 
 # Obsidian Integration Troubleshooting
