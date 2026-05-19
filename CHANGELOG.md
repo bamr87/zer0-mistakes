@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.6.5] - 2026-05-19
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 4b45cc7 docs(agents): slash .github instructions and prompts to actionable rules
+
+
 ## [1.6.4] - 2026-05-19
 
 ### Changed
