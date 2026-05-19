@@ -14,8 +14,10 @@ This directory contains file-specific instructions for GitHub Copilot to provide
 │   ├── layouts.instructions.md       # Jekyll layout development
 │   ├── includes.instructions.md      # Reusable component development
 │   ├── scripts.instructions.md       # Shell script automation
+│   ├── install.instructions.md       # Modular installer (CLI, profiles, deploy plugins)
 │   ├── testing.instructions.md       # Testing guidelines
 │   ├── documentation.instructions.md # Documentation development
+│   ├── features.instructions.md      # Feature registry schema + sync contract
 │   ├── obsidian.instructions.md      # Obsidian vault integration (wiki-links, JS resolver, Ruby plugin)
 │   ├── sass.instructions.md          # Sass partials, Bootstrap overrides, CSS custom properties
 │   └── version-control.instructions.md  # Git workflow and releases
@@ -43,9 +45,12 @@ GitHub Copilot automatically applies these instructions based on the files you'r
 | `scripts.instructions.md`         | `scripts/**`                       | Shell script standards, error handling             |
 | `testing.instructions.md`         | `test/**`                          | Test development, assertions, CI/CD                |
 | `documentation.instructions.md`   | `docs/**,pages/_docs/**,*docs*.md` | Documentation development guidelines               |
+| `features.instructions.md`        | `_data/features.yml`, `features/**`, `pages/features.md`, `_includes/components/feature-card.html` | Feature registry schema, sync contract, update-on-change rules |
+| `includes.instructions.md`        | `_includes/**`                     | Reusable components, parameters, accessibility     |
+| `install.instructions.md`         | `scripts/lib/install/**`, `scripts/bin/install`, `install.sh`, `templates/{profiles,deploy,agents,ai}/**` | Modular installer architecture, profiles, deploy plugins, safety contracts |
 | `obsidian.instructions.md`        | `_plugins/obsidian_links.rb`, `assets/js/obsidian-*.js`, `assets/data/wiki-index.json`, `_includes/content/backlinks.html`, `pages/_docs/obsidian/**`, Obsidian tests | Wiki-link/embed/callout contract across Liquid index, JS resolver, and Ruby plugin |
 | `sass.instructions.md`            | `_sass/**`, `assets/css/**`        | Sass partial layering, Bootstrap variable overrides, no-double-Bootstrap rule |
-| `version-control.instructions.md` | `**` (all files)                   | Git workflow, semantic versioning, releases        |
+| `version-control.instructions.md` | `CHANGELOG.md`, `**/version.*`, `*.gemspec`, `package.json` | Git workflow, semantic versioning, releases        |
 
 ## 📖 Main Instructions (copilot-instructions.md)
 

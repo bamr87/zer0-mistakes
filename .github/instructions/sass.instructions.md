@@ -1,6 +1,8 @@
 ---
 applyTo: "_sass/**,assets/css/**"
 description: "Use when editing Sass partials, the main stylesheet, or layering custom CSS on top of bundled Bootstrap 5.3.3. Covers the partial hierarchy, the `!default` override pattern, and the rule against loading two Bootstraps."
+date: 2026-05-18T12:00:00.000Z
+lastmod: 2026-05-18T12:00:00.000Z
 ---
 
 # Sass / CSS

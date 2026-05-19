@@ -1,6 +1,8 @@
 ---
 applyTo: "_plugins/obsidian_links.rb,assets/js/obsidian-*.js,assets/data/wiki-index.json,_includes/content/backlinks.html,_includes/content/wiki-graph*.html,pages/_docs/obsidian/**,test/test_obsidian.sh,test/test_ruby_converter.rb,test/test_resolver.js"
 description: "Use when editing the Obsidian vault integration: wiki-links, embeds, callouts, backlinks, graph view, the Liquid wiki-index, the JS client resolver, or the optional Ruby plugin. Enforces the contract that keeps GitHub Pages and self-build deployments rendering identically."
+date: 2026-05-18T12:00:00.000Z
+lastmod: 2026-05-18T12:00:00.000Z
 ---
 
 # Obsidian Integration

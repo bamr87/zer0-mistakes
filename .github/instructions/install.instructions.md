@@ -1,6 +1,8 @@
 ---
 applyTo: "scripts/lib/install/**,scripts/bin/install,install.sh,templates/profiles/**,templates/deploy/**,templates/agents/**,templates/ai/**"
 description: "Architecture, conventions, and safety contracts for the modular installer (CLI dispatcher, library modules, declarative profiles, deploy plugins, AI integration). Read this when touching anything under scripts/lib/install/, scripts/bin/install, install.sh, or installer-related templates."
+date: 2026-05-18T12:00:00.000Z
+lastmod: 2026-05-18T12:00:00.000Z
 ---
 
 # Installer Development Instructions

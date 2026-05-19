@@ -1,7 +1,8 @@
 ---
-agent: agent
 mode: agent
 description: "Add a new Obsidian wiki-link, embed, or callout syntax to all three rendering paths (Liquid wiki-index, JS resolver, optional Ruby plugin), update tests, and document it — without breaking the GitHub Pages deployment."
+date: 2026-05-18T12:00:00.000Z
+lastmod: 2026-05-18T12:00:00.000Z
 ---
 
 # Add an Obsidian Syntax Feature

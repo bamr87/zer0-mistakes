@@ -1,355 +1,168 @@
 ---
 applyTo: "scripts/**"
 description: "Shell script development guidelines for automation and tooling scripts"
+date: 2026-05-18T12:00:00.000Z
+lastmod: 2026-05-18T12:00:00.000Z
 ---
 
-# Shell Script Development Guidelines
+# Shell Script Guidelines
 
-## 🛠️ Overview
+## Layout
 
-This document provides guidelines for developing and maintaining shell scripts in the `scripts/` directory. These scripts automate critical tasks including versioning, building, testing, and releasing the Jekyll theme.
+```
+scripts/
+├── bin/                      # Canonical entry points (executable)
+│   ├── build, release, test, install
+├── lib/                      # Shared modules (sourced, never executed)
+│   ├── common.sh             # logging, error helpers
+│   ├── git.sh, gem.sh, version.sh
+│   └── install/              # installer sub-modules
+├── build, release, test      # Back-compat thin wrappers → bin/*
+├── analyze-commits.sh        # standalone utilities
+└── vendor-install.sh
+```
 
-## 📋 Script Inventory
+Rule: callers invoke `scripts/bin/<name>`; logic lives in `scripts/lib/`.
 
-### Core Scripts
-
-| Script           | Purpose                     | Usage                                        |
-| ---------------- | --------------------------- | -------------------------------------------- |
-| `version.sh`     | Semantic version management | `./scripts/version.sh [patch\|minor\|major]` |
-| `build.sh`       | Build Jekyll site and gem   | `./scripts/build.sh`                         |
-| `test.sh`        | Run test suite              | `./scripts/test.sh`                          |
-| `release.sh`     | Complete release workflow   | `./scripts/release.sh`                       |
-| `gem-publish.sh` | Publish gem to RubyGems.org | `./scripts/gem-publish.sh`                   |
-| `setup.sh`       | Initial project setup       | `./scripts/setup.sh`                         |
-
-## 🔧 Script Development Standards
-
-### Shell Script Best Practices
-
-#### Error Handling
+## Required Skeleton
 
 ```bash
-#!/bin/bash
-# Always use strict error handling
+#!/usr/bin/env bash
+# scripts/bin/<name> — one-line purpose
 set -euo pipefail
+IFS=$'\n\t'
 
-# Set up error trap
-trap 'echo "Error on line $LINENO"' ERR
-```
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+# shellcheck source=../lib/common.sh
+source "$REPO_ROOT/scripts/lib/common.sh"
 
-#### Logging Functions
+VERSION="1.0.0"
+DRY_RUN=false
+VERBOSE=false
 
-```bash
-# Consistent logging with colors
-log_info() {
-    echo -e "\033[0;34m[INFO]\033[0m $1"
+usage() {
+  cat <<EOF
+Usage: ${0##*/} [OPTIONS] [ARGS]
+  -h, --help        show this help
+  -v, --version     print version
+  -n, --dry-run     show actions without executing
+  -V, --verbose     extra logging
+EOF
 }
 
-log_success() {
-    echo -e "\033[0;32m[SUCCESS]\033[0m $1"
-}
-
-log_warning() {
-    echo -e "\033[0;33m[WARNING]\033[0m $1"
-}
-
-log_error() {
-    echo -e "\033[0;31m[ERROR]\033[0m $1" >&2
-}
-```
-
-#### Parameter Validation
-
-```bash
-# Validate required arguments
-if [ $# -eq 0 ]; then
-    log_error "Usage: $0 <argument>"
-    exit 1
-fi
-
-# Validate specific values
-case "$1" in
-    patch|minor|major)
-        VERSION_TYPE="$1"
-        ;;
-    *)
-        log_error "Invalid version type. Use: patch, minor, or major"
-        exit 1
-        ;;
-esac
-```
-
-#### Environment Detection
-
-```bash
-# Detect operating system
-detect_os() {
-    case "$(uname -s)" in
-        Darwin*)    echo "macos" ;;
-        Linux*)     echo "linux" ;;
-        MINGW*)     echo "windows" ;;
-        *)          echo "unknown" ;;
+parse_args() {
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -h|--help) usage; exit 0 ;;
+      -v|--version) echo "$VERSION"; exit 0 ;;
+      -n|--dry-run) DRY_RUN=true; shift ;;
+      -V|--verbose) VERBOSE=true; shift ;;
+      --) shift; break ;;
+      -*) log_error "Unknown flag: $1"; usage; exit 2 ;;
+      *) break ;;
     esac
+  done
 }
 
-# Detect architecture
-detect_arch() {
-    case "$(uname -m)" in
-        x86_64)     echo "amd64" ;;
-        arm64)      echo "arm64" ;;
-        aarch64)    echo "arm64" ;;
-        *)          echo "unknown" ;;
-    esac
-}
-```
-
-### Script Structure Template
-
-```bash
-#!/bin/bash
-#
-# Script Name: example.sh
-# Description: Brief description of what this script does
-# Usage: ./scripts/example.sh [options]
-# Dependencies: List any required commands or tools
-#
-# Examples:
-#   ./scripts/example.sh --option value
-#
-
-set -euo pipefail
-
-# Script directory
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-
-# Logging functions
-log_info() { echo -e "\033[0;34m[INFO]\033[0m $1"; }
-log_success() { echo -e "\033[0;32m[SUCCESS]\033[0m $1"; }
-log_error() { echo -e "\033[0;31m[ERROR]\033[0m $1" >&2; }
-
-# Error handling
-trap 'log_error "Error on line $LINENO"' ERR
-
-# Main function
 main() {
-    log_info "Starting script execution..."
-
-    # Script logic here
-
-    log_success "Script completed successfully"
+  parse_args "$@"
+  require_cmd docker
+  # …work…
 }
 
-# Parse arguments
-while [[ $# -gt 0 ]]; do
-    case $1 in
-        -h|--help)
-            show_help
-            exit 0
-            ;;
-        *)
-            log_error "Unknown option: $1"
-            show_help
-            exit 1
-            ;;
-    esac
-    shift
-done
-
-# Execute main function
 main "$@"
 ```
 
-## 🧪 Testing Scripts
+## Mandatory Flags
 
-### Testing Checklist
+Every `bin/` script supports `-h/--help`, `-v/--version`, `-n/--dry-run`, `-V/--verbose`.
 
-- [ ] Test with valid inputs
-- [ ] Test with invalid/missing inputs
-- [ ] Test error conditions and recovery
-- [ ] Test on multiple platforms (macOS, Linux)
-- [ ] Test with different shell environments (bash, zsh)
-- [ ] Verify exit codes are correct
-- [ ] Check that error messages are helpful
-- [ ] Ensure idempotency where appropriate
-
-### Manual Testing Commands
+## Logging (`scripts/lib/common.sh`)
 
 ```bash
-# Test script execution
-bash -x ./scripts/script_name.sh  # Debug mode
-
-# Test in isolated environment
-docker run -it --rm -v "$PWD:/workspace" -w /workspace ubuntu:latest bash
-./scripts/script_name.sh
-
-# Check for shellcheck issues
-shellcheck ./scripts/*.sh
+log_info()  { printf '\033[0;34m[INFO]\033[0m  %s\n' "$*"; }
+log_warn()  { printf '\033[0;33m[WARN]\033[0m  %s\n' "$*" >&2; }
+log_error() { printf '\033[0;31m[ERROR]\033[0m %s\n' "$*" >&2; }
+log_debug() { [[ "${VERBOSE:-false}" == true ]] && printf '[DEBUG] %s\n' "$*"; }
+require_cmd() { command -v "$1" >/dev/null || { log_error "Missing: $1"; exit 127; }; }
+run() {
+  if [[ "${DRY_RUN:-false}" == true ]]; then log_info "DRY: $*"; else "$@"; fi
+}
 ```
 
-## 🔒 Security Considerations
+## Defensive Programming
 
-### Safe Scripting Practices
+- `set -euo pipefail` + `IFS=$'\n\t'` at the top of every script.
+- Quote all variables: `"$var"`, never `$var` (except integer math).
+- Validate required args/env before doing anything destructive.
+- Use `mktemp -d` for temp dirs; `trap 'rm -rf "$tmp"' EXIT`.
+- Idempotent: re-running must not corrupt state.
+- Dry-run path must reach all decision points without side effects.
 
-1. **Input Validation**: Always validate and sanitize user inputs
-
-   ```bash
-   # Validate input before using
-   if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-       log_error "Invalid version format"
-       exit 1
-   fi
-   ```
-
-2. **Avoid Command Injection**: Use arrays for command arguments
-
-   ```bash
-   # Safe
-   args=("--option" "$user_input")
-   command "${args[@]}"
-
-   # Unsafe
-   command --option $user_input
-   ```
-
-3. **Secure Temporary Files**: Use proper temp file creation
-
-   ```bash
-   TEMP_FILE=$(mktemp)
-   trap "rm -f $TEMP_FILE" EXIT
-   ```
-
-4. **Credentials**: Never hardcode credentials
-   ```bash
-   # Use environment variables
-   GITHUB_TOKEN="${GITHUB_TOKEN:-}"
-   if [ -z "$GITHUB_TOKEN" ]; then
-       log_error "GITHUB_TOKEN not set"
-       exit 1
-   fi
-   ```
-
-## 📖 Documentation Requirements
-
-### Script Header Documentation
-
-Every script must include:
-
-- Brief description
-- Usage examples
-- Required dependencies
-- Environment variables needed
-- Expected inputs and outputs
-
-### Inline Comments
-
-- Explain complex logic
-- Document non-obvious behavior
-- Provide context for business logic
-- Keep comments up-to-date with code
-
-### Help/Usage Function
+## Docker Integration
 
 ```bash
-show_help() {
-    cat << EOF
-Usage: $(basename "$0") [OPTIONS]
+docker-compose exec -T jekyll bundle exec jekyll build \
+  --config '_config.yml,_config_dev.yml'
+```
 
-Description of what this script does.
+Use `-T` to disable TTY in CI; quote multi-flag args.
+
+## Git Operations (via `scripts/lib/git.sh`)
+
+- Check clean working tree before mutating: `git diff --quiet || die "Working tree dirty"`.
+- Always rebase, never merge in release scripts.
+- Tag annotated: `git tag -a vX.Y.Z -m "…"`.
+
+## Security
+
+- Never `eval` user input.
+- Never write secrets to disk or logs.
+- Read secrets from env vars only: `: "${RUBYGEMS_API_KEY:?required}"`.
+- Use `printf %q` when constructing commands from untrusted strings.
+- Validate paths before `rm -rf`: confirm under `$REPO_ROOT`.
+
+## Help Output Standard
+
+```text
+Usage: release [OPTIONS] <patch|minor|major>
+
+Run the full release pipeline.
 
 Options:
-    -h, --help          Show this help message
-    -v, --version TYPE  Bump version (patch|minor|major)
-    -d, --dry-run       Preview changes without executing
+  -h, --help        show this help
+  -n, --dry-run     show actions without executing
+  -V, --verbose     extra logging
 
 Examples:
-    $(basename "$0") --version patch
-    $(basename "$0") --dry-run
-
-EOF
-}
+  release patch --dry-run
+  release minor
 ```
 
-## 🚀 Common Patterns
-
-### Docker Integration
+## Testing
 
 ```bash
-# Check if running in Docker
-is_docker() {
-    [ -f /.dockerenv ] || grep -q docker /proc/1/cgroup 2>/dev/null
-}
-
-# Execute command in Docker container
-docker_exec() {
-    docker-compose exec jekyll "$@"
-}
+bash -n scripts/bin/release           # syntax
+shellcheck scripts/bin/* scripts/lib/*.sh
+./scripts/bin/release patch --dry-run # no side effects
+./scripts/bin/test                    # full suite
 ```
 
-### Git Operations
+## Naming
 
-```bash
-# Check for uncommitted changes
-check_git_clean() {
-    if ! git diff-index --quiet HEAD --; then
-        log_error "Uncommitted changes detected"
-        exit 1
-    fi
-}
+- Files: `kebab-case.sh` (e.g., `analyze-commits.sh`).
+- Entry points in `bin/`: no extension (`build`, `release`, `test`).
+- Functions: `snake_case`. Constants: `UPPER_SNAKE`.
+- Private functions in libs: prefix with `_`.
 
-# Get current branch
-get_current_branch() {
-    git rev-parse --abbrev-ref HEAD
-}
-```
+## Hard Rules
 
-### Version Management
-
-```bash
-# Read version from file
-get_current_version() {
-    grep "VERSION = " lib/jekyll-theme-zer0/version.rb | \
-        cut -d'"' -f2
-}
-
-# Bump version number
-bump_version() {
-    local version="$1"
-    local type="$2"
-
-    IFS='.' read -r major minor patch <<< "$version"
-
-    case "$type" in
-        major) echo "$((major + 1)).0.0" ;;
-        minor) echo "$major.$((minor + 1)).0" ;;
-        patch) echo "$major.$minor.$((patch + 1))" ;;
-    esac
-}
-```
-
-## 🔄 Maintenance Guidelines
-
-### Script Updates
-
-- Keep scripts synchronized with workflow changes
-- Update documentation when changing functionality
-- Test thoroughly after modifications
-- Review shellcheck warnings regularly
-
-### Deprecation Process
-
-1. Add deprecation warning to script
-2. Update documentation
-3. Notify users through CHANGELOG
-4. Remove after grace period (minimum 2 releases)
-
-### Performance Optimization
-
-- Minimize external command calls
-- Use bash built-ins when possible
-- Cache expensive operations
-- Add progress indicators for long-running tasks
+- Never call `rm -rf` without an explicit guard on the target path.
+- Never depend on a tool not checked via `require_cmd`.
+- Never duplicate logic — extract to `scripts/lib/`.
+- Never commit a script without `bash -n` + `shellcheck` clean.
 
 ---
 
-_These guidelines ensure consistent, reliable, and maintainable shell scripts across the Zer0-Mistakes project. Always test scripts thoroughly before committing._
+**Related:** [`testing.instructions.md`](testing.instructions.md) · [`install.instructions.md`](install.instructions.md) · [`version-control.instructions.md`](version-control.instructions.md)

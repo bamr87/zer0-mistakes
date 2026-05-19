@@ -1,6 +1,8 @@
 ---
 applyTo: "_data/features.yml,features/features.yml,features/README.md,pages/features.md,_includes/components/feature-card.html"
 description: "Feature registry maintenance — schema, sync contract, and update-on-change rules for zer0-mistakes."
+date: 2026-05-18T12:00:00.000Z
+lastmod: 2026-05-18T12:00:00.000Z
 ---
 
 # Feature Registry Instructions
