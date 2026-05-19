@@ -1132,7 +1132,6 @@ features:
     references:
       includes:
         - "_includes/navigation/navbar.html"
-        - "_includes/navigation/menu-collections.html"
 
   - id: ZER0-050
     title: "Admin Layout & Configuration Dashboards"
@@ -1174,7 +1173,7 @@ features:
     references:
       data: "_data/roadmap.yml"
       page: "pages/roadmap.md"
-      script: "scripts/generate-roadmap-diagram.sh"
+      script: "scripts/generate-roadmap.sh"
 
   - id: ZER0-053
     title: "Vendored Bootstrap & Icon Assets"
@@ -1203,8 +1202,9 @@ features:
     date: 2025-12-30
     references:
       includes:
-        - "_includes/content/structured-data.html"
-        - "_includes/content/eeat-signals.html"
+        - "_includes/content/seo.html"
+        - "_includes/content/jsonld-faq.html"
+        - "_includes/components/author-eeat.html"
       pages:
         - "pages/faq.md"
         - "pages/glossary.md"
@@ -1224,7 +1224,6 @@ features:
         - "assets/js/navigation.js"
       includes:
         - "_includes/navigation/navbar.html"
-        - "_includes/components/settings-modal.html"
 
   - id: ZER0-056
     title: "DevContainer Configuration"
