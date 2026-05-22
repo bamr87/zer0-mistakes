@@ -86,14 +86,20 @@
   }
 
   function openShareWindow(href) {
-    const shareWindow = window.open(href, '_blank', 'noopener,noreferrer');
+    return window.open(href, '_blank', 'noopener,noreferrer');
+  }
 
-    if (shareWindow) {
-      shareWindow.opener = null;
-      return;
-    }
+  function notify(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type || 'info'} shadow position-fixed top-0 end-0 m-3`;
+    notification.style.zIndex = '1085';
+    notification.setAttribute('role', 'status');
+    notification.textContent = message;
+    document.body.appendChild(notification);
 
-    window.location.assign(href);
+    window.setTimeout(() => {
+      notification.remove();
+    }, 4000);
   }
 
   function bindLinkedInShare(anchor) {
@@ -103,21 +109,43 @@
     anchor.addEventListener('click', async function (event) {
       event.preventDefault();
 
-      openShareWindow(anchor.href);
+      const shareWindow = openShareWindow('', '_blank');
 
       const shareText = buildLinkedInShareText(anchor);
       const copied = await copyShareText(shareText);
 
+      if (shareWindow) {
+        shareWindow.location = anchor.href;
+      } else {
+        window.location.assign(anchor.href);
+      }
+
       if (copied) {
-        window.setTimeout(() => {
-          window.alert('A cleaned LinkedIn-ready summary was copied to your clipboard. Paste it into LinkedIn after the share page opens.');
-        }, 150);
+        notify('A cleaned LinkedIn-ready summary was copied to your clipboard. Paste it into LinkedIn after the share page opens.', 'info');
+      } else {
+        notify('LinkedIn opened, but clipboard access was unavailable. Copy the summary manually if needed.', 'warning');
+      }
+    });
+  }
+
+  function bindCopyButton(button) {
+    if (button.dataset.copyBound === 'true') return;
+
+    button.dataset.copyBound = 'true';
+    button.addEventListener('click', async function () {
+      const copied = await copyShareText(button.dataset.copyText || '');
+
+      if (copied) {
+        notify(button.dataset.copySuccess || 'Copied to clipboard.', 'success');
+      } else {
+        notify('Clipboard access was unavailable.', 'warning');
       }
     });
   }
 
   function initLinkedInShareButtons() {
     document.querySelectorAll('.js-linkedin-share').forEach(bindLinkedInShare);
+    document.querySelectorAll('.js-copy-share-link').forEach(bindCopyButton);
   }
 
   if (document.readyState === 'loading') {

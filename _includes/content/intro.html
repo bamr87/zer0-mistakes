@@ -92,7 +92,11 @@
         </li>
         <li><hr class="dropdown-divider"></li>
         <li>
-          <button class="dropdown-item" onclick='navigator.clipboard.writeText("{{ page_absolute_url }}"); alert("Link copied to clipboard!");'>
+          <button class="dropdown-item js-copy-share-link"
+                  type="button"
+                  data-copy-text="{{ page_absolute_url | escape }}"
+                  data-copy-success="Link copied to clipboard!"
+                  title="Copy this page link to your clipboard">
             <i class="bi bi-clipboard me-2"></i>Copy Link
           </button>
         </li>
