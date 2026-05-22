@@ -86,7 +86,7 @@
   }
 
   function openShareWindow(href) {
-    return window.open(href, '_blank', 'noopener,noreferrer');
+    return window.open(href || 'about:blank', '_blank', 'noopener,noreferrer');
   }
 
   function notify(message, type) {
@@ -121,7 +121,7 @@
       }
 
       if (copied) {
-        notify('A cleaned LinkedIn-ready summary was copied to your clipboard. Paste it into LinkedIn after the share page opens.', 'info');
+        notify('A cleaned LinkedIn-ready summary was copied to your clipboard. Paste it on LinkedIn after the share page opens.', 'info');
       } else {
         notify('LinkedIn opened, but clipboard access was unavailable. Copy the summary manually if needed.', 'warning');
       }
