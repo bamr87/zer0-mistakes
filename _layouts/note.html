@@ -152,7 +152,7 @@ layout: default
       <div class="share-buttons mb-4">
         <h5 class="mb-3">Share this note</h5>
         <div class="d-flex gap-2">
-          <a href="https://twitter.com/intent/tweet?text={{ page.title | uri_escape }}&url={{ site.url | append: page.url | uri_escape }}" 
+          <a href="https://twitter.com/intent/tweet?text={{ page.title | uri_escape }}&url={{ page_absolute_url | uri_escape }}" 
              class="btn btn-outline-primary btn-sm" target="_blank" rel="noopener noreferrer">
             <i class="bi bi-twitter"></i> Twitter
           </a>
@@ -162,7 +162,7 @@ layout: default
              data-share-title="{{ linkedin_share_title | escape }}"
              data-share-description="{{ linkedin_share_description | escape }}"
              title="Copies a cleaned article summary to your clipboard, then opens LinkedIn sharing"
-             class="btn btn-outline-primary btn-sm" target="_blank" rel="noopener noreferrer">
+             target="_blank" rel="noopener noreferrer">
             <i class="bi bi-linkedin"></i> LinkedIn
           </a>
           <a href="mailto:?subject={{ page.title | uri_escape }}&body={{ page_absolute_url | uri_escape }}" 

@@ -103,10 +103,10 @@
     anchor.addEventListener('click', async function (event) {
       event.preventDefault();
 
+      openShareWindow(anchor.href);
+
       const shareText = buildLinkedInShareText(anchor);
       const copied = await copyShareText(shareText);
-
-      openShareWindow(anchor.href);
 
       if (copied) {
         window.setTimeout(() => {
