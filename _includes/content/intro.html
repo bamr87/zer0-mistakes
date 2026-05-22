@@ -46,6 +46,9 @@
 {% assign file_path = page_dir | append: "/" | append: page.path %}
 {% assign repo_parts = site.repository | split: "/" %}
 {% assign repo_owner = repo_parts[0] %}
+{% assign page_absolute_url = page.url | absolute_url %}
+{% assign linkedin_share_title = page.title | default: site.title | strip_html | strip_newlines | strip %}
+{% assign linkedin_share_description = page.description | default: page.excerpt | default: site.description | strip_html | strip_newlines | strip %}
 
 <div class="bd-intro pt-5 ps-lg-2 position-relative" style="
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{{ preview_path | relative_url }}') no-repeat center center / cover;
@@ -66,23 +69,30 @@
       </button>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="shareDropdownBottom">
         <li>
-          <a class="dropdown-item" href="https://reddit.com/submit?url={{ site.url | append: page.url | url_encode }}&amp;title={{ page.title | url_encode }}" target="_blank">
+          <a class="dropdown-item" href="https://reddit.com/submit?url={{ page_absolute_url | uri_escape }}&amp;title={{ page.title | url_encode }}" target="_blank" rel="noopener noreferrer">
             <i class="bi bi-reddit me-2"></i>Share on Reddit
           </a>
         </li>
         <li>
-          <a class="dropdown-item" href="https://www.linkedin.com/sharing/share-offsite/?url={{ site.url | append: page.url | url_encode }}" target="_blank">
+          <a class="dropdown-item js-linkedin-share"
+             href="https://www.linkedin.com/sharing/share-offsite/?url={{ page_absolute_url | uri_escape }}"
+             target="_blank"
+             rel="noopener noreferrer"
+             title="Copies a cleaned article summary to your clipboard, then opens LinkedIn sharing"
+             data-share-url="{{ page_absolute_url | escape }}"
+             data-share-title="{{ linkedin_share_title | escape }}"
+             data-share-description="{{ linkedin_share_description | escape }}">
             <i class="bi bi-linkedin me-2"></i>Share on LinkedIn
           </a>
         </li>
         <li>
-          <a class="dropdown-item" href="https://twitter.com/intent/tweet?url={{ site.url | append: page.url | url_encode }}&text={{ page.title | url_encode }}" target="_blank">
+          <a class="dropdown-item" href="https://twitter.com/intent/tweet?url={{ page_absolute_url | uri_escape }}&text={{ page.title | url_encode }}" target="_blank" rel="noopener noreferrer">
             <i class="bi bi-twitter me-2"></i>Share on Twitter
           </a>
         </li>
         <li><hr class="dropdown-divider"></li>
         <li>
-          <button class="dropdown-item" onclick='navigator.clipboard.writeText("{{ site.url | append: page.url }}"); alert("Link copied to clipboard!");'>
+          <button class="dropdown-item" onclick='navigator.clipboard.writeText("{{ page_absolute_url }}"); alert("Link copied to clipboard!");'>
             <i class="bi bi-clipboard me-2"></i>Copy Link
           </button>
         </li>
