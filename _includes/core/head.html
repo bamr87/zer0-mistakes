@@ -55,8 +55,10 @@
 <!-- Nano Progress Bar - Visual loading indicator (config-driven) -->
 {% include components/nanobar.html %}
 
-<!-- MathJax - Mathematical notation rendering (async; bundled under assets/vendor) -->
+<!-- MathJax - Conditional loading based on page front matter (like Mermaid) -->
+{% if page.mathjax %}
 <script id="MathJax-script" async src="{{ '/assets/vendor/mathjax/es5/tex-mml-chtml.js' | relative_url }}"></script>
+{% endif %}
 
 <!-- ================================ -->
 <!-- HTML DOCUMENT META DATA         -->

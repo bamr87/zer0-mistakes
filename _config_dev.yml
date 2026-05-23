@@ -35,6 +35,16 @@ posthog:
 incremental              : true
 profile                  : false
 
+# Performance: Disable rarely-edited collections during development.
+# Comment out or set output: true for any collection you're actively working on.
+collections:
+  notebooks:
+    output: false
+  hobbies:
+    output: false
+  quests:
+    output: false
+
 # Development-specific plugins (add any dev-only plugins here)
 # plugins:
 #   - jekyll-admin  # Uncomment if you want to use Jekyll admin interface

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'digest'
+
 #
 # File: obsidian_links.rb
 # Path: _plugins/obsidian_links.rb
@@ -388,7 +390,7 @@ module Jekyll
         Jekyll::Hooks.register :site, :pre_render do |site|
           self.config = site_config(site)
           if config['enabled']
-            self.index = Index.new(site)
+            self.index = build_or_reuse_index(site)
             site.config['obsidian'] = config.merge('index' => index.to_h)
             Jekyll.logger.info('Obsidian:', "indexed #{index.entries.size} wiki-link targets")
           else
@@ -424,6 +426,31 @@ module Jekyll
 
       def needs_rewrite?(content)
         content.include?('[[') || content.include?('> [!') || content.match?(Converter::INLINE_TAG_RE)
+      end
+
+      private
+
+      # Reuse the cached index when the set of document URLs hasn't changed
+      # (common during incremental rebuilds where only content is modified).
+      def build_or_reuse_index(site)
+        current_urls = compute_url_fingerprint(site)
+        if @cached_url_fingerprint && @cached_url_fingerprint == current_urls && @cached_index
+          Jekyll.logger.debug('Obsidian:', 'reusing cached wiki-link index (URLs unchanged)')
+          return @cached_index
+        end
+
+        new_index = Index.new(site)
+        @cached_url_fingerprint = current_urls
+        @cached_index = new_index
+        new_index
+      end
+
+      # A fast fingerprint: sorted list of all document URLs, hashed.
+      def compute_url_fingerprint(site)
+        urls = []
+        urls.concat(site.documents.map(&:url)) if site.respond_to?(:documents)
+        urls.concat(site.pages.select { |p| p.output_ext == '.html' }.map(&:url))
+        Digest::MD5.hexdigest(urls.sort.join("\n"))
       end
     end
   end
