@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:30:01.000Z
 title: Deploy to GitHub Pages
 description: Deploy your Zer0-Mistakes Jekyll site to GitHub Pages with automatic builds.
+preview: /images/previews/deploy-to-github-pages.png
 layout: default
 categories:
     - docs

@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:53.000Z
 title: Include Components
 description: Guide to the 70+ reusable include components organized by category for maximum flexibility.
+preview: /images/previews/include-components.png
 layout: default
 categories:
     - docs

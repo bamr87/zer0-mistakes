@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:55.000Z
 title: CI/CD Pipeline
 description: Comprehensive guide to the continuous integration and deployment workflows for the Zer0-Mistakes theme.
+preview: /images/previews/ci-cd-pipeline.png
 layout: default
 categories:
     - docs

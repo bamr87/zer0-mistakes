@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:50.000Z
 title: Pagination
 description: Implement previous/next navigation buttons and paginated post lists in your Jekyll site.
+preview: /images/previews/pagination.png
 layout: default
 categories:
     - docs

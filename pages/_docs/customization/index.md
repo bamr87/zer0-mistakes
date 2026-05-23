@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:53.000Z
 title: Customization
 description: Customize the Zer0-Mistakes Jekyll theme - layouts, styles, navigation, and more.
+preview: /images/previews/customization.png
 layout: default
 categories:
     - docs
@@ -41,6 +42,7 @@ Update `_config.yml`:
 title: "Your Site Title"
 subtitle: "Your tagline"
 description: "Site description for SEO"
+preview: /images/previews/customization.png
 author:
   name: "Your Name"
   email: "you@example.com"

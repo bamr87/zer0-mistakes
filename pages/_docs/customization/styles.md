@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:52.000Z
 title: Styles
 description: Customize CSS and SCSS styles in the Zer0-Mistakes Jekyll theme.
+preview: /images/previews/styles.png
 layout: default
 categories:
     - docs

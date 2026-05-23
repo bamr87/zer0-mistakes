@@ -1,6 +1,7 @@
 ---
 title: Liquid
 description: Liquid templating basics used by Jekyll and this theme.
+preview: /images/previews/liquid.png
 layout: default
 categories:
     - docs

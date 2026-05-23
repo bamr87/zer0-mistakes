@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:57.000Z
 title: Mermaid Diagrams
 description: Complete guide to integrating Mermaid diagrams in Jekyll sites - flowcharts, sequence diagrams, class diagrams and more with GitHub Pages compatibility.
+preview: /images/previews/mermaid-diagrams.png
 layout: default
 categories:
     - docs

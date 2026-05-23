@@ -1,6 +1,7 @@
 ---
 title: Jekyll + Liquid
 description: Liquid basics as used in Jekyll templates.
+preview: /images/previews/jekyll-liquid.png
 layout: default
 categories:
     - docs

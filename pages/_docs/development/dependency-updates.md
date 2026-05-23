@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:54.000Z
 title: Dependency Updates
 description: Guide to automated dependency management and Ruby gem updates for the Zer0-Mistakes theme.
+preview: /images/previews/dependency-updates.png
 layout: default
 categories:
     - docs

@@ -1,6 +1,7 @@
 ---
 title: Obsidian Integration Troubleshooting
 description: Common issues with the Obsidian + Jekyll integration and how to fix them.
+preview: /images/previews/obsidian-integration-troubleshooting.png
 layout: default
 permalink: /docs/obsidian/troubleshooting/
 categories:

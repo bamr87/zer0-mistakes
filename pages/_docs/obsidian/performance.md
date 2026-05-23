@@ -2,6 +2,7 @@
 lastmod: 2026-05-05T00:00:00.000Z
 title: Obsidian Resolver — Performance & Caching
 description: How the zer0-mistakes Obsidian wiki-link resolver caches the page-URL index and short-circuits rewrites for measurable build-time improvements on large vaults.
+preview: /images/previews/obsidian-resolver-performance-caching.png
 layout: default
 categories:
   - docs

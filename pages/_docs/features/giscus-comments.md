@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:59.000Z
 title: Giscus Comments
 description: Integrate GitHub Discussions-powered comments into your Jekyll site using Giscus - a modern, privacy-friendly alternative to Disqus.
+preview: /images/previews/giscus-comments.png
 layout: default
 categories:
     - docs

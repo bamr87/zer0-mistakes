@@ -2,6 +2,7 @@
 lastmod: 2026-05-05T00:00:00.000Z
 title: AGENTS.md — Cross-Tool AI Agent Entry Point
 description: How the repository-root AGENTS.md file provides a single source of truth for AI coding agents (Copilot, Codex, Cursor, Aider, Jules, Continue, Claude Code, and others).
+preview: /images/previews/agents-md-cross-tool-ai-agent-entry-point.png
 layout: default
 categories:
   - docs

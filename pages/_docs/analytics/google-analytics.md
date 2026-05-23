@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:30:02.000Z
 title: Google Analytics
 description: Google Analytics 4 integration for website traffic analysis with privacy-conscious configuration.
+preview: /images/previews/google-analytics.png
 layout: default
 categories:
     - docs

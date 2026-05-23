@@ -2,6 +2,7 @@
 lastmod: 2026-05-05T00:00:00.000Z
 title: Local Docker Publishing Pipeline
 description: Publish the jekyll-theme-zer0 gem from a clean Docker container locally, mirroring the CI release path for reproducible builds without polluting the host Ruby environment.
+preview: /images/previews/local-docker-publishing-pipeline.png
 layout: default
 categories:
   - docs

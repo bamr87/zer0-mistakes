@@ -2,6 +2,7 @@
 lastmod: 2026-05-05T00:00:00.000Z
 title: Smart 404 & Site Configuration Detection
 description: How the zer0-mistakes 404 page auto-detects whether the site is a fork, remote-theme consumer, or full clone and guides visitors back to a working entry point.
+preview: /images/previews/smart-404-site-configuration-detection.png
 layout: default
 categories:
   - docs

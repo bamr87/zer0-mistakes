@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:56.000Z
 title: Dark/Light Mode Toggle
 description: Theme color mode switcher supporting light, dark, and auto modes with system preference detection.
+preview: /images/previews/dark-light-mode-toggle.png
 layout: default
 categories:
     - docs

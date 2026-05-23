@@ -1,6 +1,7 @@
 ---
 title: Installation
 description: Prerequisites and setup steps for running Zer0-Mistakes locally.
+preview: /images/previews/installation.png
 layout: default
 categories:
     - docs

@@ -1,6 +1,7 @@
 ---
 title: "Obsidian Syntax Reference"
 description: "Every Obsidian-flavoured Markdown feature supported by the Zer0-Mistakes theme and how it renders on GitHub Pages."
+preview: /images/previews/obsidian-syntax-reference.png
 layout: default
 permalink: /docs/obsidian/syntax-reference/
 categories: [Documentation, Obsidian]

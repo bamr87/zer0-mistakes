@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:30:01.000Z
 title: Custom Domain Setup
 description: Configure a custom domain for your Jekyll site hosted on GitHub Pages or Netlify.
+preview: /images/previews/custom-domain-setup.png
 layout: default
 categories:
     - docs

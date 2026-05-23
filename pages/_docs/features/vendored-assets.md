@@ -2,6 +2,7 @@
 lastmod: 2026-05-05T00:00:00.000Z
 title: Vendored Bootstrap & Icon Assets
 description: Bootstrap 5.3.3 CSS/JS and Bootstrap Icons are committed under assets/vendor/ for GitHub Pages safety and offline development. How to use and refresh them.
+preview: /images/previews/vendored-bootstrap-icon-assets.png
 layout: default
 categories:
   - docs

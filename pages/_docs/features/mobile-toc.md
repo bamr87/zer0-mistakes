@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:59.000Z
 title: Mobile TOC Floating Action Button
 description: Redesigned mobile table of contents access with FAB pattern for better usability on touch devices.
+preview: /images/previews/mobile-toc-floating-action-button.png
 layout: default
 categories:
     - docs

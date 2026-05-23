@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:56.000Z
 title: PostHog Analytics
 description: Implement privacy-first web analytics in Jekyll using PostHog with GDPR/CCPA compliance, custom event tracking, and Do Not Track support.
+preview: /images/previews/posthog-analytics.png
 layout: default
 categories:
     - docs

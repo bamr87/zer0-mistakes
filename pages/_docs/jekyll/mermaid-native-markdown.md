@@ -1,6 +1,7 @@
 ---
 title: Mermaid Native Markdown
 description: Using Mermaid diagrams in Markdown with Zer0-Mistakes.
+preview: /images/previews/mermaid-native-markdown.png
 layout: default
 categories:
     - docs

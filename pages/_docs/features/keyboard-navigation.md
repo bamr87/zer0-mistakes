@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:57.000Z
 title: Keyboard Navigation
 description: Complete guide to keyboard shortcuts and navigation accessibility features in the Zer0-Mistakes theme.
+preview: /images/previews/keyboard-navigation.png
 layout: default
 categories:
     - docs

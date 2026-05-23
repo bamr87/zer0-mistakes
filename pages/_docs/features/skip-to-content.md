@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:57.000Z
 title: Skip-to-Content Accessibility Link
 description: WCAG 2.1 Level AA compliant skip link for keyboard users to bypass navigation and jump to main content.
+preview: /images/previews/skip-to-content-accessibility-link.png
 layout: default
 categories:
     - docs

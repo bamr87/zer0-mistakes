@@ -1,6 +1,7 @@
 ---
 title: Security
 description: Basic security considerations for Jekyll sites.
+preview: /images/previews/security.png
 layout: default
 categories:
     - docs

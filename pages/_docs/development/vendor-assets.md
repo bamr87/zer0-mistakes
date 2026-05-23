@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:54.000Z
 title: Vendor assets
 description: How third-party CSS and JavaScript are bundled under assets/vendor for GitHub Pages and how to refresh them.
+preview: /images/previews/vendor-assets.png
 layout: default
 categories:
   - docs
