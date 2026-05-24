@@ -257,6 +257,10 @@ plugins:
   # jekyll-redirect-from is on the GitHub Pages whitelist and powers Obsidian
   # `aliases:` → URL redirects (see pages/_docs/obsidian/syntax-reference.md).
   - jekyll-redirect-from
+  # jekyll-include-cache (on the GitHub Pages whitelist) provides the
+  # {% include_cached %} tag used by setup-banner.html and other includes to
+  # collapse per-page renders of stable content into a single cached render.
+  - jekyll-include-cache
   # Note: jekyll-mermaid is NOT in GitHub Pages whitelist - it only provides {% mermaid %} Liquid tag
   # Mermaid diagrams work without this plugin via client-side JavaScript (see _includes/components/mermaid.html)
   - jekyll-mermaid

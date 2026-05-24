@@ -52,15 +52,19 @@ collections:
     output: true
 
 # Development-only plugin list. Jekyll *replaces* (does not merge) the `plugins:`
-# key when layering configs, so this slim list intentionally drops feed/sitemap/
-# remote-theme (which fully regenerate every rebuild) to shave 10–20s off dev
-# serves. Re-enable any plugin here when you need to test its output locally.
+# key when layering configs, so this slim list intentionally drops remote-theme
+# (which fully regenerates every rebuild) to shave seconds off dev serves.
+# jekyll-feed and jekyll-sitemap stay enabled because integration tests treat
+# /feed.xml and /sitemap.xml as critical paths. Re-enable any plugin here when
+# you need to test its output locally.
 plugins:
   - jekyll-include-cache
   - jekyll-relative-links
   - jekyll-redirect-from
   - jekyll-seo-tag
   - jekyll-paginate
+  - jekyll-feed
+  - jekyll-sitemap
 
 # Exclude — MUST include everything from _config.yml plus dev-only paths.
 # When using --config _config.yml,_config_dev.yml, Jekyll applies this file
