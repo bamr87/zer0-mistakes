@@ -1,0 +1,16 @@
+{%- comment -%}
+  Inner body of setup-banner.html, extracted so it can be wrapped in
+  {% include_cached %}. Output depends only on site config (stable across all
+  pages in a build), so a single render is reused for every page.
+{%- endcomment -%}
+{% include components/setup-check.html %}
+
+{% if site_needs_setup %}
+<div class="alert alert-primary alert-dismissible fade show rounded-0 mb-0 py-2 text-center" role="alert" id="setup-banner">
+  <i class="bi bi-gear-wide-connected me-1"></i>
+  <strong>Almost there!</strong>
+  Your site is running with default settings.
+  <a href="{{ '/' | relative_url }}#setup-wizard" class="alert-link">Complete setup &rarr;</a>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}

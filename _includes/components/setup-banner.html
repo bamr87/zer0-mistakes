@@ -19,17 +19,12 @@
   Fast-exit: skip all setup detection when site_configured is true.
   This prevents ~150 redundant include calls + heuristic string comparisons
   on every page render for sites that have already been configured.
+
+  When the site IS unconfigured, the banner output depends only on site
+  config (not per-page state), so it's safe to cache the entire body via
+  jekyll-include-cache. That collapses N per-page renders into a single
+  render reused across the whole build.
 {%- endcomment -%}
 {% unless site.site_configured %}
-  {% include components/setup-check.html %}
-
-  {% if site_needs_setup %}
-  <div class="alert alert-primary alert-dismissible fade show rounded-0 mb-0 py-2 text-center" role="alert" id="setup-banner">
-    <i class="bi bi-gear-wide-connected me-1"></i>
-    <strong>Almost there!</strong>
-    Your site is running with default settings.
-    <a href="{{ '/' | relative_url }}#setup-wizard" class="alert-link">Complete setup &rarr;</a>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-  {% endif %}
+  {% include_cached components/setup-banner-inner.html %}
 {% endunless %}

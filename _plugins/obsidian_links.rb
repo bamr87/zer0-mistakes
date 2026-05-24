@@ -434,14 +434,24 @@ module Jekyll
       # and aliases all match). Common during incremental rebuilds where only
       # page body content is modified.
       def build_or_reuse_index(site)
+        # Cheap early-exit: if Jekyll hands us the same Site object as the
+        # previous :pre_render call, the document set cannot have changed and
+        # we can skip the O(n) fingerprint walk entirely. Matters on 500+ doc
+        # sites where compute_url_fingerprint shows up in --profile output.
+        if @cached_site_id == site.object_id && @cached_index
+          return @cached_index
+        end
+
         current_fingerprint = compute_url_fingerprint(site)
         if @cached_fingerprint && @cached_fingerprint == current_fingerprint && @cached_index
           Jekyll.logger.debug('Obsidian:', 'reusing cached wiki-link index (URLs, titles, and aliases unchanged)')
+          @cached_site_id = site.object_id
           return @cached_index
         end
 
         new_index = Index.new(site)
         @cached_fingerprint = current_fingerprint
+        @cached_site_id = site.object_id
         @cached_index = new_index
         new_index
       end

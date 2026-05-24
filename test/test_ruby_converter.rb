@@ -199,6 +199,7 @@ class ObsidianCacheTest < Minitest::Test
     # Reset class-level cache between tests
     Jekyll::Obsidian.instance_variable_set(:@cached_fingerprint, nil)
     Jekyll::Obsidian.instance_variable_set(:@cached_index, nil)
+    Jekyll::Obsidian.instance_variable_set(:@cached_site_id, nil)
   end
 
   def make_doc(title, url, aliases = [])

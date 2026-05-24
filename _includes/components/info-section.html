@@ -23,14 +23,13 @@
 
 {% include components/env-detect.html %}
 {%- comment -%}
-  Build a small pipe-delimited URL lookup string containing only pages under
-  /about/ — accessed once from site.html_pages. Using four separate
-  where: "url" lookups proved ~63% slower per render because each call
-  re-evaluates site.html_pages independently (O(n²) across 4 calls × n renders).
-  Pre-filtering to /about/ pages reduces the string to ~10 entries instead of
-  150+, making both the join and the contains searches ~18x faster.
+  Admin page URL lookup string is computed once per build by the
+  _plugins/admin_page_urls.rb :pre_render hook and exposed as
+  site.data.admin_page_urls. This avoids re-running
+  `site.html_pages | where_exp | map | join` on every page render
+  (150+ renders → 1 plugin call per build).
 {%- endcomment -%}
-{%- assign _admin_page_urls = site.html_pages | where_exp: "p", "p.url contains '/about/'" | map: "url" | join: "|" | prepend: "|" | append: "|" -%}
+{%- assign _admin_page_urls = site.data.admin_page_urls | default: "" -%}
 <!-- Settings Offcanvas -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="info-section" aria-labelledby="infoSectionLabel">
   
