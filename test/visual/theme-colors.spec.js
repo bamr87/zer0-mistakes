@@ -30,26 +30,31 @@ test.describe('Theme color customization', () => {
   });
 
   test('color picker change updates paired text input', async ({ page }) => {
-    // Color inputs are in the "Color Editor" tab which is not active by default
+    // Color inputs live in the "Color Editor" tab which is not active by
+    // default. Activate it and wait for the tab pane to be shown before
+    // interacting; otherwise input is in a hidden pane and `fill()` times out.
     const colorTab = page.locator('#tab-colors');
-    if (await colorTab.count() > 0) {
-      await colorTab.click();
-      await page.waitForTimeout(300);
-    }
-    const colorInput = page.locator('input[type="color"]').first();
-    const count = await colorInput.count();
-    if (count === 0) {
+    if (await colorTab.count() === 0) {
       test.skip();
       return;
     }
-    // Find the sibling/paired text input
+    await colorTab.click();
+    const colorPane = page.locator('#pane-colors');
+    await expect(colorPane).toHaveClass(/(^|\s)active(\s|$)/);
+    await expect(colorPane).toBeVisible();
+
+    // Scope to the active pane so we don't hit hidden inputs from other tabs.
+    const colorInput = colorPane.locator('input[type="color"]').first();
+    if (await colorInput.count() === 0) {
+      test.skip();
+      return;
+    }
     const parent = colorInput.locator('..');
     const textInput = parent.locator('input[type="text"]');
     if (await textInput.count() === 0) {
       test.skip();
       return;
     }
-    // Change color
     await colorInput.fill('#ff5500');
     const textValue = await textInput.inputValue();
     expect(textValue.toLowerCase()).toBe('#ff5500');

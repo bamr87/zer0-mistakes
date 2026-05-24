@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'digest'
+
 #
 # File: obsidian_links.rb
 # Path: _plugins/obsidian_links.rb
@@ -388,7 +390,7 @@ module Jekyll
         Jekyll::Hooks.register :site, :pre_render do |site|
           self.config = site_config(site)
           if config['enabled']
-            self.index = Index.new(site)
+            self.index = build_or_reuse_index(site)
             site.config['obsidian'] = config.merge('index' => index.to_h)
             Jekyll.logger.info('Obsidian:', "indexed #{index.entries.size} wiki-link targets")
           else
@@ -424,6 +426,47 @@ module Jekyll
 
       def needs_rewrite?(content)
         content.include?('[[') || content.include?('> [!') || content.match?(Converter::INLINE_TAG_RE)
+      end
+
+      private
+
+      # Reuse the cached index when the document set is unchanged (URLs, titles,
+      # and aliases all match). Common during incremental rebuilds where only
+      # page body content is modified.
+      def build_or_reuse_index(site)
+        # Cheap early-exit: if Jekyll hands us the same Site object as the
+        # previous :pre_render call, the document set cannot have changed and
+        # we can skip the O(n) fingerprint walk entirely. Matters on 500+ doc
+        # sites where compute_url_fingerprint shows up in --profile output.
+        if @cached_site_id == site.object_id && @cached_index
+          return @cached_index
+        end
+
+        current_fingerprint = compute_url_fingerprint(site)
+        if @cached_fingerprint && @cached_fingerprint == current_fingerprint && @cached_index
+          Jekyll.logger.debug('Obsidian:', 'reusing cached wiki-link index (URLs, titles, and aliases unchanged)')
+          @cached_site_id = site.object_id
+          return @cached_index
+        end
+
+        new_index = Index.new(site)
+        @cached_fingerprint = current_fingerprint
+        @cached_site_id = site.object_id
+        @cached_index = new_index
+        new_index
+      end
+
+      # Fingerprint covering URLs, titles, and aliases so the cache is
+      # invalidated whenever any of those change (not only page additions/removals).
+      def compute_url_fingerprint(site)
+        items = []
+        items.concat(site.documents) if site.respond_to?(:documents)
+        items.concat(site.pages.select { |p| p.output_ext == '.html' })
+        sig = items.map { |d|
+          aliases = Array(d.data['aliases']).sort.join(',')
+          "#{d.url}|#{d.data['title']}|#{aliases}"
+        }.sort.join("\n")
+        Digest::MD5.hexdigest(sig)
       end
     end
   end

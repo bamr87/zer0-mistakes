@@ -106,14 +106,38 @@ Code quality and linting tests:
 | HTML Validation | Validates generated HTML |
 | Link Checking | Verifies internal links work |
 
-### Styling tests (`test_styling.sh` + Playwright)
+### Playwright frontend tests (`test_playwright.sh`)
 
-Browser checks for the theme stylesheet stack and layout: same-origin CSS returns 200, `main.css` is linked, Bootstrap `--bs-*` variables resolve on `:root`, header/navbar structure, mobile nav toggler, and `bd-main` / `bd-content` on `/faq/`. Core tests also assert compiled `main.css` includes docs-layout rules (`bd-layout`).
+Playwright runs in two CI tiers (a third multi-browser tier is manual):
+
+| Tier (`PLAYWRIGHT_PROJECT`) | Coverage | When CI runs it |
+|------|------|------|
+| `smoke` | Stylesheet stack, Bootstrap CSS variables, layout chrome, admin DOM, behavioral skin tests, accessibility component checks | Every code-change PR |
+| `snapshots` | Pixel screenshots of the homepage in each of the 9 theme skins | Path-filtered: only when `_sass/`, `assets/`, `_layouts/`, `_includes/`, or `test/visual/` change |
+| `regression-{chromium,firefox,webkit}` | All specs across all browsers | Manual `workflow_dispatch` only |
 
 ```bash
-./test/test_runner.sh --suites styling
-# With Docker already on port 4000:
-BASE_URL=http://127.0.0.1:4000 npm run test:styling
+# Smoke tier (default)
+./test/test_runner.sh --suites playwright
+npm run test:smoke
+
+# Pixel snapshots
+./test/test_runner.sh --suites playwright_snapshots
+npm run test:snapshots
+
+# Reuse an existing Jekyll server (e.g. docker compose on :4000)
+BASE_URL=http://localhost:4000 ./test/test_playwright.sh
+```
+
+#### Updating snapshot baselines
+
+Baselines are platform-specific (`*-snapshots-linux.png`). CI runs on
+`ubuntu-latest`, so non-Linux contributors should refresh baselines via the
+matched Playwright Docker image:
+
+```bash
+./test/update-snapshots.sh   # writes test/visual/snapshots/*
+git add test/visual/snapshots/
 ```
 
 Bundled libraries live under `assets/vendor/`; see [Vendor assets](/docs/development/vendor-assets/) (`npm run vendor:install` / `scripts/vendor-install.sh`).

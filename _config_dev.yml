@@ -31,45 +31,111 @@ posthog:
   api_key                : null
   api_host               : null
 
-# Disable production optimizations for faster builds
+# Disable production optimizations for faster builds.
+# `limit_posts: 30` caps the post-processing window during dev serves; raise it
+# or run without it when editing older posts (or pass --drafts/--unpublished).
 incremental              : true
+limit_posts              : 30
 profile                  : false
 
-# Development-specific plugins (add any dev-only plugins here)
-# plugins:
-#   - jekyll-admin  # Uncomment if you want to use Jekyll admin interface
+# Performance: Disable rarely-edited collections during development.
+# Comment out or set output: true for any collection you're actively working on.
+# NOTE: `quests` stays enabled because consumer sites (e.g. it-journey) use it as
+# their primary dev loop. Sites without quest content can opt out by overriding
+# `collections.quests.output: false` in their own dev config.
+collections:
+  notebooks:
+    output: false
+  hobbies:
+    output: false
+  quests:
+    output: true
+
+# Development-only plugin list. Jekyll *replaces* (does not merge) the `plugins:`
+# key when layering configs, so this slim list intentionally drops remote-theme
+# (which fully regenerates every rebuild) to shave seconds off dev serves.
+# jekyll-feed and jekyll-sitemap stay enabled because integration tests treat
+# /feed.xml and /sitemap.xml as critical paths. Re-enable any plugin here when
+# you need to test its output locally.
+plugins:
+  - jekyll-include-cache
+  - jekyll-relative-links
+  - jekyll-redirect-from
+  - jekyll-seo-tag
+  - jekyll-paginate
+  - jekyll-feed
+  - jekyll-sitemap
 
 # Exclude — MUST include everything from _config.yml plus dev-only paths.
 # When using --config _config.yml,_config_dev.yml, Jekyll applies this file
 # last; a short list here *replaces* the base exclude and would skip
 # node_modules/, causing Liquid to parse README.md samples under npm packages.
+
 exclude:
+  # ── Jekyll cache ─────────────────────────────────────────────────────────
   - .sass-cache/
   - .jekyll-cache/
-  - .obsidian
+
+  # ── Obsidian vault working files ─────────────────────────────────────────
+  - .obsidian/
   - "*.canvas"
   - "*.excalidraw.md"
-  - docs/
+
+  # ── IDE / editor config ───────────────────────────────────────────────────
+  - .cursor/
+  - .devcontainer/
+  - .frontmatter/
+  - .github/
+  - .vscode/
+
+  # ── Ruby / Bundler ────────────────────────────────────────────────────────
+  - Gemfile
   - Gemfile.lock
   - gemfiles/
-  - Gemfile
-  - node_modules/
-  - templates/
-  # Exclude Bundler's vendor dir (Ruby gems). assets/vendor/ is a different path
-  # and is intentionally committed for GitHub Pages (Bootstrap, jQuery, etc.).
+  - jekyll-theme-zer0.gemspec
+  - lib/
+  - pkg/
   - vendor/bundle/
   - vendor/cache/
   - vendor/gems/
   - vendor/ruby/
+
+  # ── Node.js ───────────────────────────────────────────────────────────────
+  - node_modules/
+  - package.json
+  - package-lock.json
+
+  # ── Shell scripts and automation ──────────────────────────────────────────
+  - scripts/
+  - "*.sh"
+
+  # ── Docker configuration ──────────────────────────────────────────────────
+  - docker/
+  - docker-compose.yml
+  - docker-compose.prod.yml
+  - docker-compose.publish.yml
+  - docker-compose.test.yml
+
+  # ── Build / task runners ──────────────────────────────────────────────────
+  - Makefile
+  - Rakefile
+
+  # ── Project tooling metadata ──────────────────────────────────────────────
+  - AGENTS.md
+  - docs/
+  - frontmatter.json
+  - logs/
+  - templates/
+  - vendor-manifest.json
+  - "*.code-workspace"
+
+  # ── Submodules, tests, and authoring scaffolding ──────────────────────────
   - submodules/
-  - MERMAID-*.md
-  - MERMAID-*/
   - test/
   - tests/
-  - _site/lib/
-  - logs/
-  - "*.log"
+  - MERMAID-*.md
+  - MERMAID-*/
   - pages/_notes/_templates/
-  - .vscode/
+  - "*.log"
   - debug-*.log
 

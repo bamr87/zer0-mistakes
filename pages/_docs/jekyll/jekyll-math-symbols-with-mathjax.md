@@ -10,6 +10,7 @@ tags:
     - jekyll
     - mathjax
 permalink: /docs/jekyll/jekyll-math-symbols-with-mathjax/
+mathjax: true
 difficulty: beginner
 estimated_reading_time: 5 minutes
 prerequisites: []

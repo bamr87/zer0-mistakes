@@ -1,13 +1,29 @@
 # Changelog
 
-## [1.7.0] - 2026-05-24
+## [Unreleased]
 
 ### Changed
-- Version bump: minor release
+- **Testing**: Consolidated three Playwright configs into a single `test/playwright.config.js` with `smoke`, `snapshots`, and `regression-{chromium,firefox,webkit}` projects (tiers). The new `test/test_playwright.sh` runner replaces `test_styling.sh` and selects the tier via `PLAYWRIGHT_PROJECT`. Snapshot baselines now live in `test/visual/snapshots/` (committed Linux images) and can be refreshed via the new `test/update-snapshots.sh` Docker helper.
+- **CI**: Split the styling step in `ci.yml` into a Playwright smoke step (every code-change PR) and a path-filtered Playwright snapshot step (only when `_sass/`, `assets/`, `_layouts/`, `_includes/`, `test/visual/` change); both go through the new reusable `.github/actions/playwright-tests` composite action and upload `test/visual-results/` artifacts on failure (14-day retention) for easier triage.
+- **Performance**: `setup-banner.html` — added `{% raw %}{% unless site.site_configured %}{% endraw %}` early-exit guard that skips all setup detection logic and the `setup-check.html` sub-include when `site_configured: true`; eliminated 151 redundant include renders per build (-87% per-render time, setup-check fully eliminated from profile)
+- **Performance**: `info-section.html` — replaced full-site URL megastring (`site.html_pages | map | join`) with a single pre-filtered admin-page lookup (`where_exp: "p.url contains '/about/'"`) that accesses `site.html_pages` once and builds a ~10-entry string instead of 150+, making `contains` checks ~18× faster
+- **Performance**: `sidebar-right.html` — added heading-presence guard before calling the expensive `toc.html` Liquid parser; pages without `<h2>`/`<h3>`/`<h4>` headings skip TOC generation entirely (-18% per-render for `toc.html`)
+- **Performance**: Made MathJax loading conditional via `page.mathjax` front matter flag (mirrors Mermaid pattern) — saves 1.8 MB transfer on pages without math
+- **Performance**: Cached Obsidian plugin wiki-link index across incremental builds — index is rebuilt only when document URLs, titles, or aliases change
+- **Performance**: Disabled `notebooks`, `hobbies`, and `quests` collections in dev config for faster local builds
+- **Performance**: Removed jQuery from page loads — Bootstrap 5.3.3 does not require it and no custom JS uses jQuery APIs
 
-### Commits in this release
-- 13f9e8c feat: AI-generated retro pixel-art preview images for all content (#102)
+### Fixed
+- **Accessibility**: Dynamically-rendered color inputs in the Theme Customizer (Skin Editor gradient stops in `assets/js/skin-editor.js` and Live Preview pickers in `assets/js/palette-generator.js`) now have associated `<label for>` elements and `aria-label`s, fixing a regression that left them inaccessible to assistive tech.
+- **Tests**: `test/visual/theme-colors.spec.js` now activates the Color Editor tab and waits for the panel to be visible before interacting, eliminating a 45 s `locator.fill` timeout caused by hitting hidden inputs in inactive tabs.
+- **Tests**: Replaced flaky `waitForTimeout(300)` and `networkidle` calls in `test/visual/fixtures.js` and `test/visual/skins.spec.js` with deterministic waits on `domcontentloaded`, `load`, the `data-theme-skin` attribute, and the `zer0:skin-change` event.
+- **Tests**: Retired the legacy `test/test_visual.sh` (ImageMagick + bash screenshot pipeline) and the placeholder `homepage-*-chromium-darwin.png` baselines in favor of the unified Playwright snapshot tier.
+- Added missing `mathjax: true` front matter to pages that use math notation (test-notebook.md, jupyter-notebooks.md, jekyll-math-symbols-with-mathjax.md)
+- **MathJax 3 inline math**: Added `window.MathJax` config block before the script tag so `$...$` inline math (used in test-notebook.md) renders correctly — MathJax 3 does not enable dollar-sign inline delimiters by default
+- Updated `mathjax-math.md` documentation to show MathJax 3 API (`window.MathJax = {}`) instead of the removed MathJax 2 `MathJax.Hub.Config` API
 
+### Tests
+- Added `ObsidianCacheTest` suite (5 new tests) covering fingerprint invalidation on document addition, title change, alias change, cache hit, and cache miss
 
 ## [1.6.5] - 2026-05-19
 

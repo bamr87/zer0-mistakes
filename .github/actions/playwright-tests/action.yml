@@ -1,0 +1,49 @@
+name: 'Run Playwright Tests'
+description: 'Run a Playwright tier (smoke / snapshots / regression) against a freshly-served Jekyll site and upload artifacts on failure.'
+inputs:
+  project:
+    description: 'Playwright project to run (smoke, snapshots, regression-chromium, …)'
+    required: false
+    default: 'smoke'
+  base-url:
+    description: 'Optional pre-existing site URL. When set, the runner will not start Jekyll itself.'
+    required: false
+    default: ''
+  install-deps:
+    description: 'Install npm + chromium before running. Set to false when the caller already installed them.'
+    required: false
+    default: 'true'
+  artifact-name:
+    description: 'Suffix for uploaded artifacts (so multiple steps do not collide).'
+    required: false
+    default: 'playwright'
+
+runs:
+  using: composite
+  steps:
+    - name: Install Playwright dependencies
+      if: inputs.install-deps == 'true'
+      shell: bash
+      run: |
+        npm ci
+        npx playwright install --with-deps chromium
+
+    - name: Run Playwright (${{ inputs.project }})
+      shell: bash
+      env:
+        PLAYWRIGHT_PROJECT: ${{ inputs.project }}
+        BASE_URL: ${{ inputs.base-url }}
+        # The runner does its own install only when explicitly asked.
+        SKIP_NPM_INSTALL: '1'
+        SKIP_PLAYWRIGHT_INSTALL: '1'
+      run: ./test/test_playwright.sh
+
+    - name: Upload Playwright artifacts on failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact-name }}-${{ inputs.project }}
+        path: |
+          test/visual-results/
+        retention-days: 14
+        if-no-files-found: ignore

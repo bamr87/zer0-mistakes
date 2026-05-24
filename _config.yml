@@ -257,6 +257,10 @@ plugins:
   # jekyll-redirect-from is on the GitHub Pages whitelist and powers Obsidian
   # `aliases:` → URL redirects (see pages/_docs/obsidian/syntax-reference.md).
   - jekyll-redirect-from
+  # jekyll-include-cache (on the GitHub Pages whitelist) provides the
+  # {% include_cached %} tag used by setup-banner.html and other includes to
+  # collapse per-page renders of stable content into a single cached render.
+  - jekyll-include-cache
   # Note: jekyll-mermaid is NOT in GitHub Pages whitelist - it only provides {% mermaid %} Liquid tag
   # Mermaid diagrams work without this plugin via client-side JavaScript (see _includes/components/mermaid.html)
   - jekyll-mermaid
@@ -488,34 +492,74 @@ defaults:
 #
 # Excluded items can be processed by explicitly listing the directories or
 # their entries' file path in the `include:` list.
+#
+# NOTE: When _config_dev.yml is layered on top (--config _config.yml,_config_dev.yml),
+# the dev file MUST repeat this full list — Jekyll replaces, not merges, the exclude key.
 
 exclude:
+  # ── Jekyll cache ─────────────────────────────────────────────────────────
   - .sass-cache/
   - .jekyll-cache/
-  - .obsidian
-  # Obsidian working files that shouldn't leak into the build
+
+  # ── Obsidian vault working files ─────────────────────────────────────────
+  - .obsidian/
   - "*.canvas"
   - "*.excalidraw.md"
-  - docs/
+
+  # ── IDE / editor config (dot-prefix dirs hidden by default; listed for clarity) ─
+  - .cursor/
+  - .devcontainer/
+  - .frontmatter/
+  - .github/
+  - .vscode/
+
+  # ── Ruby / Bundler ────────────────────────────────────────────────────────
+  - Gemfile
   - Gemfile.lock
   - gemfiles/
-  - Gemfile
-  - node_modules/
-  - templates/
-  # Exclude Bundler's vendor dir (Ruby gems). assets/vendor/ is a different path
-  # and is intentionally committed for GitHub Pages (Bootstrap, jQuery, etc.).
+  - jekyll-theme-zer0.gemspec
+  - lib/
+  - pkg/
   - vendor/bundle/
   - vendor/cache/
   - vendor/gems/
   - vendor/ruby/
-  # - "*.sh"
+
+  # ── Node.js ───────────────────────────────────────────────────────────────
+  - node_modules/
+  - package.json
+  - package-lock.json
+
+  # ── Shell scripts and automation ──────────────────────────────────────────
+  - scripts/
+  - "*.sh"
+
+  # ── Docker configuration ──────────────────────────────────────────────────
+  - docker/
+  - docker-compose.yml
+  - docker-compose.prod.yml
+  - docker-compose.publish.yml
+  - docker-compose.test.yml
+
+  # ── Build / task runners ──────────────────────────────────────────────────
+  - Makefile
+  - Rakefile
+
+  # ── Project tooling metadata ──────────────────────────────────────────────
+  - AGENTS.md
+  - docs/
+  - frontmatter.json
+  - logs/
+  - templates/
+  - vendor-manifest.json
+  - "*.code-workspace"
+
+  # ── Submodules, tests, and authoring scaffolding ──────────────────────────
   - submodules/
-  - MERMAID-*.md
-  - MERMAID-*/
   - test/
   - tests/
-  - _site/lib/
-  # Obsidian note templates are authoring scaffolding, not publishable content.
+  - MERMAID-*.md
+  - MERMAID-*/
   - pages/_notes/_templates/
 
 # Sass/SCSS

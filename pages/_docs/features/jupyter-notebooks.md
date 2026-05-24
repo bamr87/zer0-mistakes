@@ -13,6 +13,7 @@ tags:
     - python
     - data-science
 permalink: /docs/features/jupyter-notebooks/
+mathjax: true
 difficulty: intermediate
 estimated_reading_time: 15 minutes
 prerequisites:

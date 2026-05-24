@@ -276,13 +276,13 @@
           '<div class="card border-0 shadow-sm h-100">' +
             '<div class="card-body p-3">' +
               '<div class="d-flex align-items-center justify-content-between mb-2">' +
-                '<span class="fw-semibold small">' + STOP_LABELS[idx] + '</span>' +
+                '<label class="fw-semibold small mb-0" for="stop-color-' + idx + '">' + STOP_LABELS[idx] + '</label>' +
                 '<span class="font-monospace small text-body-secondary" id="stop-hex-' + idx + '">' + color + '</span>' +
               '</div>' +
               '<div style="height:56px;border-radius:8px;background:' + color + ';border:1px solid rgba(128,128,128,.15);margin-bottom:8px" id="stop-preview-' + idx + '"></div>' +
               '<div class="input-group input-group-sm">' +
-                '<input type="color" class="form-control form-control-color" value="' + color + '" id="stop-color-' + idx + '" style="min-width:40px">' +
-                '<input type="text" class="form-control font-monospace" value="' + color + '" id="stop-text-' + idx + '" maxlength="7">' +
+                '<input type="color" class="form-control form-control-color" value="' + color + '" id="stop-color-' + idx + '" aria-label="' + STOP_LABELS[idx] + ' color picker" style="min-width:40px">' +
+                '<input type="text" class="form-control font-monospace" value="' + color + '" id="stop-text-' + idx + '" aria-label="' + STOP_LABELS[idx] + ' hex value" maxlength="7">' +
               '</div>' +
             '</div>' +
           '</div>';

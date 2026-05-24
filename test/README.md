@@ -16,7 +16,8 @@ The zer0-mistakes testing framework provides **6 comprehensive test suites** for
 | Installation | `test_installation.sh` | CLI, modes, edge cases | ~3-5 min |
 | Fork Cleanup | `test_fork_cleanup.sh` | `scripts/fork-cleanup.sh` behavior | ~30 sec |
 | Site Generation | `test_site_generation.sh` | Config matrix builds | ~5-10 min |
-| Visual | `test_visual.sh` | Screenshots, responsive | ~10-15 min |
+| Playwright Smoke | `test_playwright.sh` (`PLAYWRIGHT_PROJECT=smoke`) | CSS, layout, behavioral DOM | ~2-3 min |
+| Playwright Snapshots | `test_playwright.sh` (`PLAYWRIGHT_PROJECT=snapshots`) | Pixel regression for the 9 theme skins | ~1 min |
 
 ### 🔧 Core Test Suite (`test_core.sh`)
 
@@ -128,31 +129,48 @@ The zer0-mistakes testing framework provides **6 comprehensive test suites** for
 ./test/test_site_generation.sh --mode minimal --keep
 ```
 
-### 👁️ Visual Test Suite (`test_visual.sh`)
+### 🎭 Playwright Frontend Tests (`test_playwright.sh`)
 
-**Purpose:** Browser-based screenshot and visual regression testing  
-**Runtime:** ~10-15 minutes  
-**Focus Areas:**
+A single runner script invokes the appropriate Playwright project (tier).
+All tiers share `test/playwright.config.js`.
 
-- **Screenshot Capture**: Homepage, docs, about pages
-- **Responsive Testing**: Desktop (1280px), tablet (768px), mobile (375px)
-- **Theme Verification**: Dark/light mode toggle
-- **Visual Regression**: Baseline comparison with diff generation
+| Tier | `PLAYWRIGHT_PROJECT` | What it covers | When CI runs it |
+|------|----------------------|----------------|-----------------|
+| Smoke | `smoke` (default) | CSS load, Bootstrap tokens, layout chrome, admin DOM, accessibility component checks | Every code-change PR |
+| Snapshots | `snapshots` | Homepage pixel screenshots for the 9 theme skins | Path-filtered: only when `_sass/`, `assets/`, `_layouts/`, `_includes/`, or `test/visual/` change |
+| Regression | `regression-chromium` / `regression-firefox` / `regression-webkit` | All specs across all browsers | Manual `workflow_dispatch` only |
 
-**Prerequisites:** Node.js 18+, Playwright
+**Prerequisites:** Node.js 18+, Playwright (auto-installed by the runner)
 
 ```bash
-# Run visual tests for all modes
-./test/test_visual.sh --all-modes
+# Smoke tier (default) — starts Jekyll on port 4011 unless BASE_URL is set
+./test/test_playwright.sh
 
-# Test specific mode
-./test/test_visual.sh --mode full
+# Snapshot tier — pixel regression
+PLAYWRIGHT_PROJECT=snapshots ./test/test_playwright.sh
 
-# Update baseline screenshots
-./test/test_visual.sh --mode full --update-baseline
+# Reuse an existing Jekyll server (e.g. docker compose on :4000)
+BASE_URL=http://localhost:4000 ./test/test_playwright.sh
 
-# Verbose output
-./test/test_visual.sh --verbose
+# npm aliases
+npm run test:smoke
+npm run test:snapshots
+npm run test:regression
+```
+
+#### Updating snapshot baselines
+
+Baselines are platform-specific; CI runs on Linux. macOS/Windows
+contributors should regenerate baselines via the Linux Playwright Docker
+image:
+
+```bash
+# Starts Jekyll via docker compose, runs Playwright in a Linux container,
+# writes baselines into test/visual/snapshots/
+./test/update-snapshots.sh
+
+git add test/visual/snapshots/
+git commit -m "test: refresh skin homepage snapshot baselines"
 ```
 
 ## 🎮 Unified Test Runner (`test_runner.sh`)
@@ -220,19 +238,18 @@ test/
 ├── test_quality.sh          # ✅ Security + Accessibility + Compatibility + Performance
 ├── test_installation.sh     # ✅ CLI + Modes + Error Handling + Edge Cases
 ├── test_site_generation.sh  # ✅ Config Matrix + Jekyll Build + Content Validation
-├── test_visual.sh           # ✅ Screenshots + Responsive + Visual Regression
-├── test_styling.sh          # ✅ Playwright: CSS load, Bootstrap tokens, layout chrome
+├── test_playwright.sh       # ✅ Playwright runner (smoke / snapshots / regression)
+├── update-snapshots.sh      # ✅ Generate Linux snapshot baselines via Docker
 ├── test_runner.sh           # ✅ Orchestrates all suites
-├── playwright.config.js     # ✅ Playwright visual test configuration
-├── playwright.styling.config.js  # ✅ Playwright styling-only (Chromium, fast CI)
+├── playwright.config.js     # ✅ Single Playwright config (projects = tiers)
 ├── lib/                     # ✅ Shared test utilities
 │   ├── install_test_utils.sh
 │   └── config_matrix_generator.sh
-├── visual/                  # ✅ Playwright specs + visual artifacts
-│   ├── styling.spec.js      # Frontend stylesheet & layout smoke tests
-│   ├── baseline/            # Reference screenshots by mode
-│   ├── current/             # Current run screenshots
-│   └── diff/                # Visual diff images
+├── visual/                  # ✅ Playwright specs + snapshot baselines
+│   ├── *.spec.js            # 11 spec files (styling, skins, admin, a11y, …)
+│   ├── fixtures.js          # Shared helpers (SKINS, VIEWPORTS, setSkin, …)
+│   └── snapshots/           # Committed Linux baselines for the snapshots tier
+├── visual-results/          # ⚙️ Run output (gitignored): traces, html report, jekyll.log
 ├── results/                 # ✅ Test results (JSON)
 ├── reports/                 # ✅ Aggregated reports
 └── coverage/                # ✅ Coverage reports
@@ -252,9 +269,12 @@ test/
 # Complete quality check
 ./test/test_runner.sh --suites all
 
-# Frontend styling (Playwright; starts Jekyll on port 4011 unless BASE_URL is set)
-./test/test_runner.sh --suites styling
-# or: npm run test:styling   (with BASE_URL=http://127.0.0.1:4000 if site already running)
+# Playwright smoke tier (CSS/layout/behavior; starts Jekyll on port 4011)
+./test/test_runner.sh --suites playwright
+# or: npm run test:smoke   (set BASE_URL=http://localhost:4000 to reuse a running site)
+
+# Playwright pixel snapshots (skin homepage regression)
+./test/test_runner.sh --suites playwright_snapshots
 ```
 
 ### For CI/CD
@@ -400,7 +420,7 @@ The test framework automatically detects and adapts to different environments:
 ./test/test_runner.sh --suites xyz
 
 # Solution: Use valid suite names
-./test/test_runner.sh --suites core,deployment,quality,installation,site_generation,visual
+./test/test_runner.sh --suites core,deployment,quality,installation,site_generation,obsidian,playwright,playwright_snapshots
 ```
 
 #### Docker Tests Failing
@@ -486,8 +506,8 @@ Each mode generates:
 - **Smart Test Selection**: Run only tests affected by code changes
 - **Enhanced Parallel Execution**: Fine-grained parallel test execution
 - **Visual Test Reports**: Rich HTML dashboards with trends and insights
-- **Cross-Browser Testing**: Firefox, Safari visual tests
-- **Accessibility Automation**: WCAG compliance checking in visual tests
+- **Cross-Browser Snapshots**: Wire `regression-firefox` / `regression-webkit` projects into a nightly workflow
+- **Accessibility Automation**: WCAG compliance checking via the existing axe-core specs (currently `test.fixme` pending PR #57)
 
 ### Contributing
 
