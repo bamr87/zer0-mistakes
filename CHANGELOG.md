@@ -1,12 +1,9 @@
----
-render_with_liquid: false
----
 # Changelog
 
 ## [Unreleased]
 
 ### Changed
-- **Performance**: `setup-banner.html` — added `{% unless site.site_configured %}` early-exit guard that skips all setup detection logic and the `setup-check.html` sub-include when `site_configured: true`; eliminated 151 redundant include renders per build (-87% per-render time, setup-check fully eliminated from profile)
+- **Performance**: `setup-banner.html` — added `{% raw %}{% unless site.site_configured %}{% endraw %}` early-exit guard that skips all setup detection logic and the `setup-check.html` sub-include when `site_configured: true`; eliminated 151 redundant include renders per build (-87% per-render time, setup-check fully eliminated from profile)
 - **Performance**: `info-section.html` — replaced full-site URL megastring (`site.html_pages | map | join`) with a single pre-filtered admin-page lookup (`where_exp: "p.url contains '/about/'"`) that accesses `site.html_pages` once and builds a ~10-entry string instead of 150+, making `contains` checks ~18× faster
 - **Performance**: `sidebar-right.html` — added heading-presence guard before calling the expensive `toc.html` Liquid parser; pages without `<h2>`/`<h3>`/`<h4>` headings skip TOC generation entirely (-18% per-render for `toc.html`)
 - **Performance**: Made MathJax loading conditional via `page.mathjax` front matter flag (mirrors Mermaid pattern) — saves 1.8 MB transfer on pages without math
