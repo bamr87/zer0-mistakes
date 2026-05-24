@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:30:00.000Z
 title: Sidebar Navigation System
 description: Modern sidebar with Intersection Observer scroll spy, smooth scrolling, keyboard shortcuts, and swipe gestures.
+preview: /images/previews/sidebar-navigation-system.png
 layout: default
 categories:
     - docs

@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:55.000Z
 title: Documentation
 description: Guide to the dual documentation architecture with technical docs, public docs, and AI instructions.
+preview: /images/previews/documentation.png
 layout: default
 categories:
     - docs
@@ -60,6 +61,7 @@ Documentation Architecture
 ---
 title: "Descriptive Technical Title"
 description: "Technical implementation summary"
+preview: /images/previews/documentation.png
 type: "system|feature|configuration|release"
 audience: "developers|contributors|maintainers"
 components: ["file1.rb", "file2.html"]
@@ -100,6 +102,7 @@ complexity: "beginner|intermediate|advanced"
 ---
 title: Feature Name
 description: One-line description for SEO
+preview: /images/previews/documentation.png
 layout: default
 categories: [docs, features]
 tags: [relevant, tags]
@@ -135,6 +138,7 @@ sidebar:
 ---
 applyTo: "path/to/files/**"
 description: "Guidance for these files"
+preview: /images/previews/documentation.png
 ---
 
 # Development Guidelines

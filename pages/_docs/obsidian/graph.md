@@ -1,6 +1,7 @@
 ---
 title: "Obsidian Graph View"
 description: "Interactive force-directed map of every wiki-link in the site, mirroring Obsidian's local graph."
+preview: /images/previews/obsidian-graph-view.png
 layout: default
 permalink: /docs/obsidian/graph/
 categories: [Documentation, Obsidian]

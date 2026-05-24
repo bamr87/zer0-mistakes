@@ -1,6 +1,7 @@
 ---
 title: Front Matter
 description: How to use front matter for Jekyll pages, posts, and collections.
+preview: /images/previews/front-matter.png
 layout: default
 categories:
     - docs
@@ -89,7 +90,7 @@ permalink: /custom-url/   # Override default URL
 
 ```yaml
 ---
-preview: /images/preview.png    # Social sharing image
+preview: /images/previews/front-matter.png
 toc: true                       # Show table of contents
 comments: true                  # Enable comments (if configured)
 sidebar:
@@ -129,7 +130,7 @@ lastmod: 2025-01-15
 ```yaml
 ---
 excerpt: "Custom excerpt for listings"
-preview: /images/post-preview.png
+preview: /images/previews/front-matter.png
 featured: true               # Feature on homepage
 ---
 ```
@@ -192,7 +193,7 @@ categories:
 tags:
     - jekyll
     - getting-started
-preview: /images/jekyll-tutorial.png
+preview: /images/previews/front-matter.png
 comments: true
 ---
 ```

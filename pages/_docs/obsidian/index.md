@@ -1,6 +1,7 @@
 ---
 title: "Obsidian Vault Integration"
 description: "Edit Zer0-Mistakes content as an Obsidian vault and have it render identically on GitHub Pages."
+preview: /images/previews/obsidian-vault-integration.png
 layout: default
 permalink: /docs/obsidian/
 categories: [Documentation, Obsidian]

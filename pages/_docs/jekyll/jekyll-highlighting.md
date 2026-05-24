@@ -1,6 +1,7 @@
 ---
 title: Syntax Highlighting
 description: Code highlighting options in Jekyll.
+preview: /images/previews/syntax-highlighting.png
 layout: default
 categories:
     - docs

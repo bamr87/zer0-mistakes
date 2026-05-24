@@ -2,6 +2,7 @@
 lastmod: 2026-05-05T00:00:00.000Z
 title: Bare-Minimum Remote-Theme Starter
 description: Start a working GitHub Pages site that uses zer0-mistakes as a remote theme with just three files — _config.yml, Gemfile, and index.md.
+preview: /images/previews/bare-minimum-remote-theme-starter.png
 layout: default
 categories:
   - docs
@@ -29,6 +30,7 @@ You can run a full zer0-mistakes site on GitHub Pages with only **three files**.
 ```yaml
 title: My Site
 description: A site powered by zer0-mistakes
+preview: /images/previews/bare-minimum-remote-theme-starter.png
 remote_theme: bamr87/zer0-mistakes
 
 plugins:

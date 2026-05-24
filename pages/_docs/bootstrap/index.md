@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:52.000Z
 title: Bootstrap Integration
 description: Bootstrap 5.3.3 usage patterns, components, and customization in the Zer0-Mistakes theme.
+preview: /images/previews/bootstrap-integration.png
 layout: default
 categories:
     - docs

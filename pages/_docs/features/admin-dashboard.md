@@ -2,6 +2,7 @@
 lastmod: 2026-05-05T00:00:00.000Z
 title: Admin Layout & Configuration Dashboards
 description: Admin-style layout and dashboard partials for surfacing site configuration, build info, and feature flags in a single place.
+preview: /images/previews/admin-layout-configuration-dashboards.png
 layout: default
 categories:
   - docs
@@ -100,6 +101,7 @@ The theme ships several admin pages under `pages/_about/settings/`:
 layout: admin
 title: My Dashboard
 description: Custom dashboard for my site
+preview: /images/previews/admin-layout-configuration-dashboards.png
 icon: bi-speedometer2
 permalink: /admin/my-dashboard/
 sidebar:

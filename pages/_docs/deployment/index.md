@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:30:01.000Z
 title: Deployment
 description: Deploy your Zer0-Mistakes Jekyll site to various hosting platforms.
+preview: /images/previews/deployment.png
 layout: default
 categories:
     - docs

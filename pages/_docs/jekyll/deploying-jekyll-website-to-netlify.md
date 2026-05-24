@@ -1,6 +1,7 @@
 ---
 title: Deploying to Netlify
 description: High-level steps to deploy a Jekyll site to Netlify.
+preview: /images/previews/deploying-to-netlify.png
 layout: default
 categories:
     - docs

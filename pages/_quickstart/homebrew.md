@@ -2,6 +2,7 @@
 title: Homebrew Setup
 layout: default
 description: Install Homebrew and common dependencies on macOS.
+preview: /images/previews/homebrew-setup.png
 author: "Zer0-Mistakes Team"
 keywords: [homebrew, macos, package manager]
 permalink: /quickstart/homebrew/

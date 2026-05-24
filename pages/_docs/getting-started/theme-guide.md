@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:30:00.000Z
 title: Jekyll Theme Guide
 description: Comprehensive guide to using and customizing the Zer0-Mistakes Jekyll theme with Docker-first development, Bootstrap 5, and modern integrations.
+preview: /images/previews/jekyll-theme-guide.png
 layout: default
 categories:
     - docs
@@ -126,6 +127,7 @@ show_drafts: true
 # Site Settings
 title: "Your Site Title"
 description: "Site description for SEO"
+preview: /images/previews/jekyll-theme-guide.png
 url: "https://yourdomain.com"
 baseurl: ""  # Subpath, e.g., /blog
 
@@ -167,6 +169,7 @@ YYYY-MM-DD-title-slug.md
 ---
 title: "My Blog Post"
 description: "A brief description (150-160 chars)"
+preview: /images/previews/jekyll-theme-guide.png
 date: 2026-01-24T10:00:00.000Z
 layout: article
 categories: [Category, Subcategory]
@@ -186,6 +189,7 @@ Create docs in `pages/_docs/`:
 ---
 title: "Documentation Page"
 description: "What this page covers"
+preview: /images/previews/jekyll-theme-guide.png
 layout: default
 permalink: /docs/section/page-name/
 difficulty: beginner

@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:30:02.000Z
 title: SEO Meta Tags
 description: Comprehensive SEO meta tag generation including Open Graph, Twitter Cards, and JSON-LD structured data.
+preview: /images/previews/seo-meta-tags.png
 layout: default
 categories:
     - docs
@@ -74,6 +75,7 @@ The theme generates:
 # _config.yml
 title: "Site Title"
 description: "Default site description"
+preview: /images/previews/seo-meta-tags.png
 url: "https://yoursite.com"
 
 author:
@@ -94,6 +96,7 @@ twitter:
 ---
 title: "Custom Page Title"
 description: "Custom page description for SEO"
+preview: /images/previews/seo-meta-tags.png
 image: "/assets/images/custom-og.png"
 author: "Different Author"
 ---

@@ -1,6 +1,7 @@
 ---
 title: MathJax
 description: Rendering math symbols with MathJax in Jekyll.
+preview: /images/previews/mathjax.png
 layout: default
 categories:
     - docs

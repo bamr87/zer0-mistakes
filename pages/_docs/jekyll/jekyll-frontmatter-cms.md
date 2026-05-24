@@ -1,6 +1,7 @@
 ---
 title: Front Matter
 description: Front matter basics for pages and posts.
+preview: /images/previews/front-matter.png
 layout: default
 categories:
     - docs

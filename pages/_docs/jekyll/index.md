@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:50.000Z
 title: Jekyll
 description: Jekyll basics and Zer0-Mistakes development workflow (Docker-first).
+preview: /images/previews/jekyll.png
 layout: default
 categories:
     - docs

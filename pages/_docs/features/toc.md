@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:58.000Z
 title: Table of Contents
 description: Automatic table of contents generation from page headings with scroll spy and smooth scrolling.
+preview: /images/previews/table-of-contents.png
 layout: default
 categories:
     - docs

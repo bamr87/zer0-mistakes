@@ -1,6 +1,7 @@
 ---
 title: Jekyll Configuration
 description: Configuration basics for Jekyll and this theme.
+preview: /images/previews/jekyll-configuration.png
 layout: default
 categories:
     - docs

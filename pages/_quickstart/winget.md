@@ -2,6 +2,7 @@
 title: Winget Setup
 layout: default
 description: Install Winget and common dependencies on Windows.
+preview: /images/previews/winget-setup.png
 author: "Zer0-Mistakes Team"
 keywords: [winget, windows, package manager]
 permalink: /quickstart/winget/

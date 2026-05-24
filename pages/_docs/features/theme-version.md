@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:59.000Z
 title: Theme Version Display Plugin
 description: Automatic theme version extraction from gem specification with modal display and footer integration.
+preview: /images/previews/theme-version-display-plugin.png
 layout: default
 categories:
     - docs

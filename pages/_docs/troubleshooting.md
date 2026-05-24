@@ -1,6 +1,7 @@
 ---
 title: Troubleshooting
 description: Common setup and build issues when running Zer0-Mistakes.
+preview: /images/previews/troubleshooting.png
 layout: default
 categories:
     - docs

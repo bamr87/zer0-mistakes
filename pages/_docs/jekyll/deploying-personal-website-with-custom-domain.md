@@ -1,6 +1,7 @@
 ---
 title: Custom Domain
 description: High-level steps to use a custom domain with your site.
+preview: /images/previews/custom-domain.png
 layout: default
 categories:
     - docs
