@@ -430,17 +430,18 @@ module Jekyll
 
       private
 
-      # Reuse the cached index when the set of document URLs hasn't changed
-      # (common during incremental rebuilds where only content is modified).
+      # Reuse the cached index when the document set is unchanged (URLs, titles,
+      # and aliases all match). Common during incremental rebuilds where only
+      # page body content is modified.
       def build_or_reuse_index(site)
-        current_urls = compute_url_fingerprint(site)
-        if @cached_url_fingerprint && @cached_url_fingerprint == current_urls && @cached_index
-          Jekyll.logger.debug('Obsidian:', 'reusing cached wiki-link index (URLs unchanged)')
+        current_fingerprint = compute_url_fingerprint(site)
+        if @cached_fingerprint && @cached_fingerprint == current_fingerprint && @cached_index
+          Jekyll.logger.debug('Obsidian:', 'reusing cached wiki-link index (URLs, titles, and aliases unchanged)')
           return @cached_index
         end
 
         new_index = Index.new(site)
-        @cached_url_fingerprint = current_urls
+        @cached_fingerprint = current_fingerprint
         @cached_index = new_index
         new_index
       end

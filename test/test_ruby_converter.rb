@@ -197,7 +197,7 @@ class ObsidianCacheTest < Minitest::Test
 
   def setup
     # Reset class-level cache between tests
-    Jekyll::Obsidian.instance_variable_set(:@cached_url_fingerprint, nil)
+    Jekyll::Obsidian.instance_variable_set(:@cached_fingerprint, nil)
     Jekyll::Obsidian.instance_variable_set(:@cached_index, nil)
   end
 
