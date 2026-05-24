@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:30:03.000Z
 title: Google Tag Manager
 description: Google Tag Manager integration for centralized tag management and marketing analytics.
+preview: /images/previews/google-tag-manager.png
 layout: default
 categories:
     - docs

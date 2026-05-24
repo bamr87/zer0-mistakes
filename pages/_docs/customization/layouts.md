@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:53.000Z
 title: Layouts
 description: Create and customize page layouts in the Zer0-Mistakes Jekyll theme.
+preview: /images/previews/layouts.png
 layout: default
 categories:
     - docs

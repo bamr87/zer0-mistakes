@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:56.000Z
 title: Code Copy Button
 description: One-click copy functionality for code blocks with visual feedback and clipboard API integration.
+preview: /images/previews/code-copy-button.png
 layout: default
 categories:
     - docs

@@ -1,6 +1,7 @@
 ---
 title: Ruby 101
 description: Ruby and Bundler basics needed to build and serve the theme.
+preview: /images/previews/ruby-101.png
 layout: default
 categories:
     - docs

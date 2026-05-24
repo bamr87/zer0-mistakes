@@ -1,6 +1,7 @@
 ---
 title: "Obsidian Authoring Workflow"
 description: "From an empty Obsidian note to a published page on GitHub Pages — the daily loop."
+preview: /images/previews/obsidian-authoring-workflow.png
 layout: default
 permalink: /docs/obsidian/authoring-workflow/
 categories: [Documentation, Obsidian]

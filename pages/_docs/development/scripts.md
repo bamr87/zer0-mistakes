@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:54.000Z
 title: Scripts
 description: Guide to the shell script automation library for building, testing, and releasing the Zer0-Mistakes theme.
+preview: /images/previews/scripts.png
 layout: default
 categories:
     - docs

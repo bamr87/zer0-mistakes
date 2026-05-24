@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:30:02.000Z
 title: Sitemap Generation
 description: Automatic XML sitemap and JSON search index generation for search engine discovery and site search.
+preview: /images/previews/sitemap-generation.png
 layout: default
 categories:
     - docs

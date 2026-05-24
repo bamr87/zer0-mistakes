@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:56.000Z
 title: AI Preview Image Generator
 description: AI-powered automatic preview image generation for posts using OpenAI DALL-E, Stability AI, or local placeholders.
+preview: /images/previews/ai-preview-image-generator.png
 layout: default
 categories:
     - docs
@@ -131,7 +132,7 @@ Run the generation script:
 ```yaml
 ---
 title: "My Post Title"
-preview: /images/previews/my-post-preview.png
+preview: /images/previews/ai-preview-image-generator.png
 ---
 ```
 

@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:54.000Z
 title: Product Requirements Document
 description: Product vision, goals, and requirements for the Zer0-Mistakes Jekyll theme.
+preview: /images/previews/product-requirements-document.png
 layout: default
 categories:
     - docs

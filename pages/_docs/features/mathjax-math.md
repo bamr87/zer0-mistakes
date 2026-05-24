@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:58.000Z
 title: MathJax Math
 description: Display mathematical equations and formulas in Jekyll pages using MathJax - LaTeX-style notation for the web.
+preview: /images/previews/mathjax-math.png
 layout: default
 categories:
     - docs

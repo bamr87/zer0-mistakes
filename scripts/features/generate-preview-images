@@ -177,12 +177,16 @@ ENHANCE_FIDELITY="${ENHANCE_FIDELITY:-high}"
 ENHANCE_FORMAT="${ENHANCE_FORMAT:-png}"
 DEFAULT_ENHANCE_PROMPT="Improve this preview banner image: fix any misspelled, garbled, or incorrect text so it reads clearly and accurately. Sharpen visual details and improve composition while preserving the original art style, color palette, and theme. Ensure the image is clean and professional."
 
-# Counters
+# Counters (used in serial mode; replaced by file-based counters in parallel mode)
 PROCESSED=0
 GENERATED=0
 ENHANCED=0
 SKIPPED=0
 ERRORS=0
+
+# Parallel processing — number of concurrent API workers (1 = serial)
+MAX_PARALLEL="${MAX_PARALLEL:-4}"
+COUNTER_DIR=""  # Initialised in main() for parallel generation
 
 # Temporary files may contain request payloads or auth headers. Keep a registry so
 # interrupted runs clean them up before exiting.
@@ -192,9 +196,54 @@ cleanup_temp_files() {
     if [[ ${#TEMP_FILES[@]} -gt 0 ]]; then
         rm -f "${TEMP_FILES[@]}" 2>/dev/null || true
     fi
+    # Clean up counter directory if we own it
+    if [[ -n "$COUNTER_DIR" && -d "$COUNTER_DIR" ]]; then
+        rm -rf "$COUNTER_DIR" 2>/dev/null || true
+    fi
 }
 
 trap cleanup_temp_files EXIT HUP INT TERM
+
+# ---------------------------------------------------------------------------
+# Parallel-safe counter helpers
+# Each background worker subshell writes a unique sentinel file; the parent
+# aggregates the counts with ls | wc -l (no shared variable races).
+# ---------------------------------------------------------------------------
+init_counters() {
+    COUNTER_DIR=$(mktemp -d)
+    mkdir -p "$COUNTER_DIR"/{processed,generated,enhanced,skipped,errors}
+}
+
+inc_counter() {
+    local name="$1"
+    if [[ -n "$COUNTER_DIR" && -d "$COUNTER_DIR/$name" ]]; then
+        mktemp "$COUNTER_DIR/$name/XXXXXX" >/dev/null 2>&1 || true
+    else
+        # Serial fallback — update parent variables directly
+        case "$name" in
+            processed) PROCESSED=$((PROCESSED + 1)) ;;
+            generated) GENERATED=$((GENERATED + 1)) ;;
+            enhanced)  ENHANCED=$((ENHANCED  + 1)) ;;
+            skipped)   SKIPPED=$((SKIPPED   + 1)) ;;
+            errors)    ERRORS=$((ERRORS     + 1)) ;;
+        esac
+    fi
+}
+
+get_counter() {
+    local name="$1"
+    if [[ -n "$COUNTER_DIR" && -d "$COUNTER_DIR/$name" ]]; then
+        ls "$COUNTER_DIR/$name/" 2>/dev/null | wc -l | tr -d ' '
+    else
+        case "$name" in
+            processed) echo "$PROCESSED" ;;
+            generated) echo "$GENERATED" ;;
+            enhanced)  echo "$ENHANCED"  ;;
+            skipped)   echo "$SKIPPED"   ;;
+            errors)    echo "$ERRORS"    ;;
+        esac
+    fi
+}
 
 # Print usage
 show_help() {
@@ -300,6 +349,10 @@ parse_args() {
                 ;;
             --list-missing)
                 LIST_ONLY="true"
+                ;;
+            -j|--parallel)
+                MAX_PARALLEL="$2"
+                shift
                 ;;
             -e|--enhance)
                 ENHANCE="true"
@@ -525,21 +578,37 @@ generate_image_openai() {
     printf '%s' "$payload" > "$payload_file"
     
     local response
-    if ! response=$(curl -s --max-time 900 -X POST "https://api.openai.com/v1/images/generations" \
-        --config "$auth_config" \
-        -H "Content-Type: application/json" \
-        --data-binary "@$payload_file"); then
-        rm -f "$auth_config" "$payload_file"
-        warn "OpenAI API request failed"
+    local max_retries=3
+    local attempt=0
+    local api_success=false
+    while [[ $attempt -lt $max_retries ]]; do
+        attempt=$((attempt + 1))
+        if [[ $attempt -gt 1 ]]; then
+            local backoff=$(( (attempt - 1) * 15 ))
+            warn "Retrying API call (attempt $attempt/$max_retries) after ${backoff}s..."
+            sleep "$backoff"
+        fi
+        if response=$(curl -s --max-time 120 -X POST "https://api.openai.com/v1/images/generations" \
+            --config "$auth_config" \
+            -H "Content-Type: application/json" \
+            --data-binary "@$payload_file"); then
+            api_success=true
+            break
+        fi
+        warn "OpenAI API request failed (attempt $attempt/$max_retries)"
+    done
+    rm -f "$auth_config" "$payload_file"
+    if [[ "$api_success" != "true" ]]; then
+        warn "OpenAI API request failed after $max_retries attempts"
         return 1
     fi
-    rm -f "$auth_config" "$payload_file"
-    
+
     # Check for errors
     local error_msg
     error_msg=$(echo "$response" | jq -r '.error.message // empty')
     if [[ -n "$error_msg" ]]; then
         warn "OpenAI API error: $error_msg"
+        debug "Full response: $response"
         return 1
     fi
     
@@ -898,9 +967,9 @@ preview: $preview_path" "$file"
 # Process a single file
 process_file() {
     local file="$1"
-    
-    PROCESSED=$((PROCESSED + 1))
-    
+
+    inc_counter processed
+
     debug "Processing file: $file"
     
     # Extract front matter
@@ -909,7 +978,7 @@ process_file() {
     
     if [[ -z "$front_matter" ]]; then
         debug "No front matter found in: $file"
-        SKIPPED=$((SKIPPED + 1))
+        inc_counter skipped
         return 0
     fi
     
@@ -935,7 +1004,7 @@ process_file() {
             warn "No existing preview image found for: $title"
             warn "  Expected at: $preview"
             warn "  Use without --enhance to generate a new image first."
-            SKIPPED=$((SKIPPED + 1))
+            inc_counter skipped
             return 0
         fi
         
@@ -969,11 +1038,11 @@ process_file() {
         
         # Enhance the image (output overwrites original)
         if enhance_image "$existing_image" "$enhance_prompt" "$existing_image"; then
-            ENHANCED=$((ENHANCED + 1))
+            inc_counter enhanced
         else
             warn "Failed to enhance image for: $title"
             info "Original preserved at: $backup_file"
-            ERRORS=$((ERRORS + 1))
+            inc_counter errors
         fi
         
         return 0
@@ -987,7 +1056,7 @@ process_file() {
     if [[ -n "$preview" ]] && check_preview_exists "$preview"; then
         if [[ "$FORCE" != "true" ]]; then
             debug "Preview already exists and is valid: $preview"
-            SKIPPED=$((SKIPPED + 1))
+            inc_counter skipped
             return 0
         else
             info "Force mode: regenerating preview for $title"
@@ -1032,7 +1101,7 @@ process_file() {
         echo "  Preview path: $preview_path"
         echo "  Prompt: ${prompt:0:400}..."
         echo ""
-        GENERATED=$((GENERATED + 1))
+        inc_counter generated
         return 0
     fi
     
@@ -1040,10 +1109,12 @@ process_file() {
     if generate_image "$prompt" "$output_file"; then
         # Update front matter with new preview path
         update_front_matter "$file" "$preview_path"
-        GENERATED=$((GENERATED + 1))
+        inc_counter generated
+        # Brief pause between successful generations to stay within API rate limits
+        sleep 2
     else
         warn "Failed to generate image for: $title"
-        ERRORS=$((ERRORS + 1))
+        inc_counter errors
     fi
 }
 
@@ -1051,17 +1122,37 @@ process_file() {
 process_collection() {
     local collection_path="$1"
     local pattern="${2:-*.md}"
-    
+
     debug "Processing collection: $collection_path with pattern: $pattern"
-    
+
     if [[ ! -d "$collection_path" ]]; then
         warn "Collection directory not found: $collection_path"
         return 1
     fi
-    
+
+    # Serial mode for dry-run / list-only (clean, ordered output) or when parallelism=1
+    if [[ "$LIST_ONLY" == "true" || "$DRY_RUN" == "true" || "$MAX_PARALLEL" -le 1 ]]; then
+        while IFS= read -r -d '' file; do
+            process_file "$file"
+        done < <(find "$collection_path" -name "$pattern" -type f -print0 | sort -z)
+        return 0
+    fi
+
+    # Parallel mode: dispatch up to MAX_PARALLEL concurrent workers
+    # Uses a busy-wait throttle compatible with bash 3.2+
     while IFS= read -r -d '' file; do
-        process_file "$file"
-    done < <(find "$collection_path" -name "$pattern" -type f -print0)
+        # Block until a worker slot opens
+        while true; do
+            local active
+            active=$(jobs -rp 2>/dev/null | wc -l | tr -d ' ')
+            [[ "$active" -lt "$MAX_PARALLEL" ]] && break
+            sleep 0.2
+        done
+        process_file "$file" &
+    done < <(find "$collection_path" -name "$pattern" -type f -print0 | sort -z)
+
+    # Drain all remaining workers before returning
+    wait
 }
 
 # Main function
@@ -1070,13 +1161,19 @@ main() {
     
     # Validate environment
     validate_environment
-    
+
+    # Initialise file-based counters for parallel-safe counting
+    if [[ "$LIST_ONLY" != "true" && "$DRY_RUN" != "true" ]]; then
+        init_counters
+    fi
+
     # Display configuration
     info "Configuration:"
     echo "  AI Provider: $AI_PROVIDER"
     echo "  Image Model: $IMAGE_MODEL"
     echo "  Output Dir: $OUTPUT_DIR"
     echo "  Image Size: $IMAGE_SIZE"
+    echo "  Parallel Workers: $MAX_PARALLEL"
     echo "  Dry Run: $DRY_RUN"
     echo "  Force: $FORCE"
     echo "  List Only: $LIST_ONLY"
@@ -1177,22 +1274,24 @@ main() {
     # Print summary
     echo ""
     print_header "📊 Summary"
-    echo "  Files processed: $PROCESSED"
-    echo "  Images generated: $GENERATED"
-    echo "  Images enhanced: $ENHANCED"
-    echo "  Files skipped: $SKIPPED"
-    echo "  Errors: $ERRORS"
+    echo "  Files processed: $(get_counter processed)"
+    echo "  Images generated: $(get_counter generated)"
+    echo "  Images enhanced: $(get_counter enhanced)"
+    echo "  Files skipped: $(get_counter skipped)"
+    echo "  Errors: $(get_counter errors)"
     echo ""
-    
+
     if [[ "$DRY_RUN" == "true" ]]; then
         info "This was a dry run. No actual changes were made."
     fi
-    
-    if [[ "$ERRORS" -gt 0 ]]; then
+
+    local err_count
+    err_count=$(get_counter errors)
+    if [[ "$err_count" -gt 0 ]]; then
         warn "Some files had errors. Check the output above."
         exit 1
     fi
-    
+
     success "Preview image generation complete!"
 }
 

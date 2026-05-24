@@ -2,6 +2,7 @@
 lastmod: 2026-05-05T00:00:00.000Z
 title: ES6 Modular Navigation Architecture
 description: The zer0-mistakes navigation system refactored into ES6 modules — hover dropdowns, keyboard accessibility, smooth scroll, sidebar state persistence, and graceful degradation.
+preview: /images/previews/es6-modular-navigation-architecture.png
 layout: default
 categories:
   - docs

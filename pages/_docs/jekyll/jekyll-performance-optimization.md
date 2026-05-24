@@ -1,6 +1,7 @@
 ---
 title: Performance Optimization
 description: Basic performance tips for Jekyll sites.
+preview: /images/previews/performance-optimization.png
 layout: default
 categories:
     - docs

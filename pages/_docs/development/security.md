@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:56.000Z
 title: Security Scanning
 description: Guide to CodeQL security scanning and security best practices for the Zer0-Mistakes theme.
+preview: /images/previews/security-scanning.png
 layout: default
 categories:
     - docs

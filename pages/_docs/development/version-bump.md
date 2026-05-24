@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:55.000Z
 title: Version Bump Workflow
 description: Guide to the automated version bump workflow for managing semantic versioning and releases.
+preview: /images/previews/version-bump-workflow.png
 layout: default
 categories:
     - docs

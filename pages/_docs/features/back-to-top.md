@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:59.000Z
 title: Back to Top Button
 description: Floating button that appears on scroll, allowing users to quickly return to the top of the page.
+preview: /images/previews/back-to-top-button.png
 layout: default
 categories:
     - docs

@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:58.000Z
 title: Features
 description: Enable and configure theme features including diagrams, comments, analytics, and more.
+preview: /images/previews/features.png
 layout: default
 categories:
     - docs

@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:55.000Z
 title: Testing
 description: Comprehensive testing guide including test suite structure, test development standards, and CI/CD integration.
+preview: /images/previews/testing.png
 layout: default
 categories:
     - docs
