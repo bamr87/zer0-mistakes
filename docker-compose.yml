@@ -24,7 +24,9 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
-      target: dev  # Use lightweight dev stage for daily work
+      # dev-test is the stage with the full Jekyll + tooling toolchain; the
+      # leaner `base` stage lacks `COPY . .` and cannot serve the site.
+      target: dev-test
     
     # Platform specification for Apple Silicon compatibility
     platform: linux/amd64

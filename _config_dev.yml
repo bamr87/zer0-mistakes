@@ -31,23 +31,36 @@ posthog:
   api_key                : null
   api_host               : null
 
-# Disable production optimizations for faster builds
+# Disable production optimizations for faster builds.
+# `limit_posts: 30` caps the post-processing window during dev serves; raise it
+# or run without it when editing older posts (or pass --drafts/--unpublished).
 incremental              : true
+limit_posts              : 30
 profile                  : false
 
 # Performance: Disable rarely-edited collections during development.
 # Comment out or set output: true for any collection you're actively working on.
+# NOTE: `quests` stays enabled because consumer sites (e.g. it-journey) use it as
+# their primary dev loop. Sites without quest content can opt out by overriding
+# `collections.quests.output: false` in their own dev config.
 collections:
   notebooks:
     output: false
   hobbies:
     output: false
   quests:
-    output: false
+    output: true
 
-# Development-specific plugins (add any dev-only plugins here)
-# plugins:
-#   - jekyll-admin  # Uncomment if you want to use Jekyll admin interface
+# Development-only plugin list. Jekyll *replaces* (does not merge) the `plugins:`
+# key when layering configs, so this slim list intentionally drops feed/sitemap/
+# remote-theme (which fully regenerate every rebuild) to shave 10–20s off dev
+# serves. Re-enable any plugin here when you need to test its output locally.
+plugins:
+  - jekyll-include-cache
+  - jekyll-relative-links
+  - jekyll-redirect-from
+  - jekyll-seo-tag
+  - jekyll-paginate
 
 # Exclude — MUST include everything from _config.yml plus dev-only paths.
 # When using --config _config.yml,_config_dev.yml, Jekyll applies this file
@@ -120,7 +133,5 @@ exclude:
   - MERMAID-*/
   - pages/_notes/_templates/
   - "*.log"
-  - pages/_notes/_templates/
-  - .vscode/
   - debug-*.log
 
