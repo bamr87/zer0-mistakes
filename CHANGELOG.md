@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.7.1] - 2026-05-24
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 580f2b4 perf: Jekyll build performance improvements + MathJax 3 fix + richer Obsidian cache (#100)
+
+
 ## [Unreleased]
 
 ### Changed
