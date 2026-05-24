@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.7.0] - 2026-05-24
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 13f9e8c feat: AI-generated retro pixel-art preview images for all content (#102)
+
+
 ## [1.6.5] - 2026-05-19
 
 ### Changed
