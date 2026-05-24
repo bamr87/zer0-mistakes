@@ -34,7 +34,16 @@
         </strong>
       </div>
 
-      {% include content/toc.html sanitize=true html=content h_min=1 h_max=3 class="list-group-flush" item_class="list-group-item" anchor_class="" skip_no_ids=true %}
+      {% comment %}
+        Only invoke the Liquid TOC parser when the page actually has headings.
+        A single contains check is far cheaper than running the full toc.html
+        parser (allejo/jekyll-toc) on content with no heading anchors.
+      {% endcomment %}
+      {% if content contains '<h2' or content contains '<h3' or content contains '<h4' %}
+        {% include content/toc.html sanitize=true html=content h_min=1 h_max=3 class="list-group-flush" item_class="list-group-item" anchor_class="" skip_no_ids=true %}
+      {% else %}
+        <p class="text-body-secondary small fst-italic">No sections on this page.</p>
+      {% endif %}
     </nav>
   </div>
 </div>
