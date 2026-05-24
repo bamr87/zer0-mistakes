@@ -445,12 +445,17 @@ module Jekyll
         new_index
       end
 
-      # A fast fingerprint: sorted list of all document URLs, hashed.
+      # Fingerprint covering URLs, titles, and aliases so the cache is
+      # invalidated whenever any of those change (not only page additions/removals).
       def compute_url_fingerprint(site)
-        urls = []
-        urls.concat(site.documents.map(&:url)) if site.respond_to?(:documents)
-        urls.concat(site.pages.select { |p| p.output_ext == '.html' }.map(&:url))
-        Digest::MD5.hexdigest(urls.sort.join("\n"))
+        items = []
+        items.concat(site.documents) if site.respond_to?(:documents)
+        items.concat(site.pages.select { |p| p.output_ext == '.html' })
+        sig = items.map { |d|
+          aliases = Array(d.data['aliases']).sort.join(',')
+          "#{d.url}|#{d.data['title']}|#{aliases}"
+        }.sort.join("\n")
+        Digest::MD5.hexdigest(sig)
       end
     end
   end

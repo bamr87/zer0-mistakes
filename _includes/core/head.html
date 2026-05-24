@@ -57,6 +57,17 @@
 
 <!-- MathJax - Conditional loading based on page front matter (like Mermaid) -->
 {% if page.mathjax %}
+<!-- MathJax 3 configuration — must appear before the script tag.
+     Enables $...$ inline math (off by default in MathJax 3). -->
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  }
+};
+</script>
 <script id="MathJax-script" async src="{{ '/assets/vendor/mathjax/es5/tex-mml-chtml.js' | relative_url }}"></script>
 {% endif %}
 

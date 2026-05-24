@@ -4,12 +4,17 @@
 
 ### Changed
 - **Performance**: Made MathJax loading conditional via `page.mathjax` front matter flag (mirrors Mermaid pattern) — saves 1.8 MB transfer on pages without math
-- **Performance**: Cached Obsidian plugin wiki-link index across incremental builds — index is only rebuilt when document URLs change
+- **Performance**: Cached Obsidian plugin wiki-link index across incremental builds — index is rebuilt only when document URLs, titles, or aliases change
 - **Performance**: Disabled `notebooks`, `hobbies`, and `quests` collections in dev config for faster local builds
 - **Performance**: Removed jQuery from page loads — Bootstrap 5.3.3 does not require it and no custom JS uses jQuery APIs
 
 ### Fixed
 - Added missing `mathjax: true` front matter to pages that use math notation (test-notebook.md, jupyter-notebooks.md, jekyll-math-symbols-with-mathjax.md)
+- **MathJax 3 inline math**: Added `window.MathJax` config block before the script tag so `$...$` inline math (used in test-notebook.md) renders correctly — MathJax 3 does not enable dollar-sign inline delimiters by default
+- Updated `mathjax-math.md` documentation to show MathJax 3 API (`window.MathJax = {}`) instead of the removed MathJax 2 `MathJax.Hub.Config` API
+
+### Tests
+- Added `ObsidianCacheTest` suite (5 new tests) covering fingerprint invalidation on document addition, title change, alias change, cache hit, and cache miss
 
 ## [1.6.5] - 2026-05-19
 

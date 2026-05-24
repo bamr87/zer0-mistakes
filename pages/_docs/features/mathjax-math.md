@@ -62,19 +62,19 @@ The theme includes MathJax support. The include file loads MathJax conditionally
 
 ```html
 {% raw %}{% if page.mathjax %}
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
-      displayMath: [ ['$$','$$'], ['\\[','\\]'] ],
-      processEscapes: true
-    },
-    TeX: {
-      equationNumbers: { autoNumber: "AMS" }
-    }
-  });
+<!-- MathJax 3 configuration — must appear before the script tag.
+     Enables $...$ inline math (off by default in MathJax 3). -->
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  }
+};
 </script>
-<script src="{{ '/assets/vendor/mathjax/es5/tex-mml-chtml.js' | relative_url }}" async></script>
+<script id="MathJax-script" async
+  src="{{ '/assets/vendor/mathjax/es5/tex-mml-chtml.js' | relative_url }}"></script>
 {% endif %}{% endraw %}
 ```
 

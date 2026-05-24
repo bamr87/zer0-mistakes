@@ -21,6 +21,7 @@ module Jekyll
   class Logger
     def info(*); end
     def warn(*); end
+    def debug(*); end
   end
 
   def self.logger
@@ -173,5 +174,89 @@ class ObsidianConverterTest < Minitest::Test
   def test_plain_markdown_unchanged
     plain = "## Heading\n\nA regular paragraph with [a link](https://example.com) and **bold**.\n\n> a normal quote\n"
     assert_equal plain, convert(plain)
+  end
+end
+
+# ---------------------------------------------------------------------------
+# Index caching tests (build_or_reuse_index / compute_url_fingerprint)
+# ---------------------------------------------------------------------------
+class ObsidianCacheTest < Minitest::Test
+  FakePage = Struct.new(:url, :output_ext, :data, :relative_path) do
+    def respond_to?(method, include_private = false)
+      method == :documents ? false : super
+    end
+  end
+
+  def make_site(docs, pages = [])
+    Struct.new(:documents, :pages, :config).new(docs, pages, {})
+  end
+
+  def fingerprint(site)
+    Jekyll::Obsidian.send(:compute_url_fingerprint, site)
+  end
+
+  def setup
+    # Reset class-level cache between tests
+    Jekyll::Obsidian.instance_variable_set(:@cached_url_fingerprint, nil)
+    Jekyll::Obsidian.instance_variable_set(:@cached_index, nil)
+  end
+
+  def make_doc(title, url, aliases = [])
+    FakeDoc.new({ 'title' => title, 'aliases' => aliases }, url, "_notes/#{title.downcase.gsub(' ', '-')}.md", 'notes')
+  end
+
+  # Fingerprint changes when a document is added
+  def test_fingerprint_changes_on_new_document
+    doc_a = make_doc('Page A', '/a/')
+    fp1 = fingerprint(make_site([doc_a]))
+
+    doc_b = make_doc('Page B', '/b/')
+    fp2 = fingerprint(make_site([doc_a, doc_b]))
+
+    refute_equal fp1, fp2
+  end
+
+  # Fingerprint changes when a document title changes (same URL)
+  def test_fingerprint_changes_on_title_change
+    doc_old = make_doc('Old Title', '/page/')
+    fp1 = fingerprint(make_site([doc_old]))
+
+    doc_new = make_doc('New Title', '/page/')
+    fp2 = fingerprint(make_site([doc_new]))
+
+    refute_equal fp1, fp2
+  end
+
+  # Fingerprint changes when aliases change
+  def test_fingerprint_changes_on_alias_change
+    doc_no_alias  = make_doc('Page A', '/a/')
+    doc_with_alias = make_doc('Page A', '/a/', ['Alias'])
+
+    fp1 = fingerprint(make_site([doc_no_alias]))
+    fp2 = fingerprint(make_site([doc_with_alias]))
+
+    refute_equal fp1, fp2
+  end
+
+  # Second call with same site returns the cached index object
+  def test_build_or_reuse_returns_cached_index
+    doc = make_doc('Cached Doc', '/cached/')
+    site = make_site([doc])
+
+    idx1 = Jekyll::Obsidian.send(:build_or_reuse_index, site)
+    idx2 = Jekyll::Obsidian.send(:build_or_reuse_index, site)
+
+    assert_same idx1, idx2, 'expected the same Index object to be reused'
+  end
+
+  # New index is built when the site changes
+  def test_cache_invalidated_on_site_change
+    site1 = make_site([make_doc('Doc One', '/one/')])
+    site2 = make_site([make_doc('Doc One', '/one/'), make_doc('Doc Two', '/two/')])
+
+    idx1 = Jekyll::Obsidian.send(:build_or_reuse_index, site1)
+    idx2 = Jekyll::Obsidian.send(:build_or_reuse_index, site2)
+
+    refute_same idx1, idx2, 'expected a fresh Index after site changed'
   end
 end
