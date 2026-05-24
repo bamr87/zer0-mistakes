@@ -10,7 +10,7 @@ inputs:
     default: 'true'
     required: false
   suites:
-    description: 'Test suites to run: all, full, core, deployment, quality, styling, visual, etc.'
+    description: 'Test suites to run: all, full, core, deployment, quality, installation, site_generation, obsidian, playwright, playwright_snapshots'
     default: 'core,quality'
     required: false
   skip-docker:

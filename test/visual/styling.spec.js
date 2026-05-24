@@ -1,6 +1,6 @@
 /**
  * Frontend styling smoke tests — bundled Bootstrap (assets/vendor) + Jekyll main.css.
- * Run: ./test/test_styling.sh   or   npm run test:styling
+ * Run: ./test/test_playwright.sh   or   npm run test:smoke
  * Requires a running Jekyll server; BASE_URL overrides the default origin.
  */
 const { test, expect } = require('@playwright/test');

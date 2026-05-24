@@ -28,11 +28,16 @@ const VIEWPORTS = {
 };
 
 /**
- * Wait for a Jekyll-served page to be fully ready.
- * Waits for DOMContentLoaded and network idle.
+ * Wait for a Jekyll-served page to be ready.
+ *
+ * We deliberately avoid `networkidle` here: it's flaky on pages with
+ * analytics, mermaid CDNs, or long-running fetches. Instead we wait for
+ * `domcontentloaded` and then for `document.readyState === 'complete'`,
+ * which is sufficient for the assertions in our specs.
  */
 async function waitForJekyll(page, url = '/') {
-  await page.goto(url, { waitUntil: 'networkidle' });
+  await page.goto(url, { waitUntil: 'domcontentloaded' });
+  await page.waitForLoadState('load');
 }
 
 /**
@@ -48,7 +53,8 @@ async function gotoBeforeScrollSpy(page, url) {
       document.body.removeAttribute('data-bs-target');
     });
   });
-  await page.goto(url, { waitUntil: 'networkidle' });
+  await page.goto(url, { waitUntil: 'domcontentloaded' });
+  await page.waitForLoadState('load');
 }
 
 /**
@@ -57,12 +63,20 @@ async function gotoBeforeScrollSpy(page, url) {
  * @param {string} skinName - One of SKINS
  */
 async function setSkin(page, skinName) {
+  await page.waitForFunction(() => typeof window.zer0Bg?.setSkin === 'function');
   await page.evaluate((name) => {
     return new Promise((resolve) => {
       document.addEventListener('zer0:skin-change', () => resolve(), { once: true });
       window.zer0Bg.setSkin(name);
     });
   }, skinName);
+  // Wait for the html[data-theme-skin] attribute to reflect the new skin
+  // before any CSS-variable-dependent assertion or screenshot. This replaces
+  // a brittle waitForTimeout(300) that produced flaky snapshots.
+  await page.waitForFunction(
+    (name) => document.documentElement.getAttribute('data-theme-skin') === name,
+    skinName,
+  );
 }
 
 /**

@@ -29,17 +29,23 @@ test.describe('Theme skins', () => {
 
       test(`skin restores after navigation`, async ({ page }) => {
         await setSkin(page, skin);
-        // Navigate away
-        await page.goto('/faq/', { waitUntil: 'networkidle' });
-        // Skin should restore from localStorage
-        const attr = await page.getAttribute('html', 'data-theme-skin');
-        expect(attr).toBe(skin);
+        await page.goto('/faq/', { waitUntil: 'domcontentloaded' });
+        await page.waitForLoadState('load');
+        // Skin should restore from localStorage on the new page
+        await expect.poll(
+          () => page.getAttribute('html', 'data-theme-skin'),
+          { timeout: 5000 },
+        ).toBe(skin);
       });
 
       test(`homepage visual snapshot`, async ({ page }) => {
         await setSkin(page, skin);
-        // Wait for skin transition to settle
-        await page.waitForTimeout(300);
+        // setSkin already waits for the html[data-theme-skin] attr to flip
+        // and for the zer0:skin-change event. Animations are short; one
+        // requestAnimationFrame is enough to let CSS variable changes paint.
+        await page.evaluate(
+          () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))),
+        );
         await expect(page).toHaveScreenshot(`homepage-${skin}.png`, {
           fullPage: false,
           maxDiffPixels: 150,

@@ -7,8 +7,10 @@
     "vendor:install": "bash scripts/vendor-install.sh",
     "vendor:mermaid": "mkdir -p assets/vendor/mermaid && cp node_modules/mermaid/dist/mermaid.min.js assets/vendor/mermaid/mermaid.min.js",
     "css:bootstrap": "mkdir -p assets/css/vendor && sass --load-path=node_modules --no-source-map --style=compressed assets/css/theme-npm-entry.scss:assets/css/vendor/bootstrap-from-npm.css",
-    "test:styling": "playwright test --config=test/playwright.styling.config.js",
-    "test:regression": "playwright test --config=test/playwright.regression.config.js"
+    "test:smoke": "playwright test --config=test/playwright.config.js --project=smoke",
+    "test:snapshots": "playwright test --config=test/playwright.config.js --project=snapshots",
+    "test:regression": "playwright test --config=test/playwright.config.js --project=regression-chromium --project=regression-firefox --project=regression-webkit",
+    "test:update-snapshots": "playwright test --config=test/playwright.config.js --project=snapshots --update-snapshots"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.1",

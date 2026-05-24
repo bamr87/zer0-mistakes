@@ -82,16 +82,28 @@ Tests include:
 - HTML validation
 - Accessibility checks
 
-### Frontend styling tests (Playwright)
+### Frontend Playwright tests
 
-Automated checks for the theme CSS stack (Jekyll `main.css`, same-origin CSS HTTP 200, Bootstrap CSS variables) and layout chrome (header, navbar structure, mobile menu toggle, `bd-main` / `bd-content` on a default-layout page).
+The Playwright runner is split into tiers selected via `PLAYWRIGHT_PROJECT`:
+
+- **`smoke`** (default) — CSS load, Bootstrap tokens, layout chrome, admin DOM, behavioral skin tests, accessibility component checks.
+- **`snapshots`** — pixel screenshots of the homepage in each of the 9 theme skins (path-filtered in CI).
+- **`regression-{chromium,firefox,webkit}`** — all specs across all browsers (manual `workflow_dispatch` only).
 
 ```bash
-# Starts Jekyll on 127.0.0.1:4011 unless BASE_URL is already set
-./test/test_runner.sh --suites styling
+# Smoke tier — starts Jekyll on 127.0.0.1:4011 unless BASE_URL is already set
+./test/test_runner.sh --suites playwright
+npm run test:smoke
 
-# Or with Docker already serving on 4000:
-BASE_URL=http://127.0.0.1:4000 npm run test:styling
+# Pixel snapshots
+./test/test_runner.sh --suites playwright_snapshots
+npm run test:snapshots
+
+# Reuse Docker Jekyll on :4000
+BASE_URL=http://127.0.0.1:4000 ./test/test_playwright.sh
+
+# Refresh Linux snapshot baselines (uses Docker)
+./test/update-snapshots.sh
 ```
 
 Core tests also validate that a production Jekyll build emits `main.css` containing docs-layout rules (e.g. `bd-layout`).
