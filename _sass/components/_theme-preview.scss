@@ -1,0 +1,41 @@
+// Theme Preview style guide — gallery layout and section chrome
+
+.theme-preview-gallery {
+  .theme-preview-section {
+    margin-bottom: var(--zer0-space-5, 3rem);
+    scroll-margin-top: 5.5rem;
+  }
+
+  .theme-preview-heading {
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--zer0-color-border, var(--bs-border-color));
+    color: var(--bs-body-color);
+  }
+}
+
+.theme-preview-toc {
+  .nav-link {
+    padding: 0.35rem 0.75rem;
+    color: var(--bs-body-color);
+
+    &:hover {
+      color: var(--bs-link-color);
+    }
+  }
+}
+
+.theme-preview-navbar {
+  background-color: var(--bs-body-bg);
+}
+
+.theme-preview-footer {
+  background-color: var(--zer0-color-bg-muted, var(--bs-secondary-bg));
+}
+
+// Mini appearance panel inside preview sidebar (appearance.js injects .zer0-appearance-panel)
+[data-appearance-panel-host] .zer0-appearance-panel {
+  border: 0 !important;
+  padding: 0 !important;
+  margin-top: 0 !important;
+}

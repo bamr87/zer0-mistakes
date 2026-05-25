@@ -92,26 +92,21 @@ A complete automatic theme version display system for the zer0-mistakes Jekyll t
 To test this feature:
 
 1. **Build the site**:
-
-   ```bash
+  ```bash
    bundle exec jekyll serve
-   ```
-
+  ```
 2. **Check build logs** for theme version output:
-
-   ```
+  ```
    ThemeVersion: jekyll-theme-zer0 v0.5.0 (gem)
-   ```
-
+  ```
 3. **Access the info modal**:
-   - Click the gear icon (⚙️) in the header
-   - Or click "Info" in the footer
-
+  - Click the gear icon (⚙️) in the header
+  - Or click "Info" in the footer
 4. **Verify display**:
-   - Theme version shows correctly
-   - Jekyll version matches your environment
-   - Links work properly
-   - Modal closes correctly
+  - Theme version shows correctly
+  - Jekyll version matches your environment
+  - Links work properly
+  - Modal closes correctly
 
 ## For it-journey Site
 

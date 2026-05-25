@@ -1,0 +1,32 @@
+// ============================================================================
+// Spacing tokens — semantic --zer0-space-* custom properties
+// ----------------------------------------------------------------------------
+// Aliased onto Bootstrap's spacing scale (0–5) and extended with FAB/offset
+// values needed by the floating action button stack. Used by component
+// partials so spacing decisions live in one place.
+// ============================================================================
+
+:root {
+  // Base scale (mirrors Bootstrap utility 0–5) ------------------------------
+  --zer0-space-0: 0;
+  --zer0-space-1: 0.25rem;
+  --zer0-space-2: 0.5rem;
+  --zer0-space-3: 1rem;
+  --zer0-space-4: 1.5rem;
+  --zer0-space-5: 3rem;
+
+  // Layout-specific --------------------------------------------------------
+  --zer0-space-section: clamp(2rem, 6vw, 5rem);     // vertical rhythm between landing sections
+  --zer0-space-container-x: clamp(1rem, 4vw, 2rem); // gutter
+  --zer0-space-fab-offset: 1rem;                    // FAB distance from viewport edge
+  --zer0-space-fab-size: 3.5rem;                    // standard circular FAB diameter
+  --zer0-space-fab-gap: 0.75rem;                    // gap between stacked FABs
+
+  // Sidebar widths (kept compatible with _docs-layout.scss) ----------------
+  --zer0-sidebar-width: 17rem;
+  --zer0-sidebar-toc-width: 12rem;
+
+  // Docs layout container — wider than Bootstrap container-xxl (1320px) ----
+  --zer0-layout-max-width-xl: 1280px;
+  --zer0-layout-max-width-xxl: clamp(1400px, 94vw, 1720px);
+}

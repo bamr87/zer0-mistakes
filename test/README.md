@@ -136,7 +136,7 @@ All tiers share `test/playwright.config.js`.
 
 | Tier | `PLAYWRIGHT_PROJECT` | What it covers | When CI runs it |
 |------|----------------------|----------------|-----------------|
-| Smoke | `smoke` (default) | CSS load, Bootstrap tokens, layout chrome, admin DOM, accessibility component checks | Every code-change PR |
+| Smoke | `smoke` (default) | CSS load, Bootstrap tokens, layout chrome, admin DOM, **ui-refresh** styling/layout/a11y, accessibility component checks | Every code-change PR |
 | Snapshots | `snapshots` | Homepage pixel screenshots for the 9 theme skins | Path-filtered: only when `_sass/`, `assets/`, `_layouts/`, `_includes/`, or `test/visual/` change |
 | Regression | `regression-chromium` / `regression-firefox` / `regression-webkit` | All specs across all browsers | Manual `workflow_dispatch` only |
 
@@ -151,6 +151,9 @@ PLAYWRIGHT_PROJECT=snapshots ./test/test_playwright.sh
 
 # Reuse an existing Jekyll server (e.g. docker compose on :4000)
 BASE_URL=http://localhost:4000 ./test/test_playwright.sh
+
+# Run only the UI refresh regression suite
+npx playwright test --project=smoke ui-refresh.spec.js
 
 # npm aliases
 npm run test:smoke
@@ -246,8 +249,8 @@ test/
 │   ├── install_test_utils.sh
 │   └── config_matrix_generator.sh
 ├── visual/                  # ✅ Playwright specs + snapshot baselines
-│   ├── *.spec.js            # 11 spec files (styling, skins, admin, a11y, …)
-│   ├── fixtures.js          # Shared helpers (SKINS, VIEWPORTS, setSkin, …)
+│   ├── *.spec.js            # 12 spec files (styling, ui-refresh, skins, admin, a11y, …)
+│   ├── fixtures.js          # Shared helpers (SKINS, VIEWPORTS, UI_ROUTES, setSkin, …)
 │   └── snapshots/           # Committed Linux baselines for the snapshots tier
 ├── visual-results/          # ⚙️ Run output (gitignored): traces, html report, jekyll.log
 ├── results/                 # ✅ Test results (JSON)

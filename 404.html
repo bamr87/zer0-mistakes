@@ -179,33 +179,47 @@ git push origin main</code></pre>
   <div class="my-4">
     <p class="h5">Or navigate to one of these pages:</p>
     <div class="nav justify-content-center">
-      <a class="nav-link" href="{{ '/' | relative_url }}">Home</a>
-      <a class="nav-link" href="{{ '/about/' | relative_url }}">About</a>
-      <a class="nav-link" href="{{ '/contact/' | relative_url }}">Contact</a>
+      {% assign _404_candidates = "Home,/|About,/about/|Contact,/contact/" | split: "|" %}
+      {% for entry in _404_candidates %}
+        {% assign _parts = entry | split: "," %}
+        {% assign _label = _parts[0] %}
+        {% assign _url   = _parts[1] %}
+        {% assign _page  = site.html_pages | where: "url", _url | first %}
+        {% unless _page %}
+          {% for col in site.collections %}
+            {% assign _page = col.docs | where: "url", _url | first %}
+            {% if _page %}{% break %}{% endif %}
+          {% endfor %}
+        {% endunless %}
+        {% if _page or _url == "/" %}
+          <a class="nav-link" href="{{ _url | relative_url }}">{{ _label }}</a>
+        {% endif %}
+      {% endfor %}
     </div>
   </div>
 
   <a class="btn btn-danger mt-4" href="{{ '/' | relative_url }}">Return to Homepage</a>
+  {% if site.github_user and site.repository_name %}
   <div class="mt-3">
-    <a id="github-issue-link" class="btn btn-secondary" href="#">
+    {% capture _issue_title %}404 Error{% endcapture %}
+    {% capture _issue_body %}I encountered a 404 error on this site. Please investigate.{% endcapture %}
+    <a id="github-issue-link"
+       class="btn btn-secondary"
+       href="https://github.com/{{ site.github_user }}/{{ site.repository_name }}/issues/new?title={{ _issue_title | uri_escape }}&body={{ _issue_body | uri_escape }}"
+       target="_blank"
+       rel="noopener noreferrer">
       Submit an Issue on GitHub
     </a>
   </div>
-</div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var githubIssueLink = document.getElementById('github-issue-link');
-    var githubUser = '{{ site.github_user }}';
-    var repoName = '{{ site.repository_name }}';
-    if (githubUser && repoName) {
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var githubIssueLink = document.getElementById('github-issue-link');
+      if (!githubIssueLink) return;
       var currentUrl = window.location.href;
-      var repoSlug = githubUser + '/' + repoName;
-      var githubUrl = 'https://github.com/' + repoSlug + '/issues/new?title=404%20Error%20on%20' + encodeURIComponent(currentUrl) + '&body=I%20encountered%20a%20404%20error%20on%20the%20following%20page:%20' + encodeURIComponent(currentUrl) + '.%20Please%20investigate.';
-      githubIssueLink.href = githubUrl;
-    } else {
-      githubIssueLink.style.display = 'none';
-    }
-  });
-</script>
+      var repoSlug = '{{ site.github_user }}/{{ site.repository_name }}';
+      githubIssueLink.href = 'https://github.com/' + repoSlug + '/issues/new?title=' + encodeURIComponent('404 Error on ' + currentUrl) + '&body=' + encodeURIComponent('I encountered a 404 error on the following page: ' + currentUrl + '. Please investigate.');
+    });
+  </script>
+  {% endif %}
+</div>
 {% endif %}

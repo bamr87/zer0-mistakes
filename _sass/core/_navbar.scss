@@ -3,147 +3,154 @@
 // ==============================================================================
 // 
 // Extracted from navbar.html inline styles for better maintainability
-// Breakpoints: 
-//   - Desktop XL >= 1200px (full labels)
-//   - Desktop LG 992px-1199px (icons with tooltips, optimized spacing)
+// Breakpoints:
+//   - Desktop >= 992px (inline nav; label density via @container bd-nav)
 //   - Mobile < 992px (offcanvas)
+// Nav label tiers (center track / bd-nav container width):
+//   - >= 38rem (~608px): full labels (with ellipsis safety when crowded)
+//   - < 38rem: icon-only (tooltips on lg–xl viewports)
 // ==============================================================================
 
 // -----------------------------------------------------------------------------
-// Compact Desktop Navigation (992px - 1199px)
-// Icons only with enhanced tooltips for better UX
+// Split dropdown toggles — ghost chevron affordance (all breakpoints)
+// Chevron-only control: no Bootstrap .btn box, no theme .btn hover chrome.
 // -----------------------------------------------------------------------------
 
-@media (min-width: 992px) and (max-width: 1199.98px) {
-  // Hide nav link text labels, keep icons visible
-  #bdNavbar .nav-link .nav-link-text {
-    display: none;
+#bdNavbar .nav-hover-dropdown > .dropdown-toggle-split {
+  --bs-btn-border-width: 0;
+  --bs-btn-bg: transparent;
+  --bs-btn-hover-bg: transparent;
+  --bs-btn-active-bg: transparent;
+  --bs-btn-border-color: transparent;
+  --bs-btn-hover-border-color: transparent;
+  --bs-btn-active-border-color: transparent;
+  --bs-btn-box-shadow: none;
+  --bs-btn-focus-box-shadow: none;
+
+  flex-shrink: 0;
+  align-self: stretch;        // fill the full height of the nav row
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  // Compact chevron on desktop; mobile bumps to the 44px touch target below.
+  padding: 0 0.25rem;
+  min-width: 1.5rem;
+  width: 1.5rem;
+  min-height: 0;
+  border: none;
+  border-radius: 0.375rem;
+  background-color: transparent;
+  box-shadow: none;
+  color: inherit;
+  line-height: 1;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+
+  @media (max-width: 991.98px) {
+    min-width: 44px;
+    min-height: 44px;
+    width: auto;
+    padding: var(--zer0-space-1) var(--zer0-space-2);
   }
-  
-  // Adjust icon margin when text is hidden
+
+  &::before {
+    display: none; // theme .btn ripple overlay
+  }
+
+  &:hover,
+  &:focus-visible,
+  &[aria-expanded="true"] {
+    background-color: var(--bs-tertiary-bg);
+    border: none;
+    box-shadow: none;
+    transform: none;
+    color: inherit;
+  }
+
+  &:active {
+    background-color: var(--bs-tertiary-bg);
+    transform: none;
+    box-shadow: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 2px;
+  }
+
+  &::after {
+    margin-left: 0;
+    vertical-align: 0.15em;
+    font-size: 1em;
+    opacity: 0.7;
+    transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
+  }
+
+  &:hover::after,
+  &[aria-expanded="true"]::after {
+    opacity: 1;
+  }
+}
+
+// Shared icon-only nav styling (applied via @container bd-nav below)
+@mixin navbar-nav-icon-only {
+  #bdNavbar .nav-link .nav-link-text {
+    display: none !important;
+  }
+
   #bdNavbar .nav-link i {
     margin-right: 0 !important;
-    font-size: 1.15rem; // Slightly larger icons for better visibility
+    font-size: 1.15rem;
   }
-  
-  // Optimized nav item spacing for compact view
+
   #bdNavbar .navbar-nav {
     gap: 0.125rem;
   }
-  
+
   #bdNavbar .nav-link {
-    padding: 0.625rem 0.75rem; // Increased padding for better touch/click targets
-    min-width: 44px; // WCAG minimum touch target
+    padding: 0.625rem 0.75rem;
+    min-width: 44px;
     min-height: 44px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 0.375rem; // Rounded corners for modern look
+    border-radius: 0.375rem;
     transition: all 0.2s ease-in-out;
   }
 
-  // Beat later desktop rules that set display:flex without centering (icon-only rows)
-  #bdNavbar .nav-item > .nav-link:not(.btn),
+  #bdNavbar .nav-item > .nav-link:not(.dropdown-toggle-split),
   #bdNavbar .nav-hover-dropdown > .nav-link:first-child {
     justify-content: center;
+    flex: 0 0 auto;
+    max-width: none;
+    overflow: visible;
   }
-  
-  // Enhanced hover state for better feedback
+
+  #bdNavbar .nav-item,
+  #bdNavbar .nav-hover-dropdown {
+    flex: 0 0 auto;
+    min-width: auto;
+  }
+
+  #bdNavbar .nav-hover-dropdown > .nav-link:first-child {
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+
   #bdNavbar .nav-link:hover {
     background-color: var(--bs-tertiary-bg);
     transform: translateY(-1px);
   }
-  
-  // Dropdown toggle with improved spacing
+
   .nav-hover-dropdown .dropdown-toggle-split {
-    padding: 0.625rem 0.5rem;
-    min-width: 32px; // Smaller but still accessible
-    
+    padding: var(--zer0-space-1) var(--zer0-space-2);
+
     &::after {
-      font-size: 0.75em;
-      margin-left: 0;
       transition: transform 0.2s ease-in-out;
     }
-    
+
     &:hover::after {
-      transform: translateY(2px); // Visual feedback on hover
+      transform: translateY(2px);
     }
-  }
-  
-  // Keep Search button label hidden with improved styling
-  .nav-search-button .d-lg-inline {
-    display: none !important;
-  }
-  
-  .nav-search-button {
-    padding: 0.625rem 0.75rem !important;
-    min-width: 44px;
-    min-height: 44px;
-  }
-  
-  // Hide site subtitle at compact breakpoint
-  .site-subtitle {
-    display: none !important;
-  }
-  
-  // Optimize brand group spacing
-  .navbar-brand-group {
-    gap: 0.5rem !important;
-  }
-  
-  // Compact home links with better visual feedback
-  .navbar-home-links .btn {
-    padding: 0.5rem 0.625rem;
-    min-width: 44px;
-    min-height: 44px;
-    border-radius: 0.375rem;
-    transition: all 0.2s ease-in-out;
-    
-    &:hover {
-      background-color: var(--bs-tertiary-bg);
-      transform: translateY(-1px);
-    }
-  }
-}
-
-// -----------------------------------------------------------------------------
-// Full Desktop Navigation (>= 1200px)
-// Show full labels with icons and enhanced interactions
-// -----------------------------------------------------------------------------
-
-@media (min-width: 1200px) {
-  // Flex + gap on parent (>=992) handles spacing; inline would block ellipsis shrinking
-  #bdNavbar .nav-link .nav-link-text {
-    margin-left: 0;
-    min-width: 0;
-    transition: opacity 0.15s ease-in-out;
-  }
-  
-  #bdNavbar .nav-link i {
-    margin-right: 0;
-    font-size: 1rem;
-    transition: transform 0.15s ease-in-out;
-  }
-  
-  // Smooth hover animation
-  #bdNavbar .nav-link:hover {
-    background-color: var(--bs-tertiary-bg);
-    border-radius: 0.375rem;
-    
-    i {
-      transform: scale(1.1);
-    }
-  }
-  
-  // Enhanced dropdown parent link
-  .nav-hover-dropdown > .nav-link {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-  }
-  
-  .nav-hover-dropdown > .dropdown-toggle-split {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
   }
 }
 
@@ -198,17 +205,23 @@
   }
 }
 
-@media (min-width: 992px) and (max-width: 1199.98px) {
-  .navbar-utility-controls {
-    gap: 0.25rem;
-    
-    .nav-search-button,
-    .nav-settings-button {
-      padding: 0.625rem;
-    }
-    
-    .nav-link-text {
+@media (min-width: 992px) {
+  @container navbar-main (max-width: 75rem) {
+    #navbar .navbar-utility-controls .nav-link-text {
       display: none !important;
+    }
+  }
+
+  @container navbar-main (max-width: 45.99rem) {
+    #navbar .navbar-utility-controls {
+      gap: 0.25rem;
+    }
+
+    #navbar .navbar-utility-controls .nav-search-button,
+    #navbar .navbar-utility-controls .nav-settings-button {
+      padding: 0.625rem;
+      min-width: 44px;
+      min-height: 44px;
     }
   }
 }
@@ -260,29 +273,20 @@
     overflow: visible;
   }
 
-  // Clip in-flow nav row without creating a scroll container (hidden + abs dropdowns = horiz scrollbar)
+  // Establish the container-query context for label density without clipping —
+  // any axis-specific overflow here would compute the other axis to `auto` and
+  // clip absolutely-positioned dropdowns that extend below the nav row.
+  // Horizontal overflow is prevented by the icon-only container query below.
   #bdNavbar .bd-navbar-nav-viewport {
     width: 100%;
     max-width: 100%;
     min-width: 0;
-    overflow-y: visible;
+    overflow: visible;
     container-type: inline-size;
     container-name: bd-nav;
   }
 
-  @supports (overflow-x: clip) {
-    #bdNavbar .bd-navbar-nav-viewport {
-      overflow-x: clip;
-    }
-  }
-
-  @supports not (overflow-x: clip) {
-    #bdNavbar .bd-navbar-nav-viewport {
-      overflow-x: hidden;
-    }
-  }
-
-  // Fill the track; items shrink — text truncates instead of scrolling
+  // Fill the track; lg allows shrink + ellipsis; xl overrides when labels are shown
   #bdNavbar .navbar-nav {
     flex-direction: row !important;
     flex-wrap: nowrap !important;
@@ -308,7 +312,7 @@
     flex: 0 1 auto;
   }
 
-  // Dropdown row: label flexes, split toggle stays fixed width
+  // Dropdown row: label flexes when crowded, split toggle stays fixed width
   .nav-hover-dropdown > .nav-link:first-child {
     display: flex;
     align-items: center;
@@ -322,20 +326,13 @@
     flex-shrink: 0;
   }
 
-  #bdNavbar .nav-item > .nav-link:not(.btn) {
+  #bdNavbar .nav-item > .nav-link:not(.dropdown-toggle-split) {
     display: flex;
     align-items: center;
     gap: 0.375rem;
     min-width: 0;
     max-width: 100%;
     overflow: hidden;
-  }
-
-  #bdNavbar .nav-link .nav-link-text {
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   #bdNavbar .nav-link i {
@@ -374,86 +371,106 @@
     right: 0;
   }
   
-  // Smooth hover reveal animation
+  // Click-to-toggle reveal animation (no parent-hover trigger — only the chevron
+  // button opens/closes the dropdown via .show toggled in JS).
   .nav-hover-dropdown .dropdown-menu {
     opacity: 0;
     visibility: hidden;
     transform: translateY(-0.5rem);
-    transition: opacity 0.2s ease-in-out, 
+    transition: opacity 0.2s ease-in-out,
                 visibility 0.2s ease-in-out,
                 transform 0.2s ease-in-out;
     display: block !important;
   }
-  
-  .nav-hover-dropdown:hover .dropdown-menu,
+
   .nav-hover-dropdown .dropdown-menu.show {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
   }
-  
-  // Enhanced dropdown toggle
+
+  // Enhanced dropdown toggle — hover bg from shared base; chevron rotates on open
   .nav-hover-dropdown .dropdown-toggle-split {
-    padding-left: 0.375rem;
-    padding-right: 0.625rem;
-    border-radius: 0.375rem;
-    transition: all 0.2s ease-in-out;
-    
-    &:hover {
-      background-color: var(--bs-tertiary-bg);
-    }
+    padding-left: var(--zer0-space-1);
+    padding-right: var(--zer0-space-1);
   }
-  
-  .nav-hover-dropdown .dropdown-toggle-split::after {
-    vertical-align: 0.15em;
-    font-size: 0.75em;
-    transition: transform 0.2s ease-in-out;
-  }
-  
-  // Visual feedback when dropdown is open
-  .nav-hover-dropdown:hover .dropdown-toggle-split::after {
+
+  .nav-hover-dropdown .dropdown-toggle-split[aria-expanded="true"]::after {
     transform: rotate(180deg);
   }
 
-  // After base dropdown-toggle rules so these win when the nav track is narrow
-  @container bd-nav (max-width: 42rem) {
-    #bdNavbar .nav-link .nav-link-text {
-      display: none !important;
-    }
-
-    #bdNavbar .nav-link i {
-      margin-right: 0 !important;
-      font-size: 1.15rem;
-    }
-
+  // Show labels whenever the center track has room (>= ~38rem / 608px).
+  // Items keep min-width:0 + ellipsis so a crowded row degrades gracefully
+  // before falling all the way back to the icon-only tier below.
+  @container bd-nav (min-width: 38rem) {
     #bdNavbar .navbar-nav {
       gap: 0.125rem;
     }
 
     #bdNavbar .nav-link {
-      padding: 0.625rem 0.75rem;
-      min-width: 44px;
-      min-height: 44px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      padding: 0.375rem 0.5rem;
+    }
+
+    #bdNavbar .nav-link .nav-link-text {
+      display: inline !important;
+      margin-left: 0;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      transition: opacity 0.15s ease-in-out;
+    }
+
+    #bdNavbar .nav-item,
+    #bdNavbar .nav-hover-dropdown {
+      flex: 0 1 auto;
+      min-width: 0;
+    }
+
+    #bdNavbar .nav-item > .nav-link:not(.dropdown-toggle-split),
+    #bdNavbar .nav-hover-dropdown > .nav-link:first-child {
+      flex: 1 1 auto;
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
+      gap: 0.25rem;
+    }
+
+    #bdNavbar .nav-link i {
+      margin-right: 0;
+      font-size: 1rem;
+      transition: transform 0.15s ease-in-out;
+    }
+
+    #bdNavbar .nav-link:hover {
+      background-color: var(--bs-tertiary-bg);
       border-radius: 0.375rem;
-    }
 
-    .nav-hover-dropdown > .nav-link:first-child {
-      flex: 0 0 auto;
-      overflow: visible;
-    }
-
-    .nav-hover-dropdown .dropdown-toggle-split {
-      padding: 0.625rem 0.5rem;
-      min-width: 32px;
-
-      &::after {
-        font-size: 0.75em;
-        margin-left: 0;
+      i {
+        transform: scale(1.1);
       }
     }
+
+    .nav-hover-dropdown > .nav-link {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .nav-hover-dropdown > .dropdown-toggle-split {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      min-width: 1.25rem;
+      min-height: 0;
+      width: 1.25rem;
+      padding-left: 0.125rem;
+      padding-right: 0.125rem;
+      margin-left: 0 !important;
+    }
+  }
+
+  // Icon-only when the center track is too narrow even for ellipsized labels
+  @container bd-nav (max-width: 37.99rem) {
+    @include navbar-nav-icon-only;
   }
 }
 
@@ -471,6 +488,10 @@
   #bdNavbar .navbar-nav {
     flex-direction: column !important;
   }
+
+  #bdNavbar .nav-item {
+    margin-bottom: 0;
+  }
   
   .nav-hover-dropdown {
     flex-wrap: wrap !important;
@@ -483,35 +504,22 @@
   
   .nav-hover-dropdown > .dropdown-toggle-split {
     flex: 0 0 auto;
-    // WCAG minimum touch target (48px recommended for mobile)
-    min-width: 48px;
-    min-height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.375rem;
-    transition: all 0.2s ease-in-out;
-    
-    &:hover {
-      background-color: var(--bs-tertiary-bg);
-    }
-    
-    &:focus-visible {
-      outline: 2px solid var(--bs-primary);
-      outline-offset: 2px;
-    }
   }
-  
+
   .nav-hover-dropdown > .dropdown-toggle-split::after {
     transition: transform 0.3s ease-in-out;
   }
-  
+
   .nav-hover-dropdown > .dropdown-toggle-split.show::after,
   .nav-hover-dropdown > .dropdown-toggle-split[aria-expanded="true"]::after {
     transform: rotate(180deg);
   }
   
   // Improved dropdown menu animation
+  #bdNavbar .nav-hover-dropdown .dropdown-menu {
+    padding: var(--zer0-space-0) var(--zer0-space-0) var(--zer0-space-0) var(--zer0-space-3);
+  }
+
   .nav-hover-dropdown .dropdown-menu {
     position: static !important;
     float: none;
@@ -521,7 +529,7 @@
     border: none;
     box-shadow: none;
     background-color: var(--bs-tertiary-bg);
-    padding-left: 1.25rem; // Increased indent
+    padding-left: var(--zer0-space-3);
     max-height: 0;
     overflow: hidden;
     opacity: 0;
@@ -536,16 +544,17 @@
   .nav-hover-dropdown .dropdown-menu.show {
     max-height: 600px; // Increased for more items
     opacity: 1;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    padding-top: var(--zer0-space-0);
+    padding-bottom: var(--zer0-space-0);
   }
 
-  // Larger touch targets for nav items
-  #bdNavbar .nav-link {
-    padding: 0.875rem 1rem;
-    min-height: 52px; // Increased from 48px
+  // Compact touch targets for offcanvas nav items (parent links, not split toggles)
+  #bdNavbar .nav-link:not(.dropdown-toggle-split) {
+    padding: var(--zer0-space-1) var(--zer0-space-3);
+    min-height: 40px;
     display: flex;
     align-items: center;
+    gap: var(--zer0-space-2);
     border-radius: 0.375rem;
     transition: background-color 0.2s ease-in-out;
     
@@ -560,14 +569,15 @@
     }
   }
   
-  // Dropdown items with better spacing
-  #bdNavbar .dropdown-item {
-    padding: 0.75rem 1rem;
-    min-height: 48px;
+  // Dropdown items — tighter than top-level but still tappable
+  #bdNavbar .dropdown-item,
+  #bdNavbar .nav-hover-dropdown .dropdown-item {
+    padding: var(--zer0-space-1) var(--zer0-space-3);
+    min-height: 40px;
+    margin-bottom: 0;
     display: flex;
     align-items: center;
     border-radius: 0.375rem;
-    margin-bottom: 0.25rem;
     transition: all 0.2s ease-in-out;
     
     &:last-child {
@@ -609,9 +619,13 @@
     }
   }
   
-  // Enhanced offcanvas body
+  // Compact offcanvas body — vertical padding drives item rhythm
   #bdNavbar .offcanvas-body {
-    padding: 1rem;
+    padding: var(--zer0-space-1) var(--zer0-space-3);
+  }
+
+  #bdNavbar .navbar-nav {
+    gap: 0;
   }
 }
 

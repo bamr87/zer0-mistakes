@@ -1,0 +1,25 @@
+{%- comment -%}
+  Local graph FAB trigger — rendered from footer.html so the fixed button
+  stays above the footer band. Pair with navigation/local-graph.html (panel).
+{%- endcomment -%}
+{%- assign _effective_sidebar = page.sidebar -%}
+{%- if _effective_sidebar == nil -%}
+  {%- if page.post_type == "featured" or page.post_type == "breaking" -%}
+    {%- assign _effective_sidebar = false -%}
+  {%- else -%}
+    {%- assign _effective_sidebar = true -%}
+  {%- endif -%}
+{%- endif -%}
+{%- if page.local_graph != false and _effective_sidebar != false -%}
+<div class="obsidian-local-graph-fab d-print-none" data-obsidian-local-graph-toggle>
+  <button class="btn btn-primary rounded-circle shadow-lg p-0 obsidian-local-graph-toggle"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#obsidianLocalGraphPanel"
+          aria-controls="obsidianLocalGraphPanel"
+          aria-label="Open local graph"
+          title="Open local graph">
+    <i class="bi bi-diagram-3 fs-5" aria-hidden="true"></i>
+  </button>
+</div>
+{%- endif -%}

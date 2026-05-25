@@ -1,54 +1,74 @@
-<!-- Breadcrumsbs
-  file: breadcrumbs.html
-  path: _includes/breadcrumbs.html
-  TODO: Update to be read by Google Search Console "https://developers.google.com/search/docs/appearance/structured-data/breadcrumb"
- -->
-{% if page.url != "/" and site.breadcrumbs %}
-  {% unless paginator %}{% endunless %}
-  
-<nav class="breadcrumbs">
-  <ol itemscope itemtype="https://schema.org/BreadcrumbList">
-    <i class="bi bi-folder"></i>
-    {% assign crumbs = page.url | remove:'/index.html' | split: '/' %}
-    {% assign section = crumbs[1] | default: '' %}
-    <a href="{{ '/' | relative_url }}">root</a>
+{%- comment -%}
+  ===================================================================
+  BREADCRUMBS — Accessible breadcrumb trail with Schema.org markup
+  ===================================================================
 
-    {% comment %}
+  Path: _includes/navigation/breadcrumbs.html
+
+  Renders a <nav> labelled "Breadcrumb" with a proper <ol> of <li> items.
+  Each <li> may itself include the folder icon (kept out of the list for HTML
+  validity). The trail uses BreadcrumbList microdata, so it's eligible for
+  Google rich results, and the first crumb label is sourced from
+  site.data.ui-text for i18n.
+  ===================================================================
+{%- endcomment -%}
+{% if page.url != "/" and site.breadcrumbs %}
+  {%- assign ui = site.data.ui-text[site.locale] | default: site.data.ui-text.en -%}
+  {%- assign label_root = ui.breadcrumbs_root | default: "Home" -%}
+  {%- assign label_aria = ui.breadcrumbs_aria | default: "Breadcrumb" -%}
+  {%- assign crumbs = page.url | remove:'/index.html' | split: '/' -%}
+  {%- assign section = crumbs[1] | default: '' -%}
+
+<nav class="breadcrumbs" aria-label="{{ label_aria }}">
+  <ol class="breadcrumb mb-0" itemscope itemtype="https://schema.org/BreadcrumbList">
+    <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+      <i class="bi bi-folder me-1" aria-hidden="true"></i>
+      <a href="{{ '/' | relative_url }}" itemprop="item"><span itemprop="name">{{ label_root }}</span></a>
+      <meta itemprop="position" content="1" />
+    </li>
+
+    {%- comment -%}
       Avoid linking to intermediate directories that don't have index pages.
-      Example: posts are /posts/YYYY/MM/DD/slug/ (only /posts/ and the leaf page exist).
-    {% endcomment %}
-    {% if section == 'posts' %}
-      / <a href="{{ '/posts/' | relative_url }}">Posts</a>
-      / {{ page.title }}
-    {% elsif section == 'notebooks' %}
-      / <a href="{{ '/notebooks/' | relative_url }}">Notebooks</a>
-      / {{ page.title }}
-    {% elsif section == 'notes' %}
-      / <a href="{{ '/notes/' | relative_url }}">Notes</a>
-      / {{ page.title }}
-    {% elsif section == 'docs' %}
-      / <a href="{{ '/docs/' | relative_url }}">Docs</a>
-      / {{ page.title }}
-    {% else %}
-      {% for crumb in crumbs offset: 1 %}
-        {% if forloop.last %}
-          / {{ page.title }}
-        {% elsif forloop.first %}
-          / <a href="{{ '/' | append: crumb | append: '/' | relative_url }}">{{ crumb | replace:'-',' ' | remove:'.html' | capitalize }}</a>
-        {% else %}
-          {% comment %} Keep intermediate crumbs as plain text to avoid dead links {% endcomment %}
-          / {{ crumb | replace:'-',' ' | remove:'.html' | capitalize }}
-        {% endif %}
-      {% endfor %}
-    {% endif %}
+      Example: posts are /posts/YYYY/MM/DD/slug/ (only /posts/ and the leaf
+      page exist on disk).
+    {%- endcomment -%}
+    {%- assign known_sections = "posts,notebooks,notes,docs" | split: "," -%}
+    {%- if known_sections contains section -%}
+      {%- assign section_label = section | capitalize -%}
+      <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a href="{{ '/' | append: section | append: '/' | relative_url }}" itemprop="item">
+          <span itemprop="name">{{ section_label }}</span>
+        </a>
+        <meta itemprop="position" content="2" />
+      </li>
+      <li class="breadcrumb-item active" aria-current="page" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <span itemprop="name">{{ page.title }}</span>
+        <meta itemprop="position" content="3" />
+      </li>
+    {%- else -%}
+      {%- for crumb in crumbs offset: 1 -%}
+        {%- assign position = forloop.index | plus: 1 -%}
+        {%- assign crumb_label = crumb | replace:'-',' ' | remove:'.html' | capitalize -%}
+        {%- if forloop.last -%}
+          <li class="breadcrumb-item active" aria-current="page" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <span itemprop="name">{{ page.title }}</span>
+            <meta itemprop="position" content="{{ position }}" />
+          </li>
+        {%- elsif forloop.first -%}
+          <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a href="{{ '/' | append: crumb | append: '/' | relative_url }}" itemprop="item">
+              <span itemprop="name">{{ crumb_label }}</span>
+            </a>
+            <meta itemprop="position" content="{{ position }}" />
+          </li>
+        {%- else -%}
+          <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <span itemprop="name">{{ crumb_label }}</span>
+            <meta itemprop="position" content="{{ position }}" />
+          </li>
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
   </ol>
 </nav>
-<!-- Secret Search bar  -->
-<!-- Hidden
-<form class="form-inline my-2 my-lg-0">
-  <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-  <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-</form> 
--->
-
 {% endif %}

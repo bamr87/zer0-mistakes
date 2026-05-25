@@ -1,0 +1,195 @@
+// ==========================================================================
+// Skin color tokens — per-skin UI palette overrides
+// ==========================================================================
+// Maps each data-theme-skin to Bootstrap + --zer0-color-* tokens so skin
+// previews affect buttons, links, borders, cards, nav, and alerts — not just
+// SVG backgrounds. Color values mirror _data/theme_backgrounds.yml.
+// ==========================================================================
+
+@mixin zer0-skin-palette($brand, $brand-rgb, $accent, $accent-rgb: null) {
+  --zer0-color-primary: #{$brand};
+  --zer0-color-primary-rgb: #{$brand-rgb};
+  --zer0-color-accent: #{$accent};
+  --bs-primary: #{$brand};
+  --bs-primary-rgb: #{$brand-rgb};
+  --bs-link-color: #{$accent};
+  --zer0-color-link: #{$accent};
+  --zer0-color-border: rgba(#{$brand-rgb}, 0.28);
+  --zer0-shadow-focus: 0 0 0 0.2rem rgba(#{$brand-rgb}, 0.25);
+
+  @if $accent-rgb {
+    --bs-link-hover-color: rgba(#{$accent-rgb}, 0.85);
+    --zer0-color-link-hover: rgba(#{$accent-rgb}, 0.85);
+  } @else {
+    --bs-link-hover-color: #{$accent};
+    --zer0-color-link-hover: #{$accent};
+  }
+
+  // Subtle brand tint on elevated surfaces (cards, admin header bar)
+  --zer0-color-bg-elevated: color-mix(in srgb, #{$brand} 10%, var(--bs-body-bg));
+  --zer0-color-bg-muted: color-mix(in srgb, #{$brand} 6%, var(--bs-secondary-bg, var(--bs-body-bg)));
+
+  // Bootstrap component wiring
+  .btn-primary {
+    --bs-btn-bg: #{$brand};
+    --bs-btn-border-color: #{$brand};
+    --bs-btn-hover-bg: color-mix(in srgb, #{$brand} 85%, #{$accent});
+    --bs-btn-hover-border-color: color-mix(in srgb, #{$brand} 85%, #{$accent});
+    --bs-btn-active-bg: color-mix(in srgb, #{$brand} 75%, #{$accent});
+    --bs-btn-active-border-color: color-mix(in srgb, #{$brand} 75%, #{$accent});
+  }
+
+  .btn-outline-primary {
+    --bs-btn-color: #{$brand};
+    --bs-btn-border-color: #{$brand};
+    --bs-btn-hover-bg: #{$brand};
+    --bs-btn-hover-border-color: #{$brand};
+    --bs-btn-active-bg: #{$brand};
+    --bs-btn-active-border-color: #{$brand};
+  }
+
+  .alert-primary {
+    --bs-alert-color: #{$brand};
+    --bs-alert-bg: rgba(#{$brand-rgb}, 0.12);
+    --bs-alert-border-color: rgba(#{$brand-rgb}, 0.35);
+  }
+
+  .nav-tabs .nav-link.active {
+    color: #{$brand};
+    border-color: var(--bs-border-color) var(--bs-border-color) var(--bs-body-bg);
+  }
+
+  .nav-tabs .nav-link:hover:not(.active) {
+    color: #{$accent};
+  }
+
+  // Links (Bootstrap + theme)
+  a:not(.btn):not(.nav-link):not(.dropdown-item) {
+    color: var(--bs-link-color);
+  }
+
+  a:not(.btn):hover {
+    color: var(--bs-link-hover-color);
+  }
+
+  // Surfaces
+  .card:not(.skin-card) {
+    background-color: var(--zer0-color-bg-elevated);
+    border-color: var(--zer0-color-border);
+  }
+
+  // List group active state
+  .list-group-item.active {
+    background-color: #{$brand};
+    border-color: #{$brand};
+  }
+
+  .list-group-item-action:hover:not(.active) {
+    color: #{$accent};
+  }
+
+  // Form controls
+  .form-control:focus,
+  .form-select:focus,
+  .form-check-input:focus {
+    border-color: #{$brand};
+    box-shadow: var(--zer0-shadow-focus);
+  }
+
+  .form-check-input:checked {
+    background-color: #{$brand};
+    border-color: #{$brand};
+  }
+
+  // Pagination & breadcrumbs
+  .page-link {
+    color: #{$brand};
+  }
+
+  .page-item.active .page-link {
+    background-color: #{$brand};
+    border-color: #{$brand};
+  }
+
+  .breadcrumb-item.active {
+    color: #{$brand};
+  }
+
+  // Progress
+  .progress-bar {
+    background-color: #{$brand};
+  }
+
+  // Code blocks
+  pre:not(.highlight) {
+    border-color: rgba(var(--bs-primary-rgb), 0.22);
+  }
+
+  pre:not(.highlight):hover {
+    border-color: rgba(var(--bs-primary-rgb), 0.4);
+  }
+
+  // Navbar snippet / active nav links
+  .navbar .nav-link.active,
+  .navbar .nav-link.show {
+    color: #{$brand};
+  }
+
+  // Text & border utilities tied to primary
+  .text-primary {
+    color: #{$brand} !important;
+  }
+
+  .border-primary {
+    border-color: #{$brand} !important;
+  }
+
+  .link-primary {
+    color: #{$brand} !important;
+  }
+}
+
+[data-theme-skin="air"] {
+  @include zer0-skin-palette(#6fa8dc, "111, 168, 220", #b8d4e3);
+}
+
+[data-theme-skin="aqua"] {
+  @include zer0-skin-palette(#00b4d8, "0, 180, 216", #90e0ef);
+}
+
+[data-theme-skin="contrast"] {
+  @include zer0-skin-palette(#ffcc00, "255, 204, 0", #ffffff, "255, 255, 255");
+}
+
+// Light-mode override: white accent is invisible on the white/light body bg.
+// Apply near-black for links and nav so contrast skin stays readable in light mode.
+[data-theme-skin="contrast"]:not([data-bs-theme="dark"]) {
+  --bs-link-color: #111111;
+  --zer0-color-link: #111111;
+  --bs-link-hover-color: rgba(17, 17, 17, 0.7);
+  --zer0-color-link-hover: rgba(17, 17, 17, 0.7);
+}
+
+[data-theme-skin="dark"] {
+  @include zer0-skin-palette(#4a90d9, "74, 144, 217", #0f3460);
+}
+
+[data-theme-skin="dirt"] {
+  @include zer0-skin-palette(#8b6914, "139, 105, 20", #d4a574);
+}
+
+[data-theme-skin="neon"] {
+  @include zer0-skin-palette(#8338ec, "131, 56, 236", #3a86ff, "58, 134, 255");
+}
+
+[data-theme-skin="mint"] {
+  @include zer0-skin-palette(#52b788, "82, 183, 136", #95d5b2);
+}
+
+[data-theme-skin="plum"] {
+  @include zer0-skin-palette(#c77dff, "199, 125, 255", #812f85);
+}
+
+[data-theme-skin="sunrise"] {
+  @include zer0-skin-palette(#ff6b35, "255, 107, 53", #f7c59f);
+}

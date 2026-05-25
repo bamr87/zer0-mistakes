@@ -1,7 +1,7 @@
 /**
  * theme-customizer.js
  * Powers the Theme Customizer admin page.
- * - Skin preview: clicking a card swaps data-bs-theme for page-level preview
+ * - Skin preview: clicking a card or quick-select button applies data-theme-skin
  * - Color editor: syncs color picker ↔ text inputs
  * - YAML export: builds theme_skin + theme_color YAML from current selections
  */
@@ -9,46 +9,107 @@
 document.addEventListener('DOMContentLoaded', function () {
   'use strict';
 
-  /* ── Skin Preview ─────────────────────────────────────────── */
-  const skinGrid = document.getElementById('skin-grid');
-  let selectedSkin = document.querySelector('.skin-card.border-primary');
+  var skinGrid = document.getElementById('skin-grid');
+  var quickSkinBar = document.getElementById('quickSkinBar');
+  var selectedSkin = document.querySelector('.skin-card.border-primary');
 
-  if (skinGrid) {
-    skinGrid.addEventListener('click', function (e) {
-      const card = e.target.closest('.skin-card');
-      if (!card) return;
+  /** Apply skin via zer0Bg API (falls back to attribute-only). */
+  function applySkinPreview(skinName) {
+    if (!skinName) return;
+    if (typeof zer0Bg !== 'undefined') {
+      zer0Bg.setSkin(skinName);
+    } else {
+      document.documentElement.setAttribute('data-theme-skin', skinName);
+      document.dispatchEvent(new CustomEvent('zer0:skin-change', { detail: { skin: skinName } }));
+    }
+    updateSkinCardUI(skinName);
+    updateQuickSkinBarUI(skinName);
+    rebuildYaml();
+  }
 
-      // Visual: deselect previous, select new
-      if (selectedSkin) {
-        selectedSkin.classList.replace('border-primary', 'border-secondary');
-        const prev = selectedSkin.querySelector('.badge');
-        if (prev) prev.outerHTML = '<small class="text-body-tertiary">Click to preview</small>';
-        const prevIcon = selectedSkin.querySelector('.bi-circle-fill');
-        if (prevIcon) { prevIcon.classList.remove('text-primary'); prevIcon.classList.add('text-body-secondary'); }
+  /** Highlight the matching skin card. */
+  function updateSkinCardUI(skinName) {
+    if (!skinGrid) return;
+    skinGrid.querySelectorAll('.skin-card').forEach(function (card) {
+      var isActive = card.dataset.skin === skinName;
+      card.classList.toggle('border-primary', isActive);
+      card.classList.toggle('border-secondary', !isActive);
+
+      var icon = card.querySelector('.bi-circle-fill');
+      if (icon) {
+        icon.classList.toggle('text-primary', isActive);
+        icon.classList.toggle('text-body-secondary', !isActive);
       }
 
-      card.classList.replace('border-secondary', 'border-primary');
-      const label = card.querySelector('small');
-      if (label) label.outerHTML = '<span class="badge bg-primary"><i class="bi bi-check-circle me-1"></i>Selected</span>';
-      const icon = card.querySelector('.bi-circle-fill');
-      if (icon) { icon.classList.remove('text-body-secondary'); icon.classList.add('text-primary'); }
+      var footer = card.querySelector('.card-body > .badge, .card-body > small');
+      if (footer) {
+        footer.outerHTML = isActive
+          ? '<span class="badge bg-primary"><i class="bi bi-check-circle me-1"></i>Previewing</span>'
+          : '<small class="text-body-tertiary">Click to preview</small>';
+      }
+    });
+    selectedSkin = skinGrid.querySelector('.skin-card.border-primary');
+  }
 
-      selectedSkin = card;
-      rebuildYaml();
+  /** Sync quick-select button active state. */
+  function updateQuickSkinBarUI(skinName) {
+    if (!quickSkinBar) return;
+    quickSkinBar.querySelectorAll('[data-quick-skin]').forEach(function (btn) {
+      btn.classList.toggle('active', btn.dataset.quickSkin === skinName);
     });
   }
+
+  /* ── Skin Preview (card grid) ─────────────────────────────── */
+  if (skinGrid) {
+    skinGrid.addEventListener('click', function (e) {
+      var card = e.target.closest('.skin-card');
+      if (!card || !card.dataset.skin) return;
+      applySkinPreview(card.dataset.skin);
+    });
+
+    skinGrid.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var card = e.target.closest('.skin-card');
+      if (!card || !card.dataset.skin) return;
+      e.preventDefault();
+      applySkinPreview(card.dataset.skin);
+    });
+  }
+
+  /* ── Skin Preview (quick-select bar) ──────────────────────── */
+  if (quickSkinBar) {
+    quickSkinBar.querySelectorAll('[data-quick-skin]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        applySkinPreview(this.dataset.quickSkin);
+      });
+    });
+  }
+
+  /* ── Keep UI in sync when skin changes elsewhere ──────────── */
+  document.addEventListener('zer0:skin-change', function (e) {
+    if (!e.detail || !e.detail.skin) return;
+    updateSkinCardUI(e.detail.skin);
+    updateQuickSkinBarUI(e.detail.skin);
+    rebuildYaml();
+  });
 
   /* ── Color Editor ─────────────────────────────────────────── */
   document.querySelectorAll('[data-color-key]').forEach(function (picker) {
     picker.addEventListener('input', function () {
-      const key = this.dataset.colorKey;
-      const textInput = document.querySelector('[data-color-text="' + key + '"]');
+      var key = this.dataset.colorKey;
+      var textInput = document.querySelector('[data-color-text="' + key + '"]');
       if (textInput) textInput.value = this.value;
       rebuildYaml();
     });
   });
 
   /* ── YAML Export ──────────────────────────────────────────── */
+  function getActiveSkin() {
+    if (typeof zer0Bg !== 'undefined') return zer0Bg.currentSkin();
+    if (selectedSkin && selectedSkin.dataset.skin) return selectedSkin.dataset.skin;
+    return document.documentElement.getAttribute('data-theme-skin') || 'dark';
+  }
+
   function rebuildYaml() {
     // If palette-generator.js provides a full YAML builder, use it
     if (typeof rebuildFullYaml === 'function') {
@@ -56,21 +117,20 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
     var lines = [];
-    // Skin
-    var skin = selectedSkin ? selectedSkin.dataset.skin : 'dark';
-    lines.push('theme_skin: "' + skin + '"');
+    lines.push('theme_skin: "' + getActiveSkin() + '"');
     lines.push('');
-    // Colors
     lines.push('theme_color:');
     document.querySelectorAll('[data-color-key]').forEach(function (el) {
-      var key = el.dataset.colorKey;
-      var val = el.value;
-      lines.push('  ' + key + ': ' + val);
+      lines.push('  ' + el.dataset.colorKey + ': ' + el.value);
     });
-    var yaml = lines.join('\n');
     var output = document.getElementById('theme-yaml-output');
-    if (output) output.textContent = yaml;
+    if (output) output.textContent = lines.join('\n');
   }
+
+  // Sync UI to skin restored by background-customizer.js on load
+  var initialSkin = getActiveSkin();
+  updateSkinCardUI(initialSkin);
+  updateQuickSkinBarUI(initialSkin);
 
   // Initial build
   rebuildYaml();

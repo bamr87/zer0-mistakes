@@ -8,9 +8,9 @@
     - Copilot Agent dropdown: select a prompt template to pre-fill a GitHub issue
     - Issue body includes prompt template + page context + environment details
     - Prompts sourced from _data/prompts.yml
-    - Properly aligned action buttons at bottom right
-    - Improved accessibility with icons and labels
-    - Clean button grouping with consistent spacing
+    - Responsive flex layout: full-width content block, frosted metadata footer with reading time and action buttons
+    - Balanced padding and typography hierarchy via bd-intro-* classes
+    - Metadata row: author, dates, category, difficulty, tags, view source
 --> 
 {% if page.collection %}
   {% capture page_dir %}{{ site.collections_dir }}{% endcapture %}
@@ -47,21 +47,188 @@
 {% assign repo_parts = site.repository | split: "/" %}
 {% assign repo_owner = repo_parts[0] %}
 
-<div class="bd-intro pt-5 ps-lg-2 position-relative" style="
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{{ preview_path | relative_url }}') no-repeat center center / cover;
-  color: #fff;">
+{% comment %}
+  Resolve author display name and optional profile URL from page front matter,
+  _data/authors.yml, or site.author fallback.
+{% endcomment %}
+{% assign intro_author_key = page.author %}
+{% assign intro_author_data = nil %}
+{% if intro_author_key and intro_author_key != "" %}
+  {% assign intro_author_data = site.data.authors[intro_author_key] %}
+{% endif %}
+{% if intro_author_data %}
+  {% assign intro_author_name = intro_author_data.name %}
+{% elsif intro_author_key and intro_author_key != "" %}
+  {% assign intro_author_name = intro_author_key %}
+{% else %}
+  {% assign intro_author_name = site.author.name %}
+{% endif %}
+{% assign intro_author_url = nil %}
+{% if intro_author_data %}
+  {% if intro_author_data.website %}
+    {% assign intro_author_url = intro_author_data.website %}
+  {% elsif intro_author_data.github %}
+    {% assign intro_author_url = "https://github.com/" | append: intro_author_data.github %}
+  {% endif %}
+{% elsif site.author.github_username %}
+  {% assign intro_author_url = "https://github.com/" | append: site.author.github_username %}
+{% endif %}
 
-  <br>
-  <h1>{{ page.title }}</h1>
-  <p>By {{ page.author | default: site.author.name }}</p>
-  <p>{{ page.description }}</p>
-  <p>Estimated reading time: {{ content | number_of_words | divided_by:200 }} minutes</p>
-  <!-- Action Buttons Group -->
-  <div class="position-absolute bottom-0 end-0 m-3 d-flex gap-2">
+{% comment %} Dates: prefer last_modified_at, then lastmod {% endcomment %}
+{% assign intro_updated = page.last_modified_at | default: page.lastmod %}
+{% assign intro_published = page.date %}
+{% assign intro_show_updated = false %}
+{% if intro_updated %}
+  {% if intro_published == nil %}
+    {% assign intro_show_updated = true %}
+  {% else %}
+    {% assign intro_published_day = intro_published | date: "%Y-%m-%d" %}
+    {% assign intro_updated_day = intro_updated | date: "%Y-%m-%d" %}
+    {% if intro_updated_day != intro_published_day %}
+      {% assign intro_show_updated = true %}
+    {% endif %}
+  {% endif %}
+{% endif %}
+
+{% comment %} Category or collection badge (most specific category wins) {% endcomment %}
+{% assign intro_category = nil %}
+{% assign intro_category_url = nil %}
+{% if page.categories.size > 0 %}
+  {% assign intro_category = page.categories | last %}
+  {% if page.categories.size > 1 %}
+    {% for cat in page.categories %}
+      {% if cat != "docs" and cat != "pages" %}
+        {% assign intro_category = cat %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% if page.categories contains "docs" %}
+    {% assign intro_category_slug = intro_category | append: '' | slugify %}
+    {% capture intro_category_url %}{{ site.baseurl }}/docs/{{ intro_category_slug }}/{% endcapture %}
+  {% else %}
+    {% assign intro_category_slug = intro_category | append: '' | slugify %}
+    {% capture intro_category_url %}{{ '/tags/' | relative_url }}#{{ intro_category_slug }}{% endcapture %}
+  {% endif %}
+{% elsif page.collection and page.collection != "pages" %}
+  {% assign intro_category = page.collection %}
+  {% capture intro_category_url %}{{ site.baseurl }}/{{ page.collection }}/{% endcapture %}
+{% endif %}
+
+{% assign intro_level = page.difficulty | default: page.level %}
+{% assign intro_subtitle = page.subtitle | default: page.sub-title %}
+{% assign intro_source_url = nil %}
+{% if site.repository and file_path != blank %}
+  {% capture intro_source_url %}https://github.com/{{ site.repository }}/blob/{{ repo_branch }}/{{ file_path }}{% endcapture %}
+{% endif %}
+
+{% assign intro_read_words = content | number_of_words %}
+{% assign intro_read_mins = intro_read_words | divided_by: 200 %}
+{% if intro_read_mins < 1 %}
+  {% assign intro_read_mins = 1 %}
+{% endif %}
+
+<div class="bd-intro" style="
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{{ preview_path | relative_url }}') no-repeat center center / cover;">
+
+  <div class="bd-intro-inner">
+    <div class="bd-intro-content">
+      <h1 class="bd-intro-title">{{ page.title }}</h1>
+      {% if intro_subtitle %}
+      <p class="bd-intro-subtitle">{{ intro_subtitle }}</p>
+      {% endif %}
+      {% if page.description %}
+      <p class="bd-intro-description">{{ page.description }}</p>
+      {% endif %}
+    </div>
+
+    <div class="bd-intro-meta-footer">
+      <ul class="bd-intro-meta-row list-unstyled" aria-label="Page metadata">
+        <li class="bd-intro-meta-item">
+          <i class="bi bi-person-fill bd-intro-meta-icon" aria-hidden="true"></i>
+          {% if intro_author_url %}
+          <a class="bd-intro-meta-link" href="{{ intro_author_url }}" rel="author" itemprop="author">{{ intro_author_name }}</a>
+          {% else %}
+          <span itemprop="author">{{ intro_author_name }}</span>
+          {% endif %}
+        </li>
+
+        {% if intro_published %}
+        <li class="bd-intro-meta-item">
+          <i class="bi bi-calendar3 bd-intro-meta-icon" aria-hidden="true"></i>
+          <time datetime="{{ intro_published | date_to_xmlschema }}" itemprop="datePublished">
+            Published {{ intro_published | date: "%b %d, %Y" }}
+          </time>
+        </li>
+        {% endif %}
+
+        {% if intro_show_updated %}
+        <li class="bd-intro-meta-item">
+          <i class="bi bi-pencil bd-intro-meta-icon" aria-hidden="true"></i>
+          <time datetime="{{ intro_updated | date_to_xmlschema }}" itemprop="dateModified">
+            Updated {{ intro_updated | date: "%b %d, %Y" }}
+          </time>
+        </li>
+        {% endif %}
+
+        {% if intro_category %}
+        <li class="bd-intro-meta-item">
+          <i class="bi bi-folder2 bd-intro-meta-icon" aria-hidden="true"></i>
+          {% if intro_category_url %}
+          <a class="bd-intro-meta-link bd-intro-badge" href="{{ intro_category_url }}">{{ intro_category | replace: '-', ' ' | capitalize }}</a>
+          {% else %}
+          <span class="bd-intro-badge">{{ intro_category | replace: '-', ' ' | capitalize }}</span>
+          {% endif %}
+        </li>
+        {% endif %}
+
+        {% if intro_level %}
+        <li class="bd-intro-meta-item">
+          <i class="bi bi-bar-chart-steps bd-intro-meta-icon" aria-hidden="true"></i>
+          {% assign intro_level_label = intro_level | append: '' %}
+          <span class="bd-intro-badge bd-intro-badge--level bd-intro-badge--level-{{ intro_level_label | slugify }}">{{ intro_level_label | capitalize }}</span>
+        </li>
+        {% endif %}
+
+        {% if page.tags and page.tags.size > 0 %}
+        <li class="bd-intro-meta-item bd-intro-meta-item--tags">
+          <i class="bi bi-tags bd-intro-meta-icon" aria-hidden="true"></i>
+          <span class="bd-intro-tag-list">
+            {% for tag in page.tags limit: 5 %}
+            {% assign intro_tag_label = tag | append: '' %}
+            <a class="bd-intro-badge bd-intro-badge--tag" href="{{ '/tags/' | relative_url }}#{{ intro_tag_label | slugify }}">{{ intro_tag_label }}</a>
+            {% endfor %}
+            {% if page.tags.size > 5 %}
+            <span class="bd-intro-badge bd-intro-badge--tag bd-intro-badge--more">+{{ page.tags.size | minus: 5 }}</span>
+            {% endif %}
+          </span>
+        </li>
+        {% endif %}
+
+        {% if intro_source_url %}
+        <li class="bd-intro-meta-item bd-intro-meta-item--source d-none d-md-inline-flex">
+          <i class="bi bi-file-earmark-code bd-intro-meta-icon" aria-hidden="true"></i>
+          <a class="bd-intro-meta-link" href="{{ intro_source_url }}" target="_blank" rel="noopener noreferrer">View source</a>
+        </li>
+        {% endif %}
+      </ul>
+
+      <div class="bd-intro-meta-bottom">
+        <p class="bd-intro-meta">
+          <i class="bi bi-clock me-1" aria-hidden="true"></i>
+          {% if page.estimated_reading_time %}
+          Estimated reading time: {{ page.estimated_reading_time }}
+          {% else %}
+          Estimated reading time: {{ intro_read_mins }} minute{% if intro_read_mins != 1 %}s{% endif %}
+          {% endif %}
+        </p>
+
+        <!-- Action Buttons Group -->
+        <div class="bd-intro-actions">
     <!-- Share Button -->
     <div class="dropdown">
-      <button class="btn btn-info dropdown-toggle" type="button" id="shareDropdownBottom" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="bi bi-share"></i>
+      <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="shareDropdownBottom" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-share" aria-hidden="true"></i>
         <span class="d-none d-sm-inline ms-1">Share</span>
       </button>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="shareDropdownBottom">
@@ -76,14 +243,19 @@
           </a>
         </li>
         <li>
-          <a class="dropdown-item" href="https://twitter.com/intent/tweet?url={{ site.url | append: page.url | url_encode }}&text={{ page.title | url_encode }}" target="_blank">
-            <i class="bi bi-twitter me-2"></i>Share on Twitter
+          <a class="dropdown-item" href="https://x.com/intent/tweet?url={{ site.url | append: page.url | url_encode }}&text={{ page.title | url_encode }}" target="_blank" aria-label="Share on X">
+            <i class="bi bi-twitter-x me-2"></i>Share on X
           </a>
         </li>
         <li><hr class="dropdown-divider"></li>
         <li>
-          <button class="dropdown-item" onclick='navigator.clipboard.writeText("{{ site.url | append: page.url }}"); alert("Link copied to clipboard!");'>
-            <i class="bi bi-clipboard me-2"></i>Copy Link
+          {%- comment -%}
+            Uses the data-copy binding from assets/js/ui-helpers.js, which
+            announces success via an accessible aria-live toast instead of
+            the blocking alert() the legacy markup used.
+          {%- endcomment -%}
+          <button class="dropdown-item" type="button" data-copy="{{ site.url | append: page.url }}">
+            <i class="bi bi-clipboard me-2" aria-hidden="true"></i>Copy Link
           </button>
         </li>
       </ul>
@@ -91,11 +263,11 @@
 
     <!-- Copilot Agent Prompt Dropdown -->
     <div class="dropdown">
-      <button class="btn btn-success dropdown-toggle" type="button" id="copilotAgentDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Open a GitHub issue with a Copilot prompt for this page">
-        <i class="bi bi-robot"></i>
+      <button class="btn btn-sm btn-success dropdown-toggle" type="button" id="copilotAgentDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Open a GitHub issue with a Copilot prompt for this page">
+        <i class="bi bi-robot" aria-hidden="true"></i>
         <span class="d-none d-sm-inline ms-1">Copilot Agent</span>
       </button>
-      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="copilotAgentDropdown">
+      <ul class="dropdown-menu dropdown-menu-end copilot-agent-menu" aria-labelledby="copilotAgentDropdown">
         {% assign current_group = "" %}
         {% for prompt in site.data.prompts %}
         {% if prompt.group and prompt.group != current_group %}
@@ -135,18 +307,29 @@
 {% endcapture %}
         <li>
           <a class="dropdown-item" href="https://github.com/{{ site.repository }}/issues/new?assignees=copilot&labels=ai-agent&title={{ issue_title | url_encode }}&body={{ issue_body | url_encode }}" target="_blank" rel="noopener noreferrer">
-            <i class="bi {{ prompt.icon }} me-2"></i>{{ prompt.label }}
-            {% if prompt.description %}<small class="text-muted d-block">{{ prompt.description }}</small>{% endif %}
+            <span class="copilot-agent-item">
+              <i class="bi {{ prompt.icon }} copilot-agent-item__icon" aria-hidden="true"></i>
+              <span class="copilot-agent-item__text">
+                <span class="copilot-agent-item__label">{{ prompt.label }}</span>
+                {% if prompt.description %}<small class="copilot-agent-item__desc">{{ prompt.description }}</small>{% endif %}
+              </span>
+            </span>
           </a>
         </li>
         {% endfor %}
       </ul>
     </div>
 
-    <!-- Edit on Github Button -->
-    <a href="https://github.com/{{ site.repository }}/blob/{{ repo_branch }}/{{ file_path }}" class="btn btn-dark">
-      <i class="bi bi-github"></i>
+    <!-- Edit on GitHub Button -->
+    <a href="https://github.com/{{ site.repository }}/blob/{{ repo_branch }}/{{ file_path }}"
+       class="btn btn-sm btn-dark bd-intro-action-link"
+       target="_blank"
+       rel="noopener noreferrer">
+      <i class="bi bi-github" aria-hidden="true"></i>
       <span class="d-none d-sm-inline ms-1">Edit on GitHub</span>
     </a>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

@@ -1,0 +1,260 @@
+// ============================================================================
+// Content tables — markdown & HTML tables in main reading areas
+// ----------------------------------------------------------------------------
+// Styles bare <table> output from Kramdown as well as Bootstrap .table markup.
+// Scoped to content wrappers only — excludes admin (#admin-content) and the
+// interactive sitemap table (#sitemapTable).
+// ============================================================================
+
+$zer0-content-table-scopes: (
+  ".bd-content",
+  ".landing-content-body",
+  ".post-content",
+  ".note-content",
+  ".notebook-content",
+  ".page-content"
+);
+
+@mixin zer0-content-table-cell {
+  padding: var(--zer0-space-2) var(--zer0-space-3);
+  border: 0;
+  border-bottom: 1px solid var(--zer0-color-border);
+  vertical-align: top;
+}
+
+@mixin zer0-content-table-base {
+  --zer0-table-stripe: color-mix(in srgb, var(--zer0-color-bg-elevated) 72%, transparent);
+  --zer0-table-hover: color-mix(in srgb, var(--zer0-color-primary) 8%, var(--zer0-color-bg));
+  --zer0-table-header-bg: color-mix(
+    in srgb,
+    var(--zer0-color-bg-elevated) 52%,
+    var(--zer0-color-primary) 14%
+  );
+  --zer0-table-header-border: color-mix(
+    in srgb,
+    var(--zer0-color-primary) 42%,
+    var(--zer0-color-border)
+  );
+
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: var(--zer0-space-4);
+  font-size: var(--zer0-text-sm);
+  line-height: var(--zer0-leading-normal, 1.5);
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--zer0-color-border);
+  border-radius: 0.5rem;
+  overflow: visible;
+  background-color: var(--zer0-color-bg);
+
+  thead tr:first-child th:first-child {
+    border-top-left-radius: 0.5rem;
+  }
+
+  thead tr:first-child th:last-child {
+    border-top-right-radius: 0.5rem;
+  }
+
+  tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 0.5rem;
+  }
+
+  tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 0.5rem;
+  }
+  caption {
+    caption-side: bottom;
+    padding: var(--zer0-space-2) var(--zer0-space-3);
+    color: var(--zer0-color-ink-muted);
+    font-size: var(--zer0-text-sm);
+    text-align: left;
+  }
+
+  thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: var(--zer0-table-header-bg);
+    border-bottom: 2px solid var(--zer0-table-header-border);
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--zer0-color-ink) 6%, transparent);
+  }
+
+  th {
+    @include zer0-content-table-cell;
+    background-color: var(--zer0-table-header-bg);
+    color: var(--zer0-color-ink);
+    font-weight: var(--zer0-font-weight-semibold);
+    text-align: left;
+    white-space: nowrap;
+    box-shadow: inset 0 -1px 0 var(--zer0-table-header-border);
+  }
+
+  td {
+    @include zer0-content-table-cell;
+    color: var(--zer0-color-ink);
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: var(--zer0-table-stripe);
+  }
+
+  tbody tr:last-child td,
+  tbody tr:last-child th {
+    border-bottom: 0;
+  }
+
+  tbody tr {
+    transition: background-color var(--zer0-motion-duration-fast, 0.15s) ease;
+  }
+
+  tbody tr:hover {
+    background-color: var(--zer0-table-hover);
+  }
+
+  strong,
+  b {
+    color: var(--zer0-color-ink);
+    font-weight: var(--zer0-font-weight-semibold);
+  }
+
+  a {
+    color: var(--zer0-color-link);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--zer0-color-link-hover);
+    }
+  }
+
+  code:not(pre code) {
+    background: var(--zer0-color-bg-muted);
+    color: var(--zer0-color-code-ink);
+    padding: 0.15em 0.4em;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+    white-space: nowrap;
+  }
+
+  // Bootstrap .table may zero borders — restore content-table look
+  &.table > :not(caption) > * > * {
+    border-bottom-color: var(--zer0-color-border);
+  }
+}
+
+// Wrapper injected by table-copy.js — toolbar + unified card chrome
+.content-table-wrapper {
+  margin-bottom: var(--zer0-space-4);
+  border: 1px solid var(--zer0-color-border);
+  border-radius: 0.5rem;
+  overflow: visible;
+  background-color: var(--zer0-color-bg);
+
+  > .content-table-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--zer0-space-2);
+    padding: var(--zer0-space-1) var(--zer0-space-2);
+    background-color: color-mix(in srgb, var(--zer0-color-bg-elevated) 88%, var(--zer0-color-primary) 6%);
+    border-bottom: 1px solid var(--zer0-color-border);
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+  }
+
+  > table,
+  > .table-responsive > table {
+    border: 0;
+    border-radius: 0;
+    margin-bottom: 0;
+
+    thead tr:first-child th:first-child,
+    thead tr:first-child th:last-child {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+    }
+  }
+
+  > .table-responsive {
+    border: 0;
+    border-radius: 0;
+    margin-bottom: 0;
+  }
+
+  .table-copy-csv {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem var(--zer0-space-2);
+    font-size: 0.6875rem;
+    font-weight: var(--zer0-font-weight-medium);
+    line-height: 1.2;
+    color: var(--zer0-color-ink);
+    background: color-mix(in srgb, var(--zer0-color-bg) 72%, var(--zer0-color-primary) 8%);
+    border: 1px solid var(--zer0-color-border);
+    border-radius: calc(var(--bs-border-radius) * 0.75);
+    cursor: pointer;
+    transition:
+      background-color var(--zer0-motion-duration-fast, 0.15s) ease,
+      border-color var(--zer0-motion-duration-fast, 0.15s) ease,
+      color var(--zer0-motion-duration-fast, 0.15s) ease;
+
+    &:hover,
+    &:focus-visible {
+      background: color-mix(in srgb, var(--zer0-color-bg) 58%, var(--zer0-color-primary) 14%);
+      border-color: var(--zer0-table-header-border);
+      color: var(--zer0-color-ink);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--zer0-shadow-focus);
+    }
+
+    &.copied {
+      color: var(--bs-light);
+      background-color: var(--zer0-color-success);
+      border-color: transparent;
+    }
+  }
+}
+
+@each $scope in $zer0-content-table-scopes {
+  #{$scope} {
+    table:not(#sitemapTable) {
+      @include zer0-content-table-base;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--zer0-color-border);
+      border-radius: 0.5rem;
+      margin-bottom: var(--zer0-space-4);
+
+      > table:not(#sitemapTable) {
+        border: 0;
+        border-radius: 0;
+        margin-bottom: 0;
+      }
+    }
+
+    @media (max-width: 767.98px) {
+      > table:not(#sitemapTable) {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+
+        > thead,
+        > tbody,
+        > tfoot {
+          display: table;
+          width: 100%;
+          min-width: 36rem;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,126 @@
+// ============================================================================
+// Notes layout — token-aware, dark-mode-safe
+// ----------------------------------------------------------------------------
+// Canonical home for .note-header / .note-content / .related-notes /
+// .note-navigation styles. The legacy hardcoded block was removed from
+// _sass/custom.scss (see the MOVED comment there); difficulty badges remain
+// in custom.scss because they map to fixed semantic colors.
+// ============================================================================
+
+.note-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--zer0-color-border);
+
+  .note-title {
+    font-size: var(--zer0-text-h2);
+    font-weight: var(--zer0-font-weight-bold);
+    line-height: var(--zer0-leading-tight);
+    margin-bottom: 0.75rem;
+  }
+
+  .note-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--zer0-space-3);
+    color: var(--zer0-color-ink-muted);
+    font-size: var(--zer0-text-sm);
+
+    span {
+      display: inline-flex;
+      align-items: center;
+
+      i {
+        margin-right: 0.35rem;
+      }
+    }
+  }
+
+  .note-description {
+    margin-top: var(--zer0-space-3);
+    font-size: var(--zer0-text-lg);
+    color: var(--zer0-color-ink);
+  }
+}
+
+.note-content {
+  pre:not(.highlight) {
+    background: var(--zer0-color-code-bg);
+    border: 1px solid var(--zer0-color-border);
+    border-radius: 0.5rem;
+    padding: var(--zer0-space-2) var(--zer0-space-3);
+    overflow-x: auto;
+
+    code {
+      background: transparent;
+      padding: 0;
+    }
+  }
+
+  .highlight:not(pre) pre,
+  pre.highlight {
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  code:not(pre code) {
+    background: var(--zer0-color-bg-muted);
+    color: var(--zer0-color-code-ink);
+    padding: 0.15em 0.4em;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+  }
+
+  // Table styling → _sass/components/_content-tables.scss (.note-content scope)
+}
+
+.related-notes {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--zer0-color-border);
+
+  .related-note-card {
+    transition:
+      transform var(--zer0-motion-duration-base) var(--zer0-motion-ease-standard),
+      box-shadow var(--zer0-motion-duration-base) var(--zer0-motion-ease-standard);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--zer0-shadow-md) !important;
+    }
+  }
+}
+
+.note-navigation {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--zer0-color-border);
+
+  .nav-link-note {
+    display: block;
+    padding: var(--zer0-space-3);
+    background: var(--zer0-color-bg-elevated);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: background var(--zer0-motion-duration-base) var(--zer0-motion-ease-standard);
+
+    &:hover {
+      background: var(--zer0-color-bg-muted);
+    }
+
+    .nav-label {
+      font-size: var(--zer0-text-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--zer0-color-ink-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .nav-title {
+      font-weight: var(--zer0-font-weight-semibold);
+      color: var(--zer0-color-link);
+    }
+  }
+}

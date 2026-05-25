@@ -33,6 +33,7 @@ docker-compose up
 ```
 
 **Benefits:**
+
 - No Ruby installation required
 - Consistent environment across machines
 - Matches production build environment
@@ -191,3 +192,4 @@ bundle exec jekyll build
 - [Testing](testing.md) — Validate your changes
 - [Code Style](code-style.md) — Follow coding conventions
 - [Architecture](../architecture/README.md) — Understand the codebase
+

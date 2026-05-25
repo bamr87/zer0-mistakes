@@ -1,0 +1,54 @@
+{%- comment -%}
+  ===================================================================
+  TOKENS-INLINE - Runtime CSS variable overrides
+  ===================================================================
+
+  Path: _includes/core/tokens-inline.html
+  Purpose: Emit a <style> block in <head> that overrides --zer0-color-*
+           tokens with values from _config.yml `theme_color` and (optionally)
+           localStorage Appearance-panel preferences.
+
+  Load order:
+    1. _sass/tokens/_color.scss sets defaults aliased to --bs-* / --bd-*
+    2. This partial overrides them with site-config values (compile-time)
+    3. assets/js/modules/theme/appearance.js can override --zer0-color-primary
+       at runtime by writing to document.documentElement.style
+
+  Only emits a key if the config value is present, so the default cascade
+  remains intact when consumers omit `theme_color` from _config.yml.
+  ===================================================================
+{%- endcomment -%}
+{%- assign tc = site.theme_color -%}
+{%- if tc -%}
+<style id="zer0-tokens-inline">
+:root {
+  {%- if tc.main %} --zer0-color-primary: {{ tc.main }};{%- endif %}
+  {%- if tc.secondary %} --zer0-color-secondary: {{ tc.secondary }};{%- endif %}
+  {%- if tc.red %} --zer0-color-danger: {{ tc.red }};{%- endif %}
+  {%- if tc.yellow %} --zer0-color-warning: {{ tc.yellow }};{%- endif %}
+  {%- if tc.green %} --zer0-color-success: {{ tc.green }};{%- endif %}
+  {%- if tc.teal %} --zer0-color-info: {{ tc.teal }};{%- endif %}
+  {%- if tc.blue %} --zer0-color-link: {{ tc.blue }};{%- endif %}
+  {%- if tc.purple %} --zer0-color-accent: {{ tc.purple }};{%- endif %}
+}
+</style>
+{%- endif -%}
+
+{%- comment -%}
+  Restore any user-saved Appearance overrides before paint to avoid a flash
+  of the default palette. The Appearance panel (Track 6) writes JSON like
+  {"primary":"#ff5722"} to localStorage["zer0-appearance"].
+{%- endcomment -%}
+<script>
+(function () {
+  try {
+    var raw = window.localStorage.getItem('zer0-appearance');
+    if (!raw) return;
+    var prefs = JSON.parse(raw);
+    var root = document.documentElement;
+    if (prefs.primary) root.style.setProperty('--zer0-color-primary', prefs.primary);
+    if (prefs.secondary) root.style.setProperty('--zer0-color-secondary', prefs.secondary);
+    if (prefs.accent) root.style.setProperty('--zer0-color-accent', prefs.accent);
+  } catch (e) { /* localStorage unavailable or parse error — fall back to config defaults */ }
+})();
+</script>

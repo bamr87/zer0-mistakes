@@ -5,7 +5,13 @@
  */
 const { test, expect } = require('@playwright/test');
 const AxeBuilder = require('@axe-core/playwright').default;
-const { ADMIN_PAGES, VIEWPORTS, waitForJekyll } = require('./fixtures');
+const {
+  ADMIN_PAGES,
+  VIEWPORTS,
+  UI_ROUTES,
+  waitForJekyll,
+  gotoOrSkip,
+} = require('./fixtures');
 
 test.describe('Accessibility — axe-core WCAG audits', () => {
   test.beforeEach(async ({ page }) => {
@@ -127,6 +133,81 @@ test.describe('Accessibility — specific component checks', () => {
       '<hr> must not be a direct child of <ul> — wrap in <li role="separator">'
     ).toBe(false);
   });
+});
+
+test.describe('Accessibility — UI refresh smoke', () => {
+  test('skip link is focusable and targets main content', async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.desktop);
+    await waitForJekyll(page, UI_ROUTES.home);
+
+    const skip = page.locator('a[href="#main-content"].visually-hidden-focusable');
+    await expect(skip).toBeAttached();
+    await skip.focus();
+    await expect(skip).toBeFocused();
+    await expect(page.locator('#main-content, main').first()).toBeAttached();
+  });
+
+  test('intro metadata row has aria-label when present', async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.desktop);
+    await gotoOrSkip(page, UI_ROUTES.quickstart);
+
+    const meta = page.locator('.bd-intro-meta-row[aria-label]');
+    if ((await meta.count()) === 0) {
+      test.skip(true, 'Intro metadata not on this page');
+      return;
+    }
+    const label = await meta.getAttribute('aria-label');
+    expect((label || '').length).toBeGreaterThan(0);
+  });
+
+  test('code copy buttons are keyboard focusable', async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.desktop);
+    await gotoOrSkip(page, UI_ROUTES.codeCopy);
+
+    await page.waitForFunction(() =>
+      document.querySelector('.bd-content .code-block-header .copy, .bd-content .copy')
+    );
+    const copyBtn = page.locator('.bd-content .code-block-header .copy, .bd-content .copy').first();
+    if ((await copyBtn.count()) === 0) {
+      test.skip(true, 'No copy buttons on page');
+      return;
+    }
+    await copyBtn.focus();
+    await expect(copyBtn).toBeFocused();
+  });
+
+  test('table CSV export button has accessible name', async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.desktop);
+    await gotoOrSkip(page, UI_ROUTES.home);
+
+    await page.waitForFunction(() => document.querySelector('.table-copy-csv'));
+    const btn = page.locator('.table-copy-csv').first();
+    if ((await btn.count()) === 0) {
+      test.skip(true, 'No table copy button');
+      return;
+    }
+    const ariaLabel = await btn.getAttribute('aria-label');
+    const title = await btn.getAttribute('title');
+    const text = ((await btn.textContent()) || '').trim();
+    expect((ariaLabel || title || text).length).toBeGreaterThan(0);
+  });
+
+  for (const [name, viewport] of Object.entries(VIEWPORTS)) {
+    test(`axe advisory scan at ${name} viewport`, async ({ page }) => {
+      await page.setViewportSize(viewport);
+      await waitForJekyll(page, UI_ROUTES.home);
+
+      const results = await new AxeBuilder({ page })
+        .withTags(['wcag2a', 'wcag2aa'])
+        .disableRules(['color-contrast'])
+        .analyze();
+
+      expect(
+        results.violations.length,
+        `High axe violation count at ${name}:\n${formatViolations(results.violations)}`
+      ).toBeLessThan(20);
+    });
+  }
 });
 
 /** Format axe violations for readable error output. */

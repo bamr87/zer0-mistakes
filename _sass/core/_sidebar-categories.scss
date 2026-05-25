@@ -1,0 +1,148 @@
+// ===================================================================
+// SIDEBAR CATEGORIES — Category-grouped sidebar navigation
+// ===================================================================
+//
+// Scoped to .nav-tree--categories so docs YAML nav-tree is unchanged.
+// Ghost headers with left accent bar; post links reuse nav-tree-link.
+//
+// ===================================================================
+
+.nav-tree--categories {
+  .sidebar-categories-heading {
+    letter-spacing: 0.04em;
+    font-size: var(--zer0-text-sm);
+    margin-bottom: var(--zer0-space-3);
+    padding-bottom: var(--zer0-space-2);
+    border-bottom: 1px solid var(--zer0-color-border-translucent);
+  }
+
+  .sidebar-categories-group {
+    margin-bottom: var(--zer0-space-2);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  // Category header — ghost pill, no hard outline
+  .sidebar-categories-toggle {
+    gap: var(--zer0-space-2);
+    padding: var(--zer0-space-2) var(--zer0-space-2) var(--zer0-space-2) calc(var(--zer0-space-2) - 2px);
+    margin-bottom: 0;
+    font-size: var(--zer0-text-sm);
+    font-weight: var(--zer0-font-weight-semibold);
+    color: var(--zer0-color-ink);
+    text-decoration: none;
+    border: 1px solid transparent;
+    border-left: 2px solid var(--zer0-color-border-translucent);
+    border-radius: var(--bs-border-radius, 0.375rem);
+    background-color: color-mix(in srgb, var(--zer0-color-bg-elevated) 65%, transparent);
+    transition:
+      color 0.15s ease-in-out,
+      background-color 0.15s ease-in-out,
+      border-color 0.15s ease-in-out;
+
+    &:hover {
+      color: var(--zer0-color-primary);
+      background-color: color-mix(in srgb, var(--zer0-color-primary) 8%, var(--zer0-color-bg-elevated));
+      border-left-color: var(--zer0-color-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--zer0-color-primary);
+      outline-offset: 2px;
+      box-shadow: none;
+    }
+
+    &:not(.collapsed),
+    &[aria-expanded="true"] {
+      color: var(--zer0-color-primary);
+      background-color: color-mix(in srgb, var(--zer0-color-primary) 10%, var(--zer0-color-bg-elevated));
+      border-left-color: var(--zer0-color-primary);
+    }
+
+    &__icon {
+      flex-shrink: 0;
+      font-size: 0.9375rem;
+      opacity: 0.85;
+    }
+
+    &__label {
+      min-width: 0;
+      line-height: var(--zer0-leading-tight);
+    }
+
+    &__chevron {
+      flex-shrink: 0;
+      font-size: 0.75rem;
+      opacity: 0.65;
+    }
+  }
+
+  // Post list under each category
+  .sidebar-categories-posts {
+    margin-top: var(--zer0-space-1);
+    padding-left: var(--zer0-space-2);
+    border-left-color: var(--zer0-color-border-translucent);
+  }
+
+  .sidebar-categories-link {
+    gap: var(--zer0-space-2);
+    padding: var(--zer0-space-1) var(--zer0-space-2);
+    font-size: var(--zer0-text-sm);
+    font-weight: var(--zer0-font-weight-regular);
+    line-height: var(--zer0-leading-normal);
+    color: var(--zer0-color-ink-muted);
+
+    &:hover {
+      color: var(--zer0-color-primary);
+    }
+
+    &.active {
+      color: var(--zer0-color-primary);
+      font-weight: var(--zer0-font-weight-medium);
+    }
+
+    &__icon {
+      flex-shrink: 0;
+      margin-top: 0.15em;
+      font-size: 0.8125rem;
+      opacity: 0.7;
+    }
+
+    &__text {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+    }
+  }
+}
+
+// Dark theme — softer surfaces, visible accent
+[data-bs-theme="dark"] {
+  .nav-tree--categories {
+    .sidebar-categories-toggle {
+      background-color: color-mix(in srgb, var(--zer0-color-bg-elevated) 40%, transparent);
+
+      &:hover {
+        background-color: color-mix(in srgb, var(--zer0-color-primary) 12%, transparent);
+      }
+
+      &:not(.collapsed),
+      &[aria-expanded="true"] {
+        background-color: color-mix(in srgb, var(--zer0-color-primary) 14%, transparent);
+      }
+    }
+
+    .sidebar-categories-link {
+      &:hover,
+      &.active {
+        background-color: color-mix(in srgb, var(--zer0-color-primary) 12%, transparent);
+      }
+    }
+  }
+}

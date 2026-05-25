@@ -20,6 +20,12 @@
 
 ## [Unreleased]
 
+### Added
+- **Design system & layouts**: Sass token layers (`_sass/tokens/`), component and layout partials (`_sass/components/`, `_sass/layouts/`), skins (`theme_skins.yml` + `_sass/theme/_skins.scss`), utilities, and developer docs (`docs/design-system.md`, `design-tokens.md`, `theming.md`, `layouts-and-navigation.md`, and related guides). Homepage sections are driven by `_data/landing.yml` per `_includes/components/README.md`.
+- **Navigation & chrome**: Drawer/TOC FAB and sidebar visibility modules (`assets/js/modules/navigation/`), `appearance.js` theme helper, refreshed navbar/footer/breadcrumb markup aligned with Bootstrap 5.3.
+- **Statistics**: `_plugins/content_statistics_generator.rb` optionally regenerates `_data/content_statistics.yml` during `jekyll build` (toggle via `content_statistics.auto_generate`); `./scripts/generate-content-statistics.sh` delegates to `_data/generate_statistics.sh` and is wired from `rake stats:generate`.
+- **Testing**: Expanded Playwright coverage (`test/visual/ui-refresh.spec.js`, `layouts.spec.js`) and refreshed smoke visuals/`results.json` for the new chrome.
+
 ### Changed
 - **Testing**: Consolidated three Playwright configs into a single `test/playwright.config.js` with `smoke`, `snapshots`, and `regression-{chromium,firefox,webkit}` projects (tiers). The new `test/test_playwright.sh` runner replaces `test_styling.sh` and selects the tier via `PLAYWRIGHT_PROJECT`. Snapshot baselines now live in `test/visual/snapshots/` (committed Linux images) and can be refreshed via the new `test/update-snapshots.sh` Docker helper.
 - **CI**: Split the styling step in `ci.yml` into a Playwright smoke step (every code-change PR) and a path-filtered Playwright snapshot step (only when `_sass/`, `assets/`, `_layouts/`, `_includes/`, `test/visual/` change); both go through the new reusable `.github/actions/playwright-tests` composite action and upload `test/visual-results/` artifacts on failure (14-day retention) for easier triage.
@@ -42,6 +48,18 @@
 
 ### Tests
 - Added `ObsidianCacheTest` suite (5 new tests) covering fingerprint invalidation on document addition, title change, alias change, cache hit, and cache miss
+
+### Changed (UI/UX)
+- **Sidebar collapse — VS Code style**: Left sidebar (`#bdSidebar`) and right TOC (`#tocContents`) now collapse to a slim 36 px rail (`--zer0-sidebar-rail-width`) instead of being fully hidden on desktop. The visibility toggle icon (`bi-layout-sidebar-inset` / `bi-layout-sidebar-inset-reverse`) stays mounted on the rail so users can re-expand the panel with a single click — the floating action buttons (`.bd-sidebar-fab`, `.bd-toc-fab`) are now hidden at `≥992 px` since the rail toggle replaces them. `_sass/core/_docs-layout.scss`, `_sass/layouts/_navbar-extras.scss`.
+- **Smooth transitions**: `.bd-layout` and `.bd-main` now animate `grid-template-columns` and `gap` over `--zer0-motion-duration-base` (0.3 s) with `--zer0-motion-ease-standard`; sidebar contents cross-fade via `opacity` + delayed `visibility`. Honors `@media (prefers-reduced-motion: reduce)` by disabling all related transitions.
+- **Toggle behavior**: `sidebar-visibility.js` and `toc-visibility.js` no longer set `button.hidden = true` on the rail toggle when collapsed, keeping it interactive in the collapsed state. Aria labels (`Hide…` / `Show…`) update on each toggle.
+- **Cache-bust**: Added `?v={{ site.time | date: '%s' }}` to the navigation ES-module `<script type="module">` tag in `_includes/components/js-cdn.html` to force re-fetch on rebuild (browsers cache ES modules indefinitely by URL).
+- **Navbar dropdown**: Dropdown toggle button set to `align-self: stretch` so it spans the full navbar height, making it easier to invoke on touch/small screens; chevron icon `font-size` increased to `1em` for better legibility. `_sass/core/_navbar.scss`.
+- **Syntax highlighting**: Dual-palette system — `_sass/core/_syntax.scss` now uses a GitHub Light palette for `.highlight` (light mode) and scopes the Material Dark base16 palette to `[data-bs-theme="dark"] .highlight`, fixing near-invisible token colors on light backgrounds.
+- **Theme preview gallery**: Expanded to 20 sections with 6 new components: Callouts (5 types), Accordion, Progress & Spinners, Breadcrumb & Pagination, Tooltips & Popovers, and Icons showcase. TOC updated accordingly; Bootstrap tooltip/popover JS initializer added. `_includes/components/theme-preview-gallery.html`, `pages/_about/settings/theme-preview.md`.
+
+### Fixed (UI)
+- **Contrast skin — light mode**: The `contrast` skin's `zer0-skin-palette` mixin sets `--bs-link-color: #ffffff` (white accent) which rendered sidebar nav links invisible on a white background in light mode. Added `[data-theme-skin="contrast"]:not([data-bs-theme="dark"])` override in `_sass/theme/_skins.scss` to pin link color to `#111111` in light mode while leaving dark-mode behavior unchanged.
 
 ## [1.6.5] - 2026-05-19
 

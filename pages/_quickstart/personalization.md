@@ -775,7 +775,7 @@ author:
 # -------------------------------------------------------------------------
 links:`;
       if (github) yaml += `\n  - label: "GitHub"\n    icon: "bi-github"\n    url: "https://github.com/${escapeYaml(github)}"`;
-      if (twitter) yaml += `\n  - label: "Twitter"\n    icon: "bi-twitter-x"\n    url: "https://twitter.com/${escapeYaml(twitter)}"`;
+      if (twitter) yaml += `\n  - label: "X"\n    icon: "bi-twitter-x"\n    url: "https://x.com/${escapeYaml(twitter)}"`;
       if (linkedin) yaml += `\n  - label: "LinkedIn"\n    icon: "bi-linkedin"\n    url: "https://linkedin.com/in/${escapeYaml(linkedin)}"`;
       if (instagram) yaml += `\n  - label: "Instagram"\n    icon: "bi-instagram"\n    url: "https://instagram.com/${escapeYaml(instagram)}"`;
       if (youtube) yaml += `\n  - label: "YouTube"\n    icon: "bi-youtube"\n    url: "${escapeYaml(youtube)}"`;

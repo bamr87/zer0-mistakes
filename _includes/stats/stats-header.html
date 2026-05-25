@@ -1,25 +1,3 @@
-<!--
-  ===================================================================
-  STATS HEADER COMPONENT - BOOTSTRAP 5 OPTIMIZED
-  ===================================================================
-  
-  File: stats-header.html
-  Path: _includes/stats/stats-header.html
-  Purpose: Page header for statistics dashboard using Bootstrap 5 classes
-  
-  Features:
-  - Bootstrap 5 utility classes for layout and styling
-  - Responsive design with Bootstrap breakpoints
-  - Bootstrap icons and color system
-  - Minimal custom CSS dependencies
-  
-  Dependencies:
-  - Bootstrap 5 for styling
-  - Bootstrap Icons for iconography
-  - Jekyll data variables
-  ===================================================================
--->
-
 <!-- ================================================ -->
 <!-- STATS PAGE HEADER                               -->
 <!-- Title, description, and metadata display        -->
@@ -43,17 +21,21 @@
       </p>
     </div>
     
-    <!-- Last Updated Information using Bootstrap alerts -->
-    {% if site.data.content_statistics and site.data.content_statistics.generated_at %}
+    <!-- Last updated reflects build-time stats (generated_at or site.time) -->
+    {% if site.data.content_statistics %}
+      {% assign stats_last_updated = site.data.content_statistics.generated_at | default: site.time %}
       <div class="alert alert-info shadow-sm d-flex align-items-center justify-content-between" role="alert">
         <div class="d-flex align-items-center">
           <i class="bi bi-clock me-3 fs-4"></i>
           <span class="fw-medium">
-            <strong>Last updated:</strong> 
-            {{ site.data.content_statistics.generated_at | date: "%B %d, %Y at %I:%M %p" }}
+            <strong>Last updated:</strong>
+            {{ stats_last_updated | date: "%B %d, %Y at %I:%M %p" }}
           </span>
         </div>
-        <button class="btn btn-outline-info btn-sm" onclick="window.location.reload()">
+        <button type="button"
+                class="btn btn-outline-info btn-sm"
+                onclick="window.location.reload()"
+                title="Reload this page. Statistics refresh automatically on each site build.">
           <i class="bi bi-arrow-clockwise me-1"></i>
           Refresh
         </button>

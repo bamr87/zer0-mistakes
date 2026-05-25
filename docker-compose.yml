@@ -32,7 +32,7 @@ services:
     platform: linux/amd64
     
     # Run bundle check first; skip install if deps haven't changed
-    command: ["sh", "-c", "git config --global --add safe.directory /site 2>/dev/null || true && bundle check || bundle install --jobs 4 --retry 3 && bundle exec jekyll serve --watch --livereload --config '_config.yml,_config_dev.yml' --host 0.0.0.0 --port 4000"]
+    command: ["sh", "-c", "git config --global --add safe.directory /site 2>/dev/null || true && bundle check || bundle install --jobs 4 --retry 3 && bash _data/generate_statistics.sh && bundle exec jekyll serve --watch --livereload --config '_config.yml,_config_dev.yml' --host 0.0.0.0 --port 4000"]
     
     volumes:
       - .:/site

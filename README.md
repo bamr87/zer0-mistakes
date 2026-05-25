@@ -65,28 +65,6 @@ Built from the ground up to **automate, facilitate, and integrate** with modern 
 
 ---
 
-## 📖 Table of Contents
-
-- [Overview](#overview)
-- [Quick Start](#-quick-start)
-- [AI-Native Workflow](#-ai-native-workflow)
-- [Architecture](#-architecture)
-- [Key Features](#-key-features)
-- [Installation Methods](#-installation-methods)
-- [Project Structure](#-project-structure)
-- [Development Workflow](#-development-workflow)
-- [Deployment](#-deployment)
-- [Documentation](#-documentation)
-- [Release System](#-release-system)
-- [Roadmap](#-roadmap)
-- [FAQ](/faq/)
-- [Glossary](/glossary/)
-- [Contributing](#-contributing)
-- [Support](#-support)
-- [AIEO-Optimized](#-aieo-optimized--built-for-ai-citation)
-
----
-
 ## Overview
 
 **zer0-mistakes** is an **AI-native** Jekyll theme engineered to eliminate setup friction and accelerate every stage of the content lifecycle with AI automation, facilitation, and integration. Docker containerization, multi-agent guidance files, AI-powered tooling, and 43 documented features take you from zero to deployed — and zero to AI-collaborative — in under 5 minutes.
@@ -673,19 +651,20 @@ graph TD
 | Directory | Purpose | Key Files |
 |-----------|---------|-----------|
 | `_layouts/` | Page templates | `default.html`, `journals.html`, `landing.html`, `notebook.html` |
-| `_includes/` | Reusable components | `core/`, `components/`, `analytics/`, `navigation/` |
-| `_sass/` | Stylesheets | `custom.scss`, `notebooks.scss`, `core/` (`_variables`, `_docs-layout`, …), `theme/` (`_css-variables`, `_wizard-mode`) |
-| `assets/` | Static files | `css/`, `js/`, `images/`, **`vendor/`** (Bootstrap, jQuery, MathJax, Mermaid, … — committed for GitHub Pages) |
+| `_includes/` | Reusable components | `core/`, `components/` (see `_includes/components/README.md`), `analytics/`, `navigation/` |
+| `_sass/` | Stylesheets | `tokens/` (design tokens), `components/`, `layouts/`, `utilities/`, `custom.scss` (legacy barrel), `core/`, `theme/` |
+| `_data/` | Data-driven content | `landing.yml` (homepage copy), `navigation/*.yml`, `ui-text.yml` (i18n), `features.yml`, `authors.yml`, `theme_backgrounds.yml` |
+| `assets/` | Static files | `css/`, `js/` (incl. `modules/navigation/`), `images/`, **`vendor/`** (Bootstrap, jQuery, MathJax, Mermaid, … — committed for GitHub Pages) |
 | `scripts/` | Automation | `release`, `build`, `migrate.sh`, `vendor-install.sh`, `convert-notebooks.sh` |
 | `templates/` | Installable templates | `pages/admin/` (6 admin page templates), `config/install.conf` |
-| `docs/` | Technical docs | `SIDEBAR_IMPROVEMENTS.md`, `JUPYTER_NOTEBOOKS.md` |
+| `docs/` | Technical docs | `design-system.md`, `theming.md`, `components.md`, `layouts-and-navigation.md`, `design-tokens.md`, `configuration.md`, `code-blocks.md`, `customization.md`, `extending.md`, `js-api.md`; see [`docs/README.md`](docs/README.md) |
 | `pages/` | Content pages | `privacy-policy.md`, `terms-of-service.md` |
+
+> **Homepage routing**: The site root (`/`) is served by **`README.md`** (front matter declares `layout: landing` and `permalink: /`). The root **`index.html`** file is a posts archive served at **`/pages/`**, not the homepage — keep this in mind when customizing landing copy. To change the homepage hero/features, edit `_data/landing.yml` rather than editing the layout HTML.
 
 ---
 
-## �️ Migration Utility
-
-Add the admin settings UI to an existing consumer site using the migration script:
+## 🛠️ Migration Utility to an existing consumer site using the migration script:
 
 ```bash
 # From the zer0-mistakes repo — install into another site
@@ -716,7 +695,7 @@ This installs 6 admin pages to `pages/_about/settings/`:
 
 ---
 
-## �🔄 Development Workflow
+## 🔄 Development Workflow
 
 ```mermaid
 gitGraph

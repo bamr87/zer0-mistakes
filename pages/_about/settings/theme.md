@@ -10,27 +10,13 @@ lastmod: 2026-04-05T00:00:00.000Z
 <!-- chroma.js — color manipulation library (BSD-3, 36 KB min) -->
 <script src="https://cdn.jsdelivr.net/npm/chroma-js@2.4.2/chroma.min.js"></script>
 
-<!-- ═══ Mode + Skin bar (always visible) ═══ -->
-<div class="d-flex flex-wrap align-items-center gap-3 mb-4 p-3 bg-body-tertiary rounded-3 border">
-  <div class="d-flex align-items-center gap-2">
-    <i class="bi bi-moon-stars"></i>
-    <span class="fw-semibold small">Mode:</span>
-    {% include components/halfmoon.html %}
-  </div>
-  <div class="vr d-none d-sm-block"></div>
-  <div class="d-flex align-items-center gap-2 flex-grow-1">
-    <i class="bi bi-palette2"></i>
-    <span class="fw-semibold small">Skin:</span>
-    {% assign skins_list = "air,aqua,contrast,dark,dirt,neon,mint,plum,sunrise" | split: "," %}
-    {% assign active_skin = site.theme_skin | default: "dark" %}
-    <div class="d-flex flex-wrap gap-1" id="quickSkinBar">
-      {% for s in skins_list %}
-      <button class="btn btn-sm btn-outline-primary{% if s == active_skin %} active{% endif %}"
-              data-quick-skin="{{ s }}" type="button">{{ s | capitalize }}</button>
-      {% endfor %}
-    </div>
-  </div>
-</div>
+{% include components/theme-controls-bar.html %}
+
+<p class="small mb-4">
+  <i class="bi bi-easel me-1"></i>
+  Open the <a href="{{ '/about/settings/theme-preview/' | relative_url }}">Theme Preview style guide</a>
+  to see all components update live with skin and mode changes.
+</p>
 
 <ul class="nav nav-tabs" id="themeTabs" role="tablist">
   <li class="nav-item" role="presentation">
@@ -62,6 +48,11 @@ lastmod: 2026-04-05T00:00:00.000Z
     <button class="nav-link" id="tab-export" data-bs-toggle="tab" data-bs-target="#pane-export" type="button" role="tab" aria-controls="pane-export" aria-selected="false">
       <i class="bi bi-download me-1"></i>Export
     </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" href="{{ '/about/settings/theme-preview/' | relative_url }}" role="tab">
+      <i class="bi bi-easel me-1"></i>Component Gallery
+    </a>
   </li>
 </ul>
 
@@ -231,19 +222,6 @@ lastmod: 2026-04-05T00:00:00.000Z
 
 </div>
 
-<!-- Quick skin bar integration -->
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  if (typeof zer0Bg === 'undefined') return;
-  document.querySelectorAll('#quickSkinBar [data-quick-skin]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      zer0Bg.setSkin(this.dataset.quickSkin);
-      document.querySelectorAll('#quickSkinBar .btn').forEach(function (b) { b.classList.remove('active'); });
-      this.classList.add('active');
-    });
-  });
-});
-</script>
 <script src="{{ '/assets/js/theme-customizer.js' | relative_url }}" defer></script>
 <script src="{{ '/assets/js/palette-generator.js' | relative_url }}" defer></script>
 <script src="{{ '/assets/js/skin-editor.js' | relative_url }}" defer></script>

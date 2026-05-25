@@ -127,18 +127,14 @@ Then display in template:
 ### Version Update Process
 
 1. Update `lib/jekyll-theme-zer0/version.rb`:
-
-   ```ruby
+  ```ruby
    VERSION = "0.6.0"
-   ```
-
+  ```
 2. Build and publish gem:
-
-   ```bash
+  ```bash
    gem build jekyll-theme-zer0.gemspec
    gem push jekyll-theme-zer0-0.6.0.gem
-   ```
-
+  ```
 3. Version automatically appears in all sites using the theme!
 
 ## Benefits
@@ -192,11 +188,11 @@ Check that Bootstrap JavaScript is loaded:
 
 Potential improvements:
 
-- [ ] Add version comparison (current vs latest available)
-- [ ] Show update notification when new version available
-- [ ] Display theme changelog directly in modal
-- [ ] Add theme configuration preview
-- [ ] Show deprecation warnings for old versions
+- Add version comparison (current vs latest available)
+- Show update notification when new version available
+- Display theme changelog directly in modal
+- Add theme configuration preview
+- Show deprecation warnings for old versions
 
 ## License
 

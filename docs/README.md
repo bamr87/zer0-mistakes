@@ -18,6 +18,16 @@ This `/docs/` directory contains **developer-focused documentation** for the Zer
 
 ```
 docs/
+├── design-system.md        # Tokens, SCSS architecture, import order
+├── theming.md              # Skins, color modes, Appearance panel
+├── configuration.md        # _config.yml styling keys
+├── components.md           # Liquid component library
+├── layouts-and-navigation.md
+├── code-blocks.md          # Rouge, copy, line numbers
+├── customization.md        # Layered customization workflow
+├── design-tokens.md        # Token quick reference
+├── extending.md            # Add layouts, components, skins
+├── js-api.md               # Public JavaScript APIs
 ├── architecture/           # Codebase architecture
 │   ├── project-structure.md
 │   ├── layouts-includes.md
@@ -52,6 +62,20 @@ docs/
 ```
 
 ## Quick Links
+
+### Styling and UI (start here)
+
+- [Design system](design-system.md) — tokens, SCSS pipeline, Bootstrap integration
+- [Theming](theming.md) — skins, backgrounds, color modes, preview pages
+- [Configuration](configuration.md) — `_config.yml` styling keys with examples
+- [Components](components.md) — Liquid include library
+- [Layouts and navigation](layouts-and-navigation.md) — sidebars, TOC, navbar, FABs
+- [Code blocks](code-blocks.md) — syntax highlighting and copy button
+- [Customization](customization.md) — decision tree for fork-safe changes
+- [Design tokens (quick reference)](design-tokens.md)
+- [JavaScript API](js-api.md) — `zer0Navigation`, `zer0Bg`, `zer0UI`
+
+Live preview (built site): `/about/settings/theme-preview/`
 
 ### Getting Started (Contributors)
 
@@ -97,6 +121,7 @@ docs/
 
 ## Recent Updates
 
+- **v1.8** — Comprehensive styling documentation set (design system, theming, configuration, components, layouts, code blocks)
 - **v0.22.21** — Nanobar component refactoring, footer full-width fix, UI/UX improvements
 - **v0.22.9** — Skin editor, palette generator, Playwright visual tests
 - **v0.22.0** — Copilot Agent prompt button with data-driven prompt registry
@@ -109,5 +134,5 @@ docs/
 
 ---
 
-**Last Updated:** April 2026
+**Last Updated:** May 2026
 **Maintained By:** Zer0-Mistakes Contributors

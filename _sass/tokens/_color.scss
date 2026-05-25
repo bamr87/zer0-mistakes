@@ -1,0 +1,44 @@
+// ============================================================================
+// Color tokens — semantic --zer0-color-* custom properties
+// ----------------------------------------------------------------------------
+// Single source of truth for theme colors. Values default to Bootstrap (--bs-*)
+// or design tokens (--bd-*) so existing styling continues to work without
+// per-property duplication. _config.yml `theme_color` keys override these at
+// runtime via _includes/core/tokens-inline.html, which emits a :root style
+// block before main.css loads.
+//
+// Naming convention: --zer0-color-<role>[-variant]
+//   role     = semantic purpose (primary, surface, ink, accent, danger, ...)
+//   variant  = optional intensity / state (hover, muted, subtle, inverse)
+//
+// See docs/design-tokens.md for the full reference.
+// ============================================================================
+
+:root {
+  // Brand / accent ---------------------------------------------------------
+  --zer0-color-primary: var(--bs-primary, #007bff);
+  --zer0-color-primary-rgb: var(--bs-primary-rgb, 0, 123, 255);
+  --zer0-color-secondary: var(--bs-secondary, #6c757d);
+  --zer0-color-accent: var(--bd-accent, #ffe484);
+
+  // Semantic state ---------------------------------------------------------
+  --zer0-color-success: var(--bs-success, #28a745);
+  --zer0-color-info: var(--bs-info, #17a2b8);
+  --zer0-color-warning: var(--bs-warning, #ffc107);
+  --zer0-color-danger: var(--bs-danger, #dc3545);
+
+  // Surfaces & ink ---------------------------------------------------------
+  --zer0-color-bg: var(--bs-body-bg, #fff);
+  --zer0-color-bg-elevated: var(--bs-tertiary-bg, #f8f9fa);
+  --zer0-color-bg-muted: var(--bs-secondary-bg, #e9ecef);
+  --zer0-color-ink: var(--bs-body-color, #212529);
+  --zer0-color-ink-muted: var(--bs-secondary-color, #6c757d);
+  --zer0-color-border: var(--bs-border-color, #dee2e6);
+  --zer0-color-border-translucent: color-mix(in srgb, var(--zer0-color-border) 42%, transparent);
+
+  // Code & callouts (legacy --bd-* aliases) --------------------------------
+  --zer0-color-code-bg: var(--bd-pre-bg, var(--bs-tertiary-bg));
+  --zer0-color-code-ink: var(--bd-callout-code-color, #ab296a);
+  --zer0-color-link: var(--bs-link-color, var(--bd-violet, #712cf9));
+  --zer0-color-link-hover: var(--bs-link-hover-color, #4c0bce);
+}

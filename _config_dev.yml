@@ -32,8 +32,9 @@ posthog:
   api_host               : null
 
 # Disable production optimizations for faster builds.
-# `limit_posts: 30` caps the post-processing window during dev serves; raise it
-# or run without it when editing older posts (or pass --drafts/--unpublished).
+# `limit_posts` caps the post-processing window during dev serves. Category
+# index pages (index: true) use a recent date so they stay inside this window.
+# Raise the limit or run without it when editing older posts.
 incremental              : true
 limit_posts              : 30
 profile                  : false
