@@ -1,0 +1,34 @@
+{%- comment -%}
+  ===================================================================
+  NAVBAR-MOBILE-QUICKLINKS — Compact section shortcuts (tablet widths)
+  ===================================================================
+
+  Visible between md and lg (768px–991px) where the full menubar lives in
+  the offcanvas but there is horizontal room for icon+label chips. Below md
+  the site title in branding.html carries the center; at lg+ the full
+  navbar.html menubar takes over.
+
+  Data: site.data.navigation.main (same source as navbar.html)
+  ===================================================================
+{%- endcomment -%}
+{%- assign nav_main = site.data.navigation.main -%}
+{%- if nav_main and nav_main.size > 0 -%}
+<nav class="navbar-mobile-quicklinks d-none d-md-flex d-lg-none align-items-center flex-grow-1 min-w-0"
+     aria-label="Section shortcuts">
+  <ul class="navbar-mobile-quicklinks__list list-unstyled d-flex flex-nowrap gap-1 mb-0 mx-auto px-1">
+    {%- for link in nav_main limit: 5 -%}
+    <li class="flex-shrink-0">
+      <a href="{{ link.url | relative_url }}"
+         class="navbar-mobile-quicklinks__chip btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1"
+         {% if link.url == page.url %}aria-current="page"{% endif %}
+         title="{{ link.title }}">
+        {%- if link.icon -%}
+          <i class="{{ site.default_icon }} {{ link.icon }}" aria-hidden="true"></i>
+        {%- endif -%}
+        <span class="navbar-mobile-quicklinks__label">{{ link.title }}</span>
+      </a>
+    </li>
+    {%- endfor -%}
+  </ul>
+</nav>
+{%- endif -%}

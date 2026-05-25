@@ -1,0 +1,25 @@
+// ============================================================================
+// Motion tokens — semantic --zer0-motion-* properties
+// ----------------------------------------------------------------------------
+// Centralised durations and easings. Consumers should always check
+// `prefers-reduced-motion` (see _sass/utilities/_motion.scss) and shorten
+// transitions to 0.01ms accordingly.
+// ============================================================================
+
+:root {
+  --zer0-motion-duration-fast: 120ms;
+  --zer0-motion-duration-base: 200ms;
+  --zer0-motion-duration-slow: 320ms;
+
+  --zer0-motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --zer0-motion-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --zer0-motion-ease-out: cubic-bezier(0, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --zer0-motion-duration-fast: 0.01ms;
+    --zer0-motion-duration-base: 0.01ms;
+    --zer0-motion-duration-slow: 0.01ms;
+  }
+}

@@ -1,25 +1,3 @@
-<!--
-  ===================================================================
-  STATS CATEGORIES COMPONENT
-  ===================================================================
-  
-  File: stats-categories.html
-  Path: _includes/stats/stats-categories.html
-  Purpose: Categories analysis section for statistics dashboard
-  
-  Features:
-  - Top categories list with post counts
-  - Bootstrap styled card layout
-  - Responsive badges for counts
-  - Sortable category data
-  
-  Dependencies:
-  - Bootstrap 5 for styling
-  - Bootstrap Icons for iconography
-  - site.data.content_statistics.categories
-  ===================================================================
--->
-
 <!-- ================================================ -->
 <!-- CATEGORIES ANALYSIS SECTION                     -->
 <!-- Top categories with post counts                 -->
@@ -40,13 +18,14 @@
     {% if site.data.content_statistics.categories and site.data.content_statistics.categories.size > 0 %}
       
       <!-- Categories List -->
-      <div class="list-group list-group-flush">
-        {% for category in site.data.content_statistics.categories limit: 15 %}
-          <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+      <div class="list-group list-group-flush stats-taxonomy-list">
+        {% for category in site.data.content_statistics.categories %}
+          <div class="list-group-item d-flex justify-content-between align-items-center{% if forloop.index > 15 %} d-none stats-category-extra{% endif %}">
             <div class="d-flex align-items-center">
-              <i class="bi bi-folder text-primary me-3"></i>
+              <i class="bi bi-folder text-primary me-2"></i>
               <div>
-                <span class="fw-medium">{{ category[0] | capitalize }}</span>
+                <a href="{{ '/categories/' | relative_url }}#{{ category[0] | slugify }}"
+                   class="stats-taxonomy-link fw-medium">{{ category[0] | capitalize }}</a>
                 {% assign max_category = site.data.content_statistics.categories | first %}
                 {% assign max_count = max_category[1] | default: 1 %}
                 {% assign high_threshold = max_count | times: 0.7 | round %}
@@ -73,12 +52,16 @@
       <!-- Show More Button if there are more categories -->
       {% if site.data.content_statistics.categories.size > 15 %}
         <div class="card-footer text-center">
-          <button class="btn btn-outline-primary btn-sm" 
-                  onclick="toggleAllCategories(this)">
+          <button class="btn btn-outline-primary btn-sm"
+                  type="button"
+                  onclick="toggleAllCategories(this)"
+                  aria-expanded="false"
+                  data-hidden-count="{{ site.data.content_statistics.categories.size | minus: 15 }}">
             <i class="bi bi-chevron-down"></i>
             Show {{ site.data.content_statistics.categories.size | minus: 15 }} more categories
           </button>
         </div>
+        <script defer src="{{ '/assets/js/stats.js' | relative_url }}"></script>
       {% endif %}
       
     {% else %}
@@ -119,28 +102,3 @@
     </div>
   {% endif %}
 </div>
-
-<!-- ================================================ -->
-<!-- CATEGORIES JAVASCRIPT                           -->
-<!-- Interactive functionality for categories        -->
-<!-- ================================================ -->
-<script>
-function toggleAllCategories(button) {
-  // This would expand/collapse additional categories
-  // Implementation depends on whether you want to load more data
-  // or show/hide existing elements
-  
-  const icon = button.querySelector('i');
-  const isExpanded = icon.classList.contains('bi-chevron-up');
-  
-  if (isExpanded) {
-    icon.className = 'bi bi-chevron-down';
-    button.innerHTML = '<i class="bi bi-chevron-down"></i> Show more categories';
-  } else {
-    icon.className = 'bi bi-chevron-up';
-    button.innerHTML = '<i class="bi bi-chevron-up"></i> Show fewer categories';
-  }
-  
-  // Add your expand/collapse logic here
-}
-</script>

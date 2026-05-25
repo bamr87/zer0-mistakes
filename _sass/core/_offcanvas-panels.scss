@@ -50,3 +50,18 @@
     padding-bottom: 1rem;
   }
 }
+
+// Bootstrap sets `.offcanvas-lg .offcanvas-body { display: flex }` at lg+ with
+// default row direction, which places the desktop header beside the nav tree.
+@media (min-width: 992px) {
+  #bdSidebar .offcanvas-body {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  #bdSidebar .offcanvas-body > .bd-sidebar-desktop-header {
+    flex-shrink: 0;
+    width: 100%;
+  }
+}

@@ -11,6 +11,12 @@
 
 ## [Unreleased]
 
+### Added
+- **Design system & layouts**: Sass token layers (`_sass/tokens/`), component and layout partials (`_sass/components/`, `_sass/layouts/`), skins (`theme_skins.yml` + `_sass/theme/_skins.scss`), utilities, and developer docs (`docs/design-system.md`, `design-tokens.md`, `theming.md`, `layouts-and-navigation.md`, and related guides). Homepage sections are driven by `_data/landing.yml` per `_includes/components/README.md`.
+- **Navigation & chrome**: Drawer/TOC FAB and sidebar visibility modules (`assets/js/modules/navigation/`), `appearance.js` theme helper, refreshed navbar/footer/breadcrumb markup aligned with Bootstrap 5.3.
+- **Statistics**: `_plugins/content_statistics_generator.rb` optionally regenerates `_data/content_statistics.yml` during `jekyll build` (toggle via `content_statistics.auto_generate`); `./scripts/generate-content-statistics.sh` delegates to `_data/generate_statistics.sh` and is wired from `rake stats:generate`.
+- **Testing**: Expanded Playwright coverage (`test/visual/ui-refresh.spec.js`, `layouts.spec.js`) and refreshed smoke visuals/`results.json` for the new chrome.
+
 ### Changed
 - **Testing**: Consolidated three Playwright configs into a single `test/playwright.config.js` with `smoke`, `snapshots`, and `regression-{chromium,firefox,webkit}` projects (tiers). The new `test/test_playwright.sh` runner replaces `test_styling.sh` and selects the tier via `PLAYWRIGHT_PROJECT`. Snapshot baselines now live in `test/visual/snapshots/` (committed Linux images) and can be refreshed via the new `test/update-snapshots.sh` Docker helper.
 - **CI**: Split the styling step in `ci.yml` into a Playwright smoke step (every code-change PR) and a path-filtered Playwright snapshot step (only when `_sass/`, `assets/`, `_layouts/`, `_includes/`, `test/visual/` change); both go through the new reusable `.github/actions/playwright-tests` composite action and upload `test/visual-results/` artifacts on failure (14-day retention) for easier triage.

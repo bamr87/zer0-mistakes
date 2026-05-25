@@ -129,9 +129,9 @@ links:
   - label: "BASH Consulting"
     url: "https://bashconsultants.com"
     icon: "bi-link"
-  - label: "Twitter"
-    icon: "bi-twitter"
-    url: "https://twitter.com/bamr87"
+  - label: "X"
+    icon: "bi-twitter-x"
+    url: "https://x.com/bamr87"
   - label: "GitHub"
     icon: "bi-github"
     url: [ 'https://github.com/' , *github_user ]

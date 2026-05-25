@@ -1,0 +1,290 @@
+<!--
+  Theme Preview — component gallery for live skin / mode testing.
+  Pair with theme-controls-bar.html and theme-customizer.js.
+-->
+<div class="theme-preview-gallery" id="theme-preview-gallery">
+
+  <p class="text-body-secondary">
+    Every section below uses Bootstrap and theme tokens. Switch <strong>Skin</strong> or <strong>Mode</strong>
+    above to see live updates. Overrides from the Appearance panel or <code>_config.yml</code>
+    <code>theme_color</code> may take precedence over skin tokens for <code>--zer0-color-*</code> variables.
+  </p>
+
+  <!-- Typography -->
+  <section class="theme-preview-section" id="preview-typography" aria-labelledby="preview-typography-heading">
+    <h2 class="h4 theme-preview-heading" id="preview-typography-heading">
+      <i class="bi bi-fonts me-2" aria-hidden="true"></i>Typography
+    </h2>
+    <div class="card mb-3">
+      <div class="card-body">
+        <h1 class="h1">Heading 1</h1>
+        <h2 class="h2">Heading 2</h2>
+        <h3 class="h3">Heading 3</h3>
+        <p class="lead">Lead paragraph — skin tints links and primary accents.</p>
+        <p>Body text with a <a href="#preview-links">sample link</a> and <strong>bold</strong> / <em>emphasis</em>.</p>
+        <p class="text-primary">.text-primary</p>
+        <p class="text-body-secondary">.text-body-secondary</p>
+        <blockquote class="blockquote">
+          <p>Blockquote using theme ink colors.</p>
+          <footer class="blockquote-footer">Theme Preview</footer>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- Buttons -->
+  <section class="theme-preview-section" id="preview-buttons" aria-labelledby="preview-buttons-heading">
+    <h2 class="h4 theme-preview-heading" id="preview-buttons-heading">
+      <i class="bi bi-hand-index-thumb me-2" aria-hidden="true"></i>Buttons
+    </h2>
+    <div class="card mb-3">
+      <div class="card-body d-flex flex-wrap gap-2">
+        <button type="button" class="btn btn-primary">Primary</button>
+        <button type="button" class="btn btn-secondary">Secondary</button>
+        <button type="button" class="btn btn-success">Success</button>
+        <button type="button" class="btn btn-danger">Danger</button>
+        <button type="button" class="btn btn-warning">Warning</button>
+        <button type="button" class="btn btn-info">Info</button>
+        <button type="button" class="btn btn-light">Light</button>
+        <button type="button" class="btn btn-dark">Dark</button>
+        <button type="button" class="btn btn-link">Link</button>
+      </div>
+      <div class="card-body border-top d-flex flex-wrap gap-2 pt-3">
+        <button type="button" class="btn btn-outline-primary">Outline primary</button>
+        <button type="button" class="btn btn-outline-secondary">Outline secondary</button>
+        <button type="button" class="btn btn-sm btn-primary">Small primary</button>
+        <button type="button" class="btn btn-lg btn-primary">Large primary</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Alerts -->
+  <section class="theme-preview-section" id="preview-alerts" aria-labelledby="preview-alerts-heading">
+    <h2 class="h4 theme-preview-heading" id="preview-alerts-heading">
+      <i class="bi bi-exclamation-triangle me-2" aria-hidden="true"></i>Alerts
+    </h2>
+    <div class="alert alert-primary" role="alert">Primary alert — skin-tinted background and border.</div>
+    <div class="alert alert-secondary" role="alert">Secondary alert</div>
+    <div class="alert alert-success" role="alert">Success alert</div>
+    <div class="alert alert-danger" role="alert">Danger alert</div>
+    <div class="alert alert-warning" role="alert">Warning alert</div>
+    <div class="alert alert-info" role="alert">Info alert</div>
+  </section>
+
+  <!-- Cards -->
+  <section class="theme-preview-section" id="preview-cards" aria-labelledby="preview-cards-heading">
+    <h2 class="h4 theme-preview-heading" id="preview-cards-heading">
+      <i class="bi bi-card-heading me-2" aria-hidden="true"></i>Cards
+    </h2>
+    <div class="row g-3 mb-3">
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-header">Default card</div>
+          <div class="card-body">
+            <h5 class="card-title">Elevated surface</h5>
+            <p class="card-text">Uses <code>--zer0-color-bg-elevated</code> when skin is active.</p>
+            <a href="#" class="btn btn-primary btn-sm">Action</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card border-primary h-100">
+          <div class="card-body">
+            <span class="badge bg-primary mb-2">Featured</span>
+            <h5 class="card-title">Border primary</h5>
+            <p class="card-text">Border and badge follow skin primary.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Forms -->
+  <section class="theme-preview-section" id="preview-forms" aria-labelledby="preview-forms-heading">
+    <h2 class="h4 theme-preview-heading" id="preview-forms-heading">
+      <i class="bi bi-input-cursor-text me-2" aria-hidden="true"></i>Forms
+    </h2>
+    <div class="card mb-3">
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label" for="preview-input">Text input</label>
+            <input type="text" class="form-control" id="preview-input" placeholder="Focus shows primary ring">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="preview-select">Select</label>
+            <select class="form-select" id="preview-select">
+              <option>Option one</option>
+              <option>Option two</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="preview-check" checked>
+              <label class="form-check-label" for="preview-check">Checked checkbox (primary)</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="preview-radio" id="preview-radio" checked>
+              <label class="form-check-label" for="preview-radio">Selected radio</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Nav tabs -->
+  <section class="theme-preview-section" id="preview-tabs" aria-labelledby="preview-tabs-heading">
+    <h2 class="h4 theme-preview-heading" id="preview-tabs-heading">
+      <i class="bi bi-layout-text-window-reverse me-2" aria-hidden="true"></i>Nav tabs
+    </h2>
+    <ul class="nav nav-tabs mb-3" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" type="button" role="tab" aria-selected="true">Active tab</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" type="button" role="tab" aria-selected="false">Hover me</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link disabled" type="button" disabled>Disabled</button>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Badges -->
+  <section class="theme-preview-section" id="preview-badges" aria-labelledby="preview-badges-heading">
+    <h2 class="h4 theme-preview-heading" id="preview-badges-heading">
+      <i class="bi bi-award me-2" aria-hidden="true"></i>Badges
+    </h2>
+    <p>
+      <span class="badge bg-primary">Primary</span>
+      <span class="badge bg-secondary">Secondary</span>
+      <span class="badge bg-success">Success</span>
+      <span class="badge bg-danger">Danger</span>
+      <span class="badge bg-warning text-dark">Warning</span>
+      <span class="badge bg-info">Info</span>
+      <span class="badge rounded-pill bg-primary">Pill</span>
+    </p>
+  </section>
+
+  <!-- Code blocks -->
+  <section class="theme-preview-section" id="preview-code" aria-labelledby="preview-code-heading">
+    <h2 class="h4 theme-preview-heading" id="preview-code-heading">
+      <i class="bi bi-code-slash me-2" aria-hidden="true"></i>Code blocks
+    </h2>
+    <p>Inline <code>const skin = 'aqua'</code> and block:</p>
+    <pre class="mb-3"><code>zer0Bg.setSkin('neon');
+document.documentElement.getAttribute('data-theme-skin');</code></pre>
+  </section>
+
+  <!-- Links -->
+  <section class="theme-preview-section" id="preview-links" aria-labelledby="preview-links-heading">
+    <h2 class="h4 theme-preview-heading" id="preview-links-heading">
+      <i class="bi bi-link-45deg me-2" aria-hidden="true"></i>Links
+    </h2>
+    <p>
+      <a href="#">Default link</a> ·
+      <a href="#" class="link-primary">.link-primary</a> ·
+      <a href="#" class="link-secondary">.link-secondary</a>
+    </p>
+  </section>
+
+  <!-- Navbar snippet -->
+  <section class="theme-preview-section" id="preview-navbar" aria-labelledby="preview-navbar-heading">
+    <h2 class="h4 theme-preview-heading" id="preview-navbar-heading">
+      <i class="bi bi-layout-navbar me-2" aria-hidden="true"></i>Navbar snippet
+    </h2>
+    <nav class="navbar navbar-expand-lg border rounded mb-3 theme-preview-navbar" aria-label="Preview navbar">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#"><i class="bi bi-robot me-1"></i>Brand</a>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Active</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Link</a></li>
+          <li class="nav-item"><a class="nav-link disabled" href="#" tabindex="-1">Disabled</a></li>
+        </ul>
+        <button type="button" class="btn btn-outline-primary btn-sm">Action</button>
+      </div>
+    </nav>
+  </section>
+
+  <!-- Footer snippet -->
+  <section class="theme-preview-section" id="preview-footer" aria-labelledby="preview-footer-heading">
+    <h2 class="h4 theme-preview-heading" id="preview-footer-heading">
+      <i class="bi bi-layout-text-sidebar-reverse me-2" aria-hidden="true"></i>Footer snippet
+    </h2>
+    <footer class="bd-footer theme-preview-footer border rounded p-4 mb-3">
+      <div class="row">
+        <div class="col-md-4">
+          <h3 class="footer-section-title text-uppercase">About</h3>
+          <p class="small text-body-secondary">Footer links use accent / link tokens.</p>
+        </div>
+        <div class="col-md-4">
+          <h3 class="footer-section-title text-uppercase">Links</h3>
+          <ul class="list-unstyled small">
+            <li><a href="#">Documentation</a></li>
+            <li><a href="#">Theme settings</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <p class="footer-powered-by-copyright small mb-0">&copy; Theme Preview</p>
+        </div>
+      </div>
+    </footer>
+  </section>
+
+  <!-- Table -->
+  <section class="theme-preview-section" id="preview-table" aria-labelledby="preview-table-heading">
+    <h2 class="h4 theme-preview-heading" id="preview-table-heading">
+      <i class="bi bi-table me-2" aria-hidden="true"></i>Table
+    </h2>
+    <div class="table-responsive mb-3">
+      <table class="table table-hover">
+        <thead>
+          <tr><th scope="col">Token</th><th scope="col">Skin</th><th scope="col">Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>--bs-primary</code></td><td>Yes</td><td><span class="badge bg-primary">Live</span></td></tr>
+          <tr><td><code>--zer0-color-link</code></td><td>Partial*</td><td><span class="badge bg-warning text-dark">Config</span></td></tr>
+          <tr><td>SVG backgrounds</td><td>Yes</td><td><span class="badge bg-success">Live</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- List group -->
+  <section class="theme-preview-section" id="preview-list-group" aria-labelledby="preview-list-group-heading">
+    <h2 class="h4 theme-preview-heading" id="preview-list-group-heading">
+      <i class="bi bi-list-ul me-2" aria-hidden="true"></i>List group
+    </h2>
+    <ul class="list-group mb-3" style="max-width: 24rem;">
+      <li class="list-group-item">Default item</li>
+      <li class="list-group-item active" aria-current="true">Active item (primary)</li>
+      <li class="list-group-item list-group-item-action">Action item</li>
+    </ul>
+  </section>
+
+  <!-- Backgrounds -->
+  <section class="theme-preview-section" id="preview-backgrounds" aria-labelledby="preview-backgrounds-heading">
+    <h2 class="h4 theme-preview-heading" id="preview-backgrounds-heading">
+      <i class="bi bi-image me-2" aria-hidden="true"></i>Background layers
+    </h2>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div class="zer0-bg-hero rounded-3 p-4 border text-center" style="min-height: 6rem;">
+          <span class="small">.zer0-bg-hero</span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="zer0-bg-surface rounded-3 p-4 border text-center" style="min-height: 6rem;">
+          <span class="small">.zer0-bg-surface</span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="zer0-bg-body rounded-3 p-4 border text-center" style="min-height: 6rem;">
+          <span class="small">.zer0-bg-body</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>

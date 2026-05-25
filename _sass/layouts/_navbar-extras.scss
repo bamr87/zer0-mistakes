@@ -1,0 +1,164 @@
+// ============================================================================
+// Navbar extras — FAB stack and ancillary navbar tweaks
+// ----------------------------------------------------------------------------
+// Centralises FAB z-index/offset/positioning using the unified --zer0-layer-*
+// and --zer0-space-fab-* tokens so the TOC and back-to-top buttons never
+// overlap each other on small viewports. The TOC and local-graph FAB triggers
+// are rendered from footer.html; graph styles live in _obsidian.scss.
+// ============================================================================
+
+// Mobile TOC FAB (rendered from footer.html)
+.bd-toc-fab {
+  right: var(--zer0-space-fab-offset, 1rem);
+  z-index: var(--zer0-layer-fab-toc);
+
+  // Stack above back-to-top on mobile (open + restore modes).
+  @media (max-width: 991.98px) {
+    bottom: calc(
+      var(--zer0-space-fab-offset, 1rem) +
+      var(--zer0-space-fab-size, 3.5rem) +
+      var(--zer0-space-fab-gap, 0.75rem)
+    );
+  }
+
+  // When TOC is hidden, show restore FAB on desktop too.
+  &.bd-toc-fab--restore,
+  html.bd-toc-pref-hidden & {
+    display: block !important;
+  }
+
+  // Desktop restore: top-right under navbar — avoids covering footer links.
+  @media (min-width: 992px) {
+    &.bd-toc-fab--restore,
+    html.bd-toc-pref-hidden & {
+      top: 5.5rem;
+      bottom: auto;
+    }
+  }
+
+  .btn.bd-toc-toggle {
+    --bs-btn-padding-x: 0;
+    --bs-btn-padding-y: 0;
+    width: var(--zer0-space-fab-size, 3.5rem);
+    height: var(--zer0-space-fab-size, 3.5rem);
+    padding: 0;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform var(--zer0-motion-duration-fast) var(--zer0-motion-ease-standard);
+
+    > .bi {
+      line-height: 1;
+      display: block;
+    }
+
+    &:hover,
+    &:focus-visible {
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+// Left docs sidebar FAB — mirrors .bd-toc-fab on the opposite edge
+.bd-sidebar-fab {
+  left: var(--zer0-space-fab-offset, 1rem);
+  z-index: var(--zer0-layer-fab-toc);
+
+  @media (max-width: 991.98px) {
+    bottom: calc(
+      var(--zer0-space-fab-offset, 1rem) +
+      var(--zer0-space-fab-size, 3.5rem) +
+      var(--zer0-space-fab-gap, 0.75rem)
+    );
+  }
+
+  &.bd-sidebar-fab--restore,
+  html.bd-sidebar-pref-hidden &.bd-sidebar-fab {
+    display: block !important;
+    bottom: var(--zer0-space-fab-offset, 1rem);
+  }
+
+  @media (min-width: 992px) {
+    &.bd-sidebar-fab--restore,
+    html.bd-sidebar-pref-hidden &.bd-sidebar-fab {
+      top: 5.5rem;
+      bottom: auto;
+    }
+  }
+
+  .btn.bd-sidebar-toggle {
+    --bs-btn-padding-x: 0;
+    --bs-btn-padding-y: 0;
+    width: var(--zer0-space-fab-size, 3.5rem);
+    height: var(--zer0-space-fab-size, 3.5rem);
+    padding: 0;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform var(--zer0-motion-duration-fast) var(--zer0-motion-ease-standard);
+
+    > .bi {
+      line-height: 1;
+      display: block;
+    }
+
+    &:hover,
+    &:focus-visible {
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+// Tablet shortcut chips — fill center band between md and lg
+.navbar-mobile-quicklinks {
+  min-width: 0;
+  overflow: hidden;
+
+  &__list {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &__chip {
+    --bs-btn-padding-x: 0.5rem;
+    --bs-btn-padding-y: 0.25rem;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    border-color: var(--bs-border-color-translucent);
+
+    &:hover,
+    &:focus-visible {
+      border-color: var(--bs-primary);
+      color: var(--bs-primary);
+    }
+
+    &[aria-current="page"] {
+      font-weight: 600;
+      color: var(--bs-primary);
+      border-color: var(--bs-primary);
+      background-color: var(--bs-primary-bg-subtle);
+    }
+  }
+
+  &__label {
+    max-width: 5.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

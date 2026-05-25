@@ -2,6 +2,16 @@
 require "bundler/gem_tasks"
 
 # =============================================================================
+# Content Statistics Tasks
+# =============================================================================
+namespace :stats do
+  desc "Regenerate _data/content_statistics.yml"
+  task :generate do
+    sh "./scripts/generate-content-statistics.sh"
+  end
+end
+
+# =============================================================================
 # Preview Image Generator Tasks
 # Feature: ZER0-003
 # =============================================================================

@@ -153,26 +153,39 @@
 
 // ----------------------------------------------------------------------------
 // Local graph side panel — Obsidian-style local graph view.
-// Rendered by _includes/navigation/local-graph.html via assets/js/obsidian-local-graph.js.
+// Rendered by _includes/navigation/local-graph.html (body-level, after footer)
+// and _includes/navigation/local-graph-fab.html (footer) via
+// assets/js/obsidian-local-graph.js.
 // ----------------------------------------------------------------------------
 .obsidian-local-graph-fab {
   position: fixed;
-  left: 1rem;
-  bottom: 1rem;
-  z-index: 1032;
+  left: var(--zer0-space-fab-offset, 1rem);
+  right: auto;
+  bottom: var(--zer0-space-fab-offset, 1rem);
+  z-index: var(--zer0-layer-fab-local-graph);
 
   &[hidden] {
     display: none !important;
   }
 }
 
-.obsidian-local-graph-toggle {
-  width: 3.25rem;
-  height: 3.25rem;
+.btn.obsidian-local-graph-toggle {
+  --bs-btn-padding-x: 0;
+  --bs-btn-padding-y: 0;
+  width: var(--zer0-space-fab-size, 3.5rem);
+  height: var(--zer0-space-fab-size, 3.5rem);
+  padding: 0;
+  line-height: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  box-shadow: var(--zer0-shadow-fab);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  > .bi {
+    line-height: 1;
+    display: block;
+  }
 
   &:hover,
   &:focus-visible {
@@ -186,15 +199,22 @@
 
 .obsidian-local-graph-panel {
   --bs-offcanvas-width: min(28rem, calc(100vw - 1.5rem));
+  z-index: var(--zer0-layer-offcanvas);
+  background-color: var(--bs-offcanvas-bg, var(--bs-body-bg));
 
   &[hidden] {
     display: none !important;
+  }
+
+  .offcanvas-header {
+    background-color: inherit;
   }
 
   .offcanvas-body {
     display: flex;
     flex-direction: column;
     min-height: 0;
+    background-color: inherit;
   }
 }
 
@@ -226,11 +246,6 @@
 }
 
 @media (max-width: 575.98px) {
-  .obsidian-local-graph-fab {
-    left: 0.875rem;
-    bottom: 0.875rem;
-  }
-
   .obsidian-local-graph-panel {
     --bs-offcanvas-width: min(100vw, 24rem);
   }

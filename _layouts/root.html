@@ -62,8 +62,15 @@
         <!-- Main site header with navigation, branding, and search functionality -->
         {% include core/header.html %}
 
+        <!-- Optional unified mobile drawer (Browse / Menu / Settings tabs).
+             Enable with `navigation.unified_mobile_drawer: true` in _config.yml. -->
+        {% include navigation/unified-drawer.html %}
+
         <!-- Search modal (site-wide) -->
         {% include components/search-modal.html %}
+
+        <!-- Keyboard shortcuts help modal (triggered by `?`) -->
+        {% include components/shortcuts-modal.html %}
 
         <!-- Site-wide information banner or announcement section -->
         {% include components/info-section.html %}

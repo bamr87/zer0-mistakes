@@ -1,0 +1,89 @@
+// ============================================================================
+// Post navigation — previous / next article cards
+// ----------------------------------------------------------------------------
+// Pairs with the post-navigation block in _layouts/article.html. Card-like
+// affordance with token shadows, borders, and hover elevation — dark-mode safe.
+// ============================================================================
+
+.post-navigation {
+  .post-nav-card {
+    display: block;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+    background: var(--zer0-color-bg-elevated, var(--bs-tertiary-bg));
+    border: 1px solid var(--zer0-color-border, var(--bs-border-color));
+    border-radius: 0.625rem;
+    box-shadow: var(--zer0-shadow-sm);
+    transition:
+      transform var(--zer0-motion-duration-fast, 120ms) var(--zer0-motion-ease-standard),
+      box-shadow var(--zer0-motion-duration-base, 200ms) var(--zer0-motion-ease-standard),
+      border-color var(--zer0-motion-duration-fast, 120ms) var(--zer0-motion-ease-standard);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--zer0-shadow-md);
+      border-color: rgba(var(--zer0-color-primary-rgb, var(--bs-primary-rgb)), 0.35);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--zer0-color-primary, var(--bs-primary));
+      outline-offset: 2px;
+      box-shadow: var(--zer0-shadow-focus), var(--zer0-shadow-md);
+    }
+
+    [data-bs-theme="dark"] & {
+      box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.35);
+      border-color: rgba(255, 255, 255, 0.1);
+
+      &:hover {
+        box-shadow: 0 0.375rem 1rem rgba(0, 0, 0, 0.45);
+        border-color: rgba(var(--zer0-color-primary-rgb, var(--bs-primary-rgb)), 0.45);
+      }
+    }
+  }
+
+  .post-nav-card__body {
+    min-width: 0;
+    padding: var(--zer0-space-3) var(--zer0-space-4);
+  }
+
+  .post-nav-card--next .post-nav-card__body {
+    text-align: right;
+  }
+
+  .post-nav-card__label {
+    display: block;
+    margin-bottom: var(--zer0-space-1);
+    font-size: var(--zer0-text-sm);
+    color: var(--zer0-color-ink-muted, var(--bs-secondary-color));
+  }
+
+  .post-nav-card__title {
+    display: block;
+    font-weight: var(--zer0-font-weight-semibold);
+    color: var(--zer0-color-ink, var(--bs-body-color));
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .post-nav-card--disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: default;
+    box-shadow: none;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+      border-color: var(--zer0-color-border, var(--bs-border-color));
+    }
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .post-navigation .post-nav-card:hover {
+    transform: none;
+  }
+}

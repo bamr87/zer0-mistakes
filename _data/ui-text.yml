@@ -68,6 +68,17 @@ en: &DEFAULT_EN
   view_source                : "View source"
   edit_page                  : "Edit this page"
   report_issue               : "Report an issue"
+  # Breadcrumb labels (used by _includes/navigation/breadcrumbs.html)
+  breadcrumbs_root           : "Home"
+  breadcrumbs_aria           : "Breadcrumb"
+  # Keyboard shortcuts modal (Track 5)
+  shortcuts_title            : "Keyboard shortcuts"
+  shortcuts_search           : "Open search"
+  shortcuts_prev_section     : "Previous section"
+  shortcuts_next_section     : "Next section"
+  shortcuts_toggle_sidebar   : "Toggle sidebar"
+  shortcuts_toggle_toc       : "Toggle table of contents"
+  shortcuts_show_help        : "Show this help"
   
 en-US:
   <<: *DEFAULT_EN

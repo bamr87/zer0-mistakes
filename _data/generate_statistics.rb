@@ -8,6 +8,9 @@ require 'fileutils'
 # Enhanced Statistics Generator for Jekyll Site
 # Analyzes site content and generates comprehensive statistics
 # Features: focus areas, skill levels, authors, content types analysis
+#
+# Build hook: _plugins/content_statistics_generator.rb runs this on each Jekyll build.
+# Manual run: ruby _data/generate_statistics.rb  (or rake stats:generate)
 
 class SiteStatisticsGenerator
   CONFIG_FILE = '_data/statistics_config.yml'

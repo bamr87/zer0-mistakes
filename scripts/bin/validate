@@ -475,6 +475,15 @@ run_jekyll_build() {
         return 0
     fi
 
+    if [[ -f "$REPO_ROOT/_data/generate_statistics.sh" ]]; then
+        step "Generating content statistics..."
+        if bash "$REPO_ROOT/scripts/generate-content-statistics.sh"; then
+            success "Content statistics updated"
+        else
+            warn "Content statistics generation failed; continuing with existing data"
+        fi
+    fi
+
     step "Running Jekyll build..."
     run_bundle_command jekyll build --config '_config.yml,_config_dev.yml'
     success "Jekyll build passed"
