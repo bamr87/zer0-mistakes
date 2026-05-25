@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.7.2] - 2026-05-25
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- be8fd2b Expand Ruby 101 page with comprehensive beginner content (#107)
+
+
 ## [1.7.1] - 2026-05-24
 
 ### Changed
