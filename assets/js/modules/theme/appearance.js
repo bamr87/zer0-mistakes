@@ -102,7 +102,7 @@
               '<label for="zer0-appearance-primary" class="form-label small text-body-secondary">' +
                 'Primary color</label>' +
               '<input type="color" id="zer0-appearance-primary" class="form-control form-control-color" ' +
-                'value="' + primary + '" aria-describedby="zer0-appearance-primary-help">' +
+                'aria-describedby="zer0-appearance-primary-help">' +
               '<div id="zer0-appearance-primary-help" class="form-text small">' +
                 'Overrides <code>--zer0-color-primary</code> across the theme.</div>' +
             '</div>' +
@@ -111,6 +111,10 @@
             '</button>';
 
         host.appendChild(wrapper);
+
+        // Set via the DOM property — never interpolate user/localStorage data into innerHTML.
+        const picker = wrapper.querySelector('#zer0-appearance-primary');
+        picker.value = hexishOrDefault(primary, '#007bff');
 
         // Wire color-mode buttons
         wrapper.querySelectorAll('[data-mode]').forEach((btn) => {
@@ -128,7 +132,6 @@
         });
 
         // Wire color picker (debounced)
-        const picker = wrapper.querySelector('#zer0-appearance-primary');
         let pickTimer;
         picker.addEventListener('input', (e) => {
             const value = e.target.value;

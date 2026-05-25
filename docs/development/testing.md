@@ -89,9 +89,9 @@ Tests include:
 
 The Playwright runner is split into tiers selected via `PLAYWRIGHT_PROJECT`:
 
-- `**smoke**` (default) — CSS load, Bootstrap tokens, layout chrome, admin DOM, behavioral skin tests, **UI refresh regression** (`ui-refresh.spec.js`), accessibility component checks.
-- `**snapshots`** — pixel screenshots of the homepage in each of the 9 theme skins (path-filtered in CI).
-- `**regression-{chromium,firefox,webkit}`** — all specs across all browsers (manual `workflow_dispatch` only).
+- **smoke** (default) — CSS load, Bootstrap tokens, layout chrome, admin DOM, behavioral skin tests, **UI refresh regression** (`ui-refresh.spec.js`), accessibility component checks.
+- **snapshots** — pixel screenshots of the homepage in each of the 9 theme skins (path-filtered in CI).
+- **regression-{chromium,firefox,webkit}** — all specs across all browsers (manual `workflow_dispatch` only).
 
 ```bash
 # Smoke tier — starts Jekyll on 127.0.0.1:4011 unless BASE_URL is already set

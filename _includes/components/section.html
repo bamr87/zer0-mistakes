@@ -39,6 +39,14 @@
 {%- assign heading_level = include.heading_level | default: 2 -%}
 {%- assign section_id    = include.id            | default: "" -%}
 
+{%- if section_id != "" -%}
+  {%- assign heading_id = section_id | append: "-heading" -%}
+{%- elsif include.heading -%}
+  {%- assign heading_id = include.heading | slugify | prepend: "zer0-section-" -%}
+{%- else -%}
+  {%- assign heading_id = "" -%}
+{%- endif -%}
+
 {%- comment -%} Map variant → bg/text utility classes {%- endcomment -%}
 {%- if variant == "muted" -%}
   {%- assign variant_classes = "bg-body-tertiary" -%}
@@ -48,19 +56,19 @@
   {%- assign variant_classes = "" -%}
 {%- endif -%}
 
-{%- comment -%} Map spacing → padding class on the inner container {%- endcomment -%}
+{%- comment -%} Map spacing → token-aware modifier on the section wrapper {%- endcomment -%}
 {%- case spacing -%}
-  {%- when "tight"  -%}{%- assign pad_class = "py-4" -%}
-  {%- when "loose"  -%}{%- assign pad_class = "py-6 py-md-7" -%}
-  {%- else -%}{%- assign pad_class = "py-5" -%}
+  {%- when "tight"  -%}{%- assign spacing_class = "zer0-section--spacing-tight" -%}
+  {%- when "loose"  -%}{%- assign spacing_class = "zer0-section--spacing-loose" -%}
+  {%- else -%}{%- assign spacing_class = "" -%}
 {%- endcase -%}
 
-<section{% if section_id != "" %} id="{{ section_id }}"{% endif %} class="zer0-section {{ variant_classes }}"{% if include.aria_label %} aria-label="{{ include.aria_label }}"{% elsif include.heading %} aria-labelledby="{{ section_id | default: 'zer0-section' }}-heading"{% endif %}>
-  <div class="{{ container_cls }} {{ pad_class }} px-4 px-md-5">
+<section{% if section_id != "" %} id="{{ section_id }}"{% endif %} class="zer0-section {{ spacing_class }} {{ variant_classes }}"{% if include.aria_label %} aria-label="{{ include.aria_label }}"{% elsif heading_id != "" %} aria-labelledby="{{ heading_id }}"{% endif %}>
+  <div class="{{ container_cls }} px-4 px-md-5">
     {%- if include.heading -%}
     <div class="row text-center mb-5">
       <div class="col-lg-8 mx-auto">
-        <h{{ heading_level }} id="{{ section_id | default: 'zer0-section' }}-heading" class="display-5 fw-bold {% if variant != 'inverse' %}text-body-emphasis{% endif %}">{{ include.heading }}</h{{ heading_level }}>
+        <h{{ heading_level }}{% if heading_id != "" %} id="{{ heading_id }}"{% endif %} class="display-5 fw-bold {% if variant != 'inverse' %}text-body-emphasis{% endif %}">{{ include.heading }}</h{{ heading_level }}>
         {%- if include.lead -%}
         <p class="lead {% if variant != 'inverse' %}text-body-secondary{% endif %}">{{ include.lead }}</p>
         {%- endif -%}

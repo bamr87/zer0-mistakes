@@ -35,7 +35,17 @@
   {%- else      -%}{%- assign size_class = "" -%}
 {%- endcase -%}
 
-<a href="{{ include.url }}"
+{%- assign cta_href = include.url -%}
+{%- assign cta_first = cta_href | slice: 0 -%}
+{%- if cta_href contains "://" or cta_href contains "mailto:" or cta_href contains "tel:" -%}
+  {%- comment -%} absolute / special-scheme URLs — leave untouched {%- endcomment -%}
+{%- elsif cta_first == "#" -%}
+  {%- comment -%} in-page anchors (#section) — leave untouched {%- endcomment -%}
+{%- else -%}
+  {%- assign cta_href = cta_href | relative_url -%}
+{%- endif -%}
+
+<a href="{{ cta_href }}"
    class="btn {{ btn_class }} {{ size_class }} zer0-cta"
    {%- if include.aria_label %} aria-label="{{ include.aria_label }}"{% endif %}
    {%- if include.external %} target="_blank" rel="noopener noreferrer"{% endif %}>

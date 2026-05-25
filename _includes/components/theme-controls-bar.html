@@ -1,8 +1,18 @@
-<!--
-  Theme controls bar — color mode + skin quick-select.
+{%- comment -%}
+  ===================================================================
+  THEME-CONTROLS-BAR — Color mode + skin quick-select
+  ===================================================================
+
+  Path: _includes/components/theme-controls-bar.html
+
+  Parameters
+    include.show_status (bool) — show active skin/mode readout (optional)
+
+  Depends on: theme-customizer.js, halfmoon.js, background-customizer.js
+
   Used by theme settings and theme preview pages.
-  Requires: theme-customizer.js, halfmoon.js, background-customizer.js (global)
--->
+  ===================================================================
+{%- endcomment -%}
 {% assign active_skin = site.theme_skin | default: site.data.theme_skins.default | default: "dark" %}
 {% assign skin_order = site.data.theme_skins.order %}
 

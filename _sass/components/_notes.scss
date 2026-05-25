@@ -1,15 +1,10 @@
 // ============================================================================
 // Notes layout — token-aware, dark-mode-safe
 // ----------------------------------------------------------------------------
-// Replaces the legacy block in _sass/custom.scss (~ln 1069+) which hardcoded
-// light-mode values (#f8f9fa, #6c757d, #0d6efd, #1e1e1e). Those rules still
-// load from custom.scss for backward compatibility but are overridden here
-// because main.scss loads custom.scss AFTER this partial — this means the
-// legacy block will win at runtime until we delete it in the next major.
-//
-// To migrate now, fork users can set `$zer0-notes-use-tokens: true` and
-// remove the legacy block from custom.scss. A follow-up release will flip
-// the default.
+// Canonical home for .note-header / .note-content / .related-notes /
+// .note-navigation styles. The legacy hardcoded block was removed from
+// _sass/custom.scss (see the MOVED comment there); difficulty badges remain
+// in custom.scss because they map to fixed semantic colors.
 // ============================================================================
 
 .note-header {

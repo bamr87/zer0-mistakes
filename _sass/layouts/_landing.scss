@@ -11,6 +11,21 @@
   padding-block: var(--zer0-space-section);
 }
 
+// Shared section wrapper (_includes/components/section.html)
+.zer0-section {
+  [class*="container-"] {
+    padding-block: var(--zer0-space-section);
+  }
+
+  &--spacing-tight [class*="container-"] {
+    padding-block: calc(var(--zer0-space-section) * 0.5);
+  }
+
+  &--spacing-loose [class*="container-"] {
+    padding-block: calc(var(--zer0-space-section) * 1.5);
+  }
+}
+
 .landing-quick-links {
   background: var(--zer0-color-bg-elevated);
   border-block: 1px solid var(--zer0-color-border);

@@ -74,12 +74,18 @@ module JekyllThemeZer0
   end
 end
 ```
-
-
+</CodeBlock>
 
 ## Testing Implementation
 
-```bash ./test/test_feature.sh ``` ```
+<TestingGuide>
+  <TestCase name="Feature validation">
+    ```bash
+    ./test/test_feature.sh
+    ```
+  </TestCase>
+</TestingGuide>
+```
 
 ### File Organization
 
@@ -110,7 +116,7 @@ end
 
 Public documentation uses **standard Markdown** for Jekyll compatibility:
 
-```markdown
+````markdown
 ---
 title: "Getting Started with Theme Customization"
 description: "Learn how to customize the Zer0-Mistakes theme"
@@ -138,7 +144,6 @@ theme_config:
   navbar_style: "dark"
   enable_sidebar: true
 ```
-```
 
 ## Customizing Colors
 
@@ -150,21 +155,18 @@ Override Bootstrap variables in your custom CSS:
   --bs-secondary: #your-secondary-color;
 }
 ```
-
-```
+````
 
 ### File Organization
 
 ```
-
-/pages/docs/
-├── index.md # Documentation library index
-├── jekyll/ # Jekyll user guides
-├── bootstrap/ # Bootstrap usage guides  
-├── customization/ # Theme customization
-├── deployment/ # Hosting and deployment
-└── troubleshooting/ # Common issues and solutions
-
+/pages/_docs/
+├── index.md              # Documentation library index
+├── jekyll/               # Jekyll user guides
+├── bootstrap/            # Bootstrap usage guides
+├── customization/        # Theme customization
+├── deployment/           # Hosting and deployment
+└── troubleshooting/      # Common issues and solutions
 ```
 
 ## 🔄 Content Conversion Pipeline
