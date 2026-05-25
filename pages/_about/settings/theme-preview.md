@@ -29,13 +29,19 @@ admin_actions:
         <a class="nav-link" href="#preview-forms">Forms</a>
         <a class="nav-link" href="#preview-tabs">Nav tabs</a>
         <a class="nav-link" href="#preview-badges">Badges</a>
-        <a class="nav-link" href="#preview-code">Code</a>
+        <a class="nav-link" href="#preview-code">Code blocks</a>
         <a class="nav-link" href="#preview-links">Links</a>
         <a class="nav-link" href="#preview-navbar">Navbar</a>
         <a class="nav-link" href="#preview-footer">Footer</a>
         <a class="nav-link" href="#preview-table">Table</a>
         <a class="nav-link" href="#preview-list-group">List group</a>
         <a class="nav-link" href="#preview-backgrounds">Backgrounds</a>
+        <a class="nav-link" href="#preview-callouts">Callouts</a>
+        <a class="nav-link" href="#preview-accordion">Accordion</a>
+        <a class="nav-link" href="#preview-progress">Progress &amp; Spinners</a>
+        <a class="nav-link" href="#preview-breadcrumb">Breadcrumb &amp; Pagination</a>
+        <a class="nav-link" href="#preview-tooltips">Tooltips &amp; Popovers</a>
+        <a class="nav-link" href="#preview-icons">Icons</a>
       </nav>
 
       <div class="card border">
@@ -62,3 +68,14 @@ admin_actions:
 
 <script src="{{ '/assets/js/theme-customizer.js' | relative_url }}" defer></script>
 <script src="{{ '/assets/js/theme-preview.js' | relative_url }}" defer></script>
+<script>
+  // Initialise Bootstrap tooltips and popovers in the preview section
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+      bootstrap.Tooltip.getOrCreateInstance(el);
+    });
+    document.querySelectorAll('[data-bs-toggle="popover"]').forEach(function (el) {
+      bootstrap.Popover.getOrCreateInstance(el);
+    });
+  });
+</script>

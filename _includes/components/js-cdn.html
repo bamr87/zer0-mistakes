@@ -20,7 +20,7 @@
 <!-- Navigation ES Modules — orchestrator for sidebar, scroll spy, keyboard
      shortcuts, gestures, focus, AND the navbar dropdowns/mobile menu that
      formerly lived in /assets/js/navigation.js (now deprecated). -->
-<script type="module" src="{{ '/assets/js/modules/navigation/index.js' | relative_url }}"></script>
+<script type="module" src="{{ '/assets/js/modules/navigation/index.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
 
 <!-- Generic UI helpers (toast, copy-to-clipboard, image fade-in) -->
 <script defer src="{{ '/assets/js/ui-helpers.js' | relative_url }}"></script>

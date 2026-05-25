@@ -100,13 +100,6 @@ export class Navbar {
             const menu = dropdown.querySelector('.dropdown-menu');
             if (!toggle || !menu) return;
 
-            this._on(toggle, 'focus', () => {
-                if (!this._isMobile()) {
-                    menu.classList.add('show');
-                    toggle.setAttribute('aria-expanded', 'true');
-                }
-            });
-
             this._on(dropdown, 'focusout', (e) => {
                 if (!dropdown.contains(e.relatedTarget)) {
                     menu.classList.remove('show');
@@ -162,7 +155,6 @@ export class Navbar {
             if (!toggle || !menu) return;
 
             this._on(toggle, 'click', (e) => {
-                if (!this._isMobile()) return;
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -187,9 +179,11 @@ export class Navbar {
                     menu.classList.add('show');
                     toggle.classList.add('show');
                     toggle.setAttribute('aria-expanded', 'true');
-                    setTimeout(() => {
-                        toggle.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    }, 100);
+                    if (this._isMobile()) {
+                        setTimeout(() => {
+                            toggle.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }, 100);
+                    }
                 }
             });
         });
@@ -197,7 +191,6 @@ export class Navbar {
 
     _setupOutsideClickClose() {
         this._on(document, 'click', (e) => {
-            if (!this._isMobile()) return;
             const target = e.target;
             if (target && typeof target.closest === 'function' && target.closest('.nav-hover-dropdown')) return;
             document.querySelectorAll('.nav-hover-dropdown').forEach((dropdown) => {
@@ -250,22 +243,8 @@ export class Navbar {
     }
 
     _setupDropdownHoverDelay() {
-        if (this._isMobile()) return;
-        const hoverDelay = 150;
-        document.querySelectorAll('.nav-hover-dropdown').forEach((dropdown) => {
-            let hoverTimeout;
-            this._on(dropdown, 'mouseenter', () => {
-                hoverTimeout = setTimeout(() => {
-                    const menu = dropdown.querySelector('.dropdown-menu');
-                    if (menu && !this._isMobile()) menu.classList.add('show');
-                }, hoverDelay);
-            });
-            this._on(dropdown, 'mouseleave', () => {
-                clearTimeout(hoverTimeout);
-                const menu = dropdown.querySelector('.dropdown-menu');
-                if (menu && !this._isMobile()) menu.classList.remove('show');
-            });
-        });
+        // Hover-to-open removed by request: dropdowns toggle on chevron click only.
+        return;
     }
 
     _setupFocusTrap() {

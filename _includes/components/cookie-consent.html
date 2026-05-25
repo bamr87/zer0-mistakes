@@ -49,7 +49,7 @@ Usage: Include in root.html layout
 Configuration: Uses site.posthog settings from _config.yml
 {% endcomment %}
 
-<div id="cookieConsent" class="cookie-consent-banner position-fixed bottom-0 start-0 end-0 bg-dark text-light py-3 px-3 shadow-lg" hidden>
+<div id="cookieConsent" class="cookie-consent-banner position-fixed bottom-0 start-0 end-0 py-3 px-3 shadow-lg" hidden>
   <div class="container-xl px-3 px-md-4">
     <div class="row align-items-center g-2">
       <div class="col-12 col-lg-8">
@@ -57,17 +57,17 @@ Configuration: Uses site.posthog settings from _config.yml
           <i class="bi bi-shield-check me-2" aria-hidden="true"></i>
           We value your privacy
         </p>
-        <p class="mb-2 mb-lg-0 small text-white-50">
+        <p class="mb-2 mb-lg-0 small text-body-secondary">
           This website uses cookies and similar technologies to enhance your browsing experience, analyze traffic, and provide personalized content.
           {% assign cookie_page_urls = site.html_pages | map: "url" | join: "|" | prepend: "|" | append: "|" %}
           {% if site.privacy_policy_url or cookie_page_urls contains "|/privacy-policy/|" or cookie_page_urls contains "|/privacy-policy|" %}
-            <a href="{{ site.privacy_policy_url | default: '/privacy-policy/' | relative_url }}" class="text-white text-decoration-underline">Learn more in our Privacy Policy</a>.
+            <a href="{{ site.privacy_policy_url | default: '/privacy-policy/' | relative_url }}" class="link-body-emphasis text-decoration-underline">Learn more in our Privacy Policy</a>.
           {% endif %}
         </p>
       </div>
       <div class="col-12 col-lg-4">
         <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
-          <button type="button" class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#cookieSettingsModal">
+          <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#cookieSettingsModal">
             <i class="bi bi-gear me-1"></i>
             Manage Cookies
           </button>

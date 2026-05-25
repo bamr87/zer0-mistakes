@@ -120,7 +120,10 @@
         display:grid;
         grid-template-areas: "sidebar main";
         grid-template-columns: var(--zer0-sidebar-width) minmax(0, 1fr);
-        gap: 1.5rem
+        gap: 1.5rem;
+        transition:
+            grid-template-columns var(--zer0-motion-duration-base, 0.3s) var(--zer0-motion-ease-standard, ease),
+            gap var(--zer0-motion-duration-base, 0.3s) var(--zer0-motion-ease-standard, ease);
     }
 
     .bd-layout.bd-layout--no-sidebar {
@@ -128,15 +131,52 @@
         grid-template-columns: minmax(0, 1fr)
     }
 
+    // Collapsed: shrink sidebar column to a slim rail that still shows the
+    // hide/show toggle, then fade out the rest of the sidebar content.
+    // Transitioning grid-template-columns is supported in modern Chrome/
+    // Firefox/Safari; older browsers simply snap without animation.
     .bd-layout.bd-layout--sidebar-collapsed,
     html.bd-sidebar-pref-hidden .bd-layout:not(.bd-layout--no-sidebar) {
-        grid-template-areas: "main";
-        grid-template-columns: minmax(0, 1fr);
+        grid-template-columns: var(--zer0-sidebar-rail-width, 2.25rem) minmax(0, 1fr);
+        gap: 0.5rem;
     }
 
     .bd-layout.bd-layout--sidebar-collapsed .bd-sidebar,
     html.bd-sidebar-pref-hidden .bd-layout:not(.bd-layout--no-sidebar) .bd-sidebar {
+        overflow: visible;
+    }
+
+    // Hide everything inside the sidebar body except the desktop header that
+    // hosts the toggle button.
+    .bd-layout.bd-layout--sidebar-collapsed .bd-sidebar .offcanvas-body > *:not(.bd-sidebar-desktop-header),
+    html.bd-sidebar-pref-hidden .bd-layout:not(.bd-layout--no-sidebar) .bd-sidebar .offcanvas-body > *:not(.bd-sidebar-desktop-header) {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition:
+            opacity var(--zer0-motion-duration-fast, 0.2s) var(--zer0-motion-ease-standard, ease),
+            visibility 0s linear var(--zer0-motion-duration-fast, 0.2s);
+    }
+
+    // Collapse the desktop header to a centered toggle column; hide the label.
+    // `!important` is required to override Bootstrap utility classes
+    // (`d-flex`, `justify-content-between`) on the inner elements.
+    .bd-layout.bd-layout--sidebar-collapsed .bd-sidebar-desktop-header > strong,
+    html.bd-sidebar-pref-hidden .bd-layout:not(.bd-layout--no-sidebar) .bd-sidebar-desktop-header > strong {
         display: none !important;
+    }
+
+    .bd-layout.bd-layout--sidebar-collapsed .bd-sidebar-desktop-header,
+    html.bd-sidebar-pref-hidden .bd-layout:not(.bd-layout--no-sidebar) .bd-sidebar-desktop-header {
+        justify-content: center !important;
+        margin-bottom: 0 !important;
+    }
+
+    // Smooth content fade for the default (expanded) state
+    .bd-sidebar .offcanvas-body > *:not(.bd-sidebar-desktop-header) {
+        transition:
+            opacity var(--zer0-motion-duration-base, 0.3s) var(--zer0-motion-ease-standard, ease),
+            visibility 0s linear 0s;
     }
 }
 
@@ -167,19 +207,61 @@
     .bd-main {
         grid-template-areas:"intro   toc" "content toc";
         grid-template-rows: auto 1fr;
-        grid-template-columns: minmax(0, 1fr) var(--zer0-sidebar-toc-width)
+        grid-template-columns: minmax(0, 1fr) var(--zer0-sidebar-toc-width);
+        transition:
+            grid-template-columns var(--zer0-motion-duration-base, 0.3s) var(--zer0-motion-ease-standard, ease);
     }
 
     .bd-main.bd-main--no-toc,
     html.bd-toc-pref-hidden .bd-main:has(.bd-toc) {
-        grid-template-areas: "intro" "content";
+        grid-template-areas: "intro   toc" "content toc";
         grid-template-rows: auto 1fr;
-        grid-template-columns: minmax(0, 1fr);
+        grid-template-columns: minmax(0, 1fr) var(--zer0-sidebar-toc-rail-width, 2.25rem);
     }
 
+    // Keep the TOC column visible in collapsed (rail) mode so its toggle stays
+    // on-screen; fade out everything except the header that hosts the toggle.
     .bd-main.bd-main--no-toc .bd-toc,
     html.bd-toc-pref-hidden .bd-main:has(.bd-toc) .bd-toc {
-        display: none;
+        overflow: visible;
+    }
+
+    .bd-main.bd-main--no-toc #TableOfContents > *:not(:first-child),
+    html.bd-toc-pref-hidden .bd-main:has(.bd-toc) #TableOfContents > *:not(:first-child) {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition:
+            opacity var(--zer0-motion-duration-fast, 0.2s) var(--zer0-motion-ease-standard, ease),
+            visibility 0s linear var(--zer0-motion-duration-fast, 0.2s);
+    }
+
+    // Collapse the TOC header to a centered toggle column; hide its label.
+    // `!important` overrides Bootstrap `d-flex` / `justify-content-between`.
+    .bd-main.bd-main--no-toc #TableOfContents > div:first-child > strong,
+    html.bd-toc-pref-hidden .bd-main:has(.bd-toc) #TableOfContents > div:first-child > strong {
+        display: none !important;
+    }
+
+    .bd-main.bd-main--no-toc #TableOfContents > div:first-child,
+    html.bd-toc-pref-hidden .bd-main:has(.bd-toc) #TableOfContents > div:first-child {
+        justify-content: center !important;
+        margin-bottom: 0 !important;
+    }
+
+    .bd-toc #TableOfContents > *:not(:first-child) {
+        transition:
+            opacity var(--zer0-motion-duration-base, 0.3s) var(--zer0-motion-ease-standard, ease),
+            visibility 0s linear 0s;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .bd-layout,
+        .bd-main,
+        .bd-sidebar .offcanvas-body > *:not(.bd-sidebar-desktop-header),
+        #TableOfContents > *:not(:first-child) {
+            transition: none !important;
+        }
     }
 }
 

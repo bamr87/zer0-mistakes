@@ -161,6 +161,15 @@
   @include zer0-skin-palette(#ffcc00, "255, 204, 0", #ffffff, "255, 255, 255");
 }
 
+// Light-mode override: white accent is invisible on the white/light body bg.
+// Apply near-black for links and nav so contrast skin stays readable in light mode.
+[data-theme-skin="contrast"]:not([data-bs-theme="dark"]) {
+  --bs-link-color: #111111;
+  --zer0-color-link: #111111;
+  --bs-link-hover-color: rgba(17, 17, 17, 0.7);
+  --zer0-color-link-hover: rgba(17, 17, 17, 0.7);
+}
+
 [data-theme-skin="dark"] {
   @include zer0-skin-palette(#4a90d9, "74, 144, 217", #0f3460);
 }

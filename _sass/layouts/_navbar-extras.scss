@@ -27,12 +27,12 @@
     display: block !important;
   }
 
-  // Desktop restore: top-right under navbar — avoids covering footer links.
+  // Desktop restore is handled by the persistent rail toggle inside the TOC
+  // header (see `_docs-layout.scss`), so the FAB is mobile-only.
   @media (min-width: 992px) {
     &.bd-toc-fab--restore,
     html.bd-toc-pref-hidden & {
-      top: 5.5rem;
-      bottom: auto;
+      display: none !important;
     }
   }
 
@@ -86,8 +86,7 @@
   @media (min-width: 992px) {
     &.bd-sidebar-fab--restore,
     html.bd-sidebar-pref-hidden &.bd-sidebar-fab {
-      top: 5.5rem;
-      bottom: auto;
+      display: none !important;
     }
   }
 

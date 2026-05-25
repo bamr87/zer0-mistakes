@@ -65,7 +65,7 @@ export class SidebarVisibility {
         this._hideToggles.forEach((button) => {
             button.addEventListener('click', (event) => {
                 event.preventDefault();
-                this.setVisible(false, { focusTarget: this._fabToggle });
+                this.toggle();
             });
         });
 
@@ -102,8 +102,18 @@ export class SidebarVisibility {
         document.documentElement.classList.toggle('bd-sidebar-pref-hidden', !this._visible);
 
         this._hideToggles.forEach((button) => {
-            button.hidden = !this._visible;
             button.setAttribute('aria-expanded', String(this._visible));
+            button.setAttribute(
+                'aria-label',
+                this._visible ? 'Hide documentation sidebar' : 'Show documentation sidebar'
+            );
+            const title = button.getAttribute('title');
+            if (title !== null) {
+                button.setAttribute(
+                    'title',
+                    this._visible ? 'Hide documentation sidebar' : 'Show documentation sidebar'
+                );
+            }
         });
 
         if (this._fabToggle) {

@@ -172,9 +172,45 @@
     <h2 class="h4 theme-preview-heading" id="preview-code-heading">
       <i class="bi bi-code-slash me-2" aria-hidden="true"></i>Code blocks
     </h2>
-    <p>Inline <code>const skin = 'aqua'</code> and block:</p>
-    <pre class="mb-3"><code>zer0Bg.setSkin('neon');
-document.documentElement.getAttribute('data-theme-skin');</code></pre>
+    <div class="card mb-3">
+      <div class="card-body">
+        <p class="mb-2">Inline: <code>const skin = 'aqua'</code> and <code>--zer0-color-primary</code> reference the same token.</p>
+      </div>
+    </div>
+
+    <p class="small text-body-secondary mb-1 ms-1"><i class="bi bi-gem me-1"></i>Ruby — Rouge syntax highlight</p>
+{% highlight ruby %}
+# Zer0-Mistakes skin helper
+module Zer0
+  SKINS = %w[aqua neon carbon forest rose].freeze
+
+  def self.apply_skin(name)
+    raise ArgumentError, "Unknown skin: #{name}" unless SKINS.include?(name)
+    document.documentElement.setAttribute('data-theme-skin', name)
+  end
+end
+{% endhighlight %}
+
+    <p class="small text-body-secondary mb-1 ms-1 mt-3"><i class="bi bi-terminal me-1"></i>Shell</p>
+{% highlight bash %}
+# Start the dev server with Docker
+docker-compose up
+
+# Build the gem and release a patch version
+./scripts/bin/release patch --dry-run
+{% endhighlight %}
+
+    <p class="small text-body-secondary mb-1 ms-1 mt-3"><i class="bi bi-filetype-json me-1"></i>JSON / config</p>
+{% highlight json %}
+{
+  "skin": "aqua",
+  "mode": "dark",
+  "tokens": {
+    "--zer0-color-primary": "#4a90d9",
+    "--zer0-color-bg-body":  "#1a1a2e"
+  }
+}
+{% endhighlight %}
   </section>
 
   <!-- Links -->
@@ -282,6 +318,217 @@ document.documentElement.getAttribute('data-theme-skin');</code></pre>
       <div class="col-md-4">
         <div class="zer0-bg-body rounded-3 p-4 border text-center" style="min-height: 6rem;">
           <span class="small">.zer0-bg-body</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Callouts -->
+  <section class="theme-preview-section" id="preview-callouts" aria-labelledby="preview-callouts-heading">
+    <h2 class="h4 theme-preview-heading" id="preview-callouts-heading">
+      <i class="bi bi-chat-square-text me-2" aria-hidden="true"></i>Callouts
+    </h2>
+    {%- capture _note_body -%}Use <code>{% raw %}{% include components/callout.html type="note" %}{% endraw %}</code> in any page or layout.{%- endcapture -%}
+    {% include components/callout.html type="note"    title="Note"    content=_note_body %}
+    {%- capture _tip_body -%}Callout colors are fully token-driven. Switching skins or modes updates all borders and icons automatically.{%- endcapture -%}
+    {% include components/callout.html type="tip"     title="Tip"     content=_tip_body %}
+    {%- capture _info_body -%}The <code>--zer0-color-info</code> token resolves from the active skin or falls back to Bootstrap's <code>--bs-info</code>.{%- endcapture -%}
+    {% include components/callout.html type="info"    title="Info"    content=_info_body %}
+    {%- capture _warn_body -%}Background color of the callout box uses <code>--zer0-color-bg-elevated</code> so it adapts to both light and dark mode.{%- endcapture -%}
+    {% include components/callout.html type="warning" title="Warning" content=_warn_body %}
+    {%- capture _danger_body -%}Danger callouts use <code>--zer0-color-danger</code> for the left border, icon, and title — no hardcoded hex values.{%- endcapture -%}
+    {% include components/callout.html type="danger"  title="Danger"  content=_danger_body %}
+  </section>
+
+  <!-- Accordion -->
+  <section class="theme-preview-section" id="preview-accordion" aria-labelledby="preview-accordion-heading">
+    <h2 class="h4 theme-preview-heading" id="preview-accordion-heading">
+      <i class="bi bi-chevron-bar-expand me-2" aria-hidden="true"></i>Accordion
+    </h2>
+    <div class="accordion mb-3" id="previewAccordion">
+      <div class="accordion-item">
+        <h3 class="accordion-header">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#accordionOne" aria-expanded="true" aria-controls="accordionOne">
+            Open panel — accordion button active state
+          </button>
+        </h3>
+        <div id="accordionOne" class="accordion-collapse collapse show" data-bs-parent="#previewAccordion">
+          <div class="accordion-body small">
+            Button background uses <code>--bs-accordion-active-bg</code>, which the skin layer overrides with <code>--zer0-color-primary</code> at low opacity.
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h3 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordionTwo" aria-expanded="false" aria-controls="accordionTwo">
+            Collapsed panel
+          </button>
+        </h3>
+        <div id="accordionTwo" class="accordion-collapse collapse" data-bs-parent="#previewAccordion">
+          <div class="accordion-body small">Hidden content revealed on click.</div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h3 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordionThree" aria-expanded="false" aria-controls="accordionThree">
+            Another collapsed panel
+          </button>
+        </h3>
+        <div id="accordionThree" class="accordion-collapse collapse" data-bs-parent="#previewAccordion">
+          <div class="accordion-body small">Third accordion item.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Progress & Spinners -->
+  <section class="theme-preview-section" id="preview-progress" aria-labelledby="preview-progress-heading">
+    <h2 class="h4 theme-preview-heading" id="preview-progress-heading">
+      <i class="bi bi-hourglass-split me-2" aria-hidden="true"></i>Progress &amp; Spinners
+    </h2>
+    <div class="card mb-3">
+      <div class="card-body d-flex flex-column gap-3">
+        <div>
+          <p class="small text-body-secondary mb-1">Progress — primary</p>
+          <div class="progress" role="progressbar" aria-label="Primary progress" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar" style="width: 60%">60%</div>
+          </div>
+        </div>
+        <div>
+          <p class="small text-body-secondary mb-1">Progress — striped animated</p>
+          <div class="progress" role="progressbar" aria-label="Striped animated" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" style="width: 40%"></div>
+          </div>
+        </div>
+        <div>
+          <p class="small text-body-secondary mb-1">Stacked progress</p>
+          <div class="progress" role="progressbar" aria-label="Stacked" style="height: 1.25rem;">
+            <div class="progress-bar bg-success" style="width: 35%">Success</div>
+            <div class="progress-bar bg-warning" style="width: 20%">Warning</div>
+            <div class="progress-bar bg-danger" style="width: 10%">Danger</div>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-4 flex-wrap">
+          <div>
+            <p class="small text-body-secondary mb-1">Border spinner</p>
+            <div class="spinner-border text-primary" role="status" style="width: 2rem; height: 2rem;">
+              <span class="visually-hidden">Loading…</span>
+            </div>
+          </div>
+          <div>
+            <p class="small text-body-secondary mb-1">Grow spinner</p>
+            <div class="spinner-grow text-primary" role="status" style="width: 2rem; height: 2rem;">
+              <span class="visually-hidden">Loading…</span>
+            </div>
+          </div>
+          <div>
+            <p class="small text-body-secondary mb-1">Button with spinner</p>
+            <button class="btn btn-primary" type="button" disabled>
+              <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+              Loading…
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Breadcrumb & Pagination -->
+  <section class="theme-preview-section" id="preview-breadcrumb" aria-labelledby="preview-breadcrumb-heading">
+    <h2 class="h4 theme-preview-heading" id="preview-breadcrumb-heading">
+      <i class="bi bi-signpost-split me-2" aria-hidden="true"></i>Breadcrumb &amp; Pagination
+    </h2>
+    <div class="card mb-3">
+      <div class="card-body d-flex flex-column gap-4">
+        <div>
+          <p class="small text-body-secondary mb-1">Breadcrumb</p>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item"><a href="#">Settings</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Theme Preview</li>
+            </ol>
+          </nav>
+        </div>
+        <div>
+          <p class="small text-body-secondary mb-1">Pagination</p>
+          <nav aria-label="Page navigation">
+            <ul class="pagination mb-0">
+              <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a></li>
+              <li class="page-item"><a class="page-link" href="#">1</a></li>
+              <li class="page-item active" aria-current="page"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item"><a class="page-link" href="#">Next</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div>
+          <p class="small text-body-secondary mb-1">Pagination — small</p>
+          <nav aria-label="Small page navigation">
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item"><a class="page-link" href="#">«</a></li>
+              <li class="page-item active"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item"><a class="page-link" href="#">»</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tooltips & Popovers -->
+  <section class="theme-preview-section" id="preview-tooltips" aria-labelledby="preview-tooltips-heading">
+    <h2 class="h4 theme-preview-heading" id="preview-tooltips-heading">
+      <i class="bi bi-chat-dots me-2" aria-hidden="true"></i>Tooltips &amp; Popovers
+    </h2>
+    <div class="card mb-3">
+      <div class="card-body d-flex flex-wrap gap-3 align-items-center">
+        <button type="button" class="btn btn-outline-secondary btn-sm"
+          data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip on top">
+          Tooltip top
+        </button>
+        <button type="button" class="btn btn-outline-secondary btn-sm"
+          data-bs-toggle="tooltip" data-bs-placement="right" title="Tooltip on right">
+          Tooltip right
+        </button>
+        <button type="button" class="btn btn-outline-primary btn-sm"
+          data-bs-toggle="popover" data-bs-title="Popover title"
+          data-bs-content="Token-driven background: uses --bs-popover-bg which follows the active color mode.">
+          Popover
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Icons showcase -->
+  <section class="theme-preview-section" id="preview-icons" aria-labelledby="preview-icons-heading">
+    <h2 class="h4 theme-preview-heading" id="preview-icons-heading">
+      <i class="bi bi-grid me-2" aria-hidden="true"></i>Bootstrap Icons
+    </h2>
+    <div class="card mb-3">
+      <div class="card-body">
+        <p class="small text-body-secondary mb-3">Icons inherit <code>currentColor</code> — switching modes or applying <code>.text-primary</code> / <code>.text-danger</code> etc. works without extra CSS.</p>
+        <div class="d-flex flex-wrap gap-3 fs-4 align-items-center">
+          <i class="bi bi-house"            title="bi-house"></i>
+          <i class="bi bi-search"           title="bi-search"></i>
+          <i class="bi bi-gear"             title="bi-gear"></i>
+          <i class="bi bi-bell"             title="bi-bell"></i>
+          <i class="bi bi-person-circle"    title="bi-person-circle"></i>
+          <i class="bi bi-palette"          title="bi-palette"></i>
+          <i class="bi bi-code-slash"       title="bi-code-slash"></i>
+          <i class="bi bi-file-earmark-text"title="bi-file-earmark-text"></i>
+          <i class="bi bi-check-circle text-success" title="success"></i>
+          <i class="bi bi-x-circle     text-danger"  title="danger"></i>
+          <i class="bi bi-exclamation-triangle text-warning" title="warning"></i>
+          <i class="bi bi-info-circle  text-info"    title="info"></i>
+          <i class="bi bi-star-fill    text-primary" title="primary"></i>
+        </div>
+        <div class="d-flex flex-wrap gap-3 mt-3">
+          <span class="badge bg-primary p-2"><i class="bi bi-lightning-charge me-1"></i>Badge icon</span>
+          <button class="btn btn-outline-primary btn-sm"><i class="bi bi-download me-1"></i>Icon button</button>
+          <button class="btn btn-primary btn-sm"><i class="bi bi-arrow-right"></i></button>
         </div>
       </div>
     </div>

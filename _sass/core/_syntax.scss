@@ -1,8 +1,10 @@
 /* ==========================================================================
-   Syntax highlighting (Rouge / base16)
+   Syntax highlighting (Rouge)
+   Light mode: GitHub Light-inspired — WCAG AA on --bd-pre-bg: #f8f9fa
+   Dark mode:  Material Dark base16  — designed for --bd-pre-bg: #1b1f22
    ========================================================================== */
 
-/* syntax highlighting (base16) */
+// Dark mode palette (Material Dark / base16)
 $base00: #263238 !default;
 $base01: #2e3c43 !default;
 $base02: #314549 !default;
@@ -24,57 +26,47 @@ $base0f: #ff5370 !default;
   width: 100%;
 }
 
-.highlight .hll {
-  background-color: $base06;
-}
+// ---------------------------------------------------------------------------
+// Default (light mode) — GitHub Light palette, high contrast on #f8f9fa
+// ---------------------------------------------------------------------------
+.highlight .hll { background-color: #fff3cd; }
 .highlight {
-  .c {
+  .c, .cm, .cp, .c1, .cs, .sd {
     /* Comment */
-    color: $base04;
+    color: #6a737d;
   }
   .err {
     /* Error */
-    color: $base08;
+    color: #b31d28;
   }
-  .k {
+  .k, .kc, .kd, .kn, .kp, .kr {
     /* Keyword */
-    color: $base0e;
+    color: #d73a49;
+  }
+  .kt {
+    /* Keyword.Type */
+    color: #005cc5;
   }
   .l {
     /* Literal */
-    color: $base09;
+    color: #005cc5;
   }
   .n {
     /* Name */
-    color: $base05;
+    color: #24292e;
   }
-  .o {
+  .o, .ow {
     /* Operator */
-    color: $base0c;
+    color: #d73a49;
   }
-  .p {
-    /* Punctuation */
-    color: $base05;
-  }
-  .cm {
-    /* Comment.Multiline */
-    color: $base04;
-  }
-  .cp {
-    /* Comment.Preproc */
-    color: $base04;
-  }
-  .c1 {
-    /* Comment.Single */
-    color: $base04;
-  }
-  .cs {
-    /* Comment.Special */
-    color: $base04;
+  .p, .w {
+    /* Punctuation / Whitespace */
+    color: #24292e;
   }
   .gd {
     /* Generic.Deleted */
-    color: $base08;
+    color: #b31d28;
+    background-color: #ffeef0;
   }
   .ge {
     /* Generic.Emph */
@@ -82,16 +74,17 @@ $base0f: #ff5370 !default;
   }
   .gh {
     /* Generic.Heading */
-    color: $base05;
+    color: #24292e;
     font-weight: bold;
   }
   .gi {
     /* Generic.Inserted */
-    color: $base0b;
+    color: #22863a;
+    background-color: #f0fff4;
   }
   .gp {
     /* Generic.Prompt */
-    color: $base04;
+    color: #6a737d;
     font-weight: bold;
   }
   .gs {
@@ -100,188 +93,106 @@ $base0f: #ff5370 !default;
   }
   .gu {
     /* Generic.Subheading */
-    color: $base0c;
+    color: #005cc5;
     font-weight: bold;
-  }
-  .kc {
-    /* Keyword.Constant */
-    color: $base0e;
-  }
-  .kd {
-    /* Keyword.Declaration */
-    color: $base0e;
-  }
-  .kn {
-    /* Keyword.Namespace */
-    color: $base0c;
-  }
-  .kp {
-    /* Keyword.Pseudo */
-    color: $base0e;
-  }
-  .kr {
-    /* Keyword.Reserved */
-    color: $base0e;
-  }
-  .kt {
-    /* Keyword.Type */
-    color: $base0a;
   }
   .ld {
     /* Literal.Date */
-    color: $base0b;
+    color: #005cc5;
   }
-  .m {
+  .m, .mf, .mh, .mi, .mo, .il {
     /* Literal.Number */
-    color: $base09;
+    color: #005cc5;
   }
-  .s {
+  .s, .sb, .sc, .sh, .sx, .sr, .s1, .s2, .ss {
     /* Literal.String */
-    color: $base0b;
+    color: #032f62;
+  }
+  .se, .si {
+    /* String.Escape / String.Interpol */
+    color: #e36209;
+  }
+  .sd {
+    /* String.Doc (docstring) */
+    color: #6a737d;
   }
   .na {
     /* Name.Attribute */
-    color: $base0d;
+    color: #6f42c1;
   }
-  .nb {
+  .nb, .bp {
     /* Name.Builtin */
-    color: $base05;
+    color: #005cc5;
   }
-  .nc {
-    /* Name.Class */
-    color: $base0a;
+  .nc, .nn {
+    /* Name.Class / Name.Namespace */
+    color: #6f42c1;
   }
-  .no {
-    /* Name.Constant */
-    color: $base08;
+  .no, .nv, .vc, .vg, .vi {
+    /* Name.Constant / Name.Variable */
+    color: #e36209;
   }
-  .nd {
-    /* Name.Decorator */
-    color: $base0c;
+  .nd, .nt {
+    /* Name.Decorator / Name.Tag */
+    color: #d73a49;
   }
-  .ni {
-    /* Name.Entity */
-    color: $base05;
+  .ni, .py {
+    /* Name.Entity / Name.Property */
+    color: #24292e;
   }
   .ne {
     /* Name.Exception */
-    color: $base08;
+    color: #b31d28;
   }
-  .nf {
-    /* Name.Function */
-    color: $base0d;
+  .nf, .nx {
+    /* Name.Function / Name.Other */
+    color: #6f42c1;
   }
   .nl {
-    /* Name.Label */
-    color: $base05;
+    /* Name.Label (JSON keys, etc.) */
+    color: #005cc5;
   }
-  .nn {
-    /* Name.Namespace */
-    color: $base0a;
+  .kn {
+    /* Keyword.Namespace */
+    color: #d73a49;
   }
-  .nx {
-    /* Name.Other */
-    color: $base0d;
-  }
-  .py {
-    /* Name.Property */
-    color: $base05;
-  }
-  .nt {
-    /* Name.Tag */
-    color: $base0c;
-  }
-  .nv {
-    /* Name.Variable */
-    color: $base08;
-  }
-  .ow {
-    /* Operator.Word */
-    color: $base0c;
-  }
-  .w {
-    /* Text.Whitespace */
-    color: $base05;
-  }
-  .mf {
-    /* Literal.Number.Float */
-    color: $base09;
-  }
-  .mh {
-    /* Literal.Number.Hex */
-    color: $base09;
-  }
-  .mi {
-    /* Literal.Number.Integer */
-    color: $base09;
-  }
-  .mo {
-    /* Literal.Number.Oct */
-    color: $base09;
-  }
-  .sb {
-    /* Literal.String.Backtick */
-    color: $base0b;
-  }
-  .sc {
-    /* Literal.String.Char */
-    color: $base05;
-  }
-  .sd {
-    /* Literal.String.Doc */
-    color: $base04;
-  }
-  .s2 {
-    /* Literal.String.Double */
-    color: $base0b;
-  }
-  .se {
-    /* Literal.String.Escape */
-    color: $base09;
-  }
-  .sh {
-    /* Literal.String.Heredoc */
-    color: $base0b;
-  }
-  .si {
-    /* Literal.String.Interpol */
-    color: $base09;
-  }
-  .sx {
-    /* Literal.String.Other */
-    color: $base0b;
-  }
-  .sr {
-    /* Literal.String.Regex */
-    color: $base0b;
-  }
-  .s1 {
-    /* Literal.String.Single */
-    color: $base0b;
-  }
-  .ss {
-    /* Literal.String.Symbol */
-    color: $base0b;
-  }
-  .bp {
-    /* Name.Builtin.Pseudo */
-    color: $base05;
-  }
-  .vc {
-    /* Name.Variable.Class */
-    color: $base08;
-  }
-  .vg {
-    /* Name.Variable.Global */
-    color: $base08;
-  }
-  .vi {
-    /* Name.Variable.Instance */
-    color: $base08;
-  }
-  .il {
-    /* Literal.Number.Integer.Long */
-    color: $base09;
+}
+
+// ---------------------------------------------------------------------------
+// Dark mode overrides — Material Dark base16 on --bd-pre-bg: #1b1f22
+// ---------------------------------------------------------------------------
+[data-bs-theme="dark"] {
+  .highlight .hll { background-color: $base06; }
+  .highlight {
+    .c, .cm, .cp, .c1, .cs, .sd { color: $base04; }
+    .err                          { color: $base08; }
+    .k, .kc, .kd, .kn, .kp, .kr  { color: $base0e; }
+    .kt                           { color: $base0a; }
+    .l                            { color: $base09; }
+    .n                            { color: $base05; }
+    .o, .ow                       { color: $base0c; }
+    .p, .w                        { color: $base05; }
+    .gd                           { color: $base08; background-color: transparent; }
+    .ge                           { font-style: italic; }
+    .gh, .gs                      { color: $base05; font-weight: bold; }
+    .gi                           { color: $base0b; background-color: transparent; }
+    .gp                           { color: $base04; font-weight: bold; }
+    .gu                           { color: $base0c; font-weight: bold; }
+    .ld                           { color: $base0b; }
+    .m, .mf, .mh, .mi, .mo, .il  { color: $base09; }
+    .s, .sb, .sc, .sh, .sx, .sr,
+    .s1, .s2, .ss, .se, .si       { color: $base0b; }
+    .sd                           { color: $base04; }
+    .na                           { color: $base0d; }
+    .nb, .bp                      { color: $base05; }
+    .nc, .nn                      { color: $base0a; }
+    .no, .nv, .vc, .vg, .vi       { color: $base08; }
+    .nd, .nt                      { color: $base0c; }
+    .ni, .py                      { color: $base05; }
+    .ne                           { color: $base08; }
+    .nf, .nx                      { color: $base0d; }
+    .nl                           { color: $base05; }
+    .kn                           { color: $base0c; }
   }
 }
 
