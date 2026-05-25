@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.8.0] - 2026-05-25
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- f62849f feat(ui): design tokens, navigation chrome, docs overhaul, sidebar rail & skin fixes (#108)
+
+
 ## [1.7.2] - 2026-05-25
 
 ### Changed
