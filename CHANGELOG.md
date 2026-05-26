@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+- **Gem packaging**: `jekyll-theme-zer0.gemspec` now excludes `assets/images/` (287 MB of content previews/author photos), `assets/backgrounds/`, `.DS_Store` files, and binary media outside `assets/vendor/`, reducing gem payload to ~8.9 MB
+
 ## [1.8.1] - 2026-05-26
 
 ### Changed
