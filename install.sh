@@ -145,6 +145,7 @@ else
             -e "s|{{RAW_GITHUB_URL}}|${GITHUB_RAW_URL}|g" \
             -e "s|{{FORK_GITHUB_USER}}|${FORK_GITHUB_USER:-${GITHUB_USER}}|g" \
             -e "s|{{INSTALL_MODE}}|${INSTALL_MODE:-full}|g" \
+            -e "s|{{REMOTE_BRANCH}}|${REMOTE_BRANCH:-gh-pages}|g" \
             -e "s|{{GITHUB_PAGES_URL}}|https://${FORK_GITHUB_USER:-${GITHUB_USER}}.github.io/${REPOSITORY_NAME:-$THEME_NAME}|g")
         if [[ -n "$output_file" ]]; then
             mkdir -p "$(dirname "$output_file")"
@@ -585,31 +586,25 @@ install_docker_files() {
 
 generate_consumer_dockerfile() {
     log_info "Generating consumer Dockerfile for jekyll-theme-zer0 site..."
-    cat > "$TARGET_DIR/docker/Dockerfile" << 'CONSUMER_DOCKERFILE'
-# Consumer site Dockerfile — installs jekyll-theme-zer0 from RubyGems
+    local fallback='# Consumer site Dockerfile — installs jekyll-theme-zer0 from RubyGems
 FROM ruby:3.3-slim
 
-RUN apt-get update -qq && \
-    apt-get install -y --no-install-recommends \
-        build-essential \
-        libssl-dev \
-        pkg-config \
-        libyaml-dev \
-        zlib1g-dev \
-        git && \
+RUN apt-get update -qq && \\
+    apt-get install -y --no-install-recommends \\
+        build-essential libssl-dev pkg-config libyaml-dev zlib1g-dev git && \\
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /site
 
-RUN gem install bundler -v '~> 2.5'
+RUN gem install bundler -v ~> 2.5
 
 COPY Gemfile Gemfile.lock* ./
 RUN bundle install --jobs 4 --retry 3
 
 COPY . .
 
-CMD ["bundle", "exec", "jekyll", "serve", "--host", "0.0.0.0", "--port", "4000", "--watch", "--livereload"]
-CONSUMER_DOCKERFILE
+CMD ["bundle", "exec", "jekyll", "serve", "--host", "0.0.0.0", "--port", "4000", "--watch", "--livereload"]'
+    create_from_template "config/Dockerfile.consumer.template" "$TARGET_DIR/docker/Dockerfile" "$fallback"
     log_info "Consumer Dockerfile generated"
 }
 
@@ -839,391 +834,55 @@ create_starter_navigation() {
 }
 
 create_gitignore() {
+    local template mode_label
     if [[ "$INSTALL_MODE" == "minimal" ]]; then
-        create_minimal_gitignore
+        template="config/gitignore.minimal.template"
+        mode_label="minimal "
+    else
+        template="config/gitignore.full.template"
+        mode_label=""
+    fi
+
+    log_info "Creating ${mode_label}.gitignore file..."
+
+    if [[ -f "$TARGET_DIR/.gitignore" ]]; then
+        log_warning ".gitignore already exists, skipping to preserve existing rules"
+        log_success "Git configuration completed${mode_label:+ ($mode_label)}"
         return
     fi
-    
-    log_info "Creating .gitignore file..."
-    
-    local gitignore_content="# Jekyll
-_site/
-.sass-cache/
-.jekyll-cache/
-.jekyll-metadata
 
-# Ruby
-.bundle/
-vendor/
-Gemfile.lock
-
-# Node.js
-node_modules/
-npm-debug.log*
-
-# Environment
-.env
-env-variables.log
-
-# OS
-.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Backup files
-*.backup.*
-"
-    
-    if [[ ! -f "$TARGET_DIR/.gitignore" ]]; then
-        echo "$gitignore_content" > "$TARGET_DIR/.gitignore"
-        log_info "Created .gitignore"
-    else
-        log_warning ".gitignore already exists, skipping to preserve existing rules"
-    fi
-    
-    log_success "Git configuration completed"
-}
-
-create_minimal_gitignore() {
-    log_info "Creating minimal .gitignore file..."
-    
-    local gitignore_content="# Jekyll
-_site/
-.sass-cache/
-.jekyll-cache/
-.jekyll-metadata
-
-# Ruby
-.bundle/
-vendor/
-Gemfile.lock
-
-# OS
-.DS_Store
-Thumbs.db
-"
-    
-    if [[ ! -f "$TARGET_DIR/.gitignore" ]]; then
-        echo "$gitignore_content" > "$TARGET_DIR/.gitignore"
-        log_info "Created minimal .gitignore"
-    else
-        log_warning ".gitignore already exists, skipping to preserve existing rules"
-    fi
-    
-    log_success "Git configuration completed (minimal)"
+    create_from_template "$template" "$TARGET_DIR/.gitignore" ""
+    log_success "Git configuration completed${mode_label:+ ($mode_label)}"
 }
 
 create_readme_instructions() {
+    local template mode_label
     if [[ "$INSTALL_MODE" == "minimal" ]]; then
-        create_minimal_readme
-        return
+        template="config/INSTALLATION.minimal.md.template"
+        mode_label="minimal "
+    else
+        template="config/INSTALLATION.md.template"
+        mode_label=""
     fi
-    
-    log_info "Creating installation instructions..."
-    
-    local readme_content="# zer0-mistakes Jekyll Theme Installation
 
-This directory has been set up with the zer0-mistakes Jekyll theme.
-
-## Quick Start
-
-### Using Docker (Recommended)
-\`\`\`bash
-# Start the development server
-docker-compose up
-
-# Your site will be available at http://localhost:4000
-\`\`\`
-
-**Note**: The installation script has optimized \`_config_dev.yml\` for Docker compatibility.
-
-### Using Local Ruby Environment
-\`\`\`bash
-# Install dependencies
-bundle install
-
-# Start the development server
-bundle exec jekyll serve --config _config_dev.yml
-
-# Your site will be available at http://localhost:4000
-\`\`\`
-
-## Azure Static Web Apps Deployment
-
-This theme is pre-configured for Azure Static Web Apps deployment:
-
-### Directory Structure for Azure
-- **App Location**: \`.\" (root directory) - Contains Jekyll source files
-- **API Location**: \`api/\" - For Azure Functions (optional)
-- **Output Location**: \`_site/\" - Jekyll build output
-
-### Deployment Setup
-1. Create an Azure Static Web App in the Azure portal
-2. Copy the deployment token to your GitHub repository secrets as \`AZURE_STATIC_WEB_APPS_API_TOKEN\`
-3. Push to the \`main\` branch to trigger automatic deployment
-
-### Adding Azure Functions (Optional)
-\`\`\`bash
-# Create Azure Functions API structure
-mkdir -p api/hello
-
-# The workflow file at .github/workflows/azure-static-web-apps.yml
-# is already configured for Azure deployment
-\`\`\`
-
-## Configuration
-
-1. Edit \`_config.yml\` to customize your site settings
-2. Update the content in \`index.md\` to match your needs
-3. Add your content in the \`pages/\` directory
-4. Customize styling in \`_sass/custom.scss\`
-
-## Directory Structure
-
-- \`_config.yml\` - Main Jekyll configuration
-- \`_config_dev.yml\` - Development configuration (Docker-optimized)
-- \`_data/\` - Site data files
-- \`_includes/\` - Reusable template components
-- \`_layouts/\` - Page layouts
-- \`_sass/\` - Sass stylesheets
-- \`assets/\` - Static assets (images, JS, CSS)
-- \`build/\` - Build logs and temporary files
-- \`.github/workflows/\` - GitHub Actions for Azure deployment
-
-## Troubleshooting
-
-### Docker Issues
-
-#### Theme Not Found Error
-\`\`\`text
-jekyll 3.10.0 | Error: The jekyll-theme-zer0 theme could not be found.
-\`\`\`
-
-**Solution**: The installation script has configured \`_config_dev.yml\` to disable theme dependencies for Docker compatibility.
-
-#### Port Conflicts
-If port 4000 is already in use, modify \`docker-compose.yml\`:
-\`\`\`yaml
-ports:
-  - \"4001:4000\"  # Use different external port
-\`\`\`
-
-#### Platform Issues (Apple Silicon/ARM64)
-If you encounter platform warnings on Apple Silicon Macs, this is normal and the container should still work.
-
-#### Bundle Install Failures
-If you encounter gem installation issues:
-\`\`\`bash
-# Clear bundle cache
-docker-compose down
-docker system prune -f
-
-# Rebuild containers
-docker-compose up --build
-\`\`\`
-
-### Local Development Issues
-
-#### Missing Dependencies
-\`\`\`bash
-# Update bundler
-gem update bundler
-
-# Clean install
-bundle clean --force
-bundle install
-\`\`\`
-
-#### Ruby Version Issues
-Ensure you're using a compatible Ruby version (3.0+):
-\`\`\`bash
-ruby --version
-rbenv install 3.1.0  # If using rbenv
-rbenv global 3.1.0
-\`\`\`
-
-## Support
-
-For issues and documentation, visit: [zer0-mistakes GitHub Repository](https://github.com/bamr87/zer0-mistakes)
-
----
-Installed on: \$(date)
-Theme Version: zer0-mistakes
-Azure Static Web Apps: Ready
-Docker: Optimized for compatibility
-"
-    
-    if [[ ! -f "$TARGET_DIR/INSTALLATION.md" ]]; then
-        echo "$readme_content" > "$TARGET_DIR/INSTALLATION.md"
-        log_info "Created INSTALLATION.md"
-    fi
-    
-    log_success "Installation instructions created"
+    log_info "Creating ${mode_label}installation instructions..."
+    create_from_template "$template" "$TARGET_DIR/INSTALLATION.md" ""
+    log_success "Installation instructions created${mode_label:+ ($mode_label)}"
 }
 
-create_minimal_readme() {
-    log_info "Creating minimal installation instructions..."
-    
-    local readme_content="# zer0-mistakes Jekyll Theme - Minimal Installation
-
-This directory has been set up with a minimal zer0-mistakes Jekyll theme installation.
-
-## Quick Start
-
-\`\`\`bash
-# Install dependencies
-bundle install
-
-# Start the development server
-bundle exec jekyll serve
-
-# Your site will be available at http://localhost:4000
-\`\`\`
-
-## What's Included (Minimal Installation)
-
-- \`_config.yml\` - Main Jekyll configuration
-- \`Gemfile\` - Ruby dependencies
-- \`index.md\` - Basic homepage
-- \`.gitignore\` - Git ignore rules
-
-## Next Steps
-
-1. **Customize Configuration**: Edit \`_config.yml\` to match your site needs
-2. **Add Content**: Create pages and posts in markdown format
-3. **Choose Layouts**: Use Jekyll's default layouts or create your own
-4. **Style Your Site**: Add custom CSS or upgrade to full installation
-
-## Upgrading to Full Installation
-
-For complete theme features including:
-- Custom layouts and includes
-- Docker support
-- Azure Static Web Apps deployment
-- Pre-built styling and components
-
-Run the installer again with the full flag:
-
-\`\`\`bash
-# Local installation
-./install.sh --full
-
-# Remote installation  
-curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash -s -- --full
-\`\`\`
-
-## Troubleshooting
-
-### Missing Dependencies
-\`\`\`bash
-# Update bundler
-gem update bundler
-
-# Clean install
-bundle clean --force
-bundle install
-\`\`\`
-
-### Ruby Version Issues
-Ensure you're using a compatible Ruby version (3.0+):
-\`\`\`bash
-ruby --version
-\`\`\`
-
-## Support
-
-For issues and documentation, visit: [zer0-mistakes GitHub Repository](https://github.com/bamr87/zer0-mistakes)
-
----
-Installed on: \$(date)
-Installation Type: Minimal
-Upgrade Available: Run with --full flag
-"
-    
-    if [[ ! -f "$TARGET_DIR/INSTALLATION.md" ]]; then
-        echo "$readme_content" > "$TARGET_DIR/INSTALLATION.md"
-        log_info "Created minimal INSTALLATION.md"
-    fi
-    
-    log_success "Minimal installation instructions created"
-}
 
 create_azure_static_web_apps_workflow() {
     if [[ "$INSTALL_MODE" == "minimal" ]]; then
         log_info "Skipping Azure workflow (minimal installation)"
         return
     fi
-    
+
     log_info "Creating Azure Static Web Apps workflow..."
-    
-    # Create .github/workflows directory
     mkdir -p "$TARGET_DIR/.github/workflows"
-    
-    # Create Azure Static Web Apps workflow file
-    cat > "$TARGET_DIR/.github/workflows/azure-static-web-apps.yml" << 'EOF'
-name: Azure Static Web Apps CI/CD
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
-    branches:
-      - main
-
-jobs:
-  build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
-    runs-on: ubuntu-latest
-    name: Build and Deploy Job
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: true
-          lfs: false
-      
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.1'
-          bundler-cache: true
-      
-      - name: Build Jekyll site
-        run: |
-          bundle install
-          bundle exec jekyll build
-      
-      - name: Build And Deploy
-        id: builddeploy
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: "upload"
-          app_location: "."
-          api_location: "api"
-          output_location: "_site"
-          skip_app_build: true
-
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Close Pull Request Job
-    steps:
-      - name: Close Pull Request
-        id: closepullrequest
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          action: "close"
-EOF
-    
+    create_from_template \
+        "deploy/azure-static-web-apps.yml.template" \
+        "$TARGET_DIR/.github/workflows/azure-static-web-apps.yml" \
+        ""
     log_success "Azure Static Web Apps workflow created"
 }
 
@@ -1237,53 +896,11 @@ optimize_development_config() {
     log_info "Optimizing development configuration for Docker compatibility..."
     
     local dev_config="$TARGET_DIR/_config_dev.yml"
-    
-    # Create an enhanced _config_dev.yml that works with Docker
-    cat > "$dev_config" << 'EOF'
-# Dev config override for zer0-mistakes theme
-# Optimized for Docker development environment
 
-# Disable remote theme for local development — theme gem is loaded instead
-remote_theme             : false
-theme                    : "jekyll-theme-zer0"
-
-# Essential Jekyll plugins for development
-plugins:
-  - jekyll-feed
-  - jekyll-sitemap
-  - jekyll-seo-tag
-  - jekyll-paginate
-  - jekyll-include-cache
-
-# Override problematic settings for local development
-url: ""
-baseurl: ""
-
-# Development-specific settings
-host: "0.0.0.0"  # Allow Docker container access
-port: 4000
-livereload: true
-incremental: true
-
-# Exclude files for faster builds
-exclude:
-  - README.md
-  - INSTALLATION.md
-  - Gemfile.lock
-  - vendor/
-  - .bundle/
-  - build/
-  - .github/
-  - docker-compose.yml
-  - "*.backup.*"
-
-# Markdown processing
-markdown: kramdown
-highlighter: rouge
-kramdown:
-  input: GFM
-  syntax_highlighter: rouge
-EOF
+    # Remove any previously-copied dev config so create_from_template writes the
+    # consumer-appropriate version (simpler, gem-based) instead of skipping.
+    rm -f "$dev_config"
+    create_from_template "config/_config_dev.yml.template" "$dev_config" ""
     
     # Update docker-compose.yml to include repository environment variable
     update_docker_compose_config
@@ -1533,20 +1150,7 @@ install_remote_mode() {
     create_from_template "pages/index.md.template" "index.md" ""
 
     # 404.html
-    mkdir -p "$(dirname "404.html")"
-    cat > 404.html << 'FOUROHFOUR'
----
-layout: default
-title: "Page Not Found"
-permalink: /404.html
----
-
-# 404 — Page Not Found
-
-The page you're looking for doesn't exist.
-
-[Go Home →]({{ '/' | relative_url }})
-FOUROHFOUR
+    create_from_template "config/404.md.template" "404.html" ""
 
     # pages/ content stubs
     mkdir -p pages/_posts pages/_docs pages/_about
@@ -1583,44 +1187,12 @@ FOUROHFOUR
     # Codespaces / devcontainer support
     install_codespaces_config
 
-    # .gitignore
-    cat > .gitignore << 'GITIGNORE'
-_site/
-.sass-cache/
-.jekyll-cache/
-.jekyll-metadata
-Gemfile.lock
-*.gem
-GITIGNORE
+    # .gitignore (slightly different from minimal: includes Gemfile.lock + *.gem)
+    create_from_template "config/gitignore.remote.template" ".gitignore" ""
 
-    # README for the branch
-    cat > README.md << EOF
-# ${FORK_SITE_NAME:-My Site}
-
-This site is built with [${THEME_DISPLAY_NAME}](${GITHUB_URL}) using \`remote_theme\`.
-
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/${gh_user}/${THEME_NAME}?quickstart=1&ref=${branch})
-
-## Local Development
-
-\`\`\`bash
-bundle install
-bundle exec jekyll serve
-\`\`\`
-
-Visit \`http://localhost:4000/${repo_name}/\` to preview your site.
-
-## GitHub Codespaces
-
-Click the badge above or go to **Code → Codespaces → New codespace** to launch
-a browser-based development environment. Jekyll starts automatically and the
-site preview opens in a forwarded port.
-
-## Deployment
-
-This branch is configured for GitHub Pages. Enable Pages in your repository
-settings and set the source to the \`${branch}\` branch.
-EOF
+    # README for the branch (uses REMOTE_BRANCH, REPOSITORY_NAME, FORK_GITHUB_USER, SITE_TITLE)
+    export REMOTE_BRANCH="$branch"
+    create_from_template "config/README.remote.md.template" "README.md" ""
 
     # ── Step 5: Initial commit ─────────────────────────────────────────────
     # Ensure git user identity is configured (needed on fresh envs / Codespaces)
