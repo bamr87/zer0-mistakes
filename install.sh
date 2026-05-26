@@ -575,15 +575,42 @@ install_docker_files() {
     
     copy_file_with_backup "$SOURCE_DIR/docker-compose.yml" "$TARGET_DIR/docker-compose.yml"
     
-    # Copy the docker directory with Dockerfile (required by docker-compose.yml)
-    if [[ -d "$SOURCE_DIR/docker" ]]; then
-        copy_directory_with_backup "$SOURCE_DIR/docker" "$TARGET_DIR/docker"
-        log_info "Docker directory with Dockerfile installed"
-    else
-        log_warning "docker/ directory not found, skipping"
-    fi
+    # Generate a consumer-appropriate Dockerfile (not the gem-dev source Dockerfile
+    # which expects jekyll-theme-zer0.gemspec and lib/ to be present)
+    mkdir -p "$TARGET_DIR/docker"
+    generate_consumer_dockerfile
     
     log_success "Docker files installed"
+}
+
+generate_consumer_dockerfile() {
+    log_info "Generating consumer Dockerfile for jekyll-theme-zer0 site..."
+    cat > "$TARGET_DIR/docker/Dockerfile" << 'CONSUMER_DOCKERFILE'
+# Consumer site Dockerfile — installs jekyll-theme-zer0 from RubyGems
+FROM ruby:3.3-slim
+
+RUN apt-get update -qq && \
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        libssl-dev \
+        pkg-config \
+        libyaml-dev \
+        zlib1g-dev \
+        git && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /site
+
+RUN gem install bundler -v '~> 2.5'
+
+COPY Gemfile Gemfile.lock* ./
+RUN bundle install --jobs 4 --retry 3
+
+COPY . .
+
+CMD ["bundle", "exec", "jekyll", "serve", "--host", "0.0.0.0", "--port", "4000", "--watch", "--livereload"]
+CONSUMER_DOCKERFILE
+    log_info "Consumer Dockerfile generated"
 }
 
 install_theme_directories() {
@@ -647,10 +674,12 @@ create_site_gemfile() {
     local template_path
     local fallback_content
 
-    # On macOS with system Ruby < 2.7, use the compatibility-capped template.
-    # All other environments (Linux, Docker, Ruby >= 2.7) stay zero-pin.
-    if needs_macos_gemfile; then
-        log_info "Detected macOS + Ruby < 2.7 — using macOS compatibility template"
+    # On macOS with system Ruby < 2.7, use the compatibility-capped template —
+    # BUT only when no Docker files are being installed (Docker uses Ruby 3.x and
+    # doesn't need the macOS caps).  Full-mode installs always include Docker, so
+    # they always use the standard template.
+    if needs_macos_gemfile && [[ "$INSTALL_MODE" == "minimal" ]]; then
+        log_info "Detected macOS + Ruby < 2.7 (minimal mode) — using macOS compatibility template"
         template_path="config/Gemfile.macos.template"
         fallback_content='source "https://rubygems.org"
 
@@ -673,6 +702,7 @@ gem "jekyll", "'"${JEKYLL_VERSION}"'"
 gem "jekyll-feed"
 gem "jekyll-sitemap"
 gem "jekyll-seo-tag"
+gem "jekyll-include-cache"
 
 # Platform compatibility
 gem "ffi", "'"${FFI_VERSION}"'"
@@ -693,10 +723,12 @@ gem "wdm", :platforms => [:windows]'
         template_path="config/Gemfile.full.template"
         fallback_content='source "https://rubygems.org"
 
-# GitHub Pages gem includes Jekyll and compatible plugins
-gem "github-pages", group: :jekyll_plugins
+# Jekyll and the theme gem
+gem "jekyll", "~> 4.3"
+gem "jekyll-theme-zer0"
 
-# Essential plugins (already included in github-pages but listed for clarity)
+# Plugins required by the theme
+gem "jekyll-include-cache"
 gem "jekyll-remote-theme"
 gem "jekyll-feed"
 gem "jekyll-sitemap"
@@ -706,7 +738,6 @@ gem "jekyll-paginate"
 # Platform compatibility and performance
 gem "ffi", "'"${FFI_VERSION}"'"
 gem "webrick", "'"${WEBRICK_VERSION}"'"
-gem "commonmarker", "'"${COMMONMARKER_VERSION}"'"  # Fixed version to avoid compatibility issues
 
 # Platform-specific dependencies
 platforms :windows, :jruby do
@@ -1212,17 +1243,17 @@ optimize_development_config() {
 # Dev config override for zer0-mistakes theme
 # Optimized for Docker development environment
 
-# Disable remote theme for initial setup - allows site to build with basic Jekyll functionality
-# Enable remote_theme only when bamr87/zer0-mistakes repository is available and accessible
+# Disable remote theme for local development — theme gem is loaded instead
 remote_theme             : false
-# theme                    : "jekyll-theme-zer0"  # Commented out to avoid gem dependency issues
+theme                    : "jekyll-theme-zer0"
 
 # Essential Jekyll plugins for development
 plugins:
   - jekyll-feed
-  - jekyll-sitemap  
+  - jekyll-sitemap
   - jekyll-seo-tag
   - jekyll-paginate
+  - jekyll-include-cache
 
 # Override problematic settings for local development
 url: ""
@@ -1265,12 +1296,32 @@ update_docker_compose_config() {
     
     local docker_config="$TARGET_DIR/docker-compose.yml"
     
-    # Read the current docker-compose.yml and add environment variable
+    # Read the current docker-compose.yml and patch it for consumer site use
     if [[ -f "$docker_config" ]]; then
-        # Check if PAGES_REPO_NWO is already present
+        # 1. Remove the dev-only multi-stage build target (consumer Dockerfile is single-stage)
+        perl -ni -e 'print unless /^\s+target:\s+dev-test/' "$docker_config"
+        log_info "Removed 'target: dev-test' from docker-compose.yml"
+
+        # 2. Replace the complex stats-generator command with a simple serve command
+        perl -0777 -pi -e '
+            s|command:\s*\[\s*"sh".*?generate_statistics\.sh.*?\]|command: ["bundle", "exec", "jekyll", "serve", "--watch", "--livereload", "--config", "_config.yml,_config_dev.yml", "--host", "0.0.0.0", "--port", "4000"]|s
+        ' "$docker_config"
+        log_info "Simplified jekyll serve command in docker-compose.yml"
+
+        # 4. Remove bundle_cache volume — gems are baked into the consumer image;
+        #    mounting an empty named volume over /usr/local/bundle hides them.
+        #    Remove the service-level volume line AND the top-level key+driver block.
+        perl -0777 -pi -e 's/      - bundle_cache:[^\n]*\n//g' "$docker_config"
+        perl -0777 -pi -e 's/  bundle_cache:\n    driver: local\n//g' "$docker_config"
+        log_info "Removed bundle_cache volume from docker-compose.yml"
+
+        # 5. Remove BUNDLE_PATH env var — gems are installed to the system path
+        #    during `docker build`; setting BUNDLE_PATH redirects Bundler away from them
+        perl -ni -e 'print unless /BUNDLE_PATH/' "$docker_config"
+        log_info "Removed BUNDLE_PATH from docker-compose.yml environment"
+
+        # 6. Add PAGES_REPO_NWO environment variable if not already present
         if ! grep -q "PAGES_REPO_NWO" "$docker_config"; then
-            # Add the environment variable after JEKYLL_ENV line
-            # Use perl for cross-platform compatibility (BSD sed and GNU sed differ on in-place syntax)
             perl -pi -e '$_ .= "      PAGES_REPO_NWO: \"bamr87/zer0-mistakes\"\n" if /JEKYLL_ENV: development/' "$docker_config"
             log_info "Added PAGES_REPO_NWO environment variable to docker-compose.yml"
         fi
