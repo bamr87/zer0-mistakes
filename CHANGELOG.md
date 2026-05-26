@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.8.2] - 2026-05-26
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 41bbd9a chore(gemspec): exclude images and large files from gem packaging
+
+
 ## [Unreleased]
 
 ### Changed
