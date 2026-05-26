@@ -177,7 +177,21 @@ main() {
     # Step 4: Update version files
     update_version_files "$new_version"
     echo ""
-    
+
+    # Step 4.5: Regenerate theme manifest with new version + checksums
+    step "Regenerating theme manifest..."
+    local manifest_script="$SCRIPT_DIR/manifest"
+    if [[ -x "$manifest_script" ]]; then
+        if [[ "$DRY_RUN" == "true" ]]; then
+            info "[DRY RUN] Would regenerate _data/theme-manifest.yml"
+        else
+            "$manifest_script"
+        fi
+    else
+        warn "scripts/bin/manifest not found — skipping manifest regeneration"
+    fi
+    echo ""
+
     # Step 5: Run tests
     if [[ "$SKIP_TESTS" != "true" ]]; then
         run_tests

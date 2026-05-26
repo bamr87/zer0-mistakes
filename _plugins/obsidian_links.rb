@@ -60,7 +60,11 @@ module Jekyll
       'tag_base_url' => '/tags/',
       'callout_class_prefix' => 'obsidian-callout',
       'wiki_link_class' => 'wiki-link',
-      'broken_link_class' => 'wiki-link wiki-link-broken'
+      'broken_link_class' => 'wiki-link wiki-link-broken',
+      # Slugs (normalised: lowercase, stripped) that are too generic to be
+      # useful as wiki-link targets and whose collisions should be silenced.
+      # Add entries in _config.yml under `obsidian.skip_slugs`.
+      'skip_slugs' => []
     }.freeze
 
     # Bootstrap alert mapping per Obsidian callout type.
@@ -104,15 +108,20 @@ module Jekyll
     class Index
       attr_reader :entries
 
-      def initialize(site)
+      def initialize(site, config = {})
         @entries = {}
+        @skip_slugs = Array(config['skip_slugs'])
+                        .map { |s| s.to_s.downcase.strip.gsub(/\s+/, ' ') }
+                        .to_set
         build(site)
       end
 
       def build(site)
-        # All renderable docs across collections + standalone pages.
+        # All renderable docs across collections + standalone HTML pages.
+        # Filtering to output_ext == '.html' ensures raw binary docs (e.g.
+        # .ipynb notebook files) are not indexed as wiki-link targets.
         items = []
-        items.concat(site.documents) if site.respond_to?(:documents)
+        items.concat(site.documents.select { |d| d.respond_to?(:output_ext) && d.output_ext == '.html' }) if site.respond_to?(:documents)
         items.concat(site.pages.select { |p| p.output_ext == '.html' })
 
         items.each do |doc|
@@ -133,6 +142,7 @@ module Jekyll
       def register(key, url, doc)
         slug = normalize(key)
         return if slug.empty?
+        return if @skip_slugs.include?(slug)
 
         # First registration wins; subsequent collisions produce a deterministic
         # warning so authors can disambiguate (e.g. via `aliases:`).
@@ -449,7 +459,7 @@ module Jekyll
           return @cached_index
         end
 
-        new_index = Index.new(site)
+        new_index = Index.new(site, self.config)
         @cached_fingerprint = current_fingerprint
         @cached_site_id = site.object_id
         @cached_index = new_index
