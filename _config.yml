@@ -556,8 +556,6 @@ exclude:
   # ── Docker configuration ──────────────────────────────────────────────────
   - docker/
   - docker-compose.yml
-  - docker-compose.prod.yml
-  - docker-compose.publish.yml
   - docker-compose.test.yml
 
   # ── Build / task runners ──────────────────────────────────────────────────

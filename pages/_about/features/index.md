@@ -3,7 +3,7 @@ title: Zer0-Mistakes Theme Features
 description: Technical features and capabilities of the Zer0-Mistakes Jekyll theme optimized for VS Code Copilot assistance and AI-powered development.
 excerpt: Comprehensive guide to theme features, Jekyll optimization, automation systems, and AI-assisted developer tools.
 date: 2024-03-12T21:42:28.963Z
-preview: null
+preview: /images/previews/zer0-mistakes-theme-features.png
 tags:
   [
     jekyll,

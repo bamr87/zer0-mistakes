@@ -2,7 +2,7 @@
 title: "AI-Assisted Development with Zer0-Mistakes"
 description: "Comprehensive guide for AI-assisted development workflows using VS Code Copilot with the Zer0-Mistakes Jekyll theme"
 date: 2025-10-19T00:00:00.000Z
-preview: null
+preview: /images/previews/ai-assisted-development-with-zer0-mistakes.png
 tags: [ai-development, copilot, automation, workflow, best-practices]
 categories: [Development, AI, Workflow]
 sub-title: "VS Code Copilot optimization for Jekyll theme development"

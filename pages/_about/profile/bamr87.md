@@ -1,5 +1,6 @@
 ---
 title: Amr Abdel-Motaleb
+preview: /images/previews/amr-abdel-motaleb.png
 name: Amr Abdel-Motaleb
 avatar: /assets/images/bamr-avatar.png
 excerpt: IT Wizard, Software Architect, Tech Enthusiast.
