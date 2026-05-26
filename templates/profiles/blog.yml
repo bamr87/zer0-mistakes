@@ -1,0 +1,23 @@
+# jekyll-theme-zer0 install profile: blog
+name: blog
+display_name: Blog
+description: Blog-focused site with posts, categories, tags, and RSS feed.
+legacy_flag: ""
+recommended_for: personal blogs, developer blogs
+
+tasks:
+  - config
+  - gemfile
+  - docker
+  - pages
+  - nav
+  - data
+  - gitignore
+  - readme
+  - marker
+
+deploy_targets:
+  - github-pages
+
+ai_features:
+  agent_files: [generic, copilot]

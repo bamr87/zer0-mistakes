@@ -13,7 +13,8 @@ The zer0-mistakes testing framework provides **6 comprehensive test suites** for
 | Core | `test_core.sh` | Unit, integration, validation | ~2-3 min |
 | Deployment | `test_deployment.sh` | Docker, E2E workflows | ~5-8 min |
 | Quality | `test_quality.sh` | Security, accessibility | ~4-6 min |
-| Installation | `test_installation.sh` | CLI, modes, edge cases | ~3-5 min |
+| Installation | `test_installation.sh` | Legacy `install.sh` CLI, modes, edge cases | ~3-5 min |
+| **Installer** | `test_installer.sh` | **Modular installer (`scripts/bin/install`): profiles, deploy plugins, agent files, AI wizard** | ~30-60 sec |
 | Fork Cleanup | `test_fork_cleanup.sh` | `scripts/fork-cleanup.sh` behavior | ~30 sec |
 | Site Generation | `test_site_generation.sh` | Config matrix builds | ~5-10 min |
 | Playwright Smoke | `test_playwright.sh` (`PLAYWRIGHT_PROJECT=smoke`) | CSS, layout, behavioral DOM | ~2-3 min |

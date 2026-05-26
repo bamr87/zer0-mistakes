@@ -1,0 +1,20 @@
+# pages/manifest.yml — Starter page manifest for zer0-mistakes installer
+#
+# Format: one entry per line (YAML flow style for easy shell parsing):
+#   - dest: <path relative to target>  src: <template file relative to pages/>  profiles: all|blog|docs|...
+#
+# The "src" field is relative to templates/pages/.
+# The "dest" field is relative to the target site root.
+# Omit "profiles" to apply to all profiles, or specify a space-separated list.
+# ---------------------------------------------------------------------------
+
+- dest: index.md                          src: index.md.template                profiles: all
+- dest: pages/_posts/welcome.md           src: welcome-post.md.template         profiles: blog
+- dest: pages/_docs/index.md              src: docs-index.md.template           profiles: docs
+- dest: pages/about.md                    src: about.md.template                profiles: all
+- dest: pages/blog.md                     src: blog.md.template                 profiles: blog
+- dest: pages/quickstart.md               src: quickstart.md.template           profiles: all
+- dest: pages/setup.html                  src: setup.html.template              profiles: all
+- dest: pages/configuration.md            src: configuration.md.template        profiles: all
+- dest: pages/theming.md                  src: theming.md.template              profiles: all
+- dest: pages/troubleshooting.md          src: troubleshooting.md.template      profiles: all

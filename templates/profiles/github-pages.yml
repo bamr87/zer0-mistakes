@@ -1,0 +1,25 @@
+# jekyll-theme-zer0 install profile: github-pages
+name: github-pages
+display_name: GitHub Pages
+description: GitHub Pages compatible install using remote_theme directive.
+legacy_flag: --github
+recommended_for: GitHub Pages hosting, remote theme usage
+
+theme_source: remote
+
+tasks:
+  - config
+  - gemfile
+  - pages
+  - nav
+  - data
+  - devcontainer
+  - gitignore
+  - readme
+  - marker
+
+deploy_targets:
+  - github-pages
+
+ai_features:
+  agent_files: [copilot, generic]

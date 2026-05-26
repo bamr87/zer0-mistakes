@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- **Modular installer (`scripts/install/`)**: spec-driven, AI-aware installer dispatched by `scripts/bin/install`. Single `.zer0/install.spec.json` contract feeds CLI flags, the TUI wizard, and the OpenAI wizard into one apply pipeline.
+- **Deploy plugins**: `tasks/deploy_github-pages.sh`, `tasks/deploy_azure-swa.sh`, `tasks/deploy_docker-prod.sh`. Spec deploy targets now auto-render the matching workflow / config from `templates/deploy/`.
+- **AI wizard end-to-end**: `install wizard --ai` now chains spec generation → `apply_run`, records AI provenance (`ai.used/provider/model`) in the spec, lets CLI flags override AI guesses, and falls back to profile defaults when the model returns empty arrays.
+- **Profile defaults fallback**: `ai/wizard.sh` re-loads the selected profile to fill in empty `deploy`/`agents` arrays from the AI output, ensuring decisive installs.
+- **`generic` agent target** added to spec schema enum (cross-tool `AGENTS.md` baseline alongside `claude`, `cursor`, `aider`, `copilot`).
+- **Installer test suite (`test/test_installer.sh`)**: 17-check regression harness covering module syntax, all 6 profile inits, all 3 deploy plugins, all 5 agent flavours, and the AI wizard pipeline. Wired into `test/test_runner.sh` as the `installer` suite (included in `--suites all` and `--suites full`).
+
+### Fixed
+- `_cmd_wizard` previously left targets containing only `.zer0/install.spec.json`; now chains `apply_run` to write all task outputs.
+- `plan.sh` YAML parser now accepts both `deploy:`/`deploy_targets:` keys and parses `agents:` block lists *and* `ai_features.agent_files:` inline flow lists, matching the actual profile YAML shape.
+- Rewrote `ai/prompts/wizard.system.md` with explicit profile, deploy, and agent heuristics plus a full example output, eliminating empty AI responses.
+- `plan_load_profile` and `plan_apply_flags` now return `0` explicitly so Bash 3.2 doesn't propagate a trailing-test exit code.
+
 ## [1.8.2] - 2026-05-26
 
 ### Changed

@@ -1,0 +1,36 @@
+---
+description: Rules for working with {{SITE_TITLE}}
+globs: **/*
+alwaysApply: true
+---
+
+# {{SITE_TITLE}} — Cursor Rules
+
+## Tech stack
+
+- Jekyll static site with zer0-mistakes theme
+- Bootstrap 5 for styling
+- Liquid templating
+- Docker for development
+
+## Key paths
+
+- `pages/_posts/` — blog posts (layout: article)
+- `pages/_docs/` — documentation
+- `_layouts/` — page layouts
+- `_includes/` — reusable components
+- `_sass/` — custom styles
+- `_data/` — site data (navigation, authors, etc.)
+
+## Commands
+
+```bash
+docker compose up              # dev server
+bundle exec jekyll build       # build
+```
+
+## Rules
+
+- Match existing Liquid/HTML style
+- Mobile-first Bootstrap 5 components
+- Front matter required on all content files
