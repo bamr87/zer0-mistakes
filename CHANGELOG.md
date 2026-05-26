@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.8.1] - 2026-05-26
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 6a9bac4 chore(docker): remove unused prod and publish compose files
+
+
 ## [1.8.0] - 2026-05-25
 
 ### Changed
