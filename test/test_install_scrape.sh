@@ -169,11 +169,12 @@ test_scrape_init_integration() {
     rm -f /tmp/init-scrape-$$
 
     local missing=""
-    [[ -f "$ws/pages/_scraped/index.md" ]]      || missing="$missing pages/_scraped/index.md"
-    [[ -f "$ws/pages/_scraped/about.md" ]]      || missing="$missing pages/_scraped/about.md"
-    [[ -f "$ws/_data/scraped_site.json" ]]      || missing="$missing _data/scraped_site.json"
-    [[ -f "$ws/_data/navigation/scraped.yml" ]] || missing="$missing _data/navigation/scraped.yml"
-    [[ -f "$ws/_config.yml" ]]                  || missing="$missing _config.yml"
+    # New layout: home → root index.md, generic pages → pages/<slug>.md
+    [[ -f "$ws/index.md" ]]                  || missing="$missing index.md"
+    [[ -f "$ws/pages/about.md" ]]            || missing="$missing pages/about.md"
+    [[ -f "$ws/_data/scraped_site.json" ]]   || missing="$missing _data/scraped_site.json"
+    [[ -f "$ws/_data/navigation/main.yml" ]] || missing="$missing _data/navigation/main.yml"
+    [[ -f "$ws/_config.yml" ]]               || missing="$missing _config.yml"
 
     if [[ -n "$missing" ]]; then
         test_log_error "init+scrape: missing artifacts:$missing"
@@ -187,9 +188,23 @@ test_scrape_init_integration() {
             || { test_log_error "spec: scrape.source_url not persisted"; return 1; }
     fi
 
-    # nav YAML should contain at least one entry from the fixture.
-    grep -q 'About' "$ws/_data/navigation/scraped.yml" \
+    # nav YAML should contain at least one entry from the fixture (About).
+    grep -q 'About' "$ws/_data/navigation/main.yml" \
         || { test_log_error "scraped nav YAML missing About entry"; return 1; }
+
+    # Nav YAML must NOT contain any blocked labels.
+    if grep -Eqi '^- title: "?(Folder:|Cart|Back)' "$ws/_data/navigation/main.yml"; then
+        test_log_error "scraped nav YAML contains blocked label"
+        return 1
+    fi
+
+    # Home index.md must have permalink: /
+    grep -q '^permalink: "/"' "$ws/index.md" \
+        || { test_log_error "home index.md missing permalink: /"; return 1; }
+
+    # _config.yml should have been seeded with lang.
+    grep -Eq '^lang\s*:\s*"?en"?' "$ws/_config.yml" \
+        || { test_log_error "_config.yml lang not seeded"; return 1; }
 
     return 0
 }

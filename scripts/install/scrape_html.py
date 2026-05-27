@@ -220,6 +220,16 @@ SKIP_LINK_EXTS = (
     ".css", ".js", ".xml", ".json", ".rss", ".atom",
     ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx",
 )
+# Query keys whose presence marks the URL as an export/feed variant of a
+# page we likely already crawled (e.g. ?format=ical, ?format=json-pretty).
+SKIP_QUERY_FORMATS = {"ical", "json", "json-pretty", "rss", "atom", "feed", "xml", "pdf", "csv"}
+# Nav labels we never want in the rendered navbar.
+NAV_LABEL_BLOCKLIST = {
+    "back", "cart", "checkout", "login", "log in", "sign in", "signup", "sign up",
+    "menu", "toggle navigation", "skip to main content", "skip to content",
+    "search", "close", "open menu",
+}
+NAV_LABEL_PREFIX_BLOCKLIST = ("folder:",)
 
 
 def normalize_link(href: str, base_url: str) -> Optional[str]:
@@ -237,6 +247,16 @@ def normalize_link(href: str, base_url: str) -> Optional[str]:
         return None
     if any(parsed.path.lower().endswith(e) for e in SKIP_LINK_EXTS):
         return None
+    # Drop export-format variants (e.g. ?format=ical, ?format=json-pretty).
+    if parsed.query:
+        from urllib.parse import parse_qs
+        try:
+            qs = parse_qs(parsed.query, keep_blank_values=False)
+            for v in qs.get("format", []):
+                if v.lower() in SKIP_QUERY_FORMATS:
+                    return None
+        except Exception:
+            pass
     # Strip default ports for stable dedup
     netloc = parsed.netloc
     if netloc.endswith(":80") and parsed.scheme == "http":
@@ -301,6 +321,75 @@ def extract_nav_links(root: Node, url: str, base_url: str) -> List[Tuple[str, st
             seen.add(norm)
             out.append((norm, label))
     return out
+
+
+def filter_nav_links(nav: List[Tuple[str, str]], base_url: str) -> List[Tuple[str, str]]:
+    """Drop blocked labels, duplicates by path, and the home link itself."""
+    cleaned: List[Tuple[str, str]] = []
+    seen_paths = set()
+    base_path = (urlparse(base_url).path or "/").rstrip("/") or "/"
+    for u, label in nav:
+        lab_l = label.strip().lower()
+        if not lab_l or lab_l in NAV_LABEL_BLOCKLIST:
+            continue
+        if any(lab_l.startswith(p) for p in NAV_LABEL_PREFIX_BLOCKLIST):
+            continue
+        path = (urlparse(u).path or "/").rstrip("/") or "/"
+        if path in seen_paths:
+            continue
+        if path == base_path and lab_l in {"home", "back", base_path}:
+            continue
+        seen_paths.add(path)
+        cleaned.append((u, label))
+    return cleaned[:10]  # cap nav size
+
+
+def extract_images(root: Node, url: str) -> List[Dict[str, str]]:
+    """Collect every <img src=...> (absolute URL + alt) in document order."""
+    out: List[Dict[str, str]] = []
+    seen = set()
+    for img in root.find_all("img"):
+        src = img.attrs.get("src", "").strip()
+        if not src:
+            continue
+        if src.startswith("data:"):
+            continue
+        try:
+            absu = urljoin(url, src)
+        except Exception:
+            continue
+        if absu in seen:
+            continue
+        seen.add(absu)
+        out.append({"url": absu, "alt": (img.attrs.get("alt") or "").strip()})
+    return out
+
+
+# URL patterns → page "kind" (drives layout + destination dir in tasks/scrape.sh).
+_KIND_PATTERNS = [
+    (re.compile(r"^/?(events?|calendar)(/|$)", re.I), "event"),
+    (re.compile(r"^/?(blog|news|posts?|articles?)(/|$)", re.I), "post"),
+    (re.compile(r"^/?(about|who-we-are|mission|team|associates|people)(/|$)", re.I), "about"),
+    (re.compile(r"^/?(contact|reach-us|get-in-touch)(/|$)", re.I), "contact"),
+    (re.compile(r"^/?(services|products?|programs?|activities|offerings)(/|$)", re.I), "service"),
+    (re.compile(r"^/?(faq|help|support)(/|$)", re.I), "faq"),
+]
+
+
+def classify_page(url: str, base_url: str, title: str = "") -> str:
+    """Return a kind for the URL: home/event/post/about/contact/service/faq/page."""
+    parsed = urlparse(url)
+    base = urlparse(base_url)
+    path = (parsed.path or "/").strip("/")
+    base_path = (base.path or "/").strip("/")
+    # Home: same path as the base URL (after stripping).
+    if path == base_path or path == "" or path in ("index", "home"):
+        return "home"
+    for pat, kind in _KIND_PATTERNS:
+        if pat.match("/" + path):
+            return kind
+    return "page"
+
 
 
 # ---------------------------------------------------------------------------
@@ -604,11 +693,19 @@ def cmd_extract(args) -> int:
     main = select_main(root)
     markdown = to_markdown(main, args.url)
     links = extract_links(root, args.url, base)
-    nav = extract_nav_links(root, args.url, base)
+    nav_raw = extract_nav_links(root, args.url, base)
+    nav = filter_nav_links(nav_raw, base)
+    images = extract_images(main, args.url)
+    # Include page-level og:image as the first asset if it isn't already.
+    if meta.get("image"):
+        if not any(img["url"] == meta["image"] for img in images):
+            images.insert(0, {"url": meta["image"], "alt": meta.get("title") or ""})
+    kind = classify_page(args.url, base, meta.get("title", ""))
     word_count = len(markdown.split())
     out = {
         "url": args.url,
         "base_url": base,
+        "kind": kind,
         "title": meta["title"],
         "description": meta["description"],
         "canonical": meta["canonical"],
@@ -619,6 +716,7 @@ def cmd_extract(args) -> int:
         "markdown": markdown,
         "links": [{"url": u, "label": l} for u, l in links],
         "nav": [{"url": u, "label": l} for u, l in nav],
+        "images": images,
     }
     json.dump(out, sys.stdout, ensure_ascii=False, indent=2)
     sys.stdout.write("\n")
