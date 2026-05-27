@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.9.0] - 2026-05-27
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 8a2bd84 feat(install): modular installer with deploy plugins, AI wizard pipeline, scrape v2, and test suite (#111)
+
+
 ## [Unreleased]
 
 ### Added
