@@ -1,5 +1,22 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- **Modular installer (`scripts/install/`)**: spec-driven, AI-aware installer dispatched by `scripts/bin/install`. Single `.zer0/install.spec.json` contract feeds CLI flags, the TUI wizard, and the OpenAI wizard into one apply pipeline.
+- **Deploy plugins**: `tasks/deploy_github-pages.sh`, `tasks/deploy_azure-swa.sh`, `tasks/deploy_docker-prod.sh`. Spec deploy targets now auto-render the matching workflow / config from `templates/deploy/`.
+- **AI wizard end-to-end**: `install wizard --ai` now chains spec generation → `apply_run`, records AI provenance (`ai.used/provider/model`) in the spec, lets CLI flags override AI guesses, and falls back to profile defaults when the model returns empty arrays.
+- **Profile defaults fallback**: `ai/wizard.sh` re-loads the selected profile to fill in empty `deploy`/`agents` arrays from the AI output, ensuring decisive installs.
+- **`generic` agent target** added to spec schema enum (cross-tool `AGENTS.md` baseline alongside `claude`, `cursor`, `aider`, `copilot`).
+- **Installer test suite (`test/test_installer.sh`)**: 17-check regression harness covering module syntax, all 6 profile inits, all 3 deploy plugins, all 5 agent flavours, and the AI wizard pipeline. Wired into `test/test_runner.sh` as the `installer` suite (included in `--suites all` and `--suites full`).
+- **Site scraping (`install scrape <URL>` + `install init --scrape <URL>`)**: new `scripts/install/scrape.sh` BFS crawler + stdlib-only `scripts/install/scrape_html.py` extractor convert any existing website into a fully-rendered zer0-mistakes site. Now distributes pages by detected `kind`: home → `index.md` with `permalink: /`, events → `pages/events/<slug>.md`, posts → `pages/news/<slug>.md`, rest → `pages/<slug>.md`. Downloads referenced images into `assets/scraped/` and rewrites markdown to local paths. Wires navigation into `_data/navigation/main.yml` (the file the theme actually reads) with kind-based Bootstrap Icons, filters junk labels (Back / Cart / Folder:) and `?format=ical`/`?format=json` URLs, skips commerce paths (`/cart`, `/checkout`, `/login`). Seeds `_config.yml` `title`/`description`/`lang`/`logo` from `og:`/`<html lang>` metadata. New flags: `--scrape URL`, `--scrape-depth N` (default 2), `--scrape-max-pages N` (default 25). Covered by `test/test_install_scrape.sh` (standalone + init-integration, asserts new layout + nav cleanliness).
+
+### Fixed
+- `_cmd_wizard` previously left targets containing only `.zer0/install.spec.json`; now chains `apply_run` to write all task outputs.
+- `plan.sh` YAML parser now accepts both `deploy:`/`deploy_targets:` keys and parses `agents:` block lists *and* `ai_features.agent_files:` inline flow lists, matching the actual profile YAML shape.
+- Rewrote `ai/prompts/wizard.system.md` with explicit profile, deploy, and agent heuristics plus a full example output, eliminating empty AI responses.
+- `plan_load_profile` and `plan_apply_flags` now return `0` explicitly so Bash 3.2 doesn't propagate a trailing-test exit code.
+
 ## [1.8.2] - 2026-05-26
 
 ### Changed

@@ -1,0 +1,25 @@
+# {{SITE_TITLE}}
+
+This site is built with [{{THEME_DISPLAY_NAME}}]({{GITHUB_URL}}) using `remote_theme`.
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/{{FORK_GITHUB_USER}}/{{REPOSITORY_NAME}}?quickstart=1&ref={{REMOTE_BRANCH}})
+
+## Local Development
+
+```bash
+bundle install
+bundle exec jekyll serve
+```
+
+Visit `http://localhost:{{DEFAULT_PORT}}/{{REPOSITORY_NAME}}/` to preview your site.
+
+## GitHub Codespaces
+
+Click the badge above or go to **Code → Codespaces → New codespace** to launch
+a browser-based development environment. Jekyll starts automatically and the
+site preview opens in a forwarded port.
+
+## Deployment
+
+This branch is configured for GitHub Pages. Enable Pages in your repository
+settings and set the source to the `{{REMOTE_BRANCH}}` branch.

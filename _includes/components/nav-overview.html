@@ -1,0 +1,54 @@
+<!--
+  ===================================================================
+  NAV OVERVIEW — Navigation structure summary
+  ===================================================================
+
+  File: nav-overview.html
+  Path: _includes/components/nav-overview.html
+  Purpose: Displays a high-level overview of all navigation menus,
+           their item counts, and quick links to edit them.
+
+  Dependencies: Bootstrap 5, Bootstrap Icons,
+                _data/navigation/*.yml
+  Used by: pages/_about/settings/navigation.md
+  ===================================================================
+-->
+
+{% assign nav_files = "main,home,about,docs,posts,quickstart,admin" | split: "," %}
+
+<div class="row g-3 mb-4">
+  {% for nav_name in nav_files %}
+    {% assign nav_data = site.data.navigation[nav_name] %}
+    <div class="col-sm-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-2">
+            <i class="bi bi-signpost-2 me-2 text-primary"></i>
+            <h6 class="card-title mb-0 text-capitalize">{{ nav_name }}</h6>
+          </div>
+          {% if nav_data %}
+            <p class="text-body-secondary small mb-1">
+              {{ nav_data | size }} top-level item{% if nav_data.size != 1 %}s{% endif %}
+            </p>
+            <ul class="list-unstyled small mb-0">
+              {% for item in nav_data limit:5 %}
+                <li class="text-truncate">
+                  <i class="bi bi-chevron-right me-1 text-muted" style="font-size:0.7rem"></i>
+                  {{ item.title | default: item.name | default: "(untitled)" }}
+                </li>
+              {% endfor %}
+              {% if nav_data.size > 5 %}
+                <li class="text-muted">… and {{ nav_data.size | minus: 5 }} more</li>
+              {% endif %}
+            </ul>
+          {% else %}
+            <p class="text-body-secondary small mb-0"><em>No data found</em></p>
+          {% endif %}
+        </div>
+        <div class="card-footer bg-transparent border-0 pt-0">
+          <small class="text-body-secondary">_data/navigation/{{ nav_name }}.yml</small>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>

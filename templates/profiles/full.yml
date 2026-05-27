@@ -22,6 +22,18 @@ includes:
   - INSTALLATION.md
   - .gitignore
 excludes: []
+
+tasks:
+  - config
+  - gemfile
+  - docker
+  - pages
+  - nav
+  - data
+  - gitignore
+  - readme
+  - marker
+
 deploy_targets:
   - github-pages
   - azure-swa

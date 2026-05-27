@@ -1,0 +1,41 @@
+# {{THEME_DISPLAY_NAME}} — Minimal Installation
+
+This directory has been set up with a minimal {{THEME_NAME}} Jekyll theme installation.
+
+## Quick Start
+
+```bash
+bundle install
+bundle exec jekyll serve
+# Visit {{DEFAULT_URL}}
+```
+
+## What's Included
+
+- `_config.yml` — Main Jekyll configuration
+- `Gemfile` — Ruby dependencies
+- `index.md` — Basic homepage
+- `.gitignore` — Git ignore rules
+
+## Next Steps
+
+1. Edit `_config.yml` to match your site needs
+2. Create pages and posts in Markdown
+3. Upgrade to full installation for Docker, layouts, and more
+
+## Upgrading
+
+```bash
+# Re-run the installer with --full
+./install.sh --full {{TARGET_DIRECTORY}}
+# or
+curl -fsSL {{GITHUB_RAW_URL}}/install.sh | bash -s -- --full
+```
+
+## Support
+
+[{{THEME_NAME}} on GitHub]({{GITHUB_URL}})
+
+---
+Installed: {{CURRENT_DATE}}  
+Mode: minimal

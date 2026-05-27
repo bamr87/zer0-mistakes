@@ -23,6 +23,14 @@ deploy_targets:
   - github-pages
   - docker-prod
 
+tasks:
+  - config
+  - gemfile
+  - gitignore
+  - pages
+  - readme
+  - marker
+
 # Phase 5 — AI agent guidance to install by default.
 # Override with: install agents [target] [--cursor|--claude|--aider|--all]
 ai_features:

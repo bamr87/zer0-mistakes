@@ -1,0 +1,23 @@
+# jekyll-theme-zer0 install profile: portfolio
+name: portfolio
+display_name: Portfolio
+description: Personal portfolio or resume site showcasing projects and skills.
+legacy_flag: ""
+recommended_for: developer portfolios, resume sites, freelancers
+
+tasks:
+  - config
+  - gemfile
+  - docker
+  - pages
+  - nav
+  - data
+  - gitignore
+  - readme
+  - marker
+
+deploy_targets:
+  - github-pages
+
+ai_features:
+  agent_files: [generic]
