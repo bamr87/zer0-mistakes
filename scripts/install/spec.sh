@@ -89,6 +89,13 @@ spec_default() {
     "model": "",
     "tokens_estimated": 0,
     "spec_hash": ""
+  },
+  "scrape": {
+    "source_url": "",
+    "depth": 2,
+    "max_pages": 25,
+    "out_dir": "",
+    "include_nav": true
   }
 }
 SPEC
@@ -165,6 +172,13 @@ spec_write() {
     "model": "${SPEC_AI_MODEL:-}",
     "tokens_estimated": ${SPEC_AI_TOKENS:-0},
     "spec_hash": ""
+  },
+  "scrape": {
+    "source_url": "${SPEC_SCRAPE_SOURCE_URL:-}",
+    "depth": ${SPEC_SCRAPE_DEPTH:-2},
+    "max_pages": ${SPEC_SCRAPE_MAX_PAGES:-25},
+    "out_dir": "${SPEC_SCRAPE_OUT_DIR:-}",
+    "include_nav": ${SPEC_SCRAPE_INCLUDE_NAV:-true}
   }
 }
 JSON
@@ -237,6 +251,11 @@ _spec_read_jq() {
     SPEC_AI_PROVIDER=$(jq -r '.ai.provider // "openai"' "$f")
     SPEC_AI_MODEL=$(jq -r '.ai.model // ""' "$f")
     SPEC_AI_TOKENS=$(jq -r '.ai.tokens_estimated // 0' "$f")
+    SPEC_SCRAPE_SOURCE_URL=$(jq -r '.scrape.source_url // ""' "$f")
+    SPEC_SCRAPE_DEPTH=$(jq -r '.scrape.depth // 2' "$f")
+    SPEC_SCRAPE_MAX_PAGES=$(jq -r '.scrape.max_pages // 25' "$f")
+    SPEC_SCRAPE_OUT_DIR=$(jq -r '.scrape.out_dir // ""' "$f")
+    SPEC_SCRAPE_INCLUDE_NAV=$(jq -r '.scrape.include_nav // true' "$f")
     export SPEC_SCHEMA_VERSION SPEC_TARGET_DIR SPEC_PROFILE \
         SPEC_SITE_TITLE SPEC_SITE_DESCRIPTION SPEC_SITE_URL \
         SPEC_SITE_AUTHOR SPEC_SITE_EMAIL SPEC_SITE_TIMEZONE SPEC_SITE_LOCALE \
@@ -246,7 +265,9 @@ _spec_read_jq() {
         SPEC_OPT_DRY_RUN SPEC_OPT_FORCE SPEC_OPT_BACKUP \
         SPEC_OPT_NON_INTERACTIVE SPEC_OPT_OUTPUT SPEC_OPT_AUTO_ACCEPT \
         SPEC_OPT_SKIP_DOCTOR SPEC_OPT_VERBOSE \
-        SPEC_AI_USED SPEC_AI_PROVIDER SPEC_AI_MODEL SPEC_AI_TOKENS
+        SPEC_AI_USED SPEC_AI_PROVIDER SPEC_AI_MODEL SPEC_AI_TOKENS \
+        SPEC_SCRAPE_SOURCE_URL SPEC_SCRAPE_DEPTH SPEC_SCRAPE_MAX_PAGES \
+        SPEC_SCRAPE_OUT_DIR SPEC_SCRAPE_INCLUDE_NAV
 }
 
 # Minimal awk-based JSON reader for when jq is absent.
@@ -351,6 +372,11 @@ _spec_read_awk() {
     SPEC_AI_PROVIDER="${SPEC_AI_PROVIDER:-openai}"
     SPEC_AI_MODEL="${SPEC_AI_MODEL:-}"
     SPEC_AI_TOKENS="${SPEC_AI_TOKENS:-0}"
+    SPEC_SCRAPE_SOURCE_URL="${SPEC_SCRAPE_SOURCE_URL:-$(awk '/"source_url"/ { gsub(/.*"source_url"[[:space:]]*:[[:space:]]*"/, ""); gsub(/".*/, ""); print; exit }' "$f" 2>/dev/null)}"
+    SPEC_SCRAPE_DEPTH="${SPEC_SCRAPE_DEPTH:-2}"
+    SPEC_SCRAPE_MAX_PAGES="${SPEC_SCRAPE_MAX_PAGES:-25}"
+    SPEC_SCRAPE_OUT_DIR="${SPEC_SCRAPE_OUT_DIR:-}"
+    SPEC_SCRAPE_INCLUDE_NAV="${SPEC_SCRAPE_INCLUDE_NAV:-true}"
 
     export SPEC_SCHEMA_VERSION SPEC_TARGET_DIR SPEC_PROFILE \
         SPEC_SITE_TITLE SPEC_SITE_DESCRIPTION SPEC_SITE_URL \
@@ -361,7 +387,9 @@ _spec_read_awk() {
         SPEC_OPT_DRY_RUN SPEC_OPT_FORCE SPEC_OPT_BACKUP \
         SPEC_OPT_NON_INTERACTIVE SPEC_OPT_OUTPUT SPEC_OPT_AUTO_ACCEPT \
         SPEC_OPT_SKIP_DOCTOR SPEC_OPT_VERBOSE \
-        SPEC_AI_USED SPEC_AI_PROVIDER SPEC_AI_MODEL SPEC_AI_TOKENS
+        SPEC_AI_USED SPEC_AI_PROVIDER SPEC_AI_MODEL SPEC_AI_TOKENS \
+        SPEC_SCRAPE_SOURCE_URL SPEC_SCRAPE_DEPTH SPEC_SCRAPE_MAX_PAGES \
+        SPEC_SCRAPE_OUT_DIR SPEC_SCRAPE_INCLUDE_NAV
 }
 
 # ---------------------------------------------------------------------------

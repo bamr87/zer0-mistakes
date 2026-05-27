@@ -16,7 +16,7 @@
 _HAS_TASK_REGISTRY=1
 
 # Ordered canonical task list (deps must appear before dependents)
-_TASK_ALL="config gemfile docker theme pages nav data devcontainer agents gitignore readme marker"
+_TASK_ALL="config gemfile docker theme pages scrape nav data devcontainer agents gitignore readme marker"
 
 # One-line descriptions
 _task_desc_config="Write _config.yml and _config_dev.yml"
@@ -24,6 +24,7 @@ _task_desc_gemfile="Write Gemfile (variant: gem|remote|macos)"
 _task_desc_docker="Write docker-compose.yml and docker/Dockerfile"
 _task_desc_theme="Copy _layouts _includes _sass assets (vendor|local)"
 _task_desc_pages="Generate starter pages from templates"
+_task_desc_scrape="Import content from an existing website (spec.scrape.source_url)"
 _task_desc_nav="Generate _data/navigation/ from template"
 _task_desc_data="Generate _data/authors.yml and seed data"
 _task_desc_devcontainer="Write .devcontainer/devcontainer.json"
@@ -38,6 +39,7 @@ _task_deps_gemfile="config"
 _task_deps_docker="config"
 _task_deps_theme=""
 _task_deps_pages="config"
+_task_deps_scrape="config pages"
 _task_deps_nav="config"
 _task_deps_data="config"
 _task_deps_devcontainer=""

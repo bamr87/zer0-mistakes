@@ -9,6 +9,7 @@
 - **Profile defaults fallback**: `ai/wizard.sh` re-loads the selected profile to fill in empty `deploy`/`agents` arrays from the AI output, ensuring decisive installs.
 - **`generic` agent target** added to spec schema enum (cross-tool `AGENTS.md` baseline alongside `claude`, `cursor`, `aider`, `copilot`).
 - **Installer test suite (`test/test_installer.sh`)**: 17-check regression harness covering module syntax, all 6 profile inits, all 3 deploy plugins, all 5 agent flavours, and the AI wizard pipeline. Wired into `test/test_runner.sh` as the `installer` suite (included in `--suites all` and `--suites full`).
+- **Site scraping (`install scrape <URL>` + `install init --scrape <URL>`)**: new `scripts/install/scrape.sh` BFS crawler + stdlib-only `scripts/install/scrape_html.py` extractor convert any existing website into Jekyll-ready markdown. Produces `site.json`, per-page JSON, and frontmatter'd `.md` files under `<out>/jekyll/`; when chained into `init`, lands content in `pages/_scraped/`, writes `_data/scraped_site.json` + `_data/navigation/scraped.yml`, and seeds `_config.yml` title/description. New flags: `--scrape URL`, `--scrape-depth N` (default 2), `--scrape-max-pages N` (default 25). Covered by `test/test_install_scrape.sh` (standalone + init-integration tests).
 
 ### Fixed
 - `_cmd_wizard` previously left targets containing only `.zer0/install.spec.json`; now chains `apply_run` to write all task outputs.

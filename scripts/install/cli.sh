@@ -96,6 +96,9 @@ _cli_parse_flags() {
     _FLAG_TASKS=""
     _FLAG_AI=0
     _FLAG_SPEC=""
+    _FLAG_SCRAPE_URL=""
+    _FLAG_SCRAPE_DEPTH=""
+    _FLAG_SCRAPE_MAX_PAGES=""
     _CLI_TARGET=""
     _CLI_POS_COUNT=0
     _CLI_POS_0=""
@@ -107,7 +110,8 @@ _cli_parse_flags() {
            _FLAG_VERBOSE _FLAG_OUTPUT _FLAG_SITE_TITLE _FLAG_SITE_DESC \
            _FLAG_SITE_URL _FLAG_SITE_AUTHOR _FLAG_SITE_EMAIL \
            _FLAG_GITHUB_USER _FLAG_GITHUB_REPO _FLAG_THEME_SOURCE \
-           _FLAG_DEPLOY _FLAG_AGENTS _FLAG_TASKS _FLAG_AI _FLAG_SPEC
+           _FLAG_DEPLOY _FLAG_AGENTS _FLAG_TASKS _FLAG_AI _FLAG_SPEC \
+           _FLAG_SCRAPE_URL _FLAG_SCRAPE_DEPTH _FLAG_SCRAPE_MAX_PAGES
 
     while [[ $# -gt 0 ]]; do
         case "$1" in
@@ -147,6 +151,12 @@ _cli_parse_flags() {
             --tasks=*)           _FLAG_TASKS="${1#--tasks=}" ;;
             --spec)              shift; _FLAG_SPEC="${1:-}" ;;
             --spec=*)            _FLAG_SPEC="${1#--spec=}" ;;
+            --scrape)            shift; _FLAG_SCRAPE_URL="${1:-}" ;;
+            --scrape=*)          _FLAG_SCRAPE_URL="${1#--scrape=}" ;;
+            --scrape-depth)      shift; _FLAG_SCRAPE_DEPTH="${1:-}" ;;
+            --scrape-depth=*)    _FLAG_SCRAPE_DEPTH="${1#--scrape-depth=}" ;;
+            --scrape-max-pages)  shift; _FLAG_SCRAPE_MAX_PAGES="${1:-}" ;;
+            --scrape-max-pages=*) _FLAG_SCRAPE_MAX_PAGES="${1#--scrape-max-pages=}" ;;
             # Compat: --claude|--cursor|--aider|--copilot|--all (agents subcommand)
             --claude|--cursor|--aider|--copilot|--all)
                 local _agent="${1#--}"
@@ -303,6 +313,47 @@ _cmd_doctor() {
     doctor_run "$target"
 }
 
+# ---------------------------------------------------------------------------
+# scrape — standalone crawler. Writes scraped corpus only; does NOT apply a
+# full install. Used to preview content or to feed `init --scrape`.
+#
+# Surface:
+#   install scrape <URL> [OUT_DIR] [--scrape-depth N] [--scrape-max-pages N]
+# ---------------------------------------------------------------------------
+_cmd_scrape() {
+    local url=""
+    local out_dir=""
+
+    # First positional is the URL (override --scrape if both given).
+    if [[ "${_CLI_POS_COUNT:-0}" -ge 1 ]]; then
+        url="$_CLI_POS_0"
+    fi
+    [[ -z "$url" && -n "${_FLAG_SCRAPE_URL:-}" ]] && url="$_FLAG_SCRAPE_URL"
+
+    if [[ "${_CLI_POS_COUNT:-0}" -ge 2 ]]; then
+        out_dir="$_CLI_POS_1"
+    fi
+    [[ -z "$out_dir" ]] && out_dir="$(pwd)/.zer0/scrape"
+
+    if [[ -z "$url" ]]; then
+        log_error "scrape: URL required (e.g. 'install scrape https://example.com')"
+        return 2
+    fi
+
+    local scrape_mod="${_CLI_DIR}/scrape.sh"
+    if [[ ! -f "$scrape_mod" ]]; then
+        log_error "scrape: module not found: $scrape_mod"
+        return 1
+    fi
+    # shellcheck source=/dev/null
+    source "$scrape_mod"
+
+    local depth="${_FLAG_SCRAPE_DEPTH:-2}"
+    local max_pages="${_FLAG_SCRAPE_MAX_PAGES:-25}"
+
+    scrape_run "$url" "$out_dir" "$depth" "$max_pages"
+}
+
 _cmd_diff() {
     local target="${_CLI_TARGET:-$(pwd)}"
     local spec_file
@@ -412,6 +463,7 @@ Subcommands:
   agents         Install AI agent files only
   deploy         Configure deployment plugin(s)
   doctor         Run pre-install health checks
+  scrape         Crawl an existing site into ./.zer0/scrape (no install)
   diagnose       Diagnose an existing install (--ai for suggestions)
   upgrade        Re-apply spec to an existing install
   diff           Show what would change without applying
@@ -444,6 +496,9 @@ Global options:
   --output json|human    Log format (default: human)
   --ai                   Use AI assistant for wizard/diagnose
   --spec FILE            Load spec from FILE instead of detecting
+  --scrape URL           Import content from URL during init (adds 'scrape' task)
+  --scrape-depth N       Max crawl depth (default: 2)
+  --scrape-max-pages N   Max pages to fetch (default: 25)
 
 Examples:
   install init . --profile blog --site-title "My Blog"
@@ -454,6 +509,8 @@ Examples:
   install diff .
   install upgrade . --force
   install plan . --profile docs
+  install scrape https://www.cicit.org/
+  install init ./newsite --scrape https://www.cicit.org/ --scrape-max-pages 15
 USAGE
 }
 
@@ -486,6 +543,7 @@ cli_main() {
         agents)         _cmd_agents ;;
         deploy)         _cmd_deploy ;;
         doctor)         _cmd_doctor ;;
+        scrape)         _cmd_scrape ;;
         diagnose)       _cmd_diagnose ;;
         upgrade)        _cmd_upgrade ;;
         diff)           _cmd_diff ;;

@@ -154,6 +154,18 @@ plan_apply_flags() {
     [[ "${_FLAG_SKIP_DOCTOR:-0}" == "1" ]]  && SPEC_OPT_SKIP_DOCTOR=true
     [[ "${_FLAG_VERBOSE:-0}" == "1" ]]      && SPEC_OPT_VERBOSE=true
     [[ -n "${_FLAG_OUTPUT:-}" ]]            && SPEC_OPT_OUTPUT="$_FLAG_OUTPUT"
+
+    # Scrape flags — when --scrape URL is given, register the scrape task
+    # so apply.sh runs it (after pages so it can overlay).
+    if [[ -n "${_FLAG_SCRAPE_URL:-}" ]]; then
+        SPEC_SCRAPE_SOURCE_URL="$_FLAG_SCRAPE_URL"
+        [[ -n "${_FLAG_SCRAPE_DEPTH:-}" ]]     && SPEC_SCRAPE_DEPTH="$_FLAG_SCRAPE_DEPTH"
+        [[ -n "${_FLAG_SCRAPE_MAX_PAGES:-}" ]] && SPEC_SCRAPE_MAX_PAGES="$_FLAG_SCRAPE_MAX_PAGES"
+        case " ${SPEC_TASKS:-} " in
+            *" scrape "*) ;;
+            *) SPEC_TASKS="${SPEC_TASKS:-} scrape" ;;
+        esac
+    fi
     return 0
 }
 
