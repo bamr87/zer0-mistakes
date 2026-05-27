@@ -27,6 +27,8 @@ tasks:
   - config
   - gemfile
   - gitignore
+  - pages
+  - readme
   - marker
 
 # Phase 5 — AI agent guidance to install by default.

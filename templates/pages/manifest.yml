@@ -9,10 +9,11 @@
 # ---------------------------------------------------------------------------
 
 - dest: index.md                          src: index.md.template                profiles: all
-- dest: pages/_posts/welcome.md           src: welcome-post.md.template         profiles: blog
-- dest: pages/_docs/index.md              src: docs-index.md.template           profiles: docs
+- dest: pages/_posts/welcome.md           src: welcome-post.md.template         profiles: blog full
+- dest: pages/_docs/index.md              src: docs-index.md.template           profiles: docs full
+- dest: pages/_about/index.md             src: about.md.template                profiles: full
 - dest: pages/about.md                    src: about.md.template                profiles: all
-- dest: pages/blog.md                     src: blog.md.template                 profiles: blog
+- dest: pages/blog.md                     src: blog.md.template                 profiles: blog full
 - dest: pages/quickstart.md               src: quickstart.md.template           profiles: all
 - dest: pages/setup.html                  src: setup.html.template              profiles: all
 - dest: pages/configuration.md            src: configuration.md.template        profiles: all

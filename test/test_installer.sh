@@ -74,7 +74,7 @@ for tgt in github-pages azure-swa docker-prod; do
     case "$tgt" in
         github-pages) marker="${out}/.github/workflows/jekyll-gh-pages.yml" ;;
         azure-swa)    marker="${out}/.github/workflows/azure-static-web-apps.yml" ;;
-        docker-prod)  marker="${out}/Dockerfile.prod" ;;
+        docker-prod)  marker="${out}/docker/Dockerfile.prod" ;;
     esac
     [[ -f "$marker" ]] && pass "deploy=$tgt  wrote=$(basename "$marker")" \
         || fail "deploy=$tgt  missing: $marker"

@@ -97,6 +97,9 @@ _cli_parse_flags() {
     _FLAG_AI=0
     _FLAG_SPEC=""
     _CLI_TARGET=""
+    _CLI_POS_COUNT=0
+    _CLI_POS_0=""
+    _CLI_POS_1=""
 
     # Export flag globals for plan.sh
     export _FLAG_PROFILE _FLAG_DRY_RUN _FLAG_FORCE _FLAG_NO_BACKUP \
@@ -153,10 +156,13 @@ _cli_parse_flags() {
                 log_warning "Unknown flag: $1 (ignored)"
                 ;;
             *)
-                # First non-flag after subcommand is target dir
-                if [[ -z "$_CLI_TARGET" ]]; then
-                    _CLI_TARGET="$1"
-                fi
+                # Capture up to two positionals; first also seeds _CLI_TARGET
+                # for backwards compatibility with init/wizard/upgrade/etc.
+                case "$_CLI_POS_COUNT" in
+                    0) _CLI_POS_0="$1"; _CLI_TARGET="$1" ;;
+                    1) _CLI_POS_1="$1" ;;
+                esac
+                _CLI_POS_COUNT=$((_CLI_POS_COUNT + 1))
                 ;;
         esac
         shift
@@ -246,16 +252,44 @@ _cmd_agents() {
 }
 
 _cmd_deploy() {
-    local target="${_CLI_TARGET:-$(pwd)}"
-    local spec_file="$(spec_path "$target")"
+    # Surface: install deploy <TARGET_NAME> [WORKSPACE]
+    #   - 2 positionals: TARGET = $1, WORKSPACE = $2
+    #   - 1 positional + --deploy flag: WORKSPACE = $1, TARGET = $_FLAG_DEPLOY
+    #   - 1 positional only: TARGET = $1, WORKSPACE = $(pwd)
+    #   - 0 positionals: TARGET = $_FLAG_DEPLOY, WORKSPACE = $(pwd)
+    local target_name=""
+    local workspace=""
+    if [[ "${_CLI_POS_COUNT:-0}" -ge 2 ]]; then
+        target_name="$_CLI_POS_0"
+        workspace="$_CLI_POS_1"
+    elif [[ "${_CLI_POS_COUNT:-0}" -eq 1 ]]; then
+        if [[ -n "${_FLAG_DEPLOY:-}" ]]; then
+            workspace="$_CLI_POS_0"
+            target_name="$_FLAG_DEPLOY"
+        else
+            target_name="$_CLI_POS_0"
+            workspace="$(pwd)"
+        fi
+    else
+        target_name="${_FLAG_DEPLOY:-}"
+        workspace="$(pwd)"
+    fi
+
+    [[ -n "$target_name" ]] || { log_error "deploy: target name required (e.g. 'install deploy github-pages')"; return 2; }
+
+    _CLI_TARGET="$workspace"
+    export _CLI_TARGET
+    local spec_file
+    spec_file="$(spec_path "$workspace")"
 
     if [[ -f "$spec_file" ]]; then
         spec_read "$spec_file"
     else
-        plan_build "$target"
+        plan_build "$workspace"
     fi
 
-    [[ -n "${_FLAG_DEPLOY:-}" ]] && SPEC_DEPLOY="$_FLAG_DEPLOY"
+    # Caller explicitly asked for this deploy target — override spec defaults.
+    SPEC_DEPLOY="$target_name"
     SPEC_TASKS=""   # only run deploy plugins
 
     spec_write "$spec_file"

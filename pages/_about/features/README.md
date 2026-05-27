@@ -25,7 +25,7 @@ technical_requirements:
     - VS Code with Copilot extension (recommended)
 difficulty_level: intermediate
 estimated_reading_time: 10 minutes
-draft: draft
+draft: false
 ---
 
 # Zer0-Mistakes Features Documentation
