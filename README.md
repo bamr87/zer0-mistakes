@@ -252,6 +252,9 @@ flowchart LR
 | Capability | What it does | Where it lives |
 |---|---|---|
 | **Self-healing install** | Detects platform, fixes Docker/Jekyll issues, retries with fallbacks | [`install.sh`](install.sh) |
+| **Modular installer CLI** | Spec-driven `init`, `wizard`, `agents`, `deploy`, `doctor`, `scrape` subcommands; declarative profiles; deploy plugins (GitHub Pages, Azure SWA, Docker) | [`scripts/bin/install`](scripts/bin/install), [`scripts/install/`](scripts/install/) |
+| **AI wizard** | `install wizard --ai` generates a site spec via OpenAI, records AI provenance, falls back to profile defaults | [`scripts/install/ai/wizard.sh`](scripts/install/ai/wizard.sh) |
+| **Site scraper** | `install init --scrape <URL>` — BFS-crawls any site, classifies pages by kind, downloads assets, wires nav, seeds config; zero post-processing needed | [`scripts/install/scrape.sh`](scripts/install/scrape.sh), [`scripts/install/scrape_html.py`](scripts/install/scrape_html.py) |
 | **Cross-tool agent guide** | Single entry point for any [agents.md](https://agents.md/)-aware AI tool | [`AGENTS.md`](AGENTS.md) |
 | **Copilot project context** | Architecture, conventions, commands, release flow | [`.github/copilot-instructions.md`](.github/copilot-instructions.md) |
 | **File-scoped instructions** | `applyTo:` globs auto-load guidance for `_layouts/`, `_includes/`, `scripts/`, `test/`, `docs/`, version files | [`.github/instructions/`](.github/instructions/) |
@@ -275,6 +278,12 @@ flowchart LR
 
 # Run the AI-facilitated release pipeline (validate → version → changelog → publish)
 ./scripts/bin/release patch --dry-run
+
+# Clone any existing website into a zer0-mistakes site (no OPENAI_API_KEY required)
+./scripts/bin/install init ./my-clone --scrape https://example.com --scrape-depth 2
+
+# Use the AI wizard to interactively generate a site spec (needs OPENAI_API_KEY)
+./scripts/bin/install wizard --ai ./my-site
 ```
 
 ### Drop-in for any AI editor
@@ -375,9 +384,38 @@ pie title Technology Distribution
 
 ## ✨ Key Features
 
-### 🤖 AI-Powered Installation
+### 🤖 AI-Powered Installation & Modular Installer
 
-The ~1,100-line `install.sh` script provides intelligent platform detection and Docker configuration:
+Two layers of installation automation:
+
+**Classic one-liner** (`install.sh`) — self-healing, ~95% success rate, works on macOS / Linux / Windows WSL:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
+```
+
+**Modular CLI** (`scripts/bin/install`) — declarative, spec-driven, composable:
+
+```bash
+# Initialise a new site from a profile
+./scripts/bin/install init ./my-site --profile full
+
+# Scaffold deploy configs (GitHub Pages + Docker)
+./scripts/bin/install deploy github-pages,docker-prod ./my-site
+
+# Clone any existing website into a zer0-mistakes site
+./scripts/bin/install init ./my-clone --scrape https://example.com --scrape-depth 2 --scrape-max-pages 20
+
+# AI wizard — generates site spec via OpenAI and runs full apply pipeline
+./scripts/bin/install wizard --ai ./my-site
+
+# Health check / doctor
+./scripts/bin/install doctor ./my-site
+```
+
+The installer is driven by a single spec file (`.zer0/install.spec.json`) that records every decision — profiles chosen, deploy targets, AI provenance — so the entire setup is reproducible and version-controlled.
+
+The ~1,100-line classic `install.sh` provides intelligent platform detection and Docker configuration:
 
 ```mermaid
 flowchart TD
@@ -395,6 +433,57 @@ flowchart TD
     
     style START fill:#e3f2fd
     style DONE fill:#c8e6c9
+```
+
+### 🌐 Site Scraper — Clone Any Website
+
+`install init --scrape <URL>` BFS-crawls an existing website and turns it into a fully rendered zer0-mistakes site with zero post-processing:
+
+```mermaid
+flowchart LR
+    subgraph Crawl["🕷 BFS Crawl"]
+        C1[Fetch pages]
+        C2[Filter junk URLs]
+        C3[Classify page kind]
+    end
+    subgraph Extract["🔍 Extract"]
+        E1[Markdown + metadata]
+        E2[Image assets]
+        E3[Navigation links]
+    end
+    subgraph Emit["📄 Emit Jekyll"]
+        D1[index.md — home]
+        D2[pages/events/*.md]
+        D3[pages/news/*.md]
+        D4[pages/*.md]
+    end
+    subgraph Wire["🔧 Wire Site"]
+        W1[_data/navigation/main.yml]
+        W2[assets/scraped/]
+        W3[_config.yml seeded]
+    end
+
+    Crawl --> Extract --> Emit --> Wire
+```
+
+| What gets scraped | Where it lands |
+|---|---|
+| Home page | `index.md` with `permalink: /` |
+| Event pages | `pages/events/<slug>.md` |
+| Blog / news posts | `pages/news/<slug>.md` |
+| All other pages | `pages/<slug>.md` |
+| Images | `assets/scraped/<md5>.<ext>` (markdown rewritten to local paths) |
+| Navigation | `_data/navigation/main.yml` (junk labels filtered: Back / Cart / Folder:) |
+| Site metadata | `_config.yml` title / description / lang / logo seeded from `<og:>` tags |
+
+Requires only `python3` (stdlib) and `curl` — no `pip` dependencies, no API key.
+
+```bash
+# Clone a site with default depth=2, max-pages=25
+./scripts/bin/install init ./my-clone --scrape https://example.com
+
+# Deeper crawl
+./scripts/bin/install init ./my-clone --scrape https://example.com --scrape-depth 3 --scrape-max-pages 50
 ```
 
 ### 🐳 Docker-First Development
@@ -573,7 +662,9 @@ git clone https://github.com/bamr87/zer0-mistakes.git
 ./zer0-mistakes/scripts/bin/install agents /path/to/new-site --all   # AI agent guidance
 ```
 
-Available subcommands: `init`, `wizard [--ai]`, `agents`, `deploy`, `doctor`, `diagnose [--ai]`, `upgrade`, `list-profiles`, `list-targets`, `version`, `help`.
+Available subcommands: `init`, `wizard [--ai]`, `agents`, `deploy`, `doctor`, `diagnose [--ai]`, `scrape`, `upgrade`, `list-profiles`, `list-targets`, `version`, `help`.
+
+Key `init` flags: `--profile <name>`, `--scrape <URL>`, `--scrape-depth N` (default 2), `--scrape-max-pages N` (default 25), `--skip-doctor`, `--force`.
 
 ### Method 2: Remote Theme (GitHub Pages)
 
