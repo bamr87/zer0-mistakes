@@ -221,7 +221,7 @@ else
         GITHUB_PAGES_MAX_VERSION="${GITHUB_PAGES_MAX_VERSION:-232}"
         COMMONMARKER_MACOS_VERSION="${COMMONMARKER_MACOS_VERSION:-~> 0.23}"
         RUBY_MIN_VERSION_MACOS="${RUBY_MIN_VERSION_MACOS:-2.6.0}"
-        return 1
+        return 0
     }
     _load_install_config
 
@@ -972,7 +972,7 @@ download_theme_files() {
         trap cleanup_temp_dir EXIT
         
         # Download and extract the repository
-        if ! curl -fsSL "$GITHUB_REPO/archive/refs/heads/main.tar.gz" | tar -xz -C "$TEMP_DIR" --strip-components=1; then
+        if ! curl -fsSL "https://github.com/${GITHUB_REPO}/archive/refs/heads/main.tar.gz" | tar -xz -C "$TEMP_DIR" --strip-components=1; then
             log_error "Failed to download theme files from GitHub"
             log_error "Please check your internet connection and try again"
             exit 1

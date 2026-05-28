@@ -185,8 +185,9 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           verbose: true
-          suites: core,quality
+          suites: core,quality,installation
           skip-docker: true
+          skip-remote: true
 
       - name: Setup Node.js (Playwright)
         uses: actions/setup-node@v4
