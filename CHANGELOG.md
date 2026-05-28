@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.1] - 2026-05-27
+
+### Fixed
+- Harden one-line installer path
+
+
+
 ## [1.9.0] - 2026-05-27
 
 ### Changed
@@ -30,9 +37,6 @@
 
 ### Changed
 - Version bump: patch release
-
-### Commits in this release
-- 41bbd9a chore(gemspec): exclude images and large files from gem packaging
 
 
 ## [Unreleased]
