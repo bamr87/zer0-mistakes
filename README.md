@@ -20,7 +20,7 @@ categories:
   - bootstrap
   - ai-tooling
 created: 2024-02-10T23:51:11.480Z
-lastmod: 2026-05-28T02:06:43.000Z
+lastmod: 2026-05-28T03:00:00.000Z
 draft: false
 permalink: /
 slug: zer0
@@ -53,90 +53,107 @@ excerpt: "AI-native Jekyll theme for GitHub Pages — multi-agent ready (Copilot
 [![AI-Native](https://img.shields.io/badge/AI--Native-Copilot%20%7C%20Codex%20%7C%20Cursor%20%7C%20Claude-8A2BE2)](AGENTS.md)
 [![AIEO](https://img.shields.io/badge/AIEO-Optimized-ff69b4)](#-aieo-optimized--built-for-ai-citation)
 
-# 🚀 zer0-mistakes
+# zer0-mistakes
 
-### The AI-Native Jekyll Theme for GitHub Pages
+### A modern website theme that just works — for blogs, docs, portfolios, and more
 
-**AI-augmented • Agent-ready • Docker-first • Bootstrap 5.3 • Privacy-compliant • Zero-configuration**
+**Free • Open source • Hosted on GitHub Pages for $0/month • Works on Mac, Windows, and Linux**
 
-Built from the ground up to **automate, facilitate, and integrate** with modern AI workflows — from one-line self-healing install to multi-agent code guidance ([Copilot](https://github.com/features/copilot), [Codex](https://openai.com/codex), [Cursor](https://cursor.com/), [Claude Code](https://www.claude.com/product/claude-code), [Aider](https://aider.chat/)) to AI-generated preview images and AIEO content optimization for AI citation.
+`zer0-mistakes` is a ready-made website you can publish in **under five minutes**, with no design skills, no servers to manage, and almost nothing to install. Pick a template, write your content in plain text, and push to GitHub — your site is live.
 
-[Quick Start](#-quick-start) • [AI Workflow](#-ai-native-workflow) • [Features](#-key-features) • [Documentation](#-documentation) • [Contributing](CONTRIBUTING.md)
+If you already know Jekyll, Ruby, Docker, or AI coding agents: the same theme grows with you into a fully programmable platform with self-healing install scripts, multi-agent guidance for Copilot / Cursor / Claude, AI-generated preview images, and automated semantic releases to RubyGems. Beginners can skip those parts entirely.
+
+[Get Started in 5 Minutes](#-get-started-in-5-minutes) • [What You Get](#-what-you-get) • [Who It's For](#-who-its-for) • [Advanced & AI Features](#-advanced-features-for-power-users) • [Live Demo](https://zer0-mistakes.com/)
 
 ---
 
-## Overview
+## ✨ What You Get
 
-**zer0-mistakes** is an **AI-native** Jekyll theme engineered to eliminate setup friction and accelerate every stage of the content lifecycle with AI automation, facilitation, and integration. Docker containerization, multi-agent guidance files, AI-powered tooling, and 43 documented features take you from zero to deployed — and zero to AI-collaborative — in under 5 minutes.
+A complete, professional website out of the box — no design or coding required to start:
 
-**AI is a first-class citizen, not an afterthought:**
+- 📝 **Pages, posts, and a blog** — write in Markdown, organize with tags and categories
+- 🎨 **Beautiful responsive design** — looks great on phones, tablets, and desktops
+- 🌗 **Light and dark mode** — automatic, with a one-click toggle
+- 🔍 **Built-in site search** — press `/` or `Ctrl/Cmd+K` from anywhere
+- 🧭 **Smart navigation** — sidebar, breadcrumbs, table of contents
+- 🔒 **Privacy-friendly** — cookie consent and GDPR/CCPA compliant analytics already wired up
+- 📊 **Diagrams and math** — Mermaid charts and LaTeX equations work out of the box
+- 📓 **Jupyter notebooks** — drop in `.ipynb` files and they render as posts
+- 🧠 **Obsidian-friendly** — edit your site as an Obsidian vault, `[[wiki-links]]` and all
+- ⚙️ **Free hosting on GitHub Pages** — no servers, no monthly bill
 
-- 🤖 **AI-powered installation** — `install.sh` self-heals across macOS / Linux / Windows (WSL) with ~95% success rate
-- 🧠 **Multi-agent integration** — Drop-in [`AGENTS.md`](AGENTS.md) + `.github/copilot-instructions.md` + `.github/instructions/*.instructions.md` + `.github/prompts/*.prompt.md` + `.cursor/commands/` work with Copilot, Codex, Cursor, Claude Code, Aider, Jules, Continue
-- 🎨 **AI preview-image generation** — Jekyll plugin + script generate OpenAI/DALL·E images for posts missing previews ([`_plugins/preview_image_generator.rb`](_plugins/preview_image_generator.rb))
-- 🤝 **AI-facilitated releases** — Conventional-commit analyzer auto-determines semantic version bumps and writes the changelog ([`scripts/analyze-commits.sh`](scripts/analyze-commits.sh))
-- 🔍 **AIEO-optimized output** — Structured data, entity density, FAQ schema, and definitional precision so AI engines cite your site accurately
+> **Want to see it in action?** Visit the [live demo site](https://zer0-mistakes.com/) — it's built with this exact theme.
 
-```mermaid
-graph LR
-    subgraph "🎯 Your Goal"
-        A[Beautiful Website]
-    end
-    
-    subgraph "⚡ zer0-mistakes"
-        B[One Command] --> C[Auto-Configure]
-        C --> D[Docker Ready]
-        D --> E[Live Preview]
-    end
-    
-    subgraph "🚀 Result"
-        F[Production Site]
-    end
-    
-    A --> B
-    E --> F
-    
-    style A fill:#e1f5fe
-    style F fill:#c8e6c9
+---
+
+## 👥 Who It's For
+
+| If you are… | You'll love that… |
+|---|---|
+| **A writer or blogger** | You just write Markdown. The theme handles the design. |
+| **A student or teacher** | You can publish lecture notes, notebooks, and reading lists for free on GitHub Pages. |
+| **A maker, artist, or creator** | You get a portfolio-quality landing page with image galleries and project pages. |
+| **A small business or community** | You ship a polished marketing site without paying for hosting or a CMS. |
+| **A developer or technical team** | You get Docker-first dev, semantic-versioned releases, ES6 navigation modules, design tokens, and a full test suite. |
+| **An AI-assisted builder** | The theme ships with first-class guidance for GitHub Copilot, Cursor, Claude Code, Codex, Aider, and any [agents.md](https://agents.md/)-aware tool. |
+
+---
+
+## 🚀 Get Started in 5 Minutes
+
+You only need a free [GitHub account](https://github.com/signup). Pick the path that matches your comfort level:
+
+### Path A — Easiest: Fork on GitHub (no terminal required)
+
+1. Click **[Fork](https://github.com/bamr87/zer0-mistakes/fork)** on the repo page.
+2. Rename your fork to **`<your-username>.github.io`** (this turns it into a free website at that URL).
+3. Go to **Settings → Pages → Build and deployment** and select **Deploy from a branch → `main`**.
+4. Wait ~1 minute. Visit `https://<your-username>.github.io` — your site is live.
+5. Edit `_config.yml` and any `*.md` file directly on GitHub to make it yours.
+
+### Path B — Three-file starter (still no install)
+
+Want the lightest possible setup? Create a new repo with just these three files and push it to GitHub. The theme is loaded over the network — there's nothing to download.
+
+```text
+my-site/
+├── _config.yml      ← title + remote theme link
+├── Gemfile          ← github-pages + jekyll-remote-theme
+└── index.md         ← your homepage content
 ```
 
-### Why zer0-mistakes?
+Full file contents and the in-browser setup wizard are in the [Bare-Minimum Starter](#-bare-minimum-starter-3-files-zero-install) section below.
 
-| Challenge | Traditional Jekyll | zer0-mistakes |
-|-----------|-------------------|---------------|
-| **Setup Time** | 15-30 minutes | **2-5 minutes** ([benchmarked via install.sh](https://github.com/bamr87/zer0-mistakes/blob/main/install.sh)) |
-| **Success Rate** | ~60% | **~95%** ([self-healing error recovery](https://github.com/bamr87/zer0-mistakes/blob/main/install.sh#L1)) |
-| **Platform Support** | Limited | **Universal** ([macOS, Linux, Windows/WSL via Docker](https://github.com/bamr87/zer0-mistakes/blob/main/docker-compose.yml)) |
-| **Error Handling** | Manual debugging | **Automated** |
-| **Dependencies** | Ruby + Bundler + Jekyll | **Docker only** |
-| **AI Agent Integration** | None / DIY | **Built-in** ([`AGENTS.md`](AGENTS.md) + Copilot / Codex / Cursor / Claude / Aider guidance) |
-| **AI Content Tooling** | None | **First-class** (AI preview images, AIEO schema, prompt library) |
-| **Release Automation** | Manual versioning | **AI-facilitated** ([commit-analyzer](scripts/analyze-commits.sh) → semantic bump + changelog) |
-| **AI Discoverability** | None | **AIEO-optimized** ([structured data, FAQ schema, entity density](#-aieo-optimized--built-for-ai-citation)) |
+### Path C — Local development with Docker
 
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- **Docker Desktop** ([download](https://www.docker.com/products/docker-desktop))
-- **Git** ([download](https://git-scm.com/))
-
-### One-Line Installation
+If you want a live-reload preview on your own computer, you'll need [Docker Desktop](https://www.docker.com/products/docker-desktop) (free) and [Git](https://git-scm.com/).
 
 ```bash
 mkdir my-site && cd my-site && curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
-```
-
-### Start Development
-
-```bash
 docker-compose up
-# 🌐 Open http://localhost:4000
+# Open http://localhost:4000 in your browser
 ```
 
-### Bare-Minimum Starter (3 files, zero install)
+The installer auto-detects your operating system, sets up Docker, downloads the theme, and recovers from common errors. Total time: 2–5 minutes.
+
+---
+
+## ⚡ Why People Pick zer0-mistakes
+
+| | Most starter themes | zer0-mistakes |
+|---|---|---|
+| **Setup** | Install Ruby, install Bundler, install Jekyll, hope for the best | One command, or just fork a repo |
+| **Works on Apple Silicon, Windows, Linux** | Sometimes | Always (Docker-first) |
+| **First-time success rate** | ~60% | ~95% (self-healing install) |
+| **Looks good immediately** | Needs CSS tweaking | Bootstrap 5.3 design system, ready to ship |
+| **Hosting cost** | $5–20/month | $0 (GitHub Pages) |
+| **AI coding-agent support** | None | Built-in for Copilot, Cursor, Claude, Codex, Aider |
+| **AI-generated post previews** | None | One-command image generation |
+| **Release & changelog management** | Manual | Automated semantic versioning |
+
+---
+
+## 🎯 Bare-Minimum Starter (3 files, zero install)
 
 Don't want to run the installer? You can publish a working site to GitHub
 Pages with **just three files** in your repo. The remote theme provides every
@@ -184,68 +201,39 @@ title: Home
 ```
 
 Push to a GitHub Pages–enabled repository and visit your site. Until you set
-`site_configured: true`, the home page renders the **welcome layout** —
-a hero card listing your three files, a 3-step starter accordion, and a full
-in-browser wizard that generates a personalised `_config.yml` you can
-download. Once you flip the flag (or fill in `title`/`founder`/`email`), the
-welcome screen is replaced by your own content.
+`site_configured: true`, the home page renders the **welcome layout** — a hero
+card and a full in-browser wizard that generates a personalised `_config.yml`
+you can download. Flip the flag (or fill in `title`/`founder`/`email`) and your
+own content takes over.
 
-```mermaid
-sequenceDiagram
-    participant You
-    participant GitHubPages as GitHub Pages
-    participant RemoteTheme as bamr87/zer0-mistakes
+---
 
-    You->>GitHubPages: push 3 files
-    GitHubPages->>RemoteTheme: fetch layouts/includes/assets
-    RemoteTheme-->>GitHubPages: welcome.html + setup wizard
-    GitHubPages-->>You: 🎉 onboarding screen at /
-    You->>You: use wizard to generate _config.yml
-    You->>GitHubPages: replace _config.yml + set site_configured: true
-    GitHubPages-->>You: 🚀 your customised site
-```
+## 🧰 Advanced Features for Power Users
+
+Everything below is **optional**. Beginners can ignore it and still ship a great site. Developers and AI-assisted builders, this is where `zer0-mistakes` becomes a fully programmable platform.
+
+Jump to a topic:
+
+- [AI-native workflow](#-ai-native-workflow) — multi-agent guidance, AI install wizard, AI preview images, AIEO discovery
+- [Architecture & technology stack](#-architecture)
+- [Key features in depth](#-key-features) — installer CLI, site scraper, Docker, analytics, search, navigation, dark mode
+- [Installation methods](#-installation-methods) — one-liner, modular CLI, remote theme, fork, Ruby gem
+- [Project structure](#-project-structure)
+- [Migration utility](#️-migration-utility--add-admin-pages-to-an-existing-site)
+- [Development workflow & testing](#-development-workflow)
+- [Deployment options](#-deployment)
+- [Documentation map](#-documentation)
+- [Release system & GitHub Actions automation](#-release-system)
+- [Roadmap](#-roadmap)
+- [AIEO — built for AI citation](#-aieo-optimized--built-for-ai-citation)
 
 ---
 
 ## 🤖 AI-Native Workflow
 
-zer0-mistakes treats AI as core infrastructure across **install → author → build → release → discover**. Every layer is wired for **automation, facilitation, and integration** with the AI tools you already use.
+> **Who this is for:** anyone using GitHub Copilot, Cursor, Claude Code, Codex, Aider, Continue, or Jules. If you don't use an AI coding assistant, you can skip this section — the rest of the theme works without any AI configuration.
 
-```mermaid
-flowchart LR
-    subgraph Install["🤖 AI Install"]
-        I1[install.sh<br/>self-healing]
-    end
-    subgraph Author["🧠 AI Authoring"]
-        A1[Copilot]
-        A2[Codex]
-        A3[Cursor]
-        A4[Claude Code]
-        A5[Aider]
-    end
-    subgraph Build["🎨 AI Content"]
-        B1[OpenAI<br/>Preview Images]
-        B2[AI Frontmatter<br/>Maintainer prompt]
-    end
-    subgraph Release["🚀 AI Release"]
-        R1[Commit Analyzer]
-        R2[Auto Changelog]
-        R3[Semantic Bump]
-    end
-    subgraph Discover["🔍 AIEO Discovery"]
-        D1[JSON-LD Schema]
-        D2[FAQ + Glossary]
-        D3[Entity Density]
-    end
-
-    Install --> Author --> Build --> Release --> Discover
-
-    style Install fill:#e3f2fd
-    style Author fill:#f3e5f5
-    style Build fill:#fff3e0
-    style Release fill:#e8f5e9
-    style Discover fill:#fce4ec
-```
+zer0-mistakes treats AI as core infrastructure across **install → author → build → release → discover**. Every layer is wired for **automation, facilitation, and integration** with the AI tools you already use — with one consistent guidance layer in `.github/` and `AGENTS.md` that every major agent picks up automatically.
 
 ### What's wired for AI
 
@@ -301,68 +289,11 @@ Clone the repo (or fork) and your editor's AI agent will pick up project context
 
 ## 🏗 Architecture
 
-### System Overview
+> **Who this is for:** developers, theme customizers, and anyone integrating zer0-mistakes into a larger system. If you only want to publish a blog, you can skip ahead to [Key Features](#-key-features) or [Installation Methods](#-installation-methods).
 
-```mermaid
-flowchart TB
-    subgraph Input["📝 Content Layer"]
-        MD[Markdown Files]
-        DATA[YAML Data]
-        ASSETS[Static Assets]
-    end
-    
-    subgraph Theme["🎨 Theme Layer"]
-        LAYOUTS[_layouts/]
-        INCLUDES[_includes/]
-        SASS[_sass/]
-    end
-    
-    subgraph Build["⚙️ Build Layer"]
-        JEKYLL[Jekyll Engine]
-        PLUGINS[Plugins]
-        LIQUID[Liquid Templates]
-    end
-    
-    subgraph Output["🌐 Output Layer"]
-        HTML[Static HTML]
-        CSS[Compiled CSS]
-        JS[JavaScript]
-    end
-    
-    subgraph Deploy["🚀 Deploy Layer"]
-        GHPAGES[GitHub Pages]
-        DOCKER[Docker Container]
-        CDN[CDN/Custom Host]
-    end
-    
-    MD --> JEKYLL
-    DATA --> JEKYLL
-    ASSETS --> JEKYLL
-    
-    LAYOUTS --> JEKYLL
-    INCLUDES --> JEKYLL
-    SASS --> JEKYLL
-    
-    JEKYLL --> HTML
-    JEKYLL --> CSS
-    JEKYLL --> JS
-    
-    HTML --> GHPAGES
-    HTML --> DOCKER
-    HTML --> CDN
-```
+zer0-mistakes is a layered system: your content (Markdown + YAML) flows through the theme's templates, gets compiled by Jekyll, and is published as a fully static site that any host can serve. Every layer is replaceable without affecting the others.
 
 ### Technology Stack
-
-```mermaid
-pie title Technology Distribution
-    "Jekyll (Static Gen)" : 25
-    "Bootstrap 5.3 (UI)" : 20
-    "Docker (Dev Env)" : 18
-    "AI Tooling & Agents" : 15
-    "Liquid (Templates)" : 12
-    "PostHog (Analytics)" : 10
-```
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
@@ -383,6 +314,15 @@ pie title Technology Distribution
 ---
 
 ## ✨ Key Features
+
+This is the in-depth tour of what ships out of the box. Each subsection is independent — jump to whatever matters for your project.
+
+| Audience | Start with |
+|---|---|
+| New users | [Docker-first dev](#-docker-first-development), [Search](#-site-search-v0180), [Dark mode](#-darklight-mode-toggle), [Legal pages](#-legal--compliance-pages-v0150) |
+| Bloggers / writers | [Mermaid diagrams](#-mermaid-diagram-support), [Obsidian vault](#-obsidian-vault-integration), [Jupyter notebooks](#-jupyter-notebook-support) |
+| Site migrators | [Site Scraper](#-site-scraper--clone-any-website) |
+| Developers / SREs | [Modular installer CLI](#-ai-powered-installation--modular-installer), [Enhanced navigation](#-enhanced-navigation-system-v0170), [Privacy-first analytics](#-privacy-first-analytics) |
 
 ### 🤖 AI-Powered Installation & Modular Installer
 
@@ -415,56 +355,11 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.s
 
 The installer is driven by a single spec file (`.zer0/install.spec.json`) that records every decision — profiles chosen, deploy targets, AI provenance — so the entire setup is reproducible and version-controlled.
 
-The ~1,100-line classic `install.sh` provides intelligent platform detection and Docker configuration:
-
-```mermaid
-flowchart TD
-    START([Start Installation]) --> DETECT[Detect Platform]
-    DETECT --> CHECK{Prerequisites OK?}
-    
-    CHECK -->|Yes| DOWNLOAD[Download Theme]
-    CHECK -->|No| GUIDE[Show Requirements]
-    
-    DOWNLOAD --> CONFIG[Configure Docker]
-    CONFIG --> VALIDATE{Build Success?}
-    
-    VALIDATE -->|Yes| DONE([✅ Ready!])
-    VALIDATE -->|No| LOGS[Show Error Logs]
-    
-    style START fill:#e3f2fd
-    style DONE fill:#c8e6c9
-```
+The ~1,100-line classic `install.sh` provides intelligent platform detection, Docker configuration, prerequisite checks, and error recovery with fallbacks.
 
 ### 🌐 Site Scraper — Clone Any Website
 
 `install init --scrape <URL>` BFS-crawls an existing website and turns it into a fully rendered zer0-mistakes site with zero post-processing:
-
-```mermaid
-flowchart LR
-    subgraph Crawl["🕷 BFS Crawl"]
-        C1[Fetch pages]
-        C2[Filter junk URLs]
-        C3[Classify page kind]
-    end
-    subgraph Extract["🔍 Extract"]
-        E1[Markdown + metadata]
-        E2[Image assets]
-        E3[Navigation links]
-    end
-    subgraph Emit["📄 Emit Jekyll"]
-        D1[index.md — home]
-        D2[pages/events/*.md]
-        D3[pages/news/*.md]
-        D4[pages/*.md]
-    end
-    subgraph Wire["🔧 Wire Site"]
-        W1[_data/navigation/main.yml]
-        W2[assets/scraped/]
-        W3[_config.yml seeded]
-    end
-
-    Crawl --> Extract --> Emit --> Wire
-```
 
 | What gets scraped | Where it lands |
 |---|---|
@@ -488,42 +383,35 @@ Requires only `python3` (stdlib) and `curl` — no `pip` dependencies, no API ke
 
 ### 🐳 Docker-First Development
 
-Zero local dependencies required. Works identically across all platforms:
+No Ruby, no Bundler, no Jekyll install on your machine. Docker is the *only* prerequisite, and the same container runs identically on Intel Macs, Apple Silicon, Linux, and Windows/WSL2. The bundled `docker-compose.yml` mounts your project directory into the container, so file edits trigger a live rebuild automatically.
 
 ```yaml
-# docker-compose.yml - That's all you need!
+# docker-compose.yml — that's all you need
 services:
   jekyll:
     image: jekyll/jekyll:latest
-    platform: linux/amd64
-    command: jekyll serve --config "_config.yml,_config_dev.yml"
-    ports: ["4000:4000"]
+    platform: linux/amd64     # forces x86 emulation on Apple Silicon for gem compatibility
+    command: jekyll serve --config "_config.yml,_config_dev.yml" --livereload
+    ports: ["4000:4000", "35729:35729"]   # Jekyll + LiveReload
     volumes: ["./:/app"]
+    environment:
+      JEKYLL_ENV: development
 ```
+
+Day-to-day commands:
+
+```bash
+docker-compose up                # start with live reload at http://localhost:4000
+docker-compose exec jekyll bash  # drop into the container shell
+docker-compose down -v           # clean up volumes and gem cache
+docker-compose down && docker-compose up --build   # full rebuild after Gemfile changes
+```
+
+A separate [`docker-compose.test.yml`](docker-compose.test.yml) provides an isolated environment for CI-style test runs, and [`docker-compose.prod.yml`](docker-compose.prod.yml) (referenced in the [Deployment](#-deployment) section) builds a production image.
 
 ### 🔒 Privacy-First Analytics
 
-GDPR/CCPA compliant PostHog integration with granular consent:
-
-```mermaid
-stateDiagram-v2
-    [*] --> PageLoad
-    PageLoad --> ConsentCheck
-    
-    ConsentCheck --> Disabled: DNT Enabled
-    ConsentCheck --> ShowBanner: No Consent
-    ConsentCheck --> Tracking: Has Consent
-    
-    ShowBanner --> Tracking: Accept
-    ShowBanner --> Disabled: Decline
-    
-    Tracking --> DataCollection
-    DataCollection --> Anonymize
-    Anonymize --> PostHog
-    
-    Disabled --> [*]
-    PostHog --> [*]
-```
+GDPR/CCPA compliant PostHog integration with granular consent: it respects Do Not Track, shows a consent banner, anonymizes data, and only sends events to PostHog after the user opts in.
 
 ### 📊 Mermaid Diagram Support
 
@@ -641,24 +529,30 @@ Built-in GDPR/CCPA compliant documentation:
 
 ---
 
-## 📦 Installation Methods
+## 📦 Installation Methods — Reference Card
 
-> **New in 1.0:** the installer is now a modular CLI (`scripts/bin/install`) with subcommands and declarative profiles. The classic `curl | bash` one-liner still works — it bootstraps the same pipeline. See [docs/installation/](docs/installation/index.md) for the full guide and [docs/installation/migration-from-0.x.md](docs/installation/migration-from-0.x.md) for the 0.x → 1.0 flag mapping.
+The three beginner paths are already covered in [Get Started in 5 Minutes](#-get-started-in-5-minutes). This section is the technical reference: every supported installation method with its exact command and the situation it fits.
 
-### Method 1: AI-Powered Install (Recommended)
+| Method | Command | When to use it |
+|---|---|---|
+| **One-line installer** | `curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh \| bash` | Default. Self-healing, ~95% success rate, macOS / Linux / WSL. Same as Get-Started Path C. |
+| **Modular CLI** | `./scripts/bin/install init --profile full /path/to/site` | Reproducible, spec-driven setup with profiles, deploy plugins, AI wizard, and site scraper. Detailed below. |
+| **Remote theme** | `remote_theme: "bamr87/zer0-mistakes"` in `_config.yml` | Three-file repos. Identical to [Get-Started Path B](#path-b--three-file-starter-still-no-install). |
+| **Fork & deploy** | Fork → rename to `<user>.github.io` → enable Pages | Zero-terminal setup. Identical to [Get-Started Path A](#path-a--easiest-fork-on-github-no-terminal-required). |
+| **Ruby gem dependency** | `gem "jekyll-theme-zer0", "~> 1.9"` in `Gemfile` | When you want a pinned version managed by Bundler instead of the remote theme. |
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
-```
+> **New in 1.0:** the installer is a modular CLI with subcommands and declarative profiles. The classic `curl \| bash` one-liner still works — it bootstraps the same pipeline. See [docs/installation/](docs/installation/index.md) for the full guide and [docs/installation/migration-from-0.x.md](docs/installation/migration-from-0.x.md) for the 0.x → 1.0 flag mapping.
 
-### Method 1b: Modular CLI (Local Clone)
+### Modular CLI (the in-depth bits)
+
+Clone the repo to use `scripts/bin/install` directly:
 
 ```bash
 git clone https://github.com/bamr87/zer0-mistakes.git
 ./zer0-mistakes/scripts/bin/install help
 ./zer0-mistakes/scripts/bin/install init --profile full /path/to/new-site
 ./zer0-mistakes/scripts/bin/install deploy github-pages,docker-prod /path/to/new-site
-./zer0-mistakes/scripts/bin/install doctor /path/to/new-site     # health check
+./zer0-mistakes/scripts/bin/install doctor /path/to/new-site         # health check
 ./zer0-mistakes/scripts/bin/install agents /path/to/new-site --all   # AI agent guidance
 ```
 
@@ -666,25 +560,9 @@ Available subcommands: `init`, `wizard [--ai]`, `agents`, `deploy`, `doctor`, `d
 
 Key `init` flags: `--profile <name>`, `--scrape <URL>`, `--scrape-depth N` (default 2), `--scrape-max-pages N` (default 25), `--skip-doctor`, `--force`.
 
-### Method 2: Remote Theme (GitHub Pages)
+### Forking workflow
 
-```yaml
-# _config.yml
-remote_theme: "bamr87/zer0-mistakes"
-plugins:
-  - jekyll-remote-theme
-```
-
-### Method 3: Fork & Deploy as Your Site
-
-Fork into `<your-username>.github.io` for a working site in minutes:
-
-1. Go to [bamr87/zer0-mistakes](https://github.com/bamr87/zer0-mistakes) → **Fork**
-2. Set repository name to **`<your-username>.github.io`**
-3. Enable **Settings → Pages → Deploy from branch: `main`**
-4. Visit `https://<your-username>.github.io`
-
-Then personalize locally:
+After forking, personalize locally:
 
 ```bash
 git clone https://github.com/<your-username>/<your-username>.github.io.git
@@ -695,47 +573,11 @@ docker-compose up
 
 See [docs/FORKING.md](docs/FORKING.md) for the full progressive workflow.
 
-### Method 4: Ruby Gem
-
-```ruby
-# Gemfile
-gem "jekyll-theme-zer0", "~> 0.21"
-```
-
 ---
 
 ## 📁 Project Structure
 
-```mermaid
-graph TD
-    ROOT[zer0-mistakes/] --> CONFIG[Configuration]
-    ROOT --> THEME[Theme Components]
-    ROOT --> CONTENT[Content]
-    ROOT --> AUTOMATION[Automation]
-    
-    CONFIG --> CFG1[_config.yml]
-    CONFIG --> CFG2[_config_dev.yml]
-    CONFIG --> CFG3[docker-compose.yml]
-    
-    THEME --> LAYOUTS[_layouts/]
-    THEME --> INCLUDES[_includes/]
-    THEME --> SASS[_sass/]
-    THEME --> ASSETS[assets/]
-    
-    CONTENT --> PAGES[pages/]
-    CONTENT --> DATA[_data/]
-    CONTENT --> DOCS[docs/]
-    
-    AUTOMATION --> SCRIPTS[scripts/]
-    AUTOMATION --> TESTS[test/]
-    AUTOMATION --> WORKFLOWS[.github/workflows/]
-    
-    style ROOT fill:#e8f5e9
-    style CONFIG fill:#e3f2fd
-    style THEME fill:#fff3e0
-    style CONTENT fill:#fce4ec
-    style AUTOMATION fill:#f3e5f5
-```
+The repository follows Jekyll convention with a few additions for tooling and AI guidance. If you only ever edit content, you'll spend all your time in `pages/` and `_data/`. The rest is here when you need it.
 
 ### Key Directories
 
@@ -755,7 +597,9 @@ graph TD
 
 ---
 
-## 🛠️ Migration Utility to an existing consumer site using the migration script:
+## 🛠️ Migration Utility — Add Admin Pages to an Existing Site
+
+Already running a Jekyll site on zer0-mistakes and want the built-in admin UI? `scripts/migrate.sh` copies the six in-browser admin pages (theme customizer, config editor, navigation editor, collection manager, analytics dashboard, environment inspector) into your target site without touching your content.
 
 ```bash
 # From the zer0-mistakes repo — install into another site
@@ -788,33 +632,14 @@ This installs 6 admin pages to `pages/_about/settings/`:
 
 ## 🔄 Development Workflow
 
-```mermaid
-gitGraph
-    commit id: "Clone/Install"
-    branch feature
-    checkout feature
-    commit id: "Make Changes"
-    commit id: "Test Locally"
-    checkout main
-    merge feature id: "PR Merged"
-    commit id: "Auto Version" type: HIGHLIGHT
-    commit id: "Gem Published"
-    commit id: "GitHub Release"
-```
+> **Who this is for:** contributors and anyone customizing the theme locally. The flow is the same one this repo uses internally — clone, branch, change, test, PR, and the automated release pipeline does the rest.
 
 ### Daily Development
 
 ```bash
-# Start development server
-docker-compose up
-
-# Make changes (auto-reload enabled)
-# Edit files in _layouts/, _includes/, pages/
-
-# Run tests
-./test/test_runner.sh
-
-# Commit changes
+docker-compose up                      # live reload at http://localhost:4000
+# edit _layouts/, _includes/, pages/
+./test/test_runner.sh                  # run tests
 git commit -m "feat: add new component"
 ```
 
@@ -850,75 +675,23 @@ npm run vendor:install    # manifest downloads (+ Mermaid copy when node_modules
 
 ## 🚀 Deployment
 
-### GitHub Pages (User Site — Recommended)
+Three supported targets, in order of recommendation:
 
-Fork the repo as `<your-username>.github.io` and enable GitHub Pages:
-
-1. Push to `main` branch
-2. GitHub Pages builds automatically
-3. Site deploys to `https://<your-username>.github.io`
-
-No workflows or `baseurl` configuration needed. See [docs/FORKING.md](docs/FORKING.md) for details.
-
-```mermaid
-sequenceDiagram
-    participant Dev as Developer
-    participant GH as GitHub
-    participant Pages as GitHub Pages
-    
-    Dev->>GH: git push main
-    GH->>Pages: Auto-build Jekyll
-    Pages-->>Dev: 🌐 Site live at username.github.io
-```
-
-### Docker Production
-
-```bash
-docker-compose -f docker-compose.prod.yml up -d
-```
-
-### Custom Hosting
-
-```bash
-# Build static site
-docker-compose run --rm jekyll jekyll build
-
-# Deploy _site/ to any static host
-```
+| Target | Cost | Setup | Best for |
+|---|---|---|---|
+| **GitHub Pages user site** | Free | Push to `main` of `<username>.github.io` (see [Path A](#path-a--easiest-fork-on-github-no-terminal-required)) | Most users; personal sites, docs, blogs, portfolios |
+| **Docker production image** | Self-hosted | `docker-compose -f docker-compose.prod.yml up -d` | Self-hosted servers, intranet, air-gapped environments |
+| **Custom static host** | Varies | `docker-compose run --rm jekyll jekyll build` → upload `_site/` | Netlify, Vercel, Cloudflare Pages, S3 + CloudFront, Azure Static Web Apps |
 
 ---
 
 ## 📚 Documentation
 
-### Documentation Architecture
+zer0-mistakes documentation is split across three audiences. Pick the layer that matches your task:
 
-```mermaid
-graph LR
-    subgraph Technical["📋 /docs/"]
-        SYS[systems/]
-        FEAT[features/]
-        REL[releases/]
-    end
-    
-    subgraph Public["📖 /pages/_docs/"]
-        GUIDES[User Guides]
-        TUTORIALS[Tutorials]
-        REF[Reference]
-    end
-    
-    subgraph AI["🤖 .github/"]
-        COPILOT[copilot-instructions.md]
-        SEED[seed/]
-        INSTR[instructions/]
-    end
-    
-    Technical -->|Process| Public
-    AI -->|Guides| Technical
-    
-    style Technical fill:#e3f2fd
-    style Public fill:#e8f5e9
-    style AI fill:#fff3e0
-```
+- **`/docs/`** — technical reference for theme contributors (architecture, design system, internals).
+- **`/pages/_docs/`** — published user guides on [zer0-mistakes.com/docs/](https://zer0-mistakes.com/docs/) (tutorials, how-tos, FAQs).
+- **`.github/`** — AI agent guidance ([copilot-instructions.md](.github/copilot-instructions.md), file-scoped instructions, reusable prompts, project seed).
 
 ### Quick Links
 
@@ -937,47 +710,20 @@ graph LR
 
 ## 🔧 Release System
 
-### Automated Release Pipeline
+> **Who this is for:** maintainers of this theme, and anyone who forks it to publish their own gem. The release pipeline is fully automated — one command takes you from "commit on main" to "version published on RubyGems and tagged on GitHub."
 
-```mermaid
-flowchart LR
-    subgraph Trigger["🎯 Trigger"]
-        COMMIT[Commit to main]
-    end
-    
-    subgraph Analyze["🔍 Analyze"]
-        PARSE[Parse Commits]
-        BUMP[Determine Version]
-    end
-    
-    subgraph Build["⚙️ Build"]
-        CHANGE[Update CHANGELOG]
-        VERSION[Bump Version]
-        TEST[Run Tests]
-        GEM[Build Gem]
-    end
-    
-    subgraph Publish["🚀 Publish"]
-        RUBYGEMS[Push to RubyGems]
-        GHREL[GitHub Release]
-        TAG[Git Tag]
-    end
-    
-    COMMIT --> PARSE --> BUMP
-    BUMP --> CHANGE --> VERSION --> TEST --> GEM
-    GEM --> RUBYGEMS --> GHREL --> TAG
-```
+The pipeline analyzes your commit messages (Conventional Commits format), decides whether the next release is a patch / minor / major bump, regenerates `CHANGELOG.md`, updates the version file, runs the test suite, builds the gem, publishes to [RubyGems](https://rubygems.org/gems/jekyll-theme-zer0), pushes a tag, and cuts a GitHub Release with auto-generated notes.
 
 ### Release Commands
 
 ```bash
-# Preview release
-bash scripts/release patch --dry-run
+# Preview release (no changes published)
+./scripts/bin/release patch --dry-run
 
 # Full release
-bash scripts/release patch  # 0.21.5 → 0.21.6
-bash scripts/release minor  # 0.21.5 → 0.22.0
-bash scripts/release major  # 0.21.5 → 1.0.0
+./scripts/bin/release patch  # 1.9.1 → 1.9.2
+./scripts/bin/release minor  # 1.9.1 → 1.10.0
+./scripts/bin/release major  # 1.9.1 → 2.0.0
 ```
 
 ---
@@ -1003,81 +749,6 @@ All workflows live under [`.github/workflows/`](.github/workflows/).
 | 9 | **New Site Setup** | [`setup-template.yml`](.github/workflows/setup-template.yml) | first push after template/fork | Creates a PR with prefilled `_config.yml` so a new site is ready to merge & go |
 
 > 💡 GitHub Pages adds an additional managed `pages-build-deployment` run on every push to `main`.
-
-### Pipeline Topology
-
-```mermaid
-flowchart LR
-    subgraph Devloop["🧑‍💻 Developer Loop"]
-        PR[Pull Request]
-        PUSH[Push to main]
-    end
-
-    subgraph Continuous["🧪 Continuous Integration"]
-        CI[ci.yml<br/>Comprehensive CI]
-        CODEQL[codeql.yml<br/>Security Scan]
-        TESTLATEST[test-latest.yml<br/>Latest Deps]
-    end
-
-    subgraph Maintenance["🔧 Maintenance"]
-        DEPS[update-dependencies.yml<br/>Weekly Bump]
-        ROADMAP[roadmap-sync.yml<br/>README Sync]
-        NOTEBOOKS[convert-notebooks.yml<br/>.ipynb → .md]
-    end
-
-    subgraph Releaseflow["🚀 Release Pipeline"]
-        BUMP[version-bump.yml<br/>Semantic Bump]
-        RELEASE[release.yml<br/>Gem + GitHub Release]
-        PAGES[pages-build-deployment<br/>GitHub Pages]
-    end
-
-    subgraph Bootstrap["🌱 Bootstrap"]
-        SETUP[setup-template.yml<br/>New Site Setup]
-    end
-
-    PR --> CI
-    PR --> CODEQL
-    PUSH --> CI
-    PUSH --> CODEQL
-    PUSH --> ROADMAP
-    PUSH --> NOTEBOOKS
-    PUSH --> BUMP
-    BUMP -->|tag v*| RELEASE
-    PUSH --> PAGES
-    DEPS -.->|opens PR| PR
-    SETUP -.->|first push| PR
-
-    style Continuous fill:#e3f2fd
-    style Maintenance fill:#fff3e0
-    style Releaseflow fill:#e8f5e9
-    style Bootstrap fill:#f3e5f5
-```
-
-### What it looks like
-
-#### 🗂 Actions overview — every workflow at a glance
-
-![All workflows view in the GitHub Actions tab showing recent runs of Release, pages-build-deployment, TEST, CodeQL, New Site Setup, Comprehensive CI, Version Bump, and Roadmap Sync](docs/images/workflows/actions-overview.png)
-
-The Actions tab gives you a real-time activity feed — every push to `main` triggers a coordinated set of workflows that you can audit, re-run, or dispatch manually.
-
-#### 🚀 Release pipeline — automated gem + GitHub release
-
-![Successful Release (Gem + GitHub) #49 run showing the four-stage pipeline: Pre-release Validation → Build Release Assets → Publish to RubyGems → Create GitHub Release, completed in 1m 40s with one artifact](docs/images/workflows/release-run-detail.png)
-
-A single tag (`v0.22.21`) — or one click on **Run workflow** — runs the entire publish pipeline in under two minutes. The job graph makes the dependency chain visible: validate → build → publish to [RubyGems](https://rubygems.org/gems/jekyll-theme-zer0) → cut the [GitHub Release](https://github.com/bamr87/zer0-mistakes/releases). No manual `gem push`, no manual changelog edit, no missed step.
-
-#### 🧪 Comprehensive CI — parallel quality gates
-
-![Comprehensive CI Pipeline run showing the workflow graph with parallel jobs: Detect Changes, Fast Checks, Quality Control, matrix Test Suite (Ruby 3.3), Integration Tests, and Build & Validate, with annotations panel underneath](docs/images/workflows/ci-run-detail.png)
-
-CI fans out across **change detection → fast checks → quality control → matrix test suite → integration tests → build & validate**, with annotations surfacing test failures and deprecations directly in the run summary.
-
-#### 🚦 Per-workflow run history
-
-![Comprehensive CI Pipeline workflow run history with branch filters, status indicators, and individual run timings](docs/images/workflows/ci-pipeline.png)
-
-Each workflow has its own run history with branch filters, status badges, and per-job durations — easy to spot regressions or compare runs across branches.
 
 ### Trigger guide
 
@@ -1108,8 +779,6 @@ When you fork the theme as a starter, the workflows come with you. To make them 
 2. **Tune triggers** in [`update-dependencies.yml`](.github/workflows/update-dependencies.yml) (default: weekly).
 3. **Disable** [`setup-template.yml`](.github/workflows/setup-template.yml) after the first run — it's a one-shot bootstrap.
 4. **GitHub Pages** is auto-enabled when you push to `main` if your repo is `<username>.github.io`.
-
-> 📸 Screenshots above are real runs captured from [github.com/bamr87/zer0-mistakes/actions](https://github.com/bamr87/zer0-mistakes/actions). Re-capture them for your fork by running `./scripts/test/capture-workflow-screenshots.sh` (or just take fresh screenshots) and replacing the files in [`docs/images/workflows/`](docs/images/workflows/).
 
 ---
 
@@ -1161,35 +830,18 @@ gantt
 
 ## 🤝 Contributing
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+Contributions of every size are welcome — bug reports, doc tweaks, new components, new layouts, accessibility improvements, translations, or whole new features. Every change in this repo is shipped through the same automated release pipeline described above, so your PR can be merged and live as a published gem within hours.
 
-```mermaid
-flowchart LR
-    FORK[Fork Repo] --> BRANCH[Create Branch]
-    BRANCH --> CODE[Make Changes]
-    CODE --> TEST[Run Tests]
-    TEST --> PR[Open PR]
-    PR --> REVIEW[Code Review]
-    REVIEW --> MERGE[Merge! 🎉]
-    
-    style MERGE fill:#c8e6c9
-```
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide. The short version:
 
 ### Quick Contribution
 
 ```bash
-# Fork and clone
 gh repo fork bamr87/zer0-mistakes --clone
 cd zer0-mistakes
-
-# Create feature branch
 git checkout -b feature/awesome-feature
-
-# Make changes and test
-docker-compose up
-./test/test_runner.sh
-
-# Submit PR
+docker-compose up                  # iterate locally
+./test/test_runner.sh              # verify
 git push origin feature/awesome-feature
 ```
 
@@ -1221,7 +873,11 @@ git push origin feature/awesome-feature
 
 ## 🤖 AIEO-Optimized — Built for AI Citation
 
-This site implements [AI Engine Optimization (AIEO)](https://zer0-mistakes.com/glossary/#aieo) to maximize accuracy and depth when AI models cite or summarize its content. Key patterns applied:
+**Why this matters:** when someone asks ChatGPT, Claude, Gemini, or Perplexity about your topic, you want those models to cite *your* site — and to cite it accurately. AI Engine Optimization (AIEO) is to AI assistants what SEO is to Google: a set of patterns that make your content easier for language models to ingest, attribute, and summarize correctly.
+
+zer0-mistakes ships these patterns by default on every page, so you get AI discoverability without changing how you write. Implementation lives in `_includes/seo/` and the structured data partials; nothing you author has to know about it.
+
+Key patterns applied (see [glossary entry](https://zer0-mistakes.com/glossary/#aieo) for definitions):
 
 | AIEO Pattern | Implementation |
 |---|---|
@@ -1240,7 +896,7 @@ All AIEO enhancements are backward-compatible, follow existing code style (Boots
 
 ## 🙏 Acknowledgments
 
-Built with these amazing technologies:
+Built with these technologies:
 
 - [Jekyll](https://jekyllrb.com/) — Static site generation
 - [Bootstrap](https://getbootstrap.com/) — UI framework

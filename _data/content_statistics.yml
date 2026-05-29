@@ -1,5 +1,5 @@
 ---
-generated_at: '2026-05-26 02:07:26'
+generated_at: '2026-05-29 00:59:17'
 overview:
   total_posts: 25
   total_pages: 148
@@ -7,8 +7,8 @@ overview:
   total_categories: 55
   total_tags: 254
   total_authors: 5
-  total_words: 105547
-  average_words_per_post: 610.1
+  total_words: 106994
+  average_words_per_post: 618.5
   published: 173
   drafts: 14
 categories:
@@ -750,7 +750,7 @@ word_statistics:
     type: post
     title: 'Urban Resilience: How Cities Prepare for Extreme Heat'
   README.md:
-    words: 5375
+    words: 6370
     type: page
     title: zer0-mistakes
   STATS_ENHANCEMENT_SUMMARY.md:
@@ -1226,7 +1226,7 @@ word_statistics:
     type: page
     title: AGENTS
   CHANGELOG.md:
-    words: 16526
+    words: 16978
     type: page
     title: CHANGELOG
   CODE_OF_CONDUCT.md:
