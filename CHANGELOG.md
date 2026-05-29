@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.9.2] - 2026-05-29
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 6e73c5f Update README and content statistics
+
+
 ## [1.9.1] - 2026-05-27
 
 ### Fixed
