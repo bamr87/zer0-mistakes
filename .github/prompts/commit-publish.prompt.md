@@ -4,7 +4,7 @@ description: "Run the full release pipeline for the jekyll-theme-zer0 gem: analy
 argument-hint: "Bump type: patch | minor | major (defaults to patch)"
 tools: [run_in_terminal, read_file, replace_string_in_file, multi_replace_string_in_file, get_changed_files, grep_search, file_search]
 date: 2026-05-18T12:00:00.000Z
-lastmod: 2026-05-30T13:00:00.000Z
+lastmod: 2026-05-30T23:00:00.000Z
 ---
 
 # Release Pipeline — `jekyll-theme-zer0`
@@ -85,9 +85,14 @@ docker-compose exec -T jekyll ruby -ryaml -e "
   YAML.load_file('_config_dev.yml');
   puts 'configs OK'"
 
-# Gemfile.lock in sync
-docker-compose exec -T jekyll bundle check || \
-  docker-compose exec -T jekyll bundle install
+# Gemfile.lock PATH spec MUST match version.rb (CI runs Bundler frozen → exit 16 on drift)
+lock_ver=$(grep -A1 'remote: \.' Gemfile.lock | grep -oE 'jekyll-theme-zer0 \(([0-9.]+)\)' | grep -oE '[0-9.]+')
+rb_ver=$(grep -oE '[0-9]+\.[0-9]+\.[0-9]+' lib/jekyll-theme-zer0/version.rb)
+[[ "$lock_ver" == "$rb_ver" ]] && echo "lockfile OK ($rb_ver)" || echo "⚠️ DRIFT: Gemfile.lock=$lock_ver version.rb=$rb_ver — run 'bundle install' and commit"
+
+# Frozen-mode parity with CI (this is exactly what setup-ruby does)
+docker-compose exec -T jekyll bundle install --frozen --quiet \
+  || docker-compose exec -T jekyll bundle install  # then re-commit Gemfile.lock
 ```
 
 🛑 **Any failure → STOP.** Do not advance to phase 3.
@@ -122,6 +127,7 @@ Update any other doc surface a user-visible change touches:
 
 - [ ] `CHANGELOG.md` — move `[Unreleased]` entries into the new version section
 - [ ] `lib/jekyll-theme-zer0/version.rb` — bump to `X.Y.Z`
+- [ ] `Gemfile.lock` — **required**: run `bundle install` so the `jekyll-theme-zer0 (X.Y.Z)` PATH spec matches `version.rb`, then stage it (CI fails with Bundler exit 16 otherwise)
 - [ ] `docs/` and `pages/_docs/` — feature/usage docs for changed behavior
 - [ ] `README.md` — install/usage snippets, badges, version references
 - [ ] `_data/features.yml` — if a feature was added, changed, or removed
@@ -144,6 +150,12 @@ Bump version to X.Y.Z"
 Use scopes: `search`, `navigation`, `layouts`, `includes`, `sass`, `config`, `ci`, `scripts`, `analytics`.
 
 ## Phase 5 — Push, Tag, Publish
+
+> ⚠️ An automated **Version Bump** workflow runs on every push to `main`. To avoid
+> non-fast-forward push failures (`failed to push some refs`) and double-bumps,
+> **always `git pull --rebase` immediately before pushing**, and never push a
+> manual version commit while that workflow is mid-run. Prefer `./scripts/bin/release`,
+> which sequences this correctly.
 
 ```bash
 git pull --rebase origin main
@@ -209,7 +221,9 @@ Confirm matches `X.Y.Z`. Check GitHub release was created (or create with `gh re
 
 - Never skip Phase 2 validation, even for `docs:`-only releases.
 - Never bump the version without updating `CHANGELOG.md` in the same commit.
+- Never commit a version bump without refreshing `Gemfile.lock` in the same commit — its `jekyll-theme-zer0 (X.Y.Z)` PATH spec must equal `version.rb` (CI Bundler is frozen and fails with exit 16 on drift).
 - Never push tags before commits.
+- Always `git pull --rebase` right before pushing — the automated Version Bump workflow and Pages deploy can move `main` underneath you.
 - Never publish a gem version that already exists on RubyGems (yank-and-republish is forbidden).
 - Never edit `lib/jekyll-theme-zer0/version.rb` outside a release commit.
 - Never run the release pipeline from a feature branch — cut releases from an up-to-date `main` after PRs merge.
