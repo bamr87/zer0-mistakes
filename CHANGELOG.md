@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.9.6] - 2026-05-30
+
+### Changed
+- **Quickstart**: Comprehensive rewrite of all quickstart docs (`pages/_quickstart/`) with improved structure, Mermaid decision flowchart, and step-by-step screenshots
+- **Quickstart**: `index.md` published from draft — now live at `/quickstart/`
+- **Quickstart**: Removed `homebrew.md` and `winget.md` (content consolidated into `machine-setup.md`)
+- **Quickstart**: 18 new screenshots added to `assets/images/quickstart/` for visual walkthroughs
+
 ## [1.9.5] - 2026-05-30
 
 ### Changed

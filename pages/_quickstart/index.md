@@ -6,7 +6,7 @@ description: Complete setup guide for the Zer0-Mistakes Jekyll theme featuring D
 permalink: /quickstart/
 sidebar:
     nav: quickstart
-lastmod: 2025-12-20T22:15:45.842Z
+lastmod: 2026-05-30T00:00:00.000Z
 preview: /images/previews/zer0-mistakes-quick-start-guide.png
 tags:
     - jekyll
@@ -25,50 +25,31 @@ keywords:
         - ai installation
         - cross-platform
         - bootstrap 5
-draft: true
 ---
 
-# 🚀 Quick Start Guide
+# Quick Start Guide
 
-Get your **zer0-mistakes** Jekyll site running in under 5 minutes with our intelligent installation system.
+![Zer0-Mistakes Quick Start Guide](/assets/images/quickstart/01-quickstart-overview.png)
 
-For the full install + personalization workflow (all methods, config layering, and troubleshooting), use the canonical repo guide:
+Get your **zer0-mistakes** Jekyll site running in under 5 minutes. Choose the path that fits your goal:
 
-- `{{ site.resources.github_repo | default: '' | join: '' }}/blob/{{ site.branch }}/docs/QUICKSTART.md`
+```mermaid
+flowchart TD
+    A([Start]) --> B{What's your goal?}
+    B --> C[New site, local dev]
+    B --> D[Personal GitHub Pages site]
+    B --> E[Add theme to existing repo]
+    B --> F[Zero-install / cloud]
 
-<h2 id="fastest-start-1-command">⚡ Fastest Start (1 Command)</h2>
-
-**For immediate results:**
-
-```bash
-# Create and setup new site
-mkdir my-site && cd my-site
-curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash && docker-compose up
+    C --> C1["Option A: Install wizard\ncurl … | bash + docker-compose up"]
+    C --> C2["Option B: GitHub Template\ngh repo create --template"]
+    D --> D1["Option D: Fork/Clone\ngh repo fork + fork-cleanup.sh"]
+    E --> E1["Option E: Remote theme\nremote_theme: bamr87/zer0-mistakes"]
+    E --> E2["Option F: Ruby Gem\ngem 'jekyll-theme-zer0'"]
+    F --> F1["Option C: Codespaces\nOne click, browser-based"]
 ```
 
-**That's it!** Your site will be running at `http://localhost:4000`
-
-## 🎯 What You Get
-
-- **🤖 AI-Powered Setup** - Intelligent error detection and automatic fixes
-- **🐳 Docker Environment** - Consistent development across all platforms
-- **🎨 Bootstrap 5.3** - Modern responsive design with dark mode
-- **📱 Mobile-First** - Optimized for all devices and screen sizes
-- **⚡ Live Reload** - Changes appear instantly during development
-- **🛡️ Error Recovery** - Self-healing installation with detailed diagnostics
-
-## 🔄 Installation Options
-
-| Path | Method | Best For |
-|------|--------|----------|
-| **A** | AI Install Wizard | Creating a new site (recommended) |
-| **B** | GitHub Template | One-click copy of the entire repo |
-| **C** | GitHub Codespaces | Zero-install cloud development |
-| **D** | Fork/Clone | Personal site & theme customization |
-| **E** | Remote Theme | GitHub Pages without copying files |
-| **F** | Ruby Gem | Traditional Jekyll workflow |
-
-### Option A: AI Install Wizard (Recommended)
+## ⚡ Fastest Start (1 Command) {#fastest-start-1-command}
 
 ```bash
 mkdir my-site && cd my-site
@@ -76,10 +57,41 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.s
 docker-compose up
 ```
 
-### Option B: GitHub Template Repository
+Your site will be live at `http://localhost:4000`.
+
+![Install wizard running in terminal](/assets/images/quickstart/install-oneliner.png)
+
+## What You Get
+
+- **Docker environment** — consistent dev setup across macOS, Linux, and Windows (WSL)
+- **Bootstrap 5.3.3** — vendored, responsive, dark-mode-ready
+- **Live reload** — browser updates on every file save
+- **GitHub Pages compatible** — push to `main`, site deploys automatically
+- **Privacy-first analytics** — PostHog with consent gate, disabled in dev
+
+## Installation Options {#installation-options}
+
+| Path | Method | Best For |
+|------|--------|----------|
+| **A** | Install wizard (one-liner) | Brand-new local site |
+| **B** | GitHub Template | Clean copy via GitHub UI or CLI |
+| **C** | GitHub Codespaces | Zero-install, browser-based dev |
+| **D** | Fork/Clone | Personal `username.github.io` site |
+| **E** | Remote theme | Add theme to an existing repo |
+| **F** | Ruby Gem | Traditional Bundler workflow |
+
+### Option A — Install Wizard
+
+```bash
+mkdir my-site && cd my-site
+curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
+docker-compose up
+```
+
+### Option B — GitHub Template
 
 1. Go to [github.com/bamr87/zer0-mistakes](https://github.com/bamr87/zer0-mistakes)
-2. Click **"Use this template"** → **"Create a new repository"**
+2. Click **Use this template** → **Create a new repository**
 3. Clone your new repo and run `docker-compose up`
 
 Or via CLI:
@@ -89,173 +101,99 @@ gh repo create my-site --template bamr87/zer0-mistakes --clone
 cd my-site && docker-compose up
 ```
 
-### Option C: GitHub Codespaces (Zero Install)
+### Option C — GitHub Codespaces
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/bamr87/zer0-mistakes)
 
-Or from the repo page: **Code** → **Codespaces** → **Create codespace on main**
+Or: repo page → **Code** → **Codespaces** → **Create codespace on main**.
 
-### Option D: Fork/Clone (Personal Site)
+### Option D — Fork/Clone (Personal Site)
 
-Fork into `<your-username>.github.io` to deploy your own site:
-
-1. Go to [bamr87/zer0-mistakes](https://github.com/bamr87/zer0-mistakes) → **Fork**
-2. Set repository name to **`<your-username>.github.io`**
-3. Enable **Settings → Pages → Deploy from branch: `main`**
-4. Clone locally and personalize:
+Fork into `<your-username>.github.io` to get your own GitHub Pages site:
 
 ```bash
-git clone https://github.com/<your-username>/<your-username>.github.io.git
-cd <your-username>.github.io
+gh repo fork bamr87/zer0-mistakes --clone
+cd zer0-mistakes
 ./scripts/fork-cleanup.sh   # interactive config wizard
 docker-compose up
 ```
 
-See [docs/FORKING.md]({{ site.resources.github_repo | default: '' | join: '' }}/blob/{{ site.branch }}/docs/FORKING.md) for the full fork → configure → personalize guide.
+Enable Pages: **Settings → Pages → Branch: main → Save**.
 
-### Option E: Remote Theme (GitHub Pages)
+See [docs/FORKING.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/FORKING.md) for the full fork → configure → personalize guide.
 
-```bash
-gh repo create my-site --public --clone
-cd my-site
-echo "remote_theme: bamr87/zer0-mistakes" > _config.yml
-# Enable GitHub Pages in repository Settings
+### Option E — Remote Theme
+
+```yaml
+# _config.yml
+remote_theme: "bamr87/zer0-mistakes"
+plugins:
+  - jekyll-remote-theme
 ```
 
-### Option F: Ruby Gem
+Enable GitHub Pages in your repo's **Settings → Pages**.
 
-```bash
-echo 'gem "jekyll-theme-zer0"' >> Gemfile
-bundle install
-# Set theme: jekyll-theme-zer0 in _config.yml
+### Option F — Ruby Gem
+
+```ruby
+# Gemfile
+gem "jekyll-theme-zer0"
 ```
 
-For the complete setup guide with all options and troubleshooting, see [QUICKSTART.md]({{ site.resources.github_repo | default: '' | join: '' }}/blob/{{ site.branch }}/docs/QUICKSTART.md).
-
-## 📚 Comprehensive Setup Guides
-
-<h3 id="essential-setup">🏗️ Essential Setup</h3>
-
-| Guide                                           | Purpose                                     | Time   | Difficulty   |
-| ----------------------------------------------- | ------------------------------------------- | ------ | ------------ |
-| **[Machine Setup](/quickstart/machine-setup/)** | Install Docker, Git, and platform tools     | 10 min | Beginner     |
-| **[Jekyll Setup](/quickstart/jekyll-setup/)**   | Configure theme and development environment | 5 min  | Beginner     |
-| **[GitHub Setup](/quickstart/github-setup/)**   | Version control and deployment              | 10 min | Intermediate |
-
-<h3 id="advanced-configuration">🚀 Advanced Configuration</h3>
-
-| Guide                        | Purpose                                      | Time   | Difficulty   |
-| ---------------------------- | -------------------------------------------- | ------ | ------------ |
-| **Bootstrap Customization**  | Modify themes and responsive design          | 15 min | Intermediate |
-| **Performance Optimization** | Speed up loading and Core Web Vitals         | 20 min | Advanced     |
-| **Custom Hosting**           | Deploy to Netlify, Vercel, or custom servers | 15 min | Intermediate |
-
-### 🔧 Development Tools
-
-| Tool                   | Purpose                     | Setup Time |
-| ---------------------- | --------------------------- | ---------- |
-| **VS Code Extensions** | Enhanced Jekyll development | 5 min      |
-| **GitHub CLI**         | Repository management       | 5 min      |
-| **Docker Desktop**     | Containerized development   | 10 min     |
-
-## 🎯 Development Workflows
-
-### Local Development
-
-```bash
-# Start development environment
-docker-compose up
-
-# Access your site
-open http://localhost:4000
+```yaml
+# _config.yml
+theme: "jekyll-theme-zer0"
 ```
 
-### Theme Customization
-
 ```bash
-# Customize layouts and includes
-edit _layouts/default.html
-edit _includes/header.html
-
-# Modify styles (SCSS pipeline)
-edit _sass/custom.scss
-# or add assets/css/user-overrides.css and link it in _includes/core/head.html
+bundle install && bundle exec jekyll serve
 ```
 
-## 🔧 Quick Troubleshooting
+## Setup Guides {#essential-setup}
 
-### Installation Issues
+| Guide | Purpose | Time | Difficulty |
+|-------|---------|------|------------|
+| **[Machine Setup](/quickstart/machine-setup/)** | Install Docker, Git, GitHub CLI | 10 min | Beginner |
+| **[Jekyll Setup](/quickstart/jekyll-setup/)** | Run the dev server, create content | 5 min | Beginner |
+| **[GitHub Setup](/quickstart/github-setup/)** | Fork, deploy to GitHub Pages | 10 min | Intermediate |
+| **[Personalization](/quickstart/personalization/)** | Configure `_config.yml` for your site | 5 min | Beginner |
 
-**Problem: Installation fails**
+## Quick Troubleshooting
 
-```bash
-# Check Docker is running
-docker --version
-
-# Try minimal installation first
-curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash -s -- --minimal
-```
-
-**Problem: Port 4000 in use**
+**Port 4000 in use**
 
 ```bash
-# Check what's using the port
-lsof -i :4000
-
-# Use different port
-docker-compose run -p 4001:4000 jekyll
+lsof -i :4000          # see what's running
+docker-compose down    # stop any existing containers
+docker-compose up      # restart
 ```
 
-**Problem: Docker platform warnings**
+**Docker platform warnings (Apple Silicon)**
+
+This is expected — `docker-compose.yml` already sets `platform: linux/amd64`. The site works normally.
+
+**Jekyll build errors**
 
 ```bash
-# This is normal on Apple Silicon - the site will still work
-# The docker-compose.yml already includes platform: linux/amd64
+docker-compose exec jekyll bundle exec jekyll doctor
+docker-compose exec jekyll bundle exec jekyll build --trace
 ```
 
-<h3 id="validation-commands">Validation Commands</h3>
-
-**Test your installation:**
+**Validate your setup:**
 
 ```bash
-# New site install (generated project):
-# - Confirm files exist and Docker config parses
-ls -la
-docker-compose config
-
-# Theme repo (this repository):
-./test/test_runner.sh
+docker-compose exec -T jekyll bundle exec jekyll build \
+  --config '_config.yml,_config_dev.yml'
 ```
 
-## 🆘 Need Help?
+## Need Help?
 
-| Resource                                                               | Purpose                            | Response Time    |
-| ---------------------------------------------------------------------- | ---------------------------------- | ---------------- |
-| **[GitHub Issues](https://github.com/bamr87/zer0-mistakes/issues)**    | Bug reports and technical support  | 24-48 hours      |
-| **[Discussions](https://github.com/bamr87/zer0-mistakes/discussions)** | Community Q&A and feature requests | Community-driven |
-| **[Documentation](https://bamr87.github.io/zer0-mistakes/)**           | Comprehensive guides and tutorials | Immediate        |
-| **AI Diagnostics**                                                     | Built-in automated troubleshooting | Immediate        |
-
-## 🚀 Next Steps
-
-**🎯 Immediate Actions:**
-
-1. Run the [one-command installation](#fastest-start-1-command)
-2. Verify with the [validation commands](#validation-commands)
-3. Start customizing your site content
-
-**📚 Learn More:**
-
-1. Follow the [essential setup guides](#essential-setup)
-2. Explore [advanced configuration options](#advanced-configuration)
-3. Join our [community discussions](https://github.com/bamr87/zer0-mistakes/discussions)
-
-**🚀 Deploy:**
-
-1. Push to GitHub for automatic Pages deployment
-2. Configure custom domain if needed
-3. Monitor performance with built-in tools
+| Resource | Purpose |
+|----------|---------|
+| [GitHub Issues](https://github.com/bamr87/zer0-mistakes/issues) | Bug reports and technical support |
+| [Discussions](https://github.com/bamr87/zer0-mistakes/discussions) | Community Q&A and feature requests |
+| [Installation Guide](/docs/installation/) | Deep-dive setup documentation |
 
 ---
 
-**Ready to build something amazing?** Start with the [fastest installation](#fastest-start-1-command) above!
+Start with **[Machine Setup →](/quickstart/machine-setup/)** if this is your first time, or jump straight to [Installation Options](#installation-options) to pick your path.
