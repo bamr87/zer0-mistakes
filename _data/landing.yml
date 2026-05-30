@@ -20,7 +20,7 @@ hero:
     variant: "light"
   cta_secondary:
     label: "Features"
-    url: "#features"
+    url: "/features/"
     icon: "bi-list-check"
     variant: "outline"
   cta_tertiary:
