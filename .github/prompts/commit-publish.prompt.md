@@ -1,13 +1,15 @@
 ---
 mode: agent
-description: "Complete release pipeline: analyze changes → validate → document → version → publish → verify"
+description: "Run the full release pipeline for the jekyll-theme-zer0 gem: analyze changes → validate build → update CHANGELOG/version → commit → tag → publish to RubyGems → verify. Use when asked to commit, push, release, publish, cut a version, or ship a new gem."
+argument-hint: "Bump type: patch | minor | major (defaults to patch)"
+tools: [run_in_terminal, read_file, replace_string_in_file, multi_replace_string_in_file, get_changed_files, grep_search, file_search]
 date: 2026-05-18T12:00:00.000Z
-lastmod: 2026-05-18T12:00:00.000Z
+lastmod: 2026-05-30T13:00:00.000Z
 ---
 
 # Release Pipeline — `jekyll-theme-zer0`
 
-When invoked with `/commit-publish`, execute a full release: analyze → validate → document → version → publish → verify. Use `./scripts/bin/release` whenever possible — it automates phases 3–6.
+When invoked with `/commit-publish`, execute a full release: analyze → validate → document → version → publish → verify. Use [`./scripts/bin/release`](../../scripts/bin/release) whenever possible — it automates phases 2–6 (tests, changelog, version bump, commit, tag, push, gem publish, GitHub release).
 
 ## Quick Path (default)
 
@@ -16,7 +18,15 @@ When invoked with `/commit-publish`, execute a full release: analyze → validat
 ./scripts/bin/release patch             # execute (patch | minor | major)
 ```
 
-Fall through to manual phases below only if the script fails or the user requests step-by-step.
+Add `--non-interactive` when running unattended (skips confirmation prompts). Fall through to the manual phases below only if the script fails or the user requests step-by-step.
+
+## Branching & PRs (GitHub Flow)
+
+This repo uses GitHub Flow — `main` is always deployable, feature work lands via PR.
+
+- **Feature/fix work** → branch (`feature/<scope>-<desc>`, `fix/<scope>-<desc>`, `docs/<desc>`), open a PR early, squash-merge into `main`. Do **not** run the release here.
+- **Cutting a release** → run the pipeline from an up-to-date `main` *after* the relevant PRs are merged and CI is green.
+- **Release-via-PR (protected `main`)** → if direct pushes/tags to `main` are blocked, do the version bump + CHANGELOG on a `release/vX.Y.Z` branch, open a PR, merge it, then tag and publish from `main` (see Phase 5 alternative).
 
 ## Release Checklist
 
@@ -108,7 +118,14 @@ module JekyllThemeZer0
 end
 ```
 
-If user-visible changes touched docs under `docs/` or `pages/_docs/`, update those too.
+Update any other doc surface a user-visible change touches:
+
+- [ ] `CHANGELOG.md` — move `[Unreleased]` entries into the new version section
+- [ ] `lib/jekyll-theme-zer0/version.rb` — bump to `X.Y.Z`
+- [ ] `docs/` and `pages/_docs/` — feature/usage docs for changed behavior
+- [ ] `README.md` — install/usage snippets, badges, version references
+- [ ] `_data/features.yml` — if a feature was added, changed, or removed
+- [ ] Migration notes — for any breaking change (MAJOR)
 
 ## Phase 4 — Commit
 
@@ -138,6 +155,19 @@ git push origin vX.Y.Z
 gem build jekyll-theme-zer0.gemspec
 gem push jekyll-theme-zer0-X.Y.Z.gem
 mkdir -p pkg && mv jekyll-theme-zer0-X.Y.Z.gem pkg/
+```
+
+**Alternative — release via PR (protected `main`):**
+
+```bash
+git switch -c release/vX.Y.Z
+git add -A && git commit -m "chore(release): vX.Y.Z"
+git push -u origin release/vX.Y.Z
+gh pr create --base main --fill --title "chore(release): vX.Y.Z"
+# After review + squash-merge, pushing the tag triggers CI publication
+# (.github/workflows/gem-release.yml on v* tags). Then:
+git switch main && git pull --rebase origin main
+git tag -a vX.Y.Z -m "vX.Y.Z - <one-line summary>" && git push origin vX.Y.Z
 ```
 
 ## Phase 6 — Verify
@@ -182,8 +212,9 @@ Confirm matches `X.Y.Z`. Check GitHub release was created (or create with `gh re
 - Never push tags before commits.
 - Never publish a gem version that already exists on RubyGems (yank-and-republish is forbidden).
 - Never edit `lib/jekyll-theme-zer0/version.rb` outside a release commit.
+- Never run the release pipeline from a feature branch — cut releases from an up-to-date `main` after PRs merge.
 - Always verify the published version matches the tag.
 
 ---
 
-**Related:** `.github/instructions/version-control.instructions.md` · `.github/instructions/documentation.instructions.md` · `CHANGELOG.md`.
+**Related:** [version-control.instructions.md](../instructions/version-control.instructions.md) · [documentation.instructions.md](../instructions/documentation.instructions.md) · [CHANGELOG.md](../../CHANGELOG.md) · [scripts/bin/release](../../scripts/bin/release).
