@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.9.3] - 2026-05-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 90ff5f8 fix(landing): update URL for secondary CTA to point to features page
+
+
 ## [1.9.2] - 2026-05-29
 
 ### Changed
