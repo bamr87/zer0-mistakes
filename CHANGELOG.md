@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.9.7] - 2026-05-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- c01d4e85 fix(quickstart): remove broken image reference from Quick Start Guide
+- 7f6b13fd docs: enhance release pipeline documentation for clarity and completeness
+
+
 ## [1.9.6] - 2026-05-30
 
 ### Changed
