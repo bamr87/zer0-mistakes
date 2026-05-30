@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.9.5] - 2026-05-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- d4e1a789 fix(skins): remove contrast/dark skins, set air as default, improve link contrast
+
+
 ## [1.9.4] - 2026-05-30
 
 ### Changed
