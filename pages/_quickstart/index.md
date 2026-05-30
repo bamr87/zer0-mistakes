@@ -29,8 +29,6 @@ keywords:
 
 # Quick Start Guide
 
-![Zer0-Mistakes Quick Start Guide](/assets/images/quickstart/01-quickstart-overview.png)
-
 Get your **zer0-mistakes** Jekyll site running in under 5 minutes. Choose the path that fits your goal:
 
 ```mermaid
