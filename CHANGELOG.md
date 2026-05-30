@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.4] - 2026-05-30
+
+### Changed
+- **Skins**: Removed `contrast` and `dark` skins; `air` is now the default skin
+- **Accessibility**: Rewrote per-skin link and hover colors to meet WCAG AA (≥4.5:1) contrast in both light and dark mode — all 7 remaining skins now use a darker brand tone for light-mode links and a lighter accent tone for dark-mode links
+- `_config.yml`: `theme_skin` default changed from `"dark"` to `"air"`
+
 ## [1.9.3] - 2026-05-30
 
 ### Changed
