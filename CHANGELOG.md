@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.9.8] - 2026-05-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 4e0273b8 docs: update Gemfile.lock handling and release workflow guidelines
+
+
 ## [1.9.7] - 2026-05-30
 
 ### Changed
