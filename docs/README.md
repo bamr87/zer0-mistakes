@@ -23,7 +23,8 @@ docs/
 │   └── js-api.md
 │
 ├── architecture/              # ADRs and system design
-│   ├── prd.md
+│   ├── prd-requirements.md
+│   ├── prd-roadmap.md
 │   ├── project-structure.md
 │   ├── layouts-includes.md
 │   └── build-system.md
@@ -44,23 +45,15 @@ docs/
 │   └── github-secrets-setup.md
 │
 ├── implementation/            # Feature implementation changelogs
-│   ├── copilot-agent-prompt-button.md
-│   ├── lint-pages-fixes.md
-│   ├── mermaid-integration-v2.md
-│   ├── navigation-review-summary.md
-│   ├── navigation-visual-comparison.md
+│   ├── feature-change-log.md
+│   ├── navigation-redesign.md
 │   ├── posthog-analytics-integration.md
 │   ├── preview-image-generator.md
-│   ├── sidebar-improvements.md
-│   ├── sitemap-enhancement-summary.md
-│   ├── sitemap-integration.md
-│   ├── theme-version-implementation.md
-│   └── ui-ux-navigation-improvements.md
+│   └── sitemap-integration.md
 │
 ├── features/                  # Per-feature design notes
 │   ├── jupyter-notebooks.md
 │   ├── nanobar-component.md
-│   ├── quick-access-guide.md
 │   └── theme-version.md
 │
 ├── installation/              # Installer and deployment guides
@@ -114,7 +107,7 @@ Live preview (built site): `/about/settings/theme-preview/`
 - [Project Structure](architecture/project-structure.md)
 - [Layouts and Includes](architecture/layouts-includes.md)
 - [Build System](architecture/build-system.md)
-- [Product Requirements](architecture/prd.md)
+- [Product Requirements](architecture/prd-requirements.md)
 
 ### Release Process
 

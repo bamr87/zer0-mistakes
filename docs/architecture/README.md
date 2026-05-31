@@ -9,9 +9,7 @@ Technical architecture documentation for the Zer0-Mistakes Jekyll theme. This do
 | [Project Structure](project-structure.md) | Overview of directory layout and file organization |
 | [Layouts and Includes](layouts-includes.md) | Template architecture and component system |
 | [Build System](build-system.md) | Jekyll build process and Docker configuration |
-| [PRD: Overview and Goals](prd-overview.md) | Vision, differentiators, goals (exec summary) |
-| [PRD: User Personas](prd-personas.md) | Target users and market segments |
-| [PRD: Feature Requirements](prd-requirements.md) | Functional, technical, and design requirements |
+| [Product Requirements Document](prd-requirements.md) | Vision, personas, feature requirements, technical and design specs |
 | [PRD: Roadmap and Metrics](prd-roadmap.md) | Roadmap, KPIs, security, acceptance criteria |
 
 ## Overview
@@ -128,5 +126,5 @@ Before contributing, understand:
 
 - [Release Automation](../systems/release-automation.md) — CI/CD and releases
 - [Development Setup](../development/local-setup.md) — Getting started
-- [Dependency Management](../DEPENDENCY_MANAGEMENT.md) — Zero-pin strategy
-- [Ruby Version Management](../RUBY_VERSION_MANAGEMENT.md) — Ruby 3.3 strategy
+- [Dependency Management](../systems/dependency-management.md) — Zero-pin strategy
+- [Ruby Version Management](../systems/ruby-version-management.md) — Ruby 3.3 strategy
