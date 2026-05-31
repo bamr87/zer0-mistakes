@@ -329,3 +329,7 @@ See all patterns rendered with every skin:
 - [_includes/components/README.md](../_includes/components/README.md) — conventions
 - [extending.md](extending.md) — register components, navigation data, skins
 - [design-system.md](design-system.md) — SCSS counterparts in `_sass/components/`
+
+---
+
+> **User guide**: For usage and configuration examples (how to use includes as a theme user), see [Include Components](/docs/customization/includes/) in the user documentation.

@@ -208,3 +208,7 @@ toggle.addEventListener('change', () => {
 ## 8. Add a new test
 
 Drop a `*.spec.js` under `test/visual/` and it will be picked up by `npm run test:smoke`. See `test/visual/layouts.spec.js` for examples that gracefully skip when a route is not available.
+
+---
+
+> **User guide**: For usage and configuration examples (how to extend the theme as a user), see [Customization](/docs/customization/) in the user documentation.

@@ -376,6 +376,12 @@ docker-compose up
 
 *This guide is part of the [Zer0-Mistakes Jekyll Theme](https://github.com/bamr87/zer0-mistakes) documentation.*
 
+## Technical Reference
+
+For implementation details (how Mermaid v2 was integrated, file changes, test suite):
+
+- [Mermaid Integration → docs/implementation/feature-change-log.md](../../../docs/implementation/feature-change-log.md#mermaid-integration-v20)
+
 ## See also
 
 - [[Features]]

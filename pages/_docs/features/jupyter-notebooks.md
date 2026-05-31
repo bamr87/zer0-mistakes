@@ -286,6 +286,12 @@ Add responsive wrapper:
 - [Code Highlighting](/docs/jekyll/code-highlighting/)
 - [Mermaid Diagrams](/docs/features/mermaid-diagrams/)
 
+## Technical Reference
+
+For implementation details (Docker conversion pipeline, nbconvert config, SCSS styling, GitHub Actions workflow):
+
+- [Jupyter Notebooks → docs/features/jupyter-notebooks.md](../../../docs/features/jupyter-notebooks.md)
+
 ## See also
 
 - [[Features]]

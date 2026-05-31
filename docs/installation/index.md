@@ -69,3 +69,7 @@ cd zer0-mistakes
 ---
 
 **Last updated:** 2026-04-20 — Phase 7 docs refresh (1.0.0 prep).
+
+---
+
+> **User guide**: For theme end users, the quick-start paths are at [Quick Start Guide](/docs/getting-started/quick-start/) in the user documentation.

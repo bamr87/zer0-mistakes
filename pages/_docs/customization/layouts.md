@@ -163,6 +163,12 @@ Use includes for reusable parts:
 - [Jekyll Layouts Documentation](https://jekyllrb.com/docs/layouts/)
 - [Liquid Template Language](https://shopify.github.io/liquid/)
 
+## Technical Reference
+
+For contributor-level details (layout hierarchy, Liquid template inheritance, sidebar wiring):
+
+- [Layouts and Navigation → docs/ui/layouts-and-navigation.md](../../../docs/ui/layouts-and-navigation.md)
+
 ## See also
 
 - [[Customization]]

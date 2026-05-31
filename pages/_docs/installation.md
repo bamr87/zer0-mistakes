@@ -107,6 +107,13 @@ docker-compose exec jekyll jekyll doctor
 - [Jekyll Configuration](/docs/jekyll/jekyll-config/) - Customize your site
 - [Troubleshooting](/docs/troubleshooting/) - Common issues and solutions
 
+## Technical Reference
+
+For contributor-level details (installer architecture, profile system, AI-powered setup):
+
+- [Installation Guide → docs/installation/index.md](../../docs/installation/index.md)
+- [Forking Guide → docs/installation/forking.md](../../docs/installation/forking.md)
+
 ## See also
 
 - [[Docker]]

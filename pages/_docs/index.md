@@ -19,7 +19,9 @@ lastmod: 2026-01-24T00:00:00.000Z
 
 # Zer0-Mistakes Documentation
 
-Welcome to the Zer0-Mistakes Jekyll theme documentation. This section contains user-facing guides for installing, configuring, and customizing the theme.
+Welcome to the Zer0-Mistakes Jekyll theme documentation. This section contains **user-facing guides** for installing, configuring, and customizing the theme.
+
+> **Two-tier documentation system:** This site (`/docs/`) contains user guides — how to *use* the theme. For contributor and maintainer references (architecture, release automation, system internals), see the [`docs/` directory](https://github.com/bamr87/zer0-mistakes/tree/main/docs) in the repository.
 
 ## Getting Started
 
