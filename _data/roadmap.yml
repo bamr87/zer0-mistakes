@@ -16,10 +16,23 @@
 # To update the roadmap:
 #   1. Edit this file.
 #   2. Run `./scripts/generate-roadmap.sh` to refresh the README.
-#   3. Commit both this file and the resulting README.md changes.
+#   3. Run `./scripts/generate-roadmap.sh --validate` to confirm the roadmap
+#      is internally consistent and still tracks the shipped gem version.
+#   4. Commit both this file and the resulting README.md changes.
 #
 # A GitHub Actions workflow (`.github/workflows/roadmap-sync.yml`) also runs
-# the generator automatically on push when this file changes.
+# the generator and the validator automatically: it regenerates the README on
+# push, fails PRs whose README is stale, and flags whenever the roadmap drifts
+# behind the version in `lib/jekyll-theme-zer0/version.rb`.
+#
+# Tracking rules enforced by `--validate`:
+#   - `status` must be one of: completed | active | planned | milestone
+#   - `status` must match its `section` (completed=Completed, active=Current,
+#     planned/milestone=Future)
+#   - exactly one `active` milestone; its version must equal the gem's
+#     major.minor series
+#   - no `planned`/`milestone` version at or below the shipped gem version
+#   - `start`/`end` are valid YYYY-MM with end >= start; `meta.updated` is fresh
 #
 # =============================================================================
 # Schema
@@ -47,7 +60,7 @@
 meta:
   title: "zer0-mistakes Roadmap"
   tagline: "Past releases, current focus, and future plans for the zer0-mistakes Jekyll theme."
-  updated: 2026-04-18
+  updated: 2026-05-30
 
 milestones:
   # --- Completed -------------------------------------------------------------
@@ -119,40 +132,171 @@ milestones:
       - "RubyGems API-key authentication"
       - "Dependency updates"
 
-  # --- Current ---------------------------------------------------------------
+  # --- Completed (continued) -------------------------------------------------
 
   - version: "0.22"
     title: "AIEO & Customization"
-    status: active
-    section: Current
-    start: 2026-03
+    status: completed
+    section: Completed
+    start: 2026-04
     end: 2026-04
-    target: "Q1–Q2 2026"
+    released: 2026-04-21
     summary: "AI Engine Optimization (AIEO), structured data, and visual customization tools."
     features:
       - "JSON-LD `SoftwareApplication`, `WebPage`, `Person`, and `FAQPage` schemas"
       - "Author E-E-A-T visibility block on the landing page"
-      - "FAQ page with FAQPage schema"
-      - "Glossary with key term definitions"
-      - "Roadmap page with temporal anchoring"
-      - "Citation hooks on project stats"
+      - "FAQ page with FAQPage schema and glossary with key term definitions"
       - "Skin editor with live color pickers and palette generator"
       - "Admin layout and configuration dashboards"
       - "Playwright visual regression tests"
       - "Vendored assets (Bootstrap, Icons, Mermaid — no runtime CDN)"
       - "Copilot Agent prompt button with data-driven prompt registry"
-      - "Universal installer (remote / github / codespaces modes)"
       - "Dynamic collection-based navigation fallback for zero-config sites"
+
+  - version: "1.0"
+    title: "Modular Installer & First Stable"
+    status: completed
+    section: Completed
+    start: 2026-04
+    end: 2026-04
+    released: 2026-04-20
+    summary: "First stable major release — the monolithic installer rewritten as a modular, spec-driven CLI."
+    features:
+      - "Modular installer CLI (`scripts/bin/install`) with library modules"
+      - "Declarative YAML profiles (full / minimal / fork / remote / github)"
+      - "Pluggable deploy targets (GitHub Pages, Azure SWA, Docker)"
+      - "`wizard --ai`, `doctor`, `diagnose`, and `upgrade` subcommands"
+      - "Hardened version analyzer and release automation"
+
+  - version: "1.1"
+    title: "Copilot Agent Prompts"
+    status: completed
+    section: Completed
+    start: 2026-04
+    end: 2026-04
+    released: 2026-04-21
+    summary: "Data-driven Copilot Agent prompt registry focused on frontend and CMS workflows."
+    features:
+      - "Prompt registry powering the Copilot Agent button"
+      - "Frontend- and CMS-oriented prompt presets"
+
+  - version: "1.2"
+    title: "Bare-Minimum Starter"
+    status: completed
+    section: Completed
+    start: 2026-04
+    end: 2026-04
+    released: 2026-04-22
+    summary: "Three-file remote-theme starter with an in-browser configuration wizard."
+    features:
+      - "`welcome` layout that detects unconfigured sites"
+      - "Embedded setup wizard that generates a personalised `_config.yml`"
+      - "Smarter unconfigured-site detection heuristics"
+
+  - version: "1.3"
+    title: "Obsidian Vault Integration"
+    status: completed
+    section: Completed
+    start: 2026-04
+    end: 2026-04
+    released: 2026-04-24
+    summary: "Edit content as an Obsidian vault with identical rendering on GitHub Pages."
+    features:
+      - "Client-side wiki-link resolver (aliases, embeds, callouts, inline tags)"
+      - "Server-side backlinks panel on note layouts"
+      - "Optional Ruby converter for vanilla Jekyll forks"
+
+  - version: "1.4"
+    title: "Obsidian Graph View"
+    status: completed
+    section: Completed
+    start: 2026-04
+    end: 2026-04
+    released: 2026-04-25
+    summary: "Force-directed knowledge graph mirroring Obsidian's local graph view."
+    features:
+      - "Cytoscape.js graph at `/docs/obsidian/graph/`"
+      - "Standalone collapsible local graph panel"
+
+  - version: "1.5"
+    title: "Example Posts & AI Previews"
+    status: completed
+    section: Completed
+    start: 2026-04
+    end: 2026-04
+    released: 2026-04-29
+    summary: "Richer sample content and regenerated AI preview images."
+    features:
+      - "12 example posts across Business, Development, Science, Technology, Tutorial, and World"
+      - "All preview images regenerated with the GPT image model"
+
+  - version: "1.6"
+    title: "About Page & Search Cleanup"
+    status: completed
+    section: Completed
+    start: 2026-04
+    end: 2026-04
+    released: 2026-04-29
+    summary: "Expanded About page and removal of the Algolia search dependency."
+    features:
+      - "About page with prerequisites, quick start, FAQ, and architecture diagram"
+      - "Algolia removed in favor of the built-in client-side search"
+      - "Jekyll build performance caching"
+
+  - version: "1.7"
+    title: "Build Performance & MathJax 3"
+    status: completed
+    section: Completed
+    start: 2026-05
+    end: 2026-05
+    released: 2026-05-24
+    summary: "Significant Jekyll build speedups and a MathJax 3 inline-math fix."
+    features:
+      - "Conditional MathJax/Mermaid loading and richer Obsidian cache"
+      - "jQuery removed from page loads"
+      - "Profiled Docker build reduced from ~119s to ~87s"
+
+  - version: "1.8"
+    title: "Design Tokens & Navigation Chrome"
+    status: completed
+    section: Completed
+    start: 2026-05
+    end: 2026-05
+    released: 2026-05-25
+    summary: "Sass design-token system, refreshed navigation chrome, and a docs overhaul."
+    features:
+      - "Sass token layers, component/layout partials, and skins"
+      - "VS Code-style collapsible sidebar rail and TOC"
+      - "Unified Playwright test tiers (smoke / snapshots / regression)"
+      - "Design-system developer docs"
+
+  # --- Current ---------------------------------------------------------------
+
+  - version: "1.9"
+    title: "Installer v2 & Site Scraper"
+    status: active
+    section: Current
+    start: 2026-05
+    end: 2026-05
+    target: "Current (1.9.x)"
+    released: 2026-05-27
+    summary: "Modular installer v2 with deploy plugins, AI wizard pipeline, and a site scraper."
+    features:
+      - "Installer deploy plugins and AI wizard apply pipeline"
+      - "Site scraper — BFS-crawl any website into a zer0-mistakes site"
+      - "Accessibility skin fixes (WCAG AA contrast); `air` default skin"
+      - "Quickstart documentation rewrite with screenshots"
+      - "Hardened one-line installer path"
 
   # --- Future ----------------------------------------------------------------
 
-  - version: "0.23"
+  - version: "2.0"
     title: "CMS Integration"
     status: planned
     section: Future
-    start: 2026-05
-    end: 2026-07
-    target: "Q2 2026"
+    start: 2026-06
+    end: 2026-08
+    target: "Q3 2026"
     summary: "Headless CMS integration with a content API and admin dashboard."
     features:
       - "Headless CMS integration (Decap CMS or Tina)"
@@ -161,13 +305,13 @@ milestones:
       - "Draft preview workflow"
       - "Multi-author collaboration"
 
-  - version: "0.24"
+  - version: "2.1"
     title: "i18n Support"
     status: planned
     section: Future
-    start: 2026-07
-    end: 2026-09
-    target: "Q3 2026"
+    start: 2026-08
+    end: 2026-10
+    target: "Q4 2026"
     summary: "Multi-language content support with locale-aware routing."
     features:
       - "Multi-language content support"
@@ -175,12 +319,12 @@ milestones:
       - "Translated UI strings via `_data/ui-text.yml`"
       - "Right-to-left (RTL) layout support"
 
-  - version: "0.25"
+  - version: "2.2"
     title: "Advanced Analytics"
     status: planned
     section: Future
-    start: 2026-09
-    end: 2026-11
+    start: 2026-10
+    end: 2026-12
     target: "Q4 2026"
     summary: "Visual theme customizer, A/B testing, and conversion funnels."
     features:
@@ -189,12 +333,12 @@ milestones:
       - "Heatmap visualization"
       - "Visual theme customizer enhancements"
 
-  - version: "1.0"
-    title: "Stable Release"
+  - version: "3.0"
+    title: "Stable LTS"
     status: milestone
     section: Future
-    start: 2027-01
-    end: 2027-01
+    start: 2027-02
+    end: 2027-02
     target: "Q1 2027"
     summary: "Stable public API, 90%+ test coverage, and long-term support commitment."
     features:
