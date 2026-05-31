@@ -1,3 +1,13 @@
+---
+title: "Profiles"
+description: "TODO: Add a 120-160 character description of this document."
+date: 2026-04-21T04:03:45.000Z
+lastmod: 2026-04-21T04:03:45.000Z
+categories: [docs]
+tags: [installation, setup]
+author: bamr87
+---
+
 # Profiles
 
 A **profile** is a declarative YAML manifest under [`templates/profiles/`](../../templates/profiles/) that tells the installer what to install and how to brand it. Profiles replaced the old if/elif `--minimal | --full | --fork | --remote | --github` mode dispatcher.

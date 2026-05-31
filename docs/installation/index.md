@@ -1,3 +1,13 @@
+---
+title: "Installation Guide"
+description: "TODO: Add a 120-160 character description of this document."
+date: 2026-04-21T04:03:45.000Z
+lastmod: 2026-04-21T04:03:45.000Z
+categories: [docs]
+tags: [installation, setup]
+author: bamr87
+---
+
 # Installation Guide
 
 The `zer0-mistakes` installer is a modular, profile-driven, AI-aware CLI built around the canonical entrypoint [`scripts/bin/install`](../../scripts/bin/install). The classic `install.sh` one-liner still works — it now bootstraps the same modular pipeline.

@@ -1,3 +1,13 @@
+---
+title: "Release Notes Template"
+description: "TODO: Add a 120-160 character description of this document."
+date: 2025-10-26T19:20:20.000Z
+lastmod: 2025-11-27T20:10:56.000Z
+categories: [docs]
+tags: [templates]
+author: bamr87
+---
+
 # Release Notes Template
 
 **Version**: vX.Y.Z  

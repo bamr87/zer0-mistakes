@@ -1,3 +1,13 @@
+---
+title: "Code Style Guide"
+description: "TODO: Add a 120-160 character description of this document."
+date: 2026-01-25T03:38:33.000Z
+lastmod: 2026-01-25T03:38:33.000Z
+categories: [docs]
+tags: [development, contributing]
+author: bamr87
+---
+
 # Code Style Guide
 
 Coding conventions and best practices for contributing to the Zer0-Mistakes theme.

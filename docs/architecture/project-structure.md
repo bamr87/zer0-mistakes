@@ -1,3 +1,13 @@
+---
+title: "Project Structure"
+description: "TODO: Add a 120-160 character description of this document."
+date: 2026-01-25T03:38:33.000Z
+lastmod: 2026-01-25T03:38:33.000Z
+categories: [docs]
+tags: [architecture, design]
+author: bamr87
+---
+
 # Project Structure
 
 Overview of the Zer0-Mistakes theme directory layout and file organization.

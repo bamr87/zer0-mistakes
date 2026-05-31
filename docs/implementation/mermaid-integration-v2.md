@@ -1,3 +1,13 @@
+---
+title: "Changelog: Mermaid Integration v2.0"
+description: "TODO: Add a 120-160 character description of this document."
+date: 2025-10-04T20:39:25.000Z
+lastmod: 2026-03-29T23:57:37.000Z
+categories: [docs]
+tags: [implementation, changelog]
+author: bamr87
+---
+
 # Changelog: Mermaid Integration v2.0
 
 **Issue**: [#6](https://github.com/bamr87/zer0-mistakes/issues/6)  

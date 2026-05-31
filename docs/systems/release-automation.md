@@ -1,3 +1,13 @@
+---
+title: "Release Automation System"
+description: "TODO: Add a 120-160 character description of this document."
+date: 2025-11-26T05:12:01.000Z
+lastmod: 2026-03-30T15:05:18.000Z
+categories: [docs]
+tags: [systems, automation]
+author: bamr87
+---
+
 # Release Automation System
 
 **Version:** 2.0 (Modular Architecture)  

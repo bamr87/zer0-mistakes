@@ -1,3 +1,13 @@
+---
+title: "Zero Version Pin Strategy"
+description: "TODO: Add a 120-160 character description of this document."
+date: 2025-11-29T05:33:55.000Z
+lastmod: 2025-11-29T05:33:55.000Z
+categories: [docs]
+tags: [systems, automation]
+author: bamr87
+---
+
 # Zero Version Pin Strategy
 
 > **Always use the latest compatible versions of everything, with zero version pins anywhere — while maintaining 100% reproducible builds and failing fast in TEST/DEV.**

@@ -4,6 +4,11 @@ This directory contains historical documentation from the **Release Automation M
 
 ## Archived Files
 
+### General Project History
+
+- **organization-summary.md** - October 2025 documentation consolidation summary
+- **features-update-summary.md** - Features metadata expansion (features.yml: 3 → 28 features, 77 tags)
+
 ### Phase Completion Documents
 
 These files tracked the 3-phase modernization process:

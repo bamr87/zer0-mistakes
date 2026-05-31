@@ -8,6 +8,10 @@ features:
   - Per-page context injection
   - Environment metadata capture
   - Data-driven prompt registry
+lastmod: 2026-05-31T20:54:52.000Z
+categories: [docs]
+tags: [implementation, copilot, ui]
+author: bamr87
 ---
 
 # Copilot Agent Prompt Button

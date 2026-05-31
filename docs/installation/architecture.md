@@ -1,3 +1,13 @@
+---
+title: "Installer Architecture"
+description: "TODO: Add a 120-160 character description of this document."
+date: 2026-04-21T04:03:45.000Z
+lastmod: 2026-04-21T04:03:45.000Z
+categories: [docs]
+tags: [installation, setup]
+author: bamr87
+---
+
 # Installer Architecture
 
 The installer is layered: a thin **bootstrap** (legacy `install.sh` for `curl | bash`) hands off to a **CLI dispatcher** (`scripts/bin/install`), which loads **focused library modules** from `scripts/lib/install/`, which read **declarative YAML profiles** from `templates/profiles/`, which can attach **pluggable deploy modules** from `scripts/lib/install/deploy/`.

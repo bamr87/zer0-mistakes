@@ -1,3 +1,13 @@
+---
+title: "AI Features"
+description: "TODO: Add a 120-160 character description of this document."
+date: 2026-04-21T04:03:45.000Z
+lastmod: 2026-04-21T04:03:45.000Z
+categories: [docs]
+tags: [installation, setup]
+author: bamr87
+---
+
 # AI Features
 
 Every AI feature in the installer is **opt-in, sandboxed, and visible**. Nothing reaches a third party unless you explicitly invoke an `--ai`-flagged subcommand or set `OPENAI_API_KEY` and run a wizard. Everything written to disk is shown as a unified diff first.

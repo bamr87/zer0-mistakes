@@ -1,3 +1,13 @@
+---
+title: "Customization"
+description: "TODO: Add a 120-160 character description of this document."
+date: 2026-04-21T04:03:45.000Z
+lastmod: 2026-04-21T04:03:45.000Z
+categories: [docs]
+tags: [installation, setup]
+author: bamr87
+---
+
 # Customization
 
 The installer is designed for forking. Three extension points cover almost every customization scenario without modifying the bootstrap or CLI dispatcher.

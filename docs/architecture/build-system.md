@@ -1,3 +1,13 @@
+---
+title: "Build System"
+description: "TODO: Add a 120-160 character description of this document."
+date: 2026-01-25T03:38:33.000Z
+lastmod: 2026-01-25T03:38:33.000Z
+categories: [docs]
+tags: [architecture, design]
+author: bamr87
+---
+
 # Build System
 
 Documentation of the Jekyll build process, Docker configuration, and deployment pipeline.
