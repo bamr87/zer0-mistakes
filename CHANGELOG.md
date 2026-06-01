@@ -1,5 +1,18 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- **Continuous-evolution loop**: a self-sustaining backlog mechanism so AI agents can keep improving the repo between human sessions.
+  - `_data/backlog.yml` — tactical task queue (single source of truth), mirroring the `_data/roadmap.yml` pattern.
+  - `scripts/sync-backlog.rb` (+ `scripts/sync-backlog.sh`) — schema validator and GitHub Issues sync (idempotent via `<!-- backlog-id -->` markers).
+  - `.github/workflows/backlog-sync.yml` — syncs the backlog to issues on push to `main`; validates schema on PRs.
+  - `.github/workflows/auto-merge.yml` — enables native auto-merge for low-risk (`docs`/`deps`/`lint`) PRs once CI is green.
+  - `.github/prompts/repo-audit.prompt.md` (`/repo-audit`) and `.github/prompts/backlog-implement.prompt.md` (`/backlog-implement`) — the audit and implement routines.
+  - `.github/instructions/backlog.instructions.md` — file-scoped guidance for the backlog.
+  - `docs/systems/continuous-evolution.md` — full design, autonomy policy, and setup.
+  - `CLAUDE.md` — Claude Code pointer to `AGENTS.md` (per the documented convention).
+
 ## [1.9.9] - 2026-05-31
 
 ### Changed

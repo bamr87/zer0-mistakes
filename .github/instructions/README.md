@@ -20,10 +20,13 @@ This directory contains file-specific instructions for GitHub Copilot to provide
 │   ├── features.instructions.md      # Feature registry schema + sync contract
 │   ├── obsidian.instructions.md      # Obsidian vault integration (wiki-links, JS resolver, Ruby plugin)
 │   ├── sass.instructions.md          # Sass partials, Bootstrap overrides, CSS custom properties
-│   └── version-control.instructions.md  # Git workflow and releases
+│   ├── version-control.instructions.md  # Git workflow and releases
+│   └── backlog.instructions.md       # Tactical backlog schema + sync contract
 ├── prompts/                         # Reusable agent/chat prompts (.prompt.md)
 │   ├── commit-publish.prompt.md      # Full release pipeline
 │   ├── frontmatter-maintainer.prompt.md  # Front matter audit / fix
+│   ├── repo-audit.prompt.md          # Review repo → file backlog tasks
+│   ├── backlog-implement.prompt.md   # Implement next backlog task → PR
 │   └── seed.prompt.md                # Theme rebuild blueprint
 └── seed/                            # Deep architectural blueprint docs
 
@@ -51,6 +54,7 @@ GitHub Copilot automatically applies these instructions based on the files you'r
 | `obsidian.instructions.md`        | `_plugins/obsidian_links.rb`, `assets/js/obsidian-*.js`, `assets/data/wiki-index.json`, `_includes/content/backlinks.html`, `pages/_docs/obsidian/**`, Obsidian tests | Wiki-link/embed/callout contract across Liquid index, JS resolver, and Ruby plugin |
 | `sass.instructions.md`            | `_sass/**`, `assets/css/**`        | Sass partial layering, Bootstrap variable overrides, no-double-Bootstrap rule |
 | `version-control.instructions.md` | `CHANGELOG.md`, `**/version.*`, `*.gemspec`, `package.json` | Git workflow, semantic versioning, releases        |
+| `backlog.instructions.md`         | `_data/backlog.yml`, `scripts/sync-backlog.*`, `.github/workflows/backlog-sync.yml` | Tactical backlog schema, sync contract, ownership rules |
 
 ## 📖 Main Instructions (copilot-instructions.md)
 

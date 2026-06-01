@@ -1,0 +1,55 @@
+name: Auto-merge low-risk PRs
+
+# Enable GitHub native auto-merge for PRs the IMPLEMENT routine has classified as
+# low-risk (label `auto-merge`). Native auto-merge only completes once all
+# REQUIRED status checks pass, so CI remains the gate. Everything without the
+# label stays for human review.
+#
+# Prerequisites (configured once by a maintainer, see
+# docs/systems/continuous-evolution.md):
+#   - Settings → General → "Allow auto-merge" enabled.
+#   - Branch protection on `main` with the CI checks marked as required.
+# Without these, this job is a safe no-op and the PR simply waits for a human.
+
+permissions:
+  contents: write
+  pull-requests: write
+
+on:
+  pull_request_target:
+    types: [labeled, opened, reopened, synchronize]
+
+concurrency:
+  group: auto-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  enable-auto-merge:
+    # Only act on PRs carrying the auto-merge label. Guard against the label
+    # being applied to risky changes: bail if the PR touches version/release or
+    # dependency-manifest files that must never auto-merge.
+    if: contains(github.event.pull_request.labels.*.name, 'auto-merge')
+    runs-on: ubuntu-latest
+    steps:
+      # Note: we never check out the PR head (untrusted code under
+      # pull_request_target). The file list comes from the API via `gh pr diff`.
+      - name: Verify the PR is genuinely low-risk
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          changed=$(gh pr diff "$PR" --name-only)
+          echo "Changed files:"; echo "$changed"
+          # Files that must never auto-merge, even if mislabelled.
+          if echo "$changed" | grep -E -q \
+            '(^lib/jekyll-theme-zer0/version\.rb$|\.gemspec$|^Gemfile$|^Gemfile\.lock$|^package\.json$)'; then
+            echo "::error::PR labelled auto-merge but touches version/release/dependency files — removing label."
+            gh pr edit "$PR" --remove-label auto-merge
+            exit 1
+          fi
+
+      - name: Enable native auto-merge (squash)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+        run: gh pr merge "$PR" --auto --squash

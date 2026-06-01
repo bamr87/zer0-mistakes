@@ -39,6 +39,7 @@ files you are about to touch — do **not** load everything up front.
 | **File-scoped instructions** | `.github/instructions/*.instructions.md` | When editing files matching the `applyTo:` glob in each file's front matter |
 | **Reusable prompts (chat/agent modes)** | `.github/prompts/*.prompt.md` | When asked to perform a multi-step task that matches a prompt |
 | **Project "seed" blueprint** | `.github/seed/*.md` | For deep architectural decisions or rebuilding subsystems from scratch |
+| **Tactical backlog** | `_data/backlog.yml` | When picking up or filing granular tasks (synced to GitHub Issues) — see the continuous-evolution loop below |
 | **Obsidian vault docs** | `pages/_docs/obsidian/` | When working with `[[wiki-links]]`, `![[embeds]]`, callouts, or the wiki-index/JS resolver |
 | **Cursor slash-commands** | `.cursor/commands/*.md` | Auto-loaded by Cursor; mirrors the prompts above |
 | **CI / quality config** | `.github/config/`, `.github/workflows/` | When changing lint rules, tests, or release automation |
@@ -60,6 +61,7 @@ should load them manually):
 | `test/**` | `.github/instructions/testing.instructions.md` |
 | `docs/**`, `pages/_docs/**`, `*docs*.md` | `.github/instructions/documentation.instructions.md` |
 | `CHANGELOG.md`, `**/version.*`, `*.gemspec`, `package.json` | `.github/instructions/version-control.instructions.md` |
+| `_data/backlog.yml`, `scripts/sync-backlog.*`, `.github/workflows/backlog-sync.yml` | `.github/instructions/backlog.instructions.md` |
 
 ### Reusable prompts
 
@@ -69,6 +71,28 @@ should load them manually):
 | Add a new Obsidian wiki-link / embed / callout syntax across all rendering paths | `.github/prompts/obsidian-add-syntax.prompt.md` |
 | Front matter audit / fix across content | `.github/prompts/frontmatter-maintainer.prompt.md` |
 | Rebuild the theme from scratch (deep blueprint) | `.github/prompts/seed.prompt.md` |
+| Review the repo and file tactical tasks into the backlog | `.github/prompts/repo-audit.prompt.md` |
+| Implement the next open backlog task and open a PR | `.github/prompts/backlog-implement.prompt.md` |
+
+---
+
+## 🔁 Continuous-Evolution Loop
+
+This repo runs a self-sustaining backlog loop so AI agents can keep improving it
+between human sessions:
+
+1. **Audit** (`/repo-audit`, scheduled weekly) reviews tests, docs, and roadmap
+   delivery and files tasks into [`_data/backlog.yml`](./_data/backlog.yml).
+2. **Sync** (`.github/workflows/backlog-sync.yml`) mirrors open tasks to GitHub
+   Issues (`agent-ready` label) and closes issues for tasks marked `done`.
+3. **Implement** (`/backlog-implement`, scheduled) picks the top open task, builds
+   it on a branch, validates, and opens a PR. Low-risk classes (`docs`/`deps`/`lint`
+   with `risk: low`) auto-merge once CI is green via `.github/workflows/auto-merge.yml`;
+   everything else waits for human review.
+
+`_data/backlog.yml` is the source of truth — edit the file, not the issues. Full
+design, autonomy policy, and how to pause the loop:
+[`docs/systems/continuous-evolution.md`](./docs/systems/continuous-evolution.md).
 
 ---
 
