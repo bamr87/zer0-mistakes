@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.11.0] - 2026-06-01
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 8a5ba7e2 feat(ci): add continuous-evolution backlog loop (#114)
+
+
 ## [Unreleased]
 
 ### Added
