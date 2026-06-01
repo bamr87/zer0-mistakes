@@ -11,6 +11,7 @@
 # Usage:
 #   ./scripts/generate-roadmap.sh             # update README.md
 #   ./scripts/generate-roadmap.sh --check     # CI-friendly drift detection
+#   ./scripts/generate-roadmap.sh --validate  # check integrity & version tracking
 #   ./scripts/generate-roadmap.sh --stdout    # print regenerated sections only
 #
 # =============================================================================

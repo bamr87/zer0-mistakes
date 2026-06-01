@@ -13,8 +13,7 @@ lastmod: 2026-05-18T12:00:00.000Z
 root.html              # base <html>, <head>, <body> shell
 └── default.html       # navbar + footer + container
     ├── home.html
-    ├── journals.html  # blog post
-    ├── blog.html      # blog index
+    ├── article.html   # blog post
     ├── collection.html
     ├── landing.html
     └── stats.html
