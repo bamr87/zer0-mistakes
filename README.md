@@ -217,9 +217,9 @@ Jump to a topic:
 - [AI-native workflow](#-ai-native-workflow) — multi-agent guidance, AI install wizard, AI preview images, AIEO discovery
 - [Architecture & technology stack](#-architecture)
 - [Key features in depth](#-key-features) — installer CLI, site scraper, Docker, analytics, search, navigation, dark mode
-- [Installation methods](#-installation-methods) — one-liner, modular CLI, remote theme, fork, Ruby gem
+- [Installation methods](#-installation-methods--reference-card) — one-liner, modular CLI, remote theme, fork, Ruby gem
 - [Project structure](#-project-structure)
-- [Migration utility](#️-migration-utility--add-admin-pages-to-an-existing-site)
+- [Migration utility](#-migration-utility--add-admin-pages-to-an-existing-site)
 - [Development workflow & testing](#-development-workflow)
 - [Deployment options](#-deployment)
 - [Documentation map](#-documentation)
@@ -289,7 +289,7 @@ Clone the repo (or fork) and your editor's AI agent will pick up project context
 
 ## 🏗 Architecture
 
-> **Who this is for:** developers, theme customizers, and anyone integrating zer0-mistakes into a larger system. If you only want to publish a blog, you can skip ahead to [Key Features](#-key-features) or [Installation Methods](#-installation-methods).
+> **Who this is for:** developers, theme customizers, and anyone integrating zer0-mistakes into a larger system. If you only want to publish a blog, you can skip ahead to [Key Features](#-key-features) or [Installation Methods](#-installation-methods--reference-card).
 
 zer0-mistakes is a layered system: your content (Markdown + YAML) flows through the theme's templates, gets compiled by Jekyll, and is published as a fully static site that any host can serve. Every layer is replaceable without affecting the others.
 
@@ -407,7 +407,7 @@ docker-compose down -v           # clean up volumes and gem cache
 docker-compose down && docker-compose up --build   # full rebuild after Gemfile changes
 ```
 
-A separate [`docker-compose.test.yml`](docker-compose.test.yml) provides an isolated environment for CI-style test runs, and [`docker-compose.prod.yml`](docker-compose.prod.yml) (referenced in the [Deployment](#-deployment) section) builds a production image.
+A separate [`docker-compose.test.yml`](docker-compose.test.yml) provides an isolated environment for CI-style test runs.
 
 ### 🔒 Privacy-First Analytics
 
@@ -583,7 +583,7 @@ The repository follows Jekyll convention with a few additions for tooling and AI
 
 | Directory | Purpose | Key Files |
 |-----------|---------|-----------|
-| `_layouts/` | Page templates | `default.html`, `journals.html`, `landing.html`, `notebook.html` |
+| `_layouts/` | Page templates | `default.html`, `article.html`, `landing.html`, `notebook.html` |
 | `_includes/` | Reusable components | `core/`, `components/` (see `_includes/components/README.md`), `analytics/`, `navigation/` |
 | `_sass/` | Stylesheets | `tokens/` (design tokens), `components/`, `layouts/`, `utilities/`, `custom.scss` (legacy barrel), `core/`, `theme/` |
 | `_data/` | Data-driven content | `landing.yml` (homepage copy), `navigation/*.yml`, `ui-text.yml` (i18n), `features.yml`, `authors.yml`, `theme_backgrounds.yml` |
@@ -647,13 +647,13 @@ git commit -m "feat: add new component"
 
 ```bash
 # Quick validation
-./test/validate_installation.sh
+./test/test_installation.sh
 
 # Full test suite
 ./test/test_runner.sh --verbose
 
 # Docker-specific tests
-./test/test_docker_deployment.sh
+./test/test_deployment.sh
 
 # Frontend smoke tests (Playwright; starts Jekyll on :4011 unless BASE_URL is set)
 npm run test:smoke
@@ -680,7 +680,7 @@ Three supported targets, in order of recommendation:
 | Target | Cost | Setup | Best for |
 |---|---|---|---|
 | **GitHub Pages user site** | Free | Push to `main` of `<username>.github.io` (see [Path A](#path-a--easiest-fork-on-github-no-terminal-required)) | Most users; personal sites, docs, blogs, portfolios |
-| **Docker production image** | Self-hosted | `docker-compose -f docker-compose.prod.yml up -d` | Self-hosted servers, intranet, air-gapped environments |
+| **Docker production image** | Self-hosted | `JEKYLL_ENV=production docker-compose up -d` | Self-hosted servers, intranet, air-gapped environments |
 | **Custom static host** | Varies | `docker-compose run --rm jekyll jekyll build` → upload `_site/` | Netlify, Vercel, Cloudflare Pages, S3 + CloudFront, Azure Static Web Apps |
 
 ---
@@ -705,6 +705,25 @@ zer0-mistakes documentation is split across three audiences. Pick the layer that
 | [📓 Jupyter Notebooks](https://github.com/bamr87/zer0-mistakes/blob/main/docs/JUPYTER_NOTEBOOKS.md) | Notebook conversion documentation |
 | [📝 PRD](docs/PRD.md) | Product requirements & roadmap |
 | [🔒 Privacy Policy](https://zer0-mistakes.com/privacy-policy/) | GDPR/CCPA compliant privacy docs |
+
+### Contributor Technical Reference
+
+These files live in the repo under `docs/` and are intended for theme contributors and forks:
+
+| File | Topic |
+|------|-------|
+| [docs/design-system.md](docs/design-system.md) | Design system overview |
+| [docs/design-tokens.md](docs/design-tokens.md) | Design tokens reference |
+| [docs/components.md](docs/components.md) | UI component catalogue |
+| [docs/layouts-and-navigation.md](docs/layouts-and-navigation.md) | Layout hierarchy & navigation |
+| [docs/theming.md](docs/theming.md) | Sass / Bootstrap theming guide |
+| [docs/customization.md](docs/customization.md) | Site customization patterns |
+| [docs/configuration.md](docs/configuration.md) | `_config.yml` reference |
+| [docs/code-blocks.md](docs/code-blocks.md) | Syntax highlighting setup |
+| [docs/extending.md](docs/extending.md) | Adding layouts, includes & plugins |
+| [docs/js-api.md](docs/js-api.md) | JavaScript module API |
+| [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | Common issues & fixes |
+| [docs/FORKING.md](docs/FORKING.md) | Forking & personalization guide |
 
 ---
 
@@ -784,7 +803,7 @@ When you fork the theme as a starter, the workflows come with you. To make them 
 
 ## 🗺 Roadmap
 
-The diagram and table below are auto-generated from [`_data/roadmap.yml`](_data/roadmap.yml) by [`scripts/generate-roadmap.sh`](scripts/generate-roadmap.sh). See the full [Roadmap page](/roadmap/) for per-version detail and the [PRD](docs/PRD.md) for product context.
+The diagram and table below are auto-generated from [`_data/roadmap.yml`](_data/roadmap.yml) by [`scripts/generate-roadmap.sh`](scripts/generate-roadmap.sh). See the full [Roadmap page](https://zer0-mistakes.com/roadmap/) for per-version detail and the [PRD](docs/PRD.md) for product context.
 
 <!-- ROADMAP_MERMAID:START -->
 
@@ -798,13 +817,23 @@ gantt
     v0.19 Feature Discovery      :done, 2026-01, 2026-01
     v0.20 Navigation Redesign    :done, 2026-02, 2026-02
     v0.21 Env Switcher           :done, 2026-02, 2026-03
+    v0.22 AIEO & Customization   :done, 2026-04, 2026-04
+    v1.0 Modular Installer & First Stable :done, 2026-04, 2026-04
+    v1.1 Copilot Agent Prompts   :done, 2026-04, 2026-04
+    v1.2 Bare-Minimum Starter    :done, 2026-04, 2026-04
+    v1.3 Obsidian Vault Integration :done, 2026-04, 2026-04
+    v1.4 Obsidian Graph View     :done, 2026-04, 2026-04
+    v1.5 Example Posts & AI Previews :done, 2026-04, 2026-04
+    v1.6 About Page & Search Cleanup :done, 2026-04, 2026-04
+    v1.7 Build Performance & MathJax 3 :done, 2026-05, 2026-05
+    v1.8 Design Tokens & Navigation Chrome :done, 2026-05, 2026-05
     section Current
-    v0.22 AIEO & Customization   :active, 2026-03, 2026-04
+    v1.9 Installer v2 & Site Scraper :active, 2026-05, 2026-05
     section Future
-    v0.23 CMS Integration        :2026-05, 2026-07
-    v0.24 i18n Support           :2026-07, 2026-09
-    v0.25 Advanced Analytics     :2026-09, 2026-11
-    v1.0 Stable Release          :milestone, 2027-01, 1d
+    v2.0 CMS Integration         :2026-06, 2026-08
+    v2.1 i18n Support            :2026-08, 2026-10
+    v2.2 Advanced Analytics      :2026-10, 2026-12
+    v3.0 Stable LTS              :milestone, 2027-02, 1d
 ```
 
 <!-- ROADMAP_MERMAID:END -->
@@ -818,11 +847,21 @@ gantt
 | **v0.19** | ✅ Completed | Jan 2026 | 43 documented features with a comprehensive feature registry. |
 | **v0.20** | ✅ Completed | Feb 2026 | Local Docker publishing pipeline and CI variable abstraction. |
 | **v0.21** | ✅ Completed | Feb 2026 | Environment switcher, settings modal redesign, and RubyGems API-key auth. |
-| **v0.22** | 🚧 In Progress | Q1–Q2 2026 | AI Engine Optimization (AIEO), structured data, and visual customization tools. |
-| **v0.23** | 🗓 Planned | Q2 2026 | Headless CMS integration with a content API and admin dashboard. |
-| **v0.24** | 🗓 Planned | Q3 2026 | Multi-language content support with locale-aware routing. |
-| **v0.25** | 🗓 Planned | Q4 2026 | Visual theme customizer, A/B testing, and conversion funnels. |
-| **v1.0** | 🎯 Milestone | Q1 2027 | Stable public API, 90%+ test coverage, and long-term support commitment. |
+| **v0.22** | ✅ Completed | Apr 2026 | AI Engine Optimization (AIEO), structured data, and visual customization tools. |
+| **v1.0** | ✅ Completed | Apr 2026 | First stable major release — the monolithic installer rewritten as a modular, spec-driven CLI. |
+| **v1.1** | ✅ Completed | Apr 2026 | Data-driven Copilot Agent prompt registry focused on frontend and CMS workflows. |
+| **v1.2** | ✅ Completed | Apr 2026 | Three-file remote-theme starter with an in-browser configuration wizard. |
+| **v1.3** | ✅ Completed | Apr 2026 | Edit content as an Obsidian vault with identical rendering on GitHub Pages. |
+| **v1.4** | ✅ Completed | Apr 2026 | Force-directed knowledge graph mirroring Obsidian's local graph view. |
+| **v1.5** | ✅ Completed | Apr 2026 | Richer sample content and regenerated AI preview images. |
+| **v1.6** | ✅ Completed | Apr 2026 | Expanded About page and removal of the Algolia search dependency. |
+| **v1.7** | ✅ Completed | May 2026 | Significant Jekyll build speedups and a MathJax 3 inline-math fix. |
+| **v1.8** | ✅ Completed | May 2026 | Sass design-token system, refreshed navigation chrome, and a docs overhaul. |
+| **v1.9** | 🚧 In Progress | Current (1.9.x) | Modular installer v2 with deploy plugins, AI wizard pipeline, and a site scraper. |
+| **v2.0** | 🗓 Planned | Q3 2026 | Headless CMS integration with a content API and admin dashboard. |
+| **v2.1** | 🗓 Planned | Q4 2026 | Multi-language content support with locale-aware routing. |
+| **v2.2** | 🗓 Planned | Q4 2026 | Visual theme customizer, A/B testing, and conversion funnels. |
+| **v3.0** | 🎯 Milestone | Q1 2027 | Stable public API, 90%+ test coverage, and long-term support commitment. |
 
 <!-- ROADMAP_TABLE:END -->
 
@@ -865,7 +904,7 @@ git push origin feature/awesome-feature
 | **Current Version** | 1.9.10 ([RubyGems](https://rubygems.org/gems/jekyll-theme-zer0), [CHANGELOG](/CHANGELOG)) |
 | **Documented Features** | 43 ([Feature Registry](https://github.com/bamr87/zer0-mistakes/blob/main/_data/features.yml)) |
 | **Setup Time** | 2-5 minutes ([install.sh benchmarks](https://github.com/bamr87/zer0-mistakes/blob/main/install.sh)) |
-| **Documentation Pages** | 70+ ([browse docs](/pages/)) |
+| **Documentation Pages** | 70+ ([browse docs](https://zer0-mistakes.com/pages/)) |
 | **RubyGems Downloads** | 3,000+ ([rubygems.org](https://rubygems.org/gems/jekyll-theme-zer0)) |
 | **Lighthouse Score** | 95+ ([measured via Chrome DevTools](https://developer.chrome.com/docs/lighthouse/)) |
 
@@ -883,10 +922,10 @@ Key patterns applied (see [glossary entry](https://zer0-mistakes.com/glossary/#a
 |---|---|
 | **Structured Data** | JSON-LD `SoftwareApplication`, `WebPage`, `Person`, and `FAQPage` schemas in every page head |
 | **Entity Density** | Author profiles, technology names, and version numbers linked to canonical sources |
-| **E-E-A-T Signals** | Visible [author block](/glossary/#e-e-a-t) on the landing page with social proof links |
-| **FAQ Injection** | Dedicated [FAQ page](/faq/) with 12 question-answer pairs and FAQPage schema |
-| **Definitional Precision** | Machine-readable [Glossary](/glossary/) with 20+ key term definitions |
-| **Temporal Anchoring** | Dated [Roadmap](/roadmap/) with past, present, and future milestones |
+| **E-E-A-T Signals** | Visible [author block](https://zer0-mistakes.com/glossary/#e-e-a-t) on the landing page with social proof links |
+| **FAQ Injection** | Dedicated [FAQ page](https://zer0-mistakes.com/faq/) with 12 question-answer pairs and FAQPage schema |
+| **Definitional Precision** | Machine-readable [Glossary](https://zer0-mistakes.com/glossary/) with 20+ key term definitions |
+| **Temporal Anchoring** | Dated [Roadmap](https://zer0-mistakes.com/roadmap/) with past, present, and future milestones |
 | **Substantiated Claims** | Project stats table links to RubyGems, CHANGELOG, and Feature Registry as evidence |
 | **Procedural Clarity** | Step-by-step installation with Mermaid sequence diagrams and comparison tables |
 
