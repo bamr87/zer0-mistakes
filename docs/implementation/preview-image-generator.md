@@ -397,3 +397,7 @@ Part of the zer0-mistakes Jekyll theme. MIT License.
 ---
 
 *Built with ❤️ for the Jekyll community*
+
+---
+
+> **User guide**: For setup and configuration examples, see [AI Preview Image Generator](/docs/features/preview-image-generator/) in the user documentation.

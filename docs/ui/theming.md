@@ -285,3 +285,7 @@ See [extending.md § Add a new skin](extending.md#4-add-a-new-skin). Summary:
 - [design-system.md](design-system.md) — SCSS architecture and tokens
 - [js-api.md](js-api.md) — full JavaScript surface area
 - [customization.md](customization.md) — layered customization workflow
+
+---
+
+> **User guide**: For usage and configuration examples (how to customize as a theme user), see [Styles & Customization](/docs/customization/styles/) in the user documentation.

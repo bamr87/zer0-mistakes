@@ -207,3 +207,6 @@ Potential improvements:
 ## License
 
 This feature is part of the zer0-mistakes theme and follows the same MIT license.
+---
+
+> **User guide**: For usage instructions, see [Theme Version Display](/docs/features/theme-version/) in the user documentation.

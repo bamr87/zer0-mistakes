@@ -369,3 +369,7 @@ Your implementation is working correctly if:
 - [x] GitHub Pages builds successfully
 
 **Congratulations!** Your Jekyll site now supports Jupyter notebooks! 🎊
+
+---
+
+> **User guide**: For setup and usage instructions, see [Jupyter Notebook Integration](/docs/features/jupyter-notebooks/) in the user documentation.

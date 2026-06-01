@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.9.10] - 2026-05-31
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- ef6a3f39 fix: update copyright year range in LICENSE file
+
+
+## [1.9.9] - 2026-05-31
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 2ffb820d docs: align pages/_docs/ (user guides) ↔ docs/ (technical guides)
+
+
 ## [1.9.8] - 2026-05-30
 
 ### Changed

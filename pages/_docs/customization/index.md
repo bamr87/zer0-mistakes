@@ -111,6 +111,13 @@ Example: Override the footer by creating `_includes/core/footer.html`.
 - [Styles Guide](styles/) — CSS customization
 - [Navigation Guide](navigation/) — Menu configuration
 
+## Technical Reference
+
+For contributor-level details (SCSS architecture, design token catalog, fork-safe extension patterns):
+
+- [Extending the Theme → docs/ui/extending.md](../../../docs/ui/extending.md)
+- [UI Customization → docs/ui/customization.md](../../../docs/ui/customization.md)
+
 ## See also
 
 - [[Bootstrap Integration]]

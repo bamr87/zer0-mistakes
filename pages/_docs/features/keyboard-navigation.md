@@ -170,6 +170,12 @@ Have suggestions for improving keyboard navigation? [Open an issue](https://gith
 
 *This guide follows [WCAG 2.1 Level AA](https://www.w3.org/WAI/WCAG21/quickref/) accessibility standards.*
 
+## Technical Reference
+
+For implementation details (WCAG 2.1 AA compliance, ARIA attributes, keyboard event handling, focus management):
+
+- [Navigation Redesign → docs/implementation/navigation-redesign.md](../../../docs/implementation/navigation-redesign.md)
+
 ## See also
 
 - [[Features]]

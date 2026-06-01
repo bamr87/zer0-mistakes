@@ -224,6 +224,12 @@ If exceeding free tier limits:
 
 *This guide is part of the [Zer0-Mistakes Jekyll Theme](https://github.com/bamr87/zer0-mistakes) documentation.*
 
+## Technical Reference
+
+For implementation details (GDPR/CCPA configuration, event tracking architecture, integration notes):
+
+- [PostHog Integration → docs/implementation/posthog-analytics-integration.md](../../../docs/implementation/posthog-analytics-integration.md)
+
 ## See also
 
 - [[Features]]

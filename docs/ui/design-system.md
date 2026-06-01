@@ -294,3 +294,7 @@ These pages exercise typography, buttons, alerts, cards, forms, tabs, badges, co
 - [configuration.md](configuration.md) — `_config.yml` styling keys
 - [extending.md](extending.md) — add layouts, components, skins, tokens
 - [code-blocks.md](code-blocks.md) — Rouge highlighting and copy button
+
+---
+
+> **User guide**: For usage and configuration examples (how to customize as a theme user), see [Styles & Customization](/docs/customization/styles/) in the user documentation.

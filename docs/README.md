@@ -2,7 +2,17 @@
 
 Technical documentation for contributors and maintainers of the Zer0-Mistakes Jekyll theme.
 
-> **For Users:** Looking for docs on *using* the theme? See [`pages/_docs/`](../pages/_docs/) for user-facing guides.
+## Purpose
+
+This `/docs/` directory contains **developer-focused documentation** for the Zer0-Mistakes Jekyll theme:
+
+- **Architecture** — Codebase structure and design decisions
+- **Systems** — CI/CD, release automation, gem publication
+- **Implementation** — Feature implementation details and changelogs
+- **Development** — Setup guides and coding conventions
+- **Releases** — Version history and release notes
+
+> **For Users:** If you're looking for documentation on **using** the theme — installation, features, customization, deployment — see [`pages/_docs/`](../pages/_docs/), which is the user-facing documentation site (served at `/docs/` on the live theme). This `docs/` directory is for contributors and maintainers only.
 
 ## Directory Structure
 
