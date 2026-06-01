@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.11.1] - 2026-06-01
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- d4a53d51 docs: consolidate, standardize, and add maintenance system (#112)
+
+
 ## [1.11.0] - 2026-06-01
 
 ### Changed
