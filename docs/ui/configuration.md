@@ -1,6 +1,6 @@
 ---
 title: "Configuration — styling and UI"
-description: "TODO: Add a 120-160 character description of this document."
+description: "Styling and UI keys in _config.yml for Zer0-Mistakes: what each controls, example values, and why Jekyll must be restarted after editing config."
 date: 2026-05-31T20:54:57.000Z
 lastmod: 2026-05-31T20:54:57.000Z
 categories: [docs]
@@ -189,7 +189,7 @@ nanobar:
   enabled: false
 ```
 
-Implementation: `_includes/components/nanobar.html`. Full architecture: [features/nanobar-component.md](features/nanobar-component.md).
+Implementation: `_includes/components/nanobar.html`. Full architecture: [nanobar-component.md](../features/nanobar-component.md).
 
 ---
 
@@ -319,5 +319,4 @@ jekyll serve --config _config.yml,_config_dev.yml
 
 - [theming.md](theming.md) — skins, color modes, preview pages
 - [design-system.md](design-system.md) — tokens and SCSS pipeline
-- [jekyll/config-reference.md](jekyll/config-reference.md) — general Jekyll config
-- [configuration/url-configuration-guide.md](configuration/url-configuration-guide.md) — URLs and `baseurl`
+- [url-configuration.md](../installation/url-configuration.md) — URLs and `baseurl`

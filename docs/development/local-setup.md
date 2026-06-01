@@ -1,6 +1,6 @@
 ---
 title: "Local Development Setup"
-description: "TODO: Add a 120-160 character description of this document."
+description: "Set up a local Zer0-Mistakes development environment with Docker or a native Ruby toolchain, then run the dev server and validate your changes."
 date: 2026-01-25T03:38:33.000Z
 lastmod: 2026-05-25T19:58:49.000Z
 categories: [docs]

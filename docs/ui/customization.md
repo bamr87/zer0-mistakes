@@ -1,6 +1,6 @@
 ---
 title: "Customization"
-description: "TODO: Add a 120-160 character description of this document."
+description: "Supported ways to change the look and behavior of Zer0-Mistakes without forking the whole theme, layered from smallest tweak to deepest override."
 date: 2026-05-31T20:54:57.000Z
 lastmod: 2026-05-31T20:54:57.000Z
 categories: [docs]

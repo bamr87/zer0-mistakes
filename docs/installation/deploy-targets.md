@@ -1,6 +1,6 @@
 ---
 title: "Deploy Targets"
-description: "TODO: Add a 120-160 character description of this document."
+description: "How installer deploy targets work: self-contained modules under scripts/lib/install/deploy backed by templates, all implementing one shared contract."
 date: 2026-04-21T04:03:45.000Z
 lastmod: 2026-04-21T04:03:45.000Z
 categories: [docs]

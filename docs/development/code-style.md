@@ -1,8 +1,8 @@
 ---
 title: "Code Style Guide"
-description: "TODO: Add a 120-160 character description of this document."
+description: "Coding conventions for contributing to Zer0-Mistakes: naming, formatting, Liquid and SCSS idioms, and the consistency rules enforced in review."
 date: 2026-01-25T03:38:33.000Z
-lastmod: 2026-01-25T03:38:33.000Z
+lastmod: 2026-06-01T03:38:46.000Z
 categories: [docs]
 tags: [development, contributing]
 author: bamr87

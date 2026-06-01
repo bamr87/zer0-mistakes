@@ -1,8 +1,8 @@
 ---
 title: "🤖 Automated Version Bump Implementation Summary"
-description: "TODO: Add a 120-160 character description of this document."
+description: "Implementation summary of the automated version-bump system: the workflows, scripts, and commit analysis that publish new gem versions from main."
 date: 2025-09-28T23:26:11.000Z
-lastmod: 2025-11-27T20:10:56.000Z
+lastmod: 2026-06-01T03:38:46.000Z
 categories: [docs]
 tags: [systems, automation]
 author: bamr87

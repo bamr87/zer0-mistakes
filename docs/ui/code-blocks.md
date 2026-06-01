@@ -1,6 +1,6 @@
 ---
 title: "Code blocks"
-description: "TODO: Add a 120-160 character description of this document."
+description: "Syntax highlighting, language headers, line numbers, and copy-to-clipboard for code blocks in the Zer0-Mistakes theme, including notebook code cells."
 date: 2026-05-31T20:54:56.000Z
 lastmod: 2026-05-31T20:54:56.000Z
 categories: [docs]
@@ -212,7 +212,7 @@ Obsidian callouts (`> [!note]`) map to Bootstrap alerts; fenced code inside call
 
 ## Notebook code cells
 
-Jupyter notebook layout (`layout: notebook`) preserves Rouge highlighting on converted code cells. See [JUPYTER_NOTEBOOKS.md](JUPYTER_NOTEBOOKS.md).
+Jupyter notebook layout (`layout: notebook`) preserves Rouge highlighting on converted code cells. See [Jupyter Notebooks](../features/jupyter-notebooks.md).
 
 ---
 
@@ -265,4 +265,4 @@ Switch skins with the controls bar to verify contrast in all palettes.
 
 - [design-system.md](design-system.md) — `--zer0-color-code-bg`, import order
 - [js-api.md](js-api.md) — `window.zer0UI`
-- [pages/_docs/features/code-copy.md](../pages/_docs/features/code-copy.md) — user-facing feature doc
+- [pages/_docs/features/code-copy.md](../../pages/_docs/features/code-copy.md) — user-facing feature doc

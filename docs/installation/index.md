@@ -1,6 +1,6 @@
 ---
 title: "Installation Guide"
-description: "TODO: Add a 120-160 character description of this document."
+description: "Overview of the modular, profile-driven Zer0-Mistakes installer CLI, the classic install.sh one-liner, and how to choose the right install path."
 date: 2026-04-21T04:03:45.000Z
 lastmod: 2026-04-21T04:03:45.000Z
 categories: [docs]

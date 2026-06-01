@@ -1,8 +1,8 @@
 ---
 title: "Zero Version Pin Strategy"
-description: "TODO: Add a 120-160 character description of this document."
+description: "The zero-version-pin strategy: always use the latest compatible dependencies while keeping reproducible builds via lockfiles and fail-fast checks."
 date: 2025-11-29T05:33:55.000Z
-lastmod: 2025-11-29T05:33:55.000Z
+lastmod: 2026-06-01T03:38:46.000Z
 categories: [docs]
 tags: [systems, automation]
 author: bamr87
@@ -226,6 +226,6 @@ If you're coming from a project with version pins:
 
 ## Related Documentation
 
-- [Docker Development Guide](../jekyll/docker-development.md)
-- [CI/CD Workflows](../systems/ci-cd.md)
-- [Release Process](../releases/release-process.md)
+- [Dependency Management](dependency-management.md)
+- [Ruby Version Management](ruby-version-management.md)
+- [Release Automation](release-automation.md)

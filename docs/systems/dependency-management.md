@@ -1,6 +1,6 @@
 ---
 title: "Dependency Management Strategy"
-description: "TODO: Add a 120-160 character description of this document."
+description: "The Zero Pin plus lockfile plus automated-updates dependency strategy: flexible Gemfiles with reproducible, regularly refreshed lockfiles for the theme."
 date: 2026-05-31T20:54:54.000Z
 lastmod: 2026-05-31T20:54:54.000Z
 categories: [docs]
@@ -162,4 +162,4 @@ gem "problematic-gem", "~> 1.2.0"  # Pin to working version
 
 - [Bundler Documentation](https://bundler.io/guides/updating_gems.html)
 - [GitHub Pages Dependency Versions](https://pages.github.com/versions/)
-- [Zero Pin Strategy Context](../.github/copilot-instructions.md#development-environment)
+- [Zero Pin Strategy Context](../../.github/copilot-instructions.md#development-environment)

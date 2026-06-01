@@ -1,6 +1,6 @@
 ---
 title: "Forking Guide: From Fork to Personalized Site"
-description: "TODO: Add a 120-160 character description of this document."
+description: "A progressive guide to deploying your own site from a Zer0-Mistakes fork: repository cleanup, configuration, and personalization, phase by phase."
 date: 2026-05-31T20:54:51.000Z
 lastmod: 2026-05-31T20:54:51.000Z
 categories: [docs]
@@ -78,7 +78,7 @@ cd <your-username>.github.io
 
 ### Step 2: Run the Fork Cleanup Script (Recommended)
 
-> **New in 1.0:** you can also run `./scripts/bin/install init --profile fork .` from inside the cloned fork — it dispatches to the same fork-cleanup pipeline through the modular CLI and lets you opt into AI agent guidance (`install agents --all`) and a deploy target (`install deploy github-pages`) in one flow. See [docs/installation/profiles.md](installation/profiles.md) for the full profile reference.
+> **New in 1.0:** you can also run `./scripts/bin/install init --profile fork .` from inside the cloned fork — it dispatches to the same fork-cleanup pipeline through the modular CLI and lets you opt into AI agent guidance (`install agents --all`) and a deploy target (`install deploy github-pages`) in one flow. See [docs/installation/profiles.md](profiles.md) for the full profile reference.
 
 ```bash
 # Interactive mode — prompts you for each value

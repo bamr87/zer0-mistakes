@@ -1,6 +1,6 @@
 ---
 title: "Extending the theme"
-description: "TODO: Add a 120-160 character description of this document."
+description: "Minimal copy-paste recipes for extending Zer0-Mistakes: adding layouts, components, skins, and other building blocks on top of the design system."
 date: 2026-05-31T20:54:58.000Z
 lastmod: 2026-05-31T20:54:58.000Z
 categories: [docs]

@@ -1,6 +1,6 @@
 ---
 title: "URL Configuration Guide"
-description: "TODO: Add a 120-160 character description of this document."
+description: "Configure base URLs for the Zer0-Mistakes theme across hosting scenarios: GitHub Pages user sites, project sites, and custom domains with baseurl."
 date: 2026-05-31T20:54:52.000Z
 lastmod: 2026-05-31T20:54:52.000Z
 categories: [docs]

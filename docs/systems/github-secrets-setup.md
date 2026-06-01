@@ -1,6 +1,6 @@
 ---
 title: "GitHub Secrets and Variables Setup"
-description: "TODO: Add a 120-160 character description of this document."
+description: "How to configure the GitHub Actions secrets and variables the Zer0-Mistakes workflows need for releases, gem publishing, and scheduled automation."
 date: 2026-05-31T20:54:55.000Z
 lastmod: 2026-05-31T20:54:55.000Z
 categories: [docs]

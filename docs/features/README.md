@@ -8,8 +8,7 @@ Per-feature design notes and implementation details for the Zer0-Mistakes Jekyll
 |----------|-------------|
 | [Jupyter Notebooks](jupyter-notebooks.md) | Jupyter notebook integration via GitHub Actions conversion |
 | [Nanobar Component](nanobar-component.md) | Config-driven page loading progress bar architecture |
-| [Quick Access Guide](quick-access-guide.md) | Theme version info accessible via gear icon or footer button |
-| [Theme Version Display](theme-version.md) | Automatic theme, Jekyll, and Ruby version display system |
+| [Theme Version Display](theme-version.md) | Automatic theme/Jekyll/Ruby version display, plus quick-access via gear icon or footer button |
 
 ## Purpose
 

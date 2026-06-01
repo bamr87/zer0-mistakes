@@ -7,6 +7,10 @@ on:
       - "pages/_docs/**"
       - ".github/instructions/documentation.instructions.md"
 
+# Read-only by default; individual jobs only check out and lint.
+permissions:
+  contents: read
+
 jobs:
   lint-frontmatter:
     name: Front matter compliance

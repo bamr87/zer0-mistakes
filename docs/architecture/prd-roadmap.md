@@ -435,11 +435,10 @@ status: "Active"
 
 ### Appendix B: Related Documents
 
-- [README.md](README.md) - User-facing project overview
-- [CHANGELOG.md](CHANGELOG.md) - Version history and changes
-- [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines
-- [.seed.md](.seed.md) - Technical blueprint
-- [.github/seed/](./github/seed/) - Comprehensive seed documentation
+- [README.md](../../README.md) - User-facing project overview
+- [CHANGELOG.md](../../CHANGELOG.md) - Version history and changes
+- [CONTRIBUTING.md](../../CONTRIBUTING.md) - Contribution guidelines
+- [.github/seed/](../../.github/seed/) - Comprehensive seed documentation
 
 ### Appendix C: References
 

@@ -11,7 +11,8 @@ jobs:
     name: Check for stale docs
     runs-on: ubuntu-latest
     permissions:
-      issues: write
+      contents: read   # checkout
+      issues: write    # open the freshness-review issue
 
     steps:
       - uses: actions/checkout@v4

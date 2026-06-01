@@ -1,8 +1,8 @@
 ---
 title: "🚀 Gem Publication System Documentation"
-description: "TODO: Add a 120-160 character description of this document."
+description: "The gem publication system for jekyll-theme-zer0: scripted build, version bump, changelog generation, VS Code integration, and RubyGems publishing."
 date: 2025-09-28T22:17:52.000Z
-lastmod: 2025-11-27T20:10:56.000Z
+lastmod: 2026-06-01T03:38:46.000Z
 categories: [docs]
 tags: [systems, automation]
 author: bamr87

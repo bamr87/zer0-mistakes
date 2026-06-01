@@ -1,6 +1,6 @@
 ---
 title: "AI Features"
-description: "TODO: Add a 120-160 character description of this document."
+description: "The installer's opt-in AI features: every action is sandboxed, shown as a diff first, and never contacts a third party unless you explicitly invoke it."
 date: 2026-04-21T04:03:45.000Z
 lastmod: 2026-04-21T04:03:45.000Z
 categories: [docs]

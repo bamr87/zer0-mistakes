@@ -1,6 +1,6 @@
 ---
 title: "Components"
-description: "TODO: Add a 120-160 character description of this document."
+description: "The reusable Liquid component library in _includes/components for Zer0-Mistakes, how components consume design tokens, and how to add new ones."
 date: 2026-05-31T20:54:57.000Z
 lastmod: 2026-05-31T20:54:57.000Z
 categories: [docs]
@@ -14,7 +14,7 @@ Reusable Liquid partials in `_includes/components/`. Components consume design t
 
 **Related docs:** [Design system](design-system.md) · [Extending](extending.md) · [Layouts and navigation](layouts-and-navigation.md)
 
-Conventions: [_includes/components/README.md](../_includes/components/README.md)
+Conventions: [_includes/components/README.md](../../_includes/components/README.md)
 
 ---
 
@@ -336,7 +336,7 @@ See all patterns rendered with every skin:
 
 ## Further reading
 
-- [_includes/components/README.md](../_includes/components/README.md) — conventions
+- [_includes/components/README.md](../../_includes/components/README.md) — conventions
 - [extending.md](extending.md) — register components, navigation data, skins
 - [design-system.md](design-system.md) — SCSS counterparts in `_sass/components/`
 

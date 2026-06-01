@@ -87,7 +87,6 @@ The release script: bumps `version.rb` → updates `CHANGELOG.md` → runs tests
 ```
 root.html (base)
   └─ default.html (main chrome)
-       ├─ journals.html
        ├─ home.html
        ├─ landing.html
        └─ article.html (blog posts)
@@ -113,7 +112,7 @@ scripts/
 └── *.sh           # Standalone utilities + back-compat wrappers → bin/*
 ```
 
-All scripts: `set -euo pipefail`, support `--dry-run` and `--verbose`, source `scripts/lib/common.sh` for logging helpers.
+All scripts: `set -euo pipefail`, support `--verbose`, source `scripts/lib/common.sh` for logging helpers. The canonical `scripts/bin/*` entry points (build, release, test, install) also support `--dry-run`.
 
 ### Content Collections
 

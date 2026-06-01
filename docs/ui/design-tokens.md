@@ -1,6 +1,6 @@
 ---
 title: "Design tokens — quick reference"
-description: "TODO: Add a 120-160 character description of this document."
+description: "Quick reference for the semantic --zer0-* CSS custom properties used across Zer0-Mistakes, with pointers to the full design-system architecture."
 date: 2026-05-31T20:54:57.000Z
 lastmod: 2026-05-31T20:54:57.000Z
 categories: [docs]

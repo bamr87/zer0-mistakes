@@ -1,6 +1,6 @@
 ---
 title: "Design system"
-description: "TODO: Add a 120-160 character description of this document."
+description: "The Zer0-Mistakes design system: Bootstrap 5.3.3, the semantic --zer0-* token layer, decomposed SCSS partials, and runtime config-driven overrides."
 date: 2026-05-31T20:54:57.000Z
 lastmod: 2026-05-31T20:54:57.000Z
 categories: [docs]

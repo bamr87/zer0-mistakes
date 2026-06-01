@@ -1,6 +1,6 @@
 ---
 title: "Jupyter Notebook Integration for Jekyll"
-description: "TODO: Add a 120-160 character description of this document."
+description: "How Zer0-Mistakes converts Jupyter notebooks to Jekyll Markdown at build time for GitHub Pages, preserving code, outputs, and math without plugins."
 date: 2026-05-31T20:54:47.000Z
 lastmod: 2026-05-31T20:54:47.000Z
 categories: [docs]

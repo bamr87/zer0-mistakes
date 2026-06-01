@@ -2,7 +2,7 @@
 title: "Layouts and Includes Architecture"
 description: "How Jekyll layouts inherit from each other (root → default → article/collection/landing) and how the _includes/ component system is organized."
 date: 2026-01-25T03:38:33.000Z
-lastmod: 2026-01-25T03:38:33.000Z
+lastmod: 2026-06-01T03:38:46.000Z
 categories: [docs]
 tags: [architecture, design]
 author: bamr87

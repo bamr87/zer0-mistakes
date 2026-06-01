@@ -1,6 +1,6 @@
 ---
 title: "Ruby Version Management Strategy"
-description: "TODO: Add a 120-160 character description of this document."
+description: "The Zer0-Mistakes Ruby version strategy: why Docker pins a specific Ruby, how CI selects versions, and how to upgrade Ruby safely across the toolchain."
 date: 2026-05-31T20:54:55.000Z
 lastmod: 2026-05-31T20:54:55.000Z
 categories: [docs]
@@ -205,14 +205,14 @@ gem '<gem-name>', '~> X.Y'
 - [Ruby Release History](https://www.ruby-lang.org/en/downloads/releases/)
 - [Ruby Maintenance Schedule](https://endoflife.date/ruby)
 - [Bundler Best Practices](https://bundler.io/guides/best_practices.html)
-- [Our CI Configuration](.github/workflows/ci.yml)
-- [Dependency Management](DEPENDENCY_MANAGEMENT.md)
+- [Our CI Configuration](../../.github/workflows/ci.yml)
+- [Dependency Management](dependency-management.md)
 
 ## Related Documentation
 
-- [DEPENDENCY_MANAGEMENT.md](DEPENDENCY_MANAGEMENT.md) - Gem version strategy
-- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Common build issues
-- [docker/Dockerfile](../docker/Dockerfile) - Build configuration
+- [Dependency Management](dependency-management.md) - Gem version strategy
+- [Troubleshooting](../development/troubleshooting.md) - Common build issues
+- [docker/Dockerfile](../../docker/Dockerfile) - Build configuration
 
 ---
 

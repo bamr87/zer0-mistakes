@@ -1,8 +1,8 @@
 ---
 title: "🤖 Automated Version Bump System"
-description: "TODO: Add a 120-160 character description of this document."
+description: "How the automated version-bump system analyzes commits on main and performs the matching semantic version bump and release without manual steps."
 date: 2025-09-28T23:25:58.000Z
-lastmod: 2025-11-27T20:10:56.000Z
+lastmod: 2026-06-01T03:38:46.000Z
 categories: [docs]
 tags: [systems, automation]
 author: bamr87

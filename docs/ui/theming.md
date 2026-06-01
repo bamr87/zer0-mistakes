@@ -1,6 +1,6 @@
 ---
 title: "Theming"
-description: "TODO: Add a 120-160 character description of this document."
+description: "Theming in Zer0-Mistakes: separating color mode (light/dark/auto) from skin (palette plus SVG backgrounds), set at build time and adjusted at runtime."
 date: 2026-05-31T20:54:58.000Z
 lastmod: 2026-05-31T20:54:58.000Z
 categories: [docs]

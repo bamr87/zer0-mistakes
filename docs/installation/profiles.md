@@ -1,6 +1,6 @@
 ---
 title: "Profiles"
-description: "TODO: Add a 120-160 character description of this document."
+description: "What installer profiles are: declarative YAML manifests under templates/profiles that replace the old mode flags and control what gets installed."
 date: 2026-04-21T04:03:45.000Z
 lastmod: 2026-04-21T04:03:45.000Z
 categories: [docs]

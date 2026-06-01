@@ -1,8 +1,8 @@
 ---
 title: "Project Structure"
-description: "TODO: Add a 120-160 character description of this document."
+description: "A tour of the Zer0-Mistakes theme repository: directory layout, key files, content collections, and where layouts, includes, and scripts live."
 date: 2026-01-25T03:38:33.000Z
-lastmod: 2026-01-25T03:38:33.000Z
+lastmod: 2026-06-01T03:38:46.000Z
 categories: [docs]
 tags: [architecture, design]
 author: bamr87

@@ -1,8 +1,8 @@
 ---
 title: "Change Tracking Template"
-description: "TODO: Add a 120-160 character description of this document."
+description: "A reusable template for tracking a single change: its identifier, type, rationale, scope, and verification, when documenting work in Zer0-Mistakes."
 date: 2025-10-26T19:20:20.000Z
-lastmod: 2025-11-27T20:10:56.000Z
+lastmod: 2026-06-01T03:38:46.000Z
 categories: [docs]
 tags: [templates]
 author: bamr87

@@ -2,7 +2,7 @@
 title: "Comprehensive Sitemap Integration Summary"
 description: "Technical implementation of the unified sitemap system: merged collection layout, stats, dark mode, dual view modes, filtering, and accessibility improvements."
 date: 2025-10-25T23:02:17.000Z
-lastmod: 2026-01-25T03:38:33.000Z
+lastmod: 2026-06-01T03:38:46.000Z
 categories: [docs]
 tags: [implementation, changelog]
 author: bamr87

@@ -1,6 +1,6 @@
 ---
 title: "Customization"
-description: "TODO: Add a 120-160 character description of this document."
+description: "Three fork-friendly extension points for customizing the Zer0-Mistakes installer without editing the bootstrap or CLI: templates, profiles, and modules."
 date: 2026-04-21T04:03:45.000Z
 lastmod: 2026-04-21T04:03:45.000Z
 categories: [docs]

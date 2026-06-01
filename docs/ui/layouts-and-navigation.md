@@ -1,6 +1,6 @@
 ---
 title: "Layouts and navigation"
-description: "TODO: Add a 120-160 character description of this document."
+description: "How Zer0-Mistakes structures pages: the layout hierarchy, sidebars, table of contents, the navbar, and floating action buttons (FABs)."
 date: 2026-05-31T20:54:58.000Z
 lastmod: 2026-05-31T20:54:58.000Z
 categories: [docs]
@@ -388,8 +388,7 @@ Fork spacing tokens:
 
 - [configuration.md](configuration.md) — `navigation`, defaults, sidebar keys
 - [components.md](components.md) — `info-section`, `search-modal`, nav components
-- [SIDEBAR_IMPROVEMENTS.md](SIDEBAR_IMPROVEMENTS.md) — historical sidebar changelog
-- [features/nanobar-component.md](features/nanobar-component.md) — navbar progress bar
+- [nanobar-component.md](../features/nanobar-component.md) — navbar progress bar
 
 ---
 

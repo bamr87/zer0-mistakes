@@ -1,8 +1,8 @@
 ---
 title: "PostHog Analytics Integration"
-description: "TODO: Add a 120-160 character description of this document."
+description: "PostHog analytics in Zer0-Mistakes: privacy-first, consent-gated event tracking with GDPR/CCPA compliance and a cookie banner, enabled in production."
 date: 2025-11-16T17:04:56.000Z
-lastmod: 2026-01-25T03:38:33.000Z
+lastmod: 2026-06-01T03:38:46.000Z
 categories: [docs]
 tags: [implementation, changelog]
 author: bamr87

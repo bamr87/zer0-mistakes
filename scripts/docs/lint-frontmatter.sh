@@ -160,8 +160,24 @@ for filepath in $(list_docs_files); do
         fi
     done
 
-    if [[ -n "$missing_list" ]]; then
-        warn "  INCOMPLETE ($relpath): missing:$missing_list"
+    # Description quality: presence alone is not enough. Reject the --fix
+    # skeleton placeholder and obvious stubs so a "compliant" run can't ship
+    # docs with a TODO description. Schema target is a 120-160 char sentence.
+    desc_problem=""
+    if echo "$fm" | grep -q "^description:"; then
+        desc_value="$(echo "$fm" | grep -m1 "^description:" | sed -E 's/^description:[[:space:]]*//; s/^"(.*)"$/\1/; s/^'"'"'(.*)'"'"'$/\1/')"
+        if echo "$desc_value" | grep -qi "TODO"; then
+            desc_problem="placeholder TODO description"
+        elif [[ "${#desc_value}" -lt 40 ]]; then
+            desc_problem="description too short (${#desc_value} chars; aim for 120-160)"
+        fi
+    fi
+
+    if [[ -n "$missing_list" || -n "$desc_problem" ]]; then
+        local_msg="  INCOMPLETE ($relpath):"
+        [[ -n "$missing_list" ]] && local_msg="$local_msg missing:$missing_list"
+        [[ -n "$desc_problem" ]] && local_msg="$local_msg $desc_problem"
+        warn "$local_msg"
         ERRORS=$((ERRORS + 1))
     else
         debug "  OK: $relpath"
