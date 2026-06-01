@@ -1,3 +1,13 @@
+---
+title: "Continuous-Evolution Loop"
+description: "The continuous-evolution loop that lets scheduled AI agents audit this repo into a backlog and implement the highest-priority tasks via PRs."
+date: 2026-06-01T03:43:23.000Z
+lastmod: 2026-06-01T03:43:23.000Z
+categories: [docs]
+tags: [systems, automation]
+author: bamr87
+---
+
 # Continuous-Evolution Loop
 
 **Status:** ✅ Active

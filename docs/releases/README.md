@@ -2,24 +2,15 @@
 
 This directory contains comprehensive release documentation for all versions of the Zer0-Mistakes Jekyll theme.
 
-## 📁 Current Release Documentation
+## 📁 Release Documentation
 
-### v0.7.0 - Changelog Automation (November 2025)
+### Current releases (v0.7.0+)
 
-- See [CHANGELOG.md](../../CHANGELOG.md#070) for full release details
+See [CHANGELOG.md](../../CHANGELOG.md) — the authoritative source for all current releases.
 
-### v0.5.0 - Comprehensive Sitemap Integration (October 25, 2025)
+### Early releases (v0.3.0 – v0.7.0)
 
-- [Release Summary](v0.5.0-release-summary.md) - Complete release overview and features
-- [RubyGems Publication](rubygems-publication-success.md) - Publication details and success confirmation
-
-### v0.4.0 - Statistics Dashboard (October 10, 2025)
-
-- [Release Summary](v0.4.0-release-summary.md) - Statistics dashboard feature implementation
-
-### v0.3.0 - Mermaid Integration (January 27, 2025)
-
-- [Release Notes](v0.3.0-release-notes.md) - Comprehensive Mermaid diagram integration
+- [Historical Releases](historical-releases.md) — Condensed notes for v0.3.0 (Mermaid), v0.4.0 (Stats Dashboard), v0.5.0 (Sitemap + first RubyGems publish), v0.7.0 (Blog Architecture Redesign)
 
 ## 📋 Documentation Standards
 

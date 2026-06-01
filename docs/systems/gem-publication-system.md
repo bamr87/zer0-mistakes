@@ -1,3 +1,13 @@
+---
+title: "🚀 Gem Publication System Documentation"
+description: "The gem publication system for jekyll-theme-zer0: scripted build, version bump, changelog generation, VS Code integration, and RubyGems publishing."
+date: 2025-09-28T22:17:52.000Z
+lastmod: 2026-06-01T03:38:46.000Z
+categories: [docs]
+tags: [systems, automation]
+author: bamr87
+---
+
 # 🚀 Gem Publication System Documentation
 
 This document describes the comprehensive gem publication system for Jekyll Theme Zer0, including VS Code integration and automatic changelog generation.

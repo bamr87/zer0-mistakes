@@ -1,3 +1,13 @@
+---
+title: "🤖 Automated Version Bump Implementation Summary"
+description: "Implementation summary of the automated version-bump system: the workflows, scripts, and commit analysis that publish new gem versions from main."
+date: 2025-09-28T23:26:11.000Z
+lastmod: 2026-06-01T03:38:46.000Z
+categories: [docs]
+tags: [systems, automation]
+author: bamr87
+---
+
 # 🤖 Automated Version Bump Implementation Summary
 
 ## 📋 Overview

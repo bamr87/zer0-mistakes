@@ -1,3 +1,13 @@
+---
+title: "Deploy Targets"
+description: "How installer deploy targets work: self-contained modules under scripts/lib/install/deploy backed by templates, all implementing one shared contract."
+date: 2026-04-21T04:03:45.000Z
+lastmod: 2026-04-21T04:03:45.000Z
+categories: [docs]
+tags: [installation, setup]
+author: bamr87
+---
+
 # Deploy Targets
 
 Each deploy target is a self-contained module under [`scripts/lib/install/deploy/`](../../scripts/lib/install/deploy/) backed by templates under [`templates/deploy/<target>/`](../../templates/deploy/). All modules implement the same contract:

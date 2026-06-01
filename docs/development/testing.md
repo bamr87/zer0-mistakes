@@ -1,3 +1,13 @@
+---
+title: "Testing"
+description: "How to run the Zer0-Mistakes test suites and validators locally, and which checks to run before opening a pull request to keep CI green."
+date: 2026-01-25T03:38:33.000Z
+lastmod: 2026-05-25T19:58:49.000Z
+categories: [docs]
+tags: [development, contributing]
+author: bamr87
+---
+
 # Testing
 
 Run tests and validate changes before submitting pull requests.
