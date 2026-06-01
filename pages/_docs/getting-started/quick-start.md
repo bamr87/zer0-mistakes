@@ -294,6 +294,12 @@ docker-compose up
 - [Features](/docs/features/) — Enable Mermaid diagrams, comments, analytics
 - [Deployment](/docs/deployment/) — Publish your site
 
+## Technical Reference
+
+For contributor-level details (installer architecture, profile system, deploy target modules):
+
+- [Installation Guide → docs/installation/index.md](../../../docs/installation/index.md)
+
 ## See also
 
 - [[Getting Started]]

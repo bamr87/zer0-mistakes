@@ -297,3 +297,7 @@ bash -x ./test/specific_test.sh
 - [Local Setup](local-setup.md) — Development environment
 - [Code Style](code-style.md) — Coding conventions
 
+
+---
+
+> **User guide**: Contributors who access testing via the public site can find an overview at [Testing](/docs/development/testing/) in the user-facing docs.

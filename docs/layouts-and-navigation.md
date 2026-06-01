@@ -380,3 +380,7 @@ Fork spacing tokens:
 - [components.md](components.md) — `info-section`, `search-modal`, nav components
 - [SIDEBAR_IMPROVEMENTS.md](SIDEBAR_IMPROVEMENTS.md) — historical sidebar changelog
 - [features/nanobar-component.md](features/nanobar-component.md) — navbar progress bar
+
+---
+
+> **User guide**: For usage and configuration examples (available layouts, navigation configuration), see [Layouts](/docs/customization/layouts/) in the user documentation.

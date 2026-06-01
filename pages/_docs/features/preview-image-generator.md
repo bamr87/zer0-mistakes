@@ -330,8 +330,13 @@ export OPENAI_API_KEY="sk-..."
 ## Related
 
 - [SEO Meta Tags](/docs/seo/meta-tags/)
-- [Jekyll Configuration](/docs/jekyll/jekyll-config/)
 - [OpenAI API Documentation](https://platform.openai.com/docs/guides/images)
+
+## Technical Reference
+
+For implementation details (multi-provider architecture, xAI Grok integration, generation workflow):
+
+- [Preview Image Generator → docs/implementation/preview-image-generator.md](../../../docs/implementation/preview-image-generator.md)
 
 ## See also
 

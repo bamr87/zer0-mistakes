@@ -12,7 +12,7 @@ This `/docs/` directory contains **developer-focused documentation** for the Zer
 - **Development** — Setup guides and coding conventions
 - **Releases** — Version history and release notes
 
-> **For Users:** If you're looking for documentation on **using** the theme, see [`pages/_docs/`](../pages/_docs/) which contains user-facing guides and tutorials.
+> **For Users:** If you're looking for documentation on **using** the theme — installation, features, customization, deployment — see [`pages/_docs/`](../pages/_docs/), which is the user-facing documentation site (served at `/docs/` on the live theme). This `docs/` directory is for contributors and maintainers only.
 
 ## Directory Structure
 

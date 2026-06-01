@@ -339,3 +339,7 @@ For issues or questions about PostHog integration:
 ---
 
 _This integration provides a complete, privacy-compliant analytics solution for Jekyll sites with the flexibility to grow with your needs while respecting user privacy._
+
+---
+
+> **User guide**: For setup and configuration examples, see [PostHog Analytics](/docs/features/posthog-analytics/) in the user documentation.
