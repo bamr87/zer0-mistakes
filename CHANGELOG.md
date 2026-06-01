@@ -12,6 +12,15 @@
   - `.github/instructions/backlog.instructions.md` — file-scoped guidance for the backlog.
   - `docs/systems/continuous-evolution.md` — full design, autonomy policy, and setup.
   - `CLAUDE.md` — Claude Code pointer to `AGENTS.md` (per the documented convention).
+## [1.10.0] - 2026-06-01
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 309202f2 feat(roadmap): add --validate mode, catch-up milestones v1.0–1.9, README accuracy fixes (#113)
+
+
 ## [1.9.10] - 2026-05-31
 
 ### Changed
