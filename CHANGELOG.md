@@ -21,6 +21,7 @@
 ## [Unreleased]
 
 ### Added
+- **Test coverage baseline** (`docs/development/coverage-baseline.md`): structural analysis of all subsystems, identifying the three lowest-covered areas (Jekyll plugins, release tooling, and the installer interactive wizard). Follow-up tasks T-007, T-008, and T-009 filed in `_data/backlog.yml` to drive coverage toward the v1.0 90% goal.
 - **Continuous-evolution loop**: a self-sustaining backlog mechanism so AI agents can keep improving the repo between human sessions.
   - `_data/backlog.yml` — tactical task queue (single source of truth), mirroring the `_data/roadmap.yml` pattern.
   - `scripts/sync-backlog.rb` (+ `scripts/sync-backlog.sh`) — schema validator and GitHub Issues sync (idempotent via `<!-- backlog-id -->` markers).
