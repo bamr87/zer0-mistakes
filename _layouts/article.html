@@ -41,11 +41,29 @@ layout: default
   ===================================================================
 -->
 
-{% comment %} Determine post type and sidebar visibility {% endcomment %}
-{% assign post_type = page.post_type | default: "standard" %}
-{% assign show_sidebar = page.sidebar %}
+{% comment %}
+  Determine post type and (article-local) sidebar visibility.
 
-{% comment %} Auto-disable sidebar for certain post types unless explicitly enabled {% endcomment %}
+  Note: the parent `default.html` layout reads `page.post_type` directly to
+  resolve effective sidebar visibility, so authors get the expected behavior
+  (featured/breaking → no sidebar by default) even though Liquid does not let
+  us mutate `page.sidebar` here. Setting `sidebar: false` in front matter
+  still wins.
+{% endcomment %}
+{% assign post_type = page.post_type | default: "standard" %}
+{% comment %}
+  Authors often set featured: true or breaking: true in front matter (homepage
+  / archive flags) while post_type stays at the _config default "standard".
+  Map those booleans so hero images, badges, and layout variants render.
+{% endcomment %}
+{% if post_type == "standard" %}
+  {% if page.breaking %}
+    {% assign post_type = "breaking" %}
+  {% elsif page.featured %}
+    {% assign post_type = "featured" %}
+  {% endif %}
+{% endif %}
+{% assign show_sidebar = page.sidebar %}
 {% if show_sidebar == nil %}
   {% if post_type == "featured" or post_type == "breaking" %}
     {% assign show_sidebar = false %}
@@ -87,8 +105,19 @@ layout: default
       {{ page.title }}
     </h1>
     
-    {% comment %} Subtitle for featured/opinion articles {% endcomment %}
-    {% if page.sub-title and post_type == "featured" or post_type == "opinion" %}
+    {% comment %}
+      Subtitle for featured/opinion articles. The previous condition mixed
+      `and` / `or` without grouping, so it evaluated as
+      `(page.sub-title and post_type == "featured") or post_type == "opinion"`
+      — opinion posts always showed the lead even when sub-title was empty.
+    {% endcomment %}
+    {% assign _show_subtitle = false %}
+    {% if page.sub-title %}
+      {% if post_type == "featured" or post_type == "opinion" %}
+        {% assign _show_subtitle = true %}
+      {% endif %}
+    {% endif %}
+    {% if _show_subtitle %}
     <p class="lead text-muted">{{ page.sub-title }}</p>
     {% endif %}
     
@@ -194,20 +223,26 @@ layout: default
       <div class="row align-items-center">
         <div class="col-md-4 text-center mb-3 mb-md-0">
           {% if page.rating %}
-          <div class="rating-score">
+          {%- comment -%}
+            Score is read as text first; the star icons are presentational
+            and use role="img" + aria-label so screen readers announce a
+            single, accurate value instead of the icon font glyphs.
+          {%- endcomment -%}
+          <div class="rating-score" aria-hidden="true">
             <span class="display-3 fw-bold text-primary">{{ page.rating }}</span>
             <span class="text-muted">/10</span>
           </div>
-          <div class="rating-stars">
+          <div class="rating-stars" role="img" aria-label="Rated {{ page.rating }} out of 10">
             {% assign full_stars = page.rating | divided_by: 2 %}
             {% assign half_star = page.rating | modulo: 2 %}
             {% for i in (1..full_stars) %}
-              <i class="bi bi-star-fill text-warning"></i>
+              <i class="bi bi-star-fill text-warning" aria-hidden="true"></i>
             {% endfor %}
             {% if half_star >= 1 %}
-              <i class="bi bi-star-half text-warning"></i>
+              <i class="bi bi-star-half text-warning" aria-hidden="true"></i>
             {% endif %}
           </div>
+          <span class="visually-hidden">Rating: {{ page.rating }} out of 10</span>
           {% endif %}
         </div>
         <div class="col-md-8">
@@ -377,10 +412,10 @@ layout: default
                   </a>
                 {% endif %}
                 {% if author_data.twitter %}
-                  <a href="https://twitter.com/{{ author_data.twitter }}" 
+                  <a href="https://x.com/{{ author_data.twitter }}" 
                      class="btn btn-sm btn-outline-secondary" 
-                     target="_blank" rel="noopener" title="Twitter">
-                    <i class="bi bi-twitter"></i>
+                     target="_blank" rel="noopener" title="X" aria-label="X">
+                    <i class="bi bi-twitter-x"></i>
                   </a>
                 {% endif %}
                 {% if author_data.website %}
@@ -459,21 +494,21 @@ layout: default
       <!-- Previous Post -->
       <div class="col-md-6">
         {% if page.previous %}
-          <a href="{{ page.previous.url | relative_url }}" class="card h-100 text-decoration-none border-0 shadow-sm">
-            <div class="card-body">
-              <small class="text-muted d-block mb-1">
-                <i class="bi bi-chevron-left me-1"></i>Previous
+          <a href="{{ page.previous.url | relative_url }}" class="post-nav-card post-nav-card--prev">
+            <div class="post-nav-card__body">
+              <small class="post-nav-card__label">
+                <i class="bi bi-chevron-left me-1" aria-hidden="true"></i>Previous
               </small>
-              <span class="text-body-emphasis">{{ page.previous.title | truncate: 50 }}</span>
+              <span class="post-nav-card__title">{{ page.previous.title | truncate: 50 }}</span>
             </div>
           </a>
         {% else %}
-          <div class="card h-100 border-0 bg-body-tertiary opacity-50">
-            <div class="card-body">
-              <small class="text-muted d-block mb-1">
-                <i class="bi bi-chevron-left me-1"></i>Previous
+          <div class="post-nav-card post-nav-card--prev post-nav-card--disabled" aria-disabled="true">
+            <div class="post-nav-card__body">
+              <small class="post-nav-card__label">
+                <i class="bi bi-chevron-left me-1" aria-hidden="true"></i>Previous
               </small>
-              <span class="text-muted">No previous post</span>
+              <span class="post-nav-card__title text-muted">No previous post</span>
             </div>
           </div>
         {% endif %}
@@ -482,21 +517,21 @@ layout: default
       <!-- Next Post -->
       <div class="col-md-6">
         {% if page.next %}
-          <a href="{{ page.next.url | relative_url }}" class="card h-100 text-decoration-none border-0 shadow-sm">
-            <div class="card-body text-end">
-              <small class="text-muted d-block mb-1">
-                Next<i class="bi bi-chevron-right ms-1"></i>
+          <a href="{{ page.next.url | relative_url }}" class="post-nav-card post-nav-card--next">
+            <div class="post-nav-card__body">
+              <small class="post-nav-card__label">
+                Next<i class="bi bi-chevron-right ms-1" aria-hidden="true"></i>
               </small>
-              <span class="text-body-emphasis">{{ page.next.title | truncate: 50 }}</span>
+              <span class="post-nav-card__title">{{ page.next.title | truncate: 50 }}</span>
             </div>
           </a>
         {% else %}
-          <div class="card h-100 border-0 bg-body-tertiary opacity-50">
-            <div class="card-body text-end">
-              <small class="text-muted d-block mb-1">
-                Next<i class="bi bi-chevron-right ms-1"></i>
+          <div class="post-nav-card post-nav-card--next post-nav-card--disabled" aria-disabled="true">
+            <div class="post-nav-card__body">
+              <small class="post-nav-card__label">
+                Next<i class="bi bi-chevron-right ms-1" aria-hidden="true"></i>
               </small>
-              <span class="text-muted">No next post</span>
+              <span class="post-nav-card__title text-muted">No next post</span>
             </div>
           </div>
         {% endif %}

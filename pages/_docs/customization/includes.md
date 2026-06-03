@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:53.000Z
 title: Include Components
 description: Guide to the 70+ reusable include components organized by category for maximum flexibility.
+preview: /images/previews/include-components.png
 layout: default
 categories:
     - docs
@@ -305,6 +306,12 @@ bundle show jekyll-theme-zer0
 - [Layouts](/docs/customization/layouts/)
 - [Jekyll Liquid](/docs/jekyll/jekyll-liquid/)
 - [Bootstrap Integration](/docs/bootstrap/)
+
+## Technical Reference
+
+For contributor-level details (component API reference, include parameters, extending the component library):
+
+- [Components → docs/ui/components.md](../../../docs/ui/components.md)
 
 ## See also
 

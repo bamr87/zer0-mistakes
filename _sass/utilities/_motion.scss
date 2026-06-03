@@ -1,0 +1,19 @@
+// ============================================================================
+// Motion utilities — respect prefers-reduced-motion
+// ----------------------------------------------------------------------------
+// Global guardrail: forcibly disable animations/transitions for users who set
+// the OS-level "reduce motion" preference. Components should still declare
+// their own transitions normally; this rule overrides them at the end of the
+// cascade.
+// ============================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

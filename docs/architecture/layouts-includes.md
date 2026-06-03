@@ -1,3 +1,13 @@
+---
+title: "Layouts and Includes Architecture"
+description: "How Jekyll layouts inherit from each other (root → default → article/collection/landing) and how the _includes/ component system is organized."
+date: 2026-01-25T03:38:33.000Z
+lastmod: 2026-06-01T03:38:46.000Z
+categories: [docs]
+tags: [architecture, design]
+author: bamr87
+---
+
 # Layouts and Includes Architecture
 
 Documentation of the template system and component architecture.
@@ -10,7 +20,7 @@ Layouts inherit from each other using Jekyll's `layout` front matter:
 root.html              ← Base HTML document structure
 └── default.html       ← Main site wrapper
     ├── home.html      ← Homepage
-    ├── journals.html  ← Blog posts
+    ├── article.html  ← Blog posts
     ├── collection.html ← Collection index
     ├── landing.html   ← Full-width pages
     ├── blog.html      ← Blog listing
@@ -46,7 +56,7 @@ Main site wrapper with header, footer, and optional sidebars.
 - Right sidebar / TOC (optional)
 - Footer
 
-### `journals.html`
+### `article.html`
 
 Blog post layout extending `default.html`.
 

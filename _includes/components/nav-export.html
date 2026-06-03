@@ -1,0 +1,61 @@
+<!--
+  ===================================================================
+  NAV EXPORT — Export navigation data as YAML
+  ===================================================================
+
+  File: nav-export.html
+  Path: _includes/components/nav-export.html
+  Purpose: Renders the current navigation data files as copyable YAML
+           so users can download or inspect the raw navigation config.
+
+  Dependencies: Bootstrap 5, Bootstrap Icons,
+                _data/navigation/*.yml
+  Used by: pages/_about/settings/navigation.md
+  ===================================================================
+-->
+
+{% assign nav_files = "main,home,about,docs,posts,quickstart,admin" | split: "," %}
+
+<div class="mb-3 d-flex align-items-center gap-2">
+  <label class="form-label mb-0 fw-semibold" for="exportNavSelect">Navigation file:</label>
+  <select class="form-select form-select-sm w-auto" id="exportNavSelect" onchange="showNavExport(this.value)">
+    {% for nav_name in nav_files %}
+      <option value="{{ nav_name }}">{{ nav_name }}</option>
+    {% endfor %}
+  </select>
+  <button class="btn btn-sm btn-outline-secondary" onclick="copyNavExport()" title="Copy to clipboard">
+    <i class="bi bi-clipboard me-1"></i>Copy
+  </button>
+</div>
+
+{% for nav_name in nav_files %}
+  {% assign nav_data = site.data.navigation[nav_name] %}
+  <div class="nav-export-block" id="export-{{ nav_name }}" {% unless forloop.first %}style="display:none"{% endunless %}>
+    <pre class="bg-body-secondary rounded p-3 small overflow-auto" style="max-height:400px" id="export-pre-{{ nav_name }}">{% if nav_data %}{% for item in nav_data %}- title: "{{ item.title | default: item.name }}"
+  url: "{{ item.url }}"{% if item.children %}
+  children:{% for child in item.children %}
+    - title: "{{ child.title | default: child.name }}"
+      url: "{{ child.url }}"{% endfor %}{% endif %}
+{% endfor %}{% else %}# No navigation data found for {{ nav_name }}{% endif %}</pre>
+  </div>
+{% endfor %}
+
+<script>
+function showNavExport(name) {
+  document.querySelectorAll('.nav-export-block').forEach(function(el) {
+    el.style.display = 'none';
+  });
+  var target = document.getElementById('export-' + name);
+  if (target) target.style.display = '';
+}
+function copyNavExport() {
+  var visible = document.querySelector('.nav-export-block:not([style*="display:none"])');
+  if (!visible) return;
+  var pre = visible.querySelector('pre');
+  if (!pre) return;
+  navigator.clipboard.writeText(pre.innerText).then(function() {
+    var btn = document.querySelector('[onclick="copyNavExport()"]');
+    if (btn) { btn.innerHTML = '<i class="bi bi-check2 me-1"></i>Copied!'; setTimeout(function(){ btn.innerHTML = '<i class="bi bi-clipboard me-1"></i>Copy'; }, 2000); }
+  });
+}
+</script>

@@ -2,6 +2,7 @@
 lastmod: 2026-05-05T00:00:00.000Z
 title: AIEO — AI Engine Optimization
 description: AI-Engine Optimization toolkit for zer0-mistakes — Schema.org JSON-LD structured data, E-E-A-T signals, FAQ page, and glossary collection for stronger AI search and LLM grounding.
+preview: /images/previews/aieo-ai-engine-optimization.png
 layout: default
 categories:
   - docs
@@ -115,6 +116,7 @@ It is included automatically by `_includes/core/head.html` on every page.
 # _config.yml
 title: "My Site"
 description: "Site description for search engines"
+preview: /images/previews/aieo-ai-engine-optimization.png
 url: "https://example.com"
 
 # Author / E-E-A-T

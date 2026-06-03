@@ -25,13 +25,16 @@
  * ===================================================================
  */
 
-import { config } from './config.js';
+import { config, syncBreakpointsFromCss } from './config.js';
 import { ScrollSpy } from './scroll-spy.js';
 import { SmoothScroll } from './smooth-scroll.js';
 import { KeyboardShortcuts } from './keyboard.js';
 import { SwipeGestures } from './gestures.js';
 import { FocusManager } from './focus.js';
 import { SidebarState } from './sidebar-state.js';
+import { TocVisibility } from './toc-visibility.js';
+import { SidebarVisibility } from './sidebar-visibility.js';
+import { Navbar } from './navbar.js';
 
 /**
  * Navigation Controller - Orchestrates all navigation modules
@@ -53,12 +56,23 @@ export class Navigation {
         }
 
         try {
+            // Sync breakpoints from --zer0-bp-* CSS custom properties so a fork
+            // overriding tokens in SCSS automatically propagates to JS checks.
+            syncBreakpointsFromCss();
+
             // Initialize sidebar state first (other modules may depend on it)
             this.modules.state = new SidebarState();
+
+            const leftSidebar = document.querySelector(config.selectors.leftSidebar);
+            const docsLayout = document.querySelector(config.selectors.docsLayout);
+            if (leftSidebar && docsLayout && !docsLayout.classList.contains('bd-layout--no-sidebar')) {
+                this.modules.sidebarVisibility = new SidebarVisibility();
+            }
             
             // Initialize TOC-related modules only if TOC exists
             const toc = document.querySelector(config.selectors.toc);
             if (toc) {
+                this.modules.tocVisibility = new TocVisibility();
                 this.modules.scrollSpy = new ScrollSpy();
                 this.modules.smoothScroll = new SmoothScroll();
             } else {
@@ -73,6 +87,11 @@ export class Navigation {
             
             // Initialize focus management
             this.modules.focus = new FocusManager();
+
+            // Initialize navbar (hover dropdowns, mobile menu, tooltips,
+            // focus trap) — formerly the standalone assets/js/navigation.js IIFE.
+            this.modules.navbar = new Navbar(config);
+            this.modules.navbar.init();
 
             this._initialized = true;
             
@@ -223,5 +242,7 @@ export { KeyboardShortcuts } from './keyboard.js';
 export { SwipeGestures } from './gestures.js';
 export { FocusManager } from './focus.js';
 export { SidebarState } from './sidebar-state.js';
+export { TocVisibility } from './toc-visibility.js';
+export { SidebarVisibility } from './sidebar-visibility.js';
 
 export default Navigation;

@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:57.000Z
 title: Mermaid Diagrams
 description: Complete guide to integrating Mermaid diagrams in Jekyll sites - flowcharts, sequence diagrams, class diagrams and more with GitHub Pages compatibility.
+preview: /images/previews/mermaid-diagrams.png
 layout: default
 categories:
     - docs
@@ -374,6 +375,12 @@ docker-compose up
 ---
 
 *This guide is part of the [Zer0-Mistakes Jekyll Theme](https://github.com/bamr87/zer0-mistakes) documentation.*
+
+## Technical Reference
+
+For implementation details (how Mermaid v2 was integrated, file changes, test suite):
+
+- [Mermaid Integration → docs/implementation/feature-change-log.md](../../../docs/implementation/feature-change-log.md#mermaid-integration-v20)
 
 ## See also
 

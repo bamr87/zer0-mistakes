@@ -1,0 +1,84 @@
+# {{THEME_DISPLAY_NAME}} Installation
+
+This directory has been set up with the {{THEME_NAME}} Jekyll theme.
+
+## Quick Start
+
+### Using Docker (Recommended)
+```bash
+# Start the development server
+docker-compose up
+
+# Your site will be available at {{DEFAULT_URL}}
+```
+
+**Note**: `_config_dev.yml` is optimized for Docker compatibility.
+
+### Using Local Ruby Environment
+```bash
+# Install dependencies
+bundle install
+
+# Start the development server
+bundle exec jekyll serve --config _config_dev.yml
+
+# Your site will be available at {{DEFAULT_URL}}
+```
+
+## Configuration
+
+1. Edit `_config.yml` to customize your site settings
+2. Update the content in `index.md` to match your needs
+3. Add your content in the `pages/` directory
+4. Customize styling in `_sass/custom.scss`
+
+## Directory Structure
+
+- `_config.yml` — Main Jekyll configuration
+- `_config_dev.yml` — Development configuration (Docker-optimized)
+- `_data/` — Site data files
+- `_includes/` — Reusable template components
+- `_layouts/` — Page layouts
+- `_sass/` — Sass stylesheets
+- `assets/` — Static assets (images, JS, CSS)
+
+## Troubleshooting
+
+### Docker Issues
+
+#### Port Conflicts
+If port {{DEFAULT_PORT}} is already in use, modify `docker-compose.yml`:
+```yaml
+ports:
+  - "4001:4000"  # Use different external port
+```
+
+#### Bundle Install Failures
+```bash
+docker-compose down
+docker system prune -f
+docker-compose up --build
+```
+
+### Local Development Issues
+
+#### Missing Dependencies
+```bash
+gem update bundler
+bundle clean --force
+bundle install
+```
+
+#### Ruby Version Issues
+Ensure you're using Ruby 3.0+:
+```bash
+ruby --version
+```
+
+## Support
+
+For issues and documentation, visit: [{{THEME_NAME}} GitHub Repository]({{GITHUB_URL}})
+
+---
+Installed: {{CURRENT_DATE}}  
+Mode: {{INSTALL_MODE}}

@@ -359,11 +359,17 @@ required_exclusions = [
   'pages/_notes/_templates/'
 ]
 
+# Normalize trailing slashes so '.obsidian' and '.obsidian/' are treated the same;
+# Jekyll accepts both forms and configs in this repo mix them by section.
+normalize_exclusion = ->(entry) { entry.to_s.sub(%r{/\z}, '') }
+normalized_required = required_exclusions.map(&normalize_exclusion)
+
 {
   root_file => Array(root_config['exclude']),
   dev_file => Array(dev_config['exclude'])
 }.each do |file, exclusions|
-  missing_exclusions = required_exclusions.reject { |entry| exclusions.include?(entry) }
+  normalized_present = exclusions.map(&normalize_exclusion)
+  missing_exclusions = normalized_required.reject { |entry| normalized_present.include?(entry) }
   assert(missing_exclusions.empty?, "#{file}: exclude is missing #{missing_exclusions.join(', ')}")
 end
 
@@ -467,6 +473,15 @@ run_jekyll_build() {
     if [[ "$SKIP_JEKYLL" == "true" ]]; then
         warn "Skipping Jekyll build"
         return 0
+    fi
+
+    if [[ -f "$REPO_ROOT/_data/generate_statistics.sh" ]]; then
+        step "Generating content statistics..."
+        if bash "$REPO_ROOT/scripts/generate-content-statistics.sh"; then
+            success "Content statistics updated"
+        else
+            warn "Content statistics generation failed; continuing with existing data"
+        fi
     fi
 
     step "Running Jekyll build..."

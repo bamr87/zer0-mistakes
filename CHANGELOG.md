@@ -1,5 +1,255 @@
 # Changelog
 
+## [1.11.2] - 2026-06-03
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 452022ae chore(backlog): audit 2026-06-01 (#121)
+
+
+## [1.11.1] - 2026-06-01
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- d4a53d51 docs: consolidate, standardize, and add maintenance system (#112)
+
+
+## [1.11.0] - 2026-06-01
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 8a5ba7e2 feat(ci): add continuous-evolution backlog loop (#114)
+
+
+## [Unreleased]
+
+### Added
+- **Continuous-evolution loop**: a self-sustaining backlog mechanism so AI agents can keep improving the repo between human sessions.
+  - `_data/backlog.yml` — tactical task queue (single source of truth), mirroring the `_data/roadmap.yml` pattern.
+  - `scripts/sync-backlog.rb` (+ `scripts/sync-backlog.sh`) — schema validator and GitHub Issues sync (idempotent via `<!-- backlog-id -->` markers).
+  - `.github/workflows/backlog-sync.yml` — syncs the backlog to issues on push to `main`; validates schema on PRs.
+  - `.github/workflows/auto-merge.yml` — enables native auto-merge for low-risk (`docs`/`deps`/`lint`) PRs once CI is green.
+  - `.github/prompts/repo-audit.prompt.md` (`/repo-audit`) and `.github/prompts/backlog-implement.prompt.md` (`/backlog-implement`) — the audit and implement routines.
+  - `.github/instructions/backlog.instructions.md` — file-scoped guidance for the backlog.
+  - `docs/systems/continuous-evolution.md` — full design, autonomy policy, and setup.
+  - `CLAUDE.md` — Claude Code pointer to `AGENTS.md` (per the documented convention).
+## [1.10.0] - 2026-06-01
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 309202f2 feat(roadmap): add --validate mode, catch-up milestones v1.0–1.9, README accuracy fixes (#113)
+
+
+## [1.9.10] - 2026-05-31
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- ef6a3f39 fix: update copyright year range in LICENSE file
+
+
+## [1.9.9] - 2026-05-31
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 2ffb820d docs: align pages/_docs/ (user guides) ↔ docs/ (technical guides)
+
+
+## [1.9.8] - 2026-05-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 4e0273b8 docs: update Gemfile.lock handling and release workflow guidelines
+
+
+## [1.9.7] - 2026-05-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- c01d4e85 fix(quickstart): remove broken image reference from Quick Start Guide
+- 7f6b13fd docs: enhance release pipeline documentation for clarity and completeness
+
+
+## [1.9.6] - 2026-05-30
+
+### Changed
+- **Quickstart**: Comprehensive rewrite of all quickstart docs (`pages/_quickstart/`) with improved structure, Mermaid decision flowchart, and step-by-step screenshots
+- **Quickstart**: `index.md` published from draft — now live at `/quickstart/`
+- **Quickstart**: Removed `homebrew.md` and `winget.md` (content consolidated into `machine-setup.md`)
+- **Quickstart**: 18 new screenshots added to `assets/images/quickstart/` for visual walkthroughs
+
+## [1.9.5] - 2026-05-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- d4e1a789 fix(skins): remove contrast/dark skins, set air as default, improve link contrast
+
+
+## [1.9.4] - 2026-05-30
+
+### Changed
+- **Skins**: Removed `contrast` and `dark` skins; `air` is now the default skin
+- **Accessibility**: Rewrote per-skin link and hover colors to meet WCAG AA (≥4.5:1) contrast in both light and dark mode — all 7 remaining skins now use a darker brand tone for light-mode links and a lighter accent tone for dark-mode links
+- `_config.yml`: `theme_skin` default changed from `"dark"` to `"air"`
+
+## [1.9.3] - 2026-05-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 90ff5f8 fix(landing): update URL for secondary CTA to point to features page
+
+
+## [1.9.2] - 2026-05-29
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 6e73c5f Update README and content statistics
+
+
+## [1.9.1] - 2026-05-27
+
+### Fixed
+- Harden one-line installer path
+
+
+
+## [1.9.0] - 2026-05-27
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 8a2bd84 feat(install): modular installer with deploy plugins, AI wizard pipeline, scrape v2, and test suite (#111)
+
+
+## [Unreleased]
+
+### Added
+- **Modular installer (`scripts/install/`)**: spec-driven, AI-aware installer dispatched by `scripts/bin/install`. Single `.zer0/install.spec.json` contract feeds CLI flags, the TUI wizard, and the OpenAI wizard into one apply pipeline.
+- **Deploy plugins**: `tasks/deploy_github-pages.sh`, `tasks/deploy_azure-swa.sh`, `tasks/deploy_docker-prod.sh`. Spec deploy targets now auto-render the matching workflow / config from `templates/deploy/`.
+- **AI wizard end-to-end**: `install wizard --ai` now chains spec generation → `apply_run`, records AI provenance (`ai.used/provider/model`) in the spec, lets CLI flags override AI guesses, and falls back to profile defaults when the model returns empty arrays.
+- **Profile defaults fallback**: `ai/wizard.sh` re-loads the selected profile to fill in empty `deploy`/`agents` arrays from the AI output, ensuring decisive installs.
+- **`generic` agent target** added to spec schema enum (cross-tool `AGENTS.md` baseline alongside `claude`, `cursor`, `aider`, `copilot`).
+- **Installer test suite (`test/test_installer.sh`)**: 17-check regression harness covering module syntax, all 6 profile inits, all 3 deploy plugins, all 5 agent flavours, and the AI wizard pipeline. Wired into `test/test_runner.sh` as the `installer` suite (included in `--suites all` and `--suites full`).
+- **Site scraping (`install scrape <URL>` + `install init --scrape <URL>`)**: new `scripts/install/scrape.sh` BFS crawler + stdlib-only `scripts/install/scrape_html.py` extractor convert any existing website into a fully-rendered zer0-mistakes site. Now distributes pages by detected `kind`: home → `index.md` with `permalink: /`, events → `pages/events/<slug>.md`, posts → `pages/news/<slug>.md`, rest → `pages/<slug>.md`. Downloads referenced images into `assets/scraped/` and rewrites markdown to local paths. Wires navigation into `_data/navigation/main.yml` (the file the theme actually reads) with kind-based Bootstrap Icons, filters junk labels (Back / Cart / Folder:) and `?format=ical`/`?format=json` URLs, skips commerce paths (`/cart`, `/checkout`, `/login`). Seeds `_config.yml` `title`/`description`/`lang`/`logo` from `og:`/`<html lang>` metadata. New flags: `--scrape URL`, `--scrape-depth N` (default 2), `--scrape-max-pages N` (default 25). Covered by `test/test_install_scrape.sh` (standalone + init-integration, asserts new layout + nav cleanliness).
+
+### Fixed
+- `_cmd_wizard` previously left targets containing only `.zer0/install.spec.json`; now chains `apply_run` to write all task outputs.
+- `plan.sh` YAML parser now accepts both `deploy:`/`deploy_targets:` keys and parses `agents:` block lists *and* `ai_features.agent_files:` inline flow lists, matching the actual profile YAML shape.
+- Rewrote `ai/prompts/wizard.system.md` with explicit profile, deploy, and agent heuristics plus a full example output, eliminating empty AI responses.
+- `plan_load_profile` and `plan_apply_flags` now return `0` explicitly so Bash 3.2 doesn't propagate a trailing-test exit code.
+
+## [1.8.2] - 2026-05-26
+
+### Changed
+- Version bump: patch release
+
+
+## [Unreleased]
+
+### Changed
+- **Gem packaging**: `jekyll-theme-zer0.gemspec` now excludes `assets/images/` (287 MB of content previews/author photos), `assets/backgrounds/`, `.DS_Store` files, and binary media outside `assets/vendor/`, reducing gem payload to ~8.9 MB
+
+## [1.8.1] - 2026-05-26
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 6a9bac4 chore(docker): remove unused prod and publish compose files
+
+
+## [1.8.0] - 2026-05-25
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- f62849f feat(ui): design tokens, navigation chrome, docs overhaul, sidebar rail & skin fixes (#108)
+
+
+## [1.7.2] - 2026-05-25
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- be8fd2b Expand Ruby 101 page with comprehensive beginner content (#107)
+
+
+## [1.7.1] - 2026-05-24
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 580f2b4 perf: Jekyll build performance improvements + MathJax 3 fix + richer Obsidian cache (#100)
+
+
+## [Unreleased]
+
+### Added
+- **Design system & layouts**: Sass token layers (`_sass/tokens/`), component and layout partials (`_sass/components/`, `_sass/layouts/`), skins (`theme_skins.yml` + `_sass/theme/_skins.scss`), utilities, and developer docs (`docs/design-system.md`, `design-tokens.md`, `theming.md`, `layouts-and-navigation.md`, and related guides). Homepage sections are driven by `_data/landing.yml` per `_includes/components/README.md`.
+- **Navigation & chrome**: Drawer/TOC FAB and sidebar visibility modules (`assets/js/modules/navigation/`), `appearance.js` theme helper, refreshed navbar/footer/breadcrumb markup aligned with Bootstrap 5.3.
+- **Statistics**: `_plugins/content_statistics_generator.rb` optionally regenerates `_data/content_statistics.yml` during `jekyll build` (toggle via `content_statistics.auto_generate`); `./scripts/generate-content-statistics.sh` delegates to `_data/generate_statistics.sh` and is wired from `rake stats:generate`.
+- **Testing**: Expanded Playwright coverage (`test/visual/ui-refresh.spec.js`, `layouts.spec.js`) and refreshed smoke visuals/`results.json` for the new chrome.
+
+### Changed
+- **Testing**: Consolidated three Playwright configs into a single `test/playwright.config.js` with `smoke`, `snapshots`, and `regression-{chromium,firefox,webkit}` projects (tiers). The new `test/test_playwright.sh` runner replaces `test_styling.sh` and selects the tier via `PLAYWRIGHT_PROJECT`. Snapshot baselines now live in `test/visual/snapshots/` (committed Linux images) and can be refreshed via the new `test/update-snapshots.sh` Docker helper.
+- **CI**: Split the styling step in `ci.yml` into a Playwright smoke step (every code-change PR) and a path-filtered Playwright snapshot step (only when `_sass/`, `assets/`, `_layouts/`, `_includes/`, `test/visual/` change); both go through the new reusable `.github/actions/playwright-tests` composite action and upload `test/visual-results/` artifacts on failure (14-day retention) for easier triage.
+- **Performance**: `setup-banner.html` — added `{% raw %}{% unless site.site_configured %}{% endraw %}` early-exit guard that skips all setup detection logic and the `setup-check.html` sub-include when `site_configured: true`; eliminated 151 redundant include renders per build (-87% per-render time, setup-check fully eliminated from profile)
+- **Performance**: `info-section.html` — replaced full-site URL megastring (`site.html_pages | map | join`) with a single pre-filtered admin-page lookup (`where_exp: "p.url contains '/about/'"`) that accesses `site.html_pages` once and builds a ~10-entry string instead of 150+, making `contains` checks ~18× faster
+- **Performance**: `sidebar-right.html` — added heading-presence guard before calling the expensive `toc.html` Liquid parser; pages without `<h2>`/`<h3>`/`<h4>` headings skip TOC generation entirely (-18% per-render for `toc.html`)
+- **Performance**: Made MathJax loading conditional via `page.mathjax` front matter flag (mirrors Mermaid pattern) — saves 1.8 MB transfer on pages without math
+- **Performance**: Cached Obsidian plugin wiki-link index across incremental builds — index is rebuilt only when document URLs, titles, or aliases change
+- **Performance**: Disabled `notebooks`, `hobbies`, and `quests` collections in dev config for faster local builds
+- **Performance**: Removed jQuery from page loads — Bootstrap 5.3.3 does not require it and no custom JS uses jQuery APIs
+
+### Fixed
+- **Accessibility**: Dynamically-rendered color inputs in the Theme Customizer (Skin Editor gradient stops in `assets/js/skin-editor.js` and Live Preview pickers in `assets/js/palette-generator.js`) now have associated `<label for>` elements and `aria-label`s, fixing a regression that left them inaccessible to assistive tech.
+- **Tests**: `test/visual/theme-colors.spec.js` now activates the Color Editor tab and waits for the panel to be visible before interacting, eliminating a 45 s `locator.fill` timeout caused by hitting hidden inputs in inactive tabs.
+- **Tests**: Replaced flaky `waitForTimeout(300)` and `networkidle` calls in `test/visual/fixtures.js` and `test/visual/skins.spec.js` with deterministic waits on `domcontentloaded`, `load`, the `data-theme-skin` attribute, and the `zer0:skin-change` event.
+- **Tests**: Retired the legacy `test/test_visual.sh` (ImageMagick + bash screenshot pipeline) and the placeholder `homepage-*-chromium-darwin.png` baselines in favor of the unified Playwright snapshot tier.
+- Added missing `mathjax: true` front matter to pages that use math notation (test-notebook.md, jupyter-notebooks.md, jekyll-math-symbols-with-mathjax.md)
+- **MathJax 3 inline math**: Added `window.MathJax` config block before the script tag so `$...$` inline math (used in test-notebook.md) renders correctly — MathJax 3 does not enable dollar-sign inline delimiters by default
+- Updated `mathjax-math.md` documentation to show MathJax 3 API (`window.MathJax = {}`) instead of the removed MathJax 2 `MathJax.Hub.Config` API
+
+### Tests
+- Added `ObsidianCacheTest` suite (5 new tests) covering fingerprint invalidation on document addition, title change, alias change, cache hit, and cache miss
+
+### Changed (UI/UX)
+- **Sidebar collapse — VS Code style**: Left sidebar (`#bdSidebar`) and right TOC (`#tocContents`) now collapse to a slim 36 px rail (`--zer0-sidebar-rail-width`) instead of being fully hidden on desktop. The visibility toggle icon (`bi-layout-sidebar-inset` / `bi-layout-sidebar-inset-reverse`) stays mounted on the rail so users can re-expand the panel with a single click — the floating action buttons (`.bd-sidebar-fab`, `.bd-toc-fab`) are now hidden at `≥992 px` since the rail toggle replaces them. `_sass/core/_docs-layout.scss`, `_sass/layouts/_navbar-extras.scss`.
+- **Smooth transitions**: `.bd-layout` and `.bd-main` now animate `grid-template-columns` and `gap` over `--zer0-motion-duration-base` (0.3 s) with `--zer0-motion-ease-standard`; sidebar contents cross-fade via `opacity` + delayed `visibility`. Honors `@media (prefers-reduced-motion: reduce)` by disabling all related transitions.
+- **Toggle behavior**: `sidebar-visibility.js` and `toc-visibility.js` no longer set `button.hidden = true` on the rail toggle when collapsed, keeping it interactive in the collapsed state. Aria labels (`Hide…` / `Show…`) update on each toggle.
+- **Cache-bust**: Added `?v={{ site.time | date: '%s' }}` to the navigation ES-module `<script type="module">` tag in `_includes/components/js-cdn.html` to force re-fetch on rebuild (browsers cache ES modules indefinitely by URL).
+- **Navbar dropdown**: Dropdown toggle button set to `align-self: stretch` so it spans the full navbar height, making it easier to invoke on touch/small screens; chevron icon `font-size` increased to `1em` for better legibility. `_sass/core/_navbar.scss`.
+- **Syntax highlighting**: Dual-palette system — `_sass/core/_syntax.scss` now uses a GitHub Light palette for `.highlight` (light mode) and scopes the Material Dark base16 palette to `[data-bs-theme="dark"] .highlight`, fixing near-invisible token colors on light backgrounds.
+- **Theme preview gallery**: Expanded to 20 sections with 6 new components: Callouts (5 types), Accordion, Progress & Spinners, Breadcrumb & Pagination, Tooltips & Popovers, and Icons showcase. TOC updated accordingly; Bootstrap tooltip/popover JS initializer added. `_includes/components/theme-preview-gallery.html`, `pages/_about/settings/theme-preview.md`.
+
+### Fixed (UI)
+- **Contrast skin — light mode**: The `contrast` skin's `zer0-skin-palette` mixin sets `--bs-link-color: #ffffff` (white accent) which rendered sidebar nav links invisible on a white background in light mode. Added `[data-theme-skin="contrast"]:not([data-bs-theme="dark"])` override in `_sass/theme/_skins.scss` to pin link color to `#111111` in light mode while leaving dark-mode behavior unchanged.
+
 ## [1.6.5] - 2026-05-19
 
 ### Changed

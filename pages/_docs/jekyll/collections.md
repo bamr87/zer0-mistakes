@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:49.000Z
 title: Jekyll Collections
 description: Organized content collections for posts, docs, notebooks, and other content types with custom permalinks.
+preview: /images/previews/jekyll-collections.png
 layout: default
 categories:
     - docs
@@ -100,7 +101,7 @@ title: "My Blog Post"
 date: 2025-01-25
 categories: [technology, jekyll]
 tags: [tutorial, beginner]
-preview: /images/previews/my-post.png
+preview: /images/previews/jekyll-collections.png
 ---
 
 Post content here...

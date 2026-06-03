@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:30:00.000Z
 title: Jupyter Notebook Integration
 description: Full Jupyter notebook support with GitHub Pages compatibility, automated conversion, and responsive design.
+preview: /images/previews/jupyter-notebook-integration.png
 layout: default
 categories:
     - docs
@@ -12,6 +13,7 @@ tags:
     - python
     - data-science
 permalink: /docs/features/jupyter-notebooks/
+mathjax: true
 difficulty: intermediate
 estimated_reading_time: 15 minutes
 prerequisites:
@@ -283,6 +285,12 @@ Add responsive wrapper:
 - [MathJax Math](/docs/features/mathjax-math/)
 - [Code Highlighting](/docs/jekyll/code-highlighting/)
 - [Mermaid Diagrams](/docs/features/mermaid-diagrams/)
+
+## Technical Reference
+
+For implementation details (Docker conversion pipeline, nbconvert config, SCSS styling, GitHub Actions workflow):
+
+- [Jupyter Notebooks → docs/features/jupyter-notebooks.md](../../../docs/features/jupyter-notebooks.md)
 
 ## See also
 

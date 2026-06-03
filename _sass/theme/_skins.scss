@@ -1,0 +1,256 @@
+// ==========================================================================
+// Skin color tokens — per-skin UI palette overrides
+// ==========================================================================
+// Maps each data-theme-skin to Bootstrap + --zer0-color-* tokens so skin
+// previews affect buttons, links, borders, cards, nav, and alerts — not just
+// SVG backgrounds. Color values mirror _data/theme_backgrounds.yml.
+// ==========================================================================
+
+// $link-light / $link-light-hover — link colors for light mode; should reach
+//   WCAG AA (≥4.5:1) against a white/near-white body background.
+// $link-dark  / $link-dark-hover  — link colors for dark mode; should reach
+//   WCAG AA (≥4.5:1) against Bootstrap's dark body background (#212529).
+// Falls back to $brand (light) / $accent (dark) when not supplied.
+@mixin zer0-skin-palette(
+  $brand, $brand-rgb, $accent, $accent-rgb: null,
+  $link-light: null,       // WCAG-AA color on white (light mode)
+  $link-light-hover: null, // Hover variant in light mode
+  $link-dark: null,        // WCAG-AA color on dark bg (dark mode)
+  $link-dark-hover: null   // Hover variant in dark mode
+) {
+  // Resolve: fall back to $brand / $accent when params are omitted
+  $_ll:  if($link-light       != null, $link-light,       $brand);
+  $_llh: if($link-light-hover != null, $link-light-hover, $_ll);
+  $_ld:  if($link-dark        != null, $link-dark,        $accent);
+  $_ldh: if($link-dark-hover  != null, $link-dark-hover,  $_ld);
+
+  --zer0-color-primary: #{$brand};
+  --zer0-color-primary-rgb: #{$brand-rgb};
+  --zer0-color-accent: #{$accent};
+  --bs-primary: #{$brand};
+  --bs-primary-rgb: #{$brand-rgb};
+
+  // Light-mode link colors (default); dark-mode overrides live in &[data-bs-theme="dark"]
+  --bs-link-color: #{$_ll};
+  --zer0-color-link: #{$_ll};
+  --bs-link-hover-color: #{$_llh};
+  --zer0-color-link-hover: #{$_llh};
+
+  --zer0-color-border: rgba(#{$brand-rgb}, 0.28);
+  --zer0-shadow-focus: 0 0 0 0.2rem rgba(#{$brand-rgb}, 0.25);
+
+  // Subtle brand tint on elevated surfaces (cards, admin header bar)
+  --zer0-color-bg-elevated: color-mix(in srgb, #{$brand} 10%, var(--bs-body-bg));
+  --zer0-color-bg-muted: color-mix(in srgb, #{$brand} 6%, var(--bs-secondary-bg, var(--bs-body-bg)));
+
+  // Bootstrap component wiring
+  .btn-primary {
+    --bs-btn-bg: #{$brand};
+    --bs-btn-border-color: #{$brand};
+    --bs-btn-hover-bg: color-mix(in srgb, #{$brand} 85%, #{$accent});
+    --bs-btn-hover-border-color: color-mix(in srgb, #{$brand} 85%, #{$accent});
+    --bs-btn-active-bg: color-mix(in srgb, #{$brand} 75%, #{$accent});
+    --bs-btn-active-border-color: color-mix(in srgb, #{$brand} 75%, #{$accent});
+  }
+
+  .btn-outline-primary {
+    --bs-btn-color: #{$brand};
+    --bs-btn-border-color: #{$brand};
+    --bs-btn-hover-bg: #{$brand};
+    --bs-btn-hover-border-color: #{$brand};
+    --bs-btn-active-bg: #{$brand};
+    --bs-btn-active-border-color: #{$brand};
+  }
+
+  .alert-primary {
+    --bs-alert-color: #{$brand};
+    --bs-alert-bg: rgba(#{$brand-rgb}, 0.12);
+    --bs-alert-border-color: rgba(#{$brand-rgb}, 0.35);
+  }
+
+  .nav-tabs .nav-link.active {
+    color: #{$brand};
+    border-color: var(--bs-border-color) var(--bs-border-color) var(--bs-body-bg);
+  }
+
+  .nav-tabs .nav-link:hover:not(.active) {
+    color: #{$accent};
+  }
+
+  // Links (Bootstrap + theme)
+  a:not(.btn):not(.nav-link):not(.dropdown-item) {
+    color: var(--bs-link-color);
+  }
+
+  a:not(.btn):hover {
+    color: var(--bs-link-hover-color);
+  }
+
+  // Surfaces
+  .card:not(.skin-card) {
+    background-color: var(--zer0-color-bg-elevated);
+    border-color: var(--zer0-color-border);
+  }
+
+  // List group active state
+  .list-group-item.active {
+    background-color: #{$brand};
+    border-color: #{$brand};
+  }
+
+  .list-group-item-action:hover:not(.active) {
+    color: #{$accent};
+  }
+
+  // Form controls
+  .form-control:focus,
+  .form-select:focus,
+  .form-check-input:focus {
+    border-color: #{$brand};
+    box-shadow: var(--zer0-shadow-focus);
+  }
+
+  .form-check-input:checked {
+    background-color: #{$brand};
+    border-color: #{$brand};
+  }
+
+  // Pagination & breadcrumbs
+  .page-link {
+    color: #{$brand};
+  }
+
+  .page-item.active .page-link {
+    background-color: #{$brand};
+    border-color: #{$brand};
+  }
+
+  .breadcrumb-item.active {
+    color: #{$brand};
+  }
+
+  // Progress
+  .progress-bar {
+    background-color: #{$brand};
+  }
+
+  // Code blocks
+  pre:not(.highlight) {
+    border-color: rgba(var(--bs-primary-rgb), 0.22);
+  }
+
+  pre:not(.highlight):hover {
+    border-color: rgba(var(--bs-primary-rgb), 0.4);
+  }
+
+  // Navbar snippet / active nav links
+  .navbar .nav-link.active,
+  .navbar .nav-link.show {
+    color: #{$brand};
+  }
+
+  // Text & border utilities tied to primary
+  .text-primary {
+    color: #{$brand} !important;
+  }
+
+  .border-primary {
+    border-color: #{$brand} !important;
+  }
+
+  .link-primary {
+    color: #{$brand} !important;
+  }
+
+  // Dark-mode link overrides — switch to lighter tones for contrast on dark bg
+  &[data-bs-theme="dark"] {
+    --bs-link-color: #{$_ld};
+    --zer0-color-link: #{$_ld};
+    --bs-link-hover-color: #{$_ldh};
+    --zer0-color-link-hover: #{$_ldh};
+  }
+}
+
+// air — steel blue
+// Light: #1e5fa8 (≈6.5:1 on white) / Dark: #b8d4e3 (≈8.5:1 on #212529)
+[data-theme-skin="air"] {
+  @include zer0-skin-palette(
+    #6fa8dc, "111, 168, 220", #b8d4e3,
+    $link-light:       #1e5fa8,
+    $link-light-hover: #154a87,
+    $link-dark:        #b8d4e3,
+    $link-dark-hover:  #d6eaf4
+  );
+}
+
+// aqua — cyan/teal
+// Light: #006d99 (≈5.5:1 on white) / Dark: #67d7ec (≈8.0:1 on #212529)
+[data-theme-skin="aqua"] {
+  @include zer0-skin-palette(
+    #00b4d8, "0, 180, 216", #90e0ef,
+    $link-light:       #006d99,
+    $link-light-hover: #005577,
+    $link-dark:        #67d7ec,
+    $link-dark-hover:  #9ae8f5
+  );
+}
+
+// dirt — earthy gold/brown
+// Light: #7a5a10 (≈5.0:1 on white) / Dark: #e0b882 (≈7.0:1 on #212529)
+[data-theme-skin="dirt"] {
+  @include zer0-skin-palette(
+    #8b6914, "139, 105, 20", #d4a574,
+    $link-light:       #7a5a10,
+    $link-light-hover: #5c430c,
+    $link-dark:        #e0b882,
+    $link-dark-hover:  #f0cea0
+  );
+}
+
+// neon — electric purple/blue
+// Light: #5e22cc (≈5.5:1 on white) / Dark: #8ab4ff (≈6.0:1 on #212529)
+[data-theme-skin="neon"] {
+  @include zer0-skin-palette(
+    #8338ec, "131, 56, 236", #3a86ff, "58, 134, 255",
+    $link-light:       #5e22cc,
+    $link-light-hover: #4a1aa3,
+    $link-dark:        #8ab4ff,
+    $link-dark-hover:  #b0ccff
+  );
+}
+
+// mint — forest green
+// Light: #2d8059 (≈5.5:1 on white) / Dark: #80cfa8 (≈7.5:1 on #212529)
+[data-theme-skin="mint"] {
+  @include zer0-skin-palette(
+    #52b788, "82, 183, 136", #95d5b2,
+    $link-light:       #2d8059,
+    $link-light-hover: #1f5a3b,
+    $link-dark:        #80cfa8,
+    $link-dark-hover:  #a8e6c4
+  );
+}
+
+// plum — deep violet
+// Light: #6b2477 (≈8.0:1 on white) / Dark: #d4a0f5 (≈7.0:1 on #212529)
+[data-theme-skin="plum"] {
+  @include zer0-skin-palette(
+    #c77dff, "199, 125, 255", #812f85,
+    $link-light:       #6b2477,
+    $link-light-hover: #4e1958,
+    $link-dark:        #d4a0f5,
+    $link-dark-hover:  #e8c8ff
+  );
+}
+
+// sunrise — warm terracotta/orange
+// Light: #b54418 (≈5.5:1 on white) / Dark: #ffa87a (≈7.0:1 on #212529)
+[data-theme-skin="sunrise"] {
+  @include zer0-skin-palette(
+    #ff6b35, "255, 107, 53", #f7c59f,
+    $link-light:       #b54418,
+    $link-light-hover: #8f3512,
+    $link-dark:        #ffa87a,
+    $link-dark-hover:  #ffd0b0
+  );
+}

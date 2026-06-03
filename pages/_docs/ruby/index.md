@@ -1,6 +1,7 @@
 ---
 title: Ruby
 description: Ruby versioning and Bundler tips for Zer0-Mistakes.
+preview: /images/previews/ruby.png
 layout: default
 categories:
     - docs

@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:52.000Z
 title: Styles
 description: Customize CSS and SCSS styles in the Zer0-Mistakes Jekyll theme.
+preview: /images/previews/styles.png
 layout: default
 categories:
     - docs
@@ -280,6 +281,14 @@ Use Bootstrap's breakpoints:
 - [Bootstrap 5 Documentation](https://getbootstrap.com/docs/5.3/)
 - [Sass Documentation](https://sass-lang.com/documentation/)
 - [CSS Custom Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties)
+
+## Technical Reference
+
+For contributor-level details (SCSS pipeline, design token catalog, Bootstrap integration internals, extending the design system):
+
+- [Design System → docs/ui/design-system.md](../../../docs/ui/design-system.md)
+- [Theming → docs/ui/theming.md](../../../docs/ui/theming.md)
+- [Design Tokens → docs/ui/design-tokens.md](../../../docs/ui/design-tokens.md)
 
 ## See also
 

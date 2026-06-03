@@ -5,6 +5,11 @@ description: Automatically generate AI-powered preview images for Jekyll posts u
 permalink: /docs/features/preview-image-generator/
 feature_id: ZER0-003
 version: "0.8.0"
+date: 2026-04-01T00:00:00.000Z
+lastmod: 2026-05-31T20:54:52.000Z
+categories: [docs]
+tags: [implementation, ai, images]
+author: bamr87
 ---
 
 # AI Preview Image Generator
@@ -392,3 +397,7 @@ Part of the zer0-mistakes Jekyll theme. MIT License.
 ---
 
 *Built with ❤️ for the Jekyll community*
+
+---
+
+> **User guide**: For setup and configuration examples, see [AI Preview Image Generator](/docs/features/preview-image-generator/) in the user documentation.

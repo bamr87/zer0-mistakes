@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:58.000Z
 title: Cookie Consent Management
 description: GDPR/CCPA compliant cookie consent system with granular permissions and Bootstrap modal preferences.
+preview: /images/previews/cookie-consent-management.png
 layout: default
 categories:
     - docs

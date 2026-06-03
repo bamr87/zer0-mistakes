@@ -1,0 +1,158 @@
+// ============================================================================
+// Site footer — compact responsive layout
+// ----------------------------------------------------------------------------
+// Tightens vertical rhythm and link columns below lg while preserving the
+// four-column desktop grid.
+// ============================================================================
+
+.bd-footer {
+  .footer-powered-by {
+    padding-block: var(--zer0-space-2, 0.5rem) var(--zer0-space-3, 1rem);
+
+    @media (min-width: 992px) {
+      padding-block: var(--zer0-space-3, 1rem);
+    }
+  }
+
+  .footer-powered-by-copyright {
+    font-size: 0.875rem;
+    color: var(--bs-secondary-color);
+    margin-bottom: var(--zer0-space-2, 0.5rem);
+  }
+
+  .footer-powered-by-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--zer0-space-2, 0.5rem);
+    text-align: center;
+
+    @media (min-width: 576px) {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  }
+
+  .footer-powered-by-label {
+    flex-shrink: 0;
+    font-size: 0.875rem;
+    color: var(--bs-secondary-color);
+    white-space: nowrap;
+  }
+
+  .footer-powered-by-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--zer0-space-2, 0.5rem);
+
+    @media (min-width: 992px) {
+      gap: var(--zer0-space-3, 1rem);
+    }
+  }
+
+  .footer-powered-by-trailing-inner {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: var(--zer0-space-2, 0.5rem);
+
+    @media (min-width: 992px) {
+      gap: var(--zer0-space-3, 1rem);
+    }
+  }
+
+  .powered-by-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--zer0-space-1, 0.25rem);
+    padding: var(--zer0-space-1, 0.25rem) var(--zer0-space-2, 0.5rem);
+    position: relative;
+    z-index: 1;
+    cursor: pointer;
+    text-decoration: none;
+    border-radius: var(--bs-border-radius-sm, 0.25rem);
+    white-space: nowrap;
+
+    &:hover,
+    &:focus-visible {
+      text-decoration: none;
+    }
+  }
+
+  .powered-by-link-text {
+    display: none;
+
+    @media (min-width: 992px) {
+      display: inline;
+    }
+  }
+
+  .footer-dark-block {
+    padding-block: var(--zer0-space-3, 1rem);
+
+    @media (min-width: 768px) {
+      padding-block: var(--zer0-space-4, 1.5rem);
+    }
+
+    @media (min-width: 992px) {
+      padding-block: var(--zer0-space-5, 3rem);
+    }
+  }
+
+  .footer-section-title {
+    font-size: 0.8125rem;
+    letter-spacing: 0.06em;
+    margin-bottom: var(--zer0-space-2, 0.5rem);
+
+    @media (min-width: 992px) {
+      font-size: 1.25rem;
+      margin-bottom: var(--zer0-space-3, 1rem);
+    }
+  }
+
+  .footer-nav-columns {
+    ul.list-unstyled > li + li {
+      margin-top: 0.125rem;
+
+      @media (min-width: 992px) {
+        margin-top: 0.25rem;
+      }
+    }
+
+    .list-inline-item {
+      margin-right: 0.5rem;
+    }
+  }
+
+  .footer-post-link {
+    max-width: 100%;
+  }
+
+  .footer-latest-posts li:nth-child(n + 3) {
+    @media (max-width: 767.98px) {
+      display: none;
+    }
+  }
+
+  .footer-subscribe-form {
+    .form-control,
+    .btn {
+      @media (max-width: 767.98px) {
+        min-height: calc(1.5em + 0.5rem + 2px);
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+        font-size: 0.875rem;
+      }
+    }
+  }
+
+  .footer-policy-links {
+    @media (max-width: 767.98px) {
+      font-size: 0.8125rem;
+      margin-top: var(--zer0-space-2, 0.5rem);
+    }
+  }
+}

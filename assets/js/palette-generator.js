@@ -227,22 +227,30 @@ document.addEventListener('DOMContentLoaded', function () {
         var cfg = liveVars[varName];
         var current = readCurrentCSSVar(varName) || cfg.default;
 
+        // Build a stable, valid HTML id from the CSS variable name (e.g.
+        // `--bs-primary` → `live-bs-primary`). Using ids lets us associate
+        // <label for> with each input, which the accessibility audit
+        // requires.
+        var safeId = 'live-' + varName.replace(/^--/, '').replace(/[^a-zA-Z0-9_-]/g, '-');
+        var colorId = safeId + '-color';
+        var textId = safeId + '-text';
+        var rangeId = safeId + '-range';
+
         if (cfg.type === 'color') {
-          // Normalize to hex
           var hex;
           try { hex = chroma(current).hex(); } catch (e) { hex = cfg.default; }
           html += '<div class="col-6 col-md-4 col-lg-3">' +
-            '<label class="form-label small fw-semibold mb-1">' + cfg.label + '</label>' +
+            '<label class="form-label small fw-semibold mb-1" for="' + colorId + '">' + cfg.label + '</label>' +
             '<div class="input-group input-group-sm">' +
-            '<input type="color" class="form-control form-control-color" value="' + hex + '" data-live-var="' + varName + '">' +
-            '<input type="text" class="form-control font-monospace" value="' + hex + '" data-live-text="' + varName + '">' +
+            '<input type="color" id="' + colorId + '" class="form-control form-control-color" value="' + hex + '" data-live-var="' + varName + '" aria-label="' + cfg.label + ' color picker">' +
+            '<input type="text" id="' + textId + '" class="form-control font-monospace" value="' + hex + '" data-live-text="' + varName + '" aria-label="' + cfg.label + ' hex value">' +
             '</div></div>';
         } else if (cfg.type === 'range') {
           var numVal = parseFloat(current) || parseFloat(cfg.default);
           html += '<div class="col-6 col-md-4 col-lg-3">' +
-            '<label class="form-label small fw-semibold mb-1">' + cfg.label + '</label>' +
+            '<label class="form-label small fw-semibold mb-1" for="' + rangeId + '">' + cfg.label + '</label>' +
             '<div class="d-flex align-items-center gap-2">' +
-            '<input type="range" class="form-range flex-grow-1" min="' + cfg.min + '" max="' + cfg.max +
+            '<input type="range" id="' + rangeId + '" class="form-range flex-grow-1" min="' + cfg.min + '" max="' + cfg.max +
             '" step="' + cfg.step + '" value="' + numVal + '" data-live-var="' + varName + '" data-unit="' + cfg.unit + '">' +
             '<code class="text-nowrap" data-live-val="' + varName + '">' + numVal + cfg.unit + '</code>' +
             '</div></div>';

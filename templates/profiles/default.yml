@@ -1,0 +1,23 @@
+# jekyll-theme-zer0 install profile: default
+name: default
+display_name: Default
+description: Default. Starter pages, navigation, admin settings, setup wizard.
+legacy_flag: ""
+recommended_for: general-purpose Jekyll sites
+
+tasks:
+  - config
+  - gemfile
+  - docker
+  - pages
+  - nav
+  - data
+  - gitignore
+  - readme
+  - marker
+
+deploy_targets:
+  - github-pages
+
+ai_features:
+  agent_files: [generic]

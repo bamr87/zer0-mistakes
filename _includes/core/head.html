@@ -41,6 +41,7 @@
 <script defer src="{{ '/assets/js/halfmoon.js' | relative_url }}"></script>
 <script defer src="{{ '/assets/js/side-bar-folders.js' | relative_url }}"></script>
 <script defer src="{{ '/assets/js/code-copy.js' | relative_url }}"></script>
+<script defer src="{{ '/assets/js/table-copy.js' | relative_url }}"></script>
 <script defer src="{{ '/assets/js/ui-enhancements.js' | relative_url }}"></script>
 
 <!-- ================================ -->
@@ -55,8 +56,21 @@
 <!-- Nano Progress Bar - Visual loading indicator (config-driven) -->
 {% include components/nanobar.html %}
 
-<!-- MathJax - Mathematical notation rendering (async; bundled under assets/vendor) -->
+<!-- MathJax - Conditional loading based on page front matter (like Mermaid) -->
+{% if page.mathjax %}
+<!-- MathJax 3 configuration — must appear before the script tag.
+     Enables $...$ inline math (off by default in MathJax 3). -->
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  }
+};
+</script>
 <script id="MathJax-script" async src="{{ '/assets/vendor/mathjax/es5/tex-mml-chtml.js' | relative_url }}"></script>
+{% endif %}
 
 <!-- ================================ -->
 <!-- HTML DOCUMENT META DATA         -->
@@ -129,10 +143,21 @@
 <!-- Primary theme stylesheet - Core styling and layout (SCSS pipeline) -->
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
 
-<!-- Optional fork overrides: add assets/css/user-overrides.css locally if needed (not shipped by default). -->
+<!-- ========================== -->
+<!-- DESIGN TOKEN OVERRIDES     -->
+<!-- ========================== -->
+<!-- Inline <style> block emitted AFTER main.css so site-config `theme_color` keys
+     and any per-user Appearance overrides win over compiled defaults. -->
+{% include core/tokens-inline.html %}
+
+<!-- Optional fork overrides: opt-in via `site.user_overrides: true` in _config.yml.
+     Loaded LAST so consumer rules win over both main.css and tokens-inline. -->
+{% if site.user_overrides %}
+<link rel="stylesheet" href="{{ '/assets/css/user-overrides.css' | relative_url }}">
+{% endif %}
 
 <!-- Statistics page specific styles -->
-{% if page.layout == 'stats' %}
+{% if page.layout == 'stats' or page.permalink == '/about/stats/' %}
 <link rel="stylesheet" href="{{ '/assets/css/stats.css' | relative_url }}">
 {% endif %}
 

@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:59.000Z
 title: Theme Version Display Plugin
 description: Automatic theme version extraction from gem specification with modal display and footer integration.
+preview: /images/previews/theme-version-display-plugin.png
 layout: default
 categories:
     - docs
@@ -231,9 +232,15 @@ Plugin automatically extracts from gemspec.
 
 ## Related
 
-- [Release Management](/docs/development/release-management/)
-- [Version Bump](/docs/development/version-bump/)
-- [Gem Publishing](/docs/development/release-management/#rubygems-publishing)
+- [Release Management](../../../docs/development/release-management/)
+- [Version Bump](../../../docs/development/version-bump/)
+- [Gem Publishing](../../../docs/development/release-management/#rubygems-publishing)
+
+## Technical Reference
+
+For implementation details (Jekyll plugin architecture, version extraction, modal integration):
+
+- [Theme Version Feature → docs/features/theme-version.md](../../../docs/features/theme-version.md)
 
 ## See also
 

@@ -1,0 +1,35 @@
+// ============================================================================
+// Typography tokens — semantic --zer0-font-* / --zer0-text-* properties
+// ----------------------------------------------------------------------------
+// Aliases Bootstrap typography vars and exposes a fluid heading scale via
+// clamp(), so headings stay readable on both phone and desktop without media
+// queries.
+// ============================================================================
+
+:root {
+  // Font families ----------------------------------------------------------
+  --zer0-font-sans: var(--bs-body-font-family, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif);
+  --zer0-font-mono: var(--bs-font-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+
+  // Weights ----------------------------------------------------------------
+  --zer0-font-weight-regular: 400;
+  --zer0-font-weight-medium: 500;
+  --zer0-font-weight-semibold: 600;
+  --zer0-font-weight-bold: 700;
+
+  // Fluid heading scale ----------------------------------------------------
+  --zer0-text-base: 1rem;
+  --zer0-text-sm: 0.875rem;
+  --zer0-text-lg: 1.125rem;
+  --zer0-text-h1: clamp(2rem, 4vw + 1rem, 3rem);
+  --zer0-text-h2: clamp(1.5rem, 2.5vw + 1rem, 2.25rem);
+  --zer0-text-h3: clamp(1.25rem, 1.5vw + 1rem, 1.75rem);
+  --zer0-text-h4: clamp(1.125rem, 1vw + 1rem, 1.4rem);
+  --zer0-text-h5: 1.125rem;
+  --zer0-text-h6: 1rem;
+
+  // Line heights -----------------------------------------------------------
+  --zer0-leading-tight: 1.2;
+  --zer0-leading-normal: 1.55;
+  --zer0-leading-loose: 1.75;
+}

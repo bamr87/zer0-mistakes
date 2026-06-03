@@ -1,5 +1,6 @@
 ---
 title: Analytics Dashboard
+preview: /images/previews/analytics-dashboard.png
 layout: admin
 icon: bi-graph-up
 permalink: /about/settings/analytics/

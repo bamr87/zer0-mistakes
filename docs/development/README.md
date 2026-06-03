@@ -4,11 +4,13 @@ Guides for setting up a development environment and contributing to the Zer0-Mis
 
 ## Contents
 
-| Document | Description |
-|----------|-------------|
-| [Local Setup](local-setup.md) | Set up your development environment |
-| [Testing](testing.md) | Run tests and validate changes |
-| [Code Style](code-style.md) | Coding conventions and best practices |
+
+| Document                      | Description                           |
+| ----------------------------- | ------------------------------------- |
+| [Local Setup](local-setup.md) | Set up your development environment   |
+| [Testing](testing.md)         | Run tests and validate changes        |
+| [Code Style](code-style.md)   | Coding conventions and best practices |
+
 
 ## Quick Start
 
@@ -39,13 +41,15 @@ docker-compose up
 
 ## Key Files
 
-| File | Purpose |
-|------|---------|
-| `_config.yml` | Production configuration |
-| `_config_dev.yml` | Development overrides |
-| `docker-compose.yml` | Docker setup |
-| `Gemfile` | Ruby dependencies |
-| `Makefile` | Build shortcuts |
+
+| File                 | Purpose                  |
+| -------------------- | ------------------------ |
+| `_config.yml`        | Production configuration |
+| `_config_dev.yml`    | Development overrides    |
+| `docker-compose.yml` | Docker setup             |
+| `Gemfile`            | Ruby dependencies        |
+| `Makefile`           | Build shortcuts          |
+
 
 ## Testing
 
@@ -81,3 +85,4 @@ make lint
 - [Architecture](../architecture/README.md) — Codebase structure
 - [Release Automation](../systems/release-automation.md) — Release process
 - [CONTRIBUTING.md](../../CONTRIBUTING.md) — Contribution guidelines
+

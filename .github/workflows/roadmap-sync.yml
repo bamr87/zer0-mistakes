@@ -16,12 +16,14 @@ on:
       - '_data/roadmap.yml'
       - 'scripts/generate-roadmap.rb'
       - 'scripts/generate-roadmap.sh'
+      - 'lib/jekyll-theme-zer0/version.rb'
       - '.github/workflows/roadmap-sync.yml'
   pull_request:
     paths:
       - '_data/roadmap.yml'
       - 'scripts/generate-roadmap.rb'
       - 'scripts/generate-roadmap.sh'
+      - 'lib/jekyll-theme-zer0/version.rb'
       - 'README.md'
       - '.github/workflows/roadmap-sync.yml'
   workflow_dispatch:
@@ -44,6 +46,9 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.3'
+
+      - name: Validate roadmap integrity & version tracking
+        run: ruby scripts/generate-roadmap.rb --validate
 
       - name: Verify roadmap is in sync (PRs)
         if: github.event_name == 'pull_request'

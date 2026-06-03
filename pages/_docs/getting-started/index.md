@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:30:01.000Z
 title: Getting Started
 description: Quick start guides and initial setup for the Zer0-Mistakes Jekyll theme.
+preview: /images/previews/getting-started.png
 layout: default
 categories:
     - docs

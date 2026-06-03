@@ -17,6 +17,10 @@ test/
 ├── test_quality.sh        # Lint, link check, frontmatter
 ├── test_installation.sh   # install.sh end-to-end
 ├── test_obsidian.sh       # Obsidian plugin (Ruby + JS resolver)
+├── test_playwright.sh     # Frontend (CSS, layout, behavior, snapshots)
+├── update-snapshots.sh    # Refresh Linux snapshot baselines via Docker
+├── playwright.config.js   # Single Playwright config; tiers = projects
+├── visual/                # Specs + committed snapshot baselines
 └── README.md
 ```
 
@@ -28,9 +32,41 @@ test/
 ./test/test_runner.sh --verbose
 ./test/test_core.sh                # one suite
 
+# Frontend (Playwright tiers)
+./test/test_runner.sh --suites playwright              # smoke
+./test/test_runner.sh --suites playwright_snapshots    # pixel regression
+
 # Inside Docker
 docker-compose exec -T jekyll ./test/test_runner.sh
 ```
+
+## Playwright Tiers
+
+`test/test_playwright.sh` selects a Playwright **project** via the
+`PLAYWRIGHT_PROJECT` env var. All tiers share `test/playwright.config.js`.
+
+| Tier | When CI runs it | What it checks |
+|------|-----------------|----------------|
+| `smoke` (default) | Every code-change PR | CSS load, Bootstrap tokens, layout chrome, admin DOM, behavioral skin tests, a11y component checks |
+| `snapshots` | Path-filtered: `_sass/`, `assets/`, `_layouts/`, `_includes/`, `test/visual/`, `test/playwright.config.js` | Pixel screenshots of the homepage in each of the 9 theme skins |
+| `regression-{chromium,firefox,webkit}` | Manual `workflow_dispatch` only | All specs across all browsers |
+
+Snapshot baselines live in `test/visual/snapshots/` and are committed to
+the repo. They are platform-specific (`*-snapshots-linux.png`); refresh
+them via `./test/update-snapshots.sh` (uses a Linux Playwright Docker
+image) when intentional visual changes land.
+
+When adding a new Playwright spec:
+
+- Use helpers in `test/visual/fixtures.js` (`waitForJekyll`, `setSkin`,
+  `gotoBeforeScrollSpy`) instead of raw `page.goto(..., 'networkidle')`.
+- Avoid `page.waitForTimeout()` — wait on a deterministic condition
+  (attribute change, event, `expect.poll`).
+- If the spec relies on visible UI in a Bootstrap tab, **activate the
+  tab and wait for `.tab-pane.active` to be visible** before interacting.
+- Mark known product bugs with `test.fixme(...)` and a `// TODO:` comment
+  linking to the tracking issue. Never delete a failing test to make CI
+  green.
 
 ## Test Script Template
 
@@ -112,6 +148,8 @@ Exit codes: `0` = all pass, non-zero = failure (which the workflow surfaces).
 |---|---|
 | `test_core.sh` | < 5s |
 | `test_quality.sh` | < 30s |
+| `test_playwright.sh` (smoke) | < 3 min |
+| `test_playwright.sh` (snapshots) | < 1 min |
 | `test_runner.sh` (full) | < 2 min |
 
 If a suite exceeds budget: parallelize or split.

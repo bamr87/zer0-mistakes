@@ -1,0 +1,55 @@
+{%- comment -%}
+  ===================================================================
+  CTA-BUTTON — Themed call-to-action button
+  ===================================================================
+
+  Path: _includes/components/cta-button.html
+
+  Parameters
+    include.label    (string) — visible button text (required)
+    include.url      (string) — destination URL (required)
+    include.variant  (string) — `primary` | `secondary` | `outline` | `light` (default: `primary`)
+    include.size     (string) — `sm` | `md` (default) | `lg`
+    include.icon     (string) — Bootstrap Icon class (optional)
+    include.external (bool)   — opens in new tab with rel=noopener (default: false)
+    include.aria_label (string) — overrides accessible name (optional)
+
+  Example:
+    {% include components/cta-button.html label="Get Started" url="#get-started" variant="light" size="lg" icon="bi-rocket-takeoff" %}
+  ===================================================================
+{%- endcomment -%}
+{%- assign variant = include.variant | default: "primary" -%}
+{%- assign size    = include.size    | default: "md" -%}
+
+{%- case variant -%}
+  {%- when "primary"   -%}{%- assign btn_class = "btn-primary" -%}
+  {%- when "secondary" -%}{%- assign btn_class = "btn-secondary" -%}
+  {%- when "outline"   -%}{%- assign btn_class = "btn-outline-light" -%}
+  {%- when "light"     -%}{%- assign btn_class = "btn-light" -%}
+  {%- else             -%}{%- assign btn_class = "btn-primary" -%}
+{%- endcase -%}
+
+{%- case size -%}
+  {%- when "sm" -%}{%- assign size_class = "btn-sm" -%}
+  {%- when "lg" -%}{%- assign size_class = "btn-lg" -%}
+  {%- else      -%}{%- assign size_class = "" -%}
+{%- endcase -%}
+
+{%- assign cta_href = include.url -%}
+{%- assign cta_first = cta_href | slice: 0 -%}
+{%- if cta_href contains "://" or cta_href contains "mailto:" or cta_href contains "tel:" -%}
+  {%- comment -%} absolute / special-scheme URLs — leave untouched {%- endcomment -%}
+{%- elsif cta_first == "#" -%}
+  {%- comment -%} in-page anchors (#section) — leave untouched {%- endcomment -%}
+{%- else -%}
+  {%- assign cta_href = cta_href | relative_url -%}
+{%- endif -%}
+
+<a href="{{ cta_href }}"
+   class="btn {{ btn_class }} {{ size_class }} zer0-cta"
+   {%- if include.aria_label %} aria-label="{{ include.aria_label }}"{% endif %}
+   {%- if include.external %} target="_blank" rel="noopener noreferrer"{% endif %}>
+  {%- if include.icon -%}<i class="bi {{ include.icon }} me-2" aria-hidden="true"></i>{%- endif -%}
+  {{ include.label }}
+  {%- if include.external -%}<span class="visually-hidden"> (opens in a new tab)</span>{%- endif -%}
+</a>

@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:55.000Z
 title: Development
 description: Developer guides for contributing to and extending the Zer0-Mistakes Jekyll theme.
+preview: /images/previews/development.png
 layout: default
 categories:
     - docs
@@ -17,9 +18,11 @@ sidebar:
     nav: docs
 ---
 
-# Development Documentation
+# Contributing to Zer0-Mistakes
 
-This section provides comprehensive guides for developers who want to contribute to, extend, or customize the Zer0-Mistakes Jekyll theme.
+This section provides guides for **theme contributors** — developers who want to contribute to, extend, or modify the Zer0-Mistakes Jekyll theme itself.
+
+> **Deep technical reference** (architecture, scripts, systems, release automation internals) lives in the [`docs/` directory](https://github.com/bamr87/zer0-mistakes/tree/main/docs) in the repository. This section provides the contributor-accessible overview; the `docs/` directory has the full technical reference.
 
 ## Getting Started
 

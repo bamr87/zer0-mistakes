@@ -1,5 +1,6 @@
 ---
 title: Configuration Utility
+preview: /images/previews/configuration-utility.png
 layout: admin
 icon: bi-gear
 excerpt: View, manage, and update your Jekyll theme configuration from one place.

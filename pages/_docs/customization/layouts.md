@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:53.000Z
 title: Layouts
 description: Create and customize page layouts in the Zer0-Mistakes Jekyll theme.
+preview: /images/previews/layouts.png
 layout: default
 categories:
     - docs
@@ -161,6 +162,12 @@ Use includes for reusable parts:
 
 - [Jekyll Layouts Documentation](https://jekyllrb.com/docs/layouts/)
 - [Liquid Template Language](https://shopify.github.io/liquid/)
+
+## Technical Reference
+
+For contributor-level details (layout hierarchy, Liquid template inheritance, sidebar wiring):
+
+- [Layouts and Navigation → docs/ui/layouts-and-navigation.md](../../../docs/ui/layouts-and-navigation.md)
 
 ## See also
 

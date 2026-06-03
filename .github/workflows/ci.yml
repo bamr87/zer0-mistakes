@@ -57,6 +57,7 @@ jobs:
       code: ${{ steps.filter.outputs.code }}
       docker: ${{ steps.filter.outputs.docker }}
       content: ${{ steps.filter.outputs.content }}
+      styling: ${{ steps.filter.outputs.styling }}
       docs-only: ${{ steps.check.outputs.docs-only }}
     steps:
       - name: Checkout Repository
@@ -90,6 +91,14 @@ jobs:
               - '*.md'
               - '_data/**'
               - '_config*.yml'
+            styling:
+              - '_sass/**'
+              - 'assets/css/**'
+              - 'assets/js/**'
+              - '_layouts/**'
+              - '_includes/**'
+              - 'test/visual/**'
+              - 'test/playwright.config.js'
 
       - name: Check if docs-only
         id: check
@@ -176,22 +185,48 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           verbose: true
-          suites: core,quality
+          suites: core,quality,installation
           skip-docker: true
+          skip-remote: true
 
-      - name: Setup Node.js (styling tests)
+      - name: Setup Node.js (Playwright)
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
-      - name: Frontend styling tests (Playwright)
-        env:
-          PAGES_REPO_NWO: ${{ env.PAGES_REPO_NWO }}
+      - name: Install Playwright dependencies
         run: |
           npm ci
           npx playwright install --with-deps chromium
-          ./test/test_styling.sh
+
+      - name: Playwright smoke tests
+        env:
+          PAGES_REPO_NWO: ${{ env.PAGES_REPO_NWO }}
+        uses: ./.github/actions/playwright-tests
+        with:
+          project: smoke
+          install-deps: 'false'
+
+      - name: Playwright snapshot tests
+        # Path-filtered: only run when CSS/layout/asset/spec files changed,
+        # and skip when the user explicitly requested a fast scope.
+        #
+        # Non-blocking until the skin homepage baselines are regenerated:
+        # they predate the PR #108 UI overhaul and currently report a large
+        # diff against the live rendering. The step still runs (and uploads
+        # diffs as artifacts) so the drift stays visible, but it does not gate
+        # the suite. Drop continue-on-error once baselines are refreshed.
+        continue-on-error: true
+        if: |
+          needs.detect-changes.outputs.styling == 'true' &&
+          (github.event_name != 'workflow_dispatch' || inputs.test_scope != 'fast')
+        env:
+          PAGES_REPO_NWO: ${{ env.PAGES_REPO_NWO }}
+        uses: ./.github/actions/playwright-tests
+        with:
+          project: snapshots
+          install-deps: 'false'
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4

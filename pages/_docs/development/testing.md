@@ -1,7 +1,8 @@
 ---
-lastmod: 2026-04-18T19:29:55.000Z
+lastmod: 2026-05-31T00:00:00.000Z
 title: Testing
-description: Comprehensive testing guide including test suite structure, test development standards, and CI/CD integration.
+description: Overview of the test suite for the Zer0-Mistakes theme. See the contributor reference in docs/ for the full testing guide.
+preview: /images/previews/testing.png
 layout: default
 categories:
     - docs
@@ -12,290 +13,32 @@ tags:
     - quality
 permalink: /docs/development/testing/
 difficulty: intermediate
-estimated_reading_time: 15 minutes
-prerequisites:
-    - Docker Desktop
-    - Basic shell scripting
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---
 
-# Testing Guide
+# Testing
 
-This guide covers the comprehensive testing infrastructure for the Zer0-Mistakes Jekyll theme, ensuring reliability across all features and platforms.
+The Zer0-Mistakes theme includes a comprehensive test suite covering preflight validation, core functionality, deployment readiness, quality checks, and Playwright visual regression tests.
 
-## Test Suite Structure
+Tests run automatically via GitHub Actions on every push and pull request. The suite uses shell scripts (no RSpec dependency) so contributors can run tests locally with Docker or a native Ruby environment.
 
-```
-test/
-├── test_runner.sh       # Main test orchestration
-├── test_core.sh         # Core functionality tests
-├── test_deployment.sh   # Deployment and build tests
-├── test_quality.sh      # Code quality and linting
-├── results/             # Test results and reports
-└── README.md            # Test documentation
-```
-
-## Running Tests
-
-### Quick Start
+## Quick start
 
 ```bash
-# Run all tests
+# Run all tests (from repo root)
 ./test/test_runner.sh
 
-# Run specific test suite
-./test/test_core.sh
-./test/test_deployment.sh
-./test/test_quality.sh
+# Run smoke tests only
+./test/test_runner.sh --scope smoke
 
-# Run with verbose output
-./test/test_runner.sh --verbose
-
-# Generate detailed report
-./test/test_runner.sh --report
+# Run with retry on failure
+./test/test_runner.sh --retry-failed
 ```
 
-### Docker-Based Testing
+## Full Reference
 
-```bash
-# Run tests in Docker environment
-docker-compose up -d
-docker-compose exec jekyll ./test/test_runner.sh
+The complete testing guide — test structure, writing new tests, coverage expectations, CI/CD integration, and Playwright setup — lives in the contributor docs:
 
-# Run tests on clean container
-docker-compose down
-docker-compose up --build
-docker-compose exec jekyll ./test/test_core.sh
-```
-
-## Test Categories
-
-### Core Tests (`test_core.sh`)
-
-Tests for Jekyll build and theme functionality:
-
-| Test | Description |
-|------|-------------|
-| Jekyll Build | Verifies site builds without errors |
-| Theme Configuration | Validates `_config.yml` syntax |
-| Layout Files | Checks all required layouts exist |
-| Include Components | Verifies include files are present |
-| Asset Compilation | Tests CSS/JS asset processing |
-
-### Deployment Tests (`test_deployment.sh`)
-
-Tests for deployment compatibility:
-
-| Test | Description |
-|------|-------------|
-| Docker Build | Verifies Docker image builds |
-| Docker Run | Tests site accessibility in container |
-| GitHub Pages | Checks remote_theme compatibility |
-| Gem Build | Validates gem package creation |
-
-### Quality Tests (`test_quality.sh`)
-
-Code quality and linting tests:
-
-| Test | Description |
-|------|-------------|
-| Markdown Linting | Validates Markdown syntax |
-| YAML Linting | Checks YAML file validity |
-| HTML Validation | Validates generated HTML |
-| Link Checking | Verifies internal links work |
-
-### Styling tests (`test_styling.sh` + Playwright)
-
-Browser checks for the theme stylesheet stack and layout: same-origin CSS returns 200, `main.css` is linked, Bootstrap `--bs-*` variables resolve on `:root`, header/navbar structure, mobile nav toggler, and `bd-main` / `bd-content` on `/faq/`. Core tests also assert compiled `main.css` includes docs-layout rules (`bd-layout`).
-
-```bash
-./test/test_runner.sh --suites styling
-# With Docker already on port 4000:
-BASE_URL=http://127.0.0.1:4000 npm run test:styling
-```
-
-Bundled libraries live under `assets/vendor/`; see [Vendor assets](/docs/development/vendor-assets/) (`npm run vendor:install` / `scripts/vendor-install.sh`).
-
-## Writing Tests
-
-### Test Script Template
-
-```bash
-#!/bin/bash
-set -euo pipefail
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-
-# Test counters
-TESTS_RUN=0
-TESTS_PASSED=0
-TESTS_FAILED=0
-
-# Logging functions
-log_test_pass() {
-    ((TESTS_PASSED++))
-    echo -e "✅ PASS: $1"
-}
-
-log_test_fail() {
-    ((TESTS_FAILED++))
-    echo -e "❌ FAIL: $1"
-}
-
-# Test execution wrapper
-run_test() {
-    local test_name="$1"
-    local test_command="$2"
-    
-    ((TESTS_RUN++))
-    if eval "$test_command"; then
-        log_test_pass "$test_name"
-    else
-        log_test_fail "$test_name"
-    fi
-}
-
-# Your tests here
-run_test "My Test" "[ -f _config.yml ]"
-
-# Summary
-echo "Tests: $TESTS_RUN, Passed: $TESTS_PASSED, Failed: $TESTS_FAILED"
-exit $TESTS_FAILED
-```
-
-### Common Assertions
-
-```bash
-# Assert file exists
-assert_file_exists() {
-    [ -f "$1" ] || { echo "File not found: $1"; return 1; }
-}
-
-# Assert directory exists
-assert_dir_exists() {
-    [ -d "$1" ] || { echo "Directory not found: $1"; return 1; }
-}
-
-# Assert command succeeds
-assert_command_success() {
-    eval "$1" >/dev/null 2>&1 || { echo "Command failed: $1"; return 1; }
-}
-
-# Assert string contains
-assert_contains() {
-    echo "$1" | grep -q "$2" || { echo "'$2' not found"; return 1; }
-}
-```
-
-## CI/CD Integration
-
-Tests run automatically via GitHub Actions:
-
-- On pull requests
-- On pushes to main branch
-- Scheduled nightly runs
-- Before releases
-
-### GitHub Actions Configuration
-
-```yaml
-test:
-  runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v3
-    - name: Run test suite
-      run: ./test/test_runner.sh --report
-    - name: Upload test results
-      uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: test-results
-        path: test/results/
-```
-
-## Best Practices
-
-### Test Isolation
-
-- Each test should be independent
-- Clean up after tests
-- Don't rely on test execution order
-- Use temporary directories for artifacts
-
-### Test Coverage
-
-- Test all critical paths
-- Test error conditions
-- Test edge cases
-- Test platform-specific behavior
-
-### Test Performance
-
-- Keep tests fast (< 5 seconds each)
-- Parallelize independent tests
-- Cache test dependencies
-- Use mocking when appropriate
-
-## Test Reports
-
-### JSON Report Format
-
-```json
-{
-  "timestamp": "2025-01-25T05:00:00Z",
-  "total": 15,
-  "passed": 14,
-  "failed": 1,
-  "skipped": 0,
-  "duration": "45 seconds"
-}
-```
-
-### HTML Reports
-
-Generate HTML reports for visual inspection:
-
-```bash
-./test/test_runner.sh --report --format html
-```
-
-## Troubleshooting
-
-### Tests Fail Locally but Pass in CI
-
-1. Check Docker version differences
-2. Verify environment variables
-3. Check for timing-sensitive tests
-4. Review path differences
-
-### Flaky Tests
-
-1. Add retry logic for network tests
-2. Increase timeouts for slow operations
-3. Mock external dependencies
-4. Check for race conditions
-
-### Missing Dependencies
-
-```bash
-# Install test dependencies
-bundle install --with test
-
-# Install linting tools
-npm install -g markdownlint-cli
-pip install yamllint
-```
-
-## Related
-
-- [CI/CD Pipeline](/docs/development/ci-cd/)
-- [Security Scanning](/docs/development/security/)
-- [Release Management](/docs/development/release-management/)
-
-## See also
-
-- [[Development]]
-- [[CI/CD Pipeline]]
-- [[Scripts]]
+**[Testing Guide → docs/development/testing.md](../../../docs/development/testing.md)**

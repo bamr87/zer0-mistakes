@@ -1,0 +1,57 @@
+# =============================================================================
+# Landing page content
+# -----------------------------------------------------------------------------
+# Drives the marketing copy on _layouts/landing.html so consumers can rewrite
+# the headlines, feature cards, and CTAs without editing the layout HTML.
+#
+# To override per-site, copy this file into your own `_data/landing.yml` and
+# replace the values you want to change. Any keys you omit fall back to the
+# defaults baked into the layout.
+# =============================================================================
+
+# Hero ------------------------------------------------------------------------
+# Used only when page.title / page.description are not set. The layout still
+# prefers the frontmatter values (so README.md frontmatter wins).
+hero:
+  cta_primary:
+    label: "Get Started"
+    url: "#get-started"
+    icon: "bi-rocket-takeoff"
+    variant: "light"
+  cta_secondary:
+    label: "Features"
+    url: "/features/"
+    icon: "bi-list-check"
+    variant: "outline"
+  cta_tertiary:
+    label: "GitHub"
+    url: ""                # falls back to site.resources.github_repo
+    icon: "bi-github"
+    variant: "outline"
+    external: true
+
+# Features section ------------------------------------------------------------
+# Each entry renders through _includes/components/feature-card.html-style
+# markup inside a section. `icon_bg` is a Bootstrap utility (`bg-primary`,
+# `bg-success`, `bg-info`, ...) that paints the icon circle.
+features:
+  heading: "Why Choose zer0-mistakes?"
+  lead: "Built for developers who value reliability, simplicity, and modern workflows"
+  items:
+    - title: "Error-Free Development"
+      description: "Built-in error handling and self-healing installation process ensures a smooth development experience."
+      icon: "bi-shield-check"
+      icon_bg: "bg-primary"
+    - title: "Docker-First Approach"
+      description: "Cross-platform compatibility with zero local configuration. Works on Apple Silicon, Intel, and Linux."
+      icon: "bi-boxes"
+      icon_bg: "bg-success"
+    - title: "AI-Powered Setup"
+      description: "Intelligent installation automation that detects and fixes common issues automatically."
+      icon: "bi-lightning-charge"
+      icon_bg: "bg-info"
+
+# Get-started section ---------------------------------------------------------
+get_started:
+  heading: "Ready to Get Started?"
+  lead: "Choose your preferred installation method and be up and running in minutes"

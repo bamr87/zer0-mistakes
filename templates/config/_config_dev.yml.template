@@ -1,0 +1,43 @@
+# Dev config override for zer0-mistakes theme
+# Optimized for Docker development environment
+
+# Disable remote theme for local development — theme gem is loaded instead
+remote_theme             : false
+theme                    : "{{THEME_GEM_NAME}}"
+
+# Essential Jekyll plugins for development
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+  - jekyll-paginate
+  - jekyll-include-cache
+
+# Override problematic settings for local development
+url: ""
+baseurl: ""
+
+# Development-specific settings
+host: "0.0.0.0"  # Allow Docker container access
+port: {{DEFAULT_PORT}}
+livereload: true
+incremental: true
+
+# Exclude files for faster builds
+exclude:
+  - README.md
+  - INSTALLATION.md
+  - Gemfile.lock
+  - vendor/
+  - .bundle/
+  - build/
+  - .github/
+  - docker-compose.yml
+  - "*.backup.*"
+
+# Markdown processing
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge

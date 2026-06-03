@@ -57,6 +57,45 @@
 }
 
 /* ========================================== */
+/* TAXONOMY LIST (CATEGORIES & TAGS)         */
+/* ========================================== */
+
+.stats-taxonomy-list .list-group-item {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+#categories .stats-taxonomy-link {
+  color: var(--bs-primary);
+  text-decoration: none;
+}
+
+#categories .stats-taxonomy-link:hover {
+  color: var(--bs-primary);
+  text-decoration: underline;
+}
+
+#tags .stats-taxonomy-link {
+  color: var(--bs-success);
+  text-decoration: none;
+}
+
+#tags .stats-taxonomy-link:hover {
+  color: var(--bs-success);
+  text-decoration: underline;
+}
+
+.stats-taxonomy-link:focus-visible {
+  outline: 2px solid var(--bs-primary);
+  outline-offset: 2px;
+  border-radius: 0.125rem;
+}
+
+#tags .stats-taxonomy-link:focus-visible {
+  outline-color: var(--bs-success);
+}
+
+/* ========================================== */
 /* TAG CLOUD STYLES                          */
 /* ========================================== */
 

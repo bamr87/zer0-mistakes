@@ -1,6 +1,7 @@
 ---
 title: "Getting Started with the Obsidian Vault"
 description: "Open the Zer0-Mistakes repo as an Obsidian vault, install recommended plugins, and learn the frontmatter conventions."
+preview: /images/previews/getting-started-with-the-obsidian-vault.png
 layout: default
 permalink: /docs/obsidian/getting-started/
 categories: [Documentation, Obsidian]
@@ -54,6 +55,7 @@ correct layout and permalink. The shared template at
 ---
 title: "Your note title"
 description: "Used for SEO and social previews (≤160 chars)."
+preview: /images/previews/getting-started-with-the-obsidian-vault.png
 layout: note
 date: 2026-04-19T10:00:00.000Z
 lastmod: 2026-04-19T10:00:00.000Z

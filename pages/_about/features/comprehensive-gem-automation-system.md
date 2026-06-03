@@ -3,7 +3,7 @@ title: Comprehensive Gem Automation System
 description: Complete automation ecosystem for Jekyll theme versioning, testing, building, and publishing with CI/CD integration
 permalink: /about/features/comprehensive-gem-automation-system/
 date: 2025-07-03T12:00:00.000Z
-preview: null
+preview: /images/previews/comprehensive-gem-automation-system.png
 tags:
     - Automation
     - CI/CD

@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:30:01.000Z
 title: Deploy to Netlify
 description: Deploy your Jekyll site to Netlify with continuous deployment from GitHub and custom headers.
+preview: /images/previews/deploy-to-netlify.png
 layout: default
 categories:
     - docs

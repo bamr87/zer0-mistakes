@@ -1,0 +1,42 @@
+{%- comment -%}
+  ===================================================================
+  THEME-CONTROLS-BAR — Color mode + skin quick-select
+  ===================================================================
+
+  Path: _includes/components/theme-controls-bar.html
+
+  Parameters
+    include.show_status (bool) — show active skin/mode readout (optional)
+
+  Depends on: theme-customizer.js, halfmoon.js, background-customizer.js
+
+  Used by theme settings and theme preview pages.
+  ===================================================================
+{%- endcomment -%}
+{% assign active_skin = site.theme_skin | default: site.data.theme_skins.default | default: "dark" %}
+{% assign skin_order = site.data.theme_skins.order %}
+
+<div class="theme-controls-bar d-flex flex-wrap align-items-center gap-3 mb-4 p-3 bg-body-tertiary rounded-3 border">
+  <div class="d-flex align-items-center gap-2">
+    <i class="bi bi-moon-stars" aria-hidden="true"></i>
+    <span class="fw-semibold small">Mode:</span>
+    {% include components/halfmoon.html %}
+  </div>
+  <div class="vr d-none d-sm-block" aria-hidden="true"></div>
+  <div class="d-flex align-items-center gap-2 flex-grow-1">
+    <i class="bi bi-palette2" aria-hidden="true"></i>
+    <span class="fw-semibold small">Skin:</span>
+    <div class="d-flex flex-wrap gap-1" id="quickSkinBar" role="group" aria-label="Theme skin">
+      {% for s in skin_order %}
+      <button class="btn btn-sm btn-outline-primary{% if s == active_skin %} active{% endif %}"
+              data-quick-skin="{{ s }}" type="button">{{ s | capitalize }}</button>
+      {% endfor %}
+    </div>
+  </div>
+  {% if include.show_status %}
+  <div class="small text-body-secondary ms-auto d-none d-md-block">
+    Active: <code id="theme-preview-active-skin">{{ active_skin }}</code>
+    · Mode: <code id="theme-preview-active-mode">—</code>
+  </div>
+  {% endif %}
+</div>

@@ -1,0 +1,41 @@
+// ============================================================================
+// Focus utilities — visible keyboard-focus indicators
+// ----------------------------------------------------------------------------
+// Provides a consistent :focus-visible ring across interactive elements using
+// the design-token shadow scale. Bootstrap supplies focus styles for its own
+// components; this rule covers raw elements (links inside content, custom
+// buttons, etc.) without overriding Bootstrap's stronger contextual rings.
+// ============================================================================
+
+// Selector list deliberately excludes elements that Bootstrap styles itself
+// (.btn, .form-control, .nav-link). They keep their existing focus rings.
+a:not(.btn):not(.nav-link):focus-visible,
+button:not(.btn):focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--zer0-color-primary, currentColor);
+  outline-offset: 2px;
+  border-radius: 0.125rem;
+}
+
+// Skip-to-content link — visually hidden until focused
+.zer0-skip-link {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: var(--zer0-layer-skip-link);
+  padding: 0.5rem 1rem;
+  background: var(--zer0-color-primary);
+  color: #fff;
+  border-radius: 0.25rem;
+  transform: translateY(-200%);
+  transition: transform var(--zer0-motion-duration-base) var(--zer0-motion-ease-standard);
+
+  &:focus,
+  &:focus-visible {
+    transform: translateY(0);
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+}

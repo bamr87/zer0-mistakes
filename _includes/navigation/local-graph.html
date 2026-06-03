@@ -5,6 +5,7 @@
 
   File: local-graph.html
   Path: _includes/navigation/local-graph.html
+  Included from: _includes/core/footer.html after </footer> (body-level)
   Purpose: Renders a collapsible, page-scoped graph of the current page and
            its immediate wiki-link neighbors in a separate side panel.
 
@@ -23,20 +24,16 @@
   Configurable depth: `local_graph_depth: 2` in page front matter (default 1).
   ===================================================================
 {%- endcomment -%}
-{%- if page.local_graph != false -%}
+{%- assign _effective_sidebar = page.sidebar -%}
+{%- if _effective_sidebar == nil -%}
+  {%- if page.post_type == "featured" or page.post_type == "breaking" -%}
+    {%- assign _effective_sidebar = false -%}
+  {%- else -%}
+    {%- assign _effective_sidebar = true -%}
+  {%- endif -%}
+{%- endif -%}
+{%- if page.local_graph != false and _effective_sidebar != false -%}
 {%- assign lg_depth = page.local_graph_depth | default: 1 -%}
-<div class="obsidian-local-graph-fab d-print-none" data-obsidian-local-graph-toggle>
-  <button class="btn btn-primary rounded-circle shadow-lg obsidian-local-graph-toggle"
-          type="button"
-          data-bs-toggle="offcanvas"
-          data-bs-target="#obsidianLocalGraphPanel"
-          aria-controls="obsidianLocalGraphPanel"
-          aria-label="Open local graph"
-          title="Open local graph">
-    <i class="bi bi-diagram-3 fs-5" aria-hidden="true"></i>
-  </button>
-</div>
-
 <aside class="offcanvas offcanvas-start obsidian-local-graph-panel"
        tabindex="-1"
        id="obsidianLocalGraphPanel"

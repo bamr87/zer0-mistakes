@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:53.000Z
 title: Navigation
 description: Configure navigation menus and sidebars in the Zer0-Mistakes Jekyll theme.
+preview: /images/previews/navigation.png
 layout: default
 categories:
     - docs

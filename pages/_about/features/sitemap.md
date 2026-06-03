@@ -2,6 +2,7 @@
 title: Enhanced Sitemap Feature
 lastmod: 2025-12-20T22:15:46.563Z
 description: Comprehensive site navigation with advanced search, filtering, and discovery tools
+preview: /images/previews/enhanced-sitemap-feature.png
 layout: default
 categories:
     - Features

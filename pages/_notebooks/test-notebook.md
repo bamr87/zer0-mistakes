@@ -8,6 +8,7 @@ categories: [Notebooks]
 tags: [jupyter, python]
 comments: true
 jupyter_metadata: true
+mathjax: true
 lastmod: 2025-11-30T05:20:10.000Z
 permalink: /notebooks/test-notebook/
 ---

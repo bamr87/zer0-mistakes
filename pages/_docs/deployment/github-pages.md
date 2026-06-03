@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:30:01.000Z
 title: Deploy to GitHub Pages
 description: Deploy your Zer0-Mistakes Jekyll site to GitHub Pages with automatic builds.
+preview: /images/previews/deploy-to-github-pages.png
 layout: default
 categories:
     - docs
@@ -179,6 +180,12 @@ This allows custom plugins and more build control.
 
 - [Custom Domain Setup](/docs/deployment/custom-domain/)
 - [Netlify Deployment](/docs/deployment/netlify/) — For more hosting features
+
+## Technical Reference
+
+For contributor-level details (deploy target module architecture, profile system, CI/CD integration):
+
+- [Deploy Targets → docs/installation/deploy-targets.md](../../../docs/installation/deploy-targets.md)
 
 ## See also
 

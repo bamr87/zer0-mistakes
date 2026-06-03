@@ -2,6 +2,7 @@
 lastmod: 2026-05-05T00:00:00.000Z
 title: Config-Driven Frontmatter Validation
 description: Schema-driven frontmatter validation that catches missing required fields, bad date formats, and unknown layouts before Jekyll builds.
+preview: /images/previews/config-driven-frontmatter-validation.png
 layout: default
 categories:
   - docs

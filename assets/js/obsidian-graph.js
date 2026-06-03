@@ -51,45 +51,66 @@
     return byKey;
   }
 
-  // Detect Bootstrap's color-mode at init time so cytoscape gets concrete
-  // hex values (it rejects `var(--bs-…)`). We re-read on toggle so the
-  // graph stays legible when users flip light/dark.
+  // Cytoscape needs concrete color values (not CSS vars). readTheme()
+  // resolves light/dark at init time.
+  // Shared cose layout — looser packing, more edge length, wider padding.
+  var COSE_LAYOUT = {
+    name: 'cose',
+    animate: false,
+    randomize: true,
+    nodeRepulsion: function () { return 32000; },
+    idealEdgeLength: function () { return 190; },
+    edgeElasticity: function () { return 60; },
+    nodeOverlap: 40,
+    gravity: 0.1,
+    nestingFactor: 1.5,
+    numIter: 3000,
+    padding: 80,
+    componentSpacing: 140
+  };
+
+  // Labels appear when zoomed past this level or on hover/highlight.
+  var LABEL_ZOOM_THRESHOLD = 1.25;
+  var HUB_DEGREE_THRESHOLD = 12;
+
   function readTheme() {
     var attr = (document.documentElement.getAttribute('data-bs-theme') ||
       document.body.getAttribute('data-bs-theme') || '').toLowerCase();
     var dark = attr === 'dark' || (!attr &&
       window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
     return dark ? {
-      label:        '#e9ecef',
-      labelOutline: '#1b1f23',
-      edge:         'rgba(173,181,189,0.45)',
-      edgeArrow:    'rgba(173,181,189,0.65)',
-      canvasBg:     '#1b1f23',
-      nodeBorder:   'rgba(255,255,255,0.22)'
+      label:        'rgba(233,236,239,0.94)',
+      labelOutline: 'rgba(13,17,23,0.88)',
+      edge:         'rgba(173,181,189,0.28)',
+      edgeArrow:    'rgba(173,181,189,0.42)',
+      canvasBg:     'transparent',
+      nodeBorder:   'rgba(255,255,255,0.18)'
     } : {
-      label:        '#1b1f23',
-      labelOutline: '#f8f9fa',
-      edge:         'rgba(73,80,87,0.40)',
-      edgeArrow:    'rgba(73,80,87,0.60)',
-      canvasBg:     '#f8f9fa',
-      nodeBorder:   'rgba(0,0,0,0.20)'
+      label:        'rgba(27,31,35,0.92)',
+      labelOutline: 'rgba(248,249,250,0.90)',
+      edge:         'rgba(73,80,87,0.22)',
+      edgeArrow:    'rgba(73,80,87,0.38)',
+      canvasBg:     'transparent',
+      nodeBorder:   'rgba(0,0,0,0.14)'
     };
   }
 
-  function collectionColor(name) {
+  function collectionColor(name, alpha) {
+    alpha = alpha == null ? 0.72 : alpha;
     // Stable, distinguishable palette per collection. Falls back for pages.
     var palette = {
-      posts:        '#0d6efd', // primary blue
-      docs:         '#198754', // success green
-      notes:        '#6f42c1', // purple
-      notebooks:    '#d63384', // pink
-      quickstart:   '#fd7e14', // orange
-      about:        '#20c997', // teal
-      hobbies:      '#ffc107', // amber
-      news:         '#6610f2', // indigo
-      services:     '#0dcaf0'  // cyan
+      posts:        [13, 110, 253],
+      docs:         [25, 135, 84],
+      notes:        [111, 66, 193],
+      notebooks:    [214, 51, 132],
+      quickstart:   [253, 126, 20],
+      about:        [32, 201, 151],
+      hobbies:      [255, 193, 7],
+      news:         [102, 16, 242],
+      services:     [13, 202, 240]
     };
-    return palette[name] || '#6c757d'; // gray for standalone pages
+    var rgb = palette[name] || [108, 117, 125];
+    return 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + alpha + ')';
   }
 
   function buildElements(entries, byKey) {
@@ -133,7 +154,7 @@
                 label: target,
                 url: null,
                 collection: 'broken',
-                color: '#dc3545',
+                color: 'rgba(220,53,69,0.78)',
                 excerpt: 'Unresolved wiki-link',
                 broken: true
               }
@@ -168,6 +189,16 @@
     });
   }
 
+  function updateLabelVisibility(cy) {
+    if (!cy) return;
+    var show = cy.zoom() >= LABEL_ZOOM_THRESHOLD;
+    cy.nodes().forEach(function (node) {
+      if (node.hasClass('highlighted')) return;
+      if ((node.data('degree') || 0) >= HUB_DEGREE_THRESHOLD) return;
+      node.style('text-opacity', show ? 0.9 : 0);
+    });
+  }
+
   function renderGraph(container, elements) {
     if (typeof window.cytoscape !== 'function') {
       container.innerHTML =
@@ -191,40 +222,38 @@
           selector: 'node',
           style: {
             'background-color': 'data(color)',
+            'background-opacity': 0.82,
             'label': 'data(label)',
-            'font-size': '11px',
+            'font-size': '10px',
             'font-weight': 500,
             'color': theme.label,
-            // Halo-only labels (outline matches canvas) — no white pill,
-            // no obstruction. Mirrors how Obsidian draws labels.
             'text-outline-color': theme.labelOutline,
-            'text-outline-width': 2.5,
-            'text-outline-opacity': 0.95,
+            'text-outline-width': 3,
+            'text-outline-opacity': 1,
             'text-background-opacity': 0,
             'text-border-opacity': 0,
             'text-valign': 'bottom',
-            'text-margin-y': 5,
+            'text-margin-y': 6,
             'text-wrap': 'ellipsis',
-            'text-max-width': '140px',
-            // Labels appear when zoomed-in or hovered — keeps the
-            // overview clean instead of being a wall of text.
-            'min-zoomed-font-size': 9,
+            'text-max-width': '120px',
+            // Hidden until zoomed-in, hovered, or a high-degree hub.
+            'min-zoomed-font-size': 11,
             'text-opacity': 0,
-            'width': 'mapData(degree, 0, 20, 12, 50)',
-            'height': 'mapData(degree, 0, 20, 12, 50)',
-            'border-width': 1.5,
+            'width': 'mapData(degree, 0, 25, 8, 34)',
+            'height': 'mapData(degree, 0, 25, 8, 34)',
+            'border-width': 1,
             'border-color': theme.nodeBorder,
-            'transition-property': 'background-color, border-color, width, height, text-opacity',
+            'opacity': 0.88,
+            'transition-property': 'background-color, border-color, width, height, text-opacity, opacity',
             'transition-duration': '160ms'
           }
         },
         {
-          // Always show labels for hub nodes (degree >= 6) so the user
-          // has anchor landmarks even when zoomed all the way out.
-          selector: 'node[degree >= 6]',
+          // Hub landmarks stay labeled when zoomed out.
+          selector: 'node[degree >= ' + HUB_DEGREE_THRESHOLD + ']',
           style: {
-            'text-opacity': 1,
-            'font-size': '12px',
+            'text-opacity': 0.88,
+            'font-size': '11px',
             'font-weight': 600,
             'min-zoomed-font-size': 0
           }
@@ -233,46 +262,51 @@
           selector: 'node[?broken]',
           style: {
             'border-style': 'dashed',
-            'border-color': '#dc3545',
-            'border-width': 2
+            'border-color': 'rgba(220,53,69,0.75)',
+            'border-width': 1.5,
+            'background-opacity': 0.55,
+            'opacity': 0.78
           }
         },
         {
           selector: 'edge',
           style: {
             'curve-style': 'bezier',
-            'width': 1.5,
+            'width': 1,
             'line-color': theme.edge,
             'target-arrow-color': theme.edgeArrow,
             'target-arrow-shape': 'triangle',
-            'arrow-scale': 0.9,
-            'transition-property': 'line-color, width',
+            'arrow-scale': 0.75,
+            'opacity': 0.55,
+            'transition-property': 'line-color, width, opacity',
             'transition-duration': '150ms'
           }
         },
         {
           selector: 'edge[?broken]',
           style: {
-            'line-color': 'rgba(220,53,69,0.45)',
-            'target-arrow-color': 'rgba(220,53,69,0.55)',
-            'line-style': 'dashed'
+            'line-color': 'rgba(220,53,69,0.32)',
+            'target-arrow-color': 'rgba(220,53,69,0.42)',
+            'line-style': 'dashed',
+            'opacity': 0.45
           }
         },
         {
           selector: '.faded',
           style: {
-            'opacity': 0.15,
-            'text-opacity': 0.15
+            'opacity': 0.08,
+            'text-opacity': 0
           }
         },
         {
           selector: 'node.highlighted',
           style: {
-            'border-color': '#fd7e14',
-            'border-width': 3,
+            'border-color': 'rgba(253,126,20,0.95)',
+            'border-width': 2.5,
             'opacity': 1,
+            'background-opacity': 0.95,
             'text-opacity': 1,
-            'font-size': '12px',
+            'font-size': '11px',
             'font-weight': 700,
             'min-zoomed-font-size': 0,
             'z-index': 9999
@@ -281,30 +315,15 @@
         {
           selector: 'edge.highlighted',
           style: {
-            'line-color': '#fd7e14',
-            'target-arrow-color': '#fd7e14',
-            'width': 2.5,
-            'opacity': 1,
+            'line-color': 'rgba(253,126,20,0.85)',
+            'target-arrow-color': 'rgba(253,126,20,0.85)',
+            'width': 2,
+            'opacity': 0.95,
             'z-index': 9999
           }
         }
       ],
-      layout: {
-        name: 'cose',
-        animate: false,
-        randomize: true,
-        // Looser packing so clusters have breathing room and labels
-        // don't pile on top of each other.
-        nodeRepulsion: function () { return 18000; },
-        idealEdgeLength: function () { return 130; },
-        edgeElasticity: function () { return 80; },
-        nodeOverlap: 24,
-        gravity: 0.18,
-        nestingFactor: 1.2,
-        numIter: 2500,
-        padding: 40,
-        componentSpacing: 80
-      }
+      layout: COSE_LAYOUT
     });
 
     cy.on('tap', 'node', function (evt) {
@@ -331,7 +350,14 @@
     });
     cy.on('mouseout', 'node', function () {
       cy.elements().removeClass('faded highlighted');
+      updateLabelVisibility(cy);
     });
+
+    cy.on('zoom', function () {
+      updateLabelVisibility(cy);
+    });
+
+    updateLabelVisibility(cy);
 
     return cy;
   }
@@ -346,7 +372,7 @@
       cy.elements().removeClass('faded highlighted');
       if (!q) {
         if (status) status.textContent = '';
-        cy.fit(undefined, 70);
+        cy.fit(undefined, 80);
         return;
       }
       var matches = cy.nodes().filter(function (n) {
@@ -361,7 +387,7 @@
       matches.addClass('highlighted');
       if (status) status.textContent = matches.length + ' node' +
         (matches.length === 1 ? '' : 's') + ' matched.';
-      cy.fit(matches, 100);
+      cy.fit(matches, 110);
     }
 
     input.addEventListener('input', run);
@@ -376,7 +402,7 @@
       if (input) input.value = '';
       var status = document.getElementById('obsidian-graph-status');
       if (status) status.textContent = '';
-      cy.fit(undefined, 70);
+      cy.fit(undefined, 80);
     });
   }
 
@@ -390,21 +416,12 @@
     }
     // Re-run a quick layout pass on visible elements so the connected
     // cluster expands into the freed space.
-    cy.layout({
-      name: 'cose',
-      animate: false,
+    cy.layout(Object.assign({}, COSE_LAYOUT, {
       randomize: false,
-      nodeRepulsion: function () { return 18000; },
-      idealEdgeLength: function () { return 130; },
-      edgeElasticity: function () { return 80; },
-      nodeOverlap: 24,
-      gravity: 0.18,
-      numIter: 1200,
-      padding: 40,
-      componentSpacing: 80,
+      numIter: 1400,
       eles: cy.elements(':visible')
-    }).run();
-    cy.fit(cy.elements(':visible'), 70);
+    })).run();
+    cy.fit(cy.elements(':visible'), 80);
   }
 
   function wireOrphansToggle(cy) {

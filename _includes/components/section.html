@@ -1,0 +1,80 @@
+{%- comment -%}
+  ===================================================================
+  SECTION — Consistent landing/page section wrapper
+  ===================================================================
+
+  Path: _includes/components/section.html
+
+  Parameters
+    include.id           (string)  — DOM id for in-page anchor links (optional)
+    include.variant      (string)  — `default` | `muted` | `inverse` (default: `default`)
+    include.container    (string)  — Bootstrap container class (default: `container-xl`)
+    include.spacing      (string)  — `tight` | `normal` (default) | `loose`
+    include.heading      (string)  — section heading text (optional)
+    include.heading_level (int)    — heading level 2-6 (default: 2)
+    include.lead         (string)  — lead/subtitle paragraph (optional)
+    include.aria_label   (string)  — overrides auto-generated aria-label (optional)
+    include.content      (string)  — body markup (required when called standalone)
+
+  Notes:
+    - Variant `muted` uses `--zer0-color-bg-elevated`; `inverse` flips to ink-on-primary.
+    - Spacing maps to `--zer0-space-section` (normal), 50% (tight), 150% (loose).
+    - When omitted, the heading/lead block is skipped entirely so this component
+      can also wrap pure-content sections.
+
+  Example (data-driven landing band):
+    {%- capture body -%}
+      <div class="row g-4">
+        {% for f in site.data.landing.features %}
+          <div class="col-md-4">{% include components/feature-card.html feature=f %}</div>
+        {% endfor %}
+      </div>
+    {%- endcapture -%}
+    {% include components/section.html id="features" variant="muted" heading="Why Choose zer0-mistakes?" lead="..." content=body %}
+  ===================================================================
+{%- endcomment -%}
+{%- assign variant       = include.variant       | default: "default" -%}
+{%- assign container_cls = include.container     | default: "container-xl" -%}
+{%- assign spacing       = include.spacing       | default: "normal" -%}
+{%- assign heading_level = include.heading_level | default: 2 -%}
+{%- assign section_id    = include.id            | default: "" -%}
+
+{%- if section_id != "" -%}
+  {%- assign heading_id = section_id | append: "-heading" -%}
+{%- elsif include.heading -%}
+  {%- assign heading_id = include.heading | slugify | prepend: "zer0-section-" -%}
+{%- else -%}
+  {%- assign heading_id = "" -%}
+{%- endif -%}
+
+{%- comment -%} Map variant → bg/text utility classes {%- endcomment -%}
+{%- if variant == "muted" -%}
+  {%- assign variant_classes = "bg-body-tertiary" -%}
+{%- elsif variant == "inverse" -%}
+  {%- assign variant_classes = "bg-primary text-white" -%}
+{%- else -%}
+  {%- assign variant_classes = "" -%}
+{%- endif -%}
+
+{%- comment -%} Map spacing → token-aware modifier on the section wrapper {%- endcomment -%}
+{%- case spacing -%}
+  {%- when "tight"  -%}{%- assign spacing_class = "zer0-section--spacing-tight" -%}
+  {%- when "loose"  -%}{%- assign spacing_class = "zer0-section--spacing-loose" -%}
+  {%- else -%}{%- assign spacing_class = "" -%}
+{%- endcase -%}
+
+<section{% if section_id != "" %} id="{{ section_id }}"{% endif %} class="zer0-section {{ spacing_class }} {{ variant_classes }}"{% if include.aria_label %} aria-label="{{ include.aria_label }}"{% elsif heading_id != "" %} aria-labelledby="{{ heading_id }}"{% endif %}>
+  <div class="{{ container_cls }} px-4 px-md-5">
+    {%- if include.heading -%}
+    <div class="row text-center mb-5">
+      <div class="col-lg-8 mx-auto">
+        <h{{ heading_level }}{% if heading_id != "" %} id="{{ heading_id }}"{% endif %} class="display-5 fw-bold {% if variant != 'inverse' %}text-body-emphasis{% endif %}">{{ include.heading }}</h{{ heading_level }}>
+        {%- if include.lead -%}
+        <p class="lead {% if variant != 'inverse' %}text-body-secondary{% endif %}">{{ include.lead }}</p>
+        {%- endif -%}
+      </div>
+    </div>
+    {%- endif -%}
+    {{ include.content }}
+  </div>
+</section>

@@ -1,5 +1,6 @@
 ---
 title: Navigation Editor
+preview: /images/previews/navigation-editor.png
 layout: admin
 icon: bi-signpost-2
 permalink: /about/settings/navigation/

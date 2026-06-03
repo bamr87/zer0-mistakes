@@ -1,0 +1,34 @@
+// ============================================================================
+// Layer tokens — z-index and stacking-context scale
+// ----------------------------------------------------------------------------
+// Single ordered scale for every floating UI element so FABs / banners /
+// modals never overlap unintentionally. Higher number wins. Steps of 10 leave
+// room for ad-hoc adjustments.
+// ============================================================================
+
+:root {
+  // Base content -----------------------------------------------------------
+  --zer0-layer-base: 0;
+  --zer0-layer-elevated: 1;
+
+  // Header / sticky --------------------------------------------------------
+  --zer0-layer-sticky: 1020;     // Bootstrap default: .sticky-top
+  --zer0-layer-header: 1030;     // Bootstrap default: .fixed-top
+  --zer0-layer-backdrop: 1040;
+
+  // Floating action buttons (stack bottom-to-top) --------------------------
+  --zer0-layer-fab-back-to-top: 1050;
+  --zer0-layer-fab-toc: 1055;
+  --zer0-layer-fab-local-graph: 1060;
+
+  // Overlay surfaces -------------------------------------------------------
+  --zer0-layer-offcanvas: 1045;
+  --zer0-layer-modal: 1055;
+  --zer0-layer-popover: 1070;
+  --zer0-layer-tooltip: 1080;
+
+  // Notifications ----------------------------------------------------------
+  --zer0-layer-toast: 1090;
+  --zer0-layer-cookie-banner: 1095;
+  --zer0-layer-skip-link: 1100;  // always on top when focused
+}

@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:56.000Z
 title: AI Preview Image Generator
 description: AI-powered automatic preview image generation for posts using OpenAI DALL-E, Stability AI, or local placeholders.
+preview: /images/previews/ai-preview-image-generator.png
 layout: default
 categories:
     - docs
@@ -131,7 +132,7 @@ Run the generation script:
 ```yaml
 ---
 title: "My Post Title"
-preview: /images/previews/my-post-preview.png
+preview: /images/previews/ai-preview-image-generator.png
 ---
 ```
 
@@ -329,8 +330,13 @@ export OPENAI_API_KEY="sk-..."
 ## Related
 
 - [SEO Meta Tags](/docs/seo/meta-tags/)
-- [Jekyll Configuration](/docs/jekyll/jekyll-config/)
 - [OpenAI API Documentation](https://platform.openai.com/docs/guides/images)
+
+## Technical Reference
+
+For implementation details (multi-provider architecture, xAI Grok integration, generation workflow):
+
+- [Preview Image Generator → docs/implementation/preview-image-generator.md](../../../docs/implementation/preview-image-generator.md)
 
 ## See also
 

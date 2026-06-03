@@ -1,0 +1,53 @@
+name: Backlog Sync
+
+# Mirror `_data/backlog.yml` (the tactical task queue) to GitHub Issues.
+#
+# - On push to main: create/update/close issues so they match the backlog file.
+# - On pull requests touching the data file or script: validate the schema only
+#   (no issue writes), so a malformed backlog can never reach main.
+
+permissions:
+  contents: read
+  issues: write
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '_data/backlog.yml'
+      - 'scripts/sync-backlog.rb'
+      - 'scripts/sync-backlog.sh'
+      - '.github/workflows/backlog-sync.yml'
+  pull_request:
+    paths:
+      - '_data/backlog.yml'
+      - 'scripts/sync-backlog.rb'
+      - 'scripts/sync-backlog.sh'
+      - '.github/workflows/backlog-sync.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: backlog-sync-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+
+      - name: Validate backlog schema (PRs)
+        if: github.event_name == 'pull_request'
+        run: ruby scripts/sync-backlog.rb --check
+
+      - name: Sync backlog to issues (push / manual)
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ruby scripts/sync-backlog.rb

@@ -1,6 +1,7 @@
 ---
 title: Docker
 description: Docker-first workflow for developing and testing Zer0-Mistakes.
+preview: /images/previews/docker.png
 layout: default
 categories:
     - docs

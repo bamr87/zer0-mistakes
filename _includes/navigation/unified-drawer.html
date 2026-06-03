@@ -1,0 +1,106 @@
+{%- comment -%}
+  ===================================================================
+  UNIFIED-DRAWER — Single mobile offcanvas with tabbed panels
+  ===================================================================
+
+  Path: _includes/navigation/unified-drawer.html
+
+  Status: OPTIONAL. Enabled by setting `navigation.unified_mobile_drawer: true`
+  in _config.yml. When enabled, the header's two separate mobile toggles
+  (#bdSidebar = "Browse docs" and #bdNavbar = main menu) collapse into a
+  single drawer with tabs, reducing cognitive load on small viewports.
+
+  Tabs:
+    1. Browse — the same content as sidebar-left.html
+    2. Menu   — main navigation (site.data.navigation.main)
+    3. Settings — quick links to the existing settings offcanvas trigger
+
+  This include intentionally renders only when on mobile widths AND when the
+  flag is on. The legacy #bdSidebar / #bdNavbar offcanvases remain in the
+  DOM so desktop layouts and existing JS continue to work unchanged.
+
+  Markup uses Bootstrap 5 offcanvas + nav-pills.
+  ===================================================================
+{%- endcomment -%}
+{% if site.navigation.unified_mobile_drawer %}
+{%- assign ui = site.data.ui-text[site.locale] | default: site.data.ui-text.en -%}
+<div class="offcanvas offcanvas-start zer0-unified-drawer d-lg-none"
+     tabindex="-1"
+     id="zer0UnifiedDrawer"
+     aria-labelledby="zer0UnifiedDrawerLabel">
+  <div class="offcanvas-header border-bottom">
+    <h2 class="offcanvas-title h5 mb-0" id="zer0UnifiedDrawerLabel">{{ site.title }}</h2>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{{ ui.menu_label | default: 'Close menu' }}"></button>
+  </div>
+
+  <ul class="nav nav-pills nav-fill m-2" role="tablist" aria-label="Drawer sections">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="zer0-drawer-tab-browse"
+              data-bs-toggle="tab" data-bs-target="#zer0-drawer-pane-browse"
+              type="button" role="tab" aria-controls="zer0-drawer-pane-browse" aria-selected="true">
+        <i class="bi bi-list-ul me-1" aria-hidden="true"></i>Browse
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="zer0-drawer-tab-menu"
+              data-bs-toggle="tab" data-bs-target="#zer0-drawer-pane-menu"
+              type="button" role="tab" aria-controls="zer0-drawer-pane-menu" aria-selected="false">
+        <i class="bi bi-grid me-1" aria-hidden="true"></i>Menu
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="zer0-drawer-tab-settings"
+              data-bs-toggle="tab" data-bs-target="#zer0-drawer-pane-settings"
+              type="button" role="tab" aria-controls="zer0-drawer-pane-settings" aria-selected="false">
+        <i class="bi bi-sliders me-1" aria-hidden="true"></i>Settings
+      </button>
+    </li>
+  </ul>
+
+  <div class="offcanvas-body tab-content overflow-auto">
+    <div class="tab-pane fade show active" id="zer0-drawer-pane-browse"
+         role="tabpanel" aria-labelledby="zer0-drawer-tab-browse">
+      {%- if page.sidebar.nav == "auto" -%}
+        <div class="list-group nav-tree">
+          {% assign folders = site.pages | where_exp: "item", "item.path contains 'index.md'" | sort: 'path' %}
+          {% include navigation/sidebar-folders.html folders=folders %}
+        </div>
+      {%- elsif page.sidebar.nav == "categories" -%}
+        <div class="nav-tree nav-tree--categories">
+          {% assign categories = site.categories | sort %}
+          {% include navigation/sidebar-categories.html categories=categories %}
+        </div>
+      {%- elsif page.sidebar.nav -%}
+        <nav aria-label="Section navigation">
+          {% include navigation/nav-tree.html nav=page.sidebar.nav %}
+        </nav>
+      {%- else -%}
+        <p class="text-body-secondary small mb-0">No sidebar configured for this page.</p>
+      {%- endif -%}
+    </div>
+
+    <div class="tab-pane fade" id="zer0-drawer-pane-menu"
+         role="tabpanel" aria-labelledby="zer0-drawer-tab-menu">
+      <nav aria-label="Main navigation">
+        {% include navigation/nav-tree.html nav="main" %}
+      </nav>
+    </div>
+
+    <div class="tab-pane fade" id="zer0-drawer-pane-settings"
+         role="tabpanel" aria-labelledby="zer0-drawer-tab-settings">
+      <button type="button"
+              class="btn btn-outline-primary w-100 mb-2"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#info-section">
+        <i class="bi bi-gear me-1" aria-hidden="true"></i>Theme &amp; appearance
+      </button>
+      <button type="button"
+              class="btn btn-outline-secondary w-100"
+              data-bs-toggle="modal"
+              data-bs-target="#search-modal">
+        <i class="bi bi-search me-1" aria-hidden="true"></i>Search
+      </button>
+    </div>
+  </div>
+</div>
+{% endif %}

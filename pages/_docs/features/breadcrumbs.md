@@ -2,6 +2,7 @@
 lastmod: 2026-04-18T19:29:58.000Z
 title: Breadcrumbs Navigation
 description: Hierarchical breadcrumb navigation with Schema.org structured data for SEO and user orientation.
+preview: /images/previews/breadcrumbs-navigation.png
 layout: default
 categories:
     - docs

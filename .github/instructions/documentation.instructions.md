@@ -2,7 +2,7 @@
 applyTo: "docs/**,pages/_docs/**,DOCUMENTATION_WORKFLOW.md,**/*documentation*.md,**/*docs*.md"
 description: "Documentation development guidelines for Zer0-Mistakes theme dual documentation architecture"
 date: 2026-05-18T12:00:00.000Z
-lastmod: 2026-05-18T12:00:00.000Z
+lastmod: 2026-06-01T03:42:37.000Z
 ---
 
 # Documentation Guidelines
@@ -92,14 +92,22 @@ When promoting an internal doc (`docs/`) to public (`pages/_docs/`):
 ## Validation
 
 ```bash
-# Front matter & link checks
-markdownlint "docs/**/*.md" "pages/_docs/**/*.md"
-markdown-link-check docs/**/*.md
-yamllint -c .github/config/.yamllint.yml docs/ pages/_docs/
+# Docs maintenance suite (front matter, internal links, freshness)
+./scripts/docs/validate.sh              # all checks
+./scripts/docs/lint-frontmatter.sh      # required front matter (rejects TODO/stub descriptions)
+./scripts/docs/check-links.sh           # internal links in docs/ resolve on disk
+./scripts/docs/check-freshness.sh       # lastmod > 60 days behind last commit
+./scripts/docs/lint-frontmatter.sh --fix  # inject skeleton front matter where missing
 
-# Jekyll build (catches broken includes, missing layouts)
+# Markdown / YAML / Jekyll
+markdownlint "docs/**/*.md" "pages/_docs/**/*.md"
+yamllint -c .github/config/.yamllint.yml docs/ pages/_docs/
 docker-compose exec -T jekyll bundle exec jekyll build --config '_config.yml,_config_dev.yml'
 ```
+
+CI runs `lint-frontmatter.sh` and `check-links.sh` on every PR touching docs
+(`.github/workflows/docs-validate.yml`); `check-freshness.sh` runs monthly and
+opens a tracking issue (`.github/workflows/docs-freshness.yml`).
 
 ## Style
 
