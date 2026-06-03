@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.12.0] - 2026-06-03
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 7e227c59 feat: auto-generate /search.json and /sitemap/ endpoints for downstream sites (#104)
+- 300dabaf chore(deps): update Ruby gem dependencies (#120)
+- 3a1a810c chore(deps-dev): bump mermaid from 10.9.5 to 10.9.6 (#105)
+
+
 ## [1.11.2] - 2026-06-03
 
 ### Changed
