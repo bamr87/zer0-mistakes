@@ -141,11 +141,11 @@ build smoke tests. Playwright smoke tier checks live DOM.
 
 | Rank | Subsystem | Source lines | Dedicated tests | New backlog task |
 |------|-----------|-------------:|-----------------|-----------------|
-| 1 | Jekyll plugins (non-Obsidian) | 523 | 0 | T-007 |
-| 2 | Release tooling (migrate + changelog) | 617 | 0 | T-008 |
-| 3 | Installer interactive wizard + upgrade path | 373 | ~0 in CI | T-009 |
+| 1 | Jekyll plugins (non-Obsidian) | 523 | 0 | T-011 |
+| 2 | Release tooling (migrate + changelog) | 617 | 0 | T-012 |
+| 3 | Installer interactive wizard + upgrade path | 373 | ~0 in CI | T-013 |
 
-Follow-up tasks T-007, T-008, and T-009 have been filed in `_data/backlog.yml`.
+Follow-up tasks T-011, T-012, and T-013 have been filed in `_data/backlog.yml`.
 
 ---
 
@@ -158,6 +158,6 @@ Follow-up tasks T-007, T-008, and T-009 have been filed in `_data/backlog.yml`.
   asserted) is noted but not counted as "covered" for baseline purposes.
 - This baseline does not produce a numeric percentage because no
   line-instrumentation tool is wired into the CI pipeline yet. The follow-up
-  tasks (T-007–T-009) address the identified gaps; a future task should wire
+  tasks (T-011–T-013) address the identified gaps; a future task should wire
   up `simplecov` (Ruby) and `bashcov`/`kcov` (shell) to produce percentage
   reports.

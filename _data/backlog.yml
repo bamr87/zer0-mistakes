@@ -56,7 +56,7 @@
 meta:
   title: "zer0-mistakes Backlog"
   updated: 2026-06-02
-  next_id: 10
+  next_id: 14
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -160,33 +160,122 @@ tasks:
     created: 2026-05-31
     updated: 2026-06-02
 
-  # --- Coverage follow-up tasks filed by T-005 --------------------------------
+  # --- 2026-06-01 audit -------------------------------------------------------
 
   - id: T-007
-    title: "Add unit tests for the four non-Obsidian Jekyll plugins"
+    title: "Fix global navbar WCAG 2.1 AA violations to enable axe-core full-audit tests"
     status: open
     priority: P1
+    area: a11y
+    risk: standard
+    effort: M
+    source: audit
+    summary: >-
+      Three tests in `test/visual/accessibility.spec.js` are frozen with `test.fixme`
+      because four WCAG 2.1 AA violations in the global navbar prevent them from passing:
+      `aria-required-children` (menubar/button nesting), `link-name` (icon-only nav links),
+      `list` (footer list structure), and `scrollable-region-focusable` (code blocks).
+      Fix the HTML/ARIA in `_includes/` and `_layouts/` to make the full axe-core audit green.
+    acceptance:
+      - "All four violations listed in the `test.fixme` comment are resolved in `_includes/` / `_layouts/`."
+      - "The three `test.fixme` blocks in `test/visual/accessibility.spec.js` are changed to live `test()` calls and pass in CI."
+      - "`bundle exec ./scripts/bin/validate --quick` still passes."
+      - "No visual regression in smoke snapshot tests."
+    links: { issue: null, pr: null, roadmap: "1.9" }
+    created: 2026-06-01
+    updated: 2026-06-01
+
+  - id: T-008
+    title: "Fix theme-customizer YAML export to quote hex color values"
+    status: open
+    priority: P2
+    area: feat
+    risk: standard
+    effort: S
+    source: audit
+    summary: >-
+      The JS theme-customizer export serialises CSS custom-property values directly into
+      YAML without quoting strings that start with `#`. Unquoted `#RRGGBB` is treated as a
+      YAML comment by parsers, silently dropping colour values. A regression guard in
+      `test/visual/theme-colors.spec.js` is frozen as `test.fixme` until the bug is fixed.
+    acceptance:
+      - "JS export wraps every hex colour value (matching `/#[0-9a-fA-F]{3,8}/`) in double quotes in the generated YAML."
+      - "The `test.fixme` in `test/visual/theme-colors.spec.js` is promoted to a live `test()` and passes in CI."
+      - "Exported YAML is valid when parsed by `yaml.safe_load` in Ruby."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-06-01
+    updated: 2026-06-01
+
+  - id: T-009
+    title: "Sanitize sensitive config keys from admin config-page DOM injection"
+    status: open
+    priority: P1
+    area: infra
+    risk: standard
+    effort: S
+    source: audit
+    summary: >-
+      The admin config page injects raw `_config.yml` content into a hidden
+      `<pre id="cfg-full-yaml">` element. If the config contains secrets
+      (`api_key`, `token`, PostHog `phc_*` keys, etc.) they are exposed in the page
+      DOM. A regression test in `test/visual/security.spec.js` is frozen as
+      `test.fixme` until a sanitisation pass is in place.
+    acceptance:
+      - "The Liquid/Ruby that populates `<pre id=\"cfg-full-yaml\">` strips or masks keys matching `api_key`, `secret`, `password`, `token`, and `phc_` prefix before DOM injection."
+      - "The `test.fixme` in `test/visual/security.spec.js` is promoted to a live `test()` and passes in CI."
+      - "The visible config display in the admin UI is unaffected (only the raw hidden element is sanitised)."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-06-01
+    updated: 2026-06-01
+
+  - id: T-010
+    title: "Complete v1.9 quickstart docs rewrite with getting-started guide and screenshots"
+    status: open
+    priority: P2
+    area: docs
+    risk: low
+    effort: M
+    source: roadmap
+    summary: >-
+      The v1.9 milestone lists "Quickstart documentation rewrite with screenshots"
+      as a deliverable, but `pages/_docs/quickstart/` contains only `bare-minimum.md`.
+      Add a proper quickstart index page and at least one full getting-started guide
+      (covering the standard GitHub Pages workflow) with annotated screenshots.
+    acceptance:
+      - "`pages/_docs/quickstart/index.md` exists with a nav overview linking to available quickstart guides."
+      - "At least one guide beyond `bare-minimum.md` covers the standard fork/remote-theme workflow."
+      - "Each guide includes at least one screenshot stored under `assets/images/docs/quickstart/`."
+      - "All new pages pass `docs-validate.yml` front-matter and link checks."
+    links: { issue: null, pr: null, roadmap: "1.9" }
+    created: 2026-06-01
+    updated: 2026-06-01
+
+  - id: T-011
+    title: "Add Ruby unit tests for uncovered _plugins/ generators"
+    status: open
+    priority: P2
     area: tests
     risk: standard
     effort: M
     source: audit
     summary: >-
-      `_plugins/preview_image_generator.rb` (350 lines, 17 methods),
-      `_plugins/content_statistics_generator.rb`, `_plugins/admin_page_urls.rb`,
-      and `_plugins/theme_version.rb` have zero dedicated unit tests. They are
-      only exercised indirectly by full Jekyll builds, making regressions slow
-      to diagnose. Add a `test/test_plugins.rb` MiniTest suite covering the
-      major code paths.
+      Three Jekyll plugins have no dedicated unit tests: `content_statistics_generator.rb`,
+      `preview_image_generator.rb`, and `admin_page_urls.rb`. The quality suite has
+      URL-pattern checks (`test_preview_image_urls`) but no specs that exercise the
+      generator logic in isolation. This is a concrete gap on the path to the
+      3.0-milestone 90% coverage target.
     acceptance:
-      - "`test/test_plugins.rb` exists and is runnable with `bundle exec ruby test/test_plugins.rb`."
-      - "At least one assertion per public method in `preview_image_generator.rb`."
-      - "`content_statistics_generator.rb`, `admin_page_urls.rb`, and `theme_version.rb` each have at least one assertion."
-      - "`./scripts/bin/test` stays green (no regressions)."
-    links: { issue: null, pr: null, roadmap: "1.0" }
-    created: 2026-06-02
-    updated: 2026-06-02
+      - "`test/test_ruby_converter.rb`-style RSpec or Minitest specs exist for all three plugins."
+      - "Each spec runs independently without a running Jekyll server (`bundle exec ruby -Itest`)."
+      - "`./scripts/bin/test` continues to pass with the new specs included."
+      - "Edge cases covered: empty collections, missing front-matter keys, and duplicate slug detection."
+    links: { issue: null, pr: null, roadmap: "3.0" }
+    created: 2026-06-01
+    updated: 2026-06-01
 
-  - id: T-008
+  # --- Coverage follow-up tasks filed by T-005 --------------------------------
+
+  - id: T-012
     title: "Add unit tests for release-tooling scripts (migrate.sh and changelog.sh)"
     status: open
     priority: P2
@@ -204,12 +293,12 @@ tasks:
       - "`test/test_release_tooling.sh` exists and passes standalone (`bash test/test_release_tooling.sh`)."
       - "Each of the 5 functions in `migrate.sh` has at least one assertion."
       - "Each of the 5 functions in `changelog.sh` has at least one assertion."
-      - "`./scripts/bin/test` stays green."
+      - "`./scripts/bin/test` passes with no regressions vs the pre-PR baseline."
     links: { issue: null, pr: null, roadmap: "1.0" }
     created: 2026-06-02
     updated: 2026-06-02
 
-  - id: T-009
+  - id: T-013
     title: "Add CI coverage for the installer interactive wizard and upgrade path"
     status: open
     priority: P2
@@ -229,7 +318,7 @@ tasks:
       - "The interactive wizard helpers (`_wiz_prompt`, `_wiz_confirm`, `_wiz_choose`) are tested via stdin redirection — no `OPENAI_API_KEY` required."
       - "`wizard_interactive_run` is exercised end-to-end in at least one test scenario."
       - "At least two assertions cover the `upgrade.sh` migration path."
-      - "`./scripts/bin/test` stays green."
+      - "`./scripts/bin/test` passes with no regressions vs the pre-PR baseline."
     links: { issue: null, pr: null, roadmap: "1.0" }
     created: 2026-06-02
     updated: 2026-06-02

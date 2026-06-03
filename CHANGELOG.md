@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.11.2] - 2026-06-03
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 452022ae chore(backlog): audit 2026-06-01 (#121)
+
+
 ## [1.11.1] - 2026-06-01
 
 ### Changed
