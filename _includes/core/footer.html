@@ -30,79 +30,148 @@
   ===================================================================
 -->
 
-<footer class="bd-footer container-xl border-top" role="contentinfo">
+<footer class="bd-footer border-top" role="contentinfo">
+  {% assign footer_page_urls = site.html_pages | map: "url" | join: "|" | prepend: "|" | append: "|" %}
   <!-- Powered by Row -->
-  <div class="container row my-3">
-    <ul class="nav col-sm justify-content-end list-unstyled d-flex align-items-center" aria-label="Powered by technologies">
-      <span class="align-start">
-        &copy; {{ site.time | date: "%Y" }} {{ site.name | default: site.title }} — Powered by:
+  <div class="container-xl footer-powered-by">
+    <p class="footer-powered-by-copyright text-center mb-0">
+      &copy; {{ site.time | date: "%Y" }} {{ site.name | default: site.title }}
+    </p>
+    <div class="footer-powered-by-row">
+      <span class="footer-powered-by-label" id="footer-powered-by-label">
+        {{ site.data.ui-text[site.locale].powered_by | default: "Powered by" }}:
       </span>
-      {% for power in site.powered_by %}
-        <li class="btn align-items-end">
+      <ul class="footer-powered-by-links list-unstyled mb-0"
+          aria-labelledby="footer-powered-by-label">
+        {% assign powered_by_count = site.powered_by | size %}
+        {% for power in site.powered_by %}
+          {% assign power_url = power.url | default: power.link %}
           {% capture icon_classes %}{{ site.default_icon }} {{ power.icon | default: "bi-question-circle" }}{% endcapture %}
-          {% if power.url %}
-            <a href="{{ power.url }}" rel="nofollow">
+          {% if forloop.last and powered_by_count > 0 %}
+            <li class="footer-powered-by-trailing">
+              <span class="footer-powered-by-trailing-inner">
+          {% else %}
+            <li>
+          {% endif %}
+          {% if power_url %}
+            <a href="{{ power_url }}"
+               class="powered-by-link"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="{{ power.name }} (opens in new tab)"
+               title="{{ power.name }}">
               <i class="{{ icon_classes }}" aria-hidden="true"></i>
-              <span class="d-none d-md-inline">{{ power.name }}</span>
+              <span class="powered-by-link-text">{{ power.name }}</span>
             </a>
           {% else %}
-            <span class="text-muted">
+            <span class="powered-by-link text-muted" aria-label="{{ power.name }}">
               <i class="{{ icon_classes }}" aria-hidden="true"></i>
-              <span class="d-none d-md-inline">{{ power.name }}</span>
+              <span class="powered-by-link-text">{{ power.name }}</span>
             </span>
           {% endif %}
-        </li>
-      {% endfor %}
-      <!-- Theme Info Button -->
-      <li class="btn align-items-end">
-        <a href="#" 
-           data-bs-toggle="offcanvas" 
-           data-bs-target="#info-section"
-           aria-label="View theme information and system details"
-           title="Theme Info">
-          <i class="{{ site.default_icon }} bi-info-circle" aria-hidden="true"></i>
-          <span class="d-none d-md-inline">Info</span>
-        </a>
-      </li>
-    </ul>
+          {% if forloop.last and powered_by_count > 0 %}
+                <a href="#"
+                   class="powered-by-link"
+                   data-bs-toggle="offcanvas"
+                   data-bs-target="#info-section"
+                   aria-label="View theme information and system details"
+                   title="Theme Info">
+                  <i class="{{ site.default_icon }} bi-info-circle" aria-hidden="true"></i>
+                  <span class="powered-by-link-text">Info</span>
+                </a>
+              </span>
+            </li>
+          {% else %}
+            </li>
+          {% endif %}
+        {% endfor %}
+        {% if powered_by_count == 0 %}
+          <li>
+            <a href="#"
+               class="powered-by-link"
+               data-bs-toggle="offcanvas"
+               data-bs-target="#info-section"
+               aria-label="View theme information and system details"
+               title="Theme Info">
+              <i class="{{ site.default_icon }} bi-info-circle" aria-hidden="true"></i>
+              <span class="powered-by-link-text">Info</span>
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
   </div>
 
-  <!-- Branding and Navigation Block -->
-  <div class="container row">
-    <div class="container bg-dark text-light py-5 rounded-3">
-      <div class="container">
+  <!-- Branding and Navigation Block — full-width dark background -->
+  <div class="bg-dark text-light footer-dark-block">
+    <div class="container-xl">
         <!-- Top: Site info + Quick Links + Social -->
-        <div class="row mb-4">
+        <div class="row mb-3 mb-lg-4 g-2 g-lg-3 footer-nav-columns justify-content-center">
           <!-- Site Info -->
-          <div class="col-12 col-md-6 col-lg-3 mb-3">
-            <h5 class="text-uppercase mb-3">{{ site.title }}</h5>
+          <div class="col-12 col-md-3 col-lg-3 mb-2 mb-lg-3 order-0 order-md-1 order-lg-1">
+            <h2 class="footer-section-title text-uppercase h6 mb-0">{{ site.title }}</h2>
             {% if site.address %}<p class="mb-1">{{ site.address }}</p>{% endif %}
             {% if site.phone %}<p class="mb-1"><a href="tel:{{ site.phone }}" class="text-light text-decoration-none">{{ site.phone }}</a></p>{% endif %}
             {% if site.email %}<p class="mb-0"><a href="mailto:{{ site.email }}" class="text-light text-decoration-none">{{ site.email }}</a></p>{% endif %}
           </div>
 
-          <!-- Quick Links -->
-          <div class="col-12 col-md-6 col-lg-3 mb-3">
-            <h5 class="text-uppercase mb-3">Quick Links</h5>
+          <!-- Quick Links
+               Resolution order:
+                 1. site.footer_quick_links  (array of {label, url}) — explicit override
+                 2. Auto-detection: only render links whose target pages
+                    actually exist in the build. Prevents 404s on bare-minimum
+                    sites that haven't created /about/, /services/, etc. -->
+          <div class="col-6 col-md-3 col-lg-3 mb-2 mb-lg-3 order-2 order-md-2 order-lg-2">
+            <h2 class="footer-section-title text-uppercase h6 mb-0">Quick Links</h2>
             <ul class="list-unstyled" aria-label="Footer quick links">
-              <li><a href="{{ '/' | relative_url }}" class="text-light text-decoration-none">Home</a></li>
-              <li><a href="{{ '/about/' | relative_url }}" class="text-light text-decoration-none">About</a></li>
-              <li><a href="{{ '/services/' | relative_url }}" class="text-light text-decoration-none">Services</a></li>
-              <li><a href="{{ '/news/' | relative_url }}" class="text-light text-decoration-none">News</a></li>
-              <li><a href="{{ '/contact/' | relative_url }}" class="text-light text-decoration-none">Contact</a></li>
-              <li><a href="{{ '/sitemap.xml' | relative_url }}" class="text-light text-decoration-none">Sitemap (XML)</a></li>
+              {% if site.footer_quick_links %}
+                {% for link in site.footer_quick_links %}
+                  <li><a href="{{ link.url | relative_url }}" class="text-light text-decoration-none">{{ link.label }}</a></li>
+                {% endfor %}
+              {% else %}
+                <li><a href="{{ '/' | relative_url }}" class="text-light text-decoration-none">Home</a></li>
+                {% assign _candidate_links = "About,/about/|Statistics,/about/stats/|Services,/services/|News,/news/|Contact,/contact/" | split: "|" %}
+                {% for entry in _candidate_links %}
+                  {% assign _parts = entry | split: "," %}
+                  {% assign _label = _parts[0] %}
+                  {% assign _url   = _parts[1] %}
+                  {% assign _page  = site.html_pages | where: "url", _url | first %}
+                  {% unless _page %}
+                    {% for col in site.collections %}
+                      {% assign _page = col.docs | where: "url", _url | first %}
+                      {% if _page %}{% break %}{% endif %}
+                    {% endfor %}
+                  {% endunless %}
+                  {% if _page %}
+                    <li><a href="{{ _url | relative_url }}" class="text-light text-decoration-none">{{ _label }}</a></li>
+                  {% endif %}
+                {% endfor %}
+                {% assign _sitemap_url = site.repo_map | default: "/sitemap/" %}
+                {% assign _sitemap_page = site.html_pages | where: "url", _sitemap_url | first %}
+                {% unless _sitemap_page %}
+                  {% for col in site.collections %}
+                    {% assign _sitemap_page = col.docs | where: "url", _sitemap_url | first %}
+                    {% if _sitemap_page %}{% break %}{% endif %}
+                  {% endfor %}
+                {% endunless %}
+                {% if _sitemap_page %}
+                  <li><a href="{{ _sitemap_url | relative_url }}" class="text-light text-decoration-none">Sitemap</a></li>
+                {% else %}
+                  <li><a href="{{ '/sitemap.xml' | relative_url }}" class="text-light text-decoration-none">Sitemap (XML)</a></li>
+                {% endif %}
+              {% endif %}
             </ul>
           </div>
 
           <!-- Latest Posts (dynamic) -->
           {% assign posts_count = site.posts | size %}
           {% if posts_count and posts_count > 0 %}
-          <div class="col-12 col-md-6 col-lg-3 mb-3">
-            <h5 class="text-uppercase mb-3">Latest Posts</h5>
-            <ul class="list-unstyled" aria-label="Latest posts">
+          <div class="col-12 col-md-3 col-lg-3 mb-2 mb-lg-3 order-4 order-md-3 order-lg-3">
+            <h2 class="footer-section-title text-uppercase h6 mb-0">Latest Posts</h2>
+            <ul class="list-unstyled mb-0 footer-latest-posts" aria-label="Latest posts">
               {% for post in site.posts limit:3 %}
-                <li class="mb-1">
-                  <a href="{{ post.url | relative_url }}" class="text-light text-decoration-none">{{ post.title }}</a>
+                <li>
+                  <a href="{{ post.url | relative_url }}" class="text-light text-decoration-none footer-post-link text-truncate d-block" title="{{ post.title | escape }}">{{ post.title }}</a>
                 </li>
               {% endfor %}
             </ul>
@@ -110,8 +179,8 @@
           {% endif %}
 
           <!-- Social & RSS -->
-          <div class="col-12 col-md-6 col-lg-3 mb-3">
-            <h5 class="text-uppercase mb-3">Follow Us</h5>
+          <div class="col-6 col-md-3 col-lg-3 mb-2 mb-lg-3 order-3 order-md-4 order-lg-4">
+            <h2 class="footer-section-title text-uppercase h6 mb-0">Follow Us</h2>
             <ul class="list-inline mb-0" aria-label="Social links">
               {% for link in site.links %}
                 {% if link.url %}
@@ -135,25 +204,34 @@
         </div>
 
         <!-- Middle: Subscribe + Policies -->
-        <div class="row mb-4 align-items-center g-2">
-          <div class="col-md-8">
-            <form class="row g-2" aria-label="Newsletter signup" onsubmit="return false;">
-              <div class="col-md-8">
+        <div class="row mb-3 mb-lg-4 align-items-center justify-content-center g-2 footer-subscribe-row">
+          <div class="col-12 col-md-8 col-lg-8">
+            <form class="row g-2 footer-subscribe-form" aria-label="Newsletter signup" onsubmit="return false;">
+              <div class="col-8 col-md-8">
                 <label for="footer-email" class="visually-hidden">Email</label>
                 <input type="email" name="email" id="footer-email" class="form-control" placeholder="Enter your email" autocomplete="email" disabled aria-describedby="footer-subscribe-hint">
               </div>
-              <div class="col-md-4">
+              <div class="col-4 col-md-4">
                 <button type="button" class="btn btn-primary w-100" disabled title="Configure a newsletter endpoint in your site config">Subscribe</button>
               </div>
               <div class="col-12">
-                <p id="footer-subscribe-hint" class="small text-white-50 mb-0">Newsletter is a placeholder until you connect a provider.</p>
+                <p id="footer-subscribe-hint" class="small text-white-50 mb-0 d-none d-md-block">Newsletter is a placeholder until you connect a provider.</p>
               </div>
             </form>
           </div>
-          <div class="col-md-4 text-md-end">
+          <div class="col-12 col-md-4 col-lg-4 text-md-end text-lg-end footer-policy-links">
             <ul class="list-inline mb-0">
-              <li class="list-inline-item"><a href="{{ '/privacy-policy' | relative_url }}" class="text-light text-decoration-none">Privacy Policy</a></li>
-              <li class="list-inline-item"><a href="{{ '/terms-of-service' | relative_url }}" class="text-light text-decoration-none">Terms of Service</a></li>
+              {% comment %} Only render policy links whose pages exist (or that are explicitly configured). {% endcomment %}
+              {% assign _privacy_needle = "|/privacy-policy/|" %}
+              {% assign _privacy_alt_needle = "|/privacy-policy|" %}
+              {% if site.privacy_policy_url or footer_page_urls contains _privacy_needle or footer_page_urls contains _privacy_alt_needle %}
+                <li class="list-inline-item"><a href="{{ site.privacy_policy_url | default: '/privacy-policy' | relative_url }}" class="text-light text-decoration-none">Privacy Policy</a></li>
+              {% endif %}
+              {% assign _terms_needle = "|/terms-of-service/|" %}
+              {% assign _terms_alt_needle = "|/terms-of-service|" %}
+              {% if site.terms_of_service_url or footer_page_urls contains _terms_needle or footer_page_urls contains _terms_alt_needle %}
+                <li class="list-inline-item"><a href="{{ site.terms_of_service_url | default: '/terms-of-service' | relative_url }}" class="text-light text-decoration-none">Terms of Service</a></li>
+              {% endif %}
               <li class="list-inline-item">
                 <a href="#" class="text-light text-decoration-none" data-bs-toggle="modal" data-bs-target="#cookieSettingsModal">
                   Cookie Preferences
@@ -163,13 +241,23 @@
           </div>
         </div>
 
-        <!-- Bottom: Copyright -->
-        <div class="text-center">
-          <p class="mb-0">&copy; {{ site.time | date: "%Y" }} {{ site.title | default: site.name }}. All Rights Reserved.</p>
-        </div>
+      <!-- Bottom: Copyright -->
+      <div class="text-center">
+        <p class="mb-0">&copy; {{ site.time | date: "%Y" }} {{ site.title | default: site.name }}. All Rights Reserved.</p>
       </div>
     </div>
   </div>
+
+  {%- comment -%}
+    Floating action buttons live in the footer (not #main-content) so fixed
+    positioning shares the footer stacking context with back-to-top and does
+    not cover the powered-by row when the user scrolls to the page bottom.
+  {%- endcomment -%}
+  {%- assign _root_only_layouts = "landing,welcome,stats,sitemap-collection,setup,section,news,index,home,admin" | split: "," -%}
+  {%- unless _root_only_layouts contains page.layout -%}
+    {% include navigation/toc-fab.html %}
+    {% include navigation/local-graph-fab.html %}
+  {%- endunless -%}
 
   <!-- Back to Top Button (controlled by assets/js/back-to-top.js) -->
   <a
@@ -186,3 +274,10 @@
   </a>
 </footer>
 
+{%- comment -%}
+  Local graph panel is a body-level sibling (after footer) so Bootstrap offcanvas
+  escapes the #main-content z-index stacking context and sits above the footer band.
+{%- endcomment -%}
+{%- unless _root_only_layouts contains page.layout -%}
+  {% include navigation/local-graph.html %}
+{%- endunless -%}

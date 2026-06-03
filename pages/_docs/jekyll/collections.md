@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:29:49.000Z
 title: Jekyll Collections
 description: Organized content collections for posts, docs, notebooks, and other content types with custom permalinks.
+preview: /images/previews/jekyll-collections.png
 layout: default
 categories:
     - docs
@@ -12,7 +14,7 @@ tags:
     - organization
 permalink: /docs/jekyll/collections/
 difficulty: intermediate
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 sidebar:
     nav: docs
 ---
@@ -65,7 +67,7 @@ defaults:
       path: "pages/_posts"
       type: posts
     values:
-      layout: journals
+      layout: article
       author: default
       
   # Documentation
@@ -99,7 +101,7 @@ title: "My Blog Post"
 date: 2025-01-25
 categories: [technology, jekyll]
 tags: [tutorial, beginner]
-preview: /images/previews/my-post.png
+preview: /images/previews/jekyll-collections.png
 ---
 
 Post content here...
@@ -117,7 +119,7 @@ title: "Getting Started"
 description: "Quick start guide for new users"
 permalink: /docs/getting-started/
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 ---
 
 Documentation content...
@@ -350,3 +352,9 @@ layout: default
 - [Jekyll Configuration](/docs/jekyll/jekyll-config/)
 - [Layouts](/docs/customization/layouts/)
 - [Front Matter](/docs/front-matter/)
+
+## See also
+
+- [[Jekyll]]
+- [[front-matter]]
+- [[Liquid]]

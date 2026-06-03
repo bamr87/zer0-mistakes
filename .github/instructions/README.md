@@ -2,19 +2,38 @@
 
 This directory contains file-specific instructions for GitHub Copilot to provide context-aware assistance when working with different parts of the Zer0-Mistakes Jekyll theme codebase.
 
+> 🤖 **Working with another AI agent?** (Codex, Cursor, Aider, Jules, Continue, Claude Code, …) Start at [`AGENTS.md`](../../AGENTS.md) in the repository root — it is the cross-tool entry point and links into the layered guidance described below.
+
 ## 📂 Structure
 
 ```
 .github/
 ├── copilot-instructions.md          # Main project-wide instructions
-└── instructions/
-    ├── README.md                     # This file
-    ├── layouts.instructions.md       # Jekyll layout development
-    ├── includes.instructions.md      # Reusable component development
-    ├── scripts.instructions.md       # Shell script automation
-    ├── testing.instructions.md       # Testing guidelines
-    ├── documentation.instructions.md # Documentation development
-    └── version-control.instructions.md  # Git workflow and releases
+├── instructions/                    # File-scoped instructions (this directory)
+│   ├── README.md                     # This file
+│   ├── layouts.instructions.md       # Jekyll layout development
+│   ├── includes.instructions.md      # Reusable component development
+│   ├── scripts.instructions.md       # Shell script automation
+│   ├── install.instructions.md       # Modular installer (CLI, profiles, deploy plugins)
+│   ├── testing.instructions.md       # Testing guidelines
+│   ├── documentation.instructions.md # Documentation development
+│   ├── features.instructions.md      # Feature registry schema + sync contract
+│   ├── obsidian.instructions.md      # Obsidian vault integration (wiki-links, JS resolver, Ruby plugin)
+│   ├── sass.instructions.md          # Sass partials, Bootstrap overrides, CSS custom properties
+│   ├── version-control.instructions.md  # Git workflow and releases
+│   └── backlog.instructions.md       # Tactical backlog schema + sync contract
+├── prompts/                         # Reusable agent/chat prompts (.prompt.md)
+│   ├── commit-publish.prompt.md      # Full release pipeline
+│   ├── frontmatter-maintainer.prompt.md  # Front matter audit / fix
+│   ├── repo-audit.prompt.md          # Review repo → file backlog tasks
+│   ├── backlog-implement.prompt.md   # Implement next backlog task → PR
+│   └── seed.prompt.md                # Theme rebuild blueprint
+└── seed/                            # Deep architectural blueprint docs
+
+.cursor/
+└── commands/                        # Cursor IDE slash-commands (mirror of prompts/)
+
+AGENTS.md                            # Cross-tool agent entry point (repo root)
 ```
 
 ## 🎯 How It Works
@@ -29,7 +48,13 @@ GitHub Copilot automatically applies these instructions based on the files you'r
 | `scripts.instructions.md`         | `scripts/**`                       | Shell script standards, error handling             |
 | `testing.instructions.md`         | `test/**`                          | Test development, assertions, CI/CD                |
 | `documentation.instructions.md`   | `docs/**,pages/_docs/**,*docs*.md` | Documentation development guidelines               |
-| `version-control.instructions.md` | `**` (all files)                   | Git workflow, semantic versioning, releases        |
+| `features.instructions.md`        | `_data/features.yml`, `features/**`, `pages/features.md`, `_includes/components/feature-card.html` | Feature registry schema, sync contract, update-on-change rules |
+| `includes.instructions.md`        | `_includes/**`                     | Reusable components, parameters, accessibility     |
+| `install.instructions.md`         | `scripts/lib/install/**`, `scripts/bin/install`, `install.sh`, `templates/{profiles,deploy,agents,ai}/**` | Modular installer architecture, profiles, deploy plugins, safety contracts |
+| `obsidian.instructions.md`        | `_plugins/obsidian_links.rb`, `assets/js/obsidian-*.js`, `assets/data/wiki-index.json`, `_includes/content/backlinks.html`, `pages/_docs/obsidian/**`, Obsidian tests | Wiki-link/embed/callout contract across Liquid index, JS resolver, and Ruby plugin |
+| `sass.instructions.md`            | `_sass/**`, `assets/css/**`        | Sass partial layering, Bootstrap variable overrides, no-double-Bootstrap rule |
+| `version-control.instructions.md` | `CHANGELOG.md`, `**/version.*`, `*.gemspec`, `package.json` | Git workflow, semantic versioning, releases        |
+| `backlog.instructions.md`         | `_data/backlog.yml`, `scripts/sync-backlog.*`, `.github/workflows/backlog-sync.yml` | Tactical backlog schema, sync contract, ownership rules |
 
 ## 📖 Main Instructions (copilot-instructions.md)
 
@@ -227,6 +252,44 @@ Documentation requirements
 
 _Closing notes or references_
 ```
+
+## 🧩 Extending Agent Capabilities
+
+The agent guidance system is designed to be **extendable**. Use these patterns when adding new capabilities:
+
+### Add a new file-scoped instruction set
+
+1. Create `.github/instructions/<area>.instructions.md` with the front matter template above.
+2. Cover overview, structure, standards, patterns, best practices, testing, and documentation (mirror existing files such as `layouts.instructions.md`).
+3. Add the file to the **Structure** diagram and table at the top of this README.
+4. Add a row to the file-scoped instruction map in [`AGENTS.md`](../../AGENTS.md) so non-Copilot agents can find it.
+
+### Add a reusable prompt / agent mode
+
+1. Create `.github/prompts/<task>.prompt.md` with this front matter:
+
+   ```yaml
+   ---
+   agent: agent
+   mode: agent
+   description: "Short description of the multi-step task"
+   tools: [optional, list, of, tool, names]
+   ---
+   ```
+
+2. Write the prompt as a numbered, checkable workflow (see `commit-publish.prompt.md` for the canonical pattern).
+3. To make it available as a Cursor slash-command, mirror the file into `.cursor/commands/<task>.md`.
+4. Add it to the prompts table in [`AGENTS.md`](../../AGENTS.md).
+
+### Onboard a new AI tool / IDE
+
+When adding support for a new agent that uses its own config file, **do not duplicate** instruction content — point the new file at `AGENTS.md` and the layered guidance under `.github/`. Examples:
+
+- Claude Code: `CLAUDE.md` → "See `AGENTS.md`."
+- Aider: `.aider.conf.yml` with `read: [AGENTS.md, .github/copilot-instructions.md]`.
+- Continue: `.continuerc.json` referencing the same files.
+
+This keeps a single source of truth and prevents drift between tools.
 
 ## 🔄 Maintenance
 

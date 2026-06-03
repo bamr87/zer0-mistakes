@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:30:00.000Z
 title: Quick Start Guide
 description: Multiple installation methods for the Zer0-Mistakes Jekyll theme - from AI wizard to manual setup.
+preview: /images/previews/quick-start-guide.png
 layout: default
 categories:
     - docs
@@ -11,7 +13,7 @@ tags:
     - docker
 permalink: /docs/getting-started/quick-start/
 difficulty: beginner
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 sidebar:
     nav: docs
 ---
@@ -29,7 +31,7 @@ This guide covers all installation methods for the Zer0-Mistakes Jekyll theme.
 | **A** | AI Install Wizard | Creating a new site (recommended) |
 | **B** | GitHub Template Repo | One-click copy of the entire repo |
 | **C** | GitHub Codespaces | Zero-install cloud development |
-| **D** | Fork/Clone | Theme development & customization |
+| **D** | Fork/Clone | Personal site & theme customization |
 | **E** | Remote Theme | GitHub Pages without copying files |
 | **F** | Ruby Gem | Traditional Jekyll workflow |
 
@@ -127,28 +129,38 @@ Develop entirely in the cloud — no local Docker or Ruby required.
 
 ---
 
-## Path D — Fork/Clone (theme development)
+## Path D — Fork/Clone (personal site)
+
+Fork into `<your-username>.github.io` for a GitHub Pages user site that works out of the box.
 
 ### Prerequisites
 - Docker Desktop
+- No existing `<your-username>.github.io` repository (one free user site per GitHub account)
 
-### 1) Clone (or fork) the repo
+### 1) Fork the repo
+
+1. Go to [bamr87/zer0-mistakes](https://github.com/bamr87/zer0-mistakes) → **Fork**
+2. Set **Repository name** to `<your-username>.github.io`
+3. Enable **Settings → Pages → Deploy from branch: `main`**
+4. Your site goes live at `https://<your-username>.github.io`
+
+### 2) Clone and configure locally
 
 ```bash
-git clone https://github.com/bamr87/zer0-mistakes.git
-cd zer0-mistakes
+git clone https://github.com/<your-username>/<your-username>.github.io.git
+cd <your-username>.github.io
+./scripts/fork-cleanup.sh   # interactive config wizard
 ```
 
-### 2) Start development (Docker)
+### 3) Start development (Docker)
 
 ```bash
 docker-compose up
 ```
 
-This uses both configs:
-- `_config.yml,_config_dev.yml`
+This uses both configs: `_config.yml,_config_dev.yml`
 
-### 3) Useful Docker commands
+### 4) Useful Docker commands
 
 ```bash
 # Rebuild when dependencies change
@@ -163,6 +175,8 @@ docker-compose stop
 # Remove containers + network
 docker-compose down
 ```
+
+See [docs/FORKING.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/FORKING.md) for the full fork → configure → personalize workflow.
 
 ---
 
@@ -279,3 +293,16 @@ docker-compose up
 - [Front Matter](/docs/front-matter/) — Configure page metadata
 - [Features](/docs/features/) — Enable Mermaid diagrams, comments, analytics
 - [Deployment](/docs/deployment/) — Publish your site
+
+## Technical Reference
+
+For contributor-level details (installer architecture, profile system, deploy target modules):
+
+- [Installation Guide → docs/installation/index.md](../../../docs/installation/index.md)
+
+## See also
+
+- [[Getting Started]]
+- [[Installation]]
+- [[Docker]]
+- [[Customization]]

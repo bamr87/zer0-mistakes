@@ -1,3 +1,13 @@
+---
+title: "Build System"
+description: "How the Zer0-Mistakes theme builds: the Jekyll pipeline, Docker configuration, vendored Bootstrap assets, and the GitHub Pages deployment flow."
+date: 2026-01-25T03:38:33.000Z
+lastmod: 2026-06-01T03:38:46.000Z
+categories: [docs]
+tags: [architecture, design]
+author: bamr87
+---
+
 # Build System
 
 Documentation of the Jekyll build process, Docker configuration, and deployment pipeline.

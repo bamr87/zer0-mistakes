@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:29:58.000Z
 title: Breadcrumbs Navigation
 description: Hierarchical breadcrumb navigation with Schema.org structured data for SEO and user orientation.
+preview: /images/previews/breadcrumbs-navigation.png
 layout: default
 categories:
     - docs
@@ -12,7 +14,7 @@ tags:
     - accessibility
 permalink: /docs/features/breadcrumbs/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---
@@ -283,3 +285,9 @@ Test structured data at:
 - [SEO Optimization](/docs/seo/meta-tags/)
 - [Navigation](/docs/customization/navigation/)
 - [Sidebar Navigation](/docs/features/sidebar-navigation/)
+
+## See also
+
+- [[Features]]
+- [[Sidebar Navigation System]]
+- [[Keyboard Navigation]]

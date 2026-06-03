@@ -20,9 +20,19 @@ Gem::Specification.new do |s|
   s.metadata["documentation_uri"] = "#{s.homepage}#readme"
   s.metadata["allowed_push_host"] = "https://rubygems.org"
   
-  # Include theme files: layouts, includes, sass, assets, data, plugins, and scripts
+  # Include theme files: layouts, includes, sass, assets, data, plugins, and scripts.
+  # Exclude content images, generated previews, and macOS metadata to keep the gem
+  # small and focused on theme code. Bootstrap vendor assets are retained since the
+  # theme serves them directly (no external CDN dependency required).
   s.files                    = `git ls-files -z`.split("\x0").select do |f|
     f.match(%r{^(assets|scripts|_(data|includes|layouts|plugins|sass)/|(LICENSE|README|CHANGELOG|features)((\.(txt|md|markdown|yml)|$)))}i)
+  end.reject do |f|
+    f.match(%r{
+      ^assets/images/      # content-specific images (287 MB — post previews, author photos)
+    | ^assets/backgrounds/ # large background images
+    | \.DS_Store$          # macOS metadata
+    | ^assets/(?!vendor/).*\.(png|jpg|jpeg|gif|webp|ico|bmp|tiff|mp4|mp3|wav|ogg|zip|tar|gz)$
+    }x)
   end
   
   s.platform                 = Gem::Platform::RUBY

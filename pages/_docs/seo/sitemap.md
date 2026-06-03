@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:30:02.000Z
 title: Sitemap Generation
 description: Automatic XML sitemap and JSON search index generation for search engine discovery and site search.
+preview: /images/previews/sitemap-generation.png
 layout: default
 categories:
     - docs
@@ -12,7 +14,7 @@ tags:
     - indexing
 permalink: /docs/seo/sitemap/
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 sidebar:
     nav: docs
 ---
@@ -284,3 +286,9 @@ Check sitemap status in Search Console → Sitemaps
 - [Meta Tags](/docs/seo/meta-tags/)
 - [Site Search](/docs/features/site-search/)
 - [Breadcrumbs](/docs/features/breadcrumbs/)
+
+## See also
+
+- [[SEO]]
+- [[Deployment]]
+- [[Analytics]]

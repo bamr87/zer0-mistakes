@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:29:54.000Z
 title: Scripts
 description: Guide to the shell script automation library for building, testing, and releasing the Zer0-Mistakes theme.
+preview: /images/previews/scripts.png
 layout: default
 categories:
     - docs
@@ -12,7 +14,7 @@ tags:
     - utilities
 permalink: /docs/development/scripts/
 difficulty: intermediate
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 prerequisites:
     - Bash shell
     - Docker (optional)
@@ -326,3 +328,9 @@ docker-compose up -d
 - [Testing Guide](/docs/development/testing/)
 - [Release Management](/docs/development/release-management/)
 - [CI/CD Pipeline](/docs/development/ci-cd/)
+
+## See also
+
+- [[Development]]
+- [[Release Management]]
+- [[CI/CD Pipeline]]

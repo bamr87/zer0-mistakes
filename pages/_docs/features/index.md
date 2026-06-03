@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:29:58.000Z
 title: Features
 description: Enable and configure theme features including diagrams, comments, analytics, and more.
+preview: /images/previews/features.png
 layout: default
 categories:
     - docs
@@ -10,7 +12,7 @@ tags:
     - configuration
 permalink: /docs/features/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---
@@ -120,3 +122,10 @@ Choose a feature to learn more:
 - [MathJax Math](mathjax-math/) — Mathematical notation
 - [Giscus Comments](giscus-comments/) — User engagement
 - [PostHog Analytics](posthog-analytics/) — Site insights
+
+## See also
+
+- [[Customization]]
+- [[Bootstrap Integration]]
+- [[Analytics]]
+- [[SEO]]

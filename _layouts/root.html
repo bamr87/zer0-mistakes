@@ -31,11 +31,7 @@
 -->
 
 <!doctype html>
-{% assign zer0_bg_state = "on" %}
-{% if site.theme_background.enabled == false %}
-  {% assign zer0_bg_state = "off" %}
-{% endif %}
-<html lang="{{ site.locale | slice: 0,2 | default: 'en' }}" class="no-js" data-bs-theme="dark" data-theme-skin="{{ site.theme_skin | default: 'dark' }}" data-zer0-bg="{{ zer0_bg_state }}">
+<html lang="{{ site.locale | slice: 0,2 | default: 'en' }}" class="no-js" data-bs-theme="dark" data-theme-skin="{{ site.theme_skin | default: 'dark' }}" data-zer0-bg="{{ site.theme_background.enabled | default: true }}">
     <head>
         <!-- =============================================== -->
         <!-- HEAD SECTION: Meta tags, styles, and SEO setup -->
@@ -49,7 +45,7 @@
         {% seo %}
 
         <!-- fffuel-style SVG background config overrides -->
-        {% include components/svg-background.html %}
+        {% include components/svg-background.html zone="body" %}
     </head>
     
     <body class="zer0-bg-body" data-bs-spy="scroll" data-bs-target="#TableOfContents">
@@ -66,11 +62,21 @@
         <!-- Main site header with navigation, branding, and search functionality -->
         {% include core/header.html %}
 
+        <!-- Optional unified mobile drawer (Browse / Menu / Settings tabs).
+             Enable with `navigation.unified_mobile_drawer: true` in _config.yml. -->
+        {% include navigation/unified-drawer.html %}
+
         <!-- Search modal (site-wide) -->
         {% include components/search-modal.html %}
 
+        <!-- Keyboard shortcuts help modal (triggered by `?`) -->
+        {% include components/shortcuts-modal.html %}
+
         <!-- Site-wide information banner or announcement section -->
         {% include components/info-section.html %}
+
+        <!-- Setup banner for unconfigured sites -->
+        {% include components/setup-banner.html %}
 
         <!-- ======================== -->
         <!-- MAIN CONTENT AREA        -->
@@ -92,7 +98,7 @@
 
         <!-- JavaScript dependencies and custom scripts -->
         <div>
-            <!-- Search functionality (Algolia or similar) -->
+            <!-- Search functionality -->
             <!-- Note: Currently commented out - uncomment when search is implemented -->
 
             <!-- External JavaScript libraries and custom scripts -->

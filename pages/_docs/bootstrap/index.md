@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:29:52.000Z
 title: Bootstrap Integration
 description: Bootstrap 5.3.3 usage patterns, components, and customization in the Zer0-Mistakes theme.
+preview: /images/previews/bootstrap-integration.png
 layout: default
 categories:
     - docs
@@ -12,7 +14,7 @@ tags:
     - components
 permalink: /docs/bootstrap/
 difficulty: beginner
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 prerequisites: []
 sidebar:
     nav: docs
@@ -372,3 +374,10 @@ document.querySelectorAll('.needs-validation').forEach(form => {
 - [Color Modes](/docs/features/color-modes/)
 - [Layouts](/docs/customization/layouts/)
 - [Include Components](/docs/customization/includes/)
+
+## See also
+
+- [[Customization]]
+- [[Features]]
+- [[Jekyll]]
+- [[Liquid]]

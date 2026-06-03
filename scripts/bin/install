@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# scripts/bin/install — zer0-mistakes installer entrypoint (v2)
+#
+# Routes to scripts/install/cli.sh (new spec-driven architecture).
+# Falls back to legacy install.sh for unknown contexts.
+#
+# Usage:
+#   ./scripts/bin/install [SUBCOMMAND] [OPTIONS] [TARGET_DIR]
+#
+# For full help: ./scripts/bin/install help
+# Architecture: scripts/install/README.md
+
+set -euo pipefail
+
+_BIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${_BIN_DIR}/../.." && pwd)"
+_INSTALL_DIR="${REPO_ROOT}/scripts/install"
+LEGACY_INSTALL="${REPO_ROOT}/install.sh"
+export REPO_ROOT LEGACY_INSTALL
+
+# ---------------------------------------------------------------------------
+# Route to new spec-driven installer when available
+# ---------------------------------------------------------------------------
+if [[ -f "${_INSTALL_DIR}/cli.sh" ]]; then
+    TEMPLATES_DIR="${TEMPLATES_DIR:-${REPO_ROOT}/templates}"
+    export TEMPLATES_DIR _INSTALL_DIR
+    _CLI_DIR="$_INSTALL_DIR"
+    export _CLI_DIR
+    # shellcheck source=../install/cli.sh
+    source "${_INSTALL_DIR}/cli.sh"
+    cli_main "$@"
+    exit $?
+fi
+
+# ---------------------------------------------------------------------------
+# Legacy fallback: route to install.sh with translated flags
+# ---------------------------------------------------------------------------
+if [[ ! -x "$LEGACY_INSTALL" ]]; then
+    echo "[ERROR] Installer not found at: $LEGACY_INSTALL" >&2
+    exit 1
+fi
+
+# Translate new subcommand surface → legacy flags for bare environments
+case "${1:-}" in
+    init)
+        shift
+        exec "$LEGACY_INSTALL" "$@"
+        ;;
+    help|--help|-h)
+        echo "zer0-mistakes installer — type './scripts/bin/install help' after setup" >&2
+        exec "$LEGACY_INSTALL" --help 2>/dev/null || true
+        ;;
+    version|--version|-V)
+        vfile="${REPO_ROOT}/lib/jekyll-theme-zer0/version.rb"
+        v="$(grep -E 'VERSION\s*=' "$vfile" 2>/dev/null | head -n1 | sed -E 's/.*"([^"]+)".*/\1/')"
+        echo "jekyll-theme-zer0 ${v:-unknown}"
+        ;;
+    "")
+        exec "$LEGACY_INSTALL"
+        ;;
+    *)
+        exec "$LEGACY_INSTALL" "$@"
+        ;;
+esac

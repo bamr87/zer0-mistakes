@@ -1,6 +1,7 @@
 ---
 title: Zer0-Mistakes Features Documentation
 description: Comprehensive documentation of Zer0-Mistakes Jekyll theme features, automation systems, and VS Code Copilot integration guides
+preview: /images/previews/zer0-mistakes-features-documentation.png
 permalink: /about/features/readme/
 lastmod: 2025-12-20T22:15:46.333Z
 tags:
@@ -24,6 +25,7 @@ technical_requirements:
     - VS Code with Copilot extension (recommended)
 difficulty_level: intermediate
 estimated_reading_time: 10 minutes
+draft: false
 ---
 
 # Zer0-Mistakes Features Documentation
@@ -215,6 +217,7 @@ graph TD
 ---
 title: "Descriptive Feature Title"
 description: "Clear explanation of feature purpose and capabilities"
+preview: /images/previews/zer0-mistakes-features-documentation.png
 date: YYYY-MM-DDTHH:MM:SS.000Z
 tags: [relevant, feature, tags]
 categories: [Features, Category]

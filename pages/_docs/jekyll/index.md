@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:29:50.000Z
 title: Jekyll
 description: Jekyll basics and Zer0-Mistakes development workflow (Docker-first).
+preview: /images/previews/jekyll.png
 layout: default
 categories:
     - docs
@@ -11,11 +13,12 @@ tags:
     - docker
 permalink: /docs/jekyll/
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 prerequisites:
     - Docker Desktop (recommended) or Ruby + Bundler
 sidebar:
     nav: docs
+draft: false
 ---
 
 # Jekyll
@@ -124,3 +127,11 @@ See the [Deployment](/docs/deployment/) section for:
 - [Ruby & Bundler](/docs/ruby/) — Ruby dependency management
 - [Liquid Templating](/docs/liquid/) — Template language reference
 - [Docker Development](/docs/docker/) — Container-based workflow
+
+## See also
+
+- [[Liquid]]
+- [[Ruby]]
+- [[Docker]]
+- [[Customization]]
+- [[front-matter]]

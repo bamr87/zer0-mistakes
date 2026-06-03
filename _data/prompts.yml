@@ -1,184 +1,302 @@
 # _data/prompts.yml
-# Prompt templates for the Copilot Agent issue button in the intro section.
-# Each entry maps to a .github/prompts/*.prompt.md file.
-# The body is included in the GitHub issue when that prompt is selected.
+#
+# Prompt templates for the Copilot Agent issue button rendered by
+# `_includes/content/intro.html`. Each entry becomes a dropdown item that
+# opens a pre-filled GitHub issue assigned to @copilot.
+#
+# These templates are tuned for a Jekyll/CMS theme (zer0-mistakes) and focus
+# on FRONTEND and CONTENT (CMS) improvements. Two scopes are supported via
+# the `group` field:
+#
+#   - "Page Improvements" – act on the page the button was clicked from.
+#     The Page Context table injected by intro.html (title, URL, file path,
+#     layout, collection, tags, etc.) is what every prompt should reference.
+#
+#   - "Site Improvements" – act on theme-wide UI/UX, components, layouts,
+#     navigation, performance, or new features. The page is included as the
+#     example/entry point, not necessarily the only target.
+#
+# Schema:
+#   - id:          unique slug
+#     label:       short text shown in the dropdown
+#     icon:        Bootstrap Icons class (https://icons.getbootstrap.com/)
+#     group:       optional section header in the dropdown
+#     description: optional one-line subtitle under the label
+#     body:        prompt instructions appended above the auto-generated
+#                  Page Context + Environment tables in the issue body.
 
-- id: article-review
-  label: "Article Review"
-  icon: "bi-file-text"
-  description: "Review article structure, metadata, and SEO"
+# ─────────────────────────────────────────────────────────────────────────────
+# Page Improvements — scoped to the current page
+# ─────────────────────────────────────────────────────────────────────────────
+
+- id: improve-page
+  label: "Improve Page"
+  icon: "bi-stars"
+  group: "Page Improvements"
+  description: "Polish content, structure, and presentation of this page"
   body: |
-    Act as an Expert Content Editor and SEO Specialist.
+    Act as a Senior Content Editor and Frontend Designer for the
+    zer0-mistakes Jekyll theme.
 
-    Review this article, validate its structure/metadata, and suggest content expansions to improve depth and engagement.
+    Improve the page referenced in the **Page Context** table below. Make it
+    clearer, more engaging, and visually consistent with the rest of the
+    site — without changing its core message or breaking existing links.
 
-    **Review Checklist:**
-    - Front Matter: `title`, `description`, `categories`, `tags`, `date`, `layout` present and valid
-    - Content depth: flag sections that are too brief or superficial
-    - Clarity: identify jargon needing explanation
-    - Structure: verify logical flow with proper H2/H3 headings
-    - SEO: keyword placement in title, H1, and first paragraph
-    - Tone: professional, authoritative, yet accessible
+    **Scope (this page only):**
+    - Tighten copy: remove fluff, fix grammar, improve readability
+    - Strengthen the opening hook and the closing call-to-action
+    - Verify heading hierarchy (single H1, logical H2/H3 nesting)
+    - Confirm front matter is complete: `title`, `description`, `date`,
+      `lastmod`, `layout`, `categories`, `tags`, `permalink`, `preview`
+    - Improve visual rhythm: paragraph length, lists, callouts, code blocks
+    - Validate internal links and image paths (use `relative_url`)
+    - Ensure Bootstrap 5 utility classes are used over custom CSS
 
     **Deliverables:**
-    - Front Matter pass/fail report with specific fixes
-    - Bullet-point content issues
-    - Suggested expanded sections (provide actual text)
+    - A diff-style proposal of the edited Markdown (front matter + body)
+    - A short "Why these changes" rationale (3–5 bullets)
+    - A checklist of any follow-up items that are out of scope
 
-- id: code-implementation
-  label: "Code Implementation"
-  icon: "bi-code-slash"
-  description: "Implement a feature with production-ready code"
+- id: expand-page
+  label: "Expand Page"
+  icon: "bi-arrows-angle-expand"
+  group: "Page Improvements"
+  description: "Add depth, examples, and missing sections to this page"
   body: |
-    Act as a Senior Software Engineer with expertise in clean code practices, design patterns, and production-ready development.
+    Act as a Subject Matter Expert and Technical Writer.
 
-    Implement the requested feature, module, or system component for this page/file.
+    Expand the page referenced in the **Page Context** table below by adding
+    depth, real examples, and any sections that a reader would reasonably
+    expect but are currently missing.
 
-    **Requirements:**
-    - Follow existing code conventions and style
-    - Include error handling and edge cases
-    - Add inline documentation and comments
-    - Write unit tests if applicable
-    - Consider performance and security implications
+    **Expansion targets:**
+    - Add concrete, copy-pasteable examples (code, configs, screenshots)
+    - Add a "Prerequisites" and "Next steps" / "Related" section
+    - Add a short FAQ or troubleshooting block when relevant
+    - Cross-link to related posts, docs, or theme components in this repo
+    - Add or update Mermaid diagrams where they clarify flow/architecture
+    - Keep the existing tone, structure, and front matter intact
 
     **Deliverables:**
-    - Complete, working implementation
-    - Explanation of design decisions
-    - Test cases
-    - Usage examples
+    - The new/expanded Markdown sections, ready to merge into the page
+    - A list of any new assets needed (images, diagrams, data files)
+    - Suggested updates to `tags`, `categories`, and `description`
 
-- id: code-refactoring
-  label: "Code Refactoring"
-  icon: "bi-arrow-repeat"
-  description: "Refactor code for quality, readability, and performance"
+- id: update-page
+  label: "Update Page"
+  icon: "bi-arrow-clockwise"
+  group: "Page Improvements"
+  description: "Refresh outdated content, versions, links, and screenshots"
   body: |
-    Act as a Code Quality Expert and Refactoring Specialist.
+    Act as a Documentation Maintainer responsible for keeping the
+    zer0-mistakes site accurate and current.
 
-    Refactor the code in this file to improve quality, maintainability, and performance while preserving exact external behavior.
+    Audit and update the page referenced in the **Page Context** table below.
+    Treat any version numbers, dates, screenshots, or external references as
+    suspect and verify them against the current state of the repository and
+    the wider ecosystem.
 
-    **Refactoring Goals:**
-    - Apply SOLID principles and clean code practices
-    - Eliminate duplication (DRY)
-    - Improve naming clarity
-    - Reduce complexity and nesting
-    - Optimize performance bottlenecks
+    **Update checklist:**
+    - Bump version numbers, release names, and dependency references
+    - Replace deprecated Jekyll/Bootstrap patterns with current equivalents
+    - Refresh screenshots, GIFs, and embedded examples
+    - Re-validate every external link; replace dead or moved URLs
+    - Update `lastmod` in the front matter and add a brief "Updated" note
+    - Reconcile content with related files in this repo (configs, layouts,
+      includes) so instructions match what the codebase actually does
 
     **Deliverables:**
-    - Refactored code with before/after comparison
-    - Explanation of each change and its rationale
-    - Any breaking changes or migration notes
+    - Updated Markdown for the page (front matter + body)
+    - A short changelog summarising what was refreshed and why
+    - Any follow-up issues to file for changes outside this page
 
-- id: debugging
-  label: "Debugging"
+- id: fix-page
+  label: "Fix Page Issue"
   icon: "bi-bug"
-  description: "Diagnose and fix issues in the code"
+  group: "Page Improvements"
+  description: "Report a typo, broken link, layout glitch, or content bug"
   body: |
-    Act as a Senior Debugging Specialist and Software Troubleshooting Expert.
+    Act as a Frontend QA Engineer for the zer0-mistakes Jekyll theme.
 
-    Analyze the provided code, error messages, and symptoms to identify the root cause and propose a targeted fix.
+    Investigate and fix the issue described below on the page referenced in
+    the **Page Context** table. Reproduce it locally with `docker-compose up`
+    before proposing a change.
 
-    **Please provide in your response:**
-    - Root cause analysis (WHY it fails, not just WHAT)
-    - Targeted fix with code changes
-    - Verification steps to confirm the fix
-    - Preventive measures to avoid recurrence
+    **Please describe (fill in before submitting):**
+    - **What is wrong?** <!-- typo, broken link, image, layout, behaviour -->
+    - **Where on the page?** <!-- section heading, line, screenshot region -->
+    - **Expected:** <!-- what should appear / happen -->
+    - **Actual:** <!-- what currently appears / happens -->
+    - **Browser / device (if visual):** <!-- e.g. Chrome 124 desktop, iOS Safari -->
 
-    **Steps to reproduce:** <!-- fill in below -->
+    **Deliverables:**
+    - Root-cause analysis (content vs. layout vs. include vs. config)
+    - Minimal, surgical fix (Markdown, Liquid, SCSS, or front matter)
+    - Verification steps and a passing `bundle exec jekyll build`
 
-    **Expected behavior:** <!-- fill in below -->
-
-    **Actual behavior / error message:** <!-- fill in below -->
-
-- id: documentation
-  label: "Documentation"
-  icon: "bi-journal-text"
-  description: "Generate or improve technical documentation"
+- id: seo-optimize
+  label: "SEO Optimize"
+  icon: "bi-graph-up-arrow"
+  group: "Page Improvements"
+  description: "Improve discoverability, metadata, and structured data"
   body: |
-    Act as a Technical Writer and Documentation Specialist.
+    Act as a Technical SEO Specialist.
 
-    Create or improve the documentation for the code, API, or content in this file.
+    Optimise the page referenced in the **Page Context** table below for
+    search engines and social sharing, without sacrificing readability.
 
-    **Documentation Scope:**
-    - Purpose and overview
-    - Installation / setup instructions
-    - Usage examples with code snippets
-    - API reference (parameters, return values, errors)
-    - Troubleshooting / FAQ section
+    **Audit and improve:**
+    - Front matter `title` (≤ 60 chars) and `description` (150–160 chars)
+    - Primary keyword in H1, first paragraph, and at least one H2
+    - `permalink` is short, lowercase, and hyphen-separated
+    - `tags` and `categories` align with site taxonomy
+    - `preview` image exists, has descriptive alt text, and good aspect ratio
+    - Open Graph + Twitter Card metadata via existing includes
+    - JSON-LD structured data (Article / BlogPosting) where applicable
+    - Internal links to high-value related pages, with descriptive anchors
 
-    **Standards:**
-    - Clear, concise language
-    - Consistent formatting (Markdown)
-    - Working code examples
-    - Proper heading hierarchy
+    **Deliverables:**
+    - Updated front matter
+    - Specific in-body edits (H1/H2/intro)
+    - A keyword/intent map (primary + 3–5 secondary)
+    - Any sitemap, robots, or `_config.yml` changes required
 
-- id: requirements-analysis
-  label: "Requirements Analysis"
-  icon: "bi-list-check"
-  description: "Convert ideas into structured technical requirements"
+- id: accessibility-audit
+  label: "Accessibility Audit"
+  icon: "bi-universal-access"
+  group: "Page Improvements"
+  description: "Audit this page for WCAG 2.1 AA compliance"
   body: |
-    Act as an expert Business Analyst and Technical Lead.
+    Act as an Accessibility (a11y) Engineer.
 
-    Analyze the content of this page and convert it into a comprehensive, structured technical requirements document.
+    Audit the page referenced in the **Page Context** table below against
+    WCAG 2.1 AA and propose concrete fixes in Markdown, Liquid, or SCSS.
 
-    **Output Structure:**
-    - Executive Summary
-    - Functional Requirements (user stories + acceptance criteria)
-    - Non-Functional Requirements (performance, security, scalability)
-    - Technical Constraints and Assumptions
-    - Out of Scope items
-    - Open Questions
+    **Audit areas:**
+    - Semantic HTML and heading order
+    - Alt text on every meaningful image; empty alt on decorative ones
+    - Sufficient colour contrast (≥ 4.5:1 body, ≥ 3:1 large text/UI)
+    - Keyboard navigability and visible focus states
+    - ARIA attributes on Bootstrap components (modals, dropdowns, tabs)
+    - Form labels, error messages, and `aria-describedby` associations
+    - Skip links and landmark regions (`<main>`, `<nav>`, `<aside>`)
+    - Reduced-motion and prefers-color-scheme respect
 
-- id: system-design
-  label: "System Design"
-  icon: "bi-diagram-3"
-  description: "Design a scalable system architecture"
+    **Deliverables:**
+    - Findings table: issue, WCAG criterion, severity, fix
+    - Patches for the page and any shared includes that need updating
+    - A re-test plan (axe-core, Lighthouse, manual keyboard pass)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Site Improvements — theme-wide UI/UX, components, and features
+# ─────────────────────────────────────────────────────────────────────────────
+
+- id: ui-ux-improvement
+  label: "UI/UX Improvement"
+  icon: "bi-palette"
+  group: "Site Improvements"
+  description: "Propose a design or UX refinement for the theme"
   body: |
-    Act as a Senior Software Architect.
+    Act as a Senior UI/UX Designer working in Bootstrap 5 and Jekyll.
 
-    Design a comprehensive system architecture based on the requirements or content described in this page.
+    Propose a UI/UX improvement for the zer0-mistakes theme. Use the page
+    referenced in the **Page Context** table below as the starting example;
+    where the change applies site-wide, call that out explicitly.
 
-    **Design Deliverables:**
-    - High-level architecture diagram (described in text/Mermaid)
-    - Component breakdown and responsibilities
-    - Data models and API contracts
-    - Security and authentication strategy
-    - Scalability and reliability considerations
-    - Technology stack recommendations with rationale
+    **Cover in your proposal:**
+    - **Problem / opportunity** — what user pain or quality gap exists?
+    - **Affected surfaces** — layouts, includes, components, or data files
+    - **Design direction** — spacing, typography, colour, motion, hierarchy
+    - **Bootstrap-first approach** — utilities and components over custom CSS
+    - **Responsive behaviour** — xs / sm / md / lg / xl / xxl breakpoints
+    - **Accessibility** — contrast, focus, ARIA, reduced-motion
+    - **Dark mode / colour scheme** considerations
+    - **Before/after sketch or description** of the change
 
-- id: test-generation
-  label: "Test Generation"
-  icon: "bi-check2-square"
-  description: "Generate comprehensive tests for code"
+    **Deliverables:**
+    - A concrete change list mapped to files in `_layouts/`, `_includes/`,
+      `_sass/`, and `assets/`
+    - SCSS / Liquid / HTML snippets ready to drop in
+    - A short test plan covering desktop + mobile + keyboard
+
+- id: new-feature
+  label: "New Feature"
+  icon: "bi-lightbulb"
+  group: "Site Improvements"
+  description: "Propose a new site-wide feature or capability"
   body: |
-    Act as a QA Automation Engineer and Test Architect.
+    Act as a Product Manager + Frontend Engineer for the zer0-mistakes
+    Jekyll theme.
 
-    Generate a comprehensive test suite for the code or functionality described in this file.
+    Propose a new feature for the site or theme. Use the page referenced in
+    the **Page Context** table below as the inspiration / first consumer of
+    the feature where it makes sense.
 
-    **Test Coverage:**
-    - Unit tests for core logic
-    - Integration tests for component interactions
-    - Edge cases and error conditions
-    - Performance benchmarks (if applicable)
+    **Please describe:**
+    - **User story** — As a [reader / author / theme adopter], I want…
+    - **Problem solved** and the success metric
+    - **Scope** — pages, layouts, includes, data files, configs touched
+    - **Configuration** — what goes into `_config.yml` / `_data/*.yml`?
+    - **Dependencies** — any new gems, JS libs, or vendor assets?
+    - **Privacy / analytics** — does it need consent gating?
+    - **Rollout plan** — feature flag, opt-in via front matter, default-on?
+    - **Out of scope** items
 
-    **Standards:**
-    - Follow existing test framework conventions
-    - Clear test descriptions
-    - Arrange-Act-Assert pattern
-    - Mocks/stubs for external dependencies
+    **Deliverables:**
+    - A minimal, working implementation plan (file-by-file)
+    - Sample Liquid / HTML / SCSS / JS scaffolding
+    - Documentation stub for `docs/` or `pages/_docs/`
+    - CHANGELOG entry following Keep a Changelog format
 
-- id: prompt-engineering
-  label: "Prompt Engineering"
-  icon: "bi-lightning"
-  description: "Craft an effective AI prompt for this task"
+- id: component-enhancement
+  label: "Component Enhancement"
+  icon: "bi-puzzle"
+  group: "Site Improvements"
+  description: "Improve a Jekyll layout, include, or shared component"
   body: |
-    Act as an expert Prompt Engineer specializing in software development and AI-assisted workflows.
+    Act as a Senior Jekyll Theme Developer.
 
-    Craft a high-quality, effective prompt that will guide an AI agent to work on the content or task described in this page.
+    Enhance a shared component used by the page referenced in the
+    **Page Context** table below — a layout in `_layouts/`, an include in
+    `_includes/`, or a partial in `_sass/`. Improvements should benefit every
+    page that uses the component, not just this one.
 
-    **Prompt Requirements:**
-    - Clear role definition (Act as...)
-    - Specific task instructions
-    - Input/output format specification
-    - Constraints and edge cases
-    - Example inputs and expected outputs
-    - Quality criteria for evaluation
+    **Targets to consider:**
+    - Cleaner Liquid: safe `default:` filters, fewer nested `if`s
+    - Parameterise hard-coded values via `include.*` arguments
+    - Consistent BEM-style class names and Bootstrap utility usage
+    - Add the standard component header comment block
+    - Improve mobile responsiveness and accessibility
+    - Document parameters and usage in the file header
+
+    **Deliverables:**
+    - The enhanced file(s), preserving backward compatibility
+    - A migration note if any include parameters changed
+    - Before/after rendering notes for at least one page that uses it
+    - A test plan: `docker-compose exec jekyll bundle exec jekyll build`
+
+- id: performance-optimization
+  label: "Performance Optimization"
+  icon: "bi-speedometer2"
+  group: "Site Improvements"
+  description: "Improve load time, Core Web Vitals, and asset delivery"
+  body: |
+    Act as a Web Performance Engineer.
+
+    Profile and optimise the site, using the page referenced in the
+    **Page Context** table below as a representative measurement target.
+
+    **Investigate:**
+    - Core Web Vitals: LCP (Largest Contentful Paint), CLS (Cumulative
+      Layout Shift), and INP (Interaction to Next Paint) for this page
+    - Render-blocking CSS/JS in `_includes/core/head.html` and `js-cdn.html`
+    - Vendored Bootstrap and Bootstrap Icons under `assets/vendor/`
+    - Image strategy: dimensions, `loading="lazy"`, modern formats
+    - Liquid hot spots: nested loops, repeated `where` filters
+    - Build output size in `_site/` and unused CSS
+
+    **Deliverables:**
+    - Lighthouse / WebPageTest results before and after
+    - Specific patches to layouts, includes, SCSS, and config
+    - Any new build steps or scripts (must be opt-in, GitHub Pages-safe)
+    - A short report on tradeoffs and follow-ups

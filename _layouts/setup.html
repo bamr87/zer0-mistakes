@@ -1,0 +1,73 @@
+---
+layout: root
+---
+<!--
+  ===================================================================
+  SETUP LAYOUT - Onboarding and configuration pages
+  ===================================================================
+
+  File: setup.html
+  Path: _layouts/setup.html
+  Inherits: root.html
+  Purpose: Clean single-column layout for setup, onboarding, and
+           configuration guide pages. No sidebar clutter.
+
+  Features:
+  - Centered, readable content column
+  - Optional progress indicator via page.setup_step frontmatter
+  - Setup banner when site is unconfigured
+  - Minimal chrome — lets the user focus on getting configured
+
+  Usage:
+    layout: setup
+    setup_step: 2        # optional, highlights step in progress bar
+    setup_total: 4       # optional, total number of steps
+  ===================================================================
+-->
+
+{% include components/setup-check.html %}
+
+<div class="container-lg py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+
+      {% if site_needs_setup %}
+      <div class="alert alert-warning d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <div>
+          <strong>Setup required.</strong>
+          Your <code>_config.yml</code> still has default values.
+          Follow the instructions on this page or see the
+          <a href="{{ '/404.html' | relative_url }}" class="alert-link">setup guide</a>.
+        </div>
+      </div>
+      {% endif %}
+
+      {% if page.setup_step and page.setup_total %}
+      <!-- Progress indicator -->
+      <div class="mb-4">
+        <div class="d-flex justify-content-between small text-body-secondary mb-1">
+          <span>Step {{ page.setup_step }} of {{ page.setup_total }}</span>
+          <span>{{ page.setup_step | times: 100 | divided_by: page.setup_total }}% complete</span>
+        </div>
+        <div class="progress" style="height: 6px;">
+          <div class="progress-bar bg-primary"
+               role="progressbar"
+               style="width: {{ page.setup_step | times: 100 | divided_by: page.setup_total }}%"
+               aria-valuenow="{{ page.setup_step }}"
+               aria-valuemin="0"
+               aria-valuemax="{{ page.setup_total }}">
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      {% if page.title %}
+      <h1 class="mb-3">{{ page.title }}</h1>
+      {% endif %}
+
+      {{ content }}
+
+    </div>
+  </div>
+</div>

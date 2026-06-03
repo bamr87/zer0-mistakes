@@ -50,26 +50,6 @@ skins:
     pattern: "assets/backgrounds/patterns/aqua.svg"
     noise: "assets/backgrounds/noise/aqua.svg"
 
-  contrast:
-    label: "Contrast"
-    colors:
-      primary: "#000000"
-      secondary: "#ffffff"
-      accent: "#ffcc00"
-    gradient: "assets/backgrounds/gradients/contrast.svg"
-    pattern: "assets/backgrounds/patterns/contrast.svg"
-    noise: "assets/backgrounds/noise/contrast.svg"
-
-  dark:
-    label: "Dark"
-    colors:
-      primary: "#1a1a2e"
-      secondary: "#16213e"
-      accent: "#0f3460"
-    gradient: "assets/backgrounds/gradients/dark.svg"
-    pattern: "assets/backgrounds/patterns/dark.svg"
-    noise: "assets/backgrounds/noise/dark.svg"
-
   dirt:
     label: "Dirt"
     colors:

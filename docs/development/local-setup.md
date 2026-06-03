@@ -1,3 +1,13 @@
+---
+title: "Local Development Setup"
+description: "Set up a local Zer0-Mistakes development environment with Docker or a native Ruby toolchain, then run the dev server and validate your changes."
+date: 2026-01-25T03:38:33.000Z
+lastmod: 2026-05-25T19:58:49.000Z
+categories: [docs]
+tags: [development, contributing]
+author: bamr87
+---
+
 # Local Development Setup
 
 Set up your development environment for contributing to the Zer0-Mistakes theme.
@@ -33,6 +43,7 @@ docker-compose up
 ```
 
 **Benefits:**
+
 - No Ruby installation required
 - Consistent environment across machines
 - Matches production build environment
@@ -191,3 +202,4 @@ bundle exec jekyll build
 - [Testing](testing.md) — Validate your changes
 - [Code Style](code-style.md) — Follow coding conventions
 - [Architecture](../architecture/README.md) — Understand the codebase
+

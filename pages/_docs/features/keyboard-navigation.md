@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:29:57.000Z
 title: Keyboard Navigation
 description: Complete guide to keyboard shortcuts and navigation accessibility features in the Zer0-Mistakes theme.
+preview: /images/previews/keyboard-navigation.png
 layout: default
 categories:
     - docs
@@ -13,7 +15,7 @@ tags:
     - navigation
 permalink: /docs/features/keyboard-navigation/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---
@@ -167,3 +169,15 @@ Have suggestions for improving keyboard navigation? [Open an issue](https://gith
 ---
 
 *This guide follows [WCAG 2.1 Level AA](https://www.w3.org/WAI/WCAG21/quickref/) accessibility standards.*
+
+## Technical Reference
+
+For implementation details (WCAG 2.1 AA compliance, ARIA attributes, keyboard event handling, focus management):
+
+- [Navigation Redesign → docs/implementation/navigation-redesign.md](../../../docs/implementation/navigation-redesign.md)
+
+## See also
+
+- [[Features]]
+- [[Skip-to-Content Accessibility Link]]
+- [[Sidebar Navigation System]]

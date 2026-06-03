@@ -1,6 +1,7 @@
 ---
 title: "Site Statistics Portal"
 description: "Comprehensive analytics and metrics for the Zer0-Mistakes knowledge base"
+preview: /images/previews/site-statistics-portal.png
 layout: admin
 icon: bi-bar-chart-line
 permalink: /about/stats/

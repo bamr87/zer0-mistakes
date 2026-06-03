@@ -12,7 +12,7 @@
   - Loads critical JavaScript libraries before page render
   - Includes SEO optimization and social media meta tags
   - Configures third-party integrations (Analytics, MathJax)
-  - Sets up progress bar and UI enhancement scripts
+  - Sets up progress bar via components/nanobar.html include
   
   Dependencies:
   - seo.html: SEO meta tags and Open Graph data
@@ -22,7 +22,7 @@
   Performance Notes:
   - Scripts loaded in head for immediate availability
   - MathJax loaded asynchronously to prevent render blocking
-  - Nanobar provides visual loading feedback
+  - Nanobar provides visual loading feedback (see components/nanobar.html)
   ===================================================================
 -->
 
@@ -41,6 +41,7 @@
 <script defer src="{{ '/assets/js/halfmoon.js' | relative_url }}"></script>
 <script defer src="{{ '/assets/js/side-bar-folders.js' | relative_url }}"></script>
 <script defer src="{{ '/assets/js/code-copy.js' | relative_url }}"></script>
+<script defer src="{{ '/assets/js/table-copy.js' | relative_url }}"></script>
 <script defer src="{{ '/assets/js/ui-enhancements.js' | relative_url }}"></script>
 
 <!-- ================================ -->
@@ -52,32 +53,24 @@
   {% include components/mermaid.html %}
 {% endif %}
 
-<!-- Nano Progress Bar - Visual loading indicator -->
-<script defer src="{{'/assets/js/nanobar.min.js' | relative_url }}"></script>
+<!-- Nano Progress Bar - Visual loading indicator (config-driven) -->
+{% include components/nanobar.html %}
 
-<!-- Progress Bar Initialization - Creates visual loading feedback -->
+<!-- MathJax - Conditional loading based on page front matter (like Mermaid) -->
+{% if page.mathjax %}
+<!-- MathJax 3 configuration — must appear before the script tag.
+     Enables $...$ inline math (off by default in MathJax 3). -->
 <script>
-    // Wait for DOM to be ready before initializing Nanobar
-    document.addEventListener('DOMContentLoaded', function() {
-        // Check if the progress bar element exists before initializing
-        var progressElement = document.getElementById('top-progress-bar');
-        if (progressElement) {
-            var options = {
-              classname: 'nanobar',
-              id: 'top-progress-bar'
-            };
-            var nanobar = new Nanobar(options);
-            nanobar.go( 30 );  // Initial loading state
-            nanobar.go( 76 );  // Partial completion
-            nanobar.go(100);   // Complete loading
-        } else {
-            console.warn('Progress bar element #top-progress-bar not found. Skipping Nanobar initialization.');
-        }
-    });
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  }
+};
 </script>
-
-<!-- MathJax - Mathematical notation rendering (async; bundled under assets/vendor) -->
 <script id="MathJax-script" async src="{{ '/assets/vendor/mathjax/es5/tex-mml-chtml.js' | relative_url }}"></script>
+{% endif %}
 
 <!-- ================================ -->
 <!-- HTML DOCUMENT META DATA         -->
@@ -150,10 +143,21 @@
 <!-- Primary theme stylesheet - Core styling and layout (SCSS pipeline) -->
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
 
-<!-- Optional fork overrides: add assets/css/user-overrides.css locally if needed (not shipped by default). -->
+<!-- ========================== -->
+<!-- DESIGN TOKEN OVERRIDES     -->
+<!-- ========================== -->
+<!-- Inline <style> block emitted AFTER main.css so site-config `theme_color` keys
+     and any per-user Appearance overrides win over compiled defaults. -->
+{% include core/tokens-inline.html %}
+
+<!-- Optional fork overrides: opt-in via `site.user_overrides: true` in _config.yml.
+     Loaded LAST so consumer rules win over both main.css and tokens-inline. -->
+{% if site.user_overrides %}
+<link rel="stylesheet" href="{{ '/assets/css/user-overrides.css' | relative_url }}">
+{% endif %}
 
 <!-- Statistics page specific styles -->
-{% if page.layout == 'stats' %}
+{% if page.layout == 'stats' or page.permalink == '/about/stats/' %}
 <link rel="stylesheet" href="{{ '/assets/css/stats.css' | relative_url }}">
 {% endif %}
 

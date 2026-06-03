@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:30:02.000Z
 title: SEO
 description: Search engine optimization features including meta tags, structured data, and sitemap generation.
+preview: /images/previews/seo.png
 layout: default
 categories:
     - docs
@@ -12,7 +14,7 @@ tags:
     - search
 permalink: /docs/seo/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---
@@ -37,6 +39,7 @@ Most SEO features work automatically. Configure site-wide defaults:
 # _config.yml
 title: "Your Site Title"
 description: "Your site description for search engines"
+preview: /images/previews/seo.png
 url: "https://yoursite.com"
 author:
   name: "Your Name"
@@ -52,6 +55,7 @@ Override in front matter:
 ---
 title: "Page Title"
 description: "Page-specific description"
+preview: /images/previews/seo.png
 image: "/assets/images/page-image.png"
 author: "Specific Author"
 ---
@@ -68,3 +72,10 @@ author: "Specific Author"
 - [Meta Tags](/docs/seo/meta-tags/)
 - [Sitemap](/docs/seo/sitemap/)
 - [Breadcrumbs](/docs/features/breadcrumbs/)
+
+## See also
+
+- [[Analytics]]
+- [[front-matter]]
+- [[Features]]
+- [[Deployment]]

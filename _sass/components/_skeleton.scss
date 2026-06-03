@@ -1,0 +1,25 @@
+// ============================================================================
+// Skeleton loader — token-aware, dark-mode-safe
+// ----------------------------------------------------------------------------
+// Replaces hardcoded #f0f0f0/#e0e0e0 gradient in _sass/custom.scss (~ln 1040).
+// Uses the elevated-surface / border tokens so the shimmer is visible in
+// both light and dark color modes without redefining the keyframes.
+// ============================================================================
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--zer0-color-bg-elevated) 25%,
+    var(--zer0-color-bg-muted) 50%,
+    var(--zer0-color-bg-elevated) 75%
+  );
+  background-size: 200% 100%;
+  animation: zer0-skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: 0.25rem;
+  min-height: 1em;
+}
+
+@keyframes zer0-skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

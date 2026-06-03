@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:29:56.000Z
 title: Code Copy Button
 description: One-click copy functionality for code blocks with visual feedback and clipboard API integration.
+preview: /images/previews/code-copy-button.png
 layout: default
 categories:
     - docs
@@ -12,7 +14,7 @@ tags:
     - ui
 permalink: /docs/features/code-copy/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---
@@ -261,3 +263,8 @@ if (lang) {
 
 - [Code Highlighting](/docs/jekyll/code-highlighting/)
 - [Mermaid Diagrams](/docs/features/mermaid-diagrams/)
+
+## See also
+
+- [[Features]]
+- [[Code Highlighting]]

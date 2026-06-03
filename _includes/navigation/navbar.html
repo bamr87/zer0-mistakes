@@ -22,7 +22,7 @@
         <ul class="navbar-nav justify-content-lg-center text-start flex-grow-1" role="menubar">
             <li class="nav-item d-lg-none" role="none">
                 <a class="nav-link" href="{{ '/' | relative_url }}" role="menuitem" {% if page.url == '/' %}aria-current="page"{% endif %}>
-                    <i class="{{site.default_icon}} bi-house me-2" aria-hidden="true"></i>
+                    <i class="{{site.default_icon}} bi-house" aria-hidden="true"></i>
                     Home
                 </a>
             </li>
@@ -38,6 +38,7 @@
 
               {%- for link in nav_main -%}
                 {%- assign has_children = link.children and link.children.size > 0 -%}
+                {%- assign items_remaining = nav_main.size | minus: forloop.index -%}
 
                 {%- if has_children -%}
                     <li class="nav-item dropdown d-flex align-items-center nav-hover-dropdown" role="none">
@@ -59,7 +60,7 @@
                         <!-- Note: No data-bs-toggle="dropdown" — custom JS handles all interactions
                              to avoid Bootstrap's native handler conflicting with our toggle logic -->
                         <button
-                            class="nav-link dropdown-toggle dropdown-toggle-split ms-1 px-1 btn"
+                            class="nav-link dropdown-toggle dropdown-toggle-split ms-1"
                             type="button"
                             id="dropdown-{{ link.title | slugify }}"
                             aria-expanded="false"
@@ -69,7 +70,7 @@
                             <span class="visually-hidden">Toggle {{ link.title }} submenu</span>
                         </button>
 
-                        <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="dropdown-{{ link.title | slugify }}" role="menu">
+                        <ul class="dropdown-menu {% if items_remaining < 2 %}dropdown-menu-end{% else %}dropdown-menu-start{% endif %}" aria-labelledby="dropdown-{{ link.title | slugify }}" role="menu">
                             {%- for child in link.children -%}
                                 <li role="none">
                                     <a
@@ -140,7 +141,7 @@
                     aria-label="Open search"
                     aria-haspopup="dialog"
                 >
-                    <i class="{{site.default_icon}} bi-search me-2" aria-hidden="true"></i>
+                    <i class="{{site.default_icon}} bi-search" aria-hidden="true"></i>
                     Search
                 </button>
             </li>
@@ -153,7 +154,7 @@
                     aria-controls="info-section"
                     aria-haspopup="dialog"
                 >
-                    <i class="{{site.default_icon}} bi-gear me-2" aria-hidden="true"></i>
+                    <i class="{{site.default_icon}} bi-gear" aria-hidden="true"></i>
                     Settings
                 </button>
             </li>

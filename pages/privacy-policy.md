@@ -5,7 +5,7 @@ layout: default
 permalink: /privacy-policy/
 date: 2025-01-27
 lastmod: 2025-01-27
-draft: draft
+draft: true
 ---
 
 # Privacy Policy

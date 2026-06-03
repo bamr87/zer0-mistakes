@@ -1,14 +1,44 @@
+---
+title: "Testing"
+description: "How to run the Zer0-Mistakes test suites and validators locally, and which checks to run before opening a pull request to keep CI green."
+date: 2026-01-25T03:38:33.000Z
+lastmod: 2026-05-25T19:58:49.000Z
+categories: [docs]
+tags: [development, contributing]
+author: bamr87
+---
+
 # Testing
 
 Run tests and validate changes before submitting pull requests.
+
+## Preflight Validation
+
+Use the canonical validator before larger refactors and before preparing a PR.
+It runs fast repository checks, version consistency, YAML/data validation,
+active configuration contract checks, config-file classification, navigation
+schema validation, the Docker/local Jekyll build, Jekyll doctor, and compiled
+asset checks.
+
+```bash
+# Standard preflight; uses Docker Compose when the jekyll service is running,
+# otherwise falls back to local bundle exec.
+./scripts/validate
+
+# Fast host-only checks used by CI fast-checks
+./scripts/validate --quick
+
+# Start Docker if needed and include optional test layers
+./scripts/validate --full --start-docker
+```
 
 ## Test Suite
 
 The theme includes a comprehensive test suite:
 
 ```bash
-# Run all tests
-./test/test_runner.sh
+# Run all canonical tests
+./scripts/bin/test
 
 # Run specific test suites
 ./test/test_runner.sh --suites core,deployment
@@ -31,6 +61,7 @@ Basic functionality and configuration:
 ```
 
 Tests include:
+
 - Configuration validation
 - Required files exist
 - Jekyll build succeeds
@@ -45,6 +76,7 @@ Production readiness:
 ```
 
 Tests include:
+
 - GitHub Pages compatibility
 - Remote theme functionality
 - Build output validation
@@ -58,23 +90,55 @@ Code quality and best practices:
 ```
 
 Tests include:
+
 - Broken link detection
 - HTML validation
 - Accessibility checks
 
-### Frontend styling tests (Playwright)
+### Frontend Playwright tests
 
-Automated checks for the theme CSS stack (Jekyll `main.css`, same-origin CSS HTTP 200, Bootstrap CSS variables) and layout chrome (header, navbar structure, mobile menu toggle, `bd-main` / `bd-content` on a default-layout page).
+The Playwright runner is split into tiers selected via `PLAYWRIGHT_PROJECT`:
+
+- **smoke** (default) — CSS load, Bootstrap tokens, layout chrome, admin DOM, behavioral skin tests, **UI refresh regression** (`ui-refresh.spec.js`), accessibility component checks.
+- **snapshots** — pixel screenshots of the homepage in each of the 9 theme skins (path-filtered in CI).
+- **regression-{chromium,firefox,webkit}** — all specs across all browsers (manual `workflow_dispatch` only).
 
 ```bash
-# Starts Jekyll on 127.0.0.1:4011 unless BASE_URL is already set
-./test/test_runner.sh --suites styling
+# Smoke tier — starts Jekyll on 127.0.0.1:4011 unless BASE_URL is already set
+./test/test_runner.sh --suites playwright
+npm run test:smoke
 
-# Or with Docker already serving on 4000:
-BASE_URL=http://127.0.0.1:4000 npm run test:styling
+# Pixel snapshots
+./test/test_runner.sh --suites playwright_snapshots
+npm run test:snapshots
+
+# Reuse Docker Jekyll on :4000
+BASE_URL=http://127.0.0.1:4000 ./test/test_playwright.sh
+
+# UI refresh suite only (navbar tiers, intro hero, code blocks, tables, footer, viewports)
+npx playwright test --project=smoke ui-refresh.spec.js
+
+# Refresh Linux snapshot baselines (uses Docker)
+./test/update-snapshots.sh
 ```
 
 Core tests also validate that a production Jekyll build emits `main.css` containing docs-layout rules (e.g. `bd-layout`).
+
+### UI refresh regression (`ui-refresh.spec.js`)
+
+The smoke tier includes a dedicated spec for the v1.8+ UI work. It exercises styling, layout containment, visibility, and advisory axe scans across five viewports defined in `test/visual/fixtures.js`:
+
+
+| Viewport      | Size     | What it guards                                         |
+| ------------- | -------- | ------------------------------------------------------ |
+| `mobile`      | 375×667  | Offcanvas toggler, ToC FAB, landmark visibility        |
+| `tablet`      | 768×1024 | Mobile quicklink chips, footer column balance          |
+| `midDesktop`  | 1140×720 | Brand logo/title overlap (navbar container-query tier) |
+| `desktop`     | 1280×720 | Intro hero, code blocks, tables, docs chrome           |
+| `wideDesktop` | 1320×720 | Full nav labels without ellipsis                       |
+
+
+Canonical routes live in `UI_ROUTES` (home, quickstart, news section, features, theme preview, etc.). Tests call `gotoOrSkip()` so minimal fork installs skip missing pages instead of failing.
 
 Third-party CSS/JS are bundled under `assets/vendor/`; see `pages/_docs/development/vendor-assets.md` (site: `/docs/development/vendor-assets/`) and `npm run vendor:install` to refresh.
 
@@ -109,12 +173,14 @@ bundle exec htmlproofer _site --disable-external
 ### Cross-Browser Testing
 
 Test in multiple browsers:
+
 - Chrome
 - Firefox
 - Safari
 - Edge
 
 Check:
+
 - Layout rendering
 - JavaScript functionality
 - Responsive design
@@ -159,6 +225,7 @@ Note: Giscus requires production deployment to test.
 ## Continuous Integration
 
 GitHub Actions runs tests on:
+
 - Pull requests
 - Pushes to main branch
 - Release tags
@@ -166,6 +233,7 @@ GitHub Actions runs tests on:
 ### CI Configuration
 
 `.github/workflows/` contains:
+
 - Build validation
 - HTML proofer
 - Deploy workflows
@@ -215,12 +283,14 @@ test_something() {
 
 ### Common Failures
 
-| Error | Solution |
-|-------|----------|
+
+| Error               | Solution                               |
+| ------------------- | -------------------------------------- |
 | Jekyll build failed | Check for syntax errors in Liquid/YAML |
-| Missing file | Verify file exists and path is correct |
-| Docker not found | Install Docker or use `--skip-docker` |
-| Permission denied | Check file permissions |
+| Missing file        | Verify file exists and path is correct |
+| Docker not found    | Install Docker or use `--skip-docker`  |
+| Permission denied   | Check file permissions                 |
+
 
 ### Debug Mode
 
@@ -236,3 +306,8 @@ bash -x ./test/specific_test.sh
 
 - [Local Setup](local-setup.md) — Development environment
 - [Code Style](code-style.md) — Coding conventions
+
+
+---
+
+> **User guide**: Contributors who access testing via the public site can find an overview at [Testing](/docs/development/testing/) in the user-facing docs.

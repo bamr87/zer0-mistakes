@@ -25,6 +25,8 @@
 
 # Site Settings ###################################################################
 
+site_configured          : true   # Tells the theme this site has been personalised
+
 founder                  : "Amr Abdel-Motaleb"
 remote_theme             : "bamr87/zer0-mistakes"
 gem                      : &gem "jekyll-theme-zer0"
@@ -96,9 +98,9 @@ info_banner              : '/assets/images/info-banner-mountain-wizard.png' # pa
 preview_images:
   enabled                : true
   provider               : 'openai'           # openai, stability, local
-  model                  : 'dall-e-3'         # dall-e-3, dall-e-2, stable-diffusion
-  size                   : '1792x1024'        # Landscape for banner: 1792x1024, square: 1024x1024
-  quality                : 'standard'         # standard, hd (hd costs more)
+  model                  : 'gpt-image-2'      # gpt-image-2, dall-e-3, dall-e-2, stable-diffusion
+  size                   : '1536x1024'        # Landscape for GPT Image banners; DALL-E 3 also supports 1792x1024
+  quality                : 'auto'             # auto for GPT Image models; standard/hd for DALL-E 3
   style                  : 'retro pixel art, 8-bit video game aesthetic, vibrant colors, nostalgic, clean pixel graphics'
   output_dir             : 'assets/images/previews'
   # Path normalization: allows omitting /assets/ prefix in frontmatter
@@ -111,6 +113,25 @@ preview_images:
 breadcrumbs              : true # true, false (default)
 words_per_minute         : 200
 _posts_file_structure    : "year-month-day-title.md"
+
+# UI navigation behaviour --------------------------------------------------
+# Optional consolidation of the mobile sidebar + main-menu offcanvases into
+# a single tabbed drawer (Browse / Menu / Settings). Default false to avoid
+# disrupting existing forks. See _includes/navigation/unified-drawer.html.
+navigation:
+  unified_mobile_drawer  : false  # true to opt into the single-drawer pattern
+
+# Opt-in user override hooks. When true, the theme loads:
+#   - assets/css/user-overrides.css  (after main.css, wins over theme rules)
+#   - assets/js/user-overrides.js    (after the theme JS bundle)
+# Ship these files in your fork; they are not bundled with the theme.
+user_overrides           : false
+
+# Runtime Appearance panel inside the Settings offcanvas (Track 6).
+# Adds light/dark/auto color-mode buttons + a primary-color picker that
+# writes to localStorage["zer0-appearance"] and updates --zer0-color-primary
+# without a page reload. Falls back gracefully when disabled.
+appearance_panel         : true
 
 ## Identity #####################################################################
 
@@ -154,6 +175,28 @@ posthog:
     mask_all_inputs      : true   # Mask form inputs in session recordings
     ip_anonymization     : false  # Anonymize IP addresses
 
+# Nanobar - Page Loading Progress Bar #############################################
+# Visual loading indicator shown on every page load.
+# Library: https://github.com/jacoborus/nanobar
+nanobar:
+  enabled       : true              # Master switch — set false to disable entirely
+  # Visual styling (any valid CSS values; CSS variables / var() are supported)
+  color         : "var(--bs-primary)" # Bar (progress) color
+  background    : "transparent"      # Track background behind the bar
+  height        : "3px"              # Bar thickness (e.g. 2px, 4px, 0.25rem)
+  # Placement
+  position      : "navbar"           # top | bottom | navbar (under header)
+  z_index       : 9999               # Stacking order
+  # Loading simulation — percentages applied in order on DOMContentLoaded.
+  # With step_delay_ms = 0 the bar fills instantly and is essentially invisible
+  # on fast pages. Increase to slow / make the animation perceivable.
+  steps         : [20, 55, 85, 100]
+  step_delay_ms : 180                # Delay between steps in ms (0 = instant burst)
+  # Advanced (rarely needs changing)
+  classname     : "nanobar"          # Class added to the injected element
+  id            : "top-progress-bar" # DOM id of the injected element
+  target        : ""                 # CSS selector to mount inside; "" = fixed to viewport
+
 ## Site verification #############################################################
 
 google_site_verification : null
@@ -171,9 +214,9 @@ links:
   - label: "Portfolio"
     url: [ 'https://', *github_user, '.github.io/']
     icon: "bi-link"
-  - label: "Twitter"
-    icon: "bi-twitter"
-    url: "https://twitter.com/bamr87"
+  - label: "X"
+    icon: "bi-twitter-x"
+    url: "https://x.com/bamr87"
   - label: "GitHub"
     icon: "bi-github"
     url: [ 'https://github.com/' , *github_user ]
@@ -201,10 +244,6 @@ powered_by:
     version: "5.3.3"
     url: "https://getbootstrap.com/"
     icon: "bi-bootstrap"
-  - name: "Algolia"
-    version: 
-    url: "https://algolia.com/"
-    icon: "bi-search"
   - name: "jQuery"
     url: "https://jquery.com/"
     icon: "bi-filetype-js"
@@ -234,6 +273,13 @@ plugins:
   - jekyll-seo-tag
   - jekyll-paginate
   - jekyll-relative-links
+  # jekyll-redirect-from is on the GitHub Pages whitelist and powers Obsidian
+  # `aliases:` → URL redirects (see pages/_docs/obsidian/syntax-reference.md).
+  - jekyll-redirect-from
+  # jekyll-include-cache (on the GitHub Pages whitelist) provides the
+  # {% include_cached %} tag used by setup-banner.html and other includes to
+  # collapse per-page renders of stable content into a single cached render.
+  - jekyll-include-cache
   # Note: jekyll-mermaid is NOT in GitHub Pages whitelist - it only provides {% mermaid %} Liquid tag
   # Mermaid diagrams work without this plugin via client-side JavaScript (see _includes/components/mermaid.html)
   - jekyll-mermaid
@@ -465,30 +511,73 @@ defaults:
 #
 # Excluded items can be processed by explicitly listing the directories or
 # their entries' file path in the `include:` list.
+#
+# NOTE: When _config_dev.yml is layered on top (--config _config.yml,_config_dev.yml),
+# the dev file MUST repeat this full list — Jekyll replaces, not merges, the exclude key.
 
 exclude:
+  # ── Jekyll cache ─────────────────────────────────────────────────────────
   - .sass-cache/
   - .jekyll-cache/
-  - .obsidian
-  - docs/
+
+  # ── Obsidian vault working files ─────────────────────────────────────────
+  - .obsidian/
+  - "*.canvas"
+  - "*.excalidraw.md"
+
+  # ── IDE / editor config (dot-prefix dirs hidden by default; listed for clarity) ─
+  - .cursor/
+  - .devcontainer/
+  - .frontmatter/
+  - .github/
+  - .vscode/
+
+  # ── Ruby / Bundler ────────────────────────────────────────────────────────
+  - Gemfile
   - Gemfile.lock
   - gemfiles/
-  - Gemfile
-  - node_modules/
-  - templates/
-  # Exclude Bundler's vendor dir (Ruby gems). assets/vendor/ is a different path
-  # and is intentionally committed for GitHub Pages (Bootstrap, jQuery, etc.).
+  - jekyll-theme-zer0.gemspec
+  - lib/
+  - pkg/
   - vendor/bundle/
   - vendor/cache/
   - vendor/gems/
   - vendor/ruby/
-  # - "*.sh"
+
+  # ── Node.js ───────────────────────────────────────────────────────────────
+  - node_modules/
+  - package.json
+  - package-lock.json
+
+  # ── Shell scripts and automation ──────────────────────────────────────────
+  - scripts/
+  - "*.sh"
+
+  # ── Docker configuration ──────────────────────────────────────────────────
+  - docker/
+  - docker-compose.yml
+  - docker-compose.test.yml
+
+  # ── Build / task runners ──────────────────────────────────────────────────
+  - Makefile
+  - Rakefile
+
+  # ── Project tooling metadata ──────────────────────────────────────────────
+  - AGENTS.md
+  - docs/
+  - frontmatter.json
+  - logs/
+  - templates/
+  - vendor-manifest.json
+  - "*.code-workspace"
+
+  # ── Submodules, tests, and authoring scaffolding ──────────────────────────
   - submodules/
-  - MERMAID-*.md
-  - MERMAID-*/
   - test/
   - tests/
-  - _site/lib/
+  - MERMAID-*.md
+  - MERMAID-*/
+  - pages/_notes/_templates/
 
 # Sass/SCSS
 sass:
@@ -504,7 +593,15 @@ sass:
 
 # theme                  : "zer0-mistakes-jekyll"
 # remote_theme           : "bamr87/zer0-mistakes"
-theme_skin               : "dark" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
+theme_skin               : "air" # "air", "aqua", "dirt", "neon", "mint", "plum", "sunrise"
+
+# SVG background layers (fffuel.co style) — gradient, pattern, noise per skin
+theme_background:
+  enabled: true           # Master toggle for SVG backgrounds
+  gradient_opacity: 0.6   # Hero/header gradient layer opacity
+  texture_opacity: 0.04   # Body noise texture overlay opacity
+  pattern_opacity: 0.08   # Surface/card pattern overlay opacity
+  blend_mode: overlay     # CSS mix-blend-mode for all layers
 
 # SVG background layers (fffuel.co style) — gradient, pattern, noise per skin
 theme_background:
@@ -517,30 +614,33 @@ theme_background:
 # style                  : "default" # "default", "dark", "light", "solarized-dark", "solarized-light"
 # remote_style           : "bamr87/zer0-mistakes"
 
+# NOTE: Hex codes MUST be quoted — unquoted `#007bff` is parsed as a YAML
+# comment and the key resolves to null. These values feed
+# _includes/core/tokens-inline.html → --zer0-color-*.
 theme_color:
-  main: #007bff
-  secondary: #6c757d
-  red: #a11111
-  yellow: #ffe900
-  teal: #376986
-  blue: #007bff
-  green: #28a745
-  purple: #6f42c1
-  pink: #e83e8c
-  orange: #fd7e14
-  brown: #795548
-  cyan: #17a2b8
-  indigo: #6610f2
-  lime: #cddc39
-  amber: #ffc107
-  deep_orange: #ff5722
-  deep_purple: #673ab7
-  light_blue: #03a9f4
-  light_green: #8bc34a
-  light_purple: #9c27b0
-  light_red: #f44336
-  light_yellow: #ffeb3b
-  light_teal: #009688
+  main:         "#007bff"
+  secondary:    "#6c757d"
+  red:          "#a11111"
+  yellow:       "#ffe900"
+  teal:         "#376986"
+  blue:         "#007bff"
+  green:        "#28a745"
+  purple:       "#6f42c1"
+  pink:         "#e83e8c"
+  orange:       "#fd7e14"
+  brown:        "#795548"
+  cyan:         "#17a2b8"
+  indigo:       "#6610f2"
+  lime:         "#cddc39"
+  amber:        "#ffc107"
+  deep_orange:  "#ff5722"
+  deep_purple:  "#673ab7"
+  light_blue:   "#03a9f4"
+  light_green:  "#8bc34a"
+  light_purple: "#9c27b0"
+  light_red:    "#f44336"
+  light_yellow: "#ffeb3b"
+  light_teal:   "#009688"
 
 ## Copyright Settings --------------------------------------------------------------
 

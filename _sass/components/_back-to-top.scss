@@ -1,0 +1,38 @@
+// ============================================================================
+// Back-to-top floating action button
+// ----------------------------------------------------------------------------
+// Token-aware replacement for the legacy block in _sass/custom.scss (~ln 265).
+// Differences from the legacy version:
+//   - z-index from the unified --zer0-layer-* scale (no magic numbers).
+//   - Hover color is a darker primary tint rather than a hardcoded gray.
+//   - Position uses --zer0-space-fab-offset so FABs line up.
+// ============================================================================
+
+#backToTopBtn {
+  position: fixed;
+  bottom: var(--zer0-space-fab-offset, 1rem);
+  right: var(--zer0-space-fab-offset, 1rem);
+  z-index: var(--zer0-layer-fab-back-to-top);
+
+  background-color: var(--zer0-color-primary, var(--bs-primary));
+  color: var(--bs-light, #fff);
+  border: 0;
+  outline: 0;
+  padding: 0.75rem;
+  border-radius: 0.625rem;
+  font-size: 1.125rem;
+  opacity: 0.5;
+  cursor: pointer;
+  box-shadow: var(--zer0-shadow-fab);
+  transition:
+    opacity var(--zer0-motion-duration-fast, 120ms) var(--zer0-motion-ease-standard),
+    background-color var(--zer0-motion-duration-fast, 120ms) var(--zer0-motion-ease-standard),
+    transform var(--zer0-motion-duration-fast, 120ms) var(--zer0-motion-ease-standard);
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+    background-color: var(--zer0-color-link-hover, var(--bs-primary));
+    transform: translateY(-2px);
+  }
+}

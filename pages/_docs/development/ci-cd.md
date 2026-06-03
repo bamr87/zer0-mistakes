@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:29:55.000Z
 title: CI/CD Pipeline
 description: Comprehensive guide to the continuous integration and deployment workflows for the Zer0-Mistakes theme.
+preview: /images/previews/ci-cd-pipeline.png
 layout: default
 categories:
     - docs
@@ -12,7 +14,7 @@ tags:
     - deployment
 permalink: /docs/development/ci-cd/
 difficulty: intermediate
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 prerequisites:
     - GitHub repository access
     - Understanding of GitHub Actions
@@ -299,3 +301,10 @@ permissions:
 - [Testing Guide](/docs/development/testing/)
 - [Version Bump](/docs/development/version-bump/)
 - [Release Management](/docs/development/release-management/)
+
+## See also
+
+- [[Development]]
+- [[Testing]]
+- [[Release Management]]
+- [[Security Scanning]]

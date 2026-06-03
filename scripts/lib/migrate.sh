@@ -146,18 +146,18 @@ install_admin_pages() {
 
         if [[ ! -f "$template_file" ]]; then
             warn "Template not found: $template_file — skipping"
-            ((skipped++))
+            skipped=$((skipped + 1))
             continue
         fi
 
         if [[ -f "$output_file" ]] && [[ "$force" != "true" ]]; then
             info "Already exists (use --force to overwrite): $output_file"
-            ((skipped++))
+            skipped=$((skipped + 1))
             continue
         fi
 
         dry_run_exec "Render ${page}.md" render_template "$template_file" "$output_file"
-        ((installed++))
+        installed=$((installed + 1))
         debug "Installed: $output_file"
     done
 
@@ -193,24 +193,24 @@ verify_admin_pages() {
     local page page_file
     for page in "${ADMIN_PAGES[@]}"; do
         page_file="$output_dir/${page}.md"
-        ((total++))
+        total=$((total + 1))
 
         if [[ ! -f "$page_file" ]]; then
             warn "Missing: $page_file"
-            ((errors++))
+            errors=$((errors + 1))
             continue
         fi
 
         # Check required front matter fields
         if ! grep -q 'layout: admin' "$page_file" 2>/dev/null; then
             warn "Missing 'layout: admin' in $page_file"
-            ((errors++))
+            errors=$((errors + 1))
             continue
         fi
 
         if ! grep -q 'permalink:' "$page_file" 2>/dev/null; then
             warn "Missing 'permalink' in $page_file"
-            ((errors++))
+            errors=$((errors + 1))
             continue
         fi
 
@@ -229,35 +229,6 @@ verify_admin_pages() {
 # -------------------------------------------------------------------------
 # Version Detection
 # -------------------------------------------------------------------------
-
-# Return 0 when version_a < version_b (SemVer MAJOR.MINOR.PATCH), else 1.
-semver_lt() {
-    local version_a="${1:-0.0.0}"
-    local version_b="${2:-0.0.0}"
-    local a_major a_minor a_patch
-    local b_major b_minor b_patch
-
-    IFS='.' read -r a_major a_minor a_patch <<< "$version_a"
-    IFS='.' read -r b_major b_minor b_patch <<< "$version_b"
-
-    a_major="${a_major:-0}"; a_minor="${a_minor:-0}"; a_patch="${a_patch:-0}"
-    b_major="${b_major:-0}"; b_minor="${b_minor:-0}"; b_patch="${b_patch:-0}"
-
-    if [[ ! "$a_major" =~ ^[0-9]+$ || ! "$a_minor" =~ ^[0-9]+$ || ! "$a_patch" =~ ^[0-9]+$ ||
-          ! "$b_major" =~ ^[0-9]+$ || ! "$b_minor" =~ ^[0-9]+$ || ! "$b_patch" =~ ^[0-9]+$ ]]; then
-        return 2
-    fi
-
-    if (( a_major != b_major )); then
-        (( a_major < b_major ))
-        return
-    fi
-    if (( a_minor != b_minor )); then
-        (( a_minor < b_minor ))
-        return
-    fi
-    (( a_patch < b_patch ))
-}
 
 # Detect the installed theme version and warn if admin features may be missing
 # Usage: detect_version_gap "/path/to/site"
@@ -281,18 +252,12 @@ detect_version_gap() {
 
     info "Installed theme version: $installed_version"
 
-    local compare_result=0
-    semver_lt "$installed_version" "$min_admin_version"
-    compare_result=$?
-
-    if [[ "$compare_result" -eq 0 ]]; then
+    # Simple version comparison (works for same-major versions)
+    if [[ "$(printf '%s\n' "$min_admin_version" "$installed_version" | sort -V | head -1)" != "$min_admin_version" ]]; then
         warn "Theme version $installed_version may not include admin layout/includes."
         warn "Admin pages require version >= $min_admin_version."
         warn "Consider updating: bundle update jekyll-theme-zer0"
         return 1
-    elif [[ "$compare_result" -eq 2 ]]; then
-        debug "Could not compare versions '$installed_version' and '$min_admin_version'"
-        return 0
     fi
 
     debug "Theme version $installed_version >= $min_admin_version — admin features supported"

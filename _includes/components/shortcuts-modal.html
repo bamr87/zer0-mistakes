@@ -1,0 +1,50 @@
+{%- comment -%}
+  ===================================================================
+  SHORTCUTS-MODAL — Keyboard-shortcut reference
+  ===================================================================
+
+  Path: _includes/components/shortcuts-modal.html
+
+  Triggered by pressing `?` (see assets/js/modules/navigation/keyboard.js).
+  Labels are i18n via _data/ui-text.yml so a fork can localise them.
+
+  Visible only when site.navigation.keyboard_shortcuts != false; the modal
+  itself is always in the DOM so the `?` handler can find it. The handler
+  is a no-op when the element is absent.
+  ===================================================================
+{%- endcomment -%}
+{%- assign ui = site.data.ui-text[site.locale] | default: site.data.ui-text.en -%}
+<div class="modal fade" id="zer0-shortcuts-modal" tabindex="-1"
+     aria-labelledby="zer0-shortcuts-modal-title" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title h5" id="zer0-shortcuts-modal-title">
+          <i class="bi bi-keyboard me-2" aria-hidden="true"></i>{{ ui.shortcuts_title | default: "Keyboard shortcuts" }}
+        </h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <dl class="row mb-0 small">
+          <dt class="col-4 col-sm-3 text-end"><kbd>/</kbd></dt>
+          <dd class="col-8 col-sm-9 mb-2">{{ ui.shortcuts_search | default: "Open search" }}</dd>
+
+          <dt class="col-4 col-sm-3 text-end"><kbd>[</kbd></dt>
+          <dd class="col-8 col-sm-9 mb-2">{{ ui.shortcuts_prev_section | default: "Previous section" }}</dd>
+
+          <dt class="col-4 col-sm-3 text-end"><kbd>]</kbd></dt>
+          <dd class="col-8 col-sm-9 mb-2">{{ ui.shortcuts_next_section | default: "Next section" }}</dd>
+
+          <dt class="col-4 col-sm-3 text-end"><kbd>b</kbd></dt>
+          <dd class="col-8 col-sm-9 mb-2">{{ ui.shortcuts_toggle_sidebar | default: "Toggle sidebar" }}</dd>
+
+          <dt class="col-4 col-sm-3 text-end"><kbd>t</kbd></dt>
+          <dd class="col-8 col-sm-9 mb-2">{{ ui.shortcuts_toggle_toc | default: "Toggle table of contents" }}</dd>
+
+          <dt class="col-4 col-sm-3 text-end"><kbd>?</kbd></dt>
+          <dd class="col-8 col-sm-9 mb-0">{{ ui.shortcuts_show_help | default: "Show this help" }}</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</div>

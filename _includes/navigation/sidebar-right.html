@@ -4,37 +4,61 @@
   includes: nav_list.html, content/toc.html
 -->
 
-<!-- TOC button in mobile view - Floating Action Button pattern -->
-<!-- Positioned above back-to-top button to prevent overlap -->
-<div class="d-lg-none position-fixed bd-toc-fab">
-  <button class="btn btn-primary rounded-circle shadow-lg bd-toc-toggle" 
-          type="button" 
-          data-bs-toggle="offcanvas" 
-          data-bs-target="#tocContents" 
-          aria-controls="tocContents"
-          aria-label="Toggle Table of Contents">
-    <i class="bi bi-list-ul fs-5"></i>
-  </button>
-</div>
+<!-- FOUC guard: apply hidden TOC preference before paint -->
+<script>
+  try {
+    if (localStorage.getItem('zer0-nav-toc-visible') === 'false') {
+      document.documentElement.classList.add('bd-toc-pref-hidden');
+    }
+  } catch (e) {}
+</script>
 
 <!-- Right sidebar container -->
 <div class="offcanvas-lg offcanvas-end" tabindex="-1" id="tocContents" aria-labelledby="tocLabel">
   <div class="offcanvas-header">
     <h2 class="offcanvas-title h5 mb-0" id="tocLabel">Table of Contents</h2>
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close table of contents" data-bs-target="#tocContents"></button>
+    <div class="d-flex align-items-center gap-1">
+      <button type="button"
+              class="btn btn-sm btn-link text-body-secondary bd-toc-visibility-toggle d-lg-none px-2"
+              aria-controls="tocContents"
+              aria-expanded="true"
+              aria-label="Hide table of contents">
+        <i class="bi bi-eye-slash" aria-hidden="true"></i>
+        <span class="visually-hidden">Hide table of contents</span>
+      </button>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close table of contents" data-bs-target="#tocContents"></button>
+    </div>
   </div>
   <div class="offcanvas-body">
     <!-- Table of contents -->
     <nav id="TableOfContents" role="navigation" aria-label="Table of Contents">
       <!-- TOC title -->
-      <div class="mb-3">
-        <strong class="d-flex align-items-center">
-          <i class="bi bi-file-text me-2"></i>
+      <div class="mb-3 d-flex align-items-center justify-content-between gap-2">
+        <strong class="d-flex align-items-center mb-0">
+          <i class="bi bi-file-text me-2" aria-hidden="true"></i>
           On this page
         </strong>
+        <button type="button"
+                class="btn btn-sm btn-link text-body-secondary bd-toc-visibility-toggle d-none d-lg-inline-flex flex-shrink-0 px-1"
+                aria-controls="tocContents"
+                aria-expanded="true"
+                aria-label="Hide table of contents"
+                title="Hide table of contents">
+          <i class="bi bi-layout-sidebar-inset-reverse" aria-hidden="true"></i>
+          <span class="visually-hidden">Hide table of contents</span>
+        </button>
       </div>
 
-      {% include content/toc.html sanitize=true html=content h_min=1 h_max=3 class="list-group-flush" item_class="list-group-item" anchor_class="" skip_no_ids=true %}
+      {% comment %}
+        Only invoke the Liquid TOC parser when the page actually has headings.
+        A single contains check is far cheaper than running the full toc.html
+        parser (allejo/jekyll-toc) on content with no heading anchors.
+      {% endcomment %}
+      {% if content contains '<h2' or content contains '<h3' or content contains '<h4' %}
+        {% include content/toc.html sanitize=true html=content h_min=1 h_max=3 class="list-group-flush" item_class="list-group-item" anchor_class="" skip_no_ids=true %}
+      {% else %}
+        <p class="text-body-secondary small fst-italic">No sections on this page.</p>
+      {% endif %}
     </nav>
   </div>
 </div>

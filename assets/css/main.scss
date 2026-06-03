@@ -8,19 +8,45 @@
 // Theme layer on top of bundled Bootstrap CSS (assets/vendor/bootstrap/css/bootstrap.min.css in head.html).
 // Advanced: npm run css:bootstrap can emit a custom Bootstrap build; swap the head <link> — never load two full Bootstraps.
 
-// Design tokens + theme (CSS variables / wizard mode)
+// 1. Semantic design tokens (CSS custom properties: --zer0-*) — must load before everything
+//    that consumes them. Runtime overrides come from _includes/core/tokens-inline.html.
+@import "tokens/index";
+
+// 2. Legacy Sass variables + --bd-* tokens + wizard palette (kept for backward compat)
 @import "core/variables";
 @import "core/theme";
-// Bootstrap-docs-style layout (trimmed; was ~3.2k-line vendor snapshot)
+
+// 3. Bootstrap-docs-style layout (trimmed; was ~3.2k-line vendor snapshot)
 @import "core/docs-layout";
 
-// Bootstrap Styles
+// 4. Reusable utilities (motion, focus rings) — used by components below
+@import "utilities/motion";
+@import "utilities/focus";
+
+// 5. Component partials (formerly inside custom.scss + new primitives)
+@import "components/cookie-banner";
+@import "components/back-to-top";
+@import "components/notes";
+@import "components/skeleton";
+@import "components/callout";
+@import "components/post-navigation";
+@import "components/footer";
+@import "components/theme-preview";
+@import "components/content-tables";
+
+// 6. Layout partials
+@import "layouts/landing";
+@import "layouts/section";
+@import "layouts/navbar-extras";
+
+// 7. Bootstrap Styles
 // @import "bootstrap.scss";
 
-// Custom Styles
+// 8. Remaining custom styles (thin barrel — see _sass/custom.scss header).
+//    Slated for full decomposition in a follow-up release.
 @import "custom.scss";
 
-// Custom Features
+// 9. Custom Features
 @import "core/code-copy";
 @import "core/syntax";
 

@@ -23,8 +23,16 @@ export const config = {
         toc: '#TableOfContents',
         tocLinks: '#TableOfContents a',
         tocContainer: '.bd-toc .offcanvas-body',
+        tocWrapper: '.bd-toc',
+        tocFab: '.bd-toc-fab',
+        tocVisibilityToggle: '.bd-toc-visibility-toggle',
+        mainArea: '.bd-main',
         
         // Sidebars
+        docsLayout: '.bd-layout',
+        sidebarWrapper: '.bd-sidebar',
+        sidebarFab: '.bd-sidebar-fab',
+        sidebarVisibilityToggle: '.bd-sidebar-visibility-toggle',
         leftSidebar: '#bdSidebar',
         rightSidebar: '#tocContents',
         
@@ -104,7 +112,9 @@ export const config = {
         keys: {
             expandedNodes: 'expanded-nodes',
             sidebarOpen: 'sidebar-open',
-            tocOpen: 'toc-open'
+            tocOpen: 'toc-open',
+            tocVisible: 'toc-visible',
+            sidebarVisible: 'sidebar-visible'
         }
     },
 
@@ -117,8 +127,12 @@ export const config = {
     },
 
     // ===================================================================
-    // BREAKPOINTS (match Bootstrap 5)
+    // BREAKPOINTS (match Bootstrap 5 and _sass/tokens/_breakpoints.scss)
     // ===================================================================
+    // Defaults mirror the --zer0-bp-* CSS custom properties. At runtime
+    // `syncBreakpointsFromCss()` reads the live --zer0-bp-* values from
+    // :root so a fork can override breakpoints in a single place (the
+    // SCSS token file) and JS picks them up automatically.
     breakpoints: {
         sm: 576,
         md: 768,
@@ -127,6 +141,23 @@ export const config = {
         xxl: 1400
     }
 };
+
+/**
+ * Read --zer0-bp-* CSS custom properties from :root and write them back to
+ * `config.breakpoints`. Falls back to the default values if a token is not
+ * defined (e.g. main.css hasn't loaded yet).
+ */
+export function syncBreakpointsFromCss() {
+    if (typeof window === 'undefined' || typeof getComputedStyle !== 'function') return;
+    const root = document.documentElement;
+    const styles = getComputedStyle(root);
+    ['sm', 'md', 'lg', 'xl', 'xxl'].forEach((bp) => {
+        const raw = styles.getPropertyValue(`--zer0-bp-${bp}`).trim();
+        if (!raw) return;
+        const parsed = parseInt(raw, 10);
+        if (Number.isFinite(parsed)) config.breakpoints[bp] = parsed;
+    });
+}
 
 /**
  * Check if viewport is below a breakpoint

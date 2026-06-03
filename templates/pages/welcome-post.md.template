@@ -1,5 +1,5 @@
 ---
-layout: journals
+layout: article
 title: "Welcome to Your New Site"
 date: {{CURRENT_DATE}}
 categories: [General]
@@ -44,7 +44,7 @@ your-site/
 
    ```yaml
    ---
-   layout: journals
+   layout: article
    title: "My First Real Post"
    date: 2025-01-28
    categories: [Tutorial]

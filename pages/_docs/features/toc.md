@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:29:58.000Z
 title: Table of Contents
 description: Automatic table of contents generation from page headings with scroll spy and smooth scrolling.
+preview: /images/previews/table-of-contents.png
 layout: default
 categories:
     - docs
@@ -12,7 +14,7 @@ tags:
     - documentation
 permalink: /docs/features/toc/
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 sidebar:
     nav: docs
 ---
@@ -280,3 +282,9 @@ TOC in offcanvas (see [Mobile TOC](/docs/features/mobile-toc/)):
 - [Sidebar Navigation](/docs/features/sidebar-navigation/)
 - [Mobile TOC](/docs/features/mobile-toc/)
 - [Keyboard Navigation](/docs/features/keyboard-navigation/)
+
+## See also
+
+- [[Features]]
+- [[Mobile TOC Floating Action Button]]
+- [[Sidebar Navigation System]]

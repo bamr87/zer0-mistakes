@@ -1,3 +1,13 @@
+---
+title: "Release Automation System"
+description: "The v2.0 modular release automation system for Zer0-Mistakes: its architecture, scripts, and the end-to-end flow from version bump to publish."
+date: 2025-11-26T05:12:01.000Z
+lastmod: 2026-06-01T03:38:46.000Z
+categories: [docs]
+tags: [systems, automation]
+author: bamr87
+---
+
 # Release Automation System
 
 **Version:** 2.0 (Modular Architecture)  
@@ -271,7 +281,7 @@ gem signin
 # Or manually configure ~/.gem/credentials
 ```
 
-For comprehensive troubleshooting, see: [TROUBLESHOOTING.md](../TROUBLESHOOTING.md)
+For comprehensive troubleshooting, see: [Troubleshooting](../development/troubleshooting.md)
 
 ## Migration Guide
 
@@ -432,7 +442,7 @@ See: [scripts/lib/README.md](../../scripts/lib/README.md)
 ### Internal Documentation
 
 - **[Library README](../../scripts/lib/README.md)** - Detailed library documentation
-- **[TROUBLESHOOTING](../TROUBLESHOOTING.md)** - Common issues and solutions
+- **[Troubleshooting](../development/troubleshooting.md)** - Common issues and solutions
 - **[CONTRIBUTING](../../CONTRIBUTING.md)** - Development guidelines
 - **[Test Suite](../../test/README.md)** - Testing documentation
 

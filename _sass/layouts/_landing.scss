@@ -1,0 +1,92 @@
+// ============================================================================
+// Landing layout
+// ----------------------------------------------------------------------------
+// Token-aware styles for the marketing homepage shell (_layouts/landing.html).
+// Reads spacing/typography/motion tokens so consumers can re-skin without
+// editing the layout HTML. The legacy `.landing-hero` rules in custom.scss
+// continue to load for backward compatibility.
+// ============================================================================
+
+.landing-section {
+  padding-block: var(--zer0-space-section);
+}
+
+// Shared section wrapper (_includes/components/section.html)
+.zer0-section {
+  [class*="container-"] {
+    padding-block: var(--zer0-space-section);
+  }
+
+  &--spacing-tight [class*="container-"] {
+    padding-block: calc(var(--zer0-space-section) * 0.5);
+  }
+
+  &--spacing-loose [class*="container-"] {
+    padding-block: calc(var(--zer0-space-section) * 1.5);
+  }
+}
+
+.landing-quick-links {
+  background: var(--zer0-color-bg-elevated);
+  border-block: 1px solid var(--zer0-color-border);
+
+  .btn {
+    transition:
+      transform var(--zer0-motion-duration-fast) var(--zer0-motion-ease-standard),
+      background-color var(--zer0-motion-duration-fast) var(--zer0-motion-ease-standard);
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+  }
+}
+
+.landing-feature-card {
+  height: 100%;
+  border: 1px solid var(--zer0-color-border);
+  border-radius: 0.75rem;
+  background: var(--zer0-color-bg);
+  transition:
+    transform var(--zer0-motion-duration-base) var(--zer0-motion-ease-standard),
+    box-shadow var(--zer0-motion-duration-base) var(--zer0-motion-ease-standard);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--zer0-shadow-md);
+  }
+
+  .landing-feature-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(var(--zer0-color-primary-rgb), 0.12);
+    color: var(--zer0-color-primary);
+    margin-bottom: var(--zer0-space-3);
+    font-size: 1.5rem;
+  }
+}
+
+// Hero image fade-in (progressive enhancement of inline aspect-ratio box)
+.landing-hero {
+  .landing-hero-img {
+    opacity: 0;
+    transition: opacity 0.45s var(--zer0-motion-ease-standard);
+
+    &.is-loaded {
+      opacity: 1;
+    }
+  }
+}
+
+// Suppress the first <h1> inside the markdown body region of the landing
+// layout. The hero already exposes the page title as an <h1>, and many
+// homepage source files (notably README-as-homepage) ship their own first
+// H1 for non-Jekyll renders (GitHub, npm). `display: none` removes the
+// duplicate from the accessibility tree as well, which is what we want.
+.landing-content-body > h1:first-of-type {
+  display: none;
+}
+

@@ -1,6 +1,7 @@
 ---
 title: Docker
 description: Docker-first workflow for developing and testing Zer0-Mistakes.
+preview: /images/previews/docker.png
 layout: default
 categories:
     - docs
@@ -10,10 +11,10 @@ tags:
     - docker-compose
 permalink: /docs/docker/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 prerequisites:
     - Docker Desktop
-updated: 2025-12-20
+lastmod: 2025-12-20
 lastmod: 2025-12-20T22:15:46.186Z
 sidebar:
     nav: docs
@@ -138,3 +139,10 @@ docker-compose down -v && docker-compose up --build
 - [Installation Guide](/docs/installation/)
 - [Troubleshooting](/docs/troubleshooting/)
 - [Jekyll Configuration](/docs/jekyll/jekyll-config/)
+
+## See also
+
+- [[Jekyll]]
+- [[Ruby]]
+- [[Deployment]]
+- [[Installation]]

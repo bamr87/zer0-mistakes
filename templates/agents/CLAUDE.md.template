@@ -1,0 +1,19 @@
+# Claude Code Instructions
+
+This project uses [`AGENTS.md`](./AGENTS.md) as the cross-tool entry point for
+AI agent guidance. **Read it first** — it explains the layered guidance model
+and points you to the right detail file for whatever you're touching.
+
+For deeper detail, see:
+
+- `.github/copilot-instructions.md` — full project-wide conventions
+- `.github/instructions/*.instructions.md` — file-scoped instruction sets
+- `.github/prompts/*.prompt.md` — reusable multi-step workflows
+
+## Quick start
+
+1. Read `AGENTS.md`.
+2. For any file you edit, load the matching `.github/instructions/*.instructions.md`
+   (the `applyTo:` glob in each file's front matter tells you which paths it covers).
+3. Make minimal, surgical changes that match the existing style.
+4. Validate before declaring done (run the relevant test command from `AGENTS.md`).

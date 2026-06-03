@@ -20,6 +20,11 @@
   icon: bi-palette
   description: Skin, colors, and typography
 
+- title: Theme Preview
+  url: /about/settings/theme-preview/
+  icon: bi-easel
+  description: Live component style guide
+
 - title: Navigation Editor
   url: /about/settings/navigation/
   icon: bi-signpost-2

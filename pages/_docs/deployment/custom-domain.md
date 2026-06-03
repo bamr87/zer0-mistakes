@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:30:01.000Z
 title: Custom Domain Setup
 description: Configure a custom domain for your Jekyll site hosted on GitHub Pages or Netlify.
+preview: /images/previews/custom-domain-setup.png
 layout: default
 categories:
     - docs
@@ -12,7 +14,7 @@ tags:
     - deployment
 permalink: /docs/deployment/custom-domain/
 difficulty: intermediate
-estimated_time: 20 minutes
+estimated_reading_time: 20 minutes
 prerequisites:
     - Domain registrar account
     - GitHub Pages or Netlify hosting
@@ -251,3 +253,9 @@ Configure a redirect in your hosting platform:
 
 - [GitHub Pages Guide](/docs/deployment/github-pages/)
 - [Netlify Guide](/docs/deployment/netlify/)
+
+## See also
+
+- [[Deployment]]
+- [[Deploy to GitHub Pages]]
+- [[Deploy to Netlify]]

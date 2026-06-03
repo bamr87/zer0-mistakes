@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:30:22.000Z
 title: "Categories"
 description: "Browse all categories and discover content by topic"
 layout: default

@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:30:00.000Z
 title: Sidebar Navigation System
 description: Modern sidebar with Intersection Observer scroll spy, smooth scrolling, keyboard shortcuts, and swipe gestures.
+preview: /images/previews/sidebar-navigation-system.png
 layout: default
 categories:
     - docs
@@ -12,7 +14,7 @@ tags:
     - accessibility
 permalink: /docs/features/sidebar-navigation/
 difficulty: intermediate
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 sidebar:
     nav: docs
 ---
@@ -284,6 +286,19 @@ Using Bootstrap Icons throughout:
 
 ## Related
 
-- [Keyboard Navigation](/docs/features/keyboard-navigation/)
-- [Mobile TOC Button](/docs/features/mobile-toc/)
-- [Table of Contents](/docs/features/toc/)
+- [Keyboard Navigation](../../../docs/features/keyboard-navigation/)
+- [Mobile TOC Button](../../../docs/features/mobile-toc/)
+- [Table of Contents](../../../docs/features/toc/)
+
+## Technical Reference
+
+For implementation details (scroll spy, swipe gestures, keyboard shortcuts, ARIA improvements):
+
+- [Navigation Redesign → docs/implementation/navigation-redesign.md](../../../docs/implementation/navigation-redesign.md)
+- [Sidebar improvements → docs/implementation/feature-change-log.md](../../../docs/implementation/feature-change-log.md#sidebar-uiux-improvements-december-2025)
+
+## See also
+
+- [[Features]]
+- [[Breadcrumbs Navigation]]
+- [[Mobile TOC Floating Action Button]]

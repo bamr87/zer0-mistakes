@@ -120,8 +120,35 @@ jobs:
         
         # Analyze commit messages
         chmod +x ./scripts/analyze-commits.sh
-        BUMP_TYPE=$(./scripts/analyze-commits.sh "$COMMIT_RANGE" 2>/dev/null || echo "patch")
-        
+        echo "::group::Commit analysis (stderr stream)"
+        # Capture stdout (the bump type) while letting stderr stream to the job log.
+        # We deliberately do NOT silence stderr or fall back to a default — a
+        # crashing analyzer must fail the workflow so we never publish the wrong
+        # version (e.g. a silent fallback to "patch" on a breaking-change commit).
+        if ! BUMP_TYPE=$(./scripts/analyze-commits.sh "$COMMIT_RANGE"); then
+          echo "::endgroup::"
+          echo "::error title=Commit analyzer failed::analyze-commits exited non-zero. Inspect the stderr stream above."
+          exit 1
+        fi
+        echo "::endgroup::"
+
+        # Validate the analyzer returned a known bump type — anything else means
+        # the script regressed and we must not trust its output.
+        case "$BUMP_TYPE" in
+          patch|minor|major|none) ;;
+          *)
+            echo "::error title=Invalid bump type::analyze-commits returned '$BUMP_TYPE' (expected patch|minor|major|none)"
+            exit 1
+            ;;
+        esac
+
+        if [[ "$BUMP_TYPE" == "none" ]]; then
+          echo "bump_type=none" >> $GITHUB_OUTPUT
+          echo "should_release=false" >> $GITHUB_OUTPUT
+          echo "🚫 No releasable changes detected — skipping version bump"
+          exit 0
+        fi
+
         echo "bump_type=$BUMP_TYPE" >> $GITHUB_OUTPUT
         echo "should_release=true" >> $GITHUB_OUTPUT
         

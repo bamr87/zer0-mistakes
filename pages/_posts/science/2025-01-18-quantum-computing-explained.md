@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:48.000Z
 title: "Quantum Computing Explained: From Qubits to Quantum Advantage"
 description: "A beginner-friendly introduction to quantum computing and its revolutionary potential"
 preview: /images/previews/quantum-computing-explained-from-qubits-to-quantum.png

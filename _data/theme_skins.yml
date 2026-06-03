@@ -1,0 +1,14 @@
+# Theme skin registry — ordered list for UI iteration (cards, quick-select, preview).
+# Per-skin colors, gradients, and SVG assets live in theme_backgrounds.yml.
+# SCSS token wiring: _sass/theme/_skins.scss
+
+order:
+  - air
+  - aqua
+  - dirt
+  - neon
+  - mint
+  - plum
+  - sunrise
+
+default: air

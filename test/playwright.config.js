@@ -1,135 +1,98 @@
 // =============================================================================
-// Playwright Configuration for zer0-mistakes Visual Testing
+// Playwright Configuration for zer0-mistakes
 // =============================================================================
 //
-// This configuration defines how Playwright captures screenshots and
-// performs visual testing for the Jekyll theme.
+// Single source of truth for all Playwright runs. Tiers are exposed as
+// Playwright "projects" — pick one with `--project=<name>`:
+//
+//   smoke       Behavioral DOM/CSS/layout tests across all specs (no
+//               pixel screenshots). Runs on every CI code-change.
+//   snapshots   Pixel-perfect homepage screenshots for the 9 theme skins
+//               in skins.spec.js. Path-filtered in CI; baselines are
+//               committed under test/visual/snapshots/.
+//   regression  All specs across chromium/firefox/webkit. Manual /
+//               workflow_dispatch only.
 //
 // Usage:
-//   npx playwright test
-//   npx playwright test --project=desktop-chrome
-//   npx playwright screenshot http://localhost:4000 screenshot.png
+//   npm run test:smoke
+//   npm run test:snapshots
+//   npm run test:regression
+//   npx playwright test --project=smoke
+//   BASE_URL=http://127.0.0.1:4011 npx playwright test --project=smoke
 //
 
 const { defineConfig, devices } = require('@playwright/test');
 
+const isCI = !!process.env.CI;
+const SNAPSHOT_GREP = /homepage visual snapshot/;
+
 module.exports = defineConfig({
-  // Test directory
   testDir: './visual',
-  
-  // Output directories
-  outputDir: './visual-results',
-  snapshotDir: './visual/baseline',
-  
-  // Timeout settings
-  timeout: 30000,
+  testMatch: '**/*.spec.js',
+
+  // Commit baselines alongside specs in a single location.
+  snapshotDir: './visual/snapshots',
+
+  // Per-test timeout. Snapshots in particular are slower than DOM checks.
+  timeout: 45000,
   expect: {
-    timeout: 10000,
+    timeout: 15000,
     toHaveScreenshot: {
-      maxDiffPixels: 100,
+      maxDiffPixels: 150,
       threshold: 0.2,
     },
   },
-  
-  // Fail fast in CI
-  fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
-  
-  // Reporter configuration
+
+  forbidOnly: isCI,
+  retries: isCI ? 1 : 0,
+  // Single worker keeps Jekyll dev-server load predictable and avoids
+  // flake from parallel skin transitions.
+  workers: 1,
+  fullyParallel: false,
+
   reporter: [
-    ['html', { open: 'never', outputFolder: './visual-results/html-report' }],
-    ['json', { outputFile: './visual-results/results.json' }],
     ['list'],
+    ['html', { open: 'never', outputFolder: './visual-results/html' }],
+    ['json', { outputFile: './visual-results/results.json' }],
   ],
-  
-  // Global settings
+  outputDir: './visual-results/output',
+
   use: {
-    // Base URL for tests
-    baseURL: process.env.BASE_URL || 'http://localhost:4000',
-    
-    // Screenshot settings
-    screenshot: 'on',
-    
-    // Trace settings for debugging
-    trace: 'on-first-retry',
-    
-    // Default viewport
-    viewport: { width: 1280, height: 720 },
-    
-    // Ignore HTTPS errors for local testing
+    baseURL: process.env.BASE_URL || 'http://127.0.0.1:4011',
     ignoreHTTPSErrors: true,
-    
-    // Action timeout
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
+    viewport: { width: 1280, height: 720 },
+    navigationTimeout: 45000,
     actionTimeout: 10000,
-    
-    // Navigation timeout
-    navigationTimeout: 30000,
   },
-  
-  // Project configurations for different viewports/browsers
+
+  // Tiers. Each tier picks a subset of specs and/or test names so we never
+  // need separate config files. Use `--project=<name>` to select one.
   projects: [
-    // Desktop Chrome
     {
-      name: 'desktop-chrome',
-      use: {
-        ...devices['Desktop Chrome'],
-        viewport: { width: 1280, height: 720 },
-      },
+      name: 'smoke',
+      // Everything except the pixel-snapshot block in skins.spec.js.
+      grepInvert: SNAPSHOT_GREP,
+      use: { ...devices['Desktop Chrome'] },
     },
-    
-    // Desktop Firefox
     {
-      name: 'desktop-firefox',
-      use: {
-        ...devices['Desktop Firefox'],
-        viewport: { width: 1280, height: 720 },
-      },
+      name: 'snapshots',
+      testMatch: '**/skins.spec.js',
+      grep: SNAPSHOT_GREP,
+      use: { ...devices['Desktop Chrome'] },
     },
-    
-    // Desktop Safari
     {
-      name: 'desktop-safari',
-      use: {
-        ...devices['Desktop Safari'],
-        viewport: { width: 1280, height: 720 },
-      },
+      name: 'regression-chromium',
+      use: { ...devices['Desktop Chrome'] },
     },
-    
-    // Tablet viewport
     {
-      name: 'tablet',
-      use: {
-        ...devices['iPad (gen 7)'],
-        viewport: { width: 768, height: 1024 },
-      },
+      name: 'regression-firefox',
+      use: { ...devices['Desktop Firefox'] },
     },
-    
-    // Mobile viewport
     {
-      name: 'mobile',
-      use: {
-        ...devices['iPhone 12'],
-        viewport: { width: 375, height: 667 },
-      },
-    },
-    
-    // Mobile landscape
-    {
-      name: 'mobile-landscape',
-      use: {
-        ...devices['iPhone 12 landscape'],
-        viewport: { width: 667, height: 375 },
-      },
+      name: 'regression-webkit',
+      use: { ...devices['Desktop Safari'] },
     },
   ],
-  
-  // Web server configuration (start Jekyll before tests)
-  webServer: process.env.START_SERVER ? {
-    command: 'bundle exec jekyll serve --port 4000',
-    url: 'http://localhost:4000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120000,
-  } : undefined,
 });

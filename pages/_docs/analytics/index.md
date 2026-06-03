@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:30:03.000Z
 title: Analytics
 description: Analytics integration options for the Zer0-Mistakes theme including PostHog, Google Analytics, and Tag Manager.
+preview: /images/previews/analytics.png
 layout: default
 categories:
     - docs
@@ -11,7 +13,7 @@ tags:
     - privacy
 permalink: /docs/analytics/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---
@@ -97,3 +99,10 @@ See [Cookie Consent](/docs/features/cookie-consent/) for GDPR/CCPA compliant con
 - [Google Tag Manager](/docs/analytics/google-tag-manager/)
 - [Cookie Consent](/docs/features/cookie-consent/)
 - [Privacy Policy](/privacy-policy/)
+
+## See also
+
+- [[Features]]
+- [[Customization]]
+- [[SEO]]
+- [[Deployment]]

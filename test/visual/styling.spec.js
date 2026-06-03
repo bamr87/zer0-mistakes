@@ -1,9 +1,10 @@
 /**
  * Frontend styling smoke tests — bundled Bootstrap (assets/vendor) + Jekyll main.css.
- * Run: ./test/test_styling.sh   or   npm run test:styling
+ * Run: ./test/test_playwright.sh   or   npm run test:smoke
  * Requires a running Jekyll server; BASE_URL overrides the default origin.
  */
 const { test, expect } = require('@playwright/test');
+const { VIEWPORTS, UI_ROUTES, waitForJekyll } = require('./fixtures');
 
 function isSameOriginStylesheet(url, baseURL) {
   try {
@@ -62,8 +63,8 @@ test.describe('Theme stylesheets', () => {
 
 test.describe('Layout chrome', () => {
   test('desktop header and navbar render', async ({ page }) => {
-    await page.setViewportSize({ width: 1280, height: 720 });
-    await page.goto('/');
+    await page.setViewportSize(VIEWPORTS.desktop);
+    await waitForJekyll(page, UI_ROUTES.home);
     await expect(page.locator('header#navbar')).toBeVisible();
     // Bootstrap `.navbar` is on the wrapper div; inner element is `nav.navbar-main`
     await expect(page.locator('header#navbar .navbar.navbar-expand-lg')).toBeVisible();
@@ -76,16 +77,34 @@ test.describe('Layout chrome', () => {
   });
 
   test('mobile main navigation toggle is visible', async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto('/');
+    await page.setViewportSize(VIEWPORTS.mobile);
+    await waitForJekyll(page, UI_ROUTES.home);
     // Exclude offcanvas close buttons that also reference #bdNavbar
     const toggler = page.locator('.bd-navbar-toggle.d-lg-none button.navbar-toggler[data-bs-target="#bdNavbar"]');
     await expect(toggler).toBeVisible();
   });
 
   test('default layout page exposes docs-layout regions', async ({ page }) => {
-    await page.goto('/faq/');
+    await waitForJekyll(page, UI_ROUTES.faq);
     await expect(page.locator('main.bd-main')).toBeVisible();
     await expect(page.locator('.bd-content')).toBeVisible();
+  });
+});
+
+test.describe('Design tokens — CSS variables', () => {
+  test('--zer0-color-primary resolves on :root', async ({ page }) => {
+    await waitForJekyll(page, UI_ROUTES.home);
+    const value = await page.evaluate(() =>
+      getComputedStyle(document.documentElement).getPropertyValue('--zer0-color-primary').trim()
+    );
+    expect(value.length).toBeGreaterThan(0);
+  });
+
+  test('--zer0-bp-lg resolves to a pixel value', async ({ page }) => {
+    await waitForJekyll(page, UI_ROUTES.home);
+    const value = await page.evaluate(() =>
+      getComputedStyle(document.documentElement).getPropertyValue('--zer0-bp-lg').trim()
+    );
+    expect(value).toMatch(/^\d+px$/);
   });
 });

@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:30:01.000Z
 title: Deployment
 description: Deploy your Zer0-Mistakes Jekyll site to various hosting platforms.
+preview: /images/previews/deployment.png
 layout: default
 categories:
     - docs
@@ -12,7 +14,7 @@ tags:
     - netlify
 permalink: /docs/deployment/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---
@@ -71,3 +73,10 @@ In production, ensure:
 - [GitHub Pages Guide](github-pages/) — Free hosting with automatic deploys
 - [Netlify Guide](netlify/) — Advanced hosting features
 - [Custom Domain Setup](custom-domain/) — Use your own domain
+
+## See also
+
+- [[Docker]]
+- [[Jekyll]]
+- [[SEO]]
+- [[Analytics]]

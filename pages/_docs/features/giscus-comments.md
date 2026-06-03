@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:29:59.000Z
 title: Giscus Comments
 description: Integrate GitHub Discussions-powered comments into your Jekyll site using Giscus - a modern, privacy-friendly alternative to Disqus.
+preview: /images/previews/giscus-comments.png
 layout: default
 categories:
     - docs
@@ -12,7 +14,7 @@ tags:
     - github-discussions
 permalink: /docs/features/giscus-comments/
 difficulty: beginner
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 prerequisites:
     - GitHub account
     - Jekyll site repository on GitHub
@@ -185,3 +187,8 @@ If pages are creating duplicate discussions:
 ---
 
 *This guide is part of the [Zer0-Mistakes Jekyll Theme](https://github.com/bamr87/zer0-mistakes) documentation.*
+
+## See also
+
+- [[Features]]
+- [[PostHog Analytics]]

@@ -34,7 +34,7 @@ The CI pipeline validates code quality, runs tests, builds the gem, and performs
 | `detect-changes` | Identifies code/docker/content changes | Always | 3 min |
 | `fast-checks` | Quick syntax validation | Code changes only | 5 min |
 | `quality-checks` | Linting, security audit, markdown checks | Always (covers docs PRs) | 10 min |
-| `test` | Full test suite (Ruby ${{ matrix.ruby }}) + Playwright styling | Code changes only | 25 min |
+| `test` | Full test suite (Ruby ${{ matrix.ruby }}) + Playwright smoke tier (and snapshots when CSS/layout changes) | Code changes only | 25 min |
 | `build` | Gem build, validation, and install test | Code changes only | 10 min |
 | `integration` | Docker build + critical page accessibility | Code or Docker changes | 12 min |
 
@@ -45,15 +45,20 @@ detect-changes → fast-checks → quality-checks → test → build
 ```
 
 #### Manual Dispatch Options:
-- **test_scope**: `fast` or `standard`
+- **test_scope**: `fast` (skips Playwright snapshot tier) or `standard`
 - **fix_markdown**: Auto-fix markdown formatting issues
 
 #### Path Filter Behavior:
 | Change Type | Jobs Run | Estimated Time |
 |-------------|----------|----------------|
 | Markdown/docs only | detect-changes, quality-checks | ~3 min |
-| Code changes | All jobs | ~15 min |
+| Code changes (no styling) | All jobs; Playwright snapshot tier skipped | ~12 min |
+| Styling changes (`_sass/`, `assets/`, `_layouts/`, `_includes/`, `test/visual/`) | All jobs incl. Playwright snapshot tier | ~15 min |
 | Docker changes | detect-changes, quality-checks, integration | ~8 min |
+
+#### Playwright tiers in the `test` job:
+- **Smoke** — runs on every code-change PR (CSS load, Bootstrap tokens, layout chrome, behavioral DOM, a11y component checks). Failures upload `test/visual-results/` as a `playwright-smoke` artifact (14-day retention).
+- **Snapshots** — path-filtered to styling changes; pixel screenshots of the homepage in each of the 9 theme skins. Failures upload as `playwright-snapshots`. Baselines live in `test/visual/snapshots/` (committed). Refresh with `./test/update-snapshots.sh` and commit.
 
 ---
 
@@ -176,6 +181,10 @@ See [`.github/actions/README.md`](../actions/README.md) for action documentation
 To test workflows locally before pushing:
 
 ```bash
+# Canonical preflight validation
+./scripts/validate --quick
+./scripts/validate --start-docker
+
 # Preview version bump
 ./scripts/release patch --dry-run
 
@@ -183,7 +192,7 @@ To test workflows locally before pushing:
 ./scripts/build
 
 # Run tests
-./test/test_runner.sh --verbose
+./scripts/bin/test --verbose
 
 # Analyze commits for version bump type
 ./scripts/analyze-commits.sh HEAD~5..HEAD
@@ -207,5 +216,6 @@ To test workflows locally before pushing:
 
 ### CI failures
 - Check individual job logs for specific errors
-- Run tests locally: `./test/test_runner.sh`
+- Run quick validation locally: `./scripts/validate --quick`
+- Run tests locally: `./scripts/bin/test`
 - Validate gem: `./scripts/build && gem spec jekyll-theme-zer0-*.gem`

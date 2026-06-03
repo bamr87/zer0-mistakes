@@ -44,6 +44,14 @@ layout: root
   ===================================================================
 -->
 
+{%- comment -%}
+  Landing copy is data-driven via _data/landing.yml. Defaults shipped with the
+  theme cover hero CTAs, features section, and get-started copy; consumers can
+  override by copying that file into their site's _data/ folder.
+{%- endcomment -%}
+{%- assign landing = site.data.landing -%}
+{%- assign github_url = site.resources.github_repo | default: "" | join: "" -%}
+
 <!-- ================================ -->
 <!-- HERO SECTION                     -->
 <!-- ================================ -->
@@ -54,38 +62,66 @@ layout: root
                 <h1 class="display-4 fw-bold mb-3">{{ page.title }}</h1>
                 <p class="lead mb-4">{{ page.description }}</p>
                 <div class="d-flex flex-column flex-md-row gap-3 flex-wrap">
-                    <a href="#get-started" class="btn btn-light btn-lg">
-                        <i class="bi bi-rocket-takeoff me-2"></i>Get Started
-                    </a>
-                    <a href="#features" class="btn btn-outline-light btn-lg">
-                        <i class="bi bi-list-check me-2"></i>Features
-                    </a>
-                    <a href="{{ site.resources.github_repo | default: '' | join: '' }}" class="btn btn-outline-light btn-lg" target="_blank" rel="noopener">
-                        <i class="bi bi-github me-2"></i>GitHub
-                    </a>
+                    {%- if landing.hero.cta_primary -%}
+                      {% include components/cta-button.html
+                          label=landing.hero.cta_primary.label
+                          url=landing.hero.cta_primary.url
+                          icon=landing.hero.cta_primary.icon
+                          variant=landing.hero.cta_primary.variant
+                          size="lg" %}
+                    {%- endif -%}
+                    {%- if landing.hero.cta_secondary -%}
+                      {% include components/cta-button.html
+                          label=landing.hero.cta_secondary.label
+                          url=landing.hero.cta_secondary.url
+                          icon=landing.hero.cta_secondary.icon
+                          variant=landing.hero.cta_secondary.variant
+                          size="lg" %}
+                    {%- endif -%}
+                    {%- if landing.hero.cta_tertiary -%}
+                      {%- assign tert_url = landing.hero.cta_tertiary.url | default: "" -%}
+                      {%- if tert_url == "" -%}{%- assign tert_url = github_url -%}{%- endif -%}
+                      {% include components/cta-button.html
+                          label=landing.hero.cta_tertiary.label
+                          url=tert_url
+                          icon=landing.hero.cta_tertiary.icon
+                          variant=landing.hero.cta_tertiary.variant
+                          external=landing.hero.cta_tertiary.external
+                          size="lg" %}
+                    {%- endif -%}
                 </div>
             </div>
             <div class="col-lg-6 text-center order-2">
+                {%- comment -%}
+                  Inline `aspect-ratio` + `max-width` reserve the final box size BEFORE
+                  external CSS parses, eliminating the post-load "jerk" caused by the
+                  vendored Bootstrap `.ratio` class loading after first paint.
+                {%- endcomment -%}
                 {% if page.hero_image %}
-                <div class="landing-hero-media ratio ratio-4x3 mx-auto shadow-lg rounded overflow-hidden">
+                <div class="landing-hero-media mx-auto shadow-lg rounded overflow-hidden"
+                     style="aspect-ratio: 4 / 3; max-width: min(100%, 28rem); width: 100%;">
                     <img
                         src="{{ page.hero_image | relative_url }}"
                         alt="{{ page.title }}"
-                        class="w-100 h-100"
+                        class="landing-hero-img w-100 h-100"
                         width="800"
                         height="600"
                         loading="eager"
                         decoding="async"
                         fetchpriority="high"
-                        style="object-fit: contain;"
+                        style="object-fit: contain; display: block;"
                     >
+                    {%- comment -%}
+                      The `.is-loaded` opacity transition is applied by
+                      assets/js/ui-helpers.js (bindHeroImages), so authors do
+                      not need to wire an inline onload handler.
+                    {%- endcomment -%}
                 </div>
                 {% else %}
-                <div class="landing-hero-media ratio ratio-4x3 mx-auto shadow-lg rounded overflow-hidden">
-                    <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center bg-secondary bg-opacity-25 text-body rounded">
-                        <i class="bi bi-code-square display-1"></i>
-                        <p class="mt-3 mb-0 px-3">Jekyll Theme</p>
-                    </div>
+                <div class="landing-hero-media mx-auto shadow-lg rounded overflow-hidden d-flex flex-column align-items-center justify-content-center bg-secondary bg-opacity-25 text-body"
+                     style="aspect-ratio: 4 / 3; max-width: min(100%, 28rem); width: 100%;">
+                    <i class="bi bi-code-square display-1"></i>
+                    <p class="mt-3 mb-0 px-3">Jekyll Theme</p>
                 </div>
                 {% endif %}
             </div>
@@ -98,74 +134,64 @@ layout: root
 <!-- ================================ -->
 {% include landing/landing-quick-links.html %}
 
-<div class="container-xl py-5 px-4 px-md-5">
+{%- comment -%}
+  The hero already renders `<h1>{{ page.title }}</h1>`. Mark the markdown
+  body region so SCSS can suppress any duplicate first <h1> coming from the
+  source file (common in README-as-homepage setups where the file needs its
+  own H1 for the GitHub render). See _sass/layouts/_landing.scss.
+{%- endcomment -%}
+<div class="container-xl py-5 px-4 px-md-5 landing-content-body">
     {{ content }}
 </div>
 
 <!-- ================================ -->
-<!-- FEATURES SECTION                 -->
+<!-- FEATURES SECTION (data-driven)   -->
 <!-- ================================ -->
-<div class="py-5 bg-body-tertiary" id="features">
-    <div class="container-xl px-4 px-md-5">
-        <div class="row text-center mb-5">
-            <div class="col-lg-8 mx-auto">
-        <h2 class="display-5 fw-bold text-body-emphasis">Why Choose zer0-mistakes?</h2>
-        <p class="lead text-body-secondary">Built for developers who value reliability, simplicity, and modern workflows</p>
-            </div>
-        </div>
-        
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm feature-card">
-                    <div class="card-body text-center p-4">
-                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 feature-icon" style="width: 60px; height: 60px;">
-                            <i class="bi bi-shield-check fs-4"></i>
-                        </div>
-                        <h5 class="card-title text-body-emphasis">Error-Free Development</h5>
-                        <p class="card-text text-body-secondary">Built-in error handling and self-healing installation process ensures a smooth development experience.</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm feature-card">
-                    <div class="card-body text-center p-4">
-                        <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 feature-icon" style="width: 60px; height: 60px;">
-                            <i class="bi bi-boxes fs-4"></i>
-                        </div>
-                        <h5 class="card-title text-body-emphasis">Docker-First Approach</h5>
-                        <p class="card-text text-body-secondary">Cross-platform compatibility with zero local configuration. Works on Apple Silicon, Intel, and Linux.</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm feature-card">
-                    <div class="card-body text-center p-4">
-                        <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 feature-icon" style="width: 60px; height: 60px;">
-                            <i class="bi bi-lightning-charge fs-4"></i>
-                        </div>
-                        <h5 class="card-title text-body-emphasis">AI-Powered Setup</h5>
-                        <p class="card-text text-body-secondary">Intelligent installation automation that detects and fixes common issues automatically.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+{%- if landing.features.items -%}
+<section id="features" class="zer0-section bg-body-tertiary" aria-labelledby="features-heading">
+  <div class="container-xl py-5 px-4 px-md-5">
+    <div class="row text-center mb-5">
+      <div class="col-lg-8 mx-auto">
+        <h2 id="features-heading" class="display-5 fw-bold text-body-emphasis">{{ landing.features.heading }}</h2>
+        {%- if landing.features.lead -%}
+        <p class="lead text-body-secondary">{{ landing.features.lead }}</p>
+        {%- endif -%}
+      </div>
     </div>
-</div>
+
+    <div class="row g-4">
+      {%- for item in landing.features.items -%}
+      <div class="col-md-4">
+        <div class="card landing-feature-card h-100 border-0 shadow-sm">
+          <div class="card-body text-center p-4">
+            <div class="{{ item.icon_bg | default: 'bg-primary' }} text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 landing-feature-icon">
+              <i class="bi {{ item.icon | default: 'bi-stars' }} fs-4" aria-hidden="true"></i>
+            </div>
+            <h3 class="h5 card-title text-body-emphasis">{{ item.title }}</h3>
+            <p class="card-text text-body-secondary">{{ item.description }}</p>
+          </div>
+        </div>
+      </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{%- endif -%}
 
 <!-- ================================ -->
-<!-- QUICK START SECTION             -->
+<!-- QUICK START SECTION (data-driven)-->
 <!-- ================================ -->
-<div class="container-xl py-5 px-4 px-md-5" id="get-started">
+<section id="get-started" class="zer0-section" aria-labelledby="get-started-heading">
+  <div class="container-xl py-5 px-4 px-md-5">
     <div class="row">
-        <div class="col-12 col-xl-10 mx-auto text-center">
-            <h2 class="display-5 fw-bold mb-4">Ready to Get Started?</h2>
-            <p class="lead mb-4">Choose your preferred installation method and be up and running in minutes</p>
-            {% include landing/landing-install-cards.html %}
-        </div>
+      <div class="col-12 col-xl-10 mx-auto text-center">
+        <h2 id="get-started-heading" class="display-5 fw-bold mb-4">{{ landing.get_started.heading | default: "Ready to Get Started?" }}</h2>
+        <p class="lead mb-4">{{ landing.get_started.lead | default: "Choose your preferred installation method and be up and running in minutes" }}</p>
+        {% include landing/landing-install-cards.html %}
+      </div>
     </div>
-</div>
+  </div>
+</section>
 
 <!-- ================================ -->
 <!-- AUTHOR / E-E-A-T SECTION        -->

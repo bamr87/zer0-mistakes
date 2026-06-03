@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:29:56.000Z
 title: Security Scanning
 description: Guide to CodeQL security scanning and security best practices for the Zer0-Mistakes theme.
+preview: /images/previews/security-scanning.png
 layout: default
 categories:
     - docs
@@ -12,7 +14,7 @@ tags:
     - scanning
 permalink: /docs/development/security/
 difficulty: intermediate
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 prerequisites:
     - GitHub repository access
 sidebar:
@@ -242,3 +244,9 @@ For critical issues:
 - [Testing Guide](/docs/development/testing/)
 - [CI/CD Pipeline](/docs/development/ci-cd/)
 - [Dependency Updates](/docs/development/dependency-updates/)
+
+## See also
+
+- [[Development]]
+- [[Dependency Updates]]
+- [[CI/CD Pipeline]]

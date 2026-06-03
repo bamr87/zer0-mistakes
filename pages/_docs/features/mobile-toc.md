@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:29:59.000Z
 title: Mobile TOC Floating Action Button
 description: Redesigned mobile table of contents access with FAB pattern for better usability on touch devices.
+preview: /images/previews/mobile-toc-floating-action-button.png
 layout: default
 categories:
     - docs
@@ -12,7 +14,7 @@ tags:
     - responsive
 permalink: /docs/features/mobile-toc/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---
@@ -209,3 +211,9 @@ The button announces:
 - [Sidebar Navigation](/docs/features/sidebar-navigation/)
 - [Table of Contents](/docs/features/toc/)
 - [Keyboard Navigation](/docs/features/keyboard-navigation/)
+
+## See also
+
+- [[Features]]
+- [[Table of Contents]]
+- [[Sidebar Navigation System]]

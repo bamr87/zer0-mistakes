@@ -1,0 +1,30 @@
+{% comment %}
+  ===================================================================
+  SETUP BANNER - Persistent notification for unconfigured sites
+  ===================================================================
+
+  File: setup-banner.html
+  Path: _includes/components/setup-banner.html
+  Purpose: Shows a dismissible top-bar when the site still needs
+           configuration. Disappears once site_configured is true.
+
+  Usage (add to root.html or any layout):
+    include components/setup-banner.html
+
+  Dependencies: components/setup-check.html (auto-included)
+  ===================================================================
+{% endcomment %}
+
+{%- comment -%}
+  Fast-exit: skip all setup detection when site_configured is true.
+  This prevents ~150 redundant include calls + heuristic string comparisons
+  on every page render for sites that have already been configured.
+
+  When the site IS unconfigured, the banner output depends only on site
+  config (not per-page state), so it's safe to cache the entire body via
+  jekyll-include-cache. That collapses N per-page renders into a single
+  render reused across the whole build.
+{%- endcomment -%}
+{% unless site.site_configured %}
+  {% include_cached components/setup-banner-inner.html %}
+{% endunless %}

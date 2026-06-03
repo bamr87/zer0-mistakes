@@ -1,6 +1,7 @@
 ---
 title: Front Matter
 description: How to use front matter for Jekyll pages, posts, and collections.
+preview: /images/previews/front-matter.png
 layout: default
 categories:
     - docs
@@ -10,9 +11,9 @@ tags:
     - yaml
 permalink: /docs/front-matter/
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 prerequisites: []
-updated: 2025-12-20
+lastmod: 2025-12-20
 lastmod: 2025-12-20T22:15:46.744Z
 sidebar:
     nav: docs
@@ -50,7 +51,7 @@ layout: default          # Required: Template to use from _layouts/
 ```yaml
 ---
 title: "Post Title"
-layout: journals
+layout: article
 date: 2025-01-15         # Required for posts: Publication date
 ---
 ```
@@ -89,7 +90,7 @@ permalink: /custom-url/   # Override default URL
 
 ```yaml
 ---
-preview: /images/preview.png    # Social sharing image
+preview: /images/previews/front-matter.png
 toc: true                       # Show table of contents
 comments: true                  # Enable comments (if configured)
 sidebar:
@@ -116,11 +117,11 @@ Available layouts in Zer0-Mistakes:
 ```yaml
 ---
 difficulty: beginner          # beginner, intermediate, advanced
-estimated_time: "10 minutes"
+estimated_reading_time: "10 minutes"
 prerequisites:
     - Docker installed
     - Basic Jekyll knowledge
-updated: 2025-01-15
+lastmod: 2025-01-15
 ---
 ```
 
@@ -129,7 +130,7 @@ updated: 2025-01-15
 ```yaml
 ---
 excerpt: "Custom excerpt for listings"
-preview: /images/post-preview.png
+preview: /images/previews/front-matter.png
 featured: true               # Feature on homepage
 ---
 ```
@@ -167,10 +168,10 @@ tags:
     - docker
 permalink: /docs/installation/
 difficulty: beginner
-estimated_time: "10 minutes"
+estimated_reading_time: "10 minutes"
 prerequisites:
     - Docker Desktop
-updated: 2025-01-15
+lastmod: 2025-01-15
 sidebar:
     nav: docs
 ---
@@ -182,7 +183,7 @@ sidebar:
 ---
 title: "Getting Started with Jekyll"
 description: "Learn the basics of Jekyll static site generation"
-layout: journals
+layout: article
 date: 2025-01-15
 lastmod: 2025-01-20
 author: "Amr"
@@ -192,7 +193,7 @@ categories:
 tags:
     - jekyll
     - getting-started
-preview: /images/jekyll-tutorial.png
+preview: /images/previews/front-matter.png
 comments: true
 ---
 ```
@@ -202,3 +203,10 @@ comments: true
 - [Jekyll Guide](/docs/jekyll/)
 - [Jekyll Configuration](/docs/jekyll/jekyll-config/)
 - [Liquid Templating](/docs/liquid/)
+
+## See also
+
+- [[Jekyll]]
+- [[Liquid]]
+- [[SEO]]
+- [[Customization]]

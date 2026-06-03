@@ -1,25 +1,3 @@
-<!--
-  ===================================================================
-  STATS TAGS COMPONENT
-  ===================================================================
-  
-  File: stats-tags.html
-  Path: _includes/stats/stats-tags.html
-  Purpose: Tags analysis section for statistics dashboard
-  
-  Features:
-  - Top tags list with usage counts
-  - Tag cloud visualization
-  - Bootstrap styled card layout
-  - Interactive tag display
-  
-  Dependencies:
-  - Bootstrap 5 for styling
-  - Bootstrap Icons for iconography
-  - site.data.content_statistics.tags
-  ===================================================================
--->
-
 <!-- ================================================ -->
 <!-- TAGS ANALYSIS SECTION                           -->
 <!-- Top tags with usage counts                      -->
@@ -40,13 +18,14 @@
     {% if site.data.content_statistics.tags and site.data.content_statistics.tags.size > 0 %}
       
       <!-- Tags List -->
-      <div class="list-group list-group-flush">
-        {% for tag in site.data.content_statistics.tags limit: 15 %}
-          <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+      <div class="list-group list-group-flush stats-taxonomy-list">
+        {% for tag in site.data.content_statistics.tags %}
+          <div class="list-group-item d-flex justify-content-between align-items-center{% if forloop.index > 15 %} d-none stats-tag-extra{% endif %}">
             <div class="d-flex align-items-center">
-              <i class="bi bi-tag text-success me-3"></i>
+              <i class="bi bi-tag text-success me-2"></i>
               <div>
-                <span class="fw-medium">{{ tag[0] }}</span>
+                <a href="{{ '/tags/' | relative_url }}#{{ tag[0] | slugify }}"
+                   class="stats-taxonomy-link fw-medium">{{ tag[0] }}</a>
                 {% assign max_tag = site.data.content_statistics.tags | first %}
                 {% assign max_count = max_tag[1] | default: 1 %}
                 {% assign frequent_threshold = max_count | times: 0.6 | round %}
@@ -69,6 +48,22 @@
           </div>
         {% endfor %}
       </div>
+
+      {% if site.data.content_statistics.tags.size > 15 %}
+        <div class="card-footer text-center">
+          <button class="btn btn-outline-success btn-sm"
+                  type="button"
+                  onclick="toggleAllTags(this)"
+                  aria-expanded="false"
+                  data-hidden-count="{{ site.data.content_statistics.tags.size | minus: 15 }}">
+            <i class="bi bi-chevron-down"></i>
+            Show {{ site.data.content_statistics.tags.size | minus: 15 }} more tags
+          </button>
+        </div>
+        {% unless site.data.content_statistics.categories.size > 15 %}
+          <script defer src="{{ '/assets/js/stats.js' | relative_url }}"></script>
+        {% endunless %}
+      {% endif %}
       
       <!-- Tag Cloud Section -->
       <div class="card-footer">

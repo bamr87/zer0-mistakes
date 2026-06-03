@@ -1,0 +1,274 @@
+# =============================================================================
+# zer0-mistakes Backlog — Tactical Task Queue (Single Source of Truth)
+# =============================================================================
+#
+# This file is the canonical, machine-readable backlog of *tactical* tasks
+# (the granular, pickup-able work items). It complements `_data/roadmap.yml`,
+# which holds the *strategic* milestones.
+#
+# It powers the continuous-evolution loop:
+#
+#   1. The AUDIT routine (`.github/prompts/repo-audit.prompt.md`) appends new
+#      tasks here when it reviews the repo.
+#   2. `scripts/sync-backlog.rb` (run by `.github/workflows/backlog-sync.yml`)
+#      mirrors each open task to a GitHub Issue and closes issues for tasks
+#      marked `done`.
+#   3. The IMPLEMENT routine (`.github/prompts/backlog-implement.prompt.md`)
+#      picks the highest-priority open task, implements it, and opens a PR.
+#
+# See `docs/systems/continuous-evolution.md` for the full design.
+#
+# To add a task by hand:
+#   1. Copy the schema block below; give it the next free `T-NNN` id.
+#   2. Set status/priority/area/risk/effort/source and acceptance criteria.
+#   3. Commit. The sync workflow creates the matching GitHub Issue on push.
+#
+# =============================================================================
+# Schema
+# =============================================================================
+#
+# meta:
+#   title:    Display title
+#   updated:  Last-reviewed date (YYYY-MM-DD)
+#   next_id:  Next free task id number (the audit routine increments this)
+#
+# tasks:
+#   - id:         Stable task id, "T-NNN" (never reused; matches the GitHub Issue)
+#     title:      One line — becomes the GitHub Issue title
+#     status:     open | in-progress | blocked | done
+#     priority:   P0 (urgent) | P1 | P2 | P3 (nice-to-have)
+#     area:       tests | docs | feat | infra | a11y | perf | deps | lint
+#     risk:       low (auto-merge eligible) | standard (human review required)
+#     effort:     S | M | L
+#     source:     audit | roadmap | issue | user
+#     summary:    1–2 lines of context
+#     acceptance: List of checkable done-criteria the implement routine verifies
+#     links:      { issue: <#|null>, pr: <#|null>, roadmap: "<version>|null" }
+#     created:    YYYY-MM-DD
+#     updated:    YYYY-MM-DD
+#
+# `risk: low` + area in {docs, deps, lint} makes a task auto-merge eligible once
+# CI is green (see `.github/prompts/backlog-implement.prompt.md`). Everything
+# else stays PR-only for human review.
+#
+# =============================================================================
+
+meta:
+  title: "zer0-mistakes Backlog"
+  updated: 2026-06-01
+  next_id: 12
+
+tasks:
+  # --- Housekeeping (seeded so the loop has work on day one) ------------------
+
+  - id: T-001
+    title: "Reconcile roadmap milestone numbering with the published gem version"
+    status: open
+    priority: P2
+    area: docs
+    risk: standard
+    effort: M
+    source: user
+    summary: >-
+      `_data/roadmap.yml` milestones run 0.17–1.0 while the gem ships as 1.9.9.
+      Decide on a single numbering scheme (or document the mapping) so the
+      roadmap, README, and RubyGems version no longer contradict each other.
+    acceptance:
+      - "Roadmap version line and gem version no longer contradict (either remapped or an explicit mapping note added to `_data/roadmap.yml` and `pages/roadmap.md`)."
+      - "`./scripts/generate-roadmap.sh --check` passes after the change."
+      - "No edit to `lib/jekyll-theme-zer0/version.rb`."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-05-31
+    updated: 2026-05-31
+
+  - id: T-002
+    title: "Refresh roadmap `updated:` date and review milestone statuses"
+    status: open
+    priority: P3
+    area: docs
+    risk: low
+    effort: S
+    source: user
+    summary: >-
+      `_data/roadmap.yml` `meta.updated` is 2026-04-18. Refresh it and confirm
+      the 0.22 "active" milestone still reflects reality.
+    acceptance:
+      - "`meta.updated` set to the current date."
+      - "Active/planned statuses reviewed against shipped work."
+      - "`./scripts/generate-roadmap.sh --check` passes."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-05-31
+    updated: 2026-05-31
+
+  - id: T-003
+    title: "Add GitHub issue templates and a pull-request template"
+    status: open
+    priority: P2
+    area: infra
+    risk: standard
+    effort: M
+    source: user
+    summary: >-
+      The repo has no `.github/ISSUE_TEMPLATE/` or PR template. Add a bug-report
+      and feature-request issue form plus a PR template that nudges contributors
+      toward conventional commits, CHANGELOG updates, and the test checklist.
+    acceptance:
+      - "`.github/ISSUE_TEMPLATE/bug_report.yml` and `feature_request.yml` exist and render."
+      - "`.github/pull_request_template.md` exists with a conventional-commit + CHANGELOG + tests checklist."
+      - "Agent-filed backlog issues remain compatible with the new templates (no broken automation)."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-05-31
+    updated: 2026-05-31
+
+  - id: T-004
+    title: "Docs-freshness sweep: reconcile docs/ ↔ pages/_docs/ and fix broken links"
+    status: open
+    priority: P2
+    area: docs
+    risk: low
+    effort: M
+    source: user
+    summary: >-
+      Run the markdown-link checker and audit the two-tier docs for drift,
+      stale dates/versions, and any user/technical pages that fell out of sync
+      after the recent alignment commit.
+    acceptance:
+      - "`markdown-link-check` (config in `.github/config/`) reports no broken internal links."
+      - "Any stale version/date references in `docs/` and `pages/_docs/` are corrected."
+      - "Cross-links between the user tier and technical tier resolve both ways."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-05-31
+    updated: 2026-05-31
+
+  - id: T-005
+    title: "Coverage baseline: identify the lowest-covered subsystems toward the v1.0 90% goal"
+    status: open
+    priority: P1
+    area: tests
+    risk: standard
+    effort: L
+    source: roadmap
+    summary: >-
+      The v1.0 milestone targets 90%+ automated test coverage. Produce a
+      coverage baseline and file follow-up tasks for the lowest-covered areas
+      (start with the modular installer and the Obsidian resolver paths).
+    acceptance:
+      - "A coverage baseline is recorded (test/coverage or a docs note)."
+      - "The 2–3 lowest-covered subsystems are identified and filed as new backlog tasks."
+      - "No reduction in existing passing tests (`./scripts/bin/test` stays green)."
+    links: { issue: null, pr: null, roadmap: "1.0" }
+    created: 2026-05-31
+    updated: 2026-05-31
+
+  # --- 2026-06-01 audit -------------------------------------------------------
+
+  - id: T-007
+    title: "Fix global navbar WCAG 2.1 AA violations to enable axe-core full-audit tests"
+    status: open
+    priority: P1
+    area: a11y
+    risk: standard
+    effort: M
+    source: audit
+    summary: >-
+      Three tests in `test/visual/accessibility.spec.js` are frozen with `test.fixme`
+      because four WCAG 2.1 AA violations in the global navbar prevent them from passing:
+      `aria-required-children` (menubar/button nesting), `link-name` (icon-only nav links),
+      `list` (footer list structure), and `scrollable-region-focusable` (code blocks).
+      Fix the HTML/ARIA in `_includes/` and `_layouts/` to make the full axe-core audit green.
+    acceptance:
+      - "All four violations listed in the `test.fixme` comment are resolved in `_includes/` / `_layouts/`."
+      - "The three `test.fixme` blocks in `test/visual/accessibility.spec.js` are changed to live `test()` calls and pass in CI."
+      - "`bundle exec ./scripts/bin/validate --quick` still passes."
+      - "No visual regression in smoke snapshot tests."
+    links: { issue: null, pr: null, roadmap: "1.9" }
+    created: 2026-06-01
+    updated: 2026-06-01
+
+  - id: T-008
+    title: "Fix theme-customizer YAML export to quote hex color values"
+    status: open
+    priority: P2
+    area: feat
+    risk: standard
+    effort: S
+    source: audit
+    summary: >-
+      The JS theme-customizer export serialises CSS custom-property values directly into
+      YAML without quoting strings that start with `#`. Unquoted `#RRGGBB` is treated as a
+      YAML comment by parsers, silently dropping colour values. A regression guard in
+      `test/visual/theme-colors.spec.js` is frozen as `test.fixme` until the bug is fixed.
+    acceptance:
+      - "JS export wraps every hex colour value (matching `/#[0-9a-fA-F]{3,8}/`) in double quotes in the generated YAML."
+      - "The `test.fixme` in `test/visual/theme-colors.spec.js` is promoted to a live `test()` and passes in CI."
+      - "Exported YAML is valid when parsed by `yaml.safe_load` in Ruby."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-06-01
+    updated: 2026-06-01
+
+  - id: T-009
+    title: "Sanitize sensitive config keys from admin config-page DOM injection"
+    status: open
+    priority: P1
+    area: infra
+    risk: standard
+    effort: S
+    source: audit
+    summary: >-
+      The admin config page injects raw `_config.yml` content into a hidden
+      `<pre id="cfg-full-yaml">` element. If the config contains secrets
+      (`api_key`, `token`, PostHog `phc_*` keys, etc.) they are exposed in the page
+      DOM. A regression test in `test/visual/security.spec.js` is frozen as
+      `test.fixme` until a sanitisation pass is in place.
+    acceptance:
+      - "The Liquid/Ruby that populates `<pre id=\"cfg-full-yaml\">` strips or masks keys matching `api_key`, `secret`, `password`, `token`, and `phc_` prefix before DOM injection."
+      - "The `test.fixme` in `test/visual/security.spec.js` is promoted to a live `test()` and passes in CI."
+      - "The visible config display in the admin UI is unaffected (only the raw hidden element is sanitised)."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-06-01
+    updated: 2026-06-01
+
+  - id: T-010
+    title: "Complete v1.9 quickstart docs rewrite with getting-started guide and screenshots"
+    status: open
+    priority: P2
+    area: docs
+    risk: low
+    effort: M
+    source: roadmap
+    summary: >-
+      The v1.9 milestone lists "Quickstart documentation rewrite with screenshots"
+      as a deliverable, but `pages/_docs/quickstart/` contains only `bare-minimum.md`.
+      Add a proper quickstart index page and at least one full getting-started guide
+      (covering the standard GitHub Pages workflow) with annotated screenshots.
+    acceptance:
+      - "`pages/_docs/quickstart/index.md` exists with a nav overview linking to available quickstart guides."
+      - "At least one guide beyond `bare-minimum.md` covers the standard fork/remote-theme workflow."
+      - "Each guide includes at least one screenshot stored under `assets/images/docs/quickstart/`."
+      - "All new pages pass `docs-validate.yml` front-matter and link checks."
+    links: { issue: null, pr: null, roadmap: "1.9" }
+    created: 2026-06-01
+    updated: 2026-06-01
+
+  - id: T-011
+    title: "Add Ruby unit tests for uncovered _plugins/ generators"
+    status: open
+    priority: P2
+    area: tests
+    risk: standard
+    effort: M
+    source: audit
+    summary: >-
+      Three Jekyll plugins have no dedicated unit tests: `content_statistics_generator.rb`,
+      `preview_image_generator.rb`, and `admin_page_urls.rb`. The quality suite has
+      URL-pattern checks (`test_preview_image_urls`) but no specs that exercise the
+      generator logic in isolation. This is a concrete gap on the path to the
+      3.0-milestone 90% coverage target.
+    acceptance:
+      - "`test/test_ruby_converter.rb`-style RSpec or Minitest specs exist for all three plugins."
+      - "Each spec runs independently without a running Jekyll server (`bundle exec ruby -Itest`)."
+      - "`./scripts/bin/test` continues to pass with the new specs included."
+      - "Edge cases covered: empty collections, missing front-matter keys, and duplicate slug detection."
+    links: { issue: null, pr: null, roadmap: "3.0" }
+    created: 2026-06-01
+    updated: 2026-06-01

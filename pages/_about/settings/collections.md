@@ -1,5 +1,6 @@
 ---
 title: Collection Manager
+preview: /images/previews/collection-manager.png
 layout: admin
 icon: bi-collection
 permalink: /about/settings/collections/
