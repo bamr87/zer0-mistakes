@@ -55,8 +55,8 @@
 
 meta:
   title: "zer0-mistakes Backlog"
-  updated: 2026-06-01
-  next_id: 12
+  updated: 2026-06-08
+  next_id: 17
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -272,3 +272,124 @@ tasks:
     links: { issue: null, pr: null, roadmap: "3.0" }
     created: 2026-06-01
     updated: 2026-06-01
+
+  # --- 2026-06-08 audit -------------------------------------------------------
+
+  - id: T-012
+    title: "Fix stale file references in auto-version and mermaid integration tests"
+    status: open
+    priority: P3
+    area: tests
+    risk: standard
+    effort: S
+    source: audit
+    summary: >-
+      `scripts/test/integration/auto-version` still asserts on `gem-publish.sh`,
+      which was deleted in the workflow-consolidation refactor (commit
+      `0b3c2c24`, replaced by `scripts/bin/release` / `scripts/lib/gem.sh`),
+      and `scripts/test/integration/mermaid` checks for
+      `pages/_docs/jekyll/{mermaid,mermaid-test-suite,jekyll-diagram-with-mermaid}.md`,
+      which were consolidated into `pages/_docs/features/mermaid-diagrams.md`.
+      Both integration suites fail on every `./scripts/bin/test` run as a result.
+    acceptance:
+      - "`scripts/test/integration/auto-version` no longer references the removed `gem-publish.sh`; its release-tooling assertions target the current `scripts/bin/release` / `scripts/lib/gem.sh` implementation."
+      - "`scripts/test/integration/mermaid` 'core file' checks reference the current doc paths under `pages/_docs/features/` (or the missing docs are restored — implementer's call; document the choice in a comment)."
+      - "`./scripts/bin/test` reports the `auto-version` and `mermaid` integration suites passing."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-06-08
+    updated: 2026-06-08
+
+  - id: T-013
+    title: "Fix failing front-matter check for the orphaned _layouts/search.html layout"
+    status: open
+    priority: P3
+    area: tests
+    risk: standard
+    effort: S
+    source: audit
+    summary: >-
+      `_layouts/search.html` (the layout behind the generated `/search.json`
+      endpoint) is a bare `{% include search-data.json %}` with no `---`
+      front-matter delimiters, so the theme-validation suite's "Validate
+      front matter in search.html" check fails on every `./scripts/bin/test`
+      run. Jekyll renders the layout's Liquid content regardless of whether
+      front matter is present, so the page itself isn't broken — the test's
+      assumption is just too strict for this data-emitting layout.
+    acceptance:
+      - "`_layouts/search.html` either gains empty `---`/`---` front-matter delimiters that keep `/search.json` rendering valid JSON, or `scripts/test/theme/validate` is adjusted to not require front matter on data-emitting layouts (with a comment explaining why)."
+      - "`/search.json` (built via `layout: search`) still renders syntactically valid JSON after the change."
+      - "`./scripts/bin/test` reports 0 failures in the theme validation suite."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-06-08
+    updated: 2026-06-08
+
+  - id: T-014
+    title: "Make scripts/bin/validate version-consistency check resilient to non-UTF-8 locales"
+    status: open
+    priority: P3
+    area: infra
+    risk: standard
+    effort: S
+    source: audit
+    summary: >-
+      `validate_version_consistency` in `scripts/bin/validate` calls
+      `JSON.parse(File.read('package.json'))` without an explicit encoding.
+      `package.json`'s description contains an em dash, so under a POSIX/C
+      locale (no `LANG`/`LC_ALL` — as in minimal containers and some CI
+      base images) Ruby defaults to US-ASCII and `File.read` raises
+      `Encoding::InvalidByteSequenceError`, aborting `./scripts/bin/validate
+      --quick` before any of its real checks run. Reproduced in this audit
+      with `LANG= LC_ALL= ./scripts/bin/validate --quick`.
+    acceptance:
+      - "`File.read('package.json')` (and any sibling reads in `validate_version_consistency`) explicitly decode as UTF-8 (e.g. `File.read(path, encoding: 'utf-8')`)."
+      - "`LANG= LC_ALL= ./scripts/bin/validate --quick` completes the version-consistency step without raising `Encoding::InvalidByteSequenceError`."
+      - "Behavior in a UTF-8 locale is unchanged (`./scripts/bin/validate --quick` still reports `Version consistent: <version>`)."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-06-08
+    updated: 2026-06-08
+
+  - id: T-015
+    title: "Tame markdownlint MD060 table-column-style noise in docs lint"
+    status: open
+    priority: P3
+    area: lint
+    risk: low
+    effort: S
+    source: audit
+    summary: >-
+      The markdownlint rule `MD060` (table-column-style) — not present when
+      `.github/config/.markdownlint.json` was last tuned — now fires roughly
+      940 times across `docs/**/*.md` and `pages/_docs/**/*.md`, by far the
+      single largest contributor to the ~1,600 warnings the `docs-validate.yml`
+      lint job emits (currently swallowed by `|| true`). It is drowning out
+      the signal from the rules the config does curate.
+    acceptance:
+      - "`.github/config/.markdownlint.json` gains an explicit `MD060` entry (disabled, or set to match the project's existing 'compact' table style — implementer's call; document the choice with a comment)."
+      - "`markdownlint \"docs/**/*.md\" --ignore \"docs/archive/**\" --config .github/config/.markdownlint.json` and the equivalent `pages/_docs/**/*.md` run report zero `MD060` findings."
+      - "No other rule's finding count regresses as a side effect of the config change."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-06-08
+    updated: 2026-06-08
+
+  - id: T-016
+    title: "Register and document the site-scraper feature shipped in v1.9"
+    status: open
+    priority: P3
+    area: docs
+    risk: low
+    effort: S
+    source: audit
+    summary: >-
+      The v1.9 "Site scraper — BFS-crawl any website into a zer0-mistakes
+      site" roadmap feature shipped with working code
+      (`scripts/install/scrape.sh`, `scrape_html.py`,
+      `scripts/install/tasks/scrape.sh`) and a passing `test_install_scrape.sh`
+      suite, but it has no entry in `_data/features.yml` and no page under
+      `pages/_docs/` or `docs/` explaining how to use it.
+    acceptance:
+      - "`_data/features.yml` gains a `ZER0-0XX` entry for the site scraper with `implemented: true`, `version`, `references`, and `components` following the existing schema."
+      - "A `pages/_docs/` page documents how to invoke the scraper (the `scrape.source_url` install spec / `scrape_run` task, depth & rate-limit knobs, and the generated `_data/scraped_site.json` + `assets/scraped/` output) for end users, linked from the install/quickstart docs."
+      - "`./scripts/bin/validate --quick` and the docs front-matter checks pass for the new page."
+    links: { issue: null, pr: null, roadmap: "1.9" }
+    created: 2026-06-08
+    updated: 2026-06-08
