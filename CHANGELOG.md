@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Security
+- Sanitize sensitive config keys (`api_key`, `secret`, `password`, `token`, `phc_*`) from the hidden `<pre id="cfg-full-yaml">` DOM element on the admin config page. Values are replaced with `[REDACTED]` at build time via a new `sanitize_config` Liquid filter (`_plugins/config_sanitizer.rb`). The visible config display and Raw YAML tab are unaffected.
+
 ## [1.12.0] - 2026-06-03
 
 ### Changed

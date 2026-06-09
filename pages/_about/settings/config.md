@@ -220,7 +220,9 @@ Get-Content {{ page.config-dir }}/config-utf16.txt |
 </div>
 
 <!-- Hidden full YAML used by the viewer's "Copy Full Config" button -->
-<pre id="cfg-full-yaml" class="d-none">{% include_relative _config.yml %}</pre>
+<!-- Sensitive keys (api_key, secret, password, token, phc_*) are masked by the sanitize_config filter. -->
+{% capture _cfg_raw %}{% include_relative _config.yml %}{% endcapture %}
+<pre id="cfg-full-yaml" class="d-none">{{ _cfg_raw | sanitize_config }}</pre>
 
 <!-- Config Utility JS (must load after DOM) -->
 <script src="{{ '/assets/js/config-utility.js' | relative_url }}" defer></script>

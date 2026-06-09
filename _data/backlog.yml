@@ -208,7 +208,7 @@ tasks:
 
   - id: T-009
     title: "Sanitize sensitive config keys from admin config-page DOM injection"
-    status: open
+    status: done
     priority: P1
     area: infra
     risk: standard
@@ -226,7 +226,7 @@ tasks:
       - "The visible config display in the admin UI is unaffected (only the raw hidden element is sanitised)."
     links: { issue: null, pr: null, roadmap: null }
     created: 2026-06-01
-    updated: 2026-06-01
+    updated: 2026-06-09
 
   - id: T-010
     title: "Complete v1.9 quickstart docs rewrite with getting-started guide and screenshots"
