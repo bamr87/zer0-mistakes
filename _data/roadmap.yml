@@ -330,6 +330,22 @@ milestones:
 
   # --- Future ----------------------------------------------------------------
 
+  - version: "1.13"
+    title: "Zer0-Mistake Quality Framework"
+    status: planned
+    section: Future
+    start: 2026-06
+    end: 2026-08
+    target: "Q3 2026"
+    summary: "Close the gap between the repo's quality gates and what CI actually enforces — no mistake lands green."
+    features:
+      - "CI gate parity — PRs run the full canonical test entrypoint (lib unit, theme, integration, installer e2e), not a subset"
+      - "Re-armed pixel-snapshot gate (refreshed baselines, no `continue-on-error`)"
+      - "Re-armed docs link-check gate (clean baseline, no warn-only `|| true`)"
+      - "Locale-independence regression guard for the Ruby/Bash tooling"
+      - "Coverage baseline with follow-up tasks for the lowest-covered subsystems"
+      - "Documented required status checks per branch (the 'controls' contract)"
+
   - version: "2.0"
     title: "CMS Integration"
     status: planned

@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Zer0-Mistake Quality Framework (planning)**: new roadmap milestone v1.13 and backlog tasks T-012–T-015 to close the gap between the repo's quality gates and what CI enforces — CI gate parity with the canonical `./scripts/bin/test` entrypoint (whose integration suites previously rotted unnoticed), re-armed pixel-snapshot and docs link-check gates, and a locale-independence regression guard; coverage baseline task T-005 repointed at the new milestone
+
 ### Fixed
 - **Tooling encoding**: `generate-roadmap.rb`, `sync-backlog.rb`, and `scripts/bin/validate` now read repo files as UTF-8 explicitly, fixing `invalid byte sequence in US-ASCII` crashes in environments without a UTF-8 locale (minimal containers, some CI runners) — `generate-roadmap.sh --check` and `validate --quick` both crashed in such environments
 - **Test suite**: repaired the three test suites that failed on `main`:

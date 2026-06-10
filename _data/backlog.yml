@@ -56,7 +56,7 @@
 meta:
   title: "zer0-mistakes Backlog"
   updated: 2026-06-10
-  next_id: 12
+  next_id: 16
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -145,7 +145,7 @@ tasks:
     updated: 2026-05-31
 
   - id: T-005
-    title: "Coverage baseline: identify the lowest-covered subsystems toward the v1.0 90% goal"
+    title: "Coverage baseline: identify the lowest-covered subsystems toward the 90% goal"
     status: open
     priority: P1
     area: tests
@@ -153,16 +153,17 @@ tasks:
     effort: L
     source: roadmap
     summary: >-
-      The v1.0 milestone targets 90%+ automated test coverage. Produce a
-      coverage baseline and file follow-up tasks for the lowest-covered areas
-      (start with the modular installer and the Obsidian resolver paths).
+      The 3.0 LTS milestone targets 90%+ automated test coverage, and the v1.13
+      Zer0-Mistake Quality Framework starts with knowing where coverage stands.
+      Produce a coverage baseline and file follow-up tasks for the lowest-covered
+      areas (start with the modular installer and the Obsidian resolver paths).
     acceptance:
       - "A coverage baseline is recorded (test/coverage or a docs note)."
       - "The 2–3 lowest-covered subsystems are identified and filed as new backlog tasks."
       - "No reduction in existing passing tests (`./scripts/bin/test` stays green)."
-    links: { issue: null, pr: null, roadmap: "1.0" }
+    links: { issue: null, pr: null, roadmap: "1.13" }
     created: 2026-05-31
-    updated: 2026-05-31
+    updated: 2026-06-10
 
   # --- 2026-06-01 audit -------------------------------------------------------
 
@@ -276,3 +277,97 @@ tasks:
     links: { issue: null, pr: null, roadmap: "3.0" }
     created: 2026-06-01
     updated: 2026-06-01
+
+  # --- 2026-06-10 Zer0-Mistake Quality Framework (roadmap v1.13) --------------
+  #
+  # Origin: main carried 3 failing test suites and 2 crashing validators while
+  # every CI check stayed green (fixed in PR #132). Root cause: the PR gate runs
+  # only a subset of the canonical test entrypoint, and two checks are warn-only.
+  # These tasks close the gap between the quality gates and what CI enforces.
+
+  - id: T-012
+    title: "CI gate parity: run the full canonical test entrypoint on PRs"
+    status: open
+    priority: P1
+    area: infra
+    risk: standard
+    effort: M
+    source: roadmap
+    summary: >-
+      `ci.yml`'s test job runs `test/test_runner.sh --suites core,quality,installation`,
+      which skips the lib unit tests (`scripts/test/lib/`), the integration suites
+      (`scripts/test/integration/` — exactly the ones that rotted unnoticed before
+      PR #132), the obsidian suite, and the installer e2e suites that
+      `./scripts/bin/test` runs locally. PRs must gate on the same entrypoint
+      contributors are told to run.
+    acceptance:
+      - "The `ci.yml` test job executes `./scripts/bin/test` (or an explicit suite list that includes lib, integration, obsidian, and installer e2e) on every code PR."
+      - "A deliberately broken integration test fails CI in a draft PR experiment (then reverted)."
+      - "`.github/workflows/README.md` documents which gates run on PR vs push vs schedule."
+      - "Total PR wall-clock stays under 25 minutes (parallelize jobs if needed)."
+    links: { issue: null, pr: null, roadmap: "1.13" }
+    created: 2026-06-10
+    updated: 2026-06-10
+
+  - id: T-013
+    title: "Refresh Playwright snapshot baselines and re-arm the pixel gate"
+    status: open
+    priority: P2
+    area: tests
+    risk: standard
+    effort: M
+    source: roadmap
+    summary: >-
+      The snapshot tier in `ci.yml` is `continue-on-error: true` because the
+      committed baselines predate the PR #108 UI overhaul. Regenerate the Linux
+      baselines via `./test/update-snapshots.sh` and make the tier blocking again
+      so visual regressions cannot land silently.
+    acceptance:
+      - "Baselines under `test/visual/snapshots/` regenerated and committed."
+      - "`continue-on-error: true` removed from the snapshot step in `ci.yml`."
+      - "Snapshot tier passes in CI on an unchanged follow-up commit."
+    links: { issue: null, pr: null, roadmap: "1.13" }
+    created: 2026-06-10
+    updated: 2026-06-10
+
+  - id: T-014
+    title: "Re-arm the docs link-check gate (remove warn-only || true)"
+    status: open
+    priority: P2
+    area: lint
+    risk: standard
+    effort: M
+    source: roadmap
+    summary: >-
+      `docs-validate.yml` runs markdown-link-check with `|| true` ("warn-only
+      until baseline is clean"), so broken links accumulate. Fix the links it
+      currently reports, then drop the `|| true` so the gate blocks.
+    acceptance:
+      - "All links reported by the current `docs-validate.yml` run are fixed or allowlisted in `.github/config/.markdown-link-check.json`."
+      - "Both `|| true` suppressions removed from `docs-validate.yml`."
+      - "`docs-validate.yml` passes blocking on a follow-up PR."
+    links: { issue: null, pr: null, roadmap: "1.13" }
+    created: 2026-06-10
+    updated: 2026-06-10
+
+  - id: T-015
+    title: "Locale-independence regression guard for Ruby/Bash tooling"
+    status: open
+    priority: P2
+    area: infra
+    risk: standard
+    effort: S
+    source: roadmap
+    summary: >-
+      PR #132 fixed `invalid byte sequence in US-ASCII` crashes in
+      `generate-roadmap.rb`, `sync-backlog.rb`, and `scripts/bin/validate` that
+      only reproduced without a UTF-8 locale. Add a guard so the bug class
+      cannot return: run the validators under `LC_ALL=C` in a lib test or a
+      dedicated CI step.
+    acceptance:
+      - "A test (scripts/test/lib/) or CI step runs `generate-roadmap.rb --check`, `sync-backlog.rb --check`, and `validate --quick` with `LC_ALL=C LANG=C`."
+      - "The guard fails when the explicit-UTF-8 reads are reverted (verified once locally)."
+      - "`./scripts/bin/test` stays green."
+    links: { issue: null, pr: null, roadmap: "1.13" }
+    created: 2026-06-10
+    updated: 2026-06-10
