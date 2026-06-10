@@ -827,8 +827,11 @@ gantt
     v1.6 About Page & Search Cleanup :done, 2026-04, 2026-04
     v1.7 Build Performance & MathJax 3 :done, 2026-05, 2026-05
     v1.8 Design Tokens & Navigation Chrome :done, 2026-05, 2026-05
+    v1.9 Installer v2 & Site Scraper :done, 2026-05, 2026-05
+    v1.10 Roadmap Validation     :done, 2026-06, 2026-06
+    v1.11 Continuous-Evolution Loop :done, 2026-06, 2026-06
     section Current
-    v1.9 Installer v2 & Site Scraper :active, 2026-05, 2026-05
+    v1.12 Headless Endpoints     :active, 2026-06, 2026-06
     section Future
     v2.0 CMS Integration         :2026-06, 2026-08
     v2.1 i18n Support            :2026-08, 2026-10
@@ -857,7 +860,10 @@ gantt
 | **v1.6** | ✅ Completed | Apr 2026 | Expanded About page and removal of the Algolia search dependency. |
 | **v1.7** | ✅ Completed | May 2026 | Significant Jekyll build speedups and a MathJax 3 inline-math fix. |
 | **v1.8** | ✅ Completed | May 2026 | Sass design-token system, refreshed navigation chrome, and a docs overhaul. |
-| **v1.9** | 🚧 In Progress | Current (1.9.x) | Modular installer v2 with deploy plugins, AI wizard pipeline, and a site scraper. |
+| **v1.9** | ✅ Completed | May 2026 | Modular installer v2 with deploy plugins, AI wizard pipeline, and a site scraper. |
+| **v1.10** | ✅ Completed | Jun 2026 | Roadmap integrity validation and catch-up milestones so the roadmap tracks the shipped gem. |
+| **v1.11** | ✅ Completed | Jun 2026 | Self-sustaining backlog loop so AI agents keep improving the repo between human sessions. |
+| **v1.12** | 🚧 In Progress | Current (1.12.x) | Machine-readable site endpoints for downstream sites and AI agents. |
 | **v2.0** | 🗓 Planned | Q3 2026 | Headless CMS integration with a content API and admin dashboard. |
 | **v2.1** | 🗓 Planned | Q4 2026 | Multi-language content support with locale-aware routing. |
 | **v2.2** | 🗓 Planned | Q4 2026 | Visual theme customizer, A/B testing, and conversion funnels. |

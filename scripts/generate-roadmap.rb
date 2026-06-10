@@ -149,7 +149,7 @@ end
 def current_gem_version
   return nil unless File.exist?(VERSION_RB)
 
-  m = File.read(VERSION_RB).match(/VERSION\s*=\s*["']([^"']+)["']/)
+  m = File.read(VERSION_RB, encoding: 'UTF-8').match(/VERSION\s*=\s*["']([^"']+)["']/)
   m && m[1]
 end
 
@@ -318,7 +318,7 @@ def main
     begin
       YAML.load_file(DATA_FILE, permitted_classes: [Date, Time])
     rescue ArgumentError
-      YAML.safe_load(File.read(DATA_FILE), permitted_classes: [Date, Time], aliases: false)
+      YAML.safe_load(File.read(DATA_FILE, encoding: 'UTF-8'), permitted_classes: [Date, Time], aliases: false)
     end
 
   return run_validation(data) if options[:mode] == :validate
@@ -333,7 +333,9 @@ def main
     return 0
   end
 
-  original = File.read(README)
+  # Force UTF-8: the README contains emoji, and the default external encoding
+  # is US-ASCII when no locale is set (minimal containers, some CI runners).
+  original = File.read(README, encoding: 'UTF-8')
   updated  = original.dup
   updated  = replace_block(updated, MERMAID_START, MERMAID_END, mermaid)
   updated  = replace_block(updated, TABLE_START,   TABLE_END,   table)
