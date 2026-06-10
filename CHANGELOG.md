@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.12.2] - 2026-06-10
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 846bd9ff chore(backlog): plan the Zer0-Mistake Quality Framework (roadmap v1.13, T-012–T-015) (#133)
+- 33a727c0 docs: expand CLAUDE.md into a comprehensive Claude Code guide (#131)
+
+
 ## [1.12.1] - 2026-06-10
 
 ### Changed
