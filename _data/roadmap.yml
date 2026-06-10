@@ -60,7 +60,7 @@
 meta:
   title: "zer0-mistakes Roadmap"
   tagline: "Past releases, current focus, and future plans for the zer0-mistakes Jekyll theme."
-  updated: 2026-05-30
+  updated: 2026-06-10
 
 milestones:
   # --- Completed -------------------------------------------------------------
@@ -270,15 +270,12 @@ milestones:
       - "Unified Playwright test tiers (smoke / snapshots / regression)"
       - "Design-system developer docs"
 
-  # --- Current ---------------------------------------------------------------
-
   - version: "1.9"
     title: "Installer v2 & Site Scraper"
-    status: active
-    section: Current
+    status: completed
+    section: Completed
     start: 2026-05
     end: 2026-05
-    target: "Current (1.9.x)"
     released: 2026-05-27
     summary: "Modular installer v2 with deploy plugins, AI wizard pipeline, and a site scraper."
     features:
@@ -287,6 +284,49 @@ milestones:
       - "Accessibility skin fixes (WCAG AA contrast); `air` default skin"
       - "Quickstart documentation rewrite with screenshots"
       - "Hardened one-line installer path"
+
+  - version: "1.10"
+    title: "Roadmap Validation"
+    status: completed
+    section: Completed
+    start: 2026-06
+    end: 2026-06
+    released: 2026-06-01
+    summary: "Roadmap integrity validation and catch-up milestones so the roadmap tracks the shipped gem."
+    features:
+      - "`generate-roadmap.rb --validate` mode (status/section/version/date checks)"
+      - "Catch-up milestones v1.0–1.9 recorded in the roadmap"
+      - "README roadmap accuracy fixes"
+
+  - version: "1.11"
+    title: "Continuous-Evolution Loop"
+    status: completed
+    section: Completed
+    start: 2026-06
+    end: 2026-06
+    released: 2026-06-01
+    summary: "Self-sustaining backlog loop so AI agents keep improving the repo between human sessions."
+    features:
+      - "`_data/backlog.yml` tactical task queue (single source of truth)"
+      - "Backlog ↔ GitHub Issues sync workflow with schema validation"
+      - "Auto-merge for low-risk (docs/deps/lint) PRs once CI is green"
+      - "`/repo-audit` and `/backlog-implement` agent routines"
+      - "Documentation maintenance system and consolidation"
+
+  # --- Current ---------------------------------------------------------------
+
+  - version: "1.12"
+    title: "Headless Endpoints"
+    status: active
+    section: Current
+    start: 2026-06
+    end: 2026-06
+    target: "Current (1.12.x)"
+    summary: "Machine-readable site endpoints for downstream sites and AI agents."
+    features:
+      - "Auto-generated `/search.json` endpoint for downstream sites"
+      - "Auto-generated `/sitemap/` endpoint"
+      - "Ruby gem and Mermaid dependency updates"
 
   # --- Future ----------------------------------------------------------------
 

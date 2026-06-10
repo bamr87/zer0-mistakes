@@ -78,7 +78,7 @@ def load_data
   begin
     YAML.load_file(DATA_FILE, permitted_classes: [Date, Time])
   rescue ArgumentError
-    YAML.safe_load(File.read(DATA_FILE), permitted_classes: [Date, Time], aliases: false)
+    YAML.safe_load(File.read(DATA_FILE, encoding: 'UTF-8'), permitted_classes: [Date, Time], aliases: false)
   end
 end
 

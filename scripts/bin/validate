@@ -236,7 +236,9 @@ versions = {
 }
 
 if File.file?('package.json')
-  versions['package.json'] = JSON.parse(File.read('package.json')).fetch('version').to_s
+  # Explicit UTF-8: package.json contains multibyte characters and the default
+  # external encoding is US-ASCII when no locale is set (containers, some CI).
+  versions['package.json'] = JSON.parse(File.read('package.json', encoding: 'UTF-8')).fetch('version').to_s
 end
 
 expected = versions.values.first

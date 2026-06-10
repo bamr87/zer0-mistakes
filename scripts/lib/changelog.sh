@@ -305,18 +305,59 @@ update_changelog_file() {
     
     # Create backup
     cp "$CHANGELOG_FILE" "${CHANGELOG_FILE}.bak"
-    
-    # Insert new entry after header (preserve first line)
+
+    # Fold any pending "## [Unreleased]" section into the new entry so its
+    # notes ship with this release instead of getting buried beneath it
+    # (stale Unreleased blocks used to accumulate mid-file).
+    local unreleased_start
+    unreleased_start=$(grep -n '^## \[Unreleased\]' "$CHANGELOG_FILE" | head -1 | cut -d: -f1)
+
+    if [[ -n "$unreleased_start" ]]; then
+        # First "## " heading after the Unreleased one (relative offset)
+        local rel_next
+        rel_next=$(tail -n +"$((unreleased_start + 1))" "$CHANGELOG_FILE" | grep -n '^## ' | head -1 | cut -d: -f1)
+
+        local unreleased_body
+        if [[ -n "$rel_next" ]]; then
+            unreleased_body=$(sed -n "$((unreleased_start + 1)),$((unreleased_start + rel_next - 1))p" "$CHANGELOG_FILE")
+        else
+            unreleased_body=$(tail -n +"$((unreleased_start + 1))" "$CHANGELOG_FILE")
+        fi
+
+        # Drop the Unreleased section (header + body) from the file
+        {
+            head -n "$((unreleased_start - 1))" "$CHANGELOG_FILE"
+            [[ -n "$rel_next" ]] && tail -n +"$((unreleased_start + rel_next))" "$CHANGELOG_FILE"
+        } > "${CHANGELOG_FILE}.tmp"
+        mv "${CHANGELOG_FILE}.tmp" "$CHANGELOG_FILE"
+
+        # Append the pending notes to the new entry (if any are non-blank)
+        if [[ -n "${unreleased_body//[[:space:]]/}" ]]; then
+            debug "Folding pending [Unreleased] notes into the new entry"
+            entry+=$'\n'"$(echo "$unreleased_body" | sed -e '/./,$!d')"$'\n'
+        fi
+    fi
+
+    # Insert the new entry before the first release heading so the file
+    # header/preamble (title, Keep a Changelog blurb) stays at the top.
+    local first_release
+    first_release=$(grep -n '^## ' "$CHANGELOG_FILE" | head -1 | cut -d: -f1)
+
     {
-        head -n 1 "$CHANGELOG_FILE"
-        echo ""
-        echo "$entry"
-        tail -n +2 "$CHANGELOG_FILE"
+        if [[ -n "$first_release" ]]; then
+            head -n "$((first_release - 1))" "$CHANGELOG_FILE"
+            echo "$entry"
+            tail -n +"$first_release" "$CHANGELOG_FILE"
+        else
+            cat "$CHANGELOG_FILE"
+            echo ""
+            echo "$entry"
+        fi
     } > "${CHANGELOG_FILE}.tmp"
-    
+
     mv "${CHANGELOG_FILE}.tmp" "$CHANGELOG_FILE"
     rm -f "${CHANGELOG_FILE}.bak"
-    
+
     debug "✓ Updated $CHANGELOG_FILE"
 }
 

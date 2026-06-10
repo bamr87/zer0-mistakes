@@ -1,5 +1,24 @@
 # Changelog
 
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Fixed
+- **Tooling encoding**: `generate-roadmap.rb`, `sync-backlog.rb`, and `scripts/bin/validate` now read repo files as UTF-8 explicitly, fixing `invalid byte sequence in US-ASCII` crashes in environments without a UTF-8 locale (minimal containers, some CI runners) — `generate-roadmap.sh --check` and `validate --quick` both crashed in such environments
+- **Test suite**: repaired the three test suites that failed on `main`:
+  - `scripts/test/integration/auto-version` rewritten against the current release architecture (`scripts/analyze-commits.sh` wrapper, `scripts/utils/analyze-commits`, `scripts/bin/release`, `version-bump.yml`) — it previously targeted the retired `gem-publish.sh`/`auto-version-bump.yml` and aborted under `set -e` due to `((var++))` returning non-zero
+  - `scripts/test/integration/mermaid` repointed at `pages/_docs/features/mermaid-diagrams.md` (the doc moved from `pages/_docs/jekyll/`) and at the current Bootstrap-aware theming instead of the removed forest theme/FontAwesome config
+  - `_layouts/search.html` given a front matter block so theme layout validation passes
+- **Changelog tooling**: `update_changelog_file` now folds any pending `## [Unreleased]` section into the new release entry and inserts before the first release heading (preserving the file preamble) — stale Unreleased blocks no longer accumulate mid-file; the eight historical stray blocks were folded into the releases that shipped them
+
+### Changed
+- **Roadmap**: advanced to track the shipped gem — v1.9 marked completed, v1.10 (Roadmap Validation) and v1.11 (Continuous-Evolution Loop) recorded, v1.12 (Headless Endpoints) is the active milestone (closes backlog T-001, T-002)
+- **Changelog**: restored the Keep a Changelog preamble at the top of this file
+
 ## [1.12.0] - 2026-06-03
 
 ### Changed
@@ -37,9 +56,6 @@
 ### Commits in this release
 - 8a5ba7e2 feat(ci): add continuous-evolution backlog loop (#114)
 
-
-## [Unreleased]
-
 ### Added
 - **Continuous-evolution loop**: a self-sustaining backlog mechanism so AI agents can keep improving the repo between human sessions.
   - `_data/backlog.yml` — tactical task queue (single source of truth), mirroring the `_data/roadmap.yml` pattern.
@@ -50,6 +66,8 @@
   - `.github/instructions/backlog.instructions.md` — file-scoped guidance for the backlog.
   - `docs/systems/continuous-evolution.md` — full design, autonomy policy, and setup.
   - `CLAUDE.md` — Claude Code pointer to `AGENTS.md` (per the documented convention).
+
+
 ## [1.10.0] - 2026-06-01
 
 ### Changed
@@ -153,9 +171,6 @@
 ### Commits in this release
 - 8a2bd84 feat(install): modular installer with deploy plugins, AI wizard pipeline, scrape v2, and test suite (#111)
 
-
-## [Unreleased]
-
 ### Added
 - **Modular installer (`scripts/install/`)**: spec-driven, AI-aware installer dispatched by `scripts/bin/install`. Single `.zer0/install.spec.json` contract feeds CLI flags, the TUI wizard, and the OpenAI wizard into one apply pipeline.
 - **Deploy plugins**: `tasks/deploy_github-pages.sh`, `tasks/deploy_azure-swa.sh`, `tasks/deploy_docker-prod.sh`. Spec deploy targets now auto-render the matching workflow / config from `templates/deploy/`.
@@ -171,16 +186,15 @@
 - Rewrote `ai/prompts/wizard.system.md` with explicit profile, deploy, and agent heuristics plus a full example output, eliminating empty AI responses.
 - `plan_load_profile` and `plan_apply_flags` now return `0` explicitly so Bash 3.2 doesn't propagate a trailing-test exit code.
 
+
 ## [1.8.2] - 2026-05-26
 
 ### Changed
 - Version bump: patch release
 
-
-## [Unreleased]
-
 ### Changed
 - **Gem packaging**: `jekyll-theme-zer0.gemspec` now excludes `assets/images/` (287 MB of content previews/author photos), `assets/backgrounds/`, `.DS_Store` files, and binary media outside `assets/vendor/`, reducing gem payload to ~8.9 MB
+
 
 ## [1.8.1] - 2026-05-26
 
@@ -216,9 +230,6 @@
 
 ### Commits in this release
 - 580f2b4 perf: Jekyll build performance improvements + MathJax 3 fix + richer Obsidian cache (#100)
-
-
-## [Unreleased]
 
 ### Added
 - **Design system & layouts**: Sass token layers (`_sass/tokens/`), component and layout partials (`_sass/components/`, `_sass/layouts/`), skins (`theme_skins.yml` + `_sass/theme/_skins.scss`), utilities, and developer docs (`docs/design-system.md`, `design-tokens.md`, `theming.md`, `layouts-and-navigation.md`, and related guides). Homepage sections are driven by `_data/landing.yml` per `_includes/components/README.md`.
@@ -260,6 +271,7 @@
 
 ### Fixed (UI)
 - **Contrast skin — light mode**: The `contrast` skin's `zer0-skin-palette` mixin sets `--bs-link-color: #ffffff` (white accent) which rendered sidebar nav links invisible on a white background in light mode. Added `[data-theme-skin="contrast"]:not([data-bs-theme="dark"])` override in `_sass/theme/_skins.scss` to pin link color to `#111111` in light mode while leaving dark-mode behavior unchanged.
+
 
 ## [1.6.5] - 2026-05-19
 
@@ -394,9 +406,6 @@
 - 3d91006 fix(release): replace ((var++)) with var=$((var + 1)) in release path
 - d33e5e6 feat(intro): refocus Copilot Agent prompts on frontend/CMS workflows (#74)
 
-
-## [Unreleased]
-
 ### Changed
 - **Docker/Jekyll build performance** — Reduced repeated full-page Liquid scans in the footer, settings offcanvas, and cookie consent includes; cached preview image checks during generation; skipped server-side Obsidian rewrites for documents without Obsidian syntax; and changed Docker dev startup to run `bundle install` only when `bundle check` reports missing dependencies. The profiled Docker build improved from 119.2s to 86.8s in local validation.
 
@@ -501,6 +510,7 @@
   `/#setup-wizard`, which is provided by the new welcome layout.
 - **Version-bump workflow no longer crashes on bash 5.x runners.** `scripts/utils/analyze-commits` (and `scripts/lib/changelog.sh`, `scripts/lib/migrate.sh`) used the `((var++))` post-increment idiom. On bash 5.x, when `var` is 0 the expression evaluates to 0 → exit code 1 → `set -euo pipefail` terminates the script silently. macOS bash 3.2 was more forgiving, so the bug only surfaced in CI. Replaced all release-path sites with `var=$((var + 1))`, which always returns 0. Added a static regression check to the unit tests so the pattern can't return.
 
+
 ## [1.0.0] - 2026-04-20
 
 First stable major release. Consolidates the breaking-change installer rewrite
@@ -573,9 +583,6 @@ See [`docs/installation/migration-from-0.x.md`](docs/installation/migration-from
 ### Commits in this release
 - 7f00e4d docs(roadmap): data-driven roadmap with auto-generated README mermaid diagram (#71)
 
-
-## [Unreleased]
-
 ### Changed
 - **Copilot Agent prompts (`_data/prompts.yml`)**: rewritten to focus on
   frontend/CMS workflows for the Jekyll theme. Replaced the previous
@@ -624,6 +631,7 @@ See [`docs/installation/migration-from-0.x.md`](docs/installation/migration-from
 - **Fork cleanup**: `scripts/fork-cleanup.sh` — repository name derivation now strips `.git` suffix and falls back gracefully when `origin` is missing (no `set -euo pipefail` aborts)
 - **Fork cleanup**: `scripts/fork-cleanup.sh` — `posthog`/`giscus` blocks reset only within their own YAML range (no stray matches in unrelated blocks)
 - **Welcome post**: `templates/pages/welcome-post.md.template` and embedded fallback in `scripts/fork-cleanup.sh` — corrected `layout: journals` → `layout: article` so the generated welcome post builds without “Layout does not exist” warnings on a freshly cleaned fork
+
 
 ## [0.22.20] - 2026-04-19
 
@@ -766,9 +774,6 @@ See [`docs/installation/migration-from-0.x.md`](docs/installation/migration-from
 ### Commits in this release
 - a70ae8a chore: consolidate configuration, dependencies, and installation (PRs #48, #51, #52, #53) (#51)
 
-
-## [Unreleased] — Universal Installer
-
 ### Added
 - **Installer**: New `--remote` install mode — forks repo and creates an orphan `gh-pages` branch with only the bare minimum files needed to render via `remote_theme` (no local theme source)
 - **Installer**: New `--github` install mode — interactive fork via `gh` CLI with automatic platform detection and setup
@@ -792,6 +797,7 @@ See [`docs/installation/migration-from-0.x.md`](docs/installation/migration-from
 - **Templates**: `quickstart.md.template` — enhanced with Bootstrap pill tabs for macOS/Linux/WSL/GitHub Fork platform-specific instructions
 - **Templates**: `configuration.md.template` — comprehensive rewrite with URL tables, all config sections, cookie consent, dev config
 - **Templates**: `welcome-post.md.template` — enhanced Day 1 tutorial with folder structure diagram, commands table, feature checklist
+
 
 ## [0.22.6] - 2026-04-03
 
@@ -2376,13 +2382,6 @@ See [`docs/installation/migration-from-0.x.md`](docs/installation/migration-from
 - Initial plan
 - Initial plan
 
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [Unreleased]
-
 ### Added
 
 - Comprehensive documentation organization system in `/docs/` directory
@@ -2393,6 +2392,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Migrated scattered documentation files to organized structure
 - Improved documentation discoverability and maintenance
+
 
 ## [0.5.0] - 2025-10-25
 
