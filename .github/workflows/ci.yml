@@ -185,9 +185,20 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           verbose: true
-          suites: core,quality,installation
+          # Gate parity (T-012): run every non-Playwright theme suite that
+          # `./scripts/bin/test` exposes locally, not a subset. Playwright
+          # tiers run as dedicated steps below.
+          suites: core,deployment,quality,installation,installer,site_generation,obsidian
           skip-docker: true
           skip-remote: true
+
+      - name: Run Script Suites (lib, theme validate, integration, installer e2e)
+        # Gate parity (T-012): the canonical entrypoint's own suites —
+        # scripts/test/lib unit tests, scripts/test/theme/validate,
+        # scripts/test/integration (auto-version, mermaid), and the
+        # test/test_install_*.sh e2e suites. These rotted unnoticed before
+        # PR #132 because no CI job executed them.
+        run: ./scripts/bin/test
 
       - name: Setup Node.js (Playwright)
         uses: actions/setup-node@v4

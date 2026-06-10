@@ -331,10 +331,11 @@ update_changelog_file() {
         } > "${CHANGELOG_FILE}.tmp"
         mv "${CHANGELOG_FILE}.tmp" "$CHANGELOG_FILE"
 
-        # Append the pending notes to the new entry (if any are non-blank)
+        # Append the pending notes to the new entry (if any are non-blank),
+        # separated by a blank line so section headings don't collide.
         if [[ -n "${unreleased_body//[[:space:]]/}" ]]; then
             debug "Folding pending [Unreleased] notes into the new entry"
-            entry+=$'\n'"$(echo "$unreleased_body" | sed -e '/./,$!d')"$'\n'
+            entry="${entry%$'\n'}"$'\n\n'"$(echo "$unreleased_body" | sed -e '/./,$!d')"$'\n'
         fi
     fi
 
