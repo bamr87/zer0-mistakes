@@ -5,7 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.14.0] - 2026-06-11
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 5de341aa feat(security): sanitize sensitive config lines in admin config-page DOM (T-009) (#140)
+- 42468785 chore(deps): update Ruby gem dependencies (#129)
+- 89e21988 Improve LinkedIn share flow with cleaned article summary (#99)
 
 ### Security
 - **Admin config page (T-009 hardening)**: added a pure-Liquid line-redaction layer for the hidden `<pre id="cfg-full-yaml">` element — the `sanitize_config_yaml` plugin filter shipped in 1.13.1 does not run on GitHub Pages builds (safe mode ignores custom plugins, and the unknown filter is a silent no-op), so Pages-built sites were still injecting raw config; the Liquid layer protects every build path, with the plugin filter kept as defense-in-depth

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jekyll-theme-zer0 (1.13.1)
+    jekyll-theme-zer0 (1.14.0)
       jekyll
 
 GEM
