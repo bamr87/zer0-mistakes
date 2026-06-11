@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.13.0] - 2026-06-11
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- cee6f379 feat(ci): gate PRs on the full canonical test entrypoint (T-012) (#138)
 
 ### Added
 - **CI gate parity (T-012)**: the `ci.yml` test job now runs every non-Playwright theme suite (core, deployment, quality, installation, installer, site_generation, obsidian) plus the canonical `./scripts/bin/test` script suites (lib unit, theme validate, integration, installer e2e) on every code PR — previously only `core,quality,installation` gated, which is how three suites rotted unnoticed before PR #132; a "Gate Coverage — What Enforces What" table in `.github/workflows/README.md` now documents the controls contract
