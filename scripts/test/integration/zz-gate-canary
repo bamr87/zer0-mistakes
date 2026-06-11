@@ -1,7 +1,0 @@
-#!/bin/bash
-# TEMPORARY canary for the T-012 gate-parity experiment (PR #138).
-# This file deliberately fails. The pre-T-012 CI never executed
-# scripts/test/integration/, so it would have stayed green; the new
-# "Run Script Suites" step must fail. Reverted in the next commit.
-echo "gate canary: deliberately failing to prove the new CI gate works"
-exit 1
