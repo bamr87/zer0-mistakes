@@ -388,38 +388,81 @@ test_jekyll_build() {
 
         # Set PAGES_REPO_NWO for jekyll-github-metadata gem (required in CI environments)
         export PAGES_REPO_NWO="${PAGES_REPO_NWO:-bamr87/zer0-mistakes}"
-        
-        if JEKYLL_ENV=production bundle exec jekyll build \
-            --config "$PROJECT_ROOT/_config.yml" \
+
+        local jekyll_configs="$PROJECT_ROOT/_config.yml,$PROJECT_ROOT/docker/config/docker-build.yml"
+        local build_log="$temp_site/jekyll-build.log"
+        local jekyll_status=0
+
+        if [[ "$VERBOSE" == "true" ]]; then
+            log_info "Jekyll build (verbose; Liquid warnings appear in output)"
+            JEKYLL_ENV=production bundle exec jekyll build \
+                --config "$jekyll_configs" \
+                --source "$PROJECT_ROOT" \
+                --destination "$temp_site/_site" \
+                2>&1 | tee "$build_log"
+            jekyll_status=${PIPESTATUS[0]}
+            if [[ "$jekyll_status" -eq 0 ]] && grep -qiE 'liquid warning' "$build_log" 2>/dev/null; then
+                log_warning "Liquid warnings were emitted during Jekyll build (see output above)"
+            fi
+        elif JEKYLL_ENV=production bundle exec jekyll build \
+            --config "$jekyll_configs" \
             --source "$PROJECT_ROOT" \
             --destination "$temp_site/_site" \
             --quiet; then
-            log_success "Jekyll build completed successfully"
-            
-            # Test that essential files were generated
-            if [[ -f "$temp_site/_site/index.html" ]]; then
-                log_success "index.html generated correctly"
-            else
-                log_error "index.html not generated"
-                cd "$PROJECT_ROOT"
-                rm -rf "$temp_site"
-                return 1
-            fi
-            
-            # Test that assets were processed
-            if find "$temp_site/_site/assets" -name "*.css" 2>/dev/null | head -1 | grep -q .; then
-                log_success "CSS assets processed correctly"
-            else
-                log_warning "No CSS assets found in _site/assets"
-            fi
-            
+            jekyll_status=0
         else
+            jekyll_status=$?
+        fi
+
+        if [[ "$jekyll_status" -ne 0 ]]; then
             log_error "Jekyll build failed"
             cd "$PROJECT_ROOT"
             rm -rf "$temp_site"
             return 1
         fi
-        
+
+        log_success "Jekyll build completed successfully"
+
+        # Test that essential files were generated
+        if [[ -f "$temp_site/_site/index.html" ]]; then
+            log_success "index.html generated correctly"
+        else
+            log_error "index.html not generated"
+            cd "$PROJECT_ROOT"
+            rm -rf "$temp_site"
+            return 1
+        fi
+
+        # Test that assets were processed
+        if find "$temp_site/_site/assets" -name "*.css" 2>/dev/null | head -1 | grep -q .; then
+            log_success "CSS assets processed correctly"
+        else
+            log_warning "No CSS assets found in _site/assets"
+        fi
+
+        # Theme CSS output: main bundle contains docs-layout + theme rules
+        local main_css
+        main_css=$(find "$temp_site/_site/assets/css" -maxdepth 1 \( -name 'main.css' -o -name 'main-*.css' \) 2>/dev/null | head -1)
+        if [[ -n "${main_css}" && -f "${main_css}" ]]; then
+            local css_size
+            css_size=$(stat -f%z "${main_css}" 2>/dev/null || stat -c%s "${main_css}" 2>/dev/null || echo 0)
+            if [[ "${css_size}" -lt 8000 ]]; then
+                log_error "Compiled main CSS unexpectedly small (${css_size} bytes): ${main_css}"
+                cd "$PROJECT_ROOT"
+                rm -rf "$temp_site"
+                return 1
+            fi
+            if ! grep -qE 'bd-layout|\.bd-layout' "${main_css}"; then
+                log_error "Compiled CSS missing docs-layout selectors (bd-layout): ${main_css}"
+                cd "$PROJECT_ROOT"
+                rm -rf "$temp_site"
+                return 1
+            fi
+            log_success "Theme CSS output contains expected layout rules"
+        else
+            log_warning "main.css not found under _site/assets/css (check Jekyll asset pipeline)"
+        fi
+
         # Cleanup
         rm -rf "$temp_site"
     else

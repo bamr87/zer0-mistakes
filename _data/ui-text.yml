@@ -50,7 +50,7 @@ en: &DEFAULT_EN
   loading_label              : "Loading..."
   search_label_text          : "Enter your search term..."
   search_placeholder_text    : "Enter your search term..."
-  search_algolia_no_results  : "No results"
+  search_no_results          : "No results"
   results_found              : "Result(s) found"
   back_to_top                : "Back to top"
   # Statistics labels
@@ -68,6 +68,17 @@ en: &DEFAULT_EN
   view_source                : "View source"
   edit_page                  : "Edit this page"
   report_issue               : "Report an issue"
+  # Breadcrumb labels (used by _includes/navigation/breadcrumbs.html)
+  breadcrumbs_root           : "Home"
+  breadcrumbs_aria           : "Breadcrumb"
+  # Keyboard shortcuts modal (Track 5)
+  shortcuts_title            : "Keyboard shortcuts"
+  shortcuts_search           : "Open search"
+  shortcuts_prev_section     : "Previous section"
+  shortcuts_next_section     : "Next section"
+  shortcuts_toggle_sidebar   : "Toggle sidebar"
+  shortcuts_toggle_toc       : "Toggle table of contents"
+  shortcuts_show_help        : "Show this help"
   
 en-US:
   <<: *DEFAULT_EN
@@ -126,7 +137,7 @@ es: &DEFAULT_ES
   loading_label              : "Cargando..."
   search_label_text          : "Introduce tu término de búsqueda..."
   search_placeholder_text    : "Introduce tu término de búsqueda..."
-  search_algolia_no_results  : "Sin resultados"
+  search_no_results          : "Sin resultados"
   results_found              : "Resultado(s) encontrado(s)"
   back_to_top                : "Volver arriba"
   # Statistics labels

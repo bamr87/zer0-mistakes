@@ -32,13 +32,14 @@
 
 <!-- Title Section  -->
 
-<div class="navbar-brand site-title">
-    <a class="nav-link" href="{{ '/' | relative_url }}">
-        <i class="d-none d-md-inline {{ site.default_icon }} {{ site.default_icon }}-{{ site.title_icon | default: 'house' }}" aria-hidden="true"></i>
-        <!-- Always show the title on mobile; truncate if space is tight -->
-        <span class="site-title-text">
-            {{ site.title }}
-        </span>
+<div class="navbar-brand site-title mb-0 py-0 me-0 min-w-0 flex-grow-1">
+    <a
+        class="nav-link text-body d-inline-flex align-items-center gap-2 min-w-0 p-0 text-decoration-none w-100"
+        href="{{ '/' | relative_url }}"
+        aria-label="{{ site.title }} — Home"
+    >
+        <i class="d-none d-sm-inline d-lg-none flex-shrink-0 {{ site.default_icon }} {{ site.default_icon }}-{{ site.title_icon | default: 'house' }}" aria-hidden="true"></i>
+        <span class="site-title-text">{{ site.title }}</span>
     </a>
 </div>
 

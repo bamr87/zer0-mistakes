@@ -56,13 +56,27 @@ layout: root
           </h2>
         </div>
         <div class="card-body">
+          {% comment %}Must match _includes/content/sitemap.html row rules: html_pages + collection docs, respecting sitemap: false.{% endcomment %}
+          {% assign published_url_count = 0 %}
+          {% for page in site.html_pages %}
+            {% unless page.sitemap == false %}
+              {% assign published_url_count = published_url_count | plus: 1 %}
+            {% endunless %}
+          {% endfor %}
+          {% for col in site.collections %}
+            {% for item in col.docs %}
+              {% unless item.sitemap == false %}
+                {% assign published_url_count = published_url_count | plus: 1 %}
+              {% endunless %}
+            {% endfor %}
+          {% endfor %}
           <div class="row g-3">
-            <!-- Total Pages -->
+            <!-- Published URLs (same count as Interactive Site Map table rows) -->
             <div class="col-lg-2 col-md-4 col-sm-6">
               <div class="text-center p-3 border rounded">
                 <i class="bi bi-file-text display-4 text-primary mb-2"></i>
-                <h3 class="fw-bold">{{ site.pages | size }}</h3>
-                <small class="text-muted">Pages</small>
+                <h3 class="fw-bold">{{ published_url_count }}</h3>
+                <small class="text-muted">Published URLs</small>
               </div>
             </div>
             
@@ -103,15 +117,11 @@ layout: root
               </div>
             </div>
             
-            <!-- Total Content -->
+            <!-- Total Content (same as published outputs; avoids double-counting posts/collections) -->
             <div class="col-lg-2 col-md-4 col-sm-6">
               <div class="text-center p-3 border rounded">
                 <i class="bi bi-globe display-4 text-danger mb-2"></i>
-                {% assign total_content = site.pages | size | plus: site.posts.size %}
-                {% for collection in site.collections %}
-                  {% assign total_content = total_content | plus: site[collection.label].size %}
-                {% endfor %}
-                <h3 class="fw-bold">{{ total_content }}</h3>
+                <h3 class="fw-bold">{{ published_url_count }}</h3>
                 <small class="text-muted">Total Items</small>
               </div>
             </div>
@@ -313,7 +323,7 @@ layout: root
             <!-- Recent Pages -->
             <div class="col-lg-4">
               <h5 class="border-bottom pb-2">Recent Pages</h5>
-              {% assign recent_pages = site.pages | sort: 'lastmod' | reverse | limit: 5 %}
+              {% assign recent_pages = site.html_pages | sort: 'path' | reverse | limit: 5 %}
               {% if recent_pages and recent_pages.size > 0 %}
                 <ul class="list-unstyled">{% for page in recent_pages %}{% if page.title and page.title != "" %}<li class="mb-2">
                         <a href="{{ page.url | relative_url }}" class="text-decoration-none">

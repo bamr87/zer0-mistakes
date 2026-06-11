@@ -1,0 +1,24 @@
+# jekyll-theme-zer0 install profile: remote
+#
+# Bootstrap from raw.githubusercontent.com. Used by the `curl | bash`
+# one-liner installation path; downloads the installer + templates from
+# the main branch on the fly.
+name: remote
+display_name: Remote (curl | bash)
+description: Bootstrap installer + templates from raw.githubusercontent.com.
+legacy_flag: --remote
+recommended_for: scripted installs, demos, CI/CD bootstrap
+includes:
+  - Templates fetched from GITHUB_RAW_URL on demand
+  - Same output as full profile by default
+excludes:
+  - Local templates/ directory (uses remote)
+deploy_targets:
+  - github-pages
+  - azure-swa
+  - docker-prod
+
+# Phase 5 — AI agent guidance to install by default.
+# Override with: install agents [target] [--cursor|--claude|--aider|--all]
+ai_features:
+  agent_files: [copilot, claude]

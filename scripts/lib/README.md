@@ -47,6 +47,22 @@ source "$(dirname "$0")/lib/validation.sh"
 validate_environment false false  # skip_publish=false, require_gh=false
 ```
 
+### ✅ `scripts/bin/validate` - Preflight Validation
+
+Canonical command for local and CI preflight checks. It composes the release
+validation helpers with project-specific checks for version consistency, YAML
+configuration/data files, active configuration contracts, config-file
+classification, navigation data shape, Jekyll build/doctor, compiled assets,
+and optional test suites.
+
+**Usage:**
+
+```bash
+./scripts/bin/validate --quick          # Host-only CI fast checks
+./scripts/bin/validate --start-docker   # Build + doctor via Docker Compose
+./scripts/bin/validate --full           # Include tests, Obsidian, HTMLProofer
+```
+
 ### 📝 `version.sh` - Version Management
 
 Read, calculate, and update semantic versions.

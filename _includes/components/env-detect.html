@@ -1,0 +1,14 @@
+{% comment %}
+  Sets: build_env, is_local_url, is_production
+  Production badge only when Jekyll built as production AND site.url is not a local host.
+{% endcomment %}
+{% assign build_env = jekyll.environment | default: "development" %}
+{% assign site_url_lc = site.url | default: "" | downcase %}
+{% assign is_local_url = false %}
+{% if site_url_lc contains "localhost" or site_url_lc contains "127.0.0.1" or site_url_lc contains "0.0.0.0" %}
+  {% assign is_local_url = true %}
+{% endif %}
+{% assign is_production = false %}
+{% if build_env == "production" and is_local_url == false %}
+  {% assign is_production = true %}
+{% endif %}

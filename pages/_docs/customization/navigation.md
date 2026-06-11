@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:29:53.000Z
 title: Navigation
 description: Configure navigation menus and sidebars in the Zer0-Mistakes Jekyll theme.
+preview: /images/previews/navigation.png
 layout: default
 categories:
     - docs
@@ -11,7 +13,7 @@ tags:
     - sidebar
 permalink: /docs/customization/navigation/
 difficulty: intermediate
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 sidebar:
     nav: docs
 ---
@@ -202,3 +204,9 @@ Show navigation items based on conditions:
 
 - [Jekyll Data Files](https://jekyllrb.com/docs/datafiles/)
 - [Bootstrap Navigation](https://getbootstrap.com/docs/5.3/components/navs-tabs/)
+
+## See also
+
+- [[Customization]]
+- [[Sidebar Navigation System]]
+- [[Breadcrumbs Navigation]]

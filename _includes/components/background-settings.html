@@ -1,0 +1,137 @@
+<!--
+  ===================================================================
+  BACKGROUND SETTINGS — fffuel-style background controls (tab content)
+  ===================================================================
+  
+  File: background-settings.html
+  Path: _includes/components/background-settings.html
+  Purpose: Background skin selector and opacity controls, rendered
+           inside the Settings offcanvas Background tab.
+  
+  Dependencies:
+    - assets/js/background-customizer.js (zer0Bg API)
+    - _sass/theme/_backgrounds.scss (CSS custom properties)
+    - Bootstrap 5 form components
+  ===================================================================
+-->
+
+{% assign skins = "air,aqua,contrast,dark,dirt,neon,mint,plum,sunrise" | split: "," %}
+{% assign current_skin = site.theme_skin | default: "dark" %}
+
+<!-- Skin selector -->
+<div class="mb-4">
+  <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
+    <i class="bi bi-palette2 me-1"></i>Theme Skin
+  </h6>
+  <div class="d-flex flex-wrap gap-2" id="zer0SkinButtons">
+    {% for skin in skins %}
+    <button class="btn btn-sm btn-outline-primary{% if skin == current_skin %} active{% endif %}"
+            data-skin="{{ skin }}"
+            type="button">
+      {{ skin | capitalize }}
+    </button>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Background toggle -->
+<div class="mb-4">
+  <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
+    <i class="bi bi-image me-1"></i>SVG Backgrounds
+  </h6>
+  <div class="d-flex align-items-center justify-content-between p-3 bg-body-tertiary rounded">
+    <label class="form-check-label" for="zer0BgToggle">Enable SVG backgrounds</label>
+    <div class="form-check form-switch mb-0">
+      <input class="form-check-input" type="checkbox" id="zer0BgToggle" checked>
+    </div>
+  </div>
+</div>
+
+<!-- Opacity sliders -->
+<div class="mb-4">
+  <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
+    <i class="bi bi-sliders2 me-1"></i>Layer Opacity
+  </h6>
+
+  <div class="mb-3">
+    <label class="form-label small" for="zer0GradientOpacity">Gradient opacity</label>
+    <input type="range" class="form-range" id="zer0GradientOpacity"
+           min="0" max="1" step="0.05" value="0.6">
+    <small class="text-body-secondary"><span id="zer0GradientOpacityVal">0.6</span></small>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label small" for="zer0TextureOpacity">Texture opacity</label>
+    <input type="range" class="form-range" id="zer0TextureOpacity"
+           min="0" max="0.2" step="0.005" value="0.04">
+    <small class="text-body-secondary"><span id="zer0TextureOpacityVal">0.04</span></small>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label small" for="zer0PatternOpacity">Pattern opacity</label>
+    <input type="range" class="form-range" id="zer0PatternOpacity"
+           min="0" max="0.3" step="0.01" value="0.08">
+    <small class="text-body-secondary"><span id="zer0PatternOpacityVal">0.08</span></small>
+  </div>
+</div>
+
+<!-- Reset -->
+<div>
+  <button class="btn btn-sm btn-outline-danger" id="zer0BgReset" type="button">
+    <i class="bi bi-arrow-counterclockwise me-1"></i>Reset to defaults
+  </button>
+</div>
+
+<!-- Customizer interaction logic -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  if (typeof zer0Bg === "undefined") return;
+
+  // Skin buttons
+  document.querySelectorAll("#zer0SkinButtons [data-skin]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var skin = this.getAttribute("data-skin");
+      zer0Bg.setSkin(skin);
+      document.querySelectorAll("#zer0SkinButtons .btn").forEach(function (b) { b.classList.remove("active"); });
+      this.classList.add("active");
+    });
+  });
+
+  // Background toggle
+  var toggle = document.getElementById("zer0BgToggle");
+  toggle.checked = document.documentElement.getAttribute("data-zer0-bg") !== "off";
+  toggle.addEventListener("change", function () { zer0Bg.toggle(this.checked); });
+
+  // Opacity sliders
+  function bindSlider(id, layer) {
+    var slider = document.getElementById(id);
+    var valSpan = document.getElementById(id + "Val");
+    slider.addEventListener("input", function () {
+      zer0Bg.setOpacity(layer, this.value);
+      valSpan.textContent = this.value;
+    });
+  }
+  bindSlider("zer0GradientOpacity", "gradient");
+  bindSlider("zer0TextureOpacity", "texture");
+  bindSlider("zer0PatternOpacity", "pattern");
+
+  // Reset
+  document.getElementById("zer0BgReset").addEventListener("click", function () {
+    zer0Bg.setSkin("{{ current_skin }}");
+    zer0Bg.toggle(true);
+    zer0Bg.setOpacity("gradient", 0.6);
+    zer0Bg.setOpacity("texture", 0.04);
+    zer0Bg.setOpacity("pattern", 0.08);
+    document.getElementById("zer0GradientOpacity").value = 0.6;
+    document.getElementById("zer0TextureOpacity").value = 0.04;
+    document.getElementById("zer0PatternOpacity").value = 0.08;
+    document.getElementById("zer0GradientOpacityVal").textContent = "0.6";
+    document.getElementById("zer0TextureOpacityVal").textContent = "0.04";
+    document.getElementById("zer0PatternOpacityVal").textContent = "0.08";
+    toggle.checked = true;
+    document.querySelectorAll("#zer0SkinButtons .btn").forEach(function (b) { b.classList.remove("active"); });
+    var active = document.querySelector('#zer0SkinButtons [data-skin="{{ current_skin }}"]');
+    if (active) active.classList.add("active");
+  });
+});
+</script>

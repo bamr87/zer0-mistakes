@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:30:20.000Z
 title: "Notebooks"
 description: "Interactive Jupyter notebooks with tutorials and data analysis examples"
 layout: default

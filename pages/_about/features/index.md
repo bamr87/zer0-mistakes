@@ -3,7 +3,7 @@ title: Zer0-Mistakes Theme Features
 description: Technical features and capabilities of the Zer0-Mistakes Jekyll theme optimized for VS Code Copilot assistance and AI-powered development.
 excerpt: Comprehensive guide to theme features, Jekyll optimization, automation systems, and AI-assisted developer tools.
 date: 2024-03-12T21:42:28.963Z
-preview: null
+preview: /images/previews/zer0-mistakes-theme-features.png
 tags:
   [
     jekyll,
@@ -19,7 +19,7 @@ type: default
 slug: features
 permalink: /about/features/
 lastmod: 2025-10-19T00:00:00.000Z
-draft: published
+draft: false
 inspiration:
   - features are the foundation of the future
 comments: true
@@ -128,7 +128,6 @@ Every feature embodies our core principles:
 | **MathJax Support** | ✅ Active | Mathematical equations |
 | **Mermaid Diagrams** | ✅ Active | Flowcharts and diagrams |
 | **giscus Comments** | ✅ Active | GitHub-based discussions |
-| **Algolia Search** | ✅ Active | Fast content search |
 | **Google Analytics** | ✅ Active | Traffic tracking |
 | **Social Share Buttons** | ✅ Active | Content sharing |
 | **RSS/Atom Feeds** | ✅ Active | Content syndication |

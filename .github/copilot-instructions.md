@@ -2,6 +2,12 @@
 
 **Docker-First Jekyll Theme with Automated Release Management & Privacy-Compliant Analytics**
 
+> 🤖 **Other AI agents** (Codex, Cursor, Aider, Jules, Continue, Claude Code, …)
+> should start at the cross-tool entry point at [`AGENTS.md`](../AGENTS.md) in
+> the repo root, which links back here. This file is the canonical, detailed
+> guidance for GitHub Copilot and is the source of truth for project
+> conventions.
+
 ## 📖 Project Overview
 
 Zer0-Mistakes is a professional Jekyll theme designed for developers who value reliability, modern workflows, and AI-assisted development. Key features include:
@@ -17,35 +23,53 @@ Zer0-Mistakes is a professional Jekyll theme designed for developers who value r
 
 ```
 zer0-mistakes/
-├── .github/                 # GitHub configurations and workflows
+├── AGENTS.md                # Cross-tool AI agent entry point (Codex/Cursor/Aider/…)
+├── .github/                 # GitHub configurations and AI guidance
 │   ├── copilot-instructions.md  # Main Copilot instructions (this file)
-│   ├── instructions/        # File-specific instruction files
+│   ├── instructions/        # File-scoped instruction files (applyTo globs)
 │   │   ├── layouts.instructions.md
 │   │   ├── includes.instructions.md
 │   │   ├── scripts.instructions.md
 │   │   ├── testing.instructions.md
+│   │   ├── documentation.instructions.md
 │   │   └── version-control.instructions.md
+│   ├── prompts/             # Reusable agent/chat prompts (.prompt.md)
+│   ├── seed/                # "Seed" blueprint docs for full rebuilds
 │   ├── workflows/           # GitHub Actions CI/CD workflows
-│   └── actions/             # Custom GitHub Actions
+│   ├── actions/             # Custom composite GitHub Actions
+│   └── config/              # Linter configs (markdownlint, yamllint, …)
+├── .cursor/                 # Cursor IDE slash-commands (mirrors prompts/)
 ├── _layouts/                # Jekyll layout templates
 ├── _includes/               # Reusable Jekyll components
 ├── _sass/                   # Sass stylesheets
 ├── _data/                   # Data files (YAML, JSON)
-├── assets/                  # Static assets (CSS, JS, images)
+├── _plugins/                # Custom Jekyll plugins
+├── assets/                  # Static assets (CSS, JS, images, vendor/)
+├── lib/                     # Ruby library (jekyll-theme-zer0/version.rb)
 ├── pages/                   # Content pages and collections
-│   ├── _posts/              # Blog posts
-│   ├── _docs/               # Documentation
-│   └── _quests/             # Tutorial collections
-├── scripts/                 # Automation scripts
-│   ├── version.sh           # Version management
-│   ├── build.sh             # Build automation
-│   ├── test.sh              # Test execution
-│   └── release.sh           # Release workflow
+│   ├── _posts/              # Blog posts (layout: article)
+│   ├── _docs/               # Documentation pages
+│   ├── _about/              # About pages
+│   ├── _notebooks/          # Jupyter notebook content
+│   ├── _notes/              # Notes collection
+│   └── _quickstart/         # Tutorial / quickstart content
+├── scripts/                 # Automation scripts (library-based)
+│   ├── bin/                 # Canonical entry points
+│   │   ├── build            # Build the gem
+│   │   ├── release          # Full release pipeline (patch|minor|major)
+│   │   └── test             # Unified test runner
+│   ├── lib/                 # Shared shell modules (common, git, gem, version, …)
+│   ├── build, release, test # Backward-compat wrappers → scripts/bin/*
+│   ├── analyze-commits.sh   # Conventional-commit → version-bump analyzer
+│   └── vendor-install.sh    # Refresh local Bootstrap / icon assets
 ├── test/                    # Test suite
 │   ├── test_runner.sh       # Main test orchestrator
 │   ├── test_core.sh         # Core functionality tests
 │   ├── test_deployment.sh   # Deployment tests
-│   └── test_quality.sh      # Code quality tests
+│   ├── test_quality.sh      # Code quality tests
+│   └── test_installation.sh # Installer tests
+├── templates/               # Reusable content templates
+├── docs/                    # Technical (MDX) documentation
 ├── _config.yml              # Production Jekyll configuration
 ├── _config_dev.yml          # Development configuration overrides
 ├── docker-compose.yml       # Docker development environment
@@ -69,18 +93,19 @@ docker-compose exec jekyll jekyll build
 bundle exec jekyll build
 
 # Run tests
-./test/test_runner.sh               # Run all tests
+./test/test_runner.sh               # Run all theme tests
 ./test/test_core.sh                 # Run core tests only
 ./test/test_runner.sh --verbose     # Verbose output
+./scripts/bin/test                  # Unified runner (lib + theme + integration)
 
-# Version management
-./scripts/version.sh patch          # Bump patch version (1.0.0 → 1.0.1)
-./scripts/version.sh minor          # Bump minor version (1.0.0 → 1.1.0)
-./scripts/version.sh major          # Bump major version (1.0.0 → 2.0.0)
+# Version & release (library-based; bin scripts are canonical)
+./scripts/bin/release patch         # Patch release (0.0.X) — full pipeline
+./scripts/bin/release minor         # Minor release (0.X.0)
+./scripts/bin/release major         # Major release (X.0.0)
+./scripts/bin/release patch --dry-run  # Preview without publishing
 
-# Release
-./scripts/release.sh                # Full release workflow
-./scripts/release.sh --dry-run      # Preview release
+# Build the gem only (no release)
+./scripts/bin/build
 ```
 
 ### Code Quality Commands
@@ -143,7 +168,7 @@ _includes/
 **Layout Hierarchy:**
 
 ```
-root.html (base) → default.html (main) → [journals.html, home.html, etc.]
+root.html (base) → default.html (main) → [article.html, home.html, etc.]
 ```
 
 ## 🚀 Critical Developer Workflows
@@ -160,8 +185,8 @@ docker-compose exec jekyll bash
 # Clean rebuild with dependency updates
 docker-compose down && docker-compose up --build
 
-# Test automated release system
-./scripts/gem-publish.sh patch --dry-run
+# Test automated release system (no publishing)
+./scripts/bin/release patch --dry-run
 ```
 
 ### Automated Release System
@@ -169,11 +194,11 @@ docker-compose down && docker-compose up --build
 The theme uses semantic versioning with automated commit analysis:
 
 ```bash
-# Publish patch release (0.5.1)
-./scripts/gem-publish.sh patch
+# Publish patch release (e.g. 0.22.15 → 0.22.16)
+./scripts/bin/release patch
 
-# Publish minor release (0.6.0)
-./scripts/gem-publish.sh minor
+# Publish minor release (e.g. 0.22.x → 0.23.0)
+./scripts/bin/release minor
 
 # Preview changelog generation
 ./scripts/analyze-commits.sh HEAD~5..HEAD
@@ -182,7 +207,8 @@ The theme uses semantic versioning with automated commit analysis:
 **Key Files:**
 
 - `lib/jekyll-theme-zer0/version.rb` - Single source of truth for version
-- `scripts/gem-publish.sh` - Full release workflow (changelog → version bump → test → publish)
+- `scripts/bin/release` - Full release workflow (changelog → version bump → test → build → tag → publish)
+- `scripts/lib/*.sh` - Shared shell modules used by `scripts/bin/*`
 - `scripts/analyze-commits.sh` - Analyzes commit messages for version bump type
 
 ## 📝 Content Creation Patterns
@@ -191,7 +217,7 @@ The theme uses semantic versioning with automated commit analysis:
 
 ```
 pages/
-├── _posts/         # Blog posts (layout: journals)
+├── _posts/         # Blog posts (layout: article)
 ├── _docs/          # Documentation (layout: default)
 ├── _about/         # About pages (custom layouts)
 └── _quickstart/    # Tutorial content (layout: default)
@@ -203,7 +229,7 @@ pages/
 ---
 title: "Your Post Title"
 description: "SEO description (150-160 chars)"
-layout: journals
+layout: article
 categories: [Category1, Subcategory]
 tags: [tag1, tag2]
 date: 2025-01-27T10:00:00.000Z
@@ -214,10 +240,9 @@ permalink: /custom-url/
 
 ## 🎨 Bootstrap 5 Integration
 
-**CDN Loading Pattern:**
+**Local vendor pattern:**
 
-- Bootstrap 5.3.3 CSS/JS loaded via CDN in `_includes/core/head.html`
-- Bootstrap Icons 1.10.3 for consistent iconography
+- Bootstrap 5.3.3 CSS/JS and Bootstrap Icons under `assets/vendor/` (linked from `_includes/core/head.html` and `js-cdn.html`); refresh with `./scripts/vendor-install.sh`
 - Custom CSS layered in `/assets/css/main.css`
 
 **Responsive Component Pattern:**
@@ -324,7 +349,7 @@ environment: { JEKYLL_ENV: development }
 
 ```bash
 # Full release workflow
-./scripts/gem-publish.sh patch  # Auto-detects version bump needed
+./scripts/bin/release patch  # Auto-detects version bump needed (or use minor/major)
 ```
 
 ---
@@ -364,7 +389,7 @@ sub-title: "From development to production with Docker containers"
 excerpt: "Master containerization for scalable web application deployment"
 snippet: "Containers transform how we build and deploy applications"
 author: "Zer0-Mistakes Development Team"
-layout: journals
+layout: article
 keywords:
   primary: ["docker containers", "web application deployment"]
   secondary: ["containerization", "production ready", "scalable architecture"]
@@ -516,41 +541,24 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.s
 
 - **Posts**: Create in `pages/_posts/` with comprehensive Jekyll front matter including AI content hints and technical requirements
 - **Pages**: Add to root or `pages/` with custom layouts documented via front matter component specifications
-- **Collections**: Use `pages/_quests/`, `pages/_docs/` with front matter defining content relationships and learning progressions
+- **Collections**: Use `pages/_quickstart/`, `pages/_docs/`, `pages/_notebooks/`, `pages/_notes/` with front matter defining content relationships and learning progressions
 - **Front Matter Standards**: Include complete metadata: `layout`, `title`, `date`, `categories`, `tags`, plus AI directives, SEO optimization, and performance hints
 
 ## 🎨 Bootstrap 5 Integration
 
 ### CSS Framework Architecture
 
-- **Bootstrap 5.3.3**: Latest stable version loaded via CDN
-- **Bootstrap Icons 1.10.3**: Icon library for enhanced UI elements
-- **Custom CSS**: Layered on top of Bootstrap in `/assets/css/main.css` and `/assets/css/custom.css`
+- **Bootstrap 5.3.3** and **Bootstrap Icons**: Loaded from committed `assets/vendor/` (GitHub Pages–safe), then `/assets/css/main.css` (from `main.scss` + `_sass/`). Refresh vendor files with `./scripts/vendor-install.sh` or `npm run vendor:install`. Optional fork overrides: `assets/css/user-overrides.css` linked from `_includes/core/head.html`.
 - **Responsive Design**: Mobile-first approach with breakpoint system
 
-### Bootstrap CDN Loading
+### Bootstrap and icon asset links (Liquid)
 
-```html
-<!-- Bootstrap CSS (loaded in _includes/head.html) -->
-<link
-  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-  rel="stylesheet"
-  integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-  crossorigin="anonymous"
-/>
-
-<!-- Bootstrap Icons -->
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
-/>
-
-<!-- Bootstrap JS (loaded in _includes/js-cdn.html) -->
-<script
-  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-  crossorigin="anonymous"
-></script>
+```liquid
+{% raw %}
+<link href="{{ '/assets/vendor/bootstrap/css/bootstrap.min.css' | relative_url }}" rel="stylesheet">
+<link rel="stylesheet" href="{{ '/assets/vendor/bootstrap-icons/font/bootstrap-icons.css' | relative_url }}">
+<script src="{{ '/assets/vendor/bootstrap/js/bootstrap.bundle.min.js' | relative_url }}"></script>
+{% endraw %}
 ```
 
 ### Bootstrap Component Usage
@@ -666,7 +674,7 @@ date: 2025-01-27T10:00:00.000Z
 preview: "Social media preview text"
 tags: [tag1, tag2]
 categories: [Category1, Subcategory]
-layout: journals
+layout: article
 permalink: /custom-url/
 ---
 ```

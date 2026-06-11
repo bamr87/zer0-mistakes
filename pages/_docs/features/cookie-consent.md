@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:29:58.000Z
 title: Cookie Consent Management
 description: GDPR/CCPA compliant cookie consent system with granular permissions and Bootstrap modal preferences.
+preview: /images/previews/cookie-consent-management.png
 layout: default
 categories:
     - docs
@@ -13,7 +15,7 @@ tags:
     - consent
 permalink: /docs/features/cookie-consent/
 difficulty: intermediate
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 sidebar:
     nav: docs
 ---
@@ -260,3 +262,9 @@ categories:
 - [PostHog Analytics](/docs/features/posthog-analytics/)
 - [Privacy Policy](/privacy-policy/)
 - [Google Analytics](/docs/analytics/google-analytics/)
+
+## See also
+
+- [[Features]]
+- [[PostHog Analytics]]
+- [[Google Analytics]]

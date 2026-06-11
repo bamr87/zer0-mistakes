@@ -42,30 +42,35 @@ Each feature includes:
 
 Features are organized into these categories:
 
-1. **Core Infrastructure** - Bootstrap, Docker, Installation
-2. **AI-Powered Features** - Preview Generation, Copilot Integration
-3. **Analytics & Privacy** - PostHog, Cookie Consent
-4. **Navigation & UI** - Sidebar, Keyboard Navigation, Mobile TOC
-5. **Content Management** - Jupyter Notebooks, Mermaid, Collections
-6. **Developer Experience** - Testing, CI/CD, Release Automation
-7. **Layouts & Templates** - 15+ layouts, 70+ includes
-8. **Plugins & Extensions** - Custom Jekyll plugins
-9. **Legal & Compliance** - Privacy Policy, Terms of Service
-10. **Documentation** - PRD, Dual Architecture
-11. **Automation & Workflows** - GitHub Actions
-12. **Utility Scripts** - Automation library
+1. **Core Infrastructure** — Bootstrap, Docker, Modular Installer
+2. **AI-Powered Features** — Preview generation, Copilot/AGENTS.md integration
+3. **Analytics & Privacy** — PostHog, Cookie Consent, Google Analytics, GTM
+4. **Navigation & UI** — Sidebar, Keyboard nav, Mobile TOC, ES6 modular nav, Dynamic nav fallback
+5. **Content Management** — Jupyter Notebooks, Mermaid, Collections, Notes
+6. **Obsidian Vault Integration** — Wiki-links, embeds, callouts, backlinks, graph view
+7. **Developer Experience** — Testing, CI/CD, Release Automation, DevContainer, Local Docker Publishing
+8. **Layouts & Templates** — 15+ layouts, 70+ includes, Admin dashboard
+9. **Plugins & Extensions** — Custom Jekyll plugins
+10. **Legal & Compliance** — Privacy Policy, Terms of Service
+11. **Documentation** — PRD, Dual Architecture, AGENTS.md, Roadmap
+12. **Automation & Workflows** — GitHub Actions, Frontmatter Validation
+13. **Utility Scripts** — Automation library, Vendored assets
+14. **SEO & AIEO** — Meta tags, sitemap, structured data, FAQ, glossary
+15. **Setup & Quickstart** — Bare-minimum starter, Smart 404, Site config detection
 
 ## Adding New Features
 
 When adding a new feature:
 
 1. Add the feature to `features/features.yml`
-2. Use the next sequential ID (ZER0-XXX)
-3. Include all required fields (id, title, description, implemented, version, tags, date)
+2. Use the next sequential ID (ZER0-XXX) — never reuse retired IDs
+3. Include all required fields (id, title, description, implemented, version, tags, date, link, docs)
 4. Add file references under `references:`
 5. Link to documentation if available
-6. Copy to `_data/features.yml`
+6. Copy to `_data/features.yml` (the two files must stay byte-identical)
 7. Update the features page if needed
+
+See [.github/instructions/features.instructions.md](../.github/instructions/features.instructions.md) for the full schema and sync contract.
 
 ## Validation
 
@@ -73,8 +78,9 @@ Validate YAML syntax:
 
 ```bash
 python3 -c "import yaml; yaml.safe_load(open('features/features.yml'))"
+diff -q features/features.yml _data/features.yml   # must report no difference
 ```
 
 ## Feature Count
 
-Current count: **28 features** (as of 2025-12-16)
+Current count: **59 features** (as of 2026-05-05, gem v1.6.1)

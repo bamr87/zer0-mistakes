@@ -13,6 +13,7 @@
  * - / : Focus search (when implemented)
  * - b : Toggle left sidebar
  * - t : Toggle TOC sidebar
+ * - ? : Show keyboard shortcuts help modal (#zer0-shortcuts-modal)
  * 
  * Usage:
  *   import { KeyboardShortcuts } from './keyboard.js';
@@ -65,8 +66,14 @@ export class KeyboardShortcuts {
      * @param {KeyboardEvent} event
      */
     _handleKeydown(event) {
-        // Ignore if user is typing in an input
-        if (event.target.matches('input, textarea, select, [contenteditable="true"]')) {
+        // Ignore if user is typing in an input.
+        // Guard with typeof check: when the listener fires for a synthetic
+        // event dispatched on `document`, `event.target` is the Document
+        // node, which does not implement `.matches()` and would throw a
+        // TypeError that swallows the rest of the handler.
+        const target = event.target;
+        if (target && typeof target.matches === 'function' &&
+            target.matches('input, textarea, select, [contenteditable="true"]')) {
             return;
         }
 
@@ -104,7 +111,17 @@ export class KeyboardShortcuts {
                 }
                 break;
             default:
-                if (event.code === 'Slash' && keys.search === '/') {
+                // `?` (Shift+/) must be checked BEFORE the Slash fallback,
+                // otherwise Shift+/ would focus the search input instead of
+                // opening the help modal (event.code === 'Slash' is true for
+                // both unshifted '/' and shifted '?').
+                if (event.key === '?' && !event.ctrlKey && !event.metaKey && !event.altKey) {
+                    const modalEl = document.getElementById('zer0-shortcuts-modal');
+                    if (modalEl && window.bootstrap && window.bootstrap.Modal) {
+                        event.preventDefault();
+                        window.bootstrap.Modal.getOrCreateInstance(modalEl).show();
+                    }
+                } else if (event.code === 'Slash' && !event.shiftKey && keys.search === '/') {
                     event.preventDefault();
                     this._focusSearch();
                 }
@@ -190,6 +207,16 @@ export class KeyboardShortcuts {
      * @private
      */
     _toggleSidebar() {
+        const sidebarVisibility = window.zer0Navigation?.getModule('sidebarVisibility');
+        if (sidebarVisibility) {
+            sidebarVisibility.toggle();
+
+            document.dispatchEvent(new CustomEvent('navigation:sidebarToggle', {
+                detail: { sidebar: 'left' }
+            }));
+            return;
+        }
+
         const sidebar = document.querySelector(config.selectors.leftSidebar);
         if (sidebar && typeof bootstrap !== 'undefined') {
             const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(sidebar);
@@ -206,11 +233,21 @@ export class KeyboardShortcuts {
      * @private
      */
     _toggleToc() {
+        const tocVisibility = window.zer0Navigation?.getModule('tocVisibility');
+        if (tocVisibility) {
+            tocVisibility.toggle();
+
+            document.dispatchEvent(new CustomEvent('navigation:sidebarToggle', {
+                detail: { sidebar: 'toc' }
+            }));
+            return;
+        }
+
         const toc = document.querySelector(config.selectors.rightSidebar);
         if (toc && typeof bootstrap !== 'undefined') {
             const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(toc);
             bsOffcanvas.toggle();
-            
+
             document.dispatchEvent(new CustomEvent('navigation:sidebarToggle', {
                 detail: { sidebar: 'toc' }
             }));

@@ -165,6 +165,45 @@ update_gemfile_lock() {
     fi
 }
 
+# Update version references in README.md (front matter, stats table, footer badge)
+update_readme() {
+    local new_version="$1"
+    local readme_file="README.md"
+
+    if [[ ! -f "$readme_file" ]]; then
+        debug "README.md not found, skipping"
+        return 0
+    fi
+
+    debug "Updating version references in $readme_file..."
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        info "[DRY RUN] Would update version references in $readme_file"
+        return 0
+    fi
+
+    local today
+    today=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
+
+    # Update all version patterns in a single sed pass
+    sed -i.tmp \
+        -e "s/^version: .*/version: $new_version/" \
+        -e "s/^lastmod: .*/lastmod: $today/" \
+        -e "s/| \*\*Current Version\*\* | [0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*/| **Current Version** | $new_version/" \
+        -e "s/\*\*v[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\*\*/**v${new_version}**/" \
+        "$readme_file"
+    rm -f "${readme_file}.tmp"
+
+    # Log which references were updated for visibility
+    if grep -q "^version: $new_version" "$readme_file"; then
+        debug "✓ Front matter version updated"
+    else
+        debug "⚠ Front matter version pattern not found"
+    fi
+
+    debug "✓ Updated $readme_file"
+}
+
 # Update version in all files
 update_version_files() {
     local new_version="$1"
@@ -176,6 +215,7 @@ update_version_files() {
     update_version_rb "$new_version"
     update_package_json "$new_version"
     update_gemfile_lock "$new_version"
+    update_readme "$new_version"
     
     success "Version files updated to $new_version"
 }
@@ -207,6 +247,7 @@ export -f calculate_new_version
 export -f update_version_rb
 export -f update_package_json
 export -f update_gemfile_lock
+export -f update_readme
 export -f update_version_files
 export -f version_less_than
 export -f get_version_from_tag

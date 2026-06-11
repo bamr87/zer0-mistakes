@@ -1,3 +1,13 @@
+---
+title: "PostHog Analytics Integration"
+description: "PostHog analytics in Zer0-Mistakes: privacy-first, consent-gated event tracking with GDPR/CCPA compliance and a cookie banner, enabled in production."
+date: 2025-11-16T17:04:56.000Z
+lastmod: 2026-06-01T03:38:46.000Z
+categories: [docs]
+tags: [implementation, changelog]
+author: bamr87
+---
+
 # PostHog Analytics Integration
 
 ## Overview
@@ -339,3 +349,7 @@ For issues or questions about PostHog integration:
 ---
 
 _This integration provides a complete, privacy-compliant analytics solution for Jekyll sites with the flexibility to grow with your needs while respecting user privacy._
+
+---
+
+> **User guide**: For setup and configuration examples, see [PostHog Analytics](/docs/features/posthog-analytics/) in the user documentation.

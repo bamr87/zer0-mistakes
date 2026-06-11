@@ -30,12 +30,22 @@ install: setup ## Alias for setup
 .PHONY: test
 test: ## Run all tests and validations
 	@echo "$(BLUE)Running tests...$(RESET)"
-	@./scripts/test.sh
+	@./scripts/bin/test
 
 .PHONY: test-verbose
 test-verbose: ## Run tests with verbose output
 	@echo "$(BLUE)Running tests (verbose)...$(RESET)"
-	@./scripts/test.sh --verbose
+	@./scripts/bin/test --verbose
+
+.PHONY: validate
+validate: ## Run canonical preflight validation
+	@echo "$(BLUE)Running preflight validation...$(RESET)"
+	@./scripts/validate
+
+.PHONY: validate-quick
+validate-quick: ## Run host-only validation checks
+	@echo "$(BLUE)Running quick validation...$(RESET)"
+	@./scripts/validate --quick
 
 .PHONY: lint
 lint: ## Run linting and code quality checks
@@ -75,60 +85,61 @@ version: ## Show current version
 	@echo "$(BOLD)Current version:$(RESET) $(VERSION)"
 
 .PHONY: version-patch
-version-patch: test ## Bump patch version (0.1.8 → 0.1.9)
-	@echo "$(YELLOW)Bumping patch version...$(RESET)"
-	@./scripts/version.sh patch
+version-patch: validate-quick ## Preview patch release version changes
+	@echo "$(YELLOW)Previewing patch release version changes...$(RESET)"
+	@./scripts/bin/release patch --dry-run --skip-publish --no-github-release --non-interactive
 
 .PHONY: version-minor
-version-minor: test ## Bump minor version (0.1.8 → 0.2.0)
-	@echo "$(YELLOW)Bumping minor version...$(RESET)"
-	@./scripts/version.sh minor
+version-minor: validate-quick ## Preview minor release version changes
+	@echo "$(YELLOW)Previewing minor release version changes...$(RESET)"
+	@./scripts/bin/release minor --dry-run --skip-publish --no-github-release --non-interactive
 
 .PHONY: version-major
-version-major: test ## Bump major version (0.1.8 → 1.0.0)
-	@echo "$(YELLOW)Bumping major version...$(RESET)"
-	@./scripts/version.sh major
+version-major: validate-quick ## Preview major release version changes
+	@echo "$(YELLOW)Previewing major release version changes...$(RESET)"
+	@./scripts/bin/release major --dry-run --skip-publish --no-github-release --non-interactive
 
 .PHONY: version-dry-run
 version-dry-run: ## Preview version bump without applying changes
 	@echo "$(BLUE)Version bump preview (patch):$(RESET)"
-	@./scripts/version.sh patch --dry-run
+	@./scripts/bin/release patch --dry-run --skip-publish --no-github-release --non-interactive
 
 ##@ Build Commands
 
 .PHONY: build
 build: test ## Build the gem
 	@echo "$(GREEN)Building gem...$(RESET)"
-	@./scripts/build.sh
+	@./scripts/build
 
 .PHONY: build-dry-run
 build-dry-run: ## Preview build process without creating gem
 	@echo "$(BLUE)Build preview:$(RESET)"
-	@./scripts/build.sh --dry-run
+	@./scripts/build --dry-run
 
 .PHONY: publish
-publish: build ## Build and publish gem to RubyGems
-	@echo "$(RED)$(BOLD)Publishing gem to RubyGems...$(RESET)"
-	@./scripts/build.sh --publish
+publish: ## Deprecated: use release-patch, release-minor, or release-major
+	@echo "$(YELLOW)Publishing is handled by the release workflow.$(RESET)"
+	@echo "Use: make release-patch, make release-minor, or make release-major"
+	@exit 1
 
 .PHONY: publish-dry-run
 publish-dry-run: ## Preview publish process without uploading
 	@echo "$(BLUE)Publish preview:$(RESET)"
-	@./scripts/build.sh --publish --dry-run
+	@./scripts/bin/release patch --dry-run --skip-publish --no-github-release --non-interactive
 
 ##@ Release Workflow
 
 .PHONY: release-patch
-release-patch: version-patch build publish ## Full patch release workflow
-	@echo "$(GREEN)$(BOLD)Patch release complete!$(RESET)"
+release-patch: ## Full patch release workflow
+	@./scripts/bin/release patch
 
 .PHONY: release-minor
-release-minor: version-minor build publish ## Full minor release workflow
-	@echo "$(GREEN)$(BOLD)Minor release complete!$(RESET)"
+release-minor: ## Full minor release workflow
+	@./scripts/bin/release minor
 
 .PHONY: release-major
-release-major: version-major build publish ## Full major release workflow
-	@echo "$(GREEN)$(BOLD)Major release complete!$(RESET)"
+release-major: ## Full major release workflow
+	@./scripts/bin/release major
 
 ##@ Git Commands
 

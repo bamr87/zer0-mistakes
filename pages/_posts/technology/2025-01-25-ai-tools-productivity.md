@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:48.000Z
 title: "10 AI Tools That Will Transform Your Productivity in 2025"
 description: "Discover the best AI-powered tools to supercharge your workflow and get more done"
 preview: /images/previews/10-ai-tools-that-will-transform-your-productivity-.png

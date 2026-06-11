@@ -28,50 +28,57 @@ categorize_commit() {
     local commit_full
     commit_full=$(get_commit_message "$commit_hash")
     
-    if echo "$commit_full" | grep -qi "BREAKING CHANGE\|breaking:"; then
+    # Conventional Commits "BREAKING CHANGE:" / "BREAKING:" footer
+    if echo "$commit_full" | grep -qiE "^BREAKING[ -]CHANGE:|^BREAKING:"; then
         echo "breaking"
         return 0
     fi
     
-    # Conventional commit patterns
+    # Conventional Commits "!" subject marker (e.g. feat!:, refactor(api)!:)
+    if echo "$subject" | grep -qE "^[a-zA-Z]+(\([^)]+\))?!:"; then
+        echo "breaking"
+        return 0
+    fi
+    
+    # Conventional commit patterns (allow optional scope)
     case "$subject_lower" in
-        feat:*|feature:*|add:*|new:*)
+        feat:*|feat\(*|feature:*|feature\(*|add:*|add\(*|new:*|new\(*)
             echo "added"
             ;;
-        fix:*|bugfix:*|bug:*|patch:*)
+        fix:*|fix\(*|bugfix:*|bugfix\(*|bug:*|bug\(*|patch:*|patch\(*)
             echo "fixed"
             ;;
-        perf:*|performance:*)
+        perf:*|perf\(*|performance:*|performance\(*)
             echo "changed"
             ;;
-        refactor:*)
+        refactor:*|refactor\(*)
             echo "changed"
             ;;
-        style:*)
+        style:*|style\(*)
             echo "changed"
             ;;
-        docs:*|doc:*)
+        docs:*|docs\(*|doc:*|doc\(*)
             echo "changed"
             ;;
-        test:*)
+        test:*|test\(*)
             echo "changed"
             ;;
-        chore:*)
+        chore:*|chore\(*)
             echo "changed"
             ;;
-        ci:*)
+        ci:*|ci\(*)
             echo "changed"
             ;;
-        build:*)
+        build:*|build\(*)
             echo "changed"
             ;;
-        revert:*|remove:*|delete:*)
+        revert:*|revert\(*|remove:*|remove\(*|delete:*|delete\(*)
             echo "removed"
             ;;
-        deprecate:*|deprecated:*)
+        deprecate:*|deprecate\(*|deprecated:*|deprecated\(*)
             echo "deprecated"
             ;;
-        security:*|sec:*)
+        security:*|security\(*|sec:*|sec\(*)
             echo "security"
             ;;
         *)
@@ -84,8 +91,8 @@ categorize_commit() {
 clean_commit_message() {
     local subject="$1"
     
-    # Remove conventional commit prefix
-    subject=$(echo "$subject" | sed -E 's/^(feat|feature|fix|bugfix|bug|patch|perf|performance|refactor|style|docs|doc|test|chore|ci|build|revert|remove|delete|deprecate|deprecated|security|sec)(\([^)]*\))?:\s*//')
+    # Remove conventional commit prefix (with optional scope and ! breaking marker)
+    subject=$(echo "$subject" | sed -E 's/^(feat|feature|fix|bugfix|bug|patch|perf|performance|refactor|style|docs|doc|test|chore|ci|build|revert|remove|delete|deprecate|deprecated|security|sec)(\([^)]*\))?!?:[[:space:]]*//')
     
     # Capitalize first letter
     subject="$(echo "${subject:0:1}" | tr '[:lower:]' '[:upper:]')${subject:1}"
@@ -130,7 +137,7 @@ generate_changelog() {
     while IFS='|' read -r hash subject author date; do
         [[ -z "$hash" ]] && continue
         
-        ((commit_count++))
+        commit_count=$((commit_count + 1))
         
         # Skip merge commits
         if echo "$subject" | grep -qE "^Merge (branch|pull request|remote-tracking branch)"; then
@@ -298,18 +305,65 @@ update_changelog_file() {
     
     # Create backup
     cp "$CHANGELOG_FILE" "${CHANGELOG_FILE}.bak"
-    
-    # Insert new entry after header (preserve first line)
+
+    # Fold any pending "## [Unreleased]" section into the new entry so its
+    # notes ship with this release instead of getting buried beneath it
+    # (stale Unreleased blocks used to accumulate mid-file).
+    local unreleased_start
+    unreleased_start=$(grep -n '^## \[Unreleased\]' "$CHANGELOG_FILE" | head -1 | cut -d: -f1)
+
+    if [[ -n "$unreleased_start" ]]; then
+        # First "## " heading after the Unreleased one (relative offset)
+        local rel_next
+        rel_next=$(tail -n +"$((unreleased_start + 1))" "$CHANGELOG_FILE" | grep -n '^## ' | head -1 | cut -d: -f1)
+
+        local unreleased_body
+        if [[ -n "$rel_next" ]]; then
+            unreleased_body=$(sed -n "$((unreleased_start + 1)),$((unreleased_start + rel_next - 1))p" "$CHANGELOG_FILE")
+        else
+            unreleased_body=$(tail -n +"$((unreleased_start + 1))" "$CHANGELOG_FILE")
+        fi
+
+        # Drop the Unreleased section (header + body) from the file
+        {
+            head -n "$((unreleased_start - 1))" "$CHANGELOG_FILE"
+            [[ -n "$rel_next" ]] && tail -n +"$((unreleased_start + rel_next))" "$CHANGELOG_FILE"
+        } > "${CHANGELOG_FILE}.tmp"
+        mv "${CHANGELOG_FILE}.tmp" "$CHANGELOG_FILE"
+
+        # Append the pending notes to the new entry (if any are non-blank),
+        # separated by a blank line so section headings don't collide.
+        if [[ -n "${unreleased_body//[[:space:]]/}" ]]; then
+            debug "Folding pending [Unreleased] notes into the new entry"
+            entry="${entry%$'\n'}"$'\n\n'"$(echo "$unreleased_body" | sed -e '/./,$!d')"$'\n'
+        fi
+    fi
+
+    # Insert the new entry before the first release heading so the file
+    # header/preamble (title, Keep a Changelog blurb) stays at the top.
+    # Normalize the entry's trailing newlines first: callers that build the
+    # entry via command substitution (e.g. version-bump.yml's
+    # `"$(cat "$TEMP_FILE")"`) lose them, so guarantee exactly one blank
+    # line between the entry and the next release block here.
+    while [[ "$entry" == *$'\n' ]]; do entry="${entry%$'\n'}"; done
+
+    local first_release
+    first_release=$(grep -n '^## ' "$CHANGELOG_FILE" | head -1 | cut -d: -f1)
+
     {
-        head -n 1 "$CHANGELOG_FILE"
-        echo ""
-        echo "$entry"
-        tail -n +2 "$CHANGELOG_FILE"
+        if [[ -n "$first_release" ]]; then
+            head -n "$((first_release - 1))" "$CHANGELOG_FILE"
+            printf '%s\n\n' "$entry"
+            tail -n +"$first_release" "$CHANGELOG_FILE"
+        else
+            cat "$CHANGELOG_FILE"
+            printf '\n%s\n' "$entry"
+        fi
     } > "${CHANGELOG_FILE}.tmp"
-    
+
     mv "${CHANGELOG_FILE}.tmp" "$CHANGELOG_FILE"
     rm -f "${CHANGELOG_FILE}.bak"
-    
+
     debug "✓ Updated $CHANGELOG_FILE"
 }
 

@@ -87,4 +87,81 @@ test_categorization "security: patch vulnerability" "security"
 test_categorization "BREAKING: major change" "breaking"
 test_categorization "random commit" "other"
 
+# Test: update_changelog_file
+echo -e "\nTesting update_changelog_file..."
+
+# Each case runs in a throwaway directory; CHANGELOG_FILE is the relative
+# default ("CHANGELOG.md"), so the function operates on the temp copy.
+_changelog_tmp=$(mktemp -d)
+pushd "$_changelog_tmp" >/dev/null
+
+# Case 1: pending [Unreleased] notes are folded into the new entry and the
+# preamble stays at the top of the file.
+cat > CHANGELOG.md <<'FIXTURE'
+# Changelog
+
+All notable changes are documented here.
+
+## [Unreleased]
+
+### Added
+- Pending feature A
+
+## [1.0.0] - 2026-01-01
+
+### Added
+- Initial release
+FIXTURE
+
+update_changelog_file "## [1.1.0] - 2026-06-10
+
+### Changed
+- Version bump: minor release
+" >/dev/null 2>&1
+
+assert_false "grep -q '^## \[Unreleased\]' CHANGELOG.md" "Pending Unreleased section is consumed"
+assert_true "grep -q 'Pending feature A' CHANGELOG.md" "Pending notes are preserved"
+assert_equals "# Changelog" "$(head -n 1 CHANGELOG.md)" "Preamble heading stays on line 1"
+# The folded notes must land inside the new 1.1.0 entry (above 1.0.0)
+_pending_line=$(grep -n 'Pending feature A' CHANGELOG.md | cut -d: -f1)
+_v110_line=$(grep -n '^## \[1.1.0\]' CHANGELOG.md | cut -d: -f1)
+_v100_line=$(grep -n '^## \[1.0.0\]' CHANGELOG.md | cut -d: -f1)
+assert_true "[[ $_pending_line -gt $_v110_line && $_pending_line -lt $_v100_line ]]" "Folded notes live inside the new entry"
+
+# Case 2: without an Unreleased section the entry is inserted before the
+# first release heading, after the preamble.
+cat > CHANGELOG.md <<'FIXTURE'
+# Changelog
+
+All notable changes are documented here.
+
+## [1.0.0] - 2026-01-01
+
+### Added
+- Initial release
+FIXTURE
+
+update_changelog_file "## [1.0.1] - 2026-06-10
+
+### Fixed
+- A bug
+" >/dev/null 2>&1
+
+_v101_line=$(grep -n '^## \[1.0.1\]' CHANGELOG.md | cut -d: -f1)
+_v100_line=$(grep -n '^## \[1.0.0\]' CHANGELOG.md | cut -d: -f1)
+assert_true "[[ $_v101_line -lt $_v100_line ]]" "New entry inserted before previous release"
+assert_true "grep -q 'All notable changes' CHANGELOG.md" "Preamble preserved without Unreleased"
+
+# Case 3: entries passed via command substitution lose trailing newlines
+# (e.g. version-bump.yml's "$(cat "$TEMP_FILE")"); the insert must still
+# leave exactly one blank line before the next release block.
+printf '## [1.0.2] - 2026-06-11\n\n### Fixed\n- Another bug\n\n' > entry.txt
+update_changelog_file "$(cat entry.txt)" >/dev/null 2>&1
+_v101_line=$(grep -n '^## \[1.0.1\]' CHANGELOG.md | cut -d: -f1)
+assert_true "[[ -z \"\$(sed -n $((_v101_line - 1))p CHANGELOG.md)\" ]]" "Blank line separates entry from next release block"
+assert_true "[[ -n \"\$(sed -n $((_v101_line - 2))p CHANGELOG.md)\" ]]" "Exactly one blank line (no double spacing)"
+
+popd >/dev/null
+rm -rf "$_changelog_tmp"
+
 echo -e "\n${GREEN}changelog.sh tests complete${NC}"

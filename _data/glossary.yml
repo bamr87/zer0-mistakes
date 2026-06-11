@@ -1,0 +1,101 @@
+# Glossary Data File
+# ==================
+# Key terms and definitions used throughout the zer0-mistakes theme.
+# Used by: pages/glossary.md
+#
+# Fields:
+#   term: The term being defined (required)
+#   definition: A clear, concise definition (required)
+#   url: Link to learn more (optional)
+#   related: Related terms (optional)
+
+- term: "Jekyll"
+  definition: "A static site generator written in Ruby that transforms plain text files (Markdown, Liquid templates) into a complete website. Jekyll is the engine behind GitHub Pages and powers zer0-mistakes."
+  url: "https://jekyllrb.com/"
+  related: ["Liquid", "GitHub Pages", "Ruby"]
+
+- term: "Liquid"
+  definition: "An open-source template language created by Shopify and used by Jekyll. Liquid uses tags ({% %}), objects ({{ }}), and filters to render dynamic content in static HTML pages."
+  url: "https://shopify.github.io/liquid/"
+  related: ["Jekyll", "Includes"]
+
+- term: "Bootstrap"
+  definition: "A front-end CSS and JavaScript framework for building responsive, mobile-first websites. zer0-mistakes uses Bootstrap 5.3.3 for its grid system, components, and utility classes."
+  url: "https://getbootstrap.com/"
+  related: ["Responsive Design", "SCSS"]
+
+- term: "Docker"
+  definition: "A platform for developing, shipping, and running applications inside lightweight, portable containers. zer0-mistakes uses Docker as the primary development environment to ensure cross-platform consistency."
+  url: "https://www.docker.com/"
+  related: ["Docker Compose", "Docker-First"]
+
+- term: "Docker Compose"
+  definition: "A tool for defining and running multi-container Docker applications using a YAML configuration file (docker-compose.yml). In zer0-mistakes, docker-compose up starts the full development environment."
+  url: "https://docs.docker.com/compose/"
+  related: ["Docker"]
+
+- term: "Docker-First"
+  definition: "A development philosophy where Docker containers are the primary and recommended development environment. This ensures all developers get identical behavior regardless of their host operating system."
+  related: ["Docker", "Docker Compose"]
+
+- term: "GitHub Pages"
+  definition: "A free static site hosting service from GitHub that builds Jekyll sites directly from a repository. zer0-mistakes is fully compatible with GitHub Pages using the remote_theme configuration."
+  url: "https://pages.github.com/"
+  related: ["Jekyll", "Remote Theme"]
+
+- term: "Remote Theme"
+  definition: "A Jekyll configuration that loads a theme from a GitHub repository instead of installing it locally. Configured via remote_theme: bamr87/zer0-mistakes in _config.yml for GitHub Pages compatibility."
+  related: ["GitHub Pages", "Jekyll"]
+
+- term: "Mermaid"
+  definition: "A JavaScript-based diagramming and charting library that renders Markdown-like text into diagrams (flowcharts, sequence diagrams, Gantt charts, etc.). Enabled per-page in zer0-mistakes with mermaid: true in front matter."
+  url: "https://mermaid.js.org/"
+  related: ["Markdown"]
+
+- term: "MathJax"
+  definition: "A JavaScript display engine for mathematical notation (LaTeX, MathML, AsciiMath). Loaded asynchronously in zer0-mistakes for rendering equations in blog posts and documentation."
+  url: "https://www.mathjax.org/"
+
+- term: "PostHog"
+  definition: "An open-source product analytics platform. zer0-mistakes integrates PostHog for privacy-compliant analytics with cookie consent, respecting Do Not Track settings and GDPR/CCPA requirements."
+  url: "https://posthog.com/"
+  related: ["Analytics", "Cookie Consent"]
+
+- term: "Front Matter"
+  definition: "A YAML block at the top of Jekyll files (between --- delimiters) that defines metadata such as layout, title, date, tags, and custom variables. Front matter drives Jekyll's template rendering."
+  related: ["Jekyll", "YAML"]
+
+- term: "SCSS"
+  definition: "Sassy CSS — a CSS preprocessor that adds variables, nesting, mixins, and other features to standard CSS. Jekyll compiles SCSS files from _sass/ into production CSS automatically."
+  related: ["Bootstrap", "CSS"]
+
+- term: "Semantic Versioning"
+  definition: "A versioning scheme using MAJOR.MINOR.PATCH format where MAJOR indicates breaking changes, MINOR indicates new backward-compatible features, and PATCH indicates backward-compatible bug fixes. zer0-mistakes follows SemVer strictly."
+  url: "https://semver.org/"
+  related: ["CHANGELOG"]
+
+- term: "AIEO"
+  definition: "AI Engine Optimization — a methodology for making web content maximally citable by AI systems. Includes structured data, entity density, E-E-A-T signals, FAQ injection, glossary definitions, and temporal anchoring."
+  related: ["JSON-LD", "E-E-A-T", "Structured Data"]
+
+- term: "E-E-A-T"
+  definition: "Experience, Expertise, Authoritativeness, and Trustworthiness — quality signals used by search engines and AI systems to evaluate content credibility. zer0-mistakes implements E-E-A-T through author profiles, structured data, and cited claims."
+  related: ["AIEO", "Structured Data"]
+
+- term: "JSON-LD"
+  definition: "JavaScript Object Notation for Linked Data — a method of encoding structured data in JSON format using Schema.org vocabulary. zer0-mistakes uses JSON-LD scripts in the HTML head for SoftwareApplication, FAQPage, and Person schemas."
+  url: "https://json-ld.org/"
+  related: ["Schema.org", "Structured Data", "AIEO"]
+
+- term: "Schema.org"
+  definition: "A collaborative vocabulary for structured data markup on web pages. Schema.org types (SoftwareApplication, Person, FAQPage, etc.) help search engines and AI understand page content."
+  url: "https://schema.org/"
+  related: ["JSON-LD", "Structured Data"]
+
+- term: "Cookie Consent"
+  definition: "A user-facing mechanism that requests permission before storing cookies or tracking data. zer0-mistakes includes a GDPR/CCPA-compliant cookie consent banner with granular preference management."
+  related: ["PostHog", "GDPR"]
+
+- term: "SRI (Subresource Integrity)"
+  definition: "A security feature that lets browsers verify that resources fetched from CDNs have not been tampered with. zer0-mistakes uses SRI hashes on all CDN-loaded Bootstrap CSS and JS files."
+  related: ["Bootstrap", "CDN"]

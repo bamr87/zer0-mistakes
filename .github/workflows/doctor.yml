@@ -1,0 +1,57 @@
+name: Install Doctor (Matrix)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/bin/install'
+      - 'scripts/lib/install/doctor.sh'
+      - 'scripts/platform/**'
+      - '.github/workflows/doctor.yml'
+  pull_request:
+    paths:
+      - 'scripts/bin/install'
+      - 'scripts/lib/install/doctor.sh'
+      - 'scripts/platform/**'
+      - '.github/workflows/doctor.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  doctor:
+    name: doctor (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Make installer executable
+        run: chmod +x scripts/bin/install
+
+      - name: Print version
+        run: ./scripts/bin/install version
+
+      - name: Run doctor (no AI) — JSON output
+        id: doctor
+        run: |
+          set -e
+          ./scripts/bin/install doctor --json | tee doctor.json
+          # Parse counts without jq (POSIX-only). FAIL > 0 is a hard error.
+          fail=$(grep -oE '"fail":[0-9]+' doctor.json | head -1 | cut -d: -f2)
+          echo "fail_count=${fail:-0}" >> "$GITHUB_OUTPUT"
+
+      - name: Run doctor (verbose) — non-blocking, for log readability
+        if: always()
+        run: ./scripts/bin/install doctor || true
+
+      - name: Fail if any FAIL rows
+        if: steps.doctor.outputs.fail_count != '0'
+        run: |
+          echo "::error::install doctor reported ${{ steps.doctor.outputs.fail_count }} FAIL row(s)"
+          exit 1

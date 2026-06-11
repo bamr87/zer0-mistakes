@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:29:58.000Z
 title: MathJax Math
 description: Display mathematical equations and formulas in Jekyll pages using MathJax - LaTeX-style notation for the web.
+preview: /images/previews/mathjax-math.png
 layout: default
 categories:
     - docs
@@ -13,7 +15,7 @@ tags:
 permalink: /docs/features/mathjax-math/
 mathjax: true
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 sidebar:
     nav: docs
 ---
@@ -61,19 +63,19 @@ The theme includes MathJax support. The include file loads MathJax conditionally
 
 ```html
 {% raw %}{% if page.mathjax %}
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
-      displayMath: [ ['$$','$$'], ['\\[','\\]'] ],
-      processEscapes: true
-    },
-    TeX: {
-      equationNumbers: { autoNumber: "AMS" }
-    }
-  });
+<!-- MathJax 3 configuration — must appear before the script tag.
+     Enables $...$ inline math (off by default in MathJax 3). -->
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  }
+};
 </script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+<script id="MathJax-script" async
+  src="{{ '/assets/vendor/mathjax/es5/tex-mml-chtml.js' | relative_url }}"></script>
 {% endif %}{% endraw %}
 ```
 
@@ -228,3 +230,9 @@ $$
 ---
 
 *This guide is part of the [Zer0-Mistakes Jekyll Theme](https://github.com/bamr87/zer0-mistakes) documentation.*
+
+## See also
+
+- [[Features]]
+- [[Mermaid Diagrams]]
+- [[Jupyter Notebook Integration]]

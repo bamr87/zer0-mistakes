@@ -1,3 +1,13 @@
+---
+title: "Release Notes Template"
+description: "A reusable template for writing Zer0-Mistakes release notes: version, date, highlights, changes, fixes, and upgrade guidance for each release."
+date: 2025-10-26T19:20:20.000Z
+lastmod: 2026-06-01T03:38:46.000Z
+categories: [docs]
+tags: [templates]
+author: bamr87
+---
+
 # Release Notes Template
 
 **Version**: vX.Y.Z  

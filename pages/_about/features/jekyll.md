@@ -1,9 +1,10 @@
 ---
 title: Jeykll
+preview: /images/previews/jeykll.png
 permalink: /notes/jekyll/
 lastmod: 2025-12-20T22:15:46.473Z
 published: false
-draft: draft
+draft: true
 ---
 
 # Jeykll
@@ -186,6 +187,7 @@ To pass information from a page to a layout you can use YAML frontmatter.
 ---
 layout: default
 title: Plant Eaters
+preview: /images/previews/jeykll.png
 ---
 ```
 
@@ -644,6 +646,7 @@ but the date and markup language are determined by the file name.
 ---
 layout: post
 title:  "Week #3 - slideshow gem - a free web alternative to PowerPoint and Keynote in Ruby"
+preview: /images/previews/jeykll.png
 ---
 ```
 
@@ -742,6 +745,7 @@ If you add in your `_config.yml` site configuration, for example:
 ```
 url:   'http://openfootball.github.io'
 title: 'football.db - Open Football Data'
+preview: /images/previews/jeykll.png
 ```
 
 than you can use the variables in your posts, pages and templates:

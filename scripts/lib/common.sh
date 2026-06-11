@@ -108,6 +108,60 @@ require_file() {
     debug "Found required file: $file"
 }
 
+# Load simple KEY=VALUE pairs from an env file
+load_env_file() {
+    local env_file="$1"
+
+    if [[ ! -f "$env_file" ]]; then
+        return 0
+    fi
+
+    debug "Loading environment from $env_file"
+
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        # Trim leading whitespace for easier parsing.
+        line="${line#"${line%%[![:space:]]*}"}"
+
+        [[ -z "$line" ]] && continue
+        [[ "$line" == \#* ]] && continue
+        [[ "$line" != *=* ]] && continue
+
+        local key="${line%%=*}"
+        local value="${line#*=}"
+
+        # Trim whitespace around key/value.
+        key="${key#"${key%%[![:space:]]*}"}"
+        key="${key%"${key##*[![:space:]]}"}"
+        value="${value#"${value%%[![:space:]]*}"}"
+        value="${value%"${value##*[![:space:]]}"}"
+
+        # Only export valid shell identifiers.
+        [[ "$key" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]] || continue
+
+        # Remove surrounding single/double quotes if present.
+        if [[ "$value" =~ ^\".*\"$ ]]; then
+            value="${value:1:${#value}-2}"
+        elif [[ "$value" =~ ^\'.*\'$ ]]; then
+            value="${value:1:${#value}-2}"
+        fi
+
+        export "$key=$value"
+    done < "$env_file"
+}
+
+# Prefer API-key auth from environment for RubyGems publish operations.
+prepare_rubygems_api_key() {
+    local repo_root
+    repo_root="$(get_repo_root)"
+
+    load_env_file "$repo_root/.env"
+
+    if [[ -z "${GEM_HOST_API_KEY:-}" ]] && [[ -n "${RUBY_API_KEY:-}" ]]; then
+        export GEM_HOST_API_KEY="$RUBY_API_KEY"
+        debug "Mapped RUBY_API_KEY to GEM_HOST_API_KEY for RubyGems publishing"
+    fi
+}
+
 # Get script directory
 get_script_dir() {
     local script_path="${BASH_SOURCE[0]}"
@@ -150,5 +204,6 @@ print_summary() {
 export -f log info step success warn error debug
 export -f confirm dry_run_exec
 export -f command_exists require_command require_file
+export -f load_env_file prepare_rubygems_api_key
 export -f get_script_dir get_repo_root
 export -f print_header print_summary

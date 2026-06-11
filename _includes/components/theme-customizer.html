@@ -1,0 +1,56 @@
+<!--
+  ===================================================================
+  THEME CUSTOMIZER — Skin preview grid with live class swapping
+  ===================================================================
+
+  File: theme-customizer.html
+  Path: _includes/components/theme-customizer.html
+  Purpose: Displays all available theme skins in a card grid.
+           Clicking a card applies the skin class and highlights it.
+           Current skin comes from site.theme_skin in _config.yml.
+
+  Dependencies: Bootstrap 5 grid/card, Bootstrap Icons
+  Used by: pages/_about/settings/theme.md (Skin Preview tab)
+  ===================================================================
+-->
+
+{% assign current_skin = site.theme_skin | default: site.data.theme_skins.default | default: "dark" %}
+{% assign skins = site.data.theme_skins.order %}
+
+<p class="text-body-secondary mb-3">
+  Current skin: <strong>{{ current_skin }}</strong>. Click a card to preview (page-level only — does not persist).
+</p>
+
+<div class="row g-3" id="skin-grid">
+  {% for skin in skins %}
+    {% assign skin_info = site.data.theme_backgrounds.skins[skin] %}
+    {% assign c1 = skin_info.colors.primary | default: "#888888" %}
+    {% assign c2 = skin_info.colors.secondary | default: "#aaaaaa" %}
+    {% assign c3 = skin_info.colors.accent | default: "#cccccc" %}
+    <div class="col-6 col-md-4 col-lg-3">
+      <div class="card h-100 skin-card overflow-hidden {% if skin == current_skin %}border-primary{% else %}border-secondary{% endif %}"
+           data-skin="{{ skin }}" role="button" tabindex="0" style="cursor:pointer"
+           aria-label="Preview {{ skin }} skin">
+        <div class="skin-card-preview" style="height:6px;background:linear-gradient(90deg,{{ c1 }},{{ c2 }},{{ c3 }})" aria-hidden="true"></div>
+        <div class="card-body text-center py-4">
+          <div class="d-flex justify-content-center gap-1 mb-2" aria-hidden="true">
+            <span class="rounded-circle d-inline-block" style="width:14px;height:14px;background:{{ c1 }};border:1px solid rgba(128,128,128,.25)"></span>
+            <span class="rounded-circle d-inline-block" style="width:14px;height:14px;background:{{ c2 }};border:1px solid rgba(128,128,128,.25)"></span>
+            <span class="rounded-circle d-inline-block" style="width:14px;height:14px;background:{{ c3 }};border:1px solid rgba(128,128,128,.25)"></span>
+          </div>
+          <h6 class="card-title mb-1 text-capitalize">{{ skin }}</h6>
+          {% if skin == current_skin %}
+            <span class="badge bg-primary"><i class="bi bi-check-circle me-1"></i>Active</span>
+          {% else %}
+            <small class="text-body-tertiary">Click to preview</small>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<div class="alert alert-info mt-3 small" role="alert">
+  <i class="bi bi-info-circle me-1"></i>
+  To permanently change the skin, update <code>theme_skin</code> in <code>_config.yml</code> or use the <strong>Export YAML</strong> tab.
+</div>

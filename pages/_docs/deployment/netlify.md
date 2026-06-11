@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:30:01.000Z
 title: Deploy to Netlify
 description: Deploy your Jekyll site to Netlify with continuous deployment from GitHub and custom headers.
+preview: /images/previews/deploy-to-netlify.png
 layout: default
 categories:
     - docs
@@ -12,7 +14,7 @@ tags:
     - ci-cd
 permalink: /docs/deployment/netlify/
 difficulty: beginner
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 prerequisites:
     - GitHub account
     - Netlify account
@@ -243,3 +245,9 @@ If HTTPS isn't working:
 
 - [Custom Domain Setup](/docs/deployment/custom-domain/)
 - [Security Headers](/docs/jekyll/security/) — Harden your site
+
+## See also
+
+- [[Deployment]]
+- [[Deploy to GitHub Pages]]
+- [[Custom Domain Setup]]

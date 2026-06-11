@@ -1,0 +1,19 @@
+// ============================================================================
+// Breakpoint tokens — semantic --zer0-bp-* properties
+// ----------------------------------------------------------------------------
+// Mirrors Bootstrap 5 default breakpoints. Synchronized with:
+//   - JS:  assets/js/modules/navigation/config.js (config.breakpoints)
+//   - CSS: --bs-breakpoint-* (Bootstrap vendor CSS)
+//
+// Note: CSS custom properties cannot be used inside @media queries — these
+// tokens exist for JS / inline-style consumption and for documentation.
+// SCSS code should use Bootstrap mixins or the $grid-breakpoints map.
+// ============================================================================
+
+:root {
+  --zer0-bp-sm: 576px;
+  --zer0-bp-md: 768px;
+  --zer0-bp-lg: 992px;
+  --zer0-bp-xl: 1200px;
+  --zer0-bp-xxl: 1400px;
+}

@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:30:02.000Z
 title: SEO Meta Tags
 description: Comprehensive SEO meta tag generation including Open Graph, Twitter Cards, and JSON-LD structured data.
+preview: /images/previews/seo-meta-tags.png
 layout: default
 categories:
     - docs
@@ -12,7 +14,7 @@ tags:
     - twitter-cards
 permalink: /docs/seo/meta-tags/
 difficulty: intermediate
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 sidebar:
     nav: docs
 ---
@@ -73,6 +75,7 @@ The theme generates:
 # _config.yml
 title: "Site Title"
 description: "Default site description"
+preview: /images/previews/seo-meta-tags.png
 url: "https://yoursite.com"
 
 author:
@@ -93,6 +96,7 @@ twitter:
 ---
 title: "Custom Page Title"
 description: "Custom page description for SEO"
+preview: /images/previews/seo-meta-tags.png
 image: "/assets/images/custom-og.png"
 author: "Different Author"
 ---
@@ -263,3 +267,9 @@ Test Twitter Cards at [https://cards-dev.twitter.com/validator](https://cards-de
 - [Sitemap](/docs/seo/sitemap/)
 - [Preview Image Generator](/docs/features/preview-image-generator/)
 - [Breadcrumbs](/docs/features/breadcrumbs/)
+
+## See also
+
+- [[SEO]]
+- [[front-matter]]
+- [[Analytics]]

@@ -1,3 +1,9 @@
+---
+title: Stats Page Enhancement Summary
+preview: /images/previews/stats-page-enhancement-summary.png
+layout: default
+lastmod: 2025-01-27T00:00:00.000Z
+---
 # Stats Page Enhancement Summary
 
 ## Overview

@@ -1,19 +1,25 @@
 {
   // ==================================================
-  // UNIFIED VS CODE LAUNCH CONFIGURATION - Docker-First
+  // Docker-first browser debugging (Jekyll on :4000)
   // ==================================================
-  // Optimized for zer0-mistakes Jekyll theme development
-  // Last Updated: 2025-11-29
-  
+  // Dev stack: docker-compose.yml → Jekyll serve with
+  //   _config.yml,_config_dev.yml (LiveReload :35729).
+  // Production-style static output is also under _site/ when built locally
+  // or via docker/config/docker-build.yml in CI/Docker image builds.
+  //
+  // Debug logs showed msedge failing with "Unable to find an installation
+  // of the browser" — default configs use type "chrome". Use the Edge
+  // variants if you have Microsoft Edge installed, or set runtimeExecutable
+  // to an absolute path (see https://aka.ms/msedge-debug).
+  //
+  // Gem releases: Tasks → 🚀 Release: * (scripts/release; see tasks.json).
+  //
+  // Last updated: 2026-03-29
   "version": "0.2.0",
   "configurations": [
-    
-    // ==========================================
-    // DOCKER DEVELOPMENT CONFIGURATIONS
-    // ==========================================
     {
-      "name": "🚀 Debug Zer0-Mistakes Theme (Docker)",
-      "type": "msedge",
+      "name": "🚀 Debug Zer0-Mistakes Theme (Docker, Chrome)",
+      "type": "chrome",
       "request": "launch",
       "url": "http://localhost:4000",
       "webRoot": "${workspaceFolder}",
@@ -21,13 +27,15 @@
       "postDebugTask": "Docker: Compose Stop",
       "runtimeArgs": [
         "--remote-debugging-port=9222",
-        "--disable-web-security",
-        "--disable-features=VizDisplayCompositor"
+        "--disable-web-security"
       ],
+      "userDataDir": "${workspaceFolder}/.vscode/chrome-debug-profile",
+      "killBehavior": "forceful",
       "sourceMaps": true,
       "smartStep": true,
       "skipFiles": ["<node_internals>/**"],
       "internalConsoleOptions": "openOnSessionStart",
+      "timeout": 60000,
       "trace": {
         "stdio": true,
         "logFile": "${workspaceFolder}/logs/debug-trace.log"
@@ -37,20 +45,57 @@
         "/assets/": "${workspaceFolder}/assets/",
         "/js/": "${workspaceFolder}/assets/js/",
         "/css/": "${workspaceFolder}/assets/css/"
+      },
+      "presentation": {
+        "group": "Docker",
+        "order": 1
       }
     },
-
     {
-      "name": "🔗 Attach to Running Jekyll Theme (Docker)",
-      "type": "msedge", 
-      "request": "attach",
-      "port": 9222,
+      "name": "🚀 Debug Theme (Docker, Microsoft Edge)",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:4000",
       "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "Docker: Compose Up (Detached)",
+      "postDebugTask": "Docker: Compose Stop",
+      "runtimeArgs": [
+        "--remote-debugging-port=9222",
+        "--disable-web-security"
+      ],
+      "userDataDir": "${workspaceFolder}/.vscode/edge-debug-profile",
+      "killBehavior": "forceful",
       "sourceMaps": true,
       "smartStep": true,
       "skipFiles": ["<node_internals>/**"],
       "internalConsoleOptions": "openOnSessionStart",
-      "urlFilter": "localhost:4000*",
+      "timeout": 60000,
+      "trace": {
+        "stdio": true,
+        "logFile": "${workspaceFolder}/logs/debug-trace-edge.log"
+      },
+      "pathMapping": {
+        "/": "${workspaceFolder}/_site/",
+        "/assets/": "${workspaceFolder}/assets/",
+        "/js/": "${workspaceFolder}/assets/js/",
+        "/css/": "${workspaceFolder}/assets/css/"
+      },
+      "presentation": {
+        "group": "Docker",
+        "order": 2
+      }
+    },
+    {
+      "name": "🔗 Attach to Running Browser (Chrome, port 9222)",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9222,
+      "webRoot": "${workspaceFolder}",
+      "urlFilter": "http://localhost:4000*",
+      "sourceMaps": true,
+      "smartStep": true,
+      "skipFiles": ["<node_internals>/**"],
+      "internalConsoleOptions": "openOnSessionStart",
       "trace": {
         "stdio": true,
         "logFile": "${workspaceFolder}/logs/debug-attach-trace.log"
@@ -60,13 +105,16 @@
         "/assets/": "${workspaceFolder}/assets/",
         "/js/": "${workspaceFolder}/assets/js/",
         "/css/": "${workspaceFolder}/assets/css/"
+      },
+      "presentation": {
+        "group": "Docker",
+        "order": 3
       }
     },
-
     {
-      "name": "🔄 Docker Rebuild & Debug Theme",
-      "type": "msedge",
-      "request": "launch", 
+      "name": "🔄 Docker Rebuild & Debug (Chrome)",
+      "type": "chrome",
+      "request": "launch",
       "url": "http://localhost:4000",
       "webRoot": "${workspaceFolder}",
       "preLaunchTask": "Docker: Rebuild (Force)",
@@ -76,10 +124,13 @@
         "--disable-web-security",
         "--auto-open-devtools-for-tabs"
       ],
+      "userDataDir": "${workspaceFolder}/.vscode/chrome-debug-profile",
+      "killBehavior": "forceful",
       "sourceMaps": true,
       "smartStep": true,
       "skipFiles": ["<node_internals>/**"],
       "internalConsoleOptions": "openOnSessionStart",
+      "timeout": 120000,
       "trace": {
         "stdio": true,
         "logFile": "${workspaceFolder}/logs/debug-rebuild-trace.log"
@@ -89,26 +140,15 @@
         "/assets/": "${workspaceFolder}/assets/",
         "/js/": "${workspaceFolder}/assets/js/",
         "/css/": "${workspaceFolder}/assets/css/"
+      },
+      "presentation": {
+        "group": "Docker",
+        "order": 4
       }
     },
-
-    // ==========================================
-    // GEM DEVELOPMENT CONFIGURATIONS
-    // ==========================================
-    // NOTE: Gem release operations are handled via VS Code Tasks
-    // Use Cmd+Shift+P → "Tasks: Run Task" and select:
-    // - "🚀 Release: Patch" for patch releases
-    // - "🚀 Release: Minor" for minor releases  
-    // - "🚀 Release: Major" for major releases
-    // - "🔍 Release: Dry Run Preview" to preview changes
-    // The tasks use the modular release script at scripts/release
-
-    // ==========================================
-    // MOBILE & RESPONSIVE TESTING
-    // ==========================================
     {
-      "name": "📱 Mobile Debug (Docker)",
-      "type": "msedge",
+      "name": "📱 Mobile Debug (Docker, Chrome)",
+      "type": "chrome",
       "request": "launch",
       "url": "http://localhost:4000",
       "webRoot": "${workspaceFolder}",
@@ -116,27 +156,32 @@
       "postDebugTask": "Docker: Compose Stop",
       "runtimeArgs": [
         "--remote-debugging-port=9222",
+        "--disable-web-security",
         "--device-scale-factor=2",
         "--force-device-scale-factor=2",
         "--user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1"
       ],
+      "userDataDir": "${workspaceFolder}/.vscode/chrome-debug-profile-mobile",
+      "killBehavior": "forceful",
       "sourceMaps": true,
       "smartStep": true,
+      "skipFiles": ["<node_internals>/**"],
       "internalConsoleOptions": "openOnSessionStart",
+      "timeout": 60000,
       "pathMapping": {
         "/": "${workspaceFolder}/_site/",
         "/assets/": "${workspaceFolder}/assets/",
         "/js/": "${workspaceFolder}/assets/js/",
         "/css/": "${workspaceFolder}/assets/css/"
+      },
+      "presentation": {
+        "group": "Docker",
+        "order": 5
       }
     },
-
-    // ==========================================
-    // PERFORMANCE DEBUGGING
-    // ==========================================
     {
-      "name": "🎯 Performance Debug (Docker)",
-      "type": "msedge",
+      "name": "🎯 Performance Debug (Docker, Chrome)",
+      "type": "chrome",
       "request": "launch",
       "url": "http://localhost:4000",
       "webRoot": "${workspaceFolder}",
@@ -148,9 +193,13 @@
         "--log-level=0",
         "--enable-features=NetworkService,NetworkServiceLogging"
       ],
+      "userDataDir": "${workspaceFolder}/.vscode/chrome-debug-profile",
+      "killBehavior": "forceful",
       "sourceMaps": true,
       "smartStep": true,
+      "skipFiles": ["<node_internals>/**"],
       "internalConsoleOptions": "openOnSessionStart",
+      "timeout": 60000,
       "trace": {
         "stdio": true,
         "logFile": "${workspaceFolder}/logs/performance-debug.log"
@@ -160,6 +209,10 @@
         "/assets/": "${workspaceFolder}/assets/",
         "/js/": "${workspaceFolder}/assets/js/",
         "/css/": "${workspaceFolder}/assets/css/"
+      },
+      "presentation": {
+        "group": "Docker",
+        "order": 6
       }
     }
   ]

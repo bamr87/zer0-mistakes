@@ -1,0 +1,25 @@
+# jekyll-theme-zer0 install profile: docs
+name: docs
+display_name: Docs
+description: Technical documentation site with versioning and search.
+legacy_flag: ""
+recommended_for: project docs, API references, wikis
+
+tasks:
+  - config
+  - gemfile
+  - docker
+  - pages
+  - nav
+  - data
+  - devcontainer
+  - gitignore
+  - readme
+  - agents
+  - marker
+
+deploy_targets:
+  - github-pages
+
+ai_features:
+  agent_files: [generic, copilot]

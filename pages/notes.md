@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:30:21.000Z
 title: "Notes"
 description: "Quick reference notes, cheatsheets, and command snippets for developers"
 layout: default

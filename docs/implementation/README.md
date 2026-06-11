@@ -6,12 +6,11 @@ Technical implementation details and changelogs for theme features. This documen
 
 | Document | Description |
 |----------|-------------|
-| [AI Chat Assistant](ai-chat-assistant.md) | Proxy-first AI chat implementation and grounding strategy |
-| [Mermaid Integration v2](mermaid-integration-v2.md) | Mermaid diagram implementation changelog |
-| [PostHog Analytics Integration](posthog-analytics-integration.md) | Analytics implementation details |
-| [Preview Image Generator](preview-image-generator.md) | AI-powered preview image generation |
-| [Sitemap Integration](sitemap-integration.md) | Sitemap feature implementation |
-| [Sitemap Enhancement Summary](sitemap-enhancement-summary.md) | Sitemap improvements changelog |
+| [Feature Change Log](feature-change-log.md) | Implementation notes: Mermaid v2, sidebar improvements, frontmatter bug fixes, Copilot prompt button |
+| [Navigation Redesign](navigation-redesign.md) | UI/UX overhaul: responsive design, WCAG 2.1 AA, animations, keyboard navigation |
+| [PostHog Analytics Integration](posthog-analytics-integration.md) | Analytics implementation with GDPR/CCPA compliance |
+| [Preview Image Generator](preview-image-generator.md) | AI-powered preview image generation (OpenAI, xAI Grok) |
+| [Sitemap Integration](sitemap-integration.md) | Comprehensive sitemap feature implementation |
 
 ## Purpose
 
@@ -26,7 +25,6 @@ This directory contains:
 If you're looking for **how to use** these features, see the user documentation:
 
 - [Features Documentation](/docs/features/) — User guides for theme features
-- [AI Chat Assistant](/docs/features/ai-chat-assistant/) — GitHub Pages-compatible AI chat setup
 - [Mermaid Diagrams](/docs/features/mermaid-diagrams/)
 - [PostHog Analytics](/docs/features/posthog-analytics/)
 

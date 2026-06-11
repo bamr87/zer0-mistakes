@@ -1,0 +1,40 @@
+// ============================================================================
+// Cookie consent banner
+// ----------------------------------------------------------------------------
+// Token-aware replacement for the legacy block in _sass/custom.scss (~ln 193).
+// Differences from the legacy version:
+//   - Uses --zer0-layer-cookie-banner so it sits below the skip link but above
+//     the navbar in the unified layer scale (_sass/tokens/_layers.scss).
+//   - Surface and ink colors follow the active color mode instead of a fixed
+//     dark-blue gradient that breaks in light mode.
+//   - Reduced-motion handling is centralised in _sass/utilities/_motion.scss
+//     so we don't need a duplicate @media rule here.
+// ============================================================================
+
+.cookie-consent-banner {
+  z-index: var(--zer0-layer-cookie-banner);
+  background: linear-gradient(
+    135deg,
+    var(--zer0-color-bg-elevated, var(--bs-tertiary-bg)) 0%,
+    var(--zer0-color-bg-muted, var(--bs-secondary-bg)) 100%
+  );
+  color: var(--zer0-color-ink, var(--bs-body-color));
+  border-top: 1px solid var(--zer0-color-border, var(--bs-border-color));
+  backdrop-filter: blur(10px);
+
+  opacity: 0;
+  transform: translateY(100%);
+  transition:
+    transform var(--zer0-motion-duration-slow, 320ms) var(--zer0-motion-ease-standard),
+    opacity var(--zer0-motion-duration-base, 200ms) var(--zer0-motion-ease-standard);
+  will-change: transform, opacity;
+
+  &[hidden] {
+    display: none !important;
+  }
+
+  &.cookie-banner-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

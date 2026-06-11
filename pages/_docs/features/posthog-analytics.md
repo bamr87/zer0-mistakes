@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:29:56.000Z
 title: PostHog Analytics
 description: Implement privacy-first web analytics in Jekyll using PostHog with GDPR/CCPA compliance, custom event tracking, and Do Not Track support.
+preview: /images/previews/posthog-analytics.png
 layout: default
 categories:
     - docs
@@ -13,7 +15,7 @@ tags:
     - gdpr
 permalink: /docs/features/posthog-analytics/
 difficulty: intermediate
-estimated_time: 20 minutes
+estimated_reading_time: 20 minutes
 prerequisites:
     - PostHog account (free tier available)
     - Jekyll site deployed to production
@@ -221,3 +223,16 @@ If exceeding free tier limits:
 ---
 
 *This guide is part of the [Zer0-Mistakes Jekyll Theme](https://github.com/bamr87/zer0-mistakes) documentation.*
+
+## Technical Reference
+
+For implementation details (GDPR/CCPA configuration, event tracking architecture, integration notes):
+
+- [PostHog Integration → docs/implementation/posthog-analytics-integration.md](../../../docs/implementation/posthog-analytics-integration.md)
+
+## See also
+
+- [[Features]]
+- [[Google Analytics]]
+- [[Cookie Consent Management]]
+- [[Analytics]]

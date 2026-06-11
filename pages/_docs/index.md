@@ -7,6 +7,9 @@ description: User documentation for the Zer0-Mistakes Jekyll theme - installatio
 preview: /images/previews/published-documentation-library.png
 categories:
     - docs
+tags:
+    - documentation
+    - jekyll
 sidebar:
     nav: docs
 toc_sticky: true
@@ -16,7 +19,9 @@ lastmod: 2026-01-24T00:00:00.000Z
 
 # Zer0-Mistakes Documentation
 
-Welcome to the Zer0-Mistakes Jekyll theme documentation. This section contains user-facing guides for installing, configuring, and customizing the theme.
+Welcome to the Zer0-Mistakes Jekyll theme documentation. This section contains **user-facing guides** for installing, configuring, and customizing the theme.
+
+> **Two-tier documentation system:** This site (`/docs/`) contains user guides — how to *use* the theme. For contributor and maintainer references (architecture, release automation, system internals), see the [`docs/` directory](https://github.com/bamr87/zer0-mistakes/tree/main/docs) in the repository.
 
 ## Getting Started
 
@@ -96,3 +101,14 @@ Looking to contribute to the theme? See the developer documentation in the repos
 - [Deployment](deployment/) — Go live
 
 **Last Updated:** January 2026
+
+## See also
+
+- [[Installation]]
+- [[Features]]
+- [[Customization]]
+- [[Deployment]]
+- [[Obsidian Vault Integration]]
+- [[Jekyll]]
+- [[Docker]]
+- [[Bootstrap Integration]]

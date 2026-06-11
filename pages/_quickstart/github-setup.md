@@ -23,7 +23,7 @@ keywords:
     - github cli
     - fork repository
     - pull requests
-lastmod: 2025-12-20T04:30:52.666Z
+lastmod: 2026-05-30T00:00:00.000Z
 draft: false
 sidebar:
   nav: quickstart
@@ -33,425 +33,179 @@ quickstart:
   prev: /quickstart/jekyll-setup/
 ---
 
-# 🐙 GitHub Setup & Deployment
+# GitHub Setup & Deployment
 
-Master GitHub integration for the Zer0-Mistakes theme, from development to production deployment. This guide covers the complete workflow: forking, development, collaboration, and automated deployment to GitHub Pages.
+Authenticate with GitHub, fork the theme, and deploy your site to GitHub Pages.
 
-## 🎯 Overview
-
-GitHub integration with Zer0-Mistakes provides:
-
-- ✅ **Seamless Development**: Fork, clone, and develop locally with Docker
-- ✅ **Automated Deployment**: Push to deploy with GitHub Pages
-- ✅ **Collaboration**: Team-friendly workflows and contribution guidelines
-- ✅ **Version Control**: Professional Git workflows with branching strategies
-- ✅ **CI/CD Integration**: Automated testing and deployment pipelines
-
-## 🛠️ Prerequisites
-
-Before starting GitHub integration, ensure you have completed:
-
-1. **[Machine Setup](/quickstart/machine-setup/)** - Docker Desktop, Git, and GitHub CLI installed
-2. **[Jekyll Setup](/quickstart/jekyll-setup/)** - Development environment running
-3. **GitHub account** - [Create one](https://github.com/signup) if needed
-
-<div class="alert alert-info" role="alert">
-  <i class="bi bi-info-circle"></i> <strong>Haven't set up your machine yet?</strong>
-  Complete the <a href="/quickstart/machine-setup/">Machine Setup</a> guide first to install Git and GitHub CLI.
-</div>
-
-## 📦 Development Tools Installation
-
-### Package Manager Verification
-
-First, confirm your package manager is available:
-
-**macOS:**
-
-```bash
-brew --version
+```mermaid
+flowchart LR
+    A([Machine Setup done]) --> B[gh auth login]
+    B --> C[Fork bamr87/zer0-mistakes]
+    C --> D[./scripts/fork-cleanup.sh]
+    D --> E[docker-compose up]
+    E --> F[git push origin main]
+    F --> G[GitHub Actions builds site]
+    G --> H([username.github.io live 🚀])
 ```
 
-**Windows:**
+## Prerequisites
 
-```powershell
-winget --version
-```
+- Completed [Machine Setup](/quickstart/machine-setup/) (Docker, Git, GitHub CLI)
+- A [GitHub account](https://github.com/signup)
 
-**Linux (Ubuntu/Debian):**
-
-```bash
-apt --version
-```
-
-### GitHub CLI Installation
-
-Install GitHub CLI for seamless repository management:
-
-**macOS:**
-
-```bash
-brew install gh git
-```
-
-**Windows:**
-
-```powershell
-winget install Git.Git
-winget install GitHub.cli
-```
-
-**Linux (Ubuntu/Debian):**
-
-```bash
-sudo apt update
-sudo apt install gh git
-```
-
-### Verify Installation
-
-```bash
-gh --version
-git --version
-```
-
-You should see version information for both tools.
-
-## 🔐 GitHub Authentication
-
-### Login to GitHub CLI
-
-Authenticate with GitHub for seamless integration:
+## Step 1 — Authenticate with GitHub CLI
 
 ```bash
 gh auth login
+# → GitHub.com
+# → HTTPS
+# → Login with a web browser
+# Copy the one-time code, press Enter, paste in the browser
 ```
 
-Follow the interactive prompts:
-
-1. Select **GitHub.com**
-2. Choose **HTTPS** protocol
-3. Authenticate via **web browser** (recommended)
-4. Complete authentication in your browser
-
-### Configure Git Identity
-
-Set up your Git identity for commits:
+Verify:
 
 ```bash
-# Use your GitHub username and no-reply email
-git config --global user.name "YourGitHubUsername"
-git config --global user.email "yourusername@users.noreply.github.com"
-
-# Verify configuration
-git config --global user.name
-git config --global user.email
+gh auth status
 ```
 
-### SSH Key Setup (Optional but Recommended)
+![gh auth login output](/assets/images/quickstart/github-setup-auth.png)
 
-For enhanced security and convenience:
+## Step 2 — Fork the Repository
 
-```bash
-# Generate SSH key
-ssh-keygen -t ed25519 -C "yourusername@users.noreply.github.com"
+![bamr87/zer0-mistakes repository on GitHub](/assets/images/quickstart/github-repo-main.png)
 
-# Add to SSH agent
-ssh-add ~/.ssh/id_ed25519
+Fork `bamr87/zer0-mistakes` into your account. The easiest path is naming it `<your-username>.github.io` so GitHub Pages deploys at your root domain — no `baseurl` needed.
 
-# Copy public key to clipboard
-# macOS:
-pbcopy < ~/.ssh/id_ed25519.pub
-# Linux:
-cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
-# Windows:
-cat ~/.ssh/id_ed25519.pub | clip
-
-# Add to GitHub: https://github.com/settings/ssh/new
-```
-
-## 🍴 Repository Setup
-
-### Fork the Zer0-Mistakes Theme
-
-Create your own copy of the theme for development:
+**Via GitHub CLI:**
 
 ```bash
-# Navigate to your development directory
-cd ~
-mkdir -p github
-cd github
-
-# Fork and clone the repository
-gh repo fork bamr87/zer0-mistakes --clone=true
-
-# Navigate to your forked repository
+gh repo fork bamr87/zer0-mistakes --clone
 cd zer0-mistakes
 ```
 
-### Repository Structure
+![gh repo fork dialog](/assets/images/quickstart/github-setup-fork.png)
 
-Your forked repository includes:
+**Or via the GitHub web UI:**
 
-```
-zer0-mistakes/
-├── _config.yml              # Production configuration
-├── _config_dev.yml          # Development overrides
-├── docker-compose.yml       # Docker development environment
-├── Gemfile                  # Ruby dependencies
-├── pages/                   # Content directory
-│   ├── _posts/             # Blog posts
-│   ├── _quickstart/        # Setup guides
-│   └── _docs/              # Documentation
-├── assets/                  # CSS, JS, images
-├── _layouts/               # Jekyll templates
-└── _includes/              # Reusable components
-```
-
-### Development Environment
-
-Start your containerized development environment:
+1. Go to [github.com/bamr87/zer0-mistakes](https://github.com/bamr87/zer0-mistakes)
+2. Click **Fork** → set name to `<your-username>.github.io`
+3. Click **Create fork**, then clone:
 
 ```bash
-# Start Jekyll development server
+git clone https://github.com/<your-username>/<your-username>.github.io.git
+cd <your-username>.github.io
+```
+
+![GitHub Code → Clone dialog](/assets/images/quickstart/github-repo-clone.png)
+
+![GitHub fork dialog](/assets/images/quickstart/github-fork-dialog.png)
+
+> See [docs/FORKING.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/FORKING.md) for the full fork → configure → personalize workflow.
+
+## Step 3 — Run the Fork Cleanup Script
+
+The interactive wizard strips out theme-specific content and configures the repo for your site:
+
+```bash
+./scripts/fork-cleanup.sh
+```
+
+It will prompt you for your site title, URL, author name, and other basic settings and write them into `_config.yml`.
+
+![fork-cleanup.sh running interactively](/assets/images/quickstart/github-setup-fork-cleanup.png)
+
+## Step 4 — Start the Dev Server
+
+```bash
 docker-compose up
-
-# View in browser: http://localhost:4000
 ```
 
-## 🚀 Development Workflow
+Visit [http://localhost:4000](http://localhost:4000) to confirm your personalized site is running.
 
-### Creating Content
+## Step 5 — Enable GitHub Pages
 
-**New Blog Post:**
+In your forked repo on GitHub.com:
+
+1. **Settings** → **Pages**
+2. **Source**: Deploy from branch
+3. **Branch**: `main` → `/` (root)
+4. Click **Save**
+
+![GitHub Pages settings](/assets/images/quickstart/github-pages-settings.png)
+
+After the first push, GitHub Actions builds the site and it appears at:
+
+```
+https://<your-username>.github.io
+```
+
+## Step 6 — Push Your Changes
 
 ```bash
-# Create new post with current date
-touch pages/_posts/$(date +%Y-%m-%d)-my-new-post.md
+git add -A
+git commit -m "feat: initial site personalization"
+git push origin main
 ```
 
-**Frontmatter Template:**
+![git push output](/assets/images/quickstart/github-setup-push.png)
+
+Watch the deployment: **Actions** tab → **pages build and deployment** workflow.
+
+## Git Workflow for Ongoing Development
+
+```bash
+# New feature branch
+git checkout -b feat/my-feature
+
+# Make changes, then commit
+git add -A
+git commit -m "feat(posts): add first blog post"
+
+# Push and open PR
+git push origin feat/my-feature
+gh pr create --fill
+```
+
+Merge to `main` to trigger a Pages deployment.
+
+## Troubleshooting
+
+**Forking into a different repo name (not `username.github.io`)**
+
+Add `baseurl` to `_config.yml`:
 
 ```yaml
----
-title: "Your Post Title"
-description: "SEO-friendly description (150-160 characters)"
-date: 2025-01-27T10:00:00.000Z
-preview: /images/previews/github-setup-deployment.png
-tags: [tag1, tag2, tag3]
-categories: [Category, Subcategory]
-layout: journals
-permalink: /your-post-url/
-comments: true
----
+baseurl: "/repo-name"
+url: "https://username.github.io"
 ```
 
-### Git Workflow
-
-**Feature Development:**
+**Pages build failing**
 
 ```bash
-# Create feature branch
-git checkout -b feature/new-awesome-feature
-
-# Make your changes...
-# Edit files, create content, modify theme
-
-# Stage and commit changes
-git add .
-git commit -m "feat: add awesome new feature
-
-- Implement new feature functionality
-- Update documentation
-- Add tests for new feature"
-
-# Push to your fork
-git push origin feature/new-awesome-feature
-
-# Create pull request
-gh pr create --title "Add awesome new feature" --body "Description of changes"
+# Check the Actions tab in GitHub for build logs
+# Common fix: ensure _config.yml has no YAML syntax errors
+bundle exec jekyll build --config '_config.yml,_config_dev.yml' --trace
 ```
 
-**Quick Content Updates:**
+**`gh auth login` fails**
+
+Ensure port 443 (HTTPS) is open. Try `--web` flag or create a [Personal Access Token](https://github.com/settings/tokens) and use `gh auth login --with-token`.
+
+**Remote origin mismatch**
 
 ```bash
-# For simple content updates
-git add pages/_posts/your-new-post.md
-git commit -m "docs: add new blog post about Docker development"
-git push origin main
+git remote -v                                       # verify remotes
+git remote set-url origin https://github.com/<you>/<repo>.git
 ```
-
-## 🌐 GitHub Pages Deployment
-
-### Enable GitHub Pages
-
-1. Navigate to your repository on GitHub
-2. Go to **Settings** → **Pages**
-3. Configure source:
-   - **Source**: Deploy from a branch
-   - **Branch**: `main` (or `gh-pages`)
-   - **Folder**: `/ (root)`
-
-### Automatic Deployment
-
-GitHub Pages automatically deploys when you push to your main branch:
-
-```bash
-# Deploy to production
-git checkout main
-git merge feature/your-feature
-git push origin main
-
-# Your site deploys automatically to:
-# https://yourusername.github.io/zer0-mistakes
-```
-
-### Custom Domain (Optional)
-
-For custom domains:
-
-1. Create `CNAME` file in repository root:
-
-   ```
-   your-domain.com
-   ```
-
-2. Configure DNS records with your domain provider:
-   - **Type**: CNAME
-   - **Name**: www (or @)
-   - **Value**: yourusername.github.io
-
-3. Enable HTTPS in repository settings
-
-## 🤝 Collaboration
-
-### Contributing to Upstream
-
-To contribute back to the main Zer0-Mistakes repository:
-
-```bash
-# Add upstream remote
-git remote add upstream https://github.com/bamr87/zer0-mistakes.git
-
-# Sync with upstream
-git fetch upstream
-git checkout main
-git merge upstream/main
-git push origin main
-
-# Create contribution branch
-git checkout -b contrib/your-improvement
-
-# Make changes and submit PR
-git push origin contrib/your-improvement
-gh pr create --repo bamr87/zer0-mistakes
-```
-
-### Team Development
-
-For team collaboration:
-
-1. **Invite collaborators** to your repository
-2. **Use branch protection** for main branch
-3. **Require pull request reviews** before merging
-4. **Enable GitHub Actions** for automated testing
-
-## 🔧 Advanced Configuration
-
-### Environment Variables
-
-For sensitive configuration, use GitHub repository secrets:
-
-1. Go to **Settings** → **Secrets and variables** → **Actions**
-2. Add secrets like:
-   - `GOOGLE_ANALYTICS_ID`
-   - `DISQUS_SHORTNAME`
-   - `CONTACT_EMAIL`
-
-### GitHub Actions (Optional)
-
-Create `.github/workflows/deploy.yml` for advanced deployment:
-
-```yaml
-name: Deploy Jekyll
-
-on:
-  push:
-    branches: [main]
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./_site
-```
-
-## 🔍 Troubleshooting
-
-### Common Issues
-
-**Permission Denied:**
-
-```bash
-# Check SSH key setup
-ssh -T git@github.com
-
-# Re-authenticate if needed
-gh auth login
-```
-
-**Deployment Failures:**
-
-```bash
-# Check GitHub Pages build status
-gh api repos/:owner/:repo/pages/builds
-
-# View detailed logs in repository Actions tab
-```
-
-**Local Development Issues:**
-
-```bash
-# Restart Docker environment
-docker-compose down && docker-compose up --build
-
-# Clear Jekyll cache
-docker-compose exec jekyll jekyll clean
-```
-
-### Getting Help
-
-- 📖 [GitHub Docs](https://docs.github.com)
-- 💬 [GitHub Community](https://github.community)
-- 🐛 [Report Issues](https://github.com/bamr87/zer0-mistakes/issues)
-
-## 🎉 Next Steps
-
-After completing GitHub setup:
-
-1. **[Personalize your site](/quickstart/personalization/)** - Configure site identity, branding, and analytics
-2. **Create your first post** using the provided templates
-3. **Set up analytics** and monitoring tools
-4. **Explore the documentation** for advanced customization
-
----
-
-**🏆 Congratulations!** You now have a complete GitHub-integrated Jekyll development environment with automated deployment. Continue to [Personalization](/quickstart/personalization/) to customize your site!
 
 ---
 
 <div class="d-flex justify-content-between mt-5">
-  <a href="/quickstart/jekyll-setup/" class="btn btn-outline-primary">
-    <i class="bi bi-arrow-left"></i> Previous: Jekyll Setup
+  <a href="/quickstart/jekyll-setup/" class="btn btn-outline-secondary">
+    <i class="bi bi-arrow-left"></i> Back: Jekyll Setup
   </a>
   <a href="/quickstart/personalization/" class="btn btn-primary">
     Next: Personalization <i class="bi bi-arrow-right"></i>
   </a>
-</div>---
-
-**🏆 Congratulations!** You now have a complete GitHub-integrated Jekyll development environment with automated deployment. Start creating amazing content!
+</div>

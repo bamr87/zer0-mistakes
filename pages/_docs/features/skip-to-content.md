@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:29:57.000Z
 title: Skip-to-Content Accessibility Link
 description: WCAG 2.1 Level AA compliant skip link for keyboard users to bypass navigation and jump to main content.
+preview: /images/previews/skip-to-content-accessibility-link.png
 layout: default
 categories:
     - docs
@@ -12,7 +14,7 @@ tags:
     - skip-link
 permalink: /docs/features/skip-to-content/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---
@@ -227,3 +229,8 @@ The link should announce:
 - [Keyboard Navigation](/docs/features/keyboard-navigation/)
 - [Sidebar Navigation](/docs/features/sidebar-navigation/)
 - [Accessibility Standards](https://www.w3.org/WAI/WCAG21/quickref/)
+
+## See also
+
+- [[Features]]
+- [[Keyboard Navigation]]

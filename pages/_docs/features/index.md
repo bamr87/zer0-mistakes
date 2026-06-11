@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:29:58.000Z
 title: Features
 description: Enable and configure theme features including diagrams, comments, analytics, and more.
+preview: /images/previews/features.png
 layout: default
 categories:
     - docs
@@ -10,7 +12,7 @@ tags:
     - configuration
 permalink: /docs/features/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---
@@ -27,7 +29,6 @@ The Zer0-Mistakes theme includes several optional features that enhance your sit
 | [MathJax Math](mathjax-math/) | Mathematical equations and formulas | `mathjax: true` |
 | [Giscus Comments](giscus-comments/) | GitHub Discussions-powered comments | `comments: true` |
 | [PostHog Analytics](posthog-analytics/) | Privacy-first web analytics | (site-wide) |
-| [AI Chat Assistant](ai-chat-assistant/) | Page-aware AI assistant via proxy-first mode | (site-wide) |
 | [Keyboard Navigation](keyboard-navigation/) | Accessibility shortcuts | (always on) |
 
 ## Quick Enable
@@ -63,7 +64,7 @@ giscus:
 
 # Diagrams
 mermaid:
-  src: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js'
+  src: '/assets/vendor/mermaid/mermaid.min.js'
 ```
 
 ## Feature Guides
@@ -77,7 +78,6 @@ mermaid:
 
 - **[Giscus Comments](giscus-comments/)** — Add GitHub Discussions-powered comments to your pages
 - **[PostHog Analytics](posthog-analytics/)** — Privacy-first analytics with custom event tracking
-- **[AI Chat Assistant](ai-chat-assistant/)** — Context-aware AI chat with GitHub Pages-compatible proxy setup
 
 ### Accessibility
 
@@ -122,4 +122,10 @@ Choose a feature to learn more:
 - [MathJax Math](mathjax-math/) — Mathematical notation
 - [Giscus Comments](giscus-comments/) — User engagement
 - [PostHog Analytics](posthog-analytics/) — Site insights
-- [AI Chat Assistant](ai-chat-assistant/) — Context-aware page assistant
+
+## See also
+
+- [[Customization]]
+- [[Bootstrap Integration]]
+- [[Analytics]]
+- [[SEO]]

@@ -2,9 +2,53 @@
  * Search Modal Controller
  * - Opens modal on navigation:searchRequest event ("/" shortcut)
  * - Focuses search input on open
+ * - Mutually exclusive with Settings (#info-section offcanvas) and cookie settings modal so Bootstrap
+ *   does not stack multiple backdrop layers (search vs Settings conflict).
  */
 (function() {
     'use strict';
+
+    /**
+     * If modal is visible, hide it and run next() on hidden.bs.modal; else run next() now.
+     */
+    function afterModalClosed(modalEl, next) {
+        if (!modalEl || typeof bootstrap === 'undefined') {
+            next();
+            return;
+        }
+        if (!modalEl.classList.contains('show')) {
+            next();
+            return;
+        }
+        const inst = bootstrap.Modal.getInstance(modalEl);
+        if (!inst) {
+            next();
+            return;
+        }
+        modalEl.addEventListener('hidden.bs.modal', next, { once: true });
+        inst.hide();
+    }
+
+    /**
+     * If offcanvas is visible, hide it and run next() on hidden.bs.offcanvas; else run next() now.
+     */
+    function afterOffcanvasClosed(offcanvasEl, next) {
+        if (!offcanvasEl || typeof bootstrap === 'undefined') {
+            next();
+            return;
+        }
+        if (!offcanvasEl.classList.contains('show')) {
+            next();
+            return;
+        }
+        const inst = bootstrap.Offcanvas.getInstance(offcanvasEl);
+        if (!inst) {
+            next();
+            return;
+        }
+        offcanvasEl.addEventListener('hidden.bs.offcanvas', next, { once: true });
+        inst.hide();
+    }
 
     function initSearchModal() {
         const modalEl = document.getElementById('siteSearchModal');
@@ -19,15 +63,35 @@
         let searchIndexPromise = null;
         let searchTimeout = null;
 
-        const openModal = () => {
-            const modalInstance = typeof bootstrap !== 'undefined'
-                ? bootstrap.Modal.getOrCreateInstance(modalEl)
-                : null;
-
-            if (modalInstance) {
-                modalInstance.show();
-            }
+        const showSearchModal = () => {
+            if (typeof bootstrap === 'undefined') return;
+            bootstrap.Modal.getOrCreateInstance(modalEl).show();
         };
+
+        const openModal = () => {
+            if (typeof bootstrap === 'undefined') return;
+            const cookieEl = document.getElementById('cookieSettingsModal');
+            const infoEl = document.getElementById('info-section');
+            afterModalClosed(cookieEl, () => {
+                afterOffcanvasClosed(infoEl, showSearchModal);
+            });
+        };
+
+        const infoSectionEl = document.getElementById('info-section');
+        if (infoSectionEl) {
+            infoSectionEl.addEventListener(
+                'show.bs.offcanvas',
+                (e) => {
+                    if (!modalEl.classList.contains('show')) return;
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    afterModalClosed(modalEl, () => {
+                        bootstrap.Offcanvas.getOrCreateInstance(infoSectionEl).show();
+                    });
+                },
+                true,
+            );
+        }
 
         // Open modal when keyboard shortcut requests search
         document.addEventListener('navigation:searchRequest', openModal);
@@ -150,12 +214,11 @@
         }
 
         function escapeHtml(value) {
-            return String(value)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
+            // Use the browser's built-in text escaping via DOM API
+            // instead of manual regex replacement chains (more secure, handles all edge cases)
+            const div = document.createElement('div');
+            div.textContent = String(value);
+            return div.innerHTML;
         }
 
         function highlightText(text, query) {

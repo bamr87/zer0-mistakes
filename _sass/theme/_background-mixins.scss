@@ -1,0 +1,95 @@
+// ==========================================================================
+// Background Mixins — reusable fffuel-style layered backgrounds
+// ==========================================================================
+// Usage:
+//   @include zer0-bg-gradient;     → applies gradient layer
+//   @include zer0-bg-noise;        → applies noise texture overlay
+//   @include zer0-bg-pattern;      → applies pattern overlay
+//   @include zer0-bg-layered;      → combines gradient + noise
+// ==========================================================================
+
+/// Gradient background layer (hero / header areas)
+@mixin zer0-bg-gradient {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--zer0-bg-gradient);
+    background-size: cover;
+    background-position: center;
+    opacity: var(--zer0-bg-gradient-opacity, 0.6);
+    mix-blend-mode: var(--zer0-bg-blend, overlay);
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+/// Noise texture overlay (body / footer areas)
+@mixin zer0-bg-noise {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--zer0-bg-noise);
+    background-repeat: repeat;
+    background-size: 300px 300px;
+    opacity: var(--zer0-bg-texture-opacity, 0.04);
+    mix-blend-mode: var(--zer0-bg-blend, overlay);
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+/// Pattern overlay (surface / card areas)
+@mixin zer0-bg-pattern {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--zer0-bg-pattern);
+    background-repeat: repeat;
+    background-size: var(--zer0-bg-pattern-size, 60px 60px);
+    opacity: var(--zer0-bg-pattern-opacity, 0.08);
+    mix-blend-mode: var(--zer0-bg-blend, overlay);
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+/// Layered: gradient + noise (for hero sections with depth)
+@mixin zer0-bg-layered {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--zer0-bg-gradient);
+    background-size: cover;
+    background-position: center;
+    opacity: var(--zer0-bg-gradient-opacity, 0.6);
+    mix-blend-mode: var(--zer0-bg-blend, overlay);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--zer0-bg-noise);
+    background-repeat: repeat;
+    background-size: 300px 300px;
+    opacity: var(--zer0-bg-texture-opacity, 0.04);
+    pointer-events: none;
+    z-index: 0;
+  }
+}

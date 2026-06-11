@@ -12,36 +12,25 @@
 #   - Will upgrade to 3.4 once gem ecosystem stabilizes
 # 
 # Multi-stage build:
-#   - base: Ruby 3.3 slim + build dependencies
-#   - dev-test: Includes test gems for CI validation
+#   - base: Ruby 3.3 slim + minimal build deps (bundle + jekyll build)
+#   - dev-test: Heavy tools (Mermaid CLI, Jupyter, ImageMagick, libvips) + test gems
 #   - production: Optimized for serving built site
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# Stage 1: Base Image - Ruby 3.3 with build dependencies
+# Stage 1: Base Image - Ruby 3.3 with minimal build dependencies
 # ------------------------------------------------------------------------------
 # Note: Using Ruby 3.3 instead of :latest (3.4) for compatibility with gems
 # Ruby 3.4 breaks compatibility with some older native extensions
 FROM ruby:3.3-slim AS base
 
-# Install system dependencies without version pins
-# Let apt resolve latest compatible versions
+# Minimal packages for native gems and Jekyll (no Node/Mermaid/Jupyter here)
 RUN apt-get update -qq && \
     apt-get install -y --no-install-recommends \
         build-essential \
         libyaml-dev \
         zlib1g-dev \
-        git \
-        imagemagick \
-        libvips \
-        nodejs \
-        npm \
-        curl \
-        python3 \
-        python3-pip \
-        python3-venv && \
-    npm install -g @mermaid-js/mermaid-cli && \
-    pip3 install --break-system-packages jupyter nbconvert && \
+        git && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 
@@ -67,6 +56,23 @@ RUN bundle config set --local deployment false && \
 # ------------------------------------------------------------------------------
 FROM base AS dev-test
 
+# Optional tooling for local dev, diagram export, notebooks — not needed for jekyll build
+RUN apt-get update -qq && \
+    apt-get install -y --no-install-recommends \
+        imagemagick \
+        libvips \
+        nodejs \
+        npm \
+        curl \
+        jq \
+        python3 \
+        python3-pip \
+        python3-venv && \
+    npm install -g @mermaid-js/mermaid-cli && \
+    pip3 install --break-system-packages jupyter nbconvert && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get clean
+
 # Ensure all gems including dev/test are installed
 RUN bundle config set --local with 'development test' && \
     bundle install --jobs 4 --retry 3
@@ -85,8 +91,11 @@ FROM base AS build
 # Copy full source
 COPY . .
 
-# Build site for production
-RUN bundle exec jekyll build --config _config.yml
+# Build site for production (local theme; see docker/config/docker-build.yml)
+# .dockerignore excludes .git — jekyll-github-metadata needs PAGES_REPO_NWO in this context
+ENV JEKYLL_ENV=production
+ENV PAGES_REPO_NWO=bamr87/zer0-mistakes
+RUN bundle exec jekyll build --config _config.yml,docker/config/docker-build.yml
 
 # ------------------------------------------------------------------------------
 # Stage 4: Production Runtime Stage

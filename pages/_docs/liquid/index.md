@@ -1,6 +1,7 @@
 ---
 title: Liquid
 description: Liquid templating basics used by Jekyll and this theme.
+preview: /images/previews/liquid.png
 layout: default
 categories:
     - docs
@@ -10,9 +11,9 @@ tags:
     - jekyll
 permalink: /docs/liquid/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 prerequisites: []
-updated: 2025-12-20
+lastmod: 2025-12-20
 lastmod: 2025-12-20T22:15:46.126Z
 sidebar:
     nav: docs
@@ -160,3 +161,9 @@ Explore Liquid usage in Zer0-Mistakes:
 - [Jekyll Guide](/docs/jekyll/)
 - [Front Matter](/docs/front-matter/)
 - [Jekyll Liquid Templating](/docs/jekyll/jekyll-liquid/)
+
+## See also
+
+- [[Jekyll]]
+- [[Customization]]
+- [[front-matter]]

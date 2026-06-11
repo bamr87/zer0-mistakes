@@ -86,17 +86,24 @@ TEST SUITES:
     core                  Unit, integration, and validation tests
     deployment            Installation, Docker, and E2E tests
     quality               Security, accessibility, compatibility, and performance tests
-    installation          Install script CLI, modes, error handling, edge cases
+    installation          Legacy install.sh CLI, modes, error handling, edge cases
+    installer             Modular installer: profiles, deploy plugins, agent files, AI wizard
     site_generation       Configuration matrix site generation and build tests
-    visual                Browser-based screenshot and visual regression tests
-    all                   Run core suites (excludes visual for speed)
-    full                  Run all suites including visual tests
+    obsidian              Wiki-link resolver, graph index, and backlinks tests
+    playwright            Playwright smoke tests (CSS, layout, behavioral DOM)
+    playwright_snapshots  Playwright pixel snapshot tests (homepage skin regression)
+    all                   Run core suites (excludes Playwright tiers for speed)
+    full                  Run all suites including Obsidian and both Playwright tiers
+
+    Aliases (deprecated): styling -> playwright, visual -> playwright_snapshots
 
 EXAMPLES:
     $0                                    # Run all core test suites
     $0 --verbose --format json           # Detailed output with JSON reporting
     $0 --suites core,deployment          # Run only core and deployment suites
-    $0 --suites full                     # Run all suites including visual
+    $0 --suites full                     # Run all suites including Playwright tiers
+    $0 --suites playwright               # Smoke tier (CSS/layout/behavior) only
+    $0 --suites playwright_snapshots     # Pixel snapshot tier only
     $0 --suites installation             # Run installation tests only
     $0 --parallel --environment ci       # Parallel execution for CI
     $0 --suites quality --skip-docker    # Quality tests without Docker
@@ -167,9 +174,13 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Test suites configuration (using indexed arrays for bash 3.2 compatibility)
-TEST_SUITE_KEYS=("core" "deployment" "quality" "installation" "site_generation" "visual")
-TEST_SUITE_SCRIPTS=("test_core.sh" "test_deployment.sh" "test_quality.sh" "test_installation.sh" "test_site_generation.sh" "test_visual.sh")
-TEST_SUITE_NAMES=("Core Tests (Unit, Integration, Validation)" "Deployment Tests (Installation, Docker, E2E)" "Quality Tests (Security, Accessibility, Compatibility, Performance)" "Installation Tests (CLI, Modes, Errors, Edge Cases)" "Site Generation Tests (Config Matrix, Jekyll Build)" "Visual Tests (Screenshots, Responsive, Dark Mode)")
+# `playwright` runs the smoke tier; `playwright_snapshots` runs the pixel
+# regression tier. The legacy `visual` (ImageMagick + bash screenshots) and
+# `styling` (alias for the same Playwright tier) suites have been retired.
+TEST_SUITE_KEYS=("core" "deployment" "quality" "installation" "installer" "site_generation" "obsidian" "playwright" "playwright_snapshots")
+TEST_SUITE_SCRIPTS=("test_core.sh" "test_deployment.sh" "test_quality.sh" "test_installation.sh" "test_installer.sh" "test_site_generation.sh" "test_obsidian.sh" "test_playwright.sh" "test_playwright.sh")
+TEST_SUITE_NAMES=("Core Tests (Unit, Integration, Validation)" "Deployment Tests (Installation, Docker, E2E)" "Quality Tests (Security, Accessibility, Compatibility, Performance)" "Installation Tests (CLI, Modes, Errors, Edge Cases)" "Modular Installer Tests (Profiles, Deploy Plugins, Agents, AI Wizard)" "Site Generation Tests (Config Matrix, Jekyll Build)" "Obsidian Tests (Wiki Links, Graph, Backlinks)" "Playwright Smoke Tests (CSS, layout, behavioral DOM)" "Playwright Snapshot Tests (homepage skin pixel regression)")
+TEST_SUITE_ENV=("" "" "" "" "" "" "" "PLAYWRIGHT_PROJECT=smoke" "PLAYWRIGHT_PROJECT=snapshots")
 
 # Helper function to get suite script by name
 get_suite_script() {
@@ -189,6 +200,18 @@ get_suite_name() {
     for i in "${!TEST_SUITE_KEYS[@]}"; do
         if [[ "${TEST_SUITE_KEYS[$i]}" == "$suite_name" ]]; then
             echo "${TEST_SUITE_NAMES[$i]}"
+            return 0
+        fi
+    done
+    return 1
+}
+
+# Helper function to get the inline env-var prefix for a suite (may be empty).
+get_suite_env() {
+    local suite_name="$1"
+    for i in "${!TEST_SUITE_KEYS[@]}"; do
+        if [[ "${TEST_SUITE_KEYS[$i]}" == "$suite_name" ]]; then
+            echo "${TEST_SUITE_ENV[$i]:-}"
             return 0
         fi
     done
@@ -241,13 +264,20 @@ parse_test_suites() {
     local -a suites_to_run=()
     
     if [[ "$suites_input" == "all" ]]; then
-        # Run core test suites by default (visual tests are optional and slow)
-        suites_to_run=("core" "deployment" "quality" "installation" "site_generation")
+        # Run core test suites by default (Playwright tiers are optional and slow)
+        suites_to_run=("core" "deployment" "quality" "installation" "installer" "site_generation")
     elif [[ "$suites_input" == "full" ]]; then
-        # Run all suites including visual tests
-        suites_to_run=("core" "deployment" "quality" "installation" "site_generation" "visual")
+        # Run everything including Obsidian and both Playwright tiers
+        suites_to_run=("core" "deployment" "quality" "installation" "installer" "site_generation" "obsidian" "playwright" "playwright_snapshots")
     else
         IFS=',' read -ra suites_to_run <<< "$suites_input"
+        # Backwards-compat aliases for the retired suite names
+        for i in "${!suites_to_run[@]}"; do
+            case "${suites_to_run[$i]}" in
+                styling) suites_to_run[$i]="playwright" ;;
+                visual)  suites_to_run[$i]="playwright_snapshots" ;;
+            esac
+        done
     fi
     
     # Validate suite names
@@ -522,42 +552,50 @@ run_test_suite() {
     local suite_name="$1"
     local suite_script
     local suite_description
-    
+    local suite_env
+
     suite_script=$(get_suite_script "$suite_name")
     suite_description=$(get_suite_name "$suite_name")
-    
+    suite_env=$(get_suite_env "$suite_name")
+
     info "Running $suite_description..."
     SUITES_TOTAL=$((SUITES_TOTAL + 1))
-    
-    # Build command arguments
+
+    # Build command arguments. Playwright suites don't accept these flags;
+    # they read configuration from environment variables instead.
     local cmd_args=()
-    [[ "$VERBOSE" == "true" ]] && cmd_args+=("--verbose")
-    [[ "$COVERAGE" == "true" ]] && cmd_args+=("--coverage")
-    [[ "$FORMAT" != "text" ]] && cmd_args+=("--format" "$FORMAT")
-    [[ "$TIMEOUT" != "300" ]] && cmd_args+=("--timeout" "$TIMEOUT")
-    
-    # Suite-specific arguments
-    if [[ "$suite_name" == "deployment" ]]; then
-        [[ "$SKIP_DOCKER" == "true" ]] && cmd_args+=("--skip-docker")
-        [[ "$SKIP_REMOTE" == "true" ]] && cmd_args+=("--skip-remote")
-    fi
-    
+    case "$suite_name" in
+        playwright|playwright_snapshots)
+            : # no CLI args
+            ;;
+        *)
+            [[ "$VERBOSE" == "true" ]] && cmd_args+=("--verbose")
+            [[ "$COVERAGE" == "true" ]] && cmd_args+=("--coverage")
+            [[ "$FORMAT" != "text" ]] && cmd_args+=("--format" "$FORMAT")
+            if [[ "$TIMEOUT" != "300" ]]; then
+                case "$suite_name" in
+                    core|deployment|quality) cmd_args+=("--timeout" "$TIMEOUT") ;;
+                esac
+            fi
+            if [[ "$suite_name" == "deployment" ]]; then
+                [[ "$SKIP_DOCKER" == "true" ]] && cmd_args+=("--skip-docker")
+            fi
+            if [[ "$suite_name" == "deployment" || "$suite_name" == "installation" ]]; then
+                [[ "$SKIP_REMOTE" == "true" ]] && cmd_args+=("--skip-remote")
+            fi
+            ;;
+    esac
+
     local start_time=$(date +%s)
     local suite_result="FAIL"
-    
-    # Execute the test suite
-    if [[ ${#cmd_args[@]} -gt 0 ]]; then
-        if "$SCRIPT_DIR/$suite_script" "${cmd_args[@]}"; then
-            suite_result="PASS"
-        else
-            suite_result="FAIL"
-        fi
+
+    # Execute the test suite (with optional inline env from TEST_SUITE_ENV).
+    # Use the `${arr[@]+"${arr[@]}"}` idiom to safely expand an empty array
+    # under `set -u` on bash 3.2 (macOS).
+    if env ${suite_env} "$SCRIPT_DIR/$suite_script" ${cmd_args[@]+"${cmd_args[@]}"}; then
+        suite_result="PASS"
     else
-        if "$SCRIPT_DIR/$suite_script"; then
-            suite_result="PASS"
-        else
-            suite_result="FAIL"
-        fi
+        suite_result="FAIL"
     fi
     
     if [[ "$suite_result" == "PASS" ]]; then

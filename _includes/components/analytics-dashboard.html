@@ -1,0 +1,232 @@
+<!--
+  ===================================================================
+  ANALYTICS DASHBOARD — PostHog & tracking configuration overview
+  ===================================================================
+
+  File: analytics-dashboard.html
+  Path: _includes/components/analytics-dashboard.html
+  Purpose: Shows current analytics configuration, privacy settings,
+           and tracking status. Reads from site.posthog config.
+
+  Dependencies: Bootstrap 5 card/table/badge, site.posthog config
+  Used by: pages/_about/settings/analytics.md
+  ===================================================================
+-->
+
+{% assign ph = site.posthog %}
+
+<!-- Status cards -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3">
+    <div class="card text-center h-100 {% if ph.enabled %}border-success{% else %}border-warning{% endif %}">
+      <div class="card-body py-3">
+        <i class="bi bi-graph-up fs-3 {% if ph.enabled %}text-success{% else %}text-warning{% endif %}"></i>
+        <div class="fw-semibold mt-1">{{ ph.enabled | default: false }}</div>
+        <small class="text-body-secondary">PostHog Enabled</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card text-center h-100 border-primary">
+      <div class="card-body py-3">
+        <i class="bi bi-shield-check fs-3 text-primary"></i>
+        <div class="fw-semibold mt-1">{{ ph.respect_dnt | default: false }}</div>
+        <small class="text-body-secondary">Respect DNT</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card text-center h-100 border-primary">
+      <div class="card-body py-3">
+        <i class="bi bi-camera-video fs-3 text-primary"></i>
+        <div class="fw-semibold mt-1">{{ ph.session_recording | default: false }}</div>
+        <small class="text-body-secondary">Session Recording</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card text-center h-100 border-primary">
+      <div class="card-body py-3">
+        <i class="bi bi-cookie fs-3 text-primary"></i>
+        <div class="fw-semibold mt-1">{{ ph.secure_cookie | default: false }}</div>
+        <small class="text-body-secondary">Secure Cookies</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Configuration Details -->
+<div class="row g-4">
+
+  <!-- PostHog Settings -->
+  <div class="col-lg-6">
+    <div class="card h-100">
+      <div class="card-header"><i class="bi bi-gear me-1"></i> PostHog Configuration</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <tbody>
+            <tr>
+              <td class="fw-semibold">Enabled</td>
+              <td>
+                {% if ph.enabled %}
+                  <span class="badge bg-success">Yes</span>
+                {% else %}
+                  <span class="badge bg-secondary">No</span>
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td class="fw-semibold">API Host</td>
+              <td><code class="small">{{ ph.api_host | default: "not set" }}</code></td>
+            </tr>
+            <tr>
+              <td class="fw-semibold">Person Profiles</td>
+              <td><code class="small">{{ ph.person_profiles | default: "not set" }}</code></td>
+            </tr>
+            <tr>
+              <td class="fw-semibold">Autocapture</td>
+              <td>{{ ph.autocapture | default: false }}</td>
+            </tr>
+            <tr>
+              <td class="fw-semibold">Page Views</td>
+              <td>{{ ph.capture_pageview | default: false }}</td>
+            </tr>
+            <tr>
+              <td class="fw-semibold">Page Leave</td>
+              <td>{{ ph.capture_pageleave | default: false }}</td>
+            </tr>
+            <tr>
+              <td class="fw-semibold">Persistence</td>
+              <td><code class="small">{{ ph.persistence | default: "not set" }}</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Privacy & Compliance -->
+  <div class="col-lg-6">
+    <div class="card h-100">
+      <div class="card-header"><i class="bi bi-shield-lock me-1"></i> Privacy & Compliance</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <tbody>
+            <tr>
+              <td class="fw-semibold">Respect Do Not Track</td>
+              <td>
+                {% if ph.respect_dnt %}
+                  <span class="badge bg-success">Yes</span>
+                {% else %}
+                  <span class="badge bg-warning">No</span>
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td class="fw-semibold">Session Recording</td>
+              <td>
+                {% if ph.session_recording %}
+                  <span class="badge bg-warning">Enabled</span>
+                {% else %}
+                  <span class="badge bg-success">Disabled</span>
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td class="fw-semibold">Disable Cookies</td>
+              <td>{{ ph.disable_cookie | default: false }}</td>
+            </tr>
+            <tr>
+              <td class="fw-semibold">Secure Cookies</td>
+              <td>
+                {% if ph.secure_cookie %}
+                  <span class="badge bg-success">Yes</span>
+                {% else %}
+                  <span class="badge bg-secondary">No</span>
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td class="fw-semibold">Cross-Subdomain</td>
+              <td>{{ ph.cross_subdomain_cookie | default: false }}</td>
+            </tr>
+            {% if ph.privacy %}
+              <tr><td class="fw-semibold">Mask All Text</td><td>{{ ph.privacy.mask_all_text | default: false }}</td></tr>
+              <tr><td class="fw-semibold">Mask All Inputs</td><td>{{ ph.privacy.mask_all_inputs | default: false }}</td></tr>
+              <tr><td class="fw-semibold">IP Anonymization</td><td>{{ ph.privacy.ip_anonymization | default: false }}</td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Events -->
+{% if ph.custom_events %}
+<h5 class="mt-4 mb-3"><i class="bi bi-lightning me-1"></i> Custom Event Tracking</h5>
+<div class="row g-3">
+  {% if ph.custom_events.track_downloads != nil %}
+    <div class="col-6 col-md-3">
+      <div class="card text-center">
+        <div class="card-body py-2">
+          <i class="bi bi-download fs-5 {% if ph.custom_events.track_downloads %}text-success{% else %}text-body-secondary{% endif %}"></i>
+          <div class="small fw-semibold mt-1">Downloads</div>
+          <span class="badge {% if ph.custom_events.track_downloads %}bg-success{% else %}bg-secondary{% endif %}">
+            {{ ph.custom_events.track_downloads }}
+          </span>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+  {% if ph.custom_events.track_external_links != nil %}
+    <div class="col-6 col-md-3">
+      <div class="card text-center">
+        <div class="card-body py-2">
+          <i class="bi bi-box-arrow-up-right fs-5 {% if ph.custom_events.track_external_links %}text-success{% else %}text-body-secondary{% endif %}"></i>
+          <div class="small fw-semibold mt-1">External Links</div>
+          <span class="badge {% if ph.custom_events.track_external_links %}bg-success{% else %}bg-secondary{% endif %}">
+            {{ ph.custom_events.track_external_links }}
+          </span>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+  {% if ph.custom_events.track_search != nil %}
+    <div class="col-6 col-md-3">
+      <div class="card text-center">
+        <div class="card-body py-2">
+          <i class="bi bi-search fs-5 {% if ph.custom_events.track_search %}text-success{% else %}text-body-secondary{% endif %}"></i>
+          <div class="small fw-semibold mt-1">Search</div>
+          <span class="badge {% if ph.custom_events.track_search %}bg-success{% else %}bg-secondary{% endif %}">
+            {{ ph.custom_events.track_search }}
+          </span>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+  {% if ph.custom_events.track_scroll_depth != nil %}
+    <div class="col-6 col-md-3">
+      <div class="card text-center">
+        <div class="card-body py-2">
+          <i class="bi bi-arrows-vertical fs-5 {% if ph.custom_events.track_scroll_depth %}text-success{% else %}text-body-secondary{% endif %}"></i>
+          <div class="small fw-semibold mt-1">Scroll Depth</div>
+          <span class="badge {% if ph.custom_events.track_scroll_depth %}bg-success{% else %}bg-secondary{% endif %}">
+            {{ ph.custom_events.track_scroll_depth }}
+          </span>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endif %}
+
+<!-- External Links -->
+<div class="mt-4">
+  <a href="https://us.posthog.com" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm me-2">
+    <i class="bi bi-box-arrow-up-right me-1"></i> Open PostHog Dashboard
+  </a>
+  <a href="{{ '/about/config/' | relative_url }}" class="btn btn-outline-secondary btn-sm">
+    <i class="bi bi-gear me-1"></i> Full Configuration
+  </a>
+</div>

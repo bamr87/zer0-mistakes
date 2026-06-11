@@ -211,8 +211,8 @@
                             {% assign total_pages = 0 %}
                             {% assign collections_data = '' %}
                             
-                            {% comment %} Include regular pages {% endcomment %}
-                            {% for page in site.pages %}
+                            {% comment %}Loose Jekyll pages (site.pages in Liquid is the "pages" collection, not these files){% endcomment %}
+                            {% for page in site.html_pages %}
                                 {% unless page.sitemap == false %}
                                     {% assign total_pages = total_pages | plus: 1 %}
                                     <tr data-collection="pages" 

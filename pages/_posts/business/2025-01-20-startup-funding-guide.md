@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:48.000Z
 title: "The Complete Guide to Startup Funding in 2025"
 description: "Navigate the complex world of startup funding from seed rounds to Series A and beyond"
 preview: /images/previews/the-complete-guide-to-startup-funding-in-2025.png

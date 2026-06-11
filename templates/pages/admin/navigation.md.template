@@ -1,0 +1,70 @@
+---
+title: Navigation Editor
+layout: admin
+icon: bi-signpost-2
+permalink: /about/settings/navigation/
+excerpt: View and edit your site navigation menus in real-time.
+lastmod: {{CURRENT_DATE}}T00:00:00.000Z
+---
+
+<ul class="nav nav-tabs mb-4" id="navTabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="tab-overview"
+            data-bs-toggle="tab" data-bs-target="#pane-overview"
+            type="button" role="tab">
+      <i class="bi bi-diagram-3 me-1"></i>Overview
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="tab-edit-menus"
+            data-bs-toggle="tab" data-bs-target="#pane-edit-menus"
+            type="button" role="tab">
+      <i class="bi bi-pencil-square me-1"></i>Edit Menus
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="tab-export-yaml"
+            data-bs-toggle="tab" data-bs-target="#pane-export-yaml"
+            type="button" role="tab">
+      <i class="bi bi-download me-1"></i>Export YAML
+    </button>
+  </li>
+</ul>
+
+<div class="tab-content" id="navTabContent">
+
+  <!-- Overview -->
+  <div class="tab-pane fade show active" id="pane-overview" role="tabpanel">
+    {% include components/nav-overview.html %}
+  </div>
+
+  <!-- Edit Menus -->
+  <div class="tab-pane fade" id="pane-edit-menus" role="tabpanel">
+
+    <!-- File selector for navigation files -->
+    <div class="d-flex flex-wrap align-items-end gap-3 mb-4">
+      <div>
+        <label class="form-label small fw-semibold" for="navFileSelect">Navigation file</label>
+        <select class="form-select form-select-sm" id="navFileSelect" style="min-width:200px">
+          <option value="header" selected>Header</option>
+          <option value="footer">Footer</option>
+          <option value="sidebar">Sidebar</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <button class="btn btn-sm btn-outline-primary" id="addNavItem">
+        <i class="bi bi-plus-circle me-1"></i>Add Item
+      </button>
+    </div>
+
+    {% include components/nav-editor.html %}
+  </div>
+
+  <!-- Export YAML -->
+  <div class="tab-pane fade" id="pane-export-yaml" role="tabpanel">
+    {% include components/nav-export.html %}
+  </div>
+
+</div>
+
+<script src="{{ '/assets/js/nav-editor.js' | relative_url }}" defer></script>

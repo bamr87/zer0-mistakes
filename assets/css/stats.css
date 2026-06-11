@@ -4,6 +4,9 @@
   ===================================================================
   
   File: stats.css
+  Loaded only when `page.layout == 'stats'` (_includes/core/head.html).
+  Kept separate so dashboard CSS is not bundled into every page’s main.css.
+
   Purpose: Custom styles for the statistics dashboard that cannot be 
            achieved with Bootstrap 5 utility classes alone.
   
@@ -51,6 +54,45 @@
 @keyframes progress-fill {
   0% { width: 0% !important; }
   100% { width: var(--progress-width, 0%); }
+}
+
+/* ========================================== */
+/* TAXONOMY LIST (CATEGORIES & TAGS)         */
+/* ========================================== */
+
+.stats-taxonomy-list .list-group-item {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+#categories .stats-taxonomy-link {
+  color: var(--bs-primary);
+  text-decoration: none;
+}
+
+#categories .stats-taxonomy-link:hover {
+  color: var(--bs-primary);
+  text-decoration: underline;
+}
+
+#tags .stats-taxonomy-link {
+  color: var(--bs-success);
+  text-decoration: none;
+}
+
+#tags .stats-taxonomy-link:hover {
+  color: var(--bs-success);
+  text-decoration: underline;
+}
+
+.stats-taxonomy-link:focus-visible {
+  outline: 2px solid var(--bs-primary);
+  outline-offset: 2px;
+  border-radius: 0.125rem;
+}
+
+#tags .stats-taxonomy-link:focus-visible {
+  outline-color: var(--bs-success);
 }
 
 /* ========================================== */

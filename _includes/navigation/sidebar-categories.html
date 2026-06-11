@@ -1,32 +1,40 @@
 <!-- sidebar-categories.html -->
-<div class="d-flex flex-column flex-shrink-0 w-100">
-    <a href="/" class="d-flex align-items-center text-decoration-none mb-3">
-        <i class="bi bi-folder2-open me-2 fs-4"></i>
-        <span class="fs-4">Categories</span>
-    </a>
-    <hr class="my-2">
-    {% for category in site.categories %}
-        <div class="mb-1">
-            <button class="btn btn-toggle d-flex align-items-center w-100 rounded collapsed" 
-                    data-bs-toggle="collapse" 
-                    data-bs-target="#{{category[0] | slugify}}-list" 
-                    aria-expanded="false"
-                    aria-controls="{{category[0] | slugify}}-list">
-                <i class="bi bi-folder me-2"></i>
-                <span>{{ category[0] }}</span>
-            </button>
-            <div class="collapse" id="{{category[0] | slugify}}-list">
-                <ul class="btn-toggle-nav list-unstyled fw-normal small ps-4">
-                    {% for post in category[1] %}
-                        <li class="py-1">
-                            <a href="{{ post.url | relative_url }}" class="text-decoration-none rounded d-block py-1 px-2{% if page.url == post.url %} active{% endif %}">
-                                <i class="bi bi-file-earmark-text me-1"></i>
-                                {{ post.title }}
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
+{%- assign categories = include.categories | default: site.categories -%}
+<div class="sidebar-categories nav-tree nav-tree--categories w-100">
+  <h2 class="sidebar-categories-heading h6 text-uppercase text-body-secondary fw-semibold mb-3 d-flex align-items-center gap-2">
+    <i class="bi bi-folder2-open" aria-hidden="true"></i>
+    <span>Categories</span>
+  </h2>
+
+  <ul class="list-unstyled nav-tree-root mb-0">
+    {%- for category in categories -%}
+      {%- assign category_id = category[0] | slugify | prepend: "cat-" -%}
+      <li class="nav-tree-item sidebar-categories-group" data-depth="0">
+        <button class="btn btn-link nav-tree-toggle sidebar-categories-toggle w-100 d-flex align-items-center text-start collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#{{ category_id }}-list"
+                aria-expanded="false"
+                aria-controls="{{ category_id }}-list">
+          <i class="bi bi-folder sidebar-categories-toggle__icon" aria-hidden="true"></i>
+          <span class="sidebar-categories-toggle__label flex-grow-1">{{ category[0] }}</span>
+          <i class="bi bi-chevron-down nav-tree-chevron sidebar-categories-toggle__chevron" aria-hidden="true"></i>
+        </button>
+
+        <div class="collapse" id="{{ category_id }}-list">
+          <ul class="list-unstyled nav-tree-children sidebar-categories-posts mb-0">
+            {%- for post in category[1] -%}
+              <li class="nav-tree-item" data-depth="1">
+                <a href="{{ post.url | relative_url }}"
+                   class="nav-tree-link sidebar-categories-link d-flex align-items-start rounded text-decoration-none{% if page.url == post.url %} active{% endif %}">
+                  <i class="bi bi-file-earmark-text sidebar-categories-link__icon" aria-hidden="true"></i>
+                  <span class="sidebar-categories-link__text">{{ post.title }}</span>
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
         </div>
-    {% endfor %}
+      </li>
+    {%- endfor -%}
+  </ul>
 </div>

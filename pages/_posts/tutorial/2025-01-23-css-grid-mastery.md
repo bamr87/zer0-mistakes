@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:29:47.000Z
 title: "CSS Grid Mastery: Build Any Layout You Can Imagine"
 description: "A hands-on tutorial to master CSS Grid with practical examples and real-world layouts"
 preview: /images/previews/css-grid-mastery-build-any-layout-you-can-imagine.png

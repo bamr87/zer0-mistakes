@@ -23,9 +23,14 @@ import json
 import os
 import re
 import sys
-from dataclasses import dataclass
+import signal
+import time
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, TextIO, Tuple
 import yaml
 
 # Optional imports with fallback
@@ -40,6 +45,81 @@ try:
     HAS_OPENAI = True
 except ImportError:
     HAS_OPENAI = False
+
+
+def _load_dotenv():
+    """Load environment variables from .env file if present."""
+    # Search for .env in cwd and parent directories
+    search_dir = Path.cwd()
+    for _ in range(5):  # limit search depth
+        env_file = search_dir / '.env'
+        if env_file.is_file():
+            with open(env_file) as f:
+                for line in f:
+                    line = line.strip()
+                    if not line or line.startswith('#'):
+                        continue
+                    if '=' in line:
+                        key, _, value = line.partition('=')
+                        key = key.strip()
+                        value = value.strip().strip('"').strip("'")
+                        if key and key not in os.environ:
+                            os.environ[key] = value
+            return
+        parent = search_dir.parent
+        if parent == search_dir:
+            break
+        search_dir = parent
+
+_load_dotenv()
+
+
+# Global state for interrupt handling
+_interrupted = False
+_log_file: Optional[TextIO] = None
+
+
+def _signal_handler(signum, frame):
+    """Handle interrupt signals gracefully."""
+    global _interrupted
+    _interrupted = True
+    print(f"\n{Colors.YELLOW}⚠️  Interrupt received. Finishing current tasks...{Colors.NC}")
+
+
+class RateLimiter:
+    """Token bucket rate limiter for API calls."""
+    
+    def __init__(self, requests_per_minute: int = 5):
+        self.requests_per_minute = requests_per_minute
+        self.min_interval = 60.0 / requests_per_minute
+        self.lock = threading.Lock()
+        self.last_request_time = 0.0
+        self.request_count = 0
+        self.window_start = time.time()
+    
+    def acquire(self) -> float:
+        """Acquire permission to make a request. Returns time waited."""
+        with self.lock:
+            now = time.time()
+            if now - self.window_start >= 60.0:
+                self.window_start = now
+                self.request_count = 0
+            if self.request_count >= self.requests_per_minute:
+                wait_time = 60.0 - (now - self.window_start)
+                if wait_time > 0:
+                    time.sleep(wait_time)
+                    self.window_start = time.time()
+                    self.request_count = 0
+                    return wait_time
+            elapsed = now - self.last_request_time
+            if elapsed < self.min_interval:
+                wait_time = self.min_interval - elapsed
+                time.sleep(wait_time)
+            else:
+                wait_time = 0
+            self.last_request_time = time.time()
+            self.request_count += 1
+            return wait_time
 
 
 @dataclass
@@ -63,6 +143,192 @@ class GenerationResult:
     preview_url: Optional[str]
     error: Optional[str]
     prompt_used: Optional[str]
+    duration: float = 0.0
+    file_path: Optional[Path] = None
+
+
+class ThreadSafeStats:
+    """Thread-safe progress statistics."""
+    
+    def __init__(self):
+        self.lock = threading.Lock()
+        self._total_files: int = 0
+        self._current_index: int = 0
+        self._processed: int = 0
+        self._generated: int = 0
+        self._skipped: int = 0
+        self._errors: int = 0
+        self._start_time: float = time.time()
+        self._generation_times: List[float] = []
+        self._active_workers: int = 0
+        self._pending_files: List[str] = []
+    
+    @property
+    def total_files(self) -> int:
+        with self.lock:
+            return self._total_files
+    
+    @total_files.setter
+    def total_files(self, value: int):
+        with self.lock:
+            self._total_files = value
+    
+    @property
+    def current_index(self) -> int:
+        with self.lock:
+            return self._current_index
+    
+    @current_index.setter
+    def current_index(self, value: int):
+        with self.lock:
+            self._current_index = value
+    
+    @property
+    def processed(self) -> int:
+        with self.lock:
+            return self._processed
+    
+    @property
+    def generated(self) -> int:
+        with self.lock:
+            return self._generated
+    
+    @property
+    def skipped(self) -> int:
+        with self.lock:
+            return self._skipped
+    
+    @property
+    def errors(self) -> int:
+        with self.lock:
+            return self._errors
+    
+    @property
+    def active_workers(self) -> int:
+        with self.lock:
+            return self._active_workers
+    
+    def increment_processed(self):
+        with self.lock:
+            self._processed += 1
+            self._current_index += 1
+    
+    def increment_generated(self):
+        with self.lock:
+            self._generated += 1
+    
+    def increment_skipped(self):
+        with self.lock:
+            self._skipped += 1
+    
+    def increment_errors(self):
+        with self.lock:
+            self._errors += 1
+    
+    def add_generation_time(self, duration: float):
+        with self.lock:
+            self._generation_times.append(duration)
+    
+    def set_active_workers(self, count: int):
+        with self.lock:
+            self._active_workers = count
+    
+    def add_pending_file(self, filename: str):
+        with self.lock:
+            self._pending_files.append(filename)
+    
+    def remove_pending_file(self, filename: str):
+        with self.lock:
+            if filename in self._pending_files:
+                self._pending_files.remove(filename)
+    
+    def get_pending_files(self) -> List[str]:
+        with self.lock:
+            return self._pending_files.copy()
+    
+    @property
+    def elapsed(self) -> float:
+        return time.time() - self._start_time
+    
+    @property
+    def elapsed_str(self) -> str:
+        return str(timedelta(seconds=int(self.elapsed)))
+    
+    @property
+    def avg_generation_time(self) -> float:
+        with self.lock:
+            if not self._generation_times:
+                return 25.0
+            return sum(self._generation_times) / len(self._generation_times)
+    
+    @property
+    def generation_times(self) -> List[float]:
+        with self.lock:
+            return self._generation_times.copy()
+    
+    @property
+    def estimated_remaining(self) -> float:
+        with self.lock:
+            remaining = self._total_files - self._current_index
+            return remaining * self.avg_generation_time
+    
+    @property
+    def eta_str(self) -> str:
+        with self.lock:
+            if self._total_files == 0:
+                return "unknown"
+            return str(timedelta(seconds=int(self.estimated_remaining)))
+    
+    @property
+    def percentage(self) -> float:
+        with self.lock:
+            if self._total_files == 0:
+                return 0.0
+            return (self._current_index / self._total_files) * 100
+
+
+@dataclass
+class ProgressStats:
+    """Track progress statistics (legacy, non-thread-safe)."""
+    total_files: int = 0
+    current_index: int = 0
+    processed: int = 0
+    generated: int = 0
+    skipped: int = 0
+    errors: int = 0
+    start_time: float = field(default_factory=time.time)
+    generation_times: List[float] = field(default_factory=list)
+    
+    @property
+    def elapsed(self) -> float:
+        return time.time() - self.start_time
+    
+    @property
+    def elapsed_str(self) -> str:
+        return str(timedelta(seconds=int(self.elapsed)))
+    
+    @property
+    def avg_generation_time(self) -> float:
+        if not self.generation_times:
+            return 25.0
+        return sum(self.generation_times) / len(self.generation_times)
+    
+    @property
+    def estimated_remaining(self) -> float:
+        remaining = self.total_files - self.current_index
+        return remaining * self.avg_generation_time
+    
+    @property
+    def eta_str(self) -> str:
+        if self.total_files == 0:
+            return "unknown"
+        return str(timedelta(seconds=int(self.estimated_remaining)))
+    
+    @property
+    def percentage(self) -> float:
+        if self.total_files == 0:
+            return 0.0
+        return (self.current_index / self.total_files) * 100
 
 
 class Colors:
@@ -73,11 +339,56 @@ class Colors:
     BLUE = '\033[0;34m'
     CYAN = '\033[0;36m'
     PURPLE = '\033[0;35m'
+    BOLD = '\033[1m'
+    DIM = '\033[2m'
     NC = '\033[0m'  # No Color
 
 
-def log(msg: str, level: str = "info"):
+class Spinner:
+    """Simple spinner for showing activity during long operations."""
+    
+    FRAMES = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
+    
+    def __init__(self, message: str = ""):
+        self.message = message
+        self.running = False
+        self.thread: Optional[threading.Thread] = None
+        self.frame_idx = 0
+        self.start_time = 0.0
+    
+    def _spin(self):
+        while self.running:
+            elapsed = int(time.time() - self.start_time)
+            frame = self.FRAMES[self.frame_idx % len(self.FRAMES)]
+            sys.stdout.write(f"\r{Colors.CYAN}{frame}{Colors.NC} {self.message} ({elapsed}s)...")
+            sys.stdout.flush()
+            self.frame_idx += 1
+            time.sleep(0.1)
+    
+    def start(self, message: str = None):
+        if message:
+            self.message = message
+        self.running = True
+        self.start_time = time.time()
+        self.thread = threading.Thread(target=self._spin, daemon=True)
+        self.thread.start()
+    
+    def stop(self, success: bool = True):
+        self.running = False
+        if self.thread:
+            self.thread.join(timeout=0.2)
+        elapsed = time.time() - self.start_time
+        sys.stdout.write('\r' + ' ' * 80 + '\r')
+        sys.stdout.flush()
+        return elapsed
+
+
+def log(msg: str, level: str = "info", to_file: bool = True):
     """Print formatted log message."""
+    global _log_file
+    
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
     colors = {
         "info": Colors.BLUE,
         "success": Colors.GREEN,
@@ -85,10 +396,32 @@ def log(msg: str, level: str = "info"):
         "error": Colors.RED,
         "debug": Colors.PURPLE,
         "step": Colors.CYAN,
+        "progress": Colors.BOLD,
     }
     color = colors.get(level, Colors.NC)
     prefix = f"[{level.upper()}]"
     print(f"{color}{prefix}{Colors.NC} {msg}")
+    
+    if to_file and _log_file:
+        _log_file.write(f"{timestamp} {prefix} {msg}\n")
+        _log_file.flush()
+
+
+def log_progress(current: int, total: int, title: str, stats):
+    """Print progress bar and statistics."""
+    bar_width = 30
+    filled = int(bar_width * current / total) if total > 0 else 0
+    bar = '█' * filled + '░' * (bar_width - filled)
+    
+    max_title_len = 40
+    display_title = title[:max_title_len-3] + "..." if len(title) > max_title_len else title
+    
+    print(f"\n{Colors.CYAN}{'─' * 70}{Colors.NC}")
+    print(f"{Colors.BOLD}📊 Progress: [{bar}] {current}/{total} ({stats.percentage:.1f}%){Colors.NC}")
+    print(f"   {Colors.DIM}Elapsed: {stats.elapsed_str} | ETA: {stats.eta_str} | Avg: {stats.avg_generation_time:.1f}s/image{Colors.NC}")
+    print(f"   ✅ Generated: {stats.generated} | ⏭️  Skipped: {stats.skipped} | ❌ Errors: {stats.errors}")
+    print(f"{Colors.CYAN}{'─' * 70}{Colors.NC}")
+    print(f"📁 Processing: {display_title}")
 
 
 class PreviewGenerator:
@@ -106,6 +439,9 @@ class PreviewGenerator:
         dry_run: bool = False,
         verbose: bool = False,
         force: bool = False,
+        batch_limit: int = 0,
+        workers: int = 1,
+        rate_limit: int = 5,
     ):
         self.project_root = project_root
         self.provider = provider
@@ -117,12 +453,19 @@ class PreviewGenerator:
         self.dry_run = dry_run
         self.verbose = verbose
         self.force = force
+        self.batch_limit = batch_limit
+        self.workers = workers
+        self.rate_limit = rate_limit
         
-        # Statistics
-        self.processed = 0
-        self.generated = 0
-        self.skipped = 0
-        self.errors = 0
+        # Progress tracking - use thread-safe stats for parallel processing
+        if workers > 1:
+            self.stats = ThreadSafeStats()
+        else:
+            self.stats = ProgressStats()
+        self.spinner = Spinner()
+        
+        # Rate limiter for API calls
+        self.rate_limiter = RateLimiter(requests_per_minute=rate_limit)
         
         # Ensure output directory exists
         if not dry_run:
@@ -592,13 +935,26 @@ class PreviewGenerator:
             log(f"Failed to update front matter: {e}", "error")
             return False
     
+    def _increment_stat(self, stat_name: str):
+        """Increment a stat on either ThreadSafeStats or ProgressStats."""
+        if isinstance(self.stats, ThreadSafeStats):
+            method = getattr(self.stats, f"increment_{stat_name}", None)
+            if method:
+                method()
+        else:
+            setattr(self.stats, stat_name, getattr(self.stats, stat_name) + 1)
+
     def process_file(self, file_path: Path, list_only: bool = False) -> bool:
         """Process a single content file."""
-        self.processed += 1
+        global _interrupted
+        if _interrupted:
+            return False
+        
+        self._increment_stat("processed")
         
         content = self.parse_front_matter(file_path)
         if not content:
-            self.skipped += 1
+            self._increment_stat("skipped")
             return False
         
         self.debug(f"Processing: {content.title}")
@@ -607,7 +963,7 @@ class PreviewGenerator:
         if content.preview and self.check_preview_exists(content.preview):
             if not self.force:
                 self.debug(f"Preview exists: {content.preview}")
-                self.skipped += 1
+                self._increment_stat("skipped")
                 return True
             else:
                 log(f"Force mode: regenerating preview for {content.title}", "info")
@@ -639,25 +995,90 @@ class PreviewGenerator:
             print(f"  Preview URL: {preview_url}")
             print(f"  Prompt: {prompt[:200]}...")
             print()
-            self.generated += 1
+            self._increment_stat("generated")
             return True
         
+        # Rate limiting
+        self.rate_limiter.acquire()
+        
+        start_time = time.time()
+        
         # Generate image
+        self.spinner.start(f"Generating: {content.title[:50]}...")
         result = self.generate_image(prompt, output_file)
+        self.spinner.stop()
+        
+        duration = time.time() - start_time
+        result.duration = duration
+        result.file_path = file_path
         
         if result.success:
             # Update front matter
-            if self.update_front_matter(file_path, preview_url):
-                log(f"Updated front matter with: {preview_url}", "success")
-                self.generated += 1
+            self.spinner.start("Updating front matter...")
+            updated = self.update_front_matter(file_path, preview_url)
+            self.spinner.stop()
+            
+            if updated:
+                log(f"Updated front matter with: {preview_url} ({duration:.1f}s)", "success")
+                self._increment_stat("generated")
+                if isinstance(self.stats, ThreadSafeStats):
+                    self.stats.add_generation_time(duration)
                 return True
             else:
-                self.errors += 1
+                self._increment_stat("errors")
                 return False
         else:
             log(f"Failed to generate image: {result.error}", "warning")
-            self.errors += 1
+            self._increment_stat("errors")
             return False
+    
+    def process_file_parallel(self, file_path: Path) -> Tuple[Path, GenerationResult]:
+        """Thread-safe version of process_file for parallel processing."""
+        global _interrupted
+        if _interrupted:
+            return file_path, GenerationResult(success=False, error="Interrupted")
+        
+        content = self.parse_front_matter(file_path)
+        if not content:
+            self.stats.increment_skipped()
+            return file_path, GenerationResult(success=False, error="No front matter")
+        
+        # Check if preview exists
+        if content.preview and self.check_preview_exists(content.preview):
+            if not self.force:
+                self.stats.increment_skipped()
+                return file_path, GenerationResult(success=True, file_path=file_path)
+        
+        # Generate filename and paths
+        safe_filename = self.generate_filename(content.title)
+        output_file = self.output_dir / f"{safe_filename}.png"
+        preview_url = f"/{self.output_dir.relative_to(self.project_root)}/{safe_filename}.png"
+        
+        # Generate prompt
+        prompt = self.generate_prompt(content)
+        
+        # Rate limiting
+        self.rate_limiter.acquire()
+        
+        start_time = time.time()
+        result = self.generate_image(prompt, output_file)
+        duration = time.time() - start_time
+        result.duration = duration
+        result.file_path = file_path
+        
+        if result.success:
+            if self.update_front_matter(file_path, preview_url):
+                self.stats.increment_generated()
+                self.stats.add_generation_time(duration)
+                return file_path, result
+            else:
+                self.stats.increment_errors()
+                result.success = False
+                result.error = "Failed to update front matter"
+                return file_path, result
+        else:
+            self.stats.increment_errors()
+            return file_path, result
     
     def process_collection(self, collection_path: Path, list_only: bool = False):
         """Process all markdown files in a collection."""
@@ -665,30 +1086,142 @@ class PreviewGenerator:
             log(f"Collection not found: {collection_path}", "warning")
             return
         
-        for md_file in collection_path.rglob("*.md"):
+        files = sorted(collection_path.rglob("*.md"))
+        
+        # Apply batch limit
+        if self.batch_limit > 0:
+            files = files[:self.batch_limit]
+            log(f"Batch limit: processing {len(files)} files", "info")
+        
+        if not files:
+            log(f"No markdown files found in {collection_path}", "info")
+            return
+        
+        if self.workers > 1 and not list_only and not self.dry_run:
+            self._process_collection_parallel(files)
+        else:
+            self._process_collection_sequential(files, list_only)
+
+    def _process_collection_sequential(self, files: List[Path], list_only: bool = False):
+        """Process files sequentially with progress tracking."""
+        global _interrupted
+        total = len(files)
+        
+        for i, md_file in enumerate(files):
+            if _interrupted:
+                log("Interrupted! Stopping...", "warning")
+                break
+            
+            if isinstance(self.stats, ProgressStats):
+                log_progress(i + 1, total, "Processing", self.stats)
+            
             self.process_file(md_file, list_only)
+            self.stats.processed = i + 1
+
+    def _process_collection_parallel(self, files: List[Path]):
+        """Process files in parallel using ThreadPoolExecutor."""
+        global _interrupted
+        total = len(files)
+        
+        log(f"Processing {total} files with {self.workers} workers", "info")
+        
+        if isinstance(self.stats, ThreadSafeStats):
+            self.stats.set_active_workers(self.workers)
+            for f in files:
+                self.stats.add_pending_file(str(f))
+        
+        completed = 0
+        
+        with ThreadPoolExecutor(max_workers=self.workers) as executor:
+            futures = {
+                executor.submit(self.process_file_parallel, f): f
+                for f in files
+            }
+            
+            for future in as_completed(futures):
+                if _interrupted:
+                    log("Interrupted! Cancelling remaining tasks...", "warning")
+                    for f in futures:
+                        f.cancel()
+                    break
+                
+                file_path, result = future.result()
+                completed += 1
+                
+                if isinstance(self.stats, ThreadSafeStats):
+                    self.stats.increment_processed()
+                    self.stats.remove_pending_file(str(file_path))
+                
+                self._show_parallel_progress(completed, total, file_path, result)
+
+    def _show_parallel_progress(self, completed: int, total: int, file_path: Path, result: GenerationResult):
+        """Show progress for parallel processing."""
+        pct = (completed / total) * 100
+        bar_len = 30
+        filled = int(bar_len * completed / total)
+        bar = "█" * filled + "░" * (bar_len - filled)
+        
+        status = f"{Colors.GREEN}✓{Colors.NC}" if result.success else f"{Colors.RED}✗{Colors.NC}"
+        name = file_path.name[:30]
+        duration = f" ({result.duration:.1f}s)" if result.duration > 0 else ""
+        
+        workers_info = ""
+        if isinstance(self.stats, ThreadSafeStats):
+            workers_info = f" [{self.stats.active_workers}w]"
+        
+        print(f"\r  {bar} {pct:5.1f}% ({completed}/{total}){workers_info} {status} {name}{duration}    ", end="", flush=True)
+        
+        if completed == total:
+            print()
     
     def print_summary(self):
         """Print processing summary."""
+        stats = self.stats
+        
         print()
-        print(f"{Colors.CYAN}{'=' * 40}{Colors.NC}")
-        print(f"{Colors.CYAN}📊 Summary{Colors.NC}")
-        print(f"{Colors.CYAN}{'=' * 40}{Colors.NC}")
-        print(f"  Files processed: {self.processed}")
-        print(f"  Images generated: {self.generated}")
-        print(f"  Files skipped: {self.skipped}")
-        print(f"  Errors: {self.errors}")
+        print(f"{Colors.CYAN}{'=' * 50}{Colors.NC}")
+        print(f"{Colors.CYAN}📊 Generation Summary{Colors.NC}")
+        print(f"{Colors.CYAN}{'=' * 50}{Colors.NC}")
+        
+        if isinstance(stats, ThreadSafeStats):
+            print(f"  📁 Files processed:  {stats.processed}")
+            print(f"  🎨 Images generated: {stats.generated}")
+            print(f"  ⏭️  Files skipped:    {stats.skipped}")
+            print(f"  ❌ Errors:           {stats.errors}")
+            
+            if stats.elapsed > 0:
+                print(f"\n  ⏱️  Total time:      {stats.elapsed_str}")
+            if stats.avg_generation_time > 0:
+                print(f"  📈 Avg time/image:   {stats.avg_generation_time:.1f}s")
+            if self.workers > 1:
+                print(f"  👷 Workers used:     {self.workers}")
+        else:
+            print(f"  📁 Files processed:  {stats.processed}")
+            print(f"  🎨 Images generated: {stats.generated}")
+            print(f"  ⏭️  Files skipped:    {stats.skipped}")
+            print(f"  ❌ Errors:           {stats.errors}")
+        
         print()
+        
+        if _interrupted:
+            log("Processing was interrupted by user.", "warning")
         
         if self.dry_run:
             log("This was a dry run. No actual changes were made.", "info")
         
-        if self.errors > 0:
+        errors = stats.errors if isinstance(stats, ThreadSafeStats) else stats.errors
+        if errors > 0:
             log("Some files had errors. Check the output above.", "warning")
 
 
 def main():
     """Main entry point."""
+    global _log_file
+    
+    # Set up signal handlers for graceful shutdown
+    signal.signal(signal.SIGINT, _signal_handler)
+    signal.signal(signal.SIGTERM, _signal_handler)
+    
     parser = argparse.ArgumentParser(
         description="AI-powered preview image generator for Jekyll content"
     )
@@ -747,8 +1280,38 @@ def main():
         action='store_true',
         help="Disable automatic assets prefix prepending"
     )
+    parser.add_argument(
+        '--batch',
+        type=int,
+        default=0,
+        help="Limit number of files to process (0 = no limit)"
+    )
+    parser.add_argument(
+        '--log-file',
+        help="Write log output to file"
+    )
+    parser.add_argument(
+        '-w', '--workers',
+        type=int,
+        default=1,
+        help="Number of parallel workers (default: 1 = sequential)"
+    )
+    parser.add_argument(
+        '--rate-limit',
+        type=int,
+        default=5,
+        help="Max API requests per minute (default: 5)"
+    )
     
     args = parser.parse_args()
+    
+    # Set up log file
+    if args.log_file:
+        try:
+            _log_file = open(args.log_file, 'w')
+            log(f"Logging to: {args.log_file}", "info")
+        except IOError as e:
+            log(f"Cannot open log file: {e}", "warning")
     
     # Determine project root
     script_dir = Path(__file__).parent
@@ -765,16 +1328,23 @@ def main():
         dry_run=args.dry_run,
         verbose=args.verbose,
         force=args.force,
+        batch_limit=args.batch,
+        workers=args.workers,
+        rate_limit=args.rate_limit,
     )
     
-    print(f"{Colors.BLUE}{'=' * 40}{Colors.NC}")
+    print(f"{Colors.BLUE}{'=' * 50}{Colors.NC}")
     print(f"{Colors.BLUE}🎨 Preview Image Generator{Colors.NC}")
-    print(f"{Colors.BLUE}{'=' * 40}{Colors.NC}")
+    print(f"{Colors.BLUE}{'=' * 50}{Colors.NC}")
     print()
     
-    log(f"Provider: {args.provider}", "info")
-    log(f"Output Dir: {args.output_dir}", "info")
-    log(f"Dry Run: {args.dry_run}", "info")
+    log(f"Provider:    {args.provider}", "info")
+    log(f"Output Dir:  {args.output_dir}", "info")
+    log(f"Workers:     {args.workers}", "info")
+    log(f"Rate Limit:  {args.rate_limit} req/min", "info")
+    log(f"Dry Run:     {args.dry_run}", "info")
+    if args.batch > 0:
+        log(f"Batch Limit: {args.batch}", "info")
     print()
     
     # Process files
@@ -810,7 +1380,12 @@ def main():
     
     generator.print_summary()
     
-    return 0 if generator.errors == 0 else 1
+    # Close log file
+    if _log_file:
+        _log_file.close()
+    
+    errors = generator.stats.errors if isinstance(generator.stats, ThreadSafeStats) else generator.stats.errors
+    return 0 if errors == 0 else 1
 
 
 if __name__ == "__main__":

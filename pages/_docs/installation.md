@@ -1,6 +1,7 @@
 ---
 title: Installation
 description: Prerequisites and setup steps for running Zer0-Mistakes locally.
+preview: /images/previews/installation.png
 layout: default
 categories:
     - docs
@@ -11,9 +12,9 @@ tags:
     - docker
 permalink: /docs/installation/
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 prerequisites: []
-updated: 2025-12-20
+lastmod: 2025-12-20
 lastmod: 2025-12-20T22:15:46.005Z
 sidebar:
     nav: docs
@@ -105,3 +106,18 @@ docker-compose exec jekyll jekyll doctor
 - [Docker Development Guide](/docs/docker/) - Learn Docker commands and workflows
 - [Jekyll Configuration](/docs/jekyll/jekyll-config/) - Customize your site
 - [Troubleshooting](/docs/troubleshooting/) - Common issues and solutions
+
+## Technical Reference
+
+For contributor-level details (installer architecture, profile system, AI-powered setup):
+
+- [Installation Guide → docs/installation/index.md](../../docs/installation/index.md)
+- [Forking Guide → docs/installation/forking.md](../../docs/installation/forking.md)
+
+## See also
+
+- [[Docker]]
+- [[Ruby]]
+- [[Jekyll]]
+- [[front-matter]]
+- [[Customization]]

@@ -237,7 +237,6 @@ plugins:
   - jekyll-sitemap
   - jekyll-seo-tag
   - jekyll-paginate
-  - jekyll-include-cache
 
 # Docker-optimized settings
 url: ""

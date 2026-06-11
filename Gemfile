@@ -7,6 +7,10 @@
 # - Build fails immediately if incompatible → caught in CI, not production
 # - Production always gets exactly what passed TEST (via Gemfile.lock)
 # 
+# macOS / Ruby 2.6 users: the installer (install.sh) generates a site-specific
+# Gemfile with compatibility caps via templates/config/Gemfile.macos.template
+# when it detects macOS + Ruby < 2.7.
+# 
 # See: docs/systems/ZERO_PIN_STRATEGY.md for full documentation
 # ==============================================================================
 

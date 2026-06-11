@@ -1,4 +1,6 @@
 ---
+title: Amr Abdel-Motaleb
+preview: /images/previews/amr-abdel-motaleb.png
 name: Amr Abdel-Motaleb
 avatar: /assets/images/bamr-avatar.png
 excerpt: IT Wizard, Software Architect, Tech Enthusiast.
@@ -28,16 +30,9 @@ git subtree add --prefix=pages/_about/contributors/bamr87 bamr87 main
 
 ```
 
-<!-- Include the library. -->
-<script
-  src="https://unpkg.com/github-calendar@latest/dist/github-calendar.min.js">
-</script>
-
-<!-- Optionally, include the theme (if you don't want to struggle to write the CSS) -->
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/github-calendar@latest/dist/github-calendar-responsive.css"
-/>
+<!-- GitHub contribution calendar (bundled under assets/vendor/) -->
+<script src="{{ '/assets/vendor/github-calendar/github-calendar.min.js' | relative_url }}"></script>
+<link rel="stylesheet" href="{{ '/assets/vendor/github-calendar/github-calendar-responsive.css' | relative_url }}" />
 
 <!-- Prepare a container for your calendar. -->
 <div class="calendar">

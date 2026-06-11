@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:30:01.000Z
 title: Getting Started
 description: Quick start guides and initial setup for the Zer0-Mistakes Jekyll theme.
+preview: /images/previews/getting-started.png
 layout: default
 categories:
     - docs
@@ -11,7 +13,7 @@ tags:
     - installation
 permalink: /docs/getting-started/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
 ---
@@ -27,7 +29,7 @@ Welcome to Zer0-Mistakes! Choose your path to get started with the theme.
 | **A** | [AI Install Wizard](quick-start/) | Creating a new site (recommended) |
 | **B** | GitHub Template Repo | One-click copy of the entire repo |
 | **C** | GitHub Codespaces | Zero-install cloud development |
-| **D** | Fork/Clone | Theme development & customization |
+| **D** | Fork/Clone | Personal site & theme customization |
 | **E** | Remote Theme | GitHub Pages without copying files |
 | **F** | Ruby Gem | Traditional Jekyll workflow |
 
@@ -51,3 +53,12 @@ After installation:
 1. [Configure your site](/docs/front-matter/) — Set up front matter for your pages
 2. [Enable features](/docs/features/) — Add diagrams, comments, analytics
 3. [Deploy your site](/docs/deployment/) — Publish to GitHub Pages or Netlify
+
+## See also
+
+- [[Installation]]
+- [[front-matter]]
+- [[Customization]]
+- [[Features]]
+- [[Deployment]]
+- [[Obsidian Vault Integration]]

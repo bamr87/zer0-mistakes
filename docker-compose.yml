@@ -10,8 +10,9 @@
 #   - Production gets exactly what passed TEST (via immutable image tags)
 # 
 # Usage:
-#   docker compose up              # Start development server
+#   docker compose up              # Start development server (minimal image)
 #   docker compose up --build      # Rebuild with latest dependencies
+#   docker compose -f docker-compose.yml -f docker-compose.dev-full.yml up  # Use dev-full with tools
 #   docker compose exec jekyll bash  # Access container shell
 # 
 # For testing: docker compose -f docker-compose.yml -f docker-compose.test.yml up
@@ -23,19 +24,22 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
+      # dev-test is the stage with the full Jekyll + tooling toolchain; the
+      # leaner `base` stage lacks `COPY . .` and cannot serve the site.
       target: dev-test
     
     # Platform specification for Apple Silicon compatibility
     platform: linux/amd64
     
-    # Run bundle install first since volume mount overwrites container's /site
-    # Also configure git safe.directory to avoid ownership warnings in CI
-    command: ["sh", "-c", "git config --global --add safe.directory /site 2>/dev/null || true && bundle install --jobs 4 --retry 3 && CONFIGS='_config.yml,_config_dev.yml'; [ -f _config_secrets_local.yml ] && CONFIGS=\"$${CONFIGS},_config_secrets_local.yml\"; bundle exec jekyll serve --watch --force_polling --config \"$${CONFIGS}\" --host 0.0.0.0 --port 4000 --livereload"]
+    # Run bundle check first; skip install if deps haven't changed
+    command: ["sh", "-c", "git config --global --add safe.directory /site 2>/dev/null || true && bundle check || bundle install --jobs 4 --retry 3 && bash _data/generate_statistics.sh && bundle exec jekyll serve --watch --livereload --config '_config.yml,_config_dev.yml' --host 0.0.0.0 --port 4000"]
     
     volumes:
       - .:/site
       # Named volume for bundle cache (faster rebuilds)
       - bundle_cache:/usr/local/bundle
+      # Named volume for jekyll cache (avoids metadata regeneration)
+      - jekyll_cache:/site/.jekyll-cache
     
     ports:
       - "4000:4000"
@@ -56,4 +60,5 @@ services:
 volumes:
   bundle_cache:
     driver: local
-
+  jekyll_cache:
+    driver: local

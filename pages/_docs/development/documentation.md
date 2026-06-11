@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:29:55.000Z
 title: Documentation
 description: Guide to the dual documentation architecture with technical docs, public docs, and AI instructions.
+preview: /images/previews/documentation.png
 layout: default
 categories:
     - docs
@@ -12,7 +14,7 @@ tags:
     - architecture
 permalink: /docs/development/documentation/
 difficulty: intermediate
-estimated_time: 15 minutes
+estimated_reading_time: 15 minutes
 sidebar:
     nav: docs
 ---
@@ -59,6 +61,7 @@ Documentation Architecture
 ---
 title: "Descriptive Technical Title"
 description: "Technical implementation summary"
+preview: /images/previews/documentation.png
 type: "system|feature|configuration|release"
 audience: "developers|contributors|maintainers"
 components: ["file1.rb", "file2.html"]
@@ -99,12 +102,13 @@ complexity: "beginner|intermediate|advanced"
 ---
 title: Feature Name
 description: One-line description for SEO
+preview: /images/previews/documentation.png
 layout: default
 categories: [docs, features]
 tags: [relevant, tags]
 permalink: /docs/category/feature-name/
 difficulty: beginner|intermediate|advanced
-estimated_time: X minutes
+estimated_reading_time: X minutes
 prerequisites: []
 sidebar:
     nav: docs
@@ -134,6 +138,7 @@ sidebar:
 ---
 applyTo: "path/to/files/**"
 description: "Guidance for these files"
+preview: /images/previews/documentation.png
 ---
 
 # Development Guidelines
@@ -241,3 +246,9 @@ bundle exec htmlproofer _site --check-links
 
 - [PRD](/docs/development/prd/)
 - [Contributing Guide](https://github.com/bamr87/zer0-mistakes/blob/main/CONTRIBUTING.md)
+
+## See also
+
+- [[Development]]
+- [[front-matter]]
+- [[Obsidian Vault Integration]]

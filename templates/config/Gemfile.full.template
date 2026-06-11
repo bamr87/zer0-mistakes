@@ -1,9 +1,11 @@
 source "https://rubygems.org"
 
-# GitHub Pages gem includes Jekyll and compatible plugins
-gem "github-pages", group: :jekyll_plugins
+# Jekyll and the theme gem
+gem "jekyll", "~> 4.3"
+gem "jekyll-theme-zer0"
 
-# Essential plugins (already included in github-pages but listed for clarity)
+# Plugins required by the theme
+gem "jekyll-include-cache"
 gem "jekyll-remote-theme"
 gem "jekyll-feed"
 gem "jekyll-sitemap"
@@ -13,4 +15,12 @@ gem "jekyll-paginate"
 # Platform compatibility and performance
 gem "ffi", "{{FFI_VERSION}}"
 gem "webrick", "{{WEBRICK_VERSION}}"
-gem "commonmarker", "{{COMMONMARKER_VERSION}}"  # Fixed version to avoid compatibility issues
+
+# Platform-specific dependencies
+platforms :windows, :jruby do
+  gem "tzinfo"
+  gem "tzinfo-data"
+end
+
+# Performance booster for watching directories on Windows
+gem "wdm", :platforms => [:windows]

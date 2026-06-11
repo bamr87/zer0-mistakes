@@ -1,0 +1,45 @@
+{%- comment -%}
+  ===================================================================
+  CALLOUT — Bootstrap-docs-style info/note/warning/tip block
+  ===================================================================
+
+  Path: _includes/components/callout.html
+
+  Parameters
+    include.type     (string)  — `note` (default) | `tip` | `info` | `warning` | `danger`
+    include.title    (string)  — heading text (optional)
+    include.icon     (string)  — Bootstrap Icon class override (optional)
+    include.content  (string)  — body markup (required)
+
+  Renders an <aside role="note"> with semantic colors mapped to design tokens
+  so the block adapts to color modes without further CSS.
+
+  Example (in markdown via Jekyll's `include` tag):
+    {%- capture body -%}
+    Run `bundle install` after editing the Gemfile to pick up new gems.
+    {%- endcapture -%}
+    {% include components/callout.html type="tip" title="Heads up" content=body %}
+  ===================================================================
+{%- endcomment -%}
+{%- assign type = include.type | default: "note" -%}
+
+{%- case type -%}
+  {%- when "tip"     -%}{%- assign icon_default = "bi-lightbulb"          -%}{%- assign color_token = "--zer0-color-success" -%}
+  {%- when "info"    -%}{%- assign icon_default = "bi-info-circle"        -%}{%- assign color_token = "--zer0-color-info"    -%}
+  {%- when "warning" -%}{%- assign icon_default = "bi-exclamation-triangle"-%}{%- assign color_token = "--zer0-color-warning" -%}
+  {%- when "danger"  -%}{%- assign icon_default = "bi-shield-exclamation" -%}{%- assign color_token = "--zer0-color-danger"  -%}
+  {%- else           -%}{%- assign icon_default = "bi-bookmark"           -%}{%- assign color_token = "--zer0-color-primary" -%}
+{%- endcase -%}
+{%- assign icon = include.icon | default: icon_default -%}
+
+<aside class="zer0-callout zer0-callout--{{ type }}" role="note" style="--zer0-callout-color: var({{ color_token }});">
+  <div class="zer0-callout__icon" aria-hidden="true">
+    <i class="bi {{ icon }}"></i>
+  </div>
+  <div class="zer0-callout__body">
+    {%- if include.title -%}
+    <p class="zer0-callout__title">{{ include.title }}</p>
+    {%- endif -%}
+    <div class="zer0-callout__content">{{ include.content }}</div>
+  </div>
+</aside>

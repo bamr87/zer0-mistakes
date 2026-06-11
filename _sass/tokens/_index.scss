@@ -1,0 +1,16 @@
+// ============================================================================
+// Tokens barrel — single import surface for the design-token layer
+// ----------------------------------------------------------------------------
+// Pulled in early from assets/css/main.scss so every later partial can resolve
+// `var(--zer0-*)` references. Runtime overrides (from _config.yml theme_color
+// and from the optional Appearance panel) are injected by
+// _includes/core/tokens-inline.html before main.css loads.
+// ============================================================================
+
+@import "tokens/color";
+@import "tokens/spacing";
+@import "tokens/typography";
+@import "tokens/shadow";
+@import "tokens/motion";
+@import "tokens/breakpoints";
+@import "tokens/layers";

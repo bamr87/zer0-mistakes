@@ -30,7 +30,10 @@
   - ARIA labels for screen readers
   - Focus management for offcanvas
   
-  TODO: Fix Nanobar progress bar positioning and animation
+  Nanobar:
+  - Configured via `site.nanobar.*` in _config.yml
+  - When `position: navbar`, the bar mounts inside `#top-progress-target` below
+  - Otherwise it floats fixed to the viewport (top or bottom)
   ===================================================================
 -->
 
@@ -42,32 +45,32 @@
   Skip to main content
 </a>
 
-<header id="navbar" class="container-fluid text-center fixed-top" role="navigation">
+<header id="navbar" class="container-fluid text-center fixed-top" role="banner">
 
     <!-- ================================ -->
     <!-- TOP NAVIGATION BAR              -->
     <!-- ================================ -->
-    <div class="navbar navbar-expand-lg bg-body-tertiary flex-nowrap justify-content-center bottom-shadow">
-       
-        <!-- ========================== -->
-        <!-- PROGRESS BAR INDICATOR    -->
-        <!-- ========================== -->
-        <!-- Fixed position progress bar for page loading feedback -->
-        <div class="nanobar" id="top-progress-bar" style="position: fixed;">
-            <div class="bar"></div>
-        </div>
-        
+    <div class="navbar navbar-expand-lg bg-body-tertiary flex-nowrap w-100 bottom-shadow">
+
         <!-- ========================== -->
         <!-- MAIN NAVIGATION CONTAINER -->
         <!-- ========================== -->
-        <nav class="container-xl order-2 order-lg-1 grid gap-1 navbar-main">
+        <nav class="container-xl order-2 order-lg-1 d-flex align-items-center gap-1 flex-nowrap navbar-main w-100" aria-label="Primary navigation">
+
+            <!-- Leading cluster: sidebar toggle + brand + titles (grid column 1 on lg+) -->
+            <div class="navbar-main-start d-flex align-items-center gap-1 gap-lg-2 min-w-0 flex-shrink-1 flex-grow-1">
 
             <!-- ========================== -->
             <!-- MOBILE MENU CONTROLS      -->
             <!-- ========================== -->
             
-            <!-- Left Sidebar Toggle - Mobile view only -->
-            {% assign sidebar_nav = page.sidebar.nav | default: nil %}
+            <!-- Left Sidebar Toggle - Mobile view only (omit when page.sidebar: false — matches default layout aside) -->
+            {% assign sidebar_nav = nil %}
+            {% if page.sidebar != false %}
+              {% if page.sidebar and page.sidebar.nav %}
+                {% assign sidebar_nav = page.sidebar.nav %}
+              {% endif %}
+            {% endif %}
             {% assign sidebar_has_content = false %}
             {% if sidebar_nav %}
                 {% if sidebar_nav == "auto" or sidebar_nav == "categories" %}
@@ -78,14 +81,27 @@
             {% endif %}
 
             {% if sidebar_has_content %}
+              {%- comment -%}
+                When site.navigation.unified_mobile_drawer is true, the sidebar
+                toggle opens the consolidated drawer (Browse tab pre-selected)
+                instead of the legacy #bdSidebar offcanvas.
+              {%- endcomment -%}
+              {%- if site.navigation.unified_mobile_drawer -%}
+                {%- assign _sidebar_target = "#zer0UnifiedDrawer" -%}
+                {%- assign _sidebar_controls = "zer0UnifiedDrawer" -%}
+              {%- else -%}
+                {%- assign _sidebar_target = "#bdSidebar" -%}
+                {%- assign _sidebar_controls = "bdSidebar" -%}
+              {%- endif -%}
             <div class="bd-navbar-toggle">
-                <button class="navbar-toggler p-2" 
-                        type="button" 
-                        data-bs-toggle="offcanvas" 
-                        data-bs-target="#bdSidebar" 
-                        aria-controls="bdSidebar" 
-                        aria-label="Toggle sidebar navigation">
-                    <span class="bi bi-list"></span>
+                <button class="navbar-toggler p-2"
+                        type="button"
+                        data-bs-toggle="offcanvas"
+                        data-bs-target="{{ _sidebar_target }}"
+                        aria-controls="{{ _sidebar_controls }}"
+                        aria-label="Toggle sidebar navigation"
+                        aria-expanded="false">
+                    <span class="bi bi-list" aria-hidden="true"></span>
                 </button>
             </div>
             {% endif %}
@@ -95,19 +111,26 @@
             <!-- ========================== -->
             <div class="navbar-brand-group d-inline-flex align-items-center gap-2">
                 <!-- Home Navigation Button (Desktop only) -->
-                <div class="navbar-home-links d-none d-lg-inline-flex">
-                    {%- for home in site.data.navigation.home -%}
-                    <a class="btn" href="{{ home.url | relative_url }}" aria-label="{{ home.title }}" title="{{ home.title }}">
-                        <i class="{{ site.default_icon}} {{ home.icon }}"></i>
-                    </a>
-                    {% endfor %}
+                <div class="navbar-home-links d-none" role="navigation" aria-label="Quick navigation">
+                    {%- assign nav_home = site.data.navigation.home -%}
+                    {%- if nav_home and nav_home.size > 0 -%}
+                      {%- for home in nav_home -%}
+                      <a class="btn" href="{{ home.url | relative_url }}" aria-label="{{ home.title }}" title="{{ home.title }}" {%- if home.url == page.url %} aria-current="page"{% endif %}>
+                          <i class="{{ site.default_icon}} {{ home.icon }}"></i>
+                      </a>
+                      {%- endfor -%}
+                    {%- else -%}
+                      <a class="btn" href="{{ '/' | relative_url }}" aria-label="Home" title="Home — {{ site.title }}">
+                          <i class="{{ site.default_icon }} bi-house"></i>
+                      </a>
+                    {%- endif -%}
                 </div>
                 
                 <!-- Brand Logo Link to Root -->
                 <!-- Logo path configured in _config.yml -->
                 {% capture logo_path %}{{ site.logo }}{% endcapture %}
-                <a class="navbar-brand" href="{{ site.baseurl }}/" aria-label="Home">
-                    <img src="{{ logo_path | relative_url }}" alt="Logo" width="30" height="30">
+                <a class="navbar-brand" href="{{ site.baseurl }}/" aria-label="Home - {{ site.title }}" {% if page.url == '/' %}aria-current="page"{% endif %}>
+                    <img src="{{ logo_path | relative_url }}" alt="{{ site.title }} logo" width="30" height="30">
                 </a>
             </div>
             
@@ -116,6 +139,15 @@
             <!-- ========================== -->
             <!-- Site title and subtitle display -->
             {% include core/branding.html %}
+
+            </div>
+
+            {%- comment -%}
+              Tablet-only shortcut chips (md–lg) fill the center band while
+              the full menubar remains in the offcanvas. Below md the title
+              in branding.html uses the flex-grow space instead.
+            {%- endcomment -%}
+            {% include navigation/navbar-mobile-quicklinks.html %}
     
             <!-- ========================== -->
             <!-- MAIN NAVIGATION MENU      -->
@@ -126,45 +158,64 @@
             <!-- ========================== -->
             <!-- UTILITY CONTROLS          -->
             <!-- ========================== -->
-            <div class="navbar-utility-controls d-flex align-items-center">
+            <div class="navbar-utility-controls d-flex align-items-center flex-shrink-0" role="group" aria-label="Utility controls">
                 <!-- Search Modal Toggle -->
                 <button
                     class="btn nav-search-button"
                     type="button"
-                    data-bs-toggle="modal"
-                    data-bs-target="#siteSearchModal"
                     data-search-toggle
                     aria-label="Open search"
-                    title="Search"
+                    aria-haspopup="dialog"
+                    title="Search site content"
                 >
-                    <i class="{{site.default_icon}} bi-search"></i>
+                    <i class="{{site.default_icon}} bi-search" aria-hidden="true"></i>
                     <span class="nav-link-text d-none d-xl-inline ms-1">Search</span>
                 </button>
 
-                <!-- Settings Modal Toggle -->
+                <!-- Settings Offcanvas Toggle -->
                 <button
                     class="btn nav-settings-button d-none d-lg-inline-flex"
                     type="button"
-                    data-bs-toggle="modal" 
+                    data-bs-toggle="offcanvas" 
                     data-bs-target="#info-section" 
-                    aria-label="Settings"
-                    title="Settings"
+                    aria-label="Open settings"
+                    aria-haspopup="dialog"
+                    title="Site settings and information"
                 >
-                    <i class="{{site.default_icon}} bi-gear"></i>
+                    <i class="{{site.default_icon}} bi-gear" aria-hidden="true"></i>
                 </button>
 
                 <!-- Navigation Menu Toggle - Mobile view -->
+                {%- if site.navigation.unified_mobile_drawer -%}
+                  {%- assign _menu_target = "#zer0UnifiedDrawer" -%}
+                  {%- assign _menu_controls = "zer0UnifiedDrawer" -%}
+                {%- else -%}
+                  {%- assign _menu_target = "#bdNavbar" -%}
+                  {%- assign _menu_controls = "bdNavbar" -%}
+                {%- endif -%}
                 <div class="bd-navbar-toggle d-lg-none">
-                    <button class="navbar-toggler p-2" 
-                            type="button" 
-                            data-bs-toggle="offcanvas" 
-                            data-bs-target="#bdNavbar" 
-                            aria-controls="bdNavbar" 
-                            aria-label="Toggle navigation">
-                        <span class="bi bi-three-dots"></span>
+                    <button class="navbar-toggler p-2"
+                            type="button"
+                            data-bs-toggle="offcanvas"
+                            data-bs-target="{{ _menu_target }}"
+                            aria-controls="{{ _menu_controls }}"
+                            aria-label="Toggle main navigation"
+                            aria-expanded="false">
+                        <span class="bi bi-three-dots" aria-hidden="true"></span>
                     </button>
                 </div>
             </div>
         </nav>
     </div>
+
+    <!-- ========================== -->
+    <!-- PROGRESS BAR MOUNT POINT  -->
+    <!-- ========================== -->
+    <!-- Nanobar mounts here when site.nanobar.position == "navbar" so the bar
+         renders as a thin strip directly under the header. For "top" / "bottom"
+         the bar floats fixed to the viewport and no mount is needed. -->
+    {%- assign _nb_pos = site.nanobar.position | default: "top" -%}
+    {%- if site.nanobar.enabled != false and _nb_pos == "navbar" -%}
+    <div id="top-progress-target" class="nanobar-mount" aria-hidden="true"></div>
+    {%- endif -%}
 </header>

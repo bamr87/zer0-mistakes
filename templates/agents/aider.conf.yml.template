@@ -1,0 +1,8 @@
+# Aider configuration — see https://aider.chat/docs/config/aider_conf.html
+#
+# Loads project agent guidance as read-only context for every session, so
+# Aider always has the same conventions a human contributor would use.
+
+read:
+  - AGENTS.md
+  - .github/copilot-instructions.md

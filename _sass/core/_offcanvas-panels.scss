@@ -1,0 +1,67 @@
+// =============================================================================
+// Shared offcanvas chrome (docs sidebar, TOC) — matches main nav panel on mobile
+// Bootstrap reference: fixed-top 1030, offcanvas backdrop/body 1045, modal 1055
+// =============================================================================
+
+#bdSidebar .offcanvas-header,
+#tocContents .offcanvas-header,
+#obsidianLocalGraphPanel .offcanvas-header {
+  border-bottom: 2px solid var(--bs-border-color);
+  padding: 1.25rem 1rem;
+}
+
+#bdSidebar .offcanvas-title,
+#tocContents .offcanvas-title,
+#obsidianLocalGraphPanel .offcanvas-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--bs-emphasis-color);
+  margin-bottom: 0;
+}
+
+@media (max-width: 991.98px) {
+  #bdSidebar .offcanvas-header .btn-close,
+  #tocContents .offcanvas-header .btn-close,
+  #obsidianLocalGraphPanel .offcanvas-header .btn-close {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border-radius: 0.375rem;
+    transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+
+    &:hover {
+      background-color: var(--bs-tertiary-bg);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--bs-primary);
+      outline-offset: 2px;
+    }
+  }
+
+  #tocContents .offcanvas-body,
+  #obsidianLocalGraphPanel .offcanvas-body {
+    padding: 1rem;
+  }
+
+  #bdSidebar .offcanvas-body {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-bottom: 1rem;
+  }
+}
+
+// Bootstrap sets `.offcanvas-lg .offcanvas-body { display: flex }` at lg+ with
+// default row direction, which places the desktop header beside the nav tree.
+@media (min-width: 992px) {
+  #bdSidebar .offcanvas-body {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  #bdSidebar .offcanvas-body > .bd-sidebar-desktop-header {
+    flex-shrink: 0;
+    width: 100%;
+  }
+}

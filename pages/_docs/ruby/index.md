@@ -1,6 +1,7 @@
 ---
 title: Ruby
 description: Ruby versioning and Bundler tips for Zer0-Mistakes.
+preview: /images/previews/ruby.png
 layout: default
 categories:
     - docs
@@ -10,9 +11,9 @@ tags:
     - bundler
 permalink: /docs/ruby/
 difficulty: beginner
-estimated_time: 5 minutes
+estimated_reading_time: 5 minutes
 prerequisites: []
-updated: 2025-12-20
+lastmod: 2025-12-20
 lastmod: 2025-12-20T22:15:46.090Z
 sidebar:
     nav: docs
@@ -107,3 +108,9 @@ bundle update
 - [Installation Guide](/docs/installation/)
 - [Jekyll Guide](/docs/jekyll/)
 - [Docker Development](/docs/docker/)
+
+## See also
+
+- [[Jekyll]]
+- [[Docker]]
+- [[Installation]]

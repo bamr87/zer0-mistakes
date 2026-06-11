@@ -84,32 +84,6 @@ $yiq-contrasted-light-default: #fff !default;
 $yiq-contrasted-threshold: 175 !default;
 $yiq-debug: false !default;
 
-/* brands */
-$behance-color: #1769ff !default;
-$bitbucket-color: #205081 !default;
-$dribbble-color: #ea4c89 !default;
-$facebook-color: #3b5998 !default;
-$flickr-color: #ff0084 !default;
-$foursquare-color: #0072b1 !default;
-$github-color: #171516 !default;
-$gitlab-color: #e24329 !default;
-$instagram-color: #517fa4 !default;
-$keybase-color: #ef7639 !default;
-$lastfm-color: #d51007 !default;
-$linkedin-color: #007bb6 !default;
-$mastodon-color: #2b90d9 !default;
-$pinterest-color: #cb2027 !default;
-$reddit-color: #ff4500 !default;
-$rss-color: #fa9b39 !default;
-$soundcloud-color: #ff3300 !default;
-$stackoverflow-color: #fe7a15 !default;
-$tumblr-color: #32506d !default;
-$twitter-color: #55acee !default;
-$vimeo-color: #1ab7ea !default;
-$vine-color: #00bf8f !default;
-$youtube-color: #bb0000 !default;
-$xing-color: #006567 !default;
-
 /* links */
 $link-color: mix(#000, $info-color, 20%) !default;
 $link-color-hover: mix(#000, $link-color, 25%) !default;
@@ -122,23 +96,7 @@ $navicon-link-color-hover: mix(#fff, $primary-color, 75%) !default;
 $notice-background-mix: 80% !default;
 $code-notice-background-mix: 90% !default;
 
-/* syntax highlighting (base16) */
-$base00: #263238 !default;
-$base01: #2e3c43 !default;
-$base02: #314549 !default;
-$base03: #546e7a !default;
-$base04: #b2ccd6 !default;
-$base05: #eeffff !default;
-$base06: #eeffff !default;
-$base07: #ffffff !default;
-$base08: #f07178 !default;
-$base09: #f78c6c !default;
-$base0a: #ffcb6b !default;
-$base0b: #c3e88d !default;
-$base0c: #89ddff !default;
-$base0d: #82aaff !default;
-$base0e: #c792ea !default;
-$base0f: #ff5370 !default;
+// Base16 syntax palette: see core/_syntax.scss (single source).
 
 /*
    Breakpoints
@@ -365,17 +323,6 @@ $spacers: (
   4: $spacer * 1.5,
   5: $spacer * 3,
 ) !default;
-
-// $font-size-base affects the font size of the body text
-$font-size-root:              null !default;
-$font-size-base:              1rem !default; // Assumes the browser default, typically `16px`
-$font-size-sm:                $font-size-base * .875 !default;
-$font-size-lg:                $font-size-base * 1.25 !default;
-
-$line-height-base:            1.5 !default;
-$line-height-sm:              1.25 !default;
-$line-height-lg:              2 !default;
-
 
 // Navs
 

@@ -1,6 +1,8 @@
 ---
+lastmod: 2026-04-18T19:29:57.000Z
 title: GitHub Copilot Integration
 description: Comprehensive AI development assistance with structured instructions for maximum productivity with the Zer0-Mistakes theme.
+preview: /images/previews/github-copilot-integration.png
 layout: default
 categories:
     - docs
@@ -12,7 +14,7 @@ tags:
     - github
 permalink: /docs/features/copilot-integration/
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 sidebar:
     nav: docs
 ---
@@ -66,6 +68,7 @@ When you open a file, Copilot automatically loads relevant instructions based on
 ---
 applyTo: "_layouts/**"
 description: "Layout development guidelines"
+preview: /images/previews/github-copilot-integration.png
 ---
 ```
 
@@ -197,3 +200,8 @@ Recommended settings:
 - [Development Documentation](/docs/development/documentation/)
 - [Contributing Guide](https://github.com/bamr87/zer0-mistakes/blob/main/CONTRIBUTING.md)
 - [Scripts Guide](/docs/development/scripts/)
+
+## See also
+
+- [[Features]]
+- [[Development]]

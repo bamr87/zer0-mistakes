@@ -97,7 +97,7 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - node_modules/
-  - vendor/
+  - vendor/bundle/
   - test/
 EOF
     fi
@@ -137,7 +137,7 @@ highlighter: rouge
 exclude:
   - Gemfile
   - Gemfile.lock
-  - vendor/
+  - vendor/bundle/
 EOF
 }
 
@@ -188,7 +188,7 @@ defaults:
 exclude:
   - Gemfile
   - Gemfile.lock
-  - vendor/
+  - vendor/bundle/
 EOF
 }
 
@@ -237,7 +237,7 @@ defaults:
 exclude:
   - Gemfile
   - Gemfile.lock
-  - vendor/
+  - vendor/bundle/
 EOF
 }
 

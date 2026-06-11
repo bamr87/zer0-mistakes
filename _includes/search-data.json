@@ -1,8 +1,7 @@
 [
 {%- assign search_pages = site.pages | where_exp: "item", "item.title" -%}
-{%- assign search_posts = site.posts -%}
 {%- assign search_docs = site.documents -%}
-{%- assign search_items = search_pages | concat: search_posts | concat: search_docs -%}
+{%- assign search_items = search_pages | concat: search_docs -%}
 {%- assign content_limit = site.search.content_length | default: 1000 -%}
 {%- assign first = true -%}
 {%- for item in search_items -%}

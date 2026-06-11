@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:30:22.000Z
 title: "Quests"
 description: "Browse quests and tutorials."
 layout: default

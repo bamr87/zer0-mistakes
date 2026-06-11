@@ -1,6 +1,7 @@
 ---
 title: Troubleshooting
 description: Common setup and build issues when running Zer0-Mistakes.
+preview: /images/previews/troubleshooting.png
 layout: default
 categories:
     - docs
@@ -11,9 +12,9 @@ tags:
     - docker
 permalink: /docs/troubleshooting/
 difficulty: beginner
-estimated_time: 10 minutes
+estimated_reading_time: 10 minutes
 prerequisites: []
-updated: 2025-12-20
+lastmod: 2025-12-20
 lastmod: 2025-12-20T22:15:46.061Z
 sidebar:
     nav: docs
@@ -133,7 +134,7 @@ Ensure the layout exists in `_layouts/`:
 
 ```yaml
 ---
-layout: journals    # Must match a file in _layouts/
+layout: article    # Must match a file in _layouts/
 ---
 ```
 
@@ -172,3 +173,11 @@ docker-compose exec jekyll jekyll serve --config "_config.yml,_config_dev.yml"
 - [Installation Guide](/docs/installation/)
 - [Docker Guide](/docs/docker/)
 - [Jekyll Configuration](/docs/jekyll/jekyll-config/)
+
+## See also
+
+- [[Installation]]
+- [[Docker]]
+- [[Ruby]]
+- [[Jekyll]]
+- [[Obsidian Integration Troubleshooting]]

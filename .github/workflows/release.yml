@@ -37,7 +37,7 @@ on:
         type: boolean
 
 env:
-  RUBY_VERSION: '3.2'
+  RUBY_VERSION: '3.3'
 
 defaults:
   run:
@@ -56,7 +56,7 @@ jobs:
 
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 0
 
@@ -120,7 +120,7 @@ jobs:
 
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Setup Ruby Environment
       uses: ./.github/actions/setup-ruby
@@ -216,7 +216,7 @@ jobs:
 
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Setup Ruby Environment
       uses: ./.github/actions/setup-ruby
@@ -271,7 +271,7 @@ jobs:
 
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 0
 
@@ -374,32 +374,3 @@ jobs:
         prerelease: ${{ needs.validate.outputs.is-prerelease == 'true' }}
         make_latest: ${{ needs.validate.outputs.is-prerelease != 'true' }}
         generate_release_notes: true
-
-  # Final summary
-  summary:
-    name: Release Summary
-    runs-on: ubuntu-latest
-    needs: [validate, build, publish-gem, github-release]
-    if: always()
-
-    steps:
-    - name: Generate Summary
-      run: |
-        echo "## 🎉 Release Pipeline Summary" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "| Step | Status |" >> $GITHUB_STEP_SUMMARY
-        echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
-        echo "| ✅ Validation | ${{ needs.validate.result }} |" >> $GITHUB_STEP_SUMMARY
-        echo "| 🔨 Build | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
-        echo "| 📦 RubyGems Publish | ${{ needs.publish-gem.result }} |" >> $GITHUB_STEP_SUMMARY
-        echo "| 🚀 GitHub Release | ${{ needs.github-release.result }} |" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "**Version**: ${{ needs.validate.outputs.version }}" >> $GITHUB_STEP_SUMMARY
-        echo "**Tag**: ${{ needs.validate.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
-        
-        if [[ "${{ needs.github-release.result }}" == "success" ]]; then
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 🔗 Release Links" >> $GITHUB_STEP_SUMMARY
-          echo "- [GitHub Release](https://github.com/${{ github.repository }}/releases/tag/${{ needs.validate.outputs.tag }})" >> $GITHUB_STEP_SUMMARY
-          echo "- [RubyGems](https://rubygems.org/gems/jekyll-theme-zer0)" >> $GITHUB_STEP_SUMMARY
-        fi

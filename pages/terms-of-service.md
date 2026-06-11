@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-04-18T19:30:21.000Z
 title: "Terms of Service"
 description: "Site usage terms"
 layout: default

@@ -43,38 +43,112 @@ posthog:
 ai_chat:
   auth_mode              : direct
 
-# Disable production optimizations for faster builds
+# Disable production optimizations for faster builds.
+# `limit_posts` caps the post-processing window during dev serves. Category
+# index pages (index: true) use a recent date so they stay inside this window.
+# Raise the limit or run without it when editing older posts.
 incremental              : true
+limit_posts              : 30
 profile                  : false
 
-# Development-specific plugins (add any dev-only plugins here)
-# plugins:
-#   - jekyll-admin  # Uncomment if you want to use Jekyll admin interface
+# Performance: Disable rarely-edited collections during development.
+# Comment out or set output: true for any collection you're actively working on.
+# NOTE: `quests` stays enabled because consumer sites (e.g. it-journey) use it as
+# their primary dev loop. Sites without quest content can opt out by overriding
+# `collections.quests.output: false` in their own dev config.
+collections:
+  notebooks:
+    output: false
+  hobbies:
+    output: false
+  quests:
+    output: true
 
-# Exclude files that cause unnecessary rebuilds during debugging
-# IMPORTANT: This list OVERRIDES (not merges with) _config.yml's exclude list,
-# so it must include all production excludes plus dev-specific ones.
+# Development-only plugin list. Jekyll *replaces* (does not merge) the `plugins:`
+# key when layering configs, so this slim list intentionally drops remote-theme
+# (which fully regenerates every rebuild) to shave seconds off dev serves.
+# jekyll-feed and jekyll-sitemap stay enabled because integration tests treat
+# /feed.xml and /sitemap.xml as critical paths. Re-enable any plugin here when
+# you need to test its output locally.
+plugins:
+  - jekyll-include-cache
+  - jekyll-relative-links
+  - jekyll-redirect-from
+  - jekyll-seo-tag
+  - jekyll-paginate
+  - jekyll-feed
+  - jekyll-sitemap
+
+# Exclude — MUST include everything from _config.yml plus dev-only paths.
+# When using --config _config.yml,_config_dev.yml, Jekyll applies this file
+# last; a short list here *replaces* the base exclude and would skip
+# node_modules/, causing Liquid to parse README.md samples under npm packages.
+
 exclude:
-  # Production excludes (from _config.yml)
+  # ── Jekyll cache ─────────────────────────────────────────────────────────
   - .sass-cache/
   - .jekyll-cache/
-  - .obsidian
+
+  # ── Obsidian vault working files ─────────────────────────────────────────
+  - .obsidian/
+  - "*.canvas"
+  - "*.excalidraw.md"
+
+  # ── IDE / editor config ───────────────────────────────────────────────────
+  - .cursor/
+  - .devcontainer/
+  - .frontmatter/
+  - .github/
+  - .vscode/
+
+  # ── Ruby / Bundler ────────────────────────────────────────────────────────
+  - Gemfile
   - Gemfile.lock
   - gemfiles/
-  - Gemfile
+  - jekyll-theme-zer0.gemspec
+  - lib/
+  - pkg/
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+
+  # ── Node.js ───────────────────────────────────────────────────────────────
   - node_modules/
-  - vendor/
+  - package.json
+  - package-lock.json
+
+  # ── Shell scripts and automation ──────────────────────────────────────────
+  - scripts/
+  - "*.sh"
+
+  # ── Docker configuration ──────────────────────────────────────────────────
+  - docker/
+  - docker-compose.yml
+  - docker-compose.prod.yml
+  - docker-compose.publish.yml
+  - docker-compose.test.yml
+
+  # ── Build / task runners ──────────────────────────────────────────────────
+  - Makefile
+  - Rakefile
+
+  # ── Project tooling metadata ──────────────────────────────────────────────
+  - AGENTS.md
+  - docs/
+  - frontmatter.json
+  - logs/
+  - templates/
+  - vendor-manifest.json
+  - "*.code-workspace"
+
+  # ── Submodules, tests, and authoring scaffolding ──────────────────────────
   - submodules/
-  - MERMAID-*.md
-  - MERMAID-*/
   - test/
   - tests/
-  - _site/lib/
-  # Dev-specific excludes
-  - "logs/"
+  - MERMAID-*.md
+  - MERMAID-*/
+  - pages/_notes/_templates/
   - "*.log"
-  - ".vscode/"
-  - "debug-*.log"
-  - "docs/"
-  - "templates/"
+  - debug-*.log
 

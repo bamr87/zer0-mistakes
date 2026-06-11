@@ -1,20 +1,983 @@
 # Changelog
 
-## [Unreleased] - AI Chat Integration (PR #33)
+All notable changes to this project will be documented in this file.
 
-### Fixed
-- **Floating Buttons**: Resolved overlapping fixed-position buttons (back-to-top, AI chat toggle, TOC FAB) by establishing a consistent vertical stacking order with 16px gaps
-- **AI Chat Config**: Switched from proxy mode to direct API mode; removed `enabled: false` from dev config so widget renders consistently on all pages
-- **Back-to-Top Button**: Removed conflicting Bootstrap position classes (`bottom-0 end-0 m-3`) from footer.html; positioning now handled solely by SCSS
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.14.0] - 2026-06-11
 
 ### Changed
-- **Floating Button Stack**: Standardized right offset to `1.25rem` and defined stacking order: back-to-top (1.25rem) → chat toggle (6rem) → TOC FAB (10rem)
-- **Docker Compose**: Auto-detects and includes `_config_secrets_local.yml` when present for local API key injection
-- **Dev Config Excludes**: Added production excludes to `_config_dev.yml` to prevent override gaps
-- **Send Cooldown**: Added 1-second cooldown between chat sends to prevent rapid-fire API calls
+- Version bump: minor release
+
+### Commits in this release
+- 5de341aa feat(security): sanitize sensitive config lines in admin config-page DOM (T-009) (#140)
+- 42468785 chore(deps): update Ruby gem dependencies (#129)
+- 89e21988 Improve LinkedIn share flow with cleaned article summary (#99)
 
 ### Security
-- **Secrets Management**: Added `_config_secrets_local.yml` to `.gitignore` and untracked from git to prevent API key leakage
+- **Admin config page (T-009 hardening)**: added a pure-Liquid line-redaction layer for the hidden `<pre id="cfg-full-yaml">` element — the `sanitize_config_yaml` plugin filter shipped in 1.13.1 does not run on GitHub Pages builds (safe mode ignores custom plugins, and the unknown filter is a silent no-op), so Pages-built sites were still injecting raw config; the Liquid layer protects every build path, with the plugin filter kept as defense-in-depth
+
+### Fixed
+- **Workflow lint (T-017)**: `version-bump.yml` now passes the repo yamllint config (trailing spaces, bracket spacing, sequence indentation) — these pre-existing violations failed the `auto-version` integration suite on every code PR once the T-012 gate went live; YAML verified semantically identical before/after
+- **Changelog tooling**: `update_changelog_file` normalizes trailing newlines on the entry, guaranteeing exactly one blank line before the next release block even when callers pass entries via command substitution (review feedback on the T-012 PR)
+
+## [1.13.1] - 2026-06-11
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 583fa997 fix(infra): sanitize sensitive config keys before DOM injection (T-009) (#141)
+
+### Security
+- **Admin config page sanitization (T-009)**: the hidden `<pre id="cfg-full-yaml">` element on the admin config page now has values masked for keys matching `api_key`, `secret`, `password`, `token`, and `phc_` (PostHog) prefixes via a new `sanitize_config_yaml` Liquid filter (`_plugins/sanitize_config_filter.rb`); the corresponding Playwright regression guard (`test/visual/security.spec.js`) is promoted from `test.fixme` to a live test
+
+## [1.13.0] - 2026-06-11
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- cee6f379 feat(ci): gate PRs on the full canonical test entrypoint (T-012) (#138)
+
+### Added
+- **CI gate parity (T-012)**: the `ci.yml` test job now runs every non-Playwright theme suite (core, deployment, quality, installation, installer, site_generation, obsidian) plus the canonical `./scripts/bin/test` script suites (lib unit, theme validate, integration, installer e2e) on every code PR — previously only `core,quality,installation` gated, which is how three suites rotted unnoticed before PR #132; a "Gate Coverage — What Enforces What" table in `.github/workflows/README.md` now documents the controls contract
+
+### Fixed
+- **Release changelog path**: `version-bump.yml` now inserts release entries via the shared `update_changelog_file` library instead of an inline `head`/`tail` prepend that duplicated (and regressed) the insertion logic — the 1.12.1 release had pushed the file preamble below its entry and stranded the pending `[Unreleased]` notes; both repaired in this file
+
+## [1.12.2] - 2026-06-10
+
+### Added
+- **Zer0-Mistake Quality Framework (planning)**: new roadmap milestone v1.13 and backlog tasks T-012–T-015 to close the gap between the repo's quality gates and what CI enforces — CI gate parity with the canonical `./scripts/bin/test` entrypoint (whose integration suites previously rotted unnoticed), re-armed pixel-snapshot and docs link-check gates, and a locale-independence regression guard; coverage baseline task T-005 repointed at the new milestone
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 846bd9ff chore(backlog): plan the Zer0-Mistake Quality Framework (roadmap v1.13, T-012–T-015) (#133)
+- 33a727c0 docs: expand CLAUDE.md into a comprehensive Claude Code guide (#131)
+
+## [1.12.1] - 2026-06-10
+
+### Changed
+- Version bump: patch release
+- **Roadmap**: advanced to track the shipped gem — v1.9 marked completed, v1.10 (Roadmap Validation) and v1.11 (Continuous-Evolution Loop) recorded, v1.12 (Headless Endpoints) is the active milestone (closes backlog T-001, T-002)
+- **Changelog**: restored the Keep a Changelog preamble at the top of this file
+
+### Fixed
+- **Tooling encoding**: `generate-roadmap.rb`, `sync-backlog.rb`, and `scripts/bin/validate` now read repo files as UTF-8 explicitly, fixing `invalid byte sequence in US-ASCII` crashes in environments without a UTF-8 locale (minimal containers, some CI runners) — `generate-roadmap.sh --check` and `validate --quick` both crashed in such environments
+- **Test suite**: repaired the three test suites that failed on `main`:
+  - `scripts/test/integration/auto-version` rewritten against the current release architecture (`scripts/analyze-commits.sh` wrapper, `scripts/utils/analyze-commits`, `scripts/bin/release`, `version-bump.yml`) — it previously targeted the retired `gem-publish.sh`/`auto-version-bump.yml` and aborted under `set -e` due to `((var++))` returning non-zero
+  - `scripts/test/integration/mermaid` repointed at `pages/_docs/features/mermaid-diagrams.md` (the doc moved from `pages/_docs/jekyll/`) and at the current Bootstrap-aware theming instead of the removed forest theme/FontAwesome config
+  - `_layouts/search.html` given a front matter block so theme layout validation passes
+- **Changelog tooling**: `update_changelog_file` now folds any pending `## [Unreleased]` section into the new release entry and inserts before the first release heading (preserving the file preamble) — stale Unreleased blocks no longer accumulate mid-file; the eight historical stray blocks were folded into the releases that shipped them
+
+### Commits in this release
+- 0c04f703 fix: repair failing test suites, validator crashes, and roadmap/changelog drift (#132)
+
+## [1.12.0] - 2026-06-03
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 7e227c59 feat: auto-generate /search.json and /sitemap/ endpoints for downstream sites (#104)
+- 300dabaf chore(deps): update Ruby gem dependencies (#120)
+- 3a1a810c chore(deps-dev): bump mermaid from 10.9.5 to 10.9.6 (#105)
+
+
+## [1.11.2] - 2026-06-03
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 452022ae chore(backlog): audit 2026-06-01 (#121)
+
+
+## [1.11.1] - 2026-06-01
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- d4a53d51 docs: consolidate, standardize, and add maintenance system (#112)
+
+
+## [1.11.0] - 2026-06-01
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 8a5ba7e2 feat(ci): add continuous-evolution backlog loop (#114)
+
+### Added
+- **Continuous-evolution loop**: a self-sustaining backlog mechanism so AI agents can keep improving the repo between human sessions.
+  - `_data/backlog.yml` — tactical task queue (single source of truth), mirroring the `_data/roadmap.yml` pattern.
+  - `scripts/sync-backlog.rb` (+ `scripts/sync-backlog.sh`) — schema validator and GitHub Issues sync (idempotent via `<!-- backlog-id -->` markers).
+  - `.github/workflows/backlog-sync.yml` — syncs the backlog to issues on push to `main`; validates schema on PRs.
+  - `.github/workflows/auto-merge.yml` — enables native auto-merge for low-risk (`docs`/`deps`/`lint`) PRs once CI is green.
+  - `.github/prompts/repo-audit.prompt.md` (`/repo-audit`) and `.github/prompts/backlog-implement.prompt.md` (`/backlog-implement`) — the audit and implement routines.
+  - `.github/instructions/backlog.instructions.md` — file-scoped guidance for the backlog.
+  - `docs/systems/continuous-evolution.md` — full design, autonomy policy, and setup.
+  - `CLAUDE.md` — Claude Code pointer to `AGENTS.md` (per the documented convention).
+
+
+## [1.10.0] - 2026-06-01
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 309202f2 feat(roadmap): add --validate mode, catch-up milestones v1.0–1.9, README accuracy fixes (#113)
+
+
+## [1.9.10] - 2026-05-31
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- ef6a3f39 fix: update copyright year range in LICENSE file
+
+
+## [1.9.9] - 2026-05-31
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 2ffb820d docs: align pages/_docs/ (user guides) ↔ docs/ (technical guides)
+
+
+## [1.9.8] - 2026-05-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 4e0273b8 docs: update Gemfile.lock handling and release workflow guidelines
+
+
+## [1.9.7] - 2026-05-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- c01d4e85 fix(quickstart): remove broken image reference from Quick Start Guide
+- 7f6b13fd docs: enhance release pipeline documentation for clarity and completeness
+
+
+## [1.9.6] - 2026-05-30
+
+### Changed
+- **Quickstart**: Comprehensive rewrite of all quickstart docs (`pages/_quickstart/`) with improved structure, Mermaid decision flowchart, and step-by-step screenshots
+- **Quickstart**: `index.md` published from draft — now live at `/quickstart/`
+- **Quickstart**: Removed `homebrew.md` and `winget.md` (content consolidated into `machine-setup.md`)
+- **Quickstart**: 18 new screenshots added to `assets/images/quickstart/` for visual walkthroughs
+
+## [1.9.5] - 2026-05-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- d4e1a789 fix(skins): remove contrast/dark skins, set air as default, improve link contrast
+
+
+## [1.9.4] - 2026-05-30
+
+### Changed
+- **Skins**: Removed `contrast` and `dark` skins; `air` is now the default skin
+- **Accessibility**: Rewrote per-skin link and hover colors to meet WCAG AA (≥4.5:1) contrast in both light and dark mode — all 7 remaining skins now use a darker brand tone for light-mode links and a lighter accent tone for dark-mode links
+- `_config.yml`: `theme_skin` default changed from `"dark"` to `"air"`
+
+## [1.9.3] - 2026-05-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 90ff5f8 fix(landing): update URL for secondary CTA to point to features page
+
+
+## [1.9.2] - 2026-05-29
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 6e73c5f Update README and content statistics
+
+
+## [1.9.1] - 2026-05-27
+
+### Fixed
+- Harden one-line installer path
+
+
+
+## [1.9.0] - 2026-05-27
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 8a2bd84 feat(install): modular installer with deploy plugins, AI wizard pipeline, scrape v2, and test suite (#111)
+
+### Added
+- **Modular installer (`scripts/install/`)**: spec-driven, AI-aware installer dispatched by `scripts/bin/install`. Single `.zer0/install.spec.json` contract feeds CLI flags, the TUI wizard, and the OpenAI wizard into one apply pipeline.
+- **Deploy plugins**: `tasks/deploy_github-pages.sh`, `tasks/deploy_azure-swa.sh`, `tasks/deploy_docker-prod.sh`. Spec deploy targets now auto-render the matching workflow / config from `templates/deploy/`.
+- **AI wizard end-to-end**: `install wizard --ai` now chains spec generation → `apply_run`, records AI provenance (`ai.used/provider/model`) in the spec, lets CLI flags override AI guesses, and falls back to profile defaults when the model returns empty arrays.
+- **Profile defaults fallback**: `ai/wizard.sh` re-loads the selected profile to fill in empty `deploy`/`agents` arrays from the AI output, ensuring decisive installs.
+- **`generic` agent target** added to spec schema enum (cross-tool `AGENTS.md` baseline alongside `claude`, `cursor`, `aider`, `copilot`).
+- **Installer test suite (`test/test_installer.sh`)**: 17-check regression harness covering module syntax, all 6 profile inits, all 3 deploy plugins, all 5 agent flavours, and the AI wizard pipeline. Wired into `test/test_runner.sh` as the `installer` suite (included in `--suites all` and `--suites full`).
+- **Site scraping (`install scrape <URL>` + `install init --scrape <URL>`)**: new `scripts/install/scrape.sh` BFS crawler + stdlib-only `scripts/install/scrape_html.py` extractor convert any existing website into a fully-rendered zer0-mistakes site. Now distributes pages by detected `kind`: home → `index.md` with `permalink: /`, events → `pages/events/<slug>.md`, posts → `pages/news/<slug>.md`, rest → `pages/<slug>.md`. Downloads referenced images into `assets/scraped/` and rewrites markdown to local paths. Wires navigation into `_data/navigation/main.yml` (the file the theme actually reads) with kind-based Bootstrap Icons, filters junk labels (Back / Cart / Folder:) and `?format=ical`/`?format=json` URLs, skips commerce paths (`/cart`, `/checkout`, `/login`). Seeds `_config.yml` `title`/`description`/`lang`/`logo` from `og:`/`<html lang>` metadata. New flags: `--scrape URL`, `--scrape-depth N` (default 2), `--scrape-max-pages N` (default 25). Covered by `test/test_install_scrape.sh` (standalone + init-integration, asserts new layout + nav cleanliness).
+
+### Fixed
+- `_cmd_wizard` previously left targets containing only `.zer0/install.spec.json`; now chains `apply_run` to write all task outputs.
+- `plan.sh` YAML parser now accepts both `deploy:`/`deploy_targets:` keys and parses `agents:` block lists *and* `ai_features.agent_files:` inline flow lists, matching the actual profile YAML shape.
+- Rewrote `ai/prompts/wizard.system.md` with explicit profile, deploy, and agent heuristics plus a full example output, eliminating empty AI responses.
+- `plan_load_profile` and `plan_apply_flags` now return `0` explicitly so Bash 3.2 doesn't propagate a trailing-test exit code.
+
+
+## [1.8.2] - 2026-05-26
+
+### Changed
+- Version bump: patch release
+
+### Changed
+- **Gem packaging**: `jekyll-theme-zer0.gemspec` now excludes `assets/images/` (287 MB of content previews/author photos), `assets/backgrounds/`, `.DS_Store` files, and binary media outside `assets/vendor/`, reducing gem payload to ~8.9 MB
+
+
+## [1.8.1] - 2026-05-26
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 6a9bac4 chore(docker): remove unused prod and publish compose files
+
+
+## [1.8.0] - 2026-05-25
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- f62849f feat(ui): design tokens, navigation chrome, docs overhaul, sidebar rail & skin fixes (#108)
+
+
+## [1.7.2] - 2026-05-25
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- be8fd2b Expand Ruby 101 page with comprehensive beginner content (#107)
+
+
+## [1.7.1] - 2026-05-24
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 580f2b4 perf: Jekyll build performance improvements + MathJax 3 fix + richer Obsidian cache (#100)
+
+### Added
+- **Design system & layouts**: Sass token layers (`_sass/tokens/`), component and layout partials (`_sass/components/`, `_sass/layouts/`), skins (`theme_skins.yml` + `_sass/theme/_skins.scss`), utilities, and developer docs (`docs/design-system.md`, `design-tokens.md`, `theming.md`, `layouts-and-navigation.md`, and related guides). Homepage sections are driven by `_data/landing.yml` per `_includes/components/README.md`.
+- **Navigation & chrome**: Drawer/TOC FAB and sidebar visibility modules (`assets/js/modules/navigation/`), `appearance.js` theme helper, refreshed navbar/footer/breadcrumb markup aligned with Bootstrap 5.3.
+- **Statistics**: `_plugins/content_statistics_generator.rb` optionally regenerates `_data/content_statistics.yml` during `jekyll build` (toggle via `content_statistics.auto_generate`); `./scripts/generate-content-statistics.sh` delegates to `_data/generate_statistics.sh` and is wired from `rake stats:generate`.
+- **Testing**: Expanded Playwright coverage (`test/visual/ui-refresh.spec.js`, `layouts.spec.js`) and refreshed smoke visuals/`results.json` for the new chrome.
+
+### Changed
+- **Testing**: Consolidated three Playwright configs into a single `test/playwright.config.js` with `smoke`, `snapshots`, and `regression-{chromium,firefox,webkit}` projects (tiers). The new `test/test_playwright.sh` runner replaces `test_styling.sh` and selects the tier via `PLAYWRIGHT_PROJECT`. Snapshot baselines now live in `test/visual/snapshots/` (committed Linux images) and can be refreshed via the new `test/update-snapshots.sh` Docker helper.
+- **CI**: Split the styling step in `ci.yml` into a Playwright smoke step (every code-change PR) and a path-filtered Playwright snapshot step (only when `_sass/`, `assets/`, `_layouts/`, `_includes/`, `test/visual/` change); both go through the new reusable `.github/actions/playwright-tests` composite action and upload `test/visual-results/` artifacts on failure (14-day retention) for easier triage.
+- **Performance**: `setup-banner.html` — added `{% raw %}{% unless site.site_configured %}{% endraw %}` early-exit guard that skips all setup detection logic and the `setup-check.html` sub-include when `site_configured: true`; eliminated 151 redundant include renders per build (-87% per-render time, setup-check fully eliminated from profile)
+- **Performance**: `info-section.html` — replaced full-site URL megastring (`site.html_pages | map | join`) with a single pre-filtered admin-page lookup (`where_exp: "p.url contains '/about/'"`) that accesses `site.html_pages` once and builds a ~10-entry string instead of 150+, making `contains` checks ~18× faster
+- **Performance**: `sidebar-right.html` — added heading-presence guard before calling the expensive `toc.html` Liquid parser; pages without `<h2>`/`<h3>`/`<h4>` headings skip TOC generation entirely (-18% per-render for `toc.html`)
+- **Performance**: Made MathJax loading conditional via `page.mathjax` front matter flag (mirrors Mermaid pattern) — saves 1.8 MB transfer on pages without math
+- **Performance**: Cached Obsidian plugin wiki-link index across incremental builds — index is rebuilt only when document URLs, titles, or aliases change
+- **Performance**: Disabled `notebooks`, `hobbies`, and `quests` collections in dev config for faster local builds
+- **Performance**: Removed jQuery from page loads — Bootstrap 5.3.3 does not require it and no custom JS uses jQuery APIs
+
+### Fixed
+- **Accessibility**: Dynamically-rendered color inputs in the Theme Customizer (Skin Editor gradient stops in `assets/js/skin-editor.js` and Live Preview pickers in `assets/js/palette-generator.js`) now have associated `<label for>` elements and `aria-label`s, fixing a regression that left them inaccessible to assistive tech.
+- **Tests**: `test/visual/theme-colors.spec.js` now activates the Color Editor tab and waits for the panel to be visible before interacting, eliminating a 45 s `locator.fill` timeout caused by hitting hidden inputs in inactive tabs.
+- **Tests**: Replaced flaky `waitForTimeout(300)` and `networkidle` calls in `test/visual/fixtures.js` and `test/visual/skins.spec.js` with deterministic waits on `domcontentloaded`, `load`, the `data-theme-skin` attribute, and the `zer0:skin-change` event.
+- **Tests**: Retired the legacy `test/test_visual.sh` (ImageMagick + bash screenshot pipeline) and the placeholder `homepage-*-chromium-darwin.png` baselines in favor of the unified Playwright snapshot tier.
+- Added missing `mathjax: true` front matter to pages that use math notation (test-notebook.md, jupyter-notebooks.md, jekyll-math-symbols-with-mathjax.md)
+- **MathJax 3 inline math**: Added `window.MathJax` config block before the script tag so `$...$` inline math (used in test-notebook.md) renders correctly — MathJax 3 does not enable dollar-sign inline delimiters by default
+- Updated `mathjax-math.md` documentation to show MathJax 3 API (`window.MathJax = {}`) instead of the removed MathJax 2 `MathJax.Hub.Config` API
+
+### Tests
+- Added `ObsidianCacheTest` suite (5 new tests) covering fingerprint invalidation on document addition, title change, alias change, cache hit, and cache miss
+
+### Changed (UI/UX)
+- **Sidebar collapse — VS Code style**: Left sidebar (`#bdSidebar`) and right TOC (`#tocContents`) now collapse to a slim 36 px rail (`--zer0-sidebar-rail-width`) instead of being fully hidden on desktop. The visibility toggle icon (`bi-layout-sidebar-inset` / `bi-layout-sidebar-inset-reverse`) stays mounted on the rail so users can re-expand the panel with a single click — the floating action buttons (`.bd-sidebar-fab`, `.bd-toc-fab`) are now hidden at `≥992 px` since the rail toggle replaces them. `_sass/core/_docs-layout.scss`, `_sass/layouts/_navbar-extras.scss`.
+- **Smooth transitions**: `.bd-layout` and `.bd-main` now animate `grid-template-columns` and `gap` over `--zer0-motion-duration-base` (0.3 s) with `--zer0-motion-ease-standard`; sidebar contents cross-fade via `opacity` + delayed `visibility`. Honors `@media (prefers-reduced-motion: reduce)` by disabling all related transitions.
+- **Toggle behavior**: `sidebar-visibility.js` and `toc-visibility.js` no longer set `button.hidden = true` on the rail toggle when collapsed, keeping it interactive in the collapsed state. Aria labels (`Hide…` / `Show…`) update on each toggle.
+- **Cache-bust**: Added `?v={{ site.time | date: '%s' }}` to the navigation ES-module `<script type="module">` tag in `_includes/components/js-cdn.html` to force re-fetch on rebuild (browsers cache ES modules indefinitely by URL).
+- **Navbar dropdown**: Dropdown toggle button set to `align-self: stretch` so it spans the full navbar height, making it easier to invoke on touch/small screens; chevron icon `font-size` increased to `1em` for better legibility. `_sass/core/_navbar.scss`.
+- **Syntax highlighting**: Dual-palette system — `_sass/core/_syntax.scss` now uses a GitHub Light palette for `.highlight` (light mode) and scopes the Material Dark base16 palette to `[data-bs-theme="dark"] .highlight`, fixing near-invisible token colors on light backgrounds.
+- **Theme preview gallery**: Expanded to 20 sections with 6 new components: Callouts (5 types), Accordion, Progress & Spinners, Breadcrumb & Pagination, Tooltips & Popovers, and Icons showcase. TOC updated accordingly; Bootstrap tooltip/popover JS initializer added. `_includes/components/theme-preview-gallery.html`, `pages/_about/settings/theme-preview.md`.
+
+### Fixed (UI)
+- **Contrast skin — light mode**: The `contrast` skin's `zer0-skin-palette` mixin sets `--bs-link-color: #ffffff` (white accent) which rendered sidebar nav links invisible on a white background in light mode. Added `[data-theme-skin="contrast"]:not([data-bs-theme="dark"])` override in `_sass/theme/_skins.scss` to pin link color to `#111111` in light mode while leaving dark-mode behavior unchanged.
+
+
+## [1.6.5] - 2026-05-19
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 4b45cc7 docs(agents): slash .github instructions and prompts to actionable rules
+
+
+## [1.6.4] - 2026-05-19
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- d6ecf4e fix(features): correct stale file references in feature registry (#98)
+
+
+## [1.6.3] - 2026-05-21
+
+### Fixed
+- **Feature Registry**: Remove stale `_includes/navigation/menu-collections.html` reference from ZER0-049
+- **Feature Registry**: Fix roadmap script path from `generate-roadmap-diagram.sh` → `generate-roadmap.sh` in ZER0-052
+- **Feature Registry**: Replace non-existent `structured-data.html`/`eeat-signals.html` with correct `seo.html`, `jsonld-faq.html`, `author-eeat.html` in ZER0-054
+- **Feature Registry**: Remove stale `_includes/components/settings-modal.html` reference from ZER0-055
+
+### Commits in this release
+- fix(features): correct stale file references in ZER0-049/052/054/055
+
+
+## [1.6.2] - 2026-05-19
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 6651b38 fix(docs): update layout references from journals to article, add docs pages, and update feature registry (#97)
+
+
+## [1.6.1] - 2026-04-29
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- e1999c6 Improve About page: tighten copy, add preview image, fix CTA and broken link (#90)
+
+
+## [1.6.0] - 2026-04-29
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 3dbfcad Expand About page with prerequisites, quick start, FAQ, and architecture diagram (#88)
+- f969fc0 perf(jekyll): cache page-url lookups and short-circuit obsidian rewrites (#80)
+- d50b04c chore(deps): update Ruby gem dependencies (#81)
+- b6de350 Expand "Wizard Topples Capitalist Dominance" post with examples, diagram, and reference sections (#85)
+- 21eb458 feat(search,components): remove Algolia and fix Powered By links to open in new tab (#86)
+
+
+## [1.5.1] - 2026-04-29
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- ad00bf3 [WIP] Optimize Git workflow page for SEO best practices (#79)
+
+
+## [1.5.0] - 2026-04-29
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- ffdc1eb feat(posts): add 12 example posts and regenerate all previews with gpt-image-2 (#83)
+
+
+## [1.4.1] - 2026-04-28
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 9830d3d refactor(obsidian): extract full graph include and sync docs (#82)
+
+
+## [1.4.0] - 2026-04-25
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- d39dfa9 Add standalone Obsidian local graph panel (#77)
+
+
+## [1.3.0] - 2026-04-24
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 31e042c feat: Obsidian vault integration with client-side wiki-link resolver and backlinks (#73)
+
+
+## [1.2.1] - 2026-04-22
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 5c04e62 fix(footer,welcome,info): eliminate broken links on bare-minimum sites
+
+
+## [1.2.0] - 2026-04-22
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 4bd3e36 feat(welcome): add bare-minimum 3-file remote-theme starter
+
+
+## [1.1.0] - 2026-04-21
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 3d91006 fix(release): replace ((var++)) with var=$((var + 1)) in release path
+- d33e5e6 feat(intro): refocus Copilot Agent prompts on frontend/CMS workflows (#74)
+
+### Changed
+- **Docker/Jekyll build performance** — Reduced repeated full-page Liquid scans in the footer, settings offcanvas, and cookie consent includes; cached preview image checks during generation; skipped server-side Obsidian rewrites for documents without Obsidian syntax; and changed Docker dev startup to run `bundle install` only when `bundle check` reports missing dependencies. The profiled Docker build improved from 119.2s to 86.8s in local validation.
+
+### Added
+- **Example Posts**: Added twelve new section examples across Business,
+  Development, Science, Technology, Tutorial, and World posts to provide
+  richer sample content for `_posts` category sections.
+- **Development Automation**: Added `scripts/bin/validate` and `scripts/validate`
+  as the canonical preflight validation command for repository files, version
+  consistency, YAML/data parsing, active configuration contracts, config-file
+  classification, navigation data shape, Jekyll build/doctor, compiled assets,
+  and optional tests/Obsidian/HTMLProofer checks. CI fast checks now call
+  `./scripts/bin/validate --quick`.
+- **Obsidian Integration** — The repo's markdown content is now editable as an [Obsidian](https://obsidian.md) vault and rendered identically on GitHub Pages.
+  - Shared vault config (`.obsidian/app.json`, `core-plugins.json`, `community-plugins.json`, `appearance.json`, `hotkeys.json`, `templates.json`) and a Templates-compatible note template at `pages/_notes/_templates/note-template.md`.
+  - Liquid-generated `assets/data/wiki-index.json` listing every collection document and standalone page (title, basename, permalink, tags, aliases, excerpt) — works on the default GitHub Pages remote_theme build, no plugin whitelist changes required.
+  - `assets/js/obsidian-wiki-links.js` — client-side resolver that rewrites `[[wiki-links]]` (with aliases, header anchors, broken-link styling), `![[embeds]]` (image with width modifiers, note transclusion), inline `#tags`, and Obsidian callout blockquotes (`> [!note] Title …`) into Bootstrap-styled HTML.
+  - `_includes/content/backlinks.html` — server-side backlinks panel auto-rendered on every `note` layout (and on any page with `backlinks: true`); fully indexable by search engines.
+  - `_includes/content/transclude.html` — note embed renderer used by both the JS resolver and the Ruby converter.
+  - `_sass/core/_obsidian.scss` (imported via `_sass/custom.scss`) — styles for wiki-links, broken links, callouts, embeds, and the backlinks panel.
+  - `_plugins/obsidian_links.rb` — opt-in Ruby converter that performs the same transformations server-side for forks that build with vanilla Jekyll (without the `github-pages` gem) or use a custom GH Actions workflow that bypasses the plugin whitelist.
+  - `pages/_docs/obsidian/` — full documentation section: index, getting started, syntax reference, authoring workflow, troubleshooting.
+  - `_config.yml` — added `*.canvas` and `*.excalidraw.md` to `exclude:`; `jekyll-redirect-from` enabled to map Obsidian `aliases:` to URL redirects.
+  - `.gitignore` — ignore Obsidian's local-only state (`workspace*`, `cache`, `plugins/*/data.json`, `graph.json`, `.trash/`).
+- **Tests**:
+  - `test/test_ruby_converter.rb` — 18-test, 65-assertion Minitest suite for `_plugins/obsidian_links.rb` covering wiki-links, embeds, callouts (including fold markers and unknown-type fallback), inline tags, code-block isolation, and a plain-markdown regression guard.
+  - `test/test_resolver.js` — 16-assertion Node test for `assets/js/obsidian-wiki-links.js` using a hand-rolled DOM shim; exercises wiki-link resolution, embeds, tags, and DOM-level callout rewriting.
+  - `test/test_obsidian.sh` — orchestrator that runs both unit suites and validates that the Jekyll build emits a well-formed `wiki-index.json`. Wired into `test/test_runner.sh`.
+  - `test/fixtures/obsidian/sample-note.md` — representative Obsidian note exercising every supported feature.
+- **Obsidian Graph View** — Live, force-directed knowledge graph at `/docs/obsidian/graph/` mirroring Obsidian's local graph view. Built from the same `assets/data/wiki-index.json` that powers the resolver and backlinks panel.
+  - `pages/_docs/obsidian/graph.md` — graph page (Bootstrap toolbar with title filter, "Show orphans" switch, "Reset view" button; collection-color legend; usage tips). Cytoscape.js loaded only on this page via CDN with SRI + `crossorigin="anonymous"`.
+  - `assets/js/obsidian-graph.js` — vanilla-JS renderer (~330 lines, no build step). Mirrors the resolver's normalization (`toLowerCase().trim()` + whitespace collapse) so wiki-index keys match. `cose` force layout, hover-highlight neighborhood, click-to-navigate (⌘/Ctrl-click for new tab), search-driven node fading, orphans hidden by default with a Bootstrap switch toggle. Broken targets render as dashed red nodes prefixed `__broken__:` in the graph model.
+  - `assets/data/wiki-index.json` — extended each entry with an `outgoing: [...]` array of normalized wiki-link targets, extracted at build time via Liquid (masks `![[…]]` embeds, splits on `[[`/`]]`/`|`/`#`/`^`, downcases, dedupes).
+- **Docs**: `README.md` and `AGENTS.md` updated with an Obsidian vault section pointing to the new docs.
+- **Bare-minimum 3-file remote-theme starter.** Consumers can now publish a
+  fully styled site to GitHub Pages with only `_config.yml`, `Gemfile`, and
+  `index.md` — no installer required. The new `_layouts/welcome.html` shipped
+  by the theme detects unconfigured sites and renders an onboarding screen
+  with a hero checklist, a 3-step starter accordion, and the embedded
+  `_includes/setup/wizard.html` that generates a personalised `_config.yml`
+  on the fly. README gained a "Bare-Minimum Starter" section documenting the
+  pattern.
+- **Smarter setup detection** in `_includes/components/setup-check.html`.
+  When `site_configured` is not set, the heuristic now flags a site as
+  unconfigured if it has no owner (`founder`/`author`/`email`) or its title
+  matches a known placeholder (`zer0-mistakes`, `zer0-pages-remote`,
+  `Your Site Title`, `My Awesome Site`, `Welcome`, `Untitled`, or empty).
+
+### Fixed
+- **Preview Image Generator**: Fixed `scripts/features/generate-preview-images`
+  project-root detection when invoked through the wrapper and added support for
+  OpenAI GPT image generation responses that return `b64_json` instead of URL
+  downloads. The generator now reports the active image model and defaults to
+  `gpt-image-2` with GPT-image-friendly size and quality settings.
+- **Obsidian Local Graph**: Moved the local graph out of the documentation
+  navigation sidebar into its own collapsible side panel with a larger canvas
+  and resize-on-open behavior so Cytoscape renders cleanly. Pages with no
+  local wiki-link neighbors now keep the graph control visible and render a
+  current-page-only graph instead of hiding the panel.
+- **Obsidian Resolver**: The client-side wiki-link resolver now receives
+  baseurl-safe index, attachment, and tag URLs from Liquid and derives a safe
+  fallback from its script path for GitHub Pages project sites.
+- **Backlinks**: The linked-mentions include now skips draft and unpublished
+  candidates unless `site.show_drafts` is enabled.
+- **Validation**: `scripts/bin/validate --quick` now accepts YAML anchors and
+  date values used by repository config/data files.
+- **Tests**: `test/test_runner.sh` now includes an `obsidian` suite key/name so
+  suite keys, scripts, and labels stay aligned.
+- **Footer Quick Links no longer 404 on bare-minimum sites.**
+  `_includes/core/footer.html` previously hard-coded links to
+  `/about/`, `/services/`, `/news/`, `/contact/`, `/privacy-policy`, and
+  `/terms-of-service` — none of which exist in a 3-file remote-theme
+  consumer. Quick Links are now resolved in this order:
+  1. `site.footer_quick_links` (array of `{label, url}`) — explicit override
+  2. Auto-detection: each candidate link only renders if the target page
+     exists in `site.html_pages`
+  3. Fallback to `Home` + `Sitemap (XML)` only.
+  Privacy Policy / Terms of Service links use the same existence check and
+  optionally read from `site.privacy_policy_url` / `site.terms_of_service_url`.
+- **Welcome layout external links now point to existing README anchors.**
+  The "Next steps" cards in `_layouts/welcome.html` linked to
+  `#content-creation` and `#customisation`, which don't exist in the theme
+  README. They now point to `README.md#-quick-start` and
+  `README.md#-key-features` respectively.
+- **Theme info admin links are conditional.**
+  `_includes/components/info-section.html` previously rendered Admin
+  Dashboard links to `/about/config/`, `/about/settings/theme/`,
+  `/about/settings/navigation/`, and `/about/settings/environment/`
+  unconditionally — guaranteed 404s on bare-minimum sites. The links and
+  surrounding section now only render when the corresponding page exists.
+- **Source Code shortcuts skip GitHub buttons when repository is unknown.**
+  `_includes/components/dev-shortcuts.html` rendered `https://github.com//blob//`
+  URLs when `site.repository` and `site.branch` were empty (typical on bare
+  consumer sites). It now hides the GitHub-based buttons and shows a hint
+  to set `repository: USER/REPO` in `_config.yml`.
+- **Cookie-consent privacy link is conditional.** The "Learn more in our
+  Privacy Policy" anchor in `_includes/components/cookie-consent.html` only
+  renders if a `/privacy-policy/` page exists or `site.privacy_policy_url` is
+  configured.
+- **Setup banner link.** `_includes/components/setup-banner.html` no longer
+  points at the non-existent `/404.html`; it now links to
+  `/#setup-wizard`, which is provided by the new welcome layout.
+- **Version-bump workflow no longer crashes on bash 5.x runners.** `scripts/utils/analyze-commits` (and `scripts/lib/changelog.sh`, `scripts/lib/migrate.sh`) used the `((var++))` post-increment idiom. On bash 5.x, when `var` is 0 the expression evaluates to 0 → exit code 1 → `set -euo pipefail` terminates the script silently. macOS bash 3.2 was more forgiving, so the bug only surfaced in CI. Replaced all release-path sites with `var=$((var + 1))`, which always returns 0. Added a static regression check to the unit tests so the pattern can't return.
+
+
+## [1.0.0] - 2026-04-20
+
+First stable major release. Consolidates the breaking-change installer rewrite
+(shipped in error as v0.22.22 due to a silent bug in the version analyzer) and
+the fix that restored the release automation.
+
+### ⚠️ Breaking changes
+
+- **Modular installer.** The 2,400-line monolithic `install.sh` is decomposed into a CLI dispatcher (`scripts/bin/install`) backed by focused library modules (`scripts/lib/install/*.sh`) and declarative YAML profiles (`templates/profiles/*.yml`). The legacy `curl | bash` one-liner still works — it bootstraps the same pipeline.
+- **Legacy mode flags deprecated.** `--full`, `--minimal`, `--fork`, `--remote`, `--github` continue to work in 1.0.x with a one-line deprecation warning. They map 1:1 to `install init --profile <name>`. Targeted removal: 2.0.
+- **`--azure` flag removed.** Replaced by `install deploy azure-swa`. Old flag emits a clear error pointing at the new command.
+- **Templates are the single source of truth.** Embedded heredoc fallbacks in `install.sh` are gone. A stripped distribution (theme tarball without `templates/`) will fail; the bootstrap downloads the templates tarball alongside `install.sh` for `curl | bash`.
+
+See [`docs/installation/migration-from-0.x.md`](docs/installation/migration-from-0.x.md) for the full flag-by-flag mapping.
+
+### Added
+
+#### Modular installer (Phases 1-7 of the refactor)
+
+- **`scripts/bin/install`** — canonical CLI with subcommands: `init`, `wizard [--ai]`, `agents`, `deploy`, `doctor [--ai] [--quiet] [--json]`, `diagnose [--ai]`, `upgrade`, `list-profiles`, `list-targets`, `version`, `help`.
+- **`scripts/lib/install/`** — focused modules: `core`, `platform`, `template`, `fs`, `config`, `pages`, `profile`, `wizard_interactive`, `doctor`, `upgrade`, `agents`, `ai/{openai,wizard,diagnose,suggest}`, `deploy/{registry,github-pages,azure-swa,docker-prod}`. All bash 3.2 compatible.
+- **`templates/profiles/*.yml`** — declarative profile manifests (`full`, `minimal`, `fork`, `remote`, `github`).
+- **`templates/deploy/<target>/`** — pluggable deploy templates (workflow YAMLs, Dockerfile, nginx.conf).
+- **`templates/agents/`** — distributable AI agent guidance (CLAUDE.md, aider.conf.yml templates).
+- **`templates/ai/prompts/`** — system prompts for AI subcommands.
+- **`.zer0-installed` marker file** — tracks installed theme version for idempotent `install upgrade`.
+- **AI integration (opt-in, sandboxed):** `install wizard --ai` (OpenAI-backed `_config.yml` generation), `install diagnose --ai` (unified-diff patch proposals), `install deploy --ai-suggest` (deploy-target recommendation). Honors `ZER0_NO_AI=1` kill switch. All payloads sanitized; all writes diffed before confirmation.
+- **`install doctor`** — platform/tooling/site/AI health check with PASS/WARN/FAIL counters, `--quiet` and `--json` modes. Used as preflight in `install init` (opt out with `--skip-doctor`).
+- **`install upgrade`** — idempotent in-place upgrade tracked via `.zer0-installed`. `--from`, `--force`, `--dry-run`, `--auto-accept`. Refreshes agents and checks deploy-workflow drift.
+- **`docs/installation/`** — full doc tree: `index`, `architecture`, `profiles`, `deploy-targets`, `ai-features`, `migration-from-0.x`, `customization`.
+- **`.github/instructions/install.instructions.md`** — agent guidance for installer code.
+- **`.github/workflows/doctor.yml`** — CI matrix (ubuntu-latest, macos-latest) running `install doctor --json` on every push/PR touching installer code.
+- **`.github/workflows/install-matrix.yml`** — full installer e2e matrix (ubuntu-latest + macos-latest × ruby 2.7/3.0/3.2) plus a `curl|bash` bootstrap smoke job.
+- **Installer e2e suites** under `test/`: `test_install_profiles.sh`, `test_install_deploy.sh`, `test_install_ai_mock.sh`, `test_install_legacy_flags.sh`, `test_install_idempotency.sh`.
+- **`scripts/bin/test install`** — new test-suite group that executes all installer e2e tests.
+
+#### Versioning & release automation (new in 1.0.0)
+
+- New unit-test file `scripts/test/lib/test_analyze_commits.sh` (15 assertions) covering: scoped conventional types, `!` breaking-change marker, `BREAKING CHANGE` / `BREAKING-CHANGE` footers, and stdout/stderr separation. Wired into `scripts/test/lib/run_tests.sh`.
+
+### Fixed
+
+- **Versioning automation no longer silently swallows analyzer crashes.** `scripts/utils/analyze-commits` called `log_info` / `log_warning` / `log_debug` / `log_error` helpers that were never defined in `scripts/lib/common.sh`, causing the script to exit 127 with empty stdout. The version-bump workflow then fell back to `patch` via `2>/dev/null || echo "patch"`, which is exactly what shipped v0.22.22 instead of the intended v1.0.0 for the breaking-change installer rewrite (PR #76). The analyzer now defines stderr-only logging helpers, and the workflow refuses to publish on analyzer failure or invalid output.
+- **Conventional Commits `!` breaking-change marker is now recognised.** `feat!:`, `fix(scope)!:`, and `refactor(api)!:` correctly trigger a major bump in both the version analyzer and changelog categoriser. Previously only the long-form `BREAKING CHANGE:` footer was detected.
+- **Scoped types are recognised everywhere.** `feat(auth):`, `fix(api):`, `chore(deps):`, etc. are now properly classified by `analyze-commits` and grouped correctly in `changelog.sh`.
+- `install.sh` — `gh_args[@]: unbound variable` crash when invoking the github profile with no fork environment variables set (`set -u` + empty array). Guarded with `${gh_args[@]+"${gh_args[@]}"}`.
+
+### Changed
+
+- `scripts/utils/analyze-commits` now guarantees that **only** the bump type (`patch|minor|major|none`) is written to stdout. All progress and debug output is sent to stderr, so callers can safely use `BUMP=$(./analyze-commits ...)`.
+- `.github/workflows/version-bump.yml` streams the analyzer's stderr into a collapsible job-log group and validates the returned bump type, failing the run with an annotated error if the analyzer crashes or returns garbage.
+- `README.md` Installation Methods section now references the modular CLI alongside the legacy one-liner.
+- `docs/FORKING.md` includes an `install init --profile fork` flow alongside the standalone `fork-cleanup.sh` script.
+- `AGENTS.md` instruction map adds the new install instructions row.
+
+## [0.22.22] - 2026-04-21
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 36cd015 feat(installer)!: modular installer + AI + deploy targets + test matrix (#76)
+- 555bead docs(readme): add AI-native branding and GitHub Actions automation section
+
+## [0.22.21] - 2026-04-19
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 7f00e4d docs(roadmap): data-driven roadmap with auto-generated README mermaid diagram (#71)
+
+### Changed
+- **Copilot Agent prompts (`_data/prompts.yml`)**: rewritten to focus on
+  frontend/CMS workflows for the Jekyll theme. Replaced the previous
+  general-purpose software-engineering templates with 10 prompts split into
+  two scopes: **Page Improvements** (`improve-page`, `expand-page`,
+  `update-page`, `fix-page`, `seo-optimize`, `accessibility-audit`) that act
+  on the current page, and **Site Improvements** (`ui-ux-improvement`,
+  `new-feature`, `component-enhancement`, `performance-optimization`) for
+  theme-wide changes. Every prompt explicitly references the auto-injected
+  Page Context table.
+- **Intro component (`_includes/content/intro.html`)**: the Copilot Agent
+  dropdown now renders Bootstrap `dropdown-header` section labels and
+  dividers when prompt entries declare a `group`. Entries without a
+  `group` continue to render as plain items (backward compatible).
+- **Docs (`docs/implementation/copilot-agent-prompt-button.md`)**: updated
+  the prompt registry table and YAML schema to document the new `group`
+  field and the new template set.
+
+### Added
+- **Roadmap data file**: `_data/roadmap.yml` is now the single source of truth for the project roadmap (versions, status, dates, targets, and feature highlights).
+- **Roadmap generator**: `scripts/generate-roadmap.rb` (and shell wrapper `scripts/generate-roadmap.sh`) renders a Mermaid gantt diagram and summary table from `_data/roadmap.yml` and injects them into `README.md` between `<!-- ROADMAP_MERMAID:START/END -->` and `<!-- ROADMAP_TABLE:START/END -->` markers. Supports `--check` mode for CI drift detection and `--stdout` for previewing.
+- **Roadmap sync workflow**: `.github/workflows/roadmap-sync.yml` regenerates the README on push to `main` when the data file or generator changes, and verifies sync on PRs that touch those files.
+- **Local Graph Sidebar Widget** — Per-page mini Obsidian-style local graph rendered at the top of the left sidebar on every page that has one.
+  - `_includes/navigation/local-graph.html` — small widget with a "Local graph" heading, a "full ›" link to `/docs/obsidian/graph/`, and a `#obsidian-local-graph` container. Honors `local_graph: false` and `local_graph_depth: N` (default 1) in page front matter.
+  - `assets/js/obsidian-local-graph.js` — fetches `wiki-index.json`, finds the current page by `window.location.pathname` (with title/basename fallback), BFS through both outgoing and incoming wiki-links to the configured depth, renders the subgraph with cytoscape.js (`cose` layout sized for ~220px sidebar canvas). Highlights the current page with an orange border + larger node + bold label. Click navigates (⌘/Ctrl-click opens new tab). Hides itself silently if the page isn't in the wiki-index or has no neighbors. Cytoscape is lazy-loaded from CDN with SRI + `crossorigin="anonymous"` and de-duplicated against the full graph page's existing load.
+  - `_includes/navigation/sidebar-left.html` — includes the new widget at the top of `.offcanvas-body`, before the nav-mode chain.
+  - `_sass/core/_obsidian.scss` — added `.obsidian-local-graph-widget` styles for the 220px container with theme-aware borders/background.
+- **Docs**: `docs/FORKING.md` — progressive fork → configure → personalize workflow for the `username.github.io` user-site pattern
+- **Tests**: `test/test_fork_cleanup.sh` — 32-assertion suite covering CLI parsing, dry-run, real cleanup, YAML anchor preservation, and idempotency
+
+### Changed
+- **Obsidian docs**: `pages/_docs/obsidian/syntax-reference.md` — graph view now marked **Available** (was "Not yet implemented"); `pages/_docs/obsidian/index.md` — added Graph view row to the section table.
+- **Documentation cross-linking**: appended a `## See also` block of `[[wiki-links]]` to every page in `pages/_docs/` (76 files — section indexes, leaf pages, and the obsidian cluster) so the graph view shows real cluster structure. Edge count grew from 12 → 292 with 90+ visible nodes after orphan filtering.
+- **Obsidian Graph View polish**: removed the white pill backgrounds behind labels (now halo-only outlines that match the canvas color, so edges read through cleanly); labels hide by default and reveal on zoom-in or hover, while the 37 hub nodes (degree ≥ 6 — Docker, Front Matter, Jeykll, Layouts, Customization, Release Management, etc.) keep their labels always-on as landmarks; loosened `cose` layout (`nodeRepulsion` 8000→18000, `idealEdgeLength` 80→130, added `nodeOverlap: 24` and `componentSpacing: 80`, dropped gravity 0.25→0.18, `numIter` 2500); taller canvas (`82vh` / `620px` min, was `75vh` / `520px`); bigger `cy.fit()` padding (40→70 default, 80→100 for search matches) so top-row labels don't clip the canvas edge.
+- **README roadmap section** is now auto-generated from `_data/roadmap.yml` instead of being hand-maintained, and includes status, target, and detailed highlight columns.
+- **`pages/roadmap.md`** rewritten to render the Mermaid gantt chart, release summary, and per-version detail sections directly from `_data/roadmap.yml` via Liquid — so the Jekyll page is always live with the canonical data.
+- **`_data/README.md`** documents the new `roadmap.yml` data file.
+- **Landing page**: `_includes/landing/landing-install-cards.html` — “Fork & Deploy” card now guides users to fork into `<username>.github.io` and run `scripts/fork-cleanup.sh`; safer `github_fork` URL handling
+- **README**: `README.md` — Method 3 (Fork & Customize) reframed as “Fork & Deploy as Your Site” with a 4-step path; deployment section updated for user-site flow
+- **Docs**: `pages/_quickstart/github-setup.md`, `pages/_quickstart/index.md`, `pages/_docs/getting-started/quick-start.md`, `pages/_docs/deployment/github-pages.md`, `docs/configuration/url-configuration-guide.md` — aligned with the user-site fork pattern (`baseurl: ""`)
+- **Templates**: `templates/cleanup/reset-fields.yml` — annotated `baseurl` reasoning; clarified user-site vs. project-site behavior
+- **Templates**: `templates/config/install.conf` — minor consistency tweaks
+
+### Fixed
+- **Fork cleanup**: `scripts/fork-cleanup.sh` — `get_reset_field_value()` now uses `YAML.safe_load_file(..., aliases: true)` so anchors in `reset-fields.yml` no longer break parsing under newer Ruby
+- **Fork cleanup**: `scripts/fork-cleanup.sh` — repository name derivation now strips `.git` suffix and falls back gracefully when `origin` is missing (no `set -euo pipefail` aborts)
+- **Fork cleanup**: `scripts/fork-cleanup.sh` — `posthog`/`giscus` blocks reset only within their own YAML range (no stray matches in unrelated blocks)
+- **Welcome post**: `templates/pages/welcome-post.md.template` and embedded fallback in `scripts/fork-cleanup.sh` — corrected `layout: journals` → `layout: article` so the generated welcome post builds without “Layout does not exist” warnings on a freshly cleaned fork
+
+
+## [0.22.20] - 2026-04-19
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- f5d5e97 fix(ui): UI/UX fixes — navbar dropdown, landing hero, cookie banner, nanobar, footer (#72)
+
+
+## [0.22.19] - 2026-04-18
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 1b3993e docs(fork): add fork-to-deploy workflow and user site guidance (#56)
+
+
+## [0.22.18] - 2026-04-18
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 02d0295 feat(setup): add site configuration detection and smart 404 page (#58)
+
+
+## [0.22.17] - 2026-04-18
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 10ba722 Add config-driven frontmatter validation system with review fixes (#34)
+
+
+## [0.22.16] - 2026-04-18
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- bc41b0d Add AGENTS.md and refresh stale agent instructions (#70)
+
+
+## [0.22.15] - 2026-04-18
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 939af77 feat(nav): dynamic collection-based navigation fallback for zero-config sites (#64)
+- ca7da2e docs: align project documentation with v0.22.13 (#66)
+- 9b23b63 chore(deps-dev): bump dompurify from 3.3.3 to 3.4.0 (#68)
+
+
+## [0.22.14] - 2026-04-18
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- f0a1cac fix: correct comments for clarity in SEO-related files
+- d1998ff chore(deps): update Ruby gem dependencies (#67)
+
+
+## [0.22.13] - 2026-04-10
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 3c00a3d refactor: remove duplicate code — use standard libraries and existing plugins (#59)
+
+
+## [0.22.12] - 2026-04-10
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 7ba0f83 feat(news): add data-driven feature showcase & live Bootstrap components to news index (#54)
+
+
+## [0.22.11] - 2026-04-09
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 8e83a51 Create SECURITY.md for security policy and reporting
+
+
+## [0.22.10] - 2026-04-06
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 27550da feat(admin): add admin layout and configuration dashboards (#57)
+
+
+## [0.22.9] - 2026-04-05
+
+### Added
+- **Skin Editor**: New colorffy-inspired skin editor (`assets/js/skin-editor.js`) for creating and customizing theme skins from the browser
+  - Edit all 9 built-in skin gradient colors with live color pickers
+  - Auto-generated palettes: primary tints, surface, tonal surface, semantic colors (success/warning/danger/info)
+  - WCAG contrast ratio badges on all palette swatches
+  - Random skin generation, save/load custom skins to localStorage
+  - Export SVGs and copy CSS custom properties to clipboard
+  - Advanced SVG filter controls (turbulence, octaves, seed, scale, overlay opacity)
+- **Palette Generator**: New standalone palette generator (`assets/js/palette-generator.js`) with chroma.js-powered color mixing and live CSS variable editor
+- **Playwright Tests**: 12 new visual regression test specs (skins, backgrounds, accessibility, admin layout, config editor/viewer, env dashboard, security, theme colors)
+
+### Fixed
+- **Skin Rendering**: Added `.zer0-bg-hero` class to landing layout to prevent Bootstrap `.bg-primary` from overriding skin background gradients
+- **CSS Scoping**: Added `.bg-primary:not(.zer0-bg-hero)` in custom SCSS to isolate skin backgrounds from Bootstrap utility classes
+
+### Changed
+- **Theme Customizer**: Expanded to 6 tabs — added Skin Editor between Skins and Palette Generator
+- **Admin Navigation**: Minor layout adjustment
+- **Environment Dashboard**: Minor component update
+
+## [0.22.8] - 2026-04-04
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- e0b4f13 fix: cross-platform installation compatibility — Gemfile platform sections, fork mode tests, portable sed replacements (#55)
+
+
+## [0.22.7] - 2026-04-03
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- a70ae8a chore: consolidate configuration, dependencies, and installation (PRs #48, #51, #52, #53) (#51)
+
+### Added
+- **Installer**: New `--remote` install mode — forks repo and creates an orphan `gh-pages` branch with only the bare minimum files needed to render via `remote_theme` (no local theme source)
+- **Installer**: New `--github` install mode — interactive fork via `gh` CLI with automatic platform detection and setup
+- **Installer**: New `--codespaces` flag — adds `.devcontainer/devcontainer.json` for GitHub Codespaces support (auto-included in remote mode, opt-in for full/minimal)
+- **Installer**: Cross-platform setup scripts: `scripts/platform/setup-macos.sh`, `setup-linux.sh`, `setup-wsl.sh`
+- **Installer**: GitHub CLI fork/clone helper: `scripts/github-setup.sh`
+- **Installer**: Platform auto-detection (`detect_platform()`) for macOS, Linux, and WSL
+- **Templates**: `_config.remote.yml.template` — minimal config for remote-theme consumer sites
+- **Templates**: `_config.starter.yml.template` — heavily annotated full starter config
+- **Templates**: `Gemfile.remote.template` — minimal Gemfile (github-pages + jekyll-remote-theme)
+- **Templates**: `devcontainer.json.template` — lightweight devcontainer for consumer sites
+- **Templates**: `theming.md.template` — Bootstrap 5 customization guide (dark mode, typography, layouts)
+- **Templates**: `setup.html.template` — dev-only setup wizard page
+- **Wizard**: Interactive browser-based config wizard (`pages/setup.html`, `_includes/setup/wizard.html`, `assets/js/setup-wizard.js`) for generating `_config.yml` via a 5-step Bootstrap form
+- **CI**: `.github/workflows/setup-template.yml` — auto-detects non-upstream repos and creates PR with prefilled config
+
+### Changed
+- **Installer**: `install.sh` — added `--remote`, `--github`, `--codespaces` flags and corresponding mode dispatchers
+- **Installer**: `render_template()` now substitutes `REPOSITORY_NAME`, `RAW_GITHUB_URL`, `FORK_GITHUB_USER` variables
+- **Installer**: `install.conf` — added `remote` and `github` to `VALID_INSTALL_MODES`, platform detection vars, wizard config, expanded `TEMPLATE_VARS`
+- **Templates**: `quickstart.md.template` — enhanced with Bootstrap pill tabs for macOS/Linux/WSL/GitHub Fork platform-specific instructions
+- **Templates**: `configuration.md.template` — comprehensive rewrite with URL tables, all config sections, cookie consent, dev config
+- **Templates**: `welcome-post.md.template` — enhanced Day 1 tutorial with folder structure diagram, commands table, feature checklist
+
+
+## [0.22.6] - 2026-04-03
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 0117620 chore(ci): streamline CI workflows with path-based change detection - Bump version to 0.22.5
+
+
+## [0.22.5] - 2026-04-03
+
+### Changed
+- **CI**: Streamlined `ci.yml` — added path-based change detection to skip heavy jobs on docs-only PRs, removed scheduled cron runs and `comprehensive` test scope
+- **CI**: Simplified `codeql.yml` workflow
+- **CI**: Added `test-latest.yml` for latest dependency testing
+- **CI**: Removed redundant summary job from `release.yml`
+- **CI**: Simplified `version-bump.yml`
+- **Docs**: Updated `.github/workflows/README.md` and `.github/actions/README.md`
+
+### Removed
+- **CI**: Removed `.github/actions/prepare-release/action.yml` composite action
+
+## [0.22.4] - 2026-04-03
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 9c56fe0 Review article: fix front matter and expand content for wizard-topples post (#47)
+
+
+## [0.22.3] - 2026-04-02
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 059244d fix(landing): stabilize hero layout and scroll animations (#44)
+
+
+## [0.22.2] - 2026-04-02
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- a9b8daf docs(prompts): update commit-publish workflow with PR branching and CI fix guidance
+
+
+## [0.22.1] - 2026-04-02
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- a82f670 chore(ci): update Gemfile.lock to v0.22.0 and upgrade actions/checkout to v5
+
+
+## [0.22.0] - 2026-04-01
+
+### Added
+- **Copilot Agent dropdown**: New `btn-success` dropdown in the intro section action button group that lists AI prompt templates, each opening a pre-filled GitHub issue assigned to `@copilot` with the selected prompt body, page context, and environment metadata
+- **`_data/prompts.yml`**: Data-driven prompt registry with 9 built-in templates (article-review, code-implementation, code-refactoring, debugging, documentation, requirements-analysis, system-design, test-generation, prompt-engineering)
+- **`docs/implementation/copilot-agent-prompt-button.md`**: Full implementation guide covering architecture, configuration, prompt registry, issue body structure, customization, troubleshooting, and FAQ
+
+### Changed
+- **`_includes/content/intro.html`**: Replaced single Copilot Agent link with a prompt-selection dropdown; `repo_branch` now sourced from `site.branch | default: "main"` (fixes hardcoded `master`); file path uses dedicated `file_path` variable; issue title format is `[Prompt Label] Page Title` with `ai-agent` label pre-applied
+- **`docs/implementation/README.md`**: Added Copilot Agent Prompt Button entry to contents table
+
+## [0.21.6] - 2026-03-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 56c70b8 docs: fix Quick Links, harmonize bash commands, and update version references across READMEs (#42)
+
+
+## [0.21.5] - 2026-03-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- c74f26d Automate README.md version sync and fix GitHub release dispatch in release workflow (#40)
+
+
+## [0.21.4] - 2026-03-29
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 3c96620 feat: vendor assets, theme architecture, CI and docs (v0.21.3) (#39)
+
+
+## [0.21.3] - 2026-03-29
+
+### Changed
+- **Test runner**: When `test.conf` sets a non-default `TEST_TIMEOUT_DEFAULT`, pass `--timeout` only to suites whose scripts accept it (`core`, `deployment`, `quality`). Avoids `Unknown option: --timeout` on installation and site-generation suites.
+- **Vendor assets (GitHub Pages)**: Bootstrap, jQuery, Bootstrap Icons, MathJax, Mermaid, Font Awesome, and GitHub Calendar load from committed `assets/vendor/` with `relative_url` (no runtime CDN for core assets). Added `vendor-manifest.json`, `scripts/vendor-install.sh`, and `npm run vendor:install`. `.gitignore` uses `/vendor/` for Bundler only; removed blanket `vendor/` from Jekyll `exclude` so `assets/vendor/` is published. Docker base image includes `jq` for vendor installs; `scripts/bin/build` runs vendor-install before gem build.
+- **Mermaid vendor source**: `mermaid` is a devDependency; `npm run vendor:mermaid` copies `node_modules/mermaid/dist/mermaid.min.js` into `assets/vendor/mermaid/`. The jsDelivr Mermaid entry was removed from `vendor-manifest.json`; `vendor-install.sh` copies from npm when `node_modules` is present.
+- Version bump: patch release
+- **CSS architecture**: Removed unused `assets/css/custom.css` (legacy `#mainNav`); overrides use `_sass/custom.scss` or optional `user-overrides.css`. Replaced vendored `_sass/core/_docs.scss` (~3.2k lines) with trimmed `_sass/core/_docs-layout.scss`. Theme modes: `_sass/theme/_color-modes.scss` re-exports `_wizard-mode.scss` (wizard Sass/CSS) and `_css-variables.scss` (`--bd-*` tokens); dropped duplicate blocks from `_theme.scss`, duplicate Bootstrap font/line-height block in `_variables.scss`, and unused social/base16 duplicates from `_variables.scss`. Feature metadata now points styles at `_docs-layout.scss`.
+- **Optional npm Bootstrap**: Added `package.json` with `npm run css:bootstrap` (Dart Sass + Bootstrap 5.3.3) producing `assets/css/vendor/bootstrap-from-npm.css`; documented alternate `<link>` in `_includes/core/head.html`. `stats.css` remains a conditional stylesheet for the stats layout only.
+
+### Commits in this release
+- 1fd2061 Enhance navigation UX: responsive design, accessibility, and interaction polish (#25)
+- 9a27ad7 feat(aieo): add structured data, E-E-A-T signals, FAQ, glossary, and roadmap pages (#38)
+- 96a31f9 chore(deps): update Ruby gem dependencies (#37)
+
+
+## [0.21.2] - 2026-03-21
+
+### Changed
+- Version bump: patch release
+- Release tooling: RubyGems publishing now supports API-key auth via `.env` (`RUBY_API_KEY` mapped to `GEM_HOST_API_KEY`)
+
+### Commits in this release
+- 34bed37 chore(deps): update Ruby gem dependencies (#31)
+- 50ebdd4 chore(deps): update Ruby gem dependencies (#32)
 
 ## [0.21.1] - 2026-03-13
 
@@ -1477,13 +2440,6 @@
 - Initial plan
 - Initial plan
 
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [Unreleased]
-
 ### Added
 
 - Comprehensive documentation organization system in `/docs/` directory
@@ -1494,6 +2450,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Migrated scattered documentation files to organized structure
 - Improved documentation discoverability and maintenance
+
 
 ## [0.5.0] - 2025-10-25
 

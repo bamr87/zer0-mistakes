@@ -24,24 +24,41 @@ This directory contains the CI/CD workflows for the zer0-mistakes Jekyll theme.
 
 ### 1. `ci.yml` - Continuous Integration Pipeline
 
-**Triggers:** Push to `main`/`develop`, Pull Requests, Daily schedule, Manual dispatch
+**Triggers:** Push to `main`/`develop`, Pull Requests, Manual dispatch
 
-The comprehensive CI pipeline that validates code quality, runs tests, and builds the gem.
+The CI pipeline validates code quality, runs tests, builds the gem, and performs Docker integration testing. Uses `dorny/paths-filter` to detect changed files and skip heavy jobs on docs-only changes.
 
 #### Jobs:
-| Job | Description | Timeout |
-|-----|-------------|---------|
-| `fast-checks` | Quick syntax validation | 5 min |
-| `quality-checks` | Linting, security audit, markdown checks | 10 min |
-| `test` | Full test suite across Ruby 3.2, 3.3 | 15 min |
-| `build` | Gem build and validation | 10 min |
-| `performance` | Jekyll build performance (scheduled/comprehensive) | 15 min |
-| `integration` | Docker integration tests (main branch) | 10 min |
-| `summary` | Final status report | - |
+| Job | Description | Condition | Timeout |
+|-----|-------------|-----------|---------|
+| `detect-changes` | Identifies code/docker/content changes | Always | 3 min |
+| `fast-checks` | Quick syntax validation | Code changes only | 5 min |
+| `quality-checks` | Linting, security audit, markdown checks | Always (covers docs PRs) | 10 min |
+| `test` | Full gate-parity suite: all non-Playwright theme suites (core, deployment, quality, installation, installer, site_generation, obsidian) + canonical script suites (`./scripts/bin/test`: lib unit, theme validate, integration, installer e2e) + Playwright smoke tier (and snapshots when CSS/layout changes) | Code changes only | 25 min |
+| `build` | Gem build, validation, and install test | Code changes only | 10 min |
+| `integration` | Docker build + critical page accessibility | Code or Docker changes | 12 min |
+
+#### Job Dependency Graph:
+```
+detect-changes → fast-checks → quality-checks → test → build
+                                              → integration
+```
 
 #### Manual Dispatch Options:
-- **test_scope**: `fast`, `standard`, or `comprehensive`
+- **test_scope**: `fast` (skips Playwright snapshot tier) or `standard`
 - **fix_markdown**: Auto-fix markdown formatting issues
+
+#### Path Filter Behavior:
+| Change Type | Jobs Run | Estimated Time |
+|-------------|----------|----------------|
+| Markdown/docs only | detect-changes, quality-checks | ~3 min |
+| Code changes (no styling) | All jobs; Playwright snapshot tier skipped | ~12 min |
+| Styling changes (`_sass/`, `assets/`, `_layouts/`, `_includes/`, `test/visual/`) | All jobs incl. Playwright snapshot tier | ~15 min |
+| Docker changes | detect-changes, quality-checks, integration | ~8 min |
+
+#### Playwright tiers in the `test` job:
+- **Smoke** — runs on every code-change PR (CSS load, Bootstrap tokens, layout chrome, behavioral DOM, a11y component checks). Failures upload `test/visual-results/` as a `playwright-smoke` artifact (14-day retention).
+- **Snapshots** — path-filtered to styling changes; pixel screenshots of the homepage in each of the 9 theme skins. Failures upload as `playwright-snapshots`. Baselines live in `test/visual/snapshots/` (committed). Refresh with `./test/update-snapshots.sh` and commit.
 
 ---
 
@@ -87,7 +104,6 @@ Unified release workflow that publishes to RubyGems and creates GitHub releases.
 | `build` | Build gem, generate install script | After validate |
 | `publish-gem` | Publish to RubyGems | Tag push or manual with publish_gem |
 | `github-release` | Create GitHub release with assets | After build |
-| `summary` | Release pipeline summary | Always |
 
 #### Manual Dispatch Options:
 | Input | Type | Description |
@@ -132,11 +148,38 @@ Converts notebooks to Jekyll-friendly Markdown and (on push events) commits/push
 
 ### 7. `codeql.yml` - CodeQL Security Scanning
 
-**Triggers:** Push/PR to `main`, Weekly schedule
+**Triggers:** Push/PR to `main` (code file changes only), Weekly schedule
 
-Runs CodeQL analysis for Actions, JS/TS, Python, and Ruby.
+Runs CodeQL analysis for Actions, JS/TS, Python, and Ruby. Path-filtered on push/PR to skip when only docs/content change.
 
 ---
+
+## Gate Coverage — What Enforces What
+
+The "controls" contract for the Zer0-Mistake Quality Framework (roadmap v1.13):
+every quality gate a contributor can run locally must be enforced somewhere in
+CI, and warn-only gates must be temporary and tracked in the backlog.
+
+| Quality gate | Local command | CI enforcement | Trigger |
+|---|---|---|---|
+| Quick preflight (files, versions, YAML, config contract) | `./scripts/bin/validate --quick` | `ci.yml` → `fast-checks` | PR + push (code changes) |
+| Lint (markdown, YAML), frontmatter | `markdownlint` / `yamllint` | `ci.yml` → `quality-checks` | PR + push (always) |
+| Theme suites (core, deployment, quality, installation, installer, site_generation, obsidian) | `./test/test_runner.sh --suites <list>` | `ci.yml` → `test` | PR + push (code changes) |
+| Script suites (lib unit, theme validate, integration, installer e2e) | `./scripts/bin/test` | `ci.yml` → `test` | PR + push (code changes) |
+| Playwright smoke tier | `./test/test_runner.sh --suites playwright` | `ci.yml` → `test` | PR + push (code changes) |
+| Playwright snapshot tier | `./test/test_runner.sh --suites playwright_snapshots` | `ci.yml` → `test` — ⚠ warn-only until baselines refresh (backlog T-013) | PR + push (styling changes) |
+| Gem build + install | `./scripts/build` | `ci.yml` → `build` | PR + push (code changes) |
+| Docker boot + critical pages | `docker compose up` | `ci.yml` → `integration` | PR + push (code or docker changes) |
+| Roadmap ↔ README ↔ version consistency | `./scripts/generate-roadmap.sh --check` / `--validate` | `roadmap-sync.yml` | PR (check) + push to main (regenerate) |
+| Backlog schema | `ruby scripts/sync-backlog.rb --check` | `backlog-sync.yml` | PR (check) + push to main (sync issues) |
+| Docs front matter + internal links | `markdown-link-check` | `docs-validate.yml` — ⚠ warn-only until baseline is clean (backlog T-014) | PR (docs changes) |
+| Docs freshness (staleness report) | — | `docs-freshness.yml` | Weekly schedule |
+| Latest-dependency canary (unpinned build + HTMLProofer) | — | `test-latest.yml` | Daily schedule + PR/push |
+| Security scanning (CodeQL) | — | `codeql.yml` | PR + push (code changes) + weekly |
+| Installer cross-platform matrix | `test/test_install_*.sh` | `install-matrix.yml` | PR (installer paths) + manual |
+
+Known intentional gaps (tracked): snapshot tier warn-only (T-013), docs
+link-check warn-only (T-014), locale-independence guard not yet in CI (T-015).
 
 ## Workflow Dependencies
 
@@ -157,7 +200,6 @@ All workflows use shared composite actions from `.github/actions/`:
 - `configure-git` - Git configuration for automated commits
 - `test-suite` - Comprehensive test execution
 - `quality-checks` - Code quality validation
-- `prepare-release` - Build gem and prepare release assets
 
 See [`.github/actions/README.md`](../actions/README.md) for action documentation.
 
@@ -166,6 +208,10 @@ See [`.github/actions/README.md`](../actions/README.md) for action documentation
 To test workflows locally before pushing:
 
 ```bash
+# Canonical preflight validation
+./scripts/validate --quick
+./scripts/validate --start-docker
+
 # Preview version bump
 ./scripts/release patch --dry-run
 
@@ -173,7 +219,7 @@ To test workflows locally before pushing:
 ./scripts/build
 
 # Run tests
-./test/test_runner.sh --verbose
+./scripts/bin/test --verbose
 
 # Analyze commits for version bump type
 ./scripts/analyze-commits.sh HEAD~5..HEAD
@@ -197,5 +243,6 @@ To test workflows locally before pushing:
 
 ### CI failures
 - Check individual job logs for specific errors
-- Run tests locally: `./test/test_runner.sh`
+- Run quick validation locally: `./scripts/validate --quick`
+- Run tests locally: `./scripts/bin/test`
 - Validate gem: `./scripts/build && gem spec jekyll-theme-zer0-*.gem`

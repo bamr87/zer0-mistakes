@@ -1,0 +1,6 @@
+// Optional npm build: compiles Bootstrap from node_modules (same major as CDN in head.html).
+// Run from repo root: npm install && npm run css:bootstrap
+// Output: assets/css/vendor/bootstrap-from-npm.css
+// To use: point the Bootstrap <link> in _includes/core/head.html at that file instead of jsDelivr.
+
+@import "bootstrap/scss/bootstrap";

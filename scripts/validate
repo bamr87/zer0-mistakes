@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# ============================================================================
+# WRAPPER: This script forwards to scripts/bin/validate
+#
+# The canonical location is scripts/bin/validate. This wrapper exists for
+# backward compatibility with VS Code tasks, Make targets, and local habits.
+# ============================================================================
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec "$SCRIPT_DIR/bin/validate" "$@"
