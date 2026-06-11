@@ -2,7 +2,7 @@
 title: zer0-mistakes
 sub-title: AI-Native Jekyll Theme
 description: AI-native Jekyll theme for GitHub Pages — Docker-first development, AI-powered installation, multi-agent integration (Copilot, Codex, Cursor, Claude), AI preview-image generation, and AIEO content optimization with Bootstrap 5.3.
-version: 1.12.2
+version: 1.13.1
 layout: landing
 tags:
   - jekyll
@@ -20,7 +20,7 @@ categories:
   - bootstrap
   - ai-tooling
 created: 2024-02-10T23:51:11.480Z
-lastmod: 2026-06-10T22:17:20.000Z
+lastmod: 2026-06-11T21:37:24.000Z
 draft: false
 permalink: /
 slug: zer0
@@ -830,10 +830,10 @@ gantt
     v1.9 Installer v2 & Site Scraper :done, 2026-05, 2026-05
     v1.10 Roadmap Validation     :done, 2026-06, 2026-06
     v1.11 Continuous-Evolution Loop :done, 2026-06, 2026-06
+    v1.12 Headless Endpoints     :done, 2026-06, 2026-06
     section Current
-    v1.12 Headless Endpoints     :active, 2026-06, 2026-06
+    v1.13 Zer0-Mistake Quality Framework :active, 2026-06, 2026-08
     section Future
-    v1.13 Zer0-Mistake Quality Framework :2026-06, 2026-08
     v2.0 CMS Integration         :2026-06, 2026-08
     v2.1 i18n Support            :2026-08, 2026-10
     v2.2 Advanced Analytics      :2026-10, 2026-12
@@ -864,8 +864,8 @@ gantt
 | **v1.9** | ✅ Completed | May 2026 | Modular installer v2 with deploy plugins, AI wizard pipeline, and a site scraper. |
 | **v1.10** | ✅ Completed | Jun 2026 | Roadmap integrity validation and catch-up milestones so the roadmap tracks the shipped gem. |
 | **v1.11** | ✅ Completed | Jun 2026 | Self-sustaining backlog loop so AI agents keep improving the repo between human sessions. |
-| **v1.12** | 🚧 In Progress | Current (1.12.x) | Machine-readable site endpoints for downstream sites and AI agents. |
-| **v1.13** | 🗓 Planned | Q3 2026 | Close the gap between the repo's quality gates and what CI actually enforces — no mistake lands green. |
+| **v1.12** | ✅ Completed | Jun 2026 | Machine-readable site endpoints for downstream sites and AI agents. |
+| **v1.13** | 🚧 In Progress | Current (1.13.x) | Close the gap between the repo's quality gates and what CI actually enforces — no mistake lands green. |
 | **v2.0** | 🗓 Planned | Q3 2026 | Headless CMS integration with a content API and admin dashboard. |
 | **v2.1** | 🗓 Planned | Q4 2026 | Multi-language content support with locale-aware routing. |
 | **v2.2** | 🗓 Planned | Q4 2026 | Visual theme customizer, A/B testing, and conversion funnels. |
@@ -909,7 +909,7 @@ git push origin feature/awesome-feature
 
 | Metric | Value |
 |--------|-------|
-| **Current Version** | 1.12.2 ([RubyGems](https://rubygems.org/gems/jekyll-theme-zer0), [CHANGELOG](/CHANGELOG)) |
+| **Current Version** | 1.13.1 ([RubyGems](https://rubygems.org/gems/jekyll-theme-zer0), [CHANGELOG](/CHANGELOG)) |
 | **Documented Features** | 43 ([Feature Registry](https://github.com/bamr87/zer0-mistakes/blob/main/_data/features.yml)) |
 | **Setup Time** | 2-5 minutes ([install.sh benchmarks](https://github.com/bamr87/zer0-mistakes/blob/main/install.sh)) |
 | **Documentation Pages** | 70+ ([browse docs](https://zer0-mistakes.com/pages/)) |
@@ -964,6 +964,6 @@ And these AI partners that make zer0-mistakes truly AI-native:
 
 **Built with ❤️ — and a little help from our AI partners — for the Jekyll community**
 
-**v1.12.2** • [Changelog](CHANGELOG.md) • [License](LICENSE) • [Contributing](CONTRIBUTING.md) • [AI Agent Guide](AGENTS.md)
+**v1.13.1** • [Changelog](CHANGELOG.md) • [License](LICENSE) • [Contributing](CONTRIBUTING.md) • [AI Agent Guide](AGENTS.md)
 
 

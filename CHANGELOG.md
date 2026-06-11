@@ -7,14 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+- **Admin config page (T-009 hardening)**: added a pure-Liquid line-redaction layer for the hidden `<pre id="cfg-full-yaml">` element — the `sanitize_config_yaml` plugin filter shipped in 1.13.1 does not run on GitHub Pages builds (safe mode ignores custom plugins, and the unknown filter is a silent no-op), so Pages-built sites were still injecting raw config; the Liquid layer protects every build path, with the plugin filter kept as defense-in-depth
+
+### Fixed
+- **Workflow lint (T-017)**: `version-bump.yml` now passes the repo yamllint config (trailing spaces, bracket spacing, sequence indentation) — these pre-existing violations failed the `auto-version` integration suite on every code PR once the T-012 gate went live; YAML verified semantically identical before/after
+- **Changelog tooling**: `update_changelog_file` normalizes trailing newlines on the entry, guaranteeing exactly one blank line before the next release block even when callers pass entries via command substitution (review feedback on the T-012 PR)
+
+## [1.13.1] - 2026-06-11
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 583fa997 fix(infra): sanitize sensitive config keys before DOM injection (T-009) (#141)
+
+### Security
+- **Admin config page sanitization (T-009)**: the hidden `<pre id="cfg-full-yaml">` element on the admin config page now has values masked for keys matching `api_key`, `secret`, `password`, `token`, and `phc_` (PostHog) prefixes via a new `sanitize_config_yaml` Liquid filter (`_plugins/sanitize_config_filter.rb`); the corresponding Playwright regression guard (`test/visual/security.spec.js`) is promoted from `test.fixme` to a live test
+
+## [1.13.0] - 2026-06-11
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- cee6f379 feat(ci): gate PRs on the full canonical test entrypoint (T-012) (#138)
+
 ### Added
 - **CI gate parity (T-012)**: the `ci.yml` test job now runs every non-Playwright theme suite (core, deployment, quality, installation, installer, site_generation, obsidian) plus the canonical `./scripts/bin/test` script suites (lib unit, theme validate, integration, installer e2e) on every code PR — previously only `core,quality,installation` gated, which is how three suites rotted unnoticed before PR #132; a "Gate Coverage — What Enforces What" table in `.github/workflows/README.md` now documents the controls contract
 
 ### Fixed
 - **Release changelog path**: `version-bump.yml` now inserts release entries via the shared `update_changelog_file` library instead of an inline `head`/`tail` prepend that duplicated (and regressed) the insertion logic — the 1.12.1 release had pushed the file preamble below its entry and stranded the pending `[Unreleased]` notes; both repaired in this file
-
-### Security
-- **Admin config page (T-009)**: the hidden `<pre id="cfg-full-yaml">` element (source for the "Copy Full Config" button) now redacts any `_config.yml` line mentioning `api_key`, `secret`, `password`, `token`, or a `phc_` PostHog key before DOM injection — pure Liquid, so it also protects GitHub Pages builds where custom plugins don't run; the frozen regression test in `test/visual/security.spec.js` is promoted to a live `test()`; the visible Raw-YAML tab is unchanged
 
 ## [1.12.2] - 2026-06-10
 

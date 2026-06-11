@@ -220,14 +220,23 @@ Get-Content {{ page.config-dir }}/config-utf16.txt |
 </div>
 
 <!-- Hidden full YAML used by the viewer's "Copy Full Config" button.
-     Sanitized line-by-line (T-009): any line mentioning api_key, secret,
-     password, token, or a phc_ PostHog key is replaced with a redaction
-     marker so secrets never reach the page DOM. Pure Liquid — works on
-     GitHub Pages where custom plugins don't run. -->
+     Sanitized twice (T-009), belt and braces:
+     1. Pure-Liquid line filter — any line mentioning api_key, secret,
+        password, token, or a phc_ PostHog key becomes "# [redacted]".
+        This is the layer that protects GitHub Pages builds, where custom
+        plugins (and therefore Liquid filters) do not run.
+     2. sanitize_config_yaml (_plugins/sanitize_config_filter.rb) masks
+        values on plugin-enabled builds; on GitHub Pages the unknown
+        filter is a silent no-op, which is why layer 1 must exist.
+     cfg_nl captures exactly one newline (both tags flush-left — keep them
+     that way). If the split ever degraded, the whole config would match the
+     probe and collapse to a single redaction marker: fail-closed, never raw.
+     Lines are HTML-escaped; the copy button reads textContent, which
+     decodes entities back to the original characters. -->
 {% capture cfg_full_raw %}{% include_relative _config.yml %}{% endcapture %}
 {% capture cfg_nl %}
 {% endcapture %}{% assign cfg_lines = cfg_full_raw | split: cfg_nl %}
-<pre id="cfg-full-yaml" class="d-none">{% for cfg_line in cfg_lines %}{% assign cfg_probe = cfg_line | downcase %}{% if cfg_probe contains 'api_key' or cfg_probe contains 'secret' or cfg_probe contains 'password' or cfg_probe contains 'token' or cfg_probe contains 'phc_' %}# [redacted]{% else %}{{ cfg_line }}{% endif %}
+<pre id="cfg-full-yaml" class="d-none">{% for cfg_line in cfg_lines %}{% assign cfg_probe = cfg_line | downcase %}{% if cfg_probe contains 'api_key' or cfg_probe contains 'secret' or cfg_probe contains 'password' or cfg_probe contains 'token' or cfg_probe contains 'phc_' %}# [redacted]{% else %}{{ cfg_line | sanitize_config_yaml | escape }}{% endif %}
 {% endfor %}</pre>
 
 <!-- Config Utility JS (must load after DOM) -->

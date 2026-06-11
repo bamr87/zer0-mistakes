@@ -60,7 +60,7 @@
 meta:
   title: "zer0-mistakes Roadmap"
   tagline: "Past releases, current focus, and future plans for the zer0-mistakes Jekyll theme."
-  updated: 2026-06-10
+  updated: 2026-06-11
 
 milestones:
   # --- Completed -------------------------------------------------------------
@@ -313,30 +313,28 @@ milestones:
       - "`/repo-audit` and `/backlog-implement` agent routines"
       - "Documentation maintenance system and consolidation"
 
-  # --- Current ---------------------------------------------------------------
-
   - version: "1.12"
     title: "Headless Endpoints"
-    status: active
-    section: Current
+    status: completed
+    section: Completed
     start: 2026-06
     end: 2026-06
-    target: "Current (1.12.x)"
+    released: 2026-06-03
     summary: "Machine-readable site endpoints for downstream sites and AI agents."
     features:
       - "Auto-generated `/search.json` endpoint for downstream sites"
       - "Auto-generated `/sitemap/` endpoint"
       - "Ruby gem and Mermaid dependency updates"
 
-  # --- Future ----------------------------------------------------------------
+  # --- Current ---------------------------------------------------------------
 
   - version: "1.13"
     title: "Zer0-Mistake Quality Framework"
-    status: planned
-    section: Future
+    status: active
+    section: Current
     start: 2026-06
     end: 2026-08
-    target: "Q3 2026"
+    target: "Current (1.13.x)"
     summary: "Close the gap between the repo's quality gates and what CI actually enforces — no mistake lands green."
     features:
       - "CI gate parity — PRs run the full canonical test entrypoint (lib unit, theme, integration, installer e2e), not a subset"
