@@ -302,8 +302,11 @@ tasks:
       contributors are told to run.
       Done 2026-06-10: test job expanded to all seven non-Playwright theme
       suites plus a `./scripts/bin/test` step; gate-coverage table added to
-      the workflows README; broken-test canary experiment run on the
-      implementing draft PR (canary commit failed CI, then reverted).
+      the workflows README. Canary experiment: a deliberately failing
+      integration test was committed and reverted on the implementing PR;
+      GitHub did not schedule the CI pipeline on the canary push, so the
+      gate failure was verified locally (`./scripts/bin/test` exit 1) and
+      the new gate is exercised for real by the PR's final CI run.
     acceptance:
       - "The `ci.yml` test job executes `./scripts/bin/test` (or an explicit suite list that includes lib, integration, obsidian, and installer e2e) on every code PR."
       - "A deliberately broken integration test fails CI in a draft PR experiment (then reverted)."
