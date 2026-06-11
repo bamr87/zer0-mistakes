@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **Release changelog path**: `version-bump.yml` now inserts release entries via the shared `update_changelog_file` library instead of an inline `head`/`tail` prepend that duplicated (and regressed) the insertion logic — the 1.12.1 release had pushed the file preamble below its entry and stranded the pending `[Unreleased]` notes; both repaired in this file
 
+### Security
+- **Admin config page (T-009)**: the hidden `<pre id="cfg-full-yaml">` element (source for the "Copy Full Config" button) now redacts any `_config.yml` line mentioning `api_key`, `secret`, `password`, `token`, or a `phc_` PostHog key before DOM injection — pure Liquid, so it also protects GitHub Pages builds where custom plugins don't run; the frozen regression test in `test/visual/security.spec.js` is promoted to a live `test()`; the visible Raw-YAML tab is unchanged
+
 ## [1.12.2] - 2026-06-10
 
 ### Added
