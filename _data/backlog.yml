@@ -55,8 +55,8 @@
 
 meta:
   title: "zer0-mistakes Backlog"
-  updated: 2026-06-10
-  next_id: 17
+  updated: 2026-06-11
+  next_id: 18
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -402,4 +402,26 @@ tasks:
     links: { issue: null, pr: null, roadmap: "1.13" }
     created: 2026-06-10
     updated: 2026-06-10
+
+  - id: T-017
+    title: "Fix yamllint violations in .github/workflows/version-bump.yml"
+    status: open
+    priority: P2
+    area: lint
+    risk: low
+    effort: S
+    source: audit
+    summary: >-
+      `.github/workflows/version-bump.yml` has ~30 trailing-space lines, two
+      indentation errors, and one brackets error that cause the `auto-version`
+      integration test (which runs yamllint) to fail in CI on every PR. Discovered
+      while babysitting PR #141 — the file was unchanged by that PR, confirming
+      the failures are pre-existing.
+    acceptance:
+      - "`yamllint -c .github/config/.yamllint.yml .github/workflows/version-bump.yml` exits 0."
+      - "`./scripts/test/integration/auto-version` passes the 'version-bump workflow syntax' check."
+      - "No functional change to the workflow logic."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-06-11
+    updated: 2026-06-11
 
