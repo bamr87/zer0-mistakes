@@ -341,18 +341,23 @@ update_changelog_file() {
 
     # Insert the new entry before the first release heading so the file
     # header/preamble (title, Keep a Changelog blurb) stays at the top.
+    # Normalize the entry's trailing newlines first: callers that build the
+    # entry via command substitution (e.g. version-bump.yml's
+    # `"$(cat "$TEMP_FILE")"`) lose them, so guarantee exactly one blank
+    # line between the entry and the next release block here.
+    while [[ "$entry" == *$'\n' ]]; do entry="${entry%$'\n'}"; done
+
     local first_release
     first_release=$(grep -n '^## ' "$CHANGELOG_FILE" | head -1 | cut -d: -f1)
 
     {
         if [[ -n "$first_release" ]]; then
             head -n "$((first_release - 1))" "$CHANGELOG_FILE"
-            echo "$entry"
+            printf '%s\n\n' "$entry"
             tail -n +"$first_release" "$CHANGELOG_FILE"
         else
             cat "$CHANGELOG_FILE"
-            echo ""
-            echo "$entry"
+            printf '\n%s\n' "$entry"
         fi
     } > "${CHANGELOG_FILE}.tmp"
 
