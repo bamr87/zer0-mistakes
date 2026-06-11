@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.13.1] - 2026-06-11
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 583fa997 fix(infra): sanitize sensitive config keys before DOM injection (T-009) (#141)
 
 ### Security
 - **Admin config page sanitization (T-009)**: the hidden `<pre id="cfg-full-yaml">` element on the admin config page now has values masked for keys matching `api_key`, `secret`, `password`, `token`, and `phc_` (PostHog) prefixes via a new `sanitize_config_yaml` Liquid filter (`_plugins/sanitize_config_filter.rb`); the corresponding Playwright regression guard (`test/visual/security.spec.js`) is promoted from `test.fixme` to a live test
