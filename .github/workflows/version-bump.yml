@@ -310,21 +310,15 @@ jobs:
         fi
         
         echo "" >> "$TEMP_FILE"
-        
-        # Prepend to CHANGELOG.md
-        if [[ -f "CHANGELOG.md" ]]; then
-          # Insert after the first header line
-          head -1 CHANGELOG.md > CHANGELOG.new
-          echo "" >> CHANGELOG.new
-          cat "$TEMP_FILE" >> CHANGELOG.new
-          tail -n +2 CHANGELOG.md >> CHANGELOG.new
-          mv CHANGELOG.new CHANGELOG.md
-        else
-          echo "# Changelog" > CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          cat "$TEMP_FILE" >> CHANGELOG.md
-        fi
-        
+
+        # Insert via the shared library (single source of truth for changelog
+        # behavior): folds any pending [Unreleased] notes into the new entry
+        # and inserts before the first release heading, preserving the
+        # Keep a Changelog preamble. The previous inline head/tail prepend
+        # duplicated (and regressed) that logic — see the 1.12.1 entry.
+        source scripts/lib/changelog.sh
+        update_changelog_file "$(cat "$TEMP_FILE")"
+
         rm -f "$TEMP_FILE"
         echo "✅ Changelog updated"
 

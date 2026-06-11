@@ -34,7 +34,7 @@ The CI pipeline validates code quality, runs tests, builds the gem, and performs
 | `detect-changes` | Identifies code/docker/content changes | Always | 3 min |
 | `fast-checks` | Quick syntax validation | Code changes only | 5 min |
 | `quality-checks` | Linting, security audit, markdown checks | Always (covers docs PRs) | 10 min |
-| `test` | Full test suite (Ruby ${{ matrix.ruby }}) + Playwright smoke tier (and snapshots when CSS/layout changes) | Code changes only | 25 min |
+| `test` | Full gate-parity suite: all non-Playwright theme suites (core, deployment, quality, installation, installer, site_generation, obsidian) + canonical script suites (`./scripts/bin/test`: lib unit, theme validate, integration, installer e2e) + Playwright smoke tier (and snapshots when CSS/layout changes) | Code changes only | 25 min |
 | `build` | Gem build, validation, and install test | Code changes only | 10 min |
 | `integration` | Docker build + critical page accessibility | Code or Docker changes | 12 min |
 
@@ -153,6 +153,33 @@ Converts notebooks to Jekyll-friendly Markdown and (on push events) commits/push
 Runs CodeQL analysis for Actions, JS/TS, Python, and Ruby. Path-filtered on push/PR to skip when only docs/content change.
 
 ---
+
+## Gate Coverage — What Enforces What
+
+The "controls" contract for the Zer0-Mistake Quality Framework (roadmap v1.13):
+every quality gate a contributor can run locally must be enforced somewhere in
+CI, and warn-only gates must be temporary and tracked in the backlog.
+
+| Quality gate | Local command | CI enforcement | Trigger |
+|---|---|---|---|
+| Quick preflight (files, versions, YAML, config contract) | `./scripts/bin/validate --quick` | `ci.yml` → `fast-checks` | PR + push (code changes) |
+| Lint (markdown, YAML), frontmatter | `markdownlint` / `yamllint` | `ci.yml` → `quality-checks` | PR + push (always) |
+| Theme suites (core, deployment, quality, installation, installer, site_generation, obsidian) | `./test/test_runner.sh --suites <list>` | `ci.yml` → `test` | PR + push (code changes) |
+| Script suites (lib unit, theme validate, integration, installer e2e) | `./scripts/bin/test` | `ci.yml` → `test` | PR + push (code changes) |
+| Playwright smoke tier | `./test/test_runner.sh --suites playwright` | `ci.yml` → `test` | PR + push (code changes) |
+| Playwright snapshot tier | `./test/test_runner.sh --suites playwright_snapshots` | `ci.yml` → `test` — ⚠ warn-only until baselines refresh (backlog T-013) | PR + push (styling changes) |
+| Gem build + install | `./scripts/build` | `ci.yml` → `build` | PR + push (code changes) |
+| Docker boot + critical pages | `docker compose up` | `ci.yml` → `integration` | PR + push (code or docker changes) |
+| Roadmap ↔ README ↔ version consistency | `./scripts/generate-roadmap.sh --check` / `--validate` | `roadmap-sync.yml` | PR (check) + push to main (regenerate) |
+| Backlog schema | `ruby scripts/sync-backlog.rb --check` | `backlog-sync.yml` | PR (check) + push to main (sync issues) |
+| Docs front matter + internal links | `markdown-link-check` | `docs-validate.yml` — ⚠ warn-only until baseline is clean (backlog T-014) | PR (docs changes) |
+| Docs freshness (staleness report) | — | `docs-freshness.yml` | Weekly schedule |
+| Latest-dependency canary (unpinned build + HTMLProofer) | — | `test-latest.yml` | Daily schedule + PR/push |
+| Security scanning (CodeQL) | — | `codeql.yml` | PR + push (code changes) + weekly |
+| Installer cross-platform matrix | `test/test_install_*.sh` | `install-matrix.yml` | PR (installer paths) + manual |
+
+Known intentional gaps (tracked): snapshot tier warn-only (T-013), docs
+link-check warn-only (T-014), locale-independence guard not yet in CI (T-015).
 
 ## Workflow Dependencies
 

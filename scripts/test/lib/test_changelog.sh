@@ -152,6 +152,15 @@ _v100_line=$(grep -n '^## \[1.0.0\]' CHANGELOG.md | cut -d: -f1)
 assert_true "[[ $_v101_line -lt $_v100_line ]]" "New entry inserted before previous release"
 assert_true "grep -q 'All notable changes' CHANGELOG.md" "Preamble preserved without Unreleased"
 
+# Case 3: entries passed via command substitution lose trailing newlines
+# (e.g. version-bump.yml's "$(cat "$TEMP_FILE")"); the insert must still
+# leave exactly one blank line before the next release block.
+printf '## [1.0.2] - 2026-06-11\n\n### Fixed\n- Another bug\n\n' > entry.txt
+update_changelog_file "$(cat entry.txt)" >/dev/null 2>&1
+_v101_line=$(grep -n '^## \[1.0.1\]' CHANGELOG.md | cut -d: -f1)
+assert_true "[[ -z \"\$(sed -n $((_v101_line - 1))p CHANGELOG.md)\" ]]" "Blank line separates entry from next release block"
+assert_true "[[ -n \"\$(sed -n $((_v101_line - 2))p CHANGELOG.md)\" ]]" "Exactly one blank line (no double spacing)"
+
 popd >/dev/null
 rm -rf "$_changelog_tmp"
 
