@@ -9,10 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **CI gate parity (T-012)**: the `ci.yml` test job now runs every non-Playwright theme suite (core, deployment, quality, installation, installer, site_generation, obsidian) plus the canonical `./scripts/bin/test` script suites (lib unit, theme validate, integration, installer e2e) on every code PR — previously only `core,quality,installation` gated, which is how three suites rotted unnoticed before PR #132; a "Gate Coverage — What Enforces What" table in `.github/workflows/README.md` now documents the controls contract
-- **Zer0-Mistake Quality Framework (planning)**: new roadmap milestone v1.13 and backlog tasks T-012–T-015 to close the gap between the repo's quality gates and what CI enforces — CI gate parity with the canonical `./scripts/bin/test` entrypoint (whose integration suites previously rotted unnoticed), re-armed pixel-snapshot and docs link-check gates, and a locale-independence regression guard; coverage baseline task T-005 repointed at the new milestone
 
 ### Fixed
 - **Release changelog path**: `version-bump.yml` now inserts release entries via the shared `update_changelog_file` library instead of an inline `head`/`tail` prepend that duplicated (and regressed) the insertion logic — the 1.12.1 release had pushed the file preamble below its entry and stranded the pending `[Unreleased]` notes; both repaired in this file
+
+## [1.12.2] - 2026-06-10
+
+### Added
+- **Zer0-Mistake Quality Framework (planning)**: new roadmap milestone v1.13 and backlog tasks T-012–T-015 to close the gap between the repo's quality gates and what CI enforces — CI gate parity with the canonical `./scripts/bin/test` entrypoint (whose integration suites previously rotted unnoticed), re-armed pixel-snapshot and docs link-check gates, and a locale-independence regression guard; coverage baseline task T-005 repointed at the new milestone
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 846bd9ff chore(backlog): plan the Zer0-Mistake Quality Framework (roadmap v1.13, T-012–T-015) (#133)
+- 33a727c0 docs: expand CLAUDE.md into a comprehensive Claude Code guide (#131)
 
 ## [1.12.1] - 2026-06-10
 
