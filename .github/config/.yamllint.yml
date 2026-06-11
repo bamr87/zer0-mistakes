@@ -12,3 +12,7 @@ rules:
   key-ordering: disable
   truthy:
     allowed-values: ['true', 'false', 'yes', 'no']
+  indentation:
+    spaces: 2
+    indent-sequences: whatever
+    check-multi-line-strings: false

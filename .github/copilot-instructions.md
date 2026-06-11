@@ -168,7 +168,7 @@ _includes/
 **Layout Hierarchy:**
 
 ```
-root.html (base) → default.html (main) → [journals.html, home.html, etc.]
+root.html (base) → default.html (main) → [article.html, home.html, etc.]
 ```
 
 ## 🚀 Critical Developer Workflows

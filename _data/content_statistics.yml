@@ -1,14 +1,14 @@
 ---
-generated_at: '2026-05-25 00:08:32'
+generated_at: '2026-05-30 19:26:05'
 overview:
   total_posts: 25
   total_pages: 148
   total_content: 173
   total_categories: 55
-  total_tags: 253
+  total_tags: 254
   total_authors: 5
-  total_words: 104060
-  average_words_per_post: 601.5
+  total_words: 106650
+  average_words_per_post: 616.5
   published: 173
   drafts: 14
 categories:
@@ -124,7 +124,7 @@ categories:
   - 1
 tags:
 - - jekyll
-  - 38
+  - 39
 - - docker
   - 14
 - - documentation
@@ -139,63 +139,55 @@ tags:
   - 9
 - - development
   - 8
-- - github-pages
-  - 7
 - - accessibility
   - 7
 - - obsidian
+  - 7
+- - github-pages
   - 7
 - - deployment
   - 6
 - - ci-cd
   - 6
-- - ui
-  - 6
 - - configuration
   - 6
-- - css
-  - 5
+- - ui
+  - 6
 - - search
-  - 5
-- - copilot
-  - 5
-- - reference
   - 5
 - - seo
   - 5
+- - copilot
+  - 5
+- - css
+  - 5
+- - reference
+  - 5
 - - setup
   - 5
-- - privacy
+- - workflow
   - 4
 - - git
   - 4
-- - workflow
-  - 4
 - - ruby
-  - 4
-- - analytics
-  - 4
-- - devops
   - 4
 - - performance
   - 4
-- - strategy
-  - 3
-- - features
-  - 3
-- - responsive
-  - 3
+- - devops
+  - 4
+- - analytics
+  - 4
+- - privacy
+  - 4
 - - tracking
   - 3
 - - customization
   - 3
-- - security
+- - sitemap
   - 3
-- - netlify
+- - responsive
   - 3
-- - planning
-  - 3
-- - version-control
+- - theme
   - 3
 - - installation
   - 3
@@ -203,383 +195,175 @@ tags:
   - 3
 - - yaml
   - 3
-- - keyboard
-  - 3
 - - front-matter
   - 3
-- - theme
+- - features
   - 3
-- - sitemap
+- - planning
   - 3
-- - hosting
-  - 2
-- - faq
-  - 2
-- - support
-  - 2
-- - glossary
-  - 2
-- - operations
-  - 2
-- - meta
-  - 2
-- - dns
-  - 2
-- - sidebar
-  - 2
-- - styles
-  - 2
-- - layouts
-  - 2
-- - kis
-  - 2
-- - templates
-  - 2
-- - components
-  - 2
-- - aipd
-  - 2
-- - getting-started
-  - 2
-- - liquid
-  - 2
-- - syntax
-  - 2
-- - highlighting
+- - strategy
+  - 3
+- - keyboard
+  - 3
+- - version-control
+  - 3
+- - security
+  - 3
+- - netlify
+  - 3
+- - markdown
   - 2
 - - toc
   - 2
-- - mermaid
-  - 2
-- - mathjax
-  - 2
-- - shortcuts
-  - 2
-- - python
-  - 2
-- - jupyter
-  - 2
-- - github
-  - 2
-- - gdpr
-  - 2
-- - authoring
-  - 2
-- - troubleshooting
-  - 2
-- - version
-  - 2
-- - remote-theme
-  - 2
-- - assets
-  - 2
-- - bash
+- - content
   - 2
 - - contributing
   - 2
-- - content
+- - aipd
   - 2
-- - markdown
-  - 2
-- - gem
-  - 2
-- - bundler
-  - 2
-- - release
-  - 2
-- - gems
-  - 2
-- - github-actions
-  - 2
-- - aieo
-  - 2
-- - digital-transformation
-  - 2
-- - tutorial
-  - 2
-- - frontend
-  - 2
-- - manufacturing
-  - 2
-- - business
-  - 2
-- - productivity
-  - 2
-- - web-design
-  - 2
-- - technology
-  - 2
-- - climate
-  - 2
-- - ai-assisted-development
-  - 2
-- - ci/cd
+- - kis
   - 2
 - - dry
   - 2
 - - dff
   - 2
-- - notebooks
+- - mermaid
+  - 2
+- - ci/cd
+  - 2
+- - mathjax
+  - 2
+- - ai-assisted-development
+  - 2
+- - shortcuts
+  - 2
+- - bash
+  - 2
+- - assets
+  - 2
+- - dns
+  - 2
+- - sidebar
+  - 2
+- - version
+  - 2
+- - styles
+  - 2
+- - layouts
+  - 2
+- - github
+  - 2
+- - jupyter
+  - 2
+- - templates
+  - 2
+- - components
+  - 2
+- - hosting
+  - 2
+- - python
+  - 2
+- - github-actions
+  - 2
+- - gems
+  - 2
+- - getting-started
+  - 2
+- - release
+  - 2
+- - gem
+  - 2
+- - gdpr
+  - 2
+- - faq
+  - 2
+- - glossary
+  - 2
+- - troubleshooting
+  - 2
+- - meta
+  - 2
+- - climate
+  - 2
+- - remote-theme
+  - 2
+- - support
+  - 2
+- - technology
+  - 2
+- - digital-transformation
+  - 2
+- - tutorial
+  - 2
+- - authoring
+  - 2
+- - frontend
+  - 2
+- - manufacturing
+  - 2
+- - liquid
+  - 2
+- - bundler
+  - 2
+- - productivity
+  - 2
+- - business
+  - 2
+- - web-design
+  - 2
+- - operations
+  - 2
+- - syntax
+  - 2
+- - aieo
+  - 2
+- - highlighting
+  - 2
+- - personalization
   - 1
-- - modal
-  - 1
-- - wcag
-  - 1
-- - skip-link
-  - 1
-- - logging
-  - 1
-- - '404'
-  - 1
-- - ux
-  - 1
-- - plugin
-  - 1
-- - footer
-  - 1
-- - headings
-  - 1
-- - vendor
-  - 1
-- - monitoring
-  - 1
-- - observability
-  - 1
-- - release-management
-  - 1
-- - continuous-delivery
-  - 1
-- - prerequisites
-  - 1
-- - future
+- - contact
   - 1
 - - math
   - 1
 - - latex
   - 1
-- - physics
+- - cross-platform
   - 1
 - - diagrams
+  - 1
+- - writing
+  - 1
+- - formatting
   - 1
 - - flowchart
   - 1
 - - mobile
   - 1
-- - quantum-computing
-  - 1
-- - fab
-  - 1
-- - javascript
-  - 1
-- - es6
-  - 1
-- - reliability
-  - 1
-- - posthog
-  - 1
-- - data-science
-  - 1
-- - preview
-  - 1
-- - images
-  - 1
-- - dall-e
-  - 1
-- - scroll-spy
-  - 1
-- - data-visualization
-  - 1
-- - startup
-  - 1
-- - opengraph
-  - 1
-- - twitter-cards
-  - 1
-- - indexing
-  - 1
-- - terminal
-  - 1
-- - zsh
+- - cheatsheet
   - 1
 - - containers
   - 1
-- - cheatsheet
-  - 1
-- - formatting
-  - 1
-- - writing
-  - 1
-- - cross-platform
-  - 1
-- - personalization
-  - 1
-- - contact
-  - 1
-- - email
-  - 1
-- - help
-  - 1
-- - roadmap
-  - 1
-- - releases
-  - 1
-- - ai-collaboration
-  - 1
-- - ai-automation
-  - 1
-- - ai-integration
-  - 1
-- - feature-flags
-  - 1
-- - code-review
-  - 1
-- - rouge
-  - 1
-- - collections
-  - 1
-- - organization
-  - 1
-- - domain
-  - 1
-- - collaboration
-  - 1
-- - pagination
-  - 1
-- - decision-making
-  - 1
-- - vault
-  - 1
-- - graph
-  - 1
-- - optimization
-  - 1
-- - revenue
-  - 1
-- - onboarding
-  - 1
-- - debugging
-  - 1
-- - customer-success
-  - 1
-- - entrepreneurship
-  - 1
-- - venture-capital
-  - 1
-- - structured-data
-  - 1
-- - funding
-  - 1
-- - remote-work
-  - 1
-- - scss
-  - 1
-- - custom-domain
-  - 1
-- - responsive-design
-  - 1
-- - html
-  - 1
-- - forms
-  - 1
-- - layout
-  - 1
-- - grid
-  - 1
-- - agents
-  - 1
-- - cursor
-  - 1
-- - dependencies
-  - 1
-- - embedded-systems
-  - 1
-- - machine-learning
-  - 1
-- - devcontainer
-  - 1
-- - codespaces
-  - 1
-- - edge-ai
-  - 1
-- - knowledge-management
-  - 1
-- - mdx
-  - 1
-- - mid-market
-  - 1
-- - architecture
-  - 1
-- - best-practices
-  - 1
-- - ai-development
-  - 1
-- - discovery
-  - 1
-- - about
-  - 1
-- - site-info
-  - 1
-- - infrastructure
-  - 1
-- - public-health
-  - 1
-- - climate-adaptation
-  - 1
-- - google
-  - 1
-- - cities
-  - 1
-- - ga4
-  - 1
-- - gtm
-  - 1
-- - marketing
-  - 1
-- - civic-infrastructure
-  - 1
-- - includes
-  - 1
-- - resilience
-  - 1
-- - communities
-  - 1
-- - future-of-work
-  - 1
-- - global
-  - 1
-- - menus
-  - 1
-- - admin
-  - 1
-- - dashboard
-  - 1
-- - research
-  - 1
-- - scroll
-  - 1
-- - breadcrumbs
-  - 1
-- - statistics
-  - 1
-- - code
-  - 1
-- - clipboard
-  - 1
-- - developer-experience
+- - startup
   - 1
 - - dark-mode
   - 1
 - - cookies
   - 1
-- - data
-  - 1
 - - ccpa
+  - 1
+- - ai-integration
+  - 1
+- - ai-automation
   - 1
 - - consent
   - 1
-- - decision-science
+- - ai-collaboration
   - 1
 - - zero-config
+  - 1
+- - releases
+  - 1
+- - roadmap
   - 1
 - - giscus
   - 1
@@ -587,15 +371,175 @@ tags:
   - 1
 - - github-discussions
   - 1
-- - dashboards
+- - help
   - 1
-- - validation
+- - notebooks
   - 1
-- - frontmatter
+- - data-science
+  - 1
+- - email
+  - 1
+- - skip-link
+  - 1
+- - debugging
+  - 1
+- - '404'
+  - 1
+- - optimization
+  - 1
+- - graph
+  - 1
+- - vault
+  - 1
+- - ux
+  - 1
+- - plugin
+  - 1
+- - footer
+  - 1
+- - pagination
+  - 1
+- - domain
+  - 1
+- - organization
+  - 1
+- - collections
+  - 1
+- - rouge
+  - 1
+- - headings
+  - 1
+- - vendor
+  - 1
+- - prerequisites
+  - 1
+- - fab
+  - 1
+- - zsh
+  - 1
+- - terminal
+  - 1
+- - javascript
+  - 1
+- - es6
+  - 1
+- - indexing
+  - 1
+- - twitter-cards
+  - 1
+- - opengraph
+  - 1
+- - posthog
+  - 1
+- - preview
+  - 1
+- - structured-data
+  - 1
+- - images
+  - 1
+- - dall-e
+  - 1
+- - beginner
+  - 1
+- - scroll-spy
+  - 1
+- - modal
+  - 1
+- - wcag
+  - 1
+- - statistics
+  - 1
+- - research
+  - 1
+- - tools
+  - 1
+- - b2b
   - 1
 - - content-operations
   - 1
-- - b2b
+- - mid-market
+  - 1
+- - knowledge-management
+  - 1
+- - edge-ai
+  - 1
+- - machine-learning
+  - 1
+- - embedded-systems
+  - 1
+- - grid
+  - 1
+- - layout
+  - 1
+- - forms
+  - 1
+- - html
+  - 1
+- - responsive-design
+  - 1
+- - remote-work
+  - 1
+- - global
+  - 1
+- - future-of-work
+  - 1
+- - communities
+  - 1
+- - resilience
+  - 1
+- - civic-infrastructure
+  - 1
+- - cities
+  - 1
+- - climate-adaptation
+  - 1
+- - funding
+  - 1
+- - venture-capital
+  - 1
+- - entrepreneurship
+  - 1
+- - customer-success
+  - 1
+- - onboarding
+  - 1
+- - revenue
+  - 1
+- - decision-making
+  - 1
+- - collaboration
+  - 1
+- - code-review
+  - 1
+- - feature-flags
+  - 1
+- - continuous-delivery
+  - 1
+- - release-management
+  - 1
+- - observability
+  - 1
+- - monitoring
+  - 1
+- - logging
+  - 1
+- - reliability
+  - 1
+- - quantum-computing
+  - 1
+- - physics
+  - 1
+- - future
+  - 1
+- - data-visualization
+  - 1
+- - dashboards
+  - 1
+- - decision-science
+  - 1
+- - data
+  - 1
+- - frontmatter
   - 1
 - - prd
   - 1
@@ -625,9 +569,67 @@ tags:
   - 1
 - - quality
   - 1
-- - tools
-  - 1
 - - docker-compose
+  - 1
+- - admin
+  - 1
+- - dashboard
+  - 1
+- - scroll
+  - 1
+- - breadcrumbs
+  - 1
+- - code
+  - 1
+- - clipboard
+  - 1
+- - developer-experience
+  - 1
+- - public-health
+  - 1
+- - infrastructure
+  - 1
+- - ai-development
+  - 1
+- - best-practices
+  - 1
+- - discovery
+  - 1
+- - about
+  - 1
+- - site-info
+  - 1
+- - google
+  - 1
+- - ga4
+  - 1
+- - gtm
+  - 1
+- - marketing
+  - 1
+- - includes
+  - 1
+- - menus
+  - 1
+- - scss
+  - 1
+- - custom-domain
+  - 1
+- - agents
+  - 1
+- - cursor
+  - 1
+- - dependencies
+  - 1
+- - devcontainer
+  - 1
+- - codespaces
+  - 1
+- - mdx
+  - 1
+- - architecture
+  - 1
+- - validation
   - 1
 authors:
   default: 20
@@ -748,7 +750,7 @@ word_statistics:
     type: post
     title: 'Urban Resilience: How Cities Prepare for Extreme Heat'
   README.md:
-    words: 5370
+    words: 5978
     type: page
     title: zer0-mistakes
   STATS_ENHANCEMENT_SUMMARY.md:
@@ -780,7 +782,7 @@ word_statistics:
     type: page
     title: Comprehensive Site Map & Overview
   statistics-dashboard.md:
-    words: 1178
+    words: 1180
     type: page
     title: Statistics Dashboard Feature
   bamr87.md:
@@ -808,7 +810,7 @@ word_statistics:
     type: page
     title: Navigation
   theme-preview.md:
-    words: 178
+    words: 247
     type: page
     title: Theme Preview
   theme.md:
@@ -1096,7 +1098,7 @@ word_statistics:
     type: page
     title: Bare-Minimum Remote-Theme Starter
   ruby-101.md:
-    words: 30
+    words: 816
     type: page
     title: Ruby 101
   aieo.md:
@@ -1168,7 +1170,7 @@ word_statistics:
     type: page
     title: Frequently Asked Questions
   features.md:
-    words: 1629
+    words: 1635
     type: page
     title: Features
   glossary.md:
@@ -1224,7 +1226,7 @@ word_statistics:
     type: page
     title: AGENTS
   CHANGELOG.md:
-    words: 15907
+    words: 17026
     type: page
     title: CHANGELOG
   CODE_OF_CONDUCT.md:
@@ -1245,12 +1247,12 @@ word_statistics:
     title: '404'
 focus_areas:
   Documentation & Content: 119
-  Web Development: 75
+  Web Development: 76
   AI & Machine Learning: 45
   Programming & Scripting: 42
-  DevOps & Infrastructure: 31
-  System Administration: 30
-  Tools & Development Environment: 25
+  DevOps & Infrastructure: 32
+  System Administration: 31
+  Tools & Development Environment: 26
   Creative & Experimental: 23
   Data & Analytics: 21
 skill_levels:
@@ -1259,7 +1261,7 @@ skill_levels:
   advanced: 11
   expert: 8
 content_types:
-  Tutorial: 36
+  Tutorial: 37
   Article: 31
   Documentation: 18
   Journal Entry: 16
@@ -1271,7 +1273,7 @@ date_range:
 drafts: 14
 published: 173
 category_count: 55
-tag_count: 253
+tag_count: 254
 author_count: 5
 top_categories:
   docs: 84
@@ -1280,7 +1282,7 @@ top_categories:
   Documentation: 14
   jekyll: 13
 top_tags:
-  jekyll: 38
+  jekyll: 39
   docker: 14
   documentation: 14
   navigation: 13
@@ -1288,8 +1290,8 @@ top_tags:
   bootstrap: 9
   ai: 9
   development: 8
-  github-pages: 7
   accessibility: 7
+  obsidian: 7
 top_authors:
   default: 20
   Zer0-Mistakes Team: 10

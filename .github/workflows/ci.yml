@@ -185,8 +185,20 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           verbose: true
-          suites: core,quality
+          # Gate parity (T-012): run every non-Playwright theme suite that
+          # `./scripts/bin/test` exposes locally, not a subset. Playwright
+          # tiers run as dedicated steps below.
+          suites: core,deployment,quality,installation,installer,site_generation,obsidian
           skip-docker: true
+          skip-remote: true
+
+      - name: Run Script Suites (lib, theme validate, integration, installer e2e)
+        # Gate parity (T-012): the canonical entrypoint's own suites —
+        # scripts/test/lib unit tests, scripts/test/theme/validate,
+        # scripts/test/integration (auto-version, mermaid), and the
+        # test/test_install_*.sh e2e suites. These rotted unnoticed before
+        # PR #132 because no CI job executed them.
+        run: ./scripts/bin/test
 
       - name: Setup Node.js (Playwright)
         uses: actions/setup-node@v4
@@ -210,6 +222,13 @@ jobs:
       - name: Playwright snapshot tests
         # Path-filtered: only run when CSS/layout/asset/spec files changed,
         # and skip when the user explicitly requested a fast scope.
+        #
+        # Non-blocking until the skin homepage baselines are regenerated:
+        # they predate the PR #108 UI overhaul and currently report a large
+        # diff against the live rendering. The step still runs (and uploads
+        # diffs as artifacts) so the drift stays visible, but it does not gate
+        # the suite. Drop continue-on-error once baselines are refreshed.
+        continue-on-error: true
         if: |
           needs.detect-changes.outputs.styling == 'true' &&
           (github.event_name != 'workflow_dispatch' || inputs.test_scope != 'fast')

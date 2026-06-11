@@ -109,8 +109,9 @@ jobs:
           TARGET="$RUNNER_TEMP/remote-bootstrap"
           mkdir -p "$TARGET"
           cd "$TARGET"
-          # Run install.sh out of the checkout against a clean target
-          bash "$GITHUB_WORKSPACE/install.sh" --minimal "$TARGET"
+          # Exercise README one-liner behavior: stream installer to bash stdin.
+          # Running in a clean dir forces REMOTE_INSTALL=true code path.
+          cat "$GITHUB_WORKSPACE/install.sh" | bash -s -- --minimal "$TARGET"
           test -f "$TARGET/_config.yml"
           test -f "$TARGET/Gemfile"
           test -f "$TARGET/index.md"

@@ -232,9 +232,15 @@ Plugin automatically extracts from gemspec.
 
 ## Related
 
-- [Release Management](/docs/development/release-management/)
-- [Version Bump](/docs/development/version-bump/)
-- [Gem Publishing](/docs/development/release-management/#rubygems-publishing)
+- [Release Management](../../../docs/development/release-management/)
+- [Version Bump](../../../docs/development/version-bump/)
+- [Gem Publishing](../../../docs/development/release-management/#rubygems-publishing)
+
+## Technical Reference
+
+For implementation details (Jekyll plugin architecture, version extraction, modal integration):
+
+- [Theme Version Feature → docs/features/theme-version.md](../../../docs/features/theme-version.md)
 
 ## See also
 

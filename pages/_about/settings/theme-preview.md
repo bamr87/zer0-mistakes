@@ -1,5 +1,6 @@
 ---
 title: Theme Preview
+preview: /images/previews/theme-preview.png
 layout: admin
 icon: bi-easel
 permalink: /about/settings/theme-preview/

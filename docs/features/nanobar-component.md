@@ -13,6 +13,9 @@ components:
 dependencies: ["Bootstrap 5", "Jekyll", "Liquid"]
 date: 2026-04-19
 lastmod: 2026-04-19
+categories: [docs]
+tags: [features, ui, nanobar]
+author: bamr87
 ---
 
 # Nanobar Component Architecture

@@ -10,7 +10,7 @@ tags: [jekyll, configuration, personalization, customization, yaml]
 keywords:
   primary: ["jekyll configuration", "site personalization"]
   secondary: ["yaml config", "site branding", "analytics setup", "social links"]
-lastmod: 2025-12-19T00:00:00.000Z
+lastmod: 2026-05-30T00:00:00.000Z
 draft: false
 sidebar:
   nav: quickstart
@@ -23,6 +23,12 @@ quickstart:
 # 🎨 Site Personalization & Configuration
 
 After completing the [Quick Start installation](/quickstart/), use this guide to personalize your Jekyll site. Fill out the interactive forms below to generate your custom `_config.yml` settings.
+
+> **Prefer a live UI?** The [Theme Customizer](/about/settings/theme/) lets you preview skin and color changes in real time directly on your running site.
+
+![Theme Customizer — skin and color preview](/assets/images/quickstart/06-theme-customizer.png)
+
+![Personalization config form](/assets/images/quickstart/personalization-config.png)
 
 <div class="alert alert-info mb-4" role="alert">
   <i class="bi bi-info-circle-fill"></i> <strong>How This Works</strong>
@@ -881,7 +887,9 @@ plugins:
   - jekyll-sitemap
   - jekyll-seo-tag
   - jekyll-paginate
-  - jekyll-relative-links`;
+  - jekyll-relative-links
+  - jekyll-redirect-from
+  - jekyll-include-cache`;
 
     // Update the display
     const configOutput = document.getElementById('generated-config');

@@ -923,6 +923,12 @@ run_fork_tests() {
     test_log_info "=== FORK MODE TESTS ==="
     
     run_test "Fork flag recognized" "test_fork_flag" "fork"
+
+    if [[ "$SKIP_REMOTE" == "true" ]]; then
+        skip_test "fork_remote_tests" "Skipped by --skip-remote flag"
+        return 0
+    fi
+
     run_test "Fork creates theme files" "test_fork_creates_theme_files" "fork"
     run_test "Fork resets config title" "test_fork_resets_config_title" "fork"
     run_test "Fork resets config github_user" "test_fork_resets_config_github_user" "fork"
@@ -937,6 +943,26 @@ run_platform_tests() {
     
     run_test "Full Gemfile platform sections" "test_full_gemfile_has_platform_sections" "platform"
     run_test "Minimal Gemfile platform sections" "test_minimal_gemfile_has_platform_sections" "platform"
+}
+
+test_legacy_flags_regression_suite() {
+    local legacy_suite="$SCRIPT_DIR/test_install_legacy_flags.sh"
+
+    if [[ ! -f "$legacy_suite" ]]; then
+        test_log_error "Legacy regression suite not found: $legacy_suite"
+        return 1
+    fi
+
+    if [[ "$SKIP_REMOTE" == "true" ]]; then
+        INSTALL_TEST_INCLUDE_REMOTE=0 bash "$legacy_suite"
+    else
+        INSTALL_TEST_INCLUDE_REMOTE=1 bash "$legacy_suite"
+    fi
+}
+
+run_legacy_regression_tests() {
+    test_log_info "=== LEGACY INSTALLER REGRESSION TESTS ==="
+    run_test "Legacy flags and stdin bootstrap suite" "test_legacy_flags_regression_suite" "legacy"
 }
 
 main() {
@@ -969,6 +995,7 @@ main() {
     run_remote_tests
     run_fork_tests
     run_platform_tests
+    run_legacy_regression_tests
     
     # Print summary
     print_test_summary

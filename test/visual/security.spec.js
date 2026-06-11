@@ -14,10 +14,12 @@ test.describe('Security — secret exposure prevention', () => {
     await waitForJekyll(page, CONFIG_URL);
   });
 
-  test.fixme('no hidden <pre> elements containing full config YAML (regression)', async ({ page }) => {
-    // KNOWN ISSUE: <pre id="cfg-full-yaml"> includes raw _config.yml with api_key.
-    // TODO: Sanitize sensitive values before injecting into DOM.
-    // PR review flagged: <pre id="cfg-full-yaml"> hidden in DOM exposes secrets
+  test('no hidden <pre> elements containing full config YAML (regression)', async ({ page }) => {
+    // T-009: <pre id="cfg-full-yaml"> is sanitized before DOM injection —
+    // a pure-Liquid line filter in pages/_about/settings/config.md (protects
+    // GitHub Pages builds, where plugins don't run) plus the
+    // sanitize_config_yaml filter (_plugins/sanitize_config_filter.rb) on
+    // plugin-enabled builds.
     const hiddenPre = page.locator('pre#cfg-full-yaml');
     const count = await hiddenPre.count();
     if (count > 0) {

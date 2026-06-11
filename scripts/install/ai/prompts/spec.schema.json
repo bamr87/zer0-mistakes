@@ -1,0 +1,129 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/bamr87/zer0-mistakes/installer/spec/v1",
+  "title": "zer0-mistakes Install Spec",
+  "description": "Declarative specification consumed by scripts/install/apply.sh. Produced by plan.sh, tui.sh, or ai/wizard.sh. This schema is the AI contract: the wizard must emit only valid spec JSON.",
+  "type": "object",
+  "required": ["schema_version", "target_dir", "profile", "tasks", "options"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1",
+      "description": "Schema version. Increment with breaking changes."
+    },
+    "target_dir": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Absolute path to the directory where the site will be installed."
+    },
+    "profile": {
+      "type": "string",
+      "enum": ["default", "minimal", "blog", "docs", "portfolio", "github-pages", "fork"],
+      "description": "Named preset that provides default values for all other fields."
+    },
+    "site": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title":       { "type": "string", "default": "My Jekyll Site" },
+        "description": { "type": "string", "default": "A Jekyll site built with zer0-mistakes" },
+        "url":         { "type": "string", "default": "" },
+        "author":      { "type": "string", "default": "Site Author" },
+        "email":       { "type": "string", "format": "email", "default": "" },
+        "timezone":    { "type": "string", "default": "UTC" },
+        "locale":      { "type": "string", "default": "en" }
+      }
+    },
+    "github": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "user":         { "type": "string", "default": "" },
+        "repo":         { "type": "string", "default": "" },
+        "pages_branch": { "type": "string", "default": "gh-pages" },
+        "enable_pages": { "type": "boolean", "default": false }
+      }
+    },
+    "theme": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": ["gem", "remote", "vendored"],
+          "description": "gem = install jekyll-theme-zer0 from RubyGems; remote = remote_theme on GitHub Pages; vendored = copy theme files locally."
+        },
+        "version": { "type": "string", "default": "" }
+      }
+    },
+    "tasks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": [
+          "config",
+          "gemfile",
+          "docker",
+          "theme",
+          "pages",
+          "nav",
+          "data",
+          "devcontainer",
+          "agents",
+          "gitignore",
+          "readme",
+          "marker"
+        ]
+      },
+      "description": "Ordered list of tasks apply.sh will execute. 'marker' should always be last."
+    },
+    "deploy": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["github-pages", "azure-swa", "docker-prod", "vercel", "netlify", "cloudflare-pages"]
+      },
+      "default": [],
+      "description": "Deploy targets to pre-configure alongside the install."
+    },
+    "agents": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["claude", "cursor", "aider", "copilot", "generic"]
+      },
+      "default": [],
+      "description": "AI agent config files to generate (AGENTS.md, .cursor/, CLAUDE.md, .aider.conf.yml, etc.)."
+    },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dry_run", "force", "backup", "non_interactive", "output"],
+      "properties": {
+        "dry_run":         { "type": "boolean", "default": false, "description": "Print what would happen without writing any files." },
+        "force":           { "type": "boolean", "default": false, "description": "Overwrite existing files without prompting (still backs up)." },
+        "backup":          { "type": "boolean", "default": true,  "description": "Create timestamped backups before overwriting." },
+        "non_interactive": { "type": "boolean", "default": false, "description": "Never prompt for user input. Errors out on missing required values." },
+        "output":          { "type": "string",  "default": "human", "enum": ["human", "json"], "description": "Output mode. 'json' is machine-readable." },
+        "auto_accept":     { "type": "boolean", "default": false, "description": "Skip all y/N confirmation prompts. Implies --non-interactive for confirmations." },
+        "skip_doctor":     { "type": "boolean", "default": false, "description": "Skip the pre-install environment health check." },
+        "verbose":         { "type": "boolean", "default": false, "description": "Print debug-level log lines." }
+      }
+    },
+    "ai": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Metadata about AI involvement. Written by ai/wizard.sh; informational only.",
+      "properties": {
+        "used":              { "type": "boolean", "default": false },
+        "provider":          { "type": "string",  "default": "openai" },
+        "model":             { "type": "string",  "default": "" },
+        "tokens_estimated":  { "type": "integer", "minimum": 0, "default": 0 },
+        "spec_hash":         { "type": "string",  "default": "", "description": "sha256 of the spec JSON (without the ai.spec_hash field itself)." }
+      }
+    }
+  }
+}

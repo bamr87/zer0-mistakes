@@ -3,7 +3,7 @@ title: Add Floating Back-to-Top button
 description: "How to Add a floating button that will scroll to the top of a page? "
 permalink: /about/features/add-floating-back-to-top-button/
 date: 2023-03-09T00:15:05.278Z
-preview: null
+preview: /images/previews/add-floating-back-to-top-button.png
 tags: Bootstrap
 categories: How-To
 sub-title: null

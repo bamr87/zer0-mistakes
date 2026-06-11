@@ -1,5 +1,268 @@
 # Changelog
 
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.14.0] - 2026-06-11
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 5de341aa feat(security): sanitize sensitive config lines in admin config-page DOM (T-009) (#140)
+- 42468785 chore(deps): update Ruby gem dependencies (#129)
+- 89e21988 Improve LinkedIn share flow with cleaned article summary (#99)
+
+### Security
+- **Admin config page (T-009 hardening)**: added a pure-Liquid line-redaction layer for the hidden `<pre id="cfg-full-yaml">` element — the `sanitize_config_yaml` plugin filter shipped in 1.13.1 does not run on GitHub Pages builds (safe mode ignores custom plugins, and the unknown filter is a silent no-op), so Pages-built sites were still injecting raw config; the Liquid layer protects every build path, with the plugin filter kept as defense-in-depth
+
+### Fixed
+- **Workflow lint (T-017)**: `version-bump.yml` now passes the repo yamllint config (trailing spaces, bracket spacing, sequence indentation) — these pre-existing violations failed the `auto-version` integration suite on every code PR once the T-012 gate went live; YAML verified semantically identical before/after
+- **Changelog tooling**: `update_changelog_file` normalizes trailing newlines on the entry, guaranteeing exactly one blank line before the next release block even when callers pass entries via command substitution (review feedback on the T-012 PR)
+
+## [1.13.1] - 2026-06-11
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 583fa997 fix(infra): sanitize sensitive config keys before DOM injection (T-009) (#141)
+
+### Security
+- **Admin config page sanitization (T-009)**: the hidden `<pre id="cfg-full-yaml">` element on the admin config page now has values masked for keys matching `api_key`, `secret`, `password`, `token`, and `phc_` (PostHog) prefixes via a new `sanitize_config_yaml` Liquid filter (`_plugins/sanitize_config_filter.rb`); the corresponding Playwright regression guard (`test/visual/security.spec.js`) is promoted from `test.fixme` to a live test
+
+## [1.13.0] - 2026-06-11
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- cee6f379 feat(ci): gate PRs on the full canonical test entrypoint (T-012) (#138)
+
+### Added
+- **CI gate parity (T-012)**: the `ci.yml` test job now runs every non-Playwright theme suite (core, deployment, quality, installation, installer, site_generation, obsidian) plus the canonical `./scripts/bin/test` script suites (lib unit, theme validate, integration, installer e2e) on every code PR — previously only `core,quality,installation` gated, which is how three suites rotted unnoticed before PR #132; a "Gate Coverage — What Enforces What" table in `.github/workflows/README.md` now documents the controls contract
+
+### Fixed
+- **Release changelog path**: `version-bump.yml` now inserts release entries via the shared `update_changelog_file` library instead of an inline `head`/`tail` prepend that duplicated (and regressed) the insertion logic — the 1.12.1 release had pushed the file preamble below its entry and stranded the pending `[Unreleased]` notes; both repaired in this file
+
+## [1.12.2] - 2026-06-10
+
+### Added
+- **Zer0-Mistake Quality Framework (planning)**: new roadmap milestone v1.13 and backlog tasks T-012–T-015 to close the gap between the repo's quality gates and what CI enforces — CI gate parity with the canonical `./scripts/bin/test` entrypoint (whose integration suites previously rotted unnoticed), re-armed pixel-snapshot and docs link-check gates, and a locale-independence regression guard; coverage baseline task T-005 repointed at the new milestone
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 846bd9ff chore(backlog): plan the Zer0-Mistake Quality Framework (roadmap v1.13, T-012–T-015) (#133)
+- 33a727c0 docs: expand CLAUDE.md into a comprehensive Claude Code guide (#131)
+
+## [1.12.1] - 2026-06-10
+
+### Changed
+- Version bump: patch release
+- **Roadmap**: advanced to track the shipped gem — v1.9 marked completed, v1.10 (Roadmap Validation) and v1.11 (Continuous-Evolution Loop) recorded, v1.12 (Headless Endpoints) is the active milestone (closes backlog T-001, T-002)
+- **Changelog**: restored the Keep a Changelog preamble at the top of this file
+
+### Fixed
+- **Tooling encoding**: `generate-roadmap.rb`, `sync-backlog.rb`, and `scripts/bin/validate` now read repo files as UTF-8 explicitly, fixing `invalid byte sequence in US-ASCII` crashes in environments without a UTF-8 locale (minimal containers, some CI runners) — `generate-roadmap.sh --check` and `validate --quick` both crashed in such environments
+- **Test suite**: repaired the three test suites that failed on `main`:
+  - `scripts/test/integration/auto-version` rewritten against the current release architecture (`scripts/analyze-commits.sh` wrapper, `scripts/utils/analyze-commits`, `scripts/bin/release`, `version-bump.yml`) — it previously targeted the retired `gem-publish.sh`/`auto-version-bump.yml` and aborted under `set -e` due to `((var++))` returning non-zero
+  - `scripts/test/integration/mermaid` repointed at `pages/_docs/features/mermaid-diagrams.md` (the doc moved from `pages/_docs/jekyll/`) and at the current Bootstrap-aware theming instead of the removed forest theme/FontAwesome config
+  - `_layouts/search.html` given a front matter block so theme layout validation passes
+- **Changelog tooling**: `update_changelog_file` now folds any pending `## [Unreleased]` section into the new release entry and inserts before the first release heading (preserving the file preamble) — stale Unreleased blocks no longer accumulate mid-file; the eight historical stray blocks were folded into the releases that shipped them
+
+### Commits in this release
+- 0c04f703 fix: repair failing test suites, validator crashes, and roadmap/changelog drift (#132)
+
+## [1.12.0] - 2026-06-03
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 7e227c59 feat: auto-generate /search.json and /sitemap/ endpoints for downstream sites (#104)
+- 300dabaf chore(deps): update Ruby gem dependencies (#120)
+- 3a1a810c chore(deps-dev): bump mermaid from 10.9.5 to 10.9.6 (#105)
+
+
+## [1.11.2] - 2026-06-03
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 452022ae chore(backlog): audit 2026-06-01 (#121)
+
+
+## [1.11.1] - 2026-06-01
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- d4a53d51 docs: consolidate, standardize, and add maintenance system (#112)
+
+
+## [1.11.0] - 2026-06-01
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 8a5ba7e2 feat(ci): add continuous-evolution backlog loop (#114)
+
+### Added
+- **Continuous-evolution loop**: a self-sustaining backlog mechanism so AI agents can keep improving the repo between human sessions.
+  - `_data/backlog.yml` — tactical task queue (single source of truth), mirroring the `_data/roadmap.yml` pattern.
+  - `scripts/sync-backlog.rb` (+ `scripts/sync-backlog.sh`) — schema validator and GitHub Issues sync (idempotent via `<!-- backlog-id -->` markers).
+  - `.github/workflows/backlog-sync.yml` — syncs the backlog to issues on push to `main`; validates schema on PRs.
+  - `.github/workflows/auto-merge.yml` — enables native auto-merge for low-risk (`docs`/`deps`/`lint`) PRs once CI is green.
+  - `.github/prompts/repo-audit.prompt.md` (`/repo-audit`) and `.github/prompts/backlog-implement.prompt.md` (`/backlog-implement`) — the audit and implement routines.
+  - `.github/instructions/backlog.instructions.md` — file-scoped guidance for the backlog.
+  - `docs/systems/continuous-evolution.md` — full design, autonomy policy, and setup.
+  - `CLAUDE.md` — Claude Code pointer to `AGENTS.md` (per the documented convention).
+
+
+## [1.10.0] - 2026-06-01
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 309202f2 feat(roadmap): add --validate mode, catch-up milestones v1.0–1.9, README accuracy fixes (#113)
+
+
+## [1.9.10] - 2026-05-31
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- ef6a3f39 fix: update copyright year range in LICENSE file
+
+
+## [1.9.9] - 2026-05-31
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 2ffb820d docs: align pages/_docs/ (user guides) ↔ docs/ (technical guides)
+
+
+## [1.9.8] - 2026-05-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 4e0273b8 docs: update Gemfile.lock handling and release workflow guidelines
+
+
+## [1.9.7] - 2026-05-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- c01d4e85 fix(quickstart): remove broken image reference from Quick Start Guide
+- 7f6b13fd docs: enhance release pipeline documentation for clarity and completeness
+
+
+## [1.9.6] - 2026-05-30
+
+### Changed
+- **Quickstart**: Comprehensive rewrite of all quickstart docs (`pages/_quickstart/`) with improved structure, Mermaid decision flowchart, and step-by-step screenshots
+- **Quickstart**: `index.md` published from draft — now live at `/quickstart/`
+- **Quickstart**: Removed `homebrew.md` and `winget.md` (content consolidated into `machine-setup.md`)
+- **Quickstart**: 18 new screenshots added to `assets/images/quickstart/` for visual walkthroughs
+
+## [1.9.5] - 2026-05-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- d4e1a789 fix(skins): remove contrast/dark skins, set air as default, improve link contrast
+
+
+## [1.9.4] - 2026-05-30
+
+### Changed
+- **Skins**: Removed `contrast` and `dark` skins; `air` is now the default skin
+- **Accessibility**: Rewrote per-skin link and hover colors to meet WCAG AA (≥4.5:1) contrast in both light and dark mode — all 7 remaining skins now use a darker brand tone for light-mode links and a lighter accent tone for dark-mode links
+- `_config.yml`: `theme_skin` default changed from `"dark"` to `"air"`
+
+## [1.9.3] - 2026-05-30
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 90ff5f8 fix(landing): update URL for secondary CTA to point to features page
+
+
+## [1.9.2] - 2026-05-29
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 6e73c5f Update README and content statistics
+
+
+## [1.9.1] - 2026-05-27
+
+### Fixed
+- Harden one-line installer path
+
+
+
+## [1.9.0] - 2026-05-27
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 8a2bd84 feat(install): modular installer with deploy plugins, AI wizard pipeline, scrape v2, and test suite (#111)
+
+### Added
+- **Modular installer (`scripts/install/`)**: spec-driven, AI-aware installer dispatched by `scripts/bin/install`. Single `.zer0/install.spec.json` contract feeds CLI flags, the TUI wizard, and the OpenAI wizard into one apply pipeline.
+- **Deploy plugins**: `tasks/deploy_github-pages.sh`, `tasks/deploy_azure-swa.sh`, `tasks/deploy_docker-prod.sh`. Spec deploy targets now auto-render the matching workflow / config from `templates/deploy/`.
+- **AI wizard end-to-end**: `install wizard --ai` now chains spec generation → `apply_run`, records AI provenance (`ai.used/provider/model`) in the spec, lets CLI flags override AI guesses, and falls back to profile defaults when the model returns empty arrays.
+- **Profile defaults fallback**: `ai/wizard.sh` re-loads the selected profile to fill in empty `deploy`/`agents` arrays from the AI output, ensuring decisive installs.
+- **`generic` agent target** added to spec schema enum (cross-tool `AGENTS.md` baseline alongside `claude`, `cursor`, `aider`, `copilot`).
+- **Installer test suite (`test/test_installer.sh`)**: 17-check regression harness covering module syntax, all 6 profile inits, all 3 deploy plugins, all 5 agent flavours, and the AI wizard pipeline. Wired into `test/test_runner.sh` as the `installer` suite (included in `--suites all` and `--suites full`).
+- **Site scraping (`install scrape <URL>` + `install init --scrape <URL>`)**: new `scripts/install/scrape.sh` BFS crawler + stdlib-only `scripts/install/scrape_html.py` extractor convert any existing website into a fully-rendered zer0-mistakes site. Now distributes pages by detected `kind`: home → `index.md` with `permalink: /`, events → `pages/events/<slug>.md`, posts → `pages/news/<slug>.md`, rest → `pages/<slug>.md`. Downloads referenced images into `assets/scraped/` and rewrites markdown to local paths. Wires navigation into `_data/navigation/main.yml` (the file the theme actually reads) with kind-based Bootstrap Icons, filters junk labels (Back / Cart / Folder:) and `?format=ical`/`?format=json` URLs, skips commerce paths (`/cart`, `/checkout`, `/login`). Seeds `_config.yml` `title`/`description`/`lang`/`logo` from `og:`/`<html lang>` metadata. New flags: `--scrape URL`, `--scrape-depth N` (default 2), `--scrape-max-pages N` (default 25). Covered by `test/test_install_scrape.sh` (standalone + init-integration, asserts new layout + nav cleanliness).
+
+### Fixed
+- `_cmd_wizard` previously left targets containing only `.zer0/install.spec.json`; now chains `apply_run` to write all task outputs.
+- `plan.sh` YAML parser now accepts both `deploy:`/`deploy_targets:` keys and parses `agents:` block lists *and* `ai_features.agent_files:` inline flow lists, matching the actual profile YAML shape.
+- Rewrote `ai/prompts/wizard.system.md` with explicit profile, deploy, and agent heuristics plus a full example output, eliminating empty AI responses.
+- `plan_load_profile` and `plan_apply_flags` now return `0` explicitly so Bash 3.2 doesn't propagate a trailing-test exit code.
+
+
+## [1.8.2] - 2026-05-26
+
+### Changed
+- Version bump: patch release
+
+### Changed
+- **Gem packaging**: `jekyll-theme-zer0.gemspec` now excludes `assets/images/` (287 MB of content previews/author photos), `assets/backgrounds/`, `.DS_Store` files, and binary media outside `assets/vendor/`, reducing gem payload to ~8.9 MB
+
+
+## [1.8.1] - 2026-05-26
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 6a9bac4 chore(docker): remove unused prod and publish compose files
+
+
 ## [1.8.0] - 2026-05-25
 
 ### Changed
@@ -25,9 +288,6 @@
 
 ### Commits in this release
 - 580f2b4 perf: Jekyll build performance improvements + MathJax 3 fix + richer Obsidian cache (#100)
-
-
-## [Unreleased]
 
 ### Added
 - **Design system & layouts**: Sass token layers (`_sass/tokens/`), component and layout partials (`_sass/components/`, `_sass/layouts/`), skins (`theme_skins.yml` + `_sass/theme/_skins.scss`), utilities, and developer docs (`docs/design-system.md`, `design-tokens.md`, `theming.md`, `layouts-and-navigation.md`, and related guides). Homepage sections are driven by `_data/landing.yml` per `_includes/components/README.md`.
@@ -69,6 +329,7 @@
 
 ### Fixed (UI)
 - **Contrast skin — light mode**: The `contrast` skin's `zer0-skin-palette` mixin sets `--bs-link-color: #ffffff` (white accent) which rendered sidebar nav links invisible on a white background in light mode. Added `[data-theme-skin="contrast"]:not([data-bs-theme="dark"])` override in `_sass/theme/_skins.scss` to pin link color to `#111111` in light mode while leaving dark-mode behavior unchanged.
+
 
 ## [1.6.5] - 2026-05-19
 
@@ -203,9 +464,6 @@
 - 3d91006 fix(release): replace ((var++)) with var=$((var + 1)) in release path
 - d33e5e6 feat(intro): refocus Copilot Agent prompts on frontend/CMS workflows (#74)
 
-
-## [Unreleased]
-
 ### Changed
 - **Docker/Jekyll build performance** — Reduced repeated full-page Liquid scans in the footer, settings offcanvas, and cookie consent includes; cached preview image checks during generation; skipped server-side Obsidian rewrites for documents without Obsidian syntax; and changed Docker dev startup to run `bundle install` only when `bundle check` reports missing dependencies. The profiled Docker build improved from 119.2s to 86.8s in local validation.
 
@@ -310,6 +568,7 @@
   `/#setup-wizard`, which is provided by the new welcome layout.
 - **Version-bump workflow no longer crashes on bash 5.x runners.** `scripts/utils/analyze-commits` (and `scripts/lib/changelog.sh`, `scripts/lib/migrate.sh`) used the `((var++))` post-increment idiom. On bash 5.x, when `var` is 0 the expression evaluates to 0 → exit code 1 → `set -euo pipefail` terminates the script silently. macOS bash 3.2 was more forgiving, so the bug only surfaced in CI. Replaced all release-path sites with `var=$((var + 1))`, which always returns 0. Added a static regression check to the unit tests so the pattern can't return.
 
+
 ## [1.0.0] - 2026-04-20
 
 First stable major release. Consolidates the breaking-change installer rewrite
@@ -382,9 +641,6 @@ See [`docs/installation/migration-from-0.x.md`](docs/installation/migration-from
 ### Commits in this release
 - 7f00e4d docs(roadmap): data-driven roadmap with auto-generated README mermaid diagram (#71)
 
-
-## [Unreleased]
-
 ### Changed
 - **Copilot Agent prompts (`_data/prompts.yml`)**: rewritten to focus on
   frontend/CMS workflows for the Jekyll theme. Replaced the previous
@@ -433,6 +689,7 @@ See [`docs/installation/migration-from-0.x.md`](docs/installation/migration-from
 - **Fork cleanup**: `scripts/fork-cleanup.sh` — repository name derivation now strips `.git` suffix and falls back gracefully when `origin` is missing (no `set -euo pipefail` aborts)
 - **Fork cleanup**: `scripts/fork-cleanup.sh` — `posthog`/`giscus` blocks reset only within their own YAML range (no stray matches in unrelated blocks)
 - **Welcome post**: `templates/pages/welcome-post.md.template` and embedded fallback in `scripts/fork-cleanup.sh` — corrected `layout: journals` → `layout: article` so the generated welcome post builds without “Layout does not exist” warnings on a freshly cleaned fork
+
 
 ## [0.22.20] - 2026-04-19
 
@@ -575,9 +832,6 @@ See [`docs/installation/migration-from-0.x.md`](docs/installation/migration-from
 ### Commits in this release
 - a70ae8a chore: consolidate configuration, dependencies, and installation (PRs #48, #51, #52, #53) (#51)
 
-
-## [Unreleased] — Universal Installer
-
 ### Added
 - **Installer**: New `--remote` install mode — forks repo and creates an orphan `gh-pages` branch with only the bare minimum files needed to render via `remote_theme` (no local theme source)
 - **Installer**: New `--github` install mode — interactive fork via `gh` CLI with automatic platform detection and setup
@@ -601,6 +855,7 @@ See [`docs/installation/migration-from-0.x.md`](docs/installation/migration-from
 - **Templates**: `quickstart.md.template` — enhanced with Bootstrap pill tabs for macOS/Linux/WSL/GitHub Fork platform-specific instructions
 - **Templates**: `configuration.md.template` — comprehensive rewrite with URL tables, all config sections, cookie consent, dev config
 - **Templates**: `welcome-post.md.template` — enhanced Day 1 tutorial with folder structure diagram, commands table, feature checklist
+
 
 ## [0.22.6] - 2026-04-03
 
@@ -2185,13 +2440,6 @@ See [`docs/installation/migration-from-0.x.md`](docs/installation/migration-from
 - Initial plan
 - Initial plan
 
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [Unreleased]
-
 ### Added
 
 - Comprehensive documentation organization system in `/docs/` directory
@@ -2202,6 +2450,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Migrated scattered documentation files to organized structure
 - Improved documentation discoverability and maintenance
+
 
 ## [0.5.0] - 2025-10-25
 

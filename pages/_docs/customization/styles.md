@@ -282,6 +282,14 @@ Use Bootstrap's breakpoints:
 - [Sass Documentation](https://sass-lang.com/documentation/)
 - [CSS Custom Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties)
 
+## Technical Reference
+
+For contributor-level details (SCSS pipeline, design token catalog, Bootstrap integration internals, extending the design system):
+
+- [Design System → docs/ui/design-system.md](../../../docs/ui/design-system.md)
+- [Theming → docs/ui/theming.md](../../../docs/ui/theming.md)
+- [Design Tokens → docs/ui/design-tokens.md](../../../docs/ui/design-tokens.md)
+
 ## See also
 
 - [[Customization]]

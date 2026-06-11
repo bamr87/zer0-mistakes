@@ -75,6 +75,7 @@ render_template() {
         -e "s|{{RAW_GITHUB_URL}}|${GITHUB_RAW_URL}|g" \
         -e "s|{{FORK_GITHUB_USER}}|${FORK_GITHUB_USER:-${GITHUB_USER}}|g" \
         -e "s|{{INSTALL_MODE}}|${INSTALL_MODE:-full}|g" \
+        -e "s|{{REMOTE_BRANCH}}|${REMOTE_BRANCH:-gh-pages}|g" \
         -e "s|{{GITHUB_PAGES_URL}}|https://${FORK_GITHUB_USER:-${GITHUB_USER}}.github.io/${REPOSITORY_NAME:-$THEME_NAME}|g")
 
     if [[ -n "$output_file" ]]; then

@@ -1,5 +1,6 @@
 ---
 title: Bootstrap Theme Examples
+preview: /images/previews/bootstrap-theme-examples.png
 layout: admin
 icon: bi-palette
 lastmod: 2026-04-04T00:00:00.000Z
