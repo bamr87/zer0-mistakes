@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Security
+- **Admin config page (T-009 hardening)**: added a pure-Liquid line-redaction layer for the hidden `<pre id="cfg-full-yaml">` element — the `sanitize_config_yaml` plugin filter shipped in 1.13.1 does not run on GitHub Pages builds (safe mode ignores custom plugins, and the unknown filter is a silent no-op), so Pages-built sites were still injecting raw config; the Liquid layer protects every build path, with the plugin filter kept as defense-in-depth
+
+### Fixed
+- **Workflow lint (T-017)**: `version-bump.yml` now passes the repo yamllint config (trailing spaces, bracket spacing, sequence indentation) — these pre-existing violations failed the `auto-version` integration suite on every code PR once the T-012 gate went live; YAML verified semantically identical before/after
+- **Changelog tooling**: `update_changelog_file` normalizes trailing newlines on the entry, guaranteeing exactly one blank line before the next release block even when callers pass entries via command substitution (review feedback on the T-012 PR)
+
 ## [1.13.1] - 2026-06-11
 
 ### Changed

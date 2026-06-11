@@ -15,8 +15,11 @@ test.describe('Security — secret exposure prevention', () => {
   });
 
   test('no hidden <pre> elements containing full config YAML (regression)', async ({ page }) => {
-    // sanitize_config_yaml filter (_plugins/sanitize_config_filter.rb) masks
-    // api_key/secret/password/token keys and phc_* values before DOM injection.
+    // T-009: <pre id="cfg-full-yaml"> is sanitized before DOM injection —
+    // a pure-Liquid line filter in pages/_about/settings/config.md (protects
+    // GitHub Pages builds, where plugins don't run) plus the
+    // sanitize_config_yaml filter (_plugins/sanitize_config_filter.rb) on
+    // plugin-enabled builds.
     const hiddenPre = page.locator('pre#cfg-full-yaml');
     const count = await hiddenPre.count();
     if (count > 0) {

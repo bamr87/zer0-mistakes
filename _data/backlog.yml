@@ -56,7 +56,7 @@
 meta:
   title: "zer0-mistakes Backlog"
   updated: 2026-06-11
-  next_id: 18
+  next_id: 19
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -225,6 +225,9 @@ tasks:
       (`api_key`, `token`, PostHog `phc_*` keys, etc.) they are exposed in the page
       DOM. A regression test in `test/visual/security.spec.js` is frozen as
       `test.fixme` until a sanitisation pass is in place.
+      Done 2026-06-11: pure-Liquid line filter redacts matching lines before
+      DOM injection (GitHub Pages safe — no custom plugin); regression test
+      promoted to a live `test()`; visible Raw-YAML tab untouched.
     acceptance:
       - "The Liquid/Ruby that populates `<pre id=\"cfg-full-yaml\">` strips or masks keys matching `api_key`, `secret`, `password`, `token`, and `phc_` prefix before DOM injection."
       - "The `test.fixme` in `test/visual/security.spec.js` is promoted to a live `test()` and passes in CI."
@@ -405,7 +408,7 @@ tasks:
 
   - id: T-017
     title: "Fix yamllint violations in .github/workflows/version-bump.yml"
-    status: open
+    status: done
     priority: P2
     area: lint
     risk: low
@@ -417,6 +420,9 @@ tasks:
       integration test (which runs yamllint) to fail in CI on every PR. Discovered
       while babysitting PR #141 — the file was unchanged by that PR, confirming
       the failures are pre-existing.
+      Done 2026-06-11: full cleanup (trailing spaces, brackets, sequence
+      indentation) landed with the T-009 PR; YAML verified semantically
+      identical and yamllint exits 0 with the repo config.
     acceptance:
       - "`yamllint -c .github/config/.yamllint.yml .github/workflows/version-bump.yml` exits 0."
       - "`./scripts/test/integration/auto-version` passes the 'version-bump workflow syntax' check."
@@ -425,3 +431,26 @@ tasks:
     created: 2026-06-11
     updated: 2026-06-11
 
+  - id: T-018
+    title: "Admin config page displays a stale copy of _config.yml — keep it in sync safely"
+    status: open
+    priority: P2
+    area: feat
+    risk: standard
+    effort: M
+    source: audit
+    summary: >-
+      `pages/_about/settings/config.md` renders `pages/_about/settings/_config.yml`
+      via `include_relative` (Liquid cannot reach the repo root), and that copy
+      has drifted from the live `_config.yml` (it predates, e.g., the PostHog
+      analytics block). Found while implementing T-009. Caution: a naive
+      refresh would inject the live `phc_` api_key into the *visible* Raw-YAML
+      tab — any sync mechanism must sanitize the visible tab the same way
+      T-009 sanitizes the hidden copy element, or redact at sync time.
+    acceptance:
+      - "The config shown at /about/config/ matches the live `_config.yml` (automated sync step or build-time check that fails on drift)."
+      - "The visible Raw-YAML tab applies the same sensitive-line redaction as the hidden `cfg-full-yaml` element."
+      - "`test/visual/security.spec.js` raw-tab test passes without its silent skip path (locator matches the actual `code#cfg-raw-yaml` element)."
+    links: { issue: null, pr: null, roadmap: "1.13" }
+    created: 2026-06-11
+    updated: 2026-06-11

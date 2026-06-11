@@ -72,90 +72,90 @@ jobs:
       should_release: ${{ steps.determine.outputs.should_release }}
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v5
-      with:
-        fetch-depth: 0
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
-    - name: Determine Version Bump Type
-      id: determine
-      run: |
-        # For manual triggers, use the selected version type
-        if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-          SELECTED="${{ inputs.version_type }}"
+      - name: Determine Version Bump Type
+        id: determine
+        run: |
+          # For manual triggers, use the selected version type
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            SELECTED="${{ inputs.version_type }}"
 
-          if [[ "$SELECTED" != "auto" ]]; then
-            echo "bump_type=$SELECTED" >> $GITHUB_OUTPUT
-            echo "should_release=true" >> $GITHUB_OUTPUT
-            echo "commit_count=manual" >> $GITHUB_OUTPUT
-            echo "commit_range=manual" >> $GITHUB_OUTPUT
-            echo "📋 Manual version bump: $SELECTED"
+            if [[ "$SELECTED" != "auto" ]]; then
+              echo "bump_type=$SELECTED" >> $GITHUB_OUTPUT
+              echo "should_release=true" >> $GITHUB_OUTPUT
+              echo "commit_count=manual" >> $GITHUB_OUTPUT
+              echo "commit_range=manual" >> $GITHUB_OUTPUT
+              echo "📋 Manual version bump: $SELECTED"
+              exit 0
+            fi
+          fi
+
+          # Analyze commits for automatic or 'auto' selection
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
+          if [ -z "$LAST_TAG" ]; then
+            echo "No previous tags found, analyzing all commits"
+            COMMIT_RANGE="$(git rev-list --max-parents=0 HEAD)..HEAD"
+          else
+            echo "Analyzing commits since: $LAST_TAG"
+            COMMIT_RANGE="${LAST_TAG}..HEAD"
+          fi
+
+          echo "commit_range=$COMMIT_RANGE" >> $GITHUB_OUTPUT
+
+          # Count commits
+          COMMIT_COUNT=$(git rev-list --count $COMMIT_RANGE 2>/dev/null || echo "0")
+          echo "commit_count=$COMMIT_COUNT" >> $GITHUB_OUTPUT
+
+          if [[ "$COMMIT_COUNT" == "0" ]]; then
+            echo "bump_type=none" >> $GITHUB_OUTPUT
+            echo "should_release=false" >> $GITHUB_OUTPUT
+            echo "🚫 No new commits to release"
             exit 0
           fi
-        fi
 
-        # Analyze commits for automatic or 'auto' selection
-        LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-
-        if [ -z "$LAST_TAG" ]; then
-          echo "No previous tags found, analyzing all commits"
-          COMMIT_RANGE="$(git rev-list --max-parents=0 HEAD)..HEAD"
-        else
-          echo "Analyzing commits since: $LAST_TAG"
-          COMMIT_RANGE="${LAST_TAG}..HEAD"
-        fi
-
-        echo "commit_range=$COMMIT_RANGE" >> $GITHUB_OUTPUT
-
-        # Count commits
-        COMMIT_COUNT=$(git rev-list --count $COMMIT_RANGE 2>/dev/null || echo "0")
-        echo "commit_count=$COMMIT_COUNT" >> $GITHUB_OUTPUT
-
-        if [[ "$COMMIT_COUNT" == "0" ]]; then
-          echo "bump_type=none" >> $GITHUB_OUTPUT
-          echo "should_release=false" >> $GITHUB_OUTPUT
-          echo "🚫 No new commits to release"
-          exit 0
-        fi
-
-        # Analyze commit messages
-        chmod +x ./scripts/analyze-commits.sh
-        echo "::group::Commit analysis (stderr stream)"
-        # Capture stdout (the bump type) while letting stderr stream to the job log.
-        # We deliberately do NOT silence stderr or fall back to a default — a
-        # crashing analyzer must fail the workflow so we never publish the wrong
-        # version (e.g. a silent fallback to "patch" on a breaking-change commit).
-        if ! BUMP_TYPE=$(./scripts/analyze-commits.sh "$COMMIT_RANGE"); then
-          echo "::endgroup::"
-          echo "::error title=Commit analyzer failed::analyze-commits exited non-zero. Inspect the stderr stream above."
-          exit 1
-        fi
-        echo "::endgroup::"
-
-        # Validate the analyzer returned a known bump type — anything else means
-        # the script regressed and we must not trust its output.
-        case "$BUMP_TYPE" in
-          patch|minor|major|none) ;;
-          *)
-            echo "::error title=Invalid bump type::analyze-commits returned '$BUMP_TYPE' (expected patch|minor|major|none)"
+          # Analyze commit messages
+          chmod +x ./scripts/analyze-commits.sh
+          echo "::group::Commit analysis (stderr stream)"
+          # Capture stdout (the bump type) while letting stderr stream to the job log.
+          # We deliberately do NOT silence stderr or fall back to a default — a
+          # crashing analyzer must fail the workflow so we never publish the wrong
+          # version (e.g. a silent fallback to "patch" on a breaking-change commit).
+          if ! BUMP_TYPE=$(./scripts/analyze-commits.sh "$COMMIT_RANGE"); then
+            echo "::endgroup::"
+            echo "::error title=Commit analyzer failed::analyze-commits exited non-zero. Inspect the stderr stream above."
             exit 1
-            ;;
-        esac
+          fi
+          echo "::endgroup::"
 
-        if [[ "$BUMP_TYPE" == "none" ]]; then
-          echo "bump_type=none" >> $GITHUB_OUTPUT
-          echo "should_release=false" >> $GITHUB_OUTPUT
-          echo "🚫 No releasable changes detected — skipping version bump"
-          exit 0
-        fi
+          # Validate the analyzer returned a known bump type — anything else means
+          # the script regressed and we must not trust its output.
+          case "$BUMP_TYPE" in
+            patch|minor|major|none) ;;
+            *)
+              echo "::error title=Invalid bump type::analyze-commits returned '$BUMP_TYPE' (expected patch|minor|major|none)"
+              exit 1
+              ;;
+          esac
 
-        echo "bump_type=$BUMP_TYPE" >> $GITHUB_OUTPUT
-        echo "should_release=true" >> $GITHUB_OUTPUT
+          if [[ "$BUMP_TYPE" == "none" ]]; then
+            echo "bump_type=none" >> $GITHUB_OUTPUT
+            echo "should_release=false" >> $GITHUB_OUTPUT
+            echo "🚫 No releasable changes detected — skipping version bump"
+            exit 0
+          fi
 
-        echo "📋 Analysis Results:"
-        echo "  - Commit range: $COMMIT_RANGE"
-        echo "  - Commits analyzed: $COMMIT_COUNT"
-        echo "  - Recommended bump: $BUMP_TYPE"
+          echo "bump_type=$BUMP_TYPE" >> $GITHUB_OUTPUT
+          echo "should_release=true" >> $GITHUB_OUTPUT
+
+          echo "📋 Analysis Results:"
+          echo "  - Commit range: $COMMIT_RANGE"
+          echo "  - Commits analyzed: $COMMIT_COUNT"
+          echo "  - Recommended bump: $BUMP_TYPE"
 
   # Main version bump job
   version-bump:
@@ -171,237 +171,237 @@ jobs:
       tag: ${{ steps.bump.outputs.tag }}
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v5
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        fetch-depth: 0
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
-    - name: Configure Git Environment
-      uses: ./.github/actions/configure-git
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Configure Git Environment
+        uses: ./.github/actions/configure-git
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Setup Ruby Environment
-      uses: ./.github/actions/setup-ruby
-      with:
-        ruby-version: ${{ env.RUBY_VERSION }}
-        install-system-deps: true
-        # Disable bundler cache for version bump - we need to modify Gemfile.lock
-        bundler-cache: false
+      - name: Setup Ruby Environment
+        uses: ./.github/actions/setup-ruby
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          install-system-deps: true
+          # Disable bundler cache for version bump - we need to modify Gemfile.lock
+          bundler-cache: false
 
-    - name: Run Pre-bump Validation
-      if: ${{ !inputs.skip_tests }}
-      uses: ./.github/actions/test-suite
-      with:
-        ruby-version: ${{ env.RUBY_VERSION }}
-        verbose: true
-        suites: 'core'
-        skip-docker: true
+      - name: Run Pre-bump Validation
+        if: ${{ !inputs.skip_tests }}
+        uses: ./.github/actions/test-suite
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          verbose: true
+          suites: 'core'
+          skip-docker: true
 
-    - name: Get Current Version
-      id: current
-      run: |
-        CURRENT=$(ruby -e "require './lib/jekyll-theme-zer0/version'; puts JekyllThemeZer0::VERSION")
-        echo "version=$CURRENT" >> $GITHUB_OUTPUT
-        echo "📋 Current version: $CURRENT"
+      - name: Get Current Version
+        id: current
+        run: |
+          CURRENT=$(ruby -e "require './lib/jekyll-theme-zer0/version'; puts JekyllThemeZer0::VERSION")
+          echo "version=$CURRENT" >> $GITHUB_OUTPUT
+          echo "📋 Current version: $CURRENT"
 
-    - name: Bump Version
-      id: bump
-      run: |
-        BUMP_TYPE="${{ needs.analyze.outputs.bump_type }}"
-        CURRENT="${{ steps.current.outputs.version }}"
-        DRY_RUN="${{ inputs.dry_run || 'false' }}"
+      - name: Bump Version
+        id: bump
+        run: |
+          BUMP_TYPE="${{ needs.analyze.outputs.bump_type }}"
+          CURRENT="${{ steps.current.outputs.version }}"
+          DRY_RUN="${{ inputs.dry_run || 'false' }}"
 
-        # Parse current version
-        IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+          # Parse current version
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
 
-        # Calculate new version
-        case "$BUMP_TYPE" in
-          major)
-            NEW_VERSION="$((MAJOR + 1)).0.0"
-            ;;
-          minor)
-            NEW_VERSION="${MAJOR}.$((MINOR + 1)).0"
-            ;;
-          patch|*)
-            NEW_VERSION="${MAJOR}.${MINOR}.$((PATCH + 1))"
-            ;;
-        esac
+          # Calculate new version
+          case "$BUMP_TYPE" in
+            major)
+              NEW_VERSION="$((MAJOR + 1)).0.0"
+              ;;
+            minor)
+              NEW_VERSION="${MAJOR}.$((MINOR + 1)).0"
+              ;;
+            patch|*)
+              NEW_VERSION="${MAJOR}.${MINOR}.$((PATCH + 1))"
+              ;;
+          esac
 
-        echo "📈 Version bump: $CURRENT → $NEW_VERSION ($BUMP_TYPE)"
+          echo "📈 Version bump: $CURRENT → $NEW_VERSION ($BUMP_TYPE)"
 
-        if [[ "$DRY_RUN" == "true" ]]; then
-          echo "🔍 DRY RUN - no changes will be made"
+          if [[ "$DRY_RUN" == "true" ]]; then
+            echo "🔍 DRY RUN - no changes will be made"
+            echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+            echo "tag=v$NEW_VERSION" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Update version in version.rb
+          sed -i "s/VERSION = \".*\"/VERSION = \"$NEW_VERSION\"/" lib/jekyll-theme-zer0/version.rb
+
+          # Update version in package.json if it exists
+          if [[ -f "package.json" ]]; then
+            sed -i "s/\"version\": \".*\"/\"version\": \"$NEW_VERSION\"/" package.json
+          fi
+
+          # Update gemspec version if needed
+          if [[ -f "jekyll-theme-zer0.gemspec" ]]; then
+            # Gemspec typically reads from version.rb, so no change needed
+            echo "Gemspec uses version.rb - no direct update needed"
+          fi
+
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "tag=v$NEW_VERSION" >> $GITHUB_OUTPUT
-          exit 0
-        fi
+          echo "✅ Version files updated to $NEW_VERSION"
 
-        # Update version in version.rb
-        sed -i "s/VERSION = \".*\"/VERSION = \"$NEW_VERSION\"/" lib/jekyll-theme-zer0/version.rb
+      - name: Update Gemfile.lock
+        if: ${{ inputs.dry_run != true }}
+        run: |
+          NEW_VERSION="${{ steps.bump.outputs.new_version }}"
 
-        # Update version in package.json if it exists
-        if [[ -f "package.json" ]]; then
-          sed -i "s/\"version\": \".*\"/\"version\": \"$NEW_VERSION\"/" package.json
-        fi
+          echo "📦 Regenerating Gemfile.lock for version $NEW_VERSION..."
 
-        # Update gemspec version if needed
-        if [[ -f "jekyll-theme-zer0.gemspec" ]]; then
-          # Gemspec typically reads from version.rb, so no change needed
-          echo "Gemspec uses version.rb - no direct update needed"
-        fi
+          # Ensure bundler is not in frozen/deployment mode
+          bundle config set --local frozen false
+          bundle config unset deployment 2>/dev/null || true
 
-        echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
-        echo "tag=v$NEW_VERSION" >> $GITHUB_OUTPUT
-        echo "✅ Version files updated to $NEW_VERSION"
+          # Run bundle install to regenerate lockfile with new gemspec version
+          bundle install --jobs 4 --retry 3
 
-    - name: Update Gemfile.lock
-      if: ${{ inputs.dry_run != true }}
-      run: |
-        NEW_VERSION="${{ steps.bump.outputs.new_version }}"
-
-        echo "📦 Regenerating Gemfile.lock for version $NEW_VERSION..."
-
-        # Ensure bundler is not in frozen/deployment mode
-        bundle config set --local frozen false
-        bundle config unset deployment 2>/dev/null || true
-
-        # Run bundle install to regenerate lockfile with new gemspec version
-        bundle install --jobs 4 --retry 3
-
-        # Verify the lockfile was updated correctly
-        if grep -q "jekyll-theme-zer0 ($NEW_VERSION)" Gemfile.lock; then
-          echo "✅ Gemfile.lock updated and verified for version $NEW_VERSION"
-        else
-          echo "⚠️ Warning: Gemfile.lock may not reflect new version"
-          echo "Current gem version in lockfile:"
-          grep "jekyll-theme-zer0" Gemfile.lock | head -3 || true
-        fi
-
-    - name: Update Changelog
-      if: ${{ inputs.dry_run != true }}
-      run: |
-        NEW_VERSION="${{ steps.bump.outputs.new_version }}"
-        BUMP_TYPE="${{ needs.analyze.outputs.bump_type }}"
-        TODAY=$(date +%Y-%m-%d)
-
-        # Generate changelog entry
-        TEMP_FILE=$(mktemp)
-
-        cat > "$TEMP_FILE" << EOF
-        ## [$NEW_VERSION] - $TODAY
-
-        ### Changed
-        - Version bump: $BUMP_TYPE release
-        EOF
-
-        # Try to add commit-based changes if analyze script exists
-        if [[ -f "./scripts/analyze-commits.sh" && "${{ needs.analyze.outputs.commit_range }}" != "manual" ]]; then
-          # Get commit summaries
-          COMMITS=$(git log --oneline ${{ needs.analyze.outputs.commit_range }} 2>/dev/null | head -20)
-          if [[ -n "$COMMITS" ]]; then
-            echo "" >> "$TEMP_FILE"
-            echo "### Commits in this release" >> "$TEMP_FILE"
-            echo "$COMMITS" | while read line; do
-              echo "- $line" >> "$TEMP_FILE"
-            done
+          # Verify the lockfile was updated correctly
+          if grep -q "jekyll-theme-zer0 ($NEW_VERSION)" Gemfile.lock; then
+            echo "✅ Gemfile.lock updated and verified for version $NEW_VERSION"
+          else
+            echo "⚠️ Warning: Gemfile.lock may not reflect new version"
+            echo "Current gem version in lockfile:"
+            grep "jekyll-theme-zer0" Gemfile.lock | head -3 || true
           fi
-        fi
 
-        echo "" >> "$TEMP_FILE"
+      - name: Update Changelog
+        if: ${{ inputs.dry_run != true }}
+        run: |
+          NEW_VERSION="${{ steps.bump.outputs.new_version }}"
+          BUMP_TYPE="${{ needs.analyze.outputs.bump_type }}"
+          TODAY=$(date +%Y-%m-%d)
 
-        # Insert via the shared library (single source of truth for changelog
-        # behavior): folds any pending [Unreleased] notes into the new entry
-        # and inserts before the first release heading, preserving the
-        # Keep a Changelog preamble. The previous inline head/tail prepend
-        # duplicated (and regressed) that logic — see the 1.12.1 entry.
-        source scripts/lib/changelog.sh
-        update_changelog_file "$(cat "$TEMP_FILE")"
+          # Generate changelog entry
+          TEMP_FILE=$(mktemp)
 
-        rm -f "$TEMP_FILE"
-        echo "✅ Changelog updated"
+          cat > "$TEMP_FILE" << EOF
+          ## [$NEW_VERSION] - $TODAY
 
-    - name: Update Documentation References
-      if: ${{ inputs.dry_run != true }}
-      run: |
-        NEW_VERSION="${{ steps.bump.outputs.new_version }}"
+          ### Changed
+          - Version bump: $BUMP_TYPE release
+          EOF
 
-        # Source the version management library and call update_readme()
-        # to avoid duplicating version-pattern sed logic here
-        source scripts/lib/common.sh
-        source scripts/lib/version.sh
+          # Try to add commit-based changes if analyze script exists
+          if [[ -f "./scripts/analyze-commits.sh" && "${{ needs.analyze.outputs.commit_range }}" != "manual" ]]; then
+            # Get commit summaries
+            COMMITS=$(git log --oneline ${{ needs.analyze.outputs.commit_range }} 2>/dev/null | head -20)
+            if [[ -n "$COMMITS" ]]; then
+              echo "" >> "$TEMP_FILE"
+              echo "### Commits in this release" >> "$TEMP_FILE"
+              echo "$COMMITS" | while read line; do
+                echo "- $line" >> "$TEMP_FILE"
+              done
+            fi
+          fi
 
-        update_readme "$NEW_VERSION"
+          echo "" >> "$TEMP_FILE"
 
-    - name: Commit and Push Changes
-      if: ${{ inputs.dry_run != true }}
-      run: |
-        NEW_VERSION="${{ steps.bump.outputs.new_version }}"
-        BUMP_TYPE="${{ needs.analyze.outputs.bump_type }}"
+          # Insert via the shared library (single source of truth for changelog
+          # behavior): folds any pending [Unreleased] notes into the new entry
+          # and inserts before the first release heading, preserving the
+          # Keep a Changelog preamble. The previous inline head/tail prepend
+          # duplicated (and regressed) that logic — see the 1.12.1 entry.
+          source scripts/lib/changelog.sh
+          update_changelog_file "$(cat "$TEMP_FILE")"
 
-        git add lib/jekyll-theme-zer0/version.rb package.json CHANGELOG.md Gemfile.lock README.md 2>/dev/null || true
+          rm -f "$TEMP_FILE"
+          echo "✅ Changelog updated"
 
-        git commit -m "chore: bump version to $NEW_VERSION
+      - name: Update Documentation References
+        if: ${{ inputs.dry_run != true }}
+        run: |
+          NEW_VERSION="${{ steps.bump.outputs.new_version }}"
 
-        - Version bump type: $BUMP_TYPE
-        - Updated version files, gemfile.lock, changelog, and documentation
-        - Automated by GitHub Actions
+          # Source the version management library and call update_readme()
+          # to avoid duplicating version-pattern sed logic here
+          source scripts/lib/common.sh
+          source scripts/lib/version.sh
 
-        [skip ci]" || echo "Nothing to commit"
+          update_readme "$NEW_VERSION"
 
-        git push origin main
-        echo "✅ Changes pushed to main"
+      - name: Commit and Push Changes
+        if: ${{ inputs.dry_run != true }}
+        run: |
+          NEW_VERSION="${{ steps.bump.outputs.new_version }}"
+          BUMP_TYPE="${{ needs.analyze.outputs.bump_type }}"
 
-    - name: Create and Push Tag
-      if: ${{ inputs.dry_run != true }}
-      run: |
-        TAG="${{ steps.bump.outputs.tag }}"
+          git add lib/jekyll-theme-zer0/version.rb package.json CHANGELOG.md Gemfile.lock README.md 2>/dev/null || true
 
-        git tag "$TAG"
-        git push origin "$TAG"
-        echo "✅ Tag $TAG created and pushed"
+          git commit -m "chore: bump version to $NEW_VERSION
 
-    - name: Trigger Release Workflow
-      if: ${{ inputs.dry_run != true }}
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        TAG="${{ steps.bump.outputs.tag }}"
+          - Version bump type: $BUMP_TYPE
+          - Updated version files, gemfile.lock, changelog, and documentation
+          - Automated by GitHub Actions
 
-        # GITHUB_TOKEN tag pushes do not trigger other workflows (GitHub security restriction).
-        # Explicitly dispatch the release workflow so the gem is published and a GitHub
-        # release is created for every version bump.
-        echo "🚀 Dispatching release workflow for $TAG..."
-        gh workflow run release.yml \
-          --repo "${{ github.repository }}" \
-          --ref "$TAG" \
-          --field tag="$TAG" \
-          --field publish_gem=true
-        echo "✅ Release workflow dispatched for $TAG"
+          [skip ci]" || echo "Nothing to commit"
 
-    - name: Version Bump Summary
-      run: |
-        echo "## 🚀 Version Bump Complete" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
-        echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
-        echo "| **Trigger** | ${{ github.event_name }} |" >> $GITHUB_STEP_SUMMARY
-        echo "| **Type** | ${{ needs.analyze.outputs.bump_type }} |" >> $GITHUB_STEP_SUMMARY
-        echo "| **Previous** | ${{ steps.current.outputs.version }} |" >> $GITHUB_STEP_SUMMARY
-        echo "| **New Version** | ${{ steps.bump.outputs.new_version }} |" >> $GITHUB_STEP_SUMMARY
-        echo "| **Tag** | ${{ steps.bump.outputs.tag }} |" >> $GITHUB_STEP_SUMMARY
-        echo "| **Dry Run** | ${{ inputs.dry_run || 'false' }} |" >> $GITHUB_STEP_SUMMARY
+          git push origin main
+          echo "✅ Changes pushed to main"
 
-        if [[ "${{ needs.analyze.outputs.commit_count }}" != "manual" ]]; then
-          echo "| **Commits Analyzed** | ${{ needs.analyze.outputs.commit_count }} |" >> $GITHUB_STEP_SUMMARY
-        fi
+      - name: Create and Push Tag
+        if: ${{ inputs.dry_run != true }}
+        run: |
+          TAG="${{ steps.bump.outputs.tag }}"
 
-        echo "" >> $GITHUB_STEP_SUMMARY
+          git tag "$TAG"
+          git push origin "$TAG"
+          echo "✅ Tag $TAG created and pushed"
 
-        if [[ "${{ inputs.dry_run }}" != "true" ]]; then
-          echo "✅ Release workflow dispatched via \`gh workflow run\` — gem will be published to RubyGems and a GitHub release will be created." >> $GITHUB_STEP_SUMMARY
-          echo "- [Release workflow runs](https://github.com/${{ github.repository }}/actions/workflows/release.yml)" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "🔍 Dry run complete - no changes were made." >> $GITHUB_STEP_SUMMARY
-        fi
+      - name: Trigger Release Workflow
+        if: ${{ inputs.dry_run != true }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.bump.outputs.tag }}"
+
+          # GITHUB_TOKEN tag pushes do not trigger other workflows (GitHub security restriction).
+          # Explicitly dispatch the release workflow so the gem is published and a GitHub
+          # release is created for every version bump.
+          echo "🚀 Dispatching release workflow for $TAG..."
+          gh workflow run release.yml \
+            --repo "${{ github.repository }}" \
+            --ref "$TAG" \
+            --field tag="$TAG" \
+            --field publish_gem=true
+          echo "✅ Release workflow dispatched for $TAG"
+
+      - name: Version Bump Summary
+        run: |
+          echo "## 🚀 Version Bump Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| **Trigger** | ${{ github.event_name }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Type** | ${{ needs.analyze.outputs.bump_type }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Previous** | ${{ steps.current.outputs.version }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **New Version** | ${{ steps.bump.outputs.new_version }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Tag** | ${{ steps.bump.outputs.tag }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Dry Run** | ${{ inputs.dry_run || 'false' }} |" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "${{ needs.analyze.outputs.commit_count }}" != "manual" ]]; then
+            echo "| **Commits Analyzed** | ${{ needs.analyze.outputs.commit_count }} |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "${{ inputs.dry_run }}" != "true" ]]; then
+            echo "✅ Release workflow dispatched via \`gh workflow run\` — gem will be published to RubyGems and a GitHub release will be created." >> $GITHUB_STEP_SUMMARY
+            echo "- [Release workflow runs](https://github.com/${{ github.repository }}/actions/workflows/release.yml)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "🔍 Dry run complete - no changes were made." >> $GITHUB_STEP_SUMMARY
+          fi
