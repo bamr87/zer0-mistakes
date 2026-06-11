@@ -14,10 +14,9 @@ test.describe('Security — secret exposure prevention', () => {
     await waitForJekyll(page, CONFIG_URL);
   });
 
-  test.fixme('no hidden <pre> elements containing full config YAML (regression)', async ({ page }) => {
-    // KNOWN ISSUE: <pre id="cfg-full-yaml"> includes raw _config.yml with api_key.
-    // TODO: Sanitize sensitive values before injecting into DOM.
-    // PR review flagged: <pre id="cfg-full-yaml"> hidden in DOM exposes secrets
+  test('no hidden <pre> elements containing full config YAML (regression)', async ({ page }) => {
+    // sanitize_config_yaml filter (_plugins/sanitize_config_filter.rb) masks
+    // api_key/secret/password/token keys and phc_* values before DOM injection.
     const hiddenPre = page.locator('pre#cfg-full-yaml');
     const count = await hiddenPre.count();
     if (count > 0) {
