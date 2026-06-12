@@ -56,7 +56,7 @@
 meta:
   title: "zer0-mistakes Backlog"
   updated: 2026-06-12
-  next_id: 19
+  next_id: 21
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -155,7 +155,7 @@ tasks:
 
   - id: T-005
     title: "Coverage baseline: identify the lowest-covered subsystems toward the 90% goal"
-    status: open
+    status: done
     priority: P1
     area: tests
     risk: standard
@@ -166,13 +166,17 @@ tasks:
       Zer0-Mistake Quality Framework starts with knowing where coverage stands.
       Produce a coverage baseline and file follow-up tasks for the lowest-covered
       areas (start with the modular installer and the Obsidian resolver paths).
+      Done 2026-06-12: baseline recorded at docs/development/coverage-baseline.md
+      (refreshed from the closed PR #122 survey against the current tree);
+      remaining gaps filed as T-019 (migrate.sh + theme_version.rb) and
+      T-020 (installer wizard/upgrade CI coverage).
     acceptance:
       - "A coverage baseline is recorded (test/coverage or a docs note)."
       - "The 2–3 lowest-covered subsystems are identified and filed as new backlog tasks."
       - "No reduction in existing passing tests (`./scripts/bin/test` stays green)."
     links: { issue: null, pr: null, roadmap: "1.13" }
     created: 2026-05-31
-    updated: 2026-06-10
+    updated: 2026-06-12
 
   # --- 2026-06-01 audit -------------------------------------------------------
 
@@ -273,7 +277,7 @@ tasks:
 
   - id: T-011
     title: "Add Ruby unit tests for uncovered _plugins/ generators"
-    status: open
+    status: done
     priority: P2
     area: tests
     risk: standard
@@ -285,6 +289,11 @@ tasks:
       URL-pattern checks (`test_preview_image_urls`) but no specs that exercise the
       generator logic in isolation. This is a concrete gap on the path to the
       3.0-milestone 90% coverage target.
+      Done 2026-06-12: test/test_plugins.rb — 19 Minitest specs covering all
+      three plugins (config merge, path normalization, index dedupe by
+      relative_path, filename sanitization, hook output/filtering/sorting,
+      script discovery with theme fallback); wired into test_core.sh as the
+      "Plugin Unit Specs" unit test; runs standalone without a Jekyll server.
     acceptance:
       - "`test/test_ruby_converter.rb`-style RSpec or Minitest specs exist for all three plugins."
       - "Each spec runs independently without a running Jekyll server (`bundle exec ruby -Itest`)."
@@ -292,7 +301,7 @@ tasks:
       - "Edge cases covered: empty collections, missing front-matter keys, and duplicate slug detection."
     links: { issue: null, pr: null, roadmap: "3.0" }
     created: 2026-06-01
-    updated: 2026-06-01
+    updated: 2026-06-12
 
   # --- 2026-06-10 Zer0-Mistake Quality Framework (roadmap v1.13) --------------
   #
@@ -477,3 +486,47 @@ tasks:
     links: { issue: null, pr: null, roadmap: "1.13" }
     created: 2026-06-11
     updated: 2026-06-11
+
+  - id: T-019
+    title: "Unit tests for migrate.sh and theme_version.rb (coverage rank #1)"
+    status: open
+    priority: P2
+    area: tests
+    risk: standard
+    effort: M
+    source: audit
+    summary: >-
+      The 2026-06-12 coverage baseline (docs/development/coverage-baseline.md,
+      T-005) ranks scripts/lib/migrate.sh (265 lines, 5 functions: site
+      detection, theme connection, admin-page install/verify, version-gap
+      detection) plus _plugins/theme_version.rb (88 lines) as the largest
+      remaining zero-coverage surface (353 lines).
+    acceptance:
+      - "scripts/test/lib/test_migrate.sh exercises detect_jekyll_site, validate_theme_connection, and detect_version_gap against fixture directories."
+      - "test/test_plugins.rb (or a sibling spec) covers theme_version.rb's version resolution."
+      - "./scripts/bin/test stays green with the new specs included."
+    links: { issue: null, pr: null, roadmap: "1.14" }
+    created: 2026-06-12
+    updated: 2026-06-12
+
+  - id: T-020
+    title: "CI coverage for installer interactive wizard and upgrade path (coverage rank #2)"
+    status: open
+    priority: P2
+    area: tests
+    risk: standard
+    effort: M
+    source: audit
+    summary: >-
+      Per the T-005 baseline, scripts/lib/install/wizard_interactive.sh (189
+      lines — prompt helpers need a TTY) and scripts/lib/install/upgrade.sh
+      (184 lines) have effectively no CI coverage. Drive the wizard with
+      scripted stdin (the suite pattern in test_install_legacy_flags.sh) and
+      add an upgrade-path fixture (old-version site → upgrade → assert state).
+    acceptance:
+      - "Wizard prompt helpers exercised non-interactively (piped answers) in a test_install_* suite."
+      - "An upgrade fixture covers detect→migrate→verify for at least one version gap."
+      - "Suites run in CI via the standard installer e2e discovery (test_install_*.sh)."
+    links: { issue: null, pr: null, roadmap: "1.14" }
+    created: 2026-06-12
+    updated: 2026-06-12
