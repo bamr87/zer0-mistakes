@@ -22,6 +22,9 @@ assert_true "(cd '$REPO_ROOT' && LC_ALL=C LANG=C ruby scripts/generate-roadmap.r
 assert_true "(cd '$REPO_ROOT' && LC_ALL=C LANG=C ruby scripts/sync-backlog.rb --check >/dev/null 2>&1)" \
     "sync-backlog.rb --check survives a C locale"
 
+assert_true "(cd '$REPO_ROOT' && LC_ALL=C LANG=C ./scripts/lint-pages --strict >/dev/null 2>&1)" \
+    "lint-pages --strict survives a C locale"
+
 # validate --quick covers the package.json read in scripts/bin/validate
 assert_true "(cd '$REPO_ROOT' && LC_ALL=C LANG=C ./scripts/bin/validate --quick >/dev/null 2>&1)" \
     "validate --quick survives a C locale"

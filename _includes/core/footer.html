@@ -260,10 +260,12 @@
   {%- endunless -%}
 
   <!-- Back to Top Button (controlled by assets/js/back-to-top.js) -->
+  <!-- Positioning/stacking handled by _sass/components/_back-to-top.scss
+       via the FAB tokens (bottom-up: back-to-top → chat toggle → TOC FAB) -->
   <a
     id="backToTopBtn"
     href="#"
-    class="btn btn-primary position-fixed bottom-0 end-0 m-3"
+    class="btn btn-primary"
     aria-label="Back to top"
     title="Back to top"
     role="button"

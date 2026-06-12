@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **AI Chat Assistant (ZER0-060)**: opt-in floating chat widget grounded in the current page's content, with proxy-first auth — renders nothing until `ai_chat.enabled` plus a deployed proxy (`proxy_ready: true`) or an explicit direct-mode key are configured; FAB positioning/stacking driven by the design tokens (new `--zer0-layer-fab-chat`)
+
+### Fixed
+- **Chat render guard**: the original guard used boolean expressions inside Liquid `assign` tags (always truthy), which would have rendered a dead chat button on every page; computed with if-tags instead
+- **Locale independence**: `scripts/lint-pages` (via `scripts/lib/frontmatter.sh`) read pages with the locale-dependent default encoding, reporting every multibyte post as a YAML parse error under a C locale; now reads UTF-8 explicitly and the T-015 locale guard covers it
+
 ## [1.15.0] - 2026-06-12
 
 ### Changed

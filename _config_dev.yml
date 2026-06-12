@@ -31,6 +31,18 @@ posthog:
   api_key                : null
   api_host               : null
 
+# AI Chat Configuration for Development
+# The chat widget renders only when a valid auth method is configured.
+# To test locally, create _config_secrets_local.yml with:
+#   ai_chat:
+#     enabled: true
+#     auth_mode: 'direct'
+#     api_key: '<your-openai-key>'
+#     endpoint: 'https://api.openai.com/v1/chat/completions'
+# The docker-compose command auto-includes this file when it exists.
+ai_chat:
+  auth_mode              : direct
+
 # Disable production optimizations for faster builds.
 # `limit_posts` caps the post-processing window during dev serves. Category
 # index pages (index: true) use a recent date so they stay inside this window.

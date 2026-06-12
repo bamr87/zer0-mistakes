@@ -30,6 +30,9 @@ node_modules/
 !.env.example
 env-variables.log
 
+# Local secrets config (API keys injected from .env)
+_config_secrets_local.yml
+
 # Gem development
 *.gem
 pkg/
@@ -44,7 +47,6 @@ logs/*
 
 # Front Matter CMS
 .frontmatter/
-
 # VS Code / Cursor js-debug browser profiles (see .vscode/launch.json userDataDir)
 .vscode/chrome-debug-profile/
 .vscode/chrome-debug-profile-mobile/
@@ -79,3 +81,8 @@ _config_secrets_local.yml
 # Obsidian working files that should not be published by Jekyll
 *.canvas
 *.excalidraw.md
+
+# Dependency / build artifacts
+vendor/
+node_modules/
+chrome-debug-profile/
