@@ -5,7 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.15.0] - 2026-06-12
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 85d0295a feat(quality): implement six backlog tasks — T-003/004/008/014/015/016 (#144)
+- 71b8fe46 fix(gemspec): require Ruby >= 3.2 to match modern dependency floor (#93)
 
 ### Added
 - **Contribution templates (T-003)**: bug-report and feature-request issue forms, contact links, and a PR template with the conventional-commit/CHANGELOG/test checklist
