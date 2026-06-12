@@ -44,6 +44,7 @@ Site-wide navigation with collapsible categories:
 ```
 
 Features:
+
 - Folder-based navigation
 - Category organization
 - Responsive collapse on mobile
@@ -57,6 +58,7 @@ Page-specific heading navigation:
 ```
 
 Features:
+
 - Auto-generated from headings
 - Scroll spy highlighting
 - Floating action button on mobile

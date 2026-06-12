@@ -146,6 +146,7 @@ The button opens a Bootstrap offcanvas from the right:
 ### Screen Readers
 
 The button announces:
+
 1. "Open table of contents, button"
 2. On open: "Table of contents, dialog"
 

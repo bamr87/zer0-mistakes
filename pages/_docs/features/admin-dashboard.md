@@ -46,7 +46,7 @@ icon: bi-gear
 
 ### Layout Structure
 
-```
+```text
 Admin page
 ├── Admin header  (breadcrumbs + icon + title + action buttons)
 ├── Admin sidebar (collapsible; collapses to offcanvas on mobile)
@@ -57,7 +57,7 @@ Admin page
 
 A dedicated sidebar navigation partial is included automatically with the admin layout:
 
-```
+```text
 _includes/navigation/admin-nav.html
 ```
 

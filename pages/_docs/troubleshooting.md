@@ -66,6 +66,7 @@ docker-compose run -p 4001:4000 jekyll
 **Symptoms:** File changes take a long time to reflect.
 
 **Solutions:**
+
 - Enable "Use Rosetta for x86/amd64 emulation" in Docker Desktop settings
 - Use `docker-compose.yml` which includes performance optimizations
 

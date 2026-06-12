@@ -25,7 +25,7 @@ The Zer0-Mistakes theme includes 70+ reusable components organized by category.
 
 ## Overview
 
-```
+```text
 _includes/
 ├── analytics/     # Analytics integrations
 ├── components/    # UI components

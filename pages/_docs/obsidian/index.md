@@ -22,11 +22,11 @@ equivalent presentation — no duplication, no separate sync step.
 
 | Page | What it covers |
 | --- | --- |
-| [Getting started]({{ "/docs/obsidian/getting-started/" | relative_url }}) | Open the repo as a vault, recommended plugins, frontmatter rules. |
-| [Syntax reference]({{ "/docs/obsidian/syntax-reference/" | relative_url }}) | Every Obsidian feature and how it renders on the site. |
-| [Graph view]({{ "/docs/obsidian/graph/" | relative_url }}) | Interactive force-directed map of every page and wiki-link. |
-| [Authoring workflow]({{ "/docs/obsidian/authoring-workflow/" | relative_url }}) | Daily note → commit → publish loop. |
-| [Troubleshooting]({{ "/docs/obsidian/troubleshooting/" | relative_url }}) | Broken links, missing embeds, conflicts. |
+| [Getting started](/docs/obsidian/getting-started/) | Open the repo as a vault, recommended plugins, frontmatter rules. |
+| [Syntax reference](/docs/obsidian/syntax-reference/) | Every Obsidian feature and how it renders on the site. |
+| [Graph view](/docs/obsidian/graph/) | Interactive force-directed map of every page and wiki-link. |
+| [Authoring workflow](/docs/obsidian/authoring-workflow/) | Daily note → commit → publish loop. |
+| [Troubleshooting](/docs/obsidian/troubleshooting/) | Broken links, missing embeds, conflicts. |
 
 ## How it works
 
@@ -47,7 +47,7 @@ The integration has two pieces:
 For users who self-build with vanilla Jekyll (no `github-pages` gem), an
 opt-in Ruby plugin (`_plugins/obsidian_links.rb`) performs the same
 transformations server-side for slightly better SEO. See the
-[syntax reference]({{ "/docs/obsidian/syntax-reference/" | relative_url }})
+[syntax reference](/docs/obsidian/syntax-reference/)
 for the complete feature matrix.
 
 ## See also

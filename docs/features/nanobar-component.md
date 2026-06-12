@@ -38,7 +38,7 @@ The Nanobar component provides a visual page-loading progress bar that runs on e
 
 ## Component Diagram
 
-```
+```text
 _config.yml                    ┌──────────────────────────┐
   nanobar:                     │  _includes/components/   │
     enabled: true       ──────▶│     nanobar.html         │
@@ -107,6 +107,7 @@ The `steps` array defines percentage waypoints the bar animates through on `DOMC
 **Purpose**: Single include that owns the entire nanobar subsystem.
 
 **Contents**:
+
 1. **CSS custom properties** — `:root` block mapping `site.nanobar.*` → CSS variables (`--nanobar-color`, `--nanobar-bg`, `--nanobar-height`, `--nanobar-z`)
 2. **Scoped styles** — `.nanobar`, `.nanobar-mount`, `.nanobar--bottom`, `.nanobar--navbar` selectors
 3. **JS library load** — `<script defer src="nanobar.min.js">`
@@ -118,6 +119,7 @@ The `steps` array defines percentage waypoints the bar animates through on `DOMC
 ### `_includes/core/head.html`
 
 **Change**: Replaced ~60-line inline nanobar block with:
+
 ```liquid
 {% include components/nanobar.html %}
 ```
@@ -140,6 +142,7 @@ Third-party [Nanobar](https://github.com/jacoborus/nanobar) library. Fixed a str
 ### `assets/js/nanobar-init.js`
 
 Theme initializer that:
+
 1. Reads `window.zer0Nanobar` config object
 2. Determines mount target based on `position` (viewport-fixed or `#top-progress-target`)
 3. Instantiates `new Nanobar(opts)` with correct target
@@ -169,6 +172,7 @@ No styles target `footer`, `main`, or any other component.
 The same commit (`f5d5e97`) also restructured `_includes/core/footer.html` to make the dark section extend edge-to-edge:
 
 **Before** (triple-nested containers):
+
 ```html
 <footer class="bd-footer container-xl border-top">
   <div class="container row my-3">...</div>
@@ -183,6 +187,7 @@ The same commit (`f5d5e97`) also restructured `_includes/core/footer.html` to ma
 ```
 
 **After** (flat structure):
+
 ```html
 <footer class="bd-footer border-top">
   <div class="container-xl my-3">...</div>
@@ -195,6 +200,7 @@ The same commit (`f5d5e97`) also restructured `_includes/core/footer.html` to ma
 ```
 
 **Key changes**:
+
 - Removed `container-xl` from `<footer>` element
 - Replaced `rounded-3` with edge-to-edge dark background
 - Flattened from 4 nesting levels to 2

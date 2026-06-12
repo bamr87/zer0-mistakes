@@ -271,6 +271,7 @@ breadcrumbs: false
 ### Schema Validation
 
 Test structured data at:
+
 - [Google Rich Results Test](https://search.google.com/test/rich-results)
 - [Schema.org Validator](https://validator.schema.org/)
 

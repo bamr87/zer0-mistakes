@@ -130,7 +130,7 @@ Create `netlify.toml` in your repository root for advanced configuration:
 
 Alternatively, create a `_redirects` file in your site root:
 
-```
+```text
 # Redirect old URLs
 /old-page    /new-page    301
 
@@ -142,7 +142,7 @@ Alternatively, create a `_redirects` file in your site root:
 
 Create a `_headers` file for custom headers:
 
-```
+```text
 /*
   X-Frame-Options: DENY
   X-XSS-Protection: 1; mode=block
@@ -165,14 +165,16 @@ Create a `_headers` file for custom headers:
 Add these records at your domain registrar:
 
 **For apex domain (example.com):**
-```
+
+```text
 Type: A
 Name: @
 Value: 75.2.60.5
 ```
 
 **For www subdomain:**
-```
+
+```text
 Type: CNAME
 Name: www
 Value: your-site.netlify.app
@@ -209,6 +211,7 @@ Check the deploy log for errors:
 3. Review build logs
 
 Common issues:
+
 - Missing `Gemfile.lock` — Run `bundle lock`
 - Ruby version mismatch — Specify in `netlify.toml`
 - Plugin errors — Ensure all gems are in `Gemfile`
@@ -216,6 +219,7 @@ Common issues:
 ### Slow Builds
 
 Optimize build time:
+
 - Use `bundle install --jobs 4` for parallel installs
 - Cache dependencies (Netlify does this automatically)
 - Reduce build scope with incremental builds
@@ -223,6 +227,7 @@ Optimize build time:
 ### SSL Certificate Issues
 
 If HTTPS isn't working:
+
 1. Verify DNS propagation with `dig yourdomain.com`
 2. Check **Domain management** → **HTTPS**
 3. Click **Verify DNS configuration**

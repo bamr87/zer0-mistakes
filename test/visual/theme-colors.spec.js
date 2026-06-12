@@ -60,9 +60,9 @@ test.describe('Theme color customization', () => {
     expect(textValue.toLowerCase()).toBe('#ff5500');
   });
 
-  test.fixme('YAML export quotes hex color values (regression: unquoted # is YAML comment)', async ({ page }) => {
-    // KNOWN ISSUE: Theme customizer YAML export does not quote hex color values.
-    // TODO: Fix JS export to wrap #RRGGBB values in quotes.
+  test('YAML export quotes hex color values (regression: unquoted # is YAML comment)', async ({ page }) => {
+    // T-008: both YAML builders (theme-customizer.js fallback and
+    // palette-generator.js rebuildFullYaml) quote every color value.
     // Switch to the "Export" tab if it exists
     const exportTab = page.locator('#tab-export');
     if (await exportTab.count() > 0) {

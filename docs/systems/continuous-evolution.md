@@ -34,7 +34,7 @@ way [`_data/roadmap.yml`](../../_data/roadmap.yml) is for strategic milestones.
 The backlog is mirrored to GitHub Issues for visibility, but you edit the file —
 not the issues.
 
-```
+```text
   AUDIT routine (weekly)
     └─ /repo-audit  ──►  _data/backlog.yml  ──►  PR "chore(backlog): audit …"
                                                       │ (merged)
@@ -64,7 +64,7 @@ generator/validator with `--check`, driven by a path-filtered workflow.
 
 ## Task lifecycle
 
-```
+```text
 open ──► in-progress ──► done            (blocked is a parked state)
   ▲           │
   └───────────┘  (reopened if work is abandoned)

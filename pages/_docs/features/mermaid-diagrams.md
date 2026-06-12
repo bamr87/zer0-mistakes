@@ -87,6 +87,7 @@ mermaid:
 The most common diagram type for documenting processes and workflows.
 
 **Directions:**
+
 - `TD` / `TB` — Top to Bottom
 - `BT` — Bottom to Top
 - `LR` — Left to Right

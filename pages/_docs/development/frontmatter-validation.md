@@ -42,7 +42,7 @@ graph LR
 
 The schema lives at:
 
-```
+```text
 .github/config/frontmatter_schema.yml
 ```
 
@@ -91,13 +91,13 @@ The `.github/workflows/` CI pipeline runs `./scripts/bin/validate` on every push
 
 A dedicated Copilot prompt helps you audit and repair frontmatter across the entire site:
 
-```
+```text
 .github/prompts/frontmatter-maintainer.prompt.md
 ```
 
 Use it via GitHub Copilot Chat:
 
-```
+```text
 @workspace /frontmatter-maintainer
 ```
 

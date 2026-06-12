@@ -42,6 +42,7 @@ The Zer0-Mistakes theme includes comprehensive keyboard navigation support to en
 Press `Tab` immediately after page load to reveal the "Skip to main content" link. This allows keyboard users to bypass the navigation menu and jump directly to the page content.
 
 **How it works:**
+
 1. Page loads
 2. Press `Tab` once
 3. "Skip to main content" button appears
@@ -71,6 +72,7 @@ The table of contents sidebar includes advanced keyboard navigation:
 #### Mobile Access
 
 On mobile devices:
+
 1. The TOC button appears in the bottom-right corner
 2. Tab to the button or swipe from the right edge
 3. Press `Enter` to open
@@ -83,6 +85,7 @@ The theme automatically manages focus to provide a smooth keyboard experience:
 ### Offcanvas Focus Trap
 
 When a sidebar opens:
+
 - Focus moves inside the offcanvas panel
 - `Tab` cycles through elements within the panel
 - `Esc` closes the panel and returns focus to the trigger button
@@ -90,6 +93,7 @@ When a sidebar opens:
 ### Anchor Links
 
 When clicking TOC links:
+
 - Page scrolls to the target heading
 - Focus moves to the heading for continued keyboard navigation
 - URL updates without page reload
@@ -113,6 +117,7 @@ When clicking TOC links:
 ### Reduced Motion
 
 The theme respects the `prefers-reduced-motion` system setting:
+
 - Smooth scrolling disabled when requested
 - Transition animations minimized
 - Page changes instant instead of animated
@@ -133,6 +138,7 @@ All interactive elements meet minimum touch target size requirements (44x44px) f
 ## Browser Support
 
 Keyboard navigation features work in:
+
 - Chrome/Edge 58+
 - Firefox 55+
 - Safari 12.1+
@@ -143,6 +149,7 @@ Keyboard navigation features work in:
 ### Focus Not Visible
 
 If you don't see focus indicators:
+
 1. Check browser settings for "Tab highlighting"
 2. Ensure custom CSS hasn't overridden `:focus` styles
 3. Try a different browser
@@ -150,6 +157,7 @@ If you don't see focus indicators:
 ### Shortcuts Not Working
 
 If keyboard shortcuts don't respond:
+
 1. Make sure JavaScript is enabled
 2. Check browser console for errors
 3. Verify you're not typing in a form field
@@ -158,6 +166,7 @@ If keyboard shortcuts don't respond:
 ### Screen Reader Issues
 
 For screen reader problems:
+
 1. Ensure latest screen reader version
 2. Check ARIA support in your browser
 3. Review [WCAG 2.1 guidelines](https://www.w3.org/WAI/WCAG21/quickref/)

@@ -34,7 +34,7 @@ Vendor CSS/JS lives under `assets/vendor/` (committed for GitHub Pages). Refresh
 
 ### Directory layout
 
-```
+```text
 _sass/
 ├── tokens/           # --zer0-* design tokens (color, spacing, typography, …)
 ├── theme/            # Skins, backgrounds, color modes, wizard palette
@@ -204,7 +204,7 @@ Liquid counterparts live in `_includes/components/`. See [components.md](compone
 
 Drop a same-path file in your site repo — Jekyll prefers local files over the remote theme:
 
-```
+```text
 your-site/
 └── _sass/tokens/_color.scss   # overrides theme defaults
 ```

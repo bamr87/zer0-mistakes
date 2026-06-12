@@ -59,31 +59,36 @@ Create the most developer-friendly Jekyll theme that eliminates setup friction t
 
 ### Primary Personas
 
-**Persona 1: Technical Writer (Sarah)**
+#### Persona 1: Technical Writer (Sarah)
+
 - Creates documentation for software products
 - Needs fast setup, clean layouts, markdown-focused, version control
 - Pain point: complex Jekyll configurations, theme customization
 - Success: site deployed in <10 minutes
 
-**Persona 2: Open Source Developer (Marcus)**
+#### Persona 2: Open Source Developer (Marcus)
+
 - Maintains multiple GitHub projects
 - Needs zero-maintenance project sites, GitHub Pages integration
 - Pain point: time spent on website maintenance vs. coding
 - Success: one-click deployment, automatic updates
 
-**Persona 3: Content Creator (Lisa)**
+#### Persona 3: Content Creator (Lisa)
+
 - Blogger transitioning from WordPress
 - Needs modern design, SEO, privacy-friendly analytics
 - Pain point: WordPress complexity, hosting costs, privacy concerns
 - Success: beautiful site without deep coding knowledge
 
-**Persona 4: DevOps Engineer (Raj)**
+#### Persona 4: DevOps Engineer (Raj)
+
 - Manages company infrastructure
 - Needs containerized development, CI/CD integration
 - Pain point: environment inconsistencies, deployment complexity
 - Success: Docker-based workflow, automated testing
 
-**Persona 5: AI Agent (Claude/GPT)**
+#### Persona 5: AI Agent (Claude/GPT)
+
 - Assists developers with code generation and site building
 - Needs clear instructions, complete context, reproducible builds
 - Pain point: incomplete documentation, ambiguous configurations
@@ -347,7 +352,7 @@ CURRENT=$(grep -o 'VERSION = "[^"]*"' lib/jekyll-theme-zer0/version.rb)
 
 **Technical Implementation**:
 
-```
+```text
 .github/
 ├── copilot-instructions.md (805 lines)
 └── instructions/
@@ -422,7 +427,7 @@ mermaid:
 
 **Technical Implementation**:
 
-```
+```text
 _layouts/sitemap-collection.html - Unified sitemap
 _includes/stats/ - Statistics components
 _data/content_statistics.yml - Generated metrics
@@ -498,7 +503,7 @@ _data/content_statistics.yml - Generated metrics
 
 **Technical Requirements**:
 
-```
+```text
 lib/cms/
 ├── api.rb           # REST API endpoints
 ├── adapter.rb       # CMS integration layer
@@ -584,7 +589,7 @@ posthog:
 
 **Technical Requirements**:
 
-```
+```text
 assets/js/theme-customizer.js
 _includes/components/theme-editor.html
 _data/theme-presets.yml
@@ -711,7 +716,7 @@ graph TB
 
 **Hierarchy**:
 
-```
+```text
 root.html (base)
   ├── default.html (main wrapper)
   │   ├── home.html (homepage)

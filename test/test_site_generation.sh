@@ -339,9 +339,13 @@ test_all_modes_build_success() {
             # Only try to build if generation succeeded
             # Note: remote_theme and gem modes may fail without network/gem access
             if [[ "$mode" == "full" ]] || [[ "$mode" == "minimal" ]]; then
+                # T-016: a failing jekyll build fails the suite. The only
+                # environment concession is a missing toolchain, which
+                # build_jekyll_site already handles by skipping (return 0)
+                # when bundler is absent.
                 if ! build_jekyll_site "$workspace" "$mode"; then
-                    test_log_warning "Build failed for mode: $mode"
-                    # Don't fail the test for build issues (may be environment)
+                    test_log_error "Build failed for mode: $mode"
+                    all_passed=false
                 fi
             else
                 test_log_info "Skipping build for $mode (requires network/gem access)"

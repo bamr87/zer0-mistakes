@@ -14,7 +14,7 @@ lastmod: "2026-04-24T15:06:30Z"
 
 ## The round-trip
 
-```
+```text
 Obsidian (edit)  →  git commit  →  GitHub push  →  Pages build  →  live URL
        ↑                                                                │
        └──────────── git pull (Obsidian Git plugin) ────────────────────┘

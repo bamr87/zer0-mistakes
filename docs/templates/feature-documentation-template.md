@@ -37,14 +37,14 @@ Brief description of what this feature does and why it was added.
 
 ### Files Added
 
-```
+```text
 path/to/new/file.html - Description
 path/to/another/file.css - Description
 ```
 
 ### Files Modified
 
-```
+```text
 existing/file.html - Changes made
 another/file.yml - Configuration updates
 ```

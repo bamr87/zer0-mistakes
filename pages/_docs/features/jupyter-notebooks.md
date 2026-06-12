@@ -58,13 +58,13 @@ graph LR
 
 1. Place `.ipynb` file in `pages/_notebooks/`:
 
-```
+```text
 pages/_notebooks/
 ├── data-analysis.ipynb
 └── machine-learning-intro.ipynb
 ```
 
-2. Convert notebooks:
+1. Convert notebooks:
 
 ```bash
 # Using Docker
@@ -74,7 +74,7 @@ docker-compose exec jekyll ./scripts/convert-notebooks.sh
 ./scripts/convert-notebooks.sh
 ```
 
-3. View at `/notebooks/your-notebook-name/`
+1. View at `/notebooks/your-notebook-name/`
 
 ## Conversion Script
 
@@ -180,11 +180,13 @@ defaults:
 Equations render automatically:
 
 **Inline Math**:
+
 ```latex
 The equation $E = mc^2$ is famous.
 ```
 
 **Block Math**:
+
 ```latex
 $$
 \int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}
@@ -241,11 +243,11 @@ defaults:
 ```makefile
 # Convert all notebooks
 convert-notebooks:
-	./scripts/convert-notebooks.sh
+ ./scripts/convert-notebooks.sh
 
 # Preview conversion
 convert-notebooks-dry-run:
-	./scripts/convert-notebooks.sh --dry-run
+ ./scripts/convert-notebooks.sh --dry-run
 ```
 
 ## Troubleshooting
@@ -253,9 +255,11 @@ convert-notebooks-dry-run:
 ### Conversion Fails
 
 1. Check nbconvert is installed:
+
    ```bash
    pip install nbconvert
    ```
+
 2. Verify notebook is valid JSON
 3. Check for special characters in path
 
@@ -274,6 +278,7 @@ convert-notebooks-dry-run:
 ### Tables Overflow
 
 Add responsive wrapper:
+
 ```html
 <div class="table-responsive">
   {{ table_content }}

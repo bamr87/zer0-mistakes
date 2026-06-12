@@ -54,6 +54,7 @@ gh secret set DOCKER_TOKEN --body "dckr_pat_your_token_here"
 ```
 
 Or add via GitHub UI:
+
 1. Go to repository **Settings → Secrets and variables → Actions**
 2. Click **New repository secret**
 3. Add `DOCKER_USERNAME` and `DOCKER_TOKEN`
@@ -104,12 +105,14 @@ If you fork this repository, you'll need to:
    - Create repository: `yourusername/zer0-mistakes`
 
 2. **Set up secrets in your fork**
+
    ```bash
    gh secret set DOCKER_USERNAME --body "yourusername"
    gh secret set DOCKER_TOKEN --body "your_token"
    ```
 
 3. **Set variables in your fork**
+
    ```bash
    gh variable set DOCKER_IMAGE --body "yourusername/zer0-mistakes"
    gh variable set PAGES_REPO_NWO --body "yourusername/zer0-mistakes"
@@ -122,6 +125,7 @@ If you fork this repository, you'll need to:
 **Error:** `unauthorized: incorrect username or password`
 
 **Solutions:**
+
 1. Verify `DOCKER_USERNAME` matches your Docker Hub username exactly
 2. Regenerate `DOCKER_TOKEN` - tokens expire or may be revoked
 3. Check the token has `Read, Write` permissions
@@ -137,6 +141,7 @@ If you fork this repository, you'll need to:
 **Error:** `denied: requested access to the resource is denied`
 
 **Solutions:**
+
 1. Verify the Docker Hub repository exists
 2. Check your token has write permissions
 3. Ensure `DOCKER_IMAGE` matches your Docker Hub repo path
@@ -157,6 +162,7 @@ You can also publish Docker images locally using your `.env` file.
 ### Setup Local Publishing
 
 1. **Configure `.env` file**
+
    ```bash
    # Copy example and edit
    cp .env.example .env

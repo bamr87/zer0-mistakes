@@ -22,7 +22,7 @@ The new comprehensive script that handles the entire gem publication process:
 ./scripts/gem-publish.sh [patch|minor|major] [options]
 ```
 
-#### Key Features:
+#### Key Features
 
 - 📋 **Automatic Changelog Generation**: Analyzes commit history since last version
 - 🔢 **Semantic Versioning**: Handles patch, minor, and major version bumps
@@ -32,7 +32,7 @@ The new comprehensive script that handles the entire gem publication process:
 - 🏷️ **GitHub Releases**: Creates GitHub releases with assets
 - 🔄 **Git Integration**: Handles commits, tags, and repository synchronization
 
-#### Usage Examples:
+#### Usage Examples
 
 ```bash
 # Patch release (bug fixes)
@@ -71,7 +71,7 @@ New launch configurations in `.vscode/launch.json`:
 
 New tasks in `.vscode/tasks.json`:
 
-#### Gem Management Tasks:
+#### Gem Management Tasks
 
 - **🚀 Gem: Patch Release** - Full patch release workflow
 - **🚀 Gem: Minor Release** - Full minor release workflow

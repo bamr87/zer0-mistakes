@@ -39,7 +39,7 @@ Rather than maintaining separate instruction files with duplicated content, `AGE
 
 ## File Location
 
-```
+```text
 AGENTS.md   ← repository root
 ```
 
@@ -57,7 +57,7 @@ GitHub Copilot also reads it as supplementary context. Other tools that support 
 
 ## Layered Guidance Model
 
-```
+```text
 AGENTS.md          ← Cross-tool entry point (always read first)
     │
     ├── .github/copilot-instructions.md  ← Full architecture & conventions

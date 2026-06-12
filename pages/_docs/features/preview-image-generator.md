@@ -209,7 +209,7 @@ preview_style: "technical diagram, blueprint style, clean lines"
 
 ### File Location
 
-```
+```text
 _plugins/preview_image_generator.rb
 ```
 
@@ -252,7 +252,8 @@ PreviewImageGenerator.generate_prompt(doc)
 ### Output Directory
 
 Images saved to:
-```
+
+```text
 assets/images/previews/
 ├── post-slug-preview.png
 ├── another-post-preview.png

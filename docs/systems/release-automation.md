@@ -59,7 +59,7 @@ Press `Cmd+Shift+P` → "Tasks: Run Task" → Choose:
 
 The release automation is built on 6 focused libraries:
 
-```
+```text
 scripts/lib/
 ├── common.sh       (165 lines) - Logging, error handling, utilities
 ├── validation.sh   (120 lines) - Environment validation
@@ -75,7 +75,7 @@ scripts/lib/
 
 Two simplified commands provide the user interface:
 
-```
+```text
 scripts/
 ├── release         (200 lines) - Complete release workflow
 ├── build           (80 lines)  - Gem building only
@@ -165,7 +165,7 @@ The system automatically generates changelogs from conventional commit messages:
 
 **Commit Format:**
 
-```
+```text
 <type>(<scope>): <subject>
 
 <body>

@@ -571,7 +571,7 @@ cd <your-username>.github.io
 docker-compose up
 ```
 
-See [docs/FORKING.md](docs/FORKING.md) for the full progressive workflow.
+See [docs/FORKING.md](docs/installation/forking.md) for the full progressive workflow.
 
 ---
 
@@ -703,7 +703,7 @@ zer0-mistakes documentation is split across three audiences. Pick the layer that
 | [📊 Analytics](https://zer0-mistakes.com/docs/analytics/) | PostHog, Google Analytics setup |
 | [🔍 SEO](https://zer0-mistakes.com/docs/seo/) | Meta tags, sitemap, structured data |
 | [📓 Jupyter Notebooks](https://github.com/bamr87/zer0-mistakes/blob/main/docs/JUPYTER_NOTEBOOKS.md) | Notebook conversion documentation |
-| [📝 PRD](docs/PRD.md) | Product requirements & roadmap |
+| [📝 PRD](docs/architecture/prd-requirements.md) | Product requirements & roadmap |
 | [🔒 Privacy Policy](https://zer0-mistakes.com/privacy-policy/) | GDPR/CCPA compliant privacy docs |
 
 ### Contributor Technical Reference
@@ -712,18 +712,18 @@ These files live in the repo under `docs/` and are intended for theme contributo
 
 | File | Topic |
 |------|-------|
-| [docs/design-system.md](docs/design-system.md) | Design system overview |
-| [docs/design-tokens.md](docs/design-tokens.md) | Design tokens reference |
-| [docs/components.md](docs/components.md) | UI component catalogue |
-| [docs/layouts-and-navigation.md](docs/layouts-and-navigation.md) | Layout hierarchy & navigation |
-| [docs/theming.md](docs/theming.md) | Sass / Bootstrap theming guide |
-| [docs/customization.md](docs/customization.md) | Site customization patterns |
-| [docs/configuration.md](docs/configuration.md) | `_config.yml` reference |
-| [docs/code-blocks.md](docs/code-blocks.md) | Syntax highlighting setup |
-| [docs/extending.md](docs/extending.md) | Adding layouts, includes & plugins |
-| [docs/js-api.md](docs/js-api.md) | JavaScript module API |
-| [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | Common issues & fixes |
-| [docs/FORKING.md](docs/FORKING.md) | Forking & personalization guide |
+| [docs/design-system.md](docs/ui/design-system.md) | Design system overview |
+| [docs/design-tokens.md](docs/ui/design-tokens.md) | Design tokens reference |
+| [docs/components.md](docs/ui/components.md) | UI component catalogue |
+| [docs/layouts-and-navigation.md](docs/ui/layouts-and-navigation.md) | Layout hierarchy & navigation |
+| [docs/theming.md](docs/ui/theming.md) | Sass / Bootstrap theming guide |
+| [docs/customization.md](docs/ui/customization.md) | Site customization patterns |
+| [docs/configuration.md](docs/ui/configuration.md) | `_config.yml` reference |
+| [docs/code-blocks.md](docs/ui/code-blocks.md) | Syntax highlighting setup |
+| [docs/extending.md](docs/ui/extending.md) | Adding layouts, includes & plugins |
+| [docs/js-api.md](docs/ui/js-api.md) | JavaScript module API |
+| [docs/TROUBLESHOOTING.md](docs/development/troubleshooting.md) | Common issues & fixes |
+| [docs/FORKING.md](docs/installation/forking.md) | Forking & personalization guide |
 
 ---
 
@@ -803,7 +803,7 @@ When you fork the theme as a starter, the workflows come with you. To make them 
 
 ## 🗺 Roadmap
 
-The diagram and table below are auto-generated from [`_data/roadmap.yml`](_data/roadmap.yml) by [`scripts/generate-roadmap.sh`](scripts/generate-roadmap.sh). See the full [Roadmap page](https://zer0-mistakes.com/roadmap/) for per-version detail and the [PRD](docs/PRD.md) for product context.
+The diagram and table below are auto-generated from [`_data/roadmap.yml`](_data/roadmap.yml) by [`scripts/generate-roadmap.sh`](scripts/generate-roadmap.sh). See the full [Roadmap page](https://zer0-mistakes.com/roadmap/) for per-version detail and the [PRD](docs/architecture/prd-requirements.md) for product context.
 
 <!-- ROADMAP_MERMAID:START -->
 

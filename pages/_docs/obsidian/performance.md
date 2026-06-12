@@ -43,7 +43,7 @@ graph LR
 
 The plugin builds a title → permalink index (`site.obsidian.index`) once per build and reuses it for every page. The index is also written to:
 
-```
+```text
 assets/data/wiki-index.json
 ```
 
