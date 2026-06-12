@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Plugin unit specs (T-011)**: 19 Minitest specs for the previously-untested `preview_image_generator.rb`, `content_statistics_generator.rb`, and `admin_page_urls.rb` plugins (config merge, path normalization, index dedupe by relative path, hook output, edge cases); wired into the core suite as "Plugin Unit Specs"
+- **Coverage baseline (T-005)**: structural survey recorded at `docs/development/coverage-baseline.md` — 10/10 suites green; the two remaining zero-coverage subsystems filed as T-019 (migrate.sh + theme_version.rb) and T-020 (installer wizard/upgrade)
+
 ## [1.16.0] - 2026-06-12
 
 ### Changed
@@ -16,8 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **AI Chat Assistant (ZER0-060)**: opt-in floating chat widget grounded in the current page's content, with proxy-first auth — renders nothing until `ai_chat.enabled` plus a deployed proxy (`proxy_ready: true`) or an explicit direct-mode key are configured; FAB positioning/stacking driven by the design tokens (new `--zer0-layer-fab-chat`)
-- **Plugin unit specs (T-011)**: 19 Minitest specs for the previously-untested `preview_image_generator.rb`, `content_statistics_generator.rb`, and `admin_page_urls.rb` plugins (config merge, path normalization, index dedupe by relative path, hook output, edge cases); wired into the core suite as "Plugin Unit Specs"
-- **Coverage baseline (T-005)**: structural survey recorded at `docs/development/coverage-baseline.md` — 10/10 suites green; the two remaining zero-coverage subsystems filed as T-019 (migrate.sh + theme_version.rb) and T-020 (installer wizard/upgrade)
 
 ### Fixed
 - **Chat render guard**: the original guard used boolean expressions inside Liquid `assign` tags (always truthy), which would have rendered a dead chat button on every page; computed with if-tags instead
