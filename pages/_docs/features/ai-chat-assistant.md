@@ -1,5 +1,6 @@
 ---
 title: AI Chat Assistant
+lastmod: 2026-06-12T00:00:00.000Z
 description: Configure the AI chat assistant safely for GitHub Pages using a proxy endpoint.
 layout: default
 categories:
@@ -13,7 +14,7 @@ tags:
     - proxy
 permalink: /docs/features/ai-chat-assistant/
 difficulty: intermediate
-estimated_time: 20 minutes
+estimated_reading_time: 20 minutes
 prerequisites:
     - A deployed proxy endpoint for chat completions
     - OpenAI API key stored outside the static site

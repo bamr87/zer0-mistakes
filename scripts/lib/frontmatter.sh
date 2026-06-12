@@ -437,8 +437,10 @@ parse_file_frontmatter_all() {
 
     ruby -ryaml -rdate -e '
         path = ARGV[0]
-        # Extract frontmatter block (between first pair of --- on their own lines)
-        content = File.read(path)
+        # Extract frontmatter block (between first pair of --- on their own lines).
+        # Explicit UTF-8: default external encoding is US-ASCII without a UTF-8
+        # locale, and posts contain multibyte characters (T-015 bug class).
+        content = File.read(path, encoding: "UTF-8")
         unless content =~ /\A---\s*\n(.*?)\n---\s*$/m
             puts "__NO_FRONTMATTER__"
             exit 0
