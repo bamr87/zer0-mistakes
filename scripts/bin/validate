@@ -404,6 +404,23 @@ classified_files = %w[
     pages/_about/settings/_config.yml
     .github/ISSUE_TEMPLATE/config.yml
 ]
+
+# T-018: the admin config page renders pages/_about/settings/_config.yml via
+# include_relative (Liquid cannot reach the repo root). Fail on drift so the
+# page never shows a stale copy; refresh with:
+#   cp _config.yml pages/_about/settings/_config.yml
+settings_copy = 'pages/_about/settings/_config.yml'
+if File.file?(settings_copy)
+  live = File.read('_config.yml', encoding: 'UTF-8')
+  copy_lines = File.read(settings_copy, encoding: 'UTF-8').lines
+  # The copy is wrapped in {% raw %}/{% endraw %} so include_relative renders
+  # the config text literally (the live file mentions Liquid tags in comments).
+  refresh = "{ echo '{% raw %}'; cat _config.yml; echo '{% endraw %}'; } > #{settings_copy}"
+  assert(copy_lines.first.to_s.strip == '{% raw %}' && copy_lines.last.to_s.strip == '{% endraw %}',
+         "#{settings_copy} must be wrapped in raw/endraw; refresh it: #{refresh}")
+  assert(copy_lines[1..-2].join == live,
+         "#{settings_copy} has drifted from _config.yml; refresh it: #{refresh}")
+end
 classified_files.concat(Dir.glob('_data/**/*config*.{yml,yaml}'))
 
 unclassified_files = config_like_files.sort - classified_files.select { |file| File.file?(file) }

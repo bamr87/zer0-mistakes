@@ -42,25 +42,32 @@ test.describe('Security — secret exposure prevention', () => {
   });
 
   test('raw YAML tab does not expose API keys', async ({ page }) => {
-    // Try clicking Raw YAML tab
-    const rawTab = page.locator('[role="tab"]', { hasText: /raw/i });
-    if (await rawTab.count() === 0) {
-      test.skip();
-      return;
-    }
-    await rawTab.first().click();
-    await page.waitForTimeout(300);
+    // T-018: the Raw-YAML tab renders the same sanitized capture as the
+    // hidden copy element. The element is `code#cfg-raw-yaml` (the old
+    // `pre#cfg-raw-yaml` locator silently skipped this test for months —
+    // assert presence instead of skipping).
+    const rawContent = page.locator('code#cfg-raw-yaml');
+    await expect(rawContent, 'Raw-YAML tab element must exist').toHaveCount(1);
 
-    const rawContent = page.locator('pre#cfg-raw-yaml, [role="tabpanel"]:visible pre');
-    if (await rawContent.count() === 0) {
-      test.skip();
-      return;
+    // textContent is readable without activating the tab
+    const text = await rawContent.textContent();
+    const sensitivePatterns = [
+      /api_key\s*:/i,
+      /secret\s*:/i,
+      /password\s*:/i,
+      /token\s*:/i,
+      /phc_[a-zA-Z0-9]{20,}/,
+      /sk_[a-zA-Z0-9]{20,}/,
+      /ghp_[a-zA-Z0-9]{20,}/,
+    ];
+    for (const pattern of sensitivePatterns) {
+      expect(
+        pattern.test(text),
+        `Raw-YAML tab should not contain sensitive data matching ${pattern}`
+      ).toBe(false);
     }
-    const text = await rawContent.first().textContent();
-    // Should not contain actual API key values
-    expect(text).not.toMatch(/phc_[a-zA-Z0-9]{20,}/);
-    expect(text).not.toMatch(/sk_[a-zA-Z0-9]{20,}/);
-    expect(text).not.toMatch(/ghp_[a-zA-Z0-9]{20,}/);
+    // Sanity: the sanitized config actually rendered (not an empty element)
+    expect(text).toMatch(/remote_theme|theme_skin/);
   });
 
   test('page source does not contain common secret patterns', async ({ page }) => {

@@ -465,7 +465,7 @@ tasks:
 
   - id: T-018
     title: "Admin config page displays a stale copy of _config.yml — keep it in sync safely"
-    status: open
+    status: done
     priority: P2
     area: feat
     risk: standard
@@ -479,13 +479,20 @@ tasks:
       refresh would inject the live `phc_` api_key into the *visible* Raw-YAML
       tab — any sync mechanism must sanitize the visible tab the same way
       T-009 sanitizes the hidden copy element, or redact at sync time.
+      Done 2026-06-12: copy synced (wrapped in Liquid raw markers so config
+      comments mentioning Liquid render literally); scripts/bin/validate
+      gains a drift check that fails when the copy diverges; the visible
+      Raw-YAML tab now renders the same sanitized capture as the hidden
+      element (live phc_ key verified redacted in both); the raw-tab
+      Playwright test targets code#cfg-raw-yaml and asserts presence
+      instead of silently skipping.
     acceptance:
       - "The config shown at /about/config/ matches the live `_config.yml` (automated sync step or build-time check that fails on drift)."
       - "The visible Raw-YAML tab applies the same sensitive-line redaction as the hidden `cfg-full-yaml` element."
       - "`test/visual/security.spec.js` raw-tab test passes without its silent skip path (locator matches the actual `code#cfg-raw-yaml` element)."
     links: { issue: null, pr: null, roadmap: "1.13" }
     created: 2026-06-11
-    updated: 2026-06-11
+    updated: 2026-06-12
 
   - id: T-019
     title: "Unit tests for migrate.sh and theme_version.rb (coverage rank #1)"
