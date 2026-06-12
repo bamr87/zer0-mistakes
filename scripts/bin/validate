@@ -380,7 +380,7 @@ if File.file?('_config_secrets_local.yml')
   assert(!tracked, '_config_secrets_local.yml must remain untracked and ignored')
 end
 
-ignored_dirs = %w[.git _site node_modules vendor .jekyll-cache .sass-cache]
+ignored_dirs = %w[.git _site node_modules vendor .jekyll-cache .sass-cache test/fixtures]
 config_like_files = []
 
 Find.find('.') do |path|

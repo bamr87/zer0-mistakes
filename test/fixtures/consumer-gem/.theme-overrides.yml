@@ -1,0 +1,4 @@
+version: "1.8.0"
+mode: gem
+description: "Fixture gem consumer"
+overrides: []

@@ -1,0 +1,356 @@
+#!/bin/bash
+# scripts/bin/sync-plugins — copy/update theme plugins into a remote_theme consumer repo
+#
+# When using remote_theme on GitHub Pages, Jekyll does not load plugins from
+# the theme.  Consumers must vendor required plugins locally.  This command
+# reads the theme manifest, compares SHAs, and installs or updates plugins
+# in the consumer's _plugins/ directory.
+#
+# Usage:
+#   ./scripts/bin/sync-plugins [OPTIONS]
+#
+#   --consumer-path <dir>          Target consumer repo root (default: cwd)
+#   --theme-path <dir>             Source theme path (auto-resolved if omitted)
+#   --plugins {required|optional|all|<name>}
+#                                  Which plugins to sync (default: required)
+#   --dry-run                      Show what would happen without making changes
+#   --force                        Overwrite plugins listed in .theme-overrides.yml
+#   --format {text|github}         Output format (default: text)
+#   --verbose                      Debug output
+#   --help, -h                     Show this help
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_DIR="$SCRIPT_DIR/../lib"
+THEME_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+source "$LIB_DIR/common.sh"
+source "$LIB_DIR/audit.sh"
+
+# ---------------------------------------------------------------------------
+show_usage() {
+    cat << 'EOF'
+🔌 Plugin Sync for zer0-mistakes remote_theme consumers
+
+USAGE:
+    ./scripts/bin/sync-plugins [OPTIONS]
+
+DESCRIPTION:
+    Copies theme plugins from zer0-mistakes into a remote_theme consumer
+    (e.g. it-journey).  When using remote_theme on GitHub Pages, Jekyll does
+    not load plugins from the theme — consumers must vendor them locally.
+
+    This command reads the theme manifest to determine which plugins are
+    available, compares SHA-256 checksums, and copies new or outdated plugins
+    into the consumer's _plugins/ directory.
+
+    Sync state reported per plugin:
+      INSTALLED   Plugin was missing — now copied from theme
+      UPDATED     Plugin existed but content differed — updated to theme version
+      CURRENT     Plugin already matches the theme version — no change needed
+      SKIPPED     Plugin not in sync scope (e.g. optional when --plugins required)
+      CONFLICT    Plugin differs AND is listed in .theme-overrides.yml
+                  → intentional custom version; use --force to overwrite
+
+OPTIONS:
+    --consumer-path <dir>     Consumer repo root (default: current directory)
+    --theme-path <dir>        Source theme path (auto-resolved if omitted)
+    --plugins <scope>         Which plugins to sync:
+                                required   Required plugins only (default)
+                                optional   Optional plugins only
+                                all        Both required and optional
+                                <name>     Specific plugin, e.g. obsidian_links.rb
+    --dry-run                 Show what would happen without making changes
+    --force                   Sync even if plugin is listed in .theme-overrides.yml
+    --format {text|github}    Output format (default: text)
+    --verbose                 Debug output
+    --help, -h                Show this help
+
+EXAMPLES:
+    # Install required plugins into a sibling consumer repo
+    ./scripts/bin/sync-plugins --consumer-path ../it-journey
+
+    # Preview all plugins that would be installed/updated
+    ./scripts/bin/sync-plugins --consumer-path ../it-journey --plugins all --dry-run
+
+    # Sync only the Obsidian wiki-link plugin
+    ./scripts/bin/sync-plugins --consumer-path ../it-journey --plugins obsidian_links.rb
+
+    # Update optional plugins too, forcing over any custom versions
+    ./scripts/bin/sync-plugins --consumer-path ../it-journey --plugins all --force
+
+    # GitHub Actions annotation format
+    ./scripts/bin/sync-plugins --consumer-path ../it-journey --format github
+EOF
+}
+
+# ---------------------------------------------------------------------------
+# Argument parsing
+# ---------------------------------------------------------------------------
+CONSUMER_PATH=""
+THEME_PATH_OVERRIDE=""
+PLUGINS_SCOPE="required"
+DRY_RUN_FLAG=false
+FORCE=false
+FORMAT="text"
+VERBOSE_FLAG=false
+SHOW_HELP=false
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --consumer-path)  shift; CONSUMER_PATH="$1" ;;
+        --theme-path)     shift; THEME_PATH_OVERRIDE="$1" ;;
+        --plugins)        shift; PLUGINS_SCOPE="$1" ;;
+        --dry-run)        DRY_RUN_FLAG=true ;;
+        --force)          FORCE=true ;;
+        --format)         shift; FORMAT="$1" ;;
+        --verbose)        VERBOSE_FLAG=true ;;
+        --help|-h)        SHOW_HELP=true ;;
+        *) warn "Unknown option: $1" ;;
+    esac
+    shift
+done
+
+[[ "$SHOW_HELP" == "true" ]] && { show_usage; exit 0; }
+export VERBOSE="$VERBOSE_FLAG"
+
+# ---------------------------------------------------------------------------
+# Resolve paths
+# ---------------------------------------------------------------------------
+CONSUMER_PATH="${CONSUMER_PATH:-$PWD}"
+CONSUMER_PATH="$(cd "$CONSUMER_PATH" && pwd)"
+
+if [[ -n "$THEME_PATH_OVERRIDE" ]]; then
+    RESOLVED_THEME="$(cd "$THEME_PATH_OVERRIDE" && pwd)"
+else
+    RESOLVED_THEME="$THEME_ROOT"
+fi
+
+MANIFEST="$RESOLVED_THEME/_data/theme-manifest.yml"
+if [[ ! -f "$MANIFEST" ]]; then
+    error "Manifest not found: $MANIFEST — run ./scripts/bin/manifest first"
+fi
+
+debug "Consumer: $CONSUMER_PATH"
+debug "Theme:    $RESOLVED_THEME"
+debug "Manifest: $MANIFEST"
+
+# ---------------------------------------------------------------------------
+# Load override manifest (detects CONFLICT — consumer intentionally differs)
+# ---------------------------------------------------------------------------
+OVERRIDES_FILE="$CONSUMER_PATH/.theme-overrides.yml"
+OVERRIDE_PATHS_TMP=$(mktemp)
+trap 'rm -f "$OVERRIDE_PATHS_TMP"' EXIT
+
+if [[ -f "$OVERRIDES_FILE" ]]; then
+    overrides_list "$OVERRIDES_FILE" > "$OVERRIDE_PATHS_TMP"
+    debug "Loaded overrides from $OVERRIDES_FILE"
+fi
+
+# ---------------------------------------------------------------------------
+# Build the list of plugins to process based on --plugins scope
+# ---------------------------------------------------------------------------
+REQUIRED_PLUGINS=()
+OPTIONAL_PLUGINS=()
+
+while IFS= read -r line; do
+    [[ -n "$line" ]] && REQUIRED_PLUGINS+=("$line")
+done < <(manifest_list "$MANIFEST" "required_plugin_paths")
+
+while IFS= read -r line; do
+    [[ -n "$line" ]] && OPTIONAL_PLUGINS+=("$line")
+done < <(manifest_list "$MANIFEST" "optional_plugin_paths")
+
+# Legacy fallback: if manifest doesn't have the split keys, use plugin_paths as required
+if [[ ${#REQUIRED_PLUGINS[@]} -eq 0 && ${#OPTIONAL_PLUGINS[@]} -eq 0 ]]; then
+    while IFS= read -r line; do
+        [[ -n "$line" ]] && REQUIRED_PLUGINS+=("$line")
+    done < <(manifest_list "$MANIFEST" "plugin_paths")
+fi
+
+# Default hardcoded fallback if manifest has no plugin entries at all
+if [[ ${#REQUIRED_PLUGINS[@]} -eq 0 && ${#OPTIONAL_PLUGINS[@]} -eq 0 ]]; then
+    REQUIRED_PLUGINS=(
+        "_plugins/preview_image_generator.rb"
+        "_plugins/obsidian_links.rb"
+    )
+    OPTIONAL_PLUGINS=(
+        "_plugins/admin_page_urls.rb"
+        "_plugins/content_statistics_generator.rb"
+        "_plugins/theme_version.rb"
+    )
+fi
+
+TARGET_PLUGINS=()
+SKIPPED_PLUGINS=()
+
+case "$PLUGINS_SCOPE" in
+    required)
+        [[ ${#REQUIRED_PLUGINS[@]} -gt 0 ]] && TARGET_PLUGINS+=("${REQUIRED_PLUGINS[@]}")
+        [[ ${#OPTIONAL_PLUGINS[@]} -gt 0 ]] && SKIPPED_PLUGINS+=("${OPTIONAL_PLUGINS[@]}")
+        ;;
+    optional)
+        [[ ${#OPTIONAL_PLUGINS[@]} -gt 0 ]] && TARGET_PLUGINS+=("${OPTIONAL_PLUGINS[@]}")
+        [[ ${#REQUIRED_PLUGINS[@]} -gt 0 ]] && SKIPPED_PLUGINS+=("${REQUIRED_PLUGINS[@]}")
+        ;;
+    all)
+        [[ ${#REQUIRED_PLUGINS[@]} -gt 0 ]] && TARGET_PLUGINS+=("${REQUIRED_PLUGINS[@]}")
+        [[ ${#OPTIONAL_PLUGINS[@]} -gt 0 ]] && TARGET_PLUGINS+=("${OPTIONAL_PLUGINS[@]}")
+        ;;
+    *)
+        # Specific plugin name — accept with or without path prefix
+        needle="$PLUGINS_SCOPE"
+        [[ "$needle" != _plugins/* ]] && needle="_plugins/$needle"
+        # Warn if not found in manifest
+        found=false
+        for p in "${REQUIRED_PLUGINS[@]:-}" "${OPTIONAL_PLUGINS[@]:-}"; do
+            if [[ "$p" == "$needle" || "$(basename "$p")" == "$(basename "$needle")" ]]; then
+                found=true
+                needle="$p"   # use the manifest-canonical path
+                break
+            fi
+        done
+        [[ "$found" == "false" ]] && warn "Plugin '$PLUGINS_SCOPE' not in manifest — attempting anyway"
+        TARGET_PLUGINS=("$needle")
+        ;;
+esac
+
+# ---------------------------------------------------------------------------
+# Output helpers
+# ---------------------------------------------------------------------------
+print_result() {
+    local state="$1"    # INSTALLED | UPDATED | CURRENT | SKIPPED | CONFLICT
+    local relpath="$2"
+    local note="${3:-}"
+    case "$state" in
+        INSTALLED)
+            if [[ "$FORMAT" == "github" ]]; then
+                echo "::notice file=$relpath::INSTALLED plugin from theme"
+            else
+                echo -e "${GREEN}[INSTALLED]${NC} $relpath${note:+  ($note)}"
+            fi ;;
+        UPDATED)
+            if [[ "$FORMAT" == "github" ]]; then
+                echo "::notice file=$relpath::UPDATED plugin from theme"
+            else
+                echo -e "${CYAN}[UPDATED]${NC}   $relpath${note:+  ($note)}"
+            fi ;;
+        CURRENT)
+            if [[ "$FORMAT" == "github" ]]; then
+                echo "::debug file=$relpath::CURRENT"
+            else
+                echo -e "${GREEN}[CURRENT]${NC}   $relpath"
+            fi ;;
+        SKIPPED)
+            if [[ "$FORMAT" == "github" ]]; then
+                echo "::debug file=$relpath::SKIPPED${note:+ ($note)}"
+            else
+                echo -e "          [SKIPPED]  $relpath${note:+  ($note)}"
+            fi ;;
+        CONFLICT)
+            if [[ "$FORMAT" == "github" ]]; then
+                echo "::warning file=$relpath::CONFLICT - listed in .theme-overrides.yml; use --force to overwrite"
+            else
+                echo -e "${YELLOW}[CONFLICT]${NC}  $relpath  (listed in .theme-overrides.yml — use --force to overwrite)"
+            fi ;;
+    esac
+}
+
+# ---------------------------------------------------------------------------
+# Header
+# ---------------------------------------------------------------------------
+info "Theme plugin sync"
+info "  Consumer : $CONSUMER_PATH"
+info "  Theme    : $RESOLVED_THEME"
+info "  Scope    : $PLUGINS_SCOPE"
+[[ "$DRY_RUN_FLAG" == "true" ]] && info "  Mode     : dry-run (no files written)"
+[[ "$FORCE" == "true" ]]        && info "  Force    : yes (overrides respected only by omission)"
+echo ""
+
+# ---------------------------------------------------------------------------
+# Sync loop
+# ---------------------------------------------------------------------------
+COUNT_INSTALLED=0
+COUNT_UPDATED=0
+COUNT_CURRENT=0
+COUNT_CONFLICT=0
+COUNT_SKIPPED=0
+
+for plugin_rel in "${TARGET_PLUGINS[@]}"; do
+    theme_src="$RESOLVED_THEME/$plugin_rel"
+    consumer_dst="$CONSUMER_PATH/$plugin_rel"
+
+    if [[ ! -f "$theme_src" ]]; then
+        warn "Plugin not found in theme: $plugin_rel — skipping"
+        COUNT_SKIPPED=$((COUNT_SKIPPED + 1))
+        continue
+    fi
+
+    theme_sha=$(sha256_file "$theme_src")
+
+    if [[ ! -f "$consumer_dst" ]]; then
+        # ── INSTALL ──────────────────────────────────────────────────────────
+        if [[ "$DRY_RUN_FLAG" == "true" ]]; then
+            print_result "INSTALLED" "$plugin_rel" "dry-run"
+        else
+            mkdir -p "$(dirname "$consumer_dst")"
+            cp "$theme_src" "$consumer_dst"
+            print_result "INSTALLED" "$plugin_rel"
+        fi
+        COUNT_INSTALLED=$((COUNT_INSTALLED + 1))
+    else
+        consumer_sha=$(sha256_file "$consumer_dst")
+
+        if [[ "$theme_sha" == "$consumer_sha" ]]; then
+            # ── CURRENT ──────────────────────────────────────────────────────
+            print_result "CURRENT" "$plugin_rel"
+            COUNT_CURRENT=$((COUNT_CURRENT + 1))
+        else
+            # Content differs — check for intentional override
+            if grep -qxF "$plugin_rel" "$OVERRIDE_PATHS_TMP" 2>/dev/null \
+               && [[ "$FORCE" == "false" ]]; then
+                # ── CONFLICT ─────────────────────────────────────────────────
+                print_result "CONFLICT" "$plugin_rel"
+                COUNT_CONFLICT=$((COUNT_CONFLICT + 1))
+            else
+                # ── UPDATE ───────────────────────────────────────────────────
+                if [[ "$DRY_RUN_FLAG" == "true" ]]; then
+                    print_result "UPDATED" "$plugin_rel" "dry-run"
+                else
+                    cp "$theme_src" "$consumer_dst"
+                    print_result "UPDATED" "$plugin_rel"
+                fi
+                COUNT_UPDATED=$((COUNT_UPDATED + 1))
+            fi
+        fi
+    fi
+done
+
+# Show skipped scope plugins at verbose level
+if [[ "$VERBOSE_FLAG" == "true" && ${#SKIPPED_PLUGINS[@]} -gt 0 ]]; then
+    for plugin_rel in "${SKIPPED_PLUGINS[@]}"; do
+        print_result "SKIPPED" "$plugin_rel" "out of scope (--plugins $PLUGINS_SCOPE)"
+    done
+fi
+
+# ---------------------------------------------------------------------------
+# Summary
+# ---------------------------------------------------------------------------
+echo ""
+info "--- Summary ---"
+[[ "$COUNT_INSTALLED" -gt 0 ]] && info "Installed:  $COUNT_INSTALLED"
+[[ "$COUNT_UPDATED"   -gt 0 ]] && info "Updated:    $COUNT_UPDATED"
+[[ "$COUNT_CURRENT"   -gt 0 ]] && info "Current:    $COUNT_CURRENT"
+[[ "$COUNT_CONFLICT"  -gt 0 ]] && warn "Conflicts:  $COUNT_CONFLICT  (use --force to overwrite)"
+[[ "$COUNT_SKIPPED"   -gt 0 ]] && info "Skipped:    $COUNT_SKIPPED"
+
+TOTAL_CHANGES=$((COUNT_INSTALLED + COUNT_UPDATED))
+echo ""
+if [[ "$DRY_RUN_FLAG" == "true" && "$TOTAL_CHANGES" -gt 0 ]]; then
+    info "$TOTAL_CHANGES plugin(s) would be synced (dry-run — re-run without --dry-run to apply)"
+elif [[ "$TOTAL_CHANGES" -gt 0 ]]; then
+    success "$TOTAL_CHANGES plugin(s) synced to $CONSUMER_PATH/_plugins/"
+else
+    success "All in-scope plugins are current — nothing to do"
+fi

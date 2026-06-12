@@ -1,0 +1,156 @@
+---
+layout: root
+---
+<!--
+  ===================================================================
+  DEFAULT LAYOUT - Standard content layout with sidebars
+  ===================================================================
+
+  File: default.html
+  Path: _layouts/default.html
+  Inherits: root.html
+  Purpose: Primary content layout with sidebar navigation and table of contents
+
+  Template Logic:
+  - Creates a responsive three-column layout using Bootstrap grid
+  - Left sidebar: Site navigation and content outline (collapsible on mobile)
+  - Local graph: Obsidian side panel (rendered at body level via footer.html)
+  - Center: Main content area with page title and body content
+  - Right sidebar: Table of contents and page shortcuts (hidden on mobile)
+  - Implements scroll spy for navigation highlighting
+  - Responsive design that stacks vertically on mobile devices
+
+  Layout Structure:
+  1. Container wrapper with Bootstrap responsive classes
+  2. Left sidebar (bd-sidebar) - Navigation and outline
+  3. Main content area (bd-main) with:
+     - Intro section (page title, metadata)
+     - Right sidebar (bd-toc) - Table of contents
+     - Content area (bd-content) - Main page content
+
+  Dependencies:
+  - sidebar-left.html: Site navigation and content outline
+  - intro.html: Page title, breadcrumbs, and metadata
+  - sidebar-right.html: Table of contents and page shortcuts
+
+  Bootstrap Classes Used:
+  - container-xxl: Extra large responsive container
+  - bd-gutter: Custom Bootstrap spacing
+  - bd-layout: Custom layout utility class
+  - bd-sidebar: Custom sidebar styling
+  - bd-main: Main content area
+  - bd-toc: Table of contents styling
+  - bd-content: Content area styling
+  ===================================================================
+-->
+
+{%- comment -%}
+  Resolve effective sidebar visibility. Precedence:
+    1. page.sidebar in front matter wins (true | false | hash)
+    2. Otherwise, post_type=featured|breaking → false (full-bleed reading)
+    3. Otherwise, default to true
+  This is the single source of truth so child layouts (article.html, note.html)
+  do not need to mutate page state.
+{%- endcomment -%}
+{%- assign _effective_sidebar = page.sidebar -%}
+{%- if _effective_sidebar == nil -%}
+  {%- if page.post_type == "featured" or page.post_type == "breaking" -%}
+    {%- assign _effective_sidebar = false -%}
+  {%- else -%}
+    {%- assign _effective_sidebar = true -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- comment -%}
+  Left sidebar column is only useful when sidebar-left.html has nav to render
+  (matches header.html mobile toggle logic). `sidebar: true` without `nav`
+  still enables the right TOC but must not reserve an empty left column.
+{%- endcomment -%}
+{%- assign _sidebar_has_content = false -%}
+{%- if _effective_sidebar != false -%}
+  {%- assign _sidebar_nav = nil -%}
+  {%- if page.sidebar and page.sidebar.nav -%}
+    {%- assign _sidebar_nav = page.sidebar.nav -%}
+  {%- endif -%}
+  {%- if _sidebar_nav -%}
+    {%- if _sidebar_nav == "auto" or _sidebar_nav == "categories" -%}
+      {%- assign _sidebar_has_content = true -%}
+    {%- elsif site.data.navigation[_sidebar_nav] -%}
+      {%- assign _sidebar_has_content = true -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}
+
+<!-- ================================================ -->
+<!-- MAIN LAYOUT CONTAINER                           -->
+<!-- Bootstrap responsive container with custom grid -->
+<!-- ================================================ -->
+<div class="container-xxl bd-gutter mt-3 my-md-4 bd-layout{% unless _sidebar_has_content %} bd-layout--no-sidebar{% endunless %}">
+
+    <!-- ================================ -->
+    <!-- LEFT SIDEBAR - Navigation       -->
+    <!-- ================================ -->
+    <!-- Site navigation, content outline, and offcanvas menu for mobile -->
+    {% if _sidebar_has_content %}
+    <aside class="bd-sidebar">
+        {% include navigation/sidebar-left.html %}
+    </aside>
+    <div class="position-fixed bd-sidebar-fab d-lg-none" id="sidebarFab">
+      <button class="btn btn-primary rounded-circle shadow-lg p-0 bd-sidebar-toggle"
+              type="button"
+              aria-controls="bdSidebar"
+              aria-expanded="true"
+              aria-label="Open documentation sidebar">
+        <i class="bi bi-journal-bookmark fs-5" aria-hidden="true"></i>
+      </button>
+    </div>
+    {% endif %}
+
+    <!-- ================================ -->
+    <!-- MAIN CONTENT AREA               -->
+    <!-- ================================ -->
+    <!-- Primary content section with scroll spy for table of contents navigation -->
+    <main class="bd-main order-1" data-bs-spy="scroll" data-bs-target="#TableOfContents" data-bs-offset="100" data-bs-smooth-scroll="true">
+
+        {%- comment -%}
+          Page introduction: title, breadcrumbs, metadata.
+          Skipped on layouts that render their own page header (article, note)
+          to avoid duplicate H1s. Authors can also opt-out per page via
+          `hide_intro: true` in front matter.
+        {%- endcomment -%}
+        {% assign _skip_intro = false %}
+        {% if page.layout == "article" or page.layout == "note" or page.hide_intro %}
+          {% assign _skip_intro = true %}
+        {% endif %}
+        {% unless _skip_intro %}
+          {% include content/intro.html %}
+        {% endunless %}
+
+        <!-- =============================== -->
+        <!-- RIGHT SIDEBAR - Table of Contents -->
+        <!-- =============================== -->
+        <!-- Page outline, shortcuts, and related links (hidden on mobile) -->
+        {% unless _effective_sidebar == false %}
+        <div class="bd-toc text-body-secondary">
+            {% include navigation/sidebar-right.html %}
+        </div>
+        {% endunless %}
+
+        <!-- =============================== -->
+        <!-- MAIN CONTENT BODY              -->
+        <!-- =============================== -->
+        <!-- Where the actual page content is rendered -->
+        <div class="bd-content ps-lg-2">
+            {{ content }}
+
+            {%- comment -%}
+              Optional Obsidian-style backlinks panel. Opt-in for the generic
+              default layout via `backlinks: true` in front matter (the `note`
+              layout enables it by default).
+            {%- endcomment -%}
+            {% if page.backlinks == true %}
+              {% include content/backlinks.html %}
+            {% endif %}
+        </div>
+      </main>
+    </div>
