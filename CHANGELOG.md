@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.17.0] - 2026-06-12
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- ac36e1a3 feat(tests): plugin unit specs and coverage baseline — T-011, T-005 (#145)
 
 ### Fixed
 - **Admin config page sync (T-018)**: the page's config copy is now byte-synced with the live `_config.yml` (raw-wrapped so Liquid-looking comment text renders literally) and `validate` fails on drift; the **visible Raw-YAML tab** now applies the same sensitive-line redaction as the hidden copy element (it previously showed the raw file — the stale copy was the only thing keeping the live PostHog key off that tab); the raw-tab security test targets the real `code#cfg-raw-yaml` element and asserts presence instead of silently skipping
