@@ -38,11 +38,22 @@
 -->
 
 {% assign ai_auth_mode = site.ai_chat.auth_mode | default: 'proxy' %}
-{% assign ai_has_key = site.ai_chat.api_key != '' and site.ai_chat.api_key != nil %}
-{% assign ai_proxy_ready = site.ai_chat.proxy_ready | default: false %}
-{% assign ai_proxy_enabled = ai_auth_mode == 'proxy' and ai_proxy_ready %}
-{% assign ai_direct_enabled = ai_auth_mode == 'direct' and ai_has_key %}
-{% if site.ai_chat.enabled and (ai_proxy_enabled or ai_direct_enabled) %}
+{% comment %}
+  Boolean expressions are NOT evaluated inside assign tags (Liquid stores a
+  truthy string instead) — compute the render flag with if-tags, which do
+  support and/comparisons. Render only when chat is enabled AND a usable
+  auth path exists: proxy mode with a deployed proxy, or direct mode with a
+  non-empty api_key.
+{% endcomment %}
+{% assign ai_render = false %}
+{% if site.ai_chat.enabled %}
+  {% if ai_auth_mode == 'proxy' and site.ai_chat.proxy_ready %}
+    {% assign ai_render = true %}
+  {% elsif ai_auth_mode == 'direct' and site.ai_chat.api_key and site.ai_chat.api_key != '' %}
+    {% assign ai_render = true %}
+  {% endif %}
+{% endif %}
+{% if ai_render %}
 
 <!-- AI Chat Toggle Button -->
 <button id="aiChatToggle"
