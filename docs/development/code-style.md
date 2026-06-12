@@ -334,20 +334,23 @@ docker-compose up
 | Column 1 | Column 2 | Column 3 |
 |----------|----------|----------|
 | Value 1  | Value 2  | Value 3  |
-```
+
+```text
 
 ## Commit Messages
 
 Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```
+
 feat: add mermaid diagram support
 fix: resolve sidebar collapse on mobile
 docs: update installation guide
 refactor: simplify layout inheritance
 test: add pagination tests
 chore: update dependencies
-```
+
+```text
 
 ## Pull Request Guidelines
 

@@ -55,7 +55,7 @@
 
 meta:
   title: "zer0-mistakes Backlog"
-  updated: 2026-06-11
+  updated: 2026-06-12
   next_id: 19
 
 tasks:
@@ -106,7 +106,7 @@ tasks:
 
   - id: T-003
     title: "Add GitHub issue templates and a pull-request template"
-    status: open
+    status: done
     priority: P2
     area: infra
     risk: standard
@@ -116,17 +116,21 @@ tasks:
       The repo has no `.github/ISSUE_TEMPLATE/` or PR template. Add a bug-report
       and feature-request issue form plus a PR template that nudges contributors
       toward conventional commits, CHANGELOG updates, and the test checklist.
+      Done 2026-06-12: bug-report and feature-request issue forms, config.yml
+      with contact links (blank issues stay enabled for the API-driven backlog
+      sync), and a PR template with the conventional-commit/CHANGELOG/test
+      checklist.
     acceptance:
       - "`.github/ISSUE_TEMPLATE/bug_report.yml` and `feature_request.yml` exist and render."
       - "`.github/pull_request_template.md` exists with a conventional-commit + CHANGELOG + tests checklist."
       - "Agent-filed backlog issues remain compatible with the new templates (no broken automation)."
     links: { issue: null, pr: null, roadmap: null }
     created: 2026-05-31
-    updated: 2026-05-31
+    updated: 2026-06-12
 
   - id: T-004
     title: "Docs-freshness sweep: reconcile docs/ ↔ pages/_docs/ and fix broken links"
-    status: open
+    status: done
     priority: P2
     area: docs
     risk: low
@@ -136,13 +140,18 @@ tasks:
       Run the markdown-link checker and audit the two-tier docs for drift,
       stale dates/versions, and any user/technical pages that fell out of sync
       after the recent alignment commit.
+      Done 2026-06-12: markdownlint baseline cleaned to zero violations
+      (~1,600 fixed: auto-fix pass, MD060/MD025/MD024 config tuning, fence
+      languages, table pipe escapes, a stray fence swallowing a docs section),
+      15 dead README links remapped to the reorganized docs/ tree,
+      check-links.sh reports 0 broken links.
     acceptance:
       - "`markdown-link-check` (config in `.github/config/`) reports no broken internal links."
       - "Any stale version/date references in `docs/` and `pages/_docs/` are corrected."
       - "Cross-links between the user tier and technical tier resolve both ways."
     links: { issue: null, pr: null, roadmap: null }
     created: 2026-05-31
-    updated: 2026-05-31
+    updated: 2026-06-12
 
   - id: T-005
     title: "Coverage baseline: identify the lowest-covered subsystems toward the 90% goal"
@@ -192,7 +201,7 @@ tasks:
 
   - id: T-008
     title: "Fix theme-customizer YAML export to quote hex color values"
-    status: open
+    status: done
     priority: P2
     area: feat
     risk: standard
@@ -203,13 +212,17 @@ tasks:
       YAML without quoting strings that start with `#`. Unquoted `#RRGGBB` is treated as a
       YAML comment by parsers, silently dropping colour values. A regression guard in
       `test/visual/theme-colors.spec.js` is frozen as `test.fixme` until the bug is fixed.
+      Done 2026-06-12: both YAML builders (theme-customizer.js fallback and
+      palette-generator.js commented overrides) quote color values; frozen
+      regression test promoted to live test(); export verified parseable by
+      Ruby YAML with colors preserved.
     acceptance:
       - "JS export wraps every hex colour value (matching `/#[0-9a-fA-F]{3,8}/`) in double quotes in the generated YAML."
       - "The `test.fixme` in `test/visual/theme-colors.spec.js` is promoted to a live `test()` and passes in CI."
       - "Exported YAML is valid when parsed by `yaml.safe_load` in Ruby."
     links: { issue: null, pr: null, roadmap: null }
     created: 2026-06-01
-    updated: 2026-06-01
+    updated: 2026-06-12
 
   - id: T-009
     title: "Sanitize sensitive config keys from admin config-page DOM injection"
@@ -342,7 +355,7 @@ tasks:
 
   - id: T-014
     title: "Re-arm the docs link-check gate (remove warn-only || true)"
-    status: open
+    status: done
     priority: P2
     area: lint
     risk: standard
@@ -352,17 +365,20 @@ tasks:
       `docs-validate.yml` runs markdown-link-check with `|| true` ("warn-only
       until baseline is clean"), so broken links accumulate. Fix the links it
       currently reports, then drop the `|| true` so the gate blocks.
+      Done 2026-06-12: baseline cleaned to zero violations and both
+      warn-only suppressions removed from docs-validate.yml — the lint gate
+      now blocks. (The internal link check was already blocking.)
     acceptance:
       - "All links reported by the current `docs-validate.yml` run are fixed or allowlisted in `.github/config/.markdown-link-check.json`."
       - "Both `|| true` suppressions removed from `docs-validate.yml`."
       - "`docs-validate.yml` passes blocking on a follow-up PR."
     links: { issue: null, pr: null, roadmap: "1.13" }
     created: 2026-06-10
-    updated: 2026-06-10
+    updated: 2026-06-12
 
   - id: T-015
     title: "Locale-independence regression guard for Ruby/Bash tooling"
-    status: open
+    status: done
     priority: P2
     area: infra
     risk: standard
@@ -374,17 +390,21 @@ tasks:
       only reproduced without a UTF-8 locale. Add a guard so the bug class
       cannot return: run the validators under `LC_ALL=C` in a lib test or a
       dedicated CI step.
+      Done 2026-06-12: scripts/test/lib/test_locale_independence.sh runs
+      generate-roadmap --check/--validate, sync-backlog --check, and
+      validate --quick under LC_ALL=C LANG=C; verified the guard fails when
+      the explicit-UTF-8 read is reverted.
     acceptance:
       - "A test (scripts/test/lib/) or CI step runs `generate-roadmap.rb --check`, `sync-backlog.rb --check`, and `validate --quick` with `LC_ALL=C LANG=C`."
       - "The guard fails when the explicit-UTF-8 reads are reverted (verified once locally)."
       - "`./scripts/bin/test` stays green."
     links: { issue: null, pr: null, roadmap: "1.13" }
     created: 2026-06-10
-    updated: 2026-06-10
+    updated: 2026-06-12
 
   - id: T-016
     title: "site_generation suite: fail on Jekyll build errors instead of warning"
-    status: open
+    status: done
     priority: P2
     area: tests
     risk: standard
@@ -398,13 +418,16 @@ tasks:
       the suite now gating PRs in CI (working bundler guaranteed), build
       failures should fail the suite; keep the skip only for genuinely
       missing toolchain (no bundler).
+      Done 2026-06-12: jekyll build failures now fail the suite (bundler-
+      missing still skips); verified strict suite passes locally with real
+      builds.
     acceptance:
       - "A non-zero `jekyll build` exit fails the suite when bundler is available."
       - "The bundler-missing path still skips with a warning (local minimal environments)."
       - "Suite passes in CI and via `./test/test_runner.sh --suites site_generation` locally."
     links: { issue: null, pr: null, roadmap: "1.13" }
     created: 2026-06-10
-    updated: 2026-06-10
+    updated: 2026-06-12
 
   - id: T-017
     title: "Fix yamllint violations in .github/workflows/version-bump.yml"

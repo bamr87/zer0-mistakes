@@ -166,6 +166,7 @@ Test the automation system locally:
    - Review build logs for detailed error messages
 
 4. **Manual Recovery**
+
    ```bash
    # If automation fails, recover manually:
    git tag -d v[version]  # Remove failed tag

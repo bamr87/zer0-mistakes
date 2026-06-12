@@ -67,6 +67,7 @@ Manages semantic versioning for the theme:
 ```
 
 **What it does:**
+
 - Updates `lib/jekyll-theme-zer0/version.rb`
 - Updates `package.json`
 - Creates git commit and tag
@@ -93,6 +94,7 @@ Builds the Jekyll site and gem package:
 ```
 
 **Output:**
+
 - `_site/` - Built Jekyll site
 - `jekyll-theme-zer0-X.Y.Z.gem` - Gem package
 
@@ -120,6 +122,7 @@ Complete release workflow automation:
 ```
 
 **Release steps:**
+
 1. Run test suite
 2. Build gem package
 3. Publish to RubyGems.org
@@ -144,6 +147,7 @@ Initial project setup for new contributors:
 ```
 
 **What it configures:**
+
 - Ruby environment
 - Bundler dependencies
 - Docker containers

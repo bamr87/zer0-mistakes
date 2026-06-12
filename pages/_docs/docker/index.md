@@ -118,6 +118,7 @@ docker-compose exec jekyll bundle update
 ## Troubleshooting
 
 **Port already in use:**
+
 ```bash
 # Find process using port 4000
 lsof -i :4000
@@ -126,6 +127,7 @@ docker-compose up -p 4001:4000
 ```
 
 **Container won't start:**
+
 ```bash
 # Check logs for errors
 docker-compose logs jekyll

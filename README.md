@@ -2,7 +2,7 @@
 title: zer0-mistakes
 sub-title: AI-Native Jekyll Theme
 description: AI-native Jekyll theme for GitHub Pages — Docker-first development, AI-powered installation, multi-agent integration (Copilot, Codex, Cursor, Claude), AI preview-image generation, and AIEO content optimization with Bootstrap 5.3.
-version: 1.14.0
+version: 1.15.0
 layout: landing
 tags:
   - jekyll
@@ -20,7 +20,7 @@ categories:
   - bootstrap
   - ai-tooling
 created: 2024-02-10T23:51:11.480Z
-lastmod: 2026-06-11T22:23:48.000Z
+lastmod: 2026-06-12T01:01:59.000Z
 draft: false
 permalink: /
 slug: zer0
@@ -571,7 +571,7 @@ cd <your-username>.github.io
 docker-compose up
 ```
 
-See [docs/FORKING.md](docs/FORKING.md) for the full progressive workflow.
+See [docs/FORKING.md](docs/installation/forking.md) for the full progressive workflow.
 
 ---
 
@@ -703,7 +703,7 @@ zer0-mistakes documentation is split across three audiences. Pick the layer that
 | [📊 Analytics](https://zer0-mistakes.com/docs/analytics/) | PostHog, Google Analytics setup |
 | [🔍 SEO](https://zer0-mistakes.com/docs/seo/) | Meta tags, sitemap, structured data |
 | [📓 Jupyter Notebooks](https://github.com/bamr87/zer0-mistakes/blob/main/docs/JUPYTER_NOTEBOOKS.md) | Notebook conversion documentation |
-| [📝 PRD](docs/PRD.md) | Product requirements & roadmap |
+| [📝 PRD](docs/architecture/prd-requirements.md) | Product requirements & roadmap |
 | [🔒 Privacy Policy](https://zer0-mistakes.com/privacy-policy/) | GDPR/CCPA compliant privacy docs |
 
 ### Contributor Technical Reference
@@ -712,18 +712,18 @@ These files live in the repo under `docs/` and are intended for theme contributo
 
 | File | Topic |
 |------|-------|
-| [docs/design-system.md](docs/design-system.md) | Design system overview |
-| [docs/design-tokens.md](docs/design-tokens.md) | Design tokens reference |
-| [docs/components.md](docs/components.md) | UI component catalogue |
-| [docs/layouts-and-navigation.md](docs/layouts-and-navigation.md) | Layout hierarchy & navigation |
-| [docs/theming.md](docs/theming.md) | Sass / Bootstrap theming guide |
-| [docs/customization.md](docs/customization.md) | Site customization patterns |
-| [docs/configuration.md](docs/configuration.md) | `_config.yml` reference |
-| [docs/code-blocks.md](docs/code-blocks.md) | Syntax highlighting setup |
-| [docs/extending.md](docs/extending.md) | Adding layouts, includes & plugins |
-| [docs/js-api.md](docs/js-api.md) | JavaScript module API |
-| [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | Common issues & fixes |
-| [docs/FORKING.md](docs/FORKING.md) | Forking & personalization guide |
+| [docs/design-system.md](docs/ui/design-system.md) | Design system overview |
+| [docs/design-tokens.md](docs/ui/design-tokens.md) | Design tokens reference |
+| [docs/components.md](docs/ui/components.md) | UI component catalogue |
+| [docs/layouts-and-navigation.md](docs/ui/layouts-and-navigation.md) | Layout hierarchy & navigation |
+| [docs/theming.md](docs/ui/theming.md) | Sass / Bootstrap theming guide |
+| [docs/customization.md](docs/ui/customization.md) | Site customization patterns |
+| [docs/configuration.md](docs/ui/configuration.md) | `_config.yml` reference |
+| [docs/code-blocks.md](docs/ui/code-blocks.md) | Syntax highlighting setup |
+| [docs/extending.md](docs/ui/extending.md) | Adding layouts, includes & plugins |
+| [docs/js-api.md](docs/ui/js-api.md) | JavaScript module API |
+| [docs/TROUBLESHOOTING.md](docs/development/troubleshooting.md) | Common issues & fixes |
+| [docs/FORKING.md](docs/installation/forking.md) | Forking & personalization guide |
 
 ---
 
@@ -803,7 +803,7 @@ When you fork the theme as a starter, the workflows come with you. To make them 
 
 ## 🗺 Roadmap
 
-The diagram and table below are auto-generated from [`_data/roadmap.yml`](_data/roadmap.yml) by [`scripts/generate-roadmap.sh`](scripts/generate-roadmap.sh). See the full [Roadmap page](https://zer0-mistakes.com/roadmap/) for per-version detail and the [PRD](docs/PRD.md) for product context.
+The diagram and table below are auto-generated from [`_data/roadmap.yml`](_data/roadmap.yml) by [`scripts/generate-roadmap.sh`](scripts/generate-roadmap.sh). See the full [Roadmap page](https://zer0-mistakes.com/roadmap/) for per-version detail and the [PRD](docs/architecture/prd-requirements.md) for product context.
 
 <!-- ROADMAP_MERMAID:START -->
 
@@ -831,8 +831,9 @@ gantt
     v1.10 Roadmap Validation     :done, 2026-06, 2026-06
     v1.11 Continuous-Evolution Loop :done, 2026-06, 2026-06
     v1.12 Headless Endpoints     :done, 2026-06, 2026-06
+    v1.13 Quality Framework — First Wave :done, 2026-06, 2026-06
     section Current
-    v1.13 Zer0-Mistake Quality Framework :active, 2026-06, 2026-08
+    v1.14 Zer0-Mistake Quality Framework :active, 2026-06, 2026-08
     section Future
     v2.0 CMS Integration         :2026-06, 2026-08
     v2.1 i18n Support            :2026-08, 2026-10
@@ -865,7 +866,8 @@ gantt
 | **v1.10** | ✅ Completed | Jun 2026 | Roadmap integrity validation and catch-up milestones so the roadmap tracks the shipped gem. |
 | **v1.11** | ✅ Completed | Jun 2026 | Self-sustaining backlog loop so AI agents keep improving the repo between human sessions. |
 | **v1.12** | ✅ Completed | Jun 2026 | Machine-readable site endpoints for downstream sites and AI agents. |
-| **v1.13** | 🚧 In Progress | Current (1.13.x) | Close the gap between the repo's quality gates and what CI actually enforces — no mistake lands green. |
+| **v1.13** | ✅ Completed | Jun 2026 | First shipped wave of the Zer0-Mistake Quality Framework: CI gate parity and DOM sanitization. |
+| **v1.14** | 🚧 In Progress | Current (1.14.x) | Close the gap between the repo's quality gates and what CI actually enforces — no mistake lands green. |
 | **v2.0** | 🗓 Planned | Q3 2026 | Headless CMS integration with a content API and admin dashboard. |
 | **v2.1** | 🗓 Planned | Q4 2026 | Multi-language content support with locale-aware routing. |
 | **v2.2** | 🗓 Planned | Q4 2026 | Visual theme customizer, A/B testing, and conversion funnels. |
@@ -909,7 +911,7 @@ git push origin feature/awesome-feature
 
 | Metric | Value |
 |--------|-------|
-| **Current Version** | 1.14.0 ([RubyGems](https://rubygems.org/gems/jekyll-theme-zer0), [CHANGELOG](/CHANGELOG)) |
+| **Current Version** | 1.15.0 ([RubyGems](https://rubygems.org/gems/jekyll-theme-zer0), [CHANGELOG](/CHANGELOG)) |
 | **Documented Features** | 43 ([Feature Registry](https://github.com/bamr87/zer0-mistakes/blob/main/_data/features.yml)) |
 | **Setup Time** | 2-5 minutes ([install.sh benchmarks](https://github.com/bamr87/zer0-mistakes/blob/main/install.sh)) |
 | **Documentation Pages** | 70+ ([browse docs](https://zer0-mistakes.com/pages/)) |
@@ -964,6 +966,6 @@ And these AI partners that make zer0-mistakes truly AI-native:
 
 **Built with ❤️ — and a little help from our AI partners — for the Jekyll community**
 
-**v1.14.0** • [Changelog](CHANGELOG.md) • [License](LICENSE) • [Contributing](CONTRIBUTING.md) • [AI Agent Guide](AGENTS.md)
+**v1.15.0** • [Changelog](CHANGELOG.md) • [License](LICENSE) • [Contributing](CONTRIBUTING.md) • [AI Agent Guide](AGENTS.md)
 
 

@@ -381,7 +381,7 @@ document.addEventListener('DOMContentLoaded', function () {
     ['--bs-border-radius', '--bs-border-width', '--bs-body-font-size', '--bs-body-font-weight', '--bs-body-line-height'].forEach(function (v) {
       if (state.liveOverrides[v]) {
         var key = v.replace('--bs-', '').replace(/-/g, '_');
-        lines.push('# ' + key + ': ' + state.liveOverrides[v]);
+        lines.push('# ' + key + ': "' + state.liveOverrides[v] + '"');
       }
     });
 

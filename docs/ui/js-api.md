@@ -18,7 +18,7 @@ Public JS surface area for zer0-mistakes. Everything below is intended for consu
 
 ## Module structure
 
-```
+```text
 assets/js/
 ├── modules/
 │   ├── navigation/

@@ -113,6 +113,7 @@ Check the **Actions** tab for build logs:
 3. Review error messages
 
 Common issues:
+
 - Invalid front matter (YAML syntax)
 - Missing dependencies
 - Plugin not in GitHub Pages whitelist

@@ -18,7 +18,7 @@ Supported ways to change zer0-mistakes' look and behavior **without forking the 
 
 ## Decision tree
 
-```
+```text
 Need a change?
 ├─ Primary color only?        → theme_color.main in _config.yml
 ├─ Different skin?            → theme_skin in _config.yml

@@ -40,7 +40,7 @@ Detailed description of how the change was implemented.
 
 ### Files Affected
 
-```
+```text
 path/to/file1.ext - Description of changes
 path/to/file2.ext - Description of changes
 path/to/file3.ext - Description of changes

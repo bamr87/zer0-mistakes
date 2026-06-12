@@ -134,6 +134,7 @@ Available themes: `base16`, `colorful`, `github`, `monokai`, `thankful_eyes`, an
 highlight.js supports 89+ styles. Browse themes at the [demo page](https://highlightjs.org/static/demo/).
 
 Popular themes:
+
 - `atom-one-light`
 - `atom-one-dark`
 - `github`

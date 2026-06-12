@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.0] - 2026-06-12
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 85d0295a feat(quality): implement six backlog tasks — T-003/004/008/014/015/016 (#144)
+- 71b8fe46 fix(gemspec): require Ruby >= 3.2 to match modern dependency floor (#93)
+
+### Added
+- **Contribution templates (T-003)**: bug-report and feature-request issue forms, contact links, and a PR template with the conventional-commit/CHANGELOG/test checklist
+- **Locale-independence guard (T-015)**: lib test suite runs the roadmap/backlog/preflight validators under `LC_ALL=C LANG=C` so the UTF-8 crash class fixed in 1.12.1 cannot return
+
+### Fixed
+- **Theme customizer (T-008)**: YAML export now quotes hex color values in both builders — unquoted `#RRGGBB` parsed as a YAML comment and silently dropped colors; frozen regression test promoted to live
+- **Docs lint baseline (T-004/T-014)**: ~1,600 markdownlint violations fixed or config-tuned to zero (MD060 disabled as post-config stylistic noise, MD025 front-matter handling, MD024 siblings-only); a stray code fence that swallowed the troubleshooting "Advanced Topics" section into a code block repaired; table pipes escaped; 15 dead README links remapped to the reorganized `docs/` tree
+- **site_generation suite (T-016)**: `jekyll build` failures now fail the suite instead of degrading to warnings (missing-bundler skip retained)
+
+### Changed
+- **Docs lint gate (T-014)**: both `|| true` suppressions removed from `docs-validate.yml` — markdownlint now blocks on a zero-violation baseline
+
 ## [1.14.0] - 2026-06-11
 
 ### Changed

@@ -276,19 +276,19 @@ Update your privacy policy to include:
 
 ### Common Issues
 
-**Analytics not loading**
+#### Analytics not loading
 
 - Check `jekyll.environment` is set to "production"
 - Verify `site.posthog.enabled` is `true`
 - Ensure API key is correctly configured
 
-**Cookie banner not appearing**
+#### Cookie banner not appearing
 
 - Clear localStorage: `localStorage.removeItem('zer0-cookie-consent')`
 - Check browser console for JavaScript errors
 - Verify Bootstrap 5 is loaded
 
-**Events not tracking**
+#### Events not tracking
 
 - Check user has consented to analytics
 - Verify PostHog project is receiving data

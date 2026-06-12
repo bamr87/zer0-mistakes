@@ -126,7 +126,7 @@ layout: null
 
 ### Basic Configuration
 
-```
+```text
 # robots.txt
 User-agent: *
 Allow: /

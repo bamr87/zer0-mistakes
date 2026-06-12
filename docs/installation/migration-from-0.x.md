@@ -16,7 +16,7 @@ author: bamr87
 
 | You used to do… | You now do… | Status |
 |---|---|---|
-| `curl ... | bash` | Same. Still the recommended quickstart. | ✅ unchanged |
+| `curl ... \| bash` | Same. Still the recommended quickstart. | ✅ unchanged |
 | `bash install.sh --full` | `install init --profile full` | Old flag still works; warns. |
 | `bash install.sh --minimal` | `install init --profile minimal` | Old flag still works; warns. |
 | `bash install.sh --fork` | `install init --profile fork` | Old flag still works; warns. |

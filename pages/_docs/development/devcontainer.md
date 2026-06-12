@@ -33,7 +33,7 @@ zer0-mistakes ships a `.devcontainer/devcontainer.json` that lets you open a ful
 
 ## Configuration File
 
-```
+```text
 .devcontainer/devcontainer.json
 ```
 

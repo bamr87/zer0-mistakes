@@ -1,0 +1,10 @@
+# Keep blank issues enabled: the backlog-sync workflow files issues via the
+# API (no template), and agents/maintainers need free-form issues.
+blank_issues_enabled: true
+contact_links:
+  - name: Documentation
+    url: https://zer0-mistakes.com/docs/
+    about: User guides, quickstart, and feature documentation
+  - name: Discussions
+    url: https://github.com/bamr87/zer0-mistakes/discussions
+    about: Questions and ideas that are not yet concrete bugs or features

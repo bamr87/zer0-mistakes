@@ -60,7 +60,7 @@
 meta:
   title: "zer0-mistakes Roadmap"
   tagline: "Past releases, current focus, and future plans for the zer0-mistakes Jekyll theme."
-  updated: 2026-06-11
+  updated: 2026-06-12
 
 milestones:
   # --- Completed -------------------------------------------------------------
@@ -326,23 +326,37 @@ milestones:
       - "Auto-generated `/sitemap/` endpoint"
       - "Ruby gem and Mermaid dependency updates"
 
+  - version: "1.13"
+    title: "Quality Framework — First Wave"
+    status: completed
+    section: Completed
+    start: 2026-06
+    end: 2026-06
+    released: 2026-06-11
+    summary: "First shipped wave of the Zer0-Mistake Quality Framework: CI gate parity and DOM sanitization."
+    features:
+      - "CI gate parity (T-012) — PRs run the full canonical test entrypoint, not a subset"
+      - "Admin config-page DOM sanitization (T-009), Liquid + plugin layers"
+      - "Release changelog single source of truth; workflow lint cleanup (T-017)"
+      - "Gate-coverage controls contract documented in the workflows README"
+
   # --- Current ---------------------------------------------------------------
 
-  - version: "1.13"
+  - version: "1.14"
     title: "Zer0-Mistake Quality Framework"
     status: active
     section: Current
     start: 2026-06
     end: 2026-08
-    target: "Current (1.13.x)"
+    target: "Current (1.14.x)"
     summary: "Close the gap between the repo's quality gates and what CI actually enforces — no mistake lands green."
     features:
-      - "CI gate parity — PRs run the full canonical test entrypoint (lib unit, theme, integration, installer e2e), not a subset"
-      - "Re-armed pixel-snapshot gate (refreshed baselines, no `continue-on-error`)"
-      - "Re-armed docs link-check gate (clean baseline, no warn-only `|| true`)"
-      - "Locale-independence regression guard for the Ruby/Bash tooling"
-      - "Coverage baseline with follow-up tasks for the lowest-covered subsystems"
-      - "Documented required status checks per branch (the 'controls' contract)"
+      - "Re-armed docs lint gate on a zero-violation baseline (T-014)"
+      - "Locale-independence regression guard for the Ruby/Bash tooling (T-015)"
+      - "Strict site_generation suite — build failures fail the gate (T-016)"
+      - "Re-armed pixel-snapshot gate (refreshed baselines, no continue-on-error) (T-013)"
+      - "Coverage baseline with follow-up tasks for the lowest-covered subsystems (T-005)"
+      - "Navbar WCAG 2.1 AA fixes unlocking the axe-core full audit (T-007)"
 
   - version: "2.0"
     title: "CMS Integration"

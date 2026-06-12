@@ -147,6 +147,7 @@ sidebar:
 ```
 
 Available navigation files:
+
 - `main` - Primary site navigation
 - `docs` - Documentation sidebar
 - `quickstart` - Quick start guide

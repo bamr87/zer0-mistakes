@@ -32,7 +32,7 @@ For full details on refreshing vendor files, see the [Vendor Assets guide](/docs
 
 ## Directory Layout
 
-```
+```text
 assets/vendor/
 ├── bootstrap/
 │   ├── css/

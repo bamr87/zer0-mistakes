@@ -202,4 +202,3 @@ bundle exec jekyll build
 - [Testing](testing.md) — Validate your changes
 - [Code Style](code-style.md) — Follow coding conventions
 - [Architecture](../architecture/README.md) — Understand the codebase
-

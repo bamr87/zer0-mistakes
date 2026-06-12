@@ -23,7 +23,7 @@ author: bamr87
 
 ## Where Does New Content Go?
 
-```
+```text
 New content → Who reads it?
   ├─ Contributor / maintainer → docs/
   │     ├─ Architecture decision      → docs/architecture/

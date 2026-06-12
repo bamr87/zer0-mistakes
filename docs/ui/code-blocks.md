@@ -68,7 +68,7 @@ After `code-copy.js` runs, blocks gain a header, line-number gutter, and copy bu
 
 ## Visual structure
 
-```
+```text
 ┌─ .highlighter-rouge.language-ruby ─────────────────────┐
 │ ┌─ .code-block-header ────────────────────────────────┐ │
 │ │ ruby                              [ Copy ]          │ │

@@ -40,7 +40,7 @@ The theme injects Schema.org structured data via dedicated include files:
 
 ### Software Application Schema
 
-```
+```text
 _includes/content/jsonld-software.html
 ```
 
@@ -48,7 +48,7 @@ Outputs `SoftwareApplication` markup with name, version, description, and licens
 
 ### FAQ Schema
 
-```
+```text
 _includes/content/jsonld-faq.html
 ```
 
@@ -84,7 +84,7 @@ The theme ships standard supporting pages:
 
 ## FAQ Page
 
-```
+```text
 pages/faq.md  →  /faq/
 ```
 
@@ -92,7 +92,7 @@ The FAQ page uses the `faq_items` frontmatter array and the `jsonld-faq.html` in
 
 ## Glossary Collection
 
-```
+```text
 pages/glossary.md  →  /glossary/
 ```
 

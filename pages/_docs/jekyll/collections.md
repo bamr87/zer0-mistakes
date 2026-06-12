@@ -177,7 +177,7 @@ collections:
     permalink: /tutorials/:title/
 ```
 
-2. **Set defaults**:
+1. **Set defaults**:
 
 ```yaml
 defaults:
@@ -188,13 +188,13 @@ defaults:
       layout: tutorial
 ```
 
-3. **Create directory**:
+1. **Create directory**:
 
 ```bash
 mkdir pages/_tutorials
 ```
 
-4. **Add content**:
+1. **Add content**:
 
 ```yaml
 ---
@@ -207,7 +207,7 @@ difficulty: beginner
 
 ### By Category
 
-```
+```text
 pages/_docs/
 ├── getting-started/
 │   ├── index.md
@@ -222,7 +222,7 @@ pages/_docs/
 
 ### By Date
 
-```
+```text
 pages/_posts/
 ├── 2025-01-25-first-post.md
 ├── 2025-01-24-second-post.md
@@ -231,7 +231,7 @@ pages/_posts/
 
 ### By Topic
 
-```
+```text
 pages/_notebooks/
 ├── data-science/
 │   ├── pandas-basics.ipynb

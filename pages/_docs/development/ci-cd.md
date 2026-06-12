@@ -181,6 +181,7 @@ required_status_checks:
 ### Jekyll Build Cache
 
 {% raw %}
+
 ```yaml
 - uses: actions/cache@v4
   with:
@@ -189,6 +190,7 @@ required_status_checks:
       _site
     key: jekyll-${{ hashFiles('_config.yml') }}
 ```
+
 {% endraw %}
 
 ## Artifacts
@@ -235,6 +237,7 @@ Configure notifications for workflow failures:
 ### Enable Debug Logging
 
 Set repository secrets:
+
 - `ACTIONS_RUNNER_DEBUG`: `true`
 - `ACTIONS_STEP_DEBUG`: `true`
 

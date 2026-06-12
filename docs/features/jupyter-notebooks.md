@@ -27,16 +27,19 @@ This implementation adds full Jupyter notebook support to the Zer0-Mistakes Jeky
 ## 📁 Implementation Components
 
 ### 1. Docker Environment (`docker/Dockerfile`)
+
 - Added Python 3, pip, and jupyter nbconvert
 - Enables notebook conversion in containerized development
 
 ### 2. Conversion Script (`scripts/convert-notebooks.sh`)
+
 - Converts `.ipynb` files to Jekyll Markdown
 - Extracts images to `assets/images/notebooks/`
 - Adds Jekyll front matter with metadata
 - Supports dry-run, force, and list modes
 
 ### 3. Notebook Layout (`_layouts/notebook.html`)
+
 - Extends `default.html` layout
 - Displays metadata (author, date, kernel info)
 - Includes navigation between notebooks
@@ -44,6 +47,7 @@ This implementation adds full Jupyter notebook support to the Zer0-Mistakes Jeky
 - Comment system integration
 
 ### 4. Notebook Styling (`_sass/notebooks.scss`)
+
 - Code cell and output formatting
 - Execution count display
 - Table and image styling
@@ -51,11 +55,13 @@ This implementation adds full Jupyter notebook support to the Zer0-Mistakes Jeky
 - Dark mode support
 
 ### 5. Jekyll Configuration (`_config.yml`)
+
 - Collection defaults for notebooks
 - Front matter defaults (layout, metadata)
 - Proper permalink structure
 
 ### 6. Makefile Targets
+
 - `make convert-notebooks` - Convert all notebooks
 - `make convert-notebooks-dry-run` - Preview conversion
 - `make convert-notebooks-force` - Force reconvert all
@@ -63,6 +69,7 @@ This implementation adds full Jupyter notebook support to the Zer0-Mistakes Jeky
 - `make clean-notebooks` - Remove converted files
 
 ### 7. GitHub Actions (`.github/workflows/convert-notebooks.yml`)
+
 - Automatic conversion on push to main/develop
 - Dry-run preview for pull requests
 - Commits converted files back to repo
@@ -73,12 +80,15 @@ This implementation adds full Jupyter notebook support to the Zer0-Mistakes Jeky
 ### Local Development
 
 #### 1. Add a Notebook
+
 Place your `.ipynb` file in `pages/_notebooks/`:
+
 ```bash
 cp my-notebook.ipynb pages/_notebooks/
 ```
 
 #### 2. Convert Notebook
+
 ```bash
 # Preview what will be converted
 make convert-notebooks-dry-run
@@ -91,21 +101,26 @@ make convert-notebooks
 ```
 
 #### 3. View Results
+
 The converted Markdown file appears at:
+
 - `pages/_notebooks/my-notebook.md`
 
 Extracted images go to:
+
 - `assets/images/notebooks/my-notebook_files/`
 
 ### Docker Development
 
 #### Rebuild Container with Python/Jupyter
+
 ```bash
 docker-compose down
 docker-compose up --build
 ```
 
 #### Convert Notebooks in Container
+
 ```bash
 docker-compose exec jekyll ./scripts/convert-notebooks.sh
 ```
@@ -115,6 +130,7 @@ docker-compose exec jekyll ./scripts/convert-notebooks.sh
 When you push `.ipynb` files to GitHub:
 
 1. **Push notebook to main/develop branch**
+
    ```bash
    git add pages/_notebooks/my-notebook.ipynb
    git commit -m "Add new notebook"
@@ -145,11 +161,13 @@ make convert-notebooks-force
 ## 📝 Front Matter
 
 Notebooks are converted with Jekyll front matter extracted from:
+
 1. Notebook metadata (if present)
 2. First markdown cell starting with `#`
 3. Filename (as fallback)
 
 Example generated front matter:
+
 ```yaml
 ---
 title: "My Notebook Title"
@@ -170,6 +188,7 @@ lastmod: 2025-11-29T10:00:00.000Z
 ### Modify Notebook Styling
 
 Edit `_sass/notebooks.scss` to customize:
+
 - Code cell colors
 - Output area styling
 - Table formatting
@@ -179,6 +198,7 @@ Edit `_sass/notebooks.scss` to customize:
 ### Change Conversion Behavior
 
 Edit `scripts/convert-notebooks.sh` to modify:
+
 - Front matter generation
 - Image extraction directory
 - Markdown formatting
@@ -187,6 +207,7 @@ Edit `scripts/convert-notebooks.sh` to modify:
 ### Customize Layout
 
 Edit `_layouts/notebook.html` to change:
+
 - Metadata display
 - Navigation structure
 - Share buttons
@@ -195,6 +216,7 @@ Edit `_layouts/notebook.html` to change:
 ## 📊 Test Notebook
 
 A sample notebook is included at `pages/_notebooks/test-notebook.ipynb` demonstrating:
+
 - ✅ Markdown formatting
 - ✅ Python code execution
 - ✅ LaTeX equations ($E = mc^2$)
@@ -203,6 +225,7 @@ A sample notebook is included at `pages/_notebooks/test-notebook.ipynb` demonstr
 - ✅ Code output display
 
 To test the full pipeline:
+
 ```bash
 make convert-notebooks
 # View the converted file at pages/_notebooks/test-notebook.md
@@ -213,12 +236,14 @@ make convert-notebooks
 ### Notebook Won't Convert
 
 **Check dependencies:**
+
 ```bash
 python3 --version
 python3 -c "import nbconvert" && echo "✓ nbconvert installed"
 ```
 
 **Install if missing:**
+
 ```bash
 pip3 install jupyter nbconvert
 ```
@@ -226,17 +251,20 @@ pip3 install jupyter nbconvert
 ### Images Not Displaying
 
 **Check image paths in converted Markdown:**
+
 ```bash
 grep -r "!\[" pages/_notebooks/*.md
 ```
 
 **Verify images exist:**
+
 ```bash
 ls -R assets/images/notebooks/
 ```
 
 **Fix paths if needed:**
 The conversion script should use Jekyll-compatible paths:
+
 ```markdown
 ![Image]({{ site.baseurl }}/assets/images/notebooks/my-notebook_files/image.png)
 ```
@@ -244,6 +272,7 @@ The conversion script should use Jekyll-compatible paths:
 ### Conversion Fails in Docker
 
 **Rebuild container with Python:**
+
 ```bash
 docker-compose down
 docker-compose build --no-cache
@@ -251,6 +280,7 @@ docker-compose up
 ```
 
 **Check Python installation in container:**
+
 ```bash
 docker-compose exec jekyll python3 --version
 docker-compose exec jekyll pip3 list | grep nbconvert
@@ -259,6 +289,7 @@ docker-compose exec jekyll pip3 list | grep nbconvert
 ### GitHub Actions Not Running
 
 **Check workflow triggers:**
+
 - Workflow only runs on changes to `.ipynb` files in `pages/_notebooks/`
 - Or changes to `scripts/convert-notebooks.sh`
 - Or changes to the workflow file itself
@@ -271,6 +302,7 @@ Go to GitHub Actions > Convert Jupyter Notebooks > Run workflow
 **MathJax is already configured** in `_includes/core/head.html`
 
 If equations don't render:
+
 1. Check browser console for MathJax errors
 2. Verify equations use proper LaTeX syntax
 3. Ensure MathJax script loads before content
@@ -278,16 +310,19 @@ If equations don't render:
 ## 📚 Additional Resources
 
 ### nbconvert Documentation
+
 - https://nbconvert.readthedocs.io/
 - Markdown conversion options
 - Custom templates
 
 ### Jekyll Collections
+
 - https://jekyllrb.com/docs/collections/
 - Collection configuration
 - Front matter defaults
 
 ### MathJax Documentation
+
 - https://www.mathjax.org/
 - LaTeX syntax reference
 - Configuration options
@@ -307,6 +342,7 @@ Potential improvements for future versions:
 ## 📄 Files Modified/Created
 
 ### Created Files
+
 - `docker/Dockerfile` (modified - added Python/nbconvert)
 - `scripts/convert-notebooks.sh`
 - `_layouts/notebook.html`
@@ -316,6 +352,7 @@ Potential improvements for future versions:
 - `docs/JUPYTER_NOTEBOOKS.md` (this file)
 
 ### Modified Files
+
 - `_sass/custom.scss` (imported notebooks.scss)
 - `_config.yml` (added notebooks collection defaults)
 - `Makefile` (added notebook conversion targets)

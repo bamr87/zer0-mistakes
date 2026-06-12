@@ -40,10 +40,12 @@ This guide covers all installation methods for the Zer0-Mistakes Jekyll theme.
 ## Path A — AI Install Wizard (recommended)
 
 ### Prerequisites
+
 - Docker Desktop
 - Git (optional, but recommended)
 
 ### 1) Full install (default)
+
 Create a new folder and run the installer:
 
 ```bash
@@ -53,11 +55,13 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.s
 ```
 
 Notes:
+
 - `--full` is the default; it installs the full theme structure, Docker config, and development overrides.
 - The installer runs in "remote mode" when it's executed via `curl` and downloads the theme files automatically.
 - The installer creates a project-local `INSTALLATION.md` inside the generated site folder.
 
 ### 2) Start the dev server (Docker)
+
 From inside your generated site folder:
 
 ```bash
@@ -65,9 +69,11 @@ docker-compose up
 ```
 
 Then open:
+
 - `http://localhost:4000`
 
 ### 3) Minimal install (optional)
+
 If you want a barebones starting point:
 
 ```bash
@@ -134,6 +140,7 @@ Develop entirely in the cloud — no local Docker or Ruby required.
 Fork into `<your-username>.github.io` for a GitHub Pages user site that works out of the box.
 
 ### Prerequisites
+
 - Docker Desktop
 - No existing `<your-username>.github.io` repository (one free user site per GitHub account)
 
@@ -193,6 +200,7 @@ plugins:
 ```
 
 Notes:
+
 - GitHub Pages has a plugin whitelist; keep custom plugins to a minimum.
 - Local development via Docker is usually simpler than trying to match GitHub Pages Ruby/Jekyll versions by hand.
 
@@ -228,31 +236,41 @@ bundle exec jekyll serve --config "_config.yml,_config_dev.yml"
 Most customization starts in `_config.yml` (production) and `_config_dev.yml` (development overrides).
 
 ### 1) Update your site identity (`_config.yml`)
+
 Common fields to change:
+
 - `title`, `subtitle`, `description`
 - `url` and `baseurl`
 - `author.*` / `name` / `email`
 - `logo` / `teaser` / `og_image`
 
 Important:
+
 - `_config.yml` changes are **not hot-reloaded** by Jekyll; restart your dev server after edits.
 
 ### 2) Disable or replace analytics (`_config.yml`)
+
 This repo ships with analytics settings (Google Analytics + PostHog). For your own site:
+
 - set `google_analytics: null` (or your own ID)
 - for PostHog, either set `posthog.enabled: false` or replace `posthog.api_key` + `posthog.api_host`
 
 In development, analytics are already disabled in `_config_dev.yml`.
 
 ### 3) Customize navigation
+
 Navigation data lives under:
+
 - `_data/navigation/`
 
 If you want to change menus/sidebars, start there, then check:
+
 - `_includes/navigation/`
 
 ### 4) Add/replace content
+
 Typical content locations:
+
 - `index.html` / `index.md` (homepage)
 - `pages/` (site pages)
 - `pages/_posts/` (blog posts, if you use posts)
@@ -263,6 +281,7 @@ Typical content locations:
 ## Troubleshooting
 
 ### Port already in use
+
 If `4000` is taken, change the host port mapping in `docker-compose.yml`:
 
 ```yaml
@@ -271,12 +290,15 @@ ports:
 ```
 
 ### Apple Silicon (M-series Macs)
+
 This repo's Docker config uses `platform: linux/amd64` for compatibility. If Docker warns, it's usually safe to proceed.
 
 ### Theme not found / remote theme issues
+
 For local Docker development, `_config_dev.yml` disables `remote_theme` to avoid requiring GitHub theme fetches.
 
 ### Config changes don't show up
+
 - `_config.yml` changes require restarting the Jekyll server.
 - Try:
 

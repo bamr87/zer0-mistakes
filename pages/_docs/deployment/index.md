@@ -64,6 +64,7 @@ The theme uses dual configuration for different environments:
 | `_config_dev.yml` | Development overrides |
 
 In production, ensure:
+
 - `posthog.enabled: true` (if using analytics)
 - `url` matches your domain
 - `baseurl` is set correctly for subpaths
