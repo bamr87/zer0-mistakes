@@ -93,7 +93,7 @@ The existing settings modal was enhanced to include:
 
 To use this feature in your site using zer0-mistakes theme:
 
-### 1. No Configuration Needed!
+### 1. No Configuration Needed
 
 The feature works automatically when you use:
 
@@ -109,7 +109,7 @@ Click the gear icon (⚙️) in the header or "Info" in the footer.
 
 You can override the theme-info display by creating:
 
-```
+```text
 your-site/_includes/components/theme-info.html
 ```
 
@@ -137,15 +137,19 @@ Then display in template:
 ### Version Update Process
 
 1. Update `lib/jekyll-theme-zer0/version.rb`:
+
   ```ruby
    VERSION = "0.6.0"
   ```
-2. Build and publish gem:
+
+1. Build and publish gem:
+
   ```bash
    gem build jekyll-theme-zer0.gemspec
    gem push jekyll-theme-zer0-0.6.0.gem
   ```
-3. Version automatically appears in all sites using the theme!
+
+1. Version automatically appears in all sites using the theme!
 
 ## Benefits
 
@@ -169,7 +173,7 @@ This is normal for remote themes. GitHub Pages pulls the latest commit, so there
 
 Ensure the plugin directory exists:
 
-```
+```text
 _plugins/
   theme_version.rb
 ```
@@ -206,7 +210,8 @@ Potential improvements:
 
 ## License
 
-This feature is part of the zer0-mistakes theme and follows the same MIT license.
+This feature is part of the zer0-mistakes theme and follows the same MIT license
+
 ---
 
 > **User guide**: For usage instructions, see [Theme Version Display](/docs/features/theme-version/) in the user documentation.

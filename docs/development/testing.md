@@ -128,7 +128,6 @@ Core tests also validate that a production Jekyll build emits `main.css` contain
 
 The smoke tier includes a dedicated spec for the v1.8+ UI work. It exercises styling, layout containment, visibility, and advisory axe scans across five viewports defined in `test/visual/fixtures.js`:
 
-
 | Viewport      | Size     | What it guards                                         |
 | ------------- | -------- | ------------------------------------------------------ |
 | `mobile`      | 375×667  | Offcanvas toggler, ToC FAB, landmark visibility        |
@@ -136,7 +135,6 @@ The smoke tier includes a dedicated spec for the v1.8+ UI work. It exercises sty
 | `midDesktop`  | 1140×720 | Brand logo/title overlap (navbar container-query tier) |
 | `desktop`     | 1280×720 | Intro hero, code blocks, tables, docs chrome           |
 | `wideDesktop` | 1320×720 | Full nav labels without ellipsis                       |
-
 
 Canonical routes live in `UI_ROUTES` (home, quickstart, news section, features, theme preview, etc.). Tests call `gotoOrSkip()` so minimal fork installs skip missing pages instead of failing.
 
@@ -283,14 +281,12 @@ test_something() {
 
 ### Common Failures
 
-
 | Error               | Solution                               |
 | ------------------- | -------------------------------------- |
 | Jekyll build failed | Check for syntax errors in Liquid/YAML |
 | Missing file        | Verify file exists and path is correct |
 | Docker not found    | Install Docker or use `--skip-docker`  |
 | Permission denied   | Check file permissions                 |
-
 
 ### Debug Mode
 
@@ -306,7 +302,6 @@ bash -x ./test/specific_test.sh
 
 - [Local Setup](local-setup.md) — Development environment
 - [Code Style](code-style.md) — Coding conventions
-
 
 ---
 

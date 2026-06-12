@@ -87,7 +87,7 @@ Copilot uses the instructions to provide:
 
 When working on layouts:
 
-```
+```text
 1. Open _layouts/default.html
 2. Copilot loads layouts.instructions.md
 3. Suggestions follow theme patterns

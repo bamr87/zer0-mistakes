@@ -54,7 +54,7 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/scripts/l
 curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/_plugins/preview_image_generator.rb -o _plugins/preview_image_generator.rb
 ```
 
-2. **Add configuration to `_config.yml`:**
+1. **Add configuration to `_config.yml`:**
 
 ```yaml
 preview_images:
@@ -67,7 +67,7 @@ preview_images:
   output_dir: assets/images/previews
 ```
 
-3. **Set up your API key:**
+1. **Set up your API key:**
 
 ```bash
 # Create .env file (add to .gitignore!)
@@ -188,6 +188,7 @@ The installer adds VS Code tasks for easy access:
 The Jekyll plugin provides Liquid filters and tags:
 
 {% raw %}
+
 ```liquid
 {% comment %} Check if page has preview image {% endcomment %}
 {% if page | has_preview_image %}
@@ -200,6 +201,7 @@ The Jekyll plugin provides Liquid filters and tags:
 {% comment %} List all missing previews {% endcomment %}
 {% preview_images_missing %}
 ```
+
 {% endraw %}
 
 ### Rake Tasks
@@ -295,24 +297,28 @@ style_modifiers: "pixelated, retro gaming style, CRT screen glow effect, limited
 ### Alternative Styles
 
 **Minimalist Tech:**
+
 ```yaml
 style: "minimalist, clean lines, tech aesthetic, gradient backgrounds, modern"
 style_modifiers: "simple shapes, professional, subtle shadows"
 ```
 
 **Watercolor:**
+
 ```yaml
 style: "watercolor painting, soft edges, artistic, flowing colors"
 style_modifiers: "hand-painted feel, paper texture, artistic brush strokes"
 ```
 
 **Cyberpunk:**
+
 ```yaml
 style: "cyberpunk, neon lights, futuristic city, dark atmosphere"
 style_modifiers: "glowing elements, rain reflections, high contrast"
 ```
 
 **Flat Design:**
+
 ```yaml
 style: "flat design, vector illustration, bold colors, simple shapes"
 style_modifiers: "material design inspired, clean, modern icons"
@@ -331,7 +337,7 @@ The script generates prompts from your post content:
 
 For a post titled "Getting Started with Git: A Beginner's Guide" with tags `[git, version-control, tutorial]`:
 
-```
+```text
 Create an image representing: Getting Started with Git - A beginner's guide
 Keywords: git, version-control, tutorial
 Style: retro pixel art, 8-bit video game aesthetic, vibrant colors, nostalgic, clean pixel graphics
@@ -342,7 +348,8 @@ Modifiers: pixelated, retro gaming style, CRT screen glow effect, limited color 
 
 ### Common Issues
 
-**"API key not set"**
+#### "API key not set"
+
 ```bash
 # Check if .env is loaded
 cat .env | grep OPENAI
@@ -351,16 +358,19 @@ cat .env | grep OPENAI
 echo $OPENAI_API_KEY
 ```
 
-**"Rate limit exceeded"**
+#### "Rate limit exceeded"
+
 - OpenAI has rate limits; wait a few minutes
 - Consider using `--dry-run` first to plan
 
-**"Image generation failed"**
+#### "Image generation failed"
+
 - Check your API key is valid and has credits
 - Verify network connectivity
 - Check API status at status.openai.com
 
-**"Front matter not updated"**
+#### "Front matter not updated"
+
 - Ensure the script has write permission to post files
 - Check the preview path doesn't already exist
 
@@ -381,6 +391,7 @@ Run with verbose output for detailed diagnostics:
 ## Changelog
 
 ### Version 0.8.0 (Current)
+
 - Initial release as installable module
 - OpenAI DALL-E 3 support
 - Stability AI support
@@ -396,7 +407,7 @@ Part of the zer0-mistakes Jekyll theme. MIT License.
 
 ---
 
-*Built with ❤️ for the Jekyll community*
+### Built with ❤️ for the Jekyll community
 
 ---
 

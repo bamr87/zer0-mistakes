@@ -24,7 +24,7 @@ Styling-related keys in `_config.yml` for zer0-mistakes. Restart Jekyll after ed
 | `theme_color` | hash | see below | Brand palette → `--zer0-color-*` |
 | `theme_background` | hash | `enabled: true` | SVG background layers |
 | `appearance_panel` | bool | `true` | Runtime Appearance controls in Settings |
-| `user_overrides` | bool | `false` | Load `assets/css|js/user-overrides.*` |
+| `user_overrides` | bool | `false` | Load `assets/css\|js/user-overrides.*` |
 | `navigation.unified_mobile_drawer` | bool | `false` | Single tabbed mobile drawer |
 | `nanobar` | hash | `enabled: true` | Page load progress bar |
 | `locale` | string | `en-US` | `<html lang>` |
@@ -127,7 +127,7 @@ user_overrides: true
 
 Ship these files in your fork (not bundled with the theme):
 
-```
+```text
 assets/css/user-overrides.css
 assets/js/user-overrides.js
 ```

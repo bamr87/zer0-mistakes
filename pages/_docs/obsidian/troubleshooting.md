@@ -25,6 +25,7 @@ basename doesn't match either, or the wiki-index hasn't been regenerated
 since the target was added.
 
 **Fix:**
+
 1. Confirm the target file has `title:` set in YAML frontmatter.
 2. Trigger a rebuild — `assets/data/wiki-index.json` is built per Jekyll
    run. On GitHub Pages this happens automatically on push; locally,
@@ -38,12 +39,15 @@ since the target was added.
 **Cause:** image isn't where the resolver looks.
 
 **Fix:**
+
 - Default attachment path is `assets/images/notes/` (set in
   `.obsidian/app.json` → `attachmentFolderPath`). If you customized that,
   set the matching path on the site via:
+
   ```html
   <script>window.OBSIDIAN_ATTACHMENTS_PATH = '/your/path';</script>
   ```
+
   before the resolver script loads.
 - For an absolute path, prefix the embed target with `/`:
   `![[/assets/images/special/diagram.png]]`.
@@ -89,6 +93,7 @@ tags: [obsidian, your-inline-tag]
 ## Backlinks panel is missing on a note
 
 **Causes & fixes:**
+
 - Layout other than `note`? Add `backlinks: true` to frontmatter.
 - Explicitly disabled? Remove `backlinks: false`.
 - No incoming links exist yet — the panel is hidden when empty rather

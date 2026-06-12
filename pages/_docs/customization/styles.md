@@ -25,7 +25,7 @@ Customize the visual appearance of your site using SCSS and CSS.
 
 ## File Structure
 
-```
+```text
 _sass/
 ├── core/           # Core theme styles
 │   ├── _variables.scss

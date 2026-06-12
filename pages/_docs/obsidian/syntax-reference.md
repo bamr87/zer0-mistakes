@@ -106,7 +106,7 @@ The panel is a server-side Liquid include
 (`_includes/content/backlinks.html`) — no JavaScript required, fully
 indexable by search engines.
 
-## What is *not* (yet) supported
+## What is _not_ (yet) supported
 
 | Feature | Status | Workaround |
 | --- | --- | --- |
@@ -114,7 +114,7 @@ indexable by search engines.
 | Excalidraw `.excalidraw.md` | Excluded from the build | Embed exported PNG/SVG |
 | Dataview queries | Obsidian-only | Use Liquid loops on the site |
 | Live block references (`^block-id`) | Degrades to plain link | Use heading anchors instead |
-| Interactive global graph view | Available at [/docs/obsidian/graph/]({{ "/docs/obsidian/graph/" | relative_url }}) | Force-directed cytoscape view of every wiki-link |
+| Interactive global graph view | Available at [/docs/obsidian/graph/](/docs/obsidian/graph/) | Force-directed cytoscape view of every wiki-link |
 
 These are all candidates for a v2 follow-up. None of them break a build
 when present in source — they are simply hidden from the published site

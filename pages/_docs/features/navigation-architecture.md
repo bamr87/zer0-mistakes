@@ -26,7 +26,7 @@ The zer0-mistakes navigation JavaScript is organized as ES6 modules under `asset
 
 ## Module Overview
 
-```
+```text
 assets/js/modules/navigation/
 ├── index.js         — Entry point: imports and initializes all modules
 ├── config.js        — Shared constants (breakpoints, selectors, timing)
@@ -98,7 +98,7 @@ The navbar renders and works as a standard Bootstrap component even when JavaScr
 
 ## Main Navigation Include
 
-```
+```text
 _includes/navigation/navbar.html
 ```
 
@@ -114,7 +114,7 @@ export function initMyFeature() {
 }
 ```
 
-2. Import and call it from `index.js`:
+1. Import and call it from `index.js`:
 
 ```javascript
 import { initMyFeature } from './my-feature.js';

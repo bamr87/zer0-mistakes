@@ -14,13 +14,11 @@ This guide walks you through the progressive workflow of deploying your own site
 
 ## Overview
 
-
 | Phase              | Effort     | What You Get                                  |
 | ------------------ | ---------- | --------------------------------------------- |
 | **1. Fork**        | ~2 minutes | Working site at `username.github.io`          |
 | **2. Configure**   | ~5 minutes | Your name, title, branding, and clean content |
 | **3. Personalize** | Ongoing    | Custom content, styles, and features          |
-
 
 ---
 
@@ -36,30 +34,35 @@ Fork the repo into a repository named `<your-username>.github.io`. This is a **G
 ### Steps
 
 1. **Fork the repository**
-  - Go to [bamr87/zer0-mistakes](https://github.com/bamr87/zer0-mistakes) → **Fork**
-  - **Repository name: `<your-username>.github.io`** (this is the key step)
-  - Uncheck "Copy the `main` branch only" if you want all branches
-2. **Enable GitHub Pages** (if not already enabled)
-  - Go to **Settings → Pages**
-  - Under **Source**, select **Deploy from a branch**
-  - Branch: `main`, folder: `/ (root)`
-  - Click **Save**
-3. **Wait for the first build**
-  - GitHub Pages automatically builds Jekyll sites on push
-  - Check the **Actions** tab for build status
-4. **Visit your site**
-  - `https://<your-username>.github.io`
+
+- Go to [bamr87/zer0-mistakes](https://github.com/bamr87/zer0-mistakes) → **Fork**
+- **Repository name: `<your-username>.github.io`** (this is the key step)
+- Uncheck "Copy the `main` branch only" if you want all branches
+
+1. **Enable GitHub Pages** (if not already enabled)
+
+- Go to **Settings → Pages**
+- Under **Source**, select **Deploy from a branch**
+- Branch: `main`, folder: `/ (root)`
+- Click **Save**
+
+1. **Wait for the first build**
+
+- GitHub Pages automatically builds Jekyll sites on push
+- Check the **Actions** tab for build status
+
+1. **Visit your site**
+
+- `https://<your-username>.github.io`
 
 ### Why `username.github.io`?
 
 GitHub Pages has two site types:
 
-
 | Type             | Repo name            | URL                                    | `baseurl` needed     |
 | ---------------- | -------------------- | -------------------------------------- | -------------------- |
 | **User site**    | `username.github.io` | `https://username.github.io`           | No (`""`)            |
 | **Project site** | any other name       | `https://username.github.io/repo-name` | Yes (`"/repo-name"`) |
-
 
 By forking into `username.github.io`, the site deploys at the domain root. The theme's `_config.yml` ships with `baseurl: ""`, so all asset paths, navigation links, and images work immediately — zero config needed.
 
@@ -150,7 +153,6 @@ GitHub Pages rebuilds automatically on push to `main`. Your site at `https://<yo
 
 ### Content
 
-
 | What             | Where               | Notes                                   |
 | ---------------- | ------------------- | --------------------------------------- |
 | Blog posts       | `pages/_posts/`     | `YYYY-MM-DD-title.md` naming convention |
@@ -158,7 +160,6 @@ GitHub Pages rebuilds automatically on push to `main`. Your site at `https://<yo
 | Quests/tutorials | `pages/_quests/`    | Gamified learning paths                 |
 | About page       | `pages/_about/`     | Profile, features, bios                 |
 | Navigation       | `_data/navigation/` | YAML menu definitions                   |
-
 
 ### Styles
 
@@ -193,7 +194,7 @@ The `_config_dev.yml` overlay disables analytics, enables drafts, and sets `url`
 
 The config system uses layered YAML files so the same source works across environments:
 
-```
+```text
 _config.yml                 ← Base config (identity, collections, plugins, url)
   + _config_dev.yml         ← Local dev overlay (analytics off, localhost)
 ```
@@ -240,7 +241,6 @@ Run `./scripts/fork-cleanup.sh` or manually clear `google_analytics` and `postho
 
 ## Quick Reference
 
-
 | Task                   | Command / Action                                 |
 | ---------------------- | ------------------------------------------------ |
 | Fork the repo          | Fork → name it `username.github.io`              |
@@ -251,7 +251,6 @@ Run `./scripts/fork-cleanup.sh` or manually clear `google_analytics` and `postho
 | Build locally          | `bundle exec jekyll build`                       |
 | Add a blog post        | Create `pages/_posts/YYYY-MM-DD-title.md`        |
 | Set custom domain      | Add `CNAME` file + update `url` in `_config.yml` |
-
 
 ---
 

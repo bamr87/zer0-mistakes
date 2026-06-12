@@ -1,0 +1,50 @@
+name: Bug report
+description: Report a defect in the zer0-mistakes theme, installer, or tooling
+title: "fix: <short description>"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping keep zer0-mistakes at zero mistakes. Before filing,
+        please search existing issues and check the
+        [troubleshooting docs](https://zer0-mistakes.com/docs/).
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+      placeholder: Steps to reproduce, expected vs actual behavior
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Theme version
+      description: From your Gemfile.lock (`jekyll-theme-zer0 (x.y.z)`) or `remote_theme` ref
+      placeholder: "1.14.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: install-mode
+    attributes:
+      label: Install mode
+      options:
+        - Remote theme (GitHub Pages)
+        - Gem (Gemfile)
+        - Fork / full clone
+        - install.sh
+        - Docker
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Ruby version, Jekyll version, browser (if rendering issue)
+      placeholder: "macOS 15 / Ruby 3.3.6 / Jekyll 3.10 / Chrome 137"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      render: shell

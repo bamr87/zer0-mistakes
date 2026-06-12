@@ -16,7 +16,7 @@ This `/docs/` directory contains **developer-focused documentation** for the Zer
 
 ## Directory Structure
 
-```
+```text
 docs/
 ├── README.md                  # This file
 │

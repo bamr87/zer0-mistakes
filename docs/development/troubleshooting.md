@@ -75,7 +75,7 @@ author: bamr87
 
 **Solutions:**
 
-**Option 1: Install Modern Bash (Recommended)**
+#### Option 1: Install Modern Bash (Recommended)
 
 ```bash
 # Install Bash 5 via Homebrew
@@ -89,7 +89,7 @@ brew install bash
 /opt/homebrew/bin/bash scripts/release patch --dry-run
 ```
 
-**Option 2: Add to PATH**
+#### Option 2: Add to PATH
 
 ```bash
 # Add to ~/.zshrc or ~/.bashrc
@@ -105,7 +105,7 @@ bash --version
 ./scripts/release patch --dry-run
 ```
 
-**Option 3: Create Alias**
+#### Option 3: Create Alias
 
 ```bash
 # Add to ~/.zshrc
@@ -144,7 +144,7 @@ declare: usage: declare [-afFirtx] [-p] [name[=value] ...]
 
 **Solutions:**
 
-**Option 1: Commit Changes**
+#### Option 1: Commit Changes
 
 ```bash
 # Review changes
@@ -158,7 +158,7 @@ git commit -m "chore: prepare for release"
 /opt/homebrew/bin/bash scripts/release patch
 ```
 
-**Option 2: Stash Changes**
+#### Option 2: Stash Changes
 
 ```bash
 # Stash uncommitted changes
@@ -171,7 +171,7 @@ git stash push -u -m "WIP: temp stash for release"
 git stash pop
 ```
 
-**Option 3: Use Dry-Run Mode**
+#### Option 3: Use Dry-Run Mode
 
 ```bash
 # If just testing, use dry-run (still requires clean directory)
@@ -223,7 +223,7 @@ git log --pretty=format:"%s" v0.6.0..HEAD
 
 **Solutions:**
 
-**Option 1: Configure API Key**
+#### Option 1: Configure API Key
 
 ```bash
 # Get API key from https://rubygems.org/profile/edit
@@ -239,7 +239,7 @@ EOF
 chmod 600 ~/.gem/credentials
 ```
 
-**Option 2: Skip Publishing (for testing)**
+#### Option 2: Skip Publishing (for testing)
 
 ```bash
 # Build and test without publishing
@@ -273,7 +273,7 @@ gem owner jekyll-theme-zer0
 
 **Conventional Commit Format:**
 
-```
+```text
 <type>(<scope>): <subject>
 
 <body>
@@ -370,7 +370,7 @@ Error: bind: address already in use
 
 **Solutions:**
 
-**Option 1: Stop conflicting service**
+#### Option 1: Stop conflicting service
 
 ```bash
 # Find what's using port 4000
@@ -383,7 +383,7 @@ kill -9 <PID>
 docker-compose up
 ```
 
-**Option 2: Use different port**
+#### Option 2: Use different port
 
 ```bash
 # Edit docker-compose.yml
@@ -430,7 +430,7 @@ docker-compose up
 
 **Solutions:**
 
-**Option 1: Fix tests (recommended)**
+#### Option 1: Fix tests (recommended)
 
 ```bash
 # Run tests to see failures
@@ -444,7 +444,7 @@ docker-compose up
 /opt/homebrew/bin/bash scripts/release patch
 ```
 
-**Option 2: Skip tests (not recommended)**
+#### Option 2: Skip tests (not recommended)
 
 ```bash
 # Only for emergency hotfixes
@@ -636,8 +636,6 @@ b7ad237 Update README.md for version 0.6.0
 ```
 ````
 
-````
-
 ## Advanced Topics
 
 ### Custom Changelog Categories
@@ -649,7 +647,7 @@ If you need custom commit categorization, modify `scripts/lib/changelog.sh`:
 # Add custom patterns:
 elif echo "$subject" | grep -qiE "^(breaking|major):"; then
     echo "breaking"
-````
+```
 
 ### Debugging Script Execution
 

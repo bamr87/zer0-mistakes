@@ -88,6 +88,7 @@ Using Bootstrap's `visually-hidden-focusable`:
 ```
 
 This class:
+
 - Hides element visually
 - Keeps it accessible to screen readers
 - Shows on keyboard focus
@@ -197,6 +198,7 @@ describe('Skip Link', () => {
 ### Screen Reader Testing
 
 Test with:
+
 - NVDA (Windows)
 - VoiceOver (macOS)
 - JAWS (Windows)

@@ -68,7 +68,7 @@ bundle exec jekyll serve --config "_config.yml,_config_dev.yml"
 
 ## Project Structure
 
-```
+```text
 zer0-mistakes/
 ├── _config.yml          # Production configuration
 ├── _config_dev.yml      # Development overrides
@@ -107,6 +107,7 @@ The theme uses two configuration files:
 | `_config_dev.yml` | Development overrides | Local development |
 
 **Production** (`_config.yml`):
+
 ```yaml
 remote_theme: "bamr87/zer0-mistakes"
 posthog:
@@ -114,6 +115,7 @@ posthog:
 ```
 
 **Development** (`_config_dev.yml`):
+
 ```yaml
 remote_theme: false
 posthog:
@@ -159,7 +161,7 @@ mermaid:
 
 Create posts in `pages/_posts/` with the naming convention:
 
-```
+```text
 YYYY-MM-DD-title-slug.md
 ```
 
@@ -304,6 +306,7 @@ Use the `link` tag for validated internal links:
 ```
 
 **Benefits:**
+
 - Build fails if link target doesn't exist
 - Automatically handles URL changes
 
@@ -356,6 +359,7 @@ Create reusable components in `_includes/`:
 ```
 
 **Usage:**
+
 ```liquid
 {% raw %}{% include components/alert.html type="warning" message="Important notice!" %}{% endraw %}
 ```

@@ -121,7 +121,9 @@ document.addEventListener('DOMContentLoaded', function () {
     lines.push('');
     lines.push('theme_color:');
     document.querySelectorAll('[data-color-key]').forEach(function (el) {
-      lines.push('  ' + el.dataset.colorKey + ': ' + el.value);
+      // Quote values: unquoted #RRGGBB is parsed as a YAML comment,
+      // silently dropping the color (T-008).
+      lines.push('  ' + el.dataset.colorKey + ': "' + el.value + '"');
     });
     var output = document.getElementById('theme-yaml-output');
     if (output) output.textContent = lines.join('\n');

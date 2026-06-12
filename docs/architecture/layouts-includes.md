@@ -16,7 +16,7 @@ Documentation of the template system and component architecture.
 
 Layouts inherit from each other using Jekyll's `layout` front matter:
 
-```
+```text
 root.html              ← Base HTML document structure
 └── default.html       ← Main site wrapper
     ├── home.html      ← Homepage
@@ -50,6 +50,7 @@ Base HTML structure. Rarely modified.
 Main site wrapper with header, footer, and optional sidebars.
 
 **Key sections:**
+
 - Site header with navigation
 - Left sidebar (optional, configurable)
 - Main content area
@@ -61,6 +62,7 @@ Main site wrapper with header, footer, and optional sidebars.
 Blog post layout extending `default.html`.
 
 **Additional features:**
+
 - Post metadata (date, author, categories, tags)
 - Reading time estimate
 - Comments section (Giscus)
@@ -71,6 +73,7 @@ Blog post layout extending `default.html`.
 Collection index layout for listing collection items.
 
 **Features:**
+
 - Item listing with excerpts
 - Filtering by category/tag
 - Pagination
@@ -80,6 +83,7 @@ Collection index layout for listing collection items.
 Full-width layout without sidebars.
 
 **Use cases:**
+
 - Marketing pages
 - Product pages
 - Custom landing pages

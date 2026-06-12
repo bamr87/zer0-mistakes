@@ -66,10 +66,12 @@ Run `./scripts/bin/install list-profiles` to see what's installed locally.
 2. Map `legacy_flag:` to whichever existing `install.sh` mode flag (`--full`, `--minimal`, `--fork`, …) most closely matches your intent — that's what the dispatcher hands to the bootstrap.
 3. List your profile in [`templates/profiles/README.md`](../../templates/profiles/README.md).
 4. Test:
+
    ```bash
    ./scripts/bin/install list-profiles            # confirm it shows up
    ./scripts/bin/install init --profile <your-slug> /tmp/test-profile
    ```
+
 5. Optional: open a PR against `bamr87/zer0-mistakes` to upstream it.
 
 ## What profiles cannot do

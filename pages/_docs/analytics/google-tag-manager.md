@@ -133,6 +133,7 @@ dataLayer.push({
 ### Google Analytics 4
 
 In GTM:
+
 1. Add new tag → GA4 Configuration
 2. Enter Measurement ID
 3. Trigger: All Pages
@@ -179,6 +180,7 @@ In GTM: Create trigger for event name "formSubmit"
 ### Built-in Variables
 
 Enable in GTM:
+
 - Page URL
 - Page Hostname
 - Page Path
@@ -190,6 +192,7 @@ Enable in GTM:
 ### Data Layer Variables
 
 Access dataLayer values:
+
 1. Variables → New → Data Layer Variable
 2. Set variable name (e.g., `pageTitle`)
 
@@ -229,6 +232,7 @@ function updateConsent(analytics, ads) {
 ### Consent Mode Tags
 
 In GTM, configure tags to respect consent:
+
 - Tag Settings → Consent Settings
 - Require consent for firing
 
@@ -243,6 +247,7 @@ In GTM, configure tags to respect consent:
 ### Debug Panel
 
 Shows:
+
 - Tags fired
 - Variables values
 - DataLayer events

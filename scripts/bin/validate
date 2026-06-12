@@ -402,6 +402,7 @@ classified_files = %w[
     _config_dev.yml
     _config_secrets_local.yml
     pages/_about/settings/_config.yml
+    .github/ISSUE_TEMPLATE/config.yml
 ]
 classified_files.concat(Dir.glob('_data/**/*config*.{yml,yaml}'))
 

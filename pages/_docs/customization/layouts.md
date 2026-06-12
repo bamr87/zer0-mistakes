@@ -48,7 +48,7 @@ layout: default
 
 Layouts inherit from each other:
 
-```
+```text
 root.html
 └── default.html
     ├── home.html

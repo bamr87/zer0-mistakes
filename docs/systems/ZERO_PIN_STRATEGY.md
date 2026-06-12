@@ -25,7 +25,7 @@ This is the pattern used internally by Shopify, GitHub, GitLab, and most large J
 
 ### Dependency Resolution Flow
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                         ZERO PIN DEPENDENCY FLOW                            │
 ├─────────────────────────────────────────────────────────────────────────────┤
@@ -66,7 +66,7 @@ This is the pattern used internally by Shopify, GitHub, GitLab, and most large J
 
 ## File Structure
 
-```
+```text
 zer0-mistakes/
 ├── docker/
 │   ├── Dockerfile                    # Multi-stage, zero version pins

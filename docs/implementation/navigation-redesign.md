@@ -43,7 +43,8 @@ A comprehensive UI/UX review and enhancement of the Zer0-Mistakes theme navigati
 ### Desktop Navigation (≥1200px)
 
 **Before:**
-```
+
+```text
 ┌─────────────────────────────────────────────────────────┐
 │ Logo  Title    [Nav1] [Nav2] [Nav3]     [Search] [⚙]   │
 └─────────────────────────────────────────────────────────┘
@@ -51,7 +52,8 @@ A comprehensive UI/UX review and enhancement of the Zer0-Mistakes theme navigati
 ```
 
 **After:**
-```
+
+```text
 ┌─────────────────────────────────────────────────────────┐
 │ 🏠 Logo  Title    [Nav1▼] [Nav2▼] [Nav3▼]  [🔍Search][⚙]│
 └─────────────────────────────────────────────────────────┘
@@ -68,12 +70,14 @@ A comprehensive UI/UX review and enhancement of the Zer0-Mistakes theme navigati
 ### Mobile Navigation (<992px)
 
 **Before:**
-```
+
+```text
 Offcanvas: 36px close button, 40px nav targets, abrupt dropdown expansion
 ```
 
 **After:**
-```
+
+```text
 Offcanvas: 48px close button (with rotation), 52px nav targets, smooth cubic-bezier expansion
            Auto-scroll to show opened dropdowns
 ```
@@ -89,12 +93,14 @@ Offcanvas: 48px close button (with rotation), 52px nav targets, smooth cubic-bez
 ### Animation: Dropdown Reveal
 
 **Before** (simple fade):
+
 ```css
 .dropdown-menu { opacity: 0; transition: opacity 0.15s ease-in-out; }
 .dropdown-menu.show { opacity: 1; }
 ```
 
 **After** (transform + fade):
+
 ```css
 .dropdown-menu {
   opacity: 0;
@@ -114,6 +120,7 @@ Offcanvas: 48px close button (with rotation), 52px nav targets, smooth cubic-bez
 Three-tier breakpoint system:
 
 **Mobile (<992px)** — offcanvas menu, 48–52px targets, vertical layout:
+
 ```scss
 @media (max-width: 991.98px) {
   #bdNavbar .nav-link {
@@ -125,6 +132,7 @@ Three-tier breakpoint system:
 ```
 
 **Compact Desktop (992–1199px)** — icon-only navigation, tooltips, 44px minimum:
+
 ```scss
 @media (min-width: 992px) and (max-width: 1199.98px) {
   #bdNavbar .nav-link {
@@ -136,6 +144,7 @@ Three-tier breakpoint system:
 ```
 
 **Full Desktop (≥1200px)** — labels + icons, hover scale, wider dropdowns:
+
 ```scss
 @media (min-width: 1200px) {
   #bdNavbar .nav-link:hover i { transform: scale(1.1); }
@@ -145,6 +154,7 @@ Three-tier breakpoint system:
 ### Accessibility (WCAG 2.1 AA)
 
 **Semantic HTML** — before/after:
+
 ```html
 <!-- Before -->
 <header role="navigation"><nav><ul class="navbar-nav">...</ul></nav></header>
@@ -162,6 +172,7 @@ Three-tier breakpoint system:
 ```
 
 **Focus indicators:**
+
 ```scss
 .nav-link:focus-visible {
   outline: 2px solid var(--bs-primary);

@@ -87,7 +87,7 @@ Edit files in `_data/navigation/`:
 
 ## Layout Hierarchy
 
-```
+```text
 root.html          ← Base HTML structure
 └── default.html   ← Main wrapper with navigation
     ├── home.html      ← Homepage layout

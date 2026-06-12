@@ -173,6 +173,7 @@ gtag('event', 'file_download', {
 ### Enhanced Measurement
 
 Enable in GA4 dashboard:
+
 - Page views
 - Scrolls
 - Outbound clicks
@@ -192,6 +193,7 @@ Enable in GA4 dashboard:
 ### Data Retention
 
 Configure in GA4:
+
 - Admin → Data Settings → Data Retention
 - Set to minimum required (2 months default)
 

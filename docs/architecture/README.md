@@ -23,7 +23,7 @@ The Zer0-Mistakes theme is built on:
 
 ## Key Directories
 
-```
+```text
 zer0-mistakes/
 ├── _layouts/          # 16 page templates
 │   ├── root.html      # Base HTML structure
@@ -75,7 +75,7 @@ zer0-mistakes/
 
 ### Layout Hierarchy
 
-```
+```text
 root.html              ← Base HTML structure
 └── default.html       ← Main wrapper with navigation
     ├── home.html      ← Homepage

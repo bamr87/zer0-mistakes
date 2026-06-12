@@ -43,7 +43,7 @@ The Liquid template inspects `site.remote_theme`, `site.theme`, and a small set 
 
 The smart 404 lives in the repository root:
 
-```
+```text
 404.html
 ```
 
@@ -60,7 +60,7 @@ Key Liquid variables used:
 
 ### Remote-theme consumer
 
-```
+```text
 🔍 Page Not Found
 This page doesn't exist on this site.
 → Return to home  → View the theme source on GitHub
@@ -68,7 +68,7 @@ This page doesn't exist on this site.
 
 ### Full clone / fork
 
-```
+```text
 🔍 Page Not Found
 It looks like this page was removed or the URL changed.
 → Return to home  → Browse the docs
@@ -78,7 +78,7 @@ It looks like this page was removed or the URL changed.
 
 Override just this file in your site repo:
 
-```
+```text
 your-site/
 └── 404.html   ← Your custom version takes precedence
 ```

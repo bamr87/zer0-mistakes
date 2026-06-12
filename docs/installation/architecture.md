@@ -90,7 +90,7 @@ flowchart TD
 
 ## Where things live
 
-```
+```text
 scripts/
 ├── bin/install                  # CLI dispatcher
 ├── lib/

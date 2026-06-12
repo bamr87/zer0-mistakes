@@ -26,7 +26,7 @@ Configure the navigation menus and sidebars for your site.
 
 Navigation is configured in `_data/navigation/`:
 
-```
+```text
 _data/navigation/
 ├── main.yml      # Top navigation bar
 ├── docs.yml      # Documentation sidebar

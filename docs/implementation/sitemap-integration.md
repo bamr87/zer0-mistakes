@@ -480,4 +480,3 @@ The following improvements were applied after the initial integration.
 ---
 
 The enhanced sitemap now provides a comprehensive, accessible, and visually appealing solution for site navigation and content discovery, with full dark mode support, working functionality, and modern user experience design.
-

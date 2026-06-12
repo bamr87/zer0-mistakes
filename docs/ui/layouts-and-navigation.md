@@ -18,7 +18,7 @@ How zer0-mistakes structures pages, sidebars, table of contents, navbar, and flo
 
 ## Layout hierarchy
 
-```
+```text
 root.html          ← HTML shell, head, header, footer, scripts
   └── default.html   ← Three-column docs layout (sidebar + content + TOC)
         └── article.html, note.html, …
@@ -86,7 +86,7 @@ post_type: featured   # → sidebar: false
 
 From `_layouts/default.html`:
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │  #navbar (fixed-top, auto-hide on scroll)                    │
 ├──────────┬────────────────────────────────────┬─────────────┤
@@ -352,7 +352,7 @@ See [js-api.md](js-api.md) for the full API.
 
 ### Replace default layout locally
 
-```
+```text
 your-site/_layouts/default.html
 ```
 

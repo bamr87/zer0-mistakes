@@ -36,7 +36,7 @@ The plugin provides:
 
 ### Plugin Location
 
-```
+```text
 _plugins/
 └── theme_version.rb
 ```

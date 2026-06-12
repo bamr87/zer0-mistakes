@@ -50,15 +50,16 @@ jobs:
       - name: Install markdownlint
         run: npm install -g markdownlint-cli
 
+      # Blocking since the 2026-06 baseline cleanup (T-014): zero violations
+      # with .github/config/.markdownlint.json. Do not re-add warn-only
+      # suppressions — fix the markdown or tune the shared config instead.
       - name: Lint docs/ (excluding archive)
         run: |
           markdownlint "docs/**/*.md" \
             --ignore "docs/archive/**" \
-            --config .github/config/.markdownlint.json \
-            || true  # warn-only until baseline is clean
+            --config .github/config/.markdownlint.json
 
       - name: Lint pages/_docs/
         run: |
           markdownlint "pages/_docs/**/*.md" \
-            --config .github/config/.markdownlint.json \
-            || true
+            --config .github/config/.markdownlint.json

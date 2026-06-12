@@ -25,7 +25,7 @@ The Zer0-Mistakes theme implements a dual documentation system designed to serve
 
 ## Overview
 
-```
+```text
 Documentation Architecture
 ├── /docs/                    # Technical Documentation (MDX)
 │   ├── Developer/contributor focused
@@ -172,6 +172,7 @@ preview: /images/previews/documentation.png
 ### Converting Between Formats
 
 **Technical → Public**:
+
 1. Copy MDX file to `/pages/_docs/`
 2. Remove JSX components
 3. Simplify technical details
@@ -179,6 +180,7 @@ preview: /images/previews/documentation.png
 5. Update front matter
 
 **Public → Technical**:
+
 1. Copy Markdown to `/docs/`
 2. Add MDX components
 3. Include implementation details

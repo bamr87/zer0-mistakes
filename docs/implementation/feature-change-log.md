@@ -21,16 +21,19 @@ Condensed implementation records for completed features. For current feature doc
 A dropdown button in every page's intro section that opens a pre-filled GitHub issue assigned to `@copilot`. The user selects a prompt template; the issue body is auto-populated with the template text + a Page Context table (title, URL, file path, layout, tags) + an Environment table (repo, site URL, Jekyll env, theme).
 
 **Architecture**:
-```
+
+```text
 _data/prompts.yml          ← source of truth: all prompt templates
 _includes/content/intro.html ← renders the dropdown; iterates site.data.prompts
 ```
 
 **10 built-in templates** in two groups:
+
 - *Page Improvements*: Improve Page, Expand Page, Update Page, Fix Page Issue, SEO Optimize, Accessibility Audit
 - *Site Improvements*: UI/UX Improvement, New Feature, Component Enhancement, Performance Optimization
 
 **Prompt schema** in `_data/prompts.yml`:
+
 ```yaml
 - id: string           # unique slug
   label: string        # dropdown label
@@ -100,6 +103,7 @@ Six improvements:
 **Issue**: [#6](https://github.com/bamr87/zer0-mistakes/issues/6) | **Branch**: `feature/mermaid-integration-v2`
 
 **Core files**:
+
 - `_includes/components/mermaid.html` — Mermaid v10 config, forest theme, FontAwesome support, responsive CSS
 - `_includes/core/head.html` — conditional include: `{% if page.mermaid %}{% include components/mermaid.html %}{% endif %}`
 - `assets/vendor/mermaid/mermaid.min.js` — vendored; refresh with `npm run vendor:mermaid`

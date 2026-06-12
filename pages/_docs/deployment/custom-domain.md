@@ -137,7 +137,7 @@ Netlify uses Let's Encrypt for free SSL certificates.
 
 ### Apex Domain Only (example.com)
 
-```
+```text
 A     @     185.199.108.153
 A     @     185.199.109.153
 A     @     185.199.110.153
@@ -146,13 +146,13 @@ A     @     185.199.111.153
 
 ### www Only (www.example.com)
 
-```
+```text
 CNAME   www   username.github.io
 ```
 
 ### Both Apex and www
 
-```
+```text
 A       @     185.199.108.153
 A       @     185.199.109.153
 A       @     185.199.110.153
@@ -165,6 +165,7 @@ CNAME   www   username.github.io
 Configure a redirect in your hosting platform:
 
 **Netlify (`netlify.toml`):**
+
 ```toml
 [[redirects]]
   from = "https://www.example.com/*"

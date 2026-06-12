@@ -14,7 +14,7 @@ Overview of the Zer0-Mistakes theme directory layout and file organization.
 
 ## Root Directory
 
-```
+```text
 zer0-mistakes/
 ├── _config.yml           # Production Jekyll configuration
 ├── _config_dev.yml       # Development overrides
@@ -34,7 +34,7 @@ zer0-mistakes/
 
 Page templates that define the structure of different page types:
 
-```
+```text
 _layouts/
 ├── root.html         # Base HTML structure (doctype, html, head, body)
 ├── default.html      # Main wrapper with header, footer, sidebar
@@ -51,7 +51,7 @@ _layouts/
 
 Reusable HTML components organized by function:
 
-```
+```text
 _includes/
 ├── core/             # Essential page structure
 │   ├── head.html     # <head> section with meta, CSS, scripts
@@ -80,7 +80,7 @@ _includes/
 
 SCSS stylesheets:
 
-```
+```text
 _sass/
 ├── core/             # Core theme styles
 │   ├── _variables.scss
@@ -94,7 +94,7 @@ _sass/
 
 Static files served directly:
 
-```
+```text
 assets/
 ├── css/
 │   └── main.scss     # Main stylesheet (imports _sass/)
@@ -109,7 +109,7 @@ assets/
 
 Content collections:
 
-```
+```text
 pages/
 ├── _posts/           # Blog posts (date-prefixed)
 ├── _docs/            # User documentation
@@ -127,7 +127,7 @@ pages/
 
 Developer documentation (this directory):
 
-```
+```text
 docs/
 ├── README.md         # Documentation hub
 ├── architecture/     # Codebase architecture
@@ -144,7 +144,7 @@ docs/
 
 Build and automation scripts:
 
-```
+```text
 scripts/
 ├── release           # Release automation
 ├── build             # Gem building
@@ -159,7 +159,7 @@ scripts/
 
 Jekyll data files:
 
-```
+```text
 _data/
 ├── navigation/       # Navigation configurations
 │   ├── main.yml
@@ -174,7 +174,7 @@ _data/
 
 Custom Jekyll plugins:
 
-```
+```text
 _plugins/
 ├── theme_version.rb
 └── preview_image_generator.rb
@@ -182,13 +182,13 @@ _plugins/
 
 ## Build Output
 
-```
+```text
 _site/                # Generated static site (gitignored)
 ```
 
 ## Docker Configuration
 
-```
+```text
 docker/
 ├── Dockerfile        # Container definition
 ├── config/           # Docker-specific configs
@@ -197,7 +197,7 @@ docker/
 
 ## Distribution
 
-```
+```text
 lib/                  # Gem library code
 pkg/                  # Built gem packages
 *.gemspec             # Gem specification

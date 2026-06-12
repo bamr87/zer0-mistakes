@@ -93,7 +93,7 @@ Looking to contribute to the theme? See the developer documentation in the repos
 
 ---
 
-**Quick Navigation**
+### Quick Navigation
 
 - [Installation](installation/) — Get started
 - [Features](features/) — Enable features
