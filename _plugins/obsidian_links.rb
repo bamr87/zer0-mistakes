@@ -110,6 +110,7 @@ module Jekyll
 
       def initialize(site, config = {})
         @entries = {}
+        config ||= {}
         @skip_slugs = Array(config['skip_slugs'])
                         .map { |s| s.to_s.downcase.strip.gsub(/\s+/, ' ') }
                         .to_set
@@ -121,7 +122,9 @@ module Jekyll
         # Filtering to output_ext == '.html' ensures raw binary docs (e.g.
         # .ipynb notebook files) are not indexed as wiki-link targets.
         items = []
-        items.concat(site.documents.select { |d| d.respond_to?(:output_ext) && d.output_ext == '.html' }) if site.respond_to?(:documents)
+        # Docs that don't expose output_ext (test doubles, exotic generators)
+        # stay indexable; real binary outputs are excluded.
+        items.concat(site.documents.reject { |d| d.respond_to?(:output_ext) && d.output_ext != '.html' }) if site.respond_to?(:documents)
         items.concat(site.pages.select { |p| p.output_ext == '.html' })
 
         items.each do |doc|
