@@ -232,6 +232,16 @@ test_yaml_syntax() {
     return 0
 }
 
+# Test plugin unit specs (T-011: content statistics, preview images, admin URLs)
+test_plugin_unit_specs() {
+    if command -v ruby &>/dev/null; then
+        ruby "$SCRIPT_DIR/test_plugins.rb" > /dev/null 2>&1
+    else
+        log_warning "ruby not available, skipping plugin unit specs"
+        return 0
+    fi
+}
+
 test_gemspec_validity() {
     log_info "Validating gemspec file..."
     
@@ -627,6 +637,7 @@ run_core_tests() {
     run_test "Gemspec Validity" "test_gemspec_validity" "unit"
     run_test "Package.json Validity" "test_package_json_validity" "unit"
     run_test "Version Consistency" "test_version_consistency" "unit"
+    run_test "Plugin Unit Specs" "test_plugin_unit_specs" "unit"
     
     # Integration Tests
     log_info "=== INTEGRATION TESTS ==="
