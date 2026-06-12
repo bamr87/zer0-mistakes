@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.17.0] - 2026-06-12
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- ac36e1a3 feat(tests): plugin unit specs and coverage baseline — T-011, T-005 (#145)
 
 ### Added
 - **Plugin unit specs (T-011)**: 19 Minitest specs for the previously-untested `preview_image_generator.rb`, `content_statistics_generator.rb`, and `admin_page_urls.rb` plugins (config merge, path normalization, index dedupe by relative path, hook output, edge cases); wired into the core suite as "Plugin Unit Specs"
