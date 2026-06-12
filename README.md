@@ -831,8 +831,9 @@ gantt
     v1.10 Roadmap Validation     :done, 2026-06, 2026-06
     v1.11 Continuous-Evolution Loop :done, 2026-06, 2026-06
     v1.12 Headless Endpoints     :done, 2026-06, 2026-06
+    v1.13 Quality Framework — First Wave :done, 2026-06, 2026-06
     section Current
-    v1.13 Zer0-Mistake Quality Framework :active, 2026-06, 2026-08
+    v1.14 Zer0-Mistake Quality Framework :active, 2026-06, 2026-08
     section Future
     v2.0 CMS Integration         :2026-06, 2026-08
     v2.1 i18n Support            :2026-08, 2026-10
@@ -865,7 +866,8 @@ gantt
 | **v1.10** | ✅ Completed | Jun 2026 | Roadmap integrity validation and catch-up milestones so the roadmap tracks the shipped gem. |
 | **v1.11** | ✅ Completed | Jun 2026 | Self-sustaining backlog loop so AI agents keep improving the repo between human sessions. |
 | **v1.12** | ✅ Completed | Jun 2026 | Machine-readable site endpoints for downstream sites and AI agents. |
-| **v1.13** | 🚧 In Progress | Current (1.13.x) | Close the gap between the repo's quality gates and what CI actually enforces — no mistake lands green. |
+| **v1.13** | ✅ Completed | Jun 2026 | First shipped wave of the Zer0-Mistake Quality Framework: CI gate parity and DOM sanitization. |
+| **v1.14** | 🚧 In Progress | Current (1.14.x) | Close the gap between the repo's quality gates and what CI actually enforces — no mistake lands green. |
 | **v2.0** | 🗓 Planned | Q3 2026 | Headless CMS integration with a content API and admin dashboard. |
 | **v2.1** | 🗓 Planned | Q4 2026 | Multi-language content support with locale-aware routing. |
 | **v2.2** | 🗓 Planned | Q4 2026 | Visual theme customizer, A/B testing, and conversion funnels. |
