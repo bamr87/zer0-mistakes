@@ -5,7 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.16.0] - 2026-06-12
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 341cc675 feat(chat): add AI chatbot widget with page context (#33)
+- 5a35597a feat(scripts): add consumer audit tooling and theme manifest (#110)
 
 ### Added
 - **AI Chat Assistant (ZER0-060)**: opt-in floating chat widget grounded in the current page's content, with proxy-first auth — renders nothing until `ai_chat.enabled` plus a deployed proxy (`proxy_ready: true`) or an explicit direct-mode key are configured; FAB positioning/stacking driven by the design tokens (new `--zer0-layer-fab-chat`)
