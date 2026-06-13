@@ -1,0 +1,55 @@
+# Cloudflare Worker config for the Zer0-Mistakes AI chat proxy.
+# Copy to wrangler.toml, fill in the placeholders, then `wrangler deploy`.
+#
+# Secrets are NOT set here — store them with `wrangler secret put <NAME>`:
+#   OAuth (Claude Code connector — preferred for a private/personal chat):
+#     wrangler secret put ANTHROPIC_OAUTH_REFRESH_TOKEN
+#     wrangler secret put ANTHROPIC_OAUTH_CLIENT_ID
+#     wrangler secret put ANTHROPIC_OAUTH_ACCESS_TOKEN   # optional, seeds KV
+#   API key (fallback — leave OAuth secrets unset to use this):
+#     wrangler secret put ANTHROPIC_API_KEY
+#   GitHub routes (optional):
+#     wrangler secret put GITHUB_TOKEN
+
+name = "{{SITE_NAME}}-chat-proxy"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+
+# Route the worker on your site's domain so the widget can call the
+# same-origin defaults (/api/chat, /api/github). Keeps the site on GitHub
+# Pages while only /api/* is intercepted by the worker — same origin, no CORS.
+# routes = [
+#   { pattern = "{{SITE_DOMAIN}}/api/*", zone_name = "{{SITE_DOMAIN}}" }
+# ]
+
+# KV namespace caches the rotating OAuth credential. REQUIRED for OAuth mode.
+# Create it once:  wrangler kv namespace create CHAT_KV
+# then paste the printed id below.
+[[kv_namespaces]]
+binding = "CHAT_KV"
+id = "{{CHAT_KV_ID}}"
+
+[vars]
+# --- Anthropic OAuth (Claude Code connector) -------------------------------
+# Token endpoint used for the refresh_token grant. Take this from your Claude
+# Code / Claude.ai OAuth credential — do NOT guess it. (client_id and the
+# tokens are secrets, set via `wrangler secret put`.)
+ANTHROPIC_OAUTH_TOKEN_ENDPOINT = "{{OAUTH_TOKEN_ENDPOINT}}"
+
+# --- Access control --------------------------------------------------------
+# Comma-separated list of origins allowed to call this proxy.
+ALLOWED_ORIGINS = "https://{{SITE_DOMAIN}}"
+
+# Require a Cloudflare Access JWT on every request. STRONGLY recommended in
+# OAuth mode — the credential is your personal account, so only you should be
+# able to reach the proxy. Set up an Access policy on the /api/* route too.
+REQUIRE_CF_ACCESS = "true"
+
+# --- GitHub actions (optional) ---------------------------------------------
+GITHUB_REPOSITORY = "{{GITHUB_USER}}/{{GITHUB_REPOSITORY}}"
+BASE_BRANCH = "main"
+PR_BRANCH_PREFIX = "chat/"
+
+# --- Model controls --------------------------------------------------------
+CHAT_MODEL = "claude-opus-4-8"
+MAX_TOKENS_CAP = "4096"

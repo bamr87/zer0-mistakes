@@ -32,16 +32,18 @@ posthog:
   api_host               : null
 
 # AI Chat Configuration for Development
-# The chat widget renders only when a valid auth method is configured.
-# To test locally, create _config_secrets_local.yml with:
-#   ai_chat:
-#     enabled: true
-#     auth_mode: 'direct'
-#     api_key: '<your-openai-key>'
-#     endpoint: 'https://api.openai.com/v1/chat/completions'
-# The docker-compose command auto-includes this file when it exists.
+# Local dev talks to the chat dev proxy, which reads your credential from .env
+# (CLAUDE_CODE_OAUTH_TOKEN preferred — from `claude setup-token` — or
+# ANTHROPIC_API_KEY). Start it alongside the site, from the repo root:
+#   node --env-file=.env templates/deploy/chat-proxy/dev-proxy.mjs
+# The widget then streams through http://localhost:8787. If the proxy isn't
+# running, the chat button still appears but sends will fail (connection refused).
 ai_chat:
-  auth_mode              : direct
+  auth_mode              : proxy
+  proxy_ready            : true
+  endpoint               : 'http://localhost:8787/api/chat'
+  github:
+    mode                 : 'url'   # pre-filled github.com forms; no token needed in dev
 
 # Disable production optimizations for faster builds.
 # `limit_posts` caps the post-processing window during dev serves. Category
