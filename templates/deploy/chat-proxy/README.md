@@ -146,15 +146,45 @@ With this in place the chat only works for you, even though the site is public.
 
 ## Deploy
 
+### Via GitHub Actions (this repo's live setup — workers.dev, API key)
+
+[`.github/workflows/deploy-chat-proxy.yml`](../../../.github/workflows/deploy-chat-proxy.yml)
+deploys [`wrangler.toml`](wrangler.toml) on every push to `main` that touches the
+proxy (and on manual dispatch), and sets the Worker's `ANTHROPIC_API_KEY` from a
+GitHub secret. One-time setup:
+
+1. Cloudflare → **My Profile → API Tokens → Create Token → "Edit Cloudflare
+   Workers"**. Note your **Account ID** (Workers & Pages overview).
+2. Add three **repo → Settings → Secrets and variables → Actions** secrets:
+   `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ANTHROPIC_API_KEY`.
+3. Merge to `main` (or run the workflow via **Actions → Deploy chat proxy →
+   Run workflow**). First run creates the Worker and prints its URL:
+   `https://zer0-mistakes-chat-proxy.<your-subdomain>.workers.dev`.
+4. Put that URL in `_config.yml` and flip the widget on:
+
+   ```yaml
+   ai_chat:
+     proxy_ready: true
+     endpoint: 'https://zer0-mistakes-chat-proxy.<your-subdomain>.workers.dev/api/chat'
+     github:
+       endpoint: 'https://zer0-mistakes-chat-proxy.<your-subdomain>.workers.dev/api/github'
+   ```
+
+   (Cross-origin from GitHub Pages → workers.dev; CORS is handled by the
+   Worker's `ALLOWED_ORIGINS`.)
+
+For proxy-mode issue/PR creation, also add `GITHUB_TOKEN` to the workflow's
+`secrets:` list with a `CHAT_GITHUB_TOKEN` repo secret mapped in `env:`.
+
+### Manually with wrangler
+
 ```bash
-cp wrangler.toml.template wrangler.toml
-# fill in {{SITE_NAME}}, {{SITE_DOMAIN}}, {{CHAT_KV_ID}}, {{OAUTH_TOKEN_ENDPOINT}},
-#         {{GITHUB_USER}}, {{GITHUB_REPOSITORY}}
+cp wrangler.toml.template wrangler.toml   # or edit the committed wrangler.toml
 wrangler deploy
 ```
 
-Either route `your-domain.com/api/*` to the worker (same-origin — the widget's
-defaults work as-is), or use the `*.workers.dev` URL and point
+Either route `your-domain.com/api/*` to the worker (same-origin — requires the
+domain's DNS on Cloudflare) or use the `*.workers.dev` URL and point
 `ai_chat.endpoint` / `ai_chat.github.endpoint` at it.
 
 Then flip the site config in `_config.yml`:
