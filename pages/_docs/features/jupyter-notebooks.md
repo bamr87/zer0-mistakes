@@ -21,6 +21,7 @@ prerequisites:
     - Jupyter notebooks to convert
 sidebar:
     nav: docs
+mermaid: true
 ---
 
 # Jupyter Notebook Integration

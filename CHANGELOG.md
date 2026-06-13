@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Mermaid diagrams now render on 12 more pages**: pages with ```mermaid``` code fences but no `mermaid: true` front-matter flag (about, several feature/dev docs, all four quickstart guides) were showing raw code instead of diagrams — the flag gates the renderer include. Added the flag; verified all 34 diagrams across the site parse with valid Mermaid syntax and render to SVG in a browser
+- **Obsidian graph view restored**: the `/docs/obsidian/graph/` page (roadmap v1.4 force-directed knowledge graph) had been deleted as a "stub" but its `full-graph.html` include, `obsidian-graph.js`, the docs index link, and 5 inbound wiki-links all still referenced it — a 404 to a shipped feature. Restored the page (it renders 161 nodes / 269 edges from the live wiki-index with zero console errors)
 - **Migration & theme-version coverage (T-019)**: `scripts/test/lib/test_migrate.sh` (14 assertions for Jekyll-site detection, theme-connection classification, and version-gap logic) and `ThemeVersionGeneratorTest` in `test/test_plugins.rb` — the two largest remaining zero-coverage subsystems from the T-005 baseline
 
 ### Fixed

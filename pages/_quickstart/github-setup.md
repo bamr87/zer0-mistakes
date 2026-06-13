@@ -31,6 +31,7 @@ quickstart:
   step: 3
   next: /quickstart/personalization/
   prev: /quickstart/jekyll-setup/
+mermaid: true
 ---
 
 # GitHub Setup & Deployment
