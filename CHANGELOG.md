@@ -5,7 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.17.1] - 2026-06-13
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- f2657b68 fix(a11y): resolve all navbar & site WCAG 2.1 AA violations (T-007) (#149)
+- 30d836cb fix(admin): sync config-page copy with live _config.yml and redact the Raw tab (T-018) (#148)
 
 ### Fixed
 - **Navbar & site accessibility (T-007)**: resolved all WCAG 2.1 AA violations that kept three axe-core audits frozen — dropped the redundant ARIA `menubar`/`menuitem` roles from the nav (the nav landmark already provides semantics; menubars require menuitem children the search/settings buttons weren't), added an `aria-label` to the site-subtitle home link, kept the admin/footer separator a list item, gave the theme-preview disabled tab a `role="tab"` and an icon-only button an `aria-label`, made code blocks a single keyboard-focusable scroll region, and underlined prose links so they're distinguishable without color. The three `test.fixme` blocks in `test/visual/accessibility.spec.js` are now live `test()` calls — verified 0 violations across the homepage, FAQ, and all 8 admin pages (23/23 a11y, 223/223 smoke tier)
