@@ -17,6 +17,7 @@ difficulty: intermediate
 estimated_reading_time: 10 minutes
 sidebar:
     nav: docs
+mermaid: true
 ---
 
 # Site Search

@@ -18,6 +18,7 @@ quickstart:
   step: 1
   next: /quickstart/jekyll-setup/
   prev: /quickstart/
+mermaid: true
 ---
 
 # Machine Setup

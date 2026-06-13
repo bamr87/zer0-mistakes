@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - f2657b68 fix(a11y): resolve all navbar & site WCAG 2.1 AA violations (T-007) (#149)
 - 30d836cb fix(admin): sync config-page copy with live _config.yml and redact the Raw tab (T-018) (#148)
 
+### Added
+- **Mermaid diagrams now render on 12 more pages**: pages with ```mermaid``` code fences but no `mermaid: true` front-matter flag (about, several feature/dev docs, all four quickstart guides) were showing raw code instead of diagrams — the flag gates the renderer include. Added the flag; verified all 34 diagrams across the site parse with valid Mermaid syntax and render to SVG in a browser
+- **Obsidian graph view restored**: the `/docs/obsidian/graph/` page (roadmap v1.4 force-directed knowledge graph) had been deleted as a "stub" but its `full-graph.html` include, `obsidian-graph.js`, the docs index link, and 5 inbound wiki-links all still referenced it — a 404 to a shipped feature. Restored the page (it renders 161 nodes / 269 edges from the live wiki-index with zero console errors)
+- **Migration & theme-version coverage (T-019)**: `scripts/test/lib/test_migrate.sh` (14 assertions for Jekyll-site detection, theme-connection classification, and version-gap logic) and `ThemeVersionGeneratorTest` in `test/test_plugins.rb` — the two largest remaining zero-coverage subsystems from the T-005 baseline
+
 ### Fixed
 - **Navbar & site accessibility (T-007)**: resolved all WCAG 2.1 AA violations that kept three axe-core audits frozen — dropped the redundant ARIA `menubar`/`menuitem` roles from the nav (the nav landmark already provides semantics; menubars require menuitem children the search/settings buttons weren't), added an `aria-label` to the site-subtitle home link, kept the admin/footer separator a list item, gave the theme-preview disabled tab a `role="tab"` and an icon-only button an `aria-label`, made code blocks a single keyboard-focusable scroll region, and underlined prose links so they're distinguishable without color. The three `test.fixme` blocks in `test/visual/accessibility.spec.js` are now live `test()` calls — verified 0 violations across the homepage, FAQ, and all 8 admin pages (23/23 a11y, 223/223 smoke tier)
 

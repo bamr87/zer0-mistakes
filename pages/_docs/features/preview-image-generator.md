@@ -20,6 +20,7 @@ prerequisites:
     - Or Stability AI API key
 sidebar:
     nav: docs
+mermaid: true
 ---
 
 # AI Preview Image Generator
