@@ -102,6 +102,24 @@ in `.env`, run `node --env-file=.env templates/deploy/chat-proxy/dev-proxy.mjs`,
 and `_config_dev.yml` points the widget at `http://localhost:8787/api/chat`. No
 Cloudflare or Worker deployment needed for development.
 
+#### Local page editing (dev only)
+
+When `ai_chat.local_edit` is true (set in `_config_dev.yml`, off in
+production), the dev proxy exposes two local-filesystem routes —
+`GET /api/page/source` and `POST /api/page/update` — backed by
+[`page-store.mjs`](../../templates/deploy/chat-proxy/page-store.mjs), and the
+widget gains an `update_page_content` tool. The assistant can then read and
+**rewrite the current page's source file in the working tree**; the dev
+server's `--watch` rebuilds it and the change appears live. This is a
+development-only capability: the Cloudflare Worker has no filesystem, never
+imports `page-store`, and `local_edit` is off in `_config.yml`. `page-store`
+enforces the safety boundary — paths resolve against the repo root and may not
+escape it, only `.md`/`.markdown`/`.html`/`.htm` files are editable, and writes
+target existing files only (the assistant edits a page, it cannot create
+arbitrary files). In `local_edit` mode `get_page_source` also reads from the
+local working tree rather than `raw.githubusercontent.com`, so edits are based
+on uncommitted local content.
+
 ### 3. GitHub Tool Use
 
 Tools are declared in the request and executed client-side in a manual
@@ -119,6 +137,9 @@ continue, capped at 5 rounds):
   `{title, body, file_path, updated_content, branch_name}` to
   `/api/github/pull-request`; the worker resolves the base ref, creates a
   branch, commits the file via the contents API, and opens the PR.
+- `update_page_content` (local dev only) — writes the edited file to the local
+  working tree via the dev proxy's `/api/page/update`; see *Local page editing*
+  above.
 
 **Every creation tool is gated by an inline confirmation card** rendered in
 the chat (Confirm / Cancel). A declined action returns a tool_result telling

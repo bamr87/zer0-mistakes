@@ -137,6 +137,12 @@
       system += '- The site shows the user a confirmation card before anything is created — you do not need to ask "shall I create it?" once the details are clear.\n'
         + '- After a tool succeeds, give the user a one-sentence summary with the link if one was returned.\n';
     }
+    if (CONFIG.localEdit) {
+      system += '\n\nEditing this page (local development):\n'
+        + '- Use update_page_content to apply content or UI-copy improvements directly to the CURRENT page\'s source file. The change takes effect immediately on the local dev server.\n'
+        + '- ALWAYS call get_page_source first and base updated_content on the real file. updated_content replaces the ENTIRE file: change only what the user asked, preserve the YAML front matter, and do not reformat unrelated lines.\n'
+        + '- Prefer this over opening a pull request when the user just wants to change this page locally. The site shows a confirmation card before writing.\n';
+    }
     var context = getPageContext(meta);
     if (context) system += '\n\n' + context;
     return system;
@@ -152,7 +158,7 @@
   }
 
   function buildTools() {
-    if (!githubEnabled()) return [];
+    if (!githubEnabled() && !CONFIG.localEdit) return [];
     var tools = [
       {
         name: 'get_page_source',
@@ -207,6 +213,23 @@
             branch_name: { type: 'string', description: 'Optional branch name (lowercase, hyphenated). One is generated when omitted.' }
           },
           required: ['file_path', 'title', 'body', 'updated_content']
+        }
+      });
+    }
+    if (CONFIG.localEdit) {
+      tools.push({
+        name: 'update_page_content',
+        description: 'Apply improved content to the CURRENT page\'s source file in the local working tree (local development only). '
+          + 'Call get_page_source first and base updated_content on it — updated_content replaces the ENTIRE file. '
+          + 'Preserve the YAML front matter and change only what the user asked. The user confirms in the chat before the file is written, and the dev server reloads it.',
+        input_schema: {
+          type: 'object',
+          properties: {
+            file_path: { type: 'string', description: 'Repository-relative path; omit to use the current page\'s source file.' },
+            updated_content: { type: 'string', description: 'The COMPLETE new file content, based on get_page_source with the change applied.' },
+            summary: { type: 'string', description: 'One-line summary of what changed.' }
+          },
+          required: ['updated_content']
         }
       });
     }
@@ -464,6 +487,26 @@
   async function execGetPageSource(block, meta) {
     var path = sanitizeRepoPath((block.input && block.input.file_path) || meta.page_path);
     if (!path) return toolResult(block.id, 'No valid source path is available for this page.', true);
+
+    // Local dev: read the working-tree file via the dev proxy so edits are
+    // based on the real local source (which may differ from GitHub).
+    if (CONFIG.localEdit) {
+      try {
+        var localResp = await fetch(CONFIG.localEditEndpoint + '/source?path=' + encodeURIComponent(path));
+        var localData = await localResp.json().catch(function () { return {}; });
+        if (!localResp.ok) {
+          return toolResult(block.id, 'Could not read local source for ' + path + ': ' + ((localData.error && localData.error.message) || localResp.status), true);
+        }
+        var localText = localData.content || '';
+        if (localText.length > MAX_SOURCE_CHARS) {
+          localText = localText.slice(0, MAX_SOURCE_CHARS) + '\n\n[... truncated: file exceeds ' + MAX_SOURCE_CHARS + ' characters ...]';
+        }
+        return toolResult(block.id, 'Source of ' + path + ' (local working tree):\n\n' + localText);
+      } catch (e) {
+        return toolResult(block.id, 'Network error reading local source: ' + e.message, true);
+      }
+    }
+
     var url = 'https://raw.githubusercontent.com/' + CONFIG.github.repository + '/'
       + encodeURIComponent(CONFIG.github.baseBranch || 'main') + '/'
       + path.split('/').map(encodeURIComponent).join('/');
@@ -586,11 +629,66 @@
     }
   }
 
+  // Result card with a button to reload the page after a local edit.
+  function appendReloadCard(path) {
+    var card = document.createElement('div');
+    card.className = 'ai-chat-action-card rounded-3 p-2 mb-2 small';
+    var label = document.createElement('div');
+    label.className = 'mb-1';
+    label.textContent = 'Updated ' + path + ' — the dev server will rebuild it.';
+    card.appendChild(label);
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn btn-primary btn-sm';
+    btn.textContent = 'Reload page';
+    btn.addEventListener('click', function () { window.location.reload(); });
+    card.appendChild(btn);
+    messagesContainer.appendChild(card);
+    scrollToBottom();
+  }
+
+  async function execUpdatePageContent(block, meta) {
+    var inputData = block.input || {};
+    var path = sanitizeRepoPath(inputData.file_path || meta.page_path);
+    if (!path) return toolResult(block.id, 'No valid source path is available for this page.', true);
+    if (!inputData.updated_content) return toolResult(block.id, 'Missing updated_content.', true);
+
+    var confirmed = await requestConfirmation({
+      heading: 'Apply this edit to the current page?',
+      fields: [
+        { label: 'File', value: path },
+        { label: 'Change', value: inputData.summary || '(no summary provided)' },
+        { label: 'New length', value: inputData.updated_content.length + ' characters' }
+      ],
+      confirmLabel: 'Apply edit'
+    });
+    if (!confirmed) {
+      return toolResult(block.id, 'The user declined the edit in the confirmation dialog. Do not retry unless they ask again.');
+    }
+
+    try {
+      var response = await fetch(CONFIG.localEditEndpoint + '/update', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ file_path: path, updated_content: inputData.updated_content })
+      });
+      var data = await response.json().catch(function () { return {}; });
+      if (!response.ok) {
+        return toolResult(block.id, 'Failed to update the page: ' + ((data.error && data.error.message) || response.status), true);
+      }
+      appendReloadCard(data.path || path);
+      return toolResult(block.id, 'Updated ' + (data.path || path) + ' (' + (data.bytes || 0) + ' bytes) in the local working tree. The dev server rebuilds and reloads it.');
+    } catch (e) {
+      return toolResult(block.id, 'Failed to update the page: ' + e.message, true);
+    }
+  }
+
   async function executeToolUse(block, meta) {
     switch (block.name) {
       case 'get_page_source': return execGetPageSource(block, meta);
       case 'create_github_issue': return execCreateIssue(block, meta);
       case 'create_pull_request': return execCreatePullRequest(block);
+      case 'update_page_content': return execUpdatePageContent(block, meta);
       default: return toolResult(block.id, 'Unknown tool: ' + block.name, true);
     }
   }

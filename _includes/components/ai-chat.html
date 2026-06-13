@@ -52,6 +52,16 @@
   {% assign gh_enabled = false %}
 {% endif %}
 
+{% comment %}
+  local_edit lets the assistant write the current page's source file via the
+  dev proxy. It is a development-only capability — enabled in _config_dev.yml,
+  off in production. Compute with an if-tag (default false).
+{% endcomment %}
+{% assign local_edit_flag = false %}
+{% if site.ai_chat.local_edit %}
+  {% assign local_edit_flag = true %}
+{% endif %}
+
 <!-- AI Chat Toggle Button -->
 <button id="aiChatToggle"
         class="ai-chat-toggle btn btn-primary rounded-circle shadow-lg"
@@ -102,6 +112,13 @@
             data-prompt="I have a suggestion to improve this page's content or design.">
       <i class="bi-lightbulb" aria-hidden="true"></i> Suggest an improvement
     </button>
+    {% if local_edit_flag %}
+    <button type="button"
+            class="ai-chat-chip btn btn-sm btn-outline-secondary rounded-pill"
+            data-prompt="Edit this page directly: ">
+      <i class="bi-pencil-square" aria-hidden="true"></i> Edit this page
+    </button>
+    {% endif %}
   </div>
   {% endif %}
 
@@ -170,6 +187,8 @@
   "outOfScopeMessage": {{ site.ai_chat.out_of_scope_message | default: "I can only answer from the content on this page." | jsonify }},
   "systemPrompt": {{ site.ai_chat.system_prompt | default: "You are a helpful assistant." | jsonify }},
   "welcomeMessage": {{ site.ai_chat.welcome_message | default: "Hi! Ask me anything about this page." | jsonify }},
+  "localEdit": {{ local_edit_flag }},
+  "localEditEndpoint": {{ site.ai_chat.local_edit_endpoint | default: "/api/page" | jsonify }},
   "github": {
     "enabled": {{ gh_enabled }},
     "mode": {{ site.ai_chat.github.mode | default: "url" | jsonify }},

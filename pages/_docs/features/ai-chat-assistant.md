@@ -159,6 +159,17 @@ so the chat works at `http://localhost:4000` with no Cloudflare or API key in
 the page. See the
 [chat-proxy README](https://github.com/bamr87/zer0-mistakes/tree/main/templates/deploy/chat-proxy).
 
+### Edit the current page from the chat (dev only)
+
+In local development (`ai_chat.local_edit: true`, set in `_config_dev.yml`) the
+assistant can **edit the current page's source file directly**: ask it to fix a
+typo or reword a section, review the change in the confirmation card, and the
+dev server rebuilds the page live. The dev proxy writes the file through a
+sandboxed local route — only content files (`.md`/`.html`) inside the repo can
+be edited, and only existing pages (it never creates files). This is off in
+production: the published site can't and doesn't write files. For changes to a
+deployed site, use the GitHub issue/PR actions above instead.
+
 ### Optional Direct Mode (browser → Anthropic)
 
 For a quick test without the dev proxy, direct mode sends requests from the

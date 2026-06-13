@@ -230,6 +230,9 @@ ai_chat:
   placeholder            : "Ask about this page..."
   context_max_length     : 2000               # Max chars of page content sent as context
   icon                   : 'bi-robot'         # Bootstrap icon for chat button
+  local_edit             : false              # DEV ONLY: let the assistant write the current page's
+                                              # source file via the dev proxy (never enable in production)
+  local_edit_endpoint    : '/api/page'        # dev proxy base for reading/writing the local source file
   github:                                     # GitHub actions exposed to the assistant (tool use)
     enabled              : true               # Offer issue/PR tools in the chat
     mode                 : 'url'              # 'url' = pre-filled github.com forms (no token anywhere);

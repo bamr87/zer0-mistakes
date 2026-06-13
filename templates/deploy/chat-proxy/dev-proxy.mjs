@@ -37,6 +37,7 @@
 import http from 'node:http';
 import { Readable } from 'node:stream';
 import worker from './worker.js';
+import * as pageStore from './page-store.mjs';
 
 const PORT = Number(process.env.CHAT_DEV_PROXY_PORT) || 8787;
 
@@ -78,8 +79,54 @@ if (!mode) {
   process.exit(1);
 }
 
+// Local page read/write routes (DEV ONLY — not present on the Worker).
+// These let the assistant edit the current page's source file on disk.
+function pageCors(req, res) {
+  const origin = req.headers.origin || '*';
+  res.setHeader('Access-Control-Allow-Origin', origin);
+  res.setHeader('Vary', 'Origin');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'content-type');
+}
+
+async function handlePageRoute(req, res, url) {
+  pageCors(req, res);
+  if (req.method === 'OPTIONS') {
+    res.statusCode = 204;
+    return res.end();
+  }
+  res.setHeader('content-type', 'application/json');
+  try {
+    if (url.pathname === '/api/page/source' && req.method === 'GET') {
+      const r = await pageStore.readPage(url.searchParams.get('path'));
+      res.statusCode = r.ok ? 200 : 400;
+      return res.end(JSON.stringify(r.ok ? { path: r.path, content: r.content } : { error: { message: r.error } }));
+    }
+    if (url.pathname === '/api/page/update' && req.method === 'POST') {
+      const chunks = [];
+      for await (const chunk of req) chunks.push(chunk);
+      let body = {};
+      try { body = JSON.parse(Buffer.concat(chunks).toString('utf8')); } catch { /* invalid json */ }
+      const r = await pageStore.writePage(body.file_path, body.updated_content);
+      if (r.ok) console.log(`[chat-dev-proxy] page updated: ${r.path} (${r.bytes} bytes)`);
+      res.statusCode = r.ok ? 200 : 400;
+      return res.end(JSON.stringify(r.ok ? { path: r.path, bytes: r.bytes } : { error: { message: r.error } }));
+    }
+    res.statusCode = 404;
+    return res.end(JSON.stringify({ error: { message: 'not found' } }));
+  } catch (err) {
+    res.statusCode = 500;
+    return res.end(JSON.stringify({ error: { message: err.message || 'Internal error' } }));
+  }
+}
+
 const server = http.createServer(async (req, res) => {
   try {
+    const reqUrl = new URL(req.url, `http://localhost:${PORT}`);
+    if (reqUrl.pathname.startsWith('/api/page/')) {
+      return await handlePageRoute(req, res, reqUrl);
+    }
+
     const headers = new Headers();
     for (const [key, value] of Object.entries(req.headers)) {
       if (value != null) headers.set(key, Array.isArray(value) ? value.join(',') : value);
@@ -116,6 +163,7 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, () => {
   console.log(`[chat-dev-proxy] listening on http://localhost:${PORT}  (auth: ${mode})`);
   console.log(`[chat-dev-proxy] point ai_chat.endpoint at http://localhost:${PORT}/api/chat`);
+  console.log(`[chat-dev-proxy] local page editing enabled — writes under ${pageStore.repoRoot()}`);
   if (!env.GITHUB_TOKEN) {
     console.log('[chat-dev-proxy] GITHUB_TOKEN unset — proxy-mode issue/PR routes disabled (url mode still works).');
   }

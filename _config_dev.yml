@@ -42,6 +42,8 @@ ai_chat:
   auth_mode              : proxy
   proxy_ready            : true
   endpoint               : 'http://localhost:8787/api/chat'
+  local_edit             : true                          # let the assistant edit the current page locally
+  local_edit_endpoint    : 'http://localhost:8787/api/page'
   github:
     mode                 : 'url'   # pre-filled github.com forms; no token needed in dev
 
