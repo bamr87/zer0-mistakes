@@ -32,7 +32,9 @@ exclude_repos:
 # Settings applied when provisioning org repos as Pages sites.
 pages:
   # Value for `remote_theme:` in the generated _config.yml of each org repo.
-  theme_repo: year-of-ai/zer0-mistakes
+  # The org root site (year-of-ai/year-of-ai.github.io) is a fork of the
+  # zer0-mistakes theme and doubles as the remote_theme source for the years.
+  theme_repo: year-of-ai/year-of-ai.github.io
   # Git ref to scaffold against / publish from. Empty = repo default branch.
   branch: ""
 
