@@ -5,8 +5,8 @@
 # =============================================================================
 org: year-of-ai
 totals:
-  repos: 5
-  pages: 65
+  repos: 7
+  pages: 343
 repos:
 - name: '2005'
   title: 2005 — Year Knowledge Base
@@ -17,7 +17,7 @@ repos:
   pages_enabled: true
   scaffolded: true
   branch: main
-  pushed_at: '2026-06-13T04:10:39Z'
+  pushed_at: '2026-06-13T05:34:49Z'
   page_count: 12
   sections:
   - name: arts-culture
@@ -52,7 +52,7 @@ repos:
   pages_enabled: true
   scaffolded: true
   branch: main
-  pushed_at: '2026-06-13T04:09:54Z'
+  pushed_at: '2026-06-13T05:37:59Z'
   page_count: 15
   sections:
   - name: arts-culture
@@ -86,7 +86,7 @@ repos:
   pages_enabled: true
   scaffolded: true
   branch: main
-  pushed_at: '2026-06-13T04:09:57Z'
+  pushed_at: '2026-06-13T05:38:04Z'
   page_count: 15
   sections:
   - name: arts-culture
@@ -120,7 +120,7 @@ repos:
   pages_enabled: true
   scaffolded: true
   branch: main
-  pushed_at: '2026-06-13T04:09:59Z'
+  pushed_at: '2026-06-13T05:38:08Z'
   page_count: 14
   sections:
   - name: arts-culture
@@ -154,17 +154,17 @@ repos:
   pages_enabled: false
   scaffolded: false
   branch: main
-  pushed_at: '2026-06-13T04:09:27Z'
-  page_count: 9
+  pushed_at: '2026-06-13T05:38:12Z'
+  page_count: 15
   sections:
   - name: arts-culture
     title: Arts & Culture — The Year 2009
     url: https://year-of-ai.github.io/2009/arts-culture/
-    count: 0
+    count: 2
   - name: history-politics
     title: History & Politics — The Year 2009
     url: https://year-of-ai.github.io/2009/history-politics/
-    count: 1
+    count: 5
   - name: people
     title: People — The Year 2009
     url: https://year-of-ai.github.io/2009/people/
@@ -180,3 +180,97 @@ repos:
   root_pages:
   - title: Timeline
     url: https://year-of-ai.github.io/2009/TIMELINE/
+- name: '2010'
+  title: '2010'
+  description: ''
+  url: https://github.com/year-of-ai/2010
+  site_url: https://year-of-ai.github.io/2010/
+  pages_enabled: false
+  scaffolded: false
+  branch: main
+  pushed_at: '2026-06-13T05:43:10Z'
+  page_count: 9
+  sections:
+  - name: arts-culture
+    title: Arts & Culture
+    url: https://year-of-ai.github.io/2010/arts-culture/
+    count: 0
+  - name: history-politics
+    title: History & Politics
+    url: https://year-of-ai.github.io/2010/history-politics/
+    count: 2
+  - name: people
+    title: People
+    url: https://year-of-ai.github.io/2010/people/
+    count: 0
+  - name: science-technology
+    title: Science & Technology
+    url: https://year-of-ai.github.io/2010/science-technology/
+    count: 0
+  - name: society-economics
+    title: Society & Economics
+    url: https://year-of-ai.github.io/2010/society-economics/
+    count: 0
+  root_pages:
+  - title: Timeline
+    url: https://year-of-ai.github.io/2010/TIMELINE/
+- name: year-of-ai.github.io
+  title: year-of-ai.github.io
+  description: Github Pages compatible Jekyll theme using Bootstrap 5
+  url: https://github.com/year-of-ai/year-of-ai.github.io
+  site_url: https://year-of-ai.github.io/
+  pages_enabled: true
+  scaffolded: true
+  branch: main
+  pushed_at: '2026-06-13T05:42:59Z'
+  page_count: 263
+  sections:
+  - name: _data
+    title: Data
+    url: https://year-of-ai.github.io/_data/
+    count: 2
+  - name: _includes
+    title: Includes
+    url: https://year-of-ai.github.io/_includes/
+    count: 3
+  - name: _layouts
+    title: Layouts
+    url: https://year-of-ai.github.io/_layouts/
+    count: 1
+  - name: docker
+    title: Docker
+    url: https://year-of-ai.github.io/docker/
+    count: 1
+  - name: docs
+    title: Docs
+    url: https://year-of-ai.github.io/docs/
+    count: 65
+  - name: features
+    title: Features
+    url: https://year-of-ai.github.io/features/
+    count: 1
+  - name: pages
+    title: Pages
+    url: https://year-of-ai.github.io/pages/
+    count: 149
+  - name: scripts
+    title: Scripts
+    url: https://year-of-ai.github.io/scripts/
+    count: 8
+  - name: templates
+    title: Templates
+    url: https://year-of-ai.github.io/templates/
+    count: 9
+  - name: test
+    title: Test
+    url: https://year-of-ai.github.io/test/
+    count: 2
+  root_pages:
+  - title: Changelog
+    url: https://year-of-ai.github.io/CHANGELOG/
+  - title: Code Of Conduct
+    url: https://year-of-ai.github.io/CODE_OF_CONDUCT/
+  - title: Contributing
+    url: https://year-of-ai.github.io/CONTRIBUTING/
+  - title: Security
+    url: https://year-of-ai.github.io/SECURITY/

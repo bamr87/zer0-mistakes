@@ -96,3 +96,55 @@
     url: https://year-of-ai.github.io/2009/science-technology/
   - title: Society & Economics — The Year 2009
     url: https://year-of-ai.github.io/2009/society-economics/
+- title: '2010'
+  icon: bi-journal-richtext
+  url: https://year-of-ai.github.io/2010/
+  children:
+  - title: Site Home
+    url: https://year-of-ai.github.io/2010/
+  - title: Timeline
+    url: https://year-of-ai.github.io/2010/TIMELINE/
+  - title: Arts & Culture
+    url: https://year-of-ai.github.io/2010/arts-culture/
+  - title: History & Politics
+    url: https://year-of-ai.github.io/2010/history-politics/
+  - title: People
+    url: https://year-of-ai.github.io/2010/people/
+  - title: Science & Technology
+    url: https://year-of-ai.github.io/2010/science-technology/
+  - title: Society & Economics
+    url: https://year-of-ai.github.io/2010/society-economics/
+- title: year-of-ai.github.io
+  icon: bi-journal-richtext
+  url: https://year-of-ai.github.io/
+  children:
+  - title: Site Home
+    url: https://year-of-ai.github.io/
+  - title: Changelog
+    url: https://year-of-ai.github.io/CHANGELOG/
+  - title: Code Of Conduct
+    url: https://year-of-ai.github.io/CODE_OF_CONDUCT/
+  - title: Contributing
+    url: https://year-of-ai.github.io/CONTRIBUTING/
+  - title: Security
+    url: https://year-of-ai.github.io/SECURITY/
+  - title: Data
+    url: https://year-of-ai.github.io/_data/
+  - title: Includes
+    url: https://year-of-ai.github.io/_includes/
+  - title: Layouts
+    url: https://year-of-ai.github.io/_layouts/
+  - title: Docker
+    url: https://year-of-ai.github.io/docker/
+  - title: Docs
+    url: https://year-of-ai.github.io/docs/
+  - title: Features
+    url: https://year-of-ai.github.io/features/
+  - title: Pages
+    url: https://year-of-ai.github.io/pages/
+  - title: Scripts
+    url: https://year-of-ai.github.io/scripts/
+  - title: Templates
+    url: https://year-of-ai.github.io/templates/
+  - title: Test
+    url: https://year-of-ai.github.io/test/
