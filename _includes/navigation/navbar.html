@@ -19,9 +19,9 @@
     <div class="offcanvas-body">
         <!-- Desktop: width is the grid middle track; labels ellipsis or icon-only via container query -->
         <div class="bd-navbar-nav-viewport">
-        <ul class="navbar-nav justify-content-lg-center text-start flex-grow-1" role="menubar">
-            <li class="nav-item d-lg-none" role="none">
-                <a class="nav-link" href="{{ '/' | relative_url }}" role="menuitem" {% if page.url == '/' %}aria-current="page"{% endif %}>
+        <ul class="navbar-nav justify-content-lg-center text-start flex-grow-1">
+            <li class="nav-item d-lg-none">
+                <a class="nav-link" href="{{ '/' | relative_url }}" {% if page.url == '/' %}aria-current="page"{% endif %}>
                     <i class="{{site.default_icon}} bi-house" aria-hidden="true"></i>
                     Home
                 </a>
@@ -41,12 +41,12 @@
                 {%- assign items_remaining = nav_main.size | minus: forloop.index -%}
 
                 {%- if has_children -%}
-                    <li class="nav-item dropdown d-flex align-items-center nav-hover-dropdown" role="none">
+                    <li class="nav-item dropdown d-flex align-items-center nav-hover-dropdown">
                         <!-- Parent link navigates directly -->
                         <a
                             class="nav-link"
                             href="{{ link.url | relative_url }}"
-                            role="menuitem"
+                            aria-label="{{ link.title }}"
                             {%- if link.url == page.url -%} aria-current="page"{%- endif -%}
                             title="{{ link.title }}"
                         >
@@ -70,13 +70,13 @@
                             <span class="visually-hidden">Toggle {{ link.title }} submenu</span>
                         </button>
 
-                        <ul class="dropdown-menu {% if items_remaining < 2 %}dropdown-menu-end{% else %}dropdown-menu-start{% endif %}" aria-labelledby="dropdown-{{ link.title | slugify }}" role="menu">
+                        <ul class="dropdown-menu {% if items_remaining < 2 %}dropdown-menu-end{% else %}dropdown-menu-start{% endif %}" aria-labelledby="dropdown-{{ link.title | slugify }}">
                             {%- for child in link.children -%}
-                                <li role="none">
+                                <li>
                                     <a
                                         class="dropdown-item"
                                         href="{{ child.url | relative_url }}"
-                                        role="menuitem"
+
                                         {%- if child.url == page.url -%} aria-current="page"{%- endif -%}
                                     >
                                         {%- if child.icon -%}
@@ -89,11 +89,11 @@
                         </ul>
                     </li>
                 {%- else -%}
-                    <li class="nav-item" role="none">
+                    <li class="nav-item">
                         <a
                             class="nav-link"
                             href="{{ link.url | relative_url }}"
-                            role="menuitem"
+                            aria-label="{{ link.title }}"
                             {%- if link.url == page.url -%} aria-current="page"{%- endif -%}
                             title="{{ link.title }}"
                         >
@@ -117,11 +117,11 @@
                   {%- if collection.docs.size > 0 -%}
                     {%- assign col_title = collection.label | replace: "-", " " | replace: "_", " " | capitalize -%}
                     {%- assign col_url = "/" | append: collection.label | append: "/" -%}
-                    <li class="nav-item" role="none">
+                    <li class="nav-item">
                         <a
                             class="nav-link"
                             href="{{ col_url | relative_url }}"
-                            role="menuitem"
+                            aria-label="{{ col_title }}"
                             title="{{ col_title }}"
                             {%- if page.collection == collection.label -%} aria-current="page"{%- endif -%}
                         >
@@ -133,7 +133,7 @@
               {%- endfor -%}
 
             {%- endif -%}
-            <li class="nav-item d-lg-none" role="none">
+            <li class="nav-item d-lg-none">
                 <button
                     class="nav-link btn btn-link text-start w-100"
                     type="button"
@@ -145,7 +145,7 @@
                     Search
                 </button>
             </li>
-            <li class="nav-item d-lg-none" role="none">
+            <li class="nav-item d-lg-none">
                 <button
                     class="nav-link btn btn-link text-start w-100"
                     type="button"
