@@ -1281,3 +1281,17 @@ features:
       plugin: "_plugins/obsidian_links.rb"
       includes:
         - "_includes/content/backlinks.html"
+  - id: ZER0-060
+    title: "AI Chat Assistant (Claude + GitHub)"
+    description: "Claude-powered floating chat grounded in the current page, with streaming replies and GitHub actions - files issues and opens content/UI improvement pull requests after in-chat confirmation"
+    implemented: true
+    version: "1.16.0"
+    link: "/docs/features/ai-chat-assistant/"
+    docs: "/docs/features/ai-chat-assistant/"
+    tags: [ai, chatbot, claude, github, proxy, accessibility]
+    date: 2026-06-12
+    references:
+      includes: ["_includes/components/ai-chat.html"]
+      layouts: ["_layouts/root.html"]
+      scripts: ["assets/js/ai-chat.js", "templates/deploy/chat-proxy/worker.js"]
+      config: "_config.yml"

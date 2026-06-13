@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Chat GitHub actions**: the assistant can file GitHub issues and open content/UI-improvement pull requests via Claude tool use (`get_page_source`, `create_github_issue`, `create_pull_request`), every creation gated by an in-chat confirmation card; `ai_chat.github.mode: 'url'` (default) opens pre-filled github.com forms with no token anywhere, `'proxy'` creates them server-side
+- **Chat proxy template** (`templates/deploy/chat-proxy/`): Cloudflare Worker that streams `/api/chat` to the Claude Messages API and serves `/api/github/issue` + `/api/github/pull-request` with a server-side fine-grained token, an origin allowlist, and server-pinned model/max_tokens
+- **Chat proxy: Claude Code connector (OAuth) auth**: the proxy can authenticate to Claude with a Claude Code / Claude.ai OAuth login token (`Authorization: Bearer` + `anthropic-beta: oauth-2025-04-20`) instead of an API key — three auto-detected modes by precedence: rotating `ANTHROPIC_OAUTH_REFRESH_TOKEN` (KV-cached, auto-refreshed), long-lived `CLAUDE_CODE_OAUTH_TOKEN` (from `claude setup-token`), and `ANTHROPIC_API_KEY`; OAuth modes pair with a Cloudflare Access gate for private deployments
+- **Chat local dev proxy** (`templates/deploy/chat-proxy/dev-proxy.mjs`): runs the same Worker logic on Node, reads `CLAUDE_CODE_OAUTH_TOKEN`/`ANTHROPIC_API_KEY` from `.env`, and serves `/api/chat` at `localhost:8787` so the assistant works during `docker-compose up` with no Cloudflare deploy; `_config_dev.yml` wires the widget to it
+
+### Changed
+- **AI Chat Assistant rebuilt on the Claude Messages API**: requests use the `POST /v1/messages` shape (top-level `system`, content blocks, `anthropic-version`; direct mode adds `anthropic-dangerous-direct-browser-access`) instead of OpenAI Chat Completions; responses stream token-by-token over SSE; default model is `claude-opus-4-8` and the unsupported `temperature` knob was removed; widget logic moved from inline `<script>` to `assets/js/ai-chat.js`
+
 ## [1.17.1] - 2026-06-13
 
 ### Changed
