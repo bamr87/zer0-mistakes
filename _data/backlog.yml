@@ -182,7 +182,7 @@ tasks:
 
   - id: T-007
     title: "Fix global navbar WCAG 2.1 AA violations to enable axe-core full-audit tests"
-    status: open
+    status: done
     priority: P1
     area: a11y
     risk: standard
@@ -194,6 +194,14 @@ tasks:
       `aria-required-children` (menubar/button nesting), `link-name` (icon-only nav links),
       `list` (footer list structure), and `scrollable-region-focusable` (code blocks).
       Fix the HTML/ARIA in `_includes/` and `_layouts/` to make the full axe-core audit green.
+      Done 2026-06-13: all WCAG 2.1 AA violations resolved and verified with a
+      live axe-core run plus the unfrozen Playwright a11y spec (23/23 pass,
+      223/223 smoke tier). The actual violations differed from the stale TODO:
+      dropped redundant ARIA menubar/menuitem roles (navbar.html), aria-label
+      on the site-subtitle home link, listitem-preserving admin separator,
+      role="tab" on the disabled preview tab + aria-label on an icon-only
+      button, single focusable scroll region for code blocks (code-copy.js +
+      .scss), and underlined prose links across content wrappers.
     acceptance:
       - "All four violations listed in the `test.fixme` comment are resolved in `_includes/` / `_layouts/`."
       - "The three `test.fixme` blocks in `test/visual/accessibility.spec.js` are changed to live `test()` calls and pass in CI."
@@ -201,7 +209,7 @@ tasks:
       - "No visual regression in smoke snapshot tests."
     links: { issue: null, pr: null, roadmap: "1.9" }
     created: 2026-06-01
-    updated: 2026-06-01
+    updated: 2026-06-13
 
   - id: T-008
     title: "Fix theme-customizer YAML export to quote hex color values"

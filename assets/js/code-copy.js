@@ -108,6 +108,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
     ensureLineNumbers(preElement, codeElement);
 
+    // a11y (WCAG 2.1.1 scrollable-region-focusable): a code block that can
+    // scroll horizontally must be reachable by keyboard. Make every <pre> a
+    // focusable region with a discernible name.
+    if (!preElement.hasAttribute('tabindex')) {
+      preElement.setAttribute('tabindex', '0');
+      if (!preElement.hasAttribute('role')) preElement.setAttribute('role', 'region');
+      if (!preElement.hasAttribute('aria-label')) {
+        preElement.setAttribute('aria-label', (getLanguageLabel(preElement) || 'Code') + ' code block');
+      }
+    }
+
     if (preElement.querySelector('.copy')) return;
 
     var rougeWrapper = preElement.closest('.highlighter-rouge > .highlight');

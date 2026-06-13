@@ -89,7 +89,7 @@
       display: block;
       padding: 0;
       border: 0;
-      overflow-x: auto;
+      // overflow on the parent <pre> only (single focusable scroll region, WCAG 2.1.1)
       white-space: pre;
       font-family: var(--zer0-font-mono);
       font-size: 0.8125rem;
@@ -254,7 +254,7 @@ pre.highlight,
     border: 0;
     padding: 0;
     padding-right: calc(var(--zer0-space-3) + var(--zer0-code-copy-width));
-    overflow-x: auto;
+      // overflow on the parent <pre> only (single focusable scroll region, WCAG 2.1.1)
     white-space: pre;
     background-color: transparent;
     font-family: var(--zer0-font-mono);
