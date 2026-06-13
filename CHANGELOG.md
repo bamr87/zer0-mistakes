@@ -5,7 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.18.0] - 2026-06-13
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- e7c8e33c feat(content-review): AI content reviewer framework with Claude Code agent (#153)
+- c78433f1 fix(content): render mermaid on 12 pages, restore Obsidian graph, migration tests (T-019) (#150)
 
 ### Added
 - **AI content reviewer framework**: a two-tier reviewer that runs on every PR
