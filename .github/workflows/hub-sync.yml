@@ -1,0 +1,78 @@
+---
+name: Hub Metadata Sync
+
+# Refresh the org content hub DASHBOARD data from the GitHub API. Content stays
+# in the source repos (each publishes its own Pages site at
+# https://<org>.github.io/<repo>/ via remote_theme) — this only regenerates
+# _data/hub_index.yml + _data/navigation/hub.yml so the /hub/ dashboard reflects
+# the current state of the org.
+#
+# - On schedule / manual dispatch / registry changes on main: refresh and
+#   commit the generated data (which triggers the Pages rebuild).
+# - On pull requests touching the registry or scripts: validate only
+#   (`--check`), so a malformed registry can never reach main.
+#
+# The output is deterministic — when the org is unchanged the working tree
+# stays clean and no commit is made.
+
+permissions:
+  contents: write
+
+on:
+  schedule:
+    - cron: '23 5 * * *' # daily, after the source repos' own automation
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '_data/hub.yml'
+      - 'scripts/sync-hub-metadata.rb'
+      - 'scripts/sync-hub-metadata.sh'
+      - 'scripts/lib/hub.rb'
+      - '.github/workflows/hub-sync.yml'
+  pull_request:
+    paths:
+      - '_data/hub.yml'
+      - 'scripts/sync-hub-metadata.rb'
+      - 'scripts/sync-hub-metadata.sh'
+      - 'scripts/lib/hub.rb'
+      - '.github/workflows/hub-sync.yml'
+
+concurrency:
+  group: hub-sync-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+
+      - name: Validate hub registry (PRs)
+        if: github.event_name == 'pull_request'
+        run: ruby scripts/sync-hub-metadata.rb --check
+
+      - name: Refresh hub metadata (schedule / push / manual)
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ruby scripts/sync-hub-metadata.rb
+
+      - name: Commit refreshed dashboard data
+        if: github.event_name != 'pull_request'
+        run: |
+          if [ -z "$(git status --porcelain -- _data/hub_index.yml _data/navigation/hub.yml)" ]; then
+            echo "Hub metadata unchanged — nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _data/hub_index.yml _data/navigation/hub.yml
+          git commit -m "chore(hub): refresh dashboard metadata"
+          git push

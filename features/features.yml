@@ -1,7 +1,7 @@
 # zer0-mistakes Theme Features Registry
 # Comprehensive feature tracking for the zer0-mistakes Jekyll theme
-# Version: 1.6.1
-# Last Updated: 2026-05-05
+# Version: 1.16.0
+# Last Updated: 2026-06-12
 
 features:
   # ============================================================================
@@ -1281,3 +1281,41 @@ features:
       plugin: "_plugins/obsidian_links.rb"
       includes:
         - "_includes/content/backlinks.html"
+
+
+  - id: ZER0-060
+    title: "AI Chat Assistant (Proxy-First)"
+    description: "Opt-in floating chat widget grounded in the current page's content. Proxy-first auth (no client-side key by default); renders nothing until ai_chat.enabled plus a deployed proxy (proxy_ready) or an explicit direct-mode key are configured"
+    implemented: true
+    version: "1.16.0"
+    link: "/docs/features/ai-chat-assistant/"
+    docs: "/docs/features/ai-chat-assistant/"
+    tags: [ai, chatbot, openai, proxy, accessibility]
+    date: 2026-06-12
+    references:
+      includes: ["_includes/components/ai-chat.html"]
+      layouts: ["_layouts/root.html"]
+      config: "_config.yml"
+
+  - id: ZER0-061
+    title: "Org Content Hub (Federated)"
+    description: "Tooling to publish one GitHub Pages site per org repository — each renders its own content at <org>.github.io/<repo>/ with this theme via remote_theme — plus a /hub/ dashboard that tracks them all from GitHub API metadata. Content never leaves the source repo"
+    implemented: true
+    version: "1.17.0"
+    link: "/hub/"
+    docs: "https://github.com/bamr87/zer0-mistakes/blob/main/docs/systems/content-hub.md"
+    tags: [content, automation, ci-cd, navigation]
+    date: 2026-06-12
+    references:
+      scripts:
+        - "scripts/provision-org-sites.rb"
+        - "scripts/sync-hub-metadata.rb"
+        - "scripts/lib/hub.rb"
+      data: "_data/hub.yml"
+      workflow: ".github/workflows/hub-sync.yml"
+      docs: "docs/systems/content-hub.md"
+    features:
+      - "Provisions org repos as Pages sites (remote_theme) via PR — templates/org-site/*"
+      - "Auto-discovers org repositories via the gh CLI (registry: _data/hub.yml)"
+      - "Metadata-only dashboard — clones nothing, copies no content"
+      - "Dashboard at /hub/ shows each site's live/pending status and links"
