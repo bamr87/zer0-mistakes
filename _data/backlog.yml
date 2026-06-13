@@ -504,7 +504,7 @@ tasks:
 
   - id: T-019
     title: "Unit tests for migrate.sh and theme_version.rb (coverage rank #1)"
-    status: open
+    status: done
     priority: P2
     area: tests
     risk: standard
@@ -516,13 +516,18 @@ tasks:
       detection, theme connection, admin-page install/verify, version-gap
       detection) plus _plugins/theme_version.rb (88 lines) as the largest
       remaining zero-coverage surface (353 lines).
+      Done 2026-06-13: scripts/test/lib/test_migrate.sh (14 assertions:
+      detect_jekyll_site, validate_theme_connection classification for
+      remote/gem/local, detect_version_gap min-version logic) and
+      ThemeVersionGeneratorTest in test_plugins.rb (remote/unknown-gem/none
+      branches, gem scan stubbed for determinism).
     acceptance:
       - "scripts/test/lib/test_migrate.sh exercises detect_jekyll_site, validate_theme_connection, and detect_version_gap against fixture directories."
       - "test/test_plugins.rb (or a sibling spec) covers theme_version.rb's version resolution."
       - "./scripts/bin/test stays green with the new specs included."
     links: { issue: null, pr: null, roadmap: "1.14" }
     created: 2026-06-12
-    updated: 2026-06-12
+    updated: 2026-06-13
 
   - id: T-020
     title: "CI coverage for installer interactive wizard and upgrade path (coverage rank #2)"
