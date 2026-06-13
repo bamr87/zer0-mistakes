@@ -21,10 +21,12 @@ This directory contains file-specific instructions for GitHub Copilot to provide
 │   ├── obsidian.instructions.md      # Obsidian vault integration (wiki-links, JS resolver, Ruby plugin)
 │   ├── sass.instructions.md          # Sass partials, Bootstrap overrides, CSS custom properties
 │   ├── version-control.instructions.md  # Git workflow and releases
-│   └── backlog.instructions.md       # Tactical backlog schema + sync contract
+│   ├── backlog.instructions.md       # Tactical backlog schema + sync contract
+│   └── content-review.instructions.md   # AI content reviewer: SEO/quality + resolution
 ├── prompts/                         # Reusable agent/chat prompts (.prompt.md)
 │   ├── commit-publish.prompt.md      # Full release pipeline
 │   ├── frontmatter-maintainer.prompt.md  # Front matter audit / fix
+│   ├── content-review.prompt.md      # Content SEO/consistency/polish review
 │   ├── repo-audit.prompt.md          # Review repo → file backlog tasks
 │   ├── backlog-implement.prompt.md   # Implement next backlog task → PR
 │   └── seed.prompt.md                # Theme rebuild blueprint
@@ -55,6 +57,7 @@ GitHub Copilot automatically applies these instructions based on the files you'r
 | `sass.instructions.md`            | `_sass/**`, `assets/css/**`        | Sass partial layering, Bootstrap variable overrides, no-double-Bootstrap rule |
 | `version-control.instructions.md` | `CHANGELOG.md`, `**/version.*`, `*.gemspec`, `package.json` | Git workflow, semantic versioning, releases        |
 | `backlog.instructions.md`         | `_data/backlog.yml`, `scripts/sync-backlog.*`, `.github/workflows/backlog-sync.yml` | Tactical backlog schema, sync contract, ownership rules |
+| `content-review.instructions.md`  | `pages/**/*.md`, `.github/config/content_review.yml`, `.claude/agents/content-reviewer.md`, `scripts/content-review.rb`, `.github/workflows/ai-content-review.yml` | AI content reviewer: per-collection SEO/quality targets, review resolution |
 
 ## 📖 Main Instructions (copilot-instructions.md)
 
