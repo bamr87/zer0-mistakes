@@ -37,6 +37,8 @@ jobs:
   deterministic-review:
     name: SEO & quality checks
     runs-on: ubuntu-latest
+    outputs:
+      has_content: ${{ steps.review.outputs.has_content }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -64,6 +66,13 @@ jobs:
             --quiet || true
           # Surface a build-log copy too.
           cat /tmp/content-review.md || true
+          # Did any in-scope content files actually change? Gates the AI tier.
+          count=$(ruby -rjson -e 'puts (JSON.parse(File.read("/tmp/content-review.json"))["files"] || []).length' 2>/dev/null || echo 0)
+          if [ "${count:-0}" -gt 0 ]; then
+            echo "has_content=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_content=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Post / update PR comment
         if: github.event_name == 'pull_request'
@@ -108,7 +117,7 @@ jobs:
   ai-review:
     name: Claude Code content review
     needs: [deterministic-review, gate]
-    if: ${{ github.event_name == 'pull_request' && needs.gate.outputs.ai_enabled == 'true' }}
+    if: ${{ github.event_name == 'pull_request' && needs.gate.outputs.ai_enabled == 'true' && needs.deterministic-review.outputs.has_content == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
