@@ -78,3 +78,21 @@
     url: https://year-of-ai.github.io/2008/science-technology/
   - title: Society & Economics — 2008
     url: https://year-of-ai.github.io/2008/society-economics/
+- title: '2009'
+  icon: bi-journal-richtext
+  url: https://year-of-ai.github.io/2009/
+  children:
+  - title: Site Home
+    url: https://year-of-ai.github.io/2009/
+  - title: Timeline
+    url: https://year-of-ai.github.io/2009/TIMELINE/
+  - title: Arts & Culture — The Year 2009
+    url: https://year-of-ai.github.io/2009/arts-culture/
+  - title: History & Politics — The Year 2009
+    url: https://year-of-ai.github.io/2009/history-politics/
+  - title: People — The Year 2009
+    url: https://year-of-ai.github.io/2009/people/
+  - title: Science & Technology — The Year 2009
+    url: https://year-of-ai.github.io/2009/science-technology/
+  - title: Society & Economics — The Year 2009
+    url: https://year-of-ai.github.io/2009/society-economics/

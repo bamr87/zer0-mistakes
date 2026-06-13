@@ -5,8 +5,8 @@
 # =============================================================================
 org: year-of-ai
 totals:
-  repos: 4
-  pages: 54
+  repos: 5
+  pages: 65
 repos:
 - name: '2005'
   title: 2005 — Year Knowledge Base
@@ -14,10 +14,10 @@ repos:
     arts, society, and people.
   url: https://github.com/year-of-ai/2005
   site_url: https://year-of-ai.github.io/2005/
-  pages_enabled: false
-  scaffolded: false
+  pages_enabled: true
+  scaffolded: true
   branch: main
-  pushed_at: '2026-06-12T20:33:25Z'
+  pushed_at: '2026-06-13T04:10:39Z'
   page_count: 12
   sections:
   - name: arts-culture
@@ -49,10 +49,10 @@ repos:
     year-of-ai lineage (2005 → 2006).
   url: https://github.com/year-of-ai/2006
   site_url: https://year-of-ai.github.io/2006/
-  pages_enabled: false
-  scaffolded: false
+  pages_enabled: true
+  scaffolded: true
   branch: main
-  pushed_at: '2026-06-12T19:41:25Z'
+  pushed_at: '2026-06-13T04:09:54Z'
   page_count: 15
   sections:
   - name: arts-culture
@@ -83,10 +83,10 @@ repos:
   description: ''
   url: https://github.com/year-of-ai/2007
   site_url: https://year-of-ai.github.io/2007/
-  pages_enabled: false
-  scaffolded: false
+  pages_enabled: true
+  scaffolded: true
   branch: main
-  pushed_at: '2026-06-12T19:41:30Z'
+  pushed_at: '2026-06-13T04:09:57Z'
   page_count: 15
   sections:
   - name: arts-culture
@@ -117,11 +117,11 @@ repos:
   description: A self-growing knowledge base about the year 2008
   url: https://github.com/year-of-ai/2008
   site_url: https://year-of-ai.github.io/2008/
-  pages_enabled: false
-  scaffolded: false
+  pages_enabled: true
+  scaffolded: true
   branch: main
-  pushed_at: '2026-06-12T20:18:38Z'
-  page_count: 12
+  pushed_at: '2026-06-13T04:09:59Z'
+  page_count: 14
   sections:
   - name: arts-culture
     title: Arts & Culture — 2008
@@ -130,7 +130,7 @@ repos:
   - name: history-politics
     title: History & Politics — 2008
     url: https://year-of-ai.github.io/2008/history-politics/
-    count: 2
+    count: 3
   - name: people
     title: People — 2008
     url: https://year-of-ai.github.io/2008/people/
@@ -142,7 +142,41 @@ repos:
   - name: society-economics
     title: Society & Economics — 2008
     url: https://year-of-ai.github.io/2008/society-economics/
-    count: 1
+    count: 2
   root_pages:
   - title: Timeline
     url: https://year-of-ai.github.io/2008/TIMELINE/
+- name: '2009'
+  title: '2009'
+  description: A self-growing knowledge base about the year 2009
+  url: https://github.com/year-of-ai/2009
+  site_url: https://year-of-ai.github.io/2009/
+  pages_enabled: false
+  scaffolded: false
+  branch: main
+  pushed_at: '2026-06-13T04:09:27Z'
+  page_count: 9
+  sections:
+  - name: arts-culture
+    title: Arts & Culture — The Year 2009
+    url: https://year-of-ai.github.io/2009/arts-culture/
+    count: 0
+  - name: history-politics
+    title: History & Politics — The Year 2009
+    url: https://year-of-ai.github.io/2009/history-politics/
+    count: 1
+  - name: people
+    title: People — The Year 2009
+    url: https://year-of-ai.github.io/2009/people/
+    count: 0
+  - name: science-technology
+    title: Science & Technology — The Year 2009
+    url: https://year-of-ai.github.io/2009/science-technology/
+    count: 1
+  - name: society-economics
+    title: Society & Economics — The Year 2009
+    url: https://year-of-ai.github.io/2009/society-economics/
+    count: 0
+  root_pages:
+  - title: Timeline
+    url: https://year-of-ai.github.io/2009/TIMELINE/

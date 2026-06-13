@@ -33,10 +33,17 @@ permalink: pretty
 
 # GitHub Pages enables all of these by default; listing them keeps local
 # builds (github-pages gem) identical to production.
+#
+# jekyll-include-cache is REQUIRED: the remote theme's layouts use the
+# {% include_cached %} tag (e.g. _includes/components/setup-banner.html), and
+# the consuming site must load the plugin that provides it or the build fails
+# with "Unknown tag 'include_cached'". It is on the GitHub Pages whitelist.
 plugins:
   - jekyll-remote-theme
+  - jekyll-include-cache
   - jekyll-seo-tag
   - jekyll-sitemap
+  - jekyll-feed
   - jekyll-relative-links
   - jekyll-optional-front-matter
   - jekyll-readme-index
