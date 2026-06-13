@@ -80,13 +80,18 @@ defaults:
         nav: main
 
 # Repo/agent plumbing that must not publish as site pages.
+#
+# NOTE: seed.md and ROADMAP.md are intentionally NOT excluded — the repo README
+# (the site homepage via jekyll-readme-index) links to seed.md, and seed.md
+# links to ROADMAP.md. Excluding them leaves those relative links un-rewritten
+# by jekyll-relative-links, producing 404s on every homepage. Publishing them
+# (at /seed/ and /roadmap/) lets the links resolve. They are still kept out of
+# the navbar via _data/hub.yml `defaults.exclude` in the theme repo.
 exclude:
   - CLAUDE.md
   - AGENTS.md
   - LIFECYCLE.md
-  - ROADMAP.md
   - lifecycle.yml
-  - seed.md
   - seed-package/
   - telemetry/
   - .claude/
