@@ -22,6 +22,7 @@ permalink: /about/
 slug: about
 collection: about
 order: 1
+mermaid: true
 ---
 
 {{ site.description }}

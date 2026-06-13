@@ -14,6 +14,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Chat local dev proxy** (`templates/deploy/chat-proxy/dev-proxy.mjs`): runs the same Worker logic on Node, reads `CLAUDE_CODE_OAUTH_TOKEN`/`ANTHROPIC_API_KEY` from `.env`, and serves `/api/chat` at `localhost:8787` so the assistant works during `docker-compose up` with no Cloudflare deploy; `_config_dev.yml` wires the widget to it
 - **Chat proxy CI deploy** (`.github/workflows/deploy-chat-proxy.yml` + `templates/deploy/chat-proxy/wrangler.toml`): deploys the Worker to Cloudflare (`workers.dev`, cross-origin) on push to `main` or manual dispatch, setting `ANTHROPIC_API_KEY` from a GitHub Actions secret via `wrangler-action`; requires only `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID`/`ANTHROPIC_API_KEY` repo secrets
 - **Chat local page editing (dev only)**: with `ai_chat.local_edit: true` (set in `_config_dev.yml`), the assistant gains an `update_page_content` tool and the dev proxy exposes sandboxed `/api/page/source` + `/api/page/update` routes (`templates/deploy/chat-proxy/page-store.mjs`) so it can rewrite the current page's source file in the working tree — the dev server `--watch` rebuilds it live. Path-confined to the repo, content extensions only, existing files only; off in production (the Worker has no filesystem)
+- **AI content reviewer framework**: a two-tier reviewer that runs on every PR
+  touching `pages/**/*.md` and integrates with Claude Code agents to ensure SEO
+  is met and content is consistent, polished, and styled to the collection's
+  guidelines.
+  - **Deterministic tier** — `scripts/content-review.rb` (Ruby, stdlib-only, no
+    API key, works on fork PRs) scores each file 0–100 for front matter, SEO
+    (title/description length, keywords), structure (headings, code-fence
+    languages, image alt text, bare URLs), and terminology. Thresholds are
+    derived **per collection** (posts as articles, docs under the documentation
+    guidelines, notes/notebooks as short-form, etc.).
+  - **Claude Code agent tier** — `.claude/agents/content-reviewer.md` reviews
+    tone, clarity, consistency, accessibility, and technical accuracy, loading
+    each file's governing instruction files (baseline + collection-specific).
+  - **Automation** — `.github/workflows/ai-content-review.yml` posts the
+    deterministic summary as a sticky PR comment (always) and runs the Claude
+    Code agent when `ANTHROPIC_API_KEY` is configured.
+  - **Config & guidance** — `.github/config/content_review.yml` (per-collection
+    thresholds + assigned skills/prompts), `.github/instructions/content-review.instructions.md`,
+    the `/content-review` prompt + Cursor command, and the `content-review` skill.
 
 ### Changed
 - **AI Chat Assistant rebuilt on the Claude Messages API**: requests use the `POST /v1/messages` shape (top-level `system`, content blocks, `anthropic-version`; direct mode adds `anthropic-dangerous-direct-browser-access`) instead of OpenAI Chat Completions; responses stream token-by-token over SSE; default model is `claude-opus-4-8` and the unsupported `temperature` knob was removed; widget logic moved from inline `<script>` to `assets/js/ai-chat.js`
@@ -26,6 +45,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Commits in this release
 - f2657b68 fix(a11y): resolve all navbar & site WCAG 2.1 AA violations (T-007) (#149)
 - 30d836cb fix(admin): sync config-page copy with live _config.yml and redact the Raw tab (T-018) (#148)
+
+### Added
+- **Mermaid diagrams now render on 12 more pages**: pages with ```mermaid``` code fences but no `mermaid: true` front-matter flag (about, several feature/dev docs, all four quickstart guides) were showing raw code instead of diagrams — the flag gates the renderer include. Added the flag; verified all 34 diagrams across the site parse with valid Mermaid syntax and render to SVG in a browser
+- **Obsidian graph view restored**: the `/docs/obsidian/graph/` page (roadmap v1.4 force-directed knowledge graph) had been deleted as a "stub" but its `full-graph.html` include, `obsidian-graph.js`, the docs index link, and 5 inbound wiki-links all still referenced it — a 404 to a shipped feature. Restored the page (it renders 161 nodes / 269 edges from the live wiki-index with zero console errors)
+- **Migration & theme-version coverage (T-019)**: `scripts/test/lib/test_migrate.sh` (14 assertions for Jekyll-site detection, theme-connection classification, and version-gap logic) and `ThemeVersionGeneratorTest` in `test/test_plugins.rb` — the two largest remaining zero-coverage subsystems from the T-005 baseline
 
 ### Fixed
 - **Navbar & site accessibility (T-007)**: resolved all WCAG 2.1 AA violations that kept three axe-core audits frozen — dropped the redundant ARIA `menubar`/`menuitem` roles from the nav (the nav landmark already provides semantics; menubars require menuitem children the search/settings buttons weren't), added an `aria-label` to the site-subtitle home link, kept the admin/footer separator a list item, gave the theme-preview disabled tab a `role="tab"` and an icon-only button an `aria-label`, made code blocks a single keyboard-focusable scroll region, and underlined prose links so they're distinguishable without color. The three `test.fixme` blocks in `test/visual/accessibility.spec.js` are now live `test()` calls — verified 0 violations across the homepage, FAQ, and all 8 admin pages (23/23 a11y, 223/223 smoke tier)

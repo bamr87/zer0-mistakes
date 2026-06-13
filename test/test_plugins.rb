@@ -61,6 +61,7 @@ end
 require_relative '../_plugins/admin_page_urls'
 require_relative '../_plugins/content_statistics_generator'
 require_relative '../_plugins/preview_image_generator'
+require_relative '../_plugins/theme_version'
 
 FakePage = Struct.new(:output_ext, :url)
 FakeSite = Struct.new(:pages, :data, :config, :source, :theme, :collections) do
@@ -241,5 +242,45 @@ class PreviewImageGeneratorTest < Minitest::Test
     site = site_with
     doc = doc_with({}, site, basename: 'my-post')
     assert_equal 'my-post-preview.png', PIG.generate_filename(doc)
+  end
+end
+
+# ---------------------------------------------------------------------------
+class ThemeVersionGeneratorTest < Minitest::Test
+  # site.config is a plain Hash for this generator
+  def run_generator(config)
+    site = Struct.new(:config).new(config)
+    # Silence the gem scan so the test is deterministic regardless of which
+    # jekyll-theme-* gems happen to be installed in the runner. Save/restore
+    # the original Gem::Specification.each around the run.
+    original = Gem::Specification.method(:each)
+    Gem::Specification.define_singleton_method(:each) { |*| nil }
+    begin
+      Jekyll::ThemeVersionGenerator.new.generate(site)
+    ensure
+      Gem::Specification.define_singleton_method(:each, original)
+    end
+    site.config['theme_specs']
+  end
+
+  def test_remote_theme_records_latest
+    specs = run_generator({ 'remote_theme' => 'bamr87/zer0-mistakes' })
+    assert_equal 1, specs.length
+    assert_equal 'zer0-mistakes', specs.first['name']
+    assert_equal 'remote', specs.first['type']
+    assert_equal 'latest', specs.first['version']
+    assert_equal 'bamr87/zer0-mistakes', specs.first['repository']
+  end
+
+  def test_unknown_gem_theme_records_unknown_version
+    specs = run_generator({ 'theme' => 'jekyll-theme-does-not-exist-xyz' })
+    assert_equal 1, specs.length
+    assert_equal 'jekyll-theme-does-not-exist-xyz', specs.first['name']
+    assert_equal 'unknown', specs.first['version']
+    assert_equal 'gem', specs.first['type']
+  end
+
+  def test_no_theme_config_yields_empty_specs
+    assert_equal [], run_generator({})
   end
 end

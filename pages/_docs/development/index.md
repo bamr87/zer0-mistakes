@@ -16,6 +16,7 @@ difficulty: intermediate
 estimated_reading_time: 5 minutes
 sidebar:
     nav: docs
+mermaid: true
 ---
 
 # Contributing to Zer0-Mistakes

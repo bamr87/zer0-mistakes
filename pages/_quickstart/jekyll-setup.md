@@ -30,6 +30,7 @@ quickstart:
     step: 2
     next: /quickstart/github-setup/
     prev: /quickstart/machine-setup/
+mermaid: true
 ---
 
 # Jekyll Setup

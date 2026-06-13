@@ -20,6 +20,7 @@ prerequisites:
     - Understanding of GitHub Actions
 sidebar:
     nav: docs
+mermaid: true
 ---
 
 # CI/CD Pipeline

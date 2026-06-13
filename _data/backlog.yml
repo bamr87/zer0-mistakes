@@ -56,7 +56,7 @@
 meta:
   title: "zer0-mistakes Backlog"
   updated: 2026-06-12
-  next_id: 21
+  next_id: 22
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -504,7 +504,7 @@ tasks:
 
   - id: T-019
     title: "Unit tests for migrate.sh and theme_version.rb (coverage rank #1)"
-    status: open
+    status: done
     priority: P2
     area: tests
     risk: standard
@@ -516,13 +516,18 @@ tasks:
       detection, theme connection, admin-page install/verify, version-gap
       detection) plus _plugins/theme_version.rb (88 lines) as the largest
       remaining zero-coverage surface (353 lines).
+      Done 2026-06-13: scripts/test/lib/test_migrate.sh (14 assertions:
+      detect_jekyll_site, validate_theme_connection classification for
+      remote/gem/local, detect_version_gap min-version logic) and
+      ThemeVersionGeneratorTest in test_plugins.rb (remote/unknown-gem/none
+      branches, gem scan stubbed for determinism).
     acceptance:
       - "scripts/test/lib/test_migrate.sh exercises detect_jekyll_site, validate_theme_connection, and detect_version_gap against fixture directories."
       - "test/test_plugins.rb (or a sibling spec) covers theme_version.rb's version resolution."
       - "./scripts/bin/test stays green with the new specs included."
     links: { issue: null, pr: null, roadmap: "1.14" }
     created: 2026-06-12
-    updated: 2026-06-12
+    updated: 2026-06-13
 
   - id: T-020
     title: "CI coverage for installer interactive wizard and upgrade path (coverage rank #2)"
@@ -545,3 +550,26 @@ tasks:
     links: { issue: null, pr: null, roadmap: "1.14" }
     created: 2026-06-12
     updated: 2026-06-12
+
+  - id: T-021
+    title: "Vendor cytoscape.js so the Obsidian graph works without a CDN"
+    status: open
+    priority: P3
+    area: feat
+    risk: standard
+    effort: S
+    source: audit
+    summary: >-
+      The Obsidian full-graph page (_includes/obsidian/full-graph.html) loads
+      cytoscape.js from cdn.jsdelivr.net — the only runtime CDN dependency left
+      in the theme, contradicting the vendored-assets principle (Bootstrap,
+      Icons, Mermaid are all under assets/vendor/). It also makes the graph
+      fail under strict CSP or offline. Vendor cytoscape@3.30.0 under
+      assets/vendor/ and reference it locally, matching the Mermaid pattern.
+    acceptance:
+      - "cytoscape.min.js committed under assets/vendor/ and referenced via a local path."
+      - "full-graph.html no longer references cdn.jsdelivr.net."
+      - "The graph page renders nodes/edges with the vendored file (no network)."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-06-13
+    updated: 2026-06-13

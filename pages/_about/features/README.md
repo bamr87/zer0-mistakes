@@ -26,6 +26,7 @@ technical_requirements:
 difficulty_level: intermediate
 estimated_reading_time: 10 minutes
 draft: false
+mermaid: true
 ---
 
 # Zer0-Mistakes Features Documentation

@@ -22,12 +22,19 @@ files you touch:
   canonical detailed conventions (architecture, commit/release workflow).
 - `.github/instructions/*.instructions.md` — file-scoped rules; each file has
   an `applyTo:` glob in its front matter (layouts, includes, scripts, install,
-  obsidian, sass, testing, documentation, version-control, backlog). Read the
-  matching file before editing those paths.
+  obsidian, sass, testing, documentation, version-control, backlog,
+  content-review). Read the matching file before editing those paths.
 - `.github/prompts/*.prompt.md` — reusable multi-step workflows
   (`commit-publish`, `repo-audit`, `backlog-implement`, `obsidian-add-syntax`,
-  `frontmatter-maintainer`, `seed`). Mirrored as Cursor commands in
-  `.cursor/commands/`.
+  `frontmatter-maintainer`, `content-review`, `seed`). Mirrored as Cursor
+  commands in `.cursor/commands/`.
+- **AI content reviewer** — reviews content PRs (Markdown under `pages/**`) for
+  SEO, consistency, polish, accessibility, and accuracy. Two tiers:
+  `scripts/content-review.rb` (deterministic, per-collection thresholds from
+  `.github/config/content_review.yml`) and the
+  `.claude/agents/content-reviewer.md` Claude Code agent, run on PRs by
+  `.github/workflows/ai-content-review.yml`. Skill:
+  `.github/skills/content-review/`.
 - `_data/backlog.yml` — tactical task backlog (source of truth; synced to
   GitHub Issues by `.github/workflows/backlog-sync.yml`). See
   [`docs/systems/continuous-evolution.md`](./docs/systems/continuous-evolution.md).

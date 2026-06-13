@@ -25,6 +25,7 @@ keywords:
         - ai installation
         - cross-platform
         - bootstrap 5
+mermaid: true
 ---
 
 # Quick Start Guide
