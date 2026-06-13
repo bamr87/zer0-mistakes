@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **AI content reviewer framework**: a two-tier reviewer that runs on every PR
+  touching `pages/**/*.md` and integrates with Claude Code agents to ensure SEO
+  is met and content is consistent, polished, and styled to the collection's
+  guidelines.
+  - **Deterministic tier** — `scripts/content-review.rb` (Ruby, stdlib-only, no
+    API key, works on fork PRs) scores each file 0–100 for front matter, SEO
+    (title/description length, keywords), structure (headings, code-fence
+    languages, image alt text, bare URLs), and terminology. Thresholds are
+    derived **per collection** (posts as articles, docs under the documentation
+    guidelines, notes/notebooks as short-form, etc.).
+  - **Claude Code agent tier** — `.claude/agents/content-reviewer.md` reviews
+    tone, clarity, consistency, accessibility, and technical accuracy, loading
+    each file's governing instruction files (baseline + collection-specific).
+  - **Automation** — `.github/workflows/ai-content-review.yml` posts the
+    deterministic summary as a sticky PR comment (always) and runs the Claude
+    Code agent when `ANTHROPIC_API_KEY` is configured.
+  - **Config & guidance** — `.github/config/content_review.yml` (per-collection
+    thresholds + assigned skills/prompts), `.github/instructions/content-review.instructions.md`,
+    the `/content-review` prompt + Cursor command, and the `content-review` skill.
+
 ## [1.17.1] - 2026-06-13
 
 ### Changed

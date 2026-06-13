@@ -1,0 +1,207 @@
+# =========================================================================
+# Content Review Configuration
+# =========================================================================
+# Single source of truth for the AI content reviewer framework.
+#
+# Consumed by:
+#   - scripts/content-review.rb            (deterministic, no-API tier)
+#   - .claude/agents/content-reviewer.md   (Claude Code agent tier)
+#   - .github/workflows/ai-content-review.yml
+#   - .github/instructions/content-review.instructions.md
+#
+# Thresholds are PER COLLECTION. The collection set mirrors `collections:` in
+# _config.yml; required FRONTMATTER fields are NOT duplicated here — they live
+# in .github/config/frontmatter_schema.yml (the canonical schema). Each
+# collection also names the governing `instructions:` file(s) so the reviewer
+# loads the right authoring rules (e.g. docs → documentation.instructions.md).
+#
+# Effective rules for a file = deep-merge(defaults, collections[<collection>]).
+# =========================================================================
+
+config_version: "2.0"
+
+# -------------------------------------------------------------------------
+# Which files get reviewed
+# -------------------------------------------------------------------------
+scope:
+  include:
+    - "pages/_posts/**/*.md"
+    - "pages/_docs/**/*.md"
+    - "pages/_quickstart/**/*.md"
+    - "pages/_notes/**/*.md"
+    - "pages/_notebooks/**/*.md"
+    - "pages/_about/**/*.md"
+    - "pages/_quests/**/*.md"
+    - "pages/_hobbies/**/*.md"
+    - "pages/*.md"
+  exclude:
+    - "**/README.md"
+    - "**/index.html"
+    - "_site/**"
+    - ".jekyll-cache/**"
+    - "node_modules/**"
+
+# -------------------------------------------------------------------------
+# Defaults — inherited by every collection, overridden per collection below.
+# -------------------------------------------------------------------------
+defaults:
+  # SEO thresholds (search + AI-engine optimization). Aligned with
+  # pages/_docs/seo/ (meta-tags.md, aieo.md).
+  seo:
+    title: { min_length: 30, max_length: 60 }
+    description: { min_length: 120, max_length: 160 }
+    keywords: { min: 3, max: 10, recommended: true }
+    require_preview_image: false
+    slug_max_words: 8
+
+  # Content quality thresholds.
+  quality:
+    min_word_count: 100
+    max_word_count: 3500
+    min_h2_headings: 1
+    max_heading_skip: 1
+    require_code_fence_language: true
+    require_image_alt_text: true
+    max_avg_sentence_words: 30
+    flag_bare_urls: true
+
+  # Style & consistency (the agent weighs these; the script checks the
+  # mechanical subset — terminology casing).
+  style:
+    terminology:
+      "Github": "GitHub"
+      "Jekyl": "Jekyll"
+      "Javascript": "JavaScript"
+      "Bootstrap5": "Bootstrap 5"
+      "front-matter": "front matter"
+      "frontmatter": "front matter"
+    voice: "Second person, active voice, present tense for instructions."
+    oxford_comma: true
+
+  # Scoring → weighted 0–100.
+  scoring:
+    weights: { error: 15, warning: 5, info: 1 }
+    thresholds: { excellent: 90, acceptable: 70, failing: 0 }
+    fail_under: 70
+
+  # Baseline authoring rules for any content file.
+  instructions:
+    - .github/instructions/content-review.instructions.md
+
+# -------------------------------------------------------------------------
+# Per-collection overrides (keys mirror _config.yml `collections:`).
+# Only specify what differs from `defaults`; everything else is inherited.
+# -------------------------------------------------------------------------
+collections:
+  posts:
+    # Full-length articles — strongest SEO + length expectations.
+    quality:
+      min_word_count: 300
+    seo:
+      require_preview_image: true
+    instructions:
+      - .github/instructions/content-review.instructions.md
+
+  docs:
+    # Public documentation — governed by the documentation guidelines.
+    quality:
+      min_word_count: 80          # reference pages can be concise
+      max_word_count: 4000
+    instructions:
+      - .github/instructions/content-review.instructions.md
+      - .github/instructions/documentation.instructions.md
+
+  quickstart:
+    # Short, action-oriented getting-started guides.
+    quality:
+      min_word_count: 150
+      max_word_count: 2500
+    seo:
+      keywords: { min: 3, max: 10, recommended: true }
+    instructions:
+      - .github/instructions/content-review.instructions.md
+      - .github/instructions/documentation.instructions.md
+
+  quests:
+    # Long-form tutorials / learning paths.
+    quality:
+      min_word_count: 400
+      max_word_count: 6000
+    instructions:
+      - .github/instructions/content-review.instructions.md
+
+  notes:
+    # Short-form knowledge notes — relax length and keyword pressure.
+    quality:
+      min_word_count: 50
+    seo:
+      keywords: { recommended: false }
+    instructions:
+      - .github/instructions/content-review.instructions.md
+
+  notebooks:
+    # Mostly generated from Jupyter — relax prose-quality checks.
+    quality:
+      min_word_count: 30
+      require_code_fence_language: false
+    seo:
+      keywords: { recommended: false }
+    instructions:
+      - .github/instructions/content-review.instructions.md
+
+  hobbies:
+    quality:
+      min_word_count: 50
+    seo:
+      keywords: { recommended: false }
+    instructions:
+      - .github/instructions/content-review.instructions.md
+
+  about:
+    # Profile / about pages — short, relaxed SEO.
+    quality:
+      min_word_count: 40
+      min_h2_headings: 0
+    seo:
+      description: { min_length: 0, max_length: 160 }
+      keywords: { recommended: false }
+    instructions:
+      - .github/instructions/content-review.instructions.md
+
+  pages:
+    # Top-level landing/utility pages — relax word count.
+    quality:
+      min_word_count: 40
+      min_h2_headings: 0
+    instructions:
+      - .github/instructions/content-review.instructions.md
+
+# -------------------------------------------------------------------------
+# AI (Claude Code agent) tier
+# -------------------------------------------------------------------------
+ai_review:
+  enabled: true                  # gated on ANTHROPIC_API_KEY at runtime
+  model: "claude-sonnet-4-6"
+  max_files_per_run: 20
+  post_inline_comments: true
+  focus:
+    - seo
+    - consistency
+    - polish
+    - accessibility
+    - technical_accuracy
+  # Skills / prompts the reviewer agent is allowed to invoke.
+  skills:
+    - content-review
+    - validate-build
+  prompts:
+    - content-review
+    - frontmatter-maintainer
+
+# -------------------------------------------------------------------------
+# Strictness per context (mirrors content_rules.yml convention)
+# -------------------------------------------------------------------------
+strictness:
+  ci: warn          # PR reviews advise; they do not block merges by default
+  pre_commit: warn
+  manual: warn
