@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Commits in this release
 - ac36e1a3 feat(tests): plugin unit specs and coverage baseline — T-011, T-005 (#145)
 
+### Fixed
+- **Admin config page sync (T-018)**: the page's config copy is now byte-synced with the live `_config.yml` (raw-wrapped so Liquid-looking comment text renders literally) and `validate` fails on drift; the **visible Raw-YAML tab** now applies the same sensitive-line redaction as the hidden copy element (it previously showed the raw file — the stale copy was the only thing keeping the live PostHog key off that tab); the raw-tab security test targets the real `code#cfg-raw-yaml` element and asserts presence instead of silently skipping
+
 ### Added
 - **Plugin unit specs (T-011)**: 19 Minitest specs for the previously-untested `preview_image_generator.rb`, `content_statistics_generator.rb`, and `admin_page_urls.rb` plugins (config merge, path normalization, index dedupe by relative path, hook output, edge cases); wired into the core suite as "Plugin Unit Specs"
 - **Coverage baseline (T-005)**: structural survey recorded at `docs/development/coverage-baseline.md` — 10/10 suites green; the two remaining zero-coverage subsystems filed as T-019 (migrate.sh + theme_version.rb) and T-020 (installer wizard/upgrade)
