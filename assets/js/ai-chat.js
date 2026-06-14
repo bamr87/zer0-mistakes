@@ -513,7 +513,7 @@
     }
 
     var url = 'https://raw.githubusercontent.com/' + CONFIG.github.repository + '/'
-      + encodeURIComponent(CONFIG.github.baseBranch || 'main') + '/'
+      + (CONFIG.github.baseBranch || 'main').split('/').map(encodeURIComponent).join('/') + '/'
       + path.split('/').map(encodeURIComponent).join('/');
     var response;
     try {
@@ -554,13 +554,14 @@
     if (!inputData.title || !inputData.body) {
       return toolResult(block.id, 'Missing required fields: title and body.', true);
     }
+    var issueBody = String(inputData.body || '');
     var confirmed = await requestConfirmation({
       heading: 'Create a GitHub issue?',
       fields: [
         { label: 'Repository', value: CONFIG.github.repository },
         { label: 'Title', value: inputData.title },
         { label: 'Labels', value: mergedLabels(inputData.labels).join(', ') },
-        { label: 'Body', value: String(inputData.body).slice(0, 280) + (inputData.body.length > 280 ? '…' : '') }
+        { label: 'Body', value: issueBody.slice(0, 280) + (issueBody.length > 280 ? '…' : '') }
       ],
       confirmLabel: CONFIG.github.mode === 'proxy' ? 'Create issue' : 'Open issue form'
     });
@@ -605,13 +606,14 @@
     var path = sanitizeRepoPath(inputData.file_path);
     if (!path) return toolResult(block.id, 'Invalid file path: ' + inputData.file_path, true);
 
+    var prBody = String(inputData.body || '');
     var confirmed = await requestConfirmation({
       heading: 'Open a pull request?',
       fields: [
         { label: 'Repository', value: CONFIG.github.repository },
         { label: 'File', value: path },
         { label: 'Title', value: inputData.title },
-        { label: 'Summary', value: String(inputData.body).slice(0, 280) + (inputData.body.length > 280 ? '…' : '') }
+        { label: 'Summary', value: prBody.slice(0, 280) + (prBody.length > 280 ? '…' : '') }
       ],
       confirmLabel: 'Create pull request'
     });
@@ -753,6 +755,18 @@
         if (bubble && accumulated) {
           bubble.innerHTML = renderAssistantMarkdown(accumulated); // final markdown pass
           sawText = true;
+        } else if (!bubble) {
+          // Non-streaming response (proxy returned JSON, not SSE): no text deltas
+          // arrived, so render any text blocks from the final content.
+          var textOut = result.content
+            .filter(function (b) { return b.type === 'text'; })
+            .map(function (b) { return b.text || ''; })
+            .join('')
+            .trim();
+          if (textOut) {
+            appendMessage('assistant', textOut);
+            sawText = true;
+          }
         }
         if (result.content.length) {
           history.push({ role: 'assistant', content: result.content });

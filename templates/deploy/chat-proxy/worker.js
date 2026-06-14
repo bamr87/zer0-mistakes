@@ -108,7 +108,10 @@ function allowedOrigins(env) {
 
 function originAllowed(origin, env) {
   const allowed = allowedOrigins(env);
-  if (!origin) return true; // same-origin / non-browser; real gate is Cloudflare Access
+  // No Origin header (non-browser client): only allow when Cloudflare Access
+  // gates the proxy. Otherwise require a browser Origin on the allowlist, so a
+  // direct API client can't bypass it and spend the Anthropic/GitHub credential.
+  if (!origin) return env.REQUIRE_CF_ACCESS === 'true';
   return allowed.includes(origin);
 }
 
@@ -306,6 +309,8 @@ function sanitizeBranchName(name, fallbackPrefix) {
 }
 
 function toBase64Utf8(text) {
+  // Node (dev-proxy) has Buffer but no btoa; Workers have btoa but no Buffer.
+  if (typeof Buffer !== 'undefined') return Buffer.from(text, 'utf8').toString('base64');
   const bytes = new TextEncoder().encode(text);
   let binary = '';
   const CHUNK = 0x8000;

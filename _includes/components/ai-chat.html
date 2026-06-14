@@ -69,8 +69,8 @@
         aria-label="Open AI chat assistant"
         aria-expanded="false"
         aria-controls="aiChatPanel">
-  <i class="{{ site.ai_chat.icon | default: 'bi-robot' }} ai-chat-icon-open" aria-hidden="true"></i>
-  <i class="bi-x-lg ai-chat-icon-close d-none" aria-hidden="true"></i>
+  <i class="bi {{ site.ai_chat.icon | default: 'bi-robot' }} ai-chat-icon-open" aria-hidden="true"></i>
+  <i class="bi bi-x-lg ai-chat-icon-close d-none" aria-hidden="true"></i>
 </button>
 
 <!-- AI Chat Panel -->
@@ -83,14 +83,14 @@
   <!-- Chat Header -->
   <div class="ai-chat-header d-flex align-items-center justify-content-between p-3">
     <div class="d-flex align-items-center gap-2">
-      <i class="{{ site.ai_chat.icon | default: 'bi-robot' }} fs-5" aria-hidden="true"></i>
+      <i class="bi {{ site.ai_chat.icon | default: 'bi-robot' }} fs-5" aria-hidden="true"></i>
       <h6 id="aiChatTitle" class="mb-0 fw-semibold">Zer0 Assistant</h6>
     </div>
     <button type="button"
             class="btn btn-sm btn-outline-light border-0"
             id="aiChatClose"
             aria-label="Close chat">
-      <i class="bi-x-lg" aria-hidden="true"></i>
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
     </button>
   </div>
 
@@ -105,18 +105,18 @@
     <button type="button"
             class="ai-chat-chip btn btn-sm btn-outline-secondary rounded-pill"
             data-prompt="I'd like to report a problem with this page.">
-      <i class="bi-bug" aria-hidden="true"></i> Report an issue
+      <i class="bi bi-bug" aria-hidden="true"></i> Report an issue
     </button>
     <button type="button"
             class="ai-chat-chip btn btn-sm btn-outline-secondary rounded-pill"
             data-prompt="I have a suggestion to improve this page's content or design.">
-      <i class="bi-lightbulb" aria-hidden="true"></i> Suggest an improvement
+      <i class="bi bi-lightbulb" aria-hidden="true"></i> Suggest an improvement
     </button>
     {% if local_edit_flag %}
     <button type="button"
             class="ai-chat-chip btn btn-sm btn-outline-secondary rounded-pill"
             data-prompt="Edit this page directly: ">
-      <i class="bi-pencil-square" aria-hidden="true"></i> Edit this page
+      <i class="bi bi-pencil-square" aria-hidden="true"></i> Edit this page
     </button>
     {% endif %}
   </div>
@@ -136,7 +136,7 @@
               class="btn btn-primary btn-sm"
               id="aiChatSend"
               aria-label="Send message">
-        <i class="bi-send" aria-hidden="true"></i>
+        <i class="bi bi-send" aria-hidden="true"></i>
       </button>
     </form>
     <p class="ai-chat-disclaimer text-muted mt-1 mb-0">
