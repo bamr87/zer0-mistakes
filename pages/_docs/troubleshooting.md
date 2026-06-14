@@ -14,8 +14,8 @@ permalink: /docs/troubleshooting/
 difficulty: beginner
 estimated_reading_time: 10 minutes
 prerequisites: []
-lastmod: 2025-12-20
-lastmod: 2025-12-20T22:15:46.061Z
+lastmod: 2026-06-14T00:00:00.000Z
+lastmod: 2026-06-14T00:00:00.000Z
 sidebar:
     nav: docs
 ---
@@ -173,7 +173,7 @@ docker-compose exec jekyll jekyll serve --config "_config.yml,_config_dev.yml"
 
 - [Installation Guide](/docs/installation/)
 - [Docker Guide](/docs/docker/)
-- [Jekyll Configuration](/docs/jekyll/jekyll-config/)
+- [Jekyll Configuration](/docs/jekyll/)
 
 ## See also
 

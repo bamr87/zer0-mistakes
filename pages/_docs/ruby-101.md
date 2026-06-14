@@ -1,6 +1,6 @@
 ---
 title: Ruby 101
-description: A beginner-friendly guide to Ruby, RubyGems, and Bundler for Jekyll theme development — covers installation, Gemfile anatomy, common commands, Docker workflows, and troubleshooting.
+description: A beginner's guide to Ruby, RubyGems, and Bundler for Jekyll theme development — installation, Gemfile anatomy, common commands, and Docker workflows.
 preview: /images/previews/ruby-101.png
 layout: default
 mermaid: true
@@ -18,7 +18,7 @@ difficulty: beginner
 estimated_reading_time: 10 minutes
 prerequisites:
     - Ruby installed
-lastmod: 2025-12-20
+lastmod: 2026-06-14T00:00:00.000Z
 lastmod: 2025-12-20T22:15:46.034Z
 ---
 

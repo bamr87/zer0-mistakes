@@ -1,7 +1,8 @@
 ---
-lastmod: 2026-04-18T19:29:52.000Z
-title: Bootstrap Integration
-description: Bootstrap 5.3.3 usage patterns, components, and customization in the Zer0-Mistakes theme.
+lastmod: 2026-06-14T00:00:00.000Z
+title: Bootstrap 5 Integration in Zer0-Mistakes
+description: How the Zer0-Mistakes Jekyll theme ships vendored Bootstrap 5.3.3 — grid, components, color modes, icons, and Sass customization, with copy-paste examples.
+keywords: [bootstrap 5, jekyll bootstrap theme, bootstrap grid, bootstrap components, responsive design]
 preview: /images/previews/bootstrap-integration.png
 layout: default
 categories:

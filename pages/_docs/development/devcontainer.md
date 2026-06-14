@@ -1,7 +1,7 @@
 ---
-lastmod: 2026-05-05T00:00:00.000Z
+lastmod: 2026-06-14T00:00:00.000Z
 title: DevContainer Configuration
-description: VS Code Dev Container configuration for one-click cloud and local development environments — GitHub Codespaces, JetBrains Gateway, and VS Code with the Jekyll toolchain pre-installed.
+description: VS Code Dev Container config for one-click cloud and local dev — GitHub Codespaces, JetBrains Gateway, and VS Code, with the Jekyll toolchain pre-installed.
 preview: /images/previews/devcontainer-configuration.png
 layout: default
 categories:

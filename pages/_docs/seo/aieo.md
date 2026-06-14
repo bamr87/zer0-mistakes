@@ -1,7 +1,7 @@
 ---
-lastmod: 2026-05-05T00:00:00.000Z
+lastmod: 2026-06-14T00:00:00.000Z
 title: AIEO — AI Engine Optimization
-description: AI-Engine Optimization toolkit for zer0-mistakes — Schema.org JSON-LD structured data, E-E-A-T signals, FAQ page, and glossary collection for stronger AI search and LLM grounding.
+description: AI-Engine Optimization for zer0-mistakes — Schema.org JSON-LD, E-E-A-T signals, an FAQ page, and a glossary collection for stronger AI search and LLM grounding.
 preview: /images/previews/aieo-ai-engine-optimization.png
 layout: default
 categories:

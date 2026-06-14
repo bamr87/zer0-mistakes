@@ -1,7 +1,7 @@
 ---
-lastmod: 2026-05-05T00:00:00.000Z
+lastmod: 2026-06-14T00:00:00.000Z
 title: Dynamic Collection-Based Navigation
-description: Zero-config navigation that auto-populates the navbar from Jekyll collections when no _data/navigation entry exists, so brand-new sites have a usable menu out of the box.
+description: Zero-config navigation that auto-populates the navbar from Jekyll collections when no _data/navigation entry exists, so brand-new sites get a usable menu.
 preview: /images/previews/dynamic-collection-based-navigation.png
 layout: default
 categories:
