@@ -1,7 +1,7 @@
 ---
-lastmod: 2026-04-18T19:30:02.000Z
-title: SEO
-description: Search engine optimization features including meta tags, structured data, and sitemap generation.
+lastmod: 2026-06-14T06:00:00.000Z
+title: "Jekyll SEO Features: Meta Tags, Sitemaps & Schema"
+description: "Configure the Zer0-Mistakes theme's built-in SEO — Open Graph and Twitter meta tags, JSON-LD structured data, XML sitemaps, and a search index."
 preview: /images/previews/seo.png
 layout: default
 categories:
@@ -12,6 +12,12 @@ tags:
     - meta
     - sitemap
     - search
+keywords:
+    - jekyll seo
+    - meta tags
+    - open graph
+    - structured data
+    - xml sitemap
 permalink: /docs/seo/
 difficulty: beginner
 estimated_reading_time: 5 minutes
@@ -21,7 +27,7 @@ sidebar:
 
 # SEO Features
 
-The Zer0-Mistakes theme includes comprehensive SEO features for better search engine visibility.
+The Zer0-Mistakes theme ships Open Graph and Twitter Card meta tags, JSON-LD structured data, an XML sitemap, and a search index — all enabled automatically with no plugin required.
 
 ## Features
 
