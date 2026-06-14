@@ -1295,3 +1295,4 @@ features:
       layouts: ["_layouts/root.html"]
       scripts: ["assets/js/ai-chat.js", "templates/deploy/chat-proxy/worker.js", "templates/deploy/chat-proxy/dev-proxy.mjs", "templates/deploy/chat-proxy/page-store.mjs"]
       config: "_config.yml"
+      instructions: ".github/instructions/ai-chat.instructions.md"

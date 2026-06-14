@@ -116,8 +116,13 @@
   }
 
   // --- System prompt -----------------------------------------------
+  function todayISO() {
+    try { return new Date().toISOString().slice(0, 10); } catch (e) { return ''; }
+  }
+
   function buildSystemPrompt(meta) {
     var system = CONFIG.systemPrompt || 'You are a helpful assistant.';
+    var today = todayISO();
     if (CONFIG.strictContext) {
       system += '\n\nGrounding rules:\n'
         + '- Answer questions ONLY using the provided page context.\n'
@@ -130,7 +135,7 @@
         + '- This site lives in the GitHub repository ' + CONFIG.github.repository + '.\n'
         + '- Use create_github_issue when the user reports a bug, typo, broken link, confusing content, or requests an enhancement. Gather the essentials first (what, where, expected vs actual), then call the tool with a clear title and a well-structured Markdown body.\n';
       if (prToolEnabled()) {
-        system += '- Use create_pull_request to propose a concrete improvement to this page\'s content or UI/UX. ALWAYS call get_page_source first and base updated_content on the real source file. updated_content replaces the ENTIRE file: keep the change minimal, preserve the YAML front matter, and do not reformat unrelated lines.\n';
+        system += '- Use create_pull_request to propose a concrete improvement to this page\'s content or UI/UX. ALWAYS call get_page_source first and base updated_content on the real source file. updated_content replaces the ENTIRE file: keep the change minimal, preserve the YAML front matter (but set `lastmod` to today, ' + today + '), and do not reformat unrelated lines. The repo runs an automated content review on PRs — follow the page\'s front-matter, SEO, and structure conventions so the change passes.\n';
       } else {
         system += '- Pull requests are not available in this deployment. For content-improvement proposals, file an issue instead and include the suggested replacement text in the body.\n';
       }
@@ -140,7 +145,7 @@
     if (CONFIG.localEdit) {
       system += '\n\nEditing this page (local development):\n'
         + '- Use update_page_content to apply content or UI-copy improvements directly to the CURRENT page\'s source file. The change takes effect immediately on the local dev server.\n'
-        + '- ALWAYS call get_page_source first and base updated_content on the real file. updated_content replaces the ENTIRE file: change only what the user asked, preserve the YAML front matter, and do not reformat unrelated lines.\n'
+        + '- ALWAYS call get_page_source first and base updated_content on the real file. updated_content replaces the ENTIRE file: change only what the user asked, preserve the YAML front matter (but set `lastmod` to today, ' + today + '), and do not reformat unrelated lines.\n'
         + '- Prefer this over opening a pull request when the user just wants to change this page locally. The site shows a confirmation card before writing.\n';
     }
     var context = getPageContext(meta);

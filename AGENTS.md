@@ -63,6 +63,7 @@ should load them manually):
 | `CHANGELOG.md`, `**/version.*`, `*.gemspec`, `package.json` | `.github/instructions/version-control.instructions.md` |
 | `_data/backlog.yml`, `scripts/sync-backlog.*`, `.github/workflows/backlog-sync.yml` | `.github/instructions/backlog.instructions.md` |
 | `pages/**/*.md`, `.github/config/content_review.yml`, `.claude/agents/content-reviewer.md`, `scripts/content-review.rb`, `.github/workflows/ai-content-review.yml` | `.github/instructions/content-review.instructions.md` |
+| `_includes/components/ai-chat.html`, `assets/js/ai-chat.js`, `templates/deploy/chat-proxy/**` | `.github/instructions/ai-chat.instructions.md` |
 
 ### Reusable prompts
 
