@@ -15,6 +15,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - c78433f1 fix(content): render mermaid on 12 pages, restore Obsidian graph, migration tests (T-019) (#150)
 
 ### Added
+- **Chat GitHub actions**: the assistant can file GitHub issues and open content/UI-improvement pull requests via Claude tool use (`get_page_source`, `create_github_issue`, `create_pull_request`), every creation gated by an in-chat confirmation card; `ai_chat.github.mode: 'url'` (default) opens pre-filled github.com forms with no token anywhere, `'proxy'` creates them server-side
+- **Chat proxy template** (`templates/deploy/chat-proxy/`): Cloudflare Worker that streams `/api/chat` to the Claude Messages API and serves `/api/github/issue` + `/api/github/pull-request` with a server-side fine-grained token, an origin allowlist, and server-pinned model/max_tokens
+- **Chat proxy: Claude Code connector (OAuth) auth**: the proxy can authenticate to Claude with a Claude Code / Claude.ai OAuth login token (`Authorization: Bearer` + `anthropic-beta: oauth-2025-04-20`) instead of an API key — three auto-detected modes by precedence: rotating `ANTHROPIC_OAUTH_REFRESH_TOKEN` (KV-cached, auto-refreshed), long-lived `CLAUDE_CODE_OAUTH_TOKEN` (from `claude setup-token`), and `ANTHROPIC_API_KEY`; OAuth modes pair with a Cloudflare Access gate for private deployments
+- **Chat local dev proxy** (`templates/deploy/chat-proxy/dev-proxy.mjs`): runs the same Worker logic on Node, reads `CLAUDE_CODE_OAUTH_TOKEN`/`ANTHROPIC_API_KEY` from `.env`, and serves `/api/chat` at `localhost:8787` so the assistant works during `docker-compose up` with no Cloudflare deploy; `_config_dev.yml` wires the widget to it
+- **Chat proxy CI deploy** (`.github/workflows/deploy-chat-proxy.yml` + `templates/deploy/chat-proxy/wrangler.toml`): deploys the Worker to Cloudflare (`workers.dev`, cross-origin) on push to `main` or manual dispatch, setting `ANTHROPIC_API_KEY` from a GitHub Actions secret via `wrangler-action`; requires only `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID`/`ANTHROPIC_API_KEY` repo secrets
+- **Chat local page editing (dev only)**: with `ai_chat.local_edit: true` (set in `_config_dev.yml`), the assistant gains an `update_page_content` tool and the dev proxy exposes sandboxed `/api/page/source` + `/api/page/update` routes (`templates/deploy/chat-proxy/page-store.mjs`) so it can rewrite the current page's source file in the working tree — the dev server `--watch` rebuilds it live. Path-confined to the repo, content extensions only, existing files only; off in production (the Worker has no filesystem)
+- **Chat feature registered in the layered guidance system**: new `.github/instructions/ai-chat.instructions.md` (auth modes, server caps, confirmation/safety contracts) registered in `CLAUDE.md`, `AGENTS.md`, the instructions index, and the ZER0-060 registry; resolved the `templates/deploy/**` glob collision with `install.instructions.md`; documented the shared `ANTHROPIC_API_KEY` (chat proxy + content reviewer) in `docs/systems/github-secrets-setup.md`; chat edit/PR prompts now bump `lastmod` and follow the content-review conventions so chat-authored changes pass the automated reviewer
 - **AI content reviewer framework**: a two-tier reviewer that runs on every PR
   touching `pages/**/*.md` and integrates with Claude Code agents to ensure SEO
   is met and content is consistent, polished, and styled to the collection's
@@ -34,6 +41,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Config & guidance** — `.github/config/content_review.yml` (per-collection
     thresholds + assigned skills/prompts), `.github/instructions/content-review.instructions.md`,
     the `/content-review` prompt + Cursor command, and the `content-review` skill.
+
+### Changed
+- **AI Chat Assistant rebuilt on the Claude Messages API**: requests use the `POST /v1/messages` shape (top-level `system`, content blocks, `anthropic-version`; direct mode adds `anthropic-dangerous-direct-browser-access`) instead of OpenAI Chat Completions; responses stream token-by-token over SSE; default model is `claude-opus-4-8` and the unsupported `temperature` knob was removed; widget logic moved from inline `<script>` to `assets/js/ai-chat.js`
 
 ## [1.17.1] - 2026-06-13
 

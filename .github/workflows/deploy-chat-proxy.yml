@@ -1,0 +1,42 @@
+name: Deploy chat proxy
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-chat-proxy
+  cancel-in-progress: false
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'templates/deploy/chat-proxy/worker.js'
+      - 'templates/deploy/chat-proxy/wrangler.toml'
+      - '.github/workflows/deploy-chat-proxy.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Deploys the AI chat proxy Worker to Cloudflare and sets its secret.
+      # Required GitHub Actions secrets:
+      #   CLOUDFLARE_API_TOKEN   - token with "Edit Cloudflare Workers" permission
+      #   CLOUDFLARE_ACCOUNT_ID  - your Cloudflare account id
+      #   ANTHROPIC_API_KEY      - Anthropic API key the Worker calls Claude with
+      # Optional (proxy-mode issue/PR creation): add GITHUB_TOKEN to the
+      # `secrets:` list below and a CHAT_GITHUB_TOKEN repo secret mapped in env.
+      - name: Deploy Worker to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: templates/deploy/chat-proxy
+          wranglerVersion: '3'
+          secrets: |
+            ANTHROPIC_API_KEY
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

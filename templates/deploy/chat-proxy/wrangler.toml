@@ -1,0 +1,32 @@
+# Live Cloudflare Worker config for the zer0-mistakes.com AI chat proxy.
+# Deployed by .github/workflows/deploy-chat-proxy.yml (wrangler-action).
+# Forks: change `name`, ALLOWED_ORIGINS, and GITHUB_REPOSITORY to your own.
+#
+# Secrets are NOT here — the workflow sets them from GitHub Actions secrets:
+#   ANTHROPIC_API_KEY  (required)   GITHUB_TOKEN (optional, proxy-mode issue/PR)
+# accountId is provided by the workflow via CLOUDFLARE_ACCOUNT_ID.
+
+name = "zer0-mistakes-chat-proxy"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+
+# DNS is not on Cloudflare, so serve from the *.workers.dev subdomain
+# (cross-origin). The widget's ai_chat.endpoint points at this URL; the
+# ALLOWED_ORIGINS below is what makes the cross-origin call pass CORS.
+workers_dev = true
+
+[vars]
+# Origins allowed to call the proxy (the published site + github.io fallback).
+ALLOWED_ORIGINS = "https://zer0-mistakes.com,https://bamr87.github.io"
+
+# "owner/repo" the GitHub routes act on.
+GITHUB_REPOSITORY = "bamr87/zer0-mistakes"
+BASE_BRANCH = "main"
+PR_BRANCH_PREFIX = "chat/"
+
+# Model + cost guardrails enforced server-side.
+CHAT_MODEL = "claude-opus-4-8"
+MAX_TOKENS_CAP = "4096"
+
+# Public, API-key auth: no KV namespace and no Cloudflare Access needed.
+# (KV + REQUIRE_CF_ACCESS are only for the personal OAuth modes — see README.)
