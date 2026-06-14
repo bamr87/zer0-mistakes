@@ -198,6 +198,13 @@ def strip_code_fences(body)
   body.gsub(/^```.*?^```/m, '').gsub(/`[^`]*`/, '')
 end
 
+# Remove Liquid {% raw %}...{% endraw %} regions. Content inside them is a
+# literal display example (often showing ``` fences or {{ }} tags), not real
+# page structure, so it must not be counted by the quality/style checks.
+def strip_liquid_raw(body)
+  body.gsub(/\{%-?\s*raw\s*-?%\}.*?\{%-?\s*endraw\s*-?%\}/m, '')
+end
+
 # --- Collection detection ----------------------------------------------------
 def detect_collection(path, schema)
   collections = schema['collections'] || {}
@@ -286,6 +293,8 @@ end
 
 def check_quality(body, quality)
   issues = []
+  # Liquid {% raw %} examples are display-only — exclude them from every check.
+  body = strip_liquid_raw(body)
   prose = strip_code_fences(body)
   words = prose.split(/\s+/).reject(&:empty?)
   wc = words.length
@@ -314,9 +323,18 @@ def check_quality(body, quality)
 
   # Code fences must declare a language.
   if quality['require_code_fence_language']
-    body.scan(/^```([^\n]*)\n/).each do |m|
-      info = m[0].strip
-      issues << Issue.new('info', 'quality', 'Code fence without a language (use ```bash, ```ruby, …)') if info.empty?
+    # Only opening fences need a language; toggle state so the matching closing
+    # fence (a bare ```) is not counted.
+    in_fence = false
+    body.each_line do |line|
+      next unless line =~ /^\s*```(.*)$/
+
+      if in_fence
+        in_fence = false # closing fence — no language required
+      else
+        in_fence = true
+        issues << Issue.new('info', 'quality', 'Code fence without a language (use ```bash, ```ruby, …)') if Regexp.last_match(1).strip.empty?
+      end
     end
   end
 
@@ -337,7 +355,7 @@ end
 
 def check_style(body, style)
   issues = []
-  prose = strip_code_fences(body)
+  prose = strip_code_fences(strip_liquid_raw(body))
   (style['terminology'] || {}).each do |wrong, right|
     next if wrong.to_s.empty?
 
