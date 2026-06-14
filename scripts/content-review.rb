@@ -314,9 +314,18 @@ def check_quality(body, quality)
 
   # Code fences must declare a language.
   if quality['require_code_fence_language']
-    body.scan(/^```([^\n]*)\n/).each do |m|
-      info = m[0].strip
-      issues << Issue.new('info', 'quality', 'Code fence without a language (use ```bash, ```ruby, …)') if info.empty?
+    # Only opening fences need a language; toggle state so the matching closing
+    # fence (a bare ```) is not counted.
+    in_fence = false
+    body.each_line do |line|
+      next unless line =~ /^\s*```(.*)$/
+
+      if in_fence
+        in_fence = false # closing fence — no language required
+      else
+        in_fence = true
+        issues << Issue.new('info', 'quality', 'Code fence without a language (use ```bash, ```ruby, …)') if Regexp.last_match(1).strip.empty?
+      end
     end
   end
 
