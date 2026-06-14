@@ -27,7 +27,7 @@ sidebar:
 
 # SEO Features
 
-The Zer0-Mistakes theme includes comprehensive SEO features for better search engine visibility.
+The Zer0-Mistakes theme ships Open Graph and Twitter Card meta tags, JSON-LD structured data, an XML sitemap, and a search index — all enabled automatically with no plugin required.
 
 ## Features
 
