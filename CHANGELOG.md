@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   a file's score (e.g. `pages/_about/features/jekyll.md` scored 0/100 almost
   entirely from this false positive). The check now tracks fence open/close state
   and only validates opening fences.
+- **content-review: ignore Liquid `{% raw %}` blocks** in the quality and style
+  checks. Code fences, headings, images, and terminology inside `{% raw %}…
+  {% endraw %}` are literal display examples, not page structure, and were being
+  counted as real findings.
 
 ## [1.18.0] - 2026-06-13
 
