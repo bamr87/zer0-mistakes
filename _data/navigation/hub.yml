@@ -6,114 +6,68 @@
 - title: Hub Dashboard
   icon: bi-grid-1x2
   url: "/hub/"
-- title: 2005 — Year Knowledge Base
+- title: '1776'
   icon: bi-journal-richtext
-  url: https://year-of-ai.github.io/2005/
+  url: https://year-of-ai.github.io/1776/
   children:
   - title: Site Home
-    url: https://year-of-ai.github.io/2005/
+    url: https://year-of-ai.github.io/1776/
   - title: Timeline
-    url: https://year-of-ai.github.io/2005/TIMELINE/
+    url: https://year-of-ai.github.io/1776/TIMELINE/
   - title: Arts & Culture
-    url: https://year-of-ai.github.io/2005/arts-culture/
-  - title: History & Politics
-    url: https://year-of-ai.github.io/2005/history-politics/
-  - title: People
-    url: https://year-of-ai.github.io/2005/people/
-  - title: Science & Technology
-    url: https://year-of-ai.github.io/2005/science-technology/
-  - title: Society & Economics
-    url: https://year-of-ai.github.io/2005/society-economics/
-- title: 2006 — Year Knowledge Base
+    url: https://year-of-ai.github.io/1776/arts/
+  - title: Economics & Trade
+    url: https://year-of-ai.github.io/1776/economics/
+  - title: Military Events
+    url: https://year-of-ai.github.io/1776/military/
+  - title: Key Figures
+    url: https://year-of-ai.github.io/1776/people/
+  - title: Political Events
+    url: https://year-of-ai.github.io/1776/politics/
+  - title: Science & Discovery
+    url: https://year-of-ai.github.io/1776/science/
+- title: '1777'
   icon: bi-journal-richtext
-  url: https://year-of-ai.github.io/2006/
+  url: https://year-of-ai.github.io/1777/
   children:
   - title: Site Home
-    url: https://year-of-ai.github.io/2006/
+    url: https://year-of-ai.github.io/1777/
   - title: Timeline
-    url: https://year-of-ai.github.io/2006/TIMELINE/
-  - title: Arts & Culture
-    url: https://year-of-ai.github.io/2006/arts-culture/
-  - title: History & Politics
-    url: https://year-of-ai.github.io/2006/history-politics/
-  - title: People
-    url: https://year-of-ai.github.io/2006/people/
-  - title: Science & Technology
-    url: https://year-of-ai.github.io/2006/science-technology/
-  - title: Society & Economics
-    url: https://year-of-ai.github.io/2006/society-economics/
-- title: 2007 — Year Knowledge Base
+    url: https://year-of-ai.github.io/1777/TIMELINE/
+  - title: Arts & Culture — 1777
+    url: https://year-of-ai.github.io/1777/arts/
+  - title: Economics & Trade — 1777
+    url: https://year-of-ai.github.io/1777/economics/
+  - title: Military Events — 1777
+    url: https://year-of-ai.github.io/1777/military/
+  - title: Key Figures — 1777
+    url: https://year-of-ai.github.io/1777/people/
+  - title: Political Events — 1777
+    url: https://year-of-ai.github.io/1777/politics/
+  - title: Science & Discovery — 1777
+    url: https://year-of-ai.github.io/1777/science/
+- title: 2005-2011
   icon: bi-journal-richtext
-  url: https://year-of-ai.github.io/2007/
+  url: https://year-of-ai.github.io/2005-2011/
   children:
   - title: Site Home
-    url: https://year-of-ai.github.io/2007/
+    url: https://year-of-ai.github.io/2005-2011/
   - title: Timeline
-    url: https://year-of-ai.github.io/2007/TIMELINE/
-  - title: Arts & Culture
-    url: https://year-of-ai.github.io/2007/arts-culture/
-  - title: History & Politics
-    url: https://year-of-ai.github.io/2007/history-politics/
-  - title: People
-    url: https://year-of-ai.github.io/2007/people/
-  - title: Science & Technology
-    url: https://year-of-ai.github.io/2007/science-technology/
-  - title: Society & Economics
-    url: https://year-of-ai.github.io/2007/society-economics/
-- title: 2008 — Year Knowledge Base
-  icon: bi-journal-richtext
-  url: https://year-of-ai.github.io/2008/
-  children:
-  - title: Site Home
-    url: https://year-of-ai.github.io/2008/
-  - title: Timeline
-    url: https://year-of-ai.github.io/2008/TIMELINE/
-  - title: Arts & Culture — 2008
-    url: https://year-of-ai.github.io/2008/arts-culture/
-  - title: History & Politics — 2008
-    url: https://year-of-ai.github.io/2008/history-politics/
-  - title: People — 2008
-    url: https://year-of-ai.github.io/2008/people/
-  - title: Science & Technology — 2008
-    url: https://year-of-ai.github.io/2008/science-technology/
-  - title: Society & Economics — 2008
-    url: https://year-of-ai.github.io/2008/society-economics/
-- title: '2009'
-  icon: bi-journal-richtext
-  url: https://year-of-ai.github.io/2009/
-  children:
-  - title: Site Home
-    url: https://year-of-ai.github.io/2009/
-  - title: Timeline
-    url: https://year-of-ai.github.io/2009/TIMELINE/
-  - title: Arts & Culture — The Year 2009
-    url: https://year-of-ai.github.io/2009/arts-culture/
-  - title: History & Politics — The Year 2009
-    url: https://year-of-ai.github.io/2009/history-politics/
-  - title: People — The Year 2009
-    url: https://year-of-ai.github.io/2009/people/
-  - title: Science & Technology — The Year 2009
-    url: https://year-of-ai.github.io/2009/science-technology/
-  - title: Society & Economics — The Year 2009
-    url: https://year-of-ai.github.io/2009/society-economics/
-- title: '2010'
-  icon: bi-journal-richtext
-  url: https://year-of-ai.github.io/2010/
-  children:
-  - title: Site Home
-    url: https://year-of-ai.github.io/2010/
-  - title: Timeline
-    url: https://year-of-ai.github.io/2010/TIMELINE/
-  - title: Arts & Culture
-    url: https://year-of-ai.github.io/2010/arts-culture/
-  - title: History & Politics
-    url: https://year-of-ai.github.io/2010/history-politics/
-  - title: People
-    url: https://year-of-ai.github.io/2010/people/
-  - title: Science & Technology
-    url: https://year-of-ai.github.io/2010/science-technology/
-  - title: Society & Economics
-    url: https://year-of-ai.github.io/2010/society-economics/
+    url: https://year-of-ai.github.io/2005-2011/TIMELINE/
+  - title: '2005'
+    url: https://year-of-ai.github.io/2005-2011/2005/
+  - title: '2006'
+    url: https://year-of-ai.github.io/2005-2011/2006/
+  - title: '2007'
+    url: https://year-of-ai.github.io/2005-2011/2007/
+  - title: '2008'
+    url: https://year-of-ai.github.io/2005-2011/2008/
+  - title: '2009'
+    url: https://year-of-ai.github.io/2005-2011/2009/
+  - title: '2010'
+    url: https://year-of-ai.github.io/2005-2011/2010/
+  - title: '2011'
+    url: https://year-of-ai.github.io/2005-2011/2011/
 - title: year-of-ai.github.io
   icon: bi-journal-richtext
   url: https://year-of-ai.github.io/
