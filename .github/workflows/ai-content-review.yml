@@ -119,27 +119,72 @@ jobs:
     needs: [deterministic-review, gate]
     if: ${{ github.event_name == 'pull_request' && needs.gate.outputs.ai_enabled == 'true' && needs.deterministic-review.outputs.has_content == 'true' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Claude content review
-        uses: anthropics/claude-code-action@v1
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          prompt: |
-            Use the content-reviewer subagent to review the Markdown content
-            files changed in pull request #${{ github.event.pull_request.number }}
-            (base: ${{ github.base_ref }}). Follow
-            .github/instructions/content-review.instructions.md and the
-            thresholds in .github/config/content_review.yml. Post a single
-            consolidated review comment on the PR using the agent's output
-            format. Focus on SEO, consistency, polish, accessibility, and
-            technical accuracy. Do not modify files.
-          claude_args: |
-            --model claude-sonnet-4-6
-            --max-turns 20
-            --allowedTools "Task,Read,Grep,Glob,Bash(git diff:*),Bash(ruby scripts/content-review.rb:*)"
+          ruby-version: "3.3"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Run content-reviewer agent (headless)
+        id: agent
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          BASE_REF: origin/${{ github.base_ref }}
+        run: |
+          set +e
+          read -r -d '' PROMPT <<EOF
+          Use the content-reviewer subagent to review the Markdown content files
+          changed on this branch versus ${BASE_REF}. Follow
+          .github/instructions/content-review.instructions.md and the
+          per-collection thresholds in .github/config/content_review.yml. Focus
+          on SEO, consistency, polish, accessibility, and technical accuracy.
+          Output ONLY the final Markdown review (verdict + per-file findings +
+          summary) to stdout. Do not modify any files, and do not print anything
+          before or after the review itself.
+          EOF
+          # Read-only allowlist: the agent never writes — posting is done by the
+          # sticky-comment step below, so no edit/comment tools are granted.
+          claude -p "$PROMPT" \
+            --model claude-sonnet-4-6 \
+            --max-turns 30 \
+            --allowedTools "Task,Read,Grep,Glob,Bash(ruby scripts/content-review.rb:*),Bash(git diff:*),Bash(git merge-base:*),Bash(cat /tmp/content-review.json)" \
+            --output-format text \
+            > /tmp/agent-review.md 2> /tmp/agent-err.log
+          status=$?
+          echo "claude exit status: $status"
+          echo "----- stderr (tail) -----"
+          tail -n 50 /tmp/agent-err.log || true
+          if [ ! -s /tmp/agent-review.md ]; then
+            {
+              echo "## 🤖 Claude Code Content Review"
+              echo
+              echo "The content-reviewer agent did not produce output (exit \`$status\`). See the job logs for details."
+            } > /tmp/agent-review-final.md
+          else
+            {
+              echo "## 🤖 Claude Code Content Review"
+              echo
+              cat /tmp/agent-review.md
+            } > /tmp/agent-review-final.md
+          fi
+
+      - name: Post agent review
+        if: always()
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: ai-content-review-agent
+          path: /tmp/agent-review-final.md
