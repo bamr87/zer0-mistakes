@@ -1,19 +1,24 @@
 ---
-title: Jeykll
-preview: /images/previews/jeykll.png
+title: "Jekyll Cheatsheet: Setup, Liquid Filters & Templates"
+description: "A practical Jekyll reference covering installation, Liquid filters, layout templates, folder structure, permalinks, and paginator variables."
+preview: /images/previews/jekyll.png
 permalink: /notes/jekyll/
-lastmod: 2025-12-20T22:15:46.473Z
+lastmod: 2026-06-14T14:30:00.000Z
 published: false
 draft: true
 ---
 
-# Jeykll
+# Jekyll Cheatsheet
+
+Use this reference for common Jekyll setup commands, Liquid template syntax, folder conventions, and built-in filters.
 
 {% raw %}
 [Cheatsheet](https://learn-the-web.algonquindesign.ca/topics/jekyll-cheat-sheet/)
 
 Setup and use
 Installation
+
+> For this theme, the recommended setup is Docker: `docker-compose up` (see the project README).
 
 All these commands should be executed in Terminal, one-by-one, in order.
 
@@ -41,7 +46,7 @@ bundle install
 
 ☛ Jekyll installation.
 
-Starting & stopping
+Starting and stopping
 
 First, open your Jekyll folder in Terminal using the GitHub app shortcut—⌃`
 
@@ -51,9 +56,8 @@ Start Jekyll:
 bundle exec jekyll serve
 ```
 
-View your website in a browser:
+View your website in a browser at `http://localhost:4000/`.
 
-'http://localhost:4000/'
 Stop Jekyll:
 
 Control + C
@@ -96,12 +100,12 @@ index.html
 meat-eaters.html
 ```
 
-Files & paths
+Files and paths
 Linking pages
 
 With permalink: pretty turned on the .html extension can be left off URLs.
 
-\*All links & hrefs & srcs should always start with a forward slash: /
+\*All links and hrefs and srcs should always start with a forward slash: /
 
 ```html
 <a href="/plant-eaters/">Plant eaters</a>
@@ -130,17 +134,17 @@ Linking images
 Link images like normal, make sure to start with a /
 
 ```html
-<img src="/images/trex.jpg" alt="" />
+<img src="/images/trex.jpg" alt="Tyrannosaurus Rex dinosaur" />
 ```
 
 Or for GitHub Pages folder hosting:
 
 ```html
-<img src="{{site.baseurl}}/images/trex.jpg" alt="" />
+<img src="{{site.baseurl}}/images/trex.jpg" alt="Tyrannosaurus Rex dinosaur" />
 ```
 
 Layouts
-Common header & footer
+Common header and footer
 
 First create a new file inside the \_layouts folder, name it whatever you want. Inside that file put the common
 HTML.
@@ -166,14 +170,13 @@ At the top of each page use YAML front matter to denote which layout to use:
 
 index.html
 
-````yaml
+```html
 ---
 layout: default
 ---
 
-```html
 <h1>Homepage</h1>
-````
+```
 
 Layouts can be nested by including a different layout at the top of a layout HTML file.
 
@@ -227,10 +230,10 @@ Use an if-statement inside the `<a>` tag to add the .current class.
 >
 ```
 
-Data, includes & posts
+Data, includes and posts
 Data
 
-Data files allow us to separate content from it’s presentation HTML.
+Data files allow us to separate content from its presentation HTML.
 
 Put data files in the \_data folder.
 
@@ -341,7 +344,7 @@ The if-statement can be used to do different things based on certain conditions.
 ```
 
 Template filters
-Check out the complete Liquid for Designers resource & Jekyll’s filter docs.
+Check out the complete Liquid for Designers resource and Jekyll’s filter docs.
 
 Date
 
@@ -404,7 +407,7 @@ Will convert an object or array into JSON.
 
 ## Add Class or ID to markdown element
 
-https://boringrails.com/tips/jekyll-css-class
+[Adding CSS classes to Markdown elements (Boring Rails)](https://boringrails.com/tips/jekyll-css-class)
 
 {% endraw %}
 
@@ -443,7 +446,7 @@ https://boringrails.com/tips/jekyll-css-class
 ## Jekyll Commands
 
 ```shell
-jekyll --help
+bundle exec jekyll --help
 ```
 
 ```
@@ -475,7 +478,7 @@ Subcommands:
 ### `build` Command
 
 ```shell
-jekyll help build
+bundle exec jekyll help build
 ```
 
 ```
@@ -500,9 +503,10 @@ Options:
 ### `serve` Command
 
 ```shell
-jekyll help serve
+bundle exec jekyll help serve
 ```
 
+```
 jekyll serve [options]
 
 Options:
@@ -517,25 +521,24 @@ Build Options:
 --force_polling Force watch to use polling
 
 plus all build options (see build command)
-
-````
+```
 
 
 ## Jekyll Quickstart
 
 ```shell
-jekyll new my-site
+bundle exec jekyll new my-site
 # => New jekyll site installed in ~/my-site
 cd my-site
-jekyll build
+bundle exec jekyll build
      # => Configuration file: ~/_config.yml
      #                Source: ~/my-site
      #           Destination: ~/my-site/_site
      #          Generating... done.
-jekyll serve
+bundle exec jekyll serve
      # =>     Server address: http://127.0.0.1:4000/
      #      Server running... press ctrl-c to stop.
-````
+```
 
 Browse your site e.g. open the page @ `http://127.0.0.1:4000`
 
@@ -662,7 +665,7 @@ Excerpt
 Out-of-excerpt
 ```
 
-### Tips & Tricks
+### Tips and Tricks
 
 **Including images and resources**
 
@@ -681,22 +684,6 @@ Drafts are unpublished posts without a date.
 |   ├── week-4-kramdown.md
 |   └── week-5-feedparser.md
 ```
-
-## `_layouts` Folder
-
-TBD
-
-## `_includes` Folder
-
-TBD
-
-## `_data` Folder
-
-TBD
-
-## `_COLLECTION` Folder (e.g `_books`, `_albums`, etc.)
-
-TBD
 
 ## Global Variables
 
@@ -904,15 +891,6 @@ page.previous     --  The previous post relative to the position of the current 
 
 **Escape (XML, CGI, URI) Filters**
 
-````liquid
-{% raw %}
-{{ page.content | xml_escape }}      -- Escape some text for use in XML
-{{ "foo,bar;baz?" | cgi_escape }}    -- CGI escape a string for use in a URL;
- # => foo%2Cbar%3Bbaz%3F                replaces any special characters with appropriate %XX replacements
-{{ "foo, bar \baz?" | uri_escape }}  -- URI escape a string
- # => foo,%20bar%20%5Cbaz?
-{% endraw %}
-
 ```liquid
 {% raw %}
 {{ page.content | xml_escape }}      -- Escape some text for use in XML
@@ -921,38 +899,10 @@ page.previous     --  The previous post relative to the position of the current 
 {{ "foo, bar \baz?" | uri_escape }}  -- URI escape a string
  # => foo,%20bar%20%5Cbaz?
 {% endraw %}
-````
+```
 
 **Convert (`markdownify`, `slugify`, `sassify`, `jsonify`) Filters**
 
-````liquid
-{% raw %}
-{{ page.excerpt | markdownify }}        -- Convert a Markdown-formatted string into HTML
-{{ site.data.projects | jsonify }}      -- Convert Hash or Array to JSON
-{{ some_scss | scssify }}               -- Convert a SCSS-formatted string into CSS
-{{ some_sass | sassify }}               -- Convert a Sass-formatted string into CSS
-
-{{ "The _config.yml file" | slugify }}            -- Convert a string into a lowercase URL "slug";
- # => the-config-yml-file                            with option 'pretty': spaces and non-alphanumeric chars
-{{ "The _config.yml file" | slugify: 'pretty' }}     except for ._~!$&'()+,;=@
- # => the-_config.yml-file
-
-{{ "The _config.yml file" | slugify }}            -- Convert a string into a lowercase URL "slug";
- # => the-config-yml-file                            with option 'pretty': spaces and non-alphanumeric chars
-{{ "The _config.yml file" | slugify: 'pretty' }}     except for ._~!$&'()+,;=@
- # => the-_config.yml-file
-
-{{ "The _config.yml file" | slugify }}            -- Convert a string into a lowercase URL "slug";
- # => the-config-yml-file                            with option 'pretty': spaces and non-alphanumeric chars
-{{ "The _config.yml file" | slugify: 'pretty' }}     except for ._~!$&'()+,;=@
- # => the-_config.yml-file
-
-{{ "The _config.yml file" | slugify }}            -- Convert a string into a lowercase URL "slug";
- # => the-config-yml-file                            with option 'pretty': spaces and non-alphanumeric chars
-{{ "The _config.yml file" | slugify: 'pretty' }}     except for ._~!$&'()+,;=@
- # => the-_config.yml-file
-{% endraw %}
-
 ```liquid
 {% raw %}
 {{ page.excerpt | markdownify }}        -- Convert a Markdown-formatted string into HTML
@@ -965,7 +915,7 @@ page.previous     --  The previous post relative to the position of the current 
 {{ "The _config.yml file" | slugify: 'pretty' }}     except for ._~!$&'()+,;=@
  # => the-_config.yml-file
 {% endraw %}
-````
+```
 
 **Misc Filters**
 
@@ -978,43 +928,10 @@ page.previous     --  The previous post relative to the position of the current 
 {% endraw %}
 ```
 
-````liquid
-{% raw %}
-{{ page.content | number_of_words }}         -- Count the number of words in some text
- # => 1337
-{{ page.tags | array_to_sentence_string }}   -- Convert an array into a sentence. Useful for listing tags
- # => foo, bar, and baz
-{% endraw %}
-
-```liquid
-{% raw %}
-{{ page.content | number_of_words }}         -- Count the number of words in some text
- # => 1337
-{{ page.tags | array_to_sentence_string }}   -- Convert an array into a sentence. Useful for listing tags
- # => foo, bar, and baz
-{% endraw %}
-
-```liquid
-{% raw %}
-{{ page.content | number_of_words }}         -- Count the number of words in some text
- # => 1337
-{{ page.tags | array_to_sentence_string }}   -- Convert an array into a sentence. Useful for listing tags
- # => foo, bar, and baz
-{% endraw %}
-````
-
 ### Jekyll Tags
 
 **Include Tag**
 
-````liquid
-{% raw %}
-{% include footer.html %}                  -- Searches for include file in _includes folder
-{% include footer.html param="value" %}       You can also pass parameters to an include
-
-{% include_relative somedir/footer.html %} -- Searches for include file relative to the file where used
-{% endraw %}
-
 ```liquid
 {% raw %}
 {% include footer.html %}                  -- Searches for include file in _includes folder
@@ -1022,7 +939,7 @@ page.previous     --  The previous post relative to the position of the current 
 
 {% include_relative somedir/footer.html %} -- Searches for include file relative to the file where used
 {% endraw %}
-````
+```
 
 **Code Syntax Highlighting Tag**
 
@@ -1136,25 +1053,22 @@ body {
 }
 ```
 
+Note: Front matter (minimal) is required at the top of the file:
+
 ```yaml
-Note: Front matter (minimal)
+---
+---
 ```
 
----
-
----
-
-````
-
-or with comments
+or with comments:
 
 ```yaml
 ---
 # ensure Jekyll converts scss to css
 ---
-````
+```
 
-required; ensures Jekyll converts `style.scss` to `style.css`;
+The empty front matter is required; it ensures Jekyll converts `style.scss` to `style.css`;
 include all partials (e.g. `_settings.scss`, and so on) with `@import` directives.
 
 (Source: [jekyll-sass-converter gem](https://github.com/jekyll/jekyll-sass-converter))

@@ -1,16 +1,16 @@
 ---
-title: Amr Abdel-Motaleb
+title: "Amr Abdel-Motaleb — Software Architect & IT Journey Author"
+description: "Profile of Amr Abdel-Motaleb, software architect and creator of the Zer0-Mistakes Jekyll theme and the IT Journey learning platform."
 preview: /images/previews/amr-abdel-motaleb.png
 name: Amr Abdel-Motaleb
 avatar: /assets/images/bamr-avatar.png
 excerpt: IT Wizard, Software Architect, Tech Enthusiast.
 location: Denver, CO
-email: null
 website: https://it-journey.dev
 github: bamr87
 twitter: bamr42
 linkedin: amrabdel
-lastmod: 2024-05-25T19:07:46.394Z
+lastmod: 2026-06-14T14:30:00.000Z
 permalink: /about/bamr87/
 ---
 
