@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- **content-review: closing code fences no longer counted as "missing language"**.
+  `scripts/content-review.rb` flagged every bare ```` ``` ```` line, including the
+  *closing* fence of a properly tagged block, which double-counted and could tank
+  a file's score (e.g. `pages/_about/features/jekyll.md` scored 0/100 almost
+  entirely from this false positive). The check now tracks fence open/close state
+  and only validates opening fences.
+
 ## [1.18.0] - 2026-06-13
 
 ### Changed
