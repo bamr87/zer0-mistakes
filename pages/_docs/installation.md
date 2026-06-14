@@ -14,8 +14,8 @@ permalink: /docs/installation/
 difficulty: beginner
 estimated_reading_time: 10 minutes
 prerequisites: []
-lastmod: 2025-12-20
-lastmod: 2025-12-20T22:15:46.005Z
+lastmod: 2026-06-14T00:00:00.000Z
+lastmod: 2026-06-14T00:00:00.000Z
 sidebar:
     nav: docs
 ---
@@ -104,7 +104,7 @@ docker-compose exec jekyll jekyll doctor
 ## Next Steps
 
 - [Docker Development Guide](/docs/docker/) - Learn Docker commands and workflows
-- [Jekyll Configuration](/docs/jekyll/jekyll-config/) - Customize your site
+- [Jekyll Configuration](/docs/jekyll/) - Customize your site
 - [Troubleshooting](/docs/troubleshooting/) - Common issues and solutions
 
 ## Technical Reference

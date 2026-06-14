@@ -1,6 +1,6 @@
 ---
 title: About
-description: Learn about Zer0-Mistakes — a Docker-first Jekyll theme with Bootstrap 5, AI-powered installation, automated releases, and privacy-compliant analytics. Includes site philosophy, tech stack, quick-start examples, and FAQ.
+description: Learn about Zer0-Mistakes — a Docker-first Jekyll theme with Bootstrap 5, AI-powered installation, automated releases, and privacy-compliant analytics.
 excerpt: The story, stack, and quick-start guide for the Zer0-Mistakes Jekyll theme — Docker-first, Bootstrap 5, GitHub Pages compatible.
 preview: /images/previews/about.png
 layout: default
@@ -17,7 +17,7 @@ tags:
   - getting-started
 draft: false
 date: 2024-05-31T01:35:49.414Z
-lastmod: 2026-04-29T00:00:00.000Z
+lastmod: 2026-06-14T00:00:00.000Z
 permalink: /about/
 slug: about
 collection: about

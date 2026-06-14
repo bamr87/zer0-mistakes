@@ -14,8 +14,8 @@ difficulty: beginner
 estimated_reading_time: 5 minutes
 prerequisites:
     - Docker Desktop
-lastmod: 2025-12-20
-lastmod: 2025-12-20T22:15:46.186Z
+lastmod: 2026-06-14T00:00:00.000Z
+lastmod: 2026-06-14T00:00:00.000Z
 sidebar:
     nav: docs
 ---
@@ -140,7 +140,7 @@ docker-compose down -v && docker-compose up --build
 
 - [Installation Guide](/docs/installation/)
 - [Troubleshooting](/docs/troubleshooting/)
-- [Jekyll Configuration](/docs/jekyll/jekyll-config/)
+- [Jekyll Configuration](/docs/jekyll/)
 
 ## See also
 

@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:29:50.000Z
+lastmod: 2026-06-14T00:00:00.000Z
 title: Jekyll
 description: Jekyll basics and Zer0-Mistakes development workflow (Docker-first).
 preview: /images/previews/jekyll.png
@@ -94,7 +94,7 @@ docker-compose exec jekyll jekyll clean
 
 ### Configuration & Setup
 
-- [Jekyll Configuration](/docs/jekyll/jekyll-config/) — Site settings and options
+- [Jekyll Configuration](/docs/jekyll/) — Site settings and options
 - [Front Matter](/docs/front-matter/) — Page metadata and options
 - [Code Highlighting](/docs/jekyll/code-highlighting/) — Syntax highlighting
 - [Pagination](/docs/jekyll/pagination/) — Post navigation

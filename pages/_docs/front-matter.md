@@ -13,8 +13,8 @@ permalink: /docs/front-matter/
 difficulty: beginner
 estimated_reading_time: 10 minutes
 prerequisites: []
-lastmod: 2025-12-20
-lastmod: 2025-12-20T22:15:46.744Z
+lastmod: 2026-06-14T00:00:00.000Z
+lastmod: 2026-06-14T00:00:00.000Z
 sidebar:
     nav: docs
 ---
@@ -64,7 +64,7 @@ date: 2025-01-15         # Required for posts: Publication date
 ---
 description: "A brief description for search engines (150-160 chars)"
 author: "Your Name"
-lastmod: 2025-01-20      # Last modified date
+lastmod: 2026-06-14T00:00:00.000Z
 keywords:
   primary: ["keyword1", "keyword2"]
   secondary: ["keyword3"]
@@ -121,7 +121,7 @@ estimated_reading_time: "10 minutes"
 prerequisites:
     - Docker installed
     - Basic Jekyll knowledge
-lastmod: 2025-01-15
+lastmod: 2026-06-14T00:00:00.000Z
 ---
 ```
 
@@ -172,7 +172,7 @@ difficulty: beginner
 estimated_reading_time: "10 minutes"
 prerequisites:
     - Docker Desktop
-lastmod: 2025-01-15
+lastmod: 2026-06-14T00:00:00.000Z
 sidebar:
     nav: docs
 ---
@@ -186,7 +186,7 @@ title: "Getting Started with Jekyll"
 description: "Learn the basics of Jekyll static site generation"
 layout: article
 date: 2025-01-15
-lastmod: 2025-01-20
+lastmod: 2026-06-14T00:00:00.000Z
 author: "Amr"
 categories:
     - tutorials
@@ -202,7 +202,7 @@ comments: true
 ## Related
 
 - [Jekyll Guide](/docs/jekyll/)
-- [Jekyll Configuration](/docs/jekyll/jekyll-config/)
+- [Jekyll Configuration](/docs/jekyll/)
 - [Liquid Templating](/docs/liquid/)
 
 ## See also
