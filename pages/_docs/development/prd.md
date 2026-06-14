@@ -27,9 +27,9 @@ sidebar:
 
 # Product Requirements Document
 
-The full PRD for the Zer0-Mistakes Jekyll theme — vision, user personas, feature
-requirements, technical architecture, KPIs, roadmap, and acceptance criteria —
-is maintained as a contributor reference in the technical docs.
+The Zer0-Mistakes Jekyll theme keeps its full PRD — vision, user personas,
+feature requirements, technical architecture, KPIs, roadmap, and acceptance
+criteria — as a contributor reference in the repository's technical docs.
 
 ## What you will find
 
