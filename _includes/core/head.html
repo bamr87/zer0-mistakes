@@ -30,7 +30,8 @@
 <!-- ANALYTICS AND TRACKING          -->
 <!-- ================================ -->
 <!-- Google Tag Manager - Must be in head section for proper tracking -->
-{% include analytics/google-tag-manager-head.html %}
+<!-- Only load in production builds (JEKYLL_ENV=production); the include also guards against dev hostnames -->
+{% if jekyll.environment == "production" %}{% include analytics/google-tag-manager-head.html %}{% endif %}
 
 <!-- ================================ -->
 <!-- JAVASCRIPT LIBRARIES            -->
@@ -118,7 +119,8 @@ window.MathJax = {
 <!-- ANALYTICS INTEGRATION     -->
 <!-- ========================== -->
 <!-- Google Analytics tracking - Configured in _config.yml -->
-{% include analytics/google-analytics.html %}
+<!-- Only load in production AND when an ID is configured; the include also guards against dev hostnames -->
+{% if jekyll.environment == "production" and site.google_analytics %}{% include analytics/google-analytics.html %}{% endif %}
 
 
 <!-- ================================ -->
