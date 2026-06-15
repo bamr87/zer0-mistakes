@@ -55,8 +55,8 @@
 
 meta:
   title: "zer0-mistakes Backlog"
-  updated: 2026-06-12
-  next_id: 22
+  updated: 2026-06-15
+  next_id: 27
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -573,3 +573,136 @@ tasks:
     links: { issue: null, pr: null, roadmap: null }
     created: 2026-06-13
     updated: 2026-06-13
+
+  # --- 2026-06-15 audit -------------------------------------------------------
+
+  - id: T-022
+    title: "Record shipped milestones v1.15–v1.18 in _data/roadmap.yml"
+    status: open
+    priority: P2
+    area: docs
+    risk: low
+    effort: S
+    source: audit
+    summary: >-
+      `ruby scripts/generate-roadmap.rb --validate` warns: "Active milestone is
+      v1.14 but the gem is at v1.18.1 (series 1.18). Advance the roadmap to
+      track the shipped version." Four minor and two patch releases (v1.15–v1.18)
+      shipped since the last roadmap update but are not recorded as `completed`
+      milestones. The roadmap page therefore shows v1.14 as the current work while
+      the gem is four minors ahead.
+    acceptance:
+      - "Milestones v1.15 (quality framework batch), v1.16 (AI chat + consumer audit), v1.17 (a11y + mermaid + migration tests), and v1.18 (AI content reviewer) added as `status: completed` with accurate `released:` dates from CHANGELOG.md."
+      - "The active milestone is advanced to v1.19 or the next planned entry, so only one `active` milestone remains."
+      - "`ruby scripts/generate-roadmap.rb --validate` exits 0 with no warnings."
+      - "`ruby scripts/generate-roadmap.rb --check` passes and the README roadmap section is regenerated."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-06-15
+    updated: 2026-06-15
+
+  - id: T-023
+    title: "Unit tests for sanitize_config_filter.rb (security-critical plugin)"
+    status: open
+    priority: P2
+    area: tests
+    risk: standard
+    effort: S
+    source: audit
+    summary: >-
+      `_plugins/sanitize_config_filter.rb` — the Liquid filter that redacts
+      credential lines from the admin config-page DOM — has no unit tests.
+      The filter has two distinct regex paths (SENSITIVE_KEY_RE for key-name
+      matching, PHC_VALUE_RE for PostHog token values) and is security-critical:
+      a broken regex silently exposes secrets in the rendered HTML. Only an
+      integration assertion in `test/visual/security.spec.js` exercises the
+      output end-to-end; no isolated unit test verifies each pattern or the
+      line-join output shape. Edge cases (multiline input, mixed-case keys,
+      partial matches, empty string) are unchecked.
+    acceptance:
+      - "A Minitest spec in `test/test_plugins.rb` (or a new `test_sanitize_filter.rb`) covers: SENSITIVE_KEY_RE matches `api_key`, `apikey`, `secret`, `password`, `token` (case-insensitive) and leaves non-secret lines untouched."
+      - "PHC_VALUE_RE coverage: a line with `phc_AbcDef123` is redacted; a line without it passes through."
+      - "Mixed input: a config block containing both a secret key and a safe key returns the correct partial redaction."
+      - "Edge cases: empty string and nil input return without error."
+      - "`./scripts/bin/test` stays green with the new specs included."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-06-15
+    updated: 2026-06-15
+
+  - id: T-024
+    title: "Unit tests for scripts/content-review.rb scoring engine"
+    status: open
+    priority: P2
+    area: tests
+    risk: standard
+    effort: M
+    source: audit
+    summary: >-
+      `scripts/content-review.rb` is a 470-line deterministic Ruby script that
+      powers the AI content-reviewer framework (v1.18) — it scores Markdown files
+      0–100 across front-matter, SEO, structure, and terminology dimensions using
+      per-collection thresholds from `.github/config/content_review.yml`. A
+      scoring regression (code-fence false-positive) was already fixed in v1.18.1
+      (PR #155) demonstrating the need for unit coverage. Currently zero lib tests
+      exist for it; the CI runs it only as a side-effect of the `ai-content-review`
+      workflow on PRs that touch `pages/**`.
+    acceptance:
+      - "A test in `scripts/test/lib/` (or `test/test_quality.sh` expansion) runs `content-review.rb --files` against synthetic Markdown fixtures and asserts: a well-formed post scores ≥ 80, a file missing `description` front-matter loses points, a properly tagged code fence does not penalise the closing ` ``` ` line."
+      - "At least one test verifies the `--strict` flag exits non-zero when the fail threshold is crossed."
+      - "Tests run under `LC_ALL=C` (locale-independence parity with T-015 guard)."
+      - "`./scripts/bin/test` stays green with the new tests included."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-06-15
+    updated: 2026-06-15
+
+  - id: T-025
+    title: "Playwright smoke tests for the site-wide search modal"
+    status: open
+    priority: P2
+    area: tests
+    risk: standard
+    effort: S
+    source: audit
+    summary: >-
+      The client-side site search (`assets/js/search-modal.js` + `search.json`
+      endpoint, feature ZER0-032) has no dedicated Playwright spec. The smoke
+      tier's 223 passing tests exercise many layout pages but none explicitly
+      verify that the search modal opens, accepts input, or populates results from
+      the `/search.json` index. Core behaviors to cover: keyboard shortcut `/`
+      triggers `navigation:searchRequest` → modal opens; typing a query filters
+      results; Escape closes the modal; the modal is mutually exclusive with the
+      Settings offcanvas (no stacked backdrops).
+    acceptance:
+      - "A new spec (e.g. `test/visual/search.spec.js`) or an expansion of `ui-refresh.spec.js` includes at minimum: modal opens on `/` keypress, search input is focused, Escape closes it."
+      - "A result-population check: query matching a known post title (e.g. 'Hello World') yields at least one result `<a>` element."
+      - "Mutual-exclusion guard: opening search while Settings offcanvas is open closes the offcanvas first (no stacked backdrops)."
+      - "Spec runs in the smoke project (`npx playwright test --project=smoke`) without a network request to an external index."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-06-15
+    updated: 2026-06-15
+
+  - id: T-026
+    title: "Playwright smoke test for AI chat widget render guard and FAB visibility"
+    status: open
+    priority: P3
+    area: tests
+    risk: standard
+    effort: S
+    source: audit
+    summary: >-
+      The AI chat widget (`_includes/components/ai-chat.html`, feature ZER0-060,
+      shipped in v1.16) has no dedicated Playwright test. The widget has a
+      multi-condition render guard — it is hidden unless `ai_chat.enabled: true`
+      AND either `proxy_ready: true` (proxy mode) or a non-empty `api_key`
+      (direct mode). A previous bug (Liquid `assign` returning truthy strings)
+      would have rendered a dead FAB on every page; such regressions are invisible
+      without a smoke test. The default `_config_dev.yml` has `proxy_ready: false`,
+      so the FAB should NOT appear in the test environment — that case is easily
+      asserted.
+    acceptance:
+      - "A new spec (or addition to `ui-refresh.spec.js`) asserts: with default dev config, no `#ai-chat-fab` element is visible on the homepage."
+      - "A mock-config test (inject `data-ai-chat-enabled` attribute or use a fixture page with the widget force-enabled) verifies the FAB renders and the chat panel toggles open/closed on click."
+      - "The test passes in the smoke project without a live AI backend."
+      - "`./scripts/bin/test` (including the Playwright smoke tier) stays green."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-06-15
+    updated: 2026-06-15
