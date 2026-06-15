@@ -22,7 +22,8 @@ This directory contains file-specific instructions for GitHub Copilot to provide
 │   ├── sass.instructions.md          # Sass partials, Bootstrap overrides, CSS custom properties
 │   ├── version-control.instructions.md  # Git workflow and releases
 │   ├── backlog.instructions.md       # Tactical backlog schema + sync contract
-│   └── content-review.instructions.md   # AI content reviewer: SEO/quality + resolution
+│   ├── content-review.instructions.md   # AI content reviewer: SEO/quality + resolution
+│   └── ai-chat.instructions.md       # AI chat assistant + chat-proxy: auth, caps, safety
 ├── prompts/                         # Reusable agent/chat prompts (.prompt.md)
 │   ├── commit-publish.prompt.md      # Full release pipeline
 │   ├── frontmatter-maintainer.prompt.md  # Front matter audit / fix
@@ -51,13 +52,13 @@ GitHub Copilot automatically applies these instructions based on the files you'r
 | `testing.instructions.md`         | `test/**`                          | Test development, assertions, CI/CD                |
 | `documentation.instructions.md`   | `docs/**,pages/_docs/**,*docs*.md` | Documentation development guidelines               |
 | `features.instructions.md`        | `_data/features.yml`, `features/**`, `pages/features.md`, `_includes/components/feature-card.html` | Feature registry schema, sync contract, update-on-change rules |
-| `includes.instructions.md`        | `_includes/**`                     | Reusable components, parameters, accessibility     |
 | `install.instructions.md`         | `scripts/lib/install/**`, `scripts/bin/install`, `install.sh`, `templates/{profiles,deploy,agents,ai}/**` | Modular installer architecture, profiles, deploy plugins, safety contracts |
 | `obsidian.instructions.md`        | `_plugins/obsidian_links.rb`, `assets/js/obsidian-*.js`, `assets/data/wiki-index.json`, `_includes/content/backlinks.html`, `pages/_docs/obsidian/**`, Obsidian tests | Wiki-link/embed/callout contract across Liquid index, JS resolver, and Ruby plugin |
 | `sass.instructions.md`            | `_sass/**`, `assets/css/**`        | Sass partial layering, Bootstrap variable overrides, no-double-Bootstrap rule |
 | `version-control.instructions.md` | `CHANGELOG.md`, `**/version.*`, `*.gemspec`, `package.json` | Git workflow, semantic versioning, releases        |
 | `backlog.instructions.md`         | `_data/backlog.yml`, `scripts/sync-backlog.*`, `.github/workflows/backlog-sync.yml` | Tactical backlog schema, sync contract, ownership rules |
 | `content-review.instructions.md`  | `pages/**/*.md`, `.github/config/content_review.yml`, `.claude/agents/content-reviewer.md`, `scripts/content-review.rb`, `.github/workflows/ai-content-review.yml` | AI content reviewer: per-collection SEO/quality targets, review resolution |
+| `ai-chat.instructions.md`         | `_includes/components/ai-chat.html`, `assets/js/ai-chat.js`, `templates/deploy/chat-proxy/**` | AI chat assistant + chat-proxy: auth modes, server caps, confirmation/safety contracts |
 
 ## 📖 Main Instructions (copilot-instructions.md)
 
