@@ -46,6 +46,12 @@
     url: https://year-of-ai.github.io/1777/politics/
   - title: Science & Discovery — 1777
     url: https://year-of-ai.github.io/1777/science/
+- title: '1778'
+  icon: bi-journal-richtext
+  url: https://year-of-ai.github.io/1778/
+  children:
+  - title: Site Home
+    url: https://year-of-ai.github.io/1778/
 - title: 2005-2011
   icon: bi-journal-richtext
   url: https://year-of-ai.github.io/2005-2011/

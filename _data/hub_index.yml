@@ -5,7 +5,7 @@
 # =============================================================================
 org: year-of-ai
 totals:
-  repos: 4
+  repos: 5
   pages: 399
 repos:
 - name: '1776'
@@ -17,7 +17,7 @@ repos:
   pages_enabled: false
   scaffolded: false
   branch: main
-  pushed_at: '2026-06-14T01:45:55Z'
+  pushed_at: '2026-06-14T10:07:04Z'
   page_count: 17
   sections:
   - name: arts
@@ -56,7 +56,7 @@ repos:
   pages_enabled: false
   scaffolded: false
   branch: main
-  pushed_at: '2026-06-14T03:56:18Z'
+  pushed_at: '2026-06-14T10:00:04Z'
   page_count: 14
   sections:
   - name: arts
@@ -86,6 +86,18 @@ repos:
   root_pages:
   - title: Timeline
     url: https://year-of-ai.github.io/1777/TIMELINE/
+- name: '1778'
+  title: '1778'
+  description: 'Self-growing knowledge base: the year 1778'
+  url: https://github.com/year-of-ai/1778
+  site_url: https://year-of-ai.github.io/1778/
+  pages_enabled: false
+  scaffolded: false
+  branch: main
+  pushed_at: '2026-06-14T09:57:35Z'
+  page_count: 0
+  sections: []
+  root_pages: []
 - name: 2005-2011
   title: 2005-2011
   description: A consolidated knowledge base spanning the years 2005–2011, merging
@@ -137,7 +149,7 @@ repos:
   pages_enabled: true
   scaffolded: true
   branch: main
-  pushed_at: '2026-06-13T06:08:16Z'
+  pushed_at: '2026-06-14T08:51:54Z'
   page_count: 263
   sections:
   - name: _data
