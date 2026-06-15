@@ -28,6 +28,13 @@ layout: root
   - Set layout: home in page frontmatter
   - Optionally include title: "Page Title" for display
   - Content can include hero sections, feature highlights, etc.
+
+  Front matter options:
+  - title:           displayed as <h1> (and used for SEO) when present
+  - hide_title:true  keep `title` for SEO but suppress the visible <h1>
+                     (useful when a custom hero provides its own heading)
+  - rss_subscribe:false  hide the RSS subscribe link on landing/showcase homepages
+  Both default to the original behavior, so existing homepages are unaffected.
   
   Design Philosophy:
   - Minimal structure allows for maximum content flexibility
@@ -43,9 +50,12 @@ layout: root
     <!-- ========================== -->
     <!-- OPTIONAL PAGE TITLE        -->
     <!-- ========================== -->
-    <!-- Display title only if specified in page frontmatter -->
-    <!-- Usage: Add 'title: "Homepage Title"' to page frontmatter -->
-    {%- if page.title -%}
+    <!-- Display title only if specified in page frontmatter. -->
+    <!-- Usage: Add 'title: "Homepage Title"' to page frontmatter. -->
+    <!-- Landing/showcase pages can keep `title` for SEO but suppress the -->
+    <!-- visible heading (e.g. when a custom hero supplies its own <h1>) -->
+    <!-- with `hide_title: true`. -->
+    {%- if page.title and page.hide_title != true -%}
         <h1 class="page-heading">{{ page.title }}</h1>
     {%- endif -%}
     
@@ -59,8 +69,11 @@ layout: root
     <!-- ========================== -->
     <!-- RSS SUBSCRIPTION LINK      -->
     <!-- ========================== -->
-    <!-- Provides easy access to RSS feed for blog updates -->
+    <!-- Provides easy access to RSS feed for blog updates. -->
+    <!-- Opt out on landing/showcase homepages with `rss_subscribe: false`. -->
+    {%- unless page.rss_subscribe == false -%}
     <p class="rss-subscribe">
         subscribe <a href="{{ "/feed.xml" | relative_url }}">via RSS</a>
     </p>
+    {%- endunless -%}
 </div>
