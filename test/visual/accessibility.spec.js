@@ -18,12 +18,14 @@ test.describe('Accessibility — axe-core WCAG audits', () => {
     await page.setViewportSize(VIEWPORTS.desktop);
   });
 
-  // TODO: Fix global navbar WCAG violations before re-enabling:
-  //   [critical] aria-required-children — menubar contains button[aria-haspopup]
-  //   [serious]  link-name — icon-only nav links lack discernible text
-  //   [serious]  list — footer list structure incorrect
-  //   [serious]  scrollable-region-focusable — code blocks not keyboard accessible
-  test.fixme('homepage passes WCAG 2.1 AA', async ({ page }) => {
+  // T-007 (2026-06-13): the four WCAG 2.1 AA violations below were resolved
+  // and verified with a live axe-core run (0 violations on homepage, FAQ, and
+  // admin pages). Fixes: dropped the redundant ARIA menubar/menuitem roles
+  // (navbar.html), aria-label on the site-subtitle home link (branding.html),
+  // listitem-preserving footer/admin separator (admin-nav.html), focusable
+  // single-scroll code blocks (code-copy.js + code-copy.scss), and underlined
+  // prose links (_docs-layout.scss).
+  test('homepage passes WCAG 2.1 AA', async ({ page }) => {
     await waitForJekyll(page, '/');
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa'])
@@ -35,8 +37,7 @@ test.describe('Accessibility — axe-core WCAG audits', () => {
   });
 
   for (const adminPage of ADMIN_PAGES) {
-    // TODO: Same global navbar WCAG violations as homepage (see above)
-    test.fixme(`${adminPage.title} passes WCAG 2.1 AA`, async ({ page }) => {
+    test(`${adminPage.title} passes WCAG 2.1 AA`, async ({ page }) => {
       await waitForJekyll(page, adminPage.url);
       const results = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa'])
@@ -48,8 +49,7 @@ test.describe('Accessibility — axe-core WCAG audits', () => {
     });
   }
 
-  // TODO: Same global navbar WCAG violations as homepage (see above)
-  test.fixme('FAQ page passes WCAG 2.1 AA', async ({ page }) => {
+  test('FAQ page passes WCAG 2.1 AA', async ({ page }) => {
     await waitForJekyll(page, '/faq/');
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa'])

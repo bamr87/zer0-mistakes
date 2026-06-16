@@ -1,41 +1,28 @@
-<!--
-  ===================================================================
-  AI CHAT - Frontend AI Chatbot with Page Context
-  ===================================================================
-  
-  File: ai-chat.html
-  Path: _includes/components/ai-chat.html
-  Purpose: Provides an AI-powered chat widget that includes the
-           current page context in conversations. Uses the OpenAI
-           Chat Completions API with an API key injected at build
-           time from GitHub repository secrets.
-  
-  Template Logic:
-  - Renders a floating chat button and expandable chat panel
-  - Collects current page metadata (title, description, content,
-    URL, categories, tags) as system context for the AI
-  - Sends messages to the configured AI provider endpoint
-  - Rendering is gated by ai_chat.enabled and either:
-      - Proxy mode: auth_mode: "proxy" with proxy_ready: true (recommended), or
-      - Direct mode: a non-empty ai_chat.api_key for client-side API access
-  
-  Dependencies:
-  - Bootstrap 5 for UI components and styling
-  - Bootstrap Icons for chat button icon
-  - site.ai_chat configuration from _config.yml
-  
-  Security:
-  - API key is injected at build time, not stored in source
-  - IMPORTANT: Client-side API keys are visible in page source.
-    For production, route requests through a server-side proxy
-    by changing the 'endpoint' config to your proxy URL.
-  
-  Accessibility:
-  - ARIA labels for screen readers
-  - Keyboard navigation support (Escape to close)
-  - Focus management when opening/closing the chat panel
-  ===================================================================
--->
+{%- comment -%}
+  Component:   ai-chat
+  Path:        _includes/components/ai-chat.html
+  Purpose:     Floating AI chat assistant powered by the Claude Messages
+               API, grounded in the current page's content, with optional
+               GitHub actions (create issues / propose page-improvement
+               pull requests) exposed to the model via Claude tool use.
+  Params:      none — configured via site.ai_chat in _config.yml
+  Depends on:  Bootstrap 5 + Bootstrap Icons, assets/js/ai-chat.js,
+               design tokens (_sass/tokens/_spacing.scss, _layers.scss),
+               site.ai_chat configuration
+  Notes:
+    - Renders nothing unless ai_chat.enabled AND a usable auth path
+      exists: proxy mode with a deployed proxy (proxy_ready: true,
+      recommended) or direct mode with a non-empty api_key.
+    - Proxy mode keeps the Anthropic key server-side (see
+      templates/deploy/chat-proxy/). Direct mode sends the key from the
+      browser (visible in page source) — local development only.
+    - GitHub actions: github.mode "url" opens pre-filled github.com
+      forms (no token anywhere); "proxy" creates issues/PRs through the
+      proxy's GitHub endpoints with a server-side token. Creation always
+      requires an in-chat confirmation by the user.
+    - Accessibility: ARIA dialog semantics, Escape to close, focus
+      management, aria-live message log, reduced-motion support.
+{%- endcomment -%}
 
 {% assign ai_auth_mode = site.ai_chat.auth_mode | default: 'proxy' %}
 {% comment %}
@@ -55,6 +42,26 @@
 {% endif %}
 {% if ai_render %}
 
+{% comment %}
+  GitHub actions are on by default in "url" mode (pre-filled github.com
+  forms need no token). `default:` can't preserve an explicit false, so
+  compute the flag with an if-tag.
+{% endcomment %}
+{% assign gh_enabled = true %}
+{% if site.ai_chat.github.enabled == false %}
+  {% assign gh_enabled = false %}
+{% endif %}
+
+{% comment %}
+  local_edit lets the assistant write the current page's source file via the
+  dev proxy. It is a development-only capability — enabled in _config_dev.yml,
+  off in production. Compute with an if-tag (default false).
+{% endcomment %}
+{% assign local_edit_flag = false %}
+{% if site.ai_chat.local_edit %}
+  {% assign local_edit_flag = true %}
+{% endif %}
+
 <!-- AI Chat Toggle Button -->
 <button id="aiChatToggle"
         class="ai-chat-toggle btn btn-primary rounded-circle shadow-lg"
@@ -62,8 +69,8 @@
         aria-label="Open AI chat assistant"
         aria-expanded="false"
         aria-controls="aiChatPanel">
-  <i class="{{ site.ai_chat.icon | default: 'bi-robot' }} ai-chat-icon-open" aria-hidden="true"></i>
-  <i class="bi-x-lg ai-chat-icon-close d-none" aria-hidden="true"></i>
+  <i class="bi {{ site.ai_chat.icon | default: 'bi-robot' }} ai-chat-icon-open" aria-hidden="true"></i>
+  <i class="bi bi-x-lg ai-chat-icon-close d-none" aria-hidden="true"></i>
 </button>
 
 <!-- AI Chat Panel -->
@@ -76,14 +83,14 @@
   <!-- Chat Header -->
   <div class="ai-chat-header d-flex align-items-center justify-content-between p-3">
     <div class="d-flex align-items-center gap-2">
-      <i class="{{ site.ai_chat.icon | default: 'bi-robot' }} fs-5" aria-hidden="true"></i>
+      <i class="bi {{ site.ai_chat.icon | default: 'bi-robot' }} fs-5" aria-hidden="true"></i>
       <h6 id="aiChatTitle" class="mb-0 fw-semibold">Zer0 Assistant</h6>
     </div>
     <button type="button"
             class="btn btn-sm btn-outline-light border-0"
             id="aiChatClose"
             aria-label="Close chat">
-      <i class="bi-x-lg" aria-hidden="true"></i>
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
     </button>
   </div>
 
@@ -91,6 +98,29 @@
   <div id="aiChatMessages" class="ai-chat-messages p-3" role="log" aria-live="polite">
     <!-- Welcome message inserted by JS -->
   </div>
+
+  {% if gh_enabled %}
+  <!-- Quick actions (GitHub-backed flows) -->
+  <div class="ai-chat-chips px-3 pb-2 d-flex gap-2 flex-wrap">
+    <button type="button"
+            class="ai-chat-chip btn btn-sm btn-outline-secondary rounded-pill"
+            data-prompt="I'd like to report a problem with this page.">
+      <i class="bi bi-bug" aria-hidden="true"></i> Report an issue
+    </button>
+    <button type="button"
+            class="ai-chat-chip btn btn-sm btn-outline-secondary rounded-pill"
+            data-prompt="I have a suggestion to improve this page's content or design.">
+      <i class="bi bi-lightbulb" aria-hidden="true"></i> Suggest an improvement
+    </button>
+    {% if local_edit_flag %}
+    <button type="button"
+            class="ai-chat-chip btn btn-sm btn-outline-secondary rounded-pill"
+            data-prompt="Edit this page directly: ">
+      <i class="bi bi-pencil-square" aria-hidden="true"></i> Edit this page
+    </button>
+    {% endif %}
+  </div>
+  {% endif %}
 
   <!-- Chat Input -->
   <div class="ai-chat-input p-3">
@@ -106,7 +136,7 @@
               class="btn btn-primary btn-sm"
               id="aiChatSend"
               aria-label="Send message">
-        <i class="bi-send" aria-hidden="true"></i>
+        <i class="bi bi-send" aria-hidden="true"></i>
       </button>
     </form>
     <p class="ai-chat-disclaimer text-muted mt-1 mb-0">
@@ -121,12 +151,14 @@
   "page_title": {{ page.title | default: site.title | jsonify }},
   "page_description": {{ page.description | default: page.excerpt | strip_html | default: "" | jsonify }},
   "page_url": {{ page.url | absolute_url | jsonify }},
+  "page_path": {{ page.path | default: "" | jsonify }},
   "page_categories": {{ page.categories | default: "" | jsonify }},
   "page_tags": {{ page.tags | default: "" | jsonify }},
   "page_layout": {{ page.layout | default: "" | jsonify }},
   "page_date": {{ page.date | date: "%Y-%m-%d" | default: "" | jsonify }},
   "site_title": {{ site.title | jsonify }},
-  "site_description": {{ site.description | strip_html | strip | truncate: 200 | jsonify }}
+  "site_description": {{ site.description | strip_html | strip | truncate: 200 | jsonify }},
+  "repository": {{ site.repository | join: "" | jsonify }}
 }
 </script>
 
@@ -138,308 +170,49 @@
 {% assign context_length = site.ai_chat.context_max_length | default: 2000 %}
 <script id="aiChatPageContent" type="text/plain">{{ page_text | truncate: context_length | replace: '</script>', '<\/script>' }}</script>
 
-<script>
-// AI Chat Widget
-(function() {
-  'use strict';
-
-  // Configuration from Jekyll
-  const CONFIG = {
-    endpoint: {{ site.ai_chat.endpoint | default: "/api/chat" | jsonify }},
-    authMode: {{ site.ai_chat.auth_mode | default: "proxy" | jsonify }},
-    apiKey: {{ site.ai_chat.api_key | jsonify }},
-    model: {{ site.ai_chat.model | default: "gpt-4o-mini" | jsonify }},
-    maxTokens: {{ site.ai_chat.max_tokens | default: 1024 }},
-    temperature: {{ site.ai_chat.temperature | default: 0.7 }},
-    strictContext: {{ site.ai_chat.strict_context | default: true | jsonify }},
-    outOfScopeMessage: {{ site.ai_chat.out_of_scope_message | default: "I can only answer from the content on this page." | jsonify }},
-    systemPrompt: {{ site.ai_chat.system_prompt | default: "You are a helpful assistant." | jsonify }},
-    welcomeMessage: {{ site.ai_chat.welcome_message | default: "Hi! Ask me anything about this page." | jsonify }}
-  };
-
-  // State
-  let isOpen = false;
-  let isLoading = false;
-  let lastSendTime = 0;
-  const SEND_COOLDOWN_MS = 1000; // Minimum time between sends
-  const MAX_MESSAGES = 40; // Maximum number of messages to retain in history
-  const _messages = [];
-  const messages = new Proxy(_messages, {
-    set(target, prop, value) {
-      const result = Reflect.set(target, prop, value);
-
-      // When the array grows (numeric index or length change), enforce the cap
-      if (prop === 'length' || !Number.isNaN(Number(prop))) {
-        const excess = target.length - MAX_MESSAGES;
-        if (excess > 0) {
-          // Remove oldest messages, keep only the most recent MAX_MESSAGES
-          target.splice(0, excess);
-        }
-      }
-
-      return result;
-    }
-  });
-  // DOM Elements
-  const toggle = document.getElementById('aiChatToggle');
-  const panel = document.getElementById('aiChatPanel');
-  const messagesContainer = document.getElementById('aiChatMessages');
-  const form = document.getElementById('aiChatForm');
-  const input = document.getElementById('aiChatInput');
-  const closeBtn = document.getElementById('aiChatClose');
-  const iconOpen = toggle.querySelector('.ai-chat-icon-open');
-  const iconClose = toggle.querySelector('.ai-chat-icon-close');
-
-  // Build page context for system message
-  function getPageContext() {
-    let context = '';
-    try {
-      const meta = JSON.parse(document.getElementById('aiChatPageContext').textContent);
-      const pageContent = document.getElementById('aiChatPageContent').textContent.trim();
-
-      context = 'Current page context:\n';
-      if (meta.page_title) context += '- Title: ' + meta.page_title + '\n';
-      if (meta.page_description) context += '- Description: ' + meta.page_description + '\n';
-      if (meta.page_url) context += '- URL: ' + meta.page_url + '\n';
-      if (meta.page_categories && meta.page_categories.length) {
-        context += '- Categories: ' + (Array.isArray(meta.page_categories) ? meta.page_categories.join(', ') : meta.page_categories) + '\n';
-      }
-      if (meta.page_tags && meta.page_tags.length) {
-        context += '- Tags: ' + (Array.isArray(meta.page_tags) ? meta.page_tags.join(', ') : meta.page_tags) + '\n';
-      }
-      if (meta.page_date) context += '- Date: ' + meta.page_date + '\n';
-      if (meta.site_title) context += '- Site: ' + meta.site_title + '\n';
-      if (pageContent) context += '\nPage content:\n' + pageContent + '\n';
-    } catch (e) {
-      console.warn('AI Chat: Could not parse page context', e);
-    }
-    return context;
+{% comment %}
+  Widget configuration consumed by assets/js/ai-chat.js. The Anthropic
+  key appears here only in direct mode (local development); proxy mode
+  leaves it empty and the proxy injects credentials server-side.
+{% endcomment %}
+<script id="aiChatConfig" type="application/json">
+{
+  "endpoint": {{ site.ai_chat.endpoint | default: "/api/chat" | jsonify }},
+  "authMode": {{ ai_auth_mode | jsonify }},
+  "apiKey": {{ site.ai_chat.api_key | jsonify }},
+  "anthropicVersion": {{ site.ai_chat.anthropic_version | default: "2023-06-01" | jsonify }},
+  "model": {{ site.ai_chat.model | default: "claude-opus-4-8" | jsonify }},
+  "maxTokens": {{ site.ai_chat.max_tokens | default: 1024 }},
+  "strictContext": {{ site.ai_chat.strict_context | default: true | jsonify }},
+  "outOfScopeMessage": {{ site.ai_chat.out_of_scope_message | default: "I can only answer from the content on this page." | jsonify }},
+  "systemPrompt": {{ site.ai_chat.system_prompt | default: "You are a helpful assistant." | jsonify }},
+  "welcomeMessage": {{ site.ai_chat.welcome_message | default: "Hi! Ask me anything about this page." | jsonify }},
+  "localEdit": {{ local_edit_flag }},
+  "localEditEndpoint": {{ site.ai_chat.local_edit_endpoint | default: "/api/page" | jsonify }},
+  "github": {
+    "enabled": {{ gh_enabled }},
+    "mode": {{ site.ai_chat.github.mode | default: "url" | jsonify }},
+    "endpoint": {{ site.ai_chat.github.endpoint | default: "/api/github" | jsonify }},
+    "repository": {{ site.repository | join: "" | jsonify }},
+    "baseBranch": {{ site.ai_chat.github.base_branch | default: "main" | jsonify }},
+    "defaultLabels": {% if site.ai_chat.github.default_labels %}{{ site.ai_chat.github.default_labels | jsonify }}{% else %}[]{% endif %},
+    "prBranchPrefix": {{ site.ai_chat.github.pr_branch_prefix | default: "chat/" | jsonify }}
   }
-
-  // Build system message with page context
-  function getSystemMessage() {
-    const pageContext = getPageContext();
-    let systemContent = CONFIG.systemPrompt;
-    if (CONFIG.strictContext) {
-      systemContent += '\n\nGrounding rules:\n'
-        + '- Answer ONLY using the provided page context.\n'
-        + '- If the answer is not in the page context, reply exactly with: "' + CONFIG.outOfScopeMessage + '"\n'
-        + '- Do not invent facts, links, or features.\n';
-    }
-    if (pageContext) {
-      systemContent += '\n\n' + pageContext;
-    }
-    return { role: 'system', content: systemContent };
-  }
-
-  function escapeHtml(text) {
-    return String(text)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/\"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-  }
-
-  function renderAssistantMarkdown(raw) {
-    // Escape first, then allow a small markdown subset safely.
-    let safe = escapeHtml(raw || '');
-
-    safe = safe
-      .replace(/^###\s+(.+)$/gm, '<strong>$1</strong>')
-      .replace(/^##\s+(.+)$/gm, '<strong>$1</strong>')
-      .replace(/^#\s+(.+)$/gm, '<strong>$1</strong>')
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/`([^`]+)`/g, '<code>$1</code>')
-      .replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
-      .replace(/^\s*[-*]\s+(.+)$/gm, '• $1')
-      .replace(/\n/g, '<br>');
-
-    return safe;
-  }
-
-  // Create a message element
-  function createMessageEl(role, content) {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'ai-chat-message ai-chat-message--' + role + ' mb-2';
-
-    const bubble = document.createElement('div');
-    bubble.className = 'ai-chat-bubble p-2 rounded-3 small';
-    if (role === 'assistant') {
-      bubble.innerHTML = renderAssistantMarkdown(content);
-    } else {
-      bubble.textContent = content;
-    }
-
-    wrapper.appendChild(bubble);
-    return wrapper;
-  }
-
-  // Create a loading indicator
-  function createLoadingEl() {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'ai-chat-message ai-chat-message--assistant mb-2';
-    wrapper.id = 'aiChatLoading';
-
-    const bubble = document.createElement('div');
-    bubble.className = 'ai-chat-bubble p-2 rounded-3 small';
-    bubble.innerHTML = '<span class="ai-chat-typing"><span>.</span><span>.</span><span>.</span></span>';
-
-    wrapper.appendChild(bubble);
-    return wrapper;
-  }
-
-  // Append message to chat
-  function appendMessage(role, content) {
-    const el = createMessageEl(role, content);
-    messagesContainer.appendChild(el);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    return el;
-  }
-
-  // Remove loading indicator
-  function removeLoading() {
-    const loading = document.getElementById('aiChatLoading');
-    if (loading) loading.remove();
-  }
-
-  // Send message to AI
-  async function sendMessage(userMessage) {
-    if (isLoading || !userMessage.trim()) return;
-
-    // Enforce cooldown between sends
-    const now = Date.now();
-    if (now - lastSendTime < SEND_COOLDOWN_MS) return;
-    lastSendTime = now;
-
-    // Add user message to UI and history
-    appendMessage('user', userMessage);
-    messages.push({ role: 'user', content: userMessage });
-
-    // Show loading
-    isLoading = true;
-    input.disabled = true;
-    messagesContainer.appendChild(createLoadingEl());
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-    try {
-      const response = await fetch(CONFIG.endpoint, {
-        method: 'POST',
-        headers: (function() {
-          const requestHeaders = {
-            'Content-Type': 'application/json'
-          };
-          if (CONFIG.authMode === 'direct' && CONFIG.apiKey) {
-            requestHeaders.Authorization = 'Bearer ' + CONFIG.apiKey;
-          }
-          return requestHeaders;
-        })(),
-        body: JSON.stringify({
-          model: CONFIG.model,
-          messages: [getSystemMessage(), ...messages],
-          max_tokens: CONFIG.maxTokens,
-          temperature: CONFIG.temperature
-        })
-      });
-
-      removeLoading();
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(function() { return {}; });
-        var statusMessages = {
-          401: 'Authentication failed. The API key may be invalid or missing.',
-          429: 'Rate limit exceeded. Please wait a moment and try again.',
-          500: 'The AI service is temporarily unavailable. Please try again later.',
-          503: 'The AI service is temporarily unavailable. Please try again later.'
-        };
-        throw new Error(errorData.error?.message || statusMessages[response.status] || 'API request failed (' + response.status + ')');
-      }
-
-      const data = await response.json();
-      let assistantMessage = data.choices?.[0]?.message?.content || 'Sorry, I could not generate a response.';
-      assistantMessage = String(assistantMessage).trim() || CONFIG.outOfScopeMessage;
-
-      // Add assistant message to UI and history
-      appendMessage('assistant', assistantMessage);
-      messages.push({ role: 'assistant', content: assistantMessage });
-
-    } catch (error) {
-      removeLoading();
-      appendMessage('assistant', 'Sorry, something went wrong: ' + error.message);
-      console.error('AI Chat error:', error);
-    } finally {
-      isLoading = false;
-      input.disabled = false;
-      input.focus();
-    }
-  }
-
-  // Toggle chat panel
-  function toggleChat() {
-    isOpen = !isOpen;
-    panel.classList.toggle('ai-chat-panel--open', isOpen);
-    panel.setAttribute('aria-hidden', !isOpen);
-    toggle.setAttribute('aria-expanded', isOpen);
-    iconOpen.classList.toggle('d-none', isOpen);
-    iconClose.classList.toggle('d-none', !isOpen);
-
-    if (isOpen) {
-      // Focus input when opening (short delay for CSS transition to start)
-      setTimeout(function() { input.focus(); }, 50);
-    }
-  }
-
-  // Initialize
-  function init() {
-    // Show welcome message
-    appendMessage('assistant', CONFIG.welcomeMessage);
-
-    // Event: toggle button
-    toggle.addEventListener('click', toggleChat);
-
-    // Event: close button
-    closeBtn.addEventListener('click', toggleChat);
-
-    // Event: form submit
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const msg = input.value.trim();
-      if (msg) {
-        input.value = '';
-        sendMessage(msg);
-      }
-    });
-
-    // Event: Escape key closes chat
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape' && isOpen) {
-        toggleChat();
-      }
-    });
-
-    // Event: click outside closes chat
-    document.addEventListener('click', function(e) {
-      if (isOpen && !panel.contains(e.target) && !toggle.contains(e.target)) {
-        toggleChat();
-      }
-    });
-  }
-
-  // Start when DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-})();
+}
 </script>
+
+<script defer src="{{ '/assets/js/ai-chat.js' | relative_url }}"></script>
 
 <style>
   /* AI Chat Toggle Button */
   /* FAB stack slot above back-to-top, below the TOC FAB — driven by the
      design tokens (_sass/tokens/_spacing.scss, _layers.scss) so all
      floating buttons share one offset/stacking system. */
-  .ai-chat-toggle {
+  /* ID selectors (like #backToTopBtn) are required for the fixed-position
+     elements: body children otherwise match the higher-specificity
+     `.zer0-bg-body > :not(...)` elevation rule in _sass/theme/_backgrounds.scss,
+     which forces position: relative. */
+  #aiChatToggle {
     position: fixed;
     bottom: calc(var(--zer0-space-fab-offset, 1rem) + var(--zer0-space-fab-size, 3.5rem) + var(--zer0-space-fab-gap, 0.75rem));
     right: var(--zer0-space-fab-offset, 1rem);
@@ -453,18 +226,18 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
-  .ai-chat-toggle:hover {
+  #aiChatToggle:hover {
     transform: scale(1.1);
   }
 
   /* AI Chat Panel */
-  .ai-chat-panel {
+  #aiChatPanel {
     position: fixed;
     bottom: calc(var(--zer0-space-fab-offset, 1rem) + 2 * (var(--zer0-space-fab-size, 3.5rem) + var(--zer0-space-fab-gap, 0.75rem)));
     right: var(--zer0-space-fab-offset, 1rem);
     z-index: var(--zer0-layer-fab-chat, 1052);
     width: 360px;
-    max-height: 500px;
+    max-height: 540px;
     display: flex;
     flex-direction: column;
     background: var(--bs-body-bg, #212529);
@@ -475,7 +248,7 @@
     transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
   }
 
-  .ai-chat-panel--open {
+  #aiChatPanel.ai-chat-panel--open {
     opacity: 1;
     visibility: visible;
     transform: translateY(0) scale(1);
@@ -518,6 +291,30 @@
     word-wrap: break-word;
   }
 
+  /* Quick-action chips */
+  .ai-chat-chips {
+    flex-shrink: 0;
+  }
+
+  .ai-chat-chips .ai-chat-chip {
+    font-size: 0.75rem;
+  }
+
+  /* Action cards (tool confirmations + created issue/PR links) */
+  .ai-chat-action-card {
+    background: var(--bs-tertiary-bg, #2b3035);
+    border: 1px solid var(--bs-border-color, #495057);
+    color: var(--bs-body-color, #dee2e6);
+  }
+
+  .ai-chat-action-card--resolved {
+    opacity: 0.7;
+  }
+
+  .ai-chat-action-card .ai-chat-action-meta {
+    overflow-wrap: anywhere;
+  }
+
   /* Chat Input */
   .ai-chat-input {
     border-top: 1px solid var(--bs-border-color, #495057);
@@ -552,14 +349,14 @@
 
   /* Mobile Responsive */
   @media (max-width: 576px) {
-    .ai-chat-panel {
+    #aiChatPanel {
       width: calc(100vw - 2rem);
       right: 1rem;
       bottom: 8rem;
       max-height: 60vh;
     }
 
-    .ai-chat-toggle {
+    #aiChatToggle {
       bottom: 4.5rem;
       right: 1rem;
     }
@@ -567,8 +364,8 @@
 
   /* Respect reduced motion */
   @media (prefers-reduced-motion: reduce) {
-    .ai-chat-panel,
-    .ai-chat-toggle,
+    #aiChatPanel,
+    #aiChatToggle,
     .ai-chat-typing span {
       transition: none !important;
       animation: none !important;

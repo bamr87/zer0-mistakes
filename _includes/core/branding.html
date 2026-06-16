@@ -44,11 +44,12 @@
 </div>
 
 <!-- If a subtitle exists -->
-{%- if site.subtitle -%}
+{%- assign _subtitle = site.subtitle | strip -%}
+{%- if _subtitle != "" -%}
 <div class="navbar-brand site-subtitle d-none d-lg-inline">
-    <a class="nav-link" href="{{ '/' | relative_url }}">
+    <a class="nav-link" href="{{ '/' | relative_url }}" aria-label="{{ _subtitle }} — {{ site.title }} home">
         <span class="site-subtitle-text">
-            {{ site.subtitle }}
+            {{ _subtitle }}
         </span>
     </a>
 </div>

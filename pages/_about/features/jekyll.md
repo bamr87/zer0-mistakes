@@ -1,19 +1,24 @@
 ---
-title: Jeykll
-preview: /images/previews/jeykll.png
+title: "Jekyll Cheatsheet: Setup, Liquid Filters & Templates"
+description: "A practical Jekyll reference covering installation, Liquid filters, layout templates, folder structure, permalinks, and paginator variables."
+preview: /images/previews/jekyll.png
 permalink: /notes/jekyll/
-lastmod: 2025-12-20T22:15:46.473Z
+lastmod: 2026-06-14T14:30:00.000Z
 published: false
 draft: true
 ---
 
-# Jeykll
+# Jekyll Cheatsheet
+
+Use this reference for common Jekyll setup commands, Liquid template syntax, folder conventions, and built-in filters.
 
 {% raw %}
 [Cheatsheet](https://learn-the-web.algonquindesign.ca/topics/jekyll-cheat-sheet/)
 
 Setup and use
 Installation
+
+> For this theme, the recommended setup is Docker: `docker-compose up` (see the project README).
 
 All these commands should be executed in Terminal, one-by-one, in order.
 
@@ -41,7 +46,7 @@ bundle install
 
 ☛ Jekyll installation.
 
-Starting & stopping
+Starting and stopping
 
 First, open your Jekyll folder in Terminal using the GitHub app shortcut—⌃`
 
@@ -51,9 +56,8 @@ Start Jekyll:
 bundle exec jekyll serve
 ```
 
-View your website in a browser:
+View your website in a browser at `http://localhost:4000/`.
 
-'http://localhost:4000/'
 Stop Jekyll:
 
 Control + C
@@ -96,12 +100,12 @@ index.html
 meat-eaters.html
 ```
 
-Files & paths
+Files and paths
 Linking pages
 
 With permalink: pretty turned on the .html extension can be left off URLs.
 
-\*All links & hrefs & srcs should always start with a forward slash: /
+\*All links and hrefs and srcs should always start with a forward slash: /
 
 ```html
 <a href="/plant-eaters/">Plant eaters</a>
@@ -130,17 +134,17 @@ Linking images
 Link images like normal, make sure to start with a /
 
 ```html
-<img src="/images/trex.jpg" alt="" />
+<img src="/images/trex.jpg" alt="Tyrannosaurus Rex dinosaur" />
 ```
 
 Or for GitHub Pages folder hosting:
 
 ```html
-<img src="{{site.baseurl}}/images/trex.jpg" alt="" />
+<img src="{{site.baseurl}}/images/trex.jpg" alt="Tyrannosaurus Rex dinosaur" />
 ```
 
 Layouts
-Common header & footer
+Common header and footer
 
 First create a new file inside the \_layouts folder, name it whatever you want. Inside that file put the common
 HTML.
@@ -166,20 +170,19 @@ At the top of each page use YAML front matter to denote which layout to use:
 
 index.html
 
-````yaml
+```html
 ---
 layout: default
 ---
 
-```html
 <h1>Homepage</h1>
-````
+```
 
 Layouts can be nested by including a different layout at the top of a layout HTML file.
 
 Page variables
 
-To pass information from a page to a layout you can use YAML frontmatter.
+To pass information from a page to a layout you can use YAML front matter.
 
 `index.html`
 
@@ -187,7 +190,7 @@ To pass information from a page to a layout you can use YAML frontmatter.
 ---
 layout: default
 title: Plant Eaters
-preview: /images/previews/jeykll.png
+preview: /images/previews/jekyll.png
 ---
 ```
 
@@ -227,10 +230,10 @@ Use an if-statement inside the `<a>` tag to add the .current class.
 >
 ```
 
-Data, includes & posts
+Data, includes and posts
 Data
 
-Data files allow us to separate content from it’s presentation HTML.
+Data files allow us to separate content from its presentation HTML.
 
 Put data files in the \_data folder.
 
@@ -341,7 +344,7 @@ The if-statement can be used to do different things based on certain conditions.
 ```
 
 Template filters
-Check out the complete Liquid for Designers resource & Jekyll’s filter docs.
+Check out the complete Liquid for Designers resource and Jekyll’s filter docs.
 
 Date
 
@@ -404,7 +407,7 @@ Will convert an object or array into JSON.
 
 ## Add Class or ID to markdown element
 
-https://boringrails.com/tips/jekyll-css-class
+[Adding CSS classes to Markdown elements (Boring Rails)](https://boringrails.com/tips/jekyll-css-class)
 
 {% endraw %}
 
@@ -443,10 +446,10 @@ https://boringrails.com/tips/jekyll-css-class
 ## Jekyll Commands
 
 ```shell
-jekyll --help
+bundle exec jekyll --help
 ```
 
-```
+```text
 jekyll 2.5.3 -- Jekyll is a blog-aware, static site generator in Ruby
 
 Usage:
@@ -475,10 +478,10 @@ Subcommands:
 ### `build` Command
 
 ```shell
-jekyll help build
+bundle exec jekyll help build
 ```
 
-```
+```text
 jekyll build -- Build your site
 
 Usage:
@@ -500,9 +503,10 @@ Options:
 ### `serve` Command
 
 ```shell
-jekyll help serve
+bundle exec jekyll help serve
 ```
 
+```text
 jekyll serve [options]
 
 Options:
@@ -517,25 +521,24 @@ Build Options:
 --force_polling Force watch to use polling
 
 plus all build options (see build command)
-
-````
+```
 
 
 ## Jekyll Quickstart
 
 ```shell
-jekyll new my-site
+bundle exec jekyll new my-site
 # => New jekyll site installed in ~/my-site
 cd my-site
-jekyll build
+bundle exec jekyll build
      # => Configuration file: ~/_config.yml
      #                Source: ~/my-site
      #           Destination: ~/my-site/_site
      #          Generating... done.
-jekyll serve
+bundle exec jekyll serve
      # =>     Server address: http://127.0.0.1:4000/
      #      Server running... press ctrl-c to stop.
-````
+```
 
 Browse your site e.g. open the page @ `http://127.0.0.1:4000`
 
@@ -543,7 +546,7 @@ Browse your site e.g. open the page @ `http://127.0.0.1:4000`
 
 Minimial:
 
-```
+```text
 ├── _config.yml                        # site configuration
 ├── _posts                             # blog posts
 |   ├── 2015-01-01-week-1-factbook.md  #   filename format => YEAR-MONTH-DAY-TITLE.MARKUP
@@ -560,7 +563,7 @@ Minimial:
 
 will result in (with `permalink: date`):
 
-```
+```text
 └── _site                                  # output build folder; site gets generated here
     ├── css
     |   └── styles.css                     # styles for pages (copied 1:1 as is)
@@ -578,7 +581,7 @@ will result in (with `permalink: date`):
 
 or result in (with `permalink: /:title.html`):
 
-```
+```text
 └── _site                           # output build folder; site gets generated here
     ├── css
     |   └── styles.css                     # styles for pages (copied 1:1 as is)
@@ -595,7 +598,7 @@ Note: See the `jekyll-minimal-theme` starter kit for an example
 
 With post drafts, page collections, data stores and shared building blocks:
 
-```
+```text
 ├── _config.yml                        # site configuration
 ├── _posts                             # blog posts
 |   ├── 2015-01-01-week-1-factbook.md  #  filename format => YEAR-MONTH-DAY-TITLE.MARKUP
@@ -633,7 +636,7 @@ The post file name must follow the format: _YEAR-MONTH-DAY-TITLE.MARKUP_
 The permalinks can be customized for each post,
 but the date and markup language are determined by the file name.
 
-```
+```text
 ├── _posts
 |   ├── 2015-01-01-week-1-factbook.md    # e.g. date=2015-01-01, markup=md
 |   ├── 2015-01-08-week-2-hoe.md         #      date=2015-01-08, markup=md
@@ -642,17 +645,17 @@ but the date and markup language are determined by the file name.
 
 ### Front Matter
 
-```
+```yaml
 ---
 layout: post
 title:  "Week #3 - slideshow gem - a free web alternative to PowerPoint and Keynote in Ruby"
-preview: /images/previews/jeykll.png
+preview: /images/previews/jekyll.png
 ---
 ```
 
 **Excerpt**
 
-```
+```yaml
 ---
 excerpt_separator: <!--more-->
 ---
@@ -662,11 +665,11 @@ Excerpt
 Out-of-excerpt
 ```
 
-### Tips & Tricks
+### Tips and Tricks
 
 **Including images and resources**
 
-```
+```markdown
 ![Ruby under a Microscope Book Cover]({{site.url}}/i/book-ruby-under-a-microscope.png)
 
 [Hoe PDF Booklet](http://docs.seattlerb.org/hoe/Hoe.pdf); 6 Pages
@@ -676,31 +679,15 @@ Out-of-excerpt
 
 Drafts are unpublished posts without a date.
 
-```
+```text
 ├── _drafts
 |   ├── week-4-kramdown.md
 |   └── week-5-feedparser.md
 ```
 
-## `_layouts` Folder
-
-TBD
-
-## `_includes` Folder
-
-TBD
-
-## `_data` Folder
-
-TBD
-
-## `_COLLECTION` Folder (e.g `_books`, `_albums`, etc.)
-
-TBD
-
 ## Global Variables
 
-```
+```text
 site             -- Sitewide information plus configuration settings from  _config.yml.
 page             -- Page specific information plus the front matter.
                     Custom variables set via the front matter will be available here.
@@ -713,7 +700,7 @@ paginator        -- When the paginate configuration option is set variable becom
 
 **Built-in**
 
-```
+```text
 site.time           --  The current time (when you run the jekyll command)
 site.pages          --  A list of all Pages
 site.posts          --  A reverse chronological list of all Posts
@@ -742,15 +729,15 @@ then in your Posts and Pages it will be stored in `site.url`.
 
 If you add in your `_config.yml` site configuration, for example:
 
-```
+```yaml
 url:   'http://openfootball.github.io'
 title: 'football.db - Open Football Data'
-preview: /images/previews/jeykll.png
+preview: /images/previews/jekyll.png
 ```
 
 than you can use the variables in your posts, pages and templates:
 
-```
+```text
 site.url     -- your site's url
 site.title   -- your site's title
 ```
@@ -760,7 +747,7 @@ you must restart Jekyll to see changes to variables.
 
 ## Page Variables
 
-```
+```text
 page.content      --  The content of the Page, rendered or un-rendered depending upon what
                       Liquid is being processedand what page is.
 page.title        --  The title of the Page.
@@ -792,7 +779,7 @@ page.previous     --  The previous post relative to the position of the current 
 
 **String Filters**
 
-```
+```liquid
 {% raw %}
 {{ | capitalize }}      -- capitalize words in the input sentence
 {{ | downcase }}        -- convert an input string to lowercase
@@ -904,15 +891,6 @@ page.previous     --  The previous post relative to the position of the current 
 
 **Escape (XML, CGI, URI) Filters**
 
-````liquid
-{% raw %}
-{{ page.content | xml_escape }}      -- Escape some text for use in XML
-{{ "foo,bar;baz?" | cgi_escape }}    -- CGI escape a string for use in a URL;
- # => foo%2Cbar%3Bbaz%3F                replaces any special characters with appropriate %XX replacements
-{{ "foo, bar \baz?" | uri_escape }}  -- URI escape a string
- # => foo,%20bar%20%5Cbaz?
-{% endraw %}
-
 ```liquid
 {% raw %}
 {{ page.content | xml_escape }}      -- Escape some text for use in XML
@@ -921,38 +899,10 @@ page.previous     --  The previous post relative to the position of the current 
 {{ "foo, bar \baz?" | uri_escape }}  -- URI escape a string
  # => foo,%20bar%20%5Cbaz?
 {% endraw %}
-````
+```
 
 **Convert (`markdownify`, `slugify`, `sassify`, `jsonify`) Filters**
 
-````liquid
-{% raw %}
-{{ page.excerpt | markdownify }}        -- Convert a Markdown-formatted string into HTML
-{{ site.data.projects | jsonify }}      -- Convert Hash or Array to JSON
-{{ some_scss | scssify }}               -- Convert a SCSS-formatted string into CSS
-{{ some_sass | sassify }}               -- Convert a Sass-formatted string into CSS
-
-{{ "The _config.yml file" | slugify }}            -- Convert a string into a lowercase URL "slug";
- # => the-config-yml-file                            with option 'pretty': spaces and non-alphanumeric chars
-{{ "The _config.yml file" | slugify: 'pretty' }}     except for ._~!$&'()+,;=@
- # => the-_config.yml-file
-
-{{ "The _config.yml file" | slugify }}            -- Convert a string into a lowercase URL "slug";
- # => the-config-yml-file                            with option 'pretty': spaces and non-alphanumeric chars
-{{ "The _config.yml file" | slugify: 'pretty' }}     except for ._~!$&'()+,;=@
- # => the-_config.yml-file
-
-{{ "The _config.yml file" | slugify }}            -- Convert a string into a lowercase URL "slug";
- # => the-config-yml-file                            with option 'pretty': spaces and non-alphanumeric chars
-{{ "The _config.yml file" | slugify: 'pretty' }}     except for ._~!$&'()+,;=@
- # => the-_config.yml-file
-
-{{ "The _config.yml file" | slugify }}            -- Convert a string into a lowercase URL "slug";
- # => the-config-yml-file                            with option 'pretty': spaces and non-alphanumeric chars
-{{ "The _config.yml file" | slugify: 'pretty' }}     except for ._~!$&'()+,;=@
- # => the-_config.yml-file
-{% endraw %}
-
 ```liquid
 {% raw %}
 {{ page.excerpt | markdownify }}        -- Convert a Markdown-formatted string into HTML
@@ -965,7 +915,7 @@ page.previous     --  The previous post relative to the position of the current 
 {{ "The _config.yml file" | slugify: 'pretty' }}     except for ._~!$&'()+,;=@
  # => the-_config.yml-file
 {% endraw %}
-````
+```
 
 **Misc Filters**
 
@@ -978,43 +928,10 @@ page.previous     --  The previous post relative to the position of the current 
 {% endraw %}
 ```
 
-````liquid
-{% raw %}
-{{ page.content | number_of_words }}         -- Count the number of words in some text
- # => 1337
-{{ page.tags | array_to_sentence_string }}   -- Convert an array into a sentence. Useful for listing tags
- # => foo, bar, and baz
-{% endraw %}
-
-```liquid
-{% raw %}
-{{ page.content | number_of_words }}         -- Count the number of words in some text
- # => 1337
-{{ page.tags | array_to_sentence_string }}   -- Convert an array into a sentence. Useful for listing tags
- # => foo, bar, and baz
-{% endraw %}
-
-```liquid
-{% raw %}
-{{ page.content | number_of_words }}         -- Count the number of words in some text
- # => 1337
-{{ page.tags | array_to_sentence_string }}   -- Convert an array into a sentence. Useful for listing tags
- # => foo, bar, and baz
-{% endraw %}
-````
-
 ### Jekyll Tags
 
 **Include Tag**
 
-````liquid
-{% raw %}
-{% include footer.html %}                  -- Searches for include file in _includes folder
-{% include footer.html param="value" %}       You can also pass parameters to an include
-
-{% include_relative somedir/footer.html %} -- Searches for include file relative to the file where used
-{% endraw %}
-
 ```liquid
 {% raw %}
 {% include footer.html %}                  -- Searches for include file in _includes folder
@@ -1022,11 +939,11 @@ page.previous     --  The previous post relative to the position of the current 
 
 {% include_relative somedir/footer.html %} -- Searches for include file relative to the file where used
 {% endraw %}
-````
+```
 
 **Code Syntax Highlighting Tag**
 
-```
+```liquid
 {% raw %}
 {% highlight ruby %}
 def main
@@ -1037,7 +954,7 @@ end
 
 ```
 
-```
+```liquid
 {% highlight ruby linenos %}         -- Use line numbers
 def main
   puts 'Hello World'
@@ -1049,13 +966,13 @@ end
 
 The default `date` permalink is defined as:
 
-```
+```text
 /:categories/:year/:month/:day/:title.html
 ```
 
 ### Permalink Variables
 
-```
+```text
 year        -- Year from the Post’s filename
 month       -- Month from the Post’s filename
 i_month     -- Month from the Post’s filename without leading zeros.
@@ -1073,7 +990,7 @@ categories  -- The specified categories for this Post.
 
 **Built-in**
 
-```
+```text
 date     /:categories/:year/:month/:day/:title.html
 pretty   /:categories/:year/:month/:day/:title/
 none     /:categories/:title.html
@@ -1083,7 +1000,7 @@ none     /:categories/:title.html
 
 Given a post named: /2015-01-15-week-3-slideshow.md
 
-```
+```text
 None specified (date)             /2015/01/15/week-3-slideshow.html
 pretty                            /2015/01/15/week-3-slideshow/index.html
 /:month-:day-:year/:title.html    /01-15-2015/week-3-slideshow.html
@@ -1092,7 +1009,7 @@ pretty                            /2015/01/15/week-3-slideshow/index.html
 
 ## CSS Preprocessor Example
 
-```
+```text
 ├── _config.yml            # site configuration (add sass settings)
 └── css
     ├── _settings.scss     # include / partial settings
@@ -1101,7 +1018,7 @@ pretty                            /2015/01/15/week-3-slideshow/index.html
 
 will result in:
 
-```
+```text
 └── _site
     └── css
         └── style.css      # all-in-one styles (converted from scss to css)
@@ -1109,14 +1026,14 @@ will result in:
 
 Example - `_config.yml`:
 
-```
+```yaml
 sass:
   sass_dir: css    # gets used for partial lookup (default is _sass)
 ```
 
 Example - `_settings.scss`:
 
-```
+```scss
 $font-family:    Helvetica, Arial, sans-serif;
 
 $color-primary:  #8b0000;    // dark red (ruby)
@@ -1136,25 +1053,22 @@ body {
 }
 ```
 
+Note: Front matter (minimal) is required at the top of the file:
+
 ```yaml
-Note: Front matter (minimal)
+---
+---
 ```
 
----
-
----
-
-````
-
-or with comments
+or with comments:
 
 ```yaml
 ---
 # ensure Jekyll converts scss to css
 ---
-````
+```
 
-required; ensures Jekyll converts `style.scss` to `style.css`;
+The empty front matter is required; it ensures Jekyll converts `style.scss` to `style.css`;
 include all partials (e.g. `_settings.scss`, and so on) with `@import` directives.
 
 (Source: [jekyll-sass-converter gem](https://github.com/jekyll/jekyll-sass-converter))
@@ -1256,7 +1170,7 @@ Note: You can add more than one feed, for example:
 
 ### Paginator Variables
 
-```
+```text
 paginator.per_page            --  Number of Posts per page
 paginator.posts               --  Posts available for that page
 paginator.total_posts         --  Total number of Posts

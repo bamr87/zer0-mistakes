@@ -1,0 +1,190 @@
+name: AI Content Review
+
+# Reviews new/changed Jekyll content on pull requests in two tiers:
+#   1. Deterministic SEO + quality checks (scripts/content-review.rb) — always
+#      runs, no secrets required, works on fork PRs.
+#   2. Claude Code content-reviewer agent — runs only when ANTHROPIC_API_KEY is
+#      configured, for editorial/consistency/polish review.
+# See .github/instructions/content-review.instructions.md for the contract.
+
+on:
+  pull_request:
+    paths:
+      - "pages/**/*.md"
+      - ".github/config/content_review.yml"
+      - ".claude/agents/content-reviewer.md"
+      - "scripts/content-review.rb"
+  workflow_dispatch:
+    inputs:
+      base:
+        description: "Base git ref to diff against"
+        required: false
+        default: "origin/main"
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: content-review-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Tier 1 — deterministic checks (always)
+  # ---------------------------------------------------------------------------
+  deterministic-review:
+    name: SEO & quality checks
+    runs-on: ubuntu-latest
+    outputs:
+      has_content: ${{ steps.review.outputs.has_content }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+
+      - name: Determine base ref
+        id: base
+        run: |
+          base="${{ github.event.inputs.base || format('origin/{0}', github.base_ref) }}"
+          echo "ref=${base}" >> "$GITHUB_OUTPUT"
+
+      - name: Run content review
+        id: review
+        run: |
+          ruby scripts/content-review.rb \
+            --changed --base "${{ steps.base.outputs.ref }}" \
+            --json /tmp/content-review.json \
+            --summary /tmp/content-review.md \
+            --quiet || true
+          # Surface a build-log copy too.
+          cat /tmp/content-review.md || true
+          # Did any in-scope content files actually change? Gates the AI tier.
+          count=$(ruby -rjson -e 'puts (JSON.parse(File.read("/tmp/content-review.json"))["files"] || []).length' 2>/dev/null || echo 0)
+          if [ "${count:-0}" -gt 0 ]; then
+            echo "has_content=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_content=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Post / update PR comment
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: ai-content-review
+          path: /tmp/content-review.md
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-review-results
+          path: |
+            /tmp/content-review.json
+            /tmp/content-review.md
+          retention-days: 30
+          if-no-files-found: ignore
+
+  # ---------------------------------------------------------------------------
+  # Gate — is the Claude Code tier available? (secret present, not a fork PR)
+  # ---------------------------------------------------------------------------
+  gate:
+    name: Check AI availability
+    runs-on: ubuntu-latest
+    outputs:
+      ai_enabled: ${{ steps.check.outputs.enabled }}
+    steps:
+      - id: check
+        env:
+          KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -n "$KEY" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::ANTHROPIC_API_KEY not set — skipping Claude Code content review (deterministic tier still ran)."
+          fi
+
+  # ---------------------------------------------------------------------------
+  # Tier 2 — Claude Code content-reviewer agent
+  # ---------------------------------------------------------------------------
+  ai-review:
+    name: Claude Code content review
+    needs: [deterministic-review, gate]
+    if: ${{ github.event_name == 'pull_request' && needs.gate.outputs.ai_enabled == 'true' && needs.deterministic-review.outputs.has_content == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Run content-reviewer agent (headless)
+        id: agent
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          BASE_REF: origin/${{ github.base_ref }}
+        run: |
+          set +e
+          read -r -d '' PROMPT <<EOF
+          Use the content-reviewer subagent to review the Markdown content files
+          changed on this branch versus ${BASE_REF}. Follow
+          .github/instructions/content-review.instructions.md and the
+          per-collection thresholds in .github/config/content_review.yml. Focus
+          on SEO, consistency, polish, accessibility, and technical accuracy.
+          Output ONLY the final Markdown review (verdict + per-file findings +
+          summary) to stdout. Do not modify any files, and do not print anything
+          before or after the review itself.
+          EOF
+          # Read-only allowlist: the agent never writes — posting is done by the
+          # sticky-comment step below, so no edit/comment tools are granted.
+          claude -p "$PROMPT" \
+            --model claude-sonnet-4-6 \
+            --max-turns 30 \
+            --allowedTools "Task,Read,Grep,Glob,Bash(ruby scripts/content-review.rb:*),Bash(git diff:*),Bash(git merge-base:*),Bash(cat /tmp/content-review.json)" \
+            --output-format text \
+            > /tmp/agent-review.md 2> /tmp/agent-err.log
+          status=$?
+          echo "claude exit status: $status"
+          echo "----- stderr (tail) -----"
+          tail -n 50 /tmp/agent-err.log || true
+          if [ ! -s /tmp/agent-review.md ]; then
+            {
+              echo "## 🤖 Claude Code Content Review"
+              echo
+              echo "The content-reviewer agent did not produce output (exit \`$status\`). See the job logs for details."
+            } > /tmp/agent-review-final.md
+          else
+            {
+              echo "## 🤖 Claude Code Content Review"
+              echo
+              cat /tmp/agent-review.md
+            } > /tmp/agent-review-final.md
+          fi
+
+      - name: Post agent review
+        if: always()
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: ai-content-review-agent
+          path: /tmp/agent-review-final.md

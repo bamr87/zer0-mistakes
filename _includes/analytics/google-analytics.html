@@ -1,9 +1,17 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.google_analytics }}"></script>
     <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', '{{ site.google_analytics }}');
+    (function () {
+      // Skip tracking on local/dev hostnames even if a prod build is served locally (Docker/CI preview).
+      var h = location.hostname;
+      if (h === 'localhost' || h === '127.0.0.1' || h === '0.0.0.0' || h === '[::1]' ||
+          h === 'host.docker.internal' || h.endsWith('.local') || h.endsWith('.test')) return;
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id={{ site.google_analytics }}';
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '{{ site.google_analytics }}');
+    })();
     </script>

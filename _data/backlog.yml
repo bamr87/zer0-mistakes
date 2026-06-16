@@ -55,8 +55,8 @@
 
 meta:
   title: "zer0-mistakes Backlog"
-  updated: 2026-06-12
-  next_id: 19
+  updated: 2026-06-15
+  next_id: 27
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -155,7 +155,7 @@ tasks:
 
   - id: T-005
     title: "Coverage baseline: identify the lowest-covered subsystems toward the 90% goal"
-    status: open
+    status: done
     priority: P1
     area: tests
     risk: standard
@@ -166,19 +166,23 @@ tasks:
       Zer0-Mistake Quality Framework starts with knowing where coverage stands.
       Produce a coverage baseline and file follow-up tasks for the lowest-covered
       areas (start with the modular installer and the Obsidian resolver paths).
+      Done 2026-06-12: baseline recorded at docs/development/coverage-baseline.md
+      (refreshed from the closed PR #122 survey against the current tree);
+      remaining gaps filed as T-019 (migrate.sh + theme_version.rb) and
+      T-020 (installer wizard/upgrade CI coverage).
     acceptance:
       - "A coverage baseline is recorded (test/coverage or a docs note)."
       - "The 2–3 lowest-covered subsystems are identified and filed as new backlog tasks."
       - "No reduction in existing passing tests (`./scripts/bin/test` stays green)."
     links: { issue: null, pr: null, roadmap: "1.13" }
     created: 2026-05-31
-    updated: 2026-06-10
+    updated: 2026-06-12
 
   # --- 2026-06-01 audit -------------------------------------------------------
 
   - id: T-007
     title: "Fix global navbar WCAG 2.1 AA violations to enable axe-core full-audit tests"
-    status: open
+    status: done
     priority: P1
     area: a11y
     risk: standard
@@ -190,6 +194,14 @@ tasks:
       `aria-required-children` (menubar/button nesting), `link-name` (icon-only nav links),
       `list` (footer list structure), and `scrollable-region-focusable` (code blocks).
       Fix the HTML/ARIA in `_includes/` and `_layouts/` to make the full axe-core audit green.
+      Done 2026-06-13: all WCAG 2.1 AA violations resolved and verified with a
+      live axe-core run plus the unfrozen Playwright a11y spec (23/23 pass,
+      223/223 smoke tier). The actual violations differed from the stale TODO:
+      dropped redundant ARIA menubar/menuitem roles (navbar.html), aria-label
+      on the site-subtitle home link, listitem-preserving admin separator,
+      role="tab" on the disabled preview tab + aria-label on an icon-only
+      button, single focusable scroll region for code blocks (code-copy.js +
+      .scss), and underlined prose links across content wrappers.
     acceptance:
       - "All four violations listed in the `test.fixme` comment are resolved in `_includes/` / `_layouts/`."
       - "The three `test.fixme` blocks in `test/visual/accessibility.spec.js` are changed to live `test()` calls and pass in CI."
@@ -197,7 +209,7 @@ tasks:
       - "No visual regression in smoke snapshot tests."
     links: { issue: null, pr: null, roadmap: "1.9" }
     created: 2026-06-01
-    updated: 2026-06-01
+    updated: 2026-06-13
 
   - id: T-008
     title: "Fix theme-customizer YAML export to quote hex color values"
@@ -273,7 +285,7 @@ tasks:
 
   - id: T-011
     title: "Add Ruby unit tests for uncovered _plugins/ generators"
-    status: open
+    status: done
     priority: P2
     area: tests
     risk: standard
@@ -285,6 +297,11 @@ tasks:
       URL-pattern checks (`test_preview_image_urls`) but no specs that exercise the
       generator logic in isolation. This is a concrete gap on the path to the
       3.0-milestone 90% coverage target.
+      Done 2026-06-12: test/test_plugins.rb — 19 Minitest specs covering all
+      three plugins (config merge, path normalization, index dedupe by
+      relative_path, filename sanitization, hook output/filtering/sorting,
+      script discovery with theme fallback); wired into test_core.sh as the
+      "Plugin Unit Specs" unit test; runs standalone without a Jekyll server.
     acceptance:
       - "`test/test_ruby_converter.rb`-style RSpec or Minitest specs exist for all three plugins."
       - "Each spec runs independently without a running Jekyll server (`bundle exec ruby -Itest`)."
@@ -292,7 +309,7 @@ tasks:
       - "Edge cases covered: empty collections, missing front-matter keys, and duplicate slug detection."
     links: { issue: null, pr: null, roadmap: "3.0" }
     created: 2026-06-01
-    updated: 2026-06-01
+    updated: 2026-06-12
 
   # --- 2026-06-10 Zer0-Mistake Quality Framework (roadmap v1.13) --------------
   #
@@ -456,7 +473,7 @@ tasks:
 
   - id: T-018
     title: "Admin config page displays a stale copy of _config.yml — keep it in sync safely"
-    status: open
+    status: done
     priority: P2
     area: feat
     risk: standard
@@ -470,10 +487,222 @@ tasks:
       refresh would inject the live `phc_` api_key into the *visible* Raw-YAML
       tab — any sync mechanism must sanitize the visible tab the same way
       T-009 sanitizes the hidden copy element, or redact at sync time.
+      Done 2026-06-12: copy synced (wrapped in Liquid raw markers so config
+      comments mentioning Liquid render literally); scripts/bin/validate
+      gains a drift check that fails when the copy diverges; the visible
+      Raw-YAML tab now renders the same sanitized capture as the hidden
+      element (live phc_ key verified redacted in both); the raw-tab
+      Playwright test targets code#cfg-raw-yaml and asserts presence
+      instead of silently skipping.
     acceptance:
       - "The config shown at /about/config/ matches the live `_config.yml` (automated sync step or build-time check that fails on drift)."
       - "The visible Raw-YAML tab applies the same sensitive-line redaction as the hidden `cfg-full-yaml` element."
       - "`test/visual/security.spec.js` raw-tab test passes without its silent skip path (locator matches the actual `code#cfg-raw-yaml` element)."
     links: { issue: null, pr: null, roadmap: "1.13" }
     created: 2026-06-11
-    updated: 2026-06-11
+    updated: 2026-06-12
+
+  - id: T-019
+    title: "Unit tests for migrate.sh and theme_version.rb (coverage rank #1)"
+    status: done
+    priority: P2
+    area: tests
+    risk: standard
+    effort: M
+    source: audit
+    summary: >-
+      The 2026-06-12 coverage baseline (docs/development/coverage-baseline.md,
+      T-005) ranks scripts/lib/migrate.sh (265 lines, 5 functions: site
+      detection, theme connection, admin-page install/verify, version-gap
+      detection) plus _plugins/theme_version.rb (88 lines) as the largest
+      remaining zero-coverage surface (353 lines).
+      Done 2026-06-13: scripts/test/lib/test_migrate.sh (14 assertions:
+      detect_jekyll_site, validate_theme_connection classification for
+      remote/gem/local, detect_version_gap min-version logic) and
+      ThemeVersionGeneratorTest in test_plugins.rb (remote/unknown-gem/none
+      branches, gem scan stubbed for determinism).
+    acceptance:
+      - "scripts/test/lib/test_migrate.sh exercises detect_jekyll_site, validate_theme_connection, and detect_version_gap against fixture directories."
+      - "test/test_plugins.rb (or a sibling spec) covers theme_version.rb's version resolution."
+      - "./scripts/bin/test stays green with the new specs included."
+    links: { issue: null, pr: null, roadmap: "1.14" }
+    created: 2026-06-12
+    updated: 2026-06-13
+
+  - id: T-020
+    title: "CI coverage for installer interactive wizard and upgrade path (coverage rank #2)"
+    status: open
+    priority: P2
+    area: tests
+    risk: standard
+    effort: M
+    source: audit
+    summary: >-
+      Per the T-005 baseline, scripts/lib/install/wizard_interactive.sh (189
+      lines — prompt helpers need a TTY) and scripts/lib/install/upgrade.sh
+      (184 lines) have effectively no CI coverage. Drive the wizard with
+      scripted stdin (the suite pattern in test_install_legacy_flags.sh) and
+      add an upgrade-path fixture (old-version site → upgrade → assert state).
+    acceptance:
+      - "Wizard prompt helpers exercised non-interactively (piped answers) in a test_install_* suite."
+      - "An upgrade fixture covers detect→migrate→verify for at least one version gap."
+      - "Suites run in CI via the standard installer e2e discovery (test_install_*.sh)."
+    links: { issue: null, pr: null, roadmap: "1.14" }
+    created: 2026-06-12
+    updated: 2026-06-12
+
+  - id: T-021
+    title: "Vendor cytoscape.js so the Obsidian graph works without a CDN"
+    status: open
+    priority: P3
+    area: feat
+    risk: standard
+    effort: S
+    source: audit
+    summary: >-
+      The Obsidian full-graph page (_includes/obsidian/full-graph.html) loads
+      cytoscape.js from cdn.jsdelivr.net — the only runtime CDN dependency left
+      in the theme, contradicting the vendored-assets principle (Bootstrap,
+      Icons, Mermaid are all under assets/vendor/). It also makes the graph
+      fail under strict CSP or offline. Vendor cytoscape@3.30.0 under
+      assets/vendor/ and reference it locally, matching the Mermaid pattern.
+    acceptance:
+      - "cytoscape.min.js committed under assets/vendor/ and referenced via a local path."
+      - "full-graph.html no longer references cdn.jsdelivr.net."
+      - "The graph page renders nodes/edges with the vendored file (no network)."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-06-13
+    updated: 2026-06-13
+
+  # --- 2026-06-15 audit -------------------------------------------------------
+
+  - id: T-022
+    title: "Record shipped milestones v1.15–v1.18 in _data/roadmap.yml"
+    status: open
+    priority: P2
+    area: docs
+    risk: low
+    effort: S
+    source: audit
+    summary: >-
+      `ruby scripts/generate-roadmap.rb --validate` warns: "Active milestone is
+      v1.14 but the gem is at v1.18.1 (series 1.18). Advance the roadmap to
+      track the shipped version." Four minor and two patch releases (v1.15–v1.18)
+      shipped since the last roadmap update but are not recorded as `completed`
+      milestones. The roadmap page therefore shows v1.14 as the current work while
+      the gem is four minors ahead.
+    acceptance:
+      - "Milestones v1.15 (quality framework batch), v1.16 (AI chat + consumer audit), v1.17 (a11y + mermaid + migration tests), and v1.18 (AI content reviewer) added as `status: completed` with accurate `released:` dates from CHANGELOG.md."
+      - "The active milestone is advanced to v1.19 or the next planned entry, so only one `active` milestone remains."
+      - "`ruby scripts/generate-roadmap.rb --validate` exits 0 with no warnings."
+      - "`ruby scripts/generate-roadmap.rb --check` passes and the README roadmap section is regenerated."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-06-15
+    updated: 2026-06-15
+
+  - id: T-023
+    title: "Unit tests for sanitize_config_filter.rb (security-critical plugin)"
+    status: open
+    priority: P2
+    area: tests
+    risk: standard
+    effort: S
+    source: audit
+    summary: >-
+      `_plugins/sanitize_config_filter.rb` — the Liquid filter that redacts
+      credential lines from the admin config-page DOM — has no unit tests.
+      The filter has two distinct regex paths (SENSITIVE_KEY_RE for key-name
+      matching, PHC_VALUE_RE for PostHog token values) and is security-critical:
+      a broken regex silently exposes secrets in the rendered HTML. Only an
+      integration assertion in `test/visual/security.spec.js` exercises the
+      output end-to-end; no isolated unit test verifies each pattern or the
+      line-join output shape. Edge cases (multiline input, mixed-case keys,
+      partial matches, empty string) are unchecked.
+    acceptance:
+      - "A Minitest spec in `test/test_plugins.rb` (or a new `test_sanitize_filter.rb`) covers: SENSITIVE_KEY_RE matches `api_key`, `apikey`, `secret`, `password`, `token` (case-insensitive) and leaves non-secret lines untouched."
+      - "PHC_VALUE_RE coverage: a line with `phc_AbcDef123` is redacted; a line without it passes through."
+      - "Mixed input: a config block containing both a secret key and a safe key returns the correct partial redaction."
+      - "Edge cases: empty string and nil input return without error."
+      - "`./scripts/bin/test` stays green with the new specs included."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-06-15
+    updated: 2026-06-15
+
+  - id: T-024
+    title: "Unit tests for scripts/content-review.rb scoring engine"
+    status: open
+    priority: P2
+    area: tests
+    risk: standard
+    effort: M
+    source: audit
+    summary: >-
+      `scripts/content-review.rb` is a 470-line deterministic Ruby script that
+      powers the AI content-reviewer framework (v1.18) — it scores Markdown files
+      0–100 across front-matter, SEO, structure, and terminology dimensions using
+      per-collection thresholds from `.github/config/content_review.yml`. A
+      scoring regression (code-fence false-positive) was already fixed in v1.18.1
+      (PR #155) demonstrating the need for unit coverage. Currently zero lib tests
+      exist for it; the CI runs it only as a side-effect of the `ai-content-review`
+      workflow on PRs that touch `pages/**`.
+    acceptance:
+      - "A test in `scripts/test/lib/` (or `test/test_quality.sh` expansion) runs `content-review.rb --files` against synthetic Markdown fixtures and asserts: a well-formed post scores ≥ 80, a file missing `description` front-matter loses points, a properly tagged code fence does not penalise the closing ` ``` ` line."
+      - "At least one test verifies the `--strict` flag exits non-zero when the fail threshold is crossed."
+      - "Tests run under `LC_ALL=C` (locale-independence parity with T-015 guard)."
+      - "`./scripts/bin/test` stays green with the new tests included."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-06-15
+    updated: 2026-06-15
+
+  - id: T-025
+    title: "Playwright smoke tests for the site-wide search modal"
+    status: open
+    priority: P2
+    area: tests
+    risk: standard
+    effort: S
+    source: audit
+    summary: >-
+      The client-side site search (`assets/js/search-modal.js` + `search.json`
+      endpoint, feature ZER0-032) has no dedicated Playwright spec. The smoke
+      tier's 223 passing tests exercise many layout pages but none explicitly
+      verify that the search modal opens, accepts input, or populates results from
+      the `/search.json` index. Core behaviors to cover: keyboard shortcut `/`
+      triggers `navigation:searchRequest` → modal opens; typing a query filters
+      results; Escape closes the modal; the modal is mutually exclusive with the
+      Settings offcanvas (no stacked backdrops).
+    acceptance:
+      - "A new spec (e.g. `test/visual/search.spec.js`) or an expansion of `ui-refresh.spec.js` includes at minimum: modal opens on `/` keypress, search input is focused, Escape closes it."
+      - "A result-population check: query matching a known post title (e.g. 'Hello World') yields at least one result `<a>` element."
+      - "Mutual-exclusion guard: opening search while Settings offcanvas is open closes the offcanvas first (no stacked backdrops)."
+      - "Spec runs in the smoke project (`npx playwright test --project=smoke`) without a network request to an external index."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-06-15
+    updated: 2026-06-15
+
+  - id: T-026
+    title: "Playwright smoke test for AI chat widget render guard and FAB visibility"
+    status: open
+    priority: P3
+    area: tests
+    risk: standard
+    effort: S
+    source: audit
+    summary: >-
+      The AI chat widget (`_includes/components/ai-chat.html`, feature ZER0-060,
+      shipped in v1.16) has no dedicated Playwright test. The widget has a
+      multi-condition render guard — it is hidden unless `ai_chat.enabled: true`
+      AND either `proxy_ready: true` (proxy mode) or a non-empty `api_key`
+      (direct mode). A previous bug (Liquid `assign` returning truthy strings)
+      would have rendered a dead FAB on every page; such regressions are invisible
+      without a smoke test. The default `_config_dev.yml` has `proxy_ready: false`,
+      so the FAB should NOT appear in the test environment — that case is easily
+      asserted.
+    acceptance:
+      - "A new spec (or addition to `ui-refresh.spec.js`) asserts: with default dev config, no `#ai-chat-fab` element is visible on the homepage."
+      - "A mock-config test (inject `data-ai-chat-enabled` attribute or use a fixture page with the widget force-enabled) verifies the FAB renders and the chat panel toggles open/closed on click."
+      - "The test passes in the smoke project without a live AI backend."
+      - "`./scripts/bin/test` (including the Playwright smoke tier) stays green."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-06-15
+    updated: 2026-06-15

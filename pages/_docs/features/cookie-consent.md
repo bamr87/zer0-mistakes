@@ -18,6 +18,7 @@ difficulty: intermediate
 estimated_reading_time: 15 minutes
 sidebar:
     nav: docs
+mermaid: true
 ---
 
 # Cookie Consent Management

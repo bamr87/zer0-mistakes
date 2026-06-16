@@ -1,7 +1,8 @@
 ---
-lastmod: 2026-04-18T19:30:00.000Z
-title: Jekyll Theme Guide
+lastmod: 2026-06-14T00:00:00.000Z
+title: "Jekyll Theme Guide: Setup, Customize, Deploy"
 description: Comprehensive guide to using and customizing the Zer0-Mistakes Jekyll theme with Docker-first development, Bootstrap 5, and modern integrations.
+keywords: [jekyll theme guide, zer0-mistakes, docker jekyll, bootstrap 5 theme, github pages theme]
 preview: /images/previews/jekyll-theme-guide.png
 layout: default
 categories:

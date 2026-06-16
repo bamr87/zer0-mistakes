@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:29:49.000Z
+lastmod: 2026-06-14T00:00:00.000Z
 title: Jekyll Collections
 description: Organized content collections for posts, docs, notebooks, and other content types with custom permalinks.
 preview: /images/previews/jekyll-collections.png
@@ -349,7 +349,7 @@ layout: default
 
 ## Related
 
-- [Jekyll Configuration](/docs/jekyll/jekyll-config/)
+- [Jekyll Configuration](/docs/jekyll/)
 - [Layouts](/docs/customization/layouts/)
 - [Front Matter](/docs/front-matter/)
 

@@ -19,6 +19,98 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   dashboard page that tracks every site's live/pending status, and a daily
   `hub-sync.yml` workflow that commits only when the org changed
   (see `docs/systems/content-hub.md`)
+## [1.18.1] - 2026-06-14
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- ae76a61f fix(content-review): correct code-fence detection (closing fences + {% raw %}) (#155)
+- f00fb654 docs(seo): strengthen SEO docs index metadata + fix agent-tier workflow (#154)
+
+### Fixed
+- **content-review: closing code fences no longer counted as "missing language"**.
+  `scripts/content-review.rb` flagged every bare ```` ``` ```` line, including the
+  *closing* fence of a properly tagged block, which double-counted and could tank
+  a file's score (e.g. `pages/_about/features/jekyll.md` scored 0/100 almost
+  entirely from this false positive). The check now tracks fence open/close state
+  and only validates opening fences.
+- **content-review: ignore Liquid `{% raw %}` blocks** in the quality and style
+  checks. Code fences, headings, images, and terminology inside `{% raw %}…
+  {% endraw %}` are literal display examples, not page structure, and were being
+  counted as real findings.
+
+## [1.18.0] - 2026-06-13
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- e7c8e33c feat(content-review): AI content reviewer framework with Claude Code agent (#153)
+- c78433f1 fix(content): render mermaid on 12 pages, restore Obsidian graph, migration tests (T-019) (#150)
+
+### Added
+- **Chat GitHub actions**: the assistant can file GitHub issues and open content/UI-improvement pull requests via Claude tool use (`get_page_source`, `create_github_issue`, `create_pull_request`), every creation gated by an in-chat confirmation card; `ai_chat.github.mode: 'url'` (default) opens pre-filled github.com forms with no token anywhere, `'proxy'` creates them server-side
+- **Chat proxy template** (`templates/deploy/chat-proxy/`): Cloudflare Worker that streams `/api/chat` to the Claude Messages API and serves `/api/github/issue` + `/api/github/pull-request` with a server-side fine-grained token, an origin allowlist, and server-pinned model/max_tokens
+- **Chat proxy: Claude Code connector (OAuth) auth**: the proxy can authenticate to Claude with a Claude Code / Claude.ai OAuth login token (`Authorization: Bearer` + `anthropic-beta: oauth-2025-04-20`) instead of an API key — three auto-detected modes by precedence: rotating `ANTHROPIC_OAUTH_REFRESH_TOKEN` (KV-cached, auto-refreshed), long-lived `CLAUDE_CODE_OAUTH_TOKEN` (from `claude setup-token`), and `ANTHROPIC_API_KEY`; OAuth modes pair with a Cloudflare Access gate for private deployments
+- **Chat local dev proxy** (`templates/deploy/chat-proxy/dev-proxy.mjs`): runs the same Worker logic on Node, reads `CLAUDE_CODE_OAUTH_TOKEN`/`ANTHROPIC_API_KEY` from `.env`, and serves `/api/chat` at `localhost:8787` so the assistant works during `docker-compose up` with no Cloudflare deploy; `_config_dev.yml` wires the widget to it
+- **Chat proxy CI deploy** (`.github/workflows/deploy-chat-proxy.yml` + `templates/deploy/chat-proxy/wrangler.toml`): deploys the Worker to Cloudflare (`workers.dev`, cross-origin) on push to `main` or manual dispatch, setting `ANTHROPIC_API_KEY` from a GitHub Actions secret via `wrangler-action`; requires only `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID`/`ANTHROPIC_API_KEY` repo secrets
+- **Chat local page editing (dev only)**: with `ai_chat.local_edit: true` (set in `_config_dev.yml`), the assistant gains an `update_page_content` tool and the dev proxy exposes sandboxed `/api/page/source` + `/api/page/update` routes (`templates/deploy/chat-proxy/page-store.mjs`) so it can rewrite the current page's source file in the working tree — the dev server `--watch` rebuilds it live. Path-confined to the repo, content extensions only, existing files only; off in production (the Worker has no filesystem)
+- **Chat feature registered in the layered guidance system**: new `.github/instructions/ai-chat.instructions.md` (auth modes, server caps, confirmation/safety contracts) registered in `CLAUDE.md`, `AGENTS.md`, the instructions index, and the ZER0-060 registry; resolved the `templates/deploy/**` glob collision with `install.instructions.md`; documented the shared `ANTHROPIC_API_KEY` (chat proxy + content reviewer) in `docs/systems/github-secrets-setup.md`; chat edit/PR prompts now bump `lastmod` and follow the content-review conventions so chat-authored changes pass the automated reviewer
+- **AI content reviewer framework**: a two-tier reviewer that runs on every PR
+  touching `pages/**/*.md` and integrates with Claude Code agents to ensure SEO
+  is met and content is consistent, polished, and styled to the collection's
+  guidelines.
+  - **Deterministic tier** — `scripts/content-review.rb` (Ruby, stdlib-only, no
+    API key, works on fork PRs) scores each file 0–100 for front matter, SEO
+    (title/description length, keywords), structure (headings, code-fence
+    languages, image alt text, bare URLs), and terminology. Thresholds are
+    derived **per collection** (posts as articles, docs under the documentation
+    guidelines, notes/notebooks as short-form, etc.).
+  - **Claude Code agent tier** — `.claude/agents/content-reviewer.md` reviews
+    tone, clarity, consistency, accessibility, and technical accuracy, loading
+    each file's governing instruction files (baseline + collection-specific).
+  - **Automation** — `.github/workflows/ai-content-review.yml` posts the
+    deterministic summary as a sticky PR comment (always) and runs the Claude
+    Code agent when `ANTHROPIC_API_KEY` is configured.
+  - **Config & guidance** — `.github/config/content_review.yml` (per-collection
+    thresholds + assigned skills/prompts), `.github/instructions/content-review.instructions.md`,
+    the `/content-review` prompt + Cursor command, and the `content-review` skill.
+
+### Changed
+- **AI Chat Assistant rebuilt on the Claude Messages API**: requests use the `POST /v1/messages` shape (top-level `system`, content blocks, `anthropic-version`; direct mode adds `anthropic-dangerous-direct-browser-access`) instead of OpenAI Chat Completions; responses stream token-by-token over SSE; default model is `claude-opus-4-8` and the unsupported `temperature` knob was removed; widget logic moved from inline `<script>` to `assets/js/ai-chat.js`
+
+## [1.17.1] - 2026-06-13
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- f2657b68 fix(a11y): resolve all navbar & site WCAG 2.1 AA violations (T-007) (#149)
+- 30d836cb fix(admin): sync config-page copy with live _config.yml and redact the Raw tab (T-018) (#148)
+
+### Added
+- **Mermaid diagrams now render on 12 more pages**: pages with ```mermaid``` code fences but no `mermaid: true` front-matter flag (about, several feature/dev docs, all four quickstart guides) were showing raw code instead of diagrams — the flag gates the renderer include. Added the flag; verified all 34 diagrams across the site parse with valid Mermaid syntax and render to SVG in a browser
+- **Obsidian graph view restored**: the `/docs/obsidian/graph/` page (roadmap v1.4 force-directed knowledge graph) had been deleted as a "stub" but its `full-graph.html` include, `obsidian-graph.js`, the docs index link, and 5 inbound wiki-links all still referenced it — a 404 to a shipped feature. Restored the page (it renders 161 nodes / 269 edges from the live wiki-index with zero console errors)
+- **Migration & theme-version coverage (T-019)**: `scripts/test/lib/test_migrate.sh` (14 assertions for Jekyll-site detection, theme-connection classification, and version-gap logic) and `ThemeVersionGeneratorTest` in `test/test_plugins.rb` — the two largest remaining zero-coverage subsystems from the T-005 baseline
+
+### Fixed
+- **Navbar & site accessibility (T-007)**: resolved all WCAG 2.1 AA violations that kept three axe-core audits frozen — dropped the redundant ARIA `menubar`/`menuitem` roles from the nav (the nav landmark already provides semantics; menubars require menuitem children the search/settings buttons weren't), added an `aria-label` to the site-subtitle home link, kept the admin/footer separator a list item, gave the theme-preview disabled tab a `role="tab"` and an icon-only button an `aria-label`, made code blocks a single keyboard-focusable scroll region, and underlined prose links so they're distinguishable without color. The three `test.fixme` blocks in `test/visual/accessibility.spec.js` are now live `test()` calls — verified 0 violations across the homepage, FAQ, and all 8 admin pages (23/23 a11y, 223/223 smoke tier)
+
+## [1.17.0] - 2026-06-12
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- ac36e1a3 feat(tests): plugin unit specs and coverage baseline — T-011, T-005 (#145)
+
+### Fixed
+- **Admin config page sync (T-018)**: the page's config copy is now byte-synced with the live `_config.yml` (raw-wrapped so Liquid-looking comment text renders literally) and `validate` fails on drift; the **visible Raw-YAML tab** now applies the same sensitive-line redaction as the hidden copy element (it previously showed the raw file — the stale copy was the only thing keeping the live PostHog key off that tab); the raw-tab security test targets the real `code#cfg-raw-yaml` element and asserts presence instead of silently skipping
+
+### Added
+- **Plugin unit specs (T-011)**: 19 Minitest specs for the previously-untested `preview_image_generator.rb`, `content_statistics_generator.rb`, and `admin_page_urls.rb` plugins (config merge, path normalization, index dedupe by relative path, hook output, edge cases); wired into the core suite as "Plugin Unit Specs"
+- **Coverage baseline (T-005)**: structural survey recorded at `docs/development/coverage-baseline.md` — 10/10 suites green; the two remaining zero-coverage subsystems filed as T-019 (migrate.sh + theme_version.rb) and T-020 (installer wizard/upgrade)
 
 ## [1.16.0] - 2026-06-12
 

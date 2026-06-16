@@ -99,6 +99,12 @@ See [`docs/installation/profiles.md`](../../docs/installation/profiles.md). Prof
 
 ## Adding a new deploy target
 
+> **Not `templates/deploy/chat-proxy/`.** That directory matches this file's
+> `applyTo` glob but is a JavaScript Cloudflare Worker for the AI chat
+> assistant, **not** a Bash deploy plugin. It is governed by
+> [`ai-chat.instructions.md`](./ai-chat.instructions.md) — the four-function
+> contract below does not apply to it.
+
 See [`docs/installation/customization.md`](../../docs/installation/customization.md). Implement the four-function contract:
 
 ```bash

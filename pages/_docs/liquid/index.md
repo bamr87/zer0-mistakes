@@ -13,8 +13,8 @@ permalink: /docs/liquid/
 difficulty: beginner
 estimated_reading_time: 5 minutes
 prerequisites: []
-lastmod: 2025-12-20
-lastmod: 2025-12-20T22:15:46.126Z
+lastmod: 2026-06-14T00:00:00.000Z
+lastmod: 2026-06-14T00:00:00.000Z
 sidebar:
     nav: docs
 ---
@@ -180,7 +180,7 @@ Explore Liquid usage in Zer0-Mistakes:
 
 - [Jekyll Guide](/docs/jekyll/)
 - [Front Matter](/docs/front-matter/)
-- [Jekyll Liquid Templating](/docs/jekyll/jekyll-liquid/)
+- [Jekyll Liquid Templating](/docs/liquid/)
 
 ## See also
 

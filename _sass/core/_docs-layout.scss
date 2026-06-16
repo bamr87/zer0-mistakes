@@ -641,6 +641,17 @@ a.bd-intro-badge--tag:focus {
     min-width: 1px
 }
 
+/* a11y (WCAG 1.4.1 link-in-text-block): prose links must be distinguishable
+   without relying on color. Underline inline content links; exclude links
+   that already carry their own non-color affordance (buttons, badges, nav
+   pills/tabs, card and icon links). */
+.bd-content :is(p, li, blockquote, td, dd) a:not(.btn):not(.badge):not(.nav-link):not(.dropdown-item):not(.page-link):not(.card-link):not([class*="text-decoration"]),
+.post-content :is(p, li, blockquote, td, dd) a:not(.btn):not(.badge):not(.nav-link):not(.dropdown-item):not(.page-link):not(.card-link):not([class*="text-decoration"]),
+.landing-content-body :is(p, li, blockquote, td, dd) a:not(.btn):not(.badge):not(.nav-link):not(.dropdown-item):not(.page-link):not(.card-link):not([class*="text-decoration"]),
+#admin-content :is(p, li, blockquote, td, dd, .alert) a:not(.btn):not(.badge):not(.nav-link):not(.dropdown-item):not(.page-link):not(.card-link):not(.alert-link):not([class*="text-decoration"]) {
+    text-decoration: underline;
+}
+
 @media (min-width: 992px) {
     .bd-toc {
         position:-webkit-sticky;
