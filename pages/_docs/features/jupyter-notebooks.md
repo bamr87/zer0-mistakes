@@ -298,7 +298,7 @@ Add responsive wrapper:
 
 For implementation details (Docker conversion pipeline, nbconvert config, SCSS styling, GitHub Actions workflow):
 
-- [Jupyter Notebooks → docs/features/jupyter-notebooks.md](../../../docs/features/jupyter-notebooks.md)
+- [Jupyter Notebooks → docs/features/jupyter-notebooks.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/features/jupyter-notebooks.md)
 
 ## See also
 

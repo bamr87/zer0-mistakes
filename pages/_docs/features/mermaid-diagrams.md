@@ -385,7 +385,7 @@ docker-compose up
 
 For implementation details (how Mermaid v2 was integrated, file changes, test suite):
 
-- [Mermaid Integration → docs/implementation/feature-change-log.md](../../../docs/implementation/feature-change-log.md#mermaid-integration-v20)
+- [Mermaid Integration → docs/implementation/feature-change-log.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/implementation/feature-change-log.md#mermaid-integration-v20)
 
 ## See also
 

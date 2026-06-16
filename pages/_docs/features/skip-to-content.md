@@ -1,7 +1,7 @@
 ---
-lastmod: 2026-04-18T19:29:57.000Z
+lastmod: 2026-06-15T00:00:00.000Z
 title: Skip-to-Content Accessibility Link
-description: WCAG 2.1 Level AA compliant skip link for keyboard users to bypass navigation and jump to main content.
+description: A WCAG 2.1 Level AA skip link lets keyboard users bypass the navigation and jump straight to the main content area on every page of the theme.
 preview: /images/previews/skip-to-content-accessibility-link.png
 layout: default
 categories:
@@ -44,62 +44,90 @@ The skip-to-content link:
 
 ### Implementation
 
+The link is the first focusable element in `_includes/core/header.html`, and
+its target is a single, site-wide `#main-content` wrapper in
+`_layouts/root.html`. The theme builds the link entirely from Bootstrap 5
+utility classes — `visually-hidden-focusable` keeps it hidden until it receives
+keyboard focus:
+
 ```html
-<!-- In _includes/core/header.html -->
-<a href="#main-content" class="skip-link visually-hidden-focusable">
+<!-- _includes/core/header.html -->
+<a href="#main-content" class="visually-hidden-focusable position-absolute top-0 start-0 z-3 m-3 btn btn-primary">
   Skip to main content
 </a>
+```
 
-<!-- Main content area -->
-<main id="main-content" tabindex="-1">
-  <!-- Page content -->
-</main>
+```html
+<!-- _layouts/root.html -->
+<div id="main-content">
+  {% raw %}{{ content }}{% endraw %}
+</div>
 ```
 
 ## Styling
 
-### Default Styles
+### Bootstrap utility (shipped default)
 
-```css
-.skip-link {
-  position: absolute;
-  top: -40px;
-  left: 0;
-  background: var(--bs-primary);
-  color: white;
-  padding: 8px 16px;
-  z-index: 9999;
-  transition: top 0.3s ease;
-}
-
-.skip-link:focus {
-  top: 0;
-}
-```
-
-### Bootstrap Utility
-
-Using Bootstrap's `visually-hidden-focusable`:
+The theme's link relies on Bootstrap's `visually-hidden-focusable` class plus a
+few positioning and button utilities — there is no custom CSS to maintain:
 
 ```html
-<a href="#main-content" class="visually-hidden-focusable">
+<a href="#main-content" class="visually-hidden-focusable position-absolute top-0 start-0 z-3 m-3 btn btn-primary">
   Skip to main content
 </a>
 ```
 
-This class:
+The `visually-hidden-focusable` class:
 
-- Hides element visually
-- Keeps it accessible to screen readers
-- Shows on keyboard focus
+- Hides the element visually until it receives focus
+- Keeps it accessible to screen readers at all times
+- Reveals it on keyboard focus (the `position-absolute top-0 start-0 m-3`
+  utilities pin it to the top-left corner when shown)
+
+### Token-based SCSS alternative
+
+The theme also ships a `.zer0-skip-link` helper in
+`_sass/utilities/_focus.scss` that slides the link in from off-screen on focus.
+It reads from the theme's design tokens (`--zer0-color-primary`,
+`--zer0-layer-skip-link`, the motion tokens) so it stays in sync with the rest
+of the theme. Apply it instead of the Bootstrap utilities if you prefer a
+transform-based reveal:
+
+```scss
+.zer0-skip-link {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: var(--zer0-layer-skip-link); // 1100
+  padding: 0.5rem 1rem;
+  background: var(--zer0-color-primary);
+  color: #fff;
+  border-radius: 0.25rem;
+  transform: translateY(-200%);
+  transition: transform var(--zer0-motion-duration-base) var(--zer0-motion-ease-standard);
+
+  &:focus,
+  &:focus-visible {
+    transform: translateY(0);
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+}
+```
 
 ## Customization
 
-### Link Text
+> [!NOTE]
+> To customize the shipped link, edit `_includes/core/header.html`. The CSS
+> examples below target the `.zer0-skip-link` SCSS helper; add the
+> `zer0-skip-link` class to the link (and drop the Bootstrap utilities) if you
+> want to override its appearance with the snippets that follow.
+
+### Link text
 
 ```html
 <!-- Custom text -->
-<a href="#main-content" class="skip-link visually-hidden-focusable">
+<a href="#main-content" class="visually-hidden-focusable position-absolute top-0 start-0 z-3 m-3 btn btn-primary">
   Jump to content
 </a>
 ```
@@ -107,8 +135,8 @@ This class:
 ### Styling
 
 ```css
-/* Custom styling */
-.skip-link:focus {
+/* Custom styling for the .zer0-skip-link helper */
+.zer0-skip-link:focus {
   background: var(--bs-dark);
   color: var(--bs-light);
   border-radius: var(--bs-border-radius);
@@ -120,32 +148,32 @@ This class:
 
 ```css
 /* Center the link */
-.skip-link:focus {
+.zer0-skip-link:focus {
   left: 50%;
   transform: translateX(-50%);
 }
 
 /* Right-aligned */
-.skip-link:focus {
+.zer0-skip-link:focus {
   left: auto;
   right: 1rem;
 }
 ```
 
-## Multiple Skip Links
+## Multiple skip links
 
-For complex pages with multiple sections:
+The theme ships a single skip link that targets `#main-content`. For pages with
+several major landmarks you can add more links, pointing each `href` at an ID
+that exists in your markup. The header is rendered with `id="navbar"`, so a
+"skip to navigation" link would target `#navbar`:
 
 ```html
 <div class="skip-links">
-  <a href="#main-content" class="skip-link visually-hidden-focusable">
+  <a href="#main-content" class="visually-hidden-focusable position-absolute top-0 start-0 z-3 m-3 btn btn-primary">
     Skip to main content
   </a>
-  <a href="#navigation" class="skip-link visually-hidden-focusable">
+  <a href="#navbar" class="visually-hidden-focusable position-absolute top-0 start-0 z-3 m-3 btn btn-primary">
     Skip to navigation
-  </a>
-  <a href="#footer" class="skip-link visually-hidden-focusable">
-    Skip to footer
   </a>
 </div>
 ```

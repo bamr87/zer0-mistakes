@@ -1,7 +1,7 @@
 ---
-lastmod: 2026-04-18T19:29:59.000Z
+lastmod: 2026-06-15T00:00:00.000Z
 title: Theme Version Display Plugin
-description: Automatic theme version extraction from gem specification with modal display and footer integration.
+description: Automatic theme version extraction from the installed gem specification, surfaced through the Settings panel opened from the header gear or footer Info button.
 preview: /images/previews/theme-version-display-plugin.png
 layout: default
 categories:
@@ -21,16 +21,22 @@ sidebar:
 
 # Theme Version Display Plugin
 
-The Zer0-Mistakes theme includes a Jekyll plugin that automatically extracts and displays the theme version from the gem specification.
+The Zer0-Mistakes theme includes a Jekyll plugin (`_plugins/theme_version.rb`) that automatically extracts the theme version from the installed gem specification during the build, then exposes it to Liquid so the UI can show it.
 
 ## Overview
 
 The plugin provides:
 
-- **Automatic Extraction**: Reads version from `.gemspec`
-- **Global Variable**: `site.theme_version` available in Liquid
-- **Footer Display**: Shows version in site footer
-- **Modal Integration**: Detailed version info in modal
+- **Automatic Extraction**: Reads the version from the installed gem's `Gem::Specification` (no hardcoding)
+- **Global Variable**: `site.theme_specs` — an array of theme specs — available in Liquid
+- **Settings Panel**: Theme and build info shown in the Settings offcanvas (`info-section.html`)
+- **Header & Footer Access**: Open the panel from the header gear icon or the footer Info button
+
+> [!NOTE]
+> The single source of truth for the version number is
+> `lib/jekyll-theme-zer0.gemspec` → `s.version`, which reads
+> `JekyllThemeZer0::VERSION` from `lib/jekyll-theme-zer0/version.rb`. Bump it only
+> via `./scripts/bin/release`, never by hand.
 
 ## How It Works
 
@@ -43,23 +49,40 @@ _plugins/
 
 ### Version Extraction
 
-The plugin reads from `jekyll-theme-zer0.gemspec`:
+The plugin is a Jekyll `Generator` (`ThemeVersionGenerator`, `priority :high`) that runs during the build. For a local gem theme it loads the gem's `Gem::Specification`; for a `remote_theme` it records `"latest"` (GitHub Pages serves the latest commit, so there is no pinned version):
 
 ```ruby
-# _plugins/theme_version.rb
+# _plugins/theme_version.rb (abridged)
 module Jekyll
-  class ThemeVersion < Generator
+  class ThemeVersionGenerator < Generator
     safe true
-    priority :highest
+    priority :high
 
     def generate(site)
-      gemspec = File.join(site.source, 'jekyll-theme-zer0.gemspec')
-      if File.exist?(gemspec)
-        content = File.read(gemspec)
-        if content =~ /version\s*=\s*["']([^"']+)["']/
-          site.config['theme_version'] = $1
-        end
+      theme_specs = []
+
+      if site.config['remote_theme']
+        remote_theme = site.config['remote_theme']
+        theme_specs << {
+          'name'       => remote_theme.split('/').last,
+          'type'       => 'remote',
+          'repository' => remote_theme,
+          'version'    => 'latest'
+        }
+      elsif site.config['theme']
+        spec = Gem::Specification.find_by_name(site.config['theme'])
+        theme_specs << {
+          'name'    => spec.name,
+          'version' => spec.version.to_s,
+          'type'    => 'gem',
+          'homepage' => spec.homepage,
+          'summary'  => spec.summary,
+          'authors'  => spec.authors
+        }
       end
+
+      # Make theme specs available to templates
+      site.config['theme_specs'] = theme_specs
     end
   end
 end
@@ -69,129 +92,76 @@ end
 
 ### In Templates
 
-Access the version in any template:
+The plugin exposes `site.theme_specs` (an array), not a single `site.theme_version` string. Pull the version for a named theme like this:
 
 ```liquid
-{% raw %}<!-- Display version -->
-<span>v{{ site.theme_version }}</span>
+{% raw %}<!-- Display the version for this theme -->
+<span>v{{ site.theme_specs | where: "name", "jekyll-theme-zer0" | map: "version" | first }}</span>
 
 <!-- Conditional display -->
-{% if site.theme_version %}
-  Version: {{ site.theme_version }}
+{% assign zer0 = site.theme_specs | where: "name", "jekyll-theme-zer0" | first %}
+{% if zer0 %}
+  Version: {{ zer0.version }} ({{ zer0.type }})
 {% endif %}{% endraw %}
 ```
 
-### Footer Integration
+When the site runs in development mode (`theme: "jekyll-theme-zer0"`), `version` is the installed gem version. For a `remote_theme` site it is `"latest"`.
 
-The default footer includes version display:
+### Where it appears in the UI
 
-```html
-{% raw %}<footer class="site-footer">
-  <div class="footer-info">
-    <span class="theme-version">
-      Zer0-Mistakes v{{ site.theme_version | default: "dev" }}
-    </span>
-  </div>
-</footer>{% endraw %}
-```
+The version and build details are surfaced through the **Settings** offcanvas
+(`_includes/components/info-section.html`), which embeds
+`_includes/components/theme-info.html`. Open it from:
 
-### Version Modal
+- The **gear icon** in the header (`_includes/core/header.html`,
+  `data-bs-target="#info-section"`).
+- The **Info** button in the footer (`_includes/core/footer.html`).
 
-Detailed version information in modal:
-
-```html
-{% raw %}<!-- Version info button -->
-<button type="button" 
-        class="btn btn-link btn-sm" 
-        data-bs-toggle="modal" 
-        data-bs-target="#themeInfoModal">
-  v{{ site.theme_version }}
-</button>
-
-<!-- Modal content -->
-<div class="modal fade" id="themeInfoModal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5>Theme Information</h5>
-      </div>
-      <div class="modal-body">
-        <dl>
-          <dt>Theme</dt>
-          <dd>Zer0-Mistakes</dd>
-          <dt>Version</dt>
-          <dd>{{ site.theme_version }}</dd>
-          <dt>Jekyll</dt>
-          <dd>{{ jekyll.version }}</dd>
-        </dl>
-      </div>
-    </div>
-  </div>
-</div>{% endraw %}
-```
+In the panel, expand **Theme & Build Info** to see the theme, Jekyll version,
+environment, last build time, and repository. The `theme-info.html` include
+renders the theme name from `site.remote_theme` / `site.theme` and the build
+metadata from `jekyll.version`, `jekyll.environment`, and `site.time`.
 
 ## Configuration
 
 ### Version Source
 
-The plugin looks for version in:
+The plugin resolves the version from the active theme configuration — no
+dedicated config key is required:
 
-1. `jekyll-theme-zer0.gemspec` (primary)
-2. `lib/jekyll-theme-zer0/version.rb` (fallback)
+1. `remote_theme: "bamr87/zer0-mistakes"` → the spec's `version` is `"latest"`.
+2. `theme: "jekyll-theme-zer0"` (development) → the version comes from the
+   installed gem's `Gem::Specification`, which in turn reads
+   `JekyllThemeZer0::VERSION` in `lib/jekyll-theme-zer0/version.rb`.
 
-### Override Version
+### Display your own version
 
-Set manually in `_config.yml`:
-
-```yaml
-theme_version: "1.0.0-custom"
-```
-
-### Hide Version
-
-To hide version display:
-
-```yaml
-show_theme_version: false
-```
-
-Then in templates:
+There is no `theme_version` or `show_theme_version` config key — render the
+value yourself from `site.theme_specs`:
 
 ```liquid
-{% raw %}{% if site.show_theme_version != false %}
-  v{{ site.theme_version }}
-{% endif %}{% endraw %}
+{% raw %}{% assign zer0 = site.theme_specs | where: "name", "jekyll-theme-zer0" | first %}
+{% if zer0 %}v{{ zer0.version }}{% endif %}{% endraw %}
 ```
 
 ## Customization
 
-### Footer Styling
-
-```css
-.theme-version {
-  font-size: 0.875rem;
-  color: var(--bs-secondary);
-}
-
-.theme-version:hover {
-  color: var(--bs-primary);
-  cursor: pointer;
-}
-```
-
 ### Version Badge
 
 ```html
-{% raw %}<span class="badge bg-primary">
-  v{{ site.theme_version }}
-</span>{% endraw %}
+{% raw %}{% assign zer0 = site.theme_specs | where: "name", "jekyll-theme-zer0" | first %}
+<span class="badge bg-primary">v{{ zer0.version }}</span>{% endraw %}
 ```
 
-### With Link to Changelog
+### With Link to the Changelog
+
+`CHANGELOG.md` is not served as a Jekyll page, so link to the GitHub copy rather
+than a local `/CHANGELOG/` URL:
 
 ```html
-{% raw %}<a href="/CHANGELOG/" class="version-link">
-  v{{ site.theme_version }}
+{% raw %}{% assign zer0 = site.theme_specs | where: "name", "jekyll-theme-zer0" | first %}
+<a href="https://github.com/bamr87/zer0-mistakes/blob/main/CHANGELOG.md" class="version-link">
+  v{{ zer0.version }}
 </a>{% endraw %}
 ```
 
@@ -199,16 +169,13 @@ Then in templates:
 
 ### Development Mode
 
-When running locally without gem:
-
-```yaml
-# _config_dev.yml
-theme_version: "development"
-```
+`_config_dev.yml` sets `remote_theme: false` and `theme: "jekyll-theme-zer0"`,
+so the plugin extracts the version from the locally installed gem.
 
 ### Production Mode
 
-Plugin automatically extracts from gemspec.
+`_config.yml` sets `remote_theme: "bamr87/zer0-mistakes"`, so the spec reports
+`version: "latest"` (GitHub Pages serves the latest commit).
 
 ## Troubleshooting
 
@@ -232,15 +199,15 @@ Plugin automatically extracts from gemspec.
 
 ## Related
 
-- [Release Management](../../../docs/development/release-management/)
-- [Version Bump](../../../docs/development/version-bump/)
-- [Gem Publishing](../../../docs/development/release-management/#rubygems-publishing)
+- [Release Management](/docs/development/release-management/)
+- [Version Bump](/docs/development/version-bump/)
+- [Gem Publishing](/docs/development/release-management/#rubygems-publishing)
 
 ## Technical Reference
 
 For implementation details (Jekyll plugin architecture, version extraction, modal integration):
 
-- [Theme Version Feature → docs/features/theme-version.md](../../../docs/features/theme-version.md)
+- [Theme Version Feature → docs/features/theme-version.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/features/theme-version.md)
 
 ## See also
 

@@ -186,7 +186,7 @@ This allows custom plugins and more build control.
 
 For contributor-level details (deploy target module architecture, profile system, CI/CD integration):
 
-- [Deploy Targets → docs/installation/deploy-targets.md](../../../docs/installation/deploy-targets.md)
+- [Deploy Targets → docs/installation/deploy-targets.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/installation/deploy-targets.md)
 
 ## See also
 

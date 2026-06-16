@@ -167,7 +167,7 @@ Use includes for reusable parts:
 
 For contributor-level details (layout hierarchy, Liquid template inheritance, sidebar wiring):
 
-- [Layouts and Navigation → docs/ui/layouts-and-navigation.md](../../../docs/ui/layouts-and-navigation.md)
+- [Layouts and Navigation → docs/ui/layouts-and-navigation.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/ui/layouts-and-navigation.md)
 
 ## See also
 

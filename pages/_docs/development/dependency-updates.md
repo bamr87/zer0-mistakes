@@ -42,4 +42,4 @@ bundle exec jekyll build
 
 The complete dependency management guide — Zero-Pin strategy rationale, Dependabot configuration, update policy, lockfile management:
 
-**[Dependency Management → docs/systems/dependency-management.md](../../../docs/systems/dependency-management.md)**
+**[Dependency Management → docs/systems/dependency-management.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/systems/dependency-management.md)**

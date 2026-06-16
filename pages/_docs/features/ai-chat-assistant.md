@@ -1,6 +1,6 @@
 ---
 title: AI Chat Assistant (Claude + GitHub)
-lastmod: 2026-06-13T00:00:00.000Z
+lastmod: 2026-06-15T00:00:00.000Z
 description: Configure the Claude-powered AI chat assistant — proxy setup, streaming, and GitHub issue/PR actions — safely for GitHub Pages.
 keywords:
     - claude api
@@ -166,6 +166,27 @@ so the chat works at `http://localhost:4000` with no Cloudflare or API key in
 the page. See the
 [chat-proxy README](https://github.com/bamr87/zer0-mistakes/tree/main/templates/deploy/chat-proxy).
 
+### How to verify the chat works locally
+
+With `docker-compose up` and the dev proxy both running:
+
+1. Open `http://localhost:4000` — a floating button with the `bi-robot` icon
+   appears bottom-right. (The widget renders only when `ai_chat.enabled` and a
+   usable auth path exist; in dev that is `proxy_ready: true` from
+   `_config_dev.yml`.)
+2. Confirm the proxy is listening:
+
+   ```bash
+   curl -i http://localhost:8787/api/chat
+   ```
+
+   You should get an HTTP response (a 4xx for the empty/`GET` body is fine — it
+   proves the route is reachable; only a connection error means the proxy is
+   down).
+3. Send a message and watch it stream in token-by-token (SSE). If
+   `ai_chat.github.enabled` is true, the issue/PR confirmation chips appear in
+   the panel.
+
 ### Edit the current page from the chat (dev only)
 
 In local development (`ai_chat.local_edit: true`, set in `_config_dev.yml`) the
@@ -191,8 +212,14 @@ ai_chat:
   api_key: 'sk-ant-...'
 ```
 
-Put this in `_config_secrets_local.yml` (git-ignored, auto-included by the
-Docker dev loop).
+Put this in `_config_secrets_local.yml` (git-ignored). It is **not** loaded by
+default — the Docker dev loop builds with `--config '_config.yml,_config_dev.yml'`
+only. Add the overlay explicitly when you want direct mode locally:
+
+```bash
+bundle exec jekyll serve \
+  --config '_config.yml,_config_dev.yml,_config_secrets_local.yml'
+```
 
 ## Response Quality Features
 

@@ -41,4 +41,4 @@ Tests run automatically via GitHub Actions on every push and pull request. The s
 
 The complete testing guide — test structure, writing new tests, coverage expectations, CI/CD integration, and Playwright setup — lives in the contributor docs:
 
-**[Testing Guide → docs/development/testing.md](../../../docs/development/testing.md)**
+**[Testing Guide → docs/development/testing.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/development/testing.md)**

@@ -37,6 +37,6 @@ Version is stored in `lib/jekyll-theme-zer0/version.rb` and `package.json`. The 
 
 The complete automated version system docs — conventional commit analysis, calculation algorithm, GitHub Actions integration — are in the contributor docs:
 
-**[Automated Version System → docs/systems/automated-version-system.md](../../../docs/systems/automated-version-system.md)**
+**[Automated Version System → docs/systems/automated-version-system.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/systems/automated-version-system.md)**
 
 See also: [Release Management](release-management/) for the end-to-end release workflow.

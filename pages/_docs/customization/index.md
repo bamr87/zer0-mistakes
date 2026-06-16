@@ -115,8 +115,8 @@ Example: Override the footer by creating `_includes/core/footer.html`.
 
 For contributor-level details (SCSS architecture, design token catalog, fork-safe extension patterns):
 
-- [Extending the Theme → docs/ui/extending.md](../../../docs/ui/extending.md)
-- [UI Customization → docs/ui/customization.md](../../../docs/ui/customization.md)
+- [Extending the Theme → docs/ui/extending.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/ui/extending.md)
+- [UI Customization → docs/ui/customization.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/ui/customization.md)
 
 ## See also
 

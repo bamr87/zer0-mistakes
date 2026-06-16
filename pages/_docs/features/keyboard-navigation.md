@@ -187,7 +187,7 @@ Have suggestions for improving keyboard navigation? [Open an issue](https://gith
 
 For implementation details (WCAG 2.1 AA compliance, ARIA attributes, keyboard event handling, focus management):
 
-- [Navigation Redesign → docs/implementation/navigation-redesign.md](../../../docs/implementation/navigation-redesign.md)
+- [Navigation Redesign → docs/implementation/navigation-redesign.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/implementation/navigation-redesign.md)
 
 ## See also
 

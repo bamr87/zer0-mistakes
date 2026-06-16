@@ -311,7 +311,7 @@ bundle show jekyll-theme-zer0
 
 For contributor-level details (component API reference, include parameters, extending the component library):
 
-- [Components → docs/ui/components.md](../../../docs/ui/components.md)
+- [Components → docs/ui/components.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/ui/components.md)
 
 ## See also
 

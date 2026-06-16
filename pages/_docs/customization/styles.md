@@ -286,9 +286,9 @@ Use Bootstrap's breakpoints:
 
 For contributor-level details (SCSS pipeline, design token catalog, Bootstrap integration internals, extending the design system):
 
-- [Design System → docs/ui/design-system.md](../../../docs/ui/design-system.md)
-- [Theming → docs/ui/theming.md](../../../docs/ui/theming.md)
-- [Design Tokens → docs/ui/design-tokens.md](../../../docs/ui/design-tokens.md)
+- [Design System → docs/ui/design-system.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/ui/design-system.md)
+- [Theming → docs/ui/theming.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/ui/theming.md)
+- [Design Tokens → docs/ui/design-tokens.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/ui/design-tokens.md)
 
 ## See also
 

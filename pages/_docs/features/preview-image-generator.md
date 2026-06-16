@@ -1,7 +1,7 @@
 ---
-lastmod: 2026-06-14T00:00:00.000Z
+lastmod: 2026-06-15T00:00:00.000Z
 title: AI Preview Image Generator for Jekyll Posts
-description: Generate social preview images automatically for Jekyll posts using OpenAI DALL-E, Stability AI, or local placeholders, wired into the theme build pipeline.
+description: Generate social preview images automatically for Jekyll posts using OpenAI (GPT Image / DALL-E), Stability AI, or local placeholders, wired into the theme build pipeline.
 keywords: [preview image, dall-e, stability ai, open graph image, jekyll social images]
 preview: /images/previews/ai-preview-image-generator.png
 layout: default
@@ -32,10 +32,10 @@ Automatically generate preview images for your posts and pages using AI image ge
 
 The preview image generator provides:
 
-- **AI-Powered**: Uses DALL-E 3, Stability AI, or placeholders
+- **AI-Powered**: Uses OpenAI (GPT Image or DALL-E 3), Stability AI, or a local placeholder
 - **Jekyll Integration**: Liquid tags and filters
 - **Configurable Style**: Default retro pixel art aesthetic
-- **Batch Generation**: Process multiple posts at once
+- **Batch Generation**: Process multiple posts at once (parallel workers)
 
 ## How It Works
 
@@ -43,9 +43,9 @@ The preview image generator provides:
 graph LR
     A[Post without preview] --> B[Generate prompt from title/description]
     B --> C{Provider}
-    C -->|OpenAI| D[DALL-E 3 API]
+    C -->|OpenAI| D[GPT Image / DALL-E API]
     C -->|Stability| E[Stability AI]
-    C -->|Placeholder| F[Local placeholder]
+    C -->|local| F[Local placeholder]
     D --> G[Save image]
     E --> G
     F --> G
@@ -60,7 +60,7 @@ graph LR
 # _config.yml
 preview_images:
   enabled: true
-  provider: openai  # openai, stability, placeholder
+  provider: openai  # openai, stability, local
   auto_generate: false  # Generate during build
 ```
 
@@ -69,21 +69,25 @@ preview_images:
 ```yaml
 preview_images:
   enabled: true
-  provider: openai
-  model: dall-e-3
-  size: 1792x1024
-  quality: standard
+  provider: openai            # openai, stability, local
+  model: gpt-image-2          # gpt-image-2, dall-e-3, dall-e-2, stable-diffusion
+  size: 1536x1024             # GPT Image landscape; DALL-E 3 also supports 1792x1024
+  quality: auto               # auto for GPT Image; standard/hd for DALL-E 3
   style: "retro pixel art, 8-bit video game aesthetic, vibrant colors"
   style_modifiers: "pixelated, retro gaming style, CRT screen glow effect"
   output_dir: assets/images/previews
   assets_prefix: /assets
   auto_prefix: true
   auto_generate: false
-  collections:
+  collections:                # plugin default if omitted
     - posts
     - docs
     - quickstart
 ```
+
+The values above match the shipped `_config.yml`. `collections` is not set in
+the shipped config but defaults to `[posts, docs, quickstart]` in the plugin
+(`_plugins/preview_image_generator.rb`).
 
 ### API Keys
 
@@ -140,37 +144,40 @@ preview: /images/previews/ai-preview-image-generator.png
 
 ## Providers
 
-### OpenAI DALL-E 3
+### OpenAI (GPT Image / DALL-E 3)
 
-Best quality, most expensive:
+Best quality. The shipped default is the GPT Image model; DALL-E 3 is also
+supported:
 
 ```yaml
 preview_images:
   provider: openai
-  model: dall-e-3
-  size: 1792x1024  # or 1024x1024
-  quality: standard  # or hd
+  model: gpt-image-2    # default; or dall-e-3, dall-e-2
+  size: 1536x1024       # GPT Image landscape; DALL-E 3 also takes 1792x1024
+  quality: auto         # auto for GPT Image; standard/hd for DALL-E 3
 ```
 
 ### Stability AI
 
-Good alternative:
+Good alternative. Set `provider: stability` and supply `STABILITY_API_KEY`. The
+script calls the Stable Diffusion XL 1024 endpoint at 1024x1024 — there is no
+separate `engine`/`size` key to set for this provider:
 
 ```yaml
 preview_images:
   provider: stability
-  engine: stable-diffusion-xl
-  size: 1024x1024
+  # Uses STABILITY_API_KEY; generates 1024x1024 via Stable Diffusion XL
 ```
 
-### Placeholder
+### Local (placeholder)
 
-Free, no API needed:
+Free, no API needed. The `local` provider writes a `.txt` placeholder next to
+the target path instead of calling an image API — useful for development and
+dry runs:
 
 ```yaml
 preview_images:
-  provider: placeholder
-  placeholder_style: gradient  # or pattern, solid
+  provider: local
 ```
 
 ## Style Customization
@@ -339,7 +346,7 @@ export OPENAI_API_KEY="sk-..."
 
 For implementation details (multi-provider architecture, xAI Grok integration, generation workflow):
 
-- [Preview Image Generator → docs/implementation/preview-image-generator.md](../../../docs/implementation/preview-image-generator.md)
+- [Preview Image Generator → docs/implementation/preview-image-generator.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/implementation/preview-image-generator.md)
 
 ## See also
 
