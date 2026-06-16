@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:29:53.000Z
+lastmod: 2026-06-16T00:00:00.000Z
 title: Customization
 description: Customize the Zer0-Mistakes Jekyll theme - layouts, styles, navigation, and more.
 preview: /images/previews/customization.png
@@ -115,8 +115,8 @@ Example: Override the footer by creating `_includes/core/footer.html`.
 
 For contributor-level details (SCSS architecture, design token catalog, fork-safe extension patterns):
 
-- [Extending the Theme → docs/ui/extending.md](../../../docs/ui/extending.md)
-- [UI Customization → docs/ui/customization.md](../../../docs/ui/customization.md)
+- [Extending the Theme → docs/ui/extending.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/ui/extending.md)
+- [UI Customization → docs/ui/customization.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/ui/customization.md)
 
 ## See also
 

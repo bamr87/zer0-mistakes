@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-06-14T00:00:00.000Z
+lastmod: 2026-06-16T00:00:00.000Z
 title: Include Components
 description: Guide to the 70+ reusable include components organized by category for maximum flexibility.
 preview: /images/previews/include-components.png
@@ -311,7 +311,7 @@ bundle show jekyll-theme-zer0
 
 For contributor-level details (component API reference, include parameters, extending the component library):
 
-- [Components → docs/ui/components.md](../../../docs/ui/components.md)
+- [Components → docs/ui/components.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/ui/components.md)
 
 ## See also
 

@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:30:00.000Z
+lastmod: 2026-06-16T00:00:00.000Z
 title: Quick Start Guide
 description: Multiple installation methods for the Zer0-Mistakes Jekyll theme - from AI wizard to manual setup.
 preview: /images/previews/quick-start-guide.png
@@ -320,7 +320,7 @@ docker-compose up
 
 For contributor-level details (installer architecture, profile system, deploy target modules):
 
-- [Installation Guide → docs/installation/index.md](../../../docs/installation/index.md)
+- [Installation Guide → docs/installation/index.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/installation/index.md)
 
 ## See also
 

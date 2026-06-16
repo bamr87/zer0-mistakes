@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-05-31T00:00:00.000Z
+lastmod: 2026-06-16T00:00:00.000Z
 title: Version Bump Workflow
 description: How semantic versioning and version bumping work in zer0-mistakes. Full reference in docs/systems/.
 preview: /images/previews/version-bump-workflow.png
@@ -37,6 +37,6 @@ Version is stored in `lib/jekyll-theme-zer0/version.rb` and `package.json`. The 
 
 The complete automated version system docs — conventional commit analysis, calculation algorithm, GitHub Actions integration — are in the contributor docs:
 
-**[Automated Version System → docs/systems/automated-version-system.md](../../../docs/systems/automated-version-system.md)**
+**[Automated Version System → docs/systems/automated-version-system.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/systems/automated-version-system.md)**
 
 See also: [Release Management](release-management/) for the end-to-end release workflow.

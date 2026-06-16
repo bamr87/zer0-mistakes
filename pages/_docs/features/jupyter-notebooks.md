@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:30:00.000Z
+lastmod: 2026-06-16T00:00:00.000Z
 title: Jupyter Notebook Integration
 description: Full Jupyter notebook support with GitHub Pages compatibility, automated conversion, and responsive design.
 preview: /images/previews/jupyter-notebook-integration.png
@@ -296,7 +296,7 @@ Add responsive wrapper:
 
 For implementation details (Docker conversion pipeline, nbconvert config, SCSS styling, GitHub Actions workflow):
 
-- [Jupyter Notebooks → docs/features/jupyter-notebooks.md](../../../docs/features/jupyter-notebooks.md)
+- [Jupyter Notebooks → docs/features/jupyter-notebooks.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/features/jupyter-notebooks.md)
 
 ## See also
 

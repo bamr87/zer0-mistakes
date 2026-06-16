@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:30:00.000Z
+lastmod: 2026-06-16T00:00:00.000Z
 title: Sidebar Navigation System
 description: Modern sidebar with Intersection Observer scroll spy, smooth scrolling, keyboard shortcuts, and swipe gestures.
 preview: /images/previews/sidebar-navigation-system.png
@@ -288,16 +288,16 @@ Using Bootstrap Icons throughout:
 
 ## Related
 
-- [Keyboard Navigation](../../../docs/features/keyboard-navigation/)
-- [Mobile TOC Button](../../../docs/features/mobile-toc/)
-- [Table of Contents](../../../docs/features/toc/)
+- [Keyboard Navigation](/docs/features/keyboard-navigation/)
+- [Mobile TOC Button](/docs/features/mobile-toc/)
+- [Table of Contents](/docs/features/toc/)
 
 ## Technical Reference
 
 For implementation details (scroll spy, swipe gestures, keyboard shortcuts, ARIA improvements):
 
-- [Navigation Redesign → docs/implementation/navigation-redesign.md](../../../docs/implementation/navigation-redesign.md)
-- [Sidebar improvements → docs/implementation/feature-change-log.md](../../../docs/implementation/feature-change-log.md#sidebar-uiux-improvements-december-2025)
+- [Navigation Redesign → docs/implementation/navigation-redesign.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/implementation/navigation-redesign.md)
+- [Sidebar improvements → docs/implementation/feature-change-log.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/implementation/feature-change-log.md#sidebar-uiux-improvements-december-2025)
 
 ## See also
 

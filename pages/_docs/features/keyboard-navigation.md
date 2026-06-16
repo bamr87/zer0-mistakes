@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:29:57.000Z
+lastmod: 2026-06-16T00:00:00.000Z
 title: Keyboard Navigation
 description: Complete guide to keyboard shortcuts and navigation accessibility features in the Zer0-Mistakes theme.
 preview: /images/previews/keyboard-navigation.png
@@ -183,7 +183,7 @@ Have suggestions for improving keyboard navigation? [Open an issue](https://gith
 
 For implementation details (WCAG 2.1 AA compliance, ARIA attributes, keyboard event handling, focus management):
 
-- [Navigation Redesign → docs/implementation/navigation-redesign.md](../../../docs/implementation/navigation-redesign.md)
+- [Navigation Redesign → docs/implementation/navigation-redesign.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/implementation/navigation-redesign.md)
 
 ## See also
 

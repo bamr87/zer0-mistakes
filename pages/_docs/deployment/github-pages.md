@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:30:01.000Z
+lastmod: 2026-06-16T00:00:00.000Z
 title: Deploy to GitHub Pages
 description: Deploy your Zer0-Mistakes Jekyll site to GitHub Pages with automatic builds.
 preview: /images/previews/deploy-to-github-pages.png
@@ -186,7 +186,7 @@ This allows custom plugins and more build control.
 
 For contributor-level details (deploy target module architecture, profile system, CI/CD integration):
 
-- [Deploy Targets → docs/installation/deploy-targets.md](../../../docs/installation/deploy-targets.md)
+- [Deploy Targets → docs/installation/deploy-targets.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/installation/deploy-targets.md)
 
 ## See also
 
