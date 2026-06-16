@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:29:57.000Z
+lastmod: 2026-06-15T00:00:00.000Z
 title: Keyboard Navigation
 description: Complete guide to keyboard shortcuts and navigation accessibility features in the Zer0-Mistakes theme.
 preview: /images/previews/keyboard-navigation.png
@@ -23,6 +23,10 @@ sidebar:
 # Keyboard Navigation
 
 The Zer0-Mistakes theme includes comprehensive keyboard navigation support to enhance accessibility and improve navigation efficiency for all users.
+
+![The keyboard shortcuts help modal listing actions such as Open search, Previous/Next section, and Toggle table of contents](/assets/images/docs/features/keyboard-navigation.png)
+
+Press <kbd>?</kbd> on any page to open this shortcuts reference.
 
 ## Quick Reference
 
