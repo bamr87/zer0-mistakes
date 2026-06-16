@@ -9,6 +9,11 @@ layout: home
 permalink: /
 sidebar: false
 hide_intro: true
+# The hero section below supplies its own visible <h1>; keep `title` for SEO
+# but suppress the home layout's duplicate <h1 class="page-heading"> so the
+# page exposes exactly one accessible h1 (layouts.spec.js:39).
+hide_title: true
+rss_subscribe: false
 ---
 
 <section class="text-center py-5">
