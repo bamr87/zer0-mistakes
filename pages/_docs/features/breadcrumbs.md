@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:29:58.000Z
+lastmod: 2026-06-15T00:00:00.000Z
 title: Breadcrumbs Navigation
 description: Hierarchical breadcrumb navigation with Schema.org structured data for SEO and user orientation.
 preview: /images/previews/breadcrumbs-navigation.png
@@ -22,6 +22,10 @@ sidebar:
 # Breadcrumbs Navigation
 
 Hierarchical breadcrumb navigation showing the current page's location within the site structure.
+
+![An admin page header with a breadcrumb trail reading "Home / About / Configuration Utility" above the page title](/assets/images/docs/features/admin-dashboard.png)
+
+The breadcrumb trail (e.g. **Home / About / Configuration Utility**) sits just above the page title, derived from the page's URL and collection so visitors always know where they are.
 
 ## Overview
 

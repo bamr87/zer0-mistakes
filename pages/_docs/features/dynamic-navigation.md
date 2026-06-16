@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-06-14T00:00:00.000Z
+lastmod: 2026-06-15T00:00:00.000Z
 title: Dynamic Collection-Based Navigation
 description: Zero-config navigation that auto-populates the navbar from Jekyll collections when no _data/navigation entry exists, so brand-new sites get a usable menu.
 preview: /images/previews/dynamic-collection-based-navigation.png
@@ -23,6 +23,8 @@ mermaid: true
 # Dynamic Collection-Based Navigation
 
 zer0-mistakes ships a **zero-config navigation fallback**: when no custom `_data/navigation.yml` entry exists for the navbar, the theme auto-discovers your Jekyll collections and generates a working nav menu on first launch.
+
+![The top navigation bar with the "Quick Start" dropdown open, revealing auto-generated child links (Machine Setup, Jekyll Setup, GitHub Setup)](/assets/images/docs/features/dynamic-navigation.png)
 
 ## Why It Exists
 
