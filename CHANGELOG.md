@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+- **Revert the "Year of AI" / federated content-hub pivot (PR #173).** Restored
+  the original `zer0-mistakes` theme landing page: re-published `README.md` as
+  the site homepage at `/` (dropped `published: false`) and removed the
+  `Year of AI` hub homepage (`pages/home.md`), the `/hub/` dashboard
+  (`pages/hub.md`), the hub registry/metadata (`_data/hub.yml`,
+  `_data/hub_index.yml`, `_data/navigation/hub.yml`), the hub tooling
+  (`scripts/lib/hub.rb`, `scripts/sync-hub-metadata.{rb,sh}`,
+  `scripts/provision-org-sites.{rb,sh}`, `templates/org-site/*`), the daily
+  `hub-sync` workflow, the `content-hub` system doc, and the `Hub` navbar entry.
+  Feature `ZER0-061` was dropped from the features data. `_config.yml`/`CNAME`
+  were already restored to the `zer0-mistakes.com` identity by PRs #174/#176.
+
 ### Changed
 - **Roadmap catch-up (T-022)**: recorded shipped milestones v1.14–v1.18 as `completed` in `_data/roadmap.yml` and advanced the active milestone to v1.19 so the roadmap tracks the gem version; README gantt diagram regenerated.
 ## [1.19.1] - 2026-06-16

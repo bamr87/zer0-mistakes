@@ -51,13 +51,6 @@
     - title: Test Notebook
       url: /notebooks/test-notebook/
 
-- title: Hub
-  icon: bi-collection
-  url: /hub/
-  # Per-repo links live in the generated sidebar (_data/navigation/hub.yml);
-  # the navbar only needs the dashboard entry so new org repos appear without
-  # touching this file.
-
 - title: Docs
   icon: bi-journal-bookmark
   url: /docs/

@@ -419,17 +419,15 @@ milestones:
   # --- Current ---------------------------------------------------------------
 
   - version: "1.19"
-    title: "Org Content Hub"
+    title: "Site Hardening & Polish"
     status: active
     section: Current
     start: 2026-06
     end: 2026-08
     target: "Current (1.19.x)"
-    summary: "Federated Org Content Hub — one GitHub Pages site per org repo, each rendering its own content with this theme."
+    summary: "Production config hardening, analytics privacy fix, landing-page opt-out flags, and a documentation freshness sweep."
     features:
-      - "Org Content Hub: `_data/hub.yml` registry, `scripts/provision-org-sites.rb`, `scripts/sync-hub-metadata.rb`"
-      - "Hub dashboard at `/hub/` tracking every site's live/pending status"
-      - "Daily `hub-sync.yml` workflow committing only when the org changes"
+      - "Config hardening: restored `zer0-mistakes.com` site identity + `CNAME` and the `remote_theme` contract (#174, #176)"
       - "Opt-out flags for RSS link and visible landing-page title (`feat(home)`)"
       - "Analytics fix: GA/GTM load only in production, skipping dev hostnames"
       - "Documentation freshness sweep: broken cross-links repaired (T-004 follow-up)"

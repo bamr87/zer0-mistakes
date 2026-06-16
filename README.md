@@ -4,10 +4,6 @@ sub-title: AI-Native Jekyll Theme
 description: AI-native Jekyll theme for GitHub Pages — Docker-first development, AI-powered installation, multi-agent integration (Copilot, Codex, Cursor, Claude), AI preview-image generation, and AIEO content optimization with Bootstrap 5.3.
 version: 1.19.1
 layout: landing
-# This repo now serves as the year-of-ai organization root site; the homepage
-# lives in pages/home.md. README stays as the repository README on GitHub but
-# is not published as a site page.
-published: false
 tags:
   - jekyll
   - docker
@@ -842,7 +838,7 @@ gantt
     v1.17 A11y, Mermaid & Migration Tests :done, 2026-06, 2026-06
     v1.18 AI Content Reviewer    :done, 2026-06, 2026-06
     section Current
-    v1.19 Org Content Hub        :active, 2026-06, 2026-08
+    v1.19 Site Hardening & Polish :active, 2026-06, 2026-08
     section Future
     v2.0 CMS Integration         :2026-06, 2026-08
     v2.1 i18n Support            :2026-08, 2026-10
@@ -881,7 +877,7 @@ gantt
 | **v1.16** | ✅ Completed | Jun 2026 | AI chat widget (ZER0-060) and consumer audit tooling; render guard bug fixed. |
 | **v1.17** | ✅ Completed | Jun 2026 | Plugin unit specs, coverage baseline, config-page sync, WCAG 2.1 AA fixes, Mermaid on 12 more pages, and migration tests. |
 | **v1.18** | ✅ Completed | Jun 2026 | Two-tier AI content reviewer framework and chat GitHub action tools (issue/PR creation via Claude tool use). |
-| **v1.19** | 🚧 In Progress | Current (1.19.x) | Federated Org Content Hub — one GitHub Pages site per org repo, each rendering its own content with this theme. |
+| **v1.19** | 🚧 In Progress | Current (1.19.x) | Production config hardening, analytics privacy fix, landing-page opt-out flags, and a documentation freshness sweep. |
 | **v2.0** | 🗓 Planned | Q3 2026 | Headless CMS integration with a content API and admin dashboard. |
 | **v2.1** | 🗓 Planned | Q4 2026 | Multi-language content support with locale-aware routing. |
 | **v2.2** | 🗓 Planned | Q4 2026 | Visual theme customizer, A/B testing, and conversion funnels. |
