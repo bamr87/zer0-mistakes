@@ -1,17 +1,21 @@
-name: AI Content Review
+name: Content & Docs Review
 
-# Reviews new/changed Jekyll content on pull requests in two tiers:
+# Reviews changed Markdown content and docs on pull requests:
 #   1. Deterministic SEO + quality checks (scripts/content-review.rb) — always
 #      runs, no secrets required, works on fork PRs.
 #   2. Claude Code content-reviewer agent — runs only when ANTHROPIC_API_KEY is
 #      configured, for editorial/consistency/polish review.
+#   3. Docs front matter, internal links, and markdownlint (formerly the
+#      separate docs-validate.yml).
 # See .github/instructions/content-review.instructions.md for the contract.
 
 on:
   pull_request:
     paths:
       - "pages/**/*.md"
+      - "docs/**"
       - ".github/config/content_review.yml"
+      - ".github/instructions/documentation.instructions.md"
       - ".claude/agents/content-reviewer.md"
       - "scripts/content-review.rb"
   workflow_dispatch:
@@ -21,10 +25,9 @@ on:
         required: false
         default: "origin/main"
 
+# Least-privilege default; the comment-posting jobs grant pull-requests: write.
 permissions:
   contents: read
-  pull-requests: write
-  issues: write
 
 concurrency:
   group: content-review-${{ github.event.pull_request.number || github.ref }}
@@ -37,6 +40,9 @@ jobs:
   deterministic-review:
     name: SEO & quality checks
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write   # post the sticky review comment
     outputs:
       has_content: ${{ steps.review.outputs.has_content }}
     steps:
@@ -120,6 +126,9 @@ jobs:
     if: ${{ github.event_name == 'pull_request' && needs.gate.outputs.ai_enabled == 'true' && needs.deterministic-review.outputs.has_content == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write   # post the sticky agent-review comment
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -188,3 +197,62 @@ jobs:
         with:
           header: ai-content-review-agent
           path: /tmp/agent-review-final.md
+
+  # ---------------------------------------------------------------------------
+  # Docs validation (formerly docs-validate.yml) — front matter, links, lint.
+  # These jobs inherit the top-level least-privilege `contents: read`.
+  # ---------------------------------------------------------------------------
+  lint-frontmatter:
+    name: Front matter compliance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      # Use the shared composite action, which installs gems non-frozen. The
+      # theme is a path gem whose gemspec lists git-tracked files, so frozen
+      # mode (ruby/setup-ruby's bundler-cache) aborts with "The gemspecs for
+      # path gems changed". The composite avoids that; see its inline notes.
+      - name: Set up Ruby
+        uses: ./.github/actions/setup-ruby
+        with:
+          ruby-version: "3.3"
+
+      - name: Check front matter
+        run: bash scripts/docs/lint-frontmatter.sh
+
+  check-links:
+    name: Internal link check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Check internal links
+        run: bash scripts/docs/check-links.sh
+
+  markdownlint:
+    name: Markdown lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install markdownlint
+        run: npm install -g markdownlint-cli
+
+      # Blocking since the 2026-06 baseline cleanup (T-014): zero violations
+      # with .github/config/.markdownlint.json. Do not re-add warn-only
+      # suppressions — fix the markdown or tune the shared config instead.
+      - name: Lint docs/ (excluding archive)
+        run: |
+          markdownlint "docs/**/*.md" \
+            --ignore "docs/archive/**" \
+            --config .github/config/.markdownlint.json
+
+      - name: Lint pages/_docs/
+        run: |
+          markdownlint "pages/_docs/**/*.md" \
+            --config .github/config/.markdownlint.json

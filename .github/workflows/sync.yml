@@ -1,0 +1,110 @@
+name: Sync
+
+# Mirror tracked data files to GitHub on push to main; validate on PRs.
+#   - backlog:  _data/backlog.yml -> GitHub Issues (scripts/sync-backlog.rb)
+#   - roadmap:  _data/roadmap.yml -> README roadmap section (scripts/generate-roadmap.rb)
+# Both jobs are idempotent, so either may no-op when only the other's files changed.
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '_data/backlog.yml'
+      - '_data/roadmap.yml'
+      - 'scripts/sync-backlog.rb'
+      - 'scripts/sync-backlog.sh'
+      - 'scripts/generate-roadmap.rb'
+      - 'scripts/generate-roadmap.sh'
+      - 'lib/jekyll-theme-zer0/version.rb'
+      - '.github/workflows/sync.yml'
+  pull_request:
+    paths:
+      - '_data/backlog.yml'
+      - '_data/roadmap.yml'
+      - 'scripts/sync-backlog.rb'
+      - 'scripts/sync-backlog.sh'
+      - 'scripts/generate-roadmap.rb'
+      - 'scripts/generate-roadmap.sh'
+      - 'lib/jekyll-theme-zer0/version.rb'
+      - 'README.md'
+      - '.github/workflows/sync.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: sync-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # _data/backlog.yml -> GitHub Issues. PRs validate the schema only (no writes),
+  # so a malformed backlog can never reach main.
+  backlog:
+    name: Backlog -> Issues
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+
+      - name: Validate backlog schema (PRs)
+        if: github.event_name == 'pull_request'
+        run: ruby scripts/sync-backlog.rb --check
+
+      - name: Sync backlog to issues (push / manual)
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ruby scripts/sync-backlog.rb
+
+  # _data/roadmap.yml -> README roadmap section. PRs fail if README is stale;
+  # push regenerates and commits the diff with [skip ci].
+  roadmap:
+    name: Roadmap -> README
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          # Need a token that can push commits back on the main branch.
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+
+      - name: Validate roadmap integrity & version tracking
+        run: ruby scripts/generate-roadmap.rb --validate
+
+      - name: Verify roadmap is in sync (PRs)
+        if: github.event_name == 'pull_request'
+        run: ruby scripts/generate-roadmap.rb --check
+
+      - name: Regenerate roadmap (push / manual)
+        if: github.event_name != 'pull_request'
+        run: ruby scripts/generate-roadmap.rb
+
+      - name: Commit README changes
+        if: github.event_name != 'pull_request'
+        # [skip ci] so this push does not retrigger CI workflows.
+        run: |
+          if git diff --quiet README.md; then
+            echo "README.md already in sync — nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "docs(roadmap): regenerate README from _data/roadmap.yml [skip ci]"
+          git push

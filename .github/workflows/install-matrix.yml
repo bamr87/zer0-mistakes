@@ -1,7 +1,10 @@
 ---
 name: Install Matrix
 
-# Validate the modular installer across OSes, Ruby versions, and profiles.
+# Validate the modular installer across OSes, Ruby versions, and profiles:
+#   - matrix:               full installer e2e (os x ruby)
+#   - curl-bash-bootstrap:  the README one-liner (curl | bash) remote install
+#   - doctor:               the `install doctor` environment diagnostic
 # Triggered on PRs that touch installer code or weekly to catch drift.
 
 on:
@@ -11,6 +14,7 @@ on:
       - install.sh
       - scripts/bin/install
       - scripts/lib/install/**
+      - scripts/platform/**
       - templates/profiles/**
       - templates/deploy/**
       - test/test_install_*.sh
@@ -21,6 +25,7 @@ on:
       - install.sh
       - scripts/bin/install
       - scripts/lib/install/**
+      - scripts/platform/**
       - templates/profiles/**
       - templates/deploy/**
       - test/test_install_*.sh
@@ -116,3 +121,39 @@ jobs:
           test -f "$TARGET/Gemfile"
           test -f "$TARGET/index.md"
           echo "✅ curl|bash-equivalent bootstrap produced a minimal site"
+
+  doctor:
+    name: doctor (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Make installer executable
+        run: chmod +x scripts/bin/install
+
+      - name: Print version
+        run: ./scripts/bin/install version
+
+      - name: Run doctor (no AI) — JSON output
+        id: doctor
+        run: |
+          set -e
+          ./scripts/bin/install doctor --json | tee doctor.json
+          # Parse counts without jq (POSIX-only). FAIL > 0 is a hard error.
+          fail=$(grep -oE '"fail":[0-9]+' doctor.json | head -1 | cut -d: -f2)
+          echo "fail_count=${fail:-0}" >> "$GITHUB_OUTPUT"
+
+      - name: Run doctor (verbose) — non-blocking, for log readability
+        if: always()
+        run: ./scripts/bin/install doctor || true
+
+      - name: Fail if any FAIL rows
+        if: steps.doctor.outputs.fail_count != '0'
+        run: |
+          echo "::error::install doctor reported ${{ steps.doctor.outputs.fail_count }} FAIL row(s)"
+          exit 1

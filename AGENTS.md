@@ -61,7 +61,7 @@ should load them manually):
 | `test/**` | `.github/instructions/testing.instructions.md` |
 | `docs/**`, `pages/_docs/**`, `*docs*.md` | `.github/instructions/documentation.instructions.md` |
 | `CHANGELOG.md`, `**/version.*`, `*.gemspec`, `package.json` | `.github/instructions/version-control.instructions.md` |
-| `_data/backlog.yml`, `scripts/sync-backlog.*`, `.github/workflows/backlog-sync.yml` | `.github/instructions/backlog.instructions.md` |
+| `_data/backlog.yml`, `scripts/sync-backlog.*`, `.github/workflows/sync.yml` | `.github/instructions/backlog.instructions.md` |
 | `pages/**/*.md`, `.github/config/content_review.yml`, `.claude/agents/content-reviewer.md`, `scripts/content-review.rb`, `.github/workflows/ai-content-review.yml` | `.github/instructions/content-review.instructions.md` |
 | `_includes/components/ai-chat.html`, `assets/js/ai-chat.js`, `templates/deploy/chat-proxy/**` | `.github/instructions/ai-chat.instructions.md` |
 
@@ -86,7 +86,7 @@ between human sessions:
 
 1. **Audit** (`/repo-audit`, scheduled weekly) reviews tests, docs, and roadmap
    delivery and files tasks into [`_data/backlog.yml`](./_data/backlog.yml).
-2. **Sync** (`.github/workflows/backlog-sync.yml`) mirrors open tasks to GitHub
+2. **Sync** (`.github/workflows/sync.yml`) mirrors open tasks to GitHub
    Issues (`agent-ready` label) and closes issues for tasks marked `done`.
 3. **Implement** (`/backlog-implement`, scheduled) picks the top open task, builds
    it on a branch, validates, and opens a PR. Low-risk classes (`docs`/`deps`/`lint`
