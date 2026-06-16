@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:30:00.000Z
+lastmod: 2026-06-15T00:00:00.000Z
 title: Jupyter Notebook Integration
 description: Full Jupyter notebook support with GitHub Pages compatibility, automated conversion, and responsive design.
 preview: /images/previews/jupyter-notebook-integration.png
@@ -27,6 +27,8 @@ mermaid: true
 # Jupyter Notebook Integration
 
 The Zer0-Mistakes theme provides full Jupyter notebook support with GitHub Pages compatibility through automated pre-build conversion.
+
+![The Notebooks collection landing page: a category sidebar, a difficulty filter, and notebook cards rendered like the rest of the site](/assets/images/docs/features/jupyter-notebooks.png)
 
 ## Overview
 
