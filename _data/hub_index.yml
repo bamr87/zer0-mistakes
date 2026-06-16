@@ -6,7 +6,7 @@
 org: year-of-ai
 totals:
   repos: 5
-  pages: 399
+  pages: 402
 repos:
 - name: '1776'
   title: '1776'
@@ -17,7 +17,7 @@ repos:
   pages_enabled: false
   scaffolded: false
   branch: main
-  pushed_at: '2026-06-14T10:07:04Z'
+  pushed_at: '2026-06-15T12:43:06Z'
   page_count: 17
   sections:
   - name: arts
@@ -56,7 +56,7 @@ repos:
   pages_enabled: false
   scaffolded: false
   branch: main
-  pushed_at: '2026-06-14T10:00:04Z'
+  pushed_at: '2026-06-15T12:43:43Z'
   page_count: 14
   sections:
   - name: arts
@@ -94,7 +94,7 @@ repos:
   pages_enabled: false
   scaffolded: false
   branch: main
-  pushed_at: '2026-06-14T09:57:35Z'
+  pushed_at: '2026-06-15T12:33:17Z'
   page_count: 0
   sections: []
   root_pages: []
@@ -149,8 +149,8 @@ repos:
   pages_enabled: true
   scaffolded: true
   branch: main
-  pushed_at: '2026-06-14T08:51:54Z'
-  page_count: 263
+  pushed_at: '2026-06-16T02:59:40Z'
+  page_count: 266
   sections:
   - name: _data
     title: Data
@@ -171,7 +171,7 @@ repos:
   - name: docs
     title: Docs
     url: https://year-of-ai.github.io/docs/
-    count: 65
+    count: 66
   - name: features
     title: Features
     url: https://year-of-ai.github.io/features/
@@ -179,7 +179,7 @@ repos:
   - name: pages
     title: Pages
     url: https://year-of-ai.github.io/pages/
-    count: 149
+    count: 150
   - name: scripts
     title: Scripts
     url: https://year-of-ai.github.io/scripts/
@@ -187,7 +187,7 @@ repos:
   - name: templates
     title: Templates
     url: https://year-of-ai.github.io/templates/
-    count: 9
+    count: 10
   - name: test
     title: Test
     url: https://year-of-ai.github.io/test/
