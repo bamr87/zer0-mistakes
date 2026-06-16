@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+#
+# Script Name: pixelate-preview-images
+# Description: Pixelate + palette-quantize the Jekyll preview banners so they are
+#              much smaller files while retaining the retro pixel-art quality.
+#              Thin, conventions-friendly wrapper around the dependency-free
+#              Python engine in scripts/features/pixelate_images.py.
+#
+# Usage: ./scripts/features/pixelate-preview-images [OPTIONS] [PATHS...]
+#
+#   With no PATHS, the configured preview_images.output_dir from _config.yml is
+#   processed (default: assets/images/previews).
+#
+# Options (wrapper):
+#   -h, --help              Show this help
+#   -v, --version           Print version
+#
+# Options (forwarded to the engine — see --help for the full list):
+#   -n, --dry-run           Report savings without writing
+#   --colors N              Palette size 2-256 (default: 256)
+#   --bits N                Colour precision 1-8 used while quantizing (default: 6)
+#   --max-width N           Downscale so width <= N (default: 1024)
+#   --scale F               Scale factor, e.g. 0.5
+#   --block N               Pixel block size (chunky NxN pixels)
+#   --filter nearest|box    Downsample filter (default: nearest)
+#   --upscale               Restore original WxH (chunky pixels) instead of reduced size
+#   --backup                Keep <file>.orig when writing in place
+#   --force                 Write even if the result is not smaller
+#   -j, --jobs N            Parallel worker processes (default: 1)
+#
+# Examples:
+#   # Preview the savings for every preview banner (no changes):
+#   ./scripts/features/pixelate-preview-images --dry-run -j 4
+#
+#   # Optimize all preview banners in place, 4 workers:
+#   ./scripts/features/pixelate-preview-images -j 4
+#
+#   # Optimize a single image with a chunkier pixel-art look:
+#   ./scripts/features/pixelate-preview-images --block 6 --colors 64 \
+#       assets/images/previews/about.png
+#
+
+set -euo pipefail
+IFS=$'\n\t'
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+ENGINE="$SCRIPT_DIR/pixelate_images.py"
+VERSION="1.0.0"
+
+# Source shared logging helpers, with a minimal fallback.
+if [[ -f "$PROJECT_ROOT/scripts/lib/common.sh" ]]; then
+    # shellcheck source=../lib/common.sh
+    source "$PROJECT_ROOT/scripts/lib/common.sh"
+else
+    info()    { echo "[INFO] $1"; }
+    success() { echo "[SUCCESS] $1"; }
+    warn()    { echo "[WARNING] $1" >&2; }
+    error()   { echo "[ERROR] $1" >&2; exit 1; }
+    print_header() { echo "== $1 =="; }
+fi
+
+usage() {
+    sed -n '2,49p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
+    echo ""
+    echo "Full engine options:"
+    python3 "$ENGINE" --help 2>/dev/null | sed -n '/^options:/,$p' | sed 's/^/  /'
+}
+
+# Resolve preview_images.output_dir from _config.yml (best-effort grep).
+default_output_dir() {
+    local config="$PROJECT_ROOT/_config.yml"
+    local dir=""
+    if [[ -f "$config" ]]; then
+        dir="$(awk '
+            /^preview_images:/ { in_section=1; next }
+            in_section && /^[a-zA-Z_]+:/ { exit }
+            in_section && /output_dir/ {
+                sub(/.*output_dir[[:space:]]*:[[:space:]]*/, "")
+                gsub(/["\x27]/, ""); sub(/[[:space:]]*#.*/, "")
+                print; exit
+            }
+        ' "$config")"
+    fi
+    echo "${dir:-assets/images/previews}"
+}
+
+main() {
+    # Split off wrapper-only flags; forward everything else to the engine.
+    local forward=()
+    local arg
+    for arg in "$@"; do
+        case "$arg" in
+            -h|--help)    usage; exit 0 ;;
+            -v|--version) echo "$VERSION"; exit 0 ;;
+            *)            forward+=("$arg") ;;
+        esac
+    done
+
+    if ! command -v python3 >/dev/null 2>&1; then
+        error "python3 is required but was not found on PATH"
+    fi
+    if [[ ! -f "$ENGINE" ]]; then
+        error "Engine not found: $ENGINE"
+    fi
+
+    # If the caller did not name any existing path, default to the previews dir.
+    local has_path=false a
+    for a in ${forward[@]+"${forward[@]}"}; do
+        if [[ -e "$a" || -e "$PROJECT_ROOT/$a" ]]; then
+            has_path=true
+            break
+        fi
+    done
+    if [[ "$has_path" == false ]]; then
+        local dir
+        dir="$(default_output_dir)"
+        forward+=("$PROJECT_ROOT/$dir")
+        info "No path given; defaulting to: $dir"
+    fi
+
+    print_header "🟪 Pixelate Preview Images"
+    python3 "$ENGINE" ${forward[@]+"${forward[@]}"}
+}
+
+main "$@"

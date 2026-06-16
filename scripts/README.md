@@ -21,6 +21,8 @@ scripts/
 │   └── preview_generator.py  # Python preview image generator
 ├── features/              # Feature-specific scripts
 │   ├── generate-preview-images     # AI preview image generator
+│   ├── pixelate-preview-images     # Shrink preview banners (pixelate + PNG-8)
+│   ├── pixelate_images.py          # Pure-stdlib pixelate/quantize engine
 │   ├── install-preview-generator   # Preview generator installer
 │   └── validate_preview_urls.py    # Preview URL validator
 ├── utils/                 # Utility scripts
@@ -122,6 +124,43 @@ AI Providers:
   stability - Stability AI (requires STABILITY_API_KEY)
   xai       - xAI Grok image generation (requires XAI_API_KEY)
 ```
+
+#### `pixelate-preview-images`
+Pixelate + palette-quantize the preview banners so they are dramatically smaller
+files while retaining the retro pixel-art look. Pure Python stdlib (no
+ImageMagick / Pillow / pngquant needed) — it downsamples the image and reduces
+it to an indexed PNG-8 palette. Typical savings on the AI-generated banners are
+~90% (e.g. a 2.7&nbsp;MB banner becomes ~230&nbsp;KB).
+
+```bash
+# Preview the savings for every banner (no changes), 4 workers:
+./scripts/features/pixelate-preview-images --dry-run -j 4
+
+# Optimize all banners in place:
+./scripts/features/pixelate-preview-images -j 4
+
+# Chunkier pixel-art look for one image:
+./scripts/features/pixelate-preview-images --block 6 --colors 64 \
+    assets/images/previews/about.png
+
+Options (forwarded to scripts/features/pixelate_images.py):
+  -n, --dry-run         Report savings without writing
+  --colors N            Palette size 2-256 (default: 256)
+  --bits N              Colour precision 1-8 while quantizing (default: 6)
+  --max-width N         Downscale so width <= N, keep aspect (default: 1024)
+  --scale F             Scale factor, e.g. 0.5
+  --block N             Average NxN source pixels per output pixel (chunky)
+  --filter nearest|box  Downsample filter (default: nearest)
+  --upscale             Keep original WxH (chunky pixels) instead of reduced
+  --backup              Keep <file>.orig when writing in place
+  --force               Write even if the result is not smaller
+  -j, --jobs N          Parallel worker processes (default: 1)
+```
+
+With no path argument it processes `preview_images.output_dir` from
+`_config.yml` (default `assets/images/previews`). Non-PNG and 16-bit/interlaced
+inputs are skipped gracefully. The engine has a built-in `--selftest`, exercised
+by `scripts/test/lib/test_pixelate_images.sh`.
 
 #### `install-preview-generator`
 Install the preview image generator feature.

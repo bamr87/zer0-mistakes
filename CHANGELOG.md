@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Preview-image pixelator (`scripts/features/pixelate-preview-images`).** A
+  dependency-free (Python stdlib only — no ImageMagick/Pillow/pngquant) utility
+  that pixelates and palette-quantizes the AI-generated preview banners into
+  indexed PNG-8, shrinking them ~90% (e.g. 2.7&nbsp;MB → ~230&nbsp;KB) while
+  preserving the retro 8-bit aesthetic. A dry-run across all 146 banners reports
+  283&nbsp;MB → 28&nbsp;MB. Includes a conventions-friendly bash wrapper (config
+  default path, parallel `--jobs`, `--dry-run`), the `pixelate_images.py` engine
+  with `--selftest`, and a `scripts/test/lib/test_pixelate_images.sh` suite wired
+  into the library test runner. Non-PNG / 16-bit / interlaced inputs are skipped
+  gracefully.
+
 ### Changed
 - **Roadmap catch-up (T-022)**: recorded shipped milestones v1.14–v1.18 as `completed` in `_data/roadmap.yml` and advanced the active milestone to v1.19 so the roadmap tracks the gem version; README gantt diagram regenerated.
 ## [1.19.1] - 2026-06-16
