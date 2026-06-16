@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- **Restore `zer0-mistakes.com` site identity (site was down).** PR #173 (the
+  federated org content hub) accidentally rewrote this repo's own `_config.yml`
+  to the `year-of-ai.github.io` identity and deleted the `CNAME` file, which
+  broke the production custom domain. Restored `github_user`/`repository_name`/
+  `local_repo`/`title`/`domain`/`domain_ext`/`url`/`email`/`description` to the
+  `bamr87/zer0-mistakes` → `https://zer0-mistakes.com` values and re-added the
+  `CNAME` (`zer0-mistakes.com`) so GitHub Pages serves the custom domain again.
+
 ## [1.19.0] - 2026-06-16
 
 ### Changed
