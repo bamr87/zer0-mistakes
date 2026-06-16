@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:29:58.000Z
+lastmod: 2026-06-15T00:00:00.000Z
 title: Features
 description: Enable and configure theme features including diagrams, comments, analytics, and more.
 preview: /images/previews/features.png
@@ -23,13 +23,58 @@ The Zer0-Mistakes theme includes several optional features that enhance your sit
 
 ## Available Features
 
-| Feature | Description | Front Matter |
-|---------|-------------|--------------|
-| [Mermaid Diagrams](mermaid-diagrams/) | Flowcharts, sequence diagrams, and more | `mermaid: true` |
-| [MathJax Math](mathjax-math/) | Mathematical equations and formulas | `mathjax: true` |
-| [Giscus Comments](giscus-comments/) | GitHub Discussions-powered comments | `comments: true` |
-| [PostHog Analytics](posthog-analytics/) | Privacy-first web analytics | (site-wide) |
-| [Keyboard Navigation](keyboard-navigation/) | Accessibility shortcuts | (always on) |
+Every feature has its own guide. "Enable" shows how to turn it on — page front
+matter, a `_config.yml` setting, or "always on" (built into the theme).
+
+### Content & authoring
+
+| Feature | Description | Enable |
+|---------|-------------|--------|
+| [Mermaid Diagrams](mermaid-diagrams/) | Flowcharts, sequence/class diagrams from text | `mermaid: true` |
+| [MathJax Math](mathjax-math/) | LaTeX-style equations, rendered in the browser | `mathjax: true` |
+| [Jupyter Notebooks](jupyter-notebooks/) | Publish `.ipynb` notebooks as pages | drop into `pages/_notebooks/` |
+| [Code Copy Button](code-copy/) | One-click copy on every code block | always on |
+| [AI Preview Images](preview-image-generator/) | Auto-generate social/OG images for posts | `_config.yml` |
+
+### Navigation & accessibility
+
+| Feature | Description | Enable |
+|---------|-------------|--------|
+| [Sidebar Navigation](sidebar-navigation/) | Collapsible docs sidebar with scroll spy | `sidebar.nav` |
+| [Table of Contents](toc/) | Auto "On this page" list with active highlighting | `toc: true` |
+| [Mobile TOC Button](mobile-toc/) | Floating TOC button on phones | always on |
+| [Breadcrumbs](breadcrumbs/) | Hierarchical trail + Schema.org markup | `breadcrumbs: true` |
+| [Back to Top](back-to-top/) | Floating scroll-to-top button | always on |
+| [Dynamic Navigation](dynamic-navigation/) | Auto-builds the navbar from collections | automatic fallback |
+| [Navigation Architecture](navigation-architecture/) | The ES6 modules behind the nav system | always on |
+| [Keyboard Navigation](keyboard-navigation/) | Shortcuts + focus management (press `?`) | always on |
+| [Skip to Content](skip-to-content/) | WCAG skip link for keyboard users | always on |
+
+### Appearance & admin
+
+| Feature | Description | Enable |
+|---------|-------------|--------|
+| [Dark / Light Mode](color-modes/) | Light, dark, and auto color modes + 9 skins | always on |
+| [Admin Dashboards](admin-dashboard/) | Config, stats, theme, and build dashboards | `layout: admin` |
+| [Vendored Assets](vendored-assets/) | Bootstrap/Icons/Mermaid committed, no CDN | build-time |
+| [Theme Version](theme-version/) | Surface the installed theme version | automatic |
+
+### Engagement & analytics
+
+| Feature | Description | Enable |
+|---------|-------------|--------|
+| [Site Search](site-search/) | Client-side search modal (press `/`) | always on |
+| [Giscus Comments](giscus-comments/) | GitHub Discussions-powered comments | `comments: true` + `giscus:` |
+| [PostHog Analytics](posthog-analytics/) | Privacy-first analytics, consent-gated | `posthog:` (production) |
+| [AI Chat Assistant](ai-chat-assistant/) | Page-aware Claude chat widget | `ai_chat.enabled` |
+| [Copilot / AI Integration](copilot-integration/) | Repo-wide AI coding-agent instructions | repo config |
+
+### Privacy & resilience
+
+| Feature | Description | Enable |
+|---------|-------------|--------|
+| [Cookie Consent](cookie-consent/) | GDPR/CCPA banner gating analytics | site-wide |
+| [Smart 404](smart-404/) | Deployment-aware "page not found" with search | automatic |
 
 ## Quick Enable
 

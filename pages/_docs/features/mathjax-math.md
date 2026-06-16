@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:29:58.000Z
+lastmod: 2026-06-15T00:00:00.000Z
 title: MathJax Math
 description: Display mathematical equations and formulas in Jekyll pages using MathJax - LaTeX-style notation for the web.
 preview: /images/previews/mathjax-math.png
@@ -23,6 +23,8 @@ sidebar:
 # MathJax Math
 
 > Display mathematical equations and formulas using LaTeX-style syntax with MathJax.
+
+![A table mapping LaTeX source to rendered output — $x^2$, $\sqrt{x}$, $\frac{a}{b}$, and $\sum_{i=1}^n x_i$ each typeset as real math by MathJax](/assets/images/docs/features/mathjax-math.png)
 
 ## Quick Start
 

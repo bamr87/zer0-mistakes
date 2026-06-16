@@ -23,6 +23,10 @@ sidebar:
 
 The Zer0-Mistakes theme includes a modern sidebar navigation system with performance-optimized scroll tracking and accessibility features.
 
+![A documentation page showing the collapsible "Browse docs" sidebar on the left, the article in the center, and an "On this page" table of contents on the right](/assets/images/docs/features/docs-layout.png)
+
+The **Browse docs** sidebar on the left is the enhanced navigation system; the **On this page** panel on the right is the [table of contents](/docs/features/toc/).
+
 ## Overview
 
 Key features:

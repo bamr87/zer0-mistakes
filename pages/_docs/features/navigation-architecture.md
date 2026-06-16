@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-06-14T00:00:00.000Z
+lastmod: 2026-06-15T00:00:00.000Z
 title: ES6 Modular Navigation Architecture
 description: The zer0-mistakes navigation system as ES6 modules — hover dropdowns, keyboard accessibility, smooth scroll, sidebar persistence, and graceful degradation.
 preview: /images/previews/es6-modular-navigation-architecture.png
@@ -23,6 +23,8 @@ sidebar:
 # ES6 Modular Navigation Architecture
 
 The zer0-mistakes navigation JavaScript is organized as ES6 modules under `assets/js/modules/navigation/`. This modular approach enables tree-shaking, independent unit testing, and easy extension without touching monolithic files.
+
+![The navigation bar with a hover dropdown open — one of the behaviors (dropdowns, keyboard access, smooth scroll, sidebar state) provided by the navigation modules](/assets/images/docs/features/dynamic-navigation.png)
 
 ## Module Overview
 

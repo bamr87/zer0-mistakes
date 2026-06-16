@@ -39,6 +39,11 @@ sidebar:
 - **Feature flags** — A/B testing built-in
 - **Free tier** — 1 million events/month free
 
+In this theme the integration lives in `_includes/analytics/posthog.html`, which
+`_layouts/root.html` includes near the end of the page. It reads the `posthog:`
+block from `_config.yml` and only emits the loader when both
+`site.posthog.enabled` is true **and** `jekyll.environment == "production"`.
+
 ## Prerequisites
 
 1. **PostHog account** — Sign up at [posthog.com](https://posthog.com/)
@@ -51,28 +56,41 @@ sidebar:
 
 Add the PostHog configuration block:
 
+These keys mirror the block shipped in this theme's `_config.yml`:
+
 ```yaml
 # PostHog Analytics Configuration
 posthog:
   enabled: true
   api_key: 'phc_YOUR_API_KEY_HERE'
-  api_host: 'https://us.i.posthog.com'  # or eu.i.posthog.com for EU
-  
+  api_host: 'https://us.i.posthog.com'  # or https://eu.i.posthog.com for EU
+  person_profiles: 'identified_only'    # 'always' | 'identified_only' | 'never'
+
   # Automatic tracking
   autocapture: true
   capture_pageview: true
   capture_pageleave: true
-  
-  # Privacy settings
+
+  # Privacy / cookie settings
   session_recording: false
+  disable_cookie: false                 # true = cookieless tracking
   respect_dnt: true
-  
+  cross_subdomain_cookie: false
+  secure_cookie: true
+  persistence: 'localStorage+cookie'    # 'localStorage+cookie' | 'cookie' | 'memory'
+
   # Custom event tracking
   custom_events:
     track_downloads: true
     track_external_links: true
     track_search: true
     track_scroll_depth: true
+
+  # Session-recording masking + IP options
+  privacy:
+    mask_all_text: false
+    mask_all_inputs: true
+    ip_anonymization: false
 ```
 
 ### Step 2: Disable in Development
@@ -83,6 +101,28 @@ In `_config_dev.yml`, disable analytics for local development:
 posthog:
   enabled: false
 ```
+
+### Verify
+
+Because the loader is production-only, a local `jekyll serve` (which runs in the
+`development` environment) never injects PostHog — that is expected. To confirm
+the gate works, build with the production environment and grep the output:
+
+```bash
+# Dev build: no PostHog loader is emitted (development environment)
+docker-compose exec -T jekyll bundle exec jekyll build \
+  --config '_config.yml,_config_dev.yml'
+grep -rl "posthog.init" _site/ || echo "No PostHog in dev build (expected)"
+
+# Production build with PostHog enabled: the loader appears
+JEKYLL_ENV=production docker-compose exec -T -e JEKYLL_ENV=production jekyll \
+  bundle exec jekyll build
+grep -rl "posthog.init" _site/ | head
+```
+
+In the browser, open DevTools → Console on a production page; on success the
+include logs `PostHog analytics loaded successfully`, and accepting the analytics
+cookie logs `PostHog analytics enabled via consent`.
 
 ---
 
@@ -154,9 +194,14 @@ window.addEventListener('scroll', function() {
 
 ### GDPR/CCPA Compliance
 
-1. **Cookie consent integration** — Only load PostHog after user consent
+1. **Cookie consent integration** — The PostHog loader runs in production, then
+   `_includes/components/cookie-consent.html` calls `posthog.opt_in_capturing()`
+   when a visitor accepts analytics cookies and `posthog.opt_out_capturing()`
+   otherwise. Consent therefore gates event *capturing*, not whether the library
+   loads.
 2. **Disable cookies** — Set `disable_cookie: true` for cookieless tracking
-3. **IP anonymization** — Enable `ip_anonymization: true`
+3. **IP anonymization** — Set `privacy.ip_anonymization: true` (the include then
+   passes `ip: false` to `posthog.init`)
 4. **Session recordings** — Keep `session_recording: false` unless needed
 5. **Data retention** — Configure in PostHog dashboard
 

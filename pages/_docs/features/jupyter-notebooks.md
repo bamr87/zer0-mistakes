@@ -28,6 +28,8 @@ mermaid: true
 
 The Zer0-Mistakes theme provides full Jupyter notebook support with GitHub Pages compatibility through automated pre-build conversion.
 
+![The Notebooks collection landing page: a category sidebar, a difficulty filter, and notebook cards rendered like the rest of the site](/assets/images/docs/features/jupyter-notebooks.png)
+
 ## Overview
 
 Key features:

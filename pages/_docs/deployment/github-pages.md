@@ -63,7 +63,7 @@ plugins:
   - jekyll-seo-tag
 ```
 
-> **Tip:** Fork into `<your-username>.github.io` so you don't need to change `baseurl` at all. See [docs/FORKING.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/FORKING.md) for the recommended workflow.
+> **Tip:** Fork into `<your-username>.github.io` so you don't need to change `baseurl` at all. See [docs/FORKING.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/installation/forking.md) for the recommended workflow.
 
 ### Step 3: Push and Deploy
 
@@ -83,7 +83,7 @@ GitHub will automatically build and deploy your site.
 - URL: `https://username.github.io`
 - `baseurl: ""`
 - No additional configuration needed — works out of the box with the theme defaults
-- See [Forking Guide](https://github.com/bamr87/zer0-mistakes/blob/main/docs/FORKING.md)
+- See [Forking Guide](https://github.com/bamr87/zer0-mistakes/blob/main/docs/installation/forking.md)
 
 ### Project Site
 

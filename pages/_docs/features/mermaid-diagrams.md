@@ -30,6 +30,10 @@ sidebar:
 
 **GitHub Pages Compatible** — Works without custom server-side plugins!
 
+A ` ```mermaid ` block renders to an SVG diagram in the browser. For example, the Quick Start guide's "choose your path" flowchart is a Mermaid block the theme renders automatically:
+
+![The Quick Start page with a Mermaid flowchart rendered below the intro, branching from "What's your goal?" into the install paths](/assets/images/docs/features/mermaid-rendered.png)
+
 ## Quick Start
 
 ### Step 1: Enable Mermaid on Your Page

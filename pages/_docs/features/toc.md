@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:29:58.000Z
+lastmod: 2026-06-15T00:00:00.000Z
 title: Table of Contents
 description: Automatic table of contents generation from page headings with scroll spy and smooth scrolling.
 preview: /images/previews/table-of-contents.png
@@ -22,6 +22,10 @@ sidebar:
 # Table of Contents
 
 Automatic table of contents generation from page headings with active section highlighting.
+
+![A documentation page with the "On this page" table of contents in the right column, listing the page's headings; the current section is highlighted as you scroll](/assets/images/docs/features/docs-layout.png)
+
+The **On this page** panel on the right is the table of contents, built from the page's `h2`–`h6` headings.
 
 ## Overview
 

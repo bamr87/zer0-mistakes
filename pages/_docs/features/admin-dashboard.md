@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-05-05T00:00:00.000Z
+lastmod: 2026-06-15T00:00:00.000Z
 title: Admin Layout & Configuration Dashboards
 description: Admin-style layout and dashboard partials for surfacing site configuration, build info, and feature flags in a single place.
 preview: /images/previews/admin-layout-configuration-dashboards.png
@@ -22,6 +22,10 @@ sidebar:
 # Admin Layout & Configuration Dashboards
 
 The zer0-mistakes theme ships an `admin` layout and a set of dashboard partials for surfacing site configuration, build metadata, and feature flags — all in one place, without requiring a CMS or backend.
+
+![The Configuration Utility dashboard: summary cards for Site URL, Repository, Theme Skin, and Collections above a searchable, copyable config table, with the Administration sidebar on the left](/assets/images/docs/features/admin-dashboard.png)
+
+The built-in admin pages live under `/about/` — **Configuration** (`/about/config/`), **Statistics**, **Theme Customizer**, **Theme Preview**, **Navigation Editor**, **Collection Manager**, **Analytics Dashboard**, and **Environment & Build**. They read straight from `_config.yml` and Jekyll's site data, so there's nothing to wire up.
 
 ## Admin Layout
 

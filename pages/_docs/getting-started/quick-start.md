@@ -54,6 +54,22 @@ cd my-site
 curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash -s -- --full
 ```
 
+A successful run ends with a summary and your next steps:
+
+```text
+[SUCCESS] Installation completed successfully!
+[INFO] Installation mode: full
+[INFO] Next steps:
+  1. cd my-site
+  2. Review and customize _config.yml
+  3. Run 'docker-compose up' or 'bundle install && bundle exec jekyll serve'
+  4. Visit http://localhost:4000 to see your site
+```
+
+The full install lays down the complete theme (~500 files: layouts, includes,
+Sass, assets, Docker config). The `--minimal` variant writes only the handful of
+config files below.
+
 Notes:
 
 - `--full` is the default; it installs the full theme structure, Docker config, and development overrides.
@@ -65,12 +81,37 @@ Notes:
 From inside your generated site folder:
 
 ```bash
-docker-compose up
+docker compose up        # or: docker-compose up (v1 syntax)
 ```
 
-Then open:
+The first run builds the image and installs gems, so it takes a few minutes.
+When it's ready you'll see Jekyll's server line:
 
-- `http://localhost:4000`
+```text
+       Jekyll Feed: Generating feed for posts
+                    done in 4.2 seconds.
+ Auto-regeneration: enabled for '/site'
+    Server address: http://0.0.0.0:4000
+  Server running... press ctrl-c to stop.
+```
+
+Then open **`http://localhost:4000`** — your site is live:
+
+![Zer0-Mistakes site running at localhost:4000](/assets/images/quickstart/site-running.png)
+
+#### Verify it worked
+
+- The homepage renders with the top navigation bar and a "Get Started" hero.
+- Editing any file under `pages/` and saving **live-reloads** the browser.
+- A quick build check (run in a second terminal) should exit cleanly:
+
+  ```bash
+  docker compose exec -T jekyll bundle exec jekyll build \
+    --config '_config.yml,_config_dev.yml'
+  ```
+
+> **Tip:** `docker compose` (v2, a space) and `docker-compose` (v1, a hyphen)
+> are interchangeable here. Use whichever your Docker install provides.
 
 ### 3) Minimal install (optional)
 
@@ -183,7 +224,7 @@ docker-compose stop
 docker-compose down
 ```
 
-See [docs/FORKING.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/FORKING.md) for the full fork → configure → personalize workflow.
+See [docs/FORKING.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/installation/forking.md) for the full fork → configure → personalize workflow.
 
 ---
 

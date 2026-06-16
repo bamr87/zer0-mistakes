@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:29:58.000Z
+lastmod: 2026-06-15T00:00:00.000Z
 title: Cookie Consent Management
 description: GDPR/CCPA compliant cookie consent system with granular permissions and Bootstrap modal preferences.
 preview: /images/previews/cookie-consent-management.png
@@ -24,6 +24,10 @@ mermaid: true
 # Cookie Consent Management
 
 The Zer0-Mistakes theme includes a GDPR/CCPA compliant cookie consent system with granular permission controls.
+
+![The site with the cookie-consent banner pinned along the bottom — "We value your privacy" with Manage Cookies, Reject All, and Accept All actions](/assets/images/docs/features/cookie-consent.png)
+
+The banner appears until a visitor makes a choice; "Manage Cookies" opens a modal for granular analytics/marketing toggles. Consent gates analytics loading, so nothing tracks until the visitor opts in.
 
 ## Overview
 

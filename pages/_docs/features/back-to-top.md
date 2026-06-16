@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:29:59.000Z
+lastmod: 2026-06-15T00:00:00.000Z
 title: Back to Top Button
 description: Floating button that appears on scroll, allowing users to quickly return to the top of the page.
 preview: /images/previews/back-to-top-button.png
@@ -22,6 +22,10 @@ sidebar:
 # Back to Top Button
 
 A floating button that appears when users scroll down, providing quick navigation back to the top of the page.
+
+![A documentation page scrolled partway down, with a circular back-to-top button floating in the lower corner](/assets/images/docs/features/back-to-top.png)
+
+The button stays hidden at the top of the page and fades in once you scroll past the first viewport, so it never gets in the way.
 
 ## Overview
 

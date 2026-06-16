@@ -23,7 +23,7 @@ keywords:
     - github cli
     - fork repository
     - pull requests
-lastmod: 2026-05-30T00:00:00.000Z
+lastmod: 2026-06-15T00:00:00.000Z
 draft: false
 sidebar:
   nav: quickstart
@@ -102,7 +102,7 @@ cd <your-username>.github.io
 
 ![GitHub fork dialog](/assets/images/quickstart/github-fork-dialog.png)
 
-> See [docs/FORKING.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/FORKING.md) for the full fork → configure → personalize workflow.
+> See [docs/FORKING.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/installation/forking.md) for the full fork → configure → personalize workflow.
 
 ## Step 3 — Run the Fork Cleanup Script
 

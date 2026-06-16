@@ -24,6 +24,10 @@ sidebar:
 
 The Zer0-Mistakes theme includes comprehensive keyboard navigation support to enhance accessibility and improve navigation efficiency for all users.
 
+![The keyboard shortcuts help modal listing actions such as Open search, Previous/Next section, and Toggle table of contents](/assets/images/docs/features/keyboard-navigation.png)
+
+Press <kbd>?</kbd> on any page to open this shortcuts reference.
+
 ## Quick Reference
 
 | Shortcut | Action | Context |
