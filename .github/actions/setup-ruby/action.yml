@@ -25,6 +25,14 @@ runs:
         bundler-cache: ${{ inputs.bundler-cache }}
         # Ensure bundler >= 2.3 for compatibility with gemspec requirements
         bundler: '2.5'
+        # Bust the bundler cache. The theme is a path gem whose gemspec derives
+        # `s.files` from `git ls-files`, but the cache key is only the
+        # Gemfile.lock hash. A PR that adds/removes tracked theme files without
+        # changing the lock therefore restores a cache whose baked path-gem
+        # spec no longer matches the working tree, and frozen `bundle install`
+        # aborts with "The gemspecs for path gems changed". Bump this string to
+        # force a clean install when that happens.
+        cache-version: '2'
 
     - name: Install system dependencies
       if: inputs.install-system-deps == 'true'

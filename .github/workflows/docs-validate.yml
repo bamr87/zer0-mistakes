@@ -23,6 +23,11 @@ jobs:
         with:
           ruby-version: "3.3"
           bundler-cache: true
+          # Bust the stale path-gem bundler cache (keyed only on Gemfile.lock).
+          # Adding/removing theme files changes the gemspec's git-ls-files-based
+          # `s.files` without touching the lock, so a restored cache trips
+          # frozen "gemspecs for path gems changed". Bump to force a clean install.
+          cache-version: "2"
 
       - name: Check front matter
         run: bash scripts/docs/lint-frontmatter.sh
