@@ -1,5 +1,6 @@
 ---
 title: Year of AI
+lastmod: 2026-06-15T00:00:00.000Z
 description: >-
   The organization hub for a federated network of self-growing, year-by-year
   knowledge bases — each published as its own site, all rendered with the
@@ -8,6 +9,11 @@ layout: home
 permalink: /
 sidebar: false
 hide_intro: true
+# The hero section below supplies its own visible <h1>; keep `title` for SEO
+# but suppress the home layout's duplicate <h1 class="page-heading"> so the
+# page exposes exactly one accessible h1 (layouts.spec.js:39).
+hide_title: true
+rss_subscribe: false
 ---
 
 <section class="text-center py-5">

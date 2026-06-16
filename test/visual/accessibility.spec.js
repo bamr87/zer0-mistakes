@@ -180,10 +180,14 @@ test.describe('Accessibility — UI refresh smoke', () => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await gotoOrSkip(page, UI_ROUTES.home);
 
-    await page.waitForFunction(() => document.querySelector('.table-copy-csv'));
+    // table-copy.js injects the button on DOMContentLoaded for any markdown
+    // table in the content area. Homepages without a table (e.g. a hero/landing
+    // page) never get one — wait briefly, then skip rather than block until the
+    // test times out.
     const btn = page.locator('.table-copy-csv').first();
+    await btn.waitFor({ state: 'attached', timeout: 3000 }).catch(() => {});
     if ((await btn.count()) === 0) {
-      test.skip(true, 'No table copy button');
+      test.skip(true, 'No table copy button on this page');
       return;
     }
     const ariaLabel = await btn.getAttribute('aria-label');

@@ -648,6 +648,7 @@ a.bd-intro-badge--tag:focus {
 .bd-content :is(p, li, blockquote, td, dd) a:not(.btn):not(.badge):not(.nav-link):not(.dropdown-item):not(.page-link):not(.card-link):not([class*="text-decoration"]),
 .post-content :is(p, li, blockquote, td, dd) a:not(.btn):not(.badge):not(.nav-link):not(.dropdown-item):not(.page-link):not(.card-link):not([class*="text-decoration"]),
 .landing-content-body :is(p, li, blockquote, td, dd) a:not(.btn):not(.badge):not(.nav-link):not(.dropdown-item):not(.page-link):not(.card-link):not([class*="text-decoration"]),
+.home :is(p, li, blockquote, td, dd) a:not(.btn):not(.badge):not(.nav-link):not(.dropdown-item):not(.page-link):not(.card-link):not([class*="text-decoration"]),
 #admin-content :is(p, li, blockquote, td, dd, .alert) a:not(.btn):not(.badge):not(.nav-link):not(.dropdown-item):not(.page-link):not(.card-link):not(.alert-link):not([class*="text-decoration"]) {
     text-decoration: underline;
 }
