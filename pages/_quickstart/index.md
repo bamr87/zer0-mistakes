@@ -6,7 +6,7 @@ description: Complete setup guide for the Zer0-Mistakes Jekyll theme featuring D
 permalink: /quickstart/
 sidebar:
     nav: quickstart
-lastmod: 2026-05-30T00:00:00.000Z
+lastmod: 2026-06-15T00:00:00.000Z
 preview: /images/previews/zer0-mistakes-quick-start-guide.png
 tags:
     - jekyll
@@ -119,7 +119,7 @@ docker-compose up
 
 Enable Pages: **Settings → Pages → Branch: main → Save**.
 
-See [docs/FORKING.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/FORKING.md) for the full fork → configure → personalize guide.
+See [docs/FORKING.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/installation/forking.md) for the full fork → configure → personalize guide.
 
 ### Option E — Remote Theme
 
