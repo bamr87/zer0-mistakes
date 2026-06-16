@@ -578,7 +578,7 @@ tasks:
 
   - id: T-022
     title: "Record shipped milestones v1.15–v1.18 in _data/roadmap.yml"
-    status: open
+    status: done
     priority: P2
     area: docs
     risk: low
@@ -598,7 +598,7 @@ tasks:
       - "`ruby scripts/generate-roadmap.rb --check` passes and the README roadmap section is regenerated."
     links: { issue: null, pr: null, roadmap: null }
     created: 2026-06-15
-    updated: 2026-06-15
+    updated: 2026-06-16
 
   - id: T-023
     title: "Unit tests for sanitize_config_filter.rb (security-critical plugin)"

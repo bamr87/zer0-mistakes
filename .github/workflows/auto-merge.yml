@@ -32,13 +32,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Note: we never check out the PR head (untrusted code under
-      # pull_request_target). The file list comes from the API via `gh pr diff`.
+      # pull_request_target). The file list comes from the REST API via `gh api`
+      # (gh pr diff --name-only internally invokes git and fails without a repo).
       - name: Verify the PR is genuinely low-risk
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR: ${{ github.event.pull_request.number }}
         run: |
-          changed=$(gh pr diff "$PR" --name-only)
+          changed=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --jq '.[].filename')
           echo "Changed files:"; echo "$changed"
           # Files that must never auto-merge, even if mislabelled.
           if echo "$changed" | grep -E -q \

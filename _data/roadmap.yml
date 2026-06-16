@@ -60,7 +60,7 @@
 meta:
   title: "zer0-mistakes Roadmap"
   tagline: "Past releases, current focus, and future plans for the zer0-mistakes Jekyll theme."
-  updated: 2026-06-12
+  updated: 2026-06-16
 
 milestones:
   # --- Completed -------------------------------------------------------------
@@ -340,23 +340,99 @@ milestones:
       - "Release changelog single source of truth; workflow lint cleanup (T-017)"
       - "Gate-coverage controls contract documented in the workflows README"
 
-  # --- Current ---------------------------------------------------------------
-
   - version: "1.14"
     title: "Zer0-Mistake Quality Framework"
+    status: completed
+    section: Completed
+    start: 2026-06
+    end: 2026-06
+    released: 2026-06-11
+    summary: "Second wave of the Zer0-Mistake Quality Framework: DOM sanitization hardening and workflow lint cleanup."
+    features:
+      - "Admin config-page Liquid sanitization layer (T-009 hardening) — protects GitHub Pages builds where the plugin filter is a no-op"
+      - "version-bump.yml yamllint cleanup (T-017) — trailing spaces, bracket spacing, sequence indentation"
+      - "Changelog tooling: update_changelog_file normalizes trailing newlines and folds stale Unreleased sections"
+
+  - version: "1.15"
+    title: "Quality Framework Batch"
+    status: completed
+    section: Completed
+    start: 2026-06
+    end: 2026-06
+    released: 2026-06-12
+    summary: "Quality framework batch: docs lint baseline, locale guard, strict site_generation, contribution templates, and YAML export fix."
+    features:
+      - "Contribution templates (T-003): bug-report / feature-request forms, PR template with conventional-commit checklist"
+      - "Docs lint baseline + gate re-armed (T-004/T-014): ~1,600 markdownlint violations fixed, both `|| true` suppressions removed"
+      - "Theme customizer YAML export fix (T-008): hex color values quoted; frozen regression test promoted to live"
+      - "Locale-independence guard (T-015): validators run under `LC_ALL=C` in the lib test suite"
+      - "Strict site_generation suite (T-016): `jekyll build` failures now fail the gate"
+      - "Ruby gemspec floor raised to `>= 3.2` to match modern dependency requirements"
+
+  - version: "1.16"
+    title: "AI Chat + Consumer Audit"
+    status: completed
+    section: Completed
+    start: 2026-06
+    end: 2026-06
+    released: 2026-06-12
+    summary: "AI chat widget (ZER0-060) and consumer audit tooling; render guard bug fixed."
+    features:
+      - "AI Chat Assistant (ZER0-060): opt-in floating chat widget grounded in the current page with proxy-first auth"
+      - "Consumer audit tooling and theme manifest for downstream site health checks"
+      - "Chat render guard fix: Liquid `assign` truthy bug would have shown a dead FAB on every page"
+      - "Locale independence in `scripts/lib/frontmatter.sh` (multibyte post YAML errors under C locale)"
+
+  - version: "1.17"
+    title: "A11y, Mermaid & Migration Tests"
+    status: completed
+    section: Completed
+    start: 2026-06
+    end: 2026-06
+    released: 2026-06-12
+    summary: "Plugin unit specs, coverage baseline, config-page sync, WCAG 2.1 AA fixes, Mermaid on 12 more pages, and migration tests."
+    features:
+      - "Plugin unit specs (T-011): 19 Minitest specs for preview_image_generator, content_statistics_generator, admin_page_urls"
+      - "Coverage baseline (T-005): structural survey at docs/development/coverage-baseline.md; T-019/T-020 follow-ups filed"
+      - "Admin config-page sync (T-018): byte-synced copy, drift check in validate, Raw-YAML tab sanitized"
+      - "Navbar & site WCAG 2.1 AA fixes (T-007): all axe-core violations resolved; three test.fixme blocks promoted to live tests"
+      - "Mermaid on 12 more pages: missing `mermaid: true` front-matter flags added across the docs"
+      - "Obsidian graph view restored at `/docs/obsidian/graph/` (161 nodes, 269 edges)"
+      - "Migration & theme-version coverage (T-019): test_migrate.sh (14 assertions) and ThemeVersionGeneratorTest"
+
+  - version: "1.18"
+    title: "AI Content Reviewer"
+    status: completed
+    section: Completed
+    start: 2026-06
+    end: 2026-06
+    released: 2026-06-13
+    summary: "Two-tier AI content reviewer framework and chat GitHub action tools (issue/PR creation via Claude tool use)."
+    features:
+      - "Deterministic reviewer tier (`scripts/content-review.rb`): scores Markdown files 0–100 per-collection; posts sticky PR comment"
+      - "Claude Code agent tier (`.claude/agents/content-reviewer.md`): tone, clarity, consistency, accessibility review"
+      - "AI Content Review workflow (`.github/workflows/ai-content-review.yml`): runs on every PR touching `pages/**`"
+      - "Chat GitHub actions: file issues and open PRs via Claude tool use with in-chat confirmation cards"
+      - "Chat proxy template (Cloudflare Worker + Node dev proxy) with OAuth and API-key auth modes"
+      - "AI Chat rebuilt on the Claude Messages API (SSE streaming, `claude-opus-4-8` default)"
+
+  # --- Current ---------------------------------------------------------------
+
+  - version: "1.19"
+    title: "Org Content Hub"
     status: active
     section: Current
     start: 2026-06
     end: 2026-08
-    target: "Current (1.14.x)"
-    summary: "Close the gap between the repo's quality gates and what CI actually enforces — no mistake lands green."
+    target: "Current (1.19.x)"
+    summary: "Federated Org Content Hub — one GitHub Pages site per org repo, each rendering its own content with this theme."
     features:
-      - "Re-armed docs lint gate on a zero-violation baseline (T-014)"
-      - "Locale-independence regression guard for the Ruby/Bash tooling (T-015)"
-      - "Strict site_generation suite — build failures fail the gate (T-016)"
-      - "Re-armed pixel-snapshot gate (refreshed baselines, no continue-on-error) (T-013)"
-      - "Coverage baseline with follow-up tasks for the lowest-covered subsystems (T-005)"
-      - "Navbar WCAG 2.1 AA fixes unlocking the axe-core full audit (T-007)"
+      - "Org Content Hub: `_data/hub.yml` registry, `scripts/provision-org-sites.rb`, `scripts/sync-hub-metadata.rb`"
+      - "Hub dashboard at `/hub/` tracking every site's live/pending status"
+      - "Daily `hub-sync.yml` workflow committing only when the org changes"
+      - "Opt-out flags for RSS link and visible landing-page title (`feat(home)`)"
+      - "Analytics fix: GA/GTM load only in production, skipping dev hostnames"
+      - "Documentation freshness sweep: broken cross-links repaired (T-004 follow-up)"
 
   - version: "2.0"
     title: "CMS Integration"
