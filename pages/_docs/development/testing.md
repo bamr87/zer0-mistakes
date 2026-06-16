@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-05-31T00:00:00.000Z
+lastmod: 2026-06-16T00:00:00.000Z
 title: Testing
 description: Overview of the test suite for the Zer0-Mistakes theme. See the contributor reference in docs/ for the full testing guide.
 preview: /images/previews/testing.png
@@ -41,4 +41,4 @@ Tests run automatically via GitHub Actions on every push and pull request. The s
 
 The complete testing guide — test structure, writing new tests, coverage expectations, CI/CD integration, and Playwright setup — lives in the contributor docs:
 
-**[Testing Guide → docs/development/testing.md](../../../docs/development/testing.md)**
+**[Testing Guide → docs/development/testing.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/development/testing.md)**

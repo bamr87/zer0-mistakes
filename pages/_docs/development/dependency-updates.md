@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:29:54.000Z
+lastmod: 2026-06-16T00:00:00.000Z
 title: Dependency Updates
 description: Guide to automated dependency management and Ruby gem updates for the Zer0-Mistakes theme.
 preview: /images/previews/dependency-updates.png
@@ -42,4 +42,4 @@ bundle exec jekyll build
 
 The complete dependency management guide — Zero-Pin strategy rationale, Dependabot configuration, update policy, lockfile management:
 
-**[Dependency Management → docs/systems/dependency-management.md](../../../docs/systems/dependency-management.md)**
+**[Dependency Management → docs/systems/dependency-management.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/systems/dependency-management.md)**

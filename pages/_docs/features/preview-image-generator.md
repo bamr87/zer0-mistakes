@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-06-14T00:00:00.000Z
+lastmod: 2026-06-16T00:00:00.000Z
 title: AI Preview Image Generator for Jekyll Posts
 description: Generate social preview images automatically for Jekyll posts using OpenAI DALL-E, Stability AI, or local placeholders, wired into the theme build pipeline.
 keywords: [preview image, dall-e, stability ai, open graph image, jekyll social images]
@@ -339,7 +339,7 @@ export OPENAI_API_KEY="sk-..."
 
 For implementation details (multi-provider architecture, xAI Grok integration, generation workflow):
 
-- [Preview Image Generator → docs/implementation/preview-image-generator.md](../../../docs/implementation/preview-image-generator.md)
+- [Preview Image Generator → docs/implementation/preview-image-generator.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/implementation/preview-image-generator.md)
 
 ## See also
 

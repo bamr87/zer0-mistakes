@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:29:53.000Z
+lastmod: 2026-06-16T00:00:00.000Z
 title: Layouts
 description: Create and customize page layouts in the Zer0-Mistakes Jekyll theme.
 preview: /images/previews/layouts.png
@@ -167,7 +167,7 @@ Use includes for reusable parts:
 
 For contributor-level details (layout hierarchy, Liquid template inheritance, sidebar wiring):
 
-- [Layouts and Navigation → docs/ui/layouts-and-navigation.md](../../../docs/ui/layouts-and-navigation.md)
+- [Layouts and Navigation → docs/ui/layouts-and-navigation.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/ui/layouts-and-navigation.md)
 
 ## See also
 

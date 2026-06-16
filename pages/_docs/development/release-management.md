@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-05-31T00:00:00.000Z
+lastmod: 2026-06-16T00:00:00.000Z
 title: Release Management
 description: Overview of the release process for the Zer0-Mistakes theme. See docs/ for the full release automation reference.
 preview: /images/previews/release-management.png
@@ -35,6 +35,6 @@ The command handles version bumping, CHANGELOG generation, gem build, RubyGems p
 
 The complete release automation guide — 10-step workflow, flags, troubleshooting, library architecture — is in the contributor docs:
 
-**[Release Automation → docs/systems/release-automation.md](../../../docs/systems/release-automation.md)**
+**[Release Automation → docs/systems/release-automation.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/systems/release-automation.md)**
 
-See also: [Automated Version System → docs/systems/automated-version-system.md](../../../docs/systems/automated-version-system.md)
+See also: [Automated Version System → docs/systems/automated-version-system.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/systems/automated-version-system.md)
