@@ -81,10 +81,13 @@
         <!-- ======================== -->
         <!-- MAIN CONTENT AREA        -->
         <!-- ======================== -->
-        <!-- Skip-link target: keep a single, consistent #main-content anchor site-wide -->
-        <div id="main-content">
+        <!-- Skip-link target: keep a single, consistent #main-content anchor site-wide.
+             Semantic <main> landmark (consistent with the default/section/news layouts)
+             so assistive tech, search engines, and AI content extractors can isolate the
+             primary content from the surrounding header/nav/footer chrome. -->
+        <main id="main-content">
             {{ content }}
-        </div>
+        </main>
 
         <!-- ======================== -->
         <!-- FOOTER AND SCRIPTS       -->

@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **Roadmap catch-up (T-022)**: recorded shipped milestones v1.14–v1.18 as `completed` in `_data/roadmap.yml` and advanced the active milestone to v1.19 so the roadmap tracks the gem version; README gantt diagram regenerated.
+## [1.19.1] - 2026-06-16
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 9ef8ff83 fix(config): restore zer0-mistakes.com site identity + CNAME (site was down) (#176)
+- 564328a3 chore(hub): refresh dashboard metadata
+- ae7ea222 docs(content): verify install flow, fix broken links, add tutorial + feature screenshots (#171)
+- b995115a fix(config): restore remote_theme contract + add missing lastmod (unblocks CI) (#174)
+
+### Fixed
+- **Restore `zer0-mistakes.com` site identity (site was down).** PR #173 (the
+  federated org content hub) accidentally rewrote this repo's own `_config.yml`
+  to the `year-of-ai.github.io` identity and deleted the `CNAME` file, which
+  broke the production custom domain. Restored `github_user`/`repository_name`/
+  `local_repo`/`title`/`domain`/`domain_ext`/`url`/`email`/`description` to the
+  `bamr87/zer0-mistakes` → `https://zer0-mistakes.com` values and re-added the
+  `CNAME` (`zer0-mistakes.com`) so GitHub Pages serves the custom domain again.
 
 ## [1.19.0] - 2026-06-16
 
