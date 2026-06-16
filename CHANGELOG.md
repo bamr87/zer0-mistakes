@@ -5,7 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.19.1] - 2026-06-16
+
+### Changed
+- Version bump: patch release
+
+### Commits in this release
+- 9ef8ff83 fix(config): restore zer0-mistakes.com site identity + CNAME (site was down) (#176)
+- 564328a3 chore(hub): refresh dashboard metadata
+- ae7ea222 docs(content): verify install flow, fix broken links, add tutorial + feature screenshots (#171)
+- b995115a fix(config): restore remote_theme contract + add missing lastmod (unblocks CI) (#174)
 
 ### Fixed
 - **Restore `zer0-mistakes.com` site identity (site was down).** PR #173 (the
