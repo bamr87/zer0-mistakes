@@ -20,6 +20,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **config:** restore remote_theme contract + add missing lastmod (unblocks CI) ([#174](https://github.com/bamr87/zer0-mistakes/issues/174)) ([b995115](https://github.com/bamr87/zer0-mistakes/commit/b995115a4ffb745704f1111539085a610ba94053))
 * **config:** restore zer0-mistakes.com site identity + CNAME (site was down) ([#176](https://github.com/bamr87/zer0-mistakes/issues/176)) ([9ef8ff8](https://github.com/bamr87/zer0-mistakes/commit/9ef8ff8335e0a9f394da1ec342f388d31470eb22))
 
+### Added
+- **Preview-image pixelator (`scripts/features/pixelate-preview-images`).** A
+  dependency-free (Python stdlib only — no ImageMagick/Pillow/pngquant) utility
+  that pixelates and palette-quantizes the AI-generated preview banners into
+  indexed PNG-8, shrinking them ~90% (e.g. 2.7&nbsp;MB → ~230&nbsp;KB) while
+  preserving the retro 8-bit aesthetic. A dry-run across all 146 banners reports
+  283&nbsp;MB → 28&nbsp;MB. Includes a conventions-friendly bash wrapper (config
+  default path, parallel `--jobs`, `--dry-run`), the `pixelate_images.py` engine
+  with `--selftest`, and a `scripts/test/lib/test_pixelate_images.sh` suite wired
+  into the library test runner. Non-PNG / 16-bit / interlaced inputs are skipped
+  gracefully.
+
+### Changed
+- **Roadmap catch-up (T-022)**: recorded shipped milestones v1.14–v1.18 as `completed` in `_data/roadmap.yml` and advanced the active milestone to v1.19 so the roadmap tracks the gem version; README gantt diagram regenerated.
 ## [1.19.1] - 2026-06-16
 
 ### Changed

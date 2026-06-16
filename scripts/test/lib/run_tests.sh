@@ -129,6 +129,7 @@ main() {
     source "$TEST_DIR/test_analyze_commits.sh"
     source "$TEST_DIR/test_locale_independence.sh"
     source "$TEST_DIR/test_migrate.sh"
+    source "$TEST_DIR/test_pixelate_images.sh"
     
     # Summary
     echo -e "\n${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
