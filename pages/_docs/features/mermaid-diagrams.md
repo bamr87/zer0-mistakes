@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:29:57.000Z
+lastmod: 2026-06-15T00:00:00.000Z
 title: Mermaid Diagrams
 description: Complete guide to integrating Mermaid diagrams in Jekyll sites - flowcharts, sequence diagrams, class diagrams and more with GitHub Pages compatibility.
 preview: /images/previews/mermaid-diagrams.png
@@ -29,6 +29,10 @@ sidebar:
 > Create flowcharts, sequence diagrams, class diagrams and more in your Jekyll site using Mermaid's simple text-based syntax.
 
 **GitHub Pages Compatible** — Works without custom server-side plugins!
+
+A ` ```mermaid ` block renders to an SVG diagram in the browser. For example, the Quick Start guide's "choose your path" flowchart is a Mermaid block the theme renders automatically:
+
+![The Quick Start page with a Mermaid flowchart rendered below the intro, branching from "What's your goal?" into the install paths](/assets/images/docs/features/mermaid-rendered.png)
 
 ## Quick Start
 

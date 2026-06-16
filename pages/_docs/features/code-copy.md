@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:29:56.000Z
+lastmod: 2026-06-15T00:00:00.000Z
 title: Code Copy Button
 description: One-click copy functionality for code blocks with visual feedback and clipboard API integration.
 preview: /images/previews/code-copy-button.png
@@ -22,6 +22,10 @@ sidebar:
 # Code Copy Button
 
 Automatic copy buttons on all code blocks for easy clipboard copying.
+
+![A highlighted JavaScript code block with a "Copy" button in its top-right corner, as rendered across the docs](/assets/images/docs/features/code-copy.png)
+
+The button is injected automatically into every fenced code block — there's no front matter to set and nothing to import. Hover a block and click **Copy** to put its contents on the clipboard, with a brief "Copied!" confirmation.
 
 ## Overview
 
