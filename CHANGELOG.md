@@ -5,7 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.19.0](https://github.com/bamr87/zer0-mistakes/compare/v1.18.1...v1.19.0) (2026-06-16)
+
+
+### Features
+
+* **chat:** rebuild AI assistant on Claude API with GitHub issue/PR tools + OAuth connector ([#151](https://github.com/bamr87/zer0-mistakes/issues/151)) ([02e81af](https://github.com/bamr87/zer0-mistakes/commit/02e81afbdc02643f4bc78af5e18792cd1b9c2213))
+* **home:** opt-out flags for RSS link and visible title ([#157](https://github.com/bamr87/zer0-mistakes/issues/157)) ([7597351](https://github.com/bamr87/zer0-mistakes/commit/7597351addd720fb4ff08b1170a1f0ef25fb3d75))
+
+
+### Bug Fixes
+
+* **analytics:** only load GA/GTM in production and skip dev hostnames ([#160](https://github.com/bamr87/zer0-mistakes/issues/160)) ([12d701e](https://github.com/bamr87/zer0-mistakes/commit/12d701e88ee2c76659869ccc948b2b550bb855d0))
+* **config:** restore remote_theme contract + add missing lastmod (unblocks CI) ([#174](https://github.com/bamr87/zer0-mistakes/issues/174)) ([b995115](https://github.com/bamr87/zer0-mistakes/commit/b995115a4ffb745704f1111539085a610ba94053))
+* **config:** restore zer0-mistakes.com site identity + CNAME (site was down) ([#176](https://github.com/bamr87/zer0-mistakes/issues/176)) ([9ef8ff8](https://github.com/bamr87/zer0-mistakes/commit/9ef8ff8335e0a9f394da1ec342f388d31470eb22))
 
 ### Added
 - **Preview-image pixelator (`scripts/features/pixelate-preview-images`).** A
