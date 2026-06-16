@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-06-15T00:00:00.000Z
+lastmod: 2026-06-16T00:00:00.000Z
 title: Theme Version Display Plugin
 description: Automatic theme version extraction from the installed gem specification, surfaced through the Settings panel opened from the header gear or footer Info button.
 preview: /images/previews/theme-version-display-plugin.png

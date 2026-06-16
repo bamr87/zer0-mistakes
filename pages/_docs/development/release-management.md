@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-05-31T00:00:00.000Z
+lastmod: 2026-06-16T00:00:00.000Z
 title: Release Management
 description: Overview of the release process for the Zer0-Mistakes theme. See docs/ for the full release automation reference.
 preview: /images/previews/release-management.png

@@ -14,8 +14,7 @@ permalink: /docs/installation/
 difficulty: beginner
 estimated_reading_time: 10 minutes
 prerequisites: []
-lastmod: 2026-06-14T00:00:00.000Z
-lastmod: 2026-06-14T00:00:00.000Z
+lastmod: 2026-06-16T00:00:00.000Z
 sidebar:
     nav: docs
 ---
@@ -111,8 +110,8 @@ docker-compose exec jekyll jekyll doctor
 
 For contributor-level details (installer architecture, profile system, AI-powered setup):
 
-- [Installation Guide → docs/installation/index.md](../../docs/installation/index.md)
-- [Forking Guide → docs/installation/forking.md](../../docs/installation/forking.md)
+- [Installation Guide → docs/installation/index.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/installation/index.md)
+- [Forking Guide → docs/installation/forking.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/installation/forking.md)
 
 ## See also
 

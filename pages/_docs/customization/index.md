@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-04-18T19:29:53.000Z
+lastmod: 2026-06-16T00:00:00.000Z
 title: Customization
 description: Customize the Zer0-Mistakes Jekyll theme - layouts, styles, navigation, and more.
 preview: /images/previews/customization.png

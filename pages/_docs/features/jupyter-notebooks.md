@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-06-15T00:00:00.000Z
+lastmod: 2026-06-16T00:00:00.000Z
 title: Jupyter Notebook Integration
 description: Full Jupyter notebook support with GitHub Pages compatibility, automated conversion, and responsive design.
 preview: /images/previews/jupyter-notebook-integration.png

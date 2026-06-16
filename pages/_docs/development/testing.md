@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-05-31T00:00:00.000Z
+lastmod: 2026-06-16T00:00:00.000Z
 title: Testing
 description: Overview of the test suite for the Zer0-Mistakes theme. See the contributor reference in docs/ for the full testing guide.
 preview: /images/previews/testing.png

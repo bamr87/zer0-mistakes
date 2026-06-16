@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.0] - 2026-06-16
+
+### Changed
+- Version bump: minor release
+
+### Commits in this release
+- 9c7ae494 docs: fix broken internal docs/ links in pages/_docs (#172)
+- 3d4c9464 chore(hub): refresh dashboard metadata
+- a2ec16c4 updates (#173)
+- 7b7a6dd4 chore(backlog): audit 2026-06-15 (#162)
+- 02e81afb feat(chat): rebuild AI assistant on Claude API with GitHub issue/PR tools + OAuth connector (#151)
+- 7597351a feat(home): opt-out flags for RSS link and visible title (#157)
+- 12d701e8 fix(analytics): only load GA/GTM in production and skip dev hostnames (#160)
+- 4a391327 chore(skills): add run-zer0-mistakes launch & screenshot skill (#159)
+- 95e249d6 docs(content): tighten guide SEO metadata and fix broken cross-links (#158)
+- 69394a80 docs(content): resolve AI content-review findings across 3 pages (#156)
+
+### Added
+- **Org Content Hub (federated)**: tooling to publish one GitHub Pages site per
+  org repository — each renders its own content at `<org>.github.io/<repo>/`
+  with this theme via `remote_theme`; content never leaves the source repo.
+  Adds the `_data/hub.yml` registry with auto-discovery, a shared
+  `scripts/lib/hub.rb`, `scripts/provision-org-sites.{rb,sh}` to roll the Pages
+  scaffold (`templates/org-site/*`) out to org repos and enable Pages,
+  `scripts/sync-hub-metadata.{rb,sh}` to refresh API-only dashboard data
+  (`_data/hub_index.yml` + `_data/navigation/hub.yml`, deterministic), a `/hub/`
+  dashboard page that tracks every site's live/pending status, and a daily
+  `hub-sync.yml` workflow that commits only when the org changed
+  (see `docs/systems/content-hub.md`)
+
 ## [1.18.1] - 2026-06-14
 
 ### Changed

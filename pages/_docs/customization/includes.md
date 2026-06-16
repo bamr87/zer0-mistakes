@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-06-14T00:00:00.000Z
+lastmod: 2026-06-16T00:00:00.000Z
 title: Include Components
 description: Guide to the 70+ reusable include components organized by category for maximum flexibility.
 preview: /images/previews/include-components.png

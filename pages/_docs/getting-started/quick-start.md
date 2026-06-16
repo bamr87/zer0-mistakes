@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-06-15T00:00:00.000Z
+lastmod: 2026-06-16T00:00:00.000Z
 title: Quick Start Guide
 description: Multiple installation methods for the Zer0-Mistakes Jekyll theme - from AI wizard to manual setup.
 preview: /images/previews/quick-start-guide.png
