@@ -1,5 +1,6 @@
 ---
 title: Year of AI
+lastmod: 2026-06-15T00:00:00.000Z
 description: >-
   The organization hub for a federated network of self-growing, year-by-year
   knowledge bases — each published as its own site, all rendered with the

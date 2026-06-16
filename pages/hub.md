@@ -1,5 +1,6 @@
 ---
 title: Content Hub
+lastmod: 2026-06-15T00:00:00.000Z
 description: >-
   Browse, monitor, and maintain every content site in the organization. Each
   repository publishes its own GitHub Pages site with the zer0-mistakes theme;

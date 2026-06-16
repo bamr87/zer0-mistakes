@@ -28,11 +28,11 @@
 site_configured          : true   # Tells the theme this site has been personalised
 
 founder                  : "Amr Abdel-Motaleb"
-# This repo is the year-of-ai organization root site (year-of-ai.github.io). It
-# is a fork of the zer0-mistakes theme and renders with its OWN local theme
-# files (remote_theme: false), and also serves as the remote_theme source for
-# the org's year sites (year-of-ai/<year>).
-remote_theme             : false
+# This repo is the year-of-ai organization root site (year-of-ai.github.io), a
+# fork of the zer0-mistakes theme. It renders via the shared theme below and
+# also serves as the remote_theme source for the org's year sites
+# (year-of-ai/<year>).
+remote_theme             : "bamr87/zer0-mistakes"
 gem                      : &gem "jekyll-theme-zer0"
 # theme                    : "jekyll-theme-zer0"
 
