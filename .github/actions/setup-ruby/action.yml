@@ -1,5 +1,5 @@
 name: 'Setup Ruby Environment'
-description: 'Sets up Ruby with bundler caching and common dependencies'
+description: 'Sets up Ruby, installs gems (non-frozen) with caching, and common deps'
 
 inputs:
   ruby-version:
@@ -11,7 +11,7 @@ inputs:
     required: false
     default: 'true'
   bundler-cache:
-    description: 'Enable bundler caching (set to false for version bump workflows)'
+    description: 'Cache installed gems between runs'
     required: false
     default: 'true'
 
@@ -22,17 +22,26 @@ runs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ inputs.ruby-version }}
-        bundler-cache: ${{ inputs.bundler-cache }}
-        # Ensure bundler >= 2.3 for compatibility with gemspec requirements
-        bundler: '2.5'
-        # Bust the bundler cache. The theme is a path gem whose gemspec derives
-        # `s.files` from `git ls-files`, but the cache key is only the
-        # Gemfile.lock hash. A PR that adds/removes tracked theme files without
-        # changing the lock therefore restores a cache whose baked path-gem
-        # spec no longer matches the working tree, and frozen `bundle install`
-        # aborts with "The gemspecs for path gems changed". Bump this string to
-        # force a clean install when that happens.
-        cache-version: '2'
+        # NOTE: we deliberately do NOT enable ruby/setup-ruby's `bundler-cache`.
+        # That option forces bundler into frozen/deployment mode, which is
+        # incompatible with this repo: the theme is a path gem (the Gemfile uses
+        # `gemspec`) whose gemspec derives `s.files` from `git ls-files`. On a
+        # clean install bundler then treats the path-gem spec as changed vs the
+        # fileless lockfile and aborts with "The gemspecs for path gems changed,
+        # but the lockfile can't be updated because frozen mode is set". We cache
+        # and install non-frozen below instead; the committed Gemfile.lock is
+        # consistent (re-resolving yields an identical file), so non-frozen
+        # install does not drift it. Bundler version comes from Gemfile.lock.
+        bundler-cache: false
+
+    - name: Cache bundler gems
+      if: inputs.bundler-cache == 'true'
+      uses: actions/cache@v4
+      with:
+        path: vendor/bundle
+        key: bundle-${{ runner.os }}-ruby-${{ inputs.ruby-version }}-${{ hashFiles('Gemfile.lock') }}
+        restore-keys: |
+          bundle-${{ runner.os }}-ruby-${{ inputs.ruby-version }}-
 
     - name: Install system dependencies
       if: inputs.install-system-deps == 'true'
@@ -41,17 +50,13 @@ runs:
         sudo apt-get update -qq
         sudo apt-get install -y jq
 
-    - name: Disable frozen mode for development workflows
-      if: inputs.bundler-cache != 'true'
+    - name: Install Ruby dependencies (non-frozen)
       shell: bash
       run: |
+        bundle config set --local path vendor/bundle
         bundle config set --local frozen false
         bundle config unset deployment 2>/dev/null || true
-
-    - name: Ensure Ruby dependencies are installed
-      shell: bash
-      run: |
-        bundle check || bundle install --jobs 4 --retry 3
+        bundle install --jobs 4 --retry 3
 
     - name: Make scripts executable
       shell: bash

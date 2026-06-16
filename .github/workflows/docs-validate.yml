@@ -18,16 +18,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Use the shared composite action, which installs gems non-frozen. The
+      # theme is a path gem whose gemspec lists git-tracked files, so frozen
+      # mode (ruby/setup-ruby's bundler-cache) aborts with "The gemspecs for
+      # path gems changed". The composite avoids that; see its inline notes.
       - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ./.github/actions/setup-ruby
         with:
           ruby-version: "3.3"
-          bundler-cache: true
-          # Bust the stale path-gem bundler cache (keyed only on Gemfile.lock).
-          # Adding/removing theme files changes the gemspec's git-ls-files-based
-          # `s.files` without touching the lock, so a restored cache trips
-          # frozen "gemspecs for path gems changed". Bump to force a clean install.
-          cache-version: "2"
 
       - name: Check front matter
         run: bash scripts/docs/lint-frontmatter.sh
