@@ -1,0 +1,203 @@
+# =============================================================================
+# GENERATED FILE — do not edit by hand.
+# Regenerate with: ./scripts/sync-hub-metadata.sh
+# Source registry: _data/hub.yml
+# =============================================================================
+org: year-of-ai
+totals:
+  repos: 5
+  pages: 399
+repos:
+- name: '1776'
+  title: '1776'
+  description: A self-growing knowledge base about the year 1776. Next era of the
+    year-of-ai lineage, spawned from 2005-2011.
+  url: https://github.com/year-of-ai/1776
+  site_url: https://year-of-ai.github.io/1776/
+  pages_enabled: false
+  scaffolded: false
+  branch: main
+  pushed_at: '2026-06-14T10:07:04Z'
+  page_count: 17
+  sections:
+  - name: arts
+    title: Arts & Culture
+    url: https://year-of-ai.github.io/1776/arts/
+    count: 2
+  - name: economics
+    title: Economics & Trade
+    url: https://year-of-ai.github.io/1776/economics/
+    count: 1
+  - name: military
+    title: Military Events
+    url: https://year-of-ai.github.io/1776/military/
+    count: 2
+  - name: people
+    title: Key Figures
+    url: https://year-of-ai.github.io/1776/people/
+    count: 1
+  - name: politics
+    title: Political Events
+    url: https://year-of-ai.github.io/1776/politics/
+    count: 2
+  - name: science
+    title: Science & Discovery
+    url: https://year-of-ai.github.io/1776/science/
+    count: 1
+  root_pages:
+  - title: Timeline
+    url: https://year-of-ai.github.io/1776/TIMELINE/
+- name: '1777'
+  title: '1777'
+  description: A self-growing encyclopedic knowledge base covering the events, people,
+    works, and discoveries of 1777.
+  url: https://github.com/year-of-ai/1777
+  site_url: https://year-of-ai.github.io/1777/
+  pages_enabled: false
+  scaffolded: false
+  branch: main
+  pushed_at: '2026-06-14T10:00:04Z'
+  page_count: 14
+  sections:
+  - name: arts
+    title: Arts & Culture — 1777
+    url: https://year-of-ai.github.io/1777/arts/
+    count: 0
+  - name: economics
+    title: Economics & Trade — 1777
+    url: https://year-of-ai.github.io/1777/economics/
+    count: 0
+  - name: military
+    title: Military Events — 1777
+    url: https://year-of-ai.github.io/1777/military/
+    count: 2
+  - name: people
+    title: Key Figures — 1777
+    url: https://year-of-ai.github.io/1777/people/
+    count: 1
+  - name: politics
+    title: Political Events — 1777
+    url: https://year-of-ai.github.io/1777/politics/
+    count: 3
+  - name: science
+    title: Science & Discovery — 1777
+    url: https://year-of-ai.github.io/1777/science/
+    count: 0
+  root_pages:
+  - title: Timeline
+    url: https://year-of-ai.github.io/1777/TIMELINE/
+- name: '1778'
+  title: '1778'
+  description: 'Self-growing knowledge base: the year 1778'
+  url: https://github.com/year-of-ai/1778
+  site_url: https://year-of-ai.github.io/1778/
+  pages_enabled: false
+  scaffolded: false
+  branch: main
+  pushed_at: '2026-06-14T09:57:35Z'
+  page_count: 0
+  sections: []
+  root_pages: []
+- name: 2005-2011
+  title: 2005-2011
+  description: A consolidated knowledge base spanning the years 2005–2011, merging
+    the year-of-ai lineage.
+  url: https://github.com/year-of-ai/2005-2011
+  site_url: https://year-of-ai.github.io/2005-2011/
+  pages_enabled: false
+  scaffolded: false
+  branch: main
+  pushed_at: '2026-06-14T01:18:32Z'
+  page_count: 105
+  sections:
+  - name: '2005'
+    title: '2005'
+    url: https://year-of-ai.github.io/2005-2011/2005/
+    count: 7
+  - name: '2006'
+    title: '2006'
+    url: https://year-of-ai.github.io/2005-2011/2006/
+    count: 10
+  - name: '2007'
+    title: '2007'
+    url: https://year-of-ai.github.io/2005-2011/2007/
+    count: 10
+  - name: '2008'
+    title: '2008'
+    url: https://year-of-ai.github.io/2005-2011/2008/
+    count: 9
+  - name: '2009'
+    title: '2009'
+    url: https://year-of-ai.github.io/2005-2011/2009/
+    count: 10
+  - name: '2010'
+    title: '2010'
+    url: https://year-of-ai.github.io/2005-2011/2010/
+    count: 9
+  - name: '2011'
+    title: '2011'
+    url: https://year-of-ai.github.io/2005-2011/2011/
+    count: 12
+  root_pages:
+  - title: Timeline
+    url: https://year-of-ai.github.io/2005-2011/TIMELINE/
+- name: year-of-ai.github.io
+  title: year-of-ai.github.io
+  description: Github Pages compatible Jekyll theme using Bootstrap 5
+  url: https://github.com/year-of-ai/year-of-ai.github.io
+  site_url: https://year-of-ai.github.io/
+  pages_enabled: true
+  scaffolded: true
+  branch: main
+  pushed_at: '2026-06-14T08:51:54Z'
+  page_count: 263
+  sections:
+  - name: _data
+    title: Data
+    url: https://year-of-ai.github.io/_data/
+    count: 2
+  - name: _includes
+    title: Includes
+    url: https://year-of-ai.github.io/_includes/
+    count: 3
+  - name: _layouts
+    title: Layouts
+    url: https://year-of-ai.github.io/_layouts/
+    count: 1
+  - name: docker
+    title: Docker
+    url: https://year-of-ai.github.io/docker/
+    count: 1
+  - name: docs
+    title: Docs
+    url: https://year-of-ai.github.io/docs/
+    count: 65
+  - name: features
+    title: Features
+    url: https://year-of-ai.github.io/features/
+    count: 1
+  - name: pages
+    title: Pages
+    url: https://year-of-ai.github.io/pages/
+    count: 149
+  - name: scripts
+    title: Scripts
+    url: https://year-of-ai.github.io/scripts/
+    count: 8
+  - name: templates
+    title: Templates
+    url: https://year-of-ai.github.io/templates/
+    count: 9
+  - name: test
+    title: Test
+    url: https://year-of-ai.github.io/test/
+    count: 2
+  root_pages:
+  - title: Changelog
+    url: https://year-of-ai.github.io/CHANGELOG/
+  - title: Code Of Conduct
+    url: https://year-of-ai.github.io/CODE_OF_CONDUCT/
+  - title: Contributing
+    url: https://year-of-ai.github.io/CONTRIBUTING/
+  - title: Security
+    url: https://year-of-ai.github.io/SECURITY/

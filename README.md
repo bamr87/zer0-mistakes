@@ -4,6 +4,10 @@ sub-title: AI-Native Jekyll Theme
 description: AI-native Jekyll theme for GitHub Pages — Docker-first development, AI-powered installation, multi-agent integration (Copilot, Codex, Cursor, Claude), AI preview-image generation, and AIEO content optimization with Bootstrap 5.3.
 version: 1.18.1
 layout: landing
+# This repo now serves as the year-of-ai organization root site; the homepage
+# lives in pages/home.md. README stays as the repository README on GitHub but
+# is not published as a site page.
+published: false
 tags:
   - jekyll
   - docker

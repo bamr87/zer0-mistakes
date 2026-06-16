@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Org Content Hub (federated)**: tooling to publish one GitHub Pages site per
+  org repository — each renders its own content at `<org>.github.io/<repo>/`
+  with this theme via `remote_theme`; content never leaves the source repo.
+  Adds the `_data/hub.yml` registry with auto-discovery, a shared
+  `scripts/lib/hub.rb`, `scripts/provision-org-sites.{rb,sh}` to roll the Pages
+  scaffold (`templates/org-site/*`) out to org repos and enable Pages,
+  `scripts/sync-hub-metadata.{rb,sh}` to refresh API-only dashboard data
+  (`_data/hub_index.yml` + `_data/navigation/hub.yml`, deterministic), a `/hub/`
+  dashboard page that tracks every site's live/pending status, and a daily
+  `hub-sync.yml` workflow that commits only when the org changed
+  (see `docs/systems/content-hub.md`)
 ## [1.18.1] - 2026-06-14
 
 ### Changed

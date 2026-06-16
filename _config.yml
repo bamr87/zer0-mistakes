@@ -28,35 +28,39 @@
 site_configured          : true   # Tells the theme this site has been personalised
 
 founder                  : "Amr Abdel-Motaleb"
-remote_theme             : "bamr87/zer0-mistakes"
+# This repo is the year-of-ai organization root site (year-of-ai.github.io). It
+# is a fork of the zer0-mistakes theme and renders with its OWN local theme
+# files (remote_theme: false), and also serves as the remote_theme source for
+# the org's year sites (year-of-ai/<year>).
+remote_theme             : false
 gem                      : &gem "jekyll-theme-zer0"
 # theme                    : "jekyll-theme-zer0"
 
 ## Github Information
-github_user              : &github_user "bamr87"
-repository_name          : &github_repository "zer0-mistakes"
+github_user              : &github_user "year-of-ai"
+repository_name          : &github_repository "year-of-ai.github.io"
 repository               : [*github_user, "/", *github_repository] # GitHub username/repo-name
-local_repo               : &local_repo "zer0-mistakes"
+local_repo               : &local_repo "year-of-ai.github.io"
 branch                   : &branch "main"
 repo_map                 : "/sitemap/"
 portfolio                : &portfolio [*github_user, '.', 'github.io']
 
 ## Site Information ---------------------------------------------------------------
 
-title                    : &title "zer0-mistakes"
+title                    : &title "Year of AI"
 title_url                : "/"
 title_icon               : "robot"
 subtitle                 : ""
 subtitle_url             : "localhost"
 subtitle_icon            : "code"
 title_separator          : "|" # Appears in the web browser tab name
-domain                   : &domain "zer0-mistakes"
-domain_ext               : &domain_ext "com"
+domain                   : &domain "year-of-ai"
+domain_ext               : &domain_ext "github.io"
 baseurl                  : &baseurl "" # the subpath of your site, e.g. /blog - Use this if you want this whole repo to be a domain branch
 url_test                 : &url_test [ 'https', '://', *github_user, '.', *domain, '.', *domain_ext ] # the base hostname & protocol for your site, e.g. http://example.com
 domain_url               : &domain_url [ 'https', '://', *domain, '.', *domain_ext ]
 github_io_url            : &github_io_url [ 'https', '://', *github_user, '.', *domain, '.', *domain_ext, '/', *github_repository ]
-url                      : &url https://zer0-mistakes.com
+url                      : &url https://year-of-ai.github.io
 public_folder            : assets # path to the public folder
 port                     : 4000 # Jekyll Serve Dev port
 dg_port                  : 4001 # TODO: Doppelganger site. Use this if you want to switch between parallel deployments
@@ -65,11 +69,11 @@ og_image                 : '/assets/images/wizard-on-journey.png'
 ### Owner Information -------------------------------------------------------------
 
 name                     : &name "Amr"
-email                    : "amr@zer0-mistakes.com"
+email                    : "amr.abdel@gmail.com"
 description              : >- # this means to ignore newlines until the next variable
-  "Jekyll and Bootstrap 5 theme for perfectionists.
-  Step-by-step instructions to build your blog, portfolio,
-  and documentation site with no mistakes, unless you're a n00b."
+  Year of AI — the organization hub for a federated network of self-growing,
+  year-by-year knowledge bases. Each year publishes its own site, all rendered
+  with the shared zer0-mistakes Jekyll theme.
 level                    : 'n00b'
 
 ## Maintainer Information----------------------------------------------------------
