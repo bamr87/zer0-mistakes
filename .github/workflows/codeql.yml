@@ -1,5 +1,9 @@
 name: CodeQL Security Scanning
 
+# Least-privilege default; the analyze job below grants exactly what it needs.
+permissions:
+  contents: read
+
 on:
   push:
     branches: [ "main" ]

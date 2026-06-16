@@ -1,0 +1,48 @@
+name: Lint workflows
+
+# Self-lints the CI/CD definitions with actionlint (syntax, expression errors,
+# deprecated action runners, shellcheck of run: scripts). Runs only when the
+# workflow/action definitions change.
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - '.github/actions/**'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/**'
+      - '.github/actions/**'
+  workflow_dispatch:
+
+concurrency:
+  group: lint-workflows-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  actionlint:
+    name: actionlint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install actionlint (latest)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag=$(gh release view --repo rhysd/actionlint --json tagName -q .tagName)
+          ver="${tag#v}"
+          curl -fsSL "https://github.com/rhysd/actionlint/releases/download/${tag}/actionlint_${ver}_linux_amd64.tar.gz" \
+            | tar -xz -C "${RUNNER_TEMP}" actionlint
+
+      - name: Run actionlint
+        run: |
+          # SC2086/SC2129/SC2035 are shellcheck quoting/style notes tracked as a
+          # separate cleanup; this gate fails on real issues — invalid syntax,
+          # bad workflow expressions, and deprecated/too-old action runners.
+          "${RUNNER_TEMP}/actionlint" -color \
+            -ignore 'SC2086' -ignore 'SC2129' -ignore 'SC2035'

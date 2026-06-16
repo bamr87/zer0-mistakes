@@ -1,0 +1,28 @@
+# =============================================================================
+# Dependabot — keeps GitHub Actions current.
+# =============================================================================
+# Scope note: Ruby gems are updated by .github/workflows/update-dependencies.yml
+# (the zero-pin `bundle update` strategy), and docker/Dockerfile pins ruby:3.3
+# on purpose (3.4 breaks native-extension gems — see the Dockerfile header), so
+# neither is managed here to avoid duplicate/conflicting PRs. Actions use
+# floating major-version tags (e.g. @v5), so patch/minor updates apply
+# automatically; Dependabot opens one grouped weekly PR for new MAJOR versions
+# (e.g. v5 -> v6) to keep them on the latest major.
+# =============================================================================
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    # Scans both .github/workflows/ and .github/actions/ (composite actions).
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: "chore(deps)"
+    labels:
+      - dependencies
+      - automated
