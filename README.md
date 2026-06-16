@@ -836,8 +836,13 @@ gantt
     v1.11 Continuous-Evolution Loop :done, 2026-06, 2026-06
     v1.12 Headless Endpoints     :done, 2026-06, 2026-06
     v1.13 Quality Framework — First Wave :done, 2026-06, 2026-06
+    v1.14 Zer0-Mistake Quality Framework :done, 2026-06, 2026-06
+    v1.15 Quality Framework Batch :done, 2026-06, 2026-06
+    v1.16 AI Chat + Consumer Audit :done, 2026-06, 2026-06
+    v1.17 A11y, Mermaid & Migration Tests :done, 2026-06, 2026-06
+    v1.18 AI Content Reviewer    :done, 2026-06, 2026-06
     section Current
-    v1.14 Zer0-Mistake Quality Framework :active, 2026-06, 2026-08
+    v1.19 Org Content Hub        :active, 2026-06, 2026-08
     section Future
     v2.0 CMS Integration         :2026-06, 2026-08
     v2.1 i18n Support            :2026-08, 2026-10
@@ -871,7 +876,12 @@ gantt
 | **v1.11** | ✅ Completed | Jun 2026 | Self-sustaining backlog loop so AI agents keep improving the repo between human sessions. |
 | **v1.12** | ✅ Completed | Jun 2026 | Machine-readable site endpoints for downstream sites and AI agents. |
 | **v1.13** | ✅ Completed | Jun 2026 | First shipped wave of the Zer0-Mistake Quality Framework: CI gate parity and DOM sanitization. |
-| **v1.14** | 🚧 In Progress | Current (1.14.x) | Close the gap between the repo's quality gates and what CI actually enforces — no mistake lands green. |
+| **v1.14** | ✅ Completed | Jun 2026 | Second wave of the Zer0-Mistake Quality Framework: DOM sanitization hardening and workflow lint cleanup. |
+| **v1.15** | ✅ Completed | Jun 2026 | Quality framework batch: docs lint baseline, locale guard, strict site_generation, contribution templates, and YAML export fix. |
+| **v1.16** | ✅ Completed | Jun 2026 | AI chat widget (ZER0-060) and consumer audit tooling; render guard bug fixed. |
+| **v1.17** | ✅ Completed | Jun 2026 | Plugin unit specs, coverage baseline, config-page sync, WCAG 2.1 AA fixes, Mermaid on 12 more pages, and migration tests. |
+| **v1.18** | ✅ Completed | Jun 2026 | Two-tier AI content reviewer framework and chat GitHub action tools (issue/PR creation via Claude tool use). |
+| **v1.19** | 🚧 In Progress | Current (1.19.x) | Federated Org Content Hub — one GitHub Pages site per org repo, each rendering its own content with this theme. |
 | **v2.0** | 🗓 Planned | Q3 2026 | Headless CMS integration with a content API and admin dashboard. |
 | **v2.1** | 🗓 Planned | Q4 2026 | Multi-language content support with locale-aware routing. |
 | **v2.2** | 🗓 Planned | Q4 2026 | Visual theme customizer, A/B testing, and conversion funnels. |
