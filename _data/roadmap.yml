@@ -20,7 +20,7 @@
 #      is internally consistent and still tracks the shipped gem version.
 #   4. Commit both this file and the resulting README.md changes.
 #
-# A GitHub Actions workflow (`.github/workflows/roadmap-sync.yml`) also runs
+# A GitHub Actions workflow (`.github/workflows/sync.yml`) also runs
 # the generator and the validator automatically: it regenerates the README on
 # push, fails PRs whose README is stale, and flags whenever the roadmap drifts
 # behind the version in `lib/jekyll-theme-zer0/version.rb`.

@@ -170,10 +170,9 @@ CI, and warn-only gates must be temporary and tracked in the backlog.
 | Playwright snapshot tier | `./test/test_runner.sh --suites playwright_snapshots` | `ci.yml` → `test` — ⚠ warn-only until baselines refresh (backlog T-013) | PR + push (styling changes) |
 | Gem build + install | `./scripts/build` | `ci.yml` → `build` | PR + push (code changes) |
 | Docker boot + critical pages | `docker compose up` | `ci.yml` → `integration` | PR + push (code or docker changes) |
-| Roadmap ↔ README ↔ version consistency | `./scripts/generate-roadmap.sh --check` / `--validate` | `roadmap-sync.yml` | PR (check) + push to main (regenerate) |
-| Backlog schema | `ruby scripts/sync-backlog.rb --check` | `backlog-sync.yml` | PR (check) + push to main (sync issues) |
-| Docs front matter + internal links | `markdown-link-check` | `docs-validate.yml` — ⚠ warn-only until baseline is clean (backlog T-014) | PR (docs changes) |
-| Docs freshness (staleness report) | — | `docs-freshness.yml` | Weekly schedule |
+| Roadmap ↔ README ↔ version consistency | `./scripts/generate-roadmap.sh --check` / `--validate` | `sync.yml` → `roadmap` | PR (check) + push to main (regenerate) |
+| Backlog schema | `ruby scripts/sync-backlog.rb --check` | `sync.yml` → `backlog` | PR (check) + push to main (sync issues) |
+| Docs front matter + internal links + markdownlint | `scripts/docs/lint-frontmatter.sh` / `check-links.sh` / `markdownlint` | `ai-content-review.yml` (Content & Docs Review) | PR (docs/content changes) |
 | Latest-dependency canary (unpinned build + HTMLProofer) | — | `test-latest.yml` | Daily schedule + PR/push |
 | Security scanning (CodeQL) | — | `codeql.yml` | PR + push (code changes) + weekly |
 | Installer cross-platform matrix | `test/test_install_*.sh` | `install-matrix.yml` | PR (installer paths) + manual |

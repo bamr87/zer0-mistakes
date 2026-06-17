@@ -42,7 +42,7 @@ files you touch:
   by `.github/workflows/deploy-chat-proxy.yml`. Governed by
   [`ai-chat.instructions.md`](./.github/instructions/ai-chat.instructions.md).
 - `_data/backlog.yml` — tactical task backlog (source of truth; synced to
-  GitHub Issues by `.github/workflows/backlog-sync.yml`). See
+  GitHub Issues by `.github/workflows/sync.yml`). See
   [`docs/systems/continuous-evolution.md`](./docs/systems/continuous-evolution.md).
 
 When a file-scoped instruction conflicts with a generic best practice, the

@@ -10,7 +10,7 @@
 #
 #   1. The AUDIT routine (`.github/prompts/repo-audit.prompt.md`) appends new
 #      tasks here when it reviews the repo.
-#   2. `scripts/sync-backlog.rb` (run by `.github/workflows/backlog-sync.yml`)
+#   2. `scripts/sync-backlog.rb` (run by `.github/workflows/sync.yml`)
 #      mirrors each open task to a GitHub Issue and closes issues for tasks
 #      marked `done`.
 #   3. The IMPLEMENT routine (`.github/prompts/backlog-implement.prompt.md`)

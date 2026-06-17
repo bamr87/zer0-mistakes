@@ -757,15 +757,18 @@ All workflows live under [`.github/workflows/`](.github/workflows/).
 
 | # | Workflow | File | Trigger | Purpose |
 |---|----------|------|---------|---------|
-| 1 | **Comprehensive CI Pipeline** | [`ci.yml`](.github/workflows/ci.yml) | push / PR / dispatch | Detect changes → fast checks → quality control → matrix test suite (Ruby 3.3) → integration tests → build & validate |
-| 2 | **TEST (Latest Dependencies)** | [`test-latest.yml`](.github/workflows/test-latest.yml) | scheduled / dispatch | Zero-pin Docker build with bleeding-edge gems; promotes only passing images |
-| 3 | **Update Dependencies** | [`update-dependencies.yml`](.github/workflows/update-dependencies.yml) | weekly schedule | Refreshes `Gemfile.lock` to latest compatible versions and opens an automated PR |
-| 4 | **CodeQL Security Scanning** | [`codeql.yml`](.github/workflows/codeql.yml) | push / PR on code paths | Static security analysis across Ruby, JavaScript, TypeScript, Python, YAML, plugins, scripts |
-| 5 | **Version Bump** | [`version-bump.yml`](.github/workflows/version-bump.yml) | push to main / dispatch | Analyzes conventional commits, determines MAJOR/MINOR/PATCH bump, updates `version.rb` + CHANGELOG, creates tag |
-| 6 | **Release (Gem + GitHub)** | [`release.yml`](.github/workflows/release.yml) | tag `v*` / dispatch | Pre-release validation → build assets → publish to [RubyGems](https://rubygems.org/gems/jekyll-theme-zer0) → create GitHub Release |
+| 1 | **Comprehensive CI Pipeline** | [`ci.yml`](.github/workflows/ci.yml) | push / PR / dispatch | Detect changes → fast checks → quality control → matrix test suite → integration tests → build & validate |
+| 2 | **TEST (Latest Dependencies)** | [`test-latest.yml`](.github/workflows/test-latest.yml) | daily schedule / push / PR / dispatch | Zero-pin Docker build with bleeding-edge gems; tests then promotes passing images to Docker Hub |
+| 3 | **Release** | [`release.yml`](.github/workflows/release.yml) | push to `main` | release-please opens a release PR from Conventional Commits; merging it tags `vX.Y.Z` and publishes the gem to [RubyGems](https://rubygems.org/gems/jekyll-theme-zer0) |
+| 4 | **Update Dependencies** | [`update-dependencies.yml`](.github/workflows/update-dependencies.yml) | weekly schedule | Refreshes `Gemfile.lock` to latest compatible versions and opens an automated PR |
+| 5 | **CodeQL Security Scanning** | [`codeql.yml`](.github/workflows/codeql.yml) | push / PR on code paths + weekly | Static security analysis across Ruby, JavaScript/TypeScript, Python, Actions, and YAML |
+| 6 | **Content & Docs Review** | [`ai-content-review.yml`](.github/workflows/ai-content-review.yml) | PR on docs/content | Deterministic SEO/quality review + optional Claude agent + docs front matter, internal-link, and markdownlint checks |
 | 7 | **Convert Jupyter Notebooks** | [`convert-notebooks.yml`](.github/workflows/convert-notebooks.yml) | push to `pages/_notebooks/**.ipynb` | Auto-converts `.ipynb` → Jekyll-friendly Markdown with extracted images |
-| 8 | **Roadmap Sync** | [`roadmap-sync.yml`](.github/workflows/roadmap-sync.yml) | push affecting `_data/roadmap.yml` | Regenerates the README roadmap section from data; fails PRs with stale README |
-| 9 | **New Site Setup** | [`setup-template.yml`](.github/workflows/setup-template.yml) | first push after template/fork | Creates a PR with prefilled `_config.yml` so a new site is ready to merge & go |
+| 8 | **Sync** | [`sync.yml`](.github/workflows/sync.yml) | push affecting `_data/backlog.yml` or `_data/roadmap.yml` | Mirrors the backlog to GitHub Issues and regenerates the README roadmap section |
+| 9 | **Install Matrix** | [`install-matrix.yml`](.github/workflows/install-matrix.yml) | PR on installer paths + weekly | Installer e2e across OS × Ruby, the `curl \| bash` bootstrap, and the `install doctor` diagnostic |
+| 10 | **Deploy chat proxy** | [`deploy-chat-proxy.yml`](.github/workflows/deploy-chat-proxy.yml) | push to chat-proxy worker files | Deploys the AI chat proxy Worker to Cloudflare |
+| 11 | **Auto-merge low-risk PRs** | [`auto-merge.yml`](.github/workflows/auto-merge.yml) | PR labeled `auto-merge` | Enables GitHub native auto-merge once required checks pass |
+| 12 | **Lint workflows** | [`lint-workflows.yml`](.github/workflows/lint-workflows.yml) | PR/push on `.github/**` | actionlint gate on the workflow + composite-action definitions |
 
 > 💡 GitHub Pages adds an additional managed `pages-build-deployment` run on every push to `main`.
 
@@ -780,8 +783,8 @@ gh run list --repo bamr87/zer0-mistakes --limit 10
 # Manually dispatch a release
 gh workflow run release.yml --ref main -f tag=v0.22.21
 
-# Trigger an automatic version bump on demand
-gh workflow run version-bump.yml --ref main
+# Re-sync the backlog issues / README roadmap from _data on demand
+gh workflow run sync.yml --ref main
 
 # Re-run the most recent failed CI run
 gh run rerun --failed --repo bamr87/zer0-mistakes
@@ -794,10 +797,9 @@ gh run watch --repo bamr87/zer0-mistakes
 
 When you fork the theme as a starter, the workflows come with you. To make them safe and useful in your fork:
 
-1. **Add `RUBYGEMS_API_KEY`** in `Settings → Secrets and variables → Actions` if you plan to publish your own gem; otherwise disable [`release.yml`](.github/workflows/release.yml).
+1. **Configure gem publishing** if you plan to publish your own gem (`release.yml` uses [`bamr87/.github`](https://github.com/bamr87/.github) reusable workflows); otherwise disable [`release.yml`](.github/workflows/release.yml).
 2. **Tune triggers** in [`update-dependencies.yml`](.github/workflows/update-dependencies.yml) (default: weekly).
-3. **Disable** [`setup-template.yml`](.github/workflows/setup-template.yml) after the first run — it's a one-shot bootstrap.
-4. **GitHub Pages** is auto-enabled when you push to `main` if your repo is `<username>.github.io`.
+3. **GitHub Pages** is auto-enabled when you push to `main` if your repo is `<username>.github.io`.
 
 ---
 

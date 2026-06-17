@@ -111,7 +111,7 @@ gh pr create --base main --fill \
   --label agent-ready
 ```
 
-The PR's `--check` gate runs automatically; once merged, `backlog-sync.yml`
+The PR's `--check` gate runs automatically; once merged, `sync.yml`
 creates the GitHub Issues. **Do not** enable auto-merge on the audit PR itself —
 a human glances at newly-filed work before it becomes issues.
 

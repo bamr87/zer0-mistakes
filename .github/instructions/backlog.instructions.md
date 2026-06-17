@@ -1,5 +1,5 @@
 ---
-applyTo: "_data/backlog.yml,scripts/sync-backlog.rb,scripts/sync-backlog.sh,.github/workflows/backlog-sync.yml"
+applyTo: "_data/backlog.yml,scripts/sync-backlog.rb,scripts/sync-backlog.sh,.github/workflows/sync.yml"
 description: "Tactical backlog maintenance — schema, sync contract, and ownership rules for the continuous-evolution loop."
 date: 2026-05-31T12:00:00.000Z
 lastmod: 2026-05-31T12:00:00.000Z
@@ -19,7 +19,7 @@ and drives the continuous-evolution loop. Full design:
 | `_data/backlog.yml` | Editable task queue (source of truth); schema in the file header |
 | `scripts/sync-backlog.rb` | Validates schema + creates/updates/closes GitHub Issues |
 | `scripts/sync-backlog.sh` | Thin wrapper forwarding to the Ruby script |
-| `.github/workflows/backlog-sync.yml` | Runs sync on push to `main`; `--check` gate on PRs |
+| `.github/workflows/sync.yml` | Runs sync on push to `main`; `--check` gate on PRs |
 
 ## Rules
 

@@ -39,7 +39,7 @@ not the issues.
     └─ /repo-audit  ──►  _data/backlog.yml  ──►  PR "chore(backlog): audit …"
                                                       │ (merged)
                                                       ▼
-                              backlog-sync.yml → GitHub Issues (agent-ready)
+                              sync.yml → GitHub Issues (agent-ready)
                                                       │
   IMPLEMENT routine (2–3×/week)                       ▼
     └─ /backlog-implement ──► branch + PR ──► CI gate ──► auto-merge (low-risk)
@@ -53,13 +53,13 @@ not the issues.
 |---|---|---|
 | Backlog (source of truth) | `_data/backlog.yml` | Tactical task queue; schema documented in the file header |
 | Sync script | `scripts/sync-backlog.rb` (+ `.sh` wrapper) | Mirrors tasks → GitHub Issues; validates schema |
-| Sync workflow | `.github/workflows/backlog-sync.yml` | Runs sync on push to `main`; `--check` gate on PRs |
+| Sync workflow | `.github/workflows/sync.yml` | Runs sync on push to `main`; `--check` gate on PRs |
 | Audit prompt | `.github/prompts/repo-audit.prompt.md` | `/repo-audit` — review repo, file tasks |
 | Implement prompt | `.github/prompts/backlog-implement.prompt.md` | `/backlog-implement` — build one task, open PR |
 | Auto-merge workflow | `.github/workflows/auto-merge.yml` | Enables native auto-merge for low-risk labelled PRs |
 
 It deliberately reuses the existing **roadmap-sync** pattern
-(`scripts/generate-roadmap.rb` + `.github/workflows/roadmap-sync.yml`): a Ruby
+(`scripts/generate-roadmap.rb` + `.github/workflows/sync.yml`): a Ruby
 generator/validator with `--check`, driven by a path-filtered workflow.
 
 ## Task lifecycle
