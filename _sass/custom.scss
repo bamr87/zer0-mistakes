@@ -20,19 +20,10 @@
 // partials, which use --zer0-* tokens for dark-mode safety).
 // ==============================================================================
 
-// Import notebook-specific styles
-@import "notebooks";
-
-// Import navigation tree styles
-@import "core/nav-tree";
-@import "core/sidebar-categories";
-
-// Import navbar styles (extracted from navbar.html)
-@import "core/navbar";
-@import "core/offcanvas-panels";
-
-// Obsidian-flavoured markdown features (wiki-links, callouts, backlinks, …)
-@import "core/obsidian";
+// NOTE: The core nav/content partials that were imported here (notebooks,
+// nav-tree, sidebar-categories, navbar, offcanvas-panels, obsidian) are now
+// imported directly from assets/css/main.scss, immediately before this file, so
+// the assembly order is unchanged. See main.scss § 7b.
 
 html, body {
     max-width: 100%;
@@ -452,38 +443,7 @@ img {
     }
 }
 
-.search-modal .modal-content {
-    border-radius: 0.75rem;
-}
-
-.search-modal .input-group-text {
-    background-color: var(--bs-tertiary-bg);
-    border-color: var(--bs-border-color);
-}
-
-.search-modal kbd {
-    background-color: var(--bs-tertiary-bg);
-    color: var(--bs-body-color);
-}
-
-.search-modal .search-results {
-    max-height: 50vh;
-    overflow-y: auto;
-}
-
-.search-modal .list-group-item {
-    border-color: var(--bs-border-color-translucent);
-}
-
-.nested-list-group {
-    display: none;
-  }
-  .nested-list-group.show {
-    display: block;
-  }
-  .folder {
-    cursor: pointer;
-  }
+// MOVED → _sass/components/_search-modal.scss (search modal + folder tree).
 
 // ==============================================================================
 // UI/UX ENHANCEMENTS - Modern, polished interactions

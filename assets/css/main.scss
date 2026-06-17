@@ -18,6 +18,9 @@
 
 // 3. Bootstrap-docs-style layout (trimmed; was ~3.2k-line vendor snapshot)
 @import "core/docs-layout";
+//    Code-example chrome split out of docs-layout; imported immediately after
+//    it so the concatenated cascade order is unchanged.
+@import "core/docs-code-examples";
 
 // 4. Reusable utilities (motion, focus rings) — used by components below
 @import "utilities/motion";
@@ -33,6 +36,7 @@
 @import "components/footer";
 @import "components/theme-preview";
 @import "components/content-tables";
+@import "components/search-modal";
 
 // 6. Layout partials
 @import "layouts/landing";
@@ -41,6 +45,17 @@
 
 // 7. Bootstrap Styles
 // @import "bootstrap.scss";
+
+// 7b. Core nav/content partials formerly imported from the top of custom.scss.
+//     Lifted here so assets/css/main.scss is the single assembly manifest; kept
+//     in their original relative order (immediately before the custom layer) so
+//     the compiled cascade is unchanged.
+@import "notebooks";
+@import "core/nav-tree";
+@import "core/sidebar-categories";
+@import "core/navbar";
+@import "core/offcanvas-panels";
+@import "core/obsidian";
 
 // 8. Remaining custom styles (thin barrel — see _sass/custom.scss header).
 //    Slated for full decomposition in a follow-up release.

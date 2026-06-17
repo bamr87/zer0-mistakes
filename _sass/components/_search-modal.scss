@@ -1,0 +1,40 @@
+// ============================================================================
+// Search modal — quick-search overlay + collapsible folder tree
+// ----------------------------------------------------------------------------
+// Extracted from custom.scss. Styles the search modal (triggered from the
+// navbar Search button) and the nested folder list used in its results.
+// Selectors are unique to this component, so import position is order-neutral.
+// ============================================================================
+
+.search-modal .modal-content {
+    border-radius: 0.75rem;
+}
+
+.search-modal .input-group-text {
+    background-color: var(--bs-tertiary-bg);
+    border-color: var(--bs-border-color);
+}
+
+.search-modal kbd {
+    background-color: var(--bs-tertiary-bg);
+    color: var(--bs-body-color);
+}
+
+.search-modal .search-results {
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.search-modal .list-group-item {
+    border-color: var(--bs-border-color-translucent);
+}
+
+.nested-list-group {
+    display: none;
+  }
+  .nested-list-group.show {
+    display: block;
+  }
+  .folder {
+    cursor: pointer;
+  }
