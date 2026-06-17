@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+- **Design framework (SCSS) refactor — structure only, no visual change.**
+  Decomposed the 1,131-line `_sass/custom.scss` monolith into a thin back-compat
+  barrel plus five focused partials (`layouts/_global-chrome`, `core/_toc`,
+  `core/_sidebar-extras`, `components/_ui-enhancements`, `components/_notes-index`);
+  split the code-example chrome out of `core/_docs-layout.scss` into
+  `core/_docs-code-examples.scss`; extracted `components/_search-modal.scss`;
+  consolidated the navbar fixed/grid layout into `core/_navbar.scss`; lifted the
+  stylesheet assembly order into `assets/css/main.scss` as the single manifest;
+  removed two redundant duplicate rules (a second `.btn { position; overflow }`
+  and a duplicate global `prefers-reduced-motion` reset); and deleted 141 lines
+  of dead legacy Sass variables from `core/_variables.scss`. The compiled
+  `assets/css/main.css` is verified **semantically identical** (only the two
+  redundant duplicates and some emitted comments were removed) — no tokens,
+  selectors, or declaration values changed.
+
 ## [1.19.0](https://github.com/bamr87/zer0-mistakes/compare/v1.18.1...v1.19.0) (2026-06-16)
 
 

@@ -57,8 +57,9 @@
 @import "core/offcanvas-panels";
 @import "core/obsidian";
 
-// 8. Remaining custom styles (thin barrel — see _sass/custom.scss header).
-//    Slated for full decomposition in a follow-up release.
+// 8. Custom layer — thin barrel that imports the focused partials the old
+//    custom.scss monolith was decomposed into (global-chrome, toc,
+//    sidebar-extras, ui-enhancements, notes-index). See _sass/custom.scss.
 @import "custom.scss";
 
 // 9. Custom Features
