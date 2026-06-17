@@ -21,13 +21,13 @@ log_warning() { warn "$@"; }
 log_error() { error "$@"; }
 log_test() { step "$@"; }
 
-# Paths under test (the workflow calls the wrapper; the implementation
-# lives in scripts/utils/; releases go through scripts/bin/release)
+# Paths under test (commit analysis lives in scripts/utils/ with the
+# analyze-commits.sh wrapper; releases go through scripts/bin/release). The CI
+# release path is the release-please pipeline in .github/workflows/release.yml,
+# which replaced the retired version-bump.yml.
 ANALYZE_WRAPPER="$SCRIPTS_ROOT/analyze-commits.sh"
 ANALYZE_IMPL="$SCRIPTS_ROOT/utils/analyze-commits"
 RELEASE_BIN="$SCRIPTS_ROOT/bin/release"
-# The CI/CD consolidation (PR #181) replaced the bespoke version-bump.yml with
-# release.yml (release-please driven). See the header of release.yml.
 WORKFLOW_FILE="$PROJECT_ROOT/.github/workflows/release.yml"
 
 # Test counter
@@ -131,7 +131,7 @@ test_workflow_syntax() {
 test_integration() {
     log_info "Testing integration between components..."
 
-    # The workflow invokes ./scripts/analyze-commits.sh and validates its output
+    # Validate that the commit-analysis wrapper returns a usable bump type
     if git rev-list --count HEAD >/dev/null 2>&1; then
         local commit_count=$(git rev-list --count HEAD)
         if [[ $commit_count -gt 0 ]]; then
