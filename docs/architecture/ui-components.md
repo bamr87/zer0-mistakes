@@ -1505,6 +1505,7 @@ All live in `test/visual/`; shared helpers in `test/visual/fixtures.js` (`SKINS`
 | `styling.spec.js` | Stylesheet plumbing: same-origin CSS = 200, `main.css` linked, `--bs-primary`/`--zer0-*` resolve, no banned CDNs; navbar/brand chrome render; docs-layout regions | ~9 | smoke |
 | `theme-colors.spec.js` | `/about/settings/theme/` Color Editor: 200, color pickers have `#RRGGBB`, picker↔text-input sync, YAML export quotes hex | 4 | smoke |
 | `ui-refresh.spec.js` | v1.8+ UI: navbar tiers/labels/brand overlap, mobile quicklinks, intro hero stacking/button heights, code-block header+gutter, content-table CSV toolbar, footer links/columns, docs ToC/FAB, section archive, feature badges, theme-preview, focus/landmark smoke across viewports | ~20 | smoke |
+| `interactions.spec.js` | **User interactions** (clicks/typing/keyboard): search modal open→type→results→close, code-copy click→clipboard write+feedback, navbar dropdown chevron open/close + Esc + outside-click, theme-customizer skin swatch → live `--bs-primary` + YAML export | 9 | smoke |
 
 ### Shell / theme suites
 
@@ -1538,11 +1539,11 @@ Cross-browser `regression-*` projects are **not** in push CI — manual/`workflo
 
 Prioritized — interactive behaviors the smoke tier never exercises:
 
-- **Search modal / `search.json`** — zero coverage. No test opens search, types a query, asserts results, or keyboard-navigates. **(High)**
-- **AI chat widget** (`assets/js/ai-chat.js`) — zero coverage. No test opens the widget, sends a message, or exercises dev page-edit mode. **(High)**
-- **Code-copy click → clipboard write** — copy buttons are only asserted *focusable/visible*; the one test that clicks copy and reads the clipboard (`config-viewer.spec.js`) is `test.fixme`. **(High)**
-- **Navbar dropdown open/close + keyboard nav** — only label/brand layout and toggler *visibility* are checked; nothing clicks a dropdown open, asserts menu visibility, Escape-to-close, or arrow-key nav. **(High)**
-- **Theme customizer "apply"** — picker↔text sync and YAML-quoting are tested, but no test applies a color and asserts the live `--zer0-*` var / preview updates; export paths are skip/`fixme`. **(Medium)**
+- ✅ **Search modal / `search.json`** — **now covered** by `interactions.spec.js` (open via `/` + toggle button, type → results, no-match message, close). Remaining: arrow-key result navigation. _(was: zero coverage)_
+- **AI chat widget** (`assets/js/ai-chat.js`) — zero coverage. No test opens the widget, sends a message, or exercises dev page-edit mode. **(High — still open)**
+- ✅ **Code-copy click → clipboard write** — **now covered** by `interactions.spec.js` (grants clipboard perms, clicks copy, asserts `.copied` feedback + non-empty `clipboard.readText()` + revert). _(was: only focusable; the `config-viewer.spec.js` clipboard test is still `test.fixme`)_
+- ✅ **Navbar dropdown open/close** — **now covered** by `interactions.spec.js` (chevron click open/close, Escape-to-close, outside-click-close, `aria-expanded`). Remaining: arrow/Home/End item navigation. _(was: layout/visibility only)_
+- ✅ **Theme customizer "apply" (skin)** — **now covered** by `interactions.spec.js` (click skin swatch → live `data-theme-skin` + `--bs-primary` change + YAML export). Note: color **pickers** are export-only by design (they do not live-apply). _(was: API-only)_
 - **Obsidian wiki-links / backlinks / callouts in rendered pages** — covered only by Ruby/JS unit tests; **no Playwright test** loads a page with `[[wiki-links]]`/embeds/callouts/backlinks and asserts client-side resolution. **(Medium)**
 - **Keyboard-shortcuts modal completeness** — `?`-opens is tested; Escape-to-close, focus trapping, and that listed shortcuts fire are not. **(Medium)**
 - **Background/skin controls as real UI** — tests drive the `window.zer0Bg` API directly; no test clicks the actual customizer toggle/slider/skin-swatch a user would use. **(Medium)**
@@ -1555,7 +1556,7 @@ Net: coverage is strong on **static structure, admin-page rendering, accessibili
 
 ## Coverage Gaps & Improvement Roadmap
 
-**Coverage summary:** 🟢 4 good · 🟡 47 partial · 🔴 60 none (of 111 components).
+**Coverage summary:** 🟢 4 good · 🟡 47 partial · 🔴 60 none (of 111 components, as inventoried). _Note: `test/visual/interactions.spec.js` was added after this sweep and lifts 4 high-priority surfaces (search modal, code-copy, navbar dropdowns, theme-customizer skin apply) into behavioral coverage — see the gaps list below._
 
 ### Untested components (🔴 none)
 These have no automated behavioral coverage — highest-value targets for new Playwright smoke tests.
