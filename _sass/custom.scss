@@ -718,17 +718,11 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
-// Reduce Motion for Users Who Prefer It
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
+// Reduce Motion: the global `*,*::before,*::after` reduced-motion reset lives in
+// _sass/utilities/_motion.scss (imported earlier, identical `!important` body).
+// This duplicate was removed — no compiled change. The navbar-scoped
+// `#navbar { transition: none }` reduced-motion rule above is kept (it targets a
+// specific element, not the universal reset).
 
 // Table Enhancements
 .table {
