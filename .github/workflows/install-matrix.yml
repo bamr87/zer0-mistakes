@@ -115,8 +115,10 @@ jobs:
           mkdir -p "$TARGET"
           cd "$TARGET"
           # Exercise README one-liner behavior: stream installer to bash stdin.
-          # Running in a clean dir forces REMOTE_INSTALL=true code path.
-          cat "$GITHUB_WORKSPACE/install.sh" | bash -s -- --minimal "$TARGET"
+          # Running in a clean dir forces REMOTE_INSTALL=true code path (the
+          # installer detects remote by the absent _config.yml, not the stdin
+          # type), so a redirect is equivalent to `curl | bash` here.
+          bash -s -- --minimal "$TARGET" < "$GITHUB_WORKSPACE/install.sh"
           test -f "$TARGET/_config.yml"
           test -f "$TARGET/Gemfile"
           test -f "$TARGET/index.md"
