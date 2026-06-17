@@ -1,0 +1,87 @@
+// ============================================================================
+
+// Table of contents — #TableOfContents + .toc sticky sidebar + collapse
+
+// ----------------------------------------------------------------------------
+
+// Extracted from custom.scss (Phase 5).
+
+// ============================================================================
+
+#TableOfContents {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    // white-space: nowrap;
+}
+
+.toc {
+    grid-area: toc;
+    padding-top: 5rem;
+    top: 0;
+    right: 5rem;
+}
+
+
+@media (min-width: 992px) {
+    .toc {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 5rem;
+        right: 5rem;
+        z-index: 2;
+        height: calc(100vh - 7rem);
+        overflow-y: auto
+    }
+}
+
+.toc nav {
+    font-size: .875rem
+}
+
+.toc nav ul {
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none
+}
+
+.toc nav ul ul {
+    padding-left: 1rem;
+    margin-top: .25rem
+}
+
+.toc nav li {
+    margin-bottom: .25rem
+}
+
+.toc nav a {
+    color: inherit
+}
+
+.toc nav a:not(:hover) {
+    text-decoration: none
+}
+
+.toc nav a code {
+    font: inherit
+}
+
+.toc-toggle {
+    display: flex;
+    align-items: center
+}
+
+
+@media (max-width: 989.98px) {
+    .toc-collapse nav {
+        padding:1.25rem;
+        background-color: var(--bs-tertiary-bg);
+        border: 1px solid var(--bs-border-color);
+        border-radius: var(--bs-border-radius)
+    }
+}
+
+@media (min-width: 990px) {
+    .toc-collapse {
+        display:block !important
+    }
+}

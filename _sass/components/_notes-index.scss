@@ -1,0 +1,102 @@
+// ============================================================================
+
+// Notes & notebooks index grids + difficulty badges
+
+// ----------------------------------------------------------------------------
+
+// Extracted from custom.scss (Phase 5).
+
+// ============================================================================
+
+// ==============================================================================
+// NOTES LAYOUT STYLES
+// ==============================================================================
+// MOVED → _sass/components/_notes.scss (token-aware, dark-mode-safe)
+// The .note-header / .note-content / .related-notes / .note-navigation rules
+// are now defined in the components partial. Difficulty badges remain here
+// because they map to fixed semantic colors per the existing API.
+
+// Difficulty badge colors (semantic — kept as fixed values)
+.badge-beginner {
+  background-color: var(--zer0-color-success, #198754) !important;
+}
+
+.badge-intermediate {
+  background-color: var(--zer0-color-warning, #ffc107) !important;
+  color: #212529 !important;
+}
+
+.badge-advanced {
+  background-color: var(--zer0-color-danger, #dc3545) !important;
+}
+
+// Share buttons
+.share-buttons {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #dee2e6;
+  
+  .btn-share {
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: transform 0.2s ease;
+    
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+}
+
+// Notes index page styles
+#notes-grid {
+  .note-card {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    
+    &[style*="display: none"] {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
+  
+  .card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+  }
+}
+
+// ==============================================================================
+// NOTEBOOKS INDEX PAGE STYLES
+// ==============================================================================
+
+#notebooks-grid {
+  .notebook-card {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    
+    &[style*="display: none"] {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
+  
+  .card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-left: 4px solid #0d6efd;
+    
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+    
+    .card-header {
+      border-bottom: none;
+    }
+  }
+}

@@ -8,6 +8,7 @@ Technical architecture documentation for the Zer0-Mistakes Jekyll theme. This do
 |----------|-------------|
 | [Project Structure](project-structure.md) | Overview of directory layout and file organization |
 | [Layouts and Includes](layouts-includes.md) | Template architecture and component system |
+| [UI/UX Component Spec](ui-components.md) | Single reference for every front-end component — source files, API surface, and test coverage (define/test/improve) |
 | [Build System](build-system.md) | Jekyll build process and Docker configuration |
 | [Product Requirements Document](prd-requirements.md) | Vision, personas, feature requirements, technical and design specs |
 | [PRD: Roadmap and Metrics](prd-roadmap.md) | Roadmap, KPIs, security, acceptance criteria |
