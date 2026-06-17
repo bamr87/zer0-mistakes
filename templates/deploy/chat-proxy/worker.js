@@ -60,6 +60,11 @@
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
 const ANTHROPIC_VERSION = '2023-06-01';
 const OAUTH_BETA = 'oauth-2025-04-20';
+// Claude subscription OAuth tokens (`claude setup-token` / refresh) are gated to
+// Claude Code: the Messages API requires the FIRST system block to identify as
+// Claude Code, or it rejects the request with a misleading terse
+// `rate_limit_error`. Prepended to the system prompt in OAuth modes (see handleChat).
+const CLAUDE_CODE_SYSTEM_PROMPT = "You are Claude Code, Anthropic's official CLI for Claude.";
 const GITHUB_API = 'https://api.github.com';
 const DEFAULT_MAX_TOKENS_CAP = 4096;
 const KV_OAUTH_KEY = 'anthropic_oauth';
@@ -244,10 +249,24 @@ async function handleChat(request, env, cors) {
   }
 
   const cap = Number(env.MAX_TOKENS_CAP) || DEFAULT_MAX_TOKENS_CAP;
+
+  // OAuth (Claude subscription) tokens require the request to identify as Claude
+  // Code: the first system block must be the Claude Code identity, else Anthropic
+  // rejects it with a misleading rate_limit_error. Prepend it in OAuth modes and
+  // keep the site assistant's own instructions as a following block. API-key mode
+  // (standard billing) doesn't need this.
+  const mode = anthropicAuthMode(env);
+  const userSystem = typeof body.system === 'string' ? body.system : undefined;
+  let system = userSystem;
+  if (mode === 'oauth_static' || mode === 'oauth_refresh') {
+    system = [{ type: 'text', text: CLAUDE_CODE_SYSTEM_PROMPT }];
+    if (userSystem) system.push({ type: 'text', text: userSystem });
+  }
+
   const payload = {
     model: env.CHAT_MODEL || body.model,
     max_tokens: Math.min(Number(body.max_tokens) || 1024, cap),
-    system: typeof body.system === 'string' ? body.system : undefined,
+    system,
     messages: body.messages,
     tools: Array.isArray(body.tools) ? body.tools : undefined,
     stream: true,

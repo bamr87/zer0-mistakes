@@ -56,6 +56,15 @@ deployment. The dev proxy uses the long-lived token directly (no KV/refresh).
 | 2 | `CLAUDE_CODE_OAUTH_TOKEN` | `Authorization: Bearer` + oauth beta | none (long-lived) | Local dev / simple private |
 | 3 | `ANTHROPIC_API_KEY` | `x-api-key` | n/a | Public site (workspace key) |
 
+> **OAuth modes identify as Claude Code.** Anthropic gates subscription OAuth
+> tokens (modes 1–2) to Claude Code: the Messages API requires the **first
+> `system` block to be the Claude Code identity**, or it rejects the request with
+> a *misleading* `429 rate_limit_error` (terse `"message":"Error"` — it is **not**
+> an actual rate limit). `handleChat` therefore prepends `"You are Claude Code,
+> Anthropic's official CLI for Claude."` as the first system block in OAuth modes,
+> keeping the site assistant's own instructions as a second block. API-key mode
+> (3) is exempt. If you ever see that 429 with an OAuth token, this is the cause.
+
 ### Mode 1 — Rotating OAuth refresh token (private prod)
 
 Authenticates with your **Claude Code / Claude.ai login** and keeps it alive
