@@ -1,0 +1,79 @@
+// ============================================================================
+
+// Sidebar / TOC extras — active states + cookie-banner & back-to-top shims
+
+// ----------------------------------------------------------------------------
+
+// Extracted from custom.scss (Phase 5). Kept at the custom-layer slot (not
+
+// merged into core/_sidebar-categories.scss) because some selectors overlap
+
+// rules defined earlier; staying here preserves the override order.
+
+// ============================================================================
+
+// Sidebar / docs layout: _sass/core/_docs-layout.scss
+
+// ==============================================================================
+// SIDEBAR & TOC ENHANCEMENTS
+// ==============================================================================
+
+// MOVED → _sass/layouts/_navbar-extras.scss (token-aware FAB stacking)
+// MOVED → _sass/components/_cookie-banner.scss (token-aware, dark-mode-safe)
+// Retained shim: keep stacked-button responsive sizing inside the banner
+// because it is a banner-internal concern, not a banner-shell concern.
+.cookie-consent-banner {
+    @media (max-width: 768px) {
+        .btn {
+            width: 100%;
+            margin-bottom: 0.5rem;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+}
+
+// Active TOC link highlighting
+.bd-toc nav a.active {
+    font-weight: 600;
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+    border-left-color: var(--bs-primary) !important;
+}
+
+// Smooth scroll behavior is declared once below (see "Smooth Scroll Enhancement")
+
+// Category sidebar active state (nav-tree--categories)
+.nav-tree--categories .sidebar-categories-link.active {
+    font-weight: var(--zer0-font-weight-medium);
+    background-color: color-mix(in srgb, var(--zer0-color-primary) 10%, transparent);
+    color: var(--zer0-color-primary);
+}
+
+// Improve sidebar link hover states
+.bd-sidebar .list-group-item:hover,
+.bd-sidebar .list-group-item-action:hover {
+    background-color: rgba(var(--bs-primary-rgb), 0.05);
+    transition: background-color 0.2s ease;
+}
+
+// ==============================================================================
+// https://designkojo.com/add-ellipse-truncated-text-css-single-line-and-multi-line-options
+
+
+// MOVED → _sass/components/_back-to-top.scss (token-aware version)
+// Retained shim: keep the initial `display: none` (JS toggles it on scroll)
+// and the text/arrow label swap, which are content-level concerns the
+// component partial doesn't need to know about.
+#backToTopBtn {
+    display: none;
+
+    .text { display: inline-block; }
+    .arrow { display: none; }
+
+    @media (max-width: 600px) {
+        .text { display: none; }
+        .arrow { display: inline-block; }
+    }
+}

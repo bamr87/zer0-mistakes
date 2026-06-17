@@ -1,0 +1,47 @@
+// ============================================================================
+
+// Global page chrome — base element resets + sticky/shadow/min-height helpers
+
+// ----------------------------------------------------------------------------
+
+// Extracted from custom.scss (Phase 5). Imported via the custom.scss barrel at
+
+// its original position so the cascade is unchanged.
+
+// ============================================================================
+
+html, body {
+    max-width: 100%;
+    // overflow-x: hidden;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+.make-me-sticky {
+    position: -webkit-sticky;
+	position: sticky;
+	top: 0;
+    padding: 0 15px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.bottom-shadow {
+    // background-color: rgba(255,255,255,0.95);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, .35), inset 0 -1px 0 rgba(0, 0, 0, .15);
+}
+
+// Vendored Bootstrap build may omit vh utilities; landing hero uses this for stable min height
+.min-vh-50 {
+    min-height: 50vh;
+}
+
+// MOVED → _sass/layouts/_landing.scss (token-aware version)
+// Retained shim: keeps the inline-loading aspect-ratio fallback for the hero
+// media slot so existing inline `aspect-ratio` markup in landing.html still
+// has a visible placeholder background while the image streams in.
+.landing-hero .landing-hero-media {
+    background-color: rgba(255, 255, 255, 0.06);
+}
