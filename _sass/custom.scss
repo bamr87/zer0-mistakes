@@ -818,11 +818,11 @@ a:not(.btn) {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
 }
 
-// Button Ripple Effect
+// Button Ripple Effect — JS-injected `.ripple` click element.
+// `position: relative` / `overflow: hidden` are already set on `.btn` by the
+// "Enhanced Button Styles" block above; the duplicate declarations here were
+// removed (no compiled change — they resolved to the same values).
 .btn {
-  position: relative;
-  overflow: hidden;
-  
   .ripple {
     position: absolute;
     border-radius: 50%;
