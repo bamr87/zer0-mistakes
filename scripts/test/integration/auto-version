@@ -26,7 +26,9 @@ log_test() { step "$@"; }
 ANALYZE_WRAPPER="$SCRIPTS_ROOT/analyze-commits.sh"
 ANALYZE_IMPL="$SCRIPTS_ROOT/utils/analyze-commits"
 RELEASE_BIN="$SCRIPTS_ROOT/bin/release"
-WORKFLOW_FILE="$PROJECT_ROOT/.github/workflows/version-bump.yml"
+# The CI/CD consolidation (PR #181) replaced the bespoke version-bump.yml with
+# release.yml (release-please driven). See the header of release.yml.
+WORKFLOW_FILE="$PROJECT_ROOT/.github/workflows/release.yml"
 
 # Test counter
 TESTS_RUN=0
@@ -114,14 +116,14 @@ test_release_command() {
 test_workflow_syntax() {
     log_info "Testing GitHub Actions workflow syntax..."
 
-    run_test "version-bump workflow exists" "test -f '$WORKFLOW_FILE'"
+    run_test "release workflow exists" "test -f '$WORKFLOW_FILE'"
 
     # Check if yamllint is available
     if command -v yamllint >/dev/null 2>&1; then
-        run_test "version-bump workflow syntax" "yamllint -c '$PROJECT_ROOT/.github/config/.yamllint.yml' '$WORKFLOW_FILE'"
+        run_test "release workflow syntax" "yamllint -c '$PROJECT_ROOT/.github/config/.yamllint.yml' '$WORKFLOW_FILE'"
     else
         # Basic YAML syntax check with Ruby (always present for this repo)
-        run_test "version-bump workflow syntax" "ruby -ryaml -e 'YAML.safe_load_file(\"$WORKFLOW_FILE\", aliases: true)'"
+        run_test "release workflow syntax" "ruby -ryaml -e 'YAML.safe_load_file(\"$WORKFLOW_FILE\", aliases: true)'"
     fi
 }
 
@@ -195,7 +197,7 @@ DESCRIPTION:
     - Commit analysis functionality (scripts/analyze-commits.sh wrapper
       and scripts/utils/analyze-commits implementation)
     - Release command compatibility (scripts/bin/release)
-    - Workflow file syntax validation (.github/workflows/version-bump.yml)
+    - Workflow file syntax validation (.github/workflows/release.yml)
     - Integration between components
     - Conventional commit detection
 
