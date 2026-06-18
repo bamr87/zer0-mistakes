@@ -111,6 +111,16 @@ preview_images:
   # Additional style modifiers applied to all prompts
   style_modifiers        : 'pixelated, retro gaming style, CRT screen glow effect, limited color palette'
 
+# Content statistics
+# _data/content_statistics.yml is committed and read directly by templates
+# (site.data.content_statistics). The _plugins/content_statistics_generator.rb
+# hook re-derives it from a full content scan on EVERY `jekyll build` (~12x per
+# CI run) — pure waste when content hasn't changed, plus it dirties a tracked
+# file. Keep it off by default; refresh explicitly with `rake stats:generate`
+# (or _data/generate_statistics.sh) when content changes.
+content_statistics:
+  auto_generate          : false
+
 breadcrumbs              : true # true, false (default)
 words_per_minute         : 200
 _posts_file_structure    : "year-month-day-title.md"
@@ -291,9 +301,6 @@ powered_by:
     version: "5.3.3"
     url: "https://getbootstrap.com/"
     icon: "bi-bootstrap"
-  - name: "jQuery"
-    url: "https://jquery.com/"
-    icon: "bi-filetype-js"
   - name: "MathJax"
     url: "https://www.mathjax.org/"
     icon: "bi-calculator"
@@ -627,9 +634,14 @@ exclude:
   - pages/_notes/_templates/
 
 # Sass/SCSS
+# Production default: minified output, no sourcemaps. main.css is render-blocking
+# on every page, so we ship it compressed (~182KB expanded -> ~140KB minified)
+# and skip the .css.map files. _config_dev.yml overrides this back to expanded +
+# sourcemaps for local debugging.
 sass:
   sass_dir: _sass
-  style: expanded
+  style: compressed
+  sourcemap: never
 
 #  TODO: Fix bootstrap plugin
   # load_paths:
