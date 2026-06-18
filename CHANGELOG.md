@@ -7,6 +7,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Performance
+- **Docker dev image cut from ~4GB to ~1.7GB and cold build from ~193s to ~82s**
+  (native arm64; far worse under the old emulated build). The `dev-test` stage
+  no longer installs `@mermaid-js/mermaid-cli` (its only reference in the whole
+  repo was its own install line — Mermaid renders client-side from the vendored
+  `mermaid.min.js`, never via `mmdc`, and it dragged in a ~300MB headless
+  Chromium), ImageMagick, libvips, or Node/npm (all unused in-container; the
+  `package.json` scripts run on the host). Kept Python + Jupyter/nbconvert for
+  the notebook tooling. Dropped the redundant second `bundle install` (the
+  `base` stage already installs all gem groups), removed the `platform:
+  linux/amd64` pin from `docker-compose.yml` (it forced QEMU emulation on Apple
+  Silicon), removed the per-start `generate_statistics.sh` regeneration from the
+  compose command, and simplified the production runtime stage (the static-file
+  `ruby -run -e httpd` server needs no Gemfile or `bundle install`).
+- **Jekyll build ~16.4s → ~12s** by wrapping page-invariant chrome in
+  `include_cached` (the `jekyll-include-cache` plugin was a dependency but went
+  unused): `core/footer.html`, `components/{cookie-consent,nanobar,svg,
+  search-modal,shortcuts-modal,setup-banner,background-settings}.html`, and
+  `components/js-cdn.html`. The footer alone was **3.9s** of the build — it ran
+  `where`-scans over every collection on all 172 page renders to auto-detect
+  quick links, despite output that depends only on site config. Its
+  page-front-matter-dependent tail (TOC/local-graph FABs) moved to
+  `core/footer-fabs.html` so the body stays cacheable; the FABs are
+  `position:fixed` with explicit z-index, so the output is visually identical.
+  `root.html` self-time dropped 9.1s → 4.4s.
+- **Production CSS now minified** (`sass: style: compressed`, `sourcemap:
+  never`); `main.css` ~182KB → ~158KB render-blocking. `_config_dev.yml` keeps
+  `expanded` + sourcemaps for local debugging.
+- **Content statistics no longer regenerate on every build.**
+  `content_statistics.auto_generate` now defaults to `false`; templates read the
+  committed `_data/content_statistics.yml` directly. The generator hook had been
+  re-scanning all content on every `jekyll build` (~12× per CI run) and dirtying
+  a tracked file. Refresh on demand with `rake stats:generate`.
+
+### Removed
+- **Dead vendored libraries (~1.1MB).** Deleted `assets/vendor/font-awesome`
+  (1.0MB) and `assets/vendor/jquery` (88KB), their `vendor-manifest.json`
+  entries, and the misleading "jQuery" `powered_by` credit. Font Awesome was
+  loaded only by `components/mermaid.html` (no theme diagram uses `fa:` icons) —
+  that 1.0MB render-blocking stylesheet no longer loads on Mermaid pages. jQuery
+  was already removed from page loads (Bootstrap 5 dropped it). **Forks** that
+  relied on Font Awesome icons inside Mermaid diagrams must re-add the
+  stylesheet.
+
 ### Changed
 - **Design framework (SCSS) refactor — structure only, no visual change.**
   Decomposed the 1,131-line `_sass/custom.scss` monolith into a thin back-compat

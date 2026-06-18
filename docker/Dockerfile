@@ -56,28 +56,34 @@ RUN bundle config set --local deployment false && \
 # ------------------------------------------------------------------------------
 FROM base AS dev-test
 
-# Optional tooling for local dev, diagram export, notebooks — not needed for jekyll build
+# Lean dev/test tooling. Deliberately EXCLUDED (all were unused dead weight that
+# ballooned the image to ~4GB and added ~78s to every cold build):
+#   - @mermaid-js/mermaid-cli (mmdc): the ONLY reference in the whole repo was
+#     its own install line — Mermaid renders client-side from the vendored
+#     assets/vendor/mermaid/mermaid.min.js, never via mmdc. It pulls a full
+#     headless Chromium (~300MB).
+#   - imagemagick / libvips: no gem (no mini_magick/image_processing/ruby-vips)
+#     and no script in the image shells out to them.
+#   - nodejs / npm: only existed to install mmdc; the package.json scripts
+#     (playwright, sass, vendor) run on the HOST, not in this image.
+# Kept: curl/jq (handy in CI), python3 + jupyter/nbconvert (used by
+# scripts/convert-notebooks.sh and test/test-notebook-conversion.sh in-container).
 RUN apt-get update -qq && \
     apt-get install -y --no-install-recommends \
-        imagemagick \
-        libvips \
-        nodejs \
-        npm \
         curl \
         jq \
         python3 \
         python3-pip \
         python3-venv && \
-    npm install -g @mermaid-js/mermaid-cli && \
     pip3 install --break-system-packages jupyter nbconvert && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 
-# Ensure all gems including dev/test are installed
-RUN bundle config set --local with 'development test' && \
-    bundle install --jobs 4 --retry 3
+# Note: the `base` stage already runs `bundle install` with `without ''`, so the
+# development+test gem groups are present here. No second bundle install needed.
 
-# Copy full source for testing
+# Copy full source for CI (the dev-server path bind-mounts the repo over /site,
+# so this COPY only matters for image-only test runs without a mount).
 COPY . .
 
 # Default command for development
@@ -102,25 +108,18 @@ RUN bundle exec jekyll build --config _config.yml,docker/config/docker-build.yml
 # ------------------------------------------------------------------------------
 FROM ruby:3.3-slim AS production
 
+# The CMD below serves static files with Ruby's built-in `un.rb` httpd, which
+# needs nothing but the stdlib already present in ruby:3.3-slim — no gems, no
+# Gemfile, no bundle install. (curl is kept only for container HEALTHCHECKs.)
 RUN apt-get update -qq && \
-    apt-get install -y --no-install-recommends \
-        webrick \
-        curl && \
+    apt-get install -y --no-install-recommends curl && \
     rm -rf /var/lib/apt/lists/* && \
-    apt-get clean && \
-    gem install bundler webrick
+    apt-get clean
 
 WORKDIR /site
 
-# Copy only the built site from build stage
+# Copy only the built static site from the build stage.
 COPY --from=build /site/_site /site/_site
-COPY --from=build /site/Gemfile /site/Gemfile
-COPY --from=build /site/Gemfile.lock /site/Gemfile.lock
-
-# Install minimal runtime dependencies
-RUN bundle config set --local deployment true && \
-    bundle config set --local without 'development test' && \
-    bundle install --jobs 4 --retry 3 || true
 
 EXPOSE 4000
 

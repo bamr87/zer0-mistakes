@@ -1,0 +1,28 @@
+{%- comment -%}
+  ===================================================================
+  FOOTER FABS — page-dependent floating action buttons + local graph
+  ===================================================================
+
+  File: footer-fabs.html
+  Path: _includes/core/footer-fabs.html
+  Purpose: The page-front-matter-dependent tail extracted out of
+           core/footer.html so the footer chrome itself stays page-invariant
+           and cacheable via include_cached (see _layouts/root.html).
+
+  These pieces read per-page front matter (page.sidebar, page.post_type,
+  page.local_graph, page.layout) and therefore MUST render fresh per page:
+    - navigation/toc-fab.html          (table-of-contents FAB)
+    - navigation/local-graph-fab.html  (local-graph FAB)
+    - navigation/local-graph.html      (local-graph offcanvas panel)
+
+  All are position:fixed with explicit z-index tokens
+  (_sass/components/_back-to-top.scss), so emitting them as siblings right
+  after </footer> is visually identical to the previous nesting.
+  ===================================================================
+{%- endcomment -%}
+{%- assign _root_only_layouts = "landing,welcome,stats,sitemap-collection,setup,section,news,index,home,admin" | split: "," -%}
+{%- unless _root_only_layouts contains page.layout -%}
+  {% include navigation/toc-fab.html %}
+  {% include navigation/local-graph-fab.html %}
+  {% include navigation/local-graph.html %}
+{%- endunless -%}

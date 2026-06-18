@@ -27,12 +27,18 @@ services:
       # dev-test is the stage with the full Jekyll + tooling toolchain; the
       # leaner `base` stage lacks `COPY . .` and cannot serve the site.
       target: dev-test
-    
-    # Platform specification for Apple Silicon compatibility
-    platform: linux/amd64
-    
-    # Run bundle check first; skip install if deps haven't changed
-    command: ["sh", "-c", "git config --global --add safe.directory /site 2>/dev/null || true && bundle check || bundle install --jobs 4 --retry 3 && bash _data/generate_statistics.sh && bundle exec jekyll serve --watch --livereload --config '_config.yml,_config_dev.yml' --host 0.0.0.0 --port 4000"]
+
+    # NOTE: no `platform:` pin. Forcing linux/amd64 ran the whole image under
+    # QEMU emulation on arm64 (Apple Silicon) hosts — a 3-10x slowdown on
+    # apt/bundle/native-gem work. Docker builds the native arch by default and
+    # Jekyll serves identically. Export DOCKER_DEFAULT_PLATFORM=linux/amd64 if
+    # you specifically need x86 parity with production.
+
+    # Run bundle check first; skip install if deps haven't changed.
+    # Statistics are NOT regenerated on every start — _data/content_statistics.yml
+    # is committed and read directly; refresh on demand with `rake stats:generate`
+    # (or _data/generate_statistics.sh) when content changes.
+    command: ["sh", "-c", "git config --global --add safe.directory /site 2>/dev/null || true && (bundle check || bundle install --jobs 4 --retry 3) && bundle exec jekyll serve --watch --livereload --config '_config.yml,_config_dev.yml' --host 0.0.0.0 --port 4000"]
     
     volumes:
       - .:/site
