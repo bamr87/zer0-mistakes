@@ -96,7 +96,11 @@
         
         <!-- Site footer with links, copyright, and additional navigation.
              Page-invariant chrome is cached once per build; the page-dependent
-             FAB/local-graph tail renders fresh per page (see core/footer-fabs.html). -->
+             FAB/local-graph tail renders fresh per page (see core/footer-fabs.html).
+             Build-time values inside (e.g. the copyright year from site.time) stay
+             fresh: jekyll-include-cache stores in memory only (Jekyll 3.x has no
+             Jekyll::Cache) and clears on every build's :pre_render hook — it never
+             persists to .jekyll-cache. -->
         {%- include_cached core/footer.html -%}
         {%- include core/footer-fabs.html -%}
 
@@ -111,7 +115,10 @@
             <!-- Search functionality -->
             <!-- Note: Currently commented out - uncomment when search is implemented -->
 
-            <!-- External JavaScript libraries and custom scripts — page-invariant. -->
+            <!-- External JavaScript libraries and custom scripts — page-invariant.
+                 The "?v=" cache-buster (site.time) in js-cdn.html stays correct:
+                 the include cache is in-memory and reset every build (see footer
+                 note above), so v= advances on each build, never frozen across deploys. -->
             {% include_cached components/js-cdn.html %}
         </div>
 
