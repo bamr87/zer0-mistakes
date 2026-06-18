@@ -55,6 +55,13 @@ incremental              : true
 limit_posts              : 30
 profile                  : false
 
+# Dev override: keep CSS readable + sourcemapped for debugging.
+# (Production _config.yml ships compressed, sourcemap: never.)
+sass:
+  sass_dir                : _sass
+  style                   : expanded
+  sourcemap               : always
+
 # Performance: Disable rarely-edited collections during development.
 # Comment out or set output: true for any collection you're actively working on.
 # NOTE: `quests` stays enabled because consumer sites (e.g. it-journey) use it as

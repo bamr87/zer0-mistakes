@@ -1,5 +1,5 @@
 {
-  "_comment": "Vendor asset manifest for zer0-mistakes Jekyll theme. Run scripts/vendor-install.sh to download. Mermaid is not listed here — use npm (mermaid package + npm run vendor:mermaid) so the bundle is not fetched from jsDelivr.",
+  "_comment": "Vendor asset manifest for zer0-mistakes Jekyll theme. Run scripts/vendor-install.sh to download. Mermaid is not listed here \u2014 use npm (mermaid package + npm run vendor:mermaid) so the bundle is not fetched from jsDelivr.",
   "libraries": [
     {
       "name": "bootstrap",
@@ -35,68 +35,6 @@
           "url": "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/fonts/bootstrap-icons.woff2",
           "dest": "assets/vendor/bootstrap-icons/font/fonts/bootstrap-icons.woff2",
           "sha256": "476adf42b40325098fcfa8b36ab3e769186bb4f6ce6a249753e2e1a9c22bf99e"
-        }
-      ]
-    },
-    {
-      "name": "jquery",
-      "version": "3.7.1",
-      "files": [
-        {
-          "url": "https://code.jquery.com/jquery-3.7.1.min.js",
-          "dest": "assets/vendor/jquery/jquery-3.7.1.min.js",
-          "sha256": "fc9a93dd241f6b045cbff0481cf4e1901becd0e12fb45166a8f17f95823f0b1a"
-        }
-      ]
-    },
-    {
-      "name": "font-awesome",
-      "version": "6.4.0",
-      "files": [
-        {
-          "url": "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css",
-          "dest": "assets/vendor/font-awesome/css/all.min.css",
-          "sha256": "1edb1725a9ea8ca4dcf2f5508cee183218aa1685e47c1b23056717f754f58ebf"
-        },
-        {
-          "url": "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/webfonts/fa-brands-400.ttf",
-          "dest": "assets/vendor/font-awesome/webfonts/fa-brands-400.ttf",
-          "sha256": "20c4a58bc9d1d69e935d06f1528923646a715be5e218665655cade8f5f1b8c00"
-        },
-        {
-          "url": "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/webfonts/fa-brands-400.woff2",
-          "dest": "assets/vendor/font-awesome/webfonts/fa-brands-400.woff2",
-          "sha256": "748332090c4b8e20f95d0ff59f0be20fa9c889359d3b36d4b886d73376054207"
-        },
-        {
-          "url": "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/webfonts/fa-regular-400.ttf",
-          "dest": "assets/vendor/font-awesome/webfonts/fa-regular-400.ttf",
-          "sha256": "528d022dce6725f8a0811fd91d8e6513445c81ef33353a5c3234eab932551abf"
-        },
-        {
-          "url": "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/webfonts/fa-regular-400.woff2",
-          "dest": "assets/vendor/font-awesome/webfonts/fa-regular-400.woff2",
-          "sha256": "8e7e5ea1b15f62ab14dbd41768e8fbcd21cc859a4ea5da812457ee714299fb35"
-        },
-        {
-          "url": "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/webfonts/fa-solid-900.ttf",
-          "dest": "assets/vendor/font-awesome/webfonts/fa-solid-900.ttf",
-          "sha256": "67a65763c7f80903d81603bbeb9049fc2bf28508479b83ed011fe24c71fa950a"
-        },
-        {
-          "url": "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/webfonts/fa-solid-900.woff2",
-          "dest": "assets/vendor/font-awesome/webfonts/fa-solid-900.woff2",
-          "sha256": "7152a6933ee3d690ec2af3d09da9d701723d16aa3410a6d80f28ff8866f3b880"
-        },
-        {
-          "url": "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/webfonts/fa-v4compatibility.ttf",
-          "dest": "assets/vendor/font-awesome/webfonts/fa-v4compatibility.ttf",
-          "sha256": "0515a423f828ce4e6accf92a2ea0b03d19d31cc86d9af0373291e1fd4db5f348"
-        },
-        {
-          "url": "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/webfonts/fa-v4compatibility.woff2",
-          "dest": "assets/vendor/font-awesome/webfonts/fa-v4compatibility.woff2",
-          "sha256": "694a17c3d9d6c05f8aac63c544615552a4b220e9a4de863d87341a6bcfc1bc8d"
         }
       ]
     },

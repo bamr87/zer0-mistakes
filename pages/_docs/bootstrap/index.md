@@ -27,7 +27,7 @@ The Zer0-Mistakes theme is built on **Bootstrap 5.3.3**, providing responsive la
 
 ## How Bootstrap is Loaded
 
-The theme ships **Bootstrap 5.3.3**, **jQuery**, and **Bootstrap Icons** under [`assets/vendor/`]({{ '/assets/vendor/' | relative_url }}) so **GitHub Pages** builds need no `npm` or network at publish time. Refresh files with `./scripts/vendor-install.sh` (see [Vendor assets]({{ '/docs/development/vendor-assets/' | relative_url }})).
+The theme ships **Bootstrap 5.3.3** and **Bootstrap Icons** under [`assets/vendor/`]({{ '/assets/vendor/' | relative_url }}) so **GitHub Pages** builds need no `npm` or network at publish time. Refresh files with `./scripts/vendor-install.sh` (see [Vendor assets]({{ '/docs/development/vendor-assets/' | relative_url }})). Bootstrap 5 dropped the jQuery dependency, so the theme no longer bundles or loads jQuery.
 
 ### CSS (bundled — default)
 
@@ -43,7 +43,6 @@ The theme ships **Bootstrap 5.3.3**, **jQuery**, and **Bootstrap Icons** under [
 ```liquid
 {% raw %}
 <!-- In _includes/components/js-cdn.html -->
-<script src="{{ '/assets/vendor/jquery/jquery-3.7.1.min.js' | relative_url }}"></script>
 <script src="{{ '/assets/vendor/bootstrap/js/bootstrap.bundle.min.js' | relative_url }}"></script>
 {% endraw %}
 ```

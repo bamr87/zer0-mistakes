@@ -249,15 +249,13 @@
   </div>
 
   {%- comment -%}
-    Floating action buttons live in the footer (not #main-content) so fixed
-    positioning shares the footer stacking context with back-to-top and does
-    not cover the powered-by row when the user scrolls to the page bottom.
+    Page-dependent floating action buttons (TOC / local-graph FABs) and the
+    local-graph offcanvas were moved to core/footer-fabs.html so THIS file is
+    fully page-invariant and can be rendered via include_cached (see
+    _layouts/root.html). The FABs are position:fixed with explicit z-index
+    tokens (_sass/components/_back-to-top.scss), so rendering them as a sibling
+    immediately after </footer> is visually identical to nesting them inside.
   {%- endcomment -%}
-  {%- assign _root_only_layouts = "landing,welcome,stats,sitemap-collection,setup,section,news,index,home,admin" | split: "," -%}
-  {%- unless _root_only_layouts contains page.layout -%}
-    {% include navigation/toc-fab.html %}
-    {% include navigation/local-graph-fab.html %}
-  {%- endunless -%}
 
   <!-- Back to Top Button (controlled by assets/js/back-to-top.js) -->
   <!-- Positioning/stacking handled by _sass/components/_back-to-top.scss
@@ -275,11 +273,3 @@
     <span class="visually-hidden">Back to top</span>
   </a>
 </footer>
-
-{%- comment -%}
-  Local graph panel is a body-level sibling (after footer) so Bootstrap offcanvas
-  escapes the #main-content z-index stacking context and sits above the footer band.
-{%- endcomment -%}
-{%- unless _root_only_layouts contains page.layout -%}
-  {% include navigation/local-graph.html %}
-{%- endunless -%}
