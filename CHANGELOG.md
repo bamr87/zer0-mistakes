@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Tests
+- **Unit tests for `sanitize_config_filter.rb` (T-023).** Added 12 Minitest
+  specs to `test/test_plugins.rb` covering both regex paths of the
+  security-critical Liquid filter: `SENSITIVE_KEY_RE` matches `api_key`,
+  `apikey`, `secret`, `password`, and `token` (case-insensitive); `PHC_VALUE_RE`
+  catches PostHog project keys; mixed multi-line input produces correct partial
+  redaction; and edge cases (`nil`, empty string) return without error.
+
 ### Performance
 - **Docker dev image cut from ~4GB to ~1.7GB and cold build from ~193s to ~82s**
   (native arm64; far worse under the old emulated build). The `dev-test` stage
