@@ -3,8 +3,8 @@
   // UNIFIED VS CODE SETTINGS - Docker-First Development
   // ==================================================
   // Optimized for zer0-mistakes Jekyll theme development
-  // Last Updated: 2025-10-26
-  
+  // Last Updated: 2026-06-21
+
   // ==========================================
   // GITHUB COPILOT CONFIGURATION
   // ==========================================
@@ -21,18 +21,13 @@
     "json": true,
     "jsonc": true
   },
-  "github.copilot.advanced": {
-    "enableSuggestionAutoTrigger": true,
-    "contextLength": 4096,
-    "enableAutoCompletions": true
-  },
 
   // ==========================================
   // FILE ASSOCIATIONS & LANGUAGE SUPPORT
   // ==========================================
   "files.associations": {
     "*.html": "liquid",
-    "*.md": "markdown", 
+    "*.md": "markdown",
     "*.yml": "yaml",
     "*.yaml": "yaml",
     "_config*.yml": "yaml",
@@ -80,6 +75,16 @@
   "yaml.completion": true,
   "yaml.hover": true,
   "yaml.validate": true,
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": [
+      ".github/workflows/*.yml",
+      ".github/workflows/*.yaml"
+    ],
+    "https://json.schemastore.org/github-action.json": [
+      ".github/actions/*/action.yml",
+      ".github/actions/*/action.yaml"
+    ]
+  },
 
   // ==========================================
   // LIQUID TEMPLATE CONFIGURATION
@@ -94,22 +99,48 @@
   },
 
   // ==========================================
-  // RUBY CONFIGURATION
+  // RUBY CONFIGURATION (Shopify Ruby LSP)
   // ==========================================
   "[ruby]": {
+    "editor.defaultFormatter": "Shopify.ruby-lsp",
     "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": "explicit"
-    }
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
   },
-  "ruby.rubocop.onSave": true,
-  "ruby.format": "rubocop",
+  "rubyLsp.formatter": "auto",
 
   // ==========================================
-  // DOCKER CONFIGURATION
+  // SCSS / JSON / SHELL CONFIGURATION
   // ==========================================
-  "docker.images.label": "latest",
-  "docker.commands.compose": "docker-compose",
+  "[scss]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "[json]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "[jsonc]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "[shellscript]": {
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true
+  },
+
+  // ==========================================
+  // DOCKER / CONTAINERS CONFIGURATION
+  // ==========================================
+  "containers.images.label": "Tag",
+  "containers.composeCommand": "docker-compose",
+
+  // ==========================================
+  // SHELLCHECK (timonwong.shellcheck)
+  // ==========================================
+  "shellcheck.enable": true,
+  "shellcheck.run": "onType",
+  "shellcheck.useWorkspaceRootAsCwd": true,
 
   // ==========================================
   // TERMINAL CONFIGURATION
@@ -119,7 +150,7 @@
     "DOCKER_BUILDKIT": "1"
   },
   "terminal.integrated.env.linux": {
-    "JEKYLL_ENV": "development", 
+    "JEKYLL_ENV": "development",
     "DOCKER_BUILDKIT": "1"
   },
 
@@ -133,7 +164,7 @@
     "**/_site/**": true,
     "**/.sass-cache/**": true,
     "**/.jekyll-cache/**": true,
-    "**/vendor/**": true,
+    "/vendor/**": true,
     "**/__pycache__/**": true,
     "**/*.pyc": true,
     "**/venv/**": true,
@@ -156,7 +187,7 @@
     "**/bower_components": true,
     "**/*.code-search": true,
     "**/_site": true,
-    "**/vendor": true,
+    "/vendor": true,
     "**/__pycache__": true,
     "**/build": true
   },
@@ -172,23 +203,30 @@
   // ==========================================
   "cSpell.words": [
     "bamr",
+    "barodybroject",
+    "buildkit",
+    "commonmarker",
     "endcapture",
     "endraw",
+    "frontmatter",
+    "gemspec",
     "Groking",
     "Inkscape",
     "Jamstack",
     "Krita",
     "lastmod",
+    "livereload",
     "markdownify",
     "MERN",
-    "Picade",
-    "sublinks",
-    "winget",
-    "barodybroject",
     "parodynews",
-    "zer0",
-    "gemspec",
-    "rubocop"
-  ],
-  "containers.images.label": "latest"
+    "Picade",
+    "posthog",
+    "rubocop",
+    "rubygems",
+    "sublinks",
+    "webrick",
+    "wikilinks",
+    "winget",
+    "zer0"
+  ]
 }
