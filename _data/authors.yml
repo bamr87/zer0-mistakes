@@ -5,16 +5,24 @@
 # Usage in front matter:
 #   author: johndoe  (references the key below)
 #
+# A profile page is generated at /authors/<key>/ for every entry below by
+# _plugins/author_pages_generator.rb, and all entries are listed at /authors/.
+# Reference an author by key in front matter (author: bamr87) to get an avatar,
+# a profile link, and the "About the Author" box across all collections.
+#
 # Fields:
 #   name: Display name (required)
+#   display_name: Optional longer name (used by author-eeat banner)
 #   bio: Short biography (optional)
-#   avatar: Path to avatar image (optional)
+#   avatar: Path under public_folder, e.g. /images/authors/me.png (optional)
 #   email: Contact email (optional)
-#   twitter: Twitter handle without @ (optional)
+#   twitter: Twitter/X handle without @ (optional)
 #   github: GitHub username (optional)
 #   linkedin: LinkedIn profile ID (optional)
 #   website: Personal website URL (optional)
 #   role: Job title or role (optional)
+#   expertise: List of topics (shown as chips on the full card) (optional)
+#   profile: Set to false to skip generating a profile page / hide from index (optional)
 
 default:
   name: "Zer0-Mistakes Team"
@@ -59,3 +67,7 @@ guest:
 #   linkedin: "linkedinprofile"
 #   website: "https://example.com"
 #   role: "Writer"
+#   expertise:
+#     - "Topic one"
+#     - "Topic two"
+#   profile: true   # set false to opt out of the generated /authors/<key>/ page

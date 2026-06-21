@@ -1,0 +1,73 @@
+// ============================================================================
+// Author — bylines, "About the Author" cards, and profile pages
+// ----------------------------------------------------------------------------
+// Pairs with components/author-card.html, components/author-bio.html, and the
+// author / authors layouts. Token-driven with Bootstrap fallbacks; dark-mode
+// safe (avatars and links inherit surrounding color via `text-reset`).
+// ============================================================================
+
+// Inline byline — meta rows and card footers
+.author-inline {
+  vertical-align: baseline;
+
+  &__avatar {
+    flex: 0 0 auto;
+  }
+
+  &__link {
+    transition: color var(--zer0-motion-duration-fast, 120ms) var(--zer0-motion-ease-standard);
+
+    &:hover .author-name,
+    &:focus-visible .author-name {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--zer0-color-primary, var(--bs-primary));
+      outline-offset: 2px;
+      border-radius: 0.25rem;
+    }
+  }
+}
+
+// Circular fallback used when an author has no avatar image
+.author-avatar-fallback {
+  flex: 0 0 auto;
+  background: var(--zer0-color-primary, var(--bs-primary));
+}
+
+// "About the Author" card + profile hero avatar ring
+.author-card,
+.author-card-compact {
+  .author-card__avatar,
+  img.rounded-circle {
+    border: 2px solid rgba(var(--zer0-color-primary-rgb, var(--bs-primary-rgb)), 0.25);
+  }
+}
+
+// Expertise chips
+.author-expertise .badge {
+  font-weight: 500;
+}
+
+// ----------------------------------------------------------------------------
+// Author profile page (_layouts/author.html)
+// ----------------------------------------------------------------------------
+.author-profile-header {
+  .author-card {
+    background: var(--zer0-color-bg-elevated, var(--bs-tertiary-bg));
+  }
+
+  .author-card__avatar {
+    border-width: 3px;
+    box-shadow: var(--zer0-shadow-sm);
+  }
+}
+
+// Authors index directory cards
+.authors-index {
+  .author-card-compact {
+    width: 100%;
+  }
+}

@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Author profiles ("About the Author") across all collections.** A single,
+  layered author system replaces the three divergent ad-hoc treatments that
+  existed before:
+  - `components/author-card.html` is now the canonical rendering primitive
+    (`inline` / `compact` / `full`), with avatars, profile links, schema.org
+    `Person` microdata, and expertise chips.
+  - New `components/author-bio.html` renders the shared "About the Author"
+    section (used by the `article`, `note`, and `notebook` layouts), gated by
+    the previously-unused `author_profile` front-matter flag.
+  - New `author` / `authors` layouts add per-author profile pages at
+    `/authors/:key/` (content aggregated across **every** collection) and an
+    `/authors/` directory index.
+  - New `_plugins/author_pages_generator.rb` auto-generates those pages for
+    each `_data/authors.yml` entry (opt out per author with `profile: false`,
+    or globally with `authors.generate_pages: false`); profiles for this site's
+    authors are also committed under `/authors/` so they build under GitHub
+    Pages safe mode, mirroring the committed `search.json` / `sitemap` pattern.
+  - New `_sass/components/_author.scss` styling (dark-mode safe, token-driven).
+  - `_data/authors.yml` documents the new `expertise` and `profile` fields.
+
 ### Performance
 - **Docker dev image cut from ~4GB to ~1.7GB and cold build from ~193s to ~82s**
   (native arm64; far worse under the old emulated build). The `dev-test` stage
@@ -52,6 +73,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   stylesheet.
 
 ### Changed
+- **Bylines now use the shared author component.** The `article`, `note`,
+  `notebook`, `news`, and `section` layouts plus `components/post-card.html`
+  previously printed `{{ page.author }}` as bare text; they now render
+  `components/author-card.html` (`inline`), so a known author key resolves to a
+  display name, avatar, and a link to their profile page. The inline
+  "About the Author" block that was hard-coded in `_layouts/article.html` was
+  removed in favor of `components/author-bio.html`.
 - **Design framework (SCSS) refactor — structure only, no visual change.**
   Decomposed the 1,131-line `_sass/custom.scss` monolith into a thin back-compat
   barrel plus five focused partials (`layouts/_global-chrome`, `core/_toc`,

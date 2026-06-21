@@ -216,7 +216,7 @@ layout: root
                 </small>
                 {% if featured_in_section.author %}
                   <small class="text-muted">
-                    <i class="bi bi-person me-1"></i>{{ featured_in_section.author }}
+                    {% include components/author-card.html author=featured_in_section.author style="inline" show_avatar=false %}
                   </small>
                 {% endif %}
               </div>
@@ -425,7 +425,7 @@ layout: root
                       </span>
                       {% if gpost.author %}
                         <span>
-                          <i class="bi bi-person me-1"></i>{{ gpost.author | truncate: 15 }}
+                          {% include components/author-card.html author=gpost.author style="inline" show_avatar=false %}
                         </span>
                       {% endif %}
                     </div>
@@ -476,7 +476,7 @@ layout: root
                     <div class="d-flex gap-3 text-muted small">
                       <span><i class="bi bi-calendar me-1"></i>{{ lpost.date | date: "%B %d, %Y" }}</span>
                       {% if lpost.author %}
-                        <span><i class="bi bi-person me-1"></i>{{ lpost.author }}</span>
+                        <span>{% include components/author-card.html author=lpost.author style="inline" show_avatar=false %}</span>
                       {% endif %}
                     </div>
                   </div>

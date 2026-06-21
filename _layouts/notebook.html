@@ -48,8 +48,7 @@ layout: default
       <!-- Author -->
       {% if page.author %}
         <span class="notebook-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
-          <i class="bi bi-person me-1"></i>
-          <span itemprop="name">{{ page.author }}</span>
+          {% include components/author-card.html author=page.author style="inline" name_itemprop="name" %}
         </span>
         <span class="mx-2">•</span>
       {% endif %}
@@ -129,7 +128,14 @@ layout: default
   <div class="notebook-content e-content" itemprop="articleBody">
     {{ content }}
   </div>
-  
+
+  <!-- ================================ -->
+  <!-- AUTHOR BIO SECTION               -->
+  <!-- ================================ -->
+  {% if page.author and page.author_profile != false %}
+    {% include components/author-bio.html author=page.author %}
+  {% endif %}
+
   <!-- ================================ -->
   <!-- NOTEBOOK FOOTER                  -->
   <!-- ================================ -->

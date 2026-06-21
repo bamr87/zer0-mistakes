@@ -16,10 +16,11 @@
   - show_post_type (optional): Show post_type badge (default: true)
   - card_class (optional): Additional CSS classes for the card
   
-  Usage:
-    {% include components/post-card.html post=post %}
-    {% include components/post-card.html post=post show_category=false %}
-    {% include components/post-card.html post=post card_class="shadow-lg" %}
+  Usage (wrap each line in Liquid include tags — braces omitted here because
+  Liquid parses tags even inside HTML comments, which would self-recurse):
+    include components/post-card.html post=post
+    include components/post-card.html post=post show_category=false
+    include components/post-card.html post=post card_class="shadow-lg"
   
   Features:
   - Breaking news badge (red, top-left)
@@ -145,7 +146,7 @@
         <div>
           {% if show_author and include.post.author %}
             <span class="me-2">
-              <i class="bi bi-person me-1"></i>{{ include.post.author }}
+              {% include components/author-card.html author=include.post.author style="inline" show_avatar=false %}
             </span>
           {% endif %}
           <span>

@@ -1,0 +1,91 @@
+---
+layout: default
+---
+<!--
+  ===================================================================
+  AUTHOR LAYOUT - Author profile page (cross-collection content hub)
+  ===================================================================
+
+  File: author.html
+  Path: _layouts/author.html
+  Inherits: default.html (which inherits root.html)
+  Purpose: Display a single author's profile plus every piece of content they
+           have written, aggregated across ALL collections (posts, docs,
+           notes, notebooks, quickstart, about, …).
+
+  Front Matter Variables:
+  - author_key (required): Key into _data/authors.yml. Set automatically by
+    _plugins/author_pages_generator.rb, or by hand for a committed page.
+  - title (optional): Page title (defaults to the author's name).
+
+  Matching: a document belongs to this author when its `author` front-matter
+  value equals the author key, name, or display_name. This tolerates the mix
+  of key-based (`author: bamr87`) and name-based (`author: "Amr ..."`) values
+  found across content.
+
+  Dependencies:
+  - _data/authors.yml: Author data
+  - components/author-card.html (style="full"): Profile hero
+  - components/post-card.html: Content grid cards
+  ===================================================================
+-->
+
+{% assign author_key = page.author_key %}
+{% assign author_data = site.data.authors[author_key] %}
+
+<!-- ========================== -->
+<!-- BREADCRUMB                 -->
+<!-- ========================== -->
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{ site.baseurl }}/">Home</a></li>
+    <li class="breadcrumb-item"><a href="{{ site.baseurl }}/authors/">Authors</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ author_data.name | default: author_key }}</li>
+  </ol>
+</nav>
+
+<!-- ========================== -->
+<!-- AUTHOR PROFILE HERO        -->
+<!-- ========================== -->
+<header class="author-profile-header mb-5">
+  {% include components/author-card.html author=author_key style="full" link=false avatar_size=112 %}
+</header>
+
+{% comment %} ---------------------------------------------------------------
+   Aggregate this author's content across every collection. A document matches
+   when its `author` equals the key, the name, or the display_name.
+--------------------------------------------------------------------------- {% endcomment %}
+{% assign aliases = "" | split: "" %}
+{% assign aliases = aliases | push: author_key %}
+{% if author_data.name %}{% assign aliases = aliases | push: author_data.name %}{% endif %}
+{% if author_data.display_name %}{% assign aliases = aliases | push: author_data.display_name %}{% endif %}
+
+{% assign author_docs = site.documents | where_exp: "d", "aliases contains d.author" | where_exp: "d", "d.title" | sort: "date" | reverse %}
+
+<!-- ========================== -->
+<!-- CONTENT BY THIS AUTHOR     -->
+<!-- ========================== -->
+<section class="author-content">
+  <div class="d-flex align-items-center mb-4">
+    <h2 class="h4 mb-0">
+      <i class="bi bi-collection me-2" aria-hidden="true"></i>Content by {{ author_data.name | default: author_key }}
+    </h2>
+    <span class="badge bg-secondary ms-3">{{ author_docs.size }} {{ author_docs.size | pluralize: "item", "items" }}</span>
+  </div>
+
+  {% if author_docs.size > 0 %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      {% for doc in author_docs %}
+        {% include components/post-card.html post=doc show_author=false %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="text-center py-5">
+      <i class="bi bi-journal-x fs-1 text-muted" aria-hidden="true"></i>
+      <p class="text-muted mt-3">No published content from this author yet.</p>
+      <a href="{{ site.baseurl }}/" class="btn btn-outline-primary">Back to home</a>
+    </div>
+  {% endif %}
+</section>
+
+{{ content }}

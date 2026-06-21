@@ -1,0 +1,56 @@
+---
+layout: default
+---
+<!--
+  ===================================================================
+  AUTHORS INDEX LAYOUT - Directory of all author profiles
+  ===================================================================
+
+  File: authors.html
+  Path: _layouts/authors.html
+  Inherits: default.html (which inherits root.html)
+  Purpose: List every author defined in _data/authors.yml, each linking to
+           their individual profile page (/authors/:key/).
+
+  Front Matter Variables:
+  - title (optional): Page title (default: "Authors")
+  - description (optional): Intro text
+
+  Opt-out: an author entry with `profile: false` in _data/authors.yml is
+  hidden from this directory (and skipped by the page generator).
+
+  Dependencies:
+  - _data/authors.yml
+  - components/author-card.html (style="compact")
+  ===================================================================
+-->
+
+<header class="authors-index-header mb-5">
+  <div class="d-flex align-items-center mb-3">
+    <i class="bi bi-people-fill fs-1 me-3 text-primary" aria-hidden="true"></i>
+    <div>
+      <h1 class="display-5 mb-0">{{ page.title | default: "Authors" }}</h1>
+      <p class="text-muted mb-0">Meet the people behind the content.</p>
+    </div>
+  </div>
+  {% if page.description %}<p class="lead text-muted">{{ page.description }}</p>{% endif %}
+  {{ content }}
+</header>
+
+<section class="authors-index">
+  <div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for author in site.data.authors %}
+      {% assign author_key = author[0] %}
+      {% assign author_data = author[1] %}
+      {% unless author_data.profile == false %}
+        <div class="col">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body">
+              {% include components/author-card.html author=author_key style="compact" show_bio=true avatar_size=64 %}
+            </div>
+          </div>
+        </div>
+      {% endunless %}
+    {% endfor %}
+  </div>
+</section>
