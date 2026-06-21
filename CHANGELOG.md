@@ -67,6 +67,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   redundant duplicates and some emitted comments were removed) — no tokens,
   selectors, or declaration values changed.
 
+### Fixed
+- **`Gemfile.lock` re-synced to `version.rb` (1.19.1 → 1.19.0)** and guarded
+  against future drift. The `validate_version_consistency` check
+  (`scripts/bin/validate`) now also compares the gem version pinned in
+  `Gemfile.lock`, and a new always-running `Version ↔ Gemfile.lock consistency`
+  step in CI's `quality-checks` job fails any PR where the two disagree — the
+  exact drift that left the lock at 1.19.1 while `version.rb` said 1.19.0.
+
 ## [1.19.0](https://github.com/bamr87/zer0-mistakes/compare/v1.18.1...v1.19.0) (2026-06-16)
 
 

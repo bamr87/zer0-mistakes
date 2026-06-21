@@ -35,7 +35,7 @@ DESCRIPTION:
 DEFAULT CHECKS:
     - Required repository files
     - Gemspec parse
-    - Version consistency between version.rb, package.json, and gemspec
+    - Version consistency between version.rb, package.json, gemspec, and Gemfile.lock
     - YAML parse for root config, _data, and .github/config files
     - Active configuration contract and config-file classification
     - Navigation data shape
@@ -239,6 +239,16 @@ if File.file?('package.json')
   # Explicit UTF-8: package.json contains multibyte characters and the default
   # external encoding is US-ASCII when no locale is set (containers, some CI).
   versions['package.json'] = JSON.parse(File.read('package.json', encoding: 'UTF-8')).fetch('version').to_s
+end
+
+# Gemfile.lock pins the gem's own version in its PATH specs block. It drifts
+# from version.rb when a release path bumps the version without re-locking
+# (the exact failure that left the lock at 1.19.1 while version.rb said 1.19.0).
+if File.file?('Gemfile.lock')
+  lock = File.read('Gemfile.lock')
+  if (match = lock.match(/^\s*jekyll-theme-zer0 \(([^)]+)\)\s*$/))
+    versions['Gemfile.lock'] = match[1].to_s
+  end
 end
 
 expected = versions.values.first
