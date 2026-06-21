@@ -183,9 +183,23 @@ layout: default
   </header>
   
   {% comment %} ================================ {% endcomment %}
-  {% comment %} FEATURED HERO IMAGE             {% endcomment %}
+  {% comment %} FEATURED / BREAKING HERO IMAGE  {% endcomment %}
   {% comment %} ================================ {% endcomment %}
-  {% if post_type == "featured" and page.preview %}
+  {% comment %}
+    Render the hero image for prominent post types (featured + breaking) when a
+    preview image is set. Breaking stories were previously skipped because the
+    condition checked only post_type == "featured"; since breaking is mapped
+    before featured (see top of file), breaking+featured posts showed no hero.
+    Nested ifs keep the "only when page.preview exists" guard intact (Liquid has
+    no parentheses, so a flat `a or b and c` would misgroup).
+  {% endcomment %}
+  {% assign show_hero = false %}
+  {% if page.preview %}
+    {% if post_type == "featured" or post_type == "breaking" %}
+      {% assign show_hero = true %}
+    {% endif %}
+  {% endif %}
+  {% if show_hero %}
   <figure class="featured-hero mb-5">
     {% include components/preview-image.html 
        src=page.preview 
