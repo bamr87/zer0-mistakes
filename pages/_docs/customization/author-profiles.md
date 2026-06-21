@@ -1,6 +1,7 @@
 ---
-title: Author Profiles
-description: How to define author profiles and surface "About the Author" bylines, bio cards, and per-author profile pages across every collection in the Zer0-Mistakes theme.
+title: Author Profiles and About-the-Author Bylines
+description: Define author profiles and surface bylines, bio cards, and per-author profile pages across every collection in the Zer0-Mistakes Jekyll theme.
+lastmod: 2026-06-21T00:00:00.000Z
 layout: default
 author: bamr87
 categories:
@@ -11,6 +12,12 @@ tags:
   - components
   - collections
   - seo
+keywords:
+  - author profiles
+  - about the author
+  - jekyll author byline
+  - author bio card
+  - collections
 permalink: /docs/customization/author-profiles/
 difficulty: beginner
 estimated_reading_time: 8 minutes
@@ -71,7 +78,7 @@ so existing content keeps working.
 | Profile hero + content grid | `_layouts/author.html` | `/authors/:key/` |
 | Author directory | `_layouts/authors.html` | `/authors/` |
 
-The "About the Author" card is gated by the `author_profile` front-matter flag
+The "About the Author" card is gated by the `author_profile` front matter flag
 (defaulted to `true` for content collections in `_config.yml`). Set
 `author_profile: false` on a page to hide it.
 
