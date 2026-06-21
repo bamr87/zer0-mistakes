@@ -72,11 +72,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
-          # Need a token that can push commits back on the main branch.
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Ruby
@@ -95,16 +95,28 @@ jobs:
         if: github.event_name != 'pull_request'
         run: ruby scripts/generate-roadmap.rb
 
-      - name: Commit README changes
+      # Open a PR instead of pushing to main directly (main is protected).
+      # Stable branch → repeated runs update the same PR rather than spawning new
+      # ones. NOTE: PRs opened with GITHUB_TOKEN do not auto-trigger CI (GitHub's
+      # recursion guard); close/reopen the PR to run checks, or merge directly.
+      - name: Open PR for README changes
         if: github.event_name != 'pull_request'
-        # [skip ci] so this push does not retrigger CI workflows.
-        run: |
-          if git diff --quiet README.md; then
-            echo "README.md already in sync — nothing to commit."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md
-          git commit -m "docs(roadmap): regenerate README from _data/roadmap.yml [skip ci]"
-          git push
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          add-paths: README.md
+          branch: chore/roadmap-readme
+          delete-branch: true
+          commit-message: "docs(roadmap): regenerate README from _data/roadmap.yml"
+          title: "docs(roadmap): regenerate README from _data/roadmap.yml"
+          body: |
+            Automated: regenerated the README roadmap section from
+            `_data/roadmap.yml` via `scripts/generate-roadmap.rb`.
+
+            Opened as a PR (not a direct push to `main`) so every change flows
+            through review + branch protection. PRs opened by `GITHUB_TOKEN` don't
+            auto-trigger CI — close/reopen to run checks, or merge directly.
+
+            *Automated by the [sync workflow](../.github/workflows/sync.yml).*
+          labels: automated
+          assignees: bamr87
