@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Contributor workflow guardrails.** New `change-workflow` skill
+  (`.github/skills/change-workflow/SKILL.md`) codifying the branch → commit → PR
+  flow for any change (branch-first, one concern per PR, stage-by-path,
+  worktrees for parallel work, splitting a messy working tree). Paired with
+  expanded `version-control.instructions.md` rules — working-tree/branch
+  discipline, the `version.rb` ↔ `Gemfile.lock` invariant, and keeping generated
+  artifacts out of feature PRs — and indexed from `AGENTS.md`, `CLAUDE.md`, and
+  `.github/instructions/README.md`.
+
 ### Performance
 - **Docker dev image cut from ~4GB to ~1.7GB and cold build from ~193s to ~82s**
   (native arm64; far worse under the old emulated build). The `dev-test` stage

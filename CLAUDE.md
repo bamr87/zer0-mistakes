@@ -28,6 +28,9 @@ files you touch:
   (`commit-publish`, `repo-audit`, `backlog-implement`, `obsidian-add-syntax`,
   `frontmatter-maintainer`, `content-review`, `seed`). Mirrored as Cursor
   commands in `.cursor/commands/`.
+- `.github/skills/*/SKILL.md` — operational checklists: `change-workflow`
+  (branch → commit → PR for **any** change; read it before starting one),
+  `validate-build` (pre-commit/PR validation), `content-review`.
 - **AI content reviewer** — reviews content PRs (Markdown under `pages/**`) for
   SEO, consistency, polish, accessibility, and accuracy. Two tiers:
   `scripts/content-review.rb` (deterministic, per-collection thresholds from
@@ -137,21 +140,27 @@ support `--dry-run`. The self-healing installer is `install.sh` +
 
 ## Key Conventions
 
-1. **Make minimal, surgical changes.** Match existing style; don't refactor
+1. **Branch first; one concern per PR.** Create a branch off `main` *before*
+   editing — never commit to `main` directly (it's protected). Each branch/PR
+   holds one logical change; stage by path so generated/lock files don't leak
+   in. See the `change-workflow` skill and `version-control.instructions.md`.
+2. **Make minimal, surgical changes.** Match existing style; don't refactor
    unrelated code.
-2. **Validate before declaring done.** Run the relevant test suite; for any
+3. **Validate before declaring done.** Run the relevant test suite; for any
    layout/include/sass change, run the Docker Jekyll build above.
-3. **Update `CHANGELOG.md`** for user-visible changes (Keep a Changelog
+4. **Update `CHANGELOG.md`** for user-visible changes (Keep a Changelog
    format, newest entry at the top).
-4. **Version bumps happen only via `./scripts/bin/release`** — never in
-   unrelated PRs.
-5. **Conventional commits**: types `feat|fix|docs|style|refactor|perf|test|chore`;
+5. **Version bumps happen only via `./scripts/bin/release`** — never in
+   unrelated PRs. Keep `Gemfile.lock`'s `jekyll-theme-zer0` version in sync with
+   `version.rb`, and keep the generated `_data/content_statistics.yml` out of
+   feature PRs (its own `chore` commit or CI).
+6. **Conventional commits**: types `feat|fix|docs|style|refactor|perf|test|chore`;
    scopes include `search`, `navigation`, `layouts`, `includes`, `sass`,
    `config`, `ci`, `scripts`, `analytics`. Commit analysis drives the
    automatic version-bump type.
-6. **Prefer existing patterns**: Bootstrap 5 components, Bootstrap Icons, and
+7. **Prefer existing patterns**: Bootstrap 5 components, Bootstrap Icons, and
    the modular `_includes/` system cover most UI needs.
-7. **Backlog**: edit `_data/backlog.yml`, not the mirrored GitHub Issues.
-8. When asked to "commit", "release", or "publish", follow the structured
+8. **Backlog**: edit `_data/backlog.yml`, not the mirrored GitHub Issues.
+9. When asked to "commit", "release", or "publish", follow the structured
    workflow in `.github/copilot-instructions.md` (§ Commit and Release
    Workflow) or the `/commit-publish` prompt.
