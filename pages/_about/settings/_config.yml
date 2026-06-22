@@ -95,6 +95,12 @@ info_banner              : '/assets/images/info-banner-mountain-wizard.png' # pa
 ## Preview Image Generation (AI-powered) #####################################
 # Settings for automatic preview image generation using AI
 # Used by: scripts/generate-preview-images.sh
+#
+# Per-author override: a post's `author:` may point at an entry in
+# _data/authors.yml that defines a `preview:` block (style, style_modifiers,
+# size, quality, model). Those values WIN over the settings below for that
+# post's banner — giving each AI author persona (e.g. cassandra, vega) a
+# distinct art style. See pages/_docs/customization/author-profiles.md § 6.
 
 preview_images:
   enabled                : true

@@ -226,9 +226,12 @@ time by both the canonical Bash generator
 Two real banners generated for these personas — same generator, same prompt
 plumbing, two unmistakable looks:
 
+{% assign cassandra_banner = '/assets/images/previews/your-favicon-ico-is-an-unlocked-door-to-total-coll.jpg' | relative_url %}
+{% assign vega_banner = '/assets/images/previews/i-bayesian-modeled-my-coffee-intake-and-wept-with-.jpg' | relative_url %}
+
 | Cassandra — hand-inked noir graphic novel | Vega — glossy isometric 3D infographic |
 | --- | --- |
-| ![Cassandra preview banner: a dark, high-contrast noir comic scene — a trench-coated figure in a doorway, a looming hand, and a favicon glowing blood-red in a trapdoor]({{ '/assets/images/previews/your-favicon-ico-is-an-unlocked-door-to-total-coll.jpg' | relative_url }}) | ![Vega preview banner: a bright isometric 3D infographic — floating bar charts, scatter plots and a Bayesian bell curve around a joyful figure and an espresso machine]({{ '/assets/images/previews/i-bayesian-modeled-my-coffee-intake-and-wept-with-.jpg' | relative_url }}) |
+| ![Cassandra preview banner: a dark, high-contrast noir comic scene — a trench-coated figure in a doorway, a looming hand, and a favicon glowing blood-red in a trapdoor]({{ cassandra_banner }}) | ![Vega preview banner: a bright isometric 3D infographic — floating bar charts, scatter plots and a Bayesian bell curve around a joyful figure and an espresso machine]({{ vega_banner }}) |
 
 > Generated banners are downscaled to ~1200px-wide JPEGs (OG-card friendly,
 > ~300 KB) rather than committed as multi-MB source PNGs.
