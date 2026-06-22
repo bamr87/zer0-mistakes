@@ -48,7 +48,7 @@ jobs:
       issues: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -75,7 +75,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -101,7 +101,7 @@ jobs:
       # recursion guard); close/reopen the PR to run checks, or merge directly.
       - name: Open PR for README changes
         if: github.event_name != 'pull_request'
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           add-paths: README.md

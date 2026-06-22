@@ -94,7 +94,7 @@ jobs:
     
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Generate Immutable Tag
         id: tag
@@ -213,7 +213,7 @@ jobs:
     
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Download Docker Image
         uses: actions/download-artifact@v8
@@ -337,7 +337,7 @@ jobs:
     
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Download Docker Image
         uses: actions/download-artifact@v8
