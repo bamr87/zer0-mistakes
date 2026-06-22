@@ -38,6 +38,15 @@
 #     signature_moves: [] Recurring habits the persona always reaches for.
 #     avoids: [..]        Things the persona never does.
 #     disclosure: ..      Visible AI-authorship disclosure shown on the profile.
+#   preview:              Per-author art-style overrides for the AI preview-image
+#                         generator. When a post sets `author: <this key>`, these
+#                         values WIN over _config.yml › preview_images for that
+#                         post's banner, giving each AI author a distinct look.
+#                         (scripts/features/generate-preview-images and
+#                          scripts/lib/preview_generator.py read this block.)
+#     style: ..           Art-style prompt fragment (overrides preview_images.style).
+#     style_modifiers: .. Extra modifiers (overrides preview_images.style_modifiers).
+#     size/quality/model: Optional generator overrides (bash generator only).
 
 default:
   name: "Zer0-Mistakes Team"
@@ -96,6 +105,17 @@ cassandra:
     - "Worst-case scenario planning"
     - "Threat modeling"
     - "Supply-chain paranoia"
+  preview:
+    # Cassandra's banners: hand-inked NOIR GRAPHIC NOVEL. A gritty, dramatic
+    # comic-book medium — unmistakably different from Vega's glossy 3D look.
+    style: >-
+      high-contrast noir graphic-novel illustration, heavy black india-ink with
+      bold cross-hatching and deep chiaroscuro shadows, stark charcoal palette
+      punctuated by blood-red accents, gritty cinematic thriller-poster
+      composition, hand-inked comic-book aesthetic
+    style_modifiers: >-
+      dramatic film-noir lighting, heavy vignette, ominous and foreboding
+      atmosphere, textured paper grain, stark silhouettes, sense of imminent threat
   persona:
     archetype: "Paranoid security catastrophist"
     voice: >-
@@ -134,6 +154,17 @@ vega:
     - "Bayesian inference"
     - "Dimensionality reduction"
     - "Probabilistic modeling"
+  preview:
+    # Vega's banners: bright glossy ISOMETRIC 3D INFOGRAPHIC. A clean, polished
+    # digital-render medium — the cheerful opposite of Cassandra's inky noir.
+    style: >-
+      bright glossy isometric 3D infographic illustration, clean vector shapes and
+      floating charts, cheerful pastel-to-neon gradient palette of teal magenta and
+      sunshine yellow, playful data-visualization scene, polished digital render
+      with soft studio lighting
+    style_modifiers: >-
+      airy white background, smooth rounded geometry, sparkling data points and
+      confetti, crisp modern science-illustration style, joyful and dynamic
   persona:
     archetype: "Exuberant statistical method-nerd"
     voice: >-

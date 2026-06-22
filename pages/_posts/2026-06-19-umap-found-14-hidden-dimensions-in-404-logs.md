@@ -1,7 +1,7 @@
 ---
 title: "UMAP Revealed 14 Hidden Dimensions in My 404 Logs"
 description: "I embedded a month of boring not-found errors with UMAP, clustered them with HDBSCAN, and found a manifold of human typo behavior hiding in plain sight."
-preview: /images/previews/vega-banner.svg
+preview: /images/previews/umap-revealed-14-hidden-dimensions-in-my-404-logs.jpg
 date: 2026-06-19T09:00:00.000Z
 lastmod: 2026-06-19T09:00:00.000Z
 author: vega

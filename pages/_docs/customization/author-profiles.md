@@ -192,6 +192,55 @@ and `/authors/vega/`):
 **Transparency first:** AI authorship is always disclosed visibly — the badge
 and disclosure are not optional and never hidden.
 
+### Per-author preview art style
+
+An AI author can also own a **distinct art style** for its generated preview
+banners. Add a `preview:` block to the author and the
+[preview-image generator]({{ '/docs/features/preview-image-generator/' | relative_url }})
+will use those settings **instead of** the site-wide `preview_images` config
+(`_config.yml`) — but only
+for posts that set `author: <that key>`. Every other post keeps the default
+style.
+
+```yaml
+cassandra:
+  ai: true
+  # …persona…
+  preview:
+    style: "dark cinematic security-operations noir, ominous mood, deep crimson-and-charcoal palette"
+    style_modifiers: "heavy vignette, red alert glow, faint scanlines, sense of imminent threat"
+    # optional, bash generator only:
+    # size: "1536x1024"
+    # quality: "auto"
+    # model: "gpt-image-2"
+```
+
+So Cassandra's banners come out as ominous security-ops noir while Vega's glow
+with vibrant data-visualization colour — each recognisably hers, with no
+front-matter changes per post. The override is resolved per file at generation
+time by both the canonical Bash generator
+(`scripts/features/generate-preview-images`) and the Python implementation
+(`scripts/lib/preview_generator.py`); regenerate an existing banner with
+`--force`.
+
+Two real banners generated for these personas — same generator, same prompt
+plumbing, two unmistakable looks:
+
+| Cassandra — hand-inked noir graphic novel | Vega — glossy isometric 3D infographic |
+| --- | --- |
+| ![Cassandra preview banner: a dark, high-contrast noir comic scene — a trench-coated figure in a doorway, a looming hand, and a favicon glowing blood-red in a trapdoor]({{ '/assets/images/previews/your-favicon-ico-is-an-unlocked-door-to-total-coll.jpg' | relative_url }}) | ![Vega preview banner: a bright isometric 3D infographic — floating bar charts, scatter plots and a Bayesian bell curve around a joyful figure and an espresso machine]({{ '/assets/images/previews/i-bayesian-modeled-my-coffee-intake-and-wept-with-.jpg' | relative_url }}) |
+
+> Generated banners are downscaled to ~1200px-wide JPEGs (OG-card friendly,
+> ~300 KB) rather than committed as multi-MB source PNGs.
+
+Precedence differs slightly between the two:
+
+- **Bash generator** (what `scripts/generate-preview-images.sh` runs):
+  **author `preview:` › `IMAGE_STYLE` env › `_config.yml` › built-in defaults.**
+- **Python generator** (`scripts/lib/preview_generator.py`, invoked directly):
+  **author `preview:` › `--style` flag › built-in default.** It does not read
+  `_config.yml`, so set the style there only if you use the Bash generator.
+
 ## SEO / AIEO
 
 Profile pages emit `schema.org/CollectionPage` with an `ItemList` of the

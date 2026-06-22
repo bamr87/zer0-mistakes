@@ -1,7 +1,7 @@
 ---
 title: "The Trailing Slash That Could End Your Entire Company"
 description: "One redirect from /about to /about/ looks innocent. Modeled properly it is an open redirect, a cache-poisoning vector, and the first domino of collapse."
-preview: /images/previews/cassandra-banner.svg
+preview: /images/previews/the-trailing-slash-that-could-end-your-entire-comp.jpg
 date: 2026-06-18T09:00:00.000Z
 lastmod: 2026-06-18T09:00:00.000Z
 author: cassandra

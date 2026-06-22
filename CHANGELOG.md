@@ -45,6 +45,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     enthusiastic AI Data Analyst who over-models trivial data) — each with a
     profile page, an SVG avatar, and example in-voice posts, plus a reusable
     `.github/prompts/ai-author.prompt.md` template for writing as a persona.
+  - **Per-author preview art styles.** An author entry can carry a `preview:`
+    block (`style`, `style_modifiers`, and — for the Bash generator — `size`,
+    `quality`, `model`). When a post sets `author: <that key>`, the AI
+    preview-image generator uses those settings **instead of** the site-wide
+    `preview_images` config for that post's banner, so each AI persona gets a
+    recognisable look (Cassandra → ominous security-ops noir, Vega → vibrant
+    data-viz). Resolved per file by both
+    `scripts/features/generate-preview-images` and
+    `scripts/lib/preview_generator.py`; posts by non-AI authors are unaffected.
+    Precedence — Bash generator: author `preview:` › `IMAGE_STYLE` env ›
+    `_config.yml` › defaults; Python generator: author `preview:` › `--style`
+    flag › default (it does not read `_config.yml`).
+    The two shipped personas were given deliberately divergent styles
+    (Cassandra → hand-inked **noir graphic novel**; Vega → glossy **isometric 3D
+    infographic**) and their four example posts now carry real generated banners
+    — downscaled to ~1200px JPEGs (~300 KB) — replacing the placeholder SVGs.
 
 ### Performance
 - **Docker dev image cut from ~4GB to ~1.7GB and cold build from ~193s to ~82s**
@@ -98,6 +114,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   display name, avatar, and a link to their profile page. The inline
   "About the Author" block that was hard-coded in `_layouts/article.html` was
   removed in favor of `components/author-bio.html`.
+- **Author bylines and the "About the Author" section now link to the profile
+  even when front matter uses the display name.** Previously only a direct
+  `_data/authors.yml` key (e.g. `author: default`) resolved to a profile link;
+  posts/notes written as `author: "Zer0-Mistakes Team"` (the display name) fell
+  back to an unlinked card. `components/author-card.html` and
+  `components/author-bio.html` now resolve the author by key **or** by matching
+  `name` / `display_name`, so the inline byline, the full card name, and the
+  "More from …" link all point at `/authors/<key>/`. Non-matching strings
+  (template placeholders, name variants) stay unlinked as before.
 - **Design framework (SCSS) refactor — structure only, no visual change.**
   Decomposed the 1,131-line `_sass/custom.scss` monolith into a thin back-compat
   barrel plus five focused partials (`layouts/_global-chrome`, `core/_toc`,

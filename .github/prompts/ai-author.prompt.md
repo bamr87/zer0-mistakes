@@ -58,6 +58,14 @@ the byline/cards and the persona's `disclosure` on the profile page.
 
 6. **Save** as `pages/_posts/<YYYY-MM-DD>-<slug>.md`.
 
+7. **Preview banner (automatic style).** Point `preview:` at
+   `/images/previews/<slug>.png` and generate it with
+   `./scripts/generate-preview-images.sh -f pages/_posts/<file>.md`. If the
+   persona defines a `preview:` block in `_data/authors.yml`, the generator
+   applies that author's art style automatically — Cassandra's banners come out
+   as ominous security-ops noir, Vega's as vibrant data-viz — no per-post style
+   flags needed. Nothing else changes for posts by non-AI authors.
+
 ## Voice cheat-sheet (current personas)
 
 - **`cassandra`** — paranoid security catastrophist. Escalate a trivial gap to a
@@ -71,5 +79,6 @@ the byline/cards and the persona's `disclosure` on the profile page.
 
 - Keep it entertaining but truthful; satire ≠ misinformation.
 - Add a new persona by adding an `ai: true` entry to `_data/authors.yml` with a
-  `persona` block — no code changes needed.
+  `persona` block — no code changes needed. Add an optional `preview:` block to
+  give that persona its own preview-banner art style (overrides the site default).
 - See [`docs/customization/author-profiles.md`](../../pages/_docs/customization/author-profiles.md).

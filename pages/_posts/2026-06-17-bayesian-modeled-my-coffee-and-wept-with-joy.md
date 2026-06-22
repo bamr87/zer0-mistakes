@@ -1,7 +1,7 @@
 ---
 title: "I Bayesian-Modeled My Coffee Intake and Wept With Joy"
 description: "Why settle for an average when a hierarchical Bayesian model with partial pooling and posterior predictive checks earns a gloriously credible interval?"
-preview: /images/previews/vega-banner.svg
+preview: /images/previews/i-bayesian-modeled-my-coffee-intake-and-wept-with-.jpg
 date: 2026-06-17T09:00:00.000Z
 lastmod: 2026-06-17T09:00:00.000Z
 author: vega

@@ -91,9 +91,15 @@ fi
 # =============================================================================
 # Configuration Loading
 # =============================================================================
-# Priority: CLI args > Environment variables > _config.yml > Defaults
+# Priority (per file): author preview overrides (_data/authors.yml) >
+#                       CLI args > Environment variables > _config.yml > Defaults
+# A post's `author:` may point at an entry in _data/authors.yml that carries a
+# `preview:` block (style / style_modifiers / size / quality / model). Those win
+# over the site-wide preview_images config for that post's banner, giving each
+# AI author persona a distinct, recognisable art style.
 
 CONFIG_FILE="$PROJECT_ROOT/_config.yml"
+AUTHORS_FILE="$PROJECT_ROOT/_data/authors.yml"
 
 # Function to read config value from _config.yml using grep (handles YAML anchors)
 read_config() {
@@ -282,6 +288,13 @@ ENVIRONMENT VARIABLES:
 CONFIGURATION:
     Default settings are loaded from _config.yml under 'preview_images' section.
     Environment variables override config file settings.
+
+    PER-AUTHOR ART STYLE:
+    A post's `author:` may reference an entry in _data/authors.yml that defines a
+    `preview:` block (style, style_modifiers, size, quality, model). When present,
+    those values override the site-wide preview_images settings for that post's
+    banner only — giving each AI author persona (e.g. cassandra, vega) a distinct
+    look. Other posts keep the default style.
 
 EXAMPLES:
     # List all files missing preview images
@@ -480,6 +493,73 @@ except:
     fi
     
     echo "$result"
+}
+
+# Read a per-author preview override from _data/authors.yml
+# Usage: get_author_preview_value <author_key> <setting>
+#   e.g. get_author_preview_value cassandra style
+# Returns the value (or empty string when the author / setting is absent).
+get_author_preview_value() {
+    local author_key="$1"
+    local setting="$2"
+
+    [[ -z "$author_key" || ! -f "$AUTHORS_FILE" ]] && return 0
+
+    local result=""
+    if [[ "${YAML_PARSER:-python}" == "yq" ]]; then
+        # Capture the whole value (do NOT `head -1`) so a multi-line literal/folded
+        # scalar survives intact, matching the python3 branch below; trim a single
+        # trailing newline that yq appends.
+        result=$(yq eval ".\"${author_key}\".preview.${setting} // \"\"" "$AUTHORS_FILE" 2>/dev/null)
+        result="${result%$'\n'}"
+        [[ "$result" == "null" ]] && result=""
+    else
+        result=$(AUTHOR_KEY="$author_key" SETTING="$setting" AUTHORS_FILE="$AUTHORS_FILE" python3 -c '
+import os, yaml
+try:
+    data = yaml.safe_load(open(os.environ["AUTHORS_FILE"])) or {}
+    author = data.get(os.environ["AUTHOR_KEY"]) or {}
+    preview = author.get("preview") or {}
+    val = preview.get(os.environ["SETTING"])
+    if val is not None:
+        print(str(val).strip())
+except Exception:
+    pass
+' 2>/dev/null)
+    fi
+
+    echo "$result"
+}
+
+# Apply a post author's per-author preview overrides (from _data/authors.yml) on
+# top of the current image settings. MUST be called from a function that has
+# already declared `local IMAGE_STYLE` (+ IMAGE_STYLE_MODIFIERS / IMAGE_SIZE /
+# IMAGE_QUALITY / IMAGE_MODEL) — bash dynamic scoping lets this helper reassign
+# those caller locals, scoping the override to the current file. Call it only at
+# the point an image/prompt is actually built, so --list-missing stays clean and
+# already-satisfied files don't pay for the lookup.
+apply_author_preview_overrides() {
+    local author="$1"
+    [[ -z "$author" ]] && return 0
+
+    local ov_style ov_mods ov_size ov_quality ov_model
+    ov_style=$(get_author_preview_value "$author" "style")
+    ov_mods=$(get_author_preview_value "$author" "style_modifiers")
+    ov_size=$(get_author_preview_value "$author" "size")
+    ov_quality=$(get_author_preview_value "$author" "quality")
+    ov_model=$(get_author_preview_value "$author" "model")
+
+    [[ -n "$ov_style" ]]   && IMAGE_STYLE="$ov_style"
+    [[ -n "$ov_mods" ]]    && IMAGE_STYLE_MODIFIERS="$ov_mods"
+    [[ -n "$ov_size" ]]    && IMAGE_SIZE="$ov_size"
+    [[ -n "$ov_quality" ]] && IMAGE_QUALITY="$ov_quality"
+    [[ -n "$ov_model" ]]   && IMAGE_MODEL="$ov_model"
+
+    if [[ -n "$ov_style" || -n "$ov_mods" || -n "$ov_size" || -n "$ov_quality" || -n "$ov_model" ]]; then
+        info "  ↳ Author '$author' preview overrides applied (style from _data/authors.yml)"
+        debug "Author override style: ${IMAGE_STYLE:0:120}..."
+    fi
+    return 0
 }
 
 # Extract post content (without front matter)
@@ -983,15 +1063,33 @@ process_file() {
     fi
     
     # Get metadata
-    local title description categories preview
+    local title description categories preview author
     title=$(get_yaml_value "$front_matter" "title")
     description=$(get_yaml_value "$front_matter" "description")
     categories=$(get_yaml_value "$front_matter" "categories")
     preview=$(get_yaml_value "$front_matter" "preview")
-    
+    author=$(get_yaml_value "$front_matter" "author")
+
     debug "Title: $title"
     debug "Preview: $preview"
-    
+
+    # -------------------------------------------------------------------------
+    # Per-author art-style override (e.g. AI personas Cassandra / Vega).
+    # These `local`s shadow the global image settings for the duration of this
+    # function and everything it calls (generate_prompt, generate_image,
+    # build_enhance_prompt) via bash dynamic scoping — so each worker/file gets
+    # its author's style without leaking to other files, in serial or parallel.
+    # The actual lookup runs later, via apply_author_preview_overrides, only
+    # once an image/prompt is really built — never in --list-missing mode and
+    # not for files whose preview already exists (keeps listing output clean and
+    # skips wasted YAML-parser subprocesses).
+    # -------------------------------------------------------------------------
+    local IMAGE_STYLE="$IMAGE_STYLE"
+    local IMAGE_STYLE_MODIFIERS="$IMAGE_STYLE_MODIFIERS"
+    local IMAGE_SIZE="$IMAGE_SIZE"
+    local IMAGE_QUALITY="$IMAGE_QUALITY"
+    local IMAGE_MODEL="$IMAGE_MODEL"
+
     # =========================================================================
     # ENHANCE MODE: improve an existing preview image
     # =========================================================================
@@ -1010,7 +1108,10 @@ process_file() {
         
         info "Enhancing preview for: $title"
         debug "Source image: $existing_image ($(du -h "$existing_image" | cut -f1))"
-        
+
+        # Apply the author's art style (if any) before building the prompt
+        apply_author_preview_overrides "$author"
+
         # Build enhancement prompt
         local enhance_prompt
         enhance_prompt=$(build_enhance_prompt "$title" "$description" "$ENHANCE_PROMPT")
@@ -1085,10 +1186,13 @@ process_file() {
     # Preview path should NOT include /assets/ prefix since the template adds it
     local preview_path="/images/previews/${safe_filename}.png"
     
+    # Apply the author's art style (if any) before building the prompt
+    apply_author_preview_overrides "$author"
+
     # Extract content for prompt generation
     local content
     content=$(extract_content "$file")
-    
+
     # Generate prompt
     local prompt
     prompt=$(generate_prompt "$title" "$description" "$categories" "$content")

@@ -1,7 +1,7 @@
 ---
 title: "Your favicon.ico Is an Unlocked Door to Total Collapse"
 description: "That harmless 318-byte browser-tab icon you forgot you shipped is, when modeled correctly, the single most catastrophic liability in your entire stack."
-preview: /images/previews/cassandra-banner.svg
+preview: /images/previews/your-favicon-ico-is-an-unlocked-door-to-total-coll.jpg
 date: 2026-06-16T09:00:00.000Z
 lastmod: 2026-06-16T09:00:00.000Z
 author: cassandra
