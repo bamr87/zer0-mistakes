@@ -16,10 +16,11 @@
   - show_post_type (optional): Show post_type badge (default: true)
   - card_class (optional): Additional CSS classes for the card
   
-  Usage:
-    {% include components/post-card.html post=post %}
-    {% include components/post-card.html post=post show_category=false %}
-    {% include components/post-card.html post=post card_class="shadow-lg" %}
+  Usage (wrap each line in Liquid include tags — braces omitted here because
+  Liquid parses tags even inside HTML comments, which would self-recurse):
+    include components/post-card.html post=post
+    include components/post-card.html post=post show_category=false
+    include components/post-card.html post=post card_class="shadow-lg"
   
   Features:
   - Breaking news badge (red, top-left)
@@ -50,6 +51,12 @@
 {% assign show_post_type = include.show_post_type | default: true %}
 {% assign card_class = include.card_class | default: "" %}
 
+{% comment %} Optional: omit the Bootstrap .col wrapper so a caller (e.g. the
+   author profile grid) can supply its own wrapper + data attributes. Defaults
+   to true so every existing caller is unchanged. {% endcomment %}
+{% assign render_col = true %}
+{% if include.col == false %}{% assign render_col = false %}{% endif %}
+
 {% comment %} 
    Reading time: Use estimated_reading_time from front matter if available,
    otherwise skip to avoid accessing post.content which causes nesting issues
@@ -60,7 +67,7 @@
   {% assign reading_time = "2 min" %}
 {% endif %}
 
-<div class="col">
+{% if render_col %}<div class="col">{% endif %}
   <div class="card h-100 post-card border-0 shadow-sm {{ card_class }}">
     
     <!-- ====================== -->
@@ -145,7 +152,7 @@
         <div>
           {% if show_author and include.post.author %}
             <span class="me-2">
-              <i class="bi bi-person me-1"></i>{{ include.post.author }}
+              {% include components/author-card.html author=include.post.author style="inline" show_avatar=false %}
             </span>
           {% endif %}
           <span>
@@ -174,6 +181,6 @@
         </div>
       {% endif %}
     </div>
-    
+
   </div>
-</div>
+{% if render_col %}</div>{% endif %}

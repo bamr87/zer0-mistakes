@@ -1,37 +1,37 @@
 ---
-generated_at: '2026-05-30 19:26:05'
+generated_at: '2026-06-16 17:40:51'
 overview:
   total_posts: 25
-  total_pages: 148
-  total_content: 173
+  total_pages: 141
+  total_content: 166
   total_categories: 55
-  total_tags: 254
+  total_tags: 258
   total_authors: 5
-  total_words: 106650
-  average_words_per_post: 616.5
-  published: 173
-  drafts: 14
+  total_words: 106674
+  average_words_per_post: 642.6
+  published: 166
+  drafts: 11
 categories:
 - - docs
-  - 84
+  - 75
 - - features
-  - 26
+  - 27
+- - Documentation
+  - 15
 - - development
   - 15
-- - Documentation
-  - 14
-- - jekyll
-  - 13
 - - Development
   - 9
 - - Technology
   - 7
-- - Obsidian
-  - 6
 - - Notes
   - 6
-- - deployment
+- - Obsidian
   - 6
+- - jekyll
+  - 5
+- - Quick Start
+  - 5
 - - customization
   - 5
 - - Tutorial
@@ -40,7 +40,7 @@ categories:
   - 5
 - - seo
   - 4
-- - Quick Start
+- - deployment
   - 4
 - - Business
   - 4
@@ -124,246 +124,220 @@ categories:
   - 1
 tags:
 - - jekyll
-  - 39
+  - 31
 - - docker
-  - 14
+  - 15
 - - documentation
   - 14
 - - navigation
   - 13
 - - automation
   - 12
+- - ai
+  - 10
+- - development
+  - 9
 - - bootstrap
   - 9
-- - ai
-  - 9
-- - development
+- - github-pages
   - 8
-- - accessibility
-  - 7
 - - obsidian
   - 7
-- - github-pages
+- - accessibility
   - 7
+- - setup
+  - 6
 - - deployment
   - 6
 - - ci-cd
   - 6
-- - configuration
-  - 6
 - - ui
   - 6
-- - search
-  - 5
-- - seo
-  - 5
 - - copilot
-  - 5
-- - css
   - 5
 - - reference
   - 5
-- - setup
+- - search
+  - 5
+- - configuration
+  - 5
+- - seo
+  - 5
+- - css
   - 5
 - - workflow
+  - 4
+- - analytics
   - 4
 - - git
   - 4
 - - ruby
   - 4
-- - performance
+- - privacy
   - 4
 - - devops
   - 4
-- - analytics
-  - 4
-- - privacy
-  - 4
-- - tracking
-  - 3
-- - customization
-  - 3
-- - sitemap
-  - 3
-- - responsive
-  - 3
-- - theme
-  - 3
-- - installation
-  - 3
-- - quickstart
-  - 3
-- - yaml
-  - 3
-- - front-matter
-  - 3
 - - features
   - 3
 - - planning
   - 3
+- - yaml
+  - 3
 - - strategy
   - 3
-- - keyboard
+- - quickstart
+  - 3
+- - theme
+  - 3
+- - sitemap
   - 3
 - - version-control
   - 3
-- - security
+- - keyboard
   - 3
+- - installation
+  - 3
+- - tracking
+  - 3
+- - github
+  - 3
+- - customization
+  - 3
+- - performance
+  - 3
+- - responsive
+  - 3
+- - meta
+  - 2
+- - business
+  - 2
 - - netlify
-  - 3
-- - markdown
   - 2
-- - toc
+- - hosting
   - 2
-- - content
+- - front-matter
   - 2
-- - contributing
+- - github-actions
   - 2
-- - aipd
-  - 2
-- - kis
-  - 2
-- - dry
-  - 2
-- - dff
-  - 2
-- - mermaid
-  - 2
-- - ci/cd
-  - 2
-- - mathjax
+- - support
   - 2
 - - ai-assisted-development
   - 2
-- - shortcuts
+- - contributing
   - 2
-- - bash
+- - ci/cd
   - 2
-- - assets
+- - gems
   - 2
-- - dns
+- - dff
   - 2
 - - sidebar
   - 2
-- - version
+- - dry
+  - 2
+- - security
+  - 2
+- - kis
+  - 2
+- - aipd
   - 2
 - - styles
   - 2
 - - layouts
   - 2
-- - github
+- - content
   - 2
-- - jupyter
+- - markdown
+  - 2
+- - getting-started
   - 2
 - - templates
   - 2
 - - components
   - 2
-- - hosting
-  - 2
-- - python
-  - 2
-- - github-actions
-  - 2
-- - gems
-  - 2
-- - getting-started
+- - toc
   - 2
 - - release
   - 2
 - - gem
   - 2
-- - gdpr
-  - 2
-- - faq
+- - version
   - 2
 - - glossary
   - 2
-- - troubleshooting
+- - faq
   - 2
-- - meta
+- - assets
+  - 2
+- - aieo
+  - 2
+- - productivity
   - 2
 - - climate
   - 2
-- - remote-theme
-  - 2
-- - support
+- - manufacturing
   - 2
 - - technology
   - 2
 - - digital-transformation
   - 2
+- - bundler
+  - 2
+- - remote-theme
+  - 2
+- - gdpr
+  - 2
+- - troubleshooting
+  - 2
+- - web-design
+  - 2
+- - jupyter
+  - 2
 - - tutorial
+  - 2
+- - syntax
+  - 2
+- - shortcuts
   - 2
 - - authoring
   - 2
 - - frontend
   - 2
-- - manufacturing
-  - 2
-- - liquid
-  - 2
-- - bundler
-  - 2
-- - productivity
-  - 2
-- - business
-  - 2
-- - web-design
-  - 2
 - - operations
   - 2
-- - syntax
+- - bash
   - 2
-- - aieo
+- - python
   - 2
-- - highlighting
-  - 2
-- - personalization
+- - javascript
   - 1
-- - contact
+- - code
   - 1
-- - math
+- - clipboard
   - 1
-- - latex
+- - developer-experience
   - 1
-- - cross-platform
+- - consent
   - 1
-- - diagrams
+- - ccpa
   - 1
-- - writing
-  - 1
-- - formatting
-  - 1
-- - flowchart
-  - 1
-- - mobile
-  - 1
-- - cheatsheet
-  - 1
-- - containers
-  - 1
-- - startup
+- - posthog
   - 1
 - - dark-mode
   - 1
 - - cookies
   - 1
-- - ccpa
+- - es6
   - 1
-- - ai-integration
-  - 1
-- - ai-automation
-  - 1
-- - consent
-  - 1
-- - ai-collaboration
+- - fab
   - 1
 - - zero-config
   - 1
-- - releases
+- - mobile
   - 1
-- - roadmap
+- - flowchart
+  - 1
+- - diagrams
   - 1
 - - giscus
   - 1
@@ -371,25 +345,87 @@ tags:
   - 1
 - - github-discussions
   - 1
-- - help
-  - 1
 - - notebooks
+  - 1
+- - mermaid
+  - 1
+- - latex
   - 1
 - - data-science
   - 1
-- - email
+- - math
   - 1
-- - skip-link
+- - mathjax
   - 1
-- - debugging
+- - organization
   - 1
-- - '404'
+- - pagination
   - 1
-- - optimization
+- - liquid
+  - 1
+- - vault
   - 1
 - - graph
   - 1
-- - vault
+- - optimization
+  - 1
+- - email
+  - 1
+- - debugging
+  - 1
+- - beginner
+  - 1
+- - structured-data
+  - 1
+- - opengraph
+  - 1
+- - twitter-cards
+  - 1
+- - indexing
+  - 1
+- - terminal
+  - 1
+- - zsh
+  - 1
+- - containers
+  - 1
+- - cheatsheet
+  - 1
+- - formatting
+  - 1
+- - writing
+  - 1
+- - ai-powered
+  - 1
+- - cross-platform
+  - 1
+- - personalization
+  - 1
+- - contact
+  - 1
+- - ai-integration
+  - 1
+- - ai-automation
+  - 1
+- - preview
+  - 1
+- - images
+  - 1
+- - dall-e
+  - 1
+- - scroll-spy
+  - 1
+- - modal
+  - 1
+- - wcag
+  - 1
+- - skip-link
+  - 1
+- - ai-collaboration
+  - 1
+- - '404'
+  - 1
+- - releases
   - 1
 - - ux
   - 1
@@ -397,55 +433,21 @@ tags:
   - 1
 - - footer
   - 1
-- - pagination
-  - 1
-- - domain
-  - 1
-- - organization
-  - 1
-- - collections
-  - 1
-- - rouge
+- - roadmap
   - 1
 - - headings
+  - 1
+- - help
   - 1
 - - vendor
   - 1
 - - prerequisites
   - 1
-- - fab
+- - highlighting
   - 1
-- - zsh
+- - rouge
   - 1
-- - terminal
-  - 1
-- - javascript
-  - 1
-- - es6
-  - 1
-- - indexing
-  - 1
-- - twitter-cards
-  - 1
-- - opengraph
-  - 1
-- - posthog
-  - 1
-- - preview
-  - 1
-- - structured-data
-  - 1
-- - images
-  - 1
-- - dall-e
-  - 1
-- - beginner
-  - 1
-- - scroll-spy
-  - 1
-- - modal
-  - 1
-- - wcag
+- - collections
   - 1
 - - statistics
   - 1
@@ -493,6 +495,10 @@ tags:
   - 1
 - - climate-adaptation
   - 1
+- - frontmatter
+  - 1
+- - startup
+  - 1
 - - funding
   - 1
 - - venture-capital
@@ -539,8 +545,6 @@ tags:
   - 1
 - - data
   - 1
-- - frontmatter
-  - 1
 - - prd
   - 1
 - - requirements
@@ -575,15 +579,17 @@ tags:
   - 1
 - - dashboard
   - 1
+- - chatbot
+  - 1
+- - claude
+  - 1
+- - anthropic
+  - 1
+- - proxy
+  - 1
 - - scroll
   - 1
 - - breadcrumbs
-  - 1
-- - code
-  - 1
-- - clipboard
-  - 1
-- - developer-experience
   - 1
 - - public-health
   - 1
@@ -615,6 +621,8 @@ tags:
   - 1
 - - custom-domain
   - 1
+- - dns
+  - 1
 - - agents
   - 1
 - - cursor
@@ -634,17 +642,17 @@ tags:
 authors:
   default: 20
   Zer0-Mistakes Team: 10
-  Zer0-Mistakes Development Team: 5
+  Zer0-Mistakes Development Team: 6
   Amr Abdel Eissa: 1
   "{{author}}": 1
 years:
   '2025': 19
-  '2026': 23
+  '2026': 24
   '2024': 2
   '2021': 1
 content_breakdown:
   post: 25
-  page: 148
+  page: 141
 monthly_distribution:
   2021-09: 1
   2024-03: 1
@@ -657,7 +665,7 @@ monthly_distribution:
   2025-12: 2
   2026-01: 5
   2026-03: 3
-  2026-04: 15
+  2026-04: 16
 word_statistics:
   2025-01-10-bootstrap-5-components.md:
     words: 191
@@ -750,7 +758,7 @@ word_statistics:
     type: post
     title: 'Urban Resilience: How Cities Prepare for Extreme Heat'
   README.md:
-    words: 5978
+    words: 6527
     type: page
     title: zer0-mistakes
   STATS_ENHANCEMENT_SUMMARY.md:
@@ -770,9 +778,9 @@ word_statistics:
     type: page
     title: Comprehensive Gem Automation System
   index.md:
-    words: 149
+    words: 687
     type: page
-    title: SEO
+    title: Zer0-Mistakes Quick Start Guide
   jekyll-technical-reference.md:
     words: 12
     type: page
@@ -786,19 +794,19 @@ word_statistics:
     type: page
     title: Statistics Dashboard Feature
   bamr87.md:
-    words: 74
+    words: 129
     type: page
-    title: Amr Abdel-Motaleb
+    title: Amr Abdel-Motaleb — Software Architect & IT Journey Author
   analytics.md:
     words: 4
     type: page
     title: Analytics Dashboard
   collections.md:
-    words: 690
+    words: 693
     type: page
     title: Jekyll Collections
   config.md:
-    words: 679
+    words: 976
     type: page
     title: Configuration Utility
   environment.md:
@@ -806,7 +814,7 @@ word_statistics:
     type: page
     title: Environment & Build Info
   navigation.md:
-    words: 423
+    words: 424
     type: page
     title: Navigation
   theme-preview.md:
@@ -830,31 +838,31 @@ word_statistics:
     type: page
     title: Google Tag Manager
   includes.md:
-    words: 793
+    words: 814
     type: page
     title: Include Components
   layouts.md:
-    words: 448
+    words: 469
     type: page
     title: Layouts
   styles.md:
-    words: 493
+    words: 529
     type: page
     title: Styles
   custom-domain.md:
-    words: 759
+    words: 762
     type: page
     title: Custom Domain Setup
   github-pages.md:
-    words: 512
+    words: 532
     type: page
     title: Deploy to GitHub Pages
   netlify.md:
-    words: 713
+    words: 717
     type: page
     title: Deploy to Netlify
   agents.md:
-    words: 443
+    words: 445
     type: page
     title: AGENTS.md — Cross-Tool AI Agent Entry Point
   ci-cd.md:
@@ -862,11 +870,11 @@ word_statistics:
     type: page
     title: CI/CD Pipeline
   dependency-updates.md:
-    words: 632
+    words: 80
     type: page
     title: Dependency Updates
   devcontainer.md:
-    words: 413
+    words: 414
     type: page
     title: DevContainer Configuration
   docker-publishing.md:
@@ -874,19 +882,19 @@ word_statistics:
     type: page
     title: Local Docker Publishing Pipeline
   documentation.md:
-    words: 647
+    words: 648
     type: page
     title: Documentation
   frontmatter-validation.md:
-    words: 404
+    words: 407
     type: page
     title: Config-Driven Frontmatter Validation
   prd.md:
-    words: 599
+    words: 108
     type: page
-    title: Product Requirements Document
+    title: Zer0-Mistakes Product Requirements Document
   release-management.md:
-    words: 690
+    words: 91
     type: page
     title: Release Management
   scripts.md:
@@ -898,7 +906,7 @@ word_statistics:
     type: page
     title: Security Scanning
   testing.md:
-    words: 915
+    words: 113
     type: page
     title: Testing
   vendor-assets.md:
@@ -906,13 +914,17 @@ word_statistics:
     type: page
     title: Vendor assets
   version-bump.md:
-    words: 613
+    words: 110
     type: page
     title: Version Bump Workflow
   admin-dashboard.md:
-    words: 376
+    words: 378
     type: page
     title: Admin Layout & Configuration Dashboards
+  ai-chat-assistant.md:
+    words: 1194
+    type: page
+    title: AI Chat Assistant (Claude + GitHub)
   back-to-top.md:
     words: 503
     type: page
@@ -934,7 +946,7 @@ word_statistics:
     type: page
     title: Cookie Consent Management
   copilot-integration.md:
-    words: 439
+    words: 440
     type: page
     title: GitHub Copilot Integration
   dynamic-navigation.md:
@@ -946,11 +958,11 @@ word_statistics:
     type: page
     title: Giscus Comments
   jupyter-notebooks.md:
-    words: 546
+    words: 569
     type: page
     title: Jupyter Notebook Integration
   keyboard-navigation.md:
-    words: 664
+    words: 687
     type: page
     title: Keyboard Navigation
   mathjax-math.md:
@@ -958,7 +970,7 @@ word_statistics:
     type: page
     title: MathJax Math
   mermaid-diagrams.md:
-    words: 939
+    words: 961
     type: page
     title: Mermaid Diagrams
   mobile-toc.md:
@@ -966,19 +978,19 @@ word_statistics:
     type: page
     title: Mobile TOC Floating Action Button
   navigation-architecture.md:
-    words: 387
+    words: 389
     type: page
     title: ES6 Modular Navigation Architecture
   posthog-analytics.md:
-    words: 674
+    words: 693
     type: page
     title: PostHog Analytics
   preview-image-generator.md:
-    words: 730
+    words: 748
     type: page
-    title: AI Preview Image Generator
+    title: AI Preview Image Generator for Jekyll Posts
   sidebar-navigation.md:
-    words: 633
+    words: 660
     type: page
     title: Sidebar Navigation System
   site-search.md:
@@ -990,11 +1002,11 @@ word_statistics:
     type: page
     title: Skip-to-Content Accessibility Link
   smart-404.md:
-    words: 270
+    words: 274
     type: page
     title: Smart 404 & Site Configuration Detection
   theme-version.md:
-    words: 467
+    words: 488
     type: page
     title: Theme Version Display Plugin
   toc.md:
@@ -1002,75 +1014,35 @@ word_statistics:
     type: page
     title: Table of Contents
   vendored-assets.md:
-    words: 247
+    words: 248
     type: page
     title: Vendored Bootstrap & Icon Assets
   front-matter.md:
-    words: 404
+    words: 401
     type: page
     title: Front Matter
   quick-start.md:
-    words: 968
+    words: 987
     type: page
     title: Quick Start Guide
   theme-guide.md:
-    words: 1116
+    words: 1118
     type: page
-    title: Jekyll Theme Guide
+    title: 'Jekyll Theme Guide: Setup, Customize, Deploy'
   installation.md:
-    words: 260
+    words: 284
     type: page
     title: Installation
   code-highlighting.md:
     words: 309
     type: page
     title: Code Highlighting
-  deploying-jekyll-website-to-netlify.md:
-    words: 25
-    type: page
-    title: Deploying to Netlify
-  deploying-personal-website-with-custom-domain.md:
-    words: 25
-    type: page
-    title: Custom Domain
-  jekyll-config.md:
-    words: 17
-    type: page
-    title: Jekyll Configuration
-  jekyll-frontmatter-cms.md:
-    words: 15
-    type: page
-    title: Front Matter
-  jekyll-highlighting.md:
-    words: 20
-    type: page
-    title: Syntax Highlighting
-  jekyll-liquid.md:
-    words: 18
-    type: page
-    title: Jekyll + Liquid
-  jekyll-math-symbols-with-mathjax.md:
-    words: 19
-    type: page
-    title: MathJax
-  jekyll-performance-optimization.md:
-    words: 25
-    type: page
-    title: Performance Optimization
-  jekyll-security.md:
-    words: 24
-    type: page
-    title: Security
-  mermaid-native-markdown.md:
-    words: 21
-    type: page
-    title: Mermaid Native Markdown
   pagination.md:
     words: 467
     type: page
     title: Pagination
   authoring-workflow.md:
-    words: 457
+    words: 458
     type: page
     title: Obsidian Authoring Workflow
   getting-started.md:
@@ -1082,11 +1054,11 @@ word_statistics:
     type: page
     title: Obsidian Graph View
   performance.md:
-    words: 478
+    words: 479
     type: page
     title: Obsidian Resolver — Performance & Caching
   syntax-reference.md:
-    words: 776
+    words: 773
     type: page
     title: Obsidian Syntax Reference
   troubleshooting.md:
@@ -1102,7 +1074,7 @@ word_statistics:
     type: page
     title: Ruby 101
   aieo.md:
-    words: 432
+    words: 436
     type: page
     title: AIEO — AI Engine Optimization
   meta-tags.md:
@@ -1138,19 +1110,19 @@ word_statistics:
     type: page
     title: Markdown Formatting Tips
   github-setup.md:
-    words: 1265
+    words: 557
     type: page
     title: GitHub Setup & Deployment
   jekyll-setup.md:
-    words: 1222
+    words: 617
     type: page
     title: Jekyll Setup
   machine-setup.md:
-    words: 3307
+    words: 562
     type: page
     title: Machine Setup
   personalization.md:
-    words: 3651
+    words: 3693
     type: page
     title: Site Personalization & Configuration
   archives.md:
@@ -1222,13 +1194,17 @@ word_statistics:
     type: page
     title: Terms of Service
   AGENTS.md:
-    words: 1160
+    words: 1389
     type: page
     title: AGENTS
   CHANGELOG.md:
-    words: 17026
+    words: 20091
     type: page
     title: CHANGELOG
+  CLAUDE.md:
+    words: 945
+    type: page
+    title: CLAUDE
   CODE_OF_CONDUCT.md:
     words: 1004
     type: page
@@ -1246,55 +1222,55 @@ word_statistics:
     type: page
     title: '404'
 focus_areas:
-  Documentation & Content: 119
-  Web Development: 76
-  AI & Machine Learning: 45
-  Programming & Scripting: 42
-  DevOps & Infrastructure: 32
-  System Administration: 31
-  Tools & Development Environment: 26
-  Creative & Experimental: 23
+  Documentation & Content: 111
+  Web Development: 70
+  AI & Machine Learning: 47
+  Programming & Scripting: 43
+  System Administration: 32
+  DevOps & Infrastructure: 31
+  Creative & Experimental: 24
+  Tools & Development Environment: 24
   Data & Analytics: 21
 skill_levels:
-  beginner: 26
+  beginner: 25
   intermediate: 16
-  advanced: 11
+  advanced: 10
   expert: 8
 content_types:
   Tutorial: 37
-  Article: 31
-  Documentation: 18
-  Journal Entry: 16
-  News/Update: 9
+  Article: 33
+  Documentation: 21
+  Journal Entry: 15
+  News/Update: 8
 date_range:
   earliest: 2021
   latest: 2026
   span_years: 6
-drafts: 14
-published: 173
+drafts: 11
+published: 166
 category_count: 55
-tag_count: 254
+tag_count: 258
 author_count: 5
 top_categories:
-  docs: 84
-  features: 26
+  docs: 75
+  features: 27
+  Documentation: 15
   development: 15
-  Documentation: 14
-  jekyll: 13
+  Development: 9
 top_tags:
-  jekyll: 39
-  docker: 14
+  jekyll: 31
+  docker: 15
   documentation: 14
   navigation: 13
   automation: 12
+  ai: 10
+  development: 9
   bootstrap: 9
-  ai: 9
-  development: 8
-  accessibility: 7
+  github-pages: 8
   obsidian: 7
 top_authors:
   default: 20
   Zer0-Mistakes Team: 10
-  Zer0-Mistakes Development Team: 5
+  Zer0-Mistakes Development Team: 6
   Amr Abdel Eissa: 1
   "{{author}}": 1

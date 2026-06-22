@@ -126,8 +126,7 @@ layout: default
       <!-- Author -->
       {% if page.author %}
         <span class="post-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
-          <i class="bi bi-person me-1"></i>
-          <span itemprop="name">{{ page.author }}</span>
+          {% include components/author-card.html author=page.author style="inline" name_itemprop="name" %}
         </span>
         <span class="mx-2">•</span>
       {% endif %}
@@ -183,9 +182,23 @@ layout: default
   </header>
   
   {% comment %} ================================ {% endcomment %}
-  {% comment %} FEATURED HERO IMAGE             {% endcomment %}
+  {% comment %} FEATURED / BREAKING HERO IMAGE  {% endcomment %}
   {% comment %} ================================ {% endcomment %}
-  {% if post_type == "featured" and page.preview %}
+  {% comment %}
+    Render the hero image for prominent post types (featured + breaking) when a
+    preview image is set. Breaking stories were previously skipped because the
+    condition checked only post_type == "featured"; since breaking is mapped
+    before featured (see top of file), breaking+featured posts showed no hero.
+    Nested ifs keep the "only when page.preview exists" guard intact (Liquid has
+    no parentheses, so a flat `a or b and c` would misgroup).
+  {% endcomment %}
+  {% assign show_hero = false %}
+  {% if page.preview %}
+    {% if post_type == "featured" or post_type == "breaking" %}
+      {% assign show_hero = true %}
+    {% endif %}
+  {% endif %}
+  {% if show_hero %}
   <figure class="featured-hero mb-5">
     {% include components/preview-image.html 
        src=page.preview 
@@ -366,71 +379,14 @@ layout: default
   <!-- ================================ -->
   <!-- AUTHOR BIO SECTION               -->
   <!-- ================================ -->
-  {% if page.author %}
-    {% assign author_key = page.author %}
-    {% assign author_data = site.data.authors[author_key] %}
-    {% unless author_data %}
-      {% assign author_data = site.data.authors.default %}
-      {% assign author_name = page.author %}
-    {% else %}
-      {% assign author_name = author_data.name %}
-    {% endunless %}
-    
-    <aside class="author-section my-5 pt-4 border-top">
-      <h3 class="h5 mb-3">
-        <i class="bi bi-person-badge me-2"></i>About the Author
-      </h3>
-      <div class="author-card card border-0 shadow-sm">
-        <div class="card-body">
-          <div class="d-flex align-items-start">
-            {% if author_data.avatar %}
-              <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ author_data.avatar }}" 
-                   alt="{{ author_name }}" 
-                   class="rounded-circle me-3" 
-                   width="80" height="80"
-                   style="object-fit: cover;">
-            {% else %}
-              <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" 
-                   style="width: 80px; height: 80px;">
-                <i class="bi bi-person fs-1"></i>
-              </div>
-            {% endif %}
-            <div class="flex-grow-1">
-              <h5 class="card-title mb-1">{{ author_name }}</h5>
-              {% if author_data.role %}
-                <p class="text-primary mb-2">{{ author_data.role }}</p>
-              {% endif %}
-              {% if author_data.bio %}
-                <p class="card-text text-muted">{{ author_data.bio }}</p>
-              {% endif %}
-              <div class="author-social d-flex gap-2 mt-2">
-                {% if author_data.github %}
-                  <a href="https://github.com/{{ author_data.github }}" 
-                     class="btn btn-sm btn-outline-secondary" 
-                     target="_blank" rel="noopener" title="GitHub">
-                    <i class="bi bi-github"></i>
-                  </a>
-                {% endif %}
-                {% if author_data.twitter %}
-                  <a href="https://x.com/{{ author_data.twitter }}" 
-                     class="btn btn-sm btn-outline-secondary" 
-                     target="_blank" rel="noopener" title="X" aria-label="X">
-                    <i class="bi bi-twitter-x"></i>
-                  </a>
-                {% endif %}
-                {% if author_data.website %}
-                  <a href="{{ author_data.website }}" 
-                     class="btn btn-sm btn-outline-secondary" 
-                     target="_blank" rel="noopener" title="Website">
-                    <i class="bi bi-globe"></i>
-                  </a>
-                {% endif %}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </aside>
+  {% comment %}
+    "About the Author" is honored when the post has an author and the
+    `author_profile` front-matter flag is not false (defaults to true for the
+    posts collection in _config.yml). Rendering is delegated to the shared
+    components/author-bio.html → components/author-card.html primitives.
+  {% endcomment %}
+  {% if page.author and page.author_profile != false %}
+    {% include components/author-bio.html author=page.author %}
   {% endif %}
   
   <!-- ================================ -->
