@@ -3,6 +3,7 @@ layout: author
 author_key: guest
 title: Become an Author — Contribute to zer0-mistakes
 description: How to contribute articles and become a credited author on zer0-mistakes — the workflow, front matter, review process, and adding your own author profile.
+lastmod: 2026-06-22T00:00:00.000Z
 permalink: /authors/guest/
 sidebar: false
 hide_intro: true
