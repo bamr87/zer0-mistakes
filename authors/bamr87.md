@@ -5,5 +5,6 @@ title: Amr Abdel-Motaleb
 description: Articles, docs, and notes by Amr Abdel-Motaleb, creator of zer0-mistakes.
 permalink: /authors/bamr87/
 sidebar: false
+hide_intro: true
 author_profile: false
 ---

@@ -5,5 +5,6 @@ title: Zer0-Mistakes Team
 description: Articles, docs, and notes from the Zer0-Mistakes team.
 permalink: /authors/default/
 sidebar: false
+hide_intro: true
 author_profile: false
 ---

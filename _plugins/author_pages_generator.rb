@@ -61,7 +61,8 @@ module Jekyll
           "description" => data["bio"] || "Articles and content by #{name}.",
           "permalink"   => permalink,
           "sitemap"     => true,
-          "sidebar"     => false
+          "sidebar"     => false,
+          "hide_intro"  => true
         )
         page.content = ""
 
@@ -80,7 +81,8 @@ module Jekyll
         "title"       => "Authors",
         "description" => "Meet the people behind the content.",
         "permalink"   => "/authors/",
-        "sidebar"     => false
+        "sidebar"     => false,
+        "hide_intro"  => true
       )
       page.content = ""
 

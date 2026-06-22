@@ -1,7 +1,7 @@
 ---
 title: Author Profiles and About-the-Author Bylines
 description: Define author profiles and surface bylines, bio cards, and per-author profile pages across every collection in the Zer0-Mistakes Jekyll theme.
-lastmod: 2026-06-21T00:00:00.000Z
+lastmod: 2026-06-22T00:00:00.000Z
 layout: default
 author: bamr87
 categories:
@@ -26,7 +26,8 @@ estimated_reading_time: 8 minutes
 The theme ships a single, layered author system so every collection — posts,
 docs, notes, notebooks, quickstart, about, and any you add — presents authors
 consistently: a linked byline with an avatar, an "About the Author" bio card,
-and a per-author profile page that aggregates everything they've written.
+and an **interactive** per-author profile page that aggregates everything
+they've written, with filter / search / sort controls.
 
 ## 1. Define authors in `_data/authors.yml`
 
@@ -121,11 +122,38 @@ author_key: yourkey
 title: Your Name
 permalink: /authors/yourkey/
 sidebar: false
+hide_intro: true
 ---
 ```
 
+## 5. The interactive profile page
+
+Every `/authors/:key/` page is a live dashboard, not a static list — all
+client-side, with no build step and a graceful no-JS fallback:
+
+![The interactive author profile page: a hero with avatar, bio and blurb, a stats dashboard that doubles as per-collection type filters, plus a search box, sort control and a clickable topic cloud]({{ '/assets/images/docs/author-profiles/interactive-profile.png' | relative_url }})
+
+- **Hero** — avatar, name, role, the `tagline` blurb, bio, `location`,
+  last-active date, expertise chips, and social links.
+- **Stats dashboard** — one card per collection the author has written in
+  (Posts, Docs, Notes, …) plus an "All" card. The cards *are* the type filter:
+  click one to show only that collection.
+- **Search** — filters by title and tags as you type.
+- **Sort** — newest, oldest, or title A–Z.
+- **Topics** — a clickable tag cloud; pick a topic to narrow the grid.
+- **Live count + clear** — "Showing N of M" (announced to screen readers via
+  `aria-live`), plus a Clear control whenever a filter is active.
+- **Deep links** — the active type filter is reflected in the URL hash
+  (e.g. `/authors/bamr87/#type=docs`), so a filtered view is shareable.
+
+Behaviour lives in `assets/js/author-profile.js`, which self-activates on the
+`[data-author-profile]` container (safe to load anywhere). With JavaScript
+disabled, every contribution still renders in a normal grid (fully crawlable),
+and all animations respect `prefers-reduced-motion`.
+
 ## SEO / AIEO
 
-Bylines and cards emit schema.org `Person` microdata (`name`, `image`,
-`jobTitle`, `knowsAbout`, `sameAs`), reinforcing the E-E-A-T signals the theme
-already surfaces via `components/author-eeat.html`.
+Profile pages emit `schema.org/CollectionPage` with an `ItemList` of the
+author's contributions, and bylines/cards emit `Person` microdata (`name`,
+`image`, `jobTitle`, `knowsAbout`, `sameAs`) — reinforcing the E-E-A-T signals
+the theme already surfaces via `components/author-eeat.html`.

@@ -1,55 +1,43 @@
 ---
 layout: default
+hide_intro: true
 ---
-<!--
+{% comment %}
   ===================================================================
-  AUTHOR LAYOUT - Author profile page (cross-collection content hub)
+  AUTHOR LAYOUT - Interactive author profile page (content hub)
   ===================================================================
 
   File: author.html
   Path: _layouts/author.html
   Inherits: default.html (which inherits root.html)
-  Purpose: Display a single author's profile plus every piece of content they
-           have written, aggregated across ALL collections (posts, docs,
-           notes, notebooks, quickstart, about, …).
+  Purpose: A dedicated, interactive profile for one author — bio/blurb, social,
+           expertise, an at-a-glance stats dashboard, and a filterable /
+           searchable / sortable grid of every piece of content they've written
+           across ALL collections (posts, docs, notes, notebooks, quickstart,
+           about, quests, hobbies, …).
 
   Front Matter Variables:
   - author_key (required): Key into _data/authors.yml. Set automatically by
     _plugins/author_pages_generator.rb, or by hand for a committed page.
-  - title (optional): Page title (defaults to the author's name).
+  - hide_intro: true (set above) — this layout renders its own hero/breadcrumb,
+    so the generic content/intro.html header is suppressed (no duplicate H1).
 
-  Matching: a document belongs to this author when its `author` front-matter
-  value equals the author key, name, or display_name. This tolerates the mix
-  of key-based (`author: bamr87`) and name-based (`author: "Amr ..."`) values
-  found across content.
+  Interactivity is progressive-enhancement: with JS off, all content renders as
+  a plain grid (every item visible, crawlable). assets/js/author-profile.js
+  activates on the [data-author-profile] container to power the filters.
 
   Dependencies:
   - _data/authors.yml: Author data
-  - components/author-card.html (style="full"): Profile hero
-  - components/post-card.html: Content grid cards
+  - components/post-card.html (col=false): Content grid cards
+  - assets/js/author-profile.js: filter / search / sort controller
+  - _sass/components/_author.scss: styling
   ===================================================================
--->
+{% endcomment %}
 
 {% assign author_key = page.author_key %}
 {% assign author_data = site.data.authors[author_key] %}
-
-<!-- ========================== -->
-<!-- BREADCRUMB                 -->
-<!-- ========================== -->
-<nav aria-label="breadcrumb" class="mb-3">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="{{ site.baseurl }}/">Home</a></li>
-    <li class="breadcrumb-item"><a href="{{ site.baseurl }}/authors/">Authors</a></li>
-    <li class="breadcrumb-item active" aria-current="page">{{ author_data.name | default: author_key }}</li>
-  </ol>
-</nav>
-
-<!-- ========================== -->
-<!-- AUTHOR PROFILE HERO        -->
-<!-- ========================== -->
-<header class="author-profile-header mb-5">
-  {% include components/author-card.html author=author_key style="full" link=false avatar_size=112 %}
-</header>
+{% assign author_name = author_data.name | default: author_key %}
+{% capture avatar_url %}{{ site.baseurl }}/{{ site.public_folder }}{{ author_data.avatar }}{% endcapture %}
 
 {% comment %} ---------------------------------------------------------------
    Aggregate this author's content across every collection. A document matches
@@ -59,33 +47,208 @@ layout: default
 {% assign aliases = aliases | push: author_key %}
 {% if author_data.name %}{% assign aliases = aliases | push: author_data.name %}{% endif %}
 {% if author_data.display_name %}{% assign aliases = aliases | push: author_data.display_name %}{% endif %}
-
 {% assign author_docs = site.documents | where_exp: "d", "aliases contains d.author" | where_exp: "d", "d.title" | sort: "date" | reverse %}
 
+{% comment %} Distinct collection labels present, unique tags, latest dated item {% endcomment %}
+{% assign collection_labels = "" | split: "" %}
+{% assign all_tags = "" | split: "" %}
+{% for doc in author_docs %}
+  {% unless collection_labels contains doc.collection %}{% assign collection_labels = collection_labels | push: doc.collection %}{% endunless %}
+  {% for t in doc.tags %}{% assign all_tags = all_tags | push: t %}{% endfor %}
+{% endfor %}
+{% assign collection_labels = collection_labels | sort %}
+{% assign unique_tags = all_tags | uniq | sort %}
+{% assign latest_date = nil %}
+{% for doc in author_docs %}{% if doc.date %}{% assign latest_date = doc.date %}{% break %}{% endif %}{% endfor %}
+
 <!-- ========================== -->
-<!-- CONTENT BY THIS AUTHOR     -->
+<!-- BREADCRUMB                 -->
 <!-- ========================== -->
-<section class="author-content">
-  <div class="d-flex align-items-center mb-4">
-    <h2 class="h4 mb-0">
-      <i class="bi bi-collection me-2" aria-hidden="true"></i>Content by {{ author_data.name | default: author_key }}
-    </h2>
-    <span class="badge bg-secondary ms-3">{{ author_docs.size }} {{ author_docs.size | pluralize: "item", "items" }}</span>
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{ '/' | relative_url }}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{{ '/authors/' | relative_url }}">Authors</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ author_name }}</li>
+  </ol>
+</nav>
+
+<!-- ========================== -->
+<!-- PROFILE HERO               -->
+<!-- ========================== -->
+<header class="author-hero card border-0 shadow-sm mb-4" itemscope itemtype="https://schema.org/Person">
+  <div class="card-body p-4 p-md-5">
+    <div class="d-flex flex-column flex-sm-row align-items-center align-items-sm-start gap-4">
+      {% if author_data.avatar %}
+        <img src="{{ avatar_url }}" alt="{{ author_name }}" class="author-hero__avatar rounded-circle flex-shrink-0" width="128" height="128" style="object-fit: cover;" itemprop="image">
+      {% else %}
+        <div class="author-avatar-fallback rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width: 128px; height: 128px;">
+          <i class="bi bi-person fs-1" aria-hidden="true"></i>
+        </div>
+      {% endif %}
+
+      <div class="flex-grow-1 text-center text-sm-start">
+        <h1 class="author-hero__name h2 mb-1" itemprop="name">{{ author_name }}</h1>
+        {% if author_data.role %}<p class="text-primary fw-semibold mb-2" itemprop="jobTitle">{{ author_data.role }}</p>{% endif %}
+        {% if author_data.tagline %}<p class="author-hero__tagline lead mb-2" itemprop="slogan">{{ author_data.tagline }}</p>{% endif %}
+        {% if author_data.bio %}<p class="text-body-secondary mb-3" itemprop="description">{{ author_data.bio }}</p>{% endif %}
+
+        <!-- Hero meta: location + latest activity -->
+        <div class="author-hero__meta d-flex flex-wrap justify-content-center justify-content-sm-start gap-3 text-body-secondary small mb-3">
+          {% if author_data.location %}<span itemprop="homeLocation"><i class="bi bi-geo-alt me-1" aria-hidden="true"></i>{{ author_data.location }}</span>{% endif %}
+          <span><i class="bi bi-collection me-1" aria-hidden="true"></i>{{ author_docs.size }} contribution{% unless author_docs.size == 1 %}s{% endunless %}</span>
+          {% if latest_date %}<span><i class="bi bi-clock-history me-1" aria-hidden="true"></i>Last active {{ latest_date | date: "%b %Y" }}</span>{% endif %}
+        </div>
+
+        <!-- Expertise chips -->
+        {% if author_data.expertise %}
+          <div class="author-expertise d-flex flex-wrap justify-content-center justify-content-sm-start gap-1 mb-3">
+            {% for skill in author_data.expertise %}
+              <span class="badge rounded-pill text-bg-light border" itemprop="knowsAbout">{{ skill }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <!-- Social links -->
+        <div class="author-social d-flex flex-wrap justify-content-center justify-content-sm-start gap-2">
+          {% if author_data.github %}<a href="https://github.com/{{ author_data.github }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" itemprop="sameAs"><i class="bi bi-github me-1" aria-hidden="true"></i>GitHub</a>{% endif %}
+          {% if author_data.twitter %}<a href="https://x.com/{{ author_data.twitter }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" aria-label="X" itemprop="sameAs"><i class="bi bi-twitter-x me-1" aria-hidden="true"></i>X</a>{% endif %}
+          {% if author_data.linkedin %}<a href="https://linkedin.com/in/{{ author_data.linkedin }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" itemprop="sameAs"><i class="bi bi-linkedin me-1" aria-hidden="true"></i>LinkedIn</a>{% endif %}
+          {% if author_data.website %}<a href="{{ author_data.website }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" itemprop="url"><i class="bi bi-globe me-1" aria-hidden="true"></i>Website</a>{% endif %}
+          {% if author_data.email %}<a href="mailto:{{ author_data.email }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-envelope me-1" aria-hidden="true"></i>Email</a>{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+{% if author_docs.size > 0 %}
+<!-- ========================== -->
+<!-- INTERACTIVE CONTENT HUB    -->
+<!-- ========================== -->
+<section class="author-content" data-author-profile>
+
+  <h2 class="visually-hidden">Contributions by {{ author_name }}</h2>
+
+  <!-- Stats dashboard = interactive type filters (each card filters the grid) -->
+  <div class="author-stats" role="group" aria-label="Filter contributions by type">
+    <button type="button" class="author-stat is-active" data-filter="all" aria-pressed="true">
+      <span class="author-stat__num">{{ author_docs.size }}</span>
+      <span class="author-stat__label"><i class="bi bi-grid-3x3-gap me-1" aria-hidden="true"></i>All</span>
+    </button>
+    {% for clabel in collection_labels %}
+      {% assign cdocs = author_docs | where_exp: "d", "d.collection == clabel" %}
+      {% case clabel %}
+        {% when 'posts' %}{% assign cicon = 'bi-newspaper' %}
+        {% when 'docs' %}{% assign cicon = 'bi-book' %}
+        {% when 'notes' %}{% assign cicon = 'bi-journal-text' %}
+        {% when 'notebooks' %}{% assign cicon = 'bi-journal-code' %}
+        {% when 'quickstart' %}{% assign cicon = 'bi-rocket-takeoff' %}
+        {% when 'about' %}{% assign cicon = 'bi-person-lines-fill' %}
+        {% when 'quests' %}{% assign cicon = 'bi-compass' %}
+        {% when 'hobbies' %}{% assign cicon = 'bi-controller' %}
+        {% else %}{% assign cicon = 'bi-file-earmark-text' %}
+      {% endcase %}
+      <button type="button" class="author-stat" data-filter="{{ clabel }}" aria-pressed="false">
+        <span class="author-stat__num">{{ cdocs.size }}</span>
+        <span class="author-stat__label"><i class="bi {{ cicon }} me-1" aria-hidden="true"></i>{{ clabel | capitalize }}</span>
+      </button>
+    {% endfor %}
   </div>
 
-  {% if author_docs.size > 0 %}
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-      {% for doc in author_docs %}
-        {% include components/post-card.html post=doc show_author=false %}
-      {% endfor %}
+  <!-- Controls: search + sort + live result count -->
+  <div class="author-controls d-flex flex-column flex-md-row gap-2 align-items-stretch align-items-md-center mt-3">
+    <div class="author-search flex-grow-1 position-relative">
+      <i class="bi bi-search author-search__icon" aria-hidden="true"></i>
+      <label class="visually-hidden" for="author-search-input">Search {{ author_name }}'s contributions</label>
+      <input type="search" id="author-search-input" class="form-control" placeholder="Search titles and tags…" data-author-search autocomplete="off" aria-controls="author-grid">
     </div>
-  {% else %}
-    <div class="text-center py-5">
-      <i class="bi bi-journal-x fs-1 text-muted" aria-hidden="true"></i>
-      <p class="text-muted mt-3">No published content from this author yet.</p>
-      <a href="{{ site.baseurl }}/" class="btn btn-outline-primary">Back to home</a>
+    <div class="d-flex gap-2">
+      <label class="visually-hidden" for="author-sort">Sort contributions</label>
+      <select id="author-sort" class="form-select w-auto" data-author-sort aria-label="Sort contributions">
+        <option value="newest">Newest first</option>
+        <option value="oldest">Oldest first</option>
+        <option value="az">Title A–Z</option>
+      </select>
+      <button type="button" class="btn btn-outline-secondary" data-author-clear hidden>
+        <i class="bi bi-x-lg me-1" aria-hidden="true"></i>Clear
+      </button>
     </div>
+  </div>
+
+  <!-- Topic / tag cloud (clickable filters) -->
+  {% if unique_tags.size > 0 %}
+  <div class="author-tagcloud mt-3" role="group" aria-label="Filter by topic">
+    <span class="author-tagcloud__label text-body-secondary small me-1"><i class="bi bi-tags me-1" aria-hidden="true"></i>Topics:</span>
+    {% for tag in unique_tags limit: 24 %}
+      <button type="button" class="badge rounded-pill author-tag" data-tag-filter="{{ tag | downcase | escape }}" aria-pressed="false">{{ tag }}</button>
+    {% endfor %}
+  </div>
   {% endif %}
+
+  <!-- Live result count (announced to screen readers) -->
+  <p class="author-resultcount text-body-secondary small mt-3 mb-2" data-author-count aria-live="polite">
+    Showing {{ author_docs.size }} of {{ author_docs.size }}
+  </p>
+
+  <!-- Content grid -->
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="author-grid" data-author-grid>
+    {% for doc in author_docs %}
+      {% assign dtags = doc.tags | join: "|" | downcase %}
+      <div class="col author-item"
+           data-collection="{{ doc.collection }}"
+           data-date="{{ doc.date | date: '%s' }}"
+           data-title="{{ doc.title | downcase | escape }}"
+           data-tags="{{ dtags | escape }}">
+        {% include components/post-card.html post=doc show_author=false col=false %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- No-results state (shown by JS when filters match nothing) -->
+  <div class="author-noresults text-center py-5 d-none" data-author-noresults>
+    <i class="bi bi-search fs-1 text-muted" aria-hidden="true"></i>
+    <p class="text-muted mt-3 mb-2">No contributions match your filters.</p>
+    <button type="button" class="btn btn-outline-primary btn-sm" data-author-clear>Clear filters</button>
+  </div>
 </section>
+
+<!-- Structured data: this author's contributions as a CollectionPage / ItemList -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": {{ page.title | default: author_name | jsonify }},
+  "url": {{ page.url | absolute_url | jsonify }},
+  "about": {
+    "@type": "Person",
+    "name": {{ author_name | jsonify }}{% if author_data.website %},
+    "url": {{ author_data.website | jsonify }}{% endif %}
+  },
+  "mainEntity": {
+    "@type": "ItemList",
+    "numberOfItems": {{ author_docs.size }},
+    "itemListElement": [
+      {% for doc in author_docs limit: 100 %}{
+        "@type": "ListItem",
+        "position": {{ forloop.index }},
+        "url": {{ doc.url | absolute_url | jsonify }},
+        "name": {{ doc.title | jsonify }}
+      }{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    ]
+  }
+}
+</script>
+
+<script defer src="{{ '/assets/js/author-profile.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+
+{% else %}
+<!-- Empty state -->
+<div class="text-center py-5">
+  <i class="bi bi-journal-x fs-1 text-muted" aria-hidden="true"></i>
+  <p class="text-muted mt-3">No published content from this author yet.</p>
+  <a href="{{ '/' | relative_url }}" class="btn btn-outline-primary">Back to home</a>
+</div>
+{% endif %}
 
 {{ content }}

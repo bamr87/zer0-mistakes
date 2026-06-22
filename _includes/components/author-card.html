@@ -166,6 +166,7 @@
           {%- if profile_url -%}<a href="{{ profile_url }}" class="text-decoration-none text-reset" itemprop="url">{{ author_name }}</a>{%- else -%}{{ author_name }}{%- endif -%}
         </h5>
         {% if author_data.role %}<p class="text-primary mb-2" itemprop="jobTitle">{{ author_data.role }}</p>{% endif %}
+        {% if author_data.tagline %}<p class="author-tagline fst-italic text-body-secondary mb-2">{{ author_data.tagline }}</p>{% endif %}
         {% if show_bio and author_data.bio %}<p class="card-text text-muted" itemprop="description">{{ author_data.bio }}</p>{% endif %}
 
         {% if show_expertise and author_data.expertise %}

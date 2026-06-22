@@ -21,12 +21,15 @@
 #   linkedin: LinkedIn profile ID (optional)
 #   website: Personal website URL (optional)
 #   role: Job title or role (optional)
+#   tagline: Short one-line blurb shown under the name on the profile hero (optional)
+#   location: City / region shown on the profile hero (optional)
 #   expertise: List of topics (shown as chips on the full card) (optional)
 #   profile: Set to false to skip generating a profile page / hide from index (optional)
 
 default:
   name: "Zer0-Mistakes Team"
   bio: "The collective voice of the Zer0-Mistakes Jekyll theme development team."
+  tagline: "Guides, docs, and field notes from the people building zer0-mistakes."
   avatar: "/images/gravatar-small.png"
   github: "bamr87"
   website: "https://bamr87.github.io/zer0-mistakes/"
@@ -36,6 +39,8 @@ bamr87:
   name: "Amr Abdel-Motaleb"
   display_name: "Amr Abdel (bamr87)"
   bio: "Creator of zer0-mistakes and the AIEO methodology. Developer, automation enthusiast, and Docker advocate building tools for the Jekyll community."
+  tagline: "Ship Jekyll sites without the mistakes — Docker-first, zero-config, AI-optimized."
+  location: "Denver, CO"
   avatar: "/images/authors/bamr87.png"
   github: "bamr87"
   twitter: "bamr87"
@@ -52,6 +57,7 @@ bamr87:
 guest:
   name: "Guest Author"
   bio: "A valued contributor to our community."
+  tagline: "One-off contributions from the community."
   avatar: "/images/gravatar-small.png"
   role: "Guest Contributor"
 
@@ -67,6 +73,8 @@ guest:
 #   linkedin: "linkedinprofile"
 #   website: "https://example.com"
 #   role: "Writer"
+#   tagline: "A one-line blurb for the profile hero."
+#   location: "City, Country"
 #   expertise:
 #     - "Topic one"
 #     - "Topic two"

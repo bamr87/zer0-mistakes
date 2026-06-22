@@ -51,18 +51,140 @@
   font-weight: 500;
 }
 
+// Shared tagline styling (full "About the Author" card + profile hero)
+.author-tagline {
+  color: var(--zer0-color-text-muted, var(--bs-secondary-color));
+}
+
 // ----------------------------------------------------------------------------
 // Author profile page (_layouts/author.html)
 // ----------------------------------------------------------------------------
-.author-profile-header {
-  .author-card {
-    background: var(--zer0-color-bg-elevated, var(--bs-tertiary-bg));
-  }
 
-  .author-card__avatar {
-    border-width: 3px;
+// Profile hero
+.author-hero {
+  background: var(--zer0-color-bg-elevated, var(--bs-tertiary-bg));
+
+  &__avatar {
+    border: 3px solid rgba(var(--zer0-color-primary-rgb, var(--bs-primary-rgb)), 0.35);
     box-shadow: var(--zer0-shadow-sm);
   }
+
+  &__tagline {
+    font-size: 1.05rem;
+  }
+}
+
+// Interactive content hub
+.author-content {
+  // Stats dashboard — doubles as the type-filter control group
+  .author-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .author-stat {
+    flex: 1 1 auto;
+    min-width: 5.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    padding: 0.75rem 1rem;
+    background: var(--zer0-color-bg-elevated, var(--bs-tertiary-bg));
+    border: 1px solid var(--zer0-color-border, var(--bs-border-color));
+    border-radius: 0.625rem;
+    color: inherit;
+    cursor: pointer;
+    transition:
+      transform var(--zer0-motion-duration-fast, 120ms) var(--zer0-motion-ease-standard),
+      box-shadow var(--zer0-motion-duration-base, 200ms) var(--zer0-motion-ease-standard),
+      border-color var(--zer0-motion-duration-fast, 120ms) var(--zer0-motion-ease-standard),
+      background-color var(--zer0-motion-duration-fast, 120ms) var(--zer0-motion-ease-standard);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--zer0-shadow-md);
+      border-color: rgba(var(--zer0-color-primary-rgb, var(--bs-primary-rgb)), 0.5);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--zer0-color-primary, var(--bs-primary));
+      outline-offset: 2px;
+    }
+
+    &.is-active {
+      background: var(--zer0-color-primary, var(--bs-primary));
+      border-color: var(--zer0-color-primary, var(--bs-primary));
+      color: #fff;
+    }
+
+    &__num {
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    &__label {
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+  }
+
+  // Search input with a leading icon
+  .author-search__icon {
+    position: absolute;
+    top: 50%;
+    left: 0.75rem;
+    transform: translateY(-50%);
+    color: var(--bs-secondary-color);
+    pointer-events: none;
+  }
+
+  .author-search .form-control {
+    padding-left: 2.25rem;
+  }
+
+  // Topic / tag cloud
+  .author-tagcloud {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .author-tag {
+    border: 1px solid var(--zer0-color-border, var(--bs-border-color));
+    background: transparent;
+    color: var(--bs-body-color);
+    cursor: pointer;
+    transition:
+      background-color var(--zer0-motion-duration-fast, 120ms) var(--zer0-motion-ease-standard),
+      color var(--zer0-motion-duration-fast, 120ms) var(--zer0-motion-ease-standard),
+      border-color var(--zer0-motion-duration-fast, 120ms) var(--zer0-motion-ease-standard);
+
+    &:hover { border-color: rgba(var(--zer0-color-primary-rgb, var(--bs-primary-rgb)), 0.6); }
+    &:focus-visible { outline: 2px solid var(--zer0-color-primary, var(--bs-primary)); outline-offset: 2px; }
+
+    &.is-active {
+      background: var(--zer0-color-primary, var(--bs-primary));
+      border-color: var(--zer0-color-primary, var(--bs-primary));
+      color: #fff;
+    }
+  }
+
+  // Grid item entrance animation — only when motion is allowed. Re-runs each
+  // time an item returns from display:none, giving a gentle filter transition.
+  @media (prefers-reduced-motion: no-preference) {
+    .author-item:not(.d-none) {
+      animation: authorItemIn var(--zer0-motion-duration-base, 220ms) var(--zer0-motion-ease-standard) both;
+    }
+  }
+}
+
+@keyframes authorItemIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 // Authors index directory cards

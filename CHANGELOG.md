@@ -19,14 +19,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     the previously-unused `author_profile` front-matter flag.
   - New `author` / `authors` layouts add per-author profile pages at
     `/authors/:key/` (content aggregated across **every** collection) and an
-    `/authors/` directory index.
+    `/authors/` directory index. Each profile is **interactive**: a hero with
+    bio/blurb, an at-a-glance stats dashboard that doubles as type filters
+    (Posts / Docs / Notes / …), free-text search over titles + tags, sort
+    (newest / oldest / A–Z), a clickable topic/tag cloud, a live result count,
+    and deep-linkable filters via the URL hash — powered by the new
+    progressive-enhancement `assets/js/author-profile.js` (with JS off it falls
+    back to a full, crawlable grid). Emits `schema.org/CollectionPage` +
+    `ItemList` structured data.
   - New `_plugins/author_pages_generator.rb` auto-generates those pages for
     each `_data/authors.yml` entry (opt out per author with `profile: false`,
     or globally with `authors.generate_pages: false`); profiles for this site's
     authors are also committed under `/authors/` so they build under GitHub
     Pages safe mode, mirroring the committed `search.json` / `sitemap` pattern.
   - New `_sass/components/_author.scss` styling (dark-mode safe, token-driven).
-  - `_data/authors.yml` documents the new `expertise` and `profile` fields.
+  - `_data/authors.yml` documents the new `tagline`, `location`, `expertise`,
+    and `profile` fields.
 
 ### Performance
 - **Docker dev image cut from ~4GB to ~1.7GB and cold build from ~193s to ~82s**
