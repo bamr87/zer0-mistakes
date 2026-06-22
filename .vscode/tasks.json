@@ -1,6 +1,26 @@
 {
+  // ==================================================================
+  // Docker-first tasks — everything runs in a container, nothing local
+  // ==================================================================
+  // Execution model:
+  //   • Container-native work (Jekyll, Ruby, Bash scripts, tests) runs
+  //     inside the running `jekyll` service via `docker-compose exec`.
+  //     These tasks `dependsOn` "Docker: Compose Up (Detached)", so they
+  //     start the container automatically.
+  //   • Tools NOT in the jekyll image (Playwright/node, markdownlint,
+  //     yamllint) run via throwaway `docker run` images (nothing installed
+  //     on the host).
+  //   • The Docker lifecycle tasks are themselves the `docker-compose`
+  //     commands, so they run on the host.
+  //   • Release PUBLISH tasks (Patch/Minor/Major, Quick Build & Test) are
+  //     the one host exception: they push to RubyGems + git and need host
+  //     credentials. Dry-run/preview release tasks run in the container.
+  // Last updated: 2026-06-21
   "version": "2.0.0",
   "tasks": [
+    // ---------------------------------------------------------------
+    // Docker lifecycle (these ARE the docker commands — run on host)
+    // ---------------------------------------------------------------
     {
       "label": "Docker: Compose Up (Detached)",
       "type": "shell",
@@ -42,320 +62,379 @@
       "problemMatcher": []
     },
     {
-      "label": "🚀 Release: Patch",
+      "label": "Docker: Shell into jekyll",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/release",
-      "args": ["patch"],
-      "group": {
-        "kind": "build",
-        "isDefault": false
-      },
+      "command": "docker-compose",
+      "args": ["exec", "jekyll", "bash"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Docker: Compose Up (Detached)",
       "presentation": {
         "echo": true,
         "reveal": "always",
         "focus": true,
         "panel": "new",
         "showReuseMessage": false,
-        "clear": true
+        "clear": false
       },
       "problemMatcher": [],
-      "detail": "Publishes a patch version release (0.0.X) with full workflow: changelog generation, version bump, tests, build, and publish to RubyGems - using new modular release command"
+      "detail": "Open an interactive bash shell inside the running jekyll container."
+    },
+
+    // ---------------------------------------------------------------
+    // Build / validate (in container)
+    // ---------------------------------------------------------------
+    {
+      "label": "🧱 Jekyll: Build Validation",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": ["exec", "-T", "jekyll", "bundle", "exec", "jekyll", "build", "--config", "_config.yml,_config_dev.yml"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Docker: Compose Up (Detached)",
+      "group": "test",
+      "presentation": { "echo": true, "reveal": "always", "focus": false, "panel": "shared", "showReuseMessage": true, "clear": false },
+      "problemMatcher": [],
+      "detail": "Validate the Jekyll build inside the jekyll container (required before declaring theme/layout/include/sass changes done)."
+    },
+    {
+      "label": "✅ Validate: Preflight",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": ["exec", "-T", "jekyll", "bash", "-lc", "cd /site && ./scripts/validate"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Docker: Compose Up (Detached)",
+      "group": "test",
+      "presentation": { "echo": true, "reveal": "always", "focus": false, "panel": "shared", "showReuseMessage": true, "clear": false },
+      "problemMatcher": [],
+      "detail": "Run canonical preflight validation in the container (scripts/validate -> scripts/bin/validate)."
+    },
+    {
+      "label": "🔨 Build: Gem Only",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": ["exec", "-T", "jekyll", "bash", "-lc", "cd /site && ./scripts/build"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Docker: Compose Up (Detached)",
+      "group": { "kind": "build", "isDefault": true },
+      "presentation": { "echo": true, "reveal": "always", "focus": false, "panel": "shared", "showReuseMessage": true, "clear": false },
+      "problemMatcher": [],
+      "detail": "Build the gem in the container (no version bump/publish) — safe default build."
+    },
+
+    // ---------------------------------------------------------------
+    // Tests (in container)
+    // ---------------------------------------------------------------
+    {
+      "label": "🧪 Test: Run All Suites",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": ["exec", "-T", "jekyll", "bash", "-lc", "cd /site && ./scripts/bin/test"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Docker: Compose Up (Detached)",
+      "group": { "kind": "test", "isDefault": true },
+      "presentation": { "echo": true, "reveal": "always", "focus": false, "panel": "shared", "showReuseMessage": true, "clear": false },
+      "problemMatcher": [],
+      "detail": "Run all test tiers (lib + theme + integration) in the container via scripts/bin/test."
+    },
+    {
+      "label": "🧪 Test: lib",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": ["exec", "-T", "jekyll", "bash", "-lc", "cd /site && ./scripts/bin/test lib"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Docker: Compose Up (Detached)",
+      "group": "test",
+      "presentation": { "echo": true, "reveal": "always", "focus": false, "panel": "shared", "showReuseMessage": true, "clear": false },
+      "problemMatcher": [],
+      "detail": "Run library unit tests only (in container)."
+    },
+    {
+      "label": "🧪 Test: theme",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": ["exec", "-T", "jekyll", "bash", "-lc", "cd /site && ./scripts/bin/test theme"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Docker: Compose Up (Detached)",
+      "group": "test",
+      "presentation": { "echo": true, "reveal": "always", "focus": false, "panel": "shared", "showReuseMessage": true, "clear": false },
+      "problemMatcher": [],
+      "detail": "Run theme validation tests only (in container)."
+    },
+    {
+      "label": "🧪 Test: integration",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": ["exec", "-T", "jekyll", "bash", "-lc", "cd /site && ./scripts/bin/test integration"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Docker: Compose Up (Detached)",
+      "group": "test",
+      "presentation": { "echo": true, "reveal": "always", "focus": false, "panel": "shared", "showReuseMessage": true, "clear": false },
+      "problemMatcher": [],
+      "detail": "Run integration tests only (in container). Note: the mermaid sub-test probes the live server and may fail depending on build/config state."
+    },
+    {
+      "label": "🧪 Test Automated Version System",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": ["exec", "-T", "jekyll", "bash", "-lc", "cd /site && ./scripts/test-auto-version.sh"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Docker: Compose Up (Detached)",
+      "group": "test",
+      "presentation": { "echo": true, "reveal": "always", "focus": true, "panel": "shared", "showReuseMessage": true, "clear": true },
+      "problemMatcher": [],
+      "detail": "Run comprehensive tests on the automated version bump system (in container)."
+    },
+
+    // ---------------------------------------------------------------
+    // Lint (in container where possible; docker run images otherwise)
+    // ---------------------------------------------------------------
+    {
+      "label": "🧹 Lint: Page Frontmatter",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": ["exec", "-T", "jekyll", "bash", "-lc", "cd /site && ./scripts/lint-pages"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Docker: Compose Up (Detached)",
+      "group": "test",
+      "presentation": { "echo": true, "reveal": "always", "focus": false, "panel": "shared", "showReuseMessage": true, "clear": false },
+      "problemMatcher": [],
+      "detail": "Validate page front matter across all collections (in container)."
+    },
+    {
+      "label": "🧹 Lint: Markdown",
+      "type": "shell",
+      "command": "docker",
+      "args": [
+        "run", "--rm",
+        "-v", "${workspaceFolder}:/workdir",
+        "davidanson/markdownlint-cli2:latest",
+        "--config", ".github/config/.markdownlint.json",
+        "docs/**/*.md", "pages/_docs/**/*.md", "!docs/archive/**"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": "test",
+      "presentation": { "echo": true, "reveal": "always", "focus": false, "panel": "shared", "showReuseMessage": true, "clear": false },
+      "problemMatcher": [],
+      "detail": "Lint docs/ and pages/_docs/ via the markdownlint-cli2 Docker image (mirrors CI config; nothing installed locally)."
+    },
+    {
+      "label": "🧹 Lint: YAML",
+      "type": "shell",
+      "command": "docker",
+      "args": [
+        "run", "--rm",
+        "-v", "${workspaceFolder}:/data",
+        "cytopia/yamllint:latest",
+        "-c", ".github/config/.yamllint.yml", "."
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": "test",
+      "presentation": { "echo": true, "reveal": "always", "focus": false, "panel": "shared", "showReuseMessage": true, "clear": false },
+      "problemMatcher": [],
+      "detail": "Lint YAML via the yamllint Docker image using the repo config (nothing installed locally)."
+    },
+
+    // ---------------------------------------------------------------
+    // Playwright (throwaway Microsoft Playwright image, nothing local)
+    // ---------------------------------------------------------------
+    {
+      "label": "🎭 Playwright: Smoke",
+      "type": "shell",
+      "command": "docker",
+      "args": [
+        "run", "--rm",
+        "--add-host", "host.docker.internal:host-gateway",
+        "-v", "${workspaceFolder}:/work",
+        "-v", "/work/node_modules",
+        "-w", "/work",
+        "-e", "BASE_URL=http://host.docker.internal:4000",
+        "mcr.microsoft.com/playwright:v1.58.2-noble",
+        "bash", "-lc", "npm ci && npm run test:smoke"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Docker: Compose Up (Detached)",
+      "group": "test",
+      "presentation": { "echo": true, "reveal": "always", "focus": false, "panel": "shared", "showReuseMessage": true, "clear": false },
+      "problemMatcher": [],
+      "detail": "Run the Playwright smoke tier in the official Playwright image against the running dev server (host.docker.internal:4000). Runs `npm ci` in an isolated node_modules volume; requires the jekyll container up."
+    },
+    {
+      "label": "🎭 Playwright: Snapshots",
+      "type": "shell",
+      "command": "docker",
+      "args": [
+        "run", "--rm",
+        "--add-host", "host.docker.internal:host-gateway",
+        "-v", "${workspaceFolder}:/work",
+        "-v", "/work/node_modules",
+        "-w", "/work",
+        "-e", "BASE_URL=http://host.docker.internal:4000",
+        "mcr.microsoft.com/playwright:v1.58.2-noble",
+        "bash", "-lc", "npm ci && npm run test:snapshots"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Docker: Compose Up (Detached)",
+      "group": "test",
+      "presentation": { "echo": true, "reveal": "always", "focus": false, "panel": "shared", "showReuseMessage": true, "clear": false },
+      "problemMatcher": [],
+      "detail": "Run the Playwright pixel-snapshot tier in the official Playwright image (Linux) against the running dev server. Baselines are Linux-generated; run on Linux for matching pixels."
+    },
+
+    // ---------------------------------------------------------------
+    // Release / versioning
+    //   PUBLISH tasks run on the HOST (need RubyGems + git credentials).
+    //   Dry-run / preview / analysis run in the container.
+    // ---------------------------------------------------------------
+    {
+      "label": "🚀 Release: Patch",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/release",
+      "args": ["patch"],
+      "group": { "kind": "build", "isDefault": false },
+      "presentation": { "echo": true, "reveal": "always", "focus": true, "panel": "new", "showReuseMessage": false, "clear": true },
+      "problemMatcher": [],
+      "detail": "HOST: publish a patch release (changelog, version bump, tests, build, push to RubyGems + git). Needs host RubyGems/git credentials."
     },
     {
       "label": "🚀 Release: Minor",
       "type": "shell",
       "command": "${workspaceFolder}/scripts/release",
       "args": ["minor"],
-      "group": {
-        "kind": "build",
-        "isDefault": false
-      },
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": true,
-        "panel": "new",
-        "showReuseMessage": false,
-        "clear": true
-      },
+      "group": { "kind": "build", "isDefault": false },
+      "presentation": { "echo": true, "reveal": "always", "focus": true, "panel": "new", "showReuseMessage": false, "clear": true },
       "problemMatcher": [],
-      "detail": "Publishes a minor version release (0.X.0) with full workflow: changelog generation, version bump, tests, build, and publish to RubyGems - using new modular release command"
+      "detail": "HOST: publish a minor release (full workflow). Needs host RubyGems/git credentials."
     },
     {
       "label": "🚀 Release: Major",
       "type": "shell",
       "command": "${workspaceFolder}/scripts/release",
       "args": ["major"],
-      "group": {
-        "kind": "build",
-        "isDefault": false
-      },
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": true,
-        "panel": "new",
-        "showReuseMessage": false,
-        "clear": true
-      },
+      "group": { "kind": "build", "isDefault": false },
+      "presentation": { "echo": true, "reveal": "always", "focus": true, "panel": "new", "showReuseMessage": false, "clear": true },
       "problemMatcher": [],
-      "detail": "Publishes a major version release (X.0.0) with full workflow: changelog generation, version bump, tests, build, and publish to RubyGems - using new modular release command"
+      "detail": "HOST: publish a major release (full workflow). Needs host RubyGems/git credentials."
+    },
+    {
+      "label": "⚡ Release: Quick Build & Test (no publish)",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/release",
+      "args": ["patch", "--skip-publish", "--no-github-release"],
+      "group": { "kind": "build", "isDefault": false },
+      "presentation": { "echo": true, "reveal": "always", "focus": true, "panel": "new", "showReuseMessage": false, "clear": true },
+      "problemMatcher": [],
+      "detail": "HOST: changelog + version bump + tests + build, skipping RubyGems publish. Still commits/tags/pushes git, so needs host git credentials."
     },
     {
       "label": "🔍 Release: Dry Run Preview",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/release",
-      "args": ["patch", "--dry-run"],
-      "group": {
-        "kind": "test",
-        "isDefault": false
-      },
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": true,
-        "panel": "new",
-        "showReuseMessage": false,
-        "clear": true
-      },
+      "command": "docker-compose",
+      "args": ["exec", "-T", "jekyll", "bash", "-lc", "cd /site && ./scripts/release patch --dry-run"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Docker: Compose Up (Detached)",
+      "group": { "kind": "test", "isDefault": false },
+      "presentation": { "echo": true, "reveal": "always", "focus": true, "panel": "new", "showReuseMessage": false, "clear": true },
       "problemMatcher": [],
-      "detail": "Preview what a patch release would do without making any changes - shows changelog generation and version updates using new modular release command"
-    },
-    {
-      "label": "⚡ Release: Quick Build & Test",
-      "type": "shell",
-      "command": "${workspaceFolder}/scripts/release",
-      "args": ["patch", "--skip-publish", "--no-github-release"],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": true,
-        "panel": "new",
-        "showReuseMessage": false,
-        "clear": true
-      },
-      "problemMatcher": [],
-      "detail": "Quick development workflow: changelog generation, version bump, tests, and build - but skip publishing to RubyGems - using new modular release command"
+      "detail": "Preview a patch release without making changes (in container)."
     },
     {
       "label": "📝 Release: Generate Changelog Preview",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/release",
-      "args": ["patch", "--skip-tests", "--skip-publish", "--no-github-release", "--dry-run"],
-      "group": {
-        "kind": "test",
-        "isDefault": false
-      },
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": true,
-        "panel": "new",
-        "showReuseMessage": false,
-        "clear": true
-      },
+      "command": "docker-compose",
+      "args": ["exec", "-T", "jekyll", "bash", "-lc", "cd /site && ./scripts/release patch --skip-tests --skip-publish --no-github-release --dry-run"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Docker: Compose Up (Detached)",
+      "group": { "kind": "test", "isDefault": false },
+      "presentation": { "echo": true, "reveal": "always", "focus": true, "panel": "new", "showReuseMessage": false, "clear": true },
       "problemMatcher": [],
-      "detail": "Preview automatic changelog generation from commit history - useful for reviewing changes before release - using new modular release command"
-    },
-    {
-      "label": "🧪 Gem: Run Tests Only",
-      "type": "shell",
-      "command": "bundle exec rspec",
-      "group": {
-        "kind": "test",
-        "isDefault": true
-      },
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": true,
-        "clear": false
-      },
-      "problemMatcher": [],
-      "detail": "Run the full test suite without any release actions"
-    },
-    {
-      "label": "🔨 Build: Gem Only",
-      "type": "shell",
-      "command": "${workspaceFolder}/scripts/build",
-      "group": {
-        "kind": "build",
-        "isDefault": false
-      },
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": true,
-        "clear": false
-      },
-      "problemMatcher": [],
-      "detail": "Build the gem file without publishing or version changes - using new modular build command"
-    },
-    {
-      "label": "📊 Gem: Version Info",
-      "type": "shell",
-      "command": "echo \"Current Version: $(grep -o 'VERSION = \"[^\"]*\"' lib/jekyll-theme-zer0/version.rb | sed 's/VERSION = \"\\(.*\\)\"/\\1/')\" && echo \"Last Tag: $(git describe --tags --abbrev=0 2>/dev/null || echo 'No tags found')\" && echo \"Commits since last tag: $(git rev-list --count $(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD 2>/dev/null || echo '0')\"",
-      "group": {
-        "kind": "test",
-        "isDefault": false
-      },
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": true,
-        "clear": false
-      },
-      "problemMatcher": [],
-      "detail": "Display current version information and commit status"
-    },
-    {
-      "label": "🤖 Analyze Commits for Version Bump",
-      "type": "shell",
-      "command": "./scripts/analyze-commits.sh",
-      "args": ["HEAD~5..HEAD"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "group": "build",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": true,
-        "clear": false
-      },
-      "problemMatcher": [],
-      "detail": "Analyze recent commits to determine what version bump would be appropriate"
-    },
-    {
-      "label": "🧪 Test Automated Version System",
-      "type": "shell", 
-      "command": "./scripts/test-auto-version.sh",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "group": "test",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": true,
-        "panel": "shared",
-        "showReuseMessage": true,
-        "clear": true
-      },
-      "problemMatcher": [],
-      "detail": "Run comprehensive tests on the automated version bump system"
+      "detail": "Preview automatic changelog generation from commit history (in container)."
     },
     {
       "label": "🔍 Preview Automated Release",
       "type": "shell",
-      "command": "./scripts/release",
-      "args": ["patch", "--dry-run", "--skip-tests", "--skip-publish", "--no-github-release"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
+      "command": "docker-compose",
+      "args": ["exec", "-T", "jekyll", "bash", "-lc", "cd /site && ./scripts/release patch --dry-run --skip-tests --skip-publish --no-github-release"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Docker: Compose Up (Detached)",
       "group": "build",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": true,
-        "clear": false
-      },
+      "presentation": { "echo": true, "reveal": "always", "focus": false, "panel": "shared", "showReuseMessage": true, "clear": false },
       "problemMatcher": [],
-      "detail": "Preview what an automated release would do without making any changes"
+      "detail": "Preview what an automated release would do without making any changes (in container)."
     },
+    {
+      "label": "📊 Gem: Version Info",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": ["exec", "-T", "jekyll", "bash", "-lc", "cd /site && echo Current version: && grep VERSION lib/jekyll-theme-zer0/version.rb && echo Last tag: && (git describe --tags --abbrev=0 2>/dev/null || echo none) && echo Commits since last tag: && (git rev-list --count $(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD 2>/dev/null || echo 0)"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Docker: Compose Up (Detached)",
+      "group": { "kind": "test", "isDefault": false },
+      "presentation": { "echo": true, "reveal": "always", "focus": false, "panel": "shared", "showReuseMessage": true, "clear": false },
+      "problemMatcher": [],
+      "detail": "Display current version information and commit status (in container)."
+    },
+    {
+      "label": "🤖 Analyze Commits for Version Bump",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": ["exec", "-T", "jekyll", "bash", "-lc", "cd /site && ./scripts/analyze-commits.sh HEAD~5..HEAD"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Docker: Compose Up (Detached)",
+      "group": "build",
+      "presentation": { "echo": true, "reveal": "always", "focus": false, "panel": "shared", "showReuseMessage": true, "clear": false },
+      "problemMatcher": [],
+      "detail": "Analyze recent commits to determine the appropriate version bump (in container)."
+    },
+
+    // ---------------------------------------------------------------
+    // Preview images (in container; generation needs OPENAI_API_KEY)
+    // ---------------------------------------------------------------
     {
       "label": "🎨 Preview Images: List Missing",
       "type": "shell",
-      "command": "./scripts/generate-preview-images.sh",
-      "args": ["--list-missing"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
+      "command": "docker-compose",
+      "args": ["exec", "-T", "jekyll", "bash", "-lc", "cd /site && ./scripts/generate-preview-images.sh --list-missing"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Docker: Compose Up (Detached)",
       "group": "build",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": true,
-        "panel": "new",
-        "showReuseMessage": false,
-        "clear": true
-      },
+      "presentation": { "echo": true, "reveal": "always", "focus": true, "panel": "new", "showReuseMessage": false, "clear": true },
       "problemMatcher": [],
-      "detail": "List all content files that are missing preview images"
+      "detail": "List all content files missing preview images (in container)."
     },
     {
       "label": "🎨 Preview Images: Dry Run",
       "type": "shell",
-      "command": "./scripts/generate-preview-images.sh",
-      "args": ["--dry-run", "--verbose"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
+      "command": "docker-compose",
+      "args": ["exec", "-T", "jekyll", "bash", "-lc", "cd /site && ./scripts/generate-preview-images.sh --dry-run --verbose"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Docker: Compose Up (Detached)",
       "group": "build",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": true,
-        "panel": "new",
-        "showReuseMessage": false,
-        "clear": true
-      },
+      "presentation": { "echo": true, "reveal": "always", "focus": true, "panel": "new", "showReuseMessage": false, "clear": true },
       "problemMatcher": [],
-      "detail": "Preview what images would be generated without making changes"
+      "detail": "Preview what images would be generated without making changes (in container)."
     },
     {
       "label": "🎨 Preview Images: Generate for Posts",
       "type": "shell",
-      "command": "./scripts/generate-preview-images.sh",
-      "args": ["--collection", "posts"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
+      "command": "docker-compose",
+      "args": ["exec", "-T", "-e", "OPENAI_API_KEY=${env:OPENAI_API_KEY}", "jekyll", "bash", "-lc", "cd /site && ./scripts/generate-preview-images.sh --collection posts"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Docker: Compose Up (Detached)",
       "group": "build",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": true,
-        "panel": "new",
-        "showReuseMessage": false,
-        "clear": true
-      },
+      "presentation": { "echo": true, "reveal": "always", "focus": true, "panel": "new", "showReuseMessage": false, "clear": true },
       "problemMatcher": [],
-      "detail": "Generate AI preview images for all posts missing previews (requires OPENAI_API_KEY)"
+      "detail": "Generate AI preview images for posts missing previews (in container; needs OPENAI_API_KEY in your environment)."
     },
     {
       "label": "🎨 Preview Images: Generate All",
       "type": "shell",
-      "command": "./scripts/generate-preview-images.sh",
-      "args": ["--collection", "all"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
+      "command": "docker-compose",
+      "args": ["exec", "-T", "-e", "OPENAI_API_KEY=${env:OPENAI_API_KEY}", "jekyll", "bash", "-lc", "cd /site && ./scripts/generate-preview-images.sh --collection all"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": "Docker: Compose Up (Detached)",
       "group": "build",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": true,
-        "panel": "new",
-        "showReuseMessage": false,
-        "clear": true
-      },
+      "presentation": { "echo": true, "reveal": "always", "focus": true, "panel": "new", "showReuseMessage": false, "clear": true },
       "problemMatcher": [],
-      "detail": "Generate AI preview images for all content missing previews (requires OPENAI_API_KEY)"
+      "detail": "Generate AI preview images for all content missing previews (in container; needs OPENAI_API_KEY in your environment)."
     }
   ]
 }
