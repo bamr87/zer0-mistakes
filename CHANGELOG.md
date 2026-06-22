@@ -19,8 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     the previously-unused `author_profile` front-matter flag.
   - New `author` / `authors` layouts add per-author profile pages at
     `/authors/:key/` (content aggregated across **every** collection) and an
-    `/authors/` directory index, linked from the main navbar (an "Authors"
-    dropdown) and the footer quick links. Each profile is **interactive**: a hero with
+    `/authors/` directory index, linked from the navbar (under **About**) and
+    the footer quick links. Each profile is **interactive**: a hero with
     bio/blurb, an at-a-glance stats dashboard that doubles as type filters
     (Posts / Docs / Notes / …), free-text search over titles + tags, sort
     (newest / oldest / A–Z), a clickable topic/tag cloud, a live result count,

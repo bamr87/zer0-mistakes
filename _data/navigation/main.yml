@@ -68,27 +68,14 @@
     - title: Troubleshooting
       url: /docs/troubleshooting/
 
-- title: Authors
-  icon: bi-people
-  url: /authors/
-  children:
-    - title: All Authors
-      url: /authors/
-    - title: Zer0-Mistakes Team
-      url: /authors/default/
-    - title: Amr Abdel-Motaleb
-      url: /authors/bamr87/
-    - title: Cassandra (AI)
-      url: /authors/cassandra/
-    - title: Vega (AI)
-      url: /authors/vega/
-
 - title: About
   icon: bi-info-circle
   url: /about/
   children:
     - title: Features
       url: /features/
+    - title: Authors
+      url: /authors/
     - title: Statistics
       url: /about/stats/
     - title: Config
