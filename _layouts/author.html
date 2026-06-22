@@ -87,7 +87,7 @@ hide_intro: true
       {% endif %}
 
       <div class="flex-grow-1 text-center text-sm-start">
-        <h1 class="author-hero__name h2 mb-1" itemprop="name">{{ author_name }}</h1>
+        <h1 class="author-hero__name h2 mb-1" itemprop="name">{{ author_name }}{% if author_data.ai %} <span class="badge author-ai-badge align-middle"><i class="bi bi-robot me-1" aria-hidden="true"></i>AI author</span>{% endif %}</h1>
         {% if author_data.role %}<p class="text-primary fw-semibold mb-2" itemprop="jobTitle">{{ author_data.role }}</p>{% endif %}
         {% if author_data.tagline %}<p class="author-hero__tagline lead mb-2" itemprop="slogan">{{ author_data.tagline }}</p>{% endif %}
         {% if author_data.bio %}<p class="text-body-secondary mb-3" itemprop="description">{{ author_data.bio }}</p>{% endif %}
@@ -100,9 +100,10 @@ hide_intro: true
         </div>
 
         <!-- Expertise chips -->
-        {% if author_data.expertise %}
+        {% assign hero_chips = author_data.topics | default: author_data.expertise %}
+        {% if hero_chips %}
           <div class="author-expertise d-flex flex-wrap justify-content-center justify-content-sm-start gap-1 mb-3">
-            {% for skill in author_data.expertise %}
+            {% for skill in hero_chips %}
               <span class="badge rounded-pill text-bg-light border" itemprop="knowsAbout">{{ skill }}</span>
             {% endfor %}
           </div>
@@ -116,6 +117,12 @@ hide_intro: true
           {% if author_data.website %}<a href="{{ author_data.website }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" itemprop="url"><i class="bi bi-globe me-1" aria-hidden="true"></i>Website</a>{% endif %}
           {% if author_data.email %}<a href="mailto:{{ author_data.email }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-envelope me-1" aria-hidden="true"></i>Email</a>{% endif %}
         </div>
+
+        {% if author_data.ai and author_data.persona.disclosure %}
+          <p class="author-ai-disclosure small text-body-secondary mt-3 mb-0 d-flex align-items-start">
+            <i class="bi bi-robot me-2 mt-1 flex-shrink-0" aria-hidden="true"></i><span>{{ author_data.persona.disclosure }}</span>
+          </p>
+        {% endif %}
       </div>
     </div>
   </div>

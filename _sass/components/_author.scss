@@ -56,6 +56,30 @@
   color: var(--zer0-color-text-muted, var(--bs-secondary-color));
 }
 
+// AI author persona markers — a violet accent (the "AI" convention) chosen to
+// stay legible across all skins independent of --zer0-color-primary.
+.author-ai-badge {
+  background-color: rgba(111, 66, 193, 0.14);
+  color: #6f42c1;
+  border: 1px solid rgba(111, 66, 193, 0.4);
+  font-size: 0.7em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  vertical-align: middle;
+
+  [data-bs-theme="dark"] & {
+    color: #c8a2ff;
+    background-color: rgba(111, 66, 193, 0.28);
+    border-color: rgba(111, 66, 193, 0.55);
+  }
+}
+
+.author-ai-disclosure {
+  border-left: 3px solid rgba(111, 66, 193, 0.5);
+  padding-left: 0.65rem;
+}
+
 // ----------------------------------------------------------------------------
 // Author profile page (_layouts/author.html)
 // ----------------------------------------------------------------------------

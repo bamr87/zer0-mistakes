@@ -120,6 +120,7 @@
     <span class="author-name">{{ author_name }}</span>
   {%- endif -%}
   {%- if profile_url -%}</a>{%- endif -%}
+  {%- if author_data.ai -%}<span class="badge author-ai-badge ms-1" title="AI author persona">AI</span>{%- endif -%}
 </span>
 
 {% comment %} ===========================================================
@@ -138,7 +139,7 @@
     {% endif %}
   {% endif %}
   <div>
-    <strong class="d-block" itemprop="name">{{ author_name }}</strong>
+    <strong class="d-block" itemprop="name">{{ author_name }}{% if author_data.ai %} <span class="badge author-ai-badge align-middle" title="AI author persona"><i class="bi bi-robot" aria-hidden="true"></i> AI</span>{% endif %}</strong>
     {% if author_data.role %}<small class="text-muted" itemprop="jobTitle">{{ author_data.role }}</small>{% endif %}
     {% if show_bio and author_data.bio %}<p class="text-muted small mb-0 mt-1" itemprop="description">{{ author_data.bio | truncate: 100 }}</p>{% endif %}
   </div>
@@ -164,6 +165,7 @@
       <div class="flex-grow-1">
         <h5 class="card-title mb-1" itemprop="name">
           {%- if profile_url -%}<a href="{{ profile_url }}" class="text-decoration-none text-reset" itemprop="url">{{ author_name }}</a>{%- else -%}{{ author_name }}{%- endif -%}
+          {%- if author_data.ai -%} <span class="badge author-ai-badge align-middle" title="AI author persona"><i class="bi bi-robot me-1" aria-hidden="true"></i>AI</span>{%- endif -%}
         </h5>
         {% if author_data.role %}<p class="text-primary mb-2" itemprop="jobTitle">{{ author_data.role }}</p>{% endif %}
         {% if author_data.tagline %}<p class="author-tagline fst-italic text-body-secondary mb-2">{{ author_data.tagline }}</p>{% endif %}
@@ -195,6 +197,12 @@
               <a href="mailto:{{ author_data.email }}" class="btn btn-sm btn-outline-secondary" title="Email"><i class="bi bi-envelope"></i></a>
             {% endif %}
           </div>
+        {% endif %}
+
+        {% if author_data.ai and author_data.persona.disclosure %}
+          <p class="author-ai-disclosure small text-body-secondary mt-3 mb-0 d-flex align-items-start">
+            <i class="bi bi-robot me-2 mt-1 flex-shrink-0" aria-hidden="true"></i><span>{{ author_data.persona.disclosure }}</span>
+          </p>
         {% endif %}
       </div>
     </div>

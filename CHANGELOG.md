@@ -19,7 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     the previously-unused `author_profile` front-matter flag.
   - New `author` / `authors` layouts add per-author profile pages at
     `/authors/:key/` (content aggregated across **every** collection) and an
-    `/authors/` directory index. Each profile is **interactive**: a hero with
+    `/authors/` directory index, linked from the main navbar (an "Authors"
+    dropdown) and the footer quick links. Each profile is **interactive**: a hero with
     bio/blurb, an at-a-glance stats dashboard that doubles as type filters
     (Posts / Docs / Notes / …), free-text search over titles + tags, sort
     (newest / oldest / A–Z), a clickable topic/tag cloud, a live result count,
@@ -35,6 +36,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - New `_sass/components/_author.scss` styling (dark-mode safe, token-driven).
   - `_data/authors.yml` documents the new `tagline`, `location`, `expertise`,
     and `profile` fields.
+  - **AI author personas.** An author can be flagged `ai: true` with a `persona`
+    block (archetype / voice / signature_moves / avoids / disclosure + custom
+    `topics`); the theme then renders an "AI" badge on every byline and card and
+    a visible authorship disclosure on the profile hero and the
+    About-the-Author box. Ships two examples — **Cassandra** (a paranoid AI
+    Security Analyst who catastrophizes trivial gaps) and **Vega** (an
+    enthusiastic AI Data Analyst who over-models trivial data) — each with a
+    profile page, an SVG avatar, and example in-voice posts, plus a reusable
+    `.github/prompts/ai-author.prompt.md` template for writing as a persona.
 
 ### Performance
 - **Docker dev image cut from ~4GB to ~1.7GB and cold build from ~193s to ~82s**

@@ -151,6 +151,47 @@ Behaviour lives in `assets/js/author-profile.js`, which self-activates on the
 disabled, every contribution still renders in a normal grid (fully crawlable),
 and all animations respect `prefers-reduced-motion`.
 
+## 6. AI author personas
+
+An author can be an **AI agent persona**. Mark it with `ai: true` and give it a
+`persona` block. The theme then renders an "AI" badge on every byline and card,
+shows the authorship `disclosure` on the profile hero and in the
+"About the Author" box, and surfaces the persona's custom `topics`.
+
+![Cassandra's interactive profile page: a red shield avatar, an "AI AUTHOR" badge beside the name, custom security topics, and a violet-bordered AI-authorship disclosure]({{ '/assets/images/docs/author-profiles/ai-persona-profile.png' | relative_url }})
+
+```yaml
+cassandra:
+  name: "Cassandra"
+  ai: true
+  role: "AI Security Analyst"
+  avatar: "/images/authors/cassandra.svg"
+  topics: [Security, Threat modeling, Supply chain]
+  persona:
+    archetype: "Paranoid security catastrophist"
+    voice: "Urgent, ominous, first-person; escalates trivial gaps to catastrophe."
+    signature_moves: ["Reframes the mundane as a critical attack surface"]
+    avoids: ["Reassurance of any kind"]
+    disclosure: "Cassandra is an AI author persona. Posts are AI-generated…"
+```
+
+The `persona` block **is** the reusable template. When an AI agent writes a post
+it adopts that persona using
+[`.github/prompts/ai-author.prompt.md`](https://github.com/bamr87/zer0-mistakes/blob/main/.github/prompts/ai-author.prompt.md)
+and sets `author: <persona key>` in the post front matter — adding a new persona
+needs no code changes.
+
+The theme ships two example personas (see their profiles at `/authors/cassandra/`
+and `/authors/vega/`):
+
+- **Cassandra** — a paranoid *AI Security Analyst* who escalates trivial gaps
+  (a favicon, a trailing slash) into civilization-ending breaches.
+- **Vega** — an enthusiastic *AI Data Analyst* who fits Bayesian hierarchical
+  models and UMAP embeddings to gloriously trivial data.
+
+**Transparency first:** AI authorship is always disclosed visibly — the badge
+and disclosure are not optional and never hidden.
+
 ## SEO / AIEO
 
 Profile pages emit `schema.org/CollectionPage` with an `ItemList` of the
