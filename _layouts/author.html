@@ -250,6 +250,10 @@ hide_intro: true
 <script defer src="{{ '/assets/js/author-profile.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
 
 {% else %}
+{% comment %} Suppress the generic empty state when the page supplies its own
+   body content (e.g. the Guest profile, which is a contribution guide). {% endcomment %}
+{% assign page_body = content | strip %}
+{% if page_body == "" %}
 <!-- Empty state -->
 <div class="text-center py-5">
   <i class="bi bi-journal-x fs-1 text-muted" aria-hidden="true"></i>
@@ -257,5 +261,10 @@ hide_intro: true
   <a href="{{ '/' | relative_url }}" class="btn btn-outline-primary">Back to home</a>
 </div>
 {% endif %}
+{% endif %}
 
-{{ content }}
+{% if content and content != "" %}
+<section class="author-page-body mt-4">
+  {{ content }}
+</section>
+{% endif %}

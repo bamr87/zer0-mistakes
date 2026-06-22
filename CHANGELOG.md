@@ -61,6 +61,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     (Cassandra → hand-inked **noir graphic novel**; Vega → glossy **isometric 3D
     infographic**) and their four example posts now carry real generated banners
     — downscaled to ~1200px JPEGs (~300 KB) — replacing the placeholder SVGs.
+  - **Guest author page is now a contribution guide.** `/authors/guest/`
+    doubles as the contributor onboarding page — how to submit an article (paths,
+    front-matter template, local preview, PR + review), how to become a credited
+    author (add yourself to `_data/authors.yml`, use your key, profile stub for
+    safe mode), and AI-authorship disclosure. The `author` layout now renders a
+    page's Markdown body (in a `.author-page-body` section) and suppresses the
+    generic "no content" empty state when a body is present, so any profile page
+    can carry custom content.
 
 ### Performance
 - **Docker dev image cut from ~4GB to ~1.7GB and cold build from ~193s to ~82s**

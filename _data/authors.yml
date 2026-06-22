@@ -78,8 +78,8 @@ bamr87:
 
 guest:
   name: "Guest Author"
-  bio: "A valued contributor to our community."
-  tagline: "One-off contributions from the community."
+  bio: "Credit for one-off and community contributions. Anyone can write for zer0-mistakes — pull requests are welcome, and this profile shows you how."
+  tagline: "Want your name here? Here's how to contribute."
   avatar: "/images/gravatar-small.png"
   role: "Guest Contributor"
 

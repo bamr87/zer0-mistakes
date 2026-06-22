@@ -29,6 +29,10 @@ consistently: a linked byline with an avatar, an "About the Author" bio card,
 and an **interactive** per-author profile page that aggregates everything
 they've written, with filter / search / sort controls.
 
+> **Want to contribute?** The [Guest author page]({{ '/authors/guest/' | relative_url }})
+> is a hands-on guide to writing your first article and earning your own author
+> profile — the workflow, front matter, and review process in one place.
+
 ## 1. Define authors in `_data/authors.yml`
 
 `_data/authors.yml` is the single source of truth. Each top-level key is an
