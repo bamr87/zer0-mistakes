@@ -114,7 +114,11 @@
   {% assign avatar_size = include.avatar_size | default: 48 %}
 {% endif %}
 
-{% capture avatar_url %}{{ site.baseurl }}/{{ site.public_folder }}{{ author_data.avatar }}{% endcapture %}
+{% comment %} Resolve avatar: full URL (e.g. GitHub) as-is, relative path prefixed,
+   or derived from the author's github handle. See components/author-avatar-url.html {% endcomment %}
+{% capture avatar_url %}{% include components/author-avatar-url.html data=author_data %}{% endcapture %}
+{% assign avatar_url = avatar_url | strip %}
+{% assign has_avatar = false %}{% if avatar_url != "" %}{% assign has_avatar = true %}{% endif %}
 
 {% comment %} ===========================================================
      INLINE STYLE — byline use (meta rows, card footers)
@@ -123,7 +127,7 @@
 <span class="author-inline d-inline-flex align-items-center">
   {%- if profile_url -%}<a href="{{ profile_url }}" class="author-inline__link text-decoration-none text-reset d-inline-flex align-items-center">{%- endif -%}
   {% if show_avatar %}
-    {% if author_data.avatar %}
+    {% if has_avatar %}
       <img src="{{ avatar_url }}" alt="" class="author-inline__avatar rounded-circle me-1" width="{{ avatar_size }}" height="{{ avatar_size }}" style="object-fit: cover;" loading="lazy">
     {% else %}
       <i class="bi bi-person-circle me-1"></i>
@@ -147,7 +151,7 @@
 <div class="author-card-compact d-flex align-items-center" itemscope itemtype="https://schema.org/Person">
   {%- if profile_url -%}<a href="{{ profile_url }}" class="text-decoration-none text-reset d-flex align-items-center" itemprop="url">{%- endif -%}
   {% if show_avatar %}
-    {% if author_data.avatar %}
+    {% if has_avatar %}
       <img src="{{ avatar_url }}" alt="{{ author_name }}" class="rounded-circle me-3" width="{{ avatar_size }}" height="{{ avatar_size }}" style="object-fit: cover;" itemprop="image" loading="lazy">
     {% else %}
       <div class="author-avatar-fallback rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: {{ avatar_size }}px; height: {{ avatar_size }}px;">
@@ -171,7 +175,7 @@
   <div class="card-body">
     <div class="d-flex align-items-start">
       {% if show_avatar %}
-        {% if author_data.avatar %}
+        {% if has_avatar %}
           <img src="{{ avatar_url }}" alt="{{ author_name }}" class="author-card__avatar rounded-circle me-3" width="{{ avatar_size }}" height="{{ avatar_size }}" style="object-fit: cover;" itemprop="image" loading="lazy">
         {% else %}
           <div class="author-avatar-fallback rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: {{ avatar_size }}px; height: {{ avatar_size }}px;">

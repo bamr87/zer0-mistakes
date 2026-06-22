@@ -14,7 +14,11 @@
 #   name: Display name (required)
 #   display_name: Optional longer name (used by author-eeat banner)
 #   bio: Short biography (optional)
-#   avatar: Path under public_folder, e.g. /images/authors/me.png (optional)
+#   avatar: Avatar image (optional). Either a path under public_folder
+#           (e.g. /images/authors/me.png) OR a full URL — including a GitHub
+#           avatar, e.g. https://avatars.githubusercontent.com/u/<id>?v=4.
+#           If omitted but `github` is set, it falls back to that account's
+#           avatar at https://github.com/<github>.png automatically.
 #   email: Contact email (optional)
 #   twitter: Twitter/X handle without @ (optional)
 #   github: GitHub username (optional)
@@ -63,7 +67,7 @@ bamr87:
   bio: "Creator of zer0-mistakes and the AIEO methodology. Developer, automation enthusiast, and Docker advocate building tools for the Jekyll community."
   tagline: "Ship Jekyll sites without the mistakes — Docker-first, zero-config, AI-optimized."
   location: "Denver, CO"
-  avatar: "/images/authors/bamr87.png"
+  avatar: "https://avatars.githubusercontent.com/u/10567847?v=4"
   github: "bamr87"
   twitter: "bamr87"
   linkedin: "bamr87"
@@ -80,7 +84,9 @@ guest:
   name: "Guest Author"
   bio: "Credit for one-off and community contributions. Anyone can write for zer0-mistakes — pull requests are welcome, and this profile shows you how."
   tagline: "Want your name here? Here's how to contribute."
-  avatar: "/images/gravatar-small.png"
+  # No explicit avatar — it falls back to this GitHub account's avatar
+  # (https://github.com/amr-bash.png) purely from the handle below.
+  github: "amr-bash"
   role: "Guest Contributor"
 
 # ── AI author personas ──────────────────────────────────────────────────────

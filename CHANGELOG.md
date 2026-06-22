@@ -69,6 +69,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     page's Markdown body (in a `.author-page-body` section) and suppresses the
     generic "no content" empty state when a body is present, so any profile page
     can carry custom content.
+  - **Avatars can be full URLs (incl. GitHub) or auto-derived from a handle.**
+    An author's `avatar` may now be a full URL — e.g. a GitHub avatar
+    (`https://avatars.githubusercontent.com/u/<id>?v=4`) — used as-is; relative
+    paths still resolve under the assets folder. If `avatar` is omitted but
+    `github` is set, the avatar falls back to `https://github.com/<handle>.png`.
+    Resolution is centralised in `components/author-avatar-url.html` and shared by
+    the byline, bio card, profile hero, and E-E-A-T blocks. The Guest profile
+    demonstrates the handle-only path (its avatar comes from `github: amr-bash`),
+    and bamr87 uses an explicit GitHub avatar URL.
 
 ### Performance
 - **Docker dev image cut from ~4GB to ~1.7GB and cold build from ~193s to ~82s**

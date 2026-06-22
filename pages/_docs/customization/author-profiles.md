@@ -42,7 +42,9 @@ they've written, with filter / search / sort controls.
 bamr87:
   name: "Amr Abdel-Motaleb"        # required — display name
   bio: "Creator of zer0-mistakes…" # shown in the bio card + profile hero
-  avatar: "/images/authors/bamr87.png"  # path under public_folder (assets)
+  avatar: "/images/authors/bamr87.png"  # asset path, OR a full URL (e.g. a
+                                        # GitHub avatar). Omit it and the author's
+                                        # github handle resolves the avatar instead.
   role: "Creator & Lead Developer"
   github: "bamr87"
   twitter: "bamr87"
