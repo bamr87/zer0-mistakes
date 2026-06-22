@@ -131,6 +131,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `name` / `display_name`, so the inline byline, the full card name, and the
   "More from …" link all point at `/authors/<key>/`. Non-matching strings
   (template placeholders, name variants) stay unlinked as before.
+- **Committed author pages moved to `pages/_about/authors/`** (into the `about`
+  collection), co-located with the rest of the About section instead of a
+  top-level `/authors/` source directory. URLs are unchanged (explicit
+  `/authors/:key/` permalinks), and `author_pages_generator.rb`'s dedup now also
+  checks collection documents so no duplicate pages are generated.
 - **Design framework (SCSS) refactor — structure only, no visual change.**
   Decomposed the 1,131-line `_sass/custom.scss` monolith into a thin back-compat
   barrel plus five focused partials (`layouts/_global-chrome`, `core/_toc`,

@@ -111,13 +111,16 @@ These pages are created two ways:
 1. **Automatically** by `_plugins/author_pages_generator.rb` during a normal
    `jekyll build`. Opt a single author out with `profile: false`, or disable the
    generator entirely with `authors: { generate_pages: false }` in `_config.yml`.
-2. **As committed pages** under `/authors/` in this repo. GitHub Pages' classic
-   builder runs in *safe mode* and does not load custom plugins, so the pages
-   for this site's authors are committed (just front matter — `layout: author`
-   and `author_key`) the same way `search.json` and the sitemap are. The
-   generator detects existing pages and skips them, so there are no duplicates.
+2. **As committed pages** in `pages/_about/authors/` (part of the `about`
+   collection; each carries an explicit `/authors/:key/` permalink). GitHub
+   Pages' classic builder runs in *safe mode* and does not load custom plugins,
+   so the pages for this site's authors are committed (just front matter —
+   `layout: author` and `author_key`) the same way `search.json` and the sitemap
+   are. The generator detects existing pages **and collection documents** and
+   skips them, so there are no duplicates.
 
-To add a profile for a new author on a safe-mode site, copy an existing stub:
+To add a profile for a new author on a safe-mode site, copy an existing stub
+into `pages/_about/authors/<key>.md`:
 
 ```yaml
 ---

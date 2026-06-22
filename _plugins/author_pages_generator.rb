@@ -13,7 +13,10 @@
 # Behaviour:
 #   - One /authors/:key/ page per author (layout: author).
 #   - One /authors/ index page (layout: authors).
-#   - If a page already exists at the target permalink, it is left untouched.
+#   - If a page OR collection document already exists at the target permalink it
+#     is left untouched. This site's committed author pages live in
+#     pages/_about/authors/ (the `about` collection) with explicit
+#     /authors/:key/ permalinks, so they build under GitHub Pages safe mode.
 #   - An author entry with `profile: false` in _data/authors.yml is skipped.
 #   - Generation can be disabled via _config.yml:
 #       authors:
@@ -95,9 +98,18 @@ module Jekyll
 
     def page_exists?(site, permalink)
       normalized = permalink.chomp("/")
-      site.pages.any? do |p|
+      page_match = site.pages.any? do |p|
         url = (p.url || "").chomp("/")
         perm = (p.permalink || "").chomp("/")
+        url == normalized || url == permalink || perm == normalized || perm == permalink
+      end
+      return true if page_match
+
+      # Committed author pages now live in the `about` collection
+      # (pages/_about/authors/*.md), so also honour collection documents.
+      site.documents.any? do |d|
+        url = (d.url || "").chomp("/")
+        perm = (d.data["permalink"] || "").to_s.chomp("/")
         url == normalized || url == permalink || perm == normalized || perm == permalink
       end
     end
