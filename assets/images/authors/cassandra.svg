@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cassandra, AI Security Analyst">
+  <defs>
+    <linearGradient id="cassBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#991b1b"/>
+      <stop offset="1" stop-color="#dc2626"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" fill="url(#cassBg)"/>
+  <path d="M128 44 L194 70 V126 C194 170 166 198 128 214 C90 198 62 170 62 126 V70 Z"
+        fill="none" stroke="#ffffff" stroke-width="10" stroke-linejoin="round"/>
+  <ellipse cx="128" cy="122" rx="40" ry="26" fill="#ffffff"/>
+  <circle cx="128" cy="122" r="13" fill="#991b1b"/>
+  <circle cx="133" cy="117" r="4" fill="#ffffff"/>
+</svg>

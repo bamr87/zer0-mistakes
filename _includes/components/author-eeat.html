@@ -26,6 +26,12 @@
 {% assign author = site.data.authors[author_key] %}
 {% assign eeat_style = include.style | default: "banner" %}
 
+{% comment %} Resolve avatar: full URL (e.g. GitHub) as-is, relative path prefixed,
+   or derived from the github handle. See components/author-avatar-url.html {% endcomment %}
+{% capture avatar_url %}{% include components/author-avatar-url.html data=author %}{% endcapture %}
+{% assign avatar_url = avatar_url | strip %}
+{% assign has_avatar = false %}{% if avatar_url != "" %}{% assign has_avatar = true %}{% endif %}
+
 {% if author %}
 
 {% if eeat_style == "banner" %}
@@ -34,8 +40,8 @@
   <div class="container-xl px-4 px-md-5">
     <div class="row align-items-center g-3">
       <div class="col-auto">
-        {% if author.avatar %}
-          <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ author.avatar }}"
+        {% if has_avatar %}
+          <img src="{{ avatar_url }}"
                alt="{{ author.display_name | default: author.name }}"
                class="rounded-circle border border-2 border-primary"
                width="64" height="64"
@@ -88,8 +94,8 @@
 <div class="card border-0 shadow-sm" itemscope itemtype="https://schema.org/Person">
   <div class="card-body p-4">
     <div class="d-flex align-items-start">
-      {% if author.avatar %}
-        <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ author.avatar }}"
+      {% if has_avatar %}
+        <img src="{{ avatar_url }}"
              alt="{{ author.display_name | default: author.name }}"
              class="rounded-circle me-3 border border-2 border-primary"
              width="72" height="72"

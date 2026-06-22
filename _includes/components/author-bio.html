@@ -1,0 +1,78 @@
+{% comment %}
+  ===================================================================
+  AUTHOR BIO COMPONENT - "About the Author" section
+  ===================================================================
+
+  File: author-bio.html
+  Path: _includes/components/author-bio.html
+  Purpose: Canonical end-of-content "About the Author" block, shared by the
+           article, note, and notebook layouts. Wraps the full author-card
+           primitive in a titled <aside> and links to the author's profile
+           page when the author resolves to a known _data/authors.yml entry —
+           either by key (default) or by display name ("Zer0-Mistakes Team").
+
+  Parameters:
+  - author (required): Author key from _data/authors.yml OR a plain name string.
+  - heading (optional): Section heading text (default: "About the Author").
+  - show_profile_link (optional): Show the "More from <name>" link when the
+                     author is a known key (default: true).
+
+  Usage (wrap each line in Liquid include tags — braces omitted here because
+  Liquid parses tags even inside HTML comments, which would self-recurse):
+    include components/author-bio.html author=page.author
+    include components/author-bio.html author=page.author heading="Written by"
+
+  Gating: callers decide whether to render this at all — the article/note/
+  notebook layouts only include it when `page.author` is set and the
+  `author_profile` front-matter flag is not false.
+
+  Dependencies:
+  - components/author-card.html (style="full")
+  - _data/authors.yml
+  ===================================================================
+{% endcomment %}
+{% assign bio_heading = include.heading | default: "About the Author" %}
+
+{% assign show_profile_link = true %}
+{% if include.show_profile_link == false %}{% assign show_profile_link = false %}{% endif %}
+
+{% comment %} Resolve the author to a known _data/authors.yml key — directly, or
+   by matching the display name / display_name — so the "More from" link works
+   whether front matter uses the key (default) or the name ("Zer0-Mistakes Team").
+   The profile URL is always built from the resolved KEY so the slug is correct. {% endcomment %}
+{% assign bio_author_key = nil %}
+{% assign bio_author_data = site.data.authors[include.author] %}
+{% if bio_author_data %}
+  {% assign bio_author_key = include.author %}
+{% elsif include.author and include.author != "" %}
+  {% for entry in site.data.authors %}
+    {% if entry[1].name == include.author or entry[1].display_name == include.author %}
+      {% assign bio_author_data = entry[1] %}
+      {% assign bio_author_key = entry[0] %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+{% assign bio_profile_url = nil %}
+{% if bio_author_key %}
+  {% assign bio_author_name = bio_author_data.name | default: include.author %}
+  {% capture bio_profile_url %}{{ site.baseurl }}/authors/{{ bio_author_key | slugify }}/{% endcapture %}
+{% endif %}
+
+{% if include.author %}
+<aside class="author-section my-5 pt-4 border-top" aria-labelledby="about-the-author">
+  <h2 id="about-the-author" class="h5 mb-3">
+    <i class="bi bi-person-badge me-2" aria-hidden="true"></i>{{ bio_heading }}
+  </h2>
+
+  {% include components/author-card.html author=include.author style="full" %}
+
+  {% if show_profile_link and bio_profile_url %}
+    <div class="mt-3">
+      <a href="{{ bio_profile_url }}" class="btn btn-sm btn-outline-primary">
+        <i class="bi bi-collection me-1" aria-hidden="true"></i>More from {{ bio_author_name }}
+      </a>
+    </div>
+  {% endif %}
+</aside>
+{% endif %}

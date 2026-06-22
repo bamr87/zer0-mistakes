@@ -466,10 +466,42 @@ class PreviewGenerator:
         
         # Rate limiter for API calls
         self.rate_limiter = RateLimiter(requests_per_minute=rate_limit)
-        
+
+        # Author data (for per-author art-style overrides). Loaded once and read
+        # (never mutated) per file, so it is safe to share across worker threads.
+        self.authors = self._load_authors()
+
         # Ensure output directory exists
         if not dry_run:
             self.output_dir.mkdir(parents=True, exist_ok=True)
+
+    def _load_authors(self) -> Dict[str, Any]:
+        """Load _data/authors.yml so posts can override the art style per author."""
+        authors_file = self.project_root / '_data' / 'authors.yml'
+        try:
+            data = yaml.safe_load(authors_file.read_text(encoding='utf-8'))
+            return data if isinstance(data, dict) else {}
+        except Exception:
+            return {}
+
+    def author_preview_overrides(self, author_key: Optional[str]) -> Dict[str, Any]:
+        """Return the `preview:` override block for an author key (or {}).
+
+        A post whose `author:` references an entry in _data/authors.yml that
+        carries a `preview:` block gets that block's settings — they win over the
+        site-wide style for that post's banner (e.g. AI personas cassandra/vega).
+        """
+        # Jekyll allows `author:` as a string, a list (multi-author), or a mapping
+        # (jekyll-seo-tag E-E-A-T). Only a hashable string can index authors.yml;
+        # anything else simply has no per-author override (and must not crash the
+        # run — keeping this path as resilient as the rest of the file).
+        if not isinstance(author_key, str) or not author_key:
+            return {}
+        author = self.authors.get(author_key)
+        if not isinstance(author, dict):
+            return {}
+        preview = author.get('preview')
+        return preview if isinstance(preview, dict) else {}
     
     def debug(self, msg: str):
         """Print debug message if verbose mode is enabled."""
@@ -584,14 +616,26 @@ class PreviewGenerator:
             clean_content = re.sub(r'\n+', ' ', clean_content)
             prompt_parts.append(f"Key themes: {clean_content}")
         
+        # Per-author art-style override (e.g. AI personas) wins over the
+        # configured style for this post's banner. Computed per-call from the
+        # document's own front matter, so it is thread-safe under parallel workers.
+        effective_style = self.image_style
+        style_modifiers = ""
+        overrides = self.author_preview_overrides(content.front_matter.get('author'))
+        if overrides.get('style'):
+            effective_style = str(overrides['style']).strip()
+            self.debug(f"Author '{content.front_matter.get('author')}' style override applied")
+        if overrides.get('style_modifiers'):
+            style_modifiers = f" Additional style: {str(overrides['style_modifiers']).strip()}."
+
         # Add style instructions
         prompt_parts.extend([
-            f"Style: {self.image_style}.",
+            f"Style: {effective_style}.{style_modifiers}",
             "The image should be suitable as a blog header/preview image.",
             "Clean composition, professional look, visually appealing.",
             "No text or letters in the image.",
         ])
-        
+
         return ' '.join(prompt_parts)
     
     def generate_filename(self, title: str) -> str:

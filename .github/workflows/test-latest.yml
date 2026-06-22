@@ -94,7 +94,7 @@ jobs:
     
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Generate Immutable Tag
         id: tag
@@ -107,11 +107,11 @@ jobs:
           echo "📦 Image tag: ${TAG}"
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Cache Docker layers
         if: github.event_name != 'schedule'
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-latest-${{ hashFiles('docker/Dockerfile') }}
@@ -196,7 +196,7 @@ jobs:
           fi
           
       - name: Upload Docker Image Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: docker-image
           path: /tmp/jekyll-image.tar
@@ -213,10 +213,10 @@ jobs:
     
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Download Docker Image
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: docker-image
           path: /tmp
@@ -337,10 +337,10 @@ jobs:
     
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Download Docker Image
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: docker-image
           path: /tmp
@@ -362,7 +362,7 @@ jobs:
           docker tag "${IMAGE_ID}" zer0-mistakes-jekyll-test:latest
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
@@ -391,7 +391,7 @@ jobs:
           echo "${{ needs.build-latest.outputs.image_tag }}" > LATEST_SUCCESSFUL_TAG
           
       - name: Upload Tag Reference
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: latest-tag
           path: LATEST_SUCCESSFUL_TAG

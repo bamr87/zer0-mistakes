@@ -185,6 +185,8 @@ collections:
         - root
         - stats
         - admin
+        - author
+        - authors
 
   pages:
     path_pattern: "pages/*.md"

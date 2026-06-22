@@ -10,6 +10,8 @@
   children:
     - title: Overview
       url: /about/
+    - title: Authors
+      url: /authors/
     - title: Features
       url: /about/features/
     - title: AI Development Guide
