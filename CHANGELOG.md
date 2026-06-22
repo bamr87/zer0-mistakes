@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.0](https://github.com/bamr87/zer0-mistakes/compare/v1.19.0...v1.20.0) (2026-06-22)
+
+
+### Features
+
+* **authors:** unified author profiles & About-the-Author across collections ([#193](https://github.com/bamr87/zer0-mistakes/issues/193)) ([a6db304](https://github.com/bamr87/zer0-mistakes/commit/a6db30422a5bce69a55acaba2989b461d781e013))
+* **scripts:** add dependency-free preview-image pixelator ([#178](https://github.com/bamr87/zer0-mistakes/issues/178)) ([ada91ee](https://github.com/bamr87/zer0-mistakes/commit/ada91ee255d790ea94063419afc8ff9621fe06b0))
+
+
+### Bug Fixes
+
+* **chat-proxy:** identify as Claude Code for subscription OAuth tokens ([#185](https://github.com/bamr87/zer0-mistakes/issues/185)) ([8924efd](https://github.com/bamr87/zer0-mistakes/commit/8924efd167f3cddf866df2225c069470d0f8f13a))
+* **config:** restore remote_theme contract + add missing lastmod (unblocks CI) ([#174](https://github.com/bamr87/zer0-mistakes/issues/174)) ([b995115](https://github.com/bamr87/zer0-mistakes/commit/b995115a4ffb745704f1111539085a610ba94053))
+* **config:** restore zer0-mistakes.com site identity + CNAME (site was down) ([#176](https://github.com/bamr87/zer0-mistakes/issues/176)) ([9ef8ff8](https://github.com/bamr87/zer0-mistakes/commit/9ef8ff8335e0a9f394da1ec342f388d31470eb22))
+
+
+### Performance Improvements
+
+* slim Docker build, cache page-invariant chrome, drop dead vendor weight ([#186](https://github.com/bamr87/zer0-mistakes/issues/186)) ([28ba4eb](https://github.com/bamr87/zer0-mistakes/commit/28ba4eb0948b60cee94415865f66dd4a9a58391d))
+
+
+### Reverts
+
+* remove Year of AI / org content-hub pivot, restore theme landing page ([#180](https://github.com/bamr87/zer0-mistakes/issues/180)) ([3960f65](https://github.com/bamr87/zer0-mistakes/commit/3960f65b1af4c750216deda0d032a309b0f93b78))
+
 ## [Unreleased]
 
 ### Added
