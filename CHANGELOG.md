@@ -124,6 +124,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   stylesheet.
 
 ### Changed
+- **CSS Grid tutorial now ships live, in-browser demos.** Expanded
+  `pages/_posts/tutorial/2025-01-23-css-grid-mastery.md` so every concept renders
+  a real grid next to its code — basic tracks, `fr`/`minmax()`, `auto-fit` vs
+  `auto-fill`, line spanning, named areas, an interactive column playground, and
+  card / holy-grail / magazine / alignment / dense-packing layouts (theme-aware,
+  responsive, keyboard-accessible). Added bidirectional "Related Reading" links
+  between the tutorial and the card-grid / accessible-forms posts, plus references
+  to it from the Bootstrap, Layouts, and Styles docs.
 - **Bylines now use the shared author component.** The `article`, `note`,
   `notebook`, `news`, and `section` layouts plus `components/post-card.html`
   previously printed `{{ page.author }}` as bare text; they now render
