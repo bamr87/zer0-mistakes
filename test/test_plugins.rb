@@ -62,6 +62,7 @@ require_relative '../_plugins/admin_page_urls'
 require_relative '../_plugins/content_statistics_generator'
 require_relative '../_plugins/preview_image_generator'
 require_relative '../_plugins/theme_version'
+require_relative '../_plugins/sanitize_config_filter'
 
 FakePage = Struct.new(:output_ext, :url)
 FakeSite = Struct.new(:pages, :data, :config, :source, :theme, :collections) do
@@ -282,5 +283,73 @@ class ThemeVersionGeneratorTest < Minitest::Test
 
   def test_no_theme_config_yields_empty_specs
     assert_equal [], run_generator({})
+  end
+end
+
+# ---------------------------------------------------------------------------
+class SanitizeConfigFilterTest < Minitest::Test
+  include Jekyll::SanitizeConfigFilter
+
+  def filter(input) = sanitize_config_yaml(input)
+
+  # --- SENSITIVE_KEY_RE: key-name matching -----------------------------------
+
+  def test_redacts_api_key
+    assert_equal "api_key: [REDACTED]\n", filter("api_key: secret123\n")
+  end
+
+  def test_redacts_apikey_no_separator
+    assert_equal "apikey: [REDACTED]\n", filter("apikey: value\n")
+  end
+
+  def test_redacts_secret
+    assert_equal "secret: [REDACTED]\n", filter("secret: mysecret\n")
+  end
+
+  def test_redacts_password
+    assert_equal "password: [REDACTED]\n", filter("password: pass123\n")
+  end
+
+  def test_redacts_token
+    assert_equal "token: [REDACTED]\n", filter("token: tok123\n")
+  end
+
+  def test_redacts_case_insensitive
+    assert_equal "TOKEN: [REDACTED]\n", filter("TOKEN: upper\n")
+  end
+
+  def test_leaves_non_secret_key_untouched
+    assert_equal "title: My Blog\n", filter("title: My Blog\n")
+  end
+
+  # --- PHC_VALUE_RE: PostHog project key prefix -----------------------------
+
+  def test_redacts_phc_value_in_non_secret_key_line
+    assert_equal "posthog_key: [REDACTED]\n", filter("posthog_key: phc_AbcDef123\n")
+  end
+
+  def test_leaves_line_without_phc_untouched
+    assert_equal "some_key: normalvalue\n", filter("some_key: normalvalue\n")
+  end
+
+  # --- Mixed input: partial redaction across multiple lines -----------------
+
+  def test_mixed_input_redacts_only_secret_lines
+    input = "title: My Blog\napi_key: supersecret\ndescription: A blog\ntoken: mytoken\n"
+    result = filter(input)
+    assert_includes result, "title: My Blog\n"
+    assert_includes result, "api_key: [REDACTED]\n"
+    assert_includes result, "description: A blog\n"
+    assert_includes result, "token: [REDACTED]\n"
+  end
+
+  # --- Edge cases -----------------------------------------------------------
+
+  def test_empty_string_returns_empty
+    assert_equal "", filter("")
+  end
+
+  def test_nil_returns_nil
+    assert_nil filter(nil)
   end
 end

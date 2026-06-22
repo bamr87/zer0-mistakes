@@ -32,6 +32,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Tests
+- **Unit tests for `sanitize_config_filter.rb` (T-023).** Added 12 Minitest
+  specs to `test/test_plugins.rb` covering both regex paths of the
+  security-critical Liquid filter: `SENSITIVE_KEY_RE` matches `api_key`,
+  `apikey`, `secret`, `password`, and `token` (case-insensitive); `PHC_VALUE_RE`
+  catches PostHog project keys; mixed multi-line input produces correct partial
+  redaction; and edge cases (`nil`, empty string) return without error.
 ### Added
 - **Author profiles ("About the Author") across all collections.** A single,
   layered author system replaces the three divergent ad-hoc treatments that

@@ -602,7 +602,7 @@ tasks:
 
   - id: T-023
     title: "Unit tests for sanitize_config_filter.rb (security-critical plugin)"
-    status: open
+    status: done
     priority: P2
     area: tests
     risk: standard
@@ -626,7 +626,7 @@ tasks:
       - "`./scripts/bin/test` stays green with the new specs included."
     links: { issue: null, pr: null, roadmap: null }
     created: 2026-06-15
-    updated: 2026-06-15
+    updated: 2026-06-18
 
   - id: T-024
     title: "Unit tests for scripts/content-review.rb scoring engine"
