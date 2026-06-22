@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-06-16T00:00:00.000Z
+lastmod: 2026-06-22T12:00:00.000Z
 title: Layouts
 description: Create and customize page layouts in the Zer0-Mistakes Jekyll theme.
 preview: /images/previews/layouts.png
@@ -162,6 +162,7 @@ Use includes for reusable parts:
 
 - [Jekyll Layouts Documentation](https://jekyllrb.com/docs/layouts/)
 - [Liquid Template Language](https://shopify.github.io/liquid/)
+- [CSS Grid Mastery (tutorial)](/posts/2025/01/23/css-grid-mastery/) — build custom two-dimensional layouts with live, in-browser examples
 
 ## Technical Reference
 

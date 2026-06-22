@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-06-16T00:00:00.000Z
+lastmod: 2026-06-22T12:00:00.000Z
 title: Styles
 description: Customize CSS and SCSS styles in the Zer0-Mistakes Jekyll theme.
 preview: /images/previews/styles.png
@@ -281,6 +281,7 @@ Use Bootstrap's breakpoints:
 - [Bootstrap 5 Documentation](https://getbootstrap.com/docs/5.3/)
 - [Sass Documentation](https://sass-lang.com/documentation/)
 - [CSS Custom Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties)
+- [CSS Grid Mastery (tutorial)](/posts/2025/01/23/css-grid-mastery/) — hands-on CSS Grid layouts with live, in-browser demos
 
 ## Technical Reference
 

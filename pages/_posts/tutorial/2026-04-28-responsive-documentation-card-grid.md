@@ -3,7 +3,7 @@ title: "Build a Responsive Documentation Card Grid"
 description: "A hands-on tutorial for creating a clean, responsive card grid for documentation indexes and resource libraries."
 preview: /images/previews/build-a-responsive-documentation-card-grid.png
 date: 2026-04-28T09:40:00.000Z
-lastmod: 2026-04-28T09:40:00.000Z
+lastmod: 2026-06-22T12:00:00.000Z
 author: default
 layout: article
 categories: [Tutorial]
@@ -109,3 +109,8 @@ Keep metadata short. The card should help readers choose, not become a miniature
 ## Final Pattern
 
 A good card grid is predictable. It uses stable dimensions, clear labels, and a full-card link. Once the pattern is in place, documentation indexes become easier to expand without redesigning the page each time.
+
+## Related Reading
+
+- [CSS Grid Mastery: Build Any Layout You Can Imagine](/posts/2025/01/23/css-grid-mastery/) — the full CSS Grid toolkit, with live, in-browser demos for every property used here.
+- [Accessible Form Patterns: Labels, Errors, and Helpful States](/posts/2026/04/28/accessible-form-patterns/) — another front-end pattern tutorial in this series.

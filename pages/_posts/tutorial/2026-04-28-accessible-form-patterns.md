@@ -3,7 +3,7 @@ title: "Accessible Form Patterns: Labels, Errors, and Helpful States"
 description: "A tutorial example post showing practical HTML patterns for forms that are easier to use and test."
 preview: /images/previews/accessible-form-patterns-labels-errors-and-helpful.png
 date: 2026-04-28T10:00:00.000Z
-lastmod: 2026-04-28T10:00:00.000Z
+lastmod: 2026-06-22T12:00:00.000Z
 author: default
 layout: article
 categories:
@@ -98,3 +98,8 @@ A quick keyboard pass catches many issues:
 ## Conclusion
 
 Accessible form patterns are mostly about clarity. Real labels, connected descriptions, specific errors, and predictable focus make forms more humane and easier to maintain.
+
+## Related Reading
+
+- [CSS Grid Mastery: Build Any Layout You Can Imagine](/posts/2025/01/23/css-grid-mastery/) — lay out your forms and pages with live, interactive CSS Grid demos.
+- [Build a Responsive Documentation Card Grid](/posts/2026/04/28/responsive-documentation-card-grid/) — a responsive grid pattern for documentation indexes and resource libraries.

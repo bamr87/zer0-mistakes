@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-06-14T00:00:00.000Z
+lastmod: 2026-06-22T12:00:00.000Z
 title: Bootstrap 5 Integration in Zer0-Mistakes
 description: How the Zer0-Mistakes Jekyll theme ships vendored Bootstrap 5.3.3 — grid, components, color modes, icons, and Sass customization, with copy-paste examples.
 keywords: [bootstrap 5, jekyll bootstrap theme, bootstrap grid, bootstrap components, responsive design]
@@ -91,6 +91,8 @@ If you prefer a public CDN instead of committed vendor files, you can swap the l
   <div class="col">Equal</div>
 </div>
 ```
+
+> **Going further:** Bootstrap's grid is built on flexbox and shines at rows of columns. When you need true two-dimensional control — overlapping areas, named regions, or magazine-style layouts — reach for native CSS Grid. The [CSS Grid Mastery tutorial](/posts/2025/01/23/css-grid-mastery/) walks through it with live, in-browser demos.
 
 ## Responsive Breakpoints
 
@@ -374,6 +376,7 @@ document.querySelectorAll('.needs-validation').forEach(form => {
 - [Color Modes](/docs/features/color-modes/)
 - [Layouts](/docs/customization/layouts/)
 - [Include Components](/docs/customization/includes/)
+- [CSS Grid Mastery (tutorial)](/posts/2025/01/23/css-grid-mastery/)
 
 ## See also
 
