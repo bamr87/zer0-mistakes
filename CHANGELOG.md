@@ -200,6 +200,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `assets/css/main.css` is verified **semantically identical** (only the two
   redundant duplicates and some emitted comments were removed) — no tokens,
   selectors, or declaration values changed.
+- **Automation no longer pushes directly to `main`.** The roadmap→README sync
+  (`sync.yml`) and Jupyter notebook conversion (`convert-notebooks.yml`) now
+  open pull requests via `peter-evans/create-pull-request` (labelled
+  `automated`, assigned for review) instead of committing straight to `main` —
+  prerequisite for enabling branch protection. Mirrors the existing
+  `update-dependencies.yml` pattern. (PRs opened by `GITHUB_TOKEN` don't
+  auto-trigger CI; close/reopen to run checks, or merge directly.)
 
 ### Fixed
 - **`Gemfile.lock` re-synced to `version.rb` (1.19.1 → 1.19.0)** and guarded
