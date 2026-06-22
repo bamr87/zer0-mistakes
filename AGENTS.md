@@ -77,6 +77,17 @@ should load them manually):
 | Review the repo and file tactical tasks into the backlog | `.github/prompts/repo-audit.prompt.md` |
 | Implement the next open backlog task and open a PR | `.github/prompts/backlog-implement.prompt.md` |
 
+### Workflow skills
+
+Operational checklists under `.github/skills/<name>/SKILL.md`. Read the matching
+skill before the action it covers.
+
+| Doing… | Skill |
+| --- | --- |
+| **Starting any change** — branch → commit → PR, splitting mixed work, keeping generated/lock files out of feature PRs | `.github/skills/change-workflow/SKILL.md` |
+| Validating a change before commit/PR (Jekyll build, doctor, tests) | `.github/skills/validate-build/SKILL.md` |
+| Reviewing content PRs for SEO/consistency/polish | `.github/skills/content-review/SKILL.md` |
+
 ---
 
 ## 🔁 Continuous-Evolution Loop

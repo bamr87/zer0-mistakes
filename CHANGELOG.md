@@ -32,6 +32,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Contributor workflow guardrails.** New `change-workflow` skill
+  (`.github/skills/change-workflow/SKILL.md`) codifying the branch → commit → PR
+  flow for any change (branch-first, one concern per PR, stage-by-path,
+  worktrees for parallel work, splitting a messy working tree). Paired with
+  expanded `version-control.instructions.md` rules — working-tree/branch
+  discipline, the `version.rb` ↔ `Gemfile.lock` invariant, and keeping generated
+  artifacts out of feature PRs — and indexed from `AGENTS.md`, `CLAUDE.md`, and
+  `.github/instructions/README.md`.
 ### Tests
 - **Unit tests for `sanitize_config_filter.rb` (T-023).** Added 12 Minitest
   specs to `test/test_plugins.rb` covering both regex paths of the

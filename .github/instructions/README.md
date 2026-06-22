@@ -31,6 +31,10 @@ This directory contains file-specific instructions for GitHub Copilot to provide
 │   ├── repo-audit.prompt.md          # Review repo → file backlog tasks
 │   ├── backlog-implement.prompt.md   # Implement next backlog task → PR
 │   └── seed.prompt.md                # Theme rebuild blueprint
+├── skills/                          # Operational workflow checklists (SKILL.md)
+│   ├── change-workflow/SKILL.md      # Branch → commit → PR for any change
+│   ├── validate-build/SKILL.md       # Pre-commit / pre-PR validation pipeline
+│   └── content-review/SKILL.md       # Content SEO/consistency/polish review
 └── seed/                            # Deep architectural blueprint docs
 
 .cursor/
@@ -284,6 +288,30 @@ The agent guidance system is designed to be **extendable**. Use these patterns w
 2. Write the prompt as a numbered, checkable workflow (see `commit-publish.prompt.md` for the canonical pattern).
 3. To make it available as a Cursor slash-command, mirror the file into `.cursor/commands/<task>.md`.
 4. Add it to the prompts table in [`AGENTS.md`](../../AGENTS.md).
+
+### Add a workflow skill
+
+Skills are operational checklists an agent reads before performing a recurring
+action (validating, branching, reviewing). They differ from prompts: a prompt is
+a task you invoke; a skill is a reusable procedure referenced by prompts,
+agents, and `CLAUDE.md`.
+
+1. Create `.github/skills/<name>/SKILL.md` with this front matter (mirror
+   `change-workflow` / `validate-build`):
+
+   ```yaml
+   ---
+   name: <name>
+   description: "**WORKFLOW SKILL** — <what it does>. USE FOR: … INVOKES: … DO NOT USE FOR: …"
+   ---
+   ```
+
+2. Write it as a numbered, checkable procedure with a "When to use" section and a
+   "Reporting back to the user" section.
+3. Add it to the **Structure** diagram above and the workflow-skills table in
+   [`AGENTS.md`](../../AGENTS.md).
+4. If it governs how *all* changes are made, reference it from `CLAUDE.md` and
+   the relevant `*.instructions.md`.
 
 ### Onboard a new AI tool / IDE
 
