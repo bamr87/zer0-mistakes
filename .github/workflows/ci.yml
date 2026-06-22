@@ -149,6 +149,26 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v6
 
+      # Always-running guard: version.rb must equal the gem version pinned in
+      # Gemfile.lock. Lives in this job (not the path-filtered fast-checks) so it
+      # gates every PR — including release PRs that bump version.rb without
+      # re-locking, the drift that left the lock at 1.19.1 vs version.rb 1.19.0.
+      # Pure bash (no Ruby setup needed); mirrors validate_version_consistency
+      # in scripts/bin/validate.
+      - name: Version ↔ Gemfile.lock consistency
+        run: |
+          rb=$(sed -nE 's/.*VERSION = "([0-9][^"]*)".*/\1/p' lib/jekyll-theme-zer0/version.rb | head -1)
+          lock=$(sed -nE 's/^[[:space:]]*jekyll-theme-zer0 \(([^)]+)\).*/\1/p' Gemfile.lock | head -1)
+          if [ -z "$rb" ] || [ -z "$lock" ]; then
+            echo "::error::could not parse version (version.rb='$rb', Gemfile.lock='$lock')"
+            exit 1
+          fi
+          if [ "$rb" != "$lock" ]; then
+            echo "::error file=Gemfile.lock::version.rb ($rb) != Gemfile.lock ($lock) — run 'bundle lock' to re-sync"
+            exit 1
+          fi
+          echo "✓ version.rb and Gemfile.lock agree: $rb"
+
       - name: Run Quality Checks
         uses: ./.github/actions/quality-checks
         with:
