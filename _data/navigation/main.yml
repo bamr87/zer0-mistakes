@@ -74,6 +74,8 @@
   children:
     - title: Features
       url: /features/
+    - title: Authors
+      url: /authors/
     - title: Statistics
       url: /about/stats/
     - title: Config

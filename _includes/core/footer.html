@@ -130,7 +130,7 @@
                 {% endfor %}
               {% else %}
                 <li><a href="{{ '/' | relative_url }}" class="text-light text-decoration-none">Home</a></li>
-                {% assign _candidate_links = "About,/about/|Statistics,/about/stats/|Services,/services/|News,/news/|Contact,/contact/" | split: "|" %}
+                {% assign _candidate_links = "About,/about/|Authors,/authors/|Statistics,/about/stats/|Services,/services/|News,/news/|Contact,/contact/" | split: "|" %}
                 {% for entry in _candidate_links %}
                   {% assign _parts = entry | split: "," %}
                   {% assign _label = _parts[0] %}

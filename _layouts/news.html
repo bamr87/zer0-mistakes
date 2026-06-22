@@ -121,7 +121,7 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
           </small>
           {% if hero_post.author %}
             <small class="text-muted">
-              <i class="bi bi-person me-1"></i>{{ hero_post.author }}
+              {% include components/author-card.html author=hero_post.author style="inline" show_avatar=false %}
             </small>
           {% endif %}
           {% if hero_post.categories.size > 0 %}
@@ -218,7 +218,7 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
               <i class="bi bi-calendar me-1"></i>{{ main_featured.date | date: "%b %d, %Y" }}
               {% if main_featured.author %}
                 <span class="mx-2">•</span>
-                <i class="bi bi-person me-1"></i>{{ main_featured.author }}
+                {% include components/author-card.html author=main_featured.author style="inline" show_avatar=false %}
               {% endif %}
             </small>
           </div>
@@ -414,7 +414,7 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
               <div class="d-flex gap-3 text-muted small">
                 <span><i class="bi bi-calendar me-1"></i>{{ lpost.date | date: "%B %d, %Y" }}</span>
                 {% if lpost.author %}
-                  <span><i class="bi bi-person me-1"></i>{{ lpost.author }}</span>
+                  <span>{% include components/author-card.html author=lpost.author style="inline" show_avatar=false %}</span>
                 {% endif %}
               </div>
             </div>

@@ -7,6 +7,78 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Author profiles ("About the Author") across all collections.** A single,
+  layered author system replaces the three divergent ad-hoc treatments that
+  existed before:
+  - `components/author-card.html` is now the canonical rendering primitive
+    (`inline` / `compact` / `full`), with avatars, profile links, schema.org
+    `Person` microdata, and expertise chips.
+  - New `components/author-bio.html` renders the shared "About the Author"
+    section (used by the `article`, `note`, and `notebook` layouts), gated by
+    the previously-unused `author_profile` front-matter flag.
+  - New `author` / `authors` layouts add per-author profile pages at
+    `/authors/:key/` (content aggregated across **every** collection) and an
+    `/authors/` directory index, linked from the navbar (under **About**) and
+    the footer quick links. Each profile is **interactive**: a hero with
+    bio/blurb, an at-a-glance stats dashboard that doubles as type filters
+    (Posts / Docs / Notes / …), free-text search over titles + tags, sort
+    (newest / oldest / A–Z), a clickable topic/tag cloud, a live result count,
+    and deep-linkable filters via the URL hash — powered by the new
+    progressive-enhancement `assets/js/author-profile.js` (with JS off it falls
+    back to a full, crawlable grid). Emits `schema.org/CollectionPage` +
+    `ItemList` structured data.
+  - New `_plugins/author_pages_generator.rb` auto-generates those pages for
+    each `_data/authors.yml` entry (opt out per author with `profile: false`,
+    or globally with `authors.generate_pages: false`); profiles for this site's
+    authors are also committed under `/authors/` so they build under GitHub
+    Pages safe mode, mirroring the committed `search.json` / `sitemap` pattern.
+  - New `_sass/components/_author.scss` styling (dark-mode safe, token-driven).
+  - `_data/authors.yml` documents the new `tagline`, `location`, `expertise`,
+    and `profile` fields.
+  - **AI author personas.** An author can be flagged `ai: true` with a `persona`
+    block (archetype / voice / signature_moves / avoids / disclosure + custom
+    `topics`); the theme then renders an "AI" badge on every byline and card and
+    a visible authorship disclosure on the profile hero and the
+    About-the-Author box. Ships two examples — **Cassandra** (a paranoid AI
+    Security Analyst who catastrophizes trivial gaps) and **Vega** (an
+    enthusiastic AI Data Analyst who over-models trivial data) — each with a
+    profile page, an SVG avatar, and example in-voice posts, plus a reusable
+    `.github/prompts/ai-author.prompt.md` template for writing as a persona.
+  - **Per-author preview art styles.** An author entry can carry a `preview:`
+    block (`style`, `style_modifiers`, and — for the Bash generator — `size`,
+    `quality`, `model`). When a post sets `author: <that key>`, the AI
+    preview-image generator uses those settings **instead of** the site-wide
+    `preview_images` config for that post's banner, so each AI persona gets a
+    recognisable look (Cassandra → ominous security-ops noir, Vega → vibrant
+    data-viz). Resolved per file by both
+    `scripts/features/generate-preview-images` and
+    `scripts/lib/preview_generator.py`; posts by non-AI authors are unaffected.
+    Precedence — Bash generator: author `preview:` › `IMAGE_STYLE` env ›
+    `_config.yml` › defaults; Python generator: author `preview:` › `--style`
+    flag › default (it does not read `_config.yml`).
+    The two shipped personas were given deliberately divergent styles
+    (Cassandra → hand-inked **noir graphic novel**; Vega → glossy **isometric 3D
+    infographic**) and their four example posts now carry real generated banners
+    — downscaled to ~1200px JPEGs (~300 KB) — replacing the placeholder SVGs.
+  - **Guest author page is now a contribution guide.** `/authors/guest/`
+    doubles as the contributor onboarding page — how to submit an article (paths,
+    front-matter template, local preview, PR + review), how to become a credited
+    author (add yourself to `_data/authors.yml`, use your key, profile stub for
+    safe mode), and AI-authorship disclosure. The `author` layout now renders a
+    page's Markdown body (in a `.author-page-body` section) and suppresses the
+    generic "no content" empty state when a body is present, so any profile page
+    can carry custom content.
+  - **Avatars can be full URLs (incl. GitHub) or auto-derived from a handle.**
+    An author's `avatar` may now be a full URL — e.g. a GitHub avatar
+    (`https://avatars.githubusercontent.com/u/<id>?v=4`) — used as-is; relative
+    paths still resolve under the assets folder. If `avatar` is omitted but
+    `github` is set, the avatar falls back to `https://github.com/<handle>.png`.
+    Resolution is centralised in `components/author-avatar-url.html` and shared by
+    the byline, bio card, profile hero, and E-E-A-T blocks. The Guest profile
+    demonstrates the handle-only path (its avatar comes from `github: amr-bash`),
+    and bamr87 uses an explicit GitHub avatar URL.
+
 ### Performance
 - **Docker dev image cut from ~4GB to ~1.7GB and cold build from ~193s to ~82s**
   (native arm64; far worse under the old emulated build). The `dev-test` stage
@@ -52,6 +124,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   stylesheet.
 
 ### Changed
+- **Bylines now use the shared author component.** The `article`, `note`,
+  `notebook`, `news`, and `section` layouts plus `components/post-card.html`
+  previously printed `{{ page.author }}` as bare text; they now render
+  `components/author-card.html` (`inline`), so a known author key resolves to a
+  display name, avatar, and a link to their profile page. The inline
+  "About the Author" block that was hard-coded in `_layouts/article.html` was
+  removed in favor of `components/author-bio.html`.
+- **Author bylines and the "About the Author" section now link to the profile
+  even when front matter uses the display name.** Previously only a direct
+  `_data/authors.yml` key (e.g. `author: default`) resolved to a profile link;
+  posts/notes written as `author: "Zer0-Mistakes Team"` (the display name) fell
+  back to an unlinked card. `components/author-card.html` and
+  `components/author-bio.html` now resolve the author by key **or** by matching
+  `name` / `display_name`, so the inline byline, the full card name, and the
+  "More from …" link all point at `/authors/<key>/`. Non-matching strings
+  (template placeholders, name variants) stay unlinked as before.
+- **Committed author pages moved to `pages/_about/authors/`** (into the `about`
+  collection), co-located with the rest of the About section instead of a
+  top-level `/authors/` source directory. URLs are unchanged (explicit
+  `/authors/:key/` permalinks), and `author_pages_generator.rb`'s dedup now also
+  checks collection documents so no duplicate pages are generated.
 - **Design framework (SCSS) refactor — structure only, no visual change.**
   Decomposed the 1,131-line `_sass/custom.scss` monolith into a thin back-compat
   barrel plus five focused partials (`layouts/_global-chrome`, `core/_toc`,

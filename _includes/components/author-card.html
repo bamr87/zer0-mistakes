@@ -1,174 +1,229 @@
-<!--
+{% comment %}
   ===================================================================
-  AUTHOR CARD COMPONENT - Display author information
+  AUTHOR CARD COMPONENT - Canonical author rendering primitive
   ===================================================================
-  
+
   File: author-card.html
   Path: _includes/components/author-card.html
-  Purpose: Reusable author profile display for posts and author pages
-  
-  Parameters:
-  - author (required): Author key from _data/authors.yml OR author name string
-  - style (optional): "compact" | "full" | "inline" (default: "compact")
-  - show_bio (optional): Show author bio (default: true for full, false for compact)
-  - show_social (optional): Show social links (default: true for full, false for compact)
-  
-  Usage:
-    {% include components/author-card.html author=page.author %}
-    {% include components/author-card.html author="bamr87" style="full" %}
-    {% include components/author-card.html author=page.author style="inline" %}
-  
-  Dependencies:
-  - _data/authors.yml: Author data definitions
-  - Bootstrap 5 card and utility classes
-  - Bootstrap Icons
-  ===================================================================
--->
+  Purpose: Single source of truth for rendering an author across the theme.
+           Used by article/note/notebook bylines, the "About the Author"
+           section (components/author-bio.html), post-card footers, and the
+           author profile/index layouts.
 
-{% comment %} Parameter defaults {% endcomment %}
+  Parameters:
+  - author (required): Author key from _data/authors.yml OR a plain name string.
+  - style (optional): "inline" | "compact" | "full" (default: "compact")
+  - link (optional): Link the name/avatar to the author profile page when the
+                     author resolves to a known key (default: true).
+  - show_avatar (optional): Render the avatar / fallback icon (default: true).
+  - show_bio (optional): Show bio (default: true for full, false otherwise).
+  - show_social (optional): Show social links (default: true for full, false otherwise).
+  - show_expertise (optional): Show expertise chips in full style (default: true).
+  - avatar_size (optional): Avatar size in px (default: 24 inline, 48 compact, 80 full).
+  - name_itemprop (optional): Wrap the visible name in this microdata itemprop
+                     (e.g. "name") when the caller already opened a
+                     schema.org/Person scope. Inline style only.
+
+  Usage (wrap each line in Liquid include tags — braces omitted here because
+  Liquid parses tags even inside HTML comments, which would self-recurse):
+    include components/author-card.html author=page.author style="inline"
+    include components/author-card.html author="bamr87" style="full"
+    include components/author-card.html author=post.author style="inline" show_avatar=false
+
+  Dependencies:
+  - _data/authors.yml: Author data definitions (key -> profile)
+  - Bootstrap 5 card and utility classes; Bootstrap Icons
+  - _sass/components/_author.scss: Styling hooks (.author-*)
+  ===================================================================
+{% endcomment %}
+{% comment %} ---------------------------------------------------------------
+   Parameter defaults. NOTE: `| default: true` returns true when the value is
+   literally `false` (Liquid treats false as "missing"), so boolean params that
+   default to true are resolved with explicit `== false` checks instead.
+--------------------------------------------------------------------------- {% endcomment %}
 {% assign style = include.style | default: "compact" %}
 
-{% comment %} 
-   Resolve author: can be a key to _data/authors.yml or a plain name string 
-{% endcomment %}
-{% assign author_key = include.author %}
-{% assign author_data = site.data.authors[author_key] %}
+{% assign do_link = true %}
+{% if include.link == false %}{% assign do_link = false %}{% endif %}
 
-{% comment %} If no match in authors.yml, use string as display name {% endcomment %}
-{% unless author_data %}
-  {% assign author_data = site.data.authors.default %}
-  {% if include.author and include.author != "" %}
-    {% capture author_name %}{{ include.author }}{% endcapture %}
-  {% else %}
-    {% assign author_name = author_data.name %}
-  {% endif %}
+{% assign show_avatar = true %}
+{% if include.show_avatar == false %}{% assign show_avatar = false %}{% endif %}
+
+{% assign show_expertise = true %}
+{% if include.show_expertise == false %}{% assign show_expertise = false %}{% endif %}
+
+{% comment %} ---------------------------------------------------------------
+   Resolve author: the input may be a key into _data/authors.yml or a plain
+   display-name string. A matched key is "known" and gets a profile link.
+--------------------------------------------------------------------------- {% endcomment %}
+{% assign raw_author = include.author %}
+{% assign author_data = site.data.authors[raw_author] %}
+{% assign is_known = false %}
+{% assign author_key = nil %}
+{% if author_data %}
+  {% assign is_known = true %}
+  {% assign author_key = raw_author %}
+  {% assign author_name = author_data.name | default: raw_author %}
 {% else %}
-  {% assign author_name = author_data.name %}
-{% endunless %}
+  {% comment %} Not a direct key — match by display name / display_name so front
+     matter that uses the name (e.g. "Zer0-Mistakes Team") still resolves to its
+     key (default) and links to the profile. {% endcomment %}
+  {% if raw_author and raw_author != "" %}
+    {% for entry in site.data.authors %}
+      {% if entry[1].name == raw_author or entry[1].display_name == raw_author %}
+        {% assign author_data = entry[1] %}
+        {% assign author_key = entry[0] %}
+        {% assign is_known = true %}
+        {% assign author_name = entry[1].name | default: raw_author %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% unless is_known %}
+    {% assign author_data = site.data.authors.default %}
+    {% if raw_author and raw_author != "" %}
+      {% assign author_name = raw_author %}
+    {% else %}
+      {% assign author_name = author_data.name %}
+    {% endif %}
+  {% endunless %}
+{% endif %}
+
+{% comment %} Profile URL only when the author is a known key and linking is on {% endcomment %}
+{% assign profile_url = nil %}
+{% if do_link and is_known %}
+  {% capture profile_url %}{{ site.baseurl }}/authors/{{ author_key | slugify }}/{% endcapture %}
+{% endif %}
 
 {% comment %} Style-specific defaults {% endcomment %}
 {% if style == "full" %}
-  {% assign show_bio = include.show_bio | default: true %}
-  {% assign show_social = include.show_social | default: true %}
+  {% assign show_bio = true %}
+  {% if include.show_bio == false %}{% assign show_bio = false %}{% endif %}
+  {% assign show_social = true %}
+  {% if include.show_social == false %}{% assign show_social = false %}{% endif %}
+  {% assign avatar_size = include.avatar_size | default: 80 %}
 {% elsif style == "inline" %}
   {% assign show_bio = false %}
   {% assign show_social = false %}
+  {% assign avatar_size = include.avatar_size | default: 24 %}
 {% else %}
-  {% assign show_bio = include.show_bio | default: false %}
-  {% assign show_social = include.show_social | default: false %}
+  {% assign show_bio = false %}
+  {% if include.show_bio == true %}{% assign show_bio = true %}{% endif %}
+  {% assign show_social = false %}
+  {% if include.show_social == true %}{% assign show_social = true %}{% endif %}
+  {% assign avatar_size = include.avatar_size | default: 48 %}
 {% endif %}
 
-<!-- ========================== -->
-<!-- INLINE STYLE               -->
-<!-- ========================== -->
+{% comment %} Resolve avatar: full URL (e.g. GitHub) as-is, relative path prefixed,
+   or derived from the author's github handle. See components/author-avatar-url.html {% endcomment %}
+{% capture avatar_url %}{% include components/author-avatar-url.html data=author_data %}{% endcapture %}
+{% assign avatar_url = avatar_url | strip %}
+{% assign has_avatar = false %}{% if avatar_url != "" %}{% assign has_avatar = true %}{% endif %}
+
+{% comment %} ===========================================================
+     INLINE STYLE — byline use (meta rows, card footers)
+=========================================================== {% endcomment %}
 {% if style == "inline" %}
 <span class="author-inline d-inline-flex align-items-center">
-  {% if author_data.avatar %}
-    <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ author_data.avatar }}" 
-         alt="{{ author_name }}" 
-         class="rounded-circle me-2" 
-         width="24" height="24"
-         style="object-fit: cover;">
+  {%- if profile_url -%}<a href="{{ profile_url }}" class="author-inline__link text-decoration-none text-reset d-inline-flex align-items-center">{%- endif -%}
+  {% if show_avatar %}
+    {% if has_avatar %}
+      <img src="{{ avatar_url }}" alt="" class="author-inline__avatar rounded-circle me-1" width="{{ avatar_size }}" height="{{ avatar_size }}" style="object-fit: cover;" loading="lazy">
+    {% else %}
+      <i class="bi bi-person-circle me-1"></i>
+    {% endif %}
   {% else %}
-    <i class="bi bi-person-circle me-1"></i>
+    <i class="bi bi-person me-1"></i>
   {% endif %}
-  <span class="author-name">{{ author_name }}</span>
+  {%- if include.name_itemprop -%}
+    <span class="author-name" itemprop="{{ include.name_itemprop }}">{{ author_name }}</span>
+  {%- else -%}
+    <span class="author-name">{{ author_name }}</span>
+  {%- endif -%}
+  {%- if profile_url -%}</a>{%- endif -%}
+  {%- if author_data.ai -%}<span class="badge author-ai-badge ms-1" title="AI author persona">AI</span>{%- endif -%}
 </span>
 
-<!-- ========================== -->
-<!-- COMPACT STYLE (default)    -->
-<!-- ========================== -->
+{% comment %} ===========================================================
+     COMPACT STYLE — list rows, author index
+=========================================================== {% endcomment %}
 {% elsif style == "compact" %}
-<div class="author-card-compact d-flex align-items-center">
-  {% if author_data.avatar %}
-    <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ author_data.avatar }}" 
-         alt="{{ author_name }}" 
-         class="rounded-circle me-3" 
-         width="48" height="48"
-         style="object-fit: cover;">
-  {% else %}
-    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" 
-         style="width: 48px; height: 48px;">
-      <i class="bi bi-person fs-5"></i>
-    </div>
+<div class="author-card-compact d-flex align-items-center" itemscope itemtype="https://schema.org/Person">
+  {%- if profile_url -%}<a href="{{ profile_url }}" class="text-decoration-none text-reset d-flex align-items-center" itemprop="url">{%- endif -%}
+  {% if show_avatar %}
+    {% if has_avatar %}
+      <img src="{{ avatar_url }}" alt="{{ author_name }}" class="rounded-circle me-3" width="{{ avatar_size }}" height="{{ avatar_size }}" style="object-fit: cover;" itemprop="image" loading="lazy">
+    {% else %}
+      <div class="author-avatar-fallback rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: {{ avatar_size }}px; height: {{ avatar_size }}px;">
+        <i class="bi bi-person fs-5"></i>
+      </div>
+    {% endif %}
   {% endif %}
   <div>
-    <strong class="d-block">{{ author_name }}</strong>
-    {% if author_data.role %}
-      <small class="text-muted">{{ author_data.role }}</small>
-    {% endif %}
-    {% if show_bio and author_data.bio %}
-      <p class="text-muted small mb-0 mt-1">{{ author_data.bio | truncate: 100 }}</p>
-    {% endif %}
+    <strong class="d-block" itemprop="name">{{ author_name }}{% if author_data.ai %} <span class="badge author-ai-badge align-middle" title="AI author persona"><i class="bi bi-robot" aria-hidden="true"></i> AI</span>{% endif %}</strong>
+    {% if author_data.role %}<small class="text-muted" itemprop="jobTitle">{{ author_data.role }}</small>{% endif %}
+    {% if show_bio and author_data.bio %}<p class="text-muted small mb-0 mt-1" itemprop="description">{{ author_data.bio | truncate: 100 }}</p>{% endif %}
   </div>
+  {%- if profile_url -%}</a>{%- endif -%}
 </div>
 
-<!-- ========================== -->
-<!-- FULL STYLE                 -->
-<!-- ========================== -->
+{% comment %} ===========================================================
+     FULL STYLE — "About the Author" / profile hero
+=========================================================== {% endcomment %}
 {% elsif style == "full" %}
-<div class="author-card card border-0 shadow-sm">
+<div class="author-card card border-0 shadow-sm" itemscope itemtype="https://schema.org/Person">
   <div class="card-body">
     <div class="d-flex align-items-start">
-      {% if author_data.avatar %}
-        <img src="{{ site.baseurl }}/{{ site.public_folder }}{{ author_data.avatar }}" 
-             alt="{{ author_name }}" 
-             class="rounded-circle me-3" 
-             width="80" height="80"
-             style="object-fit: cover;">
-      {% else %}
-        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" 
-             style="width: 80px; height: 80px;">
-          <i class="bi bi-person fs-1"></i>
-        </div>
+      {% if show_avatar %}
+        {% if has_avatar %}
+          <img src="{{ avatar_url }}" alt="{{ author_name }}" class="author-card__avatar rounded-circle me-3" width="{{ avatar_size }}" height="{{ avatar_size }}" style="object-fit: cover;" itemprop="image" loading="lazy">
+        {% else %}
+          <div class="author-avatar-fallback rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: {{ avatar_size }}px; height: {{ avatar_size }}px;">
+            <i class="bi bi-person fs-1"></i>
+          </div>
+        {% endif %}
       {% endif %}
       <div class="flex-grow-1">
-        <h5 class="card-title mb-1">{{ author_name }}</h5>
-        {% if author_data.role %}
-          <p class="text-primary mb-2">{{ author_data.role }}</p>
+        <h5 class="card-title mb-1" itemprop="name">
+          {%- if profile_url -%}<a href="{{ profile_url }}" class="text-decoration-none text-reset" itemprop="url">{{ author_name }}</a>{%- else -%}{{ author_name }}{%- endif -%}
+          {%- if author_data.ai -%} <span class="badge author-ai-badge align-middle" title="AI author persona"><i class="bi bi-robot me-1" aria-hidden="true"></i>AI</span>{%- endif -%}
+        </h5>
+        {% if author_data.role %}<p class="text-primary mb-2" itemprop="jobTitle">{{ author_data.role }}</p>{% endif %}
+        {% if author_data.tagline %}<p class="author-tagline fst-italic text-body-secondary mb-2">{{ author_data.tagline }}</p>{% endif %}
+        {% if show_bio and author_data.bio %}<p class="card-text text-muted" itemprop="description">{{ author_data.bio }}</p>{% endif %}
+
+        {% if show_expertise and author_data.expertise %}
+          <div class="author-expertise d-flex flex-wrap gap-1 mb-2">
+            {% for skill in author_data.expertise %}
+              <span class="badge rounded-pill text-bg-light border" itemprop="knowsAbout">{{ skill }}</span>
+            {% endfor %}
+          </div>
         {% endif %}
-        {% if show_bio and author_data.bio %}
-          <p class="card-text text-muted">{{ author_data.bio }}</p>
-        {% endif %}
-        
+
         {% if show_social %}
           <div class="author-social d-flex gap-2 mt-2">
             {% if author_data.github %}
-              <a href="https://github.com/{{ author_data.github }}" 
-                 class="btn btn-sm btn-outline-secondary" 
-                 target="_blank" rel="noopener" title="GitHub">
-                <i class="bi bi-github"></i>
-              </a>
+              <a href="https://github.com/{{ author_data.github }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" title="GitHub" itemprop="sameAs"><i class="bi bi-github"></i></a>
             {% endif %}
             {% if author_data.twitter %}
-              <a href="https://x.com/{{ author_data.twitter }}" 
-                 class="btn btn-sm btn-outline-secondary" 
-                 target="_blank" rel="noopener" title="X" aria-label="X">
-                <i class="bi bi-twitter-x"></i>
-              </a>
+              <a href="https://x.com/{{ author_data.twitter }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" title="X" aria-label="X" itemprop="sameAs"><i class="bi bi-twitter-x"></i></a>
             {% endif %}
             {% if author_data.linkedin %}
-              <a href="https://linkedin.com/in/{{ author_data.linkedin }}" 
-                 class="btn btn-sm btn-outline-secondary" 
-                 target="_blank" rel="noopener" title="LinkedIn">
-                <i class="bi bi-linkedin"></i>
-              </a>
+              <a href="https://linkedin.com/in/{{ author_data.linkedin }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" title="LinkedIn" itemprop="sameAs"><i class="bi bi-linkedin"></i></a>
             {% endif %}
             {% if author_data.website %}
-              <a href="{{ author_data.website }}" 
-                 class="btn btn-sm btn-outline-secondary" 
-                 target="_blank" rel="noopener" title="Website">
-                <i class="bi bi-globe"></i>
-              </a>
+              <a href="{{ author_data.website }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" title="Website" itemprop="url"><i class="bi bi-globe"></i></a>
             {% endif %}
             {% if author_data.email %}
-              <a href="mailto:{{ author_data.email }}" 
-                 class="btn btn-sm btn-outline-secondary" 
-                 title="Email">
-                <i class="bi bi-envelope"></i>
-              </a>
+              <a href="mailto:{{ author_data.email }}" class="btn btn-sm btn-outline-secondary" title="Email"><i class="bi bi-envelope"></i></a>
             {% endif %}
           </div>
+        {% endif %}
+
+        {% if author_data.ai and author_data.persona.disclosure %}
+          <p class="author-ai-disclosure small text-body-secondary mt-3 mb-0 d-flex align-items-start">
+            <i class="bi bi-robot me-2 mt-1 flex-shrink-0" aria-hidden="true"></i><span>{{ author_data.persona.disclosure }}</span>
+          </p>
         {% endif %}
       </div>
     </div>
