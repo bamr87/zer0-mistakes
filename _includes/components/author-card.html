@@ -59,17 +59,34 @@
 {% assign raw_author = include.author %}
 {% assign author_data = site.data.authors[raw_author] %}
 {% assign is_known = false %}
+{% assign author_key = nil %}
 {% if author_data %}
   {% assign is_known = true %}
   {% assign author_key = raw_author %}
   {% assign author_name = author_data.name | default: raw_author %}
 {% else %}
-  {% assign author_data = site.data.authors.default %}
+  {% comment %} Not a direct key — match by display name / display_name so front
+     matter that uses the name (e.g. "Zer0-Mistakes Team") still resolves to its
+     key (default) and links to the profile. {% endcomment %}
   {% if raw_author and raw_author != "" %}
-    {% assign author_name = raw_author %}
-  {% else %}
-    {% assign author_name = author_data.name %}
+    {% for entry in site.data.authors %}
+      {% if entry[1].name == raw_author or entry[1].display_name == raw_author %}
+        {% assign author_data = entry[1] %}
+        {% assign author_key = entry[0] %}
+        {% assign is_known = true %}
+        {% assign author_name = entry[1].name | default: raw_author %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
   {% endif %}
+  {% unless is_known %}
+    {% assign author_data = site.data.authors.default %}
+    {% if raw_author and raw_author != "" %}
+      {% assign author_name = raw_author %}
+    {% else %}
+      {% assign author_name = author_data.name %}
+    {% endif %}
+  {% endunless %}
 {% endif %}
 
 {% comment %} Profile URL only when the author is a known key and linking is on {% endcomment %}
