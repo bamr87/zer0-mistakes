@@ -194,6 +194,18 @@
           "sha256": "481e39042508ae313a60618af1e37146ab93e9324c98e4c78b8f17fe55d41e0b"
         }
       ]
+    },
+    {
+      "name": "cytoscape",
+      "version": "3.30.0",
+      "_comment": "Force-directed graph engine for the Obsidian graph view (full + local). Vendored so the graph runs with no runtime CDN, matching the rest of assets/vendor.",
+      "files": [
+        {
+          "url": "https://cdn.jsdelivr.net/npm/cytoscape@3.30.0/dist/cytoscape.min.js",
+          "dest": "assets/vendor/cytoscape/cytoscape.min.js",
+          "sha256": "a298b253e4b9b08bd0b2fe222ad67b2b9f42d057d7c17f7a050512079c46fddd"
+        }
+      ]
     }
   ]
 }

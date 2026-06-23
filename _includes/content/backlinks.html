@@ -21,10 +21,25 @@
   ===================================================================
 {%- endcomment -%}
 
-{%- if page.backlinks != false -%}
+{%- if page.backlinks != false and site.obsidian.enabled != false -%}
   {%- assign _self_url = page.url -%}
   {%- assign _self_title = page.title | default: "" | downcase | strip -%}
   {%- assign _self_basename = page.path | split: "/" | last | replace: ".md", "" | replace: ".markdown", "" | downcase -%}
+
+  {%- comment -%}
+    Needles = every name another page could wiki-link this page by: title,
+    file basename, and any frontmatter aliases. Normalized to lowercase + strip
+    to match the resolver. A backlink is a [[needle]] with a terminator
+    (]] | # ^) so [[Foobar]] does NOT match the needle "foo".
+  {%- endcomment -%}
+  {%- assign _needles = "" | split: "" -%}
+  {%- if _self_title != "" -%}{%- assign _needles = _needles | push: _self_title -%}{%- endif -%}
+  {%- if _self_basename != "" -%}{%- assign _needles = _needles | push: _self_basename -%}{%- endif -%}
+  {%- for _alias in page.aliases -%}
+    {%- assign _an = _alias | downcase | strip -%}
+    {%- if _an != "" -%}{%- assign _needles = _needles | push: _an -%}{%- endif -%}
+  {%- endfor -%}
+  {%- assign _needles = _needles | uniq -%}
 
   {%- assign _candidates = "" | split: "" -%}
   {%- for _coll in site.collections -%}
@@ -46,31 +61,44 @@
       {%- if _doc.published == false or _doc.draft == true -%}{%- continue -%}{%- endif -%}
     {%- endunless -%}
     {%- assign _body = _doc.content | default: "" -%}
-    {%- assign _body_lower = _body | downcase -%}
     {%- assign _matched = false -%}
 
+    {%- comment -%} A markdown link to this page's permalink is a backlink. {%- endcomment -%}
     {%- if _self_url and _self_url != "" and _self_url != "/" -%}
       {%- if _body contains _self_url -%}
         {%- assign _matched = true -%}
       {%- endif -%}
     {%- endif -%}
 
+    {%- comment -%}
+      Wiki-link match: strip fenced (```) and inline (`) code first so a page
+      that merely *documents* [[syntax]] doesn't register as a backlink, then
+      require a terminator after the needle.
+    {%- endcomment -%}
     {%- unless _matched -%}
-      {%- if _self_title != "" -%}
-        {%- assign _needle = "[[" | append: _self_title -%}
-        {%- if _body_lower contains _needle -%}
+      {%- assign _nb = "" -%}
+      {%- assign _fp = _body | split: "```" -%}
+      {%- for _p in _fp -%}
+        {%- assign _m = forloop.index0 | modulo: 2 -%}
+        {%- if _m == 0 -%}{%- assign _nb = _nb | append: _p -%}{%- endif -%}
+      {%- endfor -%}
+      {%- assign _nb2 = "" -%}
+      {%- assign _ip = _nb | split: "`" -%}
+      {%- for _p in _ip -%}
+        {%- assign _m = forloop.index0 | modulo: 2 -%}
+        {%- if _m == 0 -%}{%- assign _nb2 = _nb2 | append: _p -%}{%- endif -%}
+      {%- endfor -%}
+      {%- assign _body_lower = _nb2 | downcase -%}
+      {%- for _n in _needles -%}
+        {%- assign _v1 = "[[" | append: _n | append: "]]" -%}
+        {%- assign _v2 = "[[" | append: _n | append: "|" -%}
+        {%- assign _v3 = "[[" | append: _n | append: "#" -%}
+        {%- assign _v4 = "[[" | append: _n | append: "^" -%}
+        {%- if _body_lower contains _v1 or _body_lower contains _v2 or _body_lower contains _v3 or _body_lower contains _v4 -%}
           {%- assign _matched = true -%}
+          {%- break -%}
         {%- endif -%}
-      {%- endif -%}
-    {%- endunless -%}
-
-    {%- unless _matched -%}
-      {%- if _self_basename != "" -%}
-        {%- assign _needle2 = "[[" | append: _self_basename -%}
-        {%- if _body_lower contains _needle2 -%}
-          {%- assign _matched = true -%}
-        {%- endif -%}
-      {%- endif -%}
+      {%- endfor -%}
     {%- endunless -%}
 
     {%- if _matched -%}
@@ -92,11 +120,12 @@
               <strong>{{ _ref.title | default: _ref.path | split: "/" | last }}</strong>
             </a>
             {%- if _ref.collection -%}
-              <span class="badge bg-light text-dark ms-1">{{ _ref.collection }}</span>
+              <span class="badge rounded-pill border text-body-secondary ms-1">{{ _ref.collection }}</span>
             {%- endif -%}
-            {%- if _ref.description -%}
+            {%- assign _ref_excerpt = _ref.description | default: _ref.excerpt | strip_html | strip | truncate: 160 -%}
+            {%- if _ref_excerpt and _ref_excerpt != "" -%}
               <div class="obsidian-backlink-excerpt small text-muted">
-                {{ _ref.description | strip_html | truncate: 160 }}
+                {{ _ref_excerpt }}
               </div>
             {%- endif -%}
           </li>

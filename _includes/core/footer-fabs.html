@@ -23,6 +23,9 @@
 {%- assign _root_only_layouts = "landing,welcome,stats,sitemap-collection,setup,section,news,index,home,admin" | split: "," -%}
 {%- unless _root_only_layouts contains page.layout -%}
   {% include navigation/toc-fab.html %}
-  {% include navigation/local-graph-fab.html %}
-  {% include navigation/local-graph.html %}
+  {%- comment -%} Local-graph FAB/panel are part of the Obsidian feature. {%- endcomment -%}
+  {%- if site.obsidian.enabled != false -%}
+    {% include navigation/local-graph-fab.html %}
+    {% include navigation/local-graph.html %}
+  {%- endif -%}
 {%- endunless -%}

@@ -18,7 +18,13 @@ sitemap: false
   permalink, collection, tags, and the body's outgoing wiki-link targets.
   The JS resolver normalizes lookup keys to lowercase + collapsed whitespace
   (matching _plugins/obsidian_links.rb#normalize).
+
+  Honours `obsidian: { enabled: false }` in _config.yml: emit an empty (but
+  valid) index so the client resolver, backlinks, and graph all no-op.
 {%- endcomment -%}
+{%- if site.obsidian.enabled == false -%}
+{"generated_at": {{ site.time | date_to_xmlschema | jsonify }}, "count": 0, "entries": []}
+{%- else -%}
 {%- assign all_docs = "" | split: "" -%}
 {%- for collection in site.collections -%}
   {%- for doc in collection.docs -%}
@@ -37,6 +43,13 @@ sitemap: false
     {%- for doc in all_docs -%}
       {%- assign basename = doc.path | split: "/" | last | replace: ".md", "" | replace: ".markdown", "" | replace: ".html", "" -%}
       {%- assign body_source = doc.content | default: "" -%}
+      {%- comment -%}
+        Strip fenced code so Bash `[[ ... ]]` tests and literal examples don't
+        leak into excerpts or become graph edges. Both fence syntaxes are
+        handled: ``` first, then ~~~. (Structural limits: unbalanced fences,
+        indented code, and fence-in-fence are not perfectly handled here — the
+        server-side Ruby plugin's FENCED_CODE_RE is stricter.)
+      {%- endcomment -%}
       {%- assign body_without_fences = "" -%}
       {%- assign fence_parts = body_source | split: "```" -%}
       {%- for fence_part in fence_parts -%}
@@ -45,8 +58,16 @@ sitemap: false
           {%- assign body_without_fences = body_without_fences | append: fence_part -%}
         {%- endif -%}
       {%- endfor -%}
+      {%- assign body_without_tilde = "" -%}
+      {%- assign tilde_parts = body_without_fences | split: "~~~" -%}
+      {%- for tilde_part in tilde_parts -%}
+        {%- assign tilde_mod = forloop.index0 | modulo: 2 -%}
+        {%- if tilde_mod == 0 -%}
+          {%- assign body_without_tilde = body_without_tilde | append: tilde_part -%}
+        {%- endif -%}
+      {%- endfor -%}
       {%- assign body_without_code = "" -%}
-      {%- assign inline_code_parts = body_without_fences | split: "`" -%}
+      {%- assign inline_code_parts = body_without_tilde | split: "`" -%}
       {%- for inline_code_part in inline_code_parts -%}
         {%- assign inline_code_mod = forloop.index0 | modulo: 2 -%}
         {%- if inline_code_mod == 0 -%}
@@ -77,7 +98,6 @@ sitemap: false
         {%- if target_raw and target_raw != "" -%}
           {%- assign target = target_raw | split: "|" | first | split: "#" | first | split: "^" | first | strip | downcase -%}
           {%- assign target_is_code = false -%}
-          {%- assign first_char = target | slice: 0 -%}
           {%- if target contains "$" or target contains "==" or target contains "!=" or target contains "=~" -%}
             {%- assign target_is_code = true -%}
           {%- endif -%}
@@ -87,11 +107,37 @@ sitemap: false
           {%- if target contains " -eq " or target contains " -ne " or target contains " -lt " or target contains " -le " or target contains " -gt " or target contains " -ge " -%}
             {%- assign target_is_code = true -%}
           {%- endif -%}
-          {%- if first_char == "-" or target contains "{" or target contains "}" or target contains "(" or target contains ")" or target contains '"' or target contains "'" -%}
+          {%- comment -%} Keep braces (template/code), but allow parentheses,
+            quotes, and leading dashes — real page titles use those. {%- endcomment -%}
+          {%- if target contains "{" or target contains "}" -%}
             {%- assign target_is_code = true -%}
           {%- endif -%}
           {%- if target != "" and target.size < 200 and target_is_code == false -%}
             {%- assign outgoing = outgoing | push: target -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- comment -%}
+        Note transclusions ![[Note Title]] are outgoing edges too. Image embeds
+        (![[file.png]]) are not — skip known image/binary extensions via an
+        exact comma-delimited match so titles ending in a short token aren't
+        dropped.
+      {%- endcomment -%}
+      {%- assign embed_chunks = body | split: "![[" -%}
+      {%- for embed_chunk in embed_chunks offset: 1 -%}
+        {%- assign etarget_raw = embed_chunk | split: "]]" | first -%}
+        {%- if etarget_raw and etarget_raw != "" -%}
+          {%- assign etarget = etarget_raw | split: "|" | first | split: "#" | first | split: "^" | first | strip | downcase -%}
+          {%- assign is_image = false -%}
+          {%- if etarget contains "." -%}
+            {%- assign eext = etarget | split: "." | last -%}
+            {%- assign eext_token = "," | append: eext | append: "," -%}
+            {%- if ",png,jpg,jpeg,gif,svg,webp,avif,bmp,pdf," contains eext_token -%}
+              {%- assign is_image = true -%}
+            {%- endif -%}
+          {%- endif -%}
+          {%- if etarget != "" and etarget.size < 200 and is_image == false -%}
+            {%- assign outgoing = outgoing | push: etarget -%}
           {%- endif -%}
         {%- endif -%}
       {%- endfor -%}
@@ -110,3 +156,4 @@ sitemap: false
     {%- endfor -%}
   ]
 }
+{%- endif -%}

@@ -95,6 +95,33 @@ class ObsidianConverterTest < Minitest::Test
     assert_match(/data-wiki-target="Definitely Not Real"/, out)
   end
 
+  def test_broken_wiki_link_is_non_navigating_span
+    out = convert('Broken [[Definitely Not Real]] link.')
+    assert_match(%r{<span class="wiki-link wiki-link-broken"}, out)
+    refute_match(/href="#"/, out, 'broken link must not be an href="#" anchor')
+  end
+
+  # ---- Heading anchors mirror kramdown's basic header-id algorithm --------
+  def test_anchor_ampersand_becomes_double_dash
+    out = convert('Jump to [[Markdown Formatting Tips#Foo & Bar]].')
+    assert_match(/#foo--bar"/, out)
+  end
+
+  def test_anchor_strips_leading_non_letters
+    out = convert('Jump to [[Markdown Formatting Tips#100% Done]].')
+    assert_match(/#done"/, out)
+  end
+
+  def test_anchor_removes_underscores
+    out = convert('Jump to [[Markdown Formatting Tips#Hello_World]].')
+    assert_match(/#helloworld"/, out)
+  end
+
+  def test_note_embed_anchor_is_slugified
+    out = convert('![[Docker Commands#Build & Run]]')
+    assert_match(%r{url="/notes/docker-commands/#build--run"}, out)
+  end
+
   def test_wiki_link_inside_code_block_is_preserved
     md = "Plain text\n\n```\nliteral [[Markdown Formatting Tips]] inside fence\n```\n"
     out = convert(md)
@@ -105,6 +132,26 @@ class ObsidianConverterTest < Minitest::Test
   def test_wiki_link_inside_inline_code_is_preserved
     out = convert('See `[[Markdown Formatting Tips]]` literally.')
     assert_match(/`\[\[Markdown Formatting Tips\]\]`/, out)
+  end
+
+  def test_wiki_link_inside_double_backtick_inline_code_is_preserved
+    out = convert('Span: ``literal ` and [[Markdown Formatting Tips]]`` end.')
+    assert_match(/\[\[Markdown Formatting Tips\]\]/, out)
+    refute_match(/class="wiki-link"/, out, 'wiki-link inside multi-backtick code must not resolve')
+  end
+
+  def test_wiki_link_inside_multi_backtick_fence_is_preserved
+    md = "````markdown\n```\n[[Markdown Formatting Tips]] nested\n```\n````\n"
+    out = convert(md)
+    assert_match(/\[\[Markdown Formatting Tips\]\] nested/, out)
+    refute_match(/class="wiki-link"/, out, 'wiki-link inside a 4-backtick fence must not resolve')
+  end
+
+  def test_wiki_link_inside_unclosed_fence_is_preserved
+    md = "Intro\n\n```\n[[Markdown Formatting Tips]] dangling fence\n"
+    out = convert(md)
+    assert_match(/\[\[Markdown Formatting Tips\]\] dangling fence/, out)
+    refute_match(/class="wiki-link"/, out, 'wiki-link inside an unclosed fence must not resolve')
   end
 
   # ---- Embeds ------------------------------------------------------------
@@ -151,6 +198,31 @@ class ObsidianConverterTest < Minitest::Test
     assert_match(/data-collapsed="true"/, out)
   end
 
+  # ---- Foldable callout disclosure (accessible toggle) -------------------
+  def test_foldable_callout_renders_button_toggle
+    out = convert("> [!warning]+ Foldable\n> body\n")
+    assert_match(/<button type="button" class="obsidian-callout-title obsidian-callout-toggle"/, out)
+    assert_match(/aria-expanded="true"/, out)
+    assert_match(/aria-controls="obsidian-callout-body-\d+"/, out)
+  end
+
+  def test_collapsed_callout_button_and_hidden_body
+    out = convert("> [!tip]- Closed\n> hidden body\n")
+    assert_match(/aria-expanded="false"/, out)
+    assert_match(/class="obsidian-callout-body" id="obsidian-callout-body-\d+" hidden/, out)
+  end
+
+  def test_plain_callout_is_non_button_heading
+    out = convert("> [!note] Heads up\n> body\n")
+    refute_match(/<button/, out, 'plain callout must not render a toggle button')
+    assert_match(/class="obsidian-callout-title" role="heading" aria-level="3"/, out)
+  end
+
+  def test_callout_type_voiced_for_screen_readers
+    out = convert("> [!danger] Boom\n> body\n")
+    assert_match(%r{<span class="visually-hidden">Danger: </span>}, out)
+  end
+
   def test_callout_unknown_type_falls_back_to_note
     out = convert("> [!nonsense] Title\n> body\n")
     assert_match(/obsidian-callout-nonsense/, out)
@@ -168,6 +240,21 @@ class ObsidianConverterTest < Minitest::Test
     out = convert('See `#not-a-tag` and a real #real-tag.')
     assert_match(/`#not-a-tag`/, out)
     assert_match(/class="obsidian-tag">#real-tag/, out)
+  end
+
+  def test_tag_slug_matches_jekyll_slugify
+    out = convert('Tagged with #ai_ml here.')
+    assert_match(%r{href="/tags/#ai-ml"}, out)
+  end
+
+  def test_hex_colour_tokens_are_not_tags
+    out = convert('The colour is #ffffff and #1a2b3c and #fff here.')
+    refute_match(/class="obsidian-tag"/, out)
+  end
+
+  def test_hex_word_tag_still_links
+    out = convert('Brewing at #cafe now.')
+    assert_match(/class="obsidian-tag">#cafe/, out)
   end
 
   # ---- Regression: plain markdown is unchanged ---------------------------

@@ -25,7 +25,7 @@ build with vanilla Jekyll). Both produce equivalent HTML.
 | `[[Page Title\|Custom text]]` | Link with `Custom text` as the visible label. |
 | `[[Page Title#Section]]` | Link with `#section` URL fragment (kramdown-style anchor). |
 | `[[Page Title^block-id]]` | Block references degrade to a plain link to `Page Title`. |
-| `[[Missing Page]]` | `<a class="wiki-link wiki-link-broken">` styled as a broken link with a tooltip. |
+| `[[Missing Page]]` | `<span class="wiki-link wiki-link-broken">` — a non-navigating broken-link marker with a tooltip (a click can't scroll to the top). |
 
 Resolution is **case-insensitive** and tolerant of extra whitespace. Lookup
 keys include each document's `title`, file `basename`, and any entries in
@@ -39,7 +39,7 @@ stable order.
 | --- | --- |
 | `![[diagram.png]]` | `<img src="/assets/images/notes/diagram.png">` |
 | `![[diagram.png\|320]]` | Same, with `width="320"` |
-| `![[Note Title]]` | Card containing a 800-char excerpt + link back to the note |
+| `![[Note Title]]` | Bootstrap card containing the note's excerpt + a link back to the note |
 | `![[/absolute/path/img.svg]]` | Honors absolute paths verbatim |
 
 The default attachment folder is `assets/images/notes/`, matching the
@@ -64,12 +64,15 @@ Type → Bootstrap alert variant:
 | `failure`, `danger`, `error`, `bug` | `danger` | shield / bug |
 | `abstract`, `summary`, `tldr`, `example`, `quote`, `cite` | `secondary` | varies |
 
-Fold marker support:
+Fold markers turn the callout into an **accessible disclosure**: the title
+becomes a keyboard-operable `<button aria-expanded>` with a chevron, and the
+body shows/hides on click (Enter/Space).
 
-- `> [!warning]+` — keeps the body open by default (no-op visually here).
-- `> [!warning]-` — adds `data-collapsed="true"` so the body can be hidden
-  (CSS toggle defined in `_sass/core/_obsidian.scss`).
+- `> [!warning]+` — foldable, **expanded** by default.
+- `> [!warning]-` — foldable, **collapsed** by default (`data-collapsed="true"`
+  and the body is `hidden` until toggled).
 
+A callout **without** a fold marker renders as a static heading (not a button).
 Unknown types fall back to the `note` variant, never silently dropped.
 
 ## Tags

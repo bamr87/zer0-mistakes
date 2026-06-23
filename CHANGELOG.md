@@ -33,6 +33,65 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Foldable Obsidian callouts are now interactive.** `> [!type]+` / `> [!type]-`
+  callouts render as an accessible disclosure — the title is a keyboard-operable
+  `<button aria-expanded>` with a chevron that shows/hides the body on click
+  (previously a `-` callout's body was permanently hidden with no way to expand
+  it). Implemented identically in the Ruby plugin and the JS resolver; the toggle
+  is a delegated handler so it works for callouts rendered by either path.
+  Callout titles also voice their type to screen readers (`Warning:` …).
+- **Cytoscape is vendored** under `assets/vendor/cytoscape/` (added to
+  `vendor-manifest.json`) and lazy-loaded from a same-origin path — the graph
+  views no longer fetch it from a runtime CDN, matching the Bootstrap/Icons/
+  Mermaid policy. The full and local graph share one loader with a recovery
+  message / text fallback if the script fails.
+- **Accessible text fallback for the local graph** — a list of linked-neighbour
+  `<a>` links rendered alongside the canvas (visible when cytoscape can't load,
+  available to assistive tech otherwise).
+- **`obsidian: { enabled: false }` now disables the whole feature** on the
+  GitHub Pages path too (resolver script, `wiki-index.json`, backlinks panel,
+  and the graph FAB/scripts all honour it).
+
+### Changed
+- **Obsidian note embeds (`![[Note]]`) now render as a styled Bootstrap card**
+  on the GitHub Pages (client) path, matching the server-side `transclude.html`
+  (previously emitted unstyled markup with classes the SCSS never targeted).
+- **Inline tags** use theme-aware tokens for legible contrast in light **and**
+  dark mode, with a distinct `:focus-visible` ring; wiki-links gained a
+  `:focus-visible` ring too. The local-graph FAB now stays hidden until the page
+  is confirmed in the index (no flash of a dead button on unindexed pages), and
+  graph containers use `role="group"` instead of `role="img"`.
+- **The local-graph toggle now floats fixed in the viewport** (like the AI-chat
+  launcher) instead of dropping to the bottom of the page — a body-level
+  elevation rule (`.zer0-bg-body > *:not(…)`) was overriding its `position:
+  fixed`; it now wins via an `#obsidianLocalGraphFab` id selector.
+- Graph animations respect `prefers-reduced-motion`.
+
+### Fixed
+- **`[[Page#Heading]]` anchors now match kramdown's real header IDs** (leading
+  non-letters stripped, `&`/punctuation handling, underscores dropped) — in both
+  converters — so in-page jumps land correctly. Inline `#tag` links and note-embed
+  anchors use the same slug as the `/tags/` page (`Jekyll`'s `slugify`).
+- **Broken wiki-links render as a non-navigating `<span>`** instead of
+  `<a href="#">`, so a click no longer scrolls the page to the top.
+- Hex-colour tokens in prose (`#ffffff`, `#1a2b3c`) are no longer linkified as
+  tags. The JS tag rewriter escapes its leading character (XSS-hardening).
+- The Ruby converter masks variable-length (` ```` `) and unterminated fenced
+  code blocks, and inline code spans with inner backticks, so `[[links]]`/`#tags`
+  inside them stay literal.
+- The backlinks panel matches `[[wiki-links]]` precisely (terminator-aware,
+  alias-aware, code-stripped) instead of a loose prefix substring, and the
+  `wiki-index.json` graph data now includes `~~~` fences, note-embed edges, and a
+  less aggressive code-heuristic. Collection badges are theme-aware.
+- Resolver/graph scripts are cache-busted (`?v=`) so an updated client picks up
+  new behaviour after a deploy.
+- **Local-graph edges no longer all render as broken (dashed red).** The
+  cytoscape style used `edge[broken]`/`node[broken]` (attribute *existence*),
+  which matched every edge's `broken:false` field; switched to `[?broken]`
+  (truthiness), matching the full graph, so only genuinely unresolved links are
+  red.
+
+### Added
 - **Contributor workflow guardrails.** New `change-workflow` skill
   (`.github/skills/change-workflow/SKILL.md`) codifying the branch → commit → PR
   flow for any change (branch-first, one concern per PR, stage-by-path,

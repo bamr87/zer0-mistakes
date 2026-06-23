@@ -26,8 +26,36 @@
   var PANEL_SELECTOR = '[data-obsidian-local-graph-panel]';
   var TOGGLE_SELECTOR = '[data-obsidian-local-graph-toggle]';
   var STATUS_SELECTOR = '[data-obsidian-local-graph-status]';
-  var CYTOSCAPE_URL = 'https://cdn.jsdelivr.net/npm/cytoscape@3.30.0/dist/cytoscape.min.js';
-  var CYTOSCAPE_SRI = 'sha384-kpMsYllYzyaWU69Piok08rPNktpnjqAoDMdB00fjqUkEk3lkuUbSuwJ+oXrjvN6B';
+
+  // Cytoscape is vendored under assets/vendor/ (no runtime CDN — matches the
+  // Bootstrap / Icons / Mermaid policy). The path is supplied by Liquid via
+  // window.OBSIDIAN_CONFIG.cytoscapeUrl, with a base-relative fallback.
+  function cytoscapeSrc() {
+    var cfg = window.OBSIDIAN_CONFIG || {};
+    if (cfg.cytoscapeUrl) return cfg.cytoscapeUrl;
+    var base = (document.querySelector('base') || {}).href || '/';
+    return base.replace(/\/$/, '') + '/assets/vendor/cytoscape/cytoscape.min.js';
+  }
+
+  function prefersReducedMotion() {
+    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+
+  function debounce(fn, wait) {
+    var t;
+    return function () {
+      var ctx = this;
+      var args = arguments;
+      clearTimeout(t);
+      t = setTimeout(function () { fn.apply(ctx, args); }, wait);
+    };
+  }
+
+  function escapeHtml(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
 
   function companionElements(container) {
     return {
@@ -238,34 +266,34 @@
     };
   }
 
+  // Load cytoscape (vendored, same-origin). Invokes cb(true) on success,
+  // cb(false) on failure so callers can fall back to the text list.
   function loadCytoscape(cb) {
-    if (typeof window.cytoscape === 'function') return cb();
+    if (typeof window.cytoscape === 'function') return cb(true);
     // Re-use any in-flight load (e.g. when the full graph page also loads it).
     if (window.__obsidianCytoscapeLoading) {
       window.__obsidianCytoscapeLoading.push(cb);
       return;
     }
-    window.__obsidianCytoscapeLoading = [cb];
+    var queue = window.__obsidianCytoscapeLoading = [cb];
+    function flush(ok) {
+      window.__obsidianCytoscapeLoading = null;
+      queue.forEach(function (fn) { try { fn(ok); } catch (e) { /* ignore */ } });
+    }
     var existing = document.querySelector('script[src*="cytoscape"]');
     if (existing) {
-      existing.addEventListener('load', function () {
-        window.__obsidianCytoscapeLoading.forEach(function (fn) { fn(); });
-        window.__obsidianCytoscapeLoading = null;
-      });
+      if (typeof window.cytoscape === 'function') return flush(true);
+      existing.addEventListener('load', function () { flush(true); });
+      existing.addEventListener('error', function () { flush(false); });
       return;
     }
     var s = document.createElement('script');
-    s.src = CYTOSCAPE_URL;
-    s.integrity = CYTOSCAPE_SRI;
-    s.crossOrigin = 'anonymous';
+    s.src = cytoscapeSrc();
     s.defer = true;
-    s.onload = function () {
-      window.__obsidianCytoscapeLoading.forEach(function (fn) { fn(); });
-      window.__obsidianCytoscapeLoading = null;
-    };
+    s.onload = function () { flush(true); };
     s.onerror = function () {
       console.warn('[obsidian-local-graph] failed to load cytoscape');
-      window.__obsidianCytoscapeLoading = null;
+      flush(false);
     };
     document.head.appendChild(s);
   }
@@ -273,6 +301,7 @@
   function render(container, elements, currentUrl) {
     var theme = readTheme();
     container.style.backgroundColor = theme.canvasBg;
+    var motion = prefersReducedMotion() ? '0ms' : '160ms';
 
     var cy = window.cytoscape({
       container: container,
@@ -301,7 +330,7 @@
             'border-width': 1.5,
             'border-color': theme.nodeBorder,
             'transition-property': 'background-color, border-color, width, height',
-            'transition-duration': '160ms'
+            'transition-duration': motion
           }
         },
         {
@@ -316,7 +345,11 @@
           }
         },
         {
-          selector: 'node[broken]',
+          // `[?broken]` = truthiness, NOT `[broken]` (existence): every edge
+          // carries a broken:false field, so the existence form would paint
+          // all of them dashed-red even when nothing is broken. Mirrors the
+          // selectors in obsidian-graph.js (the full graph).
+          selector: 'node[?broken]',
           style: {
             'background-color': '#dc3545',
             'border-style': 'dashed',
@@ -335,7 +368,7 @@
           }
         },
         {
-          selector: 'edge[broken]',
+          selector: 'edge[?broken]',
           style: { 'line-style': 'dashed', 'line-color': '#dc3545' }
         }
       ],
@@ -379,11 +412,60 @@
     return cy;
   }
 
+  // Accessible text fallback: a list of linked neighbours rendered as real
+  // <a> links. Always present for screen readers / no-cytoscape users; hidden
+  // (visually) once the interactive graph renders. Returns the element or null.
+  function renderTextFallback(container, elements, current) {
+    var host = container.parentNode;
+    if (!host) return null;
+    var prior = host.querySelector('.obsidian-local-graph-fallback');
+    if (prior) prior.parentNode.removeChild(prior);
+
+    var byId = Object.create(null);
+    var outgoing = [];
+    var incoming = [];
+    var seenOut = Object.create(null);
+    var seenIn = Object.create(null);
+    elements.forEach(function (el) {
+      if (el.group === 'nodes') byId[el.data.id] = el.data;
+    });
+    elements.forEach(function (el) {
+      if (el.group !== 'edges') return;
+      if (el.data.source === current.url && el.data.target !== current.url) {
+        var t = byId[el.data.target];
+        if (t && t.url && !seenOut[t.url]) { seenOut[t.url] = true; outgoing.push(t); }
+      } else if (el.data.target === current.url && el.data.source !== current.url) {
+        var s = byId[el.data.source];
+        if (s && s.url && !seenIn[s.url]) { seenIn[s.url] = true; incoming.push(s); }
+      }
+    });
+    if (!outgoing.length && !incoming.length) return null;
+
+    function section(title, items) {
+      if (!items.length) return '';
+      var lis = items.map(function (d) {
+        return '<li class="list-group-item py-1 px-2 bg-transparent">' +
+          '<a href="' + escapeHtml(d.url) + '">' + escapeHtml(d.label || d.url) + '</a></li>';
+      }).join('');
+      return '<p class="small text-secondary mb-1 mt-2">' + title + '</p>' +
+        '<ul class="list-group list-group-flush small mb-0">' + lis + '</ul>';
+    }
+
+    var nav = document.createElement('nav');
+    nav.className = 'obsidian-local-graph-fallback mt-2';
+    nav.setAttribute('aria-label', 'Pages linked to this page');
+    nav.innerHTML = section('Links from this page', outgoing) +
+      section('Links to this page', incoming);
+    host.insertBefore(nav, container.nextSibling);
+    return nav;
+  }
+
   function init() {
     var container = document.getElementById(CONTAINER_ID);
     if (!container) return;
-    setPanelAvailable(container, true);
-    setStatus(container, 'Loading graph...', false);
+    // Panel + FAB start hidden (progressive enhancement): reveal ONLY once the
+    // current page is confirmed in the wiki-index, so unindexed/slow/no-JS pages
+    // never flash a dead button.
 
     var panel = container.closest(PANEL_SELECTOR);
     if (panel) {
@@ -392,9 +474,9 @@
       });
     }
 
-    window.addEventListener('resize', function () {
+    window.addEventListener('resize', debounce(function () {
       resizeGraph(container);
-    });
+    }, 150));
 
     var depth = parseInt(container.getAttribute('data-depth') || '1', 10);
     if (!isFinite(depth) || depth < 1) depth = 1;
@@ -410,16 +492,33 @@
         var lookup = buildLookup(entries);
         var current = findCurrentEntry(lookup);
         if (!current) { setPanelAvailable(container, false); return; }
+
+        // Confirmed in-index: reveal the panel + FAB now.
+        setPanelAvailable(container, true);
+        setStatus(container, 'Loading graph…', false);
+
         var elements = buildSubgraph(entries, lookup, current, depth);
-        loadCytoscape(function () {
+        var nodeCount = elements.filter(function (element) { return element.group === 'nodes'; }).length;
+        var edgeCount = elements.filter(function (element) { return element.group === 'edges'; }).length;
+        // Accessible text fallback (also the graceful degradation if cytoscape
+        // can't load): a list of linked neighbours below the canvas.
+        var fallback = renderTextFallback(container, elements, current);
+
+        loadCytoscape(function (ok) {
+          if (ok === false) {
+            // Keep the text list visible; hide the empty canvas.
+            container.hidden = true;
+            setStatus(container, 'Showing linked pages (interactive graph unavailable).', false);
+            return;
+          }
           render(container, elements, current.url);
-          var nodeCount = elements.filter(function (element) { return element.group === 'nodes'; }).length;
-          var edgeCount = elements.filter(function (element) { return element.group === 'edges'; }).length;
           setStatus(container, nodeCount + ' pages · ' + edgeCount + ' links', false);
+          // Graph is the visual representation; keep the list for AT only.
+          if (fallback) fallback.classList.add('visually-hidden');
         });
       })
       .catch(function (err) {
-        // Sidebar panel failing is non-fatal — hide and stay quiet.
+        // Sidebar panel failing is non-fatal — keep it hidden and stay quiet.
         console.warn('[obsidian-local-graph] init failed:', err);
         setPanelAvailable(container, false);
       });

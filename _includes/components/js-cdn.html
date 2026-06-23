@@ -44,15 +44,23 @@
 {% endif %}
 
 <!-- Obsidian wiki-link / embed / tag client-side resolver (fallback for the
-     remote_theme GH Pages build, where _plugins/obsidian_links.rb cannot run). -->
+     remote_theme GH Pages build, where _plugins/obsidian_links.rb cannot run).
+     Honours `obsidian: { enabled: false }` in _config.yml — when disabled the
+     resolver script is not loaded and the flag self-disables any fork that
+     loads it another way. Note: `| default: true` would flip `false` back to
+     true (Liquid treats false as falsy), so test enabled == false explicitly. -->
 {%- assign obsidian_attachments_path = site.obsidian.attachments_path | default: '/assets/images/notes' -%}
 <script>
   window.OBSIDIAN_CONFIG = window.OBSIDIAN_CONFIG || {};
+  window.OBSIDIAN_CONFIG.enabled = {% if site.obsidian.enabled == false %}false{% else %}true{% endif %};
   window.OBSIDIAN_CONFIG.wikiIndexUrl = {{ '/assets/data/wiki-index.json' | relative_url | jsonify }};
   window.OBSIDIAN_CONFIG.attachmentsPath = {{ obsidian_attachments_path | relative_url | jsonify }};
   window.OBSIDIAN_CONFIG.tagBase = {{ '/tags/' | relative_url | jsonify }};
+  window.OBSIDIAN_CONFIG.cytoscapeUrl = {{ '/assets/vendor/cytoscape/cytoscape.min.js' | relative_url | jsonify }};
 </script>
-<script defer src="{{ '/assets/js/obsidian-wiki-links.js' | relative_url }}"></script>
+{%- if site.obsidian.enabled != false -%}
+<script defer src="{{ '/assets/js/obsidian-wiki-links.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+{%- endif -%}
 
 <!-- Optional fork overrides: opt-in via `site.user_overrides: true` in _config.yml. -->
 {% if site.user_overrides %}

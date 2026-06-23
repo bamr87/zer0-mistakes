@@ -40,7 +40,8 @@
        aria-labelledby="obsidianLocalGraphLabel"
        data-bs-scroll="true"
        data-bs-backdrop="false"
-       data-obsidian-local-graph-panel>
+       data-obsidian-local-graph-panel
+       hidden>
   <div class="offcanvas-header">
     <h2 class="offcanvas-title h5 mb-0" id="obsidianLocalGraphLabel">
       <i class="bi bi-diagram-3 me-2" aria-hidden="true"></i>Local graph
@@ -64,7 +65,7 @@
       <div id="obsidian-local-graph"
            data-depth="{{ lg_depth }}"
            data-index-url="{{ '/assets/data/wiki-index.json' | relative_url }}"
-           role="img"
+           role="group"
            aria-label="Local graph of pages linked to this page"></div>
       <p class="obsidian-local-graph-status small text-secondary mt-2 mb-0"
          data-obsidian-local-graph-status
@@ -72,5 +73,5 @@
     </div>
   </div>
 </aside>
-<script src="{{ '/assets/js/obsidian-local-graph.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/js/obsidian-local-graph.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
 {%- endif -%}

@@ -34,6 +34,48 @@
     return String(value || '').toLowerCase().trim().replace(/\s+/g, ' ');
   }
 
+  function prefersReducedMotion() {
+    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+
+  // Cytoscape is vendored under assets/vendor/ (no runtime CDN). Path comes from
+  // window.OBSIDIAN_CONFIG.cytoscapeUrl (set by Liquid), with a base fallback.
+  function cytoscapeSrc() {
+    var cfg = window.OBSIDIAN_CONFIG || {};
+    if (cfg.cytoscapeUrl) return cfg.cytoscapeUrl;
+    var base = (document.querySelector('base') || {}).href || '/';
+    return base.replace(/\/$/, '') + '/assets/vendor/cytoscape/cytoscape.min.js';
+  }
+
+  // Load cytoscape, coordinating with obsidian-local-graph.js via the shared
+  // window.__obsidianCytoscapeLoading queue. cb(true) on success, cb(false) on
+  // failure so the caller can show a recovery message.
+  function loadCytoscape(cb) {
+    if (typeof window.cytoscape === 'function') return cb(true);
+    if (window.__obsidianCytoscapeLoading) {
+      window.__obsidianCytoscapeLoading.push(cb);
+      return;
+    }
+    var queue = window.__obsidianCytoscapeLoading = [cb];
+    function flush(ok) {
+      window.__obsidianCytoscapeLoading = null;
+      queue.forEach(function (fn) { try { fn(ok); } catch (e) { /* ignore */ } });
+    }
+    var existing = document.querySelector('script[src*="cytoscape"]');
+    if (existing) {
+      if (typeof window.cytoscape === 'function') return flush(true);
+      existing.addEventListener('load', function () { flush(true); });
+      existing.addEventListener('error', function () { flush(false); });
+      return;
+    }
+    var s = document.createElement('script');
+    s.src = cytoscapeSrc();
+    s.defer = true;
+    s.onload = function () { flush(true); };
+    s.onerror = function () { flush(false); };
+    document.head.appendChild(s);
+  }
+
   function buildLookup(entries) {
     var byKey = Object.create(null);
     entries.forEach(function (entry) {
@@ -211,6 +253,8 @@
 
     var theme = readTheme();
     container.style.backgroundColor = theme.canvasBg;
+    var nodeDur = prefersReducedMotion() ? '0ms' : '160ms';
+    var edgeDur = prefersReducedMotion() ? '0ms' : '150ms';
 
     var cy = window.cytoscape({
       container: container,
@@ -245,7 +289,7 @@
             'border-color': theme.nodeBorder,
             'opacity': 0.88,
             'transition-property': 'background-color, border-color, width, height, text-opacity, opacity',
-            'transition-duration': '160ms'
+            'transition-duration': nodeDur
           }
         },
         {
@@ -279,7 +323,7 @@
             'arrow-scale': 0.75,
             'opacity': 0.55,
             'transition-property': 'line-color, width, opacity',
-            'transition-duration': '150ms'
+            'transition-duration': edgeDur
           }
         },
         {
@@ -409,18 +453,9 @@
   function applyOrphansVisibility(cy, show) {
     if (!cy) return;
     var orphans = cy.nodes().filter(function (n) { return n.degree(false) === 0; });
-    if (show) {
-      orphans.style('display', 'element');
-    } else {
-      orphans.style('display', 'none');
-    }
-    // Re-run a quick layout pass on visible elements so the connected
-    // cluster expands into the freed space.
-    cy.layout(Object.assign({}, COSE_LAYOUT, {
-      randomize: false,
-      numIter: 1400,
-      eles: cy.elements(':visible')
-    })).run();
+    orphans.style('display', show ? 'element' : 'none');
+    // The initial COSE pass already positioned every node, so just refit the
+    // visible set — avoids a jarring full relayout of the stable core on toggle.
     cy.fit(cy.elements(':visible'), 80);
   }
 
@@ -467,13 +502,23 @@
         var byKey = buildLookup(entries);
         var elements = buildElements(entries, byKey);
         computeNodeDegree(elements);
-        container.innerHTML = '';
-        setStats(entries, elements);
-        var cy = renderGraph(container, elements);
-        wireSearch(cy, byKey);
-        wireFitButton(cy);
-        wireOrphansToggle(cy);
-        window.ObsidianGraph = { cy: cy, byKey: byKey, entries: entries };
+        loadCytoscape(function (ok) {
+          if (!ok) {
+            container.innerHTML =
+              '<div class="alert alert-danger" role="alert">' +
+              'Graph view failed to load: the <code>cytoscape</code> library could ' +
+              'not be fetched. Check your network connection or content security policy.' +
+              '</div>';
+            return;
+          }
+          container.innerHTML = '';
+          setStats(entries, elements);
+          var cy = renderGraph(container, elements);
+          wireSearch(cy, byKey);
+          wireFitButton(cy);
+          wireOrphansToggle(cy);
+          window.ObsidianGraph = { cy: cy, byKey: byKey, entries: entries };
+        });
       })
       .catch(function (err) {
         container.innerHTML =
