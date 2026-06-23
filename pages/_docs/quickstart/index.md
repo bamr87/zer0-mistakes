@@ -1,7 +1,7 @@
 ---
 lastmod: 2026-06-23T00:00:00.000Z
 title: Zer0-Mistakes Quickstart Guides
-description: Pick the fastest path to a live Zer0-Mistakes site — a three-file remote-theme starter, the full fork-and-deploy GitHub Pages workflow, or a step-by-step series.
+description: Pick the fastest path to a live Zer0-Mistakes site — a three-file remote-theme starter, the fork-and-deploy GitHub Pages workflow, or a step-by-step series.
 preview: /images/docs/quickstart/theme-home.png
 layout: default
 categories:
