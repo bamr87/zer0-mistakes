@@ -42,6 +42,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   artifacts out of feature PRs — and indexed from `AGENTS.md`, `CLAUDE.md`, and
   `.github/instructions/README.md`.
 ### Tests
+- **Playwright smoke specs for the search modal and AI chat widget (#167,
+  #168).** New `test/visual/search.spec.js` covers the site-wide search modal
+  (ZER0-032): the `/` shortcut opens it and focuses the input, Escape closes it,
+  a query populates results from `/search.json`, and opening search closes the
+  Settings offcanvas without stacking backdrops. New `test/visual/ai-chat.spec.js`
+  covers the AI chat widget (ZER0-060): the render guard's positive path (FAB +
+  config present), and the FAB ⇄ panel toggle via click, close button, and
+  Escape — all client-side, no AI backend. Note: the smoke build
+  (`_config.yml,_config_dev.yml`) sets `ai_chat.proxy_ready: true`, so the widget
+  renders in the test environment; the specs assert that real behavior.
 - **Unit tests for `sanitize_config_filter.rb` (T-023).** Added 12 Minitest
   specs to `test/test_plugins.rb` covering both regex paths of the
   security-critical Liquid filter: `SENSITIVE_KEY_RE` matches `api_key`,
