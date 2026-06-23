@@ -53,10 +53,18 @@
     {% endif %}
   {% endfor %}
 {% endif %}
+{% comment %} Only build the "More from" profile URL when the author's profile
+   page exists in the build — generated author pages aren't delivered by
+   remote_theme, so the link would 404 on a Pages consumer. See issue #204. {% endcomment %}
 {% assign bio_profile_url = nil %}
 {% if bio_author_key %}
   {% assign bio_author_name = bio_author_data.name | default: include.author %}
-  {% capture bio_profile_url %}{{ site.baseurl }}/authors/{{ bio_author_key | slugify }}/{% endcapture %}
+  {% assign bio_author_slug = bio_author_key | slugify %}
+  {% capture bio_author_path %}/authors/{{ bio_author_slug }}/{% endcapture %}
+  {% assign bio_author_page = site.html_pages | where: "url", bio_author_path | first %}
+  {% if bio_author_page %}
+    {% capture bio_profile_url %}{{ site.baseurl }}{{ bio_author_path }}{% endcapture %}
+  {% endif %}
 {% endif %}
 
 {% if include.author %}
