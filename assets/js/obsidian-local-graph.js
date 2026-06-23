@@ -26,8 +26,10 @@
   var PANEL_SELECTOR = '[data-obsidian-local-graph-panel]';
   var TOGGLE_SELECTOR = '[data-obsidian-local-graph-toggle]';
   var STATUS_SELECTOR = '[data-obsidian-local-graph-status]';
-  var CYTOSCAPE_URL = 'https://cdn.jsdelivr.net/npm/cytoscape@3.30.0/dist/cytoscape.min.js';
-  var CYTOSCAPE_SRI = 'sha384-kpMsYllYzyaWU69Piok08rPNktpnjqAoDMdB00fjqUkEk3lkuUbSuwJ+oXrjvN6B';
+  // Vendored locally (assets/vendor/cytoscape/) — no CDN, so the graph works
+  // under strict CSP and offline. The container carries a baseurl-aware path via
+  // data-cytoscape-url; this is the root-relative fallback. See issue #152.
+  var CYTOSCAPE_URL = '/assets/vendor/cytoscape/cytoscape.min.js';
 
   function companionElements(container) {
     return {
@@ -238,7 +240,7 @@
     };
   }
 
-  function loadCytoscape(cb) {
+  function loadCytoscape(url, cb) {
     if (typeof window.cytoscape === 'function') return cb();
     // Re-use any in-flight load (e.g. when the full graph page also loads it).
     if (window.__obsidianCytoscapeLoading) {
@@ -255,9 +257,7 @@
       return;
     }
     var s = document.createElement('script');
-    s.src = CYTOSCAPE_URL;
-    s.integrity = CYTOSCAPE_SRI;
-    s.crossOrigin = 'anonymous';
+    s.src = url || CYTOSCAPE_URL;
     s.defer = true;
     s.onload = function () {
       window.__obsidianCytoscapeLoading.forEach(function (fn) { fn(); });
@@ -411,7 +411,8 @@
         var current = findCurrentEntry(lookup);
         if (!current) { setPanelAvailable(container, false); return; }
         var elements = buildSubgraph(entries, lookup, current, depth);
-        loadCytoscape(function () {
+        var cytoscapeUrl = container.getAttribute('data-cytoscape-url') || CYTOSCAPE_URL;
+        loadCytoscape(cytoscapeUrl, function () {
           render(container, elements, current.url);
           var nodeCount = elements.filter(function (element) { return element.group === 'nodes'; }).length;
           var edgeCount = elements.filter(function (element) { return element.group === 'edges'; }).length;

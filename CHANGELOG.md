@@ -32,7 +32,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Giscus comments were silently disabled** ([#201](https://github.com/bamr87/zer0-mistakes/issues/201)).
+  `_config.yml` defined the comment block under the misspelled key `gisgus:`
+  while every template reads `site.giscus`, so comments never rendered. Renamed
+  the key to `giscus:`. Fixing this also surfaced and fixed a latent
+  include-path error in `_includes/content/giscus.html` (a literal
+  `include giscus.html` Liquid tag inside an HTML doc comment) that only fired
+  once comments were enabled.
+- **Theme chrome no longer injects internal links that 404 for remote-theme
+  Pages consumers** ([#204](https://github.com/bamr87/zer0-mistakes/issues/204)).
+  Tag badges (`article`/`note`/`notebook`), the breadcrumb collection-root crumb,
+  the local-graph "Full graph" link, and author byline profile links are now
+  **existence-gated** — they render as plain text when the target page isn't in
+  the build instead of linking to a 404. The post category base is configurable
+  via `category_base` (default `/news`); the tags page via `tags_page` (default
+  `/tags/`); the full-graph page via `obsidian_graph_url`.
+
+### Changed
+- **Vendored cytoscape.js** ([#152](https://github.com/bamr87/zer0-mistakes/issues/152)),
+  the last runtime CDN dependency in the theme. `cytoscape@3.30.0` is committed
+  under `assets/vendor/cytoscape/` (matching the Bootstrap/Icons/Mermaid
+  pattern) and loaded locally by the Obsidian local-graph FAB and full-graph
+  page, so the graph works under strict CSP and offline. Added to
+  `vendor-manifest.json`.
+
 ### Added
+- **Remote-theme consumer checklist doc**
+  ([#203](https://github.com/bamr87/zer0-mistakes/issues/203),
+  [#202](https://github.com/bamr87/zer0-mistakes/issues/202)). New
+  `pages/_docs/deployment/remote-theme-checklist.md` documenting what
+  `remote_theme` does not deliver on GitHub Pages (config, data, plugins) and how
+  to fill each gap — including the hand-authored `/search.json` + `/sitemap/`
+  files that the plugin-only generator can't produce in Pages safe mode.
 - **Contributor workflow guardrails.** New `change-workflow` skill
   (`.github/skills/change-workflow/SKILL.md`) codifying the branch → commit → PR
   flow for any change (branch-first, one concern per PR, stage-by-path,
