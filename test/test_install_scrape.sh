@@ -73,9 +73,11 @@ _start_server() {
     ( cd "$dir" && exec python3 -m http.server "$port" </dev/null >/dev/null 2>&1 ) &
     local pid=$!
     disown "$pid" 2>/dev/null || true
-    # Wait up to 3s for the port to accept connections.
+    # Wait up to ~15s for the port to accept connections. A 3s budget raced
+    # cold `python3 -m http.server` startup on the macOS CI runners (interpreter
+    # cold start + imports), flaking with "could not start http.server".
     local i=0
-    while [[ $i -lt 30 ]]; do
+    while [[ $i -lt 150 ]]; do
         if curl -fsS --max-time 1 "http://127.0.0.1:${port}/" >/dev/null 2>&1; then
             echo "$pid"
             return 0

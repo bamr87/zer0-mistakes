@@ -84,6 +84,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Escape — all client-side, no AI backend. Note: the smoke build
   (`_config.yml,_config_dev.yml`) sets `ai_chat.proxy_ready: true`, so the widget
   renders in the test environment; the specs assert that real behavior.
+- **CI coverage for the installer wizard and upgrade path (#147).** New
+  `test/test_install_wizard_upgrade.sh` (auto-discovered by the
+  `test_install_*.sh` glob in CI) covers two previously-untested libraries:
+  it drives the non-AI wizard prompt helpers (`_wiz_prompt`, `_wiz_confirm`,
+  `_wiz_choose`) non-interactively with piped answers — defaults, typed input,
+  yes/no confirmation, numbered/by-name menu selection, out-of-range fallback —
+  and exercises `upgrade.sh` end to end: version detection (marker, `_config.yml`
+  fallback, unknown), a detect→migrate→verify run across a version gap, the
+  dry-run (no-write) branch, and the already-current no-op branch.
 - **Unit tests for `sanitize_config_filter.rb` (T-023).** Added 12 Minitest
   specs to `test/test_plugins.rb` covering both regex paths of the
   security-critical Liquid filter: `SENSITIVE_KEY_RE` matches `api_key`,
