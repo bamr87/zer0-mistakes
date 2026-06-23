@@ -17,7 +17,7 @@
   - Renders the current page as a single-node graph when it has no neighbors
   - Hides itself if the current page is not in the wiki-index or the index
     can't be loaded
-  - Lazily loads cytoscape.js from CDN with SRI + crossorigin
+  - Lazily loads the vendored cytoscape.js (assets/vendor/cytoscape/, no CDN)
 
   Opt-out: set `local_graph: false` in page front matter.
 
@@ -80,7 +80,6 @@
       <div id="obsidian-local-graph"
            data-depth="{{ lg_depth }}"
            data-index-url="{{ '/assets/data/wiki-index.json' | relative_url }}"
-           data-cytoscape-url="{{ '/assets/vendor/cytoscape/cytoscape.min.js' | relative_url }}"
            role="img"
            aria-label="Local graph of pages linked to this page"></div>
       <p class="obsidian-local-graph-status small text-secondary mt-2 mb-0"

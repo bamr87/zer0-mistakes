@@ -7,7 +7,7 @@
  *
  * Loaded by _includes/navigation/local-graph.html inside a dedicated
  * collapsible side panel. Cytoscape.js is loaded lazily (and only once) from
- * the same CDN as the full graph page.
+ * the vendored copy under assets/vendor/cytoscape/ (no CDN).
  *
  * Subgraph:
  *   - center  = current page (matched against entry.url, falling back to
@@ -26,10 +26,16 @@
   var PANEL_SELECTOR = '[data-obsidian-local-graph-panel]';
   var TOGGLE_SELECTOR = '[data-obsidian-local-graph-toggle]';
   var STATUS_SELECTOR = '[data-obsidian-local-graph-status]';
-  // Vendored locally (assets/vendor/cytoscape/) — no CDN, so the graph works
-  // under strict CSP and offline. The container carries a baseurl-aware path via
-  // data-cytoscape-url; this is the root-relative fallback. See issue #152.
+  // Cytoscape is vendored locally (assets/vendor/cytoscape/) — no CDN, so the
+  // graph works under strict CSP and offline. Resolve the vendored URL from this
+  // script's own (trusted) src so it stays correct under any site baseurl,
+  // without flowing DOM-supplied text into a script element. See issues #152, #205.
+  var SELF_SRC = (document.currentScript && document.currentScript.src) || '';
   var CYTOSCAPE_URL = '/assets/vendor/cytoscape/cytoscape.min.js';
+  var _selfMatch = SELF_SRC.match(/^(.*\/)assets\/js\/obsidian-local-graph\.js(?:[?#].*)?$/);
+  if (_selfMatch) {
+    CYTOSCAPE_URL = _selfMatch[1] + 'assets/vendor/cytoscape/cytoscape.min.js';
+  }
 
   function companionElements(container) {
     return {
@@ -240,7 +246,7 @@
     };
   }
 
-  function loadCytoscape(url, cb) {
+  function loadCytoscape(cb) {
     if (typeof window.cytoscape === 'function') return cb();
     // Re-use any in-flight load (e.g. when the full graph page also loads it).
     if (window.__obsidianCytoscapeLoading) {
@@ -257,7 +263,7 @@
       return;
     }
     var s = document.createElement('script');
-    s.src = url || CYTOSCAPE_URL;
+    s.src = CYTOSCAPE_URL;
     s.defer = true;
     s.onload = function () {
       window.__obsidianCytoscapeLoading.forEach(function (fn) { fn(); });
@@ -411,8 +417,7 @@
         var current = findCurrentEntry(lookup);
         if (!current) { setPanelAvailable(container, false); return; }
         var elements = buildSubgraph(entries, lookup, current, depth);
-        var cytoscapeUrl = container.getAttribute('data-cytoscape-url') || CYTOSCAPE_URL;
-        loadCytoscape(cytoscapeUrl, function () {
+        loadCytoscape(function () {
           render(container, elements, current.url);
           var nodeCount = elements.filter(function (element) { return element.group === 'nodes'; }).length;
           var edgeCount = elements.filter(function (element) { return element.group === 'edges'; }).length;
