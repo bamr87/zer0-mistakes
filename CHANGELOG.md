@@ -83,6 +83,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   regression), and that `--strict` exits non-zero when a file is below the fail
   threshold (while warn mode exits 0). Runs under `LC_ALL=C` for
   locale-independence parity with the T-015 guard.
+- **Playwright smoke specs for the search modal and AI chat widget (#167,
+  #168).** New `test/visual/search.spec.js` covers the site-wide search modal
+  (ZER0-032): the `/` shortcut opens it and focuses the input, Escape closes it,
+  a query populates results from `/search.json`, and opening search closes the
+  Settings offcanvas without stacking backdrops. New `test/visual/ai-chat.spec.js`
+  covers the AI chat widget (ZER0-060): the render guard's positive path (FAB +
+  config present), and the FAB ⇄ panel toggle via click, close button, and
+  Escape — all client-side, no AI backend. Note: the smoke build
+  (`_config.yml,_config_dev.yml`) sets `ai_chat.proxy_ready: true`, so the widget
+  renders in the test environment; the specs assert that real behavior.
 - **CI coverage for the installer wizard and upgrade path (#147).** New
   `test/test_install_wizard_upgrade.sh` (auto-discovered by the
   `test_install_*.sh` glob in CI) covers two previously-untested libraries:
