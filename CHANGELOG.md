@@ -42,6 +42,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   artifacts out of feature PRs — and indexed from `AGENTS.md`, `CLAUDE.md`, and
   `.github/instructions/README.md`.
 ### Tests
+- **Unit tests for the `content-review.rb` scoring engine (#166).** New
+  `scripts/test/lib/test_content_review.sh` drives the deterministic content
+  reviewer against synthetic Markdown fixtures using the real production config
+  and schema: asserts a well-formed docs page scores ≥ 80, that removing the
+  required `description` lowers the score and reports the issue, that a closing
+  bare ` ``` ` after a language-tagged fence is not flagged (the v1.18.1
+  regression), and that `--strict` exits non-zero when a file is below the fail
+  threshold (while warn mode exits 0). Runs under `LC_ALL=C` for
+  locale-independence parity with the T-015 guard.
 - **Unit tests for `sanitize_config_filter.rb` (T-023).** Added 12 Minitest
   specs to `test/test_plugins.rb` covering both regex paths of the
   security-critical Liquid filter: `SENSITIVE_KEY_RE` matches `api_key`,
