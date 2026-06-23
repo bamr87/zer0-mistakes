@@ -33,6 +33,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Quickstart documentation hub + fork/remote-theme guide (#126).** Fleshes out
+  `pages/_docs/quickstart/` (previously only `bare-minimum.md`): a new
+  `index.md` hub that links the available quickstart paths (bare-minimum,
+  fork-and-deploy, and the step-by-step series), and a full
+  `fork-and-deploy.md` guide covering the standard fork or remote-theme GitHub
+  Pages workflow end to end (choose model → setup → local preview → enable Pages
+  → verify → troubleshoot). Both pages carry annotated screenshots under
+  `assets/images/docs/quickstart/` and score 🟢 excellent in the content
+  reviewer.
 - **Contributor workflow guardrails.** New `change-workflow` skill
   (`.github/skills/change-workflow/SKILL.md`) codifying the branch → commit → PR
   flow for any change (branch-first, one concern per PR, stage-by-path,
