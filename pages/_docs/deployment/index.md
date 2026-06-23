@@ -35,6 +35,7 @@ Deploy your Zer0-Mistakes Jekyll site to various hosting platforms.
 ## Guides in This Section
 
 - **[GitHub Pages](github-pages/)** — Deploy to GitHub's free hosting
+- **[Remote-Theme Consumer Checklist](remote-theme-checklist/)** — What `remote_theme` does not deliver, and how to fill the gaps
 - **[Netlify](netlify/)** — Deploy with custom headers and redirects
 - **[Custom Domain](custom-domain/)** — Set up your own domain name
 

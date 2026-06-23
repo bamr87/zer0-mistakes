@@ -356,9 +356,9 @@ resources:
     image: [ *github_user, '/', *github_repository ]
     hub_url: [ 'https://hub.docker.com/r/', *github_user, '/', *github_repository ]
 
-## Gisgus Plugin #################################################################
+## Giscus Plugin #################################################################
 
-gisgus:
+giscus:
   enabled: true
   data-repo-id: "MDEwOlJlcG9zaXRvcnkyODM4MjI1NzM"
   data-category-id: "DIC_kwDOEOrJ7c4CAn8D"
