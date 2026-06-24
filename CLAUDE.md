@@ -9,8 +9,14 @@ Zer0-Mistakes is a Docker-first Jekyll theme published as the Ruby gem
 and automated semantic releases to RubyGems. Primary languages: Liquid/HTML
 (theme), SCSS, Bash (tooling), Ruby (gem + plugins).
 
-**Version source of truth**: `lib/jekyll-theme-zer0/version.rb`. Never bump it
-by hand outside a release — use `./scripts/bin/release`.
+**Version source of truth**: `lib/jekyll-theme-zer0/version.rb`. Don't bump it by
+hand. **release-please** is the canonical flow: it watches Conventional Commits on
+`main`, opens a "chore(main): release X.Y.Z" PR, and merging that PR tags the
+release and publishes the gem (`.github/workflows/release.yml` → reusable
+workflows in `bamr87/.github`). `./scripts/bin/release` remains a manual fallback.
+Any `version.rb` bump MUST re-lock `Gemfile.lock` *and* `package-lock.json` in the
+same change — a stale lock breaks the frozen `bundle install` in the publish job
+(CI guards version.rb ↔ Gemfile.lock).
 
 ## Layered Agent Guidance
 
@@ -150,9 +156,11 @@ support `--dry-run`. The self-healing installer is `install.sh` +
    layout/include/sass change, run the Docker Jekyll build above.
 4. **Update `CHANGELOG.md`** for user-visible changes (Keep a Changelog
    format, newest entry at the top).
-5. **Version bumps happen only via `./scripts/bin/release`** — never in
-   unrelated PRs. Keep `Gemfile.lock`'s `jekyll-theme-zer0` version in sync with
-   `version.rb`, and keep the generated `_data/content_statistics.yml` out of
+5. **Version bumps happen via release automation** — release-please's release PR
+   (canonical) or `./scripts/bin/release` (manual fallback), never in unrelated
+   PRs. A `version.rb` bump MUST re-lock `Gemfile.lock` *and* `package-lock.json`
+   in the same change — a stale lock breaks the frozen `bundle install` in the
+   publish workflow. Keep the generated `_data/content_statistics.yml` out of
    feature PRs (its own `chore` commit or CI).
 6. **Conventional commits**: types `feat|fix|docs|style|refactor|perf|test|chore`;
    scopes include `search`, `navigation`, `layouts`, `includes`, `sass`,
