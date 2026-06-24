@@ -20,7 +20,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # Deploys the AI chat proxy Worker to Cloudflare and sets its secret.
       # Required GitHub Actions secrets:
