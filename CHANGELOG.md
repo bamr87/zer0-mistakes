@@ -32,7 +32,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Giscus comments now actually render.** The config block was keyed `gisgus:`
+  while every layout and the include read `site.giscus.*`, so `site.giscus` was
+  always `nil` and comments rendered nowhere. Renamed the key to `giscus:`
+  (`_config.yml`). Fixing the gate also surfaced a latent bug: the include's own
+  header comment carried a live self-include example written as a Liquid tag
+  pointing at the bare filename (without the `content/` path); because Liquid
+  evaluates tags even inside HTML comments, it recursively tried to include the
+  wrong path and broke the build once the gate passed — the header was rewritten
+  without any live Liquid. Replaced the stale `data-repo-id` /
+  `data-category-id` (they belonged to the upstream fork's repository, which
+  would trip a "repository does not match" error in the widget) with this repo's
+  IDs and the Giscus-recommended **Announcements** category.
+
+### Changed
+- **Comment gating is now consistent across layouts.** `article.html` gated on
+  the truthy `site.giscus` object while `note.html` / `notebook.html` gated on
+  `site.giscus.enabled`; all three now use `site.giscus.enabled`, so
+  `enabled: false` disables comments everywhere. Blog posts (`pages/_posts/`)
+  now show comments by default (per-page overridable with `comments: false`).
+
 ### Added
+- **Claude-Code-driven comment conversations.** Comments are GitHub Discussions,
+  so a new `scripts/bin/giscus-discussions` engine (`gh` GraphQL) can `list`,
+  read a `thread`, `draft` a reply scaffold, `seed` a discussion, and `post`
+  comments/replies (writes honor `--dry-run`). The `giscus-conversation` skill
+  (`.github/skills/giscus-conversation/SKILL.md`) drives it so Claude Code can
+  read a page's thread and build a maintainer reply. A read-only
+  `giscus-digest.yml` workflow surfaces comment activity in the Actions summary.
+  Guarded by a new `Giscus Comments Configuration` core test.
 - **Contributor workflow guardrails.** New `change-workflow` skill
   (`.github/skills/change-workflow/SKILL.md`) codifying the branch → commit → PR
   flow for any change (branch-first, one concern per PR, stage-by-path,

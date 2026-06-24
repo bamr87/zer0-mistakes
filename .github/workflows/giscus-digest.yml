@@ -1,0 +1,71 @@
+name: Giscus comment digest
+
+# Surface the conversation happening in the Giscus-backed GitHub Discussions so
+# maintainers (and Claude Code, via the `giscus-conversation` skill) know which
+# pages have new comments to engage. READ-ONLY: this workflow never posts — it
+# lists discussions in the configured Giscus category and writes a digest to the
+# job summary. Drafting/posting replies stays a deliberate, local action.
+#
+# Trigger manually from the Actions tab, or let the weekly schedule run it.
+
+permissions:
+  contents: read
+  discussions: read
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Mondays 13:00 UTC — weekly nudge. Remove this block to make it manual-only.
+    - cron: "0 13 * * 1"
+
+concurrency:
+  group: giscus-digest
+  cancel-in-progress: true
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Build Giscus comment digest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          script=./scripts/bin/giscus-discussions
+
+          # List discussions; the script prints "#N\tK comment(s)\tTITLE" lines.
+          if ! listing="$("$script" list 2>/dev/null)"; then
+            printf '# Giscus comment digest\n\n> Could not list discussions (Discussions disabled or token lacks scope).\n' \
+              >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          {
+            echo "# Giscus comment digest"
+            echo
+            echo "_Category from \`_config.yml\` · repo \`${GITHUB_REPOSITORY}\`_"
+            echo
+            if printf '%s\n' "$listing" | grep -q '^#'; then
+              echo "| Discussion | Comments | Page |"
+              echo "| --- | --- | --- |"
+              # Reformat the script's two-line-per-item output into table rows,
+              # linking each discussion number to its URL.
+              printf '%s\n' "$listing" | awk '
+                /^#/ {
+                  num=$1; sub(/^#/,"",num)
+                  split($0, a, "\t"); comments=a[2]; title=a[3]
+                  next
+                }
+                /^\thttps?:/ {
+                  url=$1
+                  printf "| [#%s](%s) | %s | %s |\n", num, url, comments, title
+                }'
+              echo
+              echo "Reply locally with the \`giscus-conversation\` skill or \`scripts/bin/giscus-discussions\`."
+            else
+              echo "> No discussions in the Giscus category yet."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

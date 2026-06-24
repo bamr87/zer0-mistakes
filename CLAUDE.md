@@ -44,6 +44,11 @@ files you touch:
   `templates/deploy/chat-proxy/` (Cloudflare Worker + Node dev proxy), deployed
   by `.github/workflows/deploy-chat-proxy.yml`. Governed by
   [`ai-chat.instructions.md`](./.github/instructions/ai-chat.instructions.md).
+- **Giscus comment conversations** — comments are GitHub Discussions (config:
+  `_config.yml` `giscus:` block; include: `_includes/content/giscus.html`).
+  `scripts/bin/giscus-discussions` (gh GraphQL) can list/read/draft/seed/post,
+  driven by the `giscus-conversation` skill (`.github/skills/giscus-conversation/`).
+  Read-only digest workflow: `.github/workflows/giscus-digest.yml`.
 - `_data/backlog.yml` — tactical task backlog (source of truth; synced to
   GitHub Issues by `.github/workflows/sync.yml`). See
   [`docs/systems/continuous-evolution.md`](./docs/systems/continuous-evolution.md).
