@@ -61,7 +61,7 @@ jobs:
       docs-only: ${{ steps.check.outputs.docs-only }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Filter Paths
         uses: dorny/paths-filter@v4
@@ -125,7 +125,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup Ruby Environment
         uses: ./.github/actions/setup-ruby
@@ -147,7 +147,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       # Always-running guard: version.rb must equal the gem version pinned in
       # Gemfile.lock. Lives in this job (not the path-filtered fast-checks) so it
@@ -198,7 +198,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Run Test Suite
         uses: ./.github/actions/test-suite
@@ -290,7 +290,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup Ruby environment
         uses: ./.github/actions/setup-ruby
@@ -340,7 +340,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Build and start Jekyll in Docker
         run: |
