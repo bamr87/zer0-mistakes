@@ -7,7 +7,7 @@
  *
  * Loaded by _includes/navigation/local-graph.html inside a dedicated
  * collapsible side panel. Cytoscape.js is loaded lazily (and only once) from
- * the same CDN as the full graph page.
+ * the vendored copy under assets/vendor/cytoscape/ (no CDN).
  *
  * Subgraph:
  *   - center  = current page (matched against entry.url, falling back to
@@ -26,8 +26,16 @@
   var PANEL_SELECTOR = '[data-obsidian-local-graph-panel]';
   var TOGGLE_SELECTOR = '[data-obsidian-local-graph-toggle]';
   var STATUS_SELECTOR = '[data-obsidian-local-graph-status]';
-  var CYTOSCAPE_URL = 'https://cdn.jsdelivr.net/npm/cytoscape@3.30.0/dist/cytoscape.min.js';
-  var CYTOSCAPE_SRI = 'sha384-kpMsYllYzyaWU69Piok08rPNktpnjqAoDMdB00fjqUkEk3lkuUbSuwJ+oXrjvN6B';
+  // Cytoscape is vendored locally (assets/vendor/cytoscape/) — no CDN, so the
+  // graph works under strict CSP and offline. Resolve the vendored URL from this
+  // script's own (trusted) src so it stays correct under any site baseurl,
+  // without flowing DOM-supplied text into a script element. See issues #152, #205.
+  var SELF_SRC = (document.currentScript && document.currentScript.src) || '';
+  var CYTOSCAPE_URL = '/assets/vendor/cytoscape/cytoscape.min.js';
+  var _selfMatch = SELF_SRC.match(/^(.*\/)assets\/js\/obsidian-local-graph\.js(?:[?#].*)?$/);
+  if (_selfMatch) {
+    CYTOSCAPE_URL = _selfMatch[1] + 'assets/vendor/cytoscape/cytoscape.min.js';
+  }
 
   function companionElements(container) {
     return {
@@ -256,8 +264,6 @@
     }
     var s = document.createElement('script');
     s.src = CYTOSCAPE_URL;
-    s.integrity = CYTOSCAPE_SRI;
-    s.crossOrigin = 'anonymous';
     s.defer = true;
     s.onload = function () {
       window.__obsidianCytoscapeLoading.forEach(function (fn) { fn(); });
