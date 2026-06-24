@@ -31,6 +31,8 @@ export class Navbar {
         this._tooltips = [];
         this._listeners = [];
         this._resizeTimer = null;
+        this._fitTimer = null;
+        this._lastFitWarnings = new Set();
     }
 
     // -----------------------------------------------------------------
@@ -57,6 +59,7 @@ export class Navbar {
         this._setupDropdownHoverDelay();
         this._setupFocusTrap();
         this._setupResponsiveReset();
+        this._setupFitWarnings();
     }
 
     destroy() {
@@ -276,5 +279,106 @@ export class Navbar {
                 });
             }, 250);
         });
+    }
+
+    // -----------------------------------------------------------------
+    // Dev-only constraint warnings
+    // -----------------------------------------------------------------
+    // Surfaces two failure modes that otherwise pass silently until a user
+    // hits a specific viewport: (1) the inline menubar has more items than can
+    // fit even icon-only, and (2) page content overflows the viewport, which
+    // makes the fixed-top navbar look "cut off" on the right. Logged to the
+    // console only on local/dev hosts — never on a deployed (e.g. *.github.io)
+    // site — so production consoles stay clean.
+    // -----------------------------------------------------------------
+    _isDevHost() {
+        try {
+            const h = window.location.hostname;
+            return h === 'localhost' || h === '127.0.0.1' || h === '0.0.0.0' ||
+                   h === '::1' || h === '[::1]' || h === '' ||
+                   /\.(local|test|localhost)$/.test(h);
+        } catch (e) {
+            return false;
+        }
+    }
+
+    _setupFitWarnings() {
+        if (!this._isDevHost()) return;
+        const run = () => this._checkFit();
+        // Let first paint + async chrome settle before the first check.
+        setTimeout(run, 600);
+        this._on(window, 'resize', () => {
+            clearTimeout(this._fitTimer);
+            this._fitTimer = setTimeout(run, 400);
+        });
+    }
+
+    /** Emit a warning at most once per distinct message until conditions change. */
+    _warnOnce(key, message, ...extra) {
+        if (this._lastFitWarnings.has(key)) return;
+        this._lastFitWarnings.add(key);
+        console.warn(message, ...extra);
+    }
+
+    _checkFit() {
+        const PREFIX = '[zer0-mistakes navbar]';
+        const vw = window.innerWidth;
+        // Re-evaluate from scratch each pass so a fixed layout stops warning.
+        this._lastFitWarnings.clear();
+
+        // 1) Inline menubar overflow at lg+ — more/wider items than the track holds.
+        if (vw >= this.config.breakpoints.lg) {
+            const navList = document.querySelector('#bdNavbar .navbar-nav');
+            if (navList && navList.scrollWidth > navList.clientWidth + 2) {
+                const items = navList.querySelectorAll(':scope > li:not(.d-lg-none)').length;
+                this._warnOnce(
+                    'menu-overflow',
+                    `${PREFIX} Top navigation overflows the bar at ${vw}px (~${items} ` +
+                    `visible items). Items are already icon-only here and may still clip. ` +
+                    `Reduce top-level entries, shorten titles, or group them under ` +
+                    `dropdowns in _data/navigation/main.yml.`
+                );
+            }
+        }
+
+        // 2) Page-level horizontal overflow (the usual "navbar looks cut off" cause).
+        //    `main.scrollWidth` only exceeds its clientWidth when something overflows
+        //    WITHOUT its own scroll container — locally-scrollable wide content
+        //    (tables/code) does not trip this. Cheap gate before the DOM scan.
+        const main = document.getElementById('main-content');
+        if (main && main.scrollWidth > main.clientWidth + 2) {
+            const cw = document.documentElement.clientWidth;
+            let worst = null;
+            main.querySelectorAll('*').forEach((el) => {
+                const r = el.getBoundingClientRect();
+                if (r.width === 0 || r.right <= cw + 2) return;
+                if (getComputedStyle(el).position === 'fixed') return;
+                // Overflow contained by an ancestor clip/scroll box never reaches
+                // the page. Exclude the root <html> clip so we still report what
+                // the safety net is hiding.
+                let contained = false, n = el.parentElement;
+                while (n && n !== document.body && n !== document.documentElement) {
+                    if (getComputedStyle(n).overflowX !== 'visible') { contained = true; break; }
+                    n = n.parentElement;
+                }
+                if (contained) return;
+                if (!worst || r.right > worst.right) worst = { el, right: r.right };
+            });
+            if (worst) {
+                const el = worst.el;
+                const sel = el.tagName.toLowerCase() +
+                    (el.id ? `#${el.id}` : '') +
+                    (el.className && typeof el.className === 'string'
+                        ? '.' + el.className.trim().split(/\s+/).slice(0, 2).join('.') : '');
+                this._warnOnce(
+                    'page-overflow',
+                    `${PREFIX} Content overflows the viewport by ` +
+                    `${Math.round(worst.right - cw)}px at ${vw}px (widest: ${sel}). This ` +
+                    `forces a horizontal scrollbar and can make the fixed navbar look cut ` +
+                    `off. Wrap wide content in a scroll container or a Bootstrap .container.`,
+                    el
+                );
+            }
+        }
     }
 }

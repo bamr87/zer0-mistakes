@@ -480,6 +480,15 @@
 // -----------------------------------------------------------------------------
 
 @media (max-width: 991.98px) {
+  // Cap the slide-in panels so they never exceed a narrow phone viewport.
+  // Bootstrap's default --bs-offcanvas-width is a fixed 400px — wider than a
+  // 360–390px device — which pushes part of the panel (and its close button)
+  // off-screen. Clamp to a comfortable width that always fits.
+  #bdNavbar.offcanvas-lg,
+  #info-section.offcanvas {
+    --bs-offcanvas-width: min(21rem, 86vw);
+  }
+
   // Wrapper is inert on mobile so offcanvas layout matches pre-wrapper structure
   #bdNavbar .bd-navbar-nav-viewport {
     display: contents;

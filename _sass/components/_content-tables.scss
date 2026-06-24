@@ -149,7 +149,14 @@ $zer0-content-table-scopes: (
   margin-bottom: var(--zer0-space-4);
   border: 1px solid var(--zer0-color-border);
   border-radius: 0.5rem;
-  overflow: visible;
+  // Wide tables must scroll WITHIN this card, not push the page wider. The
+  // wrapper sits between the content scope and the table, so the
+  // `#{$scope} > table` mobile fallback below no longer matches — without a
+  // scroll context here a wide markdown table forces a horizontal page
+  // scrollbar, which makes the fixed-top navbar look "cut off" on the right.
+  // (Pairs with the `html { overflow-x: clip }` safety net in _global-chrome.)
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   background-color: var(--zer0-color-bg);
 
   > .content-table-toolbar {
@@ -255,6 +262,14 @@ $zer0-content-table-scopes: (
           min-width: 36rem;
         }
       }
+    }
+
+    // Long unbroken inline-code tokens (URLs, hashes, flags) must wrap rather
+    // than force a horizontal page scrollbar on narrow viewports. Scoped to
+    // inline code only — block code (`pre code`) keeps its own scroll context.
+    :not(pre) > code {
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
   }
 }
