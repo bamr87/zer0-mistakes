@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.1](https://github.com/bamr87/zer0-mistakes/compare/v1.20.0...v1.20.1) (2026-06-24)
+
+
+### Bug Fixes
+
+* harden remote-theme consumer experience + vendor cytoscape ([#205](https://github.com/bamr87/zer0-mistakes/issues/205)) ([c6b0312](https://github.com/bamr87/zer0-mistakes/commit/c6b0312312842c9bf88fccd81472483fb4d15284))
+* **layouts:** render hero image for breaking posts, not just featured ([#189](https://github.com/bamr87/zer0-mistakes/issues/189)) ([4473a07](https://github.com/bamr87/zer0-mistakes/commit/4473a072fcc5d1018a196f8be94af5e0ba31620a))
+
 ## [1.20.0](https://github.com/bamr87/zer0-mistakes/compare/v1.19.0...v1.20.0) (2026-06-22)
 
 
