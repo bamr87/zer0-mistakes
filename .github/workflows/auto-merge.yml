@@ -41,16 +41,21 @@ jobs:
         run: |
           changed=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --jq '.[].filename')
           echo "Changed files:"; echo "$changed"
-          # Files that must never auto-merge, even if mislabelled.
+          # Files that must never auto-merge, even if mislabelled. The primary
+          # gate is CODEOWNERS + "Require Code Owner review" on main; this is a
+          # belt-and-suspenders denylist so a self-labelling agent can't slip a
+          # release/dependency-manifest change through the auto-merge fast path.
           if echo "$changed" | grep -E -q \
-            '(^lib/jekyll-theme-zer0/version\.rb$|\.gemspec$|^Gemfile$|^Gemfile\.lock$|^package\.json$)'; then
+            '(^lib/jekyll-theme-zer0/version\.rb$|\.gemspec$|^Gemfile$|^Gemfile\.lock$|^package\.json$|^package-lock\.json$)'; then
             echo "::error::PR labelled auto-merge but touches version/release/dependency files — removing label."
             gh pr edit "$PR" --remove-label auto-merge
             exit 1
           fi
 
-      - name: Enable native auto-merge (squash)
+      - name: Enable native auto-merge
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR: ${{ github.event.pull_request.number }}
-        run: gh pr merge "$PR" --auto --squash
+        # No --squash: let the repo's merge-method setting (squash-only) decide,
+        # so this stays correct if a merge queue is later enabled.
+        run: gh pr merge "$PR" --auto

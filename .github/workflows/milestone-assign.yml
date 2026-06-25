@@ -1,0 +1,43 @@
+name: Assign merged PRs to milestone
+
+# Keeps the "what's accumulating toward the next version" Milestone honest under
+# bot PR volume. When a PR merges to main and EXACTLY ONE open milestone exists,
+# assign the PR to it (unless it already has one). No-op when zero or many open
+# milestones exist — it never guesses. Optional convenience: the open
+# release-please PR remains the source of truth for the pending version; the
+# milestone is the human-readable intent overlay.
+#
+# Safe pattern (mirrors auto-merge.yml): pull_request_target with NO checkout of
+# untrusted PR head — it only calls the REST API with the repo token.
+
+permissions:
+  issues: write
+  pull-requests: write
+
+on:
+  pull_request_target:
+    types: [closed]
+
+concurrency:
+  group: milestone-assign-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  assign:
+    if: >-
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.milestone == null
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assign to the sole open milestone (if exactly one)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          mapfile -t titles < <(gh api "repos/$GITHUB_REPOSITORY/milestones?state=open" --jq '.[].title')
+          if [[ ${#titles[@]} -eq 1 ]]; then
+            echo "Assigning PR #$PR to milestone '${titles[0]}'"
+            gh pr edit "$PR" --milestone "${titles[0]}"
+          else
+            echo "Found ${#titles[@]} open milestone(s) — need exactly 1; skipping."
+          fi

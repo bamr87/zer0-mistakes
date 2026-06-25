@@ -26,7 +26,7 @@ concurrency:
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
     paths:
       - '_layouts/**'
       - '_includes/**'
@@ -44,7 +44,7 @@ on:
       - 'docker-compose*.yml'
       - 'Dockerfile'
   pull_request:
-    branches: [main, develop]
+    branches: [main]
     paths:
       - '_layouts/**'
       - '_includes/**'
