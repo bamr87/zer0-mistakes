@@ -86,6 +86,7 @@ skill before the action it covers.
 | --- | --- |
 | **Starting any change** — branch → commit → PR, splitting mixed work, keeping generated/lock files out of feature PRs | `.github/skills/change-workflow/SKILL.md` |
 | Validating a change before commit/PR (Jekyll build, doctor, tests) | `.github/skills/validate-build/SKILL.md` |
+| **Any UI/behavioural change** — regression test + before/after evidence (required for fixes to auto-merge) | `.github/skills/visual-evidence/SKILL.md` |
 | Reviewing content PRs for SEO/consistency/polish | `.github/skills/content-review/SKILL.md` |
 
 ---

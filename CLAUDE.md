@@ -36,7 +36,10 @@ files you touch:
   commands in `.cursor/commands/`.
 - `.github/skills/*/SKILL.md` — operational checklists: `change-workflow`
   (branch → commit → PR for **any** change; read it before starting one),
-  `validate-build` (pre-commit/PR validation), `content-review`.
+  `validate-build` (pre-commit/PR validation), `content-review`,
+  `visual-evidence` (regression test + before/after evidence for **any
+  UI/behavioural change**; required for fixes to auto-merge — enforced by the
+  `evidence-gate` check and `visual-evidence.instructions.md`).
 - **AI content reviewer** — reviews content PRs (Markdown under `pages/**`) for
   SEO, consistency, polish, accessibility, and accuracy. Two tiers:
   `scripts/content-review.rb` (deterministic, per-collection thresholds from
