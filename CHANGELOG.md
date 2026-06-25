@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.2](https://github.com/bamr87/zer0-mistakes/compare/v1.20.1...v1.20.2) (2026-06-25)
+
+
+### Bug Fixes
+
+* **navigation:** stop fixed navbar being cut off by page overflow ([#215](https://github.com/bamr87/zer0-mistakes/issues/215)) ([8c32563](https://github.com/bamr87/zer0-mistakes/commit/8c325633ab7f82f96fa5605716d995fc84935af9))
+* **release:** re-sync Gemfile.lock and package-lock.json to 1.20.1 ([#216](https://github.com/bamr87/zer0-mistakes/issues/216)) ([294575b](https://github.com/bamr87/zer0-mistakes/commit/294575b6b70c1a2ee7f08e839457dcd30625043b))
+
 ## [1.20.1](https://github.com/bamr87/zer0-mistakes/compare/v1.20.0...v1.20.1) (2026-06-24)
 
 
