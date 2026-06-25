@@ -40,6 +40,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Visual-evidence standard + reusable evidence kit.** UI/behavioural changes
+  now ship a regression test **and** before/after visual evidence, surfaced in
+  release notes and enforced in CI:
+  - `test/visual/evidence-kit.mjs` — a config-driven generator that drives the
+    live site across a viewport matrix + configurations, measures page overflow
+    in before/after states, composes labelled montages (Playwright, no
+    ImageMagick), and writes `metrics.json` + a CHANGELOG snippet.
+  - `.github/skills/visual-evidence/SKILL.md` + `visual-evidence.instructions.md`
+    codify the standard (and how to file issues a fix uncovers into the backlog
+    loop). Indexed from `AGENTS.md`, `CLAUDE.md`, and the instructions README.
+  - `.github/workflows/evidence-gate.yml` — a required check that fails a UI PR
+    missing the test/evidence (opt-out label `skip-evidence`).
+  - **Autonomy policy extended** (`continuous-evolution.md`,
+    `backlog-implement.prompt.md`, `auto-merge.yml`): a `risk: low` **fix** that
+    ships tests + evidence is now auto-merge-eligible alongside docs/deps/lint.
+
 ### Fixed
 - **Giscus comments were silently disabled** ([#201](https://github.com/bamr87/zer0-mistakes/issues/201)).
   `_config.yml` defined the comment block under the misspelled key `gisgus:`

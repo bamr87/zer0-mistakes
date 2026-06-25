@@ -57,6 +57,9 @@ not the issues.
 | Audit prompt | `.github/prompts/repo-audit.prompt.md` | `/repo-audit` — review repo, file tasks |
 | Implement prompt | `.github/prompts/backlog-implement.prompt.md` | `/backlog-implement` — build one task, open PR |
 | Auto-merge workflow | `.github/workflows/auto-merge.yml` | Enables native auto-merge for low-risk labelled PRs |
+| Visual-evidence skill | `.github/skills/visual-evidence/SKILL.md` | Standard: regression test + before/after evidence for UI/behavioural changes |
+| Evidence kit | `test/visual/evidence-kit.mjs` | Reusable generator for the before/after montages + metrics |
+| Evidence gate | `.github/workflows/evidence-gate.yml` | Required check: fails a UI PR lacking test+evidence (opt-out `skip-evidence`) |
 
 It deliberately reuses the existing **roadmap-sync** pattern
 (`scripts/generate-roadmap.rb` + `.github/workflows/sync.yml`): a Ruby
@@ -85,14 +88,38 @@ Each task carries `priority` (P0–P3), `area`, `risk`, `effort`, `source`, and
 A PR may **auto-merge** only when ALL hold (enforced by the implement prompt and
 re-checked by `auto-merge.yml`):
 
-- `area` ∈ { `docs`, `deps`, `lint` } **and** `risk: low`
+- `risk: low`
 - no change to public API, `lib/jekyll-theme-zer0/version.rb`, the gemspec, a
   dependency manifest, or a data schema
 - no new runtime dependency
 - all acceptance criteria verified green in CI
+- **and one of:**
+  - the change is non-visual — `area` ∈ { `docs`, `deps`, `lint` }; **or**
+  - it is a low-risk **fix** that ships a passing regression test **and**
+    before/after visual evidence (the [`visual-evidence`](../../.github/skills/visual-evidence/SKILL.md)
+    standard), with the required `evidence-gate` check green.
 
+This is the policy that lets **fixes** automate end-to-end: a `risk: low` bug fix
+proven by a test + evidence is as safe to auto-merge as a docs/deps/lint change.
 Everything else — `feat`, `refactor`, anything `risk: standard` — is **PR-only**
 and waits for a human. CI is the merge gate in every case.
+
+### Evidence & discovered issues — the standard for changes with visuals/tests
+
+Any change that alters what a user sees or how the UI behaves carries, in the same
+PR: a `test/visual/*.spec.js` regression test, before/after evidence under
+`test/visual/evidence/<slug>/` (from `test/visual/evidence-kit.mjs`), and a
+`CHANGELOG.md` link to that evidence (so it appears in release-please release
+notes). The `evidence-gate` check enforces this; `skip-evidence` opts out genuinely
+non-visual edits. Full checklist: the
+[`visual-evidence`](../../.github/skills/visual-evidence/SKILL.md) skill.
+
+When a fix **uncovers a new issue** (e.g. the navbar fix surfaced a
+`version.rb`↔`Gemfile.lock` drift), the fixer files it as a new `_data/backlog.yml`
+task (`source: issue`, referencing the PR) instead of silently fixing it. On merge
+`sync.yml` opens the Issue, and the IMPLEMENT routine picks it up — so a discovered
+issue is recorded and (if `risk: low` with tests+evidence) auto-fixed and
+auto-merged, closing the loop without human prompting.
 
 ### Guardrails
 
@@ -110,7 +137,9 @@ To enable auto-merge of low-risk PRs:
 
 1. **Settings → General → Pull Requests →** check **"Allow auto-merge"**.
 2. **Settings → Branches →** add a protection rule for `main` requiring the CI
-   status checks (from `ci.yml`) to pass before merge.
+   status checks (from `ci.yml`) **and the `evidence-gate` check** to pass before
+   merge. Marking `evidence-gate` required is what makes the test+evidence
+   standard gate auto-merge of fixes.
 
 Without these, the loop still works end-to-end — low-risk PRs just need a human to
 click merge.
