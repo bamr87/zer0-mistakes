@@ -1,0 +1,86 @@
+{
+  "base": "http://localhost:4001",
+  "generatedAtNote": "run date stamped by caller",
+  "sweep": [
+    {
+      "width": 320,
+      "beforeOverflowPx": 653,
+      "afterOverflowPx": 0,
+      "worst": "table"
+    },
+    {
+      "width": 360,
+      "beforeOverflowPx": 613,
+      "afterOverflowPx": 0,
+      "worst": "table"
+    },
+    {
+      "width": 390,
+      "beforeOverflowPx": 583,
+      "afterOverflowPx": 0,
+      "worst": "table"
+    },
+    {
+      "width": 414,
+      "beforeOverflowPx": 559,
+      "afterOverflowPx": 0,
+      "worst": "table"
+    },
+    {
+      "width": 768,
+      "beforeOverflowPx": 229,
+      "afterOverflowPx": 0,
+      "worst": "table"
+    },
+    {
+      "width": 992,
+      "beforeOverflowPx": 5,
+      "afterOverflowPx": 0,
+      "worst": "table"
+    },
+    {
+      "width": 1280,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "worst": null
+    },
+    {
+      "width": 1440,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "worst": null
+    }
+  ],
+  "configs": [
+    {
+      "config": "default",
+      "width": 1100,
+      "overflowPx": 0
+    },
+    {
+      "config": "many",
+      "width": 1100,
+      "overflowPx": 0
+    },
+    {
+      "config": "longtitle",
+      "width": 1100,
+      "overflowPx": 0
+    },
+    {
+      "config": "few",
+      "width": 1100,
+      "overflowPx": 0
+    }
+  ],
+  "contentScroll": {
+    "clientW": 340,
+    "scrollW": 948,
+    "canScroll": true
+  },
+  "offcanvas": {
+    "viewport": 360,
+    "panelRight": 360,
+    "fits": true
+  }
+}
