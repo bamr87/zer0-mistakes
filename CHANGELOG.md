@@ -58,6 +58,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     ships tests + evidence is now auto-merge-eligible alongside docs/deps/lint.
 
 ### Fixed
+- **Navbar no longer appears "cut off" at certain widths.** The root cause was
+  page-level horizontal overflow, not the navbar itself: because the header is
+  `position: fixed`, any element that pushed the page wider than the viewport
+  (a wide markdown table, a long inline-code token, an unwrapped Bootstrap
+  `.row`) created a sideways scrollbar and left the navbar's right edge
+  uncovered. Fixes:
+  - Wide content tables now scroll **inside** their `.content-table-wrapper`
+    card (`overflow-x: auto`) instead of overflowing the page — the wrapper that
+    `table-copy.js` injects previously had `overflow: visible`, which also
+    bypassed the existing mobile responsive-table fallback.
+  - Long unbroken inline-code tokens wrap in content areas instead of forcing a
+    horizontal scrollbar.
+  - A theme-wide `html { overflow-x: clip }` safety net guarantees no stray
+    element can make the fixed navbar look cut off. `clip` is used instead of
+    `hidden` so `position: sticky` (docs sidebar / TOC) keeps working; wide
+    content keeps its own local scroll so nothing is hidden.
+  - The mobile menu/settings offcanvas width is clamped (`min(21rem, 86vw)`) so
+    the slide-in panel and its close button always fit narrow phones, instead of
+    Bootstrap's fixed 400px overflowing the viewport.
 - **Giscus comments were silently disabled** ([#201](https://github.com/bamr87/zer0-mistakes/issues/201)).
   `_config.yml` defined the comment block under the misspelled key `gisgus:`
   while every template reads `site.giscus`, so comments never rendered. Renamed
@@ -83,6 +102,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `vendor-manifest.json`.
 
 ### Added
+- **Dev-mode navbar fit warnings.** On local/dev hosts only, the navbar module
+  logs an actionable `console.warn` when the inline menubar has more top-level
+  items than fit the bar, or when page content overflows the viewport (the usual
+  "navbar looks cut off" cause) — naming the widest offending element. Silent on
+  deployed sites.
 - **Quickstart documentation hub + fork/remote-theme guide (#126).** Fleshes out
   `pages/_docs/quickstart/` (previously only `bare-minimum.md`): a new
   `index.md` hub that links the available quickstart paths (bare-minimum,
@@ -108,6 +132,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   artifacts out of feature PRs — and indexed from `AGENTS.md`, `CLAUDE.md`, and
   `.github/instructions/README.md`.
 ### Tests
+- **Navbar responsiveness regression suite.** New
+  `test/visual/navbar-responsive.spec.js` (smoke tier) sweeps a 16-width matrix
+  (320 → 1920px) asserting no page-level horizontal overflow, the fixed header
+  spans the full viewport, the search/settings cluster stays on-screen, the
+  brand renders, and the inline menubar never clips its items. Adds offcanvas-,
+  dropdown-, long-title-, and many-items- fit checks, plus a reusable
+  `measureNavbarLayout()` fixture (overflow detection is element-level so it
+  still catches regressions the `overflow-x: clip` net would otherwise hide).
 - **Unit tests for the `content-review.rb` scoring engine (#166).** New
   `scripts/test/lib/test_content_review.sh` drives the deterministic content
   reviewer against synthetic Markdown fixtures using the real production config
