@@ -11,13 +11,13 @@ concurrency:
 # when .ipynb files are added or modified in the pages/_notebooks directory
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
     paths:
       - 'pages/_notebooks/**.ipynb'
       - 'scripts/convert-notebooks.sh'
       - '.github/workflows/convert-notebooks.yml'
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
     paths:
       - 'pages/_notebooks/**.ipynb'
       - 'scripts/convert-notebooks.sh'

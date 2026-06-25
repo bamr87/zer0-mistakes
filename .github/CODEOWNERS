@@ -1,0 +1,31 @@
+# Code owners — paths that REQUIRE @bamr87 review before merge, enforced by the
+# branch-protection rule "Require review from Code Owners" on `main`.
+#
+# Deliberately NO catch-all `*` rule. A `*` owner would force a code-owner review
+# on EVERY PR and kill the low-risk auto-merge fast path (auto-merge.yml) that the
+# bot firehose relies on. With only the paths below owned, a PR that touches none
+# of them (content under pages/**, _sass/**, assets/**, docs/**) needs no
+# code-owner review and can still auto-merge on green — while any change to the
+# release/versioning/CI surface is gated on human (your) review.
+
+# Release & versioning surface — only the release tooling (release-please) should
+# move these; a stray hand-edit is how version.rb and Gemfile.lock drift apart.
+/lib/jekyll-theme-zer0/version.rb   @bamr87
+/CHANGELOG.md                       @bamr87
+/release-please-config.json         @bamr87
+/.release-please-manifest.json      @bamr87
+
+# Gem + dependency manifests.
+*.gemspec                           @bamr87
+/Gemfile                            @bamr87
+/Gemfile.lock                       @bamr87
+/package.json                       @bamr87
+/package-lock.json                  @bamr87
+
+# High-blast-radius infrastructure: CI/CD, custom plugins, release scripts.
+/.github/workflows/                 @bamr87
+/.github/actions/                   @bamr87
+/.github/CODEOWNERS                 @bamr87
+/_plugins/                          @bamr87
+/scripts/bin/                       @bamr87
+/scripts/lib/                       @bamr87
