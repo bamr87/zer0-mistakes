@@ -77,9 +77,13 @@ Unknown types fall back to the `note` variant, never silently dropped.
 
 ### Live example
 
+An **expanded** foldable callout (the `+` marker) starts open:
+
 > [!tip]+ Foldable, expanded by default
 > This `tip` callout starts open. Click the title (or press Enter/Space) to
 > collapse it — the body toggles and the title's `aria-expanded` flips.
+
+A **collapsed** one (the `-` marker) starts closed — activate the title to reveal it:
 
 > [!note]- Foldable, collapsed by default
 > This `note` callout starts collapsed: `data-collapsed="true"` and the body is
