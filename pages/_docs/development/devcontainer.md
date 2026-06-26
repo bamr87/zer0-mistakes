@@ -1,7 +1,8 @@
 ---
 lastmod: 2026-06-26T00:00:00.000Z
-title: DevContainer Configuration
+title: DevContainer Configuration for Codespaces
 description: VS Code Dev Container config for one-click cloud and local dev — GitHub Codespaces, JetBrains Gateway, and VS Code, with the Jekyll toolchain pre-installed.
+keywords: [jekyll devcontainer, github codespaces, codespaces prebuilds, vs code dev containers, jekyll dev environment, docker jekyll]
 preview: /images/previews/devcontainer-configuration.png
 layout: default
 categories:
