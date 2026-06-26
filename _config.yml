@@ -355,12 +355,20 @@ resources:
     image: [ *github_user, '/', *github_repository ]
     hub_url: [ 'https://hub.docker.com/r/', *github_user, '/', *github_repository ]
 
-## Giscus Plugin #################################################################
+## Giscus Comments (GitHub Discussions) #########################################
+# Powered by https://giscus.app/ — comments are stored as GitHub Discussions.
+# The theme reads exactly three keys: enabled, data-repo-id, data-category-id.
+# data-repo is filled automatically from `repository` above.
+# Docs: pages/_docs/features/giscus-comments.md
+# NOTE: the key MUST be `giscus` — layouts/includes read `site.giscus.*`.
 
 giscus:
   enabled: true
-  data-repo-id: "MDEwOlJlcG9zaXRvcnkyODM4MjI1NzM"
-  data-category-id: "DIC_kwDOEOrJ7c4CAn8D"
+  # IDs below belong to bamr87/zer0-mistakes (Announcements category).
+  # Regenerate for a fork at https://giscus.app/ or run:
+  #   ./scripts/bin/giscus-discussions categories
+  data-repo-id: "R_kgDOMFgJHQ"
+  data-category-id: "DIC_kwDOMFgJHc4C52bX"
 
 ## Mermaid Diagram Configuration #################################################
 # Mermaid diagrams support both native markdown code blocks and div syntax
@@ -509,7 +517,7 @@ defaults:
       sidebar: true
       author_profile: true
       read_time: true
-      comments: # true
+      comments: true # blog posts show Giscus comments (override per-page with `comments: false`)
       share: true
       related: true
       # permalink: /:collection/:name/

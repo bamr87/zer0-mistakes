@@ -473,6 +473,26 @@ test_jekyll_build() {
             log_warning "main.css not found under _site/assets/css (check Jekyll asset pipeline)"
         fi
 
+        # Giscus comments: a comment-enabled page must render the widget with a
+        # non-empty data-repo-id (proves site.giscus.* interpolated correctly).
+        local giscus_page
+        giscus_page=$(grep -rl '<script src="https://giscus.app/client.js"' "$temp_site/_site" --include='*.html' 2>/dev/null | head -1)
+        if [[ -n "$giscus_page" ]]; then
+            if grep -A4 '<script src="https://giscus.app/client.js"' "$giscus_page" | grep -qE 'data-repo-id="[^"]+"'; then
+                log_success "Giscus widget rendered with interpolated repo ID"
+            else
+                log_error "Giscus widget rendered with EMPTY data-repo-id (config key/typo regression): $giscus_page"
+                cd "$PROJECT_ROOT"
+                rm -rf "$temp_site"
+                return 1
+            fi
+        else
+            log_error "No built page rendered the Giscus widget (comments disabled or include broken)"
+            cd "$PROJECT_ROOT"
+            rm -rf "$temp_site"
+            return 1
+        fi
+
         # Cleanup
         rm -rf "$temp_site"
     else
@@ -571,6 +591,87 @@ test_liquid_templates() {
     fi
     
     log_success "Liquid template validation passed"
+    return 0
+}
+
+test_giscus_comments() {
+    log_info "Validating Giscus comments configuration and wiring..."
+
+    cd "$PROJECT_ROOT"
+
+    local config="$PROJECT_ROOT/_config.yml"
+    local include="$PROJECT_ROOT/_includes/content/giscus.html"
+    local failed=0
+
+    # 1. Config key must be `giscus:` — guards against the historical `gisgus:`
+    #    typo that left site.giscus nil so comments rendered nowhere.
+    if grep -qE '^giscus:' "$config"; then
+        log_success "_config.yml defines a top-level 'giscus:' block"
+    else
+        log_error "_config.yml is missing a top-level 'giscus:' block (misspelled 'gisgus:'?)"
+        failed=1
+    fi
+    if grep -qE '^gisgus:' "$config"; then
+        log_error "_config.yml still contains misspelled 'gisgus:' — layouts read 'site.giscus.*'"
+        failed=1
+    fi
+
+    # 2. Required keys inside the giscus block (block-scoped extraction)
+    local block
+    block=$(awk '/^giscus:/{f=1;print;next} f&&/^[^[:space:]#]/{f=0} f{print}' "$config")
+    local key
+    for key in "enabled" "data-repo-id" "data-category-id"; do
+        if printf '%s\n' "$block" | grep -qE "^[[:space:]]+${key}:"; then
+            log_success "giscus block defines '${key}'"
+        else
+            log_error "giscus block is missing '${key}'"
+            failed=1
+        fi
+    done
+
+    # 3. Include interpolates config values and is not self-referential.
+    if [[ -f "$include" ]]; then
+        local token
+        for token in "site.repository" "site.giscus.data-repo-id" "site.giscus.data-category-id"; do
+            if grep -qF "$token" "$include"; then
+                log_success "giscus include references {{ $token }}"
+            else
+                log_error "giscus include is missing the '$token' interpolation"
+                failed=1
+            fi
+        done
+        # Liquid evaluates tags even inside HTML comments, so a bare
+        # `{% include giscus.html %}` (wrong path) would recurse and break the
+        # build. Require the full content/ path wherever the include is invoked.
+        if grep -qE '\{%-?[[:space:]]*include[[:space:]]+giscus\.html' "$include"; then
+            log_error "giscus include contains a bare self-include 'giscus.html' (use content/giscus.html)"
+            failed=1
+        else
+            log_success "giscus include has no recursive bare self-include"
+        fi
+    else
+        log_error "Missing include: _includes/content/giscus.html"
+        failed=1
+    fi
+
+    # 4. All comment-bearing layouts gate consistently on site.giscus.enabled.
+    local layout
+    for layout in "_layouts/article.html" "_layouts/note.html" "_layouts/notebook.html"; do
+        if [[ ! -f "$PROJECT_ROOT/$layout" ]]; then
+            continue
+        fi
+        if grep -qF 'site.giscus.enabled' "$PROJECT_ROOT/$layout"; then
+            log_success "$layout gates comments on site.giscus.enabled"
+        else
+            log_error "$layout does not gate comments on site.giscus.enabled"
+            failed=1
+        fi
+    done
+
+    if [[ "$failed" -ne 0 ]]; then
+        return 1
+    fi
+    log_success "Giscus comments configuration is valid"
     return 0
 }
 
@@ -680,6 +781,7 @@ run_core_tests() {
     # Validation Tests
     log_info "=== VALIDATION TESTS ==="
     run_test "Liquid Template Validation" "test_liquid_templates" "validation"
+    run_test "Giscus Comments Configuration" "test_giscus_comments" "validation"
     run_test "Showcase Demo Links (no absolute 404 hazards)" "test_showcase_demo_links" "validation"
     run_test "Sass Compilation" "test_sass_compilation" "validation"
     run_test "JavaScript Syntax" "test_javascript_syntax" "validation"

@@ -827,16 +827,22 @@ features:
 
   - id: ZER0-035
     title: "Giscus Comments"
-    description: "GitHub Discussions-powered comment system with theme-aware styling and reaction support"
+    description: "GitHub Discussions-powered comment system with theme-aware styling, reaction support, and Claude-Code-driven conversation building"
     implemented: true
     version: "0.1.0"
     link: "/"
     docs: "/docs/features/giscus-comments/"
-    tags: [comments, github, discussions, engagement]
+    tags: [comments, github, discussions, engagement, claude-code]
     date: 2025-01-01
     references:
       includes:
         - "_includes/content/giscus.html"
+      layouts: ["_layouts/article.html", "_layouts/note.html", "_layouts/notebook.html"]
+      config: "_config.yml"
+      script: "scripts/bin/giscus-discussions"
+      skill: ".github/skills/giscus-conversation/SKILL.md"
+      workflow: ".github/workflows/giscus-digest.yml"
+      tests: "test/test_core.sh"
       docs:
         - "pages/_docs/features/giscus-comments.md"
     features:
@@ -845,6 +851,8 @@ features:
       - "Pathname-based mapping"
       - "Reaction support"
       - "Top-positioned input"
+      - "Consistent site.giscus.enabled gating across layouts"
+      - "Claude Code conversation building (read/draft/seed/post via gh)"
 
   - id: ZER0-036
     title: "MathJax Math Rendering"
