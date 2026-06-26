@@ -108,16 +108,30 @@
     <div class="card-body d-flex flex-column">
       
       <!-- Category Badge -->
-      {% comment %} Category base is configurable (`category_base`, default `/news`)
-         to avoid hardcoded 404s for remote-theme consumers. See issue #204. {% endcomment %}
+      {% comment %} Category base is configurable (`category_base`, default `/news`).
+         Only link the badge when that category index page exists in the build;
+         otherwise render a plain badge so remote-theme consumers (whose category
+         section is plugin/page-generated and absent) don't get a 404. Mirrors
+         the tag-badge / footer Quick-Links existence guard. See issue #204. {% endcomment %}
       {% if show_category and include.post.categories.size > 0 %}
         {% assign _category_base = site.category_base | default: '/news' %}
+        {% assign primary_category = include.post.categories | first %}
+        {% capture _category_url %}{{ _category_base }}/{{ primary_category | slugify }}/{% endcapture %}
+        {% comment %} Category index pages can live in site.pages (a regular page) or
+           site.posts (a dated section index), so check both. {% endcomment %}
+        {% assign _category_page = site.html_pages | where: "url", _category_url | first %}
+        {% unless _category_page %}
+          {% assign _category_page = site.posts | where: "url", _category_url | first %}
+        {% endunless %}
         <div class="mb-2">
-          {% assign primary_category = include.post.categories | first %}
-          <a href="{{ site.baseurl }}{{ _category_base }}/{{ primary_category | slugify }}/"
+          {% if _category_page %}
+          <a href="{{ site.baseurl }}{{ _category_url }}"
              class="badge bg-primary text-decoration-none">
             {{ primary_category }}
           </a>
+          {% else %}
+          <span class="badge bg-primary">{{ primary_category }}</span>
+          {% endif %}
         </div>
       {% endif %}
       

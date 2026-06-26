@@ -1,0 +1,35 @@
+{
+  "slug": "category-badges",
+  "base": "http://localhost:4000",
+  "issue": 204,
+  "cases": [
+    {
+      "label": "Security",
+      "article": "/posts/2026/06/16/favicon-ico-unlocked-door-to-collapse/",
+      "indexUrl": "/news/security/",
+      "indexStatus": 404,
+      "before": {
+        "badgeTag": "a",
+        "badgeHref": "/news/security/"
+      },
+      "after": {
+        "badgeTag": "span",
+        "badgeHref": null
+      }
+    },
+    {
+      "label": "Development",
+      "article": "/posts/2025/01/22/git-workflow-best-practices/",
+      "indexUrl": "/news/development/",
+      "indexStatus": 200,
+      "before": {
+        "badgeTag": "a",
+        "badgeHref": "/news/development/"
+      },
+      "after": {
+        "badgeTag": "a",
+        "badgeHref": "/news/development/"
+      }
+    }
+  ]
+}

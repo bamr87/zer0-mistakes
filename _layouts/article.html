@@ -160,16 +160,33 @@ layout: default
     </div>
     
     <!-- Category Link -->
-    {% comment %} Category base is configurable (`category_base`, default `/news`)
-       so remote-theme consumers whose category index lives elsewhere
-       (e.g. `/categories`) don't get a hardcoded 404. See issue #204. {% endcomment %}
+    {% comment %} Category base is configurable (`category_base`, default `/news`).
+       Only link the badge when that category index page actually exists in the
+       build; on a remote-theme Pages consumer the category section is
+       plugin/page-generated and absent, so we render a plain badge instead of a
+       link that 404s (mirrors the tag-badge and footer Quick-Links guard).
+       See issue #204. {% endcomment %}
     {% if page.categories.size > 0 %}
     {% assign _category_base = site.category_base | default: '/news' %}
+    {% assign _primary_category = page.categories | first %}
+    {% capture _category_url %}{{ _category_base }}/{{ _primary_category | slugify }}/{% endcapture %}
+    {% comment %} Category index pages can live in site.pages (a regular page) or
+       site.posts (a dated section index), so check both. {% endcomment %}
+    {% assign _category_page = site.html_pages | where: "url", _category_url | first %}
+    {% unless _category_page %}
+      {% assign _category_page = site.posts | where: "url", _category_url | first %}
+    {% endunless %}
     <div class="mb-3">
-      <a href="{{ site.baseurl }}{{ _category_base }}/{{ page.categories | first | slugify }}/"
+      {% if _category_page %}
+      <a href="{{ site.baseurl }}{{ _category_url }}"
          class="badge bg-primary text-decoration-none fs-6">
-        <i class="bi bi-folder me-1"></i>{{ page.categories | first }}
+        <i class="bi bi-folder me-1"></i>{{ _primary_category }}
       </a>
+      {% else %}
+      <span class="badge bg-primary fs-6">
+        <i class="bi bi-folder me-1"></i>{{ _primary_category }}
+      </span>
+      {% endif %}
     </div>
     {% endif %}
 
