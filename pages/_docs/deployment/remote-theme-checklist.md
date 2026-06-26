@@ -41,6 +41,11 @@ build of a consumer site.
 The result is a chain of *silent* degradations. The checklist below is the
 shortest path through all of them.
 
+> **Building outside GitHub Pages?** If you run your own CI instead of Pages, see
+> the [Safe-Mode Build Overlay](/docs/deployment/build-overlay/) recipe — it
+> reproduces Pages' plugin-stripping behaviour so your custom build matches
+> production.
+
 ## Prerequisites
 
 - A GitHub repository with Pages enabled
