@@ -62,8 +62,8 @@
 
 meta:
   title: "zer0-mistakes Backlog"
-  updated: 2026-06-15
-  next_id: 27
+  updated: 2026-06-26
+  next_id: 32
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -713,3 +713,125 @@ tasks:
     links: { issue: null, pr: null, roadmap: null }
     created: 2026-06-15
     updated: 2026-06-15
+
+  # --- Issue intake 2026-06-26: remote-theme 404 cluster + docs ----------------
+  # Cap: 5 of 7 open issues triaged this run. Deferred (next run): #203 (consumer
+  # checklist docs — companion to T-031); #201 (giscus typo — already in-flight in
+  # PR #214, so no task, to avoid duplicating live work).
+
+  - id: T-027
+    title: "Theme chrome injects unconditional links (/authors/, /news/, /tags/, /posts/, graph) that 404 for remote-theme consumers"
+    status: open
+    priority: P2
+    area: a11y
+    risk: standard
+    effort: M
+    source: issue
+    route: a11y
+    summary: >-
+      Umbrella for the remote-theme 404 class (#204): the theme chrome itself
+      injects internal links to pages whose generators live in `_plugins` (skipped
+      by GitHub Pages safe mode), so a built consumer site has broken links on
+      every page. Guard each link by existence the way the footer "Quick Links"
+      block already does. Specific instances are T-029 (#218 sidebar) and T-030
+      (#219 showcase); T-028 (#202) is the search/sitemap variant. Any fix that
+      edits `_plugins/` is CODEOWNERS-gated -> human review.
+    acceptance:
+      - "Theme-injected chrome links render only when their target exists (mirror the footer Quick-Links existence guard)."
+      - "A link check over a built remote-theme `_site` reports no theme-injected 404s."
+      - "No edit to `lib/jekyll-theme-zer0/version.rb` or release files."
+    links: { issue: 204, pr: null, roadmap: null }
+    created: 2026-06-26
+    updated: 2026-06-26
+
+  - id: T-028
+    title: "remote_theme Pages consumers 404 on /search.json and /sitemap/ (generator is plugin-only)"
+    status: open
+    priority: P2
+    area: feat
+    risk: standard
+    effort: M
+    source: issue
+    route: code-fixer
+    summary: >-
+      On a pure remote-theme Pages consumer, `/search.json` and `/sitemap/` 404
+      because `_plugins/search_and_sitemap_generator.rb` never runs under Pages
+      safe mode (#202). Provide a Pages-safe fallback (committed stubs the navbar
+      search + sitemap link can resolve, or graceful degradation in
+      `assets/js/search-modal.js`). NOTE: editing `_plugins/` is CODEOWNERS-gated
+      -> human review; prefer the non-plugin path.
+    acceptance:
+      - "On a remote-theme Pages build, the navbar search resolves (no /search.json 404) or degrades gracefully."
+      - "The /sitemap/ link resolves (no 404) for a remote-theme consumer."
+      - "No new runtime dependency; no edit to version/release files."
+    links: { issue: 202, pr: null, roadmap: null }
+    created: 2026-06-26
+    updated: 2026-06-26
+
+  - id: T-029
+    title: "Guard the unconditional /tags/ link in section-sidebar.html for remote-theme consumers"
+    status: open
+    priority: P2
+    area: feat
+    risk: low
+    effort: S
+    source: issue
+    route: theme-ui
+    summary: >-
+      `_includes/navigation/section-sidebar.html:69` hardcodes a `/tags/` link;
+      remote-theme consumers have no `/tags/` index (plugin-only), so it 404s
+      (#218). Guard it the way `_includes/core/footer.html` (~138-147) guards its
+      links, or gate on a `site.tags_page` flag. Instance of the T-027 class.
+    acceptance:
+      - "The sidebar 'View All Tags' link renders only when the tags index exists (or a documented site flag is set)."
+      - "Remote-theme consumers no longer 404 from the sidebar link; the Jekyll build stays green."
+      - "A `test/visual/*.spec.js` regression asserts the conditional render (theme-ui / visual-evidence)."
+    links: { issue: 218, pr: null, roadmap: null }
+    created: 2026-06-26
+    updated: 2026-06-26
+
+  - id: T-030
+    title: "component-showcase.html hardcodes demo links (/docs/, /pages/, /docs/customization/) that 404 for consumers"
+    status: open
+    priority: P3
+    area: feat
+    risk: low
+    effort: S
+    source: issue
+    route: theme-ui
+    summary: >-
+      `_includes/components/component-showcase.html` hardcodes absolute demo links
+      (~323-325, 417/421) that 404 for any consumer without those exact routes
+      (#219). Parameterize them (the component already accepts `sections`) or guard
+      each by existence. Low priority — demo component — but it makes the showcase
+      un-includable as-is. Instance of the T-027 class.
+    acceptance:
+      - "The showcase's demo links are parameterized or existence-guarded (no hardcoded absolute paths that can 404)."
+      - "Including the showcase on a consumer site produces no theme-injected 404s; the Jekyll build stays green."
+      - "A `test/visual/*.spec.js` regression covers the parameterized/guarded links (theme-ui / visual-evidence)."
+    links: { issue: 219, pr: null, roadmap: null }
+    created: 2026-06-26
+    updated: 2026-06-26
+
+  - id: T-031
+    title: "Document the safe-mode build-overlay recipe for consumers building outside GitHub Pages"
+    status: open
+    priority: P3
+    area: docs
+    risk: low
+    effort: S
+    source: issue
+    route: content
+    summary: >-
+      Consumers who build the theme outside GitHub Pages (own CI/Actions) must
+      reinvent the safe-mode overlay: clone the remote theme, overlay content,
+      strip `_plugins`, then `jekyll build --strict_front_matter` (#220). Document
+      the recipe in the docs (companion to the #203 consumer checklist). A proven
+      reference exists in lifehacker.dev's `scripts/ci/build.sh`.
+    acceptance:
+      - "A docs page/section under `pages/_docs/` documents the build-overlay recipe (clone -> overlay -> strip _plugins -> strict build)."
+      - "It is cross-linked from the remote-theme/deploy docs and passes markdownlint + the content-review deterministic tier."
+      - "No code change; docs only."
+    links: { issue: 220, pr: null, roadmap: null }
+    created: 2026-06-26
+    updated: 2026-06-26
