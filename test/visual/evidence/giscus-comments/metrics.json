@@ -1,0 +1,26 @@
+{
+  "slug": "giscus-comments",
+  "base": "http://localhost:4000",
+  "issue": 201,
+  "pr": 214,
+  "states": [
+    {
+      "state": "enabled-true-fix",
+      "label": "enabled: true · fix gate — comments render",
+      "commentsPresent": true,
+      "giscusScript": true
+    },
+    {
+      "state": "enabled-false-fix",
+      "label": "enabled: false · fix gate (site.giscus.enabled) — hidden ✅",
+      "commentsPresent": false,
+      "giscusScript": false
+    },
+    {
+      "state": "enabled-false-prefix",
+      "label": "enabled: false · pre-fix gate (site.giscus) — shown ❌ (the bug)",
+      "commentsPresent": true,
+      "giscusScript": true
+    }
+  ]
+}
