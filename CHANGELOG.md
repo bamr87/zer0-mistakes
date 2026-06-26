@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.22.0](https://github.com/bamr87/zer0-mistakes/compare/v1.21.0...v1.22.0) (2026-06-26)
+
+
+### Features
+
+* **ci:** autonomous CI self-repair loop (pipeline Phase 6) ([#237](https://github.com/bamr87/zer0-mistakes/issues/237)) ([a43db45](https://github.com/bamr87/zer0-mistakes/commit/a43db45eae2da2fcf141ac959d0268dd7e6a52bd))
+* **comments:** enable Giscus + wire Claude Code conversation building ([#214](https://github.com/bamr87/zer0-mistakes/issues/214)) ([fef60a5](https://github.com/bamr87/zer0-mistakes/commit/fef60a5cf78697e94c40f098c336112fe5cdd845))
+* **obsidian:** interactive callouts, parity fixes, a11y + vendored graph ([#200](https://github.com/bamr87/zer0-mistakes/issues/200)) ([affbcd6](https://github.com/bamr87/zer0-mistakes/commit/affbcd62b3f7023457195d5137d5ace2a3751367))
+
+
+### Bug Fixes
+
+* **ci:** enable auto-merge via GraphQL (no git checkout) + graceful no-op ([#232](https://github.com/bamr87/zer0-mistakes/issues/232)) ([4c8c74c](https://github.com/bamr87/zer0-mistakes/commit/4c8c74cfb0775feda9103b379ebcecc4874d517f))
+* **includes:** existence-gate category badge links for remote-theme consumers ([#235](https://github.com/bamr87/zer0-mistakes/issues/235)) ([16ed0a8](https://github.com/bamr87/zer0-mistakes/commit/16ed0a8c77f4cd66b98918a66d00133fa90f4457))
+* **includes:** make component-showcase demo links inert to avoid consumer 404s ([#236](https://github.com/bamr87/zer0-mistakes/issues/236)) ([e96646b](https://github.com/bamr87/zer0-mistakes/commit/e96646b196c2931fc240411ded23184a1e01c8f5))
+* **navigation:** existence-gate the section-sidebar /tags/ links ([#231](https://github.com/bamr87/zer0-mistakes/issues/231)) ([a02b062](https://github.com/bamr87/zer0-mistakes/commit/a02b0622a4f16dfea375629ad347891861283fe3))
+* **search:** degrade search UI gracefully when /search.json is absent ([#234](https://github.com/bamr87/zer0-mistakes/issues/234)) ([f3a718d](https://github.com/bamr87/zer0-mistakes/commit/f3a718d1a9219bee92e2d1a46d2e32c870efb624))
+
 ## [1.21.0](https://github.com/bamr87/zer0-mistakes/compare/v1.20.2...v1.21.0) (2026-06-26)
 
 
