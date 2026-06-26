@@ -1,23 +1,48 @@
+// zer0-mistakes — Jekyll theme dev container
+//
+// Builds from the repo's own multi-stage docker/Dockerfile (the `dev-test`
+// stage), which runs `bundle install` at BUILD time. Every gem is therefore
+// PRELOADED into the image — a Codespace launches ready to serve with no
+// `bundle install` on first boot. Enable Codespaces *prebuilds* (Settings →
+// Codespaces → Set up prebuild) to make creation near-instant. See README.md
+// in this folder.
 {
   "name": "zer0-mistakes Jekyll Theme",
-  "image": "mcr.microsoft.com/devcontainers/jekyll:2-bullseye",
-  
-  "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
-    "ghcr.io/devcontainers/features/github-cli:1": {},
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "lts"
-    }
+
+  "build": {
+    "dockerfile": "../docker/Dockerfile",
+    "context": "..",
+    // `dev-test` already ran `bundle install` and bundles the full Jekyll
+    // toolchain. The leaner `base`/`production` stages can't serve the site.
+    "target": "dev-test"
   },
 
-  "postCreateCommand": "bundle install --jobs 4 --retry 3",
-  "postStartCommand": "bundle exec jekyll serve --config '_config.yml,_config_dev.yml' --host 0.0.0.0 --port 4000 --livereload &",
+  // No workspaceMount/workspaceFolder override: Codespaces always mounts the
+  // repo at /workspaces/<repo>, and the gems live at the global /usr/local/bundle
+  // (independent of cwd), so `bundle exec` works from the default folder. Keeping
+  // the default maximizes Codespaces + local VS Code compatibility.
+
+  // Lightweight extras only. Docker-in-Docker and a separate Node install are
+  // NOT needed to render the site (Playwright/Sass run on the host), so they're
+  // dropped to keep create/prebuild fast.
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+
+  // Gems are already in the image, so `bundle check` is a fast no-op that only
+  // falls back to install if the lockfile drifted from what was baked in.
+  "postCreateCommand": "git config --global --add safe.directory ${containerWorkspaceFolder} && (bundle check || bundle install --jobs 4 --retry 3)",
+
+  // Auto-serve with live reload on each container start. nohup keeps the server
+  // alive after the hook returns; --force_polling makes file watching reliable
+  // over the Codespaces bind mount. Logs land in /tmp/jekyll-serve.log.
+  "postStartCommand": "nohup bundle exec jekyll serve --config '_config.yml,_config_dev.yml' --host 0.0.0.0 --port 4000 --livereload --force_polling > /tmp/jekyll-serve.log 2>&1 &",
 
   "forwardPorts": [4000, 35729],
   "portsAttributes": {
     "4000": {
       "label": "Jekyll Site",
-      "onAutoForward": "openBrowser"
+      "onAutoForward": "openPreview"
     },
     "35729": {
       "label": "LiveReload",
@@ -48,5 +73,7 @@
     }
   },
 
-  "remoteUser": "vscode"
+  // The Dockerfile (ruby:3.3-slim base) runs as root, matching docker-compose's
+  // `.:/site` mount. Staying root avoids gem/bind-mount permission friction.
+  "remoteUser": "root"
 }
