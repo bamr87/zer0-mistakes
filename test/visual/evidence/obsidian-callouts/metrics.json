@@ -1,0 +1,32 @@
+{
+  "slug": "obsidian-callouts",
+  "base": "http://localhost:4000",
+  "route": "/docs/obsidian/syntax-reference/",
+  "pr": 200,
+  "callouts": [
+    {
+      "id": "[!note]- (foldable, collapsed)",
+      "collapsed": {
+        "ariaExpanded": "false",
+        "titleIsButton": true,
+        "bodyHidden": true,
+        "dataCollapsed": "true"
+      },
+      "afterActivate": {
+        "ariaExpanded": "true",
+        "titleIsButton": true,
+        "bodyHidden": false,
+        "dataCollapsed": null
+      }
+    },
+    {
+      "id": "[!tip]+ (foldable, expanded)",
+      "initial": {
+        "ariaExpanded": "true",
+        "titleIsButton": true,
+        "bodyHidden": false,
+        "dataCollapsed": null
+      }
+    }
+  ]
+}

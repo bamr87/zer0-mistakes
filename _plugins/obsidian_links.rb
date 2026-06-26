@@ -185,10 +185,20 @@ module Jekyll
     # Converter — pure-string transformations on the raw markdown body.
     # ---------------------------------------------------------------------
     class Converter
-      # Match fenced code blocks (``` or ~~~), indented code lines, and inline
-      # code spans so we can skip them when rewriting wiki-link / tag syntax.
-      FENCED_CODE_RE = /(^[ \t]{0,3}(```|~~~)[^\n]*\n.*?^[ \t]{0,3}\2[^\n]*$)/m
-      INLINE_CODE_RE = /(`+)[^`\n]*?\1/
+      # Match fenced code blocks and inline code spans so we can skip them when
+      # rewriting wiki-link / tag syntax.
+      #
+      # FENCED_CODE_RE has two branches (closed fence first so it is not greedily
+      # swallowed by the EOF branch):
+      #   1. A variable-length fence (3+ backticks or tildes) closed by an
+      #      equal-length run — `\2` requires the close to match the open exactly,
+      #      so a 4-backtick fence is not closed by an inner ``` fence.
+      #   2. An unclosed fence runs to end-of-input (matches Obsidian/kramdown,
+      #      which treat a dangling fence as code through EOF).
+      FENCED_CODE_RE = /(^[ \t]{0,3}(`{3,}|~{3,})[^\n]*\n.*?^[ \t]{0,3}\2[^\n]*$)|(^[ \t]{0,3}(`{3,}|~{3,})[^\n]*\n.*\z)/m
+      # Inline code: the delimiter is a run of N backticks; the span may contain
+      # shorter backtick runs (CommonMark), but not a newline or the closing run.
+      INLINE_CODE_RE = /(`+)(?:[^`\n]|(?!\1)`)*?\1/
 
       # ![[target]]  or  ![[target|width-or-alias]]
       EMBED_RE = /!\[\[([^\]\n|]+?)(?:\|([^\]\n]+))?\]\]/
@@ -209,6 +219,7 @@ module Jekyll
         @site = site
         @index = index
         @config = config
+        @callout_seq = 0
       end
 
       def convert(markdown, current_url: nil)
@@ -246,26 +257,47 @@ module Jekyll
       end
 
       # > [!type] Title  →  Bootstrap alert. Body is dedented (leading "> ").
+      # Fold markers make the callout an accessible disclosure:
+      #   `-` collapsed by default, `+` expanded; both get a <button> toggle.
+      # Plain callouts (no marker) stay a static heading.
       def transform_callouts(text)
         text.gsub(CALLOUT_RE) do
           m = Regexp.last_match
           type = m[:type].downcase
           spec = CALLOUT_TYPES[type] || CALLOUT_TYPES['note']
           fold = m[:fold]
+          foldable = fold == '+' || fold == '-'
+          collapsed = fold == '-'
           title = m[:title].to_s.strip
           title = type.capitalize if title.empty?
           body = m[:body].to_s.gsub(/^[ \t]{0,3}>[ \t]?/, '').rstrip
 
-          # Allow inner Markdown by emitting a span with `markdown="1"` so
-          # kramdown still parses the body content.
-          collapsed_attr = fold == '-' ? ' data-collapsed="true"' : ''
-          alert_class = "alert alert-#{spec[:alert]} #{@config['callout_class_prefix']} #{@config['callout_class_prefix']}-#{type}"
+          prefix = @config['callout_class_prefix']
+          collapsed_attr = collapsed ? ' data-collapsed="true"' : ''
+          alert_class = "alert alert-#{spec[:alert]} #{prefix} #{prefix}-#{type}"
+          body_id = "#{prefix}-body-#{next_callout_id}"
+          body_hidden = collapsed ? ' hidden' : ''
 
+          icon = %(<i class="bi #{spec[:icon]} me-2" aria-hidden="true"></i>)
+          # Voice the callout type for screen readers (the icon is decorative).
+          sr_type = %(<span class="visually-hidden">#{escape_html(type.capitalize)}: </span>)
+          title_inner = "#{icon}#{sr_type}#{escape_html(title)}"
+
+          title_el =
+            if foldable
+              chevron = %(<i class="bi bi-chevron-down #{prefix}-chevron ms-auto" aria-hidden="true"></i>)
+              %(<button type="button" class="#{prefix}-title #{prefix}-toggle" aria-expanded="#{collapsed ? 'false' : 'true'}" aria-controls="#{body_id}">#{title_inner}#{chevron}</button>)
+            else
+              %(<div class="#{prefix}-title" role="heading" aria-level="3">#{title_inner}</div>)
+            end
+
+          # Outer div is markdown="0" so kramdown leaves the chrome untouched;
+          # the body is markdown="1" so its content is still parsed.
           <<~HTML
 
             <div class="#{alert_class}" role="alert"#{collapsed_attr} markdown="0">
-              <div class="#{@config['callout_class_prefix']}-title"><i class="bi #{spec[:icon]} me-2" aria-hidden="true"></i>#{escape_html(title)}</div>
-              <div class="#{@config['callout_class_prefix']}-body" markdown="1">
+              #{title_el}
+              <div class="#{prefix}-body" id="#{body_id}"#{body_hidden} markdown="1">
 
             #{body}
 
@@ -274,6 +306,10 @@ module Jekyll
 
           HTML
         end
+      end
+
+      def next_callout_id
+        @callout_seq += 1
       end
 
       def transform_embeds(text)
@@ -321,7 +357,7 @@ module Jekyll
           # Use a Liquid include so the embedded note can be rendered with the
           # transclude template (avoids re-running this converter on its body).
           url = info[:url].to_s
-          url += "##{anchor}" unless anchor.nil? || anchor.empty?
+          url += "##{anchorize(anchor)}" unless anchor.nil? || anchor.empty?
           %({% include content/transclude.html target="#{escape_attr(clean_target)}" url="#{escape_attr(url)}" %})
         end
       end
@@ -335,7 +371,9 @@ module Jekyll
 
           info = @index.lookup(clean_target)
           if info.nil?
-            %(<a href="#" class="#{@config['broken_link_class']}" data-wiki-target="#{escape_attr(clean_target)}" title="Unresolved wiki-link: #{escape_attr(clean_target)}">#{escape_html(display)}</a>)
+            # A broken link points nowhere — render a non-navigating <span> so a
+            # click can't scroll the page to the top (the old href="#" bug).
+            %(<span class="#{@config['broken_link_class']}" data-wiki-target="#{escape_attr(clean_target)}" title="Unresolved wiki-link: #{escape_attr(clean_target)}">#{escape_html(display)}</span>)
           else
             url = info[:url].to_s
             url += "##{anchorize(anchor)}" unless anchor.nil? || anchor.empty?
@@ -345,9 +383,25 @@ module Jekyll
         end
       end
 
+      # Hex-colour-shaped tokens in prose (#ffffff, #fff, #1a2b3c) are not tags.
+      # Suppress standard CSS hex lengths (3/6/8) and any digit-containing hex;
+      # length 4/5/7 all-letter tokens stay tags so iconic hex-words (#cafe,
+      # #dead, #beef, #face) still link. Mirrors isColorLikeTag() in
+      # assets/js/obsidian-wiki-links.js byte-for-byte.
+      def color_like_tag?(tag)
+        return false unless tag =~ /\A[0-9a-fA-F]+\z/
+
+        len = tag.length
+        return true if [3, 6, 8].include?(len)
+
+        len.between?(3, 8) && tag =~ /\d/ ? true : false
+      end
+
       def transform_inline_tags(text)
         text.gsub(INLINE_TAG_RE) do
           tag = Regexp.last_match(1)
+          next "##{tag}" if color_like_tag?(tag)
+
           base = @config['tag_base_url'].to_s
           base = "#{base}/" unless base.end_with?('/')
           %(<a href="#{base}##{slugify(tag)}" class="obsidian-tag">##{escape_html(tag)}</a>)
@@ -366,14 +420,29 @@ module Jekyll
         end
       end
 
+      # Replicate kramdown's basic header-id algorithm so [[Page#Heading]]
+      # fragments land on the heading kramdown actually generated:
+      #   strip leading non-letters → drop chars outside [a-zA-Z0-9 -] →
+      #   spaces to dashes (consecutive spaces kept as consecutive dashes,
+      #   matching kramdown) → downcase. Underscores are removed, not kept.
+      # Must stay byte-identical to anchorize() in assets/js/obsidian-wiki-links.js.
       def anchorize(anchor)
         return '' if anchor.nil?
 
-        anchor.downcase.strip.gsub(/[^\w\s-]/, '').gsub(/\s+/, '-')
+        anchor.to_s.strip
+              .gsub(/^[^a-zA-Z]+/, '')
+              .gsub(/[^a-zA-Z0-9 -]/, '')
+              .tr(' ', '-')
+              .downcase
       end
 
+      # Match Jekyll's default `slugify` filter (the same one pages/tags.md uses
+      # for its anchor ids) so inline #tags link to a real on-page anchor.
+      # Inline tags are ASCII-only by construction (INLINE_TAG_RE), so the
+      # ASCII-equivalent of Jekyll::Utils.slugify is byte-identical here and
+      # avoids a hard Jekyll dependency in the standalone unit tests.
       def slugify(value)
-        value.downcase.gsub(/[^\w\/-]+/, '-').gsub(/-+/, '-').gsub(%r{/}, '-')
+        value.to_s.downcase.gsub(/[^a-z0-9]+/, '-').gsub(/\A-+|-+\z/, '')
       end
 
       def escape_html(value)

@@ -11,7 +11,7 @@
   {%- endif -%}
 {%- endif -%}
 {%- if page.local_graph != false and _effective_sidebar != false -%}
-<div class="obsidian-local-graph-fab d-print-none" data-obsidian-local-graph-toggle>
+<div id="obsidianLocalGraphFab" class="obsidian-local-graph-fab d-print-none" data-obsidian-local-graph-toggle hidden>
   <button class="btn btn-primary rounded-circle shadow-lg p-0 obsidian-local-graph-toggle"
           type="button"
           data-bs-toggle="offcanvas"

@@ -64,6 +64,35 @@
     return String(value || '').toLowerCase().trim().replace(/\s+/g, ' ');
   }
 
+  // Replicate kramdown's basic header-id algorithm so [[Page#Heading]] fragments
+  // land on the heading kramdown generated. Kept byte-identical to
+  // Jekyll::Obsidian::Converter#anchorize in _plugins/obsidian_links.rb.
+  function anchorize(anchor) {
+    return String(anchor == null ? '' : anchor).trim()
+      .replace(/^[^a-zA-Z]+/, '')
+      .replace(/[^a-zA-Z0-9 -]/g, '')
+      .replace(/ /g, '-')
+      .toLowerCase();
+  }
+
+  // Match Jekyll's default `slugify` filter (used by pages/tags.md anchor ids)
+  // so inline #tags link to a real on-page anchor. Mirrors Converter#slugify.
+  function tagSlug(tag) {
+    return String(tag || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  }
+
+  // Skip hex-colour-shaped tokens in prose (e.g. `#ffffff`, `#fff`, `#1a2b3c`)
+  // so they aren't linkified as tags. Suppress standard CSS hex lengths (3/6/8)
+  // and any digit-containing hex; length 4/5/7 all-letter tokens stay tags so
+  // the iconic hex-words (#cafe, #dead, #beef, #face) still link. Mirrors the
+  // Ruby `color_like_tag?` helper byte-for-byte.
+  function isColorLikeTag(tag) {
+    var t = String(tag || '');
+    if (!/^[0-9a-fA-F]+$/.test(t)) return false;
+    if (t.length === 3 || t.length === 6 || t.length === 8) return true;
+    return t.length >= 3 && t.length <= 8 && /\d/.test(t);
+  }
+
   function escapeHtml(value) {
     return String(value == null ? '' : value)
       .replace(/&/g, '&amp;')
@@ -119,12 +148,19 @@
       return '<div class="obsidian-embed obsidian-embed-broken alert alert-warning" role="alert">' +
         'Embed not found: <code>' + escapeHtml(target) + '</code></div>';
     }
-    var url = info.url + (parts.anchor ? '#' + parts.anchor.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-') : '');
-    return '<div class="obsidian-embed obsidian-embed-note">' +
-      '<div class="obsidian-embed-header"><a href="' + escapeHtml(url) + '">' +
-      escapeHtml(info.title || parts.page) + '</a></div>' +
-      '<div class="obsidian-embed-excerpt">' + escapeHtml(info.excerpt || '') + '</div>' +
-      '</div>';
+    var url = info.url + (parts.anchor ? '#' + anchorize(parts.anchor) : '');
+    // Mirror the Liquid card in _includes/content/transclude.html so embeds
+    // styled by .obsidian-embed-source / .obsidian-embed-body render identically
+    // on the GitHub Pages (client) path. Excerpt is plain text (no client-side
+    // markdownify) — escaped to stay XSS-safe.
+    return '<aside class="obsidian-embed obsidian-embed-note card my-3" aria-label="Embedded note: ' +
+      escapeHtml(info.title || parts.page) + '">' +
+      '<div class="card-header"><span class="obsidian-embed-source">' +
+      '<i class="bi bi-link-45deg me-1" aria-hidden="true"></i>Embedded: ' +
+      '<a href="' + escapeHtml(url) + '">' + escapeHtml(info.title || parts.page) + '</a>' +
+      '</span></div>' +
+      '<div class="card-body obsidian-embed-body">' + escapeHtml(info.excerpt || '') + '</div>' +
+      '</aside>';
   }
 
   function renderWikiLink(target, aliasText, byKey, currentUrl) {
@@ -132,12 +168,14 @@
     var display = aliasText || (parts.anchor ? parts.page + ' \u203A ' + parts.anchor : parts.page);
     var info = byKey[normalize(parts.page)];
     if (!info) {
-      return '<a href="#" class="' + CONFIG.brokenLinkClass +
+      // Non-navigating <span>: a broken link has no target, so a click must
+      // not scroll the page to the top (the old href="#" behaviour).
+      return '<span class="' + CONFIG.brokenLinkClass +
         '" data-wiki-target="' + escapeHtml(parts.page) +
         '" title="Unresolved wiki-link: ' + escapeHtml(parts.page) + '">' +
-        escapeHtml(display) + '</a>';
+        escapeHtml(display) + '</span>';
     }
-    var url = info.url + (parts.anchor ? '#' + parts.anchor.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-') : '');
+    var url = info.url + (parts.anchor ? '#' + anchorize(parts.anchor) : '');
     var currentAttr = currentUrl && info.url === currentUrl ? ' aria-current="page"' : '';
     return '<a href="' + escapeHtml(url) + '" class="' + CONFIG.wikiLinkClass +
       '" data-wiki-target="' + escapeHtml(parts.page) + '"' + currentAttr + '>' +
@@ -157,8 +195,13 @@
       return renderWikiLink(target.trim(), (alias || '').trim(), byKey, currentUrl);
     });
     html = html.replace(TAG_RE, function (_match, lead, tag) {
-      var url = (CONFIG.tagBase.replace(/\/$/, '') + '/#' + tag.toLowerCase().replace(/\//g, '-'));
-      return lead + '<a href="' + escapeHtml(url) + '" class="obsidian-tag">#' + escapeHtml(tag) + '</a>';
+      // Not a tag (hex colour): keep the literal text, but still escape the
+      // raw lead char so the reconstruction loop can't inject markup.
+      if (isColorLikeTag(tag)) return escapeHtml(lead) + '#' + tag;
+      var url = (CONFIG.tagBase.replace(/\/$/, '') + '/#' + tagSlug(tag));
+      // The lead char is raw source text (often `<`/`&`) — escape it so the
+      // reconstruction loop in rewriteContainer can't inject markup.
+      return escapeHtml(lead) + '<a href="' + escapeHtml(url) + '" class="obsidian-tag">#' + escapeHtml(tag) + '</a>';
     });
     return html;
   }
@@ -256,17 +299,17 @@
   // `[!warning]+ Foldable warning`.
   var CALLOUT_HEAD_RE = /^\s*\[!([A-Za-z]+)\]([+-]?)\s*([^\n]*)/;
 
+  var calloutSeq = 0;
+
   function rewriteCallouts(container) {
     if (!container) return 0;
     var quotes = container.querySelectorAll('blockquote');
     var count = 0;
     quotes.forEach(function (bq) {
       if (bq.dataset.obsidianCallout) return; // already processed
+      // Kramdown emits the callout head as the first <p> of the blockquote, so
+      // the first element child is the only place the `[!type]` marker can be.
       var firstChild = bq.firstElementChild;
-      // Walk past whitespace text nodes
-      while (firstChild && firstChild.nodeName !== 'P' && firstChild.nodeType !== 1) {
-        firstChild = firstChild.nextElementSibling;
-      }
       if (!firstChild || firstChild.nodeName !== 'P') return;
 
       var rawText = firstChild.textContent || '';
@@ -276,7 +319,10 @@
       var type = m[1].toLowerCase();
       var spec = CALLOUT_TYPES[type] || CALLOUT_TYPES.note;
       var fold = m[2];
-      var titleText = (m[3] || '').trim() || (type.charAt(0).toUpperCase() + type.slice(1));
+      var foldable = fold === '+' || fold === '-';
+      var collapsed = fold === '-';
+      var typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
+      var titleText = (m[3] || '').trim() || typeLabel;
 
       // Strip the "[!type]…" head from the first paragraph (keep any trailing text)
       var headLength = m[0].length;
@@ -291,15 +337,36 @@
       wrapper.className = 'alert alert-' + spec.alert + ' obsidian-callout obsidian-callout-' + type;
       wrapper.setAttribute('role', 'alert');
       wrapper.dataset.obsidianCallout = type;
-      if (fold === '-') wrapper.dataset.collapsed = 'true';
+      if (collapsed) wrapper.setAttribute('data-collapsed', 'true');
 
-      var titleEl = document.createElement('div');
-      titleEl.className = 'obsidian-callout-title';
-      titleEl.innerHTML = '<i class="bi ' + spec.icon + ' me-2" aria-hidden="true"></i>' + escapeHtml(titleText);
+      var bodyId = 'obsidian-callout-body-' + (++calloutSeq);
+      // Icon is decorative; voice the type for screen readers.
+      var titleInner = '<i class="bi ' + spec.icon + ' me-2" aria-hidden="true"></i>' +
+        '<span class="visually-hidden">' + escapeHtml(typeLabel) + ': </span>' +
+        escapeHtml(titleText);
+
+      var titleEl;
+      if (foldable) {
+        titleEl = document.createElement('button');
+        titleEl.setAttribute('type', 'button');
+        titleEl.className = 'obsidian-callout-title obsidian-callout-toggle';
+        titleEl.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+        titleEl.setAttribute('aria-controls', bodyId);
+        titleEl.innerHTML = titleInner +
+          '<i class="bi bi-chevron-down obsidian-callout-chevron ms-auto" aria-hidden="true"></i>';
+      } else {
+        titleEl = document.createElement('div');
+        titleEl.className = 'obsidian-callout-title';
+        titleEl.setAttribute('role', 'heading');
+        titleEl.setAttribute('aria-level', '3');
+        titleEl.innerHTML = titleInner;
+      }
       wrapper.appendChild(titleEl);
 
       var bodyEl = document.createElement('div');
       bodyEl.className = 'obsidian-callout-body';
+      bodyEl.setAttribute('id', bodyId);
+      if (collapsed) bodyEl.setAttribute('hidden', '');
       // Move blockquote children into the body, preserving inner HTML
       while (bq.firstChild) {
         bodyEl.appendChild(bq.firstChild);
@@ -312,9 +379,39 @@
     return count;
   }
 
+  // Delegated toggle for foldable callouts. Bound once on the content container
+  // so it works for callouts rendered by EITHER path (server-side Ruby plugin or
+  // client-side rewriteCallouts). Native <button> handles Enter/Space for free.
+  function wireCalloutToggles(container) {
+    if (!container || !container.addEventListener || container.__obsidianCalloutToggleBound) return;
+    container.__obsidianCalloutToggleBound = true;
+    container.addEventListener('click', function (e) {
+      var btn = e.target && e.target.closest && e.target.closest('.obsidian-callout-toggle');
+      if (!btn || !container.contains(btn)) return;
+      var callout = btn.closest('.obsidian-callout');
+      var body = callout && callout.querySelector('.obsidian-callout-body');
+      if (!body) return;
+      var expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+      body.hidden = expanded;
+      if (expanded) {
+        callout.setAttribute('data-collapsed', 'true');
+      } else {
+        callout.removeAttribute('data-collapsed');
+      }
+    });
+  }
+
   function init() {
+    // Respect `obsidian: { enabled: false }` even if the script is loaded.
+    if (OBSIDIAN_CONFIG.enabled === false) return;
+
     var container = document.querySelector('#main-content, .bd-content, main, article') || document.body;
     if (!container) return;
+
+    // Bind the foldable-callout toggle first so it works even when the index
+    // fetch fails or when callouts were rendered server-side by the plugin.
+    wireCalloutToggles(container);
 
     fetch(CONFIG.indexUrl, { credentials: 'same-origin', cache: 'force-cache' })
       .then(function (r) { return r.ok ? r.json() : null; })

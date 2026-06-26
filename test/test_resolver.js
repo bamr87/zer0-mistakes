@@ -394,6 +394,15 @@ assert('alias key resolves', /href="\/notes\/markdown-tips\/"/.test(html), html)
 
 html = resolver.rewriteHtml('Broken [[Definitely Not Real]] link.', byKey, '/notes/x/');
 assert('unresolved → wiki-link-broken', /class="wiki-link wiki-link-broken"/.test(html), html);
+assert('broken link is a non-navigating <span> (no href="#")', /<span class="wiki-link wiki-link-broken"/.test(html) && !/href="#"/.test(html), html);
+
+// Heading anchors must match kramdown's basic header-id algorithm.
+html = resolver.rewriteHtml('Jump to [[Markdown Formatting Tips#Foo & Bar]].', byKey, '/notes/x/');
+assert('anchor: ampersand → double dash (kramdown parity)', /#foo--bar"/.test(html), html);
+html = resolver.rewriteHtml('Jump to [[Markdown Formatting Tips#100% Done]].', byKey, '/notes/x/');
+assert('anchor: leading non-letters stripped', /#done"/.test(html), html);
+html = resolver.rewriteHtml('Jump to [[Markdown Formatting Tips#Hello_World]].', byKey, '/notes/x/');
+assert('anchor: underscores removed (not kept)', /#helloworld"/.test(html), html);
 
 // ---- Embeds --------------------------------------------------------------
 console.log('Embeds:');
@@ -401,7 +410,12 @@ html = resolver.rewriteHtml('![[diagram.png|320]]', byKey, '/notes/x/');
 assert('image embed → <img>', /<img /.test(html) && / width="320"/.test(html) && /class="obsidian-embed obsidian-embed-image"/.test(html), html);
 
 html = resolver.rewriteHtml('![[Docker Commands]]', byKey, '/notes/x/');
-assert('note embed → obsidian-embed-note block', /class="obsidian-embed obsidian-embed-note"/.test(html), html);
+assert('note embed → styled Bootstrap card (parity with transclude.html)',
+  /class="obsidian-embed obsidian-embed-note card/.test(html) &&
+  /class="card-header"/.test(html) &&
+  /class="obsidian-embed-source"/.test(html) &&
+  /class="card-body obsidian-embed-body"/.test(html) &&
+  /href="\/notes\/docker-commands\/"/.test(html), html);
 
 html = resolver.rewriteHtml('![[ghost-note]]', byKey, '/notes/x/');
 assert('missing note embed → broken alert', /obsidian-embed-broken/.test(html), html);
@@ -413,6 +427,15 @@ assert('inline tag → <a class="obsidian-tag">', /class="obsidian-tag">#obsidia
 
 html = resolver.rewriteHtml('Heading marker # not a tag', byKey, '/notes/x/');
 assert('hash followed by space is NOT a tag', !/class="obsidian-tag"/.test(html), html);
+
+html = resolver.rewriteHtml('Tagged with #ai_ml here.', byKey, '/notes/x/');
+assert('tag slug matches Jekyll slugify (#ai_ml → /tags/#ai-ml)', /href="[^"]*\/tags\/#ai-ml"/.test(html), html);
+
+html = resolver.rewriteHtml('The colour is #ffffff and #1a2b3c here.', byKey, '/notes/x/');
+assert('hex-colour-shaped tokens are NOT linkified as tags', !/class="obsidian-tag"/.test(html), html);
+
+html = resolver.rewriteHtml('Brewing at #cafe now.', byKey, '/notes/x/');
+assert('all-letter word tag (#cafe) still links', /class="obsidian-tag">#cafe</.test(html), html);
 
 // ---- Callout DOM rewriting ----------------------------------------------
 console.log('Callouts (DOM-level):');
@@ -431,6 +454,35 @@ assert('callout wraps in alert-warning', /alert alert-warning obsidian-callout o
 assert('callout title text preserved', /Heads up/.test(html2), html2);
 assert('callout body retains content', /the building is on fire/.test(html2), html2);
 assert('callout has role="alert"', /role="alert"/.test(html2), html2);
+// `+` marker → foldable disclosure rendered as an expanded <button>.
+assert('foldable (+) callout title is a toggle <button>', /<button[^>]*class="obsidian-callout-title obsidian-callout-toggle"/.test(html2), html2);
+assert('foldable (+) callout is expanded (aria-expanded="true")', /aria-expanded="true"/.test(html2), html2);
+assert('foldable callout wires aria-controls → body id', /aria-controls="obsidian-callout-body-\d+"/.test(html2) && /id="obsidian-callout-body-\d+"/.test(html2), html2);
+assert('callout type voiced for screen readers (visually-hidden)', /class="visually-hidden">Warning: /.test(html2), html2);
+
+// `-` marker → collapsed disclosure: aria-expanded="false" + hidden body.
+const rootC = shim.document.createElement('main');
+const bqC = shim.document.createElement('blockquote');
+const pC = shim.document.createElement('p');
+pC.appendChild(new shim.TextNode('[!note]- Collapsed by default\nhidden body text'));
+bqC.appendChild(pC);
+rootC.appendChild(bqC);
+resolver.rewriteCallouts(rootC);
+const htmlC = shim.serialize(rootC);
+assert('collapsed (-) callout is aria-expanded="false"', /aria-expanded="false"/.test(htmlC), htmlC);
+assert('collapsed (-) callout body has hidden attribute', /id="obsidian-callout-body-\d+" hidden/.test(htmlC), htmlC);
+assert('collapsed (-) callout sets data-collapsed="true"', /data-collapsed="true"/.test(htmlC), htmlC);
+
+// Plain callout (no marker) stays a static heading, not a button.
+const rootN = shim.document.createElement('main');
+const bqN = shim.document.createElement('blockquote');
+const pN = shim.document.createElement('p');
+pN.appendChild(new shim.TextNode('[!info] Just info\nbody'));
+bqN.appendChild(pN);
+rootN.appendChild(bqN);
+resolver.rewriteCallouts(rootN);
+const htmlN = shim.serialize(rootN);
+assert('plain callout title is a non-button heading', !/<button/.test(htmlN) && /role="heading"/.test(htmlN), htmlN);
 
 // Non-matching blockquote stays a blockquote
 const root2 = shim.document.createElement('main');

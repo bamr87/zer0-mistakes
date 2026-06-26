@@ -136,7 +136,7 @@ and [backlinks panel]({{ "/docs/obsidian/syntax-reference/#backlinks-panel" | re
   <span id="obsidian-graph-status" role="status"></span>
 </div>
 
-<div id="obsidian-graph" role="img" aria-label="Site knowledge graph"></div>
+<div id="obsidian-graph" role="group" aria-label="Site knowledge graph"></div>
 
 <div class="obsidian-graph-legend" aria-label="Graph legend">
   <span><span class="swatch" style="background:#0d6efd"></span>Posts</span>
@@ -167,10 +167,12 @@ unresolved targets show up as dashed red nodes so you can find dangling
 links at a glance. The graph is regenerated every Jekyll build; nothing
 runs client-side except cytoscape's force layout.
 
-<!-- Cytoscape.js (vendored, only loaded on this page) — no CDN so the graph
-     works under strict CSP and offline. See assets/vendor/cytoscape/. -->
-<script src="{{ '/assets/vendor/cytoscape/cytoscape.min.js' | relative_url }}" defer></script>
-<script src="{{ '/assets/js/obsidian-graph.js' | relative_url }}" defer></script>
+<!-- Cytoscape.js is vendored (no runtime CDN) and lazy-loaded by
+     obsidian-graph.js from window.OBSIDIAN_CONFIG.cytoscapeUrl, only on this
+     page, with an in-page recovery message if the fetch fails. -->
+{% if site.obsidian.enabled != false %}
+<script src="{{ '/assets/js/obsidian-graph.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
+{% endif %}
 
 ## See also
 

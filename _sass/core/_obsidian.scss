@@ -21,6 +21,12 @@
     border-bottom-color: transparent;
   }
 
+  &:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 2px;
+    border-bottom-color: transparent;
+  }
+
   &[aria-current="page"] {
     background-color: rgba(var(--bs-primary-rgb), 0.08);
     padding: 0 0.15rem;
@@ -46,16 +52,22 @@
   margin: 0 0.1rem;
   font-size: 0.85em;
   font-weight: 500;
-  color: var(--bs-secondary);
-  background-color: rgba(var(--bs-secondary-rgb), 0.1);
+  // Theme-aware tokens give legible contrast in both light and dark modes.
+  color: var(--bs-secondary-color);
+  background-color: var(--bs-secondary-bg);
   border-radius: 0.5rem;
   text-decoration: none;
-  transition: background-color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
 
-  &:hover,
-  &:focus {
-    background-color: rgba(var(--bs-secondary-rgb), 0.2);
-    color: var(--bs-primary);
+  &:hover {
+    background-color: var(--bs-tertiary-bg);
+    color: var(--bs-emphasis-color);
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 1px;
     text-decoration: none;
   }
 }
@@ -111,14 +123,47 @@
     align-items: center;
   }
 
+  // Foldable callouts render the title as a real <button> disclosure. Reset the
+  // button chrome so it reads like the static title, then add affordances.
+  .obsidian-callout-toggle {
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
+      border-radius: 0.2rem;
+    }
+  }
+
+  .obsidian-callout-chevron {
+    transition: transform 0.2s ease;
+  }
+
+  .obsidian-callout-toggle[aria-expanded="false"] .obsidian-callout-chevron {
+    transform: rotate(-90deg);
+  }
+
   .obsidian-callout-body {
     margin: 0;
 
     > :last-child {
       margin-bottom: 0;
     }
+
+    &[hidden] {
+      display: none;
+    }
   }
 
+  // Legacy / no-JS fallback: keep the CSS-only collapse working.
   &[data-collapsed="true"] .obsidian-callout-body {
     display: none;
   }
@@ -157,7 +202,13 @@
 // and _includes/navigation/local-graph-fab.html (footer) via
 // assets/js/obsidian-local-graph.js.
 // ----------------------------------------------------------------------------
-.obsidian-local-graph-fab {
+// ID selector (not the class) is REQUIRED for the fixed position to stick:
+// the FAB is a direct child of `.zer0-bg-body`, which matches the elevation
+// rule `.zer0-bg-body > *:not(.fixed-top):not(.offcanvas):not(.modal)` in
+// _sass/theme/_backgrounds.scss (specificity 0,4,0) and forces
+// `position: relative; z-index: 1` — dropping the FAB into page flow at the
+// bottom. An id (1,0,0) wins, mirroring `#aiChatToggle`. See ai-chat.html.
+#obsidianLocalGraphFab.obsidian-local-graph-fab {
   position: fixed;
   left: var(--zer0-space-fab-offset, 1rem);
   right: auto;
