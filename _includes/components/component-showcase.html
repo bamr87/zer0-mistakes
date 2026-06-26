@@ -22,6 +22,12 @@
   Dependencies:
   - Bootstrap 5.3 CSS & JS (loaded by theme)
   - Bootstrap Icons (loaded by theme)
+
+  Note: The breadcrumb and list-group links are DEMO links only — they are
+        intentionally inert (href="#" with onclick="return false;") so the
+        showcase never injects site-absolute paths (/docs/, /pages/, ...) that
+        would 404 on consumer sites that lack those exact routes (issue #219).
+        Do not point them at absolute paths.
   ===================================================================
 -->
 {% assign sections = include.sections | default: "alerts,buttons,badges,cards,accordion,tabs,progress,breadcrumbs,table,tooltips,list-group" %}
@@ -320,9 +326,9 @@ theme: jekyll-theme-zer0</code></pre>
 <p>Hierarchical navigation trail showing current page position:</p>
 <nav aria-label="breadcrumb example" class="mb-4">
   <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="/" class="text-decoration-none"><i class="bi bi-house me-1"></i>Home</a></li>
-    <li class="breadcrumb-item"><a href="/docs/" class="text-decoration-none">Documentation</a></li>
-    <li class="breadcrumb-item"><a href="/docs/customization/" class="text-decoration-none">Customization</a></li>
+    <li class="breadcrumb-item"><a href="#" class="text-decoration-none" onclick="return false;"><i class="bi bi-house me-1"></i>Home</a></li>
+    <li class="breadcrumb-item"><a href="#" class="text-decoration-none" onclick="return false;">Documentation</a></li>
+    <li class="breadcrumb-item"><a href="#" class="text-decoration-none" onclick="return false;">Customization</a></li>
     <li class="breadcrumb-item active" aria-current="page">Theme Colors</li>
   </ol>
 </nav>
@@ -414,19 +420,19 @@ document.addEventListener('DOMContentLoaded', () => {
 <div class="row g-4 mb-4">
   <div class="col-md-6">
     <div class="list-group">
-      <a href="/pages/" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+      <a href="#" onclick="return false;" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
         <span><i class="bi bi-journal-richtext text-primary me-2"></i>Blog Posts</span>
         <span class="badge bg-primary rounded-pill">{{ site.posts.size | default: "12" }}</span>
       </a>
-      <a href="/docs/" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+      <a href="#" onclick="return false;" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
         <span><i class="bi bi-book text-success me-2"></i>Documentation</span>
         <span class="badge bg-success rounded-pill">{{ site.documents.size | default: "8" }}</span>
       </a>
-      <a href="/categories/" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+      <a href="#" onclick="return false;" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
         <span><i class="bi bi-collection text-info me-2"></i>Categories</span>
         <span class="badge bg-info rounded-pill">{{ site.categories.size | default: "6" }}</span>
       </a>
-      <a href="/tags/" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+      <a href="#" onclick="return false;" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
         <span><i class="bi bi-tags text-warning me-2"></i>Tags</span>
         <span class="badge bg-warning text-dark rounded-pill">{{ site.tags.size | default: "24" }}</span>
       </a>
