@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/obsidian-callouts/ -->
+  (evidence: [`test/visual/evidence/obsidian-callouts/`](test/visual/evidence/obsidian-callouts/README.md) — a foldable `[!type]-` callout is a keyboard <button aria-expanded>: activation flips aria-expanded false→true and reveals the body).

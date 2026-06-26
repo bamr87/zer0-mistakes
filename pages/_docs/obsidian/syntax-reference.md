@@ -75,6 +75,16 @@ body shows/hides on click (Enter/Space).
 A callout **without** a fold marker renders as a static heading (not a button).
 Unknown types fall back to the `note` variant, never silently dropped.
 
+### Live example
+
+> [!tip]+ Foldable, expanded by default
+> This `tip` callout starts open. Click the title (or press Enter/Space) to
+> collapse it — the body toggles and the title's `aria-expanded` flips.
+
+> [!note]- Foldable, collapsed by default
+> This `note` callout starts collapsed: `data-collapsed="true"` and the body is
+> `hidden` until you activate the title to reveal this text.
+
 ## Tags
 
 Inline tags like `#obsidian` or `#fixture/example` are linked to the
