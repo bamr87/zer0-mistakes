@@ -29,14 +29,19 @@ This directory contains file-specific instructions for GitHub Copilot to provide
 │   ├── commit-publish.prompt.md      # Full release pipeline
 │   ├── frontmatter-maintainer.prompt.md  # Front matter audit / fix
 │   ├── content-review.prompt.md      # Content SEO/consistency/polish review
-│   ├── repo-audit.prompt.md          # Review repo → file backlog tasks
+│   ├── repo-audit.prompt.md          # Review repo + triage open issues → backlog
 │   ├── backlog-implement.prompt.md   # Implement next backlog task → PR
+│   ├── issue-implement.prompt.md     # Route one issue → loop-to-green → PR (human-dispatched)
+│   ├── issue-plan.prompt.md          # Planning committee → order-only roadmap_plan.yml
 │   └── seed.prompt.md                # Theme rebuild blueprint
 ├── skills/                          # Operational workflow checklists (SKILL.md)
 │   ├── change-workflow/SKILL.md      # Branch → commit → PR for any change
 │   ├── validate-build/SKILL.md       # Pre-commit / pre-PR validation pipeline
 │   ├── content-review/SKILL.md       # Content SEO/consistency/polish review
-│   └── visual-evidence/SKILL.md      # Regression test + before/after evidence for UI changes
+│   ├── visual-evidence/SKILL.md      # Regression test + before/after evidence for UI changes
+│   └── committee-plan/SKILL.md       # /issue-plan fan-out + order-only synthesis
+├── ../../_data/routing.yml          # area:* → executor lane (issue-implement routing)
+├── ../../.claude/agents/            # Specialized executor + plan-lens agents
 └── seed/                            # Deep architectural blueprint docs
 
 .cursor/
