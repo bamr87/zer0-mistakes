@@ -74,6 +74,7 @@ jobs:
         # PR, and `gh pr merge` shells out to git, failing with "not a git
         # repository". mergeMethod SQUASH matches the repo's squash-only setting.
         run: |
+          # shellcheck disable=SC2016  # $id/$pullRequestId are GraphQL variables (value passed via -F id=), intentionally NOT shell-expanded.
           if gh api graphql -f query='
             mutation($id: ID!) {
               enablePullRequestAutoMerge(input: { pullRequestId: $id, mergeMethod: SQUASH }) {
