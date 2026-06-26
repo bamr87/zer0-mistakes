@@ -64,9 +64,14 @@
           {% endfor %}
         </nav>
       </div>
-      {% if sub_categories.size > 15 %}
+      {% comment %} Existence-gate the tags index: a remote-theme consumer without
+         the (plugin-generated) /tags/ page must not get a 404 link. Mirrors the
+         footer Quick-Links guard and honours the documented site.tags_page. {% endcomment %}
+      {% assign _tags_url = site.tags_page | default: "/tags/" %}
+      {% assign _tags_page = site.html_pages | where: "url", _tags_url | first %}
+      {% if sub_categories.size > 15 and _tags_page %}
       <div class="card-footer bg-transparent">
-        <a href="{{ site.baseurl }}/tags/" class="btn btn-sm btn-outline-secondary w-100">
+        <a href="{{ _tags_url | relative_url }}" class="btn btn-sm btn-outline-secondary w-100">
           View All Tags <i class="bi bi-arrow-right ms-1"></i>
         </a>
       </div>
@@ -123,11 +128,13 @@
         {% endif %}
       {% endfor %}
     </nav>
+    {% if _tags_page %}
     <div class="p-3">
-      <a href="{{ site.baseurl }}/tags/" class="btn btn-outline-primary w-100">
+      <a href="{{ _tags_url | relative_url }}" class="btn btn-outline-primary w-100">
         <i class="bi bi-tags me-2"></i>Browse All Tags
       </a>
     </div>
+    {% endif %}
   </div>
 </div>
 
