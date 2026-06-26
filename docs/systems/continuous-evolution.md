@@ -69,6 +69,7 @@ not the issues.
 | Committee prompt | `.github/prompts/issue-plan.prompt.md` + `committee-plan` skill | `/issue-plan` — 4 read-only lenses → order-only plan |
 | Plan lenses | `.claude/agents/plan-lens-{priority,dependency,risk,test}.md` | Read-only committee perspectives |
 | Plan artifact + sync | `_data/roadmap_plan.yml` · `scripts/sync-plan.rb` (+ `.sh`) | Order-only sequencing + validator + pinned tracking issue |
+| CI self-repair | `.github/workflows/ci-self-repair.yml` + `ci-self-repair.prompt.md` | On a failed CI run for an `auto-fix`-labelled PR, fix the failure by root cause (bounded retries) or gate to draft |
 
 It deliberately reuses the existing **roadmap-sync** pattern
 (`scripts/generate-roadmap.rb` + `.github/workflows/sync.yml`): a Ruby
@@ -112,6 +113,22 @@ phase silently inherits a heavier default.
 The committee prefers Task-subagent fan-out but falls back to **inline sequential
 lenses**, and routing loads lane instructions **inline**, so the pipeline works
 whether or not the cloud-routine runtime can delegate to named subagents.
+
+### CI self-repair (closing the loop post-PR)
+
+The implement loop verifies **before** opening a PR, but local-green ≠ CI-green.
+`.github/workflows/ci-self-repair.yml` closes that gap: on a **failed** CI run
+(`Comprehensive CI Pipeline` / `TEST (Latest Dependencies)`) for a PR that opted
+in via the **`auto-fix`** label, it runs Claude Code headless
+([`/ci-self-repair`](../../.github/prompts/ci-self-repair.prompt.md)) to diagnose
+and fix the failing check **by root cause**, verify locally, and push — bounded by
+a **3-commit retry budget**. If it can't reach green — or the only fix would touch
+a CODEOWNERS path or *weaken* a check (delete a test, `continue-on-error`, lower a
+threshold) — it converts the PR to a **draft** and applies `agent-hold` for a
+human. It uses `workflow_run` (reacts after CI, base-repo context) and only ever
+acts on an **opted-in, same-repo** PR; it deliberately ignores `Evidence gate` and
+`Secret scan` (those must never be auto-"fixed" by removing the gate). `/issue-implement`
+applies `auto-fix` to every ready PR it opens.
 
 ## Task lifecycle
 

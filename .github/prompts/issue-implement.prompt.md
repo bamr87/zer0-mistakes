@@ -130,6 +130,12 @@ touching a CODEOWNERS path is **always** human-reviewed. (Auto-merge is currentl
 no-op until branch protection is enabled; the label is still applied correctly so
 it works the moment protection is on.)
 
+**Self-repair opt-in** — apply the `auto-fix` label to every **ready** (non-draft)
+PR you open. It opts the PR into [`ci-self-repair`](../workflows/ci-self-repair.yml):
+if CI later fails, Claude Code is run headless to fix the failure (root cause only,
+never by weakening a check) up to a bounded retry budget, then gates to draft +
+`agent-hold` if it can't. Do **not** add `auto-fix` to a draft/gated PR.
+
 ## Implement summary (return to operator)
 
 ```markdown
