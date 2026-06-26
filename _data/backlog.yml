@@ -44,8 +44,15 @@
 #     summary:    1–2 lines of context
 #     acceptance: List of checkable done-criteria the implement routine verifies
 #     links:      { issue: <#|null>, pr: <#|null>, roadmap: "<version>|null" }
+#                 When `issue:` points at an EXISTING issue, sync ADOPTS it (adds
+#                 a managed block, preserves the author's text, no duplicate)
+#                 instead of creating a new one. At most one task per issue.
 #     created:    YYYY-MM-DD
 #     updated:    YYYY-MM-DD
+#     route:      (optional) executor-lane hint for /issue-implement; resolved via
+#                 _data/routing.yml (defaults to the lane for `area`).
+#     depends_on: (optional) [T-NNN, …] tasks that must land first; consumed by the
+#                 /issue-plan committee for ordering. Advisory.
 #
 # `risk: low` + area in {docs, deps, lint} makes a task auto-merge eligible once
 # CI is green (see `.github/prompts/backlog-implement.prompt.md`). Everything
