@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.21.0](https://github.com/bamr87/zer0-mistakes/compare/v1.20.2...v1.21.0) (2026-06-26)
+
+
+### Features
+
+* **automation:** committee planning + specialized executor agents (Phase 4) ([#226](https://github.com/bamr87/zer0-mistakes/issues/226)) ([1e9016b](https://github.com/bamr87/zer0-mistakes/commit/1e9016b869ff33f26fc60d3ae27e7fcd0216e802))
+* **automation:** issue intake + /issue-implement routing (Phases 2-3) ([#225](https://github.com/bamr87/zer0-mistakes/issues/225)) ([21a7008](https://github.com/bamr87/zer0-mistakes/commit/21a70080b2814827bd390201e1ec76fb2b9a874e))
+* **scripts:** issue adoption in sync-backlog (Phase 1) ([#224](https://github.com/bamr87/zer0-mistakes/issues/224)) ([512068e](https://github.com/bamr87/zer0-mistakes/commit/512068e2556be7fe3a4c7870d9feab0ca52955d8))
+
 ## [1.20.2](https://github.com/bamr87/zer0-mistakes/compare/v1.20.1...v1.20.2) (2026-06-25)
 
 
