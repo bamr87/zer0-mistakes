@@ -67,7 +67,24 @@ jobs:
       - name: Enable native auto-merge
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NODE: ${{ github.event.pull_request.node_id }}
           PR: ${{ github.event.pull_request.number }}
-        # No --squash: let the repo's merge-method setting (squash-only) decide,
-        # so this stays correct if a merge queue is later enabled.
-        run: gh pr merge "$PR" --auto
+        # Enable via the GraphQL mutation, NOT `gh pr merge --auto`: this
+        # pull_request_target job intentionally does not check out the (untrusted)
+        # PR, and `gh pr merge` shells out to git, failing with "not a git
+        # repository". mergeMethod SQUASH matches the repo's squash-only setting.
+        run: |
+          if gh api graphql -f query='
+            mutation($id: ID!) {
+              enablePullRequestAutoMerge(input: { pullRequestId: $id, mergeMethod: SQUASH }) {
+                pullRequest { number }
+              }
+            }' -F id="$PR_NODE" 2>/tmp/am-err; then
+            echo "✓ native auto-merge enabled for #$PR — it will merge once required checks pass."
+          else
+            # Expected when branch protection / required checks aren't configured:
+            # there's nothing for auto-merge to gate on, so it can't be enabled.
+            # That's the safe no-op state — the PR simply waits for a human.
+            echo "::notice::Native auto-merge not enabled for #$PR (branch protection with required checks not configured). Leaving it for human review."
+            sed 's/^/  gh: /' /tmp/am-err || true
+          fi
