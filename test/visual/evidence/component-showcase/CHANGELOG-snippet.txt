@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/component-showcase/ -->
+  (evidence: [`test/visual/evidence/component-showcase/`](test/visual/evidence/component-showcase/README.md) — showcase demo links 7 site-absolute (404 hazard) → 0 (all href="#"); include now renders (recursion fixed)).

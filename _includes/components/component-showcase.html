@@ -15,9 +15,11 @@
                         tabs,progress,breadcrumbs,table,tooltips,list-group
                         Default: all sections
 
-  Usage:
-    {% include components/component-showcase.html %}
-    {% include components/component-showcase.html sections="alerts,buttons,cards" %}
+  Usage (wrapped in raw so these examples are shown literally and NOT executed —
+  un-wrapped, Liquid runs them even inside this HTML comment and the include
+  recursively includes itself → "stack level too deep"):
+    {% raw %}{% include components/component-showcase.html %}
+    {% include components/component-showcase.html sections="alerts,buttons,cards" %}{% endraw %}
 
   Dependencies:
   - Bootstrap 5.3 CSS & JS (loaded by theme)
