@@ -60,10 +60,58 @@ not the issues.
 | Visual-evidence skill | `.github/skills/visual-evidence/SKILL.md` | Standard: regression test + before/after evidence for UI/behavioural changes |
 | Evidence kit | `test/visual/evidence-kit.mjs` | Reusable generator for the before/after montages + metrics |
 | Evidence gate | `.github/workflows/evidence-gate.yml` | Required check: fails a UI PR lacking test+evidence (opt-out `skip-evidence`) |
+| Secret scan | `.github/workflows/secret-scan.yml` | Required gate: fails a PR whose diff/body leaks a credential shape |
+| Forbidden-path guards | `.github/CODEOWNERS` + the `auto-merge.yml` denylist | Block release/CI/plugin/script/version PRs from the auto-merge fast path |
+| Issue intake | `/repo-audit` Phase 1.D | Triages all open issues → `source: issue` tasks (adopted via `links.issue`, no duplicates) |
+| Routing table | `_data/routing.yml` | `area:*` (+ path globs) → executor lane (agent + instructions + skills) |
+| Issue-implement prompt | `.github/prompts/issue-implement.prompt.md` | `/issue-implement <#>` — routed, loop-until-green, one PR (human-dispatched) |
+| Executor agents | `.claude/agents/{code-fixer,theme-ui,infra-scripts,test-author,a11y-fixer,deps-bumper}.md` | The routed lanes (docs reuse `content-reviewer`) |
+| Committee prompt | `.github/prompts/issue-plan.prompt.md` + `committee-plan` skill | `/issue-plan` — 4 read-only lenses → order-only plan |
+| Plan lenses | `.claude/agents/plan-lens-{priority,dependency,risk,test}.md` | Read-only committee perspectives |
+| Plan artifact + sync | `_data/roadmap_plan.yml` · `scripts/sync-plan.rb` (+ `.sh`) | Order-only sequencing + validator + pinned tracking issue |
 
 It deliberately reuses the existing **roadmap-sync** pattern
 (`scripts/generate-roadmap.rb` + `.github/workflows/sync.yml`): a Ruby
 generator/validator with `--check`, driven by a path-filtered workflow.
+
+## Issue-first pipeline (the extension)
+
+The loop also ingests **GitHub issues** (human-filed and bot), keeping
+`_data/backlog.yml` the single source of truth — issues are a *mirror*.
+
+1. **Intake (auto).** `/repo-audit` Phase 1.D triages every open issue into a
+   `source: issue` backlog task carrying `links.issue:<#>`, with enriched
+   `area`/`risk`/`priority`/`route`. `sync-backlog.rb` then **adopts** that issue
+   (appends a managed block, preserving the author's text — no duplicate). Issue
+   text is treated as **untrusted data**; external-author issues land `agent-hold`.
+2. **Committee (auto).** `/issue-plan` fans out four read-only lenses (priority,
+   dependency, risk, test-framework) and writes an **order-only** plan to
+   `_data/roadmap_plan.yml` + one pinned tracking issue. It never re-encodes the
+   autonomy policy (below) — eligibility is derived from each task.
+3. **Implement (human-dispatched).** `/issue-implement <#|T-id>` routes the task
+   via `_data/routing.yml` to a specialized executor, **loops build+test+evidence
+   until green and compatible**, documents fully, and opens ONE PR — applying the
+   autonomy label by the same policy. It **STOPs** on any CODEOWNERS path.
+
+The **autonomy policy** below is the single canonical statement; the prompts and
+`plan-lens-risk` point at it rather than restating it.
+
+### Model tiers (per phase)
+
+| Phase | Model | Why |
+|---|---|---|
+| Intake / triage (`/repo-audit` 1.D) | haiku | classification + structured writes |
+| Committee (`/issue-plan` + 4 lenses) | sonnet | DAG / risk / merge reasoning |
+| Implement (`/issue-implement` executors) | opus | real code where quality matters |
+
+Set each via the `/schedule` routine's `--model` and the prompt front matter; no
+phase silently inherits a heavier default.
+
+### Substrate note
+
+The committee prefers Task-subagent fan-out but falls back to **inline sequential
+lenses**, and routing loads lane instructions **inline**, so the pipeline works
+whether or not the cloud-routine runtime can delegate to named subagents.
 
 ## Task lifecycle
 
@@ -149,13 +197,22 @@ click merge.
 The loop is driven by two scheduled Claude Code routines. Create them with the
 `/schedule` skill (they invoke the committed prompts, so the logic stays in-repo):
 
-- **Routine A — Weekly audit** (e.g. Mondays):
-  *"In the zer0-mistakes repo, run `/repo-audit` and open the backlog PR."*
-- **Routine B — Implementation cadence** (e.g. 2–3×/week):
+- **Routine A — Weekly audit + issue intake** (e.g. Mondays):
+  *"In the zer0-mistakes repo, run `/repo-audit` (includes issue intake) and open
+  the backlog PR."* — model `haiku`; token scope `issues:write` + PR-create.
+- **Routine B — Implementation cadence** (e.g. 2–3×/week, unchanged):
   *"In the zer0-mistakes repo, run `/backlog-implement` for the next open task."*
+- **Routine C — Committee planning** (e.g. Tuesdays, a day behind A):
+  *"In the zer0-mistakes repo, run `/issue-plan` and refresh the plan + pinned
+  issue."* — model `sonnet`.
 
-Both can also be run on demand from an interactive session, and the workflows can
-be triggered manually via `workflow_dispatch`.
+**`/issue-implement` is deliberately NOT scheduled** — per-issue implementation is
+**human-dispatched** (a person runs `/issue-implement <#>`), so nothing
+auto-dispatches code changes. Auto-merge stays a no-op until branch protection is
+enabled.
+
+All routines can also be run on demand from an interactive session, and the
+workflows can be triggered manually via `workflow_dispatch`.
 
 > **Portability:** because all logic lives in the prompt + script files, the same
 > loop can later be driven by a GitHub Actions cron + the Claude Code GitHub
