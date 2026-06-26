@@ -12,6 +12,13 @@ tags:
     - remote-theme
     - deployment
     - troubleshooting
+keywords:
+    - remote theme checklist
+    - github pages consumer
+    - jekyll safe mode
+    - remote_theme setup
+    - deployment troubleshooting
+    - jekyll-theme-zer0
 permalink: /docs/deployment/remote-theme-checklist/
 difficulty: intermediate
 estimated_reading_time: 10 minutes

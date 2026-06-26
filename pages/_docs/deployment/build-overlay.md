@@ -12,6 +12,13 @@ tags:
     - remote-theme
     - deployment
     - ci
+keywords:
+    - remote theme build
+    - github pages safe mode
+    - jekyll build overlay
+    - strip _plugins
+    - custom CI jekyll
+    - strict front matter
 permalink: /docs/deployment/build-overlay/
 difficulty: intermediate
 estimated_reading_time: 8 minutes
