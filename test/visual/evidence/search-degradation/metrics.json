@@ -1,0 +1,35 @@
+{
+  "slug": "search-degradation",
+  "base": "http://localhost:4000",
+  "route": "/",
+  "issue": 202,
+  "mergeBase": "4c8c74cfb0775feda9103b379ebcecc4874d517f",
+  "scenarios": [
+    {
+      "state": "before",
+      "js": "pre-fix",
+      "indexStatus": 404,
+      "emptyStateText": "No results found.",
+      "viewAllLink": false,
+      "submitNavigatedTo": "/sitemap/",
+      "stayedInModal": false
+    },
+    {
+      "state": "after",
+      "js": "fixed",
+      "indexStatus": 404,
+      "emptyStateText": "Search is unavailable on this site.",
+      "viewAllLink": false,
+      "submitNavigatedTo": null,
+      "stayedInModal": true
+    },
+    {
+      "state": "after",
+      "js": "fixed",
+      "indexStatus": 200,
+      "results": 2,
+      "viewAllLink": true,
+      "viewAllHref": "/sitemap/?q=jekyll"
+    }
+  ]
+}

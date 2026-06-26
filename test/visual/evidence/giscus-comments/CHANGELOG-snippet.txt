@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/giscus-comments/ -->
+  (evidence: [`test/visual/evidence/giscus-comments/`](test/visual/evidence/giscus-comments/README.md) — at enabled:false the gate now hides comments (pre-fix `site.giscus` showed them); enabled:true renders the widget).

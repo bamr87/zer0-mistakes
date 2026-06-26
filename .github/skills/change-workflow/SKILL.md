@@ -112,9 +112,17 @@ changelog.
 
 ### 7. Merge
 
-**Squash-merge** into `main`. Delete the branch. Releases are cut separately
-from an up-to-date `main` — see [`commit-publish.prompt.md`](../../prompts/commit-publish.prompt.md);
-do **not** run a release from a feature branch.
+**Squash-merge** into `main`; the branch auto-deletes. Low-risk PRs may carry the
+`auto-merge` label to land on green. PRs touching **protected paths** (anything in
+`.github/CODEOWNERS`: `version.rb`, gemspec, `Gemfile*`, `package*.json`,
+`CHANGELOG.md`, release config, `.github/workflows/`, `_plugins/`, `scripts/bin`)
+require **@bamr87 code-owner review** — agents cannot self-merge these.
+
+**You never bump the version or cut a release from a feature branch.** Every merge
+to `main` feeds release-please's open `chore(main): release X.Y.Z` PR (the
+version accumulator). A release is cut by **merging that release PR** when its set
+is coherent — see [`version-control.instructions.md`](../../instructions/version-control.instructions.md)
+(Branching — Hardened Trunk) and [`commit-publish.prompt.md`](../../prompts/commit-publish.prompt.md).
 
 ## Splitting a messy working tree
 

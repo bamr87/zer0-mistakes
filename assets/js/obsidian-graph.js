@@ -5,8 +5,8 @@
  * /assets/data/wiki-index.json into the element with id `obsidian-graph`.
  *
  * Loaded only on the graph page (pages/_docs/obsidian/graph.md), which
- * also pulls in cytoscape.js from a CDN. No runtime dependencies are
- * added to the rest of the site.
+ * also pulls in the vendored cytoscape.js (assets/vendor/cytoscape/). No
+ * runtime CDN dependencies are added to the rest of the site.
  *
  * Nodes:   one per indexed entry (collection doc or standalone page)
  * Edges:   directed, source -> target, derived from `entry.outgoing`

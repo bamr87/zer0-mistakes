@@ -7,7 +7,7 @@
  *
  * Loaded by _includes/navigation/local-graph.html inside a dedicated
  * collapsible side panel. Cytoscape.js is loaded lazily (and only once) from
- * the same CDN as the full graph page.
+ * the vendored copy under assets/vendor/cytoscape/ (no CDN).
  *
  * Subgraph:
  *   - center  = current page (matched against entry.url, falling back to

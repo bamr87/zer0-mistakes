@@ -17,7 +17,7 @@
   - Renders the current page as a single-node graph when it has no neighbors
   - Hides itself if the current page is not in the wiki-index or the index
     can't be loaded
-  - Lazily loads cytoscape.js from CDN with SRI + crossorigin
+  - Lazily loads the vendored cytoscape.js (assets/vendor/cytoscape/, no CDN)
 
   Opt-out: set `local_graph: false` in page front matter.
 
@@ -54,13 +54,29 @@
   </div>
   <div class="offcanvas-body">
     <div class="obsidian-local-graph-widget" aria-label="Local graph">
+      {%- comment -%}
+        Only show the "Full graph" link when that docs page exists in the build
+        (configurable via `obsidian_graph_url`, default `/docs/obsidian/graph/`).
+        The page lives under pages/ and isn't delivered by remote_theme, so a
+        Pages consumer would otherwise get a 404 link. See issue #204.
+      {%- endcomment -%}
+      {%- assign _graph_url = site.obsidian_graph_url | default: '/docs/obsidian/graph/' -%}
+      {%- assign _graph_page = site.html_pages | where: "url", _graph_url | first -%}
+      {%- unless _graph_page -%}
+        {%- for col in site.collections -%}
+          {%- assign _graph_page = col.docs | where: "url", _graph_url | first -%}
+          {%- if _graph_page -%}{%- break -%}{%- endif -%}
+        {%- endfor -%}
+      {%- endunless -%}
       <div class="obsidian-local-graph-meta d-flex align-items-center justify-content-between gap-2 mb-3">
         <span class="badge text-bg-secondary">Depth {{ lg_depth }}</span>
-        <a href="{{ '/docs/obsidian/graph/' | relative_url }}"
+        {%- if _graph_page -%}
+        <a href="{{ _graph_url | relative_url }}"
            class="btn btn-outline-primary btn-sm"
            title="Open the full site graph">
           <i class="bi bi-arrows-fullscreen me-1" aria-hidden="true"></i>Full graph
         </a>
+        {%- endif -%}
       </div>
       <div id="obsidian-local-graph"
            data-depth="{{ lg_depth }}"

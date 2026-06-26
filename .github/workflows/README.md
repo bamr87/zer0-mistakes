@@ -24,7 +24,7 @@ This directory contains the CI/CD workflows for the zer0-mistakes Jekyll theme.
 
 ### 1. `ci.yml` - Continuous Integration Pipeline
 
-**Triggers:** Push to `main`/`develop`, Pull Requests, Manual dispatch
+**Triggers:** Push to `main`, Pull Requests, Manual dispatch
 
 The CI pipeline validates code quality, runs tests, builds the gem, and performs Docker integration testing. Uses `dorny/paths-filter` to detect changed files and skip heavy jobs on docs-only changes.
 
@@ -121,7 +121,7 @@ Unified release workflow that publishes to RubyGems and creates GitHub releases.
 
 ### 4. `test-latest.yml` - Latest Dependency Canary
 
-**Triggers:** Push/PR to `main`/`develop`, Daily schedule, Manual dispatch
+**Triggers:** Push/PR to `main`, Daily schedule, Manual dispatch
 
 Builds with the latest resolved dependencies (no pins), runs a Docker-based validation + test suite, and publishes an immutable Docker tag on success.
 

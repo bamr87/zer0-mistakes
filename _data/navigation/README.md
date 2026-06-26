@@ -42,6 +42,30 @@
 #   nav: docs  # Uses _data/navigation/docs.yml
 # ```
 #
+# ## Navbar capacity & responsive constraints (main.yml)
+#
+# The top navbar adapts the `main.yml` items to the viewport automatically:
+#
+# - **≥ lg (992px+):** items render inline. The center track degrades in tiers
+#   as it gets crowded — full labels → ellipsized labels → icon-only — before
+#   anything is dropped.
+# - **< lg:** the full menu moves into the slide-in offcanvas (hamburger), so
+#   item count and label length never affect the bar itself there.
+#
+# Guidance:
+# - Aim for **~6–7 top-level items**. More still work, but on compact desktops
+#   (≈992–1200px) they collapse to icon-only and, past the track's capacity,
+#   would clip. Group extras under `children:` dropdowns instead of adding more
+#   top-level entries.
+# - Long titles ellipsize rather than overflow; keep them short for legibility.
+# - On local/dev hosts the navbar logs a `console.warn` ("[zer0-mistakes
+#   navbar]") when items don't fit or page content overflows the viewport — your
+#   cue that a config exceeds what the bar can show. (Silent in production.)
+# - The theme also clips stray horizontal page overflow at the root, so an
+#   over-stuffed nav or wide content can never make the fixed navbar look "cut
+#   off". Wide tables/code keep their own local scroll. Regression-guarded by
+#   test/visual/navbar-responsive.spec.js.
+#
 # ## Schema Validation
 #
 # Navigation YAML is validated at build time by _plugins/navigation_validator.rb

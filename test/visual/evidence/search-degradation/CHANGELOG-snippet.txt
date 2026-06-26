@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/search-degradation/ -->
+  (evidence: [`test/visual/evidence/search-degradation/`](test/visual/evidence/search-degradation/README.md) — missing /search.json: "No results found." → "Search is unavailable on this site."; submit navigated to /sitemap/ → stays in-modal).

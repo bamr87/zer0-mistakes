@@ -55,6 +55,17 @@
       ]
     },
     {
+      "name": "cytoscape",
+      "version": "3.30.0",
+      "files": [
+        {
+          "url": "https://cdn.jsdelivr.net/npm/cytoscape@3.30.0/dist/cytoscape.min.js",
+          "dest": "assets/vendor/cytoscape/cytoscape.min.js",
+          "sha256": "a298b253e4b9b08bd0b2fe222ad67b2b9f42d057d7c17f7a050512079c46fddd"
+        }
+      ]
+    },
+    {
       "name": "mathjax",
       "version": "3.2.2",
       "files": [

@@ -1,0 +1,37 @@
+# =============================================================================
+# Roadmap plan — ORDER-ONLY sequencing artifact
+# =============================================================================
+# Produced by the /issue-plan committee (.github/prompts/issue-plan.prompt.md).
+# Validated + mirrored by scripts/sync-plan.rb.
+#
+# This file sequences OPEN backlog tasks into batches. It is ADVISORY input to
+# the human-dispatched /issue-implement ordering — it does not dispatch anything.
+#
+# HARD INVARIANT (enforced by `sync-plan.rb --check`): order only. A batch may
+# carry ONLY `id`, `goal`, `tasks` (bare T-NNN ids that exist + are open),
+# `depends_on` (other batch ids; the DAG must be acyclic), and `test_framework`.
+# It may NEVER carry risk / priority / area / status / effort / acceptance —
+# those are DERIVED at read-time from `_data/backlog.yml` (the single source of
+# truth), exactly as /backlog-implement already does. Two sources of truth drift.
+#
+# Example batch shape:
+#   batches:
+#     - id: B-1
+#       goal: "Unblock remote-theme consumers"
+#       tasks: [T-027, T-031]
+#       depends_on: []
+#       test_framework: "Playwright smoke for the 404 path + a remote-theme build matrix job"
+#     - id: B-2
+#       goal: "Theme chrome a11y pass"
+#       tasks: [T-033]
+#       depends_on: [B-1]
+#       test_framework: "axe-core checks + before/after visual evidence per the visual-evidence skill"
+# =============================================================================
+
+meta:
+  title: "zer0-mistakes Roadmap Plan"
+  updated: 2026-06-25
+  generated_by: "/issue-plan"
+
+# Populated by the committee. Empty is valid (nothing sequenced yet).
+batches: []

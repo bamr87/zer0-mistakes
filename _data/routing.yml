@@ -1,0 +1,73 @@
+# =============================================================================
+# Issue routing — area:* (+ optional path globs) → executor lane
+# =============================================================================
+# Used by /issue-implement to pick the specialized executor for a task/issue.
+#
+# Resolution order:
+#   1. explicit task.route -> that lane (override)
+#   2. first `rules` entry whose `area` matches the task's area AND (if it lists
+#      `paths`) a path glob matches a file the work is expected to touch
+#   3. `default` lane
+#
+# A "lane" pairs a specialized .claude/agents/<agent>.md executor with the
+# file-scoped instructions + skills it must load. In v1 (until the cloud-routine
+# substrate spike proves prompt->subagent dispatch), /issue-implement loads the
+# lane's `instructions` + `skills` INLINE and the named `agent` is advisory; once
+# the spike passes it delegates to the agent. Either way the lane is the same.
+#
+# NOTE: this file is DATA. It never grants autonomy — risk/auto-merge eligibility
+# is derived from the backlog task per the autonomy policy in
+# docs/systems/continuous-evolution.md, not from the lane.
+# =============================================================================
+
+default: code-fixer
+
+lanes:
+  content:
+    agent: content-reviewer
+    instructions: [content-review.instructions.md, documentation.instructions.md]
+    skills: [content-review, validate-build]
+    done: "content builds; deterministic + AI content review clean"
+  theme-ui:
+    agent: theme-ui
+    instructions: [layouts.instructions.md, includes.instructions.md, sass.instructions.md, visual-evidence.instructions.md]
+    skills: [change-workflow, visual-evidence, validate-build]
+    done: "jekyll build green; regression spec + before/after evidence committed"
+  code-fixer:
+    agent: code-fixer
+    instructions: [includes.instructions.md, layouts.instructions.md, scripts.instructions.md]
+    skills: [change-workflow, validate-build]
+    done: "targeted tests green; jekyll build green if templates touched"
+  infra-scripts:
+    agent: infra-scripts
+    instructions: [scripts.instructions.md]
+    skills: [change-workflow, validate-build]
+    done: "scripts run; shellcheck/tests green; no CODEOWNERS-owned path touched"
+  test-author:
+    agent: test-author
+    instructions: [testing.instructions.md, visual-evidence.instructions.md]
+    skills: [validate-build]
+    done: "new test fails before the fix and passes after; suite green"
+  a11y:
+    agent: a11y-fixer
+    instructions: [includes.instructions.md, layouts.instructions.md, sass.instructions.md, visual-evidence.instructions.md]
+    skills: [change-workflow, visual-evidence, validate-build]
+    done: "axe/a11y checks pass; regression spec + evidence committed"
+  deps:
+    agent: deps-bumper
+    instructions: []
+    skills: [change-workflow, validate-build]
+    done: "lockfiles consistent; build + tests green"
+
+# First match wins. `feat` appears twice on purpose: a UI-touching feat routes to
+# theme-ui, anything else falls through to the default code-fixer.
+rules:
+  - { area: docs,  lane: content }
+  - { area: a11y,  lane: a11y }
+  - { area: tests, lane: test-author }
+  - { area: infra, lane: infra-scripts }
+  - { area: deps,  lane: deps }
+  - { area: feat,  paths: ["_layouts/**", "_includes/**", "_sass/**", "assets/**"], lane: theme-ui }
+  - { area: feat,  lane: code-fixer }
+  - { area: perf,  lane: code-fixer }
+  - { area: lint,  lane: code-fixer }

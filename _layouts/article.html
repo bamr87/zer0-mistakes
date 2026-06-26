@@ -160,22 +160,53 @@ layout: default
     </div>
     
     <!-- Category Link -->
+    {% comment %} Category base is configurable (`category_base`, default `/news`).
+       Only link the badge when that category index page actually exists in the
+       build; on a remote-theme Pages consumer the category section is
+       plugin/page-generated and absent, so we render a plain badge instead of a
+       link that 404s (mirrors the tag-badge and footer Quick-Links guard).
+       See issue #204. {% endcomment %}
     {% if page.categories.size > 0 %}
+    {% assign _category_base = site.category_base | default: '/news' %}
+    {% assign _primary_category = page.categories | first %}
+    {% capture _category_url %}{{ _category_base }}/{{ _primary_category | slugify }}/{% endcapture %}
+    {% comment %} Category index pages can live in site.pages (a regular page) or
+       site.posts (a dated section index), so check both. {% endcomment %}
+    {% assign _category_page = site.html_pages | where: "url", _category_url | first %}
+    {% unless _category_page %}
+      {% assign _category_page = site.posts | where: "url", _category_url | first %}
+    {% endunless %}
     <div class="mb-3">
-      <a href="{{ site.baseurl }}/news/{{ page.categories | first | slugify }}/" 
+      {% if _category_page %}
+      <a href="{{ site.baseurl }}{{ _category_url }}"
          class="badge bg-primary text-decoration-none fs-6">
-        <i class="bi bi-folder me-1"></i>{{ page.categories | first }}
+        <i class="bi bi-folder me-1"></i>{{ _primary_category }}
       </a>
+      {% else %}
+      <span class="badge bg-primary fs-6">
+        <i class="bi bi-folder me-1"></i>{{ _primary_category }}
+      </span>
+      {% endif %}
     </div>
     {% endif %}
-    
+
     <!-- Tags -->
+    {% comment %} Only link tag badges when a tags index page actually exists in
+       the build (configurable via `tags_page`, default `/tags/`). On a
+       remote-theme Pages consumer the tags page is plugin/page-generated and
+       absent, so we render plain badges instead of links that 404. See #204. {% endcomment %}
     {% if page.tags and page.tags.size > 0 %}
+      {% assign _tags_base = site.tags_page | default: '/tags/' %}
+      {% assign _tags_page = site.html_pages | where: "url", _tags_base | first %}
       <div class="post-tags mb-3">
         {% for tag in page.tags %}
-          <a href="{{ site.baseurl }}/tags/#{{ tag | slugify }}" class="badge bg-secondary text-decoration-none me-1">
-            <i class="bi bi-tag me-1"></i>{{ tag }}
-          </a>
+          {% if _tags_page %}
+            <a href="{{ site.baseurl }}{{ _tags_base }}#{{ tag | slugify }}" class="badge bg-secondary text-decoration-none me-1">
+              <i class="bi bi-tag me-1"></i>{{ tag }}
+            </a>
+          {% else %}
+            <span class="badge bg-secondary me-1"><i class="bi bi-tag me-1"></i>{{ tag }}</span>
+          {% endif %}
         {% endfor %}
       </div>
     {% endif %}
@@ -498,7 +529,7 @@ layout: default
   <!-- ================================ -->
   <!-- COMMENT SYSTEM                   -->
   <!-- ================================ -->
-  {% if page.comments != false and site.giscus %}
+  {% if page.comments != false and site.giscus.enabled %}
     <section class="post-comments mt-5 pt-4 border-top" id="comments">
       <h2 class="h4 mb-4">
         <i class="bi bi-chat-dots me-2"></i>Comments

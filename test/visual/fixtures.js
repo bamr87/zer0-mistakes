@@ -32,6 +32,95 @@ const VIEWPORTS = {
   wideDesktop: { width: 1320, height: 720 },
 };
 
+/**
+ * Width matrix for navbar responsiveness — spans the small-phone floor, the
+ * tablet band, both sides of the lg (992px) inline/offcanvas switch, the
+ * container-query label tiers, and ultra-wide. Each entry is a viewport width
+ * the navbar must render without cutting off or overflowing.
+ */
+const NAV_WIDTHS = [320, 360, 390, 414, 600, 768, 820, 991, 992, 1040, 1140, 1200, 1280, 1320, 1440, 1920];
+
+/**
+ * Measure navbar + page layout in the browser at the current viewport.
+ * Returns a plain object the spec can assert on:
+ *   - docOverflowPx:   worst horizontal overflow of any in-flow element past the
+ *                      viewport, EXCLUDING content that scrolls in its own
+ *                      container (tables/code) and fixed/off-screen chrome
+ *                      (offcanvas). >0 means the page can scroll sideways → the
+ *                      fixed navbar looks "cut off". Robust under overflow-x: clip
+ *                      (uses getBoundingClientRect, not scrollWidth).
+ *   - worstSelector:   tag/id/class of the worst offender (for failure messages)
+ *   - navbarCoversViewport: header right edge reaches the viewport right edge
+ *   - utilWithinViewport:   the search/settings cluster is fully on-screen
+ *   - brandVisible:    the brand logo link is rendered with a non-zero box
+ *   - menuClipsPx:     (lg+) how far the inline menubar's items overflow their
+ *                      track; >0 means top-level items are clipped
+ *   - togglerVisible:  (<lg) the offcanvas hamburger is visible
+ * @param {import('@playwright/test').Page} page
+ */
+async function measureNavbarLayout(page) {
+  return page.evaluate(() => {
+    const cw = document.documentElement.clientWidth;
+    const vw = window.innerWidth;
+    const lg = parseInt(getComputedStyle(document.documentElement)
+      .getPropertyValue('--zer0-bp-lg'), 10) || 992;
+
+    // Worst non-scrollable, in-flow element overflowing the right edge.
+    let worst = null;
+    document.querySelectorAll('#main-content *, header#navbar *').forEach((el) => {
+      const cs = getComputedStyle(el);
+      if (cs.display === 'none' || cs.visibility === 'hidden') return;
+      if (cs.position === 'fixed') return;
+      if (el.closest('.offcanvas, .offcanvas-lg, .modal')) return;
+      const r = el.getBoundingClientRect();
+      if (r.width === 0 || r.right <= cw + 1) return;
+      // Skip elements whose overflow is contained by an ancestor clip/scroll
+      // box (a table wrapper with overflow-x:auto, a hero with overflow:hidden,
+      // etc.) — those never reach the page. The root <html> clip (our safety
+      // net) is deliberately EXCLUDED so genuinely-overflowing content it is
+      // merely hiding is still reported.
+      let contained = false, n = el.parentElement;
+      while (n && n !== document.body && n !== document.documentElement) {
+        if (getComputedStyle(n).overflowX !== 'visible') { contained = true; break; }
+        n = n.parentElement;
+      }
+      if (contained) return;
+      if (!worst || r.right > worst.right) {
+        worst = {
+          right: r.right,
+          sel: el.tagName.toLowerCase() + (el.id ? '#' + el.id : '') +
+               (el.className && typeof el.className === 'string'
+                 ? '.' + el.className.trim().split(/\s+/).slice(0, 2).join('.') : ''),
+        };
+      }
+    });
+
+    const header = document.getElementById('navbar');
+    const util = document.querySelector('#navbar .navbar-utility-controls');
+    const brand = document.querySelector('#navbar a.navbar-brand');
+    const navList = document.querySelector('#bdNavbar .navbar-nav');
+    const toggler = document.querySelector(
+      '.bd-navbar-toggle.d-lg-none button.navbar-toggler[data-bs-target="#bdNavbar"]'
+    );
+
+    const hb = header ? header.getBoundingClientRect() : null;
+    const ub = util ? util.getBoundingClientRect() : null;
+    const bb = brand ? brand.getBoundingClientRect() : null;
+    const tb = toggler ? toggler.getBoundingClientRect() : null;
+
+    return {
+      vw, cw, lg,
+      docOverflowPx: worst ? Math.round(worst.right - cw) : 0,
+      worstSelector: worst ? worst.sel : null,
+      navbarCoversViewport: hb ? Math.abs(hb.right - cw) <= 2 && hb.left <= 1 : false,
+      utilWithinViewport: ub ? ub.right <= cw + 1 && ub.left >= -1 : null,
+      brandVisible: bb ? bb.width > 0 && bb.height > 0 : false,
+      menuClipsPx: navList ? Math.max(0, Math.round(navList.scrollWidth - navList.clientWidth)) : 0,
+      togglerVisible: tb ? tb.width > 0 && tb.height > 0 : false,
+    };
+  });
+}
+
 /** Canonical routes exercised by ui-refresh.spec.js (skip when 404). */
 const UI_ROUTES = {
   home: '/',
@@ -185,6 +274,8 @@ module.exports = {
   ADMIN_PAGES,
   SKINS,
   VIEWPORTS,
+  NAV_WIDTHS,
+  measureNavbarLayout,
   UI_ROUTES,
   waitForJekyll,
   gotoBeforeScrollSpy,

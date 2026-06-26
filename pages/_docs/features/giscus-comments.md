@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-06-15T00:00:00.000Z
+lastmod: 2026-06-23T00:00:00.000Z
 title: Giscus Comments
 description: Integrate GitHub Discussions-powered comments into your Jekyll site using Giscus - a modern, privacy-friendly alternative to Disqus.
 preview: /images/previews/giscus-comments.png
@@ -91,12 +91,13 @@ The `data-repo` value is filled in automatically from `site.repository`
 ## Verify it works
 
 The comment section renders at the bottom of the `article`, `note`, and
-`notebook` layouts. The gating differs slightly by layout:
+`notebook` layouts, gated consistently on `page.comments != false` **and**
+`site.giscus.enabled`. Keeping `enabled: true` in the config block renders
+comments on all three layouts.
 
-- `article.html` renders comments when `site.giscus` exists (the block is present).
-- `note.html` and `notebook.html` render comments when `site.giscus.enabled` is `true`.
-
-Keeping `enabled: true` in the config block satisfies all three.
+Blog posts (`pages/_posts/`, the `article` layout) and notes/notebooks show
+comments by default; docs and general pages do not. Override per page with
+`comments: false` (or `comments: true`) in a page's front matter.
 
 1. Build the site with the dev config:
 
@@ -172,6 +173,44 @@ comments: false
 
 ---
 
+## Building conversations with Claude Code
+
+Because comments are GitHub Discussions, you can read, draft, and reply to them
+from the terminal — and Claude Code can drive the whole flow. Two pieces ship
+with the theme:
+
+- **`scripts/bin/giscus-discussions`** — a `gh`-powered engine with subcommands
+  `categories`, `list`, `thread`, `draft`, `seed`, and `post`.
+- **The `giscus-conversation` skill** (`.github/skills/giscus-conversation/`) —
+  tells Claude Code how to read a page's thread, draft a maintainer reply with
+  the reader's context in mind, and publish it.
+
+```bash
+# What categories exist (and their node IDs for _config.yml)?
+./scripts/bin/giscus-discussions categories
+
+# Which pages have comment threads?
+./scripts/bin/giscus-discussions list
+
+# Read the full conversation for a page
+./scripts/bin/giscus-discussions thread --page /posts/2025/01/21/remote-work-revolution/
+
+# Draft a reply scaffold (thread context + a REPLY section to fill in)
+./scripts/bin/giscus-discussions draft --number 7 --out reply.md
+
+# Preview, then post (writes go to public Discussions — always --dry-run first)
+./scripts/bin/giscus-discussions post --number 7 --body-file reply.md --reply-to DC_xxx --dry-run
+```
+
+The script reads the repository from `gh repo view` and the category from
+`_config.yml`; override with `--repo` / `--category-id` (or the `GISCUS_REPO` /
+`GISCUS_CATEGORY_ID` env vars) when working against a fork. Writes (`seed`,
+`post`) are no-ops under `--dry-run`. A read-only
+[`giscus-digest.yml`](https://github.com/bamr87/zer0-mistakes/blob/main/.github/workflows/giscus-digest.yml)
+workflow surfaces new comment activity in the Actions job summary.
+
+---
+
 ## Migration from Disqus
 
 If migrating from Disqus:
@@ -191,7 +230,14 @@ If migrating from Disqus:
 1. **Check repository visibility** — must be public
 2. **Verify Discussions are enabled** on the repository
 3. **Confirm Giscus app is installed** on the repository
-4. **Validate configuration IDs** match your repository
+4. **Validate configuration IDs** match your repository — `data-repo-id` must
+   belong to **this** repo (a forked-in ID from the upstream repo will make the
+   widget show a "repository does not match" error even though the script tag
+   renders). Regenerate at [giscus.app](https://giscus.app/), or list valid
+   category IDs with `./scripts/bin/giscus-discussions categories`.
+5. **Check the config key spelling** — it must be `giscus:` (not `gisgus:`);
+   the layouts read `site.giscus.enabled`. The
+   `Giscus Comments Configuration` core test guards this.
 
 ### Theme Not Matching
 

@@ -1,0 +1,509 @@
+#!/bin/bash
+
+# giscus-discussions — read, draft, and post the GitHub Discussions that back
+# the site's Giscus comment threads. This is the engine the Claude Code
+# `giscus-conversation` skill drives to build conversations from page comments.
+#
+# Subcommands:
+#   categories   List the repo's discussion categories + node IDs (setup helper)
+#   list         List discussions in the configured Giscus category
+#   thread       Print a discussion's full conversation (comments + replies)
+#   draft        Write a Markdown draft scaffold (thread context + reply slot)
+#   seed         Create a new discussion for a page (starts a conversation)
+#   post         Add a comment or reply to an existing discussion
+#
+# Reads owner/repo from `gh repo view` and the Giscus category from
+# _config.yml (giscus.data-category-id). Both are overridable via flags/env.
+#
+# Usage: ./scripts/bin/giscus-discussions <subcommand> [options]
+# Requires: gh (authenticated). Writes (seed/post) honor --dry-run.
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_DIR="$SCRIPT_DIR/../lib"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+# shellcheck source=/dev/null
+source "$LIB_DIR/common.sh"
+
+# ---------------------------------------------------------------------------
+# Configuration resolution
+# ---------------------------------------------------------------------------
+
+CONFIG_FILE="$REPO_ROOT/_config.yml"
+
+# Owner/repo: env GISCUS_REPO or --repo override; else derive from gh.
+REPO_NWO="${GISCUS_REPO:-}"
+# Giscus category node id: env GISCUS_CATEGORY_ID or --category-id; else config.
+CATEGORY_ID="${GISCUS_CATEGORY_ID:-}"
+
+resolve_repo() {
+    if [[ -n "$REPO_NWO" ]]; then
+        return 0
+    fi
+    require_command gh "install: https://cli.github.com/"
+    REPO_NWO="$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || true)"
+    if [[ -z "$REPO_NWO" ]]; then
+        error "Could not determine repository. Pass --repo owner/name or set GISCUS_REPO."
+    fi
+}
+
+# Extract giscus.data-category-id from _config.yml (block-scoped).
+config_category_id() {
+    [[ -f "$CONFIG_FILE" ]] || return 0
+    awk '/^giscus:/{f=1;next} f&&/^[^[:space:]#]/{f=0} f' "$CONFIG_FILE" \
+        | grep -E '^[[:space:]]+data-category-id:' \
+        | head -1 \
+        | sed -E 's/^[[:space:]]+data-category-id:[[:space:]]*//; s/^"//; s/"[[:space:]]*$//; s/^'"'"'//; s/'"'"'[[:space:]]*$//'
+}
+
+resolve_category() {
+    if [[ -n "$CATEGORY_ID" ]]; then
+        return 0
+    fi
+    CATEGORY_ID="$(config_category_id)"
+    if [[ -z "$CATEGORY_ID" ]]; then
+        error "No category id. Pass --category-id, set GISCUS_CATEGORY_ID, or fix giscus.data-category-id in _config.yml (see: $0 categories)."
+    fi
+}
+
+owner_of() { printf '%s' "${1%%/*}"; }
+name_of()  { printf '%s' "${1##*/}"; }
+
+# Normalize a page path so it matches a Giscus pathname-mapped discussion title.
+normalize_page() {
+    local p="$1"
+    if [[ "$p" == *"://"* ]]; then
+        p="${p#*://}"   # strip scheme
+        p="/${p#*/}"    # strip host, keep path with a leading slash
+    fi
+    [[ "$p" != /* ]] && p="/$p"
+    printf '%s' "$p"
+}
+
+# ---------------------------------------------------------------------------
+# GraphQL helpers
+# ---------------------------------------------------------------------------
+
+repo_node_id() {
+    gh api graphql -f query='
+      query($owner:String!,$name:String!){
+        repository(owner:$owner,name:$name){ id }
+      }' -F owner="$(owner_of "$REPO_NWO")" -F name="$(name_of "$REPO_NWO")" \
+      --jq '.data.repository.id'
+}
+
+# Find a discussion number whose title equals the (normalized) page path.
+# Echoes the number, or nothing if not found.
+discussion_number_for_page() {
+    local page; page="$(normalize_page "$1")"
+    local page_noslash="${page%/}"
+    gh api graphql -f query='
+      query($owner:String!,$name:String!,$categoryId:ID,$after:String){
+        repository(owner:$owner,name:$name){
+          discussions(first:100,after:$after,categoryId:$categoryId){
+            nodes{ number title }
+            pageInfo{ hasNextPage endCursor }
+          }
+        }
+      }' -F owner="$(owner_of "$REPO_NWO")" -F name="$(name_of "$REPO_NWO")" \
+         -f categoryId="$CATEGORY_ID" \
+      --jq ".data.repository.discussions.nodes[]
+            | select(.title == \"$page\" or .title == \"$page_noslash\")
+            | .number" | head -1
+}
+
+discussion_node_id() {
+    local number="$1"
+    gh api graphql -f query='
+      query($owner:String!,$name:String!,$number:Int!){
+        repository(owner:$owner,name:$name){ discussion(number:$number){ id } }
+      }' -F owner="$(owner_of "$REPO_NWO")" -F name="$(name_of "$REPO_NWO")" \
+         -F number="$number" \
+      --jq '.data.repository.discussion.id'
+}
+
+# ---------------------------------------------------------------------------
+# Subcommand: categories
+# ---------------------------------------------------------------------------
+
+cmd_categories() {
+    resolve_repo
+    info "Discussion categories for $REPO_NWO:"
+    gh api graphql -f query='
+      query($owner:String!,$name:String!){
+        repository(owner:$owner,name:$name){
+          hasDiscussionsEnabled
+          discussionCategories(first:30){ nodes{ id name slug } }
+        }
+      }' -F owner="$(owner_of "$REPO_NWO")" -F name="$(name_of "$REPO_NWO")" \
+      --jq '.data.repository as $r
+            | if $r.hasDiscussionsEnabled then empty
+              else "WARNING: Discussions are NOT enabled on this repo." end,
+              ($r.discussionCategories.nodes[] | "  \(.id)\t\(.name)")'
+}
+
+# ---------------------------------------------------------------------------
+# Subcommand: list
+# ---------------------------------------------------------------------------
+
+cmd_list() {
+    local as_json=false
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --repo) REPO_NWO="$2"; shift 2 ;;
+            --category-id) CATEGORY_ID="$2"; shift 2 ;;
+            --json) as_json=true; shift ;;
+            *) error "list: unknown option '$1'" ;;
+        esac
+    done
+    resolve_repo; resolve_category
+    local owner name; owner="$(owner_of "$REPO_NWO")"; name="$(name_of "$REPO_NWO")"
+    local query='
+      query($owner:String!,$name:String!,$categoryId:ID){
+        repository(owner:$owner,name:$name){
+          discussions(first:100,categoryId:$categoryId,orderBy:{field:UPDATED_AT,direction:DESC}){
+            nodes{ number title url updatedAt comments{ totalCount } author{ login } }
+          }
+        }
+      }'
+    if [[ "$as_json" == true ]]; then
+        gh api graphql -f query="$query" -F owner="$owner" -F name="$name" \
+            -f categoryId="$CATEGORY_ID" --jq '.data.repository.discussions.nodes'
+        return 0
+    fi
+    local out
+    out="$(gh api graphql -f query="$query" -F owner="$owner" -F name="$name" \
+        -f categoryId="$CATEGORY_ID" \
+        --jq '.data.repository.discussions.nodes[]
+              | "#\(.number)\t\(.comments.totalCount) comment(s)\t\(.title)\n\t\(.url)"')"
+    if [[ -z "$out" ]]; then
+        info "No discussions yet in the Giscus category for $REPO_NWO."
+        info "Giscus creates one on the first visitor comment, or seed one:"
+        info "  $0 seed --page /path/ --title ... --body ..."
+        return 0
+    fi
+    info "Discussions in the Giscus category for $REPO_NWO:"
+    printf '%s\n' "$out"
+}
+
+# ---------------------------------------------------------------------------
+# Subcommand: thread
+# ---------------------------------------------------------------------------
+
+THREAD_QUERY='
+  query($owner:String!,$name:String!,$number:Int!){
+    repository(owner:$owner,name:$name){
+      discussion(number:$number){
+        number title url body createdAt id
+        author{ login }
+        comments(first:100){
+          totalCount
+          nodes{
+            id body createdAt author{ login }
+            replies(first:100){ nodes{ id body createdAt author{ login } } }
+          }
+        }
+      }
+    }
+  }'
+
+# jq program that renders a discussion thread as readable Markdown.
+THREAD_MD_JQ='
+  .data.repository.discussion as $d
+  | "# \($d.title)\n\n- URL: \($d.url)\n- Discussion: #\($d.number) (node: \($d.id))\n- Opened by: @\($d.author.login // "unknown") on \($d.createdAt)\n\n## Original post\n\n\($d.body)\n\n## Comments (\($d.comments.totalCount))\n"
+  + ( [ $d.comments.nodes[]
+        | "\n### @\(.author.login // "unknown") — \(.createdAt)\n_comment id: `\(.id)`_\n\n\(.body)\n"
+          + ( if (.replies.nodes | length) > 0
+              then "\n" + ( [ .replies.nodes[]
+                              | "  - **@\(.author.login // "unknown")** (\(.createdAt)) _reply id: `\(.id)`_\n\n    \(.body | gsub("\n"; "\n    "))" ] | join("\n") ) + "\n"
+              else "" end )
+      ] | join("\n---\n") )'
+
+# Render a thread as Markdown (uses gh's bundled jq — no external jq needed).
+fetch_thread_md() {
+    local number="$1"
+    gh api graphql -f query="$THREAD_QUERY" \
+        -F owner="$(owner_of "$REPO_NWO")" -F name="$(name_of "$REPO_NWO")" \
+        -F number="$number" --jq "$THREAD_MD_JQ"
+}
+
+# Fetch the raw discussion JSON.
+fetch_thread_raw() {
+    local number="$1"
+    gh api graphql -f query="$THREAD_QUERY" \
+        -F owner="$(owner_of "$REPO_NWO")" -F name="$(name_of "$REPO_NWO")" \
+        -F number="$number"
+}
+
+resolve_number_arg() {
+    # Sets NUMBER from --number, --url, or --page. Used by thread/draft/post.
+    local number="" url="" page=""
+    REMAINING_ARGS=()
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --number) number="$2"; shift 2 ;;
+            --url) url="$2"; shift 2 ;;
+            --page) page="$2"; shift 2 ;;
+            --repo) REPO_NWO="$2"; shift 2 ;;
+            --category-id) CATEGORY_ID="$2"; shift 2 ;;
+            *) REMAINING_ARGS+=("$1"); shift ;;
+        esac
+    done
+    resolve_repo
+    if [[ -n "$number" ]]; then
+        NUMBER="$number"
+    elif [[ -n "$url" ]]; then
+        NUMBER="${url##*/}"
+    elif [[ -n "$page" ]]; then
+        resolve_category
+        NUMBER="$(discussion_number_for_page "$page")"
+        [[ -z "$NUMBER" ]] && error "No discussion found for page '$page'. Seed one with: $0 seed --page '$page' --title ... --body ..."
+    else
+        error "Provide --number N, --url URL, or --page PATH."
+    fi
+}
+
+cmd_thread() {
+    local as_json=false
+    local args=()
+    for a in "$@"; do
+        [[ "$a" == "--json" ]] && { as_json=true; continue; }
+        args+=("$a")
+    done
+    resolve_number_arg "${args[@]}"
+    if [[ "$as_json" == true ]]; then
+        fetch_thread_raw "$NUMBER"
+    else
+        fetch_thread_md "$NUMBER"
+    fi
+}
+
+# ---------------------------------------------------------------------------
+# Subcommand: draft
+# ---------------------------------------------------------------------------
+
+cmd_draft() {
+    local out=""
+    local args=()
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --out) out="$2"; shift 2 ;;
+            *) args+=("$1"); shift ;;
+        esac
+    done
+    resolve_number_arg "${args[@]}"
+    [[ -z "$out" ]] && out="$REPO_ROOT/giscus-draft-${NUMBER}.md"
+    {
+        echo "<!-- Giscus reply draft. Edit the REPLY section, then post with:"
+        echo "       ./scripts/bin/giscus-discussions post --number $NUMBER --body-file \"$out\" [--reply-to <comment id>] [--dry-run]"
+        echo "     Everything above the REPLY marker is context and is NOT posted. -->"
+        echo
+        echo "## Conversation context"
+        echo
+        fetch_thread_md "$NUMBER"
+        echo
+        echo "<!-- ===== REPLY (everything below this line is your draft) ===== -->"
+        echo
+        echo "_Draft your reply here._"
+        echo
+    } > "$out"
+    success "Draft scaffold written: $out"
+    info "Fill in the REPLY section, then: $0 post --number $NUMBER --body-file \"$out\" --reply-to <id> --dry-run"
+}
+
+# Extract just the reply portion (everything below the REPLY marker) from a
+# draft file produced by `draft`, dropping leading blank lines.
+extract_reply_body() {
+    awk 'f{print} /===== REPLY/{f=1}' "$1" | sed '/./,$!d'
+}
+
+# ---------------------------------------------------------------------------
+# Subcommand: seed (create a new discussion for a page)
+# ---------------------------------------------------------------------------
+
+cmd_seed() {
+    local page="" title="" body="" body_file=""
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --page) page="$2"; shift 2 ;;
+            --title) title="$2"; shift 2 ;;
+            --body) body="$2"; shift 2 ;;
+            --body-file) body_file="$2"; shift 2 ;;
+            --repo) REPO_NWO="$2"; shift 2 ;;
+            --category-id) CATEGORY_ID="$2"; shift 2 ;;
+            --dry-run) DRY_RUN=true; shift ;;
+            *) error "seed: unknown option '$1'" ;;
+        esac
+    done
+    resolve_repo; resolve_category
+    [[ -z "$page" ]] && error "seed: --page PATH is required (Giscus maps the discussion title to the page path)."
+    page="$(normalize_page "$page")"
+    [[ -z "$title" ]] && title="$page"
+    if [[ -n "$body_file" ]]; then
+        require_file "$body_file" "body file"
+        body="$(cat "$body_file")"
+    fi
+    [[ -z "$body" ]] && error "seed: provide --body TEXT or --body-file FILE."
+
+    local existing; existing="$(discussion_number_for_page "$page" || true)"
+    if [[ -n "$existing" ]]; then
+        error "A discussion already exists for '$page' (#$existing). Use: $0 post --number $existing ..."
+    fi
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        info "[DRY RUN] Would create discussion in $REPO_NWO (category $CATEGORY_ID):"
+        info "  title: $title"
+        info "  body:  $(printf '%s' "$body" | head -c 200)"
+        return 0
+    fi
+
+    local repo_id; repo_id="$(repo_node_id)"
+    gh api graphql -f query='
+      mutation($repoId:ID!,$categoryId:ID!,$title:String!,$body:String!){
+        createDiscussion(input:{repositoryId:$repoId,categoryId:$categoryId,title:$title,body:$body}){
+          discussion{ number url }
+        }
+      }' -F repoId="$repo_id" -F categoryId="$CATEGORY_ID" \
+         -F title="$title" -F body="$body" \
+      --jq '.data.createDiscussion.discussion | "Created discussion #\(.number): \(.url)"'
+    success "Discussion created for $page"
+}
+
+# ---------------------------------------------------------------------------
+# Subcommand: post (comment on / reply to an existing discussion)
+# ---------------------------------------------------------------------------
+
+cmd_post() {
+    local number="" url="" page="" body="" body_file="" reply_to=""
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --number) number="$2"; shift 2 ;;
+            --url) url="$2"; shift 2 ;;
+            --page) page="$2"; shift 2 ;;
+            --body) body="$2"; shift 2 ;;
+            --body-file) body_file="$2"; shift 2 ;;
+            --reply-to) reply_to="$2"; shift 2 ;;
+            --repo) REPO_NWO="$2"; shift 2 ;;
+            --category-id) CATEGORY_ID="$2"; shift 2 ;;
+            --dry-run) DRY_RUN=true; shift ;;
+            *) error "post: unknown option '$1'" ;;
+        esac
+    done
+    resolve_repo
+    # Resolve the target discussion number.
+    if [[ -n "$number" ]]; then
+        NUMBER="$number"
+    elif [[ -n "$url" ]]; then
+        NUMBER="${url##*/}"
+    elif [[ -n "$page" ]]; then
+        resolve_category
+        NUMBER="$(discussion_number_for_page "$page")"
+        [[ -z "$NUMBER" ]] && error "No discussion for page '$page'. Seed one first: $0 seed --page '$page' ..."
+    else
+        error "post: provide --number N, --url URL, or --page PATH."
+    fi
+
+    if [[ -n "$body_file" ]]; then
+        require_file "$body_file" "body file"
+        # If it's a draft scaffold, post only the REPLY section; else the whole file.
+        if grep -q '===== REPLY' "$body_file"; then
+            body="$(extract_reply_body "$body_file")"
+        else
+            body="$(cat "$body_file")"
+        fi
+    fi
+    # Trim leading/trailing blank lines.
+    body="$(printf '%s' "$body" | sed -e 's/[[:space:]]*$//')"
+    [[ -z "${body//[[:space:]]/}" ]] && error "post: empty body. Provide --body TEXT or --body-file FILE with content under the REPLY marker."
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        info "[DRY RUN] Would post to $REPO_NWO discussion #$NUMBER${reply_to:+ (reply to $reply_to)}:"
+        printf '%s\n' "$body" | sed 's/^/    | /'
+        return 0
+    fi
+
+    local disc_id; disc_id="$(discussion_node_id "$NUMBER")"
+    [[ -z "$disc_id" || "$disc_id" == "null" ]] && error "Could not resolve discussion #$NUMBER on $REPO_NWO."
+
+    if [[ -n "$reply_to" ]]; then
+        gh api graphql -f query='
+          mutation($discussionId:ID!,$body:String!,$replyToId:ID!){
+            addDiscussionComment(input:{discussionId:$discussionId,body:$body,replyToId:$replyToId}){
+              comment{ url }
+            }
+          }' -F discussionId="$disc_id" -F body="$body" -F replyToId="$reply_to" \
+          --jq '"Posted reply: \(.data.addDiscussionComment.comment.url)"'
+    else
+        gh api graphql -f query='
+          mutation($discussionId:ID!,$body:String!){
+            addDiscussionComment(input:{discussionId:$discussionId,body:$body}){
+              comment{ url }
+            }
+          }' -F discussionId="$disc_id" -F body="$body" \
+          --jq '"Posted comment: \(.data.addDiscussionComment.comment.url)"'
+    fi
+    success "Comment posted to discussion #$NUMBER"
+}
+
+# ---------------------------------------------------------------------------
+# Usage / dispatch
+# ---------------------------------------------------------------------------
+
+show_usage() {
+    cat << 'EOF'
+giscus-discussions — read, draft, and post the GitHub Discussions behind Giscus comments
+
+USAGE:
+    ./scripts/bin/giscus-discussions <subcommand> [options]
+
+SUBCOMMANDS:
+    categories                 List discussion categories + node IDs (setup helper)
+    list [--json]              List discussions in the Giscus category
+    thread <target> [--json]   Show a discussion's full conversation
+    draft  <target> [--out F]  Write a Markdown reply-draft scaffold
+    seed   --page P --title T (--body B | --body-file F) [--dry-run]
+                               Create a new discussion for a page
+    post   <target> (--body B | --body-file F) [--reply-to ID] [--dry-run]
+                               Add a comment / reply to an existing discussion
+
+  <target> is one of:  --number N | --url URL | --page /path/
+
+COMMON OPTIONS:
+    --repo owner/name          Override repository (default: gh repo view)
+    --category-id ID           Override Giscus category (default: _config.yml)
+    --dry-run                  Preview writes (seed/post) without calling the API
+
+ENVIRONMENT:
+    GISCUS_REPO                Default --repo
+    GISCUS_CATEGORY_ID         Default --category-id
+
+EXAMPLES:
+    ./scripts/bin/giscus-discussions categories
+    ./scripts/bin/giscus-discussions list
+    ./scripts/bin/giscus-discussions thread --page /posts/2025/01/21/remote-work-revolution/
+    ./scripts/bin/giscus-discussions draft  --number 7 --out /tmp/reply.md
+    ./scripts/bin/giscus-discussions post   --number 7 --body-file /tmp/reply.md --reply-to DC_xxx --dry-run
+    ./scripts/bin/giscus-discussions seed   --page /posts/new/ --title "/posts/new/" --body "Discussion thread." --dry-run
+
+Requires an authenticated GitHub CLI (`gh auth login`).
+EOF
+}
+
+main() {
+    local sub="${1:-}"
+    [[ $# -gt 0 ]] && shift || true
+    case "$sub" in
+        categories) cmd_categories "$@" ;;
+        list)       cmd_list "$@" ;;
+        thread)     cmd_thread "$@" ;;
+        draft)      cmd_draft "$@" ;;
+        seed)       cmd_seed "$@" ;;
+        post)       cmd_post "$@" ;;
+        -h|--help|help|"") show_usage ;;
+        *) error "Unknown subcommand '$sub' (try: $0 --help)" ;;
+    esac
+}
+
+main "$@"
