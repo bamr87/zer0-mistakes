@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.21.0](https://github.com/bamr87/zer0-mistakes/compare/v1.20.2...v1.21.0) (2026-06-26)
+
+
+### Features
+
+* **automation:** committee planning + specialized executor agents (Phase 4) ([#226](https://github.com/bamr87/zer0-mistakes/issues/226)) ([1e9016b](https://github.com/bamr87/zer0-mistakes/commit/1e9016b869ff33f26fc60d3ae27e7fcd0216e802))
+* **automation:** issue intake + /issue-implement routing (Phases 2-3) ([#225](https://github.com/bamr87/zer0-mistakes/issues/225)) ([21a7008](https://github.com/bamr87/zer0-mistakes/commit/21a70080b2814827bd390201e1ec76fb2b9a874e))
+* **scripts:** issue adoption in sync-backlog (Phase 1) ([#224](https://github.com/bamr87/zer0-mistakes/issues/224)) ([512068e](https://github.com/bamr87/zer0-mistakes/commit/512068e2556be7fe3a4c7870d9feab0ca52955d8))
+
+## [1.20.2](https://github.com/bamr87/zer0-mistakes/compare/v1.20.1...v1.20.2) (2026-06-25)
+
+
+### Bug Fixes
+
+* **navigation:** stop fixed navbar being cut off by page overflow ([#215](https://github.com/bamr87/zer0-mistakes/issues/215)) ([8c32563](https://github.com/bamr87/zer0-mistakes/commit/8c325633ab7f82f96fa5605716d995fc84935af9))
+* **release:** re-sync Gemfile.lock and package-lock.json to 1.20.1 ([#216](https://github.com/bamr87/zer0-mistakes/issues/216)) ([294575b](https://github.com/bamr87/zer0-mistakes/commit/294575b6b70c1a2ee7f08e839457dcd30625043b))
+
+## [1.20.1](https://github.com/bamr87/zer0-mistakes/compare/v1.20.0...v1.20.1) (2026-06-24)
+
+
+### Bug Fixes
+
+* harden remote-theme consumer experience + vendor cytoscape ([#205](https://github.com/bamr87/zer0-mistakes/issues/205)) ([c6b0312](https://github.com/bamr87/zer0-mistakes/commit/c6b0312312842c9bf88fccd81472483fb4d15284))
+* **layouts:** render hero image for breaking posts, not just featured ([#189](https://github.com/bamr87/zer0-mistakes/issues/189)) ([4473a07](https://github.com/bamr87/zer0-mistakes/commit/4473a072fcc5d1018a196f8be94af5e0ba31620a))
+
 ## [1.20.0](https://github.com/bamr87/zer0-mistakes/compare/v1.19.0...v1.20.0) (2026-06-22)
 
 
@@ -32,36 +57,89 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Visual-evidence standard + reusable evidence kit.** UI/behavioural changes
+  now ship a regression test **and** before/after visual evidence, surfaced in
+  release notes and enforced in CI:
+  - `test/visual/evidence-kit.mjs` — a config-driven generator that drives the
+    live site across a viewport matrix + configurations, measures page overflow
+    in before/after states, composes labelled montages (Playwright, no
+    ImageMagick), and writes `metrics.json` + a CHANGELOG snippet.
+  - `.github/skills/visual-evidence/SKILL.md` + `visual-evidence.instructions.md`
+    codify the standard (and how to file issues a fix uncovers into the backlog
+    loop). Indexed from `AGENTS.md`, `CLAUDE.md`, and the instructions README.
+  - `.github/workflows/evidence-gate.yml` — a required check that fails a UI PR
+    missing the test/evidence (opt-out label `skip-evidence`).
+  - **Autonomy policy extended** (`continuous-evolution.md`,
+    `backlog-implement.prompt.md`, `auto-merge.yml`): a `risk: low` **fix** that
+    ships tests + evidence is now auto-merge-eligible alongside docs/deps/lint.
+
 ### Fixed
-- **Giscus comments now actually render.** The config block was keyed `gisgus:`
-  while every layout and the include read `site.giscus.*`, so `site.giscus` was
-  always `nil` and comments rendered nowhere. Renamed the key to `giscus:`
-  (`_config.yml`). Fixing the gate also surfaced a latent bug: the include's own
-  header comment carried a live self-include example written as a Liquid tag
-  pointing at the bare filename (without the `content/` path); because Liquid
-  evaluates tags even inside HTML comments, it recursively tried to include the
-  wrong path and broke the build once the gate passed — the header was rewritten
-  without any live Liquid. Replaced the stale `data-repo-id` /
-  `data-category-id` (they belonged to the upstream fork's repository, which
-  would trip a "repository does not match" error in the widget) with this repo's
-  IDs and the Giscus-recommended **Announcements** category.
+- **Navbar no longer appears "cut off" at certain widths.** The root cause was
+  page-level horizontal overflow, not the navbar itself: because the header is
+  `position: fixed`, any element that pushed the page wider than the viewport
+  (a wide markdown table, a long inline-code token, an unwrapped Bootstrap
+  `.row`) created a sideways scrollbar and left the navbar's right edge
+  uncovered. Fixes:
+  - Wide content tables now scroll **inside** their `.content-table-wrapper`
+    card (`overflow-x: auto`) instead of overflowing the page — the wrapper that
+    `table-copy.js` injects previously had `overflow: visible`, which also
+    bypassed the existing mobile responsive-table fallback.
+  - Long unbroken inline-code tokens wrap in content areas instead of forcing a
+    horizontal scrollbar.
+  - A theme-wide `html { overflow-x: clip }` safety net guarantees no stray
+    element can make the fixed navbar look cut off. `clip` is used instead of
+    `hidden` so `position: sticky` (docs sidebar / TOC) keeps working; wide
+    content keeps its own local scroll so nothing is hidden.
+  - The mobile menu/settings offcanvas width is clamped (`min(21rem, 86vw)`) so
+    the slide-in panel and its close button always fit narrow phones, instead of
+    Bootstrap's fixed 400px overflowing the viewport.
+- **Giscus comments were silently disabled** ([#201](https://github.com/bamr87/zer0-mistakes/issues/201)).
+  `_config.yml` defined the comment block under the misspelled key `gisgus:`
+  while every template reads `site.giscus`, so comments never rendered. Renamed
+  the key to `giscus:`. Fixing this also surfaced and fixed a latent
+  include-path error in `_includes/content/giscus.html` (a literal
+  `include giscus.html` Liquid tag inside an HTML doc comment) that only fired
+  once comments were enabled.
+- **Theme chrome no longer injects internal links that 404 for remote-theme
+  Pages consumers** ([#204](https://github.com/bamr87/zer0-mistakes/issues/204)).
+  Tag badges (`article`/`note`/`notebook`), the breadcrumb collection-root crumb,
+  the local-graph "Full graph" link, and author byline profile links are now
+  **existence-gated** — they render as plain text when the target page isn't in
+  the build instead of linking to a 404. The post category base is configurable
+  via `category_base` (default `/news`); the tags page via `tags_page` (default
+  `/tags/`); the full-graph page via `obsidian_graph_url`.
 
 ### Changed
-- **Comment gating is now consistent across layouts.** `article.html` gated on
-  the truthy `site.giscus` object while `note.html` / `notebook.html` gated on
-  `site.giscus.enabled`; all three now use `site.giscus.enabled`, so
-  `enabled: false` disables comments everywhere. Blog posts (`pages/_posts/`)
-  now show comments by default (per-page overridable with `comments: false`).
+- **Vendored cytoscape.js** ([#152](https://github.com/bamr87/zer0-mistakes/issues/152)),
+  the last runtime CDN dependency in the theme. `cytoscape@3.30.0` is committed
+  under `assets/vendor/cytoscape/` (matching the Bootstrap/Icons/Mermaid
+  pattern) and loaded locally by the Obsidian local-graph FAB and full-graph
+  page, so the graph works under strict CSP and offline. Added to
+  `vendor-manifest.json`.
 
 ### Added
-- **Claude-Code-driven comment conversations.** Comments are GitHub Discussions,
-  so a new `scripts/bin/giscus-discussions` engine (`gh` GraphQL) can `list`,
-  read a `thread`, `draft` a reply scaffold, `seed` a discussion, and `post`
-  comments/replies (writes honor `--dry-run`). The `giscus-conversation` skill
-  (`.github/skills/giscus-conversation/SKILL.md`) drives it so Claude Code can
-  read a page's thread and build a maintainer reply. A read-only
-  `giscus-digest.yml` workflow surfaces comment activity in the Actions summary.
-  Guarded by a new `Giscus Comments Configuration` core test.
+- **Dev-mode navbar fit warnings.** On local/dev hosts only, the navbar module
+  logs an actionable `console.warn` when the inline menubar has more top-level
+  items than fit the bar, or when page content overflows the viewport (the usual
+  "navbar looks cut off" cause) — naming the widest offending element. Silent on
+  deployed sites.
+- **Quickstart documentation hub + fork/remote-theme guide (#126).** Fleshes out
+  `pages/_docs/quickstart/` (previously only `bare-minimum.md`): a new
+  `index.md` hub that links the available quickstart paths (bare-minimum,
+  fork-and-deploy, and the step-by-step series), and a full
+  `fork-and-deploy.md` guide covering the standard fork or remote-theme GitHub
+  Pages workflow end to end (choose model → setup → local preview → enable Pages
+  → verify → troubleshoot). Both pages carry annotated screenshots under
+  `assets/images/docs/quickstart/` and score 🟢 excellent in the content
+  reviewer.
+- **Remote-theme consumer checklist doc**
+  ([#203](https://github.com/bamr87/zer0-mistakes/issues/203),
+  [#202](https://github.com/bamr87/zer0-mistakes/issues/202)). New
+  `pages/_docs/deployment/remote-theme-checklist.md` documenting what
+  `remote_theme` does not deliver on GitHub Pages (config, data, plugins) and how
+  to fill each gap — including the hand-authored `/search.json` + `/sitemap/`
+  files that the plugin-only generator can't produce in Pages safe mode.
 - **Contributor workflow guardrails.** New `change-workflow` skill
   (`.github/skills/change-workflow/SKILL.md`) codifying the branch → commit → PR
   flow for any change (branch-first, one concern per PR, stage-by-path,
@@ -71,6 +149,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   artifacts out of feature PRs — and indexed from `AGENTS.md`, `CLAUDE.md`, and
   `.github/instructions/README.md`.
 ### Tests
+- **Navbar responsiveness regression suite.** New
+  `test/visual/navbar-responsive.spec.js` (smoke tier) sweeps a 16-width matrix
+  (320 → 1920px) asserting no page-level horizontal overflow, the fixed header
+  spans the full viewport, the search/settings cluster stays on-screen, the
+  brand renders, and the inline menubar never clips its items. Adds offcanvas-,
+  dropdown-, long-title-, and many-items- fit checks, plus a reusable
+  `measureNavbarLayout()` fixture (overflow detection is element-level so it
+  still catches regressions the `overflow-x: clip` net would otherwise hide).
+- **Unit tests for the `content-review.rb` scoring engine (#166).** New
+  `scripts/test/lib/test_content_review.sh` drives the deterministic content
+  reviewer against synthetic Markdown fixtures using the real production config
+  and schema: asserts a well-formed docs page scores ≥ 80, that removing the
+  required `description` lowers the score and reports the issue, that a closing
+  bare ` ``` ` after a language-tagged fence is not flagged (the v1.18.1
+  regression), and that `--strict` exits non-zero when a file is below the fail
+  threshold (while warn mode exits 0). Runs under `LC_ALL=C` for
+  locale-independence parity with the T-015 guard.
+- **Playwright smoke specs for the search modal and AI chat widget (#167,
+  #168).** New `test/visual/search.spec.js` covers the site-wide search modal
+  (ZER0-032): the `/` shortcut opens it and focuses the input, Escape closes it,
+  a query populates results from `/search.json`, and opening search closes the
+  Settings offcanvas without stacking backdrops. New `test/visual/ai-chat.spec.js`
+  covers the AI chat widget (ZER0-060): the render guard's positive path (FAB +
+  config present), and the FAB ⇄ panel toggle via click, close button, and
+  Escape — all client-side, no AI backend. Note: the smoke build
+  (`_config.yml,_config_dev.yml`) sets `ai_chat.proxy_ready: true`, so the widget
+  renders in the test environment; the specs assert that real behavior.
+- **CI coverage for the installer wizard and upgrade path (#147).** New
+  `test/test_install_wizard_upgrade.sh` (auto-discovered by the
+  `test_install_*.sh` glob in CI) covers two previously-untested libraries:
+  it drives the non-AI wizard prompt helpers (`_wiz_prompt`, `_wiz_confirm`,
+  `_wiz_choose`) non-interactively with piped answers — defaults, typed input,
+  yes/no confirmation, numbered/by-name menu selection, out-of-range fallback —
+  and exercises `upgrade.sh` end to end: version detection (marker, `_config.yml`
+  fallback, unknown), a detect→migrate→verify run across a version gap, the
+  dry-run (no-write) branch, and the already-current no-op branch.
 - **Unit tests for `sanitize_config_filter.rb` (T-023).** Added 12 Minitest
   specs to `test/test_plugins.rb` covering both regex paths of the
   security-critical Liquid filter: `SENSITIVE_KEY_RE` matches `api_key`,

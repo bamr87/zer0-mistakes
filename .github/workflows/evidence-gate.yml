@@ -1,0 +1,77 @@
+name: Evidence gate
+
+# Enforces the visual-evidence standard (.github/skills/visual-evidence/SKILL.md):
+# a PR that changes UI/behaviour must also add a regression test AND before/after
+# evidence. Genuinely non-visual edits opt out with the `skip-evidence` (or
+# `no-visual-change`) label.
+#
+# The job ALWAYS runs and reports a status (it self-determines applicability),
+# so it can be marked a REQUIRED check in branch protection without the
+# path-filter "skipped required check blocks merge" gotcha. Being required is
+# also what makes it gate auto-merge of fixes.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evidence-gate-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  evidence-gate:
+    name: Visual evidence gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Require test + evidence for UI changes
+        env:
+          BASE: ${{ github.base_ref }}
+          LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+        run: |
+          # Opt-out for genuinely non-visual changes.
+          if echo ",${LABELS}," | grep -qE ',(skip-evidence|no-visual-change),'; then
+            echo "Opt-out label present — evidence gate skipped."
+            exit 0
+          fi
+
+          git fetch --quiet origin "$BASE"
+          changed=$(git diff --name-only "origin/${BASE}...HEAD")
+          echo "Changed files:"; echo "$changed"
+
+          ui=$(echo "$changed" | grep -E '^(_sass/|_includes/|_layouts/|assets/css/|assets/js/)' || true)
+          if [ -z "$ui" ]; then
+            echo "✓ No UI-affecting files changed — gate not applicable."
+            exit 0
+          fi
+
+          spec=$(echo "$changed" | grep -E '^test/visual/.*\.spec\.js$' || true)
+          evidence=$(echo "$changed" | grep -E '^test/visual/evidence/' || true)
+
+          missing=""
+          [ -z "$spec" ]     && missing="${missing}\n  - a regression test (a changed test/visual/*.spec.js)"
+          [ -z "$evidence" ] && missing="${missing}\n  - before/after evidence (files under test/visual/evidence/<slug>/)"
+
+          if [ -n "$missing" ]; then
+            echo "::error::This PR changes UI/behaviour but is missing:${missing}"
+            printf 'This PR changes UI/behaviour but is missing:%b\n' "$missing"
+            echo ""
+            echo "Add them with the visual-evidence skill:"
+            echo "  .github/skills/visual-evidence/SKILL.md"
+            echo "  test/visual/evidence-kit.mjs   (generates the montages + metrics)"
+            echo ""
+            echo "If this change has NO visual or behavioural effect, label the PR"
+            echo "'skip-evidence' (and say why)."
+            exit 1
+          fi
+
+          echo "✓ UI change includes a regression test and before/after evidence."

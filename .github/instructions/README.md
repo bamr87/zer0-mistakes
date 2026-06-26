@@ -23,18 +23,25 @@ This directory contains file-specific instructions for GitHub Copilot to provide
 │   ├── version-control.instructions.md  # Git workflow and releases
 │   ├── backlog.instructions.md       # Tactical backlog schema + sync contract
 │   ├── content-review.instructions.md   # AI content reviewer: SEO/quality + resolution
-│   └── ai-chat.instructions.md       # AI chat assistant + chat-proxy: auth, caps, safety
+│   ├── ai-chat.instructions.md       # AI chat assistant + chat-proxy: auth, caps, safety
+│   └── visual-evidence.instructions.md  # Screenshots + regression tests as the norm for UI changes
 ├── prompts/                         # Reusable agent/chat prompts (.prompt.md)
 │   ├── commit-publish.prompt.md      # Full release pipeline
 │   ├── frontmatter-maintainer.prompt.md  # Front matter audit / fix
 │   ├── content-review.prompt.md      # Content SEO/consistency/polish review
-│   ├── repo-audit.prompt.md          # Review repo → file backlog tasks
+│   ├── repo-audit.prompt.md          # Review repo + triage open issues → backlog
 │   ├── backlog-implement.prompt.md   # Implement next backlog task → PR
+│   ├── issue-implement.prompt.md     # Route one issue → loop-to-green → PR (human-dispatched)
+│   ├── issue-plan.prompt.md          # Planning committee → order-only roadmap_plan.yml
 │   └── seed.prompt.md                # Theme rebuild blueprint
 ├── skills/                          # Operational workflow checklists (SKILL.md)
 │   ├── change-workflow/SKILL.md      # Branch → commit → PR for any change
 │   ├── validate-build/SKILL.md       # Pre-commit / pre-PR validation pipeline
-│   └── content-review/SKILL.md       # Content SEO/consistency/polish review
+│   ├── content-review/SKILL.md       # Content SEO/consistency/polish review
+│   ├── visual-evidence/SKILL.md      # Regression test + before/after evidence for UI changes
+│   └── committee-plan/SKILL.md       # /issue-plan fan-out + order-only synthesis
+├── ../../_data/routing.yml          # area:* → executor lane (issue-implement routing)
+├── ../../.claude/agents/            # Specialized executor + plan-lens agents
 └── seed/                            # Deep architectural blueprint docs
 
 .cursor/
@@ -63,6 +70,7 @@ GitHub Copilot automatically applies these instructions based on the files you'r
 | `backlog.instructions.md`         | `_data/backlog.yml`, `scripts/sync-backlog.*`, `.github/workflows/sync.yml` | Tactical backlog schema, sync contract, ownership rules |
 | `content-review.instructions.md`  | `pages/**/*.md`, `.github/config/content_review.yml`, `.claude/agents/content-reviewer.md`, `scripts/content-review.rb`, `.github/workflows/ai-content-review.yml` | AI content reviewer: per-collection SEO/quality targets, review resolution |
 | `ai-chat.instructions.md`         | `_includes/components/ai-chat.html`, `assets/js/ai-chat.js`, `templates/deploy/chat-proxy/**` | AI chat assistant + chat-proxy: auth modes, server caps, confirmation/safety contracts |
+| `visual-evidence.instructions.md` | `_sass/**`, `_includes/**`, `_layouts/**`, `assets/css/**`, `assets/js/**`, `test/visual/**` | Regression test + before/after evidence required for UI/behavioural changes; surfaced in release notes; enforced by `evidence-gate` |
 
 ## 📖 Main Instructions (copilot-instructions.md)
 

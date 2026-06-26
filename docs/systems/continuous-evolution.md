@@ -57,10 +57,78 @@ not the issues.
 | Audit prompt | `.github/prompts/repo-audit.prompt.md` | `/repo-audit` — review repo, file tasks |
 | Implement prompt | `.github/prompts/backlog-implement.prompt.md` | `/backlog-implement` — build one task, open PR |
 | Auto-merge workflow | `.github/workflows/auto-merge.yml` | Enables native auto-merge for low-risk labelled PRs |
+| Visual-evidence skill | `.github/skills/visual-evidence/SKILL.md` | Standard: regression test + before/after evidence for UI/behavioural changes |
+| Evidence kit | `test/visual/evidence-kit.mjs` | Reusable generator for the before/after montages + metrics |
+| Evidence gate | `.github/workflows/evidence-gate.yml` | Required check: fails a UI PR lacking test+evidence (opt-out `skip-evidence`) |
+| Secret scan | `.github/workflows/secret-scan.yml` | Required gate: fails a PR whose diff/body leaks a credential shape |
+| Forbidden-path guards | `.github/CODEOWNERS` + the `auto-merge.yml` denylist | Block release/CI/plugin/script/version PRs from the auto-merge fast path |
+| Issue intake | `/repo-audit` Phase 1.D | Triages all open issues → `source: issue` tasks (adopted via `links.issue`, no duplicates) |
+| Routing table | `_data/routing.yml` | `area:*` (+ path globs) → executor lane (agent + instructions + skills) |
+| Issue-implement prompt | `.github/prompts/issue-implement.prompt.md` | `/issue-implement <#>` — routed, loop-until-green, one PR (human-dispatched) |
+| Executor agents | `.claude/agents/{code-fixer,theme-ui,infra-scripts,test-author,a11y-fixer,deps-bumper}.md` | The routed lanes (docs reuse `content-reviewer`) |
+| Committee prompt | `.github/prompts/issue-plan.prompt.md` + `committee-plan` skill | `/issue-plan` — 4 read-only lenses → order-only plan |
+| Plan lenses | `.claude/agents/plan-lens-{priority,dependency,risk,test}.md` | Read-only committee perspectives |
+| Plan artifact + sync | `_data/roadmap_plan.yml` · `scripts/sync-plan.rb` (+ `.sh`) | Order-only sequencing + validator + pinned tracking issue |
+| CI self-repair | `.github/workflows/ci-self-repair.yml` + `ci-self-repair.prompt.md` | On a failed CI run for an `auto-fix`-labelled PR, fix the failure by root cause (bounded retries) or gate to draft |
 
 It deliberately reuses the existing **roadmap-sync** pattern
 (`scripts/generate-roadmap.rb` + `.github/workflows/sync.yml`): a Ruby
 generator/validator with `--check`, driven by a path-filtered workflow.
+
+## Issue-first pipeline (the extension)
+
+The loop also ingests **GitHub issues** (human-filed and bot), keeping
+`_data/backlog.yml` the single source of truth — issues are a *mirror*.
+
+1. **Intake (auto).** `/repo-audit` Phase 1.D triages every open issue into a
+   `source: issue` backlog task carrying `links.issue:<#>`, with enriched
+   `area`/`risk`/`priority`/`route`. `sync-backlog.rb` then **adopts** that issue
+   (appends a managed block, preserving the author's text — no duplicate). Issue
+   text is treated as **untrusted data**; external-author issues land `agent-hold`.
+2. **Committee (auto).** `/issue-plan` fans out four read-only lenses (priority,
+   dependency, risk, test-framework) and writes an **order-only** plan to
+   `_data/roadmap_plan.yml` + one pinned tracking issue. It never re-encodes the
+   autonomy policy (below) — eligibility is derived from each task.
+3. **Implement (human-dispatched).** `/issue-implement <#|T-id>` routes the task
+   via `_data/routing.yml` to a specialized executor, **loops build+test+evidence
+   until green and compatible**, documents fully, and opens ONE PR — applying the
+   autonomy label by the same policy. It **STOPs** on any CODEOWNERS path.
+
+The **autonomy policy** below is the single canonical statement; the prompts and
+`plan-lens-risk` point at it rather than restating it.
+
+### Model tiers (per phase)
+
+| Phase | Model | Why |
+|---|---|---|
+| Intake / triage (`/repo-audit` 1.D) | haiku | classification + structured writes |
+| Committee (`/issue-plan` + 4 lenses) | sonnet | DAG / risk / merge reasoning |
+| Implement (`/issue-implement` executors) | opus | real code where quality matters |
+
+Set each via the `/schedule` routine's `--model` and the prompt front matter; no
+phase silently inherits a heavier default.
+
+### Substrate note
+
+The committee prefers Task-subagent fan-out but falls back to **inline sequential
+lenses**, and routing loads lane instructions **inline**, so the pipeline works
+whether or not the cloud-routine runtime can delegate to named subagents.
+
+### CI self-repair (closing the loop post-PR)
+
+The implement loop verifies **before** opening a PR, but local-green ≠ CI-green.
+`.github/workflows/ci-self-repair.yml` closes that gap: on a **failed** CI run
+(`Comprehensive CI Pipeline` / `TEST (Latest Dependencies)`) for a PR that opted
+in via the **`auto-fix`** label, it runs Claude Code headless
+([`/ci-self-repair`](../../.github/prompts/ci-self-repair.prompt.md)) to diagnose
+and fix the failing check **by root cause**, verify locally, and push — bounded by
+a **3-commit retry budget**. If it can't reach green — or the only fix would touch
+a CODEOWNERS path or *weaken* a check (delete a test, `continue-on-error`, lower a
+threshold) — it converts the PR to a **draft** and applies `agent-hold` for a
+human. It uses `workflow_run` (reacts after CI, base-repo context) and only ever
+acts on an **opted-in, same-repo** PR; it deliberately ignores `Evidence gate` and
+`Secret scan` (those must never be auto-"fixed" by removing the gate). `/issue-implement`
+applies `auto-fix` to every ready PR it opens.
 
 ## Task lifecycle
 
@@ -85,14 +153,38 @@ Each task carries `priority` (P0–P3), `area`, `risk`, `effort`, `source`, and
 A PR may **auto-merge** only when ALL hold (enforced by the implement prompt and
 re-checked by `auto-merge.yml`):
 
-- `area` ∈ { `docs`, `deps`, `lint` } **and** `risk: low`
+- `risk: low`
 - no change to public API, `lib/jekyll-theme-zer0/version.rb`, the gemspec, a
   dependency manifest, or a data schema
 - no new runtime dependency
 - all acceptance criteria verified green in CI
+- **and one of:**
+  - the change is non-visual — `area` ∈ { `docs`, `deps`, `lint` }; **or**
+  - it is a low-risk **fix** that ships a passing regression test **and**
+    before/after visual evidence (the [`visual-evidence`](../../.github/skills/visual-evidence/SKILL.md)
+    standard), with the required `evidence-gate` check green.
 
+This is the policy that lets **fixes** automate end-to-end: a `risk: low` bug fix
+proven by a test + evidence is as safe to auto-merge as a docs/deps/lint change.
 Everything else — `feat`, `refactor`, anything `risk: standard` — is **PR-only**
 and waits for a human. CI is the merge gate in every case.
+
+### Evidence & discovered issues — the standard for changes with visuals/tests
+
+Any change that alters what a user sees or how the UI behaves carries, in the same
+PR: a `test/visual/*.spec.js` regression test, before/after evidence under
+`test/visual/evidence/<slug>/` (from `test/visual/evidence-kit.mjs`), and a
+`CHANGELOG.md` link to that evidence (so it appears in release-please release
+notes). The `evidence-gate` check enforces this; `skip-evidence` opts out genuinely
+non-visual edits. Full checklist: the
+[`visual-evidence`](../../.github/skills/visual-evidence/SKILL.md) skill.
+
+When a fix **uncovers a new issue** (e.g. the navbar fix surfaced a
+`version.rb`↔`Gemfile.lock` drift), the fixer files it as a new `_data/backlog.yml`
+task (`source: issue`, referencing the PR) instead of silently fixing it. On merge
+`sync.yml` opens the Issue, and the IMPLEMENT routine picks it up — so a discovered
+issue is recorded and (if `risk: low` with tests+evidence) auto-fixed and
+auto-merged, closing the loop without human prompting.
 
 ### Guardrails
 
@@ -110,7 +202,9 @@ To enable auto-merge of low-risk PRs:
 
 1. **Settings → General → Pull Requests →** check **"Allow auto-merge"**.
 2. **Settings → Branches →** add a protection rule for `main` requiring the CI
-   status checks (from `ci.yml`) to pass before merge.
+   status checks (from `ci.yml`) **and the `evidence-gate` check** to pass before
+   merge. Marking `evidence-gate` required is what makes the test+evidence
+   standard gate auto-merge of fixes.
 
 Without these, the loop still works end-to-end — low-risk PRs just need a human to
 click merge.
@@ -120,13 +214,22 @@ click merge.
 The loop is driven by two scheduled Claude Code routines. Create them with the
 `/schedule` skill (they invoke the committed prompts, so the logic stays in-repo):
 
-- **Routine A — Weekly audit** (e.g. Mondays):
-  *"In the zer0-mistakes repo, run `/repo-audit` and open the backlog PR."*
-- **Routine B — Implementation cadence** (e.g. 2–3×/week):
+- **Routine A — Weekly audit + issue intake** (e.g. Mondays):
+  *"In the zer0-mistakes repo, run `/repo-audit` (includes issue intake) and open
+  the backlog PR."* — model `haiku`; token scope `issues:write` + PR-create.
+- **Routine B — Implementation cadence** (e.g. 2–3×/week, unchanged):
   *"In the zer0-mistakes repo, run `/backlog-implement` for the next open task."*
+- **Routine C — Committee planning** (e.g. Tuesdays, a day behind A):
+  *"In the zer0-mistakes repo, run `/issue-plan` and refresh the plan + pinned
+  issue."* — model `sonnet`.
 
-Both can also be run on demand from an interactive session, and the workflows can
-be triggered manually via `workflow_dispatch`.
+**`/issue-implement` is deliberately NOT scheduled** — per-issue implementation is
+**human-dispatched** (a person runs `/issue-implement <#>`), so nothing
+auto-dispatches code changes. Auto-merge stays a no-op until branch protection is
+enabled.
+
+All routines can also be run on demand from an interactive session, and the
+workflows can be triggered manually via `workflow_dispatch`.
 
 > **Portability:** because all logic lives in the prompt + script files, the same
 > loop can later be driven by a GitHub Actions cron + the Claude Code GitHub

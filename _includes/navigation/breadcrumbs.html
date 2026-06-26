@@ -35,10 +35,28 @@
     {%- assign known_sections = "posts,notebooks,notes,docs" | split: "," -%}
     {%- if known_sections contains section -%}
       {%- assign section_label = section | capitalize -%}
+      {%- comment -%}
+        Only link the collection-root crumb when that index page actually exists
+        in the build (check both standalone pages and collection docs). A pure
+        remote-theme Pages consumer doesn't get e.g. a `/posts/` index, so we
+        render the section name as plain text rather than a link that 404s. #204
+      {%- endcomment -%}
+      {%- assign _section_url = '/' | append: section | append: '/' -%}
+      {%- assign _section_page = site.html_pages | where: "url", _section_url | first -%}
+      {%- unless _section_page -%}
+        {%- for col in site.collections -%}
+          {%- assign _section_page = col.docs | where: "url", _section_url | first -%}
+          {%- if _section_page -%}{%- break -%}{%- endif -%}
+        {%- endfor -%}
+      {%- endunless -%}
       <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-        <a href="{{ '/' | append: section | append: '/' | relative_url }}" itemprop="item">
+        {%- if _section_page -%}
+          <a href="{{ _section_url | relative_url }}" itemprop="item">
+            <span itemprop="name">{{ section_label }}</span>
+          </a>
+        {%- else -%}
           <span itemprop="name">{{ section_label }}</span>
-        </a>
+        {%- endif -%}
         <meta itemprop="position" content="2" />
       </li>
       <li class="breadcrumb-item active" aria-current="page" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">

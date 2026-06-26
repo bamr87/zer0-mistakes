@@ -1,0 +1,38 @@
+{
+  "slug": "component-showcase",
+  "base": "http://localhost:4000",
+  "route": "/about/settings/components/",
+  "issue": 219,
+  "mergeBase": "4c8c74cfb0775feda9103b379ebcecc4874d517f",
+  "before": {
+    "canRender": false,
+    "renderError": "stack level too deep — header-comment usage examples executed and the include recursively included itself",
+    "breadcrumbDemoHrefs": [
+      "/",
+      "/docs/",
+      "/docs/customization/"
+    ],
+    "listGroupDemoHrefs": [
+      "/pages/",
+      "/docs/",
+      "/categories/",
+      "/tags/"
+    ],
+    "absoluteDemoLinks": 7
+  },
+  "after": {
+    "canRender": true,
+    "breadcrumbDemoHrefs": [
+      "#",
+      "#",
+      "#"
+    ],
+    "listGroupDemoHrefs": [
+      "#",
+      "#",
+      "#",
+      "#"
+    ],
+    "absoluteDemoLinks": 0
+  }
+}

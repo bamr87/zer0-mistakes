@@ -61,6 +61,7 @@
         const searchIndexUrl = new URL('/search.json', window.location.origin);
         let searchIndex = null;
         let searchIndexPromise = null;
+        let searchIndexAvailable = true;
         let searchTimeout = null;
 
         const showSearchModal = () => {
@@ -136,13 +137,27 @@
             clearResults();
         });
 
-        // Prevent empty submissions
+        // Prevent empty submissions, and keep submissions in-modal when the
+        // /sitemap/ target isn't published (remote-theme consumers) so the
+        // form's no-JS action doesn't navigate to a 404.
         if (searchForm && searchInput) {
             searchForm.addEventListener('submit', (event) => {
                 if (!searchInput.value.trim()) {
                     event.preventDefault();
                     searchInput.focus();
+                    return;
                 }
+                // The index load is what tells us whether /sitemap/ exists. If it
+                // hasn't resolved yet, hold the navigation, then either render
+                // in-modal (no sitemap) or submit to /sitemap/ (sitemap present).
+                event.preventDefault();
+                loadSearchIndex().then(() => {
+                    if (searchIndexAvailable) {
+                        searchForm.submit();
+                    } else {
+                        triggerSearch();
+                    }
+                });
             });
         }
 
@@ -175,7 +190,11 @@
             if (!items.length) {
                 const empty = document.createElement('div');
                 empty.className = 'text-muted small';
-                empty.textContent = 'No results found.';
+                // Distinguish "the index couldn't be loaded" from "no matches",
+                // so search degrades clearly where /search.json isn't published.
+                empty.textContent = searchIndexAvailable
+                    ? 'No results found.'
+                    : 'Search is unavailable on this site.';
                 resultsContainer.appendChild(empty);
                 return;
             }
@@ -206,11 +225,16 @@
 
             resultsContainer.appendChild(list);
 
-            const viewAll = document.createElement('a');
-            viewAll.className = 'd-block mt-2 small';
-            viewAll.href = `/sitemap/?q=${encodeURIComponent(query)}`;
-            viewAll.textContent = 'View all results';
-            resultsContainer.appendChild(viewAll);
+            // The "view all" target (/sitemap/) ships from the same plugin-only
+            // generator as /search.json; only offer it when the index loaded, so
+            // remote-theme consumers without it aren't sent to a 404.
+            if (searchIndexAvailable) {
+                const viewAll = document.createElement('a');
+                viewAll.className = 'd-block mt-2 small';
+                viewAll.href = `/sitemap/?q=${encodeURIComponent(query)}`;
+                viewAll.textContent = 'View all results';
+                resultsContainer.appendChild(viewAll);
+            }
         }
 
         function escapeHtml(value) {
@@ -262,12 +286,24 @@
             if (searchIndex) return Promise.resolve(searchIndex);
             if (!searchIndexPromise) {
                 searchIndexPromise = fetch(searchIndexUrl.toString())
-                    .then((response) => (response.ok ? response.json() : []))
+                    .then((response) => {
+                        // A missing /search.json (e.g. a remote-theme GitHub Pages
+                        // consumer where the plugin-only generator never ran) is not
+                        // an empty index — record it so the UI can degrade clearly.
+                        if (!response.ok) {
+                            searchIndexAvailable = false;
+                            return [];
+                        }
+                        return response.json();
+                    })
                     .then((data) => {
                         searchIndex = Array.isArray(data) ? data : [];
                         return searchIndex;
                     })
-                    .catch(() => []);
+                    .catch(() => {
+                        searchIndexAvailable = false;
+                        return [];
+                    });
             }
             return searchIndexPromise;
         }

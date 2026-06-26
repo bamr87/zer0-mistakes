@@ -74,8 +74,10 @@ should load them manually):
 | Front matter audit / fix across content | `.github/prompts/frontmatter-maintainer.prompt.md` |
 | Review content for SEO / consistency / polish (per-collection) | `.github/prompts/content-review.prompt.md` |
 | Rebuild the theme from scratch (deep blueprint) | `.github/prompts/seed.prompt.md` |
-| Review the repo and file tactical tasks into the backlog | `.github/prompts/repo-audit.prompt.md` |
+| Review the repo **and triage all open issues** into the backlog | `.github/prompts/repo-audit.prompt.md` |
 | Implement the next open backlog task and open a PR | `.github/prompts/backlog-implement.prompt.md` |
+| Implement ONE issue/task — route → loop-until-green → PR (human-dispatched) | `.github/prompts/issue-implement.prompt.md` |
+| Plan/sequence the open backlog (the planning committee) | `.github/prompts/issue-plan.prompt.md` |
 
 ### Workflow skills
 
@@ -86,7 +88,9 @@ skill before the action it covers.
 | --- | --- |
 | **Starting any change** — branch → commit → PR, splitting mixed work, keeping generated/lock files out of feature PRs | `.github/skills/change-workflow/SKILL.md` |
 | Validating a change before commit/PR (Jekyll build, doctor, tests) | `.github/skills/validate-build/SKILL.md` |
+| **Any UI/behavioural change** — regression test + before/after evidence (required for fixes to auto-merge) | `.github/skills/visual-evidence/SKILL.md` |
 | Reviewing content PRs for SEO/consistency/polish | `.github/skills/content-review/SKILL.md` |
+| Planning/sequencing the backlog (the `/issue-plan` committee fan-out) | `.github/skills/committee-plan/SKILL.md` |
 
 ---
 
@@ -95,8 +99,12 @@ skill before the action it covers.
 This repo runs a self-sustaining backlog loop so AI agents can keep improving it
 between human sessions:
 
-1. **Audit** (`/repo-audit`, scheduled weekly) reviews tests, docs, and roadmap
-   delivery and files tasks into [`_data/backlog.yml`](./_data/backlog.yml).
+1. **Audit + issue intake** (`/repo-audit`, scheduled weekly) reviews tests, docs,
+   and roadmap delivery **and triages all open GitHub issues** into
+   [`_data/backlog.yml`](./_data/backlog.yml) (`source: issue`, adopted via
+   `links.issue` — no duplicates). The committee `/issue-plan` then sequences them
+   and `/issue-implement` (human-dispatched) routes each to a specialized agent.
+   See [`docs/systems/continuous-evolution.md`](./docs/systems/continuous-evolution.md).
 2. **Sync** (`.github/workflows/sync.yml`) mirrors open tasks to GitHub
    Issues (`agent-ready` label) and closes issues for tasks marked `done`.
 3. **Implement** (`/backlog-implement`, scheduled) picks the top open task, builds

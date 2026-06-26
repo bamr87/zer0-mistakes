@@ -675,6 +675,38 @@ test_giscus_comments() {
     return 0
 }
 
+# Regression for issue #219: the reusable component-showcase include must not
+# hardcode absolute demo links (e.g. /docs/, /pages/, /docs/customization/).
+# Such links 404 on any consumer site that lacks those exact routes, making the
+# showcase un-includable. Demo links are kept inert (href="#") instead.
+test_showcase_demo_links() {
+    log_info "Checking component-showcase for hardcoded absolute demo links..."
+
+    cd "$PROJECT_ROOT"
+
+    local showcase="_includes/components/component-showcase.html"
+
+    if [[ ! -f "$showcase" ]]; then
+        log_warning "component-showcase include not found; skipping"
+        return 0
+    fi
+
+    # Any anchor whose href begins with a site-absolute path ("/...") is a
+    # consumer-404 hazard. The home/breadcrumb root and the demo list-group
+    # entries must use inert href="#" links instead.
+    local offenders
+    offenders=$(grep -nE 'href="/' "$showcase" || true)
+
+    if [[ -n "$offenders" ]]; then
+        log_error "component-showcase.html contains hardcoded absolute demo links (404 hazard for consumers):"
+        echo "$offenders"
+        return 1
+    fi
+
+    log_success "component-showcase has no hardcoded absolute demo links"
+    return 0
+}
+
 test_sass_compilation() {
     log_info "Testing Sass compilation..."
     
@@ -750,6 +782,7 @@ run_core_tests() {
     log_info "=== VALIDATION TESTS ==="
     run_test "Liquid Template Validation" "test_liquid_templates" "validation"
     run_test "Giscus Comments Configuration" "test_giscus_comments" "validation"
+    run_test "Showcase Demo Links (no absolute 404 hazards)" "test_showcase_demo_links" "validation"
     run_test "Sass Compilation" "test_sass_compilation" "validation"
     run_test "JavaScript Syntax" "test_javascript_syntax" "validation"
 }

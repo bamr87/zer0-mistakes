@@ -5,10 +5,19 @@ name: Auto-merge low-risk PRs
 # REQUIRED status checks pass, so CI remains the gate. Everything without the
 # label stays for human review.
 #
+# Eligible classes (see the autonomy policy in
+# docs/systems/continuous-evolution.md):
+#   - non-visual low-risk: area ∈ {docs, deps, lint}; or
+#   - a low-risk FIX that ships a regression test + before/after evidence —
+#     enforced by the required `evidence-gate` check (a UI PR without them fails
+#     that check, so auto-merge cannot complete).
+# This job's own guard below additionally blocks version/release/dependency files.
+#
 # Prerequisites (configured once by a maintainer, see
 # docs/systems/continuous-evolution.md):
 #   - Settings → General → "Allow auto-merge" enabled.
-#   - Branch protection on `main` with the CI checks marked as required.
+#   - Branch protection on `main` with the CI checks (incl. `evidence-gate`)
+#     marked as required.
 # Without these, this job is a safe no-op and the PR simply waits for a human.
 
 permissions:
@@ -41,16 +50,42 @@ jobs:
         run: |
           changed=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --jq '.[].filename')
           echo "Changed files:"; echo "$changed"
-          # Files that must never auto-merge, even if mislabelled.
+          # Files that must never auto-merge, even if mislabelled. The primary
+          # gate is CODEOWNERS + "Require Code Owner review" on main; this is a
+          # belt-and-suspenders denylist that mirrors (and is slightly broader
+          # than) the CODEOWNERS set, so a self-labelling agent — including the
+          # autonomous issue pipeline — can't slip a release/CI/plugin/script/
+          # gem-source change through the auto-merge fast path. Keep this in sync
+          # with .github/CODEOWNERS.
           if echo "$changed" | grep -E -q \
-            '(^lib/jekyll-theme-zer0/version\.rb$|\.gemspec$|^Gemfile$|^Gemfile\.lock$|^package\.json$)'; then
-            echo "::error::PR labelled auto-merge but touches version/release/dependency files — removing label."
+            '(^lib/|\.gemspec$|^Gemfile$|^Gemfile\.lock$|^package\.json$|^package-lock\.json$|^CHANGELOG\.md$|^release-please-config\.json$|^\.release-please-manifest\.json$|^\.github/(workflows|actions)/|^\.github/CODEOWNERS$|^_plugins/|^scripts/(bin|lib)/)'; then
+            echo "::error::PR labelled auto-merge but touches a protected release/CI/plugin/script/gem file — removing label."
             gh pr edit "$PR" --remove-label auto-merge
             exit 1
           fi
 
-      - name: Enable native auto-merge (squash)
+      - name: Enable native auto-merge
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NODE: ${{ github.event.pull_request.node_id }}
           PR: ${{ github.event.pull_request.number }}
-        run: gh pr merge "$PR" --auto --squash
+        # Enable via the GraphQL mutation, NOT `gh pr merge --auto`: this
+        # pull_request_target job intentionally does not check out the (untrusted)
+        # PR, and `gh pr merge` shells out to git, failing with "not a git
+        # repository". mergeMethod SQUASH matches the repo's squash-only setting.
+        run: |
+          # shellcheck disable=SC2016  # $id/$pullRequestId are GraphQL variables (value passed via -F id=), intentionally NOT shell-expanded.
+          if gh api graphql -f query='
+            mutation($id: ID!) {
+              enablePullRequestAutoMerge(input: { pullRequestId: $id, mergeMethod: SQUASH }) {
+                pullRequest { number }
+              }
+            }' -F id="$PR_NODE" 2>/tmp/am-err; then
+            echo "✓ native auto-merge enabled for #$PR — it will merge once required checks pass."
+          else
+            # Expected when branch protection / required checks aren't configured:
+            # there's nothing for auto-merge to gate on, so it can't be enabled.
+            # That's the safe no-op state — the PR simply waits for a human.
+            echo "::notice::Native auto-merge not enabled for #$PR (branch protection with required checks not configured). Leaving it for human review."
+            sed 's/^/  gh: /' /tmp/am-err || true
+          fi

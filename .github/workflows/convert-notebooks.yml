@@ -11,13 +11,13 @@ concurrency:
 # when .ipynb files are added or modified in the pages/_notebooks directory
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
     paths:
       - 'pages/_notebooks/**.ipynb'
       - 'scripts/convert-notebooks.sh'
       - '.github/workflows/convert-notebooks.yml'
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
     paths:
       - 'pages/_notebooks/**.ipynb'
       - 'scripts/convert-notebooks.sh'
@@ -48,7 +48,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
@@ -110,7 +110,7 @@ jobs:
       # close/reopen the PR to run checks, or merge directly.
       - name: Open PR for converted files
         if: steps.check_changes.outputs.has_changes == 'true' && github.event_name != 'pull_request'
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           add-paths: |
@@ -178,7 +178,7 @@ jobs:
 
     steps:
       - name: Checkout Repository (after conversion)
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.ref_name }}
 

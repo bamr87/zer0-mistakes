@@ -103,12 +103,21 @@ layout: default
     </div>
     
     <!-- Tags -->
+    {% comment %} Link tag badges only when a tags index exists (configurable via
+       `tags_page`); otherwise render plain badges so remote-theme consumers
+       without a /tags/ page don't get 404 links. See issue #204. {% endcomment %}
     {% if page.tags and page.tags.size > 0 %}
+      {% assign _tags_base = site.tags_page | default: '/tags/' %}
+      {% assign _tags_page = site.html_pages | where: "url", _tags_base | first %}
       <div class="note-tags mb-3">
         {% for tag in page.tags %}
-          <a href="{{ '/tags/' | relative_url }}#{{ tag | slugify }}" class="badge bg-secondary text-decoration-none me-1">
-            {{ tag }}
-          </a>
+          {% if _tags_page %}
+            <a href="{{ _tags_base | relative_url }}#{{ tag | slugify }}" class="badge bg-secondary text-decoration-none me-1">
+              {{ tag }}
+            </a>
+          {% else %}
+            <span class="badge bg-secondary me-1">{{ tag }}</span>
+          {% endif %}
         {% endfor %}
       </div>
     {% endif %}

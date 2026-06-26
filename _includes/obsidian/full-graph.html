@@ -160,18 +160,16 @@ and [backlinks panel]({{ "/docs/obsidian/syntax-reference/#backlinks-panel" | re
 | --- | --- |
 | Build-time index (nodes + outgoing edges) | [`assets/data/wiki-index.json`]({{ "/assets/data/wiki-index.json" | relative_url }}) (Liquid template at [`assets/data/wiki-index.json`](https://github.com/bamr87/zer0-mistakes/blob/main/assets/data/wiki-index.json)) |
 | Renderer | `assets/js/obsidian-graph.js` |
-| Layout engine | [cytoscape.js](https://js.cytoscape.org/) (loaded from CDN, only on this page) |
+| Layout engine | [cytoscape.js](https://js.cytoscape.org/) (vendored under `assets/vendor/`, loaded only on this page) |
 
 Outgoing edges come from the same `[[…]]` syntax the resolver handles —
 unresolved targets show up as dashed red nodes so you can find dangling
 links at a glance. The graph is regenerated every Jekyll build; nothing
 runs client-side except cytoscape's force layout.
 
-<!-- Cytoscape.js (only loaded on this page). -->
-<script src="https://cdn.jsdelivr.net/npm/cytoscape@3.30.0/dist/cytoscape.min.js"
-        integrity="sha384-kpMsYllYzyaWU69Piok08rPNktpnjqAoDMdB00fjqUkEk3lkuUbSuwJ+oXrjvN6B"
-        crossorigin="anonymous"
-        defer></script>
+<!-- Cytoscape.js (vendored, only loaded on this page) — no CDN so the graph
+     works under strict CSP and offline. See assets/vendor/cytoscape/. -->
+<script src="{{ '/assets/vendor/cytoscape/cytoscape.min.js' | relative_url }}" defer></script>
 <script src="{{ '/assets/js/obsidian-graph.js' | relative_url }}" defer></script>
 
 ## See also

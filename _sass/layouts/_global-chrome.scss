@@ -12,9 +12,21 @@
 
 html, body {
     max-width: 100%;
-    // overflow-x: hidden;
   }
-  
+
+  // Theme-wide horizontal-overflow safety net.
+  // A stray wide element (an unwrapped Bootstrap `.row`, a long code token, a
+  // markdown table) creates a horizontal page scrollbar. Because the header is
+  // `position: fixed` it only spans the viewport, so any page-level h-scroll
+  // makes the navbar look "cut off" on the right. `overflow-x: clip` removes
+  // that scrollbar at the root WITHOUT breaking `position: sticky` descendants
+  // (the docs sidebar / TOC) the way `overflow-x: hidden` would — clip does not
+  // create a scroll container. Genuinely wide content (tables, code blocks)
+  // keeps its own local `overflow-x: auto` so nothing is hidden by this clip.
+  html {
+    overflow-x: clip;
+  }
+
   * {
     box-sizing: border-box;
   }

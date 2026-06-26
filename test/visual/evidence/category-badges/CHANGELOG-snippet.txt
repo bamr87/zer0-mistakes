@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/category-badges/ -->
+  (evidence: [`test/visual/evidence/category-badges/`](test/visual/evidence/category-badges/README.md) — category badge for an absent index (/news/security/ → 404): link → plain span; existing index (/news/development/) still links).
