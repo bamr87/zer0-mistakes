@@ -764,7 +764,7 @@ tasks:
       - "On a remote-theme Pages build, the navbar search resolves (no /search.json 404) or degrades gracefully."
       - "The /sitemap/ link resolves (no 404) for a remote-theme consumer."
       - "No new runtime dependency; no edit to version/release files."
-    links: { issue: 202, pr: null, roadmap: null }
+    links: { issue: 202, pr: 257, roadmap: null }
     created: 2026-06-26
     updated: 2026-06-29
 
