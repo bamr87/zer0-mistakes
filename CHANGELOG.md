@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Bug Fixes
+
+* **includes:** existence-guard component-showcase demo links — breadcrumb and list-group items now render as real links when the target page exists in the build (`/docs/`, `/docs/customization/`, `/categories/`, `/tags/`) and as plain text when absent; removes inert `href="#"` / `onclick="return false;"` workaround ([#219](https://github.com/bamr87/zer0-mistakes/issues/219)) (evidence: [`test/visual/evidence/component-showcase/`](test/visual/evidence/component-showcase/README.md))
+
 ### Tests
 
 * **navigation:** regression spec for section-sidebar /tags/ existence gate — asserts "Browse All Tags" and "View All Tags" links only render when /tags/ page is present in the build (issue #218, `test/visual/section-sidebar-tags-gate.spec.js`)

@@ -792,7 +792,7 @@ tasks:
 
   - id: T-030
     title: "component-showcase.html hardcodes demo links (/docs/, /pages/, /docs/customization/) that 404 for consumers"
-    status: open
+    status: done
     priority: P3
     area: feat
     risk: low
@@ -811,7 +811,7 @@ tasks:
       - "A `test/visual/*.spec.js` regression covers the parameterized/guarded links (theme-ui / visual-evidence)."
     links: { issue: 219, pr: null, roadmap: null }
     created: 2026-06-26
-    updated: 2026-06-26
+    updated: 2026-06-29
 
   - id: T-031
     title: "Document the safe-mode build-overlay recipe for consumers building outside GitHub Pages"
