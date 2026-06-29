@@ -413,6 +413,7 @@ classified_files = %w[
     _config_secrets_local.yml
     pages/_about/settings/_config.yml
     .github/ISSUE_TEMPLATE/config.yml
+    .issues/config.yml
 ]
 
 # T-018: the admin config page renders pages/_about/settings/_config.yml via

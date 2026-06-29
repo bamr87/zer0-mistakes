@@ -1,0 +1,101 @@
+# =============================================================================
+# .issues/config.yml — Issue Autopilot configuration (zer0-mistakes)
+# -----------------------------------------------------------------------------
+# The hand-edited knob-board for the issue-triage loop, ported from it-journey
+# and adapted to this theme repo. The deterministic engine
+# (scripts/issues/triage.py) reads this to (1) classify every OPEN issue into a
+# `disposition`, and (2) group issues into batches. Agents ACT on the plan; they
+# never re-decide the policy encoded here.
+#
+# THEME-REPO SAFETY (why this differs from it-journey):
+#   * Many issues are MIRRORED from `_data/backlog.yml` by sync.yml (they carry a
+#     `<!-- backlog-id: T-### -->` marker + the `agent-ready` label). Those are
+#     owned by the backlog sync — the autopilot must NEVER touch them (closing or
+#     relabeling fights the sync). The FIRST disposition catches and skips them.
+#   * The theme itself (_layouts/_includes/_sass/_plugins/lib/assets) is the
+#     PRODUCT. The resolver may only edit docs/pages markdown — never theme code
+#     (that needs a human + visual review). See resolve_allow_globs.
+#
+# HARD GUARDRAIL (code, not config): a HUMAN-authored issue can never get a
+# *close* disposition (the engine downgrades it to needs-human). Only bot noise
+# is ever auto-close eligible, and only when ISSUE_AUTOCLOSE_ENABLED is set.
+# =============================================================================
+
+repo: bamr87/zer0-mistakes
+
+limits:
+  max_issues_per_run: 50
+  max_resolve_batches_per_run: 2   # conservative for a theme repo
+
+# Evaluated top-to-bottom; FIRST match wins.
+dispositions:
+  # 1. PROTECTED — backlog-synced issues are owned by sync.yml; leave them alone.
+  - id: backlog-managed
+    title: Backlog-synced issue (owned by sync.yml — do not touch)
+    match:
+      any_of:                       # match if EITHER the marker OR the label is present
+        - body_regex: '<!--\s*backlog-id:'
+        - any_label: [agent-ready]
+    action: skip
+    note: >-
+      Mirrored from _data/backlog.yml by sync.yml. Editing the issue (labels,
+      close) fights the sync — edit the backlog file instead. The autopilot
+      records but never acts on these.
+
+  # 2. Stale auto-generated bot noise (narrow; usually empty here).
+  - id: close-stale
+    title: Stale auto-generated bot noise
+    match:
+      author_is_bot: true
+      any_label: [automated]
+      title_regex: '(AI Content Review|automated report|🤖)'
+    action: recommend-close
+    note: Superseded automation noise. Bot-authored only; close is gated + opt-in.
+
+  # 3. Epic / tracking issue — decompose, keep open.
+  - id: epic
+    title: Epic / tracking issue — decompose, never close
+    match:
+      any_label: [enhancement, epic]
+      title_regex: '(Epic|⚔️|\bepic\b|tracking)'
+    action: decompose
+    note: Too large for one PR; post a decomposition plan and keep open.
+
+  # 4. Actionable DOCS/CONTENT work — the resolver may open a PR (docs/pages only).
+  - id: content
+    title: Actionable docs / content work
+    match:
+      any_label: [documentation, area:docs]
+    action: resolve-content
+
+# Everything else (theme bugs/feats, ambiguous) -> a human. The triager still
+# labels these (area:* / priority:*) and comments a routing note.
+default_disposition:
+  id: needs-human
+  action: route-human
+
+# Areas used to group content issues into batches.
+areas:
+  collections: [docs, posts, notes, quickstart, about]
+
+# RESOLVER scope: an auto-resolution PR may ONLY touch these paths. Theme code is
+# intentionally excluded — theme fixes are human-reviewed (visual regression).
+resolve_allow_globs:
+  - 'docs/**'
+  - 'pages/**'
+
+# The label namespace the autopilot owns (routing keys). area:*/priority:*/risk:*
+# already exist (sync-managed) and are applied by the triager as judgment labels.
+labels:
+  pr: auto:issue
+  triaged: autopilot:triaged
+  stale: autopilot:stale
+  epic: autopilot:epic
+  go: autopilot:go
+  needs_human: autopilot:needs-human
+
+output:
+  index: .issues/index.json
+  plan: .issues/plan.json
+  worklist_dir: .issues/worklists
+  report_dir: .issues/reports

@@ -203,6 +203,20 @@ info: ## Show project information
 	@echo "$(BOLD)Available Scripts:$(RESET)"
 	@ls -la scripts/*.sh
 
+##@ Issue Autopilot
+
+.PHONY: issue-triage
+issue-triage: ## Classify open issues -> .issues/worklists/<date>.md (read/plan only)
+	@python3 scripts/issues/triage.py plan
+
+.PHONY: issue-status
+issue-status: ## Issue triage dashboard (counts by disposition)
+	@python3 scripts/issues/triage.py status
+
+.PHONY: issue-plan
+issue-plan: ## Show what the resolve lane would dispatch this run (dry-run)
+	@python3 scripts/issues/dispatch.py --dry-run
+
 ##@ Help
 
 .PHONY: help
