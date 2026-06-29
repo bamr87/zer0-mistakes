@@ -792,7 +792,7 @@ tasks:
 
   - id: T-030
     title: "component-showcase.html hardcodes demo links (/docs/, /pages/, /docs/customization/) that 404 for consumers"
-    status: open
+    status: done
     priority: P3
     area: feat
     risk: low
@@ -809,9 +809,9 @@ tasks:
       - "The showcase's demo links are parameterized or existence-guarded (no hardcoded absolute paths that can 404)."
       - "Including the showcase on a consumer site produces no theme-injected 404s; the Jekyll build stays green."
       - "A `test/visual/*.spec.js` regression covers the parameterized/guarded links (theme-ui / visual-evidence)."
-    links: { issue: 219, pr: null, roadmap: null }
+    links: { issue: 219, pr: 256, roadmap: null }
     created: 2026-06-26
-    updated: 2026-06-26
+    updated: 2026-06-29
 
   - id: T-031
     title: "Document the safe-mode build-overlay recipe for consumers building outside GitHub Pages"

@@ -25,11 +25,12 @@
   - Bootstrap 5.3 CSS & JS (loaded by theme)
   - Bootstrap Icons (loaded by theme)
 
-  Note: The breadcrumb and list-group links are DEMO links only — they are
-        intentionally inert (href="#" with onclick="return false;") so the
-        showcase never injects site-absolute paths (/docs/, /pages/, ...) that
-        would 404 on consumer sites that lack those exact routes (issue #219).
-        Do not point them at absolute paths.
+  Note: The breadcrumb and list-group demo links are existence-guarded (issue #219).
+        Each target URL is resolved against site.html_pages (and collection docs
+        for collection-backed routes). When the page exists in the build the link
+        is real; when it does not the label renders as plain text. This keeps the
+        showcase safe for remote-theme consumers who may lack /docs/, /posts/,
+        /categories/, /tags/, or /docs/customization/.
   ===================================================================
 -->
 {% assign sections = include.sections | default: "alerts,buttons,badges,cards,accordion,tabs,progress,breadcrumbs,table,tooltips,list-group" %}
@@ -326,11 +327,29 @@ theme: jekyll-theme-zer0</code></pre>
 <!-- ===== BREADCRUMBS ===== -->
 <h3 id="showcase-breadcrumbs">Breadcrumbs</h3>
 <p>Hierarchical navigation trail showing current page position:</p>
+{% comment %} Existence-guard the demo breadcrumb links so they never 404 on
+   remote-theme consumers that lack /docs/ or /docs/customization/. When the
+   target page is in the build the crumb is a real link; otherwise plain text.
+   Home (/) is always present. Pattern mirrors _includes/navigation/breadcrumbs.html. {% endcomment %}
+{% assign _demo_docs_page = site.html_pages | where: "url", "/docs/" | first %}
+{% unless _demo_docs_page %}
+  {% for _col in site.collections %}
+    {% assign _demo_docs_page = _col.docs | where: "url", "/docs/" | first %}
+    {% if _demo_docs_page %}{% break %}{% endif %}
+  {% endfor %}
+{% endunless %}
+{% assign _demo_custom_page = site.html_pages | where: "url", "/docs/customization/" | first %}
+{% unless _demo_custom_page %}
+  {% for _col in site.collections %}
+    {% assign _demo_custom_page = _col.docs | where: "url", "/docs/customization/" | first %}
+    {% if _demo_custom_page %}{% break %}{% endif %}
+  {% endfor %}
+{% endunless %}
 <nav aria-label="breadcrumb example" class="mb-4">
   <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="#" class="text-decoration-none" onclick="return false;"><i class="bi bi-house me-1"></i>Home</a></li>
-    <li class="breadcrumb-item"><a href="#" class="text-decoration-none" onclick="return false;">Documentation</a></li>
-    <li class="breadcrumb-item"><a href="#" class="text-decoration-none" onclick="return false;">Customization</a></li>
+    <li class="breadcrumb-item"><a href="{{ '/' | relative_url }}" class="text-decoration-none"><i class="bi bi-house me-1"></i>Home</a></li>
+    <li class="breadcrumb-item">{% if _demo_docs_page %}<a href="{{ '/docs/' | relative_url }}" class="text-decoration-none">Documentation</a>{% else %}Documentation{% endif %}</li>
+    <li class="breadcrumb-item">{% if _demo_custom_page %}<a href="{{ '/docs/customization/' | relative_url }}" class="text-decoration-none">Customization</a>{% else %}Customization{% endif %}</li>
     <li class="breadcrumb-item active" aria-current="page">Theme Colors</li>
   </ol>
 </nav>
@@ -419,25 +438,67 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- ===== LIST GROUP ===== -->
 <h3 id="showcase-list-group">List Group</h3>
 <p>Organized content lists with icons, badges, and action states:</p>
+{% comment %} Existence-guard the demo list-group links (issue #219). Each target
+   URL is resolved against site.html_pages + collection docs. When present the
+   item is a real <a>; when absent it renders as a non-linking <div> so no 404
+   is injected on remote-theme consumers that lack /posts/, /docs/, /categories/,
+   or /tags/. Pattern mirrors section-sidebar.html and author-bio.html. {% endcomment %}
+{% assign _demo_posts_page = site.html_pages | where: "url", "/posts/" | first %}
+{% unless _demo_posts_page %}
+  {% for _col in site.collections %}
+    {% assign _demo_posts_page = _col.docs | where: "url", "/posts/" | first %}
+    {% if _demo_posts_page %}{% break %}{% endif %}
+  {% endfor %}
+{% endunless %}
+{% assign _demo_cats_page = site.html_pages | where: "url", "/categories/" | first %}
+{% unless _demo_cats_page %}
+  {% for _col in site.collections %}
+    {% assign _demo_cats_page = _col.docs | where: "url", "/categories/" | first %}
+    {% if _demo_cats_page %}{% break %}{% endif %}
+  {% endfor %}
+{% endunless %}
+{% assign _demo_tags_page = site.html_pages | where: "url", "/tags/" | first %}
+{% unless _demo_tags_page %}
+  {% for _col in site.collections %}
+    {% assign _demo_tags_page = _col.docs | where: "url", "/tags/" | first %}
+    {% if _demo_tags_page %}{% break %}{% endif %}
+  {% endfor %}
+{% endunless %}
 <div class="row g-4 mb-4">
   <div class="col-md-6">
     <div class="list-group">
-      <a href="#" onclick="return false;" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+      {% if _demo_posts_page %}
+      <a href="{{ '/posts/' | relative_url }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+      {% else %}
+      <div class="list-group-item d-flex justify-content-between align-items-center">
+      {% endif %}
         <span><i class="bi bi-journal-richtext text-primary me-2"></i>Blog Posts</span>
         <span class="badge bg-primary rounded-pill">{{ site.posts.size | default: "12" }}</span>
-      </a>
-      <a href="#" onclick="return false;" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+      {% if _demo_posts_page %}</a>{% else %}</div>{% endif %}
+      {% if _demo_docs_page %}
+      <a href="{{ '/docs/' | relative_url }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+      {% else %}
+      <div class="list-group-item d-flex justify-content-between align-items-center">
+      {% endif %}
         <span><i class="bi bi-book text-success me-2"></i>Documentation</span>
         <span class="badge bg-success rounded-pill">{{ site.documents.size | default: "8" }}</span>
-      </a>
-      <a href="#" onclick="return false;" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+      {% if _demo_docs_page %}</a>{% else %}</div>{% endif %}
+      {% if _demo_cats_page %}
+      <a href="{{ '/categories/' | relative_url }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+      {% else %}
+      <div class="list-group-item d-flex justify-content-between align-items-center">
+      {% endif %}
         <span><i class="bi bi-collection text-info me-2"></i>Categories</span>
         <span class="badge bg-info rounded-pill">{{ site.categories.size | default: "6" }}</span>
-      </a>
-      <a href="#" onclick="return false;" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+      {% if _demo_cats_page %}</a>{% else %}</div>{% endif %}
+      {% if _demo_tags_page %}
+      <a href="{{ '/tags/' | relative_url }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+      {% else %}
+      <div class="list-group-item d-flex justify-content-between align-items-center">
+      {% endif %}
         <span><i class="bi bi-tags text-warning me-2"></i>Tags</span>
         <span class="badge bg-warning text-dark rounded-pill">{{ site.tags.size | default: "24" }}</span>
-      </a>
+      {% if _demo_tags_page %}</a>{% else %}</div>{% endif %}
     </div>
   </div>
   <div class="col-md-6">
