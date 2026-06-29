@@ -17,8 +17,15 @@
 #     (that needs a human + visual review). See resolve_allow_globs.
 #
 # HARD GUARDRAIL (code, not config): a HUMAN-authored issue can never get a
-# *close* disposition (the engine downgrades it to needs-human). Only bot noise
-# is ever auto-close eligible, and only when ISSUE_AUTOCLOSE_ENABLED is set.
+# *heuristic close* disposition (the engine downgrades it to needs-human). Only
+# bot noise is ever `eligible_autoclose`, and only when ISSUE_AUTOCLOSE_ENABLED.
+#
+# VERIFY-AND-CLOSE (the only path that closes a HUMAN issue): every non-protected,
+# non-epic human issue is flagged `verify_candidate`. The issue-verifier (LLM,
+# read-only) checks whether its fix is ALREADY on `main`; scripts/issues/
+# verify_close.py then closes the resolved + high-confidence ones — but ONLY when
+# `main`'s full CI/CD gate suite is green (it fails CLOSED otherwise). Gated by
+# ISSUE_VERIFY_CLOSE_ENABLED. The engine only flags candidacy; it never closes.
 # =============================================================================
 
 repo: bamr87/zer0-mistakes
@@ -93,6 +100,7 @@ labels:
   epic: autopilot:epic
   go: autopilot:go
   needs_human: autopilot:needs-human
+  verified: autopilot:verified-resolved   # stamped on issues closed by verify-and-close
 
 output:
   index: .issues/index.json

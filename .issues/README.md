@@ -24,9 +24,13 @@ AI agents act on that plan — they never re-decide the policy encoded here.
   `docs/**` + `pages/**` Markdown only (`resolve_allow_globs`). Anything touching
   `_layouts/_includes/_sass/_plugins/lib/assets` is escalated to a human (theme
   changes need visual review). The auto-merge smuggle guard enforces the same.
-- **Closing is deterministic + gated.** The LLM triager never closes; a workflow
-  step closes only bot-authored `eligible_autoclose` issues, only when
-  `ISSUE_AUTOCLOSE_ENABLED`. A human-authored issue is never auto-closed.
+- **Closing is deterministic + gated.** No LLM lane runs `gh issue close`. Three
+  gated paths close issues: bot-noise (`eligible_autoclose`, under
+  `ISSUE_AUTOCLOSE_ENABLED`); **verify-and-close** (a human issue already fixed on
+  `main` — the read-only `issue-verifier` proposes, `verify_close.py` closes only
+  when `main`'s full CI/CD suite is green, under `ISSUE_VERIFY_CLOSE_ENABLED`);
+  and PR-merge (a resolver `Closes #N` PR that passes all checks). A human issue is
+  never closed on a heuristic/stale signal.
 
 ## The loop
 
@@ -36,7 +40,10 @@ AI agents act on that plan — they never re-decide the policy encoded here.
    batches to resolve this run (`budget.yml` backpressure).
 3. `issue-triager` (label/route/flag) and `issue-resolver` (one docs batch → one
    PR) run the `issue-triage` skill via `.github/workflows/issue-autopilot.yml`.
-4. `issue-pr-auto-merge.yml` merges green docs-only `auto:issue` PRs.
+4. `issue-verifier` (read-only) judges whether each `verify_candidate` human issue
+   is already fixed on `main` → `.issues/verify.json`; `scripts/issues/verify_close.py`
+   closes the resolved + high-confidence ones, gated on a green `main` CI/CD suite.
+5. `issue-pr-auto-merge.yml` merges green docs-only `auto:issue` PRs.
 
 ## Run it locally
 
@@ -60,6 +67,9 @@ Needs Python 3.12 + PyYAML and an authenticated `gh`.
    gh label create autopilot:epic         -R $R -c a2eeef -d "Large issue — decomposed, kept open" || true
    gh label create autopilot:go           -R $R -c 5319e7 -d "Human opt-in: resolve this issue now" || true
    gh label create autopilot:needs-human  -R $R -c b60205 -d "Autopilot routed to a human" || true
+   gh label create autopilot:verified-resolved -R $R -c 0e8a16 -d "Closed by verify-and-close (fixed on main + green CI)" || true
    ```
 3. Ramp the repo variables: `ISSUE_AUTOPILOT_ENABLED` (triage) → `ISSUE_AUTOCLOSE_ENABLED`
-   (close bot-noise) → `ISSUE_RESOLVE_ENABLED` (open docs PRs) → `ISSUE_AUTOMERGE_ENABLED`.
+   (close bot-noise) → `ISSUE_VERIFY_CLOSE_ENABLED` (verify-and-close human issues
+   already fixed on `main`, gated on green CI) → `ISSUE_RESOLVE_ENABLED` (open docs
+   PRs) → `ISSUE_AUTOMERGE_ENABLED`.
