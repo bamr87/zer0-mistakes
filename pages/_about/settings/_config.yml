@@ -144,6 +144,15 @@ navigation:
 # Ship these files in your fork; they are not bundled with the theme.
 user_overrides           : false
 
+# Default color mode for new visitors (before any localStorage preference is set).
+# Values: dark | light | auto
+#   dark  — always start in dark mode (Bootstrap data-bs-theme="dark")
+#   light — always start in light mode (Bootstrap data-bs-theme="light")
+#   auto  — follow the visitor's OS/browser prefers-color-scheme (default)
+# The user can still override this at any time with the Appearance panel.
+# An inline script in <head> applies the correct mode before CSS loads, preventing FOUC.
+color_mode_default       : auto
+
 # Runtime Appearance panel inside the Settings offcanvas (Track 6).
 # Adds light/dark/auto color-mode buttons + a primary-color picker that
 # writes to localStorage["zer0-appearance"] and updates --zer0-color-primary
