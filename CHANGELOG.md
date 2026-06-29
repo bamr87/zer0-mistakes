@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Tests
+
+* **tests:** add negative-path smoke tests for AI chat render guard — asserts FAB/panel are absent when `proxy_ready: false` and no `api_key` is set (closes #168)
+
 ## [1.22.0](https://github.com/bamr87/zer0-mistakes/compare/v1.21.0...v1.22.0) (2026-06-26)
 
 
