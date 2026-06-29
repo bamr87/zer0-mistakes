@@ -786,7 +786,7 @@ tasks:
       - "The sidebar 'View All Tags' link renders only when the tags index exists (or a documented site flag is set)."
       - "Remote-theme consumers no longer 404 from the sidebar link; the Jekyll build stays green."
       - "A `test/visual/*.spec.js` regression asserts the conditional render (theme-ui / visual-evidence)."
-    links: { issue: 218, pr: null, roadmap: null }
+    links: { issue: 218, pr: 254, roadmap: null }
     created: 2026-06-26
     updated: 2026-06-29
 
