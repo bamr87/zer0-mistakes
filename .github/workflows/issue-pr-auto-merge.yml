@@ -47,9 +47,9 @@ jobs:
     steps:
       # Base checkout (default for pull_request_target) — gives us OUR scripts to
       # run against the PR's file LIST (never the PR's code).
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
 
