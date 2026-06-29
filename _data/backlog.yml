@@ -689,7 +689,7 @@ tasks:
 
   - id: T-026
     title: "Playwright smoke test for AI chat widget render guard and FAB visibility"
-    status: open
+    status: done
     priority: P3
     area: tests
     risk: standard
@@ -710,9 +710,9 @@ tasks:
       - "A mock-config test (inject `data-ai-chat-enabled` attribute or use a fixture page with the widget force-enabled) verifies the FAB renders and the chat panel toggles open/closed on click."
       - "The test passes in the smoke project without a live AI backend."
       - "`./scripts/bin/test` (including the Playwright smoke tier) stays green."
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: 168, pr: null, roadmap: null }
     created: 2026-06-15
-    updated: 2026-06-15
+    updated: 2026-06-29
 
   # --- Issue intake 2026-06-26: remote-theme 404 cluster + docs ----------------
   # Cap: 5 of 7 open issues triaged this run. Deferred (next run): #203 (consumer
