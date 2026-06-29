@@ -663,7 +663,7 @@ tasks:
 
   - id: T-025
     title: "Playwright smoke tests for the site-wide search modal"
-    status: open
+    status: done
     priority: P2
     area: tests
     risk: standard
@@ -683,9 +683,9 @@ tasks:
       - "A result-population check: query matching a known post title (e.g. 'Hello World') yields at least one result `<a>` element."
       - "Mutual-exclusion guard: opening search while Settings offcanvas is open closes the offcanvas first (no stacked backdrops)."
       - "Spec runs in the smoke project (`npx playwright test --project=smoke`) without a network request to an external index."
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: 167, pr: 208, roadmap: null }
     created: 2026-06-15
-    updated: 2026-06-15
+    updated: 2026-06-29
 
   - id: T-026
     title: "Playwright smoke test for AI chat widget render guard and FAB visibility"
