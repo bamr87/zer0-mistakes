@@ -740,7 +740,7 @@ tasks:
       - "Theme-injected chrome links render only when their target exists (mirror the footer Quick-Links existence guard)."
       - "A link check over a built remote-theme `_site` reports no theme-injected 404s."
       - "No edit to `lib/jekyll-theme-zer0/version.rb` or release files."
-    links: { issue: 204, pr: null, roadmap: null }
+    links: { issue: 204, pr: 252, roadmap: null }
     created: 2026-06-26
     updated: 2026-06-29
 
