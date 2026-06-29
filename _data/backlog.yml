@@ -538,7 +538,7 @@ tasks:
 
   - id: T-020
     title: "CI coverage for installer interactive wizard and upgrade path (coverage rank #2)"
-    status: open
+    status: done
     priority: P2
     area: tests
     risk: standard
@@ -554,13 +554,13 @@ tasks:
       - "Wizard prompt helpers exercised non-interactively (piped answers) in a test_install_* suite."
       - "An upgrade fixture covers detect→migrate→verify for at least one version gap."
       - "Suites run in CI via the standard installer e2e discovery (test_install_*.sh)."
-    links: { issue: null, pr: null, roadmap: "1.14" }
+    links: { issue: 147, pr: null, roadmap: "1.14" }
     created: 2026-06-12
-    updated: 2026-06-12
+    updated: 2026-06-29
 
   - id: T-021
     title: "Vendor cytoscape.js so the Obsidian graph works without a CDN"
-    status: open
+    status: done
     priority: P3
     area: feat
     risk: standard
@@ -577,9 +577,9 @@ tasks:
       - "cytoscape.min.js committed under assets/vendor/ and referenced via a local path."
       - "full-graph.html no longer references cdn.jsdelivr.net."
       - "The graph page renders nodes/edges with the vendored file (no network)."
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: 152, pr: null, roadmap: null }
     created: 2026-06-13
-    updated: 2026-06-13
+    updated: 2026-06-29
 
   # --- 2026-06-15 audit -------------------------------------------------------
 
@@ -637,7 +637,7 @@ tasks:
 
   - id: T-024
     title: "Unit tests for scripts/content-review.rb scoring engine"
-    status: open
+    status: done
     priority: P2
     area: tests
     risk: standard
@@ -657,9 +657,9 @@ tasks:
       - "At least one test verifies the `--strict` flag exits non-zero when the fail threshold is crossed."
       - "Tests run under `LC_ALL=C` (locale-independence parity with T-015 guard)."
       - "`./scripts/bin/test` stays green with the new tests included."
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: 166, pr: null, roadmap: null }
     created: 2026-06-15
-    updated: 2026-06-15
+    updated: 2026-06-29
 
   - id: T-025
     title: "Playwright smoke tests for the site-wide search modal"
