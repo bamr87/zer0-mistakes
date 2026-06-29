@@ -1,0 +1,49 @@
+{
+  "slug": "sitemap-action-gate",
+  "issue": 202,
+  "file": "_includes/components/search-modal.html",
+  "change": "existence-gate the search-modal form action attribute to /sitemap/",
+  "type": "behavioural-unrendered",
+  "rationale": "The form action attribute is invisible to sighted users and overridden by JS in all normal browsing; a screenshot before/after would show no difference. Evidence is a DOM/template comparison.",
+  "buildResult": "green",
+  "buildConfig": "_config.yml,_config_dev.yml",
+  "conditions": [
+    {
+      "scenario": "local-dev build (/sitemap/ exists in site.html_pages)",
+      "sitemapPresent": true,
+      "before": {
+        "formAction": "/sitemap/",
+        "note": "always /sitemap/ regardless of whether page exists — potential 404 on remote-theme consumers"
+      },
+      "after": {
+        "formAction": "/sitemap/",
+        "note": "gate passes because /sitemap/ is in the build; link preserved"
+      }
+    },
+    {
+      "scenario": "remote-theme Pages consumer (/sitemap/ absent from build)",
+      "sitemapPresent": false,
+      "before": {
+        "formAction": "/sitemap/",
+        "note": "always /sitemap/ — no-JS form submission navigates to a 404"
+      },
+      "after": {
+        "formAction": "#",
+        "note": "gate fails gracefully; '#' is a safe no-op (JS intercepts submit anyway)"
+      }
+    }
+  ],
+  "mirrorGuards": [
+    {
+      "file": "_includes/core/footer.html",
+      "lines": "149-160",
+      "description": "Quick Links sitemap link gated on _sitemap_page via site.html_pages | where: url"
+    },
+    {
+      "file": "_includes/navigation/section-sidebar.html",
+      "lines": "67-73, 131-134",
+      "description": "Browse All Tags button gated on _tags_page; comment explicitly says it mirrors the footer Quick-Links guard"
+    }
+  ],
+  "spec": "test/visual/search-modal-action-gate.spec.js"
+}
