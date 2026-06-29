@@ -1,0 +1,20 @@
+# =============================================================================
+# .issues/budget.yml — loop backpressure for the zer0-mistakes issue autopilot
+# -----------------------------------------------------------------------------
+# Clamps autonomous throughput to human review speed. The dispatcher
+# (scripts/issues/dispatch.py) refuses to propose new resolution PRs once
+# max_open_prs auto:issue PRs are already awaiting review. Conservative caps
+# because this is a theme repo (most fixes are human-reviewed anyway).
+# =============================================================================
+
+caps:
+  max_open_prs: 3             # never leave more than N auto:issue PRs unreviewed
+  max_resolve_batches_per_run: 2
+  max_issues_per_run: 50
+  plan_max_age_minutes: 1440  # fail-safe: a plan older than this dispatches nothing
+
+policy:
+  backlog_heavy:
+    open_new_prs: false
+  normal:
+    open_new_prs: true

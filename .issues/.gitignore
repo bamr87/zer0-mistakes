@@ -1,0 +1,15 @@
+# Transient working state, regenerated on demand by
+# `python3 scripts/issues/triage.py plan` — the live source of truth is the
+# GitHub issue queue, so these snapshots are not committed.
+index.json
+plan.json
+dispatch.json
+
+# Keep the config, budget, docs, and dated reports/worklists in git so the
+# triage history stays reviewable (committed on local runs; CI uploads them as
+# a run artifact).
+!config.yml
+!budget.yml
+!README.md
+!reports/
+!worklists/

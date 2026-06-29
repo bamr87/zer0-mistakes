@@ -1,0 +1,81 @@
+# =============================================================================
+# claude-run — the universal AI step for the issue autopilot (Claude Code)
+# -----------------------------------------------------------------------------
+# A self-contained composite step so workflows don't hand-roll the claude install
+# + invocation. Installs Claude Code (best-effort), resolves the model from
+# _data/ai.yml, and runs the CLI as a named agent (.claude/agents/<name>.md).
+#
+# Auth comes from the JOB ENV (the caller must export it), preferring the Claude
+# Code OAuth token:
+#   CLAUDE_CODE_OAUTH_TOKEN — from `claude setup-token` (the preferred credential)
+#   ANTHROPIC_API_KEY       — a pay-per-use API key (also works)
+# With NO auth at all this step is a clean no-op (exit 0), so AI workflows degrade
+# gracefully when the secret is unset. Ported from it-journey so the sibling
+# repos share one agentic convention.
+# =============================================================================
+name: claude-run
+description: Run an AI step via Claude Code as a named agent (OAuth-first).
+inputs:
+  prompt:
+    description: The instruction for the agent.
+    required: true
+  agent:
+    description: Run AS a named agent (.claude/agents/<name>.md) — its system prompt, tools, and constraints.
+    default: ""
+  tools:
+    description: Comma-separated --allowedTools for Claude Code.
+    default: ""
+  mcp:
+    description: Path to an MCP config JSON for Claude Code.
+    default: ""
+  system:
+    description: System prompt appended to the agent.
+    default: ""
+  out:
+    description: Write the result to this file instead of stdout.
+    default: ""
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        PROMPT: ${{ inputs.prompt }}
+        AGENT: ${{ inputs.agent }}
+        TOOLS: ${{ inputs.tools }}
+        MCP: ${{ inputs.mcp }}
+        SYSTEM: ${{ inputs.system }}
+        OUT: ${{ inputs.out }}
+      run: |
+        set -uo pipefail
+        if [ -z "${CLAUDE_CODE_OAUTH_TOKEN:-}" ] && [ -z "${ANTHROPIC_API_KEY:-}" ]; then
+          echo "::warning::no Claude auth (CLAUDE_CODE_OAUTH_TOKEN or ANTHROPIC_API_KEY) — AI step is a no-op."
+          exit 0
+        fi
+        # The claude CLI reads either token from env. Prefer OAuth: drop an empty
+        # ANTHROPIC_API_KEY (an unset GitHub secret renders as "") so the CLI
+        # never attempts empty-key auth.
+        if [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ] && [ -z "${ANTHROPIC_API_KEY:-}" ]; then
+          unset ANTHROPIC_API_KEY
+        fi
+        npm install -g @anthropic-ai/claude-code >/dev/null 2>&1 \
+          || { echo "::warning::Claude Code install failed — AI step is a no-op."; exit 0; }
+        MODEL="$(python3 - <<'PY' 2>/dev/null || echo claude-opus-4-8
+        import os
+        try:
+            import yaml
+            cfg = yaml.safe_load(open("_data/ai.yml")) or {}
+        except Exception:
+            cfg = {}
+        print(os.environ.get("ZER0_AI_MODEL") or cfg.get("model") or "claude-opus-4-8")
+        PY
+        )"
+        args=(-p "$PROMPT" --model "$MODEL" --permission-mode acceptEdits --output-format text)
+        [ -n "$AGENT" ]  && args+=(--agent "$AGENT")
+        [ -n "$TOOLS" ]  && args+=(--allowedTools "$TOOLS")
+        [ -n "$MCP" ]    && args+=(--mcp-config "$MCP")
+        [ -n "$SYSTEM" ] && args+=(--append-system-prompt "$SYSTEM")
+        if [ -n "$OUT" ]; then
+          claude "${args[@]}" > "$OUT"
+        else
+          claude "${args[@]}"
+        fi
