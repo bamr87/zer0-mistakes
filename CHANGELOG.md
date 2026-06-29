@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Features
+
+- **color_mode_default config knob** — new `color_mode_default` setting (`dark` | `light` | `auto`, default `auto`) in `_config.yml` controls Bootstrap's `data-bs-theme` both server-side (in `_layouts/root.html`) and client-side. An early inline script (`_includes/core/color-mode-init.html`, loaded before Bootstrap CSS) applies the correct theme before any `[data-bs-theme]` selector is evaluated, preventing FOUC. `localStorage["theme"]` (the Appearance panel override) always wins over the config default. `auto` follows `prefers-color-scheme` — backward-compatible with the previous behaviour. (evidence: [`test/visual/evidence/color-mode-default/`](test/visual/evidence/color-mode-default/README.md))
 ### Bug Fixes
 
 * **layouts:** existence-gate `/authors/` breadcrumb link in author.html for remote-theme consumers ([#204](https://github.com/bamr87/zer0-mistakes/issues/204))

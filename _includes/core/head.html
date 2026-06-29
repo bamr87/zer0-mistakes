@@ -128,6 +128,15 @@ window.MathJax = {
 <!-- ================================ -->
 
 <!-- ========================== -->
+<!-- COLOR MODE INIT (FOUC FIX) -->
+<!-- ========================== -->
+<!-- Must run BEFORE Bootstrap CSS so the correct data-bs-theme is applied
+     when [data-bs-theme=dark/light] selectors are first evaluated.
+     Reads site.color_mode_default (via data-color-mode-default attr on <html>)
+     and falls back to localStorage["theme"] for the user's explicit preference. -->
+{% include core/color-mode-init.html %}
+
+<!-- ========================== -->
 <!-- BOOTSTRAP 5 FRAMEWORK     -->
 <!-- ========================== -->
 <!-- Bootstrap 5.3.3 - bundled locally (GitHub Pages–safe; refresh via scripts/vendor-install.sh) -->

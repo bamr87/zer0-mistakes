@@ -31,7 +31,21 @@
 -->
 
 <!doctype html>
-<html lang="{{ site.locale | slice: 0,2 | default: 'en' }}" class="no-js" data-bs-theme="dark" data-theme-skin="{{ site.theme_skin | default: 'dark' }}" data-zer0-bg="{{ site.theme_background.enabled | default: true }}">
+{%- comment -%}
+  Resolve the server-side data-bs-theme:
+    dark  → dark
+    light → light
+    auto  → dark  (inline script in tokens-inline.html corrects this before first paint)
+  We also store the raw config value in data-color-mode-default so the inline
+  script can read it without a Liquid evaluation.
+{%- endcomment -%}
+{%- assign _cm = site.color_mode_default | default: 'auto' -%}
+{%- if _cm == 'light' -%}
+  {%- assign _bs_theme = 'light' -%}
+{%- else -%}
+  {%- assign _bs_theme = 'dark' -%}
+{%- endif -%}
+<html lang="{{ site.locale | slice: 0,2 | default: 'en' }}" class="no-js" data-bs-theme="{{ _bs_theme }}" data-color-mode-default="{{ _cm }}" data-theme-skin="{{ site.theme_skin | default: 'dark' }}" data-zer0-bg="{{ site.theme_background.enabled | default: true }}">
     <head>
         <!-- =============================================== -->
         <!-- HEAD SECTION: Meta tags, styles, and SEO setup -->
