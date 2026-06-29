@@ -35,6 +35,11 @@
 {%- endif -%}
 
 {%- comment -%}
+  NOTE: The data-bs-theme FOUC-prevention script lives in
+  _includes/core/color-mode-init.html (included from head.html BEFORE Bootstrap
+  CSS) so the correct theme is applied before any [data-bs-theme] selectors are
+  evaluated. Do not duplicate it here.
+
   Restore any user-saved Appearance overrides before paint to avoid a flash
   of the default palette. The Appearance panel (Track 6) writes JSON like
   {"primary":"#ff5722"} to localStorage["zer0-appearance"].

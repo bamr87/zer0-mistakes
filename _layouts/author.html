@@ -68,10 +68,31 @@ hide_intro: true
 <!-- ========================== -->
 <!-- BREADCRUMB                 -->
 <!-- ========================== -->
+{%- comment -%}
+  Only link the /authors/ breadcrumb crumb when that index page actually exists
+  in the build. A pure remote-theme Pages consumer doesn't get the
+  plugin-generated /authors/ index, so rendering the link would produce a 404.
+  Mirror the existence guard used in _includes/navigation/breadcrumbs.html
+  and _includes/components/author-bio.html. See issue #204.
+{%- endcomment -%}
+{%- assign _authors_url = '/authors/' -%}
+{%- assign _authors_page = site.html_pages | where: "url", _authors_url | first -%}
+{%- unless _authors_page -%}
+  {%- for _col in site.collections -%}
+    {%- assign _authors_page = _col.docs | where: "url", _authors_url | first -%}
+    {%- if _authors_page -%}{%- break -%}{%- endif -%}
+  {%- endfor -%}
+{%- endunless -%}
 <nav aria-label="breadcrumb" class="mb-3">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="{{ '/' | relative_url }}">Home</a></li>
-    <li class="breadcrumb-item"><a href="{{ '/authors/' | relative_url }}">Authors</a></li>
+    <li class="breadcrumb-item">
+      {%- if _authors_page -%}
+        <a href="{{ _authors_url | relative_url }}">Authors</a>
+      {%- else -%}
+        Authors
+      {%- endif -%}
+    </li>
     <li class="breadcrumb-item active" aria-current="page">{{ author_name }}</li>
   </ol>
 </nav>

@@ -1,0 +1,35 @@
+{%- comment -%}
+  Component:   color-mode-init
+  Path:        _includes/core/color-mode-init.html
+  Purpose:     Early inline script that applies data-bs-theme BEFORE Bootstrap CSS
+               loads, preventing FOUC (flash of unstyled/wrong-themed content).
+  Params:      none — reads data-color-mode-default from the <html> element,
+               which root.html sets from site.color_mode_default.
+  Depends on:  root.html (sets data-color-mode-default attribute server-side)
+  Notes:       Must be included BEFORE any Bootstrap CSS link tag. The script
+               is tiny, synchronous, and runs inline before the browser requests
+               external stylesheets, so the correct theme is already applied
+               when Bootstrap's [data-bs-theme] selectors are first evaluated.
+
+  Priority order (highest → lowest):
+    1. localStorage["theme"]    — user's explicit override via Appearance panel
+    2. data-color-mode-default  — site.color_mode_default config value
+    3. "auto" fallback          — resolves via prefers-color-scheme
+{%- endcomment -%}
+<script>
+(function () {
+  'use strict';
+  try {
+    var root = document.documentElement;
+    var configDefault = root.getAttribute('data-color-mode-default') || 'auto';
+    var stored = window.localStorage.getItem('theme');
+    var mode = stored || configDefault;
+    if (mode === 'auto') {
+      root.setAttribute('data-bs-theme',
+        window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    } else {
+      root.setAttribute('data-bs-theme', mode);
+    }
+  } catch (e) { /* localStorage / matchMedia unavailable — server-rendered value stands */ }
+})();
+</script>

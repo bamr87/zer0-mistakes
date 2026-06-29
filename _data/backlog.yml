@@ -62,8 +62,8 @@
 
 meta:
   title: "zer0-mistakes Backlog"
-  updated: 2026-06-26
-  next_id: 32
+  updated: 2026-06-29
+  next_id: 33
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -538,7 +538,7 @@ tasks:
 
   - id: T-020
     title: "CI coverage for installer interactive wizard and upgrade path (coverage rank #2)"
-    status: open
+    status: done
     priority: P2
     area: tests
     risk: standard
@@ -554,13 +554,13 @@ tasks:
       - "Wizard prompt helpers exercised non-interactively (piped answers) in a test_install_* suite."
       - "An upgrade fixture covers detect→migrate→verify for at least one version gap."
       - "Suites run in CI via the standard installer e2e discovery (test_install_*.sh)."
-    links: { issue: null, pr: null, roadmap: "1.14" }
+    links: { issue: 147, pr: null, roadmap: "1.14" }
     created: 2026-06-12
-    updated: 2026-06-12
+    updated: 2026-06-29
 
   - id: T-021
     title: "Vendor cytoscape.js so the Obsidian graph works without a CDN"
-    status: open
+    status: done
     priority: P3
     area: feat
     risk: standard
@@ -577,9 +577,9 @@ tasks:
       - "cytoscape.min.js committed under assets/vendor/ and referenced via a local path."
       - "full-graph.html no longer references cdn.jsdelivr.net."
       - "The graph page renders nodes/edges with the vendored file (no network)."
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: 152, pr: null, roadmap: null }
     created: 2026-06-13
-    updated: 2026-06-13
+    updated: 2026-06-29
 
   # --- 2026-06-15 audit -------------------------------------------------------
 
@@ -637,7 +637,7 @@ tasks:
 
   - id: T-024
     title: "Unit tests for scripts/content-review.rb scoring engine"
-    status: open
+    status: done
     priority: P2
     area: tests
     risk: standard
@@ -657,9 +657,9 @@ tasks:
       - "At least one test verifies the `--strict` flag exits non-zero when the fail threshold is crossed."
       - "Tests run under `LC_ALL=C` (locale-independence parity with T-015 guard)."
       - "`./scripts/bin/test` stays green with the new tests included."
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: 166, pr: null, roadmap: null }
     created: 2026-06-15
-    updated: 2026-06-15
+    updated: 2026-06-29
 
   - id: T-025
     title: "Playwright smoke tests for the site-wide search modal"
@@ -689,7 +689,7 @@ tasks:
 
   - id: T-026
     title: "Playwright smoke test for AI chat widget render guard and FAB visibility"
-    status: open
+    status: done
     priority: P3
     area: tests
     risk: standard
@@ -710,9 +710,9 @@ tasks:
       - "A mock-config test (inject `data-ai-chat-enabled` attribute or use a fixture page with the widget force-enabled) verifies the FAB renders and the chat panel toggles open/closed on click."
       - "The test passes in the smoke project without a live AI backend."
       - "`./scripts/bin/test` (including the Playwright smoke tier) stays green."
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: 168, pr: 250, roadmap: null }
     created: 2026-06-15
-    updated: 2026-06-15
+    updated: 2026-06-29
 
   # --- Issue intake 2026-06-26: remote-theme 404 cluster + docs ----------------
   # Cap: 5 of 7 open issues triaged this run. Deferred (next run): #203 (consumer
@@ -721,7 +721,7 @@ tasks:
 
   - id: T-027
     title: "Theme chrome injects unconditional links (/authors/, /news/, /tags/, /posts/, graph) that 404 for remote-theme consumers"
-    status: open
+    status: done
     priority: P2
     area: a11y
     risk: standard
@@ -740,9 +740,9 @@ tasks:
       - "Theme-injected chrome links render only when their target exists (mirror the footer Quick-Links existence guard)."
       - "A link check over a built remote-theme `_site` reports no theme-injected 404s."
       - "No edit to `lib/jekyll-theme-zer0/version.rb` or release files."
-    links: { issue: 204, pr: null, roadmap: null }
+    links: { issue: 204, pr: 252, roadmap: null }
     created: 2026-06-26
-    updated: 2026-06-26
+    updated: 2026-06-29
 
   - id: T-028
     title: "remote_theme Pages consumers 404 on /search.json and /sitemap/ (generator is plugin-only)"
@@ -815,7 +815,7 @@ tasks:
 
   - id: T-031
     title: "Document the safe-mode build-overlay recipe for consumers building outside GitHub Pages"
-    status: open
+    status: done
     priority: P3
     area: docs
     risk: low
@@ -832,6 +832,34 @@ tasks:
       - "A docs page/section under `pages/_docs/` documents the build-overlay recipe (clone -> overlay -> strip _plugins -> strict build)."
       - "It is cross-linked from the remote-theme/deploy docs and passes markdownlint + the content-review deterministic tier."
       - "No code change; docs only."
-    links: { issue: 220, pr: null, roadmap: null }
+    links: { issue: 220, pr: 251, roadmap: null }
     created: 2026-06-26
     updated: 2026-06-26
+
+  - id: T-032
+    title: "Add color_mode_default config knob (dark|light|auto) with FOUC prevention"
+    status: done
+    priority: P2
+    area: feat
+    risk: low
+    effort: S
+    source: issue
+    route: theme-ui
+    summary: >-
+      Implement a color_mode_default config key (values dark|light|auto, default auto).
+      Server-side: root.html reads site.color_mode_default and sets data-bs-theme
+      accordingly (auto resolves to dark as SSR fallback). Client-side: an early inline
+      script (_includes/core/color-mode-init.html, before Bootstrap CSS) applies the
+      correct theme respecting both the config default and a localStorage["theme"] override,
+      preventing FOUC. auto follows prefers-color-scheme — backward-compatible.
+    acceptance:
+      - "site.color_mode_default: dark|light|auto is documented in _config.yml."
+      - "root.html server-renders data-bs-theme from the config (not hardcoded 'dark')."
+      - "An early inline script before Bootstrap CSS prevents FOUC for all three modes."
+      - "localStorage['theme'] override wins over the config default."
+      - "auto follows prefers-color-scheme; backward-compatible with the previous behaviour."
+      - "Regression spec test/visual/color-mode-default.spec.js passes (smoke tier)."
+      - "Before/after evidence committed under test/visual/evidence/color-mode-default/."
+    links: { issue: 241, pr: 253, roadmap: null }
+    created: 2026-06-29
+    updated: 2026-06-29

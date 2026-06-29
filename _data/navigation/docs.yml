@@ -70,6 +70,10 @@
       url: /docs/deployment/
     - title: GitHub Pages
       url: /docs/deployment/github-pages/
+    - title: Remote-Theme Consumer Checklist
+      url: /docs/deployment/remote-theme-checklist/
+    - title: Safe-Mode Build Overlay
+      url: /docs/deployment/build-overlay/
     - title: Netlify
       url: /docs/deployment/netlify/
     - title: Custom Domain
