@@ -721,7 +721,7 @@ tasks:
 
   - id: T-027
     title: "Theme chrome injects unconditional links (/authors/, /news/, /tags/, /posts/, graph) that 404 for remote-theme consumers"
-    status: open
+    status: done
     priority: P2
     area: a11y
     risk: standard
@@ -742,7 +742,7 @@ tasks:
       - "No edit to `lib/jekyll-theme-zer0/version.rb` or release files."
     links: { issue: 204, pr: null, roadmap: null }
     created: 2026-06-26
-    updated: 2026-06-26
+    updated: 2026-06-29
 
   - id: T-028
     title: "remote_theme Pages consumers 404 on /search.json and /sitemap/ (generator is plugin-only)"

@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Bug Fixes
+
+* **layouts:** existence-gate `/authors/` breadcrumb link in author.html for remote-theme consumers ([#204](https://github.com/bamr87/zer0-mistakes/issues/204))
+
 ## [1.22.0](https://github.com/bamr87/zer0-mistakes/compare/v1.21.0...v1.22.0) (2026-06-26)
 
 

@@ -1,0 +1,44 @@
+{
+  "slug": "authors-breadcrumb",
+  "issue": 204,
+  "wcag": "SC 2.4.4 Link Purpose (In Context)",
+  "file": "_layouts/author.html",
+  "change": "existence-gate the /authors/ breadcrumb link",
+  "buildResult": "green",
+  "buildConfig": "_config.yml,_config_dev.yml",
+  "buildTime": "~15s",
+  "cases": [
+    {
+      "scenario": "local-dev build (authors index present)",
+      "authorsIndexUrl": "/authors/",
+      "authorsIndexExists": true,
+      "before": {
+        "breadcrumbHtml": "<a href=\"/authors/\">Authors</a>",
+        "isLink": true,
+        "problem": "link always renders regardless of whether /authors/ exists"
+      },
+      "after": {
+        "breadcrumbHtml": "<a href=\"/authors/\">Authors</a>",
+        "isLink": true,
+        "note": "link preserved because /authors/ exists in site.html_pages"
+      }
+    },
+    {
+      "scenario": "remote-theme Pages consumer (authors index absent)",
+      "authorsIndexUrl": "/authors/",
+      "authorsIndexExists": false,
+      "before": {
+        "breadcrumbHtml": "<a href=\"/authors/\">Authors</a>",
+        "isLink": true,
+        "problem": "broken link — 404 on every author profile page"
+      },
+      "after": {
+        "breadcrumbHtml": "Authors",
+        "isLink": false,
+        "note": "degrades to plain text — no broken link"
+      }
+    }
+  ],
+  "regressionSpec": "test/visual/authors-breadcrumb-degradation.spec.js",
+  "buildEvidence": "_site/authors/bamr87/index.html (grep breadcrumb)"
+}
