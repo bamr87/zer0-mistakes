@@ -99,3 +99,27 @@ skins:
     gradient: "assets/backgrounds/gradients/sunrise.svg"
     pattern: "assets/backgrounds/patterns/sunrise.svg"
     noise: "assets/backgrounds/noise/sunrise.svg"
+
+  # `dark` is the DEFAULT theme_skin, and `contrast` is advertised as valid, but
+  # neither was mapped here — so the SVG-background feature had no entry for them
+  # (issue #240). The gradient/pattern/noise assets already ship; these entries
+  # wire them up. Colors are taken from each skin's gradient stops.
+  dark:
+    label: "Dark"
+    colors:
+      primary: "#1a1a2e"
+      secondary: "#16213e"
+      accent: "#0f3460"
+    gradient: "assets/backgrounds/gradients/dark.svg"
+    pattern: "assets/backgrounds/patterns/dark.svg"
+    noise: "assets/backgrounds/noise/dark.svg"
+
+  contrast:
+    label: "Contrast"
+    colors:
+      primary: "#111111"
+      secondary: "#333333"
+      accent: "#ffcc00"
+    gradient: "assets/backgrounds/gradients/contrast.svg"
+    pattern: "assets/backgrounds/patterns/contrast.svg"
+    noise: "assets/backgrounds/noise/contrast.svg"
