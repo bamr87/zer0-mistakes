@@ -51,10 +51,13 @@ runs:
           echo "::warning::no Claude auth (CLAUDE_CODE_OAUTH_TOKEN or ANTHROPIC_API_KEY) — AI step is a no-op."
           exit 0
         fi
-        # The claude CLI reads either token from env. Prefer OAuth: drop an empty
-        # ANTHROPIC_API_KEY (an unset GitHub secret renders as "") so the CLI
-        # never attempts empty-key auth.
-        if [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ] && [ -z "${ANTHROPIC_API_KEY:-}" ]; then
+        # The claude CLI reads either token from env, but when BOTH are present it
+        # authenticates with ANTHROPIC_API_KEY. To make the OAuth token (Claude
+        # subscription billing) the real default, drop ANTHROPIC_API_KEY entirely
+        # whenever an OAuth token is set — so OAuth wins over a present API key, and
+        # an empty-string key (an unset GitHub secret renders as "") never triggers
+        # empty-key auth either.
+        if [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
           unset ANTHROPIC_API_KEY
         fi
         npm install -g @anthropic-ai/claude-code >/dev/null 2>&1 \
