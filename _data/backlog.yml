@@ -832,6 +832,6 @@ tasks:
       - "A docs page/section under `pages/_docs/` documents the build-overlay recipe (clone -> overlay -> strip _plugins -> strict build)."
       - "It is cross-linked from the remote-theme/deploy docs and passes markdownlint + the content-review deterministic tier."
       - "No code change; docs only."
-    links: { issue: 220, pr: null, roadmap: null }
+    links: { issue: 220, pr: 251, roadmap: null }
     created: 2026-06-26
     updated: 2026-06-29
