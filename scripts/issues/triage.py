@@ -25,8 +25,16 @@ closable ones into PR-sized `batches`, and emits a stable machine contract
   workflows, which ACT on this plan but never re-decide policy.
 
   HARD GUARDRAIL (enforced in code below, not a config knob): a HUMAN-authored
-  issue can NEVER receive a *close* disposition. Any such match is downgraded to
-  `needs-human`. Only bot/automation-authored noise is ever auto-close eligible.
+  issue can NEVER receive a *heuristic close* disposition (stale bot-noise, etc.).
+  Any such match is downgraded to `needs-human`. Only bot/automation-authored
+  noise is ever `eligible_autoclose`.
+
+  A human issue is closed by the autopilot through ONE evidence-based path only:
+  the verify-and-close lane. Each non-protected, non-epic human issue is flagged
+  `verify_candidate`; the issue-verifier (LLM, read-only) checks whether its fix
+  is ALREADY on `main`; and scripts/issues/verify_close.py closes it ONLY when the
+  verdict is resolved=true (high confidence + evidence) AND `main`'s full CI/CD
+  gate suite is green. This engine only flags candidacy — it never closes.
 
   Untrusted-input quarantine: issue title/body text is treated strictly as DATA.
   It is regex-matched and copied into reports, but NEVER eval'd / exec'd / shelled.
@@ -341,8 +349,12 @@ def classify_issue(
     note = chosen.get("note")
     downgrade_reason: Optional[str] = None
 
-    # HARD GUARDRAIL: a close disposition on a HUMAN-authored issue is downgraded
-    # to needs-human, unconditionally and in code (never a config knob).
+    # HARD GUARDRAIL: a HEURISTIC close disposition (stale bot-noise, etc.) on a
+    # HUMAN-authored issue is downgraded to needs-human, unconditionally and in
+    # code (never a config knob). This blocks closing a human issue just because
+    # it *looks* stale — it does NOT block the evidence-based verify-and-close
+    # path below, which closes a human issue only with a verifier verdict AND a
+    # green CI/CD gate.
     is_close = action.startswith("recommend-close") or disposition_id.startswith("close-")
     if is_close and not is_bot:
         downgrade_reason = "human-authored; close requires a human"
@@ -352,8 +364,22 @@ def classify_issue(
         note = default.get("note")
         is_close = action.startswith("recommend-close") or disposition_id.startswith("close-")
 
-    # Auto-close eligibility: only a close action AND a bot author qualifies.
+    # Auto-close eligibility (HEURISTIC path): only a close action AND a bot
+    # author qualifies. Human issues are never closed on heuristics.
     eligible_autoclose = bool(is_close and is_bot)
+
+    # verify-and-close candidacy (EVIDENCE path, orthogonal to the heuristic one):
+    # a human-authored, non-protected, non-epic OPEN issue may be handed to the
+    # issue-verifier to check whether its fix is ALREADY on `main`. This flag
+    # NEVER closes anything by itself — verify_close.py closes only when the
+    # verifier returns resolved=true (high confidence + evidence) AND `main`'s
+    # full CI/CD gate suite is green. It is the ONLY path by which the autopilot
+    # ever closes a human-authored issue.
+    verify_candidate = bool(
+        not is_bot
+        and disposition_id != "backlog-managed"
+        and action != "decompose"
+    )
 
     area = infer_area(issue, collections)
 
@@ -369,6 +395,7 @@ def classify_issue(
         "note": note,
         "area": area,
         "eligible_autoclose": eligible_autoclose,
+        "verify_candidate": verify_candidate,
         "created_at": issue.get("createdAt"),
         "updated_at": issue.get("updatedAt"),
     }
@@ -600,7 +627,7 @@ def build_batches(
 # --------------------------------------------------------------------------- #
 def compute_counts(records: list[dict[str, Any]]) -> dict[str, Any]:
     by_disposition: dict[str, int] = {}
-    bot = human = eligible = 0
+    bot = human = eligible = verify_candidates = 0
     for rec in records:
         by_disposition[rec["disposition_id"]] = (
             by_disposition.get(rec["disposition_id"], 0) + 1
@@ -611,12 +638,15 @@ def compute_counts(records: list[dict[str, Any]]) -> dict[str, Any]:
             human += 1
         if rec["eligible_autoclose"]:
             eligible += 1
+        if rec.get("verify_candidate"):
+            verify_candidates += 1
     return {
         "by_disposition": dict(sorted(by_disposition.items())),
         "total": len(records),
         "bot": bot,
         "human": human,
         "eligible_autoclose": eligible,
+        "verify_candidates": verify_candidates,
     }
 
 
@@ -947,6 +977,7 @@ def cmd_status(args: argparse.Namespace) -> int:
     print(f"  generated: {plan.get('generated')}")
     print(f"  total:     {counts['total']} (bot={counts['bot']} human={counts['human']})")
     print(f"  auto-close eligible: {counts['eligible_autoclose']}")
+    print(f"  verify candidates:   {counts.get('verify_candidates', 0)}")
     need_human = sum(1 for r in plan["issues"] if r["action"] == "route-human")
     print(f"  need human:          {need_human}")
     print("  by disposition:")

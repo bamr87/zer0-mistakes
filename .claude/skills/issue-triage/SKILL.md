@@ -40,10 +40,16 @@ encoded `config.yml`'s policy.
 - **Leave protected issues completely alone.** Anything under "Left alone
   (protected)" (disposition `backlog-managed`, marked by `<!-- backlog-id:` or the
   `agent-ready` label) is owned by `sync.yml`. No comment, label, or close.
-- **Closing is deterministic, not the agent's call.** The triager never runs
-  `gh issue close`; a gated workflow step closes only bot-authored
-  `eligible_autoclose` issues, only when `ISSUE_AUTOCLOSE_ENABLED`. Never close a
-  human's issue.
+- **Closing is deterministic, not the agent's call.** No LLM lane runs
+  `gh issue close`. Three deterministic, gated paths close issues: (1) bot-noise —
+  a workflow step closes `eligible_autoclose` (bot-authored) issues when
+  `ISSUE_AUTOCLOSE_ENABLED`; (2) verify-and-close — for human issues already fixed
+  on `main`, the read-only **issue-verifier** writes verdicts and
+  `scripts/issues/verify_close.py` closes the resolved + high-confidence ones ONLY
+  when `main`'s full CI/CD suite is green, gated by `ISSUE_VERIFY_CLOSE_ENABLED`;
+  (3) PR-merge — a resolver `Closes #N` docs PR that passes all checks auto-merges
+  and closes its issues. The **triager** itself still never closes anything, and
+  no human issue is closed on a heuristic/stale signal.
 - **Theme code is off-limits to the autopilot.** The resolver edits only
   `docs/**`/`pages/**` Markdown; anything touching `_layouts/_includes/_sass/
   _plugins/lib/assets/scripts` is escalated to a human (visual review required).
