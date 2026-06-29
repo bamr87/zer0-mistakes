@@ -860,6 +860,6 @@ tasks:
       - "auto follows prefers-color-scheme; backward-compatible with the previous behaviour."
       - "Regression spec test/visual/color-mode-default.spec.js passes (smoke tier)."
       - "Before/after evidence committed under test/visual/evidence/color-mode-default/."
-    links: { issue: 241, pr: null, roadmap: null }
+    links: { issue: 241, pr: 253, roadmap: null }
     created: 2026-06-29
     updated: 2026-06-29
