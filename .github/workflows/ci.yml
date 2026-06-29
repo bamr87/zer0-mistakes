@@ -243,12 +243,10 @@ jobs:
         # Path-filtered: only run when CSS/layout/asset/spec files changed,
         # and skip when the user explicitly requested a fast scope.
         #
-        # Non-blocking until the skin homepage baselines are regenerated:
-        # they predate the PR #108 UI overhaul and currently report a large
-        # diff against the live rendering. The step still runs (and uploads
-        # diffs as artifacts) so the drift stays visible, but it does not gate
-        # the suite. Drop continue-on-error once baselines are refreshed.
-        continue-on-error: true
+        # Blocking gate: the skin homepage baselines under test/visual/snapshots/
+        # were regenerated on Linux (./test/update-snapshots.sh) after the PR #108
+        # UI overhaul, so a pixel diff now signals a real visual regression rather
+        # than known drift. Diffs still upload as artifacts for triage.
         if: |
           needs.detect-changes.outputs.styling == 'true' &&
           (github.event_name != 'workflow_dispatch' || inputs.test_scope != 'fast')
