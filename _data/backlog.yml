@@ -770,7 +770,7 @@ tasks:
 
   - id: T-029
     title: "Guard the unconditional /tags/ link in section-sidebar.html for remote-theme consumers"
-    status: open
+    status: done
     priority: P2
     area: feat
     risk: low
@@ -788,7 +788,7 @@ tasks:
       - "A `test/visual/*.spec.js` regression asserts the conditional render (theme-ui / visual-evidence)."
     links: { issue: 218, pr: null, roadmap: null }
     created: 2026-06-26
-    updated: 2026-06-26
+    updated: 2026-06-29
 
   - id: T-030
     title: "component-showcase.html hardcodes demo links (/docs/, /pages/, /docs/customization/) that 404 for consumers"

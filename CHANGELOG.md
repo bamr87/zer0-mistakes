@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Tests
+
+* **navigation:** regression spec for section-sidebar /tags/ existence gate — asserts "Browse All Tags" and "View All Tags" links only render when /tags/ page is present in the build (issue #218, `test/visual/section-sidebar-tags-gate.spec.js`)
+
 ## [1.22.0](https://github.com/bamr87/zer0-mistakes/compare/v1.21.0...v1.22.0) (2026-06-26)
 
 
