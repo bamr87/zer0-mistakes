@@ -270,7 +270,7 @@ tasks:
 
   - id: T-010
     title: "Complete v1.9 quickstart docs rewrite with getting-started guide and screenshots"
-    status: open
+    status: done
     priority: P2
     area: docs
     risk: low
@@ -286,9 +286,9 @@ tasks:
       - "At least one guide beyond `bare-minimum.md` covers the standard fork/remote-theme workflow."
       - "Each guide includes at least one screenshot stored under `assets/images/docs/quickstart/`."
       - "All new pages pass `docs-validate.yml` front-matter and link checks."
-    links: { issue: null, pr: null, roadmap: "1.9" }
+    links: { issue: 126, pr: null, roadmap: "1.9" }
     created: 2026-06-01
-    updated: 2026-06-01
+    updated: 2026-06-29
 
   - id: T-011
     title: "Add Ruby unit tests for uncovered _plugins/ generators"
