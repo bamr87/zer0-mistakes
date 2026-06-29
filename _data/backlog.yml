@@ -62,8 +62,8 @@
 
 meta:
   title: "zer0-mistakes Backlog"
-  updated: 2026-06-26
-  next_id: 32
+  updated: 2026-06-29
+  next_id: 33
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -834,4 +834,32 @@ tasks:
       - "No code change; docs only."
     links: { issue: 220, pr: 251, roadmap: null }
     created: 2026-06-26
+    updated: 2026-06-26
+
+  - id: T-032
+    title: "Add color_mode_default config knob (dark|light|auto) with FOUC prevention"
+    status: done
+    priority: P2
+    area: feat
+    risk: low
+    effort: S
+    source: issue
+    route: theme-ui
+    summary: >-
+      Implement a color_mode_default config key (values dark|light|auto, default auto).
+      Server-side: root.html reads site.color_mode_default and sets data-bs-theme
+      accordingly (auto resolves to dark as SSR fallback). Client-side: an early inline
+      script (_includes/core/color-mode-init.html, before Bootstrap CSS) applies the
+      correct theme respecting both the config default and a localStorage["theme"] override,
+      preventing FOUC. auto follows prefers-color-scheme — backward-compatible.
+    acceptance:
+      - "site.color_mode_default: dark|light|auto is documented in _config.yml."
+      - "root.html server-renders data-bs-theme from the config (not hardcoded 'dark')."
+      - "An early inline script before Bootstrap CSS prevents FOUC for all three modes."
+      - "localStorage['theme'] override wins over the config default."
+      - "auto follows prefers-color-scheme; backward-compatible with the previous behaviour."
+      - "Regression spec test/visual/color-mode-default.spec.js passes (smoke tier)."
+      - "Before/after evidence committed under test/visual/evidence/color-mode-default/."
+    links: { issue: 241, pr: null, roadmap: null }
+    created: 2026-06-29
     updated: 2026-06-29
