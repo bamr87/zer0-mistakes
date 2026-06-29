@@ -815,7 +815,7 @@ tasks:
 
   - id: T-031
     title: "Document the safe-mode build-overlay recipe for consumers building outside GitHub Pages"
-    status: open
+    status: done
     priority: P3
     area: docs
     risk: low
@@ -834,4 +834,4 @@ tasks:
       - "No code change; docs only."
     links: { issue: 220, pr: null, roadmap: null }
     created: 2026-06-26
-    updated: 2026-06-26
+    updated: 2026-06-29
