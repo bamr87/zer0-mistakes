@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Bug Fixes
+
+* **layouts:** existence-gate `/authors/` breadcrumb link in author.html for remote-theme consumers ([#204](https://github.com/bamr87/zer0-mistakes/issues/204))
 ### Tests
 
 * **tests:** add negative-path smoke tests for AI chat render guard — asserts FAB/panel are absent when `proxy_ready: false` and no `api_key` is set (closes #168)
