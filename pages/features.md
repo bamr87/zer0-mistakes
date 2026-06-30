@@ -16,6 +16,8 @@ toc: true
 
 Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.features.features.size }} features are documented with references, links, and implementation details.
 
+{% assign gh = "https://github.com/" | append: site.github_user | append: "/" | append: site.repository_name %}
+
 ---
 
 ## 🏗 Core Infrastructure
@@ -61,6 +63,12 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
         <span class="badge bg-light text-dark">{{ tag }}</span>
         {% endfor %}
       </div>
+      {% if feature.provenance %}
+      <div class="mt-2 small text-muted">
+        {% if feature.provenance.pr %}<a href="{{ gh }}/pull/{{ feature.provenance.pr }}" class="text-decoration-none me-2">PR #{{ feature.provenance.pr }}</a>{% endif %}
+        {% if feature.provenance.commit %}<a href="{{ gh }}/commit/{{ feature.provenance.commit }}" class="text-decoration-none"><code>{{ feature.provenance.commit }}</code></a>{% endif %}
+      </div>
+      {% endif %}
     </div>
     {% if feature.docs %}
     <div class="card-footer">
@@ -108,6 +116,12 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
         <span class="badge bg-light text-dark">{{ tag }}</span>
         {% endfor %}
       </div>
+      {% if feature.provenance %}
+      <div class="mt-2 small text-muted">
+        {% if feature.provenance.pr %}<a href="{{ gh }}/pull/{{ feature.provenance.pr }}" class="text-decoration-none me-2">PR #{{ feature.provenance.pr }}</a>{% endif %}
+        {% if feature.provenance.commit %}<a href="{{ gh }}/commit/{{ feature.provenance.commit }}" class="text-decoration-none"><code>{{ feature.provenance.commit }}</code></a>{% endif %}
+      </div>
+      {% endif %}
     </div>
     {% if feature.docs %}
     <div class="card-footer">
@@ -157,6 +171,12 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
         <span class="badge bg-light text-dark">{{ tag }}</span>
         {% endfor %}
       </div>
+      {% if feature.provenance %}
+      <div class="mt-2 small text-muted">
+        {% if feature.provenance.pr %}<a href="{{ gh }}/pull/{{ feature.provenance.pr }}" class="text-decoration-none me-2">PR #{{ feature.provenance.pr }}</a>{% endif %}
+        {% if feature.provenance.commit %}<a href="{{ gh }}/commit/{{ feature.provenance.commit }}" class="text-decoration-none"><code>{{ feature.provenance.commit }}</code></a>{% endif %}
+      </div>
+      {% endif %}
     </div>
     {% if feature.docs %}
     <div class="card-footer">
@@ -207,6 +227,12 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
         <span class="badge bg-light text-dark">{{ tag }}</span>
         {% endfor %}
       </div>
+      {% if feature.provenance %}
+      <div class="mt-2 small text-muted">
+        {% if feature.provenance.pr %}<a href="{{ gh }}/pull/{{ feature.provenance.pr }}" class="text-decoration-none me-2">PR #{{ feature.provenance.pr }}</a>{% endif %}
+        {% if feature.provenance.commit %}<a href="{{ gh }}/commit/{{ feature.provenance.commit }}" class="text-decoration-none"><code>{{ feature.provenance.commit }}</code></a>{% endif %}
+      </div>
+      {% endif %}
     </div>
     {% if feature.docs %}
     <div class="card-footer">
@@ -257,6 +283,12 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
         <span class="badge bg-light text-dark">{{ tag }}</span>
         {% endfor %}
       </div>
+      {% if feature.provenance %}
+      <div class="mt-2 small text-muted">
+        {% if feature.provenance.pr %}<a href="{{ gh }}/pull/{{ feature.provenance.pr }}" class="text-decoration-none me-2">PR #{{ feature.provenance.pr }}</a>{% endif %}
+        {% if feature.provenance.commit %}<a href="{{ gh }}/commit/{{ feature.provenance.commit }}" class="text-decoration-none"><code>{{ feature.provenance.commit }}</code></a>{% endif %}
+      </div>
+      {% endif %}
     </div>
     {% if feature.docs %}
     <div class="card-footer">
@@ -308,6 +340,12 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
         <span class="badge bg-light text-dark">{{ tag }}</span>
         {% endfor %}
       </div>
+      {% if feature.provenance %}
+      <div class="mt-2 small text-muted">
+        {% if feature.provenance.pr %}<a href="{{ gh }}/pull/{{ feature.provenance.pr }}" class="text-decoration-none me-2">PR #{{ feature.provenance.pr }}</a>{% endif %}
+        {% if feature.provenance.commit %}<a href="{{ gh }}/commit/{{ feature.provenance.commit }}" class="text-decoration-none"><code>{{ feature.provenance.commit }}</code></a>{% endif %}
+      </div>
+      {% endif %}
     </div>
     {% if feature.docs %}
     <div class="card-footer">
@@ -333,6 +371,7 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
         <th>Feature</th>
         <th>Version</th>
         <th>Tags</th>
+        <th>Provenance</th>
         <th>Documentation</th>
       </tr>
     </thead>
@@ -350,6 +389,12 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
           {% for tag in feature.tags limit:3 %}
           <span class="badge bg-light text-dark">{{ tag }}</span>
           {% endfor %}
+        </td>
+        <td class="small text-nowrap">
+          {% if feature.provenance.pr %}<a href="{{ gh }}/pull/{{ feature.provenance.pr }}" class="text-decoration-none me-1" title="Pull request">PR #{{ feature.provenance.pr }}</a>{% endif %}
+          {% if feature.provenance.commit %}<a href="{{ gh }}/commit/{{ feature.provenance.commit }}" class="text-decoration-none me-1" title="Introducing commit"><code>{{ feature.provenance.commit }}</code></a>{% endif %}
+          {% if feature.provenance.issue %}<a href="{{ gh }}/issues/{{ feature.provenance.issue }}" class="text-decoration-none" title="Issue">#{{ feature.provenance.issue }}</a>{% endif %}
+          {% unless feature.provenance %}<span class="text-muted">—</span>{% endunless %}
         </td>
         <td>
           {% if feature.docs %}

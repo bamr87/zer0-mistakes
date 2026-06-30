@@ -17,6 +17,11 @@ features:
     docs: "/docs/bootstrap/"
     tags: [jekyll, theme, bootstrap, ui, responsive]
     date: 2025-01-27
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
     references:
       layouts: ["_layouts/root.html", "_layouts/default.html"]
       includes: ["_includes/core/head.html"]
@@ -38,6 +43,11 @@ features:
     docs: "/docs/docker/"
     tags: [docker, devops, development, cross-platform]
     date: 2025-01-27
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "4ff71bc"
+      issue: null
     references:
       config: ["docker-compose.yml", "docker-compose.test.yml"]
       dockerfile: "docker/Dockerfile"
@@ -58,6 +68,11 @@ features:
     docs: "/docs/installation/"
     tags: [ai, automation, installation, error-handling, bash, installer]
     date: 2026-02-15
+    provenance:
+      introduced_in: "1.0.0"
+      pr: 76
+      commit: "36cd015"
+      issue: null
     references:
       script: "install.sh"
       cli: "scripts/bin/install"
@@ -90,6 +105,11 @@ features:
     docs: "/docs/features/preview-image-generator/"
     tags: [ai, images, automation, openai, content]
     date: 2025-01-28
+    provenance:
+      introduced_in: "1.5.0"
+      pr: 83
+      commit: "ffdc1eb"
+      issue: null
     references:
       plugin: "_plugins/preview_image_generator.rb"
       script: "scripts/generate-preview-images.sh"
@@ -131,6 +151,11 @@ features:
     docs: "/docs/features/copilot-integration/"
     tags: [ai, copilot, agents, development, documentation]
     date: 2026-04-18
+    provenance:
+      introduced_in: "1.6.0"
+      pr: 70
+      commit: "bc41b0d"
+      issue: null
     references:
       entry_point: "AGENTS.md"
       main: ".github/copilot-instructions.md"
@@ -172,6 +197,11 @@ features:
     docs: "/docs/features/posthog-analytics/"
     tags: [analytics, privacy, gdpr, ccpa, posthog]
     date: 2025-11-15
+    provenance:
+      introduced_in: "0.6.0"
+      pr: null
+      commit: "76f4508"
+      issue: null
     references:
       include: "_includes/analytics/posthog.html"
       config: "_config.yml"
@@ -195,6 +225,11 @@ features:
     docs: "/docs/features/cookie-consent/"
     tags: [privacy, gdpr, ccpa, cookies, consent]
     date: 2025-11-15
+    provenance:
+      introduced_in: "0.6.0"
+      pr: null
+      commit: "76f4508"
+      issue: null
     references:
       include: "_includes/components/cookie-consent.html"
       config: "_config.yml"
@@ -219,6 +254,11 @@ features:
     docs: "/docs/features/sidebar-navigation/"
     tags: [navigation, ui, accessibility, performance, sidebar]
     date: 2025-12-01
+    provenance:
+      introduced_in: "0.14.0"
+      pr: null
+      commit: "0ea51c6"
+      issue: null
     references:
       javascript:
         - "assets/js/modules/navigation/sidebar-state.js"
@@ -252,6 +292,11 @@ features:
     docs: "/docs/features/keyboard-navigation/"
     tags: [accessibility, keyboard, navigation, ux]
     date: 2025-12-01
+    provenance:
+      introduced_in: "0.14.0"
+      pr: null
+      commit: "0ea51c6"
+      issue: null
     references:
       javascript:
         - "assets/js/modules/navigation/keyboard.js"
@@ -278,6 +323,11 @@ features:
     docs: "/docs/features/mobile-toc/"
     tags: [mobile, navigation, ui, toc, fab]
     date: 2025-12-01
+    provenance:
+      introduced_in: "0.14.0"
+      pr: null
+      commit: "0ea51c6"
+      issue: null
     references:
       include: "_includes/navigation/sidebar-right.html"
       styles: "_sass/custom.scss"
@@ -298,6 +348,11 @@ features:
     docs: "/docs/features/skip-to-content/"
     tags: [accessibility, wcag, navigation, a11y]
     date: 2025-12-01
+    provenance:
+      introduced_in: "0.14.0"
+      pr: null
+      commit: "0ea51c6"
+      issue: null
     references:
       include: "_includes/core/header.html"
       styles: "_sass/custom.scss"
@@ -315,6 +370,11 @@ features:
     docs: "/docs/features/jupyter-notebooks/"
     tags: [jupyter, notebooks, python, data-science, content]
     date: 2025-11-29
+    provenance:
+      introduced_in: "0.13.0"
+      pr: null
+      commit: "8bf80ad"
+      issue: null
     references:
       script: "scripts/convert-notebooks.sh"
       layout: "_layouts/notebook.html"
@@ -344,6 +404,11 @@ features:
     docs: "/docs/features/mermaid-diagrams/"
     tags: [mermaid, diagrams, visualization, documentation]
     date: 2025-01-27
+    provenance:
+      introduced_in: "0.3.0"
+      pr: null
+      commit: "1a6184b"
+      issue: null
     references:
       include: "_includes/components/mermaid.html"
       config: "_config.yml"
@@ -368,6 +433,11 @@ features:
     docs: "/docs/jekyll/collections/"
     tags: [jekyll, collections, content, organization]
     date: 2025-01-27
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
     references:
       config: "_config.yml"
       collections:
@@ -395,6 +465,11 @@ features:
     docs: "/docs/development/release-management/"
     tags: [release, automation, semver, ci-cd, versioning]
     date: 2025-11-15
+    provenance:
+      introduced_in: "0.5.0"
+      pr: null
+      commit: "81ef2d7"
+      issue: null
     references:
       scripts:
         - "scripts/release"
@@ -420,6 +495,11 @@ features:
     docs: "/docs/development/testing/"
     tags: [testing, quality, ci-cd, automation]
     date: 2025-11-15
+    provenance:
+      introduced_in: "0.10.0"
+      pr: null
+      commit: "e527464"
+      issue: null
     references:
       tests:
         - "test/test_runner.sh"
@@ -447,6 +527,11 @@ features:
     docs: "/docs/development/version-bump/"
     tags: [github-actions, automation, versioning, ci-cd]
     date: 2025-12-07
+    provenance:
+      introduced_in: "0.14.2"
+      pr: null
+      commit: "1ba6994"
+      issue: null
     references:
       workflow: ".github/workflows/version-bump.yml"
       version: "lib/jekyll-theme-zer0/version.rb"
@@ -467,6 +552,11 @@ features:
     docs: "/docs/development/security/"
     tags: [security, codeql, scanning, ci-cd]
     date: 2025-11-15
+    provenance:
+      introduced_in: "0.10.0"
+      pr: null
+      commit: "5053589"
+      issue: null
     references:
       workflow: ".github/workflows/codeql.yml"
     features:
@@ -488,6 +578,11 @@ features:
     docs: "/docs/customization/layouts/"
     tags: [layouts, templates, jekyll, bootstrap]
     date: 2025-01-27
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
     references:
       layouts:
         - "_layouts/root.html"
@@ -527,6 +622,11 @@ features:
     docs: "/docs/customization/includes/"
     tags: [includes, components, modular, jekyll]
     date: 2025-01-27
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
     references:
       includes:
         - "_includes/core/"
@@ -557,6 +657,11 @@ features:
     docs: "/docs/features/theme-version/"
     tags: [plugin, version, jekyll, metadata]
     date: 2025-11-20
+    provenance:
+      introduced_in: "0.11.0"
+      pr: null
+      commit: "fbc767b"
+      issue: null
     references:
       plugin: "_plugins/theme_version.rb"
       include: "_includes/components/theme-info.html"
@@ -581,6 +686,11 @@ features:
     docs: "/privacy-policy/"
     tags: [legal, privacy, gdpr, ccpa, compliance]
     date: 2025-12-11
+    provenance:
+      introduced_in: "0.15.0"
+      pr: null
+      commit: "1bd9a2c"
+      issue: null
     references:
       page: "pages/privacy-policy.md"
     features:
@@ -599,6 +709,11 @@ features:
     docs: "/terms-of-service/"
     tags: [legal, terms, compliance]
     date: 2025-12-11
+    provenance:
+      introduced_in: "0.15.0"
+      pr: null
+      commit: "1bd9a2c"
+      issue: null
     references:
       page: "pages/terms-of-service.md"
   
@@ -615,6 +730,11 @@ features:
     docs: "/docs/development/prd/"
     tags: [documentation, prd, product, planning]
     date: 2025-11-25
+    provenance:
+      introduced_in: "0.15.0"
+      pr: null
+      commit: "b7ad237"
+      issue: null
     references:
       doc:
         - "docs/architecture/prd-requirements.md"
@@ -635,6 +755,11 @@ features:
     docs: "/docs/development/documentation/"
     tags: [documentation, mdx, markdown, workflow]
     date: 2025-11-16
+    provenance:
+      introduced_in: "0.15.0"
+      pr: null
+      commit: "ceb4962"
+      issue: null
     references:
       technical: "docs/"
       public: "pages/_docs/"
@@ -659,6 +784,11 @@ features:
     docs: "/docs/development/dependency-updates/"
     tags: [automation, dependencies, github-actions, maintenance]
     date: 2025-12-07
+    provenance:
+      introduced_in: "0.14.2"
+      pr: null
+      commit: "3b55b60"
+      issue: null
     references:
       workflow: ".github/workflows/update-dependencies.yml"
     features:
@@ -676,6 +806,11 @@ features:
     docs: "/docs/development/ci-cd/"
     tags: [ci-cd, testing, automation, github-actions]
     date: 2025-11-15
+    provenance:
+      introduced_in: "0.10.0"
+      pr: null
+      commit: "1ba6994"
+      issue: null
     references:
       workflow: ".github/workflows/ci.yml"
     features:
@@ -698,6 +833,11 @@ features:
     docs: "/docs/development/scripts/"
     tags: [scripts, automation, bash, utilities]
     date: 2025-11-15
+    provenance:
+      introduced_in: "0.5.0"
+      pr: null
+      commit: "32755cd"
+      issue: null
     references:
       scripts:
         - "scripts/build"
@@ -729,6 +869,11 @@ features:
     docs: "/docs/features/back-to-top/"
     tags: [ui, navigation, scroll, accessibility]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
     references:
       scripts:
         - "assets/js/back-to-top.js"
@@ -747,6 +892,11 @@ features:
     docs: "/docs/features/code-copy/"
     tags: [ui, code, clipboard, developer-experience]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
     references:
       scripts:
         - "assets/js/code-copy.js"
@@ -766,6 +916,11 @@ features:
     docs: "/docs/features/color-modes/"
     tags: [ui, theme, dark-mode, accessibility]
     date: 2026-06-30
+    provenance:
+      introduced_in: "1.23.0"
+      pr: 253
+      commit: "55bee97"
+      issue: null
     references:
       scripts:
         - "assets/js/modules/theme/appearance.js"
@@ -791,6 +946,11 @@ features:
     docs: "/docs/features/site-search/"
     tags: [search, navigation, modal, keyboard]
     date: 2026-04-10
+    provenance:
+      introduced_in: "1.5.1"
+      pr: 86
+      commit: "21eb458"
+      issue: null
     references:
       scripts:
         - "assets/js/search-modal.js"
@@ -816,6 +976,11 @@ features:
     docs: "/docs/features/auto-hide-nav/"
     tags: [ui, navigation, scroll, mobile]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
     references:
       scripts:
         - "assets/js/auto-hide-nav.js"
@@ -834,6 +999,11 @@ features:
     docs: "/docs/features/particles-background/"
     tags: [ui, animation, visual, landing]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
     references:
       scripts:
         - "assets/js/particles.js"
@@ -859,6 +1029,11 @@ features:
     docs: "/docs/features/giscus-comments/"
     tags: [comments, github, discussions, engagement, claude-code]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
     references:
       includes:
         - "_includes/content/giscus.html"
@@ -888,6 +1063,11 @@ features:
     docs: "/docs/features/mathjax-math/"
     tags: [math, latex, equations, documentation]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "31f827e"
+      issue: null
     references:
       docs:
         - "pages/_docs/features/mathjax-math.md"
@@ -906,6 +1086,11 @@ features:
     docs: "/docs/features/toc/"
     tags: [navigation, toc, headings, documentation]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
     references:
       includes:
         - "_includes/content/toc.html"
@@ -929,6 +1114,11 @@ features:
     docs: "/docs/analytics/google-analytics/"
     tags: [analytics, google, tracking, metrics]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
     references:
       includes:
         - "_includes/analytics/google-analytics.html"
@@ -947,6 +1137,11 @@ features:
     docs: "/docs/analytics/google-tag-manager/"
     tags: [analytics, gtm, tracking, marketing]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
     references:
       includes:
         - "_includes/analytics/google-tag-manager-head.html"
@@ -970,6 +1165,11 @@ features:
     docs: "/docs/features/breadcrumbs/"
     tags: [navigation, breadcrumbs, seo, accessibility]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
     references:
       includes:
         - "_includes/navigation/breadcrumbs.html"
@@ -993,6 +1193,11 @@ features:
     docs: "/docs/seo/meta-tags/"
     tags: [seo, meta, opengraph, twitter-cards]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
     references:
       includes:
         - "_includes/content/seo.html"
@@ -1013,6 +1218,11 @@ features:
     docs: "/docs/seo/sitemap/"
     tags: [seo, sitemap, search, indexing]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
     references:
       includes:
         - "_includes/content/sitemap.html"
@@ -1041,6 +1251,11 @@ features:
     docs: "/docs/features/statistics-dashboard/"
     tags: [dashboard, statistics, metrics, visualization]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "8986a02"
+      issue: null
     references:
       layouts:
         - "_layouts/stats.html"
@@ -1070,6 +1285,11 @@ features:
     docs: "/docs/obsidian/"
     tags: [obsidian, content, wiki-links, knowledge-base, jekyll]
     date: 2026-03-12
+    provenance:
+      introduced_in: "1.3.0"
+      pr: 73
+      commit: "31e042c"
+      issue: null
     references:
       plugin: "_plugins/obsidian_links.rb"
       scripts:
@@ -1103,6 +1323,11 @@ features:
     docs: "/docs/obsidian/graph/"
     tags: [obsidian, graph, visualization, navigation]
     date: 2026-03-25
+    provenance:
+      introduced_in: "1.4.0"
+      pr: 77
+      commit: "d39dfa9"
+      issue: null
     references:
       includes:
         - "_includes/obsidian/full-graph.html"
@@ -1123,6 +1348,11 @@ features:
     docs: "/docs/quickstart/bare-minimum/"
     tags: [setup, quickstart, remote-theme, github-pages]
     date: 2026-02-25
+    provenance:
+      introduced_in: "1.2.0"
+      pr: null
+      commit: "4bd3e36"
+      issue: null
     references:
       includes:
         - "_includes/components/info-section.html"
@@ -1138,6 +1368,11 @@ features:
     docs: "/docs/features/smart-404/"
     tags: [setup, 404, configuration, ux]
     date: 2026-01-30
+    provenance:
+      introduced_in: "0.22.18"
+      pr: 58
+      commit: "02d0295"
+      issue: null
     references:
       page: "404.html"
       docs: "pages/_docs/features/smart-404.md"
@@ -1151,6 +1386,11 @@ features:
     docs: "/docs/development/frontmatter-validation/"
     tags: [validation, frontmatter, content, ci-cd, automation]
     date: 2026-01-25
+    provenance:
+      introduced_in: "0.22.17"
+      pr: 34
+      commit: "10ba722"
+      issue: null
     references:
       script: "scripts/bin/validate"
       config: ".github/config/frontmatter_schema.yml"
@@ -1165,6 +1405,11 @@ features:
     docs: "/docs/features/dynamic-navigation/"
     tags: [navigation, ui, zero-config, jekyll]
     date: 2026-01-15
+    provenance:
+      introduced_in: "0.22.15"
+      pr: null
+      commit: "a8426a5"
+      issue: null
     references:
       includes:
         - "_includes/navigation/navbar.html"
@@ -1178,6 +1423,11 @@ features:
     docs: "/docs/features/admin-dashboard/"
     tags: [admin, dashboard, ui, configuration]
     date: 2025-12-28
+    provenance:
+      introduced_in: "0.21.4"
+      pr: 57
+      commit: "27550da"
+      issue: null
     references:
       layout: "_layouts/admin.html"
       includes:
@@ -1193,6 +1443,11 @@ features:
     docs: "/docs/development/agents/"
     tags: [ai, agents, documentation, copilot, cursor]
     date: 2026-01-20
+    provenance:
+      introduced_in: "0.22.16"
+      pr: 70
+      commit: "bc41b0d"
+      issue: null
     references:
       file: "AGENTS.md"
       instructions_index: ".github/instructions/README.md"
@@ -1206,6 +1461,11 @@ features:
     docs: "/roadmap/"
     tags: [roadmap, documentation, mermaid, automation]
     date: 2026-02-08
+    provenance:
+      introduced_in: "0.22.21"
+      pr: 71
+      commit: "7f00e4d"
+      issue: null
     references:
       data: "_data/roadmap.yml"
       page: "pages/roadmap.md"
@@ -1220,6 +1480,11 @@ features:
     docs: "/docs/features/vendored-assets/"
     tags: [bootstrap, assets, vendor, github-pages, performance]
     date: 2025-12-20
+    provenance:
+      introduced_in: "0.21.3"
+      pr: 39
+      commit: "3c96620"
+      issue: null
     references:
       script: "scripts/vendor-install.sh"
       manifest: "vendor-manifest.json"
@@ -1236,6 +1501,11 @@ features:
     docs: "/docs/seo/aieo/"
     tags: [seo, aieo, structured-data, faq, glossary, ai]
     date: 2025-12-30
+    provenance:
+      introduced_in: "0.21.5"
+      pr: 38
+      commit: "9a27ad7"
+      issue: null
     references:
       includes:
         - "_includes/content/seo.html"
@@ -1254,6 +1524,11 @@ features:
     docs: "/docs/features/navigation-architecture/"
     tags: [navigation, javascript, es6, ui, performance]
     date: 2025-12-12
+    provenance:
+      introduced_in: "0.18.0"
+      pr: null
+      commit: "5533f34"
+      issue: null
     references:
       scripts:
         - "assets/js/modules/"
@@ -1270,6 +1545,11 @@ features:
     docs: "/docs/development/devcontainer/"
     tags: [devcontainer, codespaces, development, docker]
     date: 2025-12-10
+    provenance:
+      introduced_in: "0.17.0"
+      pr: null
+      commit: "0ef86c2"
+      issue: null
     references:
       config:
         - ".devcontainer/devcontainer.json"
@@ -1285,6 +1565,11 @@ features:
     docs: "/docs/development/docker-publishing/"
     tags: [docker, release, ci-cd, gem, automation]
     date: 2025-12-22
+    provenance:
+      introduced_in: "0.21.1"
+      pr: null
+      commit: "32755cd"
+      issue: null
     references:
       compose:
         - "docker-compose.publish.yml"
@@ -1300,6 +1585,11 @@ features:
     docs: "/notes/"
     tags: [content, collections, notes, jekyll]
     date: 2025-12-15
+    provenance:
+      introduced_in: "0.20.0"
+      pr: null
+      commit: "06691f9"
+      issue: null
     references:
       collection: "pages/_notes/"
       layouts:
@@ -1315,6 +1605,11 @@ features:
     docs: "/docs/obsidian/performance/"
     tags: [obsidian, performance, jekyll, optimization]
     date: 2026-04-30
+    provenance:
+      introduced_in: "1.6.0"
+      pr: 73
+      commit: "31e042c"
+      issue: null
     references:
       plugin: "_plugins/obsidian_links.rb"
       includes:
@@ -1328,6 +1623,11 @@ features:
     docs: "/docs/features/ai-chat-assistant/"
     tags: [ai, chatbot, claude, github, proxy, accessibility]
     date: 2026-06-13
+    provenance:
+      introduced_in: "1.18.0"
+      pr: 33
+      commit: "341cc67"
+      issue: null
     references:
       includes: ["_includes/components/ai-chat.html"]
       layouts: ["_layouts/root.html"]

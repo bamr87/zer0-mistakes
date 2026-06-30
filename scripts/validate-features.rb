@@ -14,9 +14,9 @@
 #   - schema violations (missing required field, bad id/version, duplicate id)
 #   - implemented:false without `removed_in:`
 #   - a reference path on an ACTIVE feature does not exist in the repo
+#   - missing/malformed `provenance:` block on an active feature (since PR B)
 #
 # WARNINGS (non-fatal unless FEATURES_STRICT=1):
-#   - missing `provenance:` block          (backfilled in PR B)
 #   - missing `tests:` linkage             (backfilled in PR C)
 #   - header `# Version:` not tracking the gem version
 #   - id gaps (IDs are never reused, but gaps are worth a human glance)
@@ -99,8 +99,15 @@ feats.each_with_index do |f, i|
     die "#{id}: reference path does not exist: #{p}" unless ok
   end
 
-  # 3. Provenance + test linkage (warn now, fatal under FEATURES_STRICT / later PRs).
-  warnings << "#{id}: missing `provenance:` block" unless f['provenance'].is_a?(Hash)
+  # 3a. Provenance is REQUIRED on every active feature (backfilled in PR B).
+  prov = f['provenance']
+  die "#{id}: missing `provenance:` block" unless prov.is_a?(Hash)
+  die "#{id}: provenance.introduced_in must be a version string" unless prov['introduced_in'].is_a?(String) && prov['introduced_in'] =~ /\A\d+\.\d+\.\d+/
+  die "#{id}: provenance.commit must be a short git hash" unless prov['commit'].is_a?(String) && prov['commit'] =~ /\A[0-9a-f]{7,40}\z/
+  die "#{id}: provenance.pr must be an integer or null" unless prov['pr'].nil? || prov['pr'].is_a?(Integer)
+  die "#{id}: provenance.issue must be an integer or null" unless prov['issue'].nil? || prov['issue'].is_a?(Integer)
+
+  # 3b. Test linkage (warn now, fatal once PR C backfills it).
   tests = f['tests']
   has_test = tests.is_a?(Array) && tests.any? { |t| t.is_a?(String) ? File.exist?(t) : (t.is_a?(Hash) && t['na']) }
   warnings << "#{id}: no `tests:` entry (real path or `na:` + reason)" unless has_test
