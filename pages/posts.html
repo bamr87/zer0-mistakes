@@ -287,11 +287,13 @@ keywords:
         <script>
           function goToPage(event) {
             event.preventDefault();
-            const pageNum = document.getElementById('page-jump').value;
+            // Coerce to an integer and bounds-check before building the URL, so a
+            // crafted input value cannot flow into location.href (DOM XSS).
+            const pageNum = parseInt(document.getElementById('page-jump').value, 10);
             const maxPages = {{ paginator.total_pages }};
-            if (pageNum >= 1 && pageNum <= maxPages) {
+            if (Number.isInteger(pageNum) && pageNum >= 1 && pageNum <= maxPages) {
               const basePath = '{{ "/posts/" | relative_url }}';
-              window.location.href = pageNum == 1 ? basePath : basePath + pageNum + '/';
+              window.location.href = pageNum === 1 ? basePath : basePath + pageNum + '/';
             }
             return false;
           }
