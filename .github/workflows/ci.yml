@@ -208,7 +208,7 @@ jobs:
           # Gate parity (T-012): run every non-Playwright theme suite that
           # `./scripts/bin/test` exposes locally, not a subset. Playwright
           # tiers run as dedicated steps below.
-          suites: core,deployment,quality,installation,installer,site_generation,obsidian
+          suites: core,deployment,quality,installation,installer,site_generation,obsidian,features
           skip-docker: true
           skip-remote: true
 
