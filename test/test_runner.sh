@@ -178,10 +178,10 @@ done
 # `playwright` runs the smoke tier; `playwright_snapshots` runs the pixel
 # regression tier. The legacy `visual` (ImageMagick + bash screenshots) and
 # `styling` (alias for the same Playwright tier) suites have been retired.
-TEST_SUITE_KEYS=("core" "deployment" "quality" "installation" "installer" "site_generation" "obsidian" "playwright" "playwright_snapshots" "audit")
-TEST_SUITE_SCRIPTS=("test_core.sh" "test_deployment.sh" "test_quality.sh" "test_installation.sh" "test_installer.sh" "test_site_generation.sh" "test_obsidian.sh" "test_playwright.sh" "test_playwright.sh" "test_audit.sh")
-TEST_SUITE_NAMES=("Core Tests (Unit, Integration, Validation)" "Deployment Tests (Installation, Docker, E2E)" "Quality Tests (Security, Accessibility, Compatibility, Performance)" "Installation Tests (CLI, Modes, Errors, Edge Cases)" "Modular Installer Tests (Profiles, Deploy Plugins, Agents, AI Wizard)" "Site Generation Tests (Config Matrix, Jekyll Build)" "Obsidian Tests (Wiki Links, Graph, Backlinks)" "Playwright Smoke Tests (CSS, layout, behavioral DOM)" "Playwright Snapshot Tests (homepage skin pixel regression)" "Audit Tests (Manifest generation, consumer classification, fix mode)")
-TEST_SUITE_ENV=("" "" "" "" "" "" "" "PLAYWRIGHT_PROJECT=smoke" "PLAYWRIGHT_PROJECT=snapshots" "")
+TEST_SUITE_KEYS=("core" "deployment" "quality" "installation" "installer" "site_generation" "obsidian" "features" "playwright" "playwright_snapshots" "audit")
+TEST_SUITE_SCRIPTS=("test_core.sh" "test_deployment.sh" "test_quality.sh" "test_installation.sh" "test_installer.sh" "test_site_generation.sh" "test_obsidian.sh" "test_features.sh" "test_playwright.sh" "test_playwright.sh" "test_audit.sh")
+TEST_SUITE_NAMES=("Core Tests (Unit, Integration, Validation)" "Deployment Tests (Installation, Docker, E2E)" "Quality Tests (Security, Accessibility, Compatibility, Performance)" "Installation Tests (CLI, Modes, Errors, Edge Cases)" "Modular Installer Tests (Profiles, Deploy Plugins, Agents, AI Wizard)" "Site Generation Tests (Config Matrix, Jekyll Build)" "Obsidian Tests (Wiki Links, Graph, Backlinks)" "Feature Registry Tests (Sync, Schema, References, Coverage Backlog)" "Playwright Smoke Tests (CSS, layout, behavioral DOM)" "Playwright Snapshot Tests (homepage skin pixel regression)" "Audit Tests (Manifest generation, consumer classification, fix mode)")
+TEST_SUITE_ENV=("" "" "" "" "" "" "" "" "PLAYWRIGHT_PROJECT=smoke" "PLAYWRIGHT_PROJECT=snapshots" "")
 
 # Helper function to get suite script by name
 get_suite_script() {
@@ -266,10 +266,10 @@ parse_test_suites() {
     
     if [[ "$suites_input" == "all" ]]; then
         # Run core test suites by default (Playwright tiers are optional and slow)
-        suites_to_run=("core" "deployment" "quality" "installation" "installer" "site_generation")
+        suites_to_run=("core" "deployment" "quality" "installation" "installer" "site_generation" "features")
     elif [[ "$suites_input" == "full" ]]; then
         # Run everything including Obsidian and both Playwright tiers
-        suites_to_run=("core" "deployment" "quality" "installation" "installer" "site_generation" "obsidian" "playwright" "playwright_snapshots")
+        suites_to_run=("core" "deployment" "quality" "installation" "installer" "site_generation" "obsidian" "features" "playwright" "playwright_snapshots")
     else
         IFS=',' read -ra suites_to_run <<< "$suites_input"
         # Backwards-compat aliases for the retired suite names
