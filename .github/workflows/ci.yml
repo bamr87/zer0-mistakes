@@ -278,7 +278,9 @@ jobs:
       (github.event_name != 'workflow_dispatch' || inputs.test_scope != 'fast')
     timeout-minutes: 30
     env:
-      PAGES_REPO_NWO: ${{ env.PAGES_REPO_NWO }}
+      # The `env` context isn't available at job-level env; mirror the
+      # workflow-level definition directly.
+      PAGES_REPO_NWO: ${{ vars.PAGES_REPO_NWO || github.repository }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
