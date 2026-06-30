@@ -1,0 +1,11 @@
+{
+  "slug": "features-provenance",
+  "base": "http://localhost:4000",
+  "route": "/features/",
+  "shots": [
+    "01-reference-table-provenance.png",
+    "02-feature-card-provenance.png"
+  ],
+  "pr_links": 35,
+  "commit_links": 112
+}
