@@ -252,10 +252,32 @@ jobs:
           (github.event_name != 'workflow_dispatch' || inputs.test_scope != 'fast')
         env:
           PAGES_REPO_NWO: ${{ env.PAGES_REPO_NWO }}
-        uses: ./.github/actions/playwright-tests
+        run: |
+          # Render the snapshot tier inside the SAME Playwright image
+          # (mcr.microsoft.com/playwright:v1.58.2-jammy) that
+          # test/update-snapshots.sh uses to GENERATE the baselines. CI's own
+          # ubuntu-latest chromium renders fonts differently and produced a false
+          # ~30% whole-page diff; rendering in the identical image makes a
+          # refreshed Linux baseline match CI exactly. The job already has
+          # Ruby/Bundler, so serve Jekyll on :4000 and let update-snapshots.sh
+          # (UPDATE_SNAPSHOTS=0 = verify) reuse it for the jammy Playwright run.
+          bundle exec jekyll serve --config '_config.yml,_config_dev.yml' \
+            --host 127.0.0.1 --port 4000 --detach
+          for _ in $(seq 1 90); do
+            curl -sf http://localhost:4000/ >/dev/null 2>&1 && break; sleep 1
+          done
+          curl -sf http://localhost:4000/ >/dev/null 2>&1 \
+            || { echo "::error::Jekyll did not start on :4000 for the snapshot gate"; exit 1; }
+          UPDATE_SNAPSHOTS=0 ./test/update-snapshots.sh
+
+      - name: Upload snapshot diffs on failure
+        if: failure() && needs.detect-changes.outputs.styling == 'true'
+        uses: actions/upload-artifact@v7
         with:
-          project: snapshots
-          install-deps: 'false'
+          name: playwright-snapshots
+          path: test/visual-results/
+          retention-days: 14
+          if-no-files-found: ignore
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v7
