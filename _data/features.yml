@@ -1,7 +1,7 @@
 # zer0-mistakes Theme Features Registry
 # Comprehensive feature tracking for the zer0-mistakes Jekyll theme
-# Version: 1.6.2
-# Last Updated: 2026-06-13
+# Version: 1.23.0
+# Last Updated: 2026-06-30
 
 features:
   # ============================================================================
@@ -39,7 +39,7 @@ features:
     tags: [docker, devops, development, cross-platform]
     date: 2025-01-27
     references:
-      config: ["docker-compose.yml", "docker-compose.prod.yml", "docker-compose.test.yml"]
+      config: ["docker-compose.yml", "docker-compose.test.yml"]
       dockerfile: "docker/Dockerfile"
       scripts: ["scripts/setup.sh"]
     features:
@@ -220,7 +220,11 @@ features:
     tags: [navigation, ui, accessibility, performance, sidebar]
     date: 2025-12-01
     references:
-      javascript: "assets/js/sidebar.js"
+      javascript:
+        - "assets/js/modules/navigation/sidebar-state.js"
+        - "assets/js/modules/navigation/sidebar-visibility.js"
+        - "assets/js/modules/navigation/scroll-spy.js"
+        - "assets/js/modules/navigation/smooth-scroll.js"
       layouts: ["_layouts/default.html"]
       includes:
         - "_includes/navigation/sidebar-left.html"
@@ -228,7 +232,7 @@ features:
         - "_includes/navigation/sidebar-categories.html"
         - "_includes/navigation/sidebar-folders.html"
       styles: ["_sass/core/_docs-layout.scss", "_sass/custom.scss"]
-      docs: "docs/SIDEBAR_IMPROVEMENTS.md"
+      docs: "pages/_docs/features/sidebar-navigation.md"
     features:
       - "Intersection Observer scroll spy"
       - "Smooth scrolling with offset"
@@ -249,8 +253,12 @@ features:
     tags: [accessibility, keyboard, navigation, ux]
     date: 2025-12-01
     references:
-      javascript: "assets/js/sidebar.js"
-      docs: "docs/keyboard-navigation.md"
+      javascript:
+        - "assets/js/modules/navigation/keyboard.js"
+        - "assets/js/modules/navigation/gestures.js"
+      includes:
+        - "_includes/components/shortcuts-modal.html"
+      docs: "pages/_docs/features/keyboard-navigation.md"
     shortcuts:
       - key: "["
         action: "Previous section"
@@ -314,7 +322,7 @@ features:
       workflow: ".github/workflows/convert-notebooks.yml"
       config: "_config.yml"
       collection: "pages/_notebooks/"
-      docs: "docs/JUPYTER_NOTEBOOKS.md"
+      docs: "docs/features/jupyter-notebooks.md"
       makefile: "Makefile"
     features:
       - "Automatic .ipynb to Markdown conversion"
@@ -430,8 +438,10 @@ features:
   
   - id: ZER0-017
     title: "Automated Version Bump Workflow"
-    description: "GitHub Actions workflow for manual version bumping with test execution, changelog updates, and automated tagging"
-    implemented: true
+    description: "Removed in v1.20.0 — the manual version-bump GitHub Actions workflow was superseded by the release-please pipeline (see ZER0-015). Kept for ID stability and historical reference"
+    implemented: false
+    removed_in: "1.20.0"
+    superseded_by: "ZER0-015"
     version: "0.14.2"
     link: "/"
     docs: "/docs/development/version-bump/"
@@ -482,22 +492,29 @@ features:
       layouts:
         - "_layouts/root.html"
         - "_layouts/default.html"
-        - "_layouts/journals.html"
         - "_layouts/home.html"
         - "_layouts/landing.html"
+        - "_layouts/article.html"
+        - "_layouts/news.html"
+        - "_layouts/section.html"
+        - "_layouts/note.html"
         - "_layouts/notebook.html"
-        - "_layouts/blog.html"
-        - "_layouts/category.html"
         - "_layouts/collection.html"
         - "_layouts/index.html"
         - "_layouts/sitemap-collection.html"
         - "_layouts/stats.html"
         - "_layouts/tag.html"
+        - "_layouts/author.html"
+        - "_layouts/authors.html"
+        - "_layouts/admin.html"
+        - "_layouts/search.html"
+        - "_layouts/setup.html"
+        - "_layouts/welcome.html"
       docs: ".github/instructions/layouts.instructions.md"
     layout_hierarchy:
       - "root.html (base HTML structure)"
       - "default.html (main content wrapper)"
-      - "journals.html (blog posts)"
+      - "article.html (blog posts)"
       - "notebook.html (Jupyter notebooks)"
       - "landing.html (homepage)"
   
@@ -543,7 +560,7 @@ features:
     references:
       plugin: "_plugins/theme_version.rb"
       include: "_includes/components/theme-info.html"
-      docs: "docs/THEME_VERSION_IMPLEMENTATION.md"
+      docs: "docs/features/theme-version.md"
     features:
       - "Gem specification parsing"
       - "Remote theme support"
@@ -599,7 +616,9 @@ features:
     tags: [documentation, prd, product, planning]
     date: 2025-11-25
     references:
-      doc: "docs/PRD.md"
+      doc:
+        - "docs/architecture/prd-requirements.md"
+        - "docs/architecture/prd-roadmap.md"
     features:
       - "Vision statement"
       - "Target personas"
@@ -740,21 +759,27 @@ features:
 
   - id: ZER0-031
     title: "Dark/Light Mode Toggle"
-    description: "Theme color mode switcher supporting light, dark, and auto modes with system preference detection and localStorage persistence"
+    description: "Theme color mode switcher supporting light, dark, and auto modes with system preference detection, localStorage persistence, and a server+client color_mode_default config knob with FOUC prevention"
     implemented: true
-    version: "0.1.0"
+    version: "1.23.0"
     link: "/"
     docs: "/docs/features/color-modes/"
     tags: [ui, theme, dark-mode, accessibility]
-    date: 2025-01-01
+    date: 2026-06-30
     references:
       scripts:
-        - "assets/js/color-modes.js"
+        - "assets/js/modules/theme/appearance.js"
+      includes:
+        - "_includes/core/color-mode-init.html"
+      layouts:
+        - "_layouts/root.html"
+      config: "_config.yml"
     features:
       - "Light, dark, and auto modes"
       - "System preference detection"
       - "LocalStorage persistence"
       - "Bootstrap 5.3 data-bs-theme integration"
+      - "color_mode_default config knob with FOUC prevention"
       - "Smooth theme transitions"
 
   - id: ZER0-032
@@ -827,16 +852,22 @@ features:
 
   - id: ZER0-035
     title: "Giscus Comments"
-    description: "GitHub Discussions-powered comment system with theme-aware styling and reaction support"
+    description: "GitHub Discussions-powered comment system with theme-aware styling, reaction support, and Claude-Code-driven conversation building"
     implemented: true
     version: "0.1.0"
     link: "/"
     docs: "/docs/features/giscus-comments/"
-    tags: [comments, github, discussions, engagement]
+    tags: [comments, github, discussions, engagement, claude-code]
     date: 2025-01-01
     references:
       includes:
         - "_includes/content/giscus.html"
+      layouts: ["_layouts/article.html", "_layouts/note.html", "_layouts/notebook.html"]
+      config: "_config.yml"
+      script: "scripts/bin/giscus-discussions"
+      skill: ".github/skills/giscus-conversation/SKILL.md"
+      workflow: ".github/workflows/giscus-digest.yml"
+      tests: "test/test_core.sh"
       docs:
         - "pages/_docs/features/giscus-comments.md"
     features:
@@ -845,6 +876,8 @@ features:
       - "Pathname-based mapping"
       - "Reaction support"
       - "Top-positioned input"
+      - "Consistent site.giscus.enabled gating across layouts"
+      - "Claude Code conversation building (read/draft/seed/post via gh)"
 
   - id: ZER0-036
     title: "MathJax Math Rendering"
@@ -983,9 +1016,12 @@ features:
     references:
       includes:
         - "_includes/content/sitemap.html"
+      plugin: "_plugins/search_and_sitemap_generator.rb"
+      layouts:
+        - "_layouts/sitemap-collection.html"
+        - "_layouts/search.html"
       files:
         - "search.json"
-        - "sitemap.xml"
     features:
       - "XML sitemap for search engines"
       - "JSON search index for site search"
@@ -1240,8 +1276,10 @@ features:
 
   - id: ZER0-057
     title: "Local Docker Publishing Pipeline"
-    description: "Publish the gem from a clean Docker container locally, mirroring the CI release path for reproducible releases without polluting the host Ruby environment"
-    implemented: true
+    description: "Removed in v1.8.1 — the dedicated docker-compose.publish.yml / docker-compose.prod.yml local-publish path was retired; gem publishing now runs through the release-please CI pipeline (see ZER0-015) and scripts/bin/release. Kept for ID stability"
+    implemented: false
+    removed_in: "1.8.1"
+    superseded_by: "ZER0-015"
     version: "0.21.1"
     link: "/"
     docs: "/docs/development/docker-publishing/"
