@@ -505,8 +505,8 @@ validate_features_registry() {
 
     # Delegates to the shared canonical checker so this gate and the `features`
     # test suite never drift. Hard-fails on master/_data drift, schema
-    # violations, and stale references; warns (until FEATURES_STRICT=1) on
-    # missing provenance/tests. See
+    # violations, stale references, and missing provenance; warns (until
+    # FEATURES_STRICT=1) on missing tests. See
     # .github/instructions/features.instructions.md.
     FEATURES_STRICT="${FEATURES_STRICT:-0}" ruby "$REPO_ROOT/scripts/validate-features.rb"
 
