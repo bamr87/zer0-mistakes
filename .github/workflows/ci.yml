@@ -239,45 +239,9 @@ jobs:
           project: smoke
           install-deps: 'false'
 
-      - name: Playwright snapshot tests
-        # Path-filtered: only run when CSS/layout/asset/spec files changed,
-        # and skip when the user explicitly requested a fast scope.
-        #
-        # Blocking gate: the skin homepage baselines under test/visual/snapshots/
-        # were regenerated on Linux (./test/update-snapshots.sh) after the PR #108
-        # UI overhaul, so a pixel diff now signals a real visual regression rather
-        # than known drift. Diffs still upload as artifacts for triage.
-        if: |
-          needs.detect-changes.outputs.styling == 'true' &&
-          (github.event_name != 'workflow_dispatch' || inputs.test_scope != 'fast')
-        env:
-          PAGES_REPO_NWO: ${{ env.PAGES_REPO_NWO }}
-        run: |
-          # Render the snapshot tier inside the SAME Playwright image
-          # (mcr.microsoft.com/playwright:v1.58.2-jammy) that
-          # test/update-snapshots.sh uses to GENERATE the baselines. CI's own
-          # ubuntu-latest chromium renders fonts differently and produced a false
-          # ~30% whole-page diff; rendering in the identical image makes a
-          # refreshed Linux baseline match CI exactly. The job already has
-          # Ruby/Bundler, so serve Jekyll on :4000 and let update-snapshots.sh
-          # (UPDATE_SNAPSHOTS=0 = verify) reuse it for the jammy Playwright run.
-          bundle exec jekyll serve --config '_config.yml,_config_dev.yml' \
-            --host 127.0.0.1 --port 4000 --detach
-          for _ in $(seq 1 90); do
-            curl -sf http://localhost:4000/ >/dev/null 2>&1 && break; sleep 1
-          done
-          curl -sf http://localhost:4000/ >/dev/null 2>&1 \
-            || { echo "::error::Jekyll did not start on :4000 for the snapshot gate"; exit 1; }
-          UPDATE_SNAPSHOTS=0 ./test/update-snapshots.sh
-
-      - name: Upload snapshot diffs on failure
-        if: failure() && needs.detect-changes.outputs.styling == 'true'
-        uses: actions/upload-artifact@v7
-        with:
-          name: playwright-snapshots
-          path: test/visual-results/
-          retention-days: 14
-          if-no-files-found: ignore
+      # NOTE: the pixel-snapshot tier moved to its own `snapshots` job (below) so
+      # the jammy-image pull + 9-skin render isn't squeezed by this job's 25-min
+      # budget. The smoke tier above stays here.
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v7
@@ -295,6 +259,59 @@ jobs:
           path: test/coverage/
           if-no-files-found: ignore
           retention-days: 7
+
+  # Visual pixel-snapshot gate — its own job so the jammy-image pull + 9-skin
+  # render gets a full timeout budget instead of sharing the Test Suite job's
+  # (which hit its 25-min limit mid-render). Renders inside the SAME Playwright
+  # image (mcr.microsoft.com/playwright:v1.58.2-jammy) that
+  # test/update-snapshots.sh generates baselines in, so a refreshed Linux
+  # baseline matches CI exactly (the runner's own chromium renders fonts
+  # differently → false whole-page diffs).
+  snapshots:
+    name: Visual Snapshots
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: |
+      always() &&
+      needs.detect-changes.result == 'success' &&
+      needs.detect-changes.outputs.styling == 'true' &&
+      (github.event_name != 'workflow_dispatch' || inputs.test_scope != 'fast')
+    timeout-minutes: 30
+    env:
+      PAGES_REPO_NWO: ${{ env.PAGES_REPO_NWO }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Setup Ruby Environment
+        uses: ./.github/actions/setup-ruby
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+
+      - name: Render snapshot gate in the jammy Playwright image
+        run: |
+          # Serve Jekyll on :4000, then verify snapshots inside the jammy image
+          # (UPDATE_SNAPSHOTS=0). update-snapshots.sh reuses the running :4000
+          # server and runs the SAME Playwright invocation used to generate the
+          # baselines — one source of truth, so generation and verification can't
+          # drift.
+          bundle exec jekyll serve --config '_config.yml,_config_dev.yml' \
+            --host 127.0.0.1 --port 4000 --detach
+          for _ in $(seq 1 90); do
+            curl -sf http://localhost:4000/ >/dev/null 2>&1 && break; sleep 1
+          done
+          curl -sf http://localhost:4000/ >/dev/null 2>&1 \
+            || { echo "::error::Jekyll did not start on :4000 for the snapshot gate"; exit 1; }
+          UPDATE_SNAPSHOTS=0 ./test/update-snapshots.sh
+
+      - name: Upload snapshot diffs on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-snapshots
+          path: test/visual-results/
+          retention-days: 14
+          if-no-files-found: ignore
 
   # Build validation
   build:
