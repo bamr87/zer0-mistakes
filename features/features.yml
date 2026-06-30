@@ -1760,3 +1760,352 @@ features:
       scripts: ["assets/js/ai-chat.js", "templates/deploy/chat-proxy/worker.js", "templates/deploy/chat-proxy/dev-proxy.mjs", "templates/deploy/chat-proxy/page-store.mjs"]
       config: "_config.yml"
       instructions: ".github/instructions/ai-chat.instructions.md"
+
+  # ============================================================================
+  # DISCOVERED FEATURES (v1.24+) — registry coverage reconciliation
+  # ============================================================================
+
+  - id: ZER0-061
+    title: "Author Profiles System"
+    description: "Auto-generated author profile pages and a searchable author directory from _data/authors.yml — each author gets a /authors/<key>/ hub with bio, stats, and a filterable grid of their content across collections"
+    implemented: true
+    version: "1.20.0"
+    link: "/authors/"
+    docs: "/authors/"
+    tags: [content, authors, profiles, jekyll]
+    date: 2026-06-22
+    provenance:
+      introduced_in: "1.20.0"
+      pr: 193
+      commit: "a6db3042"
+      issue: null
+    tests:
+      - "test/visual/authors-breadcrumb-degradation.spec.js"
+    references:
+      plugin: "_plugins/author_pages_generator.rb"
+      layouts:
+        - "_layouts/author.html"
+        - "_layouts/authors.html"
+      scripts:
+        - "assets/js/author-profile.js"
+      data: "_data/authors.yml"
+
+  - id: ZER0-062
+    title: "News Homepage Layout"
+    description: "Magazine-style news homepage layout with configurable section styles (magazine, grid, list) and full-width content sections"
+    implemented: true
+    version: "0.1.5"
+    link: "/"
+    docs: "/docs/customization/layouts/"
+    tags: [layouts, news, homepage, content]
+    date: 2024-06-15
+    provenance:
+      introduced_in: "0.1.5"
+      pr: null
+      commit: "53132416"
+      issue: null
+    tests:
+      - "test/visual/layouts.spec.js"
+    references:
+      layout: "_layouts/news.html"
+
+  - id: ZER0-063
+    title: "Section Layout"
+    description: "News section layout with a collapsible sub-category sidebar, section styles, and a featured hero card for organizing posts by section"
+    implemented: true
+    version: "0.20.3"
+    link: "/"
+    docs: "/docs/customization/layouts/"
+    tags: [layouts, navigation, content]
+    date: 2026-02-01
+    provenance:
+      introduced_in: "0.20.3"
+      pr: null
+      commit: "06691f93"
+      issue: null
+    tests:
+      - "test/visual/section-sidebar-tags-gate.spec.js"
+      - "test/visual/layouts.spec.js"
+    references:
+      layout: "_layouts/section.html"
+
+  - id: ZER0-064
+    title: "Article Layout & Post Types"
+    description: "Article layout for blog posts with post-type variations (standard, featured, breaking, opinion, review, tutorial, listicle, interview) surfaced via a post-type badge"
+    implemented: true
+    version: "0.20.3"
+    link: "/"
+    docs: "/docs/customization/layouts/"
+    tags: [layouts, content, posts]
+    date: 2026-02-01
+    provenance:
+      introduced_in: "0.20.3"
+      pr: null
+      commit: "06691f93"
+      issue: null
+    tests:
+      - "test/visual/layouts.spec.js"
+    references:
+      layout: "_layouts/article.html"
+      include: "_includes/components/post-type-badge.html"
+
+  - id: ZER0-065
+    title: "Theme Skins & Background Customizer"
+    description: "Nine switchable theme skins with fffuel-style SVG backgrounds, a runtime customizer (skin + opacity), a palette generator, and a skin editor — all persisted to localStorage"
+    implemented: true
+    version: "0.22.10"
+    link: "/"
+    docs: "/docs/features/color-modes/"
+    tags: [ui, theme, skins, customization]
+    date: 2026-04-06
+    provenance:
+      introduced_in: "0.22.10"
+      pr: 57
+      commit: "27550dac"
+      issue: null
+    tests:
+      - "test/visual/skins.spec.js"
+      - "test/visual/backgrounds.spec.js"
+      - "test/visual/theme-colors.spec.js"
+    references:
+      scripts:
+        - "assets/js/background-customizer.js"
+        - "assets/js/palette-generator.js"
+        - "assets/js/skin-editor.js"
+        - "assets/js/theme-customizer.js"
+      includes:
+        - "_includes/components/background-customizer.html"
+        - "_includes/components/theme-preview-gallery.html"
+      styles:
+        - "_sass/theme/_backgrounds.scss"
+
+  - id: ZER0-066
+    title: "Nanobar Progress Bar"
+    description: "Config-driven page-loading progress bar (color, height, position, z-index, step timing) driven by site.nanobar and injected via a thin include"
+    implemented: true
+    version: "0.22.20"
+    link: "/"
+    docs: "/docs/features/"
+    tags: [ui, performance, loading]
+    date: 2026-04-19
+    provenance:
+      introduced_in: "0.22.20"
+      pr: 72
+      commit: "f5d5e974"
+      issue: null
+    tests:
+      - na: "Config-driven loading bar; presence verified in the Jekyll build (test/test_core.sh)"
+    references:
+      include: "_includes/components/nanobar.html"
+      scripts:
+        - "assets/js/nanobar.min.js"
+        - "assets/js/nanobar-init.js"
+      config: "_config.yml"
+      docs: "docs/features/nanobar-component.md"
+
+  - id: ZER0-067
+    title: "Setup Wizard"
+    description: "Multi-step in-browser wizard that assembles a complete _config.yml and lets you download or copy it, lowering first-run setup friction"
+    implemented: true
+    version: "0.22.7"
+    link: "/setup/"
+    docs: "/docs/quickstart/bare-minimum/"
+    tags: [setup, onboarding, configuration]
+    date: 2026-04-03
+    provenance:
+      introduced_in: "0.22.7"
+      pr: 51
+      commit: "a70ae8a5"
+      issue: null
+    tests:
+      - na: "Client-side config generator; exercised manually and via the build"
+    references:
+      include: "_includes/setup/wizard.html"
+      scripts:
+        - "assets/js/setup-wizard.js"
+      layout: "_layouts/setup.html"
+
+  - id: ZER0-068
+    title: "Table CSV Copy"
+    description: "One-click CSV copy control injected onto content tables, scoped to article/content wrappers (skips admin and sitemap tables)"
+    implemented: true
+    version: "1.8.0"
+    link: "/"
+    docs: "/docs/features/"
+    tags: [ui, content, clipboard, developer-experience]
+    date: 2026-05-25
+    provenance:
+      introduced_in: "1.8.0"
+      pr: 108
+      commit: "f62849fd"
+      issue: null
+    tests:
+      - na: "Client-side table-export helper; no dedicated spec"
+    references:
+      scripts:
+        - "assets/js/table-copy.js"
+
+  - id: ZER0-069
+    title: "Social Share Actions"
+    description: "Helper that builds normalized social-share text and URLs (whitespace-collapsed, deduped, length-truncated) for sharing posts"
+    implemented: true
+    version: "1.14.0"
+    link: "/"
+    docs: "/docs/features/"
+    tags: [ui, social, content, engagement]
+    date: 2026-06-11
+    provenance:
+      introduced_in: "1.14.0"
+      pr: 99
+      commit: "89e21988"
+      issue: null
+    tests:
+      - na: "Share-text utility; pure string helper, no dedicated spec"
+    references:
+      scripts:
+        - "assets/js/share-actions.js"
+
+  - id: ZER0-070
+    title: "Monthly Archives Page"
+    description: "Date-grouped archive of all posts with anchor-linked month sections for chronological browsing"
+    implemented: true
+    version: "0.16.1"
+    link: "/archives/"
+    docs: "/archives/"
+    tags: [content, navigation, archive]
+    date: 2025-12-20
+    provenance:
+      introduced_in: "0.16.1"
+      pr: null
+      commit: "ac141b47"
+      issue: null
+    tests:
+      - na: "Content page; rendered and link-checked in the build"
+    references:
+      page: "pages/archives.md"
+
+  - id: ZER0-071
+    title: "Live Component Showcase"
+    description: "Interactive gallery of Bootstrap 5.3 and theme components (alerts, buttons, cards, accordions, tabs, …) for visual reference and design QA"
+    implemented: true
+    version: "0.22.12"
+    link: "/"
+    docs: "/docs/customization/includes/"
+    tags: [ui, documentation, components, bootstrap]
+    date: 2026-04-10
+    provenance:
+      introduced_in: "0.22.12"
+      pr: 54
+      commit: "7ba0f834"
+      issue: null
+    tests:
+      - "test/visual/component-showcase.spec.js"
+    references:
+      include: "_includes/components/component-showcase.html"
+
+  - id: ZER0-072
+    title: "AI Content Review Workflow"
+    description: "PR workflow that reviews changed Markdown for SEO and quality via a deterministic scorer plus a Claude Code editorial agent, with docs and front-matter validation"
+    implemented: true
+    version: "1.18.0"
+    link: "/"
+    docs: "/docs/"
+    tags: [ci-cd, ai, content, automation]
+    date: 2026-06-13
+    provenance:
+      introduced_in: "1.18.0"
+      pr: 153
+      commit: "e7c8e33c"
+      issue: null
+    tests:
+      - na: "CI workflow — .github/workflows/ai-content-review.yml; runs scripts/content-review.rb on PRs"
+    references:
+      workflow: ".github/workflows/ai-content-review.yml"
+      script: "scripts/content-review.rb"
+      agent: ".claude/agents/content-reviewer.md"
+      config: ".github/config/content_review.yml"
+
+  - id: ZER0-073
+    title: "Giscus Digest Workflow"
+    description: "Scheduled read-only workflow that surfaces new Giscus (GitHub Discussions) comments to maintainers as a job-summary digest"
+    implemented: true
+    version: "1.22.0"
+    link: "/"
+    docs: "/docs/features/giscus-comments/"
+    tags: [ci-cd, comments, community, automation]
+    date: 2026-06-26
+    provenance:
+      introduced_in: "1.22.0"
+      pr: 214
+      commit: "fef60a5c"
+      issue: null
+    tests:
+      - na: "Scheduled read-only CI digest — .github/workflows/giscus-digest.yml"
+    references:
+      workflow: ".github/workflows/giscus-digest.yml"
+      script: "scripts/bin/giscus-discussions"
+      skill: ".github/skills/giscus-conversation/SKILL.md"
+
+  - id: ZER0-074
+    title: "Visual Evidence Gate"
+    description: "CI gate that requires a regression test plus before/after evidence for any UI or behavioural PR (or an explicit opt-out label), enforcing the visual-evidence standard"
+    implemented: true
+    version: "1.20.2"
+    link: "/"
+    docs: "/docs/development/testing/"
+    tags: [ci-cd, testing, quality, automation]
+    date: 2026-06-25
+    provenance:
+      introduced_in: "1.20.2"
+      pr: 221
+      commit: "9a132651"
+      issue: null
+    tests:
+      - na: "CI gate — .github/workflows/evidence-gate.yml; self-validating on every PR"
+    references:
+      workflow: ".github/workflows/evidence-gate.yml"
+      skill: ".github/skills/visual-evidence/SKILL.md"
+      kit: "test/visual/evidence-kit.mjs"
+
+  - id: ZER0-075
+    title: "Autonomous Issue & CI Pipeline"
+    description: "Issue-triage to resolve-to-PR autopilot plus a CI self-repair loop and auto-merge, extending the continuous-evolution system (off by default)"
+    implemented: true
+    version: "1.23.0"
+    link: "/"
+    docs: "/docs/development/ci-cd/"
+    tags: [ci-cd, automation, ai, issues]
+    date: 2026-06-29
+    provenance:
+      introduced_in: "1.23.0"
+      pr: 243
+      commit: "229e0765"
+      issue: null
+    tests:
+      - na: "CI automation — .github/workflows/{issue-autopilot,ci-self-repair,auto-merge}.yml; off by default"
+    references:
+      workflows:
+        - ".github/workflows/issue-autopilot.yml"
+        - ".github/workflows/ci-self-repair.yml"
+        - ".github/workflows/auto-merge.yml"
+        - ".github/workflows/issue-pr-auto-merge.yml"
+      doc: "docs/systems/continuous-evolution.md"
+
+  - id: ZER0-076
+    title: "Secret Scanning Workflow"
+    description: "CI workflow that scans pushes and pull requests for leaked secrets, complementing CodeQL static analysis"
+    implemented: true
+    version: "1.21.0"
+    link: "/"
+    docs: "/docs/development/security/"
+    tags: [ci-cd, security, automation]
+    date: 2026-06-26
+    provenance:
+      introduced_in: "1.21.0"
+      pr: 223
+      commit: "5329ffb5"
+      issue: null
+    tests:
+      - na: "CI security scan — .github/workflows/secret-scan.yml"
+    references:
+      workflow: ".github/workflows/secret-scan.yml"
