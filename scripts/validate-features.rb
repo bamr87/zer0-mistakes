@@ -15,9 +15,10 @@
 #   - implemented:false without `removed_in:`
 #   - a reference path on an ACTIVE feature does not exist in the repo
 #   - missing/malformed `provenance:` block on an active feature (since PR B)
+#   - missing/unresolvable `tests:` linkage on an active feature (since PR C):
+#     every entry must be a real test path or `{na: reason}`
 #
 # WARNINGS (non-fatal unless FEATURES_STRICT=1):
-#   - missing `tests:` linkage             (backfilled in PR C)
 #   - header `# Version:` not tracking the gem version
 #   - id gaps (IDs are never reused, but gaps are worth a human glance)
 #
@@ -107,10 +108,18 @@ feats.each_with_index do |f, i|
   die "#{id}: provenance.pr must be an integer or null" unless prov['pr'].nil? || prov['pr'].is_a?(Integer)
   die "#{id}: provenance.issue must be an integer or null" unless prov['issue'].nil? || prov['issue'].is_a?(Integer)
 
-  # 3b. Test linkage (warn now, fatal once PR C backfills it).
+  # 3b. Test linkage is REQUIRED on every active feature (backfilled in PR C).
   tests = f['tests']
-  has_test = tests.is_a?(Array) && tests.any? { |t| t.is_a?(String) ? File.exist?(t) : (t.is_a?(Hash) && t['na']) }
-  warnings << "#{id}: no `tests:` entry (real path or `na:` + reason)" unless has_test
+  die "#{id}: missing/empty `tests:` (a real test path or `{na: reason}`)" unless tests.is_a?(Array) && !tests.empty?
+  tests.each do |t|
+    if t.is_a?(String)
+      die "#{id}: tests entry does not exist: #{t}" unless File.exist?(t)
+    elsif t.is_a?(Hash)
+      die "#{id}: tests `na:` must carry a non-empty reason" unless t['na'].is_a?(String) && !t['na'].strip.empty?
+    else
+      die "#{id}: tests entries must be a path string or `{na: reason}`"
+    end
+  end
 end
 
 # Sequential-id sanity (gaps allowed — never reuse an ID — but flagged).

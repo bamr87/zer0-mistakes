@@ -22,6 +22,9 @@ features:
       pr: null
       commit: "a8426a5"
       issue: null
+    tests:
+      - "test/visual/component-showcase.spec.js"
+      - "test/visual/styling.spec.js"
     references:
       layouts: ["_layouts/root.html", "_layouts/default.html"]
       includes: ["_includes/core/head.html"]
@@ -48,6 +51,8 @@ features:
       pr: null
       commit: "4ff71bc"
       issue: null
+    tests:
+      - "test/test_deployment.sh"
     references:
       config: ["docker-compose.yml", "docker-compose.test.yml"]
       dockerfile: "docker/Dockerfile"
@@ -73,6 +78,9 @@ features:
       pr: 76
       commit: "36cd015"
       issue: null
+    tests:
+      - "test/test_installer.sh"
+      - "test/test_installation.sh"
     references:
       script: "install.sh"
       cli: "scripts/bin/install"
@@ -110,6 +118,8 @@ features:
       pr: 83
       commit: "ffdc1eb"
       issue: null
+    tests:
+      - "test/test_core.sh"
     references:
       plugin: "_plugins/preview_image_generator.rb"
       script: "scripts/generate-preview-images.sh"
@@ -156,6 +166,8 @@ features:
       pr: 70
       commit: "bc41b0d"
       issue: null
+    tests:
+      - na: "Process/docs feature (AGENTS.md + .github/instructions/*); no runtime test"
     references:
       entry_point: "AGENTS.md"
       main: ".github/copilot-instructions.md"
@@ -202,6 +214,9 @@ features:
       pr: null
       commit: "76f4508"
       issue: null
+    tests:
+      - "test/test_quality.sh"
+      - "test/visual/security.spec.js"
     references:
       include: "_includes/analytics/posthog.html"
       config: "_config.yml"
@@ -230,6 +245,8 @@ features:
       pr: null
       commit: "76f4508"
       issue: null
+    tests:
+      - "test/test_quality.sh"
     references:
       include: "_includes/components/cookie-consent.html"
       config: "_config.yml"
@@ -259,6 +276,8 @@ features:
       pr: null
       commit: "0ea51c6"
       issue: null
+    tests:
+      - "test/visual/interactions.spec.js"
     references:
       javascript:
         - "assets/js/modules/navigation/sidebar-state.js"
@@ -297,6 +316,9 @@ features:
       pr: null
       commit: "0ea51c6"
       issue: null
+    tests:
+      - "test/visual/feature-coverage.spec.js"
+      - "test/visual/accessibility.spec.js"
     references:
       javascript:
         - "assets/js/modules/navigation/keyboard.js"
@@ -328,6 +350,9 @@ features:
       pr: null
       commit: "0ea51c6"
       issue: null
+    tests:
+      - "test/visual/feature-coverage.spec.js"
+      - "test/visual/ui-refresh.spec.js"
     references:
       include: "_includes/navigation/sidebar-right.html"
       styles: "_sass/custom.scss"
@@ -353,6 +378,8 @@ features:
       pr: null
       commit: "0ea51c6"
       issue: null
+    tests:
+      - "test/visual/accessibility.spec.js"
     references:
       include: "_includes/core/header.html"
       styles: "_sass/custom.scss"
@@ -375,6 +402,8 @@ features:
       pr: null
       commit: "8bf80ad"
       issue: null
+    tests:
+      - "test/test_core.sh"
     references:
       script: "scripts/convert-notebooks.sh"
       layout: "_layouts/notebook.html"
@@ -409,6 +438,8 @@ features:
       pr: null
       commit: "1a6184b"
       issue: null
+    tests:
+      - "test/test_core.sh"
     references:
       include: "_includes/components/mermaid.html"
       config: "_config.yml"
@@ -438,6 +469,8 @@ features:
       pr: null
       commit: "a8426a5"
       issue: null
+    tests:
+      - "test/test_site_generation.sh"
     references:
       config: "_config.yml"
       collections:
@@ -470,6 +503,8 @@ features:
       pr: null
       commit: "81ef2d7"
       issue: null
+    tests:
+      - na: "Release tooling — exercised by scripts/bin/test integration (auto-version) + .github/workflows/release.yml"
     references:
       scripts:
         - "scripts/release"
@@ -500,12 +535,12 @@ features:
       pr: null
       commit: "e527464"
       issue: null
+    tests:
+      - "test/test_runner.sh"
+      - "test/test_core.sh"
+      - "test/test_deployment.sh"
+      - "test/test_quality.sh"
     references:
-      tests:
-        - "test/test_runner.sh"
-        - "test/test_core.sh"
-        - "test/test_deployment.sh"
-        - "test/test_quality.sh"
       workflow: ".github/workflows/ci.yml"
     features:
       - "Core functionality tests"
@@ -557,6 +592,8 @@ features:
       pr: null
       commit: "5053589"
       issue: null
+    tests:
+      - na: "Security scanning — .github/workflows/codeql.yml; no unit test applicable"
     references:
       workflow: ".github/workflows/codeql.yml"
     features:
@@ -583,6 +620,8 @@ features:
       pr: null
       commit: "a8426a5"
       issue: null
+    tests:
+      - "test/visual/layouts.spec.js"
     references:
       layouts:
         - "_layouts/root.html"
@@ -627,6 +666,8 @@ features:
       pr: null
       commit: "a8426a5"
       issue: null
+    tests:
+      - "test/visual/component-showcase.spec.js"
     references:
       includes:
         - "_includes/core/"
@@ -662,6 +703,8 @@ features:
       pr: null
       commit: "fbc767b"
       issue: null
+    tests:
+      - "test/test_plugins.rb"
     references:
       plugin: "_plugins/theme_version.rb"
       include: "_includes/components/theme-info.html"
@@ -691,6 +734,8 @@ features:
       pr: null
       commit: "1bd9a2c"
       issue: null
+    tests:
+      - "test/test_quality.sh"
     references:
       page: "pages/privacy-policy.md"
     features:
@@ -714,6 +759,8 @@ features:
       pr: null
       commit: "1bd9a2c"
       issue: null
+    tests:
+      - "test/test_quality.sh"
     references:
       page: "pages/terms-of-service.md"
   
@@ -735,6 +782,8 @@ features:
       pr: null
       commit: "b7ad237"
       issue: null
+    tests:
+      - na: "Documentation artifact (docs/architecture/prd-*.md); no runtime test"
     references:
       doc:
         - "docs/architecture/prd-requirements.md"
@@ -760,6 +809,8 @@ features:
       pr: null
       commit: "ceb4962"
       issue: null
+    tests:
+      - na: "Documentation architecture; no runtime test"
     references:
       technical: "docs/"
       public: "pages/_docs/"
@@ -789,6 +840,8 @@ features:
       pr: null
       commit: "3b55b60"
       issue: null
+    tests:
+      - na: "Automation — .github/workflows/update-dependencies.yml; no unit test"
     references:
       workflow: ".github/workflows/update-dependencies.yml"
     features:
@@ -811,6 +864,8 @@ features:
       pr: null
       commit: "1ba6994"
       issue: null
+    tests:
+      - na: "CI pipeline — .github/workflows/ci.yml; self-validating"
     references:
       workflow: ".github/workflows/ci.yml"
     features:
@@ -838,6 +893,8 @@ features:
       pr: null
       commit: "32755cd"
       issue: null
+    tests:
+      - na: "Shell tooling — exercised by scripts/bin/test (lib + theme + integration)"
     references:
       scripts:
         - "scripts/build"
@@ -874,6 +931,8 @@ features:
       pr: null
       commit: "a8426a5"
       issue: null
+    tests:
+      - "test/visual/feature-coverage.spec.js"
     references:
       scripts:
         - "assets/js/back-to-top.js"
@@ -897,6 +956,8 @@ features:
       pr: null
       commit: "a8426a5"
       issue: null
+    tests:
+      - "test/visual/feature-coverage.spec.js"
     references:
       scripts:
         - "assets/js/code-copy.js"
@@ -921,6 +982,8 @@ features:
       pr: 253
       commit: "55bee97"
       issue: null
+    tests:
+      - "test/visual/color-mode-default.spec.js"
     references:
       scripts:
         - "assets/js/modules/theme/appearance.js"
@@ -951,6 +1014,9 @@ features:
       pr: 86
       commit: "21eb458"
       issue: null
+    tests:
+      - "test/visual/search.spec.js"
+      - "test/visual/search-degradation.spec.js"
     references:
       scripts:
         - "assets/js/search-modal.js"
@@ -981,6 +1047,8 @@ features:
       pr: null
       commit: "a8426a5"
       issue: null
+    tests:
+      - "test/visual/feature-coverage.spec.js"
     references:
       scripts:
         - "assets/js/auto-hide-nav.js"
@@ -1004,6 +1072,8 @@ features:
       pr: null
       commit: "a8426a5"
       issue: null
+    tests:
+      - "test/visual/backgrounds.spec.js"
     references:
       scripts:
         - "assets/js/particles.js"
@@ -1034,6 +1104,8 @@ features:
       pr: null
       commit: "a8426a5"
       issue: null
+    tests:
+      - "test/visual/giscus-comments.spec.js"
     references:
       includes:
         - "_includes/content/giscus.html"
@@ -1042,7 +1114,6 @@ features:
       script: "scripts/bin/giscus-discussions"
       skill: ".github/skills/giscus-conversation/SKILL.md"
       workflow: ".github/workflows/giscus-digest.yml"
-      tests: "test/test_core.sh"
       docs:
         - "pages/_docs/features/giscus-comments.md"
     features:
@@ -1068,6 +1139,8 @@ features:
       pr: null
       commit: "31f827e"
       issue: null
+    tests:
+      - "test/visual/feature-coverage.spec.js"
     references:
       docs:
         - "pages/_docs/features/mathjax-math.md"
@@ -1091,6 +1164,9 @@ features:
       pr: null
       commit: "a8426a5"
       issue: null
+    tests:
+      - "test/visual/feature-coverage.spec.js"
+      - "test/visual/ui-refresh.spec.js"
     references:
       includes:
         - "_includes/content/toc.html"
@@ -1119,6 +1195,8 @@ features:
       pr: null
       commit: "a8426a5"
       issue: null
+    tests:
+      - "test/test_quality.sh"
     references:
       includes:
         - "_includes/analytics/google-analytics.html"
@@ -1142,6 +1220,8 @@ features:
       pr: null
       commit: "a8426a5"
       issue: null
+    tests:
+      - "test/test_quality.sh"
     references:
       includes:
         - "_includes/analytics/google-tag-manager-head.html"
@@ -1170,6 +1250,9 @@ features:
       pr: null
       commit: "a8426a5"
       issue: null
+    tests:
+      - "test/visual/layouts.spec.js"
+      - "test/visual/authors-breadcrumb-degradation.spec.js"
     references:
       includes:
         - "_includes/navigation/breadcrumbs.html"
@@ -1198,6 +1281,8 @@ features:
       pr: null
       commit: "a8426a5"
       issue: null
+    tests:
+      - "test/test_quality.sh"
     references:
       includes:
         - "_includes/content/seo.html"
@@ -1223,6 +1308,9 @@ features:
       pr: null
       commit: "a8426a5"
       issue: null
+    tests:
+      - "test/test_core.sh"
+      - "test/test_deployment.sh"
     references:
       includes:
         - "_includes/content/sitemap.html"
@@ -1256,6 +1344,9 @@ features:
       pr: null
       commit: "8986a02"
       issue: null
+    tests:
+      - "test/test_plugins.rb"
+      - "test/test_core.sh"
     references:
       layouts:
         - "_layouts/stats.html"
@@ -1290,6 +1381,10 @@ features:
       pr: 73
       commit: "31e042c"
       issue: null
+    tests:
+      - "test/test_obsidian.sh"
+      - "test/test_ruby_converter.rb"
+      - "test/test_resolver.js"
     references:
       plugin: "_plugins/obsidian_links.rb"
       scripts:
@@ -1300,10 +1395,6 @@ features:
         - "_includes/content/backlinks.html"
         - "_includes/obsidian/full-graph.html"
       docs: "pages/_docs/obsidian/"
-      tests:
-        - "test/test_obsidian.sh"
-        - "test/test_ruby_converter.rb"
-        - "test/test_resolver.js"
       instructions: ".github/instructions/obsidian.instructions.md"
     features:
       - "[[Wiki-links]] resolution"
@@ -1328,6 +1419,9 @@ features:
       pr: 77
       commit: "d39dfa9"
       issue: null
+    tests:
+      - "test/test_obsidian.sh"
+      - "test/visual/obsidian-callouts.spec.js"
     references:
       includes:
         - "_includes/obsidian/full-graph.html"
@@ -1353,6 +1447,8 @@ features:
       pr: null
       commit: "4bd3e36"
       issue: null
+    tests:
+      - "test/test_site_generation.sh"
     references:
       includes:
         - "_includes/components/info-section.html"
@@ -1373,6 +1469,9 @@ features:
       pr: 58
       commit: "02d0295"
       issue: null
+    tests:
+      - "test/test_core.sh"
+      - "test/visual/layouts.spec.js"
     references:
       page: "404.html"
       docs: "pages/_docs/features/smart-404.md"
@@ -1391,6 +1490,8 @@ features:
       pr: 34
       commit: "10ba722"
       issue: null
+    tests:
+      - na: "Build-time validation — scripts/bin/validate; CI fast-checks job"
     references:
       script: "scripts/bin/validate"
       config: ".github/config/frontmatter_schema.yml"
@@ -1410,6 +1511,9 @@ features:
       pr: null
       commit: "a8426a5"
       issue: null
+    tests:
+      - "test/visual/ui-refresh.spec.js"
+      - "test/visual/navbar-responsive.spec.js"
     references:
       includes:
         - "_includes/navigation/navbar.html"
@@ -1428,6 +1532,9 @@ features:
       pr: 57
       commit: "27550da"
       issue: null
+    tests:
+      - "test/visual/admin-layout.spec.js"
+      - "test/visual/admin-nav.spec.js"
     references:
       layout: "_layouts/admin.html"
       includes:
@@ -1448,6 +1555,8 @@ features:
       pr: 70
       commit: "bc41b0d"
       issue: null
+    tests:
+      - na: "Documentation entry point (AGENTS.md); no runtime test"
     references:
       file: "AGENTS.md"
       instructions_index: ".github/instructions/README.md"
@@ -1466,6 +1575,8 @@ features:
       pr: 71
       commit: "7f00e4d"
       issue: null
+    tests:
+      - "test/test_core.sh"
     references:
       data: "_data/roadmap.yml"
       page: "pages/roadmap.md"
@@ -1485,6 +1596,8 @@ features:
       pr: 39
       commit: "3c96620"
       issue: null
+    tests:
+      - "test/test_core.sh"
     references:
       script: "scripts/vendor-install.sh"
       manifest: "vendor-manifest.json"
@@ -1506,6 +1619,8 @@ features:
       pr: 38
       commit: "9a27ad7"
       issue: null
+    tests:
+      - "test/test_quality.sh"
     references:
       includes:
         - "_includes/content/seo.html"
@@ -1529,6 +1644,9 @@ features:
       pr: null
       commit: "5533f34"
       issue: null
+    tests:
+      - "test/visual/navbar-responsive.spec.js"
+      - "test/visual/ui-refresh.spec.js"
     references:
       scripts:
         - "assets/js/modules/"
@@ -1550,6 +1668,8 @@ features:
       pr: null
       commit: "0ef86c2"
       issue: null
+    tests:
+      - na: "DevContainer config (.devcontainer/devcontainer.json); validated by Codespaces, no unit test"
     references:
       config:
         - ".devcontainer/devcontainer.json"
@@ -1590,6 +1710,8 @@ features:
       pr: null
       commit: "06691f9"
       issue: null
+    tests:
+      - "test/test_site_generation.sh"
     references:
       collection: "pages/_notes/"
       layouts:
@@ -1610,6 +1732,8 @@ features:
       pr: 73
       commit: "31e042c"
       issue: null
+    tests:
+      - "test/test_obsidian.sh"
     references:
       plugin: "_plugins/obsidian_links.rb"
       includes:
@@ -1628,6 +1752,8 @@ features:
       pr: 33
       commit: "341cc67"
       issue: null
+    tests:
+      - "test/visual/ai-chat.spec.js"
     references:
       includes: ["_includes/components/ai-chat.html"]
       layouts: ["_layouts/root.html"]
