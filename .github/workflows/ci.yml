@@ -239,25 +239,9 @@ jobs:
           project: smoke
           install-deps: 'false'
 
-      - name: Playwright snapshot tests
-        # Path-filtered: only run when CSS/layout/asset/spec files changed,
-        # and skip when the user explicitly requested a fast scope.
-        #
-        # Non-blocking until the skin homepage baselines are regenerated:
-        # they predate the PR #108 UI overhaul and currently report a large
-        # diff against the live rendering. The step still runs (and uploads
-        # diffs as artifacts) so the drift stays visible, but it does not gate
-        # the suite. Drop continue-on-error once baselines are refreshed.
-        continue-on-error: true
-        if: |
-          needs.detect-changes.outputs.styling == 'true' &&
-          (github.event_name != 'workflow_dispatch' || inputs.test_scope != 'fast')
-        env:
-          PAGES_REPO_NWO: ${{ env.PAGES_REPO_NWO }}
-        uses: ./.github/actions/playwright-tests
-        with:
-          project: snapshots
-          install-deps: 'false'
+      # NOTE: the pixel-snapshot tier moved to its own `snapshots` job (below) so
+      # the jammy-image pull + 9-skin render isn't squeezed by this job's 25-min
+      # budget. The smoke tier above stays here.
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v7
@@ -275,6 +259,52 @@ jobs:
           path: test/coverage/
           if-no-files-found: ignore
           retention-days: 7
+
+  # Visual pixel-snapshot gate — its own job so the jammy-image pull + 9-skin
+  # render gets a full timeout budget instead of sharing the Test Suite job's
+  # (which hit its 25-min limit mid-render). Renders inside the SAME Playwright
+  # image (mcr.microsoft.com/playwright:v1.58.2-jammy) that
+  # test/update-snapshots.sh generates baselines in, so a refreshed Linux
+  # baseline matches CI exactly (the runner's own chromium renders fonts
+  # differently → false whole-page diffs).
+  snapshots:
+    name: Visual Snapshots
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: |
+      always() &&
+      needs.detect-changes.result == 'success' &&
+      needs.detect-changes.outputs.styling == 'true' &&
+      (github.event_name != 'workflow_dispatch' || inputs.test_scope != 'fast')
+    timeout-minutes: 30
+    env:
+      # The `env` context isn't available at job-level env; mirror the
+      # workflow-level definition directly.
+      PAGES_REPO_NWO: ${{ vars.PAGES_REPO_NWO || github.repository }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Render snapshot gate in the jammy Playwright image
+        run: |
+          # Verify snapshots EXACTLY as test/update-snapshots.sh GENERATES the
+          # baselines: it brings Jekyll up via `docker compose` (binds 0.0.0.0:4000,
+          # port-mapped — reachable from the --network host Playwright container; a
+          # host-only `--host 127.0.0.1` bundle serve was NOT, so page.goto timed
+          # out) and runs the snapshots project inside
+          # mcr.microsoft.com/playwright:v1.58.2-jammy. UPDATE_SNAPSHOTS=0 compares
+          # instead of regenerating, so generation and verification share ONE
+          # environment (Jekyll + browser) and cannot drift. Needs only Docker.
+          UPDATE_SNAPSHOTS=0 ./test/update-snapshots.sh
+
+      - name: Upload snapshot diffs on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-snapshots
+          path: test/visual-results/
+          retention-days: 14
+          if-no-files-found: ignore
 
   # Build validation
   build:

@@ -1,16 +1,23 @@
 #!/usr/bin/env bash
 # =============================================================================
-# Update Playwright snapshot baselines on Linux (via Docker).
+# Generate OR verify Playwright snapshot baselines in the Linux Docker image.
 # =============================================================================
 #
-# Playwright baselines are platform-specific (e.g. *-chromium-linux.png).
-# CI runs on ubuntu-latest, so baselines must be generated on Linux. macOS
-# developers should run this script — it spins up the project's Linux Docker
-# image, starts Jekyll, runs Playwright with --update-snapshots, and writes
-# baselines into test/visual/snapshots/ for committing.
+# Playwright baselines are platform-specific (e.g. *-chromium-linux.png) — they
+# only match the EXACT browser/OS that rendered them. To keep local generation
+# and CI verification in lock-step, BOTH run Playwright inside the same image
+# ($PLAYWRIGHT_IMAGE). This script spins up Jekyll (or reuses a running :4000),
+# then runs the snapshots project in that image:
+#   * UPDATE_SNAPSHOTS=1 (default) — regenerate baselines for committing.
+#     macOS devs run this and commit test/visual/snapshots/.
+#   * UPDATE_SNAPSHOTS=0 — VERIFY against the committed baselines. CI calls it
+#     this way, so its renders match the baselines a dev generated here.
+# CI must NOT render with its own ubuntu-latest chromium: a different OS renders
+# fonts differently and yields false whole-page diffs vs these jammy baselines.
 #
 # Usage:
-#   ./test/update-snapshots.sh              # update the snapshots project
+#   ./test/update-snapshots.sh                       # generate (update) baselines
+#   UPDATE_SNAPSHOTS=0 ./test/update-snapshots.sh    # verify (CI uses this)
 #   PLAYWRIGHT_PROJECT=snapshots ./test/update-snapshots.sh
 #
 # Requirements: Docker, docker-compose
@@ -20,6 +27,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 PLAYWRIGHT_PROJECT="${PLAYWRIGHT_PROJECT:-snapshots}"
+# 1 = regenerate baselines (default); 0 = verify against committed baselines (CI).
+UPDATE_SNAPSHOTS="${UPDATE_SNAPSHOTS:-1}"
 # Match the Playwright version in package-lock.json. CI uses
 # `npx playwright install` so it always gets the right binaries; this image
 # is only used by this local snapshot-update helper.
@@ -63,7 +72,13 @@ cleanup() {
 }
 trap cleanup EXIT
 
-log "Running Playwright (project=${PLAYWRIGHT_PROJECT}, --update-snapshots) in ${PLAYWRIGHT_IMAGE}..."
+PW_FLAGS=""
+if [[ "$UPDATE_SNAPSHOTS" == "1" ]]; then
+  PW_FLAGS="--update-snapshots"
+  log "Generating baselines (project=${PLAYWRIGHT_PROJECT}) in ${PLAYWRIGHT_IMAGE}..."
+else
+  log "Verifying snapshots (project=${PLAYWRIGHT_PROJECT}) against committed baselines in ${PLAYWRIGHT_IMAGE}..."
+fi
 docker run --rm \
   --network host \
   -v "${PROJECT_ROOT}:/work" \
@@ -71,7 +86,11 @@ docker run --rm \
   -e BASE_URL=http://localhost:4000 \
   -e CI=true \
   "${PLAYWRIGHT_IMAGE}" \
-  bash -c "npm ci --ignore-scripts && npx playwright test --config=test/playwright.config.js --project=${PLAYWRIGHT_PROJECT} --update-snapshots"
+  bash -c "npm ci --ignore-scripts && npx playwright test --config=test/playwright.config.js --project=${PLAYWRIGHT_PROJECT} ${PW_FLAGS}"
 
-log "Done. Review generated baselines under test/visual/snapshots/ and commit them:"
-log "  git add test/visual/snapshots/"
+if [[ "$UPDATE_SNAPSHOTS" == "1" ]]; then
+  log "Done. Review generated baselines under test/visual/snapshots/ and commit them:"
+  log "  git add test/visual/snapshots/"
+else
+  log "Snapshots match the committed baselines. ✅"
+fi

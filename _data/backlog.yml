@@ -358,7 +358,7 @@ tasks:
 
   - id: T-013
     title: "Refresh Playwright snapshot baselines and re-arm the pixel gate"
-    status: open
+    status: done
     priority: P2
     area: tests
     risk: standard
@@ -373,9 +373,9 @@ tasks:
       - "Baselines under `test/visual/snapshots/` regenerated and committed."
       - "`continue-on-error: true` removed from the snapshot step in `ci.yml`."
       - "Snapshot tier passes in CI on an unchanged follow-up commit."
-    links: { issue: null, pr: null, roadmap: "1.13" }
+    links: { issue: 135, pr: null, roadmap: "1.13" }
     created: 2026-06-10
-    updated: 2026-06-10
+    updated: 2026-06-29
 
   - id: T-014
     title: "Re-arm the docs link-check gate (remove warn-only || true)"
