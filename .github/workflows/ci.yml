@@ -285,25 +285,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v7
 
-      - name: Setup Ruby Environment
-        uses: ./.github/actions/setup-ruby
-        with:
-          ruby-version: ${{ env.RUBY_VERSION }}
-
       - name: Render snapshot gate in the jammy Playwright image
         run: |
-          # Serve Jekyll on :4000, then verify snapshots inside the jammy image
-          # (UPDATE_SNAPSHOTS=0). update-snapshots.sh reuses the running :4000
-          # server and runs the SAME Playwright invocation used to generate the
-          # baselines — one source of truth, so generation and verification can't
-          # drift.
-          bundle exec jekyll serve --config '_config.yml,_config_dev.yml' \
-            --host 127.0.0.1 --port 4000 --detach
-          for _ in $(seq 1 90); do
-            curl -sf http://localhost:4000/ >/dev/null 2>&1 && break; sleep 1
-          done
-          curl -sf http://localhost:4000/ >/dev/null 2>&1 \
-            || { echo "::error::Jekyll did not start on :4000 for the snapshot gate"; exit 1; }
+          # Verify snapshots EXACTLY as test/update-snapshots.sh GENERATES the
+          # baselines: it brings Jekyll up via `docker compose` (binds 0.0.0.0:4000,
+          # port-mapped — reachable from the --network host Playwright container; a
+          # host-only `--host 127.0.0.1` bundle serve was NOT, so page.goto timed
+          # out) and runs the snapshots project inside
+          # mcr.microsoft.com/playwright:v1.58.2-jammy. UPDATE_SNAPSHOTS=0 compares
+          # instead of regenerating, so generation and verification share ONE
+          # environment (Jekyll + browser) and cannot drift. Needs only Docker.
           UPDATE_SNAPSHOTS=0 ./test/update-snapshots.sh
 
       - name: Upload snapshot diffs on failure
