@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.23.0](https://github.com/bamr87/zer0-mistakes/compare/v1.22.0...v1.23.0) (2026-06-30)
+
+
+### Features
+
+* **automation:** issue-triage→PR autopilot (off by default) ([#243](https://github.com/bamr87/zer0-mistakes/issues/243)) ([229e076](https://github.com/bamr87/zer0-mistakes/commit/229e07654915a9a0e401b30796c4f6c078eda926))
+* **automation:** verify-and-close lane — autopilot closes human issues fixed on main when CI is green ([#247](https://github.com/bamr87/zer0-mistakes/issues/247)) ([7cc7cb0](https://github.com/bamr87/zer0-mistakes/commit/7cc7cb0cdada7f64d59f46c2f4c3a7e88afbde6b))
+* **layouts:** add color_mode_default config knob with FOUC prevention ([#253](https://github.com/bamr87/zer0-mistakes/issues/253)) ([55bee97](https://github.com/bamr87/zer0-mistakes/commit/55bee970686c10a08aeed15bff43c3b66b5293e7))
+
+
+### Bug Fixes
+
+* **ci:** make claude-run truly OAuth-first — drop API key whenever an OAuth token is set ([#248](https://github.com/bamr87/zer0-mistakes/issues/248)) ([d2b44d2](https://github.com/bamr87/zer0-mistakes/commit/d2b44d2766f5c8543f4c5d8ddb79015e726f88fd))
+* **ci:** pass -R to gh pr view in the self-repair opt-in gate ([#260](https://github.com/bamr87/zer0-mistakes/issues/260)) ([67d67d7](https://github.com/bamr87/zer0-mistakes/commit/67d67d74146366afe6d495f529ba2c86a4513e18))
+* **includes:** existence-guard component-showcase demo links ([#219](https://github.com/bamr87/zer0-mistakes/issues/219)) ([#256](https://github.com/bamr87/zer0-mistakes/issues/256)) ([ef15e79](https://github.com/bamr87/zer0-mistakes/commit/ef15e79dc64db0dc7e721ca10bb7c1e826612473))
+* **layouts:** existence-gate /authors/ breadcrumb in author.html for remote-theme consumers ([#252](https://github.com/bamr87/zer0-mistakes/issues/252)) ([cae21a7](https://github.com/bamr87/zer0-mistakes/commit/cae21a7107b1875ac876f9e30cf71590ac7b0cc5))
+* **search:** existence-gate search modal form action for remote-theme consumers ([#257](https://github.com/bamr87/zer0-mistakes/issues/257)) ([b915c4d](https://github.com/bamr87/zer0-mistakes/commit/b915c4dead5eff3d6a2986720ebacdcf2bed5e33))
+* **skins:** map dark + contrast skins to their background assets ([#245](https://github.com/bamr87/zer0-mistakes/issues/245)) ([fb8808e](https://github.com/bamr87/zer0-mistakes/commit/fb8808e5ec754785b8239b01bccfab99569b70fa)), closes [#240](https://github.com/bamr87/zer0-mistakes/issues/240)
+
 ## [Unreleased]
 
 ### Bug Fixes
