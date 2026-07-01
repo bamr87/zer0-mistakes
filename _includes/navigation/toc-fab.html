@@ -3,15 +3,9 @@
   footer stacking context with back-to-top and does not cover the powered-by
   row when the user scrolls to the page bottom.
 {%- endcomment -%}
-{%- assign _effective_sidebar = page.sidebar -%}
-{%- if _effective_sidebar == nil -%}
-  {%- if page.post_type == "featured" or page.post_type == "breaking" -%}
-    {%- assign _effective_sidebar = false -%}
-  {%- else -%}
-    {%- assign _effective_sidebar = true -%}
-  {%- endif -%}
-{%- endif -%}
-{%- if _effective_sidebar != false -%}
+{%- comment -%} Shared visibility resolver — sets sidebar_enabled {%- endcomment -%}
+{%- include navigation/sidebar-config.html -%}
+{%- if sidebar_enabled -%}
 <div class="position-fixed bd-toc-fab d-lg-none" id="tocFab">
   <button class="btn btn-primary rounded-circle shadow-lg p-0 bd-toc-toggle"
           type="button"

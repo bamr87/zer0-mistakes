@@ -1,32 +1,35 @@
 {% comment %} Feature: ZER0-008 {% endcomment %}
-  <!--
+<!--
   ===================================================================
   SIDEBAR LEFT - Dynamic Navigation Sidebar
   ===================================================================
-  
-  File: sidebar-left.html 
+
+  File: sidebar-left.html
   Path: _includes/navigation/sidebar-left.html
-  Purpose: Left sidebar navigation with three standardized content modes
-  
+  Purpose: Left sidebar panel (responsive offcanvas) around the resolved
+           sidebar navigation content
+
   Template Logic:
   - Responsive offcanvas sidebar for mobile devices
-  - Three navigation modes based on page.sidebar.nav:
-    * "auto": Auto-generated folder structure from collection documents
-    * "tree": YAML-defined hierarchical navigation from _data/navigation/
-    * "categories": Category-based navigation from site categories
-  
-  Dependencies:
-  - sidebar-folders.html: Dynamic folder structure generation (auto mode)
-  - sidebar-categories.html: Category-based navigation (categories mode)
-  - nav-tree.html: YAML-based hierarchical tree (tree mode)
-  - Bootstrap 5 offcanvas component
-  
-  Navigation Modes:
-  1. auto: Scans collection documents to build folder structure
-  2. tree: Uses predefined YAML navigation from _data/navigation/*.yml
-  3. categories: Groups content by Jekyll categories
+  - Mode resolution + rendering are delegated to shared includes:
+    * navigation/sidebar-config.html — resolves sidebar_nav / title / icon
+      from page.sidebar → collection `sidebar:` metadata → site.sidebar
+    * navigation/sidebar-nav.html — renders the resolved mode
+
+  Navigation modes (page.sidebar.nav — see sidebar-config.html):
+  - "auto": best mode for the page's collection (curated data file →
+    collection folder tree → post categories)
+  - "collection": live folder tree of the page's (or a named) collection
+  - "categories" / "tags": posts grouped by taxonomy term
+  - any other value: _data/navigation/<value>.yml rendered by nav-tree.html
+
+  Configuration:
+  - Heading text/icon: page.sidebar.title/icon → collection metadata →
+    site.sidebar.title/icon → "Browse docs"
   ===================================================================
 -->
+
+{% include navigation/sidebar-config.html %}
 
 <!-- ================================ -->
 <!-- SIDEBAR NAVIGATION CONTAINER   -->
@@ -46,7 +49,7 @@
   <!-- ========================== -->
   <!-- Mobile-only header with close button -->
   <div class="offcanvas-header">
-    <h2 class="offcanvas-title h5 mb-0" id="bdSidebarOffcanvasLabel">Browse docs</h2>
+    <h2 class="offcanvas-title h5 mb-0" id="bdSidebarOffcanvasLabel">{{ sidebar_title }}</h2>
     <div class="d-flex align-items-center gap-1">
       <button type="button"
               class="btn btn-sm btn-link text-body-secondary bd-sidebar-visibility-toggle d-lg-none px-2"
@@ -68,8 +71,8 @@
 
     <div class="bd-sidebar-desktop-header mb-3 d-none d-lg-flex align-items-center justify-content-between gap-2 w-100">
       <strong class="d-flex align-items-center mb-0">
-        <i class="bi bi-journal-bookmark me-2" aria-hidden="true"></i>
-        Browse docs
+        <i class="bi {{ sidebar_icon }} me-2" aria-hidden="true"></i>
+        {{ sidebar_title }}
       </strong>
       <button type="button"
               class="btn btn-sm btn-link text-body-secondary bd-sidebar-visibility-toggle d-none d-lg-inline-flex flex-shrink-0 px-1"
@@ -82,35 +85,8 @@
       </button>
     </div>
 
-    <!-- ========================== -->
-    <!-- AUTO MODE: Collection Docs -->
-    <!-- ========================== -->
-    <!-- Auto-generates folder structure from collection documents -->
-    {% if page.sidebar.nav == "auto" %}
-    <div class="list-group nav-tree" id="sidebar-content" data-nav-tree>
-      {% assign folders = site.pages | where_exp: "item", "item.path contains 'index.md'" | sort: 'path' %}
-      {% include navigation/sidebar-folders.html folders=folders %}
-    </div>
+    <!-- Resolved navigation content (see navigation/sidebar-nav.html) -->
+    {% include navigation/sidebar-nav.html id="sidebar-content" %}
 
-    <!-- ========================== -->
-    <!-- CATEGORIES MODE           -->
-    <!-- ========================== -->
-    <!-- Creates navigation from Jekyll post/page categories -->
-    {% elsif page.sidebar.nav == "categories" %}
-    <div class="nav-tree nav-tree--categories" id="sidebar-content" data-nav-tree>
-      {% assign categories = site.categories | sort %}
-      {% include navigation/sidebar-categories.html categories=categories %}
-    </div>
-    
-    <!-- ========================== -->
-    <!-- TREE MODE: YAML Navigation -->
-    <!-- ========================== -->
-    <!-- Uses predefined YAML navigation structure from _data files -->
-    {% elsif page.sidebar.nav %}
-    <nav class="w-100 nav-tree" data-nav-tree>
-      {% include navigation/nav-tree.html nav=page.sidebar.nav %}
-    </nav>
-    {% endif %}
-    
   </div>
 </div>

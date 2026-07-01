@@ -46,53 +46,29 @@ layout: root
 -->
 
 {%- comment -%}
-  Resolve effective sidebar visibility. Precedence:
-    1. page.sidebar in front matter wins (true | false | hash)
-    2. Otherwise, post_type=featured|breaking → false (full-bleed reading)
-    3. Otherwise, default to true
-  This is the single source of truth so child layouts (article.html, note.html)
-  do not need to mutate page state.
+  Sidebar visibility + nav mode are resolved by the shared include below
+  (single source of truth, also used by core/header.html and the sidebar
+  includes). It sets:
+    sidebar_enabled     — false when the page opts out (`sidebar: false`,
+                          or featured/breaking post_type by default)
+    sidebar_has_content — true only when the resolved nav mode will render;
+                          `sidebar: true` without a resolvable nav still
+                          enables the right TOC but must not reserve an
+                          empty left column.
 {%- endcomment -%}
-{%- assign _effective_sidebar = page.sidebar -%}
-{%- if _effective_sidebar == nil -%}
-  {%- if page.post_type == "featured" or page.post_type == "breaking" -%}
-    {%- assign _effective_sidebar = false -%}
-  {%- else -%}
-    {%- assign _effective_sidebar = true -%}
-  {%- endif -%}
-{%- endif -%}
-
-{%- comment -%}
-  Left sidebar column is only useful when sidebar-left.html has nav to render
-  (matches header.html mobile toggle logic). `sidebar: true` without `nav`
-  still enables the right TOC but must not reserve an empty left column.
-{%- endcomment -%}
-{%- assign _sidebar_has_content = false -%}
-{%- if _effective_sidebar != false -%}
-  {%- assign _sidebar_nav = nil -%}
-  {%- if page.sidebar and page.sidebar.nav -%}
-    {%- assign _sidebar_nav = page.sidebar.nav -%}
-  {%- endif -%}
-  {%- if _sidebar_nav -%}
-    {%- if _sidebar_nav == "auto" or _sidebar_nav == "categories" -%}
-      {%- assign _sidebar_has_content = true -%}
-    {%- elsif site.data.navigation[_sidebar_nav] -%}
-      {%- assign _sidebar_has_content = true -%}
-    {%- endif -%}
-  {%- endif -%}
-{%- endif -%}
+{% include navigation/sidebar-config.html %}
 
 <!-- ================================================ -->
 <!-- MAIN LAYOUT CONTAINER                           -->
 <!-- Bootstrap responsive container with custom grid -->
 <!-- ================================================ -->
-<div class="container-xxl bd-gutter mt-3 my-md-4 bd-layout{% unless _sidebar_has_content %} bd-layout--no-sidebar{% endunless %}">
+<div class="container-xxl bd-gutter mt-3 my-md-4 bd-layout{% unless sidebar_has_content %} bd-layout--no-sidebar{% endunless %}">
 
     <!-- ================================ -->
     <!-- LEFT SIDEBAR - Navigation       -->
     <!-- ================================ -->
     <!-- Site navigation, content outline, and offcanvas menu for mobile -->
-    {% if _sidebar_has_content %}
+    {% if sidebar_has_content %}
     <aside class="bd-sidebar">
         {% include navigation/sidebar-left.html %}
     </aside>
@@ -131,7 +107,7 @@ layout: root
         <!-- RIGHT SIDEBAR - Table of Contents -->
         <!-- =============================== -->
         <!-- Page outline, shortcuts, and related links (hidden on mobile) -->
-        {% unless _effective_sidebar == false %}
+        {% unless sidebar_enabled == false %}
         <div class="bd-toc text-body-secondary">
             {% include navigation/sidebar-right.html %}
         </div>

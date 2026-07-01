@@ -25,15 +25,9 @@
   Configurable depth: `local_graph_depth: 2` in page front matter (default 1).
   ===================================================================
 {%- endcomment -%}
-{%- assign _effective_sidebar = page.sidebar -%}
-{%- if _effective_sidebar == nil -%}
-  {%- if page.post_type == "featured" or page.post_type == "breaking" -%}
-    {%- assign _effective_sidebar = false -%}
-  {%- else -%}
-    {%- assign _effective_sidebar = true -%}
-  {%- endif -%}
-{%- endif -%}
-{%- if page.local_graph != false and _effective_sidebar != false -%}
+{%- comment -%} Shared visibility resolver — sets sidebar_enabled {%- endcomment -%}
+{%- include navigation/sidebar-config.html -%}
+{%- if page.local_graph != false and sidebar_enabled -%}
 {%- assign lg_depth = page.local_graph_depth | default: 1 -%}
 <aside class="offcanvas offcanvas-start obsidian-local-graph-panel"
        tabindex="-1"

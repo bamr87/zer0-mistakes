@@ -137,6 +137,18 @@ _posts_file_structure    : "year-month-day-title.md"
 navigation:
   unified_mobile_drawer  : false  # true to opt into the single-drawer pattern
 
+# Left sidebar defaults -----------------------------------------------------
+# Site-wide defaults for the docs sidebar panel. Pages override via the
+# `sidebar:` front-matter hash; collections via `sidebar:` metadata under
+# `collections:` below. Resolution: page → collection → site (this block).
+# Full reference: /docs/features/sidebar-navigation/
+sidebar:
+  title                  : "Browse docs"        # panel heading text
+  icon                   : "bi-journal-bookmark" # Bootstrap Icons class for the heading
+  # nav                  : auto  # optional site-wide fallback nav mode for pages
+  #                              # that set none. Modes: auto | collection |
+  #                              # categories | tags | <_data/navigation/*.yml name>
+
 # Opt-in user override hooks. When true, the theme loads:
 #   - assets/css/user-overrides.css  (after main.css, wins over theme rules)
 #   - assets/js/user-overrides.js    (after the theme JS bundle)
@@ -421,6 +433,12 @@ kramdown: # https://kramdown.gettalong.org/options.html
 collections_dir: &collections_dir pages
 local_repo_path: [ *collections_dir, '/', *local_repo ]
 
+# Collection metadata used by the sidebar's "collection" mode:
+#   title   — heading shown above the collection tree (default: label)
+#   icon    — Bootstrap Icons class for the heading
+#   sidebar — per-collection sidebar defaults, e.g.
+#             sidebar: { nav: collection, title: "Guides" }
+#             (page front matter still wins; see sidebar-config.html)
 collections:
   pages:
     output: true
@@ -430,6 +448,8 @@ collections:
     permalink: /:collection/:year/:month/:day/:slug/
   docs:
     output: true
+    title: Documentation
+    icon: bi-journal-text
     permalink: /:collection/:categories/:name/
   quests:
     output: true
@@ -439,15 +459,23 @@ collections:
     permalink: /:collection/:categories/:name/
   notebooks:
     output: true
+    title: Notebooks
+    icon: bi-journal-code
     permalink: /:collection/:path/:name/
   notes:
     output: true
+    title: Notes
+    icon: bi-journal-richtext
     permalink: /:collection/:path/:name/
   quickstart:
     output: true
+    title: Quick Start
+    icon: bi-rocket-takeoff
     permalink: /:collection/:name/
   about:
     output: true
+    title: About
+    icon: bi-person-badge
     permalink: /:collection/:categories/:name/
 
 permalink: pretty
@@ -472,7 +500,7 @@ defaults:
       share: true
       related: true
       sidebar:
-        nav: tree
+        nav: auto
     permalink: /:collection/:name/
 
   # pages
@@ -501,7 +529,7 @@ defaults:
       share: true
       related: true
       sidebar:
-        nav: tree
+        nav: auto
 
   # pages/_quickstart
   - 
@@ -513,7 +541,7 @@ defaults:
       share: true
       related: true
       sidebar:
-        nav: tree
+        nav: auto
 
   # pages/_posts
   - 
@@ -541,7 +569,7 @@ defaults:
       author_profile: true
       read_time: true
       sidebar:
-        nav: tree
+        nav: auto
       comments: # true
       share: true
       related: true

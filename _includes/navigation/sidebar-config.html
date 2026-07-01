@@ -1,0 +1,115 @@
+{%- comment -%}
+  Component:   sidebar-config
+  Path:        _includes/navigation/sidebar-config.html
+  Purpose:     Resolve the effective left-sidebar configuration for the
+               current page. Jekyll `assign`s inside an include propagate to
+               the including template, so this is the single source of truth
+               shared by _layouts/default.html, _includes/core/header.html,
+               navigation/sidebar-left.html and navigation/unified-drawer.html
+               (previously each duplicated this logic and drifted).
+  Params:      none — reads page / collection / site state.
+  Sets (caller scope):
+               sidebar_enabled     — false when the page opts out entirely
+                                     (`sidebar: false`, or featured/breaking
+                                     post_type with no explicit setting)
+               sidebar_nav         — resolved concrete mode: "collection",
+                                     "categories", "tags", or the name of a
+                                     _data/navigation/*.yml file (nil = none)
+               sidebar_has_content — true only when sidebar_nav will actually
+                                     render items (gates the left column and
+                                     the mobile toggle)
+               sidebar_title       — heading text for the sidebar panel
+               sidebar_icon        — Bootstrap Icons class for the heading
+  Config precedence (most specific wins):
+               1. page.sidebar   (false | true | {nav, title, icon, ...})
+               2. `sidebar:` metadata on the page's collection (_config.yml
+                  `collections.<label>.sidebar.{nav,title,icon}`)
+               3. site.sidebar   ({nav, title, icon} in _config.yml)
+  Notes:       `nav: auto` picks the best mode for the page's collection —
+               a curated _data/navigation/<collection>.yml wins, then the
+               live "collection" folder tree, then post "categories".
+{%- endcomment -%}
+
+{%- comment -%} 1. Visibility: page.sidebar wins; featured/breaking posts default off {%- endcomment -%}
+{%- assign sidebar_enabled = true -%}
+{%- if page.sidebar == false -%}
+  {%- assign sidebar_enabled = false -%}
+{%- elsif page.sidebar == nil -%}
+  {%- if page.post_type == "featured" or page.post_type == "breaking" -%}
+    {%- assign sidebar_enabled = false -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- comment -%} 2. Collection-level sidebar metadata (optional) {%- endcomment -%}
+{%- assign sidebar_collection_cfg = nil -%}
+{%- if page.collection -%}
+  {%- assign _sidebar_coll = site.collections | where: "label", page.collection | first -%}
+  {%- if _sidebar_coll -%}
+    {%- assign sidebar_collection_cfg = _sidebar_coll.sidebar -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- comment -%} 3. Nav mode: page → collection metadata → site default {%- endcomment -%}
+{%- assign sidebar_nav = nil -%}
+{%- if sidebar_enabled -%}
+  {%- if page.sidebar.nav -%}
+    {%- assign sidebar_nav = page.sidebar.nav -%}
+  {%- elsif sidebar_collection_cfg.nav -%}
+    {%- assign sidebar_nav = sidebar_collection_cfg.nav -%}
+  {%- elsif site.sidebar.nav -%}
+    {%- assign sidebar_nav = site.sidebar.nav -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- comment -%} 4. "auto" → concrete mode based on the page's collection {%- endcomment -%}
+{%- if sidebar_nav == "auto" -%}
+  {%- assign sidebar_nav = nil -%}
+  {%- if page.collection -%}
+    {%- if site.data.navigation[page.collection] -%}
+      {%- assign sidebar_nav = page.collection -%}
+    {%- else -%}
+      {%- assign sidebar_nav = "collection" -%}
+    {%- endif -%}
+  {%- elsif site.categories.size > 0 -%}
+    {%- assign sidebar_nav = "categories" -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- comment -%} 5. Content gate — never reserve an empty left column {%- endcomment -%}
+{%- assign sidebar_has_content = false -%}
+{%- if sidebar_nav -%}
+  {%- case sidebar_nav -%}
+    {%- when "collection" -%}
+      {%- if page.sidebar.collection or page.collection -%}
+        {%- assign sidebar_has_content = true -%}
+      {%- endif -%}
+    {%- when "categories" -%}
+      {%- if site.categories.size > 0 -%}
+        {%- assign sidebar_has_content = true -%}
+      {%- endif -%}
+    {%- when "tags" -%}
+      {%- if site.tags.size > 0 -%}
+        {%- assign sidebar_has_content = true -%}
+      {%- endif -%}
+    {%- else -%}
+      {%- if site.data.navigation[sidebar_nav] -%}
+        {%- assign sidebar_has_content = true -%}
+      {%- endif -%}
+  {%- endcase -%}
+{%- endif -%}
+
+{%- comment -%} 6. Panel heading text + icon (page → collection → site → theme default) {%- endcomment -%}
+{%- assign sidebar_title = site.sidebar.title | default: "Browse docs" -%}
+{%- assign sidebar_icon = site.sidebar.icon | default: "bi-journal-bookmark" -%}
+{%- if sidebar_collection_cfg.title -%}
+  {%- assign sidebar_title = sidebar_collection_cfg.title -%}
+{%- endif -%}
+{%- if sidebar_collection_cfg.icon -%}
+  {%- assign sidebar_icon = sidebar_collection_cfg.icon -%}
+{%- endif -%}
+{%- if page.sidebar.title -%}
+  {%- assign sidebar_title = page.sidebar.title -%}
+{%- endif -%}
+{%- if page.sidebar.icon -%}
+  {%- assign sidebar_icon = page.sidebar.icon -%}
+{%- endif -%}

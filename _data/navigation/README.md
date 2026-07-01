@@ -19,11 +19,18 @@
 #
 # ## Navigation Modes
 #
-# The sidebar supports three navigation modes set via `page.sidebar.nav`:
+# The sidebar supports these navigation modes set via `page.sidebar.nav`
+# (resolved by _includes/navigation/sidebar-config.html; page front matter →
+# collection `sidebar:` metadata → site.sidebar → nothing):
 #
-# 1. **auto** - Auto-generates from collection documents
-# 2. **tree** - Uses YAML data from this directory
-# 3. **categories** - Groups by Jekyll categories
+# 1. **auto** - Best mode for the page's collection: a curated
+#    _data/navigation/<collection>.yml wins, then the live "collection"
+#    folder tree, then post "categories"
+# 2. **collection** - Live folder tree of the page's (or a named) collection
+# 3. **categories** - Posts grouped by Jekyll category
+# 4. **tags** - Posts grouped by Jekyll tag
+# 5. **<file name>** - Any other value renders _data/navigation/<value>.yml
+#    as a curated tree (e.g. `nav: docs` → docs.yml)
 #
 # ## Available Files
 #
@@ -41,6 +48,9 @@
 # sidebar:
 #   nav: docs  # Uses _data/navigation/docs.yml
 # ```
+#
+# Collections named like a file here get it automatically under `nav: auto`
+# (docs.yml, about.yml, quickstart.yml, posts.yml ↔ the matching collection).
 #
 # ## Navbar capacity & responsive constraints (main.yml)
 #

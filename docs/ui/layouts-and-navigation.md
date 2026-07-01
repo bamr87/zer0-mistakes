@@ -115,10 +115,15 @@ Styles: `_sass/core/_docs-layout.scss`, tokens in `_sass/tokens/_spacing.scss`.
 
 ```yaml
 sidebar:
-  nav: tree          # _data/navigation/tree.yml
-  # nav: categories  # auto category index
-  # nav: auto        # infer from collection (notes)
-  # nav: sdk         # _data/navigation/sdk.yml
+  nav: auto          # best mode for the page's collection: curated
+                     # _data/navigation/<collection>.yml → live collection
+                     # folder tree → post categories
+  # nav: collection  # live folder tree of the page's collection
+  # nav: categories  # posts grouped by category
+  # nav: tags        # posts grouped by tag
+  # nav: sdk         # _data/navigation/sdk.yml (any other value = data file)
+  # title: "Guides"  # panel heading override
+  # icon: bi-book    # heading icon override
 ```
 
 Or boolean shorthand:
@@ -127,6 +132,13 @@ Or boolean shorthand:
 sidebar: true   # enables layout sidebar logic (default for many collections)
 sidebar: false  # full-width content
 ```
+
+Resolution is centralized in `_includes/navigation/sidebar-config.html`:
+page front matter → collection `sidebar:` metadata (in `_config.yml`
+`collections:`) → `site.sidebar` → nothing. See
+`/docs/features/sidebar-navigation/` for the full option reference
+(`collection`/`sort`/`expand` for collection mode, `limit` for taxonomy
+modes, `sidebar_exclude: true` per document).
 
 ### Navigation data file
 
