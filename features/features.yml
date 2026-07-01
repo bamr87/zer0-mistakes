@@ -1,6 +1,6 @@
 # zer0-mistakes Theme Features Registry
 # Comprehensive feature tracking for the zer0-mistakes Jekyll theme
-# Version: 1.23.0
+# Version: 1.24.0
 # Last Updated: 2026-06-30
 
 features:
@@ -1767,7 +1767,7 @@ features:
 
   - id: ZER0-061
     title: "Author Profiles System"
-    description: "Auto-generated author profile pages and a searchable author directory from _data/authors.yml — each author gets a /authors/<key>/ hub with bio, stats, and a filterable grid of their content across collections"
+    description: "Auto-generated author profile pages and a searchable author directory from _data/authors.yml — each author gets a /authors/:key/ hub with bio, stats, and a filterable grid of their content across collections"
     implemented: true
     version: "1.20.0"
     link: "/authors/"

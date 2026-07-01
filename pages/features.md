@@ -35,7 +35,7 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
         <i class="bi bi-check-circle-fill text-success me-2"></i>
         {{ feature.title }}
       </h5>
-      <p class="card-text">{{ feature.description }}</p>
+      <p class="card-text">{{ feature.description | escape }}</p>
       
       {% if feature.references %}
       <div class="mt-3">
@@ -96,7 +96,7 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
         <i class="bi bi-robot text-primary me-2"></i>
         {{ feature.title }}
       </h5>
-      <p class="card-text">{{ feature.description }}</p>
+      <p class="card-text">{{ feature.description | escape }}</p>
       
       {% if feature.providers %}
       <div class="mt-3">
@@ -151,7 +151,7 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
         <i class="bi bi-shield-check text-success me-2"></i>
         {{ feature.title }}
       </h5>
-      <p class="card-text">{{ feature.description }}</p>
+      <p class="card-text">{{ feature.description | escape }}</p>
       
       {% if feature.features %}
       <div class="mt-3">
@@ -207,7 +207,7 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
         <i class="bi bi-compass text-info me-2"></i>
         {{ feature.title }}
       </h5>
-      <p class="card-text">{{ feature.description }}</p>
+      <p class="card-text">{{ feature.description | escape }}</p>
       
       {% if feature.shortcuts %}
       <div class="mt-3">
@@ -263,7 +263,7 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
         <i class="bi bi-file-earmark-text text-warning me-2"></i>
         {{ feature.title }}
       </h5>
-      <p class="card-text">{{ feature.description }}</p>
+      <p class="card-text">{{ feature.description | escape }}</p>
       
       {% if feature.diagram_types %}
       <div class="mt-3">
@@ -320,7 +320,7 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
         <i class="bi bi-tools text-danger me-2"></i>
         {{ feature.title }}
       </h5>
-      <p class="card-text">{{ feature.description }}</p>
+      <p class="card-text">{{ feature.description | escape }}</p>
       
       {% if feature.features %}
       <div class="mt-3">
@@ -382,7 +382,7 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
         <td>
           <strong>{{ feature.title }}</strong>
           <br>
-          <small class="text-muted">{{ feature.description | truncate: 80 }}</small>
+          <small class="text-muted">{{ feature.description | escape | truncate: 80 }}</small>
         </td>
         <td><span class="badge bg-secondary">v{{ feature.version }}</span></td>
         <td>
@@ -496,7 +496,7 @@ Complete feature registry for the zer0-mistakes Jekyll theme. All {{ site.data.f
           {% else %}
           <span class="fw-semibold">{{ feature.title }}</span>
           {% endif %}
-          <small class="text-muted d-block">{{ feature.description | truncate: 100 }}</small>
+          <small class="text-muted d-block">{{ feature.description | escape | truncate: 100 }}</small>
         </li>
         {% endfor %}
       </ul>
