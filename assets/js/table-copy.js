@@ -1,3 +1,4 @@
+// Feature: ZER0-068
 /**
  * Content table CSV copy — injects a toolbar button on markdown/HTML tables
  * in main reading areas. Scoped to content wrappers; skips admin and sitemap.

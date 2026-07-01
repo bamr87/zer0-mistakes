@@ -1,3 +1,4 @@
+// Feature: ZER0-032
 /**
  * Search Modal Controller
  * - Opens modal on navigation:searchRequest event ("/" shortcut)

@@ -1,3 +1,4 @@
+// Feature: ZER0-008
 /**
  * ===================================================================
  * SMOOTH SCROLL - Enhanced Anchor Navigation

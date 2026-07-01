@@ -1,4 +1,5 @@
 #!/bin/bash
+# Features: ZER0-012, ZER0-028
 #
 # Script Name: convert-notebooks.sh
 # Description: Converts Jupyter notebooks (.ipynb) to Jekyll-compatible Markdown

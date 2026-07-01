@@ -1,3 +1,4 @@
+# Feature: ZER0-075
 name: Auto-merge low-risk PRs
 
 # Enable GitHub native auto-merge for PRs the IMPLEMENT routine has classified as

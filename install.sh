@@ -1,4 +1,5 @@
 #!/bin/bash
+# Feature: ZER0-003
 
 # zer0-mistakes Jekyll Theme Installer
 # IT-Journey Project - AI-Powered Development

@@ -1,3 +1,4 @@
+// Feature: ZER0-031
 /**
  * ===================================================================
  * APPEARANCE — Runtime theme controls (color mode + primary color)

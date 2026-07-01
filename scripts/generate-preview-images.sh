@@ -1,4 +1,5 @@
 #!/bin/bash
+# Features: ZER0-004, ZER0-028
 
 # ============================================================================
 # WRAPPER: This script forwards to scripts/features/generate-preview-images
