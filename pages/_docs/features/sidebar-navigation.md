@@ -1,7 +1,7 @@
 ---
 lastmod: 2026-07-01T00:00:00.000Z
 title: Sidebar Navigation System
-description: Collection-aware sidebar with auto/collection/categories/tags/tree modes, Intersection Observer scroll spy, smooth scrolling, keyboard shortcuts, and swipe gestures.
+description: Collection-aware sidebar with auto, collection, categories, tags, and tree modes plus scroll spy, keyboard shortcuts, and swipe gestures.
 preview: /images/previews/sidebar-navigation-system.png
 layout: default
 categories:
@@ -61,7 +61,7 @@ they can never drift apart:
 
 ## Navigation Modes
 
-Set the mode with the `sidebar.nav` front-matter key (or a collection/site
+Set the mode with the `sidebar.nav` front matter key (or a collection/site
 default — see [Configuration](#configuration)):
 
 | Mode | Renders | Best for |
