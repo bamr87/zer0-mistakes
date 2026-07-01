@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.25.0](https://github.com/bamr87/zer0-mistakes/compare/v1.24.0...v1.25.0) (2026-07-01)
+
+
+### Features
+
+* **features:** reverse-traceability source tags — applied and enforced ([#270](https://github.com/bamr87/zer0-mistakes/issues/270)) ([f2c0c07](https://github.com/bamr87/zer0-mistakes/commit/f2c0c073c08bce62956a56b4b3e77d48a00ba309))
+* **navigation:** collection-aware sidebar modes with shared resolver ([#273](https://github.com/bamr87/zer0-mistakes/issues/273)) ([104285f](https://github.com/bamr87/zer0-mistakes/commit/104285fbed2d27646549c9aa956dea5108d91f77))
+
+
+### Bug Fixes
+
+* **features:** stop ZER0-061 card from swallowing every following card ([#268](https://github.com/bamr87/zer0-mistakes/issues/268)) ([46a604d](https://github.com/bamr87/zer0-mistakes/commit/46a604d1bf4331422b382bf895aeecae928fda70))
+* **navigation:** remove redundant entries from navigation menus ([916eca2](https://github.com/bamr87/zer0-mistakes/commit/916eca269726c984c5c0c9dc9533c83d9975f906))
+
 ## [1.24.0](https://github.com/bamr87/zer0-mistakes/compare/v1.23.0...v1.24.0) (2026-07-01)
 
 
