@@ -42,7 +42,7 @@
       <i class="bi {{ icon }} {{ icon_color }} me-2"></i>
       {{ f.title }}
     </h5>
-    <p class="card-text">{{ f.description }}</p>
+    <p class="card-text">{{ f.description | escape }}</p>
 
     {% unless compact %}
       {% if f.features %}

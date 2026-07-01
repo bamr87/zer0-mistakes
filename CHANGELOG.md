@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+* **features:** stop a feature card from swallowing every card after it on `/features/` — a raw `<key>` in the ZER0-061 description rendered as a stray HTML element. Fixed the description (`/authors/:key/`), escaped all `description` output on the features page and in `feature-card.html`, and added a registry-gate check that rejects raw `<`/`>` in titles/descriptions. (evidence: [`test/visual/evidence/features-card-escape/`](test/visual/evidence/features-card-escape/README.md))
 * **includes:** existence-guard component-showcase demo links — breadcrumb and list-group items now render as real links when the target page exists in the build (`/docs/`, `/docs/customization/`, `/categories/`, `/tags/`) and as plain text when absent; removes inert `href="#"` / `onclick="return false;"` workaround ([#219](https://github.com/bamr87/zer0-mistakes/issues/219)) (evidence: [`test/visual/evidence/component-showcase/`](test/visual/evidence/component-showcase/README.md))
 
 ### Tests

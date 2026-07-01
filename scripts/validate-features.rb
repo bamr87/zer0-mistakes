@@ -81,6 +81,13 @@ feats.each_with_index do |f, i|
     die "#{id}: required field `#{key}` is missing/empty" if val.nil? || (val.respond_to?(:empty?) && val.empty?)
   end
 
+  # Title/description are rendered UNwrapped into HTML on /features/; a raw
+  # angle bracket (e.g. "/authors/<key>/") becomes a stray tag that swallows
+  # every following card. Keep them plain prose.
+  %w[title description].each do |key|
+    die "#{id}: `#{key}` must not contain raw `<`/`>` (breaks HTML on /features/ — use :key or &lt;)" if f[key].to_s =~ /[<>]/
+  end
+
   die "#{id}: id must match ZER0-NNN" unless f['id'] =~ /\AZER0-\d{3}\z/
   die "#{id}: duplicate id" if seen[f['id']]
   seen[f['id']] = true

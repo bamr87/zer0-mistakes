@@ -24,6 +24,22 @@ test.describe('Feature registry provenance (/features/)', () => {
     await expect(header).toBeVisible();
   });
 
+  test('no feature card renders a stray HTML tag from its text (no card swallowing)', async ({ page }) => {
+    // Regression: a raw "<key>" in ZER0-061's description opened a stray element
+    // that nested every following card. Descriptions are now escaped, and the
+    // registry gate rejects `<`/`>` in titles/descriptions.
+    const strayTags = await page.evaluate(() => {
+      const known = new Set(['KEY']); // element names that could leak from "<key>"
+      return [...document.querySelectorAll('main *')]
+        .map((el) => el.tagName)
+        .filter((t) => known.has(t)).length;
+    });
+    expect(strayTags).toBe(0);
+    // Every registry row is present in the reference table (nothing got swallowed).
+    const rows = await page.locator('table tbody tr td code').filter({ hasText: /^ZER0-\d{3}$/ }).count();
+    expect(rows).toBeGreaterThanOrEqual(76);
+  });
+
   test('a known feature exposes a PR link with the correct GitHub href', async ({ page }) => {
     // ZER0-060 (AI Chat Assistant) was introduced by PR #33.
     const prLink = page.locator(`a[href$="/pull/33"]`).first();
