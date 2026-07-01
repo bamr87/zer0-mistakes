@@ -340,7 +340,7 @@ clean_converted() {
                 rm -f "$md_file"
                 info "Removed: $md_file"
             fi
-            ((count++))
+            count=$((count + 1))
         fi
     done < <(find "$OUTPUT_DIR" -name "*.md" -print0 2>/dev/null)
     
@@ -365,7 +365,7 @@ list_notebooks() {
     else
         while IFS= read -r -d '' notebook_file; do
             echo "$notebook_file"
-            ((count++))
+            count=$((count + 1))
         done < <(find "$NOTEBOOKS_DIR" -name "*.ipynb" -print0 2>/dev/null)
     fi
     
@@ -401,7 +401,7 @@ main() {
         local count=0
         while IFS= read -r -d '' notebook_file; do
             convert_notebook "$notebook_file"
-            ((count++))
+            count=$((count + 1))
         done < <(find "$NOTEBOOKS_DIR" -name "*.ipynb" -print0 2>/dev/null)
         
         if [[ $count -eq 0 ]]; then
