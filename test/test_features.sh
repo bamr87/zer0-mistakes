@@ -89,6 +89,16 @@ puts "  tests:      #{tested}/#{active.length} active features  (target PR C: al
 RUBY
 
 # ---------------------------------------------------------------------------
+# Layer 4 — Reverse-traceability source tags
+# ---------------------------------------------------------------------------
+section "Source-file Feature tags (scripts/tag-features --check)"
+if "${RUBY[@]}" scripts/tag-features --check; then
+    ok "Every referenced source file carries its Feature: ZER0-NNN comment"
+else
+    bad "Referenced source file(s) missing a Feature tag — run: ruby scripts/tag-features --write"
+fi
+
+# ---------------------------------------------------------------------------
 # Summary
 # ---------------------------------------------------------------------------
 echo ""

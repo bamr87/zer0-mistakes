@@ -1,0 +1,136 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# ---------------------------------------------------------------------------
+# tag-features — reverse-traceability enforcement for the feature registry.
+#
+# Every source file a feature lists under `references:` carries a top-of-file
+# `Feature: ZER0-NNN` comment, so the link runs both ways (registry -> code and
+# code -> registry). This tool is the single source of truth for that rule:
+#
+#   ruby scripts/tag-features            # --check (default): exit 1 + list any
+#                                        #   referenced source file missing its tag
+#   ruby scripts/tag-features --write    # insert the missing tags (idempotent,
+#                                        #   line-ending-preserving)
+#
+# The `features` test suite runs `--check`, so a new feature that forgets to tag
+# its files fails CI. Governance: .github/instructions/features.instructions.md.
+#
+# Scope (mirrors what a feature's references implement, and only what can carry a
+# comment): .rb .js .mjs .scss .sh .html .yml, plus Dockerfile/Makefile and the
+# scripts/{bin/*,build,release} wrappers. Excluded by design: markdown docs,
+# JSON (no comment syntax), vendored/minified third-party libs, directory refs,
+# and _config.yml (it has an exact-copy admin mirror enforced elsewhere).
+#
+# Portable across Ruby 2.6 (macOS system) and 3.x (CI/Docker).
+# ---------------------------------------------------------------------------
+
+require 'date'
+require 'yaml'
+
+MIRROR = '_data/features.yml'
+MODE = ARGV.include?('--write') ? :write : :check
+
+CODE_EXT = %w[.rb .js .mjs .scss .sh .html .yml].freeze
+SLASH_EXT = %w[.js .mjs .scss].freeze
+NOEXT_FILES = %w[docker/Dockerfile Makefile scripts/release scripts/build].freeze
+EXCLUDE_FILES = %w[_config.yml assets/js/particles.js assets/js/halfmoon.js].freeze
+
+def load_yaml(path)
+  YAML.load_file(path, permitted_classes: [Date, Time], aliases: true)
+rescue ArgumentError
+  YAML.load_file(path)
+end
+
+def ref_paths(refs)
+  return [] unless refs.is_a?(Hash)
+
+  refs.values.flat_map { |v| v.is_a?(Array) ? v : [v] }.select { |v| v.is_a?(String) }
+end
+
+def vendored?(path)
+  path.include?('/vendor/') || path.end_with?('.min.js') || EXCLUDE_FILES.include?(path)
+end
+
+# Which referenced paths must carry a tag.
+def taggable?(path)
+  return false if path.end_with?('/') || vendored?(path)
+
+  ext = File.extname(path)
+  return false if %w[.md .json].include?(ext)
+
+  CODE_EXT.include?(ext) || NOEXT_FILES.include?(path) || (path.start_with?('scripts/bin/') && ext.empty?)
+end
+
+def tag_text(ids)
+  (ids.length == 1 ? 'Feature: ' : 'Features: ') + ids.join(', ')
+end
+
+def already_tagged?(raw, ids)
+  head = raw[0, 500].to_s
+  ids.any? { |id| head.include?(id) }
+end
+
+# Insert the tag with type-aware placement, preserving the file's line endings.
+def insert_tag(path, ids)
+  raw = File.binread(path).force_encoding('UTF-8')
+  return :skipped if already_tagged?(raw, ids)
+
+  nl = raw.include?("\r\n") ? "\r\n" : "\n"
+  ext = File.extname(path)
+  tag = tag_text(ids)
+  lines = raw.each_line.to_a
+
+  if ext == '.html' && raw.lstrip.start_with?('---')
+    idx = lines.index { |l| l.strip == '---' } || 0
+    lines.insert(idx + 1, "# #{tag}#{nl}")            # invisible YAML front-matter comment
+  elsif ext == '.html'
+    lines.unshift("{% comment %} #{tag} {% endcomment %}#{nl}")  # stripped at build
+  else
+    prefix = SLASH_EXT.include?(ext) ? '//' : '#'
+    line = "#{prefix} #{tag}#{nl}"
+    first = lines[0].to_s
+    if first.start_with?('#!') || first.lstrip.start_with?('# syntax=') || first.lstrip.start_with?('# escape=')
+      lines.insert(1, line)                            # keep shebang / Dockerfile directive on line 1
+    else
+      lines.unshift(line)
+    end
+  end
+
+  File.binwrite(path, lines.join)
+  :written
+end
+
+data = load_yaml(MIRROR)
+feats = data && data['features']
+abort 'tag-features: could not read features registry' unless feats.is_a?(Array)
+
+by_file = Hash.new { |h, k| h[k] = [] }
+feats.each do |f|
+  next if f['implemented'] == false   # removed features keep (absent) refs; nothing to tag
+
+  ref_paths(f['references']).each do |p|
+    by_file[p] << f['id'] if taggable?(p) && File.exist?(p)
+  end
+end
+
+if MODE == :write
+  written = 0
+  by_file.each { |path, ids| written += 1 if insert_tag(path, ids.uniq.sort) == :written }
+  puts "tag-features: wrote #{written} tag(s); #{by_file.size - written} already current"
+  exit 0
+end
+
+missing = by_file.reject do |path, ids|
+  already_tagged?(File.binread(path).force_encoding('UTF-8'), ids.uniq.sort)
+end
+
+if missing.empty?
+  puts "tag-features: all #{by_file.size} referenced source files carry their Feature tag"
+  exit 0
+end
+
+warn "tag-features: #{missing.length} referenced source file(s) missing a `Feature: ZER0-NNN` comment:"
+missing.each { |path, ids| warn "  - #{path}  (needs #{ids.uniq.sort.join(', ')})" }
+warn 'Fix: run `ruby scripts/tag-features --write` (or add the comment by hand).'
+exit 1
