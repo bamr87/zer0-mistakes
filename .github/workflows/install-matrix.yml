@@ -6,20 +6,10 @@ name: Install Matrix
 #   - curl-bash-bootstrap:  the README one-liner (curl | bash) remote install
 #   - doctor:               the `install doctor` environment diagnostic
 # Triggered on PRs that touch installer code or weekly to catch drift.
+# (No push trigger: main is protected, so every change already ran this matrix
+# on its PR; the weekly schedule catches environment/tooling drift.)
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - install.sh
-      - scripts/bin/install
-      - scripts/lib/install/**
-      - scripts/platform/**
-      - templates/profiles/**
-      - templates/deploy/**
-      - test/test_install_*.sh
-      - test/lib/install_test_utils.sh
-      - .github/workflows/install-matrix.yml
   pull_request:
     paths:
       - install.sh

@@ -46,7 +46,23 @@ jobs:
       pull-requests: write   # post the sticky review comment
     outputs:
       has_content: ${{ steps.review.outputs.has_content }}
+      ai_enabled: ${{ steps.ai-gate.outputs.enabled }}
     steps:
+      # Gate for the Claude Code tier — a step here rather than a separate job
+      # (secrets aren't readable in job-level `if:`, but a one-liner step doesn't
+      # justify its own runner).
+      - name: Check AI availability
+        id: ai-gate
+        env:
+          KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -n "$KEY" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::ANTHROPIC_API_KEY not set — skipping the Claude Code review tier."
+          fi
+
       - name: Checkout
         uses: actions/checkout@v7
         with:
@@ -99,32 +115,12 @@ jobs:
           if-no-files-found: ignore
 
   # ---------------------------------------------------------------------------
-  # Gate — is the Claude Code tier available? (secret present, not a fork PR)
-  # ---------------------------------------------------------------------------
-  gate:
-    name: Check AI availability
-    runs-on: ubuntu-latest
-    outputs:
-      ai_enabled: ${{ steps.check.outputs.enabled }}
-    steps:
-      - id: check
-        env:
-          KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: |
-          if [ -n "$KEY" ]; then
-            echo "enabled=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::ANTHROPIC_API_KEY not set — skipping Claude Code content review (deterministic tier still ran)."
-          fi
-
-  # ---------------------------------------------------------------------------
   # Tier 2 — Claude Code content-reviewer agent
   # ---------------------------------------------------------------------------
   ai-review:
     name: Claude Code content review
-    needs: [deterministic-review, gate]
-    if: ${{ github.event_name == 'pull_request' && needs.gate.outputs.ai_enabled == 'true' && needs.deterministic-review.outputs.has_content == 'true' }}
+    needs: deterministic-review
+    if: ${{ github.event_name == 'pull_request' && needs.deterministic-review.outputs.ai_enabled == 'true' && needs.deterministic-review.outputs.has_content == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:

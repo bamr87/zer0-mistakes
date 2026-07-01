@@ -166,86 +166,8 @@ jobs:
           
           if [[ "${{ steps.check_changes.outputs.has_changes }}" == "true" ]]; then
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "✅ **Converted files committed and pushed**" >> $GITHUB_STEP_SUMMARY
+            echo "✅ **Converted files committed to the chore/convert-notebooks PR**" >> $GITHUB_STEP_SUMMARY
           elif [[ "${{ github.event_name }}" != "pull_request" ]]; then
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "ℹ️ **No new conversions needed**" >> $GITHUB_STEP_SUMMARY
           fi
-
-  validate-converted:
-    name: Validate Converted Markdown
-    needs: convert-notebooks
-    runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
-    timeout-minutes: 5
-    permissions:
-      contents: read
-
-    steps:
-      - name: Checkout Repository (after conversion)
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.ref_name }}
-
-      - name: Setup Ruby Environment
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3'
-          bundler-cache: true
-
-      - name: Validate Converted Markdown
-        run: |
-          echo "::group::Checking Converted Markdown Files"
-          
-          # Check if converted markdown files exist
-          if compgen -G "pages/_notebooks/*.md" > /dev/null; then
-            echo "✅ Found converted markdown files:"
-            ls -lh pages/_notebooks/*.md
-            
-            # Validate front matter
-            echo ""
-            echo "Validating front matter..."
-            for file in pages/_notebooks/*.md; do
-              if head -n 1 "$file" | grep -q "^---$"; then
-                echo "✅ $file has front matter"
-              else
-                echo "⚠️  $file missing front matter"
-              fi
-            done
-          else
-            echo "ℹ️ No converted markdown files found"
-          fi
-          
-          echo "::endgroup::"
-
-      - name: Check for Broken Images
-        run: |
-          echo "::group::Checking for Broken Image References"
-          
-          if compgen -G "pages/_notebooks/*.md" > /dev/null; then
-            for file in pages/_notebooks/*.md; do
-              echo "Checking $file..."
-              
-              # Extract image paths from markdown
-              grep -oP '!\[.*?\]\(\K[^)]+' "$file" | while read -r img_path; do
-                # Remove leading slash and check if file exists
-                img_file="${img_path#/}"
-                if [[ ! -f "$img_file" ]]; then
-                  echo "⚠️  Missing image: $img_path (referenced in $file)"
-                fi
-              done || true
-            done
-          fi
-          
-          echo "::endgroup::"
-
-      - name: Summary
-        if: always()
-        run: |
-          echo "### Validation Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Markdown Files:**" >> $GITHUB_STEP_SUMMARY
-          find pages/_notebooks -name "*.md" -type f | wc -l >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Image Files:**" >> $GITHUB_STEP_SUMMARY
-          find assets/images/notebooks -type f 2>/dev/null | wc -l || echo "0" >> $GITHUB_STEP_SUMMARY

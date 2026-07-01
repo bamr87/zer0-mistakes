@@ -19,7 +19,10 @@ name: CI self-repair
 
 on:
   workflow_run:
-    workflows: ["Comprehensive CI Pipeline", "TEST (Latest Dependencies)"]
+    # Only PR-triggered runs are repairable (see the job `if` below), and ci.yml
+    # is the only PR-scoped candidate — test-latest.yml no longer runs on
+    # pull_request, so watching it here would never fire.
+    workflows: ["Comprehensive CI Pipeline"]
     types: [completed]
 
 permissions:

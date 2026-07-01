@@ -5,6 +5,10 @@ name: CodeQL Security Scanning
 permissions:
   contents: read
 
+# Path scope: the analyzable languages (js/ts/rb/py) plus the Actions
+# definitions for the `actions` language. Deliberately NOT '**.yml' — data/
+# content/config YAML contains nothing CodeQL analyzes, and that glob used to
+# fan out all four language analyses on every _data/_config change.
 on:
   push:
     branches: [ "main" ]
@@ -13,8 +17,6 @@ on:
       - '**.ts'
       - '**.rb'
       - '**.py'
-      - '**.yml'
-      - '**.yaml'
       - '_plugins/**'
       - 'scripts/**'
       - 'lib/**'
@@ -27,8 +29,6 @@ on:
       - '**.ts'
       - '**.rb'
       - '**.py'
-      - '**.yml'
-      - '**.yaml'
       - '_plugins/**'
       - 'scripts/**'
       - 'lib/**'
