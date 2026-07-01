@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.24.0](https://github.com/bamr87/zer0-mistakes/compare/v1.23.0...v1.24.0) (2026-07-01)
+
+
+### Features
+
+* **features:** backfill PR/commit/issue provenance + render it ([#264](https://github.com/bamr87/zer0-mistakes/issues/264)) ([03b584a](https://github.com/bamr87/zer0-mistakes/commit/03b584aab91332fd0e91f48210a7455da5bc6d08))
+* **features:** document 16 reconciled features (ZER0-061..076) + governance ([#267](https://github.com/bamr87/zer0-mistakes/issues/267)) ([097e842](https://github.com/bamr87/zer0-mistakes/commit/097e842426d62189d527719d07ac609a970a3084))
+
+
+### Bug Fixes
+
+* **features:** reconcile registry with the real repo + add validation gate ([#262](https://github.com/bamr87/zer0-mistakes/issues/262)) ([786459c](https://github.com/bamr87/zer0-mistakes/commit/786459cc611bcc829cd81c971dc6cd1a4f3ba82d))
+* **security:** close two DOM-XSS sinks (CodeQL js/xss-through-dom) ([#266](https://github.com/bamr87/zer0-mistakes/issues/266)) ([812f247](https://github.com/bamr87/zer0-mistakes/commit/812f2478e0cc1989f599e32ac2171a0da449567f))
+
 ## [1.23.0](https://github.com/bamr87/zer0-mistakes/compare/v1.22.0...v1.23.0) (2026-06-30)
 
 
