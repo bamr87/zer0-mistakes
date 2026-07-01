@@ -22,28 +22,15 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  cancel-in-progress: false
 
+# NOTE: deliberately NOT triggered on pull_request — PRs are validated by ci.yml
+# against the pinned (merge-relevant) dependencies. Running the whole zero-pin
+# Docker pipeline per PR duplicated that gate at ~2x the cost, and a latest-deps
+# failure is upstream drift, not something a PR author can act on. This canary
+# runs on main pushes + the daily schedule instead.
 on:
   push:
-    branches: [main]
-    paths:
-      - '_layouts/**'
-      - '_includes/**'
-      - '_sass/**'
-      - '_plugins/**'
-      - 'assets/**'
-      - 'lib/**'
-      - '*.gemspec'
-      - 'Gemfile*'
-      - 'Rakefile'
-      - 'scripts/**'
-      - 'test/**'
-      - '_config*.yml'
-      - 'docker/**'
-      - 'docker-compose*.yml'
-      - 'Dockerfile'
-  pull_request:
     branches: [main]
     paths:
       - '_layouts/**'
@@ -186,15 +173,7 @@ jobs:
           fi
           echo "💾 Saving image: $IMAGE_ID"
           docker save -o /tmp/jekyll-image.tar $IMAGE_ID
-      
-      - name: Restore Original Gemfile
-        if: always()
-        run: |
-          if [ -f Gemfile.original ]; then
-            mv Gemfile.original Gemfile
-            echo "✅ Restored original Gemfile"
-          fi
-          
+
       - name: Upload Docker Image Artifact
         uses: actions/upload-artifact@v7
         with:

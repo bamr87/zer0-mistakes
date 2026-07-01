@@ -118,7 +118,7 @@ whether or not the cloud-routine runtime can delegate to named subagents.
 
 The implement loop verifies **before** opening a PR, but local-green ≠ CI-green.
 `.github/workflows/ci-self-repair.yml` closes that gap: on a **failed** CI run
-(`Comprehensive CI Pipeline` / `TEST (Latest Dependencies)`) for a PR that opted
+(`Comprehensive CI Pipeline`) for a PR that opted
 in via the **`auto-fix`** label, it runs Claude Code headless
 ([`/ci-self-repair`](../../.github/prompts/ci-self-repair.prompt.md)) to diagnose
 and fix the failing check **by root cause**, verify locally, and push — bounded by

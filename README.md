@@ -757,11 +757,11 @@ All workflows live under [`.github/workflows/`](.github/workflows/).
 
 | # | Workflow | File | Trigger | Purpose |
 |---|----------|------|---------|---------|
-| 1 | **Comprehensive CI Pipeline** | [`ci.yml`](.github/workflows/ci.yml) | push / PR / dispatch | Detect changes → fast checks → quality control → matrix test suite → integration tests → build & validate |
-| 2 | **TEST (Latest Dependencies)** | [`test-latest.yml`](.github/workflows/test-latest.yml) | daily schedule / push / PR / dispatch | Zero-pin Docker build with bleeding-edge gems; tests then promotes passing images to Docker Hub |
+| 1 | **Comprehensive CI Pipeline** | [`ci.yml`](.github/workflows/ci.yml) | push / PR / dispatch | Detect changes → quality control (incl. quick preflight) → matrix test suite → integration tests → build & validate |
+| 2 | **TEST (Latest Dependencies)** | [`test-latest.yml`](.github/workflows/test-latest.yml) | daily schedule / push / dispatch | Zero-pin Docker build with bleeding-edge gems; tests then promotes passing images to Docker Hub |
 | 3 | **Release** | [`release.yml`](.github/workflows/release.yml) | push to `main` | release-please opens a release PR from Conventional Commits; merging it tags `vX.Y.Z` and publishes the gem to [RubyGems](https://rubygems.org/gems/jekyll-theme-zer0) |
 | 4 | **Update Dependencies** | [`update-dependencies.yml`](.github/workflows/update-dependencies.yml) | weekly schedule | Refreshes `Gemfile.lock` to latest compatible versions and opens an automated PR |
-| 5 | **CodeQL Security Scanning** | [`codeql.yml`](.github/workflows/codeql.yml) | push / PR on code paths + weekly | Static security analysis across Ruby, JavaScript/TypeScript, Python, Actions, and YAML |
+| 5 | **CodeQL Security Scanning** | [`codeql.yml`](.github/workflows/codeql.yml) | push / PR on code paths + weekly | Static security analysis across Ruby, JavaScript/TypeScript, Python, and Actions |
 | 6 | **Content & Docs Review** | [`ai-content-review.yml`](.github/workflows/ai-content-review.yml) | PR on docs/content | Deterministic SEO/quality review + optional Claude agent + docs front matter, internal-link, and markdownlint checks |
 | 7 | **Convert Jupyter Notebooks** | [`convert-notebooks.yml`](.github/workflows/convert-notebooks.yml) | push to `pages/_notebooks/**.ipynb` | Auto-converts `.ipynb` → Jekyll-friendly Markdown with extracted images |
 | 8 | **Sync** | [`sync.yml`](.github/workflows/sync.yml) | push affecting `_data/backlog.yml` or `_data/roadmap.yml` | Mirrors the backlog to GitHub Issues and regenerates the README roadmap section |

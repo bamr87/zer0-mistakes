@@ -5,243 +5,305 @@ This directory contains the CI/CD workflows for the zer0-mistakes Jekyll theme.
 ## Workflow Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        WORKFLOW TRIGGERS                         │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  Push to main ──────► version-bump.yml ──────► Creates tag v*   │
-│                       (analyzes commits)                         │
-│                                                                  │
-│  Tag v* pushed ─────► release.yml ───────────► Publishes gem    │
-│                                               + GitHub release   │
-│                                                                  │
-│  Push/PR ───────────► ci.yml ────────────────► Tests + Quality  │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────────────┐
+│                          WORKFLOW TRIGGERS                            │
+├───────────────────────────────────────────────────────────────────────┤
+│                                                                       │
+│  Pull request ──────► ci.yml, evidence-gate.yml, secret-scan.yml,    │
+│                       ai-content-review.yml*, codeql.yml*,           │
+│                       install-matrix.yml*, sync.yml* (path-filtered*)│
+│                                                                       │
+│  Push to main ──────► release.yml (release-please) ─► release PR     │
+│                       merge of release PR ─► tag + gem publish       │
+│                       ci.yml, test-latest.yml, sync.yml, …           │
+│                                                                       │
+│  Schedules ─────────► test-latest.yml (daily canary),                │
+│                       update-dependencies.yml, install-matrix.yml,   │
+│                       codeql.yml, issue-autopilot.yml,               │
+│                       giscus-digest.yml (weekly)                     │
+│                                                                       │
+└───────────────────────────────────────────────────────────────────────┘
 ```
 
-## Workflows
+## CI & Quality Gates
 
-### 1. `ci.yml` - Continuous Integration Pipeline
+### `ci.yml` — Comprehensive CI Pipeline
 
 **Triggers:** Push to `main`, Pull Requests, Manual dispatch
 
-The CI pipeline validates code quality, runs tests, builds the gem, and performs Docker integration testing. Uses `dorny/paths-filter` to detect changed files and skip heavy jobs on docs-only changes.
+Validates code quality, runs the full test suite, builds the gem, and performs
+Docker integration testing. Uses `dorny/paths-filter` (job `detect-changes`) to
+skip heavy jobs on docs-only changes.
 
-#### Jobs:
 | Job | Description | Condition | Timeout |
 |-----|-------------|-----------|---------|
-| `detect-changes` | Identifies code/docker/content changes | Always | 3 min |
-| `fast-checks` | Quick syntax validation | Code changes only | 5 min |
-| `quality-checks` | Linting, security audit, markdown checks | Always (covers docs PRs) | 10 min |
-| `test` | Full gate-parity suite: all non-Playwright theme suites (core, deployment, quality, installation, installer, site_generation, obsidian) + canonical script suites (`./scripts/bin/test`: lib unit, theme validate, integration, installer e2e) + Playwright smoke tier (and snapshots when CSS/layout changes) | Code changes only | 25 min |
+| `detect-changes` | Identifies code/docker/content/styling changes | Always | 3 min |
+| `quality-checks` | version.rb ↔ Gemfile.lock guard, linting, markdown checks, quick preflight validation (code changes) | Always — the single required check | 15 min |
+| `test` | Full gate-parity suite: all non-Playwright theme suites + canonical script suites (`./scripts/bin/test`) + Playwright smoke tier | Code changes only | 25 min |
+| `snapshots` | Playwright pixel-snapshot gate (9 theme skins, rendered in the jammy Playwright image) | Styling changes only | 30 min |
 | `build` | Gem build, validation, and install test | Code changes only | 10 min |
 | `integration` | Docker build + critical page accessibility | Code or Docker changes | 12 min |
 
-#### Job Dependency Graph:
+Job dependency graph:
+
 ```
-detect-changes → fast-checks → quality-checks → test → build
-                                              → integration
+detect-changes → quality-checks → test → build
+              → snapshots       → integration
 ```
 
-#### Manual Dispatch Options:
-- **test_scope**: `fast` (skips Playwright snapshot tier) or `standard`
-- **fix_markdown**: Auto-fix markdown formatting issues
+Manual dispatch options: **test_scope** (`fast` skips the snapshot tier) and
+**fix_markdown** (auto-fix markdown formatting).
 
-#### Path Filter Behavior:
-| Change Type | Jobs Run | Estimated Time |
-|-------------|----------|----------------|
-| Markdown/docs only | detect-changes, quality-checks | ~3 min |
-| Code changes (no styling) | All jobs; Playwright snapshot tier skipped | ~12 min |
-| Styling changes (`_sass/`, `assets/`, `_layouts/`, `_includes/`, `test/visual/`) | All jobs incl. Playwright snapshot tier | ~15 min |
-| Docker changes | detect-changes, quality-checks, integration | ~8 min |
+The `quality-checks` job must ALWAYS run (`if: always() && …`) — it is the
+single required status check on `main`, and a required-but-skipped check would
+deadlock docs-only PRs. `lint-workflows.yml` pins that invariant.
 
-#### Playwright tiers in the `test` job:
-- **Smoke** — runs on every code-change PR (CSS load, Bootstrap tokens, layout chrome, behavioral DOM, a11y component checks). Failures upload `test/visual-results/` as a `playwright-smoke` artifact (14-day retention).
-- **Snapshots** — path-filtered to styling changes; pixel screenshots of the homepage in each of the 9 theme skins. Failures upload as `playwright-snapshots`. Baselines live in `test/visual/snapshots/` (committed). Refresh with `./test/update-snapshots.sh` and commit.
+### `evidence-gate.yml` — Visual evidence gate
 
----
+**Triggers:** Pull Requests (all)
 
-### 2. `version-bump.yml` - Version Management
+Requires any PR that touches UI paths (`_sass/`, `_includes/`, `_layouts/`,
+`assets/css|js/`) to also ship a regression test (`test/visual/*.spec.js`) and
+before/after evidence (`test/visual/evidence/`). Opt out with the
+`skip-evidence` / `no-visual-change` label. Always reports a status so it can be
+a required check. See `.github/skills/visual-evidence/SKILL.md`.
 
-**Triggers:** Push to `main` (with commit analysis), Manual dispatch
+### `secret-scan.yml` — Secret scan
 
-Handles both automatic and manual version bumping with semantic versioning.
+**Triggers:** Pull Requests (all)
 
-#### Automatic Mode (Push to main):
-1. Analyzes commits since last tag using `scripts/analyze-commits.sh`
-2. Determines bump type based on commit messages:
-   - `feat:` → minor bump
-   - `fix:` → patch bump
-   - `BREAKING CHANGE:` → major bump
-3. Updates version files and CHANGELOG.md
-4. Creates and pushes tag (triggers `release.yml`)
+Fails a PR if credential shapes (Anthropic/GitHub tokens, private keys) appear
+in the merge-base diff or PR body. Fork-safe (read-only `pull_request` event).
 
-#### Manual Mode (workflow_dispatch):
-| Input | Options | Description |
-|-------|---------|-------------|
-| `version_type` | `patch`, `minor`, `major`, `auto` | Version bump type |
-| `skip_tests` | `true`/`false` | Skip test execution |
-| `dry_run` | `true`/`false` | Preview without changes |
+### `lint-workflows.yml` — Workflow lint
 
-#### Skip Conditions:
-- Commits containing "chore: bump version"
-- Commits from github-actions bot
-- Changes only in: CHANGELOG.md, version.rb, workflows, docs
+**Triggers:** PR/push touching `.github/workflows/**` or `.github/actions/**`
 
----
+Runs `actionlint` over the workflow definitions, plus a guard that the
+`quality-checks` job in `ci.yml` keeps its always-runs invariant.
 
-### 3. `release.yml` - Gem Publishing & GitHub Releases
+### `codeql.yml` — CodeQL Security Scanning
 
-**Triggers:** Tag push (`v*`), Manual dispatch
+**Triggers:** Push/PR to `main` (code paths only), Weekly schedule
 
-Unified release workflow that publishes to RubyGems and creates GitHub releases.
+CodeQL analysis for Actions, JS/TS, Python, and Ruby. Path-filtered to files
+those analyzers can actually read (not data/content YAML).
 
-#### Jobs:
-| Job | Description | Condition |
-|-----|-------------|-----------|
-| `validate` | Version consistency, test suite | Always |
-| `build` | Build gem, generate install script | After validate |
-| `publish-gem` | Publish to RubyGems | Tag push or manual with publish_gem |
-| `github-release` | Create GitHub release with assets | After build |
+### `install-matrix.yml` — Installer matrix
 
-#### Manual Dispatch Options:
-| Input | Type | Description |
-|-------|------|-------------|
-| `tag` | string | Tag to release (e.g., `v0.8.0`) |
-| `publish_gem` | boolean | Publish to RubyGems |
-| `draft` | boolean | Create as draft release |
-| `prerelease` | boolean | Mark as prerelease |
+**Triggers:** PRs touching installer paths, Weekly schedule, Manual dispatch
 
-#### Environment Requirements:
-- **`production`** environment approval for RubyGems publishing
-- **`RUBYGEMS_API_KEY`** secret for gem publishing
+Validates the modular installer across OS × Ruby (`matrix`), the README
+`curl | bash` one-liner (`curl-bash-bootstrap`), and `install doctor`. No push
+trigger: `main` is protected, so every change already ran this on its PR.
 
----
+### `test-latest.yml` — Latest-dependency canary + Docker image publish
 
-### 4. `test-latest.yml` - Latest Dependency Canary
+**Triggers:** Push to `main` (code/docker paths), Daily schedule, Manual dispatch
 
-**Triggers:** Push/PR to `main`, Daily schedule, Manual dispatch
+Zero-pin strategy: builds the Docker image with the latest resolved
+dependencies (no lockfile), runs validation + Jekyll build + RSpec +
+HTMLProofer, and on success publishes an immutable image tag
+(`date-sha`) plus `:latest` to Docker Hub. Intended to **fail** when an
+upstream gem breaks (canary behavior). Deliberately not run on PRs — PR
+validation happens in `ci.yml` against the pinned lockfile.
 
-Builds with the latest resolved dependencies (no pins), runs a Docker-based validation + test suite, and publishes an immutable Docker tag on success.
+## Release & Dependencies
 
-Notes:
-- This workflow is intended to **fail** if RSpec or HTMLProofer fails (canary behavior).
+### `release.yml` — release-please pipeline
 
----
+**Triggers:** Push to `main`
 
-### 5. `update-dependencies.yml` - Automated Gemfile.lock Updates
+The canonical release flow. Conventional Commits drive
+[release-please](https://github.com/googleapis/release-please) (reusable
+workflows in `bamr87/.github`): it opens/updates a "chore(main): release X.Y.Z"
+PR that bumps `lib/jekyll-theme-zer0/version.rb`, `package.json`, and
+`CHANGELOG.md`. Merging that PR tags `vX.Y.Z`, creates the GitHub Release, and
+the `publish` job builds the gem and pushes it to RubyGems.
+`./scripts/bin/release` remains a manual fallback.
+
+Requires: `RUBYGEMS_API_KEY` secret (publish), shared workflow definitions in
+`bamr87/.github`, config in `release-please-config.json`.
+
+### `update-dependencies.yml` — Automated Gemfile.lock updates
 
 **Triggers:** Weekly schedule, Manual dispatch
 
-Runs `bundle update` and opens an automated PR for review.
+Runs `bundle update` and opens an automated PR for review. Complements
+`.github/dependabot.yml`, which only manages GitHub Actions versions.
 
----
+### `sync.yml` — Data-file mirrors
 
-### 6. `convert-notebooks.yml` - Notebook Conversion
+**Triggers:** Push to `main` / PRs touching `_data/backlog.yml`,
+`_data/roadmap.yml`, or their scripts
 
-**Triggers:** `.ipynb` changes (push/PR), Manual dispatch
+- `backlog`: `_data/backlog.yml` → GitHub Issues (`scripts/sync-backlog.rb`);
+  PRs validate the schema only.
+- `roadmap`: `_data/roadmap.yml` → README roadmap section; PRs fail if stale,
+  pushes regenerate via an automated PR.
 
-Converts notebooks to Jekyll-friendly Markdown and (on push events) commits/pushes the converted artifacts.
+### `convert-notebooks.yml` — Notebook conversion
 
----
+**Triggers:** `.ipynb` changes under `pages/_notebooks/` (push/PR), Manual dispatch
 
-### 7. `codeql.yml` - CodeQL Security Scanning
+Converts notebooks to Jekyll-friendly Markdown. PRs get a dry-run preview;
+pushes to `main` open a `chore/convert-notebooks` PR with the converted files
+(CI on that PR validates them).
 
-**Triggers:** Push/PR to `main` (code file changes only), Weekly schedule
+### `deploy-chat-proxy.yml` — AI chat proxy deploy
 
-Runs CodeQL analysis for Actions, JS/TS, Python, and Ruby. Path-filtered on push/PR to skip when only docs/content change.
+**Triggers:** Push to `main` touching `templates/deploy/chat-proxy/`, Manual dispatch
 
----
+Deploys the AI-chat Cloudflare Worker via `wrangler-action`. Requires
+`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ANTHROPIC_API_KEY`.
+
+## Automation & AI Pipeline
+
+### `ai-content-review.yml` — Content & Docs Review
+
+**Triggers:** PRs touching `pages/**/*.md` or `docs/**`, Manual dispatch
+
+Two tiers plus docs validation: (1) deterministic SEO/quality checks
+(`scripts/content-review.rb`, fork-safe, posts a sticky comment); (2) the
+Claude Code content-reviewer agent (only when `ANTHROPIC_API_KEY` is set and
+content actually changed); (3) front-matter, internal-link, and markdownlint
+jobs (formerly `docs-validate.yml`).
+
+### `issue-autopilot.yml` — Issue autopilot
+
+**Triggers:** Weekly schedule, Manual dispatch, `autopilot:go` label
+
+One bounded pass of the autonomous issue pipeline: gate → triage (label/route
+open issues) → verify-close (close human issues already fixed on `main`,
+CI-gated) → resolve (one docs batch → one `auto:issue` PR). OFF by default
+behind `ISSUE_AUTOPILOT_ENABLED` (+ per-lane vars). See
+`docs/systems/continuous-evolution.md`.
+
+### `issue-pr-auto-merge.yml` — Issue PR auto-merge
+
+**Triggers:** `pull_request_target` on labeled/updated PRs
+
+Squash-merges same-repo `auto:issue` PRs once all checks are green, with a
+merge-time diff re-classification (docs/pages only — the smuggle guard). OFF by
+default behind `ISSUE_AUTOMERGE_ENABLED`.
+
+### `auto-merge.yml` — Auto-merge low-risk PRs
+
+**Triggers:** `pull_request_target` on labeled/updated PRs
+
+Enables GitHub native auto-merge for PRs labeled `auto-merge`, after a denylist
+check that blocks version/release/CI/plugin/script files. Required checks
+(including `evidence-gate`) remain the actual gate.
+
+### `ci-self-repair.yml` — CI self-repair
+
+**Triggers:** `workflow_run` completion of the Comprehensive CI Pipeline
+
+For failed PR runs where the PR opted in via the `auto-fix` label: runs Claude
+Code headless to diagnose and push a fix, bounded by a retry budget; otherwise
+drafts the PR with `agent-hold`. Never touches CODEOWNERS-protected paths.
+
+### `milestone-assign.yml` — Milestone assignment
+
+**Triggers:** `pull_request_target` (closed)
+
+Assigns merged PRs to the milestone when exactly one is open; otherwise no-op.
+
+### `giscus-digest.yml` — Giscus comment digest
+
+**Triggers:** Weekly schedule, Manual dispatch
+
+Read-only digest of Giscus-backed GitHub Discussions to the job summary.
 
 ## Gate Coverage — What Enforces What
 
-The "controls" contract for the Zer0-Mistake Quality Framework (roadmap v1.13):
-every quality gate a contributor can run locally must be enforced somewhere in
-CI, and warn-only gates must be temporary and tracked in the backlog.
+Every quality gate a contributor can run locally must be enforced somewhere in
+CI; warn-only gates must be temporary and tracked in the backlog.
 
 | Quality gate | Local command | CI enforcement | Trigger |
 |---|---|---|---|
-| Quick preflight (files, versions, YAML, config contract) | `./scripts/bin/validate --quick` | `ci.yml` → `fast-checks` | PR + push (code changes) |
+| version.rb ↔ Gemfile.lock consistency | `./scripts/bin/validate --quick` | `ci.yml` → `quality-checks` | PR + push (always) |
+| Quick preflight (files, versions, YAML, config contract) | `./scripts/bin/validate --quick` | `ci.yml` → `quality-checks` | PR + push (code changes) |
 | Lint (markdown, YAML), frontmatter | `markdownlint` / `yamllint` | `ci.yml` → `quality-checks` | PR + push (always) |
-| Theme suites (core, deployment, quality, installation, installer, site_generation, obsidian) | `./test/test_runner.sh --suites <list>` | `ci.yml` → `test` | PR + push (code changes) |
+| Theme suites (core, deployment, quality, installation, installer, site_generation, obsidian, features) | `./test/test_runner.sh --suites <list>` | `ci.yml` → `test` | PR + push (code changes) |
 | Script suites (lib unit, theme validate, integration, installer e2e) | `./scripts/bin/test` | `ci.yml` → `test` | PR + push (code changes) |
 | Playwright smoke tier | `./test/test_runner.sh --suites playwright` | `ci.yml` → `test` | PR + push (code changes) |
-| Playwright snapshot tier | `./test/test_runner.sh --suites playwright_snapshots` | `ci.yml` → `test` — ⚠ warn-only until baselines refresh (backlog T-013) | PR + push (styling changes) |
+| Playwright snapshot tier | `./test/test_runner.sh --suites playwright_snapshots` | `ci.yml` → `snapshots` | PR + push (styling changes) |
+| Visual evidence for UI changes | `.github/skills/visual-evidence/` | `evidence-gate.yml` | PR (always; self-scoping) |
 | Gem build + install | `./scripts/build` | `ci.yml` → `build` | PR + push (code changes) |
 | Docker boot + critical pages | `docker compose up` | `ci.yml` → `integration` | PR + push (code or docker changes) |
-| Roadmap ↔ README ↔ version consistency | `./scripts/generate-roadmap.sh --check` / `--validate` | `sync.yml` → `roadmap` | PR (check) + push to main (regenerate) |
+| Roadmap ↔ README ↔ version consistency | `ruby scripts/generate-roadmap.rb --check` | `sync.yml` → `roadmap` | PR (check) + push to main (regenerate) |
 | Backlog schema | `ruby scripts/sync-backlog.rb --check` | `sync.yml` → `backlog` | PR (check) + push to main (sync issues) |
-| Docs front matter + internal links + markdownlint | `scripts/docs/lint-frontmatter.sh` / `check-links.sh` / `markdownlint` | `ai-content-review.yml` (Content & Docs Review) | PR (docs/content changes) |
-| Latest-dependency canary (unpinned build + HTMLProofer) | — | `test-latest.yml` | Daily schedule + PR/push |
-| Security scanning (CodeQL) | — | `codeql.yml` | PR + push (code changes) + weekly |
-| Installer cross-platform matrix | `test/test_install_*.sh` | `install-matrix.yml` | PR (installer paths) + manual |
-
-Known intentional gaps (tracked): snapshot tier warn-only (T-013), docs
-link-check warn-only (T-014), locale-independence guard not yet in CI (T-015).
+| Docs front matter + internal links + markdownlint | `scripts/docs/lint-frontmatter.sh` / `check-links.sh` / `markdownlint` | `ai-content-review.yml` | PR (docs/content changes) |
+| Secret shapes in diff/PR body | — | `secret-scan.yml` | PR (always) |
+| Workflow definitions (actionlint + invariants) | `actionlint` | `lint-workflows.yml` | PR + push (workflow changes) |
+| Latest-dependency canary (unpinned build + HTMLProofer) | — | `test-latest.yml` | Daily schedule + push to main |
+| Security scanning (CodeQL) | — | `codeql.yml` | PR + push (code paths) + weekly |
+| Installer cross-platform matrix | `./scripts/bin/test install` | `install-matrix.yml` | PR (installer paths) + weekly |
 
 ## Workflow Dependencies
 
 ```yaml
 # Required Secrets
-GITHUB_TOKEN       # Automatically provided
-RUBYGEMS_API_KEY   # Required for gem publishing
+GITHUB_TOKEN            # Automatically provided
+RUBYGEMS_API_KEY        # Gem publishing (release.yml → bamr87/.github publish)
+DOCKER_USERNAME/TOKEN   # Docker Hub publish (test-latest.yml)
+ANTHROPIC_API_KEY       # AI tiers (ai-content-review, ci-self-repair, autopilot)
+CLAUDE_CODE_OAUTH_TOKEN # Preferred Claude credential for the issue autopilot
+CLOUDFLARE_API_TOKEN    # Chat proxy deploy
+CLOUDFLARE_ACCOUNT_ID   # Chat proxy deploy
 
-# Required Environment
-production         # For publish-gem job approval gate
+# Opt-in repository variables (autonomous pipeline, all default OFF)
+ISSUE_AUTOPILOT_ENABLED / ISSUE_RESOLVE_ENABLED / ISSUE_AUTOCLOSE_ENABLED /
+ISSUE_VERIFY_CLOSE_ENABLED / ISSUE_AUTOMERGE_ENABLED
 ```
 
 ## Composite Actions Used
 
-All workflows use shared composite actions from `.github/actions/`:
+Shared composite actions live in `.github/actions/`:
 
-- `setup-ruby` - Ruby environment setup with bundler cache
-- `configure-git` - Git configuration for automated commits
-- `test-suite` - Comprehensive test execution
-- `quality-checks` - Code quality validation
+- `setup-ruby` — Ruby + non-frozen bundle install with caching (path-gem safe)
+- `quality-checks` — linting, markdown, and structure validation
+- `test-suite` — theme test suite execution
+- `playwright-tests` — Playwright tier runner with artifact upload
+- `configure-git` — git identity for automated commits
+- `claude-run` — the universal Claude Code step for the issue autopilot
 
-See [`.github/actions/README.md`](../actions/README.md) for action documentation.
+See [`.github/actions/README.md`](../actions/README.md).
 
 ## Local Development
 
-To test workflows locally before pushing:
-
 ```bash
 # Canonical preflight validation
-./scripts/validate --quick
-./scripts/validate --start-docker
-
-# Preview version bump
-./scripts/release patch --dry-run
-
-# Build gem locally
-./scripts/build
+./scripts/bin/validate --quick
 
 # Run tests
-./scripts/bin/test --verbose
+./scripts/bin/test
 
-# Analyze commits for version bump type
-./scripts/analyze-commits.sh HEAD~5..HEAD
+# Build gem locally
+./scripts/bin/build
+
+# Preview a manual release (fallback; release-please is canonical)
+./scripts/bin/release patch --dry-run
+
+# Lint the workflows themselves
+actionlint
+yamllint -c .github/config/.yamllint.yml .github/workflows/
 ```
 
 ## Troubleshooting
 
-### Version bump not triggering
-- Check that commit doesn't contain "chore: bump version"
-- Verify paths-ignore isn't matching your changes
-- Ensure commit author isn't "github-actions"
-
-### Release workflow not starting
-- Verify tag follows `v*` pattern (e.g., `v0.8.0`)
-- Check that version in `lib/jekyll-theme-zer0/version.rb` matches tag
+### Release PR not appearing
+- release-please only reacts to Conventional Commits (`feat:`, `fix:`, …) on `main`
+- Check the `release.yml` run for errors from the shared `bamr87/.github` workflows
 
 ### Gem publish failing
 - Verify `RUBYGEMS_API_KEY` secret is set
-- Check production environment approval
-- Ensure gem version doesn't already exist on RubyGems
+- A `version.rb` bump must re-lock `Gemfile.lock` and `package-lock.json` in the
+  same change — the frozen `bundle install` in the publish job fails otherwise
+  (the `quality-checks` guard should have caught this on the release PR)
 
 ### CI failures
-- Check individual job logs for specific errors
-- Run quick validation locally: `./scripts/validate --quick`
+- Run quick validation locally: `./scripts/bin/validate --quick`
 - Run tests locally: `./scripts/bin/test`
-- Validate gem: `./scripts/build && gem spec jekyll-theme-zer0-*.gem`
+- For snapshot failures, refresh baselines with `./test/update-snapshots.sh`

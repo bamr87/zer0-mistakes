@@ -25,7 +25,7 @@ asset checks.
 # otherwise falls back to local bundle exec.
 ./scripts/validate
 
-# Fast host-only checks used by CI fast-checks
+# Fast host-only checks used by the CI quality-checks job
 ./scripts/validate --quick
 
 # Start Docker if needed and include optional test layers

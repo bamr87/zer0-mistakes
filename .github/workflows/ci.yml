@@ -37,7 +37,7 @@ env:
   # These are used for backwards compatibility testing
   # The test-latest.yml workflow uses actual latest versions
   RUBY_VERSION: '3.3'
-  NODE_VERSION: '18'
+  NODE_VERSION: '20'
   # Required for jekyll-github-metadata gem during CI builds
   # Uses repository variable if set, otherwise falls back to github.repository
   PAGES_REPO_NWO: ${{ vars.PAGES_REPO_NWO || github.repository }}
@@ -51,8 +51,6 @@ jobs:
   detect-changes:
     name: Detect Changes
     runs-on: ubuntu-latest
-    # Always run on dispatch; filter on push/PR
-    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.event_name == 'pull_request'
     timeout-minutes: 3
     outputs:
       code: ${{ steps.filter.outputs.code }}
@@ -112,48 +110,25 @@ jobs:
             echo "🔧 Code/docker changes detected — running full pipeline"
           fi
 
-  # Fast feedback job for quick validation
-  fast-checks:
-    name: Fast Checks
-    runs-on: ubuntu-latest
-    needs: detect-changes
-    # Skip on docs-only changes (no Ruby/gem code changed)
-    if: |
-      always() &&
-      needs.detect-changes.result == 'success' &&
-      (needs.detect-changes.outputs.code == 'true' || github.event_name == 'workflow_dispatch')
-    timeout-minutes: 5
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v7
-
-      - name: Setup Ruby Environment
-        uses: ./.github/actions/setup-ruby
-        with:
-          ruby-version: ${{ env.RUBY_VERSION }}
-          install-system-deps: false
-
-      - name: Run Quick Validator
-        run: ./scripts/bin/validate --quick
-
-  # Quality control checks — always runs (covers markdown linting)
+  # Quality control checks — always runs (covers markdown linting). Also hosts
+  # the quick validator for code changes (formerly its own fast-checks job —
+  # merged here since both jobs did a full Ruby setup and ran sequentially).
   quality-checks:
     name: Quality Control
     runs-on: ubuntu-latest
-    needs: [detect-changes, fast-checks]
+    needs: detect-changes
     # Always run quality checks (markdown lint is relevant for docs-only PRs)
     if: always() && needs.detect-changes.result == 'success' && !cancelled()
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
 
       # Always-running guard: version.rb must equal the gem version pinned in
-      # Gemfile.lock. Lives in this job (not the path-filtered fast-checks) so it
-      # gates every PR — including release PRs that bump version.rb without
-      # re-locking, the drift that left the lock at 1.19.1 vs version.rb 1.19.0.
+      # Gemfile.lock. Runs unconditionally (not path-filtered) so it gates every
+      # PR — including release PRs that bump version.rb without re-locking, the
+      # drift that left the lock at 1.19.1 vs version.rb 1.19.0.
       # Pure bash (no Ruby setup needed); mirrors validate_version_consistency
       # in scripts/bin/validate.
       - name: Version ↔ Gemfile.lock consistency
@@ -177,17 +152,22 @@ jobs:
           check-markdown: true
           fix-formatting: ${{ inputs.fix_markdown }}
 
+      # Quick preflight validation — code changes only (Ruby + gems are already
+      # set up by the quality-checks composite above).
+      - name: Run Quick Validator
+        if: needs.detect-changes.outputs.code == 'true' || github.event_name == 'workflow_dispatch'
+        run: ./scripts/bin/validate --quick
+
   # Comprehensive testing across Ruby versions
   test:
     name: Test Suite (Ruby ${{ matrix.ruby }})
     runs-on: ubuntu-latest
-    needs: [detect-changes, fast-checks, quality-checks]
+    needs: [detect-changes, quality-checks]
     # Skip when only docs/content changed
     if: |
       always() &&
       needs.detect-changes.outputs.code == 'true' &&
-      needs.fast-checks.result == 'success' &&
-      (needs.quality-checks.result == 'success' || needs.quality-checks.result == 'skipped')
+      needs.quality-checks.result == 'success'
     timeout-minutes: 25
     strategy:
       fail-fast: false
@@ -311,7 +291,7 @@ jobs:
   build:
     name: Build & Validate
     runs-on: ubuntu-latest
-    needs: [detect-changes, test, quality-checks]
+    needs: [detect-changes, test]
     # Skip when only docs/content changed
     if: |
       always() &&

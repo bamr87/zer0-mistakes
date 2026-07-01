@@ -50,10 +50,12 @@ jobs:
       - name: Guard — "Quality Control" must always run
         run: |
           # Quality Control is the SINGLE required status check on `main` and holds
-          # the version.rb<->Gemfile.lock consistency guard. It must run even when
-          # fast-checks is skipped (docs-only PRs) — a required-but-skipped check
-          # would deadlock the repo's highest-volume PR type. This pins that
-          # invariant so a future edit can't silently re-introduce the deadlock.
+          # the version.rb<->Gemfile.lock consistency guard. It must run even on
+          # docs-only PRs (where the code-path-filtered jobs are skipped) — a
+          # required-but-skipped check would deadlock the repo's highest-volume PR
+          # type. This pins that invariant so a future edit can't silently
+          # re-introduce the deadlock (e.g. by re-splitting a path-filtered
+          # fast-checks job out of quality-checks and gating on it).
           # See .github/instructions/version-control.instructions.md (Release model).
           python3 - <<'PY'
           import sys, yaml
@@ -64,9 +66,9 @@ jobs:
           if not cond:
               problems.append("quality-checks job or its `if:` is missing")
           if 'always()' not in cond:
-              problems.append("`if:` must contain always() so it runs when fast-checks is skipped")
+              problems.append("`if:` must contain always() so it runs on docs-only PRs")
           if 'fast-checks' in cond:
-              problems.append("`if:` must NOT gate on fast-checks result")
+              problems.append("`if:` must NOT gate on a path-filtered job's result")
           if problems:
               print("::error file=.github/workflows/ci.yml::Quality Control always-runs "
                     "invariant broken: " + "; ".join(problems))
