@@ -1,0 +1,87 @@
+{
+  "slug": "sidebar-modes",
+  "before": "http://127.0.0.1:4012",
+  "after": "http://127.0.0.1:4011",
+  "scenes": [
+    {
+      "key": "docs-auto",
+      "route": "/docs/obsidian/getting-started/",
+      "before": {
+        "aside": 0,
+        "navToggle": 0,
+        "sidebarLinks": 0,
+        "collectionTree": 0,
+        "countBadges": 0,
+        "activeAriaCurrent": 0
+      },
+      "after": {
+        "aside": 1,
+        "navToggle": 1,
+        "sidebarLinks": 48,
+        "collectionTree": 0,
+        "countBadges": 0,
+        "activeAriaCurrent": 0
+      }
+    },
+    {
+      "key": "notes-collection",
+      "route": "/notes/git-cheatsheet/",
+      "before": {
+        "aside": 1,
+        "navToggle": 1,
+        "sidebarLinks": 5,
+        "collectionTree": 0,
+        "countBadges": 0,
+        "activeAriaCurrent": 0
+      },
+      "after": {
+        "aside": 1,
+        "navToggle": 1,
+        "sidebarLinks": 5,
+        "collectionTree": 1,
+        "countBadges": 0,
+        "activeAriaCurrent": 1
+      }
+    },
+    {
+      "key": "categories",
+      "route": "/faq/",
+      "before": {
+        "aside": 1,
+        "navToggle": 1,
+        "sidebarLinks": 41,
+        "collectionTree": 0,
+        "countBadges": 0,
+        "activeAriaCurrent": 0
+      },
+      "after": {
+        "aside": 1,
+        "navToggle": 1,
+        "sidebarLinks": 41,
+        "collectionTree": 0,
+        "countBadges": 19,
+        "activeAriaCurrent": 0
+      }
+    },
+    {
+      "key": "homepage-guard",
+      "route": "/",
+      "before": {
+        "aside": 0,
+        "navToggle": 0,
+        "sidebarLinks": 0,
+        "collectionTree": 0,
+        "countBadges": 0,
+        "activeAriaCurrent": 0
+      },
+      "after": {
+        "aside": 0,
+        "navToggle": 0,
+        "sidebarLinks": 0,
+        "collectionTree": 0,
+        "countBadges": 0,
+        "activeAriaCurrent": 0
+      }
+    }
+  ]
+}

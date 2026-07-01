@@ -490,7 +490,10 @@ paginate_path: "/pages/:num/"
 
 defaults:
   # ALL
-  - 
+  # No sidebar nav here on purpose: root-level pages (landing README, 404)
+  # use layouts without the #bdSidebar panel, so a resolvable site-wide nav
+  # would put a dead toggle in their navbar. Collections opt in below.
+  -
     scope:
       path: ""
     values:
@@ -500,8 +503,6 @@ defaults:
       comments: false # true
       share: true
       related: true
-      sidebar:
-        nav: auto
     permalink: /:collection/:name/
 
   # pages

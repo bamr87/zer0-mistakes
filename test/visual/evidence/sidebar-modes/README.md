@@ -1,0 +1,24 @@
+# Evidence — collection-aware sidebar modes (PR #273)
+
+Before/after proof for the sidebar framework refactor: mode resolution moved
+into the shared `_includes/navigation/sidebar-config.html` resolver, `auto`
+became collection-aware, `sidebar-folders.html` was rewritten as a collapsible
+collection tree, and `sidebar-categories.html` gained count badges. BEFORE is
+a build of `main`; AFTER is a build of the PR branch (this is a template/DOM
+change, so the evidence kit's single-server `unfixCss` path doesn't apply —
+`sidebar-modes-evidence.mjs` drives two builds and composes montages with the
+kit's shared `montage` helper).
+
+| Image | Route | What it shows |
+| --- | --- | --- |
+| `01-docs-auto.png` | `/docs/obsidian/getting-started/` | The headline fix. This docs page has no per-page nav and relied on the `_config.yml` default, which was the unresolvable `nav: tree` (no `tree.yml` exists) — BEFORE it renders **no left column at all**. AFTER, the default is `nav: auto`, which resolves to the curated `docs.yml` tree (48 sidebar links, 0 → 1 aside). |
+| `02-notes-collection.png` | `/notes/git-cheatsheet/` | `collection` mode. BEFORE: flat, non-collapsible Bootstrap list-group with a bare `Notes` label. AFTER: the collection tree with the collection-metadata heading (title + icon from `_config.yml`), nav-tree styling, and the active page carrying `aria-current="page"` (0 → 1). |
+| `03-categories.png` | `/faq/` | `categories` mode. BEFORE: plain always-collapsed term toggles. AFTER: each term shows a post-count badge (0 → 19 badges); the group containing the current page starts expanded. |
+| `04-homepage-guard.png` | `/` | Regression guard. The landing layout renders no `#bdSidebar` panel, so the shared resolver must not add a dead sidebar toggle to its navbar. Both bands are identical (navToggle 0 → 0) — this is exactly the failure the first CI snapshot run caught when the site-wide default briefly resolved on root-level pages, fixed by scoping `nav: auto` to the collection defaults only. |
+
+`metrics.json` records the structural counts behind each montage (aside
+presence, navbar toggle presence, sidebar link count, collection-tree
+presence, badge count, `aria-current` count) for both states. The same
+behaviours are pinned by the smoke-tier regression spec
+[`test/visual/sidebar-modes.spec.js`](../../sidebar-modes.spec.js), which
+fails 3/7 tests against a `main` build and passes 7/7 against this branch.
