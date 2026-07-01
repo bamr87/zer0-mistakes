@@ -2,15 +2,9 @@
   Local graph FAB trigger — rendered from footer.html so the fixed button
   stays above the footer band. Pair with navigation/local-graph.html (panel).
 {%- endcomment -%}
-{%- assign _effective_sidebar = page.sidebar -%}
-{%- if _effective_sidebar == nil -%}
-  {%- if page.post_type == "featured" or page.post_type == "breaking" -%}
-    {%- assign _effective_sidebar = false -%}
-  {%- else -%}
-    {%- assign _effective_sidebar = true -%}
-  {%- endif -%}
-{%- endif -%}
-{%- if page.local_graph != false and _effective_sidebar != false -%}
+{%- comment -%} Shared visibility resolver — sets sidebar_enabled {%- endcomment -%}
+{%- include navigation/sidebar-config.html -%}
+{%- if page.local_graph != false and sidebar_enabled -%}
 <div id="obsidianLocalGraphFab" class="obsidian-local-graph-fab d-print-none" data-obsidian-local-graph-toggle hidden>
   <button class="btn btn-primary rounded-circle shadow-lg p-0 obsidian-local-graph-toggle"
           type="button"

@@ -1,0 +1,30 @@
+{%- comment -%}
+  Component:   sidebar-nav
+  Path:        _includes/navigation/sidebar-nav.html
+  Purpose:     Render the resolved sidebar navigation content for the current
+               page. Expects navigation/sidebar-config.html to have been
+               included first in the same render context (it sets
+               `sidebar_nav`). Shared by navigation/sidebar-left.html and
+               navigation/unified-drawer.html so desktop sidebar and mobile
+               drawer can never drift apart.
+  Params:      id (string, optional) — id attribute for the content wrapper
+  Depends on:  navigation/sidebar-config.html (resolver),
+               navigation/sidebar-folders.html ("collection" mode),
+               navigation/sidebar-categories.html ("categories"/"tags" modes),
+               navigation/nav-tree.html (curated _data/navigation/*.yml modes)
+  Notes:       Renders nothing when sidebar_nav is nil or its data is empty —
+               callers gate the surrounding column on `sidebar_has_content`.
+{%- endcomment -%}
+{%- if sidebar_nav == "collection" -%}
+<div class="nav-tree"{% if include.id %} id="{{ include.id }}"{% endif %} data-nav-tree>
+  {% include navigation/sidebar-folders.html %}
+</div>
+{%- elsif sidebar_nav == "categories" or sidebar_nav == "tags" -%}
+<div class="nav-tree nav-tree--categories"{% if include.id %} id="{{ include.id }}"{% endif %} data-nav-tree>
+  {% include navigation/sidebar-categories.html taxonomy=sidebar_nav %}
+</div>
+{%- elsif sidebar_nav -%}
+<nav class="w-100 nav-tree"{% if include.id %} id="{{ include.id }}"{% endif %} data-nav-tree aria-label="Section navigation">
+  {% include navigation/nav-tree.html nav=sidebar_nav %}
+</nav>
+{%- endif -%}

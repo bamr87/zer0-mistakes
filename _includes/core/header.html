@@ -65,21 +65,10 @@
             <!-- MOBILE MENU CONTROLS      -->
             <!-- ========================== -->
             
-            <!-- Left Sidebar Toggle - Mobile view only (omit when page.sidebar: false — matches default layout aside) -->
-            {% assign sidebar_nav = nil %}
-            {% if page.sidebar != false %}
-              {% if page.sidebar and page.sidebar.nav %}
-                {% assign sidebar_nav = page.sidebar.nav %}
-              {% endif %}
-            {% endif %}
-            {% assign sidebar_has_content = false %}
-            {% if sidebar_nav %}
-                {% if sidebar_nav == "auto" or sidebar_nav == "categories" %}
-                    {% assign sidebar_has_content = true %}
-                {% elsif site.data.navigation[sidebar_nav] %}
-                    {% assign sidebar_has_content = true %}
-                {% endif %}
-            {% endif %}
+            <!-- Left Sidebar Toggle - Mobile view only. Uses the shared
+                 resolver (navigation/sidebar-config.html) so this gate can
+                 never drift from the default layout's aside. -->
+            {% include navigation/sidebar-config.html %}
 
             {% if sidebar_has_content %}
               {%- comment -%}

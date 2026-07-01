@@ -163,16 +163,29 @@ _includes/
 | `navigation/nav_list.html` | Navigation list |
 | `navigation/nav-tree.html` | Tree navigation |
 | `navigation/navbar.html` | Main navbar |
-| `navigation/sidebar-categories.html` | Category sidebar |
-| `navigation/sidebar-folders.html` | Folder sidebar |
-| `navigation/sidebar-left.html` | Left sidebar |
+| `navigation/sidebar-config.html` | Resolves the effective sidebar mode/title/icon (page → collection → site) |
+| `navigation/sidebar-nav.html` | Renders the resolved sidebar mode |
+| `navigation/sidebar-categories.html` | Categories/tags sidebar (posts by taxonomy term) |
+| `navigation/sidebar-folders.html` | Collection sidebar (collapsible folder tree) |
+| `navigation/sidebar-left.html` | Left sidebar panel |
 | `navigation/sidebar-right.html` | Right sidebar (TOC) |
 
 ### Sidebar with Navigation
 
-```liquid
-{% raw %}{% include navigation/sidebar-left.html nav="docs" %}{% endraw %}
+The sidebar mode comes from the `sidebar.nav` front matter key (or a
+collection/site default), not an include parameter:
+
+```yaml
+sidebar:
+  nav: docs   # auto | collection | categories | tags | <_data/navigation file>
 ```
+
+```liquid
+{% raw %}{% include navigation/sidebar-left.html %}{% endraw %}
+```
+
+See [Sidebar Navigation](/docs/features/sidebar-navigation/) for the full
+mode and option reference.
 
 ## Landing Page Includes
 

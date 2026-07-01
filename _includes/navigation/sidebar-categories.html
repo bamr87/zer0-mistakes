@@ -1,33 +1,74 @@
 {% comment %} Feature: ZER0-008 {% endcomment %}
-<!-- sidebar-categories.html -->
-{%- assign categories = include.categories | default: site.categories -%}
+{%- comment -%}
+  Component:   sidebar-categories
+  Path:        _includes/navigation/sidebar-categories.html
+  Purpose:     "categories" / "tags" sidebar modes — collapsible taxonomy
+               groups with the posts filed under each term.
+  Params:      taxonomy (string, optional) — "categories" (default) | "tags"
+               categories (map, optional) — explicit term→posts map to render
+                 (back-compat; overrides the taxonomy lookup)
+               title (string, optional) — heading override
+               icon (string, optional) — Bootstrap Icons class override
+  Front matter (page.sidebar hash, all optional):
+               taxonomy — "categories" | "tags" (same as the param)
+               limit    — max posts listed per term (default: all)
+  Depends on:  site.categories / site.tags (posts only — Jekyll does not
+               index collection docs here), Bootstrap 5 collapse,
+               Bootstrap Icons, _sass/core/_sidebar-categories.scss
+  Notes:       Groups containing the current page start expanded. Each term
+               shows a post-count badge.
+{%- endcomment -%}
+{%- assign _type = include.taxonomy | default: page.sidebar.taxonomy | default: "categories" -%}
+{%- if _type == "tags" -%}
+  {%- assign _terms = site.tags -%}
+  {%- assign _heading = include.title | default: "Tags" -%}
+  {%- assign _heading_icon = include.icon | default: "bi-tags" -%}
+  {%- assign _id_prefix = "tag-" -%}
+{%- else -%}
+  {%- assign _terms = site.categories -%}
+  {%- assign _heading = include.title | default: "Categories" -%}
+  {%- assign _heading_icon = include.icon | default: "bi-folder2-open" -%}
+  {%- assign _id_prefix = "cat-" -%}
+{%- endif -%}
+{%- assign _terms = include.categories | default: _terms -%}
+{%- assign _terms = _terms | sort -%}
+{%- assign _limit = page.sidebar.limit -%}
 <div class="sidebar-categories nav-tree nav-tree--categories w-100">
   <h2 class="sidebar-categories-heading h6 text-uppercase text-body-secondary fw-semibold mb-3 d-flex align-items-center gap-2">
-    <i class="bi bi-folder2-open" aria-hidden="true"></i>
-    <span>Categories</span>
+    <i class="bi {{ _heading_icon }}" aria-hidden="true"></i>
+    <span>{{ _heading }}</span>
   </h2>
 
   <ul class="list-unstyled nav-tree-root mb-0">
-    {%- for category in categories -%}
-      {%- assign category_id = category[0] | slugify | prepend: "cat-" -%}
+    {%- for term in _terms -%}
+      {%- assign term_id = term[0] | slugify | prepend: _id_prefix -%}
+      {%- assign term_posts = term[1] -%}
+      {%- assign _active_here = term_posts | where: "url", page.url | size -%}
+      {%- if _active_here > 0 -%}
+        {%- assign _expanded = true -%}
+      {%- else -%}
+        {%- assign _expanded = false -%}
+      {%- endif -%}
       <li class="nav-tree-item sidebar-categories-group" data-depth="0">
-        <button class="btn btn-link nav-tree-toggle sidebar-categories-toggle w-100 d-flex align-items-center text-start collapsed"
+        <button class="btn btn-link nav-tree-toggle sidebar-categories-toggle w-100 d-flex align-items-center text-start{% unless _expanded %} collapsed{% endunless %}"
                 type="button"
                 data-bs-toggle="collapse"
-                data-bs-target="#{{ category_id }}-list"
-                aria-expanded="false"
-                aria-controls="{{ category_id }}-list">
+                data-bs-target="#{{ term_id }}-list"
+                aria-expanded="{{ _expanded }}"
+                aria-controls="{{ term_id }}-list">
           <i class="bi bi-folder sidebar-categories-toggle__icon" aria-hidden="true"></i>
-          <span class="sidebar-categories-toggle__label flex-grow-1">{{ category[0] }}</span>
+          <span class="sidebar-categories-toggle__label flex-grow-1">{{ term[0] }}</span>
+          <span class="badge text-bg-secondary bg-opacity-25 me-1">{{ term[1] | size }}</span>
           <i class="bi bi-chevron-down nav-tree-chevron sidebar-categories-toggle__chevron" aria-hidden="true"></i>
         </button>
 
-        <div class="collapse" id="{{ category_id }}-list">
+        <div class="collapse{% if _expanded %} show{% endif %}" id="{{ term_id }}-list">
           <ul class="list-unstyled nav-tree-children sidebar-categories-posts mb-0">
-            {%- for post in category[1] -%}
+            {%- for post in term_posts -%}
+              {%- if _limit and forloop.index0 >= _limit -%}{%- break -%}{%- endif -%}
               <li class="nav-tree-item" data-depth="1">
                 <a href="{{ post.url | relative_url }}"
-                   class="nav-tree-link sidebar-categories-link d-flex align-items-start rounded text-decoration-none{% if page.url == post.url %} active{% endif %}">
+                   class="nav-tree-link sidebar-categories-link d-flex align-items-start rounded text-decoration-none{% if page.url == post.url %} active{% endif %}"{% if page.url == post.url %} aria-current="page"{% endif %}>
                   <i class="bi bi-file-earmark-text sidebar-categories-link__icon" aria-hidden="true"></i>
                   <span class="sidebar-categories-link__text">{{ post.title }}</span>
                 </a>

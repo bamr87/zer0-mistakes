@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/sidebar-modes/ -->
+  (evidence: [`test/visual/evidence/sidebar-modes/`](test/visual/evidence/sidebar-modes/README.md) — collection-aware sidebar modes, before/after across 4 routes)

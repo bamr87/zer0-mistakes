@@ -1,69 +1,174 @@
 {% comment %} Feature: ZER0-008 {% endcomment %}
-<!--
-  ===================================================================
-  SIDEBAR FOLDERS - Collection Document Folder Structure
-  ===================================================================
-  
-  File: sidebar-folders.html
-  Path: _includes/navigation/sidebar-folders.html
-  Purpose: Display collection documents organized by folder structure
-  
-  Template Logic:
-  - Gets the current page's collection
-  - Sorts documents by path to maintain folder hierarchy
-  - Displays folder names and document links
-  - Uses Bootstrap list-group for styling with Bootstrap Icons
-  
-  Dependencies:
-  - page.collection: Current collection name from page front matter
-  - site.collections: Jekyll collections configuration
-  - Bootstrap 5 list-group component
-  - Bootstrap Icons for folder/file indicators
-  
-  Usage:
-  - Include in sidebar when page.sidebar.nav == "dynamic"
-  - Requires page to be part of a Jekyll collection
-  ===================================================================
--->
+{%- comment -%}
+  Component:   sidebar-folders
+  Path:        _includes/navigation/sidebar-folders.html
+  Purpose:     "collection" sidebar mode — live folder tree of a collection's
+               documents, grouped by sub-folder into collapsible sections.
+               Zero-config: any collection gets a usable sidebar without a
+               curated _data/navigation/*.yml file.
+  Params:      collection (string, optional) — collection label to list
+                 (default: page.sidebar.collection, then page.collection)
+               sort (string, optional) — "path" | "title" | "date"
+                 (default: page.sidebar.sort, then "path")
+  Front matter (page.sidebar hash, all optional):
+               collection — list a different collection than the page's own
+               sort       — see above; "date" needs date/lastmod front matter
+               reverse    — true to reverse the sort (e.g. newest-first)
+               expand     — true to expand every folder group
+                            (default: only the group containing the page)
+  Per-document opt-out: set `sidebar_exclude: true` in a doc's front matter
+               to hide it from this tree.
+  Collection metadata (optional, in _config.yml `collections.<label>:`):
+               title — heading text (default: humanized label)
+               icon  — Bootstrap Icons class (default: bi-folder2-open)
+  Depends on:  site.collections, Bootstrap 5 collapse, Bootstrap Icons,
+               nav-tree styles (_sass/core/_nav-tree.scss)
+  Notes:       A folder's index.* doc becomes the folder link itself (link +
+               separate collapse toggle, mirroring nav-tree.html). Groups
+               containing the current page start expanded so the active link
+               is always visible. Folder names are humanized (hyphens/
+               underscores → spaces). Nested sub-folders render as their own
+               "parent / child" groups.
+{%- endcomment -%}
 
-{% assign root_folder = site.collections | where: "label", page.collection | first %}
+{%- assign _coll_label = include.collection | default: page.sidebar.collection | default: page.collection -%}
+{%- assign _coll = site.collections | where: "label", _coll_label | first -%}
 
-{% if root_folder %}
-  <h2 class="h5 mb-3 d-flex align-items-center">
-    <i class="bi bi-folder2-open me-2"></i>
-    {{ root_folder.label | capitalize }}
+{%- if _coll -%}
+  {%- assign _sort = include.sort | default: page.sidebar.sort | default: "path" -%}
+  {%- assign _docs = _coll.docs | where_exp: "d", "d.sidebar_exclude != true" -%}
+  {%- case _sort -%}
+    {%- when "title" -%}
+      {%- assign _docs = _docs | sort_natural: "title" -%}
+    {%- when "date" -%}
+      {%- assign _docs = _docs | sort: "date", "first" -%}
+    {%- else -%}
+      {%- assign _docs = _docs | sort: "path" -%}
+  {%- endcase -%}
+  {%- if page.sidebar.reverse == true -%}
+    {%- assign _docs = _docs | reverse -%}
+  {%- endif -%}
+
+  {%- comment -%}
+    Group documents by their directory relative to the collection folder.
+    Splitting on "_<label>/" works with and without a collections_dir prefix
+    in doc.path. Root-level docs land in the "" group.
+  {%- endcomment -%}
+  {%- capture _coll_prefix -%}_{{ _coll_label }}/{%- endcapture -%}
+  {%- assign _groups = _docs | group_by_exp: "d", "d.path | split: _coll_prefix | last | split: '/' | pop | join: '/'" | sort: "name" -%}
+
+  {%- assign _coll_title = _coll.title -%}
+  {%- unless _coll_title -%}
+    {%- assign _coll_title = _coll_label | replace: "-", " " | replace: "_", " " | capitalize -%}
+  {%- endunless -%}
+  {%- assign _coll_icon = _coll.icon | default: "bi-folder2-open" -%}
+  {%- assign _expand_all = page.sidebar.expand | default: false -%}
+
+<div class="sidebar-collection w-100">
+  <h2 class="sidebar-collection-heading h6 text-uppercase text-body-secondary fw-semibold mb-3 d-flex align-items-center gap-2">
+    <i class="bi {{ _coll_icon }}" aria-hidden="true"></i>
+    <span>{{ _coll_title }}</span>
   </h2>
-  
-  {% assign docs = root_folder.docs | sort: 'path' %}
-  {% assign prev_path = "" %}
-  
-  <ul class="list-group list-group-flush">
-    {% for doc in docs %}
-      {% assign current_path = doc.path | split: '/' | pop %}
-      
-      {% if current_path != prev_path %}
-        {% for folder in current_path %}
-          {% if forloop.index != 1 %}
-            <li class="folder list-group-item bg-body-tertiary fw-semibold d-flex align-items-center">
-              <i class="bi bi-folder2 me-2"></i>
-              {{ folder }}
-            </li>
-          {% endif %}
-        {% endfor %}
-        {% assign prev_path = current_path %}
-      {% endif %}
-      
-      <li class="file list-group-item list-group-item-action{% if page.url == doc.url %} active{% endif %}">
-        <a href="{{ doc.url | relative_url }}" class="text-decoration-none d-flex align-items-center">
-          <i class="bi bi-file-earmark-text me-2"></i>
-          {{ doc.title }}
-        </a>
-      </li>
-    {% endfor %}
+
+  <ul class="list-unstyled nav-tree-root mb-0">
+    {%- for group in _groups -%}
+      {%- if group.name == "" or group.name == nil -%}
+        {%- comment -%} Collection-root documents: flat depth-0 links {%- endcomment -%}
+        {%- for doc in group.items -%}
+          {%- assign _doc_title = doc.title -%}
+          {%- unless _doc_title -%}
+            {%- assign _doc_title = doc.path | split: "/" | last | split: "." | first | replace: "-", " " | replace: "_", " " | capitalize -%}
+          {%- endunless -%}
+          <li class="nav-tree-item" data-depth="0">
+            <a href="{{ doc.url | relative_url }}"
+               class="nav-tree-link d-flex align-items-start rounded py-1 px-2 text-decoration-none{% if page.url == doc.url %} active{% endif %}"{% if page.url == doc.url %} aria-current="page"{% endif %}>
+              <i class="bi bi-file-earmark-text me-2 flex-shrink-0" aria-hidden="true"></i>
+              <span>{{ _doc_title }}</span>
+            </a>
+          </li>
+        {%- endfor -%}
+      {%- else -%}
+        {%- assign _group_id = group.name | slugify | prepend: "sidebar-coll-" -%}
+        {%- assign _group_title = group.name | replace: "-", " " | replace: "_", " " | replace: "/", " / " | capitalize -%}
+        {%- assign _group_index = group.items | where_exp: "d", "d.path contains '/index.'" | first -%}
+        {%- assign _active_here = group.items | where: "url", page.url | size -%}
+        {%- if _expand_all or _active_here > 0 -%}
+          {%- assign _expanded = true -%}
+        {%- else -%}
+          {%- assign _expanded = false -%}
+        {%- endif -%}
+
+        {%- assign _group_size = group.items | size -%}
+        {%- if _group_index and _group_size == 1 -%}
+        {%- comment -%} Folder holds only its index doc — plain leaf, no toggle {%- endcomment -%}
+        <li class="nav-tree-item sidebar-collection-group" data-depth="0">
+          <a href="{{ _group_index.url | relative_url }}"
+             class="nav-tree-link d-flex align-items-start rounded py-1 px-2 text-decoration-none{% if page.url == _group_index.url %} active{% endif %}"{% if page.url == _group_index.url %} aria-current="page"{% endif %}>
+            <i class="bi bi-folder2 me-2 flex-shrink-0" aria-hidden="true"></i>
+            <span>{{ _group_title }}</span>
+          </a>
+        </li>
+        {%- else -%}
+        <li class="nav-tree-item sidebar-collection-group" data-depth="0">
+          {%- if _group_index -%}
+          {%- comment -%} Folder index doc → folder name links to it, chevron toggles {%- endcomment -%}
+          <div class="d-flex align-items-center">
+            <a href="{{ _group_index.url | relative_url }}"
+               class="nav-tree-link flex-grow-1 d-inline-flex align-items-center rounded py-1 px-2 text-decoration-none{% if page.url == _group_index.url %} active{% endif %}"{% if page.url == _group_index.url %} aria-current="page"{% endif %}>
+              <i class="bi bi-folder2 me-2" aria-hidden="true"></i>
+              <span>{{ _group_title }}</span>
+            </a>
+            <button class="btn btn-sm btn-link nav-tree-toggle p-1{% unless _expanded %} collapsed{% endunless %}"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#{{ _group_id }}"
+                    aria-expanded="{{ _expanded }}"
+                    aria-controls="{{ _group_id }}"
+                    aria-label="Toggle {{ _group_title }} section">
+              <i class="bi bi-chevron-down nav-tree-chevron" aria-hidden="true"></i>
+            </button>
+          </div>
+          {%- else -%}
+          <button class="btn btn-link nav-tree-toggle w-100 d-flex align-items-center text-start py-1 px-2{% unless _expanded %} collapsed{% endunless %}"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#{{ _group_id }}"
+                  aria-expanded="{{ _expanded }}"
+                  aria-controls="{{ _group_id }}">
+            <i class="bi bi-folder2 me-2" aria-hidden="true"></i>
+            <span class="flex-grow-1">{{ _group_title }}</span>
+            <i class="bi bi-chevron-down nav-tree-chevron" aria-hidden="true"></i>
+          </button>
+          {%- endif -%}
+
+          <div class="collapse{% if _expanded %} show{% endif %}" id="{{ _group_id }}">
+            <ul class="list-unstyled nav-tree-children mb-0">
+              {%- for doc in group.items -%}
+                {%- unless _group_index and doc.path == _group_index.path -%}
+                  {%- assign _doc_title = doc.title -%}
+                  {%- unless _doc_title -%}
+                    {%- assign _doc_title = doc.path | split: "/" | last | split: "." | first | replace: "-", " " | replace: "_", " " | capitalize -%}
+                  {%- endunless -%}
+                  <li class="nav-tree-item" data-depth="1">
+                    <a href="{{ doc.url | relative_url }}"
+                       class="nav-tree-link d-flex align-items-start rounded py-1 px-2 text-decoration-none{% if page.url == doc.url %} active{% endif %}"{% if page.url == doc.url %} aria-current="page"{% endif %}>
+                      <i class="bi bi-file-earmark-text me-2 flex-shrink-0" aria-hidden="true"></i>
+                      <span>{{ _doc_title }}</span>
+                    </a>
+                  </li>
+                {%- endunless -%}
+              {%- endfor -%}
+            </ul>
+          </div>
+        </li>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
   </ul>
-{% else %}
-  <p class="text-muted small">
-    <i class="bi bi-info-circle me-1"></i>
+</div>
+{%- else -%}
+  <p class="text-body-secondary small mb-0">
+    <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
     No collection found for this page.
   </p>
-{% endif %}
+{%- endif -%}

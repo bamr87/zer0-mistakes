@@ -506,17 +506,17 @@ The reading-page shell for content/docs pages: a CSS-grid `.bd-layout` (left `.b
 - **Tests:** No automated tests.
 - **Gaps / improvement ideas:** No coverage of expand/collapse or active-state. Heading is an `<h2>` even when nested under the sidebar's own `<h2>` "Browse docs" — heading-order/landmark check advisable. The `-webkit-line-clamp` 2-line truncation has no non-WebKit fallback (acceptable but worth a fade). Active-state is defined in two places (`_sidebar-categories.scss` and the `_sidebar-extras.scss` shim) with slightly different backgrounds — consolidate to avoid drift.
 
-### Sidebar folders (auto mode)
+### Sidebar folders (collection mode)
 
-- **Purpose:** Auto-generates a left-sidebar document tree from the current collection's docs, grouped by folder path. Used in the docs sidebar's "auto" mode.
-- **Capabilities:** Sorts collection docs by `path`, emits Bootstrap `list-group-flush` with `.folder` headers and `.file` link items; active item when `page.url == doc.url`; "no collection found" fallback. A companion script adds click + Enter/Space disclosure with `role="button"`, `tabindex="0"`, `aria-expanded`, `aria-controls`.
+- **Purpose:** Live left-sidebar document tree of a collection, grouped by sub-folder into collapsible sections. Used by the sidebar's `collection` mode (and by `auto` when no curated `_data/navigation/<collection>.yml` exists).
+- **Capabilities:** Filters `sidebar_exclude: true` docs; sorts by `path`/`title`/`date` (+ `reverse`); groups via `group_by_exp` on the doc path relative to the collection folder; humanizes folder names; a folder's `index.*` doc becomes the folder link (link + separate collapse toggle, mirroring `nav-tree.html`); group containing the current page starts expanded (`expand: true` expands all); `aria-current="page"` on the active link; heading from collection `title`/`icon` metadata; "no collection found" fallback.
 - **Source:**
-  - SCSS: hover shim in `_sass/core/_sidebar-extras.scss` (`.bd-sidebar .list-group-item:hover`); otherwise Bootstrap list-group
-  - Markup: `_includes/navigation/sidebar-folders.html` (invoked by `sidebar-left.html`, wrapped in `.list-group.nav-tree#sidebar-content[data-nav-tree]`)
-  - JS: `assets/js/side-bar-folders.js` (loaded `defer` from `_includes/core/head.html`)
-- **API surface:** classes `.folder`, `.file`, `.list-group`, `.list-group-flush`, `.list-group-item`, `.list-group-item-action`, `.active`, `.nested-list-group` (expected by JS); generated id `zer0-folder-…`; attrs `role="button"`, `tabindex`, `aria-expanded`, `aria-controls`
+  - SCSS: shared nav-tree styles in `_sass/core/_nav-tree.scss`
+  - Markup: `_includes/navigation/sidebar-folders.html` (invoked via `sidebar-nav.html`, wrapped in `.nav-tree#sidebar-content[data-nav-tree]`)
+  - JS: none — Bootstrap collapse handles disclosure (`assets/js/side-bar-folders.js` targeted the pre-2026 `.folder`/`.file` markup and is now inert)
+- **API surface:** classes `.sidebar-collection`, `.sidebar-collection-heading`, `.sidebar-collection-group`, `.nav-tree-*` family, `.active`; ids `#sidebar-coll-{group-slug}`; attrs `data-bs-toggle="collapse"`, `aria-expanded`, `aria-controls`, `aria-current`; front-matter config `page.sidebar.{collection,sort,reverse,expand}`, per-doc `sidebar_exclude`
 - **Tests:** No automated tests.
-- **Gaps / improvement ideas:** **Dead-wiring bug:** `side-bar-folders.js` only activates when a `.folder` is immediately followed by an element with class `.nested-list-group`, but `sidebar-folders.html` emits a flat sibling list (`.folder` and `.file` `<li>`s in one `<ul>`) and never produces `.nested-list-group` — so the disclosure toggle is a no-op for real markup (folders are not collapsible). Either nest `.file` items under a `.nested-list-group` container per folder or rewrite the JS to target the flat structure. The folder-derivation Liquid (`current_path = doc.path | split:'/' | pop`) is fragile for deep trees. No tests cover any of this.
+- **Gaps / improvement ideas:** No behavioral coverage of expand/collapse or active-trail expansion. `assets/js/side-bar-folders.js` is now dead code and can be removed once no fork consumes it. Deeply nested sub-folders flatten to "parent / child" group labels rather than true nesting.
 
 ### Section sidebar (topic navigation)
 
