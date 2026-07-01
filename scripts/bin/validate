@@ -1,4 +1,5 @@
 #!/bin/bash
+# Feature: ZER0-048
 
 # Canonical preflight validator for zer0-mistakes.
 # Usage: ./scripts/bin/validate [options]

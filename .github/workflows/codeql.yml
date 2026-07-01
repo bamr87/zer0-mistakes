@@ -1,3 +1,4 @@
+# Feature: ZER0-018
 name: CodeQL Security Scanning
 
 # Least-privilege default; the analyze job below grants exactly what it needs.

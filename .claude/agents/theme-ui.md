@@ -35,5 +35,12 @@ Stay in your lane: the rendered theme (layouts, includes, sass, assets).
   `test/visual/*.spec.js` regression test + before/after evidence under
   `test/visual/evidence/<slug>/` (from `test/visual/evidence-kit.mjs`) + a CHANGELOG
   link — so the required `evidence-gate` check passes.
-- **Done when:** the Jekyll build is green, the regression spec passes, and the
-  before/after evidence is committed.
+- **Register the feature.** If the task adds or materially alters a user-visible
+  feature (a new layout/include/asset), add its `ZER0-NNN` entry to
+  `_data/features.yml` — with `provenance` + `tests` — and run
+  `ruby scripts/tag-features --write` (both are outside the CODEOWNERS wall). See
+  [`features.instructions.md`](../../.github/instructions/features.instructions.md);
+  the `features` suite hard-fails on a missing entry/provenance/test/source-tag.
+- **Done when:** the Jekyll build is green, the regression spec passes, the
+  before/after evidence is committed, and `./test/test_runner.sh --suites features`
+  passes.

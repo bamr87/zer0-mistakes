@@ -1,3 +1,4 @@
+// Feature: ZER0-030
 document.addEventListener('DOMContentLoaded', function () {
   var LANG_LABELS = {
     shell: 'bash',

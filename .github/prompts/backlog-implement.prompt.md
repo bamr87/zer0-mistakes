@@ -71,7 +71,11 @@ step in the [`visual-evidence`](../skills/visual-evidence/SKILL.md) skill.
   `test/visual/evidence-kit.mjs` into `test/visual/evidence/<slug>/`, and paste
   its `CHANGELOG-snippet.txt` link into the changelog entry. This is required for
   the change to auto-merge, and is enforced by the `evidence-gate` check.
-- Update `docs/` / `pages/_docs/` / `_data/features.yml` if behavior changed.
+- Update `docs/` / `pages/_docs/` if behavior changed.
+- **Feature registry:** if the task adds/alters a user-visible feature, add or
+  update its `ZER0-NNN` entry in `_data/features.yml` (with `provenance` +
+  `tests`) and run `ruby scripts/tag-features --write`; `./test/test_runner.sh
+  --suites features` must pass. See `.github/instructions/features.instructions.md`.
 - In `_data/backlog.yml`, set the task `status: done` and `updated:` to today.
 
 ## Phase 3 — Validate (required)

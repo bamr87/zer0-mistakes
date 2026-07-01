@@ -1,3 +1,4 @@
+// Feature: ZER0-060
 /**
  * ===================================================================
  * AI Chat Widget — Claude Messages API client with GitHub tool use

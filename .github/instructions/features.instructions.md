@@ -1,5 +1,5 @@
 ---
-applyTo: "_data/features.yml,features/features.yml,features/README.md,pages/features.md,_includes/components/feature-card.html"
+applyTo: "_data/features.yml,features/features.yml,features/README.md,pages/features.md,_includes/components/feature-card.html,scripts/validate-features.rb,scripts/tag-features,test/test_features.sh"
 description: "Feature registry maintenance — schema, sync contract, and update-on-change rules for zer0-mistakes."
 date: 2026-05-18T12:00:00.000Z
 lastmod: 2026-05-18T12:00:00.000Z
@@ -61,16 +61,25 @@ The feature registry is the single source of truth for what the theme does. It p
 
 ## 🛡 Validation Gate (enforced)
 
-`scripts/validate-features.rb` is the canonical checker, run by both
-`scripts/bin/validate` (preflight) and the `features` test suite
-(`test/test_features.sh`, registered in `test_runner.sh` + CI). It **hard-fails**
-on: master/`_data` drift, schema violations, stale reference paths, a removed
-feature missing `removed_in`, and a missing/malformed `provenance` **or**
-`tests` block on an active feature. Run it locally before committing a registry
-change:
+The `features` test suite (`test/test_features.sh`, registered in
+`test_runner.sh` + CI, and run by `scripts/bin/validate`) **hard-fails** on:
+
+1. `scripts/validate-features.rb` — master/`_data` drift, schema violations,
+   stale reference paths, a removed feature missing `removed_in`, and a
+   missing/malformed `provenance` **or** `tests` block on an active feature.
+2. `scripts/tag-features --check` — **reverse traceability**: every source file
+   a feature lists under `references:` must carry a top-of-file
+   `Feature: ZER0-NNN` comment (the code→registry link, mirroring the
+   registry→code `references:`). Scope and placement are owned by the tool;
+   markdown docs, JSON, vendored/minified libs, directory refs, and `_config.yml`
+   are exempt.
+
+Run both locally before committing a registry or feature change:
 
 ```bash
-ruby scripts/validate-features.rb        # or: ./test/test_runner.sh --suites features
+ruby scripts/validate-features.rb        # registry integrity
+ruby scripts/tag-features --check        # source-file tags (…--write to apply)
+# or, both plus the README-count check:  ./test/test_runner.sh --suites features
 ```
 
 ## 🔄 Sync Contract (REQUIRED)
@@ -105,7 +114,7 @@ Add, modify, or flag (`implemented: false` + `removed_in:`) an entry **in the sa
 
 | Code change | Registry action |
 | --- | --- |
-| New layout, include, plugin, script, or workflow that ships user-visible behavior | Add a new `ZER0-NNN` entry **with `provenance` + `tests`** in the same change |
+| New layout, include, plugin, script, or workflow that ships user-visible behavior | Add a new `ZER0-NNN` entry **with `provenance` + `tests`**, then `ruby scripts/tag-features --write` to tag its source files — all in the same change |
 | Material change to an existing feature (new sub-capability, new dependency, new docs) | Bump `version`, refresh `date`, update `features:` / `references:` |
 | Renaming or moving referenced files | Update every affected `references:` block |
 | Removing a feature | Set `implemented: false`, add `removed_in: "X.Y.Z"`, keep the entry |
@@ -123,6 +132,7 @@ Documentation-only changes (typos, formatting in `pages/features.md` or `feature
 - [ ] All `references:` paths exist in the repo
 - [ ] Every active feature has a `provenance:` block and a `tests:` block
 - [ ] `ruby scripts/validate-features.rb` passes (the canonical gate)
+- [ ] `ruby scripts/tag-features --check` passes (referenced source files carry their `Feature: ZER0-NNN` comment; `--write` applies them)
 - [ ] Jekyll renders the showcase page without Liquid errors:
       `docker-compose exec -T jekyll bundle exec jekyll build --config '_config.yml,_config_dev.yml'`
 

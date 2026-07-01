@@ -1,4 +1,5 @@
 #!/bin/bash
+# Features: ZER0-002, ZER0-028
 
 # ============================================================================
 # WRAPPER: This script forwards to scripts/utils/setup

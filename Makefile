@@ -1,3 +1,4 @@
+# Feature: ZER0-012
 # Makefile for jekyll-theme-zer0 gem automation
 
 # Default target

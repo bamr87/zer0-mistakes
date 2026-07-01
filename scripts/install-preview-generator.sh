@@ -1,4 +1,5 @@
 #!/bin/bash
+# Feature: ZER0-004
 
 # ============================================================================
 # WRAPPER: This script forwards to scripts/features/install-preview-generator

@@ -1,3 +1,4 @@
+// Features: ZER0-044, ZER0-045
 /*
  * obsidian-graph.js
  *

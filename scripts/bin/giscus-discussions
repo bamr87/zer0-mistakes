@@ -1,4 +1,5 @@
 #!/bin/bash
+# Features: ZER0-035, ZER0-073
 
 # giscus-discussions — read, draft, and post the GitHub Discussions that back
 # the site's Giscus comment threads. This is the engine the Claude Code

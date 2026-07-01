@@ -1,3 +1,4 @@
+# Feature: ZER0-075
 name: CI self-repair
 
 # Phase 6 of the autonomous issue pipeline. When CI fails on a pipeline-authored

@@ -1,3 +1,4 @@
+// Feature: ZER0-033
 /**
  * Auto-hide navbar on scroll with enhanced UX
  * 

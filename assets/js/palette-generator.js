@@ -1,3 +1,4 @@
+// Feature: ZER0-065
 /**
  * palette-generator.js
  * Color palette generator + live CSS variable editor for the Theme Customizer.

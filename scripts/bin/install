@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Feature: ZER0-003
 # scripts/bin/install — zer0-mistakes installer entrypoint (v2)
 #
 # Routes to scripts/install/cli.sh (new spec-driven architecture).

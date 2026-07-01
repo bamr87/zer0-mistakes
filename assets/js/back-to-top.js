@@ -1,3 +1,4 @@
+// Feature: ZER0-029
 document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('backToTopBtn');
   if (!btn) return;

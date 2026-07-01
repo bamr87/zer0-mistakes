@@ -1,3 +1,4 @@
+// Feature: ZER0-074
 /**
  * Evidence kit — reusable before/after + viewport/config evidence generator.
  * ============================================================================
