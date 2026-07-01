@@ -1,0 +1,11 @@
+# Python toolchain for repository automation scripts.
+#
+# Currently the notebook-conversion pipeline: scripts/convert-notebooks.sh and
+# .github/workflows/convert-notebooks.yml use nbconvert to render
+# pages/_notebooks/*.ipynb into Jekyll-compatible Markdown.
+#
+# This file also acts as the pip cache key for actions/setup-python in that
+# workflow (see `cache-dependency-path`). Keep it in sync with the toolchain the
+# scripts import; a missing file here makes `cache: pip` hard-fail the run.
+jupyter
+nbconvert
