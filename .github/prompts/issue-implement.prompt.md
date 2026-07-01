@@ -103,7 +103,12 @@ ready one.
 
 - `CHANGELOG.md` `[Unreleased]` entry (Keep a Changelog) for any user-visible
   change; UI changes link the evidence per the visual-evidence skill.
-- Update `docs/` / `pages/_docs/` / `_data/features.yml` if behaviour changed.
+- Update `docs/` / `pages/_docs/` if behaviour changed.
+- **Feature registry**: if the change adds/alters a user-visible feature, add or
+  update its `ZER0-NNN` entry in `_data/features.yml` (with `provenance` +
+  `tests`) and run `ruby scripts/tag-features --write`. Verify with
+  `./test/test_runner.sh --suites features` (it hard-fails on a missing entry,
+  provenance, test, or source tag). See `.github/instructions/features.instructions.md`.
 - Set the task `status: done`, `updated:` today, and `links.pr` once the PR exists.
 
 ## Phase 5 — Open ONE PR + apply the autonomy label

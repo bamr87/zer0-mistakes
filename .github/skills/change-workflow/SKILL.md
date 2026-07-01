@@ -29,6 +29,12 @@ This skill is the operational checklist.
 4. **Generated & lock files travel alone.** `_data/content_statistics.yml` and
    `Gemfile.lock` never ride inside a feature PR.
 5. **Validate before you push.** Use the `validate-build` skill.
+6. **Ship a feature → register it.** If your change adds or materially alters a
+   user-visible feature (new layout, include, plugin, script, or workflow), add
+   its `ZER0-NNN` entry to `_data/features.yml` (with `provenance` + `tests`) and
+   run `ruby scripts/tag-features --write` in the **same** PR — the `features` CI
+   suite hard-fails otherwise. See
+   [`features.instructions.md`](../../instructions/features.instructions.md).
 
 ## The flow
 

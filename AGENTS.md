@@ -64,6 +64,7 @@ should load them manually):
 | `_data/backlog.yml`, `scripts/sync-backlog.*`, `.github/workflows/sync.yml` | `.github/instructions/backlog.instructions.md` |
 | `pages/**/*.md`, `.github/config/content_review.yml`, `.claude/agents/content-reviewer.md`, `scripts/content-review.rb`, `.github/workflows/ai-content-review.yml` | `.github/instructions/content-review.instructions.md` |
 | `_includes/components/ai-chat.html`, `assets/js/ai-chat.js`, `templates/deploy/chat-proxy/**` | `.github/instructions/ai-chat.instructions.md` |
+| `_data/features.yml`, `features/**`, `pages/features.md`, `scripts/{validate-features.rb,tag-features}`, `test/test_features.sh` — **and whenever you add/alter a feature** | `.github/instructions/features.instructions.md` |
 
 ### Reusable prompts
 

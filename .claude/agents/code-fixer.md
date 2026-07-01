@@ -35,6 +35,12 @@ You implement ONE routed backlog task end-to-end under the
 - **Load:** `.github/instructions/{includes,layouts,scripts}.instructions.md` as they
   apply, plus the [`change-workflow`](../../.github/skills/change-workflow/SKILL.md)
   and [`validate-build`](../../.github/skills/validate-build/SKILL.md) skills.
+- **Register the feature.** If the task adds or materially alters a user-visible
+  feature, add its `ZER0-NNN` entry to `_data/features.yml` (with `provenance` +
+  `tests`) and run `ruby scripts/tag-features --write` (both outside the CODEOWNERS
+  wall). See [`features.instructions.md`](../../.github/instructions/features.instructions.md).
+  Note: a brand-new `_plugins/` file is CODEOWNERS-walled → **STOP** and hand back.
 - **Done when:** targeted tests pass; the relevant `./scripts/bin/test` suite is
-  green; and — if you touched templates — `docker-compose exec -T jekyll bundle exec
+  green; `./test/test_runner.sh --suites features` passes when the registry changed;
+  and — if you touched templates — `docker-compose exec -T jekyll bundle exec
   jekyll build --config '_config.yml,_config_dev.yml'` is green.
