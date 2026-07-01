@@ -500,6 +500,19 @@ RUBY
     success "Navigation data is valid"
 }
 
+validate_features_registry() {
+    step "Validating feature registry (features.yml)..."
+
+    # Delegates to the shared canonical checker so this gate and the `features`
+    # test suite never drift. Hard-fails on master/_data drift, schema
+    # violations, stale references, and missing provenance; warns (until
+    # FEATURES_STRICT=1) on missing tests. See
+    # .github/instructions/features.instructions.md.
+    FEATURES_STRICT="${FEATURES_STRICT:-0}" ruby "$REPO_ROOT/scripts/validate-features.rb"
+
+    success "Feature registry is valid"
+}
+
 run_jekyll_build() {
     if [[ "$SKIP_JEKYLL" == "true" ]]; then
         warn "Skipping Jekyll build"
@@ -612,6 +625,9 @@ main() {
     validate_navigation_data
     echo ""
 
+    validate_features_registry
+    echo ""
+
     run_jekyll_build
     echo ""
 
@@ -628,7 +644,7 @@ main() {
     print_summary "Validation Complete" \
         "Repository files: pass" \
         "Version consistency: pass" \
-        "YAML, config contract, and navigation data: pass" \
+        "YAML, config contract, navigation data, and feature registry: pass" \
         "Jekyll build: $([[ "$SKIP_JEKYLL" == "true" ]] && echo skipped || echo pass)" \
         "Jekyll doctor: $([[ "$SKIP_DOCTOR" == "true" ]] && echo skipped || echo pass)" \
         "Compiled assets: $([[ "$SKIP_ASSETS" == "true" ]] && echo skipped || echo pass)" \

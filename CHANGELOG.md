@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.24.0](https://github.com/bamr87/zer0-mistakes/compare/v1.23.0...v1.24.0) (2026-07-01)
+
+
+### Features
+
+* **features:** backfill PR/commit/issue provenance + render it ([#264](https://github.com/bamr87/zer0-mistakes/issues/264)) ([03b584a](https://github.com/bamr87/zer0-mistakes/commit/03b584aab91332fd0e91f48210a7455da5bc6d08))
+* **features:** document 16 reconciled features (ZER0-061..076) + governance ([#267](https://github.com/bamr87/zer0-mistakes/issues/267)) ([097e842](https://github.com/bamr87/zer0-mistakes/commit/097e842426d62189d527719d07ac609a970a3084))
+
+
+### Bug Fixes
+
+* **features:** reconcile registry with the real repo + add validation gate ([#262](https://github.com/bamr87/zer0-mistakes/issues/262)) ([786459c](https://github.com/bamr87/zer0-mistakes/commit/786459cc611bcc829cd81c971dc6cd1a4f3ba82d))
+* **security:** close two DOM-XSS sinks (CodeQL js/xss-through-dom) ([#266](https://github.com/bamr87/zer0-mistakes/issues/266)) ([812f247](https://github.com/bamr87/zer0-mistakes/commit/812f2478e0cc1989f599e32ac2171a0da449567f))
+
 ## [1.23.0](https://github.com/bamr87/zer0-mistakes/compare/v1.22.0...v1.23.0) (2026-06-30)
 
 
@@ -28,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
+* **features:** stop a feature card from swallowing every card after it on `/features/` — a raw `<key>` in the ZER0-061 description rendered as a stray HTML element. Fixed the description (`/authors/:key/`), escaped all `description` output on the features page and in `feature-card.html`, and added a registry-gate check that rejects raw `<`/`>` in titles/descriptions. (evidence: [`test/visual/evidence/features-card-escape/`](test/visual/evidence/features-card-escape/README.md))
 * **includes:** existence-guard component-showcase demo links — breadcrumb and list-group items now render as real links when the target page exists in the build (`/docs/`, `/docs/customization/`, `/categories/`, `/tags/`) and as plain text when absent; removes inert `href="#"` / `onclick="return false;"` workaround ([#219](https://github.com/bamr87/zer0-mistakes/issues/219)) (evidence: [`test/visual/evidence/component-showcase/`](test/visual/evidence/component-showcase/README.md))
 
 ### Tests
@@ -36,6 +51,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Features
 
 - **color_mode_default config knob** — new `color_mode_default` setting (`dark` | `light` | `auto`, default `auto`) in `_config.yml` controls Bootstrap's `data-bs-theme` both server-side (in `_layouts/root.html`) and client-side. An early inline script (`_includes/core/color-mode-init.html`, loaded before Bootstrap CSS) applies the correct theme before any `[data-bs-theme]` selector is evaluated, preventing FOUC. `localStorage["theme"]` (the Appearance panel override) always wins over the config default. `auto` follows `prefers-color-scheme` — backward-compatible with the previous behaviour. (evidence: [`test/visual/evidence/color-mode-default/`](test/visual/evidence/color-mode-default/README.md))
+- **feature provenance** — every entry in the feature registry (`_data/features.yml`) gained a `provenance:` block (`introduced_in` / `pr` / `commit` / `issue`) tracing the feature to the change that shipped it, surfaced on `/features/` as a `PR #N · <commit>` line on each card and a new **Provenance** column in the reference table. A registry-validation gate (`scripts/validate-features.rb`, the `features` test suite) now requires provenance on every active feature. (evidence: [`test/visual/evidence/features-provenance/`](test/visual/evidence/features-provenance/README.md))
+- **feature registry coverage** — reconciled the registry against the codebase: added 16 previously-undocumented features (ZER0-061…076 — author profiles, news/section/article layouts, theme-skins customizer, nanobar, setup wizard, table-CSV copy, share actions, archives, component showcase, and the AI-content-review / giscus-digest / evidence-gate / autonomous-pipeline / secret-scan workflows), each with provenance + a regression-test link. Every active feature now also declares a `tests:` block (`scripts/validate-features.rb` hard-enforces both provenance and tests), and the governance in [`features.instructions.md`](.github/instructions/features.instructions.md) requires them on every new entry.
 ### Bug Fixes
 
 * **search:** existence-gate search modal form action to `/sitemap/` only when that page is present in the build; falls back to `#` (safe no-op) for remote-theme Pages consumers without a `/sitemap/` stub (closes [#202](https://github.com/bamr87/zer0-mistakes/issues/202))

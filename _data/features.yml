@@ -1,7 +1,7 @@
 # zer0-mistakes Theme Features Registry
 # Comprehensive feature tracking for the zer0-mistakes Jekyll theme
-# Version: 1.6.2
-# Last Updated: 2026-06-13
+# Version: 1.24.0
+# Last Updated: 2026-06-30
 
 features:
   # ============================================================================
@@ -17,6 +17,14 @@ features:
     docs: "/docs/bootstrap/"
     tags: [jekyll, theme, bootstrap, ui, responsive]
     date: 2025-01-27
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
+    tests:
+      - "test/visual/component-showcase.spec.js"
+      - "test/visual/styling.spec.js"
     references:
       layouts: ["_layouts/root.html", "_layouts/default.html"]
       includes: ["_includes/core/head.html"]
@@ -38,8 +46,15 @@ features:
     docs: "/docs/docker/"
     tags: [docker, devops, development, cross-platform]
     date: 2025-01-27
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "4ff71bc"
+      issue: null
+    tests:
+      - "test/test_deployment.sh"
     references:
-      config: ["docker-compose.yml", "docker-compose.prod.yml", "docker-compose.test.yml"]
+      config: ["docker-compose.yml", "docker-compose.test.yml"]
       dockerfile: "docker/Dockerfile"
       scripts: ["scripts/setup.sh"]
     features:
@@ -58,6 +73,14 @@ features:
     docs: "/docs/installation/"
     tags: [ai, automation, installation, error-handling, bash, installer]
     date: 2026-02-15
+    provenance:
+      introduced_in: "1.0.0"
+      pr: 76
+      commit: "36cd015"
+      issue: null
+    tests:
+      - "test/test_installer.sh"
+      - "test/test_installation.sh"
     references:
       script: "install.sh"
       cli: "scripts/bin/install"
@@ -90,6 +113,13 @@ features:
     docs: "/docs/features/preview-image-generator/"
     tags: [ai, images, automation, openai, content]
     date: 2025-01-28
+    provenance:
+      introduced_in: "1.5.0"
+      pr: 83
+      commit: "ffdc1eb"
+      issue: null
+    tests:
+      - "test/test_core.sh"
     references:
       plugin: "_plugins/preview_image_generator.rb"
       script: "scripts/generate-preview-images.sh"
@@ -131,6 +161,13 @@ features:
     docs: "/docs/features/copilot-integration/"
     tags: [ai, copilot, agents, development, documentation]
     date: 2026-04-18
+    provenance:
+      introduced_in: "1.6.0"
+      pr: 70
+      commit: "bc41b0d"
+      issue: null
+    tests:
+      - na: "Process/docs feature (AGENTS.md + .github/instructions/*); no runtime test"
     references:
       entry_point: "AGENTS.md"
       main: ".github/copilot-instructions.md"
@@ -172,6 +209,14 @@ features:
     docs: "/docs/features/posthog-analytics/"
     tags: [analytics, privacy, gdpr, ccpa, posthog]
     date: 2025-11-15
+    provenance:
+      introduced_in: "0.6.0"
+      pr: null
+      commit: "76f4508"
+      issue: null
+    tests:
+      - "test/test_quality.sh"
+      - "test/visual/security.spec.js"
     references:
       include: "_includes/analytics/posthog.html"
       config: "_config.yml"
@@ -195,6 +240,13 @@ features:
     docs: "/docs/features/cookie-consent/"
     tags: [privacy, gdpr, ccpa, cookies, consent]
     date: 2025-11-15
+    provenance:
+      introduced_in: "0.6.0"
+      pr: null
+      commit: "76f4508"
+      issue: null
+    tests:
+      - "test/test_quality.sh"
     references:
       include: "_includes/components/cookie-consent.html"
       config: "_config.yml"
@@ -219,8 +271,19 @@ features:
     docs: "/docs/features/sidebar-navigation/"
     tags: [navigation, ui, accessibility, performance, sidebar]
     date: 2025-12-01
+    provenance:
+      introduced_in: "0.14.0"
+      pr: null
+      commit: "0ea51c6"
+      issue: null
+    tests:
+      - "test/visual/interactions.spec.js"
     references:
-      javascript: "assets/js/sidebar.js"
+      javascript:
+        - "assets/js/modules/navigation/sidebar-state.js"
+        - "assets/js/modules/navigation/sidebar-visibility.js"
+        - "assets/js/modules/navigation/scroll-spy.js"
+        - "assets/js/modules/navigation/smooth-scroll.js"
       layouts: ["_layouts/default.html"]
       includes:
         - "_includes/navigation/sidebar-left.html"
@@ -228,7 +291,7 @@ features:
         - "_includes/navigation/sidebar-categories.html"
         - "_includes/navigation/sidebar-folders.html"
       styles: ["_sass/core/_docs-layout.scss", "_sass/custom.scss"]
-      docs: "docs/SIDEBAR_IMPROVEMENTS.md"
+      docs: "pages/_docs/features/sidebar-navigation.md"
     features:
       - "Intersection Observer scroll spy"
       - "Smooth scrolling with offset"
@@ -248,9 +311,21 @@ features:
     docs: "/docs/features/keyboard-navigation/"
     tags: [accessibility, keyboard, navigation, ux]
     date: 2025-12-01
+    provenance:
+      introduced_in: "0.14.0"
+      pr: null
+      commit: "0ea51c6"
+      issue: null
+    tests:
+      - "test/visual/feature-coverage.spec.js"
+      - "test/visual/accessibility.spec.js"
     references:
-      javascript: "assets/js/sidebar.js"
-      docs: "docs/keyboard-navigation.md"
+      javascript:
+        - "assets/js/modules/navigation/keyboard.js"
+        - "assets/js/modules/navigation/gestures.js"
+      includes:
+        - "_includes/components/shortcuts-modal.html"
+      docs: "pages/_docs/features/keyboard-navigation.md"
     shortcuts:
       - key: "["
         action: "Previous section"
@@ -270,6 +345,14 @@ features:
     docs: "/docs/features/mobile-toc/"
     tags: [mobile, navigation, ui, toc, fab]
     date: 2025-12-01
+    provenance:
+      introduced_in: "0.14.0"
+      pr: null
+      commit: "0ea51c6"
+      issue: null
+    tests:
+      - "test/visual/feature-coverage.spec.js"
+      - "test/visual/ui-refresh.spec.js"
     references:
       include: "_includes/navigation/sidebar-right.html"
       styles: "_sass/custom.scss"
@@ -290,6 +373,13 @@ features:
     docs: "/docs/features/skip-to-content/"
     tags: [accessibility, wcag, navigation, a11y]
     date: 2025-12-01
+    provenance:
+      introduced_in: "0.14.0"
+      pr: null
+      commit: "0ea51c6"
+      issue: null
+    tests:
+      - "test/visual/accessibility.spec.js"
     references:
       include: "_includes/core/header.html"
       styles: "_sass/custom.scss"
@@ -307,6 +397,13 @@ features:
     docs: "/docs/features/jupyter-notebooks/"
     tags: [jupyter, notebooks, python, data-science, content]
     date: 2025-11-29
+    provenance:
+      introduced_in: "0.13.0"
+      pr: null
+      commit: "8bf80ad"
+      issue: null
+    tests:
+      - "test/test_core.sh"
     references:
       script: "scripts/convert-notebooks.sh"
       layout: "_layouts/notebook.html"
@@ -314,7 +411,7 @@ features:
       workflow: ".github/workflows/convert-notebooks.yml"
       config: "_config.yml"
       collection: "pages/_notebooks/"
-      docs: "docs/JUPYTER_NOTEBOOKS.md"
+      docs: "docs/features/jupyter-notebooks.md"
       makefile: "Makefile"
     features:
       - "Automatic .ipynb to Markdown conversion"
@@ -336,6 +433,13 @@ features:
     docs: "/docs/features/mermaid-diagrams/"
     tags: [mermaid, diagrams, visualization, documentation]
     date: 2025-01-27
+    provenance:
+      introduced_in: "0.3.0"
+      pr: null
+      commit: "1a6184b"
+      issue: null
+    tests:
+      - "test/test_core.sh"
     references:
       include: "_includes/components/mermaid.html"
       config: "_config.yml"
@@ -360,6 +464,13 @@ features:
     docs: "/docs/jekyll/collections/"
     tags: [jekyll, collections, content, organization]
     date: 2025-01-27
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
+    tests:
+      - "test/test_site_generation.sh"
     references:
       config: "_config.yml"
       collections:
@@ -387,6 +498,13 @@ features:
     docs: "/docs/development/release-management/"
     tags: [release, automation, semver, ci-cd, versioning]
     date: 2025-11-15
+    provenance:
+      introduced_in: "0.5.0"
+      pr: null
+      commit: "81ef2d7"
+      issue: null
+    tests:
+      - na: "Release tooling — exercised by scripts/bin/test integration (auto-version) + .github/workflows/release.yml"
     references:
       scripts:
         - "scripts/release"
@@ -412,12 +530,17 @@ features:
     docs: "/docs/development/testing/"
     tags: [testing, quality, ci-cd, automation]
     date: 2025-11-15
+    provenance:
+      introduced_in: "0.10.0"
+      pr: null
+      commit: "e527464"
+      issue: null
+    tests:
+      - "test/test_runner.sh"
+      - "test/test_core.sh"
+      - "test/test_deployment.sh"
+      - "test/test_quality.sh"
     references:
-      tests:
-        - "test/test_runner.sh"
-        - "test/test_core.sh"
-        - "test/test_deployment.sh"
-        - "test/test_quality.sh"
       workflow: ".github/workflows/ci.yml"
     features:
       - "Core functionality tests"
@@ -430,13 +553,20 @@ features:
   
   - id: ZER0-017
     title: "Automated Version Bump Workflow"
-    description: "GitHub Actions workflow for manual version bumping with test execution, changelog updates, and automated tagging"
-    implemented: true
+    description: "Removed in v1.20.0 — the manual version-bump GitHub Actions workflow was superseded by the release-please pipeline (see ZER0-015). Kept for ID stability and historical reference"
+    implemented: false
+    removed_in: "1.20.0"
+    superseded_by: "ZER0-015"
     version: "0.14.2"
     link: "/"
     docs: "/docs/development/version-bump/"
     tags: [github-actions, automation, versioning, ci-cd]
     date: 2025-12-07
+    provenance:
+      introduced_in: "0.14.2"
+      pr: null
+      commit: "1ba6994"
+      issue: null
     references:
       workflow: ".github/workflows/version-bump.yml"
       version: "lib/jekyll-theme-zer0/version.rb"
@@ -457,6 +587,13 @@ features:
     docs: "/docs/development/security/"
     tags: [security, codeql, scanning, ci-cd]
     date: 2025-11-15
+    provenance:
+      introduced_in: "0.10.0"
+      pr: null
+      commit: "5053589"
+      issue: null
+    tests:
+      - na: "Security scanning — .github/workflows/codeql.yml; no unit test applicable"
     references:
       workflow: ".github/workflows/codeql.yml"
     features:
@@ -478,26 +615,40 @@ features:
     docs: "/docs/customization/layouts/"
     tags: [layouts, templates, jekyll, bootstrap]
     date: 2025-01-27
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
+    tests:
+      - "test/visual/layouts.spec.js"
     references:
       layouts:
         - "_layouts/root.html"
         - "_layouts/default.html"
-        - "_layouts/journals.html"
         - "_layouts/home.html"
         - "_layouts/landing.html"
+        - "_layouts/article.html"
+        - "_layouts/news.html"
+        - "_layouts/section.html"
+        - "_layouts/note.html"
         - "_layouts/notebook.html"
-        - "_layouts/blog.html"
-        - "_layouts/category.html"
         - "_layouts/collection.html"
         - "_layouts/index.html"
         - "_layouts/sitemap-collection.html"
         - "_layouts/stats.html"
         - "_layouts/tag.html"
+        - "_layouts/author.html"
+        - "_layouts/authors.html"
+        - "_layouts/admin.html"
+        - "_layouts/search.html"
+        - "_layouts/setup.html"
+        - "_layouts/welcome.html"
       docs: ".github/instructions/layouts.instructions.md"
     layout_hierarchy:
       - "root.html (base HTML structure)"
       - "default.html (main content wrapper)"
-      - "journals.html (blog posts)"
+      - "article.html (blog posts)"
       - "notebook.html (Jupyter notebooks)"
       - "landing.html (homepage)"
   
@@ -510,6 +661,13 @@ features:
     docs: "/docs/customization/includes/"
     tags: [includes, components, modular, jekyll]
     date: 2025-01-27
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
+    tests:
+      - "test/visual/component-showcase.spec.js"
     references:
       includes:
         - "_includes/core/"
@@ -540,10 +698,17 @@ features:
     docs: "/docs/features/theme-version/"
     tags: [plugin, version, jekyll, metadata]
     date: 2025-11-20
+    provenance:
+      introduced_in: "0.11.0"
+      pr: null
+      commit: "fbc767b"
+      issue: null
+    tests:
+      - "test/test_plugins.rb"
     references:
       plugin: "_plugins/theme_version.rb"
       include: "_includes/components/theme-info.html"
-      docs: "docs/THEME_VERSION_IMPLEMENTATION.md"
+      docs: "docs/features/theme-version.md"
     features:
       - "Gem specification parsing"
       - "Remote theme support"
@@ -564,6 +729,13 @@ features:
     docs: "/privacy-policy/"
     tags: [legal, privacy, gdpr, ccpa, compliance]
     date: 2025-12-11
+    provenance:
+      introduced_in: "0.15.0"
+      pr: null
+      commit: "1bd9a2c"
+      issue: null
+    tests:
+      - "test/test_quality.sh"
     references:
       page: "pages/privacy-policy.md"
     features:
@@ -582,6 +754,13 @@ features:
     docs: "/terms-of-service/"
     tags: [legal, terms, compliance]
     date: 2025-12-11
+    provenance:
+      introduced_in: "0.15.0"
+      pr: null
+      commit: "1bd9a2c"
+      issue: null
+    tests:
+      - "test/test_quality.sh"
     references:
       page: "pages/terms-of-service.md"
   
@@ -598,8 +777,17 @@ features:
     docs: "/docs/development/prd/"
     tags: [documentation, prd, product, planning]
     date: 2025-11-25
+    provenance:
+      introduced_in: "0.15.0"
+      pr: null
+      commit: "b7ad237"
+      issue: null
+    tests:
+      - na: "Documentation artifact (docs/architecture/prd-*.md); no runtime test"
     references:
-      doc: "docs/PRD.md"
+      doc:
+        - "docs/architecture/prd-requirements.md"
+        - "docs/architecture/prd-roadmap.md"
     features:
       - "Vision statement"
       - "Target personas"
@@ -616,6 +804,13 @@ features:
     docs: "/docs/development/documentation/"
     tags: [documentation, mdx, markdown, workflow]
     date: 2025-11-16
+    provenance:
+      introduced_in: "0.15.0"
+      pr: null
+      commit: "ceb4962"
+      issue: null
+    tests:
+      - na: "Documentation architecture; no runtime test"
     references:
       technical: "docs/"
       public: "pages/_docs/"
@@ -640,6 +835,13 @@ features:
     docs: "/docs/development/dependency-updates/"
     tags: [automation, dependencies, github-actions, maintenance]
     date: 2025-12-07
+    provenance:
+      introduced_in: "0.14.2"
+      pr: null
+      commit: "3b55b60"
+      issue: null
+    tests:
+      - na: "Automation — .github/workflows/update-dependencies.yml; no unit test"
     references:
       workflow: ".github/workflows/update-dependencies.yml"
     features:
@@ -657,6 +859,13 @@ features:
     docs: "/docs/development/ci-cd/"
     tags: [ci-cd, testing, automation, github-actions]
     date: 2025-11-15
+    provenance:
+      introduced_in: "0.10.0"
+      pr: null
+      commit: "1ba6994"
+      issue: null
+    tests:
+      - na: "CI pipeline — .github/workflows/ci.yml; self-validating"
     references:
       workflow: ".github/workflows/ci.yml"
     features:
@@ -679,6 +888,13 @@ features:
     docs: "/docs/development/scripts/"
     tags: [scripts, automation, bash, utilities]
     date: 2025-11-15
+    provenance:
+      introduced_in: "0.5.0"
+      pr: null
+      commit: "32755cd"
+      issue: null
+    tests:
+      - na: "Shell tooling — exercised by scripts/bin/test (lib + theme + integration)"
     references:
       scripts:
         - "scripts/build"
@@ -710,6 +926,13 @@ features:
     docs: "/docs/features/back-to-top/"
     tags: [ui, navigation, scroll, accessibility]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
+    tests:
+      - "test/visual/feature-coverage.spec.js"
     references:
       scripts:
         - "assets/js/back-to-top.js"
@@ -728,6 +951,13 @@ features:
     docs: "/docs/features/code-copy/"
     tags: [ui, code, clipboard, developer-experience]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
+    tests:
+      - "test/visual/feature-coverage.spec.js"
     references:
       scripts:
         - "assets/js/code-copy.js"
@@ -740,21 +970,34 @@ features:
 
   - id: ZER0-031
     title: "Dark/Light Mode Toggle"
-    description: "Theme color mode switcher supporting light, dark, and auto modes with system preference detection and localStorage persistence"
+    description: "Theme color mode switcher supporting light, dark, and auto modes with system preference detection, localStorage persistence, and a server+client color_mode_default config knob with FOUC prevention"
     implemented: true
-    version: "0.1.0"
+    version: "1.23.0"
     link: "/"
     docs: "/docs/features/color-modes/"
     tags: [ui, theme, dark-mode, accessibility]
-    date: 2025-01-01
+    date: 2026-06-30
+    provenance:
+      introduced_in: "1.23.0"
+      pr: 253
+      commit: "55bee97"
+      issue: null
+    tests:
+      - "test/visual/color-mode-default.spec.js"
     references:
       scripts:
-        - "assets/js/color-modes.js"
+        - "assets/js/modules/theme/appearance.js"
+      includes:
+        - "_includes/core/color-mode-init.html"
+      layouts:
+        - "_layouts/root.html"
+      config: "_config.yml"
     features:
       - "Light, dark, and auto modes"
       - "System preference detection"
       - "LocalStorage persistence"
       - "Bootstrap 5.3 data-bs-theme integration"
+      - "color_mode_default config knob with FOUC prevention"
       - "Smooth theme transitions"
 
   - id: ZER0-032
@@ -766,6 +1009,14 @@ features:
     docs: "/docs/features/site-search/"
     tags: [search, navigation, modal, keyboard]
     date: 2026-04-10
+    provenance:
+      introduced_in: "1.5.1"
+      pr: 86
+      commit: "21eb458"
+      issue: null
+    tests:
+      - "test/visual/search.spec.js"
+      - "test/visual/search-degradation.spec.js"
     references:
       scripts:
         - "assets/js/search-modal.js"
@@ -791,6 +1042,13 @@ features:
     docs: "/docs/features/auto-hide-nav/"
     tags: [ui, navigation, scroll, mobile]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
+    tests:
+      - "test/visual/feature-coverage.spec.js"
     references:
       scripts:
         - "assets/js/auto-hide-nav.js"
@@ -809,6 +1067,13 @@ features:
     docs: "/docs/features/particles-background/"
     tags: [ui, animation, visual, landing]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
+    tests:
+      - "test/visual/backgrounds.spec.js"
     references:
       scripts:
         - "assets/js/particles.js"
@@ -827,16 +1092,28 @@ features:
 
   - id: ZER0-035
     title: "Giscus Comments"
-    description: "GitHub Discussions-powered comment system with theme-aware styling and reaction support"
+    description: "GitHub Discussions-powered comment system with theme-aware styling, reaction support, and Claude-Code-driven conversation building"
     implemented: true
     version: "0.1.0"
     link: "/"
     docs: "/docs/features/giscus-comments/"
-    tags: [comments, github, discussions, engagement]
+    tags: [comments, github, discussions, engagement, claude-code]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
+    tests:
+      - "test/visual/giscus-comments.spec.js"
     references:
       includes:
         - "_includes/content/giscus.html"
+      layouts: ["_layouts/article.html", "_layouts/note.html", "_layouts/notebook.html"]
+      config: "_config.yml"
+      script: "scripts/bin/giscus-discussions"
+      skill: ".github/skills/giscus-conversation/SKILL.md"
+      workflow: ".github/workflows/giscus-digest.yml"
       docs:
         - "pages/_docs/features/giscus-comments.md"
     features:
@@ -845,6 +1122,8 @@ features:
       - "Pathname-based mapping"
       - "Reaction support"
       - "Top-positioned input"
+      - "Consistent site.giscus.enabled gating across layouts"
+      - "Claude Code conversation building (read/draft/seed/post via gh)"
 
   - id: ZER0-036
     title: "MathJax Math Rendering"
@@ -855,6 +1134,13 @@ features:
     docs: "/docs/features/mathjax-math/"
     tags: [math, latex, equations, documentation]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "31f827e"
+      issue: null
+    tests:
+      - "test/visual/feature-coverage.spec.js"
     references:
       docs:
         - "pages/_docs/features/mathjax-math.md"
@@ -873,6 +1159,14 @@ features:
     docs: "/docs/features/toc/"
     tags: [navigation, toc, headings, documentation]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
+    tests:
+      - "test/visual/feature-coverage.spec.js"
+      - "test/visual/ui-refresh.spec.js"
     references:
       includes:
         - "_includes/content/toc.html"
@@ -896,6 +1190,13 @@ features:
     docs: "/docs/analytics/google-analytics/"
     tags: [analytics, google, tracking, metrics]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
+    tests:
+      - "test/test_quality.sh"
     references:
       includes:
         - "_includes/analytics/google-analytics.html"
@@ -914,6 +1215,13 @@ features:
     docs: "/docs/analytics/google-tag-manager/"
     tags: [analytics, gtm, tracking, marketing]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
+    tests:
+      - "test/test_quality.sh"
     references:
       includes:
         - "_includes/analytics/google-tag-manager-head.html"
@@ -937,6 +1245,14 @@ features:
     docs: "/docs/features/breadcrumbs/"
     tags: [navigation, breadcrumbs, seo, accessibility]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
+    tests:
+      - "test/visual/layouts.spec.js"
+      - "test/visual/authors-breadcrumb-degradation.spec.js"
     references:
       includes:
         - "_includes/navigation/breadcrumbs.html"
@@ -960,6 +1276,13 @@ features:
     docs: "/docs/seo/meta-tags/"
     tags: [seo, meta, opengraph, twitter-cards]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
+    tests:
+      - "test/test_quality.sh"
     references:
       includes:
         - "_includes/content/seo.html"
@@ -980,12 +1303,23 @@ features:
     docs: "/docs/seo/sitemap/"
     tags: [seo, sitemap, search, indexing]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "a8426a5"
+      issue: null
+    tests:
+      - "test/test_core.sh"
+      - "test/test_deployment.sh"
     references:
       includes:
         - "_includes/content/sitemap.html"
+      plugin: "_plugins/search_and_sitemap_generator.rb"
+      layouts:
+        - "_layouts/sitemap-collection.html"
+        - "_layouts/search.html"
       files:
         - "search.json"
-        - "sitemap.xml"
     features:
       - "XML sitemap for search engines"
       - "JSON search index for site search"
@@ -1005,6 +1339,14 @@ features:
     docs: "/docs/features/statistics-dashboard/"
     tags: [dashboard, statistics, metrics, visualization]
     date: 2025-01-01
+    provenance:
+      introduced_in: "0.1.0"
+      pr: null
+      commit: "8986a02"
+      issue: null
+    tests:
+      - "test/test_plugins.rb"
+      - "test/test_core.sh"
     references:
       layouts:
         - "_layouts/stats.html"
@@ -1034,6 +1376,15 @@ features:
     docs: "/docs/obsidian/"
     tags: [obsidian, content, wiki-links, knowledge-base, jekyll]
     date: 2026-03-12
+    provenance:
+      introduced_in: "1.3.0"
+      pr: 73
+      commit: "31e042c"
+      issue: null
+    tests:
+      - "test/test_obsidian.sh"
+      - "test/test_ruby_converter.rb"
+      - "test/test_resolver.js"
     references:
       plugin: "_plugins/obsidian_links.rb"
       scripts:
@@ -1044,10 +1395,6 @@ features:
         - "_includes/content/backlinks.html"
         - "_includes/obsidian/full-graph.html"
       docs: "pages/_docs/obsidian/"
-      tests:
-        - "test/test_obsidian.sh"
-        - "test/test_ruby_converter.rb"
-        - "test/test_resolver.js"
       instructions: ".github/instructions/obsidian.instructions.md"
     features:
       - "[[Wiki-links]] resolution"
@@ -1067,6 +1414,14 @@ features:
     docs: "/docs/obsidian/graph/"
     tags: [obsidian, graph, visualization, navigation]
     date: 2026-03-25
+    provenance:
+      introduced_in: "1.4.0"
+      pr: 77
+      commit: "d39dfa9"
+      issue: null
+    tests:
+      - "test/test_obsidian.sh"
+      - "test/visual/obsidian-callouts.spec.js"
     references:
       includes:
         - "_includes/obsidian/full-graph.html"
@@ -1087,6 +1442,13 @@ features:
     docs: "/docs/quickstart/bare-minimum/"
     tags: [setup, quickstart, remote-theme, github-pages]
     date: 2026-02-25
+    provenance:
+      introduced_in: "1.2.0"
+      pr: null
+      commit: "4bd3e36"
+      issue: null
+    tests:
+      - "test/test_site_generation.sh"
     references:
       includes:
         - "_includes/components/info-section.html"
@@ -1102,6 +1464,14 @@ features:
     docs: "/docs/features/smart-404/"
     tags: [setup, 404, configuration, ux]
     date: 2026-01-30
+    provenance:
+      introduced_in: "0.22.18"
+      pr: 58
+      commit: "02d0295"
+      issue: null
+    tests:
+      - "test/test_core.sh"
+      - "test/visual/layouts.spec.js"
     references:
       page: "404.html"
       docs: "pages/_docs/features/smart-404.md"
@@ -1115,6 +1485,13 @@ features:
     docs: "/docs/development/frontmatter-validation/"
     tags: [validation, frontmatter, content, ci-cd, automation]
     date: 2026-01-25
+    provenance:
+      introduced_in: "0.22.17"
+      pr: 34
+      commit: "10ba722"
+      issue: null
+    tests:
+      - na: "Build-time validation — scripts/bin/validate; CI fast-checks job"
     references:
       script: "scripts/bin/validate"
       config: ".github/config/frontmatter_schema.yml"
@@ -1129,6 +1506,14 @@ features:
     docs: "/docs/features/dynamic-navigation/"
     tags: [navigation, ui, zero-config, jekyll]
     date: 2026-01-15
+    provenance:
+      introduced_in: "0.22.15"
+      pr: null
+      commit: "a8426a5"
+      issue: null
+    tests:
+      - "test/visual/ui-refresh.spec.js"
+      - "test/visual/navbar-responsive.spec.js"
     references:
       includes:
         - "_includes/navigation/navbar.html"
@@ -1142,6 +1527,14 @@ features:
     docs: "/docs/features/admin-dashboard/"
     tags: [admin, dashboard, ui, configuration]
     date: 2025-12-28
+    provenance:
+      introduced_in: "0.21.4"
+      pr: 57
+      commit: "27550da"
+      issue: null
+    tests:
+      - "test/visual/admin-layout.spec.js"
+      - "test/visual/admin-nav.spec.js"
     references:
       layout: "_layouts/admin.html"
       includes:
@@ -1157,6 +1550,13 @@ features:
     docs: "/docs/development/agents/"
     tags: [ai, agents, documentation, copilot, cursor]
     date: 2026-01-20
+    provenance:
+      introduced_in: "0.22.16"
+      pr: 70
+      commit: "bc41b0d"
+      issue: null
+    tests:
+      - na: "Documentation entry point (AGENTS.md); no runtime test"
     references:
       file: "AGENTS.md"
       instructions_index: ".github/instructions/README.md"
@@ -1170,6 +1570,13 @@ features:
     docs: "/roadmap/"
     tags: [roadmap, documentation, mermaid, automation]
     date: 2026-02-08
+    provenance:
+      introduced_in: "0.22.21"
+      pr: 71
+      commit: "7f00e4d"
+      issue: null
+    tests:
+      - "test/test_core.sh"
     references:
       data: "_data/roadmap.yml"
       page: "pages/roadmap.md"
@@ -1184,6 +1591,13 @@ features:
     docs: "/docs/features/vendored-assets/"
     tags: [bootstrap, assets, vendor, github-pages, performance]
     date: 2025-12-20
+    provenance:
+      introduced_in: "0.21.3"
+      pr: 39
+      commit: "3c96620"
+      issue: null
+    tests:
+      - "test/test_core.sh"
     references:
       script: "scripts/vendor-install.sh"
       manifest: "vendor-manifest.json"
@@ -1200,6 +1614,13 @@ features:
     docs: "/docs/seo/aieo/"
     tags: [seo, aieo, structured-data, faq, glossary, ai]
     date: 2025-12-30
+    provenance:
+      introduced_in: "0.21.5"
+      pr: 38
+      commit: "9a27ad7"
+      issue: null
+    tests:
+      - "test/test_quality.sh"
     references:
       includes:
         - "_includes/content/seo.html"
@@ -1218,6 +1639,14 @@ features:
     docs: "/docs/features/navigation-architecture/"
     tags: [navigation, javascript, es6, ui, performance]
     date: 2025-12-12
+    provenance:
+      introduced_in: "0.18.0"
+      pr: null
+      commit: "5533f34"
+      issue: null
+    tests:
+      - "test/visual/navbar-responsive.spec.js"
+      - "test/visual/ui-refresh.spec.js"
     references:
       scripts:
         - "assets/js/modules/"
@@ -1234,19 +1663,33 @@ features:
     docs: "/docs/development/devcontainer/"
     tags: [devcontainer, codespaces, development, docker]
     date: 2025-12-10
+    provenance:
+      introduced_in: "0.17.0"
+      pr: null
+      commit: "0ef86c2"
+      issue: null
+    tests:
+      - na: "DevContainer config (.devcontainer/devcontainer.json); validated by Codespaces, no unit test"
     references:
       config:
         - ".devcontainer/devcontainer.json"
 
   - id: ZER0-057
     title: "Local Docker Publishing Pipeline"
-    description: "Publish the gem from a clean Docker container locally, mirroring the CI release path for reproducible releases without polluting the host Ruby environment"
-    implemented: true
+    description: "Removed in v1.8.1 — the dedicated docker-compose.publish.yml / docker-compose.prod.yml local-publish path was retired; gem publishing now runs through the release-please CI pipeline (see ZER0-015) and scripts/bin/release. Kept for ID stability"
+    implemented: false
+    removed_in: "1.8.1"
+    superseded_by: "ZER0-015"
     version: "0.21.1"
     link: "/"
     docs: "/docs/development/docker-publishing/"
     tags: [docker, release, ci-cd, gem, automation]
     date: 2025-12-22
+    provenance:
+      introduced_in: "0.21.1"
+      pr: null
+      commit: "32755cd"
+      issue: null
     references:
       compose:
         - "docker-compose.publish.yml"
@@ -1262,6 +1705,13 @@ features:
     docs: "/notes/"
     tags: [content, collections, notes, jekyll]
     date: 2025-12-15
+    provenance:
+      introduced_in: "0.20.0"
+      pr: null
+      commit: "06691f9"
+      issue: null
+    tests:
+      - "test/test_site_generation.sh"
     references:
       collection: "pages/_notes/"
       layouts:
@@ -1277,6 +1727,13 @@ features:
     docs: "/docs/obsidian/performance/"
     tags: [obsidian, performance, jekyll, optimization]
     date: 2026-04-30
+    provenance:
+      introduced_in: "1.6.0"
+      pr: 73
+      commit: "31e042c"
+      issue: null
+    tests:
+      - "test/test_obsidian.sh"
     references:
       plugin: "_plugins/obsidian_links.rb"
       includes:
@@ -1290,9 +1747,365 @@ features:
     docs: "/docs/features/ai-chat-assistant/"
     tags: [ai, chatbot, claude, github, proxy, accessibility]
     date: 2026-06-13
+    provenance:
+      introduced_in: "1.18.0"
+      pr: 33
+      commit: "341cc67"
+      issue: null
+    tests:
+      - "test/visual/ai-chat.spec.js"
     references:
       includes: ["_includes/components/ai-chat.html"]
       layouts: ["_layouts/root.html"]
       scripts: ["assets/js/ai-chat.js", "templates/deploy/chat-proxy/worker.js", "templates/deploy/chat-proxy/dev-proxy.mjs", "templates/deploy/chat-proxy/page-store.mjs"]
       config: "_config.yml"
       instructions: ".github/instructions/ai-chat.instructions.md"
+
+  # ============================================================================
+  # DISCOVERED FEATURES (v1.24+) — registry coverage reconciliation
+  # ============================================================================
+
+  - id: ZER0-061
+    title: "Author Profiles System"
+    description: "Auto-generated author profile pages and a searchable author directory from _data/authors.yml — each author gets a /authors/:key/ hub with bio, stats, and a filterable grid of their content across collections"
+    implemented: true
+    version: "1.20.0"
+    link: "/authors/"
+    docs: "/authors/"
+    tags: [content, authors, profiles, jekyll]
+    date: 2026-06-22
+    provenance:
+      introduced_in: "1.20.0"
+      pr: 193
+      commit: "a6db3042"
+      issue: null
+    tests:
+      - "test/visual/authors-breadcrumb-degradation.spec.js"
+    references:
+      plugin: "_plugins/author_pages_generator.rb"
+      layouts:
+        - "_layouts/author.html"
+        - "_layouts/authors.html"
+      scripts:
+        - "assets/js/author-profile.js"
+      data: "_data/authors.yml"
+
+  - id: ZER0-062
+    title: "News Homepage Layout"
+    description: "Magazine-style news homepage layout with configurable section styles (magazine, grid, list) and full-width content sections"
+    implemented: true
+    version: "0.1.5"
+    link: "/"
+    docs: "/docs/customization/layouts/"
+    tags: [layouts, news, homepage, content]
+    date: 2024-06-15
+    provenance:
+      introduced_in: "0.1.5"
+      pr: null
+      commit: "53132416"
+      issue: null
+    tests:
+      - "test/visual/layouts.spec.js"
+    references:
+      layout: "_layouts/news.html"
+
+  - id: ZER0-063
+    title: "Section Layout"
+    description: "News section layout with a collapsible sub-category sidebar, section styles, and a featured hero card for organizing posts by section"
+    implemented: true
+    version: "0.20.3"
+    link: "/"
+    docs: "/docs/customization/layouts/"
+    tags: [layouts, navigation, content]
+    date: 2026-02-01
+    provenance:
+      introduced_in: "0.20.3"
+      pr: null
+      commit: "06691f93"
+      issue: null
+    tests:
+      - "test/visual/section-sidebar-tags-gate.spec.js"
+      - "test/visual/layouts.spec.js"
+    references:
+      layout: "_layouts/section.html"
+
+  - id: ZER0-064
+    title: "Article Layout & Post Types"
+    description: "Article layout for blog posts with post-type variations (standard, featured, breaking, opinion, review, tutorial, listicle, interview) surfaced via a post-type badge"
+    implemented: true
+    version: "0.20.3"
+    link: "/"
+    docs: "/docs/customization/layouts/"
+    tags: [layouts, content, posts]
+    date: 2026-02-01
+    provenance:
+      introduced_in: "0.20.3"
+      pr: null
+      commit: "06691f93"
+      issue: null
+    tests:
+      - "test/visual/layouts.spec.js"
+    references:
+      layout: "_layouts/article.html"
+      include: "_includes/components/post-type-badge.html"
+
+  - id: ZER0-065
+    title: "Theme Skins & Background Customizer"
+    description: "Nine switchable theme skins with fffuel-style SVG backgrounds, a runtime customizer (skin + opacity), a palette generator, and a skin editor — all persisted to localStorage"
+    implemented: true
+    version: "0.22.10"
+    link: "/"
+    docs: "/docs/features/color-modes/"
+    tags: [ui, theme, skins, customization]
+    date: 2026-04-06
+    provenance:
+      introduced_in: "0.22.10"
+      pr: 57
+      commit: "27550dac"
+      issue: null
+    tests:
+      - "test/visual/skins.spec.js"
+      - "test/visual/backgrounds.spec.js"
+      - "test/visual/theme-colors.spec.js"
+    references:
+      scripts:
+        - "assets/js/background-customizer.js"
+        - "assets/js/palette-generator.js"
+        - "assets/js/skin-editor.js"
+        - "assets/js/theme-customizer.js"
+      includes:
+        - "_includes/components/background-customizer.html"
+        - "_includes/components/theme-preview-gallery.html"
+      styles:
+        - "_sass/theme/_backgrounds.scss"
+
+  - id: ZER0-066
+    title: "Nanobar Progress Bar"
+    description: "Config-driven page-loading progress bar (color, height, position, z-index, step timing) driven by site.nanobar and injected via a thin include"
+    implemented: true
+    version: "0.22.20"
+    link: "/"
+    docs: "/docs/features/"
+    tags: [ui, performance, loading]
+    date: 2026-04-19
+    provenance:
+      introduced_in: "0.22.20"
+      pr: 72
+      commit: "f5d5e974"
+      issue: null
+    tests:
+      - na: "Config-driven loading bar; presence verified in the Jekyll build (test/test_core.sh)"
+    references:
+      include: "_includes/components/nanobar.html"
+      scripts:
+        - "assets/js/nanobar.min.js"
+        - "assets/js/nanobar-init.js"
+      config: "_config.yml"
+      docs: "docs/features/nanobar-component.md"
+
+  - id: ZER0-067
+    title: "Setup Wizard"
+    description: "Multi-step in-browser wizard that assembles a complete _config.yml and lets you download or copy it, lowering first-run setup friction"
+    implemented: true
+    version: "0.22.7"
+    link: "/setup/"
+    docs: "/docs/quickstart/bare-minimum/"
+    tags: [setup, onboarding, configuration]
+    date: 2026-04-03
+    provenance:
+      introduced_in: "0.22.7"
+      pr: 51
+      commit: "a70ae8a5"
+      issue: null
+    tests:
+      - na: "Client-side config generator; exercised manually and via the build"
+    references:
+      include: "_includes/setup/wizard.html"
+      scripts:
+        - "assets/js/setup-wizard.js"
+      layout: "_layouts/setup.html"
+
+  - id: ZER0-068
+    title: "Table CSV Copy"
+    description: "One-click CSV copy control injected onto content tables, scoped to article/content wrappers (skips admin and sitemap tables)"
+    implemented: true
+    version: "1.8.0"
+    link: "/"
+    docs: "/docs/features/"
+    tags: [ui, content, clipboard, developer-experience]
+    date: 2026-05-25
+    provenance:
+      introduced_in: "1.8.0"
+      pr: 108
+      commit: "f62849fd"
+      issue: null
+    tests:
+      - na: "Client-side table-export helper; no dedicated spec"
+    references:
+      scripts:
+        - "assets/js/table-copy.js"
+
+  - id: ZER0-069
+    title: "Social Share Actions"
+    description: "Helper that builds normalized social-share text and URLs (whitespace-collapsed, deduped, length-truncated) for sharing posts"
+    implemented: true
+    version: "1.14.0"
+    link: "/"
+    docs: "/docs/features/"
+    tags: [ui, social, content, engagement]
+    date: 2026-06-11
+    provenance:
+      introduced_in: "1.14.0"
+      pr: 99
+      commit: "89e21988"
+      issue: null
+    tests:
+      - na: "Share-text utility; pure string helper, no dedicated spec"
+    references:
+      scripts:
+        - "assets/js/share-actions.js"
+
+  - id: ZER0-070
+    title: "Monthly Archives Page"
+    description: "Date-grouped archive of all posts with anchor-linked month sections for chronological browsing"
+    implemented: true
+    version: "0.16.1"
+    link: "/archives/"
+    docs: "/archives/"
+    tags: [content, navigation, archive]
+    date: 2025-12-20
+    provenance:
+      introduced_in: "0.16.1"
+      pr: null
+      commit: "ac141b47"
+      issue: null
+    tests:
+      - na: "Content page; rendered and link-checked in the build"
+    references:
+      page: "pages/archives.md"
+
+  - id: ZER0-071
+    title: "Live Component Showcase"
+    description: "Interactive gallery of Bootstrap 5.3 and theme components (alerts, buttons, cards, accordions, tabs, …) for visual reference and design QA"
+    implemented: true
+    version: "0.22.12"
+    link: "/"
+    docs: "/docs/customization/includes/"
+    tags: [ui, documentation, components, bootstrap]
+    date: 2026-04-10
+    provenance:
+      introduced_in: "0.22.12"
+      pr: 54
+      commit: "7ba0f834"
+      issue: null
+    tests:
+      - "test/visual/component-showcase.spec.js"
+    references:
+      include: "_includes/components/component-showcase.html"
+
+  - id: ZER0-072
+    title: "AI Content Review Workflow"
+    description: "PR workflow that reviews changed Markdown for SEO and quality via a deterministic scorer plus a Claude Code editorial agent, with docs and front-matter validation"
+    implemented: true
+    version: "1.18.0"
+    link: "/"
+    docs: "/docs/"
+    tags: [ci-cd, ai, content, automation]
+    date: 2026-06-13
+    provenance:
+      introduced_in: "1.18.0"
+      pr: 153
+      commit: "e7c8e33c"
+      issue: null
+    tests:
+      - na: "CI workflow — .github/workflows/ai-content-review.yml; runs scripts/content-review.rb on PRs"
+    references:
+      workflow: ".github/workflows/ai-content-review.yml"
+      script: "scripts/content-review.rb"
+      agent: ".claude/agents/content-reviewer.md"
+      config: ".github/config/content_review.yml"
+
+  - id: ZER0-073
+    title: "Giscus Digest Workflow"
+    description: "Scheduled read-only workflow that surfaces new Giscus (GitHub Discussions) comments to maintainers as a job-summary digest"
+    implemented: true
+    version: "1.22.0"
+    link: "/"
+    docs: "/docs/features/giscus-comments/"
+    tags: [ci-cd, comments, community, automation]
+    date: 2026-06-26
+    provenance:
+      introduced_in: "1.22.0"
+      pr: 214
+      commit: "fef60a5c"
+      issue: null
+    tests:
+      - na: "Scheduled read-only CI digest — .github/workflows/giscus-digest.yml"
+    references:
+      workflow: ".github/workflows/giscus-digest.yml"
+      script: "scripts/bin/giscus-discussions"
+      skill: ".github/skills/giscus-conversation/SKILL.md"
+
+  - id: ZER0-074
+    title: "Visual Evidence Gate"
+    description: "CI gate that requires a regression test plus before/after evidence for any UI or behavioural PR (or an explicit opt-out label), enforcing the visual-evidence standard"
+    implemented: true
+    version: "1.20.2"
+    link: "/"
+    docs: "/docs/development/testing/"
+    tags: [ci-cd, testing, quality, automation]
+    date: 2026-06-25
+    provenance:
+      introduced_in: "1.20.2"
+      pr: 221
+      commit: "9a132651"
+      issue: null
+    tests:
+      - na: "CI gate — .github/workflows/evidence-gate.yml; self-validating on every PR"
+    references:
+      workflow: ".github/workflows/evidence-gate.yml"
+      skill: ".github/skills/visual-evidence/SKILL.md"
+      kit: "test/visual/evidence-kit.mjs"
+
+  - id: ZER0-075
+    title: "Autonomous Issue & CI Pipeline"
+    description: "Issue-triage to resolve-to-PR autopilot plus a CI self-repair loop and auto-merge, extending the continuous-evolution system (off by default)"
+    implemented: true
+    version: "1.23.0"
+    link: "/"
+    docs: "/docs/development/ci-cd/"
+    tags: [ci-cd, automation, ai, issues]
+    date: 2026-06-29
+    provenance:
+      introduced_in: "1.23.0"
+      pr: 243
+      commit: "229e0765"
+      issue: null
+    tests:
+      - na: "CI automation — .github/workflows/{issue-autopilot,ci-self-repair,auto-merge}.yml; off by default"
+    references:
+      workflows:
+        - ".github/workflows/issue-autopilot.yml"
+        - ".github/workflows/ci-self-repair.yml"
+        - ".github/workflows/auto-merge.yml"
+        - ".github/workflows/issue-pr-auto-merge.yml"
+      doc: "docs/systems/continuous-evolution.md"
+
+  - id: ZER0-076
+    title: "Secret Scanning Workflow"
+    description: "CI workflow that scans pushes and pull requests for leaked secrets, complementing CodeQL static analysis"
+    implemented: true
+    version: "1.21.0"
+    link: "/"
+    docs: "/docs/development/security/"
+    tags: [ci-cd, security, automation]
+    date: 2026-06-26
+    provenance:
+      introduced_in: "1.21.0"
+      pr: 223
+      commit: "5329ffb5"
+      issue: null
+    tests:
+      - na: "CI security scan — .github/workflows/secret-scan.yml"
+    references:
+      workflow: ".github/workflows/secret-scan.yml"

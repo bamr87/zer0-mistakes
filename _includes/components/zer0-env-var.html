@@ -57,6 +57,12 @@
         document.querySelector('#envTable tbody').appendChild(row);
     });
 
+    // Escape user-entered text before it is interpolated into innerHTML, so a
+    // key/value containing markup cannot inject script (DOM XSS).
+    const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => (
+        { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    ));
+
     document.getElementById('submit').addEventListener('click', function() {
         const rows = document.querySelectorAll('#envTable tbody tr');
         let codeBlockText = '';
@@ -64,7 +70,7 @@
             const key = row.querySelector('td:nth-child(1) input').value;
             const value = row.querySelector('td:nth-child(2) input').value;
             sessionStorage.setItem(key, value);
-            codeBlockText += `<span class="nb">export </span><span class="nv">${key}</span><span class="o">=</span>${value}\n`;
+            codeBlockText += `<span class="nb">export </span><span class="nv">${escapeHtml(key)}</span><span class="o">=</span>${escapeHtml(value)}\n`;
         });
         document.getElementById('codeBlock').innerHTML = codeBlockText;
 

@@ -19,6 +19,11 @@
   - compact  (bool)   : Compact mode — hides sub-features list (optional, default: false)
   - features_limit (int) : Max sub-features shown in the list (optional, default: 5)
 
+  Feature fields surfaced (from _data/features.yml): title, description,
+  features[], references (when show_refs), id, version, tags, docs, link, and
+  provenance (provenance.pr / provenance.commit / provenance.issue → GitHub
+  links built from site.github_user + site.repository_name).
+
   Usage:
     {% assign f = site.data.features.features | where: "id", "ZER0-001" | first %}
     {% include components/feature-card.html feature=f style="primary" icon="bi-bootstrap" icon_color="text-primary" %}
@@ -37,7 +42,7 @@
       <i class="bi {{ icon }} {{ icon_color }} me-2"></i>
       {{ f.title }}
     </h5>
-    <p class="card-text">{{ f.description }}</p>
+    <p class="card-text">{{ f.description | escape }}</p>
 
     {% unless compact %}
       {% if f.features %}
@@ -78,6 +83,16 @@
       <span class="badge bg-light text-dark">{{ tag }}</span>
       {% endfor %}
     </div>
+
+    {% if f.provenance %}
+    {% assign gh = "https://github.com/" | append: site.github_user | append: "/" | append: site.repository_name %}
+    <div class="mt-2 small text-muted feature-provenance">
+      <i class="bi bi-clock-history me-1" aria-hidden="true"></i>
+      {% if f.provenance.pr %}<a href="{{ gh }}/pull/{{ f.provenance.pr }}" class="text-decoration-none me-2">PR #{{ f.provenance.pr }}</a>{% endif %}
+      {% if f.provenance.commit %}<a href="{{ gh }}/commit/{{ f.provenance.commit }}" class="text-decoration-none me-2"><code>{{ f.provenance.commit }}</code></a>{% endif %}
+      {% if f.provenance.issue %}<a href="{{ gh }}/issues/{{ f.provenance.issue }}" class="text-decoration-none me-2">#{{ f.provenance.issue }}</a>{% endif %}
+    </div>
+    {% endif %}
   </div>
   {% if f.docs %}
   <div class="card-footer">

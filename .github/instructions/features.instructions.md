@@ -33,6 +33,14 @@ The feature registry is the single source of truth for what the theme does. It p
   docs: "/docs/path/"          # REQUIRED. Public docs URL (prefer `/docs/...` over GitHub URLs).
   tags: [tag1, tag2]           # REQUIRED. Lowercase, kebab-case. Used by features.md filters.
   date: YYYY-MM-DD             # REQUIRED. Date the feature was added or last materially changed.
+  provenance:                  # REQUIRED (active features). How the feature reached main.
+    introduced_in: "X.Y.Z"     #   REQUIRED. Gem version that introduced it (mirrors `version`).
+    pr: 123                    #   REQUIRED key — integer PR number, or null for pre-PR-era commits.
+    commit: "abc1234"          #   REQUIRED. 7–40-char introducing commit hash.
+    issue: 456                 #   REQUIRED key — integer issue number, or null.
+  tests:                       # REQUIRED (active features). ≥1 entry; each is either:
+    - "test/visual/foo.spec.js"  #   a real test path that exists, OR
+    - na: "CI workflow X; no unit test applicable"  #   a justified exemption.
   references:                  # OPTIONAL but strongly recommended. File paths from repo root.
     layouts: [...]
     includes: [...]
@@ -48,6 +56,22 @@ The feature registry is the single source of truth for what the theme does. It p
 - **`tags`** — Reuse existing tags before inventing new ones (`grep -hoE "[a-z0-9-]+" _data/features.yml | sort -u` for the current set). Filters in `pages/features.md` rely on stable tag names (`ai`, `docker`, `jekyll`, `bootstrap`, `privacy`, `analytics`, `navigation`, `accessibility`, `ui`, `content`, `jupyter`, `mermaid`, `testing`, `ci-cd`, `automation`, `release`, …).
 - **`docs`** — Prefer site-relative paths (`/docs/features/foo/`) so links survive repo moves. External GitHub URLs are allowed only when no public doc exists.
 - **`references`** — Use real paths that exist at commit time. Stale references break trust in the registry.
+- **`provenance`** — Resolve from git: `git log --follow --diff-filter=A -- <primary reference file>` gives the introducing commit; a `(#N)` suffix in its subject is the `pr`; cross-check the matching `## [version]` block in `CHANGELOG.md` for the `issue`. Pre-PR-era features use `pr: null` with the commit hash. Rendered on `/features/` as a `PR · commit` link.
+- **`tests`** — Every active feature names the test(s) that guard it. Use a real path (a `test/visual/*.spec.js`, `test/test_*.sh`, or `test/*.rb|js`) when one exercises the feature; use `- na: "<reason>"` only for doc/CI/process features, and the reason MUST name the governing workflow or doc. Removed features (`implemented: false`) need neither `provenance` nor `tests`.
+
+## 🛡 Validation Gate (enforced)
+
+`scripts/validate-features.rb` is the canonical checker, run by both
+`scripts/bin/validate` (preflight) and the `features` test suite
+(`test/test_features.sh`, registered in `test_runner.sh` + CI). It **hard-fails**
+on: master/`_data` drift, schema violations, stale reference paths, a removed
+feature missing `removed_in`, and a missing/malformed `provenance` **or**
+`tests` block on an active feature. Run it locally before committing a registry
+change:
+
+```bash
+ruby scripts/validate-features.rb        # or: ./test/test_runner.sh --suites features
+```
 
 ## 🔄 Sync Contract (REQUIRED)
 
@@ -81,7 +105,7 @@ Add, modify, or flag (`implemented: false` + `removed_in:`) an entry **in the sa
 
 | Code change | Registry action |
 | --- | --- |
-| New layout, include, plugin, script, or workflow that ships user-visible behavior | Add a new `ZER0-NNN` entry |
+| New layout, include, plugin, script, or workflow that ships user-visible behavior | Add a new `ZER0-NNN` entry **with `provenance` + `tests`** in the same change |
 | Material change to an existing feature (new sub-capability, new dependency, new docs) | Bump `version`, refresh `date`, update `features:` / `references:` |
 | Renaming or moving referenced files | Update every affected `references:` block |
 | Removing a feature | Set `implemented: false`, add `removed_in: "X.Y.Z"`, keep the entry |
@@ -97,6 +121,8 @@ Documentation-only changes (typos, formatting in `pages/features.md` or `feature
 - [ ] Header `# Last Updated:` is today
 - [ ] `features/README.md` feature count matches `grep -c "^  - id: ZER0-" _data/features.yml`
 - [ ] All `references:` paths exist in the repo
+- [ ] Every active feature has a `provenance:` block and a `tests:` block
+- [ ] `ruby scripts/validate-features.rb` passes (the canonical gate)
 - [ ] Jekyll renders the showcase page without Liquid errors:
       `docker-compose exec -T jekyll bundle exec jekyll build --config '_config.yml,_config_dev.yml'`
 
