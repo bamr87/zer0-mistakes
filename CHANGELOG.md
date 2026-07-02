@@ -7,7 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Settings panel rebuilt** — the navbar Settings offcanvas (`#info-section`)
+  is reorganized from four overlapping tabs (Settings / Environment /
+  Developer / Background) into three with one purpose each, guarded by the
+  new `test/visual/settings-panel.spec.js` smoke suite
+  (evidence: [`test/visual/evidence/settings-panel/`](test/visual/evidence/settings-panel/README.md)
+  — 4 tabs → 3, duplicate color-mode controls 6 → 3, dead search box
+  removed, admin links 0 → 4):
+  - **Appearance** consolidates every look-and-feel control exactly once:
+    color mode (one-click segmented control replacing the two-click
+    dropdown), theme skin, background toggle + layer opacity with inline
+    values, and the primary-color picker — now mounted *inside* the tab
+    instead of appended below the tab content where it duplicated the
+    color-mode buttons under every tab.
+  - **Site** stacks the environment card (copyable page URL via a delegated
+    `data-zer0-copy` handler — inline `onclick` handlers removed),
+    quick links, deduplicated theme & build info, and Admin quick links.
+  - **Developer** keeps page location (rendered only where breadcrumbs
+    render — no more empty heading on the homepage), page metadata, and
+    source shortcuts (dead never-initialized tooltip attributes dropped).
+  - The dead Settings-tab search box (an empty `#searchbox` no JS ever
+    bound to) is removed; the search modal remains the one search surface.
+  - Mobile tabs keep their text labels (their accessible names) at every
+    width and drop the decorative icons instead of the reverse.
+
 ### Fixed
+
+- **Settings panel admin links never rendered** — the
+  `_plugins/admin_page_urls.rb` lookup powering them never ran: the
+  `github-pages` gem forces safe mode and randomizes `plugins_dir`, so local
+  `_plugins` are disabled on GitHub Pages, in CI, and in the Docker dev
+  server alike. The plugin is replaced with a pure-Liquid scan in the cached
+  `_includes/components/admin-links.html` (jekyll-include-cache is
+  whitelisted), so the Admin section now renders its existence-gated links
+  (0 → 4 on the demo site).
 
 - **Mobile responsive audit** — four defects found by driving every key route
   and component under phone emulation (320–414px), each guarded by the new
