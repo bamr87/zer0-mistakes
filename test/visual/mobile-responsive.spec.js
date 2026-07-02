@@ -87,6 +87,15 @@ test.describe('Mobile — cookie consent banner sits above the FABs', () => {
     const banner = page.locator('#cookieConsent');
     if ((await banner.count()) === 0) test.skip(true, 'Cookie consent disabled');
     await expect(banner).toBeVisible({ timeout: 10000 });
+    // The banner slides in (translateY(100%) → 0). toBeVisible passes before
+    // the transform settles, and hit-testing a mid-transition banner probes
+    // stale coordinates — wait for the entrance to finish.
+    await page.waitForFunction(() => {
+      const b = document.getElementById('cookieConsent');
+      if (!b || b.hidden || !b.classList.contains('cookie-banner-visible')) return false;
+      const t = getComputedStyle(b).transform;
+      return t === 'none' || t === 'matrix(1, 0, 0, 1, 0, 0)';
+    });
 
     const layers = await page.evaluate(() => {
       const z = (el) => (el ? parseInt(getComputedStyle(el).zIndex, 10) || 0 : null);
