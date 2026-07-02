@@ -26,6 +26,15 @@ img {
 // UI/UX ENHANCEMENTS - Modern, polished interactions
 // ==============================================================================
 
+// WCAG 2.5.8 target size: breadcrumb links render as bare ~19px text lines.
+// Block padding + matching negative margin grows the tap box past 24px
+// without shifting the visual baseline or the bar's height.
+.breadcrumbs .breadcrumb-item > a {
+  display: inline-block;
+  padding-block: 0.25rem;
+  margin-block: -0.25rem;
+}
+
 // Hero Section Enhancements
 // NOTE: Exclude .zer0-bg-hero so skin-specific gradients from _backgrounds.scss take precedence
 .bg-primary:not(.zer0-bg-hero) {

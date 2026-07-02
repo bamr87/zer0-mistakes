@@ -46,9 +46,20 @@
   }
 }
 
-// Expertise chips
+// "About the Author" card: the text column sits in a flex row next to the
+// avatar. Flexbox's default `min-width: auto` propagates the widest nowrap
+// child (a long expertise badge) as the column's minimum, blowing the card —
+// and with it the whole page — past the viewport on small phones (≤340px).
+.author-card .card-body .flex-grow-1 {
+  min-width: 0;
+}
+
+// Expertise chips — allow the label to wrap instead of forcing the card wide
+// (Bootstrap badges are white-space: nowrap by default).
 .author-expertise .badge {
   font-weight: 500;
+  white-space: normal;
+  text-align: start;
 }
 
 // Shared tagline styling (full "About the Author" card + profile hero)

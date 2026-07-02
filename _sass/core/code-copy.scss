@@ -197,6 +197,12 @@
 
 // Copy button — shared base
 .copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  // WCAG 2.5.8 target size: text metrics alone yield a ~22px-tall button;
+  // guarantee the 24px minimum, and a comfortable 32px on touch screens.
+  min-height: 1.5rem;
   flex-shrink: 0;
   color: var(--bs-light);
   opacity: 0.75;
@@ -228,6 +234,10 @@
     background: var(--zer0-color-success);
     border-color: transparent;
     opacity: 1;
+  }
+
+  @media (pointer: coarse) {
+    min-height: 2rem;
   }
 }
 

@@ -204,8 +204,8 @@
 // ----------------------------------------------------------------------------
 // ID selector (not the class) is REQUIRED for the fixed position to stick:
 // the FAB is a direct child of `.zer0-bg-body`, which matches the elevation
-// rule `.zer0-bg-body > *:not(.fixed-top):not(.offcanvas):not(.modal)` in
-// _sass/theme/_backgrounds.scss (specificity 0,4,0) and forces
+// rule `.zer0-bg-body > *:not(.fixed-top):not(.position-fixed):not(.offcanvas):not(.modal)`
+// in _sass/theme/_backgrounds.scss (specificity 0,5,0) and forces
 // `position: relative; z-index: 1` — dropping the FAB into page flow at the
 // bottom. An id (1,0,0) wins, mirroring `#aiChatToggle`. See ai-chat.html.
 #obsidianLocalGraphFab.obsidian-local-graph-fab {
