@@ -5,6 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- **Mobile responsive audit** — four defects found by driving every key route
+  and component under phone emulation (320–414px), each guarded by the new
+  `test/visual/mobile-responsive.spec.js` smoke suite
+  (evidence: [`test/visual/evidence/mobile-responsive/`](test/visual/evidence/mobile-responsive/README.md) —
+  author-card page overflow 19px → 0 on small phones; consent buttons 0
+  tap-blocked; all footer/copy tap targets ≥24px):
+  - **Author card**: a long nowrap expertise badge propagated through flexbox
+    `min-width: auto` and pushed the whole page past the viewport on ≤340px
+    phones, widening the layout viewport so the fixed navbar rendered "cut
+    off" and the page panned sideways.
+  - **Cookie consent banner**: the `.zer0-bg-body` child-elevation rule
+    flattened the banner (and the TOC FAB) to `z-index: 1`, letting the chat
+    and local-graph FABs paint over — and steal taps from — the banner's
+    Reject All / Accept All buttons on mobile. The rule now excludes
+    `.position-fixed`, restoring the `--zer0-layer-*` token order.
+  - **Footer tap targets**: text links (~19px) and icon-only social links
+    (~16px) now meet the WCAG 2.5.8 24px minimum via block padding and
+    minimum boxes — text size and visual design unchanged.
+  - **Code-copy buttons**: grown from ~22px to ≥24px tall (32px on
+    coarse/touch pointers).
+
+### Added
+
+- **Mobile test tier**: `test/visual/mobile-responsive.spec.js` runs the above
+  guards plus offcanvas-menu, search-modal, and settings-panel fit/tap checks
+  under real Pixel-class emulation in the `smoke` tier; `npm run test:mobile`
+  runs just this suite. New `dismissCookieConsent` fixture pre-seeds the
+  consent choice for tests that interact with lower-screen chrome.
+
 ## [1.24.0](https://github.com/bamr87/zer0-mistakes/compare/v1.23.0...v1.24.0) (2026-07-01)
 
 

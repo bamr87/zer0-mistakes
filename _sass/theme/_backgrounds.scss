@@ -109,8 +109,12 @@
 
   // Elevate children above the ::before / ::after pseudo-element backgrounds,
   // but exclude fixed-position, offcanvas, and modal elements whose
-  // positioning must not be overridden.
-  > *:not(.fixed-top):not(.offcanvas):not(.modal) { position: relative; z-index: 1; }
+  // positioning must not be overridden. `.position-fixed` matters as much as
+  // `.fixed-top`: without it this rule (specificity 0,4,0) flattens the
+  // cookie-consent banner and the TOC FAB to z-index 1, letting the chat and
+  // local-graph FABs paint over — and steal taps from — the banner's buttons
+  // on mobile (their `--zer0-layer-*` tokens exist precisely to prevent this).
+  > *:not(.fixed-top):not(.position-fixed):not(.offcanvas):not(.modal) { position: relative; z-index: 1; }
 }
 
 .zer0-bg-surface {

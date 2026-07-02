@@ -227,6 +227,22 @@ async function clearSkinStorage(page) {
 }
 
 /**
+ * Pre-seed the cookie-consent choice so the banner never opens.
+ * The banner stacks above offcanvas panels by design (--zer0-layer-cookie-banner
+ * 1095 > --zer0-layer-offcanvas 1045), so tests that interact with lower-screen
+ * chrome must dismiss it the way a returning visitor would. Call BEFORE goto().
+ * @param {import('@playwright/test').Page} page
+ */
+async function dismissCookieConsent(page) {
+  await page.addInitScript(() => {
+    localStorage.setItem('zer0-cookie-consent', JSON.stringify({
+      essential: true, analytics: false, marketing: false,
+      timestamp: Date.now(), version: '1.0',
+    }));
+  });
+}
+
+/**
  * Visit a URL and skip the test when the route is unavailable (404/5xx).
  * @param {import('@playwright/test').Page} page
  * @param {string} url
@@ -280,6 +296,7 @@ module.exports = {
   waitForJekyll,
   gotoBeforeScrollSpy,
   gotoOrSkip,
+  dismissCookieConsent,
   setSkin,
   collectConsoleErrors,
   assertNoConsoleErrors,

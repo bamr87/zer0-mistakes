@@ -127,6 +127,28 @@
     }
   }
 
+  // WCAG 2.5.8 target size: the dark block's text links render ~19px tall and
+  // the icon-only social links (below md) ~16px wide — under the 24px minimum.
+  // Block padding grows the tap target without changing the visual text size;
+  // icon links get an explicit minimum box. (`d-block` links — e.g. the
+  // truncated Latest Posts titles — keep their display but gain the padding.)
+  .footer-dark-block {
+    ul.list-unstyled li > a,
+    p > a {
+      display: inline-block;
+      padding-block: 0.25rem;
+    }
+
+    ul.list-inline li > a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
+      min-width: 1.75rem;
+      min-height: 1.75rem;
+    }
+  }
+
   .footer-post-link {
     max-width: 100%;
   }

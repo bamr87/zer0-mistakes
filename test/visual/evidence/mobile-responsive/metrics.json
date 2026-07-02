@@ -1,0 +1,127 @@
+{
+  "slug": "mobile-responsive",
+  "base": "http://localhost:4000",
+  "scenes": {
+    "authorCard": [
+      {
+        "state": "before",
+        "scrollWidth": 339,
+        "icb": 320,
+        "headerW": 339,
+        "cardRight": 296
+      },
+      {
+        "state": "after",
+        "scrollWidth": 320,
+        "icb": 320,
+        "headerW": 320,
+        "cardRight": 296
+      }
+    ],
+    "consentStacking": [
+      {
+        "state": "before",
+        "bannerZ": "1",
+        "blocked": [
+          {
+            "button": "Reject All",
+            "coveredBy": "bi bi-robot ai-chat-icon-open"
+          },
+          {
+            "button": "Accept All",
+            "coveredBy": "bi bi-diagram-3 fs-5"
+          }
+        ]
+      },
+      {
+        "state": "after",
+        "bannerZ": "1095",
+        "blocked": []
+      }
+    ],
+    "footerTapTargets": [
+      {
+        "state": "before",
+        "under24": 17,
+        "sample": [
+          {
+            "link": "amr@zer0-mistakes.",
+            "w": 199,
+            "h": 19
+          },
+          {
+            "link": "Home",
+            "w": 47,
+            "h": 19
+          },
+          {
+            "link": "About",
+            "w": 47,
+            "h": 19
+          },
+          {
+            "link": "Authors",
+            "w": 62,
+            "h": 19
+          },
+          {
+            "link": "Statistics",
+            "w": 73,
+            "h": 19
+          }
+        ]
+      },
+      {
+        "state": "after",
+        "under24": 0,
+        "sample": []
+      }
+    ],
+    "codeCopy_before": {
+      "w": 61,
+      "h": 22
+    },
+    "codeCopy_after": {
+      "w": 61,
+      "h": 32
+    }
+  },
+  "sweep": [
+    {
+      "width": 320,
+      "beforeOverflowPx": 19,
+      "afterOverflowPx": 0,
+      "worst": "div.flex-grow-1"
+    },
+    {
+      "width": 340,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "worst": null
+    },
+    {
+      "width": 360,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "worst": null
+    },
+    {
+      "width": 390,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "worst": null
+    },
+    {
+      "width": 414,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "worst": null
+    },
+    {
+      "width": 768,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "worst": null
+    }
+  ]
+}

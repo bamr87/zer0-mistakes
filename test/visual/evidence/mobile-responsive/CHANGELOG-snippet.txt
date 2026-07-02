@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/mobile-responsive/ -->
+  (evidence: [`test/visual/evidence/mobile-responsive/`](test/visual/evidence/mobile-responsive/README.md) — author-card page overflow → 0 on small phones; consent buttons 0 tap-blocked; all footer/copy tap targets ≥24px)
