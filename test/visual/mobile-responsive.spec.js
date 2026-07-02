@@ -168,6 +168,23 @@ test.describe('Mobile — tap targets meet the 24px minimum (WCAG 2.5.8)', () =>
     }
   });
 
+  test('breadcrumb links are at least 24px tall', async ({ page }) => {
+    await gotoOrSkip(page, '/docs/');
+    const crumbs = page.locator('.breadcrumbs .breadcrumb-item a');
+    if ((await crumbs.count()) === 0) test.skip(true, 'No breadcrumb links on this route');
+    const small = await page.evaluate(() => {
+      const out = [];
+      document.querySelectorAll('.breadcrumbs .breadcrumb-item a').forEach((a) => {
+        const r = a.getBoundingClientRect();
+        if (r.width > 0 && r.height > 0 && r.height < 24) {
+          out.push({ link: a.textContent.trim().slice(0, 20), h: Math.round(r.height) });
+        }
+      });
+      return out;
+    });
+    expect(small, 'breadcrumb links need ≥24px tap targets').toEqual([]);
+  });
+
   test('offcanvas menu items are at least 24px tall', async ({ page }) => {
     await dismissCookieConsent(page);
     await waitForJekyll(page, '/');
@@ -184,6 +201,90 @@ test.describe('Mobile — tap targets meet the 24px minimum (WCAG 2.5.8)', () =>
       return out;
     });
     expect(small).toEqual([]);
+  });
+});
+
+test.describe('Mobile — floating action buttons stack without overlap', () => {
+  // /docs/ renders both the mobile TOC FAB and (when enabled) the chat FAB,
+  // which historically claimed the same right-edge slot and overlapped.
+  const FAB_ROUTE = '/docs/';
+
+  test('ToC and chat FABs occupy distinct slots and both are tappable', async ({ page }) => {
+    await dismissCookieConsent(page);
+    await gotoOrSkip(page, FAB_ROUTE);
+
+    const toc = page.locator('#tocFab');
+    if ((await toc.count()) === 0) test.skip(true, 'No ToC FAB on this route');
+    await expect(toc).toBeVisible();
+
+    const boxes = await page.evaluate(() => {
+      const box = (id) => {
+        const el = document.getElementById(id);
+        if (!el || getComputedStyle(el).display === 'none') return null;
+        const r = el.getBoundingClientRect();
+        return { x: r.x, y: r.y, w: r.width, h: r.height };
+      };
+      return { toc: box('tocFab'), chat: box('aiChatToggle') };
+    });
+    if (!boxes.chat) test.skip(true, 'Chat FAB not enabled');
+
+    const overlap = boxes.toc.x < boxes.chat.x + boxes.chat.w &&
+      boxes.chat.x < boxes.toc.x + boxes.toc.w &&
+      boxes.toc.y < boxes.chat.y + boxes.chat.h &&
+      boxes.chat.y < boxes.toc.y + boxes.toc.h;
+    expect(overlap, `FABs must not overlap: ${JSON.stringify(boxes)}`).toBe(false);
+
+    // Both buttons receive taps at their centers.
+    const taps = await page.evaluate(() => {
+      const hit = (sel) => {
+        const el = document.querySelector(sel);
+        const r = el.getBoundingClientRect();
+        const at = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
+        return at === el || el.contains(at) || (at && at.contains(el));
+      };
+      return { toc: hit('#tocFab .bd-toc-toggle'), chat: hit('#aiChatToggle') };
+    });
+    expect(taps.toc, 'ToC FAB center tap must reach the button').toBe(true);
+    expect(taps.chat, 'chat FAB center tap must reach the button').toBe(true);
+  });
+
+  test('ToC FAB opens the mobile ToC panel', async ({ page }) => {
+    await dismissCookieConsent(page);
+    await gotoOrSkip(page, FAB_ROUTE);
+    const toggle = page.locator('#tocFab .bd-toc-toggle');
+    if ((await toggle.count()) === 0) test.skip(true, 'No ToC FAB on this route');
+    // The FAB's click handler is bound by the navigation module after window
+    // load — clicking before TocVisibility exists is a silent no-op.
+    await page.waitForFunction(() => window.zer0Navigation?.modules?.tocVisibility);
+    await toggle.click();
+    const panel = page.locator('#tocContents');
+    await expect(panel).toHaveClass(/show/, { timeout: 10000 });
+    // Wait for the slide-in transform to settle before measuring.
+    await page.waitForFunction(() => {
+      const p = document.getElementById('tocContents');
+      if (!p || !p.classList.contains('show')) return false;
+      const t = getComputedStyle(p).transform;
+      return t === 'none' || t === 'matrix(1, 0, 0, 1, 0, 0)';
+    });
+    const vw = await page.evaluate(() => document.documentElement.clientWidth);
+    const box = await panel.boundingBox();
+    expect(box.x).toBeGreaterThanOrEqual(-1);
+    expect(box.x + box.width, 'ToC panel must fit the viewport').toBeLessThanOrEqual(vw + 1);
+  });
+
+  test('opened chat panel stays within the viewport (short viewports included)', async ({ page }) => {
+    await dismissCookieConsent(page);
+    await page.setViewportSize({ width: 768, height: 667 });
+    await gotoOrSkip(page, FAB_ROUTE);
+    const chat = page.locator('#aiChatToggle');
+    if ((await chat.count()) === 0 || !(await chat.isVisible())) test.skip(true, 'Chat FAB not enabled');
+    await chat.click();
+    const panel = page.locator('#aiChatPanel');
+    await expect(panel).toHaveClass(/ai-chat-panel--open/, { timeout: 10000 });
+    const box = await panel.boundingBox();
+    expect(box.y, 'chat panel must not poke above the viewport').toBeGreaterThanOrEqual(0);
+    expect(box.x).toBeGreaterThanOrEqual(-1);
+    expect(box.x + box.width).toBeLessThanOrEqual(768 + 1);
   });
 });
 

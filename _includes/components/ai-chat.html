@@ -352,14 +352,35 @@
   @media (max-width: 576px) {
     #aiChatPanel {
       width: calc(100vw - 2rem);
-      right: 1rem;
-      bottom: 8rem;
+      right: var(--zer0-space-fab-offset, 1rem);
+      /* One gap above the toggle's slot (toggle is 3rem tall). */
+      bottom: calc(var(--zer0-space-fab-offset, 1rem) + var(--zer0-space-fab-size, 3.5rem) + var(--zer0-space-fab-gap, 0.75rem) + 3rem + var(--zer0-space-fab-gap, 0.75rem));
       max-height: 60vh;
     }
+  }
 
-    #aiChatToggle {
-      bottom: 4.5rem;
-      right: 1rem;
+  /* Below lg, pages with a sidebar/TOC render the mobile TOC FAB in this
+     same right-edge slot (offset + size + gap — see .bd-toc-fab in
+     _sass/layouts/_navbar-extras.scss). Step the chat toggle and panel one
+     slot higher there so the two buttons never overlap. */
+  @media (max-width: 991.98px) {
+    /* Cap the panel to the space between its anchored bottom (worst case:
+       the stepped-up slot below) and the fixed header — a 540px panel pokes
+       above short tablet/landscape viewports. */
+    #aiChatPanel {
+      max-height: min(60vh, calc(100vh
+        - var(--zer0-space-fab-offset, 1rem)
+        - 2 * (var(--zer0-space-fab-size, 3.5rem) + var(--zer0-space-fab-gap, 0.75rem))
+        - 3rem - var(--zer0-space-fab-gap, 0.75rem)
+        - 4rem));
+    }
+
+    body:has(#tocFab) #aiChatToggle {
+      bottom: calc(var(--zer0-space-fab-offset, 1rem) + 2 * (var(--zer0-space-fab-size, 3.5rem) + var(--zer0-space-fab-gap, 0.75rem)));
+    }
+
+    body:has(#tocFab) #aiChatPanel {
+      bottom: calc(var(--zer0-space-fab-offset, 1rem) + 2 * (var(--zer0-space-fab-size, 3.5rem) + var(--zer0-space-fab-gap, 0.75rem)) + 3rem + var(--zer0-space-fab-gap, 0.75rem));
     }
   }
 

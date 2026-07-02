@@ -210,6 +210,51 @@ async function phonePage(width, height = 800) {
 }
 
 // ---------------------------------------------------------------------------
+// Scene 4 — ToC / chat FAB stacking @ 375px (phone emulation)
+// ---------------------------------------------------------------------------
+{
+  const rows = [];
+  const states = [];
+  // The pre-fix chat toggle rule (@media ≤576px) parked it at bottom 4.5rem,
+  // inside the ToC FAB's slot.
+  const FAB_UNFIX = '#aiChatToggle { bottom: 4.5rem !important; }';
+  for (const [state, css] of [['before', FAB_UNFIX], ['after', null]]) {
+    const { ctx, page } = await phonePage(375, 667);
+    await page.addInitScript(() => localStorage.setItem('zer0-cookie-consent',
+      JSON.stringify({ essential: true, analytics: false, marketing: false, timestamp: Date.now(), version: '1.0' })));
+    await page.goto(BASE + '/docs/', { waitUntil: 'load' });
+    if (css) { await page.addStyleTag({ content: css }); await page.waitForTimeout(250); }
+    const m = await page.evaluate(() => {
+      const box = (id) => {
+        const el = document.getElementById(id);
+        if (!el || getComputedStyle(el).display === 'none') return null;
+        const r = el.getBoundingClientRect();
+        return { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height) };
+      };
+      const toc = box('tocFab'), chat = box('aiChatToggle');
+      const overlap = toc && chat && toc.x < chat.x + chat.w && chat.x < toc.x + toc.w &&
+        toc.y < chat.y + chat.h && chat.y < toc.y + toc.h;
+      return { toc, chat, overlap: !!overlap };
+    });
+    states.push({ state, ...m });
+    rows.push({
+      label: state === 'before'
+        ? `❌ BEFORE — chat toggle parked at bottom 4.5rem, inside the ToC FAB's slot: the two buttons overlap (ToC paints over chat)`
+        : `✅ AFTER — chat steps one slot higher on pages that render the ToC FAB: distinct slots, both fully tappable`,
+      img: await page.screenshot({ clip: { x: 205, y: 380, width: 170, height: 287 } }),
+      w: 340,
+    });
+    await ctx.close();
+  }
+  metrics.scenes.fabStacking = states;
+  await montage(browser, {
+    title: 'ToC + chat FABs — right-edge slot collision fixed',
+    note: 'Bottom-right corner at 375×667 on /docs/. Both floating buttons claimed the slot above back-to-top; the chat toggle (and its panel) now step one slot higher when the mobile ToC FAB is present.',
+    width: 800, rows,
+  }, `${outDir}/${next()}-toc-chat-fab-stack.png`);
+}
+
+// ---------------------------------------------------------------------------
 // Overflow sweep metric (desktop-measurement parity with the navbar evidence)
 // ---------------------------------------------------------------------------
 {

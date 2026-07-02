@@ -27,8 +27,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Footer tap targets**: text links (~19px) and icon-only social links
     (~16px) now meet the WCAG 2.5.8 24px minimum via block padding and
     minimum boxes — text size and visual design unchanged.
+  - **Breadcrumb tap targets**: breadcrumb links (~19px bare text) gain a
+    ≥24px tap box via block padding + matching negative margin, without
+    shifting the visual baseline.
   - **Code-copy buttons**: grown from ~22px to ≥24px tall (32px on
     coarse/touch pointers).
+  - **ToC / chat FAB collision**: on mobile, the table-of-contents FAB and
+    the AI-chat toggle both claimed the right-edge slot above back-to-top
+    and overlapped (ToC painting over the chat button). The chat toggle and
+    its panel now step one slot higher on pages that render the ToC FAB,
+    and the chat panel is capped to the viewport so it can't poke above
+    short tablet/landscape screens.
 
 ### Added
 

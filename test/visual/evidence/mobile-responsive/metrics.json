@@ -24,8 +24,8 @@
         "bannerZ": "1",
         "blocked": [
           {
-            "button": "Reject All",
-            "coveredBy": "bi bi-robot ai-chat-icon-open"
+            "button": "Manage Cookies",
+            "coveredBy": "aiChatToggle"
           },
           {
             "button": "Accept All",
@@ -84,7 +84,41 @@
     "codeCopy_after": {
       "w": 61,
       "h": 32
-    }
+    },
+    "fabStacking": [
+      {
+        "state": "before",
+        "toc": {
+          "x": 303,
+          "y": 527,
+          "w": 56,
+          "h": 56
+        },
+        "chat": {
+          "x": 311,
+          "y": 547,
+          "w": 48,
+          "h": 48
+        },
+        "overlap": true
+      },
+      {
+        "state": "after",
+        "toc": {
+          "x": 303,
+          "y": 527,
+          "w": 56,
+          "h": 56
+        },
+        "chat": {
+          "x": 311,
+          "y": 467,
+          "w": 48,
+          "h": 48
+        },
+        "overlap": false
+      }
+    ]
   },
   "sweep": [
     {
