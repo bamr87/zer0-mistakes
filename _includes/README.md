@@ -39,12 +39,13 @@ Analytics and tracking integrations:
 
 Reusable UI components and widgets:
 
-- `searchbar.html` - Search functionality
+- `searchbar.html` - Deprecated search stub (superseded by `search-modal.html`)
 - `powered-by.html` - "Powered by" credits display
 - `quick-index.html` - Quick page index
 - `dev-shortcuts.html` - Developer shortcuts
-- `info-section.html` - Settings/info modal
-- `halfmoon.html` - Dark mode toggle
+- `info-section.html` - Settings offcanvas (Appearance / Site / Developer tabs)
+- `admin-links.html` - Cached admin quick links for the settings offcanvas
+- `halfmoon.html` - Light/dark/auto color-mode segmented control
 - `zer0-env-var.html` - Environment variable configuration
 - `svg.html` - SVG icon definitions
 - `js-cdn.html` - CDN JavaScript libraries
@@ -81,7 +82,7 @@ When including files in layouts or other templates, use the full path:
 ```liquid
 {% include core/head.html %}
 {% include navigation/sidebar-left.html %}
-{% include components/searchbar.html %}
+{% include components/search-modal.html %}
 {% include analytics/google-analytics.html %}
 ```
 

@@ -84,7 +84,7 @@ _includes/
 | `components/post-card.html` | Blog post card |
 | `components/preview-image.html` | Preview image handler |
 | `components/search-modal.html` | Search modal |
-| `components/searchbar.html` | Search input |
+| `components/searchbar.html` | Deprecated Algolia-style search stub (use `search-modal.html`) |
 | `components/theme-info.html` | Theme version modal |
 
 ### Post Card Example

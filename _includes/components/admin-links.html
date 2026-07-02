@@ -1,0 +1,62 @@
+{%- comment -%}
+  Component:   admin-links
+  Path:        _includes/components/admin-links.html
+  Purpose:     "Admin" section of the settings offcanvas — quick links to the
+               built-in admin pages, each rendered only when the target page
+               exists in the build (prevents 404s on bare-minimum /
+               remote-theme sites that haven't created the admin pages).
+  Params:      none — site-scoped only. Include with {% include_cached %} so
+               the URL scan below runs once per build, not once per page.
+  Depends on:  site.pages, the `about` collection, Bootstrap list-group.
+  Notes:       Pure Liquid on purpose: local _plugins never load under the
+               github-pages gem (it forces safe mode and randomizes
+               plugins_dir), so a plugin-computed lookup is dead on GitHub
+               Pages and in the Docker dev server. Keep page.* out of this
+               file — it would poison the include cache.
+{%- endcomment -%}
+
+{%- assign _page_urls = site.pages | map: "url" | join: "|" -%}
+{%- assign _about_urls = "" -%}
+{%- if site.about -%}
+  {%- assign _about_urls = site.about | map: "url" | join: "|" -%}
+{%- endif -%}
+{%- capture _admin_urls -%}|{{ _page_urls }}|{{ _about_urls }}|{%- endcapture -%}
+
+{%- assign _cfg_page = false -%}
+{%- assign _theme_page = false -%}
+{%- assign _nav_page = false -%}
+{%- assign _env_page = false -%}
+{%- if _admin_urls contains "|/about/config/|" -%}{% assign _cfg_page = true %}{%- endif -%}
+{%- if _admin_urls contains "|/about/settings/theme/|" -%}{% assign _theme_page = true %}{%- endif -%}
+{%- if _admin_urls contains "|/about/settings/navigation/|" -%}{% assign _nav_page = true %}{%- endif -%}
+{%- if _admin_urls contains "|/about/settings/environment/|" -%}{% assign _env_page = true %}{%- endif -%}
+
+{% if _cfg_page or _theme_page or _nav_page or _env_page %}
+<div class="mb-3">
+  <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
+    <i class="bi bi-speedometer2 me-1" aria-hidden="true"></i>Admin
+  </h6>
+  <div class="list-group list-group-flush small">
+    {% if _cfg_page %}
+    <a href="{{ '/about/config/' | relative_url }}" class="list-group-item list-group-item-action d-flex align-items-center px-0">
+      <i class="bi bi-gear me-2 text-body-secondary" aria-hidden="true"></i>Configuration
+    </a>
+    {% endif %}
+    {% if _theme_page %}
+    <a href="{{ '/about/settings/theme/' | relative_url }}" class="list-group-item list-group-item-action d-flex align-items-center px-0">
+      <i class="bi bi-palette me-2 text-body-secondary" aria-hidden="true"></i>Theme Customizer
+    </a>
+    {% endif %}
+    {% if _nav_page %}
+    <a href="{{ '/about/settings/navigation/' | relative_url }}" class="list-group-item list-group-item-action d-flex align-items-center px-0">
+      <i class="bi bi-signpost-2 me-2 text-body-secondary" aria-hidden="true"></i>Navigation Editor
+    </a>
+    {% endif %}
+    {% if _env_page %}
+    <a href="{{ '/about/settings/environment/' | relative_url }}" class="list-group-item list-group-item-action d-flex align-items-center px-0">
+      <i class="bi bi-hdd-network me-2 text-body-secondary" aria-hidden="true"></i>Environment Dashboard
+    </a>
+    {% endif %}
+  </div>
+</div>
+{% endif %}

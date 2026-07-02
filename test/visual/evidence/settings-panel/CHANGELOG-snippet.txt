@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/settings-panel/ -->
+  (evidence: [`test/visual/evidence/settings-panel/`](test/visual/evidence/settings-panel/README.md) — 4 tabs → 3, duplicate color-mode controls 6 → 3, dead search box removed, admin links 0 → 4)

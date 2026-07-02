@@ -734,16 +734,15 @@ The marketing-facing surface of the theme: the data-driven landing layout (hero,
 
 ### Info section / Settings offcanvas (components/info-section.html)
 
-- **Purpose:** A unified right-side settings offcanvas with tabs for Settings, Environment, Developer, and Background — bundling search, theme toggle, build info, env switcher, breadcrumbs, dev shortcuts, page metadata, and background customization.
-- **Capabilities:** Bootstrap offcanvas + nav-tabs with four panes; environment tab shows a Prod/Dev badge from `is_production`; collapsible "Theme & Build Info"; admin quick-links that render only when the target admin pages exist in the build (via `site.data.admin_page_urls` from a plugin); page-metadata table; embeds `searchbar`, `halfmoon`, `theme-info`, `env-switcher`, `breadcrumbs`, `dev-shortcuts`, `background-settings`.
+- **Purpose:** A unified right-side settings offcanvas with three tabs — Appearance (color mode, theme skin, backgrounds, primary color), Site (environment, theme & build info, admin links) and Developer (page location, page metadata, source shortcuts).
+- **Capabilities:** Bootstrap offcanvas + nav-tabs with three panes; Site tab shows a Prod/Dev badge from `is_production`; admin quick-links render only when the target admin pages exist in the build (pure-Liquid scan in `components/admin-links.html` under `include_cached` — local `_plugins` never load under the github-pages gem, so a plugin-computed lookup would be dead); page-metadata table; delegated copy-to-clipboard for URL fields (`data-zer0-copy`/`data-zer0-copy-target`); embeds `halfmoon`, `background-settings`, `env-switcher`, `theme-info`, `admin-links`, `breadcrumbs`, `dev-shortcuts`; hosts the appearance.js primary-color picker in `#zer0AppearanceSlot`.
 - **Source:**
-  - SCSS: — (Bootstrap offcanvas/tabs/table/badge utilities; table hover from `_ui-enhancements.scss`)
-  - Markup: `_includes/components/info-section.html` (+ `env-detect`, `env-switcher`, `theme-info`, `halfmoon`, `dev-shortcuts`, `searchbar`, `background-settings`, `breadcrumbs`)
-  - JS: Bootstrap bundle (offcanvas/tab/collapse)
-  - Plugin/data: `_plugins/admin_page_urls.rb` → `site.data.admin_page_urls`
-- **API surface:** ids `#info-section`, `#infoTabs`, `#settings-pane`/`#environment-pane`/`#developer-pane`/`#background-pane`, `#themeInfoCollapse`; classes `.offcanvas-end`, `.nav-tabs`, `.tab-pane`, `.list-group-flush`, `.table-sm.table-hover`; data-attributes `data-bs-toggle="tab|collapse|offcanvas"`, `data-bs-target`
-- **Tests:** No automated tests target the info-section offcanvas (no spec opens it or asserts its tabs/admin-link gating).
-- **Gaps / improvement ideas:** Entirely untested despite rich conditional logic (Prod/Dev badge, existence-gated admin links). No test that the offcanvas opens, that tabs switch, or that admin links only appear when pages exist. Accessibility of the tab roving-tabindex is unverified.
+  - SCSS: `_sass/core/_navbar.scss` (tab underline styles + compact xs tabs)
+  - Markup: `_includes/components/info-section.html` (+ `env-detect`, `env-switcher`, `theme-info`, `halfmoon`, `admin-links`, `dev-shortcuts`, `background-settings`, `breadcrumbs`)
+  - JS: Bootstrap bundle (offcanvas/tab), inline delegated copy handler, `assets/js/modules/theme/appearance.js` (slot mount)
+- **API surface:** ids `#info-section`, `#infoTabs`, `#appearance-pane`/`#site-pane`/`#developer-pane`, `#zer0AppearanceSlot`; classes `.offcanvas-end`, `.nav-tabs`, `.tab-pane`, `.list-group-flush`, `.table-sm.table-hover`; data-attributes `data-bs-toggle="tab|offcanvas"`, `data-bs-target`, `data-zer0-copy`, `data-zer0-copy-target`
+- **Tests:** `test/visual/settings-panel.spec.js` (smoke) — tab wiring, one-of-each appearance controls, color-mode flips `data-bs-theme`, admin links resolve 200, breadcrumb gating, no horizontal scroll at 320px. Evidence: `test/visual/evidence/settings-panel/`.
+- **Gaps / improvement ideas:** Tab roving-tabindex accessibility is asserted only indirectly (Bootstrap's implementation). The copy buttons rely on `navigator.clipboard` (silently no-op on insecure origins other than localhost).
 
 ### Bootstrap component polish (UI enhancements)
 
@@ -831,11 +830,11 @@ The theme's appearance is a four-layer system: a `--zer0-*` design-token base (a
 - **Capabilities:** `--bd-*` accent tokens (violet/purple/accent/toc/sidebar/callout/pre-bg) differ per light vs dark; wizard mode overrides body bg/color to blue + retones dropdowns and `.btn-secondary` using Sass color math; halfmoon toggle persists `localStorage["theme"]`, honors `prefers-color-scheme` for auto, updates active icon + `aria-pressed` + `aria-label`; Mermaid treats `wizard` like `dark`.
 - **Source:**
   - SCSS: `_sass/theme/_color-modes.scss` (barrel), `_css-variables.scss` (`--bd-*` light/dark), `_wizard-mode.scss`
-  - Markup: `_includes/components/halfmoon.html` (light/dark/auto dropdown), `_includes/components/mermaid.html` (wizard→dark)
-  - JS: `assets/js/halfmoon.js`, `assets/js/modules/theme/appearance.js` (its own light/dark/auto button group)
-- **API surface:** attributes `data-bs-theme="light|dark|wizard"`, `data-bs-theme-value`; localStorage `theme`; classes `.bd-theme-dropdown`/`.bd-theme-menu`; ids `#bd-theme`, `#bd-theme-text`; CSS vars `--bd-{purple,violet,accent,violet-rgb,accent-rgb,pink-rgb,teal-rgb,violet-bg,toc-color,sidebar-link-bg,callout-link,callout-code-color,pre-bg}`, plus `--bs-body-*`/`--bs-dropdown-*`/`--bs-btn-*` under wizard
-- **Tests:** No dedicated mode-toggle spec. Indirect: `skins.spec.js` "skin restores after navigation" and the dark/contrast snapshots exercise dark surfaces; `theme-preview.js` reports resolved mode. No test asserts halfmoon click sets `data-bs-theme`, persists `localStorage["theme"]`, or that wizard mode renders.
-- **Gaps / improvement ideas:** Wizard mode is defined in SCSS and read by Mermaid but is **not selectable from any UI** (halfmoon offers only light/dark/auto) — either expose it or document it as config-only. Two independent color-mode UIs (halfmoon dropdown vs appearance.js button group) both write `localStorage["theme"]` and can desync visually. No a11y/behavioral test for the toggle. `--bd-callout-link` is an RGB triin light/dark but consumed inconsistently.
+  - Markup: `_includes/components/halfmoon.html` (light/dark/auto segmented control), `_includes/components/mermaid.html` (wizard→dark)
+  - JS: `assets/js/halfmoon.js`, `assets/js/modules/theme/appearance.js` (renders its own light/dark/auto group only on explicit `[data-appearance-panel-host]` mounts; in the settings panel it renders the primary-color picker only)
+- **API surface:** attributes `data-bs-theme="light|dark|wizard"`, `data-bs-theme-value`; localStorage `theme`; class `.bd-theme-switch`; CSS vars `--bd-{purple,violet,accent,violet-rgb,accent-rgb,pink-rgb,teal-rgb,violet-bg,toc-color,sidebar-link-bg,callout-link,callout-code-color,pre-bg}`, plus `--bs-body-*`/`--bs-dropdown-*`/`--bs-btn-*` under wizard
+- **Tests:** `test/visual/settings-panel.spec.js` asserts clicking light/dark buttons flips `data-bs-theme` and syncs `.active`/`aria-pressed`; `skins.spec.js` and the dark/contrast snapshots exercise dark surfaces.
+- **Gaps / improvement ideas:** Wizard mode is defined in SCSS and read by Mermaid but is **not selectable from any UI** (halfmoon offers only light/dark/auto) — either expose it or document it as config-only. `--bd-callout-link` is an RGB triple in light/dark but consumed inconsistently.
 
 ### Named Skins (the 9 `data-theme-skin` palettes)
 
@@ -1553,14 +1552,14 @@ Floating/embedded widgets and third-party integrations layered onto the theme: t
 
 ### Halfmoon Theme Switcher
 
-- **Purpose:** Light/dark/auto color-mode toggler (Bootstrap dropdown) that persists the choice and applies `data-bs-theme`, adapted from Bootstrap's docs color-mode toggler.
-- **Capabilities:** Reads/writes `localStorage('theme')`; `auto` follows `prefers-color-scheme` and live-updates on system change when not explicitly set; sets `data-bs-theme` on `<html>`; `showActiveTheme()` syncs the active icon, `aria-pressed`, and the toggle's `aria-label`; applies preferred theme before paint to avoid flash.
+- **Purpose:** Light/dark/auto color-mode toggler (segmented `btn-group`) that persists the choice and applies `data-bs-theme`, adapted from Bootstrap's docs color-mode toggler.
+- **Capabilities:** Reads/writes `localStorage('theme')`; `auto` follows `prefers-color-scheme` and live-updates on system change when not explicitly set; sets `data-bs-theme` on `<html>`; `showActiveTheme()` syncs `.active`/`aria-pressed` across **every** instance on the page (the control renders in both the settings offcanvas and `theme-controls-bar.html`) and still updates the legacy `#bd-theme` dropdown affordances when that markup is present; applies preferred theme before paint to avoid flash. The include carries no ids, so multiple instances are valid HTML; a `class` param (e.g. `w-100`) sizes it per context.
 - **Source:**
-  - Markup: `_includes/components/halfmoon.html` (dropdown; included by `info-section.html`, `theme-controls-bar.html`)
+  - Markup: `_includes/components/halfmoon.html` (segmented control; included by `info-section.html`, `theme-controls-bar.html`)
   - JS: `assets/js/halfmoon.js` (loaded in `_includes/core/head.html:42`)
-- **API surface:** IDs `#bd-theme`, `#bd-theme-text`; classes `.bd-theme-dropdown`, `.bd-theme-menu`, `.theme-icon-active`; data-attribute `data-bs-theme-value` (`light`/`dark`/`auto`); attribute set `data-bs-theme`; storage key `theme`; SVG sprite refs `#sun-fill`/`#moon-stars-fill`/`#circle-half`/`#check2`
-- **Tests:** No dedicated switcher test. `test/visual/styling.spec.js` asserts `--bs-primary`/`--zer0-color-primary` resolve (theme tokens load) but not the toggle. Theme-color/skin specs (`theme-colors.spec.js`, `skins.spec.js`) exercise color modes but not this dropdown.
-- **Gaps / improvement ideas:** No coverage that clicking `light`/`dark`/`auto` flips `data-bs-theme`, persists, and updates `aria-pressed`/icon. The static markup hard-codes `dark` as the active item (`.active`, `aria-pressed="true"`) — if the stored/preferred theme is light, there is a brief mismatch until `showActiveTheme()` runs. `keyboard.js`/mermaid treat a `wizard` theme value as dark, but this switcher only offers light/dark/auto — document the `wizard` mode's origin.
+- **API surface:** class `.bd-theme-switch`; data-attribute `data-bs-theme-value` (`light`/`dark`/`auto`); attribute set `data-bs-theme`; storage key `theme`; SVG sprite refs `#sun-fill`/`#moon-stars-fill`/`#circle-half`; legacy-supported ids `#bd-theme`/`#bd-theme-text` + `.theme-icon-active` (consumer-overridden dropdown markup keeps working)
+- **Tests:** `test/visual/settings-panel.spec.js` — clicking dark/light flips `data-bs-theme` and updates `.active`/`aria-pressed`. Theme-color/skin specs (`theme-colors.spec.js`, `skins.spec.js`) exercise color modes.
+- **Gaps / improvement ideas:** The static markup ships all buttons inactive — active state appears when `showActiveTheme()` runs on `DOMContentLoaded` (brief unmarked state, no wrong-marked state). `keyboard.js`/mermaid treat a `wizard` theme value as dark, but this switcher only offers light/dark/auto — document the `wizard` mode's origin.
 
 ### Misc Widgets (powered-by, component-showcase, js-cdn, svg)
 

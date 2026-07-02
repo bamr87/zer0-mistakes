@@ -4,7 +4,6 @@
 # test_plugins.rb — Standalone unit tests for the previously-uncovered
 # Jekyll plugins (T-011):
 #
-#   _plugins/admin_page_urls.rb              (pre_render hook)
 #   _plugins/content_statistics_generator.rb (after_init hook helpers)
 #   _plugins/preview_image_generator.rb      (config/path/index logic)
 #
@@ -58,7 +57,6 @@ module Liquid
   end
 end
 
-require_relative '../_plugins/admin_page_urls'
 require_relative '../_plugins/content_statistics_generator'
 require_relative '../_plugins/preview_image_generator'
 require_relative '../_plugins/theme_version'
@@ -71,34 +69,6 @@ FakeSite = Struct.new(:pages, :data, :config, :source, :theme, :collections) do
   end
 end
 FakeDoc = Struct.new(:data, :site, :relative_path, :basename_without_ext)
-
-# ---------------------------------------------------------------------------
-class AdminPageUrlsTest < Minitest::Test
-  def fire(pages)
-    site = FakeSite.new(pages, {}, {}, nil, nil, nil)
-    Jekyll::Hooks.fire(:site, :pre_render, site)
-    site.data['admin_page_urls']
-  end
-
-  def test_collects_sorted_pipe_delimited_admin_urls
-    urls = fire([
-      FakePage.new('.html', '/about/settings/theme/'),
-      FakePage.new('.html', '/about/config/'),
-      FakePage.new('.html', '/docs/intro/')
-    ])
-    assert_equal '|/about/config/|/about/settings/theme/|', urls
-  end
-
-  def test_excludes_non_html_outputs
-    urls = fire([FakePage.new('.json', '/about/feed.json'),
-                 FakePage.new('.html', '/about/config/')])
-    assert_equal '|/about/config/|', urls
-  end
-
-  def test_empty_when_no_admin_pages
-    assert_equal '', fire([FakePage.new('.html', '/docs/intro/')])
-  end
-end
 
 # ---------------------------------------------------------------------------
 class ContentStatisticsGeneratorTest < Minitest::Test

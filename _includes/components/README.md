@@ -87,7 +87,8 @@ If a component needs a token that doesn't exist yet, propose it in `_sass/tokens
 | Component                | Purpose                                              |
 |--------------------------|------------------------------------------------------|
 | `author-eeat.html`       | E-E-A-T author bio with Schema.org markup.           |
-| `info-section.html`      | Settings offcanvas with theme/appearance controls.    |
+| `admin-links.html`       | Cached admin quick links (settings offcanvas Site tab). |
+| `info-section.html`      | Settings offcanvas — Appearance / Site / Developer.   |
 | `js-cdn.html`            | Body-end script bundle.                               |
 | `search-modal.html`      | Global search modal.                                  |
 

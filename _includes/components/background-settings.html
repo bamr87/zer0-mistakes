@@ -2,16 +2,19 @@
   ===================================================================
   BACKGROUND SETTINGS — fffuel-style background controls (tab content)
   ===================================================================
-  
+
   File: background-settings.html
   Path: _includes/components/background-settings.html
-  Purpose: Background skin selector and opacity controls, rendered
-           inside the Settings offcanvas Background tab.
-  
+  Purpose: Theme-skin selector and SVG-background controls, rendered
+           inside the Settings offcanvas Appearance tab.
+
   Dependencies:
     - assets/js/background-customizer.js (zer0Bg API)
     - _sass/theme/_backgrounds.scss (CSS custom properties)
     - Bootstrap 5 form components
+
+  Section headings match the h6 pattern used by the parent
+  info-section.html so the Appearance tab reads as one surface.
   ===================================================================
 -->
 
@@ -21,9 +24,9 @@
 <!-- Skin selector -->
 <div class="mb-4">
   <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
-    <i class="bi bi-palette2 me-1"></i>Theme Skin
+    <i class="bi bi-palette2 me-1" aria-hidden="true"></i>Theme Skin
   </h6>
-  <div class="d-flex flex-wrap gap-2" id="zer0SkinButtons">
+  <div class="d-flex flex-wrap gap-2" id="zer0SkinButtons" role="group" aria-label="Theme skin">
     {% for skin in skins %}
     <button class="btn btn-sm btn-outline-primary{% if skin == current_skin %} active{% endif %}"
             data-skin="{{ skin }}"
@@ -34,51 +37,48 @@
   </div>
 </div>
 
-<!-- Background toggle -->
+<!-- SVG background toggle + layer opacity -->
 <div class="mb-4">
   <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
-    <i class="bi bi-image me-1"></i>SVG Backgrounds
+    <i class="bi bi-image me-1" aria-hidden="true"></i>Background
   </h6>
-  <div class="d-flex align-items-center justify-content-between p-3 bg-body-tertiary rounded">
-    <label class="form-check-label" for="zer0BgToggle">Enable SVG backgrounds</label>
+
+  <div class="d-flex align-items-center justify-content-between p-3 bg-body-tertiary rounded mb-3">
+    <label class="form-check-label" for="zer0BgToggle">SVG backgrounds</label>
     <div class="form-check form-switch mb-0">
       <input class="form-check-input" type="checkbox" id="zer0BgToggle" checked>
     </div>
   </div>
-</div>
-
-<!-- Opacity sliders -->
-<div class="mb-4">
-  <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
-    <i class="bi bi-sliders2 me-1"></i>Layer Opacity
-  </h6>
 
   <div class="mb-3">
-    <label class="form-label small" for="zer0GradientOpacity">Gradient opacity</label>
+    <label class="form-label small d-flex justify-content-between mb-1" for="zer0GradientOpacity">
+      <span>Gradient opacity</span>
+      <span class="text-body-secondary" id="zer0GradientOpacityVal">0.6</span>
+    </label>
     <input type="range" class="form-range" id="zer0GradientOpacity"
            min="0" max="1" step="0.05" value="0.6">
-    <small class="text-body-secondary"><span id="zer0GradientOpacityVal">0.6</span></small>
   </div>
 
   <div class="mb-3">
-    <label class="form-label small" for="zer0TextureOpacity">Texture opacity</label>
+    <label class="form-label small d-flex justify-content-between mb-1" for="zer0TextureOpacity">
+      <span>Texture opacity</span>
+      <span class="text-body-secondary" id="zer0TextureOpacityVal">0.04</span>
+    </label>
     <input type="range" class="form-range" id="zer0TextureOpacity"
            min="0" max="0.2" step="0.005" value="0.04">
-    <small class="text-body-secondary"><span id="zer0TextureOpacityVal">0.04</span></small>
   </div>
 
   <div class="mb-3">
-    <label class="form-label small" for="zer0PatternOpacity">Pattern opacity</label>
+    <label class="form-label small d-flex justify-content-between mb-1" for="zer0PatternOpacity">
+      <span>Pattern opacity</span>
+      <span class="text-body-secondary" id="zer0PatternOpacityVal">0.08</span>
+    </label>
     <input type="range" class="form-range" id="zer0PatternOpacity"
            min="0" max="0.3" step="0.01" value="0.08">
-    <small class="text-body-secondary"><span id="zer0PatternOpacityVal">0.08</span></small>
   </div>
-</div>
 
-<!-- Reset -->
-<div>
-  <button class="btn btn-sm btn-outline-danger" id="zer0BgReset" type="button">
-    <i class="bi bi-arrow-counterclockwise me-1"></i>Reset to defaults
+  <button class="btn btn-sm btn-outline-secondary" id="zer0BgReset" type="button">
+    <i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>Reset background
   </button>
 </div>
 
@@ -119,15 +119,13 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("zer0BgReset").addEventListener("click", function () {
     zer0Bg.setSkin("{{ current_skin }}");
     zer0Bg.toggle(true);
-    zer0Bg.setOpacity("gradient", 0.6);
-    zer0Bg.setOpacity("texture", 0.04);
-    zer0Bg.setOpacity("pattern", 0.08);
-    document.getElementById("zer0GradientOpacity").value = 0.6;
-    document.getElementById("zer0TextureOpacity").value = 0.04;
-    document.getElementById("zer0PatternOpacity").value = 0.08;
-    document.getElementById("zer0GradientOpacityVal").textContent = "0.6";
-    document.getElementById("zer0TextureOpacityVal").textContent = "0.04";
-    document.getElementById("zer0PatternOpacityVal").textContent = "0.08";
+    var defaults = { zer0GradientOpacity: "0.6", zer0TextureOpacity: "0.04", zer0PatternOpacity: "0.08" };
+    var layers = { zer0GradientOpacity: "gradient", zer0TextureOpacity: "texture", zer0PatternOpacity: "pattern" };
+    Object.keys(defaults).forEach(function (id) {
+      zer0Bg.setOpacity(layers[id], defaults[id]);
+      document.getElementById(id).value = defaults[id];
+      document.getElementById(id + "Val").textContent = defaults[id];
+    });
     toggle.checked = true;
     document.querySelectorAll("#zer0SkinButtons .btn").forEach(function (b) { b.classList.remove("active"); });
     var active = document.querySelector('#zer0SkinButtons [data-skin="{{ current_skin }}"]');

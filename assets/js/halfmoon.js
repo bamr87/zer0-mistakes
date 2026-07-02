@@ -30,36 +30,37 @@
   setTheme(getPreferredTheme())
 
   const showActiveTheme = (theme, focus = false) => {
-    const themeSwitcher = document.querySelector('#bd-theme')
-
-    if (!themeSwitcher) {
+    const activeButtons = document.querySelectorAll(`[data-bs-theme-value="${theme}"]`)
+    if (!activeButtons.length) {
       return
     }
 
-    const themeSwitcherText = document.querySelector('#bd-theme-text')
-    const activeThemeIcon = document.querySelector('.theme-icon-active use')
-    const btnToActive = document.querySelector(`[data-bs-theme-value="${theme}"]`)
-    const themeIconUse = btnToActive?.querySelector('svg use')
-    if (!btnToActive || !themeIconUse || !activeThemeIcon) {
-      return
-    }
-
-    const svgOfActiveBtn = themeIconUse.getAttribute('href')
-
+    // The control can render more than once per page (settings offcanvas +
+    // theme-controls-bar), so sync active state across every instance.
     document.querySelectorAll('[data-bs-theme-value]').forEach(element => {
       element.classList.remove('active')
       element.setAttribute('aria-pressed', 'false')
     })
+    activeButtons.forEach(element => {
+      element.classList.add('active')
+      element.setAttribute('aria-pressed', 'true')
+    })
 
-    btnToActive.classList.add('active')
-    btnToActive.setAttribute('aria-pressed', 'true')
-    activeThemeIcon.setAttribute('href', svgOfActiveBtn)
-    const baseLabel = themeSwitcherText?.textContent?.trim() || 'Toggle theme'
-    const themeSwitcherLabel = `${baseLabel} (${btnToActive.dataset.bsThemeValue})`
-    themeSwitcher.setAttribute('aria-label', themeSwitcherLabel)
-
-    if (focus) {
-      themeSwitcher.focus()
+    // Legacy dropdown affordances (#bd-theme toggle with a mirrored icon) —
+    // updated only when that markup is present.
+    const themeSwitcher = document.querySelector('#bd-theme')
+    const activeThemeIcon = document.querySelector('.theme-icon-active use')
+    const themeIconUse = activeButtons[0].querySelector('svg use')
+    if (activeThemeIcon && themeIconUse) {
+      activeThemeIcon.setAttribute('href', themeIconUse.getAttribute('href'))
+    }
+    if (themeSwitcher) {
+      const themeSwitcherText = document.querySelector('#bd-theme-text')
+      const baseLabel = themeSwitcherText?.textContent?.trim() || 'Toggle theme'
+      themeSwitcher.setAttribute('aria-label', `${baseLabel} (${theme})`)
+      if (focus) {
+        themeSwitcher.focus()
+      }
     }
   }
 
