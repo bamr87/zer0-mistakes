@@ -108,7 +108,7 @@
         <a href="{{ prod_url }}{{ page.url }}"
            target="_blank"
            rel="noopener"
-           class="text-decoration-none font-monospace small text-truncate"
+           class="text-decoration-none font-monospace small text-truncate min-w-0"
            title="{{ prod_url }}{{ page.url }}">
           {{ canonical_prod_origin | remove: "https://" | remove: "http://" }}{{ page.url }}
         </a>
@@ -139,7 +139,7 @@
         <a href="{{ dev_url }}{{ page.url }}"
            target="_blank"
            rel="noopener"
-           class="text-decoration-none font-monospace small text-truncate"
+           class="text-decoration-none font-monospace small text-truncate min-w-0"
            title="{{ dev_url }}{{ page.url }}">
           localhost:{{ dev_port }}{{ page.url }}
         </a>
@@ -168,7 +168,7 @@
     <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
       <div class="d-flex align-items-center min-w-0">
         <span class="badge bg-dark me-2">Source</span>
-        <span class="font-monospace small text-truncate">
+        <span class="font-monospace small text-truncate min-w-0">
           {{ page.path | split: "/" | last }}
         </span>
       </div>

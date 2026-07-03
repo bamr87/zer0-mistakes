@@ -196,10 +196,17 @@
 document.addEventListener("click", function (e) {
   var btn = e.target.closest("[data-zer0-copy], [data-zer0-copy-target]");
   if (!btn) return;
-  var text = btn.getAttribute("data-zer0-copy");
-  if (!text) {
-    var target = document.querySelector(btn.getAttribute("data-zer0-copy-target"));
-    text = target ? target.value : "";
+  var text = btn.getAttribute("data-zer0-copy") || "";
+  var targetSel = btn.getAttribute("data-zer0-copy-target");
+  if (!text && targetSel) {
+    // Guard the selector lookup — a missing/invalid value must not throw
+    // inside a document-level click listener.
+    try {
+      var target = document.querySelector(targetSel);
+      text = target && "value" in target ? target.value : "";
+    } catch (err) {
+      text = "";
+    }
   }
   if (!text || !navigator.clipboard) return;
   navigator.clipboard.writeText(text).then(function () {

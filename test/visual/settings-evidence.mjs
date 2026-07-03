@@ -72,20 +72,27 @@ async function grabPanel(base, { tab, viewport } = {}) {
   const page = await browser.newPage();
   await page.setViewportSize(viewport || { width: 1280, height: 900 });
   await page.goto(base + '/', { waitUntil: 'load' });
-  await page.waitForTimeout(600);
+  // Deterministic readiness instead of fixed sleeps: Bootstrap loaded (it is
+  // deferred) and the panel + appearance.js slot content present.
+  await page.waitForFunction(() => window.bootstrap && document.getElementById('info-section'));
   // First-visit chrome would cover the panel in both states — drop it so the
   // montage shows the panel, not the consent banner.
   await page.evaluate(() => document.getElementById('cookieConsent')?.remove());
+  // shown.bs.offcanvas fires after the slide-in transition completes.
   await page.evaluate(() => new Promise((resolve) => {
     const el = document.getElementById('info-section');
     el.addEventListener('shown.bs.offcanvas', () => resolve(), { once: true });
     window.bootstrap.Offcanvas.getOrCreateInstance(el).show();
   }));
-  await page.waitForTimeout(400);
   if (tab) {
+    // Wait on Bootstrap's own completion signal for the tab fade.
+    const paneSel = await page.getAttribute(tab, 'data-bs-target');
     await page.click(tab);
-    await page.waitForTimeout(400);
+    await page.waitForSelector(`${paneSel}.active.show`, { state: 'attached' });
   }
+  // Fonts + two frames so the screenshot captures a settled paint.
+  await page.evaluate(() => document.fonts ? document.fonts.ready : true);
+  await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
   const m = await page.evaluate(MEASURE);
   const clip = await page.evaluate(() => {
     const b = document.getElementById('info-section').getBoundingClientRect();
