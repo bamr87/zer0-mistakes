@@ -49,7 +49,6 @@ wired into the core suite (`test_core.sh` → "Plugin Unit Specs").
 |--------|------:|------------|
 | `_plugins/preview_image_generator.rb` | 350 | `test_plugins.rb` (config, path normalization, index dedupe, filename sanitization, existence checks) |
 | `_plugins/content_statistics_generator.rb` | 69 | `test_plugins.rb` (script discovery incl. theme fallback) |
-| `_plugins/admin_page_urls.rb` | 16 | `test_plugins.rb` (hook output, filtering, sorting) |
 | `_plugins/theme_version.rb` | 88 | ❌ none — see T-019 |
 
 ### 3 · Release tooling — MODERATE coverage ⚠️ *(was the #2 gap)*

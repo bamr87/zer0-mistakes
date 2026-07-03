@@ -1,0 +1,25 @@
+# Evidence — settings panel rebuild (Appearance / Site / Developer)
+
+Before/after proof for the navbar Settings offcanvas (`#info-section`)
+rebuild: four tabs (Settings / Environment / Developer / Background) become
+three (Appearance / Site / Developer), every look-and-feel control lives in
+one place exactly once, and the dead surfaces are removed. BEFORE is a build
+of `main`; AFTER is a build of the PR branch (this is a template/DOM change,
+so the evidence kit's single-server `unfixCss` path doesn't apply —
+`settings-evidence.mjs` drives two builds and composes montages with the
+kit's shared `montage` helper).
+
+| Image | What it shows |
+| --- | --- |
+| `01-first-tab.png` | The default tab. BEFORE: "Settings" opens with a dead **Search** section (an empty `#searchbox` no JS ever bound to — the search modal replaced it), a two-click Theme Mode dropdown, an About collapse — and `appearance.js` appends a duplicate color-mode panel *below the tab content*, visible under every tab (6 color-mode buttons in the panel). The four tabs wrap onto two rows. AFTER: a single **Appearance** tab owns color mode (one-click segmented control), theme skin, background toggle + layer opacity (values inline), and the primary-color picker mounted *inside* the tab (3 color-mode buttons total). |
+| `02-environment-vs-site.png` | BEFORE: "Environment" duplicates Build Time / Jekyll version already shown under Settings → About and ends in a dismissible alert; the stray injected Appearance panel bleeds in below. AFTER: **Site** stacks Environment (badge + copyable page URL + one-line build context), Quick Links, deduplicated Theme & Build info, and the **Admin** quick links — which never rendered before: the `admin_page_urls` plugin that computed them is disabled by the `github-pages` gem (forced safe mode + randomized `plugins_dir`), so the section was dead on every github-pages build, dev server included. It is now pure Liquid in `components/admin-links.html` under `include_cached` (admin links 0 → 4). |
+| `03-developer.png` | Developer tab. BEFORE: an empty "Page Location" heading on pages without breadcrumbs (the homepage). AFTER: the section renders only where breadcrumbs do; the metadata table and source-code shortcuts are otherwise unchanged (never-initialized `data-bs-toggle="tooltip"` attributes removed). |
+| `04-mobile-320.png` | 320 px phone. BEFORE: four icon-only tabs — the text labels are `display:none` below 576 px, leaving the tab buttons with **no accessible name**. AFTER: three tabs keep their text labels at every width; the decorative icons drop out instead. The panel body scrolls vertically only (no sideways scroll on any tab, asserted by the spec). |
+
+`metrics.json` records the structural counts behind each montage for both
+states: tabs 4 → 3, dead search box `true → false`, color-mode controls in
+the panel 6 → 3, stray injected panel `true → false`, admin links 0 → 4,
+skin buttons 9 → 9 (preserved). The same behaviours are pinned by the
+smoke-tier regression spec
+[`test/visual/settings-panel.spec.js`](../../settings-panel.spec.js)
+(6 tests, all green against this branch).

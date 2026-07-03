@@ -1,3 +1,4 @@
+{% comment %} Feature: ZER0-077 {% endcomment %}
 <!--
   ===================================================================
   DEV SHORTCUTS - Source Code Quick Access Links
@@ -46,8 +47,6 @@
          target="_blank"
          rel="noopener"
          class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-between"
-         data-bs-toggle="tooltip"
-         data-bs-placement="left"
          title="View source file on GitHub">
         <span>
           <i class="bi bi-github me-2"></i>
@@ -61,8 +60,6 @@
          target="_blank"
          rel="noopener"
          class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-between"
-         data-bs-toggle="tooltip"
-         data-bs-placement="left"
          title="Open in browser-based VS Code editor">
         <span>
           <i class="bi bi-cloud me-2"></i>
@@ -76,8 +73,6 @@
         {% if git_home != "" %}
       <a href="vscode://file{{ vscode_full_path }}"
           class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-between"
-          data-bs-toggle="tooltip"
-          data-bs-placement="left"
           title="Open in local VS Code (requires local clone at this path)">
         <span>
           <i class="bi bi-code-square me-2"></i>
@@ -102,8 +97,6 @@
          target="_blank"
          rel="noopener"
          class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-between"
-         data-bs-toggle="tooltip"
-         data-bs-placement="left"
          title="View Jekyll site configuration">
         <span>
           <i class="bi bi-gear me-2"></i>

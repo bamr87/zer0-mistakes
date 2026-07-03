@@ -1,0 +1,82 @@
+{
+  "slug": "settings-panel",
+  "before": "http://127.0.0.1:4012",
+  "after": "http://127.0.0.1:4000",
+  "scenes": [
+    {
+      "key": "first-tab",
+      "before": {
+        "tabs": 4,
+        "deadSearchBox": true,
+        "themeModeControls": 6,
+        "strayPanelBelowTabs": true,
+        "adminLinks": 0,
+        "skinButtons": 9
+      },
+      "after": {
+        "tabs": 3,
+        "deadSearchBox": false,
+        "themeModeControls": 3,
+        "strayPanelBelowTabs": false,
+        "adminLinks": 4,
+        "skinButtons": 9
+      }
+    },
+    {
+      "key": "environment-vs-site",
+      "before": {
+        "tabs": 4,
+        "deadSearchBox": true,
+        "themeModeControls": 6,
+        "strayPanelBelowTabs": true,
+        "adminLinks": 0,
+        "skinButtons": 9
+      },
+      "after": {
+        "tabs": 3,
+        "deadSearchBox": false,
+        "themeModeControls": 3,
+        "strayPanelBelowTabs": false,
+        "adminLinks": 4,
+        "skinButtons": 9
+      }
+    },
+    {
+      "key": "developer",
+      "before": {
+        "tabs": 4,
+        "deadSearchBox": true,
+        "themeModeControls": 6,
+        "strayPanelBelowTabs": true,
+        "adminLinks": 0,
+        "skinButtons": 9
+      },
+      "after": {
+        "tabs": 3,
+        "deadSearchBox": false,
+        "themeModeControls": 3,
+        "strayPanelBelowTabs": false,
+        "adminLinks": 4,
+        "skinButtons": 9
+      }
+    }
+  ],
+  "mobile": {
+    "before": {
+      "tabs": 4,
+      "deadSearchBox": true,
+      "themeModeControls": 6,
+      "strayPanelBelowTabs": true,
+      "adminLinks": 0,
+      "skinButtons": 9
+    },
+    "after": {
+      "tabs": 3,
+      "deadSearchBox": false,
+      "themeModeControls": 3,
+      "strayPanelBelowTabs": false,
+      "adminLinks": 4,
+      "skinButtons": 9
+    }
+  }
+}

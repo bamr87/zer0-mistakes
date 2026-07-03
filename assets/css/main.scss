@@ -22,9 +22,10 @@
 //    it so the concatenated cascade order is unchanged.
 @import "core/docs-code-examples";
 
-// 4. Reusable utilities (motion, focus rings) — used by components below
+// 4. Reusable utilities (motion, focus rings, layout helpers) — used by components below
 @import "utilities/motion";
 @import "utilities/focus";
+@import "utilities/layout";
 
 // 5. Component partials (formerly inside custom.scss + new primitives)
 @import "components/cookie-banner";

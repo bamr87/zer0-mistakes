@@ -117,8 +117,8 @@ The version and build details are surfaced through the **Settings** offcanvas
   `data-bs-target="#info-section"`).
 - The **Info** button in the footer (`_includes/core/footer.html`).
 
-In the panel, expand **Theme & Build Info** to see the theme, Jekyll version,
-environment, last build time, and repository. The `theme-info.html` include
+In the panel, the **Site** tab's *Theme & Build* section shows the theme,
+Jekyll version, last build time, and repository. The `theme-info.html` include
 renders the theme name from `site.remote_theme` / `site.theme` and the build
 metadata from `jekyll.version`, `jekyll.environment`, and `site.time`.
 

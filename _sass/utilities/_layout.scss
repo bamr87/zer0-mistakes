@@ -1,0 +1,11 @@
+// Feature: ZER0-077
+// =============================================================================
+// Layout utilities — small structural helpers Bootstrap does not ship
+// =============================================================================
+
+// Allow a flex child to shrink below its content size so text-truncate can
+// work (flex items default to min-width: auto). Used by the navbar leading
+// cluster, branding, and the settings panel quick-link rows.
+.min-w-0 {
+  min-width: 0 !important;
+}

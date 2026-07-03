@@ -1,46 +1,27 @@
-<!-- 
+{% comment %} Feature: ZER0-077 {% endcomment %}
+<!--
   file: halfmoon.html
-  path: _includes/halfmoon.html
-  description: Dark / light / auto theme switcher for the settings modal (Bootstrap dropdown).
+  path: _includes/components/halfmoon.html
+  description: Dark / light / auto color-mode switcher (segmented control).
+               Buttons carry data-bs-theme-value; assets/js/halfmoon.js wires
+               clicks, persistence (localStorage "theme") and active state.
+               No ids on purpose — the control may render more than once per
+               page (settings offcanvas + theme-controls-bar).
+  params:      class (string, optional, default "") — extra btn-group classes,
+               e.g. "w-100" to fill the parent.
  -->
 
-<div class="dropdown bd-theme-dropdown">
-  <button
-    type="button"
-    class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center justify-content-center px-2 py-2"
-    id="bd-theme"
-    data-bs-toggle="dropdown"
-    data-bs-popper-config='{"strategy":"fixed"}'
-    aria-expanded="false"
-    aria-haspopup="true"
-    aria-label="Toggle theme (dark)"
-  >
-    <svg class="bi theme-icon-active flex-shrink-0" width="1.15em" height="1.15em" fill="currentColor" aria-hidden="true">
-      <use href="#moon-stars-fill"></use>
-    </svg>
-    <span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
+<div class="btn-group bd-theme-switch {{ include.class | default: '' }}" role="group" aria-label="Color mode">
+  <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center gap-1" data-bs-theme-value="light" aria-pressed="false">
+    <svg class="bi flex-shrink-0" width="1em" height="1em" fill="currentColor" aria-hidden="true"><use href="#sun-fill"></use></svg>
+    <span>Light</span>
   </button>
-  <ul class="dropdown-menu dropdown-menu-end shadow-sm bd-theme-menu py-1" aria-labelledby="bd-theme">
-    <li>
-      <button type="button" class="dropdown-item d-flex align-items-center gap-2" data-bs-theme-value="light" aria-pressed="false">
-        <svg class="bi flex-shrink-0 opacity-50" width="1em" height="1em" fill="currentColor" aria-hidden="true"><use href="#sun-fill"></use></svg>
-        <span>Light</span>
-        <svg class="bi ms-auto flex-shrink-0 d-none" width="1em" height="1em" fill="currentColor" aria-hidden="true"><use href="#check2"></use></svg>
-      </button>
-    </li>
-    <li>
-      <button type="button" class="dropdown-item d-flex align-items-center gap-2 active" data-bs-theme-value="dark" aria-pressed="true">
-        <svg class="bi flex-shrink-0 opacity-50" width="1em" height="1em" fill="currentColor" aria-hidden="true"><use href="#moon-stars-fill"></use></svg>
-        <span>Dark</span>
-        <svg class="bi ms-auto flex-shrink-0 d-none" width="1em" height="1em" fill="currentColor" aria-hidden="true"><use href="#check2"></use></svg>
-      </button>
-    </li>
-    <li>
-      <button type="button" class="dropdown-item d-flex align-items-center gap-2" data-bs-theme-value="auto" aria-pressed="false">
-        <svg class="bi flex-shrink-0 opacity-50" width="1em" height="1em" fill="currentColor" aria-hidden="true"><use href="#circle-half"></use></svg>
-        <span>Auto</span>
-        <svg class="bi ms-auto flex-shrink-0 d-none" width="1em" height="1em" fill="currentColor" aria-hidden="true"><use href="#check2"></use></svg>
-      </button>
-    </li>
-  </ul>
+  <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center gap-1" data-bs-theme-value="dark" aria-pressed="false">
+    <svg class="bi flex-shrink-0" width="1em" height="1em" fill="currentColor" aria-hidden="true"><use href="#moon-stars-fill"></use></svg>
+    <span>Dark</span>
+  </button>
+  <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center gap-1" data-bs-theme-value="auto" aria-pressed="false">
+    <svg class="bi flex-shrink-0" width="1em" height="1em" fill="currentColor" aria-hidden="true"><use href="#circle-half"></use></svg>
+    <span>Auto</span>
+  </button>
 </div>

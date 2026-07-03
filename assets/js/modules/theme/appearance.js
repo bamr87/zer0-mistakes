@@ -12,12 +12,19 @@
  *
  *   - Color mode buttons (light / dark / auto) — writes data-bs-theme
  *     to <html> and persists to localStorage["theme"] (compatible with
- *     halfmoon.js so both stay in sync).
+ *     halfmoon.js so both stay in sync). Skipped in the settings
+ *     offcanvas (compact mode), where the halfmoon segmented control
+ *     directly above already owns color mode.
  *
  *   - Primary color picker — writes to localStorage["zer0-appearance"]
  *     and updates --zer0-color-primary live so every component that uses
  *     the token (buttons, callouts, FABs, focus rings) reflects the
  *     change without a reload. Cleared by the Reset button.
+ *
+ * Host resolution: an explicit [data-appearance-panel-host] (e.g. the
+ * theme-preview sidebar) gets the full panel; otherwise the panel
+ * mounts compactly into #zer0AppearanceSlot inside the Settings
+ * offcanvas Appearance tab (legacy fallback: the offcanvas body).
  *
  * Initial paint is already handled by the script emitted in
  * _includes/core/tokens-inline.html so there is no flash of default
@@ -34,6 +41,7 @@
     const STORAGE_KEY = 'zer0-appearance';
     const THEME_KEY = 'theme';
     const PANEL_HOST_SELECTOR = '[data-appearance-panel-host]';
+    const SLOT_HOST_SELECTOR = '#zer0AppearanceSlot';
     const FALLBACK_HOST_SELECTOR = '#info-section .offcanvas-body';
 
     function readPrefs() {
@@ -76,18 +84,15 @@
         try { localStorage.setItem(THEME_KEY, mode); } catch (e) { /* ignore */ }
     }
 
-    function buildPanel(host) {
+    function buildPanel(host, compact) {
         const prefs = readPrefs();
         const mode = resolveColorMode();
         const primary = prefs.primary || getInitialPrimary();
 
         const wrapper = document.createElement('section');
-        wrapper.className = 'zer0-appearance-panel border rounded p-3 mt-3';
         wrapper.setAttribute('aria-labelledby', 'zer0-appearance-heading');
-        wrapper.innerHTML =
-            '<h3 id="zer0-appearance-heading" class="h6 mb-3">' +
-              '<i class="bi bi-palette me-2" aria-hidden="true"></i>Appearance' +
-            '</h3>' +
+
+        const modeGroupHtml =
             '<div class="mb-3" role="group" aria-label="Color mode">' +
               '<label class="form-label small text-body-secondary mb-2">Color mode</label>' +
               '<div class="btn-group w-100" role="group">' +
@@ -98,18 +103,45 @@
                 '<button type="button" class="btn btn-outline-secondary btn-sm" data-mode="auto">' +
                   '<i class="bi bi-circle-half me-1" aria-hidden="true"></i>Auto</button>' +
               '</div>' +
-            '</div>' +
+            '</div>';
+
+        // In compact mode the section heading is the visible label, so the
+        // <label> stays for assistive tech but is visually hidden.
+        const pickerHtml = (labelClass) =>
             '<div class="mb-3">' +
-              '<label for="zer0-appearance-primary" class="form-label small text-body-secondary">' +
+              '<label for="zer0-appearance-primary" class="' + labelClass + '">' +
                 'Primary color</label>' +
               '<input type="color" id="zer0-appearance-primary" class="form-control form-control-color" ' +
                 'aria-describedby="zer0-appearance-primary-help">' +
               '<div id="zer0-appearance-primary-help" class="form-text small">' +
                 'Overrides <code>--zer0-color-primary</code> across the theme.</div>' +
-            '</div>' +
-            '<button type="button" class="btn btn-link btn-sm p-0" data-appearance-reset>' +
-              '<i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>Reset to defaults' +
-            '</button>';
+            '</div>';
+
+        if (compact) {
+            // Settings offcanvas: color mode lives in the halfmoon control just
+            // above, so render only the primary-color section, styled to match
+            // the panel's other h6 section headings.
+            wrapper.className = 'zer0-appearance-panel mb-4';
+            wrapper.innerHTML =
+                '<h6 id="zer0-appearance-heading" class="text-body-secondary small text-uppercase fw-semibold mb-2">' +
+                  '<i class="bi bi-eyedropper me-1" aria-hidden="true"></i>Primary Color' +
+                '</h6>' +
+                pickerHtml('visually-hidden') +
+                '<button type="button" class="btn btn-link btn-sm p-0" data-appearance-reset>' +
+                  '<i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>Reset color' +
+                '</button>';
+        } else {
+            wrapper.className = 'zer0-appearance-panel border rounded p-3 mt-3';
+            wrapper.innerHTML =
+                '<h3 id="zer0-appearance-heading" class="h6 mb-3">' +
+                  '<i class="bi bi-palette me-2" aria-hidden="true"></i>Appearance' +
+                '</h3>' +
+                modeGroupHtml +
+                pickerHtml('form-label small text-body-secondary') +
+                '<button type="button" class="btn btn-link btn-sm p-0" data-appearance-reset>' +
+                  '<i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>Reset to defaults' +
+                '</button>';
+        }
 
         host.appendChild(wrapper);
 
@@ -117,7 +149,7 @@
         const picker = wrapper.querySelector('#zer0-appearance-primary');
         picker.value = hexishOrDefault(primary, '#007bff');
 
-        // Wire color-mode buttons
+        // Wire color-mode buttons (full panel only)
         wrapper.querySelectorAll('[data-mode]').forEach((btn) => {
             const m = btn.dataset.mode;
             btn.setAttribute('aria-pressed', String(m === mode));
@@ -184,10 +216,13 @@
     }
 
     function mount() {
-        const host = document.querySelector(PANEL_HOST_SELECTOR) || document.querySelector(FALLBACK_HOST_SELECTOR);
+        const explicitHost = document.querySelector(PANEL_HOST_SELECTOR);
+        const host = explicitHost
+            || document.querySelector(SLOT_HOST_SELECTOR)
+            || document.querySelector(FALLBACK_HOST_SELECTOR);
         if (!host) return; // info-section not present on this page
         if (host.querySelector('.zer0-appearance-panel')) return; // already mounted
-        buildPanel(host);
+        buildPanel(host, !explicitHost);
     }
 
     if (document.readyState === 'loading') {

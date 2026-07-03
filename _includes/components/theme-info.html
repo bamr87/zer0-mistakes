@@ -3,25 +3,28 @@
   ===================================================================
   THEME INFO - Compact Theme and Build Information
   ===================================================================
-  
+
   File: theme-info.html
   Path: _includes/components/theme-info.html
   Purpose: Display compact theme version and system information
-  
+
   Dependencies:
   - site.remote_theme or site.theme configuration
   - Jekyll's site.github metadata
+
+  Note: environment (Prod/Dev) is shown by env-switcher.html in the
+  same Site tab — not duplicated here.
   ===================================================================
 -->
 
 <div class="theme-info-compact">
   <div class="row g-2">
-    
+
     <!-- Theme -->
     <div class="col-12">
       <div class="d-flex align-items-center justify-content-between p-2 bg-body-tertiary rounded">
         <div class="d-flex align-items-center">
-          <i class="bi bi-palette text-primary me-2"></i>
+          <i class="bi bi-palette text-primary me-2" aria-hidden="true"></i>
           <span class="fw-medium small">Theme</span>
         </div>
         <div>
@@ -29,7 +32,7 @@
             {% assign theme_parts = site.remote_theme | split: "/" %}
             <a href="https://github.com/{{ site.remote_theme }}" target="_blank" rel="noopener" class="text-decoration-none">
               <code class="text-info">{{ theme_parts[1] }}</code>
-              <i class="bi bi-box-arrow-up-right ms-1 small"></i>
+              <i class="bi bi-box-arrow-up-right ms-1 small" aria-hidden="true"></i>
             </a>
           {% elsif site.theme %}
             <code>{{ site.theme }}</code>
@@ -40,8 +43,8 @@
         </div>
       </div>
     </div>
-    
-    <!-- Jekyll & Environment -->
+
+    <!-- Jekyll & Last Build -->
     <div class="col-6">
       <div class="p-2 bg-body-tertiary rounded text-center">
         <small class="text-body-secondary d-block">Jekyll</small>
@@ -50,56 +53,43 @@
     </div>
     <div class="col-6">
       <div class="p-2 bg-body-tertiary rounded text-center">
-        <small class="text-body-secondary d-block">Environment</small>
-        <span class="badge {% if jekyll.environment == 'production' %}bg-success{% else %}bg-warning text-dark{% endif %}">
-          {{ jekyll.environment | capitalize }}
-        </span>
+        <small class="text-body-secondary d-block">Last Build</small>
+        <code class="small">{{ site.time | date: "%b %d, %H:%M" }}</code>
       </div>
     </div>
-    
-    <!-- Build Time -->
-    <div class="col-12">
-      <div class="d-flex align-items-center justify-content-between p-2 bg-body-tertiary rounded">
-        <div class="d-flex align-items-center">
-          <i class="bi bi-clock-history text-secondary me-2"></i>
-          <span class="small text-body-secondary">Last Build</span>
-        </div>
-        <code class="small">{{ site.time | date: "%Y-%m-%d %H:%M %Z" }}</code>
-      </div>
-    </div>
-    
+
     {% if site.repository %}
     <!-- Repository -->
     <div class="col-12">
       <div class="d-flex align-items-center justify-content-between p-2 bg-body-tertiary rounded">
         <div class="d-flex align-items-center">
-          <i class="bi bi-git text-danger me-2"></i>
+          <i class="bi bi-git text-danger me-2" aria-hidden="true"></i>
           <span class="small text-body-secondary">Repository</span>
         </div>
         <a href="https://github.com/{{ site.repository }}" target="_blank" rel="noopener" class="text-decoration-none small">
           {{ site.repository }}
-          <i class="bi bi-box-arrow-up-right ms-1"></i>
+          <i class="bi bi-box-arrow-up-right ms-1" aria-hidden="true"></i>
         </a>
       </div>
     </div>
     {% endif %}
-    
+
     <!-- Quick Links -->
     <div class="col-12 mt-2">
       <div class="d-flex flex-wrap gap-2 justify-content-center">
         {% if site.remote_theme %}
         <a href="https://github.com/{{ site.remote_theme }}/blob/main/CHANGELOG.md" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary">
-          <i class="bi bi-journal-text me-1"></i>Changelog
+          <i class="bi bi-journal-text me-1" aria-hidden="true"></i>Changelog
         </a>
         <a href="https://github.com/{{ site.remote_theme }}#readme" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary">
-          <i class="bi bi-book me-1"></i>Docs
+          <i class="bi bi-book me-1" aria-hidden="true"></i>Docs
         </a>
         {% endif %}
         <a href="https://jekyllrb.com/docs/" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary">
-          <i class="bi bi-gem me-1"></i>Jekyll
+          <i class="bi bi-gem me-1" aria-hidden="true"></i>Jekyll
         </a>
       </div>
     </div>
-    
+
   </div>
 </div>

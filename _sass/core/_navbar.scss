@@ -804,33 +804,16 @@
     padding-top: 1rem;
   }
 
-  // Theme switcher (halfmoon): keep dropdown positioned within offcanvas panel
-  .bd-theme-dropdown {
-    position: relative;
-  }
+  // Compact tabs on narrow panels: keep the text labels (they are the
+  // accessible names) and drop the decorative icons instead.
+  @media (max-width: 575.98px) {
+    .nav-tabs .nav-link {
+      padding: 0.6rem 0.25rem;
+      font-size: 0.8125rem;
 
-  .bd-theme-menu.dropdown-menu {
-    --bs-dropdown-min-width: 10.5rem;
-    z-index: 1060;
-    padding-top: 0.35rem;
-    padding-bottom: 0.35rem;
-    border-radius: var(--bs-border-radius, 0.375rem);
-    border: 1px solid var(--bs-border-color-translucent);
-  }
-
-  .bd-theme-menu .dropdown-item {
-    min-height: 0;
-    padding: 0.45rem 0.85rem;
-    font-size: 0.9375rem;
-    border-radius: calc(var(--bs-border-radius, 0.375rem) - 2px);
-    gap: 0.35rem;
-
-    &.active {
-      font-weight: 600;
-    }
-
-    .bi.ms-auto {
-      opacity: 0.9;
+      .bi {
+        display: none;
+      }
     }
   }
 }

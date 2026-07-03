@@ -2109,3 +2109,38 @@ features:
       - na: "CI security scan — .github/workflows/secret-scan.yml"
     references:
       workflow: ".github/workflows/secret-scan.yml"
+
+  - id: ZER0-077
+    title: "Unified Settings Panel"
+    description: "Navbar settings offcanvas reorganized into Appearance, Site, and Developer tabs — consolidated color-mode/skin/background controls, delegated copy-to-clipboard, and existence-gated admin quick links computed in cached Liquid"
+    implemented: true
+    version: "1.25.0"
+    link: "/"
+    docs: "/docs/customization/includes/"
+    tags: [ui, navigation, bootstrap, accessibility]
+    date: 2026-07-02
+    provenance:
+      introduced_in: "1.25.0"
+      pr: 276
+      commit: "3b951604"
+      issue: null
+    tests:
+      - "test/visual/settings-panel.spec.js"
+    references:
+      includes:
+        - "_includes/components/info-section.html"
+        - "_includes/components/admin-links.html"
+        - "_includes/components/halfmoon.html"
+        - "_includes/components/env-switcher.html"
+        - "_includes/components/theme-info.html"
+        - "_includes/components/background-settings.html"
+        - "_includes/components/dev-shortcuts.html"
+      scripts:
+        - "assets/js/halfmoon.js"
+        - "assets/js/modules/theme/appearance.js"
+      sass:
+        - "_sass/utilities/_layout.scss"
+    features:
+      - "Appearance tab: one-click color mode, 9 theme skins, background layer opacity, primary color"
+      - "Site tab: environment badge, copyable page URL, quick links, theme & build info, admin links"
+      - "Developer tab: breadcrumb page location, page metadata, source-code shortcuts"
