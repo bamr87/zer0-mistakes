@@ -51,27 +51,36 @@ Runtime theming flows: compiled `--zer0-*` defaults → `_includes/core/tokens-i
 
 Every catalogued component, its primary implementation file, primary test, and coverage. Jump to the cluster section for full detail.
 
+> **Note (2026-07-03):** the Playwright suite was restructured into
+> `test/visual/core/` + `test/visual/features/` (see `test/README.md`).
+> Table cells below have been bulk-updated for files that moved 1:1, but
+> `ui-refresh.spec.js` and `interactions.spec.js` were dissolved — their
+> content scattered across several new `features/*.spec.js` files by
+> component. Any row still citing `ui-refresh.spec.js` or `interactions.spec.js`
+> needs its `Test` cell re-pointed at the specific new file (see the merge
+> mapping in PR history) rather than a blanket find-replace.
+
 ### Global Chrome & Primary Navigation
 
 | Component | Primary source | Test | Coverage |
 |---|---|---|---|
-| Header / Site Shell | `_includes/core/header.html` | `styling.spec.js`, `ui-refresh.spec.js` | 🟡 partial |
-| Branding (title/subtitle) | `_includes/core/branding.html` | `ui-refresh.spec.js`, `styling.spec.js` | 🟡 partial |
-| Primary Navbar (menubar + dropdowns) | `_includes/navigation/navbar.html` | `ui-refresh.spec.js`, `styling.spec.js` | 🟡 partial |
+| Header / Site Shell | `_includes/core/header.html` | `core/styling.spec.js`, `ui-refresh.spec.js` | 🟡 partial |
+| Branding (title/subtitle) | `_includes/core/branding.html` | `ui-refresh.spec.js`, `core/styling.spec.js` | 🟡 partial |
+| Primary Navbar (menubar + dropdowns) | `_includes/navigation/navbar.html` | `ui-refresh.spec.js`, `core/styling.spec.js` | 🟡 partial |
 | Navbar Mobile Quicklinks (tablet chips) | `_includes/navigation/navbar-mobile-quicklinks.html` | `ui-refresh.spec.js` | 🟡 partial |
-| Head (document head / asset pipeline) | `_includes/core/head.html` | `styling.spec.js`, `test/test_quality.sh` | 🟡 partial |
+| Head (document head / asset pipeline) | `_includes/core/head.html` | `core/styling.spec.js`, `test/test_quality.sh` | 🟡 partial |
 | Footer | `_includes/core/footer.html` | `ui-refresh.spec.js` | 🟡 partial |
-| Breadcrumbs | `_includes/navigation/breadcrumbs.html` | `layouts.spec.js` | 🟡 partial |
+| Breadcrumbs | `_includes/navigation/breadcrumbs.html` | `features/layouts.spec.js` | 🟡 partial |
 | Back-to-Top FAB | `_includes/core/footer.html` | — | 🔴 none |
 | Auto-Hide Navbar | `assets/js/auto-hide-nav.js` | — | 🔴 none |
 | Nanobar (scroll/load progress bar) | `_includes/components/nanobar.html` | — | 🔴 none |
 | Offcanvas Sidebars & Unified Drawer | `_includes/navigation/sidebar-left.html` | `ui-refresh.spec.js` | 🟡 partial |
 | Navbar Extras / FAB Stacking | `_sass/layouts/_navbar-extras.scss` | `ui-refresh.spec.js` | 🟡 partial |
-| Navigation Orchestrator (index.js + config.js) | `assets/js/modules/navigation/index.js` | `styling.spec.js`, `layouts.spec.js` | 🟡 partial |
+| Navigation Orchestrator (index.js + config.js) | `assets/js/modules/navigation/index.js` | `core/styling.spec.js`, `features/layouts.spec.js` | 🟡 partial |
 | Navbar Module (dropdowns/keyboard/tooltips) | `assets/js/modules/navigation/navbar.js` | — | 🔴 none |
 | Scroll-Spy Module | `assets/js/modules/navigation/scroll-spy.js` | — | 🔴 none |
 | Smooth-Scroll Module | `assets/js/modules/navigation/smooth-scroll.js` | — | 🔴 none |
-| Keyboard Shortcuts Module | `assets/js/modules/navigation/keyboard.js` | `layouts.spec.js` | 🟡 partial |
+| Keyboard Shortcuts Module | `assets/js/modules/navigation/keyboard.js` | `features/layouts.spec.js` | 🟡 partial |
 | Swipe Gestures Module | `assets/js/modules/navigation/gestures.js` | — | 🔴 none |
 | Focus Manager Module | `assets/js/modules/navigation/focus.js` | — | 🔴 none |
 | Sidebar State Module | `assets/js/modules/navigation/sidebar-state.js` | — | 🔴 none |
@@ -82,7 +91,7 @@ Every catalogued component, its primary implementation file, primary test, and c
 
 | Component | Primary source | Test | Coverage |
 |---|---|---|---|
-| Docs layout shell (.bd-layout/.bd-sidebar/.bd-main/.bd-toc) | `_sass/core/_docs-layout.scss` | `styling.spec.js`, `ui-refresh.spec.js` | 🟡 partial |
+| Docs layout shell (.bd-layout/.bd-sidebar/.bd-main/.bd-toc) | `_sass/core/_docs-layout.scss` | `core/styling.spec.js`, `ui-refresh.spec.js` | 🟡 partial |
 | Nav-tree sidebar (YAML tree mode) | `_includes/navigation/nav-tree.html` | — | 🔴 none |
 | Sidebar categories (categories mode) | `_includes/navigation/sidebar-categories.html` | — | 🔴 none |
 | Sidebar folders (auto mode) | `_includes/navigation/sidebar-folders.html` | — | 🔴 none |
@@ -91,7 +100,7 @@ Every catalogued component, its primary implementation file, primary test, and c
 | TOC FAB (mobile trigger) | `_includes/navigation/toc-fab.html` | `ui-refresh.spec.js` | 🟡 partial |
 | TOC visibility toggle + persistence | `assets/js/modules/navigation/toc-visibility.js` | `ui-refresh.spec.js` | 🟡 partial |
 | Scroll-spy (active heading highlight) | `assets/js/modules/navigation/scroll-spy.js` | — | 🔴 none |
-| Page intro header (.bd-intro family) | `_includes/content/intro.html` | `ui-refresh.spec.js`, `layouts.spec.js` | 🟡 partial |
+| Page intro header (.bd-intro family) | `_includes/content/intro.html` | `ui-refresh.spec.js`, `features/layouts.spec.js` | 🟡 partial |
 | Docs code-example chrome (.bd-example/.bd-clipboard) | `_sass/core/_docs-code-examples.scss` | — | 🔴 none |
 | Content tables (styling + CSV copy) | `_sass/components/_content-tables.scss` | `ui-refresh.spec.js` | 🟡 partial |
 
@@ -99,15 +108,15 @@ Every catalogued component, its primary implementation file, primary test, and c
 
 | Component | Primary source | Test | Coverage |
 |---|---|---|---|
-| Landing layout | `_layouts/landing.html` | `layouts.spec.js` | 🟡 partial |
+| Landing layout | `_layouts/landing.html` | `features/layouts.spec.js` | 🟡 partial |
 | Landing quick-links bar | `_includes/landing/landing-quick-links.html` | — | 🔴 none |
 | Landing install cards | `_includes/landing/landing-install-cards.html` | — | 🔴 none |
-| Home layout | `_layouts/home.html` | `layouts.spec.js` | 🟡 partial |
+| Home layout | `_layouts/home.html` | `features/layouts.spec.js` | 🟡 partial |
 | Index layout | `_layouts/index.html` | — | 🔴 none |
-| Welcome layout | `_layouts/welcome.html` | `layouts.spec.js` | 🟡 partial |
+| Welcome layout | `_layouts/welcome.html` | `features/layouts.spec.js` | 🟡 partial |
 | Section include (components/section.html) | `_includes/components/section.html` | — | 🔴 none |
 | Feature card include (components/feature-card.html) | `_includes/components/feature-card.html` | `ui-refresh.spec.js` | 🟡 partial |
-| CTA button include (components/cta-button.html) | `_includes/components/cta-button.html` | `layouts.spec.js` | 🟡 partial |
+| CTA button include (components/cta-button.html) | `_includes/components/cta-button.html` | `features/layouts.spec.js` | 🟡 partial |
 | Info section / settings offcanvas (components/info-section.html) | `_includes/components/info-section.html` | — | 🔴 none |
 | Bootstrap component polish (UI enhancements) | `_sass/components/_ui-enhancements.scss` | `ui-refresh.spec.js` | 🟡 partial |
 | Share actions (LinkedIn/copy) | `assets/js/share-actions.js` | — | 🔴 none |
@@ -118,15 +127,15 @@ Every catalogued component, its primary implementation file, primary test, and c
 
 | Component | Primary source | Test | Coverage |
 |---|---|---|---|
-| Design Tokens (--zer0-* layer) | `_sass/tokens/_index.scss` | `styling.spec.js` | 🟡 partial |
+| Design Tokens (--zer0-* layer) | `_sass/tokens/_index.scss` | `core/styling.spec.js` | 🟡 partial |
 | Runtime Token Injection (tokens-inline.html) | `_includes/core/tokens-inline.html` | — | 🔴 none |
 | Color Modes (light/dark/wizard) | `_sass/theme/_color-modes.scss` | — | 🔴 none |
-| Named Skins (9 data-theme-skin palettes) | `_sass/theme/_skins.scss` | `skins.spec.js` | 🟢 good |
+| Named Skins (9 data-theme-skin palettes) | `_sass/theme/_skins.scss` | `features/appearance.spec.js` | 🟢 good |
 | Appearance Panel (appearance.js) | `assets/js/modules/theme/appearance.js` | — | 🔴 none |
-| Background Customizer (zer0Bg API + panels) | `assets/js/background-customizer.js` | `backgrounds.spec.js`, `skins.spec.js` | 🟢 good |
-| Palette Generator (palette-generator.js) | `assets/js/palette-generator.js` | `theme-colors.spec.js` | 🟡 partial |
+| Background Customizer (zer0Bg API + panels) | `assets/js/background-customizer.js` | `features/appearance.spec.js`, `features/appearance.spec.js` | 🟢 good |
+| Palette Generator (palette-generator.js) | `assets/js/palette-generator.js` | `features/appearance.spec.js` | 🟡 partial |
 | Skin Editor (skin-editor.js) | `assets/js/skin-editor.js` | — | 🔴 none |
-| Theme Customizer & Preview Gallery (admin UI) | `_includes/components/theme-customizer.html` | `theme-colors.spec.js` | 🟡 partial |
+| Theme Customizer & Preview Gallery (admin UI) | `_includes/components/theme-customizer.html` | `features/appearance.spec.js` | 🟡 partial |
 
 ### Content & Collections
 
@@ -137,7 +146,7 @@ Every catalogued component, its primary implementation file, primary test, and c
 | Notes & Notebooks index grids + difficulty badges | `pages/notes.md` | — | 🔴 none |
 | Callout | `_includes/components/callout.html` | — | 🔴 none |
 | Post navigation (prev/next cards) | `_sass/components/_post-navigation.scss` | — | 🔴 none |
-| Code copy button | `assets/js/code-copy.js` | `ui-refresh.spec.js`, `accessibility.spec.js` | 🟡 partial |
+| Code copy button | `assets/js/code-copy.js` | `ui-refresh.spec.js`, `core/accessibility.spec.js` | 🟡 partial |
 | Syntax highlighting | `_sass/core/_syntax.scss` | — | 🔴 none |
 | Author card | `_includes/components/author-card.html` | — | 🔴 none |
 | Author E-E-A-T block | `_includes/components/author-eeat.html` | — | 🔴 none |
@@ -148,8 +157,8 @@ Every catalogued component, its primary implementation file, primary test, and c
 | Preview-image generator plugin | `_plugins/preview_image_generator.rb` | — | 🔴 none |
 | Comments (Giscus) | `_includes/content/giscus.html` | — | 🔴 none |
 | Share actions (LinkedIn enhancement) | `assets/js/share-actions.js` | — | 🔴 none |
-| Posts pagination | `assets/js/posts-pagination.js` | `layouts.spec.js` | 🟡 partial |
-| Article layout | `_layouts/article.html` | `layouts.spec.js` | 🟡 partial |
+| Posts pagination | `assets/js/posts-pagination.js` | `features/layouts.spec.js` | 🟡 partial |
+| Article layout | `_layouts/article.html` | `features/layouts.spec.js` | 🟡 partial |
 | Collection layout | `_layouts/collection.html` | — | 🔴 none |
 | News layout | `_layouts/news.html` | — | 🔴 none |
 | Tag layout | `_layouts/tag.html` | — | 🔴 none |
@@ -171,17 +180,17 @@ Every catalogued component, its primary implementation file, primary test, and c
 
 | Component | Primary source | Test | Coverage |
 |---|---|---|---|
-| Admin Shell (layout + sidebar nav + tabs) | `_layouts/admin.html` | `admin-layout.spec.js`, `admin-nav.spec.js`, `accessibility.spec.js`, `test/test_plugins.rb` | 🟢 good |
-| Config Viewer | `_includes/components/config-viewer.html` | `config-viewer.spec.js`, `security.spec.js` | 🟡 partial |
-| Config Editor | `_includes/components/config-editor.html` | `config-editor.spec.js` | 🟡 partial |
-| Raw YAML / Config Sanitization | `pages/_about/settings/config.md` | `security.spec.js` | 🟡 partial |
-| Environment Dashboard | `_includes/components/env-dashboard.html` | `env-dashboard.spec.js`, `admin-layout.spec.js`, `accessibility.spec.js` | 🟢 good |
+| Admin Shell (layout + sidebar nav + tabs) | `_layouts/admin.html` | `features/admin.spec.js`, `core/accessibility.spec.js`, `test/test_plugins.rb` | 🟢 good |
+| Config Viewer | `_includes/components/config-viewer.html` | `features/admin.spec.js`, `core/security.spec.js` | 🟡 partial |
+| Config Editor | `_includes/components/config-editor.html` | `features/admin.spec.js` | 🟡 partial |
+| Raw YAML / Config Sanitization | `pages/_about/settings/config.md` | `core/security.spec.js` | 🟡 partial |
+| Environment Dashboard | `_includes/components/env-dashboard.html` | `features/admin.spec.js`, `core/accessibility.spec.js` | 🟢 good |
 | Environment Switcher | `_includes/components/env-switcher.html` | — | 🔴 none |
 | Env-Var Helper (zer0-env-var) | `_includes/components/zer0-env-var.html` | — | 🔴 none |
-| Navigation Editor | `_includes/components/nav-editor.html` | `admin-layout.spec.js`, `accessibility.spec.js` | 🟡 partial |
-| Collection Manager | `_includes/components/collection-manager.html` | `admin-layout.spec.js`, `admin-nav.spec.js`, `accessibility.spec.js` | 🟡 partial |
-| Analytics Dashboard | `_includes/components/analytics-dashboard.html` | `admin-layout.spec.js`, `admin-nav.spec.js`, `accessibility.spec.js` | 🟡 partial |
-| Statistics Dashboard | `_layouts/stats.html` | `admin-layout.spec.js`, `accessibility.spec.js`, `test/test_plugins.rb` | 🟡 partial |
+| Navigation Editor | `_includes/components/nav-editor.html` | `features/admin.spec.js`, `core/accessibility.spec.js` | 🟡 partial |
+| Collection Manager | `_includes/components/collection-manager.html` | `features/admin.spec.js`, `core/accessibility.spec.js` | 🟡 partial |
+| Analytics Dashboard | `_includes/components/analytics-dashboard.html` | `features/admin.spec.js`, `core/accessibility.spec.js` | 🟡 partial |
+| Statistics Dashboard | `_layouts/stats.html` | `features/admin.spec.js`, `core/accessibility.spec.js`, `test/test_plugins.rb` | 🟡 partial |
 | Setup Wizard | `_layouts/setup.html` | — | 🔴 none |
 | Setup Banner & Setup Check | `_includes/components/setup-banner.html` | — | 🔴 none |
 | Dev Shortcuts | `_includes/components/dev-shortcuts.html` | — | 🔴 none |
@@ -190,17 +199,17 @@ Every catalogued component, its primary implementation file, primary test, and c
 
 | Component | Primary source | Test | Coverage |
 |---|---|---|---|
-| AI Chat Assistant | `_includes/components/ai-chat.html` | `security.spec.js` | 🔴 none |
+| AI Chat Assistant | `_includes/components/ai-chat.html` | `core/security.spec.js` | 🔴 none |
 | Site Search (modal + index) | `_includes/components/search-modal.html` | — | 🔴 none |
 | Cookie Consent | `_includes/components/cookie-consent.html` | — | 🔴 none |
-| PostHog Analytics | `_includes/analytics/posthog.html` | `security.spec.js`, `test/test_quality.sh` | 🟡 partial |
-| Google Analytics & Tag Manager | `_includes/analytics/google-analytics.html` | `security.spec.js` | 🔴 none |
+| PostHog Analytics | `_includes/analytics/posthog.html` | `core/security.spec.js`, `test/test_quality.sh` | 🟡 partial |
+| Google Analytics & Tag Manager | `_includes/analytics/google-analytics.html` | `core/security.spec.js` | 🔴 none |
 | Mermaid Diagrams | `_includes/components/mermaid.html` | — | 🔴 none |
 | Keyboard Shortcuts | `assets/js/modules/navigation/keyboard.js` | — | 🔴 none |
 | Shortcuts Cheatsheet Modal | `_includes/components/shortcuts-modal.html` | — | 🔴 none |
 | cheetsheet.js (Bootstrap demos) | `assets/js/cheetsheet.js` | — | 🔴 none |
-| Halfmoon Theme Switcher | `_includes/components/halfmoon.html` | `styling.spec.js` | 🟡 partial |
-| Misc Widgets (powered-by, showcase, js-cdn, svg) | `_includes/components/powered-by.html` | `styling.spec.js` | 🟡 partial |
+| Halfmoon Theme Switcher | `_includes/components/halfmoon.html` | `core/styling.spec.js` | 🟡 partial |
+| Misc Widgets (powered-by, showcase, js-cdn, svg) | `_includes/components/powered-by.html` | `core/styling.spec.js` | 🟡 partial |
 
 ---
 
@@ -362,7 +371,7 @@ The fixed top header (brand, primary menubar, utility controls, mobile/tablet sh
   - Markup: `_includes/components/js-cdn.html` (module `<script>` loader)
   - JS: `assets/js/modules/navigation/index.js`, `assets/js/modules/navigation/config.js`
 - **API surface:** `window.zer0Navigation` (`.init()`, `.getModule(name)`, `.getConfig()`, `.scrollTo()`, `.expandTo()`, `.expandAll()`, `.collapseAll()`, `.getShortcuts()`, `.destroy()`); events `navigation:ready`, `navigation:destroyed`; exported `config`, `syncBreakpointsFromCss`, `isBelowBreakpoint`, `isAtOrAboveBreakpoint`; CSS vars `--zer0-bp-sm/md/lg/xl/xxl`
-- **Tests:** Indirect: `test/visual/styling.spec.js` and `layouts.spec.js` both assert `--zer0-bp-lg` resolves to a pixel value (the token `syncBreakpointsFromCss` reads). No test asserts `window.zer0Navigation` exists or that `navigation:ready` fires.
+- **Tests:** Indirect: `test/visual/styling.spec.js` and `features/layouts.spec.js` both assert `--zer0-bp-lg` resolves to a pixel value (the token `syncBreakpointsFromCss` reads). No test asserts `window.zer0Navigation` exists or that `navigation:ready` fires.
 - **Gaps / improvement ideas:** No direct assertion that the orchestrator initializes (`window.zer0Navigation._initialized`) or that conditional module gating works. The Bootstrap-not-loaded fallback path is untested. Public API methods (`scrollTo`, `expandTo`) have no coverage.
 
 ### Navbar Module (hover dropdowns / mobile menu / focus trap / tooltips)
@@ -374,7 +383,7 @@ The fixed top header (brand, primary menubar, utility controls, mobile/tablet sh
   - Markup: `_includes/navigation/navbar.html`
   - JS: `assets/js/modules/navigation/navbar.js`
 - **API surface:** class `Navbar` (`.init()`, `.destroy()`); operates on `#bdNavbar`, `.nav-hover-dropdown`, `.dropdown-toggle-split`, `.dropdown-menu`; toggles `.show` + `aria-expanded`; tooltip `customClass: 'nav-tooltip'`; breakpoints from `config.breakpoints.lg/xl`
-- **Tests:** No automated tests (behaviorally). Static markup that it drives is touched by the navbar render/toggle tests in `styling.spec.js`.
+- **Tests:** No automated tests (behaviorally). Static markup that it drives is touched by the navbar render/toggle tests in `core/styling.spec.js`.
 - **Gaps / improvement ideas:** None of the rich keyboard/dropdown/tooltip behavior is exercised by Playwright — a high-value gap given accessibility commitments. `_setupDropdownHoverDelay()` is a dead no-op left in place. `destroy()` only removes listeners tracked via `_on`, but the mobile/outside-click handlers are registered through `_on`, so this is mostly fine — still untested.
 
 ### Scroll-Spy Module
@@ -668,7 +677,7 @@ The marketing-facing surface of the theme: the data-driven landing layout (hero,
   - Markup: `_layouts/home.html` (inherits `root.html`)
   - JS: —
 - **API surface:** classes `.home`, `.page-heading`, `.rss-subscribe`; front matter `title`, `hide_title`, `rss_subscribe`
-- **Tests:** Partially — `layouts.spec.js` "homepage exposes exactly one accessible h1" applies when `/` uses this layout; no test exercises `hide_title`/`rss_subscribe` toggles.
+- **Tests:** Partially — `features/layouts.spec.js` "homepage exposes exactly one accessible h1" applies when `/` uses this layout; no test exercises `hide_title`/`rss_subscribe` toggles.
 - **Gaps / improvement ideas:** The `hide_title` and `rss_subscribe:false` branches are untested. No automated check that the RSS link resolves to a valid `/feed.xml`.
 
 ### Index layout
@@ -821,7 +830,7 @@ The theme's appearance is a four-layer system: a `--zer0-*` design-token base (a
   - JS: inline `<script>` in the include (pairs with `assets/js/modules/theme/appearance.js`)
   - Plugin/data: `_config.yml` `theme_color`
 - **API surface:** `<style id="zer0-tokens-inline">`; localStorage key `zer0-appearance` (`{primary,secondary,accent}`); writes CSS vars `--zer0-color-{primary,secondary,accent}`; Liquid `site.theme_color.{main,secondary,red,yellow,green,teal,blue,purple}`
-- **Tests:** No automated tests. (`theme-colors.spec.js` covers the customizer YAML, not this config→token bridge or the pre-paint restore.)
+- **Tests:** No automated tests. (`features/appearance.spec.js` covers the customizer YAML, not this config→token bridge or the pre-paint restore.)
 - **Gaps / improvement ideas:** No test verifies that a configured `theme_color.main` actually overrides `--zer0-color-primary`, nor that the pre-paint localStorage restore runs before main.css (the core anti-flash guarantee). Key-name mapping (red→danger etc.) is undocumented in the UI and easy to mis-set. JSON-parse failure is silently swallowed — no console signal for debugging a corrupt pref.
 
 ### Color Modes (light / dark / wizard)
@@ -833,7 +842,7 @@ The theme's appearance is a four-layer system: a `--zer0-*` design-token base (a
   - Markup: `_includes/components/halfmoon.html` (light/dark/auto segmented control), `_includes/components/mermaid.html` (wizard→dark)
   - JS: `assets/js/halfmoon.js`, `assets/js/modules/theme/appearance.js` (renders its own light/dark/auto group only on explicit `[data-appearance-panel-host]` mounts; in the settings panel it renders the primary-color picker only)
 - **API surface:** attributes `data-bs-theme="light|dark|wizard"`, `data-bs-theme-value`; localStorage `theme`; class `.bd-theme-switch`; CSS vars `--bd-{purple,violet,accent,violet-rgb,accent-rgb,pink-rgb,teal-rgb,violet-bg,toc-color,sidebar-link-bg,callout-link,callout-code-color,pre-bg}`, plus `--bs-body-*`/`--bs-dropdown-*`/`--bs-btn-*` under wizard
-- **Tests:** `test/visual/settings-panel.spec.js` asserts clicking light/dark buttons flips `data-bs-theme` and syncs `.active`/`aria-pressed`; `skins.spec.js` and the dark/contrast snapshots exercise dark surfaces.
+- **Tests:** `test/visual/settings-panel.spec.js` asserts clicking light/dark buttons flips `data-bs-theme` and syncs `.active`/`aria-pressed`; `features/appearance.spec.js` and the dark/contrast snapshots exercise dark surfaces.
 - **Gaps / improvement ideas:** Wizard mode is defined in SCSS and read by Mermaid but is **not selectable from any UI** (halfmoon offers only light/dark/auto) — either expose it or document it as config-only. `--bd-callout-link` is an RGB triple in light/dark but consumed inconsistently.
 
 ### Named Skins (the 9 `data-theme-skin` palettes)
@@ -871,7 +880,7 @@ The theme's appearance is a four-layer system: a `--zer0-*` design-token base (a
   - JS: `assets/js/background-customizer.js`
   - Plugin/data: `_data/theme_backgrounds.yml`, `_config.yml` `theme_background`
 - **API surface:** `window.zer0Bg.{setSkin(name),toggle(force?),setOpacity(layer,value),currentSkin()}`; events `zer0:skin-change`{skin}, `zer0:bg-toggle`{enabled}; attributes `data-theme-skin`, `data-zer0-bg="on|off"`, `data-skin`; localStorage `zer0-theme-skin`, `zer0-bg-enabled`; CSS vars `--zer0-bg-{gradient,pattern,noise,gradient-opacity,texture-opacity,pattern-opacity,blend,pattern-size,enabled}`; SCSS mixins `zer0-bg-{gradient,noise,pattern,layered}`; classes `.zer0-bg-{hero,body,surface,footer}`; ids `#zer0BgCustomizer`, `#zer0SkinButtons`, `#zer0BgToggle`, `#zer0{Gradient,Texture,Pattern}Opacity`, `#zer0BgReset`
-- **Tests:** `test/visual/backgrounds.spec.js` — "toggle off/on sets `data-zer0-bg`", "toggle persists to localStorage" (`zer0-bg-enabled`), "bg-toggle event fires with correct detail", three "setOpacity(...) updates CSS variable" (gradient/texture/pattern, `toBeCloseTo`), "background state persists across navigation" (`/faq/`). Skin persistence covered in `skins.spec.js`. Tests assert API/attribute/var/persistence/events; the offcanvas/slider DOM wiring and visual layering are untested.
+- **Tests:** `test/visual/backgrounds.spec.js` — "toggle off/on sets `data-zer0-bg`", "toggle persists to localStorage" (`zer0-bg-enabled`), "bg-toggle event fires with correct detail", three "setOpacity(...) updates CSS variable" (gradient/texture/pattern, `toBeCloseTo`), "background state persists across navigation" (`/faq/`). Skin persistence covered in `features/appearance.spec.js`. Tests assert API/attribute/var/persistence/events; the offcanvas/slider DOM wiring and visual layering are untested.
 - **Gaps / improvement ideas:** The two near-identical include scripts (`background-customizer.html` vs `background-settings.html`) duplicate ~50 lines of slider/reset logic and both bind `#zer0SkinButtons`/`#zer0BgToggle` by shared ids — rendering both on one page would double-bind. `setOpacity` accepts the public layer name `texture` but no validation/logging when an unknown layer is passed. `--zer0-bg-enabled` CSS var exists but is unused (toggle uses the `[data-zer0-bg]` attribute). No test for the include UI controls or the `svg-background.html` config override.
 
 ### Palette Generator (`palette-generator.js`)
@@ -1558,7 +1567,7 @@ Floating/embedded widgets and third-party integrations layered onto the theme: t
   - Markup: `_includes/components/halfmoon.html` (segmented control; included by `info-section.html`, `theme-controls-bar.html`)
   - JS: `assets/js/halfmoon.js` (loaded in `_includes/core/head.html:42`)
 - **API surface:** class `.bd-theme-switch`; data-attribute `data-bs-theme-value` (`light`/`dark`/`auto`); attribute set `data-bs-theme`; storage key `theme`; SVG sprite refs `#sun-fill`/`#moon-stars-fill`/`#circle-half`; legacy-supported ids `#bd-theme`/`#bd-theme-text` + `.theme-icon-active` (consumer-overridden dropdown markup keeps working)
-- **Tests:** `test/visual/settings-panel.spec.js` — clicking dark/light flips `data-bs-theme` and updates `.active`/`aria-pressed`. Theme-color/skin specs (`theme-colors.spec.js`, `skins.spec.js`) exercise color modes.
+- **Tests:** `test/visual/settings-panel.spec.js` — clicking dark/light flips `data-bs-theme` and updates `.active`/`aria-pressed`. Theme-color/skin specs (`features/appearance.spec.js`, `features/appearance.spec.js`) exercise color modes.
 - **Gaps / improvement ideas:** The static markup ships all buttons inactive — active state appears when `showActiveTheme()` runs on `DOMContentLoaded` (brief unmarked state, no wrong-marked state). `keyboard.js`/mermaid treat a `wizard` theme value as dark, but this switcher only offers light/dark/auto — document the `wizard` mode's origin.
 
 ### Misc Widgets (powered-by, component-showcase, js-cdn, svg)
@@ -1571,7 +1580,7 @@ Floating/embedded widgets and third-party integrations layered onto the theme: t
   - Plugin/data: `site.powered_by`, `site.appearance_panel`, `site.user_overrides`, `site.obsidian.attachments_path`, `assets/data/wiki-index.json`
 - **API surface:** powered-by: classes `.card`, config `site.powered_by[].name/version/url/icon`, `site.default_icon`. showcase: param `include.sections`, anchor ids `#showcase-*`. js-cdn: `window.OBSIDIAN_CONFIG`, gates `site.appearance_panel`/`site.user_overrides`, cache-bust `?v={site.time}`. svg: `<symbol id="...">` consumed via `<use href="#id">`.
 - **Tests:** `test/visual/styling.spec.js` — "homepage does not reference common third-party CDNs for core assets" and "same-origin CSS assets return 200" validate the no-CDN posture that `js-cdn.html` enforces; "HTML references compiled main stylesheet" confirms asset wiring. No tests for `powered_by` rendering, the showcase gallery, or SVG sprite integrity.
-- **Gaps / improvement ideas:** `styling.spec.js` bans CSS CDNs but does not assert that JS (`js-cdn.html`) is fully same-origin — extend the banned-CDN check to `<script src>` too. No test that every `<use href="#icon">` in the theme has a matching `<symbol>` in `svg.html` (broken icons fail silently). `component-showcase.html` is large (~22KB) and untested; a smoke test that each `sections=` value renders its anchor would catch regressions. `powered-by.html` has no empty-state when `site.powered_by` is unset.
+- **Gaps / improvement ideas:** `core/styling.spec.js` bans CSS CDNs but does not assert that JS (`js-cdn.html`) is fully same-origin — extend the banned-CDN check to `<script src>` too. No test that every `<use href="#icon">` in the theme has a matching `<symbol>` in `svg.html` (broken icons fail silently). `component-showcase.html` is large (~22KB) and untested; a smoke test that each `sections=` value renders its anchor would catch regressions. `powered-by.html` has no empty-state when `site.powered_by` is unset.
 
 ---
 
@@ -1581,12 +1590,12 @@ The test harness has two halves: a **Playwright** behavioral/visual suite under 
 
 ### How to run
 
-Playwright tiers are exposed as **projects** in `test/playwright.config.js` (single config, no per-tier files). Defaults: `baseURL = http://127.0.0.1:4011` (override with `BASE_URL`), `workers: 1` / `fullyParallel: false` (predictable Jekyll load), `timeout: 45s`, snapshots committed to `test/visual/snapshots/`, screenshot tolerance `maxDiffPixels: 150` / `threshold: 0.2`. The runner script `test/test_playwright.sh` spawns a short-lived Jekyll server on `STYLING_PORT` (default `4011`) unless `BASE_URL` points at an existing one.
+Playwright tiers are exposed as **projects** in `test/playwright.config.js` (single config, no per-tier files). Defaults: `baseURL = http://127.0.0.1:4000` (override with `BASE_URL`), `workers: 1` / `fullyParallel: false` (predictable Jekyll load), `timeout: 45s`, snapshots committed to `test/visual/snapshots/`, screenshot tolerance `maxDiffPixels: 150` / `threshold: 0.2`. The runner script `test/test_playwright.sh` spawns a short-lived Jekyll server on `STYLING_PORT` (default `4000`, matching the Docker dev server) unless `BASE_URL` points at an existing one.
 
 | Tier | Local command | CI invocation | Asserts | Platform caveat |
 |---|---|---|---|---|
 | **smoke** | `npm run test:smoke` | `.github/actions/playwright-tests` (`project: smoke`) | All specs **except** the pixel block (`grepInvert: /homepage visual snapshot/`) — DOM/CSS/layout/a11y behavior on Desktop Chrome | Platform-independent; runs on macOS. This is the gating tier. |
-| **snapshots** | `npm run test:snapshots` | same action, `project: snapshots`, `continue-on-error: true`, path-filtered on `detect-changes.outputs.styling` | Pixel-perfect homepage screenshots for the **9 skins** (`skins.spec.js` `homepage visual snapshot` tests) | Baselines are **Linux-only** (`*-snapshots-linux.png`). They **predate the PR #108 UI overhaul and currently drift** large; non-blocking in CI. Running on macOS produces no matching baseline. |
+| **snapshots** | `npm run test:snapshots` | same action, `project: snapshots`, `continue-on-error: true`, path-filtered on `detect-changes.outputs.styling` | Pixel-perfect homepage screenshots for the **9 skins** (`features/appearance.spec.js` `homepage visual snapshot` tests) | Baselines are **Linux-only** (`*-snapshots-linux.png`). They **predate the PR #108 UI overhaul and currently drift** large; non-blocking in CI. Running on macOS produces no matching baseline. |
 | **regression** | `npm run test:regression` | manual / `workflow_dispatch` only | All specs across chromium + firefox + webkit | Cross-browser; not wired into push CI. |
 | **update baselines** | `npm run test:update-snapshots` (or `UPDATE_SNAPSHOTS=1 ./test/test_playwright.sh`) | — | Regenerates the Linux skin baselines | Must run on Linux (or in CI/Docker) to produce valid `*-linux.png`. |
 | **shell suites** | `./scripts/bin/test` (all) or `./test/test_runner.sh --suites <list>` | `./scripts/bin/test` + `test-suite` action | Theme structure, build, install, obsidian, etc. (below) | Platform-independent. |
@@ -1599,18 +1608,18 @@ All live in `test/visual/`; shared helpers in `test/visual/fixtures.js` (`SKINS`
 
 | Spec file | What it covers | ~#tests | Tier |
 |---|---|---|---|
-| `accessibility.spec.js` | axe-core WCAG 2.1 AA audits (homepage, FAQ, 8 admin pages = 0-violation); component checks (sidebar `aria-label`, color-input labels, tab ARIA roles, `<hr>`-in-`<li>`); skip-link/code-copy focusability; per-viewport advisory scans | ~22 | smoke |
-| `admin-layout.spec.js` | Per admin page: 200 status, header+title, breadcrumbs, header icon, content area; desktop sidebar visible + active highlight; mobile toggle/offcanvas open; no console errors | ~55 (8 pages × loops) | smoke |
-| `admin-nav.spec.js` | Sidebar renders all nav items; internal links → 200; external links have `target=_blank`/`rel=noopener`; active-state tracking; clicking a sidebar link navigates | ~12 | smoke |
-| `backgrounds.spec.js` | `zer0Bg.toggle()` sets `data-zer0-bg`, localStorage persistence, `zer0:bg-toggle` event, `setOpacity()` CSS vars, persistence across navigation | 8 | smoke |
-| `config-editor.spec.js` | `/about/config/` Edit & Export tab: tab activates, fields pre-populated, title→YAML preview, skin dropdown options, download button (guarded with `test.skip` if absent) | 5 | smoke |
-| `config-viewer.spec.js` | `/about/config/` viewer: 200, accordion sections, search filter, no-results graceful; **section-copy YAML-quoting test is `test.fixme` (disabled)** | 4 (1 fixme) | smoke |
-| `env-dashboard.spec.js` | `/about/settings/environment/`: 200, overview cards, Jekyll version present/valid, no `undefined`/`NaN`/`null`, non-empty plugin list; Ruby-version test is `test.fixme` | 5 (1 fixme) | smoke |
-| `layouts.spec.js` | Layout structure: single `<h1>`, landing features from `_data/landing.yml`, hero CTA names, pagination `aria-current`, breadcrumb `<ol>`/`<li>`, article single-H1, **`?` opens shortcuts modal**, welcome H1, token wiring, axe smoke | ~12 | smoke |
-| `security.spec.js` | `/about/config/` secret exposure: hidden `pre#cfg-full-yaml` sanitized, Raw-YAML tab has no API-key patterns (`phc_`/`sk_`/`ghp_`), page source has no token patterns | 3 | smoke |
-| `skins.spec.js` | Per skin (9): `data-theme-skin` attr, localStorage persist, restore-after-nav, **homepage pixel snapshot**; plus `currentSkin()` + `skin-change` event | ~38 (attr tests=smoke; 9 snapshots=snapshots tier) | smoke + snapshots |
-| `styling.spec.js` | Stylesheet plumbing: same-origin CSS = 200, `main.css` linked, `--bs-primary`/`--zer0-*` resolve, no banned CDNs; navbar/brand chrome render; docs-layout regions | ~9 | smoke |
-| `theme-colors.spec.js` | `/about/settings/theme/` Color Editor: 200, color pickers have `#RRGGBB`, picker↔text-input sync, YAML export quotes hex | 4 | smoke |
+| `core/accessibility.spec.js` | axe-core WCAG 2.1 AA audits (homepage, FAQ, 8 admin pages = 0-violation); component checks (sidebar `aria-label`, color-input labels, tab ARIA roles, `<hr>`-in-`<li>`); skip-link/code-copy focusability; per-viewport advisory scans | ~22 | smoke |
+| `features/admin.spec.js` | Per admin page: 200 status, header+title, breadcrumbs, header icon, content area; desktop sidebar visible + active highlight; mobile toggle/offcanvas open; no console errors | ~55 (8 pages × loops) | smoke |
+| `features/admin.spec.js` | Sidebar renders all nav items; internal links → 200; external links have `target=_blank`/`rel=noopener`; active-state tracking; clicking a sidebar link navigates | ~12 | smoke |
+| `features/appearance.spec.js` | `zer0Bg.toggle()` sets `data-zer0-bg`, localStorage persistence, `zer0:bg-toggle` event, `setOpacity()` CSS vars, persistence across navigation | 8 | smoke |
+| `features/admin.spec.js` | `/about/config/` Edit & Export tab: tab activates, fields pre-populated, title→YAML preview, skin dropdown options, download button (guarded with `test.skip` if absent) | 5 | smoke |
+| `features/admin.spec.js` | `/about/config/` viewer: 200, accordion sections, search filter, no-results graceful; **section-copy YAML-quoting test is `test.fixme` (disabled)** | 4 (1 fixme) | smoke |
+| `features/admin.spec.js` | `/about/settings/environment/`: 200, overview cards, Jekyll version present/valid, no `undefined`/`NaN`/`null`, non-empty plugin list; Ruby-version test is `test.fixme` | 5 (1 fixme) | smoke |
+| `features/layouts.spec.js` | Layout structure: single `<h1>`, landing features from `_data/landing.yml`, hero CTA names, pagination `aria-current`, breadcrumb `<ol>`/`<li>`, article single-H1, **`?` opens shortcuts modal**, welcome H1, token wiring, axe smoke | ~12 | smoke |
+| `core/security.spec.js` | `/about/config/` secret exposure: hidden `pre#cfg-full-yaml` sanitized, Raw-YAML tab has no API-key patterns (`phc_`/`sk_`/`ghp_`), page source has no token patterns | 3 | smoke |
+| `features/appearance.spec.js` | Per skin (9): `data-theme-skin` attr, localStorage persist, restore-after-nav, **homepage pixel snapshot**; plus `currentSkin()` + `skin-change` event | ~38 (attr tests=smoke; 9 snapshots=snapshots tier) | smoke + snapshots |
+| `core/styling.spec.js` | Stylesheet plumbing: same-origin CSS = 200, `main.css` linked, `--bs-primary`/`--zer0-*` resolve, no banned CDNs; navbar/brand chrome render; docs-layout regions | ~9 | smoke |
+| `features/appearance.spec.js` | `/about/settings/theme/` Color Editor: 200, color pickers have `#RRGGBB`, picker↔text-input sync, YAML export quotes hex | 4 | smoke |
 | `ui-refresh.spec.js` | v1.8+ UI: navbar tiers/labels/brand overlap, mobile quicklinks, intro hero stacking/button heights, code-block header+gutter, content-table CSV toolbar, footer links/columns, docs ToC/FAB, section archive, feature badges, theme-preview, focus/landmark smoke across viewports | ~20 | smoke |
 | `interactions.spec.js` | **User interactions** (clicks/typing/keyboard): search modal open→type→results→close, code-copy click→clipboard write+feedback, navbar dropdown chevron open/close + Esc + outside-click, theme-customizer skin swatch → live `--bs-primary` + YAML export | 9 | smoke |
 
@@ -1648,7 +1657,7 @@ Prioritized — interactive behaviors the smoke tier never exercises:
 
 - ✅ **Search modal / `search.json`** — **now covered** by `interactions.spec.js` (open via `/` + toggle button, type → results, no-match message, close). Remaining: arrow-key result navigation. *(was: zero coverage)*
 - **AI chat widget** (`assets/js/ai-chat.js`) — zero coverage. No test opens the widget, sends a message, or exercises dev page-edit mode. **(High — still open)**
-- ✅ **Code-copy click → clipboard write** — **now covered** by `interactions.spec.js` (grants clipboard perms, clicks copy, asserts `.copied` feedback + non-empty `clipboard.readText()` + revert). *(was: only focusable; the `config-viewer.spec.js` clipboard test is still `test.fixme`)*
+- ✅ **Code-copy click → clipboard write** — **now covered** by `interactions.spec.js` (grants clipboard perms, clicks copy, asserts `.copied` feedback + non-empty `clipboard.readText()` + revert). *(was: only focusable; the `features/admin.spec.js` clipboard test is still `test.fixme`)*
 - ✅ **Navbar dropdown open/close** — **now covered** by `interactions.spec.js` (chevron click open/close, Escape-to-close, outside-click-close, `aria-expanded`). Remaining: arrow/Home/End item navigation. *(was: layout/visibility only)*
 - ✅ **Theme customizer "apply" (skin)** — **now covered** by `interactions.spec.js` (click skin swatch → live `data-theme-skin` + `--bs-primary` change + YAML export). Note: color **pickers** are export-only by design (they do not live-apply). *(was: API-only)*
 - **Obsidian wiki-links / backlinks / callouts in rendered pages** — covered only by Ruby/JS unit tests; **no Playwright test** loads a page with `[[wiki-links]]`/embeds/callouts/backlinks and asserts client-side resolution. **(Medium)**
@@ -1799,7 +1808,7 @@ Files in `_sass`, `_includes`, `_layouts`, `assets/js` not directly named by a c
 
 ### Accessibility utilities — UI-relevant, worth their own future entries
 
-- `_sass/utilities/_focus.scss` — global `:focus-visible` ring + `.zer0-skip-link` (token-based). Tested indirectly via `accessibility.spec.js` skip-link focusability.
+- `_sass/utilities/_focus.scss` — global `:focus-visible` ring + `.zer0-skip-link` (token-based). Tested indirectly via `core/accessibility.spec.js` skip-link focusability.
 - `_sass/utilities/_motion.scss` — global `prefers-reduced-motion` reset (canonical). No direct test that animations actually stop.
 
 ### Behavior scripts not yet itemized

@@ -10,12 +10,12 @@
 #   PLAYWRIGHT_PROJECT=snapshots ./test/test_playwright.sh
 #   PLAYWRIGHT_PROJECT=smoke UPDATE_SNAPSHOTS=1 ./test/test_playwright.sh
 #   BASE_URL=http://localhost:4000 ./test/test_playwright.sh
-#   STYLING_PORT=4011 ./test/test_playwright.sh
+#   STYLING_PORT=4011 ./test/test_playwright.sh   # non-default port
 #
 # Environment overrides:
 #   PLAYWRIGHT_PROJECT  smoke (default) | snapshots | regression-chromium | …
 #   BASE_URL            Use existing server instead of spawning Jekyll
-#   STYLING_PORT        Port for the spawned Jekyll server (default 4011)
+#   STYLING_PORT        Port for the spawned Jekyll server (default 4000)
 #   UPDATE_SNAPSHOTS    1 to pass --update-snapshots
 #   SKIP_NPM_INSTALL    1 to skip `npm ci` (CI sets this — caller already ran it)
 #   SKIP_PLAYWRIGHT_INSTALL  1 to skip `playwright install chromium`
@@ -26,7 +26,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-STYLING_PORT="${STYLING_PORT:-4011}"
+STYLING_PORT="${STYLING_PORT:-4000}"
 PLAYWRIGHT_PROJECT="${PLAYWRIGHT_PROJECT:-smoke}"
 UPDATE_SNAPSHOTS="${UPDATE_SNAPSHOTS:-0}"
 SKIP_NPM_INSTALL="${SKIP_NPM_INSTALL:-${CI:-0}}"

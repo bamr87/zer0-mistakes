@@ -217,7 +217,7 @@ toggle.addEventListener('change', () => {
 
 ## 8. Add a new test
 
-Drop a `*.spec.js` under `test/visual/` and it will be picked up by `npm run test:smoke`. See `test/visual/layouts.spec.js` for examples that gracefully skip when a route is not available.
+Drop a `*.spec.js` under `test/visual/core/` (cross-cutting quality baseline) or `test/visual/features/` (one file per feature) and it will be picked up by `npm run test:smoke`. See `test/visual/features/layouts.spec.js` for examples that gracefully skip when a route is not available.
 
 ---
 
