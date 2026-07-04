@@ -166,6 +166,54 @@
       }
     },
     {
+      // Launches the Playwright CLI as a plain node program (not
+      // runtimeExecutable) so breakpoints set in test/visual/**/*.spec.js
+      // actually hit. Reuses the Docker Jekyll dev server on :4000 — start
+      // it first (preLaunchTask) or leave it running from another session.
+      // Swap --project=smoke for --project=snapshots, or append
+      // test/visual/features/<name>.spec.js to target one file.
+      "name": "🎭 Debug Playwright: Smoke (Docker :4000)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/.bin/playwright",
+      "args": ["test", "--config=test/playwright.config.js", "--project=smoke"],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "BASE_URL": "http://localhost:4000"
+      },
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "preLaunchTask": "Docker: Compose Up (Detached)",
+      "skipFiles": ["<node_internals>/**"],
+      "presentation": {
+        "group": "Playwright",
+        "order": 1
+      }
+    },
+    {
+      // Standalone path: no Docker needed. preLaunchTask spins up a
+      // throwaway `bundle exec jekyll serve` on :4011 (background task,
+      // below) so it doesn't collide with your Docker dev server on :4000.
+      // Requires host Ruby/Bundler, same prerequisite as test_playwright.sh.
+      "name": "🎭 Debug Playwright: Smoke (Standalone :4011)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/.bin/playwright",
+      "args": ["test", "--config=test/playwright.config.js", "--project=smoke"],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "BASE_URL": "http://127.0.0.1:4011"
+      },
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "preLaunchTask": "Jekyll: Serve (Host, :4011, Background)",
+      "skipFiles": ["<node_internals>/**"],
+      "presentation": {
+        "group": "Playwright",
+        "order": 2
+      }
+    },
+    {
       "name": "🎯 Performance Debug (Docker, Chrome)",
       "type": "chrome",
       "request": "launch",

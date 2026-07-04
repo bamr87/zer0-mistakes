@@ -24,7 +24,7 @@
 //   npm run test:snapshots
 //   npm run test:regression
 //   npx playwright test --project=smoke
-//   BASE_URL=http://127.0.0.1:4011 npx playwright test --project=smoke
+//   BASE_URL=http://127.0.0.1:4011 npx playwright test --project=smoke  # non-default port
 //
 
 const { defineConfig, devices } = require('@playwright/test');
@@ -64,7 +64,7 @@ module.exports = defineConfig({
   outputDir: './visual-results/output',
 
   use: {
-    baseURL: process.env.BASE_URL || 'http://127.0.0.1:4011',
+    baseURL: process.env.BASE_URL || 'http://127.0.0.1:4000',
     ignoreHTTPSErrors: true,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',

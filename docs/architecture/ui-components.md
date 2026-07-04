@@ -1590,7 +1590,7 @@ The test harness has two halves: a **Playwright** behavioral/visual suite under 
 
 ### How to run
 
-Playwright tiers are exposed as **projects** in `test/playwright.config.js` (single config, no per-tier files). Defaults: `baseURL = http://127.0.0.1:4011` (override with `BASE_URL`), `workers: 1` / `fullyParallel: false` (predictable Jekyll load), `timeout: 45s`, snapshots committed to `test/visual/snapshots/`, screenshot tolerance `maxDiffPixels: 150` / `threshold: 0.2`. The runner script `test/test_playwright.sh` spawns a short-lived Jekyll server on `STYLING_PORT` (default `4011`) unless `BASE_URL` points at an existing one.
+Playwright tiers are exposed as **projects** in `test/playwright.config.js` (single config, no per-tier files). Defaults: `baseURL = http://127.0.0.1:4000` (override with `BASE_URL`), `workers: 1` / `fullyParallel: false` (predictable Jekyll load), `timeout: 45s`, snapshots committed to `test/visual/snapshots/`, screenshot tolerance `maxDiffPixels: 150` / `threshold: 0.2`. The runner script `test/test_playwright.sh` spawns a short-lived Jekyll server on `STYLING_PORT` (default `4000`, matching the Docker dev server) unless `BASE_URL` points at an existing one.
 
 | Tier | Local command | CI invocation | Asserts | Platform caveat |
 |---|---|---|---|---|

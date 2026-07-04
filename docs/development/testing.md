@@ -119,7 +119,7 @@ The Playwright runner is split into tiers selected via `PLAYWRIGHT_PROJECT`:
   (manual `workflow_dispatch` only).
 
 ```bash
-# Smoke tier — starts Jekyll on 127.0.0.1:4011 unless BASE_URL is already set
+# Smoke tier — starts Jekyll on 127.0.0.1:4000 unless BASE_URL is already set
 ./test/test_runner.sh --suites playwright
 npm run test:smoke
 
