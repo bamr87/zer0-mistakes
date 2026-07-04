@@ -52,5 +52,5 @@ so it also gates auto-merge.
   `generateEvidence`; do not re-implement.
 - Layout/overflow assertions live in `test/visual/fixtures.js`
   (`measureNavbarLayout`, `NAV_WIDTHS`, `boxesOverlap`, `assertStackedVertically`).
-- `test/visual/navbar-evidence.mjs` + `test/visual/navbar-responsive.spec.js` are
+- `test/visual/navbar-evidence.mjs` + `test/visual/features/navbar.spec.js` are
   the reference implementations.

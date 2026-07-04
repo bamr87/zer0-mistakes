@@ -97,11 +97,26 @@ Tests include:
 
 ### Frontend Playwright tests
 
+Specs live in two sections under `test/visual/`, orthogonal to the execution
+tiers below:
+
+- **`core/`** — cross-cutting quality/a11y/security/responsive baseline that
+  applies regardless of feature (`accessibility.spec.js`, `security.spec.js`,
+  `styling.spec.js`, `responsive.spec.js`, `layout-chrome.spec.js`,
+  `features-registry.spec.js`).
+- **`features/`** — one file per feature or tightly-scoped feature cluster,
+  matching `_data/features.yml`'s `tests:` links (`search.spec.js`,
+  `admin.spec.js`, `appearance.spec.js`, `navbar.spec.js`, `layouts.spec.js`, …).
+
 The Playwright runner is split into tiers selected via `PLAYWRIGHT_PROJECT`:
 
-- **smoke** (default) — CSS load, Bootstrap tokens, layout chrome, admin DOM, behavioral skin tests, **UI refresh regression** (`ui-refresh.spec.js`), accessibility component checks.
-- **snapshots** — pixel screenshots of the homepage in each of the 9 theme skins (path-filtered in CI).
-- **regression-{chromium,firefox,webkit}** — all specs across all browsers (manual `workflow_dispatch` only).
+- **smoke** (default) — every spec in `core/` and `features/` except the
+  pixel-snapshot test.
+- **snapshots** — pixel screenshots of the homepage in each of the 9 theme
+  skins, isolated in `features/appearance-snapshot.spec.js` (path-filtered
+  in CI).
+- **regression-{chromium,firefox,webkit}** — all specs across all browsers
+  (manual `workflow_dispatch` only).
 
 ```bash
 # Smoke tier — starts Jekyll on 127.0.0.1:4011 unless BASE_URL is already set
@@ -115,8 +130,9 @@ npm run test:snapshots
 # Reuse Docker Jekyll on :4000
 BASE_URL=http://127.0.0.1:4000 ./test/test_playwright.sh
 
-# UI refresh suite only (navbar tiers, intro hero, code blocks, tables, footer, viewports)
-npx playwright test --project=smoke ui-refresh.spec.js
+# Run just one section
+npx playwright test --config=test/playwright.config.js --project=smoke test/visual/core/
+npx playwright test --config=test/playwright.config.js --project=smoke test/visual/features/
 
 # Refresh Linux snapshot baselines (uses Docker)
 ./test/update-snapshots.sh
@@ -124,9 +140,9 @@ npx playwright test --project=smoke ui-refresh.spec.js
 
 Core tests also validate that a production Jekyll build emits `main.css` containing docs-layout rules (e.g. `bd-layout`).
 
-### UI refresh regression (`ui-refresh.spec.js`)
+### Layout & viewport regression (`features/layouts.spec.js`, `core/responsive.spec.js`)
 
-The smoke tier includes a dedicated spec for the v1.8+ UI work. It exercises styling, layout containment, visibility, and advisory axe scans across five viewports defined in `test/visual/fixtures.js`:
+These specs exercise styling, layout containment, visibility, and advisory axe scans across five viewports defined in `test/visual/fixtures.js`:
 
 | Viewport      | Size     | What it guards                                         |
 | ------------- | -------- | ------------------------------------------------------ |

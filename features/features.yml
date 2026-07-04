@@ -1,7 +1,7 @@
 # zer0-mistakes Theme Features Registry
 # Comprehensive feature tracking for the zer0-mistakes Jekyll theme
-# Version: 1.24.0
-# Last Updated: 2026-06-30
+# Version: 1.25.0
+# Last Updated: 2026-07-03
 
 features:
   # ============================================================================
@@ -23,8 +23,8 @@ features:
       commit: "a8426a5"
       issue: null
     tests:
-      - "test/visual/component-showcase.spec.js"
-      - "test/visual/styling.spec.js"
+      - "test/visual/features/component-showcase.spec.js"
+      - "test/visual/core/styling.spec.js"
     references:
       layouts: ["_layouts/root.html", "_layouts/default.html"]
       includes: ["_includes/core/head.html"]
@@ -216,7 +216,7 @@ features:
       issue: null
     tests:
       - "test/test_quality.sh"
-      - "test/visual/security.spec.js"
+      - "test/visual/core/security.spec.js"
     references:
       include: "_includes/analytics/posthog.html"
       config: "_config.yml"
@@ -277,7 +277,7 @@ features:
       commit: "0ea51c6"
       issue: null
     tests:
-      - "test/visual/interactions.spec.js"
+      - "test/visual/features/sidebar-navigation.spec.js"
     references:
       javascript:
         - "assets/js/modules/navigation/sidebar-state.js"
@@ -317,8 +317,8 @@ features:
       commit: "0ea51c6"
       issue: null
     tests:
-      - "test/visual/feature-coverage.spec.js"
-      - "test/visual/accessibility.spec.js"
+      - "test/visual/features/layouts.spec.js"
+      - "test/visual/core/accessibility.spec.js"
     references:
       javascript:
         - "assets/js/modules/navigation/keyboard.js"
@@ -351,8 +351,7 @@ features:
       commit: "0ea51c6"
       issue: null
     tests:
-      - "test/visual/feature-coverage.spec.js"
-      - "test/visual/ui-refresh.spec.js"
+      - "test/visual/features/content-enhancements.spec.js"
     references:
       include: "_includes/navigation/sidebar-right.html"
       styles: "_sass/custom.scss"
@@ -379,7 +378,7 @@ features:
       commit: "0ea51c6"
       issue: null
     tests:
-      - "test/visual/accessibility.spec.js"
+      - "test/visual/core/accessibility.spec.js"
     references:
       include: "_includes/core/header.html"
       styles: "_sass/custom.scss"
@@ -621,7 +620,7 @@ features:
       commit: "a8426a5"
       issue: null
     tests:
-      - "test/visual/layouts.spec.js"
+      - "test/visual/features/layouts.spec.js"
     references:
       layouts:
         - "_layouts/root.html"
@@ -667,7 +666,7 @@ features:
       commit: "a8426a5"
       issue: null
     tests:
-      - "test/visual/component-showcase.spec.js"
+      - "test/visual/features/component-showcase.spec.js"
     references:
       includes:
         - "_includes/core/"
@@ -932,7 +931,7 @@ features:
       commit: "a8426a5"
       issue: null
     tests:
-      - "test/visual/feature-coverage.spec.js"
+      - "test/visual/features/content-enhancements.spec.js"
     references:
       scripts:
         - "assets/js/back-to-top.js"
@@ -957,7 +956,7 @@ features:
       commit: "a8426a5"
       issue: null
     tests:
-      - "test/visual/feature-coverage.spec.js"
+      - "test/visual/features/content-enhancements.spec.js"
     references:
       scripts:
         - "assets/js/code-copy.js"
@@ -983,7 +982,7 @@ features:
       commit: "55bee97"
       issue: null
     tests:
-      - "test/visual/color-mode-default.spec.js"
+      - "test/visual/features/appearance.spec.js"
     references:
       scripts:
         - "assets/js/modules/theme/appearance.js"
@@ -1015,8 +1014,7 @@ features:
       commit: "21eb458"
       issue: null
     tests:
-      - "test/visual/search.spec.js"
-      - "test/visual/search-degradation.spec.js"
+      - "test/visual/features/search.spec.js"
     references:
       scripts:
         - "assets/js/search-modal.js"
@@ -1048,7 +1046,7 @@ features:
       commit: "a8426a5"
       issue: null
     tests:
-      - "test/visual/feature-coverage.spec.js"
+      - "test/visual/features/navbar.spec.js"
     references:
       scripts:
         - "assets/js/auto-hide-nav.js"
@@ -1073,7 +1071,7 @@ features:
       commit: "a8426a5"
       issue: null
     tests:
-      - "test/visual/backgrounds.spec.js"
+      - "test/visual/features/appearance.spec.js"
     references:
       scripts:
         - "assets/js/particles.js"
@@ -1105,7 +1103,7 @@ features:
       commit: "a8426a5"
       issue: null
     tests:
-      - "test/visual/giscus-comments.spec.js"
+      - "test/visual/features/comments.spec.js"
     references:
       includes:
         - "_includes/content/giscus.html"
@@ -1140,7 +1138,7 @@ features:
       commit: "31f827e"
       issue: null
     tests:
-      - "test/visual/feature-coverage.spec.js"
+      - "test/visual/features/content-enhancements.spec.js"
     references:
       docs:
         - "pages/_docs/features/mathjax-math.md"
@@ -1165,8 +1163,7 @@ features:
       commit: "a8426a5"
       issue: null
     tests:
-      - "test/visual/feature-coverage.spec.js"
-      - "test/visual/ui-refresh.spec.js"
+      - "test/visual/features/content-enhancements.spec.js"
     references:
       includes:
         - "_includes/content/toc.html"
@@ -1251,8 +1248,8 @@ features:
       commit: "a8426a5"
       issue: null
     tests:
-      - "test/visual/layouts.spec.js"
-      - "test/visual/authors-breadcrumb-degradation.spec.js"
+      - "test/visual/features/layouts.spec.js"
+      - "test/visual/features/authors.spec.js"
     references:
       includes:
         - "_includes/navigation/breadcrumbs.html"
@@ -1421,7 +1418,7 @@ features:
       issue: null
     tests:
       - "test/test_obsidian.sh"
-      - "test/visual/obsidian-callouts.spec.js"
+      - "test/visual/features/obsidian-callouts.spec.js"
     references:
       includes:
         - "_includes/obsidian/full-graph.html"
@@ -1471,7 +1468,7 @@ features:
       issue: null
     tests:
       - "test/test_core.sh"
-      - "test/visual/layouts.spec.js"
+      - "test/visual/features/layouts.spec.js"
     references:
       page: "404.html"
       docs: "pages/_docs/features/smart-404.md"
@@ -1512,8 +1509,7 @@ features:
       commit: "a8426a5"
       issue: null
     tests:
-      - "test/visual/ui-refresh.spec.js"
-      - "test/visual/navbar-responsive.spec.js"
+      - "test/visual/features/navbar.spec.js"
     references:
       includes:
         - "_includes/navigation/navbar.html"
@@ -1533,8 +1529,7 @@ features:
       commit: "27550da"
       issue: null
     tests:
-      - "test/visual/admin-layout.spec.js"
-      - "test/visual/admin-nav.spec.js"
+      - "test/visual/features/admin.spec.js"
     references:
       layout: "_layouts/admin.html"
       includes:
@@ -1645,8 +1640,7 @@ features:
       commit: "5533f34"
       issue: null
     tests:
-      - "test/visual/navbar-responsive.spec.js"
-      - "test/visual/ui-refresh.spec.js"
+      - "test/visual/features/navbar.spec.js"
     references:
       scripts:
         - "assets/js/modules/"
@@ -1753,7 +1747,7 @@ features:
       commit: "341cc67"
       issue: null
     tests:
-      - "test/visual/ai-chat.spec.js"
+      - "test/visual/features/ai-chat.spec.js"
     references:
       includes: ["_includes/components/ai-chat.html"]
       layouts: ["_layouts/root.html"]
@@ -1780,7 +1774,7 @@ features:
       commit: "a6db3042"
       issue: null
     tests:
-      - "test/visual/authors-breadcrumb-degradation.spec.js"
+      - "test/visual/features/authors.spec.js"
     references:
       plugin: "_plugins/author_pages_generator.rb"
       layouts:
@@ -1805,7 +1799,7 @@ features:
       commit: "53132416"
       issue: null
     tests:
-      - "test/visual/layouts.spec.js"
+      - "test/visual/features/layouts.spec.js"
     references:
       layout: "_layouts/news.html"
 
@@ -1824,8 +1818,8 @@ features:
       commit: "06691f93"
       issue: null
     tests:
-      - "test/visual/section-sidebar-tags-gate.spec.js"
-      - "test/visual/layouts.spec.js"
+      - "test/visual/features/sidebar-navigation.spec.js"
+      - "test/visual/features/layouts.spec.js"
     references:
       layout: "_layouts/section.html"
 
@@ -1844,7 +1838,7 @@ features:
       commit: "06691f93"
       issue: null
     tests:
-      - "test/visual/layouts.spec.js"
+      - "test/visual/features/layouts.spec.js"
     references:
       layout: "_layouts/article.html"
       include: "_includes/components/post-type-badge.html"
@@ -1864,9 +1858,8 @@ features:
       commit: "27550dac"
       issue: null
     tests:
-      - "test/visual/skins.spec.js"
-      - "test/visual/backgrounds.spec.js"
-      - "test/visual/theme-colors.spec.js"
+      - "test/visual/features/appearance.spec.js"
+      - "test/visual/features/appearance-snapshot.spec.js"
     references:
       scripts:
         - "assets/js/background-customizer.js"
@@ -1999,7 +1992,7 @@ features:
       commit: "7ba0f834"
       issue: null
     tests:
-      - "test/visual/component-showcase.spec.js"
+      - "test/visual/features/component-showcase.spec.js"
     references:
       include: "_includes/components/component-showcase.html"
 
@@ -2125,7 +2118,7 @@ features:
       commit: "3b951604"
       issue: null
     tests:
-      - "test/visual/settings-panel.spec.js"
+      - "test/visual/features/settings-panel.spec.js"
     references:
       includes:
         - "_includes/components/info-section.html"

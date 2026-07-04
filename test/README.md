@@ -132,13 +132,23 @@ The zer0-mistakes testing framework provides **6 comprehensive test suites** for
 
 ### 🎭 Playwright Frontend Tests (`test_playwright.sh`)
 
+Spec files live in exactly two sections under `test/visual/`, orthogonal to the
+execution tiers below:
+
+- **`core/`** — cross-cutting quality/a11y/security/responsive baseline that
+  applies regardless of feature (accessibility, security, styling, responsive,
+  layout-chrome, features-registry). Bare, non-negotiable expectations.
+- **`features/`** — one file per feature or tightly-scoped feature cluster,
+  matching the feature registry (`_data/features.yml`'s `tests:` links) —
+  e.g. `search.spec.js`, `admin.spec.js`, `appearance.spec.js`, `navbar.spec.js`.
+
 A single runner script invokes the appropriate Playwright project (tier).
 All tiers share `test/playwright.config.js`.
 
 | Tier | `PLAYWRIGHT_PROJECT` | What it covers | When CI runs it |
 |------|----------------------|----------------|-----------------|
-| Smoke | `smoke` (default) | CSS load, Bootstrap tokens, layout chrome, admin DOM, **ui-refresh** styling/layout/a11y, accessibility component checks | Every code-change PR |
-| Snapshots | `snapshots` | Homepage pixel screenshots for the 9 theme skins | Path-filtered: only when `_sass/`, `assets/`, `_layouts/`, `_includes/`, or `test/visual/` change |
+| Smoke | `smoke` (default) | Every spec in `core/` and `features/` except the pixel-snapshot test | Every code-change PR |
+| Snapshots | `snapshots` | Homepage pixel screenshots for the 9 theme skins (`features/appearance-snapshot.spec.js`) | Path-filtered: only when `_sass/`, `assets/`, `_layouts/`, `_includes/`, or `test/visual/` change |
 | Regression | `regression-chromium` / `regression-firefox` / `regression-webkit` | All specs across all browsers | Manual `workflow_dispatch` only |
 
 **Prerequisites:** Node.js 18+, Playwright (auto-installed by the runner)
@@ -153,8 +163,9 @@ PLAYWRIGHT_PROJECT=snapshots ./test/test_playwright.sh
 # Reuse an existing Jekyll server (e.g. docker compose on :4000)
 BASE_URL=http://localhost:4000 ./test/test_playwright.sh
 
-# Run only the UI refresh regression suite
-npx playwright test --project=smoke ui-refresh.spec.js
+# Run just one section
+npx playwright test --config=test/playwright.config.js --project=smoke test/visual/core/
+npx playwright test --config=test/playwright.config.js --project=smoke test/visual/features/
 
 # npm aliases
 npm run test:smoke
@@ -250,8 +261,12 @@ test/
 │   ├── install_test_utils.sh
 │   └── config_matrix_generator.sh
 ├── visual/                  # ✅ Playwright specs + snapshot baselines
-│   ├── *.spec.js            # 12 spec files (styling, ui-refresh, skins, admin, a11y, …)
+│   ├── core/                # ✅ Cross-cutting quality baseline (6 files: a11y, security,
+│   │                        #    styling, responsive, layout-chrome, features-registry)
+│   ├── features/            # ✅ One file per feature/cluster (15 files, matches the
+│   │                        #    feature registry's tests: links — search, admin, …)
 │   ├── fixtures.js          # Shared helpers (SKINS, VIEWPORTS, UI_ROUTES, setSkin, …)
+│   ├── *-evidence.mjs       # Visual-evidence generators (test/visual/evidence/<slug>/)
 │   └── snapshots/           # Committed Linux baselines for the snapshots tier
 ├── visual-results/          # ⚙️ Run output (gitignored): traces, html report, jekyll.log
 ├── results/                 # ✅ Test results (JSON)

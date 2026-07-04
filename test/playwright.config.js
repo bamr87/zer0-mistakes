@@ -2,14 +2,20 @@
 // Playwright Configuration for zer0-mistakes
 // =============================================================================
 //
-// Single source of truth for all Playwright runs. Tiers are exposed as
-// Playwright "projects" — pick one with `--project=<name>`:
+// Single source of truth for all Playwright runs.
+//
+// Spec files live in two sections (test/visual/core/, test/visual/features/):
+// core/ is the cross-cutting quality/a11y/security/responsive baseline that
+// applies regardless of feature; features/ is one file per feature or
+// tightly-scoped feature cluster, matching the feature registry
+// (_data/features.yml). This is orthogonal to the execution tiers below,
+// which are exposed as Playwright "projects" — pick one with `--project=<name>`:
 //
 //   smoke       Behavioral DOM/CSS/layout tests across all specs (no
 //               pixel screenshots). Runs on every CI code-change.
 //   snapshots   Pixel-perfect homepage screenshots for the 9 theme skins
-//               in skins.spec.js. Path-filtered in CI; baselines are
-//               committed under test/visual/snapshots/.
+//               in features/appearance-snapshot.spec.js. Path-filtered in
+//               CI; baselines are committed under test/visual/snapshots/.
 //   regression  All specs across chromium/firefox/webkit. Manual /
 //               workflow_dispatch only.
 //
@@ -72,13 +78,13 @@ module.exports = defineConfig({
   projects: [
     {
       name: 'smoke',
-      // Everything except the pixel-snapshot block in skins.spec.js.
+      // Everything except the pixel-snapshot block in appearance-snapshot.spec.js.
       grepInvert: SNAPSHOT_GREP,
       use: { ...devices['Desktop Chrome'] },
     },
     {
       name: 'snapshots',
-      testMatch: '**/skins.spec.js',
+      testMatch: '**/appearance-snapshot.spec.js',
       grep: SNAPSHOT_GREP,
       use: { ...devices['Desktop Chrome'] },
     },
