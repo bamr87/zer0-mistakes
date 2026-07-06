@@ -237,6 +237,24 @@
     // Playwright (throwaway Microsoft Playwright image, nothing local)
     // ---------------------------------------------------------------
     {
+      "label": "Jekyll: Serve (Host, :4011, Background)",
+      "type": "shell",
+      "command": "bundle",
+      "args": ["exec", "jekyll", "serve", "--config", "_config.yml,_config_dev.yml", "--host", "127.0.0.1", "--port", "4011"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "isBackground": true,
+      "presentation": { "echo": true, "reveal": "always", "focus": false, "panel": "dedicated", "showReuseMessage": false, "clear": false },
+      "problemMatcher": {
+        "pattern": { "regexp": "^never-matches-anything$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Configuration file:",
+          "endsPattern": "Server running"
+        }
+      },
+      "detail": "HOST: standalone Jekyll on :4011 for isolated Playwright debug runs (needs host Ruby/Bundler). Used as preLaunchTask by the Standalone :4011 debug config."
+    },
+    {
       "label": "🎭 Playwright: Smoke",
       "type": "shell",
       "command": "docker",

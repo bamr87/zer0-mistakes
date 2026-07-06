@@ -92,7 +92,7 @@ node .claude/skills/run-zer0-mistakes/driver.mjs --skin neon --out /tmp/neon.png
 # screenshots each, exits non-zero if any 4xx/5xx or console error
 node .claude/skills/run-zer0-mistakes/driver.mjs --smoke
 
-# Drive the test server instead (see Gotchas — tests use port 4011)
+# Drive an isolated test server instead (see Gotchas — :4011 avoids the :4000 dev server)
 node .claude/skills/run-zer0-mistakes/driver.mjs --url http://127.0.0.1:4011 --path /faq/
 ```
 
@@ -117,8 +117,7 @@ the driver exists.
 
 The Playwright behavioral tier is the test that pairs with this driver. It has
 **no `webServer`** in its config — it expects a server already running at
-`BASE_URL` (default `http://127.0.0.1:4011`). Point it at the Docker dev server
-on :4000:
+`BASE_URL` (default `http://127.0.0.1:4000`, matching the Docker dev server):
 
 ```bash
 # Verified here: 224 passed, 8 skipped in ~4 min against the live :4000 server
@@ -126,7 +125,8 @@ BASE_URL=http://localhost:4000 npm run test:smoke
 ```
 
 Without `BASE_URL`, `./test/test_playwright.sh` spawns its own short-lived
-`jekyll serve` on port 4011 first. The broader suites — `./scripts/bin/test`
+`jekyll serve` on port 4000 by default (`STYLING_PORT`) — see Gotchas if the
+Docker dev server is already up. The broader suites — `./scripts/bin/test`
 (lib + theme + integration) and `./test/test_runner.sh --suites core` — are
 documented in [`CLAUDE.md`](CLAUDE.md); they were not exercised while authoring
 this skill.
@@ -137,9 +137,11 @@ this skill.
   Docker image is Ruby 3.3. `bundle exec jekyll serve` on the host will fail or
   need the macOS compatibility Gemfile the installer generates. Docker is the
   one true serving path.
-- **Dev server is :4000; the Playwright tests default to :4011.** Two different
-  ports. The driver defaults to 4000 (the dev server); pass `--url` to point at
-  4011 if you spun up a test server.
+- **Playwright's default port (4000) now matches the Docker dev server.** If
+  Docker is already up, either reuse it (`BASE_URL=http://localhost:4000`, no
+  spawn) or pass `STYLING_PORT=4011` to `test/test_playwright.sh` to spawn an
+  isolated server on a free port instead — spawning a second server on :4000
+  while Docker holds it will fail to bind.
 - **`/about/stats/` logs a benign console error** —
   `SyntaxError: Failed to execute 'querySelector' on 'Element': '#404' is not a
   valid selector.` (an ID starting with a digit). The `--smoke` run marks that

@@ -74,7 +74,7 @@
 # - The theme also clips stray horizontal page overflow at the root, so an
 #   over-stuffed nav or wide content can never make the fixed navbar look "cut
 #   off". Wide tables/code keep their own local scroll. Regression-guarded by
-#   test/visual/navbar-responsive.spec.js.
+#   test/visual/features/navbar.spec.js.
 #
 # ## Schema Validation
 #

@@ -655,7 +655,7 @@ git commit -m "feat: add new component"
 # Docker-specific tests
 ./test/test_deployment.sh
 
-# Frontend smoke tests (Playwright; starts Jekyll on :4011 unless BASE_URL is set)
+# Frontend smoke tests (Playwright; starts Jekyll on :4000 unless BASE_URL is set)
 npm run test:smoke
 # Pixel regression (skin homepage screenshots; baselines committed for Linux)
 npm run test:snapshots
