@@ -1,0 +1,141 @@
+# ==============================================================================
+# Nightly Extended Tests
+# ==============================================================================
+# The PR gate (ci.yml) runs only the @critical Playwright tier plus the lean
+# shell-suite set, so PR feedback stays fast. This workflow is the safety net:
+# every night it runs everything the gate skips —
+#
+#   1. The FULL Playwright `smoke` tier (all specs, incl. admin dashboards,
+#      component showcase, obsidian, the 9-skin loops, …)
+#   2. The FULL shell-suite matrix (incl. the install/deploy/site-generation
+#      suites that PRs only run when install-related paths change)
+#   3. The pixel-snapshot tier (9 skin baselines in the jammy image)
+#
+# A failure never blocks anyone: it creates (or updates) a single sticky
+# issue that the issue autopilot / triager picks up, keeping humans and
+# agents in the loop without gating development speed.
+# ==============================================================================
+
+name: Nightly Extended Tests
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  schedule:
+    # Nightly, offset from test-latest.yml's 06:00 canary
+    - cron: '17 8 * * *'
+  workflow_dispatch:
+
+env:
+  PAGES_REPO_NWO: ${{ vars.PAGES_REPO_NWO || github.repository }}
+  NODE_VERSION: '20'
+
+jobs:
+  extended-suites:
+    name: Extended shell + Playwright smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Run full shell-suite matrix
+        uses: ./.github/actions/test-suite
+        with:
+          ruby-version: '3.3'
+          verbose: true
+          suites: core,deployment,quality,installation,installer,site_generation,obsidian,features
+          skip-docker: true
+          skip-remote: true
+
+      - name: Setup Node.js (Playwright)
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install Playwright dependencies
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Playwright full smoke tier
+        env:
+          PAGES_REPO_NWO: ${{ env.PAGES_REPO_NWO }}
+        uses: ./.github/actions/playwright-tests
+        with:
+          project: smoke
+          install-deps: 'false'
+          artifact-name: nightly
+
+  snapshots:
+    name: Visual snapshots (9 skins)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Render snapshot gate in the jammy Playwright image
+        run: |
+          # Same environment that generates the baselines — see ci.yml's
+          # snapshots job for the full rationale.
+          UPDATE_SNAPSHOTS=0 ./test/update-snapshots.sh
+
+      - name: Upload snapshot diffs on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: nightly-snapshots
+          path: test/visual-results/
+          retention-days: 14
+          if-no-files-found: ignore
+
+  report-failure:
+    name: File sticky issue on failure
+    runs-on: ubuntu-latest
+    needs: [extended-suites, snapshots]
+    if: always() && contains(needs.*.result, 'failure')
+    timeout-minutes: 5
+    steps:
+      - name: Create or update the sticky failure issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          SUITES_RESULT: ${{ needs.extended-suites.result }}
+          SNAPSHOTS_RESULT: ${{ needs.snapshots.result }}
+        run: |
+          TITLE="Nightly extended tests failing"
+          MARKER="<!-- nightly-extended-sticky -->"
+          BODY="$MARKER
+          The nightly extended tier failed on \`main\`.
+
+          | Job | Result |
+          |---|---|
+          | Extended shell + Playwright smoke | $SUITES_RESULT |
+          | Visual snapshots (9 skins) | $SNAPSHOTS_RESULT |
+
+          Run: $RUN_URL
+
+          These tests do not block PRs — this issue is the signal. Triage via
+          the issue autopilot or fix directly; close when a nightly run passes."
+
+          existing=$(gh issue list --state open --search "\"$TITLE\" in:title" \
+            --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$BODY"
+            echo "Updated sticky issue #$existing"
+          else
+            new_url=$(gh issue create --title "$TITLE" --body "$BODY")
+            echo "Created sticky issue: $new_url"
+            num="${new_url##*/}"
+            gh issue edit "$num" --add-label "area:tests" 2>/dev/null || true
+            gh issue edit "$num" --add-label "automated" 2>/dev/null || true
+          fi

@@ -80,7 +80,7 @@ const CATEGORIES_PAGE = '/faq/';
 // `sidebar: false` opt-out.
 const OPT_OUT_PAGE = '/sitemap/';
 
-test.describe('Sidebar modes — resolution and rendering', () => {
+test.describe('Sidebar modes — resolution and rendering', { tag: '@critical' }, () => {
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
   });

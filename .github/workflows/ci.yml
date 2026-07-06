@@ -57,6 +57,7 @@ jobs:
       docker: ${{ steps.filter.outputs.docker }}
       content: ${{ steps.filter.outputs.content }}
       styling: ${{ steps.filter.outputs.styling }}
+      install: ${{ steps.filter.outputs.install }}
       docs-only: ${{ steps.check.outputs.docs-only }}
     steps:
       - name: Checkout Repository
@@ -98,6 +99,17 @@ jobs:
               - '_includes/**'
               - 'test/visual/**'
               - 'test/playwright.config.js'
+            install:
+              - 'install.sh'
+              - 'scripts/lib/install/**'
+              - 'scripts/bin/install'
+              - 'templates/**'
+              - 'test/test_install*.sh'
+              - 'test/test_deployment.sh'
+              - 'test/test_site_generation.sh'
+              - 'docker/**'
+              - 'docker-compose*.yml'
+              - 'Dockerfile'
 
       - name: Check if docs-only
         id: check
@@ -186,10 +198,16 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           verbose: true
-          # Gate parity (T-012): run every non-Playwright theme suite that
-          # `./scripts/bin/test` exposes locally, not a subset. Playwright
-          # tiers run as dedicated steps below.
-          suites: core,deployment,quality,installation,installer,site_generation,obsidian,features
+          # Lean PR gate: the install/deploy/site-generation suites run here
+          # only when install-related paths changed (detect-changes `install`
+          # filter). They still run unconditionally every night in
+          # nightly-extended.yml, and the installer e2e suites always run via
+          # the `./scripts/bin/test` step below, so a quiet install regression
+          # surfaces within a day instead of taxing every PR.
+          suites: >-
+            ${{ needs.detect-changes.outputs.install == 'true'
+                && 'core,deployment,quality,installation,installer,site_generation,obsidian,features'
+                || 'core,quality,obsidian,features' }}
           skip-docker: true
           skip-remote: true
 
@@ -212,17 +230,21 @@ jobs:
           npm ci
           npx playwright install --with-deps chromium
 
-      - name: Playwright smoke tests
+      - name: Playwright critical tests (PR gate)
         env:
           PAGES_REPO_NWO: ${{ env.PAGES_REPO_NWO }}
         uses: ./.github/actions/playwright-tests
         with:
-          project: smoke
+          project: critical
           install-deps: 'false'
 
-      # NOTE: the pixel-snapshot tier moved to its own `snapshots` job (below) so
-      # the jammy-image pull + 9-skin render isn't squeezed by this job's 25-min
-      # budget. The smoke tier above stays here.
+      # NOTE: the PR gate runs only the @critical-tagged tier (user-facing
+      # essentials: navigation, search, mobile survival, theming baseline,
+      # security). The full `smoke` tier plus the demoted shell suites run
+      # nightly in .github/workflows/nightly-extended.yml, which files an
+      # issue on failure instead of blocking PRs. The pixel-snapshot tier has
+      # its own `snapshots` job (below) so the jammy-image pull + 9-skin
+      # render isn't squeezed by this job's 25-min budget.
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v7

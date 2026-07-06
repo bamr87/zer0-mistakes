@@ -87,7 +87,7 @@ test.describe('Settings offcanvas (rebuilt)', () => {
     await expect(pane.locator('#zer0-appearance-primary')).toBeAttached();
   });
 
-  test('color-mode buttons flip html[data-bs-theme] and sync active state', async ({ page }) => {
+  test('color-mode buttons flip html[data-bs-theme] and sync active state', { tag: '@critical' }, async ({ page }) => {
     await openSettings(page);
 
     const dark = page.locator(`${PANEL} [data-bs-theme-value="dark"]`);
@@ -150,7 +150,7 @@ test.describe('Settings offcanvas (rebuilt)', () => {
     await expect(docsPane.locator('.breadcrumbs')).toHaveCount(1);
   });
 
-  test('panel body never scrolls horizontally at 320px', async ({ page }) => {
+  test('panel body never scrolls horizontally at 320px', { tag: '@critical' }, async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 700 });
     await waitForJekyll(page, '/');
     await openSettings(page);

@@ -46,7 +46,7 @@ const {
 // content (wide tables + code); `/docs/` is a default-layout reading page.
 const CONTENT_ROUTES = ['/', '/docs/'];
 
-test.describe('Navbar — no cutoff / overflow across the width matrix', () => {
+test.describe('Navbar — no cutoff / overflow across the width matrix', { tag: '@critical' }, () => {
   for (const width of NAV_WIDTHS) {
     test(`@ ${width}px wide: navbar fits and page does not overflow`, async ({ page }) => {
       await page.setViewportSize({ width, height: 820 });
@@ -95,7 +95,7 @@ test.describe('Navbar — content pages stay within the viewport', () => {
   }
 });
 
-test.describe('Navbar — mobile offcanvas fits the viewport', () => {
+test.describe('Navbar — mobile offcanvas fits the viewport', { tag: '@critical' }, () => {
   test('opening the menu shows a panel fully within a narrow viewport', async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 760 });
     await waitForJekyll(page, '/');
@@ -128,7 +128,7 @@ test.describe('Navbar — mobile offcanvas fits the viewport', () => {
   });
 });
 
-test.describe('Navbar — desktop dropdown stays within the viewport', () => {
+test.describe('Navbar — desktop dropdown stays within the viewport', { tag: '@critical' }, () => {
   // Compact desktop (just above lg) is where a left-aligned menu is most likely
   // to spill past the right edge.
   test('an opened dropdown does not overflow the right edge', async ({ page }) => {
@@ -201,7 +201,7 @@ test.describe('Navbar — stress configurations degrade gracefully', () => {
 // Navbar dropdowns — assets/js/modules/navigation/navbar.js (.nav-hover-dropdown)
 // Hover-to-open was removed; dropdowns toggle on the .dropdown-toggle-split chevron.
 // ---------------------------------------------------------------------------
-test.describe('Navbar dropdowns', () => {
+test.describe('Navbar dropdowns', { tag: '@critical' }, () => {
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.wideDesktop); // lg+ so the menubar is inline
     await waitForJekyll(page, '/');
@@ -252,7 +252,7 @@ test.describe('Navbar dropdowns', () => {
   });
 });
 
-test.describe('Navbar — labels and brand cluster', () => {
+test.describe('Navbar — labels and brand cluster', { tag: '@critical' }, () => {
   test('wide desktop shows full nav labels without ellipsis', async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.wideDesktop);
     await waitForJekyll(page, UI_ROUTES.home);

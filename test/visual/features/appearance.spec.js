@@ -85,7 +85,7 @@ test.describe('Skins', () => {
   });
 });
 
-test.describe('Color-mode default', () => {
+test.describe('Color-mode default', { tag: '@critical' }, () => {
   test.beforeEach(async ({ page }) => {
     // Clear any stored theme preference so tests are isolated.
     await page.addInitScript(() => {
@@ -343,7 +343,7 @@ test.describe('Theme colors', () => {
 test.describe('Theme customizer UI', () => {
   const THEME_URL = '/about/settings/theme/';
 
-  test('clicking a skin card applies it live and updates the YAML export', async ({ page }) => {
+  test('clicking a skin card applies it live and updates the YAML export', { tag: '@critical' }, async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await gotoOrSkip(page, THEME_URL);
 

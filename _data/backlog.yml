@@ -63,7 +63,7 @@
 meta:
   title: "zer0-mistakes Backlog"
   updated: 2026-06-29
-  next_id: 33
+  next_id: 34
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -863,3 +863,28 @@ tasks:
     links: { issue: 241, pr: 253, roadmap: null }
     created: 2026-06-29
     updated: 2026-06-29
+
+  - id: T-033
+    title: "Retire legacy test_installation.sh after equivalence audit against the installer harness"
+    status: open
+    priority: P2
+    area: tests
+    risk: standard
+    effort: M
+    source: user
+    route: test-author
+    summary: >-
+      test_installation.sh (~1,000 lines, "legacy install.sh CLI args") predates the
+      modern test_installer.sh + test_install_*.sh harness and largely overlaps it.
+      Audit each of its scenarios against the harness, port anything genuinely
+      uncovered into test_install_*.sh, then delete the legacy suite and remove the
+      `installation` routing from test_runner.sh, ci.yml, and nightly-extended.yml.
+      Until then it runs nightly and on install-path PRs only (2026-07 CI tiering).
+    acceptance:
+      - "Every test_installation.sh scenario is mapped to a harness equivalent or ported."
+      - "test_installation.sh deleted; test_runner.sh no longer routes an `installation` suite."
+      - "ci.yml and nightly-extended.yml suite lists updated; docs (test/README.md) updated."
+      - "Nightly extended run green after removal."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-07-06
+    updated: 2026-07-06

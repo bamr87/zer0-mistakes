@@ -32,7 +32,7 @@ const LINKED_ARTICLE = '/posts/2025/01/22/git-workflow-best-practices/';
 // An article whose primary category (Security) has NO index page.
 const UNLINKED_ARTICLE = '/posts/2026/06/16/favicon-ico-unlocked-door-to-collapse/';
 
-test.describe('Category badge existence gate (issue #204)', () => {
+test.describe('Category badge existence gate (issue #204)', { tag: '@critical' }, () => {
   test('existing category index → badge links to it (and the target resolves)', async ({ page }) => {
     await waitForJekyll(page, LINKED_ARTICLE);
 
@@ -65,7 +65,7 @@ test.describe('Category badge existence gate (issue #204)', () => {
   });
 });
 
-test.describe('Features page category anchors', () => {
+test.describe('Features page category anchors', { tag: '@critical' }, () => {
   test('feature category badges link to in-page anchors', async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await gotoOrSkip(page, UI_ROUTES.features);

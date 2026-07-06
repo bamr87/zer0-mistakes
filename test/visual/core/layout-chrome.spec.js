@@ -11,7 +11,7 @@
 const { test, expect } = require('@playwright/test');
 const { VIEWPORTS, UI_ROUTES, waitForJekyll } = require('../fixtures');
 
-test.describe('Footer — powered-by and layout', () => {
+test.describe('Footer — powered-by and layout', { tag: '@critical' }, () => {
   test('powered-by credits are real links', async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await waitForJekyll(page, UI_ROUTES.home);

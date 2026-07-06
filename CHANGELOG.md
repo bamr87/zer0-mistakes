@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **CI test tiering** — the PR-blocking Playwright gate is now the new
+  `critical` project (118 `@critical`-tagged, user-facing tests: navigation,
+  search, mobile survival, theming baseline, security) instead of the full
+  331-test `smoke` tier; the full smoke tier, the complete shell-suite
+  matrix, and the 9-skin pixel snapshots moved to a nightly workflow
+  (`nightly-extended.yml`) that files a sticky issue on failure instead of
+  blocking PRs. Install/deploy/site-generation shell suites run on PRs only
+  when install-related paths change (always nightly).
+
+### Added
+
+- **Weekly agentic UI/UX audit** (`ui-audit.yml`) — a deterministic
+  Playwright sweep (`test/ui-audit/sweep.mjs`: screenshots, axe WCAG 2.1 AA,
+  console errors, overflow, broken internal links across critical routes ×
+  3 viewports) interpreted by a read-only Claude Code agent
+  (`.claude/agents/ui-auditor.md`) against the component contract in
+  `docs/architecture/ui-components.md`; findings are filed as a
+  `source:ui-audit` issue feeding the continuous-evolution loop.
+
 ## [1.25.0](https://github.com/bamr87/zer0-mistakes/compare/v1.24.0...v1.25.0) (2026-07-03)
 
 

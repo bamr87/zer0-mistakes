@@ -8,7 +8,7 @@ const { VIEWPORTS, waitForJekyll } = require('../fixtures');
 
 const CONFIG_URL = '/about/config/';
 
-test.describe('Security — secret exposure prevention', () => {
+test.describe('Security — secret exposure prevention', { tag: '@critical' }, () => {
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await waitForJekyll(page, CONFIG_URL);
