@@ -51,31 +51,22 @@ Runtime theming flows: compiled `--zer0-*` defaults → `_includes/core/tokens-i
 
 Every catalogued component, its primary implementation file, primary test, and coverage. Jump to the cluster section for full detail.
 
-> **Note (2026-07-03):** the Playwright suite was restructured into
-> `test/visual/core/` + `test/visual/features/` (see `test/README.md`).
-> Table cells below have been bulk-updated for files that moved 1:1, but
-> `ui-refresh.spec.js` and `interactions.spec.js` were dissolved — their
-> content scattered across several new `features/*.spec.js` files by
-> component. Any row still citing `ui-refresh.spec.js` or `interactions.spec.js`
-> needs its `Test` cell re-pointed at the specific new file (see the merge
-> mapping in PR history) rather than a blanket find-replace.
-
 ### Global Chrome & Primary Navigation
 
 | Component | Primary source | Test | Coverage |
 |---|---|---|---|
-| Header / Site Shell | `_includes/core/header.html` | `core/styling.spec.js`, `ui-refresh.spec.js` | 🟡 partial |
-| Branding (title/subtitle) | `_includes/core/branding.html` | `ui-refresh.spec.js`, `core/styling.spec.js` | 🟡 partial |
-| Primary Navbar (menubar + dropdowns) | `_includes/navigation/navbar.html` | `ui-refresh.spec.js`, `core/styling.spec.js` | 🟡 partial |
-| Navbar Mobile Quicklinks (tablet chips) | `_includes/navigation/navbar-mobile-quicklinks.html` | `ui-refresh.spec.js` | 🟡 partial |
+| Header / Site Shell | `_includes/core/header.html` | `core/styling.spec.js`, `core/responsive.spec.js`, `core/accessibility.spec.js` | 🟡 partial |
+| Branding (title/subtitle) | `_includes/core/branding.html` | `features/navbar.spec.js`, `core/styling.spec.js` | 🟡 partial |
+| Primary Navbar (menubar + dropdowns) | `_includes/navigation/navbar.html` | `features/navbar.spec.js`, `core/styling.spec.js` | 🟡 partial |
+| Navbar Mobile Quicklinks (tablet chips) | `_includes/navigation/navbar-mobile-quicklinks.html` | `features/navbar.spec.js` | 🟡 partial |
 | Head (document head / asset pipeline) | `_includes/core/head.html` | `core/styling.spec.js`, `test/test_quality.sh` | 🟡 partial |
-| Footer | `_includes/core/footer.html` | `ui-refresh.spec.js` | 🟡 partial |
+| Footer | `_includes/core/footer.html` | `core/layout-chrome.spec.js`, `core/responsive.spec.js` | 🟡 partial |
 | Breadcrumbs | `_includes/navigation/breadcrumbs.html` | `features/layouts.spec.js` | 🟡 partial |
 | Back-to-Top FAB | `_includes/core/footer.html` | — | 🔴 none |
 | Auto-Hide Navbar | `assets/js/auto-hide-nav.js` | — | 🔴 none |
 | Nanobar (scroll/load progress bar) | `_includes/components/nanobar.html` | — | 🔴 none |
-| Offcanvas Sidebars & Unified Drawer | `_includes/navigation/sidebar-left.html` | `ui-refresh.spec.js` | 🟡 partial |
-| Navbar Extras / FAB Stacking | `_sass/layouts/_navbar-extras.scss` | `ui-refresh.spec.js` | 🟡 partial |
+| Offcanvas Sidebars & Unified Drawer | `_includes/navigation/sidebar-left.html` | `features/content-enhancements.spec.js` | 🟡 partial |
+| Navbar Extras / FAB Stacking | `_sass/layouts/_navbar-extras.scss` | `features/content-enhancements.spec.js` | 🟡 partial |
 | Navigation Orchestrator (index.js + config.js) | `assets/js/modules/navigation/index.js` | `core/styling.spec.js`, `features/layouts.spec.js` | 🟡 partial |
 | Navbar Module (dropdowns/keyboard/tooltips) | `assets/js/modules/navigation/navbar.js` | — | 🔴 none |
 | Scroll-Spy Module | `assets/js/modules/navigation/scroll-spy.js` | — | 🔴 none |
@@ -84,25 +75,25 @@ Every catalogued component, its primary implementation file, primary test, and c
 | Swipe Gestures Module | `assets/js/modules/navigation/gestures.js` | — | 🔴 none |
 | Focus Manager Module | `assets/js/modules/navigation/focus.js` | — | 🔴 none |
 | Sidebar State Module | `assets/js/modules/navigation/sidebar-state.js` | — | 🔴 none |
-| Sidebar Visibility Module | `assets/js/modules/navigation/sidebar-visibility.js` | `ui-refresh.spec.js` | 🟡 partial |
-| TOC Visibility Module | `assets/js/modules/navigation/toc-visibility.js` | `ui-refresh.spec.js` | 🟡 partial |
+| Sidebar Visibility Module | `assets/js/modules/navigation/sidebar-visibility.js` | `features/content-enhancements.spec.js` | 🟡 partial |
+| TOC Visibility Module | `assets/js/modules/navigation/toc-visibility.js` | `features/content-enhancements.spec.js` | 🟡 partial |
 
 ### Sidebar, Table of Contents & Docs Layout
 
 | Component | Primary source | Test | Coverage |
 |---|---|---|---|
-| Docs layout shell (.bd-layout/.bd-sidebar/.bd-main/.bd-toc) | `_sass/core/_docs-layout.scss` | `core/styling.spec.js`, `ui-refresh.spec.js` | 🟡 partial |
+| Docs layout shell (.bd-layout/.bd-sidebar/.bd-main/.bd-toc) | `_sass/core/_docs-layout.scss` | `core/styling.spec.js`, `features/content-enhancements.spec.js` | 🟡 partial |
 | Nav-tree sidebar (YAML tree mode) | `_includes/navigation/nav-tree.html` | — | 🔴 none |
 | Sidebar categories (categories mode) | `_includes/navigation/sidebar-categories.html` | — | 🔴 none |
 | Sidebar folders (auto mode) | `_includes/navigation/sidebar-folders.html` | — | 🔴 none |
-| Section sidebar (topic navigation) | `_includes/navigation/section-sidebar.html` | `ui-refresh.spec.js` | 🟡 partial |
-| Table of Contents (Liquid parser + sidebar-right) | `_includes/content/toc.html` | `ui-refresh.spec.js` | 🟡 partial |
-| TOC FAB (mobile trigger) | `_includes/navigation/toc-fab.html` | `ui-refresh.spec.js` | 🟡 partial |
-| TOC visibility toggle + persistence | `assets/js/modules/navigation/toc-visibility.js` | `ui-refresh.spec.js` | 🟡 partial |
+| Section sidebar (topic navigation) | `_includes/navigation/section-sidebar.html` | `features/layouts.spec.js` | 🟡 partial |
+| Table of Contents (Liquid parser + sidebar-right) | `_includes/content/toc.html` | `features/content-enhancements.spec.js` | 🟡 partial |
+| TOC FAB (mobile trigger) | `_includes/navigation/toc-fab.html` | `features/content-enhancements.spec.js` | 🟡 partial |
+| TOC visibility toggle + persistence | `assets/js/modules/navigation/toc-visibility.js` | `features/content-enhancements.spec.js` | 🟡 partial |
 | Scroll-spy (active heading highlight) | `assets/js/modules/navigation/scroll-spy.js` | — | 🔴 none |
-| Page intro header (.bd-intro family) | `_includes/content/intro.html` | `ui-refresh.spec.js`, `features/layouts.spec.js` | 🟡 partial |
+| Page intro header (.bd-intro family) | `_includes/content/intro.html` | `features/layouts.spec.js` | 🟡 partial |
 | Docs code-example chrome (.bd-example/.bd-clipboard) | `_sass/core/_docs-code-examples.scss` | — | 🔴 none |
-| Content tables (styling + CSV copy) | `_sass/components/_content-tables.scss` | `ui-refresh.spec.js` | 🟡 partial |
+| Content tables (styling + CSV copy) | `_sass/components/_content-tables.scss` | `features/content-enhancements.spec.js` | 🟡 partial |
 
 ### Landing, Home & Component Polish
 
@@ -115,10 +106,10 @@ Every catalogued component, its primary implementation file, primary test, and c
 | Index layout | `_layouts/index.html` | — | 🔴 none |
 | Welcome layout | `_layouts/welcome.html` | `features/layouts.spec.js` | 🟡 partial |
 | Section include (components/section.html) | `_includes/components/section.html` | — | 🔴 none |
-| Feature card include (components/feature-card.html) | `_includes/components/feature-card.html` | `ui-refresh.spec.js` | 🟡 partial |
+| Feature card include (components/feature-card.html) | `_includes/components/feature-card.html` | `features/category-badges.spec.js` | 🟡 partial |
 | CTA button include (components/cta-button.html) | `_includes/components/cta-button.html` | `features/layouts.spec.js` | 🟡 partial |
 | Info section / settings offcanvas (components/info-section.html) | `_includes/components/info-section.html` | — | 🔴 none |
-| Bootstrap component polish (UI enhancements) | `_sass/components/_ui-enhancements.scss` | `ui-refresh.spec.js` | 🟡 partial |
+| Bootstrap component polish (UI enhancements) | `_sass/components/_ui-enhancements.scss` | `features/content-enhancements.spec.js`, `features/layouts.spec.js` | 🟡 partial |
 | Share actions (LinkedIn/copy) | `assets/js/share-actions.js` | — | 🔴 none |
 | Skeleton loader | `_sass/components/_skeleton.scss` | — | 🔴 none |
 | Particles hero background | `assets/js/particles.js` | — | 🔴 none |
@@ -146,7 +137,7 @@ Every catalogued component, its primary implementation file, primary test, and c
 | Notes & Notebooks index grids + difficulty badges | `pages/notes.md` | — | 🔴 none |
 | Callout | `_includes/components/callout.html` | — | 🔴 none |
 | Post navigation (prev/next cards) | `_sass/components/_post-navigation.scss` | — | 🔴 none |
-| Code copy button | `assets/js/code-copy.js` | `ui-refresh.spec.js`, `core/accessibility.spec.js` | 🟡 partial |
+| Code copy button | `assets/js/code-copy.js` | `features/content-enhancements.spec.js`, `core/accessibility.spec.js` | 🟡 partial |
 | Syntax highlighting | `_sass/core/_syntax.scss` | — | 🔴 none |
 | Author card | `_includes/components/author-card.html` | — | 🔴 none |
 | Author E-E-A-T block | `_includes/components/author-eeat.html` | — | 🔴 none |
@@ -226,7 +217,7 @@ The fixed top header (brand, primary menubar, utility controls, mobile/tablet sh
   - Markup: `_includes/core/header.html`, `_layouts/default.html` (consumer)
   - JS: `assets/js/auto-hide-nav.js` (sets body padding to `#navbar` height)
 - **API surface:** ids `#navbar`, `#main-content`, `#top-progress-target`; classes `.navbar-main`, `.navbar-main-start`, `.navbar-brand-group`, `.navbar-home-links`, `.navbar-utility-controls`, `.bottom-shadow`, `.bd-navbar-toggle`, `.navbar-hidden`; container `container-name: navbar-main`; data-attr `data-bs-target` (toggles offcanvas/drawer); CSS vars `--bs-body-bg`, `--zer0-bp-*`
-- **Tests:** `test/visual/styling.spec.js` — "desktop header and navbar render" (asserts `header#navbar`, `.navbar.navbar-expand-lg`, `nav.navbar-main` visible; brand link + img present); "mobile main navigation toggle is visible". `test/visual/ui-refresh.spec.js` — "main landmarks visible at {viewport}" asserts `header#navbar` visible across all 5 viewports; "skip link is focusable" asserts `a[href="#main-content"].visually-hidden-focusable` is attached + focusable.
+- **Tests:** `test/visual/core/styling.spec.js` — "desktop header and navbar render" (asserts `header#navbar`, `.navbar.navbar-expand-lg`, `nav.navbar-main` visible; brand link + img present); "mobile main navigation toggle is visible". `test/visual/core/responsive.spec.js` — "main landmarks visible at {viewport}" asserts `header#navbar` visible across all 5 viewports. `test/visual/core/accessibility.spec.js` — "skip link is focusable and targets main content" asserts `a[href="#main-content"].visually-hidden-focusable` is attached + focusable.
 - **Gaps / improvement ideas:** No test asserts the lg+ 3-column grid actually keeps the menubar from painting over Search/Settings (the stated reason for the grid). The nanobar `#top-progress-target` mount path is untested. Body padding from `auto-hide-nav.js` is computed in JS and never asserted, so a regression that drops it (content hidden under the fixed header) would pass CI.
 
 ### Branding (site title / subtitle)
@@ -237,7 +228,7 @@ The fixed top header (brand, primary menubar, utility controls, mobile/tablet sh
   - SCSS: `_sass/core/_navbar.scss` (`.site-title-text` responsive `max-width`, `#navbar .site-title/.site-subtitle` ellipsis in the lg grid)
   - Markup: `_includes/core/branding.html`
 - **API surface:** classes `.site-title`, `.site-subtitle`, `.site-title-text`, `.site-subtitle-text`, `.navbar-brand`; config `site.title`, `site.subtitle`, `site.title_icon`, `site.default_icon`
-- **Tests:** `test/visual/ui-refresh.spec.js` — "mid desktop brand logo and title do not overlap" (asserts `.site-title-text` sits right of the logo, no overlap); "mobile shows site title and offcanvas toggler" (asserts `.site-title-text` visible). `test/visual/styling.spec.js` checks the `a.navbar-brand` logo image exists.
+- **Tests:** `test/visual/features/navbar.spec.js` — "mid desktop brand logo and title do not overlap" (asserts `.site-title-text` sits right of the logo, no overlap); "mobile shows site title and offcanvas toggler" (asserts `.site-title-text` visible). `test/visual/core/styling.spec.js` checks the `a.navbar-brand` logo image exists.
 - **Gaps / improvement ideas:** Subtitle rendering/visibility (lg+ only, suppressed when empty) is untested. The title-icon breakpoint window (sm–lg only) is untested. There is a stale `d-lg-none` icon class string that duplicates `site.default_icon` (`{{ site.default_icon }} {{ site.default_icon }}-...`) — likely a typo that should be `{{ site.default_icon }} bi-{{ site.title_icon }}`; worth verifying the icon actually renders.
 
 ### Primary Navbar (menubar + dropdowns)
@@ -250,7 +241,7 @@ The fixed top header (brand, primary menubar, utility controls, mobile/tablet sh
   - JS: `assets/js/modules/navigation/navbar.js`
   - Plugin/data: `_data/navigation/main.yml`
 - **API surface:** id `#bdNavbar`; classes `.nav-hover-dropdown`, `.dropdown-toggle-split`, `.nav-link-text`, `.bd-navbar-nav-viewport`, `.nav-tooltip`, `.navbar-nav`; data-attr `data-search-toggle`, `data-bs-toggle="offcanvas"`, `data-bs-target="#info-section"`; container `bd-nav` (`container-type: inline-size`); ARIA `aria-current`, `aria-expanded`, `aria-haspopup`; CSS vars `--bs-tertiary-bg`, `--bs-primary`, `--zer0-space-*`
-- **Tests:** `test/visual/ui-refresh.spec.js` — "wide desktop shows full nav labels without ellipsis" (no `...` suffix; "Quick Start" visible); "mobile shows site title and offcanvas toggler". `test/visual/styling.spec.js` — "mobile main navigation toggle is visible" asserts `.bd-navbar-toggle.d-lg-none button.navbar-toggler[data-bs-target="#bdNavbar"]`.
+- **Tests:** `test/visual/features/navbar.spec.js` — "wide desktop shows full nav labels without ellipsis" (no `...` suffix; "Quick Start" visible); "mobile shows site title and offcanvas toggler". `test/visual/core/styling.spec.js` — "mobile main navigation toggle is visible" asserts `.bd-navbar-toggle.d-lg-none button.navbar-toggler[data-bs-target="#bdNavbar"]`.
 - **Gaps / improvement ideas:** Dropdown open/close (chevron click toggling `.show`), keyboard arrow/Home/End/Escape navigation, outside-click-close, and the icon-only `<38rem` tier are all untested behaviorally. Tooltip show/hide on compact desktop is untested. No test exercises the auto-generated (no `main.yml`) nav fallback path.
 
 ### Navbar Mobile Quicklinks (tablet chips)
@@ -262,7 +253,7 @@ The fixed top header (brand, primary menubar, utility controls, mobile/tablet sh
   - Markup: `_includes/navigation/navbar-mobile-quicklinks.html`
   - Plugin/data: `_data/navigation/main.yml`
 - **API surface:** classes `.navbar-mobile-quicklinks`, `.navbar-mobile-quicklinks__list`, `.navbar-mobile-quicklinks__chip`, `.navbar-mobile-quicklinks__label`; responsive `d-none d-md-flex d-lg-none`; CSS vars `--bs-primary`, `--bs-primary-bg-subtle`, `--bs-border-color-translucent`
-- **Tests:** `test/visual/ui-refresh.spec.js` — "tablet shows mobile quicklink chips between md and lg" asserts `.navbar-mobile-quicklinks` visible and first `a.navbar-mobile-quicklinks__chip` visible at the tablet viewport.
+- **Tests:** `test/visual/features/navbar.spec.js` — "tablet shows mobile quicklink chips between md and lg" asserts `.navbar-mobile-quicklinks` visible and first `a.navbar-mobile-quicklinks__chip` visible at the tablet viewport.
 - **Gaps / improvement ideas:** The `limit: 5` truncation and the horizontal-scroll overflow behavior with many links are untested. No assertion that the chips are hidden at md− or lg+ (only the in-window case is checked).
 
 ### Head (document head / asset pipeline)
@@ -286,7 +277,7 @@ The fixed top header (brand, primary menubar, utility controls, mobile/tablet sh
   - Markup: `_includes/core/footer.html`
   - Plugin/data: `site.powered_by`, `site.links`, `site.data.ui-text`
 - **API surface:** classes `.bd-footer`, `.footer-powered-by`, `.footer-powered-by-links`, `.powered-by-link`, `.footer-dark-block`, `.footer-nav-columns`, `.footer-latest-posts`, `.footer-subscribe-form`, `.footer-policy-links`; data-attr `data-bs-toggle="offcanvas"`/`"modal"` (`#info-section`, `#cookieSettingsModal`); CSS vars `--zer0-space-*`, `--bs-secondary-color`
-- **Tests:** `test/visual/ui-refresh.spec.js` — "powered-by credits are real links" (hrefs truthy, not `#`); "footer nav columns use equal width at tablet". `test/visual/ui-refresh.spec.js` "main landmarks visible at {viewport}" asserts `footer.bd-footer` visible across viewports.
+- **Tests:** `test/visual/core/layout-chrome.spec.js` — "powered-by credits are real links" (hrefs truthy, not `#`); "footer nav columns use equal width at tablet". `test/visual/core/responsive.spec.js` "main landmarks visible at {viewport}" asserts `footer.bd-footer` visible across viewports.
 - **Gaps / improvement ideas:** The quick-links auto-detection (skip-when-page-missing) and conditional policy-link rendering are untested — a regression that surfaces 404 links would pass. The disabled subscribe form's accessibility (the `disabled` button + hint association) is unverified. Latest-posts hide-when-empty is untested.
 
 ### Breadcrumbs
@@ -346,7 +337,7 @@ The fixed top header (brand, primary menubar, utility controls, mobile/tablet sh
   - Markup: `_includes/navigation/sidebar-left.html`, `sidebar-right.html`, `unified-drawer.html`, `nav-tree.html`, `sidebar-folders.html`, `sidebar-categories.html`
   - JS: `assets/js/modules/navigation/sidebar-visibility.js`, `toc-visibility.js`, `sidebar-state.js`
 - **API surface:** ids `#bdSidebar`, `#tocContents`, `#zer0UnifiedDrawer`, `#TableOfContents`, `#info-section`; classes `.offcanvas-lg`, `.bd-sidebar-visibility-toggle`, `.bd-toc-visibility-toggle`, `.nav-tree`, `.zer0-unified-drawer`; html classes `bd-sidebar-pref-hidden`/`bd-toc-pref-hidden`; data-attr `data-bs-toggle="offcanvas"`/`"tab"`, `data-nav-tree`; config `page.sidebar.nav`, `site.navigation.unified_mobile_drawer`
-- **Tests:** `test/visual/ui-refresh.spec.js` — "docs article exposes ToC on desktop" (asserts `.bd-toc, #tocContents` attached; `.bd-sidebar-visibility-toggle` / `.bd-toc-visibility-toggle` attached). The Bootstrap offcanvas open/close itself is exercised indirectly via the toggler tests in styling.spec.js.
+- **Tests:** `test/visual/features/content-enhancements.spec.js` — "docs article exposes ToC on desktop" (asserts `.bd-toc, #tocContents` attached; `.bd-sidebar-visibility-toggle` / `.bd-toc-visibility-toggle` attached). The Bootstrap offcanvas open/close itself is exercised indirectly via the toggler tests in `core/styling.spec.js`.
 - **Gaps / improvement ideas:** The unified-drawer tab switching, the three sidebar nav modes (auto/categories/tree), and the FOUC-guard hidden-preference path are untested. No spec asserts the desktop visibility toggle actually collapses the column (that lives in JS modules below). The TOC "only parse when headings exist" branch is untested.
 
 ### Navbar Extras / FAB Stacking
@@ -358,7 +349,7 @@ The fixed top header (brand, primary menubar, utility controls, mobile/tablet sh
   - Markup: `_includes/navigation/toc-fab.html`, `local-graph-fab.html` (rendered from `footer.html`)
   - JS: visibility driven by `toc-visibility.js` / `sidebar-visibility.js` (toggle `--restore` classes)
 - **API surface:** classes `.bd-toc-fab`, `.bd-sidebar-fab`, `.bd-toc-toggle`, `.bd-sidebar-toggle`, `.bd-toc-fab--restore`, `.bd-sidebar-fab--restore`; ids `#tocFab`, `#sidebarFab`; CSS vars `--zer0-layer-fab-toc` (1055), `--zer0-layer-fab-back-to-top` (1050), `--zer0-layer-fab-local-graph` (1060), `--zer0-space-fab-offset/size/gap`
-- **Tests:** `test/visual/ui-refresh.spec.js` — "mobile exposes sidebar FAB and ToC FAB" (asserts `#sidebarFab, .bd-sidebar-fab` visible and `#tocFab` attached at the mobile viewport).
+- **Tests:** `test/visual/features/content-enhancements.spec.js` — "mobile exposes sidebar FAB and ToC FAB" (asserts `#sidebarFab, .bd-sidebar-fab` visible and `#tocFab` attached at the mobile viewport).
 - **Gaps / improvement ideas:** The actual stacking (FABs not overlapping back-to-top) is computed via CSS `calc()` but never asserted with bounding-box overlap checks — `fixtures.js` already provides `boxesOverlap`/`assertStackedVertically` helpers that could verify it. The restore-mode visibility transitions and the local-graph FAB are untested.
 
 ### Navigation Orchestrator (modules/navigation/index.js + config.js)
@@ -436,7 +427,7 @@ The fixed top header (brand, primary menubar, utility controls, mobile/tablet sh
 - **Source:**
   - JS: `assets/js/modules/navigation/focus.js`
 - **API surface:** class `FocusManager` (`.returnFocus()`, `.focusFirst()`, `.focusLast()`, `.trapFocus()`, `.destroy()`); body class `keyboard-nav`; selector `offcanvas` (`.offcanvas`)
-- **Tests:** No automated tests (the generic skip-link focus test in ui-refresh.spec.js is unrelated).
+- **Tests:** No automated tests (the generic skip-link focus test in `core/accessibility.spec.js` is unrelated).
 - **Gaps / improvement ideas:** Focus-return-to-trigger on offcanvas close (a real a11y requirement) is untested. The `keyboard-nav` body class toggle and `trapFocus` are unused-by-default utilities with no coverage.
 
 ### Sidebar State Module
@@ -459,7 +450,7 @@ The fixed top header (brand, primary menubar, utility controls, mobile/tablet sh
   - Markup: `_includes/navigation/sidebar-left.html` (toggles + FOUC script)
   - JS: `assets/js/modules/navigation/sidebar-visibility.js`
 - **API surface:** class `SidebarVisibility` (`.isVisible()`, `.setVisible()`, `.toggle()`, `.destroy()`); event `navigation:sidebarVisibility`; classes `bd-layout--sidebar-collapsed`, `bd-sidebar--hidden`, `bd-sidebar-fab--restore`, html `bd-sidebar-pref-hidden`; storage key `zer0-nav-sidebar-visible`; selectors `.bd-sidebar-visibility-toggle`, `.bd-sidebar-fab`
-- **Tests:** `test/visual/ui-refresh.spec.js` — "docs article exposes ToC on desktop" asserts `.bd-sidebar-visibility-toggle` is attached (presence only, not toggle behavior).
+- **Tests:** `test/visual/features/content-enhancements.spec.js` — "docs article exposes ToC on desktop" asserts `.bd-sidebar-visibility-toggle` is attached (presence only, not toggle behavior).
 - **Gaps / improvement ideas:** The collapse/restore action, preference persistence, FOUC-guard class, and the mobile offcanvas branch are untested. The `b` keyboard shortcut routes here but its end-to-end effect is unverified.
 
 ### TOC Visibility Module
@@ -471,7 +462,7 @@ The fixed top header (brand, primary menubar, utility controls, mobile/tablet sh
   - Markup: `_includes/navigation/sidebar-right.html` (toggles + FOUC script)
   - JS: `assets/js/modules/navigation/toc-visibility.js`
 - **API surface:** class `TocVisibility` (`.isVisible()`, `.setVisible()`, `.toggle()`, `.destroy()`); event `navigation:tocVisibility`; classes `bd-main--no-toc`, `bd-toc--hidden`, `bd-toc-fab--restore`, html `bd-toc-pref-hidden`; storage key `zer0-nav-toc-visible`; selectors `.bd-toc-visibility-toggle`, `.bd-toc-fab`
-- **Tests:** `test/visual/ui-refresh.spec.js` — "docs article exposes ToC on desktop" asserts `.bd-toc-visibility-toggle` is attached (presence only).
+- **Tests:** `test/visual/features/content-enhancements.spec.js` — "docs article exposes ToC on desktop" asserts `.bd-toc-visibility-toggle` is attached (presence only).
 - **Gaps / improvement ideas:** Same as Sidebar Visibility — the actual hide/restore, persistence, FOUC class, and mobile branch (plus the `t` shortcut effect) are untested.
 
 ---
@@ -489,7 +480,7 @@ The reading-page shell for content/docs pages: a CSS-grid `.bd-layout` (left `.b
   - Markup: `_layouts/default.html` (`.bd-layout`/`.bd-main`/`.bd-content` + sidebar FAB), `_includes/navigation/sidebar-left.html` (`#bdSidebar` offcanvas-lg, `.bd-sidebar-desktop-header`), `_includes/navigation/sidebar-right.html` (`#tocContents` offcanvas-lg + `#TableOfContents`)
   - JS: `assets/js/modules/navigation/toc-visibility.js` and `sidebar-visibility.js` toggle the `--no-toc`/rail state classes (config in `assets/js/modules/navigation/config.js`)
 - **API surface:** classes `.bd-layout`, `.bd-layout--no-sidebar`, `.bd-layout--sidebar-collapsed`, `.bd-sidebar`, `.bd-sidebar-desktop-header`, `.bd-sidebar-fab`, `.bd-main`, `.bd-main--no-toc`, `.bd-toc`, `.bd-content`, `.bd-gutter`; ids `#bdSidebar`, `#tocContents`, `#sidebarFab`, `#tocFab`; html classes `bd-sidebar-pref-hidden`, `bd-toc-pref-hidden`; data-attrs on `<main>`: `data-bs-spy="scroll"`, `data-bs-target="#TableOfContents"`, `data-bs-offset="100"`, `data-bs-smooth-scroll`; CSS vars `--zer0-sidebar-width` (17rem), `--zer0-sidebar-toc-width` (12rem), `--zer0-sidebar-rail-width`/`--zer0-sidebar-toc-rail-width` (fallback 2.25rem only — undefined as tokens), `--zer0-layout-max-width-xl/xxl`, `--zer0-motion-duration-base/fast`, `--bd-sidebar-link-bg`
-- **Tests:** `test/visual/styling.spec.js` — "default layout page exposes docs-layout regions" asserts `main.bd-main` and `.bd-content` are visible. `test/visual/ui-refresh.spec.js` — "docs article exposes ToC on desktop" asserts `.bd-toc, #tocContents` attached and the visibility toggles attached; "mobile exposes sidebar FAB and ToC FAB" asserts `#sidebarFab/.bd-sidebar-fab` visible and `#tocFab` attached. No test exercises the collapsed-rail transition or the FOUC pref guards.
+- **Tests:** `test/visual/core/styling.spec.js` — "default layout page exposes docs-layout regions" asserts `main.bd-main` and `.bd-content` are visible. `test/visual/features/content-enhancements.spec.js` — "docs article exposes ToC on desktop" asserts `.bd-toc, #tocContents` attached and the visibility toggles attached; "mobile exposes sidebar FAB and ToC FAB" asserts `#sidebarFab/.bd-sidebar-fab` visible and `#tocFab` attached. No test exercises the collapsed-rail transition or the FOUC pref guards.
 - **Gaps / improvement ideas:** `--zer0-sidebar-rail-width` and `--zer0-sidebar-toc-rail-width` are consumed only via inline fallbacks and never defined in `_sass/tokens/` — promote them to real tokens for fork override. No automated coverage of the hide/show rail collapse, the `bd-*-pref-hidden` pre-paint guard, or keyboard reachability of the rail toggle when collapsed. `.bd-sidebar`/`.bd-toc` use `aria-controls` on offcanvas-lg containers that are static on desktop — consider verifying screen-reader semantics in the rail state where most content is `visibility: hidden`.
 
 ### Nav-tree sidebar (YAML "tree" mode)
@@ -536,7 +527,7 @@ The reading-page shell for content/docs pages: a CSS-grid `.bd-layout` (left `.b
   - Markup: `_includes/navigation/section-sidebar.html` (params `section_posts`, `sub_categories`, `page_title`, `sidebar_id`)
   - JS: inline IIFE in the include
 - **API surface:** classes `.section-sidebar-desktop`, `.sidebar-nav`, `.nav-link`/`.active`, `.nav-text`, `.offcanvas`; ids `#{sidebar_id}` (default `sectionSidebar`), `#all-posts`, `#{tag-slug}`; data-attrs `data-section`, `data-bs-dismiss="offcanvas"`; CSS vars `--bs-primary-rgb`, `--bs-body-color`
-- **Tests:** `test/visual/ui-refresh.spec.js` — "news section page loads with layout containment" asserts the section sidebar sits left of `#all-posts` (guards `.section-layout-sidebar` / `#all-posts`), but does not exercise this include's scroll-spy or topic counts directly.
+- **Tests:** `test/visual/features/layouts.spec.js` — "news section page loads with layout containment" asserts the section sidebar sits left of `#all-posts` (guards `.section-layout-sidebar` / `#all-posts`), but does not exercise this include's scroll-spy or topic counts directly.
 - **Gaps / improvement ideas:** Ships its own inline CSS and JS rather than reusing `_sass`/`assets/js/modules` — duplicates the scroll-spy logic already in `modules/navigation/scroll-spy.js`. Smooth-scroll and scroll-spy here are not covered by any behavioral assertion. The active topic uses `<a>` without `aria-current`; add it for assistive tech. Hard-coded `top: 80px` should reference the navbar-height token.
 
 ### Table of Contents (Liquid TOC parser + sidebar-right)
@@ -548,7 +539,7 @@ The reading-page shell for content/docs pages: a CSS-grid `.bd-layout` (left `.b
   - Markup: `_includes/content/toc.html` (parser), `_includes/navigation/sidebar-right.html` (`#tocContents` offcanvas + `nav#TableOfContents` wrapper + toggle button)
   - JS: scroll-spy via `assets/js/modules/navigation/scroll-spy.js`
 - **API surface:** ids `#TableOfContents`, `#tocContents`, `#tocLabel`; classes `.bd-toc`, `.toc`, `.toc-collapse`, `.bd-toc-collapse`, `.list-group-flush`, `.list-group-item`, `.bd-toc-visibility-toggle`, `a.active`; `role="navigation"`, `aria-label="Table of Contents"`; CSS vars `--bd-toc-color`, `--bs-tertiary-bg`, `--bs-border-color`, `--bd-violet`/`--bd-violet-rgb`
-- **Tests:** `test/visual/ui-refresh.spec.js` — "docs article exposes ToC on desktop" asserts `.bd-toc, #tocContents` is attached (presence only). No spec asserts the TOC parser output (heading nesting, anchor hrefs, the no-sections fallback) or active-link highlighting.
+- **Tests:** `test/visual/features/content-enhancements.spec.js` — "docs article exposes ToC on desktop" asserts `.bd-toc, #tocContents` is attached (presence only). No spec asserts the TOC parser output (heading nesting, anchor hrefs, the no-sections fallback) or active-link highlighting.
 - **Gaps / improvement ideas:** Both `_sass/core/_toc.scss` (`.toc`/`#TableOfContents`) and `_docs-layout.scss` (`.bd-toc`) style the TOC, with overlapping/legacy `.toc` rules that the current markup (`.bd-toc`) doesn't use — prune the dead `.toc`/`.toc-collapse` ruleset or confirm a consumer. No behavioral test of the heading parser despite it being intricate Liquid. Consider asserting that TOC anchor `href`s resolve to real heading ids (the scroll-spy depends on this).
 
 ### TOC FAB (mobile trigger)
@@ -560,7 +551,7 @@ The reading-page shell for content/docs pages: a CSS-grid `.bd-layout` (left `.b
   - Markup: `_includes/navigation/toc-fab.html` (included from `_includes/core/footer.html`)
   - JS: `assets/js/modules/navigation/toc-visibility.js` (`_fab`, `_fabToggle`, `bd-toc-fab--restore`)
 - **API surface:** id `#tocFab`; classes `.bd-toc-fab`, `.bd-toc-toggle`, `.bd-toc-fab--restore`; attrs `aria-controls="tocContents"`, `aria-expanded`, `aria-label`
-- **Tests:** `test/visual/ui-refresh.spec.js` — "mobile exposes sidebar FAB and ToC FAB" asserts `#tocFab` is attached at mobile viewport (presence only, behind a skip guard).
+- **Tests:** `test/visual/features/content-enhancements.spec.js` — "mobile exposes sidebar FAB and ToC FAB" asserts `#tocFab` is attached at mobile viewport (presence only, behind a skip guard).
 - **Gaps / improvement ideas:** No test that clicking the FAB opens/restores the TOC or that `aria-expanded` flips. The FAB's effective-sidebar logic is duplicated between `toc-fab.html` and `default.html` — extract to a shared include/variable.
 
 ### TOC visibility toggle (hide/show + persistence)
@@ -572,7 +563,7 @@ The reading-page shell for content/docs pages: a CSS-grid `.bd-layout` (left `.b
   - Markup: `.bd-toc-visibility-toggle` buttons in `_includes/navigation/sidebar-right.html`; FOUC guard `<script>` inline there
   - JS: `assets/js/modules/navigation/toc-visibility.js` (+ selectors in `config.js`)
 - **API surface:** classes `.bd-toc-visibility-toggle`; html class `bd-toc-pref-hidden`; localStorage key `zer0-nav-toc-visible`; events `navigation:tocVisibility` (detail `{visible}`); selectors from config (`tocWrapper`, `tocFab`, `mainArea`, `rightSidebar`, `tocVisibilityToggle`)
-- **Tests:** `test/visual/ui-refresh.spec.js` — "docs article exposes ToC on desktop" asserts the toggle is attached. No spec clicks the toggle, verifies persistence across reload, or checks the `aria-expanded` flip.
+- **Tests:** `test/visual/features/content-enhancements.spec.js` — "docs article exposes ToC on desktop" asserts the toggle is attached. No spec clicks the toggle, verifies persistence across reload, or checks the `aria-expanded` flip.
 - **Gaps / improvement ideas:** No behavioral/persistence test for the core feature (toggle → reload → state retained). Console `console.log` left in production init. Consider asserting the `navigation:tocVisibility` event and that focus lands correctly after collapse/restore.
 
 ### Scroll-spy (active heading highlight)
@@ -596,7 +587,7 @@ The reading-page shell for content/docs pages: a CSS-grid `.bd-layout` (left `.b
   - JS: `assets/js/ui-helpers.js` (`data-copy`, `.js-linkedin-share`) — referenced, not in this cluster
   - Plugin/data: `_data/authors.yml`, `_data/prompts.yml`
 - **API surface:** classes `.bd-intro`, `.bd-intro-inner/-content/-title/-subtitle/-description`, `.bd-intro-meta-footer/-row/-item/-icon/-link/-bottom/-meta`, `.bd-intro-meta-item--tags/--source`, `.bd-intro-badge` (+ `--level-*`, `--tag`, `--more`), `.bd-intro-tag-list`, `.bd-intro-actions`, `.bd-intro-action-link`, `.copilot-agent-menu/-item*`, `.js-linkedin-share`; attrs `aria-label="Page metadata"`, `data-copy`, `data-share-url/-title/-description`; CSS vars `--bd-intro-min-height`, `--bd-intro-meta-footer-bg/-border`, `--bd-intro-meta-gap/-separator`, many `--zer0-text-*`/`--zer0-space-*`/`--zer0-font-weight-*`
-- **Tests:** `test/visual/ui-refresh.spec.js` — "meta footer wraps actions and stacks below description" asserts `.bd-intro-meta-footer`, `.bd-intro-actions`, `.bd-intro-meta-row[aria-label]` visible, description stacked above footer, and ≥2 action buttons; "intro action buttons share consistent height" asserts non-dropdown `.bd-intro-actions .btn` heights differ ≤14px; "intro metadata row exposes aria-label" asserts the row's `aria-label` is non-empty. `test/visual/layouts.spec.js` — homepage/article single-h1 checks indirectly guard against duplicate intro H1s.
+- **Tests:** `test/visual/features/layouts.spec.js` — "meta footer wraps actions and stacks below description" asserts `.bd-intro-meta-footer`, `.bd-intro-actions`, `.bd-intro-meta-row[aria-label]` visible, description stacked above footer, and ≥2 action buttons; "intro action buttons share consistent height" asserts non-dropdown `.bd-intro-actions .btn` heights differ ≤14px; homepage/article single-h1 checks indirectly guard against duplicate intro H1s. `test/visual/core/accessibility.spec.js` — "intro metadata row has aria-label when present" asserts the row's `aria-label` is non-empty.
 - **Gaps / improvement ideas:** No test of date logic (published vs. updated dedupe), category/difficulty badge resolution, tag overflow (+N), or reading-time computation. The hero uses a hardcoded inline `background` gradient with `#fff` text on an arbitrary preview image — color-contrast is unverified (the axe scans disable `color-contrast`). Copilot-Agent issue bodies embed full page+env context; no test asserts the generated `issue.new` URL encodes correctly.
 
 ### Docs code-example chrome (.bd-example / .bd-code-snippet / clipboard)
@@ -608,7 +599,7 @@ The reading-page shell for content/docs pages: a CSS-grid `.bd-layout` (left `.b
   - Markup: `_includes/docs/bootstrap-docs.html` (the `bd-cheatsheet` with `.bd-example`/`.bd-example-snippet`/`.bd-heading`)
   - JS: `assets/js/docs.min.js`
 - **API surface:** classes `.bd-code-snippet`, `.bd-example`, `.bd-example-snippet`, `.bd-example-{row,cols,cssgrid,flex,ratios,offcanvas,zindex-levels,border-utils,…}`, `.bd-clipboard`, `.btn-clipboard`, `.bd-edit`, `.btn-edit`, `.highlight-toolbar`, `.bd-placeholder-img(-lg)`, `.bd-heading`; JS globals `window.anchors` (AnchorJS), `ClipboardJS`; CSS vars `--bd-example-padding`, `--bd-violet`/`--bd-violet-rgb`, `--bd-pre-bg`, `--bs-tooltip-*`/`--bs-popover-*`
-- **Tests:** No automated tests target `.bd-example`/`.bd-clipboard`/AnchorJS. (The `code-blocks` specs in `ui-refresh.spec.js` test a *different* system — `.code-block-header`/`.code-line-numbers` from the rouge enhancer, not `docs.min.js`'s `.bd-clipboard`.)
+- **Tests:** No automated tests target `.bd-example`/`.bd-clipboard`/AnchorJS. (The `code-blocks` specs in `features/content-enhancements.spec.js` test a *different* system — `.code-block-header`/`.code-line-numbers` from the rouge enhancer, not `docs.min.js`'s `.bd-clipboard`.)
 - **Gaps / improvement ideas:** `docs.min.js` still carries an Algolia "bootstrap" docs-search binding (`apiKey`, `indexName:'bootstrap'`, getbootstrap.com URL rewrites) that is dead/irrelevant to this theme — strip it. Two parallel code-copy systems coexist (`docs.min.js` `.btn-clipboard` for `.bd-example` pages vs. the rouge `.code-block-header .copy` used in real content) — document which applies where, and add a behavioral copy test for at least the content path. `.bd-example::after { content: null }` is invalid CSS (should be `""`/`none`). No anchor-link or copy-button behavioral coverage.
 
 ### Content tables (markdown/HTML table styling + CSV copy)
@@ -620,7 +611,7 @@ The reading-page shell for content/docs pages: a CSS-grid `.bd-layout` (left `.b
   - Markup: generated by JS (`.content-table-wrapper`/`.content-table-toolbar`); `_includes/components/quick-index.html` is a separate small collection-index list (`<ul>` of pages in the current collection + optional `#categories` mount)
   - JS: `assets/js/table-copy.js` (loaded `defer` from `_includes/core/head.html`)
 - **API surface:** classes `.content-table-wrapper`, `.content-table-toolbar`, `.table-copy-csv` (+ `.copied`), `.table-responsive`; ids excluded `#sitemapTable`, scope `#admin-content`; JS dep `window.zer0UI.showToast`; CSS vars `--zer0-table-stripe/-hover/-header-bg/-header-border`, `--zer0-color-*`, `--zer0-space-*`, `--zer0-shadow-focus`, `--zer0-motion-duration-fast`
-- **Tests:** `test/visual/ui-refresh.spec.js` — "landing comparison table has toolbar and distinct header" waits for `.table-copy-csv`, asserts `.content-table-wrapper .table-copy-csv` is visible, and that thead vs. tbody background colors differ. Does not verify the actual CSV output or clipboard write.
+- **Tests:** `test/visual/features/content-enhancements.spec.js` — "landing comparison table has toolbar and distinct header" waits for `.table-copy-csv`, asserts `.content-table-wrapper .table-copy-csv` is visible, and that thead vs. tbody background colors differ. Does not verify the actual CSV output or clipboard write.
 - **Gaps / improvement ideas:** No test of CSV correctness (cell quoting, colspan handling — note `getTableMatrix` ignores `colspan`/`rowspan`, so merged cells produce misaligned CSV), the `execCommand` fallback path, or the failure/empty-table toast. `quick-index.html` is unstyled (`text-decoration`/active-state) and its `<p>Quick Index</p>` sits illegally inside a `<ul>` — fix the markup. Consider keyboard/`aria-live` announcement parity between toolbar copy and toast.
 
 ---
@@ -639,7 +630,7 @@ The marketing-facing surface of the theme: the data-driven landing layout (hero,
   - JS: `assets/js/ui-helpers.js` (`bindHeroImages`), `assets/js/ui-enhancements.js`
   - Plugin/data: `_data/landing.yml` (hero CTAs, features heading/lead/items, get_started)
 - **API surface:** classes `.landing-hero`, `.landing-hero-copy`, `.landing-hero-media`, `.landing-hero-img`, `.is-loaded`, `.landing-content-body`, `.landing-feature-card`, `.landing-feature-icon`, `.zer0-bg-hero`, `.zer0-section`, `.min-vh-50`, ids `#features` / `#get-started`; CSS vars `--zer0-space-section`, `--zer0-color-bg-elevated`, `--zer0-color-border`, `--zer0-shadow-md`, `--zer0-color-primary`, `--zer0-color-primary-rgb`, `--zer0-motion-duration-base`, `--zer0-motion-ease-standard`; no custom data-attributes or events
-- **Tests:** `test/visual/layouts.spec.js` — "homepage exposes exactly one accessible h1" (getByRole level 1 == 1, validates the `.landing-content-body > h1:first-of-type` display:none suppression), "features section renders from _data/landing.yml" (skips if no `#features`; asserts `#features` visible and `.landing-feature-card` count ≥ 1), "hero CTA buttons expose accessible names" (every `.landing-hero a.btn` has text or aria-label), "homepage axe scan completes" (< 25 violations). `test/visual/ui-refresh.spec.js` — "landing comparison table has toolbar and distinct header" exercises `.landing-content-body table`. Axe advisory scans across all viewports.
+- **Tests:** `test/visual/features/layouts.spec.js` — "homepage exposes exactly one accessible h1" (getByRole level 1 == 1, validates the `.landing-content-body > h1:first-of-type` display:none suppression), "features section renders from _data/landing.yml" (skips if no `#features`; asserts `#features` visible and `.landing-feature-card` count ≥ 1), "hero CTA buttons expose accessible names" (every `.landing-hero a.btn` has text or aria-label), "homepage axe scan completes" (< 25 violations). `test/visual/features/content-enhancements.spec.js` — "landing comparison table has toolbar and distinct header" exercises `.landing-content-body table`. Axe advisory scans across all viewports.
 - **Gaps / improvement ideas:** No test asserts the hero image actually gains `.is-loaded` (the anti-jerk fade-in is unverified). The tertiary-CTA GitHub fallback and the no-`hero_image` placeholder branch are untested. The duplicate-H1 suppression relies on `display:none` on `:first-of-type` which would wrongly hide a legitimately-first body heading that is not a title repeat. Feature cards have no entrance-animation reduced-motion test. Consider extracting the inline hero style attributes into a class to satisfy stricter CSP.
 
 ### Landing quick-links bar
@@ -726,7 +717,7 @@ The marketing-facing surface of the theme: the data-driven landing layout (hero,
   - JS: —
   - Plugin/data: `_data/features.yml`
 - **API surface:** classes `.card`, `.card-title`, `.card-text`, `.badge.bg-primary`/`.bg-secondary`/`.bg-light`, `.card-footer`, `.btn-outline-*`; params `feature`, `style`, `icon`, `icon_color`, `show_refs`, `compact`, `features_limit`
-- **Tests:** `test/visual/ui-refresh.spec.js` — "feature category badges link to in-page anchors" exercises `.feature-categories a.badge[href^="#"]` on `/features/` (asserts the anchor target exists). The feature-card component's own structure/footer is not directly asserted.
+- **Tests:** `test/visual/features/category-badges.spec.js` — "feature category badges link to in-page anchors" exercises `.feature-categories a.badge[href^="#"]` on `/features/` (asserts the anchor target exists). The feature-card component's own structure/footer is not directly asserted.
 - **Gaps / improvement ideas:** Note the naming collision: this `feature-card.html` is unrelated to the landing layout's `.landing-feature-card` (which is hand-coded). The `references` rendering branch (`show_refs`) and `compact` mode are untested. Demo-link guard `f.link != "/"` is brittle.
 
 ### CTA button include (components/cta-button.html)
@@ -762,7 +753,7 @@ The marketing-facing surface of the theme: the data-driven landing layout (hero,
   - Markup: applies globally to Bootstrap classes in all layouts/includes
   - JS: `assets/js/ui-enhancements.js` (ripples, scroll animations, image loading, scroll-spy), `assets/js/ui-helpers.js` (toast, clipboard, `data-copy`, hero fade-in)
 - **API surface:** classes `.btn`, `.ripple`, `.card`, `.badge`, `.feature-categories`, `.table`, `.shadow-sm/.shadow/.shadow-lg` (overridden), `.animate-on-scroll`, `.nav-link.active`/`.btn.active`, `.loaded`; data-attributes `data-copy`; JS `window.zer0UI.showToast(message, {variant,duration})`, `window.zer0UI.copyToClipboard(text)`; keyframes `fadeInUp`/`fadeInRight`/`slideDown`/`ripple-animation`; CSS vars `--bs-primary(-rgb)`, `--bs-dark`, `--zer0-space-2`, `--zer0-layer-toast`
-- **Tests:** `test/visual/ui-refresh.spec.js` — "intro action buttons share consistent height", "landing comparison table has toolbar and distinct header" (thead bg ≠ tbody bg), code-block header/copy tests, footer-link checks, axe advisory scans per viewport. No spec asserts the ripple element, card hover transform, badge hover, or the `window.zer0UI` toast/clipboard API.
+- **Tests:** `test/visual/features/layouts.spec.js` — "intro action buttons share consistent height". `test/visual/features/content-enhancements.spec.js` — "landing comparison table has toolbar and distinct header" (thead bg ≠ tbody bg) and the code-block header/copy tests. `test/visual/core/layout-chrome.spec.js` — footer-link checks. `test/visual/core/accessibility.spec.js` / `test/visual/core/responsive.spec.js` — axe advisory scans per viewport. No spec asserts the ripple element, card hover transform, badge hover, or the `window.zer0UI` toast/clipboard API.
 - **Gaps / improvement ideas:** Heavy use of hardcoded `rgba(0,0,0,…)` shadows and `rgba(255,255,255,…)` ripple/gradient values instead of `--zer0-*` tokens — these do not adapt to dark mode (the rest of the system is token-driven). The global `.btn::before`/`.card:hover` transforms are unverified by tests and the JS ripple listener attaches to every `.btn` on load (no delegation; dynamically-added buttons miss it). `window.zer0UI.showToast`/`copyToClipboard` have no unit/behavioral test. `scroll-padding-top: 80px` is a magic number duplicated across rules.
 
 ### Share actions (LinkedIn/copy share)
@@ -993,7 +984,7 @@ The components that render long-form and reference content in zer0-mistakes — 
   - SCSS: `_sass/core/code-copy.scss`
   - JS: `assets/js/code-copy.js` (loaded `defer` in `_includes/core/head.html`)
 - **API surface:** classes `.copy`, `.copy.copied`, `.copy-code`, `.code-block-header`, `.code-block-lang`, `.code-block-body`, `.code-block-body--single-line/--standalone`, `.code-line-numbers`, `.code-block--single-line`, `.has-copy-button`, `.has-code-header`, `.has-line-numbers`; CSS vars `--zer0-code-copy-width`, `--zer0-code-header-height`, `--zer0-code-accent-width`, `--zer0-code-gutter-width`; uses `navigator.clipboard.writeText`. No global JS API/events.
-- **Tests:** `test/visual/ui-refresh.spec.js` "rouge blocks get header bar and line gutter after JS" (asserts `.code-block-header` visible + `.code-line-numbers` attached + header copy button visible) and "single-line rouge blocks place copy button in header bar". `test/visual/accessibility.spec.js` "code copy buttons are keyboard focusable" (focus → `toBeFocused`). All run against `UI_ROUTES.codeCopy` = `/docs/features/code-copy/`.
+- **Tests:** `test/visual/features/content-enhancements.spec.js` "rouge blocks get header bar and line gutter after JS" (asserts `.code-block-header` visible + `.code-line-numbers` attached + header copy button visible) and "single-line rouge blocks place copy button in header bar". `test/visual/core/accessibility.spec.js` "code copy buttons are keyboard focusable" (focus → `toBeFocused`). All run against `UI_ROUTES.codeCopy` = `/docs/features/code-copy/`.
 - **Gaps / improvement ideas:** No test of the actual copy action / clipboard content, the `#`-comment stripping, the "Copied!"→reset transition, or the failure path. `getCopyableCode` silently drops every line starting with `#`, which corrupts copied YAML/Python/shell-comment-bearing snippets — a correctness bug worth a regression test. `aria-label` is static "Copy code to clipboard"; copied-state change isn't announced (no `aria-live`).
 
 ### Syntax highlighting
@@ -1036,7 +1027,7 @@ The components that render long-form and reference content in zer0-mistakes — 
   - Markup: `_includes/components/post-card.html` (uses `post-type-badge.html` + `preview-image.html`)
   - Plugin/data: `site.teaser` fallback image
 - **API surface:** classes `.post-card`, plus Bootstrap `.card h-100 border-0 shadow-sm`, `.stretched-link`, badge positioning utilities, `.z-1`; include params `post` (required), `show_category`, `show_excerpt`, `show_author`, `show_reading_time`, `show_post_type`, `card_class`. No dedicated SCSS (`.post-card` has no rules of its own in this cluster), no JS.
-- **Tests:** No spec instantiates or asserts post-card structure/badges. (Used on `/tags/` and `/news/` which appear only indirectly in `ui-refresh.spec.js` section/grid checks that don't reach card internals.)
+- **Tests:** No spec instantiates or asserts post-card structure/badges. (Used on `/tags/` and `/news/` which appear only indirectly in `features/layouts.spec.js` section/grid checks that don't reach card internals.)
 - **Gaps / improvement ideas:** Reading-time fallback is a hardcoded "2 min" string when `estimated_reading_time` is absent — misleading. `stretched-link` on the title combined with the separate image `<a>` and category `<a>` creates nested/competing click targets (the stretched-link will swallow the others) — an interaction bug. `.post-card` class exists but has no styling hook. No automated coverage of badge precedence (breaking vs featured vs post_type).
 
 ### Post-type badge
@@ -1057,7 +1048,7 @@ The components that render long-form and reference content in zer0-mistakes — 
   - Markup: `_includes/components/feature-card.html`
   - Plugin/data: `_data/features.yml`
 - **API surface:** Bootstrap `.card h-100 border-{style}`, `.badge`, `.btn btn-outline-*`; include params `feature` (required), `style`, `icon`, `icon_color`, `show_refs`, `compact`, `features_limit`. No JS/CSS vars.
-- **Tests:** `test/visual/ui-refresh.spec.js` "feature category badges link to in-page anchors" tests the features page's `.feature-categories a.badge` (the page-level category nav), not this card component's internals. So effectively no direct coverage of feature-card.
+- **Tests:** `test/visual/features/category-badges.spec.js` "feature category badges link to in-page anchors" tests the features page's `.feature-categories a.badge` (the page-level category nav), not this card component's internals. So effectively no direct coverage of feature-card.
 - **Gaps / improvement ideas:** No test of the references-list nested-array branch or the docs/demo button conditionals. Tag badges use `.bg-light text-dark` (low contrast in dark mode). No `--zer0-*` token usage. Component assumes `f.version`/`f.id` always present.
 
 ### Preview image
@@ -1143,7 +1134,7 @@ The components that render long-form and reference content in zer0-mistakes — 
   - Markup: `_layouts/news.html`; components `post-type-badge.html`, `preview-image.html`
   - Plugin/data: `site.og_image`/`site.teaser`
 - **API surface:** classes `.hero-section`, `.section-nav`, `.featured-section`, `.section-posts`, `.grid-section`, `.list-section`, `.latest-section`, `.page-content`, `.footer-widgets`, `.newsletter-section`; front matter `section_style` (`magazine|grid|list`), `category`, post flags `breaking`/`featured`/`post_type`.
-- **Tests:** `test/visual/ui-refresh.spec.js` "Section archive → news section page loads with layout containment" visits `UI_ROUTES.newsSection` (`/news/business/`) and asserts `.section-layout`/`#all-posts` containment — but that targets the **section.html** layout, not `news.html`; `news.html` itself has no direct spec.
+- **Tests:** `test/visual/features/layouts.spec.js` "Section archive → news section page loads with layout containment" visits `UI_ROUTES.newsSection` (`/news/business/`) and asserts `.section-layout`/`#all-posts` containment — but that targets the **section.html** layout, not `news.html`; `news.html` itself has no direct spec.
 - **Gaps / improvement ideas:** Large (660+ lines) with inline `<style>` and inline share `<script>` rather than partials — does not reuse `post-card.html`, re-implementing cards in 4+ places (drift + maintenance cost). Hero/featured image heights are inline `style="height:..."`. No tests for the breaking→featured hero fallback, the three section_styles, or the newsletter form. Share buttons here skip the share-actions.js LinkedIn enhancement.
 
 ### Tag layout
@@ -1620,8 +1611,12 @@ All live in `test/visual/`; shared helpers in `test/visual/fixtures.js` (`SKINS`
 | `features/appearance.spec.js` | Per skin (9): `data-theme-skin` attr, localStorage persist, restore-after-nav, **homepage pixel snapshot**; plus `currentSkin()` + `skin-change` event | ~38 (attr tests=smoke; 9 snapshots=snapshots tier) | smoke + snapshots |
 | `core/styling.spec.js` | Stylesheet plumbing: same-origin CSS = 200, `main.css` linked, `--bs-primary`/`--zer0-*` resolve, no banned CDNs; navbar/brand chrome render; docs-layout regions | ~9 | smoke |
 | `features/appearance.spec.js` | `/about/settings/theme/` Color Editor: 200, color pickers have `#RRGGBB`, picker↔text-input sync, YAML export quotes hex | 4 | smoke |
-| `ui-refresh.spec.js` | v1.8+ UI: navbar tiers/labels/brand overlap, mobile quicklinks, intro hero stacking/button heights, code-block header+gutter, content-table CSV toolbar, footer links/columns, docs ToC/FAB, section archive, feature badges, theme-preview, focus/landmark smoke across viewports | ~20 | smoke |
-| `interactions.spec.js` | **User interactions** (clicks/typing/keyboard): search modal open→type→results→close, code-copy click→clipboard write+feedback, navbar dropdown chevron open/close + Esc + outside-click, theme-customizer skin swatch → live `--bs-primary` + YAML export | 9 | smoke |
+| `features/navbar.spec.js` | Navbar tiers/labels/brand overlap, mobile quicklinks; dropdown chevron open/close + Esc + outside-click (`aria-expanded`) | ~7 | smoke |
+| `features/content-enhancements.spec.js` | Code-block header+gutter, code-copy click→clipboard write+feedback, content-table CSV toolbar, docs ToC/sidebar-FAB chrome | ~6 | smoke |
+| `features/search.spec.js` | Search modal open (`/` + toggle button) → type → results, no-match message, close | ~4 | smoke |
+| `core/responsive.spec.js` | Per-viewport key-landmark (header/main/footer) visibility + homepage axe advisory scan across the viewport matrix | ~2 (×5 viewports) | smoke |
+| `core/layout-chrome.spec.js` | Footer powered-by links + equal-width nav columns | ~3 | smoke |
+| `features/category-badges.spec.js` | Features page category badges link to in-page anchors | ~1 | smoke |
 
 ### Shell / theme suites
 
@@ -1655,11 +1650,11 @@ Cross-browser `regression-*` projects are **not** in push CI — manual/`workflo
 
 Prioritized — interactive behaviors the smoke tier never exercises:
 
-- ✅ **Search modal / `search.json`** — **now covered** by `interactions.spec.js` (open via `/` + toggle button, type → results, no-match message, close). Remaining: arrow-key result navigation. *(was: zero coverage)*
+- ✅ **Search modal / `search.json`** — **now covered** by `features/search.spec.js` (open via `/` + toggle button, type → results, no-match message, close). Remaining: arrow-key result navigation. *(was: zero coverage)*
 - **AI chat widget** (`assets/js/ai-chat.js`) — zero coverage. No test opens the widget, sends a message, or exercises dev page-edit mode. **(High — still open)**
-- ✅ **Code-copy click → clipboard write** — **now covered** by `interactions.spec.js` (grants clipboard perms, clicks copy, asserts `.copied` feedback + non-empty `clipboard.readText()` + revert). *(was: only focusable; the `features/admin.spec.js` clipboard test is still `test.fixme`)*
-- ✅ **Navbar dropdown open/close** — **now covered** by `interactions.spec.js` (chevron click open/close, Escape-to-close, outside-click-close, `aria-expanded`). Remaining: arrow/Home/End item navigation. *(was: layout/visibility only)*
-- ✅ **Theme customizer "apply" (skin)** — **now covered** by `interactions.spec.js` (click skin swatch → live `data-theme-skin` + `--bs-primary` change + YAML export). Note: color **pickers** are export-only by design (they do not live-apply). *(was: API-only)*
+- ✅ **Code-copy click → clipboard write** — **now covered** by `features/content-enhancements.spec.js` (grants clipboard perms, clicks copy, asserts `.copied` feedback + non-empty `clipboard.readText()` + revert). *(was: only focusable; the `features/admin.spec.js` clipboard test is still `test.fixme`)*
+- ✅ **Navbar dropdown open/close** — **now covered** by `features/navbar.spec.js` (chevron click open/close, Escape-to-close, outside-click-close, `aria-expanded`). Remaining: arrow/Home/End item navigation. *(was: layout/visibility only)*
+- ✅ **Theme customizer "apply" (skin)** — **now covered** by `features/appearance.spec.js` (click skin swatch → live `data-theme-skin` + `--bs-primary` change + YAML export). Note: color **pickers** are export-only by design (they do not live-apply). *(was: API-only)*
 - **Obsidian wiki-links / backlinks / callouts in rendered pages** — covered only by Ruby/JS unit tests; **no Playwright test** loads a page with `[[wiki-links]]`/embeds/callouts/backlinks and asserts client-side resolution. **(Medium)**
 - **Keyboard-shortcuts modal completeness** — `?`-opens is tested; Escape-to-close, focus trapping, and that listed shortcuts fire are not. **(Medium)**
 - **Background/skin controls as real UI** — tests drive the `window.zer0Bg` API directly; no test clicks the actual customizer toggle/slider/skin-swatch a user would use. **(Medium)**
@@ -1672,7 +1667,7 @@ Net: coverage is strong on **static structure, admin-page rendering, accessibili
 
 ## Coverage Gaps & Improvement Roadmap
 
-**Coverage summary:** 🟢 4 good · 🟡 47 partial · 🔴 60 none (of 111 components, as inventoried). *Note: `test/visual/interactions.spec.js` was added after this sweep and lifts 4 high-priority surfaces (search modal, code-copy, navbar dropdowns, theme-customizer skin apply) into behavioral coverage — see the gaps list below.*
+**Coverage summary:** 🟢 4 good · 🟡 47 partial · 🔴 60 none (of 111 components, as inventoried). *Note: the interactions added after the original sweep — search modal, code-copy, navbar dropdowns, theme-customizer skin apply — were first landed together in a since-dissolved `interactions.spec.js`; they now live in `features/{search,content-enhancements,navbar,appearance}.spec.js` respectively and lift 4 high-priority surfaces into behavioral coverage — see the gaps list below.*
 
 ### Untested components (🔴 none)
 
