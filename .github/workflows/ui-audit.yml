@@ -1,0 +1,188 @@
+# ==============================================================================
+# Weekly AI UI/UX Audit
+# ==============================================================================
+# The agentic review loop for the theme's user-facing surface, in two tiers
+# (mirroring ai-content-review.yml's shape):
+#
+#   1. Deterministic sweep (no tokens): serve the site, walk the critical
+#      routes at mobile/tablet/desktop, capture screenshots + axe + console
+#      errors + overflow + broken internal links → test/ui-audit/output/.
+#   2. Claude Code ui-auditor agent (only when ANTHROPIC_API_KEY is set):
+#      reads the sweep output and the component contract
+#      (docs/architecture/ui-components.md) and writes a prioritized findings
+#      report. The agent is read-only — it never edits files or posts.
+#
+# Findings land in ONE sticky issue (labeled source:ui-audit) that the issue
+# autopilot / /repo-audit triages into the backlog, feeding /issue-plan →
+# /issue-implement (theme-ui / a11y-fixer lanes) → evidence-gated fix PRs.
+# That closes the loop: audit → issue → plan → fix → verify, humans reviewing
+# at the PR boundary.
+# ==============================================================================
+
+name: UI/UX Audit
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  schedule:
+    # Weekly, Monday morning UTC
+    - cron: '23 7 * * 1'
+  workflow_dispatch:
+
+env:
+  PAGES_REPO_NWO: ${{ vars.PAGES_REPO_NWO || github.repository }}
+
+jobs:
+  ui-audit:
+    name: Sweep + agent review
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check AI availability
+        id: ai-gate
+        env:
+          KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -n "$KEY" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::ANTHROPIC_API_KEY not set — sweep runs, agent tier skipped."
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Ruby
+        uses: ./.github/actions/setup-ruby
+        with:
+          ruby-version: '3.3'
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install Playwright
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Serve Jekyll
+        run: |
+          bundle exec jekyll serve \
+            --config _config.yml,_config_dev.yml \
+            --host 127.0.0.1 --port 4000 --detach
+          for i in $(seq 1 90); do
+            curl -sf http://127.0.0.1:4000/ >/dev/null && break
+            sleep 1
+          done
+          curl -sf http://127.0.0.1:4000/ >/dev/null || {
+            echo "::error::Jekyll did not become ready"; exit 1; }
+
+      - name: Run deterministic sweep
+        env:
+          BASE_URL: http://127.0.0.1:4000
+        run: node test/ui-audit/sweep.mjs
+
+      - name: Upload sweep artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: ui-audit-sweep
+          path: test/ui-audit/output/
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Install Claude Code CLI
+        if: steps.ai-gate.outputs.enabled == 'true'
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Run ui-auditor agent (headless, read-only)
+        if: steps.ai-gate.outputs.enabled == 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          set +e
+          read -r -d '' PROMPT <<'EOF'
+          Use the ui-auditor subagent to review the UI/UX sweep in
+          test/ui-audit/output/ against docs/architecture/ui-components.md.
+          Output ONLY the final Markdown findings report to stdout. Do not
+          modify any files.
+          EOF
+          claude -p "$PROMPT" \
+            --model claude-sonnet-4-6 \
+            --max-turns 40 \
+            --allowedTools "Task,Read,Grep,Glob" \
+            --output-format text \
+            > /tmp/ui-audit-agent.md 2> /tmp/ui-audit-err.log
+          status=$?
+          echo "claude exit status: $status"
+          tail -n 30 /tmp/ui-audit-err.log || true
+          if [ ! -s /tmp/ui-audit-agent.md ]; then
+            echo "_Agent tier produced no output (exit ${status}) — see run logs._" \
+              > /tmp/ui-audit-agent.md
+          fi
+
+      - name: File or update the audit issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          # Only file when something was actually flagged.
+          FLAGGED=$(node -e '
+            const r = require("./test/ui-audit/output/report.json");
+            const n = r.broken_links.length + r.routes.filter(x =>
+              x.error || (x.status && x.status >= 400) ||
+              (x.overflow && x.overflow.page_wider_than_viewport) ||
+              (x.axe_violations && x.axe_violations.length) ||
+              (x.console_errors && x.console_errors.length)).length;
+            console.log(n);' 2>/dev/null || echo 0)
+          # The agent's verdict line says CLEAN when it found nothing.
+          AGENT_CLEAN=true
+          if [ -s /tmp/ui-audit-agent.md ] && ! grep -qi "CLEAN" /tmp/ui-audit-agent.md; then
+            AGENT_CLEAN=false
+          fi
+          echo "flagged=$FLAGGED agent_clean=$AGENT_CLEAN"
+          if [ "$FLAGGED" = "0" ] && [ "$AGENT_CLEAN" = "true" ]; then
+            echo "Nothing flagged — no issue filed."
+            exit 0
+          fi
+
+          TITLE="UI/UX audit findings"
+          MARKER="<!-- ui-audit-sticky -->"
+          {
+            echo "$MARKER"
+            echo "Weekly UI/UX audit results ($(date -u +%F)). Run: $RUN_URL"
+            echo
+            echo "## Deterministic sweep"
+            cat test/ui-audit/output/report.md
+            echo
+            if [ -s /tmp/ui-audit-agent.md ]; then
+              echo "## Agent review"
+              cat /tmp/ui-audit-agent.md
+            fi
+            echo
+            echo "_Screenshots are in the run's ui-audit-sweep artifact._"
+            echo "_Triage via /repo-audit; route fixes to theme-ui / a11y-fixer._"
+          } > /tmp/ui-audit-issue.md
+
+          existing=$(gh issue list --state open --search "\"$TITLE\" in:title" \
+            --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body-file /tmp/ui-audit-issue.md
+            echo "Updated audit issue #$existing"
+          else
+            new_url=$(gh issue create --title "$TITLE" --body-file /tmp/ui-audit-issue.md)
+            echo "Created audit issue: $new_url"
+            num="${new_url##*/}"
+            gh issue edit "$num" --add-label "source:ui-audit" 2>/dev/null || true
+            gh issue edit "$num" --add-label "area:ui" 2>/dev/null || true
+          fi
