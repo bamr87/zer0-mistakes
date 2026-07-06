@@ -80,7 +80,7 @@ jobs:
           bundle exec jekyll serve \
             --config _config.yml,_config_dev.yml \
             --host 127.0.0.1 --port 4000 --detach
-          for i in $(seq 1 90); do
+          for _ in $(seq 1 90); do
             curl -sf http://127.0.0.1:4000/ >/dev/null && break
             sleep 1
           done
