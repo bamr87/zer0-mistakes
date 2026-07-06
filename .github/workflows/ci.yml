@@ -57,6 +57,7 @@ jobs:
       docker: ${{ steps.filter.outputs.docker }}
       content: ${{ steps.filter.outputs.content }}
       styling: ${{ steps.filter.outputs.styling }}
+      install: ${{ steps.filter.outputs.install }}
       docs-only: ${{ steps.check.outputs.docs-only }}
     steps:
       - name: Checkout Repository
@@ -98,6 +99,17 @@ jobs:
               - '_includes/**'
               - 'test/visual/**'
               - 'test/playwright.config.js'
+            install:
+              - 'install.sh'
+              - 'scripts/lib/install/**'
+              - 'scripts/bin/install'
+              - 'templates/**'
+              - 'test/test_install*.sh'
+              - 'test/test_deployment.sh'
+              - 'test/test_site_generation.sh'
+              - 'docker/**'
+              - 'docker-compose*.yml'
+              - 'Dockerfile'
 
       - name: Check if docs-only
         id: check
@@ -186,10 +198,16 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           verbose: true
-          # Gate parity (T-012): run every non-Playwright theme suite that
-          # `./scripts/bin/test` exposes locally, not a subset. Playwright
-          # tiers run as dedicated steps below.
-          suites: core,deployment,quality,installation,installer,site_generation,obsidian,features
+          # Lean PR gate: the install/deploy/site-generation suites run here
+          # only when install-related paths changed (detect-changes `install`
+          # filter). They still run unconditionally every night in
+          # nightly-extended.yml, and the installer e2e suites always run via
+          # the `./scripts/bin/test` step below, so a quiet install regression
+          # surfaces within a day instead of taxing every PR.
+          suites: >-
+            ${{ needs.detect-changes.outputs.install == 'true'
+                && 'core,deployment,quality,installation,installer,site_generation,obsidian,features'
+                || 'core,quality,obsidian,features' }}
           skip-docker: true
           skip-remote: true
 
