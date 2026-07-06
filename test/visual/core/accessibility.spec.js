@@ -25,7 +25,7 @@ test.describe('Accessibility — axe-core WCAG audits', () => {
   // listitem-preserving footer/admin separator (admin-nav.html), focusable
   // single-scroll code blocks (code-copy.js + code-copy.scss), and underlined
   // prose links (_docs-layout.scss).
-  test('homepage passes WCAG 2.1 AA', async ({ page }) => {
+  test('homepage passes WCAG 2.1 AA', { tag: '@critical' }, async ({ page }) => {
     await waitForJekyll(page, '/');
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa'])
@@ -135,7 +135,7 @@ test.describe('Accessibility — specific component checks', () => {
   });
 });
 
-test.describe('Accessibility — UI refresh smoke', () => {
+test.describe('Accessibility — UI refresh smoke', { tag: '@critical' }, () => {
   test('skip link is focusable and targets main content', async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await waitForJekyll(page, UI_ROUTES.home);

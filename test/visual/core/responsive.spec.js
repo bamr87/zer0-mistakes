@@ -61,7 +61,7 @@ function measurePage() {
   };
 }
 
-test.describe('Mobile — author card stays within small-phone viewports', () => {
+test.describe('Mobile — author card stays within small-phone viewports', { tag: '@critical' }, () => {
   for (const width of [320, 360, 393]) {
     test(`stress-filled author card does not widen the page @ ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 800 });
@@ -94,7 +94,7 @@ test.describe('Mobile — author card stays within small-phone viewports', () =>
   }
 });
 
-test.describe('Mobile — cookie consent banner sits above the FABs', () => {
+test.describe('Mobile — cookie consent banner sits above the FABs', { tag: '@critical' }, () => {
   test('banner outranks FABs and its buttons receive taps edge-to-edge', async ({ page }) => {
     await waitForJekyll(page, AUTHOR_CARD_ROUTE);
 
@@ -148,7 +148,7 @@ test.describe('Mobile — cookie consent banner sits above the FABs', () => {
   });
 });
 
-test.describe('Mobile — tap targets meet the 24px minimum (WCAG 2.5.8)', () => {
+test.describe('Mobile — tap targets meet the 24px minimum (WCAG 2.5.8)', { tag: '@critical' }, () => {
   test('footer links and social icons are at least 24px', async ({ page }) => {
     await waitForJekyll(page, '/');
     const small = await page.evaluate(() => {
@@ -218,7 +218,7 @@ test.describe('Mobile — tap targets meet the 24px minimum (WCAG 2.5.8)', () =>
   });
 });
 
-test.describe('Mobile — floating action buttons stack without overlap', () => {
+test.describe('Mobile — floating action buttons stack without overlap', { tag: '@critical' }, () => {
   // /docs/ renders both the mobile TOC FAB and (when enabled) the chat FAB,
   // which historically claimed the same right-edge slot and overlapped.
   const FAB_ROUTE = '/docs/';
@@ -302,7 +302,7 @@ test.describe('Mobile — floating action buttons stack without overlap', () => 
   });
 });
 
-test.describe('Mobile — navbar chrome fits and works at phone size', () => {
+test.describe('Mobile — navbar chrome fits and works at phone size', { tag: '@critical' }, () => {
   test('search opens from the utility cluster and the dialog fits the viewport', async ({ page }) => {
     await dismissCookieConsent(page);
     await waitForJekyll(page, '/');
@@ -355,7 +355,7 @@ test.describe('Mobile — navbar chrome fits and works at phone size', () => {
   });
 });
 
-test.describe('Responsive visibility — key landmarks', () => {
+test.describe('Responsive visibility — key landmarks', { tag: '@critical' }, () => {
   for (const [name, viewport] of Object.entries(VIEWPORTS)) {
     test(`main landmarks visible at ${name}`, async ({ page }) => {
       await page.setViewportSize(viewport);

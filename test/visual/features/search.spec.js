@@ -39,7 +39,7 @@ const SEARCH_FORM = '[data-search-form]';
 // -----------------------------------------------------------------------------
 // Search modal — happy path
 // -----------------------------------------------------------------------------
-test.describe('Search modal — happy path', () => {
+test.describe('Search modal — happy path', { tag: '@critical' }, () => {
   test.beforeEach(async ({ page }) => {
     await waitForJekyll(page, '/');
     // The modal markup is part of the navbar chrome on every page.
@@ -175,7 +175,7 @@ async function openSearch(page) {
   return modal;
 }
 
-test.describe('Search graceful degradation (no /search.json)', () => {
+test.describe('Search graceful degradation (no /search.json)', { tag: '@critical' }, () => {
   test('missing index → "unavailable" copy and no /sitemap/ link', async ({ page }) => {
     await stubSearchIndex(page, { status: 404 });
     await waitForJekyll(page, '/');
@@ -249,7 +249,7 @@ test.describe('Search graceful degradation (no /search.json)', () => {
 // How the test would fail against the pre-fix template (unconditional action):
 //  - The form action would always be "/sitemap/" regardless of whether the page
 //    exists, sending no-JS users to a potential 404.
-test.describe('Search modal form action existence gate (issue #202)', () => {
+test.describe('Search modal form action existence gate (issue #202)', { tag: '@critical' }, () => {
   test('dev build: form action resolves to /sitemap/ (page exists)', async ({ page }) => {
     // Precondition: /sitemap/ must return 200 in this build.
     const sitemapResp = await page.request.get('/sitemap/');

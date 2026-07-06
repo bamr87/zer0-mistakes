@@ -212,17 +212,21 @@ jobs:
           npm ci
           npx playwright install --with-deps chromium
 
-      - name: Playwright smoke tests
+      - name: Playwright critical tests (PR gate)
         env:
           PAGES_REPO_NWO: ${{ env.PAGES_REPO_NWO }}
         uses: ./.github/actions/playwright-tests
         with:
-          project: smoke
+          project: critical
           install-deps: 'false'
 
-      # NOTE: the pixel-snapshot tier moved to its own `snapshots` job (below) so
-      # the jammy-image pull + 9-skin render isn't squeezed by this job's 25-min
-      # budget. The smoke tier above stays here.
+      # NOTE: the PR gate runs only the @critical-tagged tier (user-facing
+      # essentials: navigation, search, mobile survival, theming baseline,
+      # security). The full `smoke` tier plus the demoted shell suites run
+      # nightly in .github/workflows/nightly-extended.yml, which files an
+      # issue on failure instead of blocking PRs. The pixel-snapshot tier has
+      # its own `snapshots` job (below) so the jammy-image pull + 9-skin
+      # render isn't squeezed by this job's 25-min budget.
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v7

@@ -77,6 +77,15 @@ module.exports = defineConfig({
   // need separate config files. Use `--project=<name>` to select one.
   projects: [
     {
+      name: 'critical',
+      // PR-blocking gate: only tests tagged @critical — the user-facing
+      // essentials (navigation, search, mobile survival, theming baseline,
+      // security). Everything else runs in the nightly `smoke` tier.
+      grep: /@critical/,
+      grepInvert: SNAPSHOT_GREP,
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
       name: 'smoke',
       // Everything except the pixel-snapshot block in appearance-snapshot.spec.js.
       grepInvert: SNAPSHOT_GREP,

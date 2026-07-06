@@ -22,7 +22,7 @@ const { UI_ROUTES, VIEWPORTS, waitForJekyll, gotoOrSkip } = require('../fixtures
 // A docs page that exercises TOC, fenced code blocks, and the reading chrome.
 const DOC = '/docs/features/code-copy/';
 
-test.describe('Back to Top', () => {
+test.describe('Back to Top', { tag: '@critical' }, () => {
   test('ZER0-029 Back to Top button is present and scrolls to top', async ({ page }) => {
     await waitForJekyll(page, DOC);
     const btn = page.locator('#backToTopBtn');
@@ -34,7 +34,7 @@ test.describe('Back to Top', () => {
   });
 });
 
-test.describe('Code copy button', () => {
+test.describe('Code copy button', { tag: '@critical' }, () => {
   test('ZER0-030 Code Copy injects a copy control on code blocks', async ({ page }) => {
     await waitForJekyll(page, DOC);
     await expect(page.locator('.highlight.has-copy-button, .code-block-header').first()).toBeAttached();
@@ -109,7 +109,7 @@ test.describe('Code copy button', () => {
   });
 });
 
-test.describe('Content tables', () => {
+test.describe('Content tables', { tag: '@critical' }, () => {
   test('landing comparison table has toolbar and distinct header', async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await gotoOrSkip(page, UI_ROUTES.home);
@@ -133,7 +133,7 @@ test.describe('Content tables', () => {
   });
 });
 
-test.describe('Table of contents', () => {
+test.describe('Table of contents', { tag: '@critical' }, () => {
   test('ZER0-037 Table of Contents renders on docs pages', async ({ page }) => {
     await waitForJekyll(page, DOC);
     await expect(page.locator('.bd-toc').first()).toBeAttached();

@@ -16,7 +16,7 @@ function isSameOriginStylesheet(url, baseURL) {
   }
 }
 
-test.describe('Theme stylesheets', () => {
+test.describe('Theme stylesheets', { tag: '@critical' }, () => {
   test('same-origin CSS assets return 200', async ({ page, baseURL }) => {
     const failures = [];
     page.on('response', (res) => {
@@ -61,7 +61,7 @@ test.describe('Theme stylesheets', () => {
   });
 });
 
-test.describe('Layout chrome', () => {
+test.describe('Layout chrome', { tag: '@critical' }, () => {
   test('desktop header and navbar render', async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await waitForJekyll(page, UI_ROUTES.home);
@@ -91,7 +91,7 @@ test.describe('Layout chrome', () => {
   });
 });
 
-test.describe('Design tokens — CSS variables', () => {
+test.describe('Design tokens — CSS variables', { tag: '@critical' }, () => {
   test('--zer0-color-primary resolves on :root', async ({ page }) => {
     await waitForJekyll(page, UI_ROUTES.home);
     const value = await page.evaluate(() =>

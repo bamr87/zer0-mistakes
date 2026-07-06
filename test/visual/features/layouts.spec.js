@@ -30,7 +30,7 @@ const {
   assertStackedVertically,
 } = require('../fixtures');
 
-test.describe('Landing layout', () => {
+test.describe('Landing layout', { tag: '@critical' }, () => {
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
   });
@@ -87,7 +87,7 @@ test.describe('Posts archive (/pages/) — pagination', () => {
   });
 });
 
-test.describe('Default layout — chrome', () => {
+test.describe('Default layout — chrome', { tag: '@critical' }, () => {
   test('breadcrumbs <nav> exposes aria-label', async ({ page }) => {
     await gotoOrSkip(page, '/about/');
     const nav = page.locator('nav.breadcrumbs[aria-label]');
@@ -115,7 +115,7 @@ test.describe('Default layout — chrome', () => {
   });
 });
 
-test.describe('Article layout — single H1', () => {
+test.describe('Article layout — single H1', { tag: '@critical' }, () => {
   test('article post has exactly one h1', async ({ page }) => {
     const response = await page.goto('/posts/', { waitUntil: 'domcontentloaded' });
     if (!response || response.status() >= 400) {
@@ -194,7 +194,7 @@ test.describe('Token wiring', () => {
 // duplicate of core/accessibility.spec.js's "UI refresh smoke" per-viewport
 // axe scan (same route, same axe tags), which is already stricter (<20).
 
-test.describe('Intro hero — layout and metadata', () => {
+test.describe('Intro hero — layout and metadata', { tag: '@critical' }, () => {
   test('meta footer wraps actions and stacks below description', async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await gotoOrSkip(page, UI_ROUTES.quickstart);
@@ -240,7 +240,7 @@ test.describe('Intro hero — layout and metadata', () => {
   });
 });
 
-test.describe('Section archive — sidebar and grid', () => {
+test.describe('Section archive — sidebar and grid', { tag: '@critical' }, () => {
   test('news section page loads with layout containment', async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await gotoOrSkip(page, UI_ROUTES.newsSection);
