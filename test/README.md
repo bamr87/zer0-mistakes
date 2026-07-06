@@ -147,13 +147,24 @@ All tiers share `test/playwright.config.js`.
 
 | Tier | `PLAYWRIGHT_PROJECT` | What it covers | When CI runs it |
 |------|----------------------|----------------|-----------------|
-| Smoke | `smoke` (default) | Every spec in `core/` and `features/` except the pixel-snapshot test | Every code-change PR |
-| Snapshots | `snapshots` | Homepage pixel screenshots for the 9 theme skins (`features/appearance-snapshot.spec.js`) | Path-filtered: only when `_sass/`, `assets/`, `_layouts/`, `_includes/`, or `test/visual/` change |
+| Critical | `critical` | Only tests tagged `@critical` — the user-facing essentials (navigation, search, mobile survival, theming baseline, security) | Every code-change PR — **the blocking gate** (`ci.yml`) |
+| Smoke | `smoke` (default) | Every spec in `core/` and `features/` except the pixel-snapshot test | Nightly (`nightly-extended.yml`) — failures file a sticky issue instead of blocking PRs |
+| Snapshots | `snapshots` | Homepage pixel screenshots for the 9 theme skins (`features/appearance-snapshot.spec.js`) | PRs path-filtered on styling changes (non-blocking) + nightly |
 | Regression | `regression-chromium` / `regression-firefox` / `regression-webkit` | All specs across all browsers | Manual `workflow_dispatch` only |
+
+Tagging: add `{ tag: '@critical' }` to a `test()` or `test.describe()` to put
+it in the PR gate. Keep the gate honest — only behaviors a *visitor* would
+notice belong there; everything else is covered nightly. A weekly agentic
+UI/UX audit (`ui-audit.yml` + `test/ui-audit/sweep.mjs` +
+`.claude/agents/ui-auditor.md`) additionally reviews screenshots/axe/console
+output of the critical routes and files findings as `source:ui-audit` issues.
 
 **Prerequisites:** Node.js 18+, Playwright (auto-installed by the runner)
 
 ```bash
+# Critical tier — the PR gate
+PLAYWRIGHT_PROJECT=critical ./test/test_playwright.sh
+
 # Smoke tier (default) — starts Jekyll on port 4011 unless BASE_URL is set
 ./test/test_playwright.sh
 
@@ -168,6 +179,7 @@ npx playwright test --config=test/playwright.config.js --project=smoke test/visu
 npx playwright test --config=test/playwright.config.js --project=smoke test/visual/features/
 
 # npm aliases
+npm run test:critical
 npm run test:smoke
 npm run test:snapshots
 npm run test:regression
