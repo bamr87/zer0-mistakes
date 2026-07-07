@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.26.0](https://github.com/bamr87/zer0-mistakes/compare/v1.25.0...v1.26.0) (2026-07-07)
+
+
+### Features
+
+* **feedback:** runtime "Improve this page" capture → GitHub issue (logs + AI triage) ([#286](https://github.com/bamr87/zer0-mistakes/issues/286)) ([f7fb20d](https://github.com/bamr87/zer0-mistakes/commit/f7fb20df74c22df7eb823344121c60617f06c7b6))
+
 ## [Unreleased]
 
 ### Changed
