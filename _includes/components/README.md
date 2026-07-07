@@ -91,6 +91,7 @@ If a component needs a token that doesn't exist yet, propose it in `_sass/tokens
 | `info-section.html`      | Settings offcanvas — Appearance / Site / Developer.   |
 | `js-cdn.html`            | Body-end script bundle.                               |
 | `search-modal.html`      | Global search modal.                                  |
+| `page-feedback.html`     | "Improve this page" capture widget — request type + live page context + captured console logs → GitHub issue (base prefill + optional AI enrichment). Pairs with `assets/js/page-feedback.js` and `core/console-capture.html`; types from `_data/feedback_types.yml`. |
 
 ## Adding a new component
 

@@ -1,0 +1,276 @@
+// ============================================================================
+// Page-feedback widget — global FAB + capture modal
+// ----------------------------------------------------------------------------
+// Markup:     _includes/components/page-feedback.html
+// Behaviour:  assets/js/page-feedback.js
+// Tokens:     shared FAB + layer scale (_sass/tokens/_spacing.scss, _layers.scss)
+// Theming:    leans on Bootstrap 5.3 CSS variables (--bs-body-bg / -color /
+//             -border-color) so it follows [data-bs-theme] light/dark for free.
+// ============================================================================
+
+// --- Global FAB (bottom-left, clear of the right-hand FAB stack) ------------
+.pf-fab {
+  position: fixed;
+  bottom: var(--zer0-space-fab-offset, 1rem);
+  left: var(--zer0-space-fab-offset, 1rem);
+  z-index: var(--zer0-layer-fab-feedback, 1051);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--zer0-space-fab-size, 3.5rem);
+  height: var(--zer0-space-fab-size, 3.5rem);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background-color: var(--zer0-color-primary, var(--bs-primary));
+  color: #fff;
+  font-size: 1.25rem;
+  opacity: .9;
+  box-shadow: var(--zer0-shadow-fab, 0 .5rem 1rem rgba(0, 0, 0, .25));
+  transition:
+    opacity var(--zer0-motion-duration-fast, 120ms) var(--zer0-motion-ease-standard, ease),
+    transform var(--zer0-motion-duration-fast, 120ms) var(--zer0-motion-ease-standard, ease);
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+    color: #fff;
+    transform: translateY(-2px);
+  }
+}
+
+// Lock background scroll while the dialog is open (set by page-feedback.js).
+.pf-no-scroll { overflow: hidden; }
+
+// --- Modal overlay ----------------------------------------------------------
+.pf-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--zer0-layer-feedback-modal, 1096); // above the cookie banner (1095)
+  display: flex;
+  align-items: flex-end;                 // bottom sheet on phones
+  justify-content: center;
+  background: rgba(0, 0, 0, .5);
+  opacity: 0;
+  transition: opacity var(--zer0-motion-duration, 180ms) var(--zer0-motion-ease-standard, ease);
+
+  &[hidden] { display: none; }
+  &.pf-overlay--open { opacity: 1; }
+
+  @media (min-width: 576px) {
+    align-items: center;
+    padding: var(--zer0-space-3, 1rem);
+  }
+}
+
+.pf-dialog {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 40rem;
+  max-height: 92vh;
+  overflow: hidden;
+  color: var(--bs-body-color);
+  background: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color, rgba(0, 0, 0, .15));
+  border-radius: 1rem 1rem 0 0;
+  transform: translateY(20px);
+  transition: transform var(--zer0-motion-duration, 180ms) var(--zer0-motion-ease-standard, ease);
+
+  .pf-overlay--open & { transform: translateY(0); }
+
+  @media (min-width: 576px) { border-radius: 1rem; }
+}
+
+// --- Header -----------------------------------------------------------------
+.pf-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--zer0-space-2, .5rem);
+  padding: var(--zer0-space-3, 1rem) var(--zer0-space-3, 1rem) var(--zer0-space-2, .5rem);
+  border-bottom: 1px solid var(--bs-border-color, rgba(0, 0, 0, .1));
+}
+
+.pf-title { display: flex; align-items: center; }
+
+.pf-intro { font-size: .875rem; line-height: 1.4; }
+
+.pf-close {
+  flex-shrink: 0;
+  color: var(--bs-body-color);
+  background: transparent;
+  border: 0;
+  opacity: .6;
+  &:hover, &:focus-visible { opacity: 1; }
+}
+
+// --- Body (scrolls) ---------------------------------------------------------
+.pf-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: var(--zer0-space-3, 1rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--zer0-space-3, 1rem);
+}
+
+.pf-field { border: 0; padding: 0; margin: 0; min-width: 0; }
+
+.pf-legend,
+.pf-label {
+  display: block;
+  font-size: .8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  color: var(--bs-secondary-color, var(--zer0-color-ink-muted, #6c757d));
+  margin-bottom: var(--zer0-space-2, .5rem);
+}
+
+.pf-help { font-size: .8125rem; margin: .35rem 0 0; }
+
+// --- Type selector ----------------------------------------------------------
+.pf-types-group {
+  font-size: .75rem;
+  font-weight: 600;
+  color: var(--bs-secondary-color, #6c757d);
+  margin: var(--zer0-space-2, .5rem) 0 .35rem;
+}
+
+.pf-types-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: .5rem;
+
+  @media (min-width: 480px) { grid-template-columns: 1fr 1fr; }
+}
+
+.pf-type {
+  display: flex;
+  align-items: flex-start;
+  gap: .625rem;
+  text-align: left;
+  padding: .625rem .75rem;
+  background: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color, rgba(0, 0, 0, .15));
+  border-radius: .625rem;
+  cursor: pointer;
+  transition: border-color 120ms ease, background-color 120ms ease;
+
+  &:hover { border-color: var(--zer0-color-primary, var(--bs-primary)); }
+
+  &:focus-visible {
+    outline: 2px solid var(--zer0-color-primary, var(--bs-primary));
+    outline-offset: 2px;
+  }
+
+  &.pf-type--active {
+    border-color: var(--zer0-color-primary, var(--bs-primary));
+    background: color-mix(in srgb, var(--bs-primary) 10%, transparent);
+    box-shadow: inset 0 0 0 1px var(--zer0-color-primary, var(--bs-primary));
+  }
+}
+
+.pf-type-icon { flex-shrink: 0; margin-top: .1rem; font-size: 1rem; color: var(--zer0-color-primary, var(--bs-primary)); }
+.pf-type-text { display: flex; flex-direction: column; gap: .1rem; min-width: 0; }
+.pf-type-label { font-weight: 600; font-size: .9rem; line-height: 1.2; }
+.pf-type-desc { font-size: .78rem; line-height: 1.3; color: var(--bs-secondary-color, #6c757d); }
+
+// --- Context / logs ---------------------------------------------------------
+.pf-summary { cursor: pointer; font-weight: 600; font-size: .875rem; }
+.pf-context-count { color: var(--bs-secondary-color, #6c757d); font-weight: 400; }
+
+.pf-context-list {
+  list-style: none;
+  margin: .5rem 0 0;
+  padding: 0;
+  font-size: .8125rem;
+
+  li { display: flex; gap: .5rem; padding: .15rem 0; }
+}
+.pf-context-key { flex: 0 0 4rem; color: var(--bs-secondary-color, #6c757d); }
+.pf-context-val { min-width: 0; word-break: break-word; }
+
+.pf-logs { margin-top: .75rem; }
+.pf-check { display: flex; align-items: center; gap: .4rem; font-size: .8125rem; font-weight: 500; }
+.pf-logs-preview {
+  max-height: 9rem;
+  overflow: auto;
+  margin: .5rem 0 0;
+  padding: .5rem .625rem;
+  font-size: .72rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: var(--bs-tertiary-bg, rgba(0, 0, 0, .04));
+  border: 1px solid var(--bs-border-color, rgba(0, 0, 0, .1));
+  border-radius: .5rem;
+}
+
+// --- AI enrichment ----------------------------------------------------------
+.pf-ai-head { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; }
+.pf-ai-hint { font-size: .8125rem; }
+.pf-ai-result { margin-top: .625rem; font-size: .875rem; }
+.pf-ai-card {
+  padding: .75rem .875rem;
+  background: var(--bs-tertiary-bg, rgba(0, 0, 0, .04));
+  border: 1px solid var(--bs-border-color, rgba(0, 0, 0, .1));
+  border-radius: .625rem;
+
+  p { margin: 0 0 .5rem; }
+  p:last-child { margin-bottom: 0; }
+}
+.pf-ai-badges .badge { margin-right: .25rem; }
+.pf-ai-questions { margin: .25rem 0 .5rem 1.1rem; padding: 0; }
+.pf-ai-labels code { font-size: .78rem; }
+.pf-ai-error { color: var(--bs-danger-text-emphasis, var(--bs-danger)); }
+.pf-ai-spinner,
+.pf-ai-note i { color: var(--zer0-color-primary, var(--bs-primary)); }
+.pf-ai-spinner {
+  display: inline-block;
+  width: .85rem;
+  height: .85rem;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  vertical-align: -.1rem;
+  animation: pf-spin .7s linear infinite;
+}
+@keyframes pf-spin { to { transform: rotate(360deg); } }
+
+// --- Status line ------------------------------------------------------------
+.pf-status:empty { display: none; }
+.pf-status {
+  font-size: .8125rem;
+  margin: 0;
+  padding: .5rem .625rem;
+  border-radius: .5rem;
+
+  &.pf-status--ok    { background: var(--bs-success-bg-subtle, #d1e7dd); color: var(--bs-success-text-emphasis, #0a3622); }
+  &.pf-status--warn  { background: var(--bs-warning-bg-subtle, #fff3cd); color: var(--bs-warning-text-emphasis, #664d03); }
+  &.pf-status--pending { background: var(--bs-info-bg-subtle, #cff4fc); color: var(--bs-info-text-emphasis, #055160); }
+  a { color: inherit; text-decoration: underline; }
+}
+
+// --- Footer -----------------------------------------------------------------
+.pf-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--zer0-space-2, .5rem);
+  padding: var(--zer0-space-2, .5rem) var(--zer0-space-3, 1rem);
+  border-top: 1px solid var(--bs-border-color, rgba(0, 0, 0, .1));
+  background: var(--bs-body-bg);
+}
+.pf-footer-primary { display: flex; gap: .5rem; }
+.pf-copy { text-decoration: none; }
+
+// --- Reduced motion ---------------------------------------------------------
+@media (prefers-reduced-motion: reduce) {
+  .pf-fab,
+  .pf-overlay,
+  .pf-dialog { transition: none; }
+  .pf-ai-spinner { animation: none; }
+}

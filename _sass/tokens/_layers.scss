@@ -18,6 +18,7 @@
 
   // Floating action buttons (stack bottom-to-top) --------------------------
   --zer0-layer-fab-back-to-top: 1050;
+  --zer0-layer-fab-feedback: 1051;   // page-feedback FAB (bottom-left)
   --zer0-layer-fab-chat: 1052;
   --zer0-layer-fab-toc: 1055;
   --zer0-layer-fab-local-graph: 1060;
@@ -25,6 +26,9 @@
   // Overlay surfaces -------------------------------------------------------
   --zer0-layer-offcanvas: 1045;
   --zer0-layer-modal: 1055;
+  --zer0-layer-feedback-modal: 1096; // page-feedback dialog — a focused dialog wins over
+                                     // every FAB, toast, AND the cookie banner (1095) so its
+                                     // controls are never intercepted; still below skip-link (1100)
   --zer0-layer-popover: 1070;
   --zer0-layer-tooltip: 1080;
 

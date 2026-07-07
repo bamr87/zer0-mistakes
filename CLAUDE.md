@@ -64,6 +64,17 @@ files you touch:
   `templates/deploy/chat-proxy/` (Cloudflare Worker + Node dev proxy), deployed
   by `.github/workflows/deploy-chat-proxy.yml`. Governed by
   [`ai-chat.instructions.md`](./.github/instructions/ai-chat.instructions.md).
+- **Page-feedback widget** — the "Improve this page" capture flow: a runtime
+  modal + global FAB turn a reader's report (request type + description + live
+  page context + a captured console/error log buffer) into a well-formed,
+  correctly-**labeled** GitHub issue. Base layer is a token-free `issues/new`
+  prefill (GitHub Pages-safe); an optional AI layer sends the capture to Claude
+  via the chat proxy's `/api/feedback` route (Claude Code OAuth) to clarify,
+  vet, prioritize, and recommend before filing. Widget:
+  `_includes/components/page-feedback.html` + `assets/js/page-feedback.js` +
+  `_includes/core/console-capture.html`; request types in
+  `_data/feedback_types.yml`; config under `page_feedback:` in `_config.yml`.
+  Replaces the old build-time Copilot dropdown (which could not capture logs).
 - **Giscus comment conversations** — comments are GitHub Discussions (config:
   `_config.yml` `giscus:` block; include: `_includes/content/giscus.html`).
   `scripts/bin/giscus-discussions` (gh GraphQL) can list/read/draft/seed/post,

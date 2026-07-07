@@ -1,0 +1,148 @@
+# _data/feedback_types.yml
+#
+# Request types for the page-feedback capture widget:
+#   _includes/components/page-feedback.html + assets/js/page-feedback.js
+#
+# This REPLACES the build-time "Copilot Agent" dropdown that baked
+# _data/prompts.yml into every <a href> at build time. The widget now injects
+# this list as JSON and assembles the GitHub issue at RUNTIME, so it can also
+# attach live page context and a captured console-log buffer — things a
+# build-time Liquid link can never see.
+#
+# ─── Schema (per entry) ──────────────────────────────────────────────────────
+#   id           unique slug — used in the issue title tag ([id]) and analytics
+#   label        short text shown in the type selector
+#   icon         Bootstrap Icons class (https://icons.getbootstrap.com/)
+#   group        section header in the selector ("This page" | "The site")
+#   scope        page | site — targets this page, or the theme as a whole
+#   description  one-line helper shown under the label
+#   labels       GitHub labels applied to the issue. MUST already exist in the
+#                repo: GitHub SILENTLY DROPS unknown labels from a prefilled URL
+#                (this was the old feature's `labels=ai-agent` bug). Verify with
+#                `gh label list`. The marker label from
+#                site.page_feedback.default_labels is added on top of these.
+#   agent        true  → assign @copilot and attach `directive` for autonomous work
+#                false → human triage only (no assignee, no directive)
+#   directive    compact agent instruction. Kept SHORT on purpose — it rides in
+#                the prefilled issue URL, and long bodies blow the URL-length
+#                budget. The full context table + logs are added by the widget.
+#   placeholder  textarea placeholder tailored to this request type
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ─── This page — scoped to the page the widget was opened from ───────────────
+
+- id: fix-page
+  label: Report a problem
+  icon: bi-bug
+  group: This page
+  scope: page
+  description: A typo, broken link, wrong information, or something rendering badly
+  labels: [bug]
+  agent: true
+  directive: >-
+    Reproduce and fix the reported defect on the page identified in Page
+    Context. Keep the change minimal and surgical; verify with a Jekyll build.
+  placeholder: What is wrong, where on the page, and what did you expect instead?
+
+- id: improve-page
+  label: Improve this page
+  icon: bi-stars
+  group: This page
+  scope: page
+  description: Polish the copy, structure, or presentation
+  labels: [enhancement, "area:docs"]
+  agent: true
+  directive: >-
+    Act as a content editor for the page in Page Context. Tighten copy, fix
+    grammar, improve heading hierarchy and visual rhythm — without changing the
+    core message or breaking links.
+  placeholder: What would make this page clearer, tighter, or more useful?
+
+- id: expand-page
+  label: Add missing detail
+  icon: bi-arrows-angle-expand
+  group: This page
+  scope: page
+  description: Add depth, examples, or a section a reader would expect
+  labels: [enhancement, "area:docs"]
+  agent: true
+  directive: >-
+    Expand the page in Page Context with concrete examples, prerequisites, and
+    any expected-but-missing sections. Preserve tone and front matter.
+  placeholder: What is missing? Which examples or sections would help?
+
+- id: update-page
+  label: Flag outdated content
+  icon: bi-arrow-clockwise
+  group: This page
+  scope: page
+  description: Stale versions, dead links, or old screenshots
+  labels: [documentation, "area:docs"]
+  agent: true
+  directive: >-
+    Audit the page in Page Context for stale versions, dead links, and outdated
+    screenshots; refresh them and bump `lastmod`.
+  placeholder: What is out of date? Paste the stale value or link if you can.
+
+- id: accessibility
+  label: Accessibility issue
+  icon: bi-universal-access
+  group: This page
+  scope: page
+  description: Contrast, keyboard, screen-reader, or focus problems
+  labels: ["area:a11y"]
+  agent: true
+  directive: >-
+    Audit the page in Page Context against WCAG 2.1 AA for the reported barrier
+    (contrast, keyboard, focus, ARIA, alt text) and propose concrete fixes.
+  placeholder: What barrier did you hit? Which assistive tech or input method?
+
+# ─── The site — theme-wide UI, components, features, performance ──────────────
+
+- id: ui-ux
+  label: UI / UX improvement
+  icon: bi-palette
+  group: The site
+  scope: site
+  description: A design or usability refinement for the theme
+  labels: [enhancement, "area:feat"]
+  agent: true
+  directive: >-
+    Propose a Bootstrap-first UI/UX refinement, using the page in Page Context
+    as the starting example. Cover responsive behaviour, dark mode, and a11y.
+  placeholder: What feels off, and how might it look or behave instead?
+
+- id: performance
+  label: Performance
+  icon: bi-speedometer2
+  group: The site
+  scope: site
+  description: Slow load, layout shift, or heavy assets
+  labels: ["area:perf"]
+  agent: true
+  directive: >-
+    Profile the page in Page Context (LCP, CLS, INP), identify the bottleneck,
+    and propose GitHub Pages-safe fixes.
+  placeholder: What felt slow? On what device / connection?
+
+- id: feature
+  label: Feature request
+  icon: bi-lightbulb
+  group: The site
+  scope: site
+  description: Propose a new site-wide capability
+  labels: [enhancement, "area:feat"]
+  agent: false
+  directive: ""
+  placeholder: What should it do, and who benefits?
+
+- id: question
+  label: Ask a question
+  icon: bi-question-circle
+  group: The site
+  scope: site
+  description: Something unclear — not necessarily a bug
+  labels: [question]
+  agent: false
+  directive: ""
+  placeholder: What are you trying to do, and where did you get stuck?

@@ -281,6 +281,39 @@ ai_chat:
     default_labels       : ['from-chat']      # Labels added to issues created from the chat
     pr_branch_prefix     : 'chat/'            # Prefix for PR branches created by the proxy
 
+## Page Feedback — "Improve this page" capture #################################
+# Runtime capture widget: _includes/components/page-feedback.html +
+# assets/js/page-feedback.js. Turns what a reader is looking at into a
+# well-formed GitHub issue — request type + description + live page context +
+# captured console/error logs — filed with labels that actually exist.
+#
+# Two layers:
+#   - Base (always on, no token, GitHub Pages-safe): opens a pre-filled
+#     github.com/issues/new form. Works on any fork of the theme.
+#   - AI enrichment (optional): when the chat proxy is deployed
+#     (ai_chat.proxy_ready), the capture is sent to Claude — via Claude Code
+#     OAuth, server-side — to clarify, vet, prioritize, and recommend before
+#     the issue is filed. Reuses templates/deploy/chat-proxy/.
+
+page_feedback:
+  enabled            : true               # Master switch for the widget
+  fab                : true               # Show the global floating feedback button
+  fab_icon           : 'bi-megaphone'     # Bootstrap icon for the FAB
+  fab_label          : 'Improve this page'
+  capture_logs       : true               # Capture console/error logs (previewed before submit)
+  log_limit          : 40                 # Max console/error entries kept in the ring buffer
+  mode               : 'url'              # 'url'  = pre-filled github.com form (no token; default)
+                                          # 'proxy' = file real issues via the chat proxy
+  endpoint           : '/api/feedback'    # Proxy triage/analysis route (AI layer)
+  issue_endpoint     : '/api/github/issue' # Proxy real-issue route (proxy mode)
+  default_labels     : ['page-feedback']  # Marker label added to every issue (MUST exist in repo)
+  assignee           : 'copilot'          # Assignee for agent-actionable types ('' to disable)
+  ai:
+    enabled          : true               # Offer AI clarify/vet/prioritize (needs the proxy deployed)
+    auto             : false              # false = user taps "Analyze with AI"; true = on open
+    model            : 'claude-opus-4-8'  # Model for the triage call
+    max_tokens       : 1024
+
 ## Site verification #############################################################
 
 google_site_verification : null

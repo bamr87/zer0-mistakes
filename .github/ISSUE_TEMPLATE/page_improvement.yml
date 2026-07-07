@@ -1,0 +1,58 @@
+name: Improve a page
+description: Report a problem or suggest an improvement for a page on the site
+title: "[page] <short summary>"
+labels: ["page-feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve the site!
+
+        This is the no-JavaScript fallback for the **Improve this page** widget.
+        With JavaScript enabled, that button opens a richer dialog that attaches
+        the page context and your browser's recent console logs automatically —
+        so if you can, use it. Otherwise, fill this in.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of feedback?
+      options:
+        - Report a problem (bug)
+        - Improve this page
+        - Add missing detail
+        - Flag outdated content
+        - Accessibility issue
+        - UI / UX improvement
+        - Performance
+        - Feature request
+        - Question
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Describe it
+      description: What you expected, what happened, or what would be better.
+      placeholder: Be specific — steps, the section of the page, expected vs actual.
+    validations:
+      required: true
+  - type: input
+    id: page-url
+    attributes:
+      label: Page URL
+      description: The page this is about (copy it from your address bar).
+      placeholder: https://zer0-mistakes.com/...
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment (optional)
+      description: Browser, OS, and device — helps for visual or behavioural issues.
+      placeholder: "macOS 15 / Chrome 137 / 1440×900"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console / error logs (optional)
+      description: Paste any relevant browser console output.
+      render: shell

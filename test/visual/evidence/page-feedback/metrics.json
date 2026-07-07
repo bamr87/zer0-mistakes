@@ -1,0 +1,18 @@
+{
+  "repository": "bamr87/zer0-mistakes",
+  "mode": "url",
+  "aiAvailable": true,
+  "requestTypes": 9,
+  "defaultLabels": [
+    "page-feedback"
+  ],
+  "exampleType": "fix-page",
+  "exampleLabels": [
+    "page-feedback",
+    "bug"
+  ],
+  "exampleTitle": "[Report a problem] zer0-mistakes",
+  "issueUrlLength": 2318,
+  "bodyIncludesPageContext": true,
+  "bodyIncludesLogs": true
+}

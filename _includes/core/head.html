@@ -34,6 +34,10 @@
 <!-- Only load in production builds (JEKYLL_ENV=production); the include also guards against dev hostnames -->
 {% if jekyll.environment == "production" %}{% include analytics/google-tag-manager-head.html %}{% endif %}
 
+<!-- Page-feedback: early console/error capture — must run before the theme
+     scripts below so a report can include the logs that led up to it. -->
+{% include core/console-capture.html %}
+
 <!-- ================================ -->
 <!-- JAVASCRIPT LIBRARIES            -->
 <!-- ================================ -->
