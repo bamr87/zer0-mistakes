@@ -196,8 +196,13 @@
   }
 
   // --- issue assembly ---------------------------------------------------
+  // Escape a value for a Markdown table cell. Backslashes MUST be escaped first,
+  // otherwise escaping "|" -> "\|" would be re-processed and corrupted.
   function cell(value) {
-    return String(value == null ? "" : value).replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
+    return String(value == null ? "" : value)
+      .replace(/\\/g, "\\\\")   // backslash first
+      .replace(/\|/g, "\\|")    // then the cell separator
+      .replace(/\r?\n/g, " ");  // collapse newlines so the row stays intact
   }
 
   function dedupe(list) {
