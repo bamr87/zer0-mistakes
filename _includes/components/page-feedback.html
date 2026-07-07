@@ -1,0 +1,252 @@
+{%- comment -%}
+  ===================================================================
+  PAGE FEEDBACK — "Improve this page" capture widget
+  ===================================================================
+
+  Component: page-feedback
+  Path:      _includes/components/page-feedback.html
+  Purpose:   Turn what a reader is looking at into a well-formed GitHub
+             issue — request type + description + live page context +
+             captured console/error logs — filed with labels that exist.
+             Replaces the build-time Copilot dropdown that used to live in
+             content/intro.html and baked _data/prompts.yml into <a href>s.
+
+  Params:    none — configured via site.page_feedback (+ site.data.feedback_types)
+  Depends on:
+    - assets/js/page-feedback.js          (behaviour)
+    - _sass/components/_page-feedback.scss (styling)
+    - _includes/core/console-capture.html (the log buffer, installed in <head>)
+    - _data/feedback_types.yml            (request-type taxonomy)
+    - FAB tokens (_sass/tokens/_spacing.scss, _layers.scss)
+
+  Layers:
+    - Base (always): opens a pre-filled github.com/issues/new form. No token,
+      works on any fork / GitHub Pages.
+    - AI enrichment (optional): when the chat proxy is deployed
+      (ai_chat.proxy_ready), an "Analyze with AI" step sends the capture to
+      Claude — via Claude Code OAuth, server-side — to clarify, vet,
+      prioritize, and recommend before the issue is filed.
+
+  Triggers:  the global FAB below, plus any element with [data-pf-open]
+             elsewhere on the page (e.g. the button in content/intro.html).
+             Add data-pf-type="<id>" to preselect a request type.
+
+  a11y:      role=dialog + aria-modal, labelled title, focus trap, Escape to
+             close, backdrop click to close, aria-live status region.
+  ===================================================================
+{%- endcomment -%}
+
+{%- unless site.page_feedback.enabled -%}{%- comment -%} widget disabled {%- endcomment -%}
+{%- else -%}
+
+{%- comment -%}
+  Booleans aren't evaluated inside assign tags (Liquid stores a truthy string),
+  so compute render flags with if-tags. The AI layer needs the chat proxy
+  deployed — reuse ai_chat.proxy_ready rather than a second readiness flag.
+{%- endcomment -%}
+{%- assign pf_ai_available = false -%}
+{%- if site.page_feedback.ai.enabled and site.ai_chat.proxy_ready -%}
+  {%- assign pf_ai_available = true -%}
+{%- endif -%}
+{%- assign pf_show_fab = false -%}
+{%- if site.page_feedback.fab -%}{%- assign pf_show_fab = true -%}{%- endif -%}
+
+{%- comment -%} Repo + file coordinates for the issue body (mirrors content/intro.html). {%- endcomment -%}
+{%- assign pf_repo = site.repository | join: "" -%}
+{%- assign pf_branch = site.branch | default: "main" -%}
+{%- assign pf_source_url = "" -%}
+{%- if pf_repo != "" and page.path -%}
+  {%- capture pf_source_url -%}https://github.com/{{ pf_repo }}/blob/{{ pf_branch }}/{{ page.path }}{%- endcapture -%}
+{%- endif -%}
+{%- assign pf_theme = site.theme | default: site.remote_theme | default: "" -%}
+
+{%- if pf_show_fab -%}
+<!-- Global feedback FAB (page-invariant; opens the modal) -->
+<button type="button"
+        id="pageFeedbackFab"
+        class="pf-fab btn shadow-lg position-fixed"
+        data-pf-open
+        aria-haspopup="dialog"
+        aria-controls="pageFeedbackModal"
+        title="{{ site.page_feedback.fab_label | default: 'Improve this page' | escape }}"
+        aria-label="{{ site.page_feedback.fab_label | default: 'Improve this page' | escape }}">
+  <i class="bi {{ site.page_feedback.fab_icon | default: 'bi-megaphone' }}" aria-hidden="true"></i>
+</button>
+{%- endif -%}
+
+<!-- Feedback modal (self-contained overlay; controlled by page-feedback.js).
+     `position-fixed` is required, not cosmetic: it opts this <body> child out of
+     the .zer0-bg-body flattening rule (_sass/theme/_backgrounds.scss) that would
+     otherwise force position:relative; z-index:1 and let the cookie banner steal
+     the dialog's clicks. -->
+<div class="pf-overlay position-fixed" id="pageFeedbackModal" role="dialog" aria-modal="true"
+     aria-labelledby="pfTitle" aria-describedby="pfIntro" hidden>
+  <div class="pf-dialog shadow-lg" role="document">
+
+    <header class="pf-header">
+      <div class="pf-header-text">
+        <h2 id="pfTitle" class="pf-title h5 mb-1">
+          <i class="bi bi-megaphone me-2" aria-hidden="true"></i>Share feedback
+        </h2>
+        <p id="pfIntro" class="pf-intro text-muted mb-0">
+          Report a problem or suggest an improvement — it becomes a GitHub issue
+          with the page details attached.
+        </p>
+      </div>
+      <button type="button" class="pf-close btn btn-sm" id="pfClose" aria-label="Close feedback dialog">
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button>
+    </header>
+
+    <form id="pfForm" class="pf-body" novalidate>
+
+      <!-- Step 1 — request type -->
+      <fieldset class="pf-field pf-types">
+        <legend class="pf-legend">What kind of feedback?</legend>
+        {%- assign pf_group = "" -%}
+        {%- for t in site.data.feedback_types -%}
+          {%- if t.group != pf_group -%}
+            {%- unless forloop.first -%}</div>{%- endunless -%}
+            <p class="pf-types-group">{{ t.group }}</p>
+            <div class="pf-types-grid" role="radiogroup" aria-label="{{ t.group | escape }}">
+            {%- assign pf_group = t.group -%}
+          {%- endif -%}
+          <button type="button"
+                  class="pf-type"
+                  role="radio"
+                  aria-checked="false"
+                  data-pf-type-id="{{ t.id }}"
+                  tabindex="{% if forloop.first %}0{% else %}-1{% endif %}">
+            <i class="bi {{ t.icon | default: 'bi-chat-dots' }} pf-type-icon" aria-hidden="true"></i>
+            <span class="pf-type-text">
+              <span class="pf-type-label">{{ t.label }}</span>
+              {%- if t.description -%}<span class="pf-type-desc">{{ t.description }}</span>{%- endif -%}
+            </span>
+          </button>
+          {%- if forloop.last -%}</div>{%- endif -%}
+        {%- endfor -%}
+      </fieldset>
+
+      <!-- Step 2 — description -->
+      <div class="pf-field">
+        <label for="pfDescription" class="pf-label">Describe it</label>
+        <textarea id="pfDescription" class="form-control" rows="4"
+                  placeholder="Pick a type above, then tell us what you have in mind."
+                  aria-describedby="pfDescHelp" required></textarea>
+        <p id="pfDescHelp" class="pf-help text-muted">
+          Be specific — what you expected, what happened, or what would be better.
+        </p>
+      </div>
+
+      <!-- Step 3 — what gets attached -->
+      <details class="pf-field pf-context" id="pfContextWrap">
+        <summary class="pf-summary">
+          <i class="bi bi-paperclip me-1" aria-hidden="true"></i>What gets attached
+          <span class="pf-context-count" id="pfContextCount"></span>
+        </summary>
+        <ul class="pf-context-list" id="pfContextList" aria-live="polite">
+          <!-- page title / url / path filled in by JS -->
+        </ul>
+
+        {%- if site.page_feedback.capture_logs -%}
+        <div class="pf-logs" id="pfLogsWrap" hidden>
+          <label class="pf-check">
+            <input type="checkbox" id="pfIncludeLogs" checked>
+            Include <span id="pfLogsCount">0</span> captured console/error line(s)
+          </label>
+          <pre class="pf-logs-preview" id="pfLogsPreview" tabindex="0" aria-label="Captured console logs"></pre>
+          <p class="pf-help text-muted mb-0">
+            <i class="bi bi-shield-check me-1" aria-hidden="true"></i>
+            These come from your browser only and are never sent until you submit.
+            Review them and untick the box to leave them out.
+          </p>
+        </div>
+        {%- endif -%}
+      </details>
+
+      {%- if pf_ai_available -%}
+      <!-- Step 4 — optional AI review (proxy + Claude Code OAuth) -->
+      <div class="pf-field pf-ai" id="pfAiWrap">
+        <div class="pf-ai-head">
+          <button type="button" class="btn btn-sm btn-outline-primary" id="pfAnalyze">
+            <i class="bi bi-robot me-1" aria-hidden="true"></i>Analyze with AI
+          </button>
+          <span class="pf-ai-hint text-muted">Optional — clarifies, prioritizes, and suggests labels.</span>
+        </div>
+        <div class="pf-ai-result" id="pfAiResult" aria-live="polite" hidden></div>
+      </div>
+      {%- endif -%}
+
+      <p class="pf-status" id="pfStatus" role="status" aria-live="polite"></p>
+
+    </form>
+
+    <footer class="pf-footer">
+      <button type="button" class="btn btn-link btn-sm pf-copy" id="pfCopy">
+        <i class="bi bi-clipboard me-1" aria-hidden="true"></i>Copy details
+      </button>
+      <div class="pf-footer-primary">
+        <button type="button" class="btn btn-secondary btn-sm" id="pfCancel">Cancel</button>
+        <button type="submit" form="pfForm" class="btn btn-primary btn-sm" id="pfSubmit" disabled>
+          <i class="bi bi-github me-1" aria-hidden="true"></i>
+          <span class="pf-submit-label">Open GitHub issue</span>
+        </button>
+      </div>
+    </footer>
+
+  </div>
+</div>
+
+<!-- Widget configuration consumed by assets/js/page-feedback.js -->
+<script id="pageFeedbackConfig" type="application/json">
+{
+  "enabled": true,
+  "mode": {{ site.page_feedback.mode | default: "url" | jsonify }},
+  "endpoint": {{ site.page_feedback.endpoint | default: "/api/feedback" | jsonify }},
+  "issueEndpoint": {{ site.page_feedback.issue_endpoint | default: "/api/github/issue" | jsonify }},
+  "repository": {{ pf_repo | jsonify }},
+  "baseBranch": {{ pf_branch | jsonify }},
+  "defaultLabels": {% if site.page_feedback.default_labels %}{{ site.page_feedback.default_labels | jsonify }}{% else %}[]{% endif %},
+  "assignee": {{ site.page_feedback.assignee | default: "" | jsonify }},
+  "captureLogs": {{ site.page_feedback.capture_logs | default: true | jsonify }},
+  "fabLabel": {{ site.page_feedback.fab_label | default: "Improve this page" | jsonify }},
+  "ai": {
+    "available": {{ pf_ai_available | jsonify }},
+    "auto": {{ site.page_feedback.ai.auto | default: false | jsonify }},
+    "model": {{ site.page_feedback.ai.model | default: "claude-opus-4-8" | jsonify }},
+    "maxTokens": {{ site.page_feedback.ai.max_tokens | default: 1024 }}
+  }
+}
+</script>
+
+<!-- Request-type taxonomy (from _data/feedback_types.yml) -->
+<script id="pageFeedbackTypes" type="application/json">
+{{ site.data.feedback_types | jsonify }}
+</script>
+
+<!-- Live page context (build-time front matter; runtime detail added by JS) -->
+<script id="pageFeedbackContext" type="application/json">
+{
+  "title": {{ page.title | default: site.title | jsonify }},
+  "url": {{ page.url | absolute_url | jsonify }},
+  "path": {{ page.path | default: "" | jsonify }},
+  "sourceUrl": {{ pf_source_url | jsonify }},
+  "layout": {{ page.layout | default: "" | jsonify }},
+  "collection": {{ page.collection | default: "" | jsonify }},
+  "categories": {{ page.categories | default: "" | jsonify }},
+  "tags": {{ page.tags | default: "" | jsonify }},
+  "author": {{ page.author | default: site.author.name | default: "" | jsonify }},
+  "date": {{ page.date | date: "%Y-%m-%d" | default: "" | jsonify }},
+  "lastmod": {{ page.last_modified_at | default: page.lastmod | date: "%Y-%m-%d" | default: "" | jsonify }},
+  "branch": {{ pf_branch | jsonify }},
+  "repository": {{ pf_repo | jsonify }},
+  "siteUrl": {{ site.url | default: "" | jsonify }},
+  "baseurl": {{ site.baseurl | default: "" | jsonify }},
+  "theme": {{ pf_theme | jsonify }},
+  "jekyllEnv": {{ jekyll.environment | jsonify }}
+}
+</script>
+
+<script defer src="{{ '/assets/js/page-feedback.js' | relative_url }}"></script>
+
+{%- endunless -%}

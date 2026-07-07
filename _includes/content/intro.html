@@ -1,13 +1,14 @@
 <!--
   file: _includes/content/intro.html
-  description: Enhanced intro section with share, edit, and Copilot agent session buttons
+  description: Enhanced intro section with share, edit, and improve/report buttons
   path: _includes/content/intro.html
   features:
     - Responsive share dropdown with multiple social platforms
     - Edit on GitHub quick link
-    - Copilot Agent dropdown: select a prompt template to pre-fill a GitHub issue
-    - Issue body includes prompt template + page context + environment details
-    - Prompts sourced from _data/prompts.yml
+    - "Improve" button — opens the page-feedback widget (capture type + description
+      + live page context + console logs → GitHub issue). Progressive enhancement:
+      it is a real link to the issue form, upgraded by assets/js/page-feedback.js.
+      See _includes/components/page-feedback.html.
     - Responsive flex layout: full-width content block, frosted metadata footer with reading time and action buttons
     - Balanced padding and typography hierarchy via bd-intro-* classes
     - Metadata row: author, dates, category, difficulty, tags, view source
@@ -271,64 +272,21 @@
       </ul>
     </div>
 
-    <!-- Copilot Agent Prompt Dropdown -->
-    <div class="dropdown">
-      <button class="btn btn-sm btn-success dropdown-toggle" type="button" id="copilotAgentDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Open a GitHub issue with a Copilot prompt for this page">
-        <i class="bi bi-robot" aria-hidden="true"></i>
-        <span class="d-none d-sm-inline ms-1">Copilot Agent</span>
-      </button>
-      <ul class="dropdown-menu dropdown-menu-end copilot-agent-menu" aria-labelledby="copilotAgentDropdown">
-        {% assign current_group = "" %}
-        {% for prompt in site.data.prompts %}
-        {% if prompt.group and prompt.group != current_group %}
-        {% unless forloop.first %}<li><hr class="dropdown-divider"></li>{% endunless %}
-        <li><h6 class="dropdown-header">{{ prompt.group }}</h6></li>
-        {% assign current_group = prompt.group %}
-        {% endif %}
-        {% capture issue_title %}[{{ prompt.label }}] {{ page.title }}{% endcapture %}
-        {% capture issue_body %}{{ prompt.body }}
----
-
-## 📄 Page Context
-
-| Field | Value |
-|---|---|
-| **Title** | {{ page.title }} |
-| **URL** | {{ site.url }}{{ page.url }} |
-| **File** | `{{ file_path }}` |
-| **Branch** | `{{ repo_branch }}` |
-| **Layout** | `{{ page.layout }}` |
-| **Collection** | `{{ page.collection }}` |
-| **Author** | {{ page.author | default: site.author.name }} |
-| **Date** | {{ page.date }} |
-| **Last Modified** | {{ page.lastmod }} |
-| **Tags** | {{ page.tags | join: ", " }} |
-| **Categories** | {{ page.categories | join: ", " }} |
-
-## 🔧 Environment
-
-| Field | Value |
-|---|---|
-| **Repository** | `{{ site.repository }}` |
-| **Site URL** | {{ site.url }} |
-| **Jekyll Env** | `{{ jekyll.environment }}` |
-| **Theme** | `{{ site.theme | default: site.remote_theme }}` |
-| **Base URL** | `{{ site.baseurl }}` |
-{% endcapture %}
-        <li>
-          <a class="dropdown-item" href="https://github.com/{{ site.repository }}/issues/new?assignees=copilot&labels=ai-agent&title={{ issue_title | url_encode }}&body={{ issue_body | url_encode }}" target="_blank" rel="noopener noreferrer">
-            <span class="copilot-agent-item">
-              <i class="bi {{ prompt.icon }} copilot-agent-item__icon" aria-hidden="true"></i>
-              <span class="copilot-agent-item__text">
-                <span class="copilot-agent-item__label">{{ prompt.label }}</span>
-                {% if prompt.description %}<small class="copilot-agent-item__desc">{{ prompt.description }}</small>{% endif %}
-              </span>
-            </span>
-          </a>
-        </li>
-        {% endfor %}
-      </ul>
-    </div>
+    <!-- Improve / Report — opens the page-feedback widget (assets/js/page-feedback.js).
+         Progressive enhancement: this is a real link to the issue form, so it
+         works without JavaScript; page-feedback.js intercepts [data-pf-open]
+         clicks and opens the richer capture modal (context + logs + AI) instead. -->
+    {% if site.page_feedback.enabled %}
+    <a class="btn btn-sm btn-success bd-intro-action-link"
+       href="https://github.com/{{ site.repository }}/issues/new?template=page_improvement.yml&labels=page-feedback"
+       data-pf-open
+       target="_blank"
+       rel="noopener noreferrer"
+       title="Report a problem or suggest an improvement for this page">
+      <i class="bi bi-megaphone" aria-hidden="true"></i>
+      <span class="d-none d-sm-inline ms-1">Improve</span>
+    </a>
+    {% endif %}
 
     <!-- Edit on GitHub Button -->
     <a href="https://github.com/{{ site.repository }}/blob/{{ repo_branch }}/{{ file_path }}"

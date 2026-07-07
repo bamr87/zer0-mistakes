@@ -28,6 +28,8 @@
  *
  * Routes:
  *   POST /api/chat                 → Claude Messages API (SSE passthrough)
+ *   POST /api/feedback             → triage a page-feedback capture, return JSON
+ *                                     (used by assets/js/page-feedback.js)
  *   POST /api/github/issue         → create a GitHub issue
  *   POST /api/github/pull-request  → branch + commit + open a pull request
  *
@@ -94,6 +96,7 @@ export default {
     const { pathname } = new URL(request.url);
     try {
       if (pathname === '/api/chat') return await handleChat(request, env, cors);
+      if (pathname === '/api/feedback') return await handleFeedback(request, env, cors);
       if (pathname === '/api/github/issue') return await handleIssue(request, env, cors);
       if (pathname === '/api/github/pull-request') return await handlePullRequest(request, env, cors);
       return jsonError('Not found', 404, cors);
@@ -283,6 +286,117 @@ async function handleChat(request, env, cors) {
       'cache-control': 'no-store',
       ...cors,
     },
+  });
+}
+
+// --- Feedback triage: analyze a page-feedback capture, return JSON --------
+
+// System prompt for the page-feedback triage call. Instructs the model to
+// return a single strict JSON object the widget can consume directly.
+const FEEDBACK_SYSTEM = [
+  'You are the triage assistant for the zer0-mistakes Jekyll theme "page feedback" widget.',
+  'A reader submitted feedback about a page. Analyze it and respond with ONLY a JSON object',
+  '(no prose, no markdown fences) with exactly these fields:',
+  '{',
+  '  "title": concise, specific GitHub issue title <= 80 chars, prefixed with a conventional',
+  '           tag when clear (e.g. "fix:", "docs:", "feat:", "perf:", "a11y:");',
+  '  "summary": 1-2 sentence restatement of the request in clear, neutral terms;',
+  '  "severity": one of "low" | "medium" | "high" | "critical";',
+  '  "priority": one of "P0" | "P1" | "P2" | "P3";',
+  '  "labels": array of labels chosen ONLY from availableLabels in the input;',
+  '  "questions": up to 3 clarifying questions if the report is ambiguous, else [];',
+  '  "recommendation": a short suggested approach or root-cause hypothesis for a maintainer.',
+  '}',
+  'Ground every field in the provided description, page context, environment, and console logs.',
+  'Prefer fewer, well-justified labels. If the logs contain an error, reflect it in severity,',
+  'priority, and recommendation. Never invent facts not supported by the input.',
+].join('\n');
+
+// Robustly pull a JSON object out of a model text response (tolerates code
+// fences and leading prose).
+function parseModelJson(text) {
+  if (!text) return null;
+  let clean = String(text).trim();
+  const fence = clean.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fence) clean = fence[1].trim();
+  const first = clean.indexOf('{');
+  const last = clean.lastIndexOf('}');
+  if (first === -1 || last === -1 || last < first) return null;
+  try { return JSON.parse(clean.slice(first, last + 1)); } catch (err) { return null; }
+}
+
+async function handleFeedback(request, env, cors) {
+  const mode = anthropicAuthMode(env);
+  if (!mode) {
+    return jsonError('AI analysis is not configured (no Anthropic credential)', 501, cors);
+  }
+  const body = await request.json().catch(() => null);
+  if (!body || typeof body.description !== 'string' || !body.description.trim()) {
+    return jsonError('description is required', 400, cors);
+  }
+
+  const cap = Number(env.MAX_TOKENS_CAP) || DEFAULT_MAX_TOKENS_CAP;
+  const userPayload = {
+    type: body.type || null,
+    description: String(body.description).slice(0, 6000),
+    page: body.page || {},
+    environment: body.environment || {},
+    logs: typeof body.logs === 'string' ? body.logs.slice(0, 6000) : '',
+    availableLabels: Array.isArray(body.availableLabels) ? body.availableLabels.slice(0, 40) : [],
+  };
+
+  // OAuth (Claude subscription) tokens require the first system block to be the
+  // Claude Code identity — same rule as handleChat.
+  let system = FEEDBACK_SYSTEM;
+  if (mode === 'oauth_static' || mode === 'oauth_refresh') {
+    system = [
+      { type: 'text', text: CLAUDE_CODE_SYSTEM_PROMPT },
+      { type: 'text', text: FEEDBACK_SYSTEM },
+    ];
+  }
+
+  const payload = {
+    model: env.CHAT_MODEL || body.model || 'claude-opus-4-8',
+    max_tokens: Math.min(Number(body.maxTokens) || 1024, cap),
+    system,
+    messages: [{
+      role: 'user',
+      content: 'Analyze this page feedback and return the JSON object:\n\n' + JSON.stringify(userPayload, null, 2),
+    }],
+    stream: false,
+  };
+
+  const upstream = await callAnthropic(env, JSON.stringify(payload));
+  const data = await upstream.json().catch(() => null);
+  if (!upstream.ok || !data) {
+    const detail = data && data.error && data.error.message ? data.error.message : 'Anthropic request failed';
+    return jsonError(detail, upstream.status || 502, cors);
+  }
+
+  const text = Array.isArray(data.content)
+    ? data.content.filter((b) => b && b.type === 'text').map((b) => b.text).join('\n')
+    : '';
+  const parsed = parseModelJson(text);
+  if (!parsed) {
+    return jsonError('Could not parse an analysis from the model response', 502, cors);
+  }
+
+  // Normalize + constrain labels to the ones the client offered, so the widget
+  // can trust the result won't reference a label GitHub would silently drop.
+  const allowed = new Set(userPayload.availableLabels);
+  const result = {
+    title: typeof parsed.title === 'string' ? parsed.title.slice(0, 120) : '',
+    summary: typeof parsed.summary === 'string' ? parsed.summary : '',
+    severity: ['low', 'medium', 'high', 'critical'].indexOf(parsed.severity) !== -1 ? parsed.severity : '',
+    priority: ['P0', 'P1', 'P2', 'P3'].indexOf(parsed.priority) !== -1 ? parsed.priority : '',
+    labels: Array.isArray(parsed.labels) ? parsed.labels.filter((l) => allowed.has(l)).slice(0, 8) : [],
+    questions: Array.isArray(parsed.questions) ? parsed.questions.filter((q) => typeof q === 'string').slice(0, 3) : [],
+    recommendation: typeof parsed.recommendation === 'string' ? parsed.recommendation : '',
+  };
+
+  return new Response(JSON.stringify(result), {
+    status: 200,
+    headers: { 'content-type': 'application/json', 'cache-control': 'no-store', ...cors },
   });
 }
 

@@ -546,90 +546,14 @@ a.bd-intro-badge--tag:focus {
         white-space: nowrap;
     }
 
-    // Plain link buttons: reserve the same trailing space as .dropdown-toggle::after.
+    // Plain link buttons: reserve the same trailing space as .dropdown-toggle::after
+    // so the plain "Improve" / "Edit on GitHub" buttons line up with the Share caret.
     .bd-intro-action-link.btn::after {
         content: "";
         display: inline-block;
         width: .555em;
         flex-shrink: 0;
         visibility: hidden;
-    }
-
-    // Copilot Agent prompt menu — compact, proportional to the trigger button.
-    // Scoped here so the Share dropdown keeps Bootstrap defaults.
-    .copilot-agent-menu.dropdown-menu {
-        --bs-dropdown-min-width: 0;
-        width: max-content;
-        max-width: min(22rem, 90vw);
-        padding: var(--zer0-space-1) 0;
-        border-radius: var(--bs-border-radius);
-        border-color: var(--zer0-color-border);
-    }
-
-    .copilot-agent-menu {
-        .dropdown-header {
-            padding: var(--zer0-space-1) var(--zer0-space-2) calc(var(--zer0-space-1) * .5);
-            font-size: var(--zer0-text-sm);
-            font-weight: var(--zer0-font-weight-semibold);
-            line-height: var(--zer0-leading-tight);
-            color: var(--zer0-color-ink-muted);
-            white-space: normal;
-        }
-
-        .dropdown-divider {
-            margin: var(--zer0-space-1) 0;
-        }
-
-        .dropdown-item {
-            white-space: normal;
-            padding: var(--zer0-space-1) var(--zer0-space-2);
-            line-height: var(--zer0-leading-normal);
-            border-radius: calc(var(--bs-border-radius) - 2px);
-
-            &:hover,
-            &:focus {
-                .copilot-agent-item__desc {
-                    color: inherit;
-                    opacity: .85;
-                }
-            }
-        }
-    }
-
-    .copilot-agent-item {
-        display: flex;
-        align-items: flex-start;
-        gap: var(--zer0-space-2);
-        min-width: 0;
-    }
-
-    .copilot-agent-item__icon {
-        flex-shrink: 0;
-        margin-top: .125rem;
-        font-size: var(--zer0-text-sm);
-        line-height: 1;
-        opacity: .85;
-    }
-
-    .copilot-agent-item__text {
-        display: flex;
-        flex-direction: column;
-        gap: .125rem;
-        min-width: 0;
-    }
-
-    .copilot-agent-item__label {
-        font-size: var(--zer0-text-sm);
-        font-weight: var(--zer0-font-weight-medium);
-        line-height: var(--zer0-leading-tight);
-    }
-
-    .copilot-agent-item__desc {
-        display: block;
-        font-size: .8125rem;
-        font-weight: var(--zer0-font-weight-regular);
-        line-height: var(--zer0-leading-normal);
-        color: var(--zer0-color-ink-muted);
     }
 }
 

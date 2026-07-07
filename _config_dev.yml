@@ -47,6 +47,15 @@ ai_chat:
   github:
     mode                 : 'url'   # pre-filled github.com forms; no token needed in dev
 
+# Page-feedback widget — local dev overrides.
+# The AI enrichment layer talks to the same dev proxy as the chat widget, which
+# reads CLAUDE_CODE_OAUTH_TOKEN from .env. Issue CREATION stays in 'url' mode
+# (no GitHub token needed locally); only the analysis call hits the proxy.
+page_feedback:
+  mode                 : 'url'
+  endpoint             : 'http://localhost:8787/api/feedback'
+  issue_endpoint       : 'http://localhost:8787/api/github/issue'
+
 # Disable production optimizations for faster builds.
 # `limit_posts` caps the post-processing window during dev serves. Category
 # index pages (index: true) use a recent date so they stay inside this window.
