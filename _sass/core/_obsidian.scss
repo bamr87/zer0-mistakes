@@ -208,11 +208,19 @@
 // in _sass/theme/_backgrounds.scss (specificity 0,5,0) and forces
 // `position: relative; z-index: 1` — dropping the FAB into page flow at the
 // bottom. An id (1,0,0) wins, mirroring `#aiChatToggle`. See ai-chat.html.
+//
+// Slot 2 on the left-side FAB stack: sits above the page-feedback FAB
+// (slot 1 = var(--zer0-space-fab-offset)) — same stacking formula as
+// .bd-toc-fab above #backToTopBtn on the right side.
 #obsidianLocalGraphFab.obsidian-local-graph-fab {
   position: fixed;
   left: var(--zer0-space-fab-offset, 1rem);
   right: auto;
-  bottom: var(--zer0-space-fab-offset, 1rem);
+  bottom: calc(
+    var(--zer0-space-fab-offset, 1rem) +
+    var(--zer0-space-fab-size, 3.5rem) +
+    var(--zer0-space-fab-gap, 0.75rem)
+  );
   z-index: var(--zer0-layer-fab-local-graph);
 
   &[hidden] {
