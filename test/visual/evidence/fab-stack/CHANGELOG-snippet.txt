@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/fab-stack/ -->
+  (evidence: [`test/visual/evidence/fab-stack/`](test/visual/evidence/fab-stack/README.md) — feedback↔obsidian FAB overlap 3136px² → 0).
