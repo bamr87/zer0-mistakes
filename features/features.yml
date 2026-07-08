@@ -1,7 +1,7 @@
 # zer0-mistakes Theme Features Registry
 # Comprehensive feature tracking for the zer0-mistakes Jekyll theme
 # Version: 1.25.0
-# Last Updated: 2026-07-03
+# Last Updated: 2026-07-08
 
 features:
   # ============================================================================
@@ -80,7 +80,7 @@ features:
       issue: null
     tests:
       - "test/test_installer.sh"
-      - "test/test_installation.sh"
+      - "test/test_install_legacy_flags.sh"
     references:
       script: "install.sh"
       cli: "scripts/bin/install"

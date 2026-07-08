@@ -67,7 +67,7 @@ zer0-mistakes/
 │   ├── test_core.sh         # Core functionality tests
 │   ├── test_deployment.sh   # Deployment tests
 │   ├── test_quality.sh      # Code quality tests
-│   └── test_installation.sh # Installer tests
+│   └── test_installer.sh    # Modular installer tests
 ├── templates/               # Reusable content templates
 ├── docs/                    # Technical (MDX) documentation
 ├── _config.yml              # Production Jekyll configuration

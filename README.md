@@ -646,8 +646,8 @@ git commit -m "feat: add new component"
 ### Testing Commands
 
 ```bash
-# Quick validation
-./test/test_installation.sh
+# Quick validation (preflight)
+./scripts/validate --quick
 
 # Full test suite
 ./test/test_runner.sh --verbose

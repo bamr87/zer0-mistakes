@@ -142,7 +142,7 @@ Use `log_info / log_success / log_warning / log_error` from `scripts/lib/common.
 | New profile | `./scripts/bin/install list-profiles` then `init --profile <slug> /tmp/test-<slug>` |
 | New deploy target | `./scripts/bin/install list-targets` then `deploy <target> /tmp/test-deploy-<target>` then verify generated YAML lints |
 | AI module | Test with `OPENAI_API_KEY` unset (must abort cleanly), with `ZER0_NO_AI=1` (must short-circuit), and with a mocked endpoint |
-| Anything | Run `./test/test_installation.sh` and ensure no new regressions |
+| Anything | Run `./test/test_installer.sh` and `./test/test_install_legacy_flags.sh` and ensure no new regressions |
 
 ## Bug patterns to avoid
 
