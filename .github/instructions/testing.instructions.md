@@ -15,7 +15,7 @@ test/
 ├── test_core.sh           # Theme/Jekyll fundamentals
 ├── test_deployment.sh     # Build artifacts, gem packaging
 ├── test_quality.sh        # Lint, link check, frontmatter
-├── test_installation.sh   # install.sh end-to-end
+├── test_installer.sh      # Modular installer (profiles, deploy, AI)
 ├── test_obsidian.sh       # Obsidian plugin (Ruby + JS resolver)
 ├── test_playwright.sh     # Frontend (CSS, layout, behavior, snapshots)
 ├── update-snapshots.sh    # Refresh Linux snapshot baselines via Docker

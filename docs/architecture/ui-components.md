@@ -1628,7 +1628,7 @@ Routing lives in `test/test_runner.sh`. `--suites all` runs the six core suites;
 | `test_core.sh` | Theme file structure/syntax, Jekyll config + build process, core dependencies, basic integration |
 | `test_deployment.sh` | Local + remote install flows, Docker setup/serving, end-to-end deploy workflow (`--skip-docker`/`--skip-remote` honored) |
 | `test_quality.sh` | Security scanning, accessibility/WCAG, cross-platform compatibility, performance benchmarks |
-| `test_installation.sh` | Legacy `install.sh` CLI args, install modes (full/minimal), error handling, edge cases, upgrade + remote install |
+| `test_install_legacy_flags.sh` | Legacy `install.sh` flags (`-m`/`-f`/`--help`), install modes (full/minimal), error handling, and edge cases ported from the retired `test_installation.sh` |
 | `test_installer.sh` | Installer regression matrix — every install profile exits 0 with expected agent files + deploy artifacts (`--ai` tier needs `OPENAI_API_KEY`) |
 | `test_site_generation.sh` | Config-matrix generator: builds a site for each mode (full/minimal/remote_theme/gem) and validates generated content |
 | `test_obsidian.sh` | 3 layers: Ruby `obsidian_links.rb` unit tests, JS `obsidian-wiki-links.js` resolver tests, and a `jekyll build` smoke that asserts `assets/data/wiki-index.json` is well-formed |
