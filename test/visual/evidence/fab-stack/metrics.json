@@ -1,0 +1,51 @@
+{
+  "slug": "fab-stack",
+  "method": "dart-sass compiled theme CSS + host Chromium (position:fixed → live-site-equivalent geometry)",
+  "widths": [
+    {
+      "width": 390,
+      "before": {
+        "obsidianBottomPx": 16,
+        "feedbackObsidianOverlapPx2": 3136
+      },
+      "after": {
+        "obsidianBottomPx": 84,
+        "feedbackObsidianOverlapPx2": 0
+      },
+      "sidebarRestoreBottomPx": {
+        "before": 16,
+        "after": 84
+      }
+    },
+    {
+      "width": 768,
+      "before": {
+        "obsidianBottomPx": 16,
+        "feedbackObsidianOverlapPx2": 3136
+      },
+      "after": {
+        "obsidianBottomPx": 84,
+        "feedbackObsidianOverlapPx2": 0
+      },
+      "sidebarRestoreBottomPx": {
+        "before": 16,
+        "after": 84
+      }
+    },
+    {
+      "width": 1280,
+      "before": {
+        "obsidianBottomPx": 16,
+        "feedbackObsidianOverlapPx2": 3136
+      },
+      "after": {
+        "obsidianBottomPx": 84,
+        "feedbackObsidianOverlapPx2": 0
+      },
+      "sidebarRestoreBottomPx": {
+        "before": 16,
+        "after": 84
+      }
+    }
+  ]
+}

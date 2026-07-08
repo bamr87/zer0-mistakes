@@ -14,6 +14,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Left-side FAB overlap** — the Obsidian local-graph button and the
+  page-feedback "Improve this page" button were both positioned at
+  `bottom: 1rem; left: 1rem` and completely overlapped each other. The
+  Obsidian FAB is now at slot 2 (`bottom: offset + size + gap`), stacking
+  above the feedback FAB — the same pattern the TOC FAB uses above
+  back-to-top on the right side. The docs-sidebar restore-mode FAB was
+  also offset to slot 2 so it cannot overlap the feedback FAB on mobile.
+  Closes #288. (evidence:
+  [`test/visual/evidence/fab-stack/`](test/visual/evidence/fab-stack/README.md)
+  — feedback↔obsidian FAB overlap 3136px² → 0; regression test
+  [`test/visual/features/fab-stack.spec.js`](test/visual/features/fab-stack.spec.js)).
+
 ### Changed
 
 - **CI test tiering** — the PR-blocking Playwright gate is now the new
