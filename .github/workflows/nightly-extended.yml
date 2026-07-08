@@ -50,7 +50,7 @@ jobs:
         with:
           ruby-version: '3.3'
           verbose: true
-          suites: core,deployment,quality,installation,installer,site_generation,obsidian,features
+          suites: core,deployment,quality,installer,site_generation,obsidian,features
           skip-docker: true
           skip-remote: true
 

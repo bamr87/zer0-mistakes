@@ -13,7 +13,6 @@ The zer0-mistakes testing framework provides **6 comprehensive test suites** for
 | Core | `test_core.sh` | Unit, integration, validation | ~2-3 min |
 | Deployment | `test_deployment.sh` | Docker, E2E workflows | ~5-8 min |
 | Quality | `test_quality.sh` | Security, accessibility | ~4-6 min |
-| Installation | `test_installation.sh` | Legacy `install.sh` CLI, modes, edge cases | ~3-5 min |
 | **Installer** | `test_installer.sh` | **Modular installer (`scripts/bin/install`): profiles, deploy plugins, agent files, AI wizard** | ~30-60 sec |
 | Fork Cleanup | `test_fork_cleanup.sh` | `scripts/fork-cleanup.sh` behavior | ~30 sec |
 | Site Generation | `test_site_generation.sh` | Config matrix builds | ~5-10 min |
@@ -82,29 +81,6 @@ The zer0-mistakes testing framework provides **6 comprehensive test suites** for
 
 # With detailed output
 ./test/test_quality.sh --verbose
-```
-
-### 📦 Installation Test Suite (`test_installation.sh`)
-
-**Purpose:** Comprehensive install.sh script validation  
-**Runtime:** ~3-5 minutes  
-**Focus Areas:**
-
-- **CLI Tests**: All argument combinations (-h, --help, -f, --full, -m, --minimal)
-- **Mode Tests**: Full vs minimal installation file verification
-- **Error Handling**: Read-only directories, missing files, graceful failures
-- **Edge Cases**: Backups, path with spaces, symlinks, existing files
-- **Upgrade Scenarios**: Minimal to full, idempotent reinstalls, customization preservation
-
-```bash
-# Run installation tests
-./test/test_installation.sh
-
-# Skip remote installation tests (faster)
-./test/test_installation.sh --skip-remote
-
-# Keep test workspaces for debugging
-./test/test_installation.sh --no-cleanup --verbose
 ```
 
 ### 🔧 Site Generation Test Suite (`test_site_generation.sh`)
@@ -216,7 +192,6 @@ The **consolidated test runner** orchestrates all test suites with advanced feat
 # Run specific suites
 ./test/test_runner.sh --suites core
 ./test/test_runner.sh --suites core,deployment
-./test/test_runner.sh --suites installation,site_generation
 
 # Run with advanced options
 ./test/test_runner.sh --suites all --verbose --format json --parallel
@@ -263,7 +238,6 @@ test/
 ├── test_core.sh             # ✅ Unit + Integration + Validation
 ├── test_deployment.sh       # ✅ Installation + Docker + E2E
 ├── test_quality.sh          # ✅ Security + Accessibility + Compatibility + Performance
-├── test_installation.sh     # ✅ CLI + Modes + Error Handling + Edge Cases
 ├── test_site_generation.sh  # ✅ Config Matrix + Jekyll Build + Content Validation
 ├── test_playwright.sh       # ✅ Playwright runner (smoke / snapshots / regression)
 ├── update-snapshots.sh      # ✅ Generate Linux snapshot baselines via Docker
@@ -451,7 +425,7 @@ The test framework automatically detects and adapts to different environments:
 ./test/test_runner.sh --suites xyz
 
 # Solution: Use valid suite names
-./test/test_runner.sh --suites core,deployment,quality,installation,site_generation,obsidian,playwright,playwright_snapshots
+./test/test_runner.sh --suites core,deployment,quality,installer,site_generation,obsidian,playwright,playwright_snapshots
 ```
 
 #### Docker Tests Failing
