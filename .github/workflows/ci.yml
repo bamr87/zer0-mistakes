@@ -206,7 +206,7 @@ jobs:
           # surfaces within a day instead of taxing every PR.
           suites: >-
             ${{ needs.detect-changes.outputs.install == 'true'
-                && 'core,deployment,quality,installation,installer,site_generation,obsidian,features'
+                && 'core,deployment,quality,installer,site_generation,obsidian,features'
                 || 'core,quality,obsidian,features' }}
           skip-docker: true
           skip-remote: true
