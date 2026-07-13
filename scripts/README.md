@@ -18,7 +18,7 @@ scripts/
 │   ├── git.sh             # Git operations
 │   ├── changelog.sh       # Changelog generation
 │   ├── gem.sh             # Gem build/publish
-│   └── preview_generator.py  # Python preview image generator
+│   └── preview_generator.py  # Preview-image engine (all providers; ZER0-004)
 ├── features/              # Feature-specific scripts
 │   ├── generate-preview-images     # AI preview image generator
 │   ├── pixelate-preview-images     # Shrink preview banners (pixelate + PNG-8)
@@ -115,14 +115,20 @@ Options:
   --dry-run           Preview without changes
   --collection TYPE   Generate for specific collection (posts, docs, etc.)
   -f, --file PATH     Process specific file
-  --provider PROVIDER Use specific AI provider (openai, stability, xai)
+  --provider PROVIDER Use specific AI provider
+                      (claude, openai, xai, stability, gemini, local)
+  --prompt-engine ENG Prompt builder for raster vendors (template | claude)
   --assets-prefix     Custom assets path prefix (default: /assets)
   --no-auto-prefix    Disable automatic path prefixing
 
 AI Providers:
-  openai    - OpenAI DALL-E (requires OPENAI_API_KEY)
-  stability - Stability AI (requires STABILITY_API_KEY)
+  claude    - Claude SVG artist, default (CLAUDE_CODE_OAUTH_TOKEN /
+              ANTHROPIC_API_KEY / logged-in `claude` CLI)
+  openai    - OpenAI gpt-image-2 / DALL-E (requires OPENAI_API_KEY)
   xai       - xAI Grok image generation (requires XAI_API_KEY)
+  stability - Stability AI (requires STABILITY_API_KEY)
+  gemini    - Google Gemini (requires GEMINI_API_KEY)
+  local     - Deterministic template SVG/PNG (no API key)
 ```
 
 #### `pixelate-preview-images`
@@ -254,7 +260,7 @@ These are sourced by other scripts, not executed directly:
 - `git.sh` - Git operations (tags, commits, branches)
 - `changelog.sh` - Changelog generation from commits
 - `gem.sh` - Gem build/publish operations
-- `preview_generator.py` - Python preview image generator
+- `preview_generator.py` - Preview-image engine (claude default + openai/xai/stability/gemini/local)
 
 ### Test Suites (scripts/test/)
 
@@ -538,15 +544,16 @@ The script is designed to integrate with AI agents for automated content managem
 3. **Front Matter Updates**: Automatically updates the markdown file with the new preview path
 4. **Idempotent**: Won't regenerate images that already exist (unless `--force`)
 
-### Python Alternative
+### Engine
 
-A Python version is available at `scripts/lib/preview_generator.py` with additional features:
+All logic lives in the single-file Python engine `scripts/lib/preview_generator.py`
+(the shell entry points are thin wrappers around it):
 
 ```bash
-# Install dependencies
-pip install openai pyyaml requests
+# Install the one dependency
+pip3 install pyyaml
 
-# Run Python version
+# Run the engine directly (same flags as the wrapper)
 python3 scripts/lib/preview_generator.py --collection posts --dry-run
 ```
 

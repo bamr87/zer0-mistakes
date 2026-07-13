@@ -1,7 +1,7 @@
 # zer0-mistakes Theme Features Registry
 # Comprehensive feature tracking for the zer0-mistakes Jekyll theme
-# Version: 1.25.0
-# Last Updated: 2026-07-08
+# Version: 1.26.0
+# Last Updated: 2026-07-13
 
 features:
   # ============================================================================
@@ -106,13 +106,13 @@ features:
   
   - id: ZER0-004
     title: "AI Preview Image Generator"
-    description: "AI-powered automatic preview image generation for posts using OpenAI gpt-image-2 / DALL-E, Stability AI, xAI, or local placeholders. Configurable assets prefix, retro pixel art defaults, batch regeneration"
+    description: "Provider-framework preview-image engine with Claude (Code OAuth) as the default SVG-artist provider, plus OpenAI gpt-image-2 / DALL-E, xAI, Stability AI, Google Gemini, and a deterministic local template. Local SVG-to-PNG rasterization, per-author styles, batch regeneration"
     implemented: true
-    version: "1.5.0"
+    version: "1.27.0"
     link: "/docs/features/preview-image-generator/"
     docs: "/docs/features/preview-image-generator/"
-    tags: [ai, images, automation, openai, content]
-    date: 2025-01-28
+    tags: [ai, images, automation, claude, openai, content]
+    date: 2026-07-12
     provenance:
       introduced_in: "1.5.0"
       pr: 83
@@ -120,35 +120,45 @@ features:
       issue: null
     tests:
       - "test/test_core.sh"
+      - "test/test_preview_generator.py"
     references:
-      plugin: "_plugins/preview_image_generator.rb"
+      engine: "scripts/lib/preview_generator.py"
       script: "scripts/generate-preview-images.sh"
+      rasterizer: "scripts/dev/rasterize-svg.js"
       install: "scripts/install-preview-generator.sh"
+      plugin: "_plugins/preview_image_generator.rb"
       config: "_config.yml"
       include: "_includes/components/preview-image.html"
     installation:
       script: "scripts/install-preview-generator.sh"
       config_section: "preview_images"
     dependencies:
-      required: [curl, jq]
-      optional: [yq, python3]
+      required: [python3, pyyaml]
+      optional: [librsvg, inkscape, imagemagick, node]
     providers:
+      - name: claude
+        description: "Claude SVG artist via Claude Code OAuth (default; rasterized to PNG locally)"
+        env_var: CLAUDE_CODE_OAUTH_TOKEN
       - name: openai
-        description: "OpenAI gpt-image-2 / DALL-E 3 image generation"
+        description: "OpenAI gpt-image-2 / DALL-E 3 image generation (+ --enhance edits)"
         env_var: OPENAI_API_KEY
-      - name: stability
-        description: "Stability AI Stable Diffusion"
-        env_var: STABILITY_API_KEY
       - name: xai
         description: "xAI Grok image generation"
         env_var: XAI_API_KEY
+      - name: stability
+        description: "Stability AI Stable Diffusion"
+        env_var: STABILITY_API_KEY
+      - name: gemini
+        description: "Google Gemini image generation"
+        env_var: GEMINI_API_KEY
       - name: local
-        description: "Local placeholder (no API needed)"
+        description: "Deterministic template SVG/PNG (no API needed)"
         env_var: null
     features:
-      - "Multiple AI provider support"
-      - "Automatic image optimization"
-      - "Retro pixel art default style"
+      - "Claude Code OAuth default engine (SVG artist, no vendor image API key)"
+      - "Six-provider framework with per-vendor model validation"
+      - "Optional Claude prompt director for raster vendors"
+      - "Retro pixel art default style with per-author overrides"
       - "Front matter integration"
       - "Batch processing"
   

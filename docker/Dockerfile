@@ -68,15 +68,18 @@ FROM base AS dev-test
 #   - nodejs / npm: only existed to install mmdc; the package.json scripts
 #     (playwright, sass, vendor) run on the HOST, not in this image.
 # Kept: curl/jq (handy in CI), python3 + jupyter/nbconvert (used by
-# scripts/convert-notebooks.sh and test/test-notebook-conversion.sh in-container).
+# scripts/convert-notebooks.sh and test/test-notebook-conversion.sh in-container)
+# + pyyaml + librsvg2-bin (scripts/lib/preview_generator.py — the preview-image
+# engine; rsvg-convert rasterizes the claude/local providers' SVG banners to PNG).
 RUN apt-get update -qq && \
     apt-get install -y --no-install-recommends \
         curl \
         jq \
+        librsvg2-bin \
         python3 \
         python3-pip \
         python3-venv && \
-    pip3 install --break-system-packages jupyter nbconvert && \
+    pip3 install --break-system-packages jupyter nbconvert pyyaml && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 

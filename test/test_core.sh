@@ -242,6 +242,20 @@ test_plugin_unit_specs() {
     fi
 }
 
+# Test the preview-image engine unit specs (ZER0-004: provider framework,
+# front-matter editor, SVG sanitizer, credential chain — zero network)
+test_preview_generator_unit_specs() {
+    if ! command -v python3 &>/dev/null; then
+        log_warning "python3 not available, skipping preview generator unit specs"
+        return 0
+    fi
+    if ! python3 -c "import yaml" &>/dev/null; then
+        log_warning "PyYAML not available, skipping preview generator unit specs"
+        return 0
+    fi
+    python3 "$SCRIPT_DIR/test_preview_generator.py" > /dev/null 2>&1
+}
+
 test_gemspec_validity() {
     log_info "Validating gemspec file..."
     
@@ -771,6 +785,7 @@ run_core_tests() {
     run_test "Package.json Validity" "test_package_json_validity" "unit"
     run_test "Version Consistency" "test_version_consistency" "unit"
     run_test "Plugin Unit Specs" "test_plugin_unit_specs" "unit"
+    run_test "Preview Generator Unit Specs" "test_preview_generator_unit_specs" "unit"
     
     # Integration Tests
     log_info "=== INTEGRATION TESTS ==="
