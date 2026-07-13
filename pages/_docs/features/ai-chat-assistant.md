@@ -4,34 +4,33 @@ lastmod: 2026-07-13T00:00:00.000Z
 description: Configure the Claude-powered AI chat assistant — proxy setup, streaming, and GitHub issue/PR actions — safely for GitHub Pages.
 preview: /images/previews/ai-chat-assistant-claude-github.png
 keywords:
-  - claude api
-  - ai chatbot
-  - github pages
-  - cloudflare worker
-  - streaming chat
-  - jekyll theme
+    - claude api
+    - ai chatbot
+    - github pages
+    - cloudflare worker
+    - streaming chat
+    - jekyll theme
 layout: default
 categories:
-  - docs
-  - features
+    - docs
+    - features
 tags:
-  - ai
-  - chatbot
-  - claude
-  - anthropic
-  - github
-  - github-pages
-  - proxy
+    - ai
+    - chatbot
+    - claude
+    - anthropic
+    - github
+    - github-pages
+    - proxy
 permalink: /docs/features/ai-chat-assistant/
 difficulty: intermediate
 estimated_reading_time: 20 minutes
 prerequisites:
-  - An Anthropic API key stored outside the static site
-  - A deployed proxy endpoint (recommended; see templates/deploy/chat-proxy/)
-  - GitHub Pages site using zer0-mistakes
+    - An Anthropic API key stored outside the static site
+    - A deployed proxy endpoint (recommended; see templates/deploy/chat-proxy/)
+    - GitHub Pages site using zer0-mistakes
 sidebar:
-  nav: docs
-draft: draft
+    nav: docs
 ---
 
 # AI Chat Assistant
