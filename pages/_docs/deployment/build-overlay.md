@@ -1,8 +1,8 @@
 ---
-lastmod: 2026-06-26T00:00:00.000Z
+lastmod: 2026-07-13T00:00:00.000Z
 title: Safe-Mode Build Overlay (Building Outside GitHub Pages)
 description: The recipe for building a Zer0-Mistakes remote-theme site in your own CI — clone the theme, overlay your content, strip plugins, and run a strict build.
-preview: /images/previews/deployment.png
+preview: /images/previews/safe-mode-build-overlay-building-outside-github-pa.png
 layout: default
 categories:
     - docs

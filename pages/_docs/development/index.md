@@ -1,8 +1,8 @@
 ---
-lastmod: 2026-04-18T19:29:55.000Z
+lastmod: 2026-07-13T00:00:00.000Z
 title: Development
 description: Developer guides for contributing to and extending the Zer0-Mistakes Jekyll theme.
-preview: /images/previews/development.png
+preview: /images/previews/development-docs.png
 layout: default
 categories:
     - docs

@@ -11,12 +11,12 @@ tags:
   - inclusive-design
 date: 2025-01-05T09:00:00.000Z
 layout: article
-preview: /images/wizard-on-journey.png
+preview: /images/previews/building-accessible-web-applications.png
 author: Zer0-Mistakes Team
 featured: true
 estimated_reading_time: 12 minutes
 draft: true
-lastmod: 2025-12-01T02:20:51.166Z
+lastmod: 2026-07-13T00:00:00.000Z
 ---
 
 Web accessibility isn't just a legal requirement—it's about creating inclusive experiences for everyone. This guide covers essential accessibility practices for modern web development.

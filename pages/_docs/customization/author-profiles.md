@@ -1,6 +1,7 @@
 ---
 title: Author Profiles and About-the-Author Bylines
 description: Define author profiles and surface bylines, bio cards, and per-author profile pages across every collection in the Zer0-Mistakes Jekyll theme.
+preview: /images/previews/author-profiles-and-about-the-author-bylines.png
 lastmod: 2026-07-13T00:00:00.000Z
 layout: default
 author: bamr87

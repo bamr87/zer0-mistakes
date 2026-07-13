@@ -1,8 +1,8 @@
 ---
-lastmod: 2026-06-23T00:00:00.000Z
+lastmod: 2026-07-13T00:00:00.000Z
 title: Remote-Theme Consumer Checklist
 description: What remote_theme does not deliver on GitHub Pages, and the files and config every Zer0-Mistakes consumer must add to avoid silent breakage.
-preview: /images/previews/deploy-to-github-pages.png
+preview: /images/previews/remote-theme-consumer-checklist.png
 layout: default
 categories:
     - docs
