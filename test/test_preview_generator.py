@@ -55,8 +55,9 @@ class TestFlagSurface(unittest.TestCase):
         ["--enhance-fidelity", "high"],
         ["--enhance-format", "png"],
         # New additive flags
-        ["-p", "claude"], ["-p", "local"], ["-p", "gemini"],
-        ["--prompt-engine", "claude"],
+        ["-p", "local"], ["-p", "gemini"],
+        ["--prompt-engine", "claude"], ["--prompt-engine", "template"],
+        ["--review", "claude"], ["--review", "none"],
         ["--rasterizer", "none"],
         ["-w", "2"],
         # Back-compat no-op from the previous engine's CLI
@@ -116,11 +117,21 @@ class TestSettingsPrecedence(unittest.TestCase):
 
     def test_defaults_when_config_empty(self):
         with mock.patch.dict(os.environ, {}, clear=False):
-            for key in ("AI_PROVIDER", "IMAGE_MODEL", "IMAGE_STYLE"):
+            for key in ("AI_PROVIDER", "IMAGE_MODEL", "IMAGE_STYLE",
+                        "PROMPT_ENGINE", "REVIEW_ENGINE"):
                 os.environ.pop(key, None)
             settings = pg.resolve_settings(parse([]), {})
-        self.assertEqual(settings.provider, "claude")  # ZER0-004 default engine
+        self.assertEqual(settings.provider, "openai")  # default renderer
+        # ZER0-004: Claude orchestrates by default (analysis + review)
+        self.assertEqual(settings.prompt_engine, "claude")
+        self.assertEqual(settings.review_engine, "claude")
         self.assertEqual(settings.collections, ["posts", "quickstart", "docs"])
+
+    def test_review_engine_cli_overrides(self):
+        with mock.patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("REVIEW_ENGINE", None)
+            settings = pg.resolve_settings(parse(["--review", "none"]), {})
+        self.assertEqual(settings.review_engine, "none")
 
     def test_author_overrides_apply_on_top(self):
         settings = self.resolve([])
@@ -314,21 +325,18 @@ class TestModelFamily(unittest.TestCase):
     def test_empty_model_uses_provider_default(self):
         settings = make_settings(model="")
         self.assertEqual(
-            pg.effective_model(settings, pg.PROVIDERS["claude"]), pg.DEFAULT_CLAUDE_MODEL
+            pg.effective_model(settings, pg.PROVIDERS["xai"]), "grok-2-image"
         )
+
+    def test_claude_model_under_renderer_falls_back(self):
+        """A leftover `model: claude-*` (Claude is no longer a renderer) must
+        fall back to the renderer's default, not be sent to the vendor API."""
+        settings = make_settings(model="claude-opus-4-8")
+        self.assertEqual(pg.effective_model(settings, pg.PROVIDERS["openai"]),
+                         "gpt-image-2")
 
 
 class TestSvgToolkit(unittest.TestCase):
-    def test_extract_from_fences(self):
-        text = "Here you go:\n```svg\n<svg xmlns='x'><rect/></svg>\n```\nEnjoy!"
-        self.assertEqual(pg.extract_svg(text), "<svg xmlns='x'><rect/></svg>")
-
-    def test_extract_bare(self):
-        self.assertEqual(pg.extract_svg("<svg a='1'></svg>"), "<svg a='1'></svg>")
-
-    def test_extract_none(self):
-        self.assertIsNone(pg.extract_svg("no vector art here"))
-
     def _sanitize(self, body):
         svg = f'<svg xmlns="http://www.w3.org/2000/svg">{body}</svg>'
         return pg.sanitize_svg(svg)
@@ -527,12 +535,13 @@ class TestProviders(unittest.TestCase):
         return pg.RunContext(project_root=Path(tmp or "."), env=env or {}, slug="test-post")
 
     def test_registry_contents(self):
+        # Renderers only — Claude orchestrates and is deliberately NOT a provider.
         self.assertEqual(
-            sorted(pg.PROVIDERS), ["claude", "gemini", "local", "openai", "stability", "xai"]
+            sorted(pg.PROVIDERS), ["gemini", "local", "openai", "stability", "xai"]
         )
 
     def test_edit_unsupported_on_non_edit_providers(self):
-        for name in ("xai", "stability", "gemini", "claude"):
+        for name in ("xai", "stability", "gemini"):
             with self.assertRaises(pg.EditUnsupported):
                 pg.PROVIDERS[name].edit(Path("x.png"), "p", make_settings(), self.ctx())
 
@@ -593,35 +602,6 @@ class TestProviders(unittest.TestCase):
         self.assertEqual(result.kind, "svg")
         self.assertEqual(result.path.suffix, ".svg")
 
-    def test_claude_provider_end_to_end_mocked(self):
-        svg = f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {pg.SVG_WIDTH} {pg.SVG_HEIGHT}"><rect width="10" height="10" fill="#111"/></svg>'
-
-        def fake_http_json(url, payload, headers, timeout=900):
-            return {"stop_reason": "end_turn",
-                    "content": [{"type": "text", "text": f"```svg\n{svg}\n```"}]}
-
-        with tempfile.TemporaryDirectory() as tmp:
-            out_base = Path(tmp) / "slug"
-            settings = make_settings(rasterizer="none")
-            ctx = self.ctx({"CLAUDE_CODE_OAUTH_TOKEN": "tok"}, tmp)
-            with mock.patch.object(pg, "http_json", fake_http_json):
-                result = pg.PROVIDERS["claude"].generate("prompt", settings, out_base, ctx)
-            self.assertTrue(result.ok, result.error)
-            self.assertEqual(result.kind, "svg")
-            content = result.path.read_text(encoding="utf-8")
-            self.assertIn("<svg", content)
-
-    def test_claude_missing_credentials_hint(self):
-        with mock.patch.object(pg.shutil, "which", return_value=None):
-            with tempfile.TemporaryDirectory() as tmp:
-                ctx = pg.RunContext(project_root=Path(tmp),
-                                    env={"OPENAI_API_KEY": "k"}, slug="s")
-                result = pg.PROVIDERS["claude"].generate(
-                    "p", make_settings(), Path(tmp) / "s", ctx)
-        self.assertFalse(result.ok)
-        self.assertIn("claude setup-token", result.error)
-        self.assertIn("--provider openai", result.error)  # detects OPENAI_API_KEY
-
     def test_gemini_inline_data_decode(self):
         def fake_json(url, payload, headers, timeout=900):
             self.assertIn("x-goog-api-key", headers)
@@ -636,6 +616,221 @@ class TestProviders(unittest.TestCase):
                     "p", make_settings(), out_base, self.ctx({"GEMINI_API_KEY": "g"}, tmp))
             self.assertTrue(result.ok)
             self.assertEqual(result.path.read_bytes(), b"img")
+
+
+class _FakeClaude:
+    """Duck-typed stand-in for AnthropicClient in orchestration tests."""
+
+    def __init__(self, text_reply=None, vision_reply=None, raise_exc=None):
+        self.text_reply = text_reply
+        self.vision_reply = vision_reply
+        self.raise_exc = raise_exc
+        self.complete_calls = []
+        self.vision_calls = []
+
+    def available(self):
+        return True
+
+    def complete(self, system_text, user_text, model=None, max_tokens=None):
+        self.complete_calls.append((system_text, user_text, model))
+        if self.raise_exc:
+            raise self.raise_exc
+        return self.text_reply or ""
+
+    def complete_vision(self, system_text, user_text, image_path, model=None,
+                        max_tokens=None):
+        self.vision_calls.append((system_text, user_text, image_path, model))
+        if self.raise_exc:
+            raise self.raise_exc
+        return self.vision_reply or ""
+
+
+def make_content_file(tmp: Path) -> "pg.ContentFile":
+    path = tmp / "post.md"
+    path.write_text("---\ntitle: T\n---\nBody\n", encoding="utf-8")
+    return pg.ContentFile(
+        path=path, title="Auto-hide Navigation",
+        description="Smart nav bar that hides on scroll",
+        categories="docs, features", preview=None, author=None,
+        content="The top navigation bar gets out of the way while you read.",
+        front_matter={"title": "Auto-hide Navigation"},
+    )
+
+
+class TestClaudeOrchestration(unittest.TestCase):
+    def test_article_brief_uses_art_director_and_article_context(self):
+        client = _FakeClaude(text_reply="A pixel-art nav bar sliding away.")
+        with tempfile.TemporaryDirectory() as tmp:
+            cf = make_content_file(Path(tmp))
+            brief = pg.claude_article_brief(client, cf, make_settings(), "base")
+        self.assertEqual(brief, "A pixel-art nav bar sliding away.")
+        system, user, model = client.complete_calls[0]
+        self.assertEqual(system, pg.ART_DIRECTOR_SYSTEM)
+        self.assertIn("Auto-hide Navigation", user)
+        self.assertIn("hides on scroll", user)
+        self.assertEqual(model, pg.DEFAULT_CLAUDE_MODEL)
+
+    def test_article_brief_falls_back_on_failure(self):
+        client = _FakeClaude(raise_exc=RuntimeError("boom"))
+        with tempfile.TemporaryDirectory() as tmp:
+            cf = make_content_file(Path(tmp))
+            self.assertEqual(
+                pg.claude_article_brief(client, cf, make_settings(), "base"), "base")
+
+    def test_claude_model_setting_respected(self):
+        client = _FakeClaude(text_reply="brief")
+        with tempfile.TemporaryDirectory() as tmp:
+            cf = make_content_file(Path(tmp))
+            pg.claude_article_brief(
+                client, cf, make_settings(claude_model="claude-sonnet-5"), "base")
+        self.assertEqual(client.complete_calls[0][2], "claude-sonnet-5")
+
+    def test_review_approve(self):
+        client = _FakeClaude(
+            vision_reply='{"verdict": "approve", "critique": "good", "revised_prompt": ""}')
+        with tempfile.TemporaryDirectory() as tmp:
+            cf = make_content_file(Path(tmp))
+            img = Path(tmp) / "x.png"
+            img.write_bytes(pg.PNG_SIGNATURE)
+            approved, critique, revised = pg.claude_review_image(
+                client, img, cf, "prompt", make_settings())
+        self.assertTrue(approved)
+        self.assertEqual(revised, "")
+        self.assertEqual(client.vision_calls[0][0], pg.REVIEWER_SYSTEM)
+
+    def test_review_revise(self):
+        client = _FakeClaude(
+            vision_reply='noise {"verdict": "revise", "critique": "wrong subject", '
+                         '"revised_prompt": "better prompt"} trailing')
+        with tempfile.TemporaryDirectory() as tmp:
+            cf = make_content_file(Path(tmp))
+            img = Path(tmp) / "x.png"
+            img.write_bytes(pg.PNG_SIGNATURE)
+            approved, critique, revised = pg.claude_review_image(
+                client, img, cf, "prompt", make_settings())
+        self.assertFalse(approved)
+        self.assertEqual(revised, "better prompt")
+        self.assertEqual(critique, "wrong subject")
+
+    def test_review_garbage_counts_as_approval(self):
+        client = _FakeClaude(vision_reply="I like it a lot!")
+        with tempfile.TemporaryDirectory() as tmp:
+            cf = make_content_file(Path(tmp))
+            img = Path(tmp) / "x.png"
+            img.write_bytes(pg.PNG_SIGNATURE)
+            approved, _, revised = pg.claude_review_image(
+                client, img, cf, "prompt", make_settings())
+        self.assertTrue(approved)
+        self.assertEqual(revised, "")
+
+    def test_review_failure_counts_as_approval(self):
+        client = _FakeClaude(raise_exc=RuntimeError("api down"))
+        with tempfile.TemporaryDirectory() as tmp:
+            cf = make_content_file(Path(tmp))
+            img = Path(tmp) / "x.png"
+            img.write_bytes(pg.PNG_SIGNATURE)
+            approved, _, _ = pg.claude_review_image(
+                client, img, cf, "prompt", make_settings())
+        self.assertTrue(approved)
+
+    def test_extract_json_object(self):
+        self.assertEqual(pg._extract_json_object('x {"a": 1} y'), {"a": 1})
+        self.assertIsNone(pg._extract_json_object("no json"))
+        self.assertIsNone(pg._extract_json_object("{broken"))
+
+    def test_complete_vision_api_payload(self):
+        captured = {}
+
+        def fake_http_json(url, payload, headers, timeout=900):
+            captured["payload"] = payload
+            return {"stop_reason": "end_turn",
+                    "content": [{"type": "text", "text": "{}"}]}
+
+        with mock.patch.object(pg.shutil, "which", return_value=None):
+            client = pg.AnthropicClient({"ANTHROPIC_API_KEY": "k"})
+        with tempfile.TemporaryDirectory() as tmp:
+            img = Path(tmp) / "x.png"
+            img.write_bytes(b"PNGBYTES")
+            with mock.patch.object(pg, "http_json", fake_http_json):
+                client.complete_vision("sys", "user", img)
+        content = captured["payload"]["messages"][0]["content"]
+        self.assertEqual(content[0]["type"], "image")
+        self.assertEqual(content[0]["source"]["media_type"], "image/png")
+        self.assertEqual(
+            content[0]["source"]["data"],
+            __import__("base64").b64encode(b"PNGBYTES").decode("ascii"))
+        self.assertEqual(content[1]["text"], "user")
+        # api_key mode: no Claude Code identity block
+        self.assertEqual(len(captured["payload"]["system"]), 1)
+
+
+class TestRunnerReviewLoop(unittest.TestCase):
+    def _run(self, review_replies, generate_results):
+        """Drive Runner.process_file with mocked renderer + reviewer."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "assets" / "images" / "previews").mkdir(parents=True)
+            post = root / "post.md"
+            post.write_text(
+                "---\ntitle: Test Post\ndescription: D\n---\nBody\n",
+                encoding="utf-8")
+
+            settings = make_settings(
+                provider="openai", prompt_engine="template",
+                review_engine="claude", parallel=1)
+            runner = pg.Runner(settings, root)
+
+            calls = {"generate": []}
+
+            def fake_generate(prompt, fsettings, out_base, fctx):
+                calls["generate"].append(prompt)
+                result = generate_results[len(calls["generate"]) - 1]
+                if result:
+                    png = out_base.with_suffix(".png")
+                    png.write_bytes(pg.PNG_SIGNATURE + prompt.encode())
+                    return pg.ImageResult(True, "png", png)
+                return pg.ImageResult(False, error="render failed")
+
+            reviews = iter(review_replies)
+
+            def fake_review(client, image_path, cf, prompt, fsettings):
+                return next(reviews)
+
+            with mock.patch.object(pg.PROVIDERS["openai"], "generate", fake_generate), \
+                 mock.patch.object(pg, "claude_review_image", fake_review), \
+                 mock.patch.object(pg.RunContext, "claude",
+                                   lambda self: _FakeClaude(text_reply="x")):
+                runner.process_file(post)
+
+            png = root / "assets" / "images" / "previews" / "test-post.png"
+            content = png.read_bytes() if png.exists() else b""
+            return calls["generate"], runner.stats, content
+
+    def test_approved_image_generates_once(self):
+        prompts, stats, _ = self._run(
+            review_replies=[(True, "fine", "")],
+            generate_results=[True])
+        self.assertEqual(len(prompts), 1)
+        self.assertEqual(stats.generated, 1)
+        self.assertEqual(stats.errors, 0)
+
+    def test_revision_regenerates_with_claude_prompt(self):
+        prompts, stats, content = self._run(
+            review_replies=[(False, "wrong subject", "REVISED BRIEF")],
+            generate_results=[True, True])
+        self.assertEqual(len(prompts), 2)
+        self.assertEqual(prompts[1], "REVISED BRIEF")
+        self.assertIn(b"REVISED BRIEF", content)  # second render kept
+        self.assertEqual(stats.generated, 1)
+
+    def test_failed_revision_keeps_first_image(self):
+        prompts, stats, content = self._run(
+            review_replies=[(False, "meh", "REVISED BRIEF")],
+            generate_results=[True, False])
+        self.assertEqual(len(prompts), 2)
+        self.assertNotIn(b"REVISED BRIEF", content)  # first render kept
+        self.assertEqual(stats.generated, 1)
+        self.assertEqual(stats.errors, 0)
 
 
 class TestMultipartBuilder(unittest.TestCase):

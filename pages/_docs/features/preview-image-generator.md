@@ -1,7 +1,7 @@
 ---
-lastmod: 2026-07-12T00:00:00.000Z
+lastmod: 2026-07-13T00:00:00.000Z
 title: AI Preview Image Generator for Jekyll Posts
-description: Generate social preview images automatically for Jekyll posts with Claude (Code OAuth, default), OpenAI, xAI, Stability, Gemini, or a free local template engine.
+description: Generate social preview images automatically for Jekyll posts — Claude analyzes the article and reviews the render; OpenAI, xAI, Stability, Gemini, or a free local template produces it.
 keywords: [preview image, claude, dall-e, gemini, stability ai, open graph image, jekyll social images]
 preview: /images/previews/ai-preview-image-generator.png
 layout: default
@@ -18,8 +18,8 @@ permalink: /docs/features/preview-image-generator/
 difficulty: intermediate
 estimated_reading_time: 15 minutes
 prerequisites:
-    - A Claude credential (Claude Code login or Anthropic API key) for the default provider
-    - Or an OpenAI / xAI / Stability / Gemini API key for raster providers
+    - An OpenAI API key (default renderer) — or xAI / Stability / Gemini
+    - Optionally a Claude credential (Claude Code login or Anthropic API key) for article analysis + image review
 sidebar:
     nav: docs
 mermaid: true
@@ -33,10 +33,9 @@ Automatically generate preview images for your posts and pages using AI image ge
 
 The preview image generator provides:
 
-- **Claude by default**: Claude (via your Claude Code OAuth token, Anthropic API key, or logged-in `claude` CLI) designs an SVG banner that is rasterized to PNG locally — no image-vendor API key required
-- **Raster providers**: OpenAI (GPT Image or DALL-E 3), xAI (grok-2-image), Stability AI, and Google Gemini
+- **Claude as art director & editor**: Claude analyzes each article and writes a subject-specific image brief, then reviews the rendered image with vision — regenerating once with a corrected prompt when the image misrepresents the article (via your Claude Code OAuth token, Anthropic API key, or logged-in `claude` CLI; degrades gracefully to a template prompt without one)
+- **Renderers**: OpenAI (GPT Image or DALL-E 3, default), xAI (grok-2-image), Stability AI, and Google Gemini
 - **Local template engine**: deterministic, free, network-less banners for development and CI
-- **Prompt director**: optional `prompt_engine: claude` has Claude write the art prompt for raster providers
 - **Configurable Style**: Default retro pixel art aesthetic, with per-author overrides
 - **Batch Generation**: Process multiple posts at once (parallel workers)
 
@@ -44,16 +43,15 @@ The preview image generator provides:
 
 ```mermaid
 graph LR
-    A[Post without preview] --> B[Generate prompt from title/description]
-    B --> C{Provider}
-    C -->|claude| D[Claude authors SVG]
-    D --> D2[Sanitize + rasterize to PNG]
-    C -->|openai / xai / gemini| E[Vendor image API]
-    C -->|stability| E
-    C -->|local| F[Deterministic template SVG]
-    F --> D2
-    D2 --> G[Save image]
-    E --> G
+    A[Post without preview] --> B[Claude analyzes the article]
+    B --> B2[Art-direction brief]
+    B2 --> C{Renderer}
+    C -->|openai / xai / gemini / stability| E[Vendor image API]
+    C -->|local| F[Deterministic template SVG → PNG]
+    E --> R[Claude reviews the image]
+    R -->|approve| G[Save image]
+    R -->|revise once| E
+    F --> G
     G --> H[Update front matter]
 ```
 
@@ -65,7 +63,7 @@ graph LR
 # _config.yml
 preview_images:
   enabled: true
-  provider: claude  # claude, openai, xai, stability, gemini, local
+  provider: openai  # renderer: openai, xai, stability, gemini, local
 ```
 
 ### Full Configuration
@@ -73,14 +71,15 @@ preview_images:
 ```yaml
 preview_images:
   enabled: true
-  provider: claude            # claude, openai, xai, stability, gemini, local
-  model: claude-opus-4-8      # empty = provider default (gpt-image-2, grok-2-image, ...)
+  provider: openai            # renderer: openai, xai, stability, gemini, local
+  model: gpt-image-2          # empty = renderer default (gpt-image-2, grok-2-image, ...)
   size: 1536x1024             # raster vendors adapt per model (DALL-E 3: 1792x1024)
   quality: auto               # auto for GPT Image; standard/hd for DALL-E 3
   style: "retro pixel art, 8-bit video game aesthetic, vibrant colors"
   style_modifiers: "pixelated, retro gaming style, CRT screen glow effect"
   output_dir: assets/images/previews
-  prompt_engine: template     # or claude — Claude writes prompts for raster vendors
+  prompt_engine: claude       # Claude analyzes the article (template = built-in)
+  review_engine: claude       # Claude reviews the render (none = skip)
   assets_prefix: /assets
   auto_prefix: true
   collections:                # engine default if omitted
@@ -95,7 +94,17 @@ when omitted.
 
 ### Credentials
 
-The default `claude` provider accepts any ONE of, in order:
+The renderer needs its own key (default: openai):
+
+```bash
+export OPENAI_API_KEY="sk-..."       # openai (also powers --enhance)
+export XAI_API_KEY="xai-..."         # xai
+export STABILITY_API_KEY="sk-..."    # stability
+export GEMINI_API_KEY="..."          # gemini
+```
+
+Claude orchestration (article analysis + image review) accepts any ONE of, in
+order — it is optional and degrades to the template prompt with no review:
 
 ```bash
 # 1. Claude Code OAuth token (recommended — from `claude setup-token`)
@@ -108,15 +117,6 @@ export ANTHROPIC_AUTH_TOKEN="..."
 export ANTHROPIC_API_KEY="sk-ant-..."
 
 # 4. Nothing — a logged-in `claude` CLI is used automatically.
-```
-
-Raster providers need their own key:
-
-```bash
-export OPENAI_API_KEY="sk-..."       # openai (also powers --enhance)
-export XAI_API_KEY="xai-..."         # xai
-export STABILITY_API_KEY="sk-..."    # stability
-export GEMINI_API_KEY="..."          # gemini
 ```
 
 ## Usage
@@ -160,27 +160,27 @@ preview: /images/previews/ai-preview-image-generator.png
 ---
 ```
 
-## Providers
+## Claude Orchestration
 
-### Claude — SVG artist (default)
+Claude never draws the image — it directs it. Two stages wrap every raster
+renderer (both default-on; both skip gracefully without a Claude credential):
 
-Claude designs a standalone retro-pixel SVG banner from your post's title,
-description, and style settings; the engine sanitizes the SVG (scripts,
-external references, and event handlers are stripped) and rasterizes it to PNG
-with the first available tool — `rsvg-convert`, `inkscape`, `magick`, or the
-theme's Playwright helper. If no rasterizer is installed the sanitized `.svg`
-is kept (the site renders it, but social `og:image` scrapers prefer PNG):
+- **Analyze** (`prompt_engine: claude`): Claude reads the article (title,
+  description, tags, excerpt) and writes a subject-specific art brief — a
+  concrete scene that represents the content, composed for a wide banner in
+  your configured style, with a strict no-text rule.
+- **Review** (`review_engine: claude`): after the renderer produces the PNG,
+  Claude inspects it with vision. If it misrepresents the article, breaks the
+  style, or contains garbled text, Claude writes a corrected prompt and the
+  engine regenerates once; otherwise the image is approved.
 
-```yaml
-preview_images:
-  provider: claude
-  model: claude-opus-4-8   # any claude-* model
-```
+On a Claude Pro/Max subscription (Claude Code OAuth token or logged-in
+`claude` CLI) the orchestration costs nothing extra; only the renderer bills
+per image.
 
-Because it reuses your Claude Code credential, this provider costs nothing
-extra on a Claude Pro/Max subscription and needs no image-vendor account.
+## Renderers
 
-### OpenAI (GPT Image / DALL-E 3)
+### OpenAI (GPT Image / DALL-E 3) — default
 
 Best raster quality. The default model is GPT Image; DALL-E 3 is also
 supported. OpenAI also powers the `--enhance` mode (`/v1/images/edits`):
@@ -228,9 +228,9 @@ preview_images:
 ### Local (template)
 
 Free, no API and no network. The `local` provider renders a deterministic
-retro-landscape SVG (seeded from the post slug, sharing the claude provider's
-palette scheme) and rasterizes it to PNG — the same post always gets the same
-banner, which makes it ideal for development and CI:
+retro-landscape SVG (seeded from the post slug) and rasterizes it to PNG — the
+same post always gets the same banner, which makes it ideal for development
+and CI. Claude analysis/review is skipped (the output is deterministic):
 
 ```yaml
 preview_images:
@@ -349,10 +349,12 @@ build):
 
 ## Cost Considerations
 
-### Claude (default)
+### Claude orchestration
 
 - Covered by a Claude Pro/Max subscription when using a Claude Code OAuth
   token or the `claude` CLI; API-key usage bills normal Anthropic token rates
+- Analysis is one small text call per image; review is one vision call (plus
+  one extra render when a revision is requested)
 
 ### OpenAI DALL-E 3
 

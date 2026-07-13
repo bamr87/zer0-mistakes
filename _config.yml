@@ -95,11 +95,14 @@ info_banner              : '/assets/images/info-banner-mountain-wizard.png' # pa
 # Settings for automatic preview image generation using AI
 # Used by: scripts/generate-preview-images.sh → scripts/lib/preview_generator.py
 #
-# Default engine is `claude` (Claude Code OAuth): Claude authors an SVG banner
-# that is rasterized to PNG locally — no vendor API key needed. Credential:
-# CLAUDE_CODE_OAUTH_TOKEN (`claude setup-token`), ANTHROPIC_AUTH_TOKEN,
-# ANTHROPIC_API_KEY, or a logged-in `claude` CLI. Raster vendors (openai, xai,
-# stability, gemini) need their own key; `local` needs none (deterministic SVG).
+# Claude ORCHESTRATES, an image model RENDERS: Claude analyzes the article and
+# writes the art-direction brief (prompt_engine: claude), the provider below
+# renders it, then Claude reviews the image and may request one refined
+# regeneration (review_engine: claude). Claude credential: CLAUDE_CODE_OAUTH_TOKEN
+# (`claude setup-token`), ANTHROPIC_AUTH_TOKEN, ANTHROPIC_API_KEY, or a
+# logged-in `claude` CLI — without one, orchestration degrades to the template
+# prompt with no review. Renderers (openai, xai, stability, gemini) need their
+# own key; `local` needs none (deterministic SVG, skips orchestration).
 #
 # Per-author override: a post's `author:` may point at an entry in
 # _data/authors.yml that defines a `preview:` block (style, style_modifiers,
@@ -109,15 +112,18 @@ info_banner              : '/assets/images/info-banner-mountain-wizard.png' # pa
 
 preview_images:
   enabled                : true
-  provider               : 'claude'           # claude, openai, xai, stability, gemini, local
-  model                  : 'claude-opus-4-8'  # models from another vendor family fall back to the provider default (e.g. gpt-image-2 under openai)
+  provider               : 'openai'           # renderer: openai, xai, stability, gemini, local
+  model                  : 'gpt-image-2'      # renderer model; another vendor family falls back to the provider default
   size                   : '1536x1024'        # Landscape banners; raster vendors adapt per model (DALL-E 3: 1792x1024)
   quality                : 'auto'             # auto for GPT Image models; standard/hd for DALL-E 3
   style                  : 'retro pixel art, 8-bit video game aesthetic, vibrant colors, nostalgic, clean pixel graphics'
   output_dir             : 'assets/images/previews'
-  # Prompt builder for raster vendors: 'template' (built-in) or 'claude'
-  # (Claude writes the art prompt — uses the same credential chain as above)
-  prompt_engine          : 'template'
+  # Claude orchestration: 'claude' analyzes the article into the art brief
+  # ('template' = built-in prompt), and reviews the rendered image with vision
+  # ('none' disables). claude_model overrides the orchestration model.
+  prompt_engine          : 'claude'
+  review_engine          : 'claude'
+  # claude_model         : 'claude-opus-4-8'
   # Path normalization: allows omitting /assets/ prefix in frontmatter
   # e.g., preview: /images/previews/my-image.png becomes /assets/images/previews/my-image.png
   assets_prefix          : '/assets'          # Prefix to prepend to relative preview paths

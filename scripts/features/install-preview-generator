@@ -14,8 +14,8 @@
 #   -h, --help              Show this help message
 #   -d, --dry-run           Preview what would be installed (no changes)
 #   -f, --force             Overwrite existing files
-#   -p, --provider PROVIDER Set default AI provider
-#                           (claude, openai, xai, stability, gemini, local)
+#   -p, --provider PROVIDER Set default renderer
+#                           (openai, xai, stability, gemini, local)
 #   --no-config             Skip _config.yml modification
 #   --no-tasks              Skip VS Code tasks installation
 #
@@ -58,7 +58,7 @@ DEST_FILES=(
 # Default options
 DRY_RUN=false
 FORCE=false
-DEFAULT_PROVIDER="claude"
+DEFAULT_PROVIDER="openai"
 INSTALL_CONFIG=true
 INSTALL_TASKS=true
 LOCAL_THEME_DIR=""
@@ -100,21 +100,21 @@ ${YELLOW}OPTIONS:${NC}
     -h, --help              Show this help message
     -d, --dry-run           Preview what would be installed (no changes)
     -f, --force             Overwrite existing files
-    -p, --provider PROVIDER Set default AI provider
-                            (claude, openai, xai, stability, gemini, local)
+    -p, --provider PROVIDER Set default renderer
+                            (openai, xai, stability, gemini, local)
     --no-config             Skip _config.yml modification
     --no-tasks              Skip VS Code tasks installation
     -l, --local PATH        Copy files from local theme directory instead of downloading
 
 ${YELLOW}EXAMPLES:${NC}
-    # Install with defaults (claude — uses your Claude Code login/token)
+    # Install with defaults (OpenAI renders; Claude analyzes + reviews)
     ./$SCRIPT_NAME
 
     # Preview installation
     ./$SCRIPT_NAME --dry-run
 
-    # Install with OpenAI as default provider
-    ./$SCRIPT_NAME --provider openai
+    # Install with Gemini as the renderer
+    ./$SCRIPT_NAME --provider gemini
 
     # Force reinstall
     ./$SCRIPT_NAME --force
@@ -123,12 +123,13 @@ ${YELLOW}REMOTE INSTALLATION:${NC}
     curl -fsSL ${RAW_URL}/scripts/$SCRIPT_NAME | bash
 
 ${YELLOW}AFTER INSTALLATION:${NC}
-    1. Set a credential in .env (default claude provider — any ONE):
+    1. Set credentials in .env:
+       OPENAI_API_KEY=...            # the default renderer
+       Plus ONE Claude credential so Claude can analyze articles and
+       review the rendered images (optional — degrades to template prompts):
        CLAUDE_CODE_OAUTH_TOKEN=...   # from \`claude setup-token\`
        ANTHROPIC_API_KEY=...         # from console.anthropic.com
        (or just have the \`claude\` CLI installed and logged in)
-       Raster vendors instead need OPENAI_API_KEY / XAI_API_KEY /
-       STABILITY_API_KEY / GEMINI_API_KEY.
 
     2. Generate preview images:
        ./scripts/generate-preview-images.sh --list-missing
@@ -262,14 +263,15 @@ update_config() {
 # =============================================================================
 preview_images:
   enabled: true
-  provider: ${DEFAULT_PROVIDER}          # claude, openai, xai, stability, gemini, local
-  model: ""                              # empty = provider default (claude-opus-4-8, gpt-image-2, ...)
+  provider: ${DEFAULT_PROVIDER}          # renderer: openai, xai, stability, gemini, local
+  model: ""                              # empty = renderer default (gpt-image-2, grok-2-image, ...)
   size: "1536x1024"                      # Landscape banner size
   quality: auto                          # auto for GPT Image; standard/hd for DALL-E 3
   style: "retro pixel art, 8-bit video game aesthetic, vibrant colors, nostalgic, clean pixel graphics"
   style_modifiers: "pixelated, retro gaming style, CRT screen glow effect, limited color palette"
   output_dir: assets/images/previews     # Where to save generated images
-  prompt_engine: template                # template, or claude (Claude writes vendor prompts)
+  prompt_engine: claude                  # claude analyzes the article (template = built-in prompt)
+  review_engine: claude                  # claude reviews the render (none = skip)
   assets_prefix: /assets                 # Prefix prepended to relative preview paths
   auto_prefix: true                      # Auto-add assets_prefix when missing
   collections:                           # Collections to scan for missing previews
@@ -303,15 +305,16 @@ create_env_example() {
     cat >> "$env_example" << 'EOF'
 
 # AI Preview Image Generator credentials
-# Default provider `claude` — any ONE of (or a logged-in `claude` CLI):
-# CLAUDE_CODE_OAUTH_TOKEN=sk-ant-oat01-...   # from `claude setup-token`
-# ANTHROPIC_API_KEY=sk-ant-...               # from console.anthropic.com
-
-# Raster vendors (only for the matching --provider choice):
+# Renderer (the default provider is openai):
 # OPENAI_API_KEY=...      # https://platform.openai.com/api-keys (also powers --enhance)
 # XAI_API_KEY=...         # https://console.x.ai/
 # STABILITY_API_KEY=...   # https://platform.stability.ai/
 # GEMINI_API_KEY=...      # https://aistudio.google.com/apikey
+
+# Claude orchestration (analyzes articles + reviews renders) — any ONE of
+# (or a logged-in `claude` CLI; optional, degrades to template prompts):
+# CLAUDE_CODE_OAUTH_TOKEN=sk-ant-oat01-...   # from `claude setup-token`
+# ANTHROPIC_API_KEY=sk-ant-...               # from console.anthropic.com
 EOF
     
     log "Updated .env.example"
@@ -451,10 +454,10 @@ print_instructions() {
     echo ""
     echo -e "${YELLOW}NEXT STEPS:${NC}"
     echo ""
-    echo "  1. ${BLUE}Set up a credential (default provider: claude):${NC}"
-    echo "     claude setup-token       # then put the token in .env, OR"
-    echo "     cp .env.example .env     # and add ANTHROPIC_API_KEY / OPENAI_API_KEY etc."
-    echo "     (a logged-in \`claude\` CLI works with no token at all)"
+    echo "  1. ${BLUE}Set up credentials:${NC}"
+    echo "     cp .env.example .env     # add OPENAI_API_KEY (the renderer)"
+    echo "     claude setup-token       # optional: lets Claude analyze + review"
+    echo "     (a logged-in \`claude\` CLI also works for the Claude side)"
     echo ""
     echo "  2. ${BLUE}Check for missing preview images:${NC}"
     echo "     ./scripts/generate-preview-images.sh --list-missing"

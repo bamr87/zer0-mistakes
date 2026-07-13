@@ -1,12 +1,12 @@
 ---
 title: AI Preview Image Generator
 layout: default
-description: Generate AI-powered preview images for Jekyll posts with Claude (Code OAuth, default), OpenAI, xAI, Stability, Gemini, or a local template engine.
+description: Generate AI-powered preview images for Jekyll posts — Claude analyzes the article and reviews the result; OpenAI, xAI, Stability, Gemini, or a local template renders it.
 permalink: /docs/features/preview-image-generator/
 feature_id: ZER0-004
 version: "1.27.0"
 date: 2026-04-01T00:00:00.000Z
-lastmod: 2026-07-12T00:00:00.000Z
+lastmod: 2026-07-13T00:00:00.000Z
 categories: [docs]
 tags: [implementation, ai, images]
 author: bamr87
@@ -16,16 +16,15 @@ author: bamr87
 
 ## Overview
 
-The AI Preview Image Generator automatically creates eye-catching banner images for your posts and articles. One consolidated Python engine (`scripts/lib/preview_generator.py`) drives every entry point and dispatches to a pluggable provider framework.
+The AI Preview Image Generator automatically creates eye-catching banner images for your posts and articles. One consolidated Python engine (`scripts/lib/preview_generator.py`) drives every entry point.
 
-**Default engine: Claude via Claude Code OAuth.** The Anthropic API doesn't render raster pixels, so the `claude` provider works as an *SVG artist*: Claude authors a complete retro-pixel SVG banner, which the engine sanitizes and rasterizes to PNG locally (rsvg-convert → inkscape → magick → Playwright). If you already use Claude Code, it works with zero extra API keys.
+**Claude orchestrates; an image model renders.** For each post, Claude reads the article and writes a content-specific art-direction brief (*analyze*), a raster image model — OpenAI's gpt-image-2 by default — renders it (*produce*), and Claude then inspects the result with vision, requesting one refined regeneration if the image misrepresents the article (*review*). Claude never renders pixels itself; without a Claude credential the pipeline degrades gracefully to a template prompt with no review.
 
 ### Key Features
 
-- 🤖 **Claude as the default engine** - Claude Code OAuth token, Anthropic API key, or a logged-in `claude` CLI; no vendor image API needed
-- 🎨 **Provider framework** - `claude`, `openai` (gpt-image-2 / DALL-E), `xai` (grok-2-image), `stability`, `gemini`, and a no-network `local` template engine
-- ✍️ **Claude prompt director** - optional `--prompt-engine claude` writes richer art prompts for any raster vendor
-- 🔧 **Highly Configurable** - Customize provider, style, size, quality via `_config.yml`
+- 🧠 **Claude as art director & editor** - analyzes each article into a vivid, subject-specific image brief, then vision-reviews the render against the article (Claude Code OAuth token, Anthropic API key, or a logged-in `claude` CLI)
+- 🎨 **Renderer framework** - `openai` (gpt-image-2 / DALL-E, default), `xai` (grok-2-image), `stability`, `gemini`, and a no-network `local` template engine
+- 🔧 **Highly Configurable** - Customize renderer, style, size, quality via `_config.yml`
 - 🎮 **Retro Pixel Art Defaults** - Beautiful 8-bit aesthetic out of the box
 - 👤 **Per-author art styles** - `_data/authors.yml` `preview:` blocks override style/model per persona
 - 📦 **Easy Installation** - One-command setup for any Jekyll site
@@ -55,7 +54,7 @@ mkdir -p scripts/lib
 curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/scripts/lib/preview_generator.py -o scripts/lib/preview_generator.py
 
 # Download the Playwright SVG rasterizer helper (optional — used by the
-# claude/local providers when no native rasterizer is installed)
+# local template provider when no native rasterizer is installed)
 mkdir -p scripts/dev
 curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/scripts/dev/rasterize-svg.js -o scripts/dev/rasterize-svg.js
 ```
@@ -65,24 +64,27 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/scripts/d
 ```yaml
 preview_images:
   enabled: true
-  provider: claude          # claude, openai, xai, stability, gemini, local
-  model: ""                 # empty = provider default (claude-opus-4-8, gpt-image-2, ...)
+  provider: openai          # renderer: openai, xai, stability, gemini, local
+  model: gpt-image-2
   size: "1536x1024"
   quality: auto
   style: "retro pixel art, 8-bit video game aesthetic, vibrant colors"
   output_dir: assets/images/previews
+  prompt_engine: claude     # Claude analyzes the article into the art brief
+  review_engine: claude     # Claude reviews the render and may refine once
 ```
 
-1. **Set up a credential (default `claude` provider — any ONE):**
+1. **Set up credentials:**
 
 ```bash
-# Recommended: mint a long-lived Claude Code OAuth token (Claude Pro/Max)
+# Renderer (default: openai)
+echo "OPENAI_API_KEY=sk-your-key" >> .env
+
+# Claude orchestration — any ONE (optional; degrades to template prompts):
 claude setup-token          # then add CLAUDE_CODE_OAUTH_TOKEN=... to .env
-
-# Alternative: an Anthropic API key
 echo "ANTHROPIC_API_KEY=sk-ant-your-key" >> .env
+# ...or nothing at all — a logged-in `claude` CLI is used automatically.
 
-# Or nothing at all — a logged-in `claude` CLI is used automatically.
 echo ".env" >> .gitignore
 ```
 
@@ -97,13 +99,13 @@ preview_images:
   # Enable/disable the feature
   enabled: true
 
-  # AI Provider: claude (default), openai, xai, stability, gemini, local
-  provider: claude
+  # Renderer: openai (default), xai, stability, gemini, local
+  provider: openai
 
-  # Model — empty uses the provider default (claude-opus-4-8, gpt-image-2,
+  # Renderer model — empty uses the provider default (gpt-image-2,
   # grok-2-image, gemini-2.5-flash-image, ...). A model from another vendor
   # family is ignored with a warning rather than sent to the wrong API.
-  model: ""
+  model: gpt-image-2
   quality: auto                      # auto for GPT Image; standard/hd for DALL-E 3
 
   # Image dimensions (landscape banner format; raster vendors adapt per model)
@@ -118,9 +120,15 @@ preview_images:
   # Output directory for generated images (relative to site root)
   output_dir: assets/images/previews
 
-  # Prompt builder for raster vendors: template (built-in) or claude
-  # (Claude writes the art prompt via the same credential chain)
-  prompt_engine: template
+  # Claude orchestration:
+  #   prompt_engine: claude — Claude analyzes the article and writes the art
+  #     brief the renderer receives (template = built-in prompt)
+  #   review_engine: claude — Claude inspects the rendered image with vision
+  #     and may request ONE refined regeneration (none = skip)
+  #   claude_model — optional override for the orchestration model
+  prompt_engine: claude
+  review_engine: claude
+  # claude_model: claude-opus-4-8
 
   # Path normalization for front-matter preview values
   assets_prefix: /assets
@@ -138,17 +146,17 @@ preview_images:
 Create a `.env` file in your project root:
 
 ```bash
-# Default claude provider — any ONE of:
-CLAUDE_CODE_OAUTH_TOKEN=sk-ant-oat01-...   # from `claude setup-token`
-ANTHROPIC_AUTH_TOKEN=...                   # short-lived Bearer token
-ANTHROPIC_API_KEY=sk-ant-...               # console.anthropic.com
-# (or a logged-in `claude` CLI — no variable needed)
-
-# Raster vendors (for the matching --provider choice)
+# Renderer (default openai; others for the matching --provider choice)
 OPENAI_API_KEY=sk-your-openai-api-key      # also powers --enhance
 XAI_API_KEY=xai-your-xai-key
 STABILITY_API_KEY=sk-your-stability-api-key
 GEMINI_API_KEY=your-gemini-key
+
+# Claude orchestration (analysis + review) — any ONE of:
+CLAUDE_CODE_OAUTH_TOKEN=sk-ant-oat01-...   # from `claude setup-token`
+ANTHROPIC_AUTH_TOKEN=...                   # short-lived Bearer token
+ANTHROPIC_API_KEY=sk-ant-...               # console.anthropic.com
+# (or a logged-in `claude` CLI — no variable needed)
 
 # Override config settings
 IMAGE_STYLE="cyberpunk, neon lights, futuristic"
@@ -177,11 +185,11 @@ The main script provides a comprehensive CLI:
 # Force regenerate all images (even if preview exists)
 ./scripts/generate-preview-images.sh --force
 
-# Use a specific AI provider
-./scripts/generate-preview-images.sh --provider openai
+# Use a specific renderer
+./scripts/generate-preview-images.sh --provider gemini
 
-# Let Claude write the art prompt, render with OpenAI
-./scripts/generate-preview-images.sh --provider openai --prompt-engine claude
+# Skip Claude orchestration (template prompt, no review)
+./scripts/generate-preview-images.sh --prompt-engine template --review none
 
 # Zero-credential deterministic banner (CI-safe)
 ./scripts/generate-preview-images.sh --provider local -f pages/_posts/my-article.md
@@ -196,10 +204,11 @@ The main script provides a comprehensive CLI:
 | `-v, --verbose` | Enable verbose output |
 | `-f, --file FILE` | Process specific file only |
 | `-c, --collection NAME` | Process specific collection (or `all`) |
-| `-p, --provider PROVIDER` | AI provider (claude, openai, xai, stability, gemini, local) |
-| `--model MODEL` | Override the provider's model |
-| `--prompt-engine ENGINE` | `template` (default) or `claude` |
-| `--rasterizer TOOL` | SVG→PNG tool: auto, rsvg, inkscape, magick, playwright, none |
+| `-p, --provider PROVIDER` | Renderer (openai, xai, stability, gemini, local) |
+| `--model MODEL` | Override the renderer's model |
+| `--prompt-engine ENGINE` | `claude` analyzes the article (default) or `template` |
+| `--review ENGINE` | `claude` reviews the render, may refine once (default) or `none` |
+| `--rasterizer TOOL` | SVG→PNG tool for `local`: auto, rsvg, inkscape, magick, playwright, none |
 | `-j, --parallel N` | Concurrent workers (default 4) |
 | `-e, --enhance` | Improve existing previews (OpenAI images/edits) |
 | `--output-dir DIR` | Custom output directory |
@@ -283,33 +292,34 @@ When the script generates an image, it automatically:
 2. Saves the image to the configured `output_dir`
 3. Updates the post's front matter with the `preview` field
 
-## AI Providers
+## Claude Orchestration
 
-### Claude — SVG artist (Default)
+Claude wraps every raster renderer with two stages (both default-on, both
+degrade gracefully without a Claude credential):
 
-- **No image-API key needed** — reuses your Claude Code credential
-- Claude authors a standalone retro-pixel SVG banner (no embedded text); the
-  engine sanitizes it (scripts, external references, and event handlers are
-  stripped) and rasterizes it to PNG
-- Credential chain, first match wins:
-  1. `CLAUDE_CODE_OAUTH_TOKEN` — from `claude setup-token` (Claude Pro/Max)
-  2. `ANTHROPIC_AUTH_TOKEN` — short-lived Bearer token
-  3. `ANTHROPIC_API_KEY` — console.anthropic.com
-  4. a logged-in `claude` CLI (headless `claude -p`) — zero setup
-- Rasterizer chain: `rsvg-convert` → `inkscape` → `magick` → Playwright
-  (`scripts/dev/rasterize-svg.js`). With none installed, the sanitized `.svg`
-  is kept — the site renders it fine, but social `og:image` scrapers prefer
-  PNG, so install librsvg (`brew install librsvg`) or Playwright.
+- **Analyze** (`prompt_engine: claude`) — Claude reads the article's title,
+  description, tags and an excerpt, then writes a subject-specific
+  art-direction brief (concrete scene, banner composition, your configured
+  style woven in, strict no-text rule). This replaces the generic template
+  prompt that produced unrepresentative images.
+- **Review** (`review_engine: claude`) — Claude inspects the rendered PNG with
+  vision against the article and style. If the image misrepresents the
+  subject, breaks the style, or contains text artifacts, Claude writes a
+  corrected prompt and the engine regenerates ONCE; otherwise the image is
+  approved as-is.
 
-```yaml
-preview_images:
-  provider: claude
-  model: claude-opus-4-8   # default; any claude-* model
-```
+Credential chain, first match wins:
 
-### OpenAI (GPT Image / DALL-E)
+1. `CLAUDE_CODE_OAUTH_TOKEN` — from `claude setup-token` (Claude Pro/Max)
+2. `ANTHROPIC_AUTH_TOKEN` — short-lived Bearer token
+3. `ANTHROPIC_API_KEY` — console.anthropic.com
+4. a logged-in `claude` CLI (headless `claude -p`) — zero setup
 
-- **Best raster quality** for detailed, artistic images
+## Renderers
+
+### OpenAI (GPT Image / DALL-E) — default
+
+- **Best raster quality** for detailed, artistic images; the default renderer
 - gpt-image-2 default; DALL-E 3 supports `hd` quality
 - Also powers `--enhance` mode (`/v1/images/edits`) for every provider
 
@@ -354,9 +364,12 @@ preview_images:
 ### Local Template (no network)
 
 - **No API required** — perfect for development, CI, and testing
-- Generates a deterministic retro-landscape SVG (seeded from the post slug,
-  same palette scheme as the claude provider) and rasterizes it to PNG
+- Generates a deterministic retro-landscape SVG (seeded from the post slug)
+  and rasterizes it to PNG via `rsvg-convert` → `inkscape` → `magick` →
+  Playwright (`scripts/dev/rasterize-svg.js`); with no rasterizer the
+  sanitized `.svg` is kept
 - Fast, free, and reproducible: the same post always gets the same banner
+- Skips Claude analysis/review (its output is deterministic by design)
 
 ```yaml
 preview_images:
@@ -473,12 +486,15 @@ Run with verbose output for detailed diagnostics:
 ### Version 1.27.0 (Current)
 
 - Consolidated Bash/Python duplicates into one Python engine
-  (`scripts/lib/preview_generator.py`) with a provider framework
-- **Claude (Code OAuth) is the default provider** — SVG artist pipeline with
-  local rasterization and mandatory SVG sanitization
-- New providers: xAI unified into the main engine, Google Gemini added
+  (`scripts/lib/preview_generator.py`) with a renderer framework
+- **Claude orchestrates every generation** — analyzes the article into a
+  subject-specific art brief (`prompt_engine: claude`) and vision-reviews the
+  rendered image, regenerating once with a corrected prompt when it
+  misrepresents the article (`review_engine: claude`)
+- Renderers: OpenAI gpt-image-2 (default), xAI unified into the main engine,
+  Google Gemini added, Stability retained
 - `local` provider now produces a real deterministic SVG/PNG banner
-- Optional `--prompt-engine claude` art-prompt director for raster vendors
+  (sanitized; rasterized via a local tool chain)
 - Front-matter updates are scoped to the front-matter block (body-corruption fix)
 - `enabled`, `assets_prefix`, and `auto_prefix` config keys are now honored
 

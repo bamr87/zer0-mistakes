@@ -4,8 +4,10 @@
 # Script Name: generate-preview-images
 # Description: AI-powered preview image generator for Jekyll posts/articles.
 #              Thin wrapper — ALL logic lives in the consolidated Python engine
-#              at scripts/lib/preview_generator.py (providers: claude [default,
-#              via Claude Code OAuth], openai, xai, stability, gemini, local).
+#              at scripts/lib/preview_generator.py. Claude ORCHESTRATES
+#              (analyzes the article into an art brief, reviews the render);
+#              a raster model RENDERS (openai [default], xai, stability,
+#              gemini, or the offline local template).
 #
 # Usage: ./scripts/features/generate-preview-images [options]
 #        Run with --help for the full option list (rendered by the engine).
@@ -19,15 +21,16 @@
 #
 # Dependencies:
 #   - python3 (3.9+) with PyYAML
-#   - Optional SVG rasterizers for the claude/local providers:
+#   - Optional SVG rasterizers for the local template provider:
 #     rsvg-convert | inkscape | magick | Playwright (scripts/dev/rasterize-svg.js)
 #
-# Environment (any ONE for the default claude provider):
+# Environment — renderer key (default openai): OPENAI_API_KEY (or XAI_API_KEY /
+# STABILITY_API_KEY / GEMINI_API_KEY for the matching --provider). Claude
+# orchestration additionally uses any ONE of (optional; degrades to template):
 #   CLAUDE_CODE_OAUTH_TOKEN   `claude setup-token` (Claude Pro/Max)
 #   ANTHROPIC_AUTH_TOKEN      short-lived Bearer token
 #   ANTHROPIC_API_KEY         console.anthropic.com API key
 #   (or a logged-in `claude` CLI — used automatically)
-# Other providers: OPENAI_API_KEY, XAI_API_KEY, STABILITY_API_KEY, GEMINI_API_KEY.
 # .env in the project root is loaded by the engine (exported vars win).
 
 set -euo pipefail

@@ -106,7 +106,7 @@ features:
   
   - id: ZER0-004
     title: "AI Preview Image Generator"
-    description: "Provider-framework preview-image engine with Claude (Code OAuth) as the default SVG-artist provider, plus OpenAI gpt-image-2 / DALL-E, xAI, Stability AI, Google Gemini, and a deterministic local template. Local SVG-to-PNG rasterization, per-author styles, batch regeneration"
+    description: "Claude-orchestrated preview-image engine: Claude analyzes each article into an art brief and vision-reviews the render (one corrective regeneration), while OpenAI gpt-image-2 / DALL-E (default), xAI, Stability AI, Google Gemini, or a deterministic local template renders. Per-author styles, batch regeneration"
     implemented: true
     version: "1.27.0"
     link: "/docs/features/preview-image-generator/"
@@ -135,12 +135,13 @@ features:
     dependencies:
       required: [python3, pyyaml]
       optional: [librsvg, inkscape, imagemagick, node]
+    orchestration:
+      name: claude
+      description: "Claude analyzes articles into art briefs and vision-reviews renders (prompt_engine/review_engine)"
+      env_var: CLAUDE_CODE_OAUTH_TOKEN
     providers:
-      - name: claude
-        description: "Claude SVG artist via Claude Code OAuth (default; rasterized to PNG locally)"
-        env_var: CLAUDE_CODE_OAUTH_TOKEN
       - name: openai
-        description: "OpenAI gpt-image-2 / DALL-E 3 image generation (+ --enhance edits)"
+        description: "OpenAI gpt-image-2 / DALL-E 3 image generation (default renderer; + --enhance edits)"
         env_var: OPENAI_API_KEY
       - name: xai
         description: "xAI Grok image generation"
@@ -155,9 +156,9 @@ features:
         description: "Deterministic template SVG/PNG (no API needed)"
         env_var: null
     features:
-      - "Claude Code OAuth default engine (SVG artist, no vendor image API key)"
-      - "Six-provider framework with per-vendor model validation"
-      - "Optional Claude prompt director for raster vendors"
+      - "Claude orchestration: article analysis into art briefs + vision review with one corrective regeneration"
+      - "Five-renderer framework with per-vendor model validation"
+      - "Graceful degradation to template prompts without a Claude credential"
       - "Retro pixel art default style with per-author overrides"
       - "Front matter integration"
       - "Batch processing"

@@ -18,7 +18,7 @@ scripts/
 │   ├── git.sh             # Git operations
 │   ├── changelog.sh       # Changelog generation
 │   ├── gem.sh             # Gem build/publish
-│   └── preview_generator.py  # Preview-image engine (all providers; ZER0-004)
+│   └── preview_generator.py  # Preview-image engine (Claude orchestrates; ZER0-004)
 ├── features/              # Feature-specific scripts
 │   ├── generate-preview-images     # AI preview image generator
 │   ├── pixelate-preview-images     # Shrink preview banners (pixelate + PNG-8)
@@ -115,16 +115,15 @@ Options:
   --dry-run           Preview without changes
   --collection TYPE   Generate for specific collection (posts, docs, etc.)
   -f, --file PATH     Process specific file
-  --provider PROVIDER Use specific AI provider
-                      (claude, openai, xai, stability, gemini, local)
-  --prompt-engine ENG Prompt builder for raster vendors (template | claude)
+  --provider PROVIDER Renderer (openai, xai, stability, gemini, local)
+  --prompt-engine ENG claude analyzes the article (default) | template
+  --review ENG        claude reviews the render (default) | none
   --assets-prefix     Custom assets path prefix (default: /assets)
   --no-auto-prefix    Disable automatic path prefixing
 
-AI Providers:
-  claude    - Claude SVG artist, default (CLAUDE_CODE_OAUTH_TOKEN /
-              ANTHROPIC_API_KEY / logged-in `claude` CLI)
-  openai    - OpenAI gpt-image-2 / DALL-E (requires OPENAI_API_KEY)
+Renderers (Claude orchestrates all of them — analysis + review via
+CLAUDE_CODE_OAUTH_TOKEN / ANTHROPIC_API_KEY / logged-in `claude` CLI):
+  openai    - OpenAI gpt-image-2 / DALL-E, default (requires OPENAI_API_KEY)
   xai       - xAI Grok image generation (requires XAI_API_KEY)
   stability - Stability AI (requires STABILITY_API_KEY)
   gemini    - Google Gemini (requires GEMINI_API_KEY)
@@ -260,7 +259,7 @@ These are sourced by other scripts, not executed directly:
 - `git.sh` - Git operations (tags, commits, branches)
 - `changelog.sh` - Changelog generation from commits
 - `gem.sh` - Gem build/publish operations
-- `preview_generator.py` - Preview-image engine (claude default + openai/xai/stability/gemini/local)
+- `preview_generator.py` - Preview-image engine (Claude analyze/review + openai/xai/stability/gemini/local renderers)
 
 ### Test Suites (scripts/test/)
 

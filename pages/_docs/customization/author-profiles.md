@@ -228,8 +228,9 @@ So Cassandra's banners come out as ominous security-ops noir while Vega's glow
 with vibrant data-visualization colour — each recognisably hers, with no
 front-matter changes per post. The override is resolved per file at generation
 time by the consolidated engine (`scripts/lib/preview_generator.py`, run via
-`scripts/generate-preview-images.sh`) and applies to every provider — including
-the default `claude` SVG artist; regenerate an existing banner with `--force`.
+`scripts/generate-preview-images.sh`) and applies to every renderer — the
+style also flows into Claude's art-direction brief and review criteria;
+regenerate an existing banner with `--force`.
 
 Two real banners generated for these personas — same generator, same prompt
 plumbing, two unmistakable looks:

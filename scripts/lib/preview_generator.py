@@ -5,31 +5,36 @@
 This single file is the ONE engine behind every preview-image entry point
 (`scripts/generate-preview-images.sh` → `scripts/features/generate-preview-images`
 → this file; `rake preview:*`; the VS Code tasks). It replaces the former
-1,400-line Bash implementation and this file's previous OpenAI-only draft with
-a provider framework:
+1,400-line Bash implementation and this file's previous OpenAI-only draft.
 
-    provider   engine                                   credential
+Architecture — Claude ORCHESTRATES, an image model RENDERS:
+
+    stage      role                                     engine / credential
     --------   --------------------------------------   ----------------------------------
-    claude     Claude authors an SVG banner which is    CLAUDE_CODE_OAUTH_TOKEN →
-    (default)  rasterized to PNG locally                ANTHROPIC_AUTH_TOKEN →
-                                                        ANTHROPIC_API_KEY → `claude` CLI
+    analyze    Claude reads the article and writes a    CLAUDE_CODE_OAUTH_TOKEN →
+               vivid art-direction brief for the        ANTHROPIC_AUTH_TOKEN →
+               renderer (prompt_engine: claude)         ANTHROPIC_API_KEY → `claude` CLI
+    produce    a raster image model renders the brief   the selected provider (below)
+    review     Claude looks at the produced image       same Claude credential chain
+               (vision) and, if it misrepresents the
+               article, requests ONE refined
+               regeneration (review_engine: claude)
+
+    provider   renderer                                 credential
+    --------   --------------------------------------   ----------------------------------
     openai     gpt-image-2 / dall-e-3 (+ --enhance      OPENAI_API_KEY
-               via /v1/images/edits)
+    (default)  via /v1/images/edits)
     xai        grok-2-image                             XAI_API_KEY
     stability  Stable Diffusion XL (v1 API)             STABILITY_API_KEY
     gemini     gemini-2.5-flash-image                   GEMINI_API_KEY
-    local      deterministic template SVG → PNG         none (CI-safe)
+    local      deterministic template SVG → PNG         none (CI-safe; skips
+                                                        analyze/review)
 
-The Anthropic API cannot render raster pixels, so the claude provider works as
-an "SVG artist": it requests a complete standalone SVG (1536x1024, retro-pixel
-aesthetic, no embedded text), sanitizes it, then rasterizes via the first
-available tool: rsvg-convert → inkscape → magick/convert → the repo's
-Playwright helper (scripts/dev/rasterize-svg.js). With no rasterizer at all the
-sanitized .svg itself becomes the preview (og:image quality degrades — social
-scrapers want PNG — so installing librsvg or Playwright is recommended).
-
-`--prompt-engine claude` additionally lets ANY raster provider use a
-Claude-written art prompt instead of the built-in template prompt.
+Claude never renders pixels itself (the Anthropic API has no image-generation
+endpoint); with no Claude credential the analyze/review stages degrade
+gracefully to the built-in template prompt with a warning — the renderer still
+runs. The SVG toolkit (sanitizer + rsvg/inkscape/magick/Playwright rasterizer
+chain) serves the zero-credential `local` provider.
 
 Configuration priority (per file):
     author preview overrides (_data/authors.yml) > CLI args > environment
@@ -41,6 +46,7 @@ Usage:
     python3 scripts/lib/preview_generator.py --collection posts
     python3 scripts/lib/preview_generator.py -f pages/_posts/my-post.md --force
     python3 scripts/lib/preview_generator.py --provider local -f <file>
+    python3 scripts/lib/preview_generator.py --prompt-engine template --review none ...
 
 Dependencies: Python 3.9+ stdlib + PyYAML (`pip3 install pyyaml`). No other
 packages — HTTP goes through urllib, multipart bodies are hand-rolled.
@@ -82,11 +88,12 @@ except ImportError:  # checked in ensure_yaml() after --help handling
 # =============================================================================
 
 # Built-in fallbacks — used only when a key is absent from _config.yml, env,
-# and CLI. Mirrors the former Bash defaults except `provider`, which is now
-# claude (ZER0-004: Claude Code OAuth is the default engine).
+# and CLI. Mirrors the former Bash defaults; Claude orchestration (analysis +
+# review, ZER0-004) is on by default and degrades gracefully without a
+# Claude credential.
 DEFAULTS: Dict[str, Any] = {
     "enabled": True,
-    "provider": "claude",
+    "provider": "openai",
     "model": "",  # empty → the active provider's default_model()
     "size": "1536x1024",
     "quality": "auto",
@@ -102,7 +109,9 @@ DEFAULTS: Dict[str, Any] = {
     "assets_prefix": "/assets",
     "auto_prefix": True,
     "collections": ["posts", "quickstart", "docs"],
-    "prompt_engine": "template",
+    "prompt_engine": "claude",   # claude analyzes the article; falls back to template
+    "review_engine": "claude",   # claude vision-reviews the render; `none` disables
+    "claude_model": "",          # empty → DEFAULT_CLAUDE_MODEL
 }
 
 # Enhance mode (OpenAI /v1/images/edits — see OpenAIProvider.edit)
@@ -172,26 +181,43 @@ COMPOSITION_VARIANTS: List[str] = [
     "an ocean of chunky pixel waves under drifting square clouds",
 ]
 
-# System prompt for the claude provider's SVG-artist role. NOTE: "no text"
-# matches the long-standing prompt rule of this feature and keeps rasterizer
-# output independent of installed fonts.
-SVG_ARTIST_SYSTEM = f"""You are an expert vector artist generating blog preview banners as SVG.
+# System prompt for Claude's ART-DIRECTOR role (prompt_engine: claude): read
+# the article, then write the brief a raster image model will render. NOTE:
+# "no text" matches the long-standing prompt rule of this feature — image
+# models garble lettering.
+ART_DIRECTOR_SYSTEM = """You are an art director for a technical blog. You will be given an article
+(title, description, tags, an excerpt) plus mandatory style directions. Your
+job is to design ONE preview banner image and describe it to an AI image
+model.
 
-Output EXACTLY ONE complete standalone SVG document and nothing else — no
-markdown fences, no commentary before or after.
+Respond with ONLY the image-generation prompt — no preamble, no quotes, no
+markdown. One vivid paragraph of at most 130 words that:
+- captures the article's actual SUBJECT as a concrete visual metaphor or
+  scene (specific objects, actions and spatial arrangement — never a generic
+  'technology background');
+- specifies composition for a wide banner (what sits left/center/right,
+  foreground/background, focal point);
+- weaves in the given art style and palette directions verbatim in spirit;
+- states that the image must contain NO text, letters, words, numbers, logos
+  or UI copy of any kind."""
 
-Hard requirements:
-- Root element: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {SVG_WIDTH} {SVG_HEIGHT}" width="{SVG_WIDTH}" height="{SVG_HEIGHT}">
-- Retro pixel-art aesthetic: blocky shapes, stepped edges, flat fills, limited
-  palette. Prefer <rect>, <polygon>, <circle>, <path>; gradients sparingly.
-- Use ONLY the palette colors given in the brief (plus darker/lighter steps of them).
-- NO text of any kind: no <text>, <tspan>, or letterforms drawn from shapes.
-- NO <script>, <foreignObject>, <iframe>, <image>, external hrefs, event
-  handlers, CSS url() references, or animations. Static art only.
-- Keep it efficient: aim for fewer than 300 elements; minify (no comments,
-  minimal whitespace, short ids).
-- Fill the full canvas edge to edge; design for legibility as a small card
-  thumbnail AND a wide og:image banner."""
+# System prompt for Claude's REVIEWER role (review_engine: claude): look at
+# the rendered image and decide whether it represents the article.
+REVIEWER_SYSTEM = """You are reviewing an AI-generated blog preview banner against the article it
+illustrates. Judge three things: (1) does the image clearly evoke the
+article's actual subject, (2) does it follow the requested art style, and
+(3) is it free of text/lettering artifacts and visual glitches.
+
+Respond with ONLY a JSON object, no markdown fences:
+{"verdict": "approve" | "revise",
+ "critique": "<one or two sentences on what is wrong or right>",
+ "revised_prompt": "<empty when approving; otherwise a complete replacement
+image-generation prompt (max 130 words) that fixes the problems while keeping
+the required style and the no-text rule>"}
+
+Approve unless the image genuinely misrepresents the subject, breaks the
+style, or contains text/glitches — minor taste differences are not grounds
+for revision."""
 
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 
@@ -555,6 +581,8 @@ class Settings:
     enabled: bool = True
     collections: List[str] = field(default_factory=lambda: list(DEFAULTS["collections"]))
     prompt_engine: str = DEFAULTS["prompt_engine"]
+    review_engine: str = DEFAULTS["review_engine"]
+    claude_model: str = DEFAULTS["claude_model"]
 
     dry_run: bool = False
     verbose: bool = False
@@ -620,6 +648,8 @@ def resolve_settings(args: argparse.Namespace, site: Dict[str, Any]) -> Settings
         enabled=bool(cfg("enabled", True)),
         collections=[str(c) for c in collections],
         prompt_engine=pick(args.prompt_engine, "PROMPT_ENGINE", "prompt_engine"),
+        review_engine=pick(args.review, "REVIEW_ENGINE", "review_engine"),
+        claude_model=str(cfg("claude_model", "") or ""),
         dry_run=args.dry_run or _env_flag("DRY_RUN"),
         verbose=args.verbose or _env_flag("VERBOSE"),
         force=args.force or _env_flag("FORCE"),
@@ -945,30 +975,83 @@ def build_enhance_prompt(cf: ContentFile, settings: Settings) -> str:
     return prompt
 
 
-PROMPT_DIRECTOR_SYSTEM = (
-    "You are an art director writing prompts for an AI image generator. "
-    "Respond with ONE vivid, concrete art prompt as a single paragraph of at "
-    "most 130 words. Describe subject, composition, palette, lighting and "
-    "mood. The image must contain no text or lettering. Output only the "
-    "prompt — no preamble, no quotes."
-)
+def claude_model_for(settings: Settings) -> str:
+    return settings.claude_model or DEFAULT_CLAUDE_MODEL
 
 
-def claude_refine_prompt(client: "AnthropicClient", base_prompt: str) -> str:
-    """--prompt-engine claude: have Claude write the vendor art prompt."""
+def claude_article_brief(client: "AnthropicClient", cf: ContentFile,
+                         settings: Settings, base_prompt: str) -> str:
+    """Analyze stage (prompt_engine: claude): Claude reads the article and
+    writes the art-direction brief the renderer will receive. Falls back to
+    the template prompt on any failure — analysis is an enhancement layer,
+    never a hard dependency."""
+    excerpt = re.sub(r"\s+", " ", cf.content[:1500]).strip()
+    article = (
+        f"ARTICLE\nTitle: {cf.title}\n"
+        f"Description: {cf.description or '(none)'}\n"
+        f"Categories/tags: {cf.categories or '(none)'}\n"
+        f"Excerpt: {excerpt or '(none)'}\n\n"
+        f"MANDATORY STYLE DIRECTIONS\nArt style: {settings.style}\n"
+        f"Style modifiers: {settings.style_modifiers or '(none)'}\n\n"
+        "Write the image-generation prompt now."
+    )
     try:
         text = client.complete(
-            PROMPT_DIRECTOR_SYSTEM,
-            f"Write the image-generation prompt for this banner:\n\n{base_prompt}",
-            max_tokens=1024,
+            ART_DIRECTOR_SYSTEM, article,
+            model=claude_model_for(settings), max_tokens=2048,
         ).strip()
         if text:
-            debug(f"Claude prompt engine: {text[:200]}...")
+            debug(f"Claude art-direction brief: {text[:300]}...")
             return text
-        warn("Claude prompt engine returned empty text; using template prompt")
+        warn("Claude analysis returned empty text; using template prompt")
     except Exception as exc:
-        warn(f"Claude prompt engine failed ({exc}); using template prompt")
+        warn(f"Claude analysis failed ({exc}); using template prompt")
     return base_prompt
+
+
+def _extract_json_object(text: str) -> Optional[dict]:
+    start, end = text.find("{"), text.rfind("}")
+    if start == -1 or end <= start:
+        return None
+    try:
+        data = json.loads(text[start:end + 1])
+        return data if isinstance(data, dict) else None
+    except ValueError:
+        return None
+
+
+def claude_review_image(client: "AnthropicClient", image_path: Path,
+                        cf: ContentFile, prompt: str,
+                        settings: Settings) -> Tuple[bool, str, str]:
+    """Review stage (review_engine: claude): Claude inspects the rendered
+    banner. Returns (approved, critique, revised_prompt). Any failure counts
+    as approval — review must never block generation."""
+    context = (
+        f"ARTICLE\nTitle: {cf.title}\nDescription: {cf.description or '(none)'}\n"
+        f"Categories/tags: {cf.categories or '(none)'}\n\n"
+        f"REQUIRED STYLE\n{settings.style}"
+        + (f"; {settings.style_modifiers}" if settings.style_modifiers else "")
+        + f"\n\nPROMPT THE IMAGE WAS GENERATED FROM\n{prompt}\n\n"
+        "Review the image above against the article and style. JSON only."
+    )
+    try:
+        text = client.complete_vision(
+            REVIEWER_SYSTEM, context, image_path,
+            model=claude_model_for(settings),
+        )
+        data = _extract_json_object(text)
+        if not data:
+            warn("Claude review returned no parseable verdict; keeping image")
+            return True, "", ""
+        verdict = str(data.get("verdict", "approve")).lower()
+        critique = str(data.get("critique", "")).strip()
+        revised = str(data.get("revised_prompt", "")).strip()
+        if verdict == "revise" and revised:
+            return False, critique, revised
+        return True, critique, ""
+    except Exception as exc:
+        warn(f"Claude review failed ({exc}); keeping image")
+        return True, "", ""
 
 
 # =============================================================================
@@ -995,16 +1078,6 @@ def palette_for(seed: int) -> List[str]:
 
 def composition_for(seed: int) -> str:
     return COMPOSITION_VARIANTS[(seed >> 8) % len(COMPOSITION_VARIANTS)]
-
-
-def extract_svg(text: str) -> Optional[str]:
-    """Pull the SVG document out of a model response (fences tolerated)."""
-    cleaned = re.sub(r"```[a-zA-Z]*", "", text).replace("```", "")
-    start = cleaned.find("<svg")
-    end = cleaned.rfind("</svg>")
-    if start == -1 or end == -1 or end <= start:
-        return None
-    return cleaned[start:end + len("</svg>")]
 
 
 def _localname(tag: str) -> str:
@@ -1360,11 +1433,68 @@ class AnthropicClient:
             raise ClaudeTruncated(text)
         return text
 
+    def complete_vision(
+        self,
+        system_text: str,
+        user_text: str,
+        image_path: Path,
+        model: str = DEFAULT_CLAUDE_MODEL,
+        max_tokens: int = 2048,
+    ) -> str:
+        """One vision turn over a local PNG (review stage). CLI mode passes the
+        file path and lets `claude -p` read it; API modes embed base64."""
+        if self.mode == "cli":
+            prompt = (
+                f"{system_text}\n\n---\n\nFirst use the Read tool to view the "
+                f"image file at {image_path.resolve()} — then respond.\n\n{user_text}"
+            )
+            return self._run_cli(prompt, model, allowed_tools="Read")
+        if self.mode is None:
+            raise RuntimeError("no Anthropic credential configured")
+
+        system_blocks = [{"type": "text", "text": system_text}]
+        if self.mode == "oauth":
+            system_blocks.insert(0, {"type": "text", "text": CLAUDE_CODE_SYSTEM_PROMPT})
+        payload: Dict[str, Any] = {
+            "model": model,
+            "max_tokens": max_tokens,
+            "thinking": {"type": "adaptive"},
+            "system": system_blocks,
+            "messages": [{
+                "role": "user",
+                "content": [
+                    {"type": "image", "source": {
+                        "type": "base64", "media_type": "image/png",
+                        "data": base64.b64encode(image_path.read_bytes()).decode("ascii"),
+                    }},
+                    {"type": "text", "text": user_text},
+                ],
+            }],
+        }
+        data = with_retries(
+            lambda: http_json(ANTHROPIC_API_URL, payload, self.headers(), timeout=900),
+            "Anthropic API (review)",
+        )
+        if data.get("stop_reason") == "refusal":
+            details = data.get("stop_details") or {}
+            raise ClaudeRefusal(details.get("category") if isinstance(details, dict) else None)
+        return "".join(
+            block.get("text", "")
+            for block in data.get("content", [])
+            if isinstance(block, dict) and block.get("type") == "text"
+        )
+
     def _complete_cli(self, system_text: str, user_text: str, model: str) -> str:
-        prompt = f"{system_text}\n\n---\n\n{user_text}"
+        return self._run_cli(f"{system_text}\n\n---\n\n{user_text}", model)
+
+    def _run_cli(self, prompt: str, model: str,
+                 allowed_tools: Optional[str] = None) -> str:
+        cmd = ["claude", "-p", "--model", model, "--output-format", "text"]
+        if allowed_tools:
+            cmd += ["--allowedTools", allowed_tools]
         try:
             proc = subprocess.run(
-                ["claude", "-p", "--model", model, "--output-format", "text"],
+                cmd,
                 input=prompt,
                 capture_output=True,
                 text=True,
@@ -1380,20 +1510,15 @@ class AnthropicClient:
         return proc.stdout
 
 
-def claude_credential_hint(env: Dict[str, str]) -> str:
-    lines = [
-        "The claude provider needs a credential. Any ONE of:",
-        "  1. CLAUDE_CODE_OAUTH_TOKEN   — run `claude setup-token` (Claude Pro/Max)",
-        "  2. ANTHROPIC_AUTH_TOKEN      — short-lived Bearer (e.g. `ant auth print-credentials`)",
-        "  3. ANTHROPIC_API_KEY         — key from console.anthropic.com",
-        "  4. the `claude` CLI installed and logged in (used automatically)",
-    ]
-    if env.get("OPENAI_API_KEY"):
-        lines.append(
-            "OPENAI_API_KEY is already set — you can also run with `--provider openai` "
-            "(or set `preview_images.provider: openai` in _config.yml)."
-        )
-    return "\n".join(lines)
+CLAUDE_CREDENTIAL_HINT = (
+    "Claude orchestration (article analysis + image review) needs any ONE of:\n"
+    "  1. CLAUDE_CODE_OAUTH_TOKEN   — run `claude setup-token` (Claude Pro/Max)\n"
+    "  2. ANTHROPIC_AUTH_TOKEN      — short-lived Bearer (e.g. `ant auth print-credentials`)\n"
+    "  3. ANTHROPIC_API_KEY         — key from console.anthropic.com\n"
+    "  4. the `claude` CLI installed and logged in (used automatically)\n"
+    "Falling back to the template prompt and skipping review (or pass "
+    "--prompt-engine template --review none to silence this)."
+)
 
 
 # =============================================================================
@@ -1703,82 +1828,6 @@ class SvgProviderMixin:
         return ImageResult(True, "svg", svg_path)
 
 
-class ClaudeProvider(Provider, SvgProviderMixin):
-    name = "claude"
-
-    def is_configured(self, env: Dict[str, str]) -> bool:
-        return AnthropicClient(env).available()
-
-    def missing_hint(self, env: Dict[str, str]) -> str:
-        return claude_credential_hint(env)
-
-    def default_model(self) -> str:
-        return DEFAULT_CLAUDE_MODEL
-
-    def _brief(self, prompt: str, seed: int) -> str:
-        palette = ", ".join(palette_for(seed))
-        return (
-            f"{prompt}\n\n"
-            f"Palette (use only these colors and their darker/lighter steps): {palette}.\n"
-            f"Composition: {composition_for(seed)}.\n"
-            f"Remember: one standalone SVG, no text, nothing but the SVG."
-        )
-
-    def generate(self, prompt, settings, out_base, ctx) -> ImageResult:
-        client = ctx.claude()
-        if not client.available():
-            return ImageResult(False, error=claude_credential_hint(ctx.env))
-        model = effective_model(settings, self)
-        seed = seed_for(ctx.slug or out_base.stem)
-        debug(f"Claude generate via {client.describe()} (model {model})")
-
-        brief = self._brief(prompt, seed)
-        # Two-attempt retry ladder: iterating `attempts` while appending is
-        # deliberate and bounded — every append is guarded by attempt_no == 1,
-        # so exactly one corrective retry (minify / simplify / SVG-only) can
-        # follow the first attempt. Keep that guard when adding retry reasons.
-        attempts = [brief]
-        svg_text: Optional[str] = None
-        last_error = "no response"
-        for attempt_no, attempt_brief in enumerate(attempts, start=1):
-            try:
-                response = client.complete(SVG_ARTIST_SYSTEM, attempt_brief, model=model)
-            except ClaudeTruncated as exc:
-                if attempt_no == 1:
-                    attempts.append(
-                        brief + "\nYour previous attempt was cut off. Minify "
-                        "aggressively: no comments, no whitespace, short ids, "
-                        "fewer than 150 elements."
-                    )
-                    continue
-                response = str(exc)  # truncated text — extraction will fail cleanly
-            except ClaudeRefusal as exc:
-                if attempt_no == 1:
-                    attempts.append(
-                        "Draw an abstract retro pixel-art landscape banner.\n"
-                        + self._brief("", seed)
-                    )
-                    last_error = str(exc)
-                    continue
-                return ImageResult(False, error=f"Claude declined: {exc}")
-            except (HttpStatusError, RuntimeError) as exc:
-                return ImageResult(False, error=str(exc))
-
-            svg_text = extract_svg(response)
-            if svg_text:
-                break
-            last_error = "response contained no <svg> document"
-            if attempt_no == 1:
-                attempts.append(
-                    brief + "\nYour previous reply contained no SVG. Respond with "
-                    "ONLY the SVG document, starting with <svg and ending with </svg>."
-                )
-
-        if not svg_text:
-            return ImageResult(False, error=f"Claude SVG generation failed: {last_error}")
-        return self.finish_svg(svg_text, out_base, settings, ctx)
-
-
 class LocalProvider(Provider, SvgProviderMixin):
     name = "local"
 
@@ -1805,10 +1854,11 @@ class LocalProvider(Provider, SvgProviderMixin):
         return ImageResult(True, "png", image_path)
 
 
+# Renderers only — Claude is the orchestration layer (claude_article_brief /
+# claude_review_image) that sits in front of ANY of these, not a provider.
 PROVIDERS: Dict[str, Provider] = {
     provider.name: provider
     for provider in (
-        ClaudeProvider(),
         OpenAIProvider(),
         XAIProvider(),
         StabilityProvider(),
@@ -1906,14 +1956,23 @@ class Runner:
         if file_settings is not settings:
             info(f"  ↳ Author '{cf.author}' preview overrides applied (_data/authors.yml)")
 
-        prompt = build_prompt(cf, file_settings)
-        if file_settings.prompt_engine == "claude" and settings.provider != "claude":
-            prompt = claude_refine_prompt(self.ctx.claude(), prompt)
+        # ---- Analyze: Claude reads the article and writes the art brief ----
+        base_prompt = build_prompt(cf, file_settings)
+        prompt = base_prompt
+        orchestrated = settings.provider != "local"  # local is deterministic
+        if (orchestrated and file_settings.prompt_engine == "claude"
+                and not settings.dry_run):
+            prompt = claude_article_brief(
+                self.ctx.claude(), cf, file_settings, base_prompt)
         debug(f"Generated prompt: {prompt[:500]}...")
 
         if settings.dry_run:
             info("[DRY RUN] Would generate image:")
             print(f"  Provider: {settings.provider}")
+            if orchestrated and file_settings.prompt_engine == "claude":
+                print("  Prompt engine: claude (article analysis runs at generation time)")
+            if orchestrated and file_settings.review_engine == "claude":
+                print("  Review: claude (image review runs at generation time)")
             print(f"  Output: {out_base.with_suffix('.png')}")
             print(f"  Preview path: {preview_front_matter_path(file_settings, slug + '.png')}")
             print(f"  Prompt: {prompt[:400]}...")
@@ -1923,11 +1982,31 @@ class Runner:
 
         provider = PROVIDERS[settings.provider]
         # Per-file context copy: workers must not share a mutable slug (the
-        # claude/local providers derive the deterministic seed from it). The
-        # copy carries the shared AnthropicClient reference, which is
-        # stateless after init and therefore thread-safe.
+        # local provider derives its deterministic seed from it). The copy
+        # carries the shared AnthropicClient reference, which is stateless
+        # after init and therefore thread-safe.
         file_ctx = replace(self.ctx, slug=slug)
+        # ---- Produce: the selected raster model renders the brief ----
         result = provider.generate(prompt, file_settings, out_base, file_ctx)
+
+        # ---- Review: Claude inspects the render; at most ONE regeneration ----
+        if (orchestrated and file_settings.review_engine == "claude"
+                and result.ok and result.path and result.kind == "png"):
+            approved, critique, revised = claude_review_image(
+                self.ctx.claude(), result.path, cf, prompt, file_settings)
+            if approved:
+                if critique:
+                    debug(f"Claude review: {critique}")
+            else:
+                info(f"  ↳ Claude review requested a revision: {critique}")
+                debug(f"Revised prompt: {revised[:300]}...")
+                retry = provider.generate(revised, file_settings, out_base, file_ctx)
+                if retry.ok and retry.path:
+                    result = retry
+                    success("  ↳ Regenerated with Claude's revised brief")
+                else:
+                    warn(f"  ↳ Revision render failed "
+                         f"({retry.error or 'unknown'}); keeping the first image")
 
         if result.ok and result.path:
             fm_value = preview_front_matter_path(file_settings, result.path.name)
@@ -2142,7 +2221,11 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--enhance-format", choices=["png", "jpeg", "webp"],
                         help="Enhanced output format (implies --enhance)")
     parser.add_argument("--prompt-engine", choices=["template", "claude"],
-                        help="Prompt builder for raster providers (default: template)")
+                        help="Art-direction brief: claude analyzes the article "
+                             "(default) or template uses the built-in prompt")
+    parser.add_argument("--review", choices=["claude", "none"],
+                        help="Post-render review: claude inspects the image and "
+                             "may request one refined regeneration (default: claude)")
     parser.add_argument("--rasterizer",
                         choices=["auto", "rsvg", "inkscape", "magick", "playwright", "none"],
                         help="SVG→PNG tool for claude/local providers (default: auto)")
@@ -2183,8 +2266,6 @@ def validate_credentials(settings: Settings, ctx: RunContext) -> None:
         return
     if not provider.is_configured(ctx.env):
         error_exit(provider.missing_hint(ctx.env))
-    if provider.name == "claude":
-        info(f"Claude credential: {ctx.claude().describe()}")
 
 
 def main(argv: Optional[List[str]] = None) -> int:
@@ -2222,6 +2303,20 @@ def main(argv: Optional[List[str]] = None) -> int:
     ctx = RunContext(project_root=project_root, env=dict(os.environ))
     validate_credentials(settings, ctx)
 
+    # Claude orchestration (analyze/review) degrades gracefully: without a
+    # Claude credential the run continues on template prompts, unreviewed.
+    wants_claude = (
+        settings.provider != "local"
+        and "claude" in (settings.prompt_engine, settings.review_engine)
+        and not (settings.dry_run or settings.list_only)
+    )
+    if wants_claude:
+        if ctx.claude().available():
+            info(f"Claude orchestration: {ctx.claude().describe()}")
+        else:
+            warn(CLAUDE_CREDENTIAL_HINT)
+            settings = replace(settings, prompt_engine="template", review_engine="none")
+
     output_dir = project_root / settings.output_dir
     if not settings.dry_run and not settings.list_only:
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -2235,8 +2330,8 @@ def main(argv: Optional[List[str]] = None) -> int:
     print(f"  Dry Run: {str(settings.dry_run).lower()}")
     print(f"  Force: {str(settings.force).lower()}")
     print(f"  List Only: {str(settings.list_only).lower()}")
-    if settings.prompt_engine != "template":
-        print(f"  Prompt Engine: {settings.prompt_engine}")
+    print(f"  Prompt Engine: {settings.prompt_engine}")
+    print(f"  Review: {settings.review_engine}")
     if settings.enhance:
         print("  Mode: ENHANCE (improve existing images)")
         print(f"  Enhance Model: {settings.enhance_model}")

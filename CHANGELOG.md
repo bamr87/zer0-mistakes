@@ -16,29 +16,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Preview-image provider framework with Claude as the default engine**
-  (ZER0-004) — the three divergent implementations (1,404-line Bash engine,
-  drifted Python duplicate, dead Jekyll plugin) are consolidated into ONE
-  Python engine, [`scripts/lib/preview_generator.py`](scripts/lib/preview_generator.py),
-  behind a pluggable provider registry:
-  - **`claude` (new default)** — Claude authors a retro-pixel SVG banner via
-    the Messages API and the engine rasterizes it to PNG locally
-    (`rsvg-convert` → `inkscape` → `magick` → the new Playwright helper
+- **Claude-orchestrated preview-image engine** (ZER0-004) — the three
+  divergent implementations (1,404-line Bash engine, drifted Python
+  duplicate, dead Jekyll plugin) are consolidated into ONE Python engine,
+  [`scripts/lib/preview_generator.py`](scripts/lib/preview_generator.py).
+  Claude directs; an image model renders:
+  - **Analyze** (`prompt_engine: claude`, default) — Claude reads each
+    article and writes a subject-specific art-direction brief, replacing the
+    generic template prompt that produced unrepresentative banners.
+  - **Produce** — the configured renderer executes the brief: `openai`
+    (gpt-image-2 / DALL-E, default), `xai` (grok-2-image), `stability`,
+    **`gemini` (new)** — or `local`, upgraded from a `.txt` stub to a real
+    deterministic SVG/PNG banner (sanitized, rasterized via `rsvg-convert` →
+    `inkscape` → `magick` → the new Playwright helper
     [`scripts/dev/rasterize-svg.js`](scripts/dev/rasterize-svg.js)).
-    Credential chain: `CLAUDE_CODE_OAUTH_TOKEN` (`claude setup-token`) →
-    `ANTHROPIC_AUTH_TOKEN` → `ANTHROPIC_API_KEY` → a logged-in `claude` CLI
-    (zero-setup for Claude Code users). Every generated SVG passes a
-    mandatory sanitizer (scripts/foreignObject/external refs/event handlers
-    stripped).
-  - **`gemini` (new)** — Google `gemini-2.5-flash-image` via `GEMINI_API_KEY`.
-  - **`openai` / `xai` / `stability`** — unified into the same engine
-    (xAI was Python-only, `local` was Bash-only before).
-  - **`local`** — upgraded from a `.txt` stub to a real deterministic
-    retro-landscape SVG/PNG (seeded per slug; free, network-less, CI-safe).
-  - **`--prompt-engine claude`** — optional prompt director that has Claude
-    write the art prompt for any raster vendor.
+  - **Review** (`review_engine: claude`, default) — Claude inspects the
+    rendered image with vision against the article and style; when it
+    misrepresents the subject or contains text artifacts, Claude writes a
+    corrected prompt and the engine regenerates once.
+  - Claude credential chain: `CLAUDE_CODE_OAUTH_TOKEN` (`claude setup-token`)
+    → `ANTHROPIC_AUTH_TOKEN` → `ANTHROPIC_API_KEY` → a logged-in `claude` CLI
+    (zero-setup for Claude Code users); orchestration degrades gracefully to
+    template prompts without one.
   - New unit suite [`test/test_preview_generator.py`](test/test_preview_generator.py)
-    (62 tests, zero network) wired into `test_core.sh`.
+    (83 tests, zero network) wired into `test_core.sh`.
 
 ### Fixed
 
@@ -64,12 +65,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Preview-image default provider is now `claude`** (was `openai`). Users
-  with only `OPENAI_API_KEY` configured get an actionable error naming the
-  one-flag remedy (`--provider openai` or `preview_images.provider: openai`)
-  — there is no silent provider fallback. `scripts/features/generate-preview-images`
-  is now a thin wrapper delegating to the Python engine (full CLI flag surface
-  preserved; `rake preview:*` and the VS Code tasks work unchanged).
+- **Preview-image generation is now Claude-orchestrated by default**
+  (`prompt_engine: claude` + `review_engine: claude`; disable with
+  `--prompt-engine template --review none`). The renderer default stays
+  `openai`. `scripts/features/generate-preview-images` is now a thin wrapper
+  delegating to the Python engine (full CLI flag surface preserved;
+  `rake preview:*` and the VS Code tasks work unchanged).
 - **CI test tiering** — the PR-blocking Playwright gate is now the new
   `critical` project (118 `@critical`-tagged, user-facing tests: navigation,
   search, mobile survival, theming baseline, security) instead of the full
