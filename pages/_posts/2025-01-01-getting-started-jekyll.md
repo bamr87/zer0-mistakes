@@ -15,8 +15,8 @@ author: Zer0-Mistakes Team
 featured: false
 estimated_reading_time: 15 minutes
 draft: true
-lastmod: 2025-12-01T02:21:11.238Z
-preview: /images/previews/business.png
+lastmod: 2026-07-13T00:00:00.000Z
+preview: /images/previews/getting-started-with-jekyll-your-first-static-site.png
 ---
 
 Welcome to Jekyll! This tutorial will guide you through creating your first static website using Jekyll, the popular static site generator.

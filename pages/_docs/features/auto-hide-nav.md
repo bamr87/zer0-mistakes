@@ -1,7 +1,8 @@
 ---
-lastmod: 2026-06-30T00:00:00.000Z
+lastmod: 2026-07-13T00:00:00.000Z
 title: Auto-hide Navigation
 description: Smart navigation bar that hides on scroll down and reappears on scroll up for maximum content visibility on mobile and desktop.
+preview: /images/previews/auto-hide-navigation.png
 layout: default
 categories:
     - docs

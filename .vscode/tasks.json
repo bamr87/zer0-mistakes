@@ -434,25 +434,25 @@
       "label": "🎨 Preview Images: Generate for Posts",
       "type": "shell",
       "command": "docker-compose",
-      "args": ["exec", "-T", "-e", "OPENAI_API_KEY=${env:OPENAI_API_KEY}", "jekyll", "bash", "-lc", "cd /site && ./scripts/generate-preview-images.sh --collection posts"],
+      "args": ["exec", "-T", "-e", "CLAUDE_CODE_OAUTH_TOKEN=${env:CLAUDE_CODE_OAUTH_TOKEN}", "-e", "ANTHROPIC_API_KEY=${env:ANTHROPIC_API_KEY}", "-e", "OPENAI_API_KEY=${env:OPENAI_API_KEY}", "jekyll", "bash", "-lc", "cd /site && ./scripts/generate-preview-images.sh --collection posts"],
       "options": { "cwd": "${workspaceFolder}" },
       "dependsOn": "Docker: Compose Up (Detached)",
       "group": "build",
       "presentation": { "echo": true, "reveal": "always", "focus": true, "panel": "new", "showReuseMessage": false, "clear": true },
       "problemMatcher": [],
-      "detail": "Generate AI preview images for posts missing previews (in container; needs OPENAI_API_KEY in your environment)."
+      "detail": "Generate AI preview images for posts missing previews (in container; default claude provider uses CLAUDE_CODE_OAUTH_TOKEN/ANTHROPIC_API_KEY from your environment or /site/.env; OPENAI_API_KEY for --provider openai)."
     },
     {
       "label": "🎨 Preview Images: Generate All",
       "type": "shell",
       "command": "docker-compose",
-      "args": ["exec", "-T", "-e", "OPENAI_API_KEY=${env:OPENAI_API_KEY}", "jekyll", "bash", "-lc", "cd /site && ./scripts/generate-preview-images.sh --collection all"],
+      "args": ["exec", "-T", "-e", "CLAUDE_CODE_OAUTH_TOKEN=${env:CLAUDE_CODE_OAUTH_TOKEN}", "-e", "ANTHROPIC_API_KEY=${env:ANTHROPIC_API_KEY}", "-e", "OPENAI_API_KEY=${env:OPENAI_API_KEY}", "jekyll", "bash", "-lc", "cd /site && ./scripts/generate-preview-images.sh --collection all"],
       "options": { "cwd": "${workspaceFolder}" },
       "dependsOn": "Docker: Compose Up (Detached)",
       "group": "build",
       "presentation": { "echo": true, "reveal": "always", "focus": true, "panel": "new", "showReuseMessage": false, "clear": true },
       "problemMatcher": [],
-      "detail": "Generate AI preview images for all content missing previews (in container; needs OPENAI_API_KEY in your environment)."
+      "detail": "Generate AI preview images for all content missing previews (in container; default claude provider uses CLAUDE_CODE_OAUTH_TOKEN/ANTHROPIC_API_KEY from your environment or /site/.env; OPENAI_API_KEY for --provider openai)."
     }
   ]
 }

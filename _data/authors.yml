@@ -47,11 +47,12 @@
 #                         generator. When a post sets `author: <this key>`, these
 #                         values WIN over _config.yml › preview_images for that
 #                         post's banner, giving each AI author a distinct look.
-#                         (scripts/features/generate-preview-images and
-#                          scripts/lib/preview_generator.py read this block.)
+#                         (Read by the consolidated engine
+#                          scripts/lib/preview_generator.py — every provider.)
 #     style: ..           Art-style prompt fragment (overrides preview_images.style).
 #     style_modifiers: .. Extra modifiers (overrides preview_images.style_modifiers).
-#     size/quality/model: Optional generator overrides (bash generator only).
+#     size/quality/model: Optional generator overrides (all providers; a model
+#                         from another vendor family falls back to the default).
 
 default:
   name: "Zer0-Mistakes Team"

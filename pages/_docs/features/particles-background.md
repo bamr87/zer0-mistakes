@@ -1,7 +1,8 @@
 ---
-lastmod: 2026-06-30T00:00:00.000Z
+lastmod: 2026-07-13T00:00:00.000Z
 title: Particles Background
 description: Interactive particle animation background using particles.js for visual enhancement on landing and hero sections.
+preview: /images/previews/particles-background.png
 layout: default
 categories:
     - docs

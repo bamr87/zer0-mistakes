@@ -14,13 +14,15 @@
 #   -h, --help              Show this help message
 #   -d, --dry-run           Preview what would be installed (no changes)
 #   -f, --force             Overwrite existing files
-#   -p, --provider PROVIDER Set default AI provider (openai, stability, local)
+#   -p, --provider PROVIDER Set default renderer
+#                           (openai, xai, stability, gemini, local)
 #   --no-config             Skip _config.yml modification
 #   --no-tasks              Skip VS Code tasks installation
 #
 # Requirements:
 #   - Jekyll site using zer0-mistakes theme
 #   - curl and jq installed
+#   - python3 with PyYAML (runs the generation engine)
 #   - Git repository (for version tracking)
 #
 
@@ -43,11 +45,13 @@ RAW_URL="https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main"
 SOURCE_FILES=(
     "scripts/features/generate-preview-images"
     "scripts/lib/preview_generator.py"
+    "scripts/dev/rasterize-svg.js"
     "_plugins/preview_image_generator.rb"
 )
 DEST_FILES=(
     "scripts/generate-preview-images.sh"
     "scripts/lib/preview_generator.py"
+    "scripts/dev/rasterize-svg.js"
     "_plugins/preview_image_generator.rb"
 )
 
@@ -96,20 +100,21 @@ ${YELLOW}OPTIONS:${NC}
     -h, --help              Show this help message
     -d, --dry-run           Preview what would be installed (no changes)
     -f, --force             Overwrite existing files
-    -p, --provider PROVIDER Set default AI provider (openai, stability, local)
+    -p, --provider PROVIDER Set default renderer
+                            (openai, xai, stability, gemini, local)
     --no-config             Skip _config.yml modification
     --no-tasks              Skip VS Code tasks installation
     -l, --local PATH        Copy files from local theme directory instead of downloading
 
 ${YELLOW}EXAMPLES:${NC}
-    # Install with defaults
+    # Install with defaults (OpenAI renders; Claude analyzes + reviews)
     ./$SCRIPT_NAME
 
     # Preview installation
     ./$SCRIPT_NAME --dry-run
 
-    # Install with Stability AI as default provider
-    ./$SCRIPT_NAME --provider stability
+    # Install with Gemini as the renderer
+    ./$SCRIPT_NAME --provider gemini
 
     # Force reinstall
     ./$SCRIPT_NAME --force
@@ -118,8 +123,13 @@ ${YELLOW}REMOTE INSTALLATION:${NC}
     curl -fsSL ${RAW_URL}/scripts/$SCRIPT_NAME | bash
 
 ${YELLOW}AFTER INSTALLATION:${NC}
-    1. Set your API key in .env file:
-       OPENAI_API_KEY=your-key-here
+    1. Set credentials in .env:
+       OPENAI_API_KEY=...            # the default renderer
+       Plus ONE Claude credential so Claude can analyze articles and
+       review the rendered images (optional — degrades to template prompts):
+       CLAUDE_CODE_OAUTH_TOKEN=...   # from \`claude setup-token\`
+       ANTHROPIC_API_KEY=...         # from console.anthropic.com
+       (or just have the \`claude\` CLI installed and logged in)
 
     2. Generate preview images:
        ./scripts/generate-preview-images.sh --list-missing
@@ -145,13 +155,13 @@ check_jekyll_site() {
 # Check dependencies
 check_dependencies() {
     local missing=()
-    
-    for cmd in curl jq; do
+
+    for cmd in curl jq python3; do
         if ! command -v "$cmd" &> /dev/null; then
             missing+=("$cmd")
         fi
     done
-    
+
     if [[ ${#missing[@]} -gt 0 ]]; then
         error "Missing required dependencies: ${missing[*]}"
         info "Install them with:"
@@ -159,7 +169,13 @@ check_dependencies() {
         info "  Ubuntu: sudo apt-get install ${missing[*]}"
         exit 1
     fi
-    
+
+    # The generation engine needs PyYAML (front matter / _config.yml parsing)
+    if ! python3 -c "import yaml" &> /dev/null; then
+        warn "PyYAML not found — the generator will not run until it is installed:"
+        info "  pip3 install pyyaml   (or: python3 -m pip install --user pyyaml)"
+    fi
+
     log "All dependencies satisfied"
 }
 
@@ -242,19 +258,22 @@ update_config() {
 
 # =============================================================================
 # AI Preview Image Generator Configuration
-# Feature: ZER0-003
+# Feature: ZER0-004
 # Documentation: ${REPO_URL}/blob/main/docs/features/preview-image-generator.md
 # =============================================================================
 preview_images:
   enabled: true
-  provider: ${DEFAULT_PROVIDER}          # openai, stability, or local
-  model: dall-e-3                        # OpenAI model to use
-  size: "1792x1024"                      # Landscape banner size
-  quality: standard                      # standard or hd
+  provider: ${DEFAULT_PROVIDER}          # renderer: openai, xai, stability, gemini, local
+  model: ""                              # empty = renderer default (gpt-image-2, grok-2-image, ...)
+  size: "1536x1024"                      # Landscape banner size
+  quality: auto                          # auto for GPT Image; standard/hd for DALL-E 3
   style: "retro pixel art, 8-bit video game aesthetic, vibrant colors, nostalgic, clean pixel graphics"
   style_modifiers: "pixelated, retro gaming style, CRT screen glow effect, limited color palette"
   output_dir: assets/images/previews     # Where to save generated images
-  auto_generate: false                   # Generate during build (slow, use script instead)
+  prompt_engine: claude                  # claude analyzes the article (template = built-in prompt)
+  review_engine: claude                  # claude reviews the render (none = skip)
+  assets_prefix: /assets                 # Prefix prepended to relative preview paths
+  auto_prefix: true                      # Auto-add assets_prefix when missing
   collections:                           # Collections to scan for missing previews
     - posts
     - docs
@@ -270,28 +289,32 @@ create_env_example() {
     
     if [[ -f "$env_example" ]]; then
         # Check if our keys are already there
-        if grep -q "OPENAI_API_KEY" "$env_example"; then
+        if grep -q "CLAUDE_CODE_OAUTH_TOKEN" "$env_example"; then
             info ".env.example already contains preview generator keys"
             return 0
         fi
     fi
-    
+
     if [[ "$DRY_RUN" == true ]]; then
         dry_run_log "Would add API keys to .env.example"
         return 0
     fi
-    
+
     step "Updating .env.example"
-    
+
     cat >> "$env_example" << 'EOF'
 
-# AI Preview Image Generator API Keys
-# Get your key from: https://platform.openai.com/api-keys
-OPENAI_API_KEY=your-openai-api-key-here
+# AI Preview Image Generator credentials
+# Renderer (the default provider is openai):
+# OPENAI_API_KEY=...      # https://platform.openai.com/api-keys (also powers --enhance)
+# XAI_API_KEY=...         # https://console.x.ai/
+# STABILITY_API_KEY=...   # https://platform.stability.ai/
+# GEMINI_API_KEY=...      # https://aistudio.google.com/apikey
 
-# Stability AI (alternative provider)
-# Get your key from: https://platform.stability.ai/
-STABILITY_API_KEY=your-stability-api-key-here
+# Claude orchestration (analyzes articles + reviews renders) — any ONE of
+# (or a logged-in `claude` CLI; optional, degrades to template prompts):
+# CLAUDE_CODE_OAUTH_TOKEN=sk-ant-oat01-...   # from `claude setup-token`
+# ANTHROPIC_API_KEY=sk-ant-...               # from console.anthropic.com
 EOF
     
     log "Updated .env.example"
@@ -431,9 +454,10 @@ print_instructions() {
     echo ""
     echo -e "${YELLOW}NEXT STEPS:${NC}"
     echo ""
-    echo "  1. ${BLUE}Set up your API key:${NC}"
-    echo "     cp .env.example .env"
-    echo "     # Edit .env and add your OPENAI_API_KEY"
+    echo "  1. ${BLUE}Set up credentials:${NC}"
+    echo "     cp .env.example .env     # add OPENAI_API_KEY (the renderer)"
+    echo "     claude setup-token       # optional: lets Claude analyze + review"
+    echo "     (a logged-in \`claude\` CLI also works for the Claude side)"
     echo ""
     echo "  2. ${BLUE}Check for missing preview images:${NC}"
     echo "     ./scripts/generate-preview-images.sh --list-missing"

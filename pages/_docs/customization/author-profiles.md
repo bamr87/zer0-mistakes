@@ -1,7 +1,8 @@
 ---
 title: Author Profiles and About-the-Author Bylines
 description: Define author profiles and surface bylines, bio cards, and per-author profile pages across every collection in the Zer0-Mistakes Jekyll theme.
-lastmod: 2026-06-22T00:00:00.000Z
+preview: /images/previews/author-profiles-and-about-the-author-bylines.png
+lastmod: 2026-07-13T00:00:00.000Z
 layout: default
 author: bamr87
 categories:
@@ -218,19 +219,19 @@ cassandra:
   preview:
     style: "dark cinematic security-operations noir, ominous mood, deep crimson-and-charcoal palette"
     style_modifiers: "heavy vignette, red alert glow, faint scanlines, sense of imminent threat"
-    # optional, bash generator only:
+    # optional generator overrides:
     # size: "1536x1024"
     # quality: "auto"
-    # model: "gpt-image-2"
+    # model: "gpt-image-2"   # models from another vendor family fall back to the provider default
 ```
 
 So Cassandra's banners come out as ominous security-ops noir while Vega's glow
 with vibrant data-visualization colour — each recognisably hers, with no
 front-matter changes per post. The override is resolved per file at generation
-time by both the canonical Bash generator
-(`scripts/features/generate-preview-images`) and the Python implementation
-(`scripts/lib/preview_generator.py`); regenerate an existing banner with
-`--force`.
+time by the consolidated engine (`scripts/lib/preview_generator.py`, run via
+`scripts/generate-preview-images.sh`) and applies to every renderer — the
+style also flows into Claude's art-direction brief and review criteria;
+regenerate an existing banner with `--force`.
 
 Two real banners generated for these personas — same generator, same prompt
 plumbing, two unmistakable looks:
@@ -245,13 +246,10 @@ plumbing, two unmistakable looks:
 > Generated banners are downscaled to ~1200px-wide JPEGs (OG-card friendly,
 > ~300 KB) rather than committed as multi-MB source PNGs.
 
-Precedence differs slightly between the two:
+Setting precedence, per file:
 
-- **Bash generator** (what `scripts/generate-preview-images.sh` runs):
-  **author `preview:` › `IMAGE_STYLE` env › `_config.yml` › built-in defaults.**
-- **Python generator** (`scripts/lib/preview_generator.py`, invoked directly):
-  **author `preview:` › `--style` flag › built-in default.** It does not read
-  `_config.yml`, so set the style there only if you use the Bash generator.
+**author `preview:` › CLI flags › environment variables (`IMAGE_STYLE`, …) ›
+`_config.yml` `preview_images` › built-in defaults.**
 
 ## SEO / AIEO
 

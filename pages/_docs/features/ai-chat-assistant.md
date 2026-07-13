@@ -1,7 +1,8 @@
 ---
 title: AI Chat Assistant (Claude + GitHub)
-lastmod: 2026-06-15T00:00:00.000Z
+lastmod: 2026-07-13T00:00:00.000Z
 description: Configure the Claude-powered AI chat assistant — proxy setup, streaming, and GitHub issue/PR actions — safely for GitHub Pages.
+preview: /images/previews/ai-chat-assistant-claude-github.png
 keywords:
     - claude api
     - ai chatbot

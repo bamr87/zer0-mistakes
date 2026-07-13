@@ -888,3 +888,31 @@ tasks:
     links: { issue: null, pr: null, roadmap: null }
     created: 2026-07-06
     updated: 2026-07-06
+  - id: T-034
+    title: "Remove the dead preview_image_generator.rb Jekyll plugin and its test surface"
+    status: open
+    priority: P3
+    area: infra
+    risk: standard
+    effort: M
+    source: user
+    route: code-fixer
+    summary: >-
+      _plugins/preview_image_generator.rb never loads anywhere (the github-pages gem
+      forces safe mode + a randomized plugins_dir), and the consolidated Python engine
+      (scripts/lib/preview_generator.py, ZER0-004) now owns all generation logic while
+      _includes/components/preview-image.html + _includes/content/seo.html cover
+      rendering in pure Liquid. Remove the plugin, its PreviewImageGeneratorTest half
+      of test/test_plugins.rb, the consumer fixture
+      test/fixtures/consumer-remote/_plugins/preview_image_generator.rb, and its
+      entries in REQUIRED_PLUGIN_FILES (scripts/bin/audit-consumer, sync-plugins,
+      manifest) and the installer SOURCE/DEST_FILES. Touches CODEOWNERS-owned
+      _plugins/ and scripts/bin/ paths, so this is a human-review PR.
+    acceptance:
+      - "_plugins/preview_image_generator.rb deleted; docs no longer advertise its Liquid filters."
+      - "test_plugins.rb keeps its content-statistics coverage; preview plugin specs removed."
+      - "audit-consumer/sync-plugins/manifest lists and the consumer fixture updated; test_audit.sh green."
+      - "install-preview-generator no longer ships the plugin; installer tests green."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-07-12
+    updated: 2026-07-12
