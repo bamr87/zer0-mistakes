@@ -1,0 +1,51 @@
+{
+  "slug": "obsidian-graph-index",
+  "base": "http://localhost:4605",
+  "route": "/zer0-mistakes/docs/obsidian/graph/",
+  "issue": 294,
+  "mergeBase": "acac2051ec79a81c04efb1af76fb4031e106a852",
+  "scenarios": [
+    {
+      "state": "before",
+      "js": "pre-fix (merge-base)",
+      "indexRequests": [
+        {
+          "path": "/assets/data/wiki-index.json",
+          "status": 404
+        },
+        {
+          "path": "/zer0-mistakes/assets/data/wiki-index.json",
+          "status": 200
+        },
+        {
+          "path": "/zer0-mistakes/assets/data/wiki-index.json",
+          "status": 200
+        }
+      ],
+      "rendered": false,
+      "alert": "Failed to load graph data: HTTP 404",
+      "stats": null
+    },
+    {
+      "state": "after",
+      "js": "fixed (PR head)",
+      "indexRequests": [
+        {
+          "path": "/zer0-mistakes/assets/data/wiki-index.json",
+          "status": 200
+        },
+        {
+          "path": "/zer0-mistakes/assets/data/wiki-index.json",
+          "status": 200
+        },
+        {
+          "path": "/zer0-mistakes/assets/data/wiki-index.json",
+          "status": 200
+        }
+      ],
+      "rendered": true,
+      "alert": null,
+      "stats": "164 pages 272 links 23 broken"
+    }
+  ]
+}
