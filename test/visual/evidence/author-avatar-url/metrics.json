@@ -1,0 +1,95 @@
+{
+  "slug": "author-avatar-url",
+  "issue": 297,
+  "beforeBase": "http://localhost:4607",
+  "afterBase": "http://localhost:4606",
+  "misconfig": "public_folder: \"/assets\"",
+  "pages": [
+    {
+      "route": "/authors/",
+      "before": [
+        {
+          "alt": "Zer0-Mistakes Team",
+          "src": "//assets/images/gravatar-small.png",
+          "protocolRelative": true,
+          "loaded": false
+        },
+        {
+          "alt": "Amr Abdel-Motaleb",
+          "src": "https://avatars.githubusercontent.com/u/10567847?v=4",
+          "protocolRelative": false,
+          "loaded": true
+        },
+        {
+          "alt": "Guest Author",
+          "src": "https://github.com/amr-bash.png",
+          "protocolRelative": false,
+          "loaded": true
+        },
+        {
+          "alt": "Cassandra",
+          "src": "//assets/images/authors/cassandra.svg",
+          "protocolRelative": true,
+          "loaded": false
+        },
+        {
+          "alt": "Vega",
+          "src": "//assets/images/authors/vega.svg",
+          "protocolRelative": true,
+          "loaded": false
+        }
+      ],
+      "after": [
+        {
+          "alt": "Zer0-Mistakes Team",
+          "src": "/assets/images/gravatar-small.png",
+          "protocolRelative": false,
+          "loaded": true
+        },
+        {
+          "alt": "Amr Abdel-Motaleb",
+          "src": "https://avatars.githubusercontent.com/u/10567847?v=4",
+          "protocolRelative": false,
+          "loaded": true
+        },
+        {
+          "alt": "Guest Author",
+          "src": "https://github.com/amr-bash.png",
+          "protocolRelative": false,
+          "loaded": true
+        },
+        {
+          "alt": "Cassandra",
+          "src": "/assets/images/authors/cassandra.svg",
+          "protocolRelative": false,
+          "loaded": true
+        },
+        {
+          "alt": "Vega",
+          "src": "/assets/images/authors/vega.svg",
+          "protocolRelative": false,
+          "loaded": true
+        }
+      ]
+    },
+    {
+      "route": "/authors/cassandra/",
+      "before": [
+        {
+          "alt": "Cassandra",
+          "src": "//assets/images/authors/cassandra.svg",
+          "protocolRelative": true,
+          "loaded": false
+        }
+      ],
+      "after": [
+        {
+          "alt": "Cassandra",
+          "src": "/assets/images/authors/cassandra.svg",
+          "protocolRelative": false,
+          "loaded": true
+        }
+      ]
+    }
+  ]
+}

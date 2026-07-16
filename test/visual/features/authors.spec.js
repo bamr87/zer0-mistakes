@@ -74,3 +74,58 @@ test.describe('Author breadcrumb existence-gate (issue #204)', () => {
     await expect(activeCrumb.first()).toBeVisible();
   });
 });
+
+// =============================================================================
+// Author avatar URLs — never protocol-relative (issue #297)
+// =============================================================================
+// _includes/components/author-avatar-url.html (the single shared resolver
+// behind author-card.html, author-eeat.html and the author/authors layouts)
+// used to build relative avatar paths by manual slash concatenation:
+//   {{ site.baseurl }}/{{ site.public_folder }}{{ _avatar }}
+// On consumer configurations where the joined slashes double up (public_folder
+// unset, or set with a leading slash — remote-theme consumers don't inherit
+// the theme's _config.yml), a site-absolute avatar like
+// /images/authors/cassandra.svg rendered as //assets/images/authors/…
+// — a protocol-relative URL the browser resolves against a host literally
+// named "assets", breaking the image everywhere it appears. The fix collapses
+// the path and applies relative_url exactly once.
+//
+// The dev build's own config can't reproduce that misconfiguration at test
+// time (Liquid renders server-side), so these tests pin the fix's output
+// invariants on every avatar surface: no avatar src may ever be
+// protocol-relative, and every site-served avatar URL must resolve. The
+// misconfigured-consumer states are captured as real before/after builds in
+// test/visual/evidence/author-avatar-url/.
+// =============================================================================
+
+const AVATAR_SELECTOR = [
+  'img.author-hero__avatar',
+  'section.authors-index img.rounded-circle',
+  'img.author-inline__avatar',
+  'img.author-card__avatar',
+].join(', ');
+
+test.describe('Author avatar URLs (issue #297)', () => {
+  for (const route of ['/authors/', '/authors/cassandra/']) {
+    test(`avatars on ${route} are never protocol-relative and all resolve`, async ({ page }) => {
+      await waitForJekyll(page, route);
+
+      const avatars = await page.$$eval(AVATAR_SELECTOR, (imgs) =>
+        imgs.map((img) => ({ alt: img.alt, src: img.getAttribute('src') || '' })),
+      );
+      expect(avatars.length).toBeGreaterThan(0);
+
+      for (const { alt, src } of avatars) {
+        // The #297 failure mode: "//assets/…" resolves to host "assets".
+        expect(src.startsWith('//'), `avatar for "${alt}" is protocol-relative: ${src}`).toBe(false);
+
+        // Site-served avatars must actually exist (viewport/lazy-loading
+        // independent — fetch the URL rather than reading naturalWidth).
+        if (src.startsWith('/')) {
+          const resp = await page.request.get(src);
+          expect(resp.status(), `avatar for "${alt}" at ${src}`).toBe(200);
+        }
+      }
+    });
+  }
+});
