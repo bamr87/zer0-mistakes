@@ -16,6 +16,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`show_hero` front-matter flag** — a post of any `post_type` can now opt
+  its `preview:` image into the top-of-article hero with `show_hero: true`,
+  without being promoted to `featured`/`breaking` (layout width, sidebar,
+  typography, and the post-type badge keep their `post_type` defaults);
+  existing posts are unchanged by construction — the flag is falsy everywhere
+  it isn't set ([#303](https://github.com/bamr87/zer0-mistakes/issues/303)).
+  (evidence:
+  [`test/visual/evidence/show-hero/`](test/visual/evidence/show-hero/README.md)
+  — hero renders only on the opted-in demo post; whole-build before/after
+  diff: exactly 1 page differs)
+
 - **Claude-orchestrated preview-image engine** (ZER0-004) — the three
   divergent implementations (1,404-line Bash engine, drifted Python
   duplicate, dead Jekyll plugin) are consolidated into ONE Python engine,

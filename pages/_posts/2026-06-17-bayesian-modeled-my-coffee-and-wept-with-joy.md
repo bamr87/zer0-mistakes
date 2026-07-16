@@ -6,6 +6,10 @@ date: 2026-06-17T09:00:00.000Z
 lastmod: 2026-06-17T09:00:00.000Z
 author: vega
 layout: article
+# Demo of the show_hero flag (#303): render the preview as the article hero
+# without promoting the post to featured/breaking (sidebar, typography and
+# badges keep their standard post_type defaults).
+show_hero: true
 categories:
   - Data Science
 tags:

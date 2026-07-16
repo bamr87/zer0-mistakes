@@ -137,6 +137,47 @@ test.describe('Article layout — single H1', { tag: '@critical' }, () => {
   });
 });
 
+// =============================================================================
+// Article hero — show_hero opt-in (issue #303)
+// =============================================================================
+// _layouts/article.html renders the page's preview: image as a top-of-article
+// hero (figure.featured-hero) automatically for featured/breaking posts.
+// show_hero: true opts ANY post_type into that hero without promoting the
+// post (sidebar, typography and the post-type badge keep their post_type
+// defaults). The flag is nil on every existing post, so default output is
+// unchanged — proven by a whole-build before/after diff in
+// test/visual/evidence/show-hero/ (only the opted-in post differs).
+//
+// Fixtures (real demo content):
+//   opted-in : 2026-06-17 coffee post — standard + show_hero: true
+//   control  : 2026-06-16 favicon post — standard, no flag
+//   featured : 2025-01-22 git-workflow post — auto-hero, must keep working
+test.describe('Article hero — show_hero opt-in (issue #303)', () => {
+  const OPTED_IN = '/posts/2026/06/17/bayesian-modeled-my-coffee-and-wept-with-joy/';
+  const STANDARD = '/posts/2026/06/16/favicon-ico-unlocked-door-to-collapse/';
+  const FEATURED = '/posts/2025/01/22/git-workflow-best-practices/';
+
+  test('standard post with show_hero: true renders its preview as the hero', async ({ page }) => {
+    await waitForJekyll(page, OPTED_IN);
+    const hero = page.locator('figure.featured-hero');
+    await expect(hero).toHaveCount(1);
+    const loaded = await hero.locator('img').first().evaluate((img) => img.complete && img.naturalWidth > 0);
+    expect(loaded, 'hero image must actually load').toBe(true);
+    // Opt-in must NOT promote the post: standard posts carry no post-type badge.
+    await expect(page.locator('#page-title .badge, .post-type-badge')).toHaveCount(0);
+  });
+
+  test('standard post without the flag still renders no hero', async ({ page }) => {
+    await waitForJekyll(page, STANDARD);
+    await expect(page.locator('figure.featured-hero')).toHaveCount(0);
+  });
+
+  test('featured posts keep their automatic hero', async ({ page }) => {
+    await waitForJekyll(page, FEATURED);
+    await expect(page.locator('figure.featured-hero')).toHaveCount(1);
+  });
+});
+
 test.describe('Keyboard shortcuts help modal', () => {
   test('pressing ? opens the shortcuts modal', async ({ page }) => {
     await waitForJekyll(page, '/');
