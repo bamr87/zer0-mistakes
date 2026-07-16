@@ -126,7 +126,6 @@ features:
       script: "scripts/generate-preview-images.sh"
       rasterizer: "scripts/dev/rasterize-svg.js"
       install: "scripts/install-preview-generator.sh"
-      plugin: "_plugins/preview_image_generator.rb"
       config: "_config.yml"
       include: "_includes/components/preview-image.html"
     installation:

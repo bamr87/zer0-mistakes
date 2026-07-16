@@ -46,13 +46,11 @@ SOURCE_FILES=(
     "scripts/features/generate-preview-images"
     "scripts/lib/preview_generator.py"
     "scripts/dev/rasterize-svg.js"
-    "_plugins/preview_image_generator.rb"
 )
 DEST_FILES=(
     "scripts/generate-preview-images.sh"
     "scripts/lib/preview_generator.py"
     "scripts/dev/rasterize-svg.js"
-    "_plugins/preview_image_generator.rb"
 )
 
 # Default options

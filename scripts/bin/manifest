@@ -67,7 +67,6 @@ THEME_DATA_PATHS=(
 # Plugins that remote_theme consumers MUST vendor locally (GitHub Pages won't
 # load plugins from a remote theme).
 REQUIRED_PLUGIN_PATHS=(
-    "_plugins/preview_image_generator.rb"
     "_plugins/obsidian_links.rb"
 )
 

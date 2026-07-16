@@ -190,7 +190,7 @@ if [[ ${#THEMABLE_DIRS[@]} -eq 0 ]]; then
     THEMABLE_DIRS=("_layouts" "_includes" "_sass" "assets/css" "assets/js")
 fi
 if [[ ${#REQUIRED_PLUGIN_FILES[@]} -eq 0 && ${#OPTIONAL_PLUGIN_FILES[@]} -eq 0 ]]; then
-    REQUIRED_PLUGIN_FILES=("_plugins/preview_image_generator.rb" "_plugins/obsidian_links.rb")
+    REQUIRED_PLUGIN_FILES=("_plugins/obsidian_links.rb")
     OPTIONAL_PLUGIN_FILES=("_plugins/admin_page_urls.rb" "_plugins/content_statistics_generator.rb" "_plugins/theme_version.rb")
 fi
 

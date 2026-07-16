@@ -136,19 +136,14 @@ Run the generation script:
 ./scripts/generate-preview-images.sh --dry-run
 ```
 
-### Liquid Tags
+### In Templates
+
+Rendering is pure Liquid via the theme's `components/preview-image.html`
+include (works under the `github-pages` gem's safe mode — no custom plugin
+required):
 
 ```liquid
-{% raw %}<!-- Show count of missing previews -->
-{% preview_image_status %}
-
-<!-- Get preview image path -->
-{{ page | preview_image_path }}
-
-<!-- Check if page has preview -->
-{% if page | has_preview_image %}
-  <img src="{{ page.preview | relative_url }}" alt="Preview">
-{% endif %}{% endraw %}
+{% raw %}{% include components/preview-image.html src=page.preview alt=page.title %}{% endraw %}
 ```
 
 ### In Front Matter
@@ -270,46 +265,6 @@ title: "My Technical Post"
 preview_style: "technical diagram, blueprint style, clean lines"
 ---
 ```
-
-## Plugin Details
-
-> **Note:** the Liquid filters and tags below come from an optional Jekyll
-> plugin that only loads in unrestricted Jekyll builds. Under the
-> `github-pages` gem (safe mode) custom plugins never load — the theme's own
-> rendering uses the pure-Liquid `components/preview-image.html` include
-> instead, so generated previews display either way.
-
-### File Location
-
-```text
-_plugins/preview_image_generator.rb
-```
-
-### Available Methods
-
-```ruby
-# Check if document has preview
-PreviewImageGenerator.has_preview?(doc)
-
-# Get preview path
-PreviewImageGenerator.preview_path(doc)
-
-# Generate prompt from document
-PreviewImageGenerator.generate_prompt(doc)
-```
-
-### Liquid Filters
-
-| Filter | Description |
-|--------|-------------|
-| `preview_image_path` | Returns full preview image path |
-| `has_preview_image` | Returns true if preview exists |
-
-### Liquid Tags
-
-| Tag | Description |
-|-----|-------------|
-| `{% raw %}{% preview_image_status %}{% endraw %}` | Shows missing preview count |
 
 ## Image Specifications
 

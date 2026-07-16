@@ -40,7 +40,7 @@ Layouts            _sass/layouts/*          landing, section, navbar-extras, glo
 Markup             _includes/**, _layouts/** Liquid partials + page layouts (root → default → …)
 Behavior           assets/js/**            ES modules under assets/js/modules/navigation|theme/,
                                            plus per-feature scripts (search, code-copy, obsidian, …)
-Server             _plugins/**             obsidian links, search/sitemap, statistics, previews
+Server             _plugins/**             obsidian links, search/sitemap, statistics
 ```
 
 Runtime theming flows: compiled `--zer0-*` defaults → `_includes/core/tokens-inline.html` (site `theme_color` + Appearance localStorage) → per-skin `[data-theme-skin]` overrides. Tests: a platform-independent Playwright **smoke** tier (runs on macOS) guards DOM/CSS/computed-token behavior; a Linux-baselined **snapshots** tier guards the 9 skins' pixels in CI.
@@ -145,7 +145,6 @@ Every catalogued component, its primary implementation file, primary test, and c
 | Post-type badge | `_includes/components/post-type-badge.html` | — | 🔴 none |
 | Feature card | `_includes/components/feature-card.html` | — | 🔴 none |
 | Preview image | `_includes/components/preview-image.html` | — | 🔴 none |
-| Preview-image generator plugin | `_plugins/preview_image_generator.rb` | — | 🔴 none |
 | Comments (Giscus) | `_includes/content/giscus.html` | — | 🔴 none |
 | Share actions (LinkedIn enhancement) | `assets/js/share-actions.js` | — | 🔴 none |
 | Posts pagination | `assets/js/posts-pagination.js` | `features/layouts.spec.js` | 🟡 partial |
@@ -1057,20 +1056,10 @@ The components that render long-form and reference content in zer0-mistakes — 
 - **Capabilities:** external-URL passthrough (`://`); auto-prefix `/assets` when `auto_prefix` (skips if already prefixed); `relative_url` normalization; `loading="lazy"` default; alt escaping; optional inline `style`.
 - **Source:**
   - Markup: `_includes/components/preview-image.html`
-  - Plugin/data: `_plugins/preview_image_generator.rb`, `site.preview_images.*` config, `site.teaser`
+  - Data: `site.preview_images.*` config, `site.teaser`
 - **API surface:** include params `src`, `alt`, `class` (default `card-img-top`), `style`, `loading`; config keys `preview_images.assets_prefix`, `preview_images.auto_prefix`. No CSS/JS.
 - **Tests:** No automated tests of the include's path logic.
-- **Gaps / improvement ideas:** No `width`/`height` attributes → cumulative-layout-shift risk and no intrinsic ratio. The Ruby plugin's path-existence/normalization logic (`has_preview?`, `normalize_preview_path`, missing-preview index) is untested — a Ruby/RSpec or shell test would catch regressions in the assets-prefix candidates. The Liquid include and the Ruby plugin re-implement prefix logic separately (drift risk). No `decoding="async"`.
-
-### Preview-image generator plugin
-
-- **Purpose:** Jekyll plugin providing Liquid filters/tags + a build-time generator hook to track which collection documents are missing AI-generated preview images (actual generation is a separate shell script).
-- **Capabilities:** filters `has_preview_image`, `preview_image_path`, `preview_filename`; tags `{% preview_image_status %}` (badge of missing count) and `{% preview_images_missing %}` (list-group of missing docs); builds a cached `preview_image_index` over configured collections (`posts`, `docs`, `quickstart` default) + posts; validates preview is an image path/URL and the file exists; `auto_generate` logs a not-implemented warning.
-- **Source:**
-  - Plugin/data: `_plugins/preview_image_generator.rb`; config `preview_images:` in `_config.yml`
-- **API surface:** Liquid filters `| has_preview_image`, `| preview_image_path`, `| preview_filename`; tags `preview_image_status`, `preview_images_missing`; `site.data['preview_images_missing']`, `site.data['preview_image_index']`; defaults provider `openai`/`dall-e-3`, `output_dir: assets/images/previews`.
-- **Tests:** No automated tests (no Ruby/RSpec spec under `test/` for this plugin).
-- **Gaps / improvement ideas:** `has_preview?` regex `\.(png|jpe?g|gif|svg|webp)$` rejects query-string'd or extensionless URLs; non-HTTP external schemes unhandled. The status/missing tags emit raw HTML strings — untested, brittle. No coverage for the candidate-path resolution across `assets/` variants. `auto_generate` is dead (warns + does nothing).
+- **Gaps / improvement ideas:** No `width`/`height` attributes → cumulative-layout-shift risk and no intrinsic ratio. No `decoding="async"`. Generation of the images themselves lives in the Python engine (`scripts/lib/preview_generator.py`, driven by `scripts/generate-preview-images.sh`).
 
 ### Comments (Giscus)
 

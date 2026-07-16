@@ -172,7 +172,6 @@ fi
 # Default hardcoded fallback if manifest has no plugin entries at all
 if [[ ${#REQUIRED_PLUGINS[@]} -eq 0 && ${#OPTIONAL_PLUGINS[@]} -eq 0 ]]; then
     REQUIRED_PLUGINS=(
-        "_plugins/preview_image_generator.rb"
         "_plugins/obsidian_links.rb"
     )
     OPTIONAL_PLUGINS=(

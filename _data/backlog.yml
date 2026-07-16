@@ -890,7 +890,7 @@ tasks:
     updated: 2026-07-06
   - id: T-034
     title: "Remove the dead preview_image_generator.rb Jekyll plugin and its test surface"
-    status: open
+    status: done
     priority: P3
     area: infra
     risk: standard
@@ -913,6 +913,6 @@ tasks:
       - "test_plugins.rb keeps its content-statistics coverage; preview plugin specs removed."
       - "audit-consumer/sync-plugins/manifest lists and the consumer fixture updated; test_audit.sh green."
       - "install-preview-generator no longer ships the plugin; installer tests green."
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: 302, pr: null, roadmap: null }
     created: 2026-07-12
-    updated: 2026-07-12
+    updated: 2026-07-16

@@ -176,8 +176,7 @@ Custom Jekyll plugins:
 
 ```text
 _plugins/
-├── theme_version.rb
-└── preview_image_generator.rb
+└── theme_version.rb
 ```
 
 ## Build Output

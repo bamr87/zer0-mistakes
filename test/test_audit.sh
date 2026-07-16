@@ -136,7 +136,7 @@ assert_output_contains "remote: flags MISSING_PLUGIN" "MISSING_PLUGIN" "$output"
 echo ""
 echo "--- 8. Remote-theme consumer: OK plugin ---"
 
-assert_output_contains "remote: flags OK for preview_image_generator.rb" "OK" "$output"
+assert_output_contains "remote: flags OK for theme_version.rb" "OK" "$output"
 
 # ---------------------------------------------------------------------------
 echo ""
