@@ -3,11 +3,15 @@
   "packages": {
     ".": {
       "release-type": "ruby",
+      "component": "jekyll-theme-zer0",
+      "include-component-in-tag": false,
       "version-file": "lib/jekyll-theme-zer0/version.rb",
       "changelog-path": "CHANGELOG.md",
       "bump-minor-pre-major": false,
       "extra-files": [
-        { "type": "json", "path": "package.json", "jsonpath": "$.version" }
+        { "type": "json", "path": "package.json", "jsonpath": "$.version" },
+        { "type": "json", "path": "package-lock.json", "jsonpath": "$.version" },
+        { "type": "json", "path": "package-lock.json", "jsonpath": "$.packages[\"\"].version" }
       ]
     }
   }
