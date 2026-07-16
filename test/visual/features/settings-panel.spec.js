@@ -170,3 +170,47 @@ test.describe('Settings offcanvas (rebuilt)', () => {
     }
   });
 });
+
+// =============================================================================
+// Quick Links Dev row — environment gating (issue #298)
+// =============================================================================
+// env-switcher.html builds dev_url from a hardcoded http://localhost:<port>
+// and — before the fix — rendered the Quick Links "Dev" row unconditionally,
+// so every JEKYLL_ENV=production build shipped a dead localhost:4000 row (in
+// the site-wide Settings offcanvas, i.e. on EVERY page) to real visitors.
+// The fix wraps the row in {% unless is_production %}.
+//
+// The dev server IS the non-production context, so these tests pin the
+// preserved half of the contract: the Dev row stays available for local work.
+// The production half (row absent, no localhost in the Settings chrome) is
+// Liquid-rendered at build time and can't be flipped from a running dev
+// server — it's captured as real JEKYLL_ENV=production before/after builds in
+// test/visual/evidence/env-switcher-prod/.
+test.describe('Quick Links environment gating (issue #298)', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForJekyll(page, '/');
+    await expect(page.locator(PANEL)).toBeAttached();
+    await openSettings(page);
+    await page.click('#site-tab');
+    await expect(page.locator('#site-pane')).toHaveClass(/active/);
+  });
+
+  test('development build keeps the Dev quick link (localhost) available', async ({ page }) => {
+    const quickLinks = page.locator('#site-pane .card', { hasText: 'Quick Links' });
+    await expect(quickLinks).toHaveCount(1);
+
+    const devRow = quickLinks.locator('li.list-group-item', { has: page.locator('.badge', { hasText: 'Dev' }) });
+    await expect(devRow).toHaveCount(1);
+    await expect(devRow.locator('a').first()).toHaveAttribute('href', /localhost:\d+/);
+  });
+
+  test('Prod and Source rows render unconditionally', async ({ page }) => {
+    const quickLinks = page.locator('#site-pane .card', { hasText: 'Quick Links' });
+    await expect(
+      quickLinks.locator('li.list-group-item', { has: page.locator('.badge', { hasText: 'Prod' }) }),
+    ).toHaveCount(1);
+    await expect(
+      quickLinks.locator('li.list-group-item', { has: page.locator('.badge', { hasText: 'Source' }) }),
+    ).toHaveCount(1);
+  });
+});
