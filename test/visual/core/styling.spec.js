@@ -86,7 +86,7 @@ test.describe('Layout chrome', { tag: '@critical' }, () => {
 
   test('default layout page exposes docs-layout regions', async ({ page }) => {
     await waitForJekyll(page, UI_ROUTES.faq);
-    await expect(page.locator('main.bd-main')).toBeVisible();
+    await expect(page.locator('.bd-main')).toBeVisible();
     await expect(page.locator('.bd-content')).toBeVisible();
   });
 });

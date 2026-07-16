@@ -98,8 +98,9 @@
         <!-- MAIN CONTENT AREA        -->
         <!-- ======================== -->
         <!-- Skip-link target: keep a single, consistent #main-content anchor site-wide.
-             Semantic <main> landmark (consistent with the default/section/news layouts)
-             so assistive tech, search engines, and AI content extractors can isolate the
+             This is the ONE <main> landmark per page — child layouts (default/section/
+             news) must use non-landmark wrappers (<div>) inside it (issue #299) — so
+             assistive tech, search engines, and AI content extractors can isolate the
              primary content from the surrounding header/nav/footer chrome. -->
         <main id="main-content">
             {{ content }}
