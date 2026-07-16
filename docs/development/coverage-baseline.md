@@ -42,12 +42,13 @@ shape. Best-covered subsystem in the repo.
 
 ### 2 · Jekyll plugins — HIGH coverage ✅ *(was the #1 gap)*
 
-**Dedicated tests:** `test/test_plugins.rb` (19 runs / 29 assertions, T-011),
-wired into the core suite (`test_core.sh` → "Plugin Unit Specs").
+**Dedicated tests:** `test/test_plugins.rb` (T-011), wired into the core
+suite (`test_core.sh` → "Plugin Unit Specs"). The formerly-covered
+`_plugins/preview_image_generator.rb` was removed as dead code (T-034) —
+generation logic lives in `scripts/lib/preview_generator.py`.
 
 | Source | Lines | Covered by |
 |--------|------:|------------|
-| `_plugins/preview_image_generator.rb` | 350 | `test_plugins.rb` (config, path normalization, index dedupe, filename sanitization, existence checks) |
 | `_plugins/content_statistics_generator.rb` | 69 | `test_plugins.rb` (script discovery incl. theme fallback) |
 | `_plugins/theme_version.rb` | 88 | ❌ none — see T-019 |
 

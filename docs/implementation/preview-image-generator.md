@@ -229,26 +229,15 @@ The installer adds VS Code tasks for easy access:
 
 ### Liquid Integration
 
-> **Note:** these filters come from `_plugins/preview_image_generator.rb`,
-> which only loads in unrestricted Jekyll builds. Under the `github-pages` gem
-> (safe mode) custom plugins never load — the theme's own rendering uses the
-> pure-Liquid `_includes/components/preview-image.html` instead.
-
-The Jekyll plugin provides Liquid filters and tags:
+Rendering is pure Liquid — no custom plugin required, so it works under the
+`github-pages` gem (safe mode) too. Use the theme's
+`_includes/components/preview-image.html` include, which handles the assets
+prefix, external URLs, and the `site.teaser` fallback:
 
 {% raw %}
 
 ```liquid
-{% comment %} Check if page has preview image {% endcomment %}
-{% if page | has_preview_image %}
-  <img src="{{ page | preview_image_path | relative_url }}" alt="{{ page.title }}">
-{% endif %}
-
-{% comment %} Show missing preview count {% endcomment %}
-{% preview_image_status %}
-
-{% comment %} List all missing previews {% endcomment %}
-{% preview_images_missing %}
+{% include components/preview-image.html src=page.preview alt=page.title %}
 ```
 
 {% endraw %}

@@ -5,7 +5,6 @@
 # Jekyll plugins (T-011):
 #
 #   _plugins/content_statistics_generator.rb (after_init hook helpers)
-#   _plugins/preview_image_generator.rb      (config/path/index logic)
 #
 # Follows the test_ruby_converter.rb pattern: stub Jekyll/Liquid just enough
 # that requiring the plugins doesn't boot Jekyll, then drive the pure logic
@@ -58,7 +57,6 @@ module Liquid
 end
 
 require_relative '../_plugins/content_statistics_generator'
-require_relative '../_plugins/preview_image_generator'
 require_relative '../_plugins/theme_version'
 require_relative '../_plugins/sanitize_config_filter'
 
@@ -68,7 +66,6 @@ FakeSite = Struct.new(:pages, :data, :config, :source, :theme, :collections) do
     name == :posts ? false : super
   end
 end
-FakeDoc = Struct.new(:data, :site, :relative_path, :basename_without_ext)
 
 # ---------------------------------------------------------------------------
 class ContentStatisticsGeneratorTest < Minitest::Test
@@ -100,119 +97,6 @@ class ContentStatisticsGeneratorTest < Minitest::Test
       site = FakeSite.new([], {}, {}, dir, nil, nil)
       assert_nil Jekyll::ContentStatisticsBuild.generator_script(site)
     end
-  end
-end
-
-# ---------------------------------------------------------------------------
-class PreviewImageGeneratorTest < Minitest::Test
-  PIG = Jekyll::PreviewImageGenerator
-
-  def site_with(config: {}, source: Dir.tmpdir, collections: {})
-    FakeSite.new([], {}, { 'preview_images' => config }, source, nil, collections)
-  end
-
-  def doc_with(data, site, relative_path: 'pages/_posts/example.md', basename: 'example')
-    FakeDoc.new(data, site, relative_path, basename)
-  end
-
-  # --- config -------------------------------------------------------------
-  def test_config_merges_site_overrides_onto_defaults
-    cfg = PIG.config(site_with(config: { 'provider' => 'xai' }))
-    assert_equal 'xai', cfg['provider']
-    assert_equal 'assets/images/previews', cfg['output_dir'] # default kept
-  end
-
-  def test_config_handles_missing_block
-    site = FakeSite.new([], {}, {}, Dir.tmpdir, nil, {})
-    assert_equal PIG::DEFAULTS, PIG.config(site)
-  end
-
-  # --- normalize_preview_path ----------------------------------------------
-  def test_normalize_adds_assets_prefix
-    assert_equal '/assets/images/p.png',
-                 PIG.normalize_preview_path('/images/p.png', PIG::DEFAULTS)
-  end
-
-  def test_normalize_leaves_prefixed_and_http_paths
-    assert_equal '/assets/images/p.png',
-                 PIG.normalize_preview_path('/assets/images/p.png', PIG::DEFAULTS)
-    assert_equal 'http://x/p.png', PIG.normalize_preview_path('http://x/p.png', PIG::DEFAULTS)
-  end
-
-  def test_normalize_respects_auto_prefix_off
-    cfg = PIG::DEFAULTS.merge('auto_prefix' => false)
-    assert_equal '/images/p.png', PIG.normalize_preview_path('/images/p.png', cfg)
-  end
-
-  # --- has_preview? / preview_path edge cases ------------------------------
-  def test_missing_front_matter_key_is_not_a_preview
-    site = site_with
-    refute PIG.has_preview?(doc_with({}, site))
-    assert_nil PIG.preview_path(doc_with({}, site))
-  end
-
-  def test_text_description_is_rejected
-    site = site_with
-    doc = doc_with({ 'preview' => 'a lovely banner of mountains' }, site)
-    refute PIG.has_preview?(doc)
-    assert_nil PIG.preview_path(doc)
-  end
-
-  def test_external_url_counts_as_preview
-    site = site_with
-    doc = doc_with({ 'preview' => 'https://cdn.example/p.png' }, site)
-    assert PIG.has_preview?(doc)
-    assert_equal 'https://cdn.example/p.png', PIG.preview_path(doc)
-  end
-
-  def test_local_preview_must_exist_on_disk
-    Dir.mktmpdir do |dir|
-      site = site_with(source: dir)
-      doc = doc_with({ 'preview' => '/images/previews/p.png' }, site)
-      refute PIG.has_preview?(doc), 'missing file should not count'
-
-      FileUtils.mkdir_p(File.join(dir, 'assets', 'images', 'previews'))
-      File.write(File.join(dir, 'assets', 'images', 'previews', 'p.png'), 'x')
-      assert PIG.has_preview?(doc), 'existing file should count'
-      assert_equal '/assets/images/previews/p.png', PIG.preview_path(doc)
-    end
-  end
-
-  # --- build_index (empty collections, duplicate slugs) --------------------
-  def collection_with(docs)
-    Struct.new(:docs).new(docs)
-  end
-
-  def test_build_index_with_empty_collections
-    site = site_with(config: { 'collections' => ['docs'] }, collections: {})
-    index = PIG.build_index(site)
-    assert_equal({}, index['documents'])
-    assert_equal [], index['missing']
-  end
-
-  def test_build_index_deduplicates_by_relative_path
-    Dir.mktmpdir do |dir|
-      site = site_with(config: { 'collections' => %w[docs quickstart] }, source: dir)
-      dup = doc_with({ 'title' => 'Dup' }, site, relative_path: 'pages/_docs/dup.md', basename: 'dup')
-      site.collections = { 'docs' => collection_with([dup]), 'quickstart' => collection_with([dup]) }
-      index = PIG.build_index(site)
-      assert_equal 1, index['documents'].size, 'same relative_path indexed once'
-      assert_equal 1, index['missing'].size
-      assert_equal 'docs', index['documents']['pages/_docs/dup.md']['collection']
-    end
-  end
-
-  # --- generate_filename ----------------------------------------------------
-  def test_generate_filename_sanitizes_slug
-    site = site_with
-    doc = doc_with({ 'slug' => 'Héllo World! (v2)' }, site, basename: 'ignored')
-    assert_equal 'h-llo-world-v2-preview.png', PIG.generate_filename(doc)
-  end
-
-  def test_generate_filename_falls_back_to_basename
-    site = site_with
-    doc = doc_with({}, site, basename: 'my-post')
-    assert_equal 'my-post-preview.png', PIG.generate_filename(doc)
   end
 end
 

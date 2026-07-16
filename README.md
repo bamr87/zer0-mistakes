@@ -248,7 +248,7 @@ zer0-mistakes treats AI as core infrastructure across **install → author → b
 | **File-scoped instructions** | `applyTo:` globs auto-load guidance for `_layouts/`, `_includes/`, `scripts/`, `test/`, `docs/`, version files | [`.github/instructions/`](.github/instructions/) |
 | **Reusable agent prompts** | `commit-publish`, `frontmatter-maintainer`, `seed` (full-rebuild blueprint) | [`.github/prompts/`](.github/prompts/) |
 | **Cursor slash-commands** | Mirrors prompts as `/commit-publish`, `/frontend-run-improve` | [`.cursor/commands/`](.cursor/commands/) |
-| **AI preview images** | Jekyll plugin + script generate OpenAI/DALL·E images for posts missing previews | [`_plugins/preview_image_generator.rb`](_plugins/preview_image_generator.rb), [`scripts/generate-preview-images.sh`](scripts/generate-preview-images.sh) |
+| **AI preview images** | Python engine + script generate OpenAI/DALL·E images for posts missing previews | [`scripts/lib/preview_generator.py`](scripts/lib/preview_generator.py), [`scripts/generate-preview-images.sh`](scripts/generate-preview-images.sh) |
 | **AI release pipeline** | Conventional-commit analyzer chooses MAJOR/MINOR/PATCH, writes CHANGELOG, tags & publishes | [`scripts/analyze-commits.sh`](scripts/analyze-commits.sh), [`scripts/bin/release`](scripts/bin/release) |
 | **AIEO content layer** | `SoftwareApplication`, `WebPage`, `FAQPage`, `Person` JSON-LD; glossary; FAQ; dated roadmap | [See AIEO section](#-aieo-optimized--built-for-ai-citation) |
 
@@ -303,7 +303,7 @@ zer0-mistakes is a layered system: your content (Markdown + YAML) flows through 
 | **Development** | Docker | Cross-platform consistency |
 | **Templates** | Liquid | Dynamic content rendering |
 | **AI Agents** | Copilot · Codex · Cursor · Claude Code · Aider · Jules · Continue | Multi-tool agentic development via [`AGENTS.md`](AGENTS.md) + `.github/instructions/` |
-| **AI Content** | OpenAI Images API | AI-generated preview images via [`_plugins/preview_image_generator.rb`](_plugins/preview_image_generator.rb) |
+| **AI Content** | OpenAI Images API | AI-generated preview images via [`scripts/lib/preview_generator.py`](scripts/lib/preview_generator.py) |
 | **AI Automation** | Conventional-commit analyzer | Auto semantic versioning + changelog ([`scripts/analyze-commits.sh`](scripts/analyze-commits.sh)) |
 | **AIEO** | JSON-LD + FAQ + Glossary schema | Optimized for AI citation and retrieval |
 | **Analytics** | PostHog | Privacy-first tracking |

@@ -232,7 +232,7 @@ test_yaml_syntax() {
     return 0
 }
 
-# Test plugin unit specs (T-011: content statistics, preview images, admin URLs)
+# Test plugin unit specs (T-011: content statistics, theme version, config sanitizer)
 test_plugin_unit_specs() {
     if command -v ruby &>/dev/null; then
         ruby "$SCRIPT_DIR/test_plugins.rb" > /dev/null 2>&1

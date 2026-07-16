@@ -26,7 +26,6 @@ theme_data_paths:
 # Plugin files that consumers using remote_theme MUST vendor locally.
 # GitHub Pages does not load plugins from a remote_theme source.
 required_plugin_paths:
-  - _plugins/preview_image_generator.rb
   - _plugins/obsidian_links.rb
 # Optional plugins consumers can vendor for enhanced functionality.
 optional_plugin_paths:
@@ -36,7 +35,6 @@ optional_plugin_paths:
 
 # Legacy alias — all plugin paths combined (kept for backward compatibility).
 plugin_paths:
-  - _plugins/preview_image_generator.rb
   - _plugins/obsidian_links.rb
   - _plugins/admin_page_urls.rb
   - _plugins/content_statistics_generator.rb
