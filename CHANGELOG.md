@@ -77,6 +77,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   — 4 protocol-relative avatars → 0, all avatars loading, on a misconfigured
   consumer build)
 
+- **Intro hero banner renders on project sites** — `content/intro.html` now
+  applies `relative_url` to the banner image exactly once (in the
+  `preview_path` assignment logic), instead of a second time at the point of
+  use, which doubled the baseurl segment on any site with a non-empty
+  `baseurl` (`url('/reponame/reponame/assets/…')` → 404 → gradient-only hero)
+  and mangled absolute preview URLs
+  ([#293](https://github.com/bamr87/zer0-mistakes/issues/293)). (evidence:
+  [`test/visual/evidence/intro-banner-baseurl/`](test/visual/evidence/intro-banner-baseurl/README.md)
+  — background fetch 404 → 200 on both preview branches of a baseurl'd build)
+
 - **Preview-image config keys `enabled`, `assets_prefix`, `auto_prefix` and
   `collections` are now honored by the generator** (the Bash engine ignored
   them), and front-matter `preview:` updates are scoped to the front-matter

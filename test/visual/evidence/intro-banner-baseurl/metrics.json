@@ -1,0 +1,31 @@
+{
+  "slug": "intro-banner-baseurl",
+  "issue": 293,
+  "beforeBase": "http://localhost:4609",
+  "afterBase": "http://localhost:4608",
+  "basePath": "/zer0-mistakes",
+  "pages": [
+    {
+      "route": "/zer0-mistakes/faq/",
+      "before": {
+        "bgUrl": "/zer0-mistakes/zer0-mistakes/assets/images/info-banner-mountain-wizard.png",
+        "status": 404
+      },
+      "after": {
+        "bgUrl": "/zer0-mistakes/assets/images/info-banner-mountain-wizard.png",
+        "status": 200
+      }
+    },
+    {
+      "route": "/zer0-mistakes/docs/obsidian/graph/",
+      "before": {
+        "bgUrl": "/zer0-mistakes/zer0-mistakes/assets/images/previews/obsidian-graph-view.png",
+        "status": 404
+      },
+      "after": {
+        "bgUrl": "/zer0-mistakes/assets/images/previews/obsidian-graph-view.png",
+        "status": 200
+      }
+    }
+  ]
+}
