@@ -77,13 +77,20 @@ async function capture(browser, base, route) {
 
 /** Whole-build rendered-output diff, normalizing non-rendered noise. */
 function buildDiff(beforeRoot, afterRoot) {
-  const norm = (p) =>
-    crypto.createHash('sha256').update(
-      fs.readFileSync(p, 'utf8')
-        .replace(/\?v=\d+/g, '?v=X')            // site.time cache-buster
-        .replace(/<!--[\s\S]*?-->/g, '')        // HTML comments are not rendered
-        .replace(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}( UTC)?/g, 'TS'), // build timestamps
-    ).digest('hex');
+  const norm = (p) => {
+    let s = fs.readFileSync(p, 'utf8')
+      .replace(/\?v=\d+/g, '?v=X'); // site.time cache-buster
+    // HTML comments are not rendered — strip repeatedly until a fixpoint so
+    // removal can never splice together a new `<!--` (CodeQL js/incomplete-
+    // multi-character-sanitization).
+    let prev;
+    do {
+      prev = s;
+      s = s.replace(/<!--[\s\S]*?-->/g, '');
+    } while (s !== prev);
+    s = s.replace(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}( UTC)?/g, 'TS'); // build timestamps
+    return crypto.createHash('sha256').update(s).digest('hex');
+  };
   const differing = [];
   const walk = (dir) => {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
