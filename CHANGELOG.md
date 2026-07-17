@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.27.0](https://github.com/bamr87/zer0-mistakes/compare/v1.26.0...v1.27.0) (2026-07-17)
+
+
+### Features
+
+* **scripts:** Claude-orchestrated preview images — Claude analyzes & reviews, image models render ([#296](https://github.com/bamr87/zer0-mistakes/issues/296)) ([acac205](https://github.com/bamr87/zer0-mistakes/commit/acac2051ec79a81c04efb1af76fb4031e106a852))
+
+
+### Bug Fixes
+
+* **ci:** secret scan matches added lines only, not context/removals/hunk headers ([#301](https://github.com/bamr87/zer0-mistakes/issues/301)) ([1b7175d](https://github.com/bamr87/zer0-mistakes/commit/1b7175ddece3d95aefc406f3b59df682db9fd0f2))
+* **obsidian:** graph reads OBSIDIAN_CONFIG.wikiIndexUrl that js-cdn.html emits ([#305](https://github.com/bamr87/zer0-mistakes/issues/305)) ([2875912](https://github.com/bamr87/zer0-mistakes/commit/28759128b7b352a054e642d153e5e38e16aa1e48))
+* **sass:** stack left-side FABs to prevent obsidian/feedback overlap ([#289](https://github.com/bamr87/zer0-mistakes/issues/289)) ([6cc4596](https://github.com/bamr87/zer0-mistakes/commit/6cc4596dff28d164386a16a6637420f84b4571bf))
+* **test:** repoint ZER0-003 to test_install_legacy_flags.sh after retirement ([#292](https://github.com/bamr87/zer0-mistakes/issues/292)) ([fd7a2ce](https://github.com/bamr87/zer0-mistakes/commit/fd7a2ce256e32d2f630bd82732227b54ba13d3dd))
+
 ## [1.26.0](https://github.com/bamr87/zer0-mistakes/compare/v1.25.0...v1.26.0) (2026-07-07)
 
 
