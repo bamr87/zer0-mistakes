@@ -66,9 +66,7 @@ A successful run ends with a summary and your next steps:
   4. Visit http://localhost:4000 to see your site
 ```
 
-The full install lays down the complete theme (~500 files: layouts, includes,
-Sass, assets, Docker config). The `--minimal` variant writes only the handful of
-config files below.
+The full install lays down the complete theme (~500 files: layouts, includes, Sass, assets, Docker config). The `--minimal` variant writes only the handful of config files below.
 
 Notes:
 
@@ -84,8 +82,7 @@ From inside your generated site folder:
 docker compose up        # or: docker-compose up (v1 syntax)
 ```
 
-The first run builds the image and installs gems, so it takes a few minutes.
-When it's ready you'll see Jekyll's server line:
+The first run builds the image and installs gems, so it takes a few minutes. When it's ready you'll see Jekyll's server line:
 
 ```text
        Jekyll Feed: Generating feed for posts

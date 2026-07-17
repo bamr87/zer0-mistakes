@@ -231,5 +231,4 @@ The modular architecture makes it easy to extend and customize for specific need
 ---
 
 _Generated: {{ 'now' | date: '%Y-%m-%d %H:%M:%S' }}_
-_Browser tested: Microsoft Edge_
-_Mobile tested: iOS Safari, Chrome Android_
+_Browser tested: Microsoft Edge_ _Mobile tested: iOS Safari, Chrome Android_

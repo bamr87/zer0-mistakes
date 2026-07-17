@@ -7,10 +7,7 @@ lastmod: 2026-05-31T12:00:00.000Z
 
 # Backlog Instructions
 
-`_data/backlog.yml` is the single source of truth for **tactical tasks** (granular,
-pickup-able work items). It is mirrored to GitHub Issues by `scripts/sync-backlog.rb`
-and drives the continuous-evolution loop. Full design:
-[`docs/systems/continuous-evolution.md`](../../docs/systems/continuous-evolution.md).
+`_data/backlog.yml` is the single source of truth for **tactical tasks** (granular, pickup-able work items). It is mirrored to GitHub Issues by `scripts/sync-backlog.rb` and drives the continuous-evolution loop. Full design: [`docs/systems/continuous-evolution.md`](../../docs/systems/continuous-evolution.md).
 
 ## 📂 Files in Scope
 
@@ -24,8 +21,7 @@ and drives the continuous-evolution loop. Full design:
 ## Rules
 
 - **Edit the file, never the issues.** Issue bodies are auto-generated and
-  overwritten on every sync (they carry a `<!-- backlog-id: T-NNN -->` marker used
-  for matching). Issue state follows the task `status`.
+overwritten on every sync (they carry a `<!-- backlog-id: T-NNN -->` marker used for matching). Issue state follows the task `status`.
 - **Ids are stable and never reused.** New tasks take the next `T-NNN` from
   `meta.next_id`; increment `meta.next_id` and bump `meta.updated` when adding.
 - **Every task needs checkable `acceptance` criteria.** The implement routine
@@ -37,13 +33,11 @@ and drives the continuous-evolution loop. Full design:
 - **Mark completion in the backlog, not by closing the issue.** Set the task to
   `status: done`; the next sync closes its issue.
 - **Keep the script dependency-free** (Ruby stdlib only) and compatible with the
-  macOS system Ruby 2.6 — mirror the YAML-load fallback used in
-  `scripts/generate-roadmap.rb`.
+macOS system Ruby 2.6 — mirror the YAML-load fallback used in `scripts/generate-roadmap.rb`.
 
 ## Sync contract
 
 - Tasks with status `open` / `in-progress` / `blocked` → an **open** issue.
 - Tasks with status `done` → their issue is **closed** (`completed`).
 - Managed labels (owned by the script, safe to reconcile): `agent-ready`,
-  `agent-hold`, `priority:P0..P3`, `area:*`, `risk:*`. Human-applied labels are
-  never removed.
+`agent-hold`, `priority:P0..P3`, `area:*`, `risk:*`. Human-applied labels are never removed.

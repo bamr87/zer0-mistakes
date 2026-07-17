@@ -5,10 +5,7 @@ description: "**WORKFLOW SKILL** — Read, draft, and post the GitHub Discussion
 
 # Giscus Conversation Builder
 
-Comments on this site are stored as **GitHub Discussions** (via Giscus, mapped by
-`pathname`). This skill drives [`scripts/bin/giscus-discussions`](../../../scripts/bin/giscus-discussions)
-to read those threads, build a reply with the reader's context in mind, and
-publish it — turning a page's comments into an actual conversation.
+Comments on this site are stored as **GitHub Discussions** (via Giscus, mapped by `pathname`). This skill drives [`scripts/bin/giscus-discussions`](../../../scripts/bin/giscus-discussions) to read those threads, build a reply with the reader's context in mind, and publish it — turning a page's comments into an actual conversation.
 
 ## When to use
 
@@ -46,9 +43,7 @@ publish it — turning a page's comments into an actual conversation.
 ./scripts/bin/giscus-discussions thread --number 7 --json   # machine-readable
 ```
 
-Read the rendered Markdown: original post, every comment, and nested replies.
-Each comment/reply prints its node id (e.g. `DC_…`) — you need it to reply to a
-specific comment.
+Read the rendered Markdown: original post, every comment, and nested replies. Each comment/reply prints its node id (e.g. `DC_…`) — you need it to reply to a specific comment.
 
 ### 2. Draft a reply (with context)
 
@@ -56,10 +51,7 @@ specific comment.
 ./scripts/bin/giscus-discussions draft --number 7 --out /tmp/giscus-reply.md
 ```
 
-This writes a scaffold: the full thread as **context** (not posted) plus a
-`===== REPLY =====` marker. Edit the section **below** the marker with the reply.
-Write as the maintainer: acknowledge the commenter, answer concretely, keep the
-project's voice. Only text below the marker is published.
+This writes a scaffold: the full thread as **context** (not posted) plus a `===== REPLY =====` marker. Edit the section **below** the marker with the reply. Write as the maintainer: acknowledge the commenter, answer concretely, keep the project's voice. Only text below the marker is published.
 
 ### 3. Post (always preview first)
 
@@ -76,8 +68,7 @@ project's voice. Only text below the marker is published.
 
 ### 4. Seed a thread (only if the page has none)
 
-Giscus auto-creates a discussion on the first visitor comment. To start one
-yourself for a page that has no thread:
+Giscus auto-creates a discussion on the first visitor comment. To start one yourself for a page that has no thread:
 
 ```bash
 ./scripts/bin/giscus-discussions seed --page /posts/new/ --title "/posts/new/" \
@@ -89,19 +80,15 @@ The title **must** equal the page's pathname so Giscus maps the widget to it.
 ## Rules of engagement
 
 - **Posting and seeding write to public GitHub Discussions.** Always run with
-  `--dry-run` first, show the rendered body, and get explicit user confirmation
-  before the real call. Never post on the user's behalf unprompted.
+`--dry-run` first, show the rendered body, and get explicit user confirmation before the real call. Never post on the user's behalf unprompted.
 - **One reply per intent.** Don't spray comments; compose one considered reply.
 - **Stay in the project's voice** and only state things you can support from the
   thread, the page, or the repo. Don't invent commitments or roadmap promises.
 - **Reply to the right node.** Use `--reply-to <comment id>` (from `thread`
   output) to thread under a specific comment; omit it for a top-level comment.
 - The script reads the repo from `gh repo view` and the category from
-  `_config.yml`; override with `--repo` / `--category-id` (or `GISCUS_REPO` /
-  `GISCUS_CATEGORY_ID`) when working against a fork.
+`_config.yml`; override with `--repo` / `--category-id` (or `GISCUS_REPO` / `GISCUS_CATEGORY_ID`) when working against a fork.
 
 ## Reporting back
 
-After acting, report: which page/discussion, a one-line summary of the thread,
-what you drafted, whether it was a dry-run or a real post, and the resulting
-comment URL when published.
+After acting, report: which page/discussion, a one-line summary of the thread, what you drafted, whether it was a dry-run or a real post, and the resulting comment URL when published.

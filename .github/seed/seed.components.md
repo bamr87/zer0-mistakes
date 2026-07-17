@@ -37,8 +37,7 @@ companion_to: "seed.prompt.md, seed.implementation.md, seed.build.md"
 
 ### 1. Root Layout {#root-layout}
 
-**File**: `_layouts/root.html`
-**Purpose**: Base HTML5 structure for all pages
+**File**: `_layouts/root.html` **Purpose**: Base HTML5 structure for all pages
 
 ```html
 <!DOCTYPE html>
@@ -54,8 +53,7 @@ companion_to: "seed.prompt.md, seed.implementation.md, seed.build.md"
 
 ### 2. Default Layout {#default-layout}
 
-**File**: `_layouts/default.html`
-**Purpose**: Main content layout with optional sidebar
+**File**: `_layouts/default.html` **Purpose**: Main content layout with optional sidebar
 
 ```html
 ---
@@ -85,8 +83,7 @@ layout: root
 
 ### 3. Journals Layout {#journals-layout}
 
-**File**: `_layouts/journals.html`
-**Purpose**: Blog post layout with metadata display
+**File**: `_layouts/journals.html` **Purpose**: Blog post layout with metadata display
 
 ```html
 ---
@@ -192,8 +189,7 @@ layout: default
 
 ### 4. Home Layout {#home-layout}
 
-**File**: `_layouts/home.html`
-**Purpose**: Homepage with featured content
+**File**: `_layouts/home.html` **Purpose**: Homepage with featured content
 
 ```html
 ---
@@ -284,8 +280,7 @@ layout: default
 
 ### 1. Head Include {#head-include}
 
-**File**: `_includes/core/head.html`
-**Purpose**: HTML head with meta tags, stylesheets, and analytics
+**File**: `_includes/core/head.html` **Purpose**: HTML head with meta tags, stylesheets, and analytics
 
 ```html
 <head>
@@ -428,8 +423,7 @@ layout: default
 
 ### 2. Header Include {#header-include}
 
-**File**: `_includes/core/header.html`
-**Purpose**: Responsive navigation header with Bootstrap navbar
+**File**: `_includes/core/header.html` **Purpose**: Responsive navigation header with Bootstrap navbar
 
 ```html
 <header class="border-bottom mb-4">
@@ -534,8 +528,7 @@ layout: default
 
 ### 3. Footer Include {#footer-include}
 
-**File**: `_includes/core/footer.html`
-**Purpose**: Site footer with copyright and links
+**File**: `_includes/core/footer.html` **Purpose**: Site footer with copyright and links
 
 ```html
 <footer class="footer mt-auto bg-dark text-white py-4">
@@ -728,8 +721,7 @@ layout: default
 
 ### 4. Sidebar Include {#sidebar-include}
 
-**File**: `_includes/sidebar-left.html`
-**Purpose**: Left sidebar with navigation and widgets
+**File**: `_includes/sidebar-left.html` **Purpose**: Left sidebar with navigation and widgets
 
 ```html
 <div class="sidebar-left sticky-top pt-4" style="top: 20px;">
@@ -823,9 +815,7 @@ layout: default
 
 ### PostHog Analytics {#posthog-analytics}
 
-**File**: `_includes/analytics/posthog.html`
-**Purpose**: Privacy-compliant analytics integration
-**Lines**: 281
+**File**: `_includes/analytics/posthog.html` **Purpose**: Privacy-compliant analytics integration **Lines**: 281
 
 ```liquid
 {{site.posthog_html_content}}
@@ -847,9 +837,7 @@ layout: default
 
 ### Cookie Consent Banner {#cookie-consent}
 
-**File**: `_includes/components/cookie-consent.html`
-**Purpose**: GDPR/CCPA compliant cookie management
-**Lines**: 382
+**File**: `_includes/components/cookie-consent.html` **Purpose**: GDPR/CCPA compliant cookie management **Lines**: 382
 
 ```liquid
 {{site.cookie_consent_html_content}}
@@ -869,8 +857,7 @@ layout: default
 
 ### Theme Info Component {#theme-info}
 
-**File**: `_includes/components/theme-info.html`
-**Purpose**: Display theme version and links
+**File**: `_includes/components/theme-info.html` **Purpose**: Display theme version and links
 
 ```html
 <div class="theme-info text-muted small">
@@ -1352,7 +1339,4 @@ Styles:
 
 ---
 
-**Status**: Complete theme component documentation
-**Version**: 0.6.0
-**Last Updated**: 2025-11-25
-**Next**: Update `.seed.md` with evolutionary context and create `seed/README.md`
+**Status**: Complete theme component documentation **Version**: 0.6.0 **Last Updated**: 2025-11-25 **Next**: Update `.seed.md` with evolutionary context and create `seed/README.md`

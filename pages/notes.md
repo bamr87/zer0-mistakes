@@ -100,9 +100,7 @@ permalink: /notes/
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  const filterButtons = document.querySelectorAll('[data-filter]');
-  const noteCards = document.querySelectorAll('.note-card');
+document.addEventListener('DOMContentLoaded', function() { const filterButtons = document.querySelectorAll('[data-filter]'); const noteCards = document.querySelectorAll('.note-card');
   
   filterButtons.forEach(button => {
     button.addEventListener('click', function() {
@@ -122,6 +120,5 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       });
     });
-  });
-});
+}); });
 </script>

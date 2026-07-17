@@ -31,9 +31,7 @@ This directory contains the CI/CD workflows for the zer0-mistakes Jekyll theme.
 
 **Triggers:** Push to `main`, Pull Requests, Manual dispatch
 
-Validates code quality, runs the full test suite, builds the gem, and performs
-Docker integration testing. Uses `dorny/paths-filter` (job `detect-changes`) to
-skip heavy jobs on docs-only changes.
+Validates code quality, runs the full test suite, builds the gem, and performs Docker integration testing. Uses `dorny/paths-filter` (job `detect-changes`) to skip heavy jobs on docs-only changes.
 
 | Job | Description | Condition | Timeout |
 |-----|-------------|-----------|---------|
@@ -51,12 +49,9 @@ detect-changes → quality-checks → test → build
               → snapshots       → integration
 ```
 
-Manual dispatch options: **test_scope** (`fast` skips the snapshot tier) and
-**fix_markdown** (auto-fix markdown formatting).
+Manual dispatch options: **test_scope** (`fast` skips the snapshot tier) and **fix_markdown** (auto-fix markdown formatting).
 
-The `quality-checks` job must ALWAYS run (`if: always() && …`) — it is the
-single required status check on `main`, and a required-but-skipped check would
-deadlock docs-only PRs. `lint-workflows.yml` pins that invariant.
+The `quality-checks` job must ALWAYS run (`if: always() && …`) — it is the single required status check on `main`, and a required-but-skipped check would deadlock docs-only PRs. `lint-workflows.yml` pins that invariant.
 
 ### `evidence-gate.yml` — Visual evidence gate
 
@@ -64,30 +59,25 @@ deadlock docs-only PRs. `lint-workflows.yml` pins that invariant.
 
 Requires any PR that touches UI paths (`_sass/`, `_includes/`, `_layouts/`,
 `assets/css|js/`) to also ship a regression test (`test/visual/*.spec.js`) and
-before/after evidence (`test/visual/evidence/`). Opt out with the
-`skip-evidence` / `no-visual-change` label. Always reports a status so it can be
-a required check. See `.github/skills/visual-evidence/SKILL.md`.
+before/after evidence (`test/visual/evidence/`). Opt out with the `skip-evidence` / `no-visual-change` label. Always reports a status so it can be a required check. See `.github/skills/visual-evidence/SKILL.md`.
 
 ### `secret-scan.yml` — Secret scan
 
 **Triggers:** Pull Requests (all)
 
-Fails a PR if credential shapes (Anthropic/GitHub tokens, private keys) appear
-in the merge-base diff or PR body. Fork-safe (read-only `pull_request` event).
+Fails a PR if credential shapes (Anthropic/GitHub tokens, private keys) appear in the merge-base diff or PR body. Fork-safe (read-only `pull_request` event).
 
 ### `lint-workflows.yml` — Workflow lint
 
 **Triggers:** PR/push touching `.github/workflows/**` or `.github/actions/**`
 
-Runs `actionlint` over the workflow definitions, plus a guard that the
-`quality-checks` job in `ci.yml` keeps its always-runs invariant.
+Runs `actionlint` over the workflow definitions, plus a guard that the `quality-checks` job in `ci.yml` keeps its always-runs invariant.
 
 ### `codeql.yml` — CodeQL Security Scanning
 
 **Triggers:** Push/PR to `main` (code paths only), Weekly schedule
 
-CodeQL analysis for Actions, JS/TS, Python, and Ruby. Path-filtered to files
-those analyzers can actually read (not data/content YAML).
+CodeQL analysis for Actions, JS/TS, Python, and Ruby. Path-filtered to files those analyzers can actually read (not data/content YAML).
 
 ### `install-matrix.yml` — Installer matrix
 
@@ -101,12 +91,7 @@ trigger: `main` is protected, so every change already ran this on its PR.
 
 **Triggers:** Push to `main` (code/docker paths), Daily schedule, Manual dispatch
 
-Zero-pin strategy: builds the Docker image with the latest resolved
-dependencies (no lockfile), runs validation + Jekyll build + RSpec +
-HTMLProofer, and on success publishes an immutable image tag
-(`date-sha`) plus `:latest` to Docker Hub. Intended to **fail** when an
-upstream gem breaks (canary behavior). Deliberately not run on PRs — PR
-validation happens in `ci.yml` against the pinned lockfile.
+Zero-pin strategy: builds the Docker image with the latest resolved dependencies (no lockfile), runs validation + Jekyll build + RSpec + HTMLProofer, and on success publishes an immutable image tag (`date-sha`) plus `:latest` to Docker Hub. Intended to **fail** when an upstream gem breaks (canary behavior). Deliberately not run on PRs — PR validation happens in `ci.yml` against the pinned lockfile.
 
 ## Release & Dependencies
 
@@ -114,28 +99,19 @@ validation happens in `ci.yml` against the pinned lockfile.
 
 **Triggers:** Push to `main`
 
-The canonical release flow. Conventional Commits drive
-[release-please](https://github.com/googleapis/release-please) (reusable
-workflows in `bamr87/.github`): it opens/updates a "chore(main): release X.Y.Z"
-PR that bumps `lib/jekyll-theme-zer0/version.rb`, `package.json`, and
-`CHANGELOG.md`. Merging that PR tags `vX.Y.Z`, creates the GitHub Release, and
-the `publish` job builds the gem and pushes it to RubyGems.
-`./scripts/bin/release` remains a manual fallback.
+The canonical release flow. Conventional Commits drive [release-please](https://github.com/googleapis/release-please) (reusable workflows in `bamr87/.github`): it opens/updates a "chore(main): release X.Y.Z" PR that bumps `lib/jekyll-theme-zer0/version.rb`, `package.json`, and `CHANGELOG.md`. Merging that PR tags `vX.Y.Z`, creates the GitHub Release, and the `publish` job builds the gem and pushes it to RubyGems. `./scripts/bin/release` remains a manual fallback.
 
-Requires: `RUBYGEMS_API_KEY` secret (publish), shared workflow definitions in
-`bamr87/.github`, config in `release-please-config.json`.
+Requires: `RUBYGEMS_API_KEY` secret (publish), shared workflow definitions in `bamr87/.github`, config in `release-please-config.json`.
 
 ### `update-dependencies.yml` — Automated Gemfile.lock updates
 
 **Triggers:** Weekly schedule, Manual dispatch
 
-Runs `bundle update` and opens an automated PR for review. Complements
-`.github/dependabot.yml`, which only manages GitHub Actions versions.
+Runs `bundle update` and opens an automated PR for review. Complements `.github/dependabot.yml`, which only manages GitHub Actions versions.
 
 ### `sync.yml` — Data-file mirrors
 
-**Triggers:** Push to `main` / PRs touching `_data/backlog.yml`,
-`_data/roadmap.yml`, or their scripts
+**Triggers:** Push to `main` / PRs touching `_data/backlog.yml`, `_data/roadmap.yml`, or their scripts
 
 - `backlog`: `_data/backlog.yml` → GitHub Issues (`scripts/sync-backlog.rb`);
   PRs validate the schema only.
@@ -146,16 +122,13 @@ Runs `bundle update` and opens an automated PR for review. Complements
 
 **Triggers:** `.ipynb` changes under `pages/_notebooks/` (push/PR), Manual dispatch
 
-Converts notebooks to Jekyll-friendly Markdown. PRs get a dry-run preview;
-pushes to `main` open a `chore/convert-notebooks` PR with the converted files
-(CI on that PR validates them).
+Converts notebooks to Jekyll-friendly Markdown. PRs get a dry-run preview; pushes to `main` open a `chore/convert-notebooks` PR with the converted files (CI on that PR validates them).
 
 ### `deploy-chat-proxy.yml` — AI chat proxy deploy
 
 **Triggers:** Push to `main` touching `templates/deploy/chat-proxy/`, Manual dispatch
 
-Deploys the AI-chat Cloudflare Worker via `wrangler-action`. Requires
-`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ANTHROPIC_API_KEY`.
+Deploys the AI-chat Cloudflare Worker via `wrangler-action`. Requires `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ANTHROPIC_API_KEY`.
 
 ## Automation & AI Pipeline
 
@@ -163,45 +136,31 @@ Deploys the AI-chat Cloudflare Worker via `wrangler-action`. Requires
 
 **Triggers:** PRs touching `pages/**/*.md` or `docs/**`, Manual dispatch
 
-Two tiers plus docs validation: (1) deterministic SEO/quality checks
-(`scripts/content-review.rb`, fork-safe, posts a sticky comment); (2) the
-Claude Code content-reviewer agent (only when `ANTHROPIC_API_KEY` is set and
-content actually changed); (3) front-matter, internal-link, and markdownlint
-jobs (formerly `docs-validate.yml`).
+Two tiers plus docs validation: (1) deterministic SEO/quality checks (`scripts/content-review.rb`, fork-safe, posts a sticky comment); (2) the Claude Code content-reviewer agent (only when `ANTHROPIC_API_KEY` is set and content actually changed); (3) front-matter, internal-link, and markdownlint jobs (formerly `docs-validate.yml`).
 
 ### `issue-autopilot.yml` — Issue autopilot
 
 **Triggers:** Weekly schedule, Manual dispatch, `autopilot:go` label
 
-One bounded pass of the autonomous issue pipeline: gate → triage (label/route
-open issues) → verify-close (close human issues already fixed on `main`,
-CI-gated) → resolve (one docs batch → one `auto:issue` PR). OFF by default
-behind `ISSUE_AUTOPILOT_ENABLED` (+ per-lane vars). See
-`docs/systems/continuous-evolution.md`.
+One bounded pass of the autonomous issue pipeline: gate → triage (label/route open issues) → verify-close (close human issues already fixed on `main`, CI-gated) → resolve (one docs batch → one `auto:issue` PR). OFF by default behind `ISSUE_AUTOPILOT_ENABLED` (+ per-lane vars). See `docs/systems/continuous-evolution.md`.
 
 ### `issue-pr-auto-merge.yml` — Issue PR auto-merge
 
 **Triggers:** `pull_request_target` on labeled/updated PRs
 
-Squash-merges same-repo `auto:issue` PRs once all checks are green, with a
-merge-time diff re-classification (docs/pages only — the smuggle guard). OFF by
-default behind `ISSUE_AUTOMERGE_ENABLED`.
+Squash-merges same-repo `auto:issue` PRs once all checks are green, with a merge-time diff re-classification (docs/pages only — the smuggle guard). OFF by default behind `ISSUE_AUTOMERGE_ENABLED`.
 
 ### `auto-merge.yml` — Auto-merge low-risk PRs
 
 **Triggers:** `pull_request_target` on labeled/updated PRs
 
-Enables GitHub native auto-merge for PRs labeled `auto-merge`, after a denylist
-check that blocks version/release/CI/plugin/script files. Required checks
-(including `evidence-gate`) remain the actual gate.
+Enables GitHub native auto-merge for PRs labeled `auto-merge`, after a denylist check that blocks version/release/CI/plugin/script files. Required checks (including `evidence-gate`) remain the actual gate.
 
 ### `ci-self-repair.yml` — CI self-repair
 
 **Triggers:** `workflow_run` completion of the Comprehensive CI Pipeline
 
-For failed PR runs where the PR opted in via the `auto-fix` label: runs Claude
-Code headless to diagnose and push a fix, bounded by a retry budget; otherwise
-drafts the PR with `agent-hold`. Never touches CODEOWNERS-protected paths.
+For failed PR runs where the PR opted in via the `auto-fix` label: runs Claude Code headless to diagnose and push a fix, bounded by a retry budget; otherwise drafts the PR with `agent-hold`. Never touches CODEOWNERS-protected paths.
 
 ### `milestone-assign.yml` — Milestone assignment
 
@@ -217,8 +176,7 @@ Read-only digest of Giscus-backed GitHub Discussions to the job summary.
 
 ## Gate Coverage — What Enforces What
 
-Every quality gate a contributor can run locally must be enforced somewhere in
-CI; warn-only gates must be temporary and tracked in the backlog.
+Every quality gate a contributor can run locally must be enforced somewhere in CI; warn-only gates must be temporary and tracked in the backlog.
 
 | Quality gate | Local command | CI enforcement | Trigger |
 |---|---|---|---|
@@ -300,8 +258,7 @@ yamllint -c .github/config/.yamllint.yml .github/workflows/
 ### Gem publish failing
 - Verify `RUBYGEMS_API_KEY` secret is set
 - A `version.rb` bump must re-lock `Gemfile.lock` and `package-lock.json` in the
-  same change — the frozen `bundle install` in the publish job fails otherwise
-  (the `quality-checks` guard should have caught this on the release PR)
+same change — the frozen `bundle install` in the publish job fails otherwise (the `quality-checks` guard should have caught this on the release PR)
 
 ### CI failures
 - Run quick validation locally: `./scripts/bin/validate --quick`

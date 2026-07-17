@@ -15,8 +15,7 @@ Use this reference for common Jekyll setup commands, Liquid template syntax, fol
 {% raw %}
 [Cheatsheet](https://learn-the-web.algonquindesign.ca/topics/jekyll-cheat-sheet/)
 
-Setup and use
-Installation
+Setup and use Installation
 
 > For this theme, the recommended setup is Docker: `docker-compose up` (see the project README).
 
@@ -31,8 +30,7 @@ echo 'export PATH="/usr/local/opt/ruby/bin:$PATH"' >> ~/.bash_profile
 
 Then open your repo in Terminal, from GitHub Desktop: Repository > Open in Terminal
 
-bundle init
-Open the new Gemfile, add the following line:
+bundle init Open the new Gemfile, add the following line:
 
 ```bash
 gem "jekyll"
@@ -60,9 +58,7 @@ View your website in a browser at `http://localhost:4000/`.
 
 Stop Jekyll:
 
-Control + C
-Or just quit Terminal.
-☛ Jekyll terminal guide.
+Control + C Or just quit Terminal. ☛ Jekyll terminal guide.
 
 If hosting on GitHub, don’t forget baseurl
 
@@ -78,8 +74,7 @@ permalink: pretty
 
 ## Add the baseurl if hosting on GitHub
 
-baseurl: /your-folder-on-github
-Sample folder setup:
+baseurl: /your-folder-on-github Sample folder setup:
 
 ```bash
 _config.yml
@@ -100,8 +95,7 @@ index.html
 meat-eaters.html
 ```
 
-Files and paths
-Linking pages
+Files and paths Linking pages
 
 With permalink: pretty turned on the .html extension can be left off URLs.
 
@@ -143,11 +137,9 @@ Or for GitHub Pages folder hosting:
 <img src="{{site.baseurl}}/images/trex.jpg" alt="Tyrannosaurus Rex dinosaur" />
 ```
 
-Layouts
-Common header and footer
+Layouts Common header and footer
 
-First create a new file inside the \_layouts folder, name it whatever you want. Inside that file put the common
-HTML.
+First create a new file inside the \_layouts folder, name it whatever you want. Inside that file put the common HTML.
 
 `Use {{content}} as the placeholder for the HTML from each page.`
 
@@ -230,8 +222,7 @@ Use an if-statement inside the `<a>` tag to add the .current class.
 >
 ```
 
-Data, includes and posts
-Data
+Data, includes and posts Data
 
 Data files allow us to separate content from its presentation HTML.
 
@@ -242,15 +233,11 @@ All the data is found in the variable site.data
 \_data/dinos.yml
 
 - name: Tyrannosaurus
-  diet: Meat
-  size: Big
+diet: Meat size: Big
 - name: Stegosaurus
-  diet: Plants
-  size: Medium
+diet: Plants size: Medium
 - name: Velociraptor
-  diet: Meat
-  size: Small
-  Includes
+diet: Meat size: Small Includes
 
 Includes are for making reusable, repeatable HTML blocks.
 
@@ -285,11 +272,7 @@ Name posts in the following, strict format: YYYY-MM-DD-file-name.md
 
 All the data is found in the variable site.posts
 
-\_posts/
-2013-09-26-water-in-martian-dirt.md
-2013-10-06-clouds-on-kepler-7b-mapped.md
-2013-10-09-planet-without-star.md
-Use the for loop to output posts:
+\_posts/ 2013-09-26-water-in-martian-dirt.md 2013-10-06-clouds-on-kepler-7b-mapped.md 2013-10-09-planet-without-star.md Use the for loop to output posts:
 
 ```html
 <ul>
@@ -302,8 +285,7 @@ Use the for loop to output posts:
 </ul>
 ```
 
-Template tags
-Check out the complete Liquid for Designers resource.
+Template tags Check out the complete Liquid for Designers resource.
 
 Output
 
@@ -343,8 +325,7 @@ The if-statement can be used to do different things based on certain conditions.
 {% endif %}
 ```
 
-Template filters
-Check out the complete Liquid for Designers resource and Jekyll’s filter docs.
+Template filters Check out the complete Liquid for Designers resource and Jekyll’s filter docs.
 
 Date
 
@@ -592,9 +573,7 @@ or result in (with `permalink: /:title.html`):
     └── index.html                  # index page
 ```
 
-Note: See the `jekyll-minimal-theme` starter kit for an example
-[source repo](https://github.com/feedreader/jekyll-minimal-theme) and
-[live demo](http://feedreader.github.io/jekyll-minimal-theme).
+Note: See the `jekyll-minimal-theme` starter kit for an example [source repo](https://github.com/feedreader/jekyll-minimal-theme) and [live demo](http://feedreader.github.io/jekyll-minimal-theme).
 
 With post drafts, page collections, data stores and shared building blocks:
 
@@ -626,15 +605,11 @@ With post drafts, page collections, data stores and shared building blocks:
 └── index.html                         # site index template
 ```
 
-Note: The `_post`, `_drafts`, `_layouts`, `_includes`, `_data`, `_books`, `_site` folders must start
-with an underscore (`_`).
+Note: The `_post`, `_drafts`, `_layouts`, `_includes`, `_data`, `_books`, `_site` folders must start with an underscore (`_`).
 
 ## `_posts` Folder
 
-The post file name must follow the format: _YEAR-MONTH-DAY-TITLE.MARKUP_
-(e.g. `2015-01-15-week-3-slideshow.md`).
-The permalinks can be customized for each post,
-but the date and markup language are determined by the file name.
+The post file name must follow the format: _YEAR-MONTH-DAY-TITLE.MARKUP_ (e.g. `2015-01-15-week-3-slideshow.md`). The permalinks can be customized for each post, but the date and markup language are determined by the file name.
 
 ```text
 ├── _posts
@@ -722,10 +697,7 @@ site.tags.TAG              -- The list of all Posts with tag TAG.
 
 **Your Own (Custom)**
 
-All variables set via the command line and
-in your `_config.yml` site configuration are available through the `site` variable.
-For example, if you have `url: http://openfootball.github.io` in your configuration file,
-then in your Posts and Pages it will be stored in `site.url`.
+All variables set via the command line and in your `_config.yml` site configuration are available through the `site` variable. For example, if you have `url: http://openfootball.github.io` in your configuration file, then in your Posts and Pages it will be stored in `site.url`.
 
 If you add in your `_config.yml` site configuration, for example:
 
@@ -742,8 +714,7 @@ site.url     -- your site's url
 site.title   -- your site's title
 ```
 
-Note: Jekyll does not parse changes to `_config.yml` in watch mode,
-you must restart Jekyll to see changes to variables.
+Note: Jekyll does not parse changes to `_config.yml` in watch mode, you must restart Jekyll to see changes to variables.
 
 ## Page Variables
 
@@ -1068,8 +1039,7 @@ or with comments:
 ---
 ```
 
-The empty front matter is required; it ensures Jekyll converts `style.scss` to `style.css`;
-include all partials (e.g. `_settings.scss`, and so on) with `@import` directives.
+The empty front matter is required; it ensures Jekyll converts `style.scss` to `style.css`; include all partials (e.g. `_settings.scss`, and so on) with `@import` directives.
 
 (Source: [jekyll-sass-converter gem](https://github.com/jekyll/jekyll-sass-converter))
 

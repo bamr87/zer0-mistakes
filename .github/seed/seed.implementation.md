@@ -28,9 +28,7 @@ companion_to: "seed.prompt.md"
 
 ### 1. Version Management Script {#version-management}
 
-**File**: `scripts/version.sh`
-**Purpose**: Manages semantic versioning across all project files
-**Lines**: 155
+**File**: `scripts/version.sh` **Purpose**: Manages semantic versioning across all project files **Lines**: 155
 
 ```bash
 #!/bin/bash
@@ -260,9 +258,7 @@ log "4. Publish gem: ./scripts/build.sh --publish"
 
 ### 2. Build Automation Script {#build-automation}
 
-**File**: `scripts/build.sh`
-**Purpose**: Builds Ruby gem with validation and optional publishing
-**Lines**: 175
+**File**: `scripts/build.sh` **Purpose**: Builds Ruby gem with validation and optional publishing **Lines**: 175
 
 ```bash
 #!/bin/bash
@@ -500,9 +496,7 @@ fi
 
 ### 3. Test Runner Script {#test-runner}
 
-**File**: `scripts/test.sh`
-**Purpose**: Comprehensive test suite for validation
-**Lines**: 135
+**File**: `scripts/test.sh` **Purpose**: Comprehensive test suite for validation **Lines**: 135
 
 ```bash
 #!/bin/bash
@@ -697,9 +691,7 @@ fi
 
 ### 4. Gem Publishing Script {#gem-publishing}
 
-**File**: `scripts/gem-publish.sh`
-**Purpose**: Complete automated release workflow
-**Lines**: 700+ (comprehensive)
+**File**: `scripts/gem-publish.sh` **Purpose**: Complete automated release workflow **Lines**: 700+ (comprehensive)
 
 ```bash
 #!/bin/bash
@@ -1061,9 +1053,7 @@ info "Gem: https://rubygems.org/gems/jekyll-theme-zer0"
 
 ### 5. AI-Powered Installer {#ai-installer}
 
-**File**: `install.sh`
-**Purpose**: Self-healing one-line installation script
-**Lines**: 1090 (comprehensive with error recovery)
+**File**: `install.sh` **Purpose**: Self-healing one-line installation script **Lines**: 1090 (comprehensive with error recovery)
 
 ```bash
 #!/bin/bash

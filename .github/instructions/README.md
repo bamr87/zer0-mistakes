@@ -299,10 +299,7 @@ The agent guidance system is designed to be **extendable**. Use these patterns w
 
 ### Add a workflow skill
 
-Skills are operational checklists an agent reads before performing a recurring
-action (validating, branching, reviewing). They differ from prompts: a prompt is
-a task you invoke; a skill is a reusable procedure referenced by prompts,
-agents, and `CLAUDE.md`.
+Skills are operational checklists an agent reads before performing a recurring action (validating, branching, reviewing). They differ from prompts: a prompt is a task you invoke; a skill is a reusable procedure referenced by prompts, agents, and `CLAUDE.md`.
 
 1. Create `.github/skills/<name>/SKILL.md` with this front matter (mirror
    `change-workflow` / `validate-build`):

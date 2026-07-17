@@ -88,9 +88,7 @@ preview_images:
     - quickstart
 ```
 
-The values above match the shipped `_config.yml`. `collections` defaults to
-`[posts, quickstart, docs]` in the engine (`scripts/lib/preview_generator.py`)
-when omitted.
+The values above match the shipped `_config.yml`. `collections` defaults to `[posts, quickstart, docs]` in the engine (`scripts/lib/preview_generator.py`) when omitted.
 
 ### Credentials
 
@@ -103,8 +101,7 @@ export STABILITY_API_KEY="sk-..."    # stability
 export GEMINI_API_KEY="..."          # gemini
 ```
 
-Claude orchestration (article analysis + image review) accepts any ONE of, in
-order — it is optional and degrades to the template prompt with no review:
+Claude orchestration (article analysis + image review) accepts any ONE of, in order — it is optional and degrades to the template prompt with no review:
 
 ```bash
 # 1. Claude Code OAuth token (recommended — from `claude setup-token`)
@@ -138,9 +135,7 @@ Run the generation script:
 
 ### In Templates
 
-Rendering is pure Liquid via the theme's `components/preview-image.html`
-include (works under the `github-pages` gem's safe mode — no custom plugin
-required):
+Rendering is pure Liquid via the theme's `components/preview-image.html` include (works under the `github-pages` gem's safe mode — no custom plugin required):
 
 ```liquid
 {% raw %}{% include components/preview-image.html src=page.preview alt=page.title %}{% endraw %}
@@ -157,28 +152,20 @@ preview: /images/previews/ai-preview-image-generator.png
 
 ## Claude Orchestration
 
-Claude never draws the image — it directs it. Two stages wrap every raster
-renderer (both default-on; both skip gracefully without a Claude credential):
+Claude never draws the image — it directs it. Two stages wrap every raster renderer (both default-on; both skip gracefully without a Claude credential):
 
 - **Analyze** (`prompt_engine: claude`): Claude reads the article (title,
-  description, tags, excerpt) and writes a subject-specific art brief — a
-  concrete scene that represents the content, composed for a wide banner in
-  your configured style, with a strict no-text rule.
+description, tags, excerpt) and writes a subject-specific art brief — a concrete scene that represents the content, composed for a wide banner in your configured style, with a strict no-text rule.
 - **Review** (`review_engine: claude`): after the renderer produces the PNG,
-  Claude inspects it with vision. If it misrepresents the article, breaks the
-  style, or contains garbled text, Claude writes a corrected prompt and the
-  engine regenerates once; otherwise the image is approved.
+Claude inspects it with vision. If it misrepresents the article, breaks the style, or contains garbled text, Claude writes a corrected prompt and the engine regenerates once; otherwise the image is approved.
 
-On a Claude Pro/Max subscription (Claude Code OAuth token or logged-in
-`claude` CLI) the orchestration costs nothing extra; only the renderer bills
-per image.
+On a Claude Pro/Max subscription (Claude Code OAuth token or logged-in `claude` CLI) the orchestration costs nothing extra; only the renderer bills per image.
 
 ## Renderers
 
 ### OpenAI (GPT Image / DALL-E 3) — default
 
-Best raster quality. The default model is GPT Image; DALL-E 3 is also
-supported. OpenAI also powers the `--enhance` mode (`/v1/images/edits`):
+Best raster quality. The default model is GPT Image; DALL-E 3 is also supported. OpenAI also powers the `--enhance` mode (`/v1/images/edits`):
 
 ```yaml
 preview_images:
@@ -190,8 +177,7 @@ preview_images:
 
 ### xAI (Grok)
 
-Uses `grok-2-image` through xAI's OpenAI-compatible API. Set
-`provider: xai` and supply `XAI_API_KEY`:
+Uses `grok-2-image` through xAI's OpenAI-compatible API. Set `provider: xai` and supply `XAI_API_KEY`:
 
 ```yaml
 preview_images:
@@ -200,9 +186,7 @@ preview_images:
 
 ### Stability AI
 
-Set `provider: stability` and supply `STABILITY_API_KEY`. The engine calls the
-Stable Diffusion XL 1024 endpoint at 1024x1024 — there is no separate
-`engine`/`size` key to set for this provider:
+Set `provider: stability` and supply `STABILITY_API_KEY`. The engine calls the Stable Diffusion XL 1024 endpoint at 1024x1024 — there is no separate `engine`/`size` key to set for this provider:
 
 ```yaml
 preview_images:
@@ -212,8 +196,7 @@ preview_images:
 
 ### Google Gemini
 
-Uses `gemini-2.5-flash-image`. Set `provider: gemini` and supply
-`GEMINI_API_KEY` (aistudio.google.com):
+Uses `gemini-2.5-flash-image`. Set `provider: gemini` and supply `GEMINI_API_KEY` (aistudio.google.com):
 
 ```yaml
 preview_images:
@@ -222,10 +205,7 @@ preview_images:
 
 ### Local (template)
 
-Free, no API and no network. The `local` provider renders a deterministic
-retro-landscape SVG (seeded from the post slug) and rasterizes it to PNG — the
-same post always gets the same banner, which makes it ideal for development
-and CI. Claude analysis/review is skipped (the output is deterministic):
+Free, no API and no network. The `local` provider renders a deterministic retro-landscape SVG (seeded from the post slug) and rasterizes it to PNG — the same post always gets the same banner, which makes it ideal for development and CI. Claude analysis/review is skipped (the output is deterministic):
 
 ```yaml
 preview_images:
@@ -291,8 +271,7 @@ assets/images/previews/
 
 ### GitHub Actions
 
-Add to a CI workflow (generation is script-driven, never part of the Jekyll
-build):
+Add to a CI workflow (generation is script-driven, never part of the Jekyll build):
 
 ```yaml
 - name: Generate preview images

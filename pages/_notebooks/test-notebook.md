@@ -144,15 +144,11 @@ Inline equation: $E = mc^2$
 
 Display equation:
 
-$$
-\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}
-$$
+$$ \int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi} $$
 
 More complex equation:
 
-$$
-f(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2}
-$$
+$$ f(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2} $$
 
 
 ```python

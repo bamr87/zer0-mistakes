@@ -49,11 +49,7 @@ validate_environment false false  # skip_publish=false, require_gh=false
 
 ### ✅ `scripts/bin/validate` - Preflight Validation
 
-Canonical command for local and CI preflight checks. It composes the release
-validation helpers with project-specific checks for version consistency, YAML
-configuration/data files, active configuration contracts, config-file
-classification, navigation data shape, Jekyll build/doctor, compiled assets,
-and optional test suites.
+Canonical command for local and CI preflight checks. It composes the release validation helpers with project-specific checks for version consistency, YAML configuration/data files, active configuration contracts, config-file classification, navigation data shape, Jekyll build/doctor, compiled assets, and optional test suites.
 
 **Usage:**
 

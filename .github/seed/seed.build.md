@@ -1189,8 +1189,7 @@ MIT License - see [LICENSE](LICENSE)
 - [Discussions](https://github.com/bamr87/zer0-mistakes/discussions)
   EOF
 
-git add README.md
-git commit -m "docs: add comprehensive README"
+git add README.md git commit -m "docs: add comprehensive README"
 
 ````
 
@@ -1325,8 +1324,7 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.s
 [Get Started](/docs/) | [View on GitHub](https://github.com/bamr87/zer0-mistakes)
 EOF
 
-git add index.md
-git commit -m "docs: add homepage"
+git add index.md git commit -m "docs: add homepage"
 
 ````
 
@@ -1451,6 +1449,4 @@ bundle exec jekyll build
 
 ---
 
-**Build Status**: Complete ✅
-**Version**: 0.6.0
-**Last Updated**: 2025-11-25
+**Build Status**: Complete ✅ **Version**: 0.6.0 **Last Updated**: 2025-11-25

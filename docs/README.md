@@ -165,5 +165,4 @@ Live preview (built site): `/about/settings/theme-preview/`
 
 ---
 
-**Last Updated:** May 2026
-**Maintained By:** Zer0-Mistakes Contributors
+**Last Updated:** May 2026 **Maintained By:** Zer0-Mistakes Contributors

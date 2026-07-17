@@ -12,16 +12,7 @@ sidebar: false
 ---
 
 {% comment %}
-  Shared sanitized config render (T-009/T-018). Both the visible Raw-YAML
-  tab and the hidden copy-source element use this capture, so the live
-  PostHog key (and any other secret-shaped line) never reaches the DOM in
-  either place. Pure Liquid line filter (works on GitHub Pages where the
-  sanitize_config_yaml plugin filter is a silent no-op) + the plugin filter
-  as defense-in-depth on plugin-enabled builds. cfg_nl captures exactly one
-  newline — keep both tags flush-left. Fail-closed: if the split degraded,
-  the whole config matches the probe and renders as one redaction marker.
-  Lines are HTML-escaped; copy buttons read textContent, which decodes
-  entities back to the original characters.
+Shared sanitized config render (T-009/T-018). Both the visible Raw-YAML tab and the hidden copy-source element use this capture, so the live PostHog key (and any other secret-shaped line) never reaches the DOM in either place. Pure Liquid line filter (works on GitHub Pages where the sanitize_config_yaml plugin filter is a silent no-op) + the plugin filter as defense-in-depth on plugin-enabled builds. cfg_nl captures exactly one newline — keep both tags flush-left. Fail-closed: if the split degraded, the whole config matches the probe and renders as one redaction marker. Lines are HTML-escaped; copy buttons read textContent, which decodes entities back to the original characters.
 {% endcomment %}
 {% capture cfg_full_raw %}{% include_relative _config.yml %}{% endcapture %}
 {% capture cfg_nl %}
@@ -251,9 +242,7 @@ Set-Content -Encoding UTF8 {{ page.config-dir }}/{{ page.config-file }} `
 <script src="{{ '/assets/js/config-utility.js' | relative_url }}" defer></script>
 <!-- Copy for Raw tab -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  var rawCopyBtn = document.getElementById('cfg-copy-raw');
-  if (rawCopyBtn) {
+document.addEventListener('DOMContentLoaded', function() { var rawCopyBtn = document.getElementById('cfg-copy-raw'); if (rawCopyBtn) {
     rawCopyBtn.addEventListener('click', function() {
       var code = document.getElementById('cfg-raw-yaml');
       if (!code) return;
@@ -263,6 +252,5 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(function() { rawCopyBtn.innerHTML = orig; }, 1800);
       });
     });
-  }
-});
+} });
 </script>

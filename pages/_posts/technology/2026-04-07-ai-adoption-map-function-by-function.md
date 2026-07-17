@@ -212,14 +212,11 @@ Many are already using AI tools independently—the "shadow AI" phenomenon is hi
 
 Based on this analysis, the recommended adoption path follows three phases:
 
-**Phase 1 (Months 1–4): Quick Wins and Proof Points**
-Focus on Sales & Marketing, Customer Service, and Digital Presence. Expected outcome: 3–5x increase in content output, 20–40% reduction in routine customer service volume.
+**Phase 1 (Months 1–4): Quick Wins and Proof Points** Focus on Sales & Marketing, Customer Service, and Digital Presence. Expected outcome: 3–5x increase in content output, 20–40% reduction in routine customer service volume.
 
-**Phase 2 (Months 4–10): Operational Integration**
-Focus on Order Processing, Purchasing, and Accounting. Expected outcome: 50–70% reduction in manual order entry time, improved inventory turns.
+**Phase 2 (Months 4–10): Operational Integration** Focus on Order Processing, Purchasing, and Accounting. Expected outcome: 50–70% reduction in manual order entry time, improved inventory turns.
 
-**Phase 3 (Months 10–18): Deep Integration**
-Focus on Manufacturing Operations and Cross-Functional Intelligence. Expected outcome: Reduced unplanned downtime, improved quality metrics, data-driven decision-making.
+**Phase 3 (Months 10–18): Deep Integration** Focus on Manufacturing Operations and Cross-Functional Intelligence. Expected outcome: Reduced unplanned downtime, improved quality metrics, data-driven decision-making.
 
 ---
 

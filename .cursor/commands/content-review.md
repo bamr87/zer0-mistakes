@@ -7,10 +7,7 @@ tools: [run_in_terminal, read_file, grep_search, file_search, get_changed_files]
 
 # Content Review for Zer0-Mistakes
 
-Mirror of [`.github/prompts/content-review.prompt.md`](../../.github/prompts/content-review.prompt.md).
-Review the content this branch/PR adds or changes and return an actionable
-editorial + SEO review. Thresholds and authoring rules are resolved **per
-collection** from `.github/config/content_review.yml`.
+Mirror of [`.github/prompts/content-review.prompt.md`](../../.github/prompts/content-review.prompt.md). Review the content this branch/PR adds or changes and return an actionable editorial + SEO review. Thresholds and authoring rules are resolved **per collection** from `.github/config/content_review.yml`.
 
 ## Commands
 
@@ -30,11 +27,9 @@ collection** from `.github/config/content_review.yml`.
      --json /tmp/content-review.json --summary /tmp/content-review.md
    ```
 3. For each file, read the `instructions` paths the script lists (baseline +
-   collection-specific, e.g. `documentation.instructions.md` for docs), then
-   judge SEO/AIEO, consistency, polish, accessibility, and accuracy.
+collection-specific, e.g. `documentation.instructions.md` for docs), then judge SEO/AIEO, consistency, polish, accessibility, and accuracy.
 4. Report worst-first with a verdict (✅ approve / 💬 comment / 🔧 request
-   changes) and findings tagged 🔴 must-fix · 🟡 should-fix · 🔵 nice-to-have,
-   each with a concrete suggested rewrite.
+changes) and findings tagged 🔴 must-fix · 🟡 should-fix · 🔵 nice-to-have, each with a concrete suggested rewrite.
 
 ## Rules
 

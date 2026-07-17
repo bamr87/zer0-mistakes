@@ -17,84 +17,7 @@ estimated_reading_time: "18 min"
 CSS Grid is the most powerful layout system in CSS. This tutorial takes you from your first grid to complex, real-world layouts — and every concept comes with a **live demo you can see rendered right here in the browser**, sitting next to the code that produces it. Resize the window or open your browser's grid inspector to watch each example respond.
 
 <style>
-/* === Live CSS Grid demos — all selectors scoped under .gd-demo === */
-.gd-demo{ --gd-rgb: var(--bs-primary-rgb, 13,110,253); margin:1.25rem 0 1.9rem; padding:1rem 1rem 1.15rem; border:1px solid var(--bs-border-color, #dee2e6); border-radius:.85rem; background:var(--bs-tertiary-bg, #f8f9fa); }
-.gd-demo__label{ display:inline-flex; align-items:center; gap:.45rem; margin:0 0 .75rem; font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--bs-secondary-color, #6c757d); }
-.gd-demo__label::before{ content:""; width:.55rem; height:.55rem; border-radius:50%; background:#2ecc71; box-shadow:0 0 0 .22rem rgba(46,204,113,.22); }
-.gd-canvas{ display:grid; gap:12px; }
-.gd-box{ display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; min-height:58px; padding:.5rem .65rem; line-height:1.25; font-weight:600; color:#fff; border-radius:.55rem; background:rgb(var(--gd-rgb)); }
-.gd-box small{ display:block; font-weight:500; opacity:.85; font-size:.72rem; }
-.gd-box--p2{ background:rgba(var(--gd-rgb),.78); }
-.gd-box--p3{ background:rgba(var(--gd-rgb),.58); }
-.gd-box--purple{ background:#6f42c1; }
-.gd-box--teal{ background:#198f7b; }
-.gd-box--orange{ background:#e8590c; }
-.gd-box--content{ color:var(--bs-body-color); font-weight:600; background:rgba(var(--gd-rgb),.1); border:1px dashed rgba(var(--gd-rgb),.45); }
-.gd-hint{ margin-top:.7rem; font-size:.78rem; color:var(--bs-secondary-color, #6c757d); }
-.gd-hint code{ font-size:.78rem; }
-/* basic 3-col */
-.gd--basic .gd-canvas{ grid-template-columns:repeat(3,1fr); }
-/* column sizing */
-.gd--fr .gd-canvas{ grid-template-columns:1fr 2fr 1fr; }
-.gd--mixed .gd-canvas{ grid-template-columns:72px 1fr 72px; }
-/* auto-fit vs auto-fill */
-.gd--autofit .gd-canvas{ grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); }
-.gd--autofill .gd-canvas{ grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); }
-/* gap */
-.gd--gap .gd-canvas{ grid-template-columns:repeat(3,1fr); row-gap:6px; column-gap:36px; }
-/* spanning grid lines */
-.gd--lines .gd-canvas{ grid-template-columns:repeat(4,1fr); grid-auto-rows:58px; }
-.gd--lines .gd-span-all{ grid-column:1 / -1; }
-.gd--lines .gd-side{ grid-column:1; grid-row:2 / 4; }
-.gd--lines .gd-main{ grid-column:2 / -1; grid-row:2 / 4; }
-/* named areas */
-.gd--areas .gd-canvas{ grid-template-columns:120px 1fr; grid-template-areas:"header header" "sidebar main" "footer footer"; grid-auto-rows:minmax(46px,auto); }
-.gd--areas .gd-a-header{ grid-area:header; }
-.gd--areas .gd-a-sidebar{ grid-area:sidebar; min-height:118px; }
-.gd--areas .gd-a-main{ grid-area:main; min-height:118px; }
-.gd--areas .gd-a-footer{ grid-area:footer; }
-/* interactive playground */
-.gd-controls{ display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:.9rem; }
-.gd-btn{ cursor:pointer; user-select:none; font:600 .8rem/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; padding:.55rem .7rem; border-radius:.5rem; color:var(--bs-body-color); background:var(--bs-body-bg, #fff); border:1px solid var(--bs-border-color, #dee2e6); transition:all .12s ease; }
-.gd-btn:hover{ border-color:rgb(var(--gd-rgb)); }
-.gd-btn:focus-visible{ outline:2px solid rgb(var(--gd-rgb)); outline-offset:2px; }
-.gd-btn.is-active{ color:#fff; background:rgb(var(--gd-rgb)); border-color:rgb(var(--gd-rgb)); }
-.gd--play .gd-canvas{ grid-template-columns:repeat(4,1fr); grid-auto-rows:54px; }
-.gd-readout{ display:block; margin-top:.85rem; padding:.55rem .7rem; border-radius:.5rem; font-size:.82rem; background:var(--bs-body-bg, #fff); border:1px solid var(--bs-border-color, #dee2e6); color:var(--bs-body-color); }
-/* responsive card grid */
-.gd--cards .gd-canvas{ grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:16px; }
-.gd-card{ display:block; padding:.9rem; border-radius:.6rem; text-decoration:none; color:var(--bs-body-color); background:var(--bs-body-bg, #fff); border:1px solid var(--bs-border-color, #dee2e6); box-shadow:0 1px 2px rgba(0,0,0,.05); transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease; }
-.gd-card:hover, .gd-card:focus-visible{ transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,.1); border-color:rgb(var(--gd-rgb)); outline:none; }
-.gd-eyebrow{ font-size:.68rem; text-transform:uppercase; letter-spacing:.05em; color:rgb(var(--gd-rgb)); font-weight:700; }
-.gd-title{ display:block; font-weight:700; margin:.2rem 0 .35rem; }
-.gd-text{ font-size:.82rem; color:var(--bs-secondary-color, #6c757d); }
-/* holy grail */
-.gd--holy .gd-canvas{ grid-template-columns:90px 1fr 90px; grid-template-areas:"hd hd hd" "nav main aside" "ft ft ft"; min-height:232px; }
-.gd--holy .gd-hd{ grid-area:hd; }
-.gd--holy .gd-nav{ grid-area:nav; }
-.gd--holy .gd-main{ grid-area:main; }
-.gd--holy .gd-aside{ grid-area:aside; }
-.gd--holy .gd-ft{ grid-area:ft; }
-@media (max-width:560px){
-  .gd--holy .gd-canvas{ grid-template-columns:1fr; grid-template-areas:"hd" "nav" "main" "aside" "ft"; }
-}
-/* magazine */
-.gd--mag .gd-canvas{ grid-template-columns:repeat(4,1fr); grid-auto-rows:72px; gap:10px; }
-.gd--mag .gd-feature{ grid-column:1 / 3; grid-row:1 / 3; }
-.gd--mag .gd-wide{ grid-column:3 / 5; }
-@media (max-width:540px){
-  .gd--mag .gd-canvas{ grid-template-columns:repeat(2,1fr); }
-  .gd--mag .gd-feature{ grid-column:1 / 3; grid-row:1 / 3; }
-  .gd--mag .gd-wide{ grid-column:1 / 3; }
-}
-/* alignment */
-.gd--align .gd-canvas{ grid-template-columns:repeat(3,1fr); grid-auto-rows:80px; justify-items:center; align-items:center; }
-.gd--align .gd-box{ min-height:auto; width:72px; height:40px; }
-.gd--align .gd-self{ justify-self:end; align-self:start; }
-/* implicit grid + dense packing */
-.gd--dense .gd-canvas{ grid-template-columns:repeat(4,1fr); grid-auto-rows:46px; grid-auto-flow:dense; }
-.gd--dense .gd-w2{ grid-column:span 2; }
-.gd--dense .gd-h2{ grid-row:span 2; }
+/* === Live CSS Grid demos — all selectors scoped under .gd-demo === */ .gd-demo{ --gd-rgb: var(--bs-primary-rgb, 13,110,253); margin:1.25rem 0 1.9rem; padding:1rem 1rem 1.15rem; border:1px solid var(--bs-border-color, #dee2e6); border-radius:.85rem; background:var(--bs-tertiary-bg, #f8f9fa); } .gd-demo__label{ display:inline-flex; align-items:center; gap:.45rem; margin:0 0 .75rem; font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--bs-secondary-color, #6c757d); } .gd-demo__label::before{ content:""; width:.55rem; height:.55rem; border-radius:50%; background:#2ecc71; box-shadow:0 0 0 .22rem rgba(46,204,113,.22); } .gd-canvas{ display:grid; gap:12px; } .gd-box{ display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; min-height:58px; padding:.5rem .65rem; line-height:1.25; font-weight:600; color:#fff; border-radius:.55rem; background:rgb(var(--gd-rgb)); } .gd-box small{ display:block; font-weight:500; opacity:.85; font-size:.72rem; } .gd-box--p2{ background:rgba(var(--gd-rgb),.78); } .gd-box--p3{ background:rgba(var(--gd-rgb),.58); } .gd-box--purple{ background:#6f42c1; } .gd-box--teal{ background:#198f7b; } .gd-box--orange{ background:#e8590c; } .gd-box--content{ color:var(--bs-body-color); font-weight:600; background:rgba(var(--gd-rgb),.1); border:1px dashed rgba(var(--gd-rgb),.45); } .gd-hint{ margin-top:.7rem; font-size:.78rem; color:var(--bs-secondary-color, #6c757d); } .gd-hint code{ font-size:.78rem; } /* basic 3-col */ .gd--basic .gd-canvas{ grid-template-columns:repeat(3,1fr); } /* column sizing */ .gd--fr .gd-canvas{ grid-template-columns:1fr 2fr 1fr; } .gd--mixed .gd-canvas{ grid-template-columns:72px 1fr 72px; } /* auto-fit vs auto-fill */ .gd--autofit .gd-canvas{ grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); } .gd--autofill .gd-canvas{ grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); } /* gap */ .gd--gap .gd-canvas{ grid-template-columns:repeat(3,1fr); row-gap:6px; column-gap:36px; } /* spanning grid lines */ .gd--lines .gd-canvas{ grid-template-columns:repeat(4,1fr); grid-auto-rows:58px; } .gd--lines .gd-span-all{ grid-column:1 / -1; } .gd--lines .gd-side{ grid-column:1; grid-row:2 / 4; } .gd--lines .gd-main{ grid-column:2 / -1; grid-row:2 / 4; } /* named areas */ .gd--areas .gd-canvas{ grid-template-columns:120px 1fr; grid-template-areas:"header header" "sidebar main" "footer footer"; grid-auto-rows:minmax(46px,auto); } .gd--areas .gd-a-header{ grid-area:header; } .gd--areas .gd-a-sidebar{ grid-area:sidebar; min-height:118px; } .gd--areas .gd-a-main{ grid-area:main; min-height:118px; } .gd--areas .gd-a-footer{ grid-area:footer; } /* interactive playground */ .gd-controls{ display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:.9rem; } .gd-btn{ cursor:pointer; user-select:none; font:600 .8rem/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; padding:.55rem .7rem; border-radius:.5rem; color:var(--bs-body-color); background:var(--bs-body-bg, #fff); border:1px solid var(--bs-border-color, #dee2e6); transition:all .12s ease; } .gd-btn:hover{ border-color:rgb(var(--gd-rgb)); } .gd-btn:focus-visible{ outline:2px solid rgb(var(--gd-rgb)); outline-offset:2px; } .gd-btn.is-active{ color:#fff; background:rgb(var(--gd-rgb)); border-color:rgb(var(--gd-rgb)); } .gd--play .gd-canvas{ grid-template-columns:repeat(4,1fr); grid-auto-rows:54px; } .gd-readout{ display:block; margin-top:.85rem; padding:.55rem .7rem; border-radius:.5rem; font-size:.82rem; background:var(--bs-body-bg, #fff); border:1px solid var(--bs-border-color, #dee2e6); color:var(--bs-body-color); } /* responsive card grid */ .gd--cards .gd-canvas{ grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:16px; } .gd-card{ display:block; padding:.9rem; border-radius:.6rem; text-decoration:none; color:var(--bs-body-color); background:var(--bs-body-bg, #fff); border:1px solid var(--bs-border-color, #dee2e6); box-shadow:0 1px 2px rgba(0,0,0,.05); transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease; } .gd-card:hover, .gd-card:focus-visible{ transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,.1); border-color:rgb(var(--gd-rgb)); outline:none; } .gd-eyebrow{ font-size:.68rem; text-transform:uppercase; letter-spacing:.05em; color:rgb(var(--gd-rgb)); font-weight:700; } .gd-title{ display:block; font-weight:700; margin:.2rem 0 .35rem; } .gd-text{ font-size:.82rem; color:var(--bs-secondary-color, #6c757d); } /* holy grail */ .gd--holy .gd-canvas{ grid-template-columns:90px 1fr 90px; grid-template-areas:"hd hd hd" "nav main aside" "ft ft ft"; min-height:232px; } .gd--holy .gd-hd{ grid-area:hd; } .gd--holy .gd-nav{ grid-area:nav; } .gd--holy .gd-main{ grid-area:main; } .gd--holy .gd-aside{ grid-area:aside; } .gd--holy .gd-ft{ grid-area:ft; } @media (max-width:560px){ .gd--holy .gd-canvas{ grid-template-columns:1fr; grid-template-areas:"hd" "nav" "main" "aside" "ft"; } } /* magazine */ .gd--mag .gd-canvas{ grid-template-columns:repeat(4,1fr); grid-auto-rows:72px; gap:10px; } .gd--mag .gd-feature{ grid-column:1 / 3; grid-row:1 / 3; } .gd--mag .gd-wide{ grid-column:3 / 5; } @media (max-width:540px){ .gd--mag .gd-canvas{ grid-template-columns:repeat(2,1fr); } .gd--mag .gd-feature{ grid-column:1 / 3; grid-row:1 / 3; } .gd--mag .gd-wide{ grid-column:1 / 3; } } /* alignment */ .gd--align .gd-canvas{ grid-template-columns:repeat(3,1fr); grid-auto-rows:80px; justify-items:center; align-items:center; } .gd--align .gd-box{ min-height:auto; width:72px; height:40px; } .gd--align .gd-self{ justify-self:end; align-self:start; } /* implicit grid + dense packing */ .gd--dense .gd-canvas{ grid-template-columns:repeat(4,1fr); grid-auto-rows:46px; grid-auto-flow:dense; } .gd--dense .gd-w2{ grid-column:span 2; } .gd--dense .gd-h2{ grid-row:span 2; }
 </style>
 
 ## How Grid Thinks
@@ -577,9 +500,7 @@ For the complete property reference, keep [MDN's CSS Grid Layout guide](https://
 - [Customizing layouts](/docs/customization/layouts/) — the theme's layout hierarchy and where your grids fit in.
 
 <script>
-(function () {
-  var pg = document.getElementById('gd-playground');
-  if (pg) {
+(function () { var pg = document.getElementById('gd-playground'); if (pg) {
     var canvas = pg.querySelector('.gd-canvas');
     var readout = pg.querySelector('.gd-readout');
     var btns = pg.querySelectorAll('.gd-btn');
@@ -599,9 +520,7 @@ For the complete property reference, keep [MDN's CSS Grid Layout guide](https://
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); apply(cols, b); }
       });
     });
-  }
-  document.querySelectorAll('.gd-demo .gd-card').forEach(function (c) {
+} document.querySelectorAll('.gd-demo .gd-card').forEach(function (c) {
     c.addEventListener('click', function (e) { e.preventDefault(); });
-  });
-})();
+}); })();
 </script>

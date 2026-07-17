@@ -229,10 +229,7 @@ The installer adds VS Code tasks for easy access:
 
 ### Liquid Integration
 
-Rendering is pure Liquid — no custom plugin required, so it works under the
-`github-pages` gem (safe mode) too. Use the theme's
-`_includes/components/preview-image.html` include, which handles the assets
-prefix, external URLs, and the `site.teaser` fallback:
+Rendering is pure Liquid — no custom plugin required, so it works under the `github-pages` gem (safe mode) too. Use the theme's `_includes/components/preview-image.html` include, which handles the assets prefix, external URLs, and the `site.teaser` fallback:
 
 {% raw %}
 
@@ -283,19 +280,12 @@ When the script generates an image, it automatically:
 
 ## Claude Orchestration
 
-Claude wraps every raster renderer with two stages (both default-on, both
-degrade gracefully without a Claude credential):
+Claude wraps every raster renderer with two stages (both default-on, both degrade gracefully without a Claude credential):
 
 - **Analyze** (`prompt_engine: claude`) — Claude reads the article's title,
-  description, tags and an excerpt, then writes a subject-specific
-  art-direction brief (concrete scene, banner composition, your configured
-  style woven in, strict no-text rule). This replaces the generic template
-  prompt that produced unrepresentative images.
+description, tags and an excerpt, then writes a subject-specific art-direction brief (concrete scene, banner composition, your configured style woven in, strict no-text rule). This replaces the generic template prompt that produced unrepresentative images.
 - **Review** (`review_engine: claude`) — Claude inspects the rendered PNG with
-  vision against the article and style. If the image misrepresents the
-  subject, breaks the style, or contains text artifacts, Claude writes a
-  corrected prompt and the engine regenerates ONCE; otherwise the image is
-  approved as-is.
+vision against the article and style. If the image misrepresents the subject, breaks the style, or contains text artifacts, Claude writes a corrected prompt and the engine regenerates ONCE; otherwise the image is approved as-is.
 
 Credential chain, first match wins:
 
@@ -354,9 +344,7 @@ preview_images:
 
 - **No API required** — perfect for development, CI, and testing
 - Generates a deterministic retro-landscape SVG (seeded from the post slug)
-  and rasterizes it to PNG via `rsvg-convert` → `inkscape` → `magick` →
-  Playwright (`scripts/dev/rasterize-svg.js`); with no rasterizer the
-  sanitized `.svg` is kept
+and rasterizes it to PNG via `rsvg-convert` → `inkscape` → `magick` → Playwright (`scripts/dev/rasterize-svg.js`); with no rasterizer the sanitized `.svg` is kept
 - Fast, free, and reproducible: the same post always gets the same banner
 - Skips Claude analysis/review (its output is deterministic by design)
 
@@ -477,9 +465,7 @@ Run with verbose output for detailed diagnostics:
 - Consolidated Bash/Python duplicates into one Python engine
   (`scripts/lib/preview_generator.py`) with a renderer framework
 - **Claude orchestrates every generation** — analyzes the article into a
-  subject-specific art brief (`prompt_engine: claude`) and vision-reviews the
-  rendered image, regenerating once with a corrected prompt when it
-  misrepresents the article (`review_engine: claude`)
+subject-specific art brief (`prompt_engine: claude`) and vision-reviews the rendered image, regenerating once with a corrected prompt when it misrepresents the article (`review_engine: claude`)
 - Renderers: OpenAI gpt-image-2 (default), xAI unified into the main engine,
   Google Gemini added, Stability retained
 - `local` provider now produces a real deterministic SVG/PNG banner

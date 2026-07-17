@@ -21,9 +21,7 @@ sidebar:
 
 # Particles Background
 
-An optional animated particle field that sits behind hero and landing content,
-adding subtle motion and depth. Particles drift, connect, and react to the
-cursor, and the whole effect is configured from a single JSON file.
+An optional animated particle field that sits behind hero and landing content, adding subtle motion and depth. Particles drift, connect, and react to the cursor, and the whole effect is configured from a single JSON file.
 
 ## Overview
 
@@ -31,18 +29,13 @@ cursor, and the whole effect is configured from a single JSON file.
   distance are all data-driven.
 - **Interactive** — particles respond to mouse hover and clicks.
 - **JSON configuration** — behaviour is read from
-  [`assets/particles.json`](https://github.com/bamr87/zer0-mistakes/blob/main/assets/particles.json),
-  so you can retune the look without touching JavaScript.
+[`assets/particles.json`](https://github.com/bamr87/zer0-mistakes/blob/main/assets/particles.json), so you can retune the look without touching JavaScript.
 - **Performance-conscious** — intended for landing/hero sections rather than
   every page, so the animation cost is scoped to where it adds value.
 
 ## How it works
 
-The vendored [`assets/js/particles.js`](https://github.com/bamr87/zer0-mistakes/blob/main/assets/js/particles.js)
-runtime renders onto a canvas mounted in the hero area; the initialiser
-(`assets/js/particles-source.js`) loads `assets/particles.json` and applies it.
-Because the configuration is external, a site can ship a calmer or denser field
-by editing the JSON alone.
+The vendored [`assets/js/particles.js`](https://github.com/bamr87/zer0-mistakes/blob/main/assets/js/particles.js) runtime renders onto a canvas mounted in the hero area; the initialiser (`assets/js/particles-source.js`) loads `assets/particles.json` and applies it. Because the configuration is external, a site can ship a calmer or denser field by editing the JSON alone.
 
 ## Implementation
 

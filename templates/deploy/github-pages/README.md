@@ -1,8 +1,6 @@
 # Deploy target: GitHub Pages
 
-Generates a GitHub Actions workflow that builds the Jekyll site with
-Bundler and publishes the rendered `_site/` directory to the `gh-pages`
-branch. Compatible with both gem-based and `remote_theme` installs.
+Generates a GitHub Actions workflow that builds the Jekyll site with Bundler and publishes the rendered `_site/` directory to the `gh-pages` branch. Compatible with both gem-based and `remote_theme` installs.
 
 ## Files installed
 

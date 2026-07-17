@@ -42,8 +42,7 @@ docker-compose exec -T jekyll ./test/test_runner.sh
 
 ## Playwright Tiers
 
-`test/test_playwright.sh` selects a Playwright **project** via the
-`PLAYWRIGHT_PROJECT` env var. All tiers share `test/playwright.config.js`.
+`test/test_playwright.sh` selects a Playwright **project** via the `PLAYWRIGHT_PROJECT` env var. All tiers share `test/playwright.config.js`.
 
 | Tier | When CI runs it | What it checks |
 |------|-----------------|----------------|
@@ -51,10 +50,7 @@ docker-compose exec -T jekyll ./test/test_runner.sh
 | `snapshots` | Path-filtered: `_sass/`, `assets/`, `_layouts/`, `_includes/`, `test/visual/`, `test/playwright.config.js` | Pixel screenshots of the homepage in each of the 9 theme skins |
 | `regression-{chromium,firefox,webkit}` | Manual `workflow_dispatch` only | All specs across all browsers |
 
-Snapshot baselines live in `test/visual/snapshots/` and are committed to
-the repo. They are platform-specific (`*-snapshots-linux.png`); refresh
-them via `./test/update-snapshots.sh` (uses a Linux Playwright Docker
-image) when intentional visual changes land.
+Snapshot baselines live in `test/visual/snapshots/` and are committed to the repo. They are platform-specific (`*-snapshots-linux.png`); refresh them via `./test/update-snapshots.sh` (uses a Linux Playwright Docker image) when intentional visual changes land.
 
 When adding a new Playwright spec:
 
@@ -65,8 +61,7 @@ When adding a new Playwright spec:
 - If the spec relies on visible UI in a Bootstrap tab, **activate the
   tab and wait for `.tab-pane.active` to be visible** before interacting.
 - Mark known product bugs with `test.fixme(...)` and a `// TODO:` comment
-  linking to the tracking issue. Never delete a failing test to make CI
-  green.
+linking to the tracking issue. Never delete a failing test to make CI green.
 
 ## Test Script Template
 

@@ -65,10 +65,7 @@ Build the gem without the full release workflow.
 ```
 
 #### `bin/validate`
-Run preflight validation before refactors, pull requests, and releases. The
-quick path validates repository files, version consistency, YAML parsing, active
-configuration contracts, config-file classification, and navigation data before
-the Docker/local build stages run.
+Run preflight validation before refactors, pull requests, and releases. The quick path validates repository files, version consistency, YAML parsing, active configuration contracts, config-file classification, and navigation data before the Docker/local build stages run.
 
 ```bash
 ./scripts/bin/validate [options]
@@ -131,11 +128,7 @@ CLAUDE_CODE_OAUTH_TOKEN / ANTHROPIC_API_KEY / logged-in `claude` CLI):
 ```
 
 #### `pixelate-preview-images`
-Pixelate + palette-quantize the preview banners so they are dramatically smaller
-files while retaining the retro pixel-art look. Pure Python stdlib (no
-ImageMagick / Pillow / pngquant needed) — it downsamples the image and reduces
-it to an indexed PNG-8 palette. Typical savings on the AI-generated banners are
-~90% (e.g. a 2.7&nbsp;MB banner becomes ~230&nbsp;KB).
+Pixelate + palette-quantize the preview banners so they are dramatically smaller files while retaining the retro pixel-art look. Pure Python stdlib (no ImageMagick / Pillow / pngquant needed) — it downsamples the image and reduces it to an indexed PNG-8 palette. Typical savings on the AI-generated banners are ~90% (e.g. a 2.7&nbsp;MB banner becomes ~230&nbsp;KB).
 
 ```bash
 # Preview the savings for every banner (no changes), 4 workers:
@@ -162,10 +155,7 @@ Options (forwarded to scripts/features/pixelate_images.py):
   -j, --jobs N          Parallel worker processes (default: 1)
 ```
 
-With no path argument it processes `preview_images.output_dir` from
-`_config.yml` (default `assets/images/previews`). Non-PNG and 16-bit/interlaced
-inputs are skipped gracefully. The engine has a built-in `--selftest`, exercised
-by `scripts/test/lib/test_pixelate_images.sh`.
+With no path argument it processes `preview_images.output_dir` from `_config.yml` (default `assets/images/previews`). Non-PNG and 16-bit/interlaced inputs are skipped gracefully. The engine has a built-in `--selftest`, exercised by `scripts/test/lib/test_pixelate_images.sh`.
 
 #### `install-preview-generator`
 Install the preview image generator feature.
@@ -277,8 +267,7 @@ These are sourced by other scripts, not executed directly:
 
 ## Backward Compatibility
 
-Legacy script paths (e.g., `./scripts/build.sh`) are maintained as thin wrappers
-that forward to the canonical locations in `bin/`, `utils/`, `features/`, or `test/`.
+Legacy script paths (e.g., `./scripts/build.sh`) are maintained as thin wrappers that forward to the canonical locations in `bin/`, `utils/`, `features/`, or `test/`.
 
 ## Development Workflow
 
@@ -545,8 +534,7 @@ The script is designed to integrate with AI agents for automated content managem
 
 ### Engine
 
-All logic lives in the single-file Python engine `scripts/lib/preview_generator.py`
-(the shell entry points are thin wrappers around it):
+All logic lives in the single-file Python engine `scripts/lib/preview_generator.py` (the shell entry points are thin wrappers around it):
 
 ```bash
 # Install the one dependency

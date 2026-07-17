@@ -38,8 +38,7 @@ graph TD
     C & E & F --> G[Render matching help block]
 ```
 
-The Liquid template inspects `site.remote_theme`, `site.theme`, and a small set of
-`site.github.*` variables that GitHub Pages injects at build time.
+The Liquid template inspects `site.remote_theme`, `site.theme`, and a small set of `site.github.*` variables that GitHub Pages injects at build time.
 
 ## Implementation
 

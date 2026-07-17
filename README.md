@@ -44,14 +44,7 @@ hero_image: /assets/images/wizard-on-journey.png
 excerpt: "AI-native Jekyll theme for GitHub Pages — multi-agent ready (Copilot, Codex, Cursor, Claude), AI-powered install & preview images, AIEO-optimized, with Docker-first development and 43 documented features"
 ---
 
-[![pages-build-deployment](https://github.com/bamr87/zer0-mistakes/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/bamr87/zer0-mistakes/actions/workflows/pages/pages-build-deployment)
-[![Gem Version](https://badge.fury.io/rb/jekyll-theme-zer0.svg)](https://badge.fury.io/rb/jekyll-theme-zer0)
-[![CI](https://github.com/bamr87/zer0-mistakes/actions/workflows/ci.yml/badge.svg)](https://github.com/bamr87/zer0-mistakes/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://github.com/bamr87/zer0-mistakes/blob/main/docker-compose.yml)
-[![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.3-purple.svg)](https://getbootstrap.com/)
-[![AI-Native](https://img.shields.io/badge/AI--Native-Copilot%20%7C%20Codex%20%7C%20Cursor%20%7C%20Claude-8A2BE2)](AGENTS.md)
-[![AIEO](https://img.shields.io/badge/AIEO-Optimized-ff69b4)](#-aieo-optimized--built-for-ai-citation)
+[![pages-build-deployment](https://github.com/bamr87/zer0-mistakes/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/bamr87/zer0-mistakes/actions/workflows/pages/pages-build-deployment) [![Gem Version](https://badge.fury.io/rb/jekyll-theme-zer0.svg)](https://badge.fury.io/rb/jekyll-theme-zer0) [![CI](https://github.com/bamr87/zer0-mistakes/actions/workflows/ci.yml/badge.svg)](https://github.com/bamr87/zer0-mistakes/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://github.com/bamr87/zer0-mistakes/blob/main/docker-compose.yml) [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.3-purple.svg)](https://getbootstrap.com/) [![AI-Native](https://img.shields.io/badge/AI--Native-Copilot%20%7C%20Codex%20%7C%20Cursor%20%7C%20Claude-8A2BE2)](AGENTS.md) [![AIEO](https://img.shields.io/badge/AIEO-Optimized-ff69b4)](#-aieo-optimized--built-for-ai-citation)
 
 # zer0-mistakes
 
@@ -155,9 +148,7 @@ The installer auto-detects your operating system, sets up Docker, downloads the 
 
 ## 🎯 Bare-Minimum Starter (3 files, zero install)
 
-Don't want to run the installer? You can publish a working site to GitHub
-Pages with **just three files** in your repo. The remote theme provides every
-layout, style, and even an in-browser configuration wizard.
+Don't want to run the installer? You can publish a working site to GitHub Pages with **just three files** in your repo. The remote theme provides every layout, style, and even an in-browser configuration wizard.
 
 ```text
 my-site/
@@ -200,11 +191,7 @@ title: Home
 # Welcome to my site
 ```
 
-Push to a GitHub Pages–enabled repository and visit your site. Until you set
-`site_configured: true`, the home page renders the **welcome layout** — a hero
-card and a full in-browser wizard that generates a personalised `_config.yml`
-you can download. Flip the flag (or fill in `title`/`founder`/`email`) and your
-own content takes over.
+Push to a GitHub Pages–enabled repository and visit your site. Until you set `site_configured: true`, the home page renders the **welcome layout** — a hero card and a full in-browser wizard that generates a personalised `_config.yml` you can download. Flip the flag (or fill in `title`/`founder`/`email`) and your own content takes over.
 
 ---
 
@@ -430,8 +417,7 @@ GDPR/CCPA compliant PostHog integration with granular consent: it respects Do No
 
 ### 🧠 Obsidian Vault Integration
 
-Edit your content as an [Obsidian](https://obsidian.md) vault — same files,
-same git history, identical rendering on the published site:
+Edit your content as an [Obsidian](https://obsidian.md) vault — same files, same git history, identical rendering on the published site:
 
 - **Open repo as a vault**: shared `.obsidian/` config commits with the repo.
 - **Wiki-links** `[[Page Title]]` and aliases `[[Page|Alias]]` resolve to permalinks.
@@ -440,17 +426,14 @@ same git history, identical rendering on the published site:
 - **Backlinks panel** auto-renders on every note (and on any page with `backlinks: true`).
 - **Inline tags** `#topic` link to the tag index, hierarchical tags supported.
 - **Zero plugin requirements**: works on the default GitHub Pages
-  `remote_theme` build via a client-side resolver
-  (`assets/js/obsidian-wiki-links.js`) backed by a Liquid-generated
-  `assets/data/wiki-index.json`.
+`remote_theme` build via a client-side resolver (`assets/js/obsidian-wiki-links.js`) backed by a Liquid-generated `assets/data/wiki-index.json`.
 
 ```bash
 # Open the repo root as an Obsidian vault, edit, then commit & push
 git commit -am "note: today's thinking" && git push
 ```
 
-Read the [Obsidian docs](pages/_docs/obsidian/) for setup, syntax reference,
-authoring workflow, and troubleshooting.
+Read the [Obsidian docs](pages/_docs/obsidian/) for setup, syntax reference, authoring workflow, and troubleshooting.
 
 ### 📓 Jupyter Notebook Support
 

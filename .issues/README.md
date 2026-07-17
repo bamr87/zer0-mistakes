@@ -1,9 +1,6 @@
 # zer0-mistakes Issue Autopilot — the `.issues/` data layer
 
-The content layer for the open-issue queue, ported from it-journey and adapted to
-this theme repo. A deterministic engine classifies every open GitHub issue into a
-**disposition**, groups related issues into batches, and emits a dated worklist.
-AI agents act on that plan — they never re-decide the policy encoded here.
+The content layer for the open-issue queue, ported from it-journey and adapted to this theme repo. A deterministic engine classifies every open GitHub issue into a **disposition**, groups related issues into batches, and emits a dated worklist. AI agents act on that plan — they never re-decide the policy encoded here.
 
 ```
 .issues/config.yml          # disposition rules + label namespace + safety globs (hand-edited)
@@ -18,19 +15,11 @@ AI agents act on that plan — they never re-decide the policy encoded here.
 - **Backlog-synced issues are never touched.** `sync.yml` mirrors
   `_data/backlog.yml` → GitHub Issues (marked with `<!-- backlog-id: T-### -->`
   + the `agent-ready` label). The engine's FIRST disposition (`backlog-managed`)
-  catches these and lists them under **"Left alone (protected)"** — the autopilot
-  records but never comments/labels/closes them. Edit the backlog file instead.
+catches these and lists them under **"Left alone (protected)"** — the autopilot records but never comments/labels/closes them. Edit the backlog file instead.
 - **The resolver never edits theme code.** Auto-resolution PRs are scoped to
-  `docs/**` + `pages/**` Markdown only (`resolve_allow_globs`). Anything touching
-  `_layouts/_includes/_sass/_plugins/lib/assets` is escalated to a human (theme
-  changes need visual review). The auto-merge smuggle guard enforces the same.
+`docs/**` + `pages/**` Markdown only (`resolve_allow_globs`). Anything touching `_layouts/_includes/_sass/_plugins/lib/assets` is escalated to a human (theme changes need visual review). The auto-merge smuggle guard enforces the same.
 - **Closing is deterministic + gated.** No LLM lane runs `gh issue close`. Three
-  gated paths close issues: bot-noise (`eligible_autoclose`, under
-  `ISSUE_AUTOCLOSE_ENABLED`); **verify-and-close** (a human issue already fixed on
-  `main` — the read-only `issue-verifier` proposes, `verify_close.py` closes only
-  when `main`'s full CI/CD suite is green, under `ISSUE_VERIFY_CLOSE_ENABLED`);
-  and PR-merge (a resolver `Closes #N` PR that passes all checks). A human issue is
-  never closed on a heuristic/stale signal.
+gated paths close issues: bot-noise (`eligible_autoclose`, under `ISSUE_AUTOCLOSE_ENABLED`); **verify-and-close** (a human issue already fixed on `main` — the read-only `issue-verifier` proposes, `verify_close.py` closes only when `main`'s full CI/CD suite is green, under `ISSUE_VERIFY_CLOSE_ENABLED`); and PR-merge (a resolver `Closes #N` PR that passes all checks). A human issue is never closed on a heuristic/stale signal.
 
 ## The loop
 
@@ -41,8 +30,7 @@ AI agents act on that plan — they never re-decide the policy encoded here.
 3. `issue-triager` (label/route/flag) and `issue-resolver` (one docs batch → one
    PR) run the `issue-triage` skill via `.github/workflows/issue-autopilot.yml`.
 4. `issue-verifier` (read-only) judges whether each `verify_candidate` human issue
-   is already fixed on `main` → `.issues/verify.json`; `scripts/issues/verify_close.py`
-   closes the resolved + high-confidence ones, gated on a green `main` CI/CD suite.
+is already fixed on `main` → `.issues/verify.json`; `scripts/issues/verify_close.py` closes the resolved + high-confidence ones, gated on a green `main` CI/CD suite.
 5. `issue-pr-auto-merge.yml` merges green docs-only `auto:issue` PRs.
 
 ## Run it locally
@@ -70,6 +58,4 @@ Needs Python 3.12 + PyYAML and an authenticated `gh`.
    gh label create autopilot:verified-resolved -R $R -c 0e8a16 -d "Closed by verify-and-close (fixed on main + green CI)" || true
    ```
 3. Ramp the repo variables: `ISSUE_AUTOPILOT_ENABLED` (triage) → `ISSUE_AUTOCLOSE_ENABLED`
-   (close bot-noise) → `ISSUE_VERIFY_CLOSE_ENABLED` (verify-and-close human issues
-   already fixed on `main`, gated on green CI) → `ISSUE_RESOLVE_ENABLED` (open docs
-   PRs) → `ISSUE_AUTOMERGE_ENABLED`.
+(close bot-noise) → `ISSUE_VERIFY_CLOSE_ENABLED` (verify-and-close human issues already fixed on `main`, gated on green CI) → `ISSUE_RESOLVE_ENABLED` (open docs PRs) → `ISSUE_AUTOMERGE_ENABLED`.

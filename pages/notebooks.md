@@ -104,9 +104,7 @@ permalink: /notebooks/
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  const filterButtons = document.querySelectorAll('[data-filter]');
-  const notebookCards = document.querySelectorAll('.notebook-card');
+document.addEventListener('DOMContentLoaded', function() { const filterButtons = document.querySelectorAll('[data-filter]'); const notebookCards = document.querySelectorAll('.notebook-card');
   
   filterButtons.forEach(button => {
     button.addEventListener('click', function() {
@@ -126,6 +124,5 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       });
     });
-  });
-});
+}); });
 </script>

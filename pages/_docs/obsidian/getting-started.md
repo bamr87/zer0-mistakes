@@ -20,9 +20,7 @@ lastmod: "2026-04-24T15:06:30Z"
 4. Trust the author when prompted (the vault ships with shared settings
    under `.obsidian/`; nothing executes automatically).
 
-The repo's `.gitignore` excludes Obsidian's per-user state
-(`workspace*`, `cache`, `plugins/*/data.json`) so multiple contributors
-can share the same vault without merge conflicts.
+The repo's `.gitignore` excludes Obsidian's per-user state (`workspace*`, `cache`, `plugins/*/data.json`) so multiple contributors can share the same vault without merge conflicts.
 
 > [!tip] Prefer a smaller surface?
 > If `_layouts/`, `_includes/`, etc. clutter the file explorer, the
@@ -31,9 +29,7 @@ can share the same vault without merge conflicts.
 
 ## 2. Recommended plugins
 
-The repo ships an *enabled* core-plugin list in `.obsidian/core-plugins.json`
-(file explorer, search, backlinks, outgoing links, tag pane, graph,
-outline, page preview, templates, daily notes, properties).
+The repo ships an *enabled* core-plugin list in `.obsidian/core-plugins.json` (file explorer, search, backlinks, outgoing links, tag pane, graph, outline, page preview, templates, daily notes, properties).
 
 Recommended community plugins (install manually, none are bundled):
 
@@ -47,9 +43,7 @@ Recommended community plugins (install manually, none are bundled):
 
 ## 3. Frontmatter conventions
 
-Every note should carry the canonical Jekyll frontmatter so it picks up the
-correct layout and permalink. The shared template at
-`pages/_notes/_templates/note-template.md` already matches:
+Every note should carry the canonical Jekyll frontmatter so it picks up the correct layout and permalink. The shared template at `pages/_notes/_templates/note-template.md` already matches:
 
 ```yaml
 ---
@@ -67,10 +61,7 @@ backlinks: true
 ---
 ```
 
-Obsidian shows these fields in its **Properties** sidebar; the values map
-1:1 to the Jekyll defaults declared in `_config.yml`. The `aliases:` array
-is honored by [`jekyll-redirect-from`](https://github.com/jekyll/jekyll-redirect-from)
-so renames don't break inbound links.
+Obsidian shows these fields in its **Properties** sidebar; the values map 1:1 to the Jekyll defaults declared in `_config.yml`. The `aliases:` array is honored by [`jekyll-redirect-from`](https://github.com/jekyll/jekyll-redirect-from) so renames don't break inbound links.
 
 ## 4. Where things live
 

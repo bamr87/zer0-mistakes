@@ -2,11 +2,7 @@
 
 ## The defect
 
-The ZER0-061 "Author Profiles System" description contained a raw `<key>`
-(`/authors/<key>/`). `/features/` renders `{{ feature.description }}`
-**unescaped**, so the browser parsed `<key>` as a stray element — its implicit
-open tag swallowed every card that followed, nesting the rest of the registry
-inside the Author Profiles card.
+The ZER0-061 "Author Profiles System" description contained a raw `<key>` (`/authors/<key>/`). `/features/` renders `{{ feature.description }}` **unescaped**, so the browser parsed `<key>` as a stray element — its implicit open tag swallowed every card that followed, nesting the rest of the registry inside the Author Profiles card.
 
 ## Before → after
 
@@ -25,10 +21,7 @@ Live stray-element count on `/features/`: **1 → 0** (`document.querySelectorAl
 
 ## Regression test
 
-[`test/visual/features-provenance.spec.js`](../../features-provenance.spec.js) —
-"no feature card renders a stray HTML tag from its text" asserts there are zero
-stray `<key>`-type elements under `main` and that all 76 registry rows are
-present (nothing swallowed). Regenerate the shots:
+[`test/visual/features-provenance.spec.js`](../../features-provenance.spec.js) — "no feature card renders a stray HTML tag from its text" asserts there are zero stray `<key>`-type elements under `main` and that all 76 registry rows are present (nothing swallowed). Regenerate the shots:
 
 ```bash
 BASE_URL=http://localhost:4000 node test/visual/features-card-escape-evidence.mjs after

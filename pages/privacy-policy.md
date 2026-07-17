@@ -214,8 +214,7 @@ We may update this Privacy Policy periodically. When we make changes:
 
 If you have questions, concerns, or requests regarding this Privacy Policy or our data practices:
 
-**Email**: {% if site.email %}[{{ site.email }}](mailto:{{ site.email }}){% else %}Contact the site owner{% endif %}
-**Website**: [{{ site.url }}]({{ site.url }})
+**Email**: {% if site.email %}[{{ site.email }}](mailto:{{ site.email }}){% else %}Contact the site owner{% endif %} **Website**: [{{ site.url }}]({{ site.url }})
 
 For PostHog-specific privacy questions, you can also refer to [PostHog's Privacy Policy](https://posthog.com/privacy).
 

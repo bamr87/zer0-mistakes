@@ -1,9 +1,7 @@
 # Evidence — color_mode_default config knob (issue #241)
 
 A new `color_mode_default` site config key (values: `dark` | `light` | `auto`,
-default `auto`) controls Bootstrap's `data-bs-theme` attribute both
-server-side (in `_layouts/root.html`) and client-side via an early inline
-FOUC-prevention script added to `_includes/core/tokens-inline.html`.
+default `auto`) controls Bootstrap's `data-bs-theme` attribute both server-side (in `_layouts/root.html`) and client-side via an early inline FOUC-prevention script added to `_includes/core/tokens-inline.html`.
 
 ## What changed
 
@@ -44,6 +42,4 @@ BASE_URL=http://localhost:4000 node test/visual/color-mode-default-evidence.mjs
 - `04-*-override-dark-*.png` — `localStorage["theme"]="dark"` overrides a light
   OS preference; result is `data-bs-theme="dark"`.
 
-Regression test: [`../../color-mode-default.spec.js`](../../color-mode-default.spec.js)
-(smoke tier — 5 assertions covering server-render, FOUC prevention, localStorage
-override, and cross-page persistence).
+Regression test: [`../../color-mode-default.spec.js`](../../color-mode-default.spec.js) (smoke tier — 5 assertions covering server-render, FOUC prevention, localStorage override, and cross-page persistence).
