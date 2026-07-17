@@ -32,6 +32,7 @@ jobs:
   matrix:
     name: ${{ matrix.os }} · ruby-${{ matrix.ruby }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
@@ -39,6 +40,12 @@ jobs:
         # Ruby 3.2+ required: Bundler 2.7.x (pinned in Gemfile.lock) needs >= 3.2.0.
         # Ruby 2.7 / 3.0 / 3.1 are EOL upstream; project floor moved with Bundler.
         ruby: ['3.2', '3.3']
+        exclude:
+          # Floor-version (3.2) coverage on Linux is enough — the installer has
+          # no OS-specific Ruby-version code paths, and macOS runner minutes
+          # bill at 10x. macOS validates the current Ruby only.
+          - os: macos-latest
+            ruby: '3.2'
 
     steps:
       - uses: actions/checkout@v7
@@ -90,6 +97,7 @@ jobs:
   curl-bash-bootstrap:
     name: curl|bash bootstrap (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
@@ -117,6 +125,7 @@ jobs:
   doctor:
     name: doctor (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:

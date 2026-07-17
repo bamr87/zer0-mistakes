@@ -48,7 +48,14 @@ async function main() {
   // the article layout even as content changes.
   const probe = await browser.newPage();
   try {
-    await probe.goto(`${BASE_URL}/`, { waitUntil: 'domcontentloaded' });
+    // Non-fatal: the discovered article route is a nice-to-have. A cold-start
+    // timeout here killed the ENTIRE 2026-07-13 audit run (per-route gotos
+    // below are try/caught; this probe wasn't). Longer timeout to absorb the
+    // server's first-hit warm-up, and swallow failures — the sweep still
+    // audits every static ROUTE and records per-route errors as findings.
+    await probe
+      .goto(`${BASE_URL}/`, { waitUntil: 'domcontentloaded', timeout: 60000 })
+      .catch(() => null);
     const article = await probe
       .locator('a[href^="/posts/"]')
       .first()

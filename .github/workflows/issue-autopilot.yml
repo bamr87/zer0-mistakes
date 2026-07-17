@@ -53,6 +53,14 @@ concurrency:
 jobs:
   # --------------------------------------------------------------------------
   gate:
+    # The `issues: [labeled]` trigger fires for EVERY label applied to any
+    # issue — including the area:*/priority:*/autopilot:* labels this pipeline
+    # itself applies during triage — and each firing booted a runner just so
+    # the gate step could say "not autopilot:go" (the 2026-07-13 triage pass
+    # alone produced a burst of ~10 such runs). Skip at the JOB level (no
+    # runner boot) unless it's the one label we act on. The step-level check
+    # below stays as defense in depth.
+    if: github.event_name != 'issues' || github.event.label.name == 'autopilot:go'
     runs-on: ubuntu-latest
     outputs:
       go: ${{ steps.check.outputs.go }}
