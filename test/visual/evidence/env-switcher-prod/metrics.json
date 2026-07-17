@@ -1,0 +1,60 @@
+{
+  "slug": "env-switcher-prod",
+  "issue": 298,
+  "route": "/",
+  "scenarios": [
+    {
+      "state": "before",
+      "build": "JEKYLL_ENV=production",
+      "rows": [
+        {
+          "badge": "Prod",
+          "link": "https://zer0-mistakes.com/"
+        },
+        {
+          "badge": "Dev",
+          "link": "http://localhost:4000/"
+        },
+        {
+          "badge": "Source",
+          "link": "https://github.com/bamr87/zer0-mistakes/blob/main/README.md"
+        }
+      ],
+      "localhostOccurrencesInSettingsChrome": 5
+    },
+    {
+      "state": "after",
+      "build": "JEKYLL_ENV=production",
+      "rows": [
+        {
+          "badge": "Prod",
+          "link": "https://zer0-mistakes.com/"
+        },
+        {
+          "badge": "Source",
+          "link": "https://github.com/bamr87/zer0-mistakes/blob/main/README.md"
+        }
+      ],
+      "localhostOccurrencesInSettingsChrome": 0
+    },
+    {
+      "state": "after",
+      "build": "development (dev server)",
+      "rows": [
+        {
+          "badge": "Prod",
+          "link": "https://zer0-mistakes.com/"
+        },
+        {
+          "badge": "Dev",
+          "link": "http://localhost:4000/"
+        },
+        {
+          "badge": "Source",
+          "link": "https://github.com/bamr87/zer0-mistakes/blob/main/README.md"
+        }
+      ],
+      "localhostOccurrencesInSettingsChrome": 6
+    }
+  ]
+}

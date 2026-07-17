@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/env-switcher-prod/ -->
+  (evidence: [`test/visual/evidence/env-switcher-prod/`](test/visual/evidence/env-switcher-prod/README.md) — production Settings-chrome localhost:4000 occurrences 5 → 0; Dev row intact in development)
