@@ -53,19 +53,24 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     outputs:
-      code: ${{ steps.filter.outputs.code }}
-      docker: ${{ steps.filter.outputs.docker }}
-      content: ${{ steps.filter.outputs.content }}
-      styling: ${{ steps.filter.outputs.styling }}
-      install: ${{ steps.filter.outputs.install }}
+      code: ${{ steps.check.outputs.code }}
+      docker: ${{ steps.check.outputs.docker }}
+      content: ${{ steps.check.outputs.content }}
+      styling: ${{ steps.check.outputs.styling }}
+      install: ${{ steps.check.outputs.install }}
       docs-only: ${{ steps.check.outputs.docs-only }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
 
+      # continue-on-error so a GitHub API outage degrades to a FULL run (the
+      # resolve step below fails open) instead of a red "Detect Changes" that
+      # blocks every open PR and wakes ci-self-repair — exactly what the
+      # 2026-07-16 pulls/*/files API incident did.
       - name: Filter Paths
         uses: dorny/paths-filter@v4
         id: filter
+        continue-on-error: true
         with:
           filters: |
             code:
@@ -111,10 +116,30 @@ jobs:
               - 'docker-compose*.yml'
               - 'Dockerfile'
 
-      - name: Check if docs-only
+      - name: Resolve filters (fail open) and check if docs-only
         id: check
+        env:
+          FILTER_OUTCOME: ${{ steps.filter.outcome }}
+          CODE: ${{ steps.filter.outputs.code }}
+          DOCKER: ${{ steps.filter.outputs.docker }}
+          CONTENT: ${{ steps.filter.outputs.content }}
+          STYLING: ${{ steps.filter.outputs.styling }}
+          INSTALL: ${{ steps.filter.outputs.install }}
         run: |
-          if [[ "${{ steps.filter.outputs.code }}" == "false" && "${{ steps.filter.outputs.docker }}" == "false" ]]; then
+          if [[ "$FILTER_OUTCOME" != "success" ]]; then
+            # paths-filter needs the pulls/*/files API; when it fails we cannot
+            # know what changed, so run EVERYTHING rather than skip gates.
+            echo "::warning::paths-filter failed (outcome: $FILTER_OUTCOME) — failing open: running the full pipeline."
+            CODE=true; DOCKER=true; CONTENT=true; STYLING=true; INSTALL=true
+          fi
+          {
+            echo "code=$CODE"
+            echo "docker=$DOCKER"
+            echo "content=$CONTENT"
+            echo "styling=$STYLING"
+            echo "install=$INSTALL"
+          } >> "$GITHUB_OUTPUT"
+          if [[ "$CODE" == "false" && "$DOCKER" == "false" ]]; then
             echo "docs-only=true" >> $GITHUB_OUTPUT
             echo "📄 Docs-only change detected — heavy jobs will be skipped"
           else

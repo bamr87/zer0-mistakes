@@ -50,7 +50,8 @@ jobs:
   update-gems:
     name: Update Gemfile.lock
     runs-on: ubuntu-latest
-    
+    timeout-minutes: 15
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7

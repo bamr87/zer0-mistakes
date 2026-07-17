@@ -37,9 +37,45 @@ env:
   NODE_VERSION: '20'
 
 jobs:
+  # The suites run against PINNED deps (Gemfile.lock), so an unchanged main
+  # cannot produce a new result — re-running nightly on idle days was pure
+  # green burn (~11 min/night; the 6/29–7/13 analytics window shows 100%
+  # success). Upstream-dependency drift is NOT this workflow's job: the daily
+  # test-latest.yml canary covers that with unpinned deps. Manual dispatches
+  # always run.
+  preflight:
+    name: Skip if main is unchanged
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      actions: read     # list this workflow's own runs (workflow-level block has no `actions` scope)
+    outputs:
+      go: ${{ steps.check.outputs.go }}
+    steps:
+      - name: Compare HEAD with the last green nightly
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "manual dispatch — always run."
+            echo "go=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          last=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/nightly-extended.yml/runs?status=success&branch=main&per_page=1" \
+                   --jq '.workflow_runs[0].head_sha // empty' 2>/dev/null || true)
+          if [ -n "$last" ] && [ "$last" = "$GITHUB_SHA" ]; then
+            echo "::notice::main unchanged since the last green nightly ($last) — skipping the extended tier."
+            echo "go=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "main moved (last green: ${last:-none}, now: $GITHUB_SHA) — running."
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          fi
+
   extended-suites:
     name: Extended shell + Playwright smoke
     runs-on: ubuntu-latest
+    needs: preflight
+    if: needs.preflight.outputs.go == 'true'
     timeout-minutes: 45
     steps:
       - name: Checkout Repository
@@ -77,6 +113,8 @@ jobs:
   snapshots:
     name: Visual snapshots (9 skins)
     runs-on: ubuntu-latest
+    needs: preflight
+    if: needs.preflight.outputs.go == 'true'
     timeout-minutes: 30
     steps:
       - name: Checkout Repository
@@ -101,7 +139,9 @@ jobs:
     name: File sticky issue on failure
     runs-on: ubuntu-latest
     needs: [extended-suites, snapshots]
-    if: always() && contains(needs.*.result, 'failure')
+    # Only the test jobs' failures are signal (a preflight hiccup or a skipped
+    # night must not file the sticky issue).
+    if: always() && (needs.extended-suites.result == 'failure' || needs.snapshots.result == 'failure')
     timeout-minutes: 5
     steps:
       - name: Create or update the sticky failure issue
