@@ -46,8 +46,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     blocks in `_data/ui-text.yml` were **removed** in favor of the
     generated pipeline.
   - Offline test suite `test/test_i18n.sh` (stub provider, no network),
-    registered as the `i18n` suite in `test_runner.sh`; docs in
+    registered as the `i18n` suite in `test_runner.sh`, plus the
+    `language-toggle` Playwright smoke spec; docs in
     [`docs/systems/multilingual-translation.md`](docs/systems/multilingual-translation.md).
+    (evidence:
+    [`test/visual/evidence/language-toggle/`](test/visual/evidence/language-toggle/README.md)
+    and
+    [`test/visual/evidence/language-toggle-fr/`](test/visual/evidence/language-toggle-fr/README.md)
+    — toggle at 6 widths + generated French page with 0px overflow, code
+    blocks byte-identical)
 
 - **`show_hero` front-matter flag** — a post of any `post_type` can now opt
   its `preview:` image into the top-of-article hero with `show_hero: true`,

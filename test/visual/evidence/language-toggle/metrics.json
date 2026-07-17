@@ -1,0 +1,49 @@
+{
+  "slug": "language-toggle",
+  "base": "http://127.0.0.1:4000",
+  "route": "/docs/development/vendor-assets/",
+  "sweep": [
+    {
+      "width": 320,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0
+    },
+    {
+      "width": 390,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0
+    },
+    {
+      "width": 768,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0
+    },
+    {
+      "width": 992,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0
+    },
+    {
+      "width": 1280,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0
+    },
+    {
+      "width": 1440,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0
+    }
+  ],
+  "configs": [
+    {
+      "config": "closed",
+      "width": 1280,
+      "overflowPx": 0
+    },
+    {
+      "config": "open",
+      "width": 1280,
+      "overflowPx": 0
+    }
+  ]
+}

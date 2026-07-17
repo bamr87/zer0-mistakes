@@ -1,7 +1,7 @@
 # zer0-mistakes Theme Features Registry
 # Comprehensive feature tracking for the zer0-mistakes Jekyll theme
 # Version: 1.26.0
-# Last Updated: 2026-07-13
+# Last Updated: 2026-07-17
 
 features:
   # ============================================================================
@@ -2147,3 +2147,40 @@ features:
       - "Appearance tab: one-click color mode, 9 theme skins, background layer opacity, primary color"
       - "Site tab: environment badge, copyable page URL, quick links, theme & build info, admin links"
       - "Developer tab: breadcrumb page location, page metadata, source-code shortcuts"
+
+  - id: ZER0-078
+    title: "AI-Generated Multilingual Translations"
+    description: "Build-time translation pipeline: English stays the only human-maintained language while scripts/translate.rb (Claude Code OAuth) generates alternate-language pages, UI strings, and the manifest behind the language toggle"
+    implemented: true
+    version: "1.27.0"
+    link: "/"
+    docs: "https://github.com/bamr87/zer0-mistakes/blob/main/docs/systems/multilingual-translation.md"
+    tags: [i18n, ai, automation, content, ui]
+    date: 2026-07-17
+    provenance:
+      introduced_in: "1.27.0"
+      pr: 316
+      commit: "01dc8fa"
+      issue: null
+    tests:
+      - "test/test_i18n.sh"
+      - "test/visual/features/language-toggle.spec.js"
+    references:
+      includes:
+        - "_includes/core/i18n.html"
+        - "_includes/core/hreflang.html"
+        - "_includes/components/language-toggle.html"
+        - "_includes/components/translation-notice.html"
+      scripts:
+        - "scripts/translate.rb"
+      workflows:
+        - ".github/workflows/translate.yml"
+      data:
+        - "_data/ui-text.yml"
+        - "_data/i18n/languages.yml"
+      docs: "docs/systems/multilingual-translation.md"
+    features:
+      - "One large full-translation job (workflow_dispatch) plus bounded incremental runs when English content changes"
+      - "Manifest-driven SHA change detection, pruning of deleted sources, and generated /fr<en-url> permalinks (GitHub Pages safe-mode friendly)"
+      - "Markdown-safe segment translation: code, Liquid, wiki-links and URLs masked as placeholders and validated"
+      - "Navbar language toggle with availability states, hreflang alternates, per-page html lang, machine-translation notice"

@@ -1,3 +1,13 @@
+---
+title: "Multilingual Translation System"
+description: "Build-time AI translation pipeline: English stays the only human-maintained language while scripts/translate.rb (Claude Code OAuth) generates alternate-language pages, UI strings, and the manifest behind the language toggle."
+date: 2026-07-17T00:00:00.000Z
+lastmod: 2026-07-17T00:00:00.000Z
+categories: [docs]
+tags: [systems, automation, i18n]
+author: bamr87
+---
+
 # Multilingual Translation System
 
 The zer0-mistakes multilingual system (ZER0-078) generates alternate-language versions of the site from the English source at build time, instead of storing hand-written translations in the repository. English is the only human-maintained language; every other language is a **build artifact** produced by an AI translation utility and committed by automation.

@@ -478,12 +478,11 @@ module Zer0Translate
       http.request(request)
     end
 
-    # Tolerate fences / stray prose around the JSON object.
+    # Tolerate fences / stray prose around the JSON object: slicing from the
+    # first "{" to the last "}" covers fenced responses too, without any
+    # backtracking-prone regex over model-controlled text.
     def extract_json(text)
-      clean = text.to_s.strip
-      if (fence = clean.match(/```(?:json)?\s*(.*?)```/m))
-        clean = fence[1].strip
-      end
+      clean = text.to_s
       first = clean.index("{")
       last = clean.rindex("}")
       return nil if first.nil? || last.nil? || last < first
