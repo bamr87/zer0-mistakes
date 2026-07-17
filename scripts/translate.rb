@@ -37,6 +37,10 @@
 #                       ANTHROPIC_API_KEY        x-api-key
 #                     OAuth tokens require the first system block to carry the
 #                     Claude Code identity (same rule as the chat proxy).
+#                     For local runs, credentials are auto-loaded from the
+#                     repo-root .env (gitignored; `claude setup-token` output
+#                     goes there — same file the chat dev proxy reads).
+#                     Real environment variables always win over .env.
 #   stub              Deterministic offline pseudo-translation (tests/demo):
 #                     appends " [<lang>]" to every segment. No network.
 #
@@ -661,6 +665,31 @@ module Zer0Translate
   end
 
   # ----------------------------------------------------------------
+  # Local credential wiring: load KEY=VALUE pairs from the repo-root
+  # .env (gitignored) so `claude setup-token` credentials work for
+  # local runs — the same file the chat dev proxy reads. Real
+  # environment variables always win; values are never logged.
+  # ----------------------------------------------------------------
+  module DotEnv
+    def self.load(root)
+      path = File.join(root, ".env")
+      return unless File.file?(path)
+
+      File.foreach(path, encoding: "bom|utf-8") do |line|
+        line = line.strip
+        next if line.empty? || line.start_with?("#")
+
+        key, _, value = line.partition("=")
+        key = key.sub(/\Aexport\s+/, "").strip
+        next unless key.match?(/\A[A-Za-z_][A-Za-z0-9_]*\z/)
+        next if ENV.key?(key) # real environment always wins
+
+        ENV[key] = value.strip.gsub(/\A["']|["']\z/, "")
+      end
+    end
+  end
+
+  # ----------------------------------------------------------------
   # CLI / orchestration
   # ----------------------------------------------------------------
   class CLI
@@ -672,6 +701,7 @@ module Zer0Translate
       parse(argv)
       Log.verbose = @options[:verbose]
       @root = File.expand_path(@options[:root])
+      DotEnv.load(@root)
       @site_config = load_yaml(File.join(@root, "_config.yml")) || {}
       @config = DEFAULT_CONFIG.merge(@site_config["translation"] || {})
       @config["languages"] = @options[:langs] if @options[:langs]
