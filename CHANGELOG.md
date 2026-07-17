@@ -57,7 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Quick Links no longer ships a dead `localhost:4000` Dev row to production
   visitors** — the env-switcher's Development URL row (rendered in the
   site-wide Settings offcanvas on every page) is now wrapped in
-  `{% unless is_production %}`, using the same `env-detect.html` flag the card
+  {% raw %}`{% unless is_production %}`{% endraw %}, using the same `env-detect.html` flag the card
   already keys its badge on; serving locally with `JEKYLL_ENV=production`
   still counts as dev context, so the row stays available for Docker workflows
   ([#298](https://github.com/bamr87/zer0-mistakes/issues/298)). (evidence:
