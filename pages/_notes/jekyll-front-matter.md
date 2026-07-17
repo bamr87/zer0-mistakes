@@ -74,6 +74,8 @@ author: "Author Name"
 post_type: standard           # standard, featured, breaking, tutorial
 featured: false               # Feature on homepage
 preview: /assets/images/preview.png  # Preview image
+show_hero: false              # true → render preview as the article hero banner
+                              # for any post_type (featured/breaking always show it)
 
 # Engagement
 comments: true                # Enable comments

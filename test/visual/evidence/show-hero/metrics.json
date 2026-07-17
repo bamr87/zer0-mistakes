@@ -1,0 +1,54 @@
+{
+  "slug": "show-hero",
+  "issue": 303,
+  "beforeBase": "http://localhost:4613",
+  "afterBase": "http://localhost:4612",
+  "scenarios": [
+    {
+      "route": "/posts/2026/06/17/bayesian-modeled-my-coffee-and-wept-with-joy/",
+      "frontMatter": "standard + show_hero: true",
+      "state": "before (merge-base layout)",
+      "heroPresent": false,
+      "heroLoaded": null,
+      "sidebarPresent": false
+    },
+    {
+      "route": "/posts/2026/06/17/bayesian-modeled-my-coffee-and-wept-with-joy/",
+      "frontMatter": "standard + show_hero: true",
+      "state": "after (PR head)",
+      "heroPresent": true,
+      "heroLoaded": true,
+      "sidebarPresent": false
+    },
+    {
+      "route": "/posts/2026/06/16/favicon-ico-unlocked-door-to-collapse/",
+      "frontMatter": "standard, no flag",
+      "state": "after (PR head)",
+      "heroPresent": false,
+      "heroLoaded": null,
+      "sidebarPresent": false
+    },
+    {
+      "route": "/posts/2025/01/22/git-workflow-best-practices/",
+      "frontMatter": "featured (auto-hero)",
+      "state": "before (merge-base layout)",
+      "heroPresent": true,
+      "heroLoaded": true,
+      "sidebarPresent": false
+    },
+    {
+      "route": "/posts/2025/01/22/git-workflow-best-practices/",
+      "frontMatter": "featured (auto-hero)",
+      "state": "after (PR head)",
+      "heroPresent": true,
+      "heroLoaded": true,
+      "sidebarPresent": false
+    }
+  ],
+  "buildDiff": {
+    "normalization": "strip HTML comments, ?v=<site.time> cache-busters, build timestamps",
+    "differingPages": [
+      "/posts/2026/06/17/bayesian-modeled-my-coffee-and-wept-with-joy/"
+    ]
+  }
+}
