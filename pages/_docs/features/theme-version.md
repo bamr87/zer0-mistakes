@@ -109,35 +109,27 @@ When the site runs in development mode (`theme: "jekyll-theme-zer0"`), `version`
 
 ### Where it appears in the UI
 
-The version and build details are surfaced through the **Settings** offcanvas
-(`_includes/components/info-section.html`), which embeds
-`_includes/components/theme-info.html`. Open it from:
+The version and build details are surfaced through the **Settings** offcanvas (`_includes/components/info-section.html`), which embeds `_includes/components/theme-info.html`. Open it from:
 
 - The **gear icon** in the header (`_includes/core/header.html`,
   `data-bs-target="#info-section"`).
 - The **Info** button in the footer (`_includes/core/footer.html`).
 
-In the panel, the **Site** tab's *Theme & Build* section shows the theme,
-Jekyll version, last build time, and repository. The `theme-info.html` include
-renders the theme name from `site.remote_theme` / `site.theme` and the build
-metadata from `jekyll.version`, `jekyll.environment`, and `site.time`.
+In the panel, the **Site** tab's *Theme & Build* section shows the theme, Jekyll version, last build time, and repository. The `theme-info.html` include renders the theme name from `site.remote_theme` / `site.theme` and the build metadata from `jekyll.version`, `jekyll.environment`, and `site.time`.
 
 ## Configuration
 
 ### Version Source
 
-The plugin resolves the version from the active theme configuration — no
-dedicated config key is required:
+The plugin resolves the version from the active theme configuration — no dedicated config key is required:
 
 1. `remote_theme: "bamr87/zer0-mistakes"` → the spec's `version` is `"latest"`.
 2. `theme: "jekyll-theme-zer0"` (development) → the version comes from the
-   installed gem's `Gem::Specification`, which in turn reads
-   `JekyllThemeZer0::VERSION` in `lib/jekyll-theme-zer0/version.rb`.
+installed gem's `Gem::Specification`, which in turn reads `JekyllThemeZer0::VERSION` in `lib/jekyll-theme-zer0/version.rb`.
 
 ### Display your own version
 
-There is no `theme_version` or `show_theme_version` config key — render the
-value yourself from `site.theme_specs`:
+There is no `theme_version` or `show_theme_version` config key — render the value yourself from `site.theme_specs`:
 
 ```liquid
 {% raw %}{% assign zer0 = site.theme_specs | where: "name", "jekyll-theme-zer0" | first %}
@@ -155,8 +147,7 @@ value yourself from `site.theme_specs`:
 
 ### With Link to the Changelog
 
-`CHANGELOG.md` is not served as a Jekyll page, so link to the GitHub copy rather
-than a local `/CHANGELOG/` URL:
+`CHANGELOG.md` is not served as a Jekyll page, so link to the GitHub copy rather than a local `/CHANGELOG/` URL:
 
 ```html
 {% raw %}{% assign zer0 = site.theme_specs | where: "name", "jekyll-theme-zer0" | first %}
@@ -169,13 +160,11 @@ than a local `/CHANGELOG/` URL:
 
 ### Development Mode
 
-`_config_dev.yml` sets `remote_theme: false` and `theme: "jekyll-theme-zer0"`,
-so the plugin extracts the version from the locally installed gem.
+`_config_dev.yml` sets `remote_theme: false` and `theme: "jekyll-theme-zer0"`, so the plugin extracts the version from the locally installed gem.
 
 ### Production Mode
 
-`_config.yml` sets `remote_theme: "bamr87/zer0-mistakes"`, so the spec reports
-`version: "latest"` (GitHub Pages serves the latest commit).
+`_config.yml` sets `remote_theme: "bamr87/zer0-mistakes"`, so the spec reports `version: "latest"` (GitHub Pages serves the latest commit).
 
 ## Troubleshooting
 

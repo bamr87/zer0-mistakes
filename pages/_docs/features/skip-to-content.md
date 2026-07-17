@@ -44,11 +44,7 @@ The skip-to-content link:
 
 ### Implementation
 
-The link is the first focusable element in `_includes/core/header.html`, and
-its target is a single, site-wide `#main-content` wrapper in
-`_layouts/root.html`. The theme builds the link entirely from Bootstrap 5
-utility classes — `visually-hidden-focusable` keeps it hidden until it receives
-keyboard focus:
+The link is the first focusable element in `_includes/core/header.html`, and its target is a single, site-wide `#main-content` wrapper in `_layouts/root.html`. The theme builds the link entirely from Bootstrap 5 utility classes — `visually-hidden-focusable` keeps it hidden until it receives keyboard focus:
 
 ```html
 <!-- _includes/core/header.html -->
@@ -68,8 +64,7 @@ keyboard focus:
 
 ### Bootstrap utility (shipped default)
 
-The theme's link relies on Bootstrap's `visually-hidden-focusable` class plus a
-few positioning and button utilities — there is no custom CSS to maintain:
+The theme's link relies on Bootstrap's `visually-hidden-focusable` class plus a few positioning and button utilities — there is no custom CSS to maintain:
 
 ```html
 <a href="#main-content" class="visually-hidden-focusable position-absolute top-0 start-0 z-3 m-3 btn btn-primary">
@@ -86,12 +81,7 @@ The `visually-hidden-focusable` class:
 
 ### Token-based SCSS alternative
 
-The theme also ships a `.zer0-skip-link` helper in
-`_sass/utilities/_focus.scss` that slides the link in from off-screen on focus.
-It reads from the theme's design tokens (`--zer0-color-primary`,
-`--zer0-layer-skip-link`, the motion tokens) so it stays in sync with the rest
-of the theme. Apply it instead of the Bootstrap utilities if you prefer a
-transform-based reveal:
+The theme also ships a `.zer0-skip-link` helper in `_sass/utilities/_focus.scss` that slides the link in from off-screen on focus. It reads from the theme's design tokens (`--zer0-color-primary`, `--zer0-layer-skip-link`, the motion tokens) so it stays in sync with the rest of the theme. Apply it instead of the Bootstrap utilities if you prefer a transform-based reveal:
 
 ```scss
 .zer0-skip-link {
@@ -162,10 +152,7 @@ transform-based reveal:
 
 ## Multiple skip links
 
-The theme ships a single skip link that targets `#main-content`. For pages with
-several major landmarks you can add more links, pointing each `href` at an ID
-that exists in your markup. The header is rendered with `id="navbar"`, so a
-"skip to navigation" link would target `#navbar`:
+The theme ships a single skip link that targets `#main-content`. For pages with several major landmarks you can add more links, pointing each `href` at an ID that exists in your markup. The header is rendered with `id="navbar"`, so a "skip to navigation" link would target `#navbar`:
 
 ```html
 <div class="skip-links">

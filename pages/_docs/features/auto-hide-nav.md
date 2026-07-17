@@ -21,10 +21,7 @@ sidebar:
 
 # Auto-hide Navigation
 
-The top navigation bar gets out of the way while you read: it slides up and
-hides as you scroll **down** the page, then reappears the moment you scroll
-**up**. This reclaims vertical space — especially valuable on small screens —
-without removing access to the menu.
+The top navigation bar gets out of the way while you read: it slides up and hides as you scroll **down** the page, then reappears the moment you scroll **up**. This reclaims vertical space — especially valuable on small screens — without removing access to the menu.
 
 ## Overview
 
@@ -38,12 +35,7 @@ without removing access to the menu.
 
 ## How it works
 
-The behaviour is a small, dependency-free controller in
-[`assets/js/auto-hide-nav.js`](https://github.com/bamr87/zer0-mistakes/blob/main/assets/js/auto-hide-nav.js).
-It listens to scroll events passively, compares the current scroll position to
-the previous one, and toggles a CSS class on the navbar that drives the
-transform. Because the listener is passive and the visual change is a transform,
-scrolling stays jank-free.
+The behaviour is a small, dependency-free controller in [`assets/js/auto-hide-nav.js`](https://github.com/bamr87/zer0-mistakes/blob/main/assets/js/auto-hide-nav.js). It listens to scroll events passively, compares the current scroll position to the previous one, and toggles a CSS class on the navbar that drives the transform. Because the listener is passive and the visual change is a transform, scrolling stays jank-free.
 
 ## Implementation
 

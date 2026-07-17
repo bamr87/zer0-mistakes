@@ -9,9 +9,7 @@ permalink: /notes/obsidian-fixture/
 sitemap: false
 ---
 
-This fixture exercises every feature handled by `_plugins/obsidian_links.rb`
-and `assets/js/obsidian-wiki-links.js`. It is excluded from sitemaps and
-intentionally lives under `pages/_notes/` so the wiki-index picks it up.
+This fixture exercises every feature handled by `_plugins/obsidian_links.rb` and `assets/js/obsidian-wiki-links.js`. It is excluded from sitemaps and intentionally lives under `pages/_notes/` so the wiki-index picks it up.
 
 ## Wiki-links
 

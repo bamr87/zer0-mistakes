@@ -11,17 +11,14 @@ permalink: /categories/
   CATEGORIES INDEX PAGE - Browse all categories
   ===================================================================
 
-  File: categories.md
-  Path: pages/categories.md
-  Purpose: Display all categories with post counts and links to categorized posts
+File: categories.md Path: pages/categories.md Purpose: Display all categories with post counts and links to categorized posts
 
   This page provides:
   - Alphabetical list of all categories
   - Post count for each category
   - Direct links to posts grouped by category
   - Category overview visualization
-  ===================================================================
--->
+=================================================================== -->
 
 <header class="categories-header mb-5">
   <h1 class="display-5">

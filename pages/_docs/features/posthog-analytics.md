@@ -39,10 +39,7 @@ sidebar:
 - **Feature flags** — A/B testing built-in
 - **Free tier** — 1 million events/month free
 
-In this theme the integration lives in `_includes/analytics/posthog.html`, which
-`_layouts/root.html` includes near the end of the page. It reads the `posthog:`
-block from `_config.yml` and only emits the loader when both
-`site.posthog.enabled` is true **and** `jekyll.environment == "production"`.
+In this theme the integration lives in `_includes/analytics/posthog.html`, which `_layouts/root.html` includes near the end of the page. It reads the `posthog:` block from `_config.yml` and only emits the loader when both `site.posthog.enabled` is true **and** `jekyll.environment == "production"`.
 
 ## Prerequisites
 
@@ -104,9 +101,7 @@ posthog:
 
 ### Verify
 
-Because the loader is production-only, a local `jekyll serve` (which runs in the
-`development` environment) never injects PostHog — that is expected. To confirm
-the gate works, build with the production environment and grep the output:
+Because the loader is production-only, a local `jekyll serve` (which runs in the `development` environment) never injects PostHog — that is expected. To confirm the gate works, build with the production environment and grep the output:
 
 ```bash
 # Dev build: no PostHog loader is emitted (development environment)
@@ -120,9 +115,7 @@ JEKYLL_ENV=production docker-compose exec -T -e JEKYLL_ENV=production jekyll \
 grep -rl "posthog.init" _site/ | head
 ```
 
-In the browser, open DevTools → Console on a production page; on success the
-include logs `PostHog analytics loaded successfully`, and accepting the analytics
-cookie logs `PostHog analytics enabled via consent`.
+In the browser, open DevTools → Console on a production page; on success the include logs `PostHog analytics loaded successfully`, and accepting the analytics cookie logs `PostHog analytics enabled via consent`.
 
 ---
 
@@ -195,10 +188,7 @@ window.addEventListener('scroll', function() {
 ### GDPR/CCPA Compliance
 
 1. **Cookie consent integration** — The PostHog loader runs in production, then
-   `_includes/components/cookie-consent.html` calls `posthog.opt_in_capturing()`
-   when a visitor accepts analytics cookies and `posthog.opt_out_capturing()`
-   otherwise. Consent therefore gates event *capturing*, not whether the library
-   loads.
+`_includes/components/cookie-consent.html` calls `posthog.opt_in_capturing()` when a visitor accepts analytics cookies and `posthog.opt_out_capturing()` otherwise. Consent therefore gates event *capturing*, not whether the library loads.
 2. **Disable cookies** — Set `disable_cookie: true` for cookieless tracking
 3. **IP anonymization** — Set `privacy.ip_anonymization: true` (the include then
    passes `ip: false` to `posthog.init`)

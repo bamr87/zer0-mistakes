@@ -47,9 +47,7 @@ This file provides:
 
 ### File-Specific Instructions
 
-Located in `.github/instructions/`. Each file declares an `applyTo:` glob in
-its front matter; this is a representative subset (run
-`ls .github/instructions/` for the full list):
+Located in `.github/instructions/`. Each file declares an `applyTo:` glob in its front matter; this is a representative subset (run `ls .github/instructions/` for the full list):
 
 | File | Applies To (`applyTo:`) | Purpose |
 |------|------------|---------|
@@ -166,8 +164,7 @@ Always verify Copilot suggestions:
 
 ## How to verify
 
-Confirm the instruction files are present and that each declares an `applyTo`
-glob. From the repository root:
+Confirm the instruction files are present and that each declares an `applyTo` glob. From the repository root:
 
 ```bash
 # Main instructions exist
@@ -186,9 +183,7 @@ Expected output for the last command:
 applyTo: "_layouts/**"
 ```
 
-Open `_layouts/default.html` in an editor with GitHub Copilot enabled — the
-matching `layouts.instructions.md` glob (`_layouts/**`) loads automatically, and
-suggestions follow the theme's include and layout patterns.
+Open `_layouts/default.html` in an editor with GitHub Copilot enabled — the matching `layouts.instructions.md` glob (`_layouts/**`) loads automatically, and suggestions follow the theme's include and layout patterns.
 
 ## Configuration
 

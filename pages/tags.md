@@ -11,17 +11,14 @@ permalink: /tags/
   TAGS INDEX PAGE - Browse all tags
   ===================================================================
 
-  File: tags.md
-  Path: pages/tags.md
-  Purpose: Display all tags with post counts and links to tagged posts
+File: tags.md Path: pages/tags.md Purpose: Display all tags with post counts and links to tagged posts
 
   This page provides:
   - Alphabetical list of all tags
   - Post count for each tag
   - Direct links to posts grouped by tag
   - Tag cloud visualization
-  ===================================================================
--->
+=================================================================== -->
 
 <header class="tags-header mb-5">
   <h1 class="display-5">

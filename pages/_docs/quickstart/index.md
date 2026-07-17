@@ -28,9 +28,7 @@ sidebar:
 
 # Quickstart Guides
 
-This hub points you at the fastest route from zero to a published
-Zer0-Mistakes site. Every guide below is self-contained — start with the one
-that matches how much you want to own.
+This hub points you at the fastest route from zero to a published Zer0-Mistakes site. Every guide below is self-contained — start with the one that matches how much you want to own.
 
 ![The Zer0-Mistakes theme home page rendered locally, showing the navbar and hero section](/assets/images/docs/quickstart/theme-home.png)
 
@@ -50,21 +48,16 @@ All paths assume you have:
 - [Git](https://git-scm.com/) installed locally (or you can work entirely in the GitHub web UI for the remote-theme path).
 - Optionally [Docker](https://www.docker.com/) for the recommended local development loop.
 
-If you have never built a Jekyll site before, the
-[step-by-step Quick Start series](/quickstart/) walks through installing those
-tools first.
+If you have never built a Jekyll site before, the [step-by-step Quick Start series](/quickstart/) walks through installing those tools first.
 
 ## Two ways to consume the theme
 
 There are two supported models, and the guides above cover both:
 
 1. **Remote theme** — your repository keeps only your content and
-   configuration, and pulls layouts/includes/styles from
-   `bamr87/zer0-mistakes` at build time. Lowest maintenance; start with the
-   [Bare-Minimum Starter](/docs/quickstart/bare-minimum/).
+configuration, and pulls layouts/includes/styles from `bamr87/zer0-mistakes` at build time. Lowest maintenance; start with the [Bare-Minimum Starter](/docs/quickstart/bare-minimum/).
 2. **Fork** — you copy the whole theme into your repository so you can edit
-   layouts and styles directly. Most control; follow
-   [Fork & Deploy](/docs/quickstart/fork-and-deploy/).
+layouts and styles directly. Most control; follow [Fork & Deploy](/docs/quickstart/fork-and-deploy/).
 
 ## Next steps
 

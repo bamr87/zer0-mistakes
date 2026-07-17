@@ -50,8 +50,7 @@ scripts/install/
 
 ### The Spec
 
-A single JSON document (`.zer0/install.spec.json`) is the universal contract
-between all front-ends and the executor:
+A single JSON document (`.zer0/install.spec.json`) is the universal contract between all front-ends and the executor:
 
 ```
 CLI flags → plan.sh → spec.json → apply.sh → tasks → files on disk
@@ -59,21 +58,18 @@ AI wizard → spec.json → apply.sh → tasks → files on disk
 TUI wizard → spec.json → apply.sh → tasks → files on disk
 ```
 
-The spec schema is defined in `ai/prompts/spec.schema.json`. The AI is
-constrained to emit only valid spec JSON — never raw file content.
+The spec schema is defined in `ai/prompts/spec.schema.json`. The AI is constrained to emit only valid spec JSON — never raw file content.
 
 ### Write contract
 
-**ALL filesystem writes go through `fs.sh`**. No raw `>`, `cp`, or `echo >` 
-outside of `fs.sh` functions. This enforces:
+**ALL filesystem writes go through `fs.sh`**. No raw `>`, `cp`, or `echo >` outside of `fs.sh` functions. This enforces:
 - `--dry-run`: zero mutations
 - `--backup`: auto-backup before overwrite
 - `--force`: overwrite without prompting
 
 ### Template contract
 
-**ALL generated file content comes from `templates/`**. No heredocs in shell
-code. Templates use `{{VARIABLE}}` substitution via `template.sh::tmpl_apply`.
+**ALL generated file content comes from `templates/`**. No heredocs in shell code. Templates use `{{VARIABLE}}` substitution via `template.sh::tmpl_apply`.
 
 ### Bash 3.2 compatibility
 
@@ -122,16 +118,13 @@ The AI path is a first-class citizen but never mandatory:
 - `ai_diagnose_run` → post-build error analysis  
 - `ai_suggest_run` → profile + deploy recommendation
 
-All three are guarded by `ZER0_NO_AI=1` kill-switch and degrade gracefully
-to defaults or rule-based logic when AI is unavailable.
+All three are guarded by `ZER0_NO_AI=1` kill-switch and degrade gracefully to defaults or rule-based logic when AI is unavailable.
 
 To enable: set `OPENAI_API_KEY` (or `OPENAI_BASE_URL` for Azure/Ollama).
 
 ## Deploy plugins
 
-Deploy targets listed in the spec (`SPEC_DEPLOY`) are dispatched as
-`tasks/deploy_<target>.sh` modules that render reusable templates from
-`templates/deploy/<target>/`. Built-in plugins:
+Deploy targets listed in the spec (`SPEC_DEPLOY`) are dispatched as `tasks/deploy_<target>.sh` modules that render reusable templates from `templates/deploy/<target>/`. Built-in plugins:
 
 | Target            | Writes                                                              |
 |-------------------|---------------------------------------------------------------------|
@@ -139,14 +132,11 @@ Deploy targets listed in the spec (`SPEC_DEPLOY`) are dispatched as
 | `azure-swa`       | `.github/workflows/azure-static-web-apps.yml`, `staticwebapp.config.json` |
 | `docker-prod`     | `Dockerfile.prod`, `docker-compose.prod.yml`, `nginx.conf`, `.dockerignore` |
 
-Add a new plugin by dropping `tasks/deploy_<target>.sh` with a
-`task_deploy_<target>_run` function plus a `templates/deploy/<target>/`
-template directory. The dispatcher is generic — no registry changes needed.
+Add a new plugin by dropping `tasks/deploy_<target>.sh` with a `task_deploy_<target>_run` function plus a `templates/deploy/<target>/` template directory. The dispatcher is generic — no registry changes needed.
 
 ## Testing
 
-A regression harness lives at [`test/test_installer.sh`](../../test/test_installer.sh)
-and is wired into the main runner as the `installer` suite:
+A regression harness lives at [`test/test_installer.sh`](../../test/test_installer.sh) and is wired into the main runner as the `installer` suite:
 
 ```bash
 # Standalone (auto-enables AI tier when OPENAI_API_KEY is set)
@@ -158,5 +148,4 @@ and is wired into the main runner as the `installer` suite:
 ./test/test_runner.sh --suites installer
 ```
 
-The harness covers: module syntax, all 6 profile inits, all 3 deploy plugins,
-all 5 agent flavours, and (when keyed) the full AI wizard → apply pipeline.
+The harness covers: module syntax, all 6 profile inits, all 3 deploy plugins, all 5 agent flavours, and (when keyed) the full AI wizard → apply pipeline.

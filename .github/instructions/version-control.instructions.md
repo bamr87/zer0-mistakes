@@ -11,8 +11,7 @@ For the full release pipeline see [`.github/prompts/commit-publish.prompt.md`](.
 
 ## Branching — Hardened Trunk
 
-GitHub Flow on a **single trunk**. `main` is always deployable and is the only
-long-lived branch — there is **no `develop`, no `next`, no standing `release/*`**.
+GitHub Flow on a **single trunk**. `main` is always deployable and is the only long-lived branch — there is **no `develop`, no `next`, no standing `release/*`**.
 
 ```
 feature/<scope>-<desc>     bugfix/<scope>-<desc>     ci/<desc>
@@ -21,18 +20,11 @@ chore/<scope>-<desc>       refactor/<scope>-<desc>
 claude/<slug>   copilot/<slug>   automated/<slug>    # agent work — same rules
 ```
 
-Branch off `main`, open a PR early, **squash-merge** (the squash title is the
-Conventional Commit the release tooling reads). One concern per PR. Agent
-branches (`claude/*`, `copilot/*`, `automated/*`) obey the same rules as human
-ones. Parallel efforts each get their own short-lived branch / `git worktree` —
-never a shared accumulator branch.
+Branch off `main`, open a PR early, **squash-merge** (the squash title is the Conventional Commit the release tooling reads). One concern per PR. Agent branches (`claude/*`, `copilot/*`, `automated/*`) obey the same rules as human ones. Parallel efforts each get their own short-lived branch / `git worktree` — never a shared accumulator branch.
 
 ### The release PR *is* your accumulator
 
-You do **not** stage a version on a branch. release-please keeps one open
-`chore(main): release X.Y.Z` PR that recomputes the pending version from `main`'s
-commit history on every push — a conflict-free, server-side accumulator that
-collapses N merged PRs into exactly one pending version:
+You do **not** stage a version on a branch. release-please keeps one open `chore(main): release X.Y.Z` PR that recomputes the pending version from `main`'s commit history on every push — a conflict-free, server-side accumulator that collapses N merged PRs into exactly one pending version:
 
 | Concept | Where | Meaning |
 |---|---|---|
@@ -41,24 +33,13 @@ collapses N merged PRs into exactly one pending version:
 | **Truth** | `version.rb` on `main` | the last released version |
 | **Fact** | git **tags** `vX.Y.Z` | immutable release points (linear tree) |
 
-**Cutting a set** = deliberately merging the release PR when its contents are
-coherent — *you* control the timing. That tags `vX.Y.Z`, publishes the gem, and
-(via continuous Pages deploy) ships the site. To **aim** the accumulator at a
-chosen version class, add a `Release-As: 1.21.0` footer to a held commit, and
-audit incoming agent PR titles for a rogue `!` / `BREAKING CHANGE:` that would
-silently flip the pending major.
+**Cutting a set** = deliberately merging the release PR when its contents are coherent — *you* control the timing. That tags `vX.Y.Z`, publishes the gem, and (via continuous Pages deploy) ships the site. To **aim** the accumulator at a chosen version class, add a `Release-As: 1.21.0` footer to a held commit, and audit incoming agent PR titles for a rogue `!` / `BREAKING CHANGE:` that would silently flip the pending major.
 
-For a multi-week breaking **2.0** that must stabilize alongside 1.x, create a
-*temporary* `prerelease/2.0` branch with a one-off `Release-As: 2.0.0-rc.1`
-(first verify `gem build` accepts the resulting `2.0.0.pre.rc.1`) — delete it the
-day 2.0.0 ships. That is the only sanctioned long-lived-ish branch, and only when
-a real major is in flight.
+For a multi-week breaking **2.0** that must stabilize alongside 1.x, create a *temporary* `prerelease/2.0` branch with a one-off `Release-As: 2.0.0-rc.1` (first verify `gem build` accepts the resulting `2.0.0.pre.rc.1`) — delete it the day 2.0.0 ships. That is the only sanctioned long-lived-ish branch, and only when a real major is in flight.
 
 ## Working-Tree & Branch Discipline
 
-The rules above only work if they are followed *before* you start editing. They
-prevent the most common failure mode: unrelated changes piling up uncommitted on
-`main` and then needing to be untangled into branches after the fact.
+The rules above only work if they are followed *before* you start editing. They prevent the most common failure mode: unrelated changes piling up uncommitted on `main` and then needing to be untangled into branches after the fact.
 
 1. **Branch first, then edit.** Create the branch off an up-to-date `main`
    *before* touching any file. Never make changes directly on `main`.
@@ -69,14 +50,10 @@ prevent the most common failure mode: unrelated changes piling up uncommitted on
    ```
 
 2. **One concern per branch / PR.** A branch holds exactly one logical change
-   (one fix, one feature, one chore). If you discover an unrelated change is
-   needed, branch again for it. Mixed PRs muddy the changelog **and** the
-   automatic version bump — release tooling reads the squash-merge commit
-   title/type, so a PR mixing `feat:` and `fix:` produces the wrong bump.
+(one fix, one feature, one chore). If you discover an unrelated change is needed, branch again for it. Mixed PRs muddy the changelog **and** the automatic version bump — release tooling reads the squash-merge commit title/type, so a PR mixing `feat:` and `fix:` produces the wrong bump.
 
 3. **Parallel work → `git worktree`, not a shared working tree.** To work on two
-   things at once, give each branch its own checkout. The Docker dev server can
-   keep running in one worktree while you edit in another, with no stash churn:
+things at once, give each branch its own checkout. The Docker dev server can keep running in one worktree while you edit in another, with no stash churn:
 
    ```bash
    git worktree add ../zer0-<topic> <type>/<scope>-<slug>
@@ -86,19 +63,16 @@ prevent the most common failure mode: unrelated changes piling up uncommitted on
    Use `git stash` only for a quick, same-tree context switch.
 
 4. **Keep generated & lock files out of feature PRs.** A change to `_layouts/`,
-   `_includes/`, `scripts/`, etc. must not also carry an unrelated regenerated
-   artifact:
+`_includes/`, `scripts/`, etc. must not also carry an unrelated regenerated artifact:
    - `_data/content_statistics.yml` is plugin-generated — let it ride in its own
      `chore` commit (or regenerate it in CI), never bundled into a feature diff.
    - `Gemfile.lock` changes belong to the release flow (see Semantic
      Versioning), not feature PRs.
 
-   Stage files **by path**, not with `git add -A`, and review `git status
-   --short` before committing so stray modifications don't leak in.
+Stage files **by path**, not with `git add -A`, and review `git status --short` before committing so stray modifications don't leak in.
 
 5. **`main` is protected.** Direct pushes to `main` are blocked; every change
-   lands via PR with CI green. If you cannot push to `main`, that is by design —
-   open a PR.
+lands via PR with CI green. If you cannot push to `main`, that is by design — open a PR.
 
 ## Commits — Conventional Commits
 
@@ -111,8 +85,7 @@ Closes #123
 BREAKING CHANGE: <if applicable>
 ```
 
-Types: `feat fix docs style refactor perf test chore ci build revert security`.
-Scopes used here: `layouts includes sass scripts ci config search navigation analytics deps`.
+Types: `feat fix docs style refactor perf test chore ci build revert security`. Scopes used here: `layouts includes sass scripts ci config search navigation analytics deps`.
 
 Imperative voice. Subject lower-case, no trailing period.
 
@@ -120,13 +93,7 @@ Imperative voice. Subject lower-case, no trailing period.
 
 Single source of truth: `lib/jekyll-theme-zer0/version.rb`.
 
-**Version ↔ lock invariant.** The `jekyll-theme-zer0 (X.Y.Z)` line in
-`Gemfile.lock` must always equal `version.rb`. They drift when one release path
-bumps the version without re-locking — so only **one** release mechanism owns a
-release (the release tooling that updates `version.rb`, `CHANGELOG.md`, *and*
-`Gemfile.lock` together). Never run two release flows for the same version. If
-they ever disagree, re-resolve the lock to match `version.rb` (`bundle lock`),
-in its own `chore` commit — this is **not** a version bump.
+**Version ↔ lock invariant.** The `jekyll-theme-zer0 (X.Y.Z)` line in `Gemfile.lock` must always equal `version.rb`. They drift when one release path bumps the version without re-locking — so only **one** release mechanism owns a release (the release tooling that updates `version.rb`, `CHANGELOG.md`, *and* `Gemfile.lock` together). Never run two release flows for the same version. If they ever disagree, re-resolve the lock to match `version.rb` (`bundle lock`), in its own `chore` commit — this is **not** a version bump.
 
 | Change | Bump | Trigger commits |
 |---|---|---|
@@ -162,14 +129,7 @@ Rules:
 
 ## Release Process
 
-**Canonical: release-please.** Conventional-Commit PRs merged to `main` are
-accumulated into one open `chore(main): release X.Y.Z` PR
-(`.github/workflows/release.yml` → reusable workflows in `bamr87/.github`).
-**Cut a release by merging that PR** — it tags `vX.Y.Z`, creates the GitHub
-Release, and `publish.yml` builds the gem and pushes it to RubyGems. The reusable
-`relock` job re-locks `Gemfile.lock`/`package-lock.json` on the release PR, so the
-version↔lock invariant holds automatically. Do **not** hand-bump the version or
-run a second release flow for the same version.
+**Canonical: release-please.** Conventional-Commit PRs merged to `main` are accumulated into one open `chore(main): release X.Y.Z` PR (`.github/workflows/release.yml` → reusable workflows in `bamr87/.github`). **Cut a release by merging that PR** — it tags `vX.Y.Z`, creates the GitHub Release, and `publish.yml` builds the gem and pushes it to RubyGems. The reusable `relock` job re-locks `Gemfile.lock`/`package-lock.json` on the release PR, so the version↔lock invariant holds automatically. Do **not** hand-bump the version or run a second release flow for the same version.
 
 **Manual fallback** (local, only if the automated pipeline is unavailable):
 
@@ -178,9 +138,7 @@ run a second release flow for the same version.
 ./scripts/bin/release [patch|minor|major]
 ```
 
-The script analyzes commits → validates → bumps `version.rb` → updates CHANGELOG →
-re-locks `Gemfile.lock` → commits/tags/pushes → `gem build`/`gem push`. Never mix
-it with a release-please cut for the same version.
+The script analyzes commits → validates → bumps `version.rb` → updates CHANGELOG → re-locks `Gemfile.lock` → commits/tags/pushes → `gem build`/`gem push`. Never mix it with a release-please cut for the same version.
 
 ## Pre-Release Checklist (before merging the release PR)
 
@@ -202,9 +160,7 @@ s.add_runtime_dependency "jekyll"
 
 First-time setup: `gem signin` (stores API key in `~/.gem/credentials`, perms `0600`).
 
-CI publication: `.github/workflows/release.yml` chains release-please → `publish.yml`
-(in `bamr87/.github`), which runs on the **release-PR merge** (not a `v*` tag
-trigger) and `gem push`es using the `RUBYGEMS_API_KEY` secret.
+CI publication: `.github/workflows/release.yml` chains release-please → `publish.yml` (in `bamr87/.github`), which runs on the **release-PR merge** (not a `v*` tag trigger) and `gem push`es using the `RUBYGEMS_API_KEY` secret.
 
 ## Hotfix Process
 
@@ -218,8 +174,7 @@ git commit -m "fix(<scope>): <subject>
 Closes #999"
 ```
 
-Merging it updates the open release PR to a patch bump; **cut it** by merging the
-release PR. Don't run a parallel release flow for the same version.
+Merging it updates the open release PR to a patch bump; **cut it** by merging the release PR. Don't run a parallel release flow for the same version.
 
 ## Yanking a Bad Release
 

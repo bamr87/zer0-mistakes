@@ -47,9 +47,7 @@ Site-wide navigation panel rendered by the default layout:
 {% raw %}{% include navigation/sidebar-left.html %}{% endraw %}
 ```
 
-The panel resolves its content through two shared includes — used by the
-desktop sidebar, the mobile offcanvas, and the optional unified drawer, so
-they can never drift apart:
+The panel resolves its content through two shared includes — used by the desktop sidebar, the mobile offcanvas, and the optional unified drawer, so they can never drift apart:
 
 | Include | Role |
 |---|---|
@@ -61,8 +59,7 @@ they can never drift apart:
 
 ## Navigation Modes
 
-Set the mode with the `sidebar.nav` front matter key (or a collection/site
-default — see [Configuration](#configuration)):
+Set the mode with the `sidebar.nav` front matter key (or a collection/site default — see [Configuration](#configuration)):
 
 | Mode | Renders | Best for |
 |---|---|---|
@@ -77,22 +74,17 @@ default — see [Configuration](#configuration)):
 `auto` picks the most useful mode for the page, based on its collection:
 
 1. **Curated tree wins** — if `_data/navigation/<collection>.yml` exists
-   (e.g. `docs.yml` for the `docs` collection), it is rendered with
-   `nav-tree.html`.
+(e.g. `docs.yml` for the `docs` collection), it is rendered with `nav-tree.html`.
 2. **Collection tree** — otherwise, a page inside a collection gets the live
    `collection` folder tree.
 3. **Categories** — pages outside any collection fall back to post
    categories (when the site has posts with categories).
 
-The left column is only rendered when the resolved mode actually has
-content, so a page never reserves an empty sidebar column.
+The left column is only rendered when the resolved mode actually has content, so a page never reserves an empty sidebar column.
 
 ### Collection mode options
 
-`collection` mode groups the collection's documents by sub-folder into
-collapsible sections. A folder's `index.md` becomes the folder link itself;
-folder names are humanized (`getting-started` → "Getting started"); and the
-group containing the current page starts expanded. Options (all optional):
+`collection` mode groups the collection's documents by sub-folder into collapsible sections. A folder's `index.md` becomes the folder link itself; folder names are humanized (`getting-started` → "Getting started"); and the group containing the current page starts expanded. Options (all optional):
 
 ```yaml
 sidebar:
@@ -103,8 +95,7 @@ sidebar:
   expand: true       # expand every folder group (default: active group only)
 ```
 
-Hide an individual document from the tree with `sidebar_exclude: true` in
-its front matter.
+Hide an individual document from the tree with `sidebar_exclude: true` in its front matter.
 
 ### Categories / tags mode options
 
@@ -114,13 +105,11 @@ sidebar:
   limit: 10          # max posts listed per term (default: all)
 ```
 
-Note: Jekyll only indexes **posts** in `site.categories` / `site.tags`, so
-these modes list posts, not collection documents.
+Note: Jekyll only indexes **posts** in `site.categories` / `site.tags`, so these modes list posts, not collection documents.
 
 ## Configuration
 
-Settings resolve most-specific-first: **page front matter → collection
-metadata → site config → theme defaults**.
+Settings resolve most-specific-first: **page front matter → collection metadata → site config → theme defaults**.
 
 ### Page front matter
 
@@ -153,9 +142,7 @@ sidebar:
   nav: auto                    # optional site-wide fallback mode
 ```
 
-Front-matter defaults remain the conventional way to assign modes per
-content path (this theme sets `nav: auto` for docs/about/quickstart and
-notes/notebooks in its own `_config.yml` `defaults:` block).
+Front-matter defaults remain the conventional way to assign modes per content path (this theme sets `nav: auto` for docs/about/quickstart and notes/notebooks in its own `_config.yml` `defaults:` block).
 
 ### Right Sidebar (Table of Contents)
 

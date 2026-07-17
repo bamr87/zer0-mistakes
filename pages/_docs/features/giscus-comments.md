@@ -72,8 +72,7 @@ Before setting up Giscus, ensure you have:
 
 ### Step 4: Configure Jekyll
 
-Add the Giscus configuration to your `_config.yml`. The theme reads exactly
-three keys — `enabled`, `data-repo-id`, and `data-category-id`:
+Add the Giscus configuration to your `_config.yml`. The theme reads exactly three keys — `enabled`, `data-repo-id`, and `data-category-id`:
 
 ```yaml
 # Giscus Comment System Configuration
@@ -83,21 +82,15 @@ giscus:
   data-category-id: "YOUR_CATEGORY_ID"
 ```
 
-The `data-repo` value is filled in automatically from `site.repository`
-(set near the top of `_config.yml`), so you don't repeat the owner/repo here.
+The `data-repo` value is filled in automatically from `site.repository` (set near the top of `_config.yml`), so you don't repeat the owner/repo here.
 
 ---
 
 ## Verify it works
 
-The comment section renders at the bottom of the `article`, `note`, and
-`notebook` layouts, gated consistently on `page.comments != false` **and**
-`site.giscus.enabled`. Keeping `enabled: true` in the config block renders
-comments on all three layouts.
+The comment section renders at the bottom of the `article`, `note`, and `notebook` layouts, gated consistently on `page.comments != false` **and** `site.giscus.enabled`. Keeping `enabled: true` in the config block renders comments on all three layouts.
 
-Blog posts (`pages/_posts/`, the `article` layout) and notes/notebooks show
-comments by default; docs and general pages do not. Override per page with
-`comments: false` (or `comments: true`) in a page's front matter.
+Blog posts (`pages/_posts/`, the `article` layout) and notes/notebooks show comments by default; docs and general pages do not. Override per page with `comments: false` (or `comments: true`) in a page's front matter.
 
 1. Build the site with the dev config:
 
@@ -113,13 +106,10 @@ comments by default; docs and general pages do not. Override per page with
    grep -A1 'giscus.app/client.js' _site/**/index.html | grep -m1 data-repo-id
    ```
 
-   Expected: a `data-repo-id="..."` attribute carrying your real ID. An empty
-   `data-repo-id=""` means the `giscus` block is missing or the key is misspelled.
+Expected: a `data-repo-id="..."` attribute carrying your real ID. An empty `data-repo-id=""` means the `giscus` block is missing or the key is misspelled.
 
 3. Serve the site (`docker-compose up`) and open a post. The Giscus widget loads
-   from GitHub, so it only fully renders on a public, deployed URL — on
-   `localhost:4000` you can confirm the `<script src="https://giscus.app/client.js">`
-   tag is present even though the embedded thread won't load.
+from GitHub, so it only fully renders on a public, deployed URL — on `localhost:4000` you can confirm the `<script src="https://giscus.app/client.js">` tag is present even though the embedded thread won't load.
 
 ---
 
@@ -127,10 +117,7 @@ comments by default; docs and general pages do not. Override per page with
 
 ### Data attributes
 
-The theme's include lives at `_includes/content/giscus.html`. Only the first
-three attributes below are wired to your `_config.yml`; the rest are fixed in
-the include. To change a fixed attribute you must edit
-`_includes/content/giscus.html` directly.
+The theme's include lives at `_includes/content/giscus.html`. Only the first three attributes below are wired to your `_config.yml`; the rest are fixed in the include. To change a fixed attribute you must edit `_includes/content/giscus.html` directly.
 
 | Attribute | Source | Value |
 |-----------|--------|-------|
@@ -147,9 +134,7 @@ the include. To change a fixed attribute you must edit
 
 ### Theme options
 
-The include ships with `data-theme="preferred_color_scheme"` (auto light/dark).
-To use a different theme, edit `data-theme` in `_includes/content/giscus.html`
-to one of:
+The include ships with `data-theme="preferred_color_scheme"` (auto light/dark). To use a different theme, edit `data-theme` in `_includes/content/giscus.html` to one of:
 
 | Value | Description |
 |-------|-------------|
@@ -175,15 +160,12 @@ comments: false
 
 ## Building conversations with Claude Code
 
-Because comments are GitHub Discussions, you can read, draft, and reply to them
-from the terminal — and Claude Code can drive the whole flow. Two pieces ship
-with the theme:
+Because comments are GitHub Discussions, you can read, draft, and reply to them from the terminal — and Claude Code can drive the whole flow. Two pieces ship with the theme:
 
 - **`scripts/bin/giscus-discussions`** — a `gh`-powered engine with subcommands
   `categories`, `list`, `thread`, `draft`, `seed`, and `post`.
 - **The `giscus-conversation` skill** (`.github/skills/giscus-conversation/`) —
-  tells Claude Code how to read a page's thread, draft a maintainer reply with
-  the reader's context in mind, and publish it.
+tells Claude Code how to read a page's thread, draft a maintainer reply with the reader's context in mind, and publish it.
 
 ```bash
 # What categories exist (and their node IDs for _config.yml)?
@@ -202,12 +184,7 @@ with the theme:
 ./scripts/bin/giscus-discussions post --number 7 --body-file reply.md --reply-to DC_xxx --dry-run
 ```
 
-The script reads the repository from `gh repo view` and the category from
-`_config.yml`; override with `--repo` / `--category-id` (or the `GISCUS_REPO` /
-`GISCUS_CATEGORY_ID` env vars) when working against a fork. Writes (`seed`,
-`post`) are no-ops under `--dry-run`. A read-only
-[`giscus-digest.yml`](https://github.com/bamr87/zer0-mistakes/blob/main/.github/workflows/giscus-digest.yml)
-workflow surfaces new comment activity in the Actions job summary.
+The script reads the repository from `gh repo view` and the category from `_config.yml`; override with `--repo` / `--category-id` (or the `GISCUS_REPO` / `GISCUS_CATEGORY_ID` env vars) when working against a fork. Writes (`seed`, `post`) are no-ops under `--dry-run`. A read-only [`giscus-digest.yml`](https://github.com/bamr87/zer0-mistakes/blob/main/.github/workflows/giscus-digest.yml) workflow surfaces new comment activity in the Actions job summary.
 
 ---
 
@@ -231,19 +208,13 @@ If migrating from Disqus:
 2. **Verify Discussions are enabled** on the repository
 3. **Confirm Giscus app is installed** on the repository
 4. **Validate configuration IDs** match your repository — `data-repo-id` must
-   belong to **this** repo (a forked-in ID from the upstream repo will make the
-   widget show a "repository does not match" error even though the script tag
-   renders). Regenerate at [giscus.app](https://giscus.app/), or list valid
-   category IDs with `./scripts/bin/giscus-discussions categories`.
+belong to **this** repo (a forked-in ID from the upstream repo will make the widget show a "repository does not match" error even though the script tag renders). Regenerate at [giscus.app](https://giscus.app/), or list valid category IDs with `./scripts/bin/giscus-discussions categories`.
 5. **Check the config key spelling** — it must be `giscus:` (not `gisgus:`);
-   the layouts read `site.giscus.enabled`. The
-   `Giscus Comments Configuration` core test guards this.
+the layouts read `site.giscus.enabled`. The `Giscus Comments Configuration` core test guards this.
 
 ### Theme Not Matching
 
-The include uses `data-theme="preferred_color_scheme"`, which follows the
-browser's light/dark preference. To force a theme, edit `data-theme` in
-`_includes/content/giscus.html`:
+The include uses `data-theme="preferred_color_scheme"`, which follows the browser's light/dark preference. To force a theme, edit `data-theme` in `_includes/content/giscus.html`:
 
 ```html
 <!-- Force a specific theme -->

@@ -7,9 +7,7 @@ lastmod: 2026-06-13T15:45:00.000Z
 
 # AI Content Review — Authoring & Resolution
 
-This file governs the **AI content reviewer framework**: how content under
-`pages/**` is reviewed on pull requests and how contributors (human or agent)
-resolve the feedback. It is the prose contract behind three artifacts:
+This file governs the **AI content reviewer framework**: how content under `pages/**` is reviewed on pull requests and how contributors (human or agent) resolve the feedback. It is the prose contract behind three artifacts:
 
 | Artifact | Role |
 | --- | --- |
@@ -17,17 +15,11 @@ resolve the feedback. It is the prose contract behind three artifacts:
 | [`.claude/agents/content-reviewer.md`](../../.claude/agents/content-reviewer.md) | Claude Code agent tier — editorial / consistency / polish |
 | [`.github/workflows/ai-content-review.yml`](../workflows/ai-content-review.yml) | Runs both tiers on every content PR |
 
-Thresholds live in [`.github/config/content_review.yml`](../config/content_review.yml);
-required front matter lives in
-[`.github/config/frontmatter_schema.yml`](../config/frontmatter_schema.yml).
-**Those configs win** — quote their numbers, don't invent new ones here.
+Thresholds live in [`.github/config/content_review.yml`](../config/content_review.yml); required front matter lives in [`.github/config/frontmatter_schema.yml`](../config/frontmatter_schema.yml). **Those configs win** — quote their numbers, don't invent new ones here.
 
 ### Thresholds are per collection
 
-Quality and SEO limits are **derived per collection** from the site's
-collections, not applied as one flat rule. The effective rules for a file are
-`deep-merge(defaults, collections.<name>)` in `content_review.yml`, and each
-collection names the governing instruction file(s):
+Quality and SEO limits are **derived per collection** from the site's collections, not applied as one flat rule. The effective rules for a file are `deep-merge(defaults, collections.<name>)` in `content_review.yml`, and each collection names the governing instruction file(s):
 
 | Collection | Lens | Also governed by |
 | --- | --- | --- |
@@ -40,8 +32,7 @@ collection names the governing instruction file(s):
 | `about` / `pages` | Landing/profile (relaxed length) | this file |
 | `pages/_docs/obsidian/**` | Vault content | [`obsidian.instructions.md`](obsidian.instructions.md) |
 
-The numbers in §1–§2 below are the **defaults**; a collection may tighten or
-relax them. Always grade a file by its own collection's effective values.
+The numbers in §1–§2 below are the **defaults**; a collection may tighten or relax them. Always grade a file by its own collection's effective values.
 
 ---
 
@@ -55,9 +46,7 @@ relax them. Always grade a file by its own collection's effective values.
 | First ~100 words | Answer the page's implied question | Featured snippets / LLM answers |
 | Headings | Phrased as the questions readers ask | Scannability + snippet capture |
 
-See [`pages/_docs/seo/meta-tags.md`](../../pages/_docs/seo/meta-tags.md) and
-[`pages/_docs/seo/aieo.md`](../../pages/_docs/seo/aieo.md) for the rendered
-implementation.
+See [`pages/_docs/seo/meta-tags.md`](../../pages/_docs/seo/meta-tags.md) and [`pages/_docs/seo/aieo.md`](../../pages/_docs/seo/aieo.md) for the rendered implementation.
 
 ### Pitfalls (do not repeat)
 - ❌ Cutting a `description` mid-sentence to hit the cap — rewrite tighter.
@@ -99,8 +88,7 @@ The deterministic tier scores each file 0–100 (`scoring` in the config):
 | ≥ 70 | 🟡 acceptable | merge; address nits when convenient |
 | < 70 | 🔴 needs work | fix before merge |
 
-The agent tier tags findings 🔴 must-fix · 🟡 should-fix · 🔵 nice-to-have.
-**Reviews advise; they do not auto-block merges** (`strictness.ci: warn`).
+The agent tier tags findings 🔴 must-fix · 🟡 should-fix · 🔵 nice-to-have. **Reviews advise; they do not auto-block merges** (`strictness.ci: warn`).
 
 ---
 

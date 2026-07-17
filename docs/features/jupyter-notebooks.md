@@ -262,8 +262,7 @@ grep -r "!\[" pages/_notebooks/*.md
 ls -R assets/images/notebooks/
 ```
 
-**Fix paths if needed:**
-The conversion script should use Jekyll-compatible paths:
+**Fix paths if needed:** The conversion script should use Jekyll-compatible paths:
 
 ```markdown
 ![Image]({{ site.baseurl }}/assets/images/notebooks/my-notebook_files/image.png)
@@ -294,8 +293,7 @@ docker-compose exec jekyll pip3 list | grep nbconvert
 - Or changes to `scripts/convert-notebooks.sh`
 - Or changes to the workflow file itself
 
-**Manual trigger:**
-Go to GitHub Actions > Convert Jupyter Notebooks > Run workflow
+**Manual trigger:** Go to GitHub Actions > Convert Jupyter Notebooks > Run workflow
 
 ### LaTeX Equations Not Rendering
 

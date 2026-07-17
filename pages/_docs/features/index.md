@@ -23,8 +23,7 @@ The Zer0-Mistakes theme includes several optional features that enhance your sit
 
 ## Available Features
 
-Every feature has its own guide. "Enable" shows how to turn it on — page front
-matter, a `_config.yml` setting, or "always on" (built into the theme).
+Every feature has its own guide. "Enable" shows how to turn it on — page front matter, a `_config.yml` setting, or "always on" (built into the theme).
 
 ### Content & authoring
 

@@ -70,9 +70,7 @@ Your site will be live at `https://<username>.github.io/<repo>/` within a minute
 
 ## Graceful Degradation
 
-When collections (`_posts`, `_docs`, `_notes`, etc.) are absent, the theme's
-footer, welcome partial, and info partial degrade gracefully — no Liquid errors
-or broken layouts.
+When collections (`_posts`, `_docs`, `_notes`, etc.) are absent, the theme's footer, welcome partial, and info partial degrade gracefully — no Liquid errors or broken layouts.
 
 ## Local Preview (Docker)
 

@@ -5,9 +5,7 @@ description: "**WORKFLOW SKILL** — How the /issue-plan committee fans out four
 
 # Committee Plan
 
-Operational checklist for the planning committee. Canonical contract:
-[`/issue-plan`](../../prompts/issue-plan.prompt.md). The committee **plans, it does
-not build** — it writes only `_data/roadmap_plan.yml` + one pinned issue.
+Operational checklist for the planning committee. Canonical contract: [`/issue-plan`](../../prompts/issue-plan.prompt.md). The committee **plans, it does not build** — it writes only `_data/roadmap_plan.yml` + one pinned issue.
 
 ## Golden rules
 1. **Read-only on code.** Only `_data/roadmap_plan.yml` and the pinned issue change.
@@ -26,20 +24,16 @@ not build** — it writes only `_data/roadmap_plan.yml` + one pinned issue.
 | Risk/autonomy | `plan-lens-risk` | which batches mix auto + human (→ split) |
 | Test framework | `plan-lens-test` | the tests/evidence each batch needs |
 
-Prefer one Task subagent per lens; if the runtime can't delegate, run the four
-personas **inline and sequentially** — identical output.
+Prefer one Task subagent per lens; if the runtime can't delegate, run the four personas **inline and sequentially** — identical output.
 
 ## Synthesis (fixed precedence ⇒ determinism)
-`dependency` sets batch membership → `risk` splits mixed batches → `priority`
-orders within the layering → `test` annotates `test_framework`. Write the plan,
-record `meta.corpus_hash` + `meta.updated`, then:
+`dependency` sets batch membership → `risk` splits mixed batches → `priority` orders within the layering → `test` annotates `test_framework`. Write the plan, record `meta.corpus_hash` + `meta.updated`, then:
 
 ```bash
 ruby scripts/sync-plan.rb --check   # ids open · DAG acyclic · order-only
 ```
 
-Open a `chore(plan)` PR (no auto-merge). On merge, `scripts/sync-plan.sh` upserts
-the single pinned tracking issue (`agent-hold`).
+Open a `chore(plan)` PR (no auto-merge). On merge, `scripts/sync-plan.sh` upserts the single pinned tracking issue (`agent-hold`).
 
 ## Idempotency
 - The corpus-hash gate makes a no-change run a no-op (cheap on schedule).

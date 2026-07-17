@@ -1,13 +1,6 @@
 # Evidence — settings panel rebuild (Appearance / Site / Developer)
 
-Before/after proof for the navbar Settings offcanvas (`#info-section`)
-rebuild: four tabs (Settings / Environment / Developer / Background) become
-three (Appearance / Site / Developer), every look-and-feel control lives in
-one place exactly once, and the dead surfaces are removed. BEFORE is a build
-of `main`; AFTER is a build of the PR branch (this is a template/DOM change,
-so the evidence kit's single-server `unfixCss` path doesn't apply —
-`settings-evidence.mjs` drives two builds and composes montages with the
-kit's shared `montage` helper).
+Before/after proof for the navbar Settings offcanvas (`#info-section`) rebuild: four tabs (Settings / Environment / Developer / Background) become three (Appearance / Site / Developer), every look-and-feel control lives in one place exactly once, and the dead surfaces are removed. BEFORE is a build of `main`; AFTER is a build of the PR branch (this is a template/DOM change, so the evidence kit's single-server `unfixCss` path doesn't apply — `settings-evidence.mjs` drives two builds and composes montages with the kit's shared `montage` helper).
 
 | Image | What it shows |
 | --- | --- |
@@ -16,10 +9,4 @@ kit's shared `montage` helper).
 | `03-developer.png` | Developer tab. BEFORE: an empty "Page Location" heading on pages without breadcrumbs (the homepage). AFTER: the section renders only where breadcrumbs do; the metadata table and source-code shortcuts are otherwise unchanged (never-initialized `data-bs-toggle="tooltip"` attributes removed). |
 | `04-mobile-320.png` | 320 px phone. BEFORE: four icon-only tabs — the text labels are `display:none` below 576 px, leaving the tab buttons with **no accessible name**. AFTER: three tabs keep their text labels at every width; the decorative icons drop out instead. The panel body scrolls vertically only (no sideways scroll on any tab, asserted by the spec). |
 
-`metrics.json` records the structural counts behind each montage for both
-states: tabs 4 → 3, dead search box `true → false`, color-mode controls in
-the panel 6 → 3, stray injected panel `true → false`, admin links 0 → 4,
-skin buttons 9 → 9 (preserved). The same behaviours are pinned by the
-smoke-tier regression spec
-[`test/visual/settings-panel.spec.js`](../../settings-panel.spec.js)
-(6 tests, all green against this branch).
+`metrics.json` records the structural counts behind each montage for both states: tabs 4 → 3, dead search box `true → false`, color-mode controls in the panel 6 → 3, stray injected panel `true → false`, admin links 0 → 4, skin buttons 9 → 9 (preserved). The same behaviours are pinned by the smoke-tier regression spec [`test/visual/settings-panel.spec.js`](../../settings-panel.spec.js) (6 tests, all green against this branch).

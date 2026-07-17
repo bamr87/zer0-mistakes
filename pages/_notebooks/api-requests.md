@@ -12,16 +12,7 @@ lastmod: 2026-07-01T03:24:13.000Z
 permalink: /notebooks/api-requests/
 ---
 ---
-title: "Working with APIs in Python"
-description: "Learn to fetch, process, and analyze data from web APIs using Python's requests library"
-date: 2025-01-27
-lastmod: 2025-01-27
-author: "Zer0-Mistakes Team"
-layout: notebook
-difficulty: beginner
-tags: [python, api, requests, json, web-scraping]
-categories: [Notebooks, Tutorials]
-toc: true
+title: "Working with APIs in Python" description: "Learn to fetch, process, and analyze data from web APIs using Python's requests library" date: 2025-01-27 lastmod: 2025-01-27 author: "Zer0-Mistakes Team" layout: notebook difficulty: beginner tags: [python, api, requests, json, web-scraping] categories: [Notebooks, Tutorials] toc: true
 comments: true
 ---
 

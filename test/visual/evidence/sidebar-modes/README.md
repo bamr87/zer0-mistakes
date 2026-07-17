@@ -1,13 +1,6 @@
 # Evidence — collection-aware sidebar modes (PR #273)
 
-Before/after proof for the sidebar framework refactor: mode resolution moved
-into the shared `_includes/navigation/sidebar-config.html` resolver, `auto`
-became collection-aware, `sidebar-folders.html` was rewritten as a collapsible
-collection tree, and `sidebar-categories.html` gained count badges. BEFORE is
-a build of `main`; AFTER is a build of the PR branch (this is a template/DOM
-change, so the evidence kit's single-server `unfixCss` path doesn't apply —
-`sidebar-modes-evidence.mjs` drives two builds and composes montages with the
-kit's shared `montage` helper).
+Before/after proof for the sidebar framework refactor: mode resolution moved into the shared `_includes/navigation/sidebar-config.html` resolver, `auto` became collection-aware, `sidebar-folders.html` was rewritten as a collapsible collection tree, and `sidebar-categories.html` gained count badges. BEFORE is a build of `main`; AFTER is a build of the PR branch (this is a template/DOM change, so the evidence kit's single-server `unfixCss` path doesn't apply — `sidebar-modes-evidence.mjs` drives two builds and composes montages with the kit's shared `montage` helper).
 
 | Image | Route | What it shows |
 | --- | --- | --- |
@@ -16,9 +9,4 @@ kit's shared `montage` helper).
 | `03-categories.png` | `/faq/` | `categories` mode. BEFORE: plain always-collapsed term toggles. AFTER: each term shows a post-count badge (0 → 19 badges); the group containing the current page starts expanded. |
 | `04-homepage-guard.png` | `/` | Regression guard. The landing layout renders no `#bdSidebar` panel, so the shared resolver must not add a dead sidebar toggle to its navbar. Both bands are identical (navToggle 0 → 0) — this is exactly the failure the first CI snapshot run caught when the site-wide default briefly resolved on root-level pages, fixed by scoping `nav: auto` to the collection defaults only. |
 
-`metrics.json` records the structural counts behind each montage (aside
-presence, navbar toggle presence, sidebar link count, collection-tree
-presence, badge count, `aria-current` count) for both states. The same
-behaviours are pinned by the smoke-tier regression spec
-[`test/visual/sidebar-modes.spec.js`](../../sidebar-modes.spec.js), which
-fails 3/7 tests against a `main` build and passes 7/7 against this branch.
+`metrics.json` records the structural counts behind each montage (aside presence, navbar toggle presence, sidebar link count, collection-tree presence, badge count, `aria-current` count) for both states. The same behaviours are pinned by the smoke-tier regression spec [`test/visual/sidebar-modes.spec.js`](../../sidebar-modes.spec.js), which fails 3/7 tests against a `main` build and passes 7/7 against this branch.

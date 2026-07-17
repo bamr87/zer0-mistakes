@@ -173,6 +173,4 @@ Contributions to the theme are welcome! See:
 
 ---
 
-**Last Updated:** 2025-01-13
-**Maintained by:** Theme Contributors
-**Repository:** [github.com/bamr87/zer0-mistakes](https://github.com/bamr87/zer0-mistakes)
+**Last Updated:** 2025-01-13 **Maintained by:** Theme Contributors **Repository:** [github.com/bamr87/zer0-mistakes](https://github.com/bamr87/zer0-mistakes)

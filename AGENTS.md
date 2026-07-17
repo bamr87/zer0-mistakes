@@ -5,32 +5,26 @@
 > and any future agent that follows the [agents.md](https://agents.md/)
 > convention).
 
-This file is intentionally short. It tells an agent **where to look** for the
-detailed, file-scoped guidance that already lives under `.github/`.
-**It does not duplicate that content** — keep changes here minimal and instead
-update the targeted instruction files when patterns evolve.
+This file is intentionally short. It tells an agent **where to look** for the detailed, file-scoped guidance that already lives under `.github/`. **It does not duplicate that content** — keep changes here minimal and instead update the targeted instruction files when patterns evolve.
 
 ---
 
 ## 🧭 Project Snapshot
 
 - **What it is**: A Docker-first Jekyll theme (Ruby gem `jekyll-theme-zer0`)
-  with Bootstrap 5.3.3, GitHub Pages remote-theme support, automated semantic
-  releases to RubyGems, and privacy-compliant analytics.
+with Bootstrap 5.3.3, GitHub Pages remote-theme support, automated semantic releases to RubyGems, and privacy-compliant analytics.
 - **Primary language(s)**: Ruby (gem), Liquid/HTML (theme), SCSS, Bash (tooling).
 - **Version source of truth**: `lib/jekyll-theme-zer0/version.rb`.
 - **Default dev environment**: Docker Compose (`docker-compose up`). A local
   Ruby/Bundler workflow also works.
 
-For the full architectural and product overview, see
-[`README.md`](./README.md) and [`.github/copilot-instructions.md`](./.github/copilot-instructions.md).
+For the full architectural and product overview, see [`README.md`](./README.md) and [`.github/copilot-instructions.md`](./.github/copilot-instructions.md).
 
 ---
 
 ## 📚 Where Agent Guidance Lives
 
-This repo follows a layered guidance model. Read the layers that match the
-files you are about to touch — do **not** load everything up front.
+This repo follows a layered guidance model. Read the layers that match the files you are about to touch — do **not** load everything up front.
 
 | Layer | Location | When to read |
 | --- | --- | --- |
@@ -46,9 +40,7 @@ files you are about to touch — do **not** load everything up front.
 
 ### File-scoped instruction map
 
-Apply the instruction file whose `applyTo:` glob matches the path you are
-editing (most editors do this automatically; agents without that capability
-should load them manually):
+Apply the instruction file whose `applyTo:` glob matches the path you are editing (most editors do this automatically; agents without that capability should load them manually):
 
 | Editing files in… | Read |
 | --- | --- |
@@ -82,8 +74,7 @@ should load them manually):
 
 ### Workflow skills
 
-Operational checklists under `.github/skills/<name>/SKILL.md`. Read the matching
-skill before the action it covers.
+Operational checklists under `.github/skills/<name>/SKILL.md`. Read the matching skill before the action it covers.
 
 | Doing… | Skill |
 | --- | --- |
@@ -97,25 +88,16 @@ skill before the action it covers.
 
 ## 🔁 Continuous-Evolution Loop
 
-This repo runs a self-sustaining backlog loop so AI agents can keep improving it
-between human sessions:
+This repo runs a self-sustaining backlog loop so AI agents can keep improving it between human sessions:
 
 1. **Audit + issue intake** (`/repo-audit`, scheduled weekly) reviews tests, docs,
-   and roadmap delivery **and triages all open GitHub issues** into
-   [`_data/backlog.yml`](./_data/backlog.yml) (`source: issue`, adopted via
-   `links.issue` — no duplicates). The committee `/issue-plan` then sequences them
-   and `/issue-implement` (human-dispatched) routes each to a specialized agent.
-   See [`docs/systems/continuous-evolution.md`](./docs/systems/continuous-evolution.md).
+and roadmap delivery **and triages all open GitHub issues** into [`_data/backlog.yml`](./_data/backlog.yml) (`source: issue`, adopted via `links.issue` — no duplicates). The committee `/issue-plan` then sequences them and `/issue-implement` (human-dispatched) routes each to a specialized agent. See [`docs/systems/continuous-evolution.md`](./docs/systems/continuous-evolution.md).
 2. **Sync** (`.github/workflows/sync.yml`) mirrors open tasks to GitHub
    Issues (`agent-ready` label) and closes issues for tasks marked `done`.
 3. **Implement** (`/backlog-implement`, scheduled) picks the top open task, builds
-   it on a branch, validates, and opens a PR. Low-risk classes (`docs`/`deps`/`lint`
-   with `risk: low`) auto-merge once CI is green via `.github/workflows/auto-merge.yml`;
-   everything else waits for human review.
+it on a branch, validates, and opens a PR. Low-risk classes (`docs`/`deps`/`lint` with `risk: low`) auto-merge once CI is green via `.github/workflows/auto-merge.yml`; everything else waits for human review.
 
-`_data/backlog.yml` is the source of truth — edit the file, not the issues. Full
-design, autonomy policy, and how to pause the loop:
-[`docs/systems/continuous-evolution.md`](./docs/systems/continuous-evolution.md).
+`_data/backlog.yml` is the source of truth — edit the file, not the issues. Full design, autonomy policy, and how to pause the loop: [`docs/systems/continuous-evolution.md`](./docs/systems/continuous-evolution.md).
 
 ---
 
@@ -157,19 +139,15 @@ yamllint -c .github/config/.yamllint.yml .
 2. **Respect the layered guidance.** When a file-scoped instruction conflicts
    with a generic best practice, the file-scoped instruction wins.
 3. **Validate before declaring done.** At minimum, run the relevant test
-   command(s) above. For theme/layout/include changes, run the Docker Jekyll
-   build.
+command(s) above. For theme/layout/include changes, run the Docker Jekyll build.
 4. **Update `CHANGELOG.md`** for any user-visible change. Follow the
-   [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format already in
-   the file.
+[Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format already in the file.
 5. **Bump the version only via `./scripts/bin/release`** (or by editing
-   `lib/jekyll-theme-zer0/version.rb` as part of a release commit). Never bump
-   it in unrelated PRs.
+`lib/jekyll-theme-zer0/version.rb` as part of a release commit). Never bump it in unrelated PRs.
 6. **Do not commit secrets.** Use environment variables; `RUBYGEMS_API_KEY` and
    `GITHUB_TOKEN` are provided in CI.
 7. **Prefer existing libraries and patterns.** Bootstrap 5 components, the
-   Bootstrap Icons set, and the modular `_includes/` system already cover most
-   UI needs.
+Bootstrap Icons set, and the modular `_includes/` system already cover most UI needs.
 8. **Document non-obvious decisions** in the relevant instruction file so the
    next agent benefits from the context.
 
@@ -177,8 +155,7 @@ yamllint -c .github/config/.yamllint.yml .
 
 ## 🧩 Extending Agent Capabilities
 
-This repository is designed to be **extendable** by both humans and agents.
-To add new agent capabilities, follow these patterns:
+This repository is designed to be **extendable** by both humans and agents. To add new agent capabilities, follow these patterns:
 
 ### Add a new file-scoped instruction set
 
@@ -216,9 +193,7 @@ To add new agent capabilities, follow these patterns:
 
 ### Add a new tool-specific config
 
-When onboarding a new agent or IDE that uses its own config file, add it
-**without** duplicating instruction content — point the new file at this
-`AGENTS.md` and the layered guidance under `.github/`. Examples:
+When onboarding a new agent or IDE that uses its own config file, add it **without** duplicating instruction content — point the new file at this `AGENTS.md` and the layered guidance under `.github/`. Examples:
 
 - Claude Code: `CLAUDE.md` → "See `AGENTS.md`."
 - Aider: `.aider.conf.yml` with `read: [AGENTS.md, .github/copilot-instructions.md]`.
@@ -248,5 +223,4 @@ This keeps a single source of truth and prevents drift.
 
 ---
 
-_Last reviewed: 2026-04-18. Keep this file short — push detail into
-`.github/instructions/` and `.github/prompts/`._
+_Last reviewed: 2026-04-18. Keep this file short — push detail into `.github/instructions/` and `.github/prompts/`._

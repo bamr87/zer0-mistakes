@@ -8,11 +8,7 @@ lastmod: 2026-06-13T15:45:00.000Z
 
 # Content Review
 
-When invoked with `/content-review`, review the content this branch/PR adds or
-changes and return an actionable editorial + SEO review. This is the interactive
-twin of the `content-reviewer` Claude Code agent and the
-[`ai-content-review.yml`](../workflows/ai-content-review.yml) workflow. Operate
-as a CLI with explicit commands.
+When invoked with `/content-review`, review the content this branch/PR adds or changes and return an actionable editorial + SEO review. This is the interactive twin of the `content-reviewer` Claude Code agent and the [`ai-content-review.yml`](../workflows/ai-content-review.yml) workflow. Operate as a CLI with explicit commands.
 
 ## Commands
 
@@ -37,8 +33,7 @@ as a CLI with explicit commands.
    ```bash
    git diff --name-only --diff-filter=ACMR origin/main...HEAD | grep -E '^pages/.*\.md$'
    ```
-   Honour the `scope.exclude` globs in
-   [`.github/config/content_review.yml`](../config/content_review.yml).
+Honour the `scope.exclude` globs in [`.github/config/content_review.yml`](../config/content_review.yml).
 
 2. **Run the deterministic tier first** (frontmatter + SEO + structure):
    ```bash
@@ -48,9 +43,7 @@ as a CLI with explicit commands.
    Read the JSON; treat its findings as given.
 
 3. **Read each file and judge** the dimensions in
-   [`content-review.instructions.md`](../instructions/content-review.instructions.md):
-   SEO/AIEO, consistency, polish, accessibility, technical accuracy. Verify any
-   factual claim about the theme against the repo (grep the include/config).
+[`content-review.instructions.md`](../instructions/content-review.instructions.md): SEO/AIEO, consistency, polish, accessibility, technical accuracy. Verify any factual claim about the theme against the repo (grep the include/config).
 
 4. **Report** in this shape, worst file first:
 
@@ -75,8 +68,7 @@ as a CLI with explicit commands.
 - Content only — no Ruby/Liquid/SCSS/JS review (that's `/code-review`). Note any
   code bug in one line under "Out of scope".
 - Prefer suggestions with exact replacement text over silent edits. In `fix`
-  mode, only apply objective fixes (front matter, terminology, alt text, fenced
-  languages) and **always bump `lastmod`** on edited files.
+mode, only apply objective fixes (front matter, terminology, alt text, fenced languages) and **always bump `lastmod`** on edited files.
 - Reserve 🔴 for objective problems (missing required field, broken link,
   truncated description, missing alt text, factual error) — not taste.
 - Re-run `ruby scripts/content-review.rb --changed` after any `fix`.

@@ -28,20 +28,12 @@ mermaid: true
 {{ site.description }}
 
 <p class="lead text-body-secondary mb-4">
-  A Docker-first Jekyll theme with Bootstrap 5, an AI-powered installer, and
-  automated semantic releases — built so your first <code>docker-compose up</code>
-  just works, on any machine.
+A Docker-first Jekyll theme with Bootstrap 5, an AI-powered installer, and automated semantic releases — built so your first <code>docker-compose up</code> just works, on any machine.
 </p>
 
 ## What is Zer0-Mistakes?
 
-**Zer0-Mistakes** is an opinionated Jekyll theme — and accompanying RubyGem
-([`jekyll-theme-zer0`](https://rubygems.org/gems/jekyll-theme-zer0)) — for
-developers who want a modern, container-friendly, GitHub Pages–compatible
-publishing platform that just works on the first try. The name reflects the
-guiding principle: every default, script, and workflow in this project exists
-to keep new users from making the kinds of small mistakes that derail a Jekyll
-setup.
+**Zer0-Mistakes** is an opinionated Jekyll theme — and accompanying RubyGem ([`jekyll-theme-zer0`](https://rubygems.org/gems/jekyll-theme-zer0)) — for developers who want a modern, container-friendly, GitHub Pages–compatible publishing platform that just works on the first try. The name reflects the guiding principle: every default, script, and workflow in this project exists to keep new users from making the kinds of small mistakes that derail a Jekyll setup.
 
 It is built around four pillars:
 
@@ -76,9 +68,7 @@ Name | Link
 
 ## Architecture at a Glance
 
-The theme follows a layered, modular architecture. Production sites consume it
-as a remote theme on GitHub Pages, while local development uses the same files
-mounted into a Jekyll container.
+The theme follows a layered, modular architecture. Production sites consume it as a remote theme on GitHub Pages, while local development uses the same files mounted into a Jekyll container.
 
 ```mermaid
 flowchart LR
@@ -93,14 +83,11 @@ flowchart LR
     H -. consent .-> I[PostHog<br/>analytics]
 ```
 
-The **dual configuration system** (`_config.yml` for production, `_config_dev.yml`
-for local overrides) is what lets the same source tree serve both modes without
-edits.
+The **dual configuration system** (`_config.yml` for production, `_config_dev.yml` for local overrides) is what lets the same source tree serve both modes without edits.
 
 ## Prerequisites
 
-To run this site — or any site built on the `jekyll-theme-zer0` gem — locally,
-you need one of the following toolchains:
+To run this site — or any site built on the `jekyll-theme-zer0` gem — locally, you need one of the following toolchains:
 
 **Recommended (Docker-first):**
 
@@ -114,8 +101,7 @@ you need one of the following toolchains:
 - Bundler 2.x (`gem install bundler`)
 - Git 2.30+
 
-No prior Jekyll knowledge is required — the installer and Docker Compose file
-handle dependency resolution for you.
+No prior Jekyll knowledge is required — the installer and Docker Compose file handle dependency resolution for you.
 
 ## Quick Start
 
@@ -132,8 +118,7 @@ docker-compose up
 # 3. Open http://localhost:4000 in your browser
 ```
 
-If you prefer to add the theme to an existing Jekyll site, drop these lines
-into your `Gemfile` and `_config.yml`:
+If you prefer to add the theme to an existing Jekyll site, drop these lines into your `Gemfile` and `_config.yml`:
 
 ```ruby
 # Gemfile
@@ -161,28 +146,13 @@ If you have any questions, comments, or suggestions, please feel free to reach o
 
 ## FAQ
 
-**Do I need to know Ruby to use this theme?**
-No. If you use the Docker-first workflow or consume the theme as a remote theme
-on GitHub Pages, Ruby is fully abstracted away. You only need it if you want to
-contribute to the theme itself.
+**Do I need to know Ruby to use this theme?** No. If you use the Docker-first workflow or consume the theme as a remote theme on GitHub Pages, Ruby is fully abstracted away. You only need it if you want to contribute to the theme itself.
 
-**Is this compatible with GitHub Pages?**
-Yes. The production `_config.yml` uses `remote_theme: "bamr87/zer0-mistakes"`,
-which is on the GitHub Pages allowlist. No custom Actions workflow is required
-for a basic deploy.
+**Is this compatible with GitHub Pages?** Yes. The production `_config.yml` uses `remote_theme: "bamr87/zer0-mistakes"`, which is on the GitHub Pages allowlist. No custom Actions workflow is required for a basic deploy.
 
-**Why "zer0-mistakes"?**
-The theme is targeted at the `n00b` level (see `level` in `_config.yml`) and
-every default is chosen to prevent the most common Jekyll-onboarding mistakes:
-wrong Ruby version, broken native extensions, platform-specific Bundler
-issues, and Liquid template footguns.
+**Why "zer0-mistakes"?** The theme is targeted at the `n00b` level (see `level` in `_config.yml`) and every default is chosen to prevent the most common Jekyll-onboarding mistakes: wrong Ruby version, broken native extensions, platform-specific Bundler issues, and Liquid template footguns.
 
-**Does the site track me?**
-Analytics ([PostHog](https://posthog.com/)) only load in production *and* only
-after the visitor accepts the cookie consent banner. See
-[`_includes/analytics/posthog.html`](https://github.com/bamr87/zer0-mistakes/blob/main/_includes/analytics/posthog.html)
-and [`_includes/components/cookie-consent.html`](https://github.com/bamr87/zer0-mistakes/blob/main/_includes/components/cookie-consent.html)
-for the full implementation.
+**Does the site track me?** Analytics ([PostHog](https://posthog.com/)) only load in production *and* only after the visitor accepts the cookie consent banner. See [`_includes/analytics/posthog.html`](https://github.com/bamr87/zer0-mistakes/blob/main/_includes/analytics/posthog.html) and [`_includes/components/cookie-consent.html`](https://github.com/bamr87/zer0-mistakes/blob/main/_includes/components/cookie-consent.html) for the full implementation.
 
 ## Troubleshooting
 
@@ -193,8 +163,7 @@ for the full implementation.
 | Site builds but theme styles are missing on GitHub Pages | `remote_theme` not enabled | Confirm `remote_theme: bamr87/zer0-mistakes` is set in `_config.yml` and that the `jekyll-remote-theme` plugin is in your `Gemfile`. |
 | Pages 404 after deploy | `baseurl` mismatch | If your repo is *not* a `<user>.github.io` repo, set `baseurl: "/<repo-name>"` in `_config.yml`. |
 
-For more, see the project [README](https://github.com/bamr87/zer0-mistakes#troubleshooting)
-and the [self-healing installer documentation](https://github.com/bamr87/zer0-mistakes/blob/main/install.sh).
+For more, see the project [README](https://github.com/bamr87/zer0-mistakes#troubleshooting) and the [self-healing installer documentation](https://github.com/bamr87/zer0-mistakes/blob/main/install.sh).
 
 ## Next Steps
 

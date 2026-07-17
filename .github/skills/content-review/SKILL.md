@@ -5,10 +5,7 @@ description: "**WORKFLOW SKILL** — Review new/changed Jekyll content (Markdown
 
 # Content Review
 
-Run the Zer0-Mistakes two-tier content review on whatever a branch/PR changes.
-Tier 1 is deterministic (no API key); tier 2 is the editorial Claude Code agent.
-Thresholds and authoring rules are resolved **per collection** — docs follow the
-documentation guidelines, posts are graded as articles, notes as short-form, etc.
+Run the Zer0-Mistakes two-tier content review on whatever a branch/PR changes. Tier 1 is deterministic (no API key); tier 2 is the editorial Claude Code agent. Thresholds and authoring rules are resolved **per collection** — docs follow the documentation guidelines, posts are graded as articles, notes as short-form, etc.
 
 ## When to use
 
@@ -38,23 +35,15 @@ ruby scripts/content-review.rb --changed --base origin/main \
 ruby scripts/content-review.rb --files "pages/_posts/2026-…-foo.md"
 ```
 
-Each result carries `collection`, per-collection `score`/`fail_under`, the
-governing `instructions` array, and categorized `issues`. **Stop and read the
-JSON** before reasoning further — don't re-derive the mechanical checks.
+Each result carries `collection`, per-collection `score`/`fail_under`, the governing `instructions` array, and categorized `issues`. **Stop and read the JSON** before reasoning further — don't re-derive the mechanical checks.
 
 ### 2. Editorial tier (Claude Code agent)
 
-Delegate the judgment layer to the [`content-reviewer`](../../../.claude/agents/content-reviewer.md)
-agent (or the [`/content-review`](../../prompts/content-review.prompt.md) prompt).
-For each file, it reads the `instructions` paths the deterministic tier listed,
-then reviews: SEO/AIEO, consistency, polish, accessibility, technical accuracy.
+Delegate the judgment layer to the [`content-reviewer`](../../../.claude/agents/content-reviewer.md) agent (or the [`/content-review`](../../prompts/content-review.prompt.md) prompt). For each file, it reads the `instructions` paths the deterministic tier listed, then reviews: SEO/AIEO, consistency, polish, accessibility, technical accuracy.
 
 ### 3. Report
 
-Use the agent's output format — verdict (✅ approve / 💬 comment / 🔧 request
-changes), per-file findings tagged 🔴 must-fix · 🟡 should-fix · 🔵 nice-to-have,
-each with a concrete suggested rewrite. Reviews advise; they don't auto-block
-(`strictness.ci: warn`).
+Use the agent's output format — verdict (✅ approve / 💬 comment / 🔧 request changes), per-file findings tagged 🔴 must-fix · 🟡 should-fix · 🔵 nice-to-have, each with a concrete suggested rewrite. Reviews advise; they don't auto-block (`strictness.ci: warn`).
 
 ## Resolving findings (order)
 
@@ -63,8 +52,7 @@ each with a concrete suggested rewrite. Reviews advise; they don't auto-block
 3. Structure (headings, code-fence languages, alt text)
 4. Prose (clarity, consistency, accuracy)
 
-Re-run `ruby scripts/content-review.rb --changed` after fixing, and **always
-bump `lastmod`** on any file you edit.
+Re-run `ruby scripts/content-review.rb --changed` after fixing, and **always bump `lastmod`** on any file you edit.
 
 ## Reporting back
 

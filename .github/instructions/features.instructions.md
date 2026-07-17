@@ -61,18 +61,12 @@ The feature registry is the single source of truth for what the theme does. It p
 
 ## 🛡 Validation Gate (enforced)
 
-The `features` test suite (`test/test_features.sh`, registered in
-`test_runner.sh` + CI, and run by `scripts/bin/validate`) **hard-fails** on:
+The `features` test suite (`test/test_features.sh`, registered in `test_runner.sh` + CI, and run by `scripts/bin/validate`) **hard-fails** on:
 
 1. `scripts/validate-features.rb` — master/`_data` drift, schema violations,
-   stale reference paths, a removed feature missing `removed_in`, and a
-   missing/malformed `provenance` **or** `tests` block on an active feature.
+stale reference paths, a removed feature missing `removed_in`, and a missing/malformed `provenance` **or** `tests` block on an active feature.
 2. `scripts/tag-features --check` — **reverse traceability**: every source file
-   a feature lists under `references:` must carry a top-of-file
-   `Feature: ZER0-NNN` comment (the code→registry link, mirroring the
-   registry→code `references:`). Scope and placement are owned by the tool;
-   markdown docs, JSON, vendored/minified libs, directory refs, and `_config.yml`
-   are exempt.
+a feature lists under `references:` must carry a top-of-file `Feature: ZER0-NNN` comment (the code→registry link, mirroring the registry→code `references:`). Scope and placement are owned by the tool; markdown docs, JSON, vendored/minified libs, directory refs, and `_config.yml` are exempt.
 
 Run both locally before committing a registry or feature change:
 

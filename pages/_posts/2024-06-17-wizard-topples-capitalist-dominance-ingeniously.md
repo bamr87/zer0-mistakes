@@ -190,20 +190,16 @@ Before declaring a project "Merlin-grade," confirm:
 
 ## FAQ & Troubleshooting
 
-**Q: Isn't "shareholder value plus ethics" a contradiction?**
-Not necessarily. Frameworks like [B Corp certification](https://www.bcorporation.net/) and the [Embankment Project for Inclusive Capitalism](https://www.epic-value.com/) demonstrate that long-horizon shareholder returns are *positively* correlated with stakeholder welfare. The contradiction only appears under quarterly-earnings tunnel vision.
+**Q: Isn't "shareholder value plus ethics" a contradiction?** Not necessarily. Frameworks like [B Corp certification](https://www.bcorporation.net/) and the [Embankment Project for Inclusive Capitalism](https://www.epic-value.com/) demonstrate that long-horizon shareholder returns are *positively* correlated with stakeholder welfare. The contradiction only appears under quarterly-earnings tunnel vision.
 
-**Q: My company won't open-source its financials. Can I still apply any of this?**
-Yes. Start internally: open the data lake to all employees, publish model cards on the intranet, and add fairness checks to your CI pipeline. Internal transparency is a credible first move.
+**Q: My company won't open-source its financials. Can I still apply any of this?** Yes. Start internally: open the data lake to all employees, publish model cards on the intranet, and add fairness checks to your CI pipeline. Internal transparency is a credible first move.
 
-**Q: The fairness audit flagged a large parity gap. What now?**
-Don't ship. Document the gap, investigate root causes (training data skew, feature proxies, labeling bias), and consider mitigations like re-weighting, threshold optimization, or removing the model entirely. "We knew and shipped anyway" is worse than "we found nothing."
+**Q: The fairness audit flagged a large parity gap. What now?** Don't ship. Document the gap, investigate root causes (training data skew, feature proxies, labeling bias), and consider mitigations like re-weighting, threshold optimization, or removing the model entirely. "We knew and shipped anyway" is worse than "we found nothing."
 
 **Q: Mermaid diagram isn't rendering on my fork of the theme.**
 Make sure the page front matter contains `mermaid: true`. The Zer0-Mistakes theme only loads the Mermaid bundle when that flag is set—see [`_includes/components/mermaid.html`]({{ site.repository | default: 'https://github.com/bamr87/zer0-mistakes' }}/blob/main/_includes/components/mermaid.html) for the implementation.
 
-**Q: The SEC EDGAR script returns 403.**
-EDGAR requires a descriptive `User-Agent` with a contact email. Update the `UA` dict in the snippet above and avoid hammering the API—stay under 10 requests/second.
+**Q: The SEC EDGAR script returns 403.** EDGAR requires a descriptive `User-Agent` with a contact email. Update the `UA` dict in the snippet above and avoid hammering the API—stay under 10 requests/second.
 
 ## Related Posts & Further Reading
 

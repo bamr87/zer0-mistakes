@@ -1,8 +1,6 @@
 # scripts/lib/install/deploy/
 
-Pluggable deploy-target modules consumed by `scripts/bin/install deploy`
-(Phase 4 of the installer refactor). Each module configures one target;
-the registry coordinates discovery, dispatch, and verification.
+Pluggable deploy-target modules consumed by `scripts/bin/install deploy` (Phase 4 of the installer refactor). Each module configures one target; the registry coordinates discovery, dispatch, and verification.
 
 ## Files
 
@@ -26,16 +24,12 @@ Every module must define:
 | `deploy_<slug>_verify <dir>`            | Confirm expected files exist + look correct.             |
 | `deploy_<slug>_doc_url`                 | Print the canonical upstream documentation URL.          |
 
-Modules use the lightweight `deploy_render` placeholder set
-(`{{RUBY_VERSION}}`, `{{DEFAULT_BRANCH}}`, `{{GITHUB_USER}}`,
-`{{SITE_NAME}}`) so they can run without the full install.sh global
-environment.
+Modules use the lightweight `deploy_render` placeholder set (`{{RUBY_VERSION}}`, `{{DEFAULT_BRANCH}}`, `{{GITHUB_USER}}`, `{{SITE_NAME}}`) so they can run without the full install.sh global environment.
 
 ## Adding a target
 
 1. Add `templates/deploy/<slug>/` with the assets (workflow YAML,
-   Dockerfile, README, etc.). Use `*.template` for files that need
-   variable substitution.
+Dockerfile, README, etc.). Use `*.template` for files that need variable substitution.
 2. Create `scripts/lib/install/deploy/<slug>.sh` exporting the four
    hooks above.
 3. Add `<slug>` to `DEPLOY_TARGETS_LIST` in `registry.sh` (alphabetical).

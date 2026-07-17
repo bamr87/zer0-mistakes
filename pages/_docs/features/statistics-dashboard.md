@@ -21,10 +21,7 @@ sidebar:
 
 # Statistics Dashboard
 
-A ready-made dashboard that turns your content into metrics: how many posts you
-have, how they break down by category, and which tags you use most. It is built
-from a dedicated layout plus a set of modular include components, all fed by
-generated content statistics.
+A ready-made dashboard that turns your content into metrics: how many posts you have, how they break down by category, and which tags you use most. It is built from a dedicated layout plus a set of modular include components, all fed by generated content statistics.
 
 ## Overview
 
@@ -35,11 +32,7 @@ generated content statistics.
 
 ## How it works
 
-The [`stats.html`](https://github.com/bamr87/zer0-mistakes/blob/main/_layouts/stats.html)
-layout composes the dashboard from the partials under `_includes/stats/`
-(header, overview, categories, tags, and metrics). The numbers come from the
-content-statistics data generated during the build, so the dashboard stays in
-sync with your actual content.
+The [`stats.html`](https://github.com/bamr87/zer0-mistakes/blob/main/_layouts/stats.html) layout composes the dashboard from the partials under `_includes/stats/` (header, overview, categories, tags, and metrics). The numbers come from the content-statistics data generated during the build, so the dashboard stays in sync with your actual content.
 
 ## Implementation
 

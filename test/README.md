@@ -108,18 +108,14 @@ The zer0-mistakes testing framework provides **6 comprehensive test suites** for
 
 ### 🎭 Playwright Frontend Tests (`test_playwright.sh`)
 
-Spec files live in exactly two sections under `test/visual/`, orthogonal to the
-execution tiers below:
+Spec files live in exactly two sections under `test/visual/`, orthogonal to the execution tiers below:
 
 - **`core/`** — cross-cutting quality/a11y/security/responsive baseline that
-  applies regardless of feature (accessibility, security, styling, responsive,
-  layout-chrome, features-registry). Bare, non-negotiable expectations.
+applies regardless of feature (accessibility, security, styling, responsive, layout-chrome, features-registry). Bare, non-negotiable expectations.
 - **`features/`** — one file per feature or tightly-scoped feature cluster,
-  matching the feature registry (`_data/features.yml`'s `tests:` links) —
-  e.g. `search.spec.js`, `admin.spec.js`, `appearance.spec.js`, `navbar.spec.js`.
+matching the feature registry (`_data/features.yml`'s `tests:` links) — e.g. `search.spec.js`, `admin.spec.js`, `appearance.spec.js`, `navbar.spec.js`.
 
-A single runner script invokes the appropriate Playwright project (tier).
-All tiers share `test/playwright.config.js`.
+A single runner script invokes the appropriate Playwright project (tier). All tiers share `test/playwright.config.js`.
 
 | Tier | `PLAYWRIGHT_PROJECT` | What it covers | When CI runs it |
 |------|----------------------|----------------|-----------------|
@@ -128,12 +124,7 @@ All tiers share `test/playwright.config.js`.
 | Snapshots | `snapshots` | Homepage pixel screenshots for the 9 theme skins (`features/appearance-snapshot.spec.js`) | PRs path-filtered on styling changes (non-blocking) + nightly |
 | Regression | `regression-chromium` / `regression-firefox` / `regression-webkit` | All specs across all browsers | Manual `workflow_dispatch` only |
 
-Tagging: add `{ tag: '@critical' }` to a `test()` or `test.describe()` to put
-it in the PR gate. Keep the gate honest — only behaviors a *visitor* would
-notice belong there; everything else is covered nightly. A weekly agentic
-UI/UX audit (`ui-audit.yml` + `test/ui-audit/sweep.mjs` +
-`.claude/agents/ui-auditor.md`) additionally reviews screenshots/axe/console
-output of the critical routes and files findings as `source:ui-audit` issues.
+Tagging: add `{ tag: '@critical' }` to a `test()` or `test.describe()` to put it in the PR gate. Keep the gate honest — only behaviors a *visitor* would notice belong there; everything else is covered nightly. A weekly agentic UI/UX audit (`ui-audit.yml` + `test/ui-audit/sweep.mjs` + `.claude/agents/ui-auditor.md`) additionally reviews screenshots/axe/console output of the critical routes and files findings as `source:ui-audit` issues.
 
 **Prerequisites:** Node.js 18+, Playwright (auto-installed by the runner)
 
@@ -163,9 +154,7 @@ npm run test:regression
 
 #### Updating snapshot baselines
 
-Baselines are platform-specific; CI runs on Linux. macOS/Windows
-contributors should regenerate baselines via the Linux Playwright Docker
-image:
+Baselines are platform-specific; CI runs on Linux. macOS/Windows contributors should regenerate baselines via the Linux Playwright Docker image:
 
 ```bash
 # Starts Jekyll via docker compose, runs Playwright in a Linux container,

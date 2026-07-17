@@ -77,9 +77,7 @@ The fallback is silently disabled as soon as this file is present.
 
 ## Excluding Collections from the Fallback
 
-Collections prefixed with `_` in the site config can be hidden by setting
-`output: false` or by adding them to the exclusion list inside
-`menu-collections.html`:
+Collections prefixed with `_` in the site config can be hidden by setting `output: false` or by adding them to the exclusion list inside `menu-collections.html`:
 
 ```liquid
 {% raw %}{% unless collection.label == "notes" or collection.label == "quickstart" %}

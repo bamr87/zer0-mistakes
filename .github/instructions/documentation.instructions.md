@@ -105,10 +105,7 @@ yamllint -c .github/config/.yamllint.yml docs/ pages/_docs/
 docker-compose exec -T jekyll bundle exec jekyll build --config '_config.yml,_config_dev.yml'
 ```
 
-CI runs `lint-frontmatter.sh`, `check-links.sh`, and `markdownlint` on every PR
-touching docs or content — the docs jobs in `.github/workflows/ai-content-review.yml`
-(Content & Docs Review). `check-freshness.sh` is available to run locally/manually
-(the scheduled freshness workflow was retired).
+CI runs `lint-frontmatter.sh`, `check-links.sh`, and `markdownlint` on every PR touching docs or content — the docs jobs in `.github/workflows/ai-content-review.yml` (Content & Docs Review). `check-freshness.sh` is available to run locally/manually (the scheduled freshness workflow was retired).
 
 ## Style
 

@@ -133,12 +133,7 @@ sidebar: true   # enables layout sidebar logic (default for many collections)
 sidebar: false  # full-width content
 ```
 
-Resolution is centralized in `_includes/navigation/sidebar-config.html`:
-page front matter → collection `sidebar:` metadata (in `_config.yml`
-`collections:`) → `site.sidebar` → nothing. See
-`/docs/features/sidebar-navigation/` for the full option reference
-(`collection`/`sort`/`expand` for collection mode, `limit` for taxonomy
-modes, `sidebar_exclude: true` per document).
+Resolution is centralized in `_includes/navigation/sidebar-config.html`: page front matter → collection `sidebar:` metadata (in `_config.yml` `collections:`) → `site.sidebar` → nothing. See `/docs/features/sidebar-navigation/` for the full option reference (`collection`/`sort`/`expand` for collection mode, `limit` for taxonomy modes, `sidebar_exclude: true` per document).
 
 ### Navigation data file
 

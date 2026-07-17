@@ -629,9 +629,7 @@ Congratulations on completing the Quick Start guide! Your site is now:
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Configuration state object
-  const config = {
+document.addEventListener('DOMContentLoaded', function() { // Configuration state object const config = {
     site: {},
     owner: {},
     social: {},
@@ -640,28 +638,21 @@ document.addEventListener('DOMContentLoaded', function() {
     advanced: {}
   };
 
-  // Helper function to get input value safely
-  function getValue(id, defaultValue = '') {
+// Helper function to get input value safely function getValue(id, defaultValue = '') {
     const el = document.getElementById(id);
     if (!el) return defaultValue;
     if (el.type === 'checkbox') return el.checked;
     return el.value || defaultValue;
   }
 
-  // Update character count for description
-  const descInput = document.getElementById('cfg-description');
-  const charCount = document.getElementById('desc-char-count');
-  if (descInput && charCount) {
+// Update character count for description const descInput = document.getElementById('cfg-description'); const charCount = document.getElementById('desc-char-count'); if (descInput && charCount) {
     descInput.addEventListener('input', function() {
       charCount.textContent = this.value.length;
       charCount.className = this.value.length > 160 ? 'text-danger' : 'text-muted';
     });
   }
 
-  // Sync color picker with text input
-  const colorPicker = document.getElementById('cfg-primary-color-picker');
-  const colorInput = document.getElementById('cfg-primary-color');
-  if (colorPicker && colorInput) {
+// Sync color picker with text input const colorPicker = document.getElementById('cfg-primary-color-picker'); const colorInput = document.getElementById('cfg-primary-color'); if (colorPicker && colorInput) {
     colorPicker.addEventListener('input', function() {
       colorInput.value = this.value;
       generateConfig();
@@ -674,8 +665,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Generate YAML configuration
-  function generateConfig() {
+// Generate YAML configuration function generateConfig() {
     const title = getValue('cfg-title', 'My Site');
     const subtitle = getValue('cfg-subtitle');
     const description = getValue('cfg-description', 'A Jekyll site powered by zer0-mistakes theme.');
@@ -745,10 +735,7 @@ title: "${escapeYaml(title)}"`;
     if (subtitle) yaml += `\nsubtitle: "${escapeYaml(subtitle)}"`;
     
     yaml += `
-title_separator: "${titleSeparator}"
-description: >-
-  ${escapeYaml(description)}
-locale: "${locale}"`;
+title_separator: "${titleSeparator}" description: >- ${escapeYaml(description)} locale: "${locale}"`;
 
     if (domain) yaml += `\nurl: "https://${escapeYaml(domain)}"`;
     if (baseurl) yaml += `\nbaseurl: "/${escapeYaml(baseurl)}"`;
@@ -764,8 +751,7 @@ name: "${escapeYaml(authorName)}"`;
 
     yaml += `
 
-author:
-  name: "${escapeYaml(authorName)}"`;
+author: name: "${escapeYaml(authorName)}"`;
     if (avatar) yaml += `\n  avatar: "${escapeYaml(avatar)}"`;
     if (bio) yaml += `\n  bio: "${escapeYaml(bio)}"`;
     if (location) yaml += `\n  location: "${escapeYaml(location)}"`;
@@ -795,9 +781,7 @@ links:`;
 
 # Appearance & Branding
 # -------------------------------------------------------------------------
-theme_skin: "${themeSkin}"
-theme_color:
-  main: "${primaryColor}"`;
+theme_skin: "${themeSkin}" theme_color: main: "${primaryColor}"`;
     if (logo) yaml += `\nlogo: "${escapeYaml(logo)}"`;
     if (ogImage) yaml += `\nog_image: "${escapeYaml(ogImage)}"`;
     if (teaser) yaml += `\nteaser: "${escapeYaml(teaser)}"`;
@@ -815,13 +799,7 @@ words_per_minute: ${wpm}`;
       if (posthogEnabled && posthogKey) {
         yaml += `
 
-posthog:
-  enabled: true
-  api_key: "${escapeYaml(posthogKey)}"
-  api_host: "${escapeYaml(posthogHost)}"
-  autocapture: ${posthogAutocapture}
-  session_recording: ${posthogSession}
-  respect_dnt: ${posthogDnt}`;
+posthog: enabled: true api_key: "${escapeYaml(posthogKey)}" api_host: "${escapeYaml(posthogHost)}" autocapture: ${posthogAutocapture} session_recording: ${posthogSession} respect_dnt: ${posthogDnt}`;
       }
     }
 
@@ -841,10 +819,7 @@ posthog:
 
 # Comments (Giscus)
 # -------------------------------------------------------------------------
-gisgus:
-  enabled: true
-  data-repo-id: "${escapeYaml(giscusRepoId)}"
-  data-category-id: "${escapeYaml(giscusCategoryId)}"`;
+gisgus: enabled: true data-repo-id: "${escapeYaml(giscusRepoId)}" data-category-id: "${escapeYaml(giscusCategoryId)}"`;
     }
 
     // Build Settings
@@ -852,8 +827,7 @@ gisgus:
 
 # Build Settings
 # -------------------------------------------------------------------------
-markdown: ${markdown}
-paginate: ${paginate}`;
+markdown: ${markdown} paginate: ${paginate}`;
 
     // Features
     yaml += `
@@ -862,8 +836,7 @@ paginate: ${paginate}`;
 # -------------------------------------------------------------------------`;
     if (mermaid) {
       yaml += `
-mermaid:
-  src: '/assets/vendor/mermaid/mermaid.min.js'`;
+mermaid: src: '/assets/vendor/mermaid/mermaid.min.js'`;
     }
 
     // Copyright
@@ -871,9 +844,7 @@ mermaid:
 
 # Copyright
 # -------------------------------------------------------------------------
-cr_year: ${crYear}
-cr_entity: "${escapeYaml(crEntity)}"
-cr_license: "${crLicense}"`;
+cr_year: ${crYear} cr_entity: "${escapeYaml(crEntity)}" cr_license: "${crLicense}"`;
 
     // Plugins
     yaml += `
@@ -903,14 +874,12 @@ plugins:
     return yaml;
   }
 
-  // Escape YAML special characters
-  function escapeYaml(str) {
+// Escape YAML special characters function escapeYaml(str) {
     if (!str) return '';
     return str.replace(/"/g, '\\"').replace(/\n/g, '\\n');
   }
 
-  // Save configuration to localStorage
-  function saveConfig() {
+// Save configuration to localStorage function saveConfig() {
     const formData = {};
     document.querySelectorAll('input, select, textarea').forEach(el => {
       if (el.id && el.id.startsWith('cfg-')) {
@@ -920,8 +889,7 @@ plugins:
     localStorage.setItem('zer0-personalization-config', JSON.stringify(formData));
   }
 
-  // Load configuration from localStorage
-  function loadConfig() {
+// Load configuration from localStorage function loadConfig() {
     const saved = localStorage.getItem('zer0-personalization-config');
     if (saved) {
       try {
@@ -947,8 +915,7 @@ plugins:
     generateConfig();
   }
 
-  // Reset all fields
-  function resetAll() {
+// Reset all fields function resetAll() {
     if (confirm('Reset all fields to defaults? This cannot be undone.')) {
       document.querySelectorAll('input, select, textarea').forEach(el => {
         if (el.id && el.id.startsWith('cfg-')) {
@@ -984,8 +951,7 @@ plugins:
     }
   }
 
-  // Copy config to clipboard
-  function copyConfig() {
+// Copy config to clipboard function copyConfig() {
     const config = document.getElementById('generated-config').textContent;
     const btn = document.getElementById('copy-config-btn');
     
@@ -1006,96 +972,48 @@ plugins:
     });
   }
 
-  // Event listeners for all form inputs
-  document.querySelectorAll('input, select, textarea').forEach(el => {
+// Event listeners for all form inputs document.querySelectorAll('input, select, textarea').forEach(el => {
     if (el.id && el.id.startsWith('cfg-')) {
       el.addEventListener('input', generateConfig);
       el.addEventListener('change', generateConfig);
     }
   });
 
-  // Button event listeners
-  const resetBtn = document.getElementById('reset-all-btn');
-  if (resetBtn) resetBtn.addEventListener('click', resetAll);
+// Button event listeners const resetBtn = document.getElementById('reset-all-btn'); if (resetBtn) resetBtn.addEventListener('click', resetAll);
   
-  const copyBtn = document.getElementById('copy-config-btn');
-  if (copyBtn) copyBtn.addEventListener('click', copyConfig);
+const copyBtn = document.getElementById('copy-config-btn'); if (copyBtn) copyBtn.addEventListener('click', copyConfig);
 
-  // Initialize
-  loadConfig();
-});
+// Initialize loadConfig(); });
 </script>
 
 <style>
-/* Form styling */
-.form-label {
-  font-weight: 500;
-}
+/* Form styling */ .form-label { font-weight: 500; }
 
-.form-label i {
-  margin-right: 0.25rem;
-}
+.form-label i { margin-right: 0.25rem; }
 
-.form-control:focus,
-.form-select:focus {
-  border-color: var(--bs-primary);
-  box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
-}
+.form-control:focus, .form-select:focus { border-color: var(--bs-primary); box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25); }
 
-.form-control-color {
-  width: 50px;
-  padding: 0.25rem;
-}
+.form-control-color { width: 50px; padding: 0.25rem; }
 
-/* Card hover effects */
-.card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
+/* Card hover effects */ .card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
 
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
+.card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 
-/* Code block styling */
-#generated-config {
-  font-family: 'Fira Code', 'Courier New', Courier, monospace;
-  font-size: 0.85rem;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
+/* Code block styling */ #generated-config { font-family: 'Fira Code', 'Courier New', Courier, monospace; font-size: 0.85rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
 
-/* Section anchors */
-h2[id] {
-  scroll-margin-top: 80px;
-}
+/* Section anchors */ h2[id] { scroll-margin-top: 80px; }
 
-/* Input group styling */
-.input-group-text {
-  font-size: 0.875rem;
-  background-color: var(--bs-gray-100);
-}
+/* Input group styling */ .input-group-text { font-size: 0.875rem; background-color: var(--bs-gray-100); }
 
-/* Switch styling */
-.form-check-input:checked {
-  background-color: var(--bs-primary);
-  border-color: var(--bs-primary);
-}
+/* Switch styling */ .form-check-input:checked { background-color: var(--bs-primary); border-color: var(--bs-primary); }
 
-/* Character counter */
-#desc-char-count {
-  transition: color 0.2s ease;
-}
+/* Character counter */ #desc-char-count { transition: color 0.2s ease; }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .card-body {
+/* Responsive adjustments */ @media (max-width: 768px) { .card-body {
     padding: 1rem;
   }
   
   #generated-config {
     font-size: 0.75rem;
-  }
-}
+} }
 </style>

@@ -32,31 +32,22 @@ sidebar:
 
 # Safe-Mode Build Overlay
 
-**What you'll do:** reproduce a GitHub Pages build of your remote-theme site in
-your own CI, so a custom pipeline (caching, link-checking, multi-site builds)
-renders exactly what Pages would — no more, no less.
+**What you'll do:** reproduce a GitHub Pages build of your remote-theme site in your own CI, so a custom pipeline (caching, link-checking, multi-site builds) renders exactly what Pages would — no more, no less.
 
 ## Why this is needed
 
-When you build *outside* GitHub Pages — your own GitHub Actions, GitLab CI, or a
-local `jekyll build` — nothing replicates Pages' two constraints for you:
+When you build *outside* GitHub Pages — your own GitHub Actions, GitLab CI, or a local `jekyll build` — nothing replicates Pages' two constraints for you:
 
 1. `remote_theme` only delivers `_layouts/`, `_includes/`, `_sass/`, and
    `assets/`. Your `_config.yml`, `_data/`, and content stay local.
 2. Pages runs Jekyll in **safe mode**, which **ignores `_plugins/*.rb`**. The
-   theme's generators (search, sitemap, author pages, previews) never run on a
-   Pages consumer build.
+theme's generators (search, sitemap, author pages, previews) never run on a Pages consumer build.
 
-If your custom build *doesn't* strip `_plugins`, you get pages locally that 404
-on the real Pages site — the build and production diverge silently. The overlay
-recipe makes your CI build match Pages exactly. (For the files Pages does *not*
-deliver, see the
-[Remote-Theme Consumer Checklist](/docs/deployment/remote-theme-checklist/).)
+If your custom build *doesn't* strip `_plugins`, you get pages locally that 404 on the real Pages site — the build and production diverge silently. The overlay recipe makes your CI build match Pages exactly. (For the files Pages does *not* deliver, see the [Remote-Theme Consumer Checklist](/docs/deployment/remote-theme-checklist/).)
 
 ## The recipe
 
-Four steps: **clone the theme → overlay your content on top → strip `_plugins`
-→ strict build.**
+Four steps: **clone the theme → overlay your content on top → strip `_plugins` → strict build.**
 
 ```bash
 #!/usr/bin/env bash
@@ -121,8 +112,7 @@ In GitHub Actions:
 After the build, sanity-check that you didn't ship anything Pages wouldn't:
 
 - **No plugin-only routes** — `/search.json`, `/sitemap/`, `/authors/` etc. should
-  be absent unless you committed static stubs for them. Their presence locally but
-  not on Pages is the classic divergence this recipe prevents.
+be absent unless you committed static stubs for them. Their presence locally but not on Pages is the classic divergence this recipe prevents.
 - **Run a link checker** over `_site` and treat theme-injected 404s as build
   failures, so a regression surfaces in CI rather than for a visitor.
 

@@ -264,8 +264,7 @@ If you're modifying or auditing `scripts/fork-cleanup.sh` itself, run the test s
 ./test/test_fork_cleanup.sh --no-cleanup  # keep temp workspaces for inspection
 ```
 
-The suite snapshots the working tree into a throwaway `/tmp` workspace, runs the
-cleanup script, and asserts that:
+The suite snapshots the working tree into a throwaway `/tmp` workspace, runs the cleanup script, and asserts that:
 
 - Required example paths (`pages/_posts`, `CNAME`, `assets/images/previews`, …) are removed
 - A welcome post is generated under `pages/_posts/`
@@ -273,5 +272,4 @@ cleanup script, and asserts that:
 - YAML anchors (`&github_user`, `&title`, `&url`, …) are preserved so existing alias references keep working
 - Re-running the cleanup is idempotent (safe to invoke twice)
 
-A backup of the original `_config.yml` is written next to it as
-`_config.yml.backup.YYYYMMDDHHMMSS` on every real (non-dry) run.
+A backup of the original `_config.yml` is written next to it as `_config.yml.backup.YYYYMMDDHHMMSS` on every real (non-dry) run.

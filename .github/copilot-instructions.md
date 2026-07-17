@@ -1001,8 +1001,7 @@ The `.github/instructions/` directory contains specialized guidelines for differ
 - **scripts.instructions.md** (applies to `scripts/**`): Shell script automation standards
 - **testing.instructions.md** (applies to `test/**`): Testing guidelines and best practices
 - **features.instructions.md** (applies to the feature registry + its tooling): the
-  registry schema, provenance/tests requirements, and the `tag-features`
-  reverse-traceability gate — **read this whenever you add or change a feature**
+registry schema, provenance/tests requirements, and the `tag-features` reverse-traceability gate — **read this whenever you add or change a feature**
 - **version-control.instructions.md** (applies to `**`): Git workflow and release management
 
 These instructions are automatically applied by GitHub Copilot based on the files you're working with.
@@ -1017,11 +1016,7 @@ These instructions are automatically applied by GitHub Copilot based on the file
 4. **Test your changes**: Run relevant tests before committing
 5. **Document updates**: Update comments, docs, and CHANGELOG.md as needed
 6. **Register the feature**: If the change adds or materially alters a
-   user-visible feature (a new layout, include, plugin, script, or workflow),
-   add/update its `ZER0-NNN` entry in `_data/features.yml` (with `provenance` +
-   `tests`), then run `ruby scripts/tag-features --write` to tag the source
-   files. The `features` CI suite hard-fails otherwise. See
-   [`.github/instructions/features.instructions.md`](instructions/features.instructions.md).
+user-visible feature (a new layout, include, plugin, script, or workflow), add/update its `ZER0-NNN` entry in `_data/features.yml` (with `provenance` + `tests`), then run `ruby scripts/tag-features --write` to tag the source files. The `features` CI suite hard-fails otherwise. See [`.github/instructions/features.instructions.md`](instructions/features.instructions.md).
 
 ### Common Tasks
 
