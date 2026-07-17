@@ -86,8 +86,10 @@ layout: root
     <!-- ================================ -->
     <!-- MAIN CONTENT AREA               -->
     <!-- ================================ -->
-    <!-- Primary content section with scroll spy for table of contents navigation -->
-    <main class="bd-main order-1" data-bs-spy="scroll" data-bs-target="#TableOfContents" data-bs-offset="100" data-bs-smooth-scroll="true">
+    <!-- Primary content section with scroll spy for table of contents navigation.
+         Not a <main>: root.html already provides the single <main id="main-content">
+         landmark; a nested <main> here would duplicate it (issue #299). -->
+    <div class="bd-main order-1" data-bs-spy="scroll" data-bs-target="#TableOfContents" data-bs-offset="100" data-bs-smooth-scroll="true">
 
         {%- comment -%}
           Page introduction: title, breadcrumbs, metadata.
@@ -129,5 +131,5 @@ layout: root
               {% include content/backlinks.html %}
             {% endif %}
         </div>
-      </main>
+      </div>
     </div>

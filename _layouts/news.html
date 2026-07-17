@@ -78,7 +78,9 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
   </div>
 </div>
 
-<main class="container">
+<!-- Not a <main>: root.html already provides the single <main id="main-content">
+     landmark; a nested <main> here would duplicate it (issue #299). -->
+<div class="container">
 
 {% if section_style == "magazine" %}
   <!-- ================================ -->
@@ -578,7 +580,7 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
     </div>
   </section>
 
-</main>
+</div>
 
 <style>
   .hover-lift {
