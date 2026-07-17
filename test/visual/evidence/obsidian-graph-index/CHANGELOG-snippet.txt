@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/obsidian-graph-index/ -->
+  (evidence: [`test/visual/evidence/obsidian-graph-index/`](test/visual/evidence/obsidian-graph-index/README.md) — wiki-index fetch 404 → 200 on a baseurl'd build)

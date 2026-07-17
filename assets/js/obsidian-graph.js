@@ -28,7 +28,11 @@
   'use strict';
 
   var CONTAINER_ID = 'obsidian-graph';
-  var INDEX_URL = (window.OBSIDIAN_WIKI_INDEX_URL ||
+  // Index URL resolution mirrors obsidian-wiki-links.js: the baseurl-aware
+  // value js-cdn.html emits (OBSIDIAN_CONFIG.wikiIndexUrl), then the legacy
+  // per-page override global, then a <base>-relative fallback.
+  var INDEX_URL = ((window.OBSIDIAN_CONFIG || {}).wikiIndexUrl ||
+    window.OBSIDIAN_WIKI_INDEX_URL ||
     ((document.querySelector('base') || {}).href || '/') + 'assets/data/wiki-index.json');
 
   function normalize(value) {

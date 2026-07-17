@@ -43,6 +43,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Obsidian graph loads its wiki index on project sites** — the full-graph
+  renderer (`assets/js/obsidian-graph.js`) now reads the baseurl-aware
+  `window.OBSIDIAN_CONFIG.wikiIndexUrl` that `js-cdn.html` emits (falling back
+  to the legacy `OBSIDIAN_WIKI_INDEX_URL` override, then the `<base>`-relative
+  path), instead of only the never-set legacy global — whose fallback dropped
+  the baseurl and 404'd the `wiki-index.json` fetch on GitHub Pages project
+  sites, leaving `/docs/obsidian/graph/` a "Failed to load graph data" alert
+  ([#294](https://github.com/bamr87/zer0-mistakes/issues/294)). (evidence:
+  [`test/visual/evidence/obsidian-graph-index/`](test/visual/evidence/obsidian-graph-index/README.md)
+  — wiki-index fetch 404 → 200, alert → rendered graph, on a baseurl'd build)
+
 - **Preview-image config keys `enabled`, `assets_prefix`, `auto_prefix` and
   `collections` are now honored by the generator** (the Bash engine ignored
   them), and front-matter `preview:` updates are scoped to the front-matter
