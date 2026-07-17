@@ -93,6 +93,10 @@ window.MathJax = {
      Outputs custom og:image with assets_prefix normalisation and non-Google site verification. -->
 {% include content/seo.html %}
 
+<!-- hreflang alternates for machine-generated translations (no-op when the
+     page has none) — see _data/i18n/manifest.yml + scripts/translate.rb -->
+{% include core/hreflang.html %}
+
 <!-- ========================== -->
 <!-- STRUCTURED DATA MARKUP    -->
 <!-- ========================== -->

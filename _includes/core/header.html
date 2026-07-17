@@ -41,9 +41,11 @@
 <!-- ================================ -->
 <!-- SKIP TO CONTENT LINK            -->
 <!-- ================================ -->
+<!-- UI strings resolve per page language (core/i18n.html sets `ui`) -->
+{%- include core/i18n.html -%}
 <!-- Accessibility: allows keyboard users to skip navigation -->
 <a href="#main-content" class="visually-hidden-focusable position-absolute top-0 start-0 z-3 m-3 btn btn-primary">
-  Skip to main content
+  {{ ui.skip_main_content | default: "Skip to main content" }}
 </a>
 
 <header id="navbar" class="container-fluid text-center fixed-top" role="banner">
@@ -149,17 +151,20 @@
             <!-- UTILITY CONTROLS          -->
             <!-- ========================== -->
             <div class="navbar-utility-controls d-flex align-items-center flex-shrink-0" role="group" aria-label="Utility controls">
+                <!-- Language Toggle (renders only when translation.languages is set) -->
+                {% include components/language-toggle.html %}
+
                 <!-- Search Modal Toggle -->
                 <button
                     class="btn nav-search-button"
                     type="button"
                     data-search-toggle
-                    aria-label="Open search"
+                    aria-label="{{ ui.shortcuts_search | default: 'Open search' }}"
                     aria-haspopup="dialog"
-                    title="Search site content"
+                    title="{{ ui.search_button_label | default: 'Search' }}"
                 >
                     <i class="{{site.default_icon}} bi-search" aria-hidden="true"></i>
-                    <span class="nav-link-text d-none d-xl-inline ms-1">Search</span>
+                    <span class="nav-link-text d-none d-xl-inline ms-1">{{ ui.search_button_label | default: "Search" }}</span>
                 </button>
 
                 <!-- Settings Offcanvas Toggle -->

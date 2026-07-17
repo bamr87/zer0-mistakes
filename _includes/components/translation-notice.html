@@ -1,0 +1,26 @@
+{%- comment -%}
+  Component:   translation-notice
+  Path:        _includes/components/translation-notice.html
+  Purpose:     Disclosure banner shown at the top of machine-generated
+               translations: tells the reader the page was translated
+               automatically and links back to the English original.
+  Params:      none — renders only when page.machine_translated is true
+               (set by scripts/translate.rb on generated pages).
+  Depends on:  core/i18n.html, Bootstrap 5 alert, Bootstrap Icons
+  Notes:       No-op on every human-authored page, so it is safe to include
+               unconditionally from the root layout.
+{%- endcomment -%}
+{%- if page.machine_translated -%}
+{%- include core/i18n.html -%}
+<div class="container-xl mt-3 translation-notice">
+    <div class="alert alert-info d-flex align-items-start gap-2 mb-0" role="note">
+        <i class="bi bi-translate flex-shrink-0 mt-1" aria-hidden="true"></i>
+        <span>
+            {{ ui.machine_translation_notice | default: "This page was translated automatically from the English original." }}
+            {%- if page.translation_source_url %}
+            <a class="alert-link" href="{{ page.translation_source_url | relative_url }}" hreflang="{{ site.translation.source_lang | default: 'en' }}">{{ ui.machine_translation_view_source | default: "View the original" }}</a>
+            {%- endif %}
+        </span>
+    </div>
+</div>
+{%- endif -%}

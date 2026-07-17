@@ -24,6 +24,7 @@ This directory contains file-specific instructions for GitHub Copilot to provide
 │   ├── backlog.instructions.md       # Tactical backlog schema + sync contract
 │   ├── content-review.instructions.md   # AI content reviewer: SEO/quality + resolution
 │   ├── ai-chat.instructions.md       # AI chat assistant + chat-proxy: auth, caps, safety
+│   ├── translation.instructions.md   # Multilingual pipeline: generated-content rules
 │   └── visual-evidence.instructions.md  # Screenshots + regression tests as the norm for UI changes
 ├── prompts/                         # Reusable agent/chat prompts (.prompt.md)
 │   ├── commit-publish.prompt.md      # Full release pipeline

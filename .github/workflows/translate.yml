@@ -1,0 +1,145 @@
+# Feature: ZER0-078
+# Multilingual translation pipeline — generates the alternate-language
+# content (fr/**, _data/i18n/**) from the English source via
+# scripts/translate.rb + Claude (Claude Code OAuth).
+#
+# Two entry points:
+#   - workflow_dispatch: the "one large translation job" — run with
+#     mode=full once to translate the whole site, or incremental to top up.
+#   - push to main touching English content: incremental update of only the
+#     new/changed pages (bounded by a per-run limit to cap spend).
+#
+# The job NEVER pushes to main (protected). Generated output is proposed as
+# a PR on the stable branch chore/i18n-translations (repeated runs update
+# the same PR), mirroring the sync.yml roadmap pattern. Merging that PR does
+# not re-trigger this workflow: the push path filter only watches English
+# sources, never fr/** or _data/i18n/**.
+name: Translate
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "full = retranslate everything (the big job); incremental = only new/changed"
+        type: choice
+        options: [incremental, full]
+        default: incremental
+      languages:
+        description: "Comma-separated target languages (blank = translation.languages from _config.yml)"
+        type: string
+        default: ""
+      limit:
+        description: "Max translation jobs this run (blank = unlimited)"
+        type: string
+        default: ""
+      dry_run:
+        description: "Plan only — no API calls, no PR"
+        type: boolean
+        default: false
+  push:
+    branches: [main]
+    paths:
+      - 'pages/**'
+      - '_data/ui-text.yml'
+      - 'scripts/translate.rb'
+      - '.github/workflows/translate.yml'
+
+concurrency:
+  group: translate
+  cancel-in-progress: false
+
+jobs:
+  translate:
+    name: Generate translations
+    # Fork safety: forks have no credential and should not burn API spend.
+    if: github.repository == 'bamr87/zer0-mistakes'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+
+      # scripts/translate.rb is stdlib-only Ruby — no bundle install needed.
+      - name: Check for an Anthropic credential
+        id: creds
+        env:
+          OAUTH: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -n "$OAUTH" ] || [ -n "$KEY" ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::No CLAUDE_CODE_OAUTH_TOKEN or ANTHROPIC_API_KEY secret configured — skipping translation."
+          fi
+
+      - name: Run translation
+        if: steps.creds.outputs.found == 'true'
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MODE: ${{ inputs.mode }}
+          LANGUAGES: ${{ inputs.languages }}
+          LIMIT: ${{ inputs.limit }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          args=(--verbose)
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            if [ "$MODE" = "full" ]; then args+=(--full); fi
+            if [ -n "$LANGUAGES" ]; then args+=(--langs "$LANGUAGES"); fi
+            if [ -n "$LIMIT" ]; then args+=(--limit "$LIMIT"); fi
+            if [ "$DRY_RUN" = "true" ]; then args+=(--dry-run); fi
+          else
+            # Push-triggered incremental runs are bounded to cap spend; the
+            # next content push (or a manual dispatch) picks up the rest.
+            args+=(--limit 50)
+          fi
+          ruby scripts/translate.rb "${args[@]}"
+
+      # Open/update a PR instead of pushing to main directly (main is
+      # protected). Stable branch → repeated runs update the same PR rather
+      # than spawning new ones. NOTE: PRs opened with GITHUB_TOKEN do not
+      # auto-trigger CI (GitHub's recursion guard); close/reopen the PR to
+      # run checks, or merge directly.
+      - name: Open PR with generated translations
+        if: steps.creds.outputs.found == 'true' && inputs.dry_run != true
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          add-paths: |
+            fr
+            _data/i18n
+          branch: chore/i18n-translations
+          delete-branch: true
+          commit-message: "chore(i18n): refresh machine-generated translations"
+          title: "chore(i18n): refresh machine-generated translations"
+          body: |
+            Automated: regenerated the machine-translated content from the
+            English source via `scripts/translate.rb` (Claude Code OAuth).
+
+            Contents of this PR are **build artifacts** — `fr/**`,
+            `_data/i18n/<lang>.yml`, and `_data/i18n/manifest.yml` are
+            generated and must never be edited by hand. To change a
+            translation, edit the English source and let this workflow
+            regenerate it. See `docs/systems/multilingual-translation.md`.
+
+            Opened as a PR (not a direct push to `main`) so every change
+            flows through review + branch protection. PRs opened by
+            `GITHUB_TOKEN` don't auto-trigger CI — close/reopen to run
+            checks, or merge directly.
+
+            *Automated by the [translate workflow](../.github/workflows/translate.yml).*
+          labels: automated
+          assignees: bamr87

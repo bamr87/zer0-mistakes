@@ -88,6 +88,7 @@ TEST SUITES:
     quality               Security, accessibility, compatibility, and performance tests
     installer             Modular installer: profiles, deploy plugins, agent files, AI wizard
     site_generation       Configuration matrix site generation and build tests
+    i18n                  Multilingual translation pipeline tests (scripts/translate.rb)
     obsidian              Wiki-link resolver, graph index, and backlinks tests
     playwright            Playwright smoke tests (CSS, layout, behavioral DOM)
     playwright_snapshots  Playwright pixel snapshot tests (homepage skin regression)
@@ -178,10 +179,10 @@ done
 # `styling` (alias for the same Playwright tier) suites have been retired.
 # The `installation` suite (test_installation.sh) was also retired after its
 # scenarios were ported into test_install_legacy_flags.sh (part of `installer`).
-TEST_SUITE_KEYS=("core" "deployment" "quality" "installer" "site_generation" "obsidian" "features" "playwright" "playwright_snapshots" "audit")
-TEST_SUITE_SCRIPTS=("test_core.sh" "test_deployment.sh" "test_quality.sh" "test_installer.sh" "test_site_generation.sh" "test_obsidian.sh" "test_features.sh" "test_playwright.sh" "test_playwright.sh" "test_audit.sh")
-TEST_SUITE_NAMES=("Core Tests (Unit, Integration, Validation)" "Deployment Tests (Installation, Docker, E2E)" "Quality Tests (Security, Accessibility, Compatibility, Performance)" "Modular Installer Tests (Profiles, Deploy Plugins, Agents, AI Wizard)" "Site Generation Tests (Config Matrix, Jekyll Build)" "Obsidian Tests (Wiki Links, Graph, Backlinks)" "Feature Registry Tests (Sync, Schema, References, Coverage Backlog)" "Playwright Smoke Tests (CSS, layout, behavioral DOM)" "Playwright Snapshot Tests (homepage skin pixel regression)" "Audit Tests (Manifest generation, consumer classification, fix mode)")
-TEST_SUITE_ENV=("" "" "" "" "" "" "" "PLAYWRIGHT_PROJECT=smoke" "PLAYWRIGHT_PROJECT=snapshots" "")
+TEST_SUITE_KEYS=("core" "deployment" "quality" "installer" "site_generation" "i18n" "obsidian" "features" "playwright" "playwright_snapshots" "audit")
+TEST_SUITE_SCRIPTS=("test_core.sh" "test_deployment.sh" "test_quality.sh" "test_installer.sh" "test_site_generation.sh" "test_i18n.sh" "test_obsidian.sh" "test_features.sh" "test_playwright.sh" "test_playwright.sh" "test_audit.sh")
+TEST_SUITE_NAMES=("Core Tests (Unit, Integration, Validation)" "Deployment Tests (Installation, Docker, E2E)" "Quality Tests (Security, Accessibility, Compatibility, Performance)" "Modular Installer Tests (Profiles, Deploy Plugins, Agents, AI Wizard)" "Site Generation Tests (Config Matrix, Jekyll Build)" "i18n Translation Tests (Pipeline, URL Mapping, Theme Wiring)" "Obsidian Tests (Wiki Links, Graph, Backlinks)" "Feature Registry Tests (Sync, Schema, References, Coverage Backlog)" "Playwright Smoke Tests (CSS, layout, behavioral DOM)" "Playwright Snapshot Tests (homepage skin pixel regression)" "Audit Tests (Manifest generation, consumer classification, fix mode)")
+TEST_SUITE_ENV=("" "" "" "" "" "" "" "" "PLAYWRIGHT_PROJECT=smoke" "PLAYWRIGHT_PROJECT=snapshots" "")
 
 # Helper function to get suite script by name
 get_suite_script() {
@@ -266,10 +267,10 @@ parse_test_suites() {
     
     if [[ "$suites_input" == "all" ]]; then
         # Run core test suites by default (Playwright tiers are optional and slow)
-        suites_to_run=("core" "deployment" "quality" "installer" "site_generation" "features")
+        suites_to_run=("core" "deployment" "quality" "installer" "site_generation" "i18n" "features")
     elif [[ "$suites_input" == "full" ]]; then
         # Run everything including Obsidian and both Playwright tiers
-        suites_to_run=("core" "deployment" "quality" "installer" "site_generation" "obsidian" "features" "playwright" "playwright_snapshots")
+        suites_to_run=("core" "deployment" "quality" "installer" "site_generation" "i18n" "obsidian" "features" "playwright" "playwright_snapshots")
     else
         IFS=',' read -ra suites_to_run <<< "$suites_input"
         # Backwards-compat aliases for the retired suite names

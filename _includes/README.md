@@ -12,6 +12,8 @@ Essential layout components that form the foundation of the site:
 - `header.html` - Main site header with navigation
 - `footer.html` - Site footer (if exists)
 - `branding.html` - Site branding and title display
+- `i18n.html` - Resolves the per-page-language UI-string set into the `ui` variable (generated translations fall back to English)
+- `hreflang.html` - `<link rel="alternate" hreflang>` tags for pages with machine-generated translations
 
 ### `navigation/`
 
@@ -40,6 +42,8 @@ Analytics and tracking integrations:
 Reusable UI components and widgets:
 
 - `searchbar.html` - Deprecated search stub (superseded by `search-modal.html`)
+- `language-toggle.html` - Navbar dropdown switching between the English original and its machine-generated translations
+- `translation-notice.html` - Disclosure banner on machine-translated pages linking back to the English original
 - `powered-by.html` - "Powered by" credits display
 - `quick-index.html` - Quick page index
 - `dev-shortcuts.html` - Developer shortcuts

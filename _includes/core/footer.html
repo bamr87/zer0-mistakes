@@ -22,15 +22,20 @@
   - site.powered_by: Framework and service credits
   - site.links: Social media and affiliate links
   - site.default_icon: Icon framework (Bootstrap Icons)
-  - site.data.ui-text: Internationalization support for RSS label
+  - core/i18n.html: UI strings (per-page language via the `lang` param)
   - Bootstrap 5 classes provided by the theme
-  
+
+  Params:
+  - lang (optional): page language. Root layout renders this include via
+    include_cached, so it MUST pass lang=page.lang for per-language caching.
+
   Notes:
   - Guard optional fields (address/phone/email) to avoid empty output
   - Use relative_url for internal links to respect baseurl
   ===================================================================
 -->
 
+{%- include core/i18n.html lang=include.lang -%}
 <footer class="bd-footer border-top" role="contentinfo">
   {% assign footer_page_urls = site.html_pages | map: "url" | join: "|" | prepend: "|" | append: "|" %}
   <!-- Powered by Row -->
@@ -40,7 +45,7 @@
     </p>
     <div class="footer-powered-by-row">
       <span class="footer-powered-by-label" id="footer-powered-by-label">
-        {{ site.data.ui-text[site.locale].powered_by | default: "Powered by" }}:
+        {{ ui.powered_by | default: "Powered by" }}:
       </span>
       <ul class="footer-powered-by-links list-unstyled mb-0"
           aria-labelledby="footer-powered-by-label">
@@ -197,7 +202,7 @@
               <li class="list-inline-item">
                 <a class="text-light text-decoration-none" href="{{ '/feed.xml' | relative_url }}">
                   <i class="{{ site.default_icon }} bi-rss" aria-hidden="true"></i>
-                  <span class="d-none d-md-inline">{{ site.data.ui-text[site.locale].feed_label | default: "Feed" }}</span>
+                  <span class="d-none d-md-inline">{{ ui.feed_label | default: "Feed" }}</span>
                 </a>
               </li>
             </ul>

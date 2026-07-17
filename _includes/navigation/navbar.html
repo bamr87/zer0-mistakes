@@ -8,11 +8,12 @@
  -->
 
 <!-- Navigation Links - Responsive Offcanvas (inline at lg+, offcanvas below) -->
+{%- include core/i18n.html -%}
 <div class="offcanvas-lg offcanvas-end" tabindex="-1" id="bdNavbar" aria-labelledby="mainNavOffcanvasLabel">
 
     <!-- Main Navigation Header - Offcanvas -->
     <div class="offcanvas-header border-bottom">
-        <h2 class="offcanvas-title h5 mb-0" id="mainNavOffcanvasLabel">Main Navigation</h2>
+        <h2 class="offcanvas-title h5 mb-0" id="mainNavOffcanvasLabel">{{ ui.main_nav_label | default: "Main Navigation" }}</h2>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close navigation menu" data-bs-target="#bdNavbar"></button>
     </div>
 
@@ -24,7 +25,7 @@
             <li class="nav-item d-lg-none">
                 <a class="nav-link" href="{{ '/' | relative_url }}" {% if page.url == '/' %}aria-current="page"{% endif %}>
                     <i class="{{site.default_icon}} bi-house" aria-hidden="true"></i>
-                    Home
+                    {{ ui.home_label | default: "Home" }}
                 </a>
             </li>
             {%- comment -%}
@@ -143,7 +144,7 @@
                     aria-haspopup="dialog"
                 >
                     <i class="{{site.default_icon}} bi-search" aria-hidden="true"></i>
-                    Search
+                    {{ ui.search_button_label | default: "Search" }}
                 </button>
             </li>
             <li class="nav-item d-lg-none">
@@ -156,7 +157,7 @@
                     aria-haspopup="dialog"
                 >
                     <i class="{{site.default_icon}} bi-gear" aria-hidden="true"></i>
-                    Settings
+                    {{ ui.settings_button_label | default: "Settings" }}
                 </button>
             </li>
         </ul>
