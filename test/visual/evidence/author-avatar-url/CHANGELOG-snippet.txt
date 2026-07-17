@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/author-avatar-url/ -->
+  (evidence: [`test/visual/evidence/author-avatar-url/`](test/visual/evidence/author-avatar-url/README.md) — 4 protocol-relative `//assets/…` avatars → 0 on a misconfigured consumer build)

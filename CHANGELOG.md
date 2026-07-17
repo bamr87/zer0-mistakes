@@ -54,6 +54,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   [`test/visual/evidence/obsidian-graph-index/`](test/visual/evidence/obsidian-graph-index/README.md)
   — wiki-index fetch 404 → 200, alert → rendered graph, on a baseurl'd build)
 
+- **Author avatars never render as protocol-relative `//assets/…` URLs** —
+  `author-avatar-url.html` now builds the relative-path branch in a capture,
+  collapses doubled slashes, and applies `relative_url` exactly once, instead
+  of the manual `{{ site.baseurl }}/{{ site.public_folder }}{{ avatar }}`
+  concatenation that produced `src="//assets/…"` (a URL browsers resolve
+  against a host named `assets`) on consumer sites where `public_folder` is
+  unset or carries a leading slash
+  ([#297](https://github.com/bamr87/zer0-mistakes/issues/297)). (evidence:
+  [`test/visual/evidence/author-avatar-url/`](test/visual/evidence/author-avatar-url/README.md)
+  — 4 protocol-relative avatars → 0, all avatars loading, on a misconfigured
+  consumer build)
+
 - **Preview-image config keys `enabled`, `assets_prefix`, `auto_prefix` and
   `collections` are now honored by the generator** (the Bash engine ignored
   them), and front-matter `preview:` updates are scoped to the front-matter
