@@ -156,7 +156,9 @@ layout: root
     <!-- ================================ -->
     <!-- MAIN CONTENT AREA                -->
     <!-- ================================ -->
-    <main class="col-lg-9 col-xl-10 section-layout-main">
+    <!-- Not a <main>: root.html already provides the single <main id="main-content">
+         landmark; a nested <main> here would duplicate it (issue #299). -->
+    <div class="col-lg-9 col-xl-10 section-layout-main">
       
       <!-- Section Header -->
       <header class="section-header mb-4">
@@ -526,7 +528,7 @@ layout: root
         </div>
       </aside>
 
-    </main>
+    </div>
   </div>
 </div>
 

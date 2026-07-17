@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/intro-banner-baseurl/ -->
+  (evidence: [`test/visual/evidence/intro-banner-baseurl/`](test/visual/evidence/intro-banner-baseurl/README.md) — intro background `/zer0-mistakes/zer0-mistakes/assets/…` 404 → `/zer0-mistakes/assets/…` 200 on a baseurl'd build)

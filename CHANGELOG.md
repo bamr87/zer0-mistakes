@@ -16,6 +16,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`show_hero` front-matter flag** — a post of any `post_type` can now opt
+  its `preview:` image into the top-of-article hero with `show_hero: true`,
+  without being promoted to `featured`/`breaking` (layout width, sidebar,
+  typography, and the post-type badge keep their `post_type` defaults);
+  existing posts are unchanged by construction — the flag is falsy everywhere
+  it isn't set ([#303](https://github.com/bamr87/zer0-mistakes/issues/303)).
+  (evidence:
+  [`test/visual/evidence/show-hero/`](test/visual/evidence/show-hero/README.md)
+  — hero renders only on the opted-in demo post; whole-build before/after
+  diff: exactly 1 page differs)
+
 - **Claude-orchestrated preview-image engine** (ZER0-004) — the three
   divergent implementations (1,404-line Bash engine, drifted Python
   duplicate, dead Jekyll plugin) are consolidated into ONE Python engine,
@@ -64,6 +75,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   [`test/visual/evidence/env-switcher-prod/`](test/visual/evidence/env-switcher-prod/README.md)
   — production Settings-chrome `localhost:4000` occurrences 5 → 0, Dev row
   intact in development)
+- **Author avatars never render as protocol-relative `//assets/…` URLs** —
+  `author-avatar-url.html` now builds the relative-path branch in a capture,
+  collapses doubled slashes, and applies `relative_url` exactly once, instead
+  of the manual `{{ site.baseurl }}/{{ site.public_folder }}{{ avatar }}`
+  concatenation that produced `src="//assets/…"` (a URL browsers resolve
+  against a host named `assets`) on consumer sites where `public_folder` is
+  unset or carries a leading slash
+  ([#297](https://github.com/bamr87/zer0-mistakes/issues/297)). (evidence:
+  [`test/visual/evidence/author-avatar-url/`](test/visual/evidence/author-avatar-url/README.md)
+  — 4 protocol-relative avatars → 0, all avatars loading, on a misconfigured
+  consumer build)
+
+- **Intro hero banner renders on project sites** — `content/intro.html` now
+  applies `relative_url` to the banner image exactly once (in the
+  `preview_path` assignment logic), instead of a second time at the point of
+  use, which doubled the baseurl segment on any site with a non-empty
+  `baseurl` (`url('/reponame/reponame/assets/…')` → 404 → gradient-only hero)
+  and mangled absolute preview URLs
+  ([#293](https://github.com/bamr87/zer0-mistakes/issues/293)). (evidence:
+  [`test/visual/evidence/intro-banner-baseurl/`](test/visual/evidence/intro-banner-baseurl/README.md)
+  — background fetch 404 → 200 on both preview branches of a baseurl'd build)
 
 - **Preview-image config keys `enabled`, `assets_prefix`, `auto_prefix` and
   `collections` are now honored by the generator** (the Bash engine ignored

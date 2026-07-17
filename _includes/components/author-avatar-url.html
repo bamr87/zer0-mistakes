@@ -10,7 +10,9 @@
      reference an external avatar, e.g. a GitHub one:
      avatar: "https://avatars.githubusercontent.com/u/10567847?v=4"
   2. `avatar` is a relative path (e.g. /images/authors/me.png) — prefixed with
-     the site's assets path ({{ site.baseurl }}/{{ site.public_folder }}).
+     the site's public_folder and passed through relative_url, so baseurl is
+     applied and the slashes never double into a protocol-relative //… URL
+     (even when public_folder and/or baseurl are empty or unset).
   3. No `avatar`, but a `github` handle is set — falls back to that account's
      GitHub avatar: https://github.com/<handle>.png
   4. Otherwise — empty output (the caller renders a fallback icon).
@@ -22,7 +24,7 @@
 {%- endcomment -%}
 {%- assign _avatar = include.data.avatar -%}
 {%- if _avatar and _avatar != "" -%}
-  {%- if _avatar contains "://" -%}{{ _avatar }}{%- else -%}{{ site.baseurl }}/{{ site.public_folder }}{{ _avatar }}{%- endif -%}
+  {%- if _avatar contains "://" -%}{{ _avatar }}{%- else -%}{%- capture _avatar_path -%}/{{ site.public_folder }}{{ _avatar }}{%- endcapture -%}{{ _avatar_path | replace: "//", "/" | relative_url }}{%- endif -%}
 {%- elsif include.data.github and include.data.github != "" -%}
 https://github.com/{{ include.data.github }}.png
 {%- endif -%}

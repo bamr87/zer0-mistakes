@@ -86,7 +86,7 @@ test.describe('Layout chrome', { tag: '@critical' }, () => {
 
   test('default layout page exposes docs-layout regions', async ({ page }) => {
     await waitForJekyll(page, UI_ROUTES.faq);
-    await expect(page.locator('main.bd-main')).toBeVisible();
+    await expect(page.locator('.bd-main')).toBeVisible();
     await expect(page.locator('.bd-content')).toBeVisible();
   });
 });
@@ -107,4 +107,34 @@ test.describe('Design tokens — CSS variables', { tag: '@critical' }, () => {
     );
     expect(value).toMatch(/^\d+px$/);
   });
+});
+
+// =============================================================================
+// Intro hero banner — background image resolves (issue #293)
+// =============================================================================
+// _includes/content/intro.html resolves the banner image into `preview_path`,
+// applying `relative_url` during assignment. The pre-fix point of use piped it
+// through `relative_url` a SECOND time, so any project site (non-empty
+// baseurl) rendered url('/reponame/reponame/assets/…') — a 404 — and every
+// intro hero lost its background image. The fix applies the filter exactly
+// once. At the dev server's baseurl "" both spellings coincide, so this test
+// pins the observable invariant — the rendered background URL must actually
+// resolve — while the project-site states are captured as real baseurl'd
+// before/after builds in test/visual/evidence/intro-banner-baseurl/.
+test.describe('Intro hero banner (issue #293)', () => {
+  // faq/ exercises the site.info_banner fallback branch; the graph doc page
+  // exercises the page.preview auto-prefix branch.
+  for (const route of [UI_ROUTES.faq, '/docs/obsidian/graph/']) {
+    test(`intro background image URL resolves on ${route}`, async ({ page }) => {
+      await waitForJekyll(page, route);
+      const bg = await page
+        .locator('.bd-intro')
+        .first()
+        .evaluate((el) => getComputedStyle(el).backgroundImage);
+      const match = /url\("([^"]+)"\)/.exec(bg);
+      expect(match, `expected .bd-intro to have a url(...) background, got: ${bg}`).toBeTruthy();
+      const resp = await page.request.get(match[1]);
+      expect(resp.status(), `intro background ${match[1]}`).toBe(200);
+    });
+  }
 });

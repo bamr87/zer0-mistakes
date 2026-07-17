@@ -14,6 +14,13 @@
 #
 # OFF by default behind ISSUE_AUTOMERGE_ENABLED. Add `autopilot:needs-human` to
 # force manual review. Runs via pull_request_target but never checks out PR code.
+#
+# STATE (2026-07): the ISSUE_AUTOMERGE_ENABLED repo variable is NOT set, so the
+# job skipped on all 59 runs in the 6/29–7/13 analytics window — every PR event
+# booted a run record for nothing. The workflow is therefore DISABLED in the
+# Actions UI (`gh workflow disable issue-pr-auto-merge.yml`). To turn the lane
+# on: set the repo variable ISSUE_AUTOMERGE_ENABLED=true AND re-enable with
+# `gh workflow enable issue-pr-auto-merge.yml`.
 # =============================================================================
 name: 🤝 Issue PR Auto-Merge
 

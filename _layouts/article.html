@@ -15,6 +15,9 @@ layout: default
   Front Matter Variables:
   - post_type: Article type (standard, featured, breaking, opinion, review, tutorial, listicle, interview)
   - sidebar: Override sidebar visibility (true/false)
+  - show_hero: Opt into the top-of-article hero image (page.preview) for any
+    post_type without changing layout/sidebar/badges (true; featured and
+    breaking posts show the hero automatically)
   
   Post Type Variations:
   - standard (default): Normal article with sidebar
@@ -221,12 +224,15 @@ layout: default
     preview image is set. Breaking stories were previously skipped because the
     condition checked only post_type == "featured"; since breaking is mapped
     before featured (see top of file), breaking+featured posts showed no hero.
+    Any other post type can opt in with `show_hero: true` in front matter —
+    this flips only the hero, leaving sidebar, typography, and badges at their
+    post_type defaults (issue #303).
     Nested ifs keep the "only when page.preview exists" guard intact (Liquid has
     no parentheses, so a flat `a or b and c` would misgroup).
   {% endcomment %}
   {% assign show_hero = false %}
   {% if page.preview %}
-    {% if post_type == "featured" or post_type == "breaking" %}
+    {% if post_type == "featured" or post_type == "breaking" or page.show_hero %}
       {% assign show_hero = true %}
     {% endif %}
   {% endif %}

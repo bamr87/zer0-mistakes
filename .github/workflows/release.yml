@@ -3,7 +3,11 @@ name: Release
 
 # Standardized release pipeline — replaces the bespoke version-bump.yml +
 # release.yml. Conventional Commits drive release-please, which opens a release
-# PR (bumps lib/jekyll-theme-zer0/version.rb + package.json + CHANGELOG.md).
+# PR (bumps lib/jekyll-theme-zer0/version.rb + package.json + package-lock.json
+# + Gemfile.lock + CHANGELOG.md in one commit — `component` in
+# release-please-config.json activates the ruby strategy's Gemfile.lock
+# updater, so the lockfile moves with version.rb and the CI
+# "Version ↔ Gemfile.lock consistency" gate is green on the first run).
 # Merging that PR tags vX.Y.Z, creates the GitHub Release, and publish.yml
 # builds the gem (via scripts/build) and pushes it to RubyGems.
 #

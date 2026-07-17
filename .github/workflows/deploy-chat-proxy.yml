@@ -19,8 +19,27 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
+      # Fail-safe gate: without the Cloudflare secrets, wrangler dies with
+      # "it's necessary to set a CLOUDFLARE_API_TOKEN" — which made EVERY run
+      # of this workflow a guaranteed failure (7/7 failures 2026-06-15 →
+      # 2026-07-07). Skip cleanly (with a notice) until the secrets exist.
+      - name: Check Cloudflare credentials
+        id: creds
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$CF_TOKEN" ] || [ -z "$CF_ACCOUNT" ]; then
+            echo "::notice::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID not configured — skipping the chat-proxy deploy. Add both repo secrets to enable it."
+            echo "go=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@v7
+        if: steps.creds.outputs.go == 'true'
 
       # Deploys the AI chat proxy Worker to Cloudflare and sets its secret.
       # Required GitHub Actions secrets:
@@ -30,6 +49,7 @@ jobs:
       # Optional (proxy-mode issue/PR creation): add GITHUB_TOKEN to the
       # `secrets:` list below and a CHAT_GITHUB_TOKEN repo secret mapped in env.
       - name: Deploy Worker to Cloudflare
+        if: steps.creds.outputs.go == 'true'
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
