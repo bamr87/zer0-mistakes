@@ -48,8 +48,20 @@ async function settleImages(page) {
   );
 }
 
+/**
+ * Third-party badge images (shields.io, badge.fury.io, GitHub workflow
+ * badge.svg) are fetched live at render time. Their load TIMING reflows the
+ * badge row (fixed by settleImages), but their AVAILABILITY does too — CI
+ * runners get rate-limited and a failed fetch renders a missing badge that
+ * no amount of waiting converges (the aqua/plum failures on PR #316).
+ * Abort them so every run renders the identical no-badge state; the
+ * committed baselines are generated with this same block in place.
+ */
+const BADGE_URL_RE = /(img\.shields\.io|badge\.fury\.io|github\.com\/.+\/badge\.svg)/;
+
 test.describe('Theme skins', () => {
   test.beforeEach(async ({ page }) => {
+    await page.route(BADGE_URL_RE, (route) => route.abort());
     await page.setViewportSize(VIEWPORTS.desktop);
     await waitForJekyll(page, '/');
     await clearSkinStorage(page);
