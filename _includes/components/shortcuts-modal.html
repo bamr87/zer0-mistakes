@@ -14,7 +14,7 @@
   is a no-op when the element is absent.
   ===================================================================
 {%- endcomment -%}
-{%- assign ui = site.data.ui-text[site.locale] | default: site.data.ui-text.en -%}
+{%- include core/i18n.html lang=include.lang -%}
 <div class="modal fade" id="zer0-shortcuts-modal" tabindex="-1"
      aria-labelledby="zer0-shortcuts-modal-title" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">

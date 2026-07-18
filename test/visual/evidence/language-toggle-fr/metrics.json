@@ -1,0 +1,34 @@
+{
+  "slug": "language-toggle-fr",
+  "base": "http://127.0.0.1:4000",
+  "route": "/fr/docs/development/vendor-assets/",
+  "sweep": [
+    {
+      "width": 320,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0
+    },
+    {
+      "width": 390,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0
+    },
+    {
+      "width": 768,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0
+    },
+    {
+      "width": 1280,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0
+    }
+  ],
+  "configs": [
+    {
+      "config": "fr-open",
+      "width": 1280,
+      "overflowPx": 0
+    }
+  ]
+}

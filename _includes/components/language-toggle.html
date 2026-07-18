@@ -1,0 +1,81 @@
+{% comment %} Feature: ZER0-078 {% endcomment %}
+{%- comment -%}
+  Component:   language-toggle
+  Path:        _includes/components/language-toggle.html
+  Purpose:     Navbar dropdown that switches between the English original and
+               its machine-generated translations (scripts/translate.rb).
+               Shows the source language plus every configured target
+               language; targets without a generated translation for the
+               current page render as disabled entries.
+  Params:      none — reads page.lang / page.url / page.translation_source_url
+               and the generated _data/i18n/manifest.yml.
+  Depends on:  site.translation.* config, site.data.i18n.manifest,
+               _data/i18n/languages.yml (display names), core/i18n.html,
+               Bootstrap 5 dropdown, Bootstrap Icons (bi-translate)
+  Notes:       Renders nothing when translation is disabled or no target
+               languages are configured. The chosen language is remembered in
+               localStorage("zer0-lang") for future UX (no auto-redirect).
+               Must NOT be include_cached — the menu is page-dependent.
+{%- endcomment -%}
+{%- assign _lt_langs = site.translation.languages -%}
+{%- if site.translation.enabled and _lt_langs and _lt_langs.size > 0 -%}
+{%- include core/i18n.html -%}
+{%- assign _lt_source = site.translation.source_lang | default: 'en' -%}
+{%- assign _lt_current = page.lang | default: _lt_source -%}
+{%- if _lt_current == _lt_source -%}
+  {%- assign _lt_src_url = page.url -%}
+{%- else -%}
+  {%- assign _lt_src_url = page.translation_source_url -%}
+{%- endif -%}
+{%- assign _lt_entry = site.data.i18n.manifest.pages[_lt_src_url] -%}
+{%- assign _lt_names = site.data.i18n.languages -%}
+{%- assign _lt_source_name = _lt_names[_lt_source].native | default: _lt_source -%}
+<div class="dropdown nav-lang-toggle" id="zer0-lang-toggle">
+    <button
+        class="btn nav-lang-button dropdown-toggle"
+        type="button"
+        id="langToggleButton"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+        aria-label="{{ ui.lang_toggle_aria | default: 'Change language' }}"
+        title="{{ ui.lang_toggle_label | default: 'Language' }}"
+    >
+        <i class="{{ site.default_icon }} bi-translate" aria-hidden="true"></i>
+        <span class="nav-link-text d-none d-xl-inline ms-1 text-uppercase">{{ _lt_current | slice: 0, 2 }}</span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langToggleButton">
+        <li>
+            {%- if _lt_current == _lt_source %}
+            <span class="dropdown-item active" aria-current="true">{{ _lt_source_name }}</span>
+            {%- else %}
+            <a class="dropdown-item" data-lang="{{ _lt_source }}" hreflang="{{ _lt_source }}" href="{{ _lt_src_url | default: '/' | relative_url }}">{{ _lt_source_name }}</a>
+            {%- endif %}
+        </li>
+        {%- for _lt_lang in _lt_langs -%}
+        {%- assign _lt_name = _lt_names[_lt_lang].native | default: _lt_lang -%}
+        {%- assign _lt_t = _lt_entry[_lt_lang] %}
+        <li>
+            {%- if _lt_current == _lt_lang %}
+            <span class="dropdown-item active" aria-current="true">{{ _lt_name }}</span>
+            {%- elsif _lt_t %}
+            <a class="dropdown-item" data-lang="{{ _lt_lang }}" hreflang="{{ _lt_lang }}" href="{{ _lt_t.url | relative_url }}">{{ _lt_name }}</a>
+            {%- else %}
+            <span class="dropdown-item disabled" aria-disabled="true" title="{{ ui.lang_not_available | default: 'Not yet translated' }}">{{ _lt_name }} <small class="text-body-secondary">({{ ui.lang_not_available | default: 'Not yet translated' }})</small></span>
+            {%- endif %}
+        </li>
+        {%- endfor %}
+    </ul>
+</div>
+<script>
+  // Remember the visitor's language pick (no auto-redirect — just preference).
+  (function () {
+    var toggle = document.getElementById('zer0-lang-toggle');
+    if (!toggle) return;
+    toggle.addEventListener('click', function (event) {
+      var item = event.target.closest('a.dropdown-item[data-lang]');
+      if (!item) return;
+      try { localStorage.setItem('zer0-lang', item.getAttribute('data-lang')); } catch (e) { /* private mode */ }
+    });
+  })();
+</script>
+{%- endif -%}

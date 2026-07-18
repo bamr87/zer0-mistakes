@@ -43,7 +43,7 @@ Each feature includes:
 Features are organized into these categories:
 
 1. **Core Infrastructure** — Bootstrap, Docker, Modular Installer
-2. **AI-Powered Features** — Preview generation, Copilot/AGENTS.md integration
+2. **AI-Powered Features** — Preview generation, Copilot/AGENTS.md integration, Multilingual translation pipeline
 3. **Analytics & Privacy** — PostHog, Cookie Consent, Google Analytics, GTM
 4. **Navigation & UI** — Sidebar, Keyboard nav, Mobile TOC, ES6 modular nav, Dynamic nav fallback
 5. **Content Management** — Jupyter Notebooks, Mermaid, Collections, Notes
@@ -83,4 +83,4 @@ diff -q features/features.yml _data/features.yml   # must report no difference
 
 ## Feature Count
 
-Current count: **77 features** (as of 2026-07-02, gem v1.24.0)
+Current count: **78 features** (as of 2026-07-17, gem v1.26.0)

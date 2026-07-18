@@ -46,7 +46,7 @@
 {%- else -%}
   {%- assign _bs_theme = 'dark' -%}
 {%- endif -%}
-<html lang="{{ site.locale | slice: 0,2 | default: 'en' }}" class="no-js" data-bs-theme="{{ _bs_theme }}" data-color-mode-default="{{ _cm }}" data-theme-skin="{{ site.theme_skin | default: 'dark' }}" data-zer0-bg="{{ site.theme_background.enabled | default: true }}">
+<html lang="{{ page.lang | default: site.locale | slice: 0, 2 | default: 'en' }}" class="no-js" data-bs-theme="{{ _bs_theme }}" data-color-mode-default="{{ _cm }}" data-theme-skin="{{ site.theme_skin | default: 'dark' }}" data-zer0-bg="{{ site.theme_background.enabled | default: true }}">
     <head>
         <!-- =============================================== -->
         <!-- HEAD SECTION: Meta tags, styles, and SEO setup -->
@@ -82,11 +82,13 @@
              Enable with `navigation.unified_mobile_drawer: true` in _config.yml. -->
         {% include navigation/unified-drawer.html %}
 
-        <!-- Search modal (site-wide) — page-invariant, cached once per build. -->
-        {% include_cached components/search-modal.html %}
+        <!-- Search modal (site-wide) — cached once per build PER LANGUAGE
+             (the lang param keys the include-cache entry; page.lang is nil
+             on English pages, so they all still share a single render). -->
+        {% include_cached components/search-modal.html lang=page.lang %}
 
-        <!-- Keyboard shortcuts help modal (triggered by `?`) — page-invariant. -->
-        {% include_cached components/shortcuts-modal.html %}
+        <!-- Keyboard shortcuts help modal (triggered by `?`) — cached per language. -->
+        {% include_cached components/shortcuts-modal.html lang=page.lang %}
 
         <!-- Settings offcanvas (Appearance / Site / Developer tabs) -->
         {% include components/info-section.html %}
@@ -103,6 +105,9 @@
              assistive tech, search engines, and AI content extractors can isolate the
              primary content from the surrounding header/nav/footer chrome. -->
         <main id="main-content">
+            <!-- Machine-translation disclosure — renders only on generated
+                 translations (page.machine_translated); no-op elsewhere. -->
+            {%- include components/translation-notice.html -%}
             {{ content }}
         </main>
 
@@ -117,7 +122,7 @@
              fresh: jekyll-include-cache stores in memory only (Jekyll 3.x has no
              Jekyll::Cache) and clears on every build's :pre_render hook — it never
              persists to .jekyll-cache. -->
-        {%- include_cached core/footer.html -%}
+        {%- include_cached core/footer.html lang=page.lang -%}
         {%- include core/footer-fabs.html -%}
 
         <!-- Privacy-compliant cookie consent banner — page-invariant. -->

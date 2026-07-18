@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/language-toggle/ -->
+  (evidence: [`test/visual/evidence/language-toggle/`](test/visual/evidence/language-toggle/README.md))

@@ -5,6 +5,7 @@
   includes: nav_list.html, content/toc.html
 -->
 
+{%- include core/i18n.html -%}
 <!-- FOUC guard: apply hidden TOC preference before paint -->
 <script>
   try {
@@ -17,7 +18,7 @@
 <!-- Right sidebar container -->
 <div class="offcanvas-lg offcanvas-end" tabindex="-1" id="tocContents" aria-labelledby="tocLabel">
   <div class="offcanvas-header">
-    <h2 class="offcanvas-title h5 mb-0" id="tocLabel">Table of Contents</h2>
+    <h2 class="offcanvas-title h5 mb-0" id="tocLabel">{{ ui.toc_title | default: "Table of Contents" }}</h2>
     <div class="d-flex align-items-center gap-1">
       <button type="button"
               class="btn btn-sm btn-link text-body-secondary bd-toc-visibility-toggle d-lg-none px-2"
@@ -37,7 +38,7 @@
       <div class="mb-3 d-flex align-items-center justify-content-between gap-2">
         <strong class="d-flex align-items-center mb-0">
           <i class="bi bi-file-text me-2" aria-hidden="true"></i>
-          On this page
+          {{ ui.toc_label | default: "On this page" }}
         </strong>
         <button type="button"
                 class="btn btn-sm btn-link text-body-secondary bd-toc-visibility-toggle d-none d-lg-inline-flex flex-shrink-0 px-1"

@@ -106,7 +106,7 @@ Blog posts (`pages/_posts/`, the `article` layout) and notes/notebooks show comm
    grep -A1 'giscus.app/client.js' _site/**/index.html | grep -m1 data-repo-id
    ```
 
-Expected: a `data-repo-id="..."` attribute carrying your real ID. An empty `data-repo-id=""` means the `giscus` block is missing or the key is misspelled.
+   Expected: a `data-repo-id="..."` attribute carrying your real ID. An empty `data-repo-id=""` means the `giscus` block is missing or the key is misspelled.
 
 3. Serve the site (`docker-compose up`) and open a post. The Giscus widget loads
 from GitHub, so it only fully renders on a public, deployed URL — on `localhost:4000` you can confirm the `<script src="https://giscus.app/client.js">` tag is present even though the embedded thread won't load.

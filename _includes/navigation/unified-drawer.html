@@ -23,7 +23,7 @@
   ===================================================================
 {%- endcomment -%}
 {% if site.navigation.unified_mobile_drawer %}
-{%- assign ui = site.data.ui-text[site.locale] | default: site.data.ui-text.en -%}
+{%- include core/i18n.html -%}
 <div class="offcanvas offcanvas-start zer0-unified-drawer d-lg-none"
      tabindex="-1"
      id="zer0UnifiedDrawer"

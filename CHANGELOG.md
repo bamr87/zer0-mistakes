@@ -16,6 +16,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Multilingual support via AI-generated translations** (ZER0-078) — the
+  theme now serves alternate-language versions of the site without storing
+  hand-written translations in source. English under `pages/**` +
+  `_data/ui-text.yml` `en` is the only human-maintained language; a
+  build-time utility ([`scripts/translate.rb`](scripts/translate.rb),
+  Claude Code OAuth with API-key fallback, stdlib-only Ruby) generates the
+  alternates and the
+  [`translate.yml`](.github/workflows/translate.yml) workflow commits them
+  via PR — one large `mode=full` dispatch job for the initial conversion,
+  plus bounded incremental runs whenever English content changes on `main`:
+  - Generated artifacts: `fr/**` page files (plain Jekyll pages with
+    explicit `/fr<en-url>` permalinks — GitHub Pages safe-mode friendly, no
+    plugin required), `_data/i18n/<lang>.yml` UI strings, and
+    `_data/i18n/manifest.yml` (en URL → translations map + SHA-based
+    incremental change detection with pruning of deleted sources).
+  - Markdown safety by construction: per-line segment translation with
+    `⟦N⟧` masking of code, Liquid, wiki-links and URLs, placeholder
+    set-equality validation with one retry, code fences never sent.
+  - Frontend: navbar **language toggle**
+    ([`language-toggle.html`](_includes/components/language-toggle.html))
+    with per-page availability states and `localStorage` preference,
+    `hreflang` alternates in `<head>`, per-page `<html lang>`, and a
+    machine-translation disclosure banner linking back to the original.
+  - Refactor: UI-string lookup centralized in
+    [`core/i18n.html`](_includes/core/i18n.html) and made per-page-language
+    aware (cached chrome includes take a `lang` parameter so each language
+    gets its own `include_cached` entry); the hand-maintained es/fr/de/ar
+    blocks in `_data/ui-text.yml` were **removed** in favor of the
+    generated pipeline.
+  - Offline test suite `test/test_i18n.sh` (stub provider, no network),
+    registered as the `i18n` suite in `test_runner.sh`, plus the
+    `language-toggle` Playwright smoke spec; docs in
+    [`docs/systems/multilingual-translation.md`](docs/systems/multilingual-translation.md).
+    (evidence:
+    [`test/visual/evidence/language-toggle/`](test/visual/evidence/language-toggle/README.md)
+    and
+    [`test/visual/evidence/language-toggle-fr/`](test/visual/evidence/language-toggle-fr/README.md)
+    — toggle at 6 widths + generated French page with 0px overflow, code
+    blocks byte-identical)
+
 - **`show_hero` front-matter flag** — a post of any `post_type` can now opt
   its `preview:` image into the top-of-article hero with `show_hero: true`,
   without being promoted to `featured`/`breaking` (layout width, sidebar,

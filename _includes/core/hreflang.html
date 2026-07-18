@@ -1,0 +1,33 @@
+{% comment %} Feature: ZER0-078 {% endcomment %}
+{%- comment -%}
+  Component:   hreflang
+  Path:        _includes/core/hreflang.html
+  Purpose:     Emit <link rel="alternate" hreflang> tags for pages that have
+               machine-generated translations, so search engines associate
+               the English original with its /fr/ (etc.) alternates.
+  Params:      none — reads page.lang / page.translation_source_url and the
+               generated _data/i18n/manifest.yml (scripts/translate.rb).
+  Depends on:  site.translation.* config, site.data.i18n.manifest
+  Notes:       Renders nothing when translation is disabled, the manifest is
+               absent, or the current page has no translations. x-default
+               always points at the English original.
+{%- endcomment -%}
+{%- if site.translation.enabled -%}
+  {%- assign _hl_source = site.translation.source_lang | default: 'en' -%}
+  {%- if page.lang and page.lang != _hl_source -%}
+    {%- assign _hl_src_url = page.translation_source_url -%}
+  {%- else -%}
+    {%- assign _hl_src_url = page.url -%}
+  {%- endif -%}
+  {%- assign _hl_entry = site.data.i18n.manifest.pages[_hl_src_url] -%}
+  {%- if _hl_src_url and _hl_entry %}
+<link rel="alternate" hreflang="{{ _hl_source }}" href="{{ _hl_src_url | absolute_url }}">
+    {%- for _hl_lang in site.translation.languages -%}
+      {%- assign _hl_t = _hl_entry[_hl_lang] -%}
+      {%- if _hl_t %}
+<link rel="alternate" hreflang="{{ _hl_lang }}" href="{{ _hl_t.url | absolute_url }}">
+      {%- endif -%}
+    {%- endfor %}
+<link rel="alternate" hreflang="x-default" href="{{ _hl_src_url | absolute_url }}">
+  {%- endif -%}
+{%- endif -%}

@@ -18,8 +18,8 @@
   ===================================================================
 -->
 
-{%- assign ui_text = site.data.ui-text[site.locale] | default: site.data.ui-text.en -%}
-{%- assign search_placeholder = ui_text.search_placeholder_text | default: "Enter your search term..." -%}
+{%- include core/i18n.html lang=include.lang -%}
+{%- assign search_placeholder = ui.search_placeholder_text | default: "Enter your search term..." -%}
 {%- comment -%}
   Existence-gate the form action to /sitemap/ only when that page is present
   in the build (mirroring the footer Quick Links guard, and the section-sidebar

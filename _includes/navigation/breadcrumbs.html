@@ -14,7 +14,7 @@
   ===================================================================
 {%- endcomment -%}
 {% if page.url != "/" and site.breadcrumbs %}
-  {%- assign ui = site.data.ui-text[site.locale] | default: site.data.ui-text.en -%}
+  {%- include core/i18n.html -%}
   {%- assign label_root = ui.breadcrumbs_root | default: "Home" -%}
   {%- assign label_aria = ui.breadcrumbs_aria | default: "Breadcrumb" -%}
   {%- assign crumbs = page.url | remove:'/index.html' | split: '/' -%}
