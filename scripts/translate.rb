@@ -172,7 +172,11 @@ module Zer0Translate
   # ----------------------------------------------------------------
   class Segmenter
     FENCE_RE = /\A(\s*)(`{3,}|~{3,})/
-    PURE_LIQUID_RE = /\A\s*\{[%{].*[%}]\}\s*\z/
+    # A line that is a SINGLE Liquid construct only (e.g. `{% include x %}`,
+    # `{{ page.title }}`). The interior excludes braces so a line with prose
+    # BETWEEN two constructs (`{{ a }} text {{ b }}`) is NOT treated as pure
+    # Liquid — that text must still be translated.
+    PURE_LIQUID_RE = /\A\s*\{[%{][^{}]*[%}]\}\s*\z/
     PURE_HTML_RE = %r{\A\s*</?[A-Za-z][^>]*/?>\s*\z}
     HR_RE = /\A\s*(?:[-*_]\s*){3,}\z/
     TABLE_RULE_RE = /\A\s*\|?[\s:|-]+\|?\s*\z/
@@ -258,6 +262,15 @@ module Zer0Translate
     # template applies. Front-matter *defaults* permalinks do not affect
     # collection documents on this Jekyll version.
     def url_for(rel_path, front_matter, collection)
+      # An explicit front-matter permalink is served by Jekyll VERBATIM (it
+      # overrides the global `permalink: pretty`). Return it unchanged so the
+      # manifest key matches the page's real `page.url` — prettifying a
+      # non-trailing-slash permalink (`/faq`, `/x.html`) would key the
+      # manifest at `/faq/` and the toggle/hreflang lookup would miss.
+      if (explicit = front_matter["permalink"]) && !explicit.include?(":")
+        return explicit
+      end
+
       template = front_matter["permalink"] || collection_permalink(collection)
       return nil unless template
       return prettify(template) unless template.include?(":")
@@ -562,7 +575,48 @@ module Zer0Translate
         expected = source.scan(PLACEHOLDER_RE).sort
         actual = value.scan(PLACEHOLDER_RE).sort
         raise TranslationError, "#{key}: placeholder mismatch" unless expected == actual
+
+        assert_link_brackets_balanced!(key, source, value)
       end
+    end
+
+    # A masked markdown link destination — `](url)` — carries the `]` that
+    # closes a preceding `[text]`. The multiset check above still passes if the
+    # model relocates that placeholder away from its bracket, but unmask would
+    # then sever the link (literal brackets on the page). Guard it structurally
+    # without needing the masker's map: any placeholder that closes a link in
+    # the SOURCE must, in the OUTPUT, sit where an unclosed `[` still awaits it
+    # (more literal `[` than `]` in the text before it — the placeholder's own
+    # `]` is still masked, so it isn't counted). A false alarm is impossible:
+    # a correctly-placed link always has its opening `[` earlier in the line.
+    def assert_link_brackets_balanced!(key, source, value)
+      link_tokens = link_closing_placeholders(source)
+      return if link_tokens.empty?
+
+      scan_placeholder_positions(value).each do |token, before|
+        next unless link_tokens.include?(token)
+        next if before.count("[") > before.count("]")
+
+        raise TranslationError, "#{key}: link placeholder #{token} detached from its [text]"
+      end
+    end
+
+    # Placeholders in `source` that sit immediately after link text with no
+    # intervening bracket — i.e. the token that provides a link's closing `]`.
+    # Identified structurally: in the source the token is preceded by an
+    # unclosed `[`.
+    def link_closing_placeholders(source)
+      scan_placeholder_positions(source).filter_map do |token, before|
+        token if before.count("[") > before.count("]")
+      end
+    end
+
+    def scan_placeholder_positions(text)
+      positions = []
+      text.scan(PLACEHOLDER_RE) do
+        positions << [Regexp.last_match(0), text[0...Regexp.last_match.begin(0)]]
+      end
+      positions
     end
   end
 
@@ -903,7 +957,14 @@ module Zer0Translate
       fm_masker = Masker.new
       FRONT_MATTER_FIELDS.each do |field|
         value = file.front_matter[field]
-        segments["fm:#{field}"] = fm_masker.mask_line(value) if value.is_a?(String) && !value.strip.empty?
+        next unless value.is_a?(String) && !value.strip.empty?
+
+        # Front-matter fields render as single-line HTML attributes (title,
+        # description, ...). Collapse any embedded newlines from a YAML block
+        # scalar (`description: |` / `>`) BEFORE masking, so the single-line
+        # validator can't reject an otherwise-faithful translation and leave
+        # the whole page permanently untranslated.
+        segments["fm:#{field}"] = fm_masker.mask_line(value.gsub(/\s*\n\s*/, " ").strip)
       end
 
       context = "Page \"#{file.front_matter['title']}\" (#{file.rel_path}) from the zer0-mistakes Jekyll theme site."

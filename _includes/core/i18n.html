@@ -18,13 +18,19 @@
                {{ ui.some_key | default: "English fallback" }}. Missing
                languages or keys degrade to English/literal defaults.
 {%- endcomment -%}
+{%- comment -%}
+  Resolve using the FULL configured language code (e.g. "fr", "pt-BR"), not a
+  2-char slice: scripts/translate.rb writes _data/i18n/<code>.yml and sets
+  page.lang to that exact code, so a regional code like "pt-BR" must look up
+  site.data.i18n["pt-BR"] — slicing to "pt" would silently miss the file and
+  fall back to English.
+{%- endcomment -%}
 {%- assign _i18n_lang = include.lang | default: page.lang | default: site.translation.source_lang | default: site.locale | default: 'en' -%}
-{%- assign _i18n_code = _i18n_lang | slice: 0, 2 | downcase -%}
 {%- assign _i18n_source = site.translation.source_lang | default: 'en' -%}
 {%- assign ui = site.data.ui-text[site.locale] | default: site.data.ui-text.en -%}
-{%- if _i18n_code != _i18n_source -%}
-  {%- assign _i18n_generated = site.data.i18n[_i18n_code] -%}
+{%- unless _i18n_lang == _i18n_source -%}
+  {%- assign _i18n_generated = site.data.i18n[_i18n_lang] -%}
   {%- if _i18n_generated -%}
     {%- assign ui = _i18n_generated -%}
   {%- endif -%}
-{%- endif -%}
+{%- endunless -%}

@@ -74,20 +74,23 @@ jobs:
       - name: Check for an Anthropic credential
         id: creds
         env:
+          # translate.rb accepts all three, in this precedence order.
           OAUTH: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          AUTH: ${{ secrets.ANTHROPIC_AUTH_TOKEN }}
           KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          if [ -n "$OAUTH" ] || [ -n "$KEY" ]; then
+          if [ -n "$OAUTH" ] || [ -n "$AUTH" ] || [ -n "$KEY" ]; then
             echo "found=true" >> "$GITHUB_OUTPUT"
           else
             echo "found=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::No CLAUDE_CODE_OAUTH_TOKEN or ANTHROPIC_API_KEY secret configured — skipping translation."
+            echo "::warning::No CLAUDE_CODE_OAUTH_TOKEN, ANTHROPIC_AUTH_TOKEN, or ANTHROPIC_API_KEY secret configured — skipping translation."
           fi
 
       - name: Run translation
         if: steps.creds.outputs.found == 'true'
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          ANTHROPIC_AUTH_TOKEN: ${{ secrets.ANTHROPIC_AUTH_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           MODE: ${{ inputs.mode }}
           LANGUAGES: ${{ inputs.languages }}

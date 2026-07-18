@@ -157,14 +157,16 @@ test_generation() {
   assert "title is translated (stub marker)" grep -q '^title: Hello World \[fr\]$' "$post"
   assert "prose lines are translated" grep -q 'This is a paragraph .* \[fr\]$' "$post"
   assert "code fence content is untouched" grep -q '^echo "do not translate me"$' "$post"
-  assert "no stub marker leaks into the code fence" bash -c "! grep -q 'do not translate me.*\[fr\]' '$post'"
+  # `test -f` first: a bare `! grep <missing-file>` passes vacuously (grep exits
+  # 2, ! flips it to 0), which would mask a generation regression as a PASS.
+  assert "no stub marker leaks into the code fence" bash -c "test -f '$post' && ! grep -q 'do not translate me.*\[fr\]' '$post'"
   assert "inline code span survives byte-identical" grep -qF '`inline code`' "$post"
   assert "link destination survives byte-identical" grep -qF '(https://example.com/docs)' "$post"
   assert "liquid output tag survives byte-identical" grep -qF '{{ site.title }}' "$post"
   assert "wiki-link survives byte-identical" grep -qF '[[Wiki Page]]' "$post"
   assert "liquid-only include line is untouched" \
     grep -qF '{% include components/callout.html %}' "$doc"
-  assert "no placeholder tokens leak into output" bash -c "! grep -q '⟦' '$post'"
+  assert "no placeholder tokens leak into output" bash -c "test -f '$post' && ! grep -q '⟦' '$post'"
 
   assert "manifest is generated" test -f "$sandbox/_data/i18n/manifest.yml"
   assert "manifest keys pages by English URL" \
@@ -182,16 +184,19 @@ test_incremental() {
   log_info "Test: incremental runs skip unchanged sources"
   local out
   out=$(run_translate)
-  assert "second run reports everything up to date" \
-    bash -c "echo '$out' | grep -q 'up to date'"
+  # Match against the captured output via a here-string, not `echo '$out' |`:
+  # a here-string can't be broken by an apostrophe (or other metachar) in a
+  # log line the way single-quote-embedding into `bash -c` can.
+  assert "second run reports everything up to date" grep -q 'up to date' <<<"$out"
 
   # Touching content re-translates exactly that page.
   printf '\nA brand new paragraph.\n' >> "$sandbox/pages/_docs/setup-guide.md"
   out=$(run_translate)
-  assert "changed source is re-translated" \
-    bash -c "echo '$out' | grep -q 'setup-guide.md'"
+  assert "changed source is re-translated" grep -q 'setup-guide.md' <<<"$out"
+  # $out passed as a positional arg (not interpolated into the script text) so
+  # a metachar in the output can't corrupt the negation.
   assert "unchanged post is not re-translated" \
-    bash -c "! echo '$out' | grep -q 'hello-world'"
+    bash -c '! grep -q "hello-world" <<<"$1"' _ "$out"
   assert "new paragraph lands in the translation" \
     grep -q 'A brand new paragraph. \[fr\]' "$sandbox/fr/docs/setup-guide.md"
 }
@@ -219,7 +224,7 @@ test_prune() {
   run_translate >/dev/null
   assert "orphaned translation is deleted" bash -c "! test -e '$sandbox/fr/docs/setup-guide.md'"
   assert "orphaned manifest entry is removed" \
-    bash -c "! grep -q 'setup-guide' '$sandbox/_data/i18n/manifest.yml'"
+    bash -c "test -f '$sandbox/_data/i18n/manifest.yml' && ! grep -q 'setup-guide' '$sandbox/_data/i18n/manifest.yml'"
 }
 
 test_theme_wiring() {
