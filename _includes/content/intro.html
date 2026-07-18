@@ -12,7 +12,8 @@
     - Responsive flex layout: full-width content block, frosted metadata footer with reading time and action buttons
     - Balanced padding and typography hierarchy via bd-intro-* classes
     - Metadata row: author, dates, category, difficulty, tags, view source
---> 
+-->
+{%- include core/i18n.html -%}
 {% if page.collection %}
   {% capture page_dir %}{{ site.collections_dir }}{% endcapture %}
   {% assign testvar = "collection exists" %}
@@ -161,7 +162,7 @@
         <li class="bd-intro-meta-item">
           <i class="bi bi-calendar3 bd-intro-meta-icon" aria-hidden="true"></i>
           <time datetime="{{ intro_published | date_to_xmlschema }}" itemprop="datePublished">
-            Published {{ intro_published | date: "%b %d, %Y" }}
+            {{ ui.published_label | default: "Published" }} {{ intro_published | date: "%b %d, %Y" }}
           </time>
         </li>
         {% endif %}
@@ -170,7 +171,7 @@
         <li class="bd-intro-meta-item">
           <i class="bi bi-pencil bd-intro-meta-icon" aria-hidden="true"></i>
           <time datetime="{{ intro_updated | date_to_xmlschema }}" itemprop="dateModified">
-            Updated {{ intro_updated | date: "%b %d, %Y" }}
+            {{ ui.updated_label | default: "Updated" }} {{ intro_updated | date: "%b %d, %Y" }}
           </time>
         </li>
         {% endif %}
@@ -212,7 +213,7 @@
         {% if intro_source_url %}
         <li class="bd-intro-meta-item bd-intro-meta-item--source d-none d-md-inline-flex">
           <i class="bi bi-file-earmark-code bd-intro-meta-icon" aria-hidden="true"></i>
-          <a class="bd-intro-meta-link" href="{{ intro_source_url }}" target="_blank" rel="noopener noreferrer">View source</a>
+          <a class="bd-intro-meta-link" href="{{ intro_source_url }}" target="_blank" rel="noopener noreferrer">{{ ui.view_source | default: "View source" }}</a>
         </li>
         {% endif %}
       </ul>
@@ -221,9 +222,9 @@
         <p class="bd-intro-meta">
           <i class="bi bi-clock me-1" aria-hidden="true"></i>
           {% if page.estimated_reading_time %}
-          Estimated reading time: {{ page.estimated_reading_time }}
+          {{ ui.reading_time_label | default: "Estimated reading time:" }} {{ page.estimated_reading_time }}
           {% else %}
-          Estimated reading time: {{ intro_read_mins }} minute{% if intro_read_mins != 1 %}s{% endif %}
+          {{ ui.reading_time_label | default: "Estimated reading time:" }} {{ intro_read_mins }} {{ ui.reading_time_minute | default: "minute" }}{% if intro_read_mins != 1 %}s{% endif %}
           {% endif %}
         </p>
 
@@ -233,12 +234,12 @@
     <div class="dropdown">
       <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="shareDropdownBottom" data-bs-toggle="dropdown" aria-expanded="false">
         <i class="bi bi-share" aria-hidden="true"></i>
-        <span class="d-none d-sm-inline ms-1">Share</span>
+        <span class="d-none d-sm-inline ms-1">{{ ui.share_label | default: "Share" }}</span>
       </button>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="shareDropdownBottom">
         <li>
           <a class="dropdown-item" href="https://reddit.com/submit?url={{ page_absolute_url | uri_escape }}&amp;title={{ page.title | uri_escape }}" target="_blank" rel="noopener noreferrer">
-            <i class="bi bi-reddit me-2"></i>Share on Reddit
+            <i class="bi bi-reddit me-2"></i>{{ ui.share_on_label | default: "Share on" }} Reddit
           </a>
         </li>
         <li>
@@ -250,12 +251,12 @@
              data-share-url="{{ page_absolute_url | escape }}"
              data-share-title="{{ linkedin_share_title | escape }}"
              data-share-description="{{ linkedin_share_description | escape }}">
-            <i class="bi bi-linkedin me-2"></i>Share on LinkedIn
+            <i class="bi bi-linkedin me-2"></i>{{ ui.share_on_label | default: "Share on" }} LinkedIn
           </a>
         </li>
         <li>
-          <a class="dropdown-item" href="https://x.com/intent/tweet?url={{ site.url | append: page.url | url_encode }}&text={{ page.title | url_encode }}" target="_blank" aria-label="Share on X">
-            <i class="bi bi-twitter-x me-2"></i>Share on X
+          <a class="dropdown-item" href="https://x.com/intent/tweet?url={{ site.url | append: page.url | url_encode }}&text={{ page.title | url_encode }}" target="_blank" aria-label="{{ ui.share_on_label | default: 'Share on' }} X">
+            <i class="bi bi-twitter-x me-2"></i>{{ ui.share_on_label | default: "Share on" }} X
           </a>
         </li>
         <li><hr class="dropdown-divider"></li>
@@ -266,7 +267,7 @@
             the blocking alert() the legacy markup used.
           {%- endcomment -%}
           <button class="dropdown-item" type="button" data-copy="{{ site.url | append: page.url }}">
-            <i class="bi bi-clipboard me-2" aria-hidden="true"></i>Copy Link
+            <i class="bi bi-clipboard me-2" aria-hidden="true"></i>{{ ui.copy_link_label | default: "Copy Link" }}
           </button>
         </li>
       </ul>
@@ -284,7 +285,7 @@
        rel="noopener noreferrer"
        title="Report a problem or suggest an improvement for this page">
       <i class="bi bi-megaphone" aria-hidden="true"></i>
-      <span class="d-none d-sm-inline ms-1">Improve</span>
+      <span class="d-none d-sm-inline ms-1">{{ ui.improve_label | default: "Improve" }}</span>
     </a>
     {% endif %}
 
@@ -294,7 +295,7 @@
        target="_blank"
        rel="noopener noreferrer">
       <i class="bi bi-github" aria-hidden="true"></i>
-      <span class="d-none d-sm-inline ms-1">Edit on GitHub</span>
+      <span class="d-none d-sm-inline ms-1">{{ ui.edit_on_github | default: "Edit on GitHub" }}</span>
     </a>
         </div>
       </div>

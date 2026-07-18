@@ -95,6 +95,16 @@ en: &DEFAULT_EN
   main_nav_label             : "Main Navigation"
   search_button_label        : "Search"
   settings_button_label      : "Settings"
+  toc_title                  : "Table of Contents"
+  # Article intro / metadata chrome (ZER0-078)
+  published_label            : "Published"
+  updated_label              : "Updated"
+  reading_time_label         : "Estimated reading time:"
+  reading_time_minute        : "minute"
+  share_label                : "Share"
+  copy_link_label            : "Copy Link"
+  improve_label              : "Improve"
+  edit_on_github             : "Edit on GitHub"
   # Language toggle & machine translation (ZER0-078)
   lang_toggle_label          : "Language"
   lang_toggle_aria           : "Change language"
