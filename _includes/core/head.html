@@ -19,6 +19,7 @@
   - seo.html: SEO meta tags and Open Graph data
   - google-analytics.html: Google Analytics tracking
   - google-tag-manager-head.html: GTM head section
+  - posthog.html: PostHog product analytics (opt-in via site.posthog.enabled)
   
   Performance Notes:
   - Scripts loaded in head for immediate availability
@@ -130,6 +131,10 @@ window.MathJax = {
 <!-- Google Analytics tracking - Configured in _config.yml -->
 <!-- Only load in production AND when an ID is configured; the include also guards against dev hostnames -->
 {% if jekyll.environment == "production" and site.google_analytics %}{% include analytics/google-analytics.html %}{% endif %}
+
+<!-- PostHog analytics - Configured via the `posthog:` block in _config.yml -->
+<!-- Only load in production AND when explicitly enabled; the include itself also respects Do Not Track -->
+{% if jekyll.environment == "production" and site.posthog.enabled %}{% include analytics/posthog.html %}{% endif %}
 
 
 <!-- ================================ -->
