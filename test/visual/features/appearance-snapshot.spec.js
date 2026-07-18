@@ -11,11 +11,49 @@
 const { test, expect } = require('@playwright/test');
 const { SKINS, VIEWPORTS, waitForJekyll, setSkin, clearSkinStorage } = require('../fixtures');
 
+/**
+ * Settle every image the screenshot can see before shooting.
+ *
+ * The homepage badge row (shields.io / GitHub badges) loads at network
+ * speed; whether those images have arrived by screenshot time reflows the
+ * rows beneath them and was the #1 source of run-to-run snapshot flake
+ * (~25k differing pixels when a load raced the shot — see PR #316).
+ * Wait for every non-lazy or near-viewport image to be fetched AND
+ * decoded; a failed fetch resolves too (rare, renders the same empty slot
+ * on retry). Bounded so below-fold lazy images can never hang the test.
+ */
+async function settleImages(page) {
+  await page.evaluate(
+    () =>
+      Promise.race([
+        Promise.all(
+          Array.from(document.images)
+            .filter(
+              (img) =>
+                img.complete ||
+                img.loading !== 'lazy' ||
+                img.getBoundingClientRect().top < window.innerHeight + 200,
+            )
+            .map((img) =>
+              img.complete
+                ? img.decode().catch(() => {})
+                : new Promise((resolve) => {
+                    img.addEventListener('load', resolve, { once: true });
+                    img.addEventListener('error', resolve, { once: true });
+                  }).then(() => img.decode().catch(() => {})),
+            ),
+        ),
+        new Promise((resolve) => setTimeout(resolve, 7000)),
+      ]),
+  );
+}
+
 test.describe('Theme skins', () => {
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await waitForJekyll(page, '/');
     await clearSkinStorage(page);
+    await settleImages(page);
   });
 
   for (const skin of SKINS) {
