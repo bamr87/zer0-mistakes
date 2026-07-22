@@ -1,0 +1,243 @@
+// ============================================================================
+// BOOK COLLECTION — children's picture-book presentation (Feature: ZER0-079)
+// ----------------------------------------------------------------------------
+// Styles for the `books` collection: bookshelf cards, the book landing page
+// (cover hero + table of contents), and the immersive story reading surface.
+//
+// Used by:
+//   _layouts/book.html, _layouts/book-story.html
+//   _includes/components/bookshelf.html, book-card.html, book-toc.html,
+//   _includes/components/book-nav.html, book-plate.html
+//
+// Theming: everything reads Bootstrap's runtime custom properties
+// (var(--bs-*)) so light/dark color modes and theme skins work for free.
+// Consumer knobs are exposed as --zer0-book-* custom properties.
+// ============================================================================
+
+:root {
+  // Friendly, readable storybook serif — system stacks only (no CDN fonts).
+  --zer0-book-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
+    "Times New Roman", serif;
+  --zer0-book-font-size: clamp(1.125rem, 1rem + 0.6vw, 1.375rem);
+  --zer0-book-measure: 42rem; // comfortable line length for read-aloud text
+  --zer0-book-plate-radius: 1rem;
+}
+
+// ----------------------------------------------------------------------------
+// Cover frame — shared by bookshelf cards and the book landing hero.
+// A portrait "physical book" look: 3/4 ratio, soft spine shadow, hover lift.
+// ----------------------------------------------------------------------------
+.book-cover-frame {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: 0.5rem 1rem 1rem 0.5rem; // subtle spine on the left
+  box-shadow:
+    inset 0.35rem 0 0.5rem -0.35rem rgba(0, 0, 0, 0.45), // spine crease
+    0 0.75rem 1.5rem rgba(0, 0, 0, 0.25);
+  background-color: var(--bs-secondary-bg);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.book-card {
+  .book-cover-frame {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  &:hover .book-cover-frame,
+  &:focus-within .book-cover-frame {
+    transform: translateY(-0.25rem) rotate(-1deg);
+    box-shadow:
+      inset 0.35rem 0 0.5rem -0.35rem rgba(0, 0, 0, 0.45),
+      0 1.25rem 2rem rgba(0, 0, 0, 0.3);
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Book landing hero (cover + title block)
+// ----------------------------------------------------------------------------
+.book-hero {
+  .book-hero-title {
+    font-family: var(--zer0-book-serif);
+    letter-spacing: -0.01em;
+  }
+
+  .book-hero-cover {
+    max-width: 22rem;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Table of contents — one row per story/chapter
+// ----------------------------------------------------------------------------
+.book-toc {
+  .book-toc-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 0.75rem;
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    text-decoration: none;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+
+    &:hover,
+    &:focus-visible {
+      border-color: var(--bs-primary);
+      transform: translateX(0.25rem);
+    }
+  }
+
+  .book-toc-number {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    font-weight: 700;
+    background-color: var(--bs-primary-bg-subtle);
+    color: var(--bs-primary-text-emphasis);
+  }
+
+  .book-toc-thumb {
+    flex: 0 0 auto;
+    width: 4.5rem;
+    height: 3rem;
+    object-fit: cover;
+    border-radius: 0.5rem;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Story reading surface — big friendly type, generous leading, drop cap
+// ----------------------------------------------------------------------------
+.book-story-content {
+  max-width: var(--zer0-book-measure);
+  margin-inline: auto;
+  font-family: var(--zer0-book-serif);
+  font-size: var(--zer0-book-font-size);
+  line-height: 1.8;
+
+  p {
+    margin-bottom: 1.25em;
+  }
+
+  // Storybook drop cap on the opening paragraph.
+  > p:first-of-type::first-letter {
+    float: left;
+    font-size: 3.2em;
+    line-height: 0.85;
+    padding-right: 0.12em;
+    font-weight: 700;
+    color: var(--bs-primary-text-emphasis);
+  }
+
+  // Bare markdown images inside a story get the plate treatment too, so
+  // content written without the book-plate include still looks right.
+  > p > img,
+  > img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--zer0-book-plate-radius);
+    box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.2);
+  }
+}
+
+// Illustration plate (figure + optional caption). Plates break out a little
+// wider than the text measure to feel like full-bleed picture-book art.
+.book-plate {
+  margin: 2rem auto;
+  max-width: min(52rem, 100%);
+
+  img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: var(--zer0-book-plate-radius);
+    box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.2);
+  }
+
+  figcaption {
+    margin-top: 0.5rem;
+    text-align: center;
+    font-style: italic;
+    font-size: 0.875rem;
+    color: var(--bs-secondary-color);
+  }
+}
+
+// "The End" flourish
+.book-the-end {
+  font-family: var(--zer0-book-serif);
+  font-style: italic;
+  text-align: center;
+  color: var(--bs-secondary-color);
+
+  &::before,
+  &::after {
+    content: "❦";
+    margin-inline: 0.75rem;
+    color: var(--bs-primary-text-emphasis);
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Colophon — collapsed "how the illustrations were made" provenance block
+// ----------------------------------------------------------------------------
+.book-colophon {
+  max-width: var(--zer0-book-measure);
+  margin-inline: auto;
+
+  summary {
+    cursor: pointer;
+    color: var(--bs-secondary-color);
+
+    &:hover {
+      color: var(--bs-body-color);
+    }
+  }
+
+  .book-colophon-prompt {
+    font-size: 0.85rem;
+    color: var(--bs-secondary-color);
+    background-color: var(--bs-tertiary-bg);
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Print — read/print the story cleanly (plates keep their ink, chrome goes)
+// ----------------------------------------------------------------------------
+@media print {
+  .book-story-nav,
+  .book-colophon {
+    display: none !important;
+  }
+
+  .book-plate img,
+  .book-story-content img {
+    box-shadow: none;
+    break-inside: avoid;
+  }
+}

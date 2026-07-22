@@ -1,0 +1,46 @@
+{%- comment -%}
+  Component:   book-toc
+  Path:        _includes/components/book-toc.html
+  Purpose:     Ordered table of contents for one book — chapter number bubble,
+               label (e.g. the month), title, and an optional thumbnail.
+  Params:      book (string, required)  — book slug matching chapters' `book:`
+               heading (string, optional, default: "Table of Contents")
+               heading_level (string, optional, default: "h2")
+  Depends on:  the `books` collection,
+               _sass/components/_book.scss (.book-toc)
+  Notes:       Chapters are docs with a numeric `chapter:`; sorted ascending.
+               Thumbnails come from each chapter's `preview` and are hidden on
+               the smallest screens to keep rows tappable.
+{%- endcomment -%}
+{%- if include.book == nil -%}
+  {%- comment -%} ERROR: book-toc requires `book` {%- endcomment -%}
+{%- else -%}
+{%- assign _chapters = site.books | where: "book", include.book | where_exp: "doc", "doc.chapter" | sort: "chapter" -%}
+{%- assign _hl = include.heading_level | default: "h2" -%}
+{%- if _chapters.size > 0 -%}
+<nav class="book-toc" aria-label="Table of contents">
+  <{{ _hl }} class="mb-3">{{ include.heading | default: "Table of Contents" }}</{{ _hl }}>
+  <ol class="list-unstyled d-flex flex-column gap-2 mb-0">
+    {%- for _ch in _chapters -%}
+    <li>
+      <a class="book-toc-item" href="{{ _ch.url | relative_url }}">
+        <span class="book-toc-number" aria-hidden="true">{{ _ch.chapter }}</span>
+        {%- if _ch.preview -%}
+        <img class="book-toc-thumb d-none d-sm-block" src="{{ _ch.preview | relative_url }}" alt="" loading="lazy" decoding="async">
+        {%- endif -%}
+        <span class="flex-grow-1">
+          {%- if _ch.chapter_label -%}
+          <span class="d-block small text-body-secondary">{{ _ch.chapter_label }}</span>
+          {%- endif -%}
+          <span class="fw-semibold">{{ _ch.title }}</span>
+        </span>
+        <i class="bi bi-chevron-right text-body-secondary" aria-hidden="true"></i>
+      </a>
+    </li>
+    {%- endfor -%}
+  </ol>
+</nav>
+{%- else -%}
+  {%- comment -%} book-toc: no chapters found for book "{{ include.book }}" — skipping render {%- endcomment -%}
+{%- endif -%}
+{%- endif -%}

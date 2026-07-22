@@ -1,0 +1,91 @@
+---
+# Feature: ZER0-079
+layout: root
+---
+{%- comment -%}
+  Layout: book-story.html
+  Extends: root.html
+  Purpose: Immersive picture-book reading page for one story/chapter — big
+           friendly type, illustration plates, prev/next story navigation,
+           and a collapsed illustration-prompt colophon.
+  Front matter required: layout, title, book (slug), chapter (number)
+  Front matter optional: chapter_label (e.g. "January"), description, preview,
+    illustrations (list of {beat, title, prompt, image}), the_end (false to
+    hide the closing flourish), comments
+  Notes: Extends root directly for a sidebar-free reading surface. Prev/next
+         come from numeric `chapter:` ordering via components/book-nav.html.
+{%- endcomment -%}
+
+{%- assign _slug = page.book -%}
+{%- assign _book_page = site.books | where: "book", _slug | where: "layout", "book" | first -%}
+
+<article class="book-story container-xl py-4 py-md-5" itemscope itemtype="https://schema.org/Chapter">
+  <!-- ================================ -->
+  <!-- STORY HEADER                     -->
+  <!-- ================================ -->
+  <header class="book-story-header text-center mb-4 mb-md-5">
+    {%- if _book_page -%}
+    <nav aria-label="Book">
+      <a class="text-decoration-none small" href="{{ _book_page.url | relative_url }}">
+        <i class="bi bi-book me-1" aria-hidden="true"></i>{{ _book_page.title }}
+      </a>
+    </nav>
+    {%- endif -%}
+    {%- if page.chapter_label -%}
+    <p class="text-uppercase small text-body-secondary mt-2 mb-1">{{ page.chapter_label }}</p>
+    {%- endif -%}
+    <h1 id="page-title" class="book-hero-title display-5 fw-bold" itemprop="name">{{ page.title }}</h1>
+    {%- if page.description -%}
+    <p class="lead text-body-secondary mx-auto" style="max-width: 42rem;">{{ page.description }}</p>
+    {%- endif -%}
+  </header>
+
+  <!-- ================================ -->
+  <!-- STORY BODY                       -->
+  <!-- ================================ -->
+  <div class="book-story-content" itemprop="text">
+    {{ content }}
+  </div>
+
+  {%- unless page.the_end == false -%}
+  <p class="book-the-end fs-4 mt-5">The End</p>
+  {%- endunless -%}
+
+  <!-- ================================ -->
+  <!-- STORY NAVIGATION                 -->
+  <!-- ================================ -->
+  {%- if page.chapter -%}
+    {%- include components/book-nav.html book=_slug chapter=page.chapter -%}
+  {%- endif -%}
+
+  <!-- ================================ -->
+  <!-- ILLUSTRATION COLOPHON            -->
+  <!-- ================================ -->
+  {%- if page.illustrations and page.illustrations.size > 0 -%}
+  <details class="book-colophon mt-4">
+    <summary class="small"><i class="bi bi-stars me-1" aria-hidden="true"></i>How the illustrations in this story were made</summary>
+    <div class="mt-3 d-flex flex-column gap-3">
+      {%- for _ill in page.illustrations -%}
+      <div class="book-colophon-prompt">
+        <p class="mb-1 fw-semibold">
+          {%- if _ill.beat -%}{{ _ill.beat }}{%- if _ill.title %} — {% endif -%}{%- endif -%}
+          {{- _ill.title -}}
+          {%- if _ill.image == nil or _ill.status == "planned" %} <span class="badge text-bg-secondary ms-1">not yet generated</span>{% endif -%}
+        </p>
+        <p class="mb-0">{{ _ill.prompt | escape }}</p>
+      </div>
+      {%- endfor -%}
+    </div>
+  </details>
+  {%- endif -%}
+
+  <!-- ================================ -->
+  <!-- COMMENTS                         -->
+  <!-- ================================ -->
+  {%- if page.comments and site.giscus.enabled -%}
+  <section class="post-comments mt-5 pt-4 border-top" id="comments">
+    <h2 class="h4 mb-4"><i class="bi bi-chat-dots me-2" aria-hidden="true"></i>Comments</h2>
+    {%- include content/giscus.html -%}
+  </section>
+  {%- endif -%}
+</article>

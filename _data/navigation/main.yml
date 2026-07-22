@@ -45,6 +45,15 @@
     - title: Test Notebook
       url: /notebooks/test-notebook/
 
+- title: Books
+  icon: bi-book-half
+  url: /books/zer0-tales/
+  children:
+    - title: The Tales of Zer0
+      url: /books/zer0-tales/
+    - title: Books Collection Docs
+      url: /docs/features/book-collection/
+
 - title: Docs
   icon: bi-journal-bookmark
   url: /docs/
