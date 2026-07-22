@@ -1,5 +1,5 @@
 ---
-title: Books Collection
+title: Books Collection — Publish AI-Illustrated Picture Books
 description: Publish children's picture books — or any cover-to-cover reading experience — with the books collection, book layouts, and illustration-plate components.
 preview: /images/zer0-mistakes-wizard.png
 layout: default
@@ -12,6 +12,13 @@ tags:
     - layouts
     - storybook
     - ai-images
+keywords:
+    - jekyll books collection
+    - children's picture book theme
+    - jekyll storybook layout
+    - AI generated illustrations
+    - openai image prompts
+    - bootstrap book layout
 permalink: /docs/features/book-collection/
 difficulty: beginner
 estimated_reading_time: 10 minutes
@@ -28,7 +35,7 @@ The theme ships a tiny demo — [The Tales of Zer0](/books/zer0-tales/) — that
 
 ## Enable the collection
 
-Add the collection and its front-matter defaults to your site's `_config.yml` (the theme's own config carries the same block):
+Add the collection and its front matter defaults to your site's `_config.yml` (the theme's own config carries the same block):
 
 ```yaml
 collections:

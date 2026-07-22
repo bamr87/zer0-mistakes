@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/books-collection/ -->
+  (evidence: [`test/visual/evidence/books-collection/`](test/visual/evidence/books-collection/README.md))

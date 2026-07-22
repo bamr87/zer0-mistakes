@@ -30,6 +30,8 @@
   children:
     - title: Features Overview
       url: /docs/features/
+    - title: Books Collection
+      url: /docs/features/book-collection/
     - title: Mermaid Diagrams
       url: /docs/features/mermaid-diagrams/
     - title: MathJax Math

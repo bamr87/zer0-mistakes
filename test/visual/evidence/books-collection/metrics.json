@@ -1,0 +1,74 @@
+{
+  "slug": "books-collection",
+  "base": "http://localhost:4400",
+  "routes": {
+    "/books/zer0-tales/": [
+      {
+        "width": 320,
+        "overflowPx": 0
+      },
+      {
+        "width": 360,
+        "overflowPx": 0
+      },
+      {
+        "width": 390,
+        "overflowPx": 0
+      },
+      {
+        "width": 414,
+        "overflowPx": 0
+      },
+      {
+        "width": 768,
+        "overflowPx": 0
+      },
+      {
+        "width": 992,
+        "overflowPx": 0
+      },
+      {
+        "width": 1280,
+        "overflowPx": 0
+      },
+      {
+        "width": 1440,
+        "overflowPx": 0
+      }
+    ],
+    "/books/zer0-tales/01-the-missing-pixel/": [
+      {
+        "width": 320,
+        "overflowPx": 0
+      },
+      {
+        "width": 360,
+        "overflowPx": 0
+      },
+      {
+        "width": 390,
+        "overflowPx": 0
+      },
+      {
+        "width": 414,
+        "overflowPx": 0
+      },
+      {
+        "width": 768,
+        "overflowPx": 0
+      },
+      {
+        "width": 992,
+        "overflowPx": 0
+      },
+      {
+        "width": 1280,
+        "overflowPx": 0
+      },
+      {
+        "width": 1440,
+        "overflowPx": 0
+      }
+    ]
+  }
+}
