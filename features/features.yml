@@ -2184,3 +2184,28 @@ features:
       - "Manifest-driven SHA change detection, pruning of deleted sources, and generated /fr<en-url> permalinks (GitHub Pages safe-mode friendly)"
       - "Markdown-safe segment translation: code, Liquid, wiki-links and URLs masked as placeholders and validated"
       - "Navbar language toggle with availability states, hreflang alternates, per-page html lang, machine-translation notice"
+
+  - id: ZER0-079
+    title: "Config-Driven Favicon and Browser Identity"
+    description: "Head include emitting favicon, SVG icon, Apple touch icon, web manifest, and theme-color tags from an optional favicon config block, with an explicit /favicon.ico fallback that works on baseurl deployments"
+    implemented: true
+    version: "1.28.0"
+    link: "/"
+    docs: "/docs/features/favicon/"
+    tags: [seo, branding, ui, configuration]
+    date: 2026-07-22
+    provenance:
+      introduced_in: "1.28.0"
+      pr: null
+      commit: "a11e29f"
+      issue: null
+    tests: []
+    references:
+      includes:
+        - "_includes/core/favicon.html"
+        - "_includes/core/head.html"
+      docs: "pages/_docs/features/favicon.md"
+    features:
+      - "Zero-config default: explicit /favicon.ico link on every page (fixes silent 404s and baseurl project sites)"
+      - "Optional SVG favicon, PNG sizes, apple-touch-icon, and web manifest links"
+      - "theme-color meta sourced from favicon.theme_color with fallback to theme_color.main design token"
