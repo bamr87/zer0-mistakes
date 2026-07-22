@@ -2223,11 +2223,11 @@ features:
     provenance:
       introduced_in: "1.28.0"
       pr: 328
-      commit: null
+      commit: "1b521f6"
       issue: null
     tests:
       - "test/visual/features/books.spec.js"
-      - "pages/_books/zer0-tales/ (demo book exercises both layouts in every build)"
+      - "pages/_books/zer0-tales/index.md"
     references:
       layouts:
         - "_layouts/book.html"
