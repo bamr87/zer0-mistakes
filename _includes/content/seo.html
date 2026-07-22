@@ -37,17 +37,23 @@
   {%- assign assets_prefix = site.preview_images.assets_prefix | default: '/assets' -%}
   {%- assign auto_prefix = site.preview_images.auto_prefix | default: true -%}
 
+  {%- comment -%}
+    Guard with truthiness AND blank: in Liquid 4 `nil != blank` is TRUE, so a
+    bare `!= blank` check on an unset variable takes the branch and assigns a
+    nil seo_image — og:image was silently dropped on every page without a
+    page.header image, defeating the site.og_image fallback entirely.
+  {%- endcomment -%}
   {%- if page_teaser_image contains '://' -%}
     {%- comment -%} External URL - use as-is {%- endcomment -%}
-  {%- elsif auto_prefix and page_teaser_image != blank -%}
+  {%- elsif auto_prefix and page_teaser_image and page_teaser_image != blank -%}
     {%- unless page_teaser_image contains assets_prefix -%}
       {%- assign page_teaser_image = assets_prefix | append: page_teaser_image -%}
     {%- endunless -%}
   {%- endif -%}
 
-  {%- if page_large_image != blank -%}
+  {%- if page_large_image and page_large_image != blank -%}
     {%- assign seo_image = page_large_image | absolute_url | escape -%}
-  {%- elsif page_teaser_image != blank -%}
+  {%- elsif page_teaser_image and page_teaser_image != blank -%}
     {%- assign seo_image = page_teaser_image | absolute_url | escape -%}
   {%- endif -%}
 

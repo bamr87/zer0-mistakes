@@ -689,6 +689,78 @@ test_giscus_comments() {
     return 0
 }
 
+test_favicon_wiring() {
+    log_info "Validating favicon include, head wiring, and analytics config gates..."
+
+    cd "$PROJECT_ROOT"
+
+    local include="$PROJECT_ROOT/_includes/core/favicon.html"
+    local head="$PROJECT_ROOT/_includes/core/head.html"
+    local failed=0
+
+    # 1. Favicon include exists and emits the explicit /favicon.ico default —
+    #    the implicit browser probe 404s on baseurl deployments.
+    if [[ -f "$include" ]]; then
+        if grep -qF 'rel="icon"' "$include" && grep -qF "default: '/favicon.ico'" "$include"; then
+            log_success "favicon include emits rel=icon with /favicon.ico default"
+        else
+            log_error "favicon include is missing the rel=icon /favicon.ico default"
+            failed=1
+        fi
+    else
+        log_error "Missing include: _includes/core/favicon.html"
+        failed=1
+    fi
+
+    # 2. head.html renders the include on every page.
+    if grep -qE 'include(_cached)?[[:space:]]+core/favicon\.html' "$head"; then
+        log_success "head.html includes core/favicon.html"
+    else
+        log_error "head.html does not include core/favicon.html"
+        failed=1
+    fi
+
+    # 3. The theme site carries the root favicon.ico the default points at.
+    if [[ -f "$PROJECT_ROOT/favicon.ico" ]]; then
+        log_success "root favicon.ico exists"
+    else
+        log_error "root favicon.ico is missing"
+        failed=1
+    fi
+
+    # 4. GTM includes must be config-gated — a hardcoded container ID would
+    #    silently enroll every consumer site into this theme's GTM container.
+    local gtm
+    for gtm in "_includes/analytics/google-tag-manager-head.html" "_includes/analytics/google-tag-manager-body.html"; do
+        if grep -qF 'if site.google_tag_manager' "$PROJECT_ROOT/$gtm"; then
+            log_success "$gtm gates on site.google_tag_manager"
+        else
+            log_error "$gtm is not gated on site.google_tag_manager"
+            failed=1
+        fi
+        if grep -qE "GTM-[A-Z0-9]{6,}" "$PROJECT_ROOT/$gtm"; then
+            log_error "$gtm hardcodes a GTM container ID"
+            failed=1
+        else
+            log_success "$gtm has no hardcoded GTM container ID"
+        fi
+    done
+
+    # 5. Legacy sidebar nav modes must alias to auto, not silently disable.
+    if grep -qF 'searchCats' "$PROJECT_ROOT/_includes/navigation/sidebar-config.html"; then
+        log_success "sidebar-config aliases legacy nav modes (tree/dynamic/searchCats)"
+    else
+        log_error "sidebar-config no longer aliases legacy nav modes"
+        failed=1
+    fi
+
+    if [[ "$failed" -ne 0 ]]; then
+        return 1
+    fi
+    log_success "Favicon and analytics wiring is valid"
+    return 0
+}
+
 # Regression for issue #219: the reusable component-showcase include must not
 # hardcode absolute demo links (e.g. /docs/, /pages/, /docs/customization/).
 # Such links 404 on any consumer site that lacks those exact routes, making the
@@ -797,6 +869,7 @@ run_core_tests() {
     log_info "=== VALIDATION TESTS ==="
     run_test "Liquid Template Validation" "test_liquid_templates" "validation"
     run_test "Giscus Comments Configuration" "test_giscus_comments" "validation"
+    run_test "Favicon and Analytics Wiring" "test_favicon_wiring" "validation"
     run_test "Showcase Demo Links (no absolute 404 hazards)" "test_showcase_demo_links" "validation"
     run_test "Sass Compilation" "test_sass_compilation" "validation"
     run_test "JavaScript Syntax" "test_javascript_syntax" "validation"

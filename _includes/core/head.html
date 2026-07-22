@@ -87,6 +87,10 @@ window.MathJax = {
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+<!-- Favicon + browser identity (config-driven via `favicon:`; explicit
+     /favicon.ico fallback so baseurl deployments resolve) — page-invariant, cached. -->
+{% include_cached core/favicon.html %}
+
 <!-- ================================ -->
 <!-- SEO SUPPLEMENT                  -->
 <!-- ================================ -->

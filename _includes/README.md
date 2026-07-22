@@ -9,6 +9,7 @@ This directory has been reorganized for better maintainability and clarity. File
 Essential layout components that form the foundation of the site:
 
 - `head.html` - HTML document head with meta tags, scripts, and styles
+- `favicon.html` - Favicon / browser-identity tags (icon links, apple-touch, manifest, theme-color) driven by the optional `favicon:` config block
 - `header.html` - Main site header with navigation
 - `footer.html` - Site footer (if exists)
 - `branding.html` - Site branding and title display
@@ -34,8 +35,8 @@ All navigation-related components:
 Analytics and tracking integrations:
 
 - `google-analytics.html` - Google Analytics tracking
-- `google-tag-manager-head.html` - GTM head section
-- `google-tag-manager-body.html` - GTM body section
+- `google-tag-manager-head.html` - GTM head section (emits nothing unless `google_tag_manager:` is set in `_config.yml`)
+- `google-tag-manager-body.html` - GTM body section (same config gate)
 
 ### `components/`
 

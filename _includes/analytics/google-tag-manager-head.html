@@ -1,8 +1,17 @@
 {% comment %} Feature: ZER0-039 {% endcomment %}
-<!-- 
-  title: Google Tag Manager 
-  file: 
--->
+{%- comment -%}
+  Component:   google-tag-manager-head
+  Path:        _includes/analytics/google-tag-manager-head.html
+  Purpose:     Google Tag Manager loader (head section). Config-driven: emits
+               nothing unless the site sets a container ID, so consumer sites
+               never inherit this theme's own GTM container.
+  Params:      none — reads `google_tag_manager: "<container-id>"` from _config.yml
+  Depends on:  google-tag-manager-body.html (optional noscript counterpart)
+  Notes:       Previously the container ID was hardcoded, silently enrolling
+               every consumer site's production build into the theme owner's
+               GTM container. Set your own ID (or leave unset for no GTM).
+{%- endcomment -%}
+{%- if site.google_tag_manager -%}
 <script>
     // Skip GTM on local/dev hostnames even if a prod build is served locally (Docker/CI preview).
     (function () {
@@ -13,7 +22,8 @@
         new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
         j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-NN8P7RZ');
+        })(window,document,'script','dataLayer','{{ site.google_tag_manager }}');
     })();
     </script>
     <!-- End Google Tag Manager -->
+{%- endif -%}
