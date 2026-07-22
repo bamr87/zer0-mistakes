@@ -1,0 +1,46 @@
+{% comment %} Feature: ZER0-079 {% endcomment %}
+{%- comment -%}
+  Component:   favicon
+  Path:        _includes/core/favicon.html
+  Purpose:     Emit the browser-identity tags (favicon, SVG icon, Apple touch
+               icon, web manifest, theme-color) for every page. Before this
+               include existed, sites relied on the browser's implicit
+               /favicon.ico probe — which silently 404s on sites without the
+               file and never works for baseurl (project-page) deployments.
+  Params:      none — reads the optional `favicon:` block in _config.yml:
+
+               favicon:
+                 ico         : /favicon.ico                    # legacy .ico (default)
+                 svg         : /assets/images/favicon.svg      # scalable icon (optional)
+                 png         : /assets/images/favicon-32.png   # PNG icon (optional)
+                 png_size    : 32x32                           # sizes attr for png (optional)
+                 apple_touch : /assets/images/apple-touch.png  # iOS home-screen icon (optional)
+                 manifest    : /site.webmanifest               # PWA manifest (optional)
+                 theme_color : "#0d1117"                       # browser chrome color (optional)
+
+               With NO config at all this still emits the explicit
+               /favicon.ico link (every consumer site carries one at root),
+               and theme_color falls back to site.theme_color.main so the
+               mobile address bar matches the site's design tokens.
+  Notes:       Page-invariant — safe to render via include_cached. All paths
+               run through relative_url so baseurl deployments resolve.
+{%- endcomment -%}
+{%- assign _fav = site.favicon -%}
+{%- assign _fav_ico = _fav.ico | default: '/favicon.ico' -%}
+<link rel="icon" href="{{ _fav_ico | relative_url }}" sizes="32x32">
+{%- if _fav.svg %}
+<link rel="icon" type="image/svg+xml" href="{{ _fav.svg | relative_url }}">
+{%- endif %}
+{%- if _fav.png %}
+<link rel="icon" type="image/png" href="{{ _fav.png | relative_url }}"{% if _fav.png_size %} sizes="{{ _fav.png_size }}"{% endif %}>
+{%- endif %}
+{%- if _fav.apple_touch %}
+<link rel="apple-touch-icon" href="{{ _fav.apple_touch | relative_url }}">
+{%- endif %}
+{%- if _fav.manifest %}
+<link rel="manifest" href="{{ _fav.manifest | relative_url }}">
+{%- endif %}
+{%- assign _fav_theme_color = _fav.theme_color | default: site.theme_color.main -%}
+{%- if _fav_theme_color %}
+<meta name="theme-color" content="{{ _fav_theme_color }}">
+{%- endif %}

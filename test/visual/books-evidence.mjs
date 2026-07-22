@@ -1,5 +1,5 @@
 /**
- * Books collection — evidence generator (ZER0-079, new-feature/after-only).
+ * Books collection — evidence generator (ZER0-080, new-feature/after-only).
  * ----------------------------------------------------------------------------
  * Drives the live site and captures the visual evidence for the books
  * collection: the book landing page (cover hero + TOC), the story reading

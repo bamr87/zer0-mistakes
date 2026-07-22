@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * Books collection spec — book landing + story reading pages (ZER0-079)
+ * Books collection spec — book landing + story reading pages (ZER0-080)
  * ----------------------------------------------------------------------------
  * Behavioural/structural regression tests for the picture-book layouts:
  *

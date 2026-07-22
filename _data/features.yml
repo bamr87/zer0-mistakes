@@ -2186,6 +2186,32 @@ features:
       - "Navbar language toggle with availability states, hreflang alternates, per-page html lang, machine-translation notice"
 
   - id: ZER0-079
+    title: "Config-Driven Favicon and Browser Identity"
+    description: "Head include emitting favicon, SVG icon, Apple touch icon, web manifest, and theme-color tags from an optional favicon config block, with an explicit /favicon.ico fallback that works on baseurl deployments"
+    implemented: true
+    version: "1.28.0"
+    link: "/"
+    docs: "/docs/features/favicon/"
+    tags: [seo, branding, ui, configuration]
+    date: 2026-07-22
+    provenance:
+      introduced_in: "1.28.0"
+      pr: null
+      commit: "a11e29f"
+      issue: null
+    tests:
+      - "test/test_core.sh"
+    references:
+      includes:
+        - "_includes/core/favicon.html"
+        - "_includes/core/head.html"
+      docs: "pages/_docs/features/favicon.md"
+    features:
+      - "Zero-config default: explicit /favicon.ico link on every page (fixes silent 404s and baseurl project sites)"
+      - "Optional SVG favicon, PNG sizes, apple-touch-icon, and web manifest links"
+      - "theme-color meta sourced from favicon.theme_color with fallback to theme_color.main design token"
+
+  - id: ZER0-080
     title: "Books Collection — Children's Picture-Book Publishing"
     description: "A `books` collection with immersive cover-to-cover layouts: book landing page (cover hero + TOC), story reading pages with illustration plates and prev/next navigation, bookshelf components, and AI-provenance colophons whose front matter doubles as the image-generation manifest"
     implemented: true
@@ -2196,10 +2222,11 @@ features:
     date: 2026-07-22
     provenance:
       introduced_in: "1.28.0"
-      pr: null
+      pr: 328
       commit: null
       issue: null
     tests:
+      - "test/visual/features/books.spec.js"
       - "pages/_books/zer0-tales/ (demo book exercises both layouts in every build)"
     references:
       layouts:
