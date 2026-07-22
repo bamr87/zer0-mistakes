@@ -1,6 +1,7 @@
 ---
-title: Favicon & Browser Identity
+title: Favicon and Browser Identity Setup
 description: Config-driven favicon, Apple touch icon, web manifest, and theme-color tags emitted on every page, with a zero-config /favicon.ico fallback.
+keywords: [favicon, browser identity, apple touch icon, web manifest, theme color, svg favicon, jekyll theme]
 lastmod: 2026-07-22T00:00:00.000Z
 layout: default
 categories:
