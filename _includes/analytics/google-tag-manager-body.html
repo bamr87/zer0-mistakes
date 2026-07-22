@@ -1,9 +1,18 @@
 {% comment %} Feature: ZER0-039 {% endcomment %}
+{%- comment -%}
+  Component:   google-tag-manager-body
+  Path:        _includes/analytics/google-tag-manager-body.html
+  Purpose:     Google Tag Manager noscript fallback (body section). Config-driven:
+               emits nothing unless the site sets a container ID.
+  Params:      none — reads `google_tag_manager: "GTM-XXXXXXX"` from _config.yml
+  Depends on:  google-tag-manager-head.html (loader)
+{%- endcomment -%}
+{%- if site.google_tag_manager -%}
 <!-- Google Tag Manager (noscript) -->
     <noscript>
-        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NN8P7RZ" 
+        <iframe src="https://www.googletagmanager.com/ns.html?id={{ site.google_tag_manager }}"
                 height="0" width="0" style="display:none;visibility:hidden">
         </iframe>
     </noscript>
 <!-- End Google Tag Manager (noscript) -->
-<!-- source https://tagmanager.google.com/#/admin/accounts/6005859084/containers/58386588/install?containerDraftId=2 -->
+{%- endif -%}
