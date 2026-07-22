@@ -1,0 +1,36 @@
+{% comment %} Feature: ZER0-080 {% endcomment %}
+{%- comment -%}
+  Component:   book-card
+  Path:        _includes/components/book-card.html
+  Purpose:     Bookshelf card for one book — portrait cover, title, subtitle,
+               chapter count, and audience badge, linking to the book page.
+  Params:      book (document, required) — a `books` collection doc with
+               `layout: book` (the book's landing page)
+  Depends on:  components/preview-image.html,
+               _sass/components/_book.scss (.book-card, .book-cover-frame)
+  Notes:       Chapter count is derived live from the collection so the card
+               never goes stale. Whole card is one link for a big tap target.
+{%- endcomment -%}
+{%- if include.book == nil -%}
+  {%- comment -%} ERROR: book-card requires `book` {%- endcomment -%}
+{%- else -%}
+{%- assign _book = include.book -%}
+{%- assign _slug = _book.book | default: _book.slug -%}
+{%- assign _chapters = site.books | where: "book", _slug | where_exp: "doc", "doc.chapter" -%}
+{%- assign _cover = _book.cover_image | default: _book.preview | default: site.teaser -%}
+<article class="book-card h-100">
+  <a href="{{ _book.url | relative_url }}" class="d-block text-decoration-none text-body h-100">
+    <div class="book-cover-frame mb-3">
+      {%- include components/preview-image.html src=_cover alt=_book.title class="" -%}
+    </div>
+    <h3 class="h5 mb-1">{{ _book.title }}</h3>
+    {%- if _book.subtitle -%}
+    <p class="text-body-secondary small mb-2">{{ _book.subtitle }}</p>
+    {%- endif -%}
+    <p class="small text-body-secondary mb-0">
+      <i class="bi bi-book me-1" aria-hidden="true"></i>{{ _chapters.size }} {% if _chapters.size == 1 %}story{% else %}stories{% endif %}
+      {%- if _book.audience %} <span class="mx-1" aria-hidden="true">•</span> {{ _book.audience }}{% endif -%}
+    </p>
+  </a>
+</article>
+{%- endif -%}

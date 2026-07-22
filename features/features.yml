@@ -2210,3 +2210,40 @@ features:
       - "Zero-config default: explicit /favicon.ico link on every page (fixes silent 404s and baseurl project sites)"
       - "Optional SVG favicon, PNG sizes, apple-touch-icon, and web manifest links"
       - "theme-color meta sourced from favicon.theme_color with fallback to theme_color.main design token"
+
+  - id: ZER0-080
+    title: "Books Collection — Children's Picture-Book Publishing"
+    description: "A `books` collection with immersive cover-to-cover layouts: book landing page (cover hero + TOC), story reading pages with illustration plates and prev/next navigation, bookshelf components, and AI-provenance colophons whose front matter doubles as the image-generation manifest"
+    implemented: true
+    version: "1.28.0"
+    link: "/books/zer0-tales/"
+    docs: "/docs/features/book-collection/"
+    tags: [books, collections, layouts, storybook, ai-images, children]
+    date: 2026-07-22
+    provenance:
+      introduced_in: "1.28.0"
+      pr: 328
+      commit: "1b521f6"
+      issue: null
+    tests:
+      - "test/visual/features/books.spec.js"
+      - "pages/_books/zer0-tales/index.md"
+    references:
+      layouts:
+        - "_layouts/book.html"
+        - "_layouts/book-story.html"
+      includes:
+        - "_includes/components/bookshelf.html"
+        - "_includes/components/book-card.html"
+        - "_includes/components/book-toc.html"
+        - "_includes/components/book-nav.html"
+        - "_includes/components/book-plate.html"
+      styles:
+        - "_sass/components/_book.scss"
+      config: "_config.yml"
+      docs: "pages/_docs/features/book-collection.md"
+    features:
+      - "Book = folder of chapters + index.md; numeric chapter: front matter drives TOC and prev/next ordering (no dates needed)"
+      - "Immersive sidebar-free reading surface: storybook serif, responsive type scale, drop cap, plate styling for bare markdown images"
+      - "illustrations: front matter renders a collapsed prompt colophon — the same list drives OpenAI image generation on consumer sites (drsai)"
+      - "Demo book The Tales of Zer0 ships with the theme; reference platform: bamr87/drsai with Dodge & Reena as the test book"

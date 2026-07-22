@@ -572,6 +572,16 @@ collections:
     title: About
     icon: bi-person-badge
     permalink: /:collection/:categories/:name/
+  # Children's-book collection: each book is a folder of story "chapters"
+  # (numeric `chapter:` front matter) plus an index.md landing page
+  # (`layout: book`). Layouts: book.html + book-story.html; components:
+  # bookshelf / book-card / book-toc / book-nav / book-plate.
+  # Docs: /docs/features/book-collection/
+  books:
+    output: true
+    title: Books
+    icon: bi-book-half
+    permalink: /:collection/:path/
 
 permalink: pretty
 
@@ -703,6 +713,19 @@ defaults:
       jupyter_metadata: true
       sidebar:
         nav: auto
+
+  # pages/_books — picture-book stories read cover-to-cover: no sidebar,
+  # no comments by default; index.md overrides layout to `book` per book.
+  -
+    scope:
+      path: pages/_books
+      type: books
+    values:
+      layout: book-story
+      sidebar: false
+      comments: false
+      share: true
+      author_profile: false
 
   # fr/ — GENERATED translations (scripts/translate.rb). These are plain
   # Jekyll pages (safe-mode friendly: no plugin needed) whose permalinks are

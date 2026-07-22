@@ -16,6 +16,8 @@ root.html (base template)
 ├── home.html (homepage)
 ├── news.html (news homepage - magazine/grid/list styles)
 ├── landing.html (landing pages)
+├── book.html (book landing page - cover hero + table of contents)
+├── book-story.html (immersive picture-book story pages)
 ├── stats.html (statistics dashboard)
 └── index.html (search pages)
 ```

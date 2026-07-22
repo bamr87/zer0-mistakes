@@ -1,0 +1,80 @@
+{% comment %} Feature: ZER0-080 {% endcomment %}
+{%- comment -%}
+  Component:   book-nav
+  Path:        _includes/components/book-nav.html
+  Purpose:     Previous/next story navigation within one book, with a
+               "Contents" link back to the book's landing page in the middle.
+  Params:      book (string, required)    — book slug matching chapters' `book:`
+               chapter (number, required) — the current chapter number
+  Depends on:  the `books` collection,
+               _sass/components/_post-navigation.scss (.post-nav-card reuse)
+  Notes:       Ordering comes from the numeric `chapter:` front matter, not
+               dates, so books read cover-to-cover. Reuses the article
+               post-nav-card styles for a consistent feel.
+{%- endcomment -%}
+{%- if include.book == nil or include.chapter == nil -%}
+  {%- comment -%} ERROR: book-nav requires `book` and `chapter` {%- endcomment -%}
+{%- else -%}
+{%- assign _chapters = site.books | where: "book", include.book | where_exp: "doc", "doc.chapter" | sort: "chapter" -%}
+{%- assign _book_page = site.books | where: "book", include.book | where: "layout", "book" | first -%}
+{%- assign _prev = nil -%}
+{%- assign _next = nil -%}
+{%- for _ch in _chapters -%}
+  {%- if _ch.chapter == include.chapter -%}
+    {%- unless forloop.first -%}
+      {%- assign _i = forloop.index0 | minus: 1 -%}
+      {%- assign _prev = _chapters[_i] -%}
+    {%- endunless -%}
+    {%- unless forloop.last -%}
+      {%- assign _i = forloop.index0 | plus: 1 -%}
+      {%- assign _next = _chapters[_i] -%}
+    {%- endunless -%}
+    {%- break -%}
+  {%- endif -%}
+{%- endfor -%}
+<nav class="book-story-nav my-5 pt-4 border-top" aria-label="Story navigation">
+  <div class="row g-3 align-items-stretch">
+    <div class="col-md-5">
+      {%- if _prev -%}
+      <a href="{{ _prev.url | relative_url }}" class="post-nav-card post-nav-card--prev">
+        <div class="post-nav-card__body">
+          <small class="post-nav-card__label"><i class="bi bi-chevron-left me-1" aria-hidden="true"></i>Previous story</small>
+          <span class="post-nav-card__title">{{ _prev.title | truncate: 50 }}</span>
+        </div>
+      </a>
+      {%- else -%}
+      <div class="post-nav-card post-nav-card--prev post-nav-card--disabled" aria-disabled="true">
+        <div class="post-nav-card__body">
+          <small class="post-nav-card__label"><i class="bi bi-chevron-left me-1" aria-hidden="true"></i>Previous story</small>
+          <span class="post-nav-card__title text-muted">This is the first story</span>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="col-md-2 d-flex">
+      {%- if _book_page -%}
+      <a href="{{ _book_page.url | relative_url }}" class="btn btn-outline-secondary w-100 align-self-center" aria-label="Back to {{ _book_page.title | escape }} contents">
+        <i class="bi bi-list-ul me-1" aria-hidden="true"></i>Contents
+      </a>
+      {%- endif -%}
+    </div>
+    <div class="col-md-5">
+      {%- if _next -%}
+      <a href="{{ _next.url | relative_url }}" class="post-nav-card post-nav-card--next">
+        <div class="post-nav-card__body">
+          <small class="post-nav-card__label">Next story<i class="bi bi-chevron-right ms-1" aria-hidden="true"></i></small>
+          <span class="post-nav-card__title">{{ _next.title | truncate: 50 }}</span>
+        </div>
+      </a>
+      {%- else -%}
+      <div class="post-nav-card post-nav-card--next post-nav-card--disabled" aria-disabled="true">
+        <div class="post-nav-card__body">
+          <small class="post-nav-card__label">Next story<i class="bi bi-chevron-right ms-1" aria-hidden="true"></i></small>
+          <span class="post-nav-card__title text-muted">The end — for now</span>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+  </div>
+</nav>
+{%- endif -%}

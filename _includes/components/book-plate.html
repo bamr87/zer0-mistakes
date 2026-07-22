@@ -1,0 +1,31 @@
+{% comment %} Feature: ZER0-080 {% endcomment %}
+{%- comment -%}
+  Component:   book-plate
+  Path:        _includes/components/book-plate.html
+  Purpose:     Full-width illustration "plate" inside a book story — a figure
+               with rounded art, soft shadow, and an optional caption.
+  Params:      src (string, required)   — image path (site-relative or /assets/…)
+               alt (string, required)   — accessible description of the scene
+               caption (string, optional, default: none) — visible caption text
+               class (string, optional, default: "")     — extra figure classes
+               loading (string, optional, default: "lazy")
+  Depends on:  components/preview-image.html (path prefixing + relative_url),
+               _sass/components/_book.scss (.book-plate)
+  Notes:       Alt text stays on the <img>; the caption renders only when
+               explicitly passed so read-aloud story text isn't duplicated.
+{%- endcomment -%}
+{%- if include.src == nil -%}
+  {%- comment -%} ERROR: book-plate requires `src` {%- endcomment -%}
+{%- else -%}
+<figure class="book-plate {{ include.class | default: '' }}">
+  {%- include components/preview-image.html
+     src=include.src
+     alt=include.alt
+     class="book-plate-img"
+     loading=include.loading
+  -%}
+  {%- if include.caption -%}
+  <figcaption>{{ include.caption | escape }}</figcaption>
+  {%- endif -%}
+</figure>
+{%- endif -%}

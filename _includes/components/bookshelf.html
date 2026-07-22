@@ -1,0 +1,30 @@
+{% comment %} Feature: ZER0-080 {% endcomment %}
+{%- comment -%}
+  Component:   bookshelf
+  Path:        _includes/components/bookshelf.html
+  Purpose:     Responsive grid of every book in the `books` collection —
+               drop it on a home or index page to list the library.
+  Params:      heading (string, optional, default: none) — section heading (h2)
+               class (string, optional, default: "")     — extra wrapper classes
+  Depends on:  components/book-card.html, the `books` collection
+  Notes:       A "book" is any books-collection doc with `layout: book`;
+               chapters (`chapter:` set) are never listed here. Renders
+               nothing when the collection is missing or empty.
+{%- endcomment -%}
+{%- assign _books = site.books | where: "layout", "book" | sort: "title" -%}
+{%- if _books and _books.size > 0 -%}
+<section class="bookshelf {{ include.class | default: '' }}">
+  {%- if include.heading -%}
+  <h2 class="mb-4">{{ include.heading }}</h2>
+  {%- endif -%}
+  <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
+    {%- for _book in _books -%}
+    <div class="col">
+      {%- include components/book-card.html book=_book -%}
+    </div>
+    {%- endfor -%}
+  </div>
+</section>
+{%- else -%}
+  {%- comment -%} bookshelf: no books collection or no book landing pages — skipping render {%- endcomment -%}
+{%- endif -%}

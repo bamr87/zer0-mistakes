@@ -1,0 +1,113 @@
+---
+# Feature: ZER0-080
+layout: root
+---
+{%- comment -%}
+  Layout: book.html
+  Extends: root.html
+  Purpose: Landing page for one book in the `books` collection — cover hero,
+           synopsis, table of contents, and an AI-provenance colophon.
+  Front matter required: layout, title, book (slug shared with its chapters)
+  Front matter optional: subtitle, author, illustrator, audience, synopsis,
+    cover_image, back_cover_image, illustration_style, status
+  Notes: Extends root directly (like landing.html) for an immersive,
+         sidebar-free presentation. Chapters are books-collection docs whose
+         `book:` matches and that set a numeric `chapter:`.
+{%- endcomment -%}
+
+{%- assign _slug = page.book | default: page.slug -%}
+{%- assign _chapters = site.books | where: "book", _slug | where_exp: "doc", "doc.chapter" | sort: "chapter" -%}
+{%- assign _first_chapter = _chapters | first -%}
+{%- assign _cover = page.cover_image | default: page.preview -%}
+
+<article class="book-landing" itemscope itemtype="https://schema.org/Book">
+  <!-- ================================ -->
+  <!-- COVER HERO                       -->
+  <!-- ================================ -->
+  <header class="book-hero zer0-bg-hero py-5">
+    <div class="container-xl">
+      <div class="row g-5 align-items-center justify-content-center">
+        {%- if _cover -%}
+        <div class="col-8 col-sm-6 col-md-4 col-lg-3">
+          <div class="book-hero-cover mx-auto">
+            <div class="book-cover-frame">
+              {%- include components/preview-image.html src=_cover alt=page.title class="" loading="eager" -%}
+            </div>
+          </div>
+        </div>
+        {%- endif -%}
+        <div class="col-md-8 col-lg-7 text-center text-md-start">
+          {%- if page.status and page.status != "complete" -%}
+          <span class="badge text-bg-warning mb-2">{{ page.status | capitalize }}</span>
+          {%- endif -%}
+          <h1 id="page-title" class="book-hero-title display-4 fw-bold" itemprop="name">{{ page.title }}</h1>
+          {%- if page.subtitle -%}
+          <p class="lead" itemprop="alternativeHeadline">{{ page.subtitle }}</p>
+          {%- endif -%}
+          <p class="text-body-secondary mb-1">
+            {%- if page.author -%}<span itemprop="author">{{ page.author }}</span>{%- endif -%}
+            {%- if page.illustrator %} <span class="mx-1" aria-hidden="true">•</span> Illustrated by {{ page.illustrator }}{%- endif -%}
+          </p>
+          <p class="text-body-secondary small mb-4">
+            <i class="bi bi-book me-1" aria-hidden="true"></i>{{ _chapters.size }} {% if _chapters.size == 1 %}story{% else %}stories{% endif %}
+            {%- if page.audience %} <span class="mx-1" aria-hidden="true">•</span> {{ page.audience }}{% endif -%}
+          </p>
+          {%- if page.synopsis -%}
+          <p class="fs-5" itemprop="abstract">{{ page.synopsis }}</p>
+          {%- endif -%}
+          {%- if _first_chapter -%}
+          <a class="btn btn-primary btn-lg mt-2" href="{{ _first_chapter.url | relative_url }}">
+            <i class="bi bi-book-half me-2" aria-hidden="true"></i>Start reading
+          </a>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container-xl py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-xl-8">
+
+        <!-- ================================ -->
+        <!-- ABOUT THIS BOOK (page body)      -->
+        <!-- ================================ -->
+        {%- assign _body = content | strip -%}
+        {%- if _body != "" -%}
+        <section class="book-about mb-5">
+          {{ content }}
+        </section>
+        {%- endif -%}
+
+        <!-- ================================ -->
+        <!-- TABLE OF CONTENTS                -->
+        <!-- ================================ -->
+        {%- include components/book-toc.html book=_slug -%}
+
+        <!-- ================================ -->
+        <!-- AI COLOPHON                      -->
+        <!-- ================================ -->
+        {%- if page.illustration_style or page.generator -%}
+        <aside class="book-colophon card border-0 bg-body-tertiary mt-5">
+          <div class="card-body">
+            <h2 class="h6 mb-2"><i class="bi bi-stars me-2" aria-hidden="true"></i>How this book was made</h2>
+            {%- if page.generator -%}
+            <p class="small text-body-secondary mb-2">{{ page.generator }}</p>
+            {%- endif -%}
+            {%- if page.illustration_style -%}
+            <p class="small text-body-secondary mb-0"><strong>Illustration style:</strong> {{ page.illustration_style }}</p>
+            {%- endif -%}
+          </div>
+        </aside>
+        {%- endif -%}
+
+        {%- if page.back_cover_image -%}
+        <figure class="book-plate mt-5">
+          {%- include components/preview-image.html src=page.back_cover_image alt="Back cover" class="book-plate-img" -%}
+        </figure>
+        {%- endif -%}
+
+      </div>
+    </div>
+  </div>
+</article>
