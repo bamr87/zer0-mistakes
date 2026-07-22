@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.27.0](https://github.com/bamr87/zer0-mistakes/compare/v1.26.0...v1.27.0) (2026-07-22)
+
+
+### Features
+
+* **analytics:** wire posthog.html into head.html ([#317](https://github.com/bamr87/zer0-mistakes/issues/317)) ([7977fe1](https://github.com/bamr87/zer0-mistakes/commit/7977fe189dec3b62eb9779feac56ec27e513f2c3))
+* **article:** show_hero front-matter flag opts standard posts into the hero image ([#309](https://github.com/bamr87/zer0-mistakes/issues/309)) ([6344473](https://github.com/bamr87/zer0-mistakes/commit/6344473c14c613825ab7ac9083b87f17a2a1e858))
+* **i18n:** AI-generated multilingual support with language toggle ([#316](https://github.com/bamr87/zer0-mistakes/issues/316)) ([72b2ab6](https://github.com/bamr87/zer0-mistakes/commit/72b2ab6980742e26305a22e3aff535f465ade084))
+* **scripts:** Claude-orchestrated preview images — Claude analyzes & reviews, image models render ([#296](https://github.com/bamr87/zer0-mistakes/issues/296)) ([acac205](https://github.com/bamr87/zer0-mistakes/commit/acac2051ec79a81c04efb1af76fb4031e106a852))
+
+
+### Bug Fixes
+
+* **a11y:** keep a single &lt;main&gt; landmark per page ([#310](https://github.com/bamr87/zer0-mistakes/issues/310)) ([fae920e](https://github.com/bamr87/zer0-mistakes/commit/fae920eb5c60b5e792e9842c9b112bd5eb60e391)), closes [#299](https://github.com/bamr87/zer0-mistakes/issues/299)
+* **author:** build avatar path with relative_url, never protocol-relative ([#306](https://github.com/bamr87/zer0-mistakes/issues/306)) ([ac597d2](https://github.com/bamr87/zer0-mistakes/commit/ac597d2c029157bb47da5a336812f764a3946da4))
+* **ci:** secret scan matches added lines only, not context/removals/hunk headers ([#301](https://github.com/bamr87/zer0-mistakes/issues/301)) ([1b7175d](https://github.com/bamr87/zer0-mistakes/commit/1b7175ddece3d95aefc406f3b59df682db9fd0f2))
+* **includes:** gate Quick Links Dev row on is_production ([#308](https://github.com/bamr87/zer0-mistakes/issues/308)) ([03b6877](https://github.com/bamr87/zer0-mistakes/commit/03b687713b8552c6ceb6b2ab30ac8caea0d6632d))
+* **obsidian:** graph reads OBSIDIAN_CONFIG.wikiIndexUrl that js-cdn.html emits ([#305](https://github.com/bamr87/zer0-mistakes/issues/305)) ([2875912](https://github.com/bamr87/zer0-mistakes/commit/28759128b7b352a054e642d153e5e38e16aa1e48))
+* **sass:** stack left-side FABs to prevent obsidian/feedback overlap ([#289](https://github.com/bamr87/zer0-mistakes/issues/289)) ([6cc4596](https://github.com/bamr87/zer0-mistakes/commit/6cc4596dff28d164386a16a6637420f84b4571bf))
+* **test:** repoint ZER0-003 to test_install_legacy_flags.sh after retirement ([#292](https://github.com/bamr87/zer0-mistakes/issues/292)) ([fd7a2ce](https://github.com/bamr87/zer0-mistakes/commit/fd7a2ce256e32d2f630bd82732227b54ba13d3dd))
+* **theme:** apply relative_url to preview_path exactly once ([#307](https://github.com/bamr87/zer0-mistakes/issues/307)) ([012e577](https://github.com/bamr87/zer0-mistakes/commit/012e577fe3131e0be42f7d33a6f5161dc666cc81))
+
 ## [1.26.0](https://github.com/bamr87/zer0-mistakes/compare/v1.25.0...v1.26.0) (2026-07-07)
 
 
