@@ -92,6 +92,13 @@ logo_link                : [ *url, *baseurl ] # URL to link the logo to, e.g. "/
 teaser                   : '/assets/images/favicon_gpt_computer_retro.png' # path of fallback teaser image, e.g. "/assets/images/500x300.png"
 info_banner              : '/assets/images/info-banner-mountain-wizard.png' # path of fallback teaser image, e.g. "/assets/images/500x300.png"
 
+# Favicon / browser identity — rendered by _includes/core/favicon.html.
+# All keys optional; with no block at all the theme still links /favicon.ico.
+# theme_color falls back to theme_color.main below when unset here.
+favicon:
+  ico                    : /favicon.ico
+  apple_touch            : /assets/images/favicon_gpt_computer_retro.png
+
 ## Preview Image Generation (AI-powered) #####################################
 # Settings for automatic preview image generation using AI
 # Used by: scripts/generate-preview-images.sh → scripts/lib/preview_generator.py
@@ -201,6 +208,10 @@ author:
 ## Site Analytics #############################################################
 
 google_analytics         : 'G-ZBDKNMC168'
+
+# Google Tag Manager container for THIS site. The GTM includes emit nothing
+# when this is unset, so consumer sites never inherit this container.
+google_tag_manager       : 'GTM-NN8P7RZ'
 
 # PostHog Analytics Configuration
 # https://posthog.com/docs/libraries/js
