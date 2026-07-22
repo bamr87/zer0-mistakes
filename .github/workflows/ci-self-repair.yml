@@ -99,7 +99,7 @@ jobs:
           bundler-cache: false
       - name: Setup Node
         if: steps.gate.outputs.go == 'true' && steps.budget.outputs.exhausted == 'false'
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: "20"
 
