@@ -28,6 +28,8 @@
   Notes:       `nav: auto` picks the best mode for the page's collection —
                a curated _data/navigation/<collection>.yml wins, then the
                live "collection" folder tree, then post "categories".
+               Legacy mode names ("tree", "dynamic", "searchCats") from
+               pre-1.x sidebars are aliased to "auto" for backward compat.
 {%- endcomment -%}
 
 {%- comment -%} 1. Visibility: page.sidebar wins; featured/breaking posts default off {%- endcomment -%}
@@ -59,6 +61,14 @@
   {%- elsif site.sidebar.nav -%}
     {%- assign sidebar_nav = site.sidebar.nav -%}
   {%- endif -%}
+{%- endif -%}
+
+{%- comment -%} 3b. Legacy mode names from pre-1.x sidebars ("tree", "dynamic",
+     "searchCats") no longer exist; consumer configs still carry them, which
+     used to silently disable the sidebar (no data file matches those names).
+     Treat them as "auto" so those sites get the best available mode. {%- endcomment -%}
+{%- if sidebar_nav == "tree" or sidebar_nav == "dynamic" or sidebar_nav == "searchCats" -%}
+  {%- assign sidebar_nav = "auto" -%}
 {%- endif -%}
 
 {%- comment -%} 4. "auto" → concrete mode based on the page's collection {%- endcomment -%}
