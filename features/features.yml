@@ -2199,7 +2199,8 @@ features:
       pr: null
       commit: "a11e29f"
       issue: null
-    tests: []
+    tests:
+      - "test/test_core.sh"
     references:
       includes:
         - "_includes/core/favicon.html"

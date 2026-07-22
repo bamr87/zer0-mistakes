@@ -5,7 +5,7 @@
   Purpose:     Google Tag Manager loader (head section). Config-driven: emits
                nothing unless the site sets a container ID, so consumer sites
                never inherit this theme's own GTM container.
-  Params:      none — reads `google_tag_manager: "GTM-XXXXXXX"` from _config.yml
+  Params:      none — reads `google_tag_manager: "<container-id>"` from _config.yml
   Depends on:  google-tag-manager-body.html (optional noscript counterpart)
   Notes:       Previously the container ID was hardcoded, silently enrolling
                every consumer site's production build into the theme owner's
