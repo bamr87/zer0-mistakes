@@ -114,10 +114,16 @@ jobs:
       - name: Run Claude self-repair (headless)
         if: steps.gate.outputs.go == 'true' && steps.budget.outputs.exhausted == 'false'
         env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          if [ -z "${ANTHROPIC_API_KEY:-}" ]; then
-            echo "::notice::ANTHROPIC_API_KEY not set — skipping self-repair (PR will be gated)."; exit 0
+          if [ -z "${CLAUDE_CODE_OAUTH_TOKEN:-}" ] && [ -z "${ANTHROPIC_API_KEY:-}" ]; then
+            echo "::notice::No CLAUDE_CODE_OAUTH_TOKEN or ANTHROPIC_API_KEY set — skipping self-repair (PR will be gated)."; exit 0
+          fi
+          # House convention: OAuth wins when both are set — drop the API key
+          # entirely so an empty-string secret never triggers empty-key auth.
+          if [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
+            unset ANTHROPIC_API_KEY
           fi
           set +e
           PROMPT="$(cat .github/prompts/ci-self-repair.prompt.md)
