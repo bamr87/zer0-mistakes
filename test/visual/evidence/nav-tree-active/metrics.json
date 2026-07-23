@@ -1,0 +1,9 @@
+{
+  "component": "_includes/navigation/nav-tree.html",
+  "issue": "Liquid `{% assign is_active = page.url == item.url %}` does not evaluate `==`; assign stored `page.url` (always truthy) so every nav-tree link rendered `.active`.",
+  "route": "/docs/wargames/natas/  (a consumer site with a large curated _data/navigation tree: 19 groups + 200 children)",
+  "measurement": "count of `aside.bd-sidebar .nav-tree .nav-tree-link.active` in the raw server-rendered HTML (no client JS)",
+  "before": { "active": 219, "total": 219 },
+  "after":  { "active": 1,   "total": 219 },
+  "how_produced": "Two real Jekyll builds of the same site: BEFORE with nav-tree.html reverted to origin/main, AFTER at this PR's HEAD. user_overrides disabled to isolate theme rendering."
+}
