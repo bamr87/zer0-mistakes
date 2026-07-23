@@ -1,7 +1,6 @@
 # book-abc layout — visual evidence (ZER0-081)
 
-After-only evidence for the `book-abc` board-book layout (a new feature — there
-is no "before" state). Regenerate with:
+After-only evidence for the `book-abc` board-book layout (a new feature — there is no "before" state). Regenerate with:
 
 ```bash
 # against a running site that serves a book-abc page:
@@ -16,10 +15,7 @@ BASE_URL=<url> ROUTE=/books/it-alphabet/ node test/visual/book-abc-evidence.mjs 
 
 ## Reference capture
 
-These montages were captured against the **drsai `it-alphabet` book** (the seed
-"The IT Alphabet: A is for Automation", 26 planned letters, `isometric-tech-toy`
-skin) built with the local theme — the same `book-abc` layout the theme's own
-demo book (`pages/_books/abc-demo/`) uses. Structural metrics from that capture:
+These montages were captured against the **drsai `it-alphabet` book** (the seed "The IT Alphabet: A is for Automation", 26 planned letters, `isometric-tech-toy` skin) built with the local theme — the same `book-abc` layout the theme's own demo book (`pages/_books/abc-demo/`) uses. Structural metrics from that capture:
 
 | metric | value |
 |---|---|
@@ -30,7 +26,4 @@ demo book (`pages/_books/abc-demo/`) uses. Structural metrics from that capture:
 | board skin | `abc-style--isometric-tech-toy` |
 | horizontal overflow (every width) | 0px |
 
-Every letter is `status: planned`, so each card shows the tinted "illustration
-coming soon" placeholder with its big HTML letter glyph — the book reads
-end-to-end before any art renders. The regression test
-`test/visual/features/book-abc.spec.js` pins these same structural facts.
+Every letter is `status: planned`, so each card shows the tinted "illustration coming soon" placeholder with its big HTML letter glyph — the book reads end-to-end before any art renders. The regression test `test/visual/features/book-abc.spec.js` pins these same structural facts.
