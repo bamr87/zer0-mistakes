@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **ABC board books (`book-abc` layout) — the "ABC & Language" series.** A new
+  immersive, single-scroll toddler alphabet layout (`_layouts/book-abc.html`)
+  driven entirely by an `alphabet:` front-matter list — one big letter, one
+  word, one picture per card, with A–Z quick-jump anchors and a cover hero.
+  The big letter is HTML typography (never baked into the art), and a card
+  whose plate is still `planned` shows a tinted "illustration coming soon"
+  placeholder so a book reads end-to-end before any art renders. New
+  `_includes/components/abc-letter.html` renders each card; `_sass/components/_book.scss`
+  gains `.abc-board` / `.abc-letter-*` styles plus a `.abc-style--<id>` skin per
+  shared art-style id. `components/bookshelf.html` now lists both `book` and
+  `book-abc` books, grouped into series shelves from `_data/series.yml`;
+  `book-card.html` shows a letter count for ABC books. Docs:
+  [`docs/features/abc-books.md`](docs/features/abc-books.md).
 - **`nav: pages` sidebar mode — auto-build the left tree from page URLs.** A new
   sidebar mode (`_includes/navigation/sidebar-pagetree.html`) derives a
   collapsible section tree purely from page permalinks under a `sidebar.base`

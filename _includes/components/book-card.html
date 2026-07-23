@@ -16,6 +16,7 @@
 {%- else -%}
 {%- assign _book = include.book -%}
 {%- assign _slug = _book.book | default: _book.slug -%}
+{%- assign _is_abc = _book.layout == "book-abc" -%}
 {%- assign _chapters = site.books | where: "book", _slug | where_exp: "doc", "doc.chapter" -%}
 {%- assign _cover = _book.cover_image | default: _book.preview | default: site.teaser -%}
 <article class="book-card h-100">
@@ -28,7 +29,12 @@
     <p class="text-body-secondary small mb-2">{{ _book.subtitle }}</p>
     {%- endif -%}
     <p class="small text-body-secondary mb-0">
+      {%- if _is_abc -%}
+      {%- assign _letters = _book.alphabet | size -%}
+      <i class="bi bi-type me-1" aria-hidden="true"></i>{{ _letters }} {% if _letters == 1 %}letter{% else %}letters{% endif %}
+      {%- else -%}
       <i class="bi bi-book me-1" aria-hidden="true"></i>{{ _chapters.size }} {% if _chapters.size == 1 %}story{% else %}stories{% endif %}
+      {%- endif -%}
       {%- if _book.audience %} <span class="mx-1" aria-hidden="true">•</span> {{ _book.audience }}{% endif -%}
     </p>
   </a>
