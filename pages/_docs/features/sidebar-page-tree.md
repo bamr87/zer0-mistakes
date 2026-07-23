@@ -1,5 +1,5 @@
 ---
-title: Page-tree sidebar
+title: "Page-tree sidebar — auto-nav from your page URLs"
 description: Build the left sidebar automatically from your page URLs — a collapsible tree grouped by section — with no curated _data/navigation file.
 layout: default
 categories:
@@ -9,6 +9,13 @@ tags:
   - navigation
   - sidebar
   - liquid
+keywords:
+  - sidebar navigation
+  - auto navigation
+  - page tree
+  - jekyll liquid
+  - remote theme
+  - url hierarchy
 permalink: /docs/features/sidebar-page-tree/
 date: 2026-07-23T00:00:00.000Z
 lastmod: 2026-07-23T00:00:00.000Z
