@@ -5,6 +5,61 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Claude Code OAuth in the AI installer** — the spec-driven installer
+  (`scripts/bin/install`) is now multi-provider. `scripts/install/ai/client.sh`
+  resolves a provider via `ZER0_AI_PROVIDER` (default `auto`), preferring the
+  logged-in `claude` CLI (**Claude Code OAuth** — zero key handling), then the
+  Anthropic Messages API (`CLAUDE_CODE_OAUTH_TOKEN` OAuth bearer or
+  `ANTHROPIC_API_KEY`), then OpenAI. `install doctor` reports the active
+  provider; `--ai-provider` / `--ai-model` / `ZER0_AI_MODEL` tune it; `--no-ai`
+  / `ZER0_NO_AI=1` disable it. User context is sanitized before every call.
+- **Config-file layer for the installer** — new `scripts/install/config.sh`
+  discovers and merges `~/.config/zer0/install.yml`, `<target>/zer0.install.yml`,
+  `<target>/.zer0/config.yml`, and `--config FILE` (precedence:
+  defaults < profile < config < env < flags). Recognises site / github / theme /
+  deploy / agents / tasks / ai keys; API keys stay environment-only.
+- **`install suggest`** subcommand — recommend a profile + deploy target
+  (AI-assisted with rule-based fallback) — plus `--yes` as an alias for
+  `--auto-accept`.
+- Installer regression matrix (`test/test_installer.sh`) now covers AI
+  provider resolution, text extraction across provider shapes, the config-file
+  layer + precedence, and the `doctor` AI check (all offline).
+
+### Changed
+
+- Installer spec default `ai.provider` is now `auto` (was `openai`); the AI
+  wizard records the provider that actually served the run.
+
+### Fixed
+
+- **`install deploy` no longer clobbers site content.** `spec_write` treated an
+  empty `SPEC_TASKS` as "use the full default task list", so a deploy-only run
+  re-ran `config`/`pages`/`nav` and overwrote a customised `_config.yml`,
+  `index.md`, and navigation. Empty now serialises to `[]`; `deploy` is
+  deploy-only and also skips agent-file rewrites.
+- **github-pages / remote profile emitted a broken `remote_theme`.** The remote
+  `_config.yml` template resolved `{{GITHUB_REPO}}` to the *site's* repo; it now
+  uses a dedicated `{{THEME_REMOTE}}` variable (default `bamr87/zer0-mistakes`,
+  overridable via `THEME_REMOTE`).
+- **Deploy workflow templates had unsubstituted variables.** Added
+  `{{DEFAULT_BRANCH}}`, `{{RUBY_VERSION}}`, and `{{SITE_NAME}}` to the template
+  renderer, so the generated `jekyll-gh-pages.yml` (and docker-prod/azure-swa
+  artifacts) no longer contain literal `{{…}}` tokens. Regression tests assert
+  no unresolved tokens survive in any deploy artifact.
+- **Agent files were written twice** when `agents` appeared in both the task
+  list and `SPEC_AGENTS`; `apply.sh` now runs the agents task at most once.
+- **The remote / github-pages Gemfile failed to build on Ruby 3.x.** It paired
+  the legacy `github-pages` gem with a standalone `jekyll-remote-theme`, which
+  bundler resolved to an ancient github-pages 170 (Jekyll 3.6 / kramdown 1.14,
+  `rexml` LoadError). The remote Gemfile now pins modern Jekyll +
+  `jekyll-remote-theme` + `webrick`, and both the Gemfile and the remote
+  `_config.yml` template add `jekyll-include-cache` (required by the theme's
+  layouts).
+
 ## [1.27.0](https://github.com/bamr87/zer0-mistakes/compare/v1.26.0...v1.27.0) (2026-07-22)
 
 

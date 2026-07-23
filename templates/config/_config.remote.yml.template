@@ -5,7 +5,7 @@
 # zer0-mistakes theme remotely. No local theme files are needed — layouts,
 # includes, assets, and styles are all pulled from the remote theme repo.
 #
-# Theme: https://github.com/{{GITHUB_REPO}}
+# Theme: https://github.com/{{THEME_REMOTE}}
 # Docs:  https://{{FORK_GITHUB_USER}}.github.io/{{REPOSITORY_NAME}}/docs/
 # =============================================================================
 
@@ -41,7 +41,7 @@ repository_name          : &github_repository "{{REPOSITORY_NAME}}"
 #
 url                      : "https://{{FORK_GITHUB_USER}}.github.io"
 baseurl                  : "/{{REPOSITORY_NAME}}"
-remote_theme             : "{{GITHUB_REPO}}"
+remote_theme             : "{{THEME_REMOTE}}"
 permalink                : /:categories/:title/
 
 # ── Build Settings ────────────────────────────────────────────────────────────
@@ -90,6 +90,7 @@ plugins:
   - jekyll-feed
   - jekyll-sitemap
   - jekyll-seo-tag
+  - jekyll-include-cache
   - jekyll-remote-theme
 
 # ── Exclude from Build ────────────────────────────────────────────────────────

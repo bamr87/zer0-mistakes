@@ -61,6 +61,7 @@ tmpl_render() {
         -e "s|{{THEME_DISPLAY_NAME}}|${THEME_DISPLAY_NAME:-Zer0-Mistakes}|g" \
         -e "s|{{THEME_VERSION}}|${THEME_VERSION:-}|g" \
         -e "s|{{THEME_SOURCE}}|${THEME_SOURCE:-gem}|g" \
+        -e "s|{{THEME_REMOTE}}|${THEME_REMOTE:-bamr87/zer0-mistakes}|g" \
         -e "s|{{GITHUB_USER}}|${GITHUB_USER:-}|g" \
         -e "s|{{FORK_GITHUB_USER}}|${GITHUB_USER:-}|g" \
         -e "s|{{GITHUB_REPO}}|${GITHUB_REPO:-}|g" \
@@ -72,6 +73,7 @@ tmpl_render() {
         -e "s|{{REMOTE_BRANCH}}|${REMOTE_BRANCH:-${GITHUB_PAGES_BRANCH:-gh-pages}}|g" \
         -e "s|{{REPOSITORY_NAME}}|${REPOSITORY_NAME:-${GITHUB_REPO:-my-site}}|g" \
         -e "s|{{SITE_TITLE}}|${SITE_TITLE:-My Jekyll Site}|g" \
+        -e "s|{{SITE_NAME}}|${SITE_TITLE:-My Jekyll Site}|g" \
         -e "s|{{SITE_DESCRIPTION}}|${SITE_DESCRIPTION:-A Jekyll site built with zer0-mistakes}|g" \
         -e "s|{{SITE_AUTHOR}}|${SITE_AUTHOR:-Site Author}|g" \
         -e "s|{{SITE_EMAIL}}|${SITE_EMAIL:-}|g" \
@@ -87,6 +89,8 @@ tmpl_render() {
         -e "s|{{COMMONMARKER_MACOS_VERSION}}|${COMMONMARKER_MACOS_VERSION:-~> 0.23}|g" \
         -e "s|{{GITHUB_PAGES_MAX_VERSION}}|${GITHUB_PAGES_MAX_VERSION:-232}|g" \
         -e "s|{{RUBY_MIN_VERSION_MACOS}}|${RUBY_MIN_VERSION_MACOS:-2.6.0}|g" \
+        -e "s|{{DEFAULT_BRANCH}}|${DEFAULT_BRANCH:-main}|g" \
+        -e "s|{{RUBY_VERSION}}|${RUBY_VERSION:-3.3}|g" \
         -e "s|{{INSTALL_PROFILE}}|${INSTALL_PROFILE:-default}|g" \
         -e "s|{{INSTALL_MODE}}|${INSTALL_MODE:-full}|g" \
         -e "s|{{CURRENT_DATE}}|$(date +%Y-%m-%d)|g" \

@@ -1,0 +1,51 @@
+# =============================================================================
+# zer0.install.yml — installer config file (example)
+# =============================================================================
+# Persist your installer choices here instead of re-typing flags every run.
+# Copy to your site root as `zer0.install.yml` (or `.zer0/config.yml`), or pass
+# an explicit path with `--config`. Discovered files merge low→high priority:
+#
+#   ~/.config/zer0/install.yml  <  ./zer0.install.yml  <  ./.zer0/config.yml
+#     <  --config FILE / $ZER0_CONFIG
+#
+# And the config layer itself sits between the profile and env/flags:
+#
+#   defaults  <  profile  <  THIS FILE  <  env vars  <  CLI flags
+#
+# Nested (shown here) and flat/dotted keys (e.g. `site.title:`) both work.
+# API keys are NEVER read from this file — keep CLAUDE_CODE_OAUTH_TOKEN /
+# ANTHROPIC_API_KEY / OPENAI_API_KEY in your environment.
+# =============================================================================
+
+# Named preset that seeds every field below.
+profile: github-pages          # default | minimal | blog | docs | portfolio | github-pages | fork
+
+site:
+  title: "My Site"
+  description: "A Jekyll site built with zer0-mistakes"
+  author: "Your Name"
+  email: "you@example.com"
+  # url: "https://you.github.io"
+  # timezone: "UTC"
+  # locale: "en"
+
+github:
+  user: your-username
+  repo: your-repo
+  # pages_branch: gh-pages
+  # enable_pages: false
+
+theme:
+  source: remote               # gem | remote | vendored
+
+# Deploy target plugin(s) — scalar or list.
+deploy:
+  - github-pages
+
+# AI agent guidance files to drop in — scalar or list.
+agents: [copilot, claude]
+
+# AI installer provider selection (wizard / suggest / diagnose).
+ai:
+  provider: auto               # auto | claude-cli | anthropic | openai | none
+  # model: claude-sonnet-5     # override the provider's default model

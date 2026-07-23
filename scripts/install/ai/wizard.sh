@@ -38,7 +38,8 @@ ai_wizard_run() {
     fi
 
     if ! ai_client_available; then
-        log_error "AI wizard requires OPENAI_API_KEY or OPENAI_BASE_URL"
+        log_error "AI wizard needs an AI provider — install the 'claude' CLI (Claude Code OAuth),"
+        log_error "or set CLAUDE_CODE_OAUTH_TOKEN / ANTHROPIC_API_KEY / OPENAI_API_KEY. Run 'install doctor'."
         return 1
     fi
 
@@ -79,8 +80,12 @@ Output ONLY the JSON object, no prose, no markdown fences.
 PROMPT
 )
 
+    local _ai_provider _ai_model
+    _ai_provider="$(ai_client_provider)"
+    _ai_model="$(ai_client_model "$_ai_provider")"
+
     log_banner "AI Installation Wizard"
-    log_info "Connecting to AI... (model: ${OPENAI_MODEL:-gpt-4o-mini})"
+    log_info "Connecting to AI (provider: ${_ai_provider}, auth: $(ai_client_auth_source)${_ai_model:+, model: ${_ai_model}})"
 
     local resp
     resp=$(ai_client_chat "$sys_prompt" "$user_prompt")
@@ -132,10 +137,10 @@ PROMPT
         fi
         # Apply platform defaults
         plan_apply_platform
-        # Record AI metadata
+        # Record AI metadata (the provider that actually served this run)
         SPEC_AI_USED=true
-        SPEC_AI_PROVIDER="${OPENAI_PROVIDER:-openai}"
-        SPEC_AI_MODEL="${OPENAI_MODEL:-gpt-4o-mini}"
+        SPEC_AI_PROVIDER="$_ai_provider"
+        SPEC_AI_MODEL="$_ai_model"
         export SPEC_AI_USED SPEC_AI_PROVIDER SPEC_AI_MODEL
         # Write final spec
         spec_write "$(spec_path "$target")"

@@ -85,7 +85,7 @@ spec_default() {
   },
   "ai": {
     "used": false,
-    "provider": "openai",
+    "provider": "auto",
     "model": "",
     "tokens_estimated": 0,
     "spec_hash": ""
@@ -108,10 +108,18 @@ spec_write() {
     local out_file="$1"
     local dry_run="${_FS_DRY_RUN:-0}"
 
-    # Build tasks array from space-separated SPEC_TASKS
+    # Build tasks array from space-separated SPEC_TASKS.
+    # Distinguish UNSET (→ default task list) from EMPTY (→ [], e.g. a
+    # deploy-only run). Using `${SPEC_TASKS:-default}` here would turn an
+    # intentional empty list back into the full default and clobber content.
     local tasks_json=""
-    local t
-    for t in ${SPEC_TASKS:-config gemfile docker pages nav data gitignore readme marker}; do
+    local t _tasks_src
+    if [[ -z "${SPEC_TASKS+set}" ]]; then
+        _tasks_src="config gemfile docker pages nav data gitignore readme marker"
+    else
+        _tasks_src="${SPEC_TASKS}"
+    fi
+    for t in ${_tasks_src}; do
         tasks_json="${tasks_json}\"${t}\","
     done
     tasks_json="[${tasks_json%,}]"
@@ -168,7 +176,7 @@ spec_write() {
   },
   "ai": {
     "used": ${SPEC_AI_USED:-false},
-    "provider": "${SPEC_AI_PROVIDER:-openai}",
+    "provider": "${SPEC_AI_PROVIDER:-auto}",
     "model": "${SPEC_AI_MODEL:-}",
     "tokens_estimated": ${SPEC_AI_TOKENS:-0},
     "spec_hash": ""
@@ -248,7 +256,7 @@ _spec_read_jq() {
     SPEC_OPT_SKIP_DOCTOR=$(jq -r '.options.skip_doctor // false' "$f")
     SPEC_OPT_VERBOSE=$(jq -r '.options.verbose // false' "$f")
     SPEC_AI_USED=$(jq -r '.ai.used // false' "$f")
-    SPEC_AI_PROVIDER=$(jq -r '.ai.provider // "openai"' "$f")
+    SPEC_AI_PROVIDER=$(jq -r '.ai.provider // "auto"' "$f")
     SPEC_AI_MODEL=$(jq -r '.ai.model // ""' "$f")
     SPEC_AI_TOKENS=$(jq -r '.ai.tokens_estimated // 0' "$f")
     SPEC_SCRAPE_SOURCE_URL=$(jq -r '.scrape.source_url // ""' "$f")
@@ -369,7 +377,7 @@ _spec_read_awk() {
     SPEC_OPT_SKIP_DOCTOR="${SPEC_OPT_SKIP_DOCTOR:-false}"
     SPEC_OPT_VERBOSE="${SPEC_OPT_VERBOSE:-false}"
     SPEC_AI_USED="${SPEC_AI_USED:-false}"
-    SPEC_AI_PROVIDER="${SPEC_AI_PROVIDER:-openai}"
+    SPEC_AI_PROVIDER="${SPEC_AI_PROVIDER:-auto}"
     SPEC_AI_MODEL="${SPEC_AI_MODEL:-}"
     SPEC_AI_TOKENS="${SPEC_AI_TOKENS:-0}"
     SPEC_SCRAPE_SOURCE_URL="${SPEC_SCRAPE_SOURCE_URL:-$(awk '/"source_url"/ { gsub(/.*"source_url"[[:space:]]*:[[:space:]]*"/, ""); gsub(/".*/, ""); print; exit }' "$f" 2>/dev/null)}"
