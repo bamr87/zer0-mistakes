@@ -90,6 +90,7 @@ plugins:
   - jekyll-feed
   - jekyll-sitemap
   - jekyll-seo-tag
+  - jekyll-include-cache
   - jekyll-remote-theme
 
 # ── Exclude from Build ────────────────────────────────────────────────────────

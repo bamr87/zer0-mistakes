@@ -75,6 +75,17 @@ if grep -qE '^remote_theme[[:space:]]*:[[:space:]]*"bamr87/zer0-mistakes"' "${rt
 else
     fail "remote_theme wrong: $(grep -E '^remote_theme' "${rt_out}/_config.yml" 2>/dev/null | tr -s ' ')"
 fi
+# The remote Gemfile must build on Ruby 3.x: modern Jekyll (not the legacy
+# github-pages gem, which downgrades to Jekyll 3.6 and fails), and the theme
+# needs jekyll-include-cache + webrick.
+gem_ok=1
+grep -qE '^gem "jekyll"' "${rt_out}/Gemfile" || { gem_ok=0; echo "    Gemfile does not pin jekyll"; }
+grep -qE '^[[:space:]]*gem "github-pages"' "${rt_out}/Gemfile" && { gem_ok=0; echo "    Gemfile still uses legacy github-pages gem"; }
+grep -q 'jekyll-include-cache' "${rt_out}/Gemfile" || { gem_ok=0; echo "    Gemfile missing jekyll-include-cache"; }
+grep -q 'webrick' "${rt_out}/Gemfile" || { gem_ok=0; echo "    Gemfile missing webrick"; }
+grep -q 'jekyll-include-cache' "${rt_out}/_config.yml" || { gem_ok=0; echo "    _config.yml plugins missing jekyll-include-cache"; }
+[[ $gem_ok -eq 1 ]] && pass "remote Gemfile is Ruby-3-buildable (modern jekyll + include-cache + webrick)" \
+    || fail "remote Gemfile/plugins not Ruby-3-buildable"
 
 echo
 echo "── Deploy plugins (via --deploy flag)"

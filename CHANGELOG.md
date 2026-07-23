@@ -52,6 +52,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   no unresolved tokens survive in any deploy artifact.
 - **Agent files were written twice** when `agents` appeared in both the task
   list and `SPEC_AGENTS`; `apply.sh` now runs the agents task at most once.
+- **The remote / github-pages Gemfile failed to build on Ruby 3.x.** It paired
+  the legacy `github-pages` gem with a standalone `jekyll-remote-theme`, which
+  bundler resolved to an ancient github-pages 170 (Jekyll 3.6 / kramdown 1.14,
+  `rexml` LoadError). The remote Gemfile now pins modern Jekyll +
+  `jekyll-remote-theme` + `webrick`, and both the Gemfile and the remote
+  `_config.yml` template add `jekyll-include-cache` (required by the theme's
+  layouts).
 
 ## [1.27.0](https://github.com/bamr87/zer0-mistakes/compare/v1.26.0...v1.27.0) (2026-07-22)
 

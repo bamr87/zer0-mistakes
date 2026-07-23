@@ -1,7 +1,19 @@
 source "https://rubygems.org"
 
-# GitHub Pages gem — includes Jekyll and all whitelisted plugins
-gem "github-pages", group: :jekyll_plugins
-
-# Remote theme support (loads zer0-mistakes from GitHub)
+# Modern Jekyll + the remote-theme plugin (loads {{THEME_REMOTE}} from GitHub).
+# The generated deploy workflow builds with Bundler via GitHub Actions, so this
+# uses current Jekyll rather than the legacy `github-pages` gem — which, when
+# combined with a standalone jekyll-remote-theme, resolves to an ancient
+# Jekyll 3.6 that fails to build on Ruby 3.x.
+gem "jekyll", "{{JEKYLL_VERSION}}"
 gem "jekyll-remote-theme"
+
+group :jekyll_plugins do
+  gem "jekyll-feed"
+  gem "jekyll-sitemap"
+  gem "jekyll-seo-tag"
+  gem "jekyll-include-cache"
+end
+
+# Ruby 3.0+ no longer ships webrick in the standard library (needed by serve).
+gem "webrick", "{{WEBRICK_VERSION}}"
