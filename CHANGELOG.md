@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`nav: pages` sidebar mode — auto-build the left tree from page URLs.** A new
+  sidebar mode (`_includes/navigation/sidebar-pagetree.html`) derives a
+  collapsible section tree purely from page permalinks under a `sidebar.base`
+  prefix — no curated `_data/navigation/*.yml` file to write or keep in sync.
+  Enable per page / collection / site with `sidebar: {nav: pages, base: /docs/,
+  order_by: nav_order, title: …}`. It covers plain pages (`site.html_pages`) and
+  collection documents (`site.documents`) alike, groups them by first path
+  segment, humanizes section labels from the URL (never leaking a generic
+  "Index" title), sorts each section by a numeric `order_by` (natural order),
+  supports per-page `sidebar_label` / `sidebar_exclude`, and marks only the
+  current page active with its section expanded server-side — pure Liquid, so
+  it is GitHub Pages / `remote_theme` safe. Documented at
+  `/docs/features/sidebar-page-tree/`.
 - **Claude Code OAuth in the AI installer** — the spec-driven installer
   (`scripts/bin/install`) is now multi-provider. `scripts/install/ai/client.sh`
   resolves a provider via `ZER0_AI_PROVIDER` (default `auto`), preferring the

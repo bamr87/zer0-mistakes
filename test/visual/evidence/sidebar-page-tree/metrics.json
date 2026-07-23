@@ -1,0 +1,29 @@
+{
+  "component": "_includes/navigation/sidebar-pagetree.html (nav: pages mode)",
+  "feature": "Derive the left-sidebar tree from page URLs under `sidebar.base`, with no curated _data/navigation/*.yml file.",
+  "route": "/docs/wargames/bandit/bandit5/  (a consumer site with 219 vendored OverTheWire pages under /docs/wargames/, config `sidebar: {nav: pages, base: /docs/wargames/, order_by: nav_order}`)",
+  "measurement": "counts under `aside.bd-sidebar` in the raw server-rendered HTML (no client JS): section groups, nav-tree links, child (level) links, active link, expanded (`.collapse.show`) sections",
+  "before": {
+    "theme": "origin/main (no `pages` mode)",
+    "aside_present": false,
+    "sections": 0,
+    "nav_links": 0,
+    "child_links": 0,
+    "active": 0,
+    "note": "`nav: pages` is unrecognized, so the content gate is false and the left navigation column is not rendered at all. Getting a browsable tree required hand-authoring/generating a ~219-entry _data/navigation/wargames.yml."
+  },
+  "after": {
+    "theme": "this PR HEAD",
+    "aside_present": true,
+    "pagetree": 1,
+    "sections": 14,
+    "nav_links": 219,
+    "child_links": 200,
+    "active": 1,
+    "active_href": "/docs/wargames/bandit/bandit5/",
+    "expanded_sections": 1,
+    "active_in_expanded": 1,
+    "datafile_lines": 0
+  },
+  "how_produced": "Two real Jekyll builds of the same fixture site (219 pages, identical config). BEFORE loads the theme from an origin/main git worktree; AFTER loads it from this PR's working tree. Both built with an empty baseurl and served locally; counts and screenshots captured with Playwright/Chromium at 1280px."
+}

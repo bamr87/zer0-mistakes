@@ -1,0 +1,150 @@
+{%- comment -%}
+  Component:   sidebar-pagetree
+  Path:        _includes/navigation/sidebar-pagetree.html
+  Purpose:     "pages" sidebar mode — a live URL-hierarchy tree of the site's
+               pages under a base path, grouped by their first path segment
+               into collapsible sections. Zero curated _data/navigation/*.yml
+               file needed: the tree is derived from page permalinks, so it
+               stays in sync with the content automatically.
+
+               Use it for flat page trees that aren't a Jekyll collection
+               (the "collection" mode covers collections). Example: a docs
+               area whose pages live at /docs/<section>/<page>/.
+
+  Params (include.* override the page.sidebar hash):
+               base      (required) URL prefix to root the tree at, e.g.
+                         "/docs/wargames/". Only pages whose url is under this
+                         prefix are listed.
+               order_by  (optional) front-matter key to sort each section's
+                         pages by. Jekyll `sort` is numeric-aware, so a numeric
+                         field like `nav_order` yields natural (0,1,2,…,10)
+                         order. Default: url (path order).
+               expand    (optional) true to expand every section (default:
+                         only the section containing the current page).
+  Front matter (per page, all optional):
+               sidebar_exclude: true  — hide this page from the tree.
+               sidebar_label: "…"     — override the link text (else title).
+  Heading:     title/icon resolved by sidebar-config.html (page → site).
+  Depends on:  site.html_pages, Bootstrap 5 collapse, Bootstrap Icons, the
+               nav-tree styles (_sass/core/_nav-tree.scss). Emits the same
+               nav-tree markup as nav-tree.html / sidebar-folders.html so
+               active-state, collapse and styling behave identically.
+{%- endcomment -%}
+
+{%- assign _base = include.base | default: page.sidebar.base -%}
+{%- if _base -%}
+  {%- assign _order_by = include.order_by | default: page.sidebar.order_by -%}
+  {%- assign _expand_all = page.sidebar.expand | default: false -%}
+
+  {%- comment -%} Pool = plain pages + every collection document, so the tree
+       works for flat pages (site.html_pages) AND collection content
+       (site.documents) alike. Then keep those under the base prefix. {%- endcomment -%}
+  {%- assign _pool = site.html_pages | concat: site.documents -%}
+  {%- assign _pages = _pool | where_exp: "p", "p.url contains _base" | where_exp: "p", "p.sidebar_exclude != true" -%}
+  {%- comment -%} The base index page (url == base) becomes a top-level link. {%- endcomment -%}
+  {%- assign _base_index = _pages | where: "url", _base | first -%}
+  {%- comment -%} Everything else groups by its first path segment after base. {%- endcomment -%}
+  {%- assign _rest = _pages | where_exp: "p", "p.url != _base" -%}
+  {%- assign _groups = _rest | group_by_exp: "p", "p.url | remove_first: _base | split: '/' | first" | sort: "name" -%}
+
+<div class="sidebar-pagetree w-100">
+  <ul class="list-unstyled nav-tree-root mb-0">
+    {%- if _base_index -%}
+    <li class="nav-tree-item" data-depth="0">
+      <a href="{{ _base_index.url | relative_url }}"
+         class="nav-tree-link d-flex align-items-start rounded py-1 px-2 text-decoration-none{% if page.url == _base_index.url %} active{% endif %}"{% if page.url == _base_index.url %} aria-current="page"{% endif %}>
+        <i class="bi bi-collection me-2 flex-shrink-0" aria-hidden="true"></i>
+        <span>{{ _base_index.sidebar_label | default: _base_index.title | default: "Overview" }}</span>
+      </a>
+    </li>
+    {%- endif -%}
+
+    {%- for group in _groups -%}
+      {%- if group.name == "" or group.name == nil -%}{%- continue -%}{%- endif -%}
+      {%- assign _section = group.name -%}
+      {%- capture _section_url -%}{{ _base }}{{ _section }}/{%- endcapture -%}
+      {%- assign _group_id = _section | slugify | prepend: "sidebar-pt-" -%}
+      {%- assign _index = group.items | where: "url", _section_url | first -%}
+      {%- assign _children = group.items | where_exp: "p", "p.url != _section_url" -%}
+      {%- if _order_by -%}
+        {%- assign _children = _children | sort: _order_by -%}
+      {%- else -%}
+        {%- assign _children = _children | sort: "url" -%}
+      {%- endif -%}
+      {%- assign _child_count = _children | size -%}
+
+      {%- comment -%} Label the section from its URL segment (humanized), not the
+           index page's title — index titles are often generic ("Index") or
+           verbose. Mirrors sidebar-folders.html. A page can still override its
+           own child label via `sidebar_label`. {%- endcomment -%}
+      {%- assign _title = _section | replace: "-", " " | replace: "_", " " | capitalize -%}
+      {%- assign _active_here = group.items | where: "url", page.url | size -%}
+      {%- if _expand_all or _active_here > 0 -%}{%- assign _expanded = true -%}{%- else -%}{%- assign _expanded = false -%}{%- endif -%}
+
+      <li class="nav-tree-item sidebar-pagetree-group" data-depth="0">
+        {%- if _child_count == 0 and _index -%}
+        {%- comment -%} Section with only its index page — plain leaf, no toggle. {%- endcomment -%}
+        <a href="{{ _index.url | relative_url }}"
+           class="nav-tree-link d-flex align-items-start rounded py-1 px-2 text-decoration-none{% if page.url == _index.url %} active{% endif %}"{% if page.url == _index.url %} aria-current="page"{% endif %}>
+          <i class="bi bi-folder2 me-2 flex-shrink-0" aria-hidden="true"></i>
+          <span>{{ _title }}</span>
+        </a>
+        {%- else -%}
+        <div class="d-flex align-items-center">
+          {%- if _index -%}
+          <a href="{{ _index.url | relative_url }}"
+             class="nav-tree-link flex-grow-1 d-inline-flex align-items-center rounded py-1 px-2 text-decoration-none{% if page.url == _index.url %} active{% endif %}"{% if page.url == _index.url %} aria-current="page"{% endif %}>
+            <i class="bi bi-folder2 me-2" aria-hidden="true"></i>
+            <span>{{ _title }}</span>
+          </a>
+          <button class="btn btn-sm btn-link nav-tree-toggle p-1{% unless _expanded %} collapsed{% endunless %}"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#{{ _group_id }}"
+                  aria-expanded="{{ _expanded }}"
+                  aria-controls="{{ _group_id }}"
+                  aria-label="Toggle {{ _title }} section">
+            <i class="bi bi-chevron-down nav-tree-chevron" aria-hidden="true"></i>
+          </button>
+          {%- else -%}
+          <button class="btn btn-link nav-tree-toggle w-100 d-flex align-items-center text-start py-1 px-2{% unless _expanded %} collapsed{% endunless %}"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#{{ _group_id }}"
+                  aria-expanded="{{ _expanded }}"
+                  aria-controls="{{ _group_id }}">
+            <i class="bi bi-folder2 me-2" aria-hidden="true"></i>
+            <span class="flex-grow-1">{{ _title }}</span>
+            <i class="bi bi-chevron-down nav-tree-chevron" aria-hidden="true"></i>
+          </button>
+          {%- endif -%}
+        </div>
+
+        <div class="collapse{% if _expanded %} show{% endif %}" id="{{ _group_id }}">
+          <ul class="list-unstyled nav-tree-children mb-0">
+            {%- for pg in _children -%}
+              {%- assign _pg_label = pg.sidebar_label | default: pg.title -%}
+              {%- unless _pg_label -%}
+                {%- assign _pg_label = pg.url | split: "/" | last | replace: "-", " " | replace: "_", " " | capitalize -%}
+              {%- endunless -%}
+              <li class="nav-tree-item" data-depth="1">
+                <a href="{{ pg.url | relative_url }}"
+                   class="nav-tree-link d-flex align-items-start rounded py-1 px-2 text-decoration-none{% if page.url == pg.url %} active{% endif %}"{% if page.url == pg.url %} aria-current="page"{% endif %}>
+                  <i class="bi bi-file-earmark-text me-2 flex-shrink-0" aria-hidden="true"></i>
+                  <span>{{ _pg_label }}</span>
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+        {%- endif -%}
+      </li>
+    {%- endfor -%}
+  </ul>
+</div>
+{%- else -%}
+  <p class="text-body-secondary small mb-0">
+    <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
+    Set <code>sidebar.base</code> (a URL prefix) to enable the page tree.
+  </p>
+{%- endif -%}

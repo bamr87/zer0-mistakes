@@ -79,6 +79,9 @@ const NOTES_COLLECTION = '/notes/git-cheatsheet/';
 const CATEGORIES_PAGE = '/faq/';
 // `sidebar: false` opt-out.
 const OPT_OUT_PAGE = '/sitemap/';
+// A page using the URL-hierarchy `nav: pages` mode (sidebar-pagetree.html):
+// the tree is derived from page URLs under a base with NO _data/navigation file.
+const PAGE_TREE = '/docs/features/sidebar-page-tree/';
 
 test.describe('Sidebar modes — resolution and rendering', { tag: '@critical' }, () => {
   test.beforeEach(async ({ page }) => {
@@ -180,6 +183,29 @@ test.describe('Sidebar modes — resolution and rendering', { tag: '@critical' }
     await expect(
       page.locator('.bd-sidebar-desktop-header').first()
     ).toContainText('Browse docs');
+  });
+
+  test('nav: pages builds a URL-hierarchy tree with one active link and its section expanded', async ({ page }) => {
+    await waitForJekyll(page, PAGE_TREE);
+    const aside = page.locator('aside.bd-sidebar');
+    await expect(aside).toHaveCount(1);
+    // The pages mode renders sidebar-pagetree.html — a data-file-free tree
+    // derived purely from page permalinks under `sidebar.base` (/docs/).
+    const tree = aside.locator('.sidebar-pagetree');
+    await expect(tree).toHaveCount(1);
+    // More than one collapsible section group (grouped by first path segment).
+    const groups = tree.locator('[id^="sidebar-pt-"]');
+    expect(await groups.count(), 'the /docs/ tree should have several sections').toBeGreaterThan(1);
+    // Exactly the current page is marked active (same Liquid `==`-in-`if`
+    // guarantee the nav-tree regression test protects; assign can't do it).
+    await expect(tree.locator('.nav-tree-link.active')).toHaveCount(1);
+    await expect(tree.locator('.nav-tree-link.active')).toHaveAttribute(
+      'href',
+      /\/docs\/features\/sidebar-page-tree\//
+    );
+    // The section containing the active page is expanded server-side (no JS):
+    // its collapse panel carries `.show` and holds the active link.
+    await expect(tree.locator('.collapse.show .nav-tree-link.active')).toHaveCount(1);
   });
 });
 
