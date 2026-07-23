@@ -4,8 +4,9 @@ name: Content & Docs Review
 # Reviews changed Markdown content and docs on pull requests:
 #   1. Deterministic SEO + quality checks (scripts/content-review.rb) — always
 #      runs, no secrets required, works on fork PRs.
-#   2. Claude Code content-reviewer agent — runs only when ANTHROPIC_API_KEY is
-#      configured, for editorial/consistency/polish review.
+#   2. Claude Code content-reviewer agent — runs only when a Claude credential
+#      is configured (CLAUDE_CODE_OAUTH_TOKEN preferred, ANTHROPIC_API_KEY as
+#      fallback), for editorial/consistency/polish review.
 #   3. Docs front matter, internal links, and markdownlint (formerly the
 #      separate docs-validate.yml).
 # See .github/instructions/content-review.instructions.md for the contract.
@@ -54,13 +55,14 @@ jobs:
       - name: Check AI availability
         id: ai-gate
         env:
+          OAUTH: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          if [ -n "$KEY" ]; then
+          if [ -n "$OAUTH" ] || [ -n "$KEY" ]; then
             echo "enabled=true" >> "$GITHUB_OUTPUT"
           else
             echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::ANTHROPIC_API_KEY not set — skipping the Claude Code review tier."
+            echo "::notice::No CLAUDE_CODE_OAUTH_TOKEN or ANTHROPIC_API_KEY set — skipping the Claude Code review tier."
           fi
 
       - name: Checkout
@@ -148,10 +150,16 @@ jobs:
       - name: Run content-reviewer agent (headless)
         id: agent
         env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           BASE_REF: origin/${{ github.base_ref }}
         run: |
           set +e
+          # House convention: OAuth wins when both are set — drop the API key
+          # entirely so an empty-string secret never triggers empty-key auth.
+          if [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
+            unset ANTHROPIC_API_KEY
+          fi
           read -r -d '' PROMPT <<EOF
           Use the content-reviewer subagent to review the Markdown content files
           changed on this branch versus ${BASE_REF}. Follow

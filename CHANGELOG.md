@@ -33,6 +33,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Installer spec default `ai.provider` is now `auto` (was `openai`); the AI
   wizard records the provider that actually served the run.
+- **CI workflows now honor `CLAUDE_CODE_OAUTH_TOKEN`** — `ui-audit.yml`,
+  `ai-content-review.yml`, and `ci-self-repair.yml` previously gated their
+  Claude Code agent tier on `ANTHROPIC_API_KEY` alone, silently ignoring a
+  configured OAuth token. They now follow the same house convention as
+  `claude.yml` / `issue-autopilot.yml`: `CLAUDE_CODE_OAUTH_TOKEN` preferred,
+  `ANTHROPIC_API_KEY` used only when it's absent.
 
 ### Fixed
 

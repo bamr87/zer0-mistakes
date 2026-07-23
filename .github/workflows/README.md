@@ -136,7 +136,7 @@ Deploys the AI-chat Cloudflare Worker via `wrangler-action`. Requires `CLOUDFLAR
 
 **Triggers:** PRs touching `pages/**/*.md` or `docs/**`, Manual dispatch
 
-Two tiers plus docs validation: (1) deterministic SEO/quality checks (`scripts/content-review.rb`, fork-safe, posts a sticky comment); (2) the Claude Code content-reviewer agent (only when `ANTHROPIC_API_KEY` is set and content actually changed); (3) front-matter, internal-link, and markdownlint jobs (formerly `docs-validate.yml`).
+Two tiers plus docs validation: (1) deterministic SEO/quality checks (`scripts/content-review.rb`, fork-safe, posts a sticky comment); (2) the Claude Code content-reviewer agent (only when a Claude credential — `CLAUDE_CODE_OAUTH_TOKEN` preferred, `ANTHROPIC_API_KEY` as fallback — is set and content actually changed); (3) front-matter, internal-link, and markdownlint jobs (formerly `docs-validate.yml`).
 
 ### `issue-autopilot.yml` — Issue autopilot
 
@@ -206,8 +206,10 @@ Every quality gate a contributor can run locally must be enforced somewhere in C
 GITHUB_TOKEN            # Automatically provided
 RUBYGEMS_API_KEY        # Gem publishing (release.yml → bamr87/.github publish)
 DOCKER_USERNAME/TOKEN   # Docker Hub publish (test-latest.yml)
-ANTHROPIC_API_KEY       # AI tiers (ai-content-review, ci-self-repair, autopilot)
-CLAUDE_CODE_OAUTH_TOKEN # Preferred Claude credential for the issue autopilot
+CLAUDE_CODE_OAUTH_TOKEN # Preferred Claude credential — all AI tiers (claude.yml,
+                        # ai-content-review, ci-self-repair, ui-audit, autopilot)
+ANTHROPIC_API_KEY       # Fallback Claude credential — same AI tiers, used only
+                        # when CLAUDE_CODE_OAUTH_TOKEN is absent
 CLOUDFLARE_API_TOKEN    # Chat proxy deploy
 CLOUDFLARE_ACCOUNT_ID   # Chat proxy deploy
 
