@@ -36,6 +36,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Left-sidebar nav highlighted every item as "active".** `nav-tree.html`
+  used `{% assign is_active = page.url == item.url %}`, but Liquid `assign`
+  does not evaluate `==` — it stored `page.url` (always truthy), so every link
+  rendered with the active style. Replaced the three broken assigns
+  (`is_active`, `child_active`, `gc_active`) with proper conditional assigns so
+  only the current page is marked active.
 - **`install deploy` no longer clobbers site content.** `spec_write` treated an
   empty `SPEC_TASKS` as "use the full default task list", so a deploy-only run
   re-ran `config`/`pages`/`nav` and overwrote a customised `_config.yml`,

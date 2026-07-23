@@ -94,6 +94,21 @@ test.describe('Sidebar modes — resolution and rendering', { tag: '@critical' }
     await expect(aside.locator('.nav-tree-link').first()).toBeVisible();
   });
 
+  test('curated nav-tree marks only the current page active, not every item', async ({ page }) => {
+    await waitForJekyll(page, DOCS_EXPLICIT_TREE);
+    const aside = page.locator('aside.bd-sidebar');
+    await expect(aside).toHaveCount(1);
+    const links = aside.locator('.nav-tree .nav-tree-link');
+    const total = await links.count();
+    const active = await aside.locator('.nav-tree .nav-tree-link.active').count();
+    // Regression (nav-tree.html): `{% assign is_active = page.url == item.url %}`
+    // does NOT evaluate `==` in Liquid — assign stored `page.url` (a truthy
+    // string), so EVERY link rendered `.active`. The fix marks at most the
+    // current page. Pre-fix this asserts `active === total` (all active).
+    expect(total, 'the curated docs tree should have several links').toBeGreaterThan(1);
+    expect(active, 'at most one nav-tree link (the current page) may be active').toBeLessThanOrEqual(1);
+  });
+
   test('nav: auto on a docs page resolves to the curated docs.yml tree', async ({ page }) => {
     await waitForJekyll(page, DOCS_AUTO_TREE);
     // Pre-refactor this page had NO left column (unresolvable `nav: tree`).

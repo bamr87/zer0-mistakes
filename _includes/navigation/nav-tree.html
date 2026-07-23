@@ -36,7 +36,7 @@
 <ul class="list-unstyled fw-normal pb-2 small nav-tree-root">
   {% for item in navigation %}
     {% assign item_id = item.title | slugify | prepend: "nav-" %}
-    {% assign is_active = page.url == item.url %}
+    {% assign is_active = false %}{% if page.url == item.url %}{% assign is_active = true %}{% endif %}
     {% assign is_expanded = item.expanded | default: false %}
     {% assign has_children = item.children and item.children.size > 0 %}
     
@@ -78,7 +78,7 @@
           <ul class="list-unstyled fw-normal ps-3 nav-tree-children">
             {% for child in item.children %}
               {% assign child_id = child.title | slugify | prepend: "nav-" %}
-              {% assign child_active = page.url == child.url %}
+              {% assign child_active = false %}{% if page.url == child.url %}{% assign child_active = true %}{% endif %}
               {% assign child_expanded = child.expanded | default: false %}
               {% assign child_has_children = child.children and child.children.size > 0 %}
               
@@ -118,7 +118,7 @@
                   <div class="collapse{% if child_expanded %} show{% endif %}" id="{{ child_id }}">
                     <ul class="list-unstyled fw-normal ps-3 nav-tree-children">
                       {% for grandchild in child.children %}
-                        {% assign gc_active = page.url == grandchild.url %}
+                        {% assign gc_active = false %}{% if page.url == grandchild.url %}{% assign gc_active = true %}{% endif %}
                         <li class="mb-1 nav-tree-item" data-depth="2">
                           {% if grandchild.url %}
                             <a href="{{ grandchild.url | relative_url }}" 
