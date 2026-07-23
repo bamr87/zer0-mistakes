@@ -1,0 +1,37 @@
+{
+  "route": "http://localhost:4012/books/it-alphabet/index/",
+  "captured": [
+    {
+      "width": 320,
+      "file": "test/visual/evidence/book-abc/board-320.jpg",
+      "overflow": 0
+    },
+    {
+      "width": 390,
+      "file": "test/visual/evidence/book-abc/board-390.jpg",
+      "overflow": 0
+    },
+    {
+      "width": 768,
+      "file": "test/visual/evidence/book-abc/board-768.jpg",
+      "overflow": 0
+    },
+    {
+      "width": 992,
+      "file": "test/visual/evidence/book-abc/board-992.jpg",
+      "overflow": 0
+    },
+    {
+      "width": 1280,
+      "file": "test/visual/evidence/book-abc/board-1280.jpg",
+      "overflow": 0
+    }
+  ],
+  "structure": {
+    "letterCards": 26,
+    "placeholders": 26,
+    "renderedImages": 0,
+    "jumpLinks": 26,
+    "boardSkin": "abc-style--isometric-tech-toy"
+  }
+}

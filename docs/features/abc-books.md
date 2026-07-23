@@ -1,15 +1,18 @@
+---
+title: "ABC board books (book-abc layout)"
+description: "The book-abc layout: a single-scroll toddler alphabet board book driven by an alphabet front-matter list, with per-style CSS skins and series-grouped shelves."
+date: 2026-07-23T00:00:00.000Z
+lastmod: 2026-07-23T00:00:00.000Z
+categories: [docs]
+tags: [features, books, layouts]
+author: bamr87
+---
+
 # ABC board books (`book-abc` layout)
 
-The `books` collection publishes two kinds of picture book: **story books**
-(`layout: book` + chapters) and **ABC / alphabet board books**
-(`layout: book-abc`). This page documents the ABC layout — a single-scroll
-toddler board book where every page is one big letter, one word, and one
-picture.
+The `books` collection publishes two kinds of picture book: **story books** (`layout: book` + chapters) and **ABC / alphabet board books** (`layout: book-abc`). This page documents the ABC layout — a single-scroll toddler board book where every page is one big letter, one word, and one picture.
 
-ABC books are the "ABC & Language" series of the [drsai](https://github.com/bamr87/drsai)
-library. Their words and per-letter illustration prompts are drafted by the
-[zer0-CMS](https://github.com/bamr87/zer0-CMS) ABC wizard; this theme renders
-them.
+ABC books are the "ABC & Language" series of the [drsai](https://github.com/bamr87/drsai) library. Their words and per-letter illustration prompts are drafted by the [zer0-CMS](https://github.com/bamr87/zer0-CMS) ABC wizard; this theme renders them.
 
 ## Front matter
 
@@ -46,28 +49,16 @@ Optional intro markdown (shown in the cover hero).
   `_data/series.yml`), letter count, audience, and a "Start at A" button.
 - **A–Z quick-jump** strip — each card is anchored `#letter-a` … `#letter-z`.
 - **The alphabet board** — a responsive grid of `abc-letter` cards. The big
-  letter is HTML typography (a badge), never baked into the art, so raster
-  models never garble it. A card whose `status` is `planned` (no plate yet)
-  shows a tinted **"illustration coming soon"** placeholder instead of a broken
-  image, so the book reads end-to-end before any art runs.
+letter is HTML typography (a badge), never baked into the art, so raster models never garble it. A card whose `status` is `planned` (no plate yet) shows a tinted **"illustration coming soon"** placeholder instead of a broken image, so the book reads end-to-end before any art runs.
 - **Colophon** — the art-style prompt and generator provenance.
 
 ## Art-style skins
 
-Each `art_style` id adds a `.abc-style--<id>` class to the board that tints the
-placeholder tiles and letter badges. The ids are a cross-repo contract with
-zer0-CMS and the zer0-image-generator plugin
-(`data/abc_art_styles.yml`): `isometric-tech-toy`, `chalkboard-doodle`,
-`soft-plush`, `crayon-primary`, `paper-cutout`, `watercolor-storybook`. Add a
-new skin in `_sass/components/_book.scss` when the shared catalog gains a style.
+Each `art_style` id adds a `.abc-style--<id>` class to the board that tints the placeholder tiles and letter badges. The ids are a cross-repo contract with zer0-CMS and the zer0-image-generator plugin (`data/abc_art_styles.yml`): `isometric-tech-toy`, `chalkboard-doodle`, `soft-plush`, `crayon-primary`, `paper-cutout`, `watercolor-storybook`. Add a new skin in `_sass/components/_book.scss` when the shared catalog gains a style.
 
 ## Series & the bookshelf
 
-`components/bookshelf.html` lists both `book` and `book-abc` books, grouped into
-shelves by each book's `series:`. Display metadata (title, tagline, icon, order)
-comes from the site's `_data/series.yml`; a book with no `series` falls under the
-default `stories` shelf. Series render in the order they appear in
-`_data/series.yml`, then any undeclared series.
+`components/bookshelf.html` lists both `book` and `book-abc` books, grouped into shelves by each book's `series:`. Display metadata (title, tagline, icon, order) comes from the site's `_data/series.yml`; a book with no `series` falls under the default `stories` shelf. Series render in the order they appear in `_data/series.yml`, then any undeclared series.
 
 ## Files
 

@@ -20,7 +20,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   gains `.abc-board` / `.abc-letter-*` styles plus a `.abc-style--<id>` skin per
   shared art-style id. `components/bookshelf.html` now lists both `book` and
   `book-abc` books, grouped into series shelves from `_data/series.yml`;
-  `book-card.html` shows a letter count for ABC books. Docs:
+  `book-card.html` shows a letter count for ABC books. Ships a demo book
+  (`pages/_books/abc-demo/`) + default series metadata (`_data/series.yml`).
+  Regression test [`test/visual/features/book-abc.spec.js`](test/visual/features/book-abc.spec.js)
+  and before/after evidence in
+  [`test/visual/evidence/book-abc/`](test/visual/evidence/book-abc/). Docs:
   [`docs/features/abc-books.md`](docs/features/abc-books.md).
 - **`nav: pages` sidebar mode — auto-build the left tree from page URLs.** A new
   sidebar mode (`_includes/navigation/sidebar-pagetree.html`) derives a

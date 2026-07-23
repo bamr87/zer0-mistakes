@@ -1,0 +1,19 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Default book series / categories for the zer0-mistakes `books` collection.
+#
+# The bookshelf (components/bookshelf.html) groups books into shelves by each
+# book's `series:` front matter and reads the display metadata below as
+# `site.data.series[book.series]`. A consuming site can override this file with
+# its own `_data/series.yml`; a book with no `series` falls under `stories`.
+# ─────────────────────────────────────────────────────────────────────────────
+abc-language:
+  title: "ABC & Language"
+  tagline: "First alphabets — one letter, one word, one picture."
+  icon: "bi-type"
+  order: 1
+
+stories:
+  title: "Stories"
+  tagline: "Picture books to read cover to cover."
+  icon: "bi-book-half"
+  order: 2
