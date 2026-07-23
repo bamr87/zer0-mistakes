@@ -101,6 +101,17 @@
       {%- if site.tags.size > 0 -%}
         {%- assign sidebar_has_content = true -%}
       {%- endif -%}
+    {%- when "pages" -%}
+      {%- comment -%} URL-hierarchy page tree — content exists when the base
+           prefix matches at least one page (see sidebar-pagetree.html). {%- endcomment -%}
+      {%- assign _pt_base = page.sidebar.base -%}
+      {%- if _pt_base -%}
+        {%- assign _pt_pool = site.html_pages | concat: site.documents -%}
+        {%- assign _pt_hits = _pt_pool | where_exp: "p", "p.url contains _pt_base" -%}
+        {%- if _pt_hits.size > 0 -%}
+          {%- assign sidebar_has_content = true -%}
+        {%- endif -%}
+      {%- endif -%}
     {%- else -%}
       {%- if site.data.navigation[sidebar_nav] -%}
         {%- assign sidebar_has_content = true -%}
