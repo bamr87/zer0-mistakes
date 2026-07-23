@@ -144,6 +144,8 @@ plan_apply_flags() {
     [[ -n "${_FLAG_DEPLOY:-}" ]]      && SPEC_DEPLOY="$_FLAG_DEPLOY"
     [[ -n "${_FLAG_AGENTS:-}" ]]      && SPEC_AGENTS="$_FLAG_AGENTS"
     [[ -n "${_FLAG_TASKS:-}" ]]       && SPEC_TASKS="$_FLAG_TASKS"
+    [[ -n "${_FLAG_AI_PROVIDER:-}" ]] && SPEC_AI_PROVIDER="$_FLAG_AI_PROVIDER"
+    [[ -n "${_FLAG_AI_MODEL:-}" ]]    && SPEC_AI_MODEL="$_FLAG_AI_MODEL"
 
     # Booleans — flags are set to "1" when present
     [[ "${_FLAG_DRY_RUN:-0}" == "1" ]]     && SPEC_OPT_DRY_RUN=true
@@ -231,12 +233,19 @@ plan_build() {
     # Layer 1: Profile defaults
     [[ -n "$profile_file" ]] && plan_load_profile "$profile_file"
 
+    # Layer 1.5: User config file(s) — override profile, sit below env/flags.
+    if [[ "$(type -t config_load)" == "function" ]]; then
+        config_load "$target_dir"
+    fi
+
     # Layer 2: Environment variable overrides (ZER0_SITE_* etc.)
     [[ -n "${ZER0_SITE_TITLE:-}" ]]  && SPEC_SITE_TITLE="$ZER0_SITE_TITLE"
     [[ -n "${ZER0_SITE_AUTHOR:-}" ]] && SPEC_SITE_AUTHOR="$ZER0_SITE_AUTHOR"
     [[ -n "${ZER0_SITE_EMAIL:-}" ]]  && SPEC_SITE_EMAIL="$ZER0_SITE_EMAIL"
     [[ -n "${ZER0_GITHUB_USER:-}" ]] && SPEC_GITHUB_USER="$ZER0_GITHUB_USER"
     [[ -n "${ZER0_GITHUB_REPO:-}" ]] && SPEC_GITHUB_REPO="$ZER0_GITHUB_REPO"
+    [[ -n "${ZER0_AI_PROVIDER:-}" ]] && SPEC_AI_PROVIDER="$ZER0_AI_PROVIDER"
+    [[ -n "${ZER0_AI_MODEL:-}" ]]    && SPEC_AI_MODEL="$ZER0_AI_MODEL"
 
     # Layer 3: CLI flags (highest priority)
     plan_apply_flags
@@ -271,6 +280,7 @@ plan_build() {
         SPEC_OPT_DRY_RUN SPEC_OPT_FORCE SPEC_OPT_BACKUP \
         SPEC_OPT_NON_INTERACTIVE SPEC_OPT_OUTPUT SPEC_OPT_AUTO_ACCEPT \
         SPEC_OPT_SKIP_DOCTOR SPEC_OPT_VERBOSE \
+        SPEC_AI_PROVIDER SPEC_AI_MODEL \
         SITE_TITLE SITE_DESCRIPTION SITE_AUTHOR SITE_EMAIL SITE_URL \
         SITE_TIMEZONE SITE_LOCALE GITHUB_USER GITHUB_REPO \
         GITHUB_PAGES_BRANCH THEME_SOURCE REPOSITORY_NAME INSTALL_PROFILE

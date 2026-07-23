@@ -20,6 +20,34 @@ export ZER0_NO_AI=1     # forces every AI codepath to fall back to non-AI behavi
 
 Use this in compliance environments or CI where you want AI subcommands to be no-ops rather than errors.
 
+## Providers (Claude Code OAuth, Anthropic, OpenAI)
+
+The spec-driven installer (`scripts/bin/install`) speaks to whichever AI
+provider is available. Selection is controlled by `ZER0_AI_PROVIDER` (or
+`ai.provider` in a config file, or `--ai-provider`); the default `auto`
+resolves in this order:
+
+| # | Provider | Auth (env only) | When picked by `auto` |
+|---|---|---|---|
+| 1 | `claude-cli` | the logged-in **`claude` CLI** — **Claude Code OAuth** (`claude setup-token` / `claude login`) | whenever the `claude` binary is on `PATH` |
+| 2 | `anthropic` | `CLAUDE_CODE_OAUTH_TOKEN` (OAuth bearer) or `ANTHROPIC_API_KEY` | no `claude` CLI, but a token/key is set |
+| 3 | `openai` | `OPENAI_API_KEY` (or `OPENAI_BASE_URL` for Azure/Ollama) | only OpenAI credentials present |
+
+The `claude-cli` path is the zero-configuration default on any machine already
+signed into Claude Code — no API key handling at all. Force a specific provider
+with `--ai-provider anthropic` (etc.) or disable AI entirely with `--no-ai`.
+
+```bash
+install doctor .                 # prints the active provider + auth source
+install wizard . --ai            # uses Claude Code OAuth when available
+install wizard . --ai --ai-provider openai --ai-model gpt-4o
+```
+
+Model defaults per provider (`claude-sonnet-5` for anthropic, `gpt-4o-mini`
+for openai, the CLI's own default for claude-cli) and is overridable with
+`ZER0_AI_MODEL` / `--ai-model`. Keys are read from the **environment only** —
+never from a config file or a flag.
+
 ## Features at a glance
 
 | Subcommand | What it does | What's sent | Default model |

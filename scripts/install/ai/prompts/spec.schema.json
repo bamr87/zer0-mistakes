@@ -119,7 +119,7 @@
       "description": "Metadata about AI involvement. Written by ai/wizard.sh; informational only.",
       "properties": {
         "used":              { "type": "boolean", "default": false },
-        "provider":          { "type": "string",  "default": "openai" },
+        "provider":          { "type": "string",  "default": "auto", "description": "Resolved AI provider: auto|claude-cli|anthropic|openai|none." },
         "model":             { "type": "string",  "default": "" },
         "tokens_estimated":  { "type": "integer", "minimum": 0, "default": 0 },
         "spec_hash":         { "type": "string",  "default": "", "description": "sha256 of the spec JSON (without the ai.spec_hash field itself)." }

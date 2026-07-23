@@ -63,6 +63,7 @@ _cli_load_core() {
     _cli_require "fs.sh"
     _cli_require "template.sh"
     _cli_require "prompt.sh"
+    _cli_require "config.sh"
     _cli_require "spec.sh"
     _cli_require "plan.sh"
     _cli_require "apply.sh"
@@ -95,6 +96,9 @@ _cli_parse_flags() {
     _FLAG_AGENTS=""
     _FLAG_TASKS=""
     _FLAG_AI=0
+    _FLAG_AI_PROVIDER=""
+    _FLAG_AI_MODEL=""
+    _FLAG_CONFIG=""
     _FLAG_SPEC=""
     _FLAG_SCRAPE_URL=""
     _FLAG_SCRAPE_DEPTH=""
@@ -111,6 +115,7 @@ _cli_parse_flags() {
            _FLAG_SITE_URL _FLAG_SITE_AUTHOR _FLAG_SITE_EMAIL \
            _FLAG_GITHUB_USER _FLAG_GITHUB_REPO _FLAG_THEME_SOURCE \
            _FLAG_DEPLOY _FLAG_AGENTS _FLAG_TASKS _FLAG_AI _FLAG_SPEC \
+           _FLAG_AI_PROVIDER _FLAG_AI_MODEL _FLAG_CONFIG \
            _FLAG_SCRAPE_URL _FLAG_SCRAPE_DEPTH _FLAG_SCRAPE_MAX_PAGES
 
     while [[ $# -gt 0 ]]; do
@@ -123,6 +128,14 @@ _cli_parse_flags() {
             --skip-doctor)       _FLAG_SKIP_DOCTOR=1 ;;
             --verbose|-v)        _FLAG_VERBOSE=1 ;;
             --ai)                _FLAG_AI=1 ;;
+            --yes|-y)            _FLAG_AUTO_ACCEPT=1 ;;
+            --ai-provider)       shift; _FLAG_AI_PROVIDER="${1:-}" ;;
+            --ai-provider=*)     _FLAG_AI_PROVIDER="${1#--ai-provider=}" ;;
+            --ai-model)          shift; _FLAG_AI_MODEL="${1:-}" ;;
+            --ai-model=*)        _FLAG_AI_MODEL="${1#--ai-model=}" ;;
+            --config)            shift; _FLAG_CONFIG="${1:-}" ;;
+            --config=*)          _FLAG_CONFIG="${1#--config=}" ;;
+            --no-ai)             _FLAG_AI_PROVIDER="none" ;;
             --profile)           shift; _FLAG_PROFILE="${1:-}" ;;
             --profile=*)         _FLAG_PROFILE="${1#--profile=}" ;;
             --output)            shift; _FLAG_OUTPUT="${1:-}" ;;
@@ -239,6 +252,22 @@ _cmd_wizard() {
             _cmd_init
         fi
     fi
+}
+
+_cmd_suggest() {
+    # install suggest [TARGET_DIR] [GOAL...]
+    #   Recommends a profile + deploy target from an optional goal description.
+    #   Uses the resolved AI provider; falls back to rule-based defaults.
+    local target="${_CLI_POS_0:-$(pwd)}"
+    local goal="${_CLI_POS_1:-}"
+    local sug="${_CLI_DIR}/ai/suggest.sh"
+    if [[ ! -f "$sug" ]]; then
+        log_error "suggest: module not available: $sug"
+        return 1
+    fi
+    # shellcheck source=/dev/null
+    source "$sug"
+    ai_suggest_run "$target" "$goal"
 }
 
 _cmd_agents() {
@@ -460,9 +489,10 @@ Usage:
 Subcommands:
   init           Install from flags + profile (default)
   wizard         Interactive wizard (--ai for AI-driven spec)
+  suggest        Recommend a profile + deploy target (AI or rule-based)
   agents         Install AI agent files only
   deploy         Configure deployment plugin(s)
-  doctor         Run pre-install health checks
+  doctor         Run pre-install health checks (incl. AI provider status)
   scrape         Crawl an existing site into ./.zer0/scrape (no install)
   diagnose       Diagnose an existing install (--ai for suggestions)
   upgrade        Re-apply spec to an existing install
@@ -494,7 +524,12 @@ Global options:
   --skip-doctor          Skip pre-install health checks
   --verbose, -v          Extra debug output
   --output json|human    Log format (default: human)
+  --yes, -y              Auto-confirm all yes/no prompts (alias of --auto-accept)
+  --config FILE          Load installer settings from a YAML config file
   --ai                   Use AI assistant for wizard/diagnose
+  --ai-provider NAME     AI provider: auto|claude-cli|anthropic|openai|none
+  --ai-model NAME        Override the AI model id for the active provider
+  --no-ai                Disable AI (equivalent to --ai-provider none)
   --spec FILE            Load spec from FILE instead of detecting
   --scrape URL           Import content from URL during init (adds 'scrape' task)
   --scrape-depth N       Max crawl depth (default: 2)
@@ -503,9 +538,12 @@ Global options:
 Examples:
   install init . --profile blog --site-title "My Blog"
   install init ~/mysite --profile github-pages --github-user bamr87
-  install wizard . --ai
+  install wizard . --ai                       # uses Claude Code OAuth if available
+  install wizard . --ai --ai-provider anthropic
+  install suggest . "a docs site for a Rust CLI"
+  install init . --config zer0.install.yml
   install agents . --copilot --claude
-  install doctor .
+  install doctor .                            # includes AI provider status
   install diff .
   install upgrade . --force
   install plan . --profile docs
@@ -537,9 +575,17 @@ cli_main() {
     [[ "$_FLAG_VERBOSE" == "1" ]] && _LOG_VERBOSE=1 && export _LOG_VERBOSE
     [[ -n "$_FLAG_OUTPUT" ]]       && _LOG_OUTPUT="$_FLAG_OUTPUT" && export _LOG_OUTPUT
 
+    # Propagate AI selection + config path to the environment so provider
+    # resolution and config discovery see them regardless of the spec flow
+    # (e.g. `doctor`, `suggest`, `wizard --ai`).
+    [[ -n "$_FLAG_AI_PROVIDER" ]] && export ZER0_AI_PROVIDER="$_FLAG_AI_PROVIDER"
+    [[ -n "$_FLAG_AI_MODEL" ]]    && export ZER0_AI_MODEL="$_FLAG_AI_MODEL"
+    [[ -n "$_FLAG_CONFIG" ]]      && export ZER0_CONFIG="$_FLAG_CONFIG"
+
     case "$subcommand" in
         init)           _cmd_init ;;
         wizard)         _cmd_wizard ;;
+        suggest)        _cmd_suggest ;;
         agents)         _cmd_agents ;;
         deploy)         _cmd_deploy ;;
         doctor)         _cmd_doctor ;;

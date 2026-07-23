@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Claude Code OAuth in the AI installer** — the spec-driven installer
+  (`scripts/bin/install`) is now multi-provider. `scripts/install/ai/client.sh`
+  resolves a provider via `ZER0_AI_PROVIDER` (default `auto`), preferring the
+  logged-in `claude` CLI (**Claude Code OAuth** — zero key handling), then the
+  Anthropic Messages API (`CLAUDE_CODE_OAUTH_TOKEN` OAuth bearer or
+  `ANTHROPIC_API_KEY`), then OpenAI. `install doctor` reports the active
+  provider; `--ai-provider` / `--ai-model` / `ZER0_AI_MODEL` tune it; `--no-ai`
+  / `ZER0_NO_AI=1` disable it. User context is sanitized before every call.
+- **Config-file layer for the installer** — new `scripts/install/config.sh`
+  discovers and merges `~/.config/zer0/install.yml`, `<target>/zer0.install.yml`,
+  `<target>/.zer0/config.yml`, and `--config FILE` (precedence:
+  defaults < profile < config < env < flags). Recognises site / github / theme /
+  deploy / agents / tasks / ai keys; API keys stay environment-only.
+- **`install suggest`** subcommand — recommend a profile + deploy target
+  (AI-assisted with rule-based fallback) — plus `--yes` as an alias for
+  `--auto-accept`.
+- Installer regression matrix (`test/test_installer.sh`) now covers AI
+  provider resolution, text extraction across provider shapes, the config-file
+  layer + precedence, and the `doctor` AI check (all offline).
+
+### Changed
+
+- Installer spec default `ai.provider` is now `auto` (was `openai`); the AI
+  wizard records the provider that actually served the run.
+
 ## [1.27.0](https://github.com/bamr87/zer0-mistakes/compare/v1.26.0...v1.27.0) (2026-07-22)
 
 

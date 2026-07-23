@@ -36,8 +36,9 @@ flowchart TD
 
 | Command | Purpose |
 |---|---|
-| `install init [--profile X] [--deploy a,b,c]` | Scaffold a new site from a profile |
-| `install wizard [--ai]` | Interactive setup; `--ai` uses OpenAI for `_config.yml` generation |
+| `install init [--profile X] [--deploy a,b,c] [--config FILE]` | Scaffold a new site from a profile (+ optional config file) |
+| `install wizard [--ai] [--ai-provider P]` | Interactive setup; `--ai` uses Claude Code OAuth / Anthropic / OpenAI for `_config.yml` generation |
+| `install suggest [GOAL]` | Recommend a profile + deploy target (AI or rule-based) |
 | `install agents [--cursor\|--claude\|--aider\|--all]` | Drop AI agent guidance files into a site |
 | `install deploy <target>[,<target>] [--ai-suggest]` | Add a deploy target to an existing site |
 | `install list-profiles` | Show available profiles |

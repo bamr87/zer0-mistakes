@@ -119,6 +119,43 @@ doctor_check_gh() {
 }
 
 # ---------------------------------------------------------------------------
+# doctor_check_ai — report which AI provider (if any) will serve wizard/
+# suggest/diagnose. Warn-only: AI is always opt-in and never blocks install.
+# ---------------------------------------------------------------------------
+doctor_check_ai() {
+    if [[ "$(type -t ai_client_provider)" != "function" ]]; then
+        local _d
+        _d="${_CLI_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd)}"
+        [[ -f "${_d}/ai/client.sh" ]] && source "${_d}/ai/client.sh"
+    fi
+    if [[ "$(type -t ai_client_provider)" != "function" ]]; then
+        _doctor_warn "AI: client module unavailable (wizard/suggest/diagnose disabled)"
+        return 0
+    fi
+
+    if [[ "${ZER0_NO_AI:-0}" == "1" ]]; then
+        _doctor_pass "AI: disabled via ZER0_NO_AI (rule-based fallbacks only)"
+        return 0
+    fi
+    case "${ZER0_AI_PROVIDER:-}" in
+        none|off|disabled)
+            _doctor_pass "AI: disabled by choice (rule-based fallbacks only)"
+            return 0 ;;
+    esac
+
+    local provider
+    provider="$(ai_client_provider)"
+    if [[ "$provider" == "none" ]] || ! ai_client_available; then
+        _doctor_warn "AI: no provider available — install the 'claude' CLI (Claude Code OAuth), or set CLAUDE_CODE_OAUTH_TOKEN / ANTHROPIC_API_KEY / OPENAI_API_KEY"
+        return 0
+    fi
+
+    local model
+    model="$(ai_client_model "$provider")"
+    _doctor_pass "AI: ${provider} via $(ai_client_auth_source)${model:+ (model ${model})}"
+}
+
+# ---------------------------------------------------------------------------
 # doctor_check_writable TARGET_DIR
 # ---------------------------------------------------------------------------
 doctor_check_writable() {
@@ -155,6 +192,7 @@ doctor_run() {
     doctor_check_docker
     doctor_check_git      || failures=$(( failures + 1 ))
     doctor_check_gh
+    doctor_check_ai
     [[ -n "$target" ]] && { doctor_check_writable "$target" || failures=$(( failures + 1 )); }
 
     if [[ $failures -eq 0 ]]; then

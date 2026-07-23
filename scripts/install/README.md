@@ -86,8 +86,11 @@ This installer runs on macOS's `/bin/bash` (3.2). Restrictions:
 # Local development
 ./scripts/bin/install help
 ./scripts/bin/install init . --profile blog --site-title "My Blog"
-./scripts/bin/install wizard . --ai
-./scripts/bin/install doctor .
+./scripts/bin/install init . --config zer0.install.yml     # config-file driven
+./scripts/bin/install wizard . --ai                        # Claude Code OAuth if available
+./scripts/bin/install wizard . --ai --ai-provider anthropic
+./scripts/bin/install suggest . "a docs site for a Rust CLI"
+./scripts/bin/install doctor .                             # shows the active AI provider
 ./scripts/bin/install diff .
 ./scripts/bin/install plan . --profile docs
 
@@ -110,17 +113,64 @@ curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/scripts/b
 3. Add template to `templates/config/` or `templates/pages/`
 4. List in the appropriate profile YAML under `templates/profiles/`
 
+## Config file layer
+
+Sites can persist installer choices in a small YAML file instead of re-typing
+flags. `config.sh` discovers and merges these (low→high precedence):
+
+1. `~/.config/zer0/install.yml` (user-global)
+2. `<target>/zer0.install.yml` (project-local)
+3. `<target>/.zer0/config.yml` (project-local, hidden)
+4. `$ZER0_CONFIG` / `--config FILE` (explicit — wins)
+
+The config layer sits between profile defaults and env/flag overrides:
+
+```
+defaults < profile < CONFIG FILE < env vars < CLI flags
+```
+
+Recognised keys (nested **or** flat/dotted both work): `profile`,
+`site.{title,description,author,email,url,timezone,locale}`,
+`github.{user,repo,pages_branch,enable_pages}`, `theme.{source,version}`,
+`deploy`, `agents`, `tasks`, `ai.provider`, `ai.model`. Example:
+
+```yaml
+profile: github-pages
+site:
+  title: "My Docs"
+deploy: [github-pages]
+ai:
+  provider: claude-cli      # auto | claude-cli | anthropic | openai | none
+```
+
+API keys are **never** read from config files — they stay in the environment.
+
 ## AI integration
 
 The AI path is a first-class citizen but never mandatory:
 
 - `ai_wizard_run` → interactive LLM spec generation
-- `ai_diagnose_run` → post-build error analysis  
-- `ai_suggest_run` → profile + deploy recommendation
+- `ai_diagnose_run` → post-build error analysis
+- `ai_suggest_run` → profile + deploy recommendation (also `install suggest`)
 
-All three are guarded by `ZER0_NO_AI=1` kill-switch and degrade gracefully to defaults or rule-based logic when AI is unavailable.
+All are guarded by the `ZER0_NO_AI=1` kill-switch and degrade gracefully to
+defaults or rule-based logic when AI is unavailable.
 
-To enable: set `OPENAI_API_KEY` (or `OPENAI_BASE_URL` for Azure/Ollama).
+### Providers (`ai/client.sh`)
+
+The client is multi-provider. `ZER0_AI_PROVIDER` (or config `ai.provider`, or
+`--ai-provider`) selects one; the default `auto` resolves in this order:
+
+| # | Provider     | Auth                                            | Notes |
+|---|--------------|-------------------------------------------------|-------|
+| 1 | `claude-cli` | the logged-in `claude` CLI (**Claude Code OAuth**) | Zero key handling — reuses `claude setup-token` / `claude login`. Preferred when the `claude` binary is on `PATH`. |
+| 2 | `anthropic`  | `CLAUDE_CODE_OAUTH_TOKEN` (OAuth) or `ANTHROPIC_API_KEY` | Anthropic Messages API over HTTPS. |
+| 3 | `openai`     | `OPENAI_API_KEY` (or `OPENAI_BASE_URL` for Azure/Ollama) | OpenAI-compatible `/chat/completions`. |
+
+Model is auto-defaulted per provider and overridable with `ZER0_AI_MODEL` /
+`--ai-model` (`ANTHROPIC_MODEL` / `OPENAI_MODEL` also honoured). Run
+`install doctor` to see which provider is active. All calls are single-attempt
+with a 30s timeout; user context is sanitized before it leaves the host.
 
 ## Deploy plugins
 
