@@ -34,6 +34,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Installer spec default `ai.provider` is now `auto` (was `openai`); the AI
   wizard records the provider that actually served the run.
 
+### Fixed
+
+- **`install deploy` no longer clobbers site content.** `spec_write` treated an
+  empty `SPEC_TASKS` as "use the full default task list", so a deploy-only run
+  re-ran `config`/`pages`/`nav` and overwrote a customised `_config.yml`,
+  `index.md`, and navigation. Empty now serialises to `[]`; `deploy` is
+  deploy-only and also skips agent-file rewrites.
+- **github-pages / remote profile emitted a broken `remote_theme`.** The remote
+  `_config.yml` template resolved `{{GITHUB_REPO}}` to the *site's* repo; it now
+  uses a dedicated `{{THEME_REMOTE}}` variable (default `bamr87/zer0-mistakes`,
+  overridable via `THEME_REMOTE`).
+- **Deploy workflow templates had unsubstituted variables.** Added
+  `{{DEFAULT_BRANCH}}`, `{{RUBY_VERSION}}`, and `{{SITE_NAME}}` to the template
+  renderer, so the generated `jekyll-gh-pages.yml` (and docker-prod/azure-swa
+  artifacts) no longer contain literal `{{…}}` tokens. Regression tests assert
+  no unresolved tokens survive in any deploy artifact.
+- **Agent files were written twice** when `agents` appeared in both the task
+  list and `SPEC_AGENTS`; `apply.sh` now runs the agents task at most once.
+
 ## [1.27.0](https://github.com/bamr87/zer0-mistakes/compare/v1.26.0...v1.27.0) (2026-07-22)
 
 

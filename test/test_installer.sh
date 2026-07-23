@@ -65,6 +65,18 @@ for profile in default minimal blog docs portfolio github-pages; do
 done
 
 echo
+echo "── Remote theme wiring (github-pages profile)"
+rt_out="${TMP}/remote-theme"
+rm -rf "$rt_out"
+"$INSTALL" init "$rt_out" --profile github-pages --github-repo wargames --github-user bamr87 \
+    --non-interactive --skip-doctor --force >/dev/null 2>&1
+if grep -qE '^remote_theme[[:space:]]*:[[:space:]]*"bamr87/zer0-mistakes"' "${rt_out}/_config.yml" 2>/dev/null; then
+    pass "remote_theme points at the theme (not the site repo)"
+else
+    fail "remote_theme wrong: $(grep -E '^remote_theme' "${rt_out}/_config.yml" 2>/dev/null | tr -s ' ')"
+fi
+
+echo
 echo "── Deploy plugins (via --deploy flag)"
 for tgt in github-pages azure-swa docker-prod; do
     out="${TMP}/deploy-${tgt}"
@@ -76,9 +88,37 @@ for tgt in github-pages azure-swa docker-prod; do
         azure-swa)    marker="${out}/.github/workflows/azure-static-web-apps.yml" ;;
         docker-prod)  marker="${out}/docker/Dockerfile.prod" ;;
     esac
-    [[ -f "$marker" ]] && pass "deploy=$tgt  wrote=$(basename "$marker")" \
-        || fail "deploy=$tgt  missing: $marker"
+    if [[ -f "$marker" ]]; then
+        # Every {{VAR}} must be substituted — an unresolved token means a
+        # missing mapping in template.sh (breaks the generated workflow).
+        if grep -q '{{[A-Z_]*}}' "$marker" 2>/dev/null; then
+            fail "deploy=$tgt  unsubstituted vars: $(grep -oE '{{[A-Z_]*}}' "$marker" | sort -u | tr '\n' ' ')"
+        else
+            pass "deploy=$tgt  wrote=$(basename "$marker") (no unresolved vars)"
+        fi
+    else
+        fail "deploy=$tgt  missing: $marker"
+    fi
 done
+
+echo
+echo "── Deploy is non-destructive (does not re-run base tasks)"
+nd="${TMP}/deploy-nodestroy"
+rm -rf "$nd"
+"$INSTALL" init "$nd" --profile github-pages --github-user bamr87 --github-repo demo \
+    --non-interactive --skip-doctor --force >/dev/null 2>&1
+# User customises content after install
+printf '\n# SENTINEL_KEEP_ME\n' >> "${nd}/_config.yml"
+echo "custom-home-content-SENTINEL" > "${nd}/index.md"
+"$INSTALL" deploy github-pages "$nd" --non-interactive --skip-doctor --force >/dev/null 2>&1
+ok=1
+grep -q "SENTINEL_KEEP_ME" "${nd}/_config.yml" 2>/dev/null || { ok=0; echo "    _config.yml was clobbered by deploy"; }
+grep -q "custom-home-content-SENTINEL" "${nd}/index.md" 2>/dev/null || { ok=0; echo "    index.md was clobbered by deploy"; }
+# The deploy run should record an empty base-task list
+if command -v jq >/dev/null 2>&1; then
+    [[ "$(jq -r '.tasks | length' "${nd}/.zer0/install.spec.json" 2>/dev/null)" == "0" ]] || { ok=0; echo "    spec tasks not empty after deploy-only run"; }
+fi
+[[ $ok -eq 1 ]] && pass "deploy preserves user content (no clobber)" || fail "deploy clobbered user content"
 
 echo
 echo "── Agent plugins (via --agents flag)"

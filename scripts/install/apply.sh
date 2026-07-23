@@ -140,10 +140,14 @@ apply_run() {
             log_warning "Deploy task failed: $task (continuing)"
     done
 
-    # Agent files
+    # Agent files — run once. Skip if `agents` already ran in the task loop
+    # above (SPEC_AGENTS being set does not mean it should run twice).
     if [[ -n "${SPEC_AGENTS:-}" ]]; then
-        apply_task "agents" "$target" || \
-            log_warning "Agents task failed (continuing)"
+        case " ${SPEC_TASKS} " in
+            *" agents "*) ;;  # already applied as a task
+            *) apply_task "agents" "$target" || \
+                   log_warning "Agents task failed (continuing)" ;;
+        esac
     fi
 
     if [[ -n "$failed_tasks" ]]; then

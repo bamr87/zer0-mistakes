@@ -108,10 +108,18 @@ spec_write() {
     local out_file="$1"
     local dry_run="${_FS_DRY_RUN:-0}"
 
-    # Build tasks array from space-separated SPEC_TASKS
+    # Build tasks array from space-separated SPEC_TASKS.
+    # Distinguish UNSET (→ default task list) from EMPTY (→ [], e.g. a
+    # deploy-only run). Using `${SPEC_TASKS:-default}` here would turn an
+    # intentional empty list back into the full default and clobber content.
     local tasks_json=""
-    local t
-    for t in ${SPEC_TASKS:-config gemfile docker pages nav data gitignore readme marker}; do
+    local t _tasks_src
+    if [[ -z "${SPEC_TASKS+set}" ]]; then
+        _tasks_src="config gemfile docker pages nav data gitignore readme marker"
+    else
+        _tasks_src="${SPEC_TASKS}"
+    fi
+    for t in ${_tasks_src}; do
         tasks_json="${tasks_json}\"${t}\","
     done
     tasks_json="[${tasks_json%,}]"

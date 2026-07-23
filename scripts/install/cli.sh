@@ -328,8 +328,12 @@ _cmd_deploy() {
     fi
 
     # Caller explicitly asked for this deploy target — override spec defaults.
+    # Deploy is deploy-only: no base tasks and no agent rewrites (use
+    # `install agents` for those). SPEC_TASKS="" now serialises to [] rather
+    # than falling back to the full default list (which would clobber content).
     SPEC_DEPLOY="$target_name"
-    SPEC_TASKS=""   # only run deploy plugins
+    SPEC_TASKS=""
+    SPEC_AGENTS=""
 
     spec_write "$spec_file"
     apply_run "$spec_file"
