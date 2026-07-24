@@ -5,9 +5,9 @@
 // (cover hero + table of contents), and the immersive story reading surface.
 //
 // Used by:
-//   _layouts/book.html, _layouts/book-story.html
+//   _layouts/book.html, _layouts/book-story.html, _layouts/book-abc.html
 //   _includes/components/bookshelf.html, book-card.html, book-toc.html,
-//   _includes/components/book-nav.html, book-plate.html
+//   _includes/components/book-nav.html, book-plate.html, abc-letter.html
 //
 // Theming: everything reads Bootstrap's runtime custom properties
 // (var(--bs-*)) so light/dark color modes and theme skins work for free.
@@ -240,4 +240,184 @@
     box-shadow: none;
     break-inside: avoid;
   }
+}
+
+// ============================================================================
+// ABC BOARD BOOKS — the "ABC & Language" series (Feature: ZER0-081)
+// ----------------------------------------------------------------------------
+// Single-scroll toddler alphabet books: _layouts/book-abc.html renders a grid
+// of abc-letter cards. Each art style (art_style front matter) adds a
+// .abc-style--<id> skin that tints the placeholder tiles and letter badges.
+// ============================================================================
+
+// A–Z quick-jump strip.
+.abc-jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+
+  &-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    padding: 0.15rem 0.4rem;
+    font-family: var(--zer0-book-serif);
+    font-weight: 700;
+    text-decoration: none;
+    color: var(--bs-primary-text-emphasis);
+    background-color: var(--bs-primary-bg-subtle);
+    border-radius: 0.4rem;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--bs-body-bg);
+      background-color: var(--bs-primary);
+    }
+  }
+}
+
+// The board: a responsive grid of letter cards.
+.abc-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  gap: 1.5rem;
+  --abc-tint: var(--bs-primary-bg-subtle);
+  --abc-badge-bg: var(--bs-primary);
+  --abc-badge-ink: var(--bs-body-bg);
+}
+
+.abc-letter {
+  scroll-margin-top: 5rem; // clear the sticky navbar on #letter-x jumps
+  text-align: center;
+
+  &-plate {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: var(--zer0-book-plate-radius);
+    overflow: hidden;
+    box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.18);
+    background-color: var(--abc-tint);
+  }
+
+  &-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  // Placeholder tile shown until the plate is rendered.
+  &-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-image: radial-gradient(
+      circle at 50% 40%,
+      color-mix(in srgb, var(--abc-tint) 55%, white),
+      var(--abc-tint)
+    );
+  }
+
+  &-glyph {
+    font-family: var(--zer0-book-serif);
+    font-weight: 800;
+    font-size: clamp(4rem, 10vw, 7rem);
+    line-height: 1;
+    color: var(--abc-badge-bg);
+  }
+
+  &-planned {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--bs-secondary-color);
+  }
+
+  // The big letter, always shown as HTML type (never baked into the art).
+  &-badge {
+    position: absolute;
+    left: 0.6rem;
+    bottom: 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 0.7rem;
+    font-family: var(--zer0-book-serif);
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--abc-badge-ink);
+    background-color: var(--abc-badge-bg);
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.25);
+  }
+
+  &-word {
+    font-family: var(--zer0-book-serif);
+    font-weight: 700;
+    font-size: 1.4rem;
+    margin: 0.8rem 0 0.15rem;
+    color: var(--bs-emphasis-color);
+  }
+
+  &-tagline {
+    font-family: var(--zer0-book-serif);
+    font-size: 1rem;
+    line-height: 1.4;
+    color: var(--bs-secondary-color);
+    max-width: 22rem;
+    margin-inline: auto;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Art-style skins — one per art_style id in the shared catalog. Each tints the
+// placeholder ground and letter badge so a book reads as one look before (and
+// after) its plates render. Ids are the cross-repo contract with zer0-CMS +
+// zer0-image-generator (data/abc_art_styles.yml).
+// ----------------------------------------------------------------------------
+.abc-style--isometric-tech-toy {
+  --abc-tint: #dceaff;
+  --abc-badge-bg: #2b7de9;
+  --abc-badge-ink: #fff;
+}
+.abc-style--chalkboard-doodle {
+  --abc-tint: #2f4f45;
+  --abc-badge-bg: #f4d35e;
+  --abc-badge-ink: #23342d;
+
+  .abc-letter-glyph { color: #f7fbf9; }
+  .abc-letter-planned { color: rgba(255, 255, 255, 0.7); }
+}
+.abc-style--soft-plush {
+  --abc-tint: #ffe6ef;
+  --abc-badge-bg: #f48fb1;
+  --abc-badge-ink: #5a2436;
+}
+.abc-style--crayon-primary {
+  --abc-tint: #fff3c4;
+  --abc-badge-bg: #e23b3b;
+  --abc-badge-ink: #fff;
+}
+.abc-style--paper-cutout {
+  --abc-tint: #ffe8d1;
+  --abc-badge-bg: #d98b4a;
+  --abc-badge-ink: #fff;
+}
+.abc-style--watercolor-storybook {
+  --abc-tint: #eef4e6;
+  --abc-badge-bg: #7fa05a;
+  --abc-badge-ink: #fff;
+}
+
+@media print {
+  .abc-jump { display: none !important; }
+  .abc-letter-plate { box-shadow: none; break-inside: avoid; }
 }

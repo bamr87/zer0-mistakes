@@ -1,29 +1,67 @@
-{% comment %} Feature: ZER0-080 {% endcomment %}
+{% comment %} Feature: ZER0-080 · series grouping ZER0-081 {% endcomment %}
 {%- comment -%}
   Component:   bookshelf
   Path:        _includes/components/bookshelf.html
-  Purpose:     Responsive grid of every book in the `books` collection —
-               drop it on a home or index page to list the library.
-  Params:      heading (string, optional, default: none) — section heading (h2)
-               class (string, optional, default: "")     — extra wrapper classes
-  Depends on:  components/book-card.html, the `books` collection
-  Notes:       A "book" is any books-collection doc with `layout: book`;
-               chapters (`chapter:` set) are never listed here. Renders
-               nothing when the collection is missing or empty.
+  Purpose:     Responsive grid of every book in the `books` collection, grouped
+               into series/category shelves — drop it on a home or index page.
+  Params:      heading (string, optional) — overall section heading (h2)
+               class (string, optional, default: "")  — extra wrapper classes
+  Depends on:  components/book-card.html, the `books` collection,
+               _data/series.yml (per-series display metadata)
+  Notes:       A "book" is any books-collection doc whose layout is `book`
+               (story books) or `book-abc` (alphabet books); chapters are never
+               listed. Books group by `series:`; a book with no series falls
+               under the default `stories` shelf. Series render in the order
+               they appear in _data/series.yml, then any undeclared series.
 {%- endcomment -%}
-{%- assign _books = site.books | where: "layout", "book" | sort: "title" -%}
-{%- if _books and _books.size > 0 -%}
+{%- assign _story_books = site.books | where: "layout", "book" -%}
+{%- assign _abc_books = site.books | where: "layout", "book-abc" -%}
+{%- assign _all = _story_books | concat: _abc_books -%}
+{%- if _all and _all.size > 0 -%}
+{%- assign _default_series = "stories" -%}
+{%- assign _groups = _all | group_by_exp: "doc", "doc.series | default: _default_series" -%}
+
+{%- comment -%} Build the shelf order: declared series (file order) first, then any others. {%- endcomment -%}
+{%- assign _order = "," -%}
+{%- for _pair in site.data.series -%}
+  {%- assign _needle = _pair[0] | prepend: "," | append: "," -%}
+  {%- unless _order contains _needle -%}
+    {%- for _g in _groups -%}{%- if _g.name == _pair[0] -%}{%- assign _order = _order | append: _pair[0] | append: "," -%}{%- endif -%}{%- endfor -%}
+  {%- endunless -%}
+{%- endfor -%}
+{%- for _g in _groups -%}
+  {%- assign _needle = _g.name | prepend: "," | append: "," -%}
+  {%- unless _order contains _needle -%}{%- assign _order = _order | append: _g.name | append: "," -%}{%- endunless -%}
+{%- endfor -%}
+{%- assign _order_list = _order | split: "," -%}
+
 <section class="bookshelf {{ include.class | default: '' }}">
   {%- if include.heading -%}
   <h2 class="mb-4">{{ include.heading }}</h2>
   {%- endif -%}
-  <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
-    {%- for _book in _books -%}
-    <div class="col">
-      {%- include components/book-card.html book=_book -%}
+
+  {%- for _name in _order_list -%}
+    {%- if _name == "" -%}{%- continue -%}{%- endif -%}
+    {%- assign _group = _groups | where: "name", _name | first -%}
+    {%- if _group == nil -%}{%- continue -%}{%- endif -%}
+    {%- assign _meta = site.data.series[_name] -%}
+    {%- assign _books = _group.items | sort: "title" -%}
+    <div class="book-series mb-5" id="series-{{ _name }}">
+      <h3 class="h4 mb-1">
+        <i class="bi {{ _meta.icon | default: 'bi-book-half' }} me-2" aria-hidden="true"></i>{{ _meta.title | default: _name | escape }}
+      </h3>
+      {%- if _meta.tagline -%}
+      <p class="text-body-secondary mb-3">{{ _meta.tagline | escape }}</p>
+      {%- endif -%}
+      <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
+        {%- for _book in _books -%}
+        <div class="col">
+          {%- include components/book-card.html book=_book -%}
+        </div>
+        {%- endfor -%}
+      </div>
     </div>
-    {%- endfor -%}
-  </div>
+  {%- endfor -%}
 </section>
 {%- else -%}
   {%- comment -%} bookshelf: no books collection or no book landing pages — skipping render {%- endcomment -%}

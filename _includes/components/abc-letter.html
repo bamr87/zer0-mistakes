@@ -1,0 +1,43 @@
+{% comment %} Feature: ZER0-081 {% endcomment %}
+{%- comment -%}
+  Component:   abc-letter
+  Path:        _includes/components/abc-letter.html
+  Purpose:     One card of an ABC board book — the illustration (or a friendly
+               "coming soon" placeholder), a big letter badge, the word, and the
+               read-aloud tagline. Rendered once per `alphabet:` entry by
+               _layouts/book-abc.html.
+  Params:      entry (hash, required) — an alphabet entry with keys:
+               letter, word, tagline, image, alt, status ("planned"|"rendered")
+  Depends on:  components/preview-image.html,
+               _sass/components/_book.scss (.abc-letter, .abc-letter-*)
+  Notes:       The big letter is HTML typography, never baked into the art (so
+               raster models never garble it). A `status: planned` entry (no
+               rendered plate yet) shows a coloured placeholder tile instead of
+               a broken image, so the book reads end-to-end before any art runs.
+{%- endcomment -%}
+{%- if include.entry == nil -%}
+  {%- comment -%} ERROR: abc-letter requires `entry` {%- endcomment -%}
+{%- else -%}
+{%- assign _e = include.entry -%}
+{%- assign _letter = _e.letter -%}
+{%- comment -%} A plate counts as rendered only when it has an image AND is not
+    still "planned". Branch inline: Liquid's assign does not reliably apply the
+    "not-equals" comparison, so the condition lives in the if-tag below. {%- endcomment -%}
+<article class="abc-letter" id="letter-{{ _letter | downcase }}">
+  <div class="abc-letter-plate">
+    {%- if _e.image and _e.status != "planned" -%}
+      {%- include components/preview-image.html src=_e.image alt=_e.alt class="abc-letter-img" loading="lazy" -%}
+    {%- else -%}
+      <div class="abc-letter-placeholder" role="img" aria-label="{{ _e.alt | default: _e.word | escape }} — illustration coming soon">
+        <span class="abc-letter-glyph" aria-hidden="true">{{ _letter }}</span>
+        <span class="abc-letter-planned">illustration coming soon</span>
+      </div>
+    {%- endif -%}
+    <span class="abc-letter-badge" aria-hidden="true">{{ _letter }}</span>
+  </div>
+  <p class="abc-letter-word">{{ _e.word }}</p>
+  {%- if _e.tagline -%}
+  <p class="abc-letter-tagline">{{ _e.tagline }}</p>
+  {%- endif -%}
+</article>
+{%- endif -%}
