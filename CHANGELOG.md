@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.28.0](https://github.com/bamr87/zer0-mistakes/compare/v1.27.0...v1.28.0) (2026-07-24)
+
+
+### Features
+
+* **books:** children's picture-book collection with immersive layouts and components ([#328](https://github.com/bamr87/zer0-mistakes/issues/328)) ([e059d1a](https://github.com/bamr87/zer0-mistakes/commit/e059d1afdc95073c5ce5bf9d1516b362979ad402))
+* **includes:** config-driven favicon, GTM gating, og:image fallback fix, sidebar nav aliases ([#327](https://github.com/bamr87/zer0-mistakes/issues/327)) ([fe8aacc](https://github.com/bamr87/zer0-mistakes/commit/fe8aacc234003f9f170fcb3b8b29c60ac18ed94b))
+* **install:** Claude Code OAuth + multi-provider AI + config-file layer ([#330](https://github.com/bamr87/zer0-mistakes/issues/330)) ([fde414c](https://github.com/bamr87/zer0-mistakes/commit/fde414cce5286f90de1ad02ca6ca40d634be5611))
+* **layouts:** book-abc board-book layout + ABC art-style skins ([#336](https://github.com/bamr87/zer0-mistakes/issues/336)) ([d88038e](https://github.com/bamr87/zer0-mistakes/commit/d88038e806e0d1a492e5d12b4e10e55fd240d692))
+* **navigation:** nav: pages sidebar mode — auto-build the tree from page URLs ([#333](https://github.com/bamr87/zer0-mistakes/issues/333)) ([c0c627d](https://github.com/bamr87/zer0-mistakes/commit/c0c627d5f50051e8f5eb4f0d6681244acaaa8d85))
+
+
+### Bug Fixes
+
+* **ci:** prefer CLAUDE_CODE_OAUTH_TOKEN over ANTHROPIC_API_KEY in all AI workflows ([#334](https://github.com/bamr87/zer0-mistakes/issues/334)) ([043848e](https://github.com/bamr87/zer0-mistakes/commit/043848eb84222240efc121e8112ddc12ab959a64))
+* **navigation:** mark only the current page active in the sidebar nav-tree ([#331](https://github.com/bamr87/zer0-mistakes/issues/331)) ([3f1b723](https://github.com/bamr87/zer0-mistakes/commit/3f1b723169258993d4530dd5817740e62734ccd4))
+
 ## [Unreleased]
 
 ### Added
