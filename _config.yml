@@ -159,6 +159,20 @@ _posts_file_structure    : "year-month-day-title.md"
 navigation:
   unified_mobile_drawer  : false  # true to opt into the single-drawer pattern
 
+# News layouts (news.html / section.html) ----------------------------------
+# Every key optional; the layouts also work with NO _data/navigation/posts.yml
+# (sections then derive from site.categories). See _layouts/news.html header.
+# news:
+#   category_base : "/news/"     # base path of per-category section pages (e.g. "/categories/")
+#   index_url     : "/news/"     # the news homepage (section breadcrumbs / back-links)
+#   hero          : true         # false = no latest-post hero fallback when nothing is breaking/featured
+#   archives_url  : ""           # archives page to deep-link months to (auto-detects /archives/; unlinked otherwise)
+#   newsletter:
+#     enabled     : true         # false hides the subscribe band
+#     endpoint    : ""           # form POST target; without one a mailto: on site.email is used
+#     heading     : "Stay Updated"
+#     lead        : "Subscribe to get the latest news and updates delivered to your inbox."
+
 # Left sidebar defaults -----------------------------------------------------
 # Site-wide defaults for the docs sidebar panel. Pages override via the
 # `sidebar:` front-matter hash; collections via `sidebar:` metadata under
@@ -185,6 +199,12 @@ user_overrides           : false
 # The user can still override this at any time with the Appearance panel.
 # An inline script in <head> applies the correct mode before CSS loads, preventing FOUC.
 color_mode_default       : auto
+
+# Pin the color mode site-wide. When true, color_mode_default wins
+# unconditionally: visitor preference (localStorage) and the OS scheme are
+# ignored, and the light/dark/auto switcher is removed from the UI. For
+# brand-locked sites that are designed for exactly one mode.
+color_mode_lock          : false
 
 # Runtime Appearance panel inside the Settings offcanvas (Track 6).
 # Adds light/dark/auto color-mode buttons + a primary-color picker that
@@ -237,6 +257,10 @@ posthog:
     mask_all_text        : false  # Mask all text in session recordings
     mask_all_inputs      : true   # Mask form inputs in session recordings
     ip_anonymization     : false  # Anonymize IP addresses
+    respect_gpc          : true   # Honor the Global Privacy Control signal (like DNT; a legal signal under CCPA/CPRA)
+    require_consent      : false  # true = start opted OUT (memory-only persistence, no cookies) until the visitor
+                                  # accepts the "analytics" category in the theme's cookie-consent banner
+    geoip_disable        : false  # true = stop PostHog resolving IP → location on every event
 
 # Nanobar - Page Loading Progress Bar #############################################
 # Visual loading indicator shown on every page load.

@@ -56,6 +56,8 @@ Reusable UI components and widgets:
 - `js-cdn.html` - CDN JavaScript libraries
 - `preview-image.html` - Consistent preview image rendering with lazy loading
 - `post-card.html` - Reusable post card component for listings
+- `data-card.html` - One generic card rendered from a plain data hash (title/url/icon/badge/meta/buttons schema in its header)
+- `card-grid.html` - Responsive grid of `data-card`s from any data array — hub dashboards, fleet registries, service grids
 - `bookshelf.html` - Grid of every book in the `books` collection (home-page library)
 - `book-card.html` - One book's portrait cover card (bookshelf tile)
 - `book-toc.html` - Ordered story/chapter list for one book
@@ -84,6 +86,20 @@ Landing page specific components:
 Documentation and reference materials:
 
 - `bootstrap-docs.html` - Bootstrap documentation (moved from style.html)
+
+### `custom/` — consumer extension hooks
+
+Empty stubs the theme includes at fixed points in the page chrome. A consumer
+site creates a file at the same path to inject markup there — **no fork of
+`root.html`, `head.html`, or `footer.html` needed**, so theme updates keep
+flowing without merge drift:
+
+- `custom/head.html` - end of `<head>` (JSON-LD, font preloads, verification tags, extra meta)
+- `custom/body-start.html` - immediately after `<body>` (e.g. GTM `<noscript>`)
+- `custom/footer.html` - after the theme footer, before the cookie-consent banner
+- `custom/body-end.html` - last thing before `</body>` (site scripts, third-party widgets)
+
+The stubs ship empty (comment-only) and render nothing until shadowed.
 
 ## Usage
 
