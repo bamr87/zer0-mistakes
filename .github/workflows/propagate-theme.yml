@@ -78,10 +78,15 @@ jobs:
       # Falls back to version.rb on a manual run.
       - name: Resolve released version
         id: version
+        # Values reach the shell via the environment, never spliced into the
+        # script body by `${{ }}` — a tag name is attacker-controllable text.
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          if [ "${{ github.event_name }}" = "release" ]; then
-            v="${{ github.event.release.tag_name }}"
-            v="${v#v}"
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "release" ]; then
+            v="${RELEASE_TAG#v}"
           else
             v=$(sed -nE 's/.*VERSION = "([0-9][^"]*)".*/\1/p' lib/jekyll-theme-zer0/version.rb | head -1)
           fi
@@ -92,10 +97,14 @@ jobs:
         env:
           LIFECYCLE_PAT: ${{ secrets.LIFECYCLE_PAT }}
           GH_TOKEN: ${{ secrets.LIFECYCLE_PAT }}
+          TARGET_VERSION: ${{ steps.version.outputs.value }}
+          CRED_AVAILABLE: ${{ steps.cred.outputs.available }}
+          DRY_RUN: ${{ inputs.dry_run }}
         run: |
           set -euo pipefail
-          args=(--dispatch --version "${{ steps.version.outputs.value }}")
-          if [ "${{ steps.cred.outputs.available }}" != "true" ] || [ "${{ inputs.dry_run }}" = "true" ]; then
+          args=(--dispatch --version "$TARGET_VERSION")
+          # DRY_RUN is empty on a release trigger; only an explicit "true" forces it.
+          if [ "$CRED_AVAILABLE" != "true" ] || [ "$DRY_RUN" = "true" ]; then
             args+=(--dry-run)
           fi
           ruby scripts/propagate.rb "${args[@]}" | tee -a "$GITHUB_STEP_SUMMARY"

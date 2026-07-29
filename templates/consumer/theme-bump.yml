@@ -55,26 +55,40 @@ jobs:
 
       - name: Resolve target version
         id: target
+        # client_payload is supplied by whoever fires the dispatch and inputs by
+        # whoever clicks Run workflow. Both reach the shell through the
+        # environment; interpolating them into the script body with `${{ }}`
+        # would splice arbitrary text in before bash parses the line.
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAYLOAD_VERSION: ${{ github.event.client_payload.version }}
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
           set -euo pipefail
           # Dispatch payload wins, then the manual input, then "latest".
-          v="${{ github.event.client_payload.version }}"
-          [ -z "$v" ] && v="${{ inputs.version }}"
+          v="${PAYLOAD_VERSION:-}"
+          [ -z "$v" ] && v="${INPUT_VERSION:-}"
           if [ -z "$v" ]; then
             v=$(gh api repos/bamr87/zer0-mistakes/releases/latest --jq .tag_name)
           fi
           v="${v#v}"
+          # Never let anything but a version number past this point: it becomes a
+          # branch name, a commit message, and a --version argument downstream.
+          if ! printf '%s' "$v" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$'; then
+            echo "::error::refusing to act on a non-version string: '$v'"
+            exit 1
+          fi
           echo "version=$v" >> "$GITHUB_OUTPUT"
           echo "Target: v$v"
 
       - name: Rewrite pins
         id: bump
+        env:
+          TARGET_VERSION: ${{ steps.target.outputs.version }}
         run: |
           set -euo pipefail
           chmod +x scripts/bump-theme-pins.sh
-          scripts/bump-theme-pins.sh --version "${{ steps.target.outputs.version }}" | tee bump.log
+          scripts/bump-theme-pins.sh --version "$TARGET_VERSION" | tee bump.log
           if git diff --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
@@ -135,4 +149,6 @@ jobs:
 
       - name: Nothing to do
         if: steps.bump.outputs.changed != 'true'
-        run: echo "Pins already at v${{ steps.target.outputs.version }}."
+        env:
+          TARGET_VERSION: ${{ steps.target.outputs.version }}
+        run: echo "Pins already at v${TARGET_VERSION}."

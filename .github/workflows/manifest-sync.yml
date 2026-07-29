@@ -74,6 +74,11 @@ jobs:
 
       - name: Commit to the release PR
         if: steps.regen.outputs.changed == 'true'
+        # head_ref reaches the shell through the environment, never interpolated
+        # into the script body — a branch name is attacker-controllable text and
+        # `${{ }}` splices it in before bash ever parses the line.
+        env:
+          HEAD_REF: ${{ github.head_ref }}
         run: |
           set -euo pipefail
           version=$(sed -nE 's/^version: "([^"]+)".*/\1/p' _data/theme-manifest.yml | head -1)
@@ -81,5 +86,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add _data/theme-manifest.yml
           git commit -m "chore(manifest): regenerate theme manifest for ${version}"
-          git push origin "HEAD:${{ github.head_ref }}"
+          git push origin "HEAD:${HEAD_REF}"
           echo "✓ manifest regenerated for ${version} and pushed to the release PR"
