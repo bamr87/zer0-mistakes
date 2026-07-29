@@ -182,6 +182,30 @@ jobs:
           fi
           echo "✓ version.rb and Gemfile.lock agree: $rb"
 
+      # Companion guard: _data/theme-manifest.yml is the contract downstream
+      # consumers audit against (scripts/bin/audit-consumer) and the release
+      # fan-out reads to bump pins. It is generated, so it rots silently — it sat
+      # at 1.14.0 while the theme shipped 13 minors to 1.27.0, leaving every
+      # checksum in it wrong and the audit tooling quietly useless.
+      # Only the version is gated here, not the checksums: the manifest is a
+      # release snapshot, and diffing 500 generated lines on every PR would churn
+      # and conflict. manifest-sync.yml regenerates it in full on the release PR,
+      # and `./scripts/bin/manifest --check` verifies the whole file on demand.
+      - name: Version ↔ theme manifest consistency
+        run: |
+          rb=$(sed -nE 's/.*VERSION = "([0-9][^"]*)".*/\1/p' lib/jekyll-theme-zer0/version.rb | head -1)
+          man=$(sed -nE 's/^version: "([^"]+)".*/\1/p' _data/theme-manifest.yml | head -1)
+          if [ -z "$rb" ] || [ -z "$man" ]; then
+            echo "::error::could not parse version (version.rb='$rb', manifest='$man')"
+            exit 1
+          fi
+          if [ "$rb" != "$man" ]; then
+            msg="version.rb ($rb) != manifest ($man) — run ./scripts/bin/manifest and commit"
+            echo "::error file=_data/theme-manifest.yml::$msg"
+            exit 1
+          fi
+          echo "✓ version.rb and theme-manifest.yml agree: $rb"
+
       - name: Run Quality Checks
         uses: ./.github/actions/quality-checks
         with:

@@ -76,6 +76,33 @@ assert_output_contains "manifest: contains plugin_paths" "plugin_paths:" "$outpu
 assert_output_contains "manifest: contains config_schema" "config_schema:" "$output"
 assert_output_contains "manifest: contains file_checksums" "file_checksums:" "$output"
 
+# --dry-run stdout must be pure YAML: the freshness gate diffs it straight
+# against the committed manifest, so a stray log line would fail every run.
+# No `| head -1` here: this suite runs under `set -o pipefail`, and head closing
+# the pipe early makes the generator die on SIGPIPE (exit 141), aborting the run.
+dry_output=$("$MANIFEST_BIN" --dry-run 2>/dev/null)
+first_line="${dry_output%%$'\n'*}"
+assert_output_contains "manifest: --dry-run stdout starts with YAML" "# _data/theme-manifest.yml" "$first_line"
+
+# ---------------------------------------------------------------------------
+echo ""
+echo "--- 1b. Manifest freshness (--check) ---"
+
+# The committed manifest sat at 1.14.0 while the theme shipped to 1.27.0, which
+# silently invalidated every checksum the consumer audit relies on. --check is
+# the guard; it must pass on a current tree and fail on a doctored one.
+"$MANIFEST_BIN" --check > /dev/null 2>&1 && check_exit=0 || check_exit=$?
+assert_exit_code "manifest --check passes on a current manifest" "0" "$check_exit"
+
+TMP_MANIFEST_BAK=$(mktemp)
+cp "$REPO_ROOT/_data/theme-manifest.yml" "$TMP_MANIFEST_BAK"
+sed -i.bak 's/^version: ".*"/version: "0.0.1"/' "$REPO_ROOT/_data/theme-manifest.yml"
+rm -f "$REPO_ROOT/_data/theme-manifest.yml.bak"
+"$MANIFEST_BIN" --check > /dev/null 2>&1 && stale_exit=0 || stale_exit=$?
+cp "$TMP_MANIFEST_BAK" "$REPO_ROOT/_data/theme-manifest.yml"
+rm -f "$TMP_MANIFEST_BAK"
+assert_exit_code "manifest --check fails on a stale manifest" "1" "$stale_exit"
+
 # ---------------------------------------------------------------------------
 echo ""
 echo "--- 2. Gem-mode consumer: IDENTICAL detection ---"
