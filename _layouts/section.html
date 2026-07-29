@@ -46,6 +46,34 @@ layout: root
 {% comment %} SECTION DISCOVERY LOGIC         {% endcomment %}
 {% comment %} ================================ {% endcomment %}
 
+{% comment %}
+  Same `news:` config surface as _layouts/news.html:
+  - news.category_base (default "/news/") — base path for section pages
+  - news.index_url     (default "/news/") — the news homepage this section
+    belongs to (breadcrumb + "Browse all news")
+  Section pills fall back to site.categories when _data/navigation/posts.yml
+  is absent, so the layout works on a data-less consumer site.
+{% endcomment %}
+{% assign news_cfg = site.news %}
+{% assign news_base = news_cfg.category_base | default: "/news/" %}
+{% assign news_index_url = news_cfg.index_url | default: "/news/" %}
+{% capture _sec_names %}{% for item in site.data.navigation.posts %}{{ item.title }}{% unless forloop.last %}|{% endunless %}{% endfor %}{% endcapture %}
+{% if _sec_names == "" %}{% capture _sec_names %}{% for cat in site.categories limit: 8 %}{{ cat[0] }}{% unless forloop.last %}|{% endunless %}{% endfor %}{% endcapture %}{% endif %}
+{% assign news_sections = _sec_names | split: "|" %}
+
+{% comment %}
+  Tags index link policy — identical to news.html: honor site.tags_page when
+  set, otherwise only link when a /tags/ page exists in the build.
+{% endcomment %}
+{% assign tags_base = site.tags_page | default: "/tags/" %}
+{% assign _tags_linkable = false %}
+{% if site.tags_page %}
+  {% assign _tags_linkable = true %}
+{% else %}
+  {% assign _tags_index_page = site.html_pages | where: "url", tags_base | first %}
+  {% if _tags_index_page %}{% assign _tags_linkable = true %}{% endif %}
+{% endif %}
+
 {% assign path_parts = page.path | split: "/" %}
 {% assign section_name = "" %}
 {% for part in path_parts %}
@@ -99,7 +127,7 @@ layout: root
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item">
-              <a href="{{ site.baseurl }}/news/" class="text-white-50 text-decoration-none">
+              <a href="{{ news_index_url | relative_url }}" class="text-white-50 text-decoration-none">
                 <i class="bi bi-newspaper me-1"></i>News
               </a>
             </li>
@@ -123,15 +151,21 @@ layout: root
 <div class="container-fluid bg-body-tertiary border-bottom py-2 mb-4">
   <div class="container-fluid px-4">
     <nav class="nav nav-pills flex-nowrap overflow-auto" style="scrollbar-width: none;">
-      {% for item in site.data.navigation.posts %}
+      {% for sec_name in news_sections %}
         {% assign is_active = false %}
-        {% if item.title == page.category or item.title == page.title %}
+        {% if sec_name == page.category or sec_name == page.title %}
           {% assign is_active = true %}
         {% endif %}
-        <a class="nav-link text-nowrap {% if is_active %}active{% else %}text-body-secondary{% endif %}" 
-           href="{{ item.url | replace: '/posts/', '/news/' | relative_url }}">
-          {% if item.icon %}<i class="bi {{ item.icon }} me-1"></i>{% endif %}
-          {{ item.title }}
+        {% assign _sec_nav = site.data.navigation.posts | where: "title", sec_name | first %}
+        {% if _sec_nav %}
+          {% assign _sec_url = _sec_nav.url | replace: '/posts/', news_base %}
+        {% else %}
+          {% capture _sec_url %}{{ news_base }}{{ sec_name | slugify }}/{% endcapture %}
+        {% endif %}
+        <a class="nav-link text-nowrap {% if is_active %}active{% else %}text-body-secondary{% endif %}"
+           href="{{ _sec_url | relative_url }}">
+          {% if _sec_nav.icon %}<i class="bi {{ _sec_nav.icon }} me-1"></i>{% endif %}
+          {{ sec_name }}
         </a>
       {% endfor %}
     </nav>
@@ -255,9 +289,11 @@ layout: root
               <h3 class="h4 mb-0">
                 <i class="bi bi-tag text-primary me-2"></i>{{ subcat | capitalize }}
               </h3>
-              <a href="{{ site.baseurl }}/tags/#{{ subcat | slugify }}" class="btn btn-outline-secondary btn-sm">
+              {% if _tags_linkable %}
+              <a href="{{ tags_base | relative_url }}#{{ subcat | slugify }}" class="btn btn-outline-secondary btn-sm">
                 View All <i class="bi bi-arrow-right ms-1"></i>
               </a>
+              {% endif %}
             </div>
             
             <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
@@ -496,7 +532,7 @@ layout: root
         <div class="text-center py-5">
           <i class="bi bi-inbox fs-1 text-muted"></i>
           <p class="text-muted mt-3">No articles in this section yet.</p>
-          <a href="{{ site.baseurl }}/news/" class="btn btn-outline-primary">
+          <a href="{{ news_index_url | relative_url }}" class="btn btn-outline-primary">
             Browse all news
           </a>
         </div>
@@ -510,15 +546,21 @@ layout: root
           <i class="bi bi-compass me-2"></i>Explore Other Sections
         </h3>
         <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-3">
-          {% for nav_item in site.data.navigation.posts %}
-            {% unless nav_item.title == page.category or nav_item.title == page.title %}
-              {% assign other_section_posts = all_site_posts | where_exp: "post", "post.categories contains nav_item.title" %}
+          {% for sec_name in news_sections %}
+            {% unless sec_name == page.category or sec_name == page.title %}
+              {% assign other_section_posts = all_site_posts | where_exp: "post", "post.categories contains sec_name" %}
+              {% assign _sec_nav = site.data.navigation.posts | where: "title", sec_name | first %}
+              {% if _sec_nav %}
+                {% assign _sec_url = _sec_nav.url | replace: '/posts/', news_base %}
+              {% else %}
+                {% capture _sec_url %}{{ news_base }}{{ sec_name | slugify }}/{% endcapture %}
+              {% endif %}
               <div class="col">
-                <a href="{{ nav_item.url | replace: '/posts/', '/news/' | relative_url }}" 
+                <a href="{{ _sec_url | relative_url }}"
                    class="card text-center h-100 text-decoration-none border-0 shadow-sm hover-lift">
                   <div class="card-body py-3">
-                    <i class="bi {{ nav_item.icon | default: 'bi-folder' }} fs-4 text-primary mb-2 d-block"></i>
-                    <h6 class="card-title mb-1 small">{{ nav_item.title }}</h6>
+                    <i class="bi {{ _sec_nav.icon | default: 'bi-folder' }} fs-4 text-primary mb-2 d-block"></i>
+                    <h6 class="card-title mb-1 small">{{ sec_name }}</h6>
                     <small class="text-muted">{{ other_section_posts.size }} articles</small>
                   </div>
                 </a>
