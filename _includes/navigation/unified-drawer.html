@@ -87,10 +87,16 @@
               data-bs-target="#info-section">
         <i class="bi bi-gear me-1" aria-hidden="true"></i>Theme &amp; appearance
       </button>
+      {%- comment -%}
+        Opened via the shared [data-search-toggle] binding in search-modal.js
+        (which also closes this drawer first). A raw data-bs-target here once
+        pointed at "#search-modal", but the modal's real id is
+        #siteSearchModal — the button was dead.
+      {%- endcomment -%}
       <button type="button"
               class="btn btn-outline-secondary w-100"
-              data-bs-toggle="modal"
-              data-bs-target="#search-modal">
+              data-search-toggle
+              aria-haspopup="dialog">
         <i class="bi bi-search me-1" aria-hidden="true"></i>Search
       </button>
     </div>
