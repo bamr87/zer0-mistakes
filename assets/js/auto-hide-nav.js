@@ -30,10 +30,14 @@
         // Check for reduced motion preference
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        // Calculate and set body padding to prevent content jump
+        // Calculate and set body padding to prevent content jump.
+        // The measured height is also published as --zer0-header-height so
+        // stylesheets (theme or consumer) can align overlays with the real
+        // header instead of hard-coding its pixel height.
         function updateBodyPadding() {
             const navbarHeight = navbar.offsetHeight;
             document.body.style.paddingTop = navbarHeight + 'px';
+            document.documentElement.style.setProperty('--zer0-header-height', navbarHeight + 'px');
         }
 
         // Initial padding setup

@@ -489,6 +489,19 @@
     --bs-offcanvas-width: min(21rem, 86vw);
   }
 
+  // #bdNavbar lives INSIDE the fixed header, whose stacking context sits at
+  // Bootstrap's $zindex-fixed (1030) — below the body-level offcanvas
+  // backdrop (1040). The menu's own z-index (1045) only orders it within the
+  // header's context, so without help the whole open menu paints BEHIND the
+  // backdrop and none of its links are tappable. Lift the header above the
+  // backdrop only while its offcanvas is opening/open/closing. Browsers
+  // without :has() just keep the old (dimmed-menu) behavior.
+  body:has(#bdNavbar.offcanvas-lg.showing) header.fixed-top,
+  body:has(#bdNavbar.offcanvas-lg.show) header.fixed-top,
+  body:has(#bdNavbar.offcanvas-lg.hiding) header.fixed-top {
+    z-index: 1046; // $zindex-offcanvas (1045) + 1
+  }
+
   // Wrapper is inert on mobile so offcanvas layout matches pre-wrapper structure
   #bdNavbar .bd-navbar-nav-viewport {
     display: contents;

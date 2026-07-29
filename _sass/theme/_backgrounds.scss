@@ -107,14 +107,27 @@
 .zer0-bg-body {
   @include zer0-bg-noise;
 
-  // Elevate children above the ::before / ::after pseudo-element backgrounds,
-  // but exclude fixed-position, offcanvas, and modal elements whose
-  // positioning must not be overridden. `.position-fixed` matters as much as
-  // `.fixed-top`: without it this rule (specificity 0,4,0) flattens the
-  // cookie-consent banner and the TOC FAB to z-index 1, letting the chat and
-  // local-graph FABs paint over — and steal taps from — the banner's buttons
-  // on mobile (their `--zer0-layer-*` tokens exist precisely to prevent this).
-  > *:not(.fixed-top):not(.position-fixed):not(.offcanvas):not(.modal) { position: relative; z-index: 1; }
+  // The body forms its own stacking context (isolation) and the noise overlay
+  // is pushed into the NEGATIVE layer, so in-flow content naturally paints
+  // above the texture with no per-child elevation at all.
+  //
+  // History: this block used to elevate every direct child instead
+  // (`> *:not(.fixed-top):not(.position-fixed):not(.offcanvas):not(.modal)
+  // { position: relative; z-index: 1; }`). That rule (specificity 0,5,0)
+  // caused three consumer-reported mobile bugs:
+  //   1. it beat FAB class rules' `position: fixed` (0,1,0), dropping FABs
+  //      into page flow and adding 16px of horizontal scroll;
+  //   2. it made <main> a z-index:1 stacking context, trapping the nested
+  //      #bdSidebar offcanvas (z-index 1045) below the fixed header (1030) —
+  //      its close button was unreachable on mobile;
+  //   3. every fixed/overlay descendant needed a bespoke carve-out or an
+  //      id-selector specificity escape (see _sass/core/_obsidian.scss).
+  // Do NOT reintroduce a child z-index elevation here.
+  isolation: isolate;
+
+  &::after {
+    z-index: -1;
+  }
 }
 
 .zer0-bg-surface {
