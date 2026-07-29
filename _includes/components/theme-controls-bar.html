@@ -13,16 +13,24 @@
   Used by theme settings and theme preview pages.
   ===================================================================
 {%- endcomment -%}
-{% assign active_skin = site.theme_skin | default: site.data.theme_skins.default | default: "dark" %}
-{% assign skin_order = site.data.theme_skins.order %}
+{%- comment -%}
+  _data/theme_skins.yml is optional for consumers (remote_theme cannot ship
+  _data), so fall back to the compiled skin registry. Keep this list in sync
+  with the [data-theme-skin] blocks in _sass/theme/_skins.scss.
+{%- endcomment -%}
+{% assign _skin_fallback = "air|aqua|dirt|neon|mint|plum|sunrise" | split: "|" %}
+{% assign active_skin = site.theme_skin | default: site.data.theme_skins.default | default: "air" %}
+{% assign skin_order = site.data.theme_skins.order | default: _skin_fallback %}
 
 <div class="theme-controls-bar d-flex flex-wrap align-items-center gap-3 mb-4 p-3 bg-body-tertiary rounded-3 border">
+  {% unless site.color_mode_lock %}
   <div class="d-flex align-items-center gap-2">
     <i class="bi bi-moon-stars" aria-hidden="true"></i>
     <span class="fw-semibold small">Mode:</span>
     {% include components/halfmoon.html %}
   </div>
   <div class="vr d-none d-sm-block" aria-hidden="true"></div>
+  {% endunless %}
   <div class="d-flex align-items-center gap-2 flex-grow-1">
     <i class="bi bi-palette2" aria-hidden="true"></i>
     <span class="fw-semibold small">Skin:</span>

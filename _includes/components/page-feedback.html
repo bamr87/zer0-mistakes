@@ -103,6 +103,14 @@
       <!-- Step 1 — request type -->
       <fieldset class="pf-field pf-types">
         <legend class="pf-legend">What kind of feedback?</legend>
+        {%- comment -%}
+          _data/feedback_types.yml is optional for consumers (remote_theme
+          cannot ship _data). Without it the widget falls back to a minimal
+          generic taxonomy (see pf_fallback_types below) instead of rendering
+          an empty selector. The fallback entries carry no GitHub labels and
+          no agent directive — labels must exist in the target repo or GitHub
+          silently drops them from prefilled issue URLs.
+        {%- endcomment -%}
         {%- assign pf_group = "" -%}
         {%- for t in site.data.feedback_types -%}
           {%- if t.group != pf_group -%}
@@ -124,6 +132,54 @@
             </span>
           </button>
           {%- if forloop.last -%}</div>{%- endif -%}
+        {%- else -%}
+          {%- comment -%}
+            _data/feedback_types.yml is optional for consumers (remote_theme
+            cannot ship _data). Without it, render this minimal generic
+            taxonomy instead of an empty selector. Ids/markup must stay in
+            sync with the fallback JSON in the #pageFeedbackTypes script
+            below. Fallback entries carry no GitHub labels (labels must exist
+            in the target repo or GitHub silently drops them) and no agent
+            directive.
+          {%- endcomment -%}
+          <p class="pf-types-group">This page</p>
+          <div class="pf-types-grid" role="radiogroup" aria-label="This page">
+            <button type="button" class="pf-type" role="radio" aria-checked="false"
+                    data-pf-type-id="fix-page" tabindex="0">
+              <i class="bi bi-bug pf-type-icon" aria-hidden="true"></i>
+              <span class="pf-type-text">
+                <span class="pf-type-label">Report a problem</span>
+                <span class="pf-type-desc">A typo, broken link, wrong information, or something rendering badly</span>
+              </span>
+            </button>
+            <button type="button" class="pf-type" role="radio" aria-checked="false"
+                    data-pf-type-id="improve-page" tabindex="-1">
+              <i class="bi bi-stars pf-type-icon" aria-hidden="true"></i>
+              <span class="pf-type-text">
+                <span class="pf-type-label">Improve this page</span>
+                <span class="pf-type-desc">Polish the copy, structure, or presentation</span>
+              </span>
+            </button>
+          </div>
+          <p class="pf-types-group">The site</p>
+          <div class="pf-types-grid" role="radiogroup" aria-label="The site">
+            <button type="button" class="pf-type" role="radio" aria-checked="false"
+                    data-pf-type-id="feature" tabindex="-1">
+              <i class="bi bi-lightbulb pf-type-icon" aria-hidden="true"></i>
+              <span class="pf-type-text">
+                <span class="pf-type-label">Suggest a feature</span>
+                <span class="pf-type-desc">An idea that would make the site more useful</span>
+              </span>
+            </button>
+            <button type="button" class="pf-type" role="radio" aria-checked="false"
+                    data-pf-type-id="question" tabindex="-1">
+              <i class="bi bi-question-circle pf-type-icon" aria-hidden="true"></i>
+              <span class="pf-type-text">
+                <span class="pf-type-label">Ask a question</span>
+                <span class="pf-type-desc">Something unclear that is not exactly a bug</span>
+              </span>
+            </button>
+          </div>
         {%- endfor -%}
       </fieldset>
 
@@ -219,9 +275,16 @@
 }
 </script>
 
-<!-- Request-type taxonomy (from _data/feedback_types.yml) -->
+<!-- Request-type taxonomy (from _data/feedback_types.yml; generic fallback
+     when the site ships no data file — keep in sync with the fallback markup
+     in the pf-types fieldset above) -->
 <script id="pageFeedbackTypes" type="application/json">
-{{ site.data.feedback_types | jsonify }}
+{% if site.data.feedback_types %}{{ site.data.feedback_types | jsonify }}{% else %}[
+  {"id":"fix-page","label":"Report a problem","icon":"bi-bug","group":"This page","scope":"page","description":"A typo, broken link, wrong information, or something rendering badly","labels":[],"agent":false,"placeholder":"What is wrong, where on the page, and what did you expect instead?"},
+  {"id":"improve-page","label":"Improve this page","icon":"bi-stars","group":"This page","scope":"page","description":"Polish the copy, structure, or presentation","labels":[],"agent":false,"placeholder":"What would make this page clearer, tighter, or more useful?"},
+  {"id":"feature","label":"Suggest a feature","icon":"bi-lightbulb","group":"The site","scope":"site","description":"An idea that would make the site more useful","labels":[],"agent":false,"placeholder":"Describe the feature and the problem it would solve."},
+  {"id":"question","label":"Ask a question","icon":"bi-question-circle","group":"The site","scope":"site","description":"Something unclear that is not exactly a bug","labels":[],"agent":false,"placeholder":"What would you like to know?"}
+]{% endif %}
 </script>
 
 <!-- Live page context (build-time front matter; runtime detail added by JS) -->

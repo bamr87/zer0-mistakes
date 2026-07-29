@@ -7,13 +7,33 @@
 (() => {
   'use strict'
 
+  // Site config surfaced by root.html as <html> data attributes:
+  // - data-color-mode-lock: "true" pins the configured mode; visitor
+  //   preference and OS scheme are ignored and the toggles are inert
+  //   (core/color-mode-init.html applies the same rules pre-paint).
+  // - data-color-mode-default: the site's configured starting mode. It
+  //   must rank ABOVE the OS preference here — otherwise this script
+  //   overrides the init script's choice on first visit and the page
+  //   flips modes after load.
+  const rootEl = document.documentElement
+  const isLocked = rootEl.getAttribute('data-color-mode-lock') === 'true'
+  const configDefault = rootEl.getAttribute('data-color-mode-default') || 'auto'
+
   const getStoredTheme = () => localStorage.getItem('theme')
   const setStoredTheme = theme => localStorage.setItem('theme', theme)
 
   const getPreferredTheme = () => {
+    if (isLocked) {
+      return configDefault === 'auto' ? 'dark' : configDefault
+    }
+
     const storedTheme = getStoredTheme()
     if (storedTheme) {
       return storedTheme
+    }
+
+    if (configDefault !== 'auto') {
+      return configDefault
     }
 
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
@@ -65,6 +85,9 @@
   }
 
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (isLocked) {
+      return
+    }
     const storedTheme = getStoredTheme()
     if (storedTheme !== 'light' && storedTheme !== 'dark') {
       setTheme(getPreferredTheme())
@@ -77,6 +100,9 @@
     document.querySelectorAll('[data-bs-theme-value]')
       .forEach(toggle => {
         toggle.addEventListener('click', () => {
+          if (isLocked) {
+            return
+          }
           const theme = toggle.getAttribute('data-bs-theme-value')
           setStoredTheme(theme)
           setTheme(theme)

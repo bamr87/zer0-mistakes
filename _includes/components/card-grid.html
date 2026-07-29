@@ -1,0 +1,60 @@
+{%- comment -%}
+  ===================================================================
+  CARD-GRID — responsive grid of data-driven cards
+  ===================================================================
+
+  Path: _includes/components/card-grid.html
+  Purpose: Render an array of card hashes (see components/data-card.html
+           for the item schema) as a responsive Bootstrap grid. Built for
+           org hub dashboards, fleet registries, service grids, and any
+           "cards from a _data file" page — the markup consumers have
+           been hand-rolling per site.
+
+  Parameters:
+    items         (array, required) — card hashes (data-card schema)
+    columns       (string) — row-cols classes,
+                  default "row-cols-1 row-cols-md-2 row-cols-lg-3"
+    gap           (string) — gutter class, default "g-4"
+    heading_level (string) — heading tag for card titles, default "h3"
+                  (pick to fit the page outline, e.g. "h2" under an h1)
+    card_class    (string) — extra classes for every card
+    empty_message (string) — message when items is empty/missing;
+                  omit to render nothing at all
+    id            (string) — id for the grid wrapper
+    aria_label    (string) — aria-label for the grid wrapper
+
+  Example — an org hub page over a generated registry:
+    {% include components/card-grid.html
+       items=site.data.hub_index.repos
+       columns="row-cols-1 row-cols-md-2"
+       heading_level="h2"
+       empty_message="No member repositories registered yet." %}
+
+  Data files map 1:1 to the schema, e.g.:
+    - title: "1776"
+      url: "https://year-of-ai.github.io/1776/"
+      external: true
+      icon: bi-journal-richtext
+      description: "The revolutionary year."
+      badge: live
+      badge_variant: success
+      meta: [ { icon: bi-files, text: "42 pages" } ]
+  ===================================================================
+{%- endcomment -%}
+{%- assign _cg_items = include.items -%}
+{%- if _cg_items and _cg_items.size > 0 -%}
+<div class="row {{ include.columns | default: 'row-cols-1 row-cols-md-2 row-cols-lg-3' }} {{ include.gap | default: 'g-4' }} zer0-card-grid"
+     {%- if include.id %} id="{{ include.id }}"{% endif %}
+     {%- if include.aria_label %} role="list" aria-label="{{ include.aria_label | escape }}"{% endif %}>
+  {%- for _cg_item in _cg_items %}
+  <div class="col"{% if include.aria_label %} role="listitem"{% endif %}>
+    {%- include components/data-card.html item=_cg_item heading_level=include.heading_level card_class=include.card_class -%}
+  </div>
+  {%- endfor %}
+</div>
+{%- elsif include.empty_message -%}
+<div class="text-center py-5 text-body-secondary zer0-card-grid-empty">
+  <i class="bi bi-inbox fs-1 d-block mb-2" aria-hidden="true"></i>
+  <p class="mb-0">{{ include.empty_message }}</p>
+</div>
+{%- endif -%}

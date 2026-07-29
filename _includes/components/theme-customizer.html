@@ -14,8 +14,14 @@
   ===================================================================
 -->
 
-{% assign current_skin = site.theme_skin | default: site.data.theme_skins.default | default: "dark" %}
-{% assign skins = site.data.theme_skins.order %}
+{%- comment -%}
+  _data/theme_skins.yml is optional for consumers (remote_theme cannot ship
+  _data), so fall back to the compiled skin registry. Keep this list in sync
+  with the [data-theme-skin] blocks in _sass/theme/_skins.scss.
+{%- endcomment -%}
+{% assign _skin_fallback = "air|aqua|dirt|neon|mint|plum|sunrise" | split: "|" %}
+{% assign current_skin = site.theme_skin | default: site.data.theme_skins.default | default: "air" %}
+{% assign skins = site.data.theme_skins.order | default: _skin_fallback %}
 
 <p class="text-body-secondary mb-3">
   Current skin: <strong>{{ current_skin }}</strong>. Click a card to preview (page-level only — does not persist).
