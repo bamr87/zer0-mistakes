@@ -89,10 +89,7 @@ Documentation and reference materials:
 
 ### `custom/` — consumer extension hooks
 
-Empty stubs the theme includes at fixed points in the page chrome. A consumer
-site creates a file at the same path to inject markup there — **no fork of
-`root.html`, `head.html`, or `footer.html` needed**, so theme updates keep
-flowing without merge drift:
+Empty stubs the theme includes at fixed points in the page chrome. A consumer site creates a file at the same path to inject markup there — **no fork of `root.html`, `head.html`, or `footer.html` needed**, so theme updates keep flowing without merge drift:
 
 - `custom/head.html` - end of `<head>` (JSON-LD, font preloads, verification tags, extra meta)
 - `custom/body-start.html` - immediately after `<body>` (e.g. GTM `<noscript>`)
