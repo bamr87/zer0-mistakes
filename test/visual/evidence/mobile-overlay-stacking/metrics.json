@@ -1,0 +1,38 @@
+{
+  "before": {
+    "sidebarClose": {
+      "found": true,
+      "hitTag": "span.site-title-text",
+      "hitInside": false
+    },
+    "navLink": {
+      "found": true,
+      "hitTag": "a.nav-link",
+      "hitInside": true
+    },
+    "overflow": {
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "fabPosition": "fixed",
+      "mainZ": "1"
+    }
+  },
+  "after": {
+    "sidebarClose": {
+      "found": true,
+      "hitTag": "button.btn-close",
+      "hitInside": true
+    },
+    "navLink": {
+      "found": true,
+      "hitTag": "a.nav-link",
+      "hitInside": true
+    },
+    "overflow": {
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "fabPosition": "fixed",
+      "mainZ": "auto"
+    }
+  }
+}
