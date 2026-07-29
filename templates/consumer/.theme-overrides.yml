@@ -1,0 +1,46 @@
+# =============================================================================
+# .theme-overrides.yml — declare which theme files this site intentionally forks
+# =============================================================================
+#
+# Copy to the ROOT of a consumer repo.
+#
+# scripts/bin/audit-consumer (in the theme repo) classifies every file you keep
+# that also exists in the theme:
+#
+#   IDENTICAL            byte-for-byte the same as the theme's copy
+#                        → delete it; the theme's version will be used
+#   DIFFERS_JUSTIFIED    differs AND is listed below → intentional, no action
+#   DIFFERS_UNJUSTIFIED  differs and is NOT listed below → flagged for review;
+#                        `--strict` exits non-zero
+#   UNIQUE               exists only here → your own file, ignored
+#
+# Without this file every shadowed file reads as unjustified drift. it-journey
+# shadows ~55 theme files, so an audit there currently reports 55 problems and
+# is useless. Declaring the deliberate ones turns the audit into a short,
+# actionable list — the ones you forgot you forked.
+#
+# Keep the `reason` current. An override whose reason has been fixed upstream is
+# the signal to delete the fork and take the theme's version back.
+#
+# Usage from a theme checkout:
+#   ./scripts/bin/audit-consumer --consumer-path /path/to/site
+#   ./scripts/bin/audit-consumer --consumer-path /path/to/site --strict   # CI
+#   ./scripts/bin/audit-consumer --consumer-path /path/to/site --fix      # drop IDENTICAL
+# =============================================================================
+
+overrides:
+  # ---------------------------------------------------------------------------
+  # Replace these examples with your own. The `path` field is what the auditor
+  # reads; everything else is for humans.
+  # ---------------------------------------------------------------------------
+
+  # - path: "_includes/core/head.html"
+  #   reason: "Adds site-specific JSON-LD before the theme's meta block."
+  #   upstream: "Superseded by _includes/custom/head.html — delete after v1.28.0."
+
+  # - path: "_sass/custom/_overrides.scss"
+  #   reason: "Brand palette; intentionally permanent."
+
+  # - path: "assets/js/user-overrides.js"
+  #   reason: "Forces light mode."
+  #   upstream: "Replaced by `color_mode_lock` in _config.yml — delete after bumping."

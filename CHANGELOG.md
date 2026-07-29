@@ -9,6 +9,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Theme propagation system — releases now reach the sites built on them.**
+  Releasing ended at RubyGems; nothing told the five downstream consumers a new
+  version existed, so all three pinned sites were still on v1.26.0 when v1.27.0
+  shipped and the two unpinned ones had been silently tracking `main`.
+  - `_data/consumers.yml` — registry of every consumer, its consumption mode
+    (`remote_theme_pinned` / `remote_theme_floating` / `gem` / `path`), and every
+    file that holds a version pin.
+  - `scripts/propagate.rb` — reports pin drift across the registry
+    (`--format text|json|github`, `--strict`) or dispatches a `theme-release`
+    event to each consumer (`--dispatch`).
+  - `.github/workflows/propagate-theme.yml` — dispatches on release publish;
+    weekly drift report. Never pushes to a consumer: each one opens its own PR so
+    its own CI gates the bump.
+  - `templates/consumer/` — the consumer's half of the contract:
+    `bump-theme-pins.sh` (rewrites `remote_theme`, `theme_repo`, and Gemfile gem
+    constraints in one pass; `--check`, `--dry-run`, `--latest`, `--pin`),
+    `theme-bump.yml` (dispatch + weekly schedule + manual), and a
+    `.theme-overrides.yml` starter. The schedule matters most for gem-mode
+    consumers, which have no `remote_theme` and so pick up nothing automatically.
+  - `docs/systems/theme-propagation.md` — how the whole flow fits together.
+- **`./scripts/bin/manifest --check`** — verifies the committed theme manifest
+  matches the working tree, ignoring `generated_at`. `--dry-run` now emits only
+  YAML on stdout (progress logs moved to stderr) so its output can be diffed
+  directly.
 - **Consumer extension hooks (`_includes/custom/`).** Four empty stubs the
   chrome now includes at fixed points — `custom/head.html` (end of `<head>`),
   `custom/body-start.html` (right after `<body>`, e.g. GTM noscript),
@@ -71,6 +95,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`_data/theme-manifest.yml` was 13 minors stale.** It sat at `1.14.0` while
+  the theme shipped to `1.27.0`, so every SHA-256 in it was wrong and
+  `scripts/bin/audit-consumer` — which reads it to classify consumer files —
+  silently compared against a June snapshot. Root cause: the file's header said
+  it regenerated during `scripts/bin/release`, but release-please became the
+  canonical release path and knows nothing about it. Regenerated, and now held
+  current by a CI gate (`version.rb` ↔ manifest version) plus
+  `manifest-sync.yml`, which regenerates it inside the release PR.
+- **`test/fixtures/consumer-gem/_layouts/default.html` had drifted from the
+  theme layout it mirrors**, so the "`--fix` deletes IDENTICAL files" audit test
+  had been failing since the layout changed in #310 — the fixture was being
+  classified `DIFFERS_UNJUSTIFIED` rather than `IDENTICAL`, testing the opposite
+  of its intent. Re-synced; the audit suite is green again (21/21).
 - **Mobile overlays no longer trap under the page chrome.** The
   `.zer0-bg-body` background utility isolates the body stacking context and
   pushes the noise overlay to `z-index: -1` instead of force-elevating every
