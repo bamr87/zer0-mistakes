@@ -13,9 +13,12 @@
                when Bootstrap's [data-bs-theme] selectors are first evaluated.
 
   Priority order (highest → lowest):
-    1. localStorage["theme"]    — user's explicit override via Appearance panel
-    2. data-color-mode-default  — site.color_mode_default config value
-    3. "auto" fallback          — resolves via prefers-color-scheme
+    1. site.color_mode_lock     — when true, config wins unconditionally:
+                                  visitor preference and OS scheme are ignored
+                                  (data-color-mode-lock attribute, set by root.html)
+    2. localStorage["theme"]    — user's explicit override via Appearance panel
+    3. data-color-mode-default  — site.color_mode_default config value
+    4. "auto" fallback          — resolves via prefers-color-scheme
 {%- endcomment -%}
 <script>
 (function () {
@@ -23,8 +26,14 @@
   try {
     var root = document.documentElement;
     var configDefault = root.getAttribute('data-color-mode-default') || 'auto';
-    var stored = window.localStorage.getItem('theme');
+    var locked = root.getAttribute('data-color-mode-lock') === 'true';
+    var stored = locked ? null : window.localStorage.getItem('theme');
     var mode = stored || configDefault;
+    if (mode === 'auto' && locked) {
+      {%- comment -%} A locked "auto" is contradictory; treat it as dark so
+          the brand-pinned mode never flips with the OS. {%- endcomment %}
+      mode = 'dark';
+    }
     if (mode === 'auto') {
       root.setAttribute('data-bs-theme',
         window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');

@@ -182,6 +182,14 @@ layout: root
 <!-- ================================ -->
 <!-- QUICK START SECTION (data-driven)-->
 <!-- ================================ -->
+{%- comment -%}
+  Rendered only when the site ships a `get_started` block in
+  _data/landing.yml. The install cards advertise THEME installation
+  (gem / Docker / fork), which is right for the theme's own site but wrong
+  boilerplate on a consumer landing page — a data-less consumer gets a
+  clean page instead of another site's marketing.
+{%- endcomment -%}
+{%- if landing.get_started -%}
 <section id="get-started" class="zer0-section" aria-labelledby="get-started-heading">
   <div class="container-xl py-5 px-4 px-md-5">
     <div class="row">
@@ -193,6 +201,7 @@ layout: root
     </div>
   </div>
 </section>
+{%- endif -%}
 
 <!-- ================================ -->
 <!-- AUTHOR / E-E-A-T SECTION        -->

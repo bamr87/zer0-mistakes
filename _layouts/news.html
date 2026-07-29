@@ -15,11 +15,27 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
   
   Front Matter Variables:
   - section_style: Display style (magazine, grid, list) - default: magazine
-  
+
   Section Styles:
   - magazine (default): Hero + category blocks + featured grid
   - grid: All posts in unified card grid
   - list: Chronological list view across all sections
+
+  Site Config (`news:` block in _config.yml — every key optional):
+  - news.category_base : base path for per-category section pages
+                         (default "/news/"; e.g. "/categories/")
+  - news.hero          : false to disable the latest-post hero fallback
+                         (hero still shows for breaking/featured posts)
+  - news.archives_url  : path of an archives page to deep-link months to;
+                         defaults to "/archives/" WHEN that page exists,
+                         otherwise month entries render unlinked
+  - news.newsletter    : { enabled: false } hides the subscribe band;
+                         { endpoint: "https://..." } posts the form there;
+                         with no endpoint it falls back to a mailto:
+                         subscribe link (site.email) or hides itself
+  Sections come from _data/navigation/posts.yml when present; otherwise
+  they are derived automatically from site.categories, so the layout
+  renders fully on a data-less consumer site.
   
   Layout Structure (NO SIDEBAR - Full Width):
   1. News Header: Dark header with title and section navigation
@@ -41,11 +57,40 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
 {% endcomment %}
 {% assign section_style = page.section_style %}
 
-{% comment %} 
+{% comment %}
   Filter posts: exclude index files
   Index files are marked with index: true in front matter
 {% endcomment %}
 {% assign all_posts = site.posts | where_exp: "post", "post.index != true" %}
+
+{% comment %}
+  Resolve the news config surface once (see the header block above).
+  news_sections is a list of section NAMES: data-driven from
+  _data/navigation/posts.yml when that file exists, otherwise derived from
+  site.categories so a consumer without vendored nav data still gets a
+  fully working news homepage. Per-section url/icon are resolved at each
+  use site via section-nav lookup with a derived fallback.
+{% endcomment %}
+{% assign news_cfg = site.news %}
+{% assign news_base = news_cfg.category_base | default: "/news/" %}
+{% capture _sec_names %}{% for item in site.data.navigation.posts %}{{ item.title }}{% unless forloop.last %}|{% endunless %}{% endfor %}{% endcapture %}
+{% if _sec_names == "" %}{% capture _sec_names %}{% for cat in site.categories limit: 8 %}{{ cat[0] }}{% unless forloop.last %}|{% endunless %}{% endfor %}{% endcapture %}{% endif %}
+{% assign news_sections = _sec_names | split: "|" %}
+
+{% comment %}
+  Tags index: honor the same site.tags_page convention as article.html.
+  When the key is not set explicitly, only link to /tags/ if such a page
+  actually exists in the build — a consumer without one gets unlinked tag
+  badges instead of site-wide 404 links.
+{% endcomment %}
+{% assign tags_base = site.tags_page | default: "/tags/" %}
+{% assign _tags_linkable = false %}
+{% if site.tags_page %}
+  {% assign _tags_linkable = true %}
+{% else %}
+  {% assign _tags_index_page = site.html_pages | where: "url", tags_base | first %}
+  {% if _tags_index_page %}{% assign _tags_linkable = true %}{% endif %}
+{% endif %}
 
 <!-- ================================ -->
 <!-- NEWS HEADER                      -->
@@ -60,18 +105,26 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
       </div>
       <div class="col-md-8">
         <nav class="nav nav-pills justify-content-md-end flex-wrap">
-          <a class="nav-link text-white active" href="{{ site.baseurl }}/news/">
+          <a class="nav-link text-white active" href="{{ page.url | relative_url }}">
             <i class="bi bi-house me-1"></i>Home
           </a>
-          {% for item in site.data.navigation.posts %}
-            <a class="nav-link text-white-50" href="{{ item.url | replace: '/posts/', '/news/' | relative_url }}">
-              {% if item.icon %}<i class="bi {{ item.icon }} me-1"></i>{% endif %}
-              {{ item.title }}
+          {% for sec_name in news_sections %}
+            {% assign _sec_nav = site.data.navigation.posts | where: "title", sec_name | first %}
+            {% if _sec_nav %}
+              {% assign _sec_url = _sec_nav.url | replace: '/posts/', news_base %}
+            {% else %}
+              {% capture _sec_url %}{{ news_base }}{{ sec_name | slugify }}/{% endcapture %}
+            {% endif %}
+            <a class="nav-link text-white-50" href="{{ _sec_url | relative_url }}">
+              {% if _sec_nav.icon %}<i class="bi {{ _sec_nav.icon }} me-1"></i>{% endif %}
+              {{ sec_name }}
             </a>
           {% endfor %}
-          <a class="nav-link text-white-50" href="{{ site.baseurl }}/tags/">
+          {% if _tags_linkable %}
+          <a class="nav-link text-white-50" href="{{ tags_base | relative_url }}">
             <i class="bi bi-tags me-1"></i>Tags
           </a>
+          {% endif %}
         </nav>
       </div>
     </div>
@@ -92,11 +145,22 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
   <!-- ================================ -->
   {% assign breaking_posts = all_posts | where: "breaking", true %}
   {% assign hero_post = breaking_posts | first %}
-  
+
   {% unless hero_post %}
     {% assign hero_post = all_posts | where: "featured", true | first %}
   {% endunless %}
-  
+
+  {% comment %}
+    No post is marked breaking/featured: fall back to the newest post so the
+    hero never silently vanishes on sites that don't curate front matter.
+    Opt out with `news: { hero: false }` in _config.yml.
+  {% endcomment %}
+  {% unless hero_post %}
+    {% unless news_cfg.hero == false %}
+      {% assign hero_post = all_posts | first %}
+    {% endunless %}
+  {% endunless %}
+
   {% if hero_post %}
   <section class="hero-section mb-5">
     <div class="row g-0 bg-body-secondary rounded-4 overflow-hidden shadow">
@@ -128,7 +192,8 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
             </small>
           {% endif %}
           {% if hero_post.categories.size > 0 %}
-            <a href="{{ site.baseurl }}/news/{{ hero_post.categories | first | slugify }}/" class="badge bg-primary text-decoration-none">
+            {% capture _hero_cat_url %}{{ news_base }}{{ hero_post.categories | first | slugify }}/{% endcapture %}
+            <a href="{{ _hero_cat_url | relative_url }}" class="badge bg-primary text-decoration-none">
               {{ hero_post.categories | first }}
             </a>
           {% endif %}
@@ -155,14 +220,20 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
   <!-- ================================ -->
   <section class="section-nav mb-5">
     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-3">
-      {% for nav_item in site.data.navigation.posts %}
-        {% assign section_posts = all_posts | where_exp: "post", "post.categories contains nav_item.title" %}
+      {% for sec_name in news_sections %}
+        {% assign section_posts = all_posts | where_exp: "post", "post.categories contains sec_name" %}
+        {% assign _sec_nav = site.data.navigation.posts | where: "title", sec_name | first %}
+        {% if _sec_nav %}
+          {% assign _sec_url = _sec_nav.url | replace: '/posts/', news_base %}
+        {% else %}
+          {% capture _sec_url %}{{ news_base }}{{ sec_name | slugify }}/{% endcapture %}
+        {% endif %}
         <div class="col">
-          <a href="{{ nav_item.url | replace: '/posts/', '/news/' | relative_url }}" 
+          <a href="{{ _sec_url | relative_url }}"
              class="card text-center h-100 text-decoration-none border-0 shadow-sm hover-lift">
             <div class="card-body py-4">
-              <i class="bi {{ nav_item.icon | default: 'bi-folder' }} fs-2 text-primary mb-2 d-block"></i>
-              <h6 class="card-title mb-1">{{ nav_item.title }}</h6>
+              <i class="bi {{ _sec_nav.icon | default: 'bi-folder' }} fs-2 text-primary mb-2 d-block"></i>
+              <h6 class="card-title mb-1">{{ sec_name }}</h6>
               <small class="text-muted">{{ section_posts.size }} articles</small>
             </div>
           </a>
@@ -204,7 +275,8 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
           </div>
           <div class="card-body">
             {% if main_featured.categories.size > 0 %}
-              <a href="{{ site.baseurl }}/news/{{ main_featured.categories | first | slugify }}/" 
+              {% capture _mf_cat_url %}{{ news_base }}{{ main_featured.categories | first | slugify }}/{% endcapture %}
+              <a href="{{ _mf_cat_url | relative_url }}"
                  class="badge bg-primary text-decoration-none mb-2">
                 {{ main_featured.categories | first }}
               </a>
@@ -265,16 +337,22 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
   <!-- ================================ -->
   <!-- POSTS BY SECTION                 -->
   <!-- ================================ -->
-  {% for nav_item in site.data.navigation.posts limit: 3 %}
-    {% assign section_posts = all_posts | where_exp: "post", "post.categories contains nav_item.title" %}
+  {% for sec_name in news_sections limit: 3 %}
+    {% assign section_posts = all_posts | where_exp: "post", "post.categories contains sec_name" %}
+    {% assign _sec_nav = site.data.navigation.posts | where: "title", sec_name | first %}
+    {% if _sec_nav %}
+      {% assign _sec_url = _sec_nav.url | replace: '/posts/', news_base %}
+    {% else %}
+      {% capture _sec_url %}{{ news_base }}{{ sec_name | slugify }}/{% endcapture %}
+    {% endif %}
     {% if section_posts.size > 0 %}
     <section class="section-posts mb-5 pb-4 border-bottom">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="h4 mb-0">
-          <i class="bi {{ nav_item.icon | default: 'bi-folder' }} text-primary me-2"></i>{{ nav_item.title }}
+          <i class="bi {{ _sec_nav.icon | default: 'bi-folder' }} text-primary me-2"></i>{{ sec_name }}
         </h2>
-        <a href="{{ nav_item.url | replace: '/posts/', '/news/' | relative_url }}" class="btn btn-outline-secondary btn-sm">
-          View All {{ nav_item.title }} <i class="bi bi-arrow-right ms-1"></i>
+        <a href="{{ _sec_url | relative_url }}" class="btn btn-outline-secondary btn-sm">
+          View All {{ sec_name }} <i class="bi bi-arrow-right ms-1"></i>
         </a>
       </div>
       
@@ -351,7 +429,8 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
             </div>
             <div class="card-body">
               {% if gpost.categories.size > 0 %}
-                <a href="{{ site.baseurl }}/news/{{ gpost.categories | first | slugify }}/" class="badge bg-primary text-decoration-none mb-2">
+                {% capture _gpost_cat_url %}{{ news_base }}{{ gpost.categories | first | slugify }}/{% endcapture %}
+                <a href="{{ _gpost_cat_url | relative_url }}" class="badge bg-primary text-decoration-none mb-2">
                   {{ gpost.categories | first }}
                 </a>
               {% endif %}
@@ -394,7 +473,8 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
             <div class="card-body">
               <div class="d-flex gap-2 mb-2 flex-wrap">
                 {% if lpost.categories.size > 0 %}
-                  <a href="{{ site.baseurl }}/news/{{ lpost.categories | first | slugify }}/" class="badge bg-primary text-decoration-none">
+                  {% capture _lpost_cat_url %}{{ news_base }}{{ lpost.categories | first | slugify }}/{% endcapture %}
+                  <a href="{{ _lpost_cat_url | relative_url }}" class="badge bg-primary text-decoration-none">
                     {{ lpost.categories | first }}
                   </a>
                 {% endif %}
@@ -511,15 +591,21 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
             {% assign unique_tags = all_tags | uniq | slice: 0, 15 %}
             <div class="d-flex flex-wrap gap-2">
               {% for tag in unique_tags %}
-                <a href="{{ site.baseurl }}/tags/#{{ tag | slugify }}" 
+                {% if _tags_linkable %}
+                <a href="{{ tags_base | relative_url }}#{{ tag | slugify }}"
                    class="badge bg-secondary text-decoration-none fs-6">
                   {{ tag }}
                 </a>
+                {% else %}
+                <span class="badge bg-secondary fs-6">{{ tag }}</span>
+                {% endif %}
               {% endfor %}
             </div>
-            <a href="{{ site.baseurl }}/tags/" class="btn btn-sm btn-outline-primary mt-3">
+            {% if _tags_linkable %}
+            <a href="{{ tags_base | relative_url }}" class="btn btn-sm btn-outline-primary mt-3">
               Browse All Tags <i class="bi bi-arrow-right ms-1"></i>
             </a>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -531,6 +617,17 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
             <h5 class="card-title mb-3">
               <i class="bi bi-archive me-2"></i>Archives
             </h5>
+            {% comment %}
+              Month entries deep-link into an archives page only when one is
+              configured (news.archives_url) or a /archives/ page actually
+              exists — the theme ships no archives page, so an unconditional
+              link 404s on every consumer site.
+            {% endcomment %}
+            {% assign archives_url = news_cfg.archives_url %}
+            {% unless archives_url %}
+              {% assign _archives_page = site.html_pages | where: "url", "/archives/" | first %}
+              {% if _archives_page %}{% assign archives_url = "/archives/" %}{% endif %}
+            {% endunless %}
             {% assign posts_by_year = all_posts | group_by_exp: "post", "post.date | date: '%Y'" %}
             <div class="row">
               {% for year in posts_by_year limit: 2 %}
@@ -540,11 +637,18 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
                   <ul class="list-unstyled small">
                     {% for month in months limit: 6 %}
                       <li class="mb-1">
-                        <a href="{{ '/archives/' | relative_url }}#{{ month.name | slugify }}-{{ year.name }}" 
+                        {% if archives_url %}
+                        <a href="{{ archives_url | relative_url }}#{{ month.name | slugify }}-{{ year.name }}"
                            class="text-decoration-none">
                           {{ month.name }}
                           <span class="badge bg-secondary text-body">{{ month.items.size }}</span>
                         </a>
+                        {% else %}
+                        <span>
+                          {{ month.name }}
+                          <span class="badge bg-secondary text-body">{{ month.items.size }}</span>
+                        </span>
+                        {% endif %}
                       </li>
                     {% endfor %}
                   </ul>
@@ -560,15 +664,28 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
   <!-- ================================ -->
   <!-- NEWSLETTER SIGNUP                -->
   <!-- ================================ -->
+  {% comment %}
+    Renders only when it can actually do something: a configured form
+    endpoint (news.newsletter.endpoint) posts for real; otherwise a
+    mailto: subscribe link on site.email. With neither — or with
+    news.newsletter.enabled: false — the band is omitted entirely
+    (the old markup shipped a form that submitted nowhere).
+  {% endcomment %}
+  {% assign _nl = news_cfg.newsletter %}
+  {% unless _nl.enabled == false %}
+  {% if _nl.endpoint or site.email %}
   <section class="newsletter-section mb-5">
     <div class="card border-0 bg-primary text-white">
       <div class="card-body p-4 p-lg-5 text-center">
         <i class="bi bi-envelope-paper fs-1 mb-3 d-block"></i>
-        <h3 class="mb-3">Stay Updated</h3>
-        <p class="mb-4 opacity-75">Subscribe to get the latest news and updates delivered to your inbox.</p>
-        <form class="row g-2 justify-content-center">
+        <h3 class="mb-3">{{ _nl.heading | default: "Stay Updated" }}</h3>
+        <p class="mb-4 opacity-75">{{ _nl.lead | default: "Subscribe to get the latest news and updates delivered to your inbox." }}</p>
+        {% if _nl.endpoint %}
+        <form class="row g-2 justify-content-center" method="post" action="{{ _nl.endpoint }}">
           <div class="col-md-4">
-            <input type="email" class="form-control form-control-lg" placeholder="Enter your email">
+            <label for="news-newsletter-email" class="visually-hidden">Email address</label>
+            <input type="email" id="news-newsletter-email" name="email" required
+                   class="form-control form-control-lg" placeholder="Enter your email">
           </div>
           <div class="col-auto">
             <button type="submit" class="btn btn-light btn-lg">
@@ -576,9 +693,16 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
             </button>
           </div>
         </form>
+        {% else %}
+        <a class="btn btn-light btn-lg" href="mailto:{{ site.email }}?subject=Subscribe%20to%20{{ site.title | uri_escape }}">
+          Subscribe <i class="bi bi-send ms-1"></i>
+        </a>
+        {% endif %}
       </div>
     </div>
   </section>
+  {% endif %}
+  {% endunless %}
 
 </div>
 

@@ -190,6 +190,11 @@ window.MathJax = {
 <link rel="stylesheet" href="{{ '/assets/css/stats.css' | relative_url }}">
 {% endif %}
 
+<!-- Consumer hook: end of <head>. Inject JSON-LD, font preloads, verification
+     tags, or extra meta by shadowing _includes/custom/head.html in your site —
+     no fork of this file needed. The theme ships the stub empty. -->
+{% include custom/head.html %}
+
 <!-- ========================== -->
 <!-- EXPERIMENTAL FRAMEWORKS   -->
 <!-- ========================== -->

@@ -46,7 +46,7 @@
 {%- else -%}
   {%- assign _bs_theme = 'dark' -%}
 {%- endif -%}
-<html lang="{{ page.lang | default: site.locale | slice: 0, 2 | default: 'en' }}" class="no-js" data-bs-theme="{{ _bs_theme }}" data-color-mode-default="{{ _cm }}" data-theme-skin="{{ site.theme_skin | default: 'dark' }}" data-zer0-bg="{{ site.theme_background.enabled | default: true }}">
+<html lang="{{ page.lang | default: site.locale | slice: 0, 2 | default: 'en' }}" class="no-js" data-bs-theme="{{ _bs_theme }}" data-color-mode-default="{{ _cm }}" data-color-mode-lock="{{ site.color_mode_lock | default: false }}" data-theme-skin="{{ site.theme_skin | default: 'air' }}" data-zer0-bg="{{ site.theme_background.enabled | default: true }}">
     <head>
         <!-- =============================================== -->
         <!-- HEAD SECTION: Meta tags, styles, and SEO setup -->
@@ -67,7 +67,11 @@
         <!-- ============================================== -->
         <!-- BODY SECTION: Site structure and content area -->
         <!-- ============================================== -->
-        
+
+        <!-- Consumer hook: first thing inside <body> (e.g. GTM noscript).
+             Empty stub shipped by the theme; shadow _includes/custom/body-start.html to use. -->
+        {% include custom/body-start.html %}
+
         <!-- Inline SVG symbols for consistent iconography throughout the site -->
         <!-- Page-invariant: cached once per build via jekyll-include-cache. -->
         {% include_cached components/svg.html %}
@@ -125,6 +129,12 @@
         {%- include_cached core/footer.html lang=page.lang -%}
         {%- include core/footer-fabs.html -%}
 
+        <!-- Consumer hook: after the theme footer, before the consent banner.
+             Empty stub shipped by the theme; shadow _includes/custom/footer.html to use.
+             Deliberately OUTSIDE the cached footer include so page-dependent
+             consumer markup renders per page. -->
+        {%- include custom/footer.html -%}
+
         <!-- Privacy-compliant cookie consent banner — page-invariant. -->
         {%- include_cached components/cookie-consent.html -%}
 
@@ -148,5 +158,9 @@
 
         <!-- Analytics Integration -->
         {%- include analytics/posthog.html -%}
+
+        <!-- Consumer hook: last thing before </body> (site scripts, widgets).
+             Empty stub shipped by the theme; shadow _includes/custom/body-end.html to use. -->
+        {%- include custom/body-end.html -%}
     </body>
 </html>

@@ -202,12 +202,12 @@
 // and _includes/navigation/local-graph-fab.html (footer) via
 // assets/js/obsidian-local-graph.js.
 // ----------------------------------------------------------------------------
-// ID selector (not the class) is REQUIRED for the fixed position to stick:
-// the FAB is a direct child of `.zer0-bg-body`, which matches the elevation
-// rule `.zer0-bg-body > *:not(.fixed-top):not(.position-fixed):not(.offcanvas):not(.modal)`
-// in _sass/theme/_backgrounds.scss (specificity 0,5,0) and forces
-// `position: relative; z-index: 1` — dropping the FAB into page flow at the
-// bottom. An id (1,0,0) wins, mirroring `#aiChatToggle`. See ai-chat.html.
+// ID selector kept for historical safety: `.zer0-bg-body` used to force
+// `position: relative; z-index: 1` on every direct child (specificity 0,5,0),
+// which beat the class rule and dropped the FAB into page flow. That elevation
+// rule is gone (the body now isolates with the noise layer at z-index: -1 —
+// see _sass/theme/_backgrounds.scss), but the id keeps the FAB immune to any
+// future generic child rule. Mirrors `#aiChatToggle`. See ai-chat.html.
 //
 // Slot 2 on the left-side FAB stack: sits above the page-feedback FAB
 // (slot 1 = var(--zer0-space-fab-offset)) — same stacking formula as

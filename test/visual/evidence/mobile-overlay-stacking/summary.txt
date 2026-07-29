@@ -1,0 +1,4 @@
+sidebar close hit-testable:  before=false (hit span.site-title-text)  after=true (hit button.btn-close)
+nav link hit-testable:       before=true (hit a.nav-link)  after=true (hit a.nav-link)
+main z-index:                before=1  after=auto
+scrollWidth (390 viewport):  before=390  after=390

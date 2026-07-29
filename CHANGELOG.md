@@ -9,6 +9,127 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Theme propagation system — releases now reach the sites built on them.**
+  Releasing ended at RubyGems; nothing told the five downstream consumers a new
+  version existed, so all three pinned sites were still on v1.26.0 when v1.27.0
+  shipped and the two unpinned ones had been silently tracking `main`.
+  - `_data/consumers.yml` — registry of every consumer, its consumption mode
+    (`remote_theme_pinned` / `remote_theme_floating` / `gem` / `path`), and every
+    file that holds a version pin.
+  - `scripts/propagate.rb` — reports pin drift across the registry
+    (`--format text|json|github`, `--strict`) or dispatches a `theme-release`
+    event to each consumer (`--dispatch`).
+  - `.github/workflows/propagate-theme.yml` — dispatches on release publish;
+    weekly drift report. Never pushes to a consumer: each one opens its own PR so
+    its own CI gates the bump.
+  - `templates/consumer/` — the consumer's half of the contract:
+    `bump-theme-pins.sh` (rewrites `remote_theme`, `theme_repo`, and Gemfile gem
+    constraints in one pass; `--check`, `--dry-run`, `--latest`, `--pin`),
+    `theme-bump.yml` (dispatch + weekly schedule + manual), and a
+    `.theme-overrides.yml` starter. The schedule matters most for gem-mode
+    consumers, which have no `remote_theme` and so pick up nothing automatically.
+  - `docs/systems/theme-propagation.md` — how the whole flow fits together.
+- **`./scripts/bin/manifest --check`** — verifies the committed theme manifest
+  matches the working tree, ignoring `generated_at`. `--dry-run` now emits only
+  YAML on stdout (progress logs moved to stderr) so its output can be diffed
+  directly.
+- **Consumer extension hooks (`_includes/custom/`).** Four empty stubs the
+  chrome now includes at fixed points — `custom/head.html` (end of `<head>`),
+  `custom/body-start.html` (right after `<body>`, e.g. GTM noscript),
+  `custom/footer.html` (after the theme footer), `custom/body-end.html` (last
+  thing before `</body>`). A consumer site shadows just the stub to inject
+  JSON-LD, fonts, verification tags, or scripts — no more forking
+  `core/head.html`/`root.html` and drifting from the theme. Documented in
+  `_includes/README.md`.
+- **`components/card-grid.html` + `components/data-card.html`.** A generic,
+  data-driven card grid (title/url/icon/badge/meta-pills/buttons schema) for
+  org hub dashboards, fleet registries, service grids, and link boards —
+  the markup consumer sites have been hand-rolling per page. Includes an
+  optional empty-state message.
+- **`_layouts/404.html` — the 404 page as a theme layout.** The full 404
+  experience (including the unconfigured-site setup guide) now lives in the
+  theme; a consumer's `/404.html` shrinks from a 224-line vendored copy to a
+  4-line front-matter stub (`layout: "404"`). Setup mode is branded with
+  `site.title` instead of a hardcoded theme welcome, and the stub page's body
+  renders below the standard content for site-specific additions.
+- **`color_mode_lock` config.** Pin the site to one color mode: visitor
+  preference and OS scheme are ignored, the light/dark/auto switcher is
+  removed, and `core/color-mode-init.html` + `halfmoon.js` enforce the lock
+  pre-paint. Replaces consumer JS workarounds that re-asserted a mode on every
+  `matchMedia` change.
+- **PostHog privacy options** (`posthog.privacy.*`): `respect_gpc` (honor the
+  Global Privacy Control signal alongside DNT, default on), `require_consent`
+  (start opted out with memory-only persistence until the visitor accepts the
+  cookie-consent "analytics" category), and `geoip_disable` (no IP→location
+  resolution). Upstreams the deltas consumer sites were maintaining in a
+  full fork of `analytics/posthog.html`.
+- **`news:` config surface for the news/section layouts.** `category_base`
+  (e.g. `/categories/` instead of the hardcoded `/news/`), `index_url`,
+  `hero: false`, `archives_url`, and a `newsletter` block (endpoint-or-mailto,
+  or hidden entirely — the old markup shipped a form that submitted nowhere).
+
+### Changed
+
+- **The news/section layouts work with zero `_data`.** Section navigation
+  falls back from `_data/navigation/posts.yml` to `site.categories`; the hero
+  falls back to the newest post when nothing is marked `breaking`/`featured`;
+  tags links render only when a tags page exists (honoring `site.tags_page`);
+  archive month links render only when an archives page exists. A data-less
+  consumer now gets a fully working magazine homepage instead of empty chrome
+  and 404 links.
+- **Zero-`_data` resilience across components.** The skin quick-select and
+  theme customizer fall back to the compiled skin registry when
+  `_data/theme_skins.yml` is absent; the page-feedback widget falls back to a
+  generic four-type taxonomy when `_data/feedback_types.yml` is absent; the
+  landing get-started band (theme install cards) renders only when the site
+  ships a `landing.get_started` block — a data-less consumer no longer
+  advertises the theme's own install methods.
+- **`home` layout accepts `hide_intro` as an alias of `hide_title`**, matching
+  the flag other layouts use for "suppress the generated page header".
+- **`halfmoon.js` honors `color_mode_default`.** The switcher no longer
+  overrides the configured default with the OS preference on first visit
+  (previously the page could flip modes right after load).
+- The default skin fallback is now `air` everywhere (`root.html`,
+  controls bar, customizer) — `dark` was never a compiled skin, so the old
+  fallback selected a skin that doesn't exist.
+
+### Fixed
+
+- **`_data/theme-manifest.yml` was 13 minors stale.** It sat at `1.14.0` while
+  the theme shipped to `1.27.0`, so every SHA-256 in it was wrong and
+  `scripts/bin/audit-consumer` — which reads it to classify consumer files —
+  silently compared against a June snapshot. Root cause: the file's header said
+  it regenerated during `scripts/bin/release`, but release-please became the
+  canonical release path and knows nothing about it. Regenerated, and now held
+  current by a CI gate (`version.rb` ↔ manifest version) plus
+  `manifest-sync.yml`, which regenerates it inside the release PR.
+- **`test/fixtures/consumer-gem/_layouts/default.html` had drifted from the
+  theme layout it mirrors**, so the "`--fix` deletes IDENTICAL files" audit test
+  had been failing since the layout changed in #310 — the fixture was being
+  classified `DIFFERS_UNJUSTIFIED` rather than `IDENTICAL`, testing the opposite
+  of its intent. Re-synced; the audit suite is green again (21/21).
+- **Mobile overlays no longer trap under the page chrome.** The
+  `.zer0-bg-body` background utility isolates the body stacking context and
+  pushes the noise overlay to `z-index: -1` instead of force-elevating every
+  direct child (`position: relative; z-index: 1`). That old rule made `<main>`
+  a stacking context that (a) capped the docs-sidebar offcanvas below the
+  fixed header — its close button was unreachable on mobile — and (b) beat
+  FAB `position: fixed` rules on specificity, dropping them into flow and
+  adding 16px of horizontal scroll on content pages.
+- **Main-nav offcanvas paints above its backdrop on mobile.** The fixed header
+  is lifted over Bootstrap's body-level backdrop only while `#bdNavbar` is
+  opening/open/closing, so the menu is actually tappable instead of rendering
+  dimmed behind the backdrop.
+- **The unified drawer's Search button works.** It targeted `#search-modal`
+  but the modal's id is `#siteSearchModal`; it now uses the shared
+  `data-search-toggle` binding, which also closes the drawer before opening
+  search.
+- The measured header height is published as `--zer0-header-height` on
+  `:root` (set by `auto-hide-nav.js`), so stylesheets can align overlays with
+  the real header instead of hard-coding its pixel height.
+
+### Added
+
 - **ABC board books (`book-abc` layout) — the "ABC & Language" series.** A new
   immersive, single-scroll toddler alphabet layout (`_layouts/book-abc.html`)
   driven entirely by an `alphabet:` front-matter list — one big letter, one

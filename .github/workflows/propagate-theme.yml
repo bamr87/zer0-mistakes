@@ -1,0 +1,143 @@
+# ==============================================================================
+# Propagate Theme — tell downstream consumers a release happened
+# ==============================================================================
+#
+# Closes the loop that used to end at RubyGems. Publishing a release changed
+# nothing for the five sites built on this theme: their pins sat wherever
+# someone last edited them by hand, so all three pinned consumers were still on
+# v1.26.0 when 1.27.0 shipped, and nobody knew until something broke.
+#
+# Two jobs:
+#   dispatch  on release publish — send `theme-release` to every consumer with
+#             `dispatch: true` in _data/consumers.yml. Each consumer runs its own
+#             theme-bump workflow (templates/consumer/theme-bump.yml), rewrites
+#             its own pins, and opens a PR gated by its own CI. This repo never
+#             pushes to a consumer.
+#   drift     weekly — report consumers whose pins have fallen behind. Catches
+#             what dispatch misses: a repo that was unreachable, a consumer that
+#             never adopted the bump workflow, or a pin reverted by hand.
+#
+# Auth: dispatching to another repo needs a PAT with `repo` scope —
+# GITHUB_TOKEN is scoped to this repository only. LIFECYCLE_PAT is the existing
+# fleet secret for cross-repo dispatch. Without it the run reports instead of
+# dispatching rather than failing the release.
+# ==============================================================================
+
+name: Propagate Theme
+
+on:
+  release:
+    types: [published]
+  schedule:
+    # Mondays 06:00 UTC — a weekly nudge, ahead of the working week.
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Report what would be dispatched; send nothing'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: propagate-theme
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    name: Dispatch release to consumers
+    if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: false
+
+      - name: Check dispatch credential
+        id: cred
+        env:
+          LIFECYCLE_PAT: ${{ secrets.LIFECYCLE_PAT }}
+        run: |
+          if [ -z "${LIFECYCLE_PAT}" ]; then
+            echo "::warning::LIFECYCLE_PAT is not set — reporting drift instead of dispatching."
+            echo "available=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # The released tag is the source of truth for what consumers should pin.
+      # Falls back to version.rb on a manual run.
+      - name: Resolve released version
+        id: version
+        # Values reach the shell via the environment, never spliced into the
+        # script body by `${{ }}` — a tag name is attacker-controllable text.
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "release" ]; then
+            v="${RELEASE_TAG#v}"
+          else
+            v=$(sed -nE 's/.*VERSION = "([0-9][^"]*)".*/\1/p' lib/jekyll-theme-zer0/version.rb | head -1)
+          fi
+          echo "value=$v" >> "$GITHUB_OUTPUT"
+          echo "Propagating v$v"
+
+      - name: Dispatch
+        env:
+          LIFECYCLE_PAT: ${{ secrets.LIFECYCLE_PAT }}
+          GH_TOKEN: ${{ secrets.LIFECYCLE_PAT }}
+          TARGET_VERSION: ${{ steps.version.outputs.value }}
+          CRED_AVAILABLE: ${{ steps.cred.outputs.available }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          args=(--dispatch --version "$TARGET_VERSION")
+          # DRY_RUN is empty on a release trigger; only an explicit "true" forces it.
+          if [ "$CRED_AVAILABLE" != "true" ] || [ "$DRY_RUN" = "true" ]; then
+            args+=(--dry-run)
+          fi
+          ruby scripts/propagate.rb "${args[@]}" | tee -a "$GITHUB_STEP_SUMMARY"
+
+  drift:
+    name: Consumer pin drift report
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: false
+
+      # Deliberately non-fatal: a floating consumer and a consumer holding back a
+      # release on purpose are both legitimate states. This surfaces drift as
+      # annotations plus a summary; it does not cry wolf every Monday.
+      - name: Report drift
+        env:
+          GITHUB_TOKEN: ${{ secrets.LIFECYCLE_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          ruby scripts/propagate.rb --format github
+          {
+            echo '## Consumer pin drift'
+            echo
+            echo '```'
+            ruby scripts/propagate.rb
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

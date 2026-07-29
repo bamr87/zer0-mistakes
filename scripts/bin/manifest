@@ -35,12 +35,15 @@ DESCRIPTION:
     Run automatically by scripts/bin/release before tagging.
 
 OPTIONS:
+    --check         Exit non-zero if the committed manifest is stale; write
+                    nothing. `generated_at` is ignored in the comparison.
     --dry-run       Print manifest to stdout; don't write the file
     --verbose       Show each file being processed
     --help, -h      Show this help message
 
 EXAMPLES:
     ./scripts/bin/manifest                  # Regenerate _data/theme-manifest.yml
+    ./scripts/bin/manifest --check          # CI gate: is the manifest current?
     ./scripts/bin/manifest --dry-run        # Preview output
     ./scripts/bin/manifest --verbose        # Show every file being hashed
 EOF
@@ -81,9 +84,11 @@ OPTIONAL_PLUGIN_PATHS=(
 # Argument parsing
 DRY_RUN=false
 VERBOSE=false
+CHECK=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
+        --check)     CHECK=true; DRY_RUN=true ;;
         --dry-run)   DRY_RUN=true ;;
         --verbose)   VERBOSE=true ;;
         --help|-h)   show_usage; exit 0 ;;
@@ -93,7 +98,14 @@ while [[ $# -gt 0 ]]; do
 done
 
 # ---------------------------------------------------------------------------
-step "Generating theme manifest..."
+# Under --dry-run stdout carries only the manifest YAML — the CI freshness gate
+# (ci.yml "Theme manifest freshness") diffs that stdout straight against the
+# committed file, so progress logs must not pollute it.
+if [[ "$DRY_RUN" == "true" ]]; then
+    step "Generating theme manifest..." >&2
+else
+    step "Generating theme manifest..."
+fi
 cd "$REPO_ROOT"
 
 CURRENT_VERSION=$(get_current_version)
@@ -173,10 +185,25 @@ YAML
 )
 
 # ---------------------------------------------------------------------------
-if [[ "$DRY_RUN" == "true" ]]; then
-    info "[DRY RUN] Would write _data/theme-manifest.yml:"
+MANIFEST_FILE="$REPO_ROOT/_data/theme-manifest.yml"
+
+if [[ "$CHECK" == "true" ]]; then
+    # Staleness = any difference other than the generation timestamp, which moves
+    # on every run and would otherwise report a false positive every time.
+    if [[ ! -f "$MANIFEST_FILE" ]]; then
+        error "Manifest missing: _data/theme-manifest.yml — run ./scripts/bin/manifest"
+    fi
+    if diff -u \
+        <(grep -v '^generated_at:' "$MANIFEST_FILE") \
+        <(echo "$MANIFEST_CONTENT" | grep -v '^generated_at:') >&2; then
+        success "Manifest is current (version $CURRENT_VERSION)" >&2
+        exit 0
+    fi
+    error "Manifest is stale — run ./scripts/bin/manifest and commit the result"
+elif [[ "$DRY_RUN" == "true" ]]; then
+    info "[DRY RUN] Would write _data/theme-manifest.yml:" >&2
     echo "$MANIFEST_CONTENT"
 else
-    echo "$MANIFEST_CONTENT" > "$REPO_ROOT/_data/theme-manifest.yml"
+    echo "$MANIFEST_CONTENT" > "$MANIFEST_FILE"
     success "Written: _data/theme-manifest.yml (version $CURRENT_VERSION)"
 fi

@@ -1,0 +1,90 @@
+# ==============================================================================
+# Manifest Sync — regenerate the theme manifest inside the release PR
+# ==============================================================================
+#
+# _data/theme-manifest.yml is the machine-readable contract downstream consumers
+# audit against (scripts/bin/audit-consumer, scripts/bin/sync-plugins) and the
+# release fan-out (propagate-theme.yml) reads. It records the version plus a
+# SHA-256 for every themable file, so it is only meaningful when it matches a
+# released tag.
+#
+# Its header claimed it was "regenerated automatically during each release
+# (scripts/bin/release)" — but scripts/bin/release is now only the manual
+# fallback. The canonical path is release-please (release.yml → reusable
+# workflows in bamr87/.github), which knows nothing about this file. The manifest
+# therefore froze at 1.14.0 while the theme shipped to 1.27.0.
+#
+# This workflow closes that gap: when release-please opens its release PR (the
+# commit that bumps version.rb), regenerate the manifest and commit it into the
+# same PR, so the tagged release always carries a manifest that describes it.
+# The "Version ↔ theme manifest consistency" gate in ci.yml is the backstop.
+# ==============================================================================
+
+name: Manifest Sync
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: manifest-sync-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    name: Regenerate theme manifest
+    # Release PRs only. Feature PRs deliberately do NOT regenerate the manifest:
+    # it is a release snapshot, and rewriting 500 generated lines on every branch
+    # would churn and conflict for no benefit.
+    if: startsWith(github.head_ref, 'release-please--')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout release branch
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.head_ref }}
+          # Default GITHUB_TOKEN is enough: the release branch lives in this repo.
+          # Pushes made with it do not retrigger workflows, which is what we want
+          # here — the follow-up CI run on the release PR is already scheduled.
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Regenerate manifest
+        id: regen
+        run: |
+          set -euo pipefail
+          before=$(grep -v '^generated_at:' _data/theme-manifest.yml || true)
+          ./scripts/bin/manifest
+          after=$(grep -v '^generated_at:' _data/theme-manifest.yml)
+
+          # generated_at moves on every run. Committing a timestamp-only change
+          # would push a new commit on each `synchronize`, which retriggers this
+          # workflow's sibling checks and churns the release PR forever.
+          if [ "$before" = "$after" ]; then
+            git checkout -- _data/theme-manifest.yml
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "✓ manifest already describes this release"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit to the release PR
+        if: steps.regen.outputs.changed == 'true'
+        # head_ref reaches the shell through the environment, never interpolated
+        # into the script body — a branch name is attacker-controllable text and
+        # `${{ }}` splices it in before bash ever parses the line.
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          set -euo pipefail
+          version=$(sed -nE 's/^version: "([^"]+)".*/\1/p' _data/theme-manifest.yml | head -1)
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _data/theme-manifest.yml
+          git commit -m "chore(manifest): regenerate theme manifest for ${version}"
+          git push origin "HEAD:${HEAD_REF}"
+          echo "✓ manifest regenerated for ${version} and pushed to the release PR"

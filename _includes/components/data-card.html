@@ -1,0 +1,95 @@
+{%- comment -%}
+  ===================================================================
+  DATA-CARD — one generic, data-driven Bootstrap card
+  ===================================================================
+
+  Path: _includes/components/data-card.html
+  Purpose: Render ONE card from a plain data hash so hub dashboards,
+           fleet registries, service grids, and link boards can be
+           data-driven instead of hand-written Bootstrap markup.
+           Usually invoked via components/card-grid.html.
+
+  Parameters:
+    item          (hash, required) — the card data (see schema below)
+    heading_level (string) — heading tag for the title, default "h3"
+    heading_class (string) — classes for the heading, default "h5"
+    card_class    (string) — extra classes on the .card element
+
+  Item schema (every key optional except title):
+    title         card heading text
+    url           makes the title a link
+    external      true → the title link opens in a new tab
+    description   body copy (plain text or inline HTML)
+    icon          Bootstrap Icons class shown before the title (e.g. "bi-robot")
+    image         image path/URL rendered via components/preview-image.html
+    image_alt     alt text for the image (defaults to title)
+    badge         short status label rendered next to the title
+    badge_variant Bootstrap color suffix for the badge (default "secondary")
+    badge_title   tooltip for the badge
+    meta          array of { icon, text } pills rendered under the body
+    buttons       array of { label, url, icon, variant, external } footer actions
+    footer        small muted footer text (rendered when no buttons)
+
+  Example (_data/projects.yml + a page):
+    {% for p in site.data.projects %}
+      {% include components/data-card.html item=p %}
+    {% endfor %}
+  ===================================================================
+{%- endcomment -%}
+{%- assign _dc = include.item -%}
+{%- assign _dc_heading = include.heading_level | default: "h3" -%}
+{%- assign _dc_heading_class = include.heading_class | default: "h5" -%}
+<div class="card h-100 zer0-data-card {{ include.card_class }}">
+  {%- if _dc.image -%}
+    {%- assign _dc_img_alt = _dc.image_alt | default: _dc.title -%}
+    {%- if _dc.url -%}<a href="{{ _dc.url | relative_url }}" tabindex="-1" aria-hidden="true">{%- endif -%}
+    {%- include components/preview-image.html src=_dc.image alt=_dc_img_alt class="card-img-top" style="height: 160px; object-fit: cover;" -%}
+    {%- if _dc.url -%}</a>{%- endif -%}
+  {%- endif -%}
+  <div class="card-body d-flex flex-column">
+    <{{ _dc_heading }} class="card-title {{ _dc_heading_class }} mb-2 d-flex align-items-center">
+      {%- if _dc.icon %}<i class="bi {{ _dc.icon }} me-2" aria-hidden="true"></i>{% endif -%}
+      <span class="flex-grow-1">
+        {%- if _dc.url -%}
+          <a href="{{ _dc.url | relative_url }}" class="text-decoration-none text-body-emphasis"
+             {%- if _dc.external %} target="_blank" rel="noopener"{% endif %}>{{ _dc.title }}</a>
+        {%- else -%}
+          {{ _dc.title }}
+        {%- endif -%}
+      </span>
+      {%- if _dc.badge %}
+      <span class="badge text-bg-{{ _dc.badge_variant | default: 'secondary' }} ms-2"
+            {%- if _dc.badge_title %} title="{{ _dc.badge_title | escape }}"{% endif %}>{{ _dc.badge }}</span>
+      {%- endif %}
+    </{{ _dc_heading }}>
+    {%- if _dc.description %}
+    <p class="card-text text-body-secondary mb-2">{{ _dc.description }}</p>
+    {%- endif %}
+    {%- if _dc.meta and _dc.meta.size > 0 %}
+    <div class="d-flex flex-wrap gap-2 mt-auto pt-2">
+      {%- for m in _dc.meta %}
+      <span class="badge rounded-pill text-bg-light border text-body-secondary fw-normal">
+        {%- if m.icon %}<i class="bi {{ m.icon }} me-1" aria-hidden="true"></i>{% endif -%}
+        {{ m.text }}
+      </span>
+      {%- endfor %}
+    </div>
+    {%- endif %}
+  </div>
+  {%- if _dc.buttons and _dc.buttons.size > 0 %}
+  <div class="card-footer bg-transparent d-flex flex-wrap gap-2">
+    {%- for b in _dc.buttons %}
+    <a class="btn btn-sm btn-{{ b.variant | default: 'outline-primary' }}"
+       href="{{ b.url | relative_url }}"
+       {%- if b.external %} target="_blank" rel="noopener"{% endif %}>
+      {%- if b.icon %}<i class="bi {{ b.icon }} me-1" aria-hidden="true"></i>{% endif -%}
+      {{ b.label }}
+    </a>
+    {%- endfor %}
+  </div>
+  {%- elsif _dc.footer %}
+  <div class="card-footer bg-transparent">
+    <small class="text-body-secondary">{{ _dc.footer }}</small>
+  </div>
+  {%- endif %}
+</div>

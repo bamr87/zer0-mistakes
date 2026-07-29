@@ -74,8 +74,11 @@
             if (typeof bootstrap === 'undefined') return;
             const cookieEl = document.getElementById('cookieSettingsModal');
             const infoEl = document.getElementById('info-section');
+            const drawerEl = document.getElementById('zer0UnifiedDrawer');
             afterModalClosed(cookieEl, () => {
-                afterOffcanvasClosed(infoEl, showSearchModal);
+                afterOffcanvasClosed(infoEl, () => {
+                    afterOffcanvasClosed(drawerEl, showSearchModal);
+                });
             });
         };
 

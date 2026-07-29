@@ -1,0 +1,154 @@
+# ==============================================================================
+# theme-bump.yml — keep this site's zer0-mistakes pins current
+# ==============================================================================
+#
+# Copy to .github/workflows/theme-bump.yml in a consumer repo, alongside
+# scripts/bump-theme-pins.sh.
+#
+# Three ways in:
+#   repository_dispatch  the theme repo fires `theme-release` on every published
+#                        release (propagate-theme.yml). This is the fast path —
+#                        a bump PR opens within a minute of a release.
+#   schedule             weekly safety net. Dispatch can be missed: the repo may
+#                        be unreachable, the PAT may have expired, or this
+#                        workflow may not have existed yet. The schedule is also
+#                        the ONLY path that works for gem-mode consumers who are
+#                        not dispatched to at all.
+#   workflow_dispatch    manual, with an optional explicit version.
+#
+# The PR is opened, never merged — this repo's own CI gates it, which is the
+# whole reason the bump happens here rather than being pushed from the theme.
+# ==============================================================================
+
+name: Theme Bump
+
+on:
+  repository_dispatch:
+    types: [theme-release]
+  schedule:
+    # Mondays 07:00 UTC — an hour after the theme's drift report.
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Theme version to pin (blank = latest release)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: theme-bump
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    name: Bump theme pins
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve target version
+        id: target
+        # client_payload is supplied by whoever fires the dispatch and inputs by
+        # whoever clicks Run workflow. Both reach the shell through the
+        # environment; interpolating them into the script body with `${{ }}`
+        # would splice arbitrary text in before bash parses the line.
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAYLOAD_VERSION: ${{ github.event.client_payload.version }}
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          # Dispatch payload wins, then the manual input, then "latest".
+          v="${PAYLOAD_VERSION:-}"
+          [ -z "$v" ] && v="${INPUT_VERSION:-}"
+          if [ -z "$v" ]; then
+            v=$(gh api repos/bamr87/zer0-mistakes/releases/latest --jq .tag_name)
+          fi
+          v="${v#v}"
+          # Never let anything but a version number past this point: it becomes a
+          # branch name, a commit message, and a --version argument downstream.
+          if ! printf '%s' "$v" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$'; then
+            echo "::error::refusing to act on a non-version string: '$v'"
+            exit 1
+          fi
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+          echo "Target: v$v"
+
+      - name: Rewrite pins
+        id: bump
+        env:
+          TARGET_VERSION: ${{ steps.target.outputs.version }}
+        run: |
+          set -euo pipefail
+          chmod +x scripts/bump-theme-pins.sh
+          scripts/bump-theme-pins.sh --version "$TARGET_VERSION" | tee bump.log
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Only relevant when a Gemfile pin moved. Harmless (and skipped) otherwise.
+      - name: Re-lock bundle
+        if: steps.bump.outputs.changed == 'true' && hashFiles('Gemfile.lock') != ''
+        continue-on-error: true
+        run: |
+          if git diff --name-only | grep -qE '^Gemfile'; then
+            bundle lock --update=jekyll-theme-zer0 || \
+              echo "::warning::bundle lock failed — re-lock by hand before merging"
+          fi
+
+      - name: Open pull request
+        if: steps.bump.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.target.outputs.version }}
+        run: |
+          set -euo pipefail
+          branch="chore/theme-v${VERSION}"
+
+          # An open bump PR for this exact version already exists — nothing to do.
+          if gh pr list --head "$branch" --state open --json number --jq 'length' | grep -qv '^0$'; then
+            echo "PR for $branch already open; leaving it alone."
+            exit 0
+          fi
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$branch"
+          git add -A
+          git commit -m "chore(theme): bump zer0-mistakes to v${VERSION}"
+          git push -u origin "$branch" --force-with-lease
+
+          gh pr create \
+            --title "chore(theme): bump zer0-mistakes to v${VERSION}" \
+            --body "$(cat <<EOF
+          Automated theme pin bump to [v${VERSION}](https://github.com/bamr87/zer0-mistakes/releases/tag/v${VERSION}).
+
+          \`\`\`
+          $(cat bump.log)
+          \`\`\`
+
+          Opened by \`theme-bump.yml\`; this repo's own CI gates it. Review the
+          rendered site before merging — and check whether any comment near a
+          pin still names the old version (the bump script deliberately does not
+          rewrite comments).
+          EOF
+          )" \
+            --label "dependencies" || \
+            gh pr create \
+              --title "chore(theme): bump zer0-mistakes to v${VERSION}" \
+              --body "Automated theme pin bump to v${VERSION}."
+
+      - name: Nothing to do
+        if: steps.bump.outputs.changed != 'true'
+        env:
+          TARGET_VERSION: ${{ steps.target.outputs.version }}
+        run: echo "Pins already at v${TARGET_VERSION}."

@@ -34,8 +34,11 @@ layout: root
   - title:           displayed as <h1> (and used for SEO) when present
   - hide_title:true  keep `title` for SEO but suppress the visible <h1>
                      (useful when a custom hero provides its own heading)
+  - hide_intro:true  accepted as an alias of hide_title — other layouts use
+                     `hide_intro` for "suppress the generated page header",
+                     and consumers reasonably reach for it here too
   - rss_subscribe:false  hide the RSS subscribe link on landing/showcase homepages
-  Both default to the original behavior, so existing homepages are unaffected.
+  All default to the original behavior, so existing homepages are unaffected.
   
   Design Philosophy:
   - Minimal structure allows for maximum content flexibility
@@ -56,7 +59,7 @@ layout: root
     <!-- Landing/showcase pages can keep `title` for SEO but suppress the -->
     <!-- visible heading (e.g. when a custom hero supplies its own <h1>) -->
     <!-- with `hide_title: true`. -->
-    {%- if page.title and page.hide_title != true -%}
+    {%- if page.title and page.hide_title != true and page.hide_intro != true -%}
         <h1 class="page-heading">{{ page.title }}</h1>
     {%- endif -%}
     
