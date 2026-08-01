@@ -1,0 +1,463 @@
+# ================================================================
+# GENERATED FILE — do not edit by hand.
+# Maintained by scripts/translate.rb (see .github/workflows/translate.yml).
+# Maps each English page URL to its generated translations; read by
+# _includes/components/language-toggle.html and _includes/core/hreflang.html.
+# ================================================================
+version: 1
+pages:
+  "/docs/analytics/":
+    source: pages/_docs/analytics/index.md
+    sha: 3e75b181bb8459209a06a561aecc47ffef3c1c410451f65bab8ac532a6daf0d0
+    fr:
+      url: "/fr/docs/analytics/"
+      path: fr/docs/analytics/index.md
+      sha: 3e75b181bb8459209a06a561aecc47ffef3c1c410451f65bab8ac532a6daf0d0
+      translated_at: '2026-07-23T17:09:23Z'
+      prompt_version: 1
+  "/docs/analytics/google-analytics/":
+    source: pages/_docs/analytics/google-analytics.md
+    sha: 2ae7ac85b18df61ceee7e9efb0936a3a0bd5fde0159989e1fa4a7478826c72fd
+    fr:
+      url: "/fr/docs/analytics/google-analytics/"
+      path: fr/docs/analytics/google-analytics.md
+      sha: 2ae7ac85b18df61ceee7e9efb0936a3a0bd5fde0159989e1fa4a7478826c72fd
+      translated_at: '2026-07-23T17:08:39Z'
+      prompt_version: 1
+  "/docs/analytics/google-tag-manager/":
+    source: pages/_docs/analytics/google-tag-manager.md
+    sha: bdf0494721472f3c04d0f421ce3721d6543cd7696730b5bf9697b024bddb02d8
+    fr:
+      url: "/fr/docs/analytics/google-tag-manager/"
+      path: fr/docs/analytics/google-tag-manager.md
+      sha: bdf0494721472f3c04d0f421ce3721d6543cd7696730b5bf9697b024bddb02d8
+      translated_at: '2026-07-23T17:09:12Z'
+      prompt_version: 1
+  "/docs/bootstrap/":
+    source: pages/_docs/bootstrap/index.md
+    sha: 3df6221d99c3ee69950624840487fed4308131d34cc7a1e54533e8b5fa5b9496
+    fr:
+      url: "/fr/docs/bootstrap/"
+      path: fr/docs/bootstrap/index.md
+      sha: 3df6221d99c3ee69950624840487fed4308131d34cc7a1e54533e8b5fa5b9496
+      translated_at: '2026-07-23T17:09:41Z'
+      prompt_version: 1
+  "/docs/customization/":
+    source: pages/_docs/customization/index.md
+    sha: b64ef8d39a8632943b11c7c047ae6f7661f06d88f011f62df009be9006414d06
+    fr:
+      url: "/fr/docs/customization/"
+      path: fr/docs/customization/index.md
+      sha: b64ef8d39a8632943b11c7c047ae6f7661f06d88f011f62df009be9006414d06
+      translated_at: '2026-07-23T17:11:13Z'
+      prompt_version: 1
+  "/docs/customization/author-profiles/":
+    source: pages/_docs/customization/author-profiles.md
+    sha: c6ab7cc3db384582798e06b4b299b07d5f7129fab96442efb5d1b1863e4b6beb
+    fr:
+      url: "/fr/docs/customization/author-profiles/"
+      path: fr/docs/customization/author-profiles.md
+      sha: c6ab7cc3db384582798e06b4b299b07d5f7129fab96442efb5d1b1863e4b6beb
+      translated_at: '2026-07-23T17:10:34Z'
+      prompt_version: 1
+  "/docs/customization/includes/":
+    source: pages/_docs/customization/includes.md
+    sha: 302b054e92b74d17d0b0d0cf05942fbd021a5bf7e6639bdd70e9121fc1de6a54
+    fr:
+      url: "/fr/docs/customization/includes/"
+      path: fr/docs/customization/includes.md
+      sha: 302b054e92b74d17d0b0d0cf05942fbd021a5bf7e6639bdd70e9121fc1de6a54
+      translated_at: '2026-07-23T17:11:02Z'
+      prompt_version: 1
+  "/docs/customization/layouts/":
+    source: pages/_docs/customization/layouts.md
+    sha: edeb35201153cbae4bdb43b39604df3a2842c809a5f8b86915990359c1e59bd4
+    fr:
+      url: "/fr/docs/customization/layouts/"
+      path: fr/docs/customization/layouts.md
+      sha: edeb35201153cbae4bdb43b39604df3a2842c809a5f8b86915990359c1e59bd4
+      translated_at: '2026-07-23T17:11:28Z'
+      prompt_version: 1
+  "/docs/customization/navigation/":
+    source: pages/_docs/customization/navigation.md
+    sha: 3ff754c43c15ee543da7223ca51f50eaff5886b73d839b3beb29662a317b8c43
+    fr:
+      url: "/fr/docs/customization/navigation/"
+      path: fr/docs/customization/navigation.md
+      sha: 3ff754c43c15ee543da7223ca51f50eaff5886b73d839b3beb29662a317b8c43
+      translated_at: '2026-07-23T17:11:38Z'
+      prompt_version: 1
+  "/docs/customization/styles/":
+    source: pages/_docs/customization/styles.md
+    sha: 76ceef73178c00bd52721c0b977aa21e3e79e305277c2bc86386afb2980dc716
+    fr:
+      url: "/fr/docs/customization/styles/"
+      path: fr/docs/customization/styles.md
+      sha: 76ceef73178c00bd52721c0b977aa21e3e79e305277c2bc86386afb2980dc716
+      translated_at: '2026-07-23T17:11:51Z'
+      prompt_version: 1
+  "/docs/deployment/build-overlay/":
+    source: pages/_docs/deployment/build-overlay.md
+    sha: fb72cf0bff9e1643c8902c7e756455f0ab4c73811a1d053987a88d540c92c1ef
+    fr:
+      url: "/fr/docs/deployment/build-overlay/"
+      path: fr/docs/deployment/build-overlay.md
+      sha: fb72cf0bff9e1643c8902c7e756455f0ab4c73811a1d053987a88d540c92c1ef
+      translated_at: '2026-07-23T17:12:08Z'
+      prompt_version: 1
+  "/docs/deployment/custom-domain/":
+    source: pages/_docs/deployment/custom-domain.md
+    sha: d2bcbbbf0f5a3cedfb2c2f33eb55af42e0d61138306d0842689b9f402317c950
+    fr:
+      url: "/fr/docs/deployment/custom-domain/"
+      path: fr/docs/deployment/custom-domain.md
+      sha: d2bcbbbf0f5a3cedfb2c2f33eb55af42e0d61138306d0842689b9f402317c950
+      translated_at: '2026-07-23T17:12:40Z'
+      prompt_version: 1
+  "/docs/deployment/github-pages/":
+    source: pages/_docs/deployment/github-pages.md
+    sha: be0523b0bf140bf69ff0242e92ed06de6aa40668692fcbe6dbb5336839b3e17e
+    fr:
+      url: "/fr/docs/deployment/github-pages/"
+      path: fr/docs/deployment/github-pages.md
+      sha: be0523b0bf140bf69ff0242e92ed06de6aa40668692fcbe6dbb5336839b3e17e
+      translated_at: '2026-07-23T17:13:01Z'
+      prompt_version: 1
+  "/news/":
+    source: pages/_posts/2000-01-01-index.md
+    sha: 1fb552f8be97026448bd1b0b12f2785fbc9251f219e896b4bda2f0d14c6d604f
+    fr:
+      url: "/fr/news/"
+      path: fr/posts/2000-01-01-index.md
+      sha: 1fb552f8be97026448bd1b0b12f2785fbc9251f219e896b4bda2f0d14c6d604f
+      translated_at: '2026-07-23T16:53:09Z'
+      prompt_version: 1
+  "/news/business/":
+    source: pages/_posts/business/2000-01-01-index.md
+    sha: b264f37362cb749fbe9a2f6539dc9de6a112d394f42173a504157f67673344f4
+    fr:
+      url: "/fr/news/business/"
+      path: fr/posts/business/2000-01-01-index.md
+      sha: b264f37362cb749fbe9a2f6539dc9de6a112d394f42173a504157f67673344f4
+      translated_at: '2026-07-23T16:56:35Z'
+      prompt_version: 1
+  "/news/development/":
+    source: pages/_posts/development/2000-01-01-index.md
+    sha: b6388f4cc919d5173e9d445876076bd47adf5a7fe8dd29a6a0c76eb45ee34a54
+    fr:
+      url: "/fr/news/development/"
+      path: fr/posts/development/2000-01-01-index.md
+      sha: b6388f4cc919d5173e9d445876076bd47adf5a7fe8dd29a6a0c76eb45ee34a54
+      translated_at: '2026-07-23T16:57:30Z'
+      prompt_version: 1
+  "/news/science/":
+    source: pages/_posts/science/2000-01-01-index.md
+    sha: f9e7973d0813edaf50eacbfb22562fac1201f56548cf5ae23079dbc840f05f14
+    fr:
+      url: "/fr/news/science/"
+      path: fr/posts/science/2000-01-01-index.md
+      sha: f9e7973d0813edaf50eacbfb22562fac1201f56548cf5ae23079dbc840f05f14
+      translated_at: '2026-07-23T16:58:32Z'
+      prompt_version: 1
+  "/news/technology/":
+    source: pages/_posts/technology/2000-01-01-index.md
+    sha: 77972cfb4365a28e14b94de4574053fe3e0021aed68b8c0298a0a29ffbbeca45
+    fr:
+      url: "/fr/news/technology/"
+      path: fr/posts/technology/2000-01-01-index.md
+      sha: 77972cfb4365a28e14b94de4574053fe3e0021aed68b8c0298a0a29ffbbeca45
+      translated_at: '2026-07-23T16:59:28Z'
+      prompt_version: 1
+  "/news/tutorial/":
+    source: pages/_posts/tutorial/2000-01-01-index.md
+    sha: b9f70e4677bc8b46e1686db4f66cba70404965c59b66230b0bc3953b6ba1a17b
+    fr:
+      url: "/fr/news/tutorial/"
+      path: fr/posts/tutorial/2000-01-01-index.md
+      sha: b9f70e4677bc8b46e1686db4f66cba70404965c59b66230b0bc3953b6ba1a17b
+      translated_at: '2026-07-23T17:04:56Z'
+      prompt_version: 1
+  "/news/world/":
+    source: pages/_posts/world/2000-01-01-index.md
+    sha: 799accfecc9193b3fda568f654a5d92fa7537b76a614965c4fa7e313719f40ea
+    fr:
+      url: "/fr/news/world/"
+      path: fr/posts/world/2000-01-01-index.md
+      sha: 799accfecc9193b3fda568f654a5d92fa7537b76a614965c4fa7e313719f40ea
+      translated_at: '2026-07-23T17:07:12Z'
+      prompt_version: 1
+  "/posts/2024/06/17/wizard-topples-capitalist-dominance-ingeniously/":
+    source: pages/_posts/2024-06-17-wizard-topples-capitalist-dominance-ingeniously.md
+    sha: 5ba30eeebe4fc18de2391258cbf49f96cf529ff1e7b92a2859877f1f87819ecd
+    fr:
+      url: "/fr/posts/2024/06/17/wizard-topples-capitalist-dominance-ingeniously/"
+      path: fr/posts/2024-06-17-wizard-topples-capitalist-dominance-ingeniously.md
+      sha: 5ba30eeebe4fc18de2391258cbf49f96cf529ff1e7b92a2859877f1f87819ecd
+      translated_at: '2026-07-23T16:54:13Z'
+      prompt_version: 1
+  "/posts/2025/01/01/getting-started-jekyll/":
+    source: pages/_posts/2025-01-01-getting-started-jekyll.md
+    sha: 8d3fbba92fb246c61a122267810e654b0c3b3a6f460d93d6ee51d9a5c5b5a24a
+    fr:
+      url: "/fr/posts/2025/01/01/getting-started-jekyll/"
+      path: fr/posts/2025-01-01-getting-started-jekyll.md
+      sha: 8d3fbba92fb246c61a122267810e654b0c3b3a6f460d93d6ee51d9a5c5b5a24a
+      translated_at: '2026-07-23T16:54:22Z'
+      prompt_version: 1
+  "/posts/2025/01/05/web-accessibility-guide/":
+    source: pages/_posts/2025-01-05-web-accessibility-guide.md
+    sha: 9e36acbd9ad4ea79467e9820a7a6344f3b9109f73a733d946700487f063c4433
+    fr:
+      url: "/fr/posts/2025/01/05/web-accessibility-guide/"
+      path: fr/posts/2025-01-05-web-accessibility-guide.md
+      sha: 9e36acbd9ad4ea79467e9820a7a6344f3b9109f73a733d946700487f063c4433
+      translated_at: '2026-07-23T16:54:34Z'
+      prompt_version: 1
+  "/posts/2025/01/10/bootstrap-5-components/":
+    source: pages/_posts/2025-01-10-bootstrap-5-components.md
+    sha: 24af55442ab536c6989a29b073e252a0123a961b9d1a7a94979ad83d8c1ab278
+    fr:
+      url: "/fr/posts/2025/01/10/bootstrap-5-components/"
+      path: fr/posts/2025-01-10-bootstrap-5-components.md
+      sha: 24af55442ab536c6989a29b073e252a0123a961b9d1a7a94979ad83d8c1ab278
+      translated_at: '2026-07-23T16:54:43Z'
+      prompt_version: 1
+  "/posts/2025/01/15/docker-jekyll-guide/":
+    source: pages/_posts/2025-01-15-docker-jekyll-guide.md
+    sha: f41e406ffb3cb2089ed37dfd8f388f975ca46edac746307768358d892aa9a3d2
+    fr:
+      url: "/fr/posts/2025/01/15/docker-jekyll-guide/"
+      path: fr/posts/2025-01-15-docker-jekyll-guide.md
+      sha: f41e406ffb3cb2089ed37dfd8f388f975ca46edac746307768358d892aa9a3d2
+      translated_at: '2026-07-23T16:54:51Z'
+      prompt_version: 1
+  "/posts/2025/01/18/quantum-computing-explained/":
+    source: pages/_posts/science/2025-01-18-quantum-computing-explained.md
+    sha: 7df0af9b5ebf5a6f94444eb8a888e4bb4c8d0f686e3e682c68feb74bbdedd7ea
+    fr:
+      url: "/fr/posts/2025/01/18/quantum-computing-explained/"
+      path: fr/posts/science/2025-01-18-quantum-computing-explained.md
+      sha: 7df0af9b5ebf5a6f94444eb8a888e4bb4c8d0f686e3e682c68feb74bbdedd7ea
+      translated_at: '2026-07-23T16:58:49Z'
+      prompt_version: 1
+  "/posts/2025/01/20/startup-funding-guide/":
+    source: pages/_posts/business/2025-01-20-startup-funding-guide.md
+    sha: 827630eab154151c3beaeb35c5b3a364d73f5ee9b255b05334fecf15a1119b08
+    fr:
+      url: "/fr/posts/2025/01/20/startup-funding-guide/"
+      path: fr/posts/business/2025-01-20-startup-funding-guide.md
+      sha: 827630eab154151c3beaeb35c5b3a364d73f5ee9b255b05334fecf15a1119b08
+      translated_at: '2026-07-23T16:56:51Z'
+      prompt_version: 1
+  "/posts/2025/01/21/remote-work-revolution/":
+    source: pages/_posts/world/2025-01-21-remote-work-revolution.md
+    sha: c1af2e3b7a1e5e980b0b8751ed1e03474b5f4f7c5b89493af803b5fadb76fe6c
+    fr:
+      url: "/fr/posts/2025/01/21/remote-work-revolution/"
+      path: fr/posts/world/2025-01-21-remote-work-revolution.md
+      sha: c1af2e3b7a1e5e980b0b8751ed1e03474b5f4f7c5b89493af803b5fadb76fe6c
+      translated_at: '2026-07-23T17:07:41Z'
+      prompt_version: 1
+  "/posts/2025/01/22/git-workflow-best-practices/":
+    source: pages/_posts/development/2025-01-22-git-workflow-best-practices.md
+    sha: 935ef23978aa1f12ce1f1d17c647e0946e57936296dfcb4148a854abaa4e964f
+    fr:
+      url: "/fr/posts/2025/01/22/git-workflow-best-practices/"
+      path: fr/posts/development/2025-01-22-git-workflow-best-practices.md
+      sha: 935ef23978aa1f12ce1f1d17c647e0946e57936296dfcb4148a854abaa4e964f
+      translated_at: '2026-07-23T16:57:50Z'
+      prompt_version: 1
+  "/posts/2025/01/23/css-grid-mastery/":
+    source: pages/_posts/tutorial/2025-01-23-css-grid-mastery.md
+    sha: bdc8ce77df057b9084ecad9b438e47c8b5031f21703eb4bbc52d8e8c6b697e59
+    fr:
+      url: "/fr/posts/2025/01/23/css-grid-mastery/"
+      path: fr/posts/tutorial/2025-01-23-css-grid-mastery.md
+      sha: bdc8ce77df057b9084ecad9b438e47c8b5031f21703eb4bbc52d8e8c6b697e59
+      translated_at: '2026-07-23T17:06:40Z'
+      prompt_version: 1
+  "/posts/2025/01/25/ai-tools-productivity/":
+    source: pages/_posts/technology/2025-01-25-ai-tools-productivity.md
+    sha: b64e95aceef7123b7be3260198d79981cffef2a7a26f832f1e5cff7bf55cfa04
+    fr:
+      url: "/fr/posts/2025/01/25/ai-tools-productivity/"
+      path: fr/posts/technology/2025-01-25-ai-tools-productivity.md
+      sha: b64e95aceef7123b7be3260198d79981cffef2a7a26f832f1e5cff7bf55cfa04
+      translated_at: '2026-07-23T16:59:46Z'
+      prompt_version: 1
+  "/posts/2026/04/07/ai-adoption-from-awareness-to-action/":
+    source: pages/_posts/technology/2026-04-07-ai-adoption-from-awareness-to-action.md
+    sha: 25bbccc4ae7ff668b393368b888cb678f5bc05186d2ad49d7a9b13c8cd9907c4
+    fr:
+      url: "/fr/posts/2026/04/07/ai-adoption-from-awareness-to-action/"
+      path: fr/posts/technology/2026-04-07-ai-adoption-from-awareness-to-action.md
+      sha: 25bbccc4ae7ff668b393368b888cb678f5bc05186d2ad49d7a9b13c8cd9907c4
+      translated_at: '2026-07-23T17:01:37Z'
+      prompt_version: 1
+  "/posts/2026/04/07/ai-adoption-imperative-mid-market-manufacturers/":
+    source: pages/_posts/technology/2026-04-07-ai-adoption-imperative-mid-market-manufacturers.md
+    sha: 38b6086a67633236c842a6edaa381b0081af9900a5e9bb4725d6127503ed52b5
+    fr:
+      url: "/fr/posts/2026/04/07/ai-adoption-imperative-mid-market-manufacturers/"
+      path: fr/posts/technology/2026-04-07-ai-adoption-imperative-mid-market-manufacturers.md
+      sha: 38b6086a67633236c842a6edaa381b0081af9900a5e9bb4725d6127503ed52b5
+      translated_at: '2026-07-23T17:02:28Z'
+      prompt_version: 1
+  "/posts/2026/04/07/ai-adoption-map-function-by-function/":
+    source: pages/_posts/technology/2026-04-07-ai-adoption-map-function-by-function.md
+    sha: ec766a3a58a93b79f17d74a644497793c1893190c4669cdb3b42dec552fa29a2
+    fr:
+      url: "/fr/posts/2026/04/07/ai-adoption-map-function-by-function/"
+      path: fr/posts/technology/2026-04-07-ai-adoption-map-function-by-function.md
+      sha: ec766a3a58a93b79f17d74a644497793c1893190c4669cdb3b42dec552fa29a2
+      translated_at: '2026-07-23T17:04:14Z'
+      prompt_version: 1
+  "/posts/2026/04/28/accessible-form-patterns/":
+    source: pages/_posts/tutorial/2026-04-28-accessible-form-patterns.md
+    sha: eae6827443ed29b3c7fc22d07a155c40c51604ffb969632b3b6c9d660dee84a3
+    fr:
+      url: "/fr/posts/2026/04/28/accessible-form-patterns/"
+      path: fr/posts/tutorial/2026-04-28-accessible-form-patterns.md
+      sha: eae6827443ed29b3c7fc22d07a155c40c51604ffb969632b3b6c9d660dee84a3
+      translated_at: '2026-07-23T17:06:54Z'
+      prompt_version: 1
+  "/posts/2026/04/28/building-ai-ready-knowledge-base/":
+    source: pages/_posts/technology/2026-04-28-building-ai-ready-knowledge-base.md
+    sha: 2cd71e27a7b3dfc37dee7deadd1c72972f3e1a3fd506774671c0b906b6af9097
+    fr:
+      url: "/fr/posts/2026/04/28/building-ai-ready-knowledge-base/"
+      path: fr/posts/technology/2026-04-28-building-ai-ready-knowledge-base.md
+      sha: 2cd71e27a7b3dfc37dee7deadd1c72972f3e1a3fd506774671c0b906b6af9097
+      translated_at: '2026-07-23T17:04:32Z'
+      prompt_version: 1
+  "/posts/2026/04/28/climate-data-dashboards/":
+    source: pages/_posts/science/2026-04-28-climate-data-dashboards.md
+    sha: c10375efe992428019b301c0e1947759e265ed923434f4f97ea541a16b33bc01
+    fr:
+      url: "/fr/posts/2026/04/28/climate-data-dashboards/"
+      path: fr/posts/science/2026-04-28-climate-data-dashboards.md
+      sha: c10375efe992428019b301c0e1947759e265ed923434f4f97ea541a16b33bc01
+      translated_at: '2026-07-23T16:59:09Z'
+      prompt_version: 1
+  "/posts/2026/04/28/climate-data-primer/":
+    source: pages/_posts/science/2026-04-28-climate-data-primer.md
+    sha: 90f6bb8478b6329ab89369a05f294ee597587c49bb7e1372a4acdd693033a23f
+    fr:
+      url: "/fr/posts/2026/04/28/climate-data-primer/"
+      path: fr/posts/science/2026-04-28-climate-data-primer.md
+      sha: 90f6bb8478b6329ab89369a05f294ee597587c49bb7e1372a4acdd693033a23f
+      translated_at: '2026-07-23T16:59:26Z'
+      prompt_version: 1
+  "/posts/2026/04/28/customer-onboarding-scorecards/":
+    source: pages/_posts/business/2026-04-28-customer-onboarding-scorecards.md
+    sha: b8028c5a07d3048e555e8f9c1347c2bc717e22723f360cde55aca8904114257a
+    fr:
+      url: "/fr/posts/2026/04/28/customer-onboarding-scorecards/"
+      path: fr/posts/business/2026-04-28-customer-onboarding-scorecards.md
+      sha: b8028c5a07d3048e555e8f9c1347c2bc717e22723f360cde55aca8904114257a
+      translated_at: '2026-07-23T16:57:10Z'
+      prompt_version: 1
+  "/posts/2026/04/28/edge-ai-practical-patterns/":
+    source: pages/_posts/technology/2026-04-28-edge-ai-practical-patterns.md
+    sha: 8a96393b25f7e7cded33f90fc435799c3fad4f68343217968c5f504d8480d1e7
+    fr:
+      url: "/fr/posts/2026/04/28/edge-ai-practical-patterns/"
+      path: fr/posts/technology/2026-04-28-edge-ai-practical-patterns.md
+      sha: 8a96393b25f7e7cded33f90fc435799c3fad4f68343217968c5f504d8480d1e7
+      translated_at: '2026-07-23T17:04:54Z'
+      prompt_version: 1
+  "/posts/2026/04/28/feature-flags-continuous-delivery/":
+    source: pages/_posts/development/2026-04-28-feature-flags-continuous-delivery.md
+    sha: af96deac5ec7a92be2f9fca3b0e1cc7b2959c51cf75281b134fda8c4418c8a6c
+    fr:
+      url: "/fr/posts/2026/04/28/feature-flags-continuous-delivery/"
+      path: fr/posts/development/2026-04-28-feature-flags-continuous-delivery.md
+      sha: af96deac5ec7a92be2f9fca3b0e1cc7b2959c51cf75281b134fda8c4418c8a6c
+      translated_at: '2026-07-23T16:58:10Z'
+      prompt_version: 1
+  "/posts/2026/04/28/local-resilience-networks/":
+    source: pages/_posts/world/2026-04-28-local-resilience-networks.md
+    sha: 0b6a7b5e163627e55821b817b04e1a4bb842b1818a63ef350083f4753ee98a2a
+    fr:
+      url: "/fr/posts/2026/04/28/local-resilience-networks/"
+      path: fr/posts/world/2026-04-28-local-resilience-networks.md
+      sha: 0b6a7b5e163627e55821b817b04e1a4bb842b1818a63ef350083f4753ee98a2a
+      translated_at: '2026-07-23T17:08:00Z'
+      prompt_version: 1
+  "/posts/2026/04/28/observability-for-small-apps/":
+    source: pages/_posts/development/2026-04-28-observability-for-small-apps.md
+    sha: 74c542fe738403afd0b4e87b5c978428ce5c4f7235a8f40219f81bdd8837f1b3
+    fr:
+      url: "/fr/posts/2026/04/28/observability-for-small-apps/"
+      path: fr/posts/development/2026-04-28-observability-for-small-apps.md
+      sha: 74c542fe738403afd0b4e87b5c978428ce5c4f7235a8f40219f81bdd8837f1b3
+      translated_at: '2026-07-23T16:58:29Z'
+      prompt_version: 1
+  "/posts/2026/04/28/responsive-documentation-card-grid/":
+    source: pages/_posts/tutorial/2026-04-28-responsive-documentation-card-grid.md
+    sha: dc8038417e38669fe1e53d094e4acb426feb0fdbf821bad413600b52c13c46d6
+    fr:
+      url: "/fr/posts/2026/04/28/responsive-documentation-card-grid/"
+      path: fr/posts/tutorial/2026-04-28-responsive-documentation-card-grid.md
+      sha: dc8038417e38669fe1e53d094e4acb426feb0fdbf821bad413600b52c13c46d6
+      translated_at: '2026-07-23T17:07:09Z'
+      prompt_version: 1
+  "/posts/2026/04/28/scenario-planning-for-small-teams/":
+    source: pages/_posts/business/2026-04-28-scenario-planning-for-small-teams.md
+    sha: db318c3417b1ca1814aa0709c243e422cf792a4e2a6f223e07bf528f91ebc5a7
+    fr:
+      url: "/fr/posts/2026/04/28/scenario-planning-for-small-teams/"
+      path: fr/posts/business/2026-04-28-scenario-planning-for-small-teams.md
+      sha: db318c3417b1ca1814aa0709c243e422cf792a4e2a6f223e07bf528f91ebc5a7
+      translated_at: '2026-07-23T16:57:28Z'
+      prompt_version: 1
+  "/posts/2026/04/28/urban-resilience-extreme-heat/":
+    source: pages/_posts/world/2026-04-28-urban-resilience-extreme-heat.md
+    sha: 9068abb43e745d0656187dc1847b313e36281b1668e5c57108c56fefde16e3f0
+    fr:
+      url: "/fr/posts/2026/04/28/urban-resilience-extreme-heat/"
+      path: fr/posts/world/2026-04-28-urban-resilience-extreme-heat.md
+      sha: 9068abb43e745d0656187dc1847b313e36281b1668e5c57108c56fefde16e3f0
+      translated_at: '2026-07-23T17:08:22Z'
+      prompt_version: 1
+  "/posts/2026/06/16/favicon-ico-unlocked-door-to-collapse/":
+    source: pages/_posts/2026-06-16-favicon-ico-unlocked-door-to-collapse.md
+    sha: f6d475e173719c97a3da52605c3f0fcd33e61f26e0db442af54cdc682f279569
+    fr:
+      url: "/fr/posts/2026/06/16/favicon-ico-unlocked-door-to-collapse/"
+      path: fr/posts/2026-06-16-favicon-ico-unlocked-door-to-collapse.md
+      sha: f6d475e173719c97a3da52605c3f0fcd33e61f26e0db442af54cdc682f279569
+      translated_at: '2026-07-23T16:55:34Z'
+      prompt_version: 1
+  "/posts/2026/06/17/bayesian-modeled-my-coffee-and-wept-with-joy/":
+    source: pages/_posts/2026-06-17-bayesian-modeled-my-coffee-and-wept-with-joy.md
+    sha: 8d2986743b7f9fc15f48ecaf82a555f28fcd3b20f6b565748270e945a5664c1b
+    fr:
+      url: "/fr/posts/2026/06/17/bayesian-modeled-my-coffee-and-wept-with-joy/"
+      path: fr/posts/2026-06-17-bayesian-modeled-my-coffee-and-wept-with-joy.md
+      sha: 8d2986743b7f9fc15f48ecaf82a555f28fcd3b20f6b565748270e945a5664c1b
+      translated_at: '2026-07-23T16:55:51Z'
+      prompt_version: 1
+  "/posts/2026/06/18/trailing-slash-that-could-end-your-company/":
+    source: pages/_posts/2026-06-18-trailing-slash-that-could-end-your-company.md
+    sha: df6965219e48f18d5725057a792caa2981bd99e570cdbb6f51d0a37f51345ef8
+    fr:
+      url: "/fr/posts/2026/06/18/trailing-slash-that-could-end-your-company/"
+      path: fr/posts/2026-06-18-trailing-slash-that-could-end-your-company.md
+      sha: df6965219e48f18d5725057a792caa2981bd99e570cdbb6f51d0a37f51345ef8
+      translated_at: '2026-07-23T16:56:14Z'
+      prompt_version: 1
+  "/posts/2026/06/19/umap-found-14-hidden-dimensions-in-404-logs/":
+    source: pages/_posts/2026-06-19-umap-found-14-hidden-dimensions-in-404-logs.md
+    sha: 74a066845c5f18d5e97f4ae523fc0cba8ded6a96a2b8c28d9ac874de4b4e5212
+    fr:
+      url: "/fr/posts/2026/06/19/umap-found-14-hidden-dimensions-in-404-logs/"
+      path: fr/posts/2026-06-19-umap-found-14-hidden-dimensions-in-404-logs.md
+      sha: 74a066845c5f18d5e97f4ae523fc0cba8ded6a96a2b8c28d9ac874de4b4e5212
+      translated_at: '2026-07-23T16:56:33Z'
+      prompt_version: 1
+ui_text: {}
+source_lang: en
+languages:
+- fr
+updated_at: '2026-07-23T17:13:01Z'
