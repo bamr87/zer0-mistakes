@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630"
+     width="1200" height="630" role="img" aria-hidden="true">
+  <defs>
+    <linearGradient id="g-card-shore" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e9e0d1"/>
+      <stop offset="1" stop-color="#a8b2b7"/>
+    </linearGradient>
+    <filter id="g-card-shore-grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#g-card-shore)"/>
+  <circle cx="946" cy="168" r="70" fill="#f4efe6" opacity="0.5"/>
+  <path d="M0 392 Q 200 362 400 390 T 800 386 T 1200 380 L1200 630 L0 630 Z" fill="#5e6f78" opacity="0.45"/>
+  <path d="M0 458 Q 240 432 480 456 T 960 452 T 1200 450 L1200 630 L0 630 Z" fill="#221f1a" opacity="0.48"/>
+  <rect width="1200" height="630" filter="url(#g-card-shore-grain)" opacity="0.06"/>
+</svg>

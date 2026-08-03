@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630"
+     width="1200" height="630" role="img" aria-hidden="true">
+  <defs>
+    <linearGradient id="g-card-map" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f0ead9"/>
+      <stop offset="1" stop-color="#c2b393"/>
+    </linearGradient>
+    <filter id="g-card-map-grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#g-card-map)"/>
+  <g stroke="#221f1a" stroke-width="8" opacity="0.4" stroke-linecap="round">
+    <path d="M120 180 H1080"/><path d="M120 330 H1080"/><path d="M120 480 H1080"/>
+    <path d="M300 90 V560"/><path d="M600 90 V560"/><path d="M900 90 V560"/>
+  </g>
+  <g fill="#8a7358" opacity="0.85">
+    <circle cx="300" cy="330" r="20"/><circle cx="600" cy="180" r="20"/>
+    <circle cx="900" cy="480" r="20"/>
+  </g>
+  <path d="M300 330 L600 180 L900 480" fill="none" stroke="#8a7358"
+        stroke-width="10" stroke-dasharray="26 20" opacity="0.85" stroke-linecap="round"/>
+  <rect width="1200" height="630" filter="url(#g-card-map-grain)" opacity="0.06"/>
+</svg>

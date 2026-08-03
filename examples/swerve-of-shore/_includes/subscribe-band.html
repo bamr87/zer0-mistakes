@@ -1,0 +1,46 @@
+<!--
+  ===================================================================
+  SUBSCRIBE BAND — Martello Notes example
+  ===================================================================
+  Site-local include (not part of the theme). Reproduces the reference
+  site's closing "get our latest posts" strip. Reads copy from
+  site.news.newsletter so the wording lives in _config.yml.
+
+  With no configured endpoint this falls back to a mailto: link, which
+  is what a static demo can honestly do — no form that posts nowhere.
+
+  Usage (braces omitted — Liquid parses tags even inside HTML comments):
+    include subscribe-band.html
+  ===================================================================
+-->
+{% assign nl = site.news.newsletter %}
+{% unless nl.enabled == false %}
+<section class="mn-subscribe" aria-labelledby="subscribe-heading">
+  <div class="mn-subscribe__inner">
+    <p class="mn-subscribe__eyebrow">Newsletter</p>
+    <h2 id="subscribe-heading" class="mn-subscribe__heading">
+      {{ nl.heading | default: "Get new readings by email" }}
+    </h2>
+    <p class="mn-subscribe__lead">
+      {{ nl.lead | default: "One episode at a time. No spam." }}
+    </p>
+
+    {% if nl.endpoint %}
+      <form class="mn-subscribe__form" method="post" action="{{ nl.endpoint }}">
+        <label class="visually-hidden" for="mn-subscribe-email">Email address</label>
+        <input type="email" id="mn-subscribe-email" name="email" required
+               class="form-control" placeholder="you@example.com">
+        <button type="submit" class="btn btn-dark">Subscribe</button>
+      </form>
+    {% elsif site.email %}
+      <a class="btn btn-dark btn-lg"
+         href="mailto:{{ site.email }}?subject=Subscribe%20to%20{{ site.title | uri_escape }}">
+        Subscribe
+      </a>
+      <p class="mn-subscribe__note">
+        Demo site — this opens your mail client instead of posting to a list.
+      </p>
+    {% endif %}
+  </div>
+</section>
+{% endunless %}

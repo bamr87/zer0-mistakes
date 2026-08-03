@@ -1,0 +1,31 @@
+# Main navigation for the Martello Notes example.
+#
+# Mirrors the reference site's top bar: Blog · Publications · About · Subscribe,
+# with the reading series hung off the Blog entry as a dropdown.
+
+- title: Blog
+  icon: bi-journal-text
+  url: /blog/
+  children:
+    - title: All Posts
+      url: /blog/
+    - title: Ulysses
+      url: /series/ulysses/
+    - title: Finnegans Wake
+      url: /series/finnegans-wake/
+    - title: Joyce in the World
+      url: /series/joyce-in-the-world/
+    - title: Portrait
+      url: /series/portrait/
+
+- title: Publications
+  icon: bi-file-earmark-text
+  url: /publications/
+
+- title: About
+  icon: bi-info-circle
+  url: /about/
+
+- title: Subscribe
+  icon: bi-envelope
+  url: /subscribe/

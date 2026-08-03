@@ -1,0 +1,21 @@
+<!--
+  ===================================================================
+  PAGE HEADER — Martello Notes example
+  ===================================================================
+  Site-local include (not part of the theme). These pages set
+  `hide_intro: true` to suppress the theme's boxed intro panel — which
+  carries reading time, share, and "Edit on GitHub" chrome that a
+  reading site does not want — so they supply their own heading here.
+
+  Reads page.title and page.description; no parameters.
+
+  Usage (braces omitted — Liquid parses tags even inside HTML comments):
+    include page-header.html
+  ===================================================================
+-->
+<header class="mn-page-header">
+  <h1 class="mn-page-header__title">{{ page.title }}</h1>
+  {% if page.description %}
+    <p class="mn-page-header__lead">{{ page.description }}</p>
+  {% endif %}
+</header>

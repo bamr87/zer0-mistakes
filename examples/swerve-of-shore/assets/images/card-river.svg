@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630"
+     width="1200" height="630" role="img" aria-hidden="true">
+  <defs>
+    <linearGradient id="g-card-river" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e4e8e3"/>
+      <stop offset="1" stop-color="#8fa08d"/>
+    </linearGradient>
+    <filter id="g-card-river-grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#g-card-river)"/>
+  <path d="M600 -20 C 470 140, 760 250, 590 400 C 470 508, 700 570, 640 660"
+        fill="none" stroke="#f4efe6" stroke-width="46" opacity="0.55" stroke-linecap="round"/>
+  <path d="M600 -20 C 470 140, 760 250, 590 400 C 470 508, 700 570, 640 660"
+        fill="none" stroke="#5e6f78" stroke-width="12" opacity="0.35" stroke-linecap="round"/>
+  <rect width="1200" height="630" filter="url(#g-card-river-grain)" opacity="0.06"/>
+</svg>

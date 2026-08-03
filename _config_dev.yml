@@ -163,6 +163,12 @@ exclude:
   - "*.code-workspace"
 
   # ── Submodules, tests, and authoring scaffolding ──────────────────────────
+  # Keep in sync with _config.yml: this list REPLACES the production one
+  # rather than merging with it, so an entry added there alone has no effect
+  # on `jekyll serve --config _config.yml,_config_dev.yml`.
+  # examples/ holds self-contained demo sites with their own _config.yml and
+  # Gemfile; they are built independently (see examples/README.md).
+  - examples/
   - submodules/
   - test/
   - tests/

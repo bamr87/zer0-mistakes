@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 520"
+     width="1600" height="520" role="img" aria-hidden="true">
+  <defs>
+    <linearGradient id="g-tower" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f0e4d2"/>
+      <stop offset="1" stop-color="#c6ac8c"/>
+    </linearGradient>
+    <filter id="g-tower-grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="520" fill="url(#g-tower)"/>
+  <circle cx="1180" cy="188" r="74" fill="#f4efe6" opacity="0.55"/>
+  <g fill="#221f1a" opacity="0.68">
+    <rect x="240" y="212" width="150" height="240" rx="10"/>
+    <rect x="226" y="196" width="178" height="26" rx="8"/>
+    <rect x="292" y="268" width="24" height="42" rx="10" fill="#f4efe6" opacity="0.55"/>
+  </g>
+  <path d="M0 452 Q 400 430 800 450 T 1600 444 L1600 520 L0 520 Z" fill="#221f1a" opacity="0.55"/>
+  <rect width="1600" height="520" filter="url(#g-tower-grain)" opacity="0.06"/>
+</svg>

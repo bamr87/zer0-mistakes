@@ -1,0 +1,50 @@
+# Reading-series sidebar for the Martello Notes example.
+# Used by: sidebar `nav: series` (set as a collection default in _config.yml)
+#
+# Mirrors the reference site's category rail. Only entries that exist are
+# listed here — the theme's nav renderer always emits an <a href>, so a
+# curated link to an unwritten episode would be a dead link. The FULL
+# 18-episode schedule lives in _data/episodes.yml and renders on each series
+# index page via _includes/episode-schedule.html, where unwritten episodes
+# show as plain "upcoming" rows instead.
+#
+# Add an entry here when you publish the matching episode.
+
+- title: All Posts
+  icon: bi-collection
+  url: /blog/
+
+- title: Ulysses
+  icon: bi-book
+  url: /series/ulysses/
+  expanded: true
+  children:
+    - title: 00 · Introduction
+      url: /series/ulysses/00-introduction/
+    - title: 01 · Telemachus
+      url: /series/ulysses/01-telemachus/
+    - title: 02 · Nestor
+      url: /series/ulysses/02-nestor/
+    - title: 03 · Proteus
+      url: /series/ulysses/03-proteus/
+
+- title: Finnegans Wake
+  icon: bi-water
+  url: /series/finnegans-wake/
+  children:
+    - title: Introduction
+      url: /series/finnegans-wake/00-introduction/
+
+- title: Joyce in the World
+  icon: bi-globe-europe-africa
+  url: /series/joyce-in-the-world/
+  children:
+    - title: Tram Timetables
+      url: /series/joyce-in-the-world/tram-timetables/
+
+- title: Portrait
+  icon: bi-person-lines-fill
+  url: /series/portrait/
+  children:
+    - title: 100 · Commencement
+      url: /series/portrait/100-commencement/

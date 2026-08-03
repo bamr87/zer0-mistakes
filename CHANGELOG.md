@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`examples/` — self-contained demo sites built on the theme.** New top-level
+  directory (excluded from the theme's own site build and from the gem) for
+  complete Jekyll sites that show the theme configured for a particular kind of
+  site. Each has its own `_config.yml`, `Gemfile`, and content, and builds
+  against the local theme sources via `_config_dev.yml`.
+  - `examples/swerve-of-shore/` — **Martello Notes**, a serialized literary
+    reading blog: a `series` output collection with nested per-book paths, a
+    data-driven publication schedule (`_data/episodes.yml` →
+    `_includes/episode-schedule.html`) that links published entries and marks
+    the rest "upcoming", a curated sidebar rail, the shared `post-card`
+    component in a single-column feed, and a full editorial light-mode restyle
+    done entirely through `assets/css/user-overrides.css` — no theme files
+    touched. Information architecture modelled on swerveofshore.com; all
+    content, branding, and artwork are original demo material.
+  - `examples/README.md` — how to run one and the conventions for adding
+    another.
 - **Theme propagation system — releases now reach the sites built on them.**
   Releasing ended at RubyGems; nothing told the five downstream consumers a new
   version existed, so all three pinned sites were still on v1.26.0 when v1.27.0

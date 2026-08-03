@@ -1,0 +1,48 @@
+<!--
+  ===================================================================
+  EPISODE SCHEDULE — Martello Notes example
+  ===================================================================
+  Site-local include (not part of the theme). Renders the full reading
+  schedule for a series: episodes that have been written link through,
+  the rest render as plain "upcoming" rows.
+
+  This is why the sidebar never 404s — the complete 18-episode rail
+  the reference site shows lives here, in data, rather than as curated
+  nav links pointing at pages that do not exist yet.
+
+  Parameters:
+  - series (required): key into _data/episodes.yml, e.g. "ulysses"
+
+  Usage (braces omitted — Liquid parses tags even inside HTML comments):
+    include episode-schedule.html series="ulysses"
+  ===================================================================
+-->
+{% assign schedule = site.data.episodes[include.series] %}
+{% assign written = site.series | where: "series", include.series %}
+
+{% if schedule %}
+  <ol class="mn-schedule">
+    {% for ep in schedule %}
+      {% comment %} Match by URL suffix so the slug is the single source of truth. {% endcomment %}
+      {% assign entry = nil %}
+      {% for doc in written %}
+        {% capture want %}/series/{{ include.series }}/{{ ep.slug }}/{% endcapture %}
+        {% if doc.url == want %}{% assign entry = doc %}{% break %}{% endif %}
+      {% endfor %}
+
+      <li class="mn-schedule__item {% if entry %}is-published{% else %}is-upcoming{% endif %}">
+        <span class="mn-schedule__num">{{ ep.number }}</span>
+
+        {% if entry %}
+          <a class="mn-schedule__link" href="{{ entry.url | relative_url }}">{{ ep.name }}</a>
+          <span class="mn-schedule__meta">
+            <time datetime="{{ entry.date | date_to_xmlschema }}">{{ entry.date | date: "%b %-d, %Y" }}</time>
+          </span>
+        {% else %}
+          <span class="mn-schedule__name">{{ ep.name }}</span>
+          <span class="mn-schedule__meta">Upcoming</span>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ol>
+{% endif %}

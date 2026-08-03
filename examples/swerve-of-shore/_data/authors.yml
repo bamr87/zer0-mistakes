@@ -1,0 +1,11 @@
+# Author profiles for the Martello Notes example.
+# Fictional demo author — this is sample data, not a real person.
+
+"R. Vaughan":
+  name: "R. Vaughan"
+  display_name: "R. Vaughan"
+  bio: >-
+    Reader, annotator, and reluctant completist. Writes one episode at a time
+    and keeps the notes public so other slow readers have company.
+  location: "Dublin"
+  role: "Editor"

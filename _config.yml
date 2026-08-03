@@ -850,6 +850,10 @@ exclude:
   - "*.code-workspace"
 
   # ── Submodules, tests, and authoring scaffolding ──────────────────────────
+  # examples/ holds self-contained demo sites, each with its own _config.yml
+  # and Gemfile. They are built independently (see examples/README.md), never
+  # as part of this site.
+  - examples/
   - submodules/
   - test/
   - tests/

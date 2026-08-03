@@ -1,0 +1,34 @@
+---
+layout: default
+title: Blog
+permalink: /blog/
+description: Every entry from the reading series and the standalone essays.
+hide_intro: true
+local_graph: false
+sidebar:
+  nav: series
+  title: "Browse the series"
+---
+<!--
+  ===================================================================
+  BLOG INDEX — Martello Notes example
+  ===================================================================
+  The reference site stacks full-width post cards in one column with a
+  category rail alongside. Here the rail is the theme's sidebar
+  (nav: series) and the column is a single-column card grid.
+  ===================================================================
+-->
+
+{% include page-header.html %}
+
+{% assign feed = site.series | concat: site.posts | sort: 'date' | reverse %}
+
+{% if feed.size > 0 %}
+  <div class="row row-cols-1 g-4 mn-feed__grid">
+    {% for post in feed %}
+      {% include components/post-card.html post=post show_post_type=false %}
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="text-muted">No entries yet.</p>
+{% endif %}

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 520"
+     width="1600" height="520" role="img" aria-hidden="true">
+  <defs>
+    <linearGradient id="g-shore" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e8dfd0"/>
+      <stop offset="1" stop-color="#a9b3b8"/>
+    </linearGradient>
+    <filter id="g-shore-grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="520" fill="url(#g-shore)"/>
+  <circle cx="1280" cy="150" r="62" fill="#f4efe6" opacity="0.5"/>
+  <path d="M0 340 Q 200 305 400 336 T 800 332 T 1200 338 T 1600 328 L1600 520 L0 520 Z"
+        fill="#5e6f78" opacity="0.42"/>
+  <path d="M0 385 Q 260 356 520 384 T 1040 380 T 1600 378 L1600 520 L0 520 Z"
+        fill="#5e6f78" opacity="0.55"/>
+  <path d="M0 442 Q 300 418 600 440 T 1200 436 T 1600 434 L1600 520 L0 520 Z"
+        fill="#221f1a" opacity="0.5"/>
+  <rect width="1600" height="520" filter="url(#g-shore-grain)" opacity="0.06"/>
+</svg>

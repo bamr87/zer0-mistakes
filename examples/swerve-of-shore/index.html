@@ -1,0 +1,60 @@
+---
+layout: home
+title: Martello Notes
+hide_title: true
+rss_subscribe: false
+description: >-
+  Episode-by-episode commentary on Ulysses and Finnegans Wake, plus essays on
+  Joyce's world and his earlier fiction.
+---
+<!--
+  ===================================================================
+  HOME — Martello Notes example
+  ===================================================================
+  Mirrors the reference layout: masthead wordmark over a wide banner
+  image, a stacked feed of recent entries as image cards, then the
+  subscribe band. Cards are rendered by the theme's post-card include
+  so this page stays markup-light.
+  ===================================================================
+-->
+
+<!-- ================================ -->
+<!-- MASTHEAD                         -->
+<!-- ================================ -->
+<header class="mn-masthead text-center">
+  <img class="mn-masthead__banner"
+       src="{{ '/assets/images/banner-shore.svg' | relative_url }}"
+       alt="" aria-hidden="true">
+  <h1 class="mn-wordmark">{{ site.title }}</h1>
+  <p class="mn-tagline">{{ site.tagline }}</p>
+</header>
+
+<!-- ================================ -->
+<!-- RECENT ENTRIES                   -->
+<!-- ================================ -->
+{% assign feed = site.series | concat: site.posts | sort: 'date' | reverse %}
+
+<section class="mn-feed" aria-labelledby="recent-heading">
+  <h2 id="recent-heading" class="mn-section-heading">Recent readings</h2>
+
+  {% if feed.size > 0 %}
+    <div class="row row-cols-1 g-4 mn-feed__grid">
+      {% for post in feed limit: 6 %}
+        {% include components/post-card.html post=post show_post_type=false %}
+      {% endfor %}
+    </div>
+
+    <p class="mn-feed__more">
+      <a class="btn btn-outline-dark" href="{{ '/blog/' | relative_url }}">
+        All posts <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+      </a>
+    </p>
+  {% else %}
+    <p class="text-muted">No entries yet.</p>
+  {% endif %}
+</section>
+
+<!-- ================================ -->
+<!-- SUBSCRIBE BAND                   -->
+<!-- ================================ -->
+{% include subscribe-band.html %}

@@ -1,0 +1,43 @@
+<!--
+  ===================================================================
+  SERIES LIST — Martello Notes example
+  ===================================================================
+  Site-local include (not part of the theme). Renders an ordered list
+  of series entries for a section index page — the numbered rail the
+  reference site shows under each category.
+
+  Parameters:
+  - entries (required): an array of collection documents, pre-sorted
+  - empty (optional): message shown when the array is empty
+
+  Usage (braces omitted — Liquid parses tags even inside HTML comments):
+    assign entries = site.series | where: "series", "ulysses" | sort: "episode"
+    include series-list.html entries=entries
+  ===================================================================
+-->
+{% assign entries = include.entries %}
+
+{% if entries and entries.size > 0 %}
+  <ol class="mn-series-list">
+    {% for entry in entries %}
+      <li class="mn-series-list__item">
+        <a class="mn-series-list__link" href="{{ entry.url | relative_url }}">
+          {{ entry.title }}
+        </a>
+        {% if entry.sub-title %}
+          <span class="mn-series-list__sub">{{ entry.sub-title }}</span>
+        {% endif %}
+        <span class="mn-series-list__meta">
+          <time datetime="{{ entry.date | date_to_xmlschema }}">
+            {{ entry.date | date: "%b %-d, %Y" }}
+          </time>
+          {% if entry.estimated_reading_time %}
+            · {{ entry.estimated_reading_time }} read
+          {% endif %}
+        </span>
+      </li>
+    {% endfor %}
+  </ol>
+{% else %}
+  <p class="text-muted">{{ include.empty | default: "Nothing here yet — the next entry is in progress." }}</p>
+{% endif %}

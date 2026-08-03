@@ -1,0 +1,22 @@
+# =============================================================================
+# Development overrides for the Martello Notes example
+# =============================================================================
+# Swaps the published remote theme for the local theme sources two directories
+# up, so edits to _layouts/, _includes/, and _sass/ show up immediately.
+#
+#   bundle exec jekyll serve --config _config.yml,_config_dev.yml
+# =============================================================================
+
+remote_theme             : false
+theme                    : "jekyll-theme-zer0"
+
+url                      : "http://localhost:4010"
+baseurl                  : ""
+
+host                     : "0.0.0.0"
+port                     : 4010
+livereload               : true
+
+environment              : "development"
+show_drafts              : true
+future                   : true
