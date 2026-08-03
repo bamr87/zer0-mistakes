@@ -12,8 +12,7 @@ sidebar:
 
 {% include page-header.html %}
 
-Occasionally a run of notes turns into something longer. Those pieces are
-collected here.
+Occasionally a run of notes turns into something longer. Those pieces are collected here.
 
 <div class="mn-pubs">
 

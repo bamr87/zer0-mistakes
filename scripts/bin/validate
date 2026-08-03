@@ -391,7 +391,11 @@ if File.file?('_config_secrets_local.yml')
   assert(!tracked, '_config_secrets_local.yml must remain untracked and ignored')
 end
 
-ignored_dirs = %w[.git _site node_modules vendor .jekyll-cache .sass-cache test/fixtures]
+# examples/ holds self-contained demo sites, each with its own _config.yml and
+# _config_dev.yml. Those belong to the example, not to this site's config
+# surface, so prune the tree rather than registering every example's configs in
+# classified_files below (which would need editing for each new example).
+ignored_dirs = %w[.git _site node_modules vendor .jekyll-cache .sass-cache test/fixtures examples]
 config_like_files = []
 
 Find.find('.') do |path|

@@ -12,9 +12,7 @@ sidebar:
 
 {% include page-header.html %}
 
-*A Portrait of the Artist as a Young Man* read on its own terms, and then read
-again in light of the book that picks its protagonist up a few years later and
-declines to mention that the ending did not take.
+*A Portrait of the Artist as a Young Man* read on its own terms, and then read again in light of the book that picks its protagonist up a few years later and declines to mention that the ending did not take.
 
 {% assign entries = site.series | where: "series", "portrait" | sort: "episode" %}
 {% include series-list.html entries=entries %}

@@ -12,8 +12,7 @@ sidebar:
 
 {% include page-header.html %}
 
-New entries land roughly every other week — one episode at a time, however long
-that episode takes.
+New entries land roughly every other week — one episode at a time, however long that episode takes.
 
 {% include subscribe-band.html %}
 
@@ -25,12 +24,8 @@ that episode takes.
 
 ## What you get
 
-Each email is the entry itself: summary, the formal trick the episode is
-playing, the threads still running, and whatever I could not resolve. No
-digests, no round-ups, no "here's what I've been up to."
+Each email is the entry itself: summary, the formal trick the episode is playing, the threads still running, and whatever I could not resolve. No digests, no round-ups, no "here's what I've been up to."
 
 ## What happens to your address
 
-On this demo site, nothing — there is no list and no endpoint configured. On a
-real deployment you would point `news.newsletter.endpoint` in `_config.yml` at
-your provider's form URL and the band above would post to it directly.
+On this demo site, nothing — there is no list and no endpoint configured. On a real deployment you would point `news.newsletter.endpoint` in `_config.yml` at your provider's form URL and the band above would post to it directly.

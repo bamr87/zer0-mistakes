@@ -12,9 +12,7 @@ sidebar:
 
 {% include page-header.html %}
 
-Eighteen episodes, read in order. Each entry follows the same four headings —
-the shape of it, the trick, the threads, the loose ends — so the running motifs
-stay easy to trace from one episode to the next.
+Eighteen episodes, read in order. Each entry follows the same four headings — the shape of it, the trick, the threads, the loose ends — so the running motifs stay easy to trace from one episode to the next.
 
 {% include episode-schedule.html series="ulysses" %}
 

@@ -12,9 +12,7 @@ sidebar:
 
 {% include page-header.html %}
 
-Shorter entries, less confidence, and a loose-ends section doing most of the
-work. Read aloud where you can; the book is far more tractable as sound than as
-text.
+Shorter entries, less confidence, and a loose-ends section doing most of the work. Read aloud where you can; the book is far more tractable as sound than as text.
 
 {% include episode-schedule.html series="finnegans-wake" %}
 
