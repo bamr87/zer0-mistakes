@@ -1,14 +1,15 @@
 <!--
   ===================================================================
-  EPISODE SCHEDULE — Martello Notes example
+  EPISODE SCHEDULE — Swerve of Shore example
   ===================================================================
-  Site-local include (not part of the theme). Renders the full reading
-  schedule for a series: episodes that have been written link through,
-  the rest render as plain "upcoming" rows.
+  Site-local include (not part of the theme). Renders the full taxonomy
+  for a series as a numbered rail: every episode/book gets a row, each
+  linking to its own section page, annotated with how many entries it
+  currently holds.
 
-  This is why the sidebar never 404s — the complete 18-episode rail
-  the reference site shows lives here, in data, rather than as curated
-  nav links pointing at pages that do not exist yet.
+  Every row links — the section pages are generated for the whole
+  taxonomy, so there are no dead targets even where nothing is written
+  yet.
 
   Parameters:
   - series (required): key into _data/episodes.yml, e.g. "ulysses"
@@ -18,30 +19,26 @@
   ===================================================================
 -->
 {% assign schedule = site.data.episodes[include.series] %}
-{% assign written = site.series | where: "series", include.series %}
+{% assign in_series = site.series | where: "series", include.series %}
 
 {% if schedule %}
   <ol class="mn-schedule">
     {% for ep in schedule %}
-      {% comment %} Match by URL suffix so the slug is the single source of truth. {% endcomment %}
-      {% assign entry = nil %}
-      {% for doc in written %}
-        {% capture want %}/series/{{ include.series }}/{{ ep.slug }}/{% endcapture %}
-        {% if doc.url == want %}{% assign entry = doc %}{% break %}{% endif %}
-      {% endfor %}
+      {% assign entries = in_series | where: "section", ep.slug %}
+      {% capture section_url %}/series/{{ include.series }}/{{ ep.slug }}/{% endcapture %}
 
-      <li class="mn-schedule__item {% if entry %}is-published{% else %}is-upcoming{% endif %}">
+      <li class="mn-schedule__item {% if entries.size > 0 %}is-published{% else %}is-upcoming{% endif %}">
         <span class="mn-schedule__num">{{ ep.number }}</span>
 
-        {% if entry %}
-          <a class="mn-schedule__link" href="{{ entry.url | relative_url }}">{{ ep.name }}</a>
-          <span class="mn-schedule__meta">
-            <time datetime="{{ entry.date | date_to_xmlschema }}">{{ entry.date | date: "%b %-d, %Y" }}</time>
-          </span>
-        {% else %}
-          <span class="mn-schedule__name">{{ ep.name }}</span>
-          <span class="mn-schedule__meta">Upcoming</span>
-        {% endif %}
+        <a class="mn-schedule__link" href="{{ section_url | relative_url }}">{{ ep.name }}</a>
+
+        <span class="mn-schedule__meta">
+          {% if entries.size > 0 %}
+            {{ entries.size }} entr{% if entries.size == 1 %}y{% else %}ies{% endif %}
+          {% else %}
+            Upcoming
+          {% endif %}
+        </span>
       </li>
     {% endfor %}
   </ol>

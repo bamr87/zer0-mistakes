@@ -6,7 +6,7 @@ They exist to answer "can the theme do *this* kind of site?" with a running answ
 
 | Example | What it demonstrates |
 |---------|----------------------|
-| [`swerve-of-shore/`](./swerve-of-shore/) | A serialized literary reading blog: a custom collection with a numbered episode series, a data-driven publication schedule, card feed, curated sidebar rail, and a light editorial skin applied entirely through `user_overrides`. |
+| [`swerve-of-shore/`](./swerve-of-shore/) | A serialized literary reading blog, rebuilt from [swerveofshore.com](https://www.swerveofshore.com/) with its owner's permission: a custom collection with nested sections, a data-driven taxonomy driving the sidebar and section pages, article hero images, a card feed, and a light editorial skin applied entirely through `user_overrides`. |
 
 ## Running one
 

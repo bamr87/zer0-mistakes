@@ -2,7 +2,7 @@
 layout: default
 title: About
 permalink: /about/
-description: What Martello Notes is for, and who is keeping it.
+description: What Swerve of Shore is, and who writes it.
 hide_intro: true
 local_graph: false
 sidebar:
@@ -13,40 +13,31 @@ sidebar:
 {% include page-header.html %}
 
 <figure class="mn-figure">
-  <img src="{{ '/assets/images/banner-tower.svg' | relative_url }}"
-       alt="Stylised illustration of a round coastal tower at dawn">
+  <img src="{{ '/assets/images/posts/008-3-omphalos-the-center-of-it-all.jpg' | relative_url }}"
+       alt="">
 </figure>
 
-## What this is
+## About this rebuild
 
-Martello Notes is a slow-reading project. The plan is unremarkable and probably impossible: work through *Ulysses* one episode at a time, in order, writing up each as I go — then start *Finnegans Wake* and find out how far stubbornness carries a person.
+You are looking at a **layout replica** of [Swerve of Shore]({{ site.source_site.url }}), a James Joyce reading blog by {{ site.source_site.author }}. It was rebuilt on the [zer0-mistakes](https://github.com/bamr87/zer0-mistakes) Jekyll theme, with the site owner's permission, as a worked example of what the theme can do.
 
-The notes are not a substitute for a good annotated edition and they are not scholarship. They are the thing that sits between the two: a record of what a careful, non-specialist reader noticed, got wrong, and had to look up.
+**What was copied:** the site's identity and navigation, the category taxonomy, every entry's title, date and section, and the featured images.
 
-## How the notes are organised
-
-Each entry is numbered by episode, so `03.0` is the third episode of *Ulysses* and `03.1` is a follow-up on the same episode. Entries usually cover:
-
-- **The shape of it** — what happens, in plain summary, before anything clever.
-- **The trick** — whatever formal game the episode is playing this time.
-- **Threads** — motifs that started earlier and are still running.
-- **Loose ends** — the things I could not resolve, left visible on purpose.
-
-Standalone essays sit outside the numbering: *Joyce in the World* covers context — the city, the politics, the publishing history — and *Portrait* collects readings of the earlier novel.
-
-## Who is writing
-
-R. Vaughan. Reader, annotator, and reluctant completist. I am not an academic and I have no institutional stake in any of this; corrections are genuinely welcome and get folded into the entry with a note.
+**What was not:** the essays. Each entry here renders with placeholder body text written for the demo and a link to the real piece. The writing belongs to its author and stays on the original site — go read it there.
 
 <figure class="mn-figure">
-  <img src="{{ '/assets/images/banner-desk.svg' | relative_url }}"
-       alt="Stylised illustration of an open book and a cup on a desk">
+  <img src="{{ '/assets/images/posts/001-1-joyce-s-skyquake.jpg' | relative_url }}"
+       alt="">
 </figure>
 
-## A note on this site
+## What the original does
 
-This is a demonstration site for the
-[zer0-mistakes]({{ site.repository | join: '' | prepend: 'https://github.com/' }})
-Jekyll theme. The layout and information architecture are modelled on [Swerve of Shore](https://www.swerveofshore.com/), an excellent real Joyce reading blog that is worth your time. Everything here — the site name, the author, and all of the writing — is original demo content invented to fill the template. Nothing on this site is affiliated with that one.
+Swerve of Shore reads Joyce closely and in order. The spine is *Ulysses*, worked through episode by episode, with entries numbered so several can sit under a single episode and stay in sequence. Alongside it run *Finnegans Wake* by book, notes on *A Portrait of the Artist as a Young Man*, and essays placing Joyce against the writers he read and was read against.
+
+That numbering scheme is the part worth stealing for a theme example: it is a real answer to the problem of serializing a long project in public, where entries arrive out of order and a flat reverse-chronological blog stops being navigable about thirty posts in.
+
+## What this example demonstrates
+
+The theme handles it with a custom collection, a data-driven taxonomy, and a curated sidebar — see the [project README](https://github.com/bamr87/zer0-mistakes/tree/main/examples/swerve-of-shore) for the full breakdown.
 
 {% include subscribe-band.html %}

@@ -1,11 +1,10 @@
-# The full reading schedule for the Martello Notes example.
+# The reading schedule behind the section pages and the sidebar rail.
 #
-# The site publishes one episode at a time, so most of these have no entry yet.
-# pages/series/*.md joins this list against the `series` collection: episodes
-# with a matching document link through, the rest render as "upcoming".
-#
-# Keeping the schedule in data (rather than as curated nav links) means the
-# sidebar never points at a page that has not been written.
+# Mirrors the category taxonomy on swerveofshore.com: eighteen Ulysses episodes
+# plus an introduction, Finnegans Wake by book, and the standalone threads.
+# pages/series/*.md joins this against the `series` collection, so an episode
+# with entries lists them and an episode without renders as "no entries yet" —
+# every nav target resolves either way.
 #
 # Ulysses episode names are the conventional Homeric schema titles used
 # throughout Joyce scholarship; they do not appear in the novel itself.
@@ -20,7 +19,7 @@ ulysses:
   - { number: "06", slug: 06-hades,                 name: "Hades" }
   - { number: "07", slug: 07-aeolus,                name: "Aeolus" }
   - { number: "08", slug: 08-lestrygonians,         name: "Lestrygonians" }
-  - { number: "09", slug: 09-scylla-and-charybdis,  name: "Scylla and Charybdis" }
+  - { number: "09", slug: 09-scylla-and-charybdis,  name: "Scylla & Charybdis" }
   - { number: "10", slug: 10-wandering-rocks,       name: "Wandering Rocks" }
   - { number: "11", slug: 11-sirens,                name: "Sirens" }
   - { number: "12", slug: 12-cyclops,               name: "Cyclops" }
@@ -32,5 +31,5 @@ ulysses:
   - { number: "18", slug: 18-penelope,              name: "Penelope" }
 
 finnegans-wake:
-  - { number: "00", slug: 00-introduction,  name: "Introduction" }
-  - { number: "I",  slug: book-i,           name: "Book I" }
+  - { number: "00", slug: 00-introduction, name: "Introduction" }
+  - { number: "01", slug: book-1,          name: "Book 1" }

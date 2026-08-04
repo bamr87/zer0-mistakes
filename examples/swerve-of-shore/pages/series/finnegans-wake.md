@@ -2,7 +2,7 @@
 layout: default
 title: Finnegans Wake
 permalink: /series/finnegans-wake/
-description: The long project — read aloud, in small units, with low expectations.
+description: The Wake, by book — read slowly and aloud.
 hide_intro: true
 local_graph: false
 sidebar:
@@ -12,7 +12,7 @@ sidebar:
 
 {% include page-header.html %}
 
-Shorter entries, less confidence, and a loose-ends section doing most of the work. Read aloud where you can; the book is far more tractable as sound than as text.
+The Wake, taken a book at a time.
 
 {% include episode-schedule.html series="finnegans-wake" %}
 

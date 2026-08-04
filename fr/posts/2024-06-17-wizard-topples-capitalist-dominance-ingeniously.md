@@ -205,8 +205,7 @@ Avant de déclarer un projet « de niveau Merlin », vérifiez :
 
 **Q : L'audit d'équité a signalé un écart de parité important. Que faire maintenant ?** Ne livrez pas. Documentez l'écart, enquêtez sur les causes profondes (biais des données d'entraînement, proxys de caractéristiques, biais d'étiquetage) et envisagez des mesures d'atténuation comme la repondération, l'optimisation des seuils ou la suppression complète du modèle. « Nous savions et avons livré quand même » est pire que « nous n'avons rien trouvé ».
 
-**Q : Le diagramme Mermaid ne s'affiche pas sur mon fork du thème.**
-Assurez-vous que le front matter de la page contient `mermaid: true`. Le thème Zer0-Mistakes ne charge le bundle Mermaid que lorsque cet indicateur est défini—voir [`_includes/components/mermaid.html`](⟦11⟧/blob/main/_includes/components/mermaid.html) pour l'implémentation.
+**Q : Le diagramme Mermaid ne s'affiche pas sur mon fork du thème.** Assurez-vous que le front matter de la page contient `mermaid: true`. Le thème Zer0-Mistakes ne charge le bundle Mermaid que lorsque cet indicateur est défini—voir [`_includes/components/mermaid.html`](⟦11⟧/blob/main/_includes/components/mermaid.html) pour l'implémentation.
 
 **Q : Le script SEC EDGAR renvoie une erreur 403.** EDGAR exige un `User-Agent` descriptif avec une adresse e-mail de contact. Mettez à jour le dictionnaire `UA` dans l'extrait ci-dessus et évitez de surcharger l'API—restez sous 10 requêtes/seconde.
 

@@ -1,12 +1,14 @@
 # =============================================================================
-# Martello Notes — a literary-blog example site built on jekyll-theme-zer0
+# Swerve of Shore — layout replica built on jekyll-theme-zer0
 # =============================================================================
-# Structure modeled on https://www.swerveofshore.com/ (a James Joyce reading
-# blog): a numbered close-reading series organised by episode, a card-based
-# blog index with a series sidebar, plus Publications / About / Subscribe.
+# A rebuild of https://www.swerveofshore.com/ (a James Joyce reading blog by
+# Brandon Nicklaus) on this theme, published with the site owner's permission.
 #
-# All prose in this example is original demo copy written for the theme.
-# See README.md for how to run it.
+# What is copied: the site's identity, navigation, category taxonomy, entry
+# titles/dates, and featured images.
+# What is NOT copied: the essays themselves. Each entry renders with original
+# placeholder body text and a link to the real piece — the demo needs the
+# layout exercised, not the author's writing republished.
 #
 # Serve from this directory:
 #   bundle exec jekyll serve --config _config.yml,_config_dev.yml
@@ -16,27 +18,34 @@ site_configured          : true
 
 ## Identity ###################################################################
 
-title                    : "Martello Notes"
+title                    : "Swerve of Shore"
 # Kept short on purpose: the navbar's centre track only shows menu labels
 # while it has room, and a long subtitle pushes it into icon-only mode.
 # The full strapline lives on the masthead as `tagline` instead.
-subtitle                 : "Reading Joyce slowly"
-tagline                  : "From the first page to the last, one episode at a time"
+subtitle                 : "James Joyce, closely read"
+tagline                  : "From Swerve of Shore to Bend of Bay"
 
-logo                     : /assets/images/logo.svg
+logo                     : /assets/images/logo.png
+wordmark                 : /assets/images/wordmark.png
 description              : >-
-  Martello Notes reads James Joyce slowly. Episode-by-episode commentary on
-  Ulysses and Finnegans Wake, plus essays on Joyce's world and his earlier
-  fiction.
+  A close reading of James Joyce — episode-by-episode commentary on Ulysses and
+  Finnegans Wake, notes on A Portrait of the Artist as a Young Man, and essays
+  on Joyce in the world.
 
-name                     : &name "R. Vaughan"
+name                     : &name "Brandon Nicklaus"
 founder                  : *name
 email                    : "hello@example.com"
 
+# The site this example replicates, with its owner's permission. Rendered as an
+# attribution line in the footer and on each entry.
+source_site:
+  name                   : "Swerve of Shore"
+  url                    : "https://www.swerveofshore.com/"
+  author                 : *name
+
 author:
   name                   : *name
-  bio                    : "Reader, annotator, and reluctant completist."
-  location               : "Dublin"
+  bio                    : "Writes Swerve of Shore, a close reading of James Joyce."
 
 ## Deployment #################################################################
 
@@ -134,6 +143,8 @@ defaults:
       path               : ""
       type               : "series"
     values:
+      # Render the featured image as a top-of-article hero (theme opt-in).
+      show_hero          : true
       layout             : "article"
       author             : *name
       sidebar:
@@ -165,8 +176,8 @@ news:
   category_base          : "/series/"
   newsletter:
     enabled              : true
-    heading              : "Get new readings by email"
-    lead                 : "One episode at a time, roughly every other week. No spam."
+    heading              : "Never miss a post"
+    lead                 : "Subscribe to get new entries as they are published."
 
 ## Exclusions #################################################################
 

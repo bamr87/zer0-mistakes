@@ -2,7 +2,7 @@
 layout: default
 title: Joyce in the World
 permalink: /series/joyce-in-the-world/
-description: Context essays — the city, the money, the politics, the publishing history.
+description: Context, influence, and the writers Joyce read and was read against.
 hide_intro: true
 local_graph: false
 sidebar:
@@ -12,7 +12,7 @@ sidebar:
 
 {% include page-header.html %}
 
-Standalone essays that sit outside the numbered sequence: the streets and the tram network, what things cost, the politics running underneath the small talk, and how the books actually got printed.
+Essays outside the numbered sequence — context, influence, and the other writers Joyce is read alongside.
 
 {% assign entries = site.series | where: "series", "joyce-in-the-world" | sort: "date" | reverse %}
 {% include series-list.html entries=entries %}

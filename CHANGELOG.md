@@ -14,15 +14,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   complete Jekyll sites that show the theme configured for a particular kind of
   site. Each has its own `_config.yml`, `Gemfile`, and content, and builds
   against the local theme sources via `_config_dev.yml`.
-  - `examples/swerve-of-shore/` — **Martello Notes**, a serialized literary
-    reading blog: a `series` output collection with nested per-book paths, a
-    data-driven publication schedule (`_data/episodes.yml` →
-    `_includes/episode-schedule.html`) that links published entries and marks
-    the rest "upcoming", a curated sidebar rail, the shared `post-card`
-    component in a single-column feed, and a full editorial light-mode restyle
-    done entirely through `assets/css/user-overrides.css` — no theme files
-    touched. Information architecture modelled on swerveofshore.com; all
-    content, branding, and artwork are original demo material.
+  - `examples/swerve-of-shore/` — **Swerve of Shore**, a serialized literary
+    reading blog rebuilt from
+    [swerveofshore.com](https://www.swerveofshore.com/) with the site owner's
+    permission. 52 pages, 0 broken internal links. Exercises a `series` output
+    collection with nested per-section paths, a data-driven taxonomy
+    (`_data/episodes.yml`) that generates the sidebar rail, the episode
+    schedule with live entry counts, and a section page for every node — so a
+    nav target resolves even where nothing is written yet. Also covers article
+    hero images (`show_hero`), entries ordered by number rather than date, the
+    shared `post-card` component in a single-column feed, and a full editorial
+    light-mode restyle done entirely through `assets/css/user-overrides.css` —
+    no theme files touched. The site's identity, taxonomy, entry titles/dates,
+    and featured images are reproduced; the essays are not — each entry
+    renders placeholder body text and links to the original.
   - `examples/README.md` — how to run one and the conventions for adding
     another.
 - **Theme propagation system — releases now reach the sites built on them.**

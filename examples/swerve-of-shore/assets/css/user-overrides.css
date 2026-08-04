@@ -155,6 +155,18 @@ blockquote {
   margin: 0 0 0.5rem;
 }
 
+/* Image wordmark. The source art is 1600px wide with a lot of internal
+   padding, so cap by height rather than width or it dominates the fold. */
+.mn-masthead__wordmark {
+  display: block;
+  width: auto;
+  max-width: min(100%, 30rem);
+  height: auto;
+  max-height: clamp(84px, 11vw, 140px);
+  object-fit: contain;
+  margin: 0 auto 0.75rem;
+}
+
 .mn-tagline {
   font-family: var(--mn-sans);
   font-size: 0.8125rem;

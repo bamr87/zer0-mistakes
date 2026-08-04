@@ -1,14 +1,9 @@
-# Reading-series sidebar for the Martello Notes example.
-# Used by: sidebar `nav: series` (set as a collection default in _config.yml)
+# Reading-series sidebar for the Swerve of Shore example.
+# Used by: sidebar `nav: series` (a collection default in _config.yml)
 #
-# Mirrors the reference site's category rail. Only entries that exist are
-# listed here — the theme's nav renderer always emits an <a href>, so a
-# curated link to an unwritten episode would be a dead link. The FULL
-# 18-episode schedule lives in _data/episodes.yml and renders on each series
-# index page via _includes/episode-schedule.html, where unwritten episodes
-# show as plain "upcoming" rows instead.
-#
-# Add an entry here when you publish the matching episode.
+# Mirrors the category rail on swerveofshore.com. Every entry here resolves:
+# pages/series/**.md generates a section page for the whole taxonomy, so an
+# episode with no entries yet still lands on a real page rather than a 404.
 
 - title: All Posts
   icon: bi-collection
@@ -19,32 +14,58 @@
   url: /series/ulysses/
   expanded: true
   children:
-    - title: 00 · Introduction
+    - title: "00 · Introduction"
       url: /series/ulysses/00-introduction/
-    - title: 01 · Telemachus
+    - title: "01 · Telemachus"
       url: /series/ulysses/01-telemachus/
-    - title: 02 · Nestor
+    - title: "02 · Nestor"
       url: /series/ulysses/02-nestor/
-    - title: 03 · Proteus
+    - title: "03 · Proteus"
       url: /series/ulysses/03-proteus/
+    - title: "04 · Calypso"
+      url: /series/ulysses/04-calypso/
+    - title: "05 · Lotus Eaters"
+      url: /series/ulysses/05-lotus-eaters/
+    - title: "06 · Hades"
+      url: /series/ulysses/06-hades/
+    - title: "07 · Aeolus"
+      url: /series/ulysses/07-aeolus/
+    - title: "08 · Lestrygonians"
+      url: /series/ulysses/08-lestrygonians/
+    - title: "09 · Scylla & Charybdis"
+      url: /series/ulysses/09-scylla-and-charybdis/
+    - title: "10 · Wandering Rocks"
+      url: /series/ulysses/10-wandering-rocks/
+    - title: "11 · Sirens"
+      url: /series/ulysses/11-sirens/
+    - title: "12 · Cyclops"
+      url: /series/ulysses/12-cyclops/
+    - title: "13 · Nausicaa"
+      url: /series/ulysses/13-nausicaa/
+    - title: "14 · Oxen of the Sun"
+      url: /series/ulysses/14-oxen-of-the-sun/
+    - title: "15 · Circe"
+      url: /series/ulysses/15-circe/
+    - title: "16 · Eumaeus"
+      url: /series/ulysses/16-eumaeus/
+    - title: "17 · Ithaca"
+      url: /series/ulysses/17-ithaca/
+    - title: "18 · Penelope"
+      url: /series/ulysses/18-penelope/
 
 - title: Finnegans Wake
   icon: bi-water
   url: /series/finnegans-wake/
   children:
-    - title: Introduction
+    - title: "Introduction"
       url: /series/finnegans-wake/00-introduction/
+    - title: "Book 1"
+      url: /series/finnegans-wake/book-1/
 
 - title: Joyce in the World
   icon: bi-globe-europe-africa
   url: /series/joyce-in-the-world/
-  children:
-    - title: Tram Timetables
-      url: /series/joyce-in-the-world/tram-timetables/
 
-- title: Portrait
+- title: APOTA
   icon: bi-person-lines-fill
-  url: /series/portrait/
-  children:
-    - title: 100 · Commencement
-      url: /series/portrait/100-commencement/
+  url: /series/apota/

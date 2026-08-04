@@ -2,7 +2,7 @@
 layout: default
 title: Ulysses
 permalink: /series/ulysses/
-description: The main sequence — eighteen episodes, in order, one at a time.
+description: The main sequence — eighteen episodes, read in order.
 hide_intro: true
 local_graph: false
 sidebar:
@@ -12,7 +12,7 @@ sidebar:
 
 {% include page-header.html %}
 
-Eighteen episodes, read in order. Each entry follows the same four headings — the shape of it, the trick, the threads, the loose ends — so the running motifs stay easy to trace from one episode to the next.
+The main sequence. Each episode has its own section; entries are numbered so they stay in reading order within an episode.
 
 {% include episode-schedule.html series="ulysses" %}
 

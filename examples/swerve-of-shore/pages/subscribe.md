@@ -2,7 +2,7 @@
 layout: default
 title: Subscribe
 permalink: /subscribe/
-description: Get each new entry by email, or follow the feed.
+description: Follow new entries by email or feed.
 hide_intro: true
 local_graph: false
 sidebar:
@@ -12,20 +12,18 @@ sidebar:
 
 {% include page-header.html %}
 
-New entries land roughly every other week — one episode at a time, however long that episode takes.
+New entries are posted as the reading goes.
 
 {% include subscribe-band.html %}
 
 ## Other ways to follow
 
-- **RSS** — [{{ '/feed.xml' | relative_url }}]({{ '/feed.xml' | relative_url }})
-  works with any reader and never asks for your address.
-- **Site map** — every entry, in order, on the [blog index]({{ '/blog/' | relative_url }}).
+- **RSS** — [{{ '/feed.xml' | relative_url }}]({{ '/feed.xml' | relative_url }}) works with any reader and never asks for your address.
+- **Everything so far** — the [blog index]({{ '/blog/' | relative_url }}) lists every entry, newest first.
+- **By section** — the [Ulysses schedule]({{ '/series/ulysses/' | relative_url }}) shows all eighteen episodes and which ones have entries.
 
-## What you get
+## On this demo
 
-Each email is the entry itself: summary, the formal trick the episode is playing, the threads still running, and whatever I could not resolve. No digests, no round-ups, no "here's what I've been up to."
+This is a layout replica, so there is no mailing list behind the form above — with no `news.newsletter.endpoint` configured, the theme falls back to a `mailto:` link rather than shipping a form that posts nowhere. To subscribe to the real thing, use [{{ site.source_site.name }}]({{ site.source_site.url }}).
 
-## What happens to your address
-
-On this demo site, nothing — there is no list and no endpoint configured. On a real deployment you would point `news.newsletter.endpoint` in `_config.yml` at your provider's form URL and the band above would post to it directly.
+On a real deployment you would point `news.newsletter.endpoint` in `_config.yml` at your provider's form URL and the band above would post to it directly.
