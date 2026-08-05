@@ -1,0 +1,20 @@
+# Gemfile for the Martello Notes example site.
+#
+# Points at the theme sources in this repository (../../) so the example
+# always builds against the working tree rather than the published gem.
+# A real consumer site would use `gem "jekyll-theme-zer0"` instead.
+
+source "https://rubygems.org"
+
+gem "jekyll-theme-zer0", path: "../.."
+
+group :jekyll_plugins do
+  gem "jekyll-feed"
+  gem "jekyll-sitemap"
+  gem "jekyll-seo-tag"
+  gem "jekyll-paginate"
+  # Required by the theme — root.html and several includes use include_cached.
+  gem "jekyll-include-cache"
+end
+
+gem "webrick"

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 520"
+     width="1600" height="520" role="img" aria-hidden="true">
+  <defs>
+    <linearGradient id="g-desk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f2ece1"/>
+      <stop offset="1" stop-color="#d3c3a8"/>
+    </linearGradient>
+    <filter id="g-desk-grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="520" fill="url(#g-desk)"/>
+  <g opacity="0.7">
+    <path d="M560 300 L800 262 L800 424 L560 452 Z" fill="#f4efe6"/>
+    <path d="M1040 300 L800 262 L800 424 L1040 452 Z" fill="#f4efe6" opacity="0.82"/>
+    <path d="M800 262 L800 424" stroke="#8a7358" stroke-width="4"/>
+    <g stroke="#8a7358" stroke-width="5" opacity="0.45" stroke-linecap="round">
+      <path d="M614 332 H752"/><path d="M614 360 H752"/><path d="M614 388 H736"/>
+      <path d="M848 332 H986"/><path d="M848 360 H986"/><path d="M848 388 H962"/>
+    </g>
+    <circle cx="1200" cy="392" r="46" fill="none" stroke="#221f1a" stroke-width="9" opacity="0.6"/>
+    <path d="M1246 372 a26 26 0 0 1 0 40" fill="none" stroke="#221f1a" stroke-width="9" opacity="0.6"/>
+  </g>
+  <rect width="1600" height="520" filter="url(#g-desk-grain)" opacity="0.06"/>
+</svg>

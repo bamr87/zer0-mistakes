@@ -1,0 +1,33 @@
+<!--
+  ===================================================================
+  PUBLICATION ITEM — Swerve of Shore example
+  ===================================================================
+  Site-local include (not part of the theme). One entry in the
+  Publications list.
+
+  Exists for the same reason as source-note.html: the page is pure
+  Markdown, and a block-level kramdown IAL cannot survive this repo's
+  one-paragraph-per-line rule (tools/unwrap-prose.py folds the IAL line
+  into the paragraph above it). Block-level classes therefore live in
+  includes rather than in the Markdown.
+
+  Parameters:
+  - title (required)
+  - meta  (optional): small caps line under the title
+  - body  (required)
+  - href / cta (optional): action button
+
+  Usage (braces omitted — Liquid parses tags even inside HTML comments):
+    include pub-item.html title="…" meta="…" body="…" href="…" cta="…"
+  ===================================================================
+-->
+<div class="mn-pub">
+  <h2 class="mn-pub__title">{{ include.title }}</h2>
+  {% if include.meta %}<p class="mn-pub__meta">{{ include.meta }}</p>{% endif %}
+  <p class="mn-pub__body">{{ include.body }}</p>
+  {% if include.href and include.cta %}
+    <p class="mn-pub__links">
+      <a class="btn btn-outline-dark btn-sm" href="{{ include.href }}">{{ include.cta }}</a>
+    </p>
+  {% endif %}
+</div>

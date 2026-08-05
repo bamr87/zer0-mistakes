@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630"
+     width="1200" height="630" role="img" aria-hidden="true">
+  <defs>
+    <linearGradient id="g-card-desk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f2ece1"/>
+      <stop offset="1" stop-color="#cdbca0"/>
+    </linearGradient>
+    <filter id="g-card-desk-grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#g-card-desk)"/>
+  <g opacity="0.72">
+    <path d="M330 268 L600 224 L600 430 L330 470 Z" fill="#f4efe6"/>
+    <path d="M870 268 L600 224 L600 430 L870 470 Z" fill="#f4efe6" opacity="0.82"/>
+    <path d="M600 224 L600 430" stroke="#8a7358" stroke-width="5"/>
+    <g stroke="#8a7358" stroke-width="6" opacity="0.42" stroke-linecap="round">
+      <path d="M388 312 H556"/><path d="M388 348 H556"/><path d="M388 384 H536"/>
+      <path d="M644 312 H812"/><path d="M644 348 H812"/><path d="M644 384 H792"/>
+    </g>
+  </g>
+  <rect width="1200" height="630" filter="url(#g-card-desk-grain)" opacity="0.06"/>
+</svg>

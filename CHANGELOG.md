@@ -33,6 +33,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`examples/` — self-contained demo sites built on the theme.** New top-level
+  directory (excluded from the theme's own site build and from the gem) for
+  complete Jekyll sites that show the theme configured for a particular kind of
+  site. Each has its own `_config.yml`, `Gemfile`, and content, and builds
+  against the local theme sources via `_config_dev.yml`.
+  - `examples/swerve-of-shore/` — **Swerve of Shore**, a serialized literary
+    reading blog rebuilt from
+    [swerveofshore.com](https://www.swerveofshore.com/) with the site owner's
+    permission. 52 pages, 0 broken internal links. Exercises a `series` output
+    collection with nested per-section paths, a data-driven taxonomy
+    (`_data/episodes.yml`) that generates the sidebar rail, the episode
+    schedule with live entry counts, and a section page for every node — so a
+    nav target resolves even where nothing is written yet. Also covers article
+    hero images (`show_hero`), entries ordered by number rather than date, the
+    shared `post-card` component in a single-column feed, and a full editorial
+    light-mode restyle done entirely through `assets/css/user-overrides.css` —
+    no theme files touched. The site's identity, taxonomy, entry titles/dates,
+    and featured images are reproduced, along with a short quoted excerpt per
+    entry (the opening the original publishes in its own RSS feed), attributed
+    and linked back. The essays themselves are not reproduced.
+  - `examples/README.md` — how to run one and the conventions for adding
+    another.
 - **Theme propagation system — releases now reach the sites built on them.**
   Releasing ended at RubyGems; nothing told the five downstream consumers a new
   version existed, so all three pinned sites were still on v1.26.0 when v1.27.0

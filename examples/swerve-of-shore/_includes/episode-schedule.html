@@ -1,0 +1,45 @@
+<!--
+  ===================================================================
+  EPISODE SCHEDULE — Swerve of Shore example
+  ===================================================================
+  Site-local include (not part of the theme). Renders the full taxonomy
+  for a series as a numbered rail: every episode/book gets a row, each
+  linking to its own section page, annotated with how many entries it
+  currently holds.
+
+  Every row links — the section pages are generated for the whole
+  taxonomy, so there are no dead targets even where nothing is written
+  yet.
+
+  Parameters:
+  - series (required): key into _data/episodes.yml, e.g. "ulysses"
+
+  Usage (braces omitted — Liquid parses tags even inside HTML comments):
+    include episode-schedule.html series="ulysses"
+  ===================================================================
+-->
+{% assign schedule = site.data.episodes[include.series] %}
+{% assign in_series = site.series | where: "series", include.series %}
+
+{% if schedule %}
+  <ol class="mn-schedule">
+    {% for ep in schedule %}
+      {% assign entries = in_series | where: "section", ep.slug %}
+      {% capture section_url %}/series/{{ include.series }}/{{ ep.slug }}/{% endcapture %}
+
+      <li class="mn-schedule__item {% if entries.size > 0 %}is-published{% else %}is-upcoming{% endif %}">
+        <span class="mn-schedule__num">{{ ep.number }}</span>
+
+        <a class="mn-schedule__link" href="{{ section_url | relative_url }}">{{ ep.name }}</a>
+
+        <span class="mn-schedule__meta">
+          {% if entries.size > 0 %}
+            {{ entries.size }} entr{% if entries.size == 1 %}y{% else %}ies{% endif %}
+          {% else %}
+            Upcoming
+          {% endif %}
+        </span>
+      </li>
+    {% endfor %}
+  </ol>
+{% endif %}

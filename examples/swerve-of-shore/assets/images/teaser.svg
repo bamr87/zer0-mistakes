@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630"
+     width="1200" height="630" role="img" aria-hidden="true">
+  <defs>
+    <linearGradient id="g-teaser" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#efe8db"/>
+      <stop offset="1" stop-color="#bfae92"/>
+    </linearGradient>
+    <filter id="g-teaser-grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#g-teaser)"/>
+  <g fill="#221f1a" opacity="0.28">
+    <rect x="470" y="230" width="260" height="180" rx="10"/>
+  </g>
+  <g stroke="#f4efe6" stroke-width="8" opacity="0.7" stroke-linecap="round">
+    <path d="M510 280 H690"/><path d="M510 316 H690"/><path d="M510 352 H650"/>
+  </g>
+  <rect width="1200" height="630" filter="url(#g-teaser-grain)" opacity="0.06"/>
+</svg>

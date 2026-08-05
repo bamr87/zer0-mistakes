@@ -1,0 +1,714 @@
+/* ===========================================================================
+   Martello Notes — site skin
+   ===========================================================================
+   Loaded by the theme via `user_overrides: true` in _config.yml, after
+   main.css, so plain selectors win without !important.
+
+   The look: an editorial, serif-forward, light-only reading site — a narrow
+   measure, generous vertical rhythm, hairline rules instead of shadows, and
+   full-width image cards in a single column. Everything is expressed through
+   the theme's --zer0-* tokens where one exists, so the theme's own components
+   (post cards, sidebar, navbar) pick the skin up for free.
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   1. Tokens
+   --------------------------------------------------------------------------- */
+
+:root {
+  /* Palette — warm paper, soft ink, a single sepia accent. */
+  --mn-paper:        #fbf8f2;
+  --mn-paper-sunk:   #f3ede2;
+  --mn-ink:          #1f1c18;
+  --mn-ink-soft:     #56504a;
+  --mn-ink-faint:    #8b8378;
+  --mn-rule:         #ddd4c5;
+  --mn-accent:       #7d6544;
+  --mn-accent-dark:  #5c4a31;
+
+  /* Type */
+  --mn-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
+              Georgia, "Times New Roman", serif;
+  --mn-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+             Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Measure of the reading column. */
+  --mn-measure: 44rem;
+
+  /* Hand the palette to the theme's own tokens. */
+  --zer0-color-bg:          var(--mn-paper);
+  --zer0-color-bg-elevated: #fffdf9;
+  --zer0-color-bg-muted:    var(--mn-paper-sunk);
+  --zer0-color-ink:         var(--mn-ink);
+  --zer0-color-ink-muted:   var(--mn-ink-soft);
+  --zer0-color-text-muted:  var(--mn-ink-faint);
+  --zer0-color-border:      var(--mn-rule);
+  --zer0-color-primary:     var(--mn-accent);
+  --zer0-color-primary-rgb: 125, 101, 68;
+  --zer0-color-accent:      var(--mn-accent);
+  --zer0-color-link:        var(--mn-accent-dark);
+  --zer0-color-link-hover:  var(--mn-ink);
+
+  --zer0-font-sans: var(--mn-sans);
+
+  /* Bootstrap surface tokens the theme's components inherit. */
+  --bs-body-bg: var(--mn-paper);
+  --bs-body-color: var(--mn-ink);
+  --bs-border-color: var(--mn-rule);
+  --bs-link-color: var(--mn-accent-dark);
+  --bs-link-hover-color: var(--mn-ink);
+  --bs-primary: var(--mn-accent);
+  --bs-primary-rgb: 125, 101, 68;
+}
+
+/* ---------------------------------------------------------------------------
+   2. Base typography
+   --------------------------------------------------------------------------- */
+
+body {
+  background-color: var(--mn-paper);
+  color: var(--mn-ink);
+  font-family: var(--mn-serif);
+  font-size: 1.0625rem;
+  line-height: 1.72;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6,
+.card-title, .post-title {
+  font-family: var(--mn-serif);
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  line-height: 1.22;
+  color: var(--mn-ink);
+}
+
+a { text-underline-offset: 0.18em; }
+
+/* Constrain the reading measure without touching the theme's grid. */
+.post .post-content,
+.post-content > *,
+main .container > .page-content p,
+main .container > .page-content ul,
+main .container > .page-content ol,
+main .container > .page-content blockquote {
+  max-width: var(--mn-measure);
+}
+
+blockquote {
+  border-left: 2px solid var(--mn-accent);
+  padding-left: 1.25rem;
+  margin-left: 0;
+  color: var(--mn-ink-soft);
+  font-style: italic;
+}
+
+/* ---------------------------------------------------------------------------
+   2b. Sampled excerpt + source attribution
+   ---------------------------------------------------------------------------
+   Entry bodies carry a short quoted excerpt from the original post. Set it
+   larger than body copy so it reads as the substance of the page, and keep the
+   attribution beneath it quiet.
+   --------------------------------------------------------------------------- */
+
+.post-content > blockquote:first-of-type {
+  border-left: 3px solid var(--mn-accent);
+  padding: 0.35rem 0 0.35rem 1.5rem;
+  margin: 2rem 0;
+  font-size: 1.16rem;
+  line-height: 1.62;
+  font-style: normal;
+  color: var(--mn-ink);
+  max-width: var(--mn-measure);
+}
+
+.mn-source {
+  margin: 2rem 0 1.25rem;
+}
+
+.mn-source .btn {
+  font-family: var(--mn-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-color: var(--mn-ink);
+  color: var(--mn-ink);
+  border-radius: 2px;
+  padding: 0.7rem 1.5rem;
+}
+
+.mn-source .btn:hover {
+  background: var(--mn-ink);
+  border-color: var(--mn-ink);
+  color: var(--mn-paper);
+}
+
+.mn-source__note {
+  font-family: var(--mn-sans);
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--mn-ink-faint);
+  max-width: var(--mn-measure);
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--mn-rule);
+}
+
+.mn-source__note a { color: var(--mn-accent-dark); }
+
+/* ---------------------------------------------------------------------------
+   3. Navbar — hairline rule, no shadow, small-caps labels
+   --------------------------------------------------------------------------- */
+
+.navbar {
+  background-color: rgba(251, 248, 242, 0.94) !important;
+  backdrop-filter: saturate(140%) blur(8px);
+  border-bottom: 1px solid var(--mn-rule);
+  box-shadow: none !important;
+}
+
+.navbar .nav-link,
+.navbar .navbar-brand {
+  font-family: var(--mn-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--mn-ink-soft);
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus-visible,
+.navbar .nav-link.active {
+  color: var(--mn-ink);
+}
+
+/* ---------------------------------------------------------------------------
+   4. Masthead
+   --------------------------------------------------------------------------- */
+
+.mn-masthead {
+  margin: 0 auto 3.5rem;
+  max-width: 62rem;
+}
+
+.mn-masthead__banner {
+  display: block;
+  width: 100%;
+  height: clamp(140px, 22vw, 260px);
+  object-fit: cover;
+  border-radius: 2px;
+  margin-bottom: 2.25rem;
+}
+
+.mn-wordmark {
+  font-size: clamp(2.25rem, 5.5vw, 3.75rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin: 0 0 0.5rem;
+}
+
+/* Image wordmark. The source art is 1600px wide with a lot of internal
+   padding, so cap by height rather than width or it dominates the fold. */
+.mn-masthead__wordmark {
+  display: block;
+  width: auto;
+  max-width: min(100%, 30rem);
+  height: auto;
+  max-height: clamp(84px, 11vw, 140px);
+  object-fit: contain;
+  margin: 0 auto 0.75rem;
+}
+
+.mn-tagline {
+  font-family: var(--mn-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--mn-ink-faint);
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   5. Section + page headers
+   --------------------------------------------------------------------------- */
+
+.mn-section-heading {
+  font-family: var(--mn-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--mn-ink-faint);
+  padding-bottom: 0.75rem;
+  margin-bottom: 2.25rem;
+  border-bottom: 1px solid var(--mn-rule);
+}
+
+.mn-page-header {
+  padding-bottom: 1.25rem;
+  margin-bottom: 2.5rem;
+  border-bottom: 1px solid var(--mn-rule);
+}
+
+.mn-page-header__title {
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  margin: 0 0 0.4rem;
+}
+
+.mn-page-header__lead {
+  font-size: 1.05rem;
+  color: var(--mn-ink-soft);
+  max-width: var(--mn-measure);
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   6. Post cards — one wide column, image above title, hairline separators
+   --------------------------------------------------------------------------- */
+
+.mn-feed { max-width: 62rem; margin: 0 auto; }
+
+.mn-feed__grid .card,
+.mn-feed__grid .post-card {
+  background: transparent;
+  border: 0 !important;
+  border-radius: 0;
+  box-shadow: none !important;
+  padding-bottom: 2.75rem;
+  margin-bottom: 2.75rem;
+  border-bottom: 1px solid var(--mn-rule) !important;
+}
+
+.mn-feed__grid .col:last-child .card {
+  border-bottom: 0 !important;
+  margin-bottom: 0;
+}
+
+.mn-feed__grid .card-img-top,
+.mn-feed__grid img.card-img-top {
+  width: 100%;
+  height: clamp(200px, 30vw, 340px);
+  object-fit: cover;
+  border-radius: 2px;
+  margin-bottom: 1.5rem;
+  transition: opacity 0.2s ease;
+}
+
+.mn-feed__grid .card:hover .card-img-top { opacity: 0.9; }
+
+.mn-feed__grid .card-body { padding: 0; }
+
+.mn-feed__grid .card-title {
+  font-size: clamp(1.35rem, 2.6vw, 1.85rem);
+  line-height: 1.24;
+  margin-bottom: 0.75rem;
+}
+
+.mn-feed__grid .card-title a {
+  color: var(--mn-ink);
+  text-decoration: none;
+}
+
+.mn-feed__grid .card-title a:hover,
+.mn-feed__grid .card-title a:focus-visible {
+  color: var(--mn-accent-dark);
+  text-decoration: underline;
+}
+
+.mn-feed__grid .card-text {
+  color: var(--mn-ink-soft);
+  font-size: 1.02rem;
+  max-width: var(--mn-measure);
+}
+
+/* Byline row: author · date · read time, set small and sans. */
+.mn-feed__grid .card-footer,
+.mn-feed__grid .text-muted,
+.mn-feed__grid small {
+  font-family: var(--mn-sans);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: var(--mn-ink-faint) !important;
+  background: transparent;
+  border: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Category chip reads as a small caps label, not a filled pill. */
+.mn-feed__grid .badge {
+  background: transparent !important;
+  color: var(--mn-accent) !important;
+  border: 0;
+  padding: 0 0 0.35rem;
+  font-family: var(--mn-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.mn-feed__more {
+  margin-top: 3rem;
+  text-align: center;
+}
+
+.mn-feed__more .btn,
+.btn-outline-dark {
+  font-family: var(--mn-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-color: var(--mn-ink);
+  color: var(--mn-ink);
+  border-radius: 2px;
+  padding: 0.7rem 1.6rem;
+}
+
+.mn-feed__more .btn:hover,
+.btn-outline-dark:hover {
+  background: var(--mn-ink);
+  border-color: var(--mn-ink);
+  color: var(--mn-paper);
+}
+
+/* ---------------------------------------------------------------------------
+   7. Series index list
+   --------------------------------------------------------------------------- */
+
+.mn-series-list {
+  list-style: none;
+  padding: 0;
+  margin: 2.5rem 0 0;
+  max-width: var(--mn-measure);
+}
+
+.mn-series-list__item {
+  padding: 1.15rem 0;
+  border-bottom: 1px solid var(--mn-rule);
+}
+
+.mn-series-list__item:first-child { border-top: 1px solid var(--mn-rule); }
+
+.mn-series-list__link {
+  display: block;
+  font-size: 1.12rem;
+  font-weight: 600;
+  color: var(--mn-ink);
+  text-decoration: none;
+}
+
+.mn-series-list__link:hover,
+.mn-series-list__link:focus-visible {
+  color: var(--mn-accent-dark);
+  text-decoration: underline;
+}
+
+.mn-series-list__sub {
+  display: block;
+  color: var(--mn-ink-soft);
+  font-size: 0.98rem;
+  margin-top: 0.15rem;
+}
+
+.mn-series-list__meta {
+  display: block;
+  margin-top: 0.4rem;
+  font-family: var(--mn-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: var(--mn-ink-faint);
+}
+
+/* ---------------------------------------------------------------------------
+   7b. Episode schedule — published entries link, the rest read as upcoming
+   --------------------------------------------------------------------------- */
+
+.mn-schedule {
+  list-style: none;
+  padding: 0;
+  margin: 2.5rem 0 0;
+  max-width: var(--mn-measure);
+  border-top: 1px solid var(--mn-rule);
+}
+
+.mn-schedule__item {
+  display: grid;
+  grid-template-columns: 2.75rem 1fr auto;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--mn-rule);
+}
+
+.mn-schedule__num {
+  font-family: var(--mn-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--mn-ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.mn-schedule__link {
+  font-size: 1.06rem;
+  font-weight: 600;
+  color: var(--mn-ink);
+  text-decoration: none;
+}
+
+.mn-schedule__link:hover,
+.mn-schedule__link:focus-visible {
+  color: var(--mn-accent-dark);
+  text-decoration: underline;
+}
+
+.mn-schedule__name { color: var(--mn-ink-faint); }
+
+.mn-schedule__meta {
+  font-family: var(--mn-sans);
+  font-size: 0.73rem;
+  letter-spacing: 0.06em;
+  color: var(--mn-ink-faint);
+  white-space: nowrap;
+}
+
+.mn-schedule__item.is-upcoming .mn-schedule__meta {
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+}
+
+@media (max-width: 480px) {
+  .mn-schedule__item {
+    grid-template-columns: 2.25rem 1fr;
+  }
+  .mn-schedule__meta { grid-column: 2; }
+}
+
+/* ---------------------------------------------------------------------------
+   8. Publications
+   --------------------------------------------------------------------------- */
+
+/* The source markdown carries no HTML — these classes arrive via kramdown
+   inline attribute lists ({: .mn-pub__title}), so each one lands on the
+   heading or paragraph itself rather than on a wrapper element. Style the
+   elements directly and use the title's top border to separate entries. */
+
+.mn-pub__title {
+  font-size: 1.3rem;
+  margin: 2.25rem 0 0.35rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--mn-rule);
+  max-width: var(--mn-measure);
+}
+
+.mn-pub__meta {
+  font-family: var(--mn-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--mn-ink-faint);
+  margin: 0 0 0.85rem;
+}
+
+.mn-pub__body {
+  color: var(--mn-ink-soft);
+  margin: 0 0 1.1rem;
+  max-width: var(--mn-measure);
+}
+
+.mn-pub__links { margin: 0 0 0.5rem; }
+
+.mn-pub__links .btn {
+  font-family: var(--mn-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-color: var(--mn-ink);
+  color: var(--mn-ink);
+  border-radius: 2px;
+  padding: 0.5rem 1.1rem;
+}
+
+.mn-pub__links .btn:hover {
+  background: var(--mn-ink);
+  border-color: var(--mn-ink);
+  color: var(--mn-paper);
+}
+
+/* ---------------------------------------------------------------------------
+   9. Figures
+   ---------------------------------------------------------------------------
+   about.md applies this with a SPAN-level IAL on the image's own line, so the
+   class lands on the <img> itself. A block-level IAL (on the following line)
+   would be folded into the paragraph by tools/unwrap-prose.py and never reach
+   kramdown as an attribute list — see _includes/source-note.html.
+   --------------------------------------------------------------------------- */
+
+img.mn-figure {
+  display: block;
+  width: 100%;
+  max-width: 62rem;
+  height: clamp(160px, 24vw, 280px);
+  object-fit: cover;
+  border-radius: 2px;
+  margin: 2.5rem 0;
+}
+
+/* ---------------------------------------------------------------------------
+   10. Subscribe band
+   --------------------------------------------------------------------------- */
+
+.mn-subscribe {
+  margin: 5rem calc(50% - 50vw) 0;
+  padding: 4.5rem 1.5rem;
+  background: var(--mn-paper-sunk);
+  border-top: 1px solid var(--mn-rule);
+  text-align: center;
+}
+
+.mn-subscribe__inner { max-width: 36rem; margin: 0 auto; }
+
+.mn-subscribe__eyebrow {
+  font-family: var(--mn-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--mn-ink-faint);
+  margin: 0 0 0.9rem;
+}
+
+.mn-subscribe__heading {
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  margin: 0 0 0.75rem;
+}
+
+.mn-subscribe__lead {
+  color: var(--mn-ink-soft);
+  margin: 0 0 1.9rem;
+}
+
+.mn-subscribe__form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: center;
+}
+
+.mn-subscribe__form .form-control {
+  flex: 1 1 16rem;
+  max-width: 22rem;
+  border-radius: 2px;
+  border-color: var(--mn-rule);
+  background: #fffdf9;
+  font-family: var(--mn-sans);
+}
+
+.mn-subscribe .btn-dark,
+.mn-subscribe__form .btn {
+  background: var(--mn-ink);
+  border-color: var(--mn-ink);
+  border-radius: 2px;
+  font-family: var(--mn-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.75rem 1.9rem;
+}
+
+.mn-subscribe .btn-dark:hover { background: var(--mn-accent-dark); border-color: var(--mn-accent-dark); }
+
+.mn-subscribe__note {
+  font-family: var(--mn-sans);
+  font-size: 0.75rem;
+  color: var(--mn-ink-faint);
+  margin: 1.1rem 0 0;
+}
+
+/* ---------------------------------------------------------------------------
+   11. Sidebar rail — quiet, typographic
+   --------------------------------------------------------------------------- */
+
+#bdSidebar,
+.sidebar-nav {
+  font-family: var(--mn-sans);
+  font-size: 0.86rem;
+}
+
+#bdSidebar a,
+.sidebar-nav a {
+  color: var(--mn-ink-soft);
+  border-radius: 2px;
+}
+
+#bdSidebar a:hover,
+#bdSidebar a.active,
+.sidebar-nav a:hover,
+.sidebar-nav a.active {
+  color: var(--mn-ink);
+  background: var(--mn-paper-sunk);
+}
+
+/* ---------------------------------------------------------------------------
+   12. Article pages
+   --------------------------------------------------------------------------- */
+
+.post-title { font-size: clamp(2rem, 4.4vw, 3rem); }
+
+.post-header {
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--mn-rule);
+}
+
+.post-content h2 {
+  font-size: 1.45rem;
+  margin-top: 2.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.post-content h3 { font-size: 1.18rem; margin-top: 2rem; }
+
+/* ---------------------------------------------------------------------------
+   13. Footer
+   --------------------------------------------------------------------------- */
+
+footer {
+  border-top: 1px solid var(--mn-rule);
+  font-family: var(--mn-sans);
+  font-size: 0.82rem;
+  color: var(--mn-ink-faint);
+}
+
+/* ---------------------------------------------------------------------------
+   14. Chrome this demo does not use
+   ---------------------------------------------------------------------------
+   The theme ships a cookie-consent banner because its default config enables
+   PostHog. This example sets `posthog.enabled: false` and no analytics IDs, so
+   it sets no cookies and the banner has nothing to consent to. Hiding it here
+   rather than deleting the include keeps the theme file untouched.
+
+   Remove this rule the moment you turn any analytics back on.
+   --------------------------------------------------------------------------- */
+
+#cookieConsent { display: none !important; }
+
+/* Index pages (blog, the series sections, about, publications, subscribe) have
+   no real heading outline — their only <h2> is the subscribe band — so the
+   right-hand "On this page" rail arrives listing one useless entry. Those
+   pages are exactly the ones that render .mn-page-header, so key off it and
+   drop the rail. Article pages keep their TOC. */
+.bd-main:has(.mn-page-header) .bd-toc { display: none; }
+
+/* ---------------------------------------------------------------------------
+   15. Motion preferences
+   --------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .mn-feed__grid .card-img-top { transition: none; }
+}

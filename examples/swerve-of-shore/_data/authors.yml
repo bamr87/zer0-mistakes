@@ -1,0 +1,13 @@
+# Author profile for the Swerve of Shore example.
+# Matches the author of the site this replica is based on.
+
+"Brandon Nicklaus":
+  name: "Brandon Nicklaus"
+  display_name: "Brandon Nicklaus"
+  bio: >-
+    Writes Swerve of Shore, a close reading of James Joyce — Ulysses episode by
+    episode, Finnegans Wake by book, and essays on Joyce in the world.
+  role: "Author"
+  links:
+    - label: "swerveofshore.com"
+      url: "https://www.swerveofshore.com/"

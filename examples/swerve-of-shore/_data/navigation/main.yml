@@ -1,0 +1,43 @@
+# Main navigation for the Swerve of Shore example.
+#
+# Mirrors the top bar on swerveofshore.com: Blog · Publications · About ·
+# Subscribe · More, with the reading sections hung off Blog and the overflow
+# items under More.
+
+- title: Blog
+  icon: bi-journal-text
+  url: /blog/
+  children:
+    - title: All Posts
+      url: /blog/
+    - title: Ulysses
+      url: /series/ulysses/
+    - title: Finnegans Wake
+      url: /series/finnegans-wake/
+    - title: Joyce in the World
+      url: /series/joyce-in-the-world/
+    - title: APOTA
+      url: /series/apota/
+
+- title: Publications
+  icon: bi-file-earmark-text
+  url: /publications/
+
+- title: About
+  icon: bi-info-circle
+  url: /about/
+
+- title: Subscribe
+  icon: bi-envelope
+  url: /subscribe/
+
+- title: More
+  icon: bi-three-dots
+  url: /more/
+  children:
+    - title: Reading Order
+      url: /more/reading-order/
+    - title: Archive
+      url: /blog/
+    - title: RSS Feed
+      url: /feed.xml

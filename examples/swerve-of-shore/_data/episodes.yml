@@ -1,0 +1,35 @@
+# The reading schedule behind the section pages and the sidebar rail.
+#
+# Mirrors the category taxonomy on swerveofshore.com: eighteen Ulysses episodes
+# plus an introduction, Finnegans Wake by book, and the standalone threads.
+# pages/series/*.md joins this against the `series` collection, so an episode
+# with entries lists them and an episode without renders as "no entries yet" —
+# every nav target resolves either way.
+#
+# Ulysses episode names are the conventional Homeric schema titles used
+# throughout Joyce scholarship; they do not appear in the novel itself.
+
+ulysses:
+  - { number: "00", slug: 00-introduction,          name: "Introduction" }
+  - { number: "01", slug: 01-telemachus,            name: "Telemachus" }
+  - { number: "02", slug: 02-nestor,                name: "Nestor" }
+  - { number: "03", slug: 03-proteus,               name: "Proteus" }
+  - { number: "04", slug: 04-calypso,               name: "Calypso" }
+  - { number: "05", slug: 05-lotus-eaters,          name: "Lotus Eaters" }
+  - { number: "06", slug: 06-hades,                 name: "Hades" }
+  - { number: "07", slug: 07-aeolus,                name: "Aeolus" }
+  - { number: "08", slug: 08-lestrygonians,         name: "Lestrygonians" }
+  - { number: "09", slug: 09-scylla-and-charybdis,  name: "Scylla & Charybdis" }
+  - { number: "10", slug: 10-wandering-rocks,       name: "Wandering Rocks" }
+  - { number: "11", slug: 11-sirens,                name: "Sirens" }
+  - { number: "12", slug: 12-cyclops,               name: "Cyclops" }
+  - { number: "13", slug: 13-nausicaa,              name: "Nausicaa" }
+  - { number: "14", slug: 14-oxen-of-the-sun,       name: "Oxen of the Sun" }
+  - { number: "15", slug: 15-circe,                 name: "Circe" }
+  - { number: "16", slug: 16-eumaeus,               name: "Eumaeus" }
+  - { number: "17", slug: 17-ithaca,                name: "Ithaca" }
+  - { number: "18", slug: 18-penelope,              name: "Penelope" }
+
+finnegans-wake:
+  - { number: "00", slug: 00-introduction, name: "Introduction" }
+  - { number: "01", slug: book-1,          name: "Book 1" }

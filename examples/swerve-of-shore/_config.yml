@@ -1,0 +1,190 @@
+# =============================================================================
+# Swerve of Shore — layout replica built on jekyll-theme-zer0
+# =============================================================================
+# A rebuild of https://www.swerveofshore.com/ (a James Joyce reading blog by
+# Brandon Nicklaus) on this theme, published with the site owner's permission.
+#
+# What is copied: the site's identity, navigation, category taxonomy, entry
+# titles/dates, and featured images.
+# What is NOT copied: the essays themselves. Each entry renders with original
+# placeholder body text and a link to the real piece — the demo needs the
+# layout exercised, not the author's writing republished.
+#
+# Serve from this directory:
+#   bundle exec jekyll serve --config _config.yml,_config_dev.yml
+# =============================================================================
+
+site_configured          : true
+
+## Identity ###################################################################
+
+title                    : "Swerve of Shore"
+# Kept short on purpose: the navbar's centre track only shows menu labels
+# while it has room, and a long subtitle pushes it into icon-only mode.
+# The full strapline lives on the masthead as `tagline` instead.
+subtitle                 : "James Joyce, closely read"
+tagline                  : "From Swerve of Shore to Bend of Bay"
+
+logo                     : /assets/images/logo.png
+wordmark                 : /assets/images/wordmark.png
+description              : >-
+  A close reading of James Joyce — episode-by-episode commentary on Ulysses and
+  Finnegans Wake, notes on A Portrait of the Artist as a Young Man, and essays
+  on Joyce in the world.
+
+name                     : &name "Brandon Nicklaus"
+founder                  : *name
+email                    : "hello@example.com"
+
+# The site this example replicates, with its owner's permission. Rendered as an
+# attribution line in the footer and on each entry.
+source_site:
+  name                   : "Swerve of Shore"
+  url                    : "https://www.swerveofshore.com/"
+  author                 : *name
+
+author:
+  name                   : *name
+  bio                    : "Writes Swerve of Shore, a close reading of James Joyce."
+
+## Deployment #################################################################
+
+url                      : "https://bamr87.github.io"
+baseurl                  : "/zer0-mistakes/examples/swerve-of-shore"
+remote_theme             : "bamr87/zer0-mistakes"
+
+github_user              : &github_user "bamr87"
+repository_name          : &github_repository "zer0-mistakes"
+repository               : [*github_user, "/", *github_repository]
+branch                   : "main"
+
+## Build ######################################################################
+
+markdown                 : kramdown
+highlighter              : rouge
+permalink                : pretty
+public_folder            : assets
+port                     : 4010
+
+# Card image used when an entry sets no `preview:` in front matter.
+teaser                   : /assets/images/teaser.svg
+og_image                 : /assets/images/banner-shore.svg
+
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+  - jekyll-paginate
+  # Required by the theme: root.html and several includes use {% include_cached %}.
+  - jekyll-include-cache
+
+paginate                 : 6
+paginate_path            : "/blog/page/:num/"
+
+## Appearance #################################################################
+# The reference site is a light, editorial, serif-forward layout. Lock the
+# theme to light mode and layer the typographic skin via user overrides.
+
+theme_skin               : "air"
+color_mode_default       : light
+color_mode_lock          : true
+user_overrides           : true
+appearance_panel         : false
+
+theme_background:
+  enabled                : false
+
+## Collections ################################################################
+# `series` holds the numbered close-reading entries (Ulysses episodes and
+# Finnegans Wake sections). Regular essays live in `posts`.
+
+collections_dir          : pages
+
+collections:
+  posts:
+    output               : true
+    permalink            : /blog/:title/
+  series:
+    output               : true
+    title                : "Reading series"
+    icon                 : "bi-bookmarks"
+    permalink            : /series/:path/
+    sidebar:
+      nav                : series
+      title              : "Browse the series"
+
+## Front-matter defaults ######################################################
+
+defaults:
+  - scope:
+      path               : ""
+    values:
+      layout             : "default"
+      author             : *name
+      read_time          : true
+      comments           : false
+      share              : true
+      related            : true
+      # The theme's local-graph FAB is a docs/wiki affordance; a reading
+      # site does not want a floating button over the prose.
+      local_graph        : false
+
+  - scope:
+      path               : ""
+      type               : "posts"
+    values:
+      layout             : "article"
+      author             : *name
+      sidebar:
+        nav              : series
+        title            : "Browse the series"
+
+  - scope:
+      path               : ""
+      type               : "series"
+    values:
+      # Render the featured image as a top-of-article hero (theme opt-in).
+      show_hero          : true
+      layout             : "article"
+      author             : *name
+      sidebar:
+        nav              : series
+        title            : "Browse the series"
+
+## Feature toggles ############################################################
+# Trim the theme chrome down to what the reference layout actually shows.
+
+posthog:
+  enabled                : false
+google_analytics         : null
+google_tag_manager       : null
+
+ai_chat:
+  enabled                : false
+
+page_feedback:
+  enabled                : false
+
+giscus:
+  enabled                : false
+
+## News / subscribe band ######################################################
+# Drives the newsletter band used by the news + section layouts.
+
+news:
+  index_url              : "/blog/"
+  category_base          : "/series/"
+  newsletter:
+    enabled              : true
+    heading              : "Never miss a post"
+    lead                 : "Subscribe to get new entries as they are published."
+
+## Exclusions #################################################################
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - vendor/
+  - .jekyll-cache/
+  - .sass-cache/

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630"
+     width="1200" height="630" role="img" aria-hidden="true">
+  <defs>
+    <linearGradient id="g-card-sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#dfe4e5"/>
+      <stop offset="1" stop-color="#7f8f97"/>
+    </linearGradient>
+    <filter id="g-card-sea-grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#g-card-sea)"/>
+  <g stroke="#f4efe6" stroke-width="7" fill="none" opacity="0.5" stroke-linecap="round">
+    <path d="M-20 250 Q 140 222 300 250 T 620 250 T 940 250 T 1220 250"/>
+    <path d="M-20 322 Q 140 294 300 322 T 620 322 T 940 322 T 1220 322"/>
+    <path d="M-20 394 Q 140 366 300 394 T 620 394 T 940 394 T 1220 394"/>
+    <path d="M-20 466 Q 140 438 300 466 T 620 466 T 940 466 T 1220 466"/>
+  </g>
+  <path d="M0 540 Q 300 518 600 538 T 1200 532 L1200 630 L0 630 Z" fill="#221f1a" opacity="0.42"/>
+  <rect width="1200" height="630" filter="url(#g-card-sea-grain)" opacity="0.06"/>
+</svg>
