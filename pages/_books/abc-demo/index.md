@@ -3,6 +3,11 @@ title: "The Zer0 Alphabet"
 subtitle: "A is for Anchor"
 layout: book-abc
 book: abc-demo
+# Without this, the `books` collection permalink (/:collection/:path/) resolves
+# :path to "abc-demo/index" and the cover lands at /books/abc-demo/index/,
+# leaving /books/abc-demo/ with no page. zer0-tales/index.md pins its own
+# permalink for the same reason.
+permalink: /books/abc-demo/
 series: abc-language
 audience: "Ages 1–4 (toddler board book)"
 art_style: crayon-primary
