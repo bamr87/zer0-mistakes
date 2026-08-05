@@ -104,6 +104,59 @@ blockquote {
 }
 
 /* ---------------------------------------------------------------------------
+   2b. Sampled excerpt + source attribution
+   ---------------------------------------------------------------------------
+   Entry bodies carry a short quoted excerpt from the original post. Set it
+   larger than body copy so it reads as the substance of the page, and keep the
+   attribution beneath it quiet.
+   --------------------------------------------------------------------------- */
+
+.post-content > blockquote:first-of-type {
+  border-left: 3px solid var(--mn-accent);
+  padding: 0.35rem 0 0.35rem 1.5rem;
+  margin: 2rem 0;
+  font-size: 1.16rem;
+  line-height: 1.62;
+  font-style: normal;
+  color: var(--mn-ink);
+  max-width: var(--mn-measure);
+}
+
+.mn-source {
+  margin: 2rem 0 1.25rem;
+}
+
+.mn-source .btn {
+  font-family: var(--mn-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-color: var(--mn-ink);
+  color: var(--mn-ink);
+  border-radius: 2px;
+  padding: 0.7rem 1.5rem;
+}
+
+.mn-source .btn:hover {
+  background: var(--mn-ink);
+  border-color: var(--mn-ink);
+  color: var(--mn-paper);
+}
+
+.mn-source__note {
+  font-family: var(--mn-sans);
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--mn-ink-faint);
+  max-width: var(--mn-measure);
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--mn-rule);
+}
+
+.mn-source__note a { color: var(--mn-accent-dark); }
+
+/* ---------------------------------------------------------------------------
    3. Navbar — hairline rule, no shadow, small-caps labels
    --------------------------------------------------------------------------- */
 

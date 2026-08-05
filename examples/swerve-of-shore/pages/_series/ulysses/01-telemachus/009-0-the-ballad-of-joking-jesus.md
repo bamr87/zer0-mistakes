@@ -9,32 +9,28 @@ order: 9.0
 
 preview: /assets/images/posts/009-0-the-ballad-of-joking-jesus.jpg
 source_url: "https://www.swerveofshore.com/post/009-0-the-ballad-of-joking-jesus"
+source_title: "009.0 - The Ballad of Joking Jesus"
 estimated_reading_time: "2 min"
 description: >-
-  Episode 1 · Telemachus — 009.0 - The Ballad of Joking Jesus. Structural demo entry in the Swerve of
-  Shore theme example.
+  We are using the original 1922 First Printing by Shakespeare & Co. - section attached "What is your idea of Hamlet?"- to -"example
 excerpt: >-
-  This entry is part of the Episode 1 · Telemachus thread.
+  We are using the original 1922 First Printing by Shakespeare & Co. - section attached "What is your idea of Hamlet?"- to -"example
 ---
 
-This entry is part of the *Episode 1 · Telemachus* thread.
+From the *Episode 1 · Telemachus* thread on [Swerve of Shore](https://www.swerveofshore.com/post/009-0-the-ballad-of-joking-jesus), by Brandon Nicklaus.
 
-> **Demo entry.** This site is a layout replica of
-> [swerveofshore.com](https://www.swerveofshore.com/) built to exercise the
-> `jekyll-theme-zer0` theme. The title, date, category, and image above are the
-> real ones; this body text is placeholder written for the demo rather than a
-> copy of the original essay.
->
-> Read the real piece: [009.0 - The Ballad of Joking Jesus](https://www.swerveofshore.com/post/009-0-the-ballad-of-joking-jesus)
+> We are using the original 1922 First Printing by Shakespeare & Co. - section attached "What is your idea of Hamlet?"- to -"example of...
 
-## What this slot demonstrates
+<p class="mn-source">
+  <a class="btn btn-outline-dark" href="https://www.swerveofshore.com/post/009-0-the-ballad-of-joking-jesus">
+    Read the full piece at Swerve of Shore
+  </a>
+</p>
 
-Everything the theme renders around an entry is live here — the byline with author and date, the category badge, the featured image, the series rail on the left, the table of contents on the right, and the previous/next pager at the foot of the page.
-
-## Why the placeholder
-
-The structure is the transferable part of a site like this: a numbered series, one entry per episode, each carrying a hero image and slotting into a category that drives both the sidebar and the archive. That is what a theme example needs to prove. The essays themselves belong to their author and stay on the original site.
-
-## Swapping in real content
-
-Replace this file's body with Markdown and it renders immediately — the front matter above already wires the entry into the series, the sidebar, the feed, and the archive.
+<p class="mn-source__note">
+  Excerpt above is the opening of the original entry, quoted from
+  <a href="https://www.swerveofshore.com/post/009-0-the-ballad-of-joking-jesus">swerveofshore.com</a> and reproduced here with the author's
+  permission. This site is a layout rebuild on the
+  <a href="https://github.com/bamr87/zer0-mistakes">zer0-mistakes</a> theme —
+  the full essay lives on the original.
+</p>

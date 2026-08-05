@@ -2,7 +2,7 @@
 layout: default
 title: "03 · Proteus"
 permalink: /series/ulysses/03-proteus/
-description: Entries on episode 03 of Ulysses — Proteus.
+description: Notes on episode 3 of Ulysses — Proteus (11am, Sandymount Strand).
 hide_intro: true
 local_graph: false
 sidebar:
@@ -12,9 +12,11 @@ sidebar:
 
 {% include page-header.html %}
 
-Entries filed under **Proteus**, in reading order.
+Episode 3 of *Ulysses*. 11am, Sandymount Strand.
+
+Entries are numbered rather than dated, so several notes on the same episode stay in reading order.
 
 {% assign entries = site.series | where: "series", "ulysses" | where: "section", "03-proteus" | sort: "order" %}
-{% include series-list.html entries=entries empty="No entries here yet — this episode is still ahead in the reading." %}
+{% include series-list.html entries=entries empty="Nothing filed under this episode yet — the reading has not reached it." %}
 
 {% include subscribe-band.html %}

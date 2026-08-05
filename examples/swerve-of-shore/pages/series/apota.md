@@ -12,9 +12,9 @@ sidebar:
 
 {% include page-header.html %}
 
-*A Portrait of the Artist as a Young Man* — the earlier novel, and the Stephen who walks into *Ulysses* a few years later.
+*A Portrait of the Artist as a Young Man* — the earlier novel, and the Stephen Dedalus who walks back into *Ulysses* a few years later with the departure undone.
 
 {% assign entries = site.series | where: "series", "apota" | sort: "order" %}
-{% include series-list.html entries=entries %}
+{% include series-list.html entries=entries empty="Nothing filed here yet." %}
 
 {% include subscribe-band.html %}

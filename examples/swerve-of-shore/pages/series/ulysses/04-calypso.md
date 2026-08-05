@@ -2,7 +2,7 @@
 layout: default
 title: "04 · Calypso"
 permalink: /series/ulysses/04-calypso/
-description: Entries on episode 04 of Ulysses — Calypso.
+description: Notes on episode 4 of Ulysses — Calypso (8am again, this time at 7 Eccles Street).
 hide_intro: true
 local_graph: false
 sidebar:
@@ -12,9 +12,11 @@ sidebar:
 
 {% include page-header.html %}
 
-Entries filed under **Calypso**, in reading order.
+Episode 4 of *Ulysses*. 8am again, this time at 7 Eccles Street.
+
+Entries are numbered rather than dated, so several notes on the same episode stay in reading order.
 
 {% assign entries = site.series | where: "series", "ulysses" | where: "section", "04-calypso" | sort: "order" %}
-{% include series-list.html entries=entries empty="No entries here yet — this episode is still ahead in the reading." %}
+{% include series-list.html entries=entries empty="Nothing filed under this episode yet — the reading has not reached it." %}
 
 {% include subscribe-band.html %}

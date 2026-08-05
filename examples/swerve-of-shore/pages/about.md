@@ -2,7 +2,7 @@
 layout: default
 title: About
 permalink: /about/
-description: What Swerve of Shore is, and who writes it.
+description: What Swerve of Shore is, and what this rebuild is.
 hide_intro: true
 local_graph: false
 sidebar:
@@ -13,31 +13,29 @@ sidebar:
 {% include page-header.html %}
 
 <figure class="mn-figure">
-  <img src="{{ '/assets/images/posts/008-3-omphalos-the-center-of-it-all.jpg' | relative_url }}"
-       alt="">
+  <img src="{{ '/assets/images/posts/008-3-omphalos-the-center-of-it-all.jpg' | relative_url }}" alt="">
 </figure>
 
-## About this rebuild
+## The original
 
-You are looking at a **layout replica** of [Swerve of Shore]({{ site.source_site.url }}), a James Joyce reading blog by {{ site.source_site.author }}. It was rebuilt on the [zer0-mistakes](https://github.com/bamr87/zer0-mistakes) Jekyll theme, with the site owner's permission, as a worked example of what the theme can do.
+[Swerve of Shore]({{ site.source_site.url }}) is a close reading of James Joyce by {{ site.source_site.author }}. The spine is *Ulysses*, worked through in order from the 1922 first printing by Shakespeare & Co., with each entry taking a stretch of text and staying with it. Running alongside: *Finnegans Wake* from the 1999 Penguin Classics edition, notes on *A Portrait of the Artist as a Young Man*, and essays placing Joyce against other writers.
 
-**What was copied:** the site's identity and navigation, the category taxonomy, every entry's title, date and section, and the featured images.
-
-**What was not:** the essays. Each entry here renders with placeholder body text written for the demo and a link to the real piece. The writing belongs to its author and stays on the original site — go read it there.
+The numbering is the clever part. Entries carry numbers rather than relying on dates, so a note written in November can sit exactly where it belongs in the reading — which is the only way a serialized project like this stays navigable past about thirty posts.
 
 <figure class="mn-figure">
-  <img src="{{ '/assets/images/posts/001-1-joyce-s-skyquake.jpg' | relative_url }}"
-       alt="">
+  <img src="{{ '/assets/images/posts/001-1-joyce-s-skyquake.jpg' | relative_url }}" alt="">
 </figure>
 
-## What the original does
+## This rebuild
 
-Swerve of Shore reads Joyce closely and in order. The spine is *Ulysses*, worked through episode by episode, with entries numbered so several can sit under a single episode and stay in sequence. Alongside it run *Finnegans Wake* by book, notes on *A Portrait of the Artist as a Young Man*, and essays placing Joyce against the writers he read and was read against.
+What you are reading is that site rebuilt on the [zer0-mistakes](https://github.com/bamr87/zer0-mistakes) Jekyll theme, with the owner's permission, as a worked example of the theme handling a long-running serialized project.
 
-That numbering scheme is the part worth stealing for a theme example: it is a real answer to the problem of serializing a long project in public, where entries arrive out of order and a flat reverse-chronological blog stops being navigable about thirty posts in.
+The identity, navigation, taxonomy, entry titles and dates, and the images are all the real ones. **The essays are not reproduced** — each entry shows a short quoted excerpt from the original, with a link to read the whole thing where it lives. If you came for the criticism rather than the CSS, [go there]({{ site.source_site.url }}).
 
-## What this example demonstrates
+## Why it makes a good example
 
-The theme handles it with a custom collection, a data-driven taxonomy, and a curated sidebar — see the [project README](https://github.com/bamr87/zer0-mistakes/tree/main/examples/swerve-of-shore) for the full breakdown.
+Most theme demos are a handful of lorem-ipsum posts, which prove nothing. A real serialized project stresses the parts that actually break: a taxonomy deep enough to need its own sidebar, sections that exist before anything is filed under them, entries that sort by something other than date, and a hundred internal links that all have to resolve.
+
+The [reading order]({{ '/more/reading-order/' | relative_url }}) page explains the numbering; the [project README](https://github.com/bamr87/zer0-mistakes/tree/main/examples/swerve-of-shore) has the technical breakdown.
 
 {% include subscribe-band.html %}

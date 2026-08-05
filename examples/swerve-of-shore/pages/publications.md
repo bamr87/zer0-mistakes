@@ -2,7 +2,7 @@
 layout: default
 title: Publications
 permalink: /publications/
-description: Longer work and collected writing.
+description: Longer work growing out of the numbered entries.
 hide_intro: true
 local_graph: false
 sidebar:
@@ -12,16 +12,15 @@ sidebar:
 
 {% include page-header.html %}
 
-The original site keeps a Publications section for longer work that grows out of the numbered entries.
+The original site keeps a Publications section for work that outgrows a single numbered entry.
 
 <div class="mn-pubs">
   <article class="mn-pub">
-    <h2 class="mn-pub__title">See the original</h2>
-    <p class="mn-pub__meta">Swerve of Shore · Publications</p>
+    <h2 class="mn-pub__title">Read it on the original site</h2>
+    <p class="mn-pub__meta">Swerve of Shore</p>
     <p class="mn-pub__body">
-      This page exists in the replica so the navigation is complete and the
-      layout is exercised. The actual publication list lives on the original
-      site.
+      This rebuild carries the navigation but not the publication list — that
+      belongs with the writing it collects.
     </p>
     <p class="mn-pub__links">
       <a class="btn btn-outline-dark btn-sm" href="{{ site.source_site.url }}">
@@ -31,15 +30,18 @@ The original site keeps a Publications section for longer work that grows out of
   </article>
 
   <article class="mn-pub">
-    <h2 class="mn-pub__title">What this page shows</h2>
-    <p class="mn-pub__meta">Theme demo</p>
+    <h2 class="mn-pub__title">The guides</h2>
+    <p class="mn-pub__meta">Ulysses · episode by episode</p>
     <p class="mn-pub__body">
-      A simple stacked list layout with title, meta line, body, and action —
-      built from plain markup styled by the site skin rather than a theme
-      component, which is how most one-off pages end up working in practice.
+      Several entries in the Ulysses sequence are reading guides rather than
+      essays — colour-coded notes tracking translated phrases, word glosses, and
+      plot beats through an episode. They are marked in-progress on the original
+      and grow as the reading advances.
     </p>
     <p class="mn-pub__links">
-      <span class="badge bg-secondary">Demo content</span>
+      <a class="btn btn-outline-dark btn-sm" href="{{ '/series/ulysses/' | relative_url }}">
+        Browse the episodes
+      </a>
     </p>
   </article>
 </div>

@@ -2,7 +2,7 @@
 layout: default
 title: "09 · Scylla & Charybdis"
 permalink: /series/ulysses/09-scylla-and-charybdis/
-description: Entries on episode 09 of Ulysses — Scylla & Charybdis.
+description: Notes on episode 9 of Ulysses — Scylla & Charybdis (2pm, the National Library).
 hide_intro: true
 local_graph: false
 sidebar:
@@ -12,9 +12,11 @@ sidebar:
 
 {% include page-header.html %}
 
-Entries filed under **Scylla & Charybdis**, in reading order.
+Episode 9 of *Ulysses*. 2pm, the National Library.
+
+Entries are numbered rather than dated, so several notes on the same episode stay in reading order.
 
 {% assign entries = site.series | where: "series", "ulysses" | where: "section", "09-scylla-and-charybdis" | sort: "order" %}
-{% include series-list.html entries=entries empty="No entries here yet — this episode is still ahead in the reading." %}
+{% include series-list.html entries=entries empty="Nothing filed under this episode yet — the reading has not reached it." %}
 
 {% include subscribe-band.html %}

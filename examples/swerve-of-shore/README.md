@@ -2,14 +2,16 @@
 
 A rebuild of [Swerve of Shore](https://www.swerveofshore.com/), a James Joyce reading blog by Brandon Nicklaus, on the `jekyll-theme-zer0` theme. Published **with the site owner's permission** as a worked example of the theme configured for a long-running serialized project.
 
-## What is and isn't copied
+## What is and isn't reproduced
 
 | | |
 |---|---|
-| **Copied** | Site identity and navigation, category taxonomy, entry titles, dates and sections, and every featured image (resized, EXIF stripped). |
-| **Not copied** | The essays. Each entry renders with placeholder body text written for this demo and a link to the real piece. |
+| **Reproduced** | Site identity and navigation, category taxonomy, entry titles, dates and sections, every featured image (resized, EXIF stripped), and a short **quoted excerpt** per entry. |
+| **Not reproduced** | The essays themselves. |
 
-The structure is the transferable part — the writing belongs to its author and stays on the original site. If you are here for the actual criticism, [read it there](https://www.swerveofshore.com/).
+Each entry shows the opening excerpt the original site publishes in its own RSS feed — 20–90 words — presented as a marked quotation, attributed to Brandon Nicklaus, with a prominent link to read the full piece on swerveofshore.com. The excerpts come from `feed-blog-feed.xml`, which is the publisher's own syndication of that text.
+
+That is deliberate on two counts. It keeps the demo honest — the pages carry real writing in the author's voice rather than filler, which is the only way to see how the layout actually behaves under real content. And it sends readers to the original rather than substituting for it. If you are here for the criticism, [read it there](https://www.swerveofshore.com/).
 
 ## Running it
 

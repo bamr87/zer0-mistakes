@@ -2,7 +2,7 @@
 layout: default
 title: "16 · Eumaeus"
 permalink: /series/ulysses/16-eumaeus/
-description: Entries on episode 16 of Ulysses — Eumaeus.
+description: Notes on episode 16 of Ulysses — Eumaeus (1am, the cabman's shelter).
 hide_intro: true
 local_graph: false
 sidebar:
@@ -12,9 +12,11 @@ sidebar:
 
 {% include page-header.html %}
 
-Entries filed under **Eumaeus**, in reading order.
+Episode 16 of *Ulysses*. 1am, the cabman's shelter.
+
+Entries are numbered rather than dated, so several notes on the same episode stay in reading order.
 
 {% assign entries = site.series | where: "series", "ulysses" | where: "section", "16-eumaeus" | sort: "order" %}
-{% include series-list.html entries=entries empty="No entries here yet — this episode is still ahead in the reading." %}
+{% include series-list.html entries=entries empty="Nothing filed under this episode yet — the reading has not reached it." %}
 
 {% include subscribe-band.html %}

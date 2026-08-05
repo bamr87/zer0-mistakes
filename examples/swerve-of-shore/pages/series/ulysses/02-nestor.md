@@ -2,7 +2,7 @@
 layout: default
 title: "02 · Nestor"
 permalink: /series/ulysses/02-nestor/
-description: Entries on episode 02 of Ulysses — Nestor.
+description: Notes on episode 2 of Ulysses — Nestor (10am, Mr Deasy's school in Dalkey).
 hide_intro: true
 local_graph: false
 sidebar:
@@ -12,9 +12,11 @@ sidebar:
 
 {% include page-header.html %}
 
-Entries filed under **Nestor**, in reading order.
+Episode 2 of *Ulysses*. 10am, Mr Deasy's school in Dalkey.
+
+Entries are numbered rather than dated, so several notes on the same episode stay in reading order.
 
 {% assign entries = site.series | where: "series", "ulysses" | where: "section", "02-nestor" | sort: "order" %}
-{% include series-list.html entries=entries empty="No entries here yet — this episode is still ahead in the reading." %}
+{% include series-list.html entries=entries empty="Nothing filed under this episode yet — the reading has not reached it." %}
 
 {% include subscribe-band.html %}

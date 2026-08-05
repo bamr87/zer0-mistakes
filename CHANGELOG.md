@@ -26,8 +26,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     shared `post-card` component in a single-column feed, and a full editorial
     light-mode restyle done entirely through `assets/css/user-overrides.css` —
     no theme files touched. The site's identity, taxonomy, entry titles/dates,
-    and featured images are reproduced; the essays are not — each entry
-    renders placeholder body text and links to the original.
+    and featured images are reproduced, along with a short quoted excerpt per
+    entry (the opening the original publishes in its own RSS feed), attributed
+    and linked back. The essays themselves are not reproduced.
   - `examples/README.md` — how to run one and the conventions for adding
     another.
 - **Theme propagation system — releases now reach the sites built on them.**

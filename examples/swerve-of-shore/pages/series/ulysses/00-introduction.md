@@ -2,7 +2,7 @@
 layout: default
 title: "Ulysses — Introduction"
 permalink: /series/ulysses/00-introduction/
-description: Opening notes before the first episode.
+description: Where the reading starts, and which edition it works from.
 hide_intro: true
 local_graph: false
 sidebar:
@@ -12,9 +12,9 @@ sidebar:
 
 {% include page-header.html %}
 
-Entries filed under **Introduction**, in reading order.
+Opening notes, before the first episode. The reading works from the 1922 first printing by Shakespeare & Co.
 
 {% assign entries = site.series | where: "series", "ulysses" | where: "section", "00-introduction" | sort: "order" %}
-{% include series-list.html entries=entries empty="No entries here yet — this episode is still ahead in the reading." %}
+{% include series-list.html entries=entries empty="Nothing filed here yet." %}
 
 {% include subscribe-band.html %}

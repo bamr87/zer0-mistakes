@@ -2,7 +2,7 @@
 layout: default
 title: "17 · Ithaca"
 permalink: /series/ulysses/17-ithaca/
-description: Entries on episode 17 of Ulysses — Ithaca.
+description: Notes on episode 17 of Ulysses — Ithaca (2am, back at Eccles Street).
 hide_intro: true
 local_graph: false
 sidebar:
@@ -12,9 +12,11 @@ sidebar:
 
 {% include page-header.html %}
 
-Entries filed under **Ithaca**, in reading order.
+Episode 17 of *Ulysses*. 2am, back at Eccles Street.
+
+Entries are numbered rather than dated, so several notes on the same episode stay in reading order.
 
 {% assign entries = site.series | where: "series", "ulysses" | where: "section", "17-ithaca" | sort: "order" %}
-{% include series-list.html entries=entries empty="No entries here yet — this episode is still ahead in the reading." %}
+{% include series-list.html entries=entries empty="Nothing filed under this episode yet — the reading has not reached it." %}
 
 {% include subscribe-band.html %}

@@ -2,7 +2,7 @@
 layout: default
 title: "05 · Lotus Eaters"
 permalink: /series/ulysses/05-lotus-eaters/
-description: Entries on episode 05 of Ulysses — Lotus Eaters.
+description: Notes on episode 5 of Ulysses — Lotus Eaters (10am, the bath house and the post office).
 hide_intro: true
 local_graph: false
 sidebar:
@@ -12,9 +12,11 @@ sidebar:
 
 {% include page-header.html %}
 
-Entries filed under **Lotus Eaters**, in reading order.
+Episode 5 of *Ulysses*. 10am, the bath house and the post office.
+
+Entries are numbered rather than dated, so several notes on the same episode stay in reading order.
 
 {% assign entries = site.series | where: "series", "ulysses" | where: "section", "05-lotus-eaters" | sort: "order" %}
-{% include series-list.html entries=entries empty="No entries here yet — this episode is still ahead in the reading." %}
+{% include series-list.html entries=entries empty="Nothing filed under this episode yet — the reading has not reached it." %}
 
 {% include subscribe-band.html %}

@@ -2,7 +2,7 @@
 layout: default
 title: "07 · Aeolus"
 permalink: /series/ulysses/07-aeolus/
-description: Entries on episode 07 of Ulysses — Aeolus.
+description: Notes on episode 7 of Ulysses — Aeolus (noon, the newspaper offices).
 hide_intro: true
 local_graph: false
 sidebar:
@@ -12,9 +12,11 @@ sidebar:
 
 {% include page-header.html %}
 
-Entries filed under **Aeolus**, in reading order.
+Episode 7 of *Ulysses*. Noon, the newspaper offices.
+
+Entries are numbered rather than dated, so several notes on the same episode stay in reading order.
 
 {% assign entries = site.series | where: "series", "ulysses" | where: "section", "07-aeolus" | sort: "order" %}
-{% include series-list.html entries=entries empty="No entries here yet — this episode is still ahead in the reading." %}
+{% include series-list.html entries=entries empty="Nothing filed under this episode yet — the reading has not reached it." %}
 
 {% include subscribe-band.html %}
