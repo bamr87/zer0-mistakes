@@ -6,6 +6,204 @@
 # ================================================================
 version: 1
 pages:
+  "/about/":
+    source: pages/_about/index.md
+    sha: 70e0f353668e72a5fe635cab847e09febd20972bd6862fca5d27ba62b3ae556f
+    fr:
+      url: "/fr/about/"
+      path: fr/about/index.md
+      sha: 70e0f353668e72a5fe635cab847e09febd20972bd6862fca5d27ba62b3ae556f
+      translated_at: '2026-08-05T04:49:10Z'
+      prompt_version: 1
+  "/about/bamr87/":
+    source: pages/_about/profile/bamr87.md
+    sha: 42f0ae0cb763f6efd4d83478b7458c95b6f729e684af5e79a57671be423702c0
+    fr:
+      url: "/fr/about/bamr87/"
+      path: fr/about/profile/bamr87.md
+      sha: 42f0ae0cb763f6efd4d83478b7458c95b6f729e684af5e79a57671be423702c0
+      translated_at: '2026-08-05T04:49:17Z'
+      prompt_version: 1
+  "/about/config/":
+    source: pages/_about/settings/config.md
+    sha: 2428cd280d3997384b41f6ee8964ddc7f3b1dbe9babd6f4c754cf2d14ff1837e
+    fr:
+      url: "/fr/about/config/"
+      path: fr/about/settings/config.md
+      sha: 2428cd280d3997384b41f6ee8964ddc7f3b1dbe9babd6f4c754cf2d14ff1837e
+      translated_at: '2026-08-05T04:49:52Z'
+      prompt_version: 1
+  "/about/features/":
+    source: pages/_about/features/index.md
+    sha: '059735857124094b9e850d9938cbe0ee124398c430f396c8c684764058d07209'
+    fr:
+      url: "/fr/about/features/"
+      path: fr/about/features/index.md
+      sha: '059735857124094b9e850d9938cbe0ee124398c430f396c8c684764058d07209'
+      translated_at: '2026-08-05T04:47:07Z'
+      prompt_version: 1
+  "/about/features/add-floating-back-to-top-button/":
+    source: pages/_about/features/add-floating-back-to-top-button.md
+    sha: cbc5f327ba288863d6bfc78338b0db2dbf557c1e34c5b60198478b90523e8f51
+    fr:
+      url: "/fr/about/features/add-floating-back-to-top-button/"
+      path: fr/about/features/add-floating-back-to-top-button.md
+      sha: cbc5f327ba288863d6bfc78338b0db2dbf557c1e34c5b60198478b90523e8f51
+      translated_at: '2026-08-05T04:43:44Z'
+      prompt_version: 1
+  "/about/features/ai-development-guide/":
+    source: pages/_about/features/ai-development-guide.md
+    sha: d821810029906d480935dae0dd58ee2bbabf0dfc2a8fada2f7b5a46c64620f21
+    fr:
+      url: "/fr/about/features/ai-development-guide/"
+      path: fr/about/features/ai-development-guide.md
+      sha: d821810029906d480935dae0dd58ee2bbabf0dfc2a8fada2f7b5a46c64620f21
+      translated_at: '2026-08-05T04:44:23Z'
+      prompt_version: 1
+  "/about/features/automated-version-build-system/":
+    source: pages/_about/features/automated-version-build-system.md
+    sha: e093558c8a5e07bdc0eef0e88d84e246913cbb8b577f027d55f8134e62acf479
+    fr:
+      url: "/fr/about/features/automated-version-build-system/"
+      path: fr/about/features/automated-version-build-system.md
+      sha: e093558c8a5e07bdc0eef0e88d84e246913cbb8b577f027d55f8134e62acf479
+      translated_at: '2026-08-05T04:45:05Z'
+      prompt_version: 1
+  "/about/features/comprehensive-gem-automation-system/":
+    source: pages/_about/features/comprehensive-gem-automation-system.md
+    sha: bbc7431d4a786896161b27411022927bd4dfeb5cf44f01275bb0582ec66790f6
+    fr:
+      url: "/fr/about/features/comprehensive-gem-automation-system/"
+      path: fr/about/features/comprehensive-gem-automation-system.md
+      sha: bbc7431d4a786896161b27411022927bd4dfeb5cf44f01275bb0582ec66790f6
+      translated_at: '2026-08-05T04:46:11Z'
+      prompt_version: 1
+  "/about/features/jekyll/":
+    source: pages/_about/features/jekyll-technical-reference.md
+    sha: 445d8224c84e8f635c5600ab0475c36aaca2319e811fb390fa99beeb95022da4
+    fr:
+      url: "/fr/about/features/jekyll/"
+      path: fr/about/features/jekyll-technical-reference.md
+      sha: 445d8224c84e8f635c5600ab0475c36aaca2319e811fb390fa99beeb95022da4
+      translated_at: '2026-08-05T04:47:09Z'
+      prompt_version: 1
+  "/about/features/navigation/sitemap/":
+    source: pages/_about/features/sitemap.md
+    sha: 59933f6864826fb44dc95060f1b9d5325c14f924127158b16e179b0b48496479
+    fr:
+      url: "/fr/about/features/navigation/sitemap/"
+      path: fr/about/features/sitemap.md
+      sha: 59933f6864826fb44dc95060f1b9d5325c14f924127158b16e179b0b48496479
+      translated_at: '2026-08-05T04:47:44Z'
+      prompt_version: 1
+  "/about/features/statistics-dashboard/":
+    source: pages/_about/features/statistics-dashboard.md
+    sha: c42451b6434bcb7ac5895111c737009fca696f02147852e3d277e73d0d1691c5
+    fr:
+      url: "/fr/about/features/statistics-dashboard/"
+      path: fr/about/features/statistics-dashboard.md
+      sha: c42451b6434bcb7ac5895111c737009fca696f02147852e3d277e73d0d1691c5
+      translated_at: '2026-08-05T04:48:30Z'
+      prompt_version: 1
+  "/about/settings/analytics/":
+    source: pages/_about/settings/analytics.md
+    sha: f1b35afd03f85e2ed462eab7d0a669d87c53c9ffefff0da3af3cf177294c8a14
+    fr:
+      url: "/fr/about/settings/analytics/"
+      path: fr/about/settings/analytics.md
+      sha: f1b35afd03f85e2ed462eab7d0a669d87c53c9ffefff0da3af3cf177294c8a14
+      translated_at: '2026-08-05T04:49:19Z'
+      prompt_version: 1
+  "/about/settings/collections/":
+    source: pages/_about/settings/collections.md
+    sha: 9a33715b85d8dcbff7cf5c1e22c4a2288f05666754b476ea13fea05efc3e2569
+    fr:
+      url: "/fr/about/settings/collections/"
+      path: fr/about/settings/collections.md
+      sha: 9a33715b85d8dcbff7cf5c1e22c4a2288f05666754b476ea13fea05efc3e2569
+      translated_at: '2026-08-05T04:49:21Z'
+      prompt_version: 1
+  "/about/settings/components/":
+    source: pages/_about/settings/components.md
+    sha: a775b0ade22f246a36d259244f1f5b943dde204b99abf4b009dc5535f64910e0
+    fr:
+      url: "/fr/about/settings/components/"
+      path: fr/about/settings/components.md
+      sha: a775b0ade22f246a36d259244f1f5b943dde204b99abf4b009dc5535f64910e0
+      translated_at: '2026-08-05T04:49:25Z'
+      prompt_version: 1
+  "/about/stats-enhancement-summary/":
+    source: pages/_about/features/STATS_ENHANCEMENT_SUMMARY.md
+    sha: f147f2bc3a5485f3c2a7411afa30331ac539266c801ccddc802c678a1f4a7846
+    fr:
+      url: "/fr/about/stats-enhancement-summary/"
+      path: fr/about/features/STATS_ENHANCEMENT_SUMMARY.md
+      sha: f147f2bc3a5485f3c2a7411afa30331ac539266c801ccddc802c678a1f4a7846
+      translated_at: '2026-08-05T04:43:41Z'
+      prompt_version: 1
+  "/authors/":
+    source: pages/_about/authors/index.md
+    sha: 85960b87208d9fae9265f8d9dcc938e86c4c104940a25518c77f7e371bdf30c5
+    fr:
+      url: "/fr/authors/"
+      path: fr/about/authors/index.md
+      sha: 85960b87208d9fae9265f8d9dcc938e86c4c104940a25518c77f7e371bdf30c5
+      translated_at: '2026-08-05T04:42:56Z'
+      prompt_version: 1
+  "/authors/bamr87/":
+    source: pages/_about/authors/bamr87.md
+    sha: f6b87c0064c8a83714f6fc00d94931d047edbbfb1d7f98346fb853f937c38409
+    fr:
+      url: "/fr/authors/bamr87/"
+      path: fr/about/authors/bamr87.md
+      sha: f6b87c0064c8a83714f6fc00d94931d047edbbfb1d7f98346fb853f937c38409
+      translated_at: '2026-08-05T04:42:27Z'
+      prompt_version: 1
+  "/authors/cassandra/":
+    source: pages/_about/authors/cassandra.md
+    sha: e39500a0658229e0728e9f3f7e3554a8fb58596a893162790dccfe88ac4e594d
+    fr:
+      url: "/fr/authors/cassandra/"
+      path: fr/about/authors/cassandra.md
+      sha: e39500a0658229e0728e9f3f7e3554a8fb58596a893162790dccfe88ac4e594d
+      translated_at: '2026-08-05T04:42:30Z'
+      prompt_version: 1
+  "/authors/default/":
+    source: pages/_about/authors/default.md
+    sha: a9a97e4dfce7495627ecf061323b73db7bb85720c744e908357fdcbd2f3ba5a5
+    fr:
+      url: "/fr/authors/default/"
+      path: fr/about/authors/default.md
+      sha: a9a97e4dfce7495627ecf061323b73db7bb85720c744e908357fdcbd2f3ba5a5
+      translated_at: '2026-08-05T04:42:31Z'
+      prompt_version: 1
+  "/authors/guest/":
+    source: pages/_about/authors/guest.md
+    sha: cd27b030744f508e799ba962517e345852e375250bc1f104f90f63b9443a96ad
+    fr:
+      url: "/fr/authors/guest/"
+      path: fr/about/authors/guest.md
+      sha: cd27b030744f508e799ba962517e345852e375250bc1f104f90f63b9443a96ad
+      translated_at: '2026-08-05T04:42:51Z'
+      prompt_version: 1
+  "/authors/vega/":
+    source: pages/_about/authors/vega.md
+    sha: aa231d65673848a7b52a9f8341f56482d844c1c98d24e7f44903ad6f8eb496be
+    fr:
+      url: "/fr/authors/vega/"
+      path: fr/about/authors/vega.md
+      sha: aa231d65673848a7b52a9f8341f56482d844c1c98d24e7f44903ad6f8eb496be
+      translated_at: '2026-08-05T04:42:58Z'
+      prompt_version: 1
+  "/docs/":
+    source: pages/_docs/index.md
+    sha: d43825e9ed60cdfb2a02bb0e4e59a51f16d6474f3f6e09f4506fa4764f75c484
+    fr:
+      url: "/fr/docs/"
+      path: fr/docs/index.md
+      sha: d43825e9ed60cdfb2a02bb0e4e59a51f16d6474f3f6e09f4506fa4764f75c484
+      translated_at: '2026-08-05T04:36:26Z'
+      prompt_version: 1
   "/docs/analytics/":
     source: pages/_docs/analytics/index.md
     sha: 3e75b181bb8459209a06a561aecc47ffef3c1c410451f65bab8ac532a6daf0d0
@@ -573,6 +771,258 @@ pages:
       sha: 6e3a36b8d8b967bc391d2a0f7821f6fa276927a43265cf253c4d713e08db2306
       translated_at: '2026-08-05T03:34:58Z'
       prompt_version: 1
+  "/docs/features/vendored-assets/":
+    source: pages/_docs/features/vendored-assets.md
+    sha: e2786f28998b0d06c58bd589e8204fa412c581f786886a5a8aa22f43d85f8c71
+    fr:
+      url: "/fr/docs/features/vendored-assets/"
+      path: fr/docs/features/vendored-assets.md
+      sha: e2786f28998b0d06c58bd589e8204fa412c581f786886a5a8aa22f43d85f8c71
+      translated_at: '2026-08-05T04:34:37Z'
+      prompt_version: 1
+  "/docs/front-matter/":
+    source: pages/_docs/front-matter.md
+    sha: ce72cd558f51ad56e1318f8506790a71b04a4eb6a373ad09bcca74531f325673
+    fr:
+      url: "/fr/docs/front-matter/"
+      path: fr/docs/front-matter.md
+      sha: ce72cd558f51ad56e1318f8506790a71b04a4eb6a373ad09bcca74531f325673
+      translated_at: '2026-08-05T04:34:47Z'
+      prompt_version: 1
+  "/docs/getting-started/":
+    source: pages/_docs/getting-started/index.md
+    sha: 5c48cab38677042cb554cbc25796ce9d1b0597adcdc0d9e639fbfa30302a0901
+    fr:
+      url: "/fr/docs/getting-started/"
+      path: fr/docs/getting-started/index.md
+      sha: 5c48cab38677042cb554cbc25796ce9d1b0597adcdc0d9e639fbfa30302a0901
+      translated_at: '2026-08-05T04:34:56Z'
+      prompt_version: 1
+  "/docs/getting-started/quick-start/":
+    source: pages/_docs/getting-started/quick-start.md
+    sha: f48dddacb177a74aac0c221d66e7f99ba2f293c5f254de5d3f1c23e0d2de5d0d
+    fr:
+      url: "/fr/docs/getting-started/quick-start/"
+      path: fr/docs/getting-started/quick-start.md
+      sha: f48dddacb177a74aac0c221d66e7f99ba2f293c5f254de5d3f1c23e0d2de5d0d
+      translated_at: '2026-08-05T04:35:42Z'
+      prompt_version: 1
+  "/docs/getting-started/theme-guide/":
+    source: pages/_docs/getting-started/theme-guide.md
+    sha: 446d47041206cc329ebe36b611b6238b3ccc45228eb7c5200fb4fe2ccbc2bae0
+    fr:
+      url: "/fr/docs/getting-started/theme-guide/"
+      path: fr/docs/getting-started/theme-guide.md
+      sha: 446d47041206cc329ebe36b611b6238b3ccc45228eb7c5200fb4fe2ccbc2bae0
+      translated_at: '2026-08-05T04:36:08Z'
+      prompt_version: 1
+  "/docs/installation/":
+    source: pages/_docs/installation.md
+    sha: d7b38e187a1114b4ad19af628b0bfaa6fb60241f315226cb6b41617739981280
+    fr:
+      url: "/fr/docs/installation/"
+      path: fr/docs/installation.md
+      sha: d7b38e187a1114b4ad19af628b0bfaa6fb60241f315226cb6b41617739981280
+      translated_at: '2026-08-05T04:36:40Z'
+      prompt_version: 1
+  "/docs/jekyll/":
+    source: pages/_docs/jekyll/index.md
+    sha: fa145fad7d0896357ca935efe1ec2a0c9eb436f04368d554cd5fa77a8553e5e1
+    fr:
+      url: "/fr/docs/jekyll/"
+      path: fr/docs/jekyll/index.md
+      sha: fa145fad7d0896357ca935efe1ec2a0c9eb436f04368d554cd5fa77a8553e5e1
+      translated_at: '2026-08-05T04:37:30Z'
+      prompt_version: 1
+  "/docs/jekyll/code-highlighting/":
+    source: pages/_docs/jekyll/code-highlighting.md
+    sha: f7c0497eed727b653d9e3902384e8675f86f82ea59abc55f5deb9026f495c309
+    fr:
+      url: "/fr/docs/jekyll/code-highlighting/"
+      path: fr/docs/jekyll/code-highlighting.md
+      sha: f7c0497eed727b653d9e3902384e8675f86f82ea59abc55f5deb9026f495c309
+      translated_at: '2026-08-05T04:36:52Z'
+      prompt_version: 1
+  "/docs/jekyll/collections/":
+    source: pages/_docs/jekyll/collections.md
+    sha: 031612b6df214b64dc636a5c9314725ba2b027f317f9e9b391aaad55593c8fb4
+    fr:
+      url: "/fr/docs/jekyll/collections/"
+      path: fr/docs/jekyll/collections.md
+      sha: 031612b6df214b64dc636a5c9314725ba2b027f317f9e9b391aaad55593c8fb4
+      translated_at: '2026-08-05T04:37:11Z'
+      prompt_version: 1
+  "/docs/jekyll/pagination/":
+    source: pages/_docs/jekyll/pagination.md
+    sha: da789c476b8ba07ff4f1d55434e1e7220fadbbb14fa2c1495157a5988a74f219
+    fr:
+      url: "/fr/docs/jekyll/pagination/"
+      path: fr/docs/jekyll/pagination.md
+      sha: da789c476b8ba07ff4f1d55434e1e7220fadbbb14fa2c1495157a5988a74f219
+      translated_at: '2026-08-05T04:37:38Z'
+      prompt_version: 1
+  "/docs/liquid/":
+    source: pages/_docs/liquid/index.md
+    sha: ec79a55a9d22945a1ed067b2f718ebb59904765532bfe481f97ff212fd577e20
+    fr:
+      url: "/fr/docs/liquid/"
+      path: fr/docs/liquid/index.md
+      sha: ec79a55a9d22945a1ed067b2f718ebb59904765532bfe481f97ff212fd577e20
+      translated_at: '2026-08-05T04:37:46Z'
+      prompt_version: 1
+  "/docs/obsidian/":
+    source: pages/_docs/obsidian/index.md
+    sha: 1c166b90ed274af3e98c4bd8d3d8d31e57bcaa7e907fcb43a592b882d4d057e0
+    fr:
+      url: "/fr/docs/obsidian/"
+      path: fr/docs/obsidian/index.md
+      sha: 1c166b90ed274af3e98c4bd8d3d8d31e57bcaa7e907fcb43a592b882d4d057e0
+      translated_at: '2026-08-05T04:38:37Z'
+      prompt_version: 1
+  "/docs/obsidian/authoring-workflow/":
+    source: pages/_docs/obsidian/authoring-workflow.md
+    sha: e7a5d08181802b8c82eeef20b26796cc19e2b230e90a5838faabd0bbf2a46cab
+    fr:
+      url: "/fr/docs/obsidian/authoring-workflow/"
+      path: fr/docs/obsidian/authoring-workflow.md
+      sha: e7a5d08181802b8c82eeef20b26796cc19e2b230e90a5838faabd0bbf2a46cab
+      translated_at: '2026-08-05T04:38:03Z'
+      prompt_version: 1
+  "/docs/obsidian/getting-started/":
+    source: pages/_docs/obsidian/getting-started.md
+    sha: 90cee16fcdf6234ac224cc419ea0ec0828a4a3618b41ac89841352ff381fb7a6
+    fr:
+      url: "/fr/docs/obsidian/getting-started/"
+      path: fr/docs/obsidian/getting-started.md
+      sha: 90cee16fcdf6234ac224cc419ea0ec0828a4a3618b41ac89841352ff381fb7a6
+      translated_at: '2026-08-05T04:38:21Z'
+      prompt_version: 1
+  "/docs/obsidian/graph/":
+    source: pages/_docs/obsidian/graph.md
+    sha: f8d79a65ff41a372d00c64fad1bfd12a504d3e4576b5bd75dc8c12205406f1d4
+    fr:
+      url: "/fr/docs/obsidian/graph/"
+      path: fr/docs/obsidian/graph.md
+      sha: f8d79a65ff41a372d00c64fad1bfd12a504d3e4576b5bd75dc8c12205406f1d4
+      translated_at: '2026-08-05T04:38:23Z'
+      prompt_version: 1
+  "/docs/obsidian/performance/":
+    source: pages/_docs/obsidian/performance.md
+    sha: 6586d60c57aa85cb1cd2e2f5985ee714bf32a232edc38de436e19b9850b175a3
+    fr:
+      url: "/fr/docs/obsidian/performance/"
+      path: fr/docs/obsidian/performance.md
+      sha: 6586d60c57aa85cb1cd2e2f5985ee714bf32a232edc38de436e19b9850b175a3
+      translated_at: '2026-08-05T04:38:54Z'
+      prompt_version: 1
+  "/docs/obsidian/syntax-reference/":
+    source: pages/_docs/obsidian/syntax-reference.md
+    sha: ba40d91073b281e70878531a458b0bb714e7cc08ae7f61b2d47d173280485939
+    fr:
+      url: "/fr/docs/obsidian/syntax-reference/"
+      path: fr/docs/obsidian/syntax-reference.md
+      sha: ba40d91073b281e70878531a458b0bb714e7cc08ae7f61b2d47d173280485939
+      translated_at: '2026-08-05T04:39:30Z'
+      prompt_version: 1
+  "/docs/obsidian/troubleshooting/":
+    source: pages/_docs/obsidian/troubleshooting.md
+    sha: 2515b91e8b1add29d8041de299c502940491b02d70b4830d92c61f3cbf3e7aaa
+    fr:
+      url: "/fr/docs/obsidian/troubleshooting/"
+      path: fr/docs/obsidian/troubleshooting.md
+      sha: 2515b91e8b1add29d8041de299c502940491b02d70b4830d92c61f3cbf3e7aaa
+      translated_at: '2026-08-05T04:39:56Z'
+      prompt_version: 1
+  "/docs/quickstart/":
+    source: pages/_docs/quickstart/index.md
+    sha: 2b6514fcc314f0df1a1fd9acdf966b7233e8e5e062b731c38c1e6dbe4edfd7e6
+    fr:
+      url: "/fr/docs/quickstart/"
+      path: fr/docs/quickstart/index.md
+      sha: 2b6514fcc314f0df1a1fd9acdf966b7233e8e5e062b731c38c1e6dbe4edfd7e6
+      translated_at: '2026-08-05T04:40:43Z'
+      prompt_version: 1
+  "/docs/quickstart/bare-minimum/":
+    source: pages/_docs/quickstart/bare-minimum.md
+    sha: abd24f43d4b076e2ea77ff6e01cfa9c5907f16db5885638dcfa3c25a157363d3
+    fr:
+      url: "/fr/docs/quickstart/bare-minimum/"
+      path: fr/docs/quickstart/bare-minimum.md
+      sha: abd24f43d4b076e2ea77ff6e01cfa9c5907f16db5885638dcfa3c25a157363d3
+      translated_at: '2026-08-05T04:40:07Z'
+      prompt_version: 1
+  "/docs/quickstart/fork-and-deploy/":
+    source: pages/_docs/quickstart/fork-and-deploy.md
+    sha: d5c4897cbad956160cabc103026d7358c12ca068a3e5aa32fb4a9d31043f026e
+    fr:
+      url: "/fr/docs/quickstart/fork-and-deploy/"
+      path: fr/docs/quickstart/fork-and-deploy.md
+      sha: d5c4897cbad956160cabc103026d7358c12ca068a3e5aa32fb4a9d31043f026e
+      translated_at: '2026-08-05T04:40:29Z'
+      prompt_version: 1
+  "/docs/ruby-101/":
+    source: pages/_docs/ruby-101.md
+    sha: 43ad3ba65d710012bcc7289fdf641f5a24a736013978504b02a2305320635562
+    fr:
+      url: "/fr/docs/ruby-101/"
+      path: fr/docs/ruby-101.md
+      sha: 43ad3ba65d710012bcc7289fdf641f5a24a736013978504b02a2305320635562
+      translated_at: '2026-08-05T04:41:04Z'
+      prompt_version: 1
+  "/docs/ruby/":
+    source: pages/_docs/ruby/index.md
+    sha: 06536d065d917519bde20566024bca5cea85e751903a805a09b272fe0f9af9cb
+    fr:
+      url: "/fr/docs/ruby/"
+      path: fr/docs/ruby/index.md
+      sha: 06536d065d917519bde20566024bca5cea85e751903a805a09b272fe0f9af9cb
+      translated_at: '2026-08-05T04:41:10Z'
+      prompt_version: 1
+  "/docs/seo/":
+    source: pages/_docs/seo/index.md
+    sha: 56c57c81e52f04d7089e984b4d9f6a043d6c7b70bb2ae817ad8f61e4fd1ec1c5
+    fr:
+      url: "/fr/docs/seo/"
+      path: fr/docs/seo/index.md
+      sha: 56c57c81e52f04d7089e984b4d9f6a043d6c7b70bb2ae817ad8f61e4fd1ec1c5
+      translated_at: '2026-08-05T04:41:36Z'
+      prompt_version: 1
+  "/docs/seo/aieo/":
+    source: pages/_docs/seo/aieo.md
+    sha: 2ca067bf7e91964fa7d06400cd704685754f7191644031bf62e5077949090e4f
+    fr:
+      url: "/fr/docs/seo/aieo/"
+      path: fr/docs/seo/aieo.md
+      sha: 2ca067bf7e91964fa7d06400cd704685754f7191644031bf62e5077949090e4f
+      translated_at: '2026-08-05T04:41:28Z'
+      prompt_version: 1
+  "/docs/seo/meta-tags/":
+    source: pages/_docs/seo/meta-tags.md
+    sha: 697066a7bd7f21e954f05bf5795a1f2cd79be8f0f528eb16df9e017fc96463b1
+    fr:
+      url: "/fr/docs/seo/meta-tags/"
+      path: fr/docs/seo/meta-tags.md
+      sha: 697066a7bd7f21e954f05bf5795a1f2cd79be8f0f528eb16df9e017fc96463b1
+      translated_at: '2026-08-05T04:41:54Z'
+      prompt_version: 1
+  "/docs/seo/sitemap/":
+    source: pages/_docs/seo/sitemap.md
+    sha: c0a70d349c49ed3771b65e9efd2f9370ee780bb42d71cf324a142e90cd44b21b
+    fr:
+      url: "/fr/docs/seo/sitemap/"
+      path: fr/docs/seo/sitemap.md
+      sha: c0a70d349c49ed3771b65e9efd2f9370ee780bb42d71cf324a142e90cd44b21b
+      translated_at: '2026-08-05T04:42:14Z'
+      prompt_version: 1
+  "/docs/troubleshooting/":
+    source: pages/_docs/troubleshooting.md
+    sha: a8990514b26fd2d01d1fda0f81b3c75ddf20f4b38fb890d71cb3f73809f5a5a8
+    fr:
+      url: "/fr/docs/troubleshooting/"
+      path: fr/docs/troubleshooting.md
+      sha: a8990514b26fd2d01d1fda0f81b3c75ddf20f4b38fb890d71cb3f73809f5a5a8
+      translated_at: '2026-08-05T04:42:25Z'
+      prompt_version: 1
   "/news/":
     source: pages/_posts/2000-01-01-index.md
     sha: 1fb552f8be97026448bd1b0b12f2785fbc9251f219e896b4bda2f0d14c6d604f
@@ -910,4 +1360,4 @@ ui_text: {}
 source_lang: en
 languages:
 - fr
-updated_at: '2026-08-05T03:34:58Z'
+updated_at: '2026-08-05T04:49:52Z'
