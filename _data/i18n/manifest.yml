@@ -96,6 +96,15 @@ pages:
       sha: 76ceef73178c00bd52721c0b977aa21e3e79e305277c2bc86386afb2980dc716
       translated_at: '2026-07-23T17:11:51Z'
       prompt_version: 1
+  "/docs/deployment/":
+    source: pages/_docs/deployment/index.md
+    sha: e2264346b00dcc258a27e0d2eab98093dd28d00318c3900670f2d038314bc513
+    fr:
+      url: "/fr/docs/deployment/"
+      path: fr/docs/deployment/index.md
+      sha: e2264346b00dcc258a27e0d2eab98093dd28d00318c3900670f2d038314bc513
+      translated_at: '2026-08-05T03:18:09Z'
+      prompt_version: 1
   "/docs/deployment/build-overlay/":
     source: pages/_docs/deployment/build-overlay.md
     sha: fb72cf0bff9e1643c8902c7e756455f0ab4c73811a1d053987a88d540c92c1ef
@@ -122,6 +131,447 @@ pages:
       path: fr/docs/deployment/github-pages.md
       sha: be0523b0bf140bf69ff0242e92ed06de6aa40668692fcbe6dbb5336839b3e17e
       translated_at: '2026-07-23T17:13:01Z'
+      prompt_version: 1
+  "/docs/deployment/netlify/":
+    source: pages/_docs/deployment/netlify.md
+    sha: c5996bf9900121c7f0e6edcdcc253d824eb653bebdedd7317548252eaf2ec859
+    fr:
+      url: "/fr/docs/deployment/netlify/"
+      path: fr/docs/deployment/netlify.md
+      sha: c5996bf9900121c7f0e6edcdcc253d824eb653bebdedd7317548252eaf2ec859
+      translated_at: '2026-08-05T03:18:38Z'
+      prompt_version: 1
+  "/docs/deployment/remote-theme-checklist/":
+    source: pages/_docs/deployment/remote-theme-checklist.md
+    sha: 9b96d540317e61dcd98890875b5d59454548cf983b741e9f59fc66ebfa4f1468
+    fr:
+      url: "/fr/docs/deployment/remote-theme-checklist/"
+      path: fr/docs/deployment/remote-theme-checklist.md
+      sha: 9b96d540317e61dcd98890875b5d59454548cf983b741e9f59fc66ebfa4f1468
+      translated_at: '2026-08-05T03:19:14Z'
+      prompt_version: 1
+  "/docs/development/":
+    source: pages/_docs/development/index.md
+    sha: 13bb41961ce9bd95d16195f3e855f7be6b0f9ab3ba7c6507288bbfa855f15275
+    fr:
+      url: "/fr/docs/development/"
+      path: fr/docs/development/index.md
+      sha: 13bb41961ce9bd95d16195f3e855f7be6b0f9ab3ba7c6507288bbfa855f15275
+      translated_at: '2026-08-05T03:21:25Z'
+      prompt_version: 1
+  "/docs/development/agents/":
+    source: pages/_docs/development/agents.md
+    sha: 4edda52c2a189296c0da120c2742dacc1170416e7190be6fb0adee0a5c28bd5f
+    fr:
+      url: "/fr/docs/development/agents/"
+      path: fr/docs/development/agents.md
+      sha: 4edda52c2a189296c0da120c2742dacc1170416e7190be6fb0adee0a5c28bd5f
+      translated_at: '2026-08-05T03:19:31Z'
+      prompt_version: 1
+  "/docs/development/ci-cd/":
+    source: pages/_docs/development/ci-cd.md
+    sha: 33cc91ba86fc22755fd6aa5176f474f2027ebbc2058454b4c32d775821a07ee8
+    fr:
+      url: "/fr/docs/development/ci-cd/"
+      path: fr/docs/development/ci-cd.md
+      sha: 33cc91ba86fc22755fd6aa5176f474f2027ebbc2058454b4c32d775821a07ee8
+      translated_at: '2026-08-05T03:19:51Z'
+      prompt_version: 1
+  "/docs/development/dependency-updates/":
+    source: pages/_docs/development/dependency-updates.md
+    sha: 42c6899a9066d1348816fa82ba469979ba4f91c595ea6f3500e9e4b63a390530
+    fr:
+      url: "/fr/docs/development/dependency-updates/"
+      path: fr/docs/development/dependency-updates.md
+      sha: 42c6899a9066d1348816fa82ba469979ba4f91c595ea6f3500e9e4b63a390530
+      translated_at: '2026-08-05T03:19:56Z'
+      prompt_version: 1
+  "/docs/development/devcontainer/":
+    source: pages/_docs/development/devcontainer.md
+    sha: 4af1a1fd3c5264e6ba68fba968f8060171e7e3a7db8d771f8e97becbc02fb159
+    fr:
+      url: "/fr/docs/development/devcontainer/"
+      path: fr/docs/development/devcontainer.md
+      sha: 4af1a1fd3c5264e6ba68fba968f8060171e7e3a7db8d771f8e97becbc02fb159
+      translated_at: '2026-08-05T03:20:20Z'
+      prompt_version: 1
+  "/docs/development/docker-publishing/":
+    source: pages/_docs/development/docker-publishing.md
+    sha: 2c3546d339fcba8c31a8c062ffbbf5127a40a998c164087032bf370882d365cf
+    fr:
+      url: "/fr/docs/development/docker-publishing/"
+      path: fr/docs/development/docker-publishing.md
+      sha: 2c3546d339fcba8c31a8c062ffbbf5127a40a998c164087032bf370882d365cf
+      translated_at: '2026-08-05T03:20:34Z'
+      prompt_version: 1
+  "/docs/development/documentation/":
+    source: pages/_docs/development/documentation.md
+    sha: 7443f2de6a96a63c988fc418924bb838c4315055348b233b80be3d78c45ca147
+    fr:
+      url: "/fr/docs/development/documentation/"
+      path: fr/docs/development/documentation.md
+      sha: 7443f2de6a96a63c988fc418924bb838c4315055348b233b80be3d78c45ca147
+      translated_at: '2026-08-05T03:20:57Z'
+      prompt_version: 1
+  "/docs/development/frontmatter-validation/":
+    source: pages/_docs/development/frontmatter-validation.md
+    sha: c8e6c41854b175628814a3e1d7cbbe783317b978a8a6804207e5c39c8e573715
+    fr:
+      url: "/fr/docs/development/frontmatter-validation/"
+      path: fr/docs/development/frontmatter-validation.md
+      sha: c8e6c41854b175628814a3e1d7cbbe783317b978a8a6804207e5c39c8e573715
+      translated_at: '2026-08-05T03:21:13Z'
+      prompt_version: 1
+  "/docs/development/prd/":
+    source: pages/_docs/development/prd.md
+    sha: 591ee4d82bd63ebc34435faa1a9006560d653d32213fa3222e1250cac8d0e593
+    fr:
+      url: "/fr/docs/development/prd/"
+      path: fr/docs/development/prd.md
+      sha: 591ee4d82bd63ebc34435faa1a9006560d653d32213fa3222e1250cac8d0e593
+      translated_at: '2026-08-05T03:21:32Z'
+      prompt_version: 1
+  "/docs/development/release-management/":
+    source: pages/_docs/development/release-management.md
+    sha: 7d4039713c7b35ca6ba8c3adbe99d444cb4a026df823859758d6cbb21959144c
+    fr:
+      url: "/fr/docs/development/release-management/"
+      path: fr/docs/development/release-management.md
+      sha: 7d4039713c7b35ca6ba8c3adbe99d444cb4a026df823859758d6cbb21959144c
+      translated_at: '2026-08-05T03:21:37Z'
+      prompt_version: 1
+  "/docs/development/scripts/":
+    source: pages/_docs/development/scripts.md
+    sha: 36431e67c42485998fca3e3d4d57b5d1d355036389912a5f0ccc9c1325654a7c
+    fr:
+      url: "/fr/docs/development/scripts/"
+      path: fr/docs/development/scripts.md
+      sha: 36431e67c42485998fca3e3d4d57b5d1d355036389912a5f0ccc9c1325654a7c
+      translated_at: '2026-08-05T03:21:55Z'
+      prompt_version: 1
+  "/docs/development/security/":
+    source: pages/_docs/development/security.md
+    sha: 2fcdc12799709a90ff761a68789117efcfc1dc36dcf05de7e865ad0ad6f1e622
+    fr:
+      url: "/fr/docs/development/security/"
+      path: fr/docs/development/security.md
+      sha: 2fcdc12799709a90ff761a68789117efcfc1dc36dcf05de7e865ad0ad6f1e622
+      translated_at: '2026-08-05T03:22:19Z'
+      prompt_version: 1
+  "/docs/development/testing/":
+    source: pages/_docs/development/testing.md
+    sha: 61cc694046fe8e58c7e83ed7dbfa6637ed499d1420bfc23feace91a348270bee
+    fr:
+      url: "/fr/docs/development/testing/"
+      path: fr/docs/development/testing.md
+      sha: 61cc694046fe8e58c7e83ed7dbfa6637ed499d1420bfc23feace91a348270bee
+      translated_at: '2026-08-05T03:22:26Z'
+      prompt_version: 1
+  "/docs/development/vendor-assets/":
+    source: pages/_docs/development/vendor-assets.md
+    sha: 7676f7374d66bec9c4b0d66378944a924209b3b644323b769dda883aa73cb36f
+    fr:
+      url: "/fr/docs/development/vendor-assets/"
+      path: fr/docs/development/vendor-assets.md
+      sha: 7676f7374d66bec9c4b0d66378944a924209b3b644323b769dda883aa73cb36f
+      translated_at: '2026-08-05T03:22:39Z'
+      prompt_version: 1
+  "/docs/development/version-bump/":
+    source: pages/_docs/development/version-bump.md
+    sha: 894bc95d515fb9081a52dae8f27f2cd13d1887c179834d2cf8301d8ef996add9
+    fr:
+      url: "/fr/docs/development/version-bump/"
+      path: fr/docs/development/version-bump.md
+      sha: 894bc95d515fb9081a52dae8f27f2cd13d1887c179834d2cf8301d8ef996add9
+      translated_at: '2026-08-05T03:22:46Z'
+      prompt_version: 1
+  "/docs/docker/":
+    source: pages/_docs/docker/index.md
+    sha: cc9ee3edfdce3da5b6b34aba3bc3206dbd3012b9feeb261f2f9a677103deaf0c
+    fr:
+      url: "/fr/docs/docker/"
+      path: fr/docs/docker/index.md
+      sha: cc9ee3edfdce3da5b6b34aba3bc3206dbd3012b9feeb261f2f9a677103deaf0c
+      translated_at: '2026-08-05T03:22:54Z'
+      prompt_version: 1
+  "/docs/features/":
+    source: pages/_docs/features/index.md
+    sha: 5ad1befc459ddd3720ed83db62877f5fc94e66d288974107ff920c3cddf6abab
+    fr:
+      url: "/fr/docs/features/"
+      path: fr/docs/features/index.md
+      sha: 5ad1befc459ddd3720ed83db62877f5fc94e66d288974107ff920c3cddf6abab
+      translated_at: '2026-08-05T03:28:16Z'
+      prompt_version: 1
+  "/docs/features/admin-dashboard/":
+    source: pages/_docs/features/admin-dashboard.md
+    sha: 06e9923ed1a17fdb78ce38cce36a8399ac3d6c59f544f690898326bf598a96cd
+    fr:
+      url: "/fr/docs/features/admin-dashboard/"
+      path: fr/docs/features/admin-dashboard.md
+      sha: 06e9923ed1a17fdb78ce38cce36a8399ac3d6c59f544f690898326bf598a96cd
+      translated_at: '2026-08-05T03:23:10Z'
+      prompt_version: 1
+  "/docs/features/ai-chat-assistant/":
+    source: pages/_docs/features/ai-chat-assistant.md
+    sha: 663b35e275eb1c9e970ad05f9d37ba674a7217db2e35961802ab60d19f6a7919
+    fr:
+      url: "/fr/docs/features/ai-chat-assistant/"
+      path: fr/docs/features/ai-chat-assistant.md
+      sha: 663b35e275eb1c9e970ad05f9d37ba674a7217db2e35961802ab60d19f6a7919
+      translated_at: '2026-08-05T03:23:57Z'
+      prompt_version: 1
+  "/docs/features/auto-hide-nav/":
+    source: pages/_docs/features/auto-hide-nav.md
+    sha: 1ecda74449355dcdc05cb0e951d00ec946079bc63f755c784bf061da947f177a
+    fr:
+      url: "/fr/docs/features/auto-hide-nav/"
+      path: fr/docs/features/auto-hide-nav.md
+      sha: 1ecda74449355dcdc05cb0e951d00ec946079bc63f755c784bf061da947f177a
+      translated_at: '2026-08-05T03:24:08Z'
+      prompt_version: 1
+  "/docs/features/back-to-top/":
+    source: pages/_docs/features/back-to-top.md
+    sha: 07233eb5a5a3987257a8e849c4234de0a9bc91dfbba2733e7fa38ebbaf39475b
+    fr:
+      url: "/fr/docs/features/back-to-top/"
+      path: fr/docs/features/back-to-top.md
+      sha: 07233eb5a5a3987257a8e849c4234de0a9bc91dfbba2733e7fa38ebbaf39475b
+      translated_at: '2026-08-05T03:24:23Z'
+      prompt_version: 1
+  "/docs/features/book-collection/":
+    source: pages/_docs/features/book-collection.md
+    sha: a058d4ca2e2149564ea0f1c09de4ffb4e836da3e352745bf554a434db3c49689
+    fr:
+      url: "/fr/docs/features/book-collection/"
+      path: fr/docs/features/book-collection.md
+      sha: a058d4ca2e2149564ea0f1c09de4ffb4e836da3e352745bf554a434db3c49689
+      translated_at: '2026-08-05T03:24:46Z'
+      prompt_version: 1
+  "/docs/features/breadcrumbs/":
+    source: pages/_docs/features/breadcrumbs.md
+    sha: 02ed2d34de6a32060b05481031d8f287084b2cf3aa3ce4236142fb0ccda7b23b
+    fr:
+      url: "/fr/docs/features/breadcrumbs/"
+      path: fr/docs/features/breadcrumbs.md
+      sha: 02ed2d34de6a32060b05481031d8f287084b2cf3aa3ce4236142fb0ccda7b23b
+      translated_at: '2026-08-05T03:25:01Z'
+      prompt_version: 1
+  "/docs/features/code-copy/":
+    source: pages/_docs/features/code-copy.md
+    sha: 747017052ef0a78a5bef59e86927fc8f01736f2b9ae6ca30c4846bff76e1203c
+    fr:
+      url: "/fr/docs/features/code-copy/"
+      path: fr/docs/features/code-copy.md
+      sha: 747017052ef0a78a5bef59e86927fc8f01736f2b9ae6ca30c4846bff76e1203c
+      translated_at: '2026-08-05T03:25:18Z'
+      prompt_version: 1
+  "/docs/features/color-modes/":
+    source: pages/_docs/features/color-modes.md
+    sha: 42ea6fdec8a04f27516f5a49f93c53671bf98ea06058945b39495657863a27d6
+    fr:
+      url: "/fr/docs/features/color-modes/"
+      path: fr/docs/features/color-modes.md
+      sha: 42ea6fdec8a04f27516f5a49f93c53671bf98ea06058945b39495657863a27d6
+      translated_at: '2026-08-05T03:25:32Z'
+      prompt_version: 1
+  "/docs/features/cookie-consent/":
+    source: pages/_docs/features/cookie-consent.md
+    sha: a7054fb3fcc62ff925ae9d257d441afac2b49123608801bea9caa43bf0edcb07
+    fr:
+      url: "/fr/docs/features/cookie-consent/"
+      path: fr/docs/features/cookie-consent.md
+      sha: a7054fb3fcc62ff925ae9d257d441afac2b49123608801bea9caa43bf0edcb07
+      translated_at: '2026-08-05T03:25:56Z'
+      prompt_version: 1
+  "/docs/features/copilot-integration/":
+    source: pages/_docs/features/copilot-integration.md
+    sha: c60a7f9c46b5ce80a856c8612c8ac54956c70359ed04090b9ca12934aa390b94
+    fr:
+      url: "/fr/docs/features/copilot-integration/"
+      path: fr/docs/features/copilot-integration.md
+      sha: c60a7f9c46b5ce80a856c8612c8ac54956c70359ed04090b9ca12934aa390b94
+      translated_at: '2026-08-05T03:26:33Z'
+      prompt_version: 1
+  "/docs/features/dynamic-navigation/":
+    source: pages/_docs/features/dynamic-navigation.md
+    sha: 1224dc4dea333fc57db3250d0d13b219f986cbddc72dc902166434970d2bb031
+    fr:
+      url: "/fr/docs/features/dynamic-navigation/"
+      path: fr/docs/features/dynamic-navigation.md
+      sha: 1224dc4dea333fc57db3250d0d13b219f986cbddc72dc902166434970d2bb031
+      translated_at: '2026-08-05T03:26:44Z'
+      prompt_version: 1
+  "/docs/features/favicon/":
+    source: pages/_docs/features/favicon.md
+    sha: 264da6b68023d01da6d1330c999686a2ca880db77a29fa3e4cfc4a2d63b7a53b
+    fr:
+      url: "/fr/docs/features/favicon/"
+      path: fr/docs/features/favicon.md
+      sha: 264da6b68023d01da6d1330c999686a2ca880db77a29fa3e4cfc4a2d63b7a53b
+      translated_at: '2026-08-05T03:26:59Z'
+      prompt_version: 1
+  "/docs/features/giscus-comments/":
+    source: pages/_docs/features/giscus-comments.md
+    sha: 52efdd3386dcf88f48f187e9b85c00dbd4503217fedaafab1788d89fe6d60c01
+    fr:
+      url: "/fr/docs/features/giscus-comments/"
+      path: fr/docs/features/giscus-comments.md
+      sha: 52efdd3386dcf88f48f187e9b85c00dbd4503217fedaafab1788d89fe6d60c01
+      translated_at: '2026-08-05T03:27:46Z'
+      prompt_version: 1
+  "/docs/features/jupyter-notebooks/":
+    source: pages/_docs/features/jupyter-notebooks.md
+    sha: 491318d3fcb33b0d33353bacb6f64d10a225d0e9acde7656fd573da9c4fde2f0
+    fr:
+      url: "/fr/docs/features/jupyter-notebooks/"
+      path: fr/docs/features/jupyter-notebooks.md
+      sha: 491318d3fcb33b0d33353bacb6f64d10a225d0e9acde7656fd573da9c4fde2f0
+      translated_at: '2026-08-05T03:28:36Z'
+      prompt_version: 1
+  "/docs/features/keyboard-navigation/":
+    source: pages/_docs/features/keyboard-navigation.md
+    sha: d0be119d5f6c6d6b177a52157542ba70126fcf3c6bec01dceede24101a9b8ff3
+    fr:
+      url: "/fr/docs/features/keyboard-navigation/"
+      path: fr/docs/features/keyboard-navigation.md
+      sha: d0be119d5f6c6d6b177a52157542ba70126fcf3c6bec01dceede24101a9b8ff3
+      translated_at: '2026-08-05T03:29:11Z'
+      prompt_version: 1
+  "/docs/features/mathjax-math/":
+    source: pages/_docs/features/mathjax-math.md
+    sha: ad2447aad6d4c97c4030c1936b8ae6f5744b192a349c0cbc1fae1f9f4e0cca60
+    fr:
+      url: "/fr/docs/features/mathjax-math/"
+      path: fr/docs/features/mathjax-math.md
+      sha: ad2447aad6d4c97c4030c1936b8ae6f5744b192a349c0cbc1fae1f9f4e0cca60
+      translated_at: '2026-08-05T03:29:38Z'
+      prompt_version: 1
+  "/docs/features/mermaid-diagrams/":
+    source: pages/_docs/features/mermaid-diagrams.md
+    sha: b8e7cd0aada3d21fa9fd357a681d97669bc0b5a0b68d6e50f8572de4421b8d90
+    fr:
+      url: "/fr/docs/features/mermaid-diagrams/"
+      path: fr/docs/features/mermaid-diagrams.md
+      sha: b8e7cd0aada3d21fa9fd357a681d97669bc0b5a0b68d6e50f8572de4421b8d90
+      translated_at: '2026-08-05T03:30:12Z'
+      prompt_version: 1
+  "/docs/features/mobile-toc/":
+    source: pages/_docs/features/mobile-toc.md
+    sha: 0e7adef532b1d8346e3fae20e1ca0d2972a93be88f871a779b06fe62fa75bef9
+    fr:
+      url: "/fr/docs/features/mobile-toc/"
+      path: fr/docs/features/mobile-toc.md
+      sha: 0e7adef532b1d8346e3fae20e1ca0d2972a93be88f871a779b06fe62fa75bef9
+      translated_at: '2026-08-05T03:30:38Z'
+      prompt_version: 1
+  "/docs/features/navigation-architecture/":
+    source: pages/_docs/features/navigation-architecture.md
+    sha: 2f062d7f74fb14ce79b61b3ca597f012ecd0616297781ff2db40015abbf9872e
+    fr:
+      url: "/fr/docs/features/navigation-architecture/"
+      path: fr/docs/features/navigation-architecture.md
+      sha: 2f062d7f74fb14ce79b61b3ca597f012ecd0616297781ff2db40015abbf9872e
+      translated_at: '2026-08-05T03:30:53Z'
+      prompt_version: 1
+  "/docs/features/particles-background/":
+    source: pages/_docs/features/particles-background.md
+    sha: 815b5d59e622c0b6126d114ea29f35c6868d07bae5312e1ef5568e28acb8013d
+    fr:
+      url: "/fr/docs/features/particles-background/"
+      path: fr/docs/features/particles-background.md
+      sha: 815b5d59e622c0b6126d114ea29f35c6868d07bae5312e1ef5568e28acb8013d
+      translated_at: '2026-08-05T03:31:02Z'
+      prompt_version: 1
+  "/docs/features/posthog-analytics/":
+    source: pages/_docs/features/posthog-analytics.md
+    sha: b61e1e545b0decfdc848aec4c4b019e5db3f2c200d4b06492f4cc77ecc288e77
+    fr:
+      url: "/fr/docs/features/posthog-analytics/"
+      path: fr/docs/features/posthog-analytics.md
+      sha: b61e1e545b0decfdc848aec4c4b019e5db3f2c200d4b06492f4cc77ecc288e77
+      translated_at: '2026-08-05T03:31:33Z'
+      prompt_version: 1
+  "/docs/features/preview-image-generator/":
+    source: pages/_docs/features/preview-image-generator.md
+    sha: 9901ab3fc428545bf5891d5f27f373b09946c15367758b1a17766f5dbf3681a8
+    fr:
+      url: "/fr/docs/features/preview-image-generator/"
+      path: fr/docs/features/preview-image-generator.md
+      sha: 9901ab3fc428545bf5891d5f27f373b09946c15367758b1a17766f5dbf3681a8
+      translated_at: '2026-08-05T03:32:12Z'
+      prompt_version: 1
+  "/docs/features/sidebar-navigation/":
+    source: pages/_docs/features/sidebar-navigation.md
+    sha: 7b2f6d514ad2de98951456dfe1e8a94aff24cd162dc910e3671fd17bf2d7b120
+    fr:
+      url: "/fr/docs/features/sidebar-navigation/"
+      path: fr/docs/features/sidebar-navigation.md
+      sha: 7b2f6d514ad2de98951456dfe1e8a94aff24cd162dc910e3671fd17bf2d7b120
+      translated_at: '2026-08-05T03:32:56Z'
+      prompt_version: 1
+  "/docs/features/sidebar-page-tree/":
+    source: pages/_docs/features/sidebar-page-tree.md
+    sha: 78aaa54a3a5ccf0c0fc38bb4ed178e43d764a194358ce5878240f20a88f3c04a
+    fr:
+      url: "/fr/docs/features/sidebar-page-tree/"
+      path: fr/docs/features/sidebar-page-tree.md
+      sha: 78aaa54a3a5ccf0c0fc38bb4ed178e43d764a194358ce5878240f20a88f3c04a
+      translated_at: '2026-08-05T03:33:13Z'
+      prompt_version: 1
+  "/docs/features/site-search/":
+    source: pages/_docs/features/site-search.md
+    sha: 6cec0dc08d9c626a53d5cbe47172eddb1fc7de497a5e2a76616f4e81a6896673
+    fr:
+      url: "/fr/docs/features/site-search/"
+      path: fr/docs/features/site-search.md
+      sha: 6cec0dc08d9c626a53d5cbe47172eddb1fc7de497a5e2a76616f4e81a6896673
+      translated_at: '2026-08-05T03:33:28Z'
+      prompt_version: 1
+  "/docs/features/skip-to-content/":
+    source: pages/_docs/features/skip-to-content.md
+    sha: 4389fc104c0562973ff51ff65061fb637fa1e4635abbeccf3e028eea6e7fda29
+    fr:
+      url: "/fr/docs/features/skip-to-content/"
+      path: fr/docs/features/skip-to-content.md
+      sha: 4389fc104c0562973ff51ff65061fb637fa1e4635abbeccf3e028eea6e7fda29
+      translated_at: '2026-08-05T03:33:58Z'
+      prompt_version: 1
+  "/docs/features/smart-404/":
+    source: pages/_docs/features/smart-404.md
+    sha: a36e25dd68dc7c46ff1657c0c1e9f56c3f70bd72caacdb4ca4d2499d314ce505
+    fr:
+      url: "/fr/docs/features/smart-404/"
+      path: fr/docs/features/smart-404.md
+      sha: a36e25dd68dc7c46ff1657c0c1e9f56c3f70bd72caacdb4ca4d2499d314ce505
+      translated_at: '2026-08-05T03:34:08Z'
+      prompt_version: 1
+  "/docs/features/statistics-dashboard/":
+    source: pages/_docs/features/statistics-dashboard.md
+    sha: 1c020f7e148c8047442a5f4b202c51a00f261afc9c7f8db161def090cbdca286
+    fr:
+      url: "/fr/docs/features/statistics-dashboard/"
+      path: fr/docs/features/statistics-dashboard.md
+      sha: 1c020f7e148c8047442a5f4b202c51a00f261afc9c7f8db161def090cbdca286
+      translated_at: '2026-08-05T03:34:18Z'
+      prompt_version: 1
+  "/docs/features/theme-version/":
+    source: pages/_docs/features/theme-version.md
+    sha: 6cc8fea4896432aeec5d038fda395f31aa94e67c4df4882b36b1459a003bbd82
+    fr:
+      url: "/fr/docs/features/theme-version/"
+      path: fr/docs/features/theme-version.md
+      sha: 6cc8fea4896432aeec5d038fda395f31aa94e67c4df4882b36b1459a003bbd82
+      translated_at: '2026-08-05T03:34:44Z'
+      prompt_version: 1
+  "/docs/features/toc/":
+    source: pages/_docs/features/toc.md
+    sha: 6e3a36b8d8b967bc391d2a0f7821f6fa276927a43265cf253c4d713e08db2306
+    fr:
+      url: "/fr/docs/features/toc/"
+      path: fr/docs/features/toc.md
+      sha: 6e3a36b8d8b967bc391d2a0f7821f6fa276927a43265cf253c4d713e08db2306
+      translated_at: '2026-08-05T03:34:58Z'
       prompt_version: 1
   "/news/":
     source: pages/_posts/2000-01-01-index.md
@@ -460,4 +910,4 @@ ui_text: {}
 source_lang: en
 languages:
 - fr
-updated_at: '2026-07-23T17:13:01Z'
+updated_at: '2026-08-05T03:34:58Z'
