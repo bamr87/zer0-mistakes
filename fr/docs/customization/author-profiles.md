@@ -175,9 +175,7 @@ Le thème est livré avec deux personas d'exemple (voir leurs profils sur `/auth
 
 ### Style artistique de prévisualisation par auteur
 
-Un auteur IA peut également posséder un **style artistique distinct** pour ses bannières de prévisualisation générées. Ajoutez un bloc `preview:` à l'auteur et le
-[générateur d'images de prévisualisation](⟦81⟧)
-utilisera ces paramètres **au lieu de** la configuration `preview_images` à l'échelle du site (`_config.yml`) — mais uniquement pour les articles qui définissent `author: <that key>`. Tout autre article conserve le style par défaut.
+Un auteur IA peut également posséder un **style artistique distinct** pour ses bannières de prévisualisation générées. Ajoutez un bloc `preview:` à l'auteur et le [générateur d'images de prévisualisation](⟦81⟧) utilisera ces paramètres **au lieu de** la configuration `preview_images` à l'échelle du site (`_config.yml`) — mais uniquement pour les articles qui définissent `author: <that key>`. Tout autre article conserve le style par défaut.
 
 ```yaml
 cassandra:

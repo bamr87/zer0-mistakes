@@ -111,6 +111,24 @@ jobs:
           fi
           ruby scripts/translate.rb "${args[@]}"
 
+      # Guaranteed backstop for the one-paragraph-per-line rule that
+      # markdown-oneline.yml enforces. translate.rb already normalises the
+      # pages it writes, but it does so best-effort (it skips when python3 is
+      # missing). This step is the one that matters: it runs immediately before
+      # the files are committed, on a runner where python3 always exists.
+      #
+      # Without it, a provider that soft-wraps a translated paragraph lands
+      # wrapped prose in fr/**, the oneline check goes red on the translation
+      # PR, and — once merged — stays red on main for everyone.
+      - name: Normalise generated prose
+        if: steps.creds.outputs.found == 'true' && inputs.dry_run != true
+        run: |
+          set -euo pipefail
+          python3 tools/unwrap-prose.py --write fr _data/i18n 2>/dev/null || true
+          # Fail loudly if anything is still wrapped — a silent pass here would
+          # just move the failure to the PR's own CI run.
+          python3 tools/unwrap-prose.py --check fr _data/i18n
+
       # Open/update a PR instead of pushing to main directly (main is
       # protected). Stable branch → repeated runs update the same PR rather
       # than spawning new ones. NOTE: PRs opened with GITHUB_TOKEN do not

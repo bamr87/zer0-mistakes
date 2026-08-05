@@ -128,6 +128,45 @@ YAML
 run_translate() { ruby "$TRANSLATE" --root "$sandbox" "$@"; }
 
 # ---------------------------------------------------------------------------
+# Generated prose must satisfy the repo's one-paragraph-per-line rule that
+# .github/workflows/markdown-oneline.yml enforces.
+#
+# Uses the stub-wrap provider, which soft-wraps at 40 columns the way a real
+# model does. Against the plain stub this would pass whether or not
+# normalisation ran, which is why the wrapping variant exists.
+test_prose_normalisation() {
+  log_info "Test: generated prose is normalised to one paragraph per line"
+  build_sandbox
+
+  local unwrap="$REPO_ROOT/tools/unwrap-prose.py"
+  if ! command -v python3 >/dev/null 2>&1 || [[ ! -f "$unwrap" ]]; then
+    log_info "  (skipped: python3 or tools/unwrap-prose.py unavailable)"
+    return 0
+  fi
+
+  run_translate --provider stub-wrap >/dev/null
+
+  local post="$sandbox/fr/posts/2026-01-15-hello-world.md"
+  assert "translation is generated with the wrapping provider" test -f "$post"
+
+  # The whole-tree check: nothing the run wrote may still be wrapped.
+  assert "generated pages pass the oneline check" python3 "$unwrap" --check "$sandbox/fr"
+
+  # Proof the fixture is meaningful rather than vacuous. The provider wraps at
+  # 40 columns, so a prose line longer than that can only exist if
+  # normalisation rejoined it.
+  assert "a wrapped paragraph was rejoined past the 40-col wrap point" \
+    awk 'BEGIN{fm=0} /^---$/{fm++; next} fm>=2 && /\[fr\]$/ && length($0)>40 {found=1} END{exit !found}' "$post"
+
+  # Normalisation must not have touched anything structural on its way through.
+  assert "code fence content survives normalisation" \
+    grep -q '^echo "do not translate me"' "$post"
+  assert "liquid output tag survives normalisation" grep -qF '{{ site.title }}' "$post"
+  assert "no placeholder tokens leak after normalisation" \
+    bash -c "test -f '$post' && ! grep -q '⟦' '$post'"
+}
+
+# ---------------------------------------------------------------------------
 test_generation() {
   log_info "Test: full generation with stub provider"
   build_sandbox
@@ -245,6 +284,7 @@ test_theme_wiring() {
 main() {
   log_info "i18n translation pipeline tests"
   test_generation
+  test_prose_normalisation
   test_incremental
   test_check_and_dry_run
   test_prune
