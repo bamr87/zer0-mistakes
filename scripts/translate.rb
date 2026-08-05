@@ -367,6 +367,42 @@ module Zer0Translate
     end
   end
 
+  # Test-only variant of StubProvider that soft-wraps its output, reproducing
+  # the one thing a real provider does that no prompt can reliably prevent.
+  # Exists so the prose-normalisation pass has something to actually fix —
+  # asserting "output is unwrapped" against the plain stub would pass whether
+  # or not normalisation ran.
+  class WrappingStubProvider
+    WRAP_AT = 40
+
+    def name = "stub-wrap"
+
+    def translate(segments, target_lang, _context)
+      segments.to_h { |key, text| [key, wrap("#{text} [#{target_lang}]")] }
+    end
+
+    private
+
+    # Greedy wrap on spaces. Never splits a line that has no space past the
+    # column (a long URL or placeholder token stays intact).
+    def wrap(text)
+      out = []
+      line = +""
+      text.split(" ").each do |word|
+        if line.empty?
+          line << word
+        elsif line.length + 1 + word.length > WRAP_AT
+          out << line
+          line = +word
+        else
+          line << " " << word
+        end
+      end
+      out << line unless line.empty?
+      out.join("\n")
+    end
+  end
+
   class ClaudeProvider
     ENDPOINT = URI("https://api.anthropic.com/v1/messages")
     API_VERSION = "2023-06-01"
@@ -762,6 +798,9 @@ module Zer0Translate
       @url_builder = UrlBuilder.new(@site_config)
       @manifest = Manifest.new(@root)
       @stats = Hash.new(0)
+      # Absolute paths of every markdown file this run wrote, for the
+      # prose-normalisation pass in `run`.
+      @written_pages = []
     end
 
     def run
@@ -790,6 +829,7 @@ module Zer0Translate
 
       translator = build_translator
       execute(plan, translator)
+      normalize_prose(@written_pages)
       prune(sources, languages)
       @manifest.save(source_lang, languages)
       summary
@@ -922,6 +962,7 @@ module Zer0Translate
       provider =
         case provider_name
         when "stub" then StubProvider.new
+        when "stub-wrap" then WrappingStubProvider.new
         when "claude"
           ClaudeProvider.new(
             model: @options[:model] || ENV["TRANSLATE_MODEL"] || @config["model"],
@@ -946,6 +987,45 @@ module Zer0Translate
         label = job.type == :page ? job.source.rel_path : "ui-text"
         Log.error "[#{job.lang}] #{label}: #{e.message}"
         @stats[:failed] += 1
+      end
+    end
+
+    # Generated pages must satisfy the repo's one-paragraph-per-line rule, which
+    # CI enforces via .github/workflows/markdown-oneline.yml. The provider is
+    # free to soft-wrap a translated paragraph across several lines — nothing in
+    # the prompt can guarantee otherwise — so normalise deterministically after
+    # the fact rather than hoping the model complies.
+    #
+    # tools/unwrap-prose.py is the single source of truth for the rule (it is
+    # what CI runs), so shell out to it instead of reimplementing the classifier
+    # here and letting the two drift.
+    #
+    # Best-effort by design: a missing python3 should not fail an otherwise good
+    # translation run. The Translate workflow runs the same tool as a guaranteed
+    # backstop before committing, so the only cost of skipping here is a local
+    # run leaving wrapped prose for that step to fix.
+    def normalize_prose(paths)
+      paths = paths.select { |p| File.file?(p) }
+      return if paths.empty?
+
+      # Resolve the tool relative to THIS script, not to --root. translate.rb
+      # and tools/ ship together; --root points at the content tree being
+      # translated, which is a different thing (and is a throwaway sandbox
+      # under test).
+      tool = File.expand_path("../tools/unwrap-prose.py", __dir__)
+      tool = File.join(@root, "tools", "unwrap-prose.py") unless File.file?(tool)
+      unless File.file?(tool)
+        Log.warn "tools/unwrap-prose.py not found — skipping prose normalisation"
+        return
+      end
+
+      ok = system("python3", tool, "--write", *paths,
+                  out: File::NULL, err: File::NULL)
+      if ok
+        Log.info "Normalised prose in #{paths.size} generated page(s)"
+      else
+        Log.warn "prose normalisation skipped (python3 unavailable or tool failed); " \
+                 "run: python3 tools/unwrap-prose.py --write"
       end
     end
 
@@ -1007,6 +1087,7 @@ module Zer0Translate
       abs = File.join(@root, out_rel)
       FileUtils.mkdir_p(File.dirname(abs))
       File.write(abs, "#{fm.to_yaml}---\n\n#{body_out.sub(/\A\n+/, '')}")
+      @written_pages << abs
     end
 
     def translate_ui_text(job, translator)

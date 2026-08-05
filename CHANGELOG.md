@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Translation runs no longer break the `oneline` check.** `scripts/translate.rb`
+  writes whatever the provider returns, and a provider is free to soft-wrap a
+  translated paragraph across several lines — no prompt instruction reliably
+  prevents it. Wrapped prose then landed in `fr/**`, turned
+  `markdown-oneline.yml` red on the translation PR, and stayed red on `main`
+  after it merged. Two of the currently committed translations were in exactly
+  that state.
+  - `translate.rb` now normalises every page it writes through
+    `tools/unwrap-prose.py` — the same tool CI runs, so the rule has one source
+    of truth instead of a reimplementation that could drift. Best-effort: a
+    missing `python3` warns rather than failing an otherwise good run.
+  - `.github/workflows/translate.yml` runs the same tool as a guaranteed
+    backstop immediately before committing, then `--check`s its own work so a
+    silent failure cannot just move the breakage to the PR's CI run.
+  - The tool is resolved relative to `translate.rb` rather than `--root`;
+    `--root` points at the content tree being translated, so the previous
+    lookup missed the tool whenever the two differed.
+  - Unwrapped the two affected files, so `oneline` passes on `main` again.
+  - Regression test in `test/test_i18n.sh` backed by a new `stub-wrap`
+    provider that soft-wraps at 40 columns. Asserting "output is unwrapped"
+    against the plain stub would have passed whether or not normalisation ran.
+
 ### Added
 
 - **`examples/` — self-contained demo sites built on the theme.** New top-level
