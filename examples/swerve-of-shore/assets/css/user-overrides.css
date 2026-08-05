@@ -492,16 +492,18 @@ blockquote {
    8. Publications
    --------------------------------------------------------------------------- */
 
-.mn-pubs { margin-top: 2.5rem; max-width: var(--mn-measure); }
+/* The source markdown carries no HTML — these classes arrive via kramdown
+   inline attribute lists ({: .mn-pub__title}), so each one lands on the
+   heading or paragraph itself rather than on a wrapper element. Style the
+   elements directly and use the title's top border to separate entries. */
 
-.mn-pub {
-  padding: 1.75rem 0;
+.mn-pub__title {
+  font-size: 1.3rem;
+  margin: 2.25rem 0 0.35rem;
+  padding-top: 1.75rem;
   border-top: 1px solid var(--mn-rule);
+  max-width: var(--mn-measure);
 }
-
-.mn-pub:last-child { border-bottom: 1px solid var(--mn-rule); }
-
-.mn-pub__title { font-size: 1.3rem; margin: 0 0 0.35rem; }
 
 .mn-pub__meta {
   font-family: var(--mn-sans);
@@ -512,32 +514,49 @@ blockquote {
   margin: 0 0 0.85rem;
 }
 
-.mn-pub__body { color: var(--mn-ink-soft); margin: 0 0 0.85rem; }
+.mn-pub__body {
+  color: var(--mn-ink-soft);
+  margin: 0 0 1.1rem;
+  max-width: var(--mn-measure);
+}
 
-.mn-pub__links .badge {
-  background: var(--mn-paper-sunk) !important;
-  color: var(--mn-ink-faint) !important;
+.mn-pub__links { margin: 0 0 0.5rem; }
+
+.mn-pub__links .btn {
   font-family: var(--mn-sans);
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  border-color: var(--mn-ink);
+  color: var(--mn-ink);
   border-radius: 2px;
-  padding: 0.35rem 0.7rem;
+  padding: 0.5rem 1.1rem;
+}
+
+.mn-pub__links .btn:hover {
+  background: var(--mn-ink);
+  border-color: var(--mn-ink);
+  color: var(--mn-paper);
 }
 
 /* ---------------------------------------------------------------------------
    9. Figures
+   ---------------------------------------------------------------------------
+   about.md applies this with a SPAN-level IAL on the image's own line, so the
+   class lands on the <img> itself. A block-level IAL (on the following line)
+   would be folded into the paragraph by tools/unwrap-prose.py and never reach
+   kramdown as an attribute list — see _includes/source-note.html.
    --------------------------------------------------------------------------- */
 
-.mn-figure { margin: 2.5rem 0; }
-
-.mn-figure img {
+img.mn-figure {
+  display: block;
   width: 100%;
   max-width: 62rem;
   height: clamp(160px, 24vw, 280px);
   object-fit: cover;
   border-radius: 2px;
+  margin: 2.5rem 0;
 }
 
 /* ---------------------------------------------------------------------------

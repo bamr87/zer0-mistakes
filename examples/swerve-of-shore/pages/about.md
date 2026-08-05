@@ -12,9 +12,7 @@ sidebar:
 
 {% include page-header.html %}
 
-<figure class="mn-figure">
-  <img src="{{ '/assets/images/posts/008-3-omphalos-the-center-of-it-all.jpg' | relative_url }}" alt="">
-</figure>
+![]({{ '/assets/images/posts/008-3-omphalos-the-center-of-it-all.jpg' | relative_url }}){: .mn-figure}
 
 ## The original
 
@@ -22,15 +20,13 @@ sidebar:
 
 The numbering is the clever part. Entries carry numbers rather than relying on dates, so a note written in November can sit exactly where it belongs in the reading — which is the only way a serialized project like this stays navigable past about thirty posts.
 
-<figure class="mn-figure">
-  <img src="{{ '/assets/images/posts/001-1-joyce-s-skyquake.jpg' | relative_url }}" alt="">
-</figure>
+![]({{ '/assets/images/posts/001-1-joyce-s-skyquake.jpg' | relative_url }}){: .mn-figure}
 
 ## This rebuild
 
 What you are reading is that site rebuilt on the [zer0-mistakes](https://github.com/bamr87/zer0-mistakes) Jekyll theme, with the owner's permission, as a worked example of the theme handling a long-running serialized project.
 
-The identity, navigation, taxonomy, entry titles and dates, and the images are all the real ones. **The essays are not reproduced** — each entry shows a short quoted excerpt from the original, with a link to read the whole thing where it lives. If you came for the criticism rather than the CSS, [go there]({{ site.source_site.url }}).
+The identity, navigation, taxonomy, entry titles and dates, and the images are all the real ones. Each entry opens with the first few paragraphs of the original, quoted and attributed, then links out — **the full essays are not reproduced here.** If you came for the criticism rather than the CSS, [go there]({{ site.source_site.url }}).
 
 ## Why it makes a good example
 

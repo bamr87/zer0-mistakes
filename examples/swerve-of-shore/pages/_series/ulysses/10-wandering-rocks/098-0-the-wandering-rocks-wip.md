@@ -9,28 +9,19 @@ order: 98.0
 wip: true
 preview: /assets/images/posts/098-0-the-wandering-rocks-wip.jpg
 source_url: "https://www.swerveofshore.com/post/098-0-the-wandering-rocks-wip"
-source_title: "098.0 - The Wandering Rocks - WIP"
 estimated_reading_time: "2 min"
 description: >-
-  #12 The Wandering Rocks Guide to support Ulysses. Notes: Red = Various Language Used and It’s Translation Orange = Word Description -
+  John Conmee S.J John Stephen Conmee SJ (- Reverend of Saint Francis Xavier’s…
 excerpt: >-
-  #12 The Wandering Rocks Guide to support Ulysses. Notes: Red = Various Language Used and It’s Translation Orange = Word Description -
+  John Conmee S.J John Stephen Conmee SJ (- Reverend of Saint Francis Xavier’s…
 ---
 
-An in-progress entry *Episode 10 · Wandering Rocks* thread on [Swerve of Shore](https://www.swerveofshore.com/post/098-0-the-wandering-rocks-wip), by Brandon Nicklaus.
+An in-progress entry in the *Episode 10 · Wandering Rocks* thread on [Swerve of Shore](https://www.swerveofshore.com/post/098-0-the-wandering-rocks-wip), by Brandon Nicklaus.
 
-> #12 The Wandering Rocks Guide to support Ulysses. Notes: Red = Various Language Used and It’s Translation Orange = Word Description - =...
+> John Conmee S.J John Stephen Conmee SJ (- Reverend of Saint Francis Xavier’s Church
+>
+> Odyssey: Odysseus chose to go the path of Scylla and Charybdis, instead of the wondering rocks path. Circe had explained that only Argo has made the passage of wandering rocks with the help of Hero. Circe described the wandering rocks as “drifters” with “boiling surf, under fiery winds”. Wandering Rocks episode never happened in the Odyssey, but were a possibility.
+>
+> In the Linati schema Joyce lists the Persons as "Objects, Places, Forces, Ulysses" and er- marks that the Sense (Meaning) of the episode is"The Hostile Environment.”
 
-<p class="mn-source">
-  <a class="btn btn-outline-dark" href="https://www.swerveofshore.com/post/098-0-the-wandering-rocks-wip">
-    Read the full piece at Swerve of Shore
-  </a>
-</p>
-
-<p class="mn-source__note">
-  Excerpt above is the opening of the original entry, quoted from
-  <a href="https://www.swerveofshore.com/post/098-0-the-wandering-rocks-wip">swerveofshore.com</a> and reproduced here with the author's
-  permission. This site is a layout rebuild on the
-  <a href="https://github.com/bamr87/zer0-mistakes">zer0-mistakes</a> theme —
-  the full essay lives on the original.
-</p>
+{% include source-note.html %}

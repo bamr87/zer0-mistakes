@@ -1,0 +1,41 @@
+<!--
+  ===================================================================
+  SOURCE NOTE — Swerve of Shore example
+  ===================================================================
+  Site-local include (not part of the theme). Renders the "read the
+  full piece" action and the attribution note that closes every entry.
+
+  Why an include rather than markup in the entry files:
+
+  The entries are pure Markdown by design — no HTML tags. Kramdown's
+  usual answer for applying a class to a whole paragraph is a BLOCK
+  inline-attribute-list on its own line ({: .my-class}), but this repo
+  also enforces one-paragraph-per-line via tools/unwrap-prose.py, which
+  joins that IAL line onto the paragraph above it. Kramdown then emits
+  the braces as literal text instead of a class.
+
+  Span-level IALs are unaffected (they sit on the same line as their
+  content), so `[text](url){: .btn}` is still used inline in the entries.
+  Anything needing a class on a whole block lives here instead.
+
+  Reads page.source_url; renders nothing without one.
+
+  Usage (braces omitted — Liquid parses tags even inside HTML comments):
+    include source-note.html
+  ===================================================================
+-->
+{% if page.source_url %}
+<p class="mn-source">
+  <a class="btn btn-outline-dark" href="{{ page.source_url }}">
+    Read the full piece at Swerve of Shore
+  </a>
+</p>
+
+<p class="mn-source__note">
+  Opening paragraphs quoted from
+  <a href="{{ page.source_url }}">swerveofshore.com</a> and reproduced with the
+  author's permission. This site is a layout rebuild on the
+  <a href="https://github.com/bamr87/zer0-mistakes">zer0-mistakes</a> theme —
+  the full essay lives on the original.
+</p>
+{% endif %}

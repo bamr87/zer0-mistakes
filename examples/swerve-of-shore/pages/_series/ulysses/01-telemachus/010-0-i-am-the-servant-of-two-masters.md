@@ -6,31 +6,21 @@ categories: [Ulysses - 01 - Telemachus]
 series: ulysses
 section: "01-telemachus"
 order: 10.0
-
 preview: /assets/images/posts/010-0-i-am-the-servant-of-two-masters.jpg
 source_url: "https://www.swerveofshore.com/post/010-0-i-am-the-servant-of-two-masters"
-source_title: "010.0 - I Am The Servant of Two Masters"
 estimated_reading_time: "2 min"
 description: >-
-  We are using the original 1922 First Printing by Shakespeare & Co. - section attached "He walked on"- to -"Snapshot, eg?
+  We are using the original 1922 First Printing by Shakespeare & Co. - section…
 excerpt: >-
-  We are using the original 1922 First Printing by Shakespeare & Co. - section attached "He walked on"- to -"Snapshot, eg?
+  We are using the original 1922 First Printing by Shakespeare & Co. - section…
 ---
 
 From the *Episode 1 · Telemachus* thread on [Swerve of Shore](https://www.swerveofshore.com/post/010-0-i-am-the-servant-of-two-masters), by Brandon Nicklaus.
 
-> We are using the original 1922 First Printing by Shakespeare & Co. - section attached "He walked on"- to -"Snapshot, eg? Brief...
+> We are using the original 1922 First Printing by Shakespeare & Co. - section attached
+>
+> As Stephen walks on, he expects Buck Mulligan or Haines to speak to him, but he remains silent. His thoughts turn inward, slipping into playful, symbolic associations. He drags his ashplant cane along the path, its metal ferrule (tip) squealing as it scrapes against the ground. The sound takes on a life of its own—an animalistic, ghostly presence trailing behind him. Stephen, attuned to the poetry of experience, embraces this eerie sensation, interpreting it as a voice calling his name:
+>
+> For me, this moment evokes something much deeper: a spectral echo of his mother, visiting him in death. We already know from earlier that Stephen is haunted by guilt over refusing to kneel and pray at her deathbed. Here, his cane—the familiar—becomes an extension of that haunting, a presence calling after him like a restless spirit.
 
-<p class="mn-source">
-  <a class="btn btn-outline-dark" href="https://www.swerveofshore.com/post/010-0-i-am-the-servant-of-two-masters">
-    Read the full piece at Swerve of Shore
-  </a>
-</p>
-
-<p class="mn-source__note">
-  Excerpt above is the opening of the original entry, quoted from
-  <a href="https://www.swerveofshore.com/post/010-0-i-am-the-servant-of-two-masters">swerveofshore.com</a> and reproduced here with the author's
-  permission. This site is a layout rebuild on the
-  <a href="https://github.com/bamr87/zer0-mistakes">zer0-mistakes</a> theme —
-  the full essay lives on the original.
-</p>
+{% include source-note.html %}

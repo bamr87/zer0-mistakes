@@ -9,28 +9,19 @@ order: 91.0
 wip: true
 preview: /assets/images/posts/091-0-proteus-wip.jpg
 source_url: "https://www.swerveofshore.com/post/091-0-proteus-wip"
-source_title: "091.0 - Proteus - WIP"
 estimated_reading_time: "2 min"
 description: >-
-  Guide to support Ulysses. Notes: Red = Various Language Used and It’s Translation Orange = Word Description - = Guided Plot
+  Sandymount Strand - A area of sandy beach that tide comes and goes. Stephen is walking on this observing his surroundings and thinking through thoughts. South side of…
 excerpt: >-
-  Guide to support Ulysses. Notes: Red = Various Language Used and It’s Translation Orange = Word Description - = Guided Plot
+  Sandymount Strand - A area of sandy beach that tide comes and goes. Stephen is walking on this observing his surroundings and thinking through thoughts. South side of…
 ---
 
-An in-progress entry *Episode 3 · Proteus* thread on [Swerve of Shore](https://www.swerveofshore.com/post/091-0-proteus-wip), by Brandon Nicklaus.
+An in-progress entry in the *Episode 3 · Proteus* thread on [Swerve of Shore](https://www.swerveofshore.com/post/091-0-proteus-wip), by Brandon Nicklaus.
 
-> Guide to support Ulysses. Notes: Red = Various Language Used and It’s Translation Orange = Word Description - = Guided Plot Noted...
+> Sandymount Strand - A area of sandy beach that tide comes and goes. Stephen is walking on this observing his surroundings and thinking through thoughts. South side of the mouth of the Liffey. Stephen arrived here by assumed public transport after leaving his teaching job in Dalkey.
+>
+> Most of this episode is stream of consciousness. Joyce did a great, but tiring job of documenting how the mind flows through thoughts. This episode is hard to follow and understand all the references. You feel like giving up many times. Push through it.
+>
+> Odyssey: Telemachus is at the court of Menelaus. Menelaus is recounting his Journey him from Troy. He struggled to get him and felt the gods had held him back. Turns out Menelaus neglected the rules of sacrifice and he had no idea how to get home. Proteus, the daughter of the “Ancient of the sea”; second in command to Poseidon, felt bad and helped. She told him the secret to escape was to grasp and hold her father even though he would take forms of all beasts, water, and blinding fire to escape his grasp. Menelaus succeeded and was able to escape the island.
 
-<p class="mn-source">
-  <a class="btn btn-outline-dark" href="https://www.swerveofshore.com/post/091-0-proteus-wip">
-    Read the full piece at Swerve of Shore
-  </a>
-</p>
-
-<p class="mn-source__note">
-  Excerpt above is the opening of the original entry, quoted from
-  <a href="https://www.swerveofshore.com/post/091-0-proteus-wip">swerveofshore.com</a> and reproduced here with the author's
-  permission. This site is a layout rebuild on the
-  <a href="https://github.com/bamr87/zer0-mistakes">zer0-mistakes</a> theme —
-  the full essay lives on the original.
-</p>
+{% include source-note.html %}

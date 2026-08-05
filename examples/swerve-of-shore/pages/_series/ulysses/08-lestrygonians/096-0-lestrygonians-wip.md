@@ -9,28 +9,19 @@ order: 96.0
 wip: true
 preview: /assets/images/posts/096-0-lestrygonians-wip.jpg
 source_url: "https://www.swerveofshore.com/post/096-0-lestrygonians-wip"
-source_title: "096.0 - Lestrygonians - WIP"
 estimated_reading_time: "2 min"
 description: >-
-  Guide to support Ulysses. Notes: Red = Various Language Used and It’s Translation Orange = Word Description - = Guided Plot
+  Ben Dollard: A well known tenor - “He has legs like barrels” “Big…
 excerpt: >-
-  Guide to support Ulysses. Notes: Red = Various Language Used and It’s Translation Orange = Word Description - = Guided Plot
+  Ben Dollard: A well known tenor - “He has legs like barrels” “Big…
 ---
 
-An in-progress entry *Episode 8 · Lestrygonians* thread on [Swerve of Shore](https://www.swerveofshore.com/post/096-0-lestrygonians-wip), by Brandon Nicklaus.
+An in-progress entry in the *Episode 8 · Lestrygonians* thread on [Swerve of Shore](https://www.swerveofshore.com/post/096-0-lestrygonians-wip), by Brandon Nicklaus.
 
-> Guide to support Ulysses. Notes: Red = Various Language Used and It’s Translation Orange = Word Description - = Guided Plot Noted...
+> Ben Dollard: A well known tenor - “He has legs like barrels” “Big Ben””Barreltone”
+>
+> Bartell d’Arcy: First appears in Dubliners - The Dead. He is another Tenor
+>
+> Mrs. Breen - Josie Powell: Blooms ex love interest who has aged rough. Bloom blames her husband.
 
-<p class="mn-source">
-  <a class="btn btn-outline-dark" href="https://www.swerveofshore.com/post/096-0-lestrygonians-wip">
-    Read the full piece at Swerve of Shore
-  </a>
-</p>
-
-<p class="mn-source__note">
-  Excerpt above is the opening of the original entry, quoted from
-  <a href="https://www.swerveofshore.com/post/096-0-lestrygonians-wip">swerveofshore.com</a> and reproduced here with the author's
-  permission. This site is a layout rebuild on the
-  <a href="https://github.com/bamr87/zer0-mistakes">zer0-mistakes</a> theme —
-  the full essay lives on the original.
-</p>
+{% include source-note.html %}

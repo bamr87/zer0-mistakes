@@ -6,10 +6,10 @@ A rebuild of [Swerve of Shore](https://www.swerveofshore.com/), a James Joyce re
 
 | | |
 |---|---|
-| **Reproduced** | Site identity and navigation, category taxonomy, entry titles, dates and sections, every featured image (resized, EXIF stripped), and a short **quoted excerpt** per entry. |
+| **Reproduced** | Site identity and navigation, category taxonomy, entry titles, dates and sections, every featured image (resized, EXIF stripped), and the **opening 2–3 paragraphs** of each entry, quoted. |
 | **Not reproduced** | The essays themselves. |
 
-Each entry shows the opening excerpt the original site publishes in its own RSS feed — 20–90 words — presented as a marked quotation, attributed to Brandon Nicklaus, with a prominent link to read the full piece on swerveofshore.com. The excerpts come from `feed-blog-feed.xml`, which is the publisher's own syndication of that text.
+Each entry opens with the first two or three paragraphs of the original — averaging ~120 words, capped at three paragraphs and 220 words — set as a marked quotation, attributed to Brandon Nicklaus, and followed by a prominent link to read the rest on swerveofshore.com. It is a lead-in, the same shape as a newsletter teaser: enough to read as a real page, not a mirror of the essay.
 
 That is deliberate on two counts. It keeps the demo honest — the pages carry real writing in the author's voice rather than filler, which is the only way to see how the layout actually behaves under real content. And it sends readers to the original rather than substituting for it. If you are here for the criticism, [read it there](https://www.swerveofshore.com/).
 
@@ -76,6 +76,24 @@ pages/
 **Every nav target resolves.** A section page exists for the whole taxonomy, not just the parts with entries written. An episode with nothing filed under it yet renders "No entries here yet" rather than 404ing. This matters because the theme's nav renderer always emits an `<a href>` — a curated link to a page that does not exist is a dead link, not a disabled one.
 
 **Entries sort by number, not date.** A serialized reading does not arrive in the order it should be read. Each entry carries `series`, `section`, and `order` in front matter; section pages filter by `section` and sort by `order`, so an entry written later still lands in its correct place. See `/more/reading-order/`.
+
+**Markdown files contain no HTML.** Classes reach the markup two ways, and which one you can use is decided by an interaction worth knowing about.
+
+*Span-level* IALs sit on the same line as their content and work normally:
+
+```markdown
+![]({{ '/assets/images/x.jpg' | relative_url }}){: .mn-figure}
+[Read the full piece](https://example.com){: .btn .btn-outline-dark}
+```
+
+*Block-level* IALs — the usual way to put a class on a whole paragraph — **do not survive this repo.** They live on their own line immediately before or after the block, and `tools/unwrap-prose.py` (which CI enforces via `markdown-oneline.yml`) folds that line into the adjacent paragraph. Kramdown then emits `{: .my-class}` as literal visible text:
+
+```markdown
+Some paragraph.
+{: .my-class}     <-- unwrap-prose joins this onto the line above; class is lost
+```
+
+So anything needing a class on a block element lives in a site-local include instead — `_includes/source-note.html` and `_includes/pub-item.html`. That keeps the Markdown free of HTML tags, which is the point, and puts the markup where a Jekyll site normally keeps it.
 
 ## Images
 
