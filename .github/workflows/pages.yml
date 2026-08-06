@@ -1,0 +1,115 @@
+# Feature: ZER0-015
+# GitHub Pages deployment for zer0-mistakes.com.
+#
+# Replaces the classic "deploy from a branch" Pages build. That builder runs a
+# single `jekyll build` with _config.yml, which is why nothing under examples/
+# could ever reach the live site: examples/ is in that config's `exclude:` list,
+# and each example is a SEPARATE Jekyll site with its own _config.yml,
+# collections, and skin — so it cannot simply be un-excluded and folded into the
+# main build.
+#
+# This workflow runs one build per site and stitches the results:
+#
+#   _site/                        <- the theme's own site (_config.yml)
+#   _site/examples/swerve-of-shore/  <- the example (_config.yml,_config_deploy.yml)
+#
+# Adding another example means adding it to the `example` matrix below.
+#
+# IMPORTANT: this only takes effect once the repository's Pages source is set to
+# "GitHub Actions" (Settings -> Pages -> Build and deployment -> Source). While
+# the source is still "Deploy from a branch", the classic builder keeps serving
+# the site and this workflow's deploy step is inert.
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race; let an in-flight one finish rather than shipping
+# a half-built tree.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build site + examples
+    runs-on: ubuntu-latest
+    env:
+      # The github-pages gem's metadata plugin aborts the build without this
+      # when it cannot infer the repository from the git remote.
+      PAGES_REPO_NWO: ${{ github.repository }}
+      # The theme's SCSS contains multibyte characters; a non-UTF-8 default
+      # external encoding makes the Sass converter fail with
+      # "Invalid US-ASCII character".
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Build the theme site
+        run: |
+          set -euo pipefail
+          bundle exec jekyll build --config _config.yml --destination _site
+
+      # Each example is its own Jekyll site. Build it with its own config and
+      # drop the result into the main site's tree at the path its baseurl
+      # expects. The root Gemfile resolves `theme: jekyll-theme-zer0` to this
+      # repository, so examples render against the current sources.
+      - name: Build examples
+        run: |
+          set -euo pipefail
+          for example in swerve-of-shore; do
+            src="examples/$example"
+            echo "::group::building $src"
+            bundle exec jekyll build \
+              --source "$src" \
+              --config "$src/_config.yml,$src/_config_deploy.yml" \
+              --destination "_site/examples/$example"
+            echo "::endgroup::"
+          done
+
+      # A missing example directory would deploy a site with dead nav links, so
+      # fail here rather than shipping it.
+      - name: Verify the stitched tree
+        run: |
+          set -euo pipefail
+          test -f _site/index.html || { echo "::error::theme site did not build"; exit 1; }
+          for example in swerve-of-shore; do
+            page="_site/examples/$example/index.html"
+            test -f "$page" || { echo "::error::$example did not build"; exit 1; }
+            echo "ok: $page"
+          done
+          # The custom domain lives in the repo root CNAME; Jekyll copies it into
+          # _site. Without it, an Actions deploy drops the custom domain.
+          test -f _site/CNAME || { echo "::error::CNAME missing from _site — custom domain would break"; exit 1; }
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    name: Deploy to Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
