@@ -16,6 +16,15 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **GitHub Pages production deploy no longer fails on the translated config
+  page.** The admin config utility `pages/_about/settings/config.md` embeds a
+  raw `_config.yml` dump via `{% include_relative _config.yml %}`, but the
+  translation pipeline copied the page into `fr/about/settings/` without its
+  sibling data file, so the production `github-pages` build died with
+  `Could not locate the included file '_config.yml'`. The page is now excluded
+  from translation (`translation.exclude` in `_config.yml`) — it has no
+  prose to translate anyway — and the stale `fr/about/settings/config.md` plus
+  its `_data/i18n/manifest.yml` entry are removed.
 - **Translation runs no longer break the `oneline` check.** `scripts/translate.rb`
   writes whatever the provider returns, and a provider is free to soft-wrap a
   translated paragraph across several lines — no prompt instruction reliably

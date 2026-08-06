@@ -24,15 +24,6 @@ pages:
       sha: 42f0ae0cb763f6efd4d83478b7458c95b6f729e684af5e79a57671be423702c0
       translated_at: '2026-08-05T04:49:17Z'
       prompt_version: 1
-  "/about/config/":
-    source: pages/_about/settings/config.md
-    sha: 2428cd280d3997384b41f6ee8964ddc7f3b1dbe9babd6f4c754cf2d14ff1837e
-    fr:
-      url: "/fr/about/config/"
-      path: fr/about/settings/config.md
-      sha: 2428cd280d3997384b41f6ee8964ddc7f3b1dbe9babd6f4c754cf2d14ff1837e
-      translated_at: '2026-08-05T04:49:52Z'
-      prompt_version: 1
   "/about/features/":
     source: pages/_about/features/index.md
     sha: '059735857124094b9e850d9938cbe0ee124398c430f396c8c684764058d07209'

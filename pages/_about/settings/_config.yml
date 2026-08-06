@@ -398,6 +398,10 @@ translation:
   exclude:
     - "**/README.md"
     - "**/_templates/**"
+    # Admin config utility: embeds a raw _config.yml dump via `include_relative`,
+    # whose sibling data file isn't copied into the translated tree (breaks the
+    # GitHub Pages build). Nothing prose-like to translate anyway.
+    - "**/_about/settings/config.md"
 
 ## Site verification #############################################################
 
