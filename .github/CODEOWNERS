@@ -9,18 +9,15 @@
 # release/versioning/CI surface is gated on human (your) review.
 
 # Release & versioning surface — only the release tooling (release-please) should
-# move these; a stray hand-edit is how version.rb and Gemfile.lock drift apart.
+# move these; a stray hand-edit is how version.rb and the changelog drift apart.
 /lib/jekyll-theme-zer0/version.rb   @bamr87
 /CHANGELOG.md                       @bamr87
 /release-please-config.json         @bamr87
 /.release-please-manifest.json      @bamr87
 
-# Gem + dependency manifests.
-*.gemspec                           @bamr87
-/Gemfile                            @bamr87
-/Gemfile.lock                       @bamr87
-/package.json                       @bamr87
-/package-lock.json                  @bamr87
+# Gem + npm manifests are intentionally NOT owned here — dependency-bump PRs
+# (Dependabot et al.) are expected to auto-merge on green rather than wait on
+# human review. See auto-merge.yml / dependabot-auto-merge.yml.
 
 # High-blast-radius infrastructure: CI/CD, custom plugins, release scripts.
 /.github/workflows/                 @bamr87

@@ -1,0 +1,39 @@
+# Label Dependabot PRs `auto-merge` so they flow through the existing
+# auto-merge fast path (auto-merge.yml), instead of waiting on human review.
+#
+# Dependabot never applies the `auto-merge` label itself (only `dependencies` /
+# `javascript` / etc., per .github/dependabot.yml), so without this job every
+# Dependabot PR sits open indefinitely even though CODEOWNERS no longer
+# protects package manifests.
+#
+# Scope: patch/minor bumps only. Major version bumps are more likely to carry
+# breaking changes, so they're left unlabelled for human review — remove the
+# `if:` condition below if that extra caution isn't wanted.
+
+name: Dependabot auto-merge
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  label:
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Label patch/minor bumps for auto-merge
+        if: steps.metadata.outputs.update-type != 'version-update:semver-major'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+        run: gh pr edit "$PR" --add-label auto-merge
