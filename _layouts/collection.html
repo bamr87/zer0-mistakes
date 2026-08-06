@@ -54,12 +54,22 @@ layout: default
 <!-- COLLECTION DATA PROCESSING -->
 <!-- ========================== -->
 <!-- Extract and sort collection entries based on page configuration -->
+<!--
+  `page.collection` is only populated for documents that actually live in a
+  collection directory. A plain page that merely declares `layout: collection`
+  (the translated copies under `fr/`, for example) leaves it nil, so
+  `site[page.collection]` resolves to nil and Jekyll's `sort` filter raises
+  "Cannot sort a null object" — aborting the *entire* site build, here and in
+  every downstream site consuming this theme. Guard the lookup instead.
+-->
 {% assign entries = site[page.collection] %}
-{% assign entries = entries | sort: page.sort_order %}
+{% if entries %}
+    {% assign entries = entries | sort: page.sort_order %}
 
-<!-- Handle reverse sorting if specified -->
-{% if page.sort_order == 'reverse' %}
-    {% assign entries = entries | reverse %}
+    <!-- Handle reverse sorting if specified -->
+    {% if page.sort_order == 'reverse' %}
+        {% assign entries = entries | reverse %}
+    {% endif %}
 {% endif %}
 
 <!-- ========================== -->
