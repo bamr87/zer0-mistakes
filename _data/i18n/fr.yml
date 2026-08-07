@@ -1,0 +1,98 @@
+# ================================================================
+# GENERATED FILE — do not edit by hand.
+# Machine-translated UI strings (fr) produced by
+# scripts/translate.rb from _data/ui-text.yml (en). Regenerate via
+# the Translate workflow or: ruby scripts/translate.rb --langs fr
+# ================================================================
+skip_links: Liens d'évitement
+skip_primary_nav: Aller à la navigation principale
+skip_content: Aller au contenu
+skip_main_content: Aller au contenu principal
+skip_footer: Aller au pied de page
+page: Page
+pagination_previous: Précédent
+pagination_next: Suivant
+breadcrumb_home_label: Accueil
+breadcrumb_separator: "/"
+menu_label: Afficher/masquer le menu
+search_label: Afficher/masquer la recherche
+toc_label: Sur cette page
+ext_link_label: Lien direct
+less_than: moins de
+minute_read: minute de lecture
+share_on_label: Partager sur
+tags_label: 'Étiquettes :'
+categories_label: 'Catégories :'
+date_label: 'Mis à jour :'
+author_label: 'Auteur :'
+comments_label: Laisser un commentaire
+comments_title: Commentaires
+more_label: En savoir plus
+related_label: Vous aimerez peut-être aussi
+follow_label: 'Suivre :'
+feed_label: Flux
+powered_by: Propulsé par
+website_label: Site web
+email_label: E-mail
+recent_posts: Articles récents
+undefined_wpm: Paramètre words_per_minute non défini dans _config.yml
+comment_form_info: Votre adresse e-mail ne sera pas publiée. Les champs obligatoires
+  sont indiqués
+comment_form_comment_label: Commentaire
+comment_form_md_info: Le Markdown est pris en charge.
+comment_form_name_label: Nom
+comment_form_email_label: Adresse e-mail
+comment_form_website_label: Site web (facultatif)
+comment_btn_submit: Envoyer le commentaire
+comment_btn_submitted: Envoyé
+comment_success_msg: Merci pour votre commentaire ! Il apparaîtra sur le site une
+  fois approuvé.
+comment_error_msg: Désolé, une erreur s'est produite lors de l'envoi. Veuillez vérifier
+  que tous les champs obligatoires sont remplis et réessayer.
+loading_label: Chargement...
+search_label_text: Saisissez votre terme de recherche...
+search_placeholder_text: Saisissez votre terme de recherche...
+search_no_results: Aucun résultat
+results_found: Résultat(s) trouvé(s)
+back_to_top: Retour en haut
+stats_total_posts: Total des articles
+stats_total_pages: Total des pages
+stats_categories: Catégories
+stats_tags: Étiquettes
+stats_last_updated: Dernière mise à jour
+stats_overview: Aperçu
+stats_content_breakdown: Répartition du contenu
+theme_toggle: Changer de thème
+dark_mode: Mode sombre
+light_mode: Mode clair
+view_source: Voir la source
+edit_page: Modifier cette page
+report_issue: Signaler un problème
+breadcrumbs_root: Accueil
+breadcrumbs_aria: Fil d'Ariane
+shortcuts_title: Raccourcis clavier
+shortcuts_search: Ouvrir la recherche
+shortcuts_prev_section: Section précédente
+shortcuts_next_section: Section suivante
+shortcuts_toggle_sidebar: Afficher/masquer la barre latérale
+shortcuts_toggle_toc: Afficher/masquer la table des matières
+shortcuts_show_help: Afficher cette aide
+home_label: Accueil
+main_nav_label: Navigation principale
+search_button_label: Rechercher
+settings_button_label: Paramètres
+toc_title: Table des matières
+published_label: Publié
+updated_label: Mis à jour
+reading_time_label: 'Temps de lecture estimé :'
+reading_time_minute: minute
+share_label: Partager
+copy_link_label: Copier le lien
+improve_label: Améliorer
+edit_on_github: Modifier sur GitHub
+lang_toggle_label: Langue
+lang_toggle_aria: Changer de langue
+lang_not_available: Pas encore traduit
+machine_translation_notice: Cette page a été traduite automatiquement à partir de
+  l'original en anglais.
+machine_translation_view_source: Voir l'original
