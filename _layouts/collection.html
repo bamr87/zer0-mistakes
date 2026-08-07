@@ -53,13 +53,25 @@ layout: default
 <!-- ========================== -->
 <!-- COLLECTION DATA PROCESSING -->
 <!-- ========================== -->
-<!-- Extract and sort collection entries based on page configuration -->
-{% assign entries = site[page.collection] %}
-{% assign entries = entries | sort: page.sort_order %}
+<!-- Extract and sort collection entries based on page configuration.
 
-<!-- Handle reverse sorting if specified -->
-{% if page.sort_order == 'reverse' %}
-    {% assign entries = entries | reverse %}
+     Jekyll sets page.collection automatically for a document inside a
+     collection, but a standalone page can also select this layout in its front
+     matter. When it does — or when it names a collection the site does not
+     declare — site[page.collection] is nil, and `sort` on nil raises
+     "Cannot sort a null object.", which aborts the ENTIRE build rather than
+     just this page. Resolve to an empty list instead so one misconfigured page
+     cannot take the site down. -->
+{% assign entries = site[page.collection] %}
+{% if entries %}
+    {% assign entries = entries | sort: page.sort_order %}
+
+    <!-- Handle reverse sorting if specified -->
+    {% if page.sort_order == 'reverse' %}
+        {% assign entries = entries | reverse %}
+    {% endif %}
+{% else %}
+    {% assign entries = "" | split: "" %}
 {% endif %}
 
 <!-- ========================== -->

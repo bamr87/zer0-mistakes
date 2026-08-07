@@ -21,9 +21,17 @@
 # the site and this workflow's deploy step is inert.
 name: Pages
 
+# Also builds (never deploys) on pull requests. Nothing else in CI runs
+# `jekyll build` against the PRODUCTION config — ci.yml only path-filters on
+# _config*.yml — so until now a change could break the real site and CI stayed
+# green. That is exactly how the deploy died silently twice in two days: #346
+# shipped a translated page whose layout aborts the build, and #349 fixed a
+# different instance of the same class. Building here on PRs makes that failure
+# visible before merge instead of after.
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -32,10 +40,12 @@ permissions:
   id-token: write
 
 # Never let two deploys race; let an in-flight one finish rather than shipping
-# a half-built tree.
+# a half-built tree. Keyed by ref so PR builds queue against themselves rather
+# than against main's deploys; a superseded PR build is worth cancelling, a
+# half-finished deploy is not.
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: pages-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
@@ -105,6 +115,8 @@ jobs:
   deploy:
     name: Deploy to Pages
     needs: build
+    # PRs build only — a pull request must never publish to the live domain.
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

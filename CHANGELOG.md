@@ -16,9 +16,34 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **GitHub Pages production deploy no longer fails at all — the site had been
+  frozen since 2026-08-05.** Three independent faults, each of which aborted the
+  whole production `jekyll build`, so nothing published after #346:
+  1. `_layouts/collection.html` sorted `site[page.collection]` without checking
+     it resolved. A page can select this layout in front matter while living
+     outside any collection, making that lookup `nil`; Liquid's `sort` then
+     raises `Cannot sort a null object.` and kills the *entire* build, not just
+     the page. It now falls back to an empty list.
+  2. `scripts/translate.rb` copied `layout: collection` into the flat `fr/**`
+     tree, which is exactly the misconfiguration above — `fr/docs/index.md` was
+     the page that took the site down. Collection-only layouts are now dropped
+     from generated translations so the `path: fr` default (`layout: default`)
+     applies, and the affected page is regenerated.
+  3. `CHANGELOG.md` is a published page (`/CHANGELOG/`), so its prose is parsed
+     as Liquid. Two entries quoted Liquid tags without a `raw` guard; one of
+     them genuinely executed `include_relative` on `_config.yml`, which in turn
+     tripped over a literal `mermaid` tag written inside a config comment.
+     Both entries are now guarded and the config comment no longer spells the
+     tag out.
+
+- **Production builds are now verified before merge.** `.github/workflows/pages.yml`
+  builds (never deploys) on pull requests. No other job ran `jekyll build`
+  against the production config, which is why all three faults above reached
+  `main` with CI green.
+
 - **GitHub Pages production deploy no longer fails on the translated config
   page.** The admin config utility `pages/_about/settings/config.md` embeds a
-  raw `_config.yml` dump via `{% include_relative _config.yml %}`, but the
+  raw `_config.yml` dump via {% raw %}`{% include_relative _config.yml %}`{% endraw %}, but the
   translation pipeline copied the page into `fr/about/settings/` without its
   sibling data file, so the production `github-pages` build died with
   `Could not locate the included file '_config.yml'`. The page is now excluded
@@ -256,7 +281,7 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 ### Fixed
 
 - **Left-sidebar nav highlighted every item as "active".** `nav-tree.html`
-  used `{% assign is_active = page.url == item.url %}`, but Liquid `assign`
+  used {% raw %}`{% assign is_active = page.url == item.url %}`{% endraw %}, but Liquid `assign`
   does not evaluate `==` — it stored `page.url` (always truthy), so every link
   rendered with the active style. Replaced the three broken assigns
   (`is_active`, `child_active`, `gc_active`) with proper conditional assigns so

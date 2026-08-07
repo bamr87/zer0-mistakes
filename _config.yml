@@ -482,7 +482,11 @@ plugins:
   # {% include_cached %} tag used by setup-banner.html and other includes to
   # collapse per-page renders of stable content into a single cached render.
   - jekyll-include-cache
-  # Note: jekyll-mermaid is NOT in GitHub Pages whitelist - it only provides {% mermaid %} Liquid tag
+  # Note: jekyll-mermaid is NOT in GitHub Pages whitelist - it only provides the
+  # `mermaid` Liquid tag. Do NOT write that tag with its Liquid braces anywhere in
+  # this file: github-pages filters the non-whitelisted gem out, so the tag never
+  # registers, and a literal occurrence here is parsed as a real tag and fails the
+  # build with "Unknown tag 'mermaid'".
   # Mermaid diagrams work without this plugin via client-side JavaScript (see _includes/components/mermaid.html)
   - jekyll-mermaid
 

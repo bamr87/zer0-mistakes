@@ -90,6 +90,14 @@ module Zer0Translate
     permalink redirect_from redirect_to aliases lang
     translation_of translation_source_url machine_translated translated_from_sha
   ].freeze
+  # Layouts that only work for a document INSIDE a Jekyll collection. The
+  # translated tree is deliberately flat — fr/** are plain pages, not collection
+  # documents — so Jekyll never sets `page.collection` there and these layouts
+  # have nothing to enumerate. `collection` is worse than useless: it sorts
+  # site[page.collection], which is nil for a plain page, and a nil sort aborts
+  # the whole Jekyll build. Drop the key so the `path: <lang>` front-matter
+  # default in _config.yml (layout: default) applies instead.
+  COLLECTION_ONLY_LAYOUTS = %w[collection].freeze
 
   DEFAULT_CONFIG = {
     "enabled" => false,
@@ -1073,6 +1081,7 @@ module Zer0Translate
         key = "fm:#{field}"
         fm[field] = fm_masker.unmask(translated[key]) if translated.key?(key)
       end
+      fm.delete("layout") if COLLECTION_ONLY_LAYOUTS.include?(fm["layout"].to_s)
       fm["lang"] = job.lang
       fm["permalink"] = "/#{job.lang}#{job.url}"
       fm["translation_of"] = file.rel_path
