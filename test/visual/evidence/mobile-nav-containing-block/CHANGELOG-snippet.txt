@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/mobile-nav-containing-block/ -->
+  (evidence: [`test/visual/evidence/mobile-nav-containing-block/`](test/visual/evidence/mobile-nav-containing-block/README.md))

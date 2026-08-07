@@ -161,10 +161,36 @@ blockquote {
    --------------------------------------------------------------------------- */
 
 .navbar {
-  background-color: rgba(251, 248, 242, 0.94) !important;
-  backdrop-filter: saturate(140%) blur(8px);
+  background-color: transparent !important;
   border-bottom: 1px solid var(--mn-rule);
   box-shadow: none !important;
+  position: relative;
+}
+
+/* The frosted-glass wash lives on a pseudo-element, NOT on .navbar itself.
+   backdrop-filter — like transform, filter and perspective — makes an element
+   the containing block for its `position: fixed` DESCENDANTS. The theme's
+   mobile navigation panel (#bdNavbar, an .offcanvas-lg) is a descendant of
+   .navbar, so putting the filter on .navbar sized that panel against the 60px
+   navbar instead of the viewport: the menu opened as a clipped 323x60 sliver
+   with its 14 links cut off. A pseudo-element is not an ancestor of #bdNavbar,
+   so the same visual effect carries no such side effect.
+   The background colour moves here too — leaving it on .navbar would paint
+   over the blur. */
+.navbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(251, 248, 242, 0.94);
+  backdrop-filter: saturate(140%) blur(8px);
+  pointer-events: none;
+}
+
+/* Keep the real navbar content painting above that pseudo-element. Both are
+   positioned, so without this they would order by DOM position and ::before
+   would sit on top of the links. */
+.navbar > * {
+  position: relative;
 }
 
 .navbar .nav-link,
@@ -269,6 +295,27 @@ blockquote {
    --------------------------------------------------------------------------- */
 
 .mn-feed { max-width: 62rem; margin: 0 auto; }
+
+/* Mobile gutter. Below their 62rem max-width these sections run the full width
+   of the screen, and neither carries an inline padding — so on a phone every
+   heading, tagline and card title sat flush against the bezel with no margin
+   at all (15 of 30 text blocks touched x=0). 0.75rem matches the 12px inset
+   the theme's own pages use, so the example reads the same as the rest of the
+   site. Scoped below lg: at desktop widths the max-width already provides the
+   breathing room and the layout should stay exactly as designed. */
+@media (max-width: 991.98px) {
+  .mn-masthead,
+  .mn-feed {
+    padding-inline: 0.75rem;
+  }
+
+  /* The banner is deliberately full-bleed — let it escape the gutter. */
+  .mn-masthead__banner {
+    width: calc(100% + 1.5rem);
+    max-width: none;
+    margin-inline: -0.75rem;
+  }
+}
 
 .mn-feed__grid .card,
 .mn-feed__grid .post-card {

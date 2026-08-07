@@ -24,7 +24,7 @@ sidebar:
 {% assign feed = site.series | concat: site.posts | sort: 'date' | reverse %}
 
 {% if feed.size > 0 %}
-  <div class="row row-cols-1 g-4 mn-feed__grid">
+  <div class="row row-cols-1 gx-0 gy-4 mn-feed__grid">
     {% for post in feed %}
       {% include components/post-card.html post=post show_post_type=false %}
     {% endfor %}
