@@ -3,8 +3,8 @@
 # Regenerated automatically during each release (scripts/bin/release).
 # Consumers use this file via scripts/bin/audit-consumer to detect drift.
 
-version: "1.27.0"
-generated_at: "2026-07-29T17:22:39Z"
+version: "1.28.0"
+generated_at: "2026-08-07T19:31:41Z"
 
 # Directories owned by this theme.  A consumer file in any of these paths
 # that is not declared in the consumer's .theme-overrides.yml is flagged
@@ -63,7 +63,7 @@ file_checksums:
   _layouts/book-abc.html: "4db8ba66ad8e29ad3e3f4ef5c6458a68ad442cb017854d5e20630bccb89e0895"
   _layouts/book-story.html: "8322452b691d22f1afc8f9540b37bb06736e9500ed0bf905cc6d825577ab3199"
   _layouts/book.html: "a289086003afd5646d4d7ae5833fe649898409d4c914981f6ddec45e6ca7364e"
-  _layouts/collection.html: "a68c4754fc2489e100e0ffee251c81c7869feafba2bdefdb2c4f5737a11d72cc"
+  _layouts/collection.html: "65971e63500ce180418236fa9a37328bb4db704434bffd8fbcdfcce5aa548260"
   _layouts/default.html: "b6650cc50005af6bb08efcd803da1b892da51c3fe08db4d48065d40bf9ebf328"
   _layouts/home.html: "a701a158fad1fa8bd8adcf51dd36fd6bc0d045662842743c7c3cde2e838d29a9"
   _layouts/index.html: "a1d426a155fd4c29520a5ede0cb2c83f283c0f34b491db104b1036ce55af3b20"
