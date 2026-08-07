@@ -12,6 +12,32 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [1.28.0](https://github.com/bamr87/zer0-mistakes/compare/v1.27.0...v1.28.0) (2026-08-07)
+
+
+### Features
+
+* **books:** children's picture-book collection with immersive layouts and components ([#328](https://github.com/bamr87/zer0-mistakes/issues/328)) ([e059d1a](https://github.com/bamr87/zer0-mistakes/commit/e059d1afdc95073c5ce5bf9d1516b362979ad402))
+* **ci:** deploy the site via Actions so examples reach the live domain ([#353](https://github.com/bamr87/zer0-mistakes/issues/353)) ([959243c](https://github.com/bamr87/zer0-mistakes/commit/959243c0e8e504fe5d8dba44b89016b413bc88da))
+* **docs:** theme-canary reporting contract for downstream theme-scouts (FF-0019) ([#358](https://github.com/bamr87/zer0-mistakes/issues/358)) ([c1c1b30](https://github.com/bamr87/zer0-mistakes/commit/c1c1b309c5504b014602982fc96ec80c3f8f70de))
+* **examples:** add serialized reading-blog example site ([#339](https://github.com/bamr87/zer0-mistakes/issues/339)) ([aca0b53](https://github.com/bamr87/zer0-mistakes/commit/aca0b53b88067bda80fb299f9d5148ccb185d618))
+* **includes:** config-driven favicon, GTM gating, og:image fallback fix, sidebar nav aliases ([#327](https://github.com/bamr87/zer0-mistakes/issues/327)) ([fe8aacc](https://github.com/bamr87/zer0-mistakes/commit/fe8aacc234003f9f170fcb3b8b29c60ac18ed94b))
+* **install:** Claude Code OAuth + multi-provider AI + config-file layer ([#330](https://github.com/bamr87/zer0-mistakes/issues/330)) ([fde414c](https://github.com/bamr87/zer0-mistakes/commit/fde414cce5286f90de1ad02ca6ca40d634be5611))
+* **layouts:** book-abc board-book layout + ABC art-style skins ([#336](https://github.com/bamr87/zer0-mistakes/issues/336)) ([d88038e](https://github.com/bamr87/zer0-mistakes/commit/d88038e806e0d1a492e5d12b4e10e55fd240d692))
+* **navigation:** nav: pages sidebar mode — auto-build the tree from page URLs ([#333](https://github.com/bamr87/zer0-mistakes/issues/333)) ([c0c627d](https://github.com/bamr87/zer0-mistakes/commit/c0c627d5f50051e8f5eb4f0d6681244acaaa8d85))
+* **theme:** consumer-adoption hardening — mobile overlay fixes, zero-data resilience, extension hooks ([#338](https://github.com/bamr87/zer0-mistakes/issues/338)) ([84bcce1](https://github.com/bamr87/zer0-mistakes/commit/84bcce15e66b0bc312f513cef4a9dd11f972a049))
+
+
+### Bug Fixes
+
+* **books:** pin abc-demo permalink so its cover lands at /books/abc-demo/ ([#345](https://github.com/bamr87/zer0-mistakes/issues/345)) ([943f463](https://github.com/bamr87/zer0-mistakes/commit/943f463c73081e7cc3d914c28a2ec2eea3d1b5ae))
+* **ci:** prefer CLAUDE_CODE_OAUTH_TOKEN over ANTHROPIC_API_KEY in all AI workflows ([#334](https://github.com/bamr87/zer0-mistakes/issues/334)) ([043848e](https://github.com/bamr87/zer0-mistakes/commit/043848eb84222240efc121e8112ddc12ab959a64))
+* **ci:** unbreak the production Pages build, frozen since 2026-08-05 ([#356](https://github.com/bamr87/zer0-mistakes/issues/356)) ([05465cf](https://github.com/bamr87/zer0-mistakes/commit/05465cfd5480a6bdfb0d164d56a892f2825ec1cf))
+* **i18n:** exclude admin config page from translation to unbreak Pages deploy ([#349](https://github.com/bamr87/zer0-mistakes/issues/349)) ([3f4890c](https://github.com/bamr87/zer0-mistakes/commit/3f4890cee3dd59b7f1cbc6ec235a863017b075fb))
+* **i18n:** normalise generated prose so translation runs keep CI green ([#342](https://github.com/bamr87/zer0-mistakes/issues/342)) ([70a7234](https://github.com/bamr87/zer0-mistakes/commit/70a723425b8cc6a77e1b845b212a8a7d127a7779))
+* **navigation:** mark only the current page active in the sidebar nav-tree ([#331](https://github.com/bamr87/zer0-mistakes/issues/331)) ([3f1b723](https://github.com/bamr87/zer0-mistakes/commit/3f1b723169258993d4530dd5817740e62734ccd4))
+* **sass:** restore mobile navigation in the example, collapsed to a 60px sliver ([#363](https://github.com/bamr87/zer0-mistakes/issues/363)) ([8c7d87a](https://github.com/bamr87/zer0-mistakes/commit/8c7d87af4fd476f06c16ce58ca4d4cd0e2c4169d))
+
 ## [Unreleased]
 
 ### Added
