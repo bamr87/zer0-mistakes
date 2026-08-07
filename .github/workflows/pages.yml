@@ -108,7 +108,7 @@ jobs:
           test -f _site/CNAME || { echo "::error::CNAME missing from _site — custom domain would break"; exit 1; }
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: _site
 
@@ -124,4 +124,4 @@ jobs:
     steps:
       - name: Deploy
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
