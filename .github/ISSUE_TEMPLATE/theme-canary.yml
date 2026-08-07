@@ -1,0 +1,87 @@
+name: Theme canary report
+description: File a theme defect observed on a downstream consumer site (theme-scout intake per the theme-canary reporting contract)
+title: "fix: <concise defect summary>"
+labels: ["theme-canary"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form is the intake for **downstream theme-canary reports** — defects a consumer site
+        (it-journey.dev, lifehacker.dev, …) observed in theme-rendered output. Follow the
+        [theme-canary reporting contract](https://github.com/bamr87/zer0-mistakes/blob/main/docs/systems/theme-canary-contract.md):
+        run the mandated dedupe search (open AND closed issues) **before** filing, respect the
+        per-run cap, and report theme defects only — content/site-specific problems stay in the
+        consumer's own repo. Also add your `from-<consumer>` label (e.g. `from-it-journey`,
+        `from-lifehacker.dev`) after filing if it is not already applied.
+  - type: input
+    id: dedupe-key
+    attributes:
+      label: Dedupe key
+      description: |
+        The deterministic 12-hex finding key from §2 of the contract —
+        `sha1(kind|rule|detail_norm)[:12]`. The same finding must always produce the same key.
+      placeholder: "3f2a91c04b7d"
+    validations:
+      required: true
+  - type: dropdown
+    id: consumer
+    attributes:
+      label: Reporting consumer
+      description: The downstream site that observed the defect (its `from-<consumer>` label must be on this issue)
+      options:
+        - it-journey
+        - lifehacker.dev
+        - other (name it in the evidence below and ask for a from-* label)
+    validations:
+      required: true
+  - type: input
+    id: theme-version
+    attributes:
+      label: Theme version/commit observed
+      description: |
+        Pinned consumers: the pin (e.g. `v1.27.0` or the Gemfile.lock version). Floating
+        `remote_theme` consumers: `bamr87/zer0-mistakes@<main HEAD sha>` at observation time
+        plus the UTC timestamp.
+      placeholder: "bamr87/zer0-mistakes@4e5bc879 (2026-08-07T09:00Z)"
+    validations:
+      required: true
+  - type: input
+    id: page-url
+    attributes:
+      label: Page URL(s)
+      description: Live consumer page(s) where the defect renders, with viewport(s) when relevant
+      placeholder: "https://it-journey.dev/quests/ (mobile 390px + desktop 1280px)"
+    validations:
+      required: true
+  - type: textarea
+    id: rendered-vs-expected
+    attributes:
+      label: Rendered vs expected
+      description: What the theme renders, and what it should render instead
+    validations:
+      required: true
+  - type: textarea
+    id: minimal-repro
+    attributes:
+      label: Minimal repro
+      description: The smallest path to see it — a URL to open + what to look at, or a config/content snippet
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Raw evidence
+      description: |
+        Real output only — crawler finding lines, axe rule id + help_url, console text,
+        theme `file:line`, or screenshots. Never invent a repro, route, or stack trace;
+        if evidence is thin, say so.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-fix
+    attributes:
+      label: Suspected theme location / proposed fix (optional)
+      description: |
+        The include/layout/sass file likely at fault and a proposed fix. Required when your
+        site already carries a local workaround for this defect — link the proven fix.
