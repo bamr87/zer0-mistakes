@@ -14,6 +14,17 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ## [Unreleased]
 
+### Added
+
+- **Theme-canary reporting contract** (`docs/systems/theme-canary-contract.md`) —
+  the canonical upstream bug-intake protocol for downstream theme-scout agents
+  (it-journey, lifehacker.dev): required `theme-canary` + `from-<consumer>`
+  labels, a deterministic 12-hex dedupe key + hidden body marker, the mandated
+  open-AND-closed pre-filing search, a 5-issues-per-consumer-per-run cap, and a
+  required evidence format that records the theme version/commit observed (so
+  fixed-in-release triage is mechanical). Ships with the matching
+  `theme-canary.yml` issue form.
+
 ### Fixed
 
 - **GitHub Pages production deploy no longer fails at all — the site had been

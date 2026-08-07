@@ -52,7 +52,8 @@ docs/
 │   ├── gem-publication-system.md
 │   ├── dependency-management.md
 │   ├── ruby-version-management.md
-│   └── github-secrets-setup.md
+│   ├── github-secrets-setup.md
+│   └── theme-canary-contract.md
 │
 ├── implementation/            # Feature implementation changelogs
 │   ├── feature-change-log.md
@@ -145,6 +146,7 @@ Live preview (built site): `/about/settings/theme-preview/`
 - [Dependency Management](systems/dependency-management.md)
 - [Ruby Version Management](systems/ruby-version-management.md)
 - [GitHub Secrets Setup](systems/github-secrets-setup.md)
+- [Theme-Canary Reporting Contract](systems/theme-canary-contract.md) — the upstream bug-intake protocol for downstream theme-scouts
 
 ## Documentation Locations
 
