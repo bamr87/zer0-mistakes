@@ -1,7 +1,6 @@
 ---
 title: Documentation
 author: Amr Abdel Eissa
-layout: collection
 description: Documentation utilisateur du thème Jekyll Zer0-Mistakes - guides d'installation,
   de fonctionnalités, de personnalisation et de déploiement.
 preview: "/images/previews/published-documentation-library.png"

@@ -118,6 +118,28 @@ title: Excluded
 Should never be translated.
 MD
 
+  # Source doc using a collection-only layout. Valid here (it IS a collection
+  # document) but not once copied into the flat translated tree — see
+  # test_collection_layout_dropped.
+  cat > "$sandbox/pages/_docs/index.md" <<'MD'
+---
+title: Docs Index
+layout: collection
+---
+
+Browse the docs.
+MD
+
+  # Same, with an ordinary layout that must survive translation untouched.
+  cat > "$sandbox/pages/_docs/guide.md" <<'MD'
+---
+title: Guide
+layout: default
+---
+
+A guide.
+MD
+
   cat > "$sandbox/_data/ui-text.yml" <<'YAML'
 en:
   search_label: "Search"
@@ -219,6 +241,32 @@ test_generation() {
     grep -q 'GENERATED FILE' "$sandbox/_data/i18n/fr.yml"
 }
 
+# ---------------------------------------------------------------------------
+# Collection-only layouts must not survive into the translated tree.
+#
+# fr/** are plain pages, not collection documents, so Jekyll never sets
+# `page.collection` there. _layouts/collection.html sorts site[page.collection];
+# for a plain page that is nil, and a nil sort aborts the ENTIRE Jekyll build.
+# That is exactly how fr/docs/index.md froze the production deploy for two days,
+# so this asserts the layout key is dropped (letting the `path: fr` front-matter
+# default apply) while ordinary layouts pass through untouched.
+test_collection_layout_dropped() {
+  log_info "Test: collection-only layouts are dropped from translations"
+  build_sandbox
+  run_translate >/dev/null
+
+  local idx="$sandbox/fr/docs/index.md"
+  local guide="$sandbox/fr/docs/guide.md"
+
+  assert "collection-layout page is still translated" test -f "$idx"
+  # test -f first: a bare `! grep <missing-file>` passes vacuously.
+  assert "layout: collection is dropped from the translation" \
+    bash -c "test -f '$idx' && ! grep -q '^layout: collection\$' '$idx'"
+  assert "no layout key is left behind at all" \
+    bash -c "test -f '$idx' && ! grep -q '^layout:' '$idx'"
+  assert "ordinary layout survives translation" grep -q '^layout: default$' "$guide"
+}
+
 test_incremental() {
   log_info "Test: incremental runs skip unchanged sources"
   local out
@@ -285,6 +333,7 @@ main() {
   log_info "i18n translation pipeline tests"
   test_generation
   test_prose_normalisation
+  test_collection_layout_dropped
   test_incremental
   test_check_and_dry_run
   test_prune
