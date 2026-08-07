@@ -1,0 +1,36 @@
+{
+  "measurements": [
+    {
+      "width": 390,
+      "state": "before",
+      "panelH": 60,
+      "viewportH": 780,
+      "linksTotal": 14,
+      "linksInsidePanel": 0
+    },
+    {
+      "width": 390,
+      "state": "after",
+      "panelH": 780,
+      "viewportH": 780,
+      "linksTotal": 14,
+      "linksInsidePanel": 14
+    },
+    {
+      "width": 768,
+      "state": "before",
+      "panelH": 60,
+      "viewportH": 780,
+      "linksTotal": 14,
+      "linksInsidePanel": 0
+    },
+    {
+      "width": 768,
+      "state": "after",
+      "panelH": 780,
+      "viewportH": 780,
+      "linksTotal": 14,
+      "linksInsidePanel": 14
+    }
+  ]
+}

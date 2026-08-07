@@ -27,6 +27,29 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **Mobile navigation opened as an unusable 60px sliver in the Swerve of Shore
+  example.** Its skin set `backdrop-filter` on `.navbar` for a frosted sticky
+  header, which — per the CSS spec, alongside `transform`/`filter`/`perspective`
+  — makes that element the containing block for its `position: fixed`
+  descendants. The theme's main-nav panel (`#bdNavbar`, an `.offcanvas-lg`) is
+  one, so it sized itself against the 60px navbar instead of the viewport:
+  tapping the hamburger dimmed the page and showed a bare title bar with **0 of
+  14 navigation links** reachable. The effect now lives on a `.navbar::before`
+  pseudo-element — visually identical, not an ancestor — restoring the
+  full-height panel with **14 of 14** links (evidence:
+  [`test/visual/evidence/mobile-nav-containing-block/`](test/visual/evidence/mobile-nav-containing-block/README.md)
+  — panel 60px → 780px at 390 and 768). A new smoke-tier spec
+  (`test/visual/features/mobile-nav-containing-block.spec.js`) guards the
+  invariant on the theme and names the offending ancestor when it fails.
+
+- **The example's home and blog pages overflowed and ran edge-to-edge on
+  phones.** Their feed grid used Bootstrap's `.row` gutters without a container
+  to absorb the −12px margins, making the page 13px wider than the screen, and
+  neither section carried an inline padding, so 15 of 30 text blocks sat flush
+  against the bezel. Now `gx-0 gy-4` plus a 0.75rem mobile gutter matching the
+  theme's own 12px inset — zero horizontal overflow at 320–768, banner still
+  full-bleed.
+
 - **GitHub Pages production deploy no longer fails at all — the site had been
   frozen since 2026-08-05.** Three independent faults, each of which aborted the
   whole production `jekyll build`, so nothing published after #346:

@@ -1,0 +1,34 @@
+{
+  "slug": "mobile-nav-containing-block",
+  "base": "http://127.0.0.1:4021",
+  "route": "/examples/swerve-of-shore/",
+  "sweep": [
+    {
+      "width": 320,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0
+    },
+    {
+      "width": 390,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0
+    },
+    {
+      "width": 414,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0
+    },
+    {
+      "width": 768,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0
+    }
+  ],
+  "configs": [
+    {
+      "config": "menu-open",
+      "width": 1100,
+      "overflowPx": 0
+    }
+  ]
+}
