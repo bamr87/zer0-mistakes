@@ -57,6 +57,12 @@
       url: /docs/docker/
     - title: Features
       url: /features/
+    # Live demo site, built by .github/workflows/pages.yml into
+    # /examples/swerve-of-shore/. Not part of this site's Jekyll build —
+    # examples/ is excluded from _config.yml — so this is an absolute path
+    # into the deployed tree rather than a page in site.html_pages.
+    - title: Example Site
+      url: /examples/swerve-of-shore/
     - title: Troubleshooting
       url: /docs/troubleshooting/
 

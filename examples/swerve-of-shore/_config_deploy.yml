@@ -1,0 +1,26 @@
+# =============================================================================
+# Deployment overrides for the Swerve of Shore example
+# =============================================================================
+# Layered over _config.yml by .github/workflows/pages.yml, which builds this
+# example into the main site's output at /examples/swerve-of-shore/.
+#
+# Two differences from _config.yml:
+#
+#   1. The theme resolves to this repository's sources rather than the
+#      published remote theme, so the example demonstrates the theme as it
+#      exists on main — not as it was at the last gem release.
+#   2. url/baseurl point at the live domain and the subpath the workflow
+#      publishes to, so every `relative_url` resolves correctly.
+#
+# Not used for local development — that is _config_dev.yml (port 4010).
+# =============================================================================
+
+remote_theme             : false
+theme                    : "jekyll-theme-zer0"
+
+url                      : "https://zer0-mistakes.com"
+baseurl                  : "/examples/swerve-of-shore"
+
+environment              : "production"
+show_drafts              : false
+future                   : false
