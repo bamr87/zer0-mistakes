@@ -1,3 +1,4 @@
+// Feature: ZER0-045
 // ============================================================================
 // _obsidian.scss — Styles for Obsidian-flavoured Markdown features.
 // Imported from _sass/custom.scss.
@@ -8,6 +9,9 @@
 //   - Note transclusion / image embeds
 //   - Callout cards beyond what Bootstrap's `.alert` provides
 //   - Backlinks panel
+//   - Full graph page (canvas shell, Obsidian-style controls, zoom bar,
+//     hover preview) — markup in _includes/obsidian/full-graph.html
+//   - Local graph side panel (FAB + offcanvas)
 // ============================================================================
 
 // --- Wiki-links ------------------------------------------------------------
@@ -193,6 +197,282 @@
 
   .obsidian-backlink-excerpt {
     margin-top: 0.2rem;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Full graph page — Obsidian-style site knowledge graph.
+// Markup: _includes/obsidian/full-graph.html (included by
+// pages/_docs/obsidian/graph.md); renderer: assets/js/obsidian-graph.js.
+// The shell is the positioning context for the floating controls card, the
+// zoom bar, and the hover preview card that overlay the cytoscape canvas.
+// ----------------------------------------------------------------------------
+.obsidian-graph-shell {
+  position: relative;
+
+  #obsidian-graph {
+    width: 100%;
+    height: 82vh;
+    min-height: 620px;
+    border: 1px solid rgba(var(--bs-border-color-rgb, 222, 226, 230), 0.55);
+    border-radius: var(--bs-border-radius-lg, 0.5rem);
+    background: rgba(var(--bs-body-bg-rgb, 255, 255, 255), 0.45);
+    -webkit-backdrop-filter: blur(14px) saturate(1.15);
+    backdrop-filter: blur(14px) saturate(1.15);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.03),
+      0 8px 24px rgba(0, 0, 0, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    position: relative;
+    overflow: hidden;
+  }
+
+  [data-bs-theme="dark"] & #obsidian-graph {
+    background: rgba(var(--bs-body-bg-rgb, 33, 37, 41), 0.38);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.12),
+      0 8px 28px rgba(0, 0, 0, 0.22),
+      inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  }
+}
+
+// CSS-overlay fallback when the Fullscreen API is unavailable/blocked, plus
+// the native :fullscreen state — both fill the viewport with a solid ground.
+.obsidian-graph-shell-expanded {
+  position: fixed;
+  inset: 0;
+  z-index: var(--zer0-layer-offcanvas, 1045);
+  background: var(--bs-body-bg, #fff);
+  padding: 0.75rem;
+}
+
+.obsidian-graph-shell-expanded #obsidian-graph,
+.obsidian-graph-shell:fullscreen #obsidian-graph {
+  height: 100%;
+  min-height: 0;
+}
+
+.obsidian-graph-shell:fullscreen {
+  background: var(--bs-body-bg, #fff);
+  padding: 0.75rem;
+}
+
+// --- Floating "Graph settings" card (Filters / Display / Forces) ------------
+.obsidian-graph-controls {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 20;
+  width: min(17.5rem, calc(100% - 1.5rem));
+  max-height: calc(100% - 1.5rem);
+  display: flex;
+  flex-direction: column;
+  background: rgba(var(--bs-body-bg-rgb, 255, 255, 255), 0.86);
+  -webkit-backdrop-filter: blur(10px) saturate(1.1);
+  backdrop-filter: blur(10px) saturate(1.1);
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: var(--bs-border-radius, 0.375rem);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+
+  .obsidian-graph-controls-toggle {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+    font-weight: 600;
+    color: var(--bs-body-color, #212529);
+    border: 0;
+    border-radius: 0;
+
+    &:focus-visible {
+      outline: 2px solid var(--bs-primary);
+      outline-offset: -2px;
+    }
+  }
+
+  .obsidian-graph-controls-chevron {
+    transition: transform 0.2s ease;
+  }
+
+  .obsidian-graph-controls-toggle[aria-expanded="true"] .obsidian-graph-controls-chevron {
+    transform: rotate(180deg);
+  }
+
+  .obsidian-graph-controls-body {
+    overflow-y: auto;
+    border-top: 1px solid var(--bs-border-color, #dee2e6);
+  }
+
+  .accordion {
+    --bs-accordion-bg: transparent;
+    font-size: 0.875rem;
+  }
+
+  .accordion-button {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .form-label {
+    margin-bottom: 0.125rem;
+    color: var(--bs-secondary-color, #6c757d);
+  }
+
+  .form-range {
+    margin-bottom: 0.375rem;
+  }
+}
+
+// Collection toggles double as the legend: color swatch + name + page count.
+.obsidian-graph-collections {
+  max-height: 12.5rem;
+  overflow-y: auto;
+
+  .obsidian-graph-collection-filter {
+    margin-bottom: 0.125rem;
+
+    .form-check-label {
+      width: 100%;
+      cursor: pointer;
+    }
+
+    .swatch {
+      display: inline-block;
+      flex: 0 0 auto;
+      width: 0.7rem;
+      height: 0.7rem;
+      border-radius: 50%;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+    }
+
+    .badge {
+      font-size: 0.7rem;
+    }
+  }
+}
+
+// --- Zoom / fit / fullscreen button stack -----------------------------------
+.obsidian-graph-zoombar {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  z-index: 20;
+  border-radius: var(--bs-border-radius, 0.375rem);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+
+  > .btn {
+    background: rgba(var(--bs-body-bg-rgb, 255, 255, 255), 0.88);
+    color: var(--bs-body-color, #212529);
+    border: 1px solid var(--bs-border-color, #dee2e6);
+    line-height: 1;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--bs-tertiary-bg, #f8f9fa);
+    }
+
+    &[aria-pressed="true"] {
+      background: rgba(var(--bs-primary-rgb), 0.12);
+      color: var(--bs-primary);
+    }
+  }
+}
+
+// --- Hover preview card (Obsidian-style page preview) -----------------------
+.obsidian-graph-preview {
+  position: absolute;
+  z-index: 30;
+  width: min(17rem, calc(100% - 1.5rem));
+  pointer-events: none;
+  background: rgba(var(--bs-body-bg-rgb, 255, 255, 255), 0.94);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--bs-border-color, #dee2e6);
+
+  &[hidden] {
+    display: none;
+  }
+
+  .obsidian-graph-preview-swatch {
+    display: inline-block;
+    flex: 0 0 auto;
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+  }
+
+  .obsidian-graph-preview-excerpt {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    color: var(--bs-secondary-color, #6c757d);
+  }
+}
+
+// --- Stats badges, status line, tips box ------------------------------------
+#obsidian-graph-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+
+  .badge {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    padding: 0.35rem 0.6rem;
+  }
+}
+
+.obsidian-graph-status {
+  font-size: 0.8125rem;
+  color: var(--bs-secondary-color, #6c757d);
+  min-height: 1.25rem;
+  margin: 0.5rem 0 0;
+}
+
+.obsidian-graph-tips {
+  margin-top: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--bs-secondary-color, #6c757d);
+  background: var(--bs-tertiary-bg, #f8f9fa);
+  border-left: 3px solid var(--bs-primary, #0d6efd);
+  border-radius: 0.25rem;
+
+  strong {
+    color: var(--bs-body-color, #212529);
+  }
+}
+
+// Small screens: the floating card would cover most of the canvas — dock the
+// controls above the graph instead, and shorten the canvas.
+@media (max-width: 767.98px) {
+  .obsidian-graph-shell {
+    display: flex;
+    flex-direction: column;
+
+    #obsidian-graph {
+      height: 62vh;
+      min-height: 420px;
+    }
+  }
+
+  .obsidian-graph-controls {
+    position: static;
+    order: -1;
+    width: 100%;
+    max-height: none;
+    margin-bottom: 0.5rem;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: var(--bs-body-bg, #fff);
+
+    .obsidian-graph-controls-body {
+      max-height: 45vh;
+    }
   }
 }
 

@@ -16,6 +16,21 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Added
 
+- **Obsidian graph frontend revamp** — the graph views now mirror the Obsidian
+  desktop experience. The full graph page gains a floating **Graph settings**
+  card (Filters / Display / Forces): search with `tag:`/`path:` operators,
+  per-collection toggles generated from the wiki-index (count badge + color
+  swatch, doubling as the legend), show-orphans and show-unresolved switches,
+  node-size / link-thickness / label-fade sliders, repel-force and
+  link-distance sliders with animated re-layout, plus a zoom / fit / fullscreen
+  button stack, an Obsidian-style hover preview card, live dark-mode restyling,
+  and localStorage persistence. The local graph panel gains a depth selector
+  (1–3) and outgoing/incoming direction switches that re-render the subgraph in
+  place. Same vendored cytoscape.js, unchanged `wiki-index.json` contract
+  (evidence:
+  [`test/visual/evidence/obsidian-graph-revamp/`](test/visual/evidence/obsidian-graph-revamp/README.md);
+  regression: `test/visual/features/obsidian-graph.spec.js`).
+
 - **Theme-canary reporting contract** (`docs/systems/theme-canary-contract.md`) —
   the canonical upstream bug-intake protocol for downstream theme-scout agents
   (it-journey, lifehacker.dev): required `theme-canary` + `from-<consumer>`

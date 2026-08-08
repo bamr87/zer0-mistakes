@@ -1,3 +1,4 @@
+// Feature: ZER0-045
 /*
  * obsidian-local-graph.js
  *
@@ -12,8 +13,13 @@
  * Subgraph:
  *   - center  = current page (matched against entry.url, falling back to
  *               normalized title/basename/aliases for permalink quirks)
- *   - depth   = configurable via data-depth attribute (default 1)
- *   - direction = both incoming and outgoing wiki-links
+ *   - depth   = 1–3, user-adjustable in the panel (default from the
+ *               data-depth attribute / `local_graph_depth` front matter)
+ *   - direction = outgoing and/or incoming wiki-links, user-toggleable
+ *
+ * Depth + direction preferences persist to localStorage
+ * (zer0.obsidianLocalGraph.v1) and the graph re-renders in place when they
+ * change — same for Bootstrap color-mode (data-bs-theme) switches.
  *
  * If the current page is in the wiki-index but has no local links, the panel
  * stays available and renders a single-node graph for the current page.
@@ -26,6 +32,7 @@
   var PANEL_SELECTOR = '[data-obsidian-local-graph-panel]';
   var TOGGLE_SELECTOR = '[data-obsidian-local-graph-toggle]';
   var STATUS_SELECTOR = '[data-obsidian-local-graph-status]';
+  var STORAGE_KEY = 'zer0.obsidianLocalGraph.v1';
 
   // Cytoscape is vendored under assets/vendor/ (no runtime CDN — matches the
   // Bootstrap / Icons / Mermaid policy). The path is supplied by Liquid via
@@ -55,6 +62,28 @@
     return String(value == null ? '' : value)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  // Depth + direction preferences. Depth falls back to the page's data-depth
+  // (front-matter `local_graph_depth`), directions default to both on.
+  function loadPrefs(defaultDepth) {
+    var prefs = { depth: defaultDepth, outgoing: true, incoming: true };
+    try {
+      var saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || 'null');
+      if (saved && typeof saved === 'object') {
+        var d = parseInt(saved.depth, 10);
+        if (d >= 1 && d <= 3) prefs.depth = d;
+        if (typeof saved.outgoing === 'boolean') prefs.outgoing = saved.outgoing;
+        if (typeof saved.incoming === 'boolean') prefs.incoming = saved.incoming;
+      }
+    } catch (e) { /* private mode / corrupt payload — use defaults */ }
+    return prefs;
+  }
+
+  function savePrefs(prefs) {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+    } catch (e) { /* storage unavailable — prefs are session-only */ }
   }
 
   function companionElements(container) {
@@ -143,10 +172,11 @@
     return palette[name] || '#6c757d';
   }
 
-  // BFS from the current entry up to `depth` hops, following both
-  // outgoing edges and incoming edges (any other entry whose `outgoing`
-  // includes one of our keys).
-  function buildSubgraph(entries, lookup, current, depth) {
+  // BFS from the current entry up to `depth` hops. Directions are opt-in:
+  // opts.outgoing follows this page's [[links]], opts.incoming follows any
+  // other entry whose `outgoing` includes one of our keys.
+  function buildSubgraph(entries, lookup, current, depth, opts) {
+    opts = opts || { outgoing: true, incoming: true };
     var visited = Object.create(null);
     var queue = [{ entry: current, dist: 0 }];
     var nodes = [];
@@ -206,45 +236,49 @@
       if (item.dist >= depth) continue;
 
       // Outgoing edges
-      (entry.outgoing || []).forEach(function (target) {
-        var nk = normalize(target);
-        var resolved = lookup.byKey[nk];
-        if (resolved) {
-          if (resolved.url === entry.url) return;
-          addEdge(entry.url, resolved.url, false);
-          if (!visited[resolved.url]) {
-            queue.push({ entry: resolved, dist: item.dist + 1 });
-          }
-        } else {
-          var brokenId = '__broken__:' + nk;
-          if (!visited[brokenId]) {
-            visited[brokenId] = true;
-            nodes.push({
-              group: 'nodes',
-              data: {
-                id: brokenId,
-                label: target,
-                url: null,
-                collection: 'broken',
-                color: '#dc3545',
-                broken: true
-              }
-            });
-          }
-          addEdge(entry.url, brokenId, true);
-        }
-      });
-
-      // Incoming edges (anyone whose outgoing matches one of our keys)
-      keysFor(entry).forEach(function (k) {
-        (reverse[k] || []).forEach(function (src) {
-          if (src.url === entry.url) return;
-          addEdge(src.url, entry.url, false);
-          if (!visited[src.url]) {
-            queue.push({ entry: src, dist: item.dist + 1 });
+      if (opts.outgoing) {
+        (entry.outgoing || []).forEach(function (target) {
+          var nk = normalize(target);
+          var resolved = lookup.byKey[nk];
+          if (resolved) {
+            if (resolved.url === entry.url) return;
+            addEdge(entry.url, resolved.url, false);
+            if (!visited[resolved.url]) {
+              queue.push({ entry: resolved, dist: item.dist + 1 });
+            }
+          } else {
+            var brokenId = '__broken__:' + nk;
+            if (!visited[brokenId]) {
+              visited[brokenId] = true;
+              nodes.push({
+                group: 'nodes',
+                data: {
+                  id: brokenId,
+                  label: target,
+                  url: null,
+                  collection: 'broken',
+                  color: '#dc3545',
+                  broken: true
+                }
+              });
+            }
+            addEdge(entry.url, brokenId, true);
           }
         });
-      });
+      }
+
+      // Incoming edges (anyone whose outgoing matches one of our keys)
+      if (opts.incoming) {
+        keysFor(entry).forEach(function (k) {
+          (reverse[k] || []).forEach(function (src) {
+            if (src.url === entry.url) return;
+            addEdge(src.url, entry.url, false);
+            if (!visited[src.url]) {
+              queue.push({ entry: src, dist: item.dist + 1 });
+            }
+          });
+        });
+      }
     }
 
     return nodes.concat(edges);
@@ -299,6 +333,11 @@
   }
 
   function render(container, elements, currentUrl) {
+    // Re-renders (depth/direction/theme changes) replace the prior instance.
+    if (container.__obsidianLocalGraph) {
+      try { container.__obsidianLocalGraph.destroy(); } catch (e) { /* ignore */ }
+      container.__obsidianLocalGraph = null;
+    }
     var theme = readTheme();
     container.style.backgroundColor = theme.canvasBg;
     var motion = prefersReducedMotion() ? '0ms' : '160ms';
@@ -460,6 +499,59 @@
     return nav;
   }
 
+  // Reflect prefs into the depth radio group + direction switches.
+  function syncControls(prefs) {
+    var radio = document.getElementById('obsidian-lg-depth-' + prefs.depth);
+    if (radio) radio.checked = true;
+    var outgoing = document.getElementById('obsidian-lg-outgoing');
+    if (outgoing) outgoing.checked = prefs.outgoing;
+    var incoming = document.getElementById('obsidian-lg-incoming');
+    if (incoming) incoming.checked = prefs.incoming;
+  }
+
+  function wireControls(prefs, rebuild) {
+    [1, 2, 3].forEach(function (d) {
+      var radio = document.getElementById('obsidian-lg-depth-' + d);
+      if (!radio) return;
+      radio.addEventListener('change', function () {
+        if (!radio.checked) return;
+        prefs.depth = d;
+        savePrefs(prefs);
+        rebuild();
+      });
+    });
+    var outgoing = document.getElementById('obsidian-lg-outgoing');
+    if (outgoing) {
+      outgoing.addEventListener('change', function () {
+        prefs.outgoing = outgoing.checked;
+        savePrefs(prefs);
+        rebuild();
+      });
+    }
+    var incoming = document.getElementById('obsidian-lg-incoming');
+    if (incoming) {
+      incoming.addEventListener('change', function () {
+        prefs.incoming = incoming.checked;
+        savePrefs(prefs);
+        rebuild();
+      });
+    }
+  }
+
+  // Re-render on Bootstrap color-mode changes so canvas colors track the
+  // theme without a reload. Local graphs are small — a full rebuild is cheap.
+  function watchTheme(rebuild) {
+    var restyle = debounce(rebuild, 60);
+    var observer = new MutationObserver(restyle);
+    [document.documentElement, document.body].forEach(function (el) {
+      observer.observe(el, { attributes: true, attributeFilter: ['data-bs-theme'] });
+    });
+    if (window.matchMedia) {
+      var mq = window.matchMedia('(prefers-color-scheme: dark)');
+      if (mq.addEventListener) mq.addEventListener('change', restyle);
+    }
+  }
+
   function init() {
     var container = document.getElementById(CONTAINER_ID);
     if (!container) return;
@@ -478,8 +570,9 @@
       resizeGraph(container);
     }, 150));
 
-    var depth = parseInt(container.getAttribute('data-depth') || '1', 10);
-    if (!isFinite(depth) || depth < 1) depth = 1;
+    var defaultDepth = parseInt(container.getAttribute('data-depth') || '1', 10);
+    if (!isFinite(defaultDepth) || defaultDepth < 1) defaultDepth = 1;
+    var prefs = loadPrefs(Math.min(defaultDepth, 3));
     var indexUrl = container.getAttribute('data-index-url') ||
       ((document.querySelector('base') || {}).href || '/') +
       'assets/data/wiki-index.json';
@@ -496,17 +589,21 @@
         // Confirmed in-index: reveal the panel + FAB now.
         setPanelAvailable(container, true);
         setStatus(container, 'Loading graph…', false);
+        syncControls(prefs);
 
-        var elements = buildSubgraph(entries, lookup, current, depth);
-        var nodeCount = elements.filter(function (element) { return element.group === 'nodes'; }).length;
-        var edgeCount = elements.filter(function (element) { return element.group === 'edges'; }).length;
-        // Accessible text fallback (also the graceful degradation if cytoscape
-        // can't load): a list of linked neighbours below the canvas.
-        var fallback = renderTextFallback(container, elements, current);
+        var graphAvailable = null; // unknown until loadCytoscape resolves
 
-        loadCytoscape(function (ok) {
-          if (ok === false) {
-            // Keep the text list visible; hide the empty canvas.
+        function rebuild() {
+          var elements = buildSubgraph(entries, lookup, current, prefs.depth, {
+            outgoing: prefs.outgoing,
+            incoming: prefs.incoming
+          });
+          var nodeCount = elements.filter(function (el) { return el.group === 'nodes'; }).length;
+          var edgeCount = elements.filter(function (el) { return el.group === 'edges'; }).length;
+          // Accessible text fallback (also the graceful degradation if
+          // cytoscape can't load): a list of linked neighbours below the canvas.
+          var fallback = renderTextFallback(container, elements, current);
+          if (graphAvailable === false) {
             container.hidden = true;
             setStatus(container, 'Showing linked pages (interactive graph unavailable).', false);
             return;
@@ -515,6 +612,16 @@
           setStatus(container, nodeCount + ' pages · ' + edgeCount + ' links', false);
           // Graph is the visual representation; keep the list for AT only.
           if (fallback) fallback.classList.add('visually-hidden');
+        }
+
+        wireControls(prefs, rebuild);
+        watchTheme(function () {
+          if (container.__obsidianLocalGraph) rebuild();
+        });
+
+        loadCytoscape(function (ok) {
+          graphAvailable = ok !== false;
+          rebuild();
         });
       })
       .catch(function (err) {

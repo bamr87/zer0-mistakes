@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/obsidian-graph-revamp/ -->
+  (evidence: [`test/visual/evidence/obsidian-graph-revamp/`](test/visual/evidence/obsidian-graph-revamp/README.md))
