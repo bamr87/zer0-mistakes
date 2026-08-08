@@ -1413,14 +1413,14 @@ features:
       - "Optional Ruby plugin for self-builds"
 
   - id: ZER0-045
-    title: "Obsidian Local Graph Panel"
-    description: "Standalone neighborhood graph view for the current note, extracted as a reusable include for sidebars and modals"
+    title: "Obsidian Graph Views (Full + Local)"
+    description: "Obsidian-desktop-style graph views: a full site graph with a Filters/Display/Forces settings panel, collection legend-filters, tag:/path: search, zoom + fullscreen controls and hover previews, plus a per-page local graph panel with depth and direction controls"
     implemented: true
-    version: "1.4.0"
+    version: "1.28.0"
     link: "/docs/obsidian/graph/"
     docs: "/docs/obsidian/graph/"
     tags: [obsidian, graph, visualization, navigation]
-    date: 2026-03-25
+    date: 2026-08-08
     provenance:
       introduced_in: "1.4.0"
       pr: 77
@@ -1428,13 +1428,22 @@ features:
       issue: null
     tests:
       - "test/test_obsidian.sh"
-      - "test/visual/features/obsidian-callouts.spec.js"
+      - "test/visual/features/obsidian-graph.spec.js"
     references:
       includes:
         - "_includes/obsidian/full-graph.html"
         - "_includes/navigation/local-graph.html"
       scripts:
         - "assets/js/obsidian-graph.js"
+        - "assets/js/obsidian-local-graph.js"
+      styles:
+        - "_sass/core/_obsidian.scss"
+    features:
+      - "Filters: search with tag:/path: operators, per-collection toggles generated from the wiki-index (count + color swatch = legend), show-orphans, show-unresolved"
+      - "Display: link arrows, node size, link thickness, label fade threshold — applied live"
+      - "Forces: repel force + link distance sliders with animated re-layout; settings persist to localStorage"
+      - "Hover preview card, zoom/fit/fullscreen stack, live dark-mode restyling"
+      - "Local graph: depth selector (1-3) + outgoing/incoming switches, re-rendered in place"
 
   # ============================================================================
   # SETUP, NAVIGATION & DEVELOPER UX (v0.20+)

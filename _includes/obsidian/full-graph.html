@@ -1,158 +1,187 @@
 {% comment %} Features: ZER0-044, ZER0-045 {% endcomment %}
-<style>
-  /* Scoped to the graph page so we don't leak into other docs. */
-  #obsidian-graph {
-    width: 100%;
-    height: 82vh;
-    min-height: 620px;
-    border: 1px solid rgba(var(--bs-border-color-rgb, 222, 226, 230), 0.55);
-    border-radius: var(--bs-border-radius-lg, .5rem);
-    background: rgba(var(--bs-body-bg-rgb, 255, 255, 255), 0.45);
-    backdrop-filter: blur(14px) saturate(1.15);
-    -webkit-backdrop-filter: blur(14px) saturate(1.15);
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, .03),
-      0 8px 24px rgba(0, 0, 0, .06),
-      inset 0 1px 0 rgba(255, 255, 255, .04);
-    position: relative;
-    overflow: hidden;
-  }
-  [data-bs-theme="dark"] #obsidian-graph {
-    background: rgba(var(--bs-body-bg-rgb, 33, 37, 41), 0.38);
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, .12),
-      0 8px 28px rgba(0, 0, 0, .22),
-      inset 0 1px 0 rgba(255, 255, 255, .03);
-  }
-  #obsidian-graph-stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: .375rem;
-  }
-  #obsidian-graph-stats .badge {
-    font-size: .8125rem;
-    font-weight: 500;
-    padding: .35rem .6rem;
-  }
-  .obsidian-graph-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: .5rem .75rem;
-    align-items: center;
-    margin: .75rem 0;
-    padding: .625rem .75rem;
-    background: var(--bs-tertiary-bg, #f8f9fa);
-    border: 1px solid var(--bs-border-color, #dee2e6);
-    border-radius: var(--bs-border-radius, .375rem);
-  }
-  .obsidian-graph-toolbar .form-control {
-    max-width: 280px;
-    flex: 1 1 200px;
-  }
-  .obsidian-graph-toolbar .form-check {
-    margin-bottom: 0;
-  }
-  #obsidian-graph-status {
-    flex-basis: 100%;
-    font-size: .8125rem;
-    color: var(--bs-secondary-color, #6c757d);
-    min-height: 1.25rem;
-  }
-  .obsidian-graph-legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: .5rem;
-    margin-top: .75rem;
-    font-size: .8125rem;
-  }
-  .obsidian-graph-legend > span {
-    display: inline-flex;
-    align-items: center;
-    gap: .375rem;
-    padding: .25rem .55rem;
-    background: var(--bs-body-bg, #fff);
-    border: 1px solid var(--bs-border-color, #dee2e6);
-    border-radius: 999px;
-    color: var(--bs-body-color, #212529);
-  }
-  .obsidian-graph-legend .swatch {
-    display: inline-block;
-    width: .7rem;
-    height: .7rem;
-    border-radius: 50%;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, .12);
-    opacity: 0.82;
-  }
-  .obsidian-graph-legend .swatch-broken {
-    border: 1.5px dashed #dc3545;
-    background: transparent !important;
-    box-shadow: none;
-  }
-  .obsidian-graph-tips {
-    margin-top: .75rem;
-    padding: .625rem .75rem;
-    font-size: .8125rem;
-    color: var(--bs-secondary-color, #6c757d);
-    background: var(--bs-tertiary-bg, #f8f9fa);
-    border-left: 3px solid var(--bs-primary, #0d6efd);
-    border-radius: .25rem;
-  }
-  .obsidian-graph-tips strong {
-    color: var(--bs-body-color, #212529);
-  }
-</style>
+{%- comment -%}
+  ===================================================================
+  FULL GRAPH PAGE — Obsidian-style site knowledge graph
+  ===================================================================
+
+  File: full-graph.html
+  Path: _includes/obsidian/full-graph.html
+  Included from: pages/_docs/obsidian/graph.md
+  Renderer: assets/js/obsidian-graph.js (vendored cytoscape.js)
+  Styles: _sass/core/_obsidian.scss § "Full graph page"
+
+  Mirrors the Obsidian desktop graph controls:
+  - Filters: search (tag:/path: operators), per-collection toggles with
+    counts + color swatches (doubles as the legend), orphans, unresolved
+  - Display: arrows, node size, link thickness, label fade threshold
+  - Forces: repulsion, link distance, animated re-layout
+  Settings persist to localStorage (zer0.obsidianGraph.v1).
+
+  Element IDs are load-bearing: obsidian-graph, obsidian-graph-stats,
+  obsidian-graph-search, obsidian-graph-fit, obsidian-graph-orphans are
+  asserted by test/visual/features/obsidian-graph.spec.js.
+  ===================================================================
+{%- endcomment -%}
 
 # Obsidian Graph View
 
 A live, force-directed map of every page on this site and every
 `[[wiki-link]]` between them. This is the rendered-site equivalent of
-Obsidian's local graph view — built from the same
+Obsidian's graph view — built from the same
 [`assets/data/wiki-index.json`]({{ "/assets/data/wiki-index.json" | relative_url }})
 that powers the [client-side resolver]({{ "/docs/obsidian/syntax-reference/" | relative_url }})
 and [backlinks panel]({{ "/docs/obsidian/syntax-reference/#backlinks-panel" | relative_url }}).
 
 <div id="obsidian-graph-stats" class="mb-2" aria-live="polite"></div>
 
-<div class="obsidian-graph-toolbar">
-  <input type="search"
-         class="form-control form-control-sm"
-         id="obsidian-graph-search"
-         placeholder="Filter nodes by title…"
-         aria-label="Filter graph nodes by title" />
-  <button type="button"
-          class="btn btn-outline-secondary btn-sm"
-          id="obsidian-graph-fit">
-    <i class="bi bi-arrows-fullscreen" aria-hidden="true"></i>
-    Reset view
-  </button>
-  <div class="form-check form-switch">
-    <input class="form-check-input"
-           type="checkbox"
-           role="switch"
-           id="obsidian-graph-orphans" />
-    <label class="form-check-label" for="obsidian-graph-orphans">
-      Show orphans
-    </label>
+<div class="obsidian-graph-shell" id="obsidian-graph-shell">
+  <div id="obsidian-graph" role="group" aria-label="Site knowledge graph"></div>
+  <div class="obsidian-graph-controls d-print-none" id="obsidian-graph-controls">
+    <button type="button"
+            class="btn btn-sm obsidian-graph-controls-toggle"
+            data-bs-toggle="collapse"
+            data-bs-target="#obsidianGraphControlsBody"
+            aria-expanded="false"
+            aria-controls="obsidianGraphControlsBody">
+      <i class="bi bi-sliders me-1" aria-hidden="true"></i>Graph settings
+      <i class="bi bi-chevron-down ms-auto obsidian-graph-controls-chevron" aria-hidden="true"></i>
+    </button>
+    <div class="collapse obsidian-graph-controls-body" id="obsidianGraphControlsBody">
+      <div class="accordion accordion-flush" id="obsidianGraphAccordion">
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button py-2" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#obsidianGraphFilters"
+                    aria-expanded="true" aria-controls="obsidianGraphFilters">
+              <i class="bi bi-funnel me-2" aria-hidden="true"></i>Filters
+            </button>
+          </h2>
+          <div id="obsidianGraphFilters" class="accordion-collapse collapse show"
+               data-bs-parent="#obsidianGraphAccordion">
+            <div class="accordion-body py-2">
+              <input type="search"
+                     class="form-control form-control-sm mb-2"
+                     id="obsidian-graph-search"
+                     placeholder="Search… (tag:foo, path:docs)"
+                     aria-label="Filter graph nodes by title, tag: or path: operator" />
+              <div id="obsidian-graph-collections"
+                   class="obsidian-graph-collections mb-2"
+                   role="group"
+                   aria-label="Toggle collections"></div>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch"
+                       id="obsidian-graph-orphans" />
+                <label class="form-check-label" for="obsidian-graph-orphans">Show orphans</label>
+              </div>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch"
+                       id="obsidian-graph-broken" checked />
+                <label class="form-check-label" for="obsidian-graph-broken">Show unresolved links</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed py-2" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#obsidianGraphDisplay"
+                    aria-expanded="false" aria-controls="obsidianGraphDisplay">
+              <i class="bi bi-eye me-2" aria-hidden="true"></i>Display
+            </button>
+          </h2>
+          <div id="obsidianGraphDisplay" class="accordion-collapse collapse"
+               data-bs-parent="#obsidianGraphAccordion">
+            <div class="accordion-body py-2">
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" role="switch"
+                       id="obsidian-graph-arrows" checked />
+                <label class="form-check-label" for="obsidian-graph-arrows">Link arrows</label>
+              </div>
+              <label class="form-label small mb-1" for="obsidian-graph-node-size">Node size</label>
+              <input type="range" class="form-range" id="obsidian-graph-node-size"
+                     min="0.5" max="2" step="0.05" value="1" />
+              <label class="form-label small mb-1" for="obsidian-graph-link-width">Link thickness</label>
+              <input type="range" class="form-range" id="obsidian-graph-link-width"
+                     min="0.5" max="3" step="0.1" value="1" />
+              <label class="form-label small mb-1" for="obsidian-graph-label-zoom">Label fade threshold</label>
+              <input type="range" class="form-range" id="obsidian-graph-label-zoom"
+                     min="0.4" max="2.5" step="0.05" value="1.25"
+                     aria-describedby="obsidian-graph-label-zoom-help" />
+              <p class="small text-secondary mb-0" id="obsidian-graph-label-zoom-help">
+                Lower shows labels sooner while zooming in.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed py-2" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#obsidianGraphForces"
+                    aria-expanded="false" aria-controls="obsidianGraphForces">
+              <i class="bi bi-magnet me-2" aria-hidden="true"></i>Forces
+            </button>
+          </h2>
+          <div id="obsidianGraphForces" class="accordion-collapse collapse"
+               data-bs-parent="#obsidianGraphAccordion">
+            <div class="accordion-body py-2">
+              <label class="form-label small mb-1" for="obsidian-graph-repulsion">Repel force</label>
+              <input type="range" class="form-range" id="obsidian-graph-repulsion"
+                     min="0.3" max="3" step="0.1" value="1" />
+              <label class="form-label small mb-1" for="obsidian-graph-link-distance">Link distance</label>
+              <input type="range" class="form-range" id="obsidian-graph-link-distance"
+                     min="0.4" max="2.5" step="0.1" value="1" />
+              <div class="form-check form-switch mb-0">
+                <input class="form-check-input" type="checkbox" role="switch"
+                       id="obsidian-graph-animate" checked />
+                <label class="form-check-label" for="obsidian-graph-animate">Animate layout</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex gap-2 p-2 border-top">
+        <button type="button" class="btn btn-outline-primary btn-sm flex-grow-1"
+                id="obsidian-graph-relayout">
+          <i class="bi bi-arrow-clockwise me-1" aria-hidden="true"></i>Re-run layout
+        </button>
+        <button type="button" class="btn btn-outline-secondary btn-sm"
+                id="obsidian-graph-reset"
+                title="Reset all graph settings to defaults">
+          Reset
+        </button>
+      </div>
+    </div>
   </div>
-  <span id="obsidian-graph-status" role="status"></span>
+  <div class="obsidian-graph-zoombar btn-group-vertical d-print-none" role="group" aria-label="Graph zoom controls">
+    <button type="button" class="btn btn-sm" id="obsidian-graph-zoom-in"
+            aria-label="Zoom in" title="Zoom in">
+      <i class="bi bi-plus-lg" aria-hidden="true"></i>
+    </button>
+    <button type="button" class="btn btn-sm" id="obsidian-graph-zoom-out"
+            aria-label="Zoom out" title="Zoom out">
+      <i class="bi bi-dash-lg" aria-hidden="true"></i>
+    </button>
+    <button type="button" class="btn btn-sm" id="obsidian-graph-fit"
+            aria-label="Reset view" title="Reset view (clears search)">
+      <i class="bi bi-aspect-ratio" aria-hidden="true"></i>
+    </button>
+    <button type="button" class="btn btn-sm" id="obsidian-graph-fullscreen"
+            aria-label="Toggle fullscreen" title="Toggle fullscreen" aria-pressed="false">
+      <i class="bi bi-arrows-fullscreen" aria-hidden="true"></i>
+    </button>
+  </div>
+  <div id="obsidian-graph-preview" class="card shadow-sm obsidian-graph-preview" hidden aria-hidden="true"></div>
 </div>
 
-<div id="obsidian-graph" role="group" aria-label="Site knowledge graph"></div>
-
-<div class="obsidian-graph-legend" aria-label="Graph legend">
-  <span><span class="swatch" style="background:#0d6efd"></span>Posts</span>
-  <span><span class="swatch" style="background:#198754"></span>Docs</span>
-  <span><span class="swatch" style="background:#6f42c1"></span>Notes</span>
-  <span><span class="swatch" style="background:#d63384"></span>Notebooks</span>
-  <span><span class="swatch" style="background:#fd7e14"></span>Quickstart</span>
-  <span><span class="swatch" style="background:#6c757d"></span>Pages</span>
-  <span><span class="swatch swatch-broken"></span>Broken links</span>
-</div>
+<p id="obsidian-graph-status" class="obsidian-graph-status" role="status"></p>
 
 <div class="obsidian-graph-tips">
   <strong>Tips:</strong> click a node to open the page · ⌘/Ctrl-click to
   open in a new tab · drag to reposition · scroll to zoom · hover to
-  highlight a node's neighborhood · type in the search box to filter.
+  preview a page and highlight its neighborhood · search supports
+  <code>tag:foo</code> and <code>path:docs</code> operators · the
+  <em>Graph settings</em> panel filters collections and tunes display
+  &amp; forces (persisted in your browser).
 </div>
 
 ## How it's built

@@ -1,0 +1,32 @@
+{
+  "slug": "obsidian-graph-revamp",
+  "base": "http://localhost:4000",
+  "scenarios": [
+    {
+      "state": "default",
+      "visible": 105,
+      "total": 187,
+      "stats": "82 of 164 pages 272 links 23 broken"
+    },
+    {
+      "state": "filtered",
+      "visible": 27,
+      "total": 187,
+      "stats": "4 of 164 pages 272 links 23 broken"
+    },
+    {
+      "state": "dark",
+      "visible": 105,
+      "total": 187,
+      "stats": "82 of 164 pages 272 links 23 broken"
+    },
+    {
+      "state": "local-depth-1",
+      "status": "12 pages · 15 links"
+    },
+    {
+      "state": "local-depth-2",
+      "status": "44 pages · 88 links"
+    }
+  ]
+}

@@ -23,6 +23,8 @@
   Opt-out: set `local_graph: false` in page front matter.
 
   Configurable depth: `local_graph_depth: 2` in page front matter (default 1).
+  The panel's depth selector (1–3) and incoming/outgoing switches override it
+  per-browser via localStorage (zer0.obsidianLocalGraph.v1).
   ===================================================================
 {%- endcomment -%}
 {%- comment -%} Shared visibility resolver — sets sidebar_enabled {%- endcomment -%}
@@ -63,8 +65,18 @@
           {%- if _graph_page -%}{%- break -%}{%- endif -%}
         {%- endfor -%}
       {%- endunless -%}
-      <div class="obsidian-local-graph-meta d-flex align-items-center justify-content-between gap-2 mb-3">
-        <span class="badge text-bg-secondary">Depth {{ lg_depth }}</span>
+      <div class="obsidian-local-graph-meta d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+        <div class="d-flex align-items-center gap-2">
+          <span class="small text-secondary">Depth</span>
+          <div class="btn-group btn-group-sm" role="group" aria-label="Graph depth">
+            {%- for d in (1..3) -%}
+            <input type="radio" class="btn-check" name="obsidianLgDepth"
+                   id="obsidian-lg-depth-{{ d }}" autocomplete="off"
+                   {% if d == lg_depth %}checked{% endif %} />
+            <label class="btn btn-outline-secondary" for="obsidian-lg-depth-{{ d }}">{{ d }}</label>
+            {%- endfor -%}
+          </div>
+        </div>
         {%- if _graph_page -%}
         <a href="{{ _graph_url | relative_url }}"
            class="btn btn-outline-primary btn-sm"
@@ -72,6 +84,20 @@
           <i class="bi bi-arrows-fullscreen me-1" aria-hidden="true"></i>Full graph
         </a>
         {%- endif -%}
+      </div>
+      <div class="d-flex flex-wrap column-gap-3 mb-2"
+           role="group"
+           aria-label="Link directions shown in the local graph">
+        <div class="form-check form-switch mb-0">
+          <input class="form-check-input" type="checkbox" role="switch"
+                 id="obsidian-lg-outgoing" checked />
+          <label class="form-check-label small" for="obsidian-lg-outgoing">Outgoing</label>
+        </div>
+        <div class="form-check form-switch mb-0">
+          <input class="form-check-input" type="checkbox" role="switch"
+                 id="obsidian-lg-incoming" checked />
+          <label class="form-check-label small" for="obsidian-lg-incoming">Incoming</label>
+        </div>
       </div>
       <div id="obsidian-local-graph"
            data-depth="{{ lg_depth }}"
