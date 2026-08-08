@@ -36,7 +36,7 @@ runs:
 
     - name: Cache bundler gems
       if: inputs.bundler-cache == 'true'
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: vendor/bundle
         key: bundle-${{ runner.os }}-ruby-${{ inputs.ruby-version }}-${{ hashFiles('Gemfile.lock') }}
