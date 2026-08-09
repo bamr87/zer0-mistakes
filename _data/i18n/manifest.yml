@@ -123,6 +123,42 @@ pages:
       sha: a775b0ade22f246a36d259244f1f5b943dde204b99abf4b009dc5535f64910e0
       translated_at: '2026-08-05T04:49:25Z'
       prompt_version: 1
+  "/about/settings/environment/":
+    source: pages/_about/settings/environment.md
+    sha: d549e2c4bc76bfa103e4add312ca996bec22a4f4dbcd0cab6f39a52e4c4dd283
+    fr:
+      url: "/fr/about/settings/environment/"
+      path: fr/about/settings/environment.md
+      sha: d549e2c4bc76bfa103e4add312ca996bec22a4f4dbcd0cab6f39a52e4c4dd283
+      translated_at: '2026-08-07T04:21:42Z'
+      prompt_version: 1
+  "/about/settings/navigation/":
+    source: pages/_about/settings/navigation.md
+    sha: b10d3f9a24917ae90aac2fab789030298218fa3b2c7387e86ab76ed7550d6d65
+    fr:
+      url: "/fr/about/settings/navigation/"
+      path: fr/about/settings/navigation.md
+      sha: b10d3f9a24917ae90aac2fab789030298218fa3b2c7387e86ab76ed7550d6d65
+      translated_at: '2026-08-07T04:21:50Z'
+      prompt_version: 1
+  "/about/settings/theme-preview/":
+    source: pages/_about/settings/theme-preview.md
+    sha: e283d9e761c8c119f7da16822be3350cb474165ac7d77f0f19eb131ef8899a1e
+    fr:
+      url: "/fr/about/settings/theme-preview/"
+      path: fr/about/settings/theme-preview.md
+      sha: e283d9e761c8c119f7da16822be3350cb474165ac7d77f0f19eb131ef8899a1e
+      translated_at: '2026-08-07T04:22:01Z'
+      prompt_version: 1
+  "/about/settings/theme/":
+    source: pages/_about/settings/theme.md
+    sha: 227959a1fb26065382267f3f6653cb1054a8e188c6547fcfc3a1653744e62f26
+    fr:
+      url: "/fr/about/settings/theme/"
+      path: fr/about/settings/theme.md
+      sha: 227959a1fb26065382267f3f6653cb1054a8e188c6547fcfc3a1653744e62f26
+      translated_at: '2026-08-07T04:22:21Z'
+      prompt_version: 1
   "/about/stats-enhancement-summary/":
     source: pages/_about/features/STATS_ENHANCEMENT_SUMMARY.md
     sha: f147f2bc3a5485f3c2a7411afa30331ac539266c801ccddc802c678a1f4a7846
@@ -131,6 +167,24 @@ pages:
       path: fr/about/features/STATS_ENHANCEMENT_SUMMARY.md
       sha: f147f2bc3a5485f3c2a7411afa30331ac539266c801ccddc802c678a1f4a7846
       translated_at: '2026-08-05T04:43:41Z'
+      prompt_version: 1
+  "/about/stats/":
+    source: pages/_about/stats.md
+    sha: 06c9f75195626ba67992484fa0828a5069f3ee3e3bb65554b25eb84c852361c5
+    fr:
+      url: "/fr/about/stats/"
+      path: fr/about/stats.md
+      sha: 06c9f75195626ba67992484fa0828a5069f3ee3e3bb65554b25eb84c852361c5
+      translated_at: '2026-08-07T04:22:24Z'
+      prompt_version: 1
+  "/about/theme/":
+    source: pages/_about/theme.md
+    sha: f1e267f28ce1caf97a711da592946025d3a20d91fabd862a7b214f193af4cec9
+    fr:
+      url: "/fr/about/theme/"
+      path: fr/about/theme.md
+      sha: f1e267f28ce1caf97a711da592946025d3a20d91fabd862a7b214f193af4cec9
+      translated_at: '2026-08-07T04:22:26Z'
       prompt_version: 1
   "/authors/":
     source: pages/_about/authors/index.md
@@ -1077,6 +1131,51 @@ pages:
       sha: 799accfecc9193b3fda568f654a5d92fa7537b76a614965c4fa7e313719f40ea
       translated_at: '2026-07-23T17:07:12Z'
       prompt_version: 1
+  "/notes/bash-shortcuts/":
+    source: pages/_notes/bash-shortcuts.md
+    sha: df7e96ad0959b46f3f4ac5187976e99b0f3d0d6a456d7316b186ac1c90aebc51
+    fr:
+      url: "/fr/notes/bash-shortcuts/"
+      path: fr/notes/bash-shortcuts.md
+      sha: df7e96ad0959b46f3f4ac5187976e99b0f3d0d6a456d7316b186ac1c90aebc51
+      translated_at: '2026-08-07T04:26:30Z'
+      prompt_version: 1
+  "/notes/docker-commands/":
+    source: pages/_notes/docker-commands.md
+    sha: 1ba8b6bf9456b044c5201303a845f34bd9e0c725151d361d207f8c92f2cc307b
+    fr:
+      url: "/fr/notes/docker-commands/"
+      path: fr/notes/docker-commands.md
+      sha: 1ba8b6bf9456b044c5201303a845f34bd9e0c725151d361d207f8c92f2cc307b
+      translated_at: '2026-08-07T04:26:39Z'
+      prompt_version: 1
+  "/notes/git-cheatsheet/":
+    source: pages/_notes/git-cheatsheet.md
+    sha: 7bb8c6a3044317fdda365b29fcc422b778bae092d740e0dfbfa3b02cd64b548a
+    fr:
+      url: "/fr/notes/git-cheatsheet/"
+      path: fr/notes/git-cheatsheet.md
+      sha: 7bb8c6a3044317fdda365b29fcc422b778bae092d740e0dfbfa3b02cd64b548a
+      translated_at: '2026-08-07T04:26:49Z'
+      prompt_version: 1
+  "/notes/jekyll-front-matter/":
+    source: pages/_notes/jekyll-front-matter.md
+    sha: ff5f5fc707147f2a55877457befc62a00c7404a38a7e0b2e7ac43b6bdfd8df43
+    fr:
+      url: "/fr/notes/jekyll-front-matter/"
+      path: fr/notes/jekyll-front-matter.md
+      sha: ff5f5fc707147f2a55877457befc62a00c7404a38a7e0b2e7ac43b6bdfd8df43
+      translated_at: '2026-08-07T04:27:07Z'
+      prompt_version: 1
+  "/notes/markdown-tips/":
+    source: pages/_notes/markdown-tips.md
+    sha: 1c8fdb9919a60952661b9a19a92632487fe09e04b7f33dc7e1dce217c70bf1c2
+    fr:
+      url: "/fr/notes/markdown-tips/"
+      path: fr/notes/markdown-tips.md
+      sha: 1c8fdb9919a60952661b9a19a92632487fe09e04b7f33dc7e1dce217c70bf1c2
+      translated_at: '2026-08-07T04:27:26Z'
+      prompt_version: 1
   "/posts/2024/06/17/wizard-topples-capitalist-dominance-ingeniously/":
     source: pages/_posts/2024-06-17-wizard-topples-capitalist-dominance-ingeniously.md
     sha: 5ba30eeebe4fc18de2391258cbf49f96cf529ff1e7b92a2859877f1f87819ecd
@@ -1347,8 +1446,57 @@ pages:
       sha: 74a066845c5f18d5e97f4ae523fc0cba8ded6a96a2b8c28d9ac874de4b4e5212
       translated_at: '2026-07-23T16:56:33Z'
       prompt_version: 1
-ui_text: {}
+  "/quickstart/":
+    source: pages/_quickstart/index.md
+    sha: 2555308eac40feb9be440ee8287840ef6ed93fed5e8df08a135cecbc0479611b
+    fr:
+      url: "/fr/quickstart/"
+      path: fr/quickstart/index.md
+      sha: 2555308eac40feb9be440ee8287840ef6ed93fed5e8df08a135cecbc0479611b
+      translated_at: '2026-08-07T04:23:04Z'
+      prompt_version: 1
+  "/quickstart/github-setup/":
+    source: pages/_quickstart/github-setup.md
+    sha: b3a9ae56e1bf4b539656a08a0cf1b649530aaba8a300e369c82c430239539cb5
+    fr:
+      url: "/fr/quickstart/github-setup/"
+      path: fr/quickstart/github-setup.md
+      sha: b3a9ae56e1bf4b539656a08a0cf1b649530aaba8a300e369c82c430239539cb5
+      translated_at: '2026-08-07T04:22:44Z'
+      prompt_version: 1
+  "/quickstart/jekyll-setup/":
+    source: pages/_quickstart/jekyll-setup.md
+    sha: fe93ed13d358ba6e0551d1d178ccf91d339bc9e4989b5b8eca7c14f875c8de88
+    fr:
+      url: "/fr/quickstart/jekyll-setup/"
+      path: fr/quickstart/jekyll-setup.md
+      sha: fe93ed13d358ba6e0551d1d178ccf91d339bc9e4989b5b8eca7c14f875c8de88
+      translated_at: '2026-08-07T04:23:18Z'
+      prompt_version: 1
+  "/quickstart/machine-setup/":
+    source: pages/_quickstart/machine-setup.md
+    sha: 02d96d7d4b84d14f75e95ef459874aa4ee9148af179b3154f388db962e2e7221
+    fr:
+      url: "/fr/quickstart/machine-setup/"
+      path: fr/quickstart/machine-setup.md
+      sha: 02d96d7d4b84d14f75e95ef459874aa4ee9148af179b3154f388db962e2e7221
+      translated_at: '2026-08-07T04:23:32Z'
+      prompt_version: 1
+  "/quickstart/personalization/":
+    source: pages/_quickstart/personalization.md
+    sha: 630342fcd53022ce0191d47f9cb12cb5c25138e1a0e877c0b43d6f3bbcfd473e
+    fr:
+      url: "/fr/quickstart/personalization/"
+      path: fr/quickstart/personalization.md
+      sha: 630342fcd53022ce0191d47f9cb12cb5c25138e1a0e877c0b43d6f3bbcfd473e
+      translated_at: '2026-08-07T04:25:50Z'
+      prompt_version: 1
+ui_text:
+  fr:
+    sha: 20ae0d4de9677f6a111dea02c95dec46599acc4a4d3d54a06ea8553004710361
+    translated_at: '2026-08-07T04:27:46Z'
+    prompt_version: 1
 source_lang: en
 languages:
 - fr
-updated_at: '2026-08-05T04:49:52Z'
+updated_at: '2026-08-07T04:27:47Z'
