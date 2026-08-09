@@ -31,9 +31,16 @@ jobs:
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
 
+      # NOTE: this job deliberately does not check out the repo (it runs under
+      # pull_request_target, so the PR head is untrusted). Without a checkout
+      # `gh` has no git remote to infer the repository from and fails with
+      # "fatal: not a git repository" — GH_REPO gives it the target explicitly.
+      # Same class of gotcha as the `gh pr diff`/`gh pr merge` notes in
+      # auto-merge.yml.
       - name: Label patch/minor bumps for auto-merge
         if: steps.metadata.outputs.update-type != 'version-update:semver-major'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
           PR: ${{ github.event.pull_request.number }}
         run: gh pr edit "$PR" --add-label auto-merge
