@@ -18,7 +18,7 @@
     "@axe-core/playwright": "^4.11.1",
     "@playwright/test": "^1.49.0",
     "bootstrap": "5.3.3",
-    "mermaid": "10.9.6",
+    "mermaid": "10.9.8",
     "sass": "^1.80.0"
   }
 }
