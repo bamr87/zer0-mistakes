@@ -3,8 +3,8 @@
 # Regenerated automatically during each release (scripts/bin/release).
 # Consumers use this file via scripts/bin/audit-consumer to detect drift.
 
-version: "1.27.0"
-generated_at: "2026-07-29T17:22:39Z"
+version: "1.28.0"
+generated_at: "2026-08-09T22:41:08Z"
 
 # Directories owned by this theme.  A consumer file in any of these paths
 # that is not declared in the consumer's .theme-overrides.yml is flagged
@@ -63,7 +63,7 @@ file_checksums:
   _layouts/book-abc.html: "4db8ba66ad8e29ad3e3f4ef5c6458a68ad442cb017854d5e20630bccb89e0895"
   _layouts/book-story.html: "8322452b691d22f1afc8f9540b37bb06736e9500ed0bf905cc6d825577ab3199"
   _layouts/book.html: "a289086003afd5646d4d7ae5833fe649898409d4c914981f6ddec45e6ca7364e"
-  _layouts/collection.html: "a68c4754fc2489e100e0ffee251c81c7869feafba2bdefdb2c4f5737a11d72cc"
+  _layouts/collection.html: "65971e63500ce180418236fa9a37328bb4db704434bffd8fbcdfcce5aa548260"
   _layouts/default.html: "b6650cc50005af6bb08efcd803da1b892da51c3fe08db4d48065d40bf9ebf328"
   _layouts/home.html: "a701a158fad1fa8bd8adcf51dd36fd6bc0d045662842743c7c3cde2e838d29a9"
   _layouts/index.html: "a1d426a155fd4c29520a5ede0cb2c83f283c0f34b491db104b1036ce55af3b20"
@@ -173,7 +173,7 @@ file_checksums:
   _includes/navigation/admin-nav.html: "7fd0129d78e2d7e99bf922b229150f9eae01cea35550c68ce194899fdb9e5155"
   _includes/navigation/breadcrumbs.html: "d13fd0fb490eb88b0dc7c3585f7578effa619f07f155f1a7a64ac77191bd1377"
   _includes/navigation/local-graph-fab.html: "ab647224f631c8e21631850408d057527d2300c0f9215ffeecd42a5f22f8cde6"
-  _includes/navigation/local-graph.html: "f66776b96c1b9e161ba1f21ed13564d6bf84e078a67bb0cb6c20a81da9662504"
+  _includes/navigation/local-graph.html: "14703bf11e1ce7b6cdd6261c81ff6a324ec614dcffb763e500f328b9be4b9728"
   _includes/navigation/nav-tree.html: "906c51994b84438cd8597cc25ebcea70fce2bb5257c7e66ee6b2dd54c980653c"
   _includes/navigation/nav_list.html: "3450b282840fb5a82e0ab01d636e3b38e0bdbcc4233cca3e2f2a80fc7c71e3c5"
   _includes/navigation/navbar-mobile-quicklinks.html: "a2c23bbc41f8b27eae1a869893f1e7ecf881f12e34164ab7f8dc4a178011a45e"
@@ -188,7 +188,7 @@ file_checksums:
   _includes/navigation/sidebar-right.html: "bb45a7d0ca8f2e3b20a9d3fe73b21b8c97143bc24316ce67a79c2ea7a7d53ad9"
   _includes/navigation/toc-fab.html: "be18ae16f8edf50aaaa84aada225aa7baf1057788de2ec9c0c39d6268030603b"
   _includes/navigation/unified-drawer.html: "199ff796377d540bdb58155b73d5c32fb0c225af71d4a72e56bddd7cfa777c5b"
-  _includes/obsidian/full-graph.html: "5db8cec09ba193cf0a6040cf03573ed8146ac0ed6a70b3204233ae33be8b914c"
+  _includes/obsidian/full-graph.html: "1ec7fa4813518664c581f124deae5931f9d7691d5599c841cafa38bcff3565cf"
   _includes/search-data.json: "1824d7a8ed778cdab23c502098cfce7dc687c18cede989294dbc989bfb15187e"
   _includes/setup/wizard.html: "12ae6e65401422b3bfa20659f3779a1c82de273f9e1adb5bcb62f521c4f908c7"
   _includes/stats/stats-categories.html: "444a6f241a95b750310eaf076b9da4e03a1d637c72f6ed2a5dcc83791ca2def6"
@@ -216,7 +216,7 @@ file_checksums:
   _sass/core/_docs-layout.scss: "adb29a60417ec2d13dd93501e6072d93ec021281de9711ed44fa76f4587def6f"
   _sass/core/_nav-tree.scss: "b696b2c5fd91dd5180010c59b38e5242c3b7a7258e889fc3c1ca16c2a53310c2"
   _sass/core/_navbar.scss: "96b9b0d91e3dc76ceb6200d21339a4d6184c0861310d94e81e9abf47076649e1"
-  _sass/core/_obsidian.scss: "be4934f8d7c8294bf55e7f65ee2a98ddf2c2f9da3b148af55ce52e76141d3e02"
+  _sass/core/_obsidian.scss: "557582682f3b37f6cbb3bac36ef2a90390d71604ef172262b5742d0c1aeba55b"
   _sass/core/_offcanvas-panels.scss: "f4c9e1046923ce036108424c7a9eeae92a54a4e95b31274283b6abf170fc846c"
   _sass/core/_sidebar-categories.scss: "7d75034b075f78dc3c604ccd190e25f98989a8162339ad9e837df82d57870eec"
   _sass/core/_sidebar-extras.scss: "24c7987e5c2ececfe20125eec43e62aa15f10a06af5df616d32d4009032a0415"
@@ -280,8 +280,8 @@ file_checksums:
   assets/js/nanobar.min.js: "0ea600560d8c3b31d51228bfa17430af7bebd99db3f07dfbeeb667c92327cac7"
   assets/js/nav-editor.js: "4baa58537bdd0685341f20b4b0abbc22b313bf9ddc74c3b9e01fc8bc0e3585da"
   assets/js/navigation.js: "3442bcd0ebd2b11dc066ffd8faabc30cc4c5541089f06000fe91c95018939b50"
-  assets/js/obsidian-graph.js: "2f1754452ed13f6cd467c9233d719719a8103b0c3f98827fad4bca3b15f6a438"
-  assets/js/obsidian-local-graph.js: "ec25df3504efe1d09b26cf5b5c392519a18570608a5f243c054aba9fb12336a8"
+  assets/js/obsidian-graph.js: "94847c3e50c760478c8762913bfbd85e73a229ef33aaaab68b0361c3ea239408"
+  assets/js/obsidian-local-graph.js: "2a1bc1397c7488416d726fec79f44f049ba1d066f15488f00ec46d585f6cea28"
   assets/js/obsidian-wiki-links.js: "6af3e8b8a464a59c4123ba8b81c3b93d036b9444bc83b23d522e83c295c756ff"
   assets/js/page-feedback.js: "022d9208d139d9bc57675f148a77e6c60a09a6c270272645beab2d29482a3e14"
   assets/js/palette-generator.js: "e8056a72ccbe5107112011fedc78d41335a2c4a6143c2d01fa2f21321817d9e2"
