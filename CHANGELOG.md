@@ -42,8 +42,21 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Giscus comments were broken sitewide** — every page rendering the comment
+widget showed `An error occurred: giscus is not installed on this repository` instead of a comment box, on `zer0-mistakes.com` and locally, because the [giscus GitHub App](https://github.com/apps/giscus) was never installed on the repository. The `_config.yml` values were all correct (`data-repo-id` and `data-category-id` both verified against the live GitHub API, repo public, Discussions enabled, `Announcements` category), which is exactly why it went unnoticed: **no check in the repo could see it**. The `Giscus Comments Configuration` core test only inspects config keys and Liquid, and `test/visual/features/comments.spec.js` stubs `giscus.app/client.js` out entirely — so all 16 core tests passed at 100% against a completely non-functional feature.
+- **Docs claimed the widget "won't load on localhost"** — it does. Giscus keys
+off the `data-repo` attribute, not the page origin, so the iframe renders and reports real errors locally. The false claim told developers to expect a non-working widget in dev, which is precisely what hid this bug. `pages/_docs/features/giscus-comments.md` now documents localhost as a genuine end-to-end check, with a table mapping each rendered state to its cause.
+
 ### Added
 
+- **`giscus-discussions doctor`** — a new subcommand that verifies the entire
+comment chain end-to-end: repository public, Discussions enabled, `giscus.enabled: true`, `data-repo-id` actually belonging to this repo (the fork trap), `data-category-id` resolving to a real category, and — the part nothing else could check — whether the giscus GitHub App is installed, by asking the Giscus API itself. Exits non-zero with a specific remediation line per failure.
+- **Giscus health check in CI** — `.github/workflows/giscus-digest.yml` (already
+scheduled weekly) now runs `doctor` and fails the job with a summary when comments are down, so a sitewide comment outage surfaces on its own instead of waiting for a reader to report it.
+- **Troubleshooting: "The giscus app is not installed"** — a new section in the
+feature docs with captured screenshots of both the broken widget and the giscus.app configurator rejecting the repo, an explanation of why this step is uniquely easy to skip, a fork-specific warning, and a copy-pasteable `curl` health check.
 - **Obsidian graph frontend revamp** — the graph views now mirror the Obsidian
   desktop experience. The full graph page gains a floating **Graph settings**
   card (Filters / Display / Forces): search with `tag:`/`path:` operators,
