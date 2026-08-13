@@ -73,14 +73,22 @@ resolve_category() {
 owner_of() { printf '%s' "${1%%/*}"; }
 name_of()  { printf '%s' "${1##*/}"; }
 
-# Normalize a page path so it matches a Giscus pathname-mapped discussion title.
+# Normalize a page path into the *Giscus term* — the string Giscus actually
+# searches discussion titles for under data-mapping="pathname".
+#
+# Giscus uses location.pathname with the leading slash STRIPPED. Verified live:
+# /posts/2025/01/21/remote-work-revolution/ produces a widget iframe with
+#   term=posts%2F2025%2F01%2F21%2Fremote-work-revolution%2F
+# This previously prepended a slash instead, so `seed` created titles Giscus
+# would never match, and `--page` lookups missed every thread Giscus itself
+# created. Callers may still pass a leading slash or a full URL.
 normalize_page() {
     local p="$1"
     if [[ "$p" == *"://"* ]]; then
         p="${p#*://}"   # strip scheme
-        p="/${p#*/}"    # strip host, keep path with a leading slash
+        p="${p#*/}"     # strip host, keep the path
     fi
-    [[ "$p" != /* ]] && p="/$p"
+    p="${p#/}"          # Giscus's pathname term carries no leading slash
     printf '%s' "$p"
 }
 
@@ -96,15 +104,26 @@ repo_node_id() {
       --jq '.data.repository.id'
 }
 
-# Find a discussion number whose title equals the (normalized) page path.
-# Echoes the number, or nothing if not found.
+# Find a discussion number whose title matches the page. Echoes the number, or
+# nothing if not found.
+#
+# Matches four title spellings so lookups work against BOTH threads Giscus
+# created (its own term: no leading slash) and any hand-made or legacy thread
+# titled with a leading slash. Paginates: the previous version declared $after
+# and pageInfo but never used them, so on a site with more than 100 discussions
+# it silently failed to find anything past the first page.
 discussion_number_for_page() {
-    local page; page="$(normalize_page "$1")"
-    local page_noslash="${page%/}"
-    gh api graphql -f query='
-      query($owner:String!,$name:String!,$categoryId:ID,$after:String){
+    local term; term="$(normalize_page "$1")"
+    # Match four spellings so lookups work against BOTH threads Giscus created
+    # (its own term: no leading slash) and hand-made/legacy threads titled with
+    # one. --paginate walks every page: the previous version declared $after and
+    # pageInfo but never used them, so on a site with more than 100 discussions
+    # it silently failed to find anything past the first page.
+    local matches
+    matches="$(gh api graphql --paginate -f query='
+      query($owner:String!,$name:String!,$categoryId:ID,$endCursor:String){
         repository(owner:$owner,name:$name){
-          discussions(first:100,after:$after,categoryId:$categoryId){
+          discussions(first:100,after:$endCursor,categoryId:$categoryId){
             nodes{ number title }
             pageInfo{ hasNextPage endCursor }
           }
@@ -112,8 +131,16 @@ discussion_number_for_page() {
       }' -F owner="$(owner_of "$REPO_NWO")" -F name="$(name_of "$REPO_NWO")" \
          -f categoryId="$CATEGORY_ID" \
       --jq ".data.repository.discussions.nodes[]
-            | select(.title == \"$page\" or .title == \"$page_noslash\")
-            | .number" | head -1
+            | select(.title == \"${term}\"
+                  or .title == \"${term%/}\"
+                  or .title == \"/${term}\"
+                  or .title == \"/${term%/}\")
+            | .number" 2>/dev/null)"
+    # First match only. Deliberately NOT `| head -1` on the pipeline: head
+    # closes the pipe early, gh dies on SIGPIPE, and `set -o pipefail` then
+    # aborts the whole script inside the surrounding command substitution.
+    local nl=$'\n'
+    printf '%s' "${matches%%${nl}*}"
 }
 
 discussion_node_id() {
@@ -261,7 +288,12 @@ resolve_number_arg() {
     elif [[ -n "$page" ]]; then
         resolve_category
         NUMBER="$(discussion_number_for_page "$page")"
-        [[ -z "$NUMBER" ]] && error "No discussion found for page '$page'. Seed one with: $0 seed --page '$page' --title ... --body ..."
+        # `if`, not `[[ ... ]] && error`: as the last statement in this branch a
+        # false test returns 1, which `set -e` turns into a silent script abort
+        # on the SUCCESS path.
+        if [[ -z "$NUMBER" ]]; then
+            error "No discussion found for page '$page'. Seed one with: $0 seed --page '$page' --title ... --body ..."
+        fi
     else
         error "Provide --number N, --url URL, or --page PATH."
     fi
@@ -402,7 +434,9 @@ cmd_post() {
     elif [[ -n "$page" ]]; then
         resolve_category
         NUMBER="$(discussion_number_for_page "$page")"
-        [[ -z "$NUMBER" ]] && error "No discussion for page '$page'. Seed one first: $0 seed --page '$page' ..."
+        if [[ -z "$NUMBER" ]]; then
+            error "No discussion for page '$page'. Seed one first: $0 seed --page '$page' ..."
+        fi
     else
         error "post: provide --number N, --url URL, or --page PATH."
     fi
