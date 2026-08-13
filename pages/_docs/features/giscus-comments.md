@@ -123,9 +123,13 @@ Blog posts (`pages/_posts/`, the `article` layout) and notes/notebooks show comm
 
    What you should see, and what each state means:
 
+   A working widget looks like this — reaction bar, comment count, a Write/Preview box and a **Sign in with GitHub** button:
+
+   ![The Comments section of a post rendering the working Giscus widget: "0 reactions" with a reaction button, "0 comments", a Write/Preview tabbed comment box reading "Sign in to comment", and a green "Sign in with GitHub" button](/assets/images/docs/features/giscus/widget-working.png)
+
    | What renders under the "Comments" heading | Meaning |
    |---|---|
-   | The comment box and any existing thread | Fully working |
+   | The comment box and any existing thread (above) | Fully working |
    | `An error occurred: giscus is not installed on this repository` | The [giscus app](https://github.com/apps/giscus) is not installed — see [Troubleshooting](#the-giscus-app-is-not-installed) |
    | `An error occurred: Discussion not found` | Normal for a page nobody has commented on yet; Giscus creates the discussion on the first comment |
    | Nothing at all | `enabled: false`, `comments: false` on the page, or the include isn't reached |
@@ -223,6 +227,33 @@ tells Claude Code how to read a page's thread, draft a maintainer reply with the
 ```
 
 The script reads the repository from `gh repo view` and the category from `_config.yml`; override with `--repo` / `--category-id` (or the `GISCUS_REPO` / `GISCUS_CATEGORY_ID` env vars) when working against a fork. Writes (`seed`, `post`) are no-ops under `--dry-run`. A read-only [`giscus-digest.yml`](https://github.com/bamr87/zer0-mistakes/blob/main/.github/workflows/giscus-digest.yml) workflow surfaces new comment activity in the Actions job summary.
+
+---
+
+## How a page maps to a discussion
+
+With `data-mapping="pathname"` and `data-strict="1"` (both fixed in the include), Giscus finds a page's thread by matching the discussion **title** against the page's pathname — with the **leading slash removed**.
+
+For `https://zer0-mistakes.com/posts/2025/01/21/remote-work-revolution/` the widget requests:
+
+```text
+term=posts/2025/01/21/remote-work-revolution/
+```
+
+So the discussion backing that page must be titled exactly:
+
+```text
+posts/2025/01/21/remote-work-revolution/
+```
+
+**not** `/posts/2025/01/21/remote-work-revolution/`. This matters in exactly two situations:
+
+- **You seed a thread by hand.** A leading slash produces a discussion Giscus
+  will never find — the page keeps showing an empty widget while the discussion sits in the category looking correct. `giscus-discussions seed --page /any/form/` normalizes this for you; passing `--title` yourself does not.
+- **You migrate or rename discussions.** Retitle to the no-leading-slash form or
+  the mapping breaks silently.
+
+In the normal case you never think about this: Giscus creates the discussion itself, correctly titled, the first time a visitor comments.
 
 ---
 
