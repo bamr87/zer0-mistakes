@@ -6,6 +6,7 @@
 # `giscus-conversation` skill drives to build conversations from page comments.
 #
 # Subcommands:
+#   doctor       Verify the comment chain end-to-end (app installed, IDs match)
 #   categories   List the repo's discussion categories + node IDs (setup helper)
 #   list         List discussions in the configured Giscus category
 #   thread       Print a discussion's full conversation (comments + replies)
@@ -72,14 +73,22 @@ resolve_category() {
 owner_of() { printf '%s' "${1%%/*}"; }
 name_of()  { printf '%s' "${1##*/}"; }
 
-# Normalize a page path so it matches a Giscus pathname-mapped discussion title.
+# Normalize a page path into the *Giscus term* — the string Giscus actually
+# searches discussion titles for under data-mapping="pathname".
+#
+# Giscus uses location.pathname with the leading slash STRIPPED. Verified live:
+# /posts/2025/01/21/remote-work-revolution/ produces a widget iframe with
+#   term=posts%2F2025%2F01%2F21%2Fremote-work-revolution%2F
+# This previously prepended a slash instead, so `seed` created titles Giscus
+# would never match, and `--page` lookups missed every thread Giscus itself
+# created. Callers may still pass a leading slash or a full URL.
 normalize_page() {
     local p="$1"
     if [[ "$p" == *"://"* ]]; then
         p="${p#*://}"   # strip scheme
-        p="/${p#*/}"    # strip host, keep path with a leading slash
+        p="${p#*/}"     # strip host, keep the path
     fi
-    [[ "$p" != /* ]] && p="/$p"
+    p="${p#/}"          # Giscus's pathname term carries no leading slash
     printf '%s' "$p"
 }
 
@@ -95,15 +104,26 @@ repo_node_id() {
       --jq '.data.repository.id'
 }
 
-# Find a discussion number whose title equals the (normalized) page path.
-# Echoes the number, or nothing if not found.
+# Find a discussion number whose title matches the page. Echoes the number, or
+# nothing if not found.
+#
+# Matches four title spellings so lookups work against BOTH threads Giscus
+# created (its own term: no leading slash) and any hand-made or legacy thread
+# titled with a leading slash. Paginates: the previous version declared $after
+# and pageInfo but never used them, so on a site with more than 100 discussions
+# it silently failed to find anything past the first page.
 discussion_number_for_page() {
-    local page; page="$(normalize_page "$1")"
-    local page_noslash="${page%/}"
-    gh api graphql -f query='
-      query($owner:String!,$name:String!,$categoryId:ID,$after:String){
+    local term; term="$(normalize_page "$1")"
+    # Match four spellings so lookups work against BOTH threads Giscus created
+    # (its own term: no leading slash) and hand-made/legacy threads titled with
+    # one. --paginate walks every page: the previous version declared $after and
+    # pageInfo but never used them, so on a site with more than 100 discussions
+    # it silently failed to find anything past the first page.
+    local matches
+    matches="$(gh api graphql --paginate -f query='
+      query($owner:String!,$name:String!,$categoryId:ID,$endCursor:String){
         repository(owner:$owner,name:$name){
-          discussions(first:100,after:$after,categoryId:$categoryId){
+          discussions(first:100,after:$endCursor,categoryId:$categoryId){
             nodes{ number title }
             pageInfo{ hasNextPage endCursor }
           }
@@ -111,8 +131,16 @@ discussion_number_for_page() {
       }' -F owner="$(owner_of "$REPO_NWO")" -F name="$(name_of "$REPO_NWO")" \
          -f categoryId="$CATEGORY_ID" \
       --jq ".data.repository.discussions.nodes[]
-            | select(.title == \"$page\" or .title == \"$page_noslash\")
-            | .number" | head -1
+            | select(.title == \"${term}\"
+                  or .title == \"${term%/}\"
+                  or .title == \"/${term}\"
+                  or .title == \"/${term%/}\")
+            | .number" 2>/dev/null)"
+    # First match only. Deliberately NOT `| head -1` on the pipeline: head
+    # closes the pipe early, gh dies on SIGPIPE, and `set -o pipefail` then
+    # aborts the whole script inside the surrounding command substitution.
+    local nl=$'\n'
+    printf '%s' "${matches%%${nl}*}"
 }
 
 discussion_node_id() {
@@ -260,7 +288,12 @@ resolve_number_arg() {
     elif [[ -n "$page" ]]; then
         resolve_category
         NUMBER="$(discussion_number_for_page "$page")"
-        [[ -z "$NUMBER" ]] && error "No discussion found for page '$page'. Seed one with: $0 seed --page '$page' --title ... --body ..."
+        # `if`, not `[[ ... ]] && error`: as the last statement in this branch a
+        # false test returns 1, which `set -e` turns into a silent script abort
+        # on the SUCCESS path.
+        if [[ -z "$NUMBER" ]]; then
+            error "No discussion found for page '$page'. Seed one with: $0 seed --page '$page' --title ... --body ..."
+        fi
     else
         error "Provide --number N, --url URL, or --page PATH."
     fi
@@ -401,7 +434,9 @@ cmd_post() {
     elif [[ -n "$page" ]]; then
         resolve_category
         NUMBER="$(discussion_number_for_page "$page")"
-        [[ -z "$NUMBER" ]] && error "No discussion for page '$page'. Seed one first: $0 seed --page '$page' ..."
+        if [[ -z "$NUMBER" ]]; then
+            error "No discussion for page '$page'. Seed one first: $0 seed --page '$page' ..."
+        fi
     else
         error "post: provide --number N, --url URL, or --page PATH."
     fi
@@ -449,6 +484,167 @@ cmd_post() {
 }
 
 # ---------------------------------------------------------------------------
+# Subcommand: doctor (verify the whole comment chain actually works)
+# ---------------------------------------------------------------------------
+
+# Why this exists: every other check in this repo is static. The core test
+# validates _config.yml keys and the include's Liquid; the Playwright spec stubs
+# giscus.app out entirely. All of them pass with a 100% broken widget, because
+# the two things that actually break comments in practice live on GitHub's side,
+# not in any file here:
+#   1. the giscus GitHub App not being installed on the repo
+#   2. a data-repo-id / data-category-id that doesn't belong to this repo
+# `doctor` asks Giscus itself, which is the only authoritative answer.
+
+# Read a scalar from the giscus block of _config.yml (same block-scoping as
+# config_category_id, which only handles data-category-id).
+config_giscus_key() {
+    local key="$1"
+    [[ -f "$CONFIG_FILE" ]] || return 0
+    # Block-scoped to the top-level `giscus:` mapping, then strip the key, any
+    # trailing comment, and surrounding quotes (\047 is awk for a single quote).
+    awk -v k="${key}:" '
+        /^giscus:/ { f=1; next }
+        f && /^[^[:space:]#]/ { f=0 }
+        f && $1 == k {
+            sub(/^[[:space:]]*[^:]+:[[:space:]]*/, "")
+            sub(/[[:space:]]+#.*$/, "")
+            gsub(/^["\047]+|["\047]+[[:space:]]*$/, "")
+            print
+            exit
+        }' "$CONFIG_FILE"
+}
+
+# Non-fatal error: report and let the caller accumulate failures. common.sh's
+# error() exits, which would stop doctor at the first problem instead of
+# reporting every one.
+doctor_fail() { printf '\033[0;31m[FAIL]\033[0m %s\n' "$*" >&2; }
+
+# One graphql call, one field out — avoids needing a standalone jq.
+gql_repo_field() {
+    gh api graphql -f query="$1" \
+        -F owner="$(owner_of "$REPO_NWO")" -F name="$(name_of "$REPO_NWO")" \
+        --jq "$2" 2>/dev/null
+}
+
+REPO_Q='
+  query($owner:String!,$name:String!){
+    repository(owner:$owner,name:$name){
+      id isPrivate hasDiscussionsEnabled
+      discussionCategories(first:50){ nodes{ id name } }
+    }
+  }'
+
+cmd_doctor() {
+    local category_name=""
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --repo) REPO_NWO="$2"; shift 2 ;;
+            --category-id) CATEGORY_ID="$2"; shift 2 ;;
+            --category) category_name="$2"; shift 2 ;;
+            *) error "doctor: unknown option '$1'" ;;
+        esac
+    done
+    resolve_repo
+    require_command gh "install: https://cli.github.com/"
+    require_command curl "install: https://curl.se/"
+
+    local failed=0
+    info "Checking the Giscus comment chain for $REPO_NWO"
+
+    # --- 1. Repo-side facts, straight from the GitHub API -------------------
+    local real_repo_id is_private discussions_on
+    real_repo_id="$(gql_repo_field "$REPO_Q" '.data.repository.id')"
+    [[ -z "$real_repo_id" ]] && error "Could not query $REPO_NWO via gh. Check the repo name and \`gh auth status\`."
+    is_private="$(gql_repo_field "$REPO_Q" '.data.repository.isPrivate')"
+    discussions_on="$(gql_repo_field "$REPO_Q" '.data.repository.hasDiscussionsEnabled')"
+
+    if [[ "$is_private" == "false" ]]; then
+        success "Repository is public"
+    else
+        doctor_fail "Repository is PRIVATE — visitors cannot read the discussions"; failed=1
+    fi
+
+    if [[ "$discussions_on" == "true" ]]; then
+        success "Discussions are enabled"
+    else
+        doctor_fail "Discussions are NOT enabled (Settings → General → Features → Discussions)"; failed=1
+    fi
+
+    # --- 2. Config IDs must belong to THIS repo ----------------------------
+    local cfg_repo_id cfg_category_id cfg_enabled
+    cfg_repo_id="$(config_giscus_key 'data-repo-id')"
+    cfg_category_id="${CATEGORY_ID:-$(config_giscus_key 'data-category-id')}"
+    cfg_enabled="$(config_giscus_key 'enabled')"
+
+    if [[ "$cfg_enabled" == "true" ]]; then
+        success "_config.yml has giscus.enabled: true"
+    else
+        doctor_fail "_config.yml has giscus.enabled: '${cfg_enabled:-unset}' — comments will not render"
+        failed=1
+    fi
+
+    if [[ -z "$cfg_repo_id" ]]; then
+        doctor_fail "_config.yml is missing giscus.data-repo-id"; failed=1
+    elif [[ "$cfg_repo_id" == "$real_repo_id" ]]; then
+        success "data-repo-id matches $REPO_NWO ($real_repo_id)"
+    else
+        doctor_fail "data-repo-id '$cfg_repo_id' does NOT belong to $REPO_NWO (expected '$real_repo_id'). Forked without regenerating it?"
+        failed=1
+    fi
+
+    # Resolve the configured category id to a name (proves it exists on this repo).
+    local cat_name=""
+    if [[ -n "$cfg_category_id" ]]; then
+        cat_name="$(gql_repo_field "$REPO_Q" \
+            ".data.repository.discussionCategories.nodes[] | select(.id == \"${cfg_category_id}\") | .name")"
+    fi
+    if [[ -n "$cat_name" ]]; then
+        success "data-category-id resolves to the '$cat_name' category"
+    else
+        doctor_fail "data-category-id '${cfg_category_id:-unset}' is not a category on $REPO_NWO (see: $0 categories)"
+        failed=1
+    fi
+    [[ -n "$category_name" ]] && cat_name="$category_name"
+
+    # --- 3. The authoritative check: ask Giscus ----------------------------
+    # Only Giscus knows whether its GitHub App is installed on the repo. No
+    # amount of config inspection can substitute for this call.
+    local api_out
+    api_out="$(curl -s -m 20 -G https://giscus.app/api/discussions \
+        --data-urlencode "repo=$REPO_NWO" \
+        --data-urlencode "category=${cat_name:-Announcements}" \
+        --data-urlencode "term=/" \
+        -d "number=0&strict=true&first=1" 2>/dev/null || true)"
+
+    if [[ -z "$api_out" ]]; then
+        warn "Could not reach giscus.app (offline?) — app-installation check SKIPPED"
+    elif printf '%s' "$api_out" | grep -q 'giscus is not installed'; then
+        doctor_fail "The giscus GitHub App is NOT installed on $REPO_NWO — comments are broken sitewide."
+        info "    Install: https://github.com/apps/giscus → Configure → grant access to $REPO_NWO"
+        failed=1
+    elif printf '%s' "$api_out" | grep -qi '"error"'; then
+        local msg
+        msg="$(printf '%s' "$api_out" | sed -E 's/.*"error"[[:space:]]*:[[:space:]]*"([^"]*)".*/\1/')"
+        # "Discussion not found" is the healthy answer for a page nobody has
+        # commented on yet — Giscus creates the thread on the first comment.
+        if printf '%s' "$msg" | grep -qi 'not found'; then
+            success "Giscus app is installed (no thread for '/' yet — created on first comment)"
+        else
+            doctor_fail "Giscus reported: $msg"; failed=1
+        fi
+    else
+        success "Giscus app is installed and serving this repo"
+    fi
+
+    echo
+    if [[ "$failed" -ne 0 ]]; then
+        error "Giscus chain is BROKEN — comments will not work for visitors."
+    fi
+    success "Giscus chain is healthy — comments will render for visitors."
+}
+
+# ---------------------------------------------------------------------------
 # Usage / dispatch
 # ---------------------------------------------------------------------------
 
@@ -460,6 +656,7 @@ USAGE:
     ./scripts/bin/giscus-discussions <subcommand> [options]
 
 SUBCOMMANDS:
+    doctor                     Verify the whole chain works (app installed, IDs match)
     categories                 List discussion categories + node IDs (setup helper)
     list [--json]              List discussions in the Giscus category
     thread <target> [--json]   Show a discussion's full conversation
@@ -481,6 +678,7 @@ ENVIRONMENT:
     GISCUS_CATEGORY_ID         Default --category-id
 
 EXAMPLES:
+    ./scripts/bin/giscus-discussions doctor
     ./scripts/bin/giscus-discussions categories
     ./scripts/bin/giscus-discussions list
     ./scripts/bin/giscus-discussions thread --page /posts/2025/01/21/remote-work-revolution/
@@ -497,6 +695,7 @@ main() {
     [[ $# -gt 0 ]] && shift || true
     case "$sub" in
         categories) cmd_categories "$@" ;;
+        doctor)     cmd_doctor "$@" ;;
         list)       cmd_list "$@" ;;
         thread)     cmd_thread "$@" ;;
         draft)      cmd_draft "$@" ;;

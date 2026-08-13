@@ -55,10 +55,20 @@ Before setting up Giscus, ensure you have:
 
 ### Step 2: Install Giscus App
 
+**This is the step most likely to be silently skipped** — nothing in your repository can declare it, and no test or build can detect that it's missing. Without it the widget renders an error instead of a comment box, no matter how correct `_config.yml` is.
+
 1. Visit [https://github.com/apps/giscus](https://github.com/apps/giscus)
-2. Click **Install**
-3. Select your repository
-4. Authorize the installation
+2. Click **Install** (or **Configure**, if you've installed it on another account before)
+3. Select the account that owns the repository
+4. Grant access — either **All repositories** or **Only select repositories** including this one
+5. Verify it took effect:
+
+   ```bash
+   ./scripts/bin/giscus-discussions doctor
+   ```
+
+> **Forking this theme?** A fork does **not** inherit the upstream repo's app
+> installation, and the `data-repo-id` / `data-category-id` in `_config.yml` still point at `bamr87/zer0-mistakes`. You must install the app on your own repo *and* regenerate both IDs.
 
 ### Step 3: Get Configuration Values
 
@@ -108,8 +118,37 @@ Blog posts (`pages/_posts/`, the `article` layout) and notes/notebooks show comm
 
    Expected: a `data-repo-id="..."` attribute carrying your real ID. An empty `data-repo-id=""` means the `giscus` block is missing or the key is misspelled.
 
-3. Serve the site (`docker-compose up`) and open a post. The Giscus widget loads
-from GitHub, so it only fully renders on a public, deployed URL — on `localhost:4000` you can confirm the `<script src="https://giscus.app/client.js">` tag is present even though the embedded thread won't load.
+3. Serve the site (`docker-compose up`) and open a post. **The widget does load on
+`localhost`** — Giscus keys off the `data-repo` attribute, not the page's origin, so the iframe renders and reports real errors locally. This makes localhost a genuine end-to-end check, not just a "is the tag there?" check.
+
+   What you should see, and what each state means:
+
+   A working widget looks like this — reaction bar, comment count, a Write/Preview box and a **Sign in with GitHub** button:
+
+   ![The Comments section of a post rendering the working Giscus widget: "0 reactions" with a reaction button, "0 comments", a Write/Preview tabbed comment box reading "Sign in to comment", and a green "Sign in with GitHub" button](/assets/images/docs/features/giscus/widget-working.png)
+
+   | What renders under the "Comments" heading | Meaning |
+   |---|---|
+   | The comment box and any existing thread (above) | Fully working |
+   | `An error occurred: giscus is not installed on this repository` | The [giscus app](https://github.com/apps/giscus) is not installed — see [Troubleshooting](#the-giscus-app-is-not-installed) |
+   | `An error occurred: Discussion not found` | Normal for a page nobody has commented on yet; Giscus creates the discussion on the first comment |
+   | Nothing at all | `enabled: false`, `comments: false` on the page, or the include isn't reached |
+
+   You will not be able to *sign in and post* from `localhost` (GitHub's OAuth redirect is bound to the deployed origin), but everything up to that point is faithful.
+
+4. Confirm the full chain — repo public, Discussions on, **app installed**, category valid —
+   with one request, no browser needed:
+
+   ```bash
+   # Replace the repo and category with your own
+   curl -s -G https://giscus.app/api/discussions \
+     --data-urlencode "repo=bamr87/zer0-mistakes" \
+     --data-urlencode "category=Announcements" \
+     --data-urlencode "term=/" \
+     -d "number=0&strict=true&first=1" | head -c 200
+   ```
+
+   A JSON payload with a `discussion` key means the chain is healthy. `{"error":"giscus is not installed on this repository"}` means the app is missing — the config can be perfect and comments will still be broken.
 
 ---
 
@@ -163,11 +202,14 @@ comments: false
 Because comments are GitHub Discussions, you can read, draft, and reply to them from the terminal — and Claude Code can drive the whole flow. Two pieces ship with the theme:
 
 - **`scripts/bin/giscus-discussions`** — a `gh`-powered engine with subcommands
-  `categories`, `list`, `thread`, `draft`, `seed`, and `post`.
+  `doctor`, `categories`, `list`, `thread`, `draft`, `seed`, and `post`.
 - **The `giscus-conversation` skill** (`.github/skills/giscus-conversation/`) —
 tells Claude Code how to read a page's thread, draft a maintainer reply with the reader's context in mind, and publish it.
 
 ```bash
+# Is the whole chain healthy? (app installed, IDs match, category valid)
+./scripts/bin/giscus-discussions doctor
+
 # What categories exist (and their node IDs for _config.yml)?
 ./scripts/bin/giscus-discussions categories
 
@@ -188,6 +230,33 @@ The script reads the repository from `gh repo view` and the category from `_conf
 
 ---
 
+## How a page maps to a discussion
+
+With `data-mapping="pathname"` and `data-strict="1"` (both fixed in the include), Giscus finds a page's thread by matching the discussion **title** against the page's pathname — with the **leading slash removed**.
+
+For `https://zer0-mistakes.com/posts/2025/01/21/remote-work-revolution/` the widget requests:
+
+```text
+term=posts/2025/01/21/remote-work-revolution/
+```
+
+So the discussion backing that page must be titled exactly:
+
+```text
+posts/2025/01/21/remote-work-revolution/
+```
+
+**not** `/posts/2025/01/21/remote-work-revolution/`. This matters in exactly two situations:
+
+- **You seed a thread by hand.** A leading slash produces a discussion Giscus
+  will never find — the page keeps showing an empty widget while the discussion sits in the category looking correct. `giscus-discussions seed --page /any/form/` normalizes this for you; passing `--title` yourself does not.
+- **You migrate or rename discussions.** Retitle to the no-leading-slash form or
+  the mapping breaks silently.
+
+In the normal case you never think about this: Giscus creates the discussion itself, correctly titled, the first time a visitor comments.
+
+---
+
 ## Migration from Disqus
 
 If migrating from Disqus:
@@ -201,6 +270,32 @@ If migrating from Disqus:
 ---
 
 ## Troubleshooting
+
+### The giscus app is not installed
+
+The single most common way a *correctly configured* site still shows no comments. Every value in `_config.yml` can be right — repo public, Discussions on, valid IDs — and the widget will still render only this:
+
+![The Comments section of a published post showing the text "An error occurred: giscus is not installed on this repository" where the comment box should be](/assets/images/docs/features/giscus/widget-error-not-installed.png)
+
+The [giscus.app](https://giscus.app/) configurator reports the same thing when you type the repository in — it checks all three prerequisites at once:
+
+![The Repository step on giscus.app listing its three requirements (public repo, giscus app installed, Discussions enabled) with "bamr87/zer0-mistakes" entered and a red error reading "Cannot use giscus on this repository. Make sure all of the above criteria has been met."](/assets/images/docs/features/giscus/configurator-repo-check.png)
+
+**Why it happens:** installing the app is a one-time action on the *repository*, not something any file in the repo can declare. Nothing in `_config.yml`, no test, and no Jekyll build can perform or detect it — so it is easy to complete every documented "configuration" step and still be missing the prerequisite. Forks are especially exposed: a fork inherits the config but **not** the upstream repo's app installation.
+
+**Fix:** install the app at [github.com/apps/giscus](https://github.com/apps/giscus) → **Configure** → select the account → grant access to the repository (either "All repositories" or "Only select repositories" including this one).
+
+**Verify** without opening a browser — this is the check worth putting in your setup notes:
+
+```bash
+curl -s -G https://giscus.app/api/discussions \
+  --data-urlencode "repo=OWNER/REPO" \
+  --data-urlencode "category=Announcements" \
+  --data-urlencode "term=/" \
+  -d "number=0&strict=true&first=1" | head -c 200
+```
+
+`{"error":"giscus is not installed on this repository"}` → still missing. Any JSON with a `discussion` key → installed and working.
 
 ### Comments Not Appearing
 

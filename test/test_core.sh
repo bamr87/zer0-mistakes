@@ -609,7 +609,17 @@ test_liquid_templates() {
 }
 
 test_giscus_comments() {
-    log_info "Validating Giscus comments configuration and wiring..."
+    # SCOPE: this test is static-only — it proves the config keys exist, the
+    # include interpolates them, and the layouts gate on them. It canNOT tell
+    # you whether comments actually work, because the two things that break
+    # them in practice live on GitHub's side and are invisible to a build:
+    #   1. the giscus GitHub App not being installed on the repo
+    #   2. a data-repo-id/data-category-id belonging to a DIFFERENT repo (forks)
+    # Both leave every assertion below passing while the widget renders only
+    # "An error occurred: giscus is not installed on this repository".
+    # The end-to-end check is `./scripts/bin/giscus-discussions doctor`, run
+    # weekly by .github/workflows/giscus-digest.yml.
+    log_info "Validating Giscus comments configuration and wiring (static checks only)..."
 
     cd "$PROJECT_ROOT"
 

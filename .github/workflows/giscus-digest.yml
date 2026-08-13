@@ -30,6 +30,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      # The widget's health lives on GitHub's side (app installation, ID
+      # ownership), so no build-time test can catch it — the core test and the
+      # Playwright spec both pass with a completely broken widget. This is the
+      # only check in CI that would notice comments being down sitewide.
+      - name: Verify the Giscus chain is healthy
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -uo pipefail
+          if ./scripts/bin/giscus-discussions doctor 2>&1 | tee /tmp/giscus-doctor.log; then
+            echo "GISCUS_HEALTHY=true" >> "$GITHUB_ENV"
+          else
+            echo "GISCUS_HEALTHY=false" >> "$GITHUB_ENV"
+            {
+              echo "# ⚠️ Giscus comments are BROKEN"
+              echo
+              echo '```'
+              cat /tmp/giscus-doctor.log
+              echo '```'
+              echo
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Build Giscus comment digest
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -70,3 +93,9 @@ jobs:
               echo "> No discussions in the Giscus category yet."
             fi
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail if comments are broken
+        if: env.GISCUS_HEALTHY == 'false'
+        run: |
+          echo "::error::The Giscus comment chain is broken — see the job summary."
+          exit 1
