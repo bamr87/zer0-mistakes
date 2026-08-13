@@ -22,8 +22,7 @@ Comments on this site are stored as **GitHub Discussions** (via Giscus, mapped b
 - The Giscus category id in `_config.yml` (`giscus.data-category-id`) must match a
   real category — verify with `giscus-discussions categories`.
 
-**Check all of the above at once** with `./scripts/bin/giscus-discussions doctor`. If a
-user reports comments are missing/broken, run this FIRST — it distinguishes a config problem from the far more common "the giscus GitHub App isn't installed on the repo", which no build-time test in this repo can detect.
+**Check all of the above at once** with `./scripts/bin/giscus-discussions doctor`. If a user reports comments are missing/broken, run this FIRST — it distinguishes a config problem from the far more common "the giscus GitHub App isn't installed on the repo", which no build-time test in this repo can detect.
 
 ## Inputs (source of truth)
 
