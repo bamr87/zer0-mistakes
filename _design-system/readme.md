@@ -123,12 +123,15 @@ Then `<i class="bi bi-rocket-takeoff"></i>`. This is the **authentic** icon set 
 - `tokens/colors.css` · `typography.css` · `spacing.css` · `radius.css` · `breakpoints.css` · `shadows.css` · `motion.css` · `layers.css` · `skins.css` — all design tokens.
 - `assets/` — brand imagery: the pixel-wizard hero art, checkpoints, info banner, gravatar, favicon.
 
-**Design System tab cards** — small specimen HTML files (tagged `@dsCard`) grouped into **Colors**, **Type**, **Spacing**, **Brand**, **Components**, and the UI-kit product group. They render live against `styles.css`.
+**Design System tab cards** — small specimen HTML files (tagged `@dsCard`) grouped into **Colors**, **Type**, **Spacing**, **Motion**, **Layers**, **Brand**, **Components**, and the UI-kit product group. They render live against `styles.css`.
 
 **Components** (`components/` — `window.Zer0MistakesDesignSystem_e75121`)
 - `core/Button`, `core/Badge` — buttons (primary/secondary/outline/ghost, sizes, with-icon, disabled) and badges/pills.
+- `core/Fab` (+ `FabStack`) — the circular bottom-right floating action buttons (back-to-top, chat, TOC, local-graph) on the fab-size/fab-shadow/layer tokens.
 - `surfaces/Card`, `surfaces/FeatureCard` — borderless soft-shadow card and the landing feature card with tinted icon chip.
+- `surfaces/PostCard` — the blog preview card: 4:3 image (gradient placeholder), breaking/featured badges, category, two-line excerpt, icon meta row.
 - `feedback/Callout` — Bootstrap-alert-style callout / Obsidian callout.
+- `feedback/Skeleton` — token-built shimmer placeholders (text/title/button/avatar/thumbnail), dark-mode-safe, reduced-motion aware.
 - `forms/Input` — labelled text input with focus ring + help/invalid states.
 
 **UI kit** (`ui_kits/website/`)
