@@ -1,0 +1,27 @@
+<!-- @dsCard group="Type" viewport="700x250" name="Display & Headings" subtitle="Fluid clamp() scale on the system-ui stack" -->
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; font-family: var(--zer0-font-sans); color: var(--zer0-color-ink);
+         background: var(--zer0-color-bg); padding: 22px; }
+  .line { display: flex; align-items: baseline; gap: 14px; padding: 5px 0;
+          border-bottom: 1px solid var(--zer0-color-border-translucent); }
+  .line:last-child { border-bottom: 0; }
+  .tag { font-family: var(--zer0-font-mono); font-size: 11px; color: var(--zer0-color-ink-muted);
+         width: 132px; flex: none; }
+  .d4 { font-size: var(--zer0-text-display-4); font-weight: 700; line-height: 1.1; }
+  .h1 { font-size: var(--zer0-text-h1); font-weight: 700; line-height: var(--zer0-leading-tight); }
+  .h2 { font-size: var(--zer0-text-h2); font-weight: 700; line-height: var(--zer0-leading-tight); }
+  .h3 { font-size: var(--zer0-text-h3); font-weight: 600; line-height: var(--zer0-leading-tight); }
+</style>
+</head>
+<body>
+  <div class="line"><span class="tag">display-4 · 700</span><span class="d4">From zero to hero</span></div>
+  <div class="line"><span class="tag">h1 · clamp 2–3rem</span><span class="h1">A theme that just works</span></div>
+  <div class="line"><span class="tag">h2 · clamp</span><span class="h2">Why choose zer0-mistakes?</span></div>
+  <div class="line"><span class="tag">h3 · clamp</span><span class="h3">Docker-first development</span></div>
+</body>
+</html>

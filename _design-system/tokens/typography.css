@@ -1,0 +1,42 @@
+/* ============================================================================
+   Typography tokens — zer0-mistakes
+   ----------------------------------------------------------------------------
+   Source: _sass/tokens/_typography.scss. zer0-mistakes ships with the native
+   Bootstrap 5.3 system-font stack (no webfonts) for instant, zero-flash text,
+   and a fluid clamp() heading scale that stays readable phone→desktop without
+   media queries. The mono stack is Bootstrap's --bs-font-monospace.
+   ============================================================================ */
+
+:root {
+  /* Font families --------------------------------------------------------- */
+  --zer0-font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --zer0-font-mono: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Weights --------------------------------------------------------------- */
+  --zer0-font-weight-regular: 400; /* @kind other */
+  --zer0-font-weight-medium: 500; /* @kind other */
+  --zer0-font-weight-semibold: 600; /* @kind other */
+  --zer0-font-weight-bold: 700; /* @kind other */
+
+  /* Body sizes ------------------------------------------------------------ */
+  --zer0-text-base: 1rem;     /* 16px @kind spacing */
+  --zer0-text-sm: 0.875rem;   /* 14px @kind spacing */
+  --zer0-text-lg: 1.125rem;   /* 18px @kind spacing */
+
+  /* Fluid heading scale (clamp: min, preferred, max) ---------------------- */
+  --zer0-text-h1: clamp(2rem, 4vw + 1rem, 3rem); /* @kind spacing */
+  --zer0-text-h2: clamp(1.5rem, 2.5vw + 1rem, 2.25rem); /* @kind spacing */
+  --zer0-text-h3: clamp(1.25rem, 1.5vw + 1rem, 1.75rem); /* @kind spacing */
+  --zer0-text-h4: clamp(1.125rem, 1vw + 1rem, 1.4rem); /* @kind spacing */
+  --zer0-text-h5: 1.125rem; /* @kind spacing */
+  --zer0-text-h6: 1rem; /* @kind spacing */
+
+  /* Display sizes (Bootstrap .display-*) ---------------------------------- */
+  --zer0-text-display-4: clamp(2.5rem, 6vw, 3.5rem); /* @kind spacing */
+  --zer0-text-display-5: clamp(2rem, 5vw, 3rem); /* @kind spacing */
+
+  /* Line heights ---------------------------------------------------------- */
+  --zer0-leading-tight: 1.2; /* @kind other */
+  --zer0-leading-normal: 1.55; /* @kind other */
+  --zer0-leading-loose: 1.75; /* @kind other */
+}

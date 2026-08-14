@@ -1,0 +1,38 @@
+<!-- @dsCard group="Colors" viewport="700x190" name="Brand & Primary" subtitle="Signature blue, accent, violet link, logo palette" -->
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; font-family: var(--zer0-font-sans); color: var(--zer0-color-ink);
+         background: var(--zer0-color-bg); padding: 20px; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .sw { flex: 1 1 0; min-width: 96px; border-radius: var(--zer0-radius-lg);
+        overflow: hidden; border: 1px solid var(--zer0-color-border); }
+  .chip { height: 60px; }
+  .meta { padding: 8px 10px; font-size: 12px; line-height: 1.35; }
+  .name { font-weight: 600; }
+  .hex { color: var(--zer0-color-ink-muted); font-family: var(--zer0-font-mono); font-size: 11px; }
+  h4 { margin: 0 0 14px; font-size: 13px; font-weight: 600; letter-spacing: .04em;
+       text-transform: uppercase; color: var(--zer0-color-ink-muted); }
+</style>
+</head>
+<body>
+  <h4>Brand &amp; logo palette</h4>
+  <div class="row">
+    <div class="sw"><div class="chip" style="background:var(--zer0-color-primary)"></div>
+      <div class="meta"><div class="name">Primary</div><div class="hex">#007bff</div></div></div>
+    <div class="sw"><div class="chip" style="background:var(--zer0-color-accent)"></div>
+      <div class="meta"><div class="name">Accent</div><div class="hex">#ffe484</div></div></div>
+    <div class="sw"><div class="chip" style="background:var(--zer0-color-link)"></div>
+      <div class="meta"><div class="name">Link violet</div><div class="hex">#712cf9</div></div></div>
+    <div class="sw"><div class="chip" style="background:var(--zer0-logo-red)"></div>
+      <div class="meta"><div class="name">Logo red</div><div class="hex">#a11111</div></div></div>
+    <div class="sw"><div class="chip" style="background:var(--zer0-logo-yellow)"></div>
+      <div class="meta"><div class="name">Logo yellow</div><div class="hex">#ffe900</div></div></div>
+    <div class="sw"><div class="chip" style="background:var(--zer0-logo-teal)"></div>
+      <div class="meta"><div class="name">Logo teal</div><div class="hex">#376986</div></div></div>
+  </div>
+</body>
+</html>

@@ -45,6 +45,35 @@ test.describe('Theme stylesheets', { tag: '@critical' }, () => {
     expect(primary.length).toBeGreaterThan(0);
   });
 
+  // Guards the --zer0-* token layer (_sass/tokens/ ↔ _design-system/tokens/):
+  // tokens must resolve at runtime and components must consume them.
+  test('design tokens (--zer0-*) resolve and are consumed', async ({ page }) => {
+    await page.goto('/');
+    const tokens = await page.evaluate(() => {
+      const cs = getComputedStyle(document.documentElement);
+      const probe = document.createElement('div');
+      probe.className = 'landing-feature-card';
+      document.body.appendChild(probe);
+      const cardRadius = getComputedStyle(probe).borderRadius;
+      probe.remove();
+      return {
+        radius: cs.getPropertyValue('--zer0-radius').trim(),
+        radiusXl: cs.getPropertyValue('--zer0-radius-xl').trim(),
+        space3: cs.getPropertyValue('--zer0-space-3').trim(),
+        primary: cs.getPropertyValue('--zer0-color-primary').trim(),
+        motionBase: cs.getPropertyValue('--zer0-motion-duration-base').trim(),
+        cardRadius,
+      };
+    });
+    expect(tokens.radius).toBe('0.375rem');
+    expect(tokens.radiusXl).toBe('0.75rem');
+    expect(tokens.space3).toBe('1rem');
+    expect(tokens.primary.length).toBeGreaterThan(0);
+    expect(tokens.motionBase.length).toBeGreaterThan(0);
+    // .landing-feature-card consumes --zer0-radius-xl (0.75rem → 12px)
+    expect(tokens.cardRadius).toBe('12px');
+  });
+
   test('homepage does not reference common third-party CDNs for core assets', async ({ page }) => {
     await page.goto('/');
     const html = await page.content();

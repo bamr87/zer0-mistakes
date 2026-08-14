@@ -1,0 +1,46 @@
+<!-- @dsCard group="Spacing" viewport="700x180" name="Radii & Elevation" subtitle="Corner radii and the soft shadow scale" -->
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; font-family: var(--zer0-font-sans); color: var(--zer0-color-ink);
+         background: var(--zer0-color-bg-elevated); padding: 22px; }
+  .grid { display: flex; gap: 28px; }
+  .col { flex: 1; }
+  h4 { margin: 0 0 14px; font-size: 13px; font-weight: 600; letter-spacing: .04em;
+       text-transform: uppercase; color: var(--zer0-color-ink-muted); }
+  .row { display: flex; gap: 14px; align-items: flex-end; }
+  .tile { width: 56px; height: 56px; background: var(--zer0-color-bg);
+          border: 1px solid var(--zer0-color-border); }
+  .shadowtile { width: 56px; height: 56px; background: var(--zer0-color-bg);
+          border-radius: var(--zer0-radius); }
+  .lbl { font-family: var(--zer0-font-mono); font-size: 10px; color: var(--zer0-color-ink-muted);
+         margin-top: 8px; text-align: center; }
+</style>
+</head>
+<body>
+  <div class="grid">
+    <div class="col">
+      <h4>Radii</h4>
+      <div class="row">
+        <div><div class="tile" style="border-radius:var(--zer0-radius-sm)"></div><div class="lbl">sm</div></div>
+        <div><div class="tile" style="border-radius:var(--zer0-radius)"></div><div class="lbl">base</div></div>
+        <div><div class="tile" style="border-radius:var(--zer0-radius-lg)"></div><div class="lbl">lg</div></div>
+        <div><div class="tile" style="border-radius:var(--zer0-radius-xl)"></div><div class="lbl">xl .75</div></div>
+        <div><div class="tile" style="border-radius:var(--zer0-radius-circle)"></div><div class="lbl">circle</div></div>
+      </div>
+    </div>
+    <div class="col">
+      <h4>Elevation</h4>
+      <div class="row">
+        <div><div class="shadowtile" style="box-shadow:var(--zer0-shadow-xs)"></div><div class="lbl">xs</div></div>
+        <div><div class="shadowtile" style="box-shadow:var(--zer0-shadow-sm)"></div><div class="lbl">sm</div></div>
+        <div><div class="shadowtile" style="box-shadow:var(--zer0-shadow-md)"></div><div class="lbl">md</div></div>
+        <div><div class="shadowtile" style="box-shadow:var(--zer0-shadow-lg)"></div><div class="lbl">lg</div></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

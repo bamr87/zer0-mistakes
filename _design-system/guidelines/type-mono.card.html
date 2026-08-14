@@ -1,0 +1,27 @@
+<!-- @dsCard group="Type" viewport="700x160" name="Monospace & Code" subtitle="SFMono stack — commands, code, inline tokens" -->
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; font-family: var(--zer0-font-sans); color: var(--zer0-color-ink);
+         background: var(--zer0-color-bg); padding: 22px; }
+  h4 { margin: 0 0 12px; font-size: 13px; font-weight: 600; letter-spacing: .04em;
+       text-transform: uppercase; color: var(--zer0-color-ink-muted); }
+  pre { margin: 0 0 12px; font-family: var(--zer0-font-mono); font-size: 13px;
+        background: var(--zer0-color-code-bg); color: var(--zer0-color-ink);
+        border: 1px solid var(--zer0-color-border); border-radius: var(--zer0-radius-lg);
+        padding: 12px 14px; overflow: auto; }
+  p { margin: 0; font-size: 14px; line-height: 1.6; }
+  code { font-family: var(--zer0-font-mono); font-size: .9em; color: var(--zer0-color-code-ink);
+         background: var(--zer0-color-code-bg); padding: .12em .4em; border-radius: 4px; }
+</style>
+</head>
+<body>
+  <h4>Monospace &amp; code</h4>
+  <pre>curl -fsSL https://raw.githubusercontent.com/.../install.sh | bash
+docker-compose up   <span style="color:var(--zer0-color-ink-muted)"># http://localhost:4000</span></pre>
+  <p>Inline tokens like <code>_config.yml</code>, <code>remote_theme</code>, and <code>⌘K</code> use the code-ink magenta on the tertiary surface.</p>
+</body>
+</html>

@@ -110,7 +110,8 @@ Tokens are CSS custom properties prefixed with `--zer0-`. They default to Bootst
 | `_sass/tokens/_index.scss` | Barrel import |
 | `_sass/tokens/_color.scss` | Brand, state, surface, ink, link, code colors |
 | `_sass/tokens/_spacing.scss` | Spacing scale, FAB offsets, sidebar widths |
-| `_sass/tokens/_typography.scss` | Fluid headings, font stacks, weights |
+| `_sass/tokens/_radius.scss` | Corner radii (`sm` → `xl`, `pill`, `circle`) |
+| `_sass/tokens/_typography.scss` | Fluid headings, display sizes, font stacks, weights |
 | `_sass/tokens/_shadow.scss` | Elevation scale (`xs` → `lg`, FAB, focus) |
 | `_sass/tokens/_motion.scss` | Durations, easings; flattens under `prefers-reduced-motion` |
 | `_sass/tokens/_breakpoints.scss` | `--zer0-bp-sm` … `--zer0-bp-xxl` (Bootstrap defaults) |
@@ -284,6 +285,19 @@ Open the theme style guide on a built site:
 - **Component preview:** `/about/settings/theme-preview/`
 
 These pages exercise typography, buttons, alerts, cards, forms, tabs, badges, code blocks, and navbar snippets across all skins.
+
+---
+
+## Claude Design round-trip
+
+The token layer is mirrored to a **Claude Design** project ([claude.ai/design](https://claude.ai/design/p/e75121c0-9210-42d1-ade3-2c8af9111cbe)) so design work can happen in either tool:
+
+- `_design-system/` in this repo is the git mirror of that project: `tokens/*.css` (plain-CSS twins of `_sass/tokens/*.scss`), React component specs (`components/`), guideline specimen cards (`guidelines/`), the marketing-site UI kit (`ui_kits/website/`), and the design guide (`readme.md` + `SKILL.md`).
+- `_sass/tokens/` stays the **source of truth** for token values. Change a token → update its `_design-system/tokens/*.css` twin in the same PR.
+- `scripts/design-system-check.rb` (run by the `core` test suite) fails CI when the two sides disagree, and also flags fallback-less `var(--zer0-…)` references to tokens that are never declared.
+- Push/pull mechanics, the file map, and what is deliberately *not* mirrored (compiled bundles, byte-identical imagery) live in [`_design-system/SYNC.md`](../../_design-system/SYNC.md).
+
+The mirror ships concrete `--bs-*`/`--bd-*` base values so Claude Design renders the system without Bootstrap loaded; in the theme those primitives come from the vendored Bootstrap CSS.
 
 ---
 

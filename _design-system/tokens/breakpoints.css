@@ -1,0 +1,16 @@
+/* ============================================================================
+   Breakpoint tokens — zer0-mistakes
+   ----------------------------------------------------------------------------
+   Source of truth: bamr87/zer0-mistakes _sass/tokens/_breakpoints.scss.
+   Mirrors Bootstrap 5 default breakpoints. CSS custom properties cannot be
+   used inside @media queries — these exist for JS / inline-style consumption
+   and for documentation.
+   ============================================================================ */
+
+:root {
+  --zer0-bp-sm: 576px; /* @kind spacing */
+  --zer0-bp-md: 768px; /* @kind spacing */
+  --zer0-bp-lg: 992px; /* @kind spacing */
+  --zer0-bp-xl: 1200px; /* @kind spacing */
+  --zer0-bp-xxl: 1400px; /* @kind spacing */
+}
