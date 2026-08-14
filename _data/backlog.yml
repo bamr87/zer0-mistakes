@@ -927,7 +927,7 @@ tasks:
     source: issue
     route: theme-ui
     summary: >-
-      The design-system alignment PR (ZER0-081) introduced --zer0-radius-* and
+      The design-system alignment PR #389 (ZER0-081) introduced --zer0-radius-* and
       --zer0-text-display-* tokens and adopted them in the partials the Claude
       Design system names (callout, landing, ui-enhancements). Hardcoded radii
       remain in _navbar.scss (~15 sites), notebooks.scss, code-copy.scss,
