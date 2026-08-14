@@ -32,9 +32,6 @@ If the user invokes this skill without any other guidance, ask them what they wa
 
 ## In Claude Code (Agent Skill)
 
-To render the React components, load the compiled bundle and read primitives off
-`window.Zer0MistakesDesignSystem_e75121` (see any `*.card.html` in `components/`
-for the exact script tags). For static mocks, copy the assets you need out of
-`assets/` and link `styles.css` for the tokens.
+To render the React components, load the compiled bundle and read primitives off `window.Zer0MistakesDesignSystem_e75121` (see any `*.card.html` in `components/` for the exact script tags). For static mocks, copy the assets you need out of `assets/` and link `styles.css` for the tokens.
 
 Source of truth upstream: https://github.com/bamr87/zer0-mistakes
