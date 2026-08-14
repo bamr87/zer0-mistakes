@@ -12,6 +12,23 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [Unreleased]
+
+### Added
+
+- **Claude Design system round-trip (ZER0-081)** — the design-token layer is now
+  aligned with the zer0-mistakes Claude Design project
+  (`claude.ai/design/p/e75121c0-9210-42d1-ade3-2c8af9111cbe`): new
+  `--zer0-radius-*`, `--zer0-logo-*`, and `--zer0-text-display-*` tokens in
+  `_sass/tokens/`; the design project vendored as a git mirror under
+  `_design-system/` (plain-CSS tokens, React component specs, guideline cards,
+  website UI kit — sync contract in `_design-system/SYNC.md`); and
+  `scripts/design-system-check.rb` wired into the core test suite so the theme
+  and the mirror cannot drift silently. Callouts, landing feature cards, mobile
+  nav, tables, and focus rings now consume the radius tokens (value-preserving —
+  rendered output unchanged, pinned by a new runtime token assertion in
+  `test/visual/core/styling.spec.js`).
+
 ## [1.28.0](https://github.com/bamr87/zer0-mistakes/compare/v1.27.0...v1.28.0) (2026-08-09)
 
 

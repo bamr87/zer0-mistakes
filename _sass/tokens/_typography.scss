@@ -28,6 +28,10 @@
   --zer0-text-h5: 1.125rem;
   --zer0-text-h6: 1rem;
 
+  // Display sizes (Bootstrap .display-* — hero titles) ---------------------
+  --zer0-text-display-4: clamp(2.5rem, 6vw, 3.5rem);
+  --zer0-text-display-5: clamp(2rem, 5vw, 3rem);
+
   // Line heights -----------------------------------------------------------
   --zer0-leading-tight: 1.2;
   --zer0-leading-normal: 1.55;

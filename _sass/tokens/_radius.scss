@@ -1,0 +1,21 @@
+// Feature: ZER0-081
+// ============================================================================
+// Radius tokens — semantic --zer0-radius-* custom properties
+// ----------------------------------------------------------------------------
+// Corner radii for every rounded surface, mirroring Bootstrap's
+// --bs-border-radius family so the theme and vanilla Bootstrap components
+// round identically. `xl` is the softer landing-feature-card radius; `pill`
+// and `circle` cover badges, chips, avatars, and FABs.
+//
+// Mirrored to the Claude Design project as tokens/radius.css — keep both in
+// lockstep (scripts/design-system-check.rb enforces parity).
+// ============================================================================
+
+:root {
+  --zer0-radius-sm: 0.25rem;
+  --zer0-radius: 0.375rem;
+  --zer0-radius-lg: 0.5rem;
+  --zer0-radius-xl: 0.75rem;   // landing feature cards
+  --zer0-radius-pill: 50rem;
+  --zer0-radius-circle: 50%;
+}

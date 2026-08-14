@@ -21,7 +21,8 @@ Semantic CSS custom properties (`--zer0-*`) used across zer0-mistakes. For archi
 | `_sass/tokens/_index.scss` | Barrel — imported first from `assets/css/main.scss` |
 | `_sass/tokens/_color.scss` | Brand, state, surface, ink, link colors |
 | `_sass/tokens/_spacing.scss` | Spacing scale + FAB offsets + sidebar widths |
-| `_sass/tokens/_typography.scss` | Fluid heading scale, line heights, weights |
+| `_sass/tokens/_radius.scss` | Corner radii (`sm` → `xl`, `pill`, `circle`) |
+| `_sass/tokens/_typography.scss` | Fluid heading + display scale, line heights, weights |
 | `_sass/tokens/_shadow.scss` | Elevation scale (`xs` → `lg`, FAB, focus) |
 | `_sass/tokens/_motion.scss` | Durations + easings; auto-flattens under `prefers-reduced-motion` |
 | `_sass/tokens/_breakpoints.scss` | `--zer0-bp-*` (Bootstrap 5 default values) |
@@ -83,6 +84,19 @@ theme_color:
 
 ---
 
+## Radius tokens
+
+| Token | Value | Notes |
+|-------|-------|-------|
+| `--zer0-radius-sm` | 0.25rem | Focus outlines, small chips |
+| `--zer0-radius` | 0.375rem | Default (callouts, nav links) |
+| `--zer0-radius-lg` | 0.5rem | Mobile nav panel, tables |
+| `--zer0-radius-xl` | 0.75rem | Landing feature cards |
+| `--zer0-radius-pill` | 50rem | Pills, badges |
+| `--zer0-radius-circle` | 50% | Icon chips, avatars, FABs |
+
+---
+
 ## Typography tokens
 
 | Token | Value |
@@ -91,6 +105,8 @@ theme_color:
 | `--zer0-font-mono` | `var(--bs-font-monospace, …)` |
 | `--zer0-text-h1` | `clamp(2rem, 4vw + 1rem, 3rem)` |
 | `--zer0-text-h2` | `clamp(1.5rem, 2.5vw + 1rem, 2.25rem)` |
+| `--zer0-text-display-4` | `clamp(2.5rem, 6vw, 3.5rem)` |
+| `--zer0-text-display-5` | `clamp(2rem, 5vw, 3rem)` |
 | `--zer0-leading-normal` | 1.55 |
 
 ---
@@ -129,7 +145,8 @@ See full tables in [design-system.md](design-system.md#layer-z-index-scale).
 
 ## Related documentation
 
-- [design-system.md](design-system.md) — full design system guide
+- [design-system.md](design-system.md) — full design system guide (incl. the Claude Design round-trip)
+- [`_design-system/SYNC.md`](../../_design-system/SYNC.md) — mirror + parity-check contract
 - [theming.md](theming.md) — skins and color modes
 - [configuration.md](configuration.md) — `_config.yml` keys
 - [extending.md](extending.md) — add new tokens

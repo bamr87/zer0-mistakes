@@ -1,0 +1,36 @@
+<!-- @dsCard group="Colors" viewport="700x190" name="Semantic State" subtitle="Bootstrap success / info / warning / danger" -->
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; font-family: var(--zer0-font-sans); color: var(--zer0-color-ink);
+         background: var(--zer0-color-bg); padding: 20px; }
+  .row { display: flex; gap: 12px; }
+  .sw { flex: 1 1 0; border-radius: var(--zer0-radius-lg); overflow: hidden;
+        border: 1px solid var(--zer0-color-border); }
+  .chip { height: 64px; }
+  .meta { padding: 8px 10px; font-size: 12px; }
+  .name { font-weight: 600; }
+  .hex { color: var(--zer0-color-ink-muted); font-family: var(--zer0-font-mono); font-size: 11px; }
+  h4 { margin: 0 0 14px; font-size: 13px; font-weight: 600; letter-spacing: .04em;
+       text-transform: uppercase; color: var(--zer0-color-ink-muted); }
+</style>
+</head>
+<body>
+  <h4>Semantic state</h4>
+  <div class="row">
+    <div class="sw"><div class="chip" style="background:var(--zer0-color-success)"></div>
+      <div class="meta"><div class="name">Success</div><div class="hex">#28a745</div></div></div>
+    <div class="sw"><div class="chip" style="background:var(--zer0-color-info)"></div>
+      <div class="meta"><div class="name">Info</div><div class="hex">#17a2b8</div></div></div>
+    <div class="sw"><div class="chip" style="background:var(--zer0-color-warning)"></div>
+      <div class="meta"><div class="name">Warning</div><div class="hex">#ffc107</div></div></div>
+    <div class="sw"><div class="chip" style="background:var(--zer0-color-danger)"></div>
+      <div class="meta"><div class="name">Danger</div><div class="hex">#dc3545</div></div></div>
+    <div class="sw"><div class="chip" style="background:var(--zer0-color-secondary)"></div>
+      <div class="meta"><div class="name">Secondary</div><div class="hex">#6c757d</div></div></div>
+  </div>
+</body>
+</html>

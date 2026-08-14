@@ -1,0 +1,29 @@
+<!-- @dsCard group="Spacing" viewport="700x180" name="Spacing Scale" subtitle="Bootstrap 0–5 spacer scale" -->
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; font-family: var(--zer0-font-sans); color: var(--zer0-color-ink);
+         background: var(--zer0-color-bg); padding: 22px; }
+  h4 { margin: 0 0 16px; font-size: 13px; font-weight: 600; letter-spacing: .04em;
+       text-transform: uppercase; color: var(--zer0-color-ink-muted); }
+  .scale { display: flex; align-items: flex-end; gap: 18px; }
+  .item { text-align: center; }
+  .bar { background: var(--zer0-color-primary); border-radius: 3px; width: 26px; }
+  .lbl { font-family: var(--zer0-font-mono); font-size: 10px; color: var(--zer0-color-ink-muted); margin-top: 8px; }
+  .val { font-size: 11px; font-weight: 600; }
+</style>
+</head>
+<body>
+  <h4>Spacing scale · --zer0-space-*</h4>
+  <div class="scale">
+    <div class="item"><div class="bar" style="height:var(--zer0-space-1)"></div><div class="val">1</div><div class="lbl">.25rem</div></div>
+    <div class="item"><div class="bar" style="height:var(--zer0-space-2)"></div><div class="val">2</div><div class="lbl">.5rem</div></div>
+    <div class="item"><div class="bar" style="height:var(--zer0-space-3)"></div><div class="val">3</div><div class="lbl">1rem</div></div>
+    <div class="item"><div class="bar" style="height:var(--zer0-space-4)"></div><div class="val">4</div><div class="lbl">1.5rem</div></div>
+    <div class="item"><div class="bar" style="height:var(--zer0-space-5)"></div><div class="val">5</div><div class="lbl">3rem</div></div>
+  </div>
+</body>
+</html>
