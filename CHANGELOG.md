@@ -44,6 +44,8 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **Seven theme dialogs labelled themselves with a bare `<h5>`** — the search
+modal, cookie settings modal, statistics help modal and the settings / background / section / admin offcanvases each opened with `<h5 class="modal-title">` or `<h5 class="offcanvas-title">`, so anyone navigating by heading met a level-5 heading as the dialog's title, skipping h3 and h4. Six other dialogs already used the correct `<h2 class="…-title h5">` form, so the theme contradicted itself half the time. All seven now match. `.h5` reproduces the exact sizing, so the change is visually inert. `_includes/docs/bootstrap-docs.html` and the docs prose examples are deliberately untouched — they reproduce upstream Bootstrap's own markup and should keep doing so.
 - **`--page` lookups never matched a real Giscus thread** — `normalize_page()`
 prepended a leading slash to build the discussion title, but Giscus's `pathname` mapping searches for `location.pathname` with the leading slash **removed** (verified live: `/posts/2025/01/21/remote-work-revolution/` requests `term=posts/2025/01/21/remote-work-revolution/`). So `seed` created discussions Giscus would never find, and `thread`/`draft`/`post --page` missed every thread Giscus created itself — the entire "build conversations from page comments" workflow was inoperable against real data. Lookups now match all four title spellings (with/without leading and trailing slash) so both new and legacy/hand-made threads resolve.
 - **`discussion_number_for_page` silently ignored pagination** — the query

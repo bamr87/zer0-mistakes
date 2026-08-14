@@ -11,6 +11,7 @@ const {
   UI_ROUTES,
   waitForJekyll,
   gotoOrSkip,
+  dismissCookieConsent,
 } = require('../fixtures');
 
 test.describe('Accessibility — axe-core WCAG audits', () => {
@@ -213,6 +214,113 @@ test.describe('Accessibility — UI refresh smoke', { tag: '@critical' }, () => 
     });
   }
 });
+
+// Regression: #318. Half the theme's dialogs labelled themselves with a bare
+// <h5>, so on a page running h1 -> h2 the first heading inside the dialog
+// jumped two levels. The other half already used <h2 class="…-title h5">.
+//
+// The existing suite could not catch this for TWO independent reasons, and
+// both have to be worked around here:
+//   1. axe's `heading-order` rule is tagged ['cat.semantics','best-practice'],
+//      NOT wcag2a/wcag2aa — so `.withTags(['wcag2a','wcag2aa'])` skips it
+//      entirely. It must be opted in with `.withRules(['heading-order'])`.
+//   2. The dialogs are closed on load, so their headings are hidden and axe
+//      never evaluates them. Each one has to be opened first.
+// A test that only fixes (1) or only fixes (2) passes vacuously.
+const DIALOGS = [
+  { url: '/', selector: '#siteSearchModal', kind: 'modal', source: 'components/search-modal.html' },
+  { url: '/', selector: '#cookieSettingsModal', kind: 'modal', source: 'components/cookie-consent.html' },
+  { url: '/', selector: '#info-section', kind: 'offcanvas', source: 'components/info-section.html' },
+  { url: '/about/stats/', selector: '#helpModal', kind: 'modal', source: 'stats/stats-metrics.html' },
+  { url: '/news/science/', selector: '#sectionSidebar', kind: 'offcanvas', source: 'navigation/section-sidebar.html' },
+  { url: '/about/theme/', selector: '#adminSidebar', kind: 'offcanvas', source: '_layouts/admin.html' },
+];
+
+test.describe('Accessibility — dialog headings do not skip levels', () => {
+  for (const dialog of DIALOGS) {
+    test(`${dialog.selector} title keeps the heading order (${dialog.source})`, async ({ page }) => {
+      // The admin sidebar offcanvas is .d-lg-none — only rendered at < lg.
+      await page.setViewportSize(
+        dialog.selector === '#adminSidebar' ? VIEWPORTS.mobile : VIEWPORTS.desktop
+      );
+      await dismissCookieConsent(page);
+      await gotoOrSkip(page, dialog.url);
+
+      await openDialog(page, dialog.selector, dialog.kind);
+
+      // (a) The dialog-title contract. This is the assertion that actually
+      // pins the bug for every dialog: a dialog is a fresh context, so its
+      // title is a semantic <h2> sized down with .h5 — the pattern the six
+      // already-correct dialogs use. Checked directly because axe cannot see
+      // most of these; see (b).
+      const title = await page
+        .locator(`${dialog.selector} .${dialog.kind}-title`)
+        .evaluate((el) => ({ tag: el.tagName.toLowerCase(), cls: el.className }));
+
+      expect(
+        title.tag,
+        `${dialog.selector} (${dialog.source}) labels itself with <${title.tag} class="${title.cls}">. ` +
+          `Dialog titles must be a semantic <h2 class="${dialog.kind}-title h5"> — ` +
+          'a bare <h5> skips levels for anyone navigating by heading.'
+      ).toBe('h2');
+      expect(
+        title.cls.split(/\s+/),
+        `${dialog.selector} must keep the .h5 utility so the swap is visually inert`
+      ).toContain('h5');
+
+      // (b) axe's own heading-order rule, as a second opinion. NOTE: this
+      // catches only the dialogs whose title happens to follow a
+      // higher-level heading in DOM order — #cookieSettingsModal and
+      // #adminSidebar today. #siteSearchModal and #info-section render
+      // their title as the FIRST heading in the document (root.html emits
+      // them ahead of the content), and axe never flags a leading heading;
+      // #helpModal and #sectionSidebar follow same-level headings. So this
+      // assertion is vacuous for four of the six and cannot replace (a).
+      const results = await new AxeBuilder({ page })
+        .withRules(['heading-order'])
+        .analyze();
+
+      // Scope to headings inside THIS dialog so an unrelated heading-order
+      // problem in page content fails its own test, not this one.
+      const inDialog = results.violations
+        .flatMap((v) => v.nodes)
+        .filter((n) => n.target.some((t) => String(t).includes(dialog.selector)));
+
+      expect(
+        inDialog.map((n) => n.html.trim().split('\n')[0]),
+        `Dialog ${dialog.selector} (${dialog.source}) skips a heading level.`
+      ).toEqual([]);
+    });
+  }
+});
+
+/**
+ * Open a Bootstrap modal or offcanvas via its JS API and wait until shown.
+ * Triggers vary per dialog (some live in the consent banner or a collapsed
+ * navbar), so drive the component directly rather than clicking.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} selector - e.g. '#siteSearchModal'
+ * @param {'modal'|'offcanvas'} kind
+ */
+async function openDialog(page, selector, kind) {
+  const Ctor = kind === 'offcanvas' ? 'Offcanvas' : 'Modal';
+  await page.waitForFunction(
+    (c) => typeof window.bootstrap?.[c] === 'function',
+    Ctor
+  );
+  await page.evaluate(
+    ([sel, ctor, evt]) => {
+      const el = document.querySelector(sel);
+      if (!el) throw new Error(`Dialog ${sel} not found in the DOM`);
+      return new Promise((resolve) => {
+        el.addEventListener(evt, () => resolve(), { once: true });
+        window.bootstrap[ctor].getOrCreateInstance(el).show();
+      });
+    },
+    [selector, Ctor, kind === 'offcanvas' ? 'shown.bs.offcanvas' : 'shown.bs.modal']
+  );
+  await expect(page.locator(selector)).toBeVisible();
+}
 
 /** Format axe violations for readable error output. */
 function formatViolations(violations) {
