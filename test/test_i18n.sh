@@ -19,6 +19,7 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1" >&2; }
 
 PASS=0; FAIL=0
 TRANSLATE="$REPO_ROOT/scripts/translate.rb"
+WORKFLOW="$REPO_ROOT/.github/workflows/translate.yml"
 
 assert() {                              # assert "<message>" <command…>
   local msg="$1"; shift
@@ -31,6 +32,20 @@ assert() {                              # assert "<message>" <command…>
 
 sandbox=$(mktemp -d)
 trap 'rm -rf "$sandbox"' EXIT
+
+# Read one field of a named step in translate.yml's `translate` job, addressed
+# by dotted path (e.g. "if", "with.add-paths"). Parses the YAML rather than
+# grepping it, so reformatting the workflow can't silently pass the assertions.
+# Prints the empty string when the field is absent.
+wf_step_field() {                       # wf_step_field "<step name>" "<dotted path>"
+  ruby -ryaml -e '
+    wf   = YAML.safe_load_file(ARGV[0], aliases: true)
+    step = (wf.dig("jobs", "translate", "steps") || []).find { |s| s["name"] == ARGV[1] }
+    abort("no step named #{ARGV[1].inspect} in translate.yml") unless step
+    val  = ARGV[2].split(".").reduce(step) { |acc, k| acc.is_a?(Hash) ? acc[k] : nil }
+    print(val.nil? ? "" : val.to_s)
+  ' "$WORKFLOW" "$1" "$2"
+}
 
 # ---------------------------------------------------------------------------
 # Sandbox fixture: a miniature site mirroring the real permalink patterns
@@ -314,6 +329,53 @@ test_prune() {
     bash -c "test -f '$sandbox/_data/i18n/manifest.yml' && ! grep -q 'setup-guide' '$sandbox/_data/i18n/manifest.yml'"
 }
 
+# ---------------------------------------------------------------------------
+# A single failed page must not discard the pages that succeeded.
+#
+# translate.rb exits 1 when ANY unit fails, and a workflow `if:` with no status
+# function carries an implicit `success()`. Together those threw away 49 good
+# translations — ~21 minutes of paid model inference — because one page failed
+# validation (run 30477839691). The guard is the pair of `!cancelled()` gates
+# plus the blast-radius limits that make partial output safe to push; this
+# asserts all of them, and that the failure is still *reported* (no
+# continue-on-error, exit code unchanged).
+test_partial_output_survives_failure() {
+  log_info "Test: a failed page does not discard the pages that succeeded"
+
+  local pr_if norm_if pr_ce run_ce add_paths branch
+  pr_if=$(wf_step_field "Open PR with generated translations" "if")
+  norm_if=$(wf_step_field "Normalise generated prose" "if")
+  pr_ce=$(wf_step_field "Open PR with generated translations" "continue-on-error")
+  run_ce=$(wf_step_field "Run translation" "continue-on-error")
+  add_paths=$(wf_step_field "Open PR with generated translations" "with.add-paths")
+  branch=$(wf_step_field "Open PR with generated translations" "with.branch")
+
+  assert "PR step gates on !cancelled(), not the implicit success()" \
+    grep -qF '!cancelled()' <<<"$pr_if"
+  assert "prose normalisation also runs on a partially-failed run" \
+    grep -qF '!cancelled()' <<<"$norm_if"
+  # always() would also push from a cancelled run, which must stay a no-op.
+  assert "PR step does not use always()" \
+    bash -c '! grep -qF "always()" <<<"$1"' _ "$pr_if"
+  assert "PR step still skips dry runs" grep -qF 'dry_run' <<<"$pr_if"
+
+  # The run must still go red — the fix is "stop binning the output", not
+  # "stop reporting the failure".
+  assert "PR step does not suppress failure with continue-on-error" test -z "$pr_ce"
+  assert "translation step does not suppress failure with continue-on-error" test -z "$run_ce"
+  assert "translate.rb still exits non-zero when any page failed" \
+    grep -qF '@stats[:failed].positive? ? 1 : 0' "$TRANSLATE"
+
+  # What bounds a partial push: only generated trees, onto one stable branch
+  # that the next run tops up.
+  assert "add-paths still includes fr" grep -qx 'fr' <<<"$add_paths"
+  assert "add-paths still includes _data/i18n" grep -qx '_data/i18n' <<<"$add_paths"
+  assert "add-paths lists nothing beyond fr and _data/i18n" \
+    awk 'NF && $0 != "fr" && $0 != "_data/i18n" { bad = 1 } END { exit bad }' <<<"$add_paths"
+  assert "PR still targets the stable chore/i18n-translations branch" \
+    test "$branch" = "chore/i18n-translations"
+}
+
 test_theme_wiring() {
   log_info "Test: theme-side i18n wiring"
   assert "_config.yml declares the translation block" \
@@ -337,6 +399,7 @@ main() {
   test_incremental
   test_check_and_dry_run
   test_prune
+  test_partial_output_survives_failure
   test_theme_wiring
   echo
   log_info "Passed: $PASS  Failed: $FAIL"

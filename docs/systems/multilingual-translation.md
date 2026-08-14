@@ -73,6 +73,18 @@ ruby scripts/translate.rb --check        # exit 1 if stale translations exist
 
 The workflow never pushes to `main`; it opens/updates a PR on the stable branch `chore/i18n-translations` (same pattern as the roadmap sync). Merging that PR does not re-trigger the workflow — its push path filter watches only English sources.
 
+### Partial output on a failed run
+
+`scripts/translate.rb` exits 1 when **any** page fails validation, so a run in which 49 pages translate and 1 fails is a red run. That failure does **not** discard the 49. The normalisation and PR steps gate on `${{ !cancelled() && … }}`, so the pages that succeeded are still normalised and still land on the `chore/i18n-translations` PR; only a *cancelled* run pushes nothing.
+
+What this means in practice:
+
+- **The run still goes red.** The failure stays visible in Actions and the failing page stays untranslated — no `continue-on-error`, no swallowed exception, no change to the exit code.
+- **The PR may arrive incomplete.** It is a top-up on a stable branch, so the next run fills in whatever was missing. `create-pull-request` no-ops on an empty diff, so a run that dies before writing anything simply produces no PR.
+- **The blast radius is bounded by `add-paths: fr, _data/i18n`** — a partial push can only touch the generated trees, never English source.
+
+The alternative — letting the implicit `success()` on a status-free `if:` gate the PR step — meant every red run binned ~21 minutes of paid model inference and re-spent it from scratch on the next run. `test/test_i18n.sh` (`test_partial_output_survives_failure`) asserts the gates and the guards so this cannot regress.
+
 ## Adding a language
 
 1. Add the code to `translation.languages` in `_config.yml` (e.g. `[fr, es]`).
