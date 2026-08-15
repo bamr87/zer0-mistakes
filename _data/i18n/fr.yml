@@ -4,7 +4,7 @@
 # scripts/translate.rb from _data/ui-text.yml (en). Regenerate via
 # the Translate workflow or: ruby scripts/translate.rb --langs fr
 # ================================================================
-skip_links: Liens d'évitement
+skip_links: Liens d'accès rapide
 skip_primary_nav: Aller à la navigation principale
 skip_content: Aller au contenu
 skip_main_content: Aller au contenu principal
@@ -28,7 +28,7 @@ author_label: 'Auteur :'
 comments_label: Laisser un commentaire
 comments_title: Commentaires
 more_label: En savoir plus
-related_label: Vous aimerez peut-être aussi
+related_label: Vous pourriez aussi aimer
 follow_label: 'Suivre :'
 feed_label: Flux
 powered_by: Propulsé par
@@ -80,6 +80,7 @@ shortcuts_show_help: Afficher cette aide
 home_label: Accueil
 main_nav_label: Navigation principale
 search_button_label: Rechercher
+search_button_title: Rechercher — appuyez sur / ou Ctrl+K
 settings_button_label: Paramètres
 toc_title: Table des matières
 published_label: Publié
