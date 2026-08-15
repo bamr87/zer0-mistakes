@@ -240,6 +240,15 @@ pages:
       sha: aa231d65673848a7b52a9f8341f56482d844c1c98d24e7f44903ad6f8eb496be
       translated_at: '2026-08-05T04:42:58Z'
       prompt_version: 1
+  "/design/":
+    source: pages/_about/design.md
+    sha: 1603b6e4656c1116919a6a8064c332044c4ba95abdcd85f848913b4c80dd4955
+    fr:
+      url: "/fr/design/"
+      path: fr/about/design.md
+      sha: 1603b6e4656c1116919a6a8064c332044c4ba95abdcd85f848913b4c80dd4955
+      translated_at: '2026-08-15T02:30:28Z'
+      prompt_version: 1
   "/docs/":
     source: pages/_docs/index.md
     sha: d43825e9ed60cdfb2a02bb0e4e59a51f16d6474f3f6e09f4506fa4764f75c484
@@ -656,12 +665,12 @@ pages:
       prompt_version: 1
   "/docs/features/giscus-comments/":
     source: pages/_docs/features/giscus-comments.md
-    sha: 52efdd3386dcf88f48f187e9b85c00dbd4503217fedaafab1788d89fe6d60c01
+    sha: b2fb5564968e8b895f93d0292a3150e7ff6d46cf59c0a7363b77adad4a302074
     fr:
       url: "/fr/docs/features/giscus-comments/"
       path: fr/docs/features/giscus-comments.md
-      sha: 52efdd3386dcf88f48f187e9b85c00dbd4503217fedaafab1788d89fe6d60c01
-      translated_at: '2026-08-05T03:27:46Z'
+      sha: b2fb5564968e8b895f93d0292a3150e7ff6d46cf59c0a7363b77adad4a302074
+      translated_at: '2026-08-15T02:30:10Z'
       prompt_version: 1
   "/docs/features/jupyter-notebooks/":
     source: pages/_docs/features/jupyter-notebooks.md
@@ -1493,10 +1502,10 @@ pages:
       prompt_version: 1
 ui_text:
   fr:
-    sha: 20ae0d4de9677f6a111dea02c95dec46599acc4a4d3d54a06ea8553004710361
-    translated_at: '2026-08-07T04:27:46Z'
+    sha: 2cda69b3cca654571ec73b2e2288f73dba60a7e90856ed790f8c92e6bbfea340
+    translated_at: '2026-08-15T02:30:48Z'
     prompt_version: 1
 source_lang: en
 languages:
 - fr
-updated_at: '2026-08-07T04:27:47Z'
+updated_at: '2026-08-15T02:30:48Z'
