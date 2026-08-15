@@ -120,8 +120,14 @@ jobs:
       # Without it, a provider that soft-wraps a translated paragraph lands
       # wrapped prose in fr/**, the oneline check goes red on the translation
       # PR, and — once merged — stays red on main for everyone.
+      #
+      # `!cancelled()` for the same reason as the PR step below: when a single
+      # page fails validation the translation step goes red, and without this
+      # the normalisation that the PR step depends on would be skipped — the
+      # surviving pages would then land unnormalised and turn the oneline check
+      # red on the translation PR. Cancelled runs still normalise nothing.
       - name: Normalise generated prose
-        if: steps.creds.outputs.found == 'true' && inputs.dry_run != true
+        if: ${{ !cancelled() && steps.creds.outputs.found == 'true' && inputs.dry_run != true }}
         run: |
           set -euo pipefail
           python3 tools/unwrap-prose.py --write fr _data/i18n 2>/dev/null || true
@@ -134,8 +140,18 @@ jobs:
       # than spawning new ones. NOTE: PRs opened with GITHUB_TOKEN do not
       # auto-trigger CI (GitHub's recursion guard); close/reopen the PR to
       # run checks, or merge directly.
+      #
+      # `!cancelled()` instead of the implicit `success()` that a status-free
+      # `if:` carries: translate.rb exits 1 when ANY page fails validation, so
+      # without this one bad page throws away every page that translated
+      # correctly — ~21 minutes of paid model inference per run, re-spent from
+      # scratch on the next run. The job still reports failure and the bad page
+      # still stays untranslated; this only stops the work already paid for
+      # from being binned alongside it. Deliberately NOT `always()` (a
+      # cancelled run must push nothing) and NOT `continue-on-error` (the run
+      # must stay red). Do not "simplify" this back to a bare condition.
       - name: Open PR with generated translations
-        if: steps.creds.outputs.found == 'true' && inputs.dry_run != true
+        if: ${{ !cancelled() && steps.creds.outputs.found == 'true' && inputs.dry_run != true }}
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
