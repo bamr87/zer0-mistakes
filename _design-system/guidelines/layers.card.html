@@ -1,0 +1,76 @@
+<!-- @dsCard group="Layers" viewport="700x250" name="Z-Index Stack" subtitle="One ordered scale — content to skip-link" -->
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; font-family: var(--zer0-font-sans); color: var(--zer0-color-ink);
+         background: var(--zer0-color-bg-elevated); padding: 22px; }
+  .grid { display: flex; gap: 30px; align-items: flex-start; }
+  h4 { margin: 0 0 14px; font-size: 13px; font-weight: 600; letter-spacing: .04em;
+       text-transform: uppercase; color: var(--zer0-color-ink-muted); }
+  .stage { position: relative; width: 240px; height: 175px; flex: none; }
+  .ledge { position: absolute; width: 150px; padding: 8px 12px; font-size: 11px;
+           background: var(--zer0-color-bg); border: 1px solid var(--zer0-color-border);
+           border-radius: var(--zer0-radius); box-shadow: var(--zer0-shadow-sm); }
+  .ledge b { font-family: var(--zer0-font-mono); font-weight: 400; font-size: 10px;
+             color: var(--zer0-color-ink-muted); display: block; }
+  .l1 { left: 0;    top: 118px; }
+  .l2 { left: 22px; top: 88px;  }
+  .l3 { left: 44px; top: 58px;  box-shadow: var(--zer0-shadow-md); }
+  .l4 { left: 66px; top: 28px;  box-shadow: var(--zer0-shadow-md); }
+  .l5 { left: 88px; top: 0;     box-shadow: var(--zer0-shadow-lg);
+        border-color: var(--zer0-color-primary); }
+  .list { flex: 1; columns: 2; column-gap: 26px; font-size: 11px; }
+  .band { break-inside: avoid; margin-bottom: 12px; }
+  .band h5 { margin: 0 0 4px; font-size: 10px; letter-spacing: .05em; text-transform: uppercase;
+             color: var(--zer0-color-primary); }
+  .band div { display: flex; justify-content: space-between; gap: 10px; padding: 1px 0;
+              font-family: var(--zer0-font-mono); font-size: 10px; }
+  .band span:last-child { color: var(--zer0-color-ink-muted); }
+</style>
+</head>
+<body>
+  <div class="grid">
+    <div class="stage">
+      <h4 style="position:absolute; top:-4px; left:0;">Stack</h4>
+      <div class="ledge l1">content<b>base 0 · elevated 1</b></div>
+      <div class="ledge l2">header / offcanvas<b>1020–1045</b></div>
+      <div class="ledge l3">FAB stack<b>1050–1060</b></div>
+      <div class="ledge l4">modal · popover · tooltip<b>1055–1080</b></div>
+      <div class="ledge l5">toast · banner · skip-link<b>1090–1100</b></div>
+    </div>
+    <div class="list">
+      <div class="band"><h5>Content</h5>
+        <div><span>base</span><span>0</span></div>
+        <div><span>elevated</span><span>1</span></div>
+      </div>
+      <div class="band"><h5>Chrome</h5>
+        <div><span>sticky</span><span>1020</span></div>
+        <div><span>header</span><span>1030</span></div>
+        <div><span>backdrop</span><span>1040</span></div>
+        <div><span>offcanvas</span><span>1045</span></div>
+      </div>
+      <div class="band"><h5>FABs</h5>
+        <div><span>back-to-top</span><span>1050</span></div>
+        <div><span>feedback</span><span>1051</span></div>
+        <div><span>chat</span><span>1052</span></div>
+        <div><span>toc</span><span>1055</span></div>
+        <div><span>local-graph</span><span>1060</span></div>
+      </div>
+      <div class="band"><h5>Overlays</h5>
+        <div><span>modal</span><span>1055</span></div>
+        <div><span>popover</span><span>1070</span></div>
+        <div><span>tooltip</span><span>1080</span></div>
+      </div>
+      <div class="band"><h5>Notices</h5>
+        <div><span>toast</span><span>1090</span></div>
+        <div><span>cookie-banner</span><span>1095</span></div>
+        <div><span>feedback-modal</span><span>1096</span></div>
+        <div><span>skip-link</span><span>1100</span></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

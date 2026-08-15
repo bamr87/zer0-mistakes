@@ -28,6 +28,14 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   nav, tables, and focus rings now consume the radius tokens (value-preserving —
   rendered output unchanged, pinned by a new runtime token assertion in
   `test/visual/core/styling.spec.js`).
+- **Design-system component twins (PR #391)** — `Fab`/`FabStack`, `PostCard`,
+  and `Skeleton` join Button/Badge/Card/FeatureCard/Callout/Input in
+  `_design-system/components/`, plus new Motion and Layers foundation cards;
+  all pushed live to the Claude Design project. The feature registry is
+  re-synced (`features/features.yml` ↔ `_data/features.yml` — #389's ZER0-081
+  entry had landed in the `_data` mirror only, which the registry validator
+  rejects) and `docs/ui/components.md` gains a theme-source →
+  design-system-twin map.
 
 ## [1.28.0](https://github.com/bamr87/zer0-mistakes/compare/v1.27.0...v1.28.0) (2026-08-09)
 

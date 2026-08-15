@@ -334,6 +334,26 @@ See all patterns rendered with every skin:
 
 ---
 
+## Design-system twins
+
+The signature component patterns also exist as React specs in [`_design-system/components/`](../../_design-system/) (mirrored to the Claude Design project — see [design-system.md](design-system.md#claude-design-round-trip)). They are design-time twins for mockups and prototypes, not runtime dependencies of the theme:
+
+| Theme source | Design-system spec |
+|--------------|--------------------|
+| `cta-button.html` + Bootstrap `.btn` | `core/Button` |
+| `post-type-badge.html` + Bootstrap `.badge` | `core/Badge` |
+| Back-to-top / FAB stack (`_sass/components/_back-to-top.scss`) | `core/Fab` + `core/FabStack` |
+| `.card border-0 shadow-sm` pattern | `surfaces/Card` |
+| `feature-card.html` / landing feature cards | `surfaces/FeatureCard` |
+| `post-card.html` | `surfaces/PostCard` |
+| `callout.html` / `_sass/components/_callout.scss` | `feedback/Callout` |
+| `_sass/components/_skeleton.scss` | `feedback/Skeleton` |
+| Bootstrap form controls + focus ring | `forms/Input` |
+
+When one of these theme components changes visually, update its twin (and its `@dsCard` specimen) in the same PR, then push per [`_design-system/SYNC.md`](../../_design-system/SYNC.md).
+
+---
+
 ## Further reading
 
 - [_includes/components/README.md](../../_includes/components/README.md) — conventions

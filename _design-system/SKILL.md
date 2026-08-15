@@ -15,10 +15,10 @@ If the user invokes this skill without any other guidance, ask them what they wa
 - `readme.md` — the full design guide: product context, **Content Fundamentals** (voice/tone), **Visual Foundations**, **Iconography**, and an index of every file. Read this first.
 - `styles.css` — the single global stylesheet to link. It `@import`s all tokens.
 - `tokens/` — `colors.css`, `typography.css`, `spacing.css`, `shadows.css`, `motion.css`, `layers.css`, `skins.css`. All `--zer0-*` / `--bs-*` / `--bd-*` custom properties.
-- `components/` — React primitives: `core/` (Button, Badge), `surfaces/` (Card, FeatureCard), `feedback/` (Callout), `forms/` (Input).
+- `components/` — React primitives: `core/` (Button, Badge, Fab), `surfaces/` (Card, FeatureCard, PostCard), `feedback/` (Callout, Skeleton), `forms/` (Input).
 - `ui_kits/website/` — interactive recreation of the marketing site.
 - `assets/images/` — the pixel-wizard hero art, checkpoints, banner, gravatar; plus `favicon.ico`.
-- `guidelines/` — foundation specimen cards (colors, type, spacing, brand).
+- `guidelines/` — foundation specimen cards (colors, type, spacing, motion, layers, brand).
 
 ## Fast rules
 

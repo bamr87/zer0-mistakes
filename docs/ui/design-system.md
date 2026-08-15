@@ -292,7 +292,7 @@ These pages exercise typography, buttons, alerts, cards, forms, tabs, badges, co
 
 The token layer is mirrored to a **Claude Design** project ([claude.ai/design](https://claude.ai/design/p/e75121c0-9210-42d1-ade3-2c8af9111cbe)) so design work can happen in either tool:
 
-- `_design-system/` in this repo is the git mirror of that project: `tokens/*.css` (plain-CSS twins of `_sass/tokens/*.scss`), React component specs (`components/`), guideline specimen cards (`guidelines/`), the marketing-site UI kit (`ui_kits/website/`), and the design guide (`readme.md` + `SKILL.md`).
+- `_design-system/` in this repo is the git mirror of that project: `tokens/*.css` (plain-CSS twins of `_sass/tokens/*.scss`), React component specs (`components/` — Button, Badge, Fab/FabStack, Card, FeatureCard, PostCard, Callout, Skeleton, Input, each as `.jsx` + `.d.ts` + `.prompt.md` + a `@dsCard` specimen), guideline specimen cards (`guidelines/` — colors, type, spacing, motion, layers, brand), the marketing-site UI kit (`ui_kits/website/`), and the design guide (`readme.md` + `SKILL.md`).
 - `_sass/tokens/` stays the **source of truth** for token values. Change a token → update its `_design-system/tokens/*.css` twin in the same PR.
 - `scripts/design-system-check.rb` (run by the `core` test suite) fails CI when the two sides disagree, and also flags fallback-less `var(--zer0-…)` references to tokens that are never declared.
 - Push/pull mechanics, the file map, and what is deliberately *not* mirrored (compiled bundles, byte-identical imagery) live in [`_design-system/SYNC.md`](../../_design-system/SYNC.md).
