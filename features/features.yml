@@ -1037,6 +1037,7 @@ features:
       - "Client-side JSON search index"
       - "Bootstrap modal interface"
       - "Keyboard shortcut (/) activation"
+      - "Cmd/Ctrl+K shortcut with visible navbar affordance — a / kbd chip on the search button (design-system navbar pattern), hover titles with platform-aware Cmd-K/Ctrl+K, aria-keyshortcuts, and shortcut hints on the sidebar (b) and TOC (t) toggles"
       - "Real-time search results"
       - "Accessible search input"
       - "No external dependency (Algolia removed v1.5.1)"

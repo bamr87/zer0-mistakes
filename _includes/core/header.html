@@ -161,10 +161,12 @@
                     data-search-toggle
                     aria-label="{{ ui.shortcuts_search | default: 'Open search' }}"
                     aria-haspopup="dialog"
-                    title="{{ ui.search_button_label | default: 'Search' }}"
+                    aria-keyshortcuts="/ Meta+K Control+K"
+                    title="{{ ui.search_button_title | default: 'Search — press / or Ctrl+K' }}"
                 >
                     <i class="{{site.default_icon}} bi-search" aria-hidden="true"></i>
                     <span class="nav-link-text d-none d-xl-inline ms-1">{{ ui.search_button_label | default: "Search" }}</span>
+                    <kbd class="nav-search-kbd d-none d-xl-inline-flex" aria-hidden="true">/</kbd>
                 </button>
 
                 <!-- Settings Offcanvas Toggle -->
