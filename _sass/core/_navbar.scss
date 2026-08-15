@@ -930,6 +930,21 @@
     gap: 0.25rem;
 }
 
+// Shortcut affordance chip on the search button — the design-system navbar
+// pattern (ui_kits/website/Navbar.jsx). Overrides Bootstrap's inverted <kbd>
+// so the chip reads as a quiet hint, not a highlighted key.
+#navbar .nav-search-kbd {
+    align-items: center;
+    margin-left: 0.1rem;
+    padding: 0.05rem 0.35rem;
+    font-family: var(--zer0-font-mono);
+    font-size: 0.7rem;
+    line-height: 1.4;
+    color: var(--zer0-color-ink-muted);
+    background: var(--zer0-color-bg-muted);
+    border-radius: var(--zer0-radius-sm);
+}
+
 // Desktop (lg+): 3-column grid — [brand/title | main nav | utilities] so nav cannot paint over Search/Settings
 @media (min-width: 992px) {
     #navbar .navbar-main {

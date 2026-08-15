@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/search-shortcut-hint/ -->
+  (evidence: [`test/visual/evidence/search-shortcut-hint/`](test/visual/evidence/search-shortcut-hint/README.md))

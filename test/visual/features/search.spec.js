@@ -104,6 +104,26 @@ test.describe('Search modal — happy path', { tag: '@critical' }, () => {
   // above (same intent: type a query, verify results render). Its one extra
   // assertion (result item has a valid href) was folded into that test instead.
 
+  test('opens on Cmd/Ctrl+K shortcut', async ({ page }) => {
+    const modal = page.locator(MODAL);
+    await page.keyboard.press('ControlOrMeta+k');
+    await expect(modal).toBeVisible();
+    await expect(page.locator(INPUT)).toBeFocused();
+  });
+
+  test('search button advertises the shortcuts (kbd chip + hover title)', async ({ page }) => {
+    const btn = page.locator('#navbar .nav-search-button');
+    // Hover title carries both shortcuts (JS swaps Ctrl+K → ⌘K on macOS).
+    await expect(btn).toHaveAttribute('title', /press \/ or (Ctrl\+K|⌘K)/);
+    await expect(btn).toHaveAttribute('aria-keyshortcuts', /Meta\+K/);
+    // The "/" kbd chip shows on desktop and stays out of the mobile navbar.
+    await page.setViewportSize(VIEWPORTS.desktop);
+    await expect(btn.locator('.nav-search-kbd')).toBeVisible();
+    await expect(btn.locator('.nav-search-kbd')).toHaveText('/');
+    await page.setViewportSize(VIEWPORTS.mobile);
+    await expect(btn.locator('.nav-search-kbd')).toBeHidden();
+  });
+
   test('search toggle button opens the modal', async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     const modal = page.locator(MODAL);
