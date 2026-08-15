@@ -2291,3 +2291,33 @@ features:
       - "scripts/design-system-check.rb (core test suite) resolves var() alias chains and fails CI on token drift, plus flags fallback-less var(--zer0-*) references that are never declared"
       - "Component specs ship the theme's primitives as React twins — Button, Badge, Fab/FabStack, Card, FeatureCard, PostCard, Callout, Skeleton, Input — with foundation cards for colors, type, spacing, motion, layers, and brand (PR 391)"
       - "No webfonts, Bootstrap-first, seven skins, light+dark — the imported system and the theme now state one identical visual contract"
+
+  - id: ZER0-082
+    title: "Live Design System Pages"
+    description: "The design system published on the site itself: _design-system/ is force-included in the Jekyll build so tokens, styles.css, specimen cards, and component sources get real URLs under /_design-system/, and a /design/ hub page renders the foundation specimens in live iframes, catalogs the component twins, and links the Claude Design page canvas covering all 24 layouts"
+    implemented: true
+    version: "1.29.0"
+    link: "/design/"
+    docs: "https://github.com/bamr87/zer0-mistakes/blob/main/docs/ui/design-system.md"
+    tags: [design-system, tokens, pages, navigation, ui]
+    date: 2026-08-14
+    provenance:
+      introduced_in: "1.29.0"
+      pr: null
+      commit: "6ac9f77d"
+      issue: null
+    tests:
+      - "test/visual/features/design-hub.spec.js"
+    references:
+      pages:
+        - "pages/_about/design.md"
+      data:
+        - "_data/navigation/main.yml"
+      tests:
+        - "test/visual/features/design-hub.spec.js"
+      config: "_config.yml"
+    features:
+      - "Publishing is one config line — include: [_design-system] — so the mirror's plain-CSS tokens double as a hosted stylesheet any prototype can link"
+      - "/design/ foundations gallery renders the actual specimen cards in iframes against the published tokens — living documentation, never screenshots"
+      - "Component-twin catalog links every React spec (.jsx/.d.ts/.prompt.md) served raw from the mirror; interactive rendering stays in Claude Design"
+      - "Page canvas: every layout, nav pattern, and chrome surface recreated as a Claude Design presentation, linked from the hub with a screen-to-repo-file map"
