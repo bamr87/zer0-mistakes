@@ -133,6 +133,7 @@ const UI_ROUTES = {
   themePreview: '/about/settings/theme-preview/',
   codeCopy: '/docs/features/code-copy/',
   faq: '/faq/',
+  designHub: '/design/',
 };
 
 /**

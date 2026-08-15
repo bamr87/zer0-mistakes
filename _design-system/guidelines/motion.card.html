@@ -1,0 +1,54 @@
+<!-- @dsCard group="Motion" viewport="700x210" name="Durations & Easing" subtitle="120/200/320ms · standard, in, out · reduced-motion aware" -->
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; font-family: var(--zer0-font-sans); color: var(--zer0-color-ink);
+         background: var(--zer0-color-bg-elevated); padding: 22px; }
+  .grid { display: flex; gap: 28px; }
+  .col { flex: 1; }
+  h4 { margin: 0 0 14px; font-size: 13px; font-weight: 600; letter-spacing: .04em;
+       text-transform: uppercase; color: var(--zer0-color-ink-muted); }
+  .row { display: flex; gap: 14px; align-items: flex-start; }
+  .chip { width: 92px; padding: 14px 0; text-align: center; background: var(--zer0-color-bg);
+          border-radius: var(--zer0-radius); box-shadow: var(--zer0-shadow-sm);
+          font-size: 12px; cursor: default;
+          transition-property: transform, box-shadow;
+          transition-timing-function: var(--zer0-motion-ease-standard); }
+  .chip:hover { transform: translateY(-2px); box-shadow: var(--zer0-shadow-md); }
+  .fast { transition-duration: var(--zer0-motion-duration-fast); }
+  .base { transition-duration: var(--zer0-motion-duration-base); }
+  .slow { transition-duration: var(--zer0-motion-duration-slow); }
+  .lbl { font-family: var(--zer0-font-mono); font-size: 10px; color: var(--zer0-color-ink-muted);
+         margin-top: 8px; text-align: center; }
+  .curve { width: 64px; height: 64px; background: var(--zer0-color-bg);
+           border-radius: var(--zer0-radius); box-shadow: var(--zer0-shadow-xs); padding: 8px; }
+  .curve path { stroke: var(--zer0-color-primary); stroke-width: 6; fill: none; }
+  .note { margin-top: 14px; font-size: 11px; color: var(--zer0-color-ink-muted); }
+</style>
+</head>
+<body>
+  <div class="grid">
+    <div class="col">
+      <h4>Durations · hover the chips</h4>
+      <div class="row">
+        <div><div class="chip fast">hover</div><div class="lbl">fast 120ms</div></div>
+        <div><div class="chip base">hover</div><div class="lbl">base 200ms</div></div>
+        <div><div class="chip slow">hover</div><div class="lbl">slow 320ms</div></div>
+      </div>
+      <div class="note">Signature motions: hover lift −2px, image fade-in, dropdown fades. No bounces, no parallax.</div>
+    </div>
+    <div class="col">
+      <h4>Easing</h4>
+      <div class="row">
+        <div><svg class="curve" viewBox="0 0 100 100"><path d="M0,100 C20,100 0,0 100,0"/></svg><div class="lbl">standard<br>.2,0,0,1</div></div>
+        <div><svg class="curve" viewBox="0 0 100 100"><path d="M0,100 C40,100 100,0 100,0"/></svg><div class="lbl">in<br>.4,0,1,1</div></div>
+        <div><svg class="curve" viewBox="0 0 100 100"><path d="M0,100 C0,100 20,0 100,0"/></svg><div class="lbl">out<br>0,0,.2,1</div></div>
+      </div>
+      <div class="note">prefers-reduced-motion collapses every duration to 0.01ms — free, token-level.</div>
+    </div>
+  </div>
+</body>
+</html>

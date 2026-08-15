@@ -1,0 +1,25 @@
+/* ============================================================================
+   Motion tokens — zer0-mistakes
+   ----------------------------------------------------------------------------
+   Source: _sass/tokens/_motion.scss. Centralised durations and easings. Motion
+   is restrained — short translateY lifts on hover, opacity fades on image load.
+   Reduced-motion collapses every duration to 0.01ms.
+   ============================================================================ */
+
+:root {
+  --zer0-motion-duration-fast: 120ms; /* @kind other */
+  --zer0-motion-duration-base: 200ms; /* @kind other */
+  --zer0-motion-duration-slow: 320ms; /* @kind other */
+
+  --zer0-motion-ease-standard: cubic-bezier(0.2, 0, 0, 1); /* @kind other */
+  --zer0-motion-ease-in: cubic-bezier(0.4, 0, 1, 1); /* @kind other */
+  --zer0-motion-ease-out: cubic-bezier(0, 0, 0.2, 1); /* @kind other */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --zer0-motion-duration-fast: 0.01ms; /* @kind other */
+    --zer0-motion-duration-base: 0.01ms; /* @kind other */
+    --zer0-motion-duration-slow: 0.01ms; /* @kind other */
+  }
+}

@@ -1,0 +1,100 @@
+/* ============================================================================
+   Color tokens — zer0-mistakes
+   ----------------------------------------------------------------------------
+   Source of truth: bamr87/zer0-mistakes _sass/tokens/_color.scss +
+   _sass/theme/_css-variables.scss. The theme aliases its semantic
+   --zer0-color-* properties onto Bootstrap 5.3 (--bs-*) primitives and the
+   docs-layout brand tokens (--bd-*). This file ships concrete base values so
+   the design system is self-contained without Bootstrap CSS loaded.
+
+   Naming: --zer0-color-<role>[-variant]
+     role    = semantic purpose (primary, surface, ink, accent, danger, ...)
+     variant = optional intensity / state (hover, muted, subtle, inverse)
+   ============================================================================ */
+
+:root,
+[data-bs-theme="light"] {
+  /* Bootstrap primitives (light) — the values zer0 aliases onto ------------- */
+  --bs-primary: #007bff;
+  --bs-primary-rgb: 0, 123, 255; /* @kind color */
+  --bs-secondary: #6c757d;
+  --bs-secondary-rgb: 108, 117, 125; /* @kind color */
+  --bs-success: #28a745;
+  --bs-info: #17a2b8;
+  --bs-warning: #ffc107;
+  --bs-danger: #dc3545;
+  --bs-body-bg: #ffffff;
+  --bs-tertiary-bg: #f8f9fa;
+  --bs-secondary-bg: #e9ecef;
+  --bs-body-color: #212529;
+  --bs-secondary-color: #6c757d;
+  --bs-border-color: #dee2e6;
+  --bs-link-color: #712cf9;
+  --bs-link-hover-color: #4c0bce;
+
+  /* Docs-layout / brand tokens (--bd-*) ----------------------------------- */
+  --bd-purple: #4c0bce;
+  --bd-violet: #712cf9;
+  --bd-violet-rgb: 112, 44, 249; /* @kind color */
+  --bd-accent: #ffe484;
+  --bd-accent-rgb: 255, 228, 132; /* @kind color */
+  --bd-pink-rgb: 214, 51, 132; /* @kind color */
+  --bd-teal-rgb: 32, 201, 151; /* @kind color */
+  --bd-callout-code-color: #ab296a;
+  --bd-pre-bg: var(--bs-tertiary-bg);
+
+  /* Logo palette (from _includes/core/branding.html) ---------------------- */
+  --zer0-logo-red: #a11111;
+  --zer0-logo-yellow: #ffe900;
+  --zer0-logo-teal: #376986;
+  --zer0-logo-blue: #007bff;
+
+  /* ----------------------------------------------------------------------- */
+  /* Semantic --zer0-color-* aliases                                         */
+  /* ----------------------------------------------------------------------- */
+
+  /* Brand / accent */
+  --zer0-color-primary: var(--bs-primary);
+  --zer0-color-primary-rgb: var(--bs-primary-rgb); /* @kind color */
+  --zer0-color-secondary: var(--bs-secondary);
+  --zer0-color-accent: var(--bd-accent);
+
+  /* Semantic state */
+  --zer0-color-success: var(--bs-success);
+  --zer0-color-info: var(--bs-info);
+  --zer0-color-warning: var(--bs-warning);
+  --zer0-color-danger: var(--bs-danger);
+
+  /* Surfaces & ink */
+  --zer0-color-bg: var(--bs-body-bg);
+  --zer0-color-bg-elevated: var(--bs-tertiary-bg);
+  --zer0-color-bg-muted: var(--bs-secondary-bg);
+  --zer0-color-ink: var(--bs-body-color);
+  --zer0-color-ink-muted: var(--bs-secondary-color);
+  --zer0-color-border: var(--bs-border-color);
+  --zer0-color-border-translucent: color-mix(in srgb, var(--zer0-color-border) 42%, transparent);
+
+  /* Code & callouts */
+  --zer0-color-code-bg: var(--bd-pre-bg);
+  --zer0-color-code-ink: var(--bd-callout-code-color);
+  --zer0-color-link: var(--bs-link-color);
+  --zer0-color-link-hover: var(--bs-link-hover-color);
+}
+
+/* ===========================================================================
+   Dark mode — Bootstrap 5.3 [data-bs-theme="dark"] primitives + --bd-* shifts
+   =========================================================================== */
+[data-bs-theme="dark"] {
+  --bs-body-bg: #212529;
+  --bs-tertiary-bg: #2b3035;
+  --bs-secondary-bg: #343a40;
+  --bs-body-color: #dee2e6;
+  --bs-secondary-color: rgba(222, 226, 230, 0.75);
+  --bs-border-color: #495057;
+  --bs-link-color: #9461fb;
+  --bs-link-hover-color: #b89bfc;
+
+  --bd-violet: #9461fb;
+  --bd-callout-code-color: #e685b5;
+  --bd-pre-bg: #1b1f22;
+}

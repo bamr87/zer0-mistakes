@@ -1,3 +1,4 @@
+# Feature: ZER0-082
 # Main Navigation Configuration
 # Used by: _includes/navigation/navbar.html
 # Purpose: Primary site navigation with dropdown children
@@ -72,6 +73,8 @@
   children:
     - title: Features
       url: /features/
+    - title: Design System
+      url: /design/
     - title: Authors
       url: /authors/
     - title: Statistics

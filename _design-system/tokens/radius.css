@@ -1,0 +1,17 @@
+/* ============================================================================
+   Radius tokens — zer0-mistakes
+   ----------------------------------------------------------------------------
+   Source of truth: bamr87/zer0-mistakes _sass/tokens/_radius.scss. Corner
+   radii mirror Bootstrap's --bs-border-radius family; `xl` is the softer
+   landing-feature-card radius, `pill`/`circle` cover badges, chips, avatars,
+   and FABs.
+   ============================================================================ */
+
+:root {
+  --zer0-radius-sm: 0.25rem;
+  --zer0-radius: 0.375rem;
+  --zer0-radius-lg: 0.5rem;
+  --zer0-radius-xl: 0.75rem;   /* landing feature cards */
+  --zer0-radius-pill: 50rem;
+  --zer0-radius-circle: 50%;
+}

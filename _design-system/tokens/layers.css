@@ -1,0 +1,32 @@
+/* ============================================================================
+   Layer (z-index) tokens — zer0-mistakes
+   ----------------------------------------------------------------------------
+   Source of truth: bamr87/zer0-mistakes _sass/tokens/_layers.scss. One ordered
+   stacking scale so FABs, banners, and modals never collide. Higher number
+   wins; steps of 10 leave room for ad-hoc adjustments.
+   ============================================================================ */
+
+:root {
+  --zer0-layer-base: 0; /* @kind other */
+  --zer0-layer-elevated: 1; /* @kind other */
+
+  --zer0-layer-sticky: 1020; /* @kind other */
+  --zer0-layer-header: 1030; /* @kind other */
+  --zer0-layer-backdrop: 1040; /* @kind other */
+  --zer0-layer-offcanvas: 1045; /* @kind other */
+
+  --zer0-layer-fab-back-to-top: 1050; /* @kind other */
+  --zer0-layer-fab-feedback: 1051; /* @kind other */
+  --zer0-layer-fab-chat: 1052; /* @kind other */
+  --zer0-layer-fab-toc: 1055; /* @kind other */
+  --zer0-layer-fab-local-graph: 1060; /* @kind other */
+
+  --zer0-layer-modal: 1055; /* @kind other */
+  --zer0-layer-popover: 1070; /* @kind other */
+  --zer0-layer-tooltip: 1080; /* @kind other */
+
+  --zer0-layer-toast: 1090; /* @kind other */
+  --zer0-layer-cookie-banner: 1095; /* @kind other */
+  --zer0-layer-feedback-modal: 1096; /* @kind other */
+  --zer0-layer-skip-link: 1100; /* @kind other */
+}

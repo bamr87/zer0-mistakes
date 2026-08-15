@@ -36,6 +36,12 @@
   --zer0-color-border: var(--bs-border-color, #dee2e6);
   --zer0-color-border-translucent: color-mix(in srgb, var(--zer0-color-border) 42%, transparent);
 
+  // Logo palette (documented in _includes/core/branding.html) --------------
+  --zer0-logo-red: #a11111;
+  --zer0-logo-yellow: #ffe900;
+  --zer0-logo-teal: #376986;
+  --zer0-logo-blue: #007bff;
+
   // Code & callouts (legacy --bd-* aliases) --------------------------------
   --zer0-color-code-bg: var(--bd-pre-bg, var(--bs-tertiary-bg));
   --zer0-color-code-ink: var(--bd-callout-code-color, #ab296a);

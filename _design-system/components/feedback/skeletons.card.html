@@ -1,0 +1,56 @@
+<!-- @dsCard group="Components" viewport="700x300" name="Skeleton Loading" subtitle="Shimmer placeholders — text, avatar, thumbnail, card" -->
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body { margin: 0; font-family: var(--zer0-font-sans); color: var(--zer0-color-ink);
+         background: var(--zer0-color-bg); padding: 22px; }
+  .demo { display: flex; gap: 26px; }
+  .card-shell { width: 240px; padding: 0 0 1rem; background: var(--zer0-color-bg);
+                border-radius: var(--zer0-radius); box-shadow: var(--zer0-shadow-sm);
+                overflow: hidden; }
+  .card-shell .pad { padding: 1rem 1rem 0; display: grid; gap: 0.6rem; }
+  .rows { flex: 1; display: grid; gap: 1.1rem; align-content: start; }
+  h4 { margin: 0 0 10px; font-size: 12px; font-weight: 600; letter-spacing: .04em;
+       text-transform: uppercase; color: var(--zer0-color-ink-muted); }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { Skeleton } = window.Zer0MistakesDesignSystem_e75121;
+    function Demo() {
+      return (
+        <div>
+          <h4>Skeletons · post card &amp; primitives</h4>
+          <div className="demo">
+            <div className="card-shell">
+              <Skeleton variant="thumbnail" />
+              <div className="pad">
+                <Skeleton variant="title" width="75%" />
+                <Skeleton variant="text" lines={2} />
+              </div>
+            </div>
+            <div className="rows">
+              <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
+                <Skeleton variant="avatar" />
+                <Skeleton variant="text" lines={2} width="11rem" />
+              </div>
+              <Skeleton variant="text" lines={3} />
+              <Skeleton variant="button" />
+            </div>
+          </div>
+        </div>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById("root")).render(<Demo />);
+  </script>
+</body>
+</html>

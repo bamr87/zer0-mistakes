@@ -12,6 +12,49 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [Unreleased]
+
+### Added
+
+- **Search shortcut affordances (ZER0-032)** — the navbar search button now
+  advertises its keyboard shortcuts, matching the design-system navbar
+  pattern: a quiet `/` kbd chip (xl-up), a hover title ("Search — press / or
+  Ctrl+K", shown as `⌘K` on macOS), and `aria-keyshortcuts`; the sidebar (`b`)
+  and table-of-contents (`t`) hide toggles gained shortcut hover hints, and
+  the keyboard-shortcuts modal now lists `⌘/Ctrl+K`
+  (evidence: [`test/visual/evidence/search-shortcut-hint/`](test/visual/evidence/search-shortcut-hint/README.md)).
+
+- **Live design-system pages (ZER0-082)** — the design system is now
+  part of the site itself: `_design-system/` is force-included in the Jekyll
+  build so `styles.css`, every token file, specimen cards, and component
+  sources get real URLs under `/_design-system/`; a new `/design/` hub page
+  renders the foundation specimens in live iframes (colors, skins, type,
+  spacing, radii, motion, layers, iconography), catalogs the component twins,
+  and links the Claude Design page canvas (all 24 layouts as a browsable
+  presentation). Navbar: About → Design System. Regression spec:
+  `test/visual/features/design-hub.spec.js`.
+
+- **Claude Design system round-trip (ZER0-081)** — the design-token layer is now
+  aligned with the zer0-mistakes Claude Design project
+  (`claude.ai/design/p/e75121c0-9210-42d1-ade3-2c8af9111cbe`): new
+  `--zer0-radius-*`, `--zer0-logo-*`, and `--zer0-text-display-*` tokens in
+  `_sass/tokens/`; the design project vendored as a git mirror under
+  `_design-system/` (plain-CSS tokens, React component specs, guideline cards,
+  website UI kit — sync contract in `_design-system/SYNC.md`); and
+  `scripts/design-system-check.rb` wired into the core test suite so the theme
+  and the mirror cannot drift silently. Callouts, landing feature cards, mobile
+  nav, tables, and focus rings now consume the radius tokens (value-preserving —
+  rendered output unchanged, pinned by a new runtime token assertion in
+  `test/visual/core/styling.spec.js`).
+- **Design-system component twins (PR #391)** — `Fab`/`FabStack`, `PostCard`,
+  and `Skeleton` join Button/Badge/Card/FeatureCard/Callout/Input in
+  `_design-system/components/`, plus new Motion and Layers foundation cards;
+  all pushed live to the Claude Design project. The feature registry is
+  re-synced (`features/features.yml` ↔ `_data/features.yml` — #389's ZER0-081
+  entry had landed in the `_data` mirror only, which the registry validator
+  rejects) and `docs/ui/components.md` gains a theme-source →
+  design-system-twin map.
+
 ## [1.28.0](https://github.com/bamr87/zer0-mistakes/compare/v1.27.0...v1.28.0) (2026-08-09)
 
 
@@ -46,6 +89,8 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 - **Seven theme dialogs labelled themselves with a bare `<h5>`** — the search
 modal, cookie settings modal, statistics help modal and the settings / background / section / admin offcanvases each opened with `<h5 class="modal-title">` or `<h5 class="offcanvas-title">`, so anyone navigating by heading met a level-5 heading as the dialog's title, skipping h3 and h4. Six other dialogs already used the correct `<h2 class="…-title h5">` form, so the theme contradicted itself half the time. All seven now match. `.h5` reproduces the exact sizing, so the change is visually inert. `_includes/docs/bootstrap-docs.html` and the docs prose examples are deliberately untouched — they reproduce upstream Bootstrap's own markup and should keep doing so. (evidence: [`test/visual/evidence/dialog-heading-levels/`](test/visual/evidence/dialog-heading-levels/README.md) — heading walk h2 → h5 becomes h2 → h2 on all six live dialogs, renders byte-identical)
+- **Cookie modal's "Your Privacy Rights" list was invisible in dark mode** — the
+list used Bootstrap's fixed `text-dark` utility inside a `bg-body` panel. `.text-dark` resolves to `rgba(var(--bs-dark-rgb), 1)`, and `--bs-dark-rgb` is **not** remapped by `[data-bs-theme=dark]` — it stays `33,37,41`, which is byte-for-byte the dark `--bs-body-bg` (`#212529`). Measured in a browser: **1.00:1**, against WCAG 1.4.3 (AA)'s 4.5:1 minimum. Not "hard to read" — the same colour as its background, on the one dialog a visitor is most likely forced to read, in the theme's default colour mode, shipped to every consumer. Now `text-body` (**11.85:1** dark, 15.43:1 light, unchanged). `.cookie-category`'s hardcoded `#dee2e6` border became `var(--bs-border-color)`, which is the identical colour in light mode and a visible one in dark. A regression test opens the dialog and asserts the measured contrast ratio — `axe` cannot catch this class of bug on this theme, because the skin system's `body::after` background image makes axe report every contrast check in the dialog as `incomplete` rather than a violation. (evidence: [`test/visual/evidence/cookie-consent-contrast/`](test/visual/evidence/cookie-consent-contrast/README.md) — dark-mode contrast 1.00:1 → 11.85:1, light mode unchanged)
 - **`--page` lookups never matched a real Giscus thread** — `normalize_page()`
 prepended a leading slash to build the discussion title, but Giscus's `pathname` mapping searches for `location.pathname` with the leading slash **removed** (verified live: `/posts/2025/01/21/remote-work-revolution/` requests `term=posts/2025/01/21/remote-work-revolution/`). So `seed` created discussions Giscus would never find, and `thread`/`draft`/`post --page` missed every thread Giscus created itself — the entire "build conversations from page comments" workflow was inoperable against real data. Lookups now match all four title spellings (with/without leading and trailing slash) so both new and legacy/hand-made threads resolve.
 - **`discussion_number_for_page` silently ignored pagination** — the query

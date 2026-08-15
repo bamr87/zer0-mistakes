@@ -1,0 +1,33 @@
+<!-- @dsCard group="Colors" viewport="700x180" name="Theme Skins" subtitle="Seven swappable primary/accent palettes" -->
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; font-family: var(--zer0-font-sans); color: var(--zer0-color-ink);
+         background: var(--zer0-color-bg); padding: 20px; }
+  h4 { margin: 0 0 14px; font-size: 13px; font-weight: 600; letter-spacing: .04em;
+       text-transform: uppercase; color: var(--zer0-color-ink-muted); }
+  .row { display: flex; gap: 10px; }
+  .skin { flex: 1 1 0; text-align: center; }
+  .duo { display: flex; height: 52px; border-radius: var(--zer0-radius-lg); overflow: hidden;
+         border: 1px solid var(--zer0-color-border); }
+  .duo .p { flex: 2; background: var(--zer0-color-primary); }
+  .duo .a { flex: 1; background: var(--zer0-color-accent); }
+  .nm { font-size: 12px; font-weight: 600; margin-top: 7px; text-transform: capitalize; }
+</style>
+</head>
+<body>
+  <h4>Theme skins · <span style="text-transform:none;font-weight:400">[data-theme-skin]</span></h4>
+  <div class="row">
+    <div class="skin" data-theme-skin="air"><div class="duo"><div class="p"></div><div class="a"></div></div><div class="nm">air</div></div>
+    <div class="skin" data-theme-skin="aqua"><div class="duo"><div class="p"></div><div class="a"></div></div><div class="nm">aqua</div></div>
+    <div class="skin" data-theme-skin="dirt"><div class="duo"><div class="p"></div><div class="a"></div></div><div class="nm">dirt</div></div>
+    <div class="skin" data-theme-skin="neon"><div class="duo"><div class="p"></div><div class="a"></div></div><div class="nm">neon</div></div>
+    <div class="skin" data-theme-skin="mint"><div class="duo"><div class="p"></div><div class="a"></div></div><div class="nm">mint</div></div>
+    <div class="skin" data-theme-skin="plum"><div class="duo"><div class="p"></div><div class="a"></div></div><div class="nm">plum</div></div>
+    <div class="skin" data-theme-skin="sunrise"><div class="duo"><div class="p"></div><div class="a"></div></div><div class="nm">sunrise</div></div>
+  </div>
+</body>
+</html>

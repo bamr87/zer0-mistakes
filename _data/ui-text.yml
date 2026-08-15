@@ -94,6 +94,7 @@ en: &DEFAULT_EN
   home_label                 : "Home"
   main_nav_label             : "Main Navigation"
   search_button_label        : "Search"
+  search_button_title        : "Search — press / or Ctrl+K"
   settings_button_label      : "Settings"
   toc_title                  : "Table of Contents"
   # Article intro / metadata chrome (ZER0-078)

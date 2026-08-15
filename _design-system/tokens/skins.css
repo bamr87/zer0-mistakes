@@ -1,0 +1,144 @@
+/* ============================================================================
+   Skin tokens — zer0-mistakes
+   ----------------------------------------------------------------------------
+   Source: _sass/theme/_skins.scss + _data/theme_backgrounds.yml. Seven named
+   skins re-point --zer0-color-primary / --bs-primary / --zer0-color-accent and
+   their WCAG-AA link colors. Apply by setting [data-theme-skin="<name>"] on a
+   container (or :root). Each skin ships a light link color (AA on white) and a
+   dark link color (AA on Bootstrap dark #212529).
+
+   Skins: air · aqua · dirt · neon · mint · plum · sunrise
+   ============================================================================ */
+
+[data-theme-skin="air"] {
+  --zer0-color-primary: #6fa8dc;
+  --zer0-color-primary-rgb: 111, 168, 220; /* @kind color */
+  --zer0-color-accent: #b8d4e3;
+  --bs-primary: #6fa8dc;
+  --bs-primary-rgb: 111, 168, 220; /* @kind color */
+  --bs-link-color: #1e5fa8;
+  --zer0-color-link: #1e5fa8;
+  --bs-link-hover-color: #154a87;
+  --zer0-color-link-hover: #154a87;
+  --zer0-color-border: rgba(111, 168, 220, 0.28);
+}
+[data-theme-skin="air"][data-bs-theme="dark"] {
+  --bs-link-color: #b8d4e3;
+  --zer0-color-link: #b8d4e3;
+  --bs-link-hover-color: #d6eaf4;
+  --zer0-color-link-hover: #d6eaf4;
+}
+
+[data-theme-skin="aqua"] {
+  --zer0-color-primary: #00b4d8;
+  --zer0-color-primary-rgb: 0, 180, 216; /* @kind color */
+  --zer0-color-accent: #90e0ef;
+  --bs-primary: #00b4d8;
+  --bs-primary-rgb: 0, 180, 216; /* @kind color */
+  --bs-link-color: #006d99;
+  --zer0-color-link: #006d99;
+  --bs-link-hover-color: #005577;
+  --zer0-color-link-hover: #005577;
+  --zer0-color-border: rgba(0, 180, 216, 0.28);
+}
+[data-theme-skin="aqua"][data-bs-theme="dark"] {
+  --bs-link-color: #67d7ec;
+  --zer0-color-link: #67d7ec;
+  --bs-link-hover-color: #9ae8f5;
+  --zer0-color-link-hover: #9ae8f5;
+}
+
+[data-theme-skin="dirt"] {
+  --zer0-color-primary: #8b6914;
+  --zer0-color-primary-rgb: 139, 105, 20; /* @kind color */
+  --zer0-color-accent: #d4a574;
+  --bs-primary: #8b6914;
+  --bs-primary-rgb: 139, 105, 20; /* @kind color */
+  --bs-link-color: #7a5a10;
+  --zer0-color-link: #7a5a10;
+  --bs-link-hover-color: #5c430c;
+  --zer0-color-link-hover: #5c430c;
+  --zer0-color-border: rgba(139, 105, 20, 0.28);
+}
+[data-theme-skin="dirt"][data-bs-theme="dark"] {
+  --bs-link-color: #e0b882;
+  --zer0-color-link: #e0b882;
+  --bs-link-hover-color: #f0cea0;
+  --zer0-color-link-hover: #f0cea0;
+}
+
+[data-theme-skin="neon"] {
+  --zer0-color-primary: #8338ec;
+  --zer0-color-primary-rgb: 131, 56, 236; /* @kind color */
+  --zer0-color-accent: #3a86ff;
+  --bs-primary: #8338ec;
+  --bs-primary-rgb: 131, 56, 236; /* @kind color */
+  --bs-link-color: #5e22cc;
+  --zer0-color-link: #5e22cc;
+  --bs-link-hover-color: #4a1aa3;
+  --zer0-color-link-hover: #4a1aa3;
+  --zer0-color-border: rgba(131, 56, 236, 0.28);
+}
+[data-theme-skin="neon"][data-bs-theme="dark"] {
+  --bs-link-color: #8ab4ff;
+  --zer0-color-link: #8ab4ff;
+  --bs-link-hover-color: #b0ccff;
+  --zer0-color-link-hover: #b0ccff;
+}
+
+[data-theme-skin="mint"] {
+  --zer0-color-primary: #52b788;
+  --zer0-color-primary-rgb: 82, 183, 136; /* @kind color */
+  --zer0-color-accent: #95d5b2;
+  --bs-primary: #52b788;
+  --bs-primary-rgb: 82, 183, 136; /* @kind color */
+  --bs-link-color: #2d8059;
+  --zer0-color-link: #2d8059;
+  --bs-link-hover-color: #1f5a3b;
+  --zer0-color-link-hover: #1f5a3b;
+  --zer0-color-border: rgba(82, 183, 136, 0.28);
+}
+[data-theme-skin="mint"][data-bs-theme="dark"] {
+  --bs-link-color: #80cfa8;
+  --zer0-color-link: #80cfa8;
+  --bs-link-hover-color: #a8e6c4;
+  --zer0-color-link-hover: #a8e6c4;
+}
+
+[data-theme-skin="plum"] {
+  --zer0-color-primary: #c77dff;
+  --zer0-color-primary-rgb: 199, 125, 255; /* @kind color */
+  --zer0-color-accent: #812f85;
+  --bs-primary: #c77dff;
+  --bs-primary-rgb: 199, 125, 255; /* @kind color */
+  --bs-link-color: #6b2477;
+  --zer0-color-link: #6b2477;
+  --bs-link-hover-color: #4e1958;
+  --zer0-color-link-hover: #4e1958;
+  --zer0-color-border: rgba(199, 125, 255, 0.28);
+}
+[data-theme-skin="plum"][data-bs-theme="dark"] {
+  --bs-link-color: #d4a0f5;
+  --zer0-color-link: #d4a0f5;
+  --bs-link-hover-color: #e8c8ff;
+  --zer0-color-link-hover: #e8c8ff;
+}
+
+[data-theme-skin="sunrise"] {
+  --zer0-color-primary: #ff6b35;
+  --zer0-color-primary-rgb: 255, 107, 53; /* @kind color */
+  --zer0-color-accent: #f7c59f;
+  --bs-primary: #ff6b35;
+  --bs-primary-rgb: 255, 107, 53; /* @kind color */
+  --bs-link-color: #b54418;
+  --zer0-color-link: #b54418;
+  --bs-link-hover-color: #8f3512;
+  --zer0-color-link-hover: #8f3512;
+  --zer0-color-border: rgba(255, 107, 53, 0.28);
+}
+[data-theme-skin="sunrise"][data-bs-theme="dark"] {
+  --bs-link-color: #ffa87a;
+  --zer0-color-link: #ffa87a;
+  --bs-link-hover-color: #ffd0b0;
+  --zer0-color-link-hover: #ffd0b0;
+}

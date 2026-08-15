@@ -17,7 +17,7 @@
 
   background: var(--zer0-color-bg-elevated);
   border-left: 0.25rem solid var(--zer0-callout-color, var(--zer0-color-primary));
-  border-radius: 0.375rem;
+  border-radius: var(--zer0-radius);
   color: var(--zer0-color-ink);
 }
 

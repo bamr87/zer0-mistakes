@@ -826,6 +826,25 @@ test_sass_compilation() {
     return 0
 }
 
+test_design_token_parity() {
+    log_info "Testing design-token parity (theme vs Claude Design mirror)..."
+
+    cd "$PROJECT_ROOT"
+
+    if command -v ruby &>/dev/null; then
+        if ruby scripts/design-system-check.rb; then
+            log_success "Design tokens in lockstep with _design-system/ mirror"
+        else
+            log_error "Design-token drift detected (see _design-system/SYNC.md)"
+            return 1
+        fi
+    else
+        log_warning "Ruby not available for design-token parity check"
+    fi
+
+    return 0
+}
+
 test_javascript_syntax() {
     log_info "Testing JavaScript syntax..."
     
@@ -882,6 +901,7 @@ run_core_tests() {
     run_test "Favicon and Analytics Wiring" "test_favicon_wiring" "validation"
     run_test "Showcase Demo Links (no absolute 404 hazards)" "test_showcase_demo_links" "validation"
     run_test "Sass Compilation" "test_sass_compilation" "validation"
+    run_test "Design Token Parity" "test_design_token_parity" "validation"
     run_test "JavaScript Syntax" "test_javascript_syntax" "validation"
 }
 

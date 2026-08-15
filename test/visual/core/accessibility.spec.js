@@ -62,6 +62,126 @@ test.describe('Accessibility — axe-core WCAG audits', () => {
   });
 });
 
+// Regression: #280. The page-level audits above never walked this subtree —
+// the modal is closed on load, so a 1:1-contrast `text-dark` on the dark
+// `bg-body` panel shipped to every consumer unnoticed.
+//
+// NOTE ON METHOD: axe's `color-contrast` rule cannot catch this, and it is
+// worth understanding why before "simplifying" this test back into an axe
+// call. The skin system paints `body.zer0-bg-body::after` with the active
+// skin's SVG (e.g. /assets/backgrounds/noise/air.svg). axe refuses to resolve
+// a background colour underneath a pseudo element, so every text node in the
+// dialog is reported as `incomplete` ("Element's background color could not
+// be determined due to a pseudo element") and `violations` comes back EMPTY —
+// on the broken markup as well as the fixed markup. An axe-only assertion
+// here passes vacuously. So we measure the contrast ratio ourselves, which is
+// what WCAG 1.4.3 actually specifies.
+test.describe('Accessibility — cookie preferences modal (dark mode)', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.desktop);
+    // Pin dark explicitly. `color_mode_default: auto` means color-mode-init.html
+    // resolves via prefers-color-scheme, so on a light-preference runner the
+    // page would flip to light and the bug would not reproduce. localStorage
+    // "theme" is the same override the Appearance panel writes, and it
+    // outranks the config default.
+    await page.emulateMedia({ colorScheme: 'dark' });
+    await page.addInitScript(() => window.localStorage.setItem('theme', 'dark'));
+    // Keep the consent banner (z-index 1095) from covering the dialog.
+    await dismissCookieConsent(page);
+    await waitForJekyll(page, '/');
+    await openDialog(page, '#cookieSettingsModal');
+  });
+
+  test('"Your Privacy Rights" text meets the 4.5:1 contrast minimum', async ({ page }) => {
+    expect(await page.getAttribute('html', 'data-bs-theme')).toBe('dark');
+
+    const measured = await page.$$eval(
+      '#cookieSettingsModal .bg-body li',
+      (items) => {
+        const parse = (c) => {
+          const m = String(c).match(/rgba?\(([^)]+)\)/);
+          if (!m) return null;
+          const p = m[1].split(',').map((v) => parseFloat(v.trim()));
+          return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 };
+        };
+        // First ancestor (self included) painting an opaque background.
+        const backdrop = (el) => {
+          for (let n = el; n; n = n.parentElement) {
+            const c = parse(getComputedStyle(n).backgroundColor);
+            if (c && c.a === 1) return c;
+          }
+          return { r: 255, g: 255, b: 255, a: 1 };
+        };
+        // WCAG 2.1 relative luminance + contrast ratio.
+        const lum = ({ r, g, b }) => {
+          const f = (v) => {
+            const s = v / 255;
+            return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+          };
+          return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+        };
+        const ratio = (a, b) => {
+          const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x);
+          return (hi + 0.05) / (lo + 0.05);
+        };
+        return items.map((el) => {
+          const fg = parse(getComputedStyle(el).color);
+          const bg = backdrop(el);
+          return {
+            text: (el.textContent || '').trim().slice(0, 48),
+            fg: `rgb(${fg.r}, ${fg.g}, ${fg.b})`,
+            bg: `rgb(${bg.r}, ${bg.g}, ${bg.b})`,
+            ratio: Math.round(ratio(fg, bg) * 100) / 100,
+          };
+        });
+      }
+    );
+
+    expect(measured.length, 'privacy-rights bullets should be present').toBeGreaterThan(0);
+    const failing = measured.filter((m) => m.ratio < 4.5);
+    expect(
+      failing,
+      'WCAG 1.4.3 (AA) requires >= 4.5:1 for body text. Failing bullets:\n' +
+        failing.map((m) => `  ${m.ratio}:1  ${m.fg} on ${m.bg}  — "${m.text}"`).join('\n')
+    ).toEqual([]);
+  });
+
+  // Broader net for the rest of the dialog. This one genuinely can pass
+  // vacuously for contrast (see the note above), but it still guards the
+  // structural rules — labels, names, roles, ARIA.
+  test('cookie settings modal has no structural WCAG 2.1 AA violations', async ({ page }) => {
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa'])
+      .include('#cookieSettingsModal')
+      .analyze();
+
+    expect(
+      results.violations,
+      `Accessibility violations in the cookie settings modal (dark mode):\n${formatViolations(results.violations)}`
+    ).toEqual([]);
+  });
+});
+
+/**
+ * Open a Bootstrap modal via its JS API and wait until it is fully shown.
+ * The trigger button lives in the consent banner, which we deliberately
+ * suppress, so drive the component directly rather than clicking.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} selector - e.g. '#cookieSettingsModal'
+ */
+async function openDialog(page, selector) {
+  await page.waitForFunction(() => typeof window.bootstrap?.Modal === 'function');
+  await page.evaluate((sel) => {
+    const el = document.querySelector(sel);
+    if (!el) throw new Error(`Dialog ${sel} not found in the DOM`);
+    return new Promise((resolve) => {
+      el.addEventListener('shown.bs.modal', () => resolve(), { once: true });
+      window.bootstrap.Modal.getOrCreateInstance(el).show();
+    });
+  }, selector);
+  await expect(page.locator(selector)).toBeVisible();
+}
+
 test.describe('Accessibility — specific component checks', () => {
   test('admin sidebar nav uses <nav> with aria-label', async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop);

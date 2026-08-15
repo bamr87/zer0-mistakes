@@ -1,0 +1,30 @@
+<!-- @dsCard group="Type" viewport="700x220" name="Body & Weights" subtitle="System-ui body scale, weights 400–700" -->
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; font-family: var(--zer0-font-sans); color: var(--zer0-color-ink);
+         background: var(--zer0-color-bg); padding: 22px; }
+  p { margin: 0 0 10px; line-height: var(--zer0-leading-normal); }
+  .lg { font-size: var(--zer0-text-lg); }
+  .base { font-size: var(--zer0-text-base); }
+  .sm { font-size: var(--zer0-text-sm); color: var(--zer0-color-ink-muted); }
+  .weights { display: flex; gap: 22px; margin-top: 6px; font-size: 18px; }
+  .weights span { display: block; }
+  .wlbl { font-family: var(--zer0-font-mono); font-size: 10px; color: var(--zer0-color-ink-muted); }
+</style>
+</head>
+<body>
+  <p class="lg">Lead — <strong>18px</strong>. Pick a template, write Markdown, push to GitHub, your site is live.</p>
+  <p class="base">Body — 16px, line-height 1.55. zer0-mistakes ships the native system-ui stack so text paints instantly with zero font flash on every platform.</p>
+  <p class="sm">Small — 14px muted. Used for captions, metadata, and helper text.</p>
+  <div class="weights">
+    <div><span style="font-weight:400">Aa</span><span class="wlbl">400 regular</span></div>
+    <div><span style="font-weight:500">Aa</span><span class="wlbl">500 medium</span></div>
+    <div><span style="font-weight:600">Aa</span><span class="wlbl">600 semibold</span></div>
+    <div><span style="font-weight:700">Aa</span><span class="wlbl">700 bold</span></div>
+  </div>
+</body>
+</html>

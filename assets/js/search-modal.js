@@ -109,6 +109,16 @@
             });
         });
 
+        // Hover hints ship as "Ctrl+K" in the markup; swap to the macOS glyph
+        // so the affordance matches the key the visitor actually has.
+        if (/Mac|iPhone|iPad/i.test(navigator.platform || navigator.userAgent)) {
+            document.querySelectorAll('[data-search-toggle]').forEach((button) => {
+                if (button.title) {
+                    button.title = button.title.replace(/Ctrl\+K/i, '⌘K');
+                }
+            });
+        }
+
         // Fallback keyboard shortcut ("/" or Cmd/Ctrl+K) in case other modules are unavailable
         document.addEventListener('keydown', (event) => {
             if (event.target.matches('input, textarea, select, [contenteditable="true"]')) {

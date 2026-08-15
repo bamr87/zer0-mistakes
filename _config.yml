@@ -869,6 +869,14 @@ exclude:
   - MERMAID-*/
   - pages/_notes/_templates/
 
+# Force-include — underscore-prefixed paths Jekyll would otherwise skip.
+# _design-system/ is the git mirror of the Claude Design project (contract:
+# _design-system/SYNC.md). Publishing it gives the design tokens, styles.css
+# manifest, and specimen cards live URLs under /_design-system/ — linked from
+# the /design/ hub page and consumable by prototypes ("link THIS one file").
+include:
+  - _design-system
+
 # Sass/SCSS
 # Production default: minified output, no sourcemaps. main.css is render-blocking
 # on every page, so we ship it compressed (~182KB expanded -> ~140KB minified)

@@ -1,0 +1,42 @@
+<!-- @dsCard group="Colors" viewport="700x230" name="Surfaces & Ink (Light / Dark)" subtitle="Body, elevated, muted, ink, border — both modes" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; font-family: var(--zer0-font-sans); padding: 20px;
+         background: #e9edf1; display: flex; gap: 16px; }
+  .mode { flex: 1; border-radius: var(--zer0-radius-lg); padding: 16px;
+          background: var(--zer0-color-bg); border: 1px solid var(--zer0-color-border); }
+  .lbl { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+         color: var(--zer0-color-ink-muted); margin-bottom: 10px; }
+  .stack { display: flex; flex-direction: column; gap: 8px; }
+  .swatch { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--zer0-color-ink); }
+  .box { width: 34px; height: 34px; border-radius: var(--zer0-radius);
+         border: 1px solid var(--zer0-color-border); flex: none; }
+  .nm { font-weight: 600; }
+  .hx { color: var(--zer0-color-ink-muted); font-family: var(--zer0-font-mono); font-size: 11px; }
+</style>
+</head>
+<body>
+  <div class="mode" data-bs-theme="light">
+    <div class="lbl">Light</div>
+    <div class="stack">
+      <div class="swatch"><span class="box" style="background:var(--zer0-color-bg)"></span><span class="nm">Body</span><span class="hx">#ffffff</span></div>
+      <div class="swatch"><span class="box" style="background:var(--zer0-color-bg-elevated)"></span><span class="nm">Elevated</span><span class="hx">#f8f9fa</span></div>
+      <div class="swatch"><span class="box" style="background:var(--zer0-color-bg-muted)"></span><span class="nm">Muted</span><span class="hx">#e9ecef</span></div>
+      <div class="swatch"><span class="box" style="background:var(--zer0-color-ink)"></span><span class="nm">Ink</span><span class="hx">#212529</span></div>
+    </div>
+  </div>
+  <div class="mode" data-bs-theme="dark">
+    <div class="lbl">Dark</div>
+    <div class="stack">
+      <div class="swatch"><span class="box" style="background:var(--zer0-color-bg)"></span><span class="nm">Body</span><span class="hx">#212529</span></div>
+      <div class="swatch"><span class="box" style="background:var(--zer0-color-bg-elevated)"></span><span class="nm">Elevated</span><span class="hx">#2b3035</span></div>
+      <div class="swatch"><span class="box" style="background:var(--zer0-color-bg-muted)"></span><span class="nm">Muted</span><span class="hx">#343a40</span></div>
+      <div class="swatch"><span class="box" style="background:var(--zer0-color-ink)"></span><span class="nm">Ink</span><span class="hx">#dee2e6</span></div>
+    </div>
+  </div>
+</body>
+</html>

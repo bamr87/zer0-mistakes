@@ -44,7 +44,7 @@
 .landing-feature-card {
   height: 100%;
   border: 1px solid var(--zer0-color-border);
-  border-radius: 0.75rem;
+  border-radius: var(--zer0-radius-xl);
   background: var(--zer0-color-bg);
   transition:
     transform var(--zer0-motion-duration-base) var(--zer0-motion-ease-standard),
@@ -61,7 +61,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
+    border-radius: var(--zer0-radius-circle);
     background-color: rgba(var(--zer0-color-primary-rgb), 0.12);
     color: var(--zer0-color-primary);
     margin-bottom: var(--zer0-space-3);
