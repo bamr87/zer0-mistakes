@@ -2259,7 +2259,7 @@ features:
 
   - id: ZER0-081
     title: "Claude Design System Round-Trip"
-    description: "Design-token layer aligned with the zer0-mistakes Claude Design project: corner-radius, logo-palette, and display-size tokens join _sass/tokens/; a git mirror of the design project lives under _design-system/ (plain-CSS tokens, React component specs, guideline cards, website UI kit); and a CI parity check fails when theme and mirror drift"
+    description: "Design-token layer aligned with the zer0-mistakes Claude Design project: corner-radius, logo-palette, and display-size tokens join _sass/tokens/; a git mirror of the design project lives under _design-system/ (plain-CSS tokens, React component specs from buttons to FABs to post cards to skeletons, foundation cards, website UI kit); and a CI parity check fails when theme and mirror drift"
     implemented: true
     version: "1.29.0"
     link: "/"
@@ -2269,7 +2269,7 @@ features:
     provenance:
       introduced_in: "1.29.0"
       pr: 389
-      commit: null
+      commit: "7fc2fe02"
       issue: null
     tests:
       - "test/visual/core/styling.spec.js"
@@ -2280,9 +2280,14 @@ features:
         - "_sass/tokens/_index.scss"
       scripts:
         - "scripts/design-system-check.rb"
+      design:
+        - "_design-system/components/"
+        - "_design-system/guidelines/"
+        - "_design-system/tokens/"
       docs: "docs/ui/design-system.md"
     features:
       - "--zer0-radius-* corner radii, --zer0-logo-* brand palette, and --zer0-text-display-* fluid hero sizes declared once and consumed by callouts, landing cards, nav, and focus rings"
       - "_design-system/ mirrors the claude.ai/design project (id e75121c0-9210-42d1-ade3-2c8af9111cbe) so interfaces can be designed in Claude Design and folded back into the theme — contract in _design-system/SYNC.md"
       - "scripts/design-system-check.rb (core test suite) resolves var() alias chains and fails CI on token drift, plus flags fallback-less var(--zer0-*) references that are never declared"
+      - "Component specs ship the theme's primitives as React twins — Button, Badge, Fab/FabStack, Card, FeatureCard, PostCard, Callout, Skeleton, Input — with foundation cards for colors, type, spacing, motion, layers, and brand (PR 391)"
       - "No webfonts, Bootstrap-first, seven skins, light+dark — the imported system and the theme now state one identical visual contract"
