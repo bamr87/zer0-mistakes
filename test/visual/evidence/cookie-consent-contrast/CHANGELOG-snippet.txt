@@ -1,0 +1,1 @@
+  (evidence: [`test/visual/evidence/cookie-consent-contrast/`](test/visual/evidence/cookie-consent-contrast/README.md) — dark-mode contrast 1:1 → 11.85:1, light mode unchanged)

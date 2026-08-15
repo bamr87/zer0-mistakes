@@ -1,0 +1,32 @@
+{
+  "slug": "cookie-consent-contrast",
+  "route": "/",
+  "element": "#cookieSettingsModal .bg-body li",
+  "wcagMinimum": 4.5,
+  "dark": {
+    "theme": "dark",
+    "before": {
+      "fg": "rgb(33, 37, 41)",
+      "bg": "rgb(33, 37, 41)",
+      "ratio": 1
+    },
+    "after": {
+      "fg": "rgb(222, 226, 230)",
+      "bg": "rgb(33, 37, 41)",
+      "ratio": 11.85
+    }
+  },
+  "light": {
+    "theme": "light",
+    "before": {
+      "fg": "rgb(33, 37, 41)",
+      "bg": "rgb(255, 255, 255)",
+      "ratio": 15.43
+    },
+    "after": {
+      "fg": "rgb(33, 37, 41)",
+      "bg": "rgb(255, 255, 255)",
+      "ratio": 15.43
+    }
+  }
+}
