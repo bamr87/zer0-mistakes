@@ -1,0 +1,144 @@
+{
+  "slug": "dialog-heading-levels",
+  "dialogs": [
+    {
+      "url": "/",
+      "selector": "#siteSearchModal",
+      "kind": "modal",
+      "source": "components/search-modal.html",
+      "before": {
+        "prevTag": "h2",
+        "titleTag": "h5",
+        "titleClass": "modal-title",
+        "fontSize": "20px",
+        "fontWeight": "500",
+        "skips": 2
+      },
+      "after": {
+        "prevTag": "h2",
+        "titleTag": "h2",
+        "titleClass": "modal-title h5",
+        "fontSize": "20px",
+        "fontWeight": "500",
+        "skips": 0
+      },
+      "pixelIdentical": true
+    },
+    {
+      "url": "/",
+      "selector": "#cookieSettingsModal",
+      "kind": "modal",
+      "source": "components/cookie-consent.html",
+      "before": {
+        "prevTag": "h2",
+        "titleTag": "h5",
+        "titleClass": "modal-title",
+        "fontSize": "20px",
+        "fontWeight": "500",
+        "skips": 2
+      },
+      "after": {
+        "prevTag": "h2",
+        "titleTag": "h2",
+        "titleClass": "modal-title h5",
+        "fontSize": "20px",
+        "fontWeight": "500",
+        "skips": 0
+      },
+      "pixelIdentical": true
+    },
+    {
+      "url": "/",
+      "selector": "#info-section",
+      "kind": "offcanvas",
+      "source": "components/info-section.html",
+      "before": {
+        "prevTag": "h2",
+        "titleTag": "h5",
+        "titleClass": "offcanvas-title",
+        "fontSize": "20px",
+        "fontWeight": "500",
+        "skips": 2
+      },
+      "after": {
+        "prevTag": "h2",
+        "titleTag": "h2",
+        "titleClass": "offcanvas-title h5",
+        "fontSize": "20px",
+        "fontWeight": "500",
+        "skips": 0
+      },
+      "pixelIdentical": true
+    },
+    {
+      "url": "/about/stats/",
+      "selector": "#helpModal",
+      "kind": "modal",
+      "source": "stats/stats-metrics.html",
+      "before": {
+        "prevTag": "h5",
+        "titleTag": "h5",
+        "titleClass": "modal-title",
+        "fontSize": "20px",
+        "fontWeight": "500",
+        "skips": 0
+      },
+      "after": {
+        "prevTag": "h5",
+        "titleTag": "h2",
+        "titleClass": "modal-title h5",
+        "fontSize": "20px",
+        "fontWeight": "500",
+        "skips": 0
+      },
+      "pixelIdentical": true
+    },
+    {
+      "url": "/news/science/",
+      "selector": "#sectionSidebar",
+      "kind": "offcanvas",
+      "source": "navigation/section-sidebar.html",
+      "before": {
+        "prevTag": "h6",
+        "titleTag": "h5",
+        "titleClass": "offcanvas-title",
+        "fontSize": "20px",
+        "fontWeight": "500",
+        "skips": 0
+      },
+      "after": {
+        "prevTag": "h6",
+        "titleTag": "h2",
+        "titleClass": "offcanvas-title h5",
+        "fontSize": "20px",
+        "fontWeight": "500",
+        "skips": 0
+      },
+      "pixelIdentical": true
+    },
+    {
+      "url": "/about/theme/",
+      "selector": "#adminSidebar",
+      "kind": "offcanvas",
+      "source": "_layouts/admin.html",
+      "mobile": true,
+      "before": {
+        "prevTag": "h6",
+        "titleTag": "h5",
+        "titleClass": "offcanvas-title",
+        "fontSize": "20px",
+        "fontWeight": "500",
+        "skips": 0
+      },
+      "after": {
+        "prevTag": "h6",
+        "titleTag": "h2",
+        "titleClass": "offcanvas-title h5",
+        "fontSize": "20px",
+        "fontWeight": "500",
+        "skips": 0
+      },
+      "pixelIdentical": true
+    }
+  ]
+}

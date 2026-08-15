@@ -1,0 +1,1 @@
+  (evidence: [`test/visual/evidence/dialog-heading-levels/`](test/visual/evidence/dialog-heading-levels/README.md) — 6/6 live dialogs now <h2 class="…-title h5">, render byte-identical for 6/6)
