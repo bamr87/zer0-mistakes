@@ -16,6 +16,24 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Added
 
+- **Search shortcut affordances (ZER0-032)** — the navbar search button now
+  advertises its keyboard shortcuts, matching the design-system navbar
+  pattern: a quiet `/` kbd chip (xl-up), a hover title ("Search — press / or
+  Ctrl+K", shown as `⌘K` on macOS), and `aria-keyshortcuts`; the sidebar (`b`)
+  and table-of-contents (`t`) hide toggles gained shortcut hover hints, and
+  the keyboard-shortcuts modal now lists `⌘/Ctrl+K`
+  (evidence: [`test/visual/evidence/search-shortcut-hint/`](test/visual/evidence/search-shortcut-hint/README.md)).
+
+- **Live design-system pages (ZER0-082)** — the design system is now
+  part of the site itself: `_design-system/` is force-included in the Jekyll
+  build so `styles.css`, every token file, specimen cards, and component
+  sources get real URLs under `/_design-system/`; a new `/design/` hub page
+  renders the foundation specimens in live iframes (colors, skins, type,
+  spacing, radii, motion, layers, iconography), catalogs the component twins,
+  and links the Claude Design page canvas (all 24 layouts as a browsable
+  presentation). Navbar: About → Design System. Regression spec:
+  `test/visual/features/design-hub.spec.js`.
+
 - **Claude Design system round-trip (ZER0-081)** — the design-token layer is now
   aligned with the zer0-mistakes Claude Design project
   (`claude.ai/design/p/e75121c0-9210-42d1-ade3-2c8af9111cbe`): new
