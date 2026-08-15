@@ -296,6 +296,7 @@ The token layer is mirrored to a **Claude Design** project ([claude.ai/design](h
 - `_sass/tokens/` stays the **source of truth** for token values. Change a token → update its `_design-system/tokens/*.css` twin in the same PR.
 - `scripts/design-system-check.rb` (run by the `core` test suite) fails CI when the two sides disagree, and also flags fallback-less `var(--zer0-…)` references to tokens that are never declared.
 - Push/pull mechanics, the file map, and what is deliberately *not* mirrored (compiled bundles, byte-identical imagery) live in [`_design-system/SYNC.md`](../../_design-system/SYNC.md).
+- The mirror is **published on the live site** (`include: [_design-system]` in `_config.yml`): tokens and `styles.css` are linkable at `/_design-system/…`, and the `/design/` hub page (`pages/_about/design.md`) renders the foundation specimens live, catalogs the component twins, and links the Claude Design page canvas (ZER0-082).
 
 The mirror ships concrete `--bs-*`/`--bd-*` base values so Claude Design renders the system without Bootstrap loaded; in the theme those primitives come from the vendored Bootstrap CSS.
 

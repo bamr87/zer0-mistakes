@@ -16,6 +16,16 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Added
 
+- **Live design-system pages (ZER0-082)** — the design system is now
+  part of the site itself: `_design-system/` is force-included in the Jekyll
+  build so `styles.css`, every token file, specimen cards, and component
+  sources get real URLs under `/_design-system/`; a new `/design/` hub page
+  renders the foundation specimens in live iframes (colors, skins, type,
+  spacing, radii, motion, layers, iconography), catalogs the component twins,
+  and links the Claude Design page canvas (all 24 layouts as a browsable
+  presentation). Navbar: About → Design System. Regression spec:
+  `test/visual/features/design-hub.spec.js`.
+
 - **Claude Design system round-trip (ZER0-081)** — the design-token layer is now
   aligned with the zer0-mistakes Claude Design project
   (`claude.ai/design/p/e75121c0-9210-42d1-ade3-2c8af9111cbe`): new

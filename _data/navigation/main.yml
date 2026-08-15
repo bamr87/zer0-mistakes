@@ -72,6 +72,8 @@
   children:
     - title: Features
       url: /features/
+    - title: Design System
+      url: /design/
     - title: Authors
       url: /authors/
     - title: Statistics
