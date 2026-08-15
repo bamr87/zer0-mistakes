@@ -2303,7 +2303,7 @@ features:
     date: 2026-08-14
     provenance:
       introduced_in: "1.29.0"
-      pr: null
+      pr: 392
       commit: "6ac9f77d"
       issue: null
     tests:
