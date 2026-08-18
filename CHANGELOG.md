@@ -57,6 +57,22 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **Section sidebars no longer emit dead sub-topic anchors** — the sidebar
+  produced `<a href="#tag">` for every tag, but the matching
+  `<section id="tag">` target exists only in the `magazine` branch of
+  `_layouts/section.html`, and only for the first 5 sub-categories that keep a
+  post once the featured hero is excluded. `grid` and `list` sections (and
+  `grid` is the default) therefore emitted one dead anchor per tag, and
+  `magazine` emitted them for tags 6–15 — 64 of them on this repo's own demo
+  site. Dead anchors are invalid markup, a dead click for keyboard/AT users,
+  and they left the sidebar scrollspy unable to activate. Anchors are now
+  emitted only where a target provably exists; every other style renders
+  `<button data-filter>`, which the layout's existing handler already wires to
+  the `[data-tags]` cards. The `list` branch gained the `data-tags` attribute
+  it was missing (without it those buttons would have been inert), and the
+  filter handler now applies pill colours only to actual pills, so the pills
+  and the sidebar stay in sync instead of fighting over each other's classes.
+  Regression cover: `test/visual/features/section-topic-controls.spec.js`
 - **Consumer homepages no longer claim to be this theme** — the
   `SoftwareApplication` JSON-LD in `_includes/content/jsonld-software.html` is
   now opt-in via `jsonld_software_application` (set on this site only). The

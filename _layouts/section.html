@@ -182,8 +182,9 @@ layout: root
       {% include navigation/section-sidebar.html 
          section_posts=section_posts 
          sub_categories=sub_categories 
-         page_title=page.title 
-         sidebar_id="sectionSidebar" 
+         page_title=page.title
+         sidebar_id="sectionSidebar"
+         section_style=section_style
       %}
     </div>
 
@@ -482,7 +483,7 @@ layout: root
 
         <section id="all-posts" class="list-section mb-5 scroll-mt-5">
           {% for lpost in section_posts %}
-            <article class="card border-0 shadow-sm mb-3 hover-lift">
+            <article class="card border-0 shadow-sm mb-3 hover-lift" data-tags="{{ lpost.tags | join: ' ' | slugify }}">
               <div class="row g-0">
                 <div class="col-md-3">
                   <a href="{{ lpost.url | relative_url }}">
@@ -597,13 +598,23 @@ layout: root
     btn.addEventListener('click', function() {
       const filter = this.dataset.filter;
       
-      // Update active button
+      // Update active state across every filter control on the page — the
+      // topic pills here and the section sidebar's topic buttons both carry
+      // [data-filter], so they stay in sync. Only pills get the btn-* colour
+      // swap; the sidebar's controls are .nav-link and style themselves off
+      // .active alone.
       document.querySelectorAll('[data-filter]').forEach(b => {
-        b.classList.remove('btn-primary', 'active');
-        b.classList.add('btn-outline-secondary');
+        b.classList.remove('active');
+        if (b.classList.contains('btn')) {
+          b.classList.remove('btn-primary');
+          b.classList.add('btn-outline-secondary');
+        }
       });
-      this.classList.remove('btn-outline-secondary');
-      this.classList.add('btn-primary', 'active');
+      this.classList.add('active');
+      if (this.classList.contains('btn')) {
+        this.classList.remove('btn-outline-secondary');
+        this.classList.add('btn-primary');
+      }
       
       // Filter cards
       document.querySelectorAll('[data-tags]').forEach(card => {
