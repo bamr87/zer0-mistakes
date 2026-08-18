@@ -1,13 +1,10 @@
 # Evidence — SoftwareApplication JSON-LD is now opt-in (2026-08 fleet audit, finding C1)
 
-`_includes/content/jsonld-software.html` emitted a `SoftwareApplication` JSON-LD
-graph on **every** consumer's homepage. The payload is hardcoded to this theme,
-so on any other site it was factually wrong in machine-readable form.
+`_includes/content/jsonld-software.html` emitted a `SoftwareApplication` JSON-LD graph on **every** consumer's homepage. The payload is hardcoded to this theme, so on any other site it was factually wrong in machine-readable form.
 
 ## The problem
 
-The include is wired unconditionally into `_includes/core/head.html` (line 127),
-gated only on `page.permalink == "/"`. Its payload hardcodes:
+The include is wired unconditionally into `_includes/core/head.html` (line 127), gated only on `page.permalink == "/"`. Its payload hardcodes:
 
 | Field | Value emitted on *every* consumer homepage |
 |---|---|
@@ -22,14 +19,9 @@ gated only on `page.permalink == "/"`. Its payload hardcodes:
 | `screenshot` | the theme's mascot image |
 | `Person` node | a specific named author + their GitHub and X profiles, referenced as the site's `publisher` |
 
-Live consequence found in the audit: `bashconsultants.com` — a Denver IT
-consulting practice — told search engines and any JSON-LD consumer that it was
-a free, MIT-licensed, RubyGems-distributed developer tool authored by someone
-else. It had not overridden the include; there was no way to.
+Live consequence found in the audit: `bashconsultants.com` — a Denver IT consulting practice — told search engines and any JSON-LD consumer that it was a free, MIT-licensed, RubyGems-distributed developer tool authored by someone else. It had not overridden the include; there was no way to.
 
-The include's own header stated its purpose was "to accurately cite and describe
-the zer0-mistakes Jekyll theme as a SoftwareApplication entity" — written for the
-theme's own marketing site, but shipped to everyone.
+The include's own header stated its purpose was "to accurately cite and describe the zer0-mistakes Jekyll theme as a SoftwareApplication entity" — written for the theme's own marketing site, but shipped to everyone.
 
 ## What changed
 
@@ -38,15 +30,11 @@ theme's own marketing site, but shipped to everyone.
 | `_includes/content/jsonld-software.html` | Renders only when `site.jsonld_software_application` is true (and the page is the homepage). Homepage detection moved into an explicit `_is_homepage` assign — Liquid has no parentheses and evaluates `and`/`or` right-to-left, so the combined condition would have been fragile. Header rewritten to say the block describes THE THEME, not the site rendering it. |
 | `_config.yml` | Sets `jsonld_software_application: true` with a comment explaining that only the theme's own site may truthfully claim it. Behaviour on this site is unchanged. |
 
-Consumers need to do nothing: absent config is falsey, so the block simply stops
-rendering. Their standard SEO metadata (`jekyll-seo-tag`'s own `WebSite` block)
-is untouched — see the `graph_node_types` in `metrics.json`.
+Consumers need to do nothing: absent config is falsey, so the block simply stops rendering. Their standard SEO metadata (`jekyll-seo-tag`'s own `WebSite` block) is untouched — see the `graph_node_types` in `metrics.json`.
 
 ## Measured result
 
-Two real builds of this repo, identical but for the flag. The opt-out column is
-exactly what every consumer homepage emitted **before** this change, since the
-include was previously ungated.
+Two real builds of this repo, identical but for the flag. The opt-out column is exactly what every consumer homepage emitted **before** this change, since the include was previously ungated.
 
 | | theme's own site (opt-in) | consumer default (opt-out) |
 |---|---|---|
@@ -72,12 +60,6 @@ grep -c '"@type": "SoftwareApplication"' /tmp/optin/index.html     # 1
 grep -c '"@type": "SoftwareApplication"' /tmp/consumer/index.html  # 0
 ```
 
-No screenshots: this change touches `<head>` structured data only and has zero
-visual effect. The rendered page is byte-identical apart from the removed
-`<script type="application/ld+json">` block.
+No screenshots: this change touches `<head>` structured data only and has zero visual effect. The rendered page is byte-identical apart from the removed `<script type="application/ld+json">` block.
 
-Regression test:
-[`../../features/jsonld-software-optin.spec.js`](../../features/jsonld-software-optin.spec.js)
-— asserts the opted-in site emits exactly one valid `SoftwareApplication` graph
-describing this theme, that the homepage gate still holds, and that the payload
-stays internally consistent.
+Regression test: [`../../features/jsonld-software-optin.spec.js`](../../features/jsonld-software-optin.spec.js) — asserts the opted-in site emits exactly one valid `SoftwareApplication` graph describing this theme, that the homepage gate still holds, and that the payload stays internally consistent.
