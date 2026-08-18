@@ -10,67 +10,36 @@ author: bamr87
 
 # Fleet Harmonization Audit (August 2026)
 
-A point-in-time, ground-truth review of every repo building on `bamr87/zer0-mistakes`
-(theme at `v1.28.0`), commissioned to identify differences, issues, inconsistencies,
-and improvements across the fleet and propose a harmonization plan. It complements
-[`theme-propagation.md`](./theme-propagation.md) (how the system is *supposed* to
-work) with what was actually found on disk.
+A point-in-time, ground-truth review of every repo building on `bamr87/zer0-mistakes` (theme at `v1.28.0`), commissioned to identify differences, issues, inconsistencies, and improvements across the fleet and propose a harmonization plan. It complements [`theme-propagation.md`](./theme-propagation.md) (how the system is *supposed* to work) with what was actually found on disk.
 
-**Companion artifact (same content, designed for scanning):**
-https://claude.ai/code/artifact/0d77e2c6-8f69-4bfd-83aa-d56ed00b4cf9
+**Companion artifact (same content, designed for scanning):** https://claude.ai/code/artifact/0d77e2c6-8f69-4bfd-83aa-d56ed00b4cf9
 
 ## Scope & method
 
-Repos audited: the theme itself, plus its nine consumers —
-`year-of-ai/year-of-ai.github.io`, `ai-world-view/ai-world-view.github.io`,
-`bamr87/lifehacker.dev`, `bamr87/irony-works`, `bamr87/bashconsultants`,
-`bamr87/it-journey`, `bamr87/zer0-pages`, `bamr87/zer0-pages-remote`,
-`bamr87/wargames`.
+Repos audited: the theme itself, plus its nine consumers — `year-of-ai/year-of-ai.github.io`, `ai-world-view/ai-world-view.github.io`, `bamr87/lifehacker.dev`, `bamr87/irony-works`, `bamr87/bashconsultants`, `bamr87/it-journey`, `bamr87/zer0-pages`, `bamr87/zer0-pages-remote`, `bamr87/wargames`.
 
-Two passes: (1) direct deterministic verification — running this repo's own
-`scripts/bin/audit-consumer` against every consumer, cross-checked with raw
-`grep`/`diff`/`git log` against every config, `Gemfile`, and `Gemfile.lock` in the
-fleet; (2) a ten-agent independent re-derivation pass (one per consumer plus one
-cataloguing the theme's own test suite/instructions/propagation tooling), each
-tasked to re-verify every claim from pass one from scratch — reading real file
-diffs for every flagged override, downloading and inspecting a published gem to
-confirm one drift claim, tracing Liquid include chains to confirm functional
-impact rather than assume it. Corrections an agent found are reported as the
-finding, not the original guess.
+Two passes: (1) direct deterministic verification — running this repo's own `scripts/bin/audit-consumer` against every consumer, cross-checked with raw `grep`/`diff`/`git log` against every config, `Gemfile`, and `Gemfile.lock` in the fleet; (2) a ten-agent independent re-derivation pass (one per consumer plus one cataloguing the theme's own test suite/instructions/propagation tooling), each tasked to re-verify every claim from pass one from scratch — reading real file diffs for every flagged override, downloading and inspecting a published gem to confirm one drift claim, tracing Liquid include chains to confirm functional impact rather than assume it. Corrections an agent found are reported as the finding, not the original guess.
 
-Citations below include file:line where useful — treat them as pointers to
-re-verify, not permanent addresses; several will drift as each repo evolves.
+Citations below include file:line where useful — treat them as pointers to re-verify, not permanent addresses; several will drift as each repo evolves.
 
 ## TL;DR
 
 - **4 of 9 consumers are invisible to `_data/consumers.yml`** — `irony-works`,
-  `zer0-pages`, `zer0-pages-remote`, `wargames` get no dispatch, no drift report,
-  no risk tracking, ever.
+`zer0-pages`, `zer0-pages-remote`, `wargames` get no dispatch, no drift report, no risk tracking, ever.
 - **0 of 9 consumers have adopted `templates/consumer/`** (`theme-bump.yml`,
-  `bump-theme-pins.sh`, `.theme-overrides.yml`) — the self-service bump pipeline
-  this repo built exists on one side of a conversation nobody joined.
+`bump-theme-pins.sh`, `.theme-overrides.yml`) — the self-service bump pipeline this repo built exists on one side of a conversation nobody joined.
 - **`detect_consumer_mode()` misclassifies 6 of 9 consumers as `gem` mode**
-  because their `_config.yml` uses padded key-alignment YAML — confirmed
-  independently against six repos — which silently skips the required-plugin
-  check wherever it fires.
+because their `_config.yml` uses padded key-alignment YAML — confirmed independently against six repos — which silently skips the required-plugin check wherever it fires.
 - **`audit-consumer --format json` emits invalid JSON** (trailing comma before
   the closing bracket) — unusable for CI without a workaround.
 - **The theme's own homepage JSON-LD describes the theme, not the consumer** —
-  live today on bashconsultants.com, whose structured data currently claims a
-  Denver IT-consulting practice is a free, open-source Ruby gem.
+live today on bashconsultants.com, whose structured data currently claims a Denver IT-consulting practice is a free, open-source Ruby gem.
 - **Two org hubs (year-of-ai, ai-world-view) run zero pre-merge validation**
-  of their own themed Jekyll build, while fanning their pin out to a dozen-plus
-  member repos each.
+of their own themed Jekyll build, while fanning their pin out to a dozen-plus member repos each.
 - **Real version drift**: both hubs pinned `@v1.26.0` (2 minors stale);
-  `zer0-pages` resolves gem `1.25.0` (3 minors stale) though its own Gemfile
-  constraint already permits `1.28.0`; `bashconsultants`' dev Gemfile runs a
-  path-gem workaround whose stated justification was verifiably obsolete
-  roughly nine releases ago.
+`zer0-pages` resolves gem `1.25.0` (3 minors stale) though its own Gemfile constraint already permits `1.28.0`; `bashconsultants`' dev Gemfile runs a path-gem workaround whose stated justification was verifiably obsolete roughly nine releases ago.
 - **`consumers.yml`'s own risk prose has drifted from the code it describes** —
-  it-journey's entry claims "~55 shadowed files … ~75 lines of !important CSS
-  working around #338"; the theme's own audit tool finds 2–3 real shadow files,
-  31 `!important` lines, and no substantiable reference to a fix numbered #338
-  inside that repo.
+it-journey's entry claims "~55 shadowed files … ~75 lines of !important CSS working around #338"; the theme's own audit tool finds 2–3 real shadow files, 31 `!important` lines, and no substantiable reference to a fix numbered #338 inside that repo.
 
 ## A. Harmonization infrastructure
 
@@ -80,12 +49,7 @@ re-verify, not permanent addresses; several will drift as each repo evolves.
 | A2 | Even inside the 5 registered consumers, only 3 (`bashconsultants`, `year-of-ai`, `ai-world-view`) carry `dispatch: true`. `propagate-theme.yml`'s release-triggered job only reaches those three; the rest depend entirely on a consumer-side `theme-bump.yml` cron nobody has installed (A3). | Medium |
 | A3 | Zero of the 9 consumers have copied any of `templates/consumer/theme-bump.yml`, `bump-theme-pins.sh`, or `.theme-overrides.yml`. Every override found in Section E is undocumented for exactly this reason — there's nowhere in any consumer to document it. | Critical |
 
-**Recommendation:** add the four missing repos to `consumers.yml` (this audit's
-inventory table below is a ready-made source; note `zer0-pages`' `gem` mode and
-`pages/` source root explicitly). Land `.theme-overrides.yml` in `irony-works`,
-`bashconsultants`, `it-journey`, and `zer0-pages` first — pure documentation,
-zero workflow risk, and every override in Section E already has a verified
-reason to write down.
+**Recommendation:** add the four missing repos to `consumers.yml` (this audit's inventory table below is a ready-made source; note `zer0-pages`' `gem` mode and `pages/` source root explicitly). Land `.theme-overrides.yml` in `irony-works`, `bashconsultants`, `it-journey`, and `zer0-pages` first — pure documentation, zero workflow risk, and every override in Section E already has a verified reason to write down.
 
 ## B. Bugs in the theme's own audit & propagation scripts
 
@@ -117,17 +81,11 @@ reason to write down.
 | zer0-pages | `Gemfile.lock` | `1.25.0` | 3 | Gemfile constraint (`~> 1.25`) already permits `1.28.0` — nothing blocks a `bundle lock --update` today |
 | lifehacker.dev / it-journey / irony-works / wargames / zer0-pages-remote | `_config.yml` | unpinned | — | floating on `main`; see CI coverage (G) for what compensates, if anything |
 
-Five consumers float with no version string anywhere. That's a legitimate design
-choice only where it's paired with a compensating control — `lifehacker.dev`'s
-nightly fresh-clone rebuild, or `it-journey`'s PR-gated cross-platform build.
-For `irony-works`, `wargames`, and `zer0-pages-remote` it's simply the default
-nobody revisited, with a weaker (push-to-main-only, or no Gemfile at all)
-safety net underneath.
+Five consumers float with no version string anywhere. That's a legitimate design choice only where it's paired with a compensating control — `lifehacker.dev`'s nightly fresh-clone rebuild, or `it-journey`'s PR-gated cross-platform build. For `irony-works`, `wargames`, and `zer0-pages-remote` it's simply the default nobody revisited, with a weaker (push-to-main-only, or no Gemfile at all) safety net underneath.
 
 ## E. Undocumented overrides, judged individually
 
-Every file `audit-consumer` flags `DIFFERS_UNJUSTIFIED` was diffed against the
-theme's copy, not just counted.
+Every file `audit-consumer` flags `DIFFERS_UNJUSTIFIED` was diffed against the theme's copy, not just counted.
 
 | Repo | File | Verdict | Why |
 |---|---|---|---|
@@ -143,16 +101,11 @@ theme's copy, not just counted.
 | zer0-pages | `_includes/content/intro.html` | legit, wrong stated reason | cited bug #293 shipped fixed in v1.26.0; fork survives only because this repo is locked to pre-fix `1.25.0` |
 | zer0-pages | `_includes/obsidian/full-graph.html` | stale, not safe to drop | cited bug #294 also fixed in v1.26.0, but the fork has since drifted into an entire older graph-page design; dropping it outright would break the graph on this repo's actually-locked `1.25.0` gem |
 
-`lifehacker.dev`'s two additive includes (`_includes/home/card.html`,
-`home/cover.html`) don't shadow any theme file at all — the theme has no
-`_includes/home/` — so they're not listed above; see Section I for why they're
-worth a second look anyway.
+`lifehacker.dev`'s two additive includes (`_includes/home/card.html`, `home/cover.html`) don't shadow any theme file at all — the theme has no `_includes/home/` — so they're not listed above; see Section I for why they're worth a second look anyway.
 
 ## F. Data-contract consistency
 
-`remote_theme` ships no `_data`; every consumer is expected to supply its own
-`navigation/`, `ui-text.yml`, `theme_skins.yml`, `theme_backgrounds.yml`,
-`authors.yml`.
+`remote_theme` ships no `_data`; every consumer is expected to supply its own `navigation/`, `ui-text.yml`, `theme_skins.yml`, `theme_backgrounds.yml`, `authors.yml`.
 
 | Repo | navigation | ui-text | skins | backgrounds | authors |
 |---|:---:|:---:|:---:|:---:|:---:|
@@ -167,16 +120,11 @@ worth a second look anyway.
 Traced what a missing file actually does, rather than assuming:
 
 - **skins & backgrounds** — not a defect anywhere. `theme-customizer.html`
-  explicitly falls back to a compiled skin registry because `remote_theme`
-  can't ship `_data`. Working as designed.
+explicitly falls back to a compiled skin registry because `remote_theme` can't ship `_data`. Working as designed.
 - **ui-text.yml** — low impact where missing. Every sampled `ui.*` reference in
-  the always-on includes chains a `default: "…"` filter, degrading to hardcoded
-  English rather than blank text.
+the always-on includes chains a `default: "…"` filter, degrading to hardcoded English rather than blank text.
 - **authors.yml** — the one real, visible break. Traced on **bashconsultants**,
-  which sets `author:` front matter on every post: with no `authors.yml`,
-  `is_known` is always false, so every post's "About the author" section
-  renders a bare name string, a generic fallback icon, and no bio — on every
-  article of a real customer-facing site.
+which sets `author:` front matter on every post: with no `authors.yml`, `is_known` is always false, so every post's "About the author" section renders a bare name string, a generic fallback icon, and no bio — on every article of a real customer-facing site.
 
 ## G. CI build coverage
 
@@ -195,24 +143,16 @@ Traced what a missing file actually does, rather than assuming:
 ## H. Docs-vs-reality drift (condensed; full detail in the artifact)
 
 - **year-of-ai / ai-world-view**: ai-world-view's CLAUDE.md still describes a
-  single-member org; it has three. Its `_config_dev.yml` comment claims to
-  disable `remote_theme` — it doesn't. Both hubs' "never float on HEAD" rule
-  is scoped to `_config.yml`/`hub.yml` in the docs, but `_config_dev.yml`
-  floats in both, unremarked.
+single-member org; it has three. Its `_config_dev.yml` comment claims to disable `remote_theme` — it doesn't. Both hubs' "never float on HEAD" rule is scoped to `_config.yml`/`hub.yml` in the docs, but `_config_dev.yml` floats in both, unremarked.
 - **lifehacker.dev**: entry-point table omits the fully-wired `theme-scout`
   agent; documented commit types cover barely half of what the log actually uses.
 - **irony-works**: CLAUDE.md never mentions any theme-layer file; five exist.
 - **bashconsultants**: "three build stacks" implied equally validated; CI only
-  ever builds two. Gemfile's "ZERO VERSION PINS" philosophy is immediately
-  contradicted by a hard local path pin, and cites a doc file that doesn't exist.
+ever builds two. Gemfile's "ZERO VERSION PINS" philosophy is immediately contradicted by a hard local path pin, and cites a doc file that doesn't exist.
 - **it-journey**: two whole collections (`_docs`, `_quickstart`) are documented
-  but don't exist on disk or in config; a real collection (`_quest-reports`,
-  117 files) isn't documented at all. `AGENTS.md`'s Ruby/Jekyll version claims
-  are already known-stale per the repo's own quest-walkthrough ledger.
+but don't exist on disk or in config; a real collection (`_quest-reports`, 117 files) isn't documented at all. `AGENTS.md`'s Ruby/Jekyll version claims are already known-stale per the repo's own quest-walkthrough ledger.
 - **zer0-pages**: the headline override-justification claim is backwards — both
-  cited bugs are documented as *fixed inside* the v1.26.0 release it cites as
-  "still broken as of." The repo actually runs `1.25.0`, so the forks are real
-  and needed, just not for the stated reason.
+cited bugs are documented as *fixed inside* the v1.26.0 release it cites as "still broken as of." The repo actually runs `1.25.0`, so the forks are real and needed, just not for the stated reason.
 - **zer0-pages-remote**: CLAUDE.md is a mostly-unfilled scaffold — fair for a
   bare demo, but real.
 - **wargames**: `AGENTS.md` is stale installer boilerplate that contradicts the
@@ -221,18 +161,13 @@ Traced what a missing file actually does, rather than assuming:
 ## I. Patterns worth propagating fleet-wide
 
 - **Documented forks with an upstream issue number** (zer0-pages) — even with
-  a now-outdated justification, this is exactly what `.theme-overrides.yml` is
-  meant to formalize everywhere.
+a now-outdated justification, this is exactly what `.theme-overrides.yml` is meant to formalize everywhere.
 - **A fresh, uncached theme rebuild on a schedule** (lifehacker.dev's
-  `nightly.yml`) — the only fleet mechanism that would catch an upstream break
-  on a floating pin before a human does, with a real incident on record.
+`nightly.yml`) — the only fleet mechanism that would catch an upstream break on a floating pin before a human does, with a real incident on record.
 - **Filing theme bugs upstream instead of patching around them**
-  (lifehacker.dev's and it-journey's `theme-scout` agents) — it-journey pairs
-  each of its three CSS workarounds with a written upstream-fix proposal under
-  `TODO/theme-issues/`.
+(lifehacker.dev's and it-journey's `theme-scout` agents) — it-journey pairs each of its three CSS workarounds with a written upstream-fix proposal under `TODO/theme-issues/`.
 - **Accessibility-conscious overrides** — lifehacker.dev's two additive
-  includes add `role="img" aria-label` / `aria-hidden` handling the theme's
-  own stock markup lacks; a candidate for upstreaming.
+includes add `role="img" aria-label` / `aria-hidden` handling the theme's own stock markup lacks; a candidate for upstreaming.
 - **CODEOWNERS + branch protection paired together** (lifehacker.dev,
   it-journey) — makes "a bot's own PR can't approve itself" structural.
 - **Cross-stack CI that builds every real deployment target**
@@ -240,7 +175,8 @@ Traced what a missing file actually does, rather than assuming:
 
 ## Recommended actions
 
-**Quick, low-risk, high-signal**
+### Quick, low-risk, high-signal
+
 1. Fix `detect_consumer_mode()`'s regex (B1) — one line, unblocks accurate
    plugin checks for 6 repos immediately.
 2. Fix the trailing comma in `audit-consumer --format json` (B2) — one line.
@@ -251,19 +187,21 @@ Traced what a missing file actually does, rather than assuming:
 5. Delete the retirable overrides: bashconsultants' `posthog.html` fork
    (adopt `posthog.privacy.*` instead) and it-journey's `particles-source.js`.
 
-**Structural**
-6. Land `.theme-overrides.yml` in irony-works, bashconsultants, it-journey,
-   and zer0-pages (A3) — every override already has a verified reason.
-7. Resolve the obsidian-plugin contradiction (B4) — gate the manifest
-   requirement on actual wikilink usage, or stop calling the plugin optional.
-8. Scope `jsonld-software.html` to the theme's own site (C1) — currently
-   live and incorrect on at least one real consumer homepage.
-9. Give year-of-ai and ai-world-view a real pre-merge `jekyll build` gate (G).
-10. Regenerate `consumers.yml`'s prose risk notes from the audit tool's actual
-    output rather than hand-maintained estimates that drift from the code.
+### Structural
 
-**Worth a decision, not urgent**
-11. Retire bashconsultants' obsolete path-gem dev workaround (D) — touches
-    `docker-compose.yml`, `Dockerfile`, and an agent doctrine file.
-12. Backfill `_data/authors.yml` on bashconsultants (F) — the one
-    missing-data-file gap with a verified visible UX cost today.
+1. Land `.theme-overrides.yml` in irony-works, bashconsultants, it-journey,
+   and zer0-pages (A3) — every override already has a verified reason.
+2. Resolve the obsidian-plugin contradiction (B4) — gate the manifest
+   requirement on actual wikilink usage, or stop calling the plugin optional.
+3. Scope `jsonld-software.html` to the theme's own site (C1) — currently
+   live and incorrect on at least one real consumer homepage.
+4. Give year-of-ai and ai-world-view a real pre-merge `jekyll build` gate (G).
+5. Regenerate `consumers.yml`'s prose risk notes from the audit tool's actual
+   output rather than hand-maintained estimates that drift from the code.
+
+### Worth a decision, not urgent
+
+1. Retire bashconsultants' obsolete path-gem dev workaround (D) — touches
+   `docker-compose.yml`, `Dockerfile`, and an agent doctrine file.
+2. Backfill `_data/authors.yml` on bashconsultants (F) — the one
+   missing-data-file gap with a verified visible UX cost today.
