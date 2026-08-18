@@ -1,0 +1,41 @@
+{
+  "change": "jsonld-software.html is now opt-in via site.jsonld_software_application",
+  "method": "Two real Jekyll builds of this repo, identical except for the new config flag. The opt-out column is byte-for-byte what EVERY consumer homepage emitted before this change, because the include was previously ungated.",
+  "build_command": "bundle exec jekyll build --config '_config.yml,_config_dev.yml'[,<flag-off overlay>]",
+  "page_measured": "index.html (homepage — the only page the include ever targeted)",
+  "before_ungated_every_consumer": {
+    "note": "Identical to the opt-in column: before this change there was no flag, so every site got this.",
+    "ld_json_blocks": 2,
+    "graph_node_types": ["WebPage", "WebSite", "SoftwareApplication", "Person", "WebSite"],
+    "emits_SoftwareApplication": true,
+    "emits_theme_codeRepository": true,
+    "emits_rubygems_downloadUrl": true,
+    "emits_hardcoded_person_node": true,
+    "html_bytes": 294601
+  },
+  "after_optin_themes_own_site": {
+    "note": "_config.yml sets jsonld_software_application: true — behaviour preserved exactly.",
+    "ld_json_blocks": 2,
+    "graph_node_types": ["WebPage", "WebSite", "SoftwareApplication", "Person", "WebSite"],
+    "emits_SoftwareApplication": true,
+    "emits_theme_codeRepository": true,
+    "emits_rubygems_downloadUrl": true,
+    "emits_hardcoded_person_node": true,
+    "html_bytes": 294601
+  },
+  "after_optout_consumer_default": {
+    "note": "Flag absent/false — the default for every consumer. Standard SEO metadata is untouched; only the theme-describing graph is gone.",
+    "ld_json_blocks": 1,
+    "graph_node_types": ["WebSite"],
+    "emits_SoftwareApplication": false,
+    "emits_theme_codeRepository": false,
+    "emits_rubygems_downloadUrl": false,
+    "emits_hardcoded_person_node": false,
+    "html_bytes": 290843
+  },
+  "delta_per_consumer_homepage": {
+    "false_software_claims_removed": 1,
+    "hardcoded_person_nodes_removed": 1,
+    "html_bytes_saved": 3758
+  }
+}

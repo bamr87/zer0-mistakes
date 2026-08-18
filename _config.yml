@@ -43,6 +43,13 @@ portfolio                : &portfolio [*github_user, '.', 'github.io']
 
 ## Site Information ---------------------------------------------------------------
 
+# Emit the SoftwareApplication JSON-LD block (_includes/content/jsonld-software.html)
+# on the homepage. That payload describes THE THEME — its RubyGems URL, GitHub
+# repo, MIT licence, feature list and author — so only the theme's own site may
+# truthfully claim it. Consumers must leave this off; on their homepage it would
+# assert that their site is this Ruby gem.
+jsonld_software_application: true
+
 title                    : &title "zer0-mistakes"
 title_url                : "/"
 title_icon               : "robot"

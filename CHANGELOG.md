@@ -55,6 +55,48 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   rejects) and `docs/ui/components.md` gains a theme-source →
   design-system-twin map.
 
+### Fixed
+
+- **Consumer homepages no longer claim to be this theme** — the
+  `SoftwareApplication` JSON-LD in `_includes/content/jsonld-software.html` is
+  now opt-in via `jsonld_software_application` (set on this site only). The
+  block hardcodes this theme's RubyGems URL, GitHub repository, MIT licence,
+  feature list and author, but was wired unconditionally into every consumer's
+  homepage — so a consulting firm's site was telling search engines it was a
+  free open-source Ruby gem. Consumers need no action: absent config is falsey.
+  Evidence: [`test/visual/evidence/jsonld-software-optin/`](test/visual/evidence/jsonld-software-optin/README.md).
+- **`audit-consumer` misread most consumers' theme mode** — `detect_consumer_mode()`
+  matched `^remote_theme:` with no tolerance for whitespace before the colon, so
+  the column-aligned YAML style that 6 of 9 fleet consumers use never matched and
+  every one of them was silently reported as `gem` mode. That skipped the plugin
+  checks entirely, with no warning that they had been skipped.
+- **`audit-consumer --format json` emitted unparseable JSON** — every entry
+  carried a trailing comma, so the array always closed on `},\n]}`. The
+  human-readable log lines also went to stdout, mixing into the payload. Entries
+  are now comma-separated correctly and logging moves to stderr under
+  `--format json`, so the output pipes straight into `jq`.
+- **`audit-consumer` ignored Jekyll's `source:`** — a consumer that relocates its
+  site tree (e.g. `source: pages`) was audited at the repo root, reporting a
+  falsely clean "no overrides, no unique files". It now follows `source:` for the
+  file scan while still reading config and `.theme-overrides.yml` from the root.
+- **The Obsidian plugin was demanded of consumers that cannot run it** — the
+  manifest listed `_plugins/obsidian_links.rb` as required for every
+  `remote_theme` consumer, contradicting `obsidian.instructions.md`, which
+  documents it as opt-in and "skipped under the `github-pages` gem". GitHub Pages
+  builds in safe mode and loads no local plugins, so nothing the theme ships is
+  mandatory; `required_plugin_paths` is now empty and the plugin is optional.
+
+### Changed
+
+- **`_data/consumers.yml` now covers the whole fleet** — added `zer0-pages`,
+  `irony-works`, `wargames` and `zer0-pages-remote`, which were unregistered and
+  therefore invisible to `propagate.rb` in both directions (no release dispatch,
+  never in the drift report). The `it-journey` risk note was corrected: its
+  "~55 shadowed files / ~75 lines of !important CSS working around #338" claim
+  is not supported by `audit-consumer` — only 2 files shadow a theme file, the
+  CSS is 31 lines in this theme's own documented `user_overrides` hook, and no
+  fix numbered #338 could be substantiated in that repo.
+
 ## [1.28.0](https://github.com/bamr87/zer0-mistakes/compare/v1.27.0...v1.28.0) (2026-08-09)
 
 

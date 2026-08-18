@@ -23,12 +23,15 @@ theme_data_paths:
   - _data/navigation
   - _data/ui-text.yml
 
-# Plugin files that consumers using remote_theme MUST vendor locally.
-# GitHub Pages does not load plugins from a remote_theme source.
+# Plugin files a consumer MUST vendor locally. Empty by design: GitHub Pages
+# builds in safe mode and loads no local plugins at all, so nothing the theme
+# ships is mandatory for a stock remote_theme consumer.
 required_plugin_paths:
-  - _plugins/obsidian_links.rb
-# Optional plugins consumers can vendor for enhanced functionality.
+  []
+# Optional plugins consumers can vendor for enhanced functionality. These run
+# only on self-built (vanilla Jekyll) sites, never on default GitHub Pages.
 optional_plugin_paths:
+  - _plugins/obsidian_links.rb
   - _plugins/admin_page_urls.rb
   - _plugins/content_statistics_generator.rb
   - _plugins/theme_version.rb

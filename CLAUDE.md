@@ -58,8 +58,12 @@ docker-compose exec -T jekyll bundle exec jekyll build \
 ./scripts/bin/test lib                     # One tier: lib | theme | integration | install
 ./test/test_runner.sh                      # Theme test orchestrator (core suites)
 ./test/test_runner.sh --suites core        # Single suite: core, deployment, quality,
-                                           #   installation, installer, site_generation,
-                                           #   obsidian, playwright, playwright_snapshots
+                                           #   installer, site_generation, i18n, obsidian,
+                                           #   features, playwright, playwright_snapshots,
+                                           #   audit  (the authoritative list is
+                                           #   TEST_SUITE_KEYS in test/test_runner.sh;
+                                           #   `installation` was retired — its scenarios
+                                           #   live in test_install_legacy_flags.sh)
 ./test/test_runner.sh --suites full        # Everything incl. Playwright tiers
 ./test/test_core.sh                        # Run one test script directly
 npm run test:smoke                         # Playwright smoke tier
