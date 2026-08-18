@@ -50,6 +50,32 @@ assert_output_contains() {
     fi
 }
 
+assert_output_not_contains() {
+    local test_name="$1"
+    local unexpected="$2"
+    local actual="$3"
+    if echo "$actual" | grep -qF "$unexpected"; then
+        fail "$test_name (unexpected '$unexpected' in output)"
+        if [[ "${VERBOSE:-false}" == "true" ]]; then
+            echo "    Actual output:"
+            echo "$actual" | sed 's/^/    /'
+        fi
+    else
+        pass "$test_name"
+    fi
+}
+
+assert_equals() {
+    local test_name="$1"
+    local expected="$2"
+    local actual="$3"
+    if [[ "$actual" == "$expected" ]]; then
+        pass "$test_name"
+    else
+        fail "$test_name (expected '$expected', got '$actual')"
+    fi
+}
+
 assert_exit_code() {
     local test_name="$1"
     local expected="$2"
@@ -149,7 +175,7 @@ assert_exit_code "gem --strict exits non-zero" "1" "$strict_exit"
 
 # ---------------------------------------------------------------------------
 echo ""
-echo "--- 7. Remote-theme consumer: MISSING_PLUGIN detection ---"
+echo "--- 7. Remote-theme consumer: opt-in plugins are never MISSING_PLUGIN ---"
 
 output=$("$AUDIT_BIN" \
     --consumer-path "$FIXTURES_DIR/consumer-remote" \
@@ -157,7 +183,45 @@ output=$("$AUDIT_BIN" \
     --mode          remote_theme \
     --format        text 2>&1 || true)
 
-assert_output_contains "remote: flags MISSING_PLUGIN" "MISSING_PLUGIN" "$output"
+# The fixture does not vendor obsidian_links.rb. That is CORRECT for a stock
+# remote_theme consumer: GitHub Pages builds in safe mode and loads no local
+# plugins, so the file could not run even if it were present. The manifest
+# therefore declares nothing required, and a missing opt-in plugin must report
+# OPTIONAL_PLUGIN. Flagging it MISSING_PLUGIN produced a false positive on
+# seven fleet consumers with no Obsidian content at all.
+assert_output_contains "remote: missing opt-in plugin reports OPTIONAL_PLUGIN" \
+    "OPTIONAL_PLUGIN" "$output"
+assert_output_not_contains "remote: no MISSING_PLUGIN for opt-in plugins" \
+    "MISSING_PLUGIN" "$output"
+
+# ---------------------------------------------------------------------------
+echo ""
+echo "--- 7b. MISSING_PLUGIN still fires for a genuinely required plugin ---"
+
+# Nothing is required by default, so drive the code path with a stub theme
+# whose manifest declares one.
+STUB_THEME=$(mktemp -d)
+mkdir -p "$STUB_THEME/_data" "$STUB_THEME/_plugins"
+echo "# stub" > "$STUB_THEME/_plugins/obsidian_links.rb"
+cat > "$STUB_THEME/_data/theme-manifest.yml" <<'STUB_MANIFEST'
+version: "0.0.0-test"
+themable_paths:
+  - _layouts
+required_plugin_paths:
+  - _plugins/obsidian_links.rb
+optional_plugin_paths:
+  - _plugins/theme_version.rb
+STUB_MANIFEST
+
+stub_output=$("$AUDIT_BIN" \
+    --consumer-path "$FIXTURES_DIR/consumer-remote" \
+    --theme-path    "$STUB_THEME" \
+    --mode          remote_theme \
+    --format        text 2>&1 || true)
+rm -rf "$STUB_THEME"
+
+assert_output_contains "required plugin absent still flags MISSING_PLUGIN" \
+    "MISSING_PLUGIN" "$stub_output"
 
 # ---------------------------------------------------------------------------
 echo ""
@@ -167,7 +231,7 @@ assert_output_contains "remote: flags OK for theme_version.rb" "OK" "$output"
 
 # ---------------------------------------------------------------------------
 echo ""
-echo "--- 9. Remote-theme --strict exits non-zero on MISSING_PLUGIN ---"
+echo "--- 9. Remote-theme --strict exits non-zero on unjustified drift ---"
 
 set +e
 "$AUDIT_BIN" \
@@ -242,6 +306,82 @@ else
 fi
 
 rm -rf "$TMPDIR_FIX"
+
+# ---------------------------------------------------------------------------
+echo ""
+echo "--- 13. detect_consumer_mode tolerates real-world YAML styles ---"
+
+# shellcheck source=/dev/null
+source "$LIB_DIR/audit.sh"
+
+MODE_FIX=$(mktemp -d)
+
+# Column-aligned YAML: the style most fleet consumers actually use. A bare
+# `^remote_theme:` regex never matched it, so every one of them was silently
+# misreported as gem mode — which skipped the plugin checks entirely.
+mkdir -p "$MODE_FIX/padded"
+printf 'title: "t"\nremote_theme             : "bamr87/zer0-mistakes@v1.26.0"\n' \
+    > "$MODE_FIX/padded/_config.yml"
+assert_equals "mode: padded-colon YAML detects remote_theme" \
+    "remote_theme" "$(detect_consumer_mode "$MODE_FIX/padded")"
+
+mkdir -p "$MODE_FIX/compact"
+printf 'remote_theme: bamr87/zer0-mistakes\n' > "$MODE_FIX/compact/_config.yml"
+assert_equals "mode: compact YAML detects remote_theme" \
+    "remote_theme" "$(detect_consumer_mode "$MODE_FIX/compact")"
+
+# `remote_theme: false` is how a consumer turns the remote theme off and
+# resolves the theme as a gem instead.
+mkdir -p "$MODE_FIX/disabled"
+printf 'remote_theme             : false\ntheme: jekyll-theme-zer0\n' \
+    > "$MODE_FIX/disabled/_config.yml"
+assert_equals "mode: remote_theme=false resolves to gem" \
+    "gem" "$(detect_consumer_mode "$MODE_FIX/disabled")"
+
+mkdir -p "$MODE_FIX/commented"
+printf '# remote_theme: bamr87/zer0-mistakes\ntheme: jekyll-theme-zer0\n' \
+    > "$MODE_FIX/commented/_config.yml"
+assert_equals "mode: commented-out remote_theme resolves to gem" \
+    "gem" "$(detect_consumer_mode "$MODE_FIX/commented")"
+
+# `source:` relocates the whole Jekyll tree; auditing the repo root instead
+# reports a falsely clean result.
+mkdir -p "$MODE_FIX/sourced"
+printf 'source: pages\ntheme: jekyll-theme-zer0\n' > "$MODE_FIX/sourced/_config.yml"
+assert_equals "source: is read from _config.yml" \
+    "pages" "$(detect_consumer_source "$MODE_FIX/sourced")"
+assert_equals "source: absent yields empty" \
+    "" "$(detect_consumer_source "$MODE_FIX/compact")"
+
+rm -rf "$MODE_FIX"
+
+# ---------------------------------------------------------------------------
+echo ""
+echo "--- 14. --format json emits parseable JSON ---"
+
+json_output=$("$AUDIT_BIN" \
+    --consumer-path "$FIXTURES_DIR/consumer-remote" \
+    --theme-path    "$REPO_ROOT" \
+    --mode          remote_theme \
+    --format        json 2>/dev/null || true)
+
+# Entries used to carry a trailing comma each, so the array always closed on
+# `},\n]}` — which no JSON parser accepts.
+if command -v python3 >/dev/null 2>&1; then
+    if printf '%s' "$json_output" | python3 -c 'import json,sys; json.load(sys.stdin)' 2>/dev/null; then
+        pass "json: output parses as valid JSON"
+    else
+        fail "json: output parses as valid JSON"
+        if [[ "${VERBOSE:-false}" == "true" ]]; then
+            printf '%s\n' "$json_output" | tail -5 | sed 's/^/    /'
+        fi
+    fi
+else
+    info "python3 unavailable — skipping JSON parse assertion"
+fi
+
+assert_output_not_contains "json: no dangling comma before the closing bracket" \
+    "}," "$(printf '%s' "$json_output" | tr -d ' \n' | grep -o '},\]}' || true)"
 
 # ---------------------------------------------------------------------------
 echo ""

@@ -62,10 +62,18 @@ consumers:
     dispatch: false
     risk: >-
       Unpinned. Every push to this theme's main reaches production with no gate
-      and no rollback. Shadows ~55 theme files (5 layouts, 34 includes, 8 JS, 6
-      CSS, 2 plugins) — the largest override surface in the fleet, including
-      ~75 lines of !important CSS working around the stacking bug fixed in #338.
-      Recommend pinning and joining the fan-out.
+      and no rollback — that part is the real exposure. Recommend pinning and
+      joining the fan-out. NOTE: this entry previously claimed it "shadows ~55
+      theme files … ~75 lines of !important CSS working around #338", which
+      audit-consumer does not support. Only 2 files actually shadow a theme
+      file (_includes/content/giscus.html, assets/js/particles-source.js); the
+      other ~52 are it-journey's own quest-system layouts and includes that
+      share no filename with anything in this theme, so they carry no drift
+      risk at all. The !important CSS is real but is 31 lines in
+      assets/css/user-overrides.css — this theme's own documented extension
+      hook, enabled by `user_overrides: true`, not a shadow — and no fix
+      numbered #338 could be substantiated in that repo. Keep this field
+      derived from audit-consumer output, not hand-maintained estimates.
     pins:
       - file: _config.yml
         kind: remote_theme
@@ -145,3 +153,100 @@ consumers:
       - file: _data/hub.yml
         kind: hub_registry
         note: "line 39 (pages.theme_repo) — re-roll members after bumping"
+
+  # ---------------------------------------------------------------------------
+  # The four entries below were missing entirely until the 2026-08 fleet audit.
+  # Unregistered consumers are invisible to propagate.rb in BOTH directions: no
+  # release dispatch reaches them, and they never appear in the weekly drift
+  # report — so their pins can rot indefinitely with nothing to notice. That is
+  # exactly what happened to zer0-pages, which sat three minors behind on a gem
+  # constraint that already permitted the current release.
+  # ---------------------------------------------------------------------------
+  - repo: bamr87/zer0-pages
+    mode: gem
+    site: https://bamr87.github.io/zer0-pages/
+    dispatch: true
+    note: >-
+      Dual Obsidian-vault / Jekyll repo. Two things make it unlike every other
+      consumer. (1) It sets `source: pages`, so the whole themable tree lives
+      under pages/ — audit-consumer follows `source:` for this reason; auditing
+      the repo root reports a falsely clean result. (2) It is gem mode with no
+      remote_theme anywhere, so NOTHING is picked up automatically: the
+      scheduled bump is its only path to a new version.
+    risk: >-
+      Gemfile.lock resolved 1.25.0 while the Gemfile constraint (~> 1.25)
+      already permitted 1.28.0 — stale purely because nothing was nudging it.
+      Keeps two deliberate include forks, declared in its .theme-overrides.yml.
+    pins:
+      - file: Gemfile
+        kind: gem_constraint
+        note: 'line 11 — `gem "jekyll-theme-zer0", "~> 1.25"`'
+      - file: Gemfile.lock
+        kind: resolved_lockfile
+        note: "line 86 — re-lock with `bundle lock --update jekyll-theme-zer0`"
+      - file: _config.yml
+        kind: theme_name
+        note: "line 29 — `theme: jekyll-theme-zer0`; activates the gem, no version of its own"
+
+  # ---------------------------------------------------------------------------
+  - repo: bamr87/irony-works
+    mode: remote_theme_floating
+    site: https://bamr87.github.io/irony-works/
+    dispatch: false
+    note: >-
+      Vault + Node engine; engine/scripts/transplant.mjs converts vault/ into
+      the _entries/ collection before Jekyll runs. Has NO Gemfile at all — it
+      builds via actions/jekyll-build-pages (the github-pages image), so it can
+      only ever be tracked as remote_theme_floating; there is no gem constraint
+      surface for a bump to rewrite.
+    risk: >-
+      Unpinned, and with no local preview path a contributor cannot see a theme
+      break before pushing. Keeps three deliberate overrides, declared in its
+      .theme-overrides.yml.
+    pins:
+      - file: _config.yml
+        kind: remote_theme
+        note: line 4, no tag — floats main
+
+  # ---------------------------------------------------------------------------
+  - repo: bamr87/wargames
+    mode: remote_theme_floating
+    site: https://bamr87.github.io/wargames/
+    dispatch: false
+    note: >-
+      Content-only vendored mirror of the OverTheWire challenges. Zero local
+      theme files — one of the cleanest consumers in the fleet. Its _config.yml
+      uses column-aligned YAML (`remote_theme             : "..."`), the style
+      that used to defeat audit-consumer's mode detection.
+    risk: >-
+      Unpinned, and its only build runs on push to main (jekyll-gh-pages.yml),
+      so a break ships before anyone sees it.
+    pins:
+      - file: _config.yml
+        kind: remote_theme
+        note: line 44, no tag — floats main
+
+  # ---------------------------------------------------------------------------
+  - repo: bamr87/zer0-pages-remote
+    mode: remote_theme_floating
+    site: https://bamr87.github.io/zer0-pages-remote/
+    dispatch: false
+    note: >-
+      The minimal reference consumer: _config.yml + Gemfile + index.md, no
+      local theme files and no _data at all, still showing the onboarding
+      wizard by design. Useful as the canary for what a stock remote_theme
+      consumer gets with zero customisation — if the theme breaks a bare site,
+      it breaks here first.
+    private: true
+    risk: >-
+      Unpinned. Low stakes (a demo, not a content site), but it has already
+      caught one real integration break: PR #8 fixed a Liquid `include_cached`
+      failure caused by a Gemfile plugin missing from the safe-mode whitelist.
+      This repo is PRIVATE, so an unauthenticated `propagate.rb` run reports it
+      "unreachable" rather than reading its pin — drift reporting needs a token
+      here even though it is read-only. CI already supplies one; a bare local
+      run will not.
+    pins:
+      - file: _config.yml
+        kind: remote_theme
+        note: line 12, no tag — floats main

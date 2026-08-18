@@ -118,14 +118,35 @@ done
 
 CONSUMER_PATH="$(cd "$CONSUMER_PATH" && pwd)"
 
+# In --format json, stdout must be PURE JSON so `jq` / `json.load` can consume
+# it directly. The human-readable log lines are still useful, so send them to
+# stderr rather than dropping them. (Left on stdout, they made every --format
+# json run unparseable even after the trailing-comma fix.)
+if [[ "$FORMAT" == "json" ]]; then
+    info()    { echo -e "${BLUE}[INFO]${NC} $1" >&2; }
+    step()    { echo -e "${CYAN}[STEP]${NC} $1" >&2; }
+    success() { echo -e "${GREEN}[SUCCESS]${NC} $1" >&2; }
+    warn()    { echo -e "${YELLOW}[WARNING]${NC} $1" >&2; }
+fi
+
 # ---------------------------------------------------------------------------
 step "Auditing consumer: $CONSUMER_PATH"
 
-# Detect or confirm mode
+# CONSUMER_ROOT holds the config/override files; CONSUMER_PATH is where the
+# theme-shadowing files actually live. They differ when the consumer sets
+# Jekyll's `source:` (zer0-pages keeps its whole site tree under `pages/`).
+CONSUMER_ROOT="$CONSUMER_PATH"
+CONSUMER_SOURCE_REL=$(detect_consumer_source "$CONSUMER_ROOT")
+if [[ -n "$CONSUMER_SOURCE_REL" && -d "$CONSUMER_ROOT/$CONSUMER_SOURCE_REL" ]]; then
+    CONSUMER_PATH="$CONSUMER_ROOT/$CONSUMER_SOURCE_REL"
+    info "Jekyll source: $CONSUMER_SOURCE_REL/ — scanning there, not the repo root"
+fi
+
+# Detect or confirm mode (from the repo root, where _config.yml lives)
 if [[ -n "$MODE_OVERRIDE" ]]; then
     MODE="$MODE_OVERRIDE"
 else
-    MODE=$(detect_consumer_mode "$CONSUMER_PATH")
+    MODE=$(detect_consumer_mode "$CONSUMER_ROOT")
     info "Detected mode: $MODE"
 fi
 
@@ -133,7 +154,7 @@ fi
 if [[ -n "$THEME_PATH_OVERRIDE" ]]; then
     RESOLVED_THEME="$THEME_PATH_OVERRIDE"
 else
-    RESOLVED_THEME=$(resolve_theme_path "$MODE" "$CONSUMER_PATH" "$THEME_ROOT")
+    RESOLVED_THEME=$(resolve_theme_path "$MODE" "$CONSUMER_ROOT" "$THEME_ROOT")
 fi
 
 if [[ -z "$RESOLVED_THEME" || ! -d "$RESOLVED_THEME" ]]; then
@@ -149,7 +170,10 @@ if [[ ! -f "$MANIFEST" ]]; then
 fi
 
 # Load overrides manifest from consumer
-OVERRIDES_FILE="$CONSUMER_PATH/.theme-overrides.yml"
+# Declared overrides sit next to _config.yml at the repo root; fall back to the
+# source dir so either placement works.
+OVERRIDES_FILE="$CONSUMER_ROOT/.theme-overrides.yml"
+[[ -f "$OVERRIDES_FILE" ]] || OVERRIDES_FILE="$CONSUMER_PATH/.theme-overrides.yml"
 OVERRIDE_PATHS_TMP=$(mktemp)
 trap 'rm -f "$OVERRIDE_PATHS_TMP"' EXIT
 
@@ -190,8 +214,14 @@ if [[ ${#THEMABLE_DIRS[@]} -eq 0 ]]; then
     THEMABLE_DIRS=("_layouts" "_includes" "_sass" "assets/css" "assets/js")
 fi
 if [[ ${#REQUIRED_PLUGIN_FILES[@]} -eq 0 && ${#OPTIONAL_PLUGIN_FILES[@]} -eq 0 ]]; then
-    REQUIRED_PLUGIN_FILES=("_plugins/obsidian_links.rb")
-    OPTIONAL_PLUGIN_FILES=("_plugins/admin_page_urls.rb" "_plugins/content_statistics_generator.rb" "_plugins/theme_version.rb")
+    # No manifest at all. Nothing is genuinely required (GitHub Pages loads no
+    # local plugins), so every known plugin is offered as optional.
+    OPTIONAL_PLUGIN_FILES=(
+        "_plugins/obsidian_links.rb"
+        "_plugins/admin_page_urls.rb"
+        "_plugins/content_statistics_generator.rb"
+        "_plugins/theme_version.rb"
+    )
 fi
 
 # ---------------------------------------------------------------------------
@@ -316,7 +346,9 @@ fi
 # ---------------------------------------------------------------------------
 # Summary
 # ---------------------------------------------------------------------------
-[[ "$FORMAT" == "json" ]] && echo ']}'
+# Entries are printed without a trailing newline (see print_classification),
+# so close the array on its own line.
+[[ "$FORMAT" == "json" ]] && printf '\n]}\n'
 
 if [[ "$FORMAT" == "text" ]]; then
     echo ""
