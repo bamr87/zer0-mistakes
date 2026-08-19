@@ -12,13 +12,17 @@
   - sub_categories: Array of unique tags/topics from section posts
   - page_title: Title of the current section
   - sidebar_id: Unique ID for the sidebar (default: "sectionSidebar")
-  
+  - section_style: The parent layout's display style, one of grid | list |
+    magazine (default: "grid"). Decides whether topics render as scroll
+    anchors or as filter buttons — see the Topic controls note below.
+
   Features:
   - Desktop: Fixed sticky sidebar on the left
   - Mobile: Offcanvas drawer
   - Topic navigation with article counts
   - Section statistics
-  - Smooth scroll to sections
+  - Smooth scroll to sections (magazine style, where scroll targets exist)
+  - Card filtering via [data-filter] (grid/list styles)
   
   Dependencies:
   - Bootstrap 5 offcanvas component
@@ -30,6 +34,42 @@
 {% assign section_posts = include.section_posts %}
 {% assign sub_categories = include.sub_categories %}
 {% assign page_title = include.page_title | default: page.title %}
+{% assign section_style = include.section_style | default: "grid" %}
+
+{% comment %}
+  Topic controls: link vs filter.
+
+  Only the `magazine` branch of _layouts/section.html emits per-subcategory
+  `<section id="{{ subcat | slugify }}">` scroll targets, and only for the first
+  5 sub-categories that still have a post once the featured hero is excluded.
+  The `grid` and `list` branches emit no sub-topic ids at all — they filter
+  `[data-tags]` cards through `[data-filter]` buttons instead.
+
+  So an <a href="#slug"> here is only ever valid under magazine, and only for
+  that exact set. Emitting one anywhere else produced guaranteed-dead anchors:
+  invalid markup, a dead click for keyboard/AT users, and a scrollspy that could
+  never activate. `_linkable_subcats` below reproduces the layout's set exactly;
+  every other style renders filter buttons, which the layout's existing
+  `[data-filter]` handler already wires up with no extra JS.
+{% endcomment %}
+{% assign _anchors_resolve = false %}
+{% if section_style == "magazine" %}{% assign _anchors_resolve = true %}{% endif %}
+
+{% assign _linkable_subcats = "" | split: "" %}
+{% if _anchors_resolve %}
+  {% assign _featured = section_posts | where: "featured", true | first %}
+  {% unless _featured %}{% assign _featured = section_posts | first %}{% endunless %}
+  {% for subcat in sub_categories limit: 5 %}
+    {% assign _subcat_posts = section_posts | where_exp: "post", "post.tags contains subcat" %}
+    {% assign _remaining = 0 %}
+    {% for p in _subcat_posts %}
+      {% unless p.url == _featured.url %}{% assign _remaining = _remaining | plus: 1 %}{% endunless %}
+    {% endfor %}
+    {% if _remaining > 0 %}
+      {% assign _linkable_subcats = _linkable_subcats | push: subcat %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
 
 <!-- ================================ -->
 <!-- DESKTOP SIDEBAR (Fixed Sticky)   -->
@@ -47,21 +87,37 @@
       </div>
       <div class="card-body p-0">
         <nav class="nav flex-column sidebar-nav">
+          {% if _anchors_resolve %}
           <a class="nav-link active" href="#all-posts" data-section="all-posts">
             <i class="bi bi-grid me-2"></i>
             <span class="nav-text">All Articles</span>
             <span class="badge bg-secondary ms-auto">{{ section_posts.size }}</span>
           </a>
-          {% for subcat in sub_categories limit: 15 %}
+          {% for subcat in _linkable_subcats %}
             {% assign subcat_posts = section_posts | where_exp: "post", "post.tags contains subcat" %}
-            {% if subcat_posts.size > 0 %}
             <a class="nav-link" href="#{{ subcat | slugify }}" data-section="{{ subcat | slugify }}">
               <i class="bi bi-tag me-2"></i>
               <span class="nav-text">{{ subcat | capitalize }}</span>
               <span class="badge bg-light text-dark ms-auto">{{ subcat_posts.size }}</span>
             </a>
+          {% endfor %}
+          {% else %}
+          <button type="button" class="nav-link text-start active" data-filter="all">
+            <i class="bi bi-grid me-2"></i>
+            <span class="nav-text">All Articles</span>
+            <span class="badge bg-secondary ms-auto">{{ section_posts.size }}</span>
+          </button>
+          {% for subcat in sub_categories limit: 15 %}
+            {% assign subcat_posts = section_posts | where_exp: "post", "post.tags contains subcat" %}
+            {% if subcat_posts.size > 0 %}
+            <button type="button" class="nav-link text-start" data-filter="{{ subcat | slugify }}">
+              <i class="bi bi-tag me-2"></i>
+              <span class="nav-text">{{ subcat | capitalize }}</span>
+              <span class="badge bg-light text-dark ms-auto">{{ subcat_posts.size }}</span>
+            </button>
             {% endif %}
           {% endfor %}
+          {% endif %}
         </nav>
       </div>
       {% comment %} Existence-gate the tags index: a remote-theme consumer without
@@ -114,19 +170,33 @@
   </div>
   <div class="offcanvas-body p-0">
     <nav class="nav flex-column">
+      {% if _anchors_resolve %}
       <a class="nav-link active bg-light py-3 border-bottom" href="#all-posts" data-bs-dismiss="offcanvas">
         <i class="bi bi-grid me-2"></i>All Articles
         <span class="badge bg-secondary float-end">{{ section_posts.size }}</span>
       </a>
-      {% for subcat in sub_categories %}
+      {% for subcat in _linkable_subcats %}
         {% assign subcat_posts = section_posts | where_exp: "post", "post.tags contains subcat" %}
-        {% if subcat_posts.size > 0 %}
         <a class="nav-link text-body-secondary py-3 border-bottom" href="#{{ subcat | slugify }}" data-bs-dismiss="offcanvas">
           <i class="bi bi-tag me-2"></i>{{ subcat | capitalize }}
           <span class="badge bg-light text-dark float-end">{{ subcat_posts.size }}</span>
         </a>
+      {% endfor %}
+      {% else %}
+      <button type="button" class="nav-link text-start active bg-light py-3 border-bottom w-100" data-filter="all" data-bs-dismiss="offcanvas">
+        <i class="bi bi-grid me-2"></i>All Articles
+        <span class="badge bg-secondary float-end">{{ section_posts.size }}</span>
+      </button>
+      {% for subcat in sub_categories %}
+        {% assign subcat_posts = section_posts | where_exp: "post", "post.tags contains subcat" %}
+        {% if subcat_posts.size > 0 %}
+        <button type="button" class="nav-link text-start text-body-secondary py-3 border-bottom w-100" data-filter="{{ subcat | slugify }}" data-bs-dismiss="offcanvas">
+          <i class="bi bi-tag me-2"></i>{{ subcat | capitalize }}
+          <span class="badge bg-light text-dark float-end">{{ subcat_posts.size }}</span>
+        </button>
         {% endif %}
       {% endfor %}
+      {% endif %}
     </nav>
     {% if _tags_page %}
     <div class="p-3">
@@ -169,6 +239,16 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
+  /* In grid/list styles the topic controls are <button data-filter> (there is
+     no per-topic scroll target to link to). Bootstrap's .nav-link already
+     clears button background/border; these are the two properties a <button>
+     still needs to render identically to the anchor form. */
+  .sidebar-nav button.nav-link,
+  .offcanvas button.nav-link {
+    width: 100%;
+    text-align: left;
+  }
   
   /* Offcanvas mobile styling */
   .offcanvas .nav-link {
@@ -194,8 +274,10 @@
           if (target) {
             target.scrollIntoView({ behavior: 'smooth' });
             
-            // Update active state in sidebar
-            document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
+            // Update active state in sidebar. Scoped to anchors: in grid/list
+            // styles the topic controls are <button data-filter> elements whose
+            // active state belongs to the layout's filter handler, not here.
+            document.querySelectorAll('.sidebar-nav a.nav-link').forEach(link => {
               link.classList.remove('active');
             });
             
@@ -220,7 +302,7 @@
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           const id = entry.target.getAttribute('id');
-          document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
+          document.querySelectorAll('.sidebar-nav a.nav-link').forEach(link => {
             link.classList.remove('active');
             if (link.getAttribute('href') === `#${id}`) {
               link.classList.add('active');

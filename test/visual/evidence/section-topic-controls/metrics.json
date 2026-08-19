@@ -1,0 +1,17 @@
+{
+  "change": "section sidebar topic controls: no dead sub-topic anchors",
+  "measured_on": "2026-08-18",
+  "method": "clean jekyll build (rm -rf _site .jekyll-cache) of this repo's own demo site with --config '_config.yml,_config_dev.yml', then href=\"#…\" resolved against every id in the emitted HTML",
+  "before_ref": "b466cad (main)",
+  "headline": { "dangling_anchors_before": 64, "dangling_anchors_after": 0 },
+  "pages": [
+    { "page": "/news/science/",     "style": "grid",     "dangling_before": 7,  "dangling_after": 0, "sidebar_links_after": 0, "sidebar_buttons_after": 8,  "data_tags_cards": 2 },
+    { "page": "/news/development/", "style": "grid",     "dangling_before": 13, "dangling_after": 0, "sidebar_links_after": 0, "sidebar_buttons_after": 14, "data_tags_cards": 3 },
+    { "page": "/news/technology/",  "style": "grid",     "dangling_before": 21, "dangling_after": 0, "sidebar_links_after": 0, "sidebar_buttons_after": 16, "data_tags_cards": 6 },
+    { "page": "/news/business/",    "style": "list",     "dangling_before": 7,  "dangling_after": 0, "sidebar_links_after": 0, "sidebar_buttons_after": 8,  "data_tags_cards": 2 },
+    { "page": "/news/world/",       "style": "magazine", "dangling_before": 5,  "dangling_after": 0, "sidebar_links_after": 4, "sidebar_buttons_after": 0,  "data_tags_cards": 0 },
+    { "page": "/news/tutorial/",    "style": "magazine", "dangling_before": 11, "dangling_after": 0, "sidebar_links_after": 6, "sidebar_buttons_after": 0,  "data_tags_cards": 0 }
+  ],
+  "regression_test": "test/visual/features/section-topic-controls.spec.js",
+  "not_verified": "No browser screenshots were captured in this sandbox; the numbers above come from the emitted HTML. The Playwright spec covers the interactive behaviour and runs in CI."
+}
