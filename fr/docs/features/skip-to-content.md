@@ -62,10 +62,19 @@ Le lien est le premier élément focalisable dans `_includes/core/header.html`, 
 
 ```html
 <!-- _layouts/root.html -->
-<div id="main-content">
+<main id="main-content" tabindex="-1">
   {% raw %}{{ content }}{% endraw %}
-</div>
+</main>
 ```
+
+`tabindex="-1"` est obligatoire : `<main>` n'est pas focalisable nativement, et
+Safari/WebKit se contente de faire défiler la page lors d'un saut d'ancre vers un
+conteneur non focalisable — le focus clavier ne bouge pas, si bien que le `Tab`
+suivant ramène l'utilisateur à la navigation qu'il venait d'éviter. La valeur `-1`
+exclut le conteneur de l'ordre de tabulation séquentiel tout en permettant au lien
+d'y déplacer le focus. Le thème supprime l'anneau de focus sur le conteneur dans
+`_sass/utilities/_focus.scss` (`#main-content:focus { outline: none; }`) ; les
+éléments *à l'intérieur* du contenu conservent leurs propres indicateurs.
 
 ## Style
 
