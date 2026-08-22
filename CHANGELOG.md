@@ -12,6 +12,25 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [1.29.0](https://github.com/bamr87/zer0-mistakes/compare/v1.28.0...v1.29.0) (2026-08-22)
+
+
+### Features
+
+* **design:** fill Fab, PostCard, Skeleton + motion/layers gaps in the design-system mirror ([#391](https://github.com/bamr87/zer0-mistakes/issues/391)) ([3b49741](https://github.com/bamr87/zer0-mistakes/commit/3b497417564b4c5e3d71eaa113cb136d2cdaf15c))
+* **pages:** publish the design system and page canvas on the live site ([#392](https://github.com/bamr87/zer0-mistakes/issues/392)) ([6cf73cd](https://github.com/bamr87/zer0-mistakes/commit/6cf73cdf2cca9ec02394b6ae1ba7e39c19969134))
+* **sass:** align design tokens with the Claude Design system ([#389](https://github.com/bamr87/zer0-mistakes/issues/389)) ([7fc2fe0](https://github.com/bamr87/zer0-mistakes/commit/7fc2fe02683d652c0326536158bd48b3690df51f))
+
+
+### Bug Fixes
+
+* **a11y:** dialog titles use a bare &lt;h5&gt;, skipping heading levels ([#387](https://github.com/bamr87/zer0-mistakes/issues/387)) ([98fd6f9](https://github.com/bamr87/zer0-mistakes/commit/98fd6f9e63dfb75c58efc3b15a642fb3e4c4095b))
+* **ci:** stop discarding good translations when one page fails ([#388](https://github.com/bamr87/zer0-mistakes/issues/388)) ([19cea46](https://github.com/bamr87/zer0-mistakes/commit/19cea462a7822d6db536fc9c23218abd4a13d830))
+* **cookie-consent:** text-dark on bg-body made privacy rights invisible in dark mode ([#386](https://github.com/bamr87/zer0-mistakes/issues/386)) ([9bde7df](https://github.com/bamr87/zer0-mistakes/commit/9bde7dfa13f426908e00e53f8e4013a049fd928d))
+* **giscus:** comments were broken sitewide — add an end-to-end health check and correct the docs ([#378](https://github.com/bamr87/zer0-mistakes/issues/378)) ([45e222c](https://github.com/bamr87/zer0-mistakes/commit/45e222c3c2c5b7c507af4df2f5f0b48bc783801e))
+* **layouts:** stop emitting dead sub-topic anchors in section sidebars ([#402](https://github.com/bamr87/zer0-mistakes/issues/402)) ([f50e790](https://github.com/bamr87/zer0-mistakes/commit/f50e790c4bfd56fefa4a74d7876de90c9776c689))
+* **scripts:** correct consumer auditor, plugin contract, and JSON-LD scope ([#400](https://github.com/bamr87/zer0-mistakes/issues/400)) ([b466cad](https://github.com/bamr87/zer0-mistakes/commit/b466cad526501e7e7a0eef5f24a12c5bbd181dc7))
+
 ## [Unreleased]
 
 ### Added
