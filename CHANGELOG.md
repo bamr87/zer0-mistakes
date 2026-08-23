@@ -30,7 +30,11 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   `components/recipe-*.html` includes, `_sass/components/_recipe.scss` (with
   print styles), a demo cookbook at `/recipes/`, and docs at
   [Cookbook collection](pages/_docs/features/cookbook-collection.md). Regression
-  coverage: "Cookbook Recipe Collection" in `test/test_core.sh`.
+  coverage: `test/visual/features/recipes.spec.js` (smoke tier) and "Cookbook
+  Recipe Collection" in `test/test_core.sh` (evidence:
+  [`test/visual/evidence/recipes-collection/`](test/visual/evidence/recipes-collection/README.md)
+  — 0px page overflow across 320–1440px; 1 cup butter → 227 g, 500 g flour →
+  4 cups; ratio percentages identical at 1× and 3×).
 
 - **Search shortcut affordances (ZER0-032)** — the navbar search button now
   advertises its keyboard shortcuts, matching the design-system navbar

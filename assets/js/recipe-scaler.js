@@ -387,7 +387,14 @@
       var f = factor();
       var j;
       for (j = 0; j < quantities.length; j++) {
-        if (state.system === 'original' && Math.abs(f - 1) < 1e-9) {
+        // Nothing to recompute when the reader is looking at the authored
+        // units AND this amount is not moving — either because the scale is
+        // 1x, or because the amount is pinned (data-scale="false", e.g. the
+        // ratio table's per-unit weight). Re-formatting it anyway would nudge
+        // the authored 81.9 g to 82 g for no reason.
+        var pinned = quantities[j].getAttribute('data-scale') === 'false';
+        var still = Math.abs(f - 1) < 1e-9 || pinned;
+        if (state.system === 'original' && still) {
           quantities[j].textContent = quantities[j].getAttribute('data-original-text');
           quantities[j].removeAttribute('title');
         } else {

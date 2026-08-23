@@ -1,6 +1,6 @@
 ---
-title: Cookbook Collection — Recipes That Scale and Convert Themselves
-description: Publish recipes with structured front matter — ingredients, ratios, timings — rendered with serving scaling, US↔metric conversion, and a baker's-percentage table.
+title: Cookbook Collection — Recipes That Scale Themselves
+description: Publish recipes as structured front matter — ingredients, ratios, timings — rendered with serving scaling, US↔metric conversion, and baker's percentages.
 preview: /images/zer0-mistakes-wizard.png
 layout: default
 categories:
@@ -42,7 +42,7 @@ The theme ships a demo cookbook — [The Zer0 Kitchen](/recipes/) — that exerc
 
 ## Enable the collection
 
-Add the collection and its front-matter defaults to your site's `_config.yml` (the theme's own config carries the same block):
+Add the collection and its front matter defaults to your site's `_config.yml` (the theme's own config carries the same block):
 
 ```yaml
 collections:
