@@ -2322,3 +2322,46 @@ features:
       - "/design/ foundations gallery renders the actual specimen cards in iframes against the published tokens — living documentation, never screenshots"
       - "Component-twin catalog links every React spec (.jsx/.d.ts/.prompt.md) served raw from the mirror; interactive rendering stays in Claude Design"
       - "Page canvas: every layout, nav pattern, and chrome surface recreated as a Claude Design presentation, linked from the hub with a screen-to-repo-file map"
+
+  # ============================================================================
+  # READER ENGAGEMENT (v1.29+)
+  # ============================================================================
+
+  - id: ZER0-083
+    title: "Page View Counter"
+    description: "Per-page view tracking with the count shown in the article meta row — a local-first provider that needs no server, or an HTTP counter endpoint, both gated by DNT, GPC, and consent"
+    implemented: true
+    version: "1.29.0"
+    link: "/"
+    docs: "https://github.com/bamr87/zer0-mistakes/blob/main/docs/features/page-views.md"
+    tags: [analytics, privacy, engagement, metrics, ui]
+    date: 2026-08-23
+    provenance:
+      introduced_in: "1.29.0"
+      pr: 413
+      commit: "6ca4961b"
+      issue: null
+    tests:
+      - "test/visual/features/page-views.spec.js"
+    references:
+      layouts:
+        - "_layouts/article.html"
+      includes:
+        - "_includes/components/page-views.html"
+        - "_includes/components/page-views-init.html"
+        - "_includes/core/head.html"
+      scripts:
+        - "assets/js/page-views.js"
+      styles:
+        - "_sass/components/_page-views.scss"
+      tests:
+        - "test/visual/features/page-views.spec.js"
+      config: "_config.yml"
+      docs: "docs/features/page-views.md"
+    features:
+      - "Two providers: 'local' (default) keeps counts in the visitor's localStorage — no server, no network, GitHub-Pages safe; 'remote' reads a counter endpoint the site owns ({path} substitution, configurable method, dotted count_key)"
+      - "Privacy gates mirror the posthog block (DNT, Global Privacy Control, optional cookie-consent 'analytics' tie-in) and suppress RECORDING only — a view blocked pending consent is recorded when consent arrives"
+      - "dedupe: session counts one view per page per browser session, so a reload cannot inflate the number"
+      - "The badge ships hidden and is revealed only once a count exists — no '0 views' flash — and carries its own leading separator so a hidden badge leaves no dangling bullet in the meta row"
+      - "Every storage touch is probed and wrapped: private mode, blocked cookies, a corrupt payload, or an exceeded quota degrade to 'no count' instead of throwing"
+      - "window.zer0PageViews (get/all/refresh/reset) plus a 'zer0:page-views' CustomEvent let a site build on the count without polling"
