@@ -59,6 +59,35 @@ async function settleImages(page) {
  */
 const BADGE_URL_RE = /(img\.shields\.io|badge\.fury\.io|github\.com\/.+\/badge\.svg)/;
 
+/**
+ * Settle the cookie-consent banner before shooting.
+ *
+ * The banner is the second run-to-run flake source after the badge row.
+ * components/cookie-consent.html un-hides it immediately but CSS parks it at
+ * `translateY(100%); opacity: 0`, and only a 1000 ms `setTimeout` adds
+ * `.cookie-banner-visible` to slide it in. Every test gets a fresh context, so
+ * a first-time visitor ALWAYS sees it — but a fast render shoots the page
+ * before it arrives, and the baselines contain it (a ~15k-pixel false diff on
+ * whichever skin happened to win the race).
+ *
+ * Wait for the class, then for the slide to actually finish — bottom edge
+ * flush with the viewport — so the shot is taken at rest either way, with or
+ * without prefers-reduced-motion.
+ */
+async function settleConsentBanner(page) {
+  const banner = page.locator('#cookieConsent.cookie-banner-visible');
+  await banner.waitFor({ state: 'visible', timeout: 15000 });
+  await page.waitForFunction(
+    () => {
+      const el = document.getElementById('cookieConsent');
+      if (!el) return false;
+      return Math.abs(el.getBoundingClientRect().bottom - window.innerHeight) < 1;
+    },
+    undefined,
+    { timeout: 15000 },
+  );
+}
+
 test.describe('Theme skins', () => {
   test.beforeEach(async ({ page }) => {
     await page.route(BADGE_URL_RE, (route) => route.abort());
@@ -66,6 +95,7 @@ test.describe('Theme skins', () => {
     await waitForJekyll(page, '/');
     await clearSkinStorage(page);
     await settleImages(page);
+    await settleConsentBanner(page);
   });
 
   for (const skin of SKINS) {
