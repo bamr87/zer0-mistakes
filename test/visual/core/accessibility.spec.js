@@ -162,26 +162,6 @@ test.describe('Accessibility — cookie preferences modal (dark mode)', () => {
   });
 });
 
-/**
- * Open a Bootstrap modal via its JS API and wait until it is fully shown.
- * The trigger button lives in the consent banner, which we deliberately
- * suppress, so drive the component directly rather than clicking.
- * @param {import('@playwright/test').Page} page
- * @param {string} selector - e.g. '#cookieSettingsModal'
- */
-async function openDialog(page, selector) {
-  await page.waitForFunction(() => typeof window.bootstrap?.Modal === 'function');
-  await page.evaluate((sel) => {
-    const el = document.querySelector(sel);
-    if (!el) throw new Error(`Dialog ${sel} not found in the DOM`);
-    return new Promise((resolve) => {
-      el.addEventListener('shown.bs.modal', () => resolve(), { once: true });
-      window.bootstrap.Modal.getOrCreateInstance(el).show();
-    });
-  }, selector);
-  await expect(page.locator(selector)).toBeVisible();
-}
-
 test.describe('Accessibility — specific component checks', () => {
   test('admin sidebar nav uses <nav> with aria-label', async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop);

@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * Cookbook / recipes spec — recipe + cookbook layouts, scaler (ZER0-083)
+ * Cookbook / recipes spec — recipe + cookbook layouts, scaler (ZER0-084)
  * ----------------------------------------------------------------------------
  * Behavioural/structural regression tests for the recipes collection:
  *

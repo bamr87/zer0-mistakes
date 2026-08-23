@@ -7,6 +7,7 @@ Per-feature design notes and implementation details for the Zer0-Mistakes Jekyll
 | Document | Description |
 |----------|-------------|
 | [Jupyter Notebooks](jupyter-notebooks.md) | Jupyter notebook integration via GitHub Actions conversion |
+| [Page View Counter](page-views.md) | Local-first page-view tracking and the meta-row count badge |
 | [Nanobar Component](nanobar-component.md) | Config-driven page loading progress bar architecture |
 | [Theme Version Display](theme-version.md) | Automatic theme/Jekyll/Ruby version display, plus quick-access via gear icon or footer button |
 

@@ -1,5 +1,5 @@
 /**
- * Cookbook / recipes collection — evidence generator (ZER0-083, new-feature/after-only).
+ * Cookbook / recipes collection — evidence generator (ZER0-084, new-feature/after-only).
  * ----------------------------------------------------------------------------
  * Drives the live site and captures the visual evidence for the recipes
  * collection: the recipe page as authored, the same page rescaled and

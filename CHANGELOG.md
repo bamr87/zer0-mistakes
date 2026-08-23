@@ -16,7 +16,7 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Added
 
-- **Cookbook & recipes collection (ZER0-083)** — a `recipes` collection that
+- **Cookbook & recipes collection (ZER0-084)** — a `recipes` collection that
   renders structured front matter as a working recipe page: `layout: recipe`
   builds a fact bar (prep/cook/rest/total, yield, difficulty, cuisine, oven),
   a grouped ingredient checklist, a numbered method with per-step timings and
@@ -35,6 +35,29 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   [`test/visual/evidence/recipes-collection/`](test/visual/evidence/recipes-collection/README.md)
   — 0px page overflow across 320–1440px; 1 cup butter → 227 g, 500 g flour →
   4 cups; ratio percentages identical at 1× and 3×).
+
+- **Page-view counter (ZER0-083)** — the theme now tracks a view for the page
+  being read and displays the count in the article meta row, next to the
+  reading time (`👁 12 views`). Two providers, configured under `page_views:`
+  in `_config.yml`: `local` (the default — counts live in the visitor's
+  `localStorage`, so it works on GitHub Pages with no server, no network, and
+  no third party) and `remote` (counts come from an HTTP counter endpoint you
+  control, with `{path}` substitution, a configurable method, and a dotted
+  `count_key` for the response shape). Privacy gates mirror the `posthog:`
+  block — Do Not Track, Global Privacy Control, and an optional
+  `require_consent` tie-in to the cookie-consent "analytics" category — and
+  they suppress *recording* only, never the display of a count that is already
+  known; a view blocked pending consent is recorded when consent arrives.
+  `dedupe: session` counts one view per page per browser session so reloads do
+  not inflate it. The badge include (`components/page-views.html`) ships hidden
+  and is revealed only once a count exists, carrying its own leading separator
+  so a page with no data leaves no dangling bullet. New:
+  `_includes/components/page-views.html`,
+  `_includes/components/page-views-init.html`, `assets/js/page-views.js`,
+  `_sass/components/_page-views.scss`. Regression spec:
+  `test/visual/features/page-views.spec.js`. Docs:
+  [`docs/features/page-views.md`](docs/features/page-views.md)
+  (evidence: [`test/visual/evidence/page-views/`](test/visual/evidence/page-views/README.md)).
 
 - **Search shortcut affordances (ZER0-032)** — the navbar search button now
   advertises its keyboard shortcuts, matching the design-system navbar

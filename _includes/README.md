@@ -56,6 +56,8 @@ Reusable UI components and widgets:
 - `js-cdn.html` - CDN JavaScript libraries
 - `preview-image.html` - Consistent preview image rendering with lazy loading
 - `post-card.html` - Reusable post card component for listings
+- `page-views.html` - Inline "N views" badge for a page (hidden until a count is known)
+- `page-views-init.html` - Page-view counter bootstrap: injects `site.page_views` config and loads `assets/js/page-views.js` (included once from `core/head.html`)
 - `data-card.html` - One generic card rendered from a plain data hash (title/url/icon/badge/meta/buttons schema in its header)
 - `card-grid.html` - Responsive grid of `data-card`s from any data array — hub dashboards, fleet registries, service grids
 - `bookshelf.html` - Grid of every book in the `books` collection (home-page library)
