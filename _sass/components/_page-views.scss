@@ -1,0 +1,35 @@
+// ============================================================================
+// Page-view counter badge
+// ----------------------------------------------------------------------------
+// Markup:     _includes/components/page-views.html
+// Behaviour:  assets/js/page-views.js
+// Config:     _config.yml → page_views:
+// Theming:    inherits the surrounding meta-row color (.post-meta is
+//             .text-muted), so it follows [data-bs-theme] light/dark for free.
+// ============================================================================
+
+.page-views {
+  display: inline-flex;
+  align-items: baseline;
+  gap: .25rem;
+  white-space: nowrap;
+
+  // The badge is server-rendered hidden and revealed by JS once a count is
+  // known. `!important` because a utility class on the include's `class`
+  // param (e.g. `d-inline-flex`) would otherwise win over [hidden].
+  &[hidden] {
+    display: none !important;
+  }
+
+  // Digits change as the count updates — tabular figures keep the meta row
+  // from reflowing when 9 becomes 10.
+  &__count {
+    font-variant-numeric: tabular-nums;
+  }
+
+  // Leading separator for meta rows; hides with the badge because it lives
+  // inside it (see the include's `separator` param).
+  &__sep {
+    display: inline;
+  }
+}

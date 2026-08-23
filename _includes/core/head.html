@@ -51,6 +51,11 @@
 <script defer src="{{ '/assets/js/table-copy.js' | relative_url }}"></script>
 <script defer src="{{ '/assets/js/ui-enhancements.js' | relative_url }}"></script>
 
+<!-- Page-view counter — injects its config and loads assets/js/page-views.js.
+     Renders nothing on its own; components/page-views.html places the badge.
+     Gated on site.page_views.enabled inside the include. -->
+{% include components/page-views-init.html %}
+
 <!-- ================================ -->
 <!-- THIRD PARTY INTEGRATIONS        -->
 <!-- ================================ -->

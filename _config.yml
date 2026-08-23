@@ -269,6 +269,41 @@ posthog:
                                   # accepts the "analytics" category in the theme's cookie-consent banner
     geoip_disable        : false  # true = stop PostHog resolving IP → location on every event
 
+# Page Views - Per-page view counter ##############################################
+# Tracks a view for the page being read and displays the count in the article
+# meta row (components/page-views.html; badge markup, behaviour in
+# assets/js/page-views.js). Privacy gates mirror the posthog block above.
+#
+# Providers:
+#   local   Counts live in THIS visitor's localStorage. No server, no network,
+#           GitHub-Pages safe — the number is "how often you opened this page".
+#           The zero-config default.
+#   remote  Counts come from an HTTP counter endpoint you control (the chat
+#           proxy, a Cloudflare/Netlify function, CounterAPI, …). The endpoint
+#           is the source of truth; the theme only asks it for a number.
+page_views:
+  enabled         : true      # Master switch for tracking + display
+  provider        : 'local'   # 'local' (localStorage) | 'remote' (HTTP endpoint)
+  track           : true      # false = display known counts, never record new ones
+  dedupe          : 'session' # 'session' = one view per page per browser session
+                              # 'never'   = count every page load
+  max_entries     : 500       # Cap on locally stored paths (oldest evicted first)
+  label_one       : 'view'    # Singular label rendered next to the count
+  label_other     : 'views'   # Plural label
+  # Privacy — these suppress RECORDING only; an already-known count still renders
+  respect_dnt     : true      # Honor the Do Not Track browser setting
+  respect_gpc     : true      # Honor the Global Privacy Control signal
+  require_consent : false     # true = record nothing until the visitor accepts the
+                              # "analytics" category in the cookie-consent banner
+  # Remote provider only (ignored when provider is 'local')
+  endpoint        : ''        # Counter URL; '{path}' is substituted, otherwise
+                              # the page path is appended as ?path=…
+  method          : 'POST'    # HTTP method used to record a view
+  count_key       : 'views'   # Key holding the number in the JSON response
+                              # (dotted paths allowed, e.g. 'data.views')
+  fallback_local  : false     # true = fall back to the local counter when the
+                              # endpoint is unreachable
+
 # Nanobar - Page Loading Progress Bar #############################################
 # Visual loading indicator shown on every page load.
 # Library: https://github.com/jacoborus/nanobar

@@ -1,0 +1,54 @@
+{
+  "base": "http://127.0.0.1:4011",
+  "states": {
+    "before_dnt": {
+      "badgeHidden": true,
+      "count": "0",
+      "label": "views",
+      "separatorVisible": false,
+      "metaRowHeight": 31,
+      "pageOverflowPx": 0
+    },
+    "first_view": {
+      "badgeHidden": false,
+      "count": "1",
+      "label": "view",
+      "separatorVisible": true,
+      "metaRowHeight": 31,
+      "pageOverflowPx": 0
+    },
+    "after_reload_same_session": {
+      "badgeHidden": false,
+      "count": "1",
+      "label": "view",
+      "separatorVisible": true,
+      "metaRowHeight": 31,
+      "pageOverflowPx": 0
+    },
+    "second_session": {
+      "badgeHidden": false,
+      "count": "2",
+      "label": "views",
+      "separatorVisible": true,
+      "metaRowHeight": 31,
+      "pageOverflowPx": 0
+    },
+    "large_count": {
+      "badgeHidden": false,
+      "count": "12,438",
+      "label": "views",
+      "separatorVisible": true,
+      "metaRowHeight": 31,
+      "pageOverflowPx": 0
+    },
+    "mobile_390": {
+      "badgeHidden": false,
+      "count": "1",
+      "label": "view",
+      "separatorVisible": true,
+      "metaRowHeight": 79,
+      "pageOverflowPx": 0
+    }
+  },
+  "route": "/posts/2026/08/15/jekyll-preview-server-from-an-old-pc/"
+}
