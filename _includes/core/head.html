@@ -60,6 +60,13 @@
 <!-- THIRD PARTY INTEGRATIONS        -->
 <!-- ================================ -->
 
+<!-- Recipe scaling & unit conversion - Only on pages that render recipe
+     quantities: the `recipe` layout, or any page that opts in with
+     `recipe_tools: true` (e.g. a post embedding components/recipe-*.html). -->
+{% if page.layout == "recipe" or page.recipe_tools %}
+<script defer src="{{ '/assets/js/recipe-scaler.js' | relative_url }}"></script>
+{% endif %}
+
 <!-- Mermaid Diagrams - Conditional loading based on page front matter -->
 {% if page.mermaid %}
   {% include components/mermaid.html %}

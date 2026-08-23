@@ -1,0 +1,90 @@
+{% comment %} Feature: ZER0-084 {% endcomment %}
+{%- comment -%}
+  Component:   recipe-ingredients
+  Path:        _includes/components/recipe-ingredients.html
+  Purpose:     The ingredient list for one recipe — optionally grouped into
+               sub-lists ("Dough", "Topping"), each amount scalable and
+               convertible, each line check-off-able as you cook.
+  Params:      ingredients (array, optional, default: page.ingredients)
+               heading (string, optional, default: "Ingredients")
+               heading_level (string, optional, default: "h2")
+               id_prefix (string, optional, default: page.slug) — checkbox ids
+               checklist (bool, optional, default: true) — false renders a
+                 plain list with no checkboxes
+  Depends on:  components/recipe-qty.html, _data/ingredient_densities.yml,
+               assets/js/recipe-scaler.js, _sass/components/_recipe.scss
+  Notes:       Accepts a flat list of items or a list of {group, items} groups,
+               and tolerates the two mixed. Densities resolve as
+               item.grams_per_cup → _data/ingredient_densities[slug] → none;
+               without one, a volume can never be converted to a weight.
+               Each line carries itemprop="recipeIngredient" for schema.org.
+               Author `singular:` alongside a countable `item:` ("large eggs"
+               + "large egg") and the scaler swaps the wording once the amount
+               drops to one or below, so halving a batch does not print
+               "1 large eggs".
+{%- endcomment -%}
+{%- assign _ri_ingredients = include.ingredients | default: page.ingredients -%}
+{%- if _ri_ingredients == nil or _ri_ingredients.size == 0 -%}
+  {%- comment -%} recipe-ingredients: no `ingredients` front matter — skipping render {%- endcomment -%}
+{%- else -%}
+{%- assign _ri_hl = include.heading_level | default: "h2" -%}
+{%- assign _ri_prefix = include.id_prefix | default: page.slug | default: "recipe" -%}
+{%- assign _ri_checklist = true -%}
+{%- if include.checklist == false -%}{%- assign _ri_checklist = false -%}{%- endif -%}
+{%- assign _ri_n = 0 -%}
+<section class="recipe-ingredients" aria-labelledby="{{ _ri_prefix }}-ingredients-heading">
+  <{{ _ri_hl }} id="{{ _ri_prefix }}-ingredients-heading" class="recipe-section-heading">
+    <i class="bi bi-basket3 me-2" aria-hidden="true"></i>{{ include.heading | default: "Ingredients" }}
+  </{{ _ri_hl }}>
+
+  {%- for _ri_entry in _ri_ingredients -%}
+    {%- if _ri_entry.items -%}
+      {%- assign _ri_group_name = _ri_entry.group | default: _ri_entry.title -%}
+      {%- assign _ri_loop_items = _ri_entry.items -%}
+    {%- else -%}
+      {%- assign _ri_group_name = nil -%}
+      {%- assign _ri_loop_items = "" | split: "" | push: _ri_entry -%}
+    {%- endif -%}
+    {%- assign _ri_sub = _ri_hl | remove: "h" | plus: 1 -%}
+
+    {%- if _ri_group_name -%}
+  <h{{ _ri_sub }} class="recipe-ingredient-group-title">{{ _ri_group_name | escape }}</h{{ _ri_sub }}>
+    {%- endif -%}
+
+  <ul class="recipe-ingredient-list list-unstyled">
+    {%- for _ri_i in _ri_loop_items -%}
+      {%- assign _ri_n = _ri_n | plus: 1 -%}
+      {%- assign _ri_id = _ri_prefix | append: "-ing-" | append: _ri_n -%}
+      {%- assign _ri_slug = _ri_i.item | default: "" | downcase | strip | replace: " ", "-" -%}
+      {%- assign _ri_gpc = _ri_i.grams_per_cup | default: site.data.ingredient_densities[_ri_slug] -%}
+    <li class="recipe-ingredient{% if _ri_i.optional %} recipe-ingredient--optional{% endif %}">
+      <div class="form-check">
+        {%- if _ri_checklist -%}
+        <input class="form-check-input recipe-ingredient-check" type="checkbox" id="{{ _ri_id }}" data-recipe-check>
+        {%- endif -%}
+        <label class="form-check-label" {% if _ri_checklist %}for="{{ _ri_id }}"{% endif %} itemprop="recipeIngredient">
+          {%- comment -%}
+            The space before `endif` is load-bearing: it separates the amount
+            from the ingredient name in the accessible text and in the
+            recipeIngredient microdata, not just visually. Neither the
+            include nor the closing tag may trim it, so both are written
+            without the whitespace-stripping dash on that side.
+          {%- endcomment -%}
+          {%- if _ri_i.qty -%}
+          {%- include components/recipe-qty.html qty=_ri_i.qty qty_max=_ri_i.qty_max unit=_ri_i.unit grams_per_cup=_ri_gpc weigh=_ri_i.weigh scale=_ri_i.scale class="recipe-ingredient-amount" %} {% endif -%}
+          <span class="recipe-ingredient-name"{% if _ri_i.singular %} data-recipe-name data-singular="{{ _ri_i.singular | escape }}" data-plural="{{ _ri_i.item | escape }}"{% endif %}>
+            {%- if _ri_i.link -%}<a href="{{ _ri_i.link }}">{{ _ri_i.item | escape }}</a>{%- else -%}{{ _ri_i.item | escape }}{%- endif -%}
+          </span>
+          {%- if _ri_i.prep %}<span class="recipe-ingredient-prep">, {{ _ri_i.prep | escape }}</span>{% endif -%}
+          {%- if _ri_i.optional %} <span class="badge rounded-pill text-bg-secondary recipe-ingredient-badge">optional</span>{% endif -%}
+        </label>
+      </div>
+      {%- if _ri_i.note -%}
+      <p class="recipe-ingredient-note small text-body-secondary mb-0">{{ _ri_i.note | escape }}</p>
+      {%- endif -%}
+    </li>
+    {%- endfor -%}
+  </ul>
+  {%- endfor -%}
+</section>
+{%- endif -%}

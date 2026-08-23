@@ -1,0 +1,506 @@
+// ============================================================================
+// COOKBOOK & RECIPES — structured recipe presentation (Feature: ZER0-084)
+// ----------------------------------------------------------------------------
+// Styles for the `recipes` collection: the recipe page (fact bar, scaler,
+// ingredient checklist, method, ratio table, nutrition), the cookbook landing
+// page, and the recipe index cards.
+//
+// Used by:
+//   _layouts/recipe.html, _layouts/cookbook.html
+//   _includes/components/recipe-{qty,temp,meta,scaler,ingredients,ratio,
+//                                steps,nutrition,card,index}.html
+//
+// Theming: everything reads Bootstrap's runtime custom properties
+// (var(--bs-*)) so light/dark color modes and theme skins work for free.
+// Consumer knobs are exposed as --zer0-recipe-* custom properties.
+// ============================================================================
+
+:root {
+  --zer0-recipe-accent: var(--bs-primary);
+  --zer0-recipe-surface: var(--bs-tertiary-bg);
+  --zer0-recipe-radius: 0.75rem;
+  // Ingredient lists stay readable at a narrow measure even in a wide column.
+  --zer0-recipe-measure: 34rem;
+}
+
+// ----------------------------------------------------------------------------
+// Page header
+// ----------------------------------------------------------------------------
+.recipe-header {
+  margin-bottom: 1.5rem;
+}
+
+.recipe-eyebrow {
+  margin-bottom: 0.35rem;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bs-secondary-color);
+
+  a {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--zer0-recipe-accent);
+      text-decoration: underline;
+    }
+  }
+}
+
+.recipe-title {
+  margin-bottom: 0.5rem;
+}
+
+.recipe-description {
+  max-width: 46rem;
+}
+
+.recipe-hero-figure {
+  margin: 1.5rem 0 0;
+
+  img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--zer0-recipe-radius);
+  }
+}
+
+.recipe-headnote {
+  max-width: 46rem;
+  margin-bottom: 1.5rem;
+}
+
+// ----------------------------------------------------------------------------
+// Fact bar — prep/cook/total/makes/difficulty tiles
+// ----------------------------------------------------------------------------
+.recipe-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin: 0 0 1.25rem;
+  padding: 0.875rem 1.125rem;
+  background-color: var(--zer0-recipe-surface);
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--zer0-recipe-radius);
+}
+
+.recipe-meta-item {
+  min-width: 6rem;
+
+  dt {
+    margin-bottom: 0.1rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--bs-secondary-color);
+  }
+
+  dd {
+    margin-bottom: 0;
+    font-weight: 600;
+  }
+}
+
+.recipe-meta-item--total dd {
+  color: var(--zer0-recipe-accent);
+}
+
+.recipe-difficulty {
+  font-weight: 600;
+
+  &--easy { color: var(--bs-success-text-emphasis); }
+  &--intermediate { color: var(--bs-warning-text-emphasis); }
+  &--advanced { color: var(--bs-danger-text-emphasis); }
+}
+
+// ----------------------------------------------------------------------------
+// Scaler control bar
+// ----------------------------------------------------------------------------
+// Hidden until recipe-scaler.js reveals it: without JavaScript the controls
+// would be dead buttons next to amounts they cannot change.
+.recipe-scaler {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1.125rem;
+  background-color: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--zer0-recipe-radius);
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.recipe-scaler-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.recipe-scaler-group--reset {
+  margin-inline-start: auto;
+}
+
+.recipe-scaler-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bs-secondary-color);
+}
+
+.recipe-scaler-stepper {
+  width: auto;
+
+  .form-control {
+    max-width: 5rem;
+  }
+}
+
+.recipe-noscript {
+  margin-bottom: 1.5rem;
+}
+
+// A quantity the reader has rescaled or converted — a quiet marker, not a
+// highlight, so a fully converted list does not turn into a wall of color.
+.recipe-qty {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+[data-scaled='true'] .recipe-qty {
+  color: var(--zer0-recipe-accent);
+}
+
+.recipe-temp {
+  white-space: nowrap;
+}
+
+// ----------------------------------------------------------------------------
+// Section headings shared by ingredients / method / ratio / nutrition
+// ----------------------------------------------------------------------------
+.recipe-section-heading {
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--bs-border-color);
+}
+
+// ----------------------------------------------------------------------------
+// Ingredients
+// ----------------------------------------------------------------------------
+.recipe-ingredients {
+  max-width: var(--zer0-recipe-measure);
+  margin-bottom: 2rem;
+}
+
+.recipe-ingredient-group-title {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--bs-secondary-color);
+}
+
+.recipe-ingredient-list {
+  margin-bottom: 0;
+}
+
+.recipe-ingredient {
+  padding: 0.3rem 0;
+  border-bottom: 1px solid var(--bs-border-color-translucent);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  .form-check-input {
+    margin-top: 0.35rem;
+  }
+
+  .form-check-label {
+    cursor: pointer;
+  }
+}
+
+.recipe-ingredient--done .form-check-label {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+.recipe-ingredient--optional .recipe-ingredient-name {
+  font-style: italic;
+}
+
+.recipe-ingredient-prep {
+  color: var(--bs-secondary-color);
+}
+
+.recipe-ingredient-note {
+  margin-left: 1.5rem;
+}
+
+.recipe-ingredient-badge {
+  font-size: 0.65rem;
+  vertical-align: middle;
+}
+
+// ----------------------------------------------------------------------------
+// Equipment
+// ----------------------------------------------------------------------------
+.recipe-equipment {
+  max-width: var(--zer0-recipe-measure);
+  margin-bottom: 2rem;
+}
+
+.recipe-equipment-list li {
+  padding: 0.15rem 0;
+  color: var(--bs-body-color);
+}
+
+// ----------------------------------------------------------------------------
+// Method
+// ----------------------------------------------------------------------------
+.recipe-steps {
+  margin-bottom: 2rem;
+}
+
+.recipe-steps-section-title {
+  margin: 1.5rem 0 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--bs-secondary-color);
+}
+
+.recipe-step-list {
+  padding-left: 1.35rem;
+  margin-bottom: 0;
+}
+
+.recipe-step {
+  margin-bottom: 1.25rem;
+  padding-left: 0.35rem;
+
+  &::marker {
+    font-weight: 700;
+    color: var(--zer0-recipe-accent);
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.recipe-step-title {
+  margin-bottom: 0.2rem;
+  font-weight: 600;
+}
+
+.recipe-step-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin: 0.4rem 0 0;
+  font-size: 0.875rem;
+  color: var(--bs-secondary-color);
+}
+
+.recipe-step-figure {
+  margin: 0.75rem 0 0;
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+.recipe-step-note {
+  margin: 0.4rem 0 0;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--bs-border-color);
+  color: var(--bs-secondary-color);
+}
+
+// ----------------------------------------------------------------------------
+// Ratio / baker's percentage table
+// ----------------------------------------------------------------------------
+.recipe-ratio {
+  margin-bottom: 2rem;
+}
+
+.recipe-ratio-intro {
+  max-width: 46rem;
+}
+
+.recipe-ratio-table {
+  td,
+  th {
+    font-variant-numeric: tabular-nums;
+  }
+
+  tfoot {
+    border-top: 2px solid var(--bs-border-color);
+    font-weight: 600;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Notes & nutrition
+// ----------------------------------------------------------------------------
+.recipe-notes {
+  max-width: 46rem;
+  margin-bottom: 2rem;
+}
+
+.recipe-notes-list li {
+  margin-bottom: 0.5rem;
+}
+
+.recipe-nutrition {
+  margin-bottom: 2rem;
+}
+
+.recipe-nutrition-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 0;
+}
+
+.recipe-nutrition-item {
+  padding: 0.6rem 0.75rem;
+  background-color: var(--zer0-recipe-surface);
+  border-radius: calc(var(--zer0-recipe-radius) / 1.5);
+  text-align: center;
+
+  dt {
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--bs-secondary-color);
+  }
+
+  dd {
+    margin-bottom: 0;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Recipe cards + index
+// ----------------------------------------------------------------------------
+.recipe-card {
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--zer0-recipe-radius);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  &:hover,
+  &:focus-within {
+    transform: translateY(-0.2rem);
+    box-shadow: var(--bs-box-shadow, 0 0.5rem 1rem rgba(0, 0, 0, 0.15));
+  }
+}
+
+.recipe-card-media {
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background-color: var(--bs-secondary-bg);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.recipe-card-body {
+  padding: 0.875rem 1rem 1rem;
+}
+
+.recipe-card-title {
+  margin-bottom: 0.35rem;
+}
+
+.recipe-card-description {
+  margin-bottom: 0.5rem;
+}
+
+.recipe-card-facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.recipe-course {
+  scroll-margin-top: 5rem;
+}
+
+// ----------------------------------------------------------------------------
+// Cookbook landing page
+// ----------------------------------------------------------------------------
+.cookbook-header {
+  margin-bottom: 2rem;
+}
+
+.cookbook-cover img {
+  width: 100%;
+  height: auto;
+  border-radius: 0.35rem 0.75rem 0.75rem 0.35rem;
+  box-shadow:
+    inset 0.35rem 0 0.5rem -0.35rem rgba(0, 0, 0, 0.4),
+    0 0.6rem 1.25rem rgba(0, 0, 0, 0.2);
+}
+
+.cookbook-about {
+  max-width: 46rem;
+  margin-bottom: 2rem;
+}
+
+.cookbook-jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+// ----------------------------------------------------------------------------
+// Print — a recipe printed from the browser is a recipe card on the counter.
+// ----------------------------------------------------------------------------
+@media print {
+  .recipe-scaler,
+  .recipe-noscript {
+    display: none !important;
+  }
+
+  .recipe-ingredient .form-check-input {
+    // Keep the tick boxes: they are useful on paper too, but flat.
+    box-shadow: none;
+  }
+
+  .recipe-step {
+    break-inside: avoid;
+  }
+
+  .recipe-card {
+    box-shadow: none;
+  }
+}

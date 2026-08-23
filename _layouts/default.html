@@ -93,12 +93,12 @@ layout: root
 
         {%- comment -%}
           Page introduction: title, breadcrumbs, metadata.
-          Skipped on layouts that render their own page header (article, note)
-          to avoid duplicate H1s. Authors can also opt-out per page via
-          `hide_intro: true` in front matter.
+          Skipped on layouts that render their own page header (article, note,
+          recipe, cookbook) to avoid duplicate H1s. Authors can also opt-out
+          per page via `hide_intro: true` in front matter.
         {%- endcomment -%}
         {% assign _skip_intro = false %}
-        {% if page.layout == "article" or page.layout == "note" or page.hide_intro %}
+        {% if page.layout == "article" or page.layout == "note" or page.layout == "recipe" or page.layout == "cookbook" or page.hide_intro %}
           {% assign _skip_intro = true %}
         {% endif %}
         {% unless _skip_intro %}

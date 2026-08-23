@@ -1,0 +1,136 @@
+{
+  "slug": "recipes-collection",
+  "base": "http://localhost:4000",
+  "routes": {
+    "/recipes/no-knead-focaccia/": [
+      {
+        "width": 320,
+        "overflowPx": 0
+      },
+      {
+        "width": 360,
+        "overflowPx": 0
+      },
+      {
+        "width": 390,
+        "overflowPx": 0
+      },
+      {
+        "width": 414,
+        "overflowPx": 0
+      },
+      {
+        "width": 768,
+        "overflowPx": 0
+      },
+      {
+        "width": 992,
+        "overflowPx": 0
+      },
+      {
+        "width": 1280,
+        "overflowPx": 0
+      },
+      {
+        "width": 1440,
+        "overflowPx": 0
+      }
+    ],
+    "/recipes/": [
+      {
+        "width": 320,
+        "overflowPx": 0
+      },
+      {
+        "width": 360,
+        "overflowPx": 0
+      },
+      {
+        "width": 390,
+        "overflowPx": 0
+      },
+      {
+        "width": 414,
+        "overflowPx": 0
+      },
+      {
+        "width": 768,
+        "overflowPx": 0
+      },
+      {
+        "width": 992,
+        "overflowPx": 0
+      },
+      {
+        "width": 1280,
+        "overflowPx": 0
+      },
+      {
+        "width": 1440,
+        "overflowPx": 0
+      }
+    ]
+  },
+  "conversions": {
+    "cookies_as_written": [
+      "1 cup unsalted butter, browned and cooled slightly",
+      "1 cup light brown sugar, packed",
+      "½ cup granulated sugar",
+      "2 large eggs",
+      "1 egg yolk",
+      "2 tsp vanilla extract",
+      "2¼ cups all-purpose flour",
+      "1 tsp baking soda",
+      "1 tsp kosher salt",
+      "1½ cups semisweet chocolate chips",
+      "flaky sea salt, for finishing optional"
+    ],
+    "cookies_2x": [
+      "2 cups unsalted butter, browned and cooled slightly",
+      "2 cups light brown sugar, packed",
+      "1 cup granulated sugar",
+      "4 large eggs",
+      "2 egg yolks",
+      "4 tsp vanilla extract",
+      "4½ cups all-purpose flour",
+      "2 tsp baking soda",
+      "2 tsp kosher salt",
+      "3 cups semisweet chocolate chips",
+      "flaky sea salt, for finishing optional"
+    ],
+    "cookies_metric": [
+      "227 g unsalted butter, browned and cooled slightly",
+      "213 g light brown sugar, packed",
+      "100 g granulated sugar",
+      "2 large eggs",
+      "1 egg yolk",
+      "8.7 g vanilla extract",
+      "281 g all-purpose flour",
+      "4.6 g baking soda",
+      "3 g kosher salt",
+      "255 g semisweet chocolate chips",
+      "flaky sea salt, for finishing optional"
+    ],
+    "no_js_scaler_visible": false
+  },
+  "ratio": {
+    "at_1x": [
+      "bread flour | 500 g | 100%",
+      "water | 400 g | 80%",
+      "fine sea salt | 10 g | 2%",
+      "instant yeast | 2 g | 0.4%",
+      "extra virgin olive oil | 30 g | 6%",
+      "extra virgin olive oil | 40.5 g | 8.1%",
+      "flaky sea salt | — | —"
+    ],
+    "at_3x": [
+      "bread flour | 1500 g | 100%",
+      "water | 1200 g | 80%",
+      "fine sea salt | 30 g | 2%",
+      "instant yeast | 6 g | 0.4%",
+      "extra virgin olive oil | 90 g | 6%",
+      "extra virgin olive oil | 122 g | 8.1%",
+      "flaky sea salt | — | —"
+    ]
+  }
+}

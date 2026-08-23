@@ -1,0 +1,67 @@
+{% comment %} Feature: ZER0-084 {% endcomment %}
+{%- comment -%}
+  Component:   recipe-card
+  Path:        _includes/components/recipe-card.html
+  Purpose:     Index card for one recipe — photo, title, one-line description,
+               and the three facts a cook scans for: total time, what it makes,
+               and how hard it is.
+  Params:      recipe (document, required) — a `recipes` collection doc
+               heading_level (number, optional, default: 3) — the title's
+                 heading level, so a card never skips a level under whatever
+                 heading precedes it
+               class (string, optional, default: "")
+  Depends on:  components/preview-image.html, components/recipe-duration.html,
+               _sass/components/_recipe.scss (.recipe-card)
+  Notes:       Total time comes from `times.total` or prep + cook + rest, so
+               the card never disagrees with the recipe page. The whole card is
+               one link for a large tap target; the facts row is plain text so
+               it stays readable when images fail to load.
+{%- endcomment -%}
+{%- if include.recipe == nil -%}
+  {%- comment -%} ERROR: recipe-card requires `recipe` {%- endcomment -%}
+{%- else -%}
+{%- assign _rc_r = include.recipe -%}
+{%- assign _rc_img = _rc_r.image | default: _rc_r.preview | default: site.teaser -%}
+{%- assign _rc_prep = _rc_r.times.prep | default: 0 -%}
+{%- assign _rc_cook = _rc_r.times.cook | default: 0 -%}
+{%- assign _rc_rest = _rc_r.times.rest | default: 0 -%}
+{%- if _rc_r.times.total -%}
+  {%- assign _rc_total = _rc_r.times.total -%}
+{%- else -%}
+  {%- assign _rc_total = _rc_prep | plus: _rc_cook | plus: _rc_rest -%}
+{%- endif -%}
+{%- capture _rc_total_h -%}{%- include components/recipe-duration.html minutes=_rc_total -%}{%- endcapture -%}
+{%- assign _rc_total_h = _rc_total_h | strip -%}
+<article class="recipe-card h-100 {{ include.class | default: '' }}">
+  <a href="{{ _rc_r.url | relative_url }}" class="recipe-card-link d-flex flex-column h-100 text-decoration-none text-body">
+    {%- if _rc_img -%}
+    <div class="recipe-card-media">
+      {%- include components/preview-image.html src=_rc_img alt=_rc_r.title class="" -%}
+    </div>
+    {%- endif -%}
+    <div class="recipe-card-body">
+      {%- assign _rc_hl = include.heading_level | default: 3 -%}
+      <h{{ _rc_hl }} class="h5 recipe-card-title">{{ _rc_r.title }}</h{{ _rc_hl }}>
+      {%- if _rc_r.description -%}
+      <p class="recipe-card-description small text-body-secondary">{{ _rc_r.description | strip_html | truncate: 120 }}</p>
+      {%- endif -%}
+      <p class="recipe-card-facts small text-body-secondary mb-0">
+        {%- assign _rc_sep = false -%}
+        {%- if _rc_total_h != "" -%}
+          <span class="recipe-card-fact"><i class="bi bi-clock-history me-1" aria-hidden="true"></i>{{ _rc_total_h }}</span>
+          {%- assign _rc_sep = true -%}
+        {%- endif -%}
+        {%- if _rc_r.yield.amount -%}
+          {%- if _rc_sep %}<span class="mx-1" aria-hidden="true">•</span>{% endif -%}
+          <span class="recipe-card-fact"><i class="bi bi-pie-chart me-1" aria-hidden="true"></i>{{ _rc_r.yield.amount }} {{ _rc_r.yield.unit | default: "servings" | escape }}</span>
+          {%- assign _rc_sep = true -%}
+        {%- endif -%}
+        {%- if _rc_r.difficulty -%}
+          {%- if _rc_sep %}<span class="mx-1" aria-hidden="true">•</span>{% endif -%}
+          <span class="recipe-difficulty recipe-difficulty--{{ _rc_r.difficulty | downcase | strip }}">{{ _rc_r.difficulty | capitalize }}</span>
+        {%- endif -%}
+      </p>
+    </div>
+  </a>
+</article>
+{%- endif -%}

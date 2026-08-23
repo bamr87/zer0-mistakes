@@ -16,6 +16,26 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Added
 
+- **Cookbook & recipes collection (ZER0-084)** — a `recipes` collection that
+  renders structured front matter as a working recipe page: `layout: recipe`
+  builds a fact bar (prep/cook/rest/total, yield, difficulty, cuisine, oven),
+  a grouped ingredient checklist, a numbered method with per-step timings and
+  temperatures, a baker's-percentage ratio table computed at build time, a
+  per-serving nutrition panel, and one `schema.org/Recipe` JSON-LD block.
+  `assets/js/recipe-scaler.js` adds serving scaling and live US↔metric
+  conversion — including volume↔weight via `_data/ingredient_densities.yml`
+  — as progressive enhancement, so every amount is still rendered exactly as
+  authored with JavaScript disabled. `layout: cookbook` indexes recipes into
+  course sections from `_data/recipe_courses.yml`. Twelve new
+  `components/recipe-*.html` includes, `_sass/components/_recipe.scss` (with
+  print styles), a demo cookbook at `/recipes/`, and docs at
+  [Cookbook collection](pages/_docs/features/cookbook-collection.md). Regression
+  coverage: `test/visual/features/recipes.spec.js` (smoke tier) and "Cookbook
+  Recipe Collection" in `test/test_core.sh` (evidence:
+  [`test/visual/evidence/recipes-collection/`](test/visual/evidence/recipes-collection/README.md)
+  — 0px page overflow across 320–1440px; 1 cup butter → 227 g, 500 g flour →
+  4 cups; ratio percentages identical at 1× and 3×).
+
 - **Page-view counter (ZER0-083)** — the theme now tracks a view for the page
   being read and displays the count in the article meta row, next to the
   reading time (`👁 12 views`). Two providers, configured under `page_views:`

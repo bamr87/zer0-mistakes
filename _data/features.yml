@@ -2365,3 +2365,51 @@ features:
       - "The badge ships hidden and is revealed only once a count exists — no '0 views' flash — and carries its own leading separator so a hidden badge leaves no dangling bullet in the meta row"
       - "Every storage touch is probed and wrapped: private mode, blocked cookies, a corrupt payload, or an exceeded quota degrade to 'no count' instead of throwing"
       - "window.zer0PageViews (get/all/refresh/reset) plus a 'zer0:page-views' CustomEvent let a site build on the count without polling"
+  - id: ZER0-084
+    title: "Cookbook & Recipes Collection"
+    description: "A `recipes` collection whose structured front matter (ingredients, steps, yield, times, ratio_basis) renders as a working recipe page: a fact bar, a serving scaler, an ingredient checklist, a numbered method, a build-time baker's-percentage table, and schema.org Recipe JSON-LD — with client-side scaling and US/metric conversion (volume↔weight via an ingredient density table) layered on as progressive enhancement"
+    implemented: true
+    version: "1.29.0"
+    link: "/recipes/"
+    docs: "/docs/features/cookbook-collection/"
+    tags: [recipes, cookbook, collections, layouts, unit-conversion, structured-data]
+    date: 2026-08-23
+    provenance:
+      introduced_in: "1.29.0"
+      pr: null
+      commit: "45354f34"
+      issue: null
+    tests:
+      - "test/test_core.sh"
+    references:
+      layouts:
+        - "_layouts/recipe.html"
+        - "_layouts/cookbook.html"
+      includes:
+        - "_includes/components/recipe-index.html"
+        - "_includes/components/recipe-card.html"
+        - "_includes/components/recipe-meta.html"
+        - "_includes/components/recipe-scaler.html"
+        - "_includes/components/recipe-ingredients.html"
+        - "_includes/components/recipe-steps.html"
+        - "_includes/components/recipe-ratio.html"
+        - "_includes/components/recipe-nutrition.html"
+        - "_includes/components/recipe-qty.html"
+        - "_includes/components/recipe-temp.html"
+        - "_includes/components/recipe-grams.html"
+        - "_includes/components/recipe-duration.html"
+      styles: ["_sass/components/_recipe.scss"]
+      scripts: ["assets/js/recipe-scaler.js"]
+      data:
+        - "_data/recipe_courses.yml"
+        - "_data/ingredient_densities.yml"
+      pages:
+        - "pages/_recipes/index.md"
+        - "pages/_docs/features/cookbook-collection.md"
+      config: "_config.yml"
+    components:
+      - "Serving scaler — stepper, ½×/1×/2×/3× presets, ?servings= and ?scale= links, per-recipe scale remembered in localStorage"
+      - "Unit switch — as written / metric / US, rewriting quantities, units and oven temperatures in place"
+      - "Volume↔weight conversion driven by _data/ingredient_densities.yml, overridable per ingredient with grams_per_cup"
+      - "Baker's-percentage ratio table computed at build time, so percentages are correct with JavaScript disabled"
+      - "Progressive enhancement: quantities render as authored by Jekyll; the control bar stays hidden until the script reveals it"

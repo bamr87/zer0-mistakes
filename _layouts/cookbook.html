@@ -1,0 +1,88 @@
+---
+# Feature: ZER0-084
+layout: default
+---
+{%- comment -%}
+  Layout: cookbook.html
+  Extends: default.html
+  Purpose: Landing page for one cookbook — cover, introduction, a jump-nav of
+           its courses, and the full recipe index grouped by course.
+  Front matter required: layout, title, cookbook (slug shared with its recipes)
+  Front matter optional: subtitle, description, image/preview, author,
+    grouped (false for one flat grid)
+  Notes: Recipes belong to a cookbook by matching its `cookbook:` slug. Omit
+         `cookbook:` here and the page indexes EVERY recipe on the site, which
+         is what a single-cookbook site wants.
+{%- endcomment -%}
+
+{%- assign _cb_slug = page.cookbook -%}
+{%- if _cb_slug -%}
+  {%- assign _cb_recipes = site.recipes | where_exp: "doc", "doc.layout != 'cookbook'" | where: "cookbook", _cb_slug -%}
+{%- else -%}
+  {%- assign _cb_recipes = site.recipes | where_exp: "doc", "doc.layout != 'cookbook'" -%}
+{%- endif -%}
+{%- assign _cb_courses = _cb_recipes | map: "course" | compact | uniq -%}
+{%- assign _cb_image = page.image | default: page.preview -%}
+
+<div class="cookbook">
+  <!-- ================================ -->
+  <!-- COVER                            -->
+  <!-- ================================ -->
+  <header class="cookbook-header">
+    <div class="row g-4 align-items-center">
+      {%- if _cb_image -%}
+      <div class="col-8 col-sm-5 col-md-4 col-lg-3">
+        <div class="cookbook-cover">
+          {%- include components/preview-image.html src=_cb_image alt=page.title class="" loading="eager" -%}
+        </div>
+      </div>
+      {%- endif -%}
+      <div class="col">
+        <h1 id="page-title" class="cookbook-title">{{ page.title }}</h1>
+        {%- if page.subtitle -%}
+        <p class="lead mb-2">{{ page.subtitle }}</p>
+        {%- endif -%}
+        {%- if page.author -%}
+        <p class="text-body-secondary small mb-2">By {{ page.author }}</p>
+        {%- endif -%}
+        <p class="text-body-secondary mb-3">
+          <i class="bi bi-egg-fried me-1" aria-hidden="true"></i>{{ _cb_recipes.size }} {% if _cb_recipes.size == 1 %}recipe{% else %}recipes{% endif %}
+          {%- if _cb_courses.size > 0 %} <span class="mx-1" aria-hidden="true">•</span> {{ _cb_courses.size }} {% if _cb_courses.size == 1 %}course{% else %}courses{% endif %}{% endif -%}
+        </p>
+        {%- if page.description -%}
+        <p class="cookbook-description">{{ page.description }}</p>
+        {%- endif -%}
+      </div>
+    </div>
+  </header>
+
+  <!-- ================================ -->
+  <!-- ABOUT (the markdown body)        -->
+  <!-- ================================ -->
+  {%- assign _cb_body = content | strip -%}
+  {%- if _cb_body != "" -%}
+  <section class="cookbook-about">
+    {{ content }}
+  </section>
+  {%- endif -%}
+
+  <!-- ================================ -->
+  <!-- COURSE JUMP NAV                  -->
+  <!-- ================================ -->
+  {%- if _cb_courses.size > 1 and page.grouped != false -%}
+  <nav class="cookbook-jump" aria-label="Jump to a course">
+    {%- for _cb_pair in site.data.recipe_courses -%}
+      {%- if _cb_courses contains _cb_pair[0] -%}
+      <a class="btn btn-sm btn-outline-secondary" href="#course-{{ _cb_pair[0] }}">
+        <i class="bi {{ _cb_pair[1].icon | default: 'bi-journal-bookmark' }} me-1" aria-hidden="true"></i>{{ _cb_pair[1].title | default: _cb_pair[0] | escape }}
+      </a>
+      {%- endif -%}
+    {%- endfor -%}
+  </nav>
+  {%- endif -%}
+
+  <!-- ================================ -->
+  <!-- RECIPE INDEX                     -->
+  <!-- ================================ -->
+  {%- include components/recipe-index.html cookbook=_cb_slug grouped=page.grouped heading_level="h2" -%}
+</div>

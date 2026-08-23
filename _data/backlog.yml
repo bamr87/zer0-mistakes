@@ -63,7 +63,7 @@
 meta:
   title: "zer0-mistakes Backlog"
   updated: 2026-08-18
-  next_id: 44
+  next_id: 46
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -1181,3 +1181,79 @@ tasks:
     created: 2026-08-18
     updated: 2026-08-18
     depends_on: [T-039]
+
+  - id: T-044
+    title: "Playwright suite aborts: duplicate openDialog declaration in accessibility.spec.js"
+    status: done
+    priority: P1
+    area: tests
+    risk: low
+    effort: S
+    source: issue
+    route: test-author
+    summary: >-
+      test/visual/core/accessibility.spec.js declares `async function
+      openDialog` twice — at line 172 (page, selector) and again at line 425
+      (page, selector, kind), the latter added by 98fd6f9 (#387) without
+      removing the former. Two function declarations of the same name in one
+      module scope is a SyntaxError, so Playwright fails to parse the file and
+      the WHOLE run aborts before any test executes: "Identifier 'openDialog'
+      has already been declared. (425:15)". This takes down the critical and
+      smoke tiers together, on every branch, and has been red on main since
+      2026-08-14. Discovered during #414, whose own new spec
+      (test/visual/features/recipes.spec.js) therefore cannot run in CI. The
+      three-argument version is a strict superset — with `kind` undefined it
+      resolves to Ctor='Modal' and 'shown.bs.modal', exactly what the
+      two-argument one does — so deleting the earlier declaration (lines
+      165-184, comment included) is behaviour-preserving.
+    acceptance:
+      - "test/visual/core/accessibility.spec.js parses; `npx playwright test --project=critical` runs to completion."
+      - "Only one openDialog declaration remains, and its callers all still pass."
+      - "No behavioural change to the modal/offcanvas a11y tests."
+    links: { issue: 416, pr: null, roadmap: null }
+    created: 2026-08-23
+    updated: 2026-08-23
+
+  - id: T-045
+    title: "Homepage snapshot baselines were regenerated without the 1967px drift being diagnosed"
+    status: open
+    priority: P2
+    area: tests
+    risk: low
+    effort: S
+    source: issue
+    route: test-author
+    summary: >-
+      The Visual Snapshots tier fails all 9 `Theme skins > homepage visual
+      snapshot` cases with the SAME diff — 1967 pixels (ratio 0.01) — against
+      test/visual/snapshots/features/appearance-snapshot.spec.js-snapshots/homepage-*-snapshots-linux.png,
+      well over the maxDiffPixels 150 budget. The count being identical across
+      air/aqua/contrast/dark/dirt/neon/mint/plum/sunrise points at one shared,
+      skin-independent region rather than a palette regression. Verified during
+      #414 that it is NOT that PR's doing: building origin/main and the PR
+      branch and screenshotting the homepage at the spec's own 1280x720
+      viewport produced BYTE-IDENTICAL PNGs (same md5), so the branch renders
+      the homepage exactly as main does and the drift is between the committed
+      baselines and what main itself now renders. Note while investigating:
+      _includes/components/theme-info.html renders a minute-resolution build
+      stamp, site.time | date "%b %d, %H:%M" — it currently sits in a collapsed
+      offcanvas (measured 0x0, not in the viewport) so it is not the cause
+      today, but it is a live non-determinism hazard the moment that panel is
+      shown by default, and worth masking regardless. UPDATE 2026-08-23: #413
+      regenerated all 9 baselines when it merged, so the check is green again —
+      resolved by re-blessing rather than by diagnosis, which is what the first
+      acceptance criterion was meant to prevent. Diffing the old vs new CI
+      baselines (homepage-air, 2596f866 vs e488c4c) puts the whole 5016px delta
+      in two bands: y21-41 (a wide navbar strip, 4688px) and y626 (328px).
+      page-views does render on the homepage so part of that is legitimately
+      #413, but a navbar strip is not where a view-count badge belongs.
+      Separating the two needs the diff artifact from a pre-#413 failing run,
+      which has rolled off. What remains is confirming the y21-41 band is
+      accounted for.
+    acceptance:
+      - "Identify the changed region from the CI diff artifact before regenerating anything — a stale baseline and a real regression look the same in the check."
+      - "Visual Snapshots passes on main and on a fresh branch with no source changes."
+      - "Any genuinely time- or build-varying content inside the snapshot region is masked or stubbed, so the tier cannot drift again."
+    links: { issue: 417, pr: null, roadmap: null }
+    created: 2026-08-23
+    updated: 2026-08-23

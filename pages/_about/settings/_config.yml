@@ -656,6 +656,16 @@ collections:
     title: Books
     icon: bi-book-half
     permalink: /:collection/:path/
+  # Cookbook collection: each recipe is one file with structured front matter
+  # (`ingredients:`, `steps:`, `yield:`, `times:`) rendered by `layout: recipe`
+  # with client-side serving scaling and US↔metric conversion. A cookbook
+  # landing page uses `layout: cookbook` and gathers recipes by `cookbook:`.
+  # Docs: /docs/features/cookbook-collection/
+  recipes:
+    output: true
+    title: Cookbook
+    icon: bi-egg-fried
+    permalink: /:collection/:name/
 
 permalink: pretty
 
@@ -800,6 +810,22 @@ defaults:
       comments: false
       share: true
       author_profile: false
+
+  # pages/_recipes — cookbook recipes. `layout: recipe` renders the structured
+  # front matter (ingredients, ratios, steps) and loads the scaler; a cookbook
+  # landing page overrides `layout: cookbook`. Sidebar navigates the collection
+  # so readers can hop between recipes without going back to the index.
+  -
+    scope:
+      path: pages/_recipes
+      type: recipes
+    values:
+      layout: recipe
+      comments: false
+      share: true
+      author_profile: false
+      sidebar:
+        nav: auto
 
   # fr/ — GENERATED translations (scripts/translate.rb). These are plain
   # Jekyll pages (safe-mode friendly: no plugin needed) whose permalinks are
