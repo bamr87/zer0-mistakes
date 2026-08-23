@@ -63,7 +63,7 @@
 meta:
   title: "zer0-mistakes Backlog"
   updated: 2026-08-18
-  next_id: 45
+  next_id: 46
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -1210,6 +1210,40 @@ tasks:
       - "test/visual/core/accessibility.spec.js parses; `npx playwright test --project=critical` runs to completion."
       - "Only one openDialog declaration remains, and its callers all still pass."
       - "No behavioural change to the modal/offcanvas a11y tests."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-08-23
+    updated: 2026-08-23
+
+  - id: T-045
+    title: "Homepage skin snapshots fail on every branch: baselines 1967px stale across all 9 skins"
+    status: open
+    priority: P2
+    area: tests
+    risk: low
+    effort: S
+    source: issue
+    route: test-author
+    summary: >-
+      The Visual Snapshots tier fails all 9 `Theme skins > homepage visual
+      snapshot` cases with the SAME diff — 1967 pixels (ratio 0.01) — against
+      test/visual/snapshots/features/appearance-snapshot.spec.js-snapshots/homepage-*-snapshots-linux.png,
+      well over the maxDiffPixels 150 budget. The count being identical across
+      air/aqua/contrast/dark/dirt/neon/mint/plum/sunrise points at one shared,
+      skin-independent region rather than a palette regression. Verified during
+      #414 that it is NOT that PR's doing: building origin/main and the PR
+      branch and screenshotting the homepage at the spec's own 1280x720
+      viewport produced BYTE-IDENTICAL PNGs (same md5), so the branch renders
+      the homepage exactly as main does and the drift is between the committed
+      baselines and what main itself now renders. Note while investigating:
+      _includes/components/theme-info.html renders a minute-resolution build
+      stamp, site.time | date "%b %d, %H:%M" — it currently sits in a collapsed
+      offcanvas (measured 0x0, not in the viewport) so it is not the cause
+      today, but it is a live non-determinism hazard the moment that panel is
+      shown by default, and worth masking regardless.
+    acceptance:
+      - "Identify the changed region from the CI diff artifact before regenerating anything — a stale baseline and a real regression look the same in the check."
+      - "Visual Snapshots passes on main and on a fresh branch with no source changes."
+      - "Any genuinely time- or build-varying content inside the snapshot region is masked or stubbed, so the tier cannot drift again."
     links: { issue: null, pr: null, roadmap: null }
     created: 2026-08-23
     updated: 2026-08-23
