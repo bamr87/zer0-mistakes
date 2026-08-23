@@ -1,0 +1,57 @@
+{% comment %} Feature: ZER0-083 {% endcomment %}
+{%- comment -%}
+  Component:   recipe-nutrition
+  Path:        _includes/components/recipe-nutrition.html
+  Purpose:     Per-serving nutrition panel, marked up as schema.org
+               NutritionInformation.
+  Params:      recipe (doc, optional, default: page)
+               heading (string, optional, default: "Nutrition")
+               heading_level (string, optional, default: "h2")
+  Depends on:  _sass/components/_recipe.scss
+  Notes:       Always shown PER SERVING, and deliberately NOT scaled — a
+               serving is a serving however many you make. Author
+               `nutrition.basis: total` and the figures are divided by
+               `yield.amount` at build time. Values are whatever the author
+               entered; the component adds an estimate disclaimer rather than
+               implying a lab analysis.
+{%- endcomment -%}
+{%- assign _rn_r = include.recipe | default: page -%}
+{%- assign _rn_n = _rn_r.nutrition -%}
+{%- if _rn_n == nil or _rn_n.calories == nil -%}
+  {%- comment -%} recipe-nutrition: no `nutrition` front matter — skipping render {%- endcomment -%}
+{%- else -%}
+{%- assign _rn_hl = include.heading_level | default: "h2" -%}
+{%- assign _rn_divisor = 1 -%}
+{%- if _rn_n.basis == "total" and _rn_r.yield.amount and _rn_r.yield.amount > 0 -%}
+  {%- assign _rn_divisor = _rn_r.yield.amount -%}
+{%- endif -%}
+{%- comment -%} Force float division so 2410 / 12 is not floored to 200. {%- endcomment -%}
+{%- assign _rn_divisor_f = _rn_divisor | times: 1.0 -%}
+{%- assign _rn_rows = "calories,Calories,kcal|protein,Protein,g|carbohydrates,Carbohydrates,g|sugar,Sugars,g|fiber,Fibre,g|fat,Fat,g|saturated_fat,Saturated fat,g|sodium,Sodium,mg|cholesterol,Cholesterol,mg" | split: "|" -%}
+{%- assign _rn_props = "calories,proteinContent,carbohydrateContent,sugarContent,fiberContent,fatContent,saturatedFatContent,sodiumContent,cholesterolContent" | split: "," -%}
+<section class="recipe-nutrition" itemprop="nutrition" itemscope itemtype="https://schema.org/NutritionInformation">
+  <{{ _rn_hl }} class="recipe-section-heading">
+    <i class="bi bi-heart-pulse me-2" aria-hidden="true"></i>{{ include.heading | default: "Nutrition" }}
+  </{{ _rn_hl }}>
+  <p class="recipe-nutrition-basis text-body-secondary small">
+    Per {{ _rn_r.yield.singular | default: "serving" | escape }}, estimated{% if _rn_divisor != 1 %} from the batch total{% endif %}.
+  </p>
+  <dl class="recipe-nutrition-grid">
+    {%- for _rn_row in _rn_rows -%}
+      {%- assign _rn_parts = _rn_row | split: "," -%}
+      {%- assign _rn_key = _rn_parts[0] -%}
+      {%- assign _rn_value = _rn_n[_rn_key] -%}
+      {%- if _rn_value -%}
+        {%- assign _rn_shown = _rn_value | divided_by: _rn_divisor_f -%}
+        {%- assign _rn_shown_i = _rn_shown | round -%}
+    <div class="recipe-nutrition-item">
+      <dt>{{ _rn_parts[1] }}</dt>
+      <dd itemprop="{{ _rn_props[forloop.index0] }}">
+        {%- if _rn_shown == _rn_shown_i -%}{{ _rn_shown_i }}{%- else -%}{{ _rn_shown | round: 1 }}{%- endif %} {{ _rn_parts[2] }}
+      </dd>
+    </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </dl>
+</section>
+{%- endif -%}

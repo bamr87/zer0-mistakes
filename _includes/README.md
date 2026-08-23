@@ -63,6 +63,18 @@ Reusable UI components and widgets:
 - `book-toc.html` - Ordered story/chapter list for one book
 - `book-nav.html` - Prev/next-story + contents navigation inside a book
 - `book-plate.html` - Full-width illustration figure with optional caption for story pages
+- `recipe-index.html` - Grid of every recipe in the `recipes` collection, grouped into course sections
+- `recipe-card.html` - One recipe's index card (photo, total time, yield, difficulty)
+- `recipe-meta.html` - Fact bar: prep/cook/rest/total time, yield, difficulty, cuisine, oven
+- `recipe-scaler.html` - Serving-scaling + US/metric unit controls for a recipe page
+- `recipe-ingredients.html` - Grouped ingredient checklist with scalable, convertible amounts
+- `recipe-steps.html` - Numbered method with per-step timings, temperatures, and photos
+- `recipe-ratio.html` - Baker's-percentage table — every ingredient as a share of one reference ingredient
+- `recipe-nutrition.html` - Per-serving nutrition panel (schema.org NutritionInformation)
+- `recipe-qty.html` - One scalable, convertible quantity (the atom the recipe components share)
+- `recipe-temp.html` - A temperature that follows the reader's unit choice
+- `recipe-grams.html` - Value resolver: quantity + unit + density → grams (build-time, for ratios)
+- `recipe-duration.html` - Value resolver: minutes → "1 hr 30 min" or ISO 8601 `PT1H30M`
 
 ### `content/`
 

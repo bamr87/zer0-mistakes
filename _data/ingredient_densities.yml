@@ -1,0 +1,122 @@
+# Feature: ZER0-083
+# ─────────────────────────────────────────────────────────────────────────────
+# Ingredient densities — GRAMS PER US CUP (236.588 ml).
+#
+# Used by components/recipe-ingredients.html: when a recipe lists an ingredient
+# by volume (cup / tbsp / tsp / fl oz …), the component looks this table up by
+# the slugified ingredient name and emits `data-grams-per-cup`, which lets
+# assets/js/recipe-scaler.js convert that volume to a weight in metric mode —
+# and a weight back to volume in US mode.
+#
+# Lookup order (first match wins):
+#   1. the ingredient's own `grams_per_cup:` front matter
+#   2. this table, keyed by the ingredient name slugified
+#      ("Bread flour" → "bread-flour", "All-Purpose Flour" → "all-purpose-flour")
+#   3. no density — volumes stay volumes (ml), weights stay weights (g)
+#
+# Set `weigh: false` on an ingredient to opt it out of volume→weight entirely.
+# A consuming site can override this whole file with its own copy.
+#
+# Values are common US test-kitchen averages; flours in particular vary with
+# scooping method, so treat them as a good default rather than a lab constant.
+# ─────────────────────────────────────────────────────────────────────────────
+
+## Flours & dry goods ---------------------------------------------------------
+all-purpose-flour: 125
+plain-flour: 125
+bread-flour: 127
+whole-wheat-flour: 120
+whole-meal-flour: 120
+cake-flour: 114
+semolina: 167
+rye-flour: 102
+almond-flour: 96
+cornmeal: 122
+cornstarch: 128
+corn-flour: 128
+rolled-oats: 90
+breadcrumbs: 108
+panko: 60
+rice: 185
+white-rice: 185
+arborio-rice: 200
+couscous: 173
+quinoa: 170
+
+## Sugars & sweeteners --------------------------------------------------------
+granulated-sugar: 200
+caster-sugar: 200
+sugar: 200
+brown-sugar: 213
+light-brown-sugar: 213
+dark-brown-sugar: 213
+powdered-sugar: 120
+confectioners-sugar: 120
+icing-sugar: 120
+honey: 340
+maple-syrup: 322
+molasses: 337
+corn-syrup: 328
+
+## Liquids & dairy ------------------------------------------------------------
+water: 236
+milk: 244
+whole-milk: 244
+buttermilk: 245
+heavy-cream: 238
+double-cream: 238
+sour-cream: 230
+yogurt: 245
+greek-yogurt: 245
+stock: 240
+chicken-stock: 240
+vegetable-stock: 240
+wine: 235
+white-wine: 235
+red-wine: 235
+vinegar: 239
+soy-sauce: 255
+lemon-juice: 244
+lime-juice: 244
+
+## Fats -----------------------------------------------------------------------
+butter: 227
+unsalted-butter: 227
+salted-butter: 227
+melted-butter: 227
+olive-oil: 216
+extra-virgin-olive-oil: 216
+vegetable-oil: 218
+canola-oil: 218
+sesame-oil: 218
+shortening: 205
+
+## Seasonings & leaveners (small quantities — precision matters) --------------
+table-salt: 292
+fine-sea-salt: 288
+sea-salt: 256
+kosher-salt: 145          # Diamond Crystal; Morton is ~241 g/cup
+salt: 292
+baking-powder: 192
+baking-soda: 220
+active-dry-yeast: 150
+instant-yeast: 150
+ground-cinnamon: 132
+ground-black-pepper: 138
+
+## Chocolate, nuts & extras ---------------------------------------------------
+cocoa-powder: 85
+chocolate-chips: 170
+semisweet-chocolate-chips: 170
+dark-chocolate: 170
+vanilla-extract: 208
+peanut-butter: 258
+tahini: 240
+tomato-paste: 262
+tomato-passata: 245
+crushed-tomatoes: 245
+grated-parmesan: 100
+almonds: 143
+walnuts: 117
+pecans: 109
+raisins: 145

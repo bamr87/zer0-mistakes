@@ -1,0 +1,96 @@
+{% comment %} Feature: ZER0-083 {% endcomment %}
+{%- comment -%}
+  Component:   recipe-index
+  Path:        _includes/components/recipe-index.html
+  Purpose:     Responsive grid of every recipe, grouped into course sections
+               ("Breads & Doughs", "Desserts") — drop it on a cookbook landing
+               page, a home page, or anywhere else recipes should be browsable.
+  Params:      cookbook (string, optional) — a cookbook slug; only recipes
+                 whose `cookbook:` matches are listed. Omit for every recipe.
+               heading (string, optional) — overall section heading (h2)
+               heading_level (string, optional, default: "h2")
+               grouped (bool, optional, default: true) — false renders one flat
+                 grid with no course headings
+               class (string, optional, default: "")
+  Depends on:  components/recipe-card.html, the `recipes` collection,
+               _data/recipe_courses.yml, _sass/components/_recipe.scss
+  Notes:       Cookbook landing pages (`layout: cookbook`) are excluded — this
+               lists recipes, not covers. Courses render in the order they
+               appear in _data/recipe_courses.yml, then any course a recipe
+               used but the data file never declared. A recipe with no
+               `course:` falls under `uncategorized`. Recipes sort by title
+               within a course.
+{%- endcomment -%}
+{%- assign _rx_all = site.recipes | where_exp: "doc", "doc.layout != 'cookbook'" -%}
+{%- if include.cookbook -%}
+  {%- assign _rx_all = _rx_all | where: "cookbook", include.cookbook -%}
+{%- endif -%}
+{%- if _rx_all == nil or _rx_all.size == 0 -%}
+  {%- comment -%} recipe-index: no recipes found{% if include.cookbook %} for cookbook "{{ include.cookbook }}"{% endif %} — skipping render {%- endcomment -%}
+{%- else -%}
+{%- assign _rx_hl = include.heading_level | default: "h2" -%}
+{%- comment -%}
+  Heading levels must not skip. Course headings sit one level below the
+  section heading when there is one, and AT the section level when there is
+  not — otherwise a cookbook page goes h1 → h3. Card titles always sit one
+  level below whatever the course headings ended up being.
+{%- endcomment -%}
+{%- if include.heading -%}
+  {%- assign _rx_course_level = _rx_hl | remove: "h" | plus: 1 -%}
+{%- else -%}
+  {%- assign _rx_course_level = _rx_hl | remove: "h" | plus: 0 -%}
+{%- endif -%}
+{%- assign _rx_card_level = _rx_course_level | plus: 1 -%}
+<section class="recipe-index {{ include.class | default: '' }}">
+  {%- if include.heading -%}
+  <{{ _rx_hl }} class="mb-4">{{ include.heading }}</{{ _rx_hl }}>
+  {%- endif -%}
+
+  {%- if include.grouped == false -%}
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+    {%- assign _rx_sorted = _rx_all | sort: "title" -%}
+    {%- for _rx_r in _rx_sorted -%}
+    <div class="col">{%- include components/recipe-card.html recipe=_rx_r heading_level=_rx_course_level -%}</div>
+    {%- endfor -%}
+  </div>
+  {%- else -%}
+  {%- assign _rx_default_course = "uncategorized" -%}
+  {%- assign _rx_groups = _rx_all | group_by_exp: "doc", "doc.course | default: _rx_default_course" -%}
+
+  {%- comment -%} Shelf order: courses declared in _data/recipe_courses.yml first (file order), then any others. {%- endcomment -%}
+  {%- assign _rx_order = "," -%}
+  {%- for _rx_pair in site.data.recipe_courses -%}
+    {%- assign _rx_needle = _rx_pair[0] | prepend: "," | append: "," -%}
+    {%- unless _rx_order contains _rx_needle -%}
+      {%- for _rx_g in _rx_groups -%}{%- if _rx_g.name == _rx_pair[0] -%}{%- assign _rx_order = _rx_order | append: _rx_pair[0] | append: "," -%}{%- endif -%}{%- endfor -%}
+    {%- endunless -%}
+  {%- endfor -%}
+  {%- for _rx_g in _rx_groups -%}
+    {%- assign _rx_needle = _rx_g.name | prepend: "," | append: "," -%}
+    {%- unless _rx_order contains _rx_needle -%}{%- assign _rx_order = _rx_order | append: _rx_g.name | append: "," -%}{%- endunless -%}
+  {%- endfor -%}
+  {%- assign _rx_order_list = _rx_order | split: "," -%}
+
+  {%- for _rx_name in _rx_order_list -%}
+    {%- if _rx_name == "" -%}{%- continue -%}{%- endif -%}
+    {%- assign _rx_group = _rx_groups | where: "name", _rx_name | first -%}
+    {%- if _rx_group == nil -%}{%- continue -%}{%- endif -%}
+    {%- assign _rx_meta = site.data.recipe_courses[_rx_name] -%}
+    {%- assign _rx_recipes = _rx_group.items | sort: "title" -%}
+  <div class="recipe-course mb-5" id="course-{{ _rx_name }}">
+    <h{{ _rx_course_level }} class="h4 mb-1">
+      <i class="bi {{ _rx_meta.icon | default: 'bi-journal-bookmark' }} me-2" aria-hidden="true"></i>{{ _rx_meta.title | default: _rx_name | escape }}
+    </h{{ _rx_course_level }}>
+    {%- if _rx_meta.tagline -%}
+    <p class="text-body-secondary mb-3">{{ _rx_meta.tagline | escape }}</p>
+    {%- endif -%}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+      {%- for _rx_r in _rx_recipes -%}
+      <div class="col">{%- include components/recipe-card.html recipe=_rx_r heading_level=_rx_card_level -%}</div>
+      {%- endfor -%}
+    </div>
+  </div>
+  {%- endfor -%}
+  {%- endif -%}
+</section>
+{%- endif -%}

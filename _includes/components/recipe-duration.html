@@ -1,0 +1,50 @@
+{% comment %} Feature: ZER0-083 {% endcomment %}
+{%- comment -%}
+  Component:   recipe-duration (value resolver — emits a bare string)
+  Path:        _includes/components/recipe-duration.html
+  Purpose:     Format a duration given in MINUTES, either for humans
+               ("1 hr 30 min") or as an ISO 8601 duration for schema.org
+               ("PT1H30M").
+  Params:      minutes (number, required)
+               format (string, optional, default: "human") — "human" | "iso"
+  Depends on:  nothing (pure Liquid arithmetic)
+  Notes:       Emits nothing for a missing or zero duration, so callers can
+               test the captured value and skip the whole row. Days are not
+               special-cased — a 3-day cure reads as "72 hr", which is how
+               recipes actually write long ferments.
+
+               Liquid `assign` writes to the GLOBAL scope even inside an
+               include, so a helper called several times from one caller will
+               clobber the caller's variables if the names collide. Every
+               variable here is therefore prefixed `_rd_`, and the other recipe
+               components use their own prefixes. Keep that up when editing.
+
+               Capture it (this comment is brace-free so it cannot self-execute):
+                 capture total -> include components/recipe-duration.html minutes=90
+{%- endcomment -%}
+{%- assign _rd_m = include.minutes -%}
+{%- if _rd_m == nil or _rd_m == "" or _rd_m <= 0 -%}
+  {%- comment -%} recipe-duration: no duration — emitting nothing {%- endcomment -%}
+{%- else -%}
+{%- assign _rd_total = _rd_m | round -%}
+{%- assign _rd_hours = _rd_total | divided_by: 60 -%}
+{%- assign _rd_mins = _rd_total | modulo: 60 -%}
+{%- if include.format == "iso" -%}
+PT{% if _rd_hours > 0 %}{{ _rd_hours }}H{% endif %}{% if _rd_mins > 0 %}{{ _rd_mins }}M{% endif %}
+{%- else -%}
+{%- comment -%}
+  Built by appending rather than by emitting the separator from inside an
+  `if`: Liquid treats a block whose body is only whitespace as blank and
+  drops it, which silently swallowed the space in "12 hr 45 min".
+{%- endcomment -%}
+{%- assign _rd_out = "" -%}
+{%- if _rd_hours > 0 -%}
+  {%- assign _rd_out = _rd_out | append: _rd_hours | append: " hr" -%}
+{%- endif -%}
+{%- if _rd_mins > 0 -%}
+  {%- if _rd_out != "" -%}{%- assign _rd_out = _rd_out | append: " " -%}{%- endif -%}
+  {%- assign _rd_out = _rd_out | append: _rd_mins | append: " min" -%}
+{%- endif -%}
+{{- _rd_out -}}
+{%- endif -%}
+{%- endif -%}

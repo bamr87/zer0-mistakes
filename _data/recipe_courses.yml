@@ -1,0 +1,64 @@
+# Feature: ZER0-083
+# ─────────────────────────────────────────────────────────────────────────────
+# Default courses / shelves for the zer0-mistakes `recipes` collection.
+#
+# The recipe index (components/recipe-index.html) groups recipes into sections
+# by each recipe's `course:` front matter and reads the display metadata below
+# as `site.data.recipe_courses[recipe.course]`. A consuming site can override
+# this file with its own `_data/recipe_courses.yml`; a recipe with no `course`
+# falls under `uncategorized`.
+#
+# Keys: title (heading), tagline (sub-heading), icon (Bootstrap Icons class),
+#       order (advisory rank for consumers that sort on it).
+#
+# Sections render in the order the courses appear IN THIS FILE — same rule as
+# _data/series.yml — with any course used by a recipe but not declared here
+# appended afterwards. To re-order the cookbook, move the blocks below.
+# ─────────────────────────────────────────────────────────────────────────────
+breakfast:
+  title: "Breakfast"
+  tagline: "The first thing you cook, and the hardest to get wrong twice."
+  icon: "bi-egg-fried"
+  order: 1
+
+breads:
+  title: "Breads & Doughs"
+  tagline: "Flour, water, salt, time — ratio cooking at its purest."
+  icon: "bi-basket"
+  order: 2
+
+mains:
+  title: "Mains"
+  tagline: "Dinner, scaled to whoever showed up."
+  icon: "bi-egg-fried"
+  order: 3
+
+sides:
+  title: "Sides & Salads"
+  tagline: "The supporting cast that people actually remember."
+  icon: "bi-flower1"
+  order: 4
+
+sauces:
+  title: "Sauces & Basics"
+  tagline: "Mother sauces, doughs, stocks — the building blocks."
+  icon: "bi-droplet-half"
+  order: 5
+
+desserts:
+  title: "Desserts & Baking"
+  tagline: "Where measuring by weight stops being optional."
+  icon: "bi-cake2"
+  order: 6
+
+drinks:
+  title: "Drinks"
+  tagline: "Scale by the glass or by the pitcher."
+  icon: "bi-cup-straw"
+  order: 7
+
+uncategorized:
+  title: "More Recipes"
+  tagline: "Everything that has not found a shelf yet."
+  icon: "bi-journal-bookmark"
+  order: 99

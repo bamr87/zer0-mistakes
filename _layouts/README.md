@@ -18,6 +18,8 @@ root.html (base template)
 ├── landing.html (landing pages)
 ├── book.html (book landing page - cover hero + table of contents)
 ├── book-story.html (immersive picture-book story pages)
+├── cookbook.html (cookbook landing page - cover + recipe index by course)
+├── recipe.html (one recipe - fact bar, scaler, ingredients, method, ratio)
 ├── stats.html (statistics dashboard)
 └── index.html (search pages)
 ```

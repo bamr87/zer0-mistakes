@@ -1,0 +1,58 @@
+{% comment %} Feature: ZER0-083 {% endcomment %}
+{%- comment -%}
+  Component:   recipe-grams (value resolver — emits a bare number)
+  Path:        _includes/components/recipe-grams.html
+  Purpose:     Convert one recipe quantity to grams so ratio tables and
+               baker's percentages can be computed at BUILD time (no JS needed).
+  Params:      qty (number, required)            — the amount as authored
+               unit (string, optional)           — g, kg, oz, lb, ml, l, tsp,
+                                                   tbsp, cup, fl oz, pint, …
+               grams_per_cup (number, optional)  — density, required to convert
+                                                   a VOLUME into a weight
+  Depends on:  nothing (pure Liquid arithmetic)
+  Notes:       Outputs a bare number rounded to 1 decimal, or nothing at all
+               when the unit is unknown/countable ("clove", "egg") or a volume
+               with no density. Callers MUST treat empty output as "unknown".
+               Mirrors the unit table in assets/js/recipe-scaler.js — change
+               both together.
+
+               Liquid `assign` writes to the GLOBAL scope even inside an
+               include, so every variable here is prefixed `_rg_` to keep
+               repeated calls from clobbering the caller's own variables.
+
+               Capture it (this comment is brace-free so it cannot self-execute):
+                 capture grams -> include components/recipe-grams.html
+                                    qty=i.qty unit=i.unit grams_per_cup=density
+{%- endcomment -%}
+{%- if include.qty == nil or include.qty == "" -%}
+  {%- comment -%} ERROR: recipe-grams requires `qty` {%- endcomment -%}
+{%- else -%}
+{%- assign _rg_u = include.unit | default: "" | downcase | strip | replace: ".", "" | replace: "-", " " -%}
+{%- assign _rg_mass = 0 -%}
+{%- assign _rg_ml = 0 -%}
+{%- case _rg_u -%}
+  {%- when "g" or "gram" or "grams" or "gr" -%}{%- assign _rg_mass = 1 -%}
+  {%- when "kg" or "kilogram" or "kilograms" -%}{%- assign _rg_mass = 1000 -%}
+  {%- when "mg" or "milligram" or "milligrams" -%}{%- assign _rg_mass = 0.001 -%}
+  {%- when "oz" or "ounce" or "ounces" -%}{%- assign _rg_mass = 28.3495 -%}
+  {%- when "lb" or "lbs" or "pound" or "pounds" -%}{%- assign _rg_mass = 453.592 -%}
+  {%- when "ml" or "milliliter" or "milliliters" or "millilitre" or "millilitres" or "cc" -%}{%- assign _rg_ml = 1 -%}
+  {%- when "l" or "liter" or "liters" or "litre" or "litres" -%}{%- assign _rg_ml = 1000 -%}
+  {%- when "dl" or "deciliter" or "deciliters" -%}{%- assign _rg_ml = 100 -%}
+  {%- when "tsp" or "teaspoon" or "teaspoons" -%}{%- assign _rg_ml = 4.92892 -%}
+  {%- when "tbsp" or "tbs" or "tablespoon" or "tablespoons" -%}{%- assign _rg_ml = 14.7868 -%}
+  {%- when "cup" or "cups" -%}{%- assign _rg_ml = 236.588 -%}
+  {%- when "fl oz" or "floz" or "fluid ounce" or "fluid ounces" -%}{%- assign _rg_ml = 29.5735 -%}
+  {%- when "pint" or "pints" or "pt" -%}{%- assign _rg_ml = 473.176 -%}
+  {%- when "quart" or "quarts" or "qt" -%}{%- assign _rg_ml = 946.353 -%}
+  {%- when "gallon" or "gallons" or "gal" -%}{%- assign _rg_ml = 3785.41 -%}
+{%- endcase -%}
+{%- if _rg_mass > 0 -%}
+  {%- assign _rg_g = include.qty | times: _rg_mass -%}
+{{- _rg_g | round: 1 -}}
+{%- elsif _rg_ml > 0 and include.grams_per_cup -%}
+  {%- assign _rg_vol = include.qty | times: _rg_ml -%}
+  {%- assign _rg_g = _rg_vol | times: include.grams_per_cup | divided_by: 236.588 -%}
+{{- _rg_g | round: 1 -}}
+{%- endif -%}
+{%- endif -%}

@@ -1,0 +1,86 @@
+{% comment %} Feature: ZER0-083 {% endcomment %}
+{%- comment -%}
+  Component:   recipe-steps
+  Path:        _includes/components/recipe-steps.html
+  Purpose:     The numbered method for one recipe — optionally split into
+               sections ("Day 1", "Assembly"), with per-step timings,
+               convertible temperatures, and step photos.
+  Params:      steps (array, optional, default: page.steps)
+               heading (string, optional, default: "Method")
+               heading_level (string, optional, default: "h2")
+  Depends on:  components/recipe-temp.html, components/recipe-duration.html,
+               _sass/components/_recipe.scss
+  Notes:       A step is either a plain string or a hash of
+               {text, title, time, temp_f, temp_c, image, image_alt, note}.
+               Sections are {section, items} hashes; numbering continues across
+               them via the <ol start> attribute so "step 7" means step 7 no
+               matter which section it lives in. Step text is markdownified, so
+               links and emphasis work. itemprop="recipeInstructions" marks
+               each step for schema.org.
+{%- endcomment -%}
+{%- assign _rs_steps = include.steps | default: page.steps -%}
+{%- if _rs_steps == nil or _rs_steps.size == 0 -%}
+  {%- comment -%} recipe-steps: no `steps` front matter — skipping render {%- endcomment -%}
+{%- else -%}
+{%- assign _rs_hl = include.heading_level | default: "h2" -%}
+{%- assign _rs_sub = _rs_hl | remove: "h" | plus: 1 -%}
+{%- assign _rs_n = 0 -%}
+<section class="recipe-steps">
+  <{{ _rs_hl }} class="recipe-section-heading">
+    <i class="bi bi-list-ol me-2" aria-hidden="true"></i>{{ include.heading | default: "Method" }}
+  </{{ _rs_hl }}>
+
+  {%- for _rs_entry in _rs_steps -%}
+    {%- if _rs_entry.items -%}
+      {%- assign _rs_section = _rs_entry.section | default: _rs_entry.group | default: _rs_entry.title -%}
+      {%- assign _rs_loop_steps = _rs_entry.items -%}
+    {%- else -%}
+      {%- assign _rs_section = nil -%}
+      {%- assign _rs_loop_steps = "" | split: "" | push: _rs_entry -%}
+    {%- endif -%}
+
+    {%- if _rs_section -%}
+  <h{{ _rs_sub }} class="recipe-steps-section-title">{{ _rs_section | escape }}</h{{ _rs_sub }}>
+    {%- endif -%}
+
+  <ol class="recipe-step-list" start="{{ _rs_n | plus: 1 }}">
+    {%- for _rs_s in _rs_loop_steps -%}
+      {%- assign _rs_n = _rs_n | plus: 1 -%}
+      {%- if _rs_s.text or _rs_s.title or _rs_s.image -%}
+        {%- assign _rs_text = _rs_s.text -%}
+      {%- else -%}
+        {%- assign _rs_text = _rs_s -%}
+      {%- endif -%}
+    <li class="recipe-step" itemprop="recipeInstructions">
+      {%- if _rs_s.title -%}
+      <p class="recipe-step-title">{{ _rs_s.title | escape }}</p>
+      {%- endif -%}
+      {%- if _rs_text -%}
+      <div class="recipe-step-text">{{ _rs_text | markdownify }}</div>
+      {%- endif -%}
+      {%- if _rs_s.time or _rs_s.temp_f or _rs_s.temp_c -%}
+      <p class="recipe-step-facts">
+        {%- if _rs_s.time -%}
+          {%- capture _rs_dur -%}{%- include components/recipe-duration.html minutes=_rs_s.time -%}{%- endcapture -%}
+        <span class="recipe-step-fact"><i class="bi bi-stopwatch me-1" aria-hidden="true"></i>{{ _rs_dur | strip }}</span>
+        {%- endif -%}
+        {%- if _rs_s.temp_f or _rs_s.temp_c -%}
+        <span class="recipe-step-fact"><i class="bi bi-thermometer-half me-1" aria-hidden="true"></i>{%- include components/recipe-temp.html f=_rs_s.temp_f c=_rs_s.temp_c -%}</span>
+        {%- endif -%}
+      </p>
+      {%- endif -%}
+      {%- if _rs_s.image -%}
+      <figure class="recipe-step-figure">
+        <img src="{{ _rs_s.image | relative_url }}" alt="{{ _rs_s.image_alt | default: '' | escape }}" loading="lazy" decoding="async" class="img-fluid rounded">
+        {%- if _rs_s.caption -%}<figcaption class="small text-body-secondary mt-1">{{ _rs_s.caption | escape }}</figcaption>{%- endif -%}
+      </figure>
+      {%- endif -%}
+      {%- if _rs_s.note -%}
+      <p class="recipe-step-note small">{{ _rs_s.note | escape }}</p>
+      {%- endif -%}
+    </li>
+    {%- endfor -%}
+  </ol>
+  {%- endfor -%}
+</section>
+{%- endif -%}

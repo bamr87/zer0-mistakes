@@ -1,0 +1,96 @@
+{% comment %} Feature: ZER0-083 {% endcomment %}
+{%- comment -%}
+  Component:   recipe-meta
+  Path:        _includes/components/recipe-meta.html
+  Purpose:     The fact bar for one recipe — prep/cook/rest/total time, what it
+               makes, difficulty, cuisine, and oven temperature.
+  Params:      recipe (doc, optional, default: page) — any recipes-collection
+                 document; pass one to render the bar for a different recipe
+               class (string, optional, default: "")
+  Depends on:  components/recipe-duration.html, components/recipe-qty.html,
+               components/recipe-temp.html, _sass/components/_recipe.scss
+  Notes:       Total time is `times.total` when authored, otherwise the sum of
+               prep + cook + rest. The "Makes" tile is a scalable quantity, so
+               it tracks the serving scaler rather than going stale. Every tile
+               is skipped when its front matter is absent — a recipe with only
+               a cook time renders one tile, not five empty ones.
+{%- endcomment -%}
+{%- assign _rm_r = include.recipe | default: page -%}
+{%- assign _rm_t = _rm_r.times -%}
+{%- assign _rm_prep = _rm_t.prep | default: 0 -%}
+{%- assign _rm_cook = _rm_t.cook | default: 0 -%}
+{%- assign _rm_rest = _rm_t.rest | default: 0 -%}
+{%- if _rm_t.total -%}
+  {%- assign _rm_total = _rm_t.total -%}
+{%- else -%}
+  {%- assign _rm_total = _rm_prep | plus: _rm_cook | plus: _rm_rest -%}
+{%- endif -%}
+{%- capture _rm_prep_h -%}{%- include components/recipe-duration.html minutes=_rm_prep -%}{%- endcapture -%}
+{%- capture _rm_cook_h -%}{%- include components/recipe-duration.html minutes=_rm_cook -%}{%- endcapture -%}
+{%- capture _rm_rest_h -%}{%- include components/recipe-duration.html minutes=_rm_rest -%}{%- endcapture -%}
+{%- capture _rm_total_h -%}{%- include components/recipe-duration.html minutes=_rm_total -%}{%- endcapture -%}
+{%- assign _rm_prep_h = _rm_prep_h | strip -%}
+{%- assign _rm_cook_h = _rm_cook_h | strip -%}
+{%- assign _rm_rest_h = _rm_rest_h | strip -%}
+{%- assign _rm_total_h = _rm_total_h | strip -%}
+{%- assign _rm_has_any = false -%}
+{%- if _rm_prep_h != "" or _rm_cook_h != "" or _rm_total_h != "" or _rm_r.yield or _rm_r.difficulty or _rm_r.cuisine or _rm_r.oven -%}
+  {%- assign _rm_has_any = true -%}
+{%- endif -%}
+{%- if _rm_has_any == false -%}
+  {%- comment -%} recipe-meta: no time/yield/difficulty front matter — skipping render {%- endcomment -%}
+{%- else -%}
+<dl class="recipe-meta {{ include.class | default: '' }}">
+  {%- if _rm_prep_h != "" -%}
+  <div class="recipe-meta-item">
+    <dt><i class="bi bi-scissors me-1" aria-hidden="true"></i>Prep</dt>
+    <dd itemprop="prepTime">{{ _rm_prep_h }}</dd>
+  </div>
+  {%- endif -%}
+  {%- if _rm_cook_h != "" -%}
+  <div class="recipe-meta-item">
+    <dt><i class="bi bi-fire me-1" aria-hidden="true"></i>Cook</dt>
+    <dd itemprop="cookTime">{{ _rm_cook_h }}</dd>
+  </div>
+  {%- endif -%}
+  {%- if _rm_rest_h != "" -%}
+  <div class="recipe-meta-item">
+    <dt><i class="bi bi-moon-stars me-1" aria-hidden="true"></i>{{ _rm_r.times.rest_label | default: "Rest" }}</dt>
+    <dd>{{ _rm_rest_h }}</dd>
+  </div>
+  {%- endif -%}
+  {%- if _rm_total_h != "" -%}
+  <div class="recipe-meta-item recipe-meta-item--total">
+    <dt><i class="bi bi-clock-history me-1" aria-hidden="true"></i>Total</dt>
+    <dd itemprop="totalTime">{{ _rm_total_h }}</dd>
+  </div>
+  {%- endif -%}
+  {%- if _rm_r.yield and _rm_r.yield.amount -%}
+  <div class="recipe-meta-item">
+    <dt><i class="bi bi-pie-chart me-1" aria-hidden="true"></i>Makes</dt>
+    <dd itemprop="recipeYield">{%- include components/recipe-qty.html qty=_rm_r.yield.amount unit=_rm_r.yield.unit -%}</dd>
+  </div>
+  {%- endif -%}
+  {%- if _rm_r.difficulty -%}
+  <div class="recipe-meta-item">
+    <dt><i class="bi bi-bar-chart me-1" aria-hidden="true"></i>Difficulty</dt>
+    <dd><span class="recipe-difficulty recipe-difficulty--{{ _rm_r.difficulty | downcase | strip }}">{{ _rm_r.difficulty | capitalize }}</span></dd>
+  </div>
+  {%- endif -%}
+  {%- if _rm_r.cuisine -%}
+  <div class="recipe-meta-item">
+    <dt><i class="bi bi-globe2 me-1" aria-hidden="true"></i>Cuisine</dt>
+    <dd itemprop="recipeCuisine">{{ _rm_r.cuisine | escape }}</dd>
+  </div>
+  {%- endif -%}
+  {%- if _rm_r.oven.temp_f or _rm_r.oven.temp_c -%}
+  <div class="recipe-meta-item">
+    <dt><i class="bi bi-thermometer-half me-1" aria-hidden="true"></i>Oven</dt>
+    <dd>
+      {%- include components/recipe-temp.html f=_rm_r.oven.temp_f c=_rm_r.oven.temp_c -%}
+      {%- if _rm_r.oven.mode %} <span class="text-body-secondary">({{ _rm_r.oven.mode | escape }})</span>{% endif -%}
+    </dd>
+  </div>
+  {%- endif -%}
+</dl>
+{%- endif -%}

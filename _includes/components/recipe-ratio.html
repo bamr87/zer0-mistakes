@@ -1,0 +1,151 @@
+{% comment %} Feature: ZER0-083 {% endcomment %}
+{%- comment -%}
+  Component:   recipe-ratio
+  Path:        _includes/components/recipe-ratio.html
+  Purpose:     The formula behind the recipe — every ingredient reduced to a
+               weight and a percentage of one reference ingredient. This is the
+               baker's-percentage table bread, pastry and sauce recipes are
+               really built on, and it is what lets a reader rebuild the recipe
+               at any size instead of only at multiples of the printed one.
+  Params:      recipe (doc, optional, default: page)
+               basis (string, optional, default: page.ratio_basis) — the
+                 ingredient that counts as 100%; matched as a substring, so
+                 "flour" covers "bread flour" + "whole-wheat flour"
+               heading (string, optional, default: "Ratio")
+               heading_level (string, optional, default: "h2")
+  Depends on:  components/recipe-grams.html, components/recipe-qty.html,
+               _data/ingredient_densities.yml, _sass/components/_recipe.scss
+  Notes:       Percentages are computed at BUILD time, so the table is right
+               with JavaScript disabled and never drifts from the ingredient
+               list. They are also scale-invariant — only the weight column
+               moves when the reader rescales. Ingredients that cannot be
+               resolved to a weight (a clove of garlic, "1 egg", a volume with
+               no density) are listed without a percentage rather than guessed
+               at. Set `ratio: false` on an ingredient to leave it out, or
+               author `baker_percent:` to pin a value.
+{%- endcomment -%}
+{%- assign _rr_r = include.recipe | default: page -%}
+{%- assign _rr_basis = include.basis | default: _rr_r.ratio_basis -%}
+{%- assign _rr_ingredients = _rr_r.ingredients -%}
+{%- if _rr_ingredients == nil or _rr_ingredients.size == 0 or _rr_basis == nil -%}
+  {%- comment -%} recipe-ratio: needs `ingredients` and a `ratio_basis` — skipping render {%- endcomment -%}
+{%- else -%}
+{%- assign _rr_basis_needle = _rr_basis | downcase | strip -%}
+{%- assign _rr_hl = include.heading_level | default: "h2" -%}
+
+{%- comment -%} Flatten grouped ingredients into one list. {%- endcomment -%}
+{%- assign _rr_flat = "" | split: "" -%}
+{%- for _rr_entry in _rr_ingredients -%}
+  {%- if _rr_entry.items -%}
+    {%- for _rr_i in _rr_entry.items -%}{%- assign _rr_flat = _rr_flat | push: _rr_i -%}{%- endfor -%}
+  {%- else -%}
+    {%- assign _rr_flat = _rr_flat | push: _rr_entry -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- comment -%} Pass 1: total the basis weight and the batch weight. {%- endcomment -%}
+{%- assign _rr_basis_grams = 0 -%}
+{%- assign _rr_total_grams = 0 -%}
+{%- assign _rr_weighed = 0 -%}
+{%- for _rr_i in _rr_flat -%}
+  {%- if _rr_i.ratio == false -%}{%- continue -%}{%- endif -%}
+  {%- assign _rr_slug = _rr_i.item | default: "" | downcase | strip | replace: " ", "-" -%}
+  {%- assign _rr_gpc = _rr_i.grams_per_cup | default: site.data.ingredient_densities[_rr_slug] -%}
+  {%- capture _rr_g -%}{%- include components/recipe-grams.html qty=_rr_i.qty unit=_rr_i.unit grams_per_cup=_rr_gpc -%}{%- endcapture -%}
+  {%- assign _rr_g = _rr_g | strip -%}
+  {%- if _rr_g != "" -%}
+    {%- assign _rr_weighed = _rr_weighed | plus: 1 -%}
+    {%- assign _rr_total_grams = _rr_total_grams | plus: _rr_g -%}
+    {%- assign _rr_name = _rr_i.item | default: "" | downcase -%}
+    {%- if _rr_name contains _rr_basis_needle -%}
+      {%- assign _rr_basis_grams = _rr_basis_grams | plus: _rr_g -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- if _rr_weighed < 2 or _rr_basis_grams <= 0 -%}
+  {%- comment -%} recipe-ratio: fewer than two weighable ingredients, or the basis "{{ _rr_basis }}" matched nothing — skipping render {%- endcomment -%}
+{%- else -%}
+<section class="recipe-ratio">
+  <{{ _rr_hl }} class="recipe-section-heading">
+    <i class="bi bi-percent me-2" aria-hidden="true"></i>{{ include.heading | default: "Ratio" }}
+  </{{ _rr_hl }}>
+  <p class="recipe-ratio-intro text-body-secondary">
+    Every weight below is a percentage of the {{ _rr_basis | escape }}
+    {%- if _rr_r.ratio %}, which gives this recipe its <strong>{{ _rr_r.ratio | escape }}</strong> ratio{% endif -%}.
+    Rescale the recipe and the weights follow; the percentages are what stay true.
+  </p>
+  <div class="table-responsive">
+    <table class="table table-sm recipe-ratio-table align-middle">
+      <thead>
+        <tr>
+          <th scope="col">Ingredient</th>
+          <th scope="col" class="text-end">Weight</th>
+          <th scope="col" class="text-end">% of {{ _rr_basis | escape }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {%- for _rr_i in _rr_flat -%}
+          {%- if _rr_i.ratio == false -%}{%- continue -%}{%- endif -%}
+          {%- assign _rr_slug = _rr_i.item | default: "" | downcase | strip | replace: " ", "-" -%}
+          {%- assign _rr_gpc = _rr_i.grams_per_cup | default: site.data.ingredient_densities[_rr_slug] -%}
+          {%- capture _rr_g -%}{%- include components/recipe-grams.html qty=_rr_i.qty unit=_rr_i.unit grams_per_cup=_rr_gpc -%}{%- endcapture -%}
+          {%- assign _rr_g = _rr_g | strip -%}
+        <tr>
+          <th scope="row" class="fw-normal">{{ _rr_i.item | escape }}{% if _rr_i.optional %} <span class="text-body-secondary small">(optional)</span>{% endif %}</th>
+          <td class="text-end">
+            {%- if _rr_g != "" -%}
+              {%- include components/recipe-qty.html qty=_rr_g unit="g" -%}
+            {%- else -%}
+              <span class="text-body-secondary">—</span>
+            {%- endif -%}
+          </td>
+          <td class="text-end">
+            {%- if _rr_i.baker_percent -%}
+              {{ _rr_i.baker_percent }}%
+            {%- elsif _rr_g != "" -%}
+              {%- assign _rr_pct = _rr_g | times: 100.0 | divided_by: _rr_basis_grams -%}
+              {%- assign _rr_pct_i = _rr_pct | round -%}
+              {%- if _rr_pct == _rr_pct_i -%}{{ _rr_pct_i }}{%- else -%}{{ _rr_pct | round: 1 }}{%- endif -%}%
+            {%- else -%}
+              <span class="text-body-secondary">—</span>
+            {%- endif -%}
+          </td>
+        </tr>
+        {%- endfor -%}
+      </tbody>
+      <tfoot>
+        <tr>
+          <th scope="row">Total weighed</th>
+          <td class="text-end">{%- include components/recipe-qty.html qty=_rr_total_grams unit="g" -%}</td>
+          <td class="text-end">
+            {%- assign _rr_tpct = _rr_total_grams | times: 100.0 | divided_by: _rr_basis_grams -%}
+            {%- assign _rr_tpct_i = _rr_tpct | round -%}
+            {%- if _rr_tpct == _rr_tpct_i -%}{{ _rr_tpct_i }}{%- else -%}{{ _rr_tpct | round: 1 }}{%- endif -%}%
+          </td>
+        </tr>
+        {%- if _rr_r.yield.amount and _rr_r.yield.amount > 0 -%}
+        {%- assign _rr_per_unit = _rr_total_grams | divided_by: _rr_r.yield.amount | round: 1 -%}
+        {%- comment -%} Naive singular for the row label: "slices" → "slice". {%- endcomment -%}
+        {%- assign _rr_yu = _rr_r.yield.singular | default: _rr_r.yield.unit | default: "serving" | strip -%}
+        {%- unless _rr_r.yield.singular -%}
+          {%- if _rr_yu.size > 1 -%}
+            {%- assign _rr_tail = _rr_yu | slice: -1 -%}
+            {%- if _rr_tail == "s" -%}
+              {%- assign _rr_cut = _rr_yu.size | minus: 1 -%}
+              {%- assign _rr_yu = _rr_yu | slice: 0, _rr_cut -%}
+            {%- endif -%}
+          {%- endif -%}
+        {%- endunless -%}
+        <tr>
+          <th scope="row">Per {{ _rr_yu | escape }}</th>
+          <td class="text-end">{%- include components/recipe-qty.html qty=_rr_per_unit unit="g" scale=false -%}</td>
+          <td class="text-end"><span class="text-body-secondary">—</span></td>
+        </tr>
+        {%- endif -%}
+      </tfoot>
+    </table>
+  </div>
+</section>
+{%- endif -%}
+{%- endif -%}

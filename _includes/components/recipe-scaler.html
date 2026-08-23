@@ -1,0 +1,73 @@
+{% comment %} Feature: ZER0-083 {% endcomment %}
+{%- comment -%}
+  Component:   recipe-scaler
+  Path:        _includes/components/recipe-scaler.html
+  Purpose:     The control bar that drives every quantity on a recipe page —
+               scale the yield up or down, and switch the whole recipe between
+               the units it was written in, metric, and US customary.
+  Params:      base_yield (number, optional, default: page.yield.amount, then 1)
+               yield_unit (string, optional, default: page.yield.unit, then
+                 "servings")
+               recipe_id (string, optional, default: page.slug) — key the
+                 remembered scale is stored under
+               units (bool, optional, default: true) — false hides the unit
+                 switch (for a recipe that is already all-metric, say)
+               class (string, optional, default: "")
+  Depends on:  assets/js/recipe-scaler.js, _sass/components/_recipe.scss
+  Notes:       Progressive enhancement: with JavaScript off the controls are
+               hidden (.recipe-scaler is display:none until the script marks it
+               ready) and the page still shows every amount exactly as written.
+               The status paragraph is an aria-live region so screen-reader
+               users hear "Scaled to 24 cookies" rather than silently changing
+               numbers underneath them.
+{%- endcomment -%}
+{%- assign _rsc_base = include.base_yield | default: page.yield.amount | default: 1 -%}
+{%- assign _rsc_unit = include.yield_unit | default: page.yield.unit | default: "servings" -%}
+{%- assign _rsc_id = include.recipe_id | default: page.slug | default: "recipe" -%}
+{%- assign _rsc_show_units = true -%}
+{%- if include.units == false -%}{%- assign _rsc_show_units = false -%}{%- endif -%}
+<div class="recipe-scaler {{ include.class | default: '' }}" data-recipe-scaler data-base-yield="{{ _rsc_base }}" data-yield-unit="{{ _rsc_unit | escape }}" data-recipe-id="{{ _rsc_id | escape }}" hidden>
+  <div class="recipe-scaler-group">
+    <span class="recipe-scaler-label" id="{{ _rsc_id }}-scale-label">Scale</span>
+    <div class="input-group input-group-sm recipe-scaler-stepper">
+      <button class="btn btn-outline-secondary" type="button" data-recipe-step="-1" aria-label="Decrease {{ _rsc_unit | escape }}">
+        <i class="bi bi-dash-lg" aria-hidden="true"></i>
+      </button>
+      <input class="form-control text-center" type="number" inputmode="decimal" min="0.25" step="1"
+             value="{{ _rsc_base }}" data-recipe-yield-input
+             aria-labelledby="{{ _rsc_id }}-scale-label" aria-describedby="{{ _rsc_id }}-yield-unit">
+      <span class="input-group-text" id="{{ _rsc_id }}-yield-unit" data-recipe-yield-unit>{{ _rsc_unit | escape }}</span>
+      <button class="btn btn-outline-secondary" type="button" data-recipe-step="1" aria-label="Increase {{ _rsc_unit | escape }}">
+        <i class="bi bi-plus-lg" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="recipe-scaler-group">
+    <div class="btn-group btn-group-sm" role="group" aria-label="Quick scale">
+      <button type="button" class="btn btn-outline-secondary" data-recipe-multiplier="0.5">½×</button>
+      <button type="button" class="btn btn-outline-secondary" data-recipe-multiplier="1">1×</button>
+      <button type="button" class="btn btn-outline-secondary" data-recipe-multiplier="2">2×</button>
+      <button type="button" class="btn btn-outline-secondary" data-recipe-multiplier="3">3×</button>
+    </div>
+  </div>
+
+  {%- if _rsc_show_units -%}
+  <div class="recipe-scaler-group">
+    <span class="recipe-scaler-label" id="{{ _rsc_id }}-units-label">Units</span>
+    <div class="btn-group btn-group-sm" role="group" aria-labelledby="{{ _rsc_id }}-units-label">
+      <button type="button" class="btn btn-outline-secondary" data-recipe-units="original" title="Show every amount exactly as the recipe was written">As written</button>
+      <button type="button" class="btn btn-outline-secondary" data-recipe-units="metric" title="Grams, millilitres and °C — volumes become weights wherever a density is known">Metric</button>
+      <button type="button" class="btn btn-outline-secondary" data-recipe-units="us" title="Cups, spoons, ounces and °F">US</button>
+    </div>
+  </div>
+  {%- endif -%}
+
+  <div class="recipe-scaler-group recipe-scaler-group--reset">
+    <button type="button" class="btn btn-sm btn-link" data-recipe-reset>
+      <i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>Reset
+    </button>
+  </div>
+
+  <p class="visually-hidden" role="status" aria-live="polite" data-recipe-status></p>
+</div>

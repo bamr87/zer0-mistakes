@@ -775,6 +775,163 @@ test_favicon_wiring() {
 # hardcode absolute demo links (e.g. /docs/, /pages/, /docs/customization/).
 # Such links 404 on any consumer site that lacks those exact routes, making the
 # showcase un-includable. Demo links are kept inert (href="#") instead.
+test_recipe_collection() {
+    log_info "Validating the cookbook/recipes collection, components, and scaler..."
+
+    cd "$PROJECT_ROOT"
+    local failed=0
+
+    # 1. Collection is registered and its documents get a layout by default.
+    if grep -qE '^  recipes:' _config.yml && grep -qE 'path: pages/_recipes' _config.yml; then
+        log_success "recipes collection and its front-matter defaults are configured"
+    else
+        log_error "_config.yml is missing the recipes collection or its pages/_recipes defaults"
+        failed=1
+    fi
+
+    # 2. Layouts and the component set exist.
+    local f
+    for f in _layouts/recipe.html _layouts/cookbook.html \
+             _includes/components/recipe-qty.html _includes/components/recipe-temp.html \
+             _includes/components/recipe-grams.html _includes/components/recipe-duration.html \
+             _includes/components/recipe-meta.html _includes/components/recipe-scaler.html \
+             _includes/components/recipe-ingredients.html _includes/components/recipe-steps.html \
+             _includes/components/recipe-ratio.html _includes/components/recipe-nutrition.html \
+             _includes/components/recipe-card.html _includes/components/recipe-index.html \
+             assets/js/recipe-scaler.js _sass/components/_recipe.scss \
+             _data/recipe_courses.yml _data/ingredient_densities.yml; do
+        if [[ ! -f "$f" ]]; then
+            log_error "Missing recipe file: $f"
+            failed=1
+        fi
+    done
+    [[ "$failed" -eq 0 ]] && log_success "All recipe layouts, components, and assets are present"
+
+    # 3. Styles and script are actually wired into the build.
+    if grep -qF '@import "components/recipe"' assets/css/main.scss; then
+        log_success "main.scss imports components/recipe"
+    else
+        log_error "assets/css/main.scss does not import components/recipe"
+        failed=1
+    fi
+    if grep -qF 'assets/js/recipe-scaler.js' _includes/core/head.html; then
+        log_success "head.html loads the recipe scaler"
+    else
+        log_error "head.html does not load assets/js/recipe-scaler.js"
+        failed=1
+    fi
+    # The scaler is a niche script: it must stay gated, not ship on every page.
+    if grep -qE 'page\.layout == "recipe" or page\.recipe_tools' _includes/core/head.html; then
+        log_success "recipe scaler is gated to recipe pages"
+    else
+        log_error "recipe scaler is loaded unconditionally — gate it on page.layout/recipe_tools"
+        failed=1
+    fi
+
+    # 4. default.html must skip its intro for layouts that render their own <h1>.
+    if grep -qF 'page.layout == "recipe"' _layouts/default.html && \
+       grep -qF 'page.layout == "cookbook"' _layouts/default.html; then
+        log_success "default.html suppresses its intro for recipe/cookbook (no duplicate H1)"
+    else
+        log_error "default.html would render content/intro.html on recipe/cookbook pages (duplicate H1)"
+        failed=1
+    fi
+
+    # 5. Liquid `assign` writes to the GLOBAL scope even inside an include, so a
+    #    helper called twice from one caller silently clobbers the caller's
+    #    variables. Every recipe include therefore namespaces its own variables.
+    if ruby - <<'RUBY'
+prefixes = {
+  'recipe-grams'       => '_rg_',  'recipe-duration'    => '_rd_',
+  'recipe-qty'         => '_rq_',  'recipe-temp'        => '_rt_',
+  'recipe-meta'        => '_rm_',  'recipe-scaler'      => '_rsc_',
+  'recipe-ingredients' => '_ri_',  'recipe-steps'       => '_rs_',
+  'recipe-ratio'       => '_rr_',  'recipe-nutrition'   => '_rn_',
+  'recipe-card'        => '_rc_',  'recipe-index'       => '_rx_',
+}
+bad = []
+prefixes.each do |name, prefix|
+  path = "_includes/components/#{name}.html"
+  next unless File.exist?(path)
+  File.read(path).scan(/\{%-?\s*(?:assign|capture)\s+(\w+)/) do |(var)|
+    bad << "#{path}: #{var} (expected #{prefix}*)" unless var.start_with?(prefix)
+  end
+end
+if bad.empty?
+  true
+else
+  warn "  Un-namespaced Liquid variables leak into the caller's scope:"
+  bad.each { |b| warn "    #{b}" }
+  exit 1
+end
+RUBY
+    then
+        log_success "Recipe includes namespace their Liquid variables (no global-scope leaks)"
+    else
+        log_error "A recipe include assigns an un-namespaced Liquid variable"
+        failed=1
+    fi
+
+    # 6. The build-time unit table (ratio percentages) and the runtime one
+    #    (live conversion) must agree, or a converted recipe silently disagrees
+    #    with its own ratio table.
+    local factor
+    for factor in 236.588 28.3495 453.592 4.92892 14.7868 29.5735 473.176 946.353; do
+        if grep -qF "$factor" _includes/components/recipe-grams.html && \
+           grep -qF "$factor" assets/js/recipe-scaler.js; then
+            :
+        else
+            log_error "Unit factor $factor is missing from recipe-grams.html or recipe-scaler.js (tables must match)"
+            failed=1
+        fi
+    done
+    [[ "$failed" -eq 0 ]] && log_success "Build-time and runtime unit tables agree"
+
+    # 7. Demo recipes parse and carry the keys the layout renders.
+    if ruby - <<'RUBY'
+require 'yaml'
+require 'date'
+files = Dir['pages/_recipes/*.md']
+abort 'no demo recipes found' if files.empty?
+problems = []
+files.each do |path|
+  raw = File.read(path)
+  fm = raw[/\A---\s*\n(.*?)\n---\s*\n/m, 1]
+  (problems << "#{path}: no front matter"; next) unless fm
+  data = begin
+    YAML.safe_load(fm, permitted_classes: [Date, Time], aliases: true)
+  rescue => e
+    problems << "#{path}: #{e.class}: #{e.message}"
+    next
+  end
+  problems << "#{path}: missing title" unless data['title'].is_a?(String)
+  next if data['layout'] == 'cookbook'
+  %w[ingredients steps].each do |key|
+    problems << "#{path}: #{key} must be a non-empty list" unless data[key].is_a?(Array) && !data[key].empty?
+  end
+  problems << "#{path}: yield.amount must be a number" unless data.dig('yield', 'amount').is_a?(Numeric)
+end
+if problems.empty?
+  true
+else
+  problems.each { |p| warn "    #{p}" }
+  exit 1
+end
+RUBY
+    then
+        log_success "Demo recipes parse and carry title/yield/ingredients/steps"
+    else
+        log_error "A demo recipe under pages/_recipes/ is malformed"
+        failed=1
+    fi
+
+    if [[ "$failed" -ne 0 ]]; then
+        return 1
+    fi
+    log_success "Cookbook/recipes collection is valid"
+    return 0
+}
+
 test_showcase_demo_links() {
     log_info "Checking component-showcase for hardcoded absolute demo links..."
 
@@ -900,6 +1057,7 @@ run_core_tests() {
     run_test "Giscus Comments Configuration" "test_giscus_comments" "validation"
     run_test "Favicon and Analytics Wiring" "test_favicon_wiring" "validation"
     run_test "Showcase Demo Links (no absolute 404 hazards)" "test_showcase_demo_links" "validation"
+    run_test "Cookbook Recipe Collection" "test_recipe_collection" "validation"
     run_test "Sass Compilation" "test_sass_compilation" "validation"
     run_test "Design Token Parity" "test_design_token_parity" "validation"
     run_test "JavaScript Syntax" "test_javascript_syntax" "validation"
