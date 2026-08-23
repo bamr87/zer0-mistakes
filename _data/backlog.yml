@@ -1210,7 +1210,7 @@ tasks:
       - "test/visual/core/accessibility.spec.js parses; `npx playwright test --project=critical` runs to completion."
       - "Only one openDialog declaration remains, and its callers all still pass."
       - "No behavioural change to the modal/offcanvas a11y tests."
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: 416, pr: null, roadmap: null }
     created: 2026-08-23
     updated: 2026-08-23
 
@@ -1244,6 +1244,6 @@ tasks:
       - "Identify the changed region from the CI diff artifact before regenerating anything — a stale baseline and a real regression look the same in the check."
       - "Visual Snapshots passes on main and on a fresh branch with no source changes."
       - "Any genuinely time- or build-varying content inside the snapshot region is masked or stubbed, so the tier cannot drift again."
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: 417, pr: null, roadmap: null }
     created: 2026-08-23
     updated: 2026-08-23
