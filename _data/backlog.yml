@@ -1184,7 +1184,7 @@ tasks:
 
   - id: T-044
     title: "Playwright suite aborts: duplicate openDialog declaration in accessibility.spec.js"
-    status: open
+    status: done
     priority: P1
     area: tests
     risk: low
@@ -1215,7 +1215,7 @@ tasks:
     updated: 2026-08-23
 
   - id: T-045
-    title: "Homepage skin snapshots fail on every branch: baselines 1967px stale across all 9 skins"
+    title: "Homepage snapshot baselines were regenerated without the 1967px drift being diagnosed"
     status: open
     priority: P2
     area: tests
@@ -1239,7 +1239,17 @@ tasks:
       stamp, site.time | date "%b %d, %H:%M" — it currently sits in a collapsed
       offcanvas (measured 0x0, not in the viewport) so it is not the cause
       today, but it is a live non-determinism hazard the moment that panel is
-      shown by default, and worth masking regardless.
+      shown by default, and worth masking regardless. UPDATE 2026-08-23: #413
+      regenerated all 9 baselines when it merged, so the check is green again —
+      resolved by re-blessing rather than by diagnosis, which is what the first
+      acceptance criterion was meant to prevent. Diffing the old vs new CI
+      baselines (homepage-air, 2596f866 vs e488c4c) puts the whole 5016px delta
+      in two bands: y21-41 (a wide navbar strip, 4688px) and y626 (328px).
+      page-views does render on the homepage so part of that is legitimately
+      #413, but a navbar strip is not where a view-count badge belongs.
+      Separating the two needs the diff artifact from a pre-#413 failing run,
+      which has rolled off. What remains is confirming the y21-41 band is
+      accounted for.
     acceptance:
       - "Identify the changed region from the CI diff artifact before regenerating anything — a stale baseline and a real regression look the same in the check."
       - "Visual Snapshots passes on main and on a fresh branch with no source changes."
