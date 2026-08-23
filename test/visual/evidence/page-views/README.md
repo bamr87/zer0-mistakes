@@ -1,25 +1,14 @@
 # Evidence — page-view counter (ZER0-083)
 
-Proof for the new per-page view counter: `_includes/components/page-views.html`
-(badge) + `_includes/components/page-views-init.html` (config, injected from
-`core/head.html`) + `assets/js/page-views.js` (behaviour), displayed in the
-article meta row by `_layouts/article.html`.
+Proof for the new per-page view counter: `_includes/components/page-views.html` (badge) + `_includes/components/page-views-init.html` (config, injected from `core/head.html`) + `assets/js/page-views.js` (behaviour), displayed in the article meta row by `_layouts/article.html`.
 
-Route exercised: `/posts/2026/08/15/jekyll-preview-server-from-an-old-pc/`
-(resolved from the homepage at run time, not hardcoded). Provider: `local` —
-the default, which keeps counts in the visitor's `localStorage` and needs no
-server.
+Route exercised: `/posts/2026/08/15/jekyll-preview-server-from-an-old-pc/` (resolved from the homepage at run time, not hardcoded). Provider: `local` — the default, which keeps counts in the visitor's `localStorage` and needs no server.
 
 ## Before → after
 
-**BEFORE** the meta row ended at the reading time. There is no old rendering to
-revert to, so `01-before-no-count.png` captures that state through a real code
-path rather than a mock: Do Not Track is on, so nothing is recorded and the
-badge stays hidden — which is also what every reader sees on a page they have
-not opened before.
+**BEFORE** the meta row ended at the reading time. There is no old rendering to revert to, so `01-before-no-count.png` captures that state through a real code path rather than a mock: Do Not Track is on, so nothing is recorded and the badge stays hidden — which is also what every reader sees on a page they have not opened before.
 
-**AFTER** the row carries `👁 N view(s)` between the reading time and the
-"Updated" stamp.
+**AFTER** the row carries `👁 N view(s)` between the reading time and the "Updated" stamp.
 
 | Image | What it shows |
 | --- | --- |
@@ -47,15 +36,11 @@ Two things worth reading off that table:
 - **Session dedupe works.** "reload, same session" holds at `1`; only a new
   session advances it. A reload cannot inflate the number.
 - **The meta row does not reflow.** Desktop height is 31 px from `1` to
-  `12,438` — `font-variant-numeric: tabular-nums` on the count keeps the row
-  stable as digits are added.
+`12,438` — `font-variant-numeric: tabular-nums` on the count keeps the row stable as digits are added.
 
 ## Regression test
 
-[`test/visual/features/page-views.spec.js`](../../features/page-views.spec.js)
-— 7 tests, green on Chromium: config injection, first view, session dedupe,
-plural switch, the Do Not Track gate, `reset()`, and a console-error check
-scoped to this feature.
+[`test/visual/features/page-views.spec.js`](../../features/page-views.spec.js) — 7 tests, green on Chromium: config injection, first view, session dedupe, plural switch, the Do Not Track gate, `reset()`, and a console-error check scoped to this feature.
 
 ## Regenerate
 

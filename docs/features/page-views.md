@@ -23,25 +23,20 @@ author: bamr87
 
 ## Overview
 
-A page-view counter that **records a view for the page being read** and
-**displays the count** in the article meta row, next to the reading time:
+A page-view counter that **records a view for the page being read** and **displays the count** in the article meta row, next to the reading time:
 
 ```text
-Amr Abdel  •  August 23, 2026  •  4 min read  •  👁 12 views
+Zer0-Mistakes Team  •  August 15, 2026  •  4 min read  •  👁 12 views
 ```
 
-The theme is a static site, so there is no server to count on by default. The
-feature is therefore built around two providers, and the honest one is the
-default:
+The theme is a static site, so there is no server to count on by default. The feature is therefore built around two providers, and the honest one is the default:
 
 | Provider | Where the count lives | What the number means | Needs |
 |----------|----------------------|-----------------------|-------|
 | `local` (default) | This visitor's `localStorage` | "How often **you** opened this page" | Nothing. Works on GitHub Pages, offline, in a fork. |
 | `remote` | An HTTP endpoint you control | "How often **anyone** opened this page" | A counter URL that returns JSON. |
 
-There is deliberately no third "guess a global number client-side" mode — a
-static site cannot know a site-wide total without asking something, and a
-counter that quietly invents one is worse than no counter.
+There is deliberately no third "guess a global number client-side" mode — a static site cannot know a site-wide total without asking something, and a counter that quietly invents one is worse than no counter.
 
 ---
 
@@ -92,14 +87,9 @@ page_views:
   fallback_local  : false     # remote only — use the local counter if the endpoint fails
 ```
 
-Turn the whole feature off with `enabled: false`: the init include emits
-nothing, the badge include renders nothing, and `page-views.js` is never
-requested.
+Turn the whole feature off with `enabled: false`: the init include emits nothing, the badge include renders nothing, and `page-views.js` is never requested.
 
-The same is true of an **absent** `page_views:` block, which is what a
-consumer site inherits: `remote_theme` and the gem ship layouts, includes, and
-assets but not `_config.yml`, so a downstream site opts in by copying the block
-above into its own config. Nothing is emitted until it does.
+The same is true of an **absent** `page_views:` block, which is what a consumer site inherits: `remote_theme` and the gem ship layouts, includes, and assets but not `_config.yml`, so a downstream site opts in by copying the block above into its own config. Nothing is emitted until it does.
 
 ### Wiring the remote provider
 
@@ -118,16 +108,14 @@ page_views:
 - `GET`/`HEAD` methods send no body; anything else sends `{"path": "/some/page/"}`
   as JSON.
 - The response is read at `count_key` (`views` by default, dotted paths
-  supported). Anything that isn't a finite number is treated as "no count", and
-  the badge stays hidden.
+supported). Anything that isn't a finite number is treated as "no count", and the badge stays hidden.
 - Requests are `credentials: "omit"`, so the endpoint needs permissive CORS.
 
 ---
 
 ## Privacy
 
-The privacy gates mirror the `posthog:` block, and they gate **recording**, not
-display — showing a number that is already known collects nothing:
+The privacy gates mirror the `posthog:` block, and they gate **recording**, not display — showing a number that is already known collects nothing:
 
 | Signal | Effect |
 |--------|--------|
@@ -135,19 +123,15 @@ display — showing a number that is already known collects nothing:
 | Global Privacy Control (`respect_gpc`) | No view is recorded. |
 | `require_consent: true` | Nothing is recorded until the visitor accepts the **analytics** category in the cookie-consent banner. The pending view is recorded on the `cookieConsentChanged` event, so consenting mid-visit still counts the page being read. |
 
-With the `remote` provider, a blocked recording still performs a read-only
-`GET` so the public count renders. With `local`, there is nothing to read from
-anyone else, so the badge simply stays hidden.
+With the `remote` provider, a blocked recording still performs a read-only `GET` so the public count renders. With `local`, there is nothing to read from anyone else, so the badge simply stays hidden.
 
-`dedupe: session` (the default) counts one view per path per browser session,
-so a reload or a back-navigation does not inflate the number.
+`dedupe: session` (the default) counts one view per path per browser session, so a reload or a back-navigation does not inflate the number.
 
 ---
 
 ## Placing the badge
 
-The badge include is safe to use anywhere, any number of times — each instance
-resolves its own path:
+The badge include is safe to use anywhere, any number of times — each instance resolves its own path:
 
 ```liquid
 {% include components/page-views.html %}                        <!-- current page -->
@@ -163,21 +147,15 @@ resolves its own path:
 | `icon` | `bi-eye` | Bootstrap icon |
 | `separator` | `false` | Render a leading `•` **inside** the badge, so it hides with it |
 
-The badge is server-rendered with the `hidden` attribute and is revealed only
-once a count exists. That is what keeps a page with no data from flashing
-"0 views", and why the separator lives inside the badge rather than beside it —
-a hidden badge leaves no dangling bullet in the meta row.
+The badge is server-rendered with the `hidden` attribute and is revealed only once a count exists. That is what keeps a page with no data from flashing "0 views", and why the separator lives inside the badge rather than beside it — a hidden badge leaves no dangling bullet in the meta row.
 
-Paths are site-relative and baseurl-free (`page.url`); `page-views.js`
-normalizes `location.pathname` the same way, so a project-Pages site under a
-`baseurl` does not count `/repo/foo/` separately from `/foo/`.
+Paths are site-relative and baseurl-free (`page.url`); `page-views.js` normalizes `location.pathname` the same way, so a project-Pages site under a `baseurl` does not count `/repo/foo/` separately from `/foo/`.
 
 ---
 
 ## Runtime API
 
-`page-views.js` exposes a small surface for other scripts (and for the
-Playwright spec):
+`page-views.js` exposes a small surface for other scripts (and for the Playwright spec):
 
 ```js
 window.zer0PageViews.get('/posts/some-post/'); // number | null
@@ -186,8 +164,7 @@ window.zer0PageViews.refresh();                // re-render every badge
 window.zer0PageViews.reset();                  // clear the local store + session dedupe
 ```
 
-Every resolved count also fires an event, so a site can react to it without
-polling:
+Every resolved count also fires an event, so a site can react to it without polling:
 
 ```js
 document.addEventListener('zer0:page-views', (e) => {
