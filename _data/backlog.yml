@@ -63,7 +63,7 @@
 meta:
   title: "zer0-mistakes Backlog"
   updated: 2026-08-18
-  next_id: 44
+  next_id: 45
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -1181,3 +1181,35 @@ tasks:
     created: 2026-08-18
     updated: 2026-08-18
     depends_on: [T-039]
+
+  - id: T-044
+    title: "Playwright suite aborts: duplicate openDialog declaration in accessibility.spec.js"
+    status: open
+    priority: P1
+    area: tests
+    risk: low
+    effort: S
+    source: issue
+    route: test-author
+    summary: >-
+      test/visual/core/accessibility.spec.js declares `async function
+      openDialog` twice — at line 172 (page, selector) and again at line 425
+      (page, selector, kind), the latter added by 98fd6f9 (#387) without
+      removing the former. Two function declarations of the same name in one
+      module scope is a SyntaxError, so Playwright fails to parse the file and
+      the WHOLE run aborts before any test executes: "Identifier 'openDialog'
+      has already been declared. (425:15)". This takes down the critical and
+      smoke tiers together, on every branch, and has been red on main since
+      2026-08-14. Discovered during #414, whose own new spec
+      (test/visual/features/recipes.spec.js) therefore cannot run in CI. The
+      three-argument version is a strict superset — with `kind` undefined it
+      resolves to Ctor='Modal' and 'shown.bs.modal', exactly what the
+      two-argument one does — so deleting the earlier declaration (lines
+      165-184, comment included) is behaviour-preserving.
+    acceptance:
+      - "test/visual/core/accessibility.spec.js parses; `npx playwright test --project=critical` runs to completion."
+      - "Only one openDialog declaration remains, and its callers all still pass."
+      - "No behavioural change to the modal/offcanvas a11y tests."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-08-23
+    updated: 2026-08-23
