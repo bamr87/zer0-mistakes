@@ -153,6 +153,11 @@ layout: default
         {{ minutes }} min read
       </span>
       
+      <!-- Page Views -->
+      {% comment %} The badge ships hidden and carries its own leading separator,
+         so a page with no count yet leaves no dangling "•" in the meta row. {% endcomment %}
+      {% include components/page-views.html separator=true %}
+      
       <!-- Last Modified -->
       {% if page.lastmod %}
         <span class="mx-2">•</span>
