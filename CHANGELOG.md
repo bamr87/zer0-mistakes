@@ -100,6 +100,30 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **A rejected Anthropic credential now falls back to the next one** — the
+  translation pipeline picked the first credential that was *set* and never
+  reconsidered, so a revoked `CLAUDE_CODE_OAUTH_TOKEN` shadowed a working
+  `ANTHROPIC_API_KEY` and took the whole run down with a `401 OAuth access
+  token has been revoked`. `scripts/translate.rb` now treats 401/403 as a
+  credential failure rather than a request failure and retries with the next
+  configured credential, rebuilding the payload so the OAuth-only Claude Code
+  identity block is not sent with an API key. The switch is sticky, so a dead
+  credential costs one rejection per run rather than one per chunk.
+
+- **A failed translation run no longer opens a PR containing nothing** —
+  `_data/i18n/manifest.yml` stamped `updated_at` on every save, so a run in
+  which *every* page failed still produced a one-line diff. That was enough
+  for `translate.yml` to open (and keep updating) a PR that read like a routine
+  translation refresh and contained no translations. The manifest is now
+  written only when the mapping itself changed; a partially successful run
+  still pushes the pages that succeeded, and the run still exits non-zero.
+
+- **The cookbook is reachable from the navbar** — the `recipes` collection
+  (ZER0-084) shipped with a landing page at `/recipes/` that nothing linked to,
+  so the deployed cookbook could only be found by typing the URL.
+  `_data/navigation/main.yml` now carries a Recipes entry with the demo
+  recipes and the feature docs.
+
 - **Section sidebars no longer emit dead sub-topic anchors** — the sidebar
   produced `<a href="#tag">` for every tag, but the matching
   `<section id="tag">` target exists only in the `magazine` branch of
