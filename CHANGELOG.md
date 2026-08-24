@@ -100,6 +100,29 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **Section topic filters match whole tags, not substrings** — filtering a
+  section by a topic silently revealed posts that did not carry it. `data-tags`
+  was built as `tags | join: ' ' | slugify`, which slugifies *after* joining and
+  so turns the separators into hyphens — making a tag boundary indistinguishable
+  from a hyphen inside a slug — and the click handler then matched with
+  `String.includes`. Filtering `/news/technology/` by **ai** returned 6 cards
+  while the sidebar badge for that topic said 5, because a post tagged `edge-ai`
+  matched too. `_layouts/section.html` now slugifies each tag separately into a
+  space-separated list and matches whole tokens, so the rendered count always
+  agrees with the badge (which Liquid computes with exact `contains` membership).
+  Regression coverage in `test/visual/features/section-topic-controls.spec.js`
+  asserts token membership and pins the filtered count to the badge.
+
+- **Nightly smoke tier is green again** — three `smoke` tests had been failing
+  every night since 2026-08-15 (the tier the PR gate does not run, so `main`
+  stayed green). Two were the topic-filter bug above; the third asserted the
+  sidebar's "All Articles" control only as an `<a href="#all-posts">`, but the
+  sidebar renders a `<button data-filter="all">` for the grid/list styles —
+  currently every section — so it could never pass. The topic-button selector
+  also used `.filter({ hasNot })`, which excludes elements *containing* a match
+  rather than matching elements themselves, so it selected the "All Articles"
+  button and asserted against an unfiltered list; it now uses `:not()`.
+
 - **A rejected Anthropic credential now falls back to the next one** — the
   translation pipeline picked the first credential that was *set* and never
   reconsidered, so a revoked `CLAUDE_CODE_OAUTH_TOKEN` shadowed a working
