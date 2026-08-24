@@ -1,0 +1,270 @@
+{
+  "slug": "section-topic-filter",
+  "route": "/news/technology/",
+  "topic": "ai",
+  "before": {
+    "filter": {
+      "found": true,
+      "badge": 5,
+      "shown": 6,
+      "tags": [
+        "ai-knowledge-management-documentation-search",
+        "edge-ai-machine-learning-embedded-systems-privacy",
+        "ai-manufacturing-digital-transformation-strategy-b2b-content-operations",
+        "ai-manufacturing-operations-sales-marketing-finance-supply-chain",
+        "ai-manufacturing-digital-transformation-mid-market-strategy",
+        "ai-productivity-tools-automation"
+      ]
+    },
+    "topics": [
+      {
+        "topic": "ai",
+        "badge": 5,
+        "shown": 6,
+        "agrees": false
+      },
+      {
+        "topic": "automation",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "b2b",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "content-operations",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "digital-transformation",
+        "badge": 2,
+        "shown": 2,
+        "agrees": true
+      },
+      {
+        "topic": "documentation",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "edge-ai",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "embedded-systems",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "finance",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "knowledge-management",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "machine-learning",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "manufacturing",
+        "badge": 3,
+        "shown": 3,
+        "agrees": true
+      },
+      {
+        "topic": "marketing",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "mid-market",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "operations",
+        "badge": 1,
+        "shown": 2,
+        "agrees": false
+      }
+    ],
+    "mismatches": 2
+  },
+  "after": {
+    "filter": {
+      "found": true,
+      "badge": 5,
+      "shown": 5,
+      "tags": [
+        "ai knowledge-management documentation search ",
+        "ai manufacturing digital-transformation strategy b2b content-operations ",
+        "ai manufacturing operations sales marketing finance supply-chain ",
+        "ai manufacturing digital-transformation mid-market strategy ",
+        "ai productivity tools automation "
+      ]
+    },
+    "topics": [
+      {
+        "topic": "ai",
+        "badge": 5,
+        "shown": 5,
+        "agrees": true
+      },
+      {
+        "topic": "automation",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "b2b",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "content-operations",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "digital-transformation",
+        "badge": 2,
+        "shown": 2,
+        "agrees": true
+      },
+      {
+        "topic": "documentation",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "edge-ai",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "embedded-systems",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "finance",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "knowledge-management",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "machine-learning",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "manufacturing",
+        "badge": 3,
+        "shown": 3,
+        "agrees": true
+      },
+      {
+        "topic": "marketing",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "mid-market",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      },
+      {
+        "topic": "operations",
+        "badge": 1,
+        "shown": 1,
+        "agrees": true
+      }
+    ],
+    "mismatches": 0
+  },
+  "sweep": [
+    {
+      "width": 320,
+      "overflowPx": 0,
+      "scrollWidth": 320,
+      "sel": null
+    },
+    {
+      "width": 360,
+      "overflowPx": 0,
+      "scrollWidth": 360,
+      "sel": null
+    },
+    {
+      "width": 390,
+      "overflowPx": 0,
+      "scrollWidth": 390,
+      "sel": null
+    },
+    {
+      "width": 414,
+      "overflowPx": 0,
+      "scrollWidth": 414,
+      "sel": null
+    },
+    {
+      "width": 768,
+      "overflowPx": 0,
+      "scrollWidth": 768,
+      "sel": null
+    },
+    {
+      "width": 992,
+      "overflowPx": 0,
+      "scrollWidth": 992,
+      "sel": null
+    },
+    {
+      "width": 1280,
+      "overflowPx": 0,
+      "scrollWidth": 1280,
+      "sel": null
+    },
+    {
+      "width": 1440,
+      "overflowPx": 0,
+      "scrollWidth": 1440,
+      "sel": null
+    }
+  ]
+}

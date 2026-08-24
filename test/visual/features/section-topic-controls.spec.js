@@ -102,10 +102,16 @@ test.describe('Section topic controls', () => {
     const totalCards = await cards.count();
     expect(totalCards).toBeGreaterThan(0);
 
-    const topicButton = page.locator('.section-sidebar-desktop button.nav-link[data-filter]')
-      .filter({ hasNot: page.locator('[data-filter="all"]') })
+    // :not() rather than .filter({ hasNot }) — hasNot excludes elements that
+    // CONTAIN a match, and the "All Articles" button does not contain a
+    // [data-filter="all"] descendant, it IS one. With hasNot this resolved to
+    // the All button, so the test filtered by "all", every card stayed visible,
+    // and the tag assertion below failed against an unfiltered list.
+    const topicButton = page
+      .locator('.section-sidebar-desktop button.nav-link[data-filter]:not([data-filter="all"])')
       .first();
     const filter = await topicButton.getAttribute('data-filter');
+    expect(filter, 'expected at least one non-"all" topic control').not.toBe('all');
 
     await topicButton.click();
 
@@ -116,8 +122,16 @@ test.describe('Section topic controls', () => {
     );
     expect(visible.length).toBeGreaterThan(0);
     for (const tags of visible) {
-      expect(tags).toContain(filter);
+      // Whole-tag membership, not toContain: a substring check is the very bug
+      // this pins — it passes for a card tagged "edge-ai" when filtering "ai".
+      expect(String(tags).split(' ').filter(Boolean)).toContain(filter);
     }
+
+    // The filtered count must agree with the topic's own badge. These are built
+    // by two different mechanisms — the badge in Liquid, the filtering in JS —
+    // and they silently disagreed while the filter matched substrings.
+    const badge = await topicButton.locator('.badge').textContent();
+    expect(visible.length).toBe(Number(badge.trim()));
 
     // The clicked control is marked active, and stays a nav-link (no pill
     // btn-* classes leak onto the sidebar).
@@ -131,8 +145,9 @@ test.describe('Section topic controls', () => {
     const cards = page.locator('[data-tags]');
     const totalCards = await cards.count();
 
-    await page.locator('.section-sidebar-desktop button.nav-link[data-filter]')
-      .filter({ hasNot: page.locator('[data-filter="all"]') })
+    // See the note on the previous test: hasNot did not exclude the All button.
+    await page
+      .locator('.section-sidebar-desktop button.nav-link[data-filter]:not([data-filter="all"])')
       .first()
       .click();
 

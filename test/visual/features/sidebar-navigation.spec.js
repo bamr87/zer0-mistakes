@@ -285,9 +285,18 @@ test.describe('Section sidebar /tags/ existence gate (issue #218)', () => {
     test('desktop sidebar renders topic nav links correctly', async ({ page }) => {
       await waitForJekyll(page, DEVELOPMENT_SECTION);
 
-      // The sidebar nav must at minimum show the "All Articles" link.
-      const allArticlesLink = page.locator('.section-sidebar-desktop a[href="#all-posts"]');
-      await expect(allArticlesLink).toHaveCount(1);
+      // The sidebar nav must at minimum show the "All Articles" control.
+      //
+      // It renders in one of two forms (see _includes/navigation/section-sidebar.html):
+      // an <a href="#all-posts"> when the section layout emits matching anchors,
+      // and a <button data-filter="all"> for the grid/list styles that filter
+      // cards client-side. Asserting only the anchor form failed on every
+      // section that uses grid/list — which is currently all of them.
+      const allArticles = page.locator(
+        '.section-sidebar-desktop a[href="#all-posts"], '
+        + '.section-sidebar-desktop button.nav-link[data-filter="all"]',
+      );
+      await expect(allArticles).toHaveCount(1);
     });
 
     test('desktop "View All Tags" when present links to /tags/ (no 404)', async ({ page }) => {
