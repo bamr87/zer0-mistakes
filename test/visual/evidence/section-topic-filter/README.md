@@ -1,29 +1,22 @@
 # Section topic filter — whole-tag matching
 
-Evidence for the fix in `_layouts/section.html`: filtering a section by a topic
-revealed posts that did not carry that topic.
+Evidence for the fix in `_layouts/section.html`: filtering a section by a topic revealed posts that did not carry that topic.
 
 ## The bug
 
 `data-tags` was built as `{{ tags | join: ' ' | slugify }}`. Slugifying **after**
-joining turns the separating spaces into hyphens, so a tag boundary becomes
-indistinguishable from a hyphen *inside* a slug:
+joining turns the separating spaces into hyphens, so a tag boundary becomes indistinguishable from a hyphen *inside* a slug:
 
 ```
 ai-knowledge-management-documentation-search      ← 4 tags, or 1, or 7?
 edge-ai-machine-learning-embedded-systems-privacy
 ```
 
-The click handler then matched with `String.includes`, so filtering by `ai` also
-matched a post tagged `edge-ai`.
+The click handler then matched with `String.includes`, so filtering by `ai` also matched a post tagged `edge-ai`.
 
-This mattered because the sidebar's own badge is computed in Liquid with
-`post.tags contains subcat` — exact list membership. The two mechanisms
-disagreed with nothing to surface it: the badge promised 5 posts and the page
-revealed 6.
+This mattered because the sidebar's own badge is computed in Liquid with `post.tags contains subcat` — exact list membership. The two mechanisms disagreed with nothing to surface it: the badge promised 5 posts and the page revealed 6.
 
-After the fix each tag is slugified separately into a space-separated list and
-matched as a whole token:
+After the fix each tag is slugified separately into a space-separated list and matched as a whole token:
 
 ```
 ai knowledge-management documentation search
@@ -49,15 +42,11 @@ edge-ai machine-learning embedded-systems privacy
 | topics whose badge disagrees with what is shown (of 15) | **2** | **0** |
 | max page overflow, 320→1440px | 0px | 0px |
 
-`operations` is a second, independent instance — a post tagged
-`content-operations` matched the substring — which is what shows this was
-systematic rather than one quirk of `edge-ai`.
+`operations` is a second, independent instance — a post tagged `content-operations` matched the substring — which is what shows this was systematic rather than one quirk of `edge-ai`.
 
 ## Regenerating
 
-The fix is in Liquid and an inline handler rather than CSS, so the kit's
-`unfixCss` cannot revert it. The generator drives **two servers** instead, which
-makes the before/after genuine rather than simulated:
+The fix is in Liquid and an inline handler rather than CSS, so the kit's `unfixCss` cannot revert it. The generator drives **two servers** instead, which makes the before/after genuine rather than simulated:
 
 ```bash
 # before: build the pre-fix revision;  after: build this branch
@@ -67,7 +56,4 @@ BASE_URL=http://127.0.0.1:4011 BEFORE_URL=http://127.0.0.1:4012 \
 
 ## Regression test
 
-`test/visual/features/section-topic-controls.spec.js` (smoke tier) asserts whole-tag
-membership for every visible card and pins the filtered count to the topic's badge,
-so the Liquid-side count and the JS-side filtering cannot drift apart silently again.
-Negative-tested: restoring `card.dataset.tags.includes(filter)` fails that assertion.
+`test/visual/features/section-topic-controls.spec.js` (smoke tier) asserts whole-tag membership for every visible card and pins the filtered count to the topic's badge, so the Liquid-side count and the JS-side filtering cannot drift apart silently again. Negative-tested: restoring `card.dataset.tags.includes(filter)` fails that assertion.
