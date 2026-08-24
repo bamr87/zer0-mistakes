@@ -46,6 +46,19 @@
     - title: Test Notebook
       url: /notebooks/test-notebook/
 
+- title: Recipes
+  icon: bi-egg-fried
+  url: /recipes/
+  children:
+    - title: No-Knead Focaccia
+      url: /recipes/no-knead-focaccia/
+    - title: Brown Butter Cookies
+      url: /recipes/brown-butter-chocolate-chip-cookies/
+    - title: Tomato Butter Pasta
+      url: /recipes/weeknight-tomato-butter-pasta/
+    - title: How Recipes Work
+      url: /docs/features/cookbook-collection/
+
 - title: Docs
   icon: bi-journal-bookmark
   url: /docs/

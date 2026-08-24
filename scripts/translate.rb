@@ -424,16 +424,26 @@ module Zer0Translate
     def initialize(model:, max_tokens:)
       @model = model
       @max_tokens = max_tokens
-      @auth = resolve_auth
+      @candidates = resolve_auth_candidates
       raise "No Anthropic credential found. Set CLAUDE_CODE_OAUTH_TOKEN " \
-            "(from `claude setup-token`), ANTHROPIC_AUTH_TOKEN, or ANTHROPIC_API_KEY." unless @auth
+            "(from `claude setup-token`), ANTHROPIC_AUTH_TOKEN, or ANTHROPIC_API_KEY." if @candidates.empty?
+
+      @auth = @candidates.first
     end
 
     def name = "claude (#{@model})"
 
     def translate(segments, target_lang, context)
-      payload = build_payload(segments, target_lang, context)
-      body = request_with_retries(payload)
+      body = begin
+        # Rebuilt on retry, not hoisted: the payload's first system block
+        # depends on @auth[:mode], so falling back to a different credential
+        # has to re-derive it.
+        request_with_retries(build_payload(segments, target_lang, context))
+      rescue AuthError => e
+        raise ProviderError, e.message unless advance_credential!(e)
+
+        retry
+      end
       text = (body["content"] || []).select { |b| b["type"] == "text" }
                                     .map { |b| b["text"] }.join("\n")
       parsed = extract_json(text)
@@ -444,16 +454,38 @@ module Zer0Translate
 
     class ProviderError < StandardError; end
 
+    # A credential the API refused (401/403), as opposed to any other failure.
+    # Separate so `translate` can fall through to the next configured
+    # credential rather than failing the run outright.
+    class AuthError < ProviderError; end
+
     private
 
-    def resolve_auth
-      if (token = ENV["CLAUDE_CODE_OAUTH_TOKEN"] || ENV["ANTHROPIC_AUTH_TOKEN"])
-        return { mode: :oauth, token: token } unless token.empty?
-      end
-      if (key = ENV["ANTHROPIC_API_KEY"])
-        return { mode: :api_key, token: key } unless key.empty?
-      end
-      nil
+    # Every configured credential, in precedence order.
+    #
+    # Returning the whole list rather than just the first match is the point:
+    # the old lookup skipped credentials that were UNSET but had no way to skip
+    # one the API refused, so a set-but-revoked CLAUDE_CODE_OAUTH_TOKEN shadowed
+    # a working ANTHROPIC_API_KEY and took the whole run down with it.
+    def resolve_auth_candidates
+      [
+        { mode: :oauth,   token: ENV["CLAUDE_CODE_OAUTH_TOKEN"], label: "CLAUDE_CODE_OAUTH_TOKEN" },
+        { mode: :oauth,   token: ENV["ANTHROPIC_AUTH_TOKEN"],    label: "ANTHROPIC_AUTH_TOKEN" },
+        { mode: :api_key, token: ENV["ANTHROPIC_API_KEY"],       label: "ANTHROPIC_API_KEY" },
+      ].reject { |c| c[:token].nil? || c[:token].empty? }
+    end
+
+    # Switch to the next configured credential after this one was refused.
+    # Sticky by design — @auth stays switched for the rest of the run, so a
+    # dead credential costs one rejection in total rather than one per chunk.
+    def advance_credential!(error)
+      current = @candidates.index { |c| c.equal?(@auth) }
+      nxt = @candidates[current + 1]
+      return false unless nxt
+
+      Log.warn "#{@auth[:label]} rejected (#{error.message}); retrying with #{nxt[:label]}"
+      @auth = nxt
+      true
     end
 
     def system_blocks(target_lang)
@@ -514,7 +546,10 @@ module Zer0Translate
         body = JSON.parse(response.body)
         unless code == 200
           message = body.dig("error", "message") || response.body[0, 300]
-          raise ProviderError, "Anthropic API #{code}: #{message}"
+          # 401/403 is the credential, not the request — surface it as an
+          # AuthError so the caller can try the next configured one.
+          klass = [401, 403].include?(code) ? AuthError : ProviderError
+          raise klass, "Anthropic API #{code}: #{message}"
         end
         body
       rescue RetryableError
@@ -692,13 +727,34 @@ module Zer0Translate
       pages[url] ||= {}
     end
 
+    # Writes the manifest only when the mapping itself changed.
+    #
+    # `updated_at` used to be stamped on every save, which meant a run that
+    # translated NOTHING still rewrote the file. That is not hypothetical: with
+    # the API credential rejected, every page failed and the run still produced
+    # a one-line `updated_at` diff — enough for translate.yml to open a PR that
+    # reads like a routine translation refresh and contains no translations.
+    # Serializing with the PREVIOUS timestamp first and comparing against disk
+    # keeps that run a no-op, while any real change (a translated page, a prune)
+    # still stamps and writes.
     def save(source_lang, languages)
+      previous = @data["updated_at"]
       @data["version"] = 1
       @data["source_lang"] = source_lang
       @data["languages"] = languages
-      @data["updated_at"] = Time.now.utc.iso8601
       @data["pages"] = pages.sort.to_h
+
+      @data["updated_at"] = previous
+      return if File.file?(@path) && File.read(@path, encoding: "bom|utf-8") == render
+
+      @data["updated_at"] = Time.now.utc.iso8601
       FileUtils.mkdir_p(File.dirname(@path))
+      File.write(@path, render)
+    end
+
+    private
+
+    def render
       header = <<~HEADER
         # ================================================================
         # GENERATED FILE — do not edit by hand.
@@ -707,7 +763,7 @@ module Zer0Translate
         # _includes/components/language-toggle.html and _includes/core/hreflang.html.
         # ================================================================
       HEADER
-      File.write(@path, header + @data.to_yaml.sub(/\A---\n/, ""))
+      header + @data.to_yaml.sub(/\A---\n/, "")
     end
   end
 
