@@ -376,6 +376,144 @@ test_partial_output_survives_failure() {
     test "$branch" = "chore/i18n-translations"
 }
 
+# ---------------------------------------------------------------------------
+# Unit checks that load translate.rb as a library.
+#
+# Everything above drives the offline stub provider, which never reaches the
+# credential path and never lets a page fail — so neither the auth fallback nor
+# the manifest write guard is reachable from the pipeline tests.
+# ---------------------------------------------------------------------------
+rb_check() {                            # rb_check "<message>"  (ruby script on stdin)
+  local msg="$1" f
+  f=$(mktemp "$sandbox/unit-XXXXXX.rb")
+  { printf 'require "%s"\n' "$TRANSLATE"; cat; } > "$f"
+  assert "$msg" env SANDBOX="$sandbox" ruby "$f"
+}
+
+test_manifest_write_guard() {
+  log_info "Test: the manifest is not rewritten by a run that changed nothing"
+
+  rb_check "a no-op save leaves the manifest byte-identical" <<'RUBY'
+require "fileutils"
+root = File.join(ENV.fetch("SANDBOX"), "manifest-unit")
+path = File.join(root, "_data", "i18n", "manifest.yml")
+FileUtils.rm_rf(root)
+
+m = Zer0Translate::Manifest.new(root)
+m.entry_for("/hello/")["fr"] = { "url" => "/fr/hello/" }
+m.save("en", ["fr"])
+abort "manifest was not written at all" unless File.file?(path)
+
+# Backdate the stamp so an unwanted bump is unmistakable.
+sentinel = "2020-01-01T00:00:00Z"
+raw = File.read(path, encoding: "bom|utf-8")
+File.write(path, raw.sub(/^updated_at:.*$/, "updated_at: '#{sentinel}'"))
+before = File.read(path, encoding: "bom|utf-8")
+
+# The regression: every page failing used to still stamp updated_at, producing
+# a one-line diff that opened a PR looking like a routine refresh of nothing.
+again = Zer0Translate::Manifest.new(root)
+again.save("en", ["fr"])
+abort "no-op save rewrote the manifest" unless File.read(path, encoding: "bom|utf-8") == before
+RUBY
+
+  rb_check "a real change still stamps updated_at and writes" <<'RUBY'
+root = File.join(ENV.fetch("SANDBOX"), "manifest-unit")
+path = File.join(root, "_data", "i18n", "manifest.yml")
+before = File.read(path, encoding: "bom|utf-8")
+
+changed = Zer0Translate::Manifest.new(root)
+changed.entry_for("/second/")["fr"] = { "url" => "/fr/second/" }
+changed.save("en", ["fr"])
+
+after = File.read(path, encoding: "bom|utf-8")
+abort "a real change did not rewrite the manifest" if after == before
+abort "a real change did not refresh updated_at" if after.include?("2020-01-01T00:00:00Z")
+abort "the new page is missing from the manifest" unless after.include?("/second/")
+RUBY
+}
+
+test_credential_fallback() {
+  log_info "Test: a rejected credential falls back to the next configured one"
+
+  rb_check "a revoked OAuth token falls back to ANTHROPIC_API_KEY" <<'RUBY'
+require "json"
+FakeResp = Struct.new(:code, :body) { def [](_key) = nil }
+
+ENV["ANTHROPIC_AUTH_TOKEN"]   = nil
+ENV["CLAUDE_CODE_OAUTH_TOKEN"] = "revoked-oauth"
+ENV["ANTHROPIC_API_KEY"]       = "good-key"
+
+provider = Zer0Translate::ClaudeProvider.new(model: "test-model", max_tokens: 64)
+seen = []
+provider.define_singleton_method(:post) do |payload|
+  hdrs = send(:headers)
+  seen << { headers: hdrs, payload: payload }
+  if hdrs.key?("authorization")
+    FakeResp.new("401", JSON.generate("error" => { "message" => "OAuth access token has been revoked." }))
+  else
+    FakeResp.new("200", JSON.generate("content" => [{ "type" => "text",
+                                                      "text" => JSON.generate("s1" => "bonjour") }]))
+  end
+end
+
+out = provider.translate({ "s1" => "hello" }, "fr", "ctx")
+abort "fallback produced no translation: #{out.inspect}" unless out == { "s1" => "bonjour" }
+abort "expected one retry, saw #{seen.size} request(s)" unless seen.size == 2
+abort "first attempt should present the OAuth bearer" unless seen[0][:headers].key?("authorization")
+abort "second attempt should present the API key" unless seen[1][:headers].key?("x-api-key")
+
+# The Claude Code identity block is OAuth-only, so the retry has to rebuild the
+# payload — reusing the first one would send a system block the API key must not
+# carry. This is why translate() builds inside the begin rather than hoisting.
+abort "OAuth attempt lost its Claude Code identity block" \
+  unless seen[0][:payload][:system][0][:text].include?("Claude Code")
+abort "API-key attempt kept the OAuth-only identity block" \
+  if seen[1][:payload][:system][0][:text].include?("Claude Code")
+
+# Sticky: a dead credential costs one rejection in total, not one per chunk.
+provider.translate({ "s1" => "hello" }, "fr", "ctx")
+abort "fallback is not sticky — the dead credential was retried" unless seen.size == 3
+abort "third attempt should present the API key" unless seen[2][:headers].key?("x-api-key")
+RUBY
+
+  rb_check "a rejected sole credential still fails, and is tried only once" <<'RUBY'
+require "json"
+FakeResp = Struct.new(:code, :body) { def [](_key) = nil }
+
+ENV["CLAUDE_CODE_OAUTH_TOKEN"] = "revoked-oauth"
+ENV["ANTHROPIC_AUTH_TOKEN"]    = nil
+ENV["ANTHROPIC_API_KEY"]       = nil
+
+provider = Zer0Translate::ClaudeProvider.new(model: "test-model", max_tokens: 64)
+calls = 0
+provider.define_singleton_method(:post) do |_payload|
+  calls += 1
+  FakeResp.new("401", JSON.generate("error" => { "message" => "OAuth access token has been revoked." }))
+end
+
+begin
+  provider.translate({ "s1" => "hello" }, "fr", "ctx")
+  abort "a rejected sole credential must still raise"
+rescue Zer0Translate::ClaudeProvider::ProviderError => e
+  abort "the raised error lost the API message" unless e.message.include?("revoked")
+end
+abort "a sole credential should be attempted exactly once, saw #{calls}" unless calls == 1
+RUBY
+
+  rb_check "with no credential configured at all, construction still fails fast" <<'RUBY'
+ENV["CLAUDE_CODE_OAUTH_TOKEN"] = nil
+ENV["ANTHROPIC_AUTH_TOKEN"]    = nil
+ENV["ANTHROPIC_API_KEY"]       = nil
+begin
+  Zer0Translate::ClaudeProvider.new(model: "test-model", max_tokens: 64)
+  abort "expected a missing-credential error"
+rescue RuntimeError => e
+  abort "unhelpful message: #{e.message}" unless e.message.include?("No Anthropic credential")
+end
+RUBY
+}
+
 test_theme_wiring() {
   log_info "Test: theme-side i18n wiring"
   assert "_config.yml declares the translation block" \
@@ -400,6 +538,8 @@ main() {
   test_check_and_dry_run
   test_prune
   test_partial_output_survives_failure
+  test_manifest_write_guard
+  test_credential_fallback
   test_theme_wiring
   echo
   log_info "Passed: $PASS  Failed: $FAIL"
