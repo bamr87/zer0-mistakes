@@ -111,7 +111,10 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   space-separated list and matches whole tokens, so the rendered count always
   agrees with the badge (which Liquid computes with exact `contains` membership).
   Regression coverage in `test/visual/features/section-topic-controls.spec.js`
-  asserts token membership and pins the filtered count to the badge.
+  asserts token membership and pins the filtered count to the badge (evidence:
+  [`test/visual/evidence/section-topic-filter/`](test/visual/evidence/section-topic-filter/README.md)
+  — filtering /news/technology/ by "ai" showed 6 cards against a badge of 5, now
+  5; topics whose badge disagrees with what is shown: 2 → 0).
 
 - **Nightly smoke tier is green again** — three `smoke` tests had been failing
   every night since 2026-08-15 (the tier the PR gate does not run, so `main`

@@ -1,0 +1,1 @@
+(evidence: [`test/visual/evidence/section-topic-filter/`](test/visual/evidence/section-topic-filter/README.md) — filtering /news/technology/ by "ai" showed 6 cards against a badge of 5, now 5; topics whose badge disagrees with what is shown: 2 → 0).
