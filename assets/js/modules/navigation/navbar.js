@@ -55,6 +55,7 @@ export class Navbar {
         this._setupMobileDropdowns();
         this._setupOutsideClickClose();
         this._setupOffcanvasReset();
+        this._setupSettingsExclusivity();
         this._setupNavTooltips();
         this._setupDropdownHoverDelay();
         this._setupFocusTrap();
@@ -222,6 +223,60 @@ export class Navbar {
                 }
             });
         });
+    }
+
+    /**
+     * Mobile: opening Settings from inside a nav panel must not leave the two
+     * stacked on top of each other.
+     *
+     * #bdNavbar (and the optional unified drawer) and #info-section are both
+     * `offcanvas-end` at Bootstrap's $zindex-offcanvas. #bdNavbar additionally
+     * lives inside the fixed header, which _navbar.scss lifts above the
+     * offcanvas backdrop while the menu is open — so a tap on the menu's own
+     * "Settings" item used to open Settings *behind* the still-open menu, with
+     * nothing on screen to show it had worked.
+     *
+     * Intercept the Bootstrap `show` event (capture phase, before Bootstrap's
+     * own handler runs) and defer it until the host panel has finished sliding
+     * out. Doing it on the event rather than on the trigger keeps the plain
+     * data-api working for every other entry point — footer, keyboard, a
+     * consumer's own button — and leaves the markup functional if this module
+     * never loads.
+     */
+    _setupSettingsExclusivity() {
+        const settingsEl = document.getElementById('info-section');
+        if (!settingsEl) return;
+
+        const hostEls = ['bdNavbar', 'zer0UnifiedDrawer']
+            .map((id) => document.getElementById(id))
+            .filter(Boolean);
+        if (!hostEls.length) return;
+
+        this._on(
+            settingsEl,
+            'show.bs.offcanvas',
+            (event) => {
+                const Offcanvas = window.bootstrap?.Offcanvas;
+                if (!Offcanvas) return;
+                const openHost = hostEls.find((el) => el.classList.contains('show'));
+                if (!openHost) return;
+
+                event.preventDefault();
+                event.stopImmediatePropagation();
+
+                const hostInstance = Offcanvas.getInstance(openHost);
+                const show = () => Offcanvas.getOrCreateInstance(settingsEl).show();
+                if (!hostInstance) {
+                    show();
+                    return;
+                }
+                // `hidden.bs.offcanvas` fires after the slide-out transition, so
+                // the header's z-index lift has already been released by then.
+                openHost.addEventListener('hidden.bs.offcanvas', show, { once: true });
+                hostInstance.hide();
+            },
+            true,
+        );
     }
 
     _setupNavTooltips() {

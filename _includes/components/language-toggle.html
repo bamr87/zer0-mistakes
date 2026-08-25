@@ -2,24 +2,35 @@
 {%- comment -%}
   Component:   language-toggle
   Path:        _includes/components/language-toggle.html
-  Purpose:     Navbar dropdown that switches between the English original and
-               its machine-generated translations (scripts/translate.rb).
-               Shows the source language plus every configured target
-               language; targets without a generated translation for the
-               current page render as disabled entries.
-  Params:      none — reads page.lang / page.url / page.translation_source_url
-               and the generated _data/i18n/manifest.yml.
+  Purpose:     Switches between the English original and its machine-generated
+               translations (scripts/translate.rb). Shows the source language
+               plus every configured target language; targets without a
+               generated translation for the current page render as disabled
+               entries.
+  Params:      variant (string, optional, default "navbar")
+                 - "navbar" — compact dropdown for the header utility cluster
+                 - "panel"  — self-contained "Language" section for the
+                              Settings offcanvas (components/info-section.html),
+                              rendered as an always-visible list of choices
+                              with its own <h6> heading
+  Reads:       page.lang / page.url / page.translation_source_url and the
+               generated _data/i18n/manifest.yml.
   Depends on:  site.translation.* config, site.data.i18n.manifest,
                _data/i18n/languages.yml (display names), core/i18n.html,
-               Bootstrap 5 dropdown, Bootstrap Icons (bi-translate)
+               Bootstrap 5 dropdown (navbar variant only), Bootstrap Icons
+               (bi-translate)
   Notes:       Renders nothing when translation is disabled or no target
                languages are configured. The chosen language is remembered in
                localStorage("zer0-lang") for future UX (no auto-redirect).
                Must NOT be include_cached — the menu is page-dependent.
+               The theme ships the "panel" variant (the navbar is reserved for
+               main navigation); "navbar" stays for consumers that prefer the
+               header dropdown.
 {%- endcomment -%}
 {%- assign _lt_langs = site.translation.languages -%}
 {%- if site.translation.enabled and _lt_langs and _lt_langs.size > 0 -%}
 {%- include core/i18n.html -%}
+{%- assign _lt_variant = include.variant | default: 'navbar' -%}
 {%- assign _lt_source = site.translation.source_lang | default: 'en' -%}
 {%- assign _lt_current = page.lang | default: _lt_source -%}
 {%- if _lt_current == _lt_source -%}
@@ -30,6 +41,49 @@
 {%- assign _lt_entry = site.data.i18n.manifest.pages[_lt_src_url] -%}
 {%- assign _lt_names = site.data.i18n.languages -%}
 {%- assign _lt_source_name = _lt_names[_lt_source].native | default: _lt_source -%}
+{%- if _lt_variant == 'panel' -%}
+<div class="mb-4 nav-lang-panel" id="zer0-lang-toggle">
+    <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
+        <i class="bi bi-translate me-1" aria-hidden="true"></i>{{ ui.lang_toggle_label | default: "Language" }}
+    </h6>
+    <div class="list-group nav-lang-options" role="group" aria-label="{{ ui.lang_toggle_aria | default: 'Change language' }}">
+        {%- if _lt_current == _lt_source %}
+        <span class="list-group-item list-group-item-action active" aria-current="true">
+            <span class="nav-lang-code">{{ _lt_source | slice: 0, 2 | upcase }}</span>
+            <span class="nav-lang-name">{{ _lt_source_name }}</span>
+            <i class="bi bi-check2 ms-auto" aria-hidden="true"></i>
+        </span>
+        {%- else %}
+        <a class="list-group-item list-group-item-action" data-lang="{{ _lt_source }}" hreflang="{{ _lt_source }}" href="{{ _lt_src_url | default: '/' | relative_url }}">
+            <span class="nav-lang-code">{{ _lt_source | slice: 0, 2 | upcase }}</span>
+            <span class="nav-lang-name">{{ _lt_source_name }}</span>
+        </a>
+        {%- endif %}
+        {%- for _lt_lang in _lt_langs -%}
+        {%- assign _lt_name = _lt_names[_lt_lang].native | default: _lt_lang -%}
+        {%- assign _lt_t = _lt_entry[_lt_lang] %}
+        {%- if _lt_current == _lt_lang %}
+        <span class="list-group-item list-group-item-action active" aria-current="true">
+            <span class="nav-lang-code">{{ _lt_lang | slice: 0, 2 | upcase }}</span>
+            <span class="nav-lang-name">{{ _lt_name }}</span>
+            <i class="bi bi-check2 ms-auto" aria-hidden="true"></i>
+        </span>
+        {%- elsif _lt_t %}
+        <a class="list-group-item list-group-item-action" data-lang="{{ _lt_lang }}" hreflang="{{ _lt_lang }}" href="{{ _lt_t.url | relative_url }}">
+            <span class="nav-lang-code">{{ _lt_lang | slice: 0, 2 | upcase }}</span>
+            <span class="nav-lang-name">{{ _lt_name }}</span>
+        </a>
+        {%- else %}
+        <span class="list-group-item list-group-item-action disabled" aria-disabled="true" title="{{ ui.lang_not_available | default: 'Not yet translated' }}">
+            <span class="nav-lang-code">{{ _lt_lang | slice: 0, 2 | upcase }}</span>
+            <span class="nav-lang-name">{{ _lt_name }}</span>
+            <small class="text-body-secondary ms-auto">{{ ui.lang_not_available | default: 'Not yet translated' }}</small>
+        </span>
+        {%- endif %}
+        {%- endfor %}
+    </div>
+</div>
+{%- else -%}
 <div class="dropdown nav-lang-toggle" id="zer0-lang-toggle">
     <button
         class="btn nav-lang-button dropdown-toggle"
@@ -66,13 +120,16 @@
         {%- endfor %}
     </ul>
 </div>
+{%- endif -%}
 <script>
   // Remember the visitor's language pick (no auto-redirect — just preference).
+  // Delegated at document level so it covers both variants and stays correct
+  // if a consumer renders the component more than once per page.
   (function () {
-    var toggle = document.getElementById('zer0-lang-toggle');
-    if (!toggle) return;
-    toggle.addEventListener('click', function (event) {
-      var item = event.target.closest('a.dropdown-item[data-lang]');
+    if (window.__zer0LangPrefWired) return;
+    window.__zer0LangPrefWired = true;
+    document.addEventListener('click', function (event) {
+      var item = event.target.closest('#zer0-lang-toggle a[data-lang]');
       if (!item) return;
       try { localStorage.setItem('zer0-lang', item.getAttribute('data-lang')); } catch (e) { /* private mode */ }
     });

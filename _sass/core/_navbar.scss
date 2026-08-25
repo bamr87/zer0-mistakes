@@ -7,8 +7,9 @@
 //   - Desktop >= 992px (inline nav; label density via @container bd-nav)
 //   - Mobile < 992px (offcanvas)
 // Nav label tiers (center track / bd-nav container width):
-//   - >= 38rem (~608px): full labels (with ellipsis safety when crowded)
-//   - < 38rem: icon-only (tooltips on lg–xl viewports)
+//   - >= 51rem (~816px): icon + full label
+//   - 41-50.99rem: label only (icons dropped so the labels still fit)
+//   - < 41rem (~656px): icon-only (tooltips on lg–xl viewports)
 // ==============================================================================
 
 // -----------------------------------------------------------------------------
@@ -399,16 +400,22 @@
     transform: rotate(180deg);
   }
 
-  // Show labels whenever the center track has room (>= ~38rem / 608px).
-  // Items keep min-width:0 + ellipsis so a crowded row degrades gracefully
-  // before falling all the way back to the icon-only tier below.
-  @container bd-nav (min-width: 38rem) {
+  // Label density degrades in three tiers, measured on the center track
+  // (the `bd-nav` container), so items fit instead of ellipsizing:
+  //   >= 51rem (816px)   icon + label      — the roomy default
+  //   41-50.99rem        label only        — icons dropped to buy ~20px/item
+  //   < 41rem (656px)    icon only         — labels no longer fit at all
+  // Each boundary is the MEASURED width the tier below it needs for the
+  // theme's seven demo items (815px with icons, 647px without), so a tier only
+  // engages once its own content fits. Items keep min-width:0 + ellipsis as the
+  // last-resort safety net for consumers with more or longer entries.
+  @container bd-nav (min-width: 41rem) {
     #bdNavbar .navbar-nav {
       gap: 0.125rem;
     }
 
     #bdNavbar .nav-link {
-      padding: 0.375rem 0.5rem;
+      padding: 0.375rem;
     }
 
     #bdNavbar .nav-link .nav-link-text {
@@ -462,14 +469,36 @@
       min-width: 1.25rem;
       min-height: 0;
       width: 1.25rem;
-      padding-left: 0.125rem;
-      padding-right: 0.125rem;
+      padding-left: 0;
+      padding-right: 0;
       margin-left: 0 !important;
     }
   }
 
-  // Icon-only when the center track is too narrow even for ellipsized labels
-  @container bd-nav (max-width: 37.99rem) {
+  // Middle tier — the labels fit but the icons no longer do. Dropping the
+  // decorative icon (the label is the accessible name) and tightening the
+  // chevron buys back roughly 20px per item, which is the difference between
+  // "Notebooks" and "N…" at 992-1200px viewports.
+  @container bd-nav (min-width: 41rem) and (max-width: 50.99rem) {
+    #bdNavbar .nav-link i {
+      display: none;
+    }
+
+    #bdNavbar .nav-item > .nav-link:not(.dropdown-toggle-split),
+    #bdNavbar .nav-hover-dropdown > .nav-link:first-child {
+      gap: 0;
+    }
+
+    // Scoped with #bdNavbar to outrank the shared base rule at the top of this
+    // file, which sets the chevron to 1.5rem.
+    #bdNavbar .nav-hover-dropdown > .dropdown-toggle-split {
+      min-width: 1rem;
+      width: 1rem;
+    }
+  }
+
+  // Icon-only when the center track is too narrow even for bare labels
+  @container bd-nav (max-width: 40.99rem) {
     @include navbar-nav-icon-only;
   }
 }
@@ -500,6 +529,27 @@
   body:has(#bdNavbar.offcanvas-lg.show) header.fixed-top,
   body:has(#bdNavbar.offcanvas-lg.hiding) header.fixed-top {
     z-index: 1046; // $zindex-offcanvas (1045) + 1
+  }
+
+  // ...but that lift must never bury Settings. #info-section is a body-level
+  // offcanvas at the SAME edge and the same z-index (1045), so while the nav
+  // menu is still on screen — including the ~300ms `.hiding` tail after a tap
+  // on its own "Settings" item — the lifted header painted the whole Settings
+  // panel out of sight. Drop the header back below the offcanvas layer for as
+  // long as Settings is on screen; navbar.js also closes the nav menu first so
+  // the two panels do not overlap at all in browsers that support it.
+  body:has(#info-section.offcanvas.showing) header.fixed-top,
+  body:has(#info-section.offcanvas.show) header.fixed-top,
+  body:has(#info-section.offcanvas.hiding) header.fixed-top {
+    z-index: 1030; // $zindex-fixed — back under the offcanvas backdrop
+  }
+
+  // Belt and braces for browsers without :has() — Settings outranks the header
+  // stacking context on its own.
+  #info-section.offcanvas.showing,
+  #info-section.offcanvas.show,
+  #info-section.offcanvas.hiding {
+    z-index: 1047; // above the lifted header (1046)
   }
 
   // Wrapper is inert on mobile so offcanvas layout matches pre-wrapper structure
@@ -832,6 +882,49 @@
 }
 
 // -----------------------------------------------------------------------------
+// Language section inside the Settings offcanvas
+// (components/language-toggle.html variant="panel")
+// -----------------------------------------------------------------------------
+
+.nav-lang-panel .nav-lang-options {
+  --bs-list-group-border-radius: 0.375rem;
+
+  .list-group-item {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.5rem 0.75rem;
+    min-height: 44px; // WCAG touch target
+    font-size: 0.9375rem;
+  }
+
+  .nav-lang-code {
+    flex-shrink: 0;
+    min-width: 2.25rem;
+    padding: 0.05rem 0.35rem;
+    font-family: var(--zer0-font-mono);
+    font-size: 0.7rem;
+    line-height: 1.4;
+    text-align: center;
+    color: var(--zer0-color-ink-muted);
+    background: var(--zer0-color-bg-muted);
+    border-radius: var(--zer0-radius-sm);
+  }
+
+  .list-group-item.active .nav-lang-code {
+    color: inherit;
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .nav-lang-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+// -----------------------------------------------------------------------------
 // Navigation Tooltips
 // Enhanced tooltips for compact desktop view
 // -----------------------------------------------------------------------------
@@ -945,26 +1038,42 @@
     border-radius: var(--zer0-radius-sm);
 }
 
+// The bar spans the full viewport (header markup uses .container-fluid) with a
+// fluid gutter instead of a centred .container-xl track, so the menubar gets the
+// whole screen width. Consumers that want the old capped bar set
+// --zer0-navbar-max-width (e.g. 1320px) in their own stylesheet.
+#navbar .navbar-main {
+    max-width: var(--zer0-navbar-max-width, 100%);
+    margin-inline: auto;
+    padding-inline: clamp(0.75rem, 1.5vw, 1.5rem);
+}
+
 // Desktop (lg+): 3-column grid — [brand/title | main nav | utilities] so nav cannot paint over Search/Settings
 @media (min-width: 992px) {
     #navbar .navbar-main {
         display: grid !important;
         grid-template-columns: minmax(0, auto) minmax(0, 1fr) auto;
         align-items: center;
-        column-gap: 0.5rem;
+        column-gap: 0.75rem;
         row-gap: 0.25rem;
         flex-wrap: unset !important;
         container-type: inline-size;
         container-name: navbar-main;
     }
 
+    // The brand cluster is sized by its content (grid track 1 is `auto`), so an
+    // unbounded title would starve the menubar of the width its labels need.
+    // Cap it at a share of the BAR — `cqi` resolves against .navbar-main (the
+    // named container), where a plain percentage would resolve against the
+    // content-sized track and collapse the title to nothing. The title already
+    // ellipsizes past the cap.
     #navbar .navbar-main-start {
         grid-column: 1;
         display: flex;
         align-items: center;
         gap: 0.375rem;
         min-width: 0;
-        max-width: none;
+        max-width: 30cqi;
         flex-shrink: 1;
     }
 
@@ -1040,8 +1149,12 @@
         max-width: none;
     }
 
-    // Progressive brand degradation (container width, not viewport)
-    @container navbar-main (min-width: 80rem) {
+    // Progressive brand degradation (container width, not viewport).
+    // The home-link icons add ~108px to the brand cluster, so they only appear
+    // once the bar is wide enough to carry them AND the full menubar
+    // (815px of items + 328px brand + 146px utilities + gaps ≈ 82rem); 86rem
+    // leaves headroom for a longer site title.
+    @container navbar-main (min-width: 86rem) {
         #navbar .navbar-home-links {
             display: inline-flex !important;
         }

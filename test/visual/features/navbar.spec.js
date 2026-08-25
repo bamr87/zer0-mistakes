@@ -277,6 +277,86 @@ test.describe('Navbar — labels and brand cluster', { tag: '@critical' }, () =>
     }
   });
 
+  // The literal-"..." check above cannot see CSS truncation: text-overflow
+  // leaves textContent intact, so every label in the theme's own 7-item menu
+  // could render as "N…" while that assertion passed. Measure the geometry.
+  test('no nav label is CSS-truncated at any desktop width', async ({ page }) => {
+    // One navigation, then resize: the density tiers are container queries, so
+    // they re-evaluate on resize alone and a reload per width just burns the
+    // per-test timeout.
+    await page.setViewportSize({ width: 1920, height: 820 });
+    await waitForJekyll(page, UI_ROUTES.home);
+
+    for (const width of [992, 1024, 1200, 1280, 1440, 1920]) {
+      await page.setViewportSize({ width, height: 820 });
+      await page.waitForTimeout(150); // let the container queries settle
+
+      const truncated = await page.evaluate(() => {
+        const nav = document.querySelector('#bdNavbar .navbar-nav');
+        if (!nav) return null;
+        return [...nav.querySelectorAll('.nav-link-text')]
+          .filter((t) => getComputedStyle(t).display !== 'none')
+          // 1px of tolerance for sub-pixel text metrics.
+          .filter((t) => t.scrollWidth > t.clientWidth + 1)
+          .map((t) => t.textContent.trim());
+      });
+      if (truncated === null) continue; // menubar not rendered at this width
+
+      expect(
+        truncated,
+        `Nav labels ellipsized at ${width}px: ${truncated.join(', ')} — the menubar ` +
+          'track is too narrow for its items. The density tiers in _navbar.scss ' +
+          '(icon+label / label-only / icon-only) should have dropped a tier first.'
+      ).toEqual([]);
+    }
+  });
+
+  test('the bar spans the full viewport width at every desktop width', async ({ page }) => {
+    await page.setViewportSize({ width: 1920, height: 820 });
+    await waitForJekyll(page, UI_ROUTES.home);
+
+    for (const width of [992, 1200, 1440, 1920]) {
+      await page.setViewportSize({ width, height: 820 });
+      await page.waitForTimeout(150);
+
+      const bar = await page.evaluate(() => {
+        const el = document.querySelector('#navbar .navbar-main');
+        if (!el) return null;
+        const r = el.getBoundingClientRect();
+        return { left: r.left, right: r.right, cw: document.documentElement.clientWidth };
+      });
+      if (!bar) continue;
+
+      // .container-fluid + a fluid gutter: the bar reaches both edges bar its
+      // padding, instead of the old centred .container-xl track that capped at
+      // 1320px and left dead space on either side.
+      const slack = Math.max(bar.left, bar.cw - bar.right);
+      expect(
+        slack,
+        `Navbar inset ${Math.round(slack)}px from the viewport edge at ${width}px — ` +
+          'the bar should span the full screen width.'
+      ).toBeLessThanOrEqual(32);
+    }
+  });
+
+  test('the brand title stays legible next to the menubar', async ({ page }) => {
+    // The brand cluster is capped so it cannot starve the menubar, but the cap
+    // must not collapse the title to zero (a percentage max-width on a
+    // content-sized grid track does exactly that).
+    await page.setViewportSize({ width: 1440, height: 820 });
+    await waitForJekyll(page, UI_ROUTES.home);
+
+    for (const width of [992, 1200, 1440]) {
+      await page.setViewportSize({ width, height: 820 });
+      await page.waitForTimeout(150);
+
+      const title = page.locator('header#navbar .site-title-text').first();
+      if ((await title.count()) === 0) continue;
+      const box = await title.boundingBox();
+      expect(box && box.width, `Site title collapsed at ${width}px`).toBeGreaterThan(40);
+    }
+  });
+
   test('mid desktop brand logo and title do not overlap', async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.midDesktop);
     await waitForJekyll(page, UI_ROUTES.home);
