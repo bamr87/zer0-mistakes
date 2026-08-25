@@ -7,13 +7,14 @@
   File: info-section.html
   Path: _includes/components/info-section.html
   Purpose: Unified settings offcanvas panel with three tabs —
-           Appearance (color mode, skin, backgrounds, primary color),
+           Appearance (language, color mode, skin, backgrounds, primary color),
            Site (environment, theme & build info, admin links) and
            Developer (page location, metadata, source shortcuts).
 
   Dependencies:
   - Bootstrap 5 Offcanvas, Tabs
   - _includes/components/env-detect.html (sets is_production/build_env)
+  - _includes/components/language-toggle.html (panel variant — Language)
   - _includes/components/halfmoon.html (color-mode segmented control)
   - _includes/components/background-settings.html (skin + backgrounds)
   - _includes/components/env-switcher.html
@@ -81,6 +82,10 @@
 
       <!-- Appearance Tab — everything that changes how the site looks -->
       <div class="tab-pane fade show active" id="appearance-pane" role="tabpanel" aria-labelledby="appearance-tab" tabindex="0">
+
+        <!-- Language — renders its own heading, and nothing at all when
+             site.translation is disabled. NOT cached: page-dependent. -->
+        {% include components/language-toggle.html variant="panel" %}
 
         <!-- Color Mode -->
         <div class="mb-4">

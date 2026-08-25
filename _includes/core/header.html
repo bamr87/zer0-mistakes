@@ -58,7 +58,7 @@
         <!-- ========================== -->
         <!-- MAIN NAVIGATION CONTAINER -->
         <!-- ========================== -->
-        <nav class="container-xl order-2 order-lg-1 d-flex align-items-center gap-1 flex-nowrap navbar-main w-100" aria-label="Primary navigation">
+        <nav class="container-fluid order-2 order-lg-1 d-flex align-items-center gap-1 flex-nowrap navbar-main w-100" aria-label="Primary navigation">
 
             <!-- Leading cluster: sidebar toggle + brand + titles (grid column 1 on lg+) -->
             <div class="navbar-main-start d-flex align-items-center gap-1 gap-lg-2 min-w-0 flex-shrink-1 flex-grow-1">
@@ -151,8 +151,9 @@
             <!-- UTILITY CONTROLS          -->
             <!-- ========================== -->
             <div class="navbar-utility-controls d-flex align-items-center flex-shrink-0" role="group" aria-label="Utility controls">
-                <!-- Language Toggle (renders only when translation.languages is set) -->
-                {% include components/language-toggle.html %}
+                <!-- Language selection lives in the Settings offcanvas
+                     (components/info-section.html, Appearance tab) so the bar
+                     keeps its width for the main navigation items. -->
 
                 <!-- Search Modal Toggle -->
                 <button

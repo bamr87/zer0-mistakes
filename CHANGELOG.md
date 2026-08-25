@@ -98,7 +98,59 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   rejects) and `docs/ui/components.md` gains a theme-source →
   design-system-twin map.
 
+### Changed
+
+- **Language selector moved from the navbar into Settings → Appearance** — the
+  header utility cluster is now Search + Settings only, returning ~70px to the
+  menubar. `components/language-toggle.html` grew a `variant` parameter: the new
+  `panel` variant (shipped) renders a self-contained **Language** section — an
+  always-visible list of languages with the active one checked and
+  untranslated targets disabled — as the first block of the Settings
+  Appearance tab, next to Color Mode and Theme Skin. The original header
+  dropdown remains available as `variant="navbar"` for consumers that prefer
+  it. Same data, same `localStorage("zer0-lang")` preference, same
+  never-a-dead-link contract; `test/visual/features/language-toggle.spec.js`
+  was updated to exercise it through the Settings panel.
+
 ### Fixed
+
+- **Navbar: every top-level item now fits, at every desktop width** — the bar
+  was pinned inside a centred `.container-xl` (max 1140–1320px), so the menubar
+  track never got more than ~740px against the ~815px the theme's seven items
+  need. Every label rendered truncated — `Quick …`, `N…`, `Note…`, `A…` — while
+  the page had 100+px of unused margin on either side, and below ~1050px the
+  whole menu collapsed to bare icons. Four changes give the labels their room:
+  the bar is now `.container-fluid` and spans the full screen width (opt back
+  into a cap with `--zer0-navbar-max-width`); the brand cluster is capped at
+  `30cqi` of the bar so a long title cannot starve the menubar; label density
+  degrades in three measured tiers instead of two (icon + label ≥ 51rem →
+  label-only 41–50.99rem → icon-only < 41rem), each boundary set to the width
+  the tier below it actually needs; and the home-link icons wait for 86rem,
+  where they no longer cost the menubar more than it can spare. Measured on the
+  demo site: **0 truncated labels from 992px to 2560px** (was: all 7 truncated
+  at 1440px, all 7 icon-only at 992px). Regression coverage: "no nav label is
+  CSS-truncated at any desktop width" / "the bar spans the full viewport width"
+  / "the brand title stays legible next to the menubar" in
+  `test/visual/features/navbar.spec.js` — the pre-existing label test only
+  checked for a literal `...` in `textContent`, which CSS `text-overflow` never
+  writes, so it passed throughout (evidence:
+  [`test/visual/evidence/navbar-fit/`](test/visual/evidence/navbar-fit/README.md)
+  — up to 7 truncated labels and 300px of dead bar margin → 0 across 8 widths).
+
+- **Settings no longer opens behind the mobile nav menu** — on phones, tapping
+  **Settings** inside the open navigation menu appeared to do nothing: the
+  Settings offcanvas and the nav menu are both `offcanvas-end` panels at
+  Bootstrap's `$zindex-offcanvas`, and `_navbar.scss` lifts the fixed header
+  (which contains the nav menu) to 1046 while that menu is open — so Settings
+  painted underneath it, fully hidden. `navbar.js` now intercepts the offcanvas
+  `show` event and closes the host panel first, opening Settings once it has
+  finished sliding out; `_navbar.scss` releases the header lift, and raises
+  `#info-section` above it, for browsers without `:has()`. Covered by "Settings
+  opened from the nav menu paints ABOVE it" in
+  `test/visual/features/mobile-overlay-stacking.spec.js` (evidence:
+  [`test/visual/evidence/navbar-fit/`](test/visual/evidence/navbar-fit/README.md)
+  — `03-settings-stacking.png`: top element at the panel centre `a.nav-link`
+  → the panel's own content; header `z-index` 1046 → 1030).
 
 - **Section topic filters match whole tags, not substrings** — filtering a
   section by a topic silently revealed posts that did not carry it. `data-tags`
