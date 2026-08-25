@@ -25,6 +25,10 @@ scripts/
 │   ├── pixelate_images.py          # Pure-stdlib pixelate/quantize engine
 │   ├── install-preview-generator   # Preview generator installer
 │   └── validate_preview_urls.py    # Preview URL validator
+├── ci/                    # Helpers called directly by workflow steps
+│   ├── classify_changes.py         # Change classifier (issue-pr-auto-merge)
+│   ├── agent_review_result.py      # Did the Claude content review actually run?
+│   └── test_agent_review_result.py # …its tests (CI-run via test/lib bridge)
 ├── utils/                 # Utility scripts
 │   ├── analyze-commits    # Commit analyzer for version bumps
 │   ├── fix-markdown       # Markdown formatting fixer
@@ -170,6 +174,42 @@ Validate preview image URLs in frontmatter.
 ```bash
 python3 scripts/features/validate_preview_urls.py [--verbose] [--suggestions]
 ```
+
+### CI Helpers (scripts/ci/)
+
+#### `agent_review_result.py`
+
+Decides whether the Claude tier of `ai-content-review.yml` **actually produced a
+review**, and fails the job when it did not.
+
+Before this existed, the agent step captured the Claude CLI's exit status, echoed
+it, and then posted whatever landed on stdout as the review. When the OAuth
+credential was revoked, `Failed to authenticate. API Error: 401 OAuth access
+token has been revoked.` became the "review" and every job still reported success
+(issue #418) — for days, across several PRs, with nothing on the checks list to
+say the editorial review had stopped happening.
+
+Note that a non-zero exit code would not have caught it: the CLI reported the
+auth failure on stdout. Three conditions are classified — a non-zero exit, no
+output at all, and a short output that leads with a known CLI failure signature.
+Any of them writes an explicit failure notice for the sticky comment, emits a
+`::error::` annotation, and exits 1.
+
+```bash
+python3 scripts/ci/agent_review_result.py \
+  --status "$status" --stdout /tmp/agent-review.md \
+  --stderr /tmp/agent-err.log --out /tmp/agent-review-final.md
+# exit 0 = the review is real · 1 = the tier failed · 2 = bad invocation
+
+python3 scripts/ci/test_agent_review_result.py   # tests, incl. the verbatim #418 output
+```
+
+The tests run in CI through `scripts/test/lib/test_agent_review_result.sh`, which
+`run_tests.sh` sources and `./scripts/bin/test` executes on every PR.
+
+#### `classify_changes.py`
+
+Classifies a PR's changed files for `issue-pr-auto-merge.yml` (`--content-only`).
 
 ### Content Validation
 
