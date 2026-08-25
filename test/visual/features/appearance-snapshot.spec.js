@@ -111,6 +111,14 @@ test.describe('Theme skins', () => {
         await expect(page).toHaveScreenshot(`homepage-${skin}.png`, {
           fullPage: false,
           maxDiffPixels: 150,
+          // Build-varying content inside the snapshot region. The theme-info
+          // "Last Build" stamp renders at minute resolution, so a run that
+          // straddles a minute boundary would diff against its own baseline.
+          // It measures 0x0 today (collapsed offcanvas), so this masks nothing
+          // yet and cannot itself change a baseline — it is here so the tier
+          // does not start flaking the day that panel is shown by default.
+          // A locator matching no elements is a no-op for `mask` (#417).
+          mask: [page.locator('[data-testid="theme-build-stamp"]')],
         });
       });
     });
