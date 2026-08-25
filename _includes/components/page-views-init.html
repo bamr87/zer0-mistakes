@@ -1,0 +1,55 @@
+{% comment %} Feature: ZER0-083 {% endcomment %}
+{%- comment -%}
+  Component:   page-views-init
+  Path:        _includes/components/page-views-init.html
+  Purpose:     Bootstrap the page-view counter — inject its configuration and
+               load the behaviour. Renders no visible markup; the badge lives
+               in components/page-views.html.
+  Params:      none — configured via site.page_views
+  Depends on:  assets/js/page-views.js
+  Included by: _includes/core/head.html (once per page)
+  Notes:       Split from the badge include on purpose: the badge may appear
+               many times on a page, this must appear exactly once.
+{%- endcomment -%}
+
+{%- unless site.page_views.enabled -%}{%- comment -%} counter disabled {%- endcomment -%}
+{%- else -%}
+{%- comment -%}
+  `respect_dnt` / `respect_gpc` / `require_consent` default to the PostHog
+  privacy block so a site configures its privacy posture once. Liquid's
+  `default` filter treats `false` as "missing", so each flag is resolved with
+  an if-tag instead — otherwise an explicit `false` would silently flip true.
+{%- endcomment -%}
+{%- assign pv_dnt = true -%}
+{%- if site.page_views.respect_dnt == false -%}{%- assign pv_dnt = false -%}{%- endif -%}
+{%- assign pv_gpc = true -%}
+{%- if site.page_views.respect_gpc == false -%}{%- assign pv_gpc = false -%}{%- endif -%}
+{%- assign pv_consent = false -%}
+{%- if site.page_views.require_consent -%}{%- assign pv_consent = true -%}{%- endif -%}
+{%- assign pv_track = true -%}
+{%- if site.page_views.track == false -%}{%- assign pv_track = false -%}{%- endif -%}
+{%- assign pv_fallback = false -%}
+{%- if site.page_views.fallback_local -%}{%- assign pv_fallback = true -%}{%- endif -%}
+
+<!-- Page-view counter configuration consumed by assets/js/page-views.js -->
+<script id="pageViewsConfig" type="application/json">
+{
+  "enabled": true,
+  "provider": {{ site.page_views.provider | default: "local" | jsonify }},
+  "endpoint": {{ site.page_views.endpoint | default: "" | jsonify }},
+  "method": {{ site.page_views.method | default: "POST" | jsonify }},
+  "countKey": {{ site.page_views.count_key | default: "views" | jsonify }},
+  "dedupe": {{ site.page_views.dedupe | default: "session" | jsonify }},
+  "maxEntries": {{ site.page_views.max_entries | default: 500 }},
+  "track": {{ pv_track | jsonify }},
+  "respectDnt": {{ pv_dnt | jsonify }},
+  "respectGpc": {{ pv_gpc | jsonify }},
+  "requireConsent": {{ pv_consent | jsonify }},
+  "fallbackLocal": {{ pv_fallback | jsonify }},
+  "baseurl": {{ site.baseurl | default: "" | jsonify }},
+  "labelOne": {{ site.page_views.label_one | default: "view" | jsonify }},
+  "labelOther": {{ site.page_views.label_other | default: "views" | jsonify }}
+}
+</script>
+<script defer src="{{ '/assets/js/page-views.js' | relative_url }}"></script>
+{%- endunless -%}

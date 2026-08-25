@@ -205,11 +205,43 @@ detect_consumer_mode() {
         return
     fi
 
-    if grep -qE '^remote_theme:' "$config"; then
+    # Match a top-level `remote_theme` key. The whitespace class before the
+    # colon is load-bearing: most fleet consumers write column-aligned YAML
+    # (`remote_theme             : "bamr87/zer0-mistakes"`), which a bare
+    # `^remote_theme:` never matches — every one of them was silently
+    # misreported as gem mode, skipping the plugin checks entirely.
+    # `|| true` keeps a no-match grep from tripping the caller's `set -o pipefail`.
+    local line value
+    line=$(grep -m1 -E '^remote_theme[[:space:]]*:' "$config" 2>/dev/null || true)
+    value=$(printf '%s' "$line" \
+            | sed -E 's/^remote_theme[[:space:]]*:[[:space:]]*//; s/[[:space:]]*(#.*)?$//; s/^"(.*)"$/\1/; s/^'\''(.*)'\''$/\1/')
+
+    # `remote_theme: false` (or an empty value) is how a consumer turns the
+    # remote theme OFF and resolves the theme as a gem instead.
+    if [[ -n "$value" && "$value" != "false" ]]; then
         echo "remote_theme"
     else
         echo "gem"
     fi
+}
+
+# detect_consumer_source <consumer_root>
+# Echoes the Jekyll `source:` value from _config.yml (relative path), or empty.
+#
+# Jekyll's `source:` relocates the whole site tree — zer0-pages keeps every
+# theme-shadowing file under `pages/`. Auditing the repo root there reports a
+# falsely clean "0 overrides, 0 unique files"; the real surface only appears
+# when the scan follows `source:`.
+detect_consumer_source() {
+    local consumer_root="$1"
+    local config="$consumer_root/_config.yml"
+
+    [[ -f "$config" ]] || return 0
+
+    local line
+    line=$(grep -m1 -E '^source[[:space:]]*:' "$config" 2>/dev/null || true)
+    printf '%s' "$line" \
+        | sed -E 's/^source[[:space:]]*:[[:space:]]*//; s/[[:space:]]*(#.*)?$//; s/^"(.*)"$/\1/; s/^'\''(.*)'\''$/\1/; s#^\./##; s#/$##'
 }
 
 # ---------------------------------------------------------------------------
@@ -277,7 +309,15 @@ print_classification() {
                 echo "::notice file=$relpath::OPTIONAL_PLUGIN (not required)" ;;
         esac
     elif [[ "$format" == "json" ]]; then
-        echo "  {\"path\":\"$relpath\",\"status\":\"$classification\"},"
+        # Separator goes BEFORE each entry but the first, so the array never
+        # ends on a dangling comma. Emitting a trailing comma per entry (the
+        # previous behaviour) produced `...},\n]}` — which no JSON parser
+        # accepts, making --format json unusable for any CI consumer.
+        if [[ "${JSON_ENTRY_EMITTED:-0}" == "1" ]]; then
+            printf ',\n'
+        fi
+        JSON_ENTRY_EMITTED=1
+        printf '  {"path":"%s","status":"%s"}' "$relpath" "$classification"
     else
         echo -e "${color}[$classification]${NC} $relpath"
     fi

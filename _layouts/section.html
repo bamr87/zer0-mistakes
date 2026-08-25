@@ -182,8 +182,9 @@ layout: root
       {% include navigation/section-sidebar.html 
          section_posts=section_posts 
          sub_categories=sub_categories 
-         page_title=page.title 
-         sidebar_id="sectionSidebar" 
+         page_title=page.title
+         sidebar_id="sectionSidebar"
+         section_style=section_style
       %}
     </div>
 
@@ -419,7 +420,17 @@ layout: root
         <section id="all-posts" class="grid-section mb-5 scroll-mt-5">
           <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             {% for gpost in section_posts %}
-              <div class="col" data-tags="{{ gpost.tags | join: ' ' | slugify }}">
+              {%- comment -%}
+                Slugify each tag separately and separate with a space. Joining
+                first and slugifying the result turned the separators into
+                hyphens, making a tag boundary indistinguishable from a hyphen
+                inside a slug ("edge-ai"), which broke filtering.
+                The trailing space is deliberate: guarding the separator with a
+                last-iteration conditional gives that conditional a
+                whitespace-only body, which Liquid treats as a blank block and
+                renders as nothing — silently gluing the tags together.
+              {%- endcomment -%}
+              <div class="col" data-tags="{% for t in gpost.tags %}{{ t | slugify }} {% endfor %}">
                 <div class="card h-100 border-0 shadow-sm hover-lift">
                   <div class="position-relative">
                     {% if gpost.breaking %}
@@ -482,7 +493,8 @@ layout: root
 
         <section id="all-posts" class="list-section mb-5 scroll-mt-5">
           {% for lpost in section_posts %}
-            <article class="card border-0 shadow-sm mb-3 hover-lift">
+            {%- comment -%} Per-tag slugify + space separator — see the grid branch above. {%- endcomment -%}
+            <article class="card border-0 shadow-sm mb-3 hover-lift" data-tags="{% for t in lpost.tags %}{{ t | slugify }} {% endfor %}">
               <div class="row g-0">
                 <div class="col-md-3">
                   <a href="{{ lpost.url | relative_url }}">
@@ -597,17 +609,34 @@ layout: root
     btn.addEventListener('click', function() {
       const filter = this.dataset.filter;
       
-      // Update active button
+      // Update active state across every filter control on the page — the
+      // topic pills here and the section sidebar's topic buttons both carry
+      // [data-filter], so they stay in sync. Only pills get the btn-* colour
+      // swap; the sidebar's controls are .nav-link and style themselves off
+      // .active alone.
       document.querySelectorAll('[data-filter]').forEach(b => {
-        b.classList.remove('btn-primary', 'active');
-        b.classList.add('btn-outline-secondary');
+        b.classList.remove('active');
+        if (b.classList.contains('btn')) {
+          b.classList.remove('btn-primary');
+          b.classList.add('btn-outline-secondary');
+        }
       });
-      this.classList.remove('btn-outline-secondary');
-      this.classList.add('btn-primary', 'active');
+      this.classList.add('active');
+      if (this.classList.contains('btn')) {
+        this.classList.remove('btn-outline-secondary');
+        this.classList.add('btn-primary');
+      }
       
       // Filter cards
+      // Match whole tags, not substrings. `data-tags` is a space-separated list
+      // of individually-slugified tags, so a slug never spans a separator and
+      // filtering by "ai" no longer also matches a post tagged "edge-ai".
+      // (This used to disagree with the sidebar's own count: the badge is built
+      // in Liquid with `post.tags contains subcat` — exact membership — so a
+      // topic showing 5 posts could reveal 6 cards when clicked.)
       document.querySelectorAll('[data-tags]').forEach(card => {
-        if (filter === 'all' || card.dataset.tags.includes(filter)) {
+        const cardTags = (card.dataset.tags || '').split(' ').filter(Boolean);
+        if (filter === 'all' || cardTags.indexOf(filter) !== -1) {
           card.style.display = '';
         } else {
           card.style.display = 'none';

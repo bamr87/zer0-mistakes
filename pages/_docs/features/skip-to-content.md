@@ -60,13 +60,7 @@ The link is the first focusable element in `_includes/core/header.html`, and its
 </main>
 ```
 
-`tabindex="-1"` is required: `<main>` is not natively focusable, and Safari/WebKit
-only scrolls on a fragment jump to a non-focusable container — keyboard focus never
-moves, so the next `Tab` returns the user to the navigation they just skipped. `-1`
-keeps the container out of the sequential `Tab` order while allowing the link to move
-focus into it. The theme suppresses the resulting focus ring on the container in
-`_sass/utilities/_focus.scss` (`#main-content:focus { outline: none; }`); elements
-*inside* the content keep their own indicators.
+`tabindex="-1"` is required: `<main>` is not natively focusable, and Safari/WebKit only scrolls on a fragment jump to a non-focusable container — keyboard focus never moves, so the next `Tab` returns the user to the navigation they just skipped. `-1` keeps the container out of the sequential `Tab` order while allowing the link to move focus into it. The theme suppresses the resulting focus ring on the container in `_sass/utilities/_focus.scss` (`#main-content:focus { outline: none; }`); elements *inside* the content keep their own indicators.
 
 ## Styling
 

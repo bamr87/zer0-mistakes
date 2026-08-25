@@ -62,8 +62,8 @@
 
 meta:
   title: "zer0-mistakes Backlog"
-  updated: 2026-08-14
-  next_id: 36
+  updated: 2026-08-18
+  next_id: 46
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -946,3 +946,314 @@ tasks:
     links: { issue: null, pr: null, roadmap: null }
     created: 2026-08-14
     updated: 2026-08-14
+
+  # --- UI/UX fix list intake (hand-written review, 2026-08-18) ----------------
+
+  - id: T-036
+    title: "Remove hover transforms that cause pointer-edge flicker in the navbar"
+    status: open
+    priority: P1
+    area: feat
+    risk: standard
+    effort: S
+    source: user
+    route: theme-ui
+    summary: >-
+      .nav-link:hover, .nav-search-button:hover and .nav-settings-button:hover in
+      _sass/core/_navbar.scss apply transform: translateY(-1px) (icons scale 1.1,
+      chevron :hover::after translateY(2px)), so the element moves out from under
+      a pointer parked on its edge, hover exits, it returns — infinite flicker.
+      Delete every transform from :hover rules (keep background/color
+      transitions; a pressed cue may use :active translateY(1px) only) and audit
+      _sass/components/_ui-enhancements.scss and card hover styles for the same
+      pattern.
+    acceptance:
+      - "No transform in any :hover rule under _sass/ (grep for translateY/scale in hover context returns nothing)."
+      - "Pointer parked on the top edge of any nav item or utility button does not flicker."
+      - "regression test added"
+      - "before/after evidence committed"
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-08-18
+    updated: 2026-08-18
+
+  - id: T-037
+    title: "Navbar width recovery: two clean label tiers, merged chevron, centered grid, no subtitle"
+    status: open
+    priority: P2
+    area: feat
+    risk: standard
+    effort: M
+    source: user
+    route: theme-ui
+    summary: >-
+      Top nav is cramped and truncates labels ("Quicksta…"). Keep per-item icons
+      at every tier but only two states — icon + full label (wide container) and
+      the existing icon-only tier (narrow) — removing the intermediate ellipsized
+      state (_includes/navigation/navbar.html + _sass/core/_navbar.scss container
+      queries). Merge each dropdown's separate 22-24px chevron button into the
+      parent link's padding box (position:absolute overlay, shared hover
+      background on the li, button kept for a11y). Use grid-template-columns:
+      1fr auto 1fr on .navbar-main so the menu stays optically centered. Retire
+      the navbar subtitle (_includes/core/branding.html — home hero only).
+      Clarify the three toggles: labeled "Menu" text button below lg, gear moves
+      into the unified drawer on mobile so only two toggles coexist.
+    acceptance:
+      - "At 1024px and 1280px with 5 nav items every label is fully visible or the whole row is icon-only — no ellipses anywhere."
+      - "Dropdown chevron shares the parent row's hover zone; no dead zone between link and chevron."
+      - "Navbar carries logo + title only; subtitle appears on the home hero."
+      - "regression test added"
+      - "before/after evidence committed"
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-08-18
+    updated: 2026-08-18
+
+  - id: T-038
+    title: "Language switcher: icon-only trigger and a compact, positive menu"
+    status: open
+    priority: P2
+    area: feat
+    risk: standard
+    effort: S
+    source: user
+    route: theme-ui
+    summary: >-
+      _includes/components/language-toggle.html: drop the EN text span and the
+      Bootstrap caret (38-40px square icon button; title + aria-label carry the
+      name). In the menu, mark the current language with a check icon + tint
+      (not .active primary fill); keep untranslated languages clickable
+      (navigate to source page, set zer0-lang); mark machine translations with a
+      small "auto" chip; replace per-row "(Not yet translated)" with one
+      footnote line under a divider; menu width <= 220px.
+    acceptance:
+      - "Menu shows no disabled rows; widest row <= 220px; current language visually distinct without primary fill."
+      - "Trigger is icon-only at all widths with an accessible name."
+      - "regression test added"
+      - "before/after evidence committed"
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-08-18
+    updated: 2026-08-18
+
+  - id: T-039
+    title: "Eliminate page-transition layout shift (fixed-nav offset, scrollbar gutter, server-rendered slots)"
+    status: open
+    priority: P1
+    area: perf
+    risk: standard
+    effort: M
+    source: user
+    route: theme-ui
+    summary: >-
+      Navigation between pages visibly bounces. Define --zer0-nav-height in
+      :root, derive body padding-top and every sticky offset (admin.html's
+      top: 5rem, TOC, sidebars) and scroll-margin-top from it (no JS
+      measurement). Add html { scrollbar-gutter: stable }. Render banner/nanobar
+      slots server-side with fixed height (nanobar 3px strip always present;
+      setup banner via Liquid when site_needs_setup, not JS insert). Verify
+      explicit width/height on content images and font-display: swap + preload
+      for bootstrap-icons woff2. Progressive enhancement: @view-transition
+      { navigation: auto } with a 120ms root fade.
+    acceptance:
+      - "Lighthouse CLS < 0.02 on landing, docs, and admin pages."
+      - "No visible reflow when navigating between short and long pages (scrollbar gutter stable)."
+      - "All sticky offsets derive from --zer0-nav-height (no hardcoded top: 5rem)."
+      - "regression test added"
+      - "before/after evidence committed"
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-08-18
+    updated: 2026-08-18
+
+  - id: T-040
+    title: "Setup wizard: live YAML preview, vertical stepper, draft persistence, stable panel height, inline validation"
+    status: open
+    priority: P2
+    area: feat
+    risk: standard
+    effort: M
+    source: user
+    route: theme-ui
+    summary: >-
+      _includes/setup/wizard.html + assets/js/setup-wizard.js: replace the
+      step-5-only <pre> with a persistent sticky preview panel regenerated on
+      every input (copy/download always enabled); replace nav-pills tabs with a
+      left vertical stepper showing done/active/upcoming state (steps unlock on
+      validation, Back always allowed, remove the "N% complete" math); persist
+      the draft to localStorage under zer0-setup-draft (debounced 300ms, restore
+      on load, "Draft saved" chip, clear on download); give the panel container
+      a min-height equal to the tallest step so Back/Next never move vertically;
+      validate email/URL on blur with is-invalid + message and list unfilled
+      recommended fields as warnings on the Review step.
+    acceptance:
+      - "YAML preview visible and live at lg+; Back/Next buttons never shift vertically between steps."
+      - "Reload mid-wizard restores the draft; invalid email/URL flagged on blur."
+      - "regression test added"
+      - "before/after evidence committed"
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-08-18
+    updated: 2026-08-18
+
+  - id: T-041
+    title: "Admin layout: actions reachable on mobile, grouped sidebar, shared sticky offset, single heading"
+    status: open
+    priority: P2
+    area: feat
+    risk: standard
+    effort: M
+    source: user
+    route: theme-ui
+    summary: >-
+      _layouts/admin.html + _includes/navigation/admin-nav.html: the
+      admin_actions wrapper is d-none d-md-flex so actions are unreachable on
+      phones — render the first action as a visible button at all widths with
+      the rest in a "..." dropdown. Group sidebar items under small-caps headers
+      (Configure / System / Links) via a group: key in
+      _data/navigation/admin.yml; counts as plain numerals, statuses as colored
+      dot + word; active item = tint + semibold, not solid primary fill. Replace
+      style="top: 5rem" with top: calc(var(--zer0-nav-height) + 1rem) (depends
+      on T-039). Keep the "Administration" heading in the offcanvas header only.
+    acceptance:
+      - "Every admin action reachable at 375px width."
+      - "Sidebar grouped; no solid-primary active fill; sticky offset uses the shared variable."
+      - "regression test added"
+      - "before/after evidence committed"
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-08-18
+    updated: 2026-08-18
+    depends_on: [T-039]
+
+  - id: T-042
+    title: "Skin contrast sweep: AA link params, tertiary meta text, per-skin badge/button audit"
+    status: open
+    priority: P1
+    area: a11y
+    risk: standard
+    effort: M
+    source: user
+    route: a11y
+    summary: >-
+      _sass/theme/_skins.scss: several skins omit the zer0-skin-palette mixin's
+      $link-light/$link-dark params and fall back to $brand/$accent, which fail
+      4.5:1 (yellow/orange/cyan brands on white, saturated brands on #212529) —
+      pass explicit AA-checked values for every skin with a comment table of
+      measured ratios. text-body-tertiary on 11-12px meta text (admin header
+      "Updated…", wizard hints) falls below AA — use --bs-secondary-color at
+      small sizes, tertiary only >= 16px. Audit .btn-primary text per skin
+      (auto-switch to dark text when brand luminance > 0.55 via color-contrast()
+      or a precomputed token).
+    acceptance:
+      - "axe/Lighthouse contrast passes on light + dark for all skins."
+      - "Every skin passes explicit link colors; measured-ratio table committed as comments."
+      - "regression test added"
+      - "before/after evidence committed"
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-08-18
+    updated: 2026-08-18
+
+  - id: T-043
+    title: "Mermaid diagrams: render-in-place (no CLS), token-driven theming, figure shell, flash-free theme switch"
+    status: open
+    priority: P2
+    area: feat
+    risk: standard
+    effort: L
+    source: user
+    route: theme-ui
+    summary: >-
+      _includes/components/mermaid.html: the hidden pre > code is replaced by a
+      min-height:100px div that grows to 300-500px on render, shifting the page —
+      render in place with the placeholder inheriting the code block's height
+      and animate the swap. Delete the ~20 !important SVG overrides that fight
+      JS themeVariables (forced white text breaks colored nodes; light mode uses
+      #007bff vs site primary #0d6efd; skins don't affect diagrams) — build
+      themeVariables at init from live tokens (getComputedStyle on --bs-primary
+      / --bs-body-bg / --bs-border-color / --bs-body-color), re-run on
+      data-bs-theme AND data-theme-skin change. Wrap each diagram in a
+      figure.mermaid-figure with type chip, optional title, copy-source /
+      download-SVG / fullscreen toolbar (reuse the code-copy button pattern) and
+      figcaption. On theme switch render the new SVG off-DOM and cross-fade
+      120ms (instant under prefers-reduced-motion). Builds on T-039.
+    acceptance:
+      - "CLS contribution from a page with 3 diagrams < 0.01."
+      - "No !important SVG overrides remain; diagrams follow theme AND skin tokens live."
+      - "Theme switch shows no blank flash."
+      - "regression test added"
+      - "before/after evidence committed"
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-08-18
+    updated: 2026-08-18
+    depends_on: [T-039]
+
+  - id: T-044
+    title: "Playwright suite aborts: duplicate openDialog declaration in accessibility.spec.js"
+    status: done
+    priority: P1
+    area: tests
+    risk: low
+    effort: S
+    source: issue
+    route: test-author
+    summary: >-
+      test/visual/core/accessibility.spec.js declares `async function
+      openDialog` twice — at line 172 (page, selector) and again at line 425
+      (page, selector, kind), the latter added by 98fd6f9 (#387) without
+      removing the former. Two function declarations of the same name in one
+      module scope is a SyntaxError, so Playwright fails to parse the file and
+      the WHOLE run aborts before any test executes: "Identifier 'openDialog'
+      has already been declared. (425:15)". This takes down the critical and
+      smoke tiers together, on every branch, and has been red on main since
+      2026-08-14. Discovered during #414, whose own new spec
+      (test/visual/features/recipes.spec.js) therefore cannot run in CI. The
+      three-argument version is a strict superset — with `kind` undefined it
+      resolves to Ctor='Modal' and 'shown.bs.modal', exactly what the
+      two-argument one does — so deleting the earlier declaration (lines
+      165-184, comment included) is behaviour-preserving.
+    acceptance:
+      - "test/visual/core/accessibility.spec.js parses; `npx playwright test --project=critical` runs to completion."
+      - "Only one openDialog declaration remains, and its callers all still pass."
+      - "No behavioural change to the modal/offcanvas a11y tests."
+    links: { issue: 416, pr: null, roadmap: null }
+    created: 2026-08-23
+    updated: 2026-08-23
+
+  - id: T-045
+    title: "Homepage snapshot baselines were regenerated without the 1967px drift being diagnosed"
+    status: open
+    priority: P2
+    area: tests
+    risk: low
+    effort: S
+    source: issue
+    route: test-author
+    summary: >-
+      The Visual Snapshots tier fails all 9 `Theme skins > homepage visual
+      snapshot` cases with the SAME diff — 1967 pixels (ratio 0.01) — against
+      test/visual/snapshots/features/appearance-snapshot.spec.js-snapshots/homepage-*-snapshots-linux.png,
+      well over the maxDiffPixels 150 budget. The count being identical across
+      air/aqua/contrast/dark/dirt/neon/mint/plum/sunrise points at one shared,
+      skin-independent region rather than a palette regression. Verified during
+      #414 that it is NOT that PR's doing: building origin/main and the PR
+      branch and screenshotting the homepage at the spec's own 1280x720
+      viewport produced BYTE-IDENTICAL PNGs (same md5), so the branch renders
+      the homepage exactly as main does and the drift is between the committed
+      baselines and what main itself now renders. Note while investigating:
+      _includes/components/theme-info.html renders a minute-resolution build
+      stamp, site.time | date "%b %d, %H:%M" — it currently sits in a collapsed
+      offcanvas (measured 0x0, not in the viewport) so it is not the cause
+      today, but it is a live non-determinism hazard the moment that panel is
+      shown by default, and worth masking regardless. UPDATE 2026-08-23: #413
+      regenerated all 9 baselines when it merged, so the check is green again —
+      resolved by re-blessing rather than by diagnosis, which is what the first
+      acceptance criterion was meant to prevent. Diffing the old vs new CI
+      baselines (homepage-air, 2596f866 vs e488c4c) puts the whole 5016px delta
+      in two bands: y21-41 (a wide navbar strip, 4688px) and y626 (328px).
+      page-views does render on the homepage so part of that is legitimately
+      #413, but a navbar strip is not where a view-count badge belongs.
+      Separating the two needs the diff artifact from a pre-#413 failing run,
+      which has rolled off. What remains is confirming the y21-41 band is
+      accounted for.
+    acceptance:
+      - "Identify the changed region from the CI diff artifact before regenerating anything — a stale baseline and a real regression look the same in the check."
+      - "Visual Snapshots passes on main and on a fresh branch with no source changes."
+      - "Any genuinely time- or build-varying content inside the snapshot region is masked or stubbed, so the tier cannot drift again."
+    links: { issue: 417, pr: null, roadmap: null }
+    created: 2026-08-23
+    updated: 2026-08-23

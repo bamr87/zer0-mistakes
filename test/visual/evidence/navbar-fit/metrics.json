@@ -1,0 +1,99 @@
+{
+  "slug": "navbar-fit",
+  "base": "http://localhost:4000",
+  "route": "/",
+  "sweep": [
+    {
+      "width": 992,
+      "beforeTruncated": 0,
+      "afterTruncated": 0,
+      "beforeLabelsShown": 0,
+      "afterLabelsShown": 7,
+      "beforeBarInsetPx": 12,
+      "afterBarInsetPx": 12
+    },
+    {
+      "width": 1024,
+      "beforeTruncated": 0,
+      "afterTruncated": 0,
+      "beforeLabelsShown": 7,
+      "afterLabelsShown": 7,
+      "beforeBarInsetPx": 12,
+      "afterBarInsetPx": 12
+    },
+    {
+      "width": 1200,
+      "beforeTruncated": 7,
+      "afterTruncated": 0,
+      "beforeLabelsShown": 7,
+      "afterLabelsShown": 7,
+      "beforeBarInsetPx": 30,
+      "afterBarInsetPx": 12
+    },
+    {
+      "width": 1280,
+      "beforeTruncated": 7,
+      "afterTruncated": 0,
+      "beforeLabelsShown": 7,
+      "afterLabelsShown": 7,
+      "beforeBarInsetPx": 70,
+      "afterBarInsetPx": 12
+    },
+    {
+      "width": 1366,
+      "beforeTruncated": 7,
+      "afterTruncated": 0,
+      "beforeLabelsShown": 7,
+      "afterLabelsShown": 7,
+      "beforeBarInsetPx": 113,
+      "afterBarInsetPx": 12
+    },
+    {
+      "width": 1440,
+      "beforeTruncated": 7,
+      "afterTruncated": 0,
+      "beforeLabelsShown": 7,
+      "afterLabelsShown": 7,
+      "beforeBarInsetPx": 60,
+      "afterBarInsetPx": 12
+    },
+    {
+      "width": 1680,
+      "beforeTruncated": 7,
+      "afterTruncated": 0,
+      "beforeLabelsShown": 7,
+      "afterLabelsShown": 7,
+      "beforeBarInsetPx": 180,
+      "afterBarInsetPx": 12
+    },
+    {
+      "width": 1920,
+      "beforeTruncated": 7,
+      "afterTruncated": 0,
+      "beforeLabelsShown": 7,
+      "afterLabelsShown": 7,
+      "beforeBarInsetPx": 300,
+      "afterBarInsetPx": 12
+    }
+  ],
+  "settingsStacking": {
+    "before": {
+      "settingsShown": true,
+      "navStillShown": true,
+      "settingsOnTop": false,
+      "topElement": "a.nav-link",
+      "headerZ": "1046"
+    },
+    "after": {
+      "settingsShown": true,
+      "navStillShown": false,
+      "settingsOnTop": true,
+      "topElement": "h6.text-body-secondary",
+      "headerZ": "1030"
+    }
+  },
+  "languageInSettings": {
+    "navbarToggleRemoved": true,
+    "panelSection": "#info-section #zer0-lang-toggle"
+  }
+}

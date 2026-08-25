@@ -162,13 +162,6 @@ test.describe('Accessibility — cookie preferences modal (dark mode)', () => {
   });
 });
 
-// NOTE: a second, modal-only `openDialog` used to be declared here. The
-// `openDialog(page, selector, kind)` helper further down is a strict superset
-// (with `kind` undefined it resolves to Modal + shown.bs.modal, i.e. exactly
-// this behaviour), and the duplicate declaration was a hard SyntaxError that
-// stopped Playwright collecting ANY spec in the repo. Removed — do not
-// reintroduce a same-named helper in this file.
-
 test.describe('Accessibility — specific component checks', () => {
   test('admin sidebar nav uses <nav> with aria-label', async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop);

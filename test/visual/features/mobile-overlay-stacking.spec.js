@@ -16,13 +16,18 @@
  *      `position: fixed`, dropping them into flow and adding ~16px of
  *      horizontal page scroll.
  *
+ * It also guards the related Settings-behind-the-menu failure: the header lift
+ * that fixes (2) used to bury the Settings offcanvas (#info-section) whenever it
+ * was opened from inside the nav menu, since both are offcanvas-end panels at
+ * the same z-index.
+ *
  * Each test drives the real interaction and asserts hit-testability via
  * elementFromPoint — the exact signal the bug reports used.
  *
  * Runs in the platform-independent `smoke` tier (no pixel screenshots).
  */
 const { test, expect } = require('@playwright/test');
-const { gotoOrSkip } = require('../fixtures');
+const { gotoOrSkip, dismissCookieConsent } = require('../fixtures');
 
 const MOBILE = { width: 390, height: 844 };
 
@@ -85,6 +90,51 @@ test.describe('Mobile overlay stacking', { tag: '@critical' }, () => {
       `first nav link must be the top hit target at its center (got ${navLink.hitTag}) — ` +
         'an offcanvas-backdrop here means the menu is painting behind the dim layer again'
     ).toBe(true);
+  });
+
+  test('Settings opened from the nav menu paints ABOVE it (panel is usable)', async ({ page }) => {
+    // The nav menu and Settings are BOTH offcanvas-end at $zindex-offcanvas,
+    // and _navbar.scss lifts the fixed header above the offcanvas backdrop
+    // while the nav menu is open. Tapping the menu's own "Settings" item used
+    // to open Settings *behind* the still-open menu — the visitor saw "Main
+    // Navigation" and nothing appeared to happen. navbar.js now closes the menu
+    // first and the header drops back below the offcanvas layer.
+    // The cookie banner outranks the offcanvas layer by design, so dismiss it
+    // the way a returning visitor would before tapping lower-screen chrome.
+    await dismissCookieConsent(page);
+    await gotoOrSkip(page, '/');
+
+    const menuToggle = page
+      .locator('button[data-bs-target="#bdNavbar"]:visible, button[aria-controls="bdNavbar"]:visible')
+      .first();
+    if ((await menuToggle.count()) === 0) test.skip(true, 'No main-nav toggle on /');
+    await menuToggle.click();
+    await expect(page.locator('#bdNavbar')).toBeVisible();
+    await page.waitForTimeout(500);
+
+    const settingsItem = page.locator('#bdNavbar [data-bs-target="#info-section"]').first();
+    if ((await settingsItem.count()) === 0) test.skip(true, 'No Settings item in the nav menu');
+    await settingsItem.click();
+    // Allow the menu's slide-out AND the Settings slide-in to finish.
+    await page.waitForTimeout(1200);
+
+    await expect(page.locator('#info-section')).toHaveClass(/\bshow\b/);
+    // The nav menu must be gone — two stacked end-panels is the bug.
+    await expect(page.locator('#bdNavbar')).not.toHaveClass(/\bshow\b/);
+
+    const panel = await page.evaluate(eval(HIT_TESTABLE), '#info-section .offcanvas-body');
+    expect(panel.found, 'settings body exists').toBe(true);
+    expect(
+      panel.hitInside,
+      `settings body must be the top hit target at its center (got ${panel.hitTag}) — ` +
+        'a nav link or the header here means Settings is buried under the nav menu again'
+    ).toBe(true);
+
+    // And the header lift is released, so nothing paints over the panel.
+    const headerZ = await page.evaluate(
+      () => getComputedStyle(document.querySelector('header.fixed-top')).zIndex
+    );
+    expect(Number(headerZ)).toBeLessThan(1045);
   });
 
   test('no element forces horizontal page scroll (FABs stay position: fixed)', async ({ page }) => {

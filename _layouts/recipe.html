@@ -1,0 +1,274 @@
+---
+# Feature: ZER0-084
+layout: default
+---
+{%- comment -%}
+  Layout: recipe.html
+  Extends: default.html
+  Purpose: One recipe — headnote, fact bar, serving scaler, ingredients,
+           equipment, method, ratio table, notes, and nutrition, all driven by
+           structured front matter rather than hand-written markdown.
+  Front matter required: layout, title
+  Front matter optional (the whole cookbook schema):
+    description, image/preview, course, cookbook, cuisine, difficulty,
+    yield: {amount, unit, singular}, times: {prep, cook, rest, rest_label,
+    total}, oven: {temp_f, temp_c, mode}, ratio, ratio_basis, equipment,
+    ingredients, steps, notes, nutrition, source, source_url, scaler (false to
+    hide the controls), units (false to hide the unit switch)
+  Notes: Every amount is rendered as authored, so the page is complete and
+         correct without JavaScript; assets/js/recipe-scaler.js only rewrites
+         the numbers once a reader asks it to. Machine-readable data is emitted
+         once, as JSON-LD — the itemprops inside the components are inert
+         annotations unless a consumer adds their own itemscope.
+{%- endcomment -%}
+
+{%- assign _rl_id = page.slug | default: "recipe" -%}
+{%- assign _rl_course_meta = site.data.recipe_courses[page.course] -%}
+{%- assign _rl_cookbook = site.recipes | where: "layout", "cookbook" | where: "cookbook", page.cookbook | first -%}
+{%- assign _rl_image = page.image | default: page.preview -%}
+{%- assign _rl_show_scaler = true -%}
+{%- if page.scaler == false -%}{%- assign _rl_show_scaler = false -%}{%- endif -%}
+
+<article class="recipe" data-recipe data-recipe-id="{{ _rl_id }}">
+
+  <!-- ================================ -->
+  <!-- HEADER                           -->
+  <!-- ================================ -->
+  <header class="recipe-header">
+    {%- if _rl_cookbook or _rl_course_meta -%}
+    <p class="recipe-eyebrow">
+      {%- if _rl_cookbook -%}
+      <a href="{{ _rl_cookbook.url | relative_url }}"><i class="bi bi-journal-bookmark me-1" aria-hidden="true"></i>{{ _rl_cookbook.title }}</a>
+      {%- endif -%}
+      {%- if _rl_cookbook and _rl_course_meta %} <span class="mx-1" aria-hidden="true">•</span> {% endif -%}
+      {%- if _rl_course_meta -%}{{ _rl_course_meta.title | escape }}{%- endif -%}
+    </p>
+    {%- endif -%}
+
+    <h1 id="page-title" class="recipe-title">{{ page.title }}</h1>
+
+    {%- if page.description -%}
+    <p class="lead recipe-description">{{ page.description }}</p>
+    {%- endif -%}
+
+    {%- if page.source or page.author -%}
+    <p class="recipe-byline text-body-secondary small">
+      {%- if page.author %}By {{ page.author }}{% endif -%}
+      {%- if page.author and page.source %} <span class="mx-1" aria-hidden="true">•</span> {% endif -%}
+      {%- if page.source -%}
+        Adapted from
+        {%- if page.source_url %} <a href="{{ page.source_url }}" rel="noopener">{{ page.source | escape }}</a>
+        {%- else %} {{ page.source | escape }}{% endif -%}
+      {%- endif -%}
+    </p>
+    {%- endif -%}
+
+    {%- if _rl_image -%}
+    <figure class="recipe-hero-figure">
+      {%- include components/preview-image.html src=_rl_image alt=page.title class="recipe-hero-image" loading="eager" -%}
+      {%- if page.image_caption -%}
+      <figcaption class="small text-body-secondary mt-2">{{ page.image_caption | escape }}</figcaption>
+      {%- endif -%}
+    </figure>
+    {%- endif -%}
+  </header>
+
+  <!-- ================================ -->
+  <!-- HEADNOTE (the markdown body)     -->
+  <!-- ================================ -->
+  {%- assign _rl_body = content | strip -%}
+  {%- if _rl_body != "" -%}
+  <div class="recipe-headnote">
+    {{ content }}
+  </div>
+  {%- endif -%}
+
+  <!-- ================================ -->
+  <!-- FACT BAR + SCALER                -->
+  <!-- ================================ -->
+  {%- include components/recipe-meta.html -%}
+
+  {%- if _rl_show_scaler -%}
+  {%- include components/recipe-scaler.html recipe_id=_rl_id units=page.units -%}
+  <noscript>
+    <p class="recipe-noscript small text-body-secondary">
+      <i class="bi bi-info-circle me-1" aria-hidden="true"></i>Serving scaling and unit conversion need JavaScript.
+      Every amount below is shown exactly as the recipe was written.
+    </p>
+  </noscript>
+  {%- endif -%}
+
+  <!-- ================================ -->
+  <!-- INGREDIENTS + METHOD             -->
+  <!-- ================================ -->
+  <div class="row g-4 g-lg-5 recipe-body">
+    <div class="col-lg-5">
+      {%- include components/recipe-ingredients.html id_prefix=_rl_id -%}
+
+      {%- if page.equipment and page.equipment.size > 0 -%}
+      <section class="recipe-equipment">
+        <h2 class="recipe-section-heading">
+          <i class="bi bi-tools me-2" aria-hidden="true"></i>Equipment
+        </h2>
+        <ul class="recipe-equipment-list list-unstyled">
+          {%- for _rl_e in page.equipment -%}
+          <li><i class="bi bi-dot" aria-hidden="true"></i>{{ _rl_e | escape }}</li>
+          {%- endfor -%}
+        </ul>
+      </section>
+      {%- endif -%}
+    </div>
+
+    <div class="col-lg-7">
+      {%- include components/recipe-steps.html -%}
+    </div>
+  </div>
+
+  <!-- ================================ -->
+  <!-- RATIO / FORMULA                  -->
+  <!-- ================================ -->
+  {%- include components/recipe-ratio.html -%}
+
+  <!-- ================================ -->
+  <!-- NOTES                            -->
+  <!-- ================================ -->
+  {%- if page.notes and page.notes.size > 0 -%}
+  <section class="recipe-notes">
+    <h2 class="recipe-section-heading">
+      <i class="bi bi-lightbulb me-2" aria-hidden="true"></i>Cook's notes
+    </h2>
+    <ul class="recipe-notes-list">
+      {%- for _rl_note in page.notes -%}
+      <li>{{ _rl_note | markdownify | remove: "<p>" | remove: "</p>" }}</li>
+      {%- endfor -%}
+    </ul>
+  </section>
+  {%- endif -%}
+
+  <!-- ================================ -->
+  <!-- NUTRITION                        -->
+  <!-- ================================ -->
+  {%- include components/recipe-nutrition.html -%}
+
+  <!-- ================================ -->
+  <!-- COMMENTS                         -->
+  <!-- ================================ -->
+  {%- if page.comments and site.giscus.enabled -%}
+  <section class="post-comments mt-5 pt-4 border-top" id="comments">
+    <h2 class="h4 mb-4"><i class="bi bi-chat-dots me-2" aria-hidden="true"></i>Comments</h2>
+    {%- include content/giscus.html -%}
+  </section>
+  {%- endif -%}
+</article>
+
+{%- comment -%}
+  ================================================================
+  STRUCTURED DATA — schema.org/Recipe as JSON-LD.
+  Emitted once, here, so search engines see exactly one Recipe entity.
+  ================================================================
+{%- endcomment -%}
+{%- assign _rl_prep = page.times.prep | default: 0 -%}
+{%- assign _rl_cook = page.times.cook | default: 0 -%}
+{%- assign _rl_rest = page.times.rest | default: 0 -%}
+{%- if page.times.total -%}
+  {%- assign _rl_total = page.times.total -%}
+{%- else -%}
+  {%- assign _rl_total = _rl_prep | plus: _rl_cook | plus: _rl_rest -%}
+{%- endif -%}
+{%- capture _rl_prep_iso -%}{%- include components/recipe-duration.html minutes=_rl_prep format="iso" -%}{%- endcapture -%}
+{%- capture _rl_cook_iso -%}{%- include components/recipe-duration.html minutes=_rl_cook format="iso" -%}{%- endcapture -%}
+{%- capture _rl_total_iso -%}{%- include components/recipe-duration.html minutes=_rl_total format="iso" -%}{%- endcapture -%}
+{%- assign _rl_flat = "" | split: "" -%}
+{%- for _rl_entry in page.ingredients -%}
+  {%- if _rl_entry.items -%}
+    {%- for _rl_i in _rl_entry.items -%}{%- assign _rl_flat = _rl_flat | push: _rl_i -%}{%- endfor -%}
+  {%- else -%}
+    {%- assign _rl_flat = _rl_flat | push: _rl_entry -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- assign _rl_flat_steps = "" | split: "" -%}
+{%- for _rl_entry in page.steps -%}
+  {%- if _rl_entry.items -%}
+    {%- for _rl_s in _rl_entry.items -%}{%- assign _rl_flat_steps = _rl_flat_steps | push: _rl_s -%}{%- endfor -%}
+  {%- else -%}
+    {%- assign _rl_flat_steps = _rl_flat_steps | push: _rl_entry -%}
+  {%- endif -%}
+{%- endfor -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Recipe",
+  "name": {{ page.title | jsonify }},
+  "url": {{ page.url | absolute_url | jsonify }}
+  {%- if page.description %},
+  "description": {{ page.description | strip_html | strip | jsonify }}
+  {%- endif -%}
+  {%- if _rl_image %},
+  "image": {{ _rl_image | absolute_url | jsonify }}
+  {%- endif -%}
+  {%- if page.author %},
+  "author": { "@type": "Person", "name": {{ page.author | jsonify }} }
+  {%- endif -%}
+  {%- if page.date %},
+  "datePublished": {{ page.date | date_to_xmlschema | jsonify }}
+  {%- endif -%}
+  {%- assign _rl_prep_iso = _rl_prep_iso | strip -%}
+  {%- if _rl_prep_iso != "" %},
+  "prepTime": {{ _rl_prep_iso | jsonify }}
+  {%- endif -%}
+  {%- assign _rl_cook_iso = _rl_cook_iso | strip -%}
+  {%- if _rl_cook_iso != "" %},
+  "cookTime": {{ _rl_cook_iso | jsonify }}
+  {%- endif -%}
+  {%- assign _rl_total_iso = _rl_total_iso | strip -%}
+  {%- if _rl_total_iso != "" %},
+  "totalTime": {{ _rl_total_iso | jsonify }}
+  {%- endif -%}
+  {%- if page.yield.amount %},
+  {%- capture _rl_yield_text %}{{ page.yield.amount }} {{ page.yield.unit | default: "servings" }}{% endcapture %}
+  "recipeYield": {{ _rl_yield_text | strip | jsonify }}
+  {%- endif -%}
+  {%- if _rl_course_meta %},
+  "recipeCategory": {{ _rl_course_meta.title | jsonify }}
+  {%- endif -%}
+  {%- if page.cuisine %},
+  "recipeCuisine": {{ page.cuisine | jsonify }}
+  {%- endif -%}
+  {%- if page.tags and page.tags.size > 0 %},
+  "keywords": {{ page.tags | join: ", " | jsonify }}
+  {%- endif -%}
+  {%- if _rl_flat.size > 0 %},
+  "recipeIngredient": [
+    {%- assign _rl_first = true -%}
+    {%- for _rl_i in _rl_flat -%}
+      {%- if _rl_i.item -%}
+        {%- capture _rl_line %}{% if _rl_i.qty %}{{ _rl_i.qty }} {% endif %}{% if _rl_i.unit %}{{ _rl_i.unit }} {% endif %}{{ _rl_i.item }}{% if _rl_i.prep %}, {{ _rl_i.prep }}{% endif %}{% endcapture -%}
+        {%- unless _rl_first %},{% endunless %}{%- assign _rl_first = false -%}
+        {{ _rl_line | strip | jsonify }}
+      {%- endif -%}
+    {%- endfor -%}
+  ]
+  {%- endif -%}
+  {%- if _rl_flat_steps.size > 0 %},
+  "recipeInstructions": [
+    {%- assign _rl_first = true -%}
+    {%- for _rl_s in _rl_flat_steps -%}
+      {%- if _rl_s.text -%}{%- assign _rl_stext = _rl_s.text -%}{%- else -%}{%- assign _rl_stext = _rl_s -%}{%- endif -%}
+      {%- assign _rl_stext = _rl_stext | strip_html | strip -%}
+      {%- if _rl_stext != "" -%}
+        {%- unless _rl_first %},{% endunless %}{%- assign _rl_first = false -%}
+        { "@type": "HowToStep"{% if _rl_s.title %}, "name": {{ _rl_s.title | jsonify }}{% endif %}, "text": {{ _rl_stext | jsonify }} }
+      {%- endif -%}
+    {%- endfor -%}
+  ]
+  {%- endif -%}
+  {%- if page.nutrition.calories %},
+  {%- capture _rl_serving_size %}1 {{ page.yield.singular | default: "serving" }}{% endcapture %}
+  "nutrition": {
+    "@type": "NutritionInformation",
+    "servingSize": {{ _rl_serving_size | strip | jsonify }},
+    "calories": {{ page.nutrition.calories | append: " calories" | jsonify }}
+  }
+  {%- endif %}
+}
+</script>

@@ -1,0 +1,73 @@
+{% comment %} Feature: ZER0-084 {% endcomment %}
+{%- comment -%}
+  Component:   recipe-qty
+  Path:        _includes/components/recipe-qty.html
+  Purpose:     One scalable, convertible quantity — the atom every other recipe
+               component is built from. Renders the amount exactly as authored
+               (so the page is complete and correct with JavaScript disabled)
+               plus the data attributes assets/js/recipe-scaler.js needs to
+               rescale and convert it in place.
+  Params:      qty (number, required)            — base amount for 1× yield
+               qty_max (number, optional)        — upper bound; renders "2–3"
+               unit (string, optional, default: "") — as authored: g, cups, …
+               grams_per_cup (number, optional)  — density for volume↔weight
+               weigh (bool, optional, default: true)  — false opts this
+                                                   quantity out of volume→weight
+               scale (bool, optional, default: true)  — false pins the amount
+                                                   (per-serving nutrition, pan
+                                                   sizes, "a pinch")
+               class (string, optional, default: "") — extra wrapper classes
+  Depends on:  assets/js/recipe-scaler.js, _sass/components/_recipe.scss
+  Notes:       Cup, spoon and countable amounts render with vulgar fractions
+               (0.5 → ½) so recipes read like recipes; unrecognised decimals
+               fall back to two-decimal rounding. Metric units stay decimal —
+               a scale shows 40.5 g, not 40½ g. The unit is echoed verbatim —
+               the scaler only rewrites it when the reader converts units.
+{%- endcomment -%}
+{%- if include.qty == nil or include.qty == "" -%}
+  {%- comment -%} ERROR: recipe-qty requires `qty` {%- endcomment -%}
+{%- else -%}
+{%- assign _rq_unit = include.unit | default: "" | strip -%}
+{%- assign _rq_values = "" | split: "" | push: include.qty -%}
+{%- comment -%}
+  Metric units are read off a scale, so they stay decimal: "40.5 g", never
+  "40½ g". Cups, spoons and countable things read as fractions.
+{%- endcomment -%}
+{%- assign _rq_metric = false -%}
+{%- assign _rq_u = _rq_unit | downcase | strip | replace: ".", "" -%}
+{%- case _rq_u -%}
+  {%- when "g" or "gr" or "gram" or "grams" or "gramme" or "grammes" -%}{%- assign _rq_metric = true -%}
+  {%- when "kg" or "kilo" or "kilos" or "kilogram" or "kilograms" -%}{%- assign _rq_metric = true -%}
+  {%- when "mg" or "milligram" or "milligrams" -%}{%- assign _rq_metric = true -%}
+  {%- when "ml" or "cc" or "milliliter" or "milliliters" or "millilitre" or "millilitres" -%}{%- assign _rq_metric = true -%}
+  {%- when "dl" or "deciliter" or "deciliters" -%}{%- assign _rq_metric = true -%}
+  {%- when "l" or "liter" or "liters" or "litre" or "litres" -%}{%- assign _rq_metric = true -%}
+{%- endcase -%}
+{%- if include.qty_max and include.qty_max > include.qty -%}
+  {%- assign _rq_values = _rq_values | push: include.qty_max -%}
+{%- endif -%}
+{%- capture _rq_text -%}
+{%- for _rq_v in _rq_values -%}
+  {%- if forloop.index > 1 -%}–{%- endif -%}
+  {%- if _rq_metric -%}{{ _rq_v | round: 2 }}{%- continue -%}{%- endif -%}
+  {%- assign _rq_w = _rq_v | floor -%}
+  {%- assign _rq_f = _rq_v | minus: _rq_w | times: 1000 | round -%}
+  {%- case _rq_f -%}
+    {%- when 0 -%}{{ _rq_w }}
+    {%- when 125 -%}{% if _rq_w > 0 %}{{ _rq_w }}{% endif %}⅛
+    {%- when 167 or 166 -%}{% if _rq_w > 0 %}{{ _rq_w }}{% endif %}⅙
+    {%- when 200 -%}{% if _rq_w > 0 %}{{ _rq_w }}{% endif %}⅕
+    {%- when 250 -%}{% if _rq_w > 0 %}{{ _rq_w }}{% endif %}¼
+    {%- when 333 or 334 -%}{% if _rq_w > 0 %}{{ _rq_w }}{% endif %}⅓
+    {%- when 375 -%}{% if _rq_w > 0 %}{{ _rq_w }}{% endif %}⅜
+    {%- when 500 -%}{% if _rq_w > 0 %}{{ _rq_w }}{% endif %}½
+    {%- when 625 -%}{% if _rq_w > 0 %}{{ _rq_w }}{% endif %}⅝
+    {%- when 667 or 666 -%}{% if _rq_w > 0 %}{{ _rq_w }}{% endif %}⅔
+    {%- when 750 -%}{% if _rq_w > 0 %}{{ _rq_w }}{% endif %}¾
+    {%- when 875 -%}{% if _rq_w > 0 %}{{ _rq_w }}{% endif %}⅞
+    {%- else -%}{{ _rq_v | round: 2 }}
+  {%- endcase -%}
+{%- endfor -%}
+{%- endcapture -%}
+<span class="recipe-qty {{ include.class | default: '' }}" data-recipe-qty data-qty="{{ include.qty }}"{% if include.qty_max %} data-qty-max="{{ include.qty_max }}"{% endif %} data-unit="{{ _rq_unit | escape }}"{% if include.grams_per_cup %} data-grams-per-cup="{{ include.grams_per_cup }}"{% endif %}{% if include.weigh == false %} data-weigh="false"{% endif %}{% if include.scale == false %} data-scale="false"{% endif %}>{{ _rq_text | strip }}{% if _rq_unit != "" %} {{ _rq_unit | escape }}{% endif %}</span>
+{%- endif -%}

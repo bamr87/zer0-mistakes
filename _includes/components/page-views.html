@@ -1,0 +1,33 @@
+{% comment %} Feature: ZER0-083 {% endcomment %}
+{%- comment -%}
+  Component:   page-views
+  Path:        _includes/components/page-views.html
+  Purpose:     Inline "N views" badge for a page. Ships hidden and is revealed
+               by assets/js/page-views.js once a count is known, so a page
+               with no data never flashes "0 views".
+  Params:      url        (string, optional, default: page.url) — page to show
+               class      (string, optional, default: "")       — extra classes
+               icon       (string, optional, default: "bi-eye")
+               separator  (bool,   optional, default: false)    — render a
+                          leading "•" INSIDE the badge, so the separator hides
+                          with it in a meta row
+  Depends on:  components/page-views-init.html (config + behaviour, loaded once
+               from core/head.html), _sass/components/_page-views.scss
+  Notes:       Safe to include more than once per page — each badge resolves
+               its own `data-page-views` path. Paths are site-relative and
+               baseurl-free (page.url); page-views.js normalizes the runtime
+               location the same way.
+{%- endcomment -%}
+
+{%- unless site.page_views.enabled -%}{%- comment -%} counter disabled {%- endcomment -%}
+{%- else -%}
+{%- assign pv_path = include.url | default: page.url -%}
+{%- assign pv_class = include.class | default: "" -%}
+{%- assign pv_icon = include.icon | default: "bi-eye" -%}
+<span class="page-views{% if pv_class != "" %} {{ pv_class }}{% endif %}" data-page-views="{{ pv_path | escape }}" hidden>
+  {%- if include.separator -%}<span class="page-views__sep mx-2" aria-hidden="true">•</span>{%- endif -%}
+  <i class="bi {{ pv_icon }} me-1" aria-hidden="true"></i>
+  <span class="page-views__count" data-page-views-count>0</span>
+  <span class="page-views__label" data-page-views-label>{{ site.page_views.label_other | default: "views" }}</span>
+</span>
+{%- endunless -%}

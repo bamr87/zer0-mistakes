@@ -44,6 +44,12 @@ test/results/*.json
 test/reports/*
 test/coverage/*
 logs/*
+# Playwright's default output dir (only .last-run.json etc. land here)
+test-results/
+
+# Local authoring-tool state (zer0 CLI drafts + workspace config)
+.zer0/
+zer0.json
 
 # Front Matter CMS
 .frontmatter/

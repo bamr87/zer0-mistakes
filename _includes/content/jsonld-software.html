@@ -9,22 +9,41 @@
            engines to accurately cite and describe the zer0-mistakes
            Jekyll theme as a SoftwareApplication entity.
 
+  OPT-IN ONLY — this describes THE THEME, not the site rendering it.
+  The payload below is hardcoded to zer0-mistakes: its RubyGems download
+  URL, its GitHub repository, its MIT licence, its feature list, its
+  mascot screenshot, and a Person node naming the theme's author. Emitted
+  from a consumer's homepage it asserts, in machine-readable form, that
+  THAT site is a free open-source Ruby gem authored by someone else — e.g.
+  a consulting practice's homepage claiming to be a developer tool.
+
+  It therefore renders only when a site explicitly opts in with
+  `jsonld_software_application: true` in _config.yml, which the theme's own
+  site does. Consumers get no software schema (their standard SEO metadata
+  is unaffected) unless they deliberately turn this on.
+
   Template Logic:
+  - Requires site.jsonld_software_application == true
   - Renders SoftwareApplication schema on the homepage only
   - Links to a WebPage wrapper via @id references
   - Pulls version, author, and description from site config
 
   Dependencies:
-  - _config.yml: site.url, site.title, site.description, site.author
+  - _config.yml: jsonld_software_application, site.url, site.title,
+    site.description, site.author
   - lib/jekyll-theme-zer0/version.rb (version referenced in config)
 
   Usage:
   - Included automatically in _includes/core/head.html
-  - Conditional: only renders when page.permalink == "/"
+  - Conditional: opted in AND page.permalink == "/"
   ===================================================================
 -->
 
-{% if page.permalink == "/" or page.url == "/" %}
+{%- assign _is_homepage = false -%}
+{%- if page.permalink == "/" or page.url == "/" -%}
+  {%- assign _is_homepage = true -%}
+{%- endif -%}
+{% if site.jsonld_software_application and _is_homepage %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",

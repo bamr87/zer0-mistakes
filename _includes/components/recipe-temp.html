@@ -1,0 +1,45 @@
+{% comment %} Feature: ZER0-084 {% endcomment %}
+{%- comment -%}
+  Component:   recipe-temp
+  Path:        _includes/components/recipe-temp.html
+  Purpose:     A temperature that follows the reader's unit choice — oven
+               settings, water temperature, doneness targets. Renders BOTH
+               scales by default so the page is complete without JavaScript;
+               the scaler then narrows it to whichever system is selected.
+  Params:      f (number, optional) — degrees Fahrenheit
+               c (number, optional) — degrees Celsius
+                 (give either one; the other is derived)
+               label (string, optional, default: "") — prefix, e.g. "Oven"
+               class (string, optional, default: "")
+  Depends on:  assets/js/recipe-scaler.js, _sass/components/_recipe.scss
+  Notes:       Derived values round to the nearest 5° above 100° — the
+               precision an oven dial actually has — and to the nearest degree
+               below it. Author both `f:` and `c:` to pin exact values.
+               Drop it straight into recipe prose:
+                 include components/recipe-temp.html f=375
+{%- endcomment -%}
+{%- if include.f == nil and include.c == nil -%}
+  {%- comment -%} ERROR: recipe-temp requires `f` or `c` {%- endcomment -%}
+{%- else -%}
+{%- if include.f != nil -%}
+  {%- assign _rt_f = include.f | round -%}
+{%- else -%}
+  {%- assign _rt_fraw = include.c | times: 9.0 | divided_by: 5.0 | plus: 32 -%}
+  {%- if _rt_fraw >= 100 -%}
+    {%- assign _rt_f = _rt_fraw | divided_by: 5.0 | round | times: 5 -%}
+  {%- else -%}
+    {%- assign _rt_f = _rt_fraw | round -%}
+  {%- endif -%}
+{%- endif -%}
+{%- if include.c != nil -%}
+  {%- assign _rt_c = include.c | round -%}
+{%- else -%}
+  {%- assign _rt_craw = include.f | minus: 32 | times: 5.0 | divided_by: 9.0 -%}
+  {%- if _rt_craw >= 100 -%}
+    {%- assign _rt_c = _rt_craw | divided_by: 5.0 | round | times: 5 -%}
+  {%- else -%}
+    {%- assign _rt_c = _rt_craw | round -%}
+  {%- endif -%}
+{%- endif -%}
+<span class="recipe-temp {{ include.class | default: '' }}" data-recipe-temp data-temp-f="{{ _rt_f }}" data-temp-c="{{ _rt_c }}">{% if include.label %}{{ include.label | escape }} {% endif %}{{ _rt_f }} °F ({{ _rt_c }} °C)</span>
+{%- endif -%}

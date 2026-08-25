@@ -67,18 +67,39 @@ THEME_DATA_PATHS=(
     "_data/ui-text.yml"
 )
 
-# Plugins that remote_theme consumers MUST vendor locally (GitHub Pages won't
-# load plugins from a remote theme).
-REQUIRED_PLUGIN_PATHS=(
-    "_plugins/obsidian_links.rb"
-)
+# Plugins that remote_theme consumers MUST vendor locally.
+#
+# Deliberately empty. Nothing the theme ships is mandatory for a stock
+# remote_theme consumer: GitHub Pages builds in safe mode, so it does not load
+# ANY local plugin — vendoring one there is inert, not required.
+REQUIRED_PLUGIN_PATHS=()
 
-# Optional plugins that consumers can vendor for enhanced functionality.
+# Optional plugins a consumer can vendor for enhanced functionality. These only
+# execute on a self-built (vanilla Jekyll) site, never on default GitHub Pages.
+#
+# `obsidian_links.rb` sits here, not above, because obsidian.instructions.md is
+# explicit that it is opt-in ("skipped under the github-pages gem"; "an
+# SEO-quality enhancement for forks that self-build") and that the Liquid + JS
+# path is the primary one. Listing it as required made the audit demand a file
+# that cannot run, flagging MISSING_PLUGIN on seven fleet consumers that have
+# no Obsidian content at all.
 OPTIONAL_PLUGIN_PATHS=(
+    "_plugins/obsidian_links.rb"
     "_plugins/admin_page_urls.rb"
     "_plugins/content_statistics_generator.rb"
     "_plugins/theme_version.rb"
 )
+
+# Emit YAML list items, or an empty flow sequence when there are none.
+# `printf '  - %s\n'` with zero args would otherwise emit a bare `  - `, i.e. a
+# phantom empty entry in the list.
+yaml_list_items() {
+    if [[ $# -eq 0 ]]; then
+        echo "  []"
+    else
+        printf '  - %s\n' "$@"
+    fi
+}
 
 # ---------------------------------------------------------------------------
 # Argument parsing
@@ -153,17 +174,19 @@ $(printf '  - %s\n' "${THEMABLE_PATHS[@]}")
 theme_data_paths:
 $(printf '  - %s\n' "${THEME_DATA_PATHS[@]}")
 
-# Plugin files that consumers using remote_theme MUST vendor locally.
-# GitHub Pages does not load plugins from a remote_theme source.
+# Plugin files a consumer MUST vendor locally. Empty by design: GitHub Pages
+# builds in safe mode and loads no local plugins at all, so nothing the theme
+# ships is mandatory for a stock remote_theme consumer.
 required_plugin_paths:
-$(printf '  - %s\n' "${REQUIRED_PLUGIN_PATHS[@]}")
-# Optional plugins consumers can vendor for enhanced functionality.
+$(yaml_list_items ${REQUIRED_PLUGIN_PATHS[@]+"${REQUIRED_PLUGIN_PATHS[@]}"})
+# Optional plugins consumers can vendor for enhanced functionality. These run
+# only on self-built (vanilla Jekyll) sites, never on default GitHub Pages.
 optional_plugin_paths:
-$(printf '  - %s\n' "${OPTIONAL_PLUGIN_PATHS[@]}")
+$(yaml_list_items ${OPTIONAL_PLUGIN_PATHS[@]+"${OPTIONAL_PLUGIN_PATHS[@]}"})
 
 # Legacy alias — all plugin paths combined (kept for backward compatibility).
 plugin_paths:
-$(printf '  - %s\n' "${REQUIRED_PLUGIN_PATHS[@]}" "${OPTIONAL_PLUGIN_PATHS[@]}")
+$(yaml_list_items ${REQUIRED_PLUGIN_PATHS[@]+"${REQUIRED_PLUGIN_PATHS[@]}"} ${OPTIONAL_PLUGIN_PATHS[@]+"${OPTIONAL_PLUGIN_PATHS[@]}"})
 
 # Jekyll config keys this theme expects.
 config_schema:

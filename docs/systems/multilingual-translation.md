@@ -29,7 +29,7 @@ The zer0-mistakes multilingual system (ZER0-078) generates alternate-language ve
 | Manifest | `_data/i18n/manifest.yml` | en URL → per-language `{url, path, sha}`; drives the toggle, hreflang, and incremental change detection |
 | Language metadata | `_data/i18n/languages.yml` | Hand-maintained native display names (config, not content) |
 | String resolver | `_includes/core/i18n.html` | Sets `ui` per page language: generated `_data/i18n/<lang>.yml` for translations, `ui-text.yml` for English |
-| Language toggle | `_includes/components/language-toggle.html` | Navbar dropdown: active language, links to existing translations, disabled entries otherwise; remembers the pick in `localStorage("zer0-lang")` |
+| Language toggle | `_includes/components/language-toggle.html` | Two variants: `panel` (shipped) renders a **Language** section inside the Settings offcanvas → Appearance tab; `navbar` keeps the older header dropdown for consumers that prefer it. Both show the active language, link to existing translations, disable the rest, and remember the pick in `localStorage("zer0-lang")` |
 | hreflang | `_includes/core/hreflang.html` | `<link rel="alternate" hreflang>` pairs + `x-default` on every translated page and its English original |
 | Disclosure | `_includes/components/translation-notice.html` | Banner on machine-translated pages linking back to the original |
 | Tests | `test/test_i18n.sh` | Offline (stub-provider) pipeline suite, registered as the `i18n` suite in `test_runner.sh` |

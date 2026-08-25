@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/navbar-fit/ -->
+  (evidence: [`test/visual/evidence/navbar-fit/`](test/visual/evidence/navbar-fit/README.md) — up to 7 truncated labels and 300px of dead bar margin → 0 across 8 widths)
