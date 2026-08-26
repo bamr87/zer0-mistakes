@@ -153,11 +153,16 @@ test.describe('Mobile — tap targets meet the 24px minimum (WCAG 2.5.8)', { tag
     await waitForJekyll(page, '/');
     const small = await page.evaluate(() => {
       const out = [];
-      document.querySelectorAll('.footer-dark-block a').forEach((a) => {
-        const r = a.getBoundingClientRect();
+      // #320: "Cookie Preferences" is a <button> (it opens a modal rather than
+      // navigating), so an `a`-only selector would let the control silently
+      // drop below the minimum. Walk both. The disabled subscribe button is
+      // skipped — it is not an activatable target.
+      document.querySelectorAll('.footer-dark-block a, .footer-dark-block button').forEach((el) => {
+        if (el.disabled) return;
+        const r = el.getBoundingClientRect();
         if (r.width === 0 || r.height === 0) return;
         if (r.height < 24 || r.width < 24) {
-          out.push({ link: (a.textContent.trim() || a.getAttribute('aria-label') || a.className).slice(0, 24), w: Math.round(r.width), h: Math.round(r.height) });
+          out.push({ link: (el.textContent.trim() || el.getAttribute('aria-label') || el.className).slice(0, 24), w: Math.round(r.width), h: Math.round(r.height) });
         }
       });
       return out;

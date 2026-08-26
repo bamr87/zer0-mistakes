@@ -64,6 +64,12 @@
     }
   }
 
+  // Element-agnostic: applied to <a> (external credits), <span> (credits with
+  // no url) and <button> (the in-page "Info" dialog trigger — it opens the
+  // #info-section offcanvas rather than navigating, so it is a button, not a
+  // link; WCAG 4.1.2). Reboot already inherits margin/font for <button>, but
+  // not background, border or colour — reset those and restate the colours
+  // `.bd-footer a` supplies so all three elements render identically.
   .powered-by-link {
     display: inline-flex;
     align-items: center;
@@ -75,10 +81,18 @@
     text-decoration: none;
     border-radius: var(--bs-border-radius-sm, 0.25rem);
     white-space: nowrap;
+    // Reboot sets `-webkit-appearance: button`, which the unprefixed property
+    // does not cancel on older WebKit — reset both.
+    -webkit-appearance: none;
+    appearance: none;
+    background: none;
+    border: 0;
+    color: var(--bs-body-color);
 
     &:hover,
     &:focus-visible {
       text-decoration: none;
+      color: var(--bs-link-hover-color);
     }
   }
 
@@ -132,6 +146,9 @@
   // Block padding grows the tap target without changing the visual text size;
   // icon links get an explicit minimum box. (`d-block` links — e.g. the
   // truncated Latest Posts titles — keep their display but gain the padding.)
+  // `> button` is matched alongside `> a` because the policy row's "Cookie
+  // Preferences" control is a <button> (it opens a modal rather than
+  // navigating) and must keep the same 1.75rem tap target as its siblings.
   .footer-dark-block {
     ul.list-unstyled li > a,
     p > a {
@@ -139,7 +156,8 @@
       padding-block: 0.25rem;
     }
 
-    ul.list-inline li > a {
+    ul.list-inline li > a,
+    ul.list-inline li > button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -169,6 +187,24 @@
         font-size: 0.875rem;
       }
     }
+  }
+
+  // A <button> that must sit in running text exactly like the <a> beside it —
+  // used by the "Cookie Preferences" control, which opens #cookieSettingsModal
+  // rather than navigating (WCAG 4.1.2). Reboot inherits margin/font for
+  // <button> but leaves the UA background, border and padding in place, so
+  // strip those; colour comes from the `.text-light` utility as before.
+  .footer-inline-button {
+    // Reboot sets `-webkit-appearance: button`, which the unprefixed property
+    // does not cancel on older WebKit — reset both.
+    -webkit-appearance: none;
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 0;
+    vertical-align: baseline;
+    text-align: inherit;
+    cursor: pointer;
   }
 
   .footer-policy-links {

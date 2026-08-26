@@ -17,11 +17,16 @@ test.describe('Footer — powered-by and layout', { tag: '@critical' }, () => {
     await waitForJekyll(page, UI_ROUTES.home);
 
     const links = page.locator('.footer-powered-by-links a[href]');
-    expect(await links.count()).toBeGreaterThan(0);
-    for (let i = 0; i < Math.min(await links.count(), 5); i++) {
+    const count = await links.count();
+    expect(count).toBeGreaterThan(0);
+    // Regression #320: this used to sample `Math.min(count, 5)`, and
+    // site.powered_by pushed the old `<a href="#">` Info toggle past index 4 —
+    // so the `not.toBe('#')` assertion below never ran against the one link
+    // that violated it. Check every credit link, not the first five.
+    for (let i = 0; i < count; i++) {
       const href = await links.nth(i).getAttribute('href');
-      expect(href).toBeTruthy();
-      expect(href).not.toBe('#');
+      expect(href, `Credit link ${i} has no href`).toBeTruthy();
+      expect(href, `Credit link ${i} is a placeholder href="#"`).not.toBe('#');
     }
   });
 

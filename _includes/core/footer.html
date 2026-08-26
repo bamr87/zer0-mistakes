@@ -76,15 +76,16 @@
             </span>
           {% endif %}
           {% if forloop.last and powered_by_count > 0 %}
-                <a href="#"
-                   class="powered-by-link"
-                   data-bs-toggle="offcanvas"
-                   data-bs-target="#info-section"
-                   aria-label="View theme information and system details"
-                   title="Theme Info">
+                <button type="button"
+                        class="powered-by-link"
+                        data-bs-toggle="offcanvas"
+                        data-bs-target="#info-section"
+                        aria-haspopup="dialog"
+                        aria-label="View theme information and system details"
+                        title="Theme Info">
                   <i class="{{ site.default_icon }} bi-info-circle" aria-hidden="true"></i>
                   <span class="powered-by-link-text">Info</span>
-                </a>
+                </button>
               </span>
             </li>
           {% else %}
@@ -93,15 +94,16 @@
         {% endfor %}
         {% if powered_by_count == 0 %}
           <li>
-            <a href="#"
-               class="powered-by-link"
-               data-bs-toggle="offcanvas"
-               data-bs-target="#info-section"
-               aria-label="View theme information and system details"
-               title="Theme Info">
+            <button type="button"
+                    class="powered-by-link"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#info-section"
+                    aria-haspopup="dialog"
+                    aria-label="View theme information and system details"
+                    title="Theme Info">
               <i class="{{ site.default_icon }} bi-info-circle" aria-hidden="true"></i>
               <span class="powered-by-link-text">Info</span>
-            </a>
+            </button>
           </li>
         {% endif %}
       </ul>
@@ -239,9 +241,9 @@
                 <li class="list-inline-item"><a href="{{ site.terms_of_service_url | default: '/terms-of-service' | relative_url }}" class="text-light text-decoration-none">Terms of Service</a></li>
               {% endif %}
               <li class="list-inline-item">
-                <a href="#" class="text-light text-decoration-none" data-bs-toggle="modal" data-bs-target="#cookieSettingsModal">
+                <button type="button" class="footer-inline-button text-light text-decoration-none" data-bs-toggle="modal" data-bs-target="#cookieSettingsModal">
                   Cookie Preferences
-                </a>
+                </button>
               </li>
             </ul>
           </div>
