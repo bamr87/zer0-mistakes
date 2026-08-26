@@ -34,6 +34,8 @@ root.html              ← Base HTML document structure
 
 Base HTML structure. Rarely modified.
 
+**Progressive-enhancement hook (public API):** the theme guarantees the root element carries `js` when JavaScript is running and `no-js` when it is not, so downstream sites can rely on `html.js …` / `html.no-js …` rules. `root.html` serves `<html class="no-js">` and swaps it with an inline, render-blocking script that is the **first child of `<head>`** — ahead of `{% include core/head.html %}`, which opens with Google Tag Manager, and never `defer`/`async`, or the no-JS branch would flash before the swap ran.
+
 ```html
 <!DOCTYPE html>
 <html lang="{{ page.lang | default: site.lang | default: 'en' }}">

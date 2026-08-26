@@ -114,6 +114,26 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **`<html class="no-js">` is upgraded to `js` again (#319)** — `_layouts/root.html`
+  shipped the standard progressive-enhancement hook but nothing ever swapped
+  it: the string `no-js` occurred in exactly one file in the repository, and in
+  no SCSS, JS, test or doc. Every page on every downstream site permanently
+  carried `no-js` with JavaScript fully enabled, so a consumer writing
+  `html.no-js .foo {…}` / `html.js .foo {…}` got the no-JS branch for everyone
+  — the class advertised a capability the theme did not deliver. An inline
+  script is now the **first child of `<head>`**, above
+  `{% include core/head.html %}` (which opens with Google Tag Manager, so
+  "first in that include" is not "first in `<head>`") and deliberately neither
+  `defer` nor `async`, since it has to run before the first stylesheet is
+  fetched or `html.js` rules would flash. The served HTML still carries
+  `class="no-js"`, so the JS-disabled branch stays correct and the change is
+  purely additive for consumers already styling against the served markup.
+  Regression coverage: `test/visual/core/progressive-enhancement.spec.js`
+  (smoke tier) pins both directions of the contract — `js` with scripts on,
+  `no-js` with them off — plus the delivery mechanism, because a fix that
+  simply deleted `class="no-js"` would satisfy a naive one-sided assertion
+  while removing the hook entirely.
+
 - **Navbar: every top-level item now fits, at every desktop width** — the bar
   was pinned inside a centred `.container-xl` (max 1140–1320px), so the menubar
   track never got more than ~740px against the ~815px the theme's seven items

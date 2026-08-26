@@ -48,10 +48,21 @@
 {%- endif -%}
 <html lang="{{ page.lang | default: site.locale | slice: 0, 2 | default: 'en' }}" class="no-js" data-bs-theme="{{ _bs_theme }}" data-color-mode-default="{{ _cm }}" data-color-mode-lock="{{ site.color_mode_lock | default: false }}" data-theme-skin="{{ site.theme_skin | default: 'air' }}" data-zer0-bg="{{ site.theme_background.enabled | default: true }}">
     <head>
+        <!-- Progressive-enhancement hook: upgrade <html class="no-js"> to "js".
+             MUST be the first child of <head>, inline, and neither `defer` nor
+             `async` — it has to run before the first stylesheet is fetched or
+             `html.js` rules would flash. It cannot live in core/head.html:
+             Google Tag Manager is emitted above everything else there, so
+             "first in that include" is not "first in <head>".
+             classList.replace() is a no-op when `no-js` is absent, so this is
+             safe unconditionally. The served HTML keeps `no-js` on <html> so
+             the JS-disabled branch stays correct. -->
+        <script>document.documentElement.classList.replace("no-js", "js");</script>
+
         <!-- =============================================== -->
         <!-- HEAD SECTION: Meta tags, styles, and SEO setup -->
         <!-- =============================================== -->
-        
+
         <!-- Core site metadata, stylesheets, and external dependencies -->
         {% include core/head.html %}
 
