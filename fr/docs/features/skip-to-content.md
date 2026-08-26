@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-06-15 00:00:00.000000000 Z
+lastmod: 2026-08-26 00:00:00.000000000 Z
 title: Lien d'accessibilité « Aller au contenu »
 description: Un lien d'évitement conforme au niveau AA de la WCAG 2.1 permet aux utilisateurs
   du clavier de contourner la navigation et d'accéder directement à la zone de contenu
@@ -204,20 +204,24 @@ Le thème fournit un unique lien d'évitement qui cible `#main-content`. Pour le
 
 ### Tests automatisés
 
+Sélectionnez le lien par son `href`, et non par une classe. L'élément livré porte des utilitaires Bootstrap (`visually-hidden-focusable position-absolute …`) et aucune classe `.skip-link` : un sélecteur de classe ne correspond donc à rien et le test réussit à vide ou échoue de manière trompeuse.
+
 ```javascript
 // Accessibility test
 describe('Skip Link', () => {
   it('should be first focusable element', () => {
     cy.get('body').tab();
-    cy.focused().should('have.class', 'skip-link');
+    cy.focused().should('have.attr', 'href', '#main-content');
   });
-  
+
   it('should skip to main content', () => {
-    cy.get('.skip-link').focus().click();
+    cy.get('[href="#main-content"]').focus().click();
     cy.focused().should('have.id', 'main-content');
   });
 });
 ```
+
+Le test de non-régression du thème pour ce comportement utilise Playwright, et non Cypress — voir `activating the skip link moves keyboard focus into main content` dans `test/visual/core/accessibility.spec.js`. Il active le lien et vérifie que le focus s'est réellement déplacé, l'assertion qui échoue lorsque `tabindex="-1"` est absent.
 
 ### Tests avec lecteur d'écran
 

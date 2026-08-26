@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-06-15T00:00:00.000Z
+lastmod: 2026-08-26T00:00:00.000Z
 title: Skip-to-Content Accessibility Link
 description: A WCAG 2.1 Level AA skip link lets keyboard users bypass the navigation and jump straight to the main content area on every page of the theme.
 preview: /images/previews/skip-to-content-accessibility-link.png
@@ -197,20 +197,24 @@ The theme ships a single skip link that targets `#main-content`. For pages with 
 
 ### Automated Testing
 
+Select the link by its `href`, not by a class. The shipped element carries Bootstrap utilities (`visually-hidden-focusable position-absolute …`) and no `.skip-link` class, so a class selector matches nothing and the test passes vacuously or fails misleadingly.
+
 ```javascript
 // Accessibility test
 describe('Skip Link', () => {
   it('should be first focusable element', () => {
     cy.get('body').tab();
-    cy.focused().should('have.class', 'skip-link');
+    cy.focused().should('have.attr', 'href', '#main-content');
   });
-  
+
   it('should skip to main content', () => {
-    cy.get('.skip-link').focus().click();
+    cy.get('[href="#main-content"]').focus().click();
     cy.focused().should('have.id', 'main-content');
   });
 });
 ```
+
+The theme's own regression test for this behaviour is Playwright, not Cypress — see `activating the skip link moves keyboard focus into main content` in `test/visual/core/accessibility.spec.js`. It activates the link and asserts focus actually moved, which is the assertion that fails when `tabindex="-1"` is missing.
 
 ### Screen Reader Testing
 
