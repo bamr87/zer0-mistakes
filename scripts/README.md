@@ -179,21 +179,11 @@ python3 scripts/features/validate_preview_urls.py [--verbose] [--suggestions]
 
 #### `agent_review_result.py`
 
-Decides whether the Claude tier of `ai-content-review.yml` **actually produced a
-review**, and fails the job when it did not.
+Decides whether the Claude tier of `ai-content-review.yml` **actually produced a review**, and fails the job when it did not.
 
-Before this existed, the agent step captured the Claude CLI's exit status, echoed
-it, and then posted whatever landed on stdout as the review. When the OAuth
-credential was revoked, `Failed to authenticate. API Error: 401 OAuth access
-token has been revoked.` became the "review" and every job still reported success
-(issue #418) — for days, across several PRs, with nothing on the checks list to
-say the editorial review had stopped happening.
+Before this existed, the agent step captured the Claude CLI's exit status, echoed it, and then posted whatever landed on stdout as the review. When the OAuth credential was revoked, `Failed to authenticate. API Error: 401 OAuth access token has been revoked.` became the "review" and every job still reported success (issue #418) — for days, across several PRs, with nothing on the checks list to say the editorial review had stopped happening.
 
-Note that a non-zero exit code would not have caught it: the CLI reported the
-auth failure on stdout. Three conditions are classified — a non-zero exit, no
-output at all, and a short output that leads with a known CLI failure signature.
-Any of them writes an explicit failure notice for the sticky comment, emits a
-`::error::` annotation, and exits 1.
+Note that a non-zero exit code would not have caught it: the CLI reported the auth failure on stdout. Three conditions are classified — a non-zero exit, no output at all, and a short output that leads with a known CLI failure signature. Any of them writes an explicit failure notice for the sticky comment, emits a `::error::` annotation, and exits 1.
 
 ```bash
 python3 scripts/ci/agent_review_result.py \
@@ -204,8 +194,7 @@ python3 scripts/ci/agent_review_result.py \
 python3 scripts/ci/test_agent_review_result.py   # tests, incl. the verbatim #418 output
 ```
 
-The tests run in CI through `scripts/test/lib/test_agent_review_result.sh`, which
-`run_tests.sh` sources and `./scripts/bin/test` executes on every PR.
+The tests run in CI through `scripts/test/lib/test_agent_review_result.sh`, which `run_tests.sh` sources and `./scripts/bin/test` executes on every PR.
 
 #### `classify_changes.py`
 
