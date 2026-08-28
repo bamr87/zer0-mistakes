@@ -14,6 +14,24 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ## [Unreleased]
 
+### Changed
+
+- **Setup wizard: live preview, vertical stepper, draft persistence (T-040, #408)** —
+  the `_config.yml` preview is now a **persistent sticky panel** shown at every
+  step rather than an element inside step 5, regenerated on every keystroke,
+  with Copy and Download always enabled. The nav-pills tab row is replaced by a
+  left **vertical stepper** with done/active/upcoming state: a step is locked
+  until every earlier step validates, and Back is always allowed. The form is
+  mirrored to `localStorage` under `zer0-setup-draft` (debounced 300ms),
+  restored on load with a "Draft saved" chip, and cleared once the file is
+  downloaded. Email and URL fields are validated **on blur** with `is-invalid`
+  and an explanatory message, cleared as soon as you retype; the Review step
+  lists any unfilled recommended fields as warnings. The pane container takes a
+  `min-height` equal to the tallest step and the nav row is pinned to the
+  bottom, so **Back/Next no longer move vertically** between steps. New
+  `_sass/components/_setup-wizard.scss`, and the wizard gains its first
+  automated coverage in `test/visual/features/setup-wizard.spec.js`.
+
 ### Added
 
 - **Cookbook & recipes collection (ZER0-084)** — a `recipes` collection that

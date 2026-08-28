@@ -9,69 +9,124 @@
   Purpose: Multi-step Bootstrap form that builds a complete _config.yml
            and lets the user download or copy it.
 
-  Dependencies: Bootstrap 5.3, assets/js/setup-wizard.js
+  Dependencies: Bootstrap 5.3, assets/js/setup-wizard.js,
+                _sass/components/_setup-wizard.scss
   Environment: Development only (guarded by calling page)
+
+  Layout (T-040 / #408) — three columns at lg+, stacked below:
+    1. Left  — vertical stepper (#wizardTabs). Replaces the nav-pills row.
+               Steps carry .is-done / .is-active / .is-locked; an upcoming
+               step is `disabled` until every earlier step validates, and
+               going BACK is always allowed.
+    2. Middle— the step panes (#wizardTabContent). The container gets a
+               min-height equal to the TALLEST pane (measured in JS, since
+               CSS cannot know it), and each pane's nav row is pinned to the
+               bottom with mt-auto — together that is what stops Back/Next
+               moving vertically between steps.
+    3. Right — the live YAML preview. Sticky, present at EVERY step (it used
+               to exist only inside step 5), regenerated on every input, with
+               Copy and Download always enabled.
+
+  Draft persistence: every field is mirrored to localStorage under
+  `zer0-setup-draft` (debounced 300ms) and restored on load; the "Draft
+  saved" chip acknowledges it, and downloading the file clears it.
+
+  NOTE: T-040 also asked to "remove the N% complete math". There is no such
+  code in this component and there never was — see the analysis on #408.
+  Nothing was removed for that clause, and no percentage indicator should be
+  added in order to remove one.
   ===================================================================
 -->
 
 <div class="container py-4" id="setup-wizard">
-  <div class="row justify-content-center">
-    <div class="col-lg-10">
 
-      <h1 class="mb-2"><i class="bi bi-gear-wide-connected"></i> Site Setup Wizard</h1>
-      <p class="lead text-muted mb-4">
-        Fill in the form to generate a personalised <code>_config.yml</code>.
-        Download it and replace the one in your project root.
-      </p>
+  <h1 class="mb-2"><i class="bi bi-gear-wide-connected"></i> Site Setup Wizard</h1>
+  <p class="lead text-muted mb-4">
+    Fill in the form to generate a personalised <code>_config.yml</code>.
+    Download it and replace the one in your project root.
+  </p>
 
-      <!-- ============================================================ -->
-      <!-- Progress Tabs                                                 -->
-      <!-- ============================================================ -->
-      <ul class="nav nav-pills nav-fill mb-4" id="wizardTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="tab-identity"
+  <div class="row g-4 wizard-grid">
+
+    <!-- ============================================================ -->
+    <!-- 1. Vertical stepper                                          -->
+    <!-- ============================================================ -->
+    <div class="col-lg-3">
+      <div class="wizard-stepper-wrap sticky-lg-top">
+        <div class="nav flex-column wizard-stepper" id="wizardTabs" role="tablist"
+             aria-orientation="vertical" aria-label="Setup steps">
+
+          <button class="wizard-step is-active" id="tab-identity"
                   data-bs-toggle="pill" data-bs-target="#step-identity"
-                  type="button" role="tab">
-            <i class="bi bi-person-badge"></i> Identity
+                  type="button" role="tab" aria-controls="step-identity"
+                  aria-selected="true" data-step="1">
+            <span class="wizard-step-marker" aria-hidden="true"><i class="bi bi-person-badge"></i></span>
+            <span class="wizard-step-text">
+              <span class="wizard-step-label">Identity</span>
+              <span class="wizard-step-state visually-hidden">current step</span>
+            </span>
           </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="tab-urls"
-                  data-bs-toggle="pill" data-bs-target="#step-urls"
-                  type="button" role="tab">
-            <i class="bi bi-link-45deg"></i> URLs
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="tab-collections"
-                  data-bs-toggle="pill" data-bs-target="#step-collections"
-                  type="button" role="tab">
-            <i class="bi bi-collection"></i> Collections
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="tab-analytics"
-                  data-bs-toggle="pill" data-bs-target="#step-analytics"
-                  type="button" role="tab">
-            <i class="bi bi-graph-up"></i> Analytics
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="tab-review"
-                  data-bs-toggle="pill" data-bs-target="#step-review"
-                  type="button" role="tab">
-            <i class="bi bi-file-earmark-code"></i> Review
-          </button>
-        </li>
-      </ul>
 
-      <!-- ============================================================ -->
-      <!-- Step Panels                                                   -->
-      <!-- ============================================================ -->
-      <div class="tab-content" id="wizardTabContent">
+          <button class="wizard-step" id="tab-urls"
+                  data-bs-toggle="pill" data-bs-target="#step-urls"
+                  type="button" role="tab" aria-controls="step-urls"
+                  aria-selected="false" data-step="2">
+            <span class="wizard-step-marker" aria-hidden="true"><i class="bi bi-link-45deg"></i></span>
+            <span class="wizard-step-text">
+              <span class="wizard-step-label">URLs</span>
+              <span class="wizard-step-state visually-hidden"></span>
+            </span>
+          </button>
+
+          <button class="wizard-step" id="tab-collections"
+                  data-bs-toggle="pill" data-bs-target="#step-collections"
+                  type="button" role="tab" aria-controls="step-collections"
+                  aria-selected="false" data-step="3">
+            <span class="wizard-step-marker" aria-hidden="true"><i class="bi bi-collection"></i></span>
+            <span class="wizard-step-text">
+              <span class="wizard-step-label">Collections</span>
+              <span class="wizard-step-state visually-hidden"></span>
+            </span>
+          </button>
+
+          <button class="wizard-step" id="tab-analytics"
+                  data-bs-toggle="pill" data-bs-target="#step-analytics"
+                  type="button" role="tab" aria-controls="step-analytics"
+                  aria-selected="false" data-step="4">
+            <span class="wizard-step-marker" aria-hidden="true"><i class="bi bi-graph-up"></i></span>
+            <span class="wizard-step-text">
+              <span class="wizard-step-label">Analytics</span>
+              <span class="wizard-step-state visually-hidden"></span>
+            </span>
+          </button>
+
+          <button class="wizard-step" id="tab-review"
+                  data-bs-toggle="pill" data-bs-target="#step-review"
+                  type="button" role="tab" aria-controls="step-review"
+                  aria-selected="false" data-step="5">
+            <span class="wizard-step-marker" aria-hidden="true"><i class="bi bi-file-earmark-code"></i></span>
+            <span class="wizard-step-text">
+              <span class="wizard-step-label">Review</span>
+              <span class="wizard-step-state visually-hidden"></span>
+            </span>
+          </button>
+        </div>
+
+        <!-- Draft acknowledgement. Hidden until the first save. -->
+        <p class="wizard-draft-chip" id="wizard-draft-chip" role="status" aria-live="polite" hidden>
+          <i class="bi bi-check2-circle" aria-hidden="true"></i> Draft saved
+        </p>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 2. Step panels                                               -->
+    <!-- ============================================================ -->
+    <div class="col-lg-5">
+      <div class="tab-content wizard-panes" id="wizardTabContent">
 
         <!-- ───── Step 1: Identity ───── -->
-        <div class="tab-pane fade show active" id="step-identity" role="tabpanel">
+        <div class="tab-pane fade show active" id="step-identity" role="tabpanel" aria-labelledby="tab-identity">
           <div class="card">
             <div class="card-body">
               <h4 class="card-title mb-3">Site Identity</h4>
@@ -79,7 +134,7 @@
               <div class="mb-3">
                 <label for="cfg-title" class="form-label">Site Title</label>
                 <input type="text" class="form-control cfg-field" id="cfg-title"
-                       placeholder="My Awesome Site" data-key="title">
+                       placeholder="My Awesome Site" data-key="title" data-recommended="Site Title">
               </div>
 
               <div class="mb-3">
@@ -91,7 +146,7 @@
               <div class="mb-3">
                 <label for="cfg-description" class="form-label">Description <small class="text-muted">(SEO, ≤ 160 chars)</small></label>
                 <textarea class="form-control cfg-field" id="cfg-description" rows="2"
-                          maxlength="160" data-key="description"
+                          maxlength="160" data-key="description" data-recommended="Description"
                           placeholder="Brief description of your site for search engines"></textarea>
                 <div class="form-text"><span id="desc-count">0</span>/160</div>
               </div>
@@ -100,29 +155,31 @@
                 <div class="col-md-6 mb-3">
                   <label for="cfg-author" class="form-label">Author / Owner</label>
                   <input type="text" class="form-control cfg-field" id="cfg-author"
-                         placeholder="Your Name" data-key="founder">
+                         placeholder="Your Name" data-key="founder" data-recommended="Author / Owner">
                 </div>
                 <div class="col-md-6 mb-3">
                   <label for="cfg-email" class="form-label">Email</label>
                   <input type="email" class="form-control cfg-field" id="cfg-email"
-                         placeholder="you@example.com" data-key="email">
+                         placeholder="you@example.com" data-key="email" data-recommended="Email"
+                         aria-describedby="cfg-email-feedback">
+                  <div class="invalid-feedback" id="cfg-email-feedback"></div>
                 </div>
               </div>
 
               <div class="mb-3">
                 <label for="cfg-github-user" class="form-label">GitHub Username</label>
                 <input type="text" class="form-control cfg-field" id="cfg-github-user"
-                       placeholder="your-username" data-key="github_user">
+                       placeholder="your-username" data-key="github_user" data-recommended="GitHub Username">
               </div>
 
               <div class="mb-3">
                 <label for="cfg-repo-name" class="form-label">Repository Name</label>
                 <input type="text" class="form-control cfg-field" id="cfg-repo-name"
-                       placeholder="my-site" data-key="repository_name">
+                       placeholder="my-site" data-key="repository_name" data-recommended="Repository Name">
                 <div class="form-text">The GitHub repository name for this site (e.g. <code>my-site</code>).</div>
               </div>
 
-              <div class="text-end">
+              <div class="wizard-nav text-end">
                 <button class="btn btn-primary btn-next" data-next="tab-urls">
                   Next: URLs <i class="bi bi-arrow-right"></i>
                 </button>
@@ -132,7 +189,7 @@
         </div>
 
         <!-- ───── Step 2: URLs ───── -->
-        <div class="tab-pane fade" id="step-urls" role="tabpanel">
+        <div class="tab-pane fade" id="step-urls" role="tabpanel" aria-labelledby="tab-urls">
           <div class="card">
             <div class="card-body">
               <h4 class="card-title mb-3">URLs &amp; Deployment</h4>
@@ -140,7 +197,9 @@
               <div class="mb-3">
                 <label for="cfg-url" class="form-label">Site URL</label>
                 <input type="url" class="form-control cfg-field" id="cfg-url"
-                       placeholder="https://yourdomain.com" data-key="url">
+                       placeholder="https://yourdomain.com" data-key="url" data-recommended="Site URL"
+                       aria-describedby="cfg-url-feedback">
+                <div class="invalid-feedback" id="cfg-url-feedback"></div>
                 <div class="form-text">Your production URL. For GitHub Pages: <code>https://USERNAME.github.io</code></div>
               </div>
 
@@ -168,7 +227,7 @@
                 </select>
               </div>
 
-              <div class="d-flex justify-content-between">
+              <div class="wizard-nav d-flex justify-content-between">
                 <button class="btn btn-outline-secondary btn-prev" data-prev="tab-identity">
                   <i class="bi bi-arrow-left"></i> Back
                 </button>
@@ -181,7 +240,7 @@
         </div>
 
         <!-- ───── Step 3: Collections ───── -->
-        <div class="tab-pane fade" id="step-collections" role="tabpanel">
+        <div class="tab-pane fade" id="step-collections" role="tabpanel" aria-labelledby="tab-collections">
           <div class="card">
             <div class="card-body">
               <h4 class="card-title mb-3">Content Collections</h4>
@@ -222,7 +281,7 @@
                 </label>
               </div>
 
-              <div class="d-flex justify-content-between">
+              <div class="wizard-nav d-flex justify-content-between">
                 <button class="btn btn-outline-secondary btn-prev" data-prev="tab-urls">
                   <i class="bi bi-arrow-left"></i> Back
                 </button>
@@ -235,7 +294,7 @@
         </div>
 
         <!-- ───── Step 4: Analytics ───── -->
-        <div class="tab-pane fade" id="step-analytics" role="tabpanel">
+        <div class="tab-pane fade" id="step-analytics" role="tabpanel" aria-labelledby="tab-analytics">
           <div class="card">
             <div class="card-body">
               <h4 class="card-title mb-3">Analytics &amp; Integrations</h4>
@@ -253,7 +312,8 @@
                   <label class="form-check-label" for="cfg-posthog-enabled">Enable PostHog</label>
                 </div>
                 <input type="text" class="form-control cfg-field" id="cfg-posthog-key"
-                       placeholder="phc_your_key_here" data-key="posthog.api_key">
+                       placeholder="phc_your_key_here" data-key="posthog.api_key"
+                       aria-label="PostHog API key">
               </div>
 
               <div class="mb-3">
@@ -262,19 +322,21 @@
                   <div class="col-md-6">
                     <div class="input-group">
                       <span class="input-group-text"><i class="bi bi-twitter-x"></i></span>
-                      <input type="text" class="form-control cfg-field" placeholder="username" data-key="twitter_username">
+                      <input type="text" class="form-control cfg-field" id="cfg-twitter"
+                             placeholder="username" data-key="twitter_username" aria-label="X / Twitter username">
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="input-group">
                       <span class="input-group-text"><i class="bi bi-linkedin"></i></span>
-                      <input type="text" class="form-control cfg-field" placeholder="username" data-key="linkedin_username">
+                      <input type="text" class="form-control cfg-field" id="cfg-linkedin"
+                             placeholder="username" data-key="linkedin_username" aria-label="LinkedIn username">
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div class="d-flex justify-content-between">
+              <div class="wizard-nav d-flex justify-content-between">
                 <button class="btn btn-outline-secondary btn-prev" data-prev="tab-collections">
                   <i class="bi bi-arrow-left"></i> Back
                 </button>
@@ -286,38 +348,30 @@
           </div>
         </div>
 
-        <!-- ───── Step 5: Review & Download ───── -->
-        <div class="tab-pane fade" id="step-review" role="tabpanel">
+        <!-- ───── Step 5: Review ───── -->
+        <!-- The YAML itself now lives in the persistent preview panel, so this
+             step is the summary: what is still unfilled, and what to do next. -->
+        <div class="tab-pane fade" id="step-review" role="tabpanel" aria-labelledby="tab-review">
           <div class="card">
             <div class="card-body">
               <h4 class="card-title mb-3">Review Your Configuration</h4>
-              <p class="text-muted">This is the <code>_config.yml</code> that will be generated. Review it, then download or copy.</p>
+              <p class="text-muted">
+                The generated <code>_config.yml</code> is in the preview panel — it has been
+                live since step one. Check the notes below, then copy or download it.
+              </p>
 
-              <div class="position-relative">
-                <pre class="bg-dark text-light p-3 rounded" style="max-height:450px;overflow:auto"><code id="yaml-preview">Loading…</code></pre>
-                <button class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2" id="btn-copy"
-                        title="Copy to clipboard">
-                  <i class="bi bi-clipboard"></i>
-                </button>
+              <!-- Populated by setup-wizard.js on entering this step. -->
+              <div id="wizard-review-warnings" role="status" aria-live="polite"></div>
+
+              <div class="alert alert-info mt-3" role="alert">
+                <i class="bi bi-info-circle"></i>
+                <strong>Next step:</strong> Replace the <code>_config.yml</code> in your project root with the downloaded file, then restart your dev server.
               </div>
 
-              <div class="d-flex justify-content-between mt-3">
+              <div class="wizard-nav d-flex justify-content-between">
                 <button class="btn btn-outline-secondary btn-prev" data-prev="tab-analytics">
                   <i class="bi bi-arrow-left"></i> Back
                 </button>
-                <div>
-                  <button class="btn btn-outline-primary me-2" id="btn-copy-full">
-                    <i class="bi bi-clipboard"></i> Copy YAML
-                  </button>
-                  <button class="btn btn-primary" id="btn-download">
-                    <i class="bi bi-download"></i> Download _config.yml
-                  </button>
-                </div>
-              </div>
-
-              <div class="alert alert-info mt-4" role="alert">
-                <i class="bi bi-info-circle"></i>
-                <strong>Next step:</strong> Replace the <code>_config.yml</code> in your project root with the downloaded file, then restart your dev server.
               </div>
             </div>
           </div>
@@ -325,7 +379,40 @@
 
       </div><!-- /tab-content -->
     </div>
-  </div>
+
+    <!-- ============================================================ -->
+    <!-- 3. Persistent live YAML preview                              -->
+    <!-- ============================================================ -->
+    <div class="col-lg-4">
+      <aside class="wizard-preview sticky-lg-top" aria-labelledby="wizard-preview-heading">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <h2 class="h6 mb-0" id="wizard-preview-heading">
+            <i class="bi bi-file-earmark-code" aria-hidden="true"></i> <code>_config.yml</code>
+          </h2>
+          <span class="badge text-bg-secondary wizard-preview-live">live</span>
+        </div>
+
+        <div class="position-relative">
+          <pre class="wizard-preview-code bg-dark text-light p-3 rounded"><code id="yaml-preview">Loading…</code></pre>
+          <button class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2" id="btn-copy"
+                  type="button" title="Copy to clipboard" aria-label="Copy configuration to clipboard">
+            <i class="bi bi-clipboard" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <!-- Always enabled, at every step — the file is valid from the start. -->
+        <div class="d-grid gap-2 d-sm-flex mt-3">
+          <button class="btn btn-outline-primary flex-sm-fill" id="btn-copy-full" type="button">
+            <i class="bi bi-clipboard" aria-hidden="true"></i> Copy YAML
+          </button>
+          <button class="btn btn-primary flex-sm-fill" id="btn-download" type="button">
+            <i class="bi bi-download" aria-hidden="true"></i> Download
+          </button>
+        </div>
+      </aside>
+    </div>
+
+  </div><!-- /row -->
 </div>
 
 <script src="{{ '/assets/js/setup-wizard.js' | relative_url }}"></script>

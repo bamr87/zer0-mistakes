@@ -181,7 +181,7 @@ Every catalogued component, its primary implementation file, primary test, and c
 | Collection Manager | `_includes/components/collection-manager.html` | `features/admin.spec.js`, `core/accessibility.spec.js` | 🟡 partial |
 | Analytics Dashboard | `_includes/components/analytics-dashboard.html` | `features/admin.spec.js`, `core/accessibility.spec.js` | 🟡 partial |
 | Statistics Dashboard | `_layouts/stats.html` | `features/admin.spec.js`, `core/accessibility.spec.js`, `test/test_plugins.rb` | 🟡 partial |
-| Setup Wizard | `_layouts/setup.html` | — | 🔴 none |
+| Setup Wizard | `_layouts/setup.html` | `features/setup-wizard.spec.js` | 🟡 partial |
 | Setup Banner & Setup Check | `_includes/components/setup-banner.html` | — | 🔴 none |
 | Dev Shortcuts | `_includes/components/dev-shortcuts.html` | — | 🔴 none |
 
@@ -1394,15 +1394,16 @@ A suite of dev-facing admin pages (all under `/about/` on the `admin`/`stats`/`s
 ### Setup Wizard
 
 - **Purpose:** Multi-step interactive `_config.yml` generator (dev-only) on the `setup` layout: collect identity/URLs/collections/analytics, preview the generated YAML, then copy/download.
-- **Capabilities:** 5 pill-tab steps (Identity, URLs, Collections, Analytics, Review) with Next/Back buttons that switch Bootstrap tabs; collection toggles; PostHog enable + key; social links; description char counter (160); `buildYAML` emits a full config (identity, GitHub with YAML anchors `&github_user`/`&github_repository`, URLs, collections + permalinks, defaults, build, plugins, analytics, social, exclude) with `yamlValue` quoting/`pad` alignment; live preview updates on tab change; download `_config.yml` via Blob; copy YAML.
+- **Capabilities:** Three columns at lg+ (vertical stepper / step panes / persistent live preview), stacked below. 5 steps (Identity, URLs, Collections, Analytics, Review) driven by a vertical stepper with `.is-done`/`.is-active`/`.is-locked` state — an upcoming step is `disabled` until every earlier step validates, and Back is always allowed. Collection toggles; PostHog enable + key; social links; description char counter (160); `buildYAML` emits a full config (identity, GitHub with YAML anchors `&github_user`/`&github_repository`, URLs, collections + permalinks, defaults, build, plugins, analytics, social, exclude) with `yamlValue` quoting/`pad` alignment. Since T-040/#408: the YAML preview is a **persistent sticky panel** regenerated on every input (it used to live inside step 5 and refresh only on tab change), with Copy and Download enabled at every step; email/URL are validated on **blur** (`is-invalid` + a message, cleared on retype); the Review step lists unfilled `data-recommended` fields as warnings; and the whole form is mirrored to `localStorage` under `zer0-setup-draft` (debounced 300ms, restored on load with a "Draft saved" chip, cleared on download).
 - **Source:**
-  - SCSS: —
+  - SCSS: `_sass/components/_setup-wizard.scss`
   - Markup: `_layouts/setup.html`, `_includes/setup/wizard.html`
-  - JS: `assets/js/setup-wizard.js` (`buildYAML`, `yamlValue`, `collectionPermalink`, download/copy/preview)
+  - JS: `assets/js/setup-wizard.js` (`buildYAML`, `yamlValue`, `collectionPermalink`, `measurePanes`, `validateField`, `refreshStepper`, `saveDraft`/`restoreDraft`, download/copy/preview)
   - Plugin/data: none (client-only)
-- **API surface:** ids `#setup-wizard`, `#wizardTabs`, `#tab-identity/urls/collections/analytics/review`, `#step-*`, `#yaml-preview`, `#btn-download`, `#btn-copy`/`#btn-copy-full`, `#desc-count`, `#cfg-title`…; classes `.cfg-field`, `.cfg-collection`, `.btn-next`, `.btn-prev`; data-attrs `data-key` (dotted for `posthog.*`), `data-col`, `data-next`/`data-prev`; layout front matter `setup_step`/`setup_total` drive a progress bar. No globals/events/CSS vars.
-- **Tests:** No automated tests. (Not in ADMIN_PAGES; no spec targets the wizard, the setup layout, or `setup-wizard.js`.)
-- **Gaps / improvement ideas:** Entirely untested despite generating a config users paste into their repo — add tests for step navigation, the description counter, collection toggles affecting `collections:`/`defaults:`, PostHog/social conditionals, and that `yamlValue` quotes special chars so the output is valid YAML (the README claims dev-only guarding but the include itself isn't guarded — verify). Step tabs aren't gated by validation (can skip required fields). Loads `setup-wizard.js` via a non-deferred `<script>` at include end.
+- **API surface:** ids `#setup-wizard`, `#wizardTabs`, `#tab-identity/urls/collections/analytics/review`, `#step-*`, `#yaml-preview`, `#btn-download`, `#btn-copy`/`#btn-copy-full`, `#desc-count`, `#wizard-draft-chip`, `#wizard-review-warnings`, `#cfg-*-feedback`, `#cfg-title`…; classes `.cfg-field`, `.cfg-collection`, `.btn-next`, `.btn-prev`, `.wizard-step`, `.wizard-panes`, `.wizard-nav`, `.wizard-preview`; data-attrs `data-key` (dotted for `posthog.*`), `data-col`, `data-next`/`data-prev`, `data-step`, `data-recommended`; storage key `zer0-setup-draft`; layout front matter `setup_step`/`setup_total` drive a progress bar. No globals/events/CSS vars.
+- **Stable-height contract:** `measurePanes()` sets an inline `min-height` on `#wizardTabContent` equal to the tallest pane (CSS cannot measure that), and `.wizard-nav` carries `margin-top: auto`. **Both are required** — the min-height stops the container resizing, the auto margin stops the buttons floating up inside a short step. Removing either reintroduces the vertical jump between steps.
+- **Tests:** `test/visual/features/setup-wizard.spec.js` — stepper replaces nav-pills, preview live at every step, Back/Next y-offset stable across steps, blur validation, lock/unlock, Review warnings, draft round-trip through reload and clear-on-download, and survival when `localStorage` throws.
+- **Gaps / improvement ideas:** `yamlValue`'s special-character quoting still has no direct test, and neither do the collection toggles' effect on `collections:`/`defaults:` or the PostHog/social conditionals — the generated file is pasted straight into a user's repo, so that output deserves its own assertions. The dev-only guard lives on the calling page (`pages/setup.html`), not the include. Loads `setup-wizard.js` via a non-deferred `<script>` at include end.
 
 ### Setup Banner & Setup Check
 
