@@ -1,0 +1,34 @@
+{
+  "slug": "footer-button-semantics",
+  "base": "http://localhost:4000",
+  "route": "/",
+  "sweep": [
+    {
+      "width": 375,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0
+    },
+    {
+      "width": 768,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0
+    },
+    {
+      "width": 1280,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0
+    }
+  ],
+  "configs": [
+    {
+      "config": "shipped",
+      "width": 1280,
+      "overflowPx": 0
+    },
+    {
+      "config": "naive",
+      "width": 1280,
+      "overflowPx": 0
+    }
+  ]
+}

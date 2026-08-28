@@ -137,6 +137,9 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   are real links" in `test/visual/core/layout-chrome.spec.js` already banned
   `href="#"` but sampled only the first five links, and `site.powered_by` pushed
   the offending Info anchor past index 4; it now checks every credit link.
+  (evidence:
+  [`test/visual/evidence/footer-button-semantics/`](test/visual/evidence/footer-button-semantics/README.md)
+  — shipped vs. reset-stripped at 1280px, footer overflow 0px at 375/768/1280)
 
 - **Navbar: every top-level item now fits, at every desktop width** — the bar
   was pinned inside a centred `.container-xl` (max 1140–1320px), so the menubar
