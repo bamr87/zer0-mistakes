@@ -124,8 +124,18 @@
   // the first paint, before that measurement lands.
   min-height: 26rem;
 
+  // The container must be a flex column, not the default block: a block child
+  // is only as tall as its content, so the min-height above would hold the
+  // CONTAINER open while the pane — and with it the nav row — stayed short.
+  display: flex;
+  flex-direction: column;
+
+  // Inactive panes are display:none and so are not flex items; the active one
+  // grows to the container's full height, which is what `.wizard-nav`'s
+  // `margin-top: auto` then has room to push against.
   > .tab-pane.active {
     display: flex;
+    flex: 1 1 auto;
     flex-direction: column;
   }
 

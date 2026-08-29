@@ -196,6 +196,11 @@ test.describe('Setup wizard', { tag: '@critical' }, () => {
   test('persists a draft across reload and clears it on download', async ({ page }) => {
     await page.locator('#cfg-title').fill('Draft Survives Reload');
     await page.locator('#cfg-github-user').fill('octocat');
+
+    // #col-notes lives on the Collections step; only the active pane is
+    // rendered, so reach it the way a user does rather than clicking a
+    // checkbox inside a display:none pane.
+    await goToStep(page, 'tab-collections');
     await page.locator('#col-notes').check();
 
     // The write is debounced 300ms — wait for the value, not a fixed sleep.
@@ -211,6 +216,7 @@ test.describe('Setup wizard', { tag: '@critical' }, () => {
     await expect(page.locator(WIZARD)).toBeVisible();
     await expect(page.locator('#cfg-title')).toHaveValue('Draft Survives Reload');
     await expect(page.locator('#cfg-github-user')).toHaveValue('octocat');
+    await goToStep(page, 'tab-collections');
     await expect(page.locator('#col-notes')).toBeChecked();
     // The restored values reach the preview too, not just the inputs.
     await expect(page.locator('#yaml-preview')).toContainText('Draft Survives Reload');

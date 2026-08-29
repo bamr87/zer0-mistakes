@@ -260,12 +260,21 @@
    * Inactive panes are display:none, so they have no height to read. Each is
    * briefly made measurable — laid out but invisible and out of flow, so
    * nothing flashes and no sibling reflows — then restored exactly as found.
+   *
+   * The floor is dropped to 0 for the duration. The active pane is stretched
+   * to the container by `.wizard-panes > .tab-pane.active { flex: 1 1 auto }`,
+   * so measuring it against a container that still carries the previous
+   * min-height (or the CSS floor) would read the STRETCH rather than the
+   * content — and the value could then only ever ratchet upwards on resize.
    */
   function measurePanes() {
     var container = document.getElementById('wizardTabContent');
     if (!container) return;
     var panes = container.querySelectorAll('.tab-pane');
     if (!panes.length) return;
+
+    var previousMinHeight = container.style.minHeight;
+    container.style.minHeight = '0px';
 
     var tallest = 0;
     panes.forEach(function (pane) {
@@ -284,7 +293,7 @@
       }
     });
 
-    if (tallest > 0) container.style.minHeight = tallest + 'px';
+    container.style.minHeight = tallest > 0 ? tallest + 'px' : previousMinHeight;
   }
 
   // ── inline validation ──────────────────────────────────────────────
