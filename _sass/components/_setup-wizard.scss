@@ -6,12 +6,12 @@
 // Three columns at lg+ (stepper / steps / live preview), stacked below. The
 // two rules that matter most:
 //
-//   1. `.wizard-panes` gets an inline `min-height` from JS (the tallest pane —
-//      CSS cannot measure that), and `.wizard-nav` is pushed to the bottom of
-//      the card with `margin-top: auto`. Neither alone is enough: the
-//      min-height stops the CONTAINER resizing, and the auto margin stops the
-//      BUTTONS floating up inside a short step. Together, Back/Next sit at the
-//      same y offset on every step.
+//   1. `.wizard-panes` is a GRID with every pane in the same cell, so the
+//      container is always exactly as tall as the tallest step; `.wizard-nav`
+//      is then pushed to the bottom of the card with `margin-top: auto`.
+//      Neither alone is enough: the grid stops the CONTAINER resizing, and the
+//      auto margin stops the BUTTONS floating up inside a short step.
+//      Together, Back/Next sit at the same y offset on every step.
 //   2. The preview panel is sticky and always present, so it needs its own
 //      scroll region rather than growing the page.
 // =============================================================================
@@ -120,23 +120,37 @@
 // -----------------------------------------------------------------------------
 
 .wizard-panes {
-  // JS sets min-height inline to the tallest pane. This is only the floor for
-  // the first paint, before that measurement lands.
-  min-height: 26rem;
+  // Every pane is stacked in ONE grid cell, so the row's height is
+  // max(pane heights) — computed by the browser, continuously, exactly.
+  //
+  // This used to be a flex column whose min-height JS measured and wrote
+  // inline. Measuring a box you have to un-hide, lay out, read and restore is
+  // a guess: it came back ~16px short of the tallest pane, and the shortest
+  // step's Back/Next sat 16px higher than everywhere else. Grid asks the
+  // layout engine the same question and gets the answer right, on every
+  // reflow, with no resize listener.
+  display: grid;
+  min-height: 26rem; // floor for the degenerate case of no panes
 
-  // The container must be a flex column, not the default block: a block child
-  // is only as tall as its content, so the min-height above would hold the
-  // CONTAINER open while the pane — and with it the nav row — stayed short.
-  display: flex;
-  flex-direction: column;
-
-  // Inactive panes are display:none and so are not flex items; the active one
-  // grows to the container's full height, which is what `.wizard-nav`'s
-  // `margin-top: auto` then has room to push against.
-  > .tab-pane.active {
+  // The selector carries `.tab-content` purely for specificity: Bootstrap's
+  // `.tab-content > .tab-pane { display: none }` would otherwise take the
+  // cell's only occupant out of the grid on a tie.
+  &.tab-content > .tab-pane {
     display: flex;
-    flex: 1 1 auto;
     flex-direction: column;
+    grid-area: 1 / 1; // one cell, all panes
+
+    // Inactive panes stay in layout — that is the whole point — but must not
+    // be seen, focused, clicked, or read out. `visibility: hidden` does all
+    // four (it removes the subtree from the a11y tree and from the tab
+    // order), which `opacity: 0` alone would not.
+    visibility: hidden;
+    pointer-events: none;
+
+    &.active {
+      visibility: visible;
+      pointer-events: auto;
+    }
   }
 
   > .tab-pane > .card {

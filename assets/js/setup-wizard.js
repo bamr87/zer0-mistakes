@@ -8,22 +8,23 @@
  * and offers Download / Copy actions.  Pure vanilla JS, no deps
  * beyond Bootstrap 5 (already on the page).
  *
+ * The step container's stable height is NOT handled here. `.wizard-panes` is a
+ * CSS grid with every pane in one cell, so the browser sizes it to the tallest
+ * pane on every reflow. An earlier measurePanes() did this in JS — un-hiding
+ * each pane, reading offsetHeight, restoring it — and came back ~16px short,
+ * which put the shortest step's Back/Next 16px above everyone else's.
+ *
  * T-040 / #408 added, in the order the pieces depend on each other:
- *   1. measurePanes()   — the step container gets a min-height equal to the
- *                         TALLEST pane. CSS cannot know that height, so it is
- *                         measured here; combined with `.wizard-nav`'s
- *                         margin-top:auto it is what keeps Back/Next from
- *                         moving vertically between steps.
- *   2. updatePreview()  — now fires on every input anywhere in the wizard,
+ *   1. updatePreview()  — now fires on every input anywhere in the wizard,
  *                         not just on entering step 5, because the preview is
  *                         a persistent panel rather than a step-5 element.
- *   3. validateField()  — email/URL checked on blur, `is-invalid` + a message;
+ *   2. validateField()  — email/URL checked on blur, `is-invalid` + a message;
  *                         cleared as soon as the user types again.
- *   4. saveDraft()      — every value mirrored to localStorage under
+ *   3. saveDraft()      — every value mirrored to localStorage under
  *                         `zer0-setup-draft`, debounced 300ms, restored on
  *                         load, acknowledged by the "Draft saved" chip, and
  *                         cleared when the file is downloaded.
- *   5. refreshStepper() — the vertical stepper's done/active/locked state. A
+ *   4. refreshStepper() — the vertical stepper's done/active/locked state. A
  *                         step is locked until every EARLIER step validates;
  *                         going back is always allowed.
  *
@@ -250,50 +251,6 @@
     lines.push('  - "*.log"');
 
     return lines.join('\n');
-  }
-
-  // ── pane height (keeps Back/Next from moving) ──────────────────────
-
-  /**
-   * Set the pane container's min-height to the tallest pane.
-   *
-   * Inactive panes are display:none, so they have no height to read. Each is
-   * briefly made measurable — laid out but invisible and out of flow, so
-   * nothing flashes and no sibling reflows — then restored exactly as found.
-   *
-   * The floor is dropped to 0 for the duration. The active pane is stretched
-   * to the container by `.wizard-panes > .tab-pane.active { flex: 1 1 auto }`,
-   * so measuring it against a container that still carries the previous
-   * min-height (or the CSS floor) would read the STRETCH rather than the
-   * content — and the value could then only ever ratchet upwards on resize.
-   */
-  function measurePanes() {
-    var container = document.getElementById('wizardTabContent');
-    if (!container) return;
-    var panes = container.querySelectorAll('.tab-pane');
-    if (!panes.length) return;
-
-    var previousMinHeight = container.style.minHeight;
-    container.style.minHeight = '0px';
-
-    var tallest = 0;
-    panes.forEach(function (pane) {
-      var isActive = pane.classList.contains('active');
-      var inline = pane.getAttribute('style');
-      if (!isActive) {
-        pane.style.display = 'block';
-        pane.style.visibility = 'hidden';
-        pane.style.position = 'absolute';
-        pane.style.width = container.clientWidth + 'px';
-      }
-      tallest = Math.max(tallest, pane.offsetHeight);
-      if (!isActive) {
-        if (inline === null) pane.removeAttribute('style');
-        else pane.setAttribute('style', inline);
-      }
-    });
-
-    container.style.minHeight = tallest > 0 ? tallest + 'px' : previousMinHeight;
   }
 
   // ── inline validation ──────────────────────────────────────────────
@@ -605,20 +562,16 @@
     var copyFullBtn = document.getElementById('btn-copy-full');
     if (copyFullBtn) copyFullBtn.addEventListener('click', copyYAML);
 
-    // Order matters: restore values first so the measurement and the initial
-    // preview both reflect the real content.
+    // Order matters: restore values first so the initial preview and stepper
+    // state both reflect the real content.
     restoreDraft();
     if (descField && descCount) descCount.textContent = descField.value.length;
     updatePreview();
     refreshStepper();
-    measurePanes();
 
-    // Re-measure when the column width changes; panes reflow at breakpoints.
-    var resizeTimer = null;
-    window.addEventListener('resize', function () {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(measurePanes, 150);
-    });
+    // No pane measurement and no resize listener: the grid in
+    // _setup-wizard.scss keeps `#wizardTabContent` as tall as the tallest pane
+    // at every width, without JS having to be told the width changed.
   });
 
 })();

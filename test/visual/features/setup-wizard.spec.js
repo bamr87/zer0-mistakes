@@ -8,8 +8,9 @@
 //
 //   1. The YAML preview is PERSISTENT — visible at every step, not only step 5 —
 //      and regenerates on input. Copy/Download are enabled throughout.
-//   2. Back/Next never move vertically between steps (the pane container takes a
-//      min-height equal to the tallest pane; the nav row is pinned with mt-auto).
+//   2. Back/Next never move vertically between steps (every pane shares one CSS
+//      grid cell, so the container is as tall as the tallest of them; the nav
+//      row is pinned to the bottom with mt-auto).
 //   3. The draft survives a reload (localStorage `zer0-setup-draft`, debounced
 //      300ms) and is cleared on download.
 //   4. Email/URL are validated on blur with `is-invalid` + a message, and the
@@ -49,8 +50,16 @@ async function goToStep(page, tabId) {
 
 test.describe('Setup wizard', { tag: '@critical' }, () => {
   test.beforeEach(async ({ page }) => {
-    // Never inherit a draft between tests.
-    await page.addInitScript((key) => {
+    // Never inherit a draft between tests — but clear it EXACTLY ONCE.
+    //
+    // `addInitScript` re-runs on every document this page ever creates,
+    // including `page.reload()`. Used here it wiped the draft the persistence
+    // test had just saved, before the wizard's own DOMContentLoaded handler
+    // could read it back, and the test then failed on the product rather than
+    // on the harness. Clear the key on a throwaway load instead, then open the
+    // wizard for real against empty storage.
+    await page.goto('/setup/');
+    await page.evaluate((key) => {
       try { localStorage.removeItem(key); } catch (e) { /* private mode */ }
     }, DRAFT_KEY);
     await openWizard(page);
@@ -94,24 +103,52 @@ test.describe('Setup wizard', { tag: '@critical' }, () => {
 
   test('Back and Next never move vertically between steps', async ({ page }) => {
     // The bug: each step was only as tall as its own content, so the nav row
-    // jumped as you advanced. Guard both halves of the fix.
-    const minHeight = await page.locator(PANES).evaluate(
-      (el) => parseFloat(getComputedStyle(el).minHeight) || 0
-    );
-    expect(minHeight).toBeGreaterThan(0);
+    // jumped as you advanced. Guard both halves of the fix — the container
+    // holds one height, and the nav row sits at its bottom.
+
+    // Every pane occupies the same grid cell, so the container is sized to the
+    // tallest of them. Assert the mechanism directly: a single row track that
+    // all five panes share.
+    const paneStacking = await page.locator(PANES).evaluate((el) => ({
+      display: getComputedStyle(el).display,
+      rows: getComputedStyle(el).gridTemplateRows.split(' ').length,
+      cells: new Set(
+        [...el.querySelectorAll('.tab-pane')].map(
+          (p) => `${getComputedStyle(p).gridRowStart}/${getComputedStyle(p).gridColumnStart}`
+        )
+      ).size
+    }));
+    expect(paneStacking.display).toBe('grid');
+    expect(paneStacking.rows).toBe(1);
+    expect(paneStacking.cells, 'every pane must share one grid cell').toBe(1);
 
     const offsets = [];
+    const heights = [];
     for (const tab of ['tab-identity', 'tab-urls', 'tab-collections', 'tab-analytics']) {
       await goToStep(page, tab);
+      // DOCUMENT coordinates, not viewport ones. `boundingBox().y` is relative
+      // to the viewport, and clicking a stepper entry scrolls the page (it
+      // scrolled 0 -> 134 -> 134 -> 243 in the run that first caught this), so
+      // a viewport-relative reading measures the scroll, not the layout.
       const next = page.locator(`#${tab.replace('tab-', 'step-')} .btn-next`);
-      const box = await next.boundingBox();
-      expect(box).not.toBeNull();
-      offsets.push(Math.round(box.y));
+      offsets.push(await next.evaluate(
+        (el) => Math.round(el.getBoundingClientRect().top + window.scrollY)
+      ));
+      heights.push(await page.locator(PANES).evaluate(
+        (el) => Math.round(el.getBoundingClientRect().height)
+      ));
     }
 
     // Allow a pixel of sub-pixel rounding, nothing more.
     const spread = Math.max(...offsets) - Math.min(...offsets);
-    expect(spread, `Next button y offsets across steps: ${offsets.join(', ')}`).toBeLessThanOrEqual(1);
+    expect(spread, `Next button document-y offsets across steps: ${offsets.join(', ')}`).toBeLessThanOrEqual(1);
+
+    // …and the container itself never resizes, which is what stops everything
+    // BELOW the wizard from moving too.
+    expect(
+      Math.max(...heights) - Math.min(...heights),
+      `pane container heights across steps: ${heights.join(', ')}`
+    ).toBeLessThanOrEqual(1);
   });
 
   test('validates email and URL on blur, and clears the error on retype', async ({ page }) => {
@@ -197,9 +234,9 @@ test.describe('Setup wizard', { tag: '@critical' }, () => {
     await page.locator('#cfg-title').fill('Draft Survives Reload');
     await page.locator('#cfg-github-user').fill('octocat');
 
-    // #col-notes lives on the Collections step; only the active pane is
-    // rendered, so reach it the way a user does rather than clicking a
-    // checkbox inside a display:none pane.
+    // #col-notes lives on the Collections step. Inactive panes are laid out
+    // but `visibility: hidden`, so the checkbox is unclickable until its step
+    // is active — reach it the way a user does.
     await goToStep(page, 'tab-collections');
     await page.locator('#col-notes').check();
 

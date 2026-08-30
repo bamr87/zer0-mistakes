@@ -26,9 +26,10 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   restored on load with a "Draft saved" chip, and cleared once the file is
   downloaded. Email and URL fields are validated **on blur** with `is-invalid`
   and an explanatory message, cleared as soon as you retype; the Review step
-  lists any unfilled recommended fields as warnings. The pane container takes a
-  `min-height` equal to the tallest step and the nav row is pinned to the
-  bottom, so **Back/Next no longer move vertically** between steps. New
+  lists any unfilled recommended fields as warnings. Every step pane shares one
+  CSS grid cell, so the container is always as tall as the tallest step, and the
+  nav row is pinned to the bottom — **Back/Next no longer move vertically**
+  between steps. New
   `_sass/components/_setup-wizard.scss`, and the wizard gains its first
   automated coverage in `test/visual/features/setup-wizard.spec.js`.
 
