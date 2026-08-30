@@ -168,6 +168,16 @@ For failed PR runs where the PR opted in via the `auto-fix` label: runs Claude C
 
 Assigns merged PRs to the milestone when exactly one is open; otherwise no-op.
 
+### `ui-audit.yml` — Weekly UI/UX audit
+
+**Triggers:** Weekly schedule (Mon 07:23 UTC), Manual dispatch
+
+Two tiers: (1) a deterministic Playwright sweep (`test/ui-audit/sweep.mjs`) over 6 routes × 3 viewports capturing screenshots, axe violations, console errors, overflow and broken internal links; (2) the read-only Claude Code `ui-auditor` agent, gated on a Claude credential. Findings land in one sticky issue labeled `source:ui-audit`.
+
+**The serve step must not use `--detach`.** It disables Jekyll's watch thread, which the LiveReload reactor rides on — leaving `livereload_port: 35729` bound but silent while pages still load `livereload.js`. The hanging subresource blocks `load`, so every `page.goto(..., waitUntil: 'load')` times out. The `curl -sf` readiness gate cannot detect this (it never requests a subresource), which is how the audit captured **zero** evidence for six weeks while reporting success ([#321](https://github.com/bamr87/zer0-mistakes/issues/321)). Keep the invocation in step with `test/test_playwright.sh:69-74`: background it with `&`, and stop it in an `always()` step.
+
+The job goes **red** when the sweep captures nothing — enforced twice, by `sweep.mjs`'s own exit code and by the `Assert the sweep captured evidence` step — and the sticky issue says "captured nothing" rather than presenting timeouts as UI findings. Guarded by `test/ui-audit/check-audit-serve.sh`.
+
 ### `giscus-digest.yml` — Giscus comment digest
 
 **Triggers:** Weekly schedule, Manual dispatch
