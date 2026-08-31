@@ -1,0 +1,181 @@
+{
+  "slug": "setup-wizard-nav-alignment",
+  "issue": 408,
+  "pr": 432,
+  "measured": "Chromium 145 (Playwright), viewport 1280x900",
+  "source": "Static harness: the real _includes/setup/wizard.html + the real compiled assets/css/main.scss + the vendored Bootstrap CSS/JS. The agent sandbox has no bundler, so no Jekyll site could be served; see README.md.",
+  "ci_observed_before": {
+    "run": "https://github.com/bamr87/zer0-mistakes/actions/runs/33304606784",
+    "test": "test/visual/features/setup-wizard.spec.js:104 Back and Next never move vertically between steps",
+    "nextButtonDocumentYOffsets": [
+      1365,
+      1367,
+      1367,
+      1351
+    ],
+    "spreadPx": 16,
+    "note": "Identity 2px above steps 2-3 (block-layout nav), Analytics 16px above them (wrapped label). Both reproduced below."
+  },
+  "columns": {
+    "271px": {
+      "before": {
+        "nextButtonDocumentYOffsets": [
+          899,
+          884,
+          884,
+          884
+        ],
+        "spreadPx": 15,
+        "nextButtonHeightsPx": [
+          19,
+          35,
+          35,
+          35
+        ]
+      },
+      "after": {
+        "nextButtonDocumentYOffsets": [
+          871,
+          871,
+          871,
+          871
+        ],
+        "spreadPx": 0,
+        "nextButtonHeightsPx": [
+          19,
+          19,
+          19,
+          19
+        ]
+      }
+    },
+    "300px": {
+      "before": {
+        "nextButtonDocumentYOffsets": [
+          875,
+          877,
+          877,
+          860
+        ],
+        "spreadPx": 17,
+        "nextButtonHeightsPx": [
+          19,
+          19,
+          19,
+          35
+        ]
+      },
+      "after": {
+        "nextButtonDocumentYOffsets": [
+          871,
+          871,
+          871,
+          871
+        ],
+        "spreadPx": 0,
+        "nextButtonHeightsPx": [
+          19,
+          19,
+          19,
+          19
+        ]
+      }
+    },
+    "1024px": {
+      "before": {
+        "nextButtonDocumentYOffsets": [
+          1122,
+          1124,
+          1124,
+          1124
+        ],
+        "spreadPx": 2,
+        "nextButtonHeightsPx": [
+          19,
+          19,
+          19,
+          19
+        ]
+      },
+      "after": {
+        "nextButtonDocumentYOffsets": [
+          1119,
+          1119,
+          1119,
+          1119
+        ],
+        "spreadPx": 0,
+        "nextButtonHeightsPx": [
+          19,
+          19,
+          19,
+          19
+        ]
+      }
+    },
+    "1280px": {
+      "before": {
+        "nextButtonDocumentYOffsets": [
+          1122,
+          1124,
+          1124,
+          1124
+        ],
+        "spreadPx": 2,
+        "nextButtonHeightsPx": [
+          19,
+          19,
+          19,
+          19
+        ]
+      },
+      "after": {
+        "nextButtonDocumentYOffsets": [
+          1119,
+          1119,
+          1119,
+          1119
+        ],
+        "spreadPx": 0,
+        "nextButtonHeightsPx": [
+          19,
+          19,
+          19,
+          19
+        ]
+      }
+    },
+    "1400px": {
+      "before": {
+        "nextButtonDocumentYOffsets": [
+          1122,
+          1124,
+          1124,
+          1124
+        ],
+        "spreadPx": 2,
+        "nextButtonHeightsPx": [
+          19,
+          19,
+          19,
+          19
+        ]
+      },
+      "after": {
+        "nextButtonDocumentYOffsets": [
+          1119,
+          1119,
+          1119,
+          1119
+        ],
+        "spreadPx": 0,
+        "nextButtonHeightsPx": [
+          19,
+          19,
+          19,
+          19
+        ]
+      }
+    }
+  }
+}

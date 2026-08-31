@@ -167,9 +167,31 @@
 
 // Pinned to the bottom of the card, so a short step does not float its
 // Back/Next up the page relative to a tall one.
+//
+// Pinning the row's BOTTOM is only half the job: the test measures the Next
+// button's TOP, so anything that changes the row's height moves it. Two things
+// did, and both are fixed here rather than in the assertion.
 .wizard-nav {
+  // 1. Never a block box. Step 1's nav is `text-end` with no `d-flex`, so its
+  //    button was an inline-block on a line box and sat on the baseline — the
+  //    descender space below it left that button ~2px above every other step's.
+  //    `flex-end` is the base; the later steps' `justify-content-between`
+  //    utility (Bootstrap emits `!important`) still wins where it is applied.
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
   margin-top: auto;
   padding-top: 1rem;
+
+  // 2. Never let a label wrap. In the real three-column layout the middle
+  //    column is ~270px, and "Review & Download" wrapped to a second line —
+  //    making that one button a line-height taller. With the row pinned to the
+  //    bottom, the extra line pushes the button's TOP up instead of its bottom
+  //    down, which is the 16px the offset test caught on step 4.
+  .btn {
+    white-space: nowrap;
+  }
 }
 
 // -----------------------------------------------------------------------------

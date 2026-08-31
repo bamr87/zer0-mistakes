@@ -267,6 +267,23 @@ test.describe('Setup wizard', { tag: '@critical' }, () => {
     ).toBeNull();
   });
 
+  test('flushes a still-pending draft write when the page goes away', async ({ page }) => {
+    // The write is debounced 300ms, and a timer does not survive navigation.
+    // Reload INSIDE that window: the edit below is only a queued timer at the
+    // moment the page goes away, so it is preserved solely by the pagehide /
+    // visibilitychange flush. Without that flush the field comes back empty —
+    // which is how the persistence test above lost its checkbox, its stored
+    // draft still reading `step: "tab-identity"` from the previous save.
+    //
+    // No `expect.poll` before the reload: waiting for the debounce to land is
+    // exactly what this test must NOT do.
+    await page.locator('#cfg-title').fill('Flushed On Unload');
+    await page.reload();
+
+    await expect(page.locator(WIZARD)).toBeVisible();
+    await expect(page.locator('#cfg-title')).toHaveValue('Flushed On Unload');
+  });
+
   test('survives localStorage being unavailable', async ({ page, context }) => {
     // Private-mode browsers throw on setItem. The wizard must still work.
     await context.addInitScript(() => {

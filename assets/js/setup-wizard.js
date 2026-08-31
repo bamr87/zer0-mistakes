@@ -398,19 +398,45 @@
     chipTimer = setTimeout(function () { chip.classList.remove('is-visible'); }, 2000);
   }
 
+  function writeDraft() {
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(collectDraft()));
+      return true;
+    } catch (e) { /* private mode or quota — the wizard still works */ }
+    return false;
+  }
+
   function saveDraft() {
     if (restoring) return;
     clearTimeout(draftTimer);
     draftTimer = setTimeout(function () {
-      try {
-        localStorage.setItem(DRAFT_KEY, JSON.stringify(collectDraft()));
-        showDraftChip();
-      } catch (e) { /* private mode or quota — the wizard still works */ }
+      draftTimer = null;
+      if (writeDraft()) showDraftChip();
     }, DRAFT_DEBOUNCE_MS);
+  }
+
+  /**
+   * Write a PENDING debounced draft out immediately.
+   *
+   * The 300ms debounce means the last edit before the page goes away is still
+   * only a queued timer, and a timer does not survive navigation: check a
+   * collection box and hit reload inside that window and the change is simply
+   * lost, even though the chip may already have acknowledged an EARLIER save.
+   * `pagehide` and the hidden `visibilitychange` are the two events that still
+   * fire reliably on reload, tab close and bfcache eviction, so the flush hangs
+   * off both. No-op when nothing is queued, so it can never resurrect a draft
+   * that `clearDraft()` has just removed.
+   */
+  function flushDraft() {
+    if (draftTimer === null || restoring) return;
+    clearTimeout(draftTimer);
+    draftTimer = null;
+    writeDraft();
   }
 
   function clearDraft() {
     clearTimeout(draftTimer);
+    draftTimer = null; // …so a later flush cannot write the draft back
     try { localStorage.removeItem(DRAFT_KEY); } catch (e) { /* ignore */ }
     var chip = document.getElementById('wizard-draft-chip');
     if (chip) { chip.classList.remove('is-visible'); chip.hidden = true; }
@@ -561,6 +587,12 @@
 
     var copyFullBtn = document.getElementById('btn-copy-full');
     if (copyFullBtn) copyFullBtn.addEventListener('click', copyYAML);
+
+    // A queued draft write must not be lost to a reload or a tab close.
+    window.addEventListener('pagehide', flushDraft);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') flushDraft();
+    });
 
     // Order matters: restore values first so the initial preview and stepper
     // state both reflect the real content.

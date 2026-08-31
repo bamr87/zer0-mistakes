@@ -33,6 +33,17 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   `_sass/components/_setup-wizard.scss`, and the wizard gains its first
   automated coverage in `test/visual/features/setup-wizard.spec.js`.
 
+  Holding the container's height turned out to be only half of "Back/Next no
+  longer move": the nav row's own height still varied. Step 1's row was a block
+  box, so its button sat on a baseline and rode ~2px high, and in the real
+  ~270px middle column `Review & Download` wrapped to a second line, pushing
+  that button's top up a further 16px. The row is now always a flex box and its
+  buttons never wrap. Draft persistence gained a matching fix: the 300ms
+  debounce meant the last edit before a reload was still only a queued timer and
+  was lost, so a pending write is now flushed on `pagehide` and on a hidden
+  `visibilitychange`. Before/after measurements are in
+  `test/visual/evidence/setup-wizard-nav-alignment/`.
+
 ### Added
 
 - **Cookbook & recipes collection (ZER0-084)** — a `recipes` collection that
