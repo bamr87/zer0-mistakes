@@ -54,7 +54,14 @@
     <div class="col-6">
       <div class="p-2 bg-body-tertiary rounded text-center">
         <small class="text-body-secondary d-block">Last Build</small>
-        <code class="small">{{ site.time | date: "%b %d, %H:%M" }}</code>
+        {%- comment -%}
+          data-testid is the stable hook the pixel-snapshot tier masks on
+          (test/visual/features/appearance-snapshot.spec.js). This stamp has
+          minute resolution, so it becomes an unconditional snapshot flake the
+          moment this panel is shown by default rather than inside a collapsed
+          offcanvas. Don't remove the attribute without updating that mask.
+        {%- endcomment -%}
+        <code class="small" data-testid="theme-build-stamp">{{ site.time | date: "%b %d, %H:%M" }}</code>
       </div>
     </div>
 
