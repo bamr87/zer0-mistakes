@@ -14,8 +14,8 @@ pagination_previous: Précédent
 pagination_next: Suivant
 breadcrumb_home_label: Accueil
 breadcrumb_separator: "/"
-menu_label: Afficher/masquer le menu
-search_label: Afficher/masquer la recherche
+menu_label: Basculer le menu
+search_label: Basculer la recherche
 toc_label: Sur cette page
 ext_link_label: Lien direct
 less_than: moins de
@@ -47,8 +47,8 @@ comment_btn_submit: Envoyer le commentaire
 comment_btn_submitted: Envoyé
 comment_success_msg: Merci pour votre commentaire ! Il apparaîtra sur le site une
   fois approuvé.
-comment_error_msg: Désolé, une erreur s'est produite lors de l'envoi. Veuillez vérifier
-  que tous les champs obligatoires sont remplis et réessayer.
+comment_error_msg: Désolé, une erreur s'est produite lors de l'envoi. Veuillez vous
+  assurer que tous les champs obligatoires sont remplis et réessayez.
 loading_label: Chargement...
 search_label_text: Saisissez votre terme de recherche...
 search_placeholder_text: Saisissez votre terme de recherche...
@@ -62,7 +62,7 @@ stats_tags: Étiquettes
 stats_last_updated: Dernière mise à jour
 stats_overview: Aperçu
 stats_content_breakdown: Répartition du contenu
-theme_toggle: Changer de thème
+theme_toggle: Basculer le thème
 dark_mode: Mode sombre
 light_mode: Mode clair
 view_source: Voir la source
@@ -94,6 +94,10 @@ edit_on_github: Modifier sur GitHub
 lang_toggle_label: Langue
 lang_toggle_aria: Changer de langue
 lang_not_available: Pas encore traduit
+lang_machine_translated: auto
+lang_machine_translated_title: Traduction générée automatiquement
+lang_untranslated_note: Les langues marquées ne sont pas encore traduites — ces liens
+  ouvrent la version originale.
 machine_translation_notice: Cette page a été traduite automatiquement à partir de
   l'original en anglais.
 machine_translation_view_source: Voir l'original

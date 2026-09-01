@@ -23,12 +23,12 @@ permalink: "/fr/docs/features/skip-to-content/"
 translation_of: pages/_docs/features/skip-to-content.md
 translation_source_url: "/docs/features/skip-to-content/"
 machine_translated: true
-translated_from_sha: 4389fc104c05
+translated_from_sha: 10f5ccd2de04
 ---
 
 # Lien d'accessibilité « Aller au contenu »
 
-Le thème Zer0-Mistakes inclut un lien d'évitement conforme au niveau AA de la norme WCAG 2.1 qui permet aux utilisateurs du clavier de contourner la navigation.
+Le thème Zer0-Mistakes intègre un lien d'évitement conforme au niveau AA de la norme WCAG 2.1, permettant aux utilisateurs du clavier de contourner la navigation.
 
 ## Vue d'ensemble
 
@@ -36,22 +36,22 @@ Le lien « Aller au contenu » :
 
 - **Masqué visuellement** : visible uniquement lors du focus clavier
 - **Premier élément focalisable** : apparaît dès l'appui sur Tab
-- **Navigation directe** : saute directement à la zone de contenu principal
-- **Conforme WCAG** : respecte les standards d'accessibilité
+- **Navigation directe** : mène directement à la zone de contenu principal
+- **Conforme WCAG** : respecte les normes d'accessibilité
 
 ## Fonctionnement
 
 ### Parcours utilisateur
 
 1. L'utilisateur arrive sur la page
-2. Il appuie sur la touche `Tab`
+2. Appuie sur la touche `Tab`
 3. Le lien « Aller au contenu principal » devient visible
 4. L'utilisateur appuie sur `Enter`
 5. Le focus se déplace vers le contenu principal
 
 ### Implémentation
 
-Le lien est le premier élément focalisable dans `_includes/core/header.html`, et sa cible est un unique conteneur `#main-content` commun à tout le site dans `_layouts/root.html`. Le thème construit le lien entièrement à partir des classes utilitaires de Bootstrap 5 — `visually-hidden-focusable` le maintient masqué jusqu'à ce qu'il reçoive le focus clavier :
+Le lien est le premier élément focalisable de `_includes/core/header.html`, et sa cible est un unique conteneur `#main-content` à l'échelle du site, situé dans `_layouts/root.html`. Le thème construit le lien entièrement à partir des classes utilitaires de Bootstrap 5 — `visually-hidden-focusable` le maintient masqué jusqu'à ce qu'il reçoive le focus clavier :
 
 ```html
 <!-- _includes/core/header.html -->
@@ -67,13 +67,13 @@ Le lien est le premier élément focalisable dans `_includes/core/header.html`, 
 </main>
 ```
 
-`tabindex="-1"` est obligatoire : `<main>` n'est pas focalisable nativement, et Safari/WebKit se contente de faire défiler la page lors d'un saut d'ancre vers un conteneur non focalisable — le focus clavier ne bouge pas, si bien que le `Tab` suivant ramène l'utilisateur à la navigation qu'il venait d'éviter. La valeur `-1` exclut le conteneur de l'ordre de tabulation séquentiel tout en permettant au lien d'y déplacer le focus. Le thème supprime l'anneau de focus sur le conteneur dans `_sass/utilities/_focus.scss` (`#main-content:focus { outline: none; }`) ; les éléments *à l'intérieur* du contenu conservent leurs propres indicateurs.
+`tabindex="-1"` est requis : `<main>` n'est pas focalisable nativement, et Safari/WebKit ne défile lors d'un saut de fragment vers un conteneur non focalisable que si — le focus clavier ne se déplace jamais, de sorte que le `Tab` suivant ramène l'utilisateur vers la navigation qu'il vient de contourner. `-1` maintient le conteneur hors de l'ordre séquentiel `Tab` tout en permettant au lien d'y déplacer le focus. Le thème supprime l'anneau de focus qui en résulte sur le conteneur dans `_sass/utilities/_focus.scss` (`#main-content:focus { outline: none; }`) ; les éléments *à l'intérieur* du contenu conservent leurs propres indicateurs.
 
-## Style
+## Mise en forme
 
-### Utilitaire Bootstrap (par défaut)
+### Utilitaire Bootstrap (par défaut, fourni)
 
-Le lien du thème s'appuie sur la classe `visually-hidden-focusable` de Bootstrap ainsi que sur quelques utilitaires de positionnement et de bouton — aucun CSS personnalisé à maintenir :
+Le lien du thème repose sur la classe `visually-hidden-focusable` de Bootstrap ainsi que sur quelques utilitaires de positionnement et de bouton — aucun CSS personnalisé à maintenir :
 
 ```html
 <a href="#main-content" class="visually-hidden-focusable position-absolute top-0 start-0 z-3 m-3 btn btn-primary">
@@ -83,14 +83,14 @@ Le lien du thème s'appuie sur la classe `visually-hidden-focusable` de Bootstra
 
 La classe `visually-hidden-focusable` :
 
-- Masque visuellement l'élément jusqu'à ce qu'il reçoive le focus
-- Le garde accessible aux lecteurs d'écran en permanence
+- Masque l'élément visuellement jusqu'à ce qu'il reçoive le focus
+- Le maintient accessible aux lecteurs d'écran en permanence
 - Le révèle lors du focus clavier (les utilitaires `position-absolute top-0 start-0 m-3`
-  l'épinglent dans le coin supérieur gauche lorsqu'il est affiché)
+  l'épinglent dans le coin supérieur gauche lorsqu'il s'affiche)
 
-### Alternative SCSS basée sur les tokens
+### Alternative SCSS à base de tokens
 
-Le thème fournit également un utilitaire `.zer0-skip-link` dans `_sass/utilities/_focus.scss` qui fait apparaître le lien depuis le hors-champ lors du focus. Il lit les tokens de design du thème (`--zer0-color-primary`, `--zer0-layer-skip-link`, les tokens de mouvement) afin de rester synchronisé avec le reste du thème. Appliquez-le à la place des utilitaires Bootstrap si vous préférez une révélation basée sur une transformation :
+Le thème fournit également un utilitaire `.zer0-skip-link` dans `_sass/utilities/_focus.scss` qui fait glisser le lien depuis l'extérieur de l'écran lors du focus. Il s'appuie sur les tokens de design du thème (`--zer0-color-primary`, `--zer0-layer-skip-link`, les tokens de mouvement) afin de rester synchronisé avec le reste du thème. Appliquez-le à la place des utilitaires Bootstrap si vous préférez une révélation par transformation :
 
 ```scss
 .zer0-skip-link {
@@ -117,9 +117,9 @@ Le thème fournit également un utilitaire `.zer0-skip-link` dans `_sass/utiliti
 ## Personnalisation
 
 > [!NOTE]
-> Pour personnaliser le lien fourni, modifiez `_includes/core/header.html`. Les exemples CSS
-> ci-dessous ciblent l'utilitaire SCSS `.zer0-skip-link` ; ajoutez la classe
-> `zer0-skip-link` au lien (et retirez les utilitaires Bootstrap) si vous
+> Pour personnaliser le lien fourni, modifiez `_includes/core/header.html`. Les exemples
+> CSS ci-dessous ciblent l'utilitaire SCSS `.zer0-skip-link` ; ajoutez la
+> classe `zer0-skip-link` au lien (et retirez les utilitaires Bootstrap) si vous
 > souhaitez remplacer son apparence avec les extraits qui suivent.
 
 ### Texte du lien
@@ -131,7 +131,7 @@ Le thème fournit également un utilitaire `.zer0-skip-link` dans `_sass/utiliti
 </a>
 ```
 
-### Style
+### Mise en forme
 
 ```css
 /* Custom styling for the .zer0-skip-link helper */
@@ -159,9 +159,9 @@ Le thème fournit également un utilitaire `.zer0-skip-link` dans `_sass/utiliti
 }
 ```
 
-## Liens d'évitement multiples
+## Plusieurs liens d'évitement
 
-Le thème fournit un unique lien d'évitement qui cible `#main-content`. Pour les pages comportant plusieurs points de repère majeurs, vous pouvez ajouter d'autres liens, en faisant pointer chaque `href` vers un ID présent dans votre balisage. L'en-tête est rendu avec `id="navbar"`, donc un lien « aller à la navigation » ciblerait `#navbar` :
+Le thème fournit un unique lien d'évitement qui cible `#main-content`. Pour les pages comportant plusieurs points de repère majeurs, vous pouvez ajouter d'autres liens, en pointant chaque `href` vers un ID existant dans votre balisage. L'en-tête est rendu avec `id="navbar"` ; ainsi, un lien « aller à la navigation » ciblerait `#navbar` :
 
 ```html
 <div class="skip-links">
@@ -180,7 +180,7 @@ Le thème fournit un unique lien d'évitement qui cible `#main-content`. Pour le
 
 | Critère | Statut |
 |-----------|--------|
-| 2.4.1 Contournement de blocs (A) | ✅ |
+| 2.4.1 Contourner des blocs (A) | ✅ |
 | 2.1.1 Clavier (A) | ✅ |
 | 2.4.3 Ordre de focus (A) | ✅ |
 | 2.4.7 Visibilité du focus (AA) | ✅ |
@@ -189,7 +189,7 @@ Le thème fournit un unique lien d'évitement qui cible `#main-content`. Pour le
 
 1. **Premier lien** : le lien d'évitement doit être le premier élément focalisable
 2. **Texte clair** : utilisez un texte de lien descriptif
-3. **Visible au focus** : doit devenir visible lorsqu'il est focalisé
+3. **Visible lors du focus** : doit devenir visible lorsqu'il est focalisé
 4. **Cible valide** : l'élément cible doit exister et être focalisable
 
 ## Tests
@@ -204,7 +204,7 @@ Le thème fournit un unique lien d'évitement qui cible `#main-content`. Pour le
 
 ### Tests automatisés
 
-Sélectionnez le lien par son `href`, et non par une classe. L'élément livré porte des utilitaires Bootstrap (`visually-hidden-focusable position-absolute …`) et aucune classe `.skip-link` : un sélecteur de classe ne correspond donc à rien et le test réussit à vide ou échoue de manière trompeuse.
+Sélectionnez le lien par son `href`, et non par une classe. L'élément fourni porte des utilitaires Bootstrap (`visually-hidden-focusable position-absolute …`) et aucune classe `.skip-link`, de sorte qu'un sélecteur de classe ne correspond à rien et que le test réussit sans rien vérifier ou échoue de manière trompeuse.
 
 ```javascript
 // Accessibility test
@@ -221,9 +221,9 @@ describe('Skip Link', () => {
 });
 ```
 
-Le test de non-régression du thème pour ce comportement utilise Playwright, et non Cypress — voir `activating the skip link moves keyboard focus into main content` dans `test/visual/core/accessibility.spec.js`. Il active le lien et vérifie que le focus s'est réellement déplacé, l'assertion qui échoue lorsque `tabindex="-1"` est absent.
+Le test de régression du thème pour ce comportement utilise Playwright, et non Cypress — voir `activating the skip link moves keyboard focus into main content` dans `test/visual/core/accessibility.spec.js`. Il active le lien et vérifie que le focus s'est réellement déplacé, une assertion qui échoue lorsque `tabindex="-1"` est manquant.
 
-### Tests avec lecteur d'écran
+### Test avec un lecteur d'écran
 
 Testez avec :
 
@@ -231,16 +231,16 @@ Testez avec :
 - VoiceOver (macOS)
 - JAWS (Windows)
 
-Le lien devrait annoncer :
-> "Aller au contenu principal, lien"
+Le lien doit annoncer :
+> « Aller au contenu principal, lien »
 
 ## Dépannage
 
 ### Le lien n'apparaît pas
 
 1. Vérifiez que l'élément existe dans le DOM
-2. Vérifiez que le CSS ne le masque pas
-3. Assurez-vous que le JavaScript n'interfère pas
+2. Assurez-vous que le CSS ne le masque pas
+3. Vérifiez que le JavaScript n'interfère pas
 
 ### Le lien ne fonctionne pas
 
@@ -251,13 +251,13 @@ Le lien devrait annoncer :
 ### Le focus ne se déplace pas
 
 1. Ajoutez `tabindex="-1"` à la cible
-2. Vérifiez la présence de pièges à focus
-3. Vérifiez l'absence de `e.preventDefault()` sur les liens
+2. Vérifiez l'absence de pièges à focus
+3. Vérifiez qu'il n'y a pas de `e.preventDefault()` sur les liens
 
 ## Ressources associées
 
 - [Navigation au clavier](/docs/features/keyboard-navigation/)
-- [Navigation de la barre latérale](/docs/features/sidebar-navigation/)
+- [Navigation dans la barre latérale](/docs/features/sidebar-navigation/)
 - [Normes d'accessibilité](https://www.w3.org/WAI/WCAG21/quickref/)
 
 ## Voir aussi

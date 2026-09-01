@@ -627,6 +627,15 @@ pages:
       sha: 42ea6fdec8a04f27516f5a49f93c53671bf98ea06058945b39495657863a27d6
       translated_at: '2026-08-05T03:25:32Z'
       prompt_version: 1
+  "/docs/features/cookbook-collection/":
+    source: pages/_docs/features/cookbook-collection.md
+    sha: c36a4d6c97f36473e4742a0461ae17bc40978bf85f924c78b7f43b0c38d6bffa
+    fr:
+      url: "/fr/docs/features/cookbook-collection/"
+      path: fr/docs/features/cookbook-collection.md
+      sha: c36a4d6c97f36473e4742a0461ae17bc40978bf85f924c78b7f43b0c38d6bffa
+      translated_at: '2026-09-01T21:28:41Z'
+      prompt_version: 1
   "/docs/features/cookie-consent/":
     source: pages/_docs/features/cookie-consent.md
     sha: a7054fb3fcc62ff925ae9d257d441afac2b49123608801bea9caa43bf0edcb07
@@ -782,12 +791,12 @@ pages:
       prompt_version: 1
   "/docs/features/skip-to-content/":
     source: pages/_docs/features/skip-to-content.md
-    sha: 4389fc104c0562973ff51ff65061fb637fa1e4635abbeccf3e028eea6e7fda29
+    sha: 10f5ccd2de04d743b6b2fea50d6f0a72b7e958c1e081c47ecf15ce85abd0602b
     fr:
       url: "/fr/docs/features/skip-to-content/"
       path: fr/docs/features/skip-to-content.md
-      sha: 4389fc104c0562973ff51ff65061fb637fa1e4635abbeccf3e028eea6e7fda29
-      translated_at: '2026-08-05T03:33:58Z'
+      sha: 10f5ccd2de04d743b6b2fea50d6f0a72b7e958c1e081c47ecf15ce85abd0602b
+      translated_at: '2026-09-01T21:29:15Z'
       prompt_version: 1
   "/docs/features/smart-404/":
     source: pages/_docs/features/smart-404.md
@@ -1250,12 +1259,12 @@ pages:
       prompt_version: 1
   "/posts/2025/01/21/remote-work-revolution/":
     source: pages/_posts/world/2025-01-21-remote-work-revolution.md
-    sha: c1af2e3b7a1e5e980b0b8751ed1e03474b5f4f7c5b89493af803b5fadb76fe6c
+    sha: eca7d4a2c77752faba20fd092f86ad2c9748aaf2994332deaeb564583fdd61e1
     fr:
       url: "/fr/posts/2025/01/21/remote-work-revolution/"
       path: fr/posts/world/2025-01-21-remote-work-revolution.md
-      sha: c1af2e3b7a1e5e980b0b8751ed1e03474b5f4f7c5b89493af803b5fadb76fe6c
-      translated_at: '2026-07-23T17:07:41Z'
+      sha: eca7d4a2c77752faba20fd092f86ad2c9748aaf2994332deaeb564583fdd61e1
+      translated_at: '2026-09-01T21:27:46Z'
       prompt_version: 1
   "/posts/2025/01/22/git-workflow-best-practices/":
     source: pages/_posts/development/2025-01-22-git-workflow-best-practices.md
@@ -1455,6 +1464,15 @@ pages:
       sha: 74a066845c5f18d5e97f4ae523fc0cba8ded6a96a2b8c28d9ac874de4b4e5212
       translated_at: '2026-07-23T16:56:33Z'
       prompt_version: 1
+  "/posts/2026/08/15/jekyll-preview-server-from-an-old-pc/":
+    source: pages/_posts/tutorial/2026-08-15-jekyll-preview-server-from-an-old-pc.md
+    sha: 22764b20a0e99bce17af697918e95d38793649977d01833311f71a7714ad93ca
+    fr:
+      url: "/fr/posts/2026/08/15/jekyll-preview-server-from-an-old-pc/"
+      path: fr/posts/tutorial/2026-08-15-jekyll-preview-server-from-an-old-pc.md
+      sha: 22764b20a0e99bce17af697918e95d38793649977d01833311f71a7714ad93ca
+      translated_at: '2026-09-01T21:27:18Z'
+      prompt_version: 1
   "/quickstart/":
     source: pages/_quickstart/index.md
     sha: 2555308eac40feb9be440ee8287840ef6ed93fed5e8df08a135cecbc0479611b
@@ -1502,10 +1520,10 @@ pages:
       prompt_version: 1
 ui_text:
   fr:
-    sha: 2cda69b3cca654571ec73b2e2288f73dba60a7e90856ed790f8c92e6bbfea340
-    translated_at: '2026-08-15T02:30:48Z'
+    sha: 648882b32870f5d536540e4b6e61d925c3bf7e550b3a6dd471ab8166cc36b351
+    translated_at: '2026-09-01T21:29:35Z'
     prompt_version: 1
 source_lang: en
 languages:
 - fr
-updated_at: '2026-08-16T22:10:09Z'
+updated_at: '2026-09-01T21:29:35Z'
