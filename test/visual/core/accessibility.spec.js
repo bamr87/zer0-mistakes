@@ -248,6 +248,101 @@ test.describe('Accessibility — UI refresh smoke', { tag: '@critical' }, () => 
     await expect(page.locator('#main-content, main').first()).toBeAttached();
   });
 
+  // Regression: issue #278. The test above asserts the target *exists* but never
+  // activates the link, so it stayed green while the skip link did nothing in
+  // Safari. <main> is not natively focusable — without tabindex="-1" a fragment
+  // jump scrolls without moving keyboard focus, and the next Tab drops the user
+  // back into the header nav (WCAG 2.4.1 Bypass Blocks).
+  test('activating the skip link moves keyboard focus into main content', async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.desktop);
+    await waitForJekyll(page, UI_ROUTES.home);
+
+    const main = page.locator('#main-content');
+    await expect(main).toBeAttached();
+
+    // The attribute is the mechanism; assert it directly so a failure names the
+    // cause rather than only the symptom.
+    await expect(main).toHaveAttribute('tabindex', '-1');
+
+    const skip = page.locator('a[href="#main-content"].visually-hidden-focusable');
+    await skip.focus();
+    await skip.press('Enter');
+
+    // The symptom the user actually feels. Fails on an untabindexed <main>.
+    await expect(main).toBeFocused();
+
+    // …and the point of the skip link: the next Tab must leave the header chrome
+    // behind. Guarded, because a route whose content holds nothing focusable
+    // legitimately tabs on to the footer — that is not this bug.
+    const hasFocusableContent = await main.evaluate((m) =>
+      m.querySelectorAll('a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])')
+        .length > 0
+    );
+    if (hasFocusableContent) {
+      await page.keyboard.press('Tab');
+      const landedInMain = await page.evaluate(() => {
+        const el = document.activeElement;
+        const m = document.getElementById('main-content');
+        return !!(el && m && m.contains(el));
+      });
+      expect(landedInMain, 'the Tab after a skip must land inside #main-content').toBe(true);
+    }
+  });
+
+  test('skip-link target paints no focus ring, but content inside still does', async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.desktop);
+    await waitForJekyll(page, UI_ROUTES.home);
+
+    const main = page.locator('#main-content');
+    const skip = page.locator('a[href="#main-content"].visually-hidden-focusable');
+    await skip.focus();
+    await skip.press('Enter');
+    await expect(main).toBeFocused();
+
+    // The container is a layout wrapper, not an interactive control — a ring
+    // around the whole page body would be noise.
+    const container = await main.evaluate((m) => {
+      const s = getComputedStyle(m);
+      return { width: s.outlineWidth, style: s.outlineStyle };
+    });
+    expect(
+      container.style === 'none' || container.width === '0px',
+      `#main-content must not paint a focus ring (got ${JSON.stringify(container)})`
+    ).toBe(true);
+
+    // The suppression must not leak to descendants. Tab (real keyboard modality,
+    // so :focus-visible engages — a programmatic .focus() would not reliably
+    // match it) and assert whatever we land on still shows an indicator.
+    const hasFocusableContent = await main.evaluate((m) =>
+      m.querySelectorAll('a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])')
+        .length > 0
+    );
+    if (!hasFocusableContent) {
+      test.skip(true, 'No focusable element inside #main-content on this route');
+      return;
+    }
+
+    await page.keyboard.press('Tab');
+    const descendant = await page.evaluate(() => {
+      const el = document.activeElement;
+      const m = document.getElementById('main-content');
+      if (!el || !m || !m.contains(el)) return null;
+      const s = getComputedStyle(el);
+      return { width: s.outlineWidth, style: s.outlineStyle, shadow: s.boxShadow, tag: el.tagName };
+    });
+    if (!descendant) {
+      test.skip(true, 'Tab did not land inside #main-content on this route');
+      return;
+    }
+    const hasIndicator =
+      (descendant.style !== 'none' && descendant.width !== '0px') ||
+      (descendant.shadow && descendant.shadow !== 'none');
+    expect(
+      hasIndicator,
+      `focused ${descendant.tag} inside #main-content must keep an indicator (got ${JSON.stringify(descendant)})`
+    ).toBe(true);
+  });
+
   test('intro metadata row has aria-label when present', async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await gotoOrSkip(page, UI_ROUTES.quickstart);

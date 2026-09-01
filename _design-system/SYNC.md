@@ -61,9 +61,16 @@ Push **incrementally** — the changed files only, never a wholesale replace.
 
 Download the project handoff zip (or `get_file` the changed paths), copy the changed source files into `_design-system/`, then reconcile any token change into `_sass/tokens/` in the same PR so `scripts/design-system-check.rb` passes.
 
+### Markdown pulled here is rendered by Jekyll
+
+`_config.yml` force-includes `_design-system`, so every `.md` here becomes a live page — and Liquid runs over it before Markdown. Any `{% raw %}{{ … }}{% endraw %}` or `{% raw %}{% … %}{% endraw %}` the design project writes is therefore parsed as a template expression, not shown as text. JSX is the common casualty: `{% raw %}style={{ … }}{% endraw %}` is a Liquid syntax error, and the published page renders `<div style=>`.
+
+**On every pull, wrap code fences that contain braces in a Liquid `{% raw %}{% raw %}{% endraw %}` block.** `Skeleton.prompt.md` is the worked example. The Pages workflow fails on `Liquid Warning`, so an unwrapped fence blocks the merge rather than shipping a mangled page.
+
 ## Verifying
 
 ```bash
 ruby scripts/design-system-check.rb   # token parity + dangling-token audit
+ruby scripts/lint-liquid-raw.rb       # Liquid raw-block balance across rendered Markdown
 ./test/test_runner.sh --suites core   # includes the parity check
 ```

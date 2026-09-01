@@ -13,8 +13,14 @@
 // sticky issue. No tokens are spent here — this tier is pure Playwright.
 //
 // Usage:  BASE_URL=http://127.0.0.1:4000 node test/ui-audit/sweep.mjs
-// Exit code is always 0 unless the sweep itself crashes — findings are data,
-// not failures (the nightly/critical tiers are the pass/fail gates).
+//         UI_AUDIT_ROUTES=/,/docs/ node test/ui-audit/sweep.mjs   (subset)
+//
+// Findings are data, not failures — a page with axe violations still exits 0
+// (the nightly/critical tiers are the pass/fail gates). But a sweep that
+// captured NOTHING is a broken harness rather than a clean audit, and exits 1:
+// for six consecutive weeks every one of the 18 passes timed out, no screenshot
+// was written, and the workflow reported success each time (#321). "Exit 0
+// always" is what made total failure indistinguishable from a clean run.
 // =============================================================================
 
 import { chromium } from '@playwright/test';
@@ -28,7 +34,15 @@ const SCREEN_DIR = path.join(OUT_DIR, 'screens');
 
 // The critical user journeys. One representative per surface — the point is
 // breadth across what a visitor touches, not exhaustive route coverage.
-const ROUTES = ['/', '/quickstart/', '/docs/', '/features/', '/about/', '/news/'];
+// UI_AUDIT_ROUTES narrows the list so a harness check can prove the sweep can
+// capture at all without paying for the full 18-pass matrix (see
+// test/ui-audit/check-audit-serve.sh). CI never sets it.
+const DEFAULT_ROUTES = ['/', '/quickstart/', '/docs/', '/features/', '/about/', '/news/'];
+const ROUTES = (process.env.UI_AUDIT_ROUTES || '')
+  .split(',')
+  .map((r) => r.trim())
+  .filter(Boolean);
+if (ROUTES.length === 0) ROUTES.push(...DEFAULT_ROUTES);
 
 const VIEWPORTS = {
   mobile: { width: 375, height: 812 },
@@ -41,7 +55,15 @@ const slug = (s) => s.replace(/\W+/g, '-').replace(/^-|-$/g, '') || 'home';
 async function main() {
   await mkdir(SCREEN_DIR, { recursive: true });
   const browser = await chromium.launch();
-  const report = { base_url: BASE_URL, routes: [], broken_links: [] };
+  // `capture` is the harness's own health, kept separate from findings so a
+  // consumer can tell "the audit ran and found N things" from "the audit
+  // captured nothing" — the distinction the sticky issue lacked (#321).
+  const report = {
+    base_url: BASE_URL,
+    capture: { attempted: 0, captured: 0 },
+    routes: [],
+    broken_links: [],
+  };
   const seenLinks = new Set();
 
   // Discover one real article from the homepage so the sweep always includes
@@ -75,6 +97,7 @@ async function main() {
       });
 
       const entry = { route, viewport: vpName, status: null };
+      report.capture.attempted += 1;
       try {
         const resp = await page.goto(`${BASE_URL}${route}`, { waitUntil: 'load', timeout: 30000 });
         entry.status = resp ? resp.status() : null;
@@ -82,6 +105,7 @@ async function main() {
 
         entry.screenshot = path.join('screens', `${slug(route)}-${vpName}.png`);
         await page.screenshot({ path: path.join(OUT_DIR, entry.screenshot), fullPage: true });
+        report.capture.captured += 1;
 
         entry.overflow = await page.evaluate(() => {
           const icb = document.documentElement.clientWidth;
@@ -155,6 +179,18 @@ async function main() {
   }
   lines.push('', `Broken internal links: ${report.broken_links.length}`);
   for (const b of report.broken_links) lines.push(`- \`${b.href}\` → ${b.status}`);
+
+  if (report.capture.captured === 0) {
+    lines.splice(
+      1,
+      0,
+      '',
+      '> [!CAUTION]',
+      `> **Captured 0 of ${report.capture.attempted} passes — these are not UI findings.**`,
+      '> Every entry below is a capture failure. The harness is broken; the',
+      '> results are void until it is green again.'
+    );
+  }
   await writeFile(path.join(OUT_DIR, 'report.md'), lines.join('\n') + '\n');
 
   const flagged =
@@ -162,7 +198,21 @@ async function main() {
     report.routes.filter(
       (r) => r.error || r.overflow?.page_wider_than_viewport || r.axe_violations?.length || r.console_errors?.length
     ).length;
-  console.log(`Sweep complete: ${report.routes.length} route×viewport passes, ${flagged} flagged entries.`);
+  console.log(
+    `Sweep complete: ${report.routes.length} route×viewport passes, ` +
+      `${report.capture.captured} captured, ${flagged} flagged entries.`
+  );
+
+  // The capture floor. Findings are data; capturing nothing is a fault. Without
+  // this the caller cannot tell "the UI is clean" from "the browser never
+  // reached the site", which is exactly how #321 stayed green for six weeks.
+  if (report.capture.attempted > 0 && report.capture.captured === 0) {
+    console.error(
+      `\nUI audit harness failure: 0 of ${report.capture.attempted} passes captured a screenshot.\n` +
+        `Base URL was ${BASE_URL}. This is a harness fault, not a UI finding.`
+    );
+    process.exitCode = 1;
+  }
 }
 
 main().catch((e) => {
