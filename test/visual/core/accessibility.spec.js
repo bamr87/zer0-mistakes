@@ -489,6 +489,85 @@ test.describe('Accessibility — dialog headings do not skip levels', () => {
   }
 });
 
+// Regression: #320. The footer rendered its two in-page dialog triggers —
+// "Info" (offcanvas #info-section, emitted TWICE, once per branch of the
+// powered-by loop) and "Cookie Preferences" (modal #cookieSettingsModal) — as
+// <a href="#" data-bs-toggle>. Assistive tech announced them as links (WCAG
+// 4.1.2 Name, Role, Value), and with Bootstrap's JS unavailable the browser
+// followed href="#" and jumped the page to the top.
+//
+// NOTE ON METHOD: this cannot be asserted through AxeBuilder. An <a> that has
+// an href is a well-formed link as far as axe-core is concerned — no rule in
+// wcag2a/wcag2aa (or outside it) fires on "anchor used as a button". An
+// axe-based assertion here passes on the broken markup AND on the fixed
+// markup, so it proves nothing. The element identity has to be checked
+// directly, which is what this block does.
+//
+// The back-to-top control (footer.html #backToTopBtn) is deliberately still an
+// <a href="#">: scrolling to the top IS its purpose, so the href is the
+// behaviour rather than a side effect. It carries no data-bs-toggle, so the
+// selector below excludes it.
+test.describe('Accessibility — footer in-page toggles are buttons', { tag: '@critical' }, () => {
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.desktop);
+    // The consent banner (z-index 1095) sits above the offcanvas and covers
+    // the footer, so dismiss it the way a returning visitor would.
+    await dismissCookieConsent(page);
+    await waitForJekyll(page, UI_ROUTES.home);
+    // Unrelated fixed chrome: back-to-top.js un-hides #backToTopBtn once the
+    // page is scrolled down, and it is position:fixed bottom-right — exactly
+    // where the right-aligned policy links land once Playwright scrolls the
+    // footer into view. Take it out of the hit test so these assertions are
+    // about the footer controls, not about FAB stacking (which
+    // features/fab-stack.spec.js owns).
+    await page.addStyleTag({ content: '#backToTopBtn { display: none !important; }' });
+  });
+
+  test('no footer control opens a dialog through <a href="#">', async ({ page }) => {
+    const offenders = await page.$$eval('footer a[href="#"][data-bs-toggle]', (els) =>
+      els.map((el) => el.outerHTML.trim().split('\n')[0])
+    );
+    expect(
+      offenders,
+      'A control that opens in-page UI navigates nowhere — it must be a ' +
+        '<button type="button">, not <a href="#"> (WCAG 4.1.2).'
+    ).toEqual([]);
+  });
+
+  test('the Info and Cookie Preferences triggers are <button type="button">', async ({ page }) => {
+    // Exactly one of each: footer.html emits the Info control in both branches
+    // of the powered-by loop, but only one branch renders for a given config.
+    const info = page.locator('footer button[data-bs-target="#info-section"]');
+    const cookies = page.locator('footer button[data-bs-target="#cookieSettingsModal"]');
+
+    await expect(info, 'footer Info trigger should be a <button>').toHaveCount(1);
+    await expect(cookies, 'footer Cookie Preferences trigger should be a <button>').toHaveCount(1);
+
+    // type="button" matters: inside a <form> a typeless button submits.
+    await expect(info).toHaveAttribute('type', 'button');
+    await expect(cookies).toHaveAttribute('type', 'button');
+  });
+
+  // Swapping the element is exactly the change that could break the toggle, so
+  // assert the controls still do their job rather than only that they exist.
+  for (const control of [
+    { name: 'Info', trigger: 'footer button[data-bs-target="#info-section"]', dialog: '#info-section' },
+    {
+      name: 'Cookie Preferences',
+      trigger: 'footer button[data-bs-target="#cookieSettingsModal"]',
+      dialog: '#cookieSettingsModal',
+    },
+  ]) {
+    test(`clicking ${control.name} still opens ${control.dialog}`, async ({ page }) => {
+      const dialog = page.locator(control.dialog);
+      await expect(dialog).not.toBeVisible();
+
+      await page.locator(control.trigger).click();
+      await expect(dialog).toBeVisible();
+    });
+  }
+});
+
 /**
  * Open a Bootstrap modal or offcanvas via its JS API and wait until shown.
  * Triggers vary per dialog (some live in the consent banner or a collapsed

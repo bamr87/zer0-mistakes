@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/footer-button-semantics/ -->
+  (evidence: [`test/visual/evidence/footer-button-semantics/`](test/visual/evidence/footer-button-semantics/README.md))

@@ -101,6 +101,10 @@ async function bandShot(page, height = 132) {
  * @param {Array<{key,label,apply}>} [spec.configs] DOM variations rendered (after) at configWidth
  * @param {number} [spec.configWidth] width for the config montage (default 1100)
  * @param {string} [spec.title]       human title for the montages
+ * @param {Function} [spec.initScript] runs in every page BEFORE navigation
+ *   (page.addInitScript). Needed for below-the-fold chrome: the cookie-consent
+ *   banner is position:fixed at the bottom, so evidence for the footer must
+ *   pre-seed consent or the banner is baked into every crop.
  * @returns {Promise<object>} metrics
  */
 export async function generateEvidence(spec) {
@@ -124,6 +128,7 @@ export async function generateEvidence(spec) {
   const bandRows = [];
   for (const w of widths) {
     const page = await browser.newPage();
+    if (spec.initScript) await page.addInitScript(spec.initScript);
     await page.setViewportSize({ width: w, height: 760 });
     await page.goto(base + route, { waitUntil: 'load' });
     await page.waitForTimeout(150);
@@ -139,6 +144,7 @@ export async function generateEvidence(spec) {
     if (bandWidths.includes(w) && spec.unfixCss) {
       const beforeBand = await bandShot(page); // still in BEFORE
       const fresh = await browser.newPage();
+      if (spec.initScript) await fresh.addInitScript(spec.initScript);
       await fresh.setViewportSize({ width: w, height: 760 });
       await fresh.goto(base + route, { waitUntil: 'load' });
       await fresh.waitForTimeout(150);
@@ -160,6 +166,7 @@ export async function generateEvidence(spec) {
   const matrixRows = [];
   for (const w of widths) {
     const page = await browser.newPage();
+    if (spec.initScript) await page.addInitScript(spec.initScript);
     await page.setViewportSize({ width: w, height: 700 });
     await page.goto(base + route, { waitUntil: 'load' });
     await page.waitForTimeout(150);
@@ -179,6 +186,7 @@ export async function generateEvidence(spec) {
     const rows = [];
     for (const cfg of spec.configs) {
       const page = await browser.newPage();
+      if (spec.initScript) await page.addInitScript(spec.initScript);
       await page.setViewportSize({ width: cw, height: 600 });
       await page.goto(base + route, { waitUntil: 'load' });
       await page.waitForTimeout(150);

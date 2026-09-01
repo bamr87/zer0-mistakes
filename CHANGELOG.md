@@ -162,6 +162,33 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **Footer "Info" and "Cookie Preferences" are buttons, not links (#320)** —
+  both controls open in-page UI (the `#info-section` offcanvas and the
+  `#cookieSettingsModal` modal) but shipped as `<a href="#" data-bs-toggle>`, so
+  assistive tech announced them as links — WCAG 4.1.2 Name, Role, Value — and
+  whenever Bootstrap's toggle did not fire the browser followed `href="#"` and
+  jumped the page to the top. All three occurrences are now
+  `<button type="button">`: the Info trigger is emitted **twice** by
+  `_includes/core/footer.html`, once in each branch of the powered-by loop, and
+  a site with no `powered_by` credits configured renders the branch a
+  single-site fix would have missed. `.powered-by-link` is now element-agnostic
+  (it already styled `<a>`, `<span>` and now `<button>`) and carries the
+  `<button>` reset Bootstrap Reboot does not supply — `appearance`,
+  `background`, `border`, `colour` — with the new `.footer-inline-button` doing
+  the same for a button in running text, so the swap is visually inert. The
+  back-to-top control keeps its `<a href="#">`: scrolling to the top is its
+  actual behaviour, not a side effect. Regression coverage: "Accessibility —
+  footer in-page toggles are buttons" in
+  `test/visual/core/accessibility.spec.js`, which asserts the element identity
+  directly — axe-core has no rule that fires on an anchor used as a button, so
+  an axe-based assertion passes on the broken markup too. "powered-by credits
+  are real links" in `test/visual/core/layout-chrome.spec.js` already banned
+  `href="#"` but sampled only the first five links, and `site.powered_by` pushed
+  the offending Info anchor past index 4; it now checks every credit link.
+  (evidence:
+  [`test/visual/evidence/footer-button-semantics/`](test/visual/evidence/footer-button-semantics/README.md)
+  — shipped vs. reset-stripped at 1280px, footer overflow 0px at 375/768/1280)
+
 - **`<html class="no-js">` is upgraded to `js` again (#319)** — `_layouts/root.html`
   shipped the standard progressive-enhancement hook but nothing ever swapped
   it: the string `no-js` occurred in exactly one file in the repository, and in
