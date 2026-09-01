@@ -126,6 +126,31 @@ A single runner script invokes the appropriate Playwright project (tier). All ti
 
 Tagging: add `{ tag: '@critical' }` to a `test()` or `test.describe()` to put it in the PR gate. Keep the gate honest — only behaviors a *visitor* would notice belong there; everything else is covered nightly. A weekly agentic UI/UX audit (`ui-audit.yml` + `test/ui-audit/sweep.mjs` + `.claude/agents/ui-auditor.md`) additionally reviews screenshots/axe/console output of the critical routes and files findings as `source:ui-audit` issues.
 
+### 🔍 UI/UX audit sweep (`test/ui-audit/`)
+
+> [!IMPORTANT]
+> **The audit's Jekyll server must be started the same way `test_playwright.sh:69-74` starts it — backgrounded with `&`, never `--detach`.**
+>
+> `--detach` prints `Auto-regeneration: disabled when running server detached`. Jekyll's LiveReload reactor rides that watch thread, so with `--detach` the port in `_config_dev.yml` (`livereload_port: 35729`) is *bound but never answers* — while Jekyll still injects `<script src=".../livereload.js">` into every page. A subresource whose connection is accepted and never answered blocks the document's `load` event, so every `page.goto(..., waitUntil: 'load')` times out.
+>
+> A `curl -sf` readiness gate **cannot** catch this: it fetches the HTML and never requests a subresource. That is why the audit passed its readiness check and still captured nothing for six consecutive weeks while reporting success ([#321](https://github.com/bamr87/zer0-mistakes/issues/321)).
+
+| Piece | What it does |
+|-------|--------------|
+| `sweep.mjs` | Walks 6 routes × 3 viewports; writes `output/report.json`, `output/report.md`, `output/screens/*.png`. Findings exit **0** (they are data); capturing **nothing** exits **1** (that is a broken harness, not a clean audit). `report.capture` = `{attempted, captured}` is the harness's own health, kept separate from findings. |
+| `check-audit-serve.sh` | Regression check for the serve invocation: serves as `ui-audit.yml` does, sweeps, asserts ≥1 screenshot. Run `UI_AUDIT_SERVE_DETACH=1 ./test/ui-audit/check-audit-serve.sh` to watch it go red on the old invocation. |
+
+```bash
+# Full sweep against a site you're already serving
+BASE_URL=http://127.0.0.1:4000 node test/ui-audit/sweep.mjs
+
+# Narrow it (UI_AUDIT_ROUTES is for harness checks; CI never sets it)
+UI_AUDIT_ROUTES=/,/docs/ BASE_URL=http://127.0.0.1:4000 node test/ui-audit/sweep.mjs
+
+# The serve-invocation regression check (skips cleanly without Ruby/Bundler)
+./test/ui-audit/check-audit-serve.sh
+```
+
 **Prerequisites:** Node.js 18+, Playwright (auto-installed by the runner)
 
 ```bash

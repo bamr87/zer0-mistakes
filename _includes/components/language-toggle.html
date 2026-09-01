@@ -4,9 +4,10 @@
   Path:        _includes/components/language-toggle.html
   Purpose:     Switches between the English original and its machine-generated
                translations (scripts/translate.rb). Shows the source language
-               plus every configured target language; targets without a
-               generated translation for the current page render as disabled
-               entries.
+               plus every configured target language. Every entry is a live
+               link: a target without a generated translation for the current
+               page falls back to the source page and is explained by one
+               footnote (it used to render as a disabled entry — see T-038).
   Params:      variant (string, optional, default "navbar")
                  - "navbar" — compact dropdown for the header utility cluster
                  - "panel"  — self-contained "Language" section for the
@@ -26,6 +27,31 @@
                The theme ships the "panel" variant (the navbar is reserved for
                main navigation); "navbar" stays for consumers that prefer the
                header dropdown.
+
+               MENU CONTRACT (T-038 / #406) — shared by both variants:
+                 * No DISABLED rows. A target language without a generated
+                   translation is still a link; it goes to the source-language
+                   page and still records the preference in zer0-lang, so the
+                   menu never contains a dead end.
+                 * The current language is marked with a check icon and a
+                   subtle tint — NOT Bootstrap's `.active` primary fill, which
+                   read as a selected nav item rather than "you are here".
+                 * Machine-generated translations carry a small "auto" chip.
+                   The source language never does (a human wrote it), and
+                   neither do untranslated rows (nothing was generated).
+                 * The per-row "(Not yet translated)" text is replaced by ONE
+                   footnote under a divider, referenced from each untranslated
+                   row via aria-describedby. Per-row text was the single
+                   biggest contributor to menu width.
+               Trigger changes (icon-only, no caret) apply to the navbar
+               variant only — the panel has an <h6> heading, not a button.
+
+               New ui keys (lang_machine_translated, lang_machine_translated_title,
+               lang_untranslated_note) live in _data/ui-text.yml `en`. core/i18n.html
+               REPLACES the whole `ui` map on a translated page rather than merging
+               it, so until scripts/translate.rb regenerates _data/i18n/<lang>.yml
+               these keys are absent there — every use below therefore carries a
+               literal `| default:` fallback. Do not remove them.
 {%- endcomment -%}
 {%- assign _lt_langs = site.translation.languages -%}
 {%- if site.translation.enabled and _lt_langs and _lt_langs.size > 0 -%}
@@ -41,6 +67,31 @@
 {%- assign _lt_entry = site.data.i18n.manifest.pages[_lt_src_url] -%}
 {%- assign _lt_names = site.data.i18n.languages -%}
 {%- assign _lt_source_name = _lt_names[_lt_source].native | default: _lt_source -%}
+{%- comment -%}
+  Display name of the language being read, for the trigger's title/aria — the
+  icon-only button has no visible text, so the accessible name has to carry it.
+{%- endcomment -%}
+{%- if _lt_current == _lt_source -%}
+  {%- assign _lt_current_name = _lt_source_name -%}
+{%- else -%}
+  {%- assign _lt_current_name = _lt_names[_lt_current].native | default: _lt_current -%}
+{%- endif -%}
+{%- comment -%}
+  Does ANY target language lack a translation of this page? Drives whether the
+  footnote + divider render at all — an all-translated menu shows neither.
+  A target we are currently reading is by definition translated.
+{%- endcomment -%}
+{%- assign _lt_untranslated = 0 -%}
+{%- for _lt_l in _lt_langs -%}
+  {%- unless _lt_l == _lt_current or _lt_entry[_lt_l] -%}
+    {%- assign _lt_untranslated = _lt_untranslated | plus: 1 -%}
+  {%- endunless -%}
+{%- endfor -%}
+{%- assign _lt_note_id = 'zer0-lang-untranslated-note' -%}
+{%- assign _lt_auto_label = ui.lang_machine_translated | default: 'auto' -%}
+{%- assign _lt_auto_title = ui.lang_machine_translated_title | default: 'Machine-generated translation' -%}
+{%- assign _lt_note_text = ui.lang_untranslated_note | default: 'Marked languages are not yet translated — those links open the original.' -%}
+{%- assign _lt_fallback_url = _lt_src_url | default: '/' | relative_url -%}
 {%- if _lt_variant == 'panel' -%}
 <div class="mb-4 nav-lang-panel" id="zer0-lang-toggle">
     <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
@@ -48,13 +99,13 @@
     </h6>
     <div class="list-group nav-lang-options" role="group" aria-label="{{ ui.lang_toggle_aria | default: 'Change language' }}">
         {%- if _lt_current == _lt_source %}
-        <span class="list-group-item list-group-item-action active" aria-current="true">
+        <span class="list-group-item nav-lang-item is-current" aria-current="true">
             <span class="nav-lang-code">{{ _lt_source | slice: 0, 2 | upcase }}</span>
             <span class="nav-lang-name">{{ _lt_source_name }}</span>
-            <i class="bi bi-check2 ms-auto" aria-hidden="true"></i>
+            <i class="bi bi-check2 nav-lang-check" aria-hidden="true"></i>
         </span>
         {%- else %}
-        <a class="list-group-item list-group-item-action" data-lang="{{ _lt_source }}" hreflang="{{ _lt_source }}" href="{{ _lt_src_url | default: '/' | relative_url }}">
+        <a class="list-group-item list-group-item-action nav-lang-item" data-lang="{{ _lt_source }}" hreflang="{{ _lt_source }}" href="{{ _lt_fallback_url }}">
             <span class="nav-lang-code">{{ _lt_source | slice: 0, 2 | upcase }}</span>
             <span class="nav-lang-name">{{ _lt_source_name }}</span>
         </a>
@@ -63,46 +114,70 @@
         {%- assign _lt_name = _lt_names[_lt_lang].native | default: _lt_lang -%}
         {%- assign _lt_t = _lt_entry[_lt_lang] %}
         {%- if _lt_current == _lt_lang %}
-        <span class="list-group-item list-group-item-action active" aria-current="true">
+        <span class="list-group-item nav-lang-item is-current" aria-current="true">
             <span class="nav-lang-code">{{ _lt_lang | slice: 0, 2 | upcase }}</span>
             <span class="nav-lang-name">{{ _lt_name }}</span>
-            <i class="bi bi-check2 ms-auto" aria-hidden="true"></i>
+            <span class="nav-lang-auto" title="{{ _lt_auto_title }}">{{ _lt_auto_label }}</span>
+            <i class="bi bi-check2 nav-lang-check" aria-hidden="true"></i>
         </span>
         {%- elsif _lt_t %}
-        <a class="list-group-item list-group-item-action" data-lang="{{ _lt_lang }}" hreflang="{{ _lt_lang }}" href="{{ _lt_t.url | relative_url }}">
+        <a class="list-group-item list-group-item-action nav-lang-item" data-lang="{{ _lt_lang }}" hreflang="{{ _lt_lang }}" href="{{ _lt_t.url | relative_url }}">
             <span class="nav-lang-code">{{ _lt_lang | slice: 0, 2 | upcase }}</span>
             <span class="nav-lang-name">{{ _lt_name }}</span>
+            <span class="nav-lang-auto" title="{{ _lt_auto_title }}">{{ _lt_auto_label }}</span>
         </a>
         {%- else %}
-        <span class="list-group-item list-group-item-action disabled" aria-disabled="true" title="{{ ui.lang_not_available | default: 'Not yet translated' }}">
+        {%- comment -%}
+          No translation yet — still a LINK, not a disabled row. It goes to the
+          source page and records the preference, so the reader lands on real
+          content instead of a dead entry. hreflang describes the DESTINATION,
+          which is the source language, not the one that was clicked.
+        {%- endcomment -%}
+        <a class="list-group-item list-group-item-action nav-lang-item is-untranslated" data-lang="{{ _lt_lang }}" hreflang="{{ _lt_source }}" href="{{ _lt_fallback_url }}" aria-describedby="{{ _lt_note_id }}-panel">
             <span class="nav-lang-code">{{ _lt_lang | slice: 0, 2 | upcase }}</span>
             <span class="nav-lang-name">{{ _lt_name }}</span>
-            <small class="text-body-secondary ms-auto">{{ ui.lang_not_available | default: 'Not yet translated' }}</small>
-        </span>
+            <span class="nav-lang-mark" aria-hidden="true">*</span>
+        </a>
         {%- endif %}
         {%- endfor %}
     </div>
+    {%- if _lt_untranslated > 0 %}
+    <hr class="nav-lang-divider">
+    <p class="nav-lang-note" id="{{ _lt_note_id }}-panel">{{ _lt_note_text }}</p>
+    {%- endif %}
 </div>
 {%- else -%}
 <div class="dropdown nav-lang-toggle" id="zer0-lang-toggle">
+    {%- comment -%}
+      Icon-only, square, and caret-free. `dropdown-toggle` is what draws the
+      Bootstrap caret; it is NOT what wires the dropdown — Bootstrap binds on
+      [data-bs-toggle="dropdown"], so dropping the class costs no behaviour.
+      The visible EN/FR label is gone at every width (it was already hidden
+      below xl), so title + aria-label are the only accessible name and both
+      name the language being read.
+    {%- endcomment -%}
     <button
-        class="btn nav-lang-button dropdown-toggle"
+        class="btn nav-lang-button"
         type="button"
         id="langToggleButton"
         data-bs-toggle="dropdown"
         aria-expanded="false"
         aria-label="{{ ui.lang_toggle_aria | default: 'Change language' }}"
-        title="{{ ui.lang_toggle_label | default: 'Language' }}"
+        title="{{ ui.lang_toggle_label | default: 'Language' }}: {{ _lt_current_name }}"
     >
         <i class="{{ site.default_icon }} bi-translate" aria-hidden="true"></i>
-        <span class="nav-link-text d-none d-xl-inline ms-1 text-uppercase">{{ _lt_current | slice: 0, 2 }}</span>
     </button>
-    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langToggleButton">
+    <ul class="dropdown-menu dropdown-menu-end nav-lang-menu" aria-labelledby="langToggleButton">
         <li>
             {%- if _lt_current == _lt_source %}
-            <span class="dropdown-item active" aria-current="true">{{ _lt_source_name }}</span>
+            <span class="dropdown-item nav-lang-item is-current" aria-current="true">
+                <span class="nav-lang-name">{{ _lt_source_name }}</span>
+                <i class="bi bi-check2 nav-lang-check" aria-hidden="true"></i>
+            </span>
             {%- else %}
-            <a class="dropdown-item" data-lang="{{ _lt_source }}" hreflang="{{ _lt_source }}" href="{{ _lt_src_url | default: '/' | relative_url }}">{{ _lt_source_name }}</a>
+            <a class="dropdown-item nav-lang-item" data-lang="{{ _lt_source }}" hreflang="{{ _lt_source }}" href="{{ _lt_fallback_url }}">
+                <span class="nav-lang-name">{{ _lt_source_name }}</span>
+            </a>
             {%- endif %}
         </li>
         {%- for _lt_lang in _lt_langs -%}
@@ -110,14 +185,29 @@
         {%- assign _lt_t = _lt_entry[_lt_lang] %}
         <li>
             {%- if _lt_current == _lt_lang %}
-            <span class="dropdown-item active" aria-current="true">{{ _lt_name }}</span>
+            <span class="dropdown-item nav-lang-item is-current" aria-current="true">
+                <span class="nav-lang-name">{{ _lt_name }}</span>
+                <span class="nav-lang-auto" title="{{ _lt_auto_title }}">{{ _lt_auto_label }}</span>
+                <i class="bi bi-check2 nav-lang-check" aria-hidden="true"></i>
+            </span>
             {%- elsif _lt_t %}
-            <a class="dropdown-item" data-lang="{{ _lt_lang }}" hreflang="{{ _lt_lang }}" href="{{ _lt_t.url | relative_url }}">{{ _lt_name }}</a>
+            <a class="dropdown-item nav-lang-item" data-lang="{{ _lt_lang }}" hreflang="{{ _lt_lang }}" href="{{ _lt_t.url | relative_url }}">
+                <span class="nav-lang-name">{{ _lt_name }}</span>
+                <span class="nav-lang-auto" title="{{ _lt_auto_title }}">{{ _lt_auto_label }}</span>
+            </a>
             {%- else %}
-            <span class="dropdown-item disabled" aria-disabled="true" title="{{ ui.lang_not_available | default: 'Not yet translated' }}">{{ _lt_name }} <small class="text-body-secondary">({{ ui.lang_not_available | default: 'Not yet translated' }})</small></span>
+            {%- comment -%} See the panel variant above — link, never a dead row. {%- endcomment -%}
+            <a class="dropdown-item nav-lang-item is-untranslated" data-lang="{{ _lt_lang }}" hreflang="{{ _lt_source }}" href="{{ _lt_fallback_url }}" aria-describedby="{{ _lt_note_id }}">
+                <span class="nav-lang-name">{{ _lt_name }}</span>
+                <span class="nav-lang-mark" aria-hidden="true">*</span>
+            </a>
             {%- endif %}
         </li>
         {%- endfor %}
+        {%- if _lt_untranslated > 0 %}
+        <li><hr class="dropdown-divider"></li>
+        <li><p class="nav-lang-note" id="{{ _lt_note_id }}">{{ _lt_note_text }}</p></li>
+        {%- endif %}
     </ul>
 </div>
 {%- endif -%}

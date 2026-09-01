@@ -30,6 +30,15 @@ assert() {                              # assert "<message>" <command…>
   fi
 }
 
+refute() {                              # refute "<message>" <command…>  (must FAIL)
+  local msg="$1"; shift
+  if "$@" >/dev/null 2>&1; then
+    log_error "  ✗ $msg"; ((FAIL+=1))
+  else
+    log_info "  ✓ $msg"; ((PASS+=1))
+  fi
+}
+
 sandbox=$(mktemp -d)
 trap 'rm -rf "$sandbox"' EXIT
 
@@ -529,6 +538,71 @@ test_theme_wiring() {
   assert "translate.rb syntax is valid" ruby -c "$TRANSLATE"
 }
 
+# ---------------------------------------------------------------------------
+# T-038 / #406 — the compact language menu.
+#
+# The navbar ("default") variant of language-toggle.html is NOT rendered on the
+# theme's own pages (the theme ships the panel variant; the navbar is reserved
+# for main navigation, and test/visual/features/language-toggle.spec.js asserts
+# exactly that). Playwright therefore cannot reach the trigger button, so the
+# icon-only/no-caret half of #406 is pinned statically here. The menu semantics
+# that ARE rendered are covered in the Playwright spec; these assertions cover
+# the markup contract for both variants plus the SCSS width cap.
+# ---------------------------------------------------------------------------
+test_language_menu() {
+  log_info "Test: compact language menu (T-038 / #406)"
+  local toggle="$REPO_ROOT/_includes/components/language-toggle.html"
+  local navbar_scss="$REPO_ROOT/_sass/core/_navbar.scss"
+
+  # --- Trigger: icon-only, caret-free, square, still accessible -------------
+  refute "trigger drops the Bootstrap caret (no dropdown-toggle class)" \
+    grep -q 'class="btn nav-lang-button dropdown-toggle"' "$toggle"
+  refute "trigger drops the visible language text span" \
+    grep -q 'nav-link-text d-none d-xl-inline' "$toggle"
+  assert "trigger is still wired to Bootstrap via data-bs-toggle" \
+    grep -q 'data-bs-toggle="dropdown"' "$toggle"
+  assert "trigger keeps an aria-label" grep -q 'aria-label="{{ ui.lang_toggle_aria' "$toggle"
+  assert "trigger's title names the current language" \
+    grep -q 'title="{{ ui.lang_toggle_label | default: .Language. }}: {{ _lt_current_name }}"' "$toggle"
+  assert "trigger is a 38px square" grep -q 'width: 2.375rem;' "$navbar_scss"
+
+  # --- Menu: no dead rows, one footnote, capped width -----------------------
+  # Match the MARKUP, not the word — the comments legitimately discuss the
+  # disabled rows this change removed.
+  refute "no row carries a disabled class in either variant" \
+    grep -qE 'class="[^"]*\bdisabled\b' "$toggle"
+  refute "no aria-disabled rows remain in either variant" grep -q 'aria-disabled=' "$toggle"
+  refute "current row no longer uses Bootstrap's .active primary fill" \
+    grep -q 'dropdown-item active\|list-group-item-action active' "$toggle"
+  assert "current row is marked .is-current" grep -q 'nav-lang-item is-current' "$toggle"
+  assert "current row keeps aria-current for AT" grep -q 'aria-current="true"' "$toggle"
+  assert "current row carries a check icon" grep -q 'bi-check2 nav-lang-check' "$toggle"
+  assert "untranslated rows are links, not spans" \
+    grep -q '<a class="dropdown-item nav-lang-item is-untranslated"' "$toggle"
+  assert "untranslated rows fall back to the source URL" \
+    grep -q 'is-untranslated" data-lang="{{ _lt_lang }}" hreflang="{{ _lt_source }}" href="{{ _lt_fallback_url }}"' "$toggle"
+  assert "untranslated rows point at the single footnote" \
+    grep -q 'aria-describedby="{{ _lt_note_id }}"' "$toggle"
+  refute "per-row '(Not yet translated)' text is gone" \
+    grep -q 'text-body-secondary">({{ ui.lang_not_available' "$toggle"
+  assert "the footnote renders only when something is untranslated" \
+    grep -q '{%- if _lt_untranslated > 0 %}' "$toggle"
+  assert "machine translations carry an auto chip" grep -q 'class="nav-lang-auto"' "$toggle"
+  assert "the menu is capped at 220px" grep -q 'max-width: 220px;' "$navbar_scss"
+
+  # --- The chip/footnote strings resolve, translated page or not ------------
+  # core/i18n.html REPLACES `ui` wholesale on a translated page, so a key added
+  # to ui-text.yml is missing from _data/i18n/<lang>.yml until translate.rb
+  # regenerates it. Every new key must therefore carry a literal fallback.
+  local key
+  for key in lang_machine_translated lang_machine_translated_title lang_untranslated_note; do
+    assert "ui-text.yml en defines $key" \
+      grep -qE "^  $key +:" "$REPO_ROOT/_data/ui-text.yml"
+    assert "$key has a literal fallback in the include" \
+      grep -q "ui.$key | default: '" "$toggle"
+  done
+}
+
 main() {
   log_info "i18n translation pipeline tests"
   test_generation
@@ -541,6 +615,7 @@ main() {
   test_manifest_write_guard
   test_credential_fallback
   test_theme_wiring
+  test_language_menu
   echo
   log_info "Passed: $PASS  Failed: $FAIL"
   [[ $FAIL -eq 0 ]]

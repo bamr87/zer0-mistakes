@@ -43,7 +43,7 @@ Analytics and tracking integrations:
 Reusable UI components and widgets:
 
 - `searchbar.html` - Deprecated search stub (superseded by `search-modal.html`)
-- `language-toggle.html` - Navbar dropdown switching between the English original and its machine-generated translations
+- `language-toggle.html` - Switches between the English original and its machine-generated translations. Two variants: `panel` (shipped, inside the Settings offcanvas) and the default navbar dropdown (icon-only trigger, ≤220px menu, every row a live link)
 - `translation-notice.html` - Disclosure banner on machine-translated pages linking back to the English original
 - `powered-by.html` - "Powered by" credits display
 - `quick-index.html` - Quick page index

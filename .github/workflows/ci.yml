@@ -96,12 +96,35 @@ jobs:
               - '*.md'
               - '_data/**'
               - '_config*.yml'
+            # Gates the `snapshots` job (the 9-skin pixel tier). The rule is
+            # "does this file change what a page RENDERS", not "is this file
+            # code" — a template and the data a template reads are equally
+            # capable of moving pixels.
+            #
+            # The `_data` entries are here because they were the gap (#417):
+            # _data/** is listed only under `content`, which gates no visual
+            # job, so #419's navbar item changed the chrome of every page with
+            # Visual Snapshots SKIPPED on both the PR and the main push. The
+            # drift then surfaced on #420, an unrelated PR whose only sin was
+            # touching _layouts/, and the pressure there was to re-bless the
+            # baselines rather than diagnose — which is how the original 1967px
+            # drift became permanently unrecoverable.
+            #
+            # Listed individually rather than as a blanket `_data/**`: that
+            # would run a Docker + 9-skin Playwright job on every backlog edit
+            # and every regenerated content_statistics.yml. These five are the
+            # data files the theme's chrome and skins actually read.
             styling:
               - '_sass/**'
               - 'assets/css/**'
               - 'assets/js/**'
               - '_layouts/**'
               - '_includes/**'
+              - '_data/navigation/**'      # navbar/sidebar on every page
+              - '_data/ui-text.yml'        # site.data.ui — chrome strings
+              - '_data/i18n/**'            # translated chrome strings
+              - '_data/theme_skins.yml'    # defines the nine skins being snapshotted
+              - '_data/theme_backgrounds.yml'
               - 'test/visual/**'
               - 'test/playwright.config.js'
             install:

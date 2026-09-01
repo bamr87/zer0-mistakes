@@ -33,6 +33,15 @@ UPDATE_SNAPSHOTS="${UPDATE_SNAPSHOTS:-1}"
 # `npx playwright install` so it always gets the right binaries; this image
 # is only used by this local snapshot-update helper.
 PLAYWRIGHT_IMAGE="${PLAYWRIGHT_IMAGE:-mcr.microsoft.com/playwright:v1.58.2-jammy}"
+# Seconds to wait for Jekyll to answer on :4000 after `docker compose up`.
+# This is NOT just process start-up: on a cold runner the `bundle_cache` volume
+# is empty, so the container runs a full `bundle install` AND Jekyll's first
+# site build before it binds the port. Locally the volume is warm and that takes
+# seconds; in CI it does not — the old 120s ceiling expired while the container
+# was still printing `Generating...`, which is what made the Visual Snapshots
+# job red on PRs. The `snapshots` job allows 30 minutes, so 7 gives real headroom
+# and still fails fast enough to be a useful signal.
+JEKYLL_READY_TIMEOUT="${JEKYLL_READY_TIMEOUT:-420}"
 
 cd "$PROJECT_ROOT"
 
@@ -51,14 +60,15 @@ else
   log "Starting Jekyll via docker compose..."
   docker compose up -d
   JEKYLL_RUNNING=2
-  for _ in $(seq 1 120); do
+  log "Waiting up to ${JEKYLL_READY_TIMEOUT}s for Jekyll on :4000 (cold bundle install + first build)..."
+  for _ in $(seq 1 "$JEKYLL_READY_TIMEOUT"); do
     if curl -sf http://localhost:4000/ >/dev/null 2>&1; then
       break
     fi
     sleep 1
   done
   if ! curl -sf http://localhost:4000/ >/dev/null 2>&1; then
-    log "ERROR: Jekyll did not respond on :4000 within 120s"
+    log "ERROR: Jekyll did not respond on :4000 within ${JEKYLL_READY_TIMEOUT}s"
     docker compose logs --tail 50 jekyll || true
     exit 1
   fi

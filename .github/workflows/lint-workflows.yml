@@ -75,3 +75,63 @@ jobs:
               sys.exit(1)
           print("OK — Quality Control always-runs invariant holds:", cond)
           PY
+
+      - name: Guard — the pixel gate must see chrome-affecting data files
+        run: |
+          # `styling` gates the 9-skin Visual Snapshots job. It used to list only
+          # code paths, while `_data/**` appeared under `content` — which gates no
+          # visual job at all. So #419's navbar item changed the chrome of every
+          # page with Visual Snapshots SKIPPED on both the PR and the main push,
+          # and the drift surfaced later on #420, an unrelated PR. The pressure
+          # there was to re-bless the baselines rather than diagnose, which is how
+          # the original 1967px drift became permanently unrecoverable (#417).
+          # A blessed regression and a green check are indistinguishable, so the
+          # filter is pinned here rather than left to review.
+          python3 - <<'PY'
+          import re, sys, yaml
+
+          CHROME_FILES = [
+              '_data/navigation/main.yml',
+              '_data/ui-text.yml',
+              '_data/i18n/en.yml',
+              '_data/theme_skins.yml',
+              '_includes/components/theme-info.html',
+              '_layouts/default.html',
+              '_sass/main.scss',
+          ]
+
+          def glob_to_regex(pat):
+              out, i = '', 0
+              while i < len(pat):
+                  if pat.startswith('**/', i):
+                      out += '(?:.*/)?'; i += 3
+                  elif pat.startswith('**', i):
+                      out += '.*'; i += 2
+                  elif pat[i] == '*':
+                      out += '[^/]*'; i += 1
+                  elif pat[i] == '?':
+                      out += '[^/]'; i += 1
+                  else:
+                      out += re.escape(pat[i]); i += 1
+              return re.compile('^' + out + '$')
+
+          ci = yaml.safe_load(open('.github/workflows/ci.yml'))
+          step = next(s for s in ci['jobs']['detect-changes']['steps']
+                      if 'paths-filter' in str(s.get('uses', '')))
+          styling = (yaml.safe_load(step['with']['filters']) or {}).get('styling') or []
+          if not styling:
+              print("::error file=.github/workflows/ci.yml::the `styling` filter is missing or empty")
+              sys.exit(1)
+
+          patterns = [glob_to_regex(p) for p in styling]
+          missing = [f for f in CHROME_FILES if not any(rx.match(f) for rx in patterns)]
+          if missing:
+              print("::error file=.github/workflows/ci.yml::the `styling` filter (which gates "
+                    "the 9-skin pixel tier) does not cover chrome-affecting file(s): "
+                    + ", ".join(missing) + ". A change to one of these moves pixels on every "
+                    "page while Visual Snapshots is skipped — that is issue #417.")
+              sys.exit(1)
+          print("OK — `styling` covers every chrome-affecting path:")
+          for f in CHROME_FILES:
+              print("   ", f)
+          PY

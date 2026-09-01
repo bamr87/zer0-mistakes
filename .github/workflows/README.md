@@ -138,6 +138,8 @@ Deploys the AI-chat Cloudflare Worker via `wrangler-action`. Requires `CLOUDFLAR
 
 Two tiers plus docs validation: (1) deterministic SEO/quality checks (`scripts/content-review.rb`, fork-safe, posts a sticky comment); (2) the Claude Code content-reviewer agent (only when a Claude credential — `CLAUDE_CODE_OAUTH_TOKEN` preferred, `ANTHROPIC_API_KEY` as fallback — is set and content actually changed); (3) front-matter, internal-link, and markdownlint jobs (formerly `docs-validate.yml`).
 
+**The credential gate checks presence, not validity** — a revoked token is still a non-empty string, so it cannot tell a live credential from a dead one. Validity is established by the API call itself: `scripts/ci/agent_review_result.py` classifies the agent's result and **fails the job** with a `::error::` annotation when the review did not actually run, instead of posting the CLI's error as if it were the review. That swallow (issue #418) hid a week-long outage behind five green checks — a non-zero exit alone would not have caught it, because the CLI reports auth failures on stdout. The sticky comment still posts (`if: always()`), carrying an explicit failure notice.
+
 ### `issue-autopilot.yml` — Issue autopilot
 
 **Triggers:** Weekly schedule, Manual dispatch, `autopilot:go` label
@@ -168,6 +170,16 @@ For failed PR runs where the PR opted in via the `auto-fix` label: runs Claude C
 
 Assigns merged PRs to the milestone when exactly one is open; otherwise no-op.
 
+### `ui-audit.yml` — Weekly UI/UX audit
+
+**Triggers:** Weekly schedule (Mon 07:23 UTC), Manual dispatch
+
+Two tiers: (1) a deterministic Playwright sweep (`test/ui-audit/sweep.mjs`) over 6 routes × 3 viewports capturing screenshots, axe violations, console errors, overflow and broken internal links; (2) the read-only Claude Code `ui-auditor` agent, gated on a Claude credential. Findings land in one sticky issue labeled `source:ui-audit`.
+
+**The serve step must not use `--detach`.** It disables Jekyll's watch thread, which the LiveReload reactor rides on — leaving `livereload_port: 35729` bound but silent while pages still load `livereload.js`. The hanging subresource blocks `load`, so every `page.goto(..., waitUntil: 'load')` times out. The `curl -sf` readiness gate cannot detect this (it never requests a subresource), which is how the audit captured **zero** evidence for six weeks while reporting success ([#321](https://github.com/bamr87/zer0-mistakes/issues/321)). Keep the invocation in step with `test/test_playwright.sh:69-74`: background it with `&`, and stop it in an `always()` step.
+
+The job goes **red** when the sweep captures nothing — enforced twice, by `sweep.mjs`'s own exit code and by the `Assert the sweep captured evidence` step — and the sticky issue says "captured nothing" rather than presenting timeouts as UI findings. Guarded by `test/ui-audit/check-audit-serve.sh`.
+
 ### `giscus-digest.yml` — Giscus comment digest
 
 **Triggers:** Weekly schedule, Manual dispatch
@@ -193,6 +205,7 @@ Every quality gate a contributor can run locally must be enforced somewhere in C
 | Roadmap ↔ README ↔ version consistency | `ruby scripts/generate-roadmap.rb --check` | `sync.yml` → `roadmap` | PR (check) + push to main (regenerate) |
 | Backlog schema | `ruby scripts/sync-backlog.rb --check` | `sync.yml` → `backlog` | PR (check) + push to main (sync issues) |
 | Docs front matter + internal links + markdownlint | `scripts/docs/lint-frontmatter.sh` / `check-links.sh` / `markdownlint` | `ai-content-review.yml` | PR (docs/content changes) |
+| Claude review actually ran (no silent-green non-review) | `python3 scripts/ci/test_agent_review_result.py` | `ai-content-review.yml` (guard) · `ci.yml` → `test` (its tests) | PR (docs/content changes) |
 | Secret shapes in diff/PR body | — | `secret-scan.yml` | PR (always) |
 | Workflow definitions (actionlint + invariants) | `actionlint` | `lint-workflows.yml` | PR + push (workflow changes) |
 | Latest-dependency canary (unpinned build + HTMLProofer) | — | `test-latest.yml` | Daily schedule + push to main |
