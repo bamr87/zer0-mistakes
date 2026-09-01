@@ -16,6 +16,34 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Changed
 
+- **Setup wizard: live preview, vertical stepper, draft persistence (T-040, #408)** —
+  the `_config.yml` preview is now a **persistent sticky panel** shown at every
+  step rather than an element inside step 5, regenerated on every keystroke,
+  with Copy and Download always enabled. The nav-pills tab row is replaced by a
+  left **vertical stepper** with done/active/upcoming state: a step is locked
+  until every earlier step validates, and Back is always allowed. The form is
+  mirrored to `localStorage` under `zer0-setup-draft` (debounced 300ms),
+  restored on load with a "Draft saved" chip, and cleared once the file is
+  downloaded. Email and URL fields are validated **on blur** with `is-invalid`
+  and an explanatory message, cleared as soon as you retype; the Review step
+  lists any unfilled recommended fields as warnings. Every step pane shares one
+  CSS grid cell, so the container is always as tall as the tallest step, and the
+  nav row is pinned to the bottom — **Back/Next no longer move vertically**
+  between steps. New
+  `_sass/components/_setup-wizard.scss`, and the wizard gains its first
+  automated coverage in `test/visual/features/setup-wizard.spec.js`.
+
+  Holding the container's height turned out to be only half of "Back/Next no
+  longer move": the nav row's own height still varied. Step 1's row was a block
+  box, so its button sat on a baseline and rode ~2px high, and in the real
+  ~270px middle column `Review & Download` wrapped to a second line, pushing
+  that button's top up a further 16px. The row is now always a flex box and its
+  buttons never wrap. Draft persistence gained a matching fix: the 300ms
+  debounce meant the last edit before a reload was still only a queued timer and
+  was lost, so a pending write is now flushed on `pagehide` and on a hidden
+  `visibilitychange`. Before/after measurements are in
+  `test/visual/evidence/setup-wizard-nav-alignment/`.
+
 - **Language switcher: icon-only trigger and a compact, positive menu (T-038, #406)** —
   the navbar trigger drops its `EN` text span and the Bootstrap caret for a
   38px square icon button, with `title` and `aria-label` carrying the language
