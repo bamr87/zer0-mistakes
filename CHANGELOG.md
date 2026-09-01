@@ -12,6 +12,40 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [1.29.0](https://github.com/bamr87/zer0-mistakes/compare/v1.28.0...v1.29.0) (2026-09-01)
+
+
+### Features
+
+* **analytics:** track and display per-page view counts ([#413](https://github.com/bamr87/zer0-mistakes/issues/413)) ([e488c4c](https://github.com/bamr87/zer0-mistakes/commit/e488c4c3101da78e98eecbf8299ce7c8705ed281))
+* **design:** fill Fab, PostCard, Skeleton + motion/layers gaps in the design-system mirror ([#391](https://github.com/bamr87/zer0-mistakes/issues/391)) ([3b49741](https://github.com/bamr87/zer0-mistakes/commit/3b497417564b4c5e3d71eaa113cb136d2cdaf15c))
+* **includes:** icon-only language trigger and a compact, positive menu ([#431](https://github.com/bamr87/zer0-mistakes/issues/431)) ([353bfa5](https://github.com/bamr87/zer0-mistakes/commit/353bfa5f3a8dd949ca6e513213a155d648218642)), closes [#406](https://github.com/bamr87/zer0-mistakes/issues/406)
+* **includes:** live preview, vertical stepper and draft persistence in the setup wizard ([#432](https://github.com/bamr87/zer0-mistakes/issues/432)) ([73bdc55](https://github.com/bamr87/zer0-mistakes/commit/73bdc5547350c448e1617ec6cf5b9f49b10d65fb)), closes [#408](https://github.com/bamr87/zer0-mistakes/issues/408)
+* **layouts:** add cookbook collection with recipe scaling and unit conversion ([#414](https://github.com/bamr87/zer0-mistakes/issues/414)) ([bb8eefa](https://github.com/bamr87/zer0-mistakes/commit/bb8eefa2beea0104fec28d173a1e57f369acada8))
+* **pages:** publish the design system and page canvas on the live site ([#392](https://github.com/bamr87/zer0-mistakes/issues/392)) ([6cf73cd](https://github.com/bamr87/zer0-mistakes/commit/6cf73cdf2cca9ec02394b6ae1ba7e39c19969134))
+* **sass:** align design tokens with the Claude Design system ([#389](https://github.com/bamr87/zer0-mistakes/issues/389)) ([7fc2fe0](https://github.com/bamr87/zer0-mistakes/commit/7fc2fe02683d652c0326536158bd48b3690df51f))
+
+
+### Bug Fixes
+
+* **a11y:** dialog titles use a bare &lt;h5&gt;, skipping heading levels ([#387](https://github.com/bamr87/zer0-mistakes/issues/387)) ([98fd6f9](https://github.com/bamr87/zer0-mistakes/commit/98fd6f9e63dfb75c58efc3b15a642fb3e4c4095b))
+* **ci:** fail the content review when it did not actually run ([#424](https://github.com/bamr87/zer0-mistakes/issues/424)) ([f048cb2](https://github.com/bamr87/zer0-mistakes/commit/f048cb22e565b3122d6682c026e13521b6fe52d9)), closes [#418](https://github.com/bamr87/zer0-mistakes/issues/418)
+* **ci:** fail the Pages build on Liquid errors, unmangle two live pages ([#439](https://github.com/bamr87/zer0-mistakes/issues/439)) ([afd2ec8](https://github.com/bamr87/zer0-mistakes/commit/afd2ec83879a793d77dfac21b41d74d5204126c4))
+* **ci:** make the pixel gate see the data files that move pixels ([#425](https://github.com/bamr87/zer0-mistakes/issues/425)) ([02ea639](https://github.com/bamr87/zer0-mistakes/commit/02ea639b3152900682ca298bd172925133d10dea)), closes [#417](https://github.com/bamr87/zer0-mistakes/issues/417)
+* **ci:** stop discarding good translations when one page fails ([#388](https://github.com/bamr87/zer0-mistakes/issues/388)) ([19cea46](https://github.com/bamr87/zer0-mistakes/commit/19cea462a7822d6db536fc9c23218abd4a13d830))
+* **ci:** wait past the cold bundle install for Jekyll in the snapshot gate ([#426](https://github.com/bamr87/zer0-mistakes/issues/426)) ([de1d1ca](https://github.com/bamr87/zer0-mistakes/commit/de1d1ca426ce7a25d5a8548c4a696c0002877200))
+* **cookie-consent:** text-dark on bg-body made privacy rights invisible in dark mode ([#386](https://github.com/bamr87/zer0-mistakes/issues/386)) ([9bde7df](https://github.com/bamr87/zer0-mistakes/commit/9bde7dfa13f426908e00e53f8e4013a049fd928d))
+* **giscus:** comments were broken sitewide — add an end-to-end health check and correct the docs ([#378](https://github.com/bamr87/zer0-mistakes/issues/378)) ([45e222c](https://github.com/bamr87/zer0-mistakes/commit/45e222c3c2c5b7c507af4df2f5f0b48bc783801e))
+* **includes:** footer Info/Cookie Preferences are buttons, not anchors ([#427](https://github.com/bamr87/zer0-mistakes/issues/427)) ([f9041b9](https://github.com/bamr87/zer0-mistakes/commit/f9041b98b8a267be59f560724821fd941090f52d)), closes [#320](https://github.com/bamr87/zer0-mistakes/issues/320)
+* **layouts:** match section topic filters on whole tags, not substrings ([#420](https://github.com/bamr87/zer0-mistakes/issues/420)) ([338ad1d](https://github.com/bamr87/zer0-mistakes/commit/338ad1ddfb71c8d1dd9c48b36fb4634daf93f2de))
+* **layouts:** move keyboard focus to the skip-link target (tabindex="-1") ([#395](https://github.com/bamr87/zer0-mistakes/issues/395)) ([f5db650](https://github.com/bamr87/zer0-mistakes/commit/f5db65048e48ca71eedebc04d02d051e0b3152a6)), closes [#278](https://github.com/bamr87/zer0-mistakes/issues/278)
+* **layouts:** stop emitting dead sub-topic anchors in section sidebars ([#402](https://github.com/bamr87/zer0-mistakes/issues/402)) ([f50e790](https://github.com/bamr87/zer0-mistakes/commit/f50e790c4bfd56fefa4a74d7876de90c9776c689))
+* **layouts:** upgrade the no-js class to "js" so the hook works ([#428](https://github.com/bamr87/zer0-mistakes/issues/428)) ([a2d31f5](https://github.com/bamr87/zer0-mistakes/commit/a2d31f5533a4fb4793042e32326c1a78c9954268)), closes [#319](https://github.com/bamr87/zer0-mistakes/issues/319)
+* **navigation:** fit all nav items, full-bleed bar, language into Settings ([#423](https://github.com/bamr87/zer0-mistakes/issues/423)) ([689006e](https://github.com/bamr87/zer0-mistakes/commit/689006e7654e900a4509c30539fcf12bd7f397c6))
+* **scripts:** correct consumer auditor, plugin contract, and JSON-LD scope ([#400](https://github.com/bamr87/zer0-mistakes/issues/400)) ([b466cad](https://github.com/bamr87/zer0-mistakes/commit/b466cad526501e7e7a0eef5f24a12c5bbd181dc7))
+* **scripts:** recover from a rejected Anthropic credential, and link the cookbook ([#419](https://github.com/bamr87/zer0-mistakes/issues/419)) ([fac6bee](https://github.com/bamr87/zer0-mistakes/commit/fac6beeb7af7dcae96f727bf0cf581b080e95f15))
+* **ui-audit:** serve without --detach so the sweep can capture, and fail loudly when it cannot ([#434](https://github.com/bamr87/zer0-mistakes/issues/434)) ([fac6415](https://github.com/bamr87/zer0-mistakes/commit/fac641574c951b2887d94f8b39561fb8b6f8fe8c)), closes [#321](https://github.com/bamr87/zer0-mistakes/issues/321)
+
 ## [Unreleased]
 
 ### Changed
