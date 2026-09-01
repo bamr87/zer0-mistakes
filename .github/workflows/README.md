@@ -138,6 +138,8 @@ Deploys the AI-chat Cloudflare Worker via `wrangler-action`. Requires `CLOUDFLAR
 
 Two tiers plus docs validation: (1) deterministic SEO/quality checks (`scripts/content-review.rb`, fork-safe, posts a sticky comment); (2) the Claude Code content-reviewer agent (only when a Claude credential — `CLAUDE_CODE_OAUTH_TOKEN` preferred, `ANTHROPIC_API_KEY` as fallback — is set and content actually changed); (3) front-matter, internal-link, and markdownlint jobs (formerly `docs-validate.yml`).
 
+**The credential gate checks presence, not validity** — a revoked token is still a non-empty string, so it cannot tell a live credential from a dead one. Validity is established by the API call itself: `scripts/ci/agent_review_result.py` classifies the agent's result and **fails the job** with a `::error::` annotation when the review did not actually run, instead of posting the CLI's error as if it were the review. That swallow (issue #418) hid a week-long outage behind five green checks — a non-zero exit alone would not have caught it, because the CLI reports auth failures on stdout. The sticky comment still posts (`if: always()`), carrying an explicit failure notice.
+
 ### `issue-autopilot.yml` — Issue autopilot
 
 **Triggers:** Weekly schedule, Manual dispatch, `autopilot:go` label
@@ -193,6 +195,7 @@ Every quality gate a contributor can run locally must be enforced somewhere in C
 | Roadmap ↔ README ↔ version consistency | `ruby scripts/generate-roadmap.rb --check` | `sync.yml` → `roadmap` | PR (check) + push to main (regenerate) |
 | Backlog schema | `ruby scripts/sync-backlog.rb --check` | `sync.yml` → `backlog` | PR (check) + push to main (sync issues) |
 | Docs front matter + internal links + markdownlint | `scripts/docs/lint-frontmatter.sh` / `check-links.sh` / `markdownlint` | `ai-content-review.yml` | PR (docs/content changes) |
+| Claude review actually ran (no silent-green non-review) | `python3 scripts/ci/test_agent_review_result.py` | `ai-content-review.yml` (guard) · `ci.yml` → `test` (its tests) | PR (docs/content changes) |
 | Secret shapes in diff/PR body | — | `secret-scan.yml` | PR (always) |
 | Workflow definitions (actionlint + invariants) | `actionlint` | `lint-workflows.yml` | PR + push (workflow changes) |
 | Latest-dependency canary (unpinned build + HTMLProofer) | — | `test-latest.yml` | Daily schedule + push to main |
