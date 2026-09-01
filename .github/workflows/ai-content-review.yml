@@ -52,7 +52,16 @@ jobs:
       # Gate for the Claude Code tier — a step here rather than a separate job
       # (secrets aren't readable in job-level `if:`, but a one-liner step doesn't
       # justify its own runner).
-      - name: Check AI availability
+      #
+      # THIS IS A PRESENCE CHECK, NOT AN AUTH CHECK. A revoked or expired
+      # credential is still a non-empty string, so `enabled=true` says only that
+      # a value exists — it cannot tell a live token from a dead one, and for a
+      # week in 2026-08 it happily enabled a tier that could not authenticate
+      # (#418). Validity is established the only place it can be: by the API call
+      # itself, which scripts/ci/agent_review_result.py now turns into a red
+      # check instead of a silent green one. Do not reword the notice below to
+      # imply the credential works.
+      - name: Check AI credential is configured
         id: ai-gate
         env:
           OAUTH: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -60,6 +69,7 @@ jobs:
         run: |
           if [ -n "$OAUTH" ] || [ -n "$KEY" ]; then
             echo "enabled=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::A Claude credential is present, so the review tier will run. Presence is not validity — a revoked token fails the tier loudly rather than posting a green non-review."
           else
             echo "enabled=false" >> "$GITHUB_OUTPUT"
             echo "::notice::No CLAUDE_CODE_OAUTH_TOKEN or ANTHROPIC_API_KEY set — skipping the Claude Code review tier."
@@ -182,19 +192,21 @@ jobs:
           echo "claude exit status: $status"
           echo "----- stderr (tail) -----"
           tail -n 50 /tmp/agent-err.log || true
-          if [ ! -s /tmp/agent-review.md ]; then
-            {
-              echo "## 🤖 Claude Code Content Review"
-              echo
-              echo "The content-reviewer agent did not produce output (exit \`$status\`). See the job logs for details."
-            } > /tmp/agent-review-final.md
-          else
-            {
-              echo "## 🤖 Claude Code Content Review"
-              echo
-              cat /tmp/agent-review.md
-            } > /tmp/agent-review-final.md
-          fi
+          # Decide whether a review actually HAPPENED, and fail the job if it did
+          # not. This step used to end by piping stdout straight into the sticky
+          # comment and exiting 0 — which is how `401 OAuth access token has been
+          # revoked` got posted to PR #414 under a green check (#418). Checking
+          # `$status` alone would not have caught it: the CLI reported the auth
+          # failure on stdout. Hence a separate, unit-tested guard —
+          # scripts/ci/test_agent_review_result.py drives it with that exact
+          # output. `Post agent review` is `if: always()`, so the failure notice
+          # still reaches the PR.
+          set -e
+          python3 scripts/ci/agent_review_result.py \
+            --status "$status" \
+            --stdout /tmp/agent-review.md \
+            --stderr /tmp/agent-err.log \
+            --out /tmp/agent-review-final.md
 
       - name: Post agent review
         if: always()

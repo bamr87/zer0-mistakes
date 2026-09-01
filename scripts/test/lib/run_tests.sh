@@ -131,7 +131,8 @@ main() {
     source "$TEST_DIR/test_migrate.sh"
     source "$TEST_DIR/test_pixelate_images.sh"
     source "$TEST_DIR/test_content_review.sh"
-    
+    source "$TEST_DIR/test_agent_review_result.sh"
+
     # Summary
     echo -e "\n${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo -e "${BLUE}Test Summary${NC}"

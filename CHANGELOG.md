@@ -134,6 +134,23 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   simply deleted `class="no-js"` would satisfy a naive one-sided assertion
   while removing the hook entirely.
 
+- **Pages build: Liquid errors no longer ship mangled pages silently.** The
+  `github-pages` gem renders every non-excluded Markdown file through Liquid, so
+  prose that merely *looks* like a template is executed as one. Jekyll 3 reports
+  that as a `Liquid Warning`, drops the expression, and still exits 0 — so the
+  Pages workflow stayed green while publishing damaged pages. Two were live:
+  `/CHANGELOG/` rendered "Added `,,` and to the template renderer" because
+  `{% raw %}{{DEFAULT_BRANCH}}{% endraw %}` and its siblings were evaluated to
+  nothing, and `/_design-system/components/feedback/Skeleton.prompt/` rendered
+  `<div style=>` because the JSX `style={% raw %}{{ … }}{% endraw %}` was a
+  Liquid syntax error. A third defect was invisible: a literal
+  `{% raw %}{% raw %}{% endraw %}` written as prose in a changelog entry opened a
+  real block that swallowed the next 945 lines of the published page. All the
+  affected spans are now escaped, `pages.yml` fails the build on
+  `Liquid Warning`/`Liquid Exception` for both the theme and the example site,
+  and `scripts/lint-liquid-raw.rb` (wired into the `quality` suite) catches the
+  silent half — an unbalanced raw block never raises a warning to gate on.
+
 - **Navbar: every top-level item now fits, at every desktop width** — the bar
   was pinned inside a centred `.container-xl` (max 1140–1320px), so the menubar
   track never got more than ~740px against the ~815px the theme's seven items
@@ -310,6 +327,8 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **The skip link never moved keyboard focus (#278)** — `_layouts/root.html`
+rendered `<main id="main-content">` with no `tabindex`, and `<main>` is not natively focusable, so activating "Skip to main content" scrolled the page while focus stayed on `<body>`: the next `Tab` returned the user to the header nav they had just skipped. That defeats WCAG 2.4.1 (Bypass Blocks) on every consuming site, and the theme's own docs already prescribed the fix (`skip-to-content.md` → *Focus Not Moving* → "Add `tabindex=\"-1\"` to target") while the shipped layout omitted it. Now `<main id="main-content" tabindex="-1">`, paired with `#main-content:focus { outline: none; }` in `_sass/utilities/_focus.scss` so the container does not paint a ring — descendants keep theirs, and the rule is safe only because `-1` keeps the container out of the sequential `Tab` order. Measured across all three engines: focus lands on `#main-content` in Chromium, Firefox **and WebKit** (the engine the report named), where before it moved in none of them. The stale `<div id="main-content">` example in the English and French docs now matches the shipped markup.
 - **Seven theme dialogs labelled themselves with a bare `<h5>`** — the search
 modal, cookie settings modal, statistics help modal and the settings / background / section / admin offcanvases each opened with `<h5 class="modal-title">` or `<h5 class="offcanvas-title">`, so anyone navigating by heading met a level-5 heading as the dialog's title, skipping h3 and h4. Six other dialogs already used the correct `<h2 class="…-title h5">` form, so the theme contradicted itself half the time. All seven now match. `.h5` reproduces the exact sizing, so the change is visually inert. `_includes/docs/bootstrap-docs.html` and the docs prose examples are deliberately untouched — they reproduce upstream Bootstrap's own markup and should keep doing so. (evidence: [`test/visual/evidence/dialog-heading-levels/`](test/visual/evidence/dialog-heading-levels/README.md) — heading walk h2 → h5 becomes h2 → h2 on all six live dialogs, renders byte-identical)
 - **Cookie modal's "Your Privacy Rights" list was invisible in dark mode** — the
@@ -658,13 +677,13 @@ feature docs with captured screenshots of both the broken widget and the giscus.
   `index.md`, and navigation. Empty now serialises to `[]`; `deploy` is
   deploy-only and also skips agent-file rewrites.
 - **github-pages / remote profile emitted a broken `remote_theme`.** The remote
-  `_config.yml` template resolved `{{GITHUB_REPO}}` to the *site's* repo; it now
-  uses a dedicated `{{THEME_REMOTE}}` variable (default `bamr87/zer0-mistakes`,
+  `_config.yml` template resolved `{% raw %}{{GITHUB_REPO}}{% endraw %}` to the *site's* repo; it now
+  uses a dedicated `{% raw %}{{THEME_REMOTE}}{% endraw %}` variable (default `bamr87/zer0-mistakes`,
   overridable via `THEME_REMOTE`).
 - **Deploy workflow templates had unsubstituted variables.** Added
-  `{{DEFAULT_BRANCH}}`, `{{RUBY_VERSION}}`, and `{{SITE_NAME}}` to the template
+  `{% raw %}{{DEFAULT_BRANCH}}{% endraw %}`, `{% raw %}{{RUBY_VERSION}}{% endraw %}`, and `{% raw %}{{SITE_NAME}}{% endraw %}` to the template
   renderer, so the generated `jekyll-gh-pages.yml` (and docker-prod/azure-swa
-  artifacts) no longer contain literal `{{…}}` tokens. Regression tests assert
+  artifacts) no longer contain literal `{% raw %}{{…}}{% endraw %}` tokens. Regression tests assert
   no unresolved tokens survive in any deploy artifact.
 - **Agent files were written twice** when `agents` appeared in both the task
   list and `SPEC_AGENTS`; `apply.sh` now runs the agents task at most once.
@@ -811,7 +830,7 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 - **Author avatars never render as protocol-relative `//assets/…` URLs** —
   `author-avatar-url.html` now builds the relative-path branch in a capture,
   collapses doubled slashes, and applies `relative_url` exactly once, instead
-  of the manual `{{ site.baseurl }}/{{ site.public_folder }}{{ avatar }}`
+  of the manual `{% raw %}{{ site.baseurl }}/{{ site.public_folder }}{{ avatar }}{% endraw %}`
   concatenation that produced `src="//assets/…"` (a URL browsers resolve
   against a host named `assets`) on consumer sites where `public_folder` is
   unset or carries a leading slash
@@ -1357,7 +1376,7 @@ feature docs with captured screenshots of both the broken widget and the giscus.
   to it from the Bootstrap, Layouts, and Styles docs.
 - **Bylines now use the shared author component.** The `article`, `note`,
   `notebook`, `news`, and `section` layouts plus `components/post-card.html`
-  previously printed `{{ page.author }}` as bare text; they now render
+  previously printed `{% raw %}{{ page.author }}{% endraw %}` as bare text; they now render
   `components/author-card.html` (`inline`), so a known author key resolves to a
   display name, avatar, and a link to their profile page. The inline
   "About the Author" block that was hard-coded in `_layouts/article.html` was
@@ -1504,7 +1523,7 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 - Version bump: patch release
 
 ### Commits in this release
-- ae76a61f fix(content-review): correct code-fence detection (closing fences + {% raw %}) (#155)
+- ae76a61f fix(content-review): correct code-fence detection (closing fences + {% raw %}{% raw %}{% endraw %}) (#155)
 - f00fb654 docs(seo): strengthen SEO docs index metadata + fix agent-tier workflow (#154)
 
 ### Fixed
@@ -1514,10 +1533,10 @@ feature docs with captured screenshots of both the broken widget and the giscus.
   a file's score (e.g. `pages/_about/features/jekyll.md` scored 0/100 almost
   entirely from this false positive). The check now tracks fence open/close state
   and only validates opening fences.
-- **content-review: ignore Liquid `{% raw %}` blocks** in the quality and style
-  checks. Code fences, headings, images, and terminology inside `{% raw %}…
-  {% endraw %}` are literal display examples, not page structure, and were being
-  counted as real findings.
+- **content-review: ignore Liquid `{% raw %}{% raw %}{% endraw %}` blocks** in the quality and style
+  checks. Code fences, headings, images, and terminology inside a Liquid
+  `{% raw %}{% raw %}{% endraw %}` block are literal display examples, not page
+  structure, and were being counted as real findings.
 
 ## [1.18.0] - 2026-06-13
 
@@ -1945,7 +1964,7 @@ feature docs with captured screenshots of both the broken widget and the giscus.
 - **Sidebar collapse — VS Code style**: Left sidebar (`#bdSidebar`) and right TOC (`#tocContents`) now collapse to a slim 36 px rail (`--zer0-sidebar-rail-width`) instead of being fully hidden on desktop. The visibility toggle icon (`bi-layout-sidebar-inset` / `bi-layout-sidebar-inset-reverse`) stays mounted on the rail so users can re-expand the panel with a single click — the floating action buttons (`.bd-sidebar-fab`, `.bd-toc-fab`) are now hidden at `≥992 px` since the rail toggle replaces them. `_sass/core/_docs-layout.scss`, `_sass/layouts/_navbar-extras.scss`.
 - **Smooth transitions**: `.bd-layout` and `.bd-main` now animate `grid-template-columns` and `gap` over `--zer0-motion-duration-base` (0.3 s) with `--zer0-motion-ease-standard`; sidebar contents cross-fade via `opacity` + delayed `visibility`. Honors `@media (prefers-reduced-motion: reduce)` by disabling all related transitions.
 - **Toggle behavior**: `sidebar-visibility.js` and `toc-visibility.js` no longer set `button.hidden = true` on the rail toggle when collapsed, keeping it interactive in the collapsed state. Aria labels (`Hide…` / `Show…`) update on each toggle.
-- **Cache-bust**: Added `?v={{ site.time | date: '%s' }}` to the navigation ES-module `<script type="module">` tag in `_includes/components/js-cdn.html` to force re-fetch on rebuild (browsers cache ES modules indefinitely by URL).
+- **Cache-bust**: Added `{% raw %}?v={{ site.time | date: '%s' }}{% endraw %}` to the navigation ES-module `<script type="module">` tag in `_includes/components/js-cdn.html` to force re-fetch on rebuild (browsers cache ES modules indefinitely by URL).
 - **Navbar dropdown**: Dropdown toggle button set to `align-self: stretch` so it spans the full navbar height, making it easier to invoke on touch/small screens; chevron icon `font-size` increased to `1em` for better legibility. `_sass/core/_navbar.scss`.
 - **Syntax highlighting**: Dual-palette system — `_sass/core/_syntax.scss` now uses a GitHub Light palette for `.highlight` (light mode) and scopes the Material Dark base16 palette to `[data-bs-theme="dark"] .highlight`, fixing near-invisible token colors on light backgrounds.
 - **Theme preview gallery**: Expanded to 20 sections with 6 new components: Callouts (5 types), Accordion, Progress & Spinners, Breadcrumb & Pagination, Tooltips & Popovers, and Icons showcase. TOC updated accordingly; Bootstrap tooltip/popover JS initializer added. `_includes/components/theme-preview-gallery.html`, `pages/_about/settings/theme-preview.md`.
@@ -2990,7 +3009,7 @@ See [`docs/installation/migration-from-0.x.md`](docs/installation/migration-from
 - **Troubleshooting Guide**: Added sections for Docker issues, Jekyll build errors, front matter problems, performance optimization
 - **Jekyll Guide**: Added directory structure, configuration files, content collections, essential commands, topic index
 - **Bootstrap Guide**: Added CDN loading patterns, key components, responsive breakpoints, custom styles, icons
-- **Liquid Guide**: Added syntax examples with `{% raw %}` tags, filters, control flow, includes
+- **Liquid Guide**: Added syntax examples with `{% raw %}{% raw %}{% endraw %}` tags, filters, control flow, includes
 - **Ruby Guide**: Added version commands, common commands, key files, Docker usage, troubleshooting
 - **Front Matter Guide**: Added required/optional fields, layout options, collection-specific fields, complete examples
 - All documentation pages now include `sidebar: nav: docs` for consistent navigation

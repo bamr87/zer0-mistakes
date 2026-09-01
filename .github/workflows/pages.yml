@@ -70,10 +70,18 @@ jobs:
           ruby-version: '3.3'
           bundler-cache: true
 
+      # Liquid renders EVERY non-excluded Markdown file (github-pages ships
+      # jekyll-optional-front-matter), so a stray `{{ … }}` in prose is a Liquid
+      # expression. Jekyll 3 reports those as "Liquid Warning" on stdout and
+      # still exits 0, having dropped the expression from the page — which is
+      # how CHANGELOG.md shipped "Added ,, and to the template renderer" and the
+      # design-system page shipped `<div style=>`. Tee the build so the gate
+      # below can see what a green exit code hides.
       - name: Build the theme site
         run: |
           set -euo pipefail
-          bundle exec jekyll build --config _config.yml --destination _site
+          bundle exec jekyll build --config _config.yml --destination _site \
+            2>&1 | tee "$RUNNER_TEMP/jekyll-build.log"
 
       # Each example is its own Jekyll site. Build it with its own config and
       # drop the result into the main site's tree at the path its baseurl
@@ -88,9 +96,24 @@ jobs:
             bundle exec jekyll build \
               --source "$src" \
               --config "$src/_config.yml,$src/_config_deploy.yml" \
-              --destination "_site/examples/$example"
+              --destination "_site/examples/$example" \
+              2>&1 | tee -a "$RUNNER_TEMP/jekyll-build.log"
             echo "::endgroup::"
           done
+
+      # A Liquid error is a content bug that reaches the live site silently:
+      # Jekyll 3 warns, drops the broken expression, and exits 0. Fail here so
+      # the PR build catches it instead of readers.
+      - name: Fail on Liquid errors
+        run: |
+          set -euo pipefail
+          if grep -nE 'Liquid (Warning|Exception)' "$RUNNER_TEMP/jekyll-build.log"; then
+            echo "::error::Jekyll reported Liquid errors above. Each one means a"
+            echo "::error::page shipped with content dropped or mangled. Wrap"
+            echo "::error::literal Liquid in {% raw %}…{% endraw %}."
+            exit 1
+          fi
+          echo "ok: no Liquid warnings in either build"
 
       # A missing example directory would deploy a site with dead nav links, so
       # fail here rather than shipping it.

@@ -1249,11 +1249,24 @@ tasks:
       #413, but a navbar strip is not where a view-count badge belongs.
       Separating the two needs the diff artifact from a pre-#413 failing run,
       which has rolled off. What remains is confirming the y21-41 band is
-      accounted for.
+      accounted for. UPDATE 2026-08-25: the y21-41 band is the navbar
+      reflowing, and the reason it RECURS is structural — a path-filter gap.
+      ci.yml's `styling` filter (which gates the snapshots job) lists only code
+      paths; `_data/**` appears solely under `content`, which gates no visual
+      job. So #419's nav item changed the chrome of every page with Visual
+      Snapshots SKIPPED on both the PR and the main push, and the drift
+      surfaced on #420, an unrelated PR. The y626 band is now UNRECOVERABLE:
+      both artifact uploads use 14-day retention (ci.yml, nightly-extended.yml)
+      and every pre-#413 failing run is past that window. Recording that rather
+      than leaving it open — no evidence survives to diagnose it from.
     acceptance:
-      - "Identify the changed region from the CI diff artifact before regenerating anything — a stale baseline and a real regression look the same in the check."
+      - "_data/** (or at minimum _data/navigation/**) is covered by the `styling` filter in ci.yml, so a nav/chrome data change runs Visual Snapshots instead of skipping it."
+      - "A CI guard pins that coverage, so the gap cannot silently reopen (lint-workflows.yml)."
+      - "A PR touching only _data/navigation/main.yml runs Visual Snapshots — demonstrated on the checks list, not asserted."
       - "Visual Snapshots passes on main and on a fresh branch with no source changes."
       - "Any genuinely time- or build-varying content inside the snapshot region is masked or stubbed, so the tier cannot drift again."
+      - "No baseline PNG is regenerated as part of this work; any diff is diagnosed in the PR before it is blessed."
+      - "The y626 band is explained, or recorded as unrecoverable with the reason. (Recorded: artifacts past 14-day retention.)"
     links: { issue: 417, pr: null, roadmap: null }
     created: 2026-08-23
-    updated: 2026-08-23
+    updated: 2026-08-25
