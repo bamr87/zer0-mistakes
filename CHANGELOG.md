@@ -14,6 +14,26 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ## [Unreleased]
 
+### Changed
+
+- **Language switcher: icon-only trigger and a compact, positive menu (T-038, #406)** —
+  the navbar trigger drops its `EN` text span and the Bootstrap caret for a
+  38px square icon button, with `title` and `aria-label` carrying the language
+  name. In the menu (both the navbar dropdown and the Settings panel variant),
+  the current language is now marked with a tint and a check icon instead of
+  Bootstrap's `.active` primary fill, which read as a selected nav item rather
+  than "you are here". **Untranslated languages are no longer disabled rows** —
+  they link to the source page and still record the `zer0-lang` preference, so
+  the menu has no dead ends. Machine-generated translations carry a small
+  `auto` chip, and the per-row "(Not yet translated)" text — the main driver of
+  menu width — collapses into one footnote under a divider, referenced from
+  each marked row via `aria-describedby`. The dropdown menu is capped at 220px.
+  New `ui` keys `lang_machine_translated`, `lang_machine_translated_title` and
+  `lang_untranslated_note` in `_data/ui-text.yml`; each use carries a literal
+  fallback, because `core/i18n.html` replaces the `ui` map wholesale on a
+  translated page and `_data/i18n/<lang>.yml` will not have them until
+  `scripts/translate.rb` next runs.
+
 ### Added
 
 - **Cookbook & recipes collection (ZER0-084)** — a `recipes` collection that

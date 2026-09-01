@@ -911,16 +911,123 @@
     border-radius: var(--zer0-radius-sm);
   }
 
-  .list-group-item.active .nav-lang-code {
-    color: inherit;
-    background: rgba(255, 255, 255, 0.2);
-  }
-
   .nav-lang-name {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Language menu — shared by BOTH variants (T-038 / #406)
+// -----------------------------------------------------------------------------
+// The current language reads as "you are here", not as a selected nav item, so
+// it gets a tint + check icon rather than Bootstrap's `.active` primary fill.
+// Rows are links even when a translation does not exist yet (they fall back to
+// the source page), and the reason lives in one footnote instead of on every
+// row — per-row "(Not yet translated)" was what made the menu wide.
+
+.nav-lang-item {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+
+  &.is-current {
+    font-weight: 600;
+    color: var(--zer0-color-ink, inherit);
+    background: var(--zer0-color-bg-muted);
+  }
+
+  // The marker is the footnote's anchor; the note itself carries the wording.
+  &.is-untranslated .nav-lang-name {
+    color: var(--zer0-color-ink-muted);
+  }
+}
+
+.nav-lang-check {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.nav-lang-mark {
+  flex-shrink: 0;
+  margin-left: auto;
+  color: var(--zer0-color-ink-muted);
+}
+
+// "auto" — this language was machine-generated (scripts/translate.rb).
+.nav-lang-auto {
+  flex-shrink: 0;
+  padding: 0.05rem 0.3rem;
+  font-family: var(--zer0-font-mono);
+  font-size: 0.625rem;
+  line-height: 1.4;
+  text-transform: lowercase;
+  color: var(--zer0-color-ink-muted);
+  background: var(--zer0-color-bg-muted);
+  border-radius: var(--zer0-radius-sm);
+}
+
+// The one footnote that replaced the per-row notices. It is the only element
+// in the menu allowed to wrap — everything else ellipsises inside the 220px.
+.nav-lang-note {
+  margin: 0;
+  padding: 0.25rem 0.75rem 0.125rem;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: var(--zer0-color-ink-muted);
+  white-space: normal;
+}
+
+.nav-lang-divider {
+  margin: 0.5rem 0 0.25rem;
+  opacity: 0.15;
+}
+
+// -----------------------------------------------------------------------------
+// Navbar dropdown variant (components/language-toggle.html, default variant)
+// -----------------------------------------------------------------------------
+
+.nav-lang-toggle {
+  .nav-lang-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.375rem; // 38px square — the icon carries the whole control
+    height: 2.375rem;
+    padding: 0;
+    line-height: 1;
+
+    // Belt and braces: if `dropdown-toggle` is ever re-added, no caret returns.
+    &::after {
+      display: none;
+    }
+  }
+
+  .nav-lang-menu {
+    min-width: 0;
+    max-width: 220px;
+
+    .nav-lang-item {
+      // Bootstrap's dropdown-item is nowrap; the name ellipsises instead so a
+      // long native name cannot push the menu past its cap.
+      overflow: hidden;
+
+      &.is-current {
+        // Beat `.dropdown-item.active`'s specificity is unnecessary (we no
+        // longer emit `.active`), but a hovered current row should not flip to
+        // the link-hover colour and lose the "you are here" reading.
+        color: var(--zer0-color-ink, inherit);
+      }
+    }
+
+    .nav-lang-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 }
 
