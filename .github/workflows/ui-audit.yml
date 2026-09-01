@@ -77,24 +77,63 @@ jobs:
           npm ci
           npx playwright install --with-deps chromium
 
+      # NOTE: no `--detach`. Detaching disables Jekyll's watch thread, and the
+      # LiveReload reactor rides that thread — while `_config_dev.yml` still
+      # makes Jekyll inject `livereload.js` into every page. The script then
+      # points at a port nothing is listening on, `load` never fires, and every
+      # `page.goto(..., waitUntil: 'load')` times out. That silently produced
+      # zero screenshots for six consecutive weeks (#321). `curl -sf` cannot
+      # catch it: it fetches the HTML and never requests a subresource.
+      # Background the process instead, exactly as test/test_playwright.sh:69-74
+      # does — the ~30 Playwright specs it drives use `waitUntil: 'load'` and
+      # pass. Keep these two invocations in step.
       - name: Serve Jekyll
         run: |
+          mkdir -p test/visual-results
           bundle exec jekyll serve \
             --config _config.yml,_config_dev.yml \
-            --host 127.0.0.1 --port 4000 --detach
+            --host 127.0.0.1 --port 4000 \
+            >test/visual-results/jekyll.log 2>&1 &
+          pid=$!
+          echo "JEKYLL_PID=$pid" >> "$GITHUB_ENV"
+          ready=false
           for _ in $(seq 1 90); do
-            curl -sf http://127.0.0.1:4000/ >/dev/null && break
+            if curl -sf http://127.0.0.1:4000/ >/dev/null 2>&1; then
+              ready=true; break
+            fi
+            # Fail fast if the server died rather than waiting out all 90s.
+            if ! kill -0 "$pid" 2>/dev/null; then break; fi
             sleep 1
           done
-          curl -sf http://127.0.0.1:4000/ >/dev/null || {
-            echo "::error::Jekyll did not become ready"; exit 1; }
+          if [ "$ready" != "true" ]; then
+            echo "::error::Jekyll did not become ready. Last 50 log lines:"
+            tail -n 50 test/visual-results/jekyll.log || true
+            exit 1
+          fi
 
       - name: Run deterministic sweep
         env:
           BASE_URL: http://127.0.0.1:4000
         run: node test/ui-audit/sweep.mjs
 
+      - name: Stop Jekyll
+        if: always()
+        run: |
+          if [ -n "${JEKYLL_PID:-}" ] && kill -0 "$JEKYLL_PID" 2>/dev/null; then
+            kill "$JEKYLL_PID" 2>/dev/null || true
+            for _ in $(seq 1 10); do
+              kill -0 "$JEKYLL_PID" 2>/dev/null || break
+              sleep 1
+            done
+            kill -9 "$JEKYLL_PID" 2>/dev/null || true
+          fi
+          echo "Jekyll stopped."
+
+      # `always()`: when the sweep hit its capture floor and exited non-zero, the
+      # output it DID write is the whole diagnostic. Uploading only on success is
+      # how a broken harness leaves nothing to debug it with.
       - name: Upload sweep artifacts
+        if: always()
         uses: actions/upload-artifact@v7
         with:
           name: ui-audit-sweep
@@ -138,12 +177,28 @@ jobs:
               > /tmp/ui-audit-agent.md
           fi
 
+      # `always()`: a capture failure is exactly the run whose explanation has to
+      # reach a human. Without it the sweep's non-zero exit would abort the job
+      # here and the sticky issue would keep showing the LAST successful audit.
       - name: File or update the audit issue
+        if: always()
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          # A run that captured nothing has no findings to report — it has a
+          # broken harness. Filing that as "UI/UX audit findings" is what made
+          # six weeks of total failure look like six weeks of UI problems (#321),
+          # so the two states get visibly different bodies. The TITLE is left
+          # alone deliberately: it is the sticky key, and forking it would strand
+          # the existing thread.
+          CAPTURED=$(node -e '
+            const r = require("./test/ui-audit/output/report.json");
+            console.log((r.capture && r.capture.captured) ?? 0);' 2>/dev/null || echo 0)
+          TOTAL=$(node -e '
+            const r = require("./test/ui-audit/output/report.json");
+            console.log((r.capture && r.capture.attempted) ?? 0);' 2>/dev/null || echo 0)
           # Only file when something was actually flagged.
           FLAGGED=$(node -e '
             const r = require("./test/ui-audit/output/report.json");
@@ -168,7 +223,19 @@ jobs:
           MARKER="<!-- ui-audit-sticky -->"
           {
             echo "$MARKER"
-            echo "Weekly UI/UX audit results ($(date -u +%F)). Run: $RUN_URL"
+            if [ "$CAPTURED" = "0" ]; then
+              echo "> [!CAUTION]"
+              echo "> **The audit captured nothing — these are not UI/UX findings.**"
+              echo "> 0 of $TOTAL route×viewport passes produced a screenshot, so every"
+              echo "> entry below is a capture failure, not something wrong with the page."
+              echo "> Fix the harness first; the sweep's results are void until it is green."
+              echo
+              echo "Harness failure ($(date -u +%F)). Run: $RUN_URL"
+            else
+              echo "Weekly UI/UX audit results ($(date -u +%F)). Run: $RUN_URL"
+              echo
+              echo "Captured **$CAPTURED of $TOTAL** route×viewport passes; **$FLAGGED** flagged."
+            fi
             echo
             echo "## Deterministic sweep"
             cat test/ui-audit/output/report.md
@@ -193,4 +260,24 @@ jobs:
             num="${new_url##*/}"
             gh issue edit "$num" --add-label "source:ui-audit" 2>/dev/null || true
             gh issue edit "$num" --add-label "area:ui" 2>/dev/null || true
+          fi
+
+      # LAST, and `always()`: an audit that captured nothing is a broken harness,
+      # and the job must go RED so it is not another green week. This runs after
+      # the artifact upload and the sticky update so both still happen — a
+      # capture failure is precisely the run whose evidence and explanation are
+      # worth keeping. `sweep.mjs` enforces the same floor on its own exit code
+      # (so `node test/ui-audit/sweep.mjs` is honest outside CI too); this step
+      # asserts it independently against the files actually on disk, because the
+      # bug this fixes was six weeks of exit-0 with an empty screens/ directory.
+      - name: Assert the sweep captured evidence
+        if: always()
+        run: |
+          shots=$(find test/ui-audit/output/screens -name '*.png' 2>/dev/null | wc -l)
+          echo "screenshots captured: $shots"
+          if [ "$shots" -eq 0 ]; then
+            echo "::error::UI audit captured 0 screenshots — the harness failed, not the UI."
+            echo "Last 50 lines of the Jekyll log:"
+            tail -n 50 test/visual-results/jekyll.log 2>/dev/null || echo "(no jekyll log)"
+            exit 1
           fi
