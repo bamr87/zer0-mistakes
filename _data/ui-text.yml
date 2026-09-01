@@ -110,6 +110,13 @@ en: &DEFAULT_EN
   lang_toggle_label          : "Language"
   lang_toggle_aria           : "Change language"
   lang_not_available         : "Not yet translated"
+  # T-038/#406 — the language menu's compact vocabulary. core/i18n.html REPLACES
+  # `ui` wholesale on a translated page, so these are absent from
+  # _data/i18n/<lang>.yml until scripts/translate.rb regenerates it; the include
+  # carries a literal `| default:` for each.
+  lang_machine_translated    : "auto"
+  lang_machine_translated_title : "Machine-generated translation"
+  lang_untranslated_note     : "Marked languages are not yet translated — those links open the original."
   machine_translation_notice : "This page was translated automatically from the English original."
   machine_translation_view_source : "View the original"
 

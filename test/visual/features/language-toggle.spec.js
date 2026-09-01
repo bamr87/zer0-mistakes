@@ -10,12 +10,23 @@
 // translations are generated (fresh checkout / CI) and after the translate
 // workflow has landed fr/** content:
 //   - the toggle lives in Settings → Appearance, NOT in the navbar
-//   - it lists the source language as the active entry and EVERY configured
-//     target language as either a real link (translation exists) or a disabled
-//     "not yet translated" entry — never a dead link
+//   - it marks the source language as current and lists EVERY configured target
+//     language as a real link — never a dead entry
 //   - the page <html lang> reflects the page language (en on the homepage)
 //   - untranslated pages emit no hreflang alternates (no bogus SEO signals)
 //   - UI chrome strings resolve through the core/i18n.html fallback chain
+//
+// T-038 / #406 changed the menu contract, and these tests changed with it:
+//   - NO disabled rows. A target without a generated translation used to be a
+//     `span.list-group-item.disabled` carrying its own "(Not yet translated)"
+//     text. It is now a LINK to the source page, marked `.is-untranslated`,
+//     described by ONE footnote. The old assertion accepted "disabled OR link";
+//     the replacement requires a link and forbids `.disabled` outright, so it
+//     is strictly tighter than what it replaced.
+//   - The current row is `.nav-lang-item.is-current` (tint + check icon), not
+//     `.list-group-item.active` (primary fill).
+//   - Machine-generated translations carry an `.nav-lang-auto` chip; the
+//     human-written source language must not.
 // =============================================================================
 
 const { test, expect } = require('@playwright/test');
@@ -54,34 +65,78 @@ test.describe('Language toggle', { tag: '@critical' }, () => {
     await expect(page.locator(`${TOGGLE} .bi-translate`)).toBeAttached();
   });
 
-  test('marks the source language active', async ({ page }) => {
+  test('marks the source language current with a tint and check, not a primary fill', async ({ page }) => {
     await openSettings(page);
 
-    // Exactly one active entry, and on an English page it is the source lang.
-    const active = page.locator(`${OPTIONS} .list-group-item.active`);
-    await expect(active).toHaveCount(1);
-    await expect(active).toHaveAttribute('aria-current', 'true');
-    await expect(active).toHaveText(/English/);
+    // Exactly one current entry, and on an English page it is the source lang.
+    const current = page.locator(`${OPTIONS} .nav-lang-item.is-current`);
+    await expect(current).toHaveCount(1);
+    await expect(current).toHaveAttribute('aria-current', 'true');
+    await expect(current).toHaveText(/English/);
+    await expect(current.locator('.nav-lang-check')).toBeAttached();
+
+    // T-038: `.active` is Bootstrap's primary fill and read as a selected nav
+    // item rather than "you are here". It must not come back.
+    await expect(page.locator(`${OPTIONS} .active`)).toHaveCount(0);
+
+    // The source language is human-written — it must never carry the auto chip.
+    await expect(current.locator('.nav-lang-auto')).toHaveCount(0);
   });
 
-  test('every configured target language is listed and never a dead link', async ({ page }) => {
-    // The demo config ships translation.languages: [fr]. Each target must be
-    // EITHER a real link to the generated translation (href starts with the
-    // language prefix) OR a disabled entry — in both cases exactly one item.
+  test('no row is disabled — every configured target language is a live link', async ({ page }) => {
+    // The demo config ships translation.languages: [fr]. Whether or not the
+    // translation has been generated, the row is a link: to /fr/… when it
+    // exists, and to the source page (marked, footnoted) when it does not.
     await openSettings(page);
-    const frLink = page.locator(`${OPTIONS} a.list-group-item[data-lang="fr"]`);
-    const frDisabled = page.locator(`${OPTIONS} span.list-group-item.disabled`, { hasText: 'Français' });
-    const links = await frLink.count();
-    const disabled = await frDisabled.count();
-    expect(links + disabled).toBe(1);
-    if (links) {
-      await expect(frLink).toHaveAttribute('href', /^\/fr\//);
-      await expect(frLink).toHaveAttribute('hreflang', 'fr');
+
+    await expect(page.locator(`${OPTIONS} .disabled`)).toHaveCount(0);
+    await expect(page.locator(`${OPTIONS} [aria-disabled="true"]`)).toHaveCount(0);
+
+    const fr = page.locator(`${OPTIONS} a.nav-lang-item[data-lang="fr"]`);
+    await expect(fr).toHaveCount(1);
+    await expect(fr).toHaveAttribute('href', /.+/);
+
+    if (await fr.evaluate((el) => el.classList.contains('is-untranslated'))) {
+      // Falls back to the source page, so hreflang must describe the
+      // DESTINATION (the source language), not the language that was clicked.
+      await expect(fr).toHaveAttribute('hreflang', 'en');
+      // The reason lives in one footnote, referenced from the row — not in
+      // per-row text, which is what used to make the menu wide.
+      const noteId = await fr.getAttribute('aria-describedby');
+      expect(noteId).toBeTruthy();
+      await expect(page.locator(`#${noteId}`)).toHaveText(/not yet translated/i);
+      // …and exactly one footnote, however many languages are missing.
+      await expect(page.locator(`${TOGGLE} .nav-lang-note`)).toHaveCount(1);
+      await expect(fr.locator('.nav-lang-auto')).toHaveCount(0);
     } else {
-      // Disabled entries explain themselves and are marked for AT.
-      await expect(frDisabled).toHaveAttribute('aria-disabled', 'true');
-      await expect(frDisabled).toHaveAttribute('title', /.+/);
+      await expect(fr).toHaveAttribute('href', /^\/fr\//);
+      await expect(fr).toHaveAttribute('hreflang', 'fr');
+      // A generated translation is machine-made and says so.
+      await expect(fr.locator('.nav-lang-auto')).toHaveText(/auto/i);
     }
+  });
+
+  test('every menu row records the language preference when clicked', async ({ page }) => {
+    // The delegated handler in the include only fires on `a[data-lang]`. When
+    // untranslated rows were `span.disabled` they could not record anything;
+    // now that they are links, the preference must survive the fallback too.
+    await openSettings(page);
+    const rows = page.locator(`${OPTIONS} a.nav-lang-item`);
+    const count = await rows.count();
+    expect(count).toBeGreaterThan(0);
+    for (let i = 0; i < count; i += 1) {
+      await expect(rows.nth(i)).toHaveAttribute('data-lang', /.+/);
+    }
+
+    await page.evaluate(() => localStorage.removeItem('zer0-lang'));
+    const first = rows.first();
+    const lang = await first.getAttribute('data-lang');
+    // Click without navigating — the handler is what is under test here.
+    await first.evaluate((el) => {
+      el.addEventListener('click', (e) => e.preventDefault(), { once: true });
+      el.click();
+    });
+    await expect.poll(() => page.evaluate(() => localStorage.getItem('zer0-lang'))).toBe(lang);
   });
 
   test('homepage declares its language and no phantom alternates', async ({ page }) => {

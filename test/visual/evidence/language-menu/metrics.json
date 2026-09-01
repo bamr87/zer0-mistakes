@@ -1,0 +1,65 @@
+{
+  "slug": "language-menu",
+  "issue": 406,
+  "pr": 431,
+  "measured": "Chromium 145 (Playwright), viewport 1280x800, navbar variant",
+  "source": "Static harness: _includes/components/language-toggle.html rendered with liquidjs against a fixture, styled by the real compiled assets/css/main.scss + vendored Bootstrap. The agent sandbox has no bundler, so no Jekyll site could be served; see README.md.",
+  "fixture": {
+    "source_lang": "en",
+    "target_languages": [
+      "fr",
+      "es",
+      "de"
+    ],
+    "translated": [
+      "fr"
+    ],
+    "note": "_config.yml ships translation.languages: [fr]. The fixture adds es and de, untranslated, so the untranslated-row, auto-chip and footnote states are all exercised at once."
+  },
+  "before": {
+    "trigger": {
+      "widthPx": 88,
+      "heightPx": 19,
+      "visibleText": "EN",
+      "hasCaretClass": true,
+      "caretPseudoDisplay": "inline-block",
+      "ariaLabel": "Change language",
+      "title": "Language"
+    },
+    "menu": {
+      "menuWidthPx": 243,
+      "widestRowPx": 241,
+      "rowCount": 4,
+      "disabledRows": 2,
+      "bootstrapActiveFill": 1,
+      "currentRows": 1,
+      "untranslatedLinks": 0,
+      "autoChips": 0,
+      "footnotes": 0,
+      "perRowNotAvailableText": 2
+    }
+  },
+  "after": {
+    "trigger": {
+      "widthPx": 38,
+      "heightPx": 38,
+      "visibleText": "",
+      "hasCaretClass": false,
+      "caretPseudoDisplay": "none",
+      "ariaLabel": "Change language",
+      "title": "Language: English"
+    },
+    "menu": {
+      "menuWidthPx": 144,
+      "widestRowPx": 142,
+      "rowCount": 6,
+      "disabledRows": 0,
+      "bootstrapActiveFill": 0,
+      "currentRows": 1,
+      "untranslatedLinks": 2,
+      "autoChips": 1,
+      "footnotes": 1,
+      "perRowNotAvailableText": 1
+    }
+  }
+}

@@ -14,6 +14,26 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ## [Unreleased]
 
+### Changed
+
+- **Language switcher: icon-only trigger and a compact, positive menu (T-038, #406)** —
+  the navbar trigger drops its `EN` text span and the Bootstrap caret for a
+  38px square icon button, with `title` and `aria-label` carrying the language
+  name. In the menu (both the navbar dropdown and the Settings panel variant),
+  the current language is now marked with a tint and a check icon instead of
+  Bootstrap's `.active` primary fill, which read as a selected nav item rather
+  than "you are here". **Untranslated languages are no longer disabled rows** —
+  they link to the source page and still record the `zer0-lang` preference, so
+  the menu has no dead ends. Machine-generated translations carry a small
+  `auto` chip, and the per-row "(Not yet translated)" text — the main driver of
+  menu width — collapses into one footnote under a divider, referenced from
+  each marked row via `aria-describedby`. The dropdown menu is capped at 220px.
+  New `ui` keys `lang_machine_translated`, `lang_machine_translated_title` and
+  `lang_untranslated_note` in `_data/ui-text.yml`; each use carries a literal
+  fallback, because `core/i18n.html` replaces the `ui` map wholesale on a
+  translated page and `_data/i18n/<lang>.yml` will not have them until
+  `scripts/translate.rb` next runs.
+
 ### Added
 
 - **Cookbook & recipes collection (ZER0-084)** — a `recipes` collection that
@@ -140,6 +160,26 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   (evidence:
   [`test/visual/evidence/footer-button-semantics/`](test/visual/evidence/footer-button-semantics/README.md)
   — shipped vs. reset-stripped at 1280px, footer overflow 0px at 375/768/1280)
+
+- **`<html class="no-js">` is upgraded to `js` again (#319)** — `_layouts/root.html`
+  shipped the standard progressive-enhancement hook but nothing ever swapped
+  it: the string `no-js` occurred in exactly one file in the repository, and in
+  no SCSS, JS, test or doc. Every page on every downstream site permanently
+  carried `no-js` with JavaScript fully enabled, so a consumer writing
+  `html.no-js .foo {…}` / `html.js .foo {…}` got the no-JS branch for everyone
+  — the class advertised a capability the theme did not deliver. An inline
+  script is now the **first child of `<head>`**, above
+  `{% include core/head.html %}` (which opens with Google Tag Manager, so
+  "first in that include" is not "first in `<head>`") and deliberately neither
+  `defer` nor `async`, since it has to run before the first stylesheet is
+  fetched or `html.js` rules would flash. The served HTML still carries
+  `class="no-js"`, so the JS-disabled branch stays correct and the change is
+  purely additive for consumers already styling against the served markup.
+  Regression coverage: `test/visual/core/progressive-enhancement.spec.js`
+  (smoke tier) pins both directions of the contract — `js` with scripts on,
+  `no-js` with them off — plus the delivery mechanism, because a fix that
+  simply deleted `class="no-js"` would satisfy a naive one-sided assertion
+  while removing the hook entirely.
 
 - **Pages build: Liquid errors no longer ship mangled pages silently.** The
   `github-pages` gem renders every non-excluded Markdown file through Liquid, so
