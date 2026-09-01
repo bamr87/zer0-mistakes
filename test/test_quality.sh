@@ -567,6 +567,36 @@ test_frontmatter_lint() {
     fi
 }
 
+test_liquid_raw_balance() {
+    log_step "Checking Liquid {% raw %} balance in rendered Markdown"
+
+    cd "$PROJECT_ROOT"
+
+    local lint_script="scripts/lint-liquid-raw.rb"
+
+    if [[ ! -f "$lint_script" ]]; then
+        log_error "Liquid raw linter not found: $lint_script"
+        return 1
+    fi
+
+    # An unbalanced {% raw %} does not fail the Jekyll build — Liquid just
+    # swallows every line up to the next {% endraw %} and the page ships short.
+    # The Pages workflow can only catch Liquid *syntax* errors, so this static
+    # check covers the silent half.
+    local lint_output
+    if lint_output=$(ruby "$lint_script" 2>&1); then
+        log_success "Liquid raw blocks balanced"
+        if [[ "$VERBOSE" == "true" ]]; then
+            echo "$lint_output"
+        fi
+        return 0
+    else
+        log_error "Unbalanced Liquid raw blocks found"
+        echo "$lint_output"
+        return 1
+    fi
+}
+
 #
 # COMPATIBILITY TESTS
 #
@@ -872,6 +902,7 @@ run_quality_tests() {
     log_info "=== CONTENT QUALITY TESTS ==="
     run_test "Preview Image URLs" "test_preview_image_urls" "content"
     run_test "Frontmatter Schema Validation" "test_frontmatter_lint" "content"
+    run_test "Liquid Raw Block Balance" "test_liquid_raw_balance" "content"
     
     # Compatibility Tests
     log_info "=== COMPATIBILITY TESTS ==="
