@@ -107,8 +107,16 @@
              This is the ONE <main> landmark per page — child layouts (default/section/
              news) must use non-landmark wrappers (<div>) inside it (issue #299) — so
              assistive tech, search engines, and AI content extractors can isolate the
-             primary content from the surrounding header/nav/footer chrome. -->
-        <main id="main-content">
+             primary content from the surrounding header/nav/footer chrome.
+
+             tabindex="-1" is REQUIRED, not decorative: <main> is not natively
+             focusable, and Safari/WebKit (historically Firefox too) only scroll on a
+             fragment jump to a non-focusable container — keyboard focus stays put, so
+             the next Tab returns the user to the header nav they just skipped
+             (WCAG 2.4.1 Bypass Blocks). -1 keeps it out of the sequential Tab order
+             while allowing programmatic focus. The focus ring it would otherwise
+             paint is suppressed in _sass/utilities/_focus.scss. -->
+        <main id="main-content" tabindex="-1">
             <!-- Machine-translation disclosure — renders only on generated
                  translations (page.machine_translated); no-op elsewhere. -->
             {%- include components/translation-notice.html -%}

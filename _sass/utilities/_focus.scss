@@ -19,6 +19,20 @@ summary:focus-visible {
   border-radius: 0.125rem;
 }
 
+// Skip-link target — <main id="main-content" tabindex="-1"> in _layouts/root.html.
+// The -1 lets the skip link move real keyboard focus into the content (see the
+// comment there), but it also makes the container paintable by the UA's default
+// focus outline. Suppress it on the container ONLY: this rule cannot match a
+// descendant, so links, buttons and headings inside the content keep their rings
+// — including the :focus-visible ring defined at the top of this file.
+//
+// Safe here specifically because the element is tabindex="-1": it is never
+// reachable by Tab, so no keyboard user can land on it and be left without an
+// indicator. Do not generalise this selector to focusable elements.
+#main-content:focus {
+  outline: none;
+}
+
 // Skip-to-content link — visually hidden until focused
 .zer0-skip-link {
   position: absolute;
