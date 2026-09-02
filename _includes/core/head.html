@@ -94,14 +94,26 @@ window.MathJax = {
 <!-- ================================ -->
 <!-- HTML DOCUMENT META DATA         -->
 <!-- ================================ -->
-<!-- Essential meta tags for proper document rendering and mobile support -->
-<meta charset="utf-8">
+{%- comment -%} NOTE: the charset meta is NOT here — it lives at the very top
+     of _layouts/root.html so it lands inside the spec's 1024-byte window
+     (issue #372). Do not re-add it here. {%- endcomment -%}
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 <!-- Favicon + browser identity (config-driven via `favicon:`; explicit
      /favicon.ico fallback so baseurl deployments resolve) — page-invariant, cached. -->
 {% include_cached core/favicon.html %}
+
+{%- comment -%} Feed autodiscovery. jekyll-feed generates /feed.xml but emits
+     no link element unless feed_meta is called, so the feed was undiscoverable
+     to readers and crawlers even though the footer links it (issue #371).
+     Written out by hand rather than via feed_meta so the theme does not
+     hard-fail with "Unknown tag" on a consumer site that has not enabled the
+     plugin; the path matches the footer's own /feed.xml link. {%- endcomment -%}
+{%- assign _feed_path = site.feed.path | default: 'feed.xml' -%}
+<link rel="alternate" type="application/atom+xml"
+      title="{{ site.title | default: site.name | escape }}"
+      href="{{ _feed_path | relative_url }}">
 
 <!-- ================================ -->
 <!-- SEO SUPPLEMENT                  -->
