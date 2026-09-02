@@ -72,6 +72,31 @@
                         Press <kbd>/</kbd> or <kbd>⌘</kbd>/<kbd>Ctrl</kbd>+<kbd>K</kbd> to open search, <kbd>Esc</kbd> to close.
                     </div>
                 </form>
+                {%- comment -%}
+                  Results were never announced (issue #279): search rewrites the
+                  container below without moving focus, so a screen-reader user
+                  got silence — the visible list changed with nothing entering
+                  the accessibility tree's notification queue.
+
+                  The live region is this dedicated, visually-hidden element
+                  rather than the results container itself. Marking the
+                  container live would announce all eight result titles and
+                  their snippets on every keystroke, which is unusable; a
+                  screen-reader user wants "7 results for jekyll", then to
+                  navigate the list on their own terms.
+
+                  polite, not assertive: results land on each keystroke and an
+                  assertive region would interrupt the user mid-word, cutting
+                  off the query they are still typing.
+
+                  aria-atomic so the summary is read as one message even when
+                  only part of the string changes (8 results -> 7 results).
+                {%- endcomment -%}
+                <div class="visually-hidden"
+                     role="status"
+                     aria-live="polite"
+                     aria-atomic="true"
+                     data-search-status></div>
                 <div class="search-results mt-3" data-search-results>
                     <div class="text-muted small" data-search-empty>Start typing to see results.</div>
                 </div>
