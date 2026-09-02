@@ -1,7 +1,7 @@
 ---
 # Features: ZER0-001, ZER0-019, ZER0-031, ZER0-060
 ---
-<!--
+{% comment %}
   ===================================================================
   ROOT LAYOUT - Base template for the Zer0 Mistakes Jekyll Theme
   ===================================================================
@@ -29,7 +29,7 @@
   Author: Amr Abdel-Motaleb
   Copyright: 2024 - it-journey.com | @bamr87
   ===================================================================
--->
+{% endcomment %}
 
 <!doctype html>
 {%- comment -%}
@@ -48,6 +48,19 @@
 {%- endif -%}
 <html lang="{{ page.lang | default: site.locale | slice: 0, 2 | default: 'en' }}" class="no-js" data-bs-theme="{{ _bs_theme }}" data-color-mode-default="{{ _cm }}" data-color-mode-lock="{{ site.color_mode_lock | default: false }}" data-theme-skin="{{ site.theme_skin | default: 'air' }}" data-zer0-bg="{{ site.theme_background.enabled | default: true }}">
     <head>
+        {%- comment -%} Character encoding MUST be the first thing in <head>: the HTML spec
+             only looks for it in the first 1024 bytes of the document, and
+             everything below (the no-js note, core/head.html's own banner,
+             Google Tag Manager, console-capture, page-views, mermaid, nanobar)
+             pushed it to byte ~4415 (issue #372). Past the limit the browser
+             stops looking and falls back to its locale default, mis-decoding
+             every non-ASCII byte until it re-parses — and this theme ships
+             UTF-8 throughout (fr/** translations, em-dashes, curly quotes).
+             It sits here rather than in core/head.html because that include is
+             not, and cannot be, the first thing in <head>.
+             Keep it first. Nothing may be emitted above it. {%- endcomment -%}
+        <meta charset="utf-8">
+
         <!-- Progressive-enhancement hook: upgrade <html class="no-js"> to "js".
              MUST be the first child of <head>, inline, and neither `defer` nor
              `async` — it has to run before the first stylesheet is fetched or
