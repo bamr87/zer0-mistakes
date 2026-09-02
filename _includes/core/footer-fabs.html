@@ -20,12 +20,26 @@
   after </footer> is visually identical to the previous nesting.
   ===================================================================
 {%- endcomment -%}
-{%- assign _root_only_layouts = "landing,welcome,stats,sitemap-collection,setup,section,news,index,home,admin" | split: "," -%}
-{%- unless _root_only_layouts contains page.layout -%}
+{%- comment -%}
+  The TOC FAB controls `#tocContents`, which navigation/sidebar-right.html
+  emits — and only _layouts/default.html includes that. This used to be a
+  DENYLIST of layouts to skip, which fails open: any layout not on the list got
+  the FAB whether or not it rendered the panel, and the list had already fallen
+  behind (404 and the book-* layouts were missing, so those pages shipped a FAB
+  pointing at nothing — issue #373).
+
+  Replaced with the positive gate from navigation/sidebar-config.html, which
+  fails safe: a new layout gets no FAB until it is declared as one that renders
+  the offcanvas. sidebar-config is included here rather than relied upon from
+  header.html because Liquid assigns propagate to the INCLUDING template, and
+  these are two sibling includes of root.html.
+{%- endcomment -%}
+{% include navigation/sidebar-config.html %}
+{%- if sidebar_offcanvas_rendered -%}
   {% include navigation/toc-fab.html %}
   {%- comment -%} Local-graph FAB/panel are part of the Obsidian feature. {%- endcomment -%}
   {%- if site.obsidian.enabled != false -%}
     {% include navigation/local-graph-fab.html %}
     {% include navigation/local-graph.html %}
   {%- endif -%}
-{%- endunless -%}
+{%- endif -%}
