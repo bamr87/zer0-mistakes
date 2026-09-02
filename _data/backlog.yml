@@ -1009,7 +1009,7 @@ tasks:
 
   - id: T-038
     title: "Language switcher: icon-only trigger and a compact, positive menu"
-    status: open
+    status: done
     priority: P2
     area: feat
     risk: standard
@@ -1029,10 +1029,9 @@ tasks:
       - "Trigger is icon-only at all widths with an accessible name."
       - "regression test added"
       - "before/after evidence committed"
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: 406, pr: 431, roadmap: null }
     created: 2026-08-18
-    updated: 2026-08-18
-
+    updated: 2026-09-01
   - id: T-039
     title: "Eliminate page-transition layout shift (fixed-nav offset, scrollbar gutter, server-rendered slots)"
     status: open
@@ -1064,7 +1063,7 @@ tasks:
 
   - id: T-040
     title: "Setup wizard: live YAML preview, vertical stepper, draft persistence, stable panel height, inline validation"
-    status: open
+    status: done
     priority: P2
     area: feat
     risk: standard
@@ -1087,10 +1086,9 @@ tasks:
       - "Reload mid-wizard restores the draft; invalid email/URL flagged on blur."
       - "regression test added"
       - "before/after evidence committed"
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: 408, pr: 432, roadmap: null }
     created: 2026-08-18
-    updated: 2026-08-18
-
+    updated: 2026-09-01
   - id: T-041
     title: "Admin layout: actions reachable on mobile, grouped sidebar, shared sticky offset, single heading"
     status: open
@@ -1216,7 +1214,7 @@ tasks:
 
   - id: T-045
     title: "Homepage snapshot baselines were regenerated without the 1967px drift being diagnosed"
-    status: open
+    status: done
     priority: P2
     area: tests
     risk: low
@@ -1267,6 +1265,6 @@ tasks:
       - "Any genuinely time- or build-varying content inside the snapshot region is masked or stubbed, so the tier cannot drift again."
       - "No baseline PNG is regenerated as part of this work; any diff is diagnosed in the PR before it is blessed."
       - "The y626 band is explained, or recorded as unrecoverable with the reason. (Recorded: artifacts past 14-day retention.)"
-    links: { issue: 417, pr: null, roadmap: null }
+    links: { issue: 417, pr: 425, roadmap: null }
     created: 2026-08-23
-    updated: 2026-08-25
+    updated: 2026-09-01

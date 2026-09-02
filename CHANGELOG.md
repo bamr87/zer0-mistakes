@@ -196,6 +196,21 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **Finished work kept reopening its own issues** — `scripts/sync-backlog.rb`
+treats `_data/backlog.yml` as the source of truth and **reopens** any issue whose
+task is not `done`. T-038, T-040 and T-045 shipped in v1.29.0 (#431, #432, #425)
+and their `Closes #NNN` commits duly closed #406, #408 and #417 — then the next
+sync reopened all three, because the backlog still said `open`. Marked done with
+their PR links, which is the only thing that actually closes them.
+- **The nightly sticky issue could be raised but never cleared (#326)** —
+`nightly-extended.yml` files and updates a sticky issue on failure and does
+nothing on recovery, so a fixed failure stayed open indefinitely. #326 sat open
+five days past its own fix, carrying a P1 into every triage pass. A
+`report-recovery` job now comments and closes it when the tier goes green. It is
+gated on `preflight.outputs.go == 'true'` as well as both jobs succeeding: the
+preflight short-circuits on an unchanged `main` and reports `skipped`, so a bare
+`success()` would close the issue on a night that tested nothing.
+
 - **Footer "Info" and "Cookie Preferences" are buttons, not links (#320)** —
   both controls open in-page UI (the `#info-section` offcanvas and the
   `#cookieSettingsModal` modal) but shipped as `<a href="#" data-bs-toggle>`, so
