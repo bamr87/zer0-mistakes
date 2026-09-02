@@ -214,6 +214,31 @@ against the real inheritance graph by
 `test/test_core.sh :: test_sidebar_offcanvas_layout_gate`, which walks every
 `_layouts/*.html` and fails if the two disagree in either direction.
 
+- **`<meta charset>` shipped ~26 KB into the document, past the spec's 1024-byte
+window (#372)** — the HTML spec only scans the first 1024 bytes for the
+character-encoding declaration. The tag sat in `_includes/core/head.html` below
+Google Tag Manager, console-capture, page-views, mermaid and nanobar — and below
+two multi-line HTML doc banners that shipped verbatim to production — so a
+served page declared its encoding at byte **26058**. Past the limit a browser
+stops looking and decodes with its locale default, mangling every non-ASCII byte
+until it re-parses; this theme ships UTF-8 throughout (`fr/**` translations,
+em-dashes, curly quotes), so that is a live corruption risk rather than a lint
+nit. The tag now sits at the very top of `_layouts/root.html` — measured at byte
+**318**, verified across all 400 built pages — and `root.html`'s own banner is a
+Liquid comment (stripped at build) rather than an HTML one, which is what freed
+the budget. Regression coverage in `test/visual/core/head-contract.spec.js`
+measures the **served bytes**, since a source-order assertion would have passed
+both before and after.
+- **The Atom feed was undiscoverable (#371)** — `jekyll-feed` generates
+`/feed.xml` but emits no autodiscovery `<link>` unless `feed_meta` is called,
+which the theme never did, so readers and crawlers could not find the feed even
+though the footer linked it. `<head>` now carries
+`<link rel="alternate" type="application/atom+xml">`, honouring `site.feed.path`.
+Written out directly rather than via `feed_meta` so a consumer site that has not
+enabled the plugin does not hard-fail with `Unknown tag`. A test asserts the
+advertised URL actually returns a feed — a discoverable link to a 404 would be
+worse than none.
+
 - **Footer "Info" and "Cookie Preferences" are buttons, not links (#320)** —
   both controls open in-page UI (the `#info-section` offcanvas and the
   `#cookieSettingsModal` modal) but shipped as `<a href="#" data-bs-toggle>`, so
