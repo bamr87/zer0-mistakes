@@ -179,3 +179,57 @@ jobs:
             gh issue edit "$num" --add-label "area:tests" 2>/dev/null || true
             gh issue edit "$num" --add-label "automated" 2>/dev/null || true
           fi
+
+  report-recovery:
+    name: Close the sticky issue on recovery
+    runs-on: ubuntu-latest
+    needs: [preflight, extended-suites, snapshots]
+    # The mirror image of report-failure: both test jobs actually RAN and both
+    # passed. `success()` alone is not enough — the preflight short-circuits on
+    # an unchanged `main` and both jobs report `skipped`, which would close the
+    # issue on a night that tested nothing. Issue #326 sat open for five days
+    # past its own fix precisely because this job did not exist: the workflow
+    # could raise a signal but never clear it, so a resolved failure kept being
+    # re-triaged as a live P1.
+    if: >-
+      always()
+      && needs.preflight.outputs.go == 'true'
+      && needs.extended-suites.result == 'success'
+      && needs.snapshots.result == 'success'
+    timeout-minutes: 5
+    steps:
+      - name: Close the sticky failure issue if one is open
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          TITLE="Nightly extended tests failing"
+
+          # Same lookup as report-failure, so the two halves cannot drift apart
+          # and start addressing different issues.
+          existing=$(gh issue list --state open --search "\"$TITLE\" in:title" \
+            --json number --jq '.[0].number // empty')
+
+          if [ -z "$existing" ]; then
+            echo "No open sticky issue — nothing to close."
+            exit 0
+          fi
+
+          # Comment before closing: the close reason is the useful artifact for
+          # anyone reading the thread later, and a bare state change is not.
+          gh issue comment "$existing" --body "<!-- nightly-extended-sticky -->
+          ✅ **The nightly extended tier is green again.** Both jobs ran and passed:
+
+          | Job | Result |
+          |---|---|
+          | Extended shell + Playwright smoke | success |
+          | Visual snapshots (9 skins) | success |
+
+          Run: $RUN_URL
+
+          Closing automatically — this issue is the failure signal, so it should
+          not outlive the failure. A future failure files a fresh one."
+
+          gh issue close "$existing" --reason completed
+          echo "Closed sticky issue #$existing"
