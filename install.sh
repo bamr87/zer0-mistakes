@@ -869,10 +869,38 @@ create_starter_navigation() {
     # create_from_template SKIPS a file that already exists, so this is safe to
     # re-run: a consumer who has edited their navigation keeps it, and only a
     # genuinely missing file is seeded.
-    local nav
+    #
+    # docs.yml carries an inline fallback because it is the file this fix is
+    # about: a `curl | bash` install resolves templates over the network, and
+    # this one must land even if that fetch does not.
+    local docs_fallback='# Docs sidebar navigation - YOUR docs, not the theme'"'"'s.
+# Every URL here must resolve on your site. Prefer no data file at all?
+# Use `sidebar: { nav: pages }`, which builds the tree from your page URLs.
+
+- title: Documentation
+  icon: bi-book
+  url: /docs/
+  children:
+    - title: Overview
+      url: /docs/
+    - title: Configuration
+      url: /docs/configuration/
+    - title: Troubleshooting
+      url: /docs/troubleshooting/'
+
+    local nav nav_fallback
     for nav in docs about admin home posts quickstart; do
+        nav_fallback=""
+        [[ "$nav" == "docs" ]] && nav_fallback="$docs_fallback"
+
+        # A template that cannot be resolved is NOT fatal. The file is simply
+        # not seeded -- which is strictly better than seeding the theme's own
+        # links, and is what happened before this change anyway. Letting it
+        # abort would mean one 404, or one flaky fetch during a curl|bash
+        # install, kills an otherwise fine installation. install.sh runs under
+        # `set -e`, so the `|| true` is load-bearing, not decoration.
         create_from_template "data/navigation-${nav}.yml.template" \
-            "$TARGET_DIR/_data/navigation/${nav}.yml" ""
+            "$TARGET_DIR/_data/navigation/${nav}.yml" "$nav_fallback" || true
     done
 
     log_success "Navigation configuration created"
