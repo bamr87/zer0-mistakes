@@ -329,4 +329,4 @@ For contributor-level details (component API reference, include parameters, exte
 
 - [[Customization]]
 - [[Layouts]]
-- [[Bootstrap Integration]]
+- [Bootstrap 5 Integration](/docs/bootstrap/)
