@@ -196,6 +196,26 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **Seven footer links had no accessible name on mobile (#435)** — the "Follow
+Us" social links and the RSS link render an `<i>` that is `aria-hidden="true"`
+beside a `<span class="d-none d-md-inline">` label. Below the `md` breakpoint
+the span is `display:none`, so it leaves the accessibility tree too and the link
+was announced as a bare "link" — measured: **7 nameless links at 375px**. Each
+now carries an `aria-label` matching its visible text exactly, so the name is
+correct on mobile and still contains the visible label at `md`+ (WCAG 2.5.3
+Label in Name). Covered by `test/visual/core/accessible-names.spec.js`, which
+asserts at **mobile** width — the same assertions pass at desktop on the
+unfixed code, which is why the bug survived the existing suite.
+- **Search results were never announced to screen readers (#279)** — the modal
+rewrites its results container without moving focus, so assistive tech had no
+signal that anything had happened. A visually-hidden `role="status"`
+`aria-live="polite"` region now announces a concise count ("7 results for
+jekyll", or "12 of 40 results…" when the list is truncated), and "No results
+found." The **results list itself is deliberately not live**: announcing eight
+titles and their snippets on every keystroke would be unusable. `aria-atomic`
+keeps the summary a single message, and a repeated string is cleared first so an
+unchanged announcement is not swallowed as a no-op.
+
 - **`<meta charset>` shipped ~26 KB into the document, past the spec's 1024-byte
 window (#372)** — the HTML spec only scans the first 1024 bytes for the
 character-encoding declaration. The tag sat in `_includes/core/head.html` below
