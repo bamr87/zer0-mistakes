@@ -1,5 +1,5 @@
 {% comment %} Feature: ZER0-008 {% endcomment %}
-<!--
+{% comment %}
   ===================================================================
   SIDEBAR LEFT - Dynamic Navigation Sidebar
   ===================================================================
@@ -27,14 +27,14 @@
   - Heading text/icon: page.sidebar.title/icon → collection metadata →
     site.sidebar.title/icon → "Browse docs"
   ===================================================================
--->
+{% endcomment %}
 
 {% include navigation/sidebar-config.html %}
 
-<!-- ================================ -->
-<!-- SIDEBAR NAVIGATION CONTAINER   -->
-<!-- ================================ -->
-<!-- Responsive offcanvas sidebar - full-width on mobile, fixed on desktop -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} SIDEBAR NAVIGATION CONTAINER   {% endcomment %}
+{% comment %} ================================ {% endcomment %}
+{% comment %} Responsive offcanvas sidebar - full-width on mobile, fixed on desktop {% endcomment %}
 <script>
   try {
     if (localStorage.getItem('zer0-nav-sidebar-visible') === 'false') {
@@ -44,10 +44,10 @@
 </script>
 <div class="offcanvas-lg offcanvas-start" tabindex="-1" id="bdSidebar" aria-labelledby="bdSidebarOffcanvasLabel">
 
-  <!-- ========================== -->
-  <!-- SIDEBAR HEADER            -->
-  <!-- ========================== -->
-  <!-- Mobile-only header with close button -->
+  {% comment %} ========================== {% endcomment %}
+  {% comment %} SIDEBAR HEADER            {% endcomment %}
+  {% comment %} ========================== {% endcomment %}
+  {% comment %} Mobile-only header with close button {% endcomment %}
   <div class="offcanvas-header">
     <h2 class="offcanvas-title h5 mb-0" id="bdSidebarOffcanvasLabel">{{ sidebar_title }}</h2>
     <div class="d-flex align-items-center gap-1">
@@ -63,10 +63,10 @@
     </div>
   </div>
 
-  <!-- ========================== -->
-  <!-- SIDEBAR CONTENT AREA      -->
-  <!-- ========================== -->
-  <!-- Scrollable content area with dynamic navigation options -->
+  {% comment %} ========================== {% endcomment %}
+  {% comment %} SIDEBAR CONTENT AREA      {% endcomment %}
+  {% comment %} ========================== {% endcomment %}
+  {% comment %} Scrollable content area with dynamic navigation options {% endcomment %}
   <div class="offcanvas-body overflow-auto">
 
     <div class="bd-sidebar-desktop-header mb-3 d-none d-lg-flex align-items-center justify-content-between gap-2 w-100">
@@ -86,7 +86,7 @@
       </button>
     </div>
 
-    <!-- Resolved navigation content (see navigation/sidebar-nav.html) -->
+    {% comment %} Resolved navigation content (see navigation/sidebar-nav.html) {% endcomment %}
     {% include navigation/sidebar-nav.html id="sidebar-content" %}
 
   </div>

@@ -11,7 +11,7 @@
       <div class="card-body">
         <div class="row g-4">
           
-          <!-- Content Overview Column -->
+          {% comment %} Content Overview Column {% endcomment %}
           <div class="col-md-4">
             <div class="h-100 p-3 bg-body-secondary rounded">
               <h5 class="text-primary mb-3">
@@ -42,7 +42,7 @@
             </div>
           </div>
           
-          <!-- Top Performers Column -->
+          {% comment %} Top Performers Column {% endcomment %}
           <div class="col-md-4">
             <div class="h-100 p-3 bg-body-secondary rounded">
               <h5 class="text-success mb-3">
@@ -67,7 +67,7 @@
                 </div>
               {% endif %}
               
-              <!-- Content Distribution -->
+              {% comment %} Content Distribution {% endcomment %}
               <div class="mb-3">
                 <strong>Content Distribution:</strong><br>
                 {% if site.data.content_statistics.categories and site.data.content_statistics.categories.size > 0 %}
@@ -92,14 +92,14 @@
             </div>
           </div>
           
-          <!-- Data Health Column -->
+          {% comment %} Data Health Column {% endcomment %}
           <div class="col-md-4">
             <div class="h-100 p-3 bg-body-secondary rounded">
               <h5 class="text-warning-emphasis mb-3">
                 <i class="bi bi-heart-pulse me-2"></i> Data Health
               </h5>
               
-              <!-- Last Update Status -->
+              {% comment %} Last Update Status {% endcomment %}
               <div class="mb-3">
                 <strong>Last Updated:</strong><br>
                 {% if site.data.content_statistics.generated_at %}
@@ -111,7 +111,7 @@
                 {% endif %}
               </div>
               
-              <!-- Data Completeness -->
+              {% comment %} Data Completeness {% endcomment %}
               <div class="mb-3">
                 <strong>Data Completeness:</strong><br>
                 {% assign completeness_score = 0 %}
@@ -146,7 +146,7 @@
                 <small class="text-muted">Overall data quality</small>
               </div>
               
-              <!-- Refresh Instructions -->
+              {% comment %} Refresh Instructions {% endcomment %}
               {% unless site.data.content_statistics %}
                 <div class="alert alert-warning alert-sm p-2" role="alert">
                   <small>
@@ -161,7 +161,7 @@
         </div>
       </div>
       
-      <!-- Action Buttons Footer -->
+      {% comment %} Action Buttons Footer {% endcomment %}
       <div class="card-footer text-center">
         <div class="btn-group" role="group">
           <button type="button" class="btn btn-outline-primary" onclick="window.print()">
@@ -179,10 +179,10 @@
   </div>
 </div>
 
-<!-- ================================================ -->
-<!-- HELP MODAL                                      -->
-<!-- Information about statistics and data sources   -->
-<!-- ================================================ -->
+{% comment %} ================================================ {% endcomment %}
+{% comment %} HELP MODAL                                      {% endcomment %}
+{% comment %} Information about statistics and data sources   {% endcomment %}
+{% comment %} ================================================ {% endcomment %}
 <div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">

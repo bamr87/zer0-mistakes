@@ -61,7 +61,7 @@
              Keep it first. Nothing may be emitted above it. {%- endcomment -%}
         <meta charset="utf-8">
 
-        <!-- Progressive-enhancement hook: upgrade <html class="no-js"> to "js".
+        {% comment %} Progressive-enhancement hook: upgrade <html class="no-js"> to "js".
              MUST be the first child of <head>, inline, and neither `defer` nor
              `async` — it has to run before the first stylesheet is fetched or
              `html.js` rules would flash. It cannot live in core/head.html:
@@ -69,65 +69,65 @@
              "first in that include" is not "first in <head>".
              classList.replace() is a no-op when `no-js` is absent, so this is
              safe unconditionally. The served HTML keeps `no-js` on <html> so
-             the JS-disabled branch stays correct. -->
+             the JS-disabled branch stays correct. {% endcomment %}
         <script>document.documentElement.classList.replace("no-js", "js");</script>
 
-        <!-- =============================================== -->
-        <!-- HEAD SECTION: Meta tags, styles, and SEO setup -->
-        <!-- =============================================== -->
+        {% comment %} =============================================== {% endcomment %}
+        {% comment %} HEAD SECTION: Meta tags, styles, and SEO setup {% endcomment %}
+        {% comment %} =============================================== {% endcomment %}
 
-        <!-- Core site metadata, stylesheets, and external dependencies -->
+        {% comment %} Core site metadata, stylesheets, and external dependencies {% endcomment %}
         {% include core/head.html %}
 
-        <!-- Jekyll SEO plugin for enhanced search engine optimization -->
-        <!-- Documentation: https://github.com/jekyll/jekyll-seo-tag -->
+        {% comment %} Jekyll SEO plugin for enhanced search engine optimization {% endcomment %}
+        {% comment %} Documentation: https://github.com/jekyll/jekyll-seo-tag {% endcomment %}
         {% seo %}
 
-        <!-- fffuel-style SVG background config overrides -->
+        {% comment %} fffuel-style SVG background config overrides {% endcomment %}
         {% include components/svg-background.html zone="body" %}
     </head>
     
     <body class="zer0-bg-body" data-bs-spy="scroll" data-bs-target="#TableOfContents">
-        <!-- ============================================== -->
-        <!-- BODY SECTION: Site structure and content area -->
-        <!-- ============================================== -->
+        {% comment %} ============================================== {% endcomment %}
+        {% comment %} BODY SECTION: Site structure and content area {% endcomment %}
+        {% comment %} ============================================== {% endcomment %}
 
-        <!-- Consumer hook: first thing inside <body> (e.g. GTM noscript).
-             Empty stub shipped by the theme; shadow _includes/custom/body-start.html to use. -->
+        {% comment %} Consumer hook: first thing inside <body> (e.g. GTM noscript).
+             Empty stub shipped by the theme; shadow _includes/custom/body-start.html to use. {% endcomment %}
         {% include custom/body-start.html %}
 
-        <!-- Inline SVG symbols for consistent iconography throughout the site -->
-        <!-- Page-invariant: cached once per build via jekyll-include-cache. -->
+        {% comment %} Inline SVG symbols for consistent iconography throughout the site {% endcomment %}
+        {% comment %} Page-invariant: cached once per build via jekyll-include-cache. {% endcomment %}
         {% include_cached components/svg.html %}
 
-        <!-- Google Tag Manager body code for analytics (if configured) -->
-        <!-- Note: Currently commented out - uncomment when GTM is needed -->
+        {% comment %} Google Tag Manager body code for analytics (if configured) {% endcomment %}
+        {% comment %} Note: Currently commented out - uncomment when GTM is needed {% endcomment %}
 
-        <!-- Main site header with navigation, branding, and search functionality -->
+        {% comment %} Main site header with navigation, branding, and search functionality {% endcomment %}
         {% include core/header.html %}
 
-        <!-- Optional unified mobile drawer (Browse / Menu / Settings tabs).
-             Enable with `navigation.unified_mobile_drawer: true` in _config.yml. -->
+        {% comment %} Optional unified mobile drawer (Browse / Menu / Settings tabs).
+             Enable with `navigation.unified_mobile_drawer: true` in _config.yml. {% endcomment %}
         {% include navigation/unified-drawer.html %}
 
-        <!-- Search modal (site-wide) — cached once per build PER LANGUAGE
+        {% comment %} Search modal (site-wide) — cached once per build PER LANGUAGE
              (the lang param keys the include-cache entry; page.lang is nil
-             on English pages, so they all still share a single render). -->
+             on English pages, so they all still share a single render). {% endcomment %}
         {% include_cached components/search-modal.html lang=page.lang %}
 
-        <!-- Keyboard shortcuts help modal (triggered by `?`) — cached per language. -->
+        {% comment %} Keyboard shortcuts help modal (triggered by `?`) — cached per language. {% endcomment %}
         {% include_cached components/shortcuts-modal.html lang=page.lang %}
 
-        <!-- Settings offcanvas (Appearance / Site / Developer tabs) -->
+        {% comment %} Settings offcanvas (Appearance / Site / Developer tabs) {% endcomment %}
         {% include components/info-section.html %}
 
-        <!-- Setup banner for unconfigured sites — page-invariant. -->
+        {% comment %} Setup banner for unconfigured sites — page-invariant. {% endcomment %}
         {% include_cached components/setup-banner.html %}
 
-        <!-- ======================== -->
-        <!-- MAIN CONTENT AREA        -->
-        <!-- ======================== -->
-        <!-- Skip-link target: keep a single, consistent #main-content anchor site-wide.
+        {% comment %} ======================== {% endcomment %}
+        {% comment %} MAIN CONTENT AREA        {% endcomment %}
+        {% comment %} ======================== {% endcomment %}
+        {% comment %} Skip-link target: keep a single, consistent #main-content anchor site-wide.
              This is the ONE <main> landmark per page — child layouts (default/section/
              news) must use non-landmark wrappers (<div>) inside it (issue #299) — so
              assistive tech, search engines, and AI content extractors can isolate the
@@ -139,60 +139,60 @@
              the next Tab returns the user to the header nav they just skipped
              (WCAG 2.4.1 Bypass Blocks). -1 keeps it out of the sequential Tab order
              while allowing programmatic focus. The focus ring it would otherwise
-             paint is suppressed in _sass/utilities/_focus.scss. -->
+             paint is suppressed in _sass/utilities/_focus.scss. {% endcomment %}
         <main id="main-content" tabindex="-1">
-            <!-- Machine-translation disclosure — renders only on generated
-                 translations (page.machine_translated); no-op elsewhere. -->
+            {% comment %} Machine-translation disclosure — renders only on generated
+                 translations (page.machine_translated); no-op elsewhere. {% endcomment %}
             {%- include components/translation-notice.html -%}
             {{ content }}
         </main>
 
-        <!-- ======================== -->
-        <!-- FOOTER AND SCRIPTS       -->
-        <!-- ======================== -->
+        {% comment %} ======================== {% endcomment %}
+        {% comment %} FOOTER AND SCRIPTS       {% endcomment %}
+        {% comment %} ======================== {% endcomment %}
         
-        <!-- Site footer with links, copyright, and additional navigation.
+        {% comment %} Site footer with links, copyright, and additional navigation.
              Page-invariant chrome is cached once per build; the page-dependent
              FAB/local-graph tail renders fresh per page (see core/footer-fabs.html).
              Build-time values inside (e.g. the copyright year from site.time) stay
              fresh: jekyll-include-cache stores in memory only (Jekyll 3.x has no
              Jekyll::Cache) and clears on every build's :pre_render hook — it never
-             persists to .jekyll-cache. -->
+             persists to .jekyll-cache. {% endcomment %}
         {%- include_cached core/footer.html lang=page.lang -%}
         {%- include core/footer-fabs.html -%}
 
-        <!-- Consumer hook: after the theme footer, before the consent banner.
+        {% comment %} Consumer hook: after the theme footer, before the consent banner.
              Empty stub shipped by the theme; shadow _includes/custom/footer.html to use.
              Deliberately OUTSIDE the cached footer include so page-dependent
-             consumer markup renders per page. -->
+             consumer markup renders per page. {% endcomment %}
         {%- include custom/footer.html -%}
 
-        <!-- Privacy-compliant cookie consent banner — page-invariant. -->
+        {% comment %} Privacy-compliant cookie consent banner — page-invariant. {% endcomment %}
         {%- include_cached components/cookie-consent.html -%}
 
-        <!-- AI Chat Assistant -->
+        {% comment %} AI Chat Assistant {% endcomment %}
         {%- include components/ai-chat.html -%}
 
-        <!-- Page-feedback capture widget ("Improve this page" → GitHub issue) -->
+        {% comment %} Page-feedback capture widget ("Improve this page" → GitHub issue) {% endcomment %}
         {%- include components/page-feedback.html -%}
 
-        <!-- JavaScript dependencies and custom scripts -->
+        {% comment %} JavaScript dependencies and custom scripts {% endcomment %}
         <div>
-            <!-- Search functionality -->
-            <!-- Note: Currently commented out - uncomment when search is implemented -->
+            {% comment %} Search functionality {% endcomment %}
+            {% comment %} Note: Currently commented out - uncomment when search is implemented {% endcomment %}
 
-            <!-- External JavaScript libraries and custom scripts — page-invariant.
+            {% comment %} External JavaScript libraries and custom scripts — page-invariant.
                  The "?v=" cache-buster (site.time) in js-cdn.html stays correct:
                  the include cache is in-memory and reset every build (see footer
-                 note above), so v= advances on each build, never frozen across deploys. -->
+                 note above), so v= advances on each build, never frozen across deploys. {% endcomment %}
             {% include_cached components/js-cdn.html %}
         </div>
 
-        <!-- Analytics Integration -->
+        {% comment %} Analytics Integration {% endcomment %}
         {%- include analytics/posthog.html -%}
 
-        <!-- Consumer hook: last thing before </body> (site scripts, widgets).
-             Empty stub shipped by the theme; shadow _includes/custom/body-end.html to use. -->
+        {% comment %} Consumer hook: last thing before </body> (site scripts, widgets).
+             Empty stub shipped by the theme; shadow _includes/custom/body-end.html to use. {% endcomment %}
         {%- include custom/body-end.html -%}
     </body>
 </html>

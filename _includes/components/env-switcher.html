@@ -1,5 +1,5 @@
 {% comment %} Feature: ZER0-077 {% endcomment %}
-<!--
+{% comment %}
   ===================================================================
   ENVIRONMENT SWITCHER - Dev/Prod URL Display and Toggle
   ===================================================================
@@ -25,7 +25,7 @@
   Build time / Jekyll version live in theme-info.html (Theme & Build
   section) — not duplicated here.
   ===================================================================
--->
+{% endcomment %}
 
 {% assign dev_port = site.port | default: 4000 %}
 {% comment %}Prod links must not use site.url during serve (Jekyll sets it to 0.0.0.0:4000 etc.){% endcomment %}
@@ -39,7 +39,7 @@
 {% assign prod_url = canonical_prod_origin | append: site.baseurl %}
 {% assign dev_url = "http://localhost:" | append: dev_port | append: site.baseurl %}
 
-<!-- Environment Status Card -->
+{% comment %} Environment Status Card {% endcomment %}
 <div class="card mb-3 {% if is_production %}border-success{% else %}border-warning{% endif %}">
   <div class="card-header d-flex align-items-center justify-content-between py-2 {% if is_production %}bg-success{% else %}bg-warning{% endif %} bg-opacity-10">
     <span class="fw-semibold">
@@ -57,7 +57,7 @@
     {% endif %}
   </div>
   <div class="card-body">
-    <!-- Active URL Display -->
+    {% comment %} Active URL Display {% endcomment %}
     <label class="form-label small text-body-secondary mb-1" for="currentUrlInput">
       <i class="bi bi-link-45deg me-1" aria-hidden="true"></i>Current Page URL
     </label>
@@ -79,7 +79,7 @@
       </button>
     </div>
 
-    <!-- Build context -->
+    {% comment %} Build context {% endcomment %}
     <p class="small text-body-secondary mb-0 mt-3">
       Built with <code>JEKYLL_ENV={{ build_env }}</code>.
       {% if is_production %}
@@ -93,7 +93,7 @@
   </div>
 </div>
 
-<!-- Quick URL Links -->
+{% comment %} Quick URL Links {% endcomment %}
 <div class="card border-secondary">
   <div class="card-header py-2 bg-body-tertiary">
     <span class="fw-semibold small">
@@ -101,7 +101,7 @@
     </span>
   </div>
   <ul class="list-group list-group-flush">
-    <!-- Production URL -->
+    {% comment %} Production URL {% endcomment %}
     <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
       <div class="d-flex align-items-center min-w-0">
         <span class="badge bg-success me-2">Prod</span>
@@ -133,7 +133,7 @@
     </li>
 
     {% unless is_production %}
-    <!-- Development URL (dev builds only — never leak localhost into production HTML) -->
+    {% comment %} Development URL (dev builds only — never leak localhost into production HTML) {% endcomment %}
     <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
       <div class="d-flex align-items-center min-w-0">
         <span class="badge bg-warning text-dark me-2">Dev</span>
@@ -166,7 +166,7 @@
     {% endunless %}
 
     {% if site.repository %}
-    <!-- GitHub Source -->
+    {% comment %} GitHub Source {% endcomment %}
     <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
       <div class="d-flex align-items-center min-w-0">
         <span class="badge bg-dark me-2">Source</span>

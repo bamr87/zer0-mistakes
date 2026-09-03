@@ -1,5 +1,5 @@
 {% comment %} Feature: ZER0-054 {% endcomment %}
-<!--
+{% comment %}
   ===================================================================
   JSON-LD FAQ SCHEMA - FAQPage Structured Data
   ===================================================================
@@ -24,7 +24,7 @@
   Dependencies:
   - Page front matter with faq_items array
   ===================================================================
--->
+{% endcomment %}
 
 {% if page.faq_items and page.faq_items.size > 0 %}
 <script type="application/ld+json">

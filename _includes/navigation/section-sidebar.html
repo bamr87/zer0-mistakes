@@ -1,4 +1,4 @@
-<!--
+{% comment %}
   ===================================================================
   SECTION SIDEBAR - Fixed Topic Navigation
   ===================================================================
@@ -28,7 +28,7 @@
   - Bootstrap 5 offcanvas component
   - Bootstrap Icons
   ===================================================================
--->
+{% endcomment %}
 
 {% assign sidebar_id = include.sidebar_id | default: "sectionSidebar" %}
 {% assign section_posts = include.section_posts %}
@@ -71,13 +71,13 @@
   {% endfor %}
 {% endif %}
 
-<!-- ================================ -->
-<!-- DESKTOP SIDEBAR (Fixed Sticky)   -->
-<!-- ================================ -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} DESKTOP SIDEBAR (Fixed Sticky)   {% endcomment %}
+{% comment %} ================================ {% endcomment %}
 <aside class="section-sidebar-desktop d-none d-lg-block w-100">
   <div class="position-sticky" style="top: 80px;">
     
-    <!-- Topics Card -->
+    {% comment %} Topics Card {% endcomment %}
     <div class="card border-0 shadow-sm">
       <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
         <h5 class="mb-0">
@@ -134,7 +134,7 @@
       {% endif %}
     </div>
     
-    <!-- Section Stats -->
+    {% comment %} Section Stats {% endcomment %}
     <div class="card border-0 shadow-sm mt-3">
       <div class="card-body">
         <h6 class="text-muted mb-3">
@@ -158,9 +158,9 @@
   </div>
 </aside>
 
-<!-- ================================ -->
-<!-- MOBILE OFFCANVAS SIDEBAR         -->
-<!-- ================================ -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} MOBILE OFFCANVAS SIDEBAR         {% endcomment %}
+{% comment %} ================================ {% endcomment %}
 <div class="offcanvas offcanvas-start" tabindex="-1" id="{{ sidebar_id }}" aria-labelledby="{{ sidebar_id }}Label">
   <div class="offcanvas-header bg-primary text-white">
     <h2 class="offcanvas-title h5" id="{{ sidebar_id }}Label">
@@ -208,9 +208,9 @@
   </div>
 </div>
 
-<!-- ================================ -->
-<!-- SIDEBAR STYLES                   -->
-<!-- ================================ -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} SIDEBAR STYLES                   {% endcomment %}
+{% comment %} ================================ {% endcomment %}
 <style>
   /* Sidebar Navigation */
   .sidebar-nav .nav-link {
@@ -258,9 +258,9 @@
   }
 </style>
 
-<!-- ================================ -->
-<!-- SIDEBAR JAVASCRIPT               -->
-<!-- ================================ -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} SIDEBAR JAVASCRIPT               {% endcomment %}
+{% comment %} ================================ {% endcomment %}
 <script>
 (function() {
   // Smooth scroll for sidebar links

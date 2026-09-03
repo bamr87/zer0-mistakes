@@ -1,0 +1,57 @@
+{
+  "before_dir": "/tmp/claude-0/-home-user-zer0-mistakes/7c571596-193a-5113-91f7-6d9a03f0c0ea/scratchpad/_site_ban_before",
+  "after_dir": "/tmp/claude-0/-home-user-zer0-mistakes/7c571596-193a-5113-91f7-6d9a03f0c0ea/scratchpad/_site_ban_after",
+  "pages": 415,
+  "html_bytes_before": 91464620,
+  "html_bytes_after": 71603991,
+  "comment_bytes_before": 19877745,
+  "comment_bytes_after": 46277,
+  "comment_blocks_before": 142840,
+  "comment_blocks_after": 1405,
+  "pages_differing": [
+    {
+      "page": "CHANGELOG/index.html",
+      "why": "content"
+    },
+    {
+      "page": "docs/customization/layouts/index.html",
+      "why": "content"
+    },
+    {
+      "page": "docs/index.html",
+      "why": "content"
+    },
+    {
+      "page": "fr/docs/customization/layouts/index.html",
+      "why": "content"
+    },
+    {
+      "page": "notebooks/api-requests/index.html",
+      "why": "content"
+    },
+    {
+      "page": "notebooks/matplotlib-visualization/index.html",
+      "why": "content"
+    },
+    {
+      "page": "notebooks/pandas-data-analysis/index.html",
+      "why": "content"
+    },
+    {
+      "page": "notebooks/python-statistics/index.html",
+      "why": "content"
+    },
+    {
+      "page": "notebooks/test-notebook/index.html",
+      "why": "content"
+    },
+    {
+      "page": "setup/index.html",
+      "why": "content"
+    }
+  ],
+  "html_bytes_removed": 19860629,
+  "html_percent_removed": 21.7,
+  "comment_bytes_per_page_before": 47898,
+  "comment_bytes_per_page_after": 112
+}

@@ -2,7 +2,7 @@
 # Feature: ZER0-019
 layout: root
 ---
-<!--
+{% comment %}
   ===================================================================
   INDEX LAYOUT - Search indexing template
   ===================================================================
@@ -40,16 +40,16 @@ layout: root
   - Provides proper container context for search tools
   - Maintains consistent navigation patterns
   ===================================================================
--->
+{% endcomment %}
 
-<!-- ================================ -->
-<!-- SEARCH INDEX CONTAINER          -->
-<!-- ================================ -->
-<!-- Full-width container optimized for search interfaces and content discovery -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} SEARCH INDEX CONTAINER          {% endcomment %}
+{% comment %} ================================ {% endcomment %}
+{% comment %} Full-width container optimized for search interfaces and content discovery {% endcomment %}
 <div id="search-index" class="container-fluid pt-5 py-5">
-    <!-- ========================== -->
-    <!-- SEARCH CONTENT AREA        -->
-    <!-- ========================== -->
-    <!-- Main content area for search forms, results, filters, and indexing -->
+    {% comment %} ========================== {% endcomment %}
+    {% comment %} SEARCH CONTENT AREA        {% endcomment %}
+    {% comment %} ========================== {% endcomment %}
+    {% comment %} Main content area for search forms, results, filters, and indexing {% endcomment %}
     {{ content }}
 </div>

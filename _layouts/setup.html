@@ -2,7 +2,7 @@
 # Features: ZER0-019, ZER0-067
 layout: root
 ---
-<!--
+{% comment %}
   ===================================================================
   SETUP LAYOUT - Onboarding and configuration pages
   ===================================================================
@@ -24,7 +24,7 @@ layout: root
     setup_step: 2        # optional, highlights step in progress bar
     setup_total: 4       # optional, total number of steps
   ===================================================================
--->
+{% endcomment %}
 
 {% include components/setup-check.html %}
 
@@ -45,7 +45,7 @@ layout: root
       {% endif %}
 
       {% if page.setup_step and page.setup_total %}
-      <!-- Progress indicator -->
+      {% comment %} Progress indicator {% endcomment %}
       <div class="mb-4">
         <div class="d-flex justify-content-between small text-body-secondary mb-1">
           <span>Step {{ page.setup_step }} of {{ page.setup_total }}</span>

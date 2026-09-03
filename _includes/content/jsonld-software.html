@@ -1,4 +1,4 @@
-<!--
+{% comment %}
   ===================================================================
   JSON-LD STRUCTURED DATA - SoftwareApplication + WebPage Schema
   ===================================================================
@@ -37,7 +37,7 @@
   - Included automatically in _includes/core/head.html
   - Conditional: opted in AND page.permalink == "/"
   ===================================================================
--->
+{% endcomment %}
 
 {%- assign _is_homepage = false -%}
 {%- if page.permalink == "/" or page.url == "/" -%}

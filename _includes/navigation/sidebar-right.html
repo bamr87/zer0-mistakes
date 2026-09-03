@@ -1,12 +1,12 @@
 {% comment %} Features: ZER0-008, ZER0-010 {% endcomment %}
-<!-- 
+{% comment %} 
   file: sidebar-right.html 
   path: _includes/sidebar-right.html
   includes: nav_list.html, content/toc.html
--->
+{% endcomment %}
 
 {%- include core/i18n.html -%}
-<!-- FOUC guard: apply hidden TOC preference before paint -->
+{% comment %} FOUC guard: apply hidden TOC preference before paint {% endcomment %}
 <script>
   try {
     if (localStorage.getItem('zer0-nav-toc-visible') === 'false') {
@@ -15,7 +15,7 @@
   } catch (e) {}
 </script>
 
-<!-- Right sidebar container -->
+{% comment %} Right sidebar container {% endcomment %}
 <div class="offcanvas-lg offcanvas-end" tabindex="-1" id="tocContents" aria-labelledby="tocLabel">
   <div class="offcanvas-header">
     <h2 class="offcanvas-title h5 mb-0" id="tocLabel">{{ ui.toc_title | default: "Table of Contents" }}</h2>
@@ -32,9 +32,9 @@
     </div>
   </div>
   <div class="offcanvas-body">
-    <!-- Table of contents -->
+    {% comment %} Table of contents {% endcomment %}
     <nav id="TableOfContents" role="navigation" aria-label="Table of Contents">
-      <!-- TOC title -->
+      {% comment %} TOC title {% endcomment %}
       <div class="mb-3 d-flex align-items-center justify-content-between gap-2">
         <strong class="d-flex align-items-center mb-0">
           <i class="bi bi-file-text me-2" aria-hidden="true"></i>

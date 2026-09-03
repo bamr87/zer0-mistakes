@@ -1,5 +1,5 @@
 {% comment %} Feature: ZER0-035 {% endcomment %}
-<!--
+{% comment %}
   giscus.html — GitHub Discussions comment system
   ===============================================
 
@@ -30,7 +30,7 @@
   NOTE: do not write a bare `include giscus.html` example with live Liquid
   braces inside this file — Liquid evaluates tags even inside HTML comments,
   which would recursively (and wrongly) try to include "giscus.html".
--->
+{% endcomment %}
 
 <script src="https://giscus.app/client.js"
         data-repo="{{ site.repository }}"

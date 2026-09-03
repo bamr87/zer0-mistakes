@@ -25,9 +25,9 @@ layout: default
 {%- assign _cb_image = page.image | default: page.preview -%}
 
 <div class="cookbook">
-  <!-- ================================ -->
-  <!-- COVER                            -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} COVER                            {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   <header class="cookbook-header">
     <div class="row g-4 align-items-center">
       {%- if _cb_image -%}
@@ -56,9 +56,9 @@ layout: default
     </div>
   </header>
 
-  <!-- ================================ -->
-  <!-- ABOUT (the markdown body)        -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} ABOUT (the markdown body)        {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {%- assign _cb_body = content | strip -%}
   {%- if _cb_body != "" -%}
   <section class="cookbook-about">
@@ -66,9 +66,9 @@ layout: default
   </section>
   {%- endif -%}
 
-  <!-- ================================ -->
-  <!-- COURSE JUMP NAV                  -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} COURSE JUMP NAV                  {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {%- if _cb_courses.size > 1 and page.grouped != false -%}
   <nav class="cookbook-jump" aria-label="Jump to a course">
     {%- for _cb_pair in site.data.recipe_courses -%}
@@ -81,8 +81,8 @@ layout: default
   </nav>
   {%- endif -%}
 
-  <!-- ================================ -->
-  <!-- RECIPE INDEX                     -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} RECIPE INDEX                     {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {%- include components/recipe-index.html cookbook=_cb_slug grouped=page.grouped heading_level="h2" -%}
 </div>

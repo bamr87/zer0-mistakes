@@ -2,7 +2,7 @@
 # Features: ZER0-019, ZER0-063
 layout: root
 ---
-<!--
+{% comment %}
   ===================================================================
   SECTION LAYOUT - News Section with Collapsible Sub-Category Sidebar
   ===================================================================
@@ -40,7 +40,7 @@ layout: root
   - Bootstrap 5 grid, card, and offcanvas components
   - Bootstrap Icons
   ===================================================================
--->
+{% endcomment %}
 
 {% comment %} ================================ {% endcomment %}
 {% comment %} SECTION DISCOVERY LOGIC         {% endcomment %}
@@ -112,9 +112,9 @@ layout: root
 {% endfor %}
 {% assign sub_categories = sub_categories | sort %}
 
-<!-- ================================ -->
-<!-- SECTION HEADER                   -->
-<!-- ================================ -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} SECTION HEADER                   {% endcomment %}
+{% comment %} ================================ {% endcomment %}
 <div class="container-fluid bg-dark text-white py-3 mb-0">
   <div class="container-fluid px-4">
     <div class="row align-items-center">
@@ -147,7 +147,7 @@ layout: root
   </div>
 </div>
 
-<!-- Sub-navigation for other sections -->
+{% comment %} Sub-navigation for other sections {% endcomment %}
 <div class="container-fluid bg-body-tertiary border-bottom py-2 mb-4">
   <div class="container-fluid px-4">
     <nav class="nav nav-pills flex-nowrap overflow-auto" style="scrollbar-width: none;">
@@ -175,9 +175,9 @@ layout: root
 <div class="container-fluid px-4">
   <div class="row g-lg-4 section-layout">
     
-    <!-- ================================ -->
-    <!-- FIXED SIDEBAR COMPONENT          -->
-    <!-- ================================ -->
+    {% comment %} ================================ {% endcomment %}
+    {% comment %} FIXED SIDEBAR COMPONENT          {% endcomment %}
+    {% comment %} ================================ {% endcomment %}
     <div class="col-lg-3 col-xl-2 section-layout-sidebar">
       {% include navigation/section-sidebar.html 
          section_posts=section_posts 
@@ -188,14 +188,14 @@ layout: root
       %}
     </div>
 
-    <!-- ================================ -->
-    <!-- MAIN CONTENT AREA                -->
-    <!-- ================================ -->
-    <!-- Not a <main>: root.html already provides the single <main id="main-content">
-         landmark; a nested <main> here would duplicate it (issue #299). -->
+    {% comment %} ================================ {% endcomment %}
+    {% comment %} MAIN CONTENT AREA                {% endcomment %}
+    {% comment %} ================================ {% endcomment %}
+    {% comment %} Not a <main>: root.html already provides the single <main id="main-content">
+         landmark; a nested <main> here would duplicate it (issue #299). {% endcomment %}
     <div class="col-lg-9 col-xl-10 section-layout-main">
       
-      <!-- Section Header -->
+      {% comment %} Section Header {% endcomment %}
       <header class="section-header mb-4">
         <div class="d-flex align-items-center mb-3">
           {% if page.icon %}
@@ -223,7 +223,7 @@ layout: root
       {% comment %} ================================ {% endcomment %}
       {% if section_style == "magazine" %}
 
-        <!-- Hero Section -->
+        {% comment %} Hero Section {% endcomment %}
         {% assign featured_in_section = section_posts | where: "featured", true | first %}
         {% unless featured_in_section %}
           {% assign featured_in_section = section_posts | first %}
@@ -274,7 +274,7 @@ layout: root
           </div>
         </section>
 
-        <!-- Sub-Category Sections -->
+        {% comment %} Sub-Category Sections {% endcomment %}
         {% for subcat in sub_categories limit: 5 %}
           {% assign subcat_posts = section_posts | where_exp: "post", "post.tags contains subcat" %}
           {% assign subcat_posts_filtered = "" | split: "" %}
@@ -340,7 +340,7 @@ layout: root
           {% endif %}
         {% endfor %}
 
-        <!-- All Posts Section -->
+        {% comment %} All Posts Section {% endcomment %}
         <section id="all-posts" class="all-posts-section mb-5 scroll-mt-5">
           <div class="d-flex justify-content-between align-items-center mb-4">
             <h3 class="h4 mb-0">
@@ -404,7 +404,7 @@ layout: root
       {% comment %} ================================ {% endcomment %}
       {% elsif section_style == "grid" %}
 
-        <!-- Topic Filter Pills -->
+        {% comment %} Topic Filter Pills {% endcomment %}
         <div class="topic-filters mb-4">
           <div class="d-flex flex-wrap gap-2 align-items-center">
             <span class="text-muted me-2">Filter:</span>
@@ -540,7 +540,7 @@ layout: root
       {% endif %}
 
       {% else %}
-        <!-- Empty state -->
+        {% comment %} Empty state {% endcomment %}
         <div class="text-center py-5">
           <i class="bi bi-inbox fs-1 text-muted"></i>
           <p class="text-muted mt-3">No articles in this section yet.</p>
@@ -550,9 +550,9 @@ layout: root
         </div>
       {% endif %}
 
-      <!-- ========================== -->
-      <!-- RELATED SECTIONS           -->
-      <!-- ========================== -->
+      {% comment %} ========================== {% endcomment %}
+      {% comment %} RELATED SECTIONS           {% endcomment %}
+      {% comment %} ========================== {% endcomment %}
       <aside class="related-sections mt-5 pt-4 border-top">
         <h3 class="h5 mb-3">
           <i class="bi bi-compass me-2"></i>Explore Other Sections

@@ -1,4 +1,4 @@
-<!--
+{% comment %}
   ===================================================================
   FEATURE CARD - Data-driven feature display from features.yml
   ===================================================================
@@ -28,7 +28,7 @@
     {% assign f = site.data.features.features | where: "id", "ZER0-001" | first %}
     {% include components/feature-card.html feature=f style="primary" icon="bi-bootstrap" icon_color="text-primary" %}
   ===================================================================
--->
+{% endcomment %}
 {% assign f = include.feature %}
 {% assign border = include.style %}
 {% assign icon = include.icon | default: "bi-check-circle-fill" %}

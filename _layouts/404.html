@@ -2,7 +2,7 @@
 # Feature: ZER0-047
 layout: root
 ---
-<!--
+{% comment %}
   ===================================================================
   404 LAYOUT - Not-found page with unconfigured-site setup mode
   ===================================================================
@@ -30,14 +30,14 @@ layout: root
   Extra content: anything in the stub page's body renders below the
   standard 404 content ({{ content }} at the bottom).
   ===================================================================
--->
+{% endcomment %}
 
 {% include components/setup-check.html %}
 
 {% if site_needs_setup %}
-<!-- ================================================================== -->
-<!-- SETUP MODE: Site is not yet configured — guide the user            -->
-<!-- ================================================================== -->
+{% comment %} ================================================================== {% endcomment %}
+{% comment %} SETUP MODE: Site is not yet configured — guide the user            {% endcomment %}
+{% comment %} ================================================================== {% endcomment %}
 <div class="container-lg py-5">
   <div class="text-center mb-5">
     <i class="bi bi-gear-wide-connected display-1 text-primary"></i>
@@ -48,7 +48,7 @@ layout: root
     </p>
   </div>
 
-  <!-- Quick-detect: user site vs project site -->
+  {% comment %} Quick-detect: user site vs project site {% endcomment %}
   <div class="row justify-content-center mb-4">
     <div class="col-lg-8">
       <div class="alert alert-info d-flex align-items-start" role="alert">
@@ -69,7 +69,7 @@ layout: root
     </div>
   </div>
 
-  <!-- Step-by-step setup instructions -->
+  {% comment %} Step-by-step setup instructions {% endcomment %}
   <div class="row justify-content-center">
     <div class="col-lg-8">
 
@@ -170,7 +170,7 @@ git push origin main</code></pre>
         </div>
       </div>
 
-      <!-- Resources -->
+      {% comment %} Resources {% endcomment %}
       <div class="text-center mt-4">
         <a href="https://github.com/bamr87/zer0-mistakes" class="btn btn-dark me-2" target="_blank" rel="noopener">
           <i class="bi bi-github me-1"></i> Theme Repository
@@ -188,9 +188,9 @@ git push origin main</code></pre>
 </div>
 
 {% else %}
-<!-- ================================================================== -->
-<!-- NORMAL 404: Site is configured — show standard error page          -->
-<!-- ================================================================== -->
+{% comment %} ================================================================== {% endcomment %}
+{% comment %} NORMAL 404: Site is configured — show standard error page          {% endcomment %}
+{% comment %} ================================================================== {% endcomment %}
 <div class="container text-center mt-5">
   <h1 class="display-1 text-danger">404</h1>
 
@@ -253,7 +253,7 @@ git push origin main</code></pre>
 {% endif %}
 
 {% if content != blank %}
-<!-- Extra content from the consumer's 404 stub body -->
+{% comment %} Extra content from the consumer's 404 stub body {% endcomment %}
 <div class="container mt-4">
   {{ content }}
 </div>

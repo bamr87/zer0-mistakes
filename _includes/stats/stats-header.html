@@ -1,28 +1,28 @@
 {% comment %} Feature: ZER0-043 {% endcomment %}
-<!-- ================================================ -->
-<!-- STATS PAGE HEADER                               -->
-<!-- Title, description, and metadata display        -->
-<!-- ================================================ -->
+{% comment %} ================================================ {% endcomment %}
+{% comment %} STATS PAGE HEADER                               {% endcomment %}
+{% comment %} Title, description, and metadata display        {% endcomment %}
+{% comment %} ================================================ {% endcomment %}
 <div class="row mb-5">
   <div class="col-12">
     <div class="text-center mb-4">
-      <!-- Header Icon with Bootstrap classes -->
+      {% comment %} Header Icon with Bootstrap classes {% endcomment %}
       <div class="d-inline-flex align-items-center justify-content-center bg-primary-subtle rounded-circle p-4 mb-4 shadow-lg stats-header-icon">
         <i class="bi bi-graph-up fs-1 text-primary stats-icon-rotate"></i>
       </div>
       
-      <!-- Title with Bootstrap typography -->
+      {% comment %} Title with Bootstrap typography {% endcomment %}
       <h1 class="display-3 mb-3 fw-bold text-primary">
         {{ page.title | default: "Site Statistics Portal" }}
       </h1>
       
-      <!-- Description with Bootstrap lead class -->
+      {% comment %} Description with Bootstrap lead class {% endcomment %}
       <p class="lead mb-4 fs-4">
         {{ page.description | default: "Comprehensive analytics and insights from the knowledge base" }}
       </p>
     </div>
     
-    <!-- Last updated reflects build-time stats (generated_at or site.time) -->
+    {% comment %} Last updated reflects build-time stats (generated_at or site.time) {% endcomment %}
     {% if site.data.content_statistics %}
       {% assign stats_last_updated = site.data.content_statistics.generated_at | default: site.time %}
       <div class="alert alert-info shadow-sm d-flex align-items-center justify-content-between" role="alert">
@@ -59,13 +59,13 @@
   </div>
 </div>
 
-<!-- ================================================ -->
-<!-- STATS NAVIGATION BREADCRUMBS                    -->
-<!-- Quick navigation within the stats page          -->
-<!-- ================================================ -->
+{% comment %} ================================================ {% endcomment %}
+{% comment %} STATS NAVIGATION BREADCRUMBS                    {% endcomment %}
+{% comment %} Quick navigation within the stats page          {% endcomment %}
+{% comment %} ================================================ {% endcomment %}
 <div class="row mb-5">
   <div class="col-12">
-    <!-- Bootstrap breadcrumb -->
+    {% comment %} Bootstrap breadcrumb {% endcomment %}
     <nav aria-label="Statistics navigation">
       <ol class="breadcrumb p-3 rounded shadow-sm">
         <li class="breadcrumb-item">
@@ -79,7 +79,7 @@
       </ol>
     </nav>
     
-    <!-- Quick Jump Navigation using Bootstrap button group -->
+    {% comment %} Quick Jump Navigation using Bootstrap button group {% endcomment %}
     {% if site.data.content_statistics %}
       <div class="text-center">
         <div class="btn-group btn-group-lg shadow-sm d-flex flex-wrap gap-2" role="group" aria-label="Statistics navigation">
