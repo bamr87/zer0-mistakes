@@ -94,3 +94,28 @@ A pinned site gets a single tag on purpose: a media pair would hand light browse
 - **Reuse your brand mark.** If your `logo` is already a square SVG, point `favicon.svg` at the same file.
 - **Apple touch icons don't scale down well from tiny sources.** Use at least a 180×180 PNG.
 - **Remote-theme consumers**: this include ships with the theme — you only carry the icon *assets* and the optional `favicon:` block in your own repository.
+
+## Verify
+
+The point of these tags is that you cannot see most of them, so check them rather than assume:
+
+1. **Icons resolve.** Open DevTools → Network, reload, and filter on `favicon`. Every entry should be `200`, not `404`. On a project-page (`baseurl`) deployment this is the check that matters — an implicit root probe would 404 here.
+2. **Both `theme-color` tags are present.** In DevTools → Elements, search `<head>` for `theme-color`. An `auto` site should show two, one per `prefers-color-scheme`; a pinned site, one. If you see **zero**, you are on a build older than v1.29.1.
+3. **The value is the surface, not the accent.** The `content` should match the page background, not your link colour. `#007bff` appearing here means something is still resolving `theme_color.main`.
+4. **Chrome actually follows.** On Android Chrome, load the page and switch the OS between light and dark — the address bar and task-switcher card should follow. iOS Safari applies it to the status-bar area.
+
+## Troubleshooting
+
+| Issue | Fix |
+| --- | --- |
+| `theme-color` change doesn't show after a deploy | Browsers cache this tag hard. Hard-reload, or check in a private window before assuming the build is wrong. |
+| Address bar stays light on a dark page | The visitor overrode the mode in the Appearance panel; `media` follows the **OS**, not that panel. Expected — see the note above. To force a match site-wide, set `color_mode_lock: true`. |
+| Address bar is your brand colour | `favicon.theme_color` is set and pins one value for both schemes. Remove it to get the scheme-aware pair. |
+| No `theme-color` at all | You are on a theme version older than v1.29.1, where the tag was config-gated and a consumer that declared no `theme_color` got none. |
+| Apple touch icon missing from the iOS home screen | iOS will not follow a redirect for this image. Check that `favicon.apple_touch` resolves directly under your `baseurl`. |
+| `favicon.theme_color_light` resolves to nothing | The hex is unquoted, so YAML read `#ffffff` as a comment. Quote it. |
+
+## See also
+
+- [Remote-Theme Consumer Checklist](/docs/deployment/remote-theme-checklist/) — what a `remote_theme` site must declare for itself, including the icon assets and the optional `favicon:` block
+- [Features](/docs/features/) — index of every theme feature
