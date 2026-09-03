@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-06-22T12:00:00.000Z
+lastmod: 2026-09-03T00:00:00.000Z
 title: Layouts
 description: Create and customize page layouts in the Zer0-Mistakes Jekyll theme.
 preview: /images/previews/layouts.png
