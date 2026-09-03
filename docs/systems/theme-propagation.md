@@ -2,7 +2,7 @@
 title: "Theme Propagation"
 description: "How a zer0-mistakes release reaches the downstream sites built on it — the consumer registry, the release fan-out, and the manifest contract underneath both."
 date: 2026-07-29T00:00:00.000Z
-lastmod: 2026-07-29T00:00:00.000Z
+lastmod: 2026-09-03T00:00:00.000Z
 categories: [docs]
 tags: [systems, automation, release]
 author: bamr87
