@@ -56,9 +56,22 @@ All 415 pages were compared after stripping comments and masking values that dif
 
 Both are filed separately. Line 617 of the same CHANGELOG already uses the correct `{% raw %}` idiom, so the fix is a known one.
 
-## The regression guard
+## The regression guards — two tiers, on purpose
 
-`test_developer_doc_banners_are_liquid` in `test/test_core.sh` fails if any HTML comment reappears in `_includes/**` or `_layouts/**`. Verified in both directions: it exits 0 on this branch and exits 1 on `origin/main`, listing 1,065 offenders.
+**Source tier.** `test_developer_doc_banners_are_liquid` in `test/test_core.sh` fails if any HTML comment reappears in `_includes/**` or `_layouts/**`. Verified in both directions: exit 0 on this branch, exit 1 on `origin/main` listing 1,065 offenders.
+
+**Served tier.** `test/visual/core/comment-payload.spec.js` measures what a visitor actually receives — a 4,096-byte per-page comment budget, plus a check for doc-banner text (`Path: _includes/`, `Template Logic:`, a rule of `=`) in the delivered bytes. The source grep cannot see a banner that reaches the page some other way; this can.
+
+Its last test is the one worth keeping. It divides comment payload by the number of rendered cards on `/authors/default/`, so a banner reintroduced **inside a repeated component** fails even if the per-page budget on some shorter page would have absorbed it. That is the exact shape of the original defect.
+
+Both directions, measured:
+
+| | `/` | `/docs/` | `/404.html` | `/about/` |
+| --- | ---: | ---: | ---: | ---: |
+| before | 46,997 B / 310 blocks | 106,418 B / 1,707 | 43,697 B / 286 | 51,880 B / 350 |
+| after | under budget | under budget | under budget | under budget |
+
+`9 passed` against the fixed build; `9 failed` against the pre-fix build.
 
 It deliberately allows two things, so it can stay strict about everything else: comments inside `<script>`/`<style>`/`<pre>`/`<textarea>`/`{% raw %}` (those are JS, CSS, or sample markup shown on purpose), and the four exact boundary markers inside Google's own copy-paste snippets, kept verbatim so those blocks stay diffable against upstream. The exact-match is the point — prose that merely mentions GTM is a developer note like any other, and an early substring version of this rule wrongly spared three of them.
 
