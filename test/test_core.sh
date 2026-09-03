@@ -997,6 +997,85 @@ test_sass_compilation() {
 # controlled nothing. This walks the front matter of every _layouts/*.html,
 # resolves each chain, and fails if reality and the list disagree in either
 # direction.
+test_developer_doc_banners_are_liquid() {
+    log_info "Testing developer doc banners are Liquid, not HTML, comments (issue #375)..."
+
+    cd "$PROJECT_ROOT"
+
+    if ! command -v python3 &>/dev/null; then
+        log_warning "python3 not available for the doc-banner check"
+        return 0
+    fi
+
+    if python3 - <<'PYEOF'
+import re, sys, glob
+
+# Jekyll copies HTML comments into every rendered page; Liquid comments are
+# stripped at build time. Developer banners (file paths, dependency lists,
+# design rationale) have no runtime value, and _includes render once per call
+# site -- a banner inside a card component rendered 1100 times on an author
+# page shipped 1100 copies. Measured before the fix: 47,898 comment bytes on
+# an average page, 21.7% of the delivered HTML across a 415-page build.
+#
+# The ONLY comments allowed to stay HTML are the boundary markers inside
+# Google's own copy-paste snippets, kept verbatim so those blocks stay
+# diffable against upstream. They are matched exactly: prose that merely
+# mentions GTM is a developer note like any other.
+ALLOWED = set([
+    "Global site tag (gtag.js) - Google Analytics",
+    "Google Tag Manager (noscript)",
+    "End Google Tag Manager (noscript)",
+    "Google Tag Manager",
+    "End Google Tag Manager",
+    ])
+
+# A comment inside <script>/<style>/<pre>/<textarea>/{% raw %} is not a banner:
+# it is JS, CSS or shown-literally sample markup. Comments are blanked before
+# these spans are located, so a banner that merely *mentions* "<style>" cannot
+# open a span that hides the comments below it.
+GUARD = re.compile(
+    r"<script\b.*?</script>|<style\b.*?</style>|<pre\b.*?</pre>"
+    r"|<textarea\b.*?</textarea>|{%-?\s*raw\s*-?%}.*?{%-?\s*endraw\s*-?%}",
+    re.S | re.I)
+
+offenders = []
+for path in sorted(glob.glob("_includes/**/*.html", recursive=True) +
+                   glob.glob("_layouts/**/*.html", recursive=True)):
+    with open(path, encoding="utf-8", errors="replace") as fh:
+        text = fh.read()
+    blanked = re.sub(r"<!--.*?-->", lambda m: " " * len(m.group(0)), text, flags=re.S)
+    spans = [m.span() for m in GUARD.finditer(blanked)]
+    for m in re.finditer(r"<!--(.*?)-->", text, re.S):
+        a, b = m.span()
+        if any(a >= x and b <= y for x, y in spans):
+            continue
+        if m.group(1).strip() in ALLOWED:
+            continue
+        line = text.count("\n", 0, a) + 1
+        first = m.group(1).strip().splitlines()[0][:60] if m.group(1).strip() else "(empty)"
+        offenders.append(f"{path}:{line}: {first}")
+
+if offenders:
+    print("::error::HTML comments in theme includes/layouts ship to every visitor.")
+    print("Use {% comment %} ... {% endcomment %} so Jekyll strips them at build time.")
+    for o in offenders[:40]:
+        print(f"  {o}")
+    if len(offenders) > 40:
+        print(f"  ... and {len(offenders) - 40} more")
+    sys.exit(1)
+
+print("OK: no developer doc banners ship as HTML comments")
+sys.exit(0)
+PYEOF
+    then
+        log_success "No developer doc banners ship as HTML comments"
+        return 0
+    else
+        log_error "Developer doc banners are shipping as HTML comments (see above)"
+        return 1
+    fi
+}
+
 test_content_liquid_is_raw_protected() {
     log_info "Testing Liquid shown as code in content is raw-protected..."
 
@@ -1208,6 +1287,7 @@ run_core_tests() {
     run_test "Version Consistency" "test_version_consistency" "unit"
     run_test "Plugin Unit Specs" "test_plugin_unit_specs" "unit"
     run_test "Sidebar Offcanvas Layout Gate" "test_sidebar_offcanvas_layout_gate" "unit"
+    run_test "Developer Doc Banners Are Liquid" "test_developer_doc_banners_are_liquid" "unit"
     run_test "Content Liquid Raw-Protected" "test_content_liquid_is_raw_protected" "unit"
     run_test "Preview Generator Unit Specs" "test_preview_generator_unit_specs" "unit"
     

@@ -1,5 +1,5 @@
 {% comment %} Feature: ZER0-054 {% endcomment %}
-<!--
+{% comment %}
   ===================================================================
   AUTHOR E-E-A-T BLOCK - Experience, Expertise, Authority, Trust
   ===================================================================
@@ -21,7 +21,7 @@
   - _data/authors.yml: Author data
   - Bootstrap 5 utility classes
   ===================================================================
--->
+{% endcomment %}
 
 {% assign author_key = include.author_key | default: "bamr87" %}
 {% assign author = site.data.authors[author_key] %}
@@ -36,7 +36,7 @@
 {% if author %}
 
 {% if eeat_style == "banner" %}
-<!-- E-E-A-T Author Banner -->
+{% comment %} E-E-A-T Author Banner {% endcomment %}
 <div class="bg-body-secondary border-top border-bottom py-4 mt-5" itemscope itemtype="https://schema.org/Person">
   <div class="container-xl px-4 px-md-5">
     <div class="row align-items-center g-3">
@@ -91,7 +91,7 @@
 </div>
 
 {% elsif eeat_style == "card" %}
-<!-- E-E-A-T Author Card -->
+{% comment %} E-E-A-T Author Card {% endcomment %}
 <div class="card border-0 shadow-sm" itemscope itemtype="https://schema.org/Person">
   <div class="card-body p-4">
     <div class="d-flex align-items-start">

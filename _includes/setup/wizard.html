@@ -1,5 +1,5 @@
 {% comment %} Feature: ZER0-067 {% endcomment %}
-<!--
+{% comment %}
   ===================================================================
   SETUP WIZARD — Interactive _config.yml Generator
   ===================================================================
@@ -36,7 +36,7 @@
   Nothing was removed for that clause, and no percentage indicator should be
   added in order to remove one.
   ===================================================================
--->
+{% endcomment %}
 
 <div class="container py-4" id="setup-wizard">
 
@@ -48,9 +48,9 @@
 
   <div class="row g-4 wizard-grid">
 
-    <!-- ============================================================ -->
-    <!-- 1. Vertical stepper                                          -->
-    <!-- ============================================================ -->
+    {% comment %} ============================================================ {% endcomment %}
+    {% comment %} 1. Vertical stepper                                          {% endcomment %}
+    {% comment %} ============================================================ {% endcomment %}
     <div class="col-lg-3">
       <div class="wizard-stepper-wrap sticky-lg-top">
         <div class="nav flex-column wizard-stepper" id="wizardTabs" role="tablist"
@@ -112,20 +112,20 @@
           </button>
         </div>
 
-        <!-- Draft acknowledgement. Hidden until the first save. -->
+        {% comment %} Draft acknowledgement. Hidden until the first save. {% endcomment %}
         <p class="wizard-draft-chip" id="wizard-draft-chip" role="status" aria-live="polite" hidden>
           <i class="bi bi-check2-circle" aria-hidden="true"></i> Draft saved
         </p>
       </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- 2. Step panels                                               -->
-    <!-- ============================================================ -->
+    {% comment %} ============================================================ {% endcomment %}
+    {% comment %} 2. Step panels                                               {% endcomment %}
+    {% comment %} ============================================================ {% endcomment %}
     <div class="col-lg-5">
       <div class="tab-content wizard-panes" id="wizardTabContent">
 
-        <!-- ───── Step 1: Identity ───── -->
+        {% comment %} ───── Step 1: Identity ───── {% endcomment %}
         <div class="tab-pane fade show active" id="step-identity" role="tabpanel" aria-labelledby="tab-identity">
           <div class="card">
             <div class="card-body">
@@ -188,7 +188,7 @@
           </div>
         </div>
 
-        <!-- ───── Step 2: URLs ───── -->
+        {% comment %} ───── Step 2: URLs ───── {% endcomment %}
         <div class="tab-pane fade" id="step-urls" role="tabpanel" aria-labelledby="tab-urls">
           <div class="card">
             <div class="card-body">
@@ -239,7 +239,7 @@
           </div>
         </div>
 
-        <!-- ───── Step 3: Collections ───── -->
+        {% comment %} ───── Step 3: Collections ───── {% endcomment %}
         <div class="tab-pane fade" id="step-collections" role="tabpanel" aria-labelledby="tab-collections">
           <div class="card">
             <div class="card-body">
@@ -293,7 +293,7 @@
           </div>
         </div>
 
-        <!-- ───── Step 4: Analytics ───── -->
+        {% comment %} ───── Step 4: Analytics ───── {% endcomment %}
         <div class="tab-pane fade" id="step-analytics" role="tabpanel" aria-labelledby="tab-analytics">
           <div class="card">
             <div class="card-body">
@@ -348,9 +348,9 @@
           </div>
         </div>
 
-        <!-- ───── Step 5: Review ───── -->
-        <!-- The YAML itself now lives in the persistent preview panel, so this
-             step is the summary: what is still unfilled, and what to do next. -->
+        {% comment %} ───── Step 5: Review ───── {% endcomment %}
+        {% comment %} The YAML itself now lives in the persistent preview panel, so this
+             step is the summary: what is still unfilled, and what to do next. {% endcomment %}
         <div class="tab-pane fade" id="step-review" role="tabpanel" aria-labelledby="tab-review">
           <div class="card">
             <div class="card-body">
@@ -360,7 +360,7 @@
                 live since step one. Check the notes below, then copy or download it.
               </p>
 
-              <!-- Populated by setup-wizard.js on entering this step. -->
+              {% comment %} Populated by setup-wizard.js on entering this step. {% endcomment %}
               <div id="wizard-review-warnings" role="status" aria-live="polite"></div>
 
               <div class="alert alert-info mt-3" role="alert">
@@ -377,12 +377,12 @@
           </div>
         </div>
 
-      </div><!-- /tab-content -->
+      </div>{% comment %} /tab-content {% endcomment %}
     </div>
 
-    <!-- ============================================================ -->
-    <!-- 3. Persistent live YAML preview                              -->
-    <!-- ============================================================ -->
+    {% comment %} ============================================================ {% endcomment %}
+    {% comment %} 3. Persistent live YAML preview                              {% endcomment %}
+    {% comment %} ============================================================ {% endcomment %}
     <div class="col-lg-4">
       <aside class="wizard-preview sticky-lg-top" aria-labelledby="wizard-preview-heading">
         <div class="d-flex align-items-center justify-content-between mb-2">
@@ -400,7 +400,7 @@
           </button>
         </div>
 
-        <!-- Always enabled, at every step — the file is valid from the start. -->
+        {% comment %} Always enabled, at every step — the file is valid from the start. {% endcomment %}
         <div class="d-grid gap-2 d-sm-flex mt-3">
           <button class="btn btn-outline-primary flex-sm-fill" id="btn-copy-full" type="button">
             <i class="bi bi-clipboard" aria-hidden="true"></i> Copy YAML
@@ -412,7 +412,7 @@
       </aside>
     </div>
 
-  </div><!-- /row -->
+  </div>{% comment %} /row {% endcomment %}
 </div>
 
 <script src="{{ '/assets/js/setup-wizard.js' | relative_url }}"></script>

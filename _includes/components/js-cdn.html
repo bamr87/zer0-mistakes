@@ -1,4 +1,4 @@
-<!--
+{% comment %}
   ===================================================================
   JAVASCRIPT - Local vendor libraries
   ===================================================================
@@ -12,43 +12,43 @@
   
   Refresh: ./scripts/vendor-install.sh (see vendor-manifest.json)
   ===================================================================
--->
+{% endcomment %}
 
-<!-- Bootstrap 5.3.3 Bundle (includes Popper.js) -->
+{% comment %} Bootstrap 5.3.3 Bundle (includes Popper.js) {% endcomment %}
 <script src="{{ '/assets/vendor/bootstrap/js/bootstrap.bundle.min.js' | relative_url }}"></script>
 
-<!-- Navigation ES Modules — orchestrator for sidebar, scroll spy, keyboard
+{% comment %} Navigation ES Modules — orchestrator for sidebar, scroll spy, keyboard
      shortcuts, gestures, focus, AND the navbar dropdowns/mobile menu that
-     formerly lived in /assets/js/navigation.js (now deprecated). -->
+     formerly lived in /assets/js/navigation.js (now deprecated). {% endcomment %}
 <script type="module" src="{{ '/assets/js/modules/navigation/index.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
 
-<!-- Generic UI helpers (toast, copy-to-clipboard, image fade-in) -->
+{% comment %} Generic UI helpers (toast, copy-to-clipboard, image fade-in) {% endcomment %}
 <script defer src="{{ '/assets/js/ui-helpers.js' | relative_url }}"></script>
 
-<!-- Posts-archive pagination (auto-activates only on pages with a
-     [data-posts-archive] container; safe to load globally). -->
+{% comment %} Posts-archive pagination (auto-activates only on pages with a
+     [data-posts-archive] container; safe to load globally). {% endcomment %}
 <script defer src="{{ '/assets/js/posts-pagination.js' | relative_url }}"></script>
 
-<!-- Search modal controller -->
+{% comment %} Search modal controller {% endcomment %}
 <script src="{{ '/assets/js/search-modal.js' | relative_url }}"></script>
 
-<!-- Share helpers -->
+{% comment %} Share helpers {% endcomment %}
 <script src="{{ '/assets/js/share-actions.js' | relative_url }}"></script>
 
-<!-- fffuel-style background customizer (skin switching, toggle, opacity) -->
+{% comment %} fffuel-style background customizer (skin switching, toggle, opacity) {% endcomment %}
 <script src="{{ '/assets/js/background-customizer.js' | relative_url }}"></script>
 
-<!-- Optional runtime Appearance panel (enabled via site.appearance_panel) -->
+{% comment %} Optional runtime Appearance panel (enabled via site.appearance_panel) {% endcomment %}
 {% if site.appearance_panel %}
 <script defer src="{{ '/assets/js/modules/theme/appearance.js' | relative_url }}"></script>
 {% endif %}
 
-<!-- Obsidian wiki-link / embed / tag client-side resolver (fallback for the
+{% comment %} Obsidian wiki-link / embed / tag client-side resolver (fallback for the
      remote_theme GH Pages build, where _plugins/obsidian_links.rb cannot run).
      Honours `obsidian: { enabled: false }` in _config.yml — when disabled the
      resolver script is not loaded and the flag self-disables any fork that
      loads it another way. Note: `| default: true` would flip `false` back to
-     true (Liquid treats false as falsy), so test enabled == false explicitly. -->
+     true (Liquid treats false as falsy), so test enabled == false explicitly. {% endcomment %}
 {%- assign obsidian_attachments_path = site.obsidian.attachments_path | default: '/assets/images/notes' -%}
 <script>
   window.OBSIDIAN_CONFIG = window.OBSIDIAN_CONFIG || {};
@@ -62,7 +62,7 @@
 <script defer src="{{ '/assets/js/obsidian-wiki-links.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
 {%- endif -%}
 
-<!-- Optional fork overrides: opt-in via `site.user_overrides: true` in _config.yml. -->
+{% comment %} Optional fork overrides: opt-in via `site.user_overrides: true` in _config.yml. {% endcomment %}
 {% if site.user_overrides %}
 <script defer src="{{ '/assets/js/user-overrides.js' | relative_url }}"></script>
 {% endif %}

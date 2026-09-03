@@ -2,7 +2,7 @@
 # Features: ZER0-019, ZER0-046
 layout: root
 ---
-<!--
+{% comment %}
   ===================================================================
   WELCOME LAYOUT — Onboarding landing page for new sites
   ===================================================================
@@ -36,15 +36,15 @@ layout: root
       Gemfile       (github-pages + jekyll-remote-theme)
       index.md      (this layout)
   ===================================================================
--->
+{% endcomment %}
 
 {% include components/setup-check.html %}
 
 {% if site_needs_setup %}
 
-  <!-- ============================================================ -->
-  <!-- HERO                                                          -->
-  <!-- ============================================================ -->
+  {% comment %} ============================================================ {% endcomment %}
+  {% comment %} HERO                                                          {% endcomment %}
+  {% comment %} ============================================================ {% endcomment %}
   <section class="bg-body-tertiary border-bottom">
     <div class="container-lg py-5">
       <div class="row align-items-center g-4">
@@ -114,9 +114,9 @@ layout: root
     </div>
   </section>
 
-  <!-- ============================================================ -->
-  <!-- MINIMAL STARTER INSTRUCTIONS                                  -->
-  <!-- ============================================================ -->
+  {% comment %} ============================================================ {% endcomment %}
+  {% comment %} MINIMAL STARTER INSTRUCTIONS                                  {% endcomment %}
+  {% comment %} ============================================================ {% endcomment %}
   <section id="minimal-starter" class="container-lg py-5">
     <div class="row justify-content-center">
       <div class="col-lg-10">
@@ -129,7 +129,7 @@ layout: root
 
         <div class="accordion mt-4" id="starterAccordion">
 
-          <!-- _config.yml -->
+          {% comment %} _config.yml {% endcomment %}
           <div class="accordion-item">
             <h3 class="accordion-header">
               <button class="accordion-button" type="button"
@@ -171,7 +171,7 @@ site_configured: true
             </div>
           </div>
 
-          <!-- Gemfile -->
+          {% comment %} Gemfile {% endcomment %}
           <div class="accordion-item">
             <h3 class="accordion-header">
               <button class="accordion-button collapsed" type="button"
@@ -197,7 +197,7 @@ gem "webrick", "~> 1.7"
             </div>
           </div>
 
-          <!-- index.md -->
+          {% comment %} index.md {% endcomment %}
           <div class="accordion-item">
             <h3 class="accordion-header">
               <button class="accordion-button collapsed" type="button"
@@ -232,7 +232,7 @@ is set in `_config.yml`.
             </div>
           </div>
 
-        </div><!-- /accordion -->
+        </div>{% comment %} /accordion {% endcomment %}
 
         <div class="alert alert-info d-flex align-items-start mt-4" role="alert">
           <i class="bi bi-info-circle-fill me-2 mt-1"></i>
@@ -248,16 +248,16 @@ is set in `_config.yml`.
     </div>
   </section>
 
-  <!-- ============================================================ -->
-  <!-- SETUP WIZARD                                                  -->
-  <!-- ============================================================ -->
+  {% comment %} ============================================================ {% endcomment %}
+  {% comment %} SETUP WIZARD                                                  {% endcomment %}
+  {% comment %} ============================================================ {% endcomment %}
   <section id="setup-wizard" class="bg-body-tertiary border-top py-5">
     {% include setup/wizard.html %}
   </section>
 
-  <!-- ============================================================ -->
-  <!-- NEXT STEPS / RESOURCES                                        -->
-  <!-- ============================================================ -->
+  {% comment %} ============================================================ {% endcomment %}
+  {% comment %} NEXT STEPS / RESOURCES                                        {% endcomment %}
+  {% comment %} ============================================================ {% endcomment %}
   <section class="container-lg py-5">
     <h2 class="mb-4"><i class="bi bi-signpost-2"></i> Next steps</h2>
     <div class="row g-3">
@@ -321,9 +321,9 @@ is set in `_config.yml`.
 
 {% else %}
 
-  <!-- ============================================================ -->
-  <!-- CONFIGURED SITE — render the user's content                   -->
-  <!-- ============================================================ -->
+  {% comment %} ============================================================ {% endcomment %}
+  {% comment %} CONFIGURED SITE — render the user's content                   {% endcomment %}
+  {% comment %} ============================================================ {% endcomment %}
   <div class="container-lg py-4">
     <div class="row justify-content-center">
       <div class="col-lg-10">

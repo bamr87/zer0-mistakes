@@ -2,7 +2,7 @@
 # Features: ZER0-012, ZER0-019, ZER0-035
 layout: default
 ---
-<!--
+{% comment %}
   ===================================================================
   NOTEBOOK LAYOUT - Jupyter Notebook Display
   ===================================================================
@@ -32,21 +32,21 @@ layout: default
   - Rouge syntax highlighter (Jekyll default)
   - Bootstrap 5 components
   ===================================================================
--->
+{% endcomment %}
 
 <article id="main" class="notebook-article h-entry" role="main" itemscope itemtype="https://schema.org/TechArticle">
   
-  <!-- ================================ -->
-  <!-- NOTEBOOK HEADER                  -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} NOTEBOOK HEADER                  {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   <header class="notebook-header mb-4">
     <h1 id="page-title" class="notebook-title p-name" itemprop="headline">
       {{ page.title }}
     </h1>
     
-    <!-- Notebook Metadata -->
+    {% comment %} Notebook Metadata {% endcomment %}
     <div class="notebook-meta text-muted mb-3">
-      <!-- Author -->
+      {% comment %} Author {% endcomment %}
       {% if page.author %}
         <span class="notebook-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
           {% include components/author-card.html author=page.author style="inline" name_itemprop="name" %}
@@ -54,7 +54,7 @@ layout: default
         <span class="mx-2">•</span>
       {% endif %}
       
-      <!-- Publication Date -->
+      {% comment %} Publication Date {% endcomment %}
       {% if page.date %}
         <time class="notebook-date dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
           <i class="bi bi-calendar me-1"></i>
@@ -63,7 +63,7 @@ layout: default
         <span class="mx-2">•</span>
       {% endif %}
       
-      <!-- Reading Time -->
+      {% comment %} Reading Time {% endcomment %}
       {% assign words = content | number_of_words %}
       {% assign minutes = words | divided_by: 200 %}
       {% if minutes < 1 %}{% assign minutes = 1 %}{% endif %}
@@ -72,7 +72,7 @@ layout: default
         {{ minutes }} min read
       </span>
       
-      <!-- Last Modified -->
+      {% comment %} Last Modified {% endcomment %}
       {% if page.lastmod %}
         <span class="mx-2">•</span>
         <span class="notebook-updated" itemprop="dateModified" content="{{ page.lastmod | date_to_xmlschema }}">
@@ -81,7 +81,7 @@ layout: default
         </span>
       {% endif %}
       
-      <!-- Kernel Info -->
+      {% comment %} Kernel Info {% endcomment %}
       {% if page.jupyter_metadata %}
         <span class="mx-2">•</span>
         <span class="notebook-kernel">
@@ -91,7 +91,7 @@ layout: default
       {% endif %}
     </div>
     
-    <!-- Tags -->
+    {% comment %} Tags {% endcomment %}
     {% comment %} Link tag badges only when a tags index exists (configurable via
        `tags_page`); otherwise render plain badges so remote-theme consumers
        without a /tags/ page don't get 404 links. See issue #204. {% endcomment %}
@@ -111,7 +111,7 @@ layout: default
       </div>
     {% endif %}
     
-    <!-- Categories -->
+    {% comment %} Categories {% endcomment %}
     {% if page.categories and page.categories.size > 0 %}
       <div class="notebook-categories mb-3">
         <i class="bi bi-folder me-1"></i>
@@ -124,7 +124,7 @@ layout: default
       </div>
     {% endif %}
     
-    <!-- Description -->
+    {% comment %} Description {% endcomment %}
     {% if page.description %}
       <div class="notebook-description lead mb-4" itemprop="description">
         {{ page.description }}
@@ -132,26 +132,26 @@ layout: default
     {% endif %}
   </header>
   
-  <!-- ================================ -->
-  <!-- NOTEBOOK CONTENT                 -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} NOTEBOOK CONTENT                 {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   <div class="notebook-content e-content" itemprop="articleBody">
     {{ content }}
   </div>
 
-  <!-- ================================ -->
-  <!-- AUTHOR BIO SECTION               -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} AUTHOR BIO SECTION               {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {% if page.author and page.author_profile != false %}
     {% include components/author-bio.html author=page.author %}
   {% endif %}
 
-  <!-- ================================ -->
-  <!-- NOTEBOOK FOOTER                  -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} NOTEBOOK FOOTER                  {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   <footer class="notebook-footer mt-5 pt-4 border-top">
     
-    <!-- Share Buttons -->
+    {% comment %} Share Buttons {% endcomment %}
     {% if page.share != false %}
       <div class="share-buttons mb-4">
         <h5 class="mb-3">Share this notebook</h5>
@@ -172,7 +172,7 @@ layout: default
       </div>
     {% endif %}
     
-    <!-- Download Original Notebook -->
+    {% comment %} Download Original Notebook {% endcomment %}
     <div class="download-notebook mb-4">
       <a href="https://raw.githubusercontent.com/{{ site.repository }}/{{ site.branch | default: 'main' }}/pages/_notebooks/{{ page.slug }}.ipynb" 
          class="btn btn-outline-secondary btn-sm" download>
@@ -180,7 +180,7 @@ layout: default
       </a>
     </div>
     
-    <!-- Related Notebooks -->
+    {% comment %} Related Notebooks {% endcomment %}
     {% if site.notebooks.size > 1 %}
       <div class="related-notebooks mt-5">
         <h5 class="mb-3">Related Notebooks</h5>
@@ -221,9 +221,9 @@ layout: default
     {% endif %}
   </footer>
   
-  <!-- ================================ -->
-  <!-- COMMENTS SECTION                 -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} COMMENTS SECTION                 {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {% if page.comments != false and site.giscus.enabled %}
     <div class="notebook-comments mt-5 pt-4 border-top">
       <h5 class="mb-4">Comments</h5>
@@ -233,10 +233,10 @@ layout: default
   
 </article>
 
-<!-- ================================ -->
-<!-- NAVIGATION                       -->
-<!-- ================================ -->
-<!-- Previous/Next Notebook Navigation -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} NAVIGATION                       {% endcomment %}
+{% comment %} ================================ {% endcomment %}
+{% comment %} Previous/Next Notebook Navigation {% endcomment %}
 {% assign notebooks = site.notebooks | sort: 'date' | reverse %}
 {% assign current_index = nil %}
 {% for notebook in notebooks %}
@@ -281,7 +281,7 @@ layout: default
   </nav>
 {% endif %}
 
-<!-- Schema.org metadata -->
+{% comment %} Schema.org metadata {% endcomment %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",

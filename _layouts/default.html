@@ -2,7 +2,7 @@
 # Features: ZER0-001, ZER0-008, ZER0-019
 layout: root
 ---
-<!--
+{% comment %}
   ===================================================================
   DEFAULT LAYOUT - Standard content layout with sidebars
   ===================================================================
@@ -43,7 +43,7 @@ layout: root
   - bd-toc: Table of contents styling
   - bd-content: Content area styling
   ===================================================================
--->
+{% endcomment %}
 
 {%- comment -%}
   Sidebar visibility + nav mode are resolved by the shared include below
@@ -58,16 +58,16 @@ layout: root
 {%- endcomment -%}
 {% include navigation/sidebar-config.html %}
 
-<!-- ================================================ -->
-<!-- MAIN LAYOUT CONTAINER                           -->
-<!-- Bootstrap responsive container with custom grid -->
-<!-- ================================================ -->
+{% comment %} ================================================ {% endcomment %}
+{% comment %} MAIN LAYOUT CONTAINER                           {% endcomment %}
+{% comment %} Bootstrap responsive container with custom grid {% endcomment %}
+{% comment %} ================================================ {% endcomment %}
 <div class="container-xxl bd-gutter mt-3 my-md-4 bd-layout{% unless sidebar_has_content %} bd-layout--no-sidebar{% endunless %}">
 
-    <!-- ================================ -->
-    <!-- LEFT SIDEBAR - Navigation       -->
-    <!-- ================================ -->
-    <!-- Site navigation, content outline, and offcanvas menu for mobile -->
+    {% comment %} ================================ {% endcomment %}
+    {% comment %} LEFT SIDEBAR - Navigation       {% endcomment %}
+    {% comment %} ================================ {% endcomment %}
+    {% comment %} Site navigation, content outline, and offcanvas menu for mobile {% endcomment %}
     {% if sidebar_has_content %}
     <aside class="bd-sidebar">
         {% include navigation/sidebar-left.html %}
@@ -83,12 +83,12 @@ layout: root
     </div>
     {% endif %}
 
-    <!-- ================================ -->
-    <!-- MAIN CONTENT AREA               -->
-    <!-- ================================ -->
-    <!-- Primary content section with scroll spy for table of contents navigation.
+    {% comment %} ================================ {% endcomment %}
+    {% comment %} MAIN CONTENT AREA               {% endcomment %}
+    {% comment %} ================================ {% endcomment %}
+    {% comment %} Primary content section with scroll spy for table of contents navigation.
          Not a <main>: root.html already provides the single <main id="main-content">
-         landmark; a nested <main> here would duplicate it (issue #299). -->
+         landmark; a nested <main> here would duplicate it (issue #299). {% endcomment %}
     <div class="bd-main order-1" data-bs-spy="scroll" data-bs-target="#TableOfContents" data-bs-offset="100" data-bs-smooth-scroll="true">
 
         {%- comment -%}
@@ -105,20 +105,20 @@ layout: root
           {% include content/intro.html %}
         {% endunless %}
 
-        <!-- =============================== -->
-        <!-- RIGHT SIDEBAR - Table of Contents -->
-        <!-- =============================== -->
-        <!-- Page outline, shortcuts, and related links (hidden on mobile) -->
+        {% comment %} =============================== {% endcomment %}
+        {% comment %} RIGHT SIDEBAR - Table of Contents {% endcomment %}
+        {% comment %} =============================== {% endcomment %}
+        {% comment %} Page outline, shortcuts, and related links (hidden on mobile) {% endcomment %}
         {% unless sidebar_enabled == false %}
         <div class="bd-toc text-body-secondary">
             {% include navigation/sidebar-right.html %}
         </div>
         {% endunless %}
 
-        <!-- =============================== -->
-        <!-- MAIN CONTENT BODY              -->
-        <!-- =============================== -->
-        <!-- Where the actual page content is rendered -->
+        {% comment %} =============================== {% endcomment %}
+        {% comment %} MAIN CONTENT BODY              {% endcomment %}
+        {% comment %} =============================== {% endcomment %}
+        {% comment %} Where the actual page content is rendered {% endcomment %}
         <div class="bd-content ps-lg-2">
             {{ content }}
 

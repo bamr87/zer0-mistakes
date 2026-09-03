@@ -2,7 +2,7 @@
 # Features: ZER0-019, ZER0-035, ZER0-064
 layout: default
 ---
-<!--
+{% comment %}
   ===================================================================
   ARTICLE LAYOUT - Blog Post and Article Display with Post Type Support
   ===================================================================
@@ -43,7 +43,7 @@ layout: default
   - site.giscus configuration for comment system
   - Bootstrap 5 components
   ===================================================================
--->
+{% endcomment %}
 
 {% comment %}
   Determine post type and (article-local) sidebar visibility.
@@ -93,9 +93,9 @@ layout: default
   </div>
   {% endif %}
   
-  <!-- ================================ -->
-  <!-- ARTICLE HEADER                   -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} ARTICLE HEADER                   {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   <header class="post-header mb-4">
     
     {% comment %} Post Type Badge {% endcomment %}
@@ -125,9 +125,9 @@ layout: default
     <p class="lead text-muted">{{ page.sub-title }}</p>
     {% endif %}
     
-    <!-- Post Metadata -->
+    {% comment %} Post Metadata {% endcomment %}
     <div class="post-meta text-muted mb-3">
-      <!-- Author -->
+      {% comment %} Author {% endcomment %}
       {% if page.author %}
         <span class="post-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
           {% include components/author-card.html author=page.author style="inline" name_itemprop="name" %}
@@ -135,7 +135,7 @@ layout: default
         <span class="mx-2">•</span>
       {% endif %}
       
-      <!-- Publication Date -->
+      {% comment %} Publication Date {% endcomment %}
       {% if page.date %}
         <time class="post-date dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
           <i class="bi bi-calendar me-1"></i>
@@ -144,7 +144,7 @@ layout: default
         <span class="mx-2">•</span>
       {% endif %}
       
-      <!-- Reading Time -->
+      {% comment %} Reading Time {% endcomment %}
       {% assign words = content | number_of_words %}
       {% assign minutes = words | divided_by: 200 %}
       {% if minutes < 1 %}{% assign minutes = 1 %}{% endif %}
@@ -153,12 +153,12 @@ layout: default
         {{ minutes }} min read
       </span>
       
-      <!-- Page Views -->
+      {% comment %} Page Views {% endcomment %}
       {% comment %} The badge ships hidden and carries its own leading separator,
          so a page with no count yet leaves no dangling "•" in the meta row. {% endcomment %}
       {% include components/page-views.html separator=true %}
       
-      <!-- Last Modified -->
+      {% comment %} Last Modified {% endcomment %}
       {% if page.lastmod %}
         <span class="mx-2">•</span>
         <span class="post-updated" itemprop="dateModified" content="{{ page.lastmod | date_to_xmlschema }}">
@@ -168,7 +168,7 @@ layout: default
       {% endif %}
     </div>
     
-    <!-- Category Link -->
+    {% comment %} Category Link {% endcomment %}
     {% comment %} Category base is configurable (`category_base`, default `/news`).
        Only link the badge when that category index page actually exists in the
        build; on a remote-theme Pages consumer the category section is
@@ -199,7 +199,7 @@ layout: default
     </div>
     {% endif %}
 
-    <!-- Tags -->
+    {% comment %} Tags {% endcomment %}
     {% comment %} Only link tag badges when a tags index page actually exists in
        the build (configurable via `tags_page`, default `/tags/`). On a
        remote-theme Pages consumer the tags page is plugin/page-generated and
@@ -374,9 +374,9 @@ layout: default
   </aside>
   {% endif %}
   
-  <!-- ================================ -->
-  <!-- ARTICLE CONTENT                  -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} ARTICLE CONTENT                  {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   <div class="post-content e-content {% if post_type == 'featured' %}fs-5{% endif %}" itemprop="articleBody">
     {{ content }}
   </div>
@@ -419,9 +419,9 @@ layout: default
   </aside>
   {% endif %}
   
-  <!-- ================================ -->
-  <!-- AUTHOR BIO SECTION               -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} AUTHOR BIO SECTION               {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {% comment %}
     "About the Author" is honored when the post has an author and the
     `author_profile` front-matter flag is not false (defaults to true for the
@@ -432,9 +432,9 @@ layout: default
     {% include components/author-bio.html author=page.author %}
   {% endif %}
   
-  <!-- ================================ -->
-  <!-- RELATED POSTS SECTION            -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} RELATED POSTS SECTION            {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {% if page.tags.size > 0 %}
     {% assign related_posts = "" | split: "" %}
     {% for tag in page.tags %}
@@ -485,12 +485,12 @@ layout: default
     {% endif %}
   {% endif %}
   
-  <!-- ================================ -->
-  <!-- POST NAVIGATION                  -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} POST NAVIGATION                  {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   <nav class="post-navigation my-5 pt-4 border-top" aria-label="Post navigation">
     <div class="row g-3">
-      <!-- Previous Post -->
+      {% comment %} Previous Post {% endcomment %}
       <div class="col-md-6">
         {% if page.previous %}
           <a href="{{ page.previous.url | relative_url }}" class="post-nav-card post-nav-card--prev">
@@ -513,7 +513,7 @@ layout: default
         {% endif %}
       </div>
       
-      <!-- Next Post -->
+      {% comment %} Next Post {% endcomment %}
       <div class="col-md-6">
         {% if page.next %}
           <a href="{{ page.next.url | relative_url }}" class="post-nav-card post-nav-card--next">
@@ -538,9 +538,9 @@ layout: default
     </div>
   </nav>
   
-  <!-- ================================ -->
-  <!-- COMMENT SYSTEM                   -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} COMMENT SYSTEM                   {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {% if page.comments != false and site.giscus.enabled %}
     <section class="post-comments mt-5 pt-4 border-top" id="comments">
       <h2 class="h4 mb-4">

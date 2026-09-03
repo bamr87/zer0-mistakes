@@ -1,4 +1,4 @@
-<!--
+{% comment %}
   ===================================================================
   BRANDING - Site Title and Subtitle Display
   ===================================================================
@@ -14,8 +14,8 @@
   - site.title_icon: Icon for title display
   - site.subtitle_icon: Icon for subtitle display
   ===================================================================
--->
-<!-- Color Schema Override 
+{% endcomment %}
+{% comment %} Color Schema Override 
     TODO: Add a poline plug-in to generate color scheme
     https://meodai.github.io/poline/
 
@@ -28,9 +28,9 @@
         Yellow - #ffe900
         Teal - #376986
         Blue - #007bff
- -->
+ {% endcomment %}
 
-<!-- Title Section  -->
+{% comment %} Title Section  {% endcomment %}
 
 <div class="navbar-brand site-title mb-0 py-0 me-0 min-w-0 flex-grow-1">
     <a
@@ -43,7 +43,7 @@
     </a>
 </div>
 
-<!-- If a subtitle exists -->
+{% comment %} If a subtitle exists {% endcomment %}
 {%- assign _subtitle = site.subtitle | strip -%}
 {%- if _subtitle != "" -%}
 <div class="navbar-brand site-subtitle d-none d-lg-inline">

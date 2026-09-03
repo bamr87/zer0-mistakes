@@ -56,16 +56,16 @@
 
     {% capture newline %}
     {% endcapture %}
-    {% assign newline = newline | rstrip %} <!-- Remove the extra spacing but preserve the newline -->
+    {% assign newline = newline | rstrip %} {% comment %} Remove the extra spacing but preserve the newline {% endcomment %}
 
     {% capture deprecation_warnings %}{% endcapture %}
 
     {% if include.baseurl %}
-        {% capture deprecation_warnings %}{{ deprecation_warnings }}<!-- jekyll-toc :: "baseurl" has been deprecated, use "base_url" instead -->{{ newline }}{% endcapture %}
+        {% capture deprecation_warnings %}{{ deprecation_warnings }}{% comment %} jekyll-toc :: "baseurl" has been deprecated, use "base_url" instead {% endcomment %}{{ newline }}{% endcapture %}
     {% endif %}
 
     {% if include.skipNoIDs %}
-        {% capture deprecation_warnings %}{{ deprecation_warnings }}<!-- jekyll-toc :: "skipNoIDs" has been deprecated, use "skip_no_ids" instead -->{{ newline }}{% endcapture %}
+        {% capture deprecation_warnings %}{{ deprecation_warnings }}{% comment %} jekyll-toc :: "skipNoIDs" has been deprecated, use "skip_no_ids" instead {% endcomment %}{{ newline }}{% endcapture %}
     {% endif %}
 
     {% capture jekyll_toc %}{% endcapture %}

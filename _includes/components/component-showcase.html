@@ -1,5 +1,5 @@
 {% comment %} Feature: ZER0-071 {% endcomment %}
-<!--
+{% comment %}
   ===================================================================
   COMPONENT SHOWCASE - Live Bootstrap 5 demo gallery
   ===================================================================
@@ -33,12 +33,12 @@
         showcase safe for remote-theme consumers who may lack /docs/, /posts/,
         /categories/, /tags/, or /docs/customization/.
   ===================================================================
--->
+{% endcomment %}
 {% assign sections = include.sections | default: "alerts,buttons,badges,cards,accordion,tabs,progress,breadcrumbs,table,tooltips,list-group" %}
 {% assign section_list = sections | split: "," %}
 
 {% if section_list contains "alerts" %}
-<!-- ===== ALERTS ===== -->
+{% comment %} ===== ALERTS ===== {% endcomment %}
 <h3 id="showcase-alerts">Alerts</h3>
 <p>Contextual feedback messages for user actions and system status:</p>
 <div class="row g-3 mb-4">
@@ -70,7 +70,7 @@
 {% endif %}
 
 {% if section_list contains "buttons" %}
-<!-- ===== BUTTONS ===== -->
+{% comment %} ===== BUTTONS ===== {% endcomment %}
 <h3 id="showcase-buttons">Buttons</h3>
 <p>A complete button system with contextual colors, outlines, and sizes:</p>
 <div class="mb-4">
@@ -102,7 +102,7 @@
 {% endif %}
 
 {% if section_list contains "badges" %}
-<!-- ===== BADGES ===== -->
+{% comment %} ===== BADGES ===== {% endcomment %}
 <h3 id="showcase-badges">Badges</h3>
 <p>Contextual labels, status indicators, and notification counters:</p>
 <div class="mb-4">
@@ -132,7 +132,7 @@
 {% endif %}
 
 {% if section_list contains "cards" %}
-<!-- ===== CARDS ===== -->
+{% comment %} ===== CARDS ===== {% endcomment %}
 <h3 id="showcase-cards">Cards</h3>
 <p>Responsive card layouts — the building block of post listings, feature displays, and documentation:</p>
 <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
@@ -191,7 +191,7 @@
 {% endif %}
 
 {% if section_list contains "accordion" %}
-<!-- ===== ACCORDION ===== -->
+{% comment %} ===== ACCORDION ===== {% endcomment %}
 <h3 id="showcase-accordion">Accordion</h3>
 <p>Collapsible content sections — ideal for FAQs and detailed documentation:</p>
 <div class="accordion mb-4" id="showcaseAccordion">
@@ -235,7 +235,7 @@
 {% endif %}
 
 {% if section_list contains "tabs" %}
-<!-- ===== TABS ===== -->
+{% comment %} ===== TABS ===== {% endcomment %}
 <h3 id="showcase-tabs">Tabs</h3>
 <p>Tabbed content panels for organizing related information:</p>
 <ul class="nav nav-tabs mb-0" id="showcaseTabs" role="tablist">
@@ -281,7 +281,7 @@ theme: jekyll-theme-zer0</code></pre>
 {% endif %}
 
 {% if section_list contains "progress" %}
-<!-- ===== PROGRESS BARS ===== -->
+{% comment %} ===== PROGRESS BARS ===== {% endcomment %}
 <h3 id="showcase-progress">Progress Bars</h3>
 <p>Visual indicators for build status, completion tracking, and loading states:</p>
 <div class="mb-4">
@@ -325,7 +325,7 @@ theme: jekyll-theme-zer0</code></pre>
 {% endif %}
 
 {% if section_list contains "breadcrumbs" %}
-<!-- ===== BREADCRUMBS ===== -->
+{% comment %} ===== BREADCRUMBS ===== {% endcomment %}
 <h3 id="showcase-breadcrumbs">Breadcrumbs</h3>
 <p>Hierarchical navigation trail showing current page position:</p>
 {% comment %} Existence-guard the demo breadcrumb links so they never 404 on
@@ -357,7 +357,7 @@ theme: jekyll-theme-zer0</code></pre>
 {% endif %}
 
 {% if section_list contains "table" %}
-<!-- ===== TABLE ===== -->
+{% comment %} ===== TABLE ===== {% endcomment %}
 <h3 id="showcase-table">Responsive Table</h3>
 <p>Styled tables with Bootstrap — all Markdown tables automatically receive Bootstrap styling:</p>
 <div class="table-responsive mb-4">
@@ -407,7 +407,7 @@ theme: jekyll-theme-zer0</code></pre>
 {% endif %}
 
 {% if section_list contains "tooltips" %}
-<!-- ===== TOOLTIPS ===== -->
+{% comment %} ===== TOOLTIPS ===== {% endcomment %}
 <h3 id="showcase-tooltips">Tooltips</h3>
 <p>Interactive hints and contextual information on hover:</p>
 <div class="d-flex flex-wrap gap-3 mb-4">
@@ -436,7 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
 {% endif %}
 
 {% if section_list contains "list-group" %}
-<!-- ===== LIST GROUP ===== -->
+{% comment %} ===== LIST GROUP ===== {% endcomment %}
 <h3 id="showcase-list-group">List Group</h3>
 <p>Organized content lists with icons, badges, and action states:</p>
 {% comment %} Existence-guard the demo list-group links (issue #219). Each target

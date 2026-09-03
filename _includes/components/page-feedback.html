@@ -61,7 +61,7 @@
 {%- assign pf_theme = site.theme | default: site.remote_theme | default: "" -%}
 
 {%- if pf_show_fab -%}
-<!-- Global feedback FAB (page-invariant; opens the modal) -->
+{% comment %} Global feedback FAB (page-invariant; opens the modal) {% endcomment %}
 <button type="button"
         id="pageFeedbackFab"
         class="pf-fab btn shadow-lg position-fixed"
@@ -74,11 +74,11 @@
 </button>
 {%- endif -%}
 
-<!-- Feedback modal (self-contained overlay; controlled by page-feedback.js).
+{% comment %} Feedback modal (self-contained overlay; controlled by page-feedback.js).
      `position-fixed` is required, not cosmetic: it opts this <body> child out of
      the .zer0-bg-body flattening rule (_sass/theme/_backgrounds.scss) that would
      otherwise force position:relative; z-index:1 and let the cookie banner steal
-     the dialog's clicks. -->
+     the dialog's clicks. {% endcomment %}
 <div class="pf-overlay position-fixed" id="pageFeedbackModal" role="dialog" aria-modal="true"
      aria-labelledby="pfTitle" aria-describedby="pfIntro" hidden>
   <div class="pf-dialog shadow-lg" role="document">
@@ -100,7 +100,7 @@
 
     <form id="pfForm" class="pf-body" novalidate>
 
-      <!-- Step 1 — request type -->
+      {% comment %} Step 1 — request type {% endcomment %}
       <fieldset class="pf-field pf-types">
         <legend class="pf-legend">What kind of feedback?</legend>
         {%- comment -%}
@@ -183,7 +183,7 @@
         {%- endfor -%}
       </fieldset>
 
-      <!-- Step 2 — description -->
+      {% comment %} Step 2 — description {% endcomment %}
       <div class="pf-field">
         <label for="pfDescription" class="pf-label">Describe it</label>
         <textarea id="pfDescription" class="form-control" rows="4"
@@ -194,14 +194,14 @@
         </p>
       </div>
 
-      <!-- Step 3 — what gets attached -->
+      {% comment %} Step 3 — what gets attached {% endcomment %}
       <details class="pf-field pf-context" id="pfContextWrap">
         <summary class="pf-summary">
           <i class="bi bi-paperclip me-1" aria-hidden="true"></i>What gets attached
           <span class="pf-context-count" id="pfContextCount"></span>
         </summary>
         <ul class="pf-context-list" id="pfContextList" aria-live="polite">
-          <!-- page title / url / path filled in by JS -->
+          {% comment %} page title / url / path filled in by JS {% endcomment %}
         </ul>
 
         {%- if site.page_feedback.capture_logs -%}
@@ -221,7 +221,7 @@
       </details>
 
       {%- if pf_ai_available -%}
-      <!-- Step 4 — optional AI review (proxy + Claude Code OAuth) -->
+      {% comment %} Step 4 — optional AI review (proxy + Claude Code OAuth) {% endcomment %}
       <div class="pf-field pf-ai" id="pfAiWrap">
         <div class="pf-ai-head">
           <button type="button" class="btn btn-sm btn-outline-primary" id="pfAnalyze">
@@ -253,7 +253,7 @@
   </div>
 </div>
 
-<!-- Widget configuration consumed by assets/js/page-feedback.js -->
+{% comment %} Widget configuration consumed by assets/js/page-feedback.js {% endcomment %}
 <script id="pageFeedbackConfig" type="application/json">
 {
   "enabled": true,
@@ -275,9 +275,9 @@
 }
 </script>
 
-<!-- Request-type taxonomy (from _data/feedback_types.yml; generic fallback
+{% comment %} Request-type taxonomy (from _data/feedback_types.yml; generic fallback
      when the site ships no data file — keep in sync with the fallback markup
-     in the pf-types fieldset above) -->
+     in the pf-types fieldset above) {% endcomment %}
 <script id="pageFeedbackTypes" type="application/json">
 {% if site.data.feedback_types %}{{ site.data.feedback_types | jsonify }}{% else %}[
   {"id":"fix-page","label":"Report a problem","icon":"bi-bug","group":"This page","scope":"page","description":"A typo, broken link, wrong information, or something rendering badly","labels":[],"agent":false,"placeholder":"What is wrong, where on the page, and what did you expect instead?"},
@@ -287,7 +287,7 @@
 ]{% endif %}
 </script>
 
-<!-- Live page context (build-time front matter; runtime detail added by JS) -->
+{% comment %} Live page context (build-time front matter; runtime detail added by JS) {% endcomment %}
 <script id="pageFeedbackContext" type="application/json">
 {
   "title": {{ page.title | default: site.title | jsonify }},

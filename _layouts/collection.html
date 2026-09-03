@@ -2,7 +2,7 @@
 # Feature: ZER0-019
 layout: default
 ---
-<!--
+{% comment %}
   ===================================================================
   COLLECTION LAYOUT - Display template for Jekyll collections
   ===================================================================
@@ -42,18 +42,18 @@ layout: default
   - Bootstrap 5 card and grid components
   - Site configuration for public_folder and teaser image
   ===================================================================
--->
+{% endcomment %}
 
-<!-- ========================== -->
-<!-- COLLECTION PAGE CONTENT    -->
-<!-- ========================== -->
-<!-- Main content area for collection description or introduction -->
+{% comment %} ========================== {% endcomment %}
+{% comment %} COLLECTION PAGE CONTENT    {% endcomment %}
+{% comment %} ========================== {% endcomment %}
+{% comment %} Main content area for collection description or introduction {% endcomment %}
 {{ content }}
 
-<!-- ========================== -->
-<!-- COLLECTION DATA PROCESSING -->
-<!-- ========================== -->
-<!-- Extract and sort collection entries based on page configuration.
+{% comment %} ========================== {% endcomment %}
+{% comment %} COLLECTION DATA PROCESSING {% endcomment %}
+{% comment %} ========================== {% endcomment %}
+{% comment %} Extract and sort collection entries based on page configuration.
 
      Jekyll sets page.collection automatically for a document inside a
      collection, but a standalone page can also select this layout in its front
@@ -61,12 +61,12 @@ layout: default
      declare — site[page.collection] is nil, and `sort` on nil raises
      "Cannot sort a null object.", which aborts the ENTIRE build rather than
      just this page. Resolve to an empty list instead so one misconfigured page
-     cannot take the site down. -->
+     cannot take the site down. {% endcomment %}
 {% assign entries = site[page.collection] %}
 {% if entries %}
     {% assign entries = entries | sort: page.sort_order %}
 
-    <!-- Handle reverse sorting if specified -->
+    {% comment %} Handle reverse sorting if specified {% endcomment %}
     {% if page.sort_order == 'reverse' %}
         {% assign entries = entries | reverse %}
     {% endif %}
@@ -74,53 +74,53 @@ layout: default
     {% assign entries = "" | split: "" %}
 {% endif %}
 
-<!-- ========================== -->
-<!-- COLLECTION INDEX HEADER    -->
-<!-- ========================== -->
+{% comment %} ========================== {% endcomment %}
+{% comment %} COLLECTION INDEX HEADER    {% endcomment %}
+{% comment %} ========================== {% endcomment %}
 <h2 id="index-collection">
     Collection Index - {{ page.collection }}
 </h2>
 
-<!-- ================================ -->
-<!-- COLLECTION ITEMS GRID           -->
-<!-- ================================ -->
-<!-- Responsive card grid: 1 column mobile, up to 3 columns desktop -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} COLLECTION ITEMS GRID           {% endcomment %}
+{% comment %} ================================ {% endcomment %}
+{% comment %} Responsive card grid: 1 column mobile, up to 3 columns desktop {% endcomment %}
 <div class="row row-cols-1 row-cols-md-3 g-4">
     
     {% for post in entries %}
         <div class="col">
-            <!-- Bootstrap card with equal height for consistent layout -->
+            {% comment %} Bootstrap card with equal height for consistent layout {% endcomment %}
             <div class="card h-100">
                 
-                <!-- ====================== -->
-                <!-- CARD IMAGE SECTION     -->
-                <!-- ====================== -->
-                <!-- Display preview image with fallback to site teaser -->
+                {% comment %} ====================== {% endcomment %}
+                {% comment %} CARD IMAGE SECTION     {% endcomment %}
+                {% comment %} ====================== {% endcomment %}
+                {% comment %} Display preview image with fallback to site teaser {% endcomment %}
                 {% assign coll_img = post.preview | default: site.teaser %}
                 {% include components/preview-image.html src=coll_img alt=post.title class="card-img-top" %}
                 
-                <!-- ====================== -->
-                <!-- CARD CONTENT SECTION   -->
-                <!-- ====================== -->
+                {% comment %} ====================== {% endcomment %}
+                {% comment %} CARD CONTENT SECTION   {% endcomment %}
+                {% comment %} ====================== {% endcomment %}
                 <div class="card-body">
-                    <!-- Post title with SEO microdata -->
+                    {% comment %} Post title with SEO microdata {% endcomment %}
                     <h5 class="card-title" itemprop="headline">
                         <a class="card-link" href="{{ post.url | relative_url }}" rel="permalink">
                             {{ post.title }}
                         </a>
                     </h5>
                     
-                    <!-- Post excerpt with HTML stripped and character limit -->
+                    {% comment %} Post excerpt with HTML stripped and character limit {% endcomment %}
                     <p class="card-text" itemprop="description">
                         {{ post.excerpt | strip_html | truncate: 160 }}
                     </p>
                 </div>
                 
-                <!-- ====================== -->
-                <!-- CARD FOOTER SECTION    -->
-                <!-- ====================== -->
+                {% comment %} ====================== {% endcomment %}
+                {% comment %} CARD FOOTER SECTION    {% endcomment %}
+                {% comment %} ====================== {% endcomment %}
                 <div class="card-footer">
-                    <!-- Last modified date for content freshness indicator -->
+                    {% comment %} Last modified date for content freshness indicator {% endcomment %}
                     <small class="text-body-secondary post-meta">
                         Last updated {{ post.lastmod | date: '%B %d, %Y' }}
                     </small>

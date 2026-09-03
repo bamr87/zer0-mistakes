@@ -3,7 +3,7 @@
 layout: root
 source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
 ---
-<!--
+{% comment %}
   ===================================================================
   NEWS LAYOUT - Main News Homepage with Section Style Support
   ===================================================================
@@ -49,7 +49,7 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
   
   Note: All cards are inlined to avoid Liquid nesting depth issues
   ===================================================================
--->
+{% endcomment %}
 
 {% comment %} 
   WARNING: section_style is required in front matter!
@@ -92,9 +92,9 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
   {% if _tags_index_page %}{% assign _tags_linkable = true %}{% endif %}
 {% endif %}
 
-<!-- ================================ -->
-<!-- NEWS HEADER                      -->
-<!-- ================================ -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} NEWS HEADER                      {% endcomment %}
+{% comment %} ================================ {% endcomment %}
 <div class="container-fluid bg-dark text-white py-3 mb-4">
   <div class="container">
     <div class="row align-items-center">
@@ -131,18 +131,18 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
   </div>
 </div>
 
-<!-- Not a <main>: root.html already provides the single <main id="main-content">
-     landmark; a nested <main> here would duplicate it (issue #299). -->
+{% comment %} Not a <main>: root.html already provides the single <main id="main-content">
+     landmark; a nested <main> here would duplicate it (issue #299). {% endcomment %}
 <div class="container">
 
 {% if section_style == "magazine" %}
-  <!-- ================================ -->
-  <!-- MAGAZINE STYLE LAYOUT            -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} MAGAZINE STYLE LAYOUT            {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
 
-  <!-- ================================ -->
-  <!-- HERO - BREAKING NEWS             -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} HERO - BREAKING NEWS             {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {% assign breaking_posts = all_posts | where: "breaking", true %}
   {% assign hero_post = breaking_posts | first %}
 
@@ -215,9 +215,9 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
   </section>
   {% endif %}
 
-  <!-- ================================ -->
-  <!-- SECTION QUICK NAVIGATION         -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} SECTION QUICK NAVIGATION         {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   <section class="section-nav mb-5">
     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-3">
       {% for sec_name in news_sections %}
@@ -242,9 +242,9 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
     </div>
   </section>
 
-  <!-- ================================ -->
-  <!-- FEATURED STORIES                 -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} FEATURED STORIES                 {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {% assign featured_posts = all_posts | where: "featured", true %}
   {% if featured_posts.size > 0 %}
   <section class="featured-section mb-5">
@@ -255,7 +255,7 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
     </div>
     
     <div class="row g-4">
-      <!-- Main Featured Post -->
+      {% comment %} Main Featured Post {% endcomment %}
       {% assign main_featured = featured_posts | first %}
       <div class="col-lg-6">
         <div class="card h-100 border-0 shadow">
@@ -300,7 +300,7 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
         </div>
       </div>
       
-      <!-- Secondary Featured Posts -->
+      {% comment %} Secondary Featured Posts {% endcomment %}
       <div class="col-lg-6">
         <div class="row row-cols-1 row-cols-md-2 g-4">
           {% for fpost in featured_posts offset:1 limit:4 %}
@@ -334,9 +334,9 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
   </section>
   {% endif %}
 
-  <!-- ================================ -->
-  <!-- POSTS BY SECTION                 -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} POSTS BY SECTION                 {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {% for sec_name in news_sections limit: 3 %}
     {% assign section_posts = all_posts | where_exp: "post", "post.categories contains sec_name" %}
     {% assign _sec_nav = site.data.navigation.posts | where: "title", sec_name | first %}
@@ -395,9 +395,9 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
   {% endfor %}
 
 {% elsif section_style == "grid" %}
-  <!-- ================================ -->
-  <!-- GRID STYLE LAYOUT                -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} GRID STYLE LAYOUT                {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   <section class="grid-section mb-5">
     <h2 class="h4 mb-4">
       <i class="bi bi-grid me-2"></i>All Articles
@@ -453,9 +453,9 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
   </section>
 
 {% elsif section_style == "list" %}
-  <!-- ================================ -->
-  <!-- LIST STYLE LAYOUT                -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} LIST STYLE LAYOUT                {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   <section class="list-section mb-5">
     <h2 class="h4 mb-4">
       <i class="bi bi-list-ul me-2"></i>Latest Articles
@@ -509,9 +509,9 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
 
 {% endif %}
 
-  <!-- ================================ -->
-  <!-- LATEST POSTS                     -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} LATEST POSTS                     {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {% if section_style == "magazine" %}
   <section class="latest-section mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -557,9 +557,9 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
   </section>
   {% endif %}
 
-  <!-- ================================ -->
-  <!-- PAGE CONTENT (if any)            -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} PAGE CONTENT (if any)            {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {% if content != blank %}
   <section class="page-content mb-5">
     <div class="card border-0 shadow-sm">
@@ -570,12 +570,12 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
   </section>
   {% endif %}
 
-  <!-- ================================ -->
-  <!-- TAGS & ARCHIVES                  -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} TAGS & ARCHIVES                  {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   <section class="footer-widgets mb-5">
     <div class="row g-4">
-      <!-- Popular Tags -->
+      {% comment %} Popular Tags {% endcomment %}
       <div class="col-md-6">
         <div class="card h-100 border-0 bg-body-tertiary">
           <div class="card-body">
@@ -610,7 +610,7 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
         </div>
       </div>
       
-      <!-- Archives -->
+      {% comment %} Archives {% endcomment %}
       <div class="col-md-6">
         <div class="card h-100 border-0 bg-body-tertiary">
           <div class="card-body">
@@ -661,9 +661,9 @@ source: "https://getbootstrap.com/docs/5.3/examples/blog/#"
     </div>
   </section>
 
-  <!-- ================================ -->
-  <!-- NEWSLETTER SIGNUP                -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} NEWSLETTER SIGNUP                {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {% comment %}
     Renders only when it can actually do something: a configured form
     endpoint (news.newsletter.endpoint) posts for real; otherwise a

@@ -1,5 +1,5 @@
 {% comment %} Feature: ZER0-042 {% endcomment %}
-<!--
+{% comment %}
   ===================================================================
   SITEMAP COMPONENT - Comprehensive Site Navigation Index
   ===================================================================
@@ -27,11 +27,11 @@
   - Export capabilities (future enhancement)
   - Keyboard navigation support
   ===================================================================
--->
+{% endcomment %}
 
-<!-- ================================ -->
-<!-- SITEMAP OVERVIEW AND STATS      -->
-<!-- ================================ -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} SITEMAP OVERVIEW AND STATS      {% endcomment %}
+{% comment %} ================================ {% endcomment %}
 <div class="row mb-4">
     <div class="col-12">
         <div class="card border-0">
@@ -63,9 +63,9 @@
     </div>
 </div>
 
-<!-- ================================ -->
-<!-- COLLECTION STATISTICS           -->
-<!-- ================================ -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} COLLECTION STATISTICS           {% endcomment %}
+{% comment %} ================================ {% endcomment %}
 <div class="row mb-4 d-none" id="statsSection">
     <div class="col-12">
         <div class="card">
@@ -77,22 +77,22 @@
             </div>
             <div class="card-body">
                 <div class="row" id="collectionStats">
-                    <!-- Dynamic collection statistics will be inserted here -->
+                    {% comment %} Dynamic collection statistics will be inserted here {% endcomment %}
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- ================================ -->
-<!-- SEARCH AND FILTER CONTROLS     -->
-<!-- ================================ -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} SEARCH AND FILTER CONTROLS     {% endcomment %}
+{% comment %} ================================ {% endcomment %}
 <div class="row mb-4">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
                 <div class="row g-3">
-                    <!-- Search Input -->
+                    {% comment %} Search Input {% endcomment %}
                     <div class="col-md-6">
                         <label for="searchBar" class="form-label">
                             <i class="bi bi-search"></i> Search Content
@@ -116,18 +116,18 @@
                         </div>
                     </div>
                     
-                    <!-- Collection Filter -->
+                    {% comment %} Collection Filter {% endcomment %}
                     <div class="col-md-3">
                         <label for="collectionFilter" class="form-label">
                             <i class="bi bi-funnel"></i> Filter by Collection
                         </label>
                         <select class="form-select" id="collectionFilter">
                             <option value="">All Collections</option>
-                            <!-- Dynamic options will be added by JavaScript -->
+                            {% comment %} Dynamic options will be added by JavaScript {% endcomment %}
                         </select>
                     </div>
                     
-                    <!-- Date Range Filter -->
+                    {% comment %} Date Range Filter {% endcomment %}
                     <div class="col-md-3">
                         <label for="dateFilter" class="form-label">
                             <i class="bi bi-calendar-range"></i> Date Range
@@ -142,7 +142,7 @@
                     </div>
                 </div>
                 
-                <!-- Results Counter -->
+                {% comment %} Results Counter {% endcomment %}
                 <div class="row mt-3">
                     <div class="col-12">
                         <div class="d-flex justify-content-between align-items-center">
@@ -168,9 +168,9 @@
     </div>
 </div>
 
-<!-- ================================ -->
-<!-- RESPONSIVE DATA TABLE           -->
-<!-- ================================ -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} RESPONSIVE DATA TABLE           {% endcomment %}
+{% comment %} ================================ {% endcomment %}
 <div class="row" id="tableViewContainer">
     <div class="col-12">
         <div class="card">
@@ -365,20 +365,20 @@
     </div>
 </div>
 
-<!-- ================================ -->
-<!-- CARDS VIEW CONTAINER            -->
-<!-- ================================ -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} CARDS VIEW CONTAINER            {% endcomment %}
+{% comment %} ================================ {% endcomment %}
 <div class="row d-none" id="cardViewContainer">
     <div class="col-12">
         <div id="sitemapCardsContainer" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
-            <!-- Cards will be dynamically generated here -->
+            {% comment %} Cards will be dynamically generated here {% endcomment %}
         </div>
     </div>
 </div>
 
-<!-- ================================ -->
-<!-- ENHANCED SITEMAP FUNCTIONALITY -->
-<!-- ================================ -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} ENHANCED SITEMAP FUNCTIONALITY {% endcomment %}
+{% comment %} ================================ {% endcomment %}
 <style>
 /* Custom Sitemap Styles */
 .sitemap-col-collection { min-width: 120px; }
