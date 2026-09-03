@@ -52,6 +52,20 @@ after:   h3 'Language'
          h3 'Essential Cookies'
 ```
 
+## A second mistake, caught by the first being fixed
+
+`heading-outline.spec.js` originally scoped its offcanvas cases to `#infoSection`. The offcanvas is `#info-section`; `#infoSection` is its `<h2>`'s id, used by `aria-labelledby`. The region locator matched nothing, so `test.skip(count === 0)` **skipped all three cases silently** — CI printed them as `-`, not as failures, and I read the suite as passing.
+
+Correcting the selector made them run, and they failed on a real skip I had missed:
+
+```
+h3 -> h6 at "Primary Color"
+```
+
+That heading is injected at **runtime** by `assets/js/modules/theme/appearance.js`. No grep over `_includes/` or `_layouts/` can find it — only a rendered assertion can. The same file already emitted `<h3 class="h6">` in its other branch, so the fix makes the two consistent.
+
+**Skips are not passes.** A locator typo is indistinguishable from "this region isn't on this page" unless you look at the counts.
+
 ## The mistake worth recording
 
 The first pass changed the six `h6` section labels in `info-section.html` and rebuilt. **Total skips went UP, 1,060 → 1,072.** Two sibling components — `background-settings.html` and `admin-links.html` — render into the same offcanvas with the same class pattern but live in separate files, so a per-file replace missed them. Moving their neighbours to `h3` turned those two into *new* `h3 → h6` skips.
