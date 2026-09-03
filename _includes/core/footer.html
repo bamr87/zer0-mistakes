@@ -194,7 +194,17 @@
                 {% if link.url %}
                   <li class="list-inline-item">
                     {% capture link_icon_classes %}{{ site.default_icon }} {{ link.icon | default: "bi-link-45deg" }}{% endcapture %}
-                    <a href="{{ link.url }}" rel="nofollow" class="text-light text-decoration-none">
+                    {%- comment -%}
+                      aria-label is load-bearing below the md breakpoint (issue
+                      #435): the icon is aria-hidden and the label span is
+                      d-none there, so without it the link had NO accessible
+                      name at all on mobile — a screen reader announced bare
+                      "link". It matches the visible text exactly, so the
+                      accessible name still contains the visible label at md+
+                      (WCAG 2.5.3 Label in Name).
+                    {%- endcomment -%}
+                    <a href="{{ link.url }}" rel="nofollow" class="text-light text-decoration-none"
+                       aria-label="{{ link.label }}">
                       <i class="{{ link_icon_classes }}" aria-hidden="true"></i>
                       <span class="d-none d-md-inline">{{ link.label }}</span>
                     </a>
@@ -202,9 +212,12 @@
                 {% endif %}
               {% endfor %}
               <li class="list-inline-item">
-                <a class="text-light text-decoration-none" href="{{ '/feed.xml' | relative_url }}">
+                {%- comment -%} Same as the social links above (#435). {%- endcomment -%}
+                {%- assign _feed_label = ui.feed_label | default: "Feed" -%}
+                <a class="text-light text-decoration-none" href="{{ '/feed.xml' | relative_url }}"
+                   aria-label="{{ _feed_label }}">
                   <i class="{{ site.default_icon }} bi-rss" aria-hidden="true"></i>
-                  <span class="d-none d-md-inline">{{ ui.feed_label | default: "Feed" }}</span>
+                  <span class="d-none d-md-inline">{{ _feed_label }}</span>
                 </a>
               </li>
             </ul>

@@ -59,6 +59,9 @@
         const searchForm = modalEl.querySelector('[data-search-form]');
         const resultsContainer = modalEl.querySelector('[data-search-results]');
         const emptyState = modalEl.querySelector('[data-search-empty]');
+        // Visually-hidden aria-live region. Announces a COUNT, not the results
+        // themselves — see the rationale in components/search-modal.html.
+        const statusRegion = modalEl.querySelector('[data-search-status]');
         const searchIndexUrl = new URL('/search.json', window.location.origin);
         let searchIndex = null;
         let searchIndexPromise = null;
@@ -182,6 +185,18 @@
             });
         }
 
+        /** Announce to screen readers. Guarded: the region is markup the theme
+         *  ships, but a consumer shadowing search-modal.html may not have it. */
+        function announce(message) {
+            if (!statusRegion) return;
+            // Re-assigning the identical string is a no-op for most screen
+            // readers, so clear first when the message has not changed —
+            // otherwise "No results found." stays silent as the user keeps
+            // typing characters that all miss.
+            if (statusRegion.textContent === message) statusRegion.textContent = '';
+            statusRegion.textContent = message;
+        }
+
         function clearResults() {
             if (!resultsContainer) return;
             resultsContainer.innerHTML = '';
@@ -198,6 +213,9 @@
 
             if (!query) {
                 clearResults();
+                // Silence on an emptied box: the user cleared it deliberately
+                // and does not need telling.
+                if (statusRegion) statusRegion.textContent = '';
                 return;
             }
 
@@ -210,11 +228,19 @@
                     ? 'No results found.'
                     : 'Search is unavailable on this site.';
                 resultsContainer.appendChild(empty);
+                announce(empty.textContent);
                 return;
             }
 
             const list = document.createElement('div');
             list.className = 'list-group';
+
+            // Announce the count, not the results. `shown` is what the user can
+            // actually reach in the list; when the index matched more than that
+            // say so, or "8 results" for a 40-match query would be a lie.
+            const shown = Math.min(items.length, 8);
+            const suffix = items.length > shown ? ` of ${items.length}` : '';
+            announce(`${shown}${suffix} result${shown === 1 ? '' : 's'} for ${query}`);
 
             items.slice(0, 8).forEach((item) => {
                 const link = document.createElement('a');
