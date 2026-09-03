@@ -200,12 +200,9 @@ Uses `site.preview_images.assets_prefix` when `auto_prefix: true`.
 
 ### `background-image.html`
 
-Cover art painted as a **CSS background** on an otherwise empty box, announced
-correctly. Sibling to `preview-image.html`: reach for that one when the art is
-an `<img>` in the content flow, this one when it is a background.
+Cover art painted as a **CSS background** on an otherwise empty box, announced correctly. Sibling to `preview-image.html`: reach for that one when the art is an `<img>` in the content flow, this one when it is a background.
 
-A background image is invisible to assistive technology, so the box needs to
-say what it is — or say that it is nothing.
+A background image is invisible to assistive technology, so the box needs to say what it is — or say that it is nothing.
 
 **Example — a real image:**
 
@@ -227,10 +224,7 @@ renders `role="img"` with an escaped `aria-label`.
 
 renders `aria-hidden="true"` with **no** `role` and **no** `aria-label`.
 
-The decorative branch is the default: an image *and* a non-empty `alt` are
-required to get `role="img"`. That is deliberate — `role="img"` with an empty
-label is an unnamed graphic, which is worse for a screen reader than either
-branch done properly. Pass `decorative=true` to force it.
+The decorative branch is the default: an image *and* a non-empty `alt` are required to get `role="img"`. That is deliberate — `role="img"` with an empty label is an unnamed graphic, which is worse for a screen reader than either branch done properly. Pass `decorative=true` to force it.
 
 Same path convention as `preview-image.html`. Accepts `tag` (default `div`).
 
