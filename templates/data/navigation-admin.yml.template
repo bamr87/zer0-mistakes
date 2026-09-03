@@ -1,0 +1,21 @@
+# Admin / settings navigation.
+#
+# These are the settings pages the installer creates. Keep the list in
+# step with pages/_about/settings/ as you add or remove them.
+
+- title: Settings
+  icon: bi-gear
+  url: /about/config/
+  children:
+    - title: Configuration
+      url: /about/config/
+    - title: Theme
+      url: /about/settings/theme/
+    - title: Navigation
+      url: /about/settings/navigation/
+    - title: Collections
+      url: /about/settings/collections/
+    - title: Analytics
+      url: /about/settings/analytics/
+    - title: Environment
+      url: /about/settings/environment/

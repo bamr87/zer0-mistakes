@@ -1,0 +1,8 @@
+# Quickstart section navigation.
+#
+# Starter entry only — the theme's own copy listed four /quickstart/*
+# sub-pages that a new site does not have.
+
+- title: Quick Start
+  icon: bi-rocket-takeoff
+  url: /quickstart/

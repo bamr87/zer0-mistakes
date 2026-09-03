@@ -609,6 +609,27 @@ CMD ["bundle", "exec", "jekyll", "serve", "--host", "0.0.0.0", "--port", "4000",
     log_info "Consumer Dockerfile generated"
 }
 
+install_theme_data() {
+    mkdir -p "$TARGET_DIR/_data"
+
+    local entry name
+    for entry in "$SOURCE_DIR"/_data/*; do
+        [[ -e "$entry" ]] || continue
+        name=$(basename "$entry")
+
+        # Held back on purpose -- see install_theme_directories.
+        if [[ "$name" == "navigation" ]]; then
+            continue
+        fi
+
+        if [[ -d "$entry" ]]; then
+            copy_directory_with_backup "$entry" "$TARGET_DIR/_data/$name"
+        else
+            copy_file_with_backup "$entry" "$TARGET_DIR/_data/$name"
+        fi
+    done
+}
+
 install_theme_directories() {
     if [[ "$INSTALL_MODE" == "minimal" ]]; then
         log_info "Skipping theme directories (minimal installation)"
@@ -617,8 +638,17 @@ install_theme_directories() {
     
     log_info "Installing theme directories..."
     
-    # Core Jekyll directories
-    copy_directory_with_backup "$SOURCE_DIR/_data" "$TARGET_DIR/_data"
+    # Core Jekyll directories.
+    #
+    # _data is copied entry by entry so navigation/ can be held back: those
+    # files are consumer SCAFFOLDING, not theme payload. Copying the theme's
+    # own navigation gave every consumer the theme's page taxonomy -- 106 of
+    # 129 seeded links pointed at pages a new site does not have, ~47 of them
+    # per doc page from docs.yml alone (issue #332). They are seeded from
+    # templates/data/navigation-*.yml.template by create_starter_navigation
+    # instead, which skips any file the consumer already has, so a re-run or
+    # an upgrade never clobbers their edits.
+    install_theme_data
     copy_directory_with_backup "$SOURCE_DIR/_sass" "$TARGET_DIR/_sass"
     copy_directory_with_backup "$SOURCE_DIR/_includes" "$TARGET_DIR/_includes"
     copy_directory_with_backup "$SOURCE_DIR/_layouts" "$TARGET_DIR/_layouts"
@@ -831,6 +861,20 @@ create_starter_navigation() {
   url: /about/'
     
     create_from_template "data/navigation-main.yml.template" "$TARGET_DIR/_data/navigation/main.yml" "$fallback_content"
+
+    # The rest of the navigation data. Each is a small starter whose links all
+    # resolve against the pages this installer actually creates -- the point of
+    # #332 is that the theme's own copies did not.
+    #
+    # create_from_template SKIPS a file that already exists, so this is safe to
+    # re-run: a consumer who has edited their navigation keeps it, and only a
+    # genuinely missing file is seeded.
+    local nav
+    for nav in docs about admin home posts quickstart; do
+        create_from_template "data/navigation-${nav}.yml.template" \
+            "$TARGET_DIR/_data/navigation/${nav}.yml" ""
+    done
+
     log_success "Navigation configuration created"
 }
 

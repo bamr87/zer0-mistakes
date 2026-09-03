@@ -1,0 +1,24 @@
+# Docs sidebar navigation — YOUR docs, not the theme's.
+#
+# The `sidebar: { nav: tree }` front matter on a page in your _docs/
+# collection renders this file. It ships as a three-entry starter on
+# purpose: every URL here must resolve on YOUR site, and the installer
+# cannot know your doc taxonomy.
+#
+# The theme's own docs tree is NOT seeded here. It used to be, and every
+# consumer inherited roughly 47 links per doc page pointing into the theme's
+# page taxonomy, none of which exist on their site (issue #332).
+#
+# Prefer no data file at all? Use `sidebar: { nav: pages }`, which builds
+# the tree from your page URLs and needs no maintenance.
+
+- title: Documentation
+  icon: bi-book
+  url: /docs/
+  children:
+    - title: Overview
+      url: /docs/
+    - title: Configuration
+      url: /docs/configuration/
+    - title: Troubleshooting
+      url: /docs/troubleshooting/

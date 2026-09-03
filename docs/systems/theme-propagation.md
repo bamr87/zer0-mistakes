@@ -102,6 +102,26 @@ ruby scripts/propagate.rb --dispatch --dry-run
 
 `--dispatch` needs `LIFECYCLE_PAT` (the existing fleet secret): `GITHUB_TOKEN` is scoped to this repository and cannot dispatch to another.
 
+## Migrating already-seeded navigation data
+
+`_data` is **not** part of Jekyll's theme payload — a `remote_theme` ships `_layouts`, `_includes`, `_sass` and `assets`, and nothing else. So `site.data.navigation` on a consumer is always that consumer's own file, and updating the theme can never fix it.
+
+Until the fix for #332, `install.sh` copied the theme's entire `_data/` into every consumer, which meant each one's "own" navigation was a verbatim copy of the theme's — carrying the theme's page taxonomy. Measured on a real install: **106 of 129 seeded navigation URLs pointed at pages the installer does not create**, ~47 per doc page from `docs.yml` alone. A consumer could not remove a single one from their content, and a link-integrity gate would block every docs PR on it.
+
+New installs now seed all seven files from `templates/data/navigation-*.yml.template`, whose links resolve against the pages the installer actually creates (0 of 26 unresolvable).
+
+**This does not retroactively clean the sites already in `_data/consumers.yml`.** A theme release cannot reach into a consumer's `_data/`. Each existing consumer has to do one of these once:
+
+| your situation | what to do |
+| --- | --- |
+| You never customised the sidebar | Delete `_data/navigation/docs.yml` and re-run the installer; it re-seeds the starter. Same for any other `_data/navigation/*.yml` you never touched. |
+| You want a sidebar with no data file to maintain | Set `sidebar: { nav: pages }` in your docs front matter. It builds the tree from your page URLs, so it cannot go stale. |
+| You did customise it | Keep your file. Delete only the entries pointing at pages you do not have — the theme's are the ones under `/docs/liquid/`, `/docs/docker/`, `/docs/ruby/`, `/docs/jekyll/`, `/docs/deployment/`, `/docs/customization/`, `/docs/features/`, plus `/news/*`, `/authors/` and `/about/stats/`. |
+
+To find them: `grep -n 'url:' _data/navigation/*.yml` and check each against your own routes.
+
+The renderer was never at fault. `sidebar: { nav: tree }` resolves through `auto` → `page.collection` → `site.data.navigation[collection]`, which is correct; it was being handed the wrong data.
+
 ## The reverse channel
 
 The weekly drift report answers "who is behind". The audit answers the more valuable question: **what are consumers forking that the theme should just provide?** Three consumers shadowing the same include is an upstream candidate — that observation is what produced the consumer-adoption work in #338, and running `audit-consumer` across the registry turns it from a manual audit into a standing report.
