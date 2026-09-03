@@ -39,7 +39,7 @@ With no configuration at all, every page links `/favicon.ico` explicitly (resolv
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#212529">
 ```
 
-Those defaults are Bootstrap 5.3.3's own `--bs-body-bg` for each scheme, so the mobile address bar matches the page **surface** out of the box. This matters most for `remote_theme` consumers, which do not inherit the theme's `_config.yml` — before v1.29.1 the tag was config-gated and such a site got none at all.
+Those defaults are Bootstrap 5.3.3's own `--bs-body-bg` for each scheme, so the mobile address bar matches the page **surface** out of the box. This matters most for `remote_theme` consumers, which do not inherit the theme's `_config.yml` — before this change the tag was config-gated, so such a site got none at all.
 
 Keep a `favicon.ico` at your site root — a 32×32 icon is enough.
 
@@ -100,7 +100,7 @@ A pinned site gets a single tag on purpose: a media pair would hand light browse
 The point of these tags is that you cannot see most of them, so check them rather than assume:
 
 1. **Icons resolve.** Open your browser DevTools → Network, reload, and filter on `favicon`. Every entry should be `200`, not `404`. On a project-page (`baseurl`) deployment this is the check that matters — an implicit root probe would 404 here.
-2. **Both `theme-color` tags are present.** In browser DevTools → Elements, search `<head>` for `theme-color`. An `auto` site should show two, one per `prefers-color-scheme`; a pinned site, one. If you see **zero**, you are on a build older than v1.29.1.
+2. **Both `theme-color` tags are present.** In browser DevTools → Elements, search `<head>` for `theme-color`. An `auto` site should show two, one per `prefers-color-scheme`; a pinned site, one. If you see **zero**, you are on a build from before this was fixed.
 3. **The value is the surface, not the accent.** The `content` should match the page background, not your link color. `#007bff` appearing here means something is still resolving `theme_color.main`.
 4. **Chrome actually follows.** On Android Chrome, load the page and switch the OS between light and dark — the address bar and task-switcher card should follow. iOS Safari applies it to the status-bar area.
 
@@ -111,7 +111,7 @@ The point of these tags is that you cannot see most of them, so check them rathe
 | `theme-color` change doesn't show after a deploy | Browsers cache this tag hard. Hard-reload, or check in a private window before assuming the build is wrong. |
 | Address bar stays light on a dark page | The visitor overrode the mode in the Appearance panel; `media` follows the **OS**, not that panel. Expected — see the note above. To force a match site-wide, set `color_mode_lock: true`. |
 | Address bar is your brand color | `favicon.theme_color` is set and pins one value for both schemes. Remove it to get the scheme-aware pair. |
-| No `theme-color` at all | You are on a theme version older than v1.29.1, where the tag was config-gated and a consumer that declared no `theme_color` got none. |
+| No `theme-color` at all | You are on a build from before this was fixed, where the tag was config-gated and a consumer that declared no `theme_color` got none. |
 | Apple touch icon missing from the iOS home screen | iOS will not follow a redirect for this image. Check that `favicon.apple_touch` resolves directly under your `baseurl`. |
 | `favicon.theme_color_light` resolves to nothing | The hex is unquoted, so YAML read `#ffffff` as a comment. Quote it. |
 
