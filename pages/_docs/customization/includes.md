@@ -329,4 +329,4 @@ For contributor-level details (component API reference, include parameters, exte
 
 - [[Customization]]
 - [[Layouts]]
-- [Bootstrap 5 Integration](/docs/bootstrap/)
+- [[Bootstrap 5 Integration in Zer0-Mistakes|Bootstrap 5 Integration]]
