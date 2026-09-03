@@ -983,6 +983,90 @@ test_sass_compilation() {
     return 0
 }
 
+# Pins the layout allowlist in _includes/navigation/sidebar-config.html against
+# the real layout inheritance graph (issue #373).
+#
+# The offcanvas panels #bdSidebar and #tocContents are emitted by
+# _layouts/default.html alone, but their toggles live in core/header.html and
+# core/footer-fabs.html, which _layouts/root.html includes on EVERY layout. The
+# gate is therefore a hard-coded list of layouts whose `layout:` chain reaches
+# default — and Liquid has no way to resolve that chain itself.
+#
+# A hard-coded list rots silently: the previous denylist in footer-fabs.html had
+# already fallen behind (404 and book-* were missing), shipping FABs that
+# controlled nothing. This walks the front matter of every _layouts/*.html,
+# resolves each chain, and fails if reality and the list disagree in either
+# direction.
+test_sidebar_offcanvas_layout_gate() {
+    log_info "Testing sidebar offcanvas layout gate (issue #373)..."
+
+    cd "$PROJECT_ROOT"
+
+    if ! command -v python3 &>/dev/null; then
+        log_warning "python3 not available for the sidebar offcanvas gate check"
+        return 0
+    fi
+
+    if python3 - <<'PYEOF'
+import re, sys, pathlib
+
+layouts_dir = pathlib.Path("_layouts")
+cfg = pathlib.Path("_includes/navigation/sidebar-config.html").read_text(encoding="utf-8")
+
+m = re.search(r'_sidebar_offcanvas_layouts\s*=\s*"([^"]*)"', cfg)
+if not m:
+    print("::error::_sidebar_offcanvas_layouts not found in sidebar-config.html")
+    sys.exit(1)
+declared = {x.strip() for x in m.group(1).split(",") if x.strip()}
+
+# parent[layout] = its `layout:` front-matter value (None when standalone)
+parent = {}
+for f in sorted(layouts_dir.glob("*.html")):
+    head = f.read_text(encoding="utf-8", errors="replace")[:600]
+    pm = re.search(r'^layout:\s*(\S+)\s*$', head, re.M)
+    parent[f.stem] = pm.group(1) if pm else None
+
+def reaches_default(name, seen=None):
+    """True when name is `default` or inherits from it (cycle-safe)."""
+    seen = seen or set()
+    if name in seen or name not in parent:
+        return False
+    if name == "default":
+        return True
+    seen.add(name)
+    p = parent[name]
+    return bool(p) and reaches_default(p, seen)
+
+actual = {n for n in parent if reaches_default(n)}
+
+missing = sorted(actual - declared)   # renders the offcanvas, gate says no
+extra   = sorted(declared - actual)   # gate says yes, renders nothing
+
+if missing or extra:
+    if missing:
+        print("::error file=_includes/navigation/sidebar-config.html::these layouts reach "
+              "default.html (so they DO render #bdSidebar/#tocContents) but are missing from "
+              "_sidebar_offcanvas_layouts: " + ", ".join(missing) +
+              ". Their sidebar toggle and TOC FAB will not render.")
+    if extra:
+        print("::error file=_includes/navigation/sidebar-config.html::these layouts are listed "
+              "in _sidebar_offcanvas_layouts but do NOT reach default.html, so they render no "
+              "offcanvas: " + ", ".join(extra) +
+              ". Their toggles would point at nothing (issue #373).")
+    sys.exit(1)
+
+print("OK - _sidebar_offcanvas_layouts matches the layout graph: " + ", ".join(sorted(actual)))
+PYEOF
+    then
+        log_success "Sidebar offcanvas layout gate matches the layout inheritance graph"
+    else
+        log_error "Sidebar offcanvas layout gate has drifted from _layouts/ (issue #373)"
+        return 1
+    fi
+
+    return 0
+}
+
 test_design_token_parity() {
     log_info "Testing design-token parity (theme vs Claude Design mirror)..."
 
@@ -1043,6 +1127,7 @@ run_core_tests() {
     run_test "Package.json Validity" "test_package_json_validity" "unit"
     run_test "Version Consistency" "test_version_consistency" "unit"
     run_test "Plugin Unit Specs" "test_plugin_unit_specs" "unit"
+    run_test "Sidebar Offcanvas Layout Gate" "test_sidebar_offcanvas_layout_gate" "unit"
     run_test "Preview Generator Unit Specs" "test_preview_generator_unit_specs" "unit"
     
     # Integration Tests

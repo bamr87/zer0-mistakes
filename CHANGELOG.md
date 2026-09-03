@@ -210,6 +210,23 @@ five days past its own fix, carrying a P1 into every triage pass. A
 gated on `preflight.outputs.go == 'true'` as well as both jobs succeeding: the
 preflight short-circuits on an unchanged `main` and reports `skipped`, so a bare
 `success()` would close the issue on a night that tested nothing.
+- **37 pages shipped dead controls with dangling ARIA references (#373)** —
+`#bdSidebar` and `#tocContents` are emitted by `_layouts/default.html` alone,
+but their toggles live in `core/header.html` and `core/footer-fabs.html`, which
+`_layouts/root.html` includes on **every** layout. On any layout inheriting
+`root` directly (admin, stats, 404, section, home, book-*) the toggle rendered
+pointing at an offcanvas that was never in the document: clicking did nothing,
+and assistive tech followed `aria-controls` to a missing element. Measured
+across a 415-page build: **19 pages with a dangling `#bdSidebar`** (the French
+`/about/**` tree) and **18 with a dangling `#tocContents`** (404, CHANGELOG,
+`_design-system/**`) — **0 after**. `navigation/sidebar-config.html` now
+publishes `sidebar_offcanvas_rendered`, and both controls are gated on it.
+`footer-fabs.html`'s previous **denylist** of layouts to skip is replaced by
+that positive gate: a denylist fails open, and this one had already fallen
+behind (`404` and the `book-*` layouts were missing). The layout list is pinned
+against the real inheritance graph by
+`test/test_core.sh :: test_sidebar_offcanvas_layout_gate`, which walks every
+`_layouts/*.html` and fails if the two disagree in either direction.
 
 - **Seven footer links had no accessible name on mobile (#435)** — the "Follow
 Us" social links and the RSS link render an `<i>` that is `aria-hidden="true"`

@@ -16,8 +16,13 @@
                                      "categories", "tags", or the name of a
                                      _data/navigation/*.yml file (nil = none)
                sidebar_has_content — true only when sidebar_nav will actually
-                                     render items (gates the left column and
-                                     the mobile toggle)
+                                     render items (gates the left column)
+               sidebar_offcanvas_rendered
+                                   — true only when the CURRENT LAYOUT emits
+                                     the #bdSidebar / #tocContents offcanvases
+                                     at all. sidebar_has_content is not enough
+                                     to gate a toggle: see the note at the
+                                     bottom of this file (issue #373).
                sidebar_title       — heading text for the sidebar panel
                sidebar_icon        — Bootstrap Icons class for the heading
   Config precedence (most specific wins):
@@ -133,4 +138,33 @@
 {%- endif -%}
 {%- if page.sidebar.icon -%}
   {%- assign sidebar_icon = page.sidebar.icon -%}
+{%- endif -%}
+
+{%- comment -%}
+  7. Does THIS LAYOUT actually render the offcanvas panels? (issue #373)
+
+  `sidebar_has_content` answers "is there nav content", which is what gates the
+  left column inside _layouts/default.html. It is NOT sufficient to gate the
+  TOGGLES, because core/header.html and core/footer-fabs.html are included from
+  _layouts/root.html — so they render on every layout, while `#bdSidebar`
+  (navigation/sidebar-left.html) and `#tocContents` (navigation/sidebar-right.html)
+  are emitted by _layouts/default.html alone.
+
+  The result was a dead control plus a dangling ARIA reference on every page
+  whose layout inherits `root` directly: measured at 37 pages of a 415-page
+  build, including all of `/about/**` (layout: admin) and 404/CHANGELOG.
+  Clicking did nothing, and assistive tech followed aria-controls to an element
+  that was not there.
+
+  There is no Liquid API for "resolve the layout inheritance chain", so the set
+  of layouts that reach default.html is listed here explicitly. It is pinned by
+  a test (test/test_core.sh :: test_sidebar_offcanvas_layout_gate) that reads
+  the front matter of every _layouts/*.html and fails if reality drifts from
+  this list — the same invariant pattern #425 used for the pixel-gate filter.
+  Add a layout here when, and only when, its `layout:` chain reaches default.
+{%- endcomment -%}
+{%- assign _sidebar_offcanvas_layouts = "default,article,author,authors,collection,cookbook,note,notebook,recipe,tag" | split: "," -%}
+{%- assign sidebar_offcanvas_rendered = false -%}
+{%- if _sidebar_offcanvas_layouts contains page.layout -%}
+  {%- assign sidebar_offcanvas_rendered = true -%}
 {%- endif -%}
