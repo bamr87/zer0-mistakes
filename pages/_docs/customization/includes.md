@@ -83,6 +83,7 @@ _includes/
 | `components/mermaid.html` | Mermaid diagram loader |
 | `components/post-card.html` | Blog post card |
 | `components/preview-image.html` | Preview image handler |
+| `components/background-image.html` | Cover art as a CSS background, with `role="img"` + `aria-label` or `aria-hidden` |
 | `components/search-modal.html` | Search modal |
 | `components/searchbar.html` | Deprecated Algolia-style search stub (use `search-modal.html`) |
 | `components/theme-info.html` | Theme version modal |

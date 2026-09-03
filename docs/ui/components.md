@@ -198,6 +198,48 @@ Uses `site.preview_images.assets_prefix` when `auto_prefix: true`.
 
 ---
 
+### `background-image.html`
+
+Cover art painted as a **CSS background** on an otherwise empty box, announced
+correctly. Sibling to `preview-image.html`: reach for that one when the art is
+an `<img>` in the content flow, this one when it is a background.
+
+A background image is invisible to assistive technology, so the box needs to
+say what it is — or say that it is nothing.
+
+**Example — a real image:**
+
+```liquid
+{% include components/background-image.html
+   src="/images/previews/my-post.png"
+   alt="Rooftop solar panels at dusk"
+   class="card-cover"
+   style="height: 180px;" %}
+```
+
+renders `role="img"` with an escaped `aria-label`.
+
+**Example — a decorative fallback:**
+
+```liquid
+{% include components/background-image.html class="card-cover card-cover-empty" %}
+```
+
+renders `aria-hidden="true"` with **no** `role` and **no** `aria-label`.
+
+The decorative branch is the default: an image *and* a non-empty `alt` are
+required to get `role="img"`. That is deliberate — `role="img"` with an empty
+label is an unnamed graphic, which is worse for a screen reader than either
+branch done properly. Pass `decorative=true` to force it.
+
+Same path convention as `preview-image.html`. Accepts `tag` (default `div`).
+
+> **Do not** put this on a box that wraps text. `role="img"` makes the element a
+> single graphic and stops exposing its descendants, so a heading inside it
+> disappears from the accessibility tree.
+
+---
+
 ### `post-type-badge.html`
 
 Visual badge for post types (`featured`, `breaking`, etc.).

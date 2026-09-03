@@ -10,6 +10,12 @@
        style="height: 180px; object-fit: cover;" 
     -%}
   
+  WHICH INCLUDE: this one renders an <img> in the content flow. For cover art
+  painted as a CSS background on an otherwise empty box, use the sibling
+  components/background-image.html -- a background image is invisible to
+  assistive tech, so that case needs role="img" + aria-label (or aria-hidden
+  when purely decorative) rather than an alt attribute.
+
   Convention: Preview paths can omit the /assets/ prefix.
   The component will auto-prepend the assets_prefix from _config.yml.
   Examples:

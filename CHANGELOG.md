@@ -50,6 +50,26 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Changed
 
+- **`components/background-image.html` — cover art painted as a CSS background,
+  announced correctly (#401)** — the theme had a solid convention for art
+  rendered as {% raw %}`<img>`{% endraw %} (`preview-image.html` always emits an escaped `alt`)
+  and none for art painted as a **background**. A background image is invisible
+  to assistive technology, so such a box announces nothing at all. The correct
+  pattern already existed by hand in three places (`abc-letter.html`, the
+  article rating stars, `theme-customizer.html`) without being a named
+  convention; this generalizes it. Two branches: a real image gets
+  `role="img"` with an escaped `aria-label`, a decorative one gets
+  `aria-hidden="true"` and **neither** `role` nor `aria-label` — combining them
+  announces a graphic and then hides it, which is worse than either alone.
+  Decorative is the **default**, and the real-image branch must earn it with
+  both a `src` and a non-empty `alt`. Path handling follows
+  `preview-image.html`. Purely additive: no in-theme call site, no CSS, no
+  layout change, and `content/intro.html` is deliberately untouched — it paints
+  a background *and* wraps the page `<h1>`, so `role="img"` there would delete
+  the heading from the accessibility tree. Guarded by
+  `test_background_image_include_contract`, which renders the include and
+  checks both branches, the escaping and all three path cases.
+
 - **Liquid written as documentation was being executed, not displayed** — Liquid
   runs before Markdown, so backticks and code fences never escaped it; they only
   changed how its *output* was displayed. Two pages leaked as a result. The
