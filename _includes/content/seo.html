@@ -1,5 +1,5 @@
 {% comment %} Features: ZER0-041, ZER0-054 {% endcomment %}
-<!--
+{% comment %}
   ===================================================================
   SEO SUPPLEMENT - Additional meta tags not covered by jekyll-seo-tag
   ===================================================================
@@ -22,7 +22,7 @@
   - jekyll-seo-tag plugin (loaded in _layouts/root.html via seo tags)
   - site.preview_images config in _config.yml
   ===================================================================
--->
+{% endcomment %}
 
 {%- comment -%}
   Custom og:image handling: supports page.preview and page.header.og_image
@@ -63,7 +63,7 @@
   {%- endif -%}
 {%- endunless -%}
 
-<!-- Site verification (non-Google; Google is handled by jekyll-seo-tag) -->
+{% comment %} Site verification (non-Google; Google is handled by jekyll-seo-tag) {% endcomment %}
 {% if site.bing_site_verification %}
   <meta name="msvalidate.01" content="{{ site.bing_site_verification }}">
 {% endif %}
@@ -79,4 +79,4 @@
 {% if site.baidu_site_verification %}
   <meta name="baidu-site-verification" content="{{ site.baidu_site_verification }}">
 {% endif %}
-<!-- end _includes/content/seo.html -->
+{% comment %} end _includes/content/seo.html {% endcomment %}

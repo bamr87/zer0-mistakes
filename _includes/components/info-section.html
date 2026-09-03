@@ -1,5 +1,5 @@
 {% comment %} Feature: ZER0-046 {% endcomment %}
-<!--
+{% comment %}
   ===================================================================
   INFO SECTION - Settings Offcanvas with Tabbed Interface
   ===================================================================
@@ -35,14 +35,14 @@
   - https://getbootstrap.com/docs/5.3/components/offcanvas/
   - https://getbootstrap.com/docs/5.3/components/navs-tabs/
   ===================================================================
--->
+{% endcomment %}
 
 {% include components/env-detect.html %}
 
-<!-- Settings Offcanvas -->
+{% comment %} Settings Offcanvas {% endcomment %}
 <div class="offcanvas offcanvas-end" tabindex="-1" id="info-section" aria-labelledby="infoSectionLabel">
 
-  <!-- Offcanvas Header -->
+  {% comment %} Offcanvas Header {% endcomment %}
   <div class="offcanvas-header border-bottom pb-0 d-block">
     <div class="d-flex align-items-center justify-content-between mb-2">
       <h2 class="offcanvas-title h5" id="infoSectionLabel">
@@ -51,7 +51,7 @@
       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
 
-    <!-- Tab Navigation -->
+    {% comment %} Tab Navigation {% endcomment %}
     <ul class="nav nav-tabs nav-fill" id="infoTabs" role="tablist">
       <li class="nav-item" role="presentation">
         <button class="nav-link active" id="appearance-tab" data-bs-toggle="tab" data-bs-target="#appearance-pane" type="button" role="tab" aria-controls="appearance-pane" aria-selected="true">
@@ -76,18 +76,18 @@
     </ul>
   </div>
 
-  <!-- Offcanvas Body with Tab Content -->
+  {% comment %} Offcanvas Body with Tab Content {% endcomment %}
   <div class="offcanvas-body">
     <div class="tab-content" id="infoTabContent">
 
-      <!-- Appearance Tab — everything that changes how the site looks -->
+      {% comment %} Appearance Tab — everything that changes how the site looks {% endcomment %}
       <div class="tab-pane fade show active" id="appearance-pane" role="tabpanel" aria-labelledby="appearance-tab" tabindex="0">
 
-        <!-- Language — renders its own heading, and nothing at all when
-             site.translation is disabled. NOT cached: page-dependent. -->
+        {% comment %} Language — renders its own heading, and nothing at all when
+             site.translation is disabled. NOT cached: page-dependent. {% endcomment %}
         {% include components/language-toggle.html variant="panel" %}
 
-        <!-- Color Mode -->
+        {% comment %} Color Mode {% endcomment %}
         <div class="mb-4">
           <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
             <i class="bi bi-moon-stars me-1" aria-hidden="true"></i>Color Mode
@@ -95,10 +95,10 @@
           {% include components/halfmoon.html class="w-100" %}
         </div>
 
-        <!-- Theme skin + SVG backgrounds (skin buttons, toggle, opacity) -->
+        {% comment %} Theme skin + SVG backgrounds (skin buttons, toggle, opacity) {% endcomment %}
         {% include_cached components/background-settings.html %}
 
-        <!-- Primary color picker mounts here (appearance.js, optional) -->
+        {% comment %} Primary color picker mounts here (appearance.js, optional) {% endcomment %}
         <div id="zer0AppearanceSlot"></div>
 
         <p class="text-body-secondary small mb-0 mt-4">
@@ -107,10 +107,10 @@
         </p>
       </div>
 
-      <!-- Site Tab — where the site runs and what it is built from -->
+      {% comment %} Site Tab — where the site runs and what it is built from {% endcomment %}
       <div class="tab-pane fade" id="site-pane" role="tabpanel" aria-labelledby="site-tab" tabindex="0">
 
-        <!-- Environment -->
+        {% comment %} Environment {% endcomment %}
         <div class="mb-4">
           <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
             <i class="bi bi-hdd-network me-1" aria-hidden="true"></i>Environment
@@ -118,7 +118,7 @@
           {% include components/env-switcher.html %}
         </div>
 
-        <!-- Theme & Build -->
+        {% comment %} Theme & Build {% endcomment %}
         <div class="mb-4">
           <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
             <i class="bi bi-info-circle me-1" aria-hidden="true"></i>Theme &amp; Build
@@ -126,16 +126,16 @@
           {% include components/theme-info.html %}
         </div>
 
-        <!-- Admin quick links — cached include; renders only links to pages
-             that exist in the build (see components/admin-links.html) -->
+        {% comment %} Admin quick links — cached include; renders only links to pages
+             that exist in the build (see components/admin-links.html) {% endcomment %}
         {% include_cached components/admin-links.html %}
       </div>
 
-      <!-- Developer Tab — tools scoped to the current page -->
+      {% comment %} Developer Tab — tools scoped to the current page {% endcomment %}
       <div class="tab-pane fade" id="developer-pane" role="tabpanel" aria-labelledby="developer-tab" tabindex="0">
 
-        <!-- Page Location — breadcrumbs render nothing on the homepage or
-             when site.breadcrumbs is off, so the section mirrors that gate -->
+        {% comment %} Page Location — breadcrumbs render nothing on the homepage or
+             when site.breadcrumbs is off, so the section mirrors that gate {% endcomment %}
         {% if page.url != "/" and site.breadcrumbs %}
         <div class="mb-4">
           <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
@@ -145,7 +145,7 @@
         </div>
         {% endif %}
 
-        <!-- Page Metadata -->
+        {% comment %} Page Metadata {% endcomment %}
         <div class="mb-4">
           <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
             <i class="bi bi-file-earmark-code me-1" aria-hidden="true"></i>Page Info
@@ -180,7 +180,7 @@
           </div>
         </div>
 
-        <!-- Source Code Shortcuts -->
+        {% comment %} Source Code Shortcuts {% endcomment %}
         <div class="mb-3">
           <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
             <i class="bi bi-code-square me-1" aria-hidden="true"></i>Source Code
@@ -194,9 +194,9 @@
 
 </div>
 
-<!-- Copy-to-clipboard for the panel's URL fields (event delegation; no
+{% comment %} Copy-to-clipboard for the panel's URL fields (event delegation; no
      inline handlers). Buttons declare data-zer0-copy="<text>" or
-     data-zer0-copy-target="#input-id". -->
+     data-zer0-copy-target="#input-id". {% endcomment %}
 <script>
 document.addEventListener("click", function (e) {
   var btn = e.target.closest("[data-zer0-copy], [data-zer0-copy-target]");

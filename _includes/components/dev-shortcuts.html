@@ -1,5 +1,5 @@
 {% comment %} Feature: ZER0-077 {% endcomment %}
-<!--
+{% comment %}
   ===================================================================
   DEV SHORTCUTS - Source Code Quick Access Links
   ===================================================================
@@ -13,7 +13,7 @@
   - page.collection, page.path
   - is_production (from env-detect.html in info-section.html) — vscode:// link only when not production
   ===================================================================
--->
+{% endcomment %}
 
 {% comment %} Determine page directory for collections (same segments as GitHub blob links) {% endcomment %}
 {% if page.collection %}
@@ -39,10 +39,10 @@
        https://github.com//blob//path → 404). {% endcomment %}
     {% if site.repository and site.branch %}
 
-    <!-- Button Group (section title is the parent h6 in info-section.html) -->
+    {% comment %} Button Group (section title is the parent h6 in info-section.html) {% endcomment %}
     <div class="btn-group-vertical" role="group" aria-label="Source code shortcuts">
 
-      <!-- View on GitHub -->
+      {% comment %} View on GitHub {% endcomment %}
       <a href="https://github.com/{{ site.repository }}/blob/{{ site.branch }}/{{ rel_site_path }}"
          target="_blank"
          rel="noopener"
@@ -55,7 +55,7 @@
         <i class="bi bi-box-arrow-up-right text-body-secondary small"></i>
       </a>
 
-      <!-- Edit in GitHub.dev -->
+      {% comment %} Edit in GitHub.dev {% endcomment %}
       <a href="https://github.dev/{{ site.repository }}/blob/{{ site.branch }}/{{ rel_site_path }}"
          target="_blank"
          rel="noopener"
@@ -85,14 +85,14 @@
 
     </div>
 
-    <!-- Config Links -->
+    {% comment %} Config Links {% endcomment %}
     <small class="text-body-secondary fw-medium text-uppercase mt-2">
       <i class="bi bi-sliders me-1"></i>Configuration
     </small>
 
     <div class="btn-group-vertical" role="group" aria-label="Configuration shortcuts">
 
-      <!-- Site Config -->
+      {% comment %} Site Config {% endcomment %}
       <a href="https://github.com/{{ site.repository }}/blob/{{ site.branch }}/_config.yml"
          target="_blank"
          rel="noopener"

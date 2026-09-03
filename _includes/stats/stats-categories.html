@@ -1,8 +1,8 @@
 {% comment %} Feature: ZER0-043 {% endcomment %}
-<!-- ================================================ -->
-<!-- CATEGORIES ANALYSIS SECTION                     -->
-<!-- Top categories with post counts                 -->
-<!-- ================================================ -->
+{% comment %} ================================================ {% endcomment %}
+{% comment %} CATEGORIES ANALYSIS SECTION                     {% endcomment %}
+{% comment %} Top categories with post counts                 {% endcomment %}
+{% comment %} ================================================ {% endcomment %}
 <div id="categories" class="card shadow-sm h-100">
   <div class="card-header bg-primary-subtle">
     <div class="d-flex align-items-center justify-content-between">
@@ -18,7 +18,7 @@
   <div class="card-body p-0">
     {% if site.data.content_statistics.categories and site.data.content_statistics.categories.size > 0 %}
       
-      <!-- Categories List -->
+      {% comment %} Categories List {% endcomment %}
       <div class="list-group list-group-flush stats-taxonomy-list">
         {% for category in site.data.content_statistics.categories %}
           <div class="list-group-item d-flex justify-content-between align-items-center{% if forloop.index > 15 %} d-none stats-category-extra{% endif %}">
@@ -50,7 +50,7 @@
         {% endfor %}
       </div>
       
-      <!-- Show More Button if there are more categories -->
+      {% comment %} Show More Button if there are more categories {% endcomment %}
       {% if site.data.content_statistics.categories.size > 15 %}
         <div class="card-footer text-center">
           <button class="btn btn-outline-primary btn-sm"
@@ -67,7 +67,7 @@
       
     {% else %}
       
-      <!-- No Categories Available -->
+      {% comment %} No Categories Available {% endcomment %}
       <div class="text-center py-5">
         <i class="bi bi-folder-x display-4 text-muted mb-3"></i>
         <h5 class="text-muted">No categories found</h5>
@@ -77,7 +77,7 @@
     {% endif %}
   </div>
   
-  <!-- Categories Summary Footer -->
+  {% comment %} Categories Summary Footer {% endcomment %}
   {% if site.data.content_statistics.categories and site.data.content_statistics.categories.size > 0 %}
     <div class="card-footer">
       <div class="row text-center">

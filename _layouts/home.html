@@ -2,7 +2,7 @@
 # Feature: ZER0-019
 layout: root
 ---
-<!--
+{% comment %}
   ===================================================================
   HOME LAYOUT - Homepage template with minimal structure
   ===================================================================
@@ -45,36 +45,36 @@ layout: root
   - RSS link maintains blog connectivity
   - Clean presentation suitable for landing pages
   ===================================================================
--->
+{% endcomment %}
 
-<!-- ================================ -->
-<!-- HOME PAGE CONTAINER             -->
-<!-- ================================ -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} HOME PAGE CONTAINER             {% endcomment %}
+{% comment %} ================================ {% endcomment %}
 <div class="home">
-    <!-- ========================== -->
-    <!-- OPTIONAL PAGE TITLE        -->
-    <!-- ========================== -->
-    <!-- Display title only if specified in page frontmatter. -->
-    <!-- Usage: Add 'title: "Homepage Title"' to page frontmatter. -->
-    <!-- Landing/showcase pages can keep `title` for SEO but suppress the -->
-    <!-- visible heading (e.g. when a custom hero supplies its own <h1>) -->
-    <!-- with `hide_title: true`. -->
+    {% comment %} ========================== {% endcomment %}
+    {% comment %} OPTIONAL PAGE TITLE        {% endcomment %}
+    {% comment %} ========================== {% endcomment %}
+    {% comment %} Display title only if specified in page frontmatter. {% endcomment %}
+    {% comment %} Usage: Add 'title: "Homepage Title"' to page frontmatter. {% endcomment %}
+    {% comment %} Landing/showcase pages can keep `title` for SEO but suppress the {% endcomment %}
+    {% comment %} visible heading (e.g. when a custom hero supplies its own <h1>) {% endcomment %}
+    {% comment %} with `hide_title: true`. {% endcomment %}
     {%- if page.title and page.hide_title != true and page.hide_intro != true -%}
         <h1 class="page-heading">{{ page.title }}</h1>
     {%- endif -%}
     
-    <!-- ========================== -->
-    <!-- MAIN CONTENT AREA          -->
-    <!-- ========================== -->
-    <!-- Homepage content rendered from Markdown or HTML -->
-    <!-- Can include hero sections, feature cards, etc. -->
+    {% comment %} ========================== {% endcomment %}
+    {% comment %} MAIN CONTENT AREA          {% endcomment %}
+    {% comment %} ========================== {% endcomment %}
+    {% comment %} Homepage content rendered from Markdown or HTML {% endcomment %}
+    {% comment %} Can include hero sections, feature cards, etc. {% endcomment %}
     {{ content }}
 
-    <!-- ========================== -->
-    <!-- RSS SUBSCRIPTION LINK      -->
-    <!-- ========================== -->
-    <!-- Provides easy access to RSS feed for blog updates. -->
-    <!-- Opt out on landing/showcase homepages with `rss_subscribe: false`. -->
+    {% comment %} ========================== {% endcomment %}
+    {% comment %} RSS SUBSCRIPTION LINK      {% endcomment %}
+    {% comment %} ========================== {% endcomment %}
+    {% comment %} Provides easy access to RSS feed for blog updates. {% endcomment %}
+    {% comment %} Opt out on landing/showcase homepages with `rss_subscribe: false`. {% endcomment %}
     {%- unless page.rss_subscribe == false -%}
     <p class="rss-subscribe">
         subscribe <a href="{{ "/feed.xml" | relative_url }}">via RSS</a>

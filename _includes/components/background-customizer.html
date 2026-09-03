@@ -1,5 +1,5 @@
 {% comment %} Feature: ZER0-065 {% endcomment %}
-<!--
+{% comment %}
   ===================================================================
   BACKGROUND CUSTOMIZER — fffuel-style background settings panel
   ===================================================================
@@ -14,12 +14,12 @@
     - _sass/theme/_backgrounds.scss (CSS custom properties)
     - Bootstrap 5 offcanvas + form components
   ===================================================================
--->
+{% endcomment %}
 
 {% assign skins = "air,aqua,contrast,dark,dirt,neon,mint,plum,sunrise" | split: "," %}
 {% assign current_skin = site.theme_skin | default: "dark" %}
 
-<!-- Floating toggle button -->
+{% comment %} Floating toggle button {% endcomment %}
 <button class="btn btn-sm btn-outline-secondary position-fixed bottom-0 end-0 m-3 rounded-circle"
         style="z-index: 1090; width: 40px; height: 40px;"
         type="button"
@@ -30,7 +30,7 @@
   <i class="bi bi-palette2"></i>
 </button>
 
-<!-- Offcanvas panel -->
+{% comment %} Offcanvas panel {% endcomment %}
 <div class="offcanvas offcanvas-end" tabindex="-1" id="zer0BgCustomizer" aria-labelledby="zer0BgCustomizerLabel">
   <div class="offcanvas-header">
     <h2 class="offcanvas-title h5" id="zer0BgCustomizerLabel">
@@ -40,7 +40,7 @@
   </div>
 
   <div class="offcanvas-body">
-    <!-- Skin selector -->
+    {% comment %} Skin selector {% endcomment %}
     <div class="mb-4">
       <label class="form-label fw-semibold">Theme Skin</label>
       <div class="d-flex flex-wrap gap-2" id="zer0SkinButtons">
@@ -56,7 +56,7 @@
 
     <hr>
 
-    <!-- Background toggle -->
+    {% comment %} Background toggle {% endcomment %}
     <div class="mb-3">
       <div class="form-check form-switch">
         <input class="form-check-input" type="checkbox" id="zer0BgToggle" checked>
@@ -66,7 +66,7 @@
 
     <hr>
 
-    <!-- Opacity sliders -->
+    {% comment %} Opacity sliders {% endcomment %}
     <div class="mb-3">
       <label class="form-label" for="zer0GradientOpacity">Gradient opacity</label>
       <input type="range" class="form-range" id="zer0GradientOpacity"
@@ -96,7 +96,7 @@
   </div>
 </div>
 
-<!-- Customizer interaction logic -->
+{% comment %} Customizer interaction logic {% endcomment %}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   if (typeof zer0Bg === "undefined") return;

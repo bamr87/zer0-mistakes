@@ -1,4 +1,4 @@
-<!--
+{% comment %}
   file: _includes/content/intro.html
   description: Enhanced intro section with share, edit, and improve/report buttons
   path: _includes/content/intro.html
@@ -12,14 +12,14 @@
     - Responsive flex layout: full-width content block, frosted metadata footer with reading time and action buttons
     - Balanced padding and typography hierarchy via bd-intro-* classes
     - Metadata row: author, dates, category, difficulty, tags, view source
--->
+{% endcomment %}
 {%- include core/i18n.html -%}
 {% if page.collection %}
   {% capture page_dir %}{{ site.collections_dir }}{% endcapture %}
   {% assign testvar = "collection exists" %}
 {% endif %}
 
-<!-- Intro Section -->
+{% comment %} Intro Section {% endcomment %}
 
 {% comment %}
   Determine the preview image path. Preview paths can omit the /assets/ prefix.
@@ -228,9 +228,9 @@
           {% endif %}
         </p>
 
-        <!-- Action Buttons Group -->
+        {% comment %} Action Buttons Group {% endcomment %}
         <div class="bd-intro-actions">
-    <!-- Share Button -->
+    {% comment %} Share Button {% endcomment %}
     <div class="dropdown">
       <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="shareDropdownBottom" data-bs-toggle="dropdown" aria-expanded="false">
         <i class="bi bi-share" aria-hidden="true"></i>
@@ -273,10 +273,10 @@
       </ul>
     </div>
 
-    <!-- Improve / Report — opens the page-feedback widget (assets/js/page-feedback.js).
+    {% comment %} Improve / Report — opens the page-feedback widget (assets/js/page-feedback.js).
          Progressive enhancement: this is a real link to the issue form, so it
          works without JavaScript; page-feedback.js intercepts [data-pf-open]
-         clicks and opens the richer capture modal (context + logs + AI) instead. -->
+         clicks and opens the richer capture modal (context + logs + AI) instead. {% endcomment %}
     {% if site.page_feedback.enabled %}
     <a class="btn btn-sm btn-success bd-intro-action-link"
        href="https://github.com/{{ site.repository }}/issues/new?template=page_improvement.yml&labels=page-feedback"
@@ -289,7 +289,7 @@
     </a>
     {% endif %}
 
-    <!-- Edit on GitHub Button -->
+    {% comment %} Edit on GitHub Button {% endcomment %}
     <a href="https://github.com/{{ site.repository }}/blob/{{ repo_branch }}/{{ file_path }}"
        class="btn btn-sm btn-dark bd-intro-action-link"
        target="_blank"

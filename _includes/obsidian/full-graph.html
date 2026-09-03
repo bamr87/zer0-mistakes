@@ -197,9 +197,9 @@ unresolved targets show up as dashed red nodes so you can find dangling
 links at a glance. The graph is regenerated every Jekyll build; nothing
 runs client-side except cytoscape's force layout.
 
-<!-- Cytoscape.js is vendored (no runtime CDN) and lazy-loaded by
+{% comment %} Cytoscape.js is vendored (no runtime CDN) and lazy-loaded by
      obsidian-graph.js from window.OBSIDIAN_CONFIG.cytoscapeUrl, only on this
-     page, with an in-page recovery message if the fetch fails. -->
+     page, with an in-page recovery message if the fetch fails. {% endcomment %}
 {% if site.obsidian.enabled != false %}
 <script src="{{ '/assets/js/obsidian-graph.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
 {% endif %}

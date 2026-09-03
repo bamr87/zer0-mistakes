@@ -2,7 +2,7 @@
 # Feature: ZER0-019
 layout: default
 ---
-<!--
+{% comment %}
   ===================================================================
   TAG LAYOUT - Tag archive page displaying posts by tag
   ===================================================================
@@ -27,11 +27,11 @@ layout: default
   - _includes/components/post-card.html: Reusable post card component
   - Bootstrap 5 grid and badge components
   ===================================================================
--->
+{% endcomment %}
 
-<!-- ========================== -->
-<!-- TAG HEADER SECTION         -->
-<!-- ========================== -->
+{% comment %} ========================== {% endcomment %}
+{% comment %} TAG HEADER SECTION         {% endcomment %}
+{% comment %} ========================== {% endcomment %}
 <header class="tag-header mb-5">
   <nav aria-label="breadcrumb" class="mb-3">
     <ol class="breadcrumb">
@@ -60,9 +60,9 @@ layout: default
   {{ content }}
 </header>
 
-<!-- ========================== -->
-<!-- TAGGED POSTS GRID          -->
-<!-- ========================== -->
+{% comment %} ========================== {% endcomment %}
+{% comment %} TAGGED POSTS GRID          {% endcomment %}
+{% comment %} ========================== {% endcomment %}
 <section class="tagged-posts">
   {% if tag_posts.size > 0 %}
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
@@ -71,7 +71,7 @@ layout: default
       {% endfor %}
     </div>
   {% else %}
-    <!-- Empty state -->
+    {% comment %} Empty state {% endcomment %}
     <div class="text-center py-5">
       <i class="bi bi-tag fs-1 text-muted"></i>
       <p class="text-muted mt-3">No posts with this tag yet.</p>
@@ -82,9 +82,9 @@ layout: default
   {% endif %}
 </section>
 
-<!-- ========================== -->
-<!-- RELATED TAGS               -->
-<!-- ========================== -->
+{% comment %} ========================== {% endcomment %}
+{% comment %} RELATED TAGS               {% endcomment %}
+{% comment %} ========================== {% endcomment %}
 {% comment %} Find tags that appear with this tag {% endcomment %}
 {% assign related_tags = "" | split: "" %}
 {% for post in tag_posts %}

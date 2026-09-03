@@ -1,5 +1,5 @@
 {% comment %} Feature: ZER0-013 {% endcomment %}
-<!--
+{% comment %}
   ===================================================================
   MERMAID DIAGRAM INTEGRATION (v2.1 - GitHub Pages Compatible)
   ===================================================================
@@ -40,12 +40,12 @@
   - https://mermaid.js.org/
   - https://github.com/mermaid-js/mermaid
   ===================================================================
--->
+{% endcomment %}
 
-<!-- Load Mermaid.js (bundled locally) -->
+{% comment %} Load Mermaid.js (bundled locally) {% endcomment %}
 <script type="text/javascript" src="{{ site.mermaid.src | relative_url }}"></script>
 
-<!-- Initialize Mermaid with custom configuration -->
+{% comment %} Initialize Mermaid with custom configuration {% endcomment %}
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     // ============================================================
@@ -321,7 +321,7 @@
   });
 </script>
 
-<!-- Custom CSS for Mermaid diagrams -->
+{% comment %} Custom CSS for Mermaid diagrams {% endcomment %}
 <style>
   /* Mermaid container styling */
   .mermaid {

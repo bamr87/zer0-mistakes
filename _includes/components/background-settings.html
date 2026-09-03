@@ -1,5 +1,5 @@
 {% comment %} Feature: ZER0-077 {% endcomment %}
-<!--
+{% comment %}
   ===================================================================
   BACKGROUND SETTINGS — fffuel-style background controls (tab content)
   ===================================================================
@@ -17,12 +17,12 @@
   Section headings match the h6 pattern used by the parent
   info-section.html so the Appearance tab reads as one surface.
   ===================================================================
--->
+{% endcomment %}
 
 {% assign skins = "air,aqua,contrast,dark,dirt,neon,mint,plum,sunrise" | split: "," %}
 {% assign current_skin = site.theme_skin | default: "dark" %}
 
-<!-- Skin selector -->
+{% comment %} Skin selector {% endcomment %}
 <div class="mb-4">
   <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
     <i class="bi bi-palette2 me-1" aria-hidden="true"></i>Theme Skin
@@ -38,7 +38,7 @@
   </div>
 </div>
 
-<!-- SVG background toggle + layer opacity -->
+{% comment %} SVG background toggle + layer opacity {% endcomment %}
 <div class="mb-4">
   <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
     <i class="bi bi-image me-1" aria-hidden="true"></i>Background
@@ -83,7 +83,7 @@
   </button>
 </div>
 
-<!-- Customizer interaction logic -->
+{% comment %} Customizer interaction logic {% endcomment %}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   if (typeof zer0Bg === "undefined") return;

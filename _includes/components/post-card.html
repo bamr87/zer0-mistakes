@@ -1,4 +1,4 @@
-<!--
+{% comment %}
   ===================================================================
   POST CARD COMPONENT - Reusable blog post card
   ===================================================================
@@ -41,7 +41,7 @@
   - site.public_folder for image paths
   - site.teaser for fallback image
   ===================================================================
--->
+{% endcomment %}
 
 {% comment %} Parameter defaults {% endcomment %}
 {% assign show_category = include.show_category | default: true %}
@@ -70,44 +70,44 @@
 {% if render_col %}<div class="col">{% endif %}
   <div class="card h-100 post-card border-0 shadow-sm {{ card_class }}">
     
-    <!-- ====================== -->
-    <!-- CARD IMAGE & BADGES    -->
-    <!-- ====================== -->
+    {% comment %} ====================== {% endcomment %}
+    {% comment %} CARD IMAGE & BADGES    {% endcomment %}
+    {% comment %} ====================== {% endcomment %}
     <div class="position-relative">
-      <!-- Breaking News Badge -->
+      {% comment %} Breaking News Badge {% endcomment %}
       {% if include.post.breaking %}
         <span class="badge bg-danger position-absolute top-0 start-0 m-2 z-1">
           <i class="bi bi-lightning-fill me-1"></i>Breaking
         </span>
       {% endif %}
       
-      <!-- Featured Badge -->
+      {% comment %} Featured Badge {% endcomment %}
       {% if include.post.featured %}
         <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2 z-1">
           <i class="bi bi-star-fill me-1"></i>Featured
         </span>
       {% endif %}
       
-      <!-- Post Type Badge -->
+      {% comment %} Post Type Badge {% endcomment %}
       {% if show_post_type and include.post.post_type and include.post.post_type != "standard" and include.post.post_type != "featured" and include.post.post_type != "breaking" %}
         <span class="position-absolute bottom-0 start-0 m-2 z-1">
           {% include components/post-type-badge.html post_type=include.post.post_type %}
         </span>
       {% endif %}
       
-      <!-- Preview Image -->
+      {% comment %} Preview Image {% endcomment %}
       <a href="{{ include.post.url | relative_url }}" class="text-decoration-none">
         {% assign card_img = include.post.preview | default: site.teaser %}
         {% include components/preview-image.html src=card_img alt=include.post.title class="card-img-top" %}
       </a>
     </div>
     
-    <!-- ====================== -->
-    <!-- CARD BODY              -->
-    <!-- ====================== -->
+    {% comment %} ====================== {% endcomment %}
+    {% comment %} CARD BODY              {% endcomment %}
+    {% comment %} ====================== {% endcomment %}
     <div class="card-body d-flex flex-column">
       
-      <!-- Category Badge -->
+      {% comment %} Category Badge {% endcomment %}
       {% comment %} Category base is configurable (`category_base`, default `/news`).
          Only link the badge when that category index page exists in the build;
          otherwise render a plain badge so remote-theme consumers (whose category
@@ -135,7 +135,7 @@
         </div>
       {% endif %}
       
-      <!-- Post Title -->
+      {% comment %} Post Title {% endcomment %}
       <h5 class="card-title mb-2">
         <a href="{{ include.post.url | relative_url }}" 
            class="text-decoration-none text-body-emphasis stretched-link">
@@ -143,14 +143,14 @@
         </a>
       </h5>
       
-      <!-- Subtitle if available -->
+      {% comment %} Subtitle if available {% endcomment %}
       {% if include.post.sub-title %}
         <p class="card-subtitle text-muted small mb-2">
           {{ include.post.sub-title }}
         </p>
       {% endif %}
       
-      <!-- Post Excerpt -->
+      {% comment %} Post Excerpt {% endcomment %}
       {% if show_excerpt %}
         <p class="card-text text-muted small flex-grow-1">
           {{ include.post.excerpt | strip_html | truncate: 120 }}
@@ -159,13 +159,13 @@
       
     </div>
     
-    <!-- ====================== -->
-    <!-- CARD FOOTER            -->
-    <!-- ====================== -->
+    {% comment %} ====================== {% endcomment %}
+    {% comment %} CARD FOOTER            {% endcomment %}
+    {% comment %} ====================== {% endcomment %}
     <div class="card-footer bg-transparent border-top-0">
       <div class="d-flex justify-content-between align-items-center small text-muted">
         
-        <!-- Left: Author & Date -->
+        {% comment %} Left: Author & Date {% endcomment %}
         <div>
           {% if show_author and include.post.author %}
             <span class="me-2">
@@ -177,7 +177,7 @@
           </span>
         </div>
         
-        <!-- Right: Reading Time -->
+        {% comment %} Right: Reading Time {% endcomment %}
         {% if show_reading_time %}
           <span>
             <i class="bi bi-clock me-1"></i>{{ reading_time }}
@@ -186,7 +186,7 @@
         
       </div>
       
-      <!-- Tags (compact) -->
+      {% comment %} Tags (compact) {% endcomment %}
       {% if include.post.tags.size > 0 %}
         <div class="mt-2">
           {% for tag in include.post.tags limit: 3 %}

@@ -1,5 +1,5 @@
 {% comment %} Feature: ZER0-021 {% endcomment %}
-<!--
+{% comment %}
   ===================================================================
   THEME INFO - Compact Theme and Build Information
   ===================================================================
@@ -15,12 +15,12 @@
   Note: environment (Prod/Dev) is shown by env-switcher.html in the
   same Site tab — not duplicated here.
   ===================================================================
--->
+{% endcomment %}
 
 <div class="theme-info-compact">
   <div class="row g-2">
 
-    <!-- Theme -->
+    {% comment %} Theme {% endcomment %}
     <div class="col-12">
       <div class="d-flex align-items-center justify-content-between p-2 bg-body-tertiary rounded">
         <div class="d-flex align-items-center">
@@ -44,7 +44,7 @@
       </div>
     </div>
 
-    <!-- Jekyll & Last Build -->
+    {% comment %} Jekyll & Last Build {% endcomment %}
     <div class="col-6">
       <div class="p-2 bg-body-tertiary rounded text-center">
         <small class="text-body-secondary d-block">Jekyll</small>
@@ -66,7 +66,7 @@
     </div>
 
     {% if site.repository %}
-    <!-- Repository -->
+    {% comment %} Repository {% endcomment %}
     <div class="col-12">
       <div class="d-flex align-items-center justify-content-between p-2 bg-body-tertiary rounded">
         <div class="d-flex align-items-center">
@@ -81,7 +81,7 @@
     </div>
     {% endif %}
 
-    <!-- Quick Links -->
+    {% comment %} Quick Links {% endcomment %}
     <div class="col-12 mt-2">
       <div class="d-flex flex-wrap gap-2 justify-content-center">
         {% if site.remote_theme %}

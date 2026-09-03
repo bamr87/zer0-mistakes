@@ -1,5 +1,5 @@
 {% comment %} Feature: ZER0-077 {% endcomment %}
-<!--
+{% comment %}
   file: halfmoon.html
   path: _includes/components/halfmoon.html
   description: Dark / light / auto color-mode switcher (segmented control).
@@ -12,7 +12,7 @@
   config:      site.color_mode_lock: true removes the control entirely — the
                site pins one mode and visitor switching is disabled
                (halfmoon.js + core/color-mode-init.html enforce the same).
- -->
+ {% endcomment %}
 {% unless site.color_mode_lock %}
 <div class="btn-group bd-theme-switch {{ include.class | default: '' }}" role="group" aria-label="Color mode">
   <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center gap-1" data-bs-theme-value="light" aria-pressed="false">

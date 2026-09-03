@@ -2,7 +2,7 @@
 # Features: ZER0-019, ZER0-050
 layout: root
 ---
-<!--
+{% comment %}
   ===================================================================
   ADMIN LAYOUT - Administrative and configuration page layout
   ===================================================================
@@ -36,7 +36,7 @@ layout: root
   - Bootstrap 5 grid, offcanvas, nav components
   - Bootstrap Icons
   ===================================================================
--->
+{% endcomment %}
 
 {% comment %} ════════════════════════════════════════════════════════ {% endcomment %}
 {% comment %} ADMIN NAV DATA                                          {% endcomment %}
@@ -46,13 +46,13 @@ layout: root
 
 {% assign show_sidebar = page.admin_nav | default: true %}
 
-<!-- ================================================ -->
-<!-- ADMIN PAGE HEADER                                -->
-<!-- Breadcrumbs + title bar (no author/read-time)    -->
-<!-- ================================================ -->
+{% comment %} ================================================ {% endcomment %}
+{% comment %} ADMIN PAGE HEADER                                {% endcomment %}
+{% comment %} Breadcrumbs + title bar (no author/read-time)    {% endcomment %}
+{% comment %} ================================================ {% endcomment %}
 <div class="bg-body-tertiary border-bottom">
   <div class="container-xxl py-3">
-    <!-- Breadcrumbs -->
+    {% comment %} Breadcrumbs {% endcomment %}
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb mb-2 small">
         <li class="breadcrumb-item"><a href="{{ '/' | relative_url }}"><i class="bi bi-house-door"></i> Home</a></li>
@@ -61,9 +61,9 @@ layout: root
       </ol>
     </nav>
 
-    <!-- Title row -->
+    {% comment %} Title row {% endcomment %}
     <div class="d-flex align-items-center">
-      <!-- Mobile sidebar toggle -->
+      {% comment %} Mobile sidebar toggle {% endcomment %}
       {% if show_sidebar %}
       <button class="btn btn-outline-secondary me-3 d-lg-none"
               type="button"
@@ -90,7 +90,7 @@ layout: root
         {% endif %}
       </div>
 
-      <!-- Page-level action buttons (from front matter admin_actions) -->
+      {% comment %} Page-level action buttons (from front matter admin_actions) {% endcomment %}
       {% if page.admin_actions %}
       <div class="d-none d-md-flex gap-2 ms-3">
         {% for action in page.admin_actions %}
@@ -106,20 +106,20 @@ layout: root
   </div>
 </div>
 
-<!-- ================================================ -->
-<!-- MAIN LAYOUT: SIDEBAR + CONTENT                   -->
-<!-- ================================================ -->
+{% comment %} ================================================ {% endcomment %}
+{% comment %} MAIN LAYOUT: SIDEBAR + CONTENT                   {% endcomment %}
+{% comment %} ================================================ {% endcomment %}
 <div class="container-xxl py-4">
   <div class="row">
 
     {% if show_sidebar %}
-    <!-- ════════════════════════════════ -->
-    <!-- ADMIN SIDEBAR                   -->
-    <!-- Desktop: sticky column           -->
-    <!-- Mobile: offcanvas                -->
-    <!-- ════════════════════════════════ -->
+    {% comment %} ════════════════════════════════ {% endcomment %}
+    {% comment %} ADMIN SIDEBAR                   {% endcomment %}
+    {% comment %} Desktop: sticky column           {% endcomment %}
+    {% comment %} Mobile: offcanvas                {% endcomment %}
+    {% comment %} ════════════════════════════════ {% endcomment %}
 
-    <!-- Desktop sidebar (lg+) -->
+    {% comment %} Desktop sidebar (lg+) {% endcomment %}
     <div class="col-lg-3 d-none d-lg-block">
       <div class="position-sticky" style="top: 5rem;">
         <nav class="admin-sidebar" aria-label="Admin navigation">
@@ -131,7 +131,7 @@ layout: root
       </div>
     </div>
 
-    <!-- Mobile offcanvas sidebar -->
+    {% comment %} Mobile offcanvas sidebar {% endcomment %}
     <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1"
          id="adminSidebar" aria-labelledby="adminSidebarLabel">
       <div class="offcanvas-header">
@@ -145,7 +145,7 @@ layout: root
       </div>
     </div>
 
-    <!-- Main content area (with sidebar) -->
+    {% comment %} Main content area (with sidebar) {% endcomment %}
     <div class="col-lg-9">
       <div id="admin-content">
         {{ content }}
@@ -154,7 +154,7 @@ layout: root
 
     {% else %}
 
-    <!-- Full-width content (no sidebar) -->
+    {% comment %} Full-width content (no sidebar) {% endcomment %}
     <div class="col-12">
       <div id="admin-content">
         {{ content }}
