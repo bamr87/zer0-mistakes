@@ -50,6 +50,26 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Changed
 
+- **Liquid written as documentation was being executed, not displayed** — Liquid
+  runs before Markdown, so backticks and code fences never escaped it; they only
+  changed how its *output* was displayed. Two pages leaked as a result. The
+  CHANGELOG page carried a **second full copy of `<head>` inside its body**
+  (Bootstrap CSS, Bootstrap Icons and `X-UA-Compatible` all emitted twice, and
+  the Google Tag Manager snippet a second time on a production build) because an
+  {% raw %}`{% include core/head.html %}`{% endraw %} in prose was run rather than shown. The
+  Layout Variables table in `/docs/customization/layouts/` documented nothing:
+  {% raw %}`{{ content }}`{% endraw %} injected the whole rendered page into a table cell and
+  {% raw %}`{{ page.title }}`{% endraw %} rendered as the literal word "Layouts", leaving
+  196 KB of leaked layout output where a five-line code sample belonged. Both are
+  now wrapped in Liquid raw blocks, the idiom the same files already used
+  elsewhere. A `test_content_liquid_is_raw_protected` guard in
+  `test/test_core.sh` fails if injecting Liquid appears unprotected inside a code
+  fence or code span again. The layouts doc also had its layout **names** and
+  **hierarchy** corrected against `_layouts/`: `journals` has not existed since
+  the v1.0 rename to `article`, and three of the four children in the
+  inheritance diagram were wrong — `home` and `landing` inherit `root`, not
+  `default`, which decides whether a layout renders the sidebar and TOC at all.
+
 - **Developer doc banners no longer ship to visitors (#375)** — the 1,065
   multi-line {% raw %}`<!-- ... -->`{% endraw %} banners documenting `_includes/**` and
   `_layouts/**` (file paths, dependency lists, design rationale) are now Liquid
@@ -326,7 +346,8 @@ worse than none.
   `html.no-js .foo {…}` / `html.js .foo {…}` got the no-JS branch for everyone
   — the class advertised a capability the theme did not deliver. An inline
   script is now the **first child of `<head>`**, above
-  `{% include core/head.html %}` (which opens with Google Tag Manager, so
+  {% raw %}`{% include core/head.html %}`{% endraw %} (which opens with Google Tag
+  Manager, so
   "first in that include" is not "first in `<head>`") and deliberately neither
   `defer` nor `async`, since it has to run before the first stylesheet is
   fetched or `html.js` rules would flash. The served HTML still carries
