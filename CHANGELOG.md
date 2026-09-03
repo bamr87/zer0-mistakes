@@ -64,7 +64,11 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   now wrapped in Liquid raw blocks, the idiom the same files already used
   elsewhere. A `test_content_liquid_is_raw_protected` guard in
   `test/test_core.sh` fails if injecting Liquid appears unprotected inside a code
-  fence or code span again.
+  fence or code span again. The layouts doc also had its layout **names** and
+  **hierarchy** corrected against `_layouts/`: `journals` has not existed since
+  the v1.0 rename to `article`, and three of the four children in the
+  inheritance diagram were wrong — `home` and `landing` inherit `root`, not
+  `default`, which decides whether a layout renders the sidebar and TOC at all.
 
 - **Setup wizard: live preview, vertical stepper, draft persistence (T-040, #408)** —
   the `_config.yml` preview is now a **persistent sticky panel** shown at every

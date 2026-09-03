@@ -11,6 +11,7 @@ tags:
     - layouts
     - templates
     - jekyll
+keywords: [jekyll layouts, liquid templates, custom layouts, layout hierarchy, layout inheritance]
 permalink: /docs/customization/layouts/
 difficulty: intermediate
 estimated_reading_time: 15 minutes
@@ -27,7 +28,7 @@ Layouts define the structure and appearance of your pages. The Zer0-Mistakes the
 | Layout | Purpose | Use Case |
 |--------|---------|----------|
 | `default` | Standard page with sidebar | Documentation, general pages |
-| `journals` | Blog post layout | Blog posts with metadata |
+| `article` | Blog post layout | Blog posts with metadata |
 | `home` | Homepage layout | Site homepage |
 | `collection` | Collection index | Listing pages for collections |
 | `landing` | Full-width page | Marketing/landing pages |
@@ -49,13 +50,24 @@ layout: default
 Layouts inherit from each other:
 
 ```text
-root.html
-└── default.html
-    ├── home.html
-    ├── journals.html
-    ├── collection.html
-    └── landing.html
+root.html                 # base HTML document — never use directly
+├── default.html          # adds the sidebars and table of contents
+│   ├── article.html      # blog posts
+│   ├── collection.html   # collection index pages
+│   ├── author.html  authors.html
+│   ├── note.html    notebook.html
+│   ├── recipe.html  cookbook.html
+│   └── tag.html
+├── home.html             # homepage
+├── landing.html          # full-width marketing pages
+├── section.html  news.html  admin.html  stats.html
+└── 404.html      setup.html  welcome.html  book*.html
 ```
+
+**Which branch a layout sits on is not cosmetic.** `default.html` is the only
+layout that renders the left sidebar (`#bdSidebar`) and the table-of-contents
+panel (`#tocContents`). A layout inheriting `root` directly gets neither — so a
+custom layout that needs them should inherit `default`.
 
 ## Creating Custom Layouts
 
@@ -127,7 +139,7 @@ To customize a theme layout:
 Show content based on layout or page variables:
 
 ```html
-{% raw %}{% if page.layout == 'journals' %}
+{% raw %}{% if page.layout == 'article' %}
   <div class="post-meta">
     <time>{{ page.date | date: "%B %d, %Y" }}</time>
     <span class="author">{{ page.author }}</span>
