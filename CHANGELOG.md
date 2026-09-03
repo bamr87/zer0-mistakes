@@ -50,6 +50,64 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Changed
 
+- **Navbar controls no longer flicker under a stationary pointer (#404)** —
+  `.nav-link:hover`, the Search/Settings utility buttons and the two sidebar/TOC
+  FABs applied `transform: translateY(-1px)`. A 1px lift moves the element out
+  from under a pointer parked on the row it vacates, so hover exits, the element
+  drops back under the pointer, and hover re-enters — an infinite flicker with
+  no pointer movement at all. Nav items are thin enough for a 1px lift to
+  reliably do it.
+
+  Deleting those declarations was **not sufficient**, and the reason is the
+  substantive finding here: `_sass/components/_ui-enhancements.scss` applies
+  `transform: translateY(-2px)` to `.btn:hover` — *every* button in the theme.
+  The utility buttons and both FABs are `.btn`s, so with the navbar's own 1px
+  lift removed the buttons kept flickering on the inherited 2px one — measured
+  on the built site, the Settings button lost and regained hover 14 times in
+  800ms with the pointer completely still. The fix therefore cancels it
+  explicitly with `transform: none`, the corrective pattern this repo already
+  uses in `_post-navigation.scss` and its `prefers-reduced-motion` blocks. The
+  FABs get the same treatment by the same reasoning — they are the same kind of
+  `.btn` with the same lift — but they were not rendered at any viewport reached
+  during verification, so that half is reasoned, not observed.
+
+  Background, colour and shadow transitions are untouched, and the controls keep
+  a pressed cue as `:active { transform: translateY(1px) }` — safe, because
+  `:active` only holds while the button is held down, so the pointer cannot
+  leave and re-enter in a loop.
+
+  Three corrections to the issue as filed. The vacated row is the **bottom**
+  edge, not the top — a probe parked on the top edge passes without exercising
+  the bug at all. Only a transform on the **hovered element's own box** can
+  flicker: `&:hover i { transform: scale(1.1) }` moves a child and never shrinks
+  the parent's hit box, so those went for consistency, not as causes. And
+  `.nav-link:hover`, named as the primary culprit, was **dead code** — its lift
+  sat inside `@media (min-width: 992px) { @container navbar-main (max-width:
+  75rem) }`, and measured on the built site at 1040/1140/1200/1280px its
+  computed hover transform is `none` at every width, on `main` too. Every
+  flicker actually observed was on the utility buttons.
+
+  Guarded by `test/visual/core/hover-stability.spec.js`: with the pointer on the
+  control's centre the border box must be byte-identical to its resting box and
+  the computed transform must be `none`; with the pointer held half a pixel
+  inside the bottom edge for 800ms, `mouseleave` must stay at zero. The verdict
+  is the *computed* value rather than "no matching rule exists", because
+  `.btn:hover` does still match these controls and always will — it is
+  overridden, not deleted. `mouseleave`, not `mouseout`: the latter also fires
+  when the pointer crosses onto a descendant, which is not the element losing
+  hover, and it produces a false positive on every `.nav-hover-dropdown` parent.
+  Against `main` the spec is 4 failed / 1 passed; with the fix, 5 passed.
+  Evidence in `test/visual/evidence/hover-flicker/` — the Settings button lost
+  hover 14 times in 800ms before, 0 after.
+
+  Scoped to the navbar. The issue's original acceptance criterion — *no
+  transform in any `:hover` rule under `_sass/`* — is 42 rules across ~15 files
+  (card lifts, book-cover tilts, recipe and author hovers) and a visual redesign
+  of a published theme rather than a defect fix; it also flagged
+  `transform: none`, which is the corrective pattern this repo already uses in
+  `_post-navigation.scss` and its `prefers-reduced-motion` blocks. A theme-wide
+  motion policy belongs in its own task.
+
 - **Liquid written as documentation was being executed, not displayed** — Liquid
   runs before Markdown, so backticks and code fences never escaped it; they only
   changed how its *output* was displayed. Two pages leaked as a result. The
