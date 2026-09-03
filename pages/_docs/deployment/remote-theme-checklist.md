@@ -66,7 +66,7 @@ plugins:
 
 None of these are inherited from the theme — declare your own: `collections`, `defaults`, `permalink`, `theme_skin`, `theme_color`, `theme_background`.
 
-The `favicon:` block, by contrast, is entirely optional: `theme_color_light` / `theme_color_dark` fall back to the theme's surface colours, and the `theme-color` tags are emitted even when you declare nothing.
+The `favicon:` block, by contrast, is entirely optional: `theme_color_light` / `theme_color_dark` fall back to the theme's surface colors (`#ffffff` / `#212529`), and the `theme-color` tags are emitted even when you declare nothing.
 
 ### 3. ⚠️ Do not copy the theme's `_config.yml` wholesale
 
