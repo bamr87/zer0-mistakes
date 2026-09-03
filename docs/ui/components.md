@@ -2,7 +2,7 @@
 title: "Components"
 description: "The reusable Liquid component library in _includes/components for Zer0-Mistakes, how components consume design tokens, and how to add new ones."
 date: 2026-05-31T20:54:57.000Z
-lastmod: 2026-05-31T20:54:57.000Z
+lastmod: 2026-09-03T00:00:00.000Z
 categories: [docs]
 tags: [ui, styling, theme]
 author: bamr87
