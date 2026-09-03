@@ -22,9 +22,9 @@ layout: root
 {%- assign _first = page.alphabet | first -%}
 
 <article class="book-abc" itemscope itemtype="https://schema.org/Book">
-  <!-- ================================ -->
-  <!-- COVER HERO                       -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} COVER HERO                       {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   <header class="book-hero zer0-bg-hero py-5">
     <div class="container-xl">
       <div class="row g-5 align-items-center justify-content-center">
@@ -67,27 +67,27 @@ layout: root
 
   <div class="container-xl py-5">
 
-    <!-- ================================ -->
-    <!-- A–Z QUICK JUMP                   -->
-    <!-- ================================ -->
+    {% comment %} ================================ {% endcomment %}
+    {% comment %} A–Z QUICK JUMP                   {% endcomment %}
+    {% comment %} ================================ {% endcomment %}
     <nav class="abc-jump" aria-label="Jump to a letter">
       {%- for _e in page.alphabet -%}
       <a class="abc-jump-link" href="#letter-{{ _e.letter | downcase }}">{{ _e.letter }}</a>
       {%- endfor -%}
     </nav>
 
-    <!-- ================================ -->
-    <!-- THE ALPHABET BOARD               -->
-    <!-- ================================ -->
+    {% comment %} ================================ {% endcomment %}
+    {% comment %} THE ALPHABET BOARD               {% endcomment %}
+    {% comment %} ================================ {% endcomment %}
     <div class="abc-board abc-style--{{ page.art_style | default: 'isometric-tech-toy' }}">
       {%- for _e in page.alphabet -%}
         {%- include components/abc-letter.html entry=_e -%}
       {%- endfor -%}
     </div>
 
-    <!-- ================================ -->
-    <!-- AI COLOPHON                      -->
-    <!-- ================================ -->
+    {% comment %} ================================ {% endcomment %}
+    {% comment %} AI COLOPHON                      {% endcomment %}
+    {% comment %} ================================ {% endcomment %}
     {%- if page.art_style_prompt or page.generator -%}
     <aside class="book-colophon card border-0 bg-body-tertiary mt-5 mx-auto" style="max-width: var(--zer0-book-measure);">
       <div class="card-body">

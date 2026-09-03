@@ -1,4 +1,4 @@
-<!-- Installation method cards; uses site.resources.* and environment where helpful -->
+{% comment %} Installation method cards; uses site.resources.* and environment where helpful {% endcomment %}
 <div class="row g-4 justify-content-center">
   <div class="col-12 col-sm-10 col-md-6 col-lg-4">
     <div class="card h-100 border-0 shadow-sm">
@@ -55,7 +55,7 @@ cd &lt;you&gt;.github.io
   </div>
 </div>
 
-<!-- Contributing guide call-to-action placed below all cards -->
+{% comment %} Contributing guide call-to-action placed below all cards {% endcomment %}
 <div class="text-center mt-4">
   <a class="btn btn-outline-secondary" href="{{ site.resources.contributing | default: '' | join: '' | default: '#' }}" target="_blank" rel="noopener">
     <i class="bi bi-journal-text me-2"></i>Read the Contributing Guide

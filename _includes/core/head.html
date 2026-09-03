@@ -1,5 +1,5 @@
 {% comment %} Feature: ZER0-001 {% endcomment %}
-<!--
+{% comment %}
   ===================================================================
   HEAD - HTML Document Head Section
   ===================================================================
@@ -26,23 +26,23 @@
   - MathJax loaded asynchronously to prevent render blocking
   - Nanobar provides visual loading feedback (see components/nanobar.html)
   ===================================================================
--->
+{% endcomment %}
 
-<!-- ================================ -->
-<!-- ANALYTICS AND TRACKING          -->
-<!-- ================================ -->
-<!-- Google Tag Manager - Must be in head section for proper tracking -->
-<!-- Only load in production builds (JEKYLL_ENV=production); the include also guards against dev hostnames -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} ANALYTICS AND TRACKING          {% endcomment %}
+{% comment %} ================================ {% endcomment %}
+{% comment %} Google Tag Manager - Must be in head section for proper tracking {% endcomment %}
+{% comment %} Only load in production builds (JEKYLL_ENV=production); the include also guards against dev hostnames {% endcomment %}
 {% if jekyll.environment == "production" %}{% include analytics/google-tag-manager-head.html %}{% endif %}
 
-<!-- Page-feedback: early console/error capture — must run before the theme
-     scripts below so a report can include the logs that led up to it. -->
+{% comment %} Page-feedback: early console/error capture — must run before the theme
+     scripts below so a report can include the logs that led up to it. {% endcomment %}
 {% include core/console-capture.html %}
 
-<!-- ================================ -->
-<!-- JAVASCRIPT LIBRARIES            -->
-<!-- ================================ -->
-<!-- Custom theme JavaScript - Deferred for performance -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} JAVASCRIPT LIBRARIES            {% endcomment %}
+{% comment %} ================================ {% endcomment %}
+{% comment %} Custom theme JavaScript - Deferred for performance {% endcomment %}
 <script defer src="{{ '/assets/js/auto-hide-nav.js' | relative_url }}"></script>
 <script defer src="{{ '/assets/js/back-to-top.js' | relative_url }}"></script>
 <script defer src="{{ '/assets/js/halfmoon.js' | relative_url }}"></script>
@@ -51,34 +51,34 @@
 <script defer src="{{ '/assets/js/table-copy.js' | relative_url }}"></script>
 <script defer src="{{ '/assets/js/ui-enhancements.js' | relative_url }}"></script>
 
-<!-- Page-view counter — injects its config and loads assets/js/page-views.js.
+{% comment %} Page-view counter — injects its config and loads assets/js/page-views.js.
      Renders nothing on its own; components/page-views.html places the badge.
-     Gated on site.page_views.enabled inside the include. -->
+     Gated on site.page_views.enabled inside the include. {% endcomment %}
 {% include components/page-views-init.html %}
 
-<!-- ================================ -->
-<!-- THIRD PARTY INTEGRATIONS        -->
-<!-- ================================ -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} THIRD PARTY INTEGRATIONS        {% endcomment %}
+{% comment %} ================================ {% endcomment %}
 
-<!-- Recipe scaling & unit conversion - Only on pages that render recipe
+{% comment %} Recipe scaling & unit conversion - Only on pages that render recipe
      quantities: the `recipe` layout, or any page that opts in with
-     `recipe_tools: true` (e.g. a post embedding components/recipe-*.html). -->
+     `recipe_tools: true` (e.g. a post embedding components/recipe-*.html). {% endcomment %}
 {% if page.layout == "recipe" or page.recipe_tools %}
 <script defer src="{{ '/assets/js/recipe-scaler.js' | relative_url }}"></script>
 {% endif %}
 
-<!-- Mermaid Diagrams - Conditional loading based on page front matter -->
+{% comment %} Mermaid Diagrams - Conditional loading based on page front matter {% endcomment %}
 {% if page.mermaid %}
   {% include components/mermaid.html %}
 {% endif %}
 
-<!-- Nano Progress Bar - Visual loading indicator (config-driven) — page-invariant, cached. -->
+{% comment %} Nano Progress Bar - Visual loading indicator (config-driven) — page-invariant, cached. {% endcomment %}
 {% include_cached components/nanobar.html %}
 
-<!-- MathJax - Conditional loading based on page front matter (like Mermaid) -->
+{% comment %} MathJax - Conditional loading based on page front matter (like Mermaid) {% endcomment %}
 {% if page.mathjax %}
-<!-- MathJax 3 configuration — must appear before the script tag.
-     Enables $...$ inline math (off by default in MathJax 3). -->
+{% comment %} MathJax 3 configuration — must appear before the script tag.
+     Enables $...$ inline math (off by default in MathJax 3). {% endcomment %}
 <script>
 window.MathJax = {
   tex: {
@@ -91,17 +91,17 @@ window.MathJax = {
 <script id="MathJax-script" async src="{{ '/assets/vendor/mathjax/es5/tex-mml-chtml.js' | relative_url }}"></script>
 {% endif %}
 
-<!-- ================================ -->
-<!-- HTML DOCUMENT META DATA         -->
-<!-- ================================ -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} HTML DOCUMENT META DATA         {% endcomment %}
+{% comment %} ================================ {% endcomment %}
 {%- comment -%} NOTE: the charset meta is NOT here — it lives at the very top
      of _layouts/root.html so it lands inside the spec's 1024-byte window
      (issue #372). Do not re-add it here. {%- endcomment -%}
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<!-- Favicon + browser identity (config-driven via `favicon:`; explicit
-     /favicon.ico fallback so baseurl deployments resolve) — page-invariant, cached. -->
+{% comment %} Favicon + browser identity (config-driven via `favicon:`; explicit
+     /favicon.ico fallback so baseurl deployments resolve) — page-invariant, cached. {% endcomment %}
 {% include_cached core/favicon.html %}
 
 {%- comment -%} Feed autodiscovery. jekyll-feed generates /feed.xml but emits
@@ -115,21 +115,21 @@ window.MathJax = {
       title="{{ site.title | default: site.name | escape }}"
       href="{{ _feed_path | relative_url }}">
 
-<!-- ================================ -->
-<!-- SEO SUPPLEMENT                  -->
-<!-- ================================ -->
-<!-- Additional SEO tags not covered by jekyll-seo-tag plugin ( in root.html).
-     Outputs custom og:image with assets_prefix normalisation and non-Google site verification. -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} SEO SUPPLEMENT                  {% endcomment %}
+{% comment %} ================================ {% endcomment %}
+{% comment %} Additional SEO tags not covered by jekyll-seo-tag plugin ( in root.html).
+     Outputs custom og:image with assets_prefix normalisation and non-Google site verification. {% endcomment %}
 {% include content/seo.html %}
 
-<!-- hreflang alternates for machine-generated translations (no-op when the
-     page has none) — see _data/i18n/manifest.yml + scripts/translate.rb -->
+{% comment %} hreflang alternates for machine-generated translations (no-op when the
+     page has none) — see _data/i18n/manifest.yml + scripts/translate.rb {% endcomment %}
 {% include core/hreflang.html %}
 
-<!-- ========================== -->
-<!-- STRUCTURED DATA MARKUP    -->
-<!-- ========================== -->
-<!-- Enhanced meta data for rich snippets and social media -->
+{% comment %} ========================== {% endcomment %}
+{% comment %} STRUCTURED DATA MARKUP    {% endcomment %}
+{% comment %} ========================== {% endcomment %}
+{% comment %} Enhanced meta data for rich snippets and social media {% endcomment %}
 {% if page.title %}
     <meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">
 {% endif %}
@@ -147,84 +147,84 @@ window.MathJax = {
     <meta itemprop="dateModified" content="{{ page.lastmod | date_to_xmlschema }}">
 {% endif %}
 
-<!-- JSON-LD SoftwareApplication schema (homepage only) -->
+{% comment %} JSON-LD SoftwareApplication schema (homepage only) {% endcomment %}
 {% include content/jsonld-software.html %}
 
-<!-- JSON-LD FAQ schema (pages with faq_items front matter) -->
+{% comment %} JSON-LD FAQ schema (pages with faq_items front matter) {% endcomment %}
 {% include content/jsonld-faq.html %}
 
-<!-- ========================== -->
-<!-- ANALYTICS INTEGRATION     -->
-<!-- ========================== -->
-<!-- Google Analytics tracking - Configured in _config.yml -->
-<!-- Only load in production AND when an ID is configured; the include also guards against dev hostnames -->
+{% comment %} ========================== {% endcomment %}
+{% comment %} ANALYTICS INTEGRATION     {% endcomment %}
+{% comment %} ========================== {% endcomment %}
+{% comment %} Google Analytics tracking - Configured in _config.yml {% endcomment %}
+{% comment %} Only load in production AND when an ID is configured; the include also guards against dev hostnames {% endcomment %}
 {% if jekyll.environment == "production" and site.google_analytics %}{% include analytics/google-analytics.html %}{% endif %}
 
-<!-- PostHog analytics - Configured via the `posthog:` block in _config.yml -->
-<!-- Only load in production AND when explicitly enabled; the include itself also respects Do Not Track -->
+{% comment %} PostHog analytics - Configured via the `posthog:` block in _config.yml {% endcomment %}
+{% comment %} Only load in production AND when explicitly enabled; the include itself also respects Do Not Track {% endcomment %}
 {% if jekyll.environment == "production" and site.posthog.enabled %}{% include analytics/posthog.html %}{% endif %}
 
 
-<!-- ================================ -->
-<!-- CSS FRAMEWORKS AND LIBRARIES   -->
-<!-- ================================ -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} CSS FRAMEWORKS AND LIBRARIES   {% endcomment %}
+{% comment %} ================================ {% endcomment %}
 
-<!-- ========================== -->
-<!-- COLOR MODE INIT (FOUC FIX) -->
-<!-- ========================== -->
-<!-- Must run BEFORE Bootstrap CSS so the correct data-bs-theme is applied
+{% comment %} ========================== {% endcomment %}
+{% comment %} COLOR MODE INIT (FOUC FIX) {% endcomment %}
+{% comment %} ========================== {% endcomment %}
+{% comment %} Must run BEFORE Bootstrap CSS so the correct data-bs-theme is applied
      when [data-bs-theme=dark/light] selectors are first evaluated.
      Reads site.color_mode_default (via data-color-mode-default attr on <html>)
-     and falls back to localStorage["theme"] for the user's explicit preference. -->
+     and falls back to localStorage["theme"] for the user's explicit preference. {% endcomment %}
 {% include core/color-mode-init.html %}
 
-<!-- ========================== -->
-<!-- BOOTSTRAP 5 FRAMEWORK     -->
-<!-- ========================== -->
-<!-- Bootstrap 5.3.3 - bundled locally (GitHub Pages–safe; refresh via scripts/vendor-install.sh) -->
+{% comment %} ========================== {% endcomment %}
+{% comment %} BOOTSTRAP 5 FRAMEWORK     {% endcomment %}
+{% comment %} ========================== {% endcomment %}
+{% comment %} Bootstrap 5.3.3 - bundled locally (GitHub Pages–safe; refresh via scripts/vendor-install.sh) {% endcomment %}
 <link href="{{ '/assets/vendor/bootstrap/css/bootstrap.min.css' | relative_url }}" rel="stylesheet">
 
-<!-- ========================== -->
-<!-- ICON LIBRARIES             -->
-<!-- ========================== -->
-<!-- Bootstrap Icons (bundled with theme; fonts use relative paths in CSS) -->
+{% comment %} ========================== {% endcomment %}
+{% comment %} ICON LIBRARIES             {% endcomment %}
+{% comment %} ========================== {% endcomment %}
+{% comment %} Bootstrap Icons (bundled with theme; fonts use relative paths in CSS) {% endcomment %}
 <link rel="stylesheet" href="{{ '/assets/vendor/bootstrap-icons/font/bootstrap-icons.css' | relative_url }}">
 
-<!-- ========================== -->
-<!-- CUSTOM THEME STYLES       -->
-<!-- ========================== -->
-<!-- Primary theme stylesheet - Core styling and layout (SCSS pipeline) -->
+{% comment %} ========================== {% endcomment %}
+{% comment %} CUSTOM THEME STYLES       {% endcomment %}
+{% comment %} ========================== {% endcomment %}
+{% comment %} Primary theme stylesheet - Core styling and layout (SCSS pipeline) {% endcomment %}
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
 
-<!-- ========================== -->
-<!-- DESIGN TOKEN OVERRIDES     -->
-<!-- ========================== -->
-<!-- Inline <style> block emitted AFTER main.css so site-config `theme_color` keys
-     and any per-user Appearance overrides win over compiled defaults. -->
+{% comment %} ========================== {% endcomment %}
+{% comment %} DESIGN TOKEN OVERRIDES     {% endcomment %}
+{% comment %} ========================== {% endcomment %}
+{% comment %} Inline <style> block emitted AFTER main.css so site-config `theme_color` keys
+     and any per-user Appearance overrides win over compiled defaults. {% endcomment %}
 {% include core/tokens-inline.html %}
 
-<!-- Optional fork overrides: opt-in via `site.user_overrides: true` in _config.yml.
-     Loaded LAST so consumer rules win over both main.css and tokens-inline. -->
+{% comment %} Optional fork overrides: opt-in via `site.user_overrides: true` in _config.yml.
+     Loaded LAST so consumer rules win over both main.css and tokens-inline. {% endcomment %}
 {% if site.user_overrides %}
 <link rel="stylesheet" href="{{ '/assets/css/user-overrides.css' | relative_url }}">
 {% endif %}
 
-<!-- Statistics page specific styles -->
+{% comment %} Statistics page specific styles {% endcomment %}
 {% if page.layout == 'stats' or page.permalink == '/about/stats/' %}
 <link rel="stylesheet" href="{{ '/assets/css/stats.css' | relative_url }}">
 {% endif %}
 
-<!-- Consumer hook: end of <head>. Inject JSON-LD, font preloads, verification
+{% comment %} Consumer hook: end of <head>. Inject JSON-LD, font preloads, verification
      tags, or extra meta by shadowing _includes/custom/head.html in your site —
-     no fork of this file needed. The theme ships the stub empty. -->
+     no fork of this file needed. The theme ships the stub empty. {% endcomment %}
 {% include custom/head.html %}
 
-<!-- ========================== -->
-<!-- EXPERIMENTAL FRAMEWORKS   -->
-<!-- ========================== -->
-<!-- Tailwind CSS - Currently disabled, enable for utility-first styling -->
-<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+{% comment %} ========================== {% endcomment %}
+{% comment %} EXPERIMENTAL FRAMEWORKS   {% endcomment %}
+{% comment %} ========================== {% endcomment %}
+{% comment %} Tailwind CSS - Currently disabled, enable for utility-first styling {% endcomment %}
+{% comment %} <script src="https://cdn.tailwindcss.com"></script> {% endcomment %}
 
-<!-- Docs CSS - Alternative stylesheet, currently disabled due to scroll spy issues -->
-<!-- TODO: Replace with compiled Sass when scroll spy functionality is fixed -->
-<!-- Optional docs.css link removed; use _sass/core/_docs-layout.scss → main.css -->
+{% comment %} Docs CSS - Alternative stylesheet, currently disabled due to scroll spy issues {% endcomment %}
+{% comment %} TODO: Replace with compiled Sass when scroll spy functionality is fixed {% endcomment %}
+{% comment %} Optional docs.css link removed; use _sass/core/_docs-layout.scss → main.css {% endcomment %}

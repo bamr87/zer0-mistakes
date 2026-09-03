@@ -1,4 +1,4 @@
-<!--
+{% comment %}
   ===================================================================
   COLLECTION MANAGER — Jekyll collections overview
   ===================================================================
@@ -11,9 +11,9 @@
   Dependencies: Bootstrap 5 table/card/badge, site.collections
   Used by: pages/_about/settings/collections.md
   ===================================================================
--->
+{% endcomment %}
 
-<!-- Summary cards -->
+{% comment %} Summary cards {% endcomment %}
 <div class="row g-3 mb-4">
   <div class="col-6 col-lg-3">
     <div class="card text-center h-100 border-primary">
@@ -61,7 +61,7 @@
   </div>
 </div>
 
-<!-- Collections table -->
+{% comment %} Collections table {% endcomment %}
 <div class="table-responsive">
   <table class="table table-hover align-middle">
     <thead class="table-dark">
@@ -104,7 +104,7 @@
   </table>
 </div>
 
-<!-- Collection defaults from _config.yml -->
+{% comment %} Collection defaults from _config.yml {% endcomment %}
 <h5 class="mt-4 mb-3"><i class="bi bi-sliders me-1"></i> Collection Defaults</h5>
 <div class="accordion" id="collDefaultsAccordion">
   {% for collection in site.collections %}

@@ -1,5 +1,5 @@
 {% comment %} Feature: ZER0-066 {% endcomment %}
-<!--
+{% comment %}
   ===================================================================
   NANOBAR - Config-Driven Page Loading Progress Bar
   ===================================================================
@@ -42,7 +42,7 @@
 
   Library: https://github.com/jacoborus/nanobar
   ===================================================================
--->
+{% endcomment %}
 
 {%- assign nb = site.nanobar | default: empty -%}
 {%- if nb == empty or nb.enabled != false -%}
@@ -62,7 +62,7 @@
   {%- assign nb_steps = "30,76,100" | split: "," -%}
 {%- endif -%}
 
-<!-- ── Nanobar theme CSS (config-driven custom properties) ── -->
+{% comment %} ── Nanobar theme CSS (config-driven custom properties) ── {% endcomment %}
 <style id="nanobar-theme">
   :root {
     --nanobar-color:  {{ nb_color }};
@@ -99,11 +99,11 @@
   }
 </style>
 
-<!-- ── Nanobar scripts ── -->
+{% comment %} ── Nanobar scripts ── {% endcomment %}
 <script defer src="{{ '/assets/js/nanobar.min.js' | relative_url }}"></script>
 <script defer src="{{ '/assets/js/nanobar-init.js' | relative_url }}"></script>
 
-<!-- ── Bridge _config.yml values to JS ── -->
+{% comment %} ── Bridge _config.yml values to JS ── {% endcomment %}
 <script>
   window.zer0Nanobar = {
     classname: {{ nb_classname | jsonify }},

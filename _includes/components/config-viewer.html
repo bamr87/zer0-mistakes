@@ -1,4 +1,4 @@
-<!--
+{% comment %}
   ===================================================================
   CONFIG VIEWER — Accordion-based live configuration browser
   ===================================================================
@@ -12,9 +12,9 @@
   Dependencies: Bootstrap 5.3, assets/js/config-utility.js
   Data source: site.* variables (Liquid at build time)
   ===================================================================
--->
+{% endcomment %}
 
-<!-- ── Search bar ─────────────────────────────────────────────────── -->
+{% comment %} ── Search bar ─────────────────────────────────────────────────── {% endcomment %}
 <div class="input-group mb-3">
   <span class="input-group-text"><i class="bi bi-search"></i></span>
   <input type="text" class="form-control" id="cfg-search"
@@ -24,7 +24,7 @@
   </button>
 </div>
 
-<!-- ── Toolbar ─────────────────────────────────────────────────────── -->
+{% comment %} ── Toolbar ─────────────────────────────────────────────────────── {% endcomment %}
 <div class="d-flex justify-content-between align-items-center mb-3">
   <div class="btn-group btn-group-sm" role="group">
     <button class="btn btn-outline-secondary" id="cfg-expand-all" title="Expand all sections">
@@ -39,7 +39,7 @@
   </button>
 </div>
 
-<!-- ── Accordion ───────────────────────────────────────────────────── -->
+{% comment %} ── Accordion ───────────────────────────────────────────────────── {% endcomment %}
 <div class="accordion" id="configAccordion">
 
   {% comment %} ──────────── Section: Site Identity ──────────── {% endcomment %}
@@ -473,7 +473,7 @@
   </div>
   {% endif %}
 
-</div><!-- /configAccordion -->
+</div>{% comment %} /configAccordion {% endcomment %}
 
-<!-- ── Hidden full YAML for copy-all (populated by parent page) ──── -->
-<!-- The parent page must render: <pre id="cfg-full-yaml" class="d-none">…</pre> -->
+{% comment %} ── Hidden full YAML for copy-all (populated by parent page) ──── {% endcomment %}
+{% comment %} The parent page must render: <pre id="cfg-full-yaml" class="d-none">…</pre> {% endcomment %}

@@ -31,7 +31,7 @@
 {%- assign pv_fallback = false -%}
 {%- if site.page_views.fallback_local -%}{%- assign pv_fallback = true -%}{%- endif -%}
 
-<!-- Page-view counter configuration consumed by assets/js/page-views.js -->
+{% comment %} Page-view counter configuration consumed by assets/js/page-views.js {% endcomment %}
 <script id="pageViewsConfig" type="application/json">
 {
   "enabled": true,

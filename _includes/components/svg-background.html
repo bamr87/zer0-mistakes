@@ -1,4 +1,4 @@
-<!--
+{% comment %}
   ===================================================================
   SVG-BACKGROUND — Apply fffuel-style SVG background to a zone
   ===================================================================
@@ -20,7 +20,7 @@
     - _data/theme_backgrounds.yml    (asset paths)
     - _config.yml theme_background   (opacity / blend settings)
   ===================================================================
--->
+{% endcomment %}
 
 {% assign zone = include.zone | default: "body" %}
 {% assign skin = site.theme_skin | default: "dark" %}

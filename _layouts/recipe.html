@@ -31,9 +31,9 @@ layout: default
 
 <article class="recipe" data-recipe data-recipe-id="{{ _rl_id }}">
 
-  <!-- ================================ -->
-  <!-- HEADER                           -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} HEADER                           {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   <header class="recipe-header">
     {%- if _rl_cookbook or _rl_course_meta -%}
     <p class="recipe-eyebrow">
@@ -73,9 +73,9 @@ layout: default
     {%- endif -%}
   </header>
 
-  <!-- ================================ -->
-  <!-- HEADNOTE (the markdown body)     -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} HEADNOTE (the markdown body)     {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {%- assign _rl_body = content | strip -%}
   {%- if _rl_body != "" -%}
   <div class="recipe-headnote">
@@ -83,9 +83,9 @@ layout: default
   </div>
   {%- endif -%}
 
-  <!-- ================================ -->
-  <!-- FACT BAR + SCALER                -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} FACT BAR + SCALER                {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {%- include components/recipe-meta.html -%}
 
   {%- if _rl_show_scaler -%}
@@ -98,9 +98,9 @@ layout: default
   </noscript>
   {%- endif -%}
 
-  <!-- ================================ -->
-  <!-- INGREDIENTS + METHOD             -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} INGREDIENTS + METHOD             {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   <div class="row g-4 g-lg-5 recipe-body">
     <div class="col-lg-5">
       {%- include components/recipe-ingredients.html id_prefix=_rl_id -%}
@@ -124,14 +124,14 @@ layout: default
     </div>
   </div>
 
-  <!-- ================================ -->
-  <!-- RATIO / FORMULA                  -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} RATIO / FORMULA                  {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {%- include components/recipe-ratio.html -%}
 
-  <!-- ================================ -->
-  <!-- NOTES                            -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} NOTES                            {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {%- if page.notes and page.notes.size > 0 -%}
   <section class="recipe-notes">
     <h2 class="recipe-section-heading">
@@ -145,14 +145,14 @@ layout: default
   </section>
   {%- endif -%}
 
-  <!-- ================================ -->
-  <!-- NUTRITION                        -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} NUTRITION                        {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {%- include components/recipe-nutrition.html -%}
 
-  <!-- ================================ -->
-  <!-- COMMENTS                         -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} COMMENTS                         {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {%- if page.comments and site.giscus.enabled -%}
   <section class="post-comments mt-5 pt-4 border-top" id="comments">
     <h2 class="h4 mb-4"><i class="bi bi-chat-dots me-2" aria-hidden="true"></i>Comments</h2>

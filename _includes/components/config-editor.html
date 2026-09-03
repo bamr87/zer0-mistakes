@@ -1,4 +1,4 @@
-<!--
+{% comment %}
   ===================================================================
   CONFIG EDITOR — Form-based configuration builder
   ===================================================================
@@ -11,15 +11,15 @@
   Dependencies: Bootstrap 5.3, assets/js/config-utility.js
   Data source: site.* variables pre-populate fields
   ===================================================================
--->
+{% endcomment %}
 
 <div id="configEditor">
   <div class="row">
 
-    <!-- ── Left: Form ────────────────────────────────────────────────── -->
+    {% comment %} ── Left: Form ────────────────────────────────────────────────── {% endcomment %}
     <div class="col-lg-6 mb-4 mb-lg-0">
 
-      <!-- Site Identity -->
+      {% comment %} Site Identity {% endcomment %}
       <div class="card mb-3">
         <div class="card-header">
           <i class="bi bi-person-badge me-1"></i> Site Identity
@@ -53,7 +53,7 @@
         </div>
       </div>
 
-      <!-- GitHub -->
+      {% comment %} GitHub {% endcomment %}
       <div class="card mb-3">
         <div class="card-header">
           <i class="bi bi-github me-1"></i> GitHub
@@ -79,7 +79,7 @@
         </div>
       </div>
 
-      <!-- URLs & Deployment -->
+      {% comment %} URLs & Deployment {% endcomment %}
       <div class="card mb-3">
         <div class="card-header">
           <i class="bi bi-link-45deg me-1"></i> URLs &amp; Deployment
@@ -121,7 +121,7 @@
         </div>
       </div>
 
-      <!-- Personalization -->
+      {% comment %} Personalization {% endcomment %}
       <div class="card mb-3">
         <div class="card-header">
           <i class="bi bi-palette me-1"></i> Personalization
@@ -151,7 +151,7 @@
         </div>
       </div>
 
-      <!-- Analytics -->
+      {% comment %} Analytics {% endcomment %}
       <div class="card mb-3">
         <div class="card-header">
           <i class="bi bi-graph-up me-1"></i> Analytics
@@ -174,9 +174,9 @@
         </div>
       </div>
 
-    </div><!-- /col form -->
+    </div>{% comment %} /col form {% endcomment %}
 
-    <!-- ── Right: Live YAML Preview ──────────────────────────────────── -->
+    {% comment %} ── Right: Live YAML Preview ──────────────────────────────────── {% endcomment %}
     <div class="col-lg-6">
       <div class="sticky-top" style="top:80px">
         <div class="card">
@@ -201,7 +201,7 @@
           <strong>Tip:</strong> Changes are reflected instantly in the preview. Download the file and replace your project's <code>_config.yml</code>, then restart your dev server.
         </div>
       </div>
-    </div><!-- /col preview -->
+    </div>{% comment %} /col preview {% endcomment %}
 
-  </div><!-- /row -->
+  </div>{% comment %} /row {% endcomment %}
 </div>

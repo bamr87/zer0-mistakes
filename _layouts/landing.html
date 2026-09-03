@@ -2,7 +2,7 @@
 # Feature: ZER0-019
 layout: root
 ---
-<!--
+{% comment %}
   ===================================================================
   LANDING LAYOUT - Welcome page for first-time visitors
   ===================================================================
@@ -43,7 +43,7 @@ layout: root
   - Custom CSS for enhanced styling
   - Responsive images and icons
   ===================================================================
--->
+{% endcomment %}
 
 {%- comment -%}
   Landing copy is data-driven via _data/landing.yml. Defaults shipped with the
@@ -53,9 +53,9 @@ layout: root
 {%- assign landing = site.data.landing -%}
 {%- assign github_url = site.resources.github_repo | default: "" | join: "" -%}
 
-<!-- ================================ -->
-<!-- HERO SECTION                     -->
-<!-- ================================ -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} HERO SECTION                     {% endcomment %}
+{% comment %} ================================ {% endcomment %}
 <div class="bg-primary zer0-bg-hero text-white position-relative overflow-hidden landing-hero">
     <div class="container-xl py-5 px-4 px-md-5">
         <div class="row align-items-center min-vh-50 g-4 g-lg-5">
@@ -130,9 +130,9 @@ layout: root
     </div>
 </div>
 
-<!-- ================================ -->
-<!-- MAIN CONTENT AREA               -->
-<!-- ================================ -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} MAIN CONTENT AREA               {% endcomment %}
+{% comment %} ================================ {% endcomment %}
 {% include landing/landing-quick-links.html %}
 
 {%- comment -%}
@@ -145,9 +145,9 @@ layout: root
     {{ content }}
 </div>
 
-<!-- ================================ -->
-<!-- FEATURES SECTION (data-driven)   -->
-<!-- ================================ -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} FEATURES SECTION (data-driven)   {% endcomment %}
+{% comment %} ================================ {% endcomment %}
 {%- if landing.features.items -%}
 <section id="features" class="zer0-section bg-body-tertiary" aria-labelledby="features-heading">
   <div class="container-xl py-5 px-4 px-md-5">
@@ -179,9 +179,9 @@ layout: root
 </section>
 {%- endif -%}
 
-<!-- ================================ -->
-<!-- QUICK START SECTION (data-driven)-->
-<!-- ================================ -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} QUICK START SECTION (data-driven){% endcomment %}
+{% comment %} ================================ {% endcomment %}
 {%- comment -%}
   Rendered only when the site ships a `get_started` block in
   _data/landing.yml. The install cards advertise THEME installation
@@ -203,7 +203,7 @@ layout: root
 </section>
 {%- endif -%}
 
-<!-- ================================ -->
-<!-- AUTHOR / E-E-A-T SECTION        -->
-<!-- ================================ -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} AUTHOR / E-E-A-T SECTION        {% endcomment %}
+{% comment %} ================================ {% endcomment %}
 {% include components/author-eeat.html %}

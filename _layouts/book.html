@@ -21,9 +21,9 @@ layout: root
 {%- assign _cover = page.cover_image | default: page.preview -%}
 
 <article class="book-landing" itemscope itemtype="https://schema.org/Book">
-  <!-- ================================ -->
-  <!-- COVER HERO                       -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} COVER HERO                       {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   <header class="book-hero zer0-bg-hero py-5">
     <div class="container-xl">
       <div class="row g-5 align-items-center justify-content-center">
@@ -69,9 +69,9 @@ layout: root
     <div class="row justify-content-center">
       <div class="col-lg-9 col-xl-8">
 
-        <!-- ================================ -->
-        <!-- ABOUT THIS BOOK (page body)      -->
-        <!-- ================================ -->
+        {% comment %} ================================ {% endcomment %}
+        {% comment %} ABOUT THIS BOOK (page body)      {% endcomment %}
+        {% comment %} ================================ {% endcomment %}
         {%- assign _body = content | strip -%}
         {%- if _body != "" -%}
         <section class="book-about mb-5">
@@ -79,14 +79,14 @@ layout: root
         </section>
         {%- endif -%}
 
-        <!-- ================================ -->
-        <!-- TABLE OF CONTENTS                -->
-        <!-- ================================ -->
+        {% comment %} ================================ {% endcomment %}
+        {% comment %} TABLE OF CONTENTS                {% endcomment %}
+        {% comment %} ================================ {% endcomment %}
         {%- include components/book-toc.html book=_slug -%}
 
-        <!-- ================================ -->
-        <!-- AI COLOPHON                      -->
-        <!-- ================================ -->
+        {% comment %} ================================ {% endcomment %}
+        {% comment %} AI COLOPHON                      {% endcomment %}
+        {% comment %} ================================ {% endcomment %}
         {%- if page.illustration_style or page.generator -%}
         <aside class="book-colophon card border-0 bg-body-tertiary mt-5">
           <div class="card-body">

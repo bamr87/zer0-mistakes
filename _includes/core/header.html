@@ -1,5 +1,5 @@
 {% comment %} Feature: ZER0-011 {% endcomment %}
-<!--
+{% comment %}
   ===================================================================
   HEADER - Main Navigation and Site Header
   ===================================================================
@@ -36,40 +36,40 @@
   - When `position: navbar`, the bar mounts inside `#top-progress-target` below
   - Otherwise it floats fixed to the viewport (top or bottom)
   ===================================================================
--->
+{% endcomment %}
 
-<!-- ================================ -->
-<!-- SKIP TO CONTENT LINK            -->
-<!-- ================================ -->
-<!-- UI strings resolve per page language (core/i18n.html sets `ui`) -->
+{% comment %} ================================ {% endcomment %}
+{% comment %} SKIP TO CONTENT LINK            {% endcomment %}
+{% comment %} ================================ {% endcomment %}
+{% comment %} UI strings resolve per page language (core/i18n.html sets `ui`) {% endcomment %}
 {%- include core/i18n.html -%}
-<!-- Accessibility: allows keyboard users to skip navigation -->
+{% comment %} Accessibility: allows keyboard users to skip navigation {% endcomment %}
 <a href="#main-content" class="visually-hidden-focusable position-absolute top-0 start-0 z-3 m-3 btn btn-primary">
   {{ ui.skip_main_content | default: "Skip to main content" }}
 </a>
 
 <header id="navbar" class="container-fluid text-center fixed-top" role="banner">
 
-    <!-- ================================ -->
-    <!-- TOP NAVIGATION BAR              -->
-    <!-- ================================ -->
+    {% comment %} ================================ {% endcomment %}
+    {% comment %} TOP NAVIGATION BAR              {% endcomment %}
+    {% comment %} ================================ {% endcomment %}
     <div class="navbar navbar-expand-lg bg-body-tertiary flex-nowrap w-100 bottom-shadow">
 
-        <!-- ========================== -->
-        <!-- MAIN NAVIGATION CONTAINER -->
-        <!-- ========================== -->
+        {% comment %} ========================== {% endcomment %}
+        {% comment %} MAIN NAVIGATION CONTAINER {% endcomment %}
+        {% comment %} ========================== {% endcomment %}
         <nav class="container-fluid order-2 order-lg-1 d-flex align-items-center gap-1 flex-nowrap navbar-main w-100" aria-label="Primary navigation">
 
-            <!-- Leading cluster: sidebar toggle + brand + titles (grid column 1 on lg+) -->
+            {% comment %} Leading cluster: sidebar toggle + brand + titles (grid column 1 on lg+) {% endcomment %}
             <div class="navbar-main-start d-flex align-items-center gap-1 gap-lg-2 min-w-0 flex-shrink-1 flex-grow-1">
 
-            <!-- ========================== -->
-            <!-- MOBILE MENU CONTROLS      -->
-            <!-- ========================== -->
+            {% comment %} ========================== {% endcomment %}
+            {% comment %} MOBILE MENU CONTROLS      {% endcomment %}
+            {% comment %} ========================== {% endcomment %}
             
-            <!-- Left Sidebar Toggle - Mobile view only. Uses the shared
+            {% comment %} Left Sidebar Toggle - Mobile view only. Uses the shared
                  resolver (navigation/sidebar-config.html) so this gate can
-                 never drift from the default layout's aside. -->
+                 never drift from the default layout's aside. {% endcomment %}
             {% include navigation/sidebar-config.html %}
 
             {%- comment -%}
@@ -117,11 +117,11 @@
             </div>
             {% endif %}
 
-            <!-- ========================== -->
-            <!-- BRAND AND HOME NAVIGATION -->
-            <!-- ========================== -->
+            {% comment %} ========================== {% endcomment %}
+            {% comment %} BRAND AND HOME NAVIGATION {% endcomment %}
+            {% comment %} ========================== {% endcomment %}
             <div class="navbar-brand-group d-inline-flex align-items-center gap-2">
-                <!-- Home Navigation Button (Desktop only) -->
+                {% comment %} Home Navigation Button (Desktop only) {% endcomment %}
                 <div class="navbar-home-links d-none" role="navigation" aria-label="Quick navigation">
                     {%- assign nav_home = site.data.navigation.home -%}
                     {%- if nav_home and nav_home.size > 0 -%}
@@ -137,18 +137,18 @@
                     {%- endif -%}
                 </div>
                 
-                <!-- Brand Logo Link to Root -->
-                <!-- Logo path configured in _config.yml -->
+                {% comment %} Brand Logo Link to Root {% endcomment %}
+                {% comment %} Logo path configured in _config.yml {% endcomment %}
                 {% capture logo_path %}{{ site.logo }}{% endcapture %}
                 <a class="navbar-brand" href="{{ site.baseurl }}/" aria-label="Home - {{ site.title }}" {% if page.url == '/' %}aria-current="page"{% endif %}>
                     <img src="{{ logo_path | relative_url }}" alt="{{ site.title }} logo" width="30" height="30">
                 </a>
             </div>
             
-            <!-- ========================== -->
-            <!-- SITE BRANDING SECTION     -->
-            <!-- ========================== -->
-            <!-- Site title and subtitle display -->
+            {% comment %} ========================== {% endcomment %}
+            {% comment %} SITE BRANDING SECTION     {% endcomment %}
+            {% comment %} ========================== {% endcomment %}
+            {% comment %} Site title and subtitle display {% endcomment %}
             {% include core/branding.html %}
 
             </div>
@@ -160,21 +160,21 @@
             {%- endcomment -%}
             {% include navigation/navbar-mobile-quicklinks.html %}
     
-            <!-- ========================== -->
-            <!-- MAIN NAVIGATION MENU      -->
-            <!-- ========================== -->
-            <!-- Primary navigation items from _data/navigation.yml -->
+            {% comment %} ========================== {% endcomment %}
+            {% comment %} MAIN NAVIGATION MENU      {% endcomment %}
+            {% comment %} ========================== {% endcomment %}
+            {% comment %} Primary navigation items from _data/navigation.yml {% endcomment %}
             {% include navigation/navbar.html %}
 
-            <!-- ========================== -->
-            <!-- UTILITY CONTROLS          -->
-            <!-- ========================== -->
+            {% comment %} ========================== {% endcomment %}
+            {% comment %} UTILITY CONTROLS          {% endcomment %}
+            {% comment %} ========================== {% endcomment %}
             <div class="navbar-utility-controls d-flex align-items-center flex-shrink-0" role="group" aria-label="Utility controls">
-                <!-- Language selection lives in the Settings offcanvas
+                {% comment %} Language selection lives in the Settings offcanvas
                      (components/info-section.html, Appearance tab) so the bar
-                     keeps its width for the main navigation items. -->
+                     keeps its width for the main navigation items. {% endcomment %}
 
-                <!-- Search Modal Toggle -->
+                {% comment %} Search Modal Toggle {% endcomment %}
                 <button
                     class="btn nav-search-button"
                     type="button"
@@ -189,7 +189,7 @@
                     <kbd class="nav-search-kbd d-none d-xl-inline-flex" aria-hidden="true">/</kbd>
                 </button>
 
-                <!-- Settings Offcanvas Toggle -->
+                {% comment %} Settings Offcanvas Toggle {% endcomment %}
                 <button
                     class="btn nav-settings-button d-none d-lg-inline-flex"
                     type="button"
@@ -202,7 +202,7 @@
                     <i class="{{site.default_icon}} bi-gear" aria-hidden="true"></i>
                 </button>
 
-                <!-- Navigation Menu Toggle - Mobile view -->
+                {% comment %} Navigation Menu Toggle - Mobile view {% endcomment %}
                 {%- if site.navigation.unified_mobile_drawer -%}
                   {%- assign _menu_target = "#zer0UnifiedDrawer" -%}
                   {%- assign _menu_controls = "zer0UnifiedDrawer" -%}
@@ -225,12 +225,12 @@
         </nav>
     </div>
 
-    <!-- ========================== -->
-    <!-- PROGRESS BAR MOUNT POINT  -->
-    <!-- ========================== -->
-    <!-- Nanobar mounts here when site.nanobar.position == "navbar" so the bar
+    {% comment %} ========================== {% endcomment %}
+    {% comment %} PROGRESS BAR MOUNT POINT  {% endcomment %}
+    {% comment %} ========================== {% endcomment %}
+    {% comment %} Nanobar mounts here when site.nanobar.position == "navbar" so the bar
          renders as a thin strip directly under the header. For "top" / "bottom"
-         the bar floats fixed to the viewport and no mount is needed. -->
+         the bar floats fixed to the viewport and no mount is needed. {% endcomment %}
     {%- assign _nb_pos = site.nanobar.position | default: "top" -%}
     {%- if site.nanobar.enabled != false and _nb_pos == "navbar" -%}
     <div id="top-progress-target" class="nanobar-mount" aria-hidden="true"></div>

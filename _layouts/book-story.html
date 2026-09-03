@@ -20,9 +20,9 @@ layout: root
 {%- assign _book_page = site.books | where: "book", _slug | where: "layout", "book" | first -%}
 
 <article class="book-story container-xl py-4 py-md-5" itemscope itemtype="https://schema.org/Chapter">
-  <!-- ================================ -->
-  <!-- STORY HEADER                     -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} STORY HEADER                     {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   <header class="book-story-header text-center mb-4 mb-md-5">
     {%- if _book_page -%}
     <nav aria-label="Book">
@@ -40,9 +40,9 @@ layout: root
     {%- endif -%}
   </header>
 
-  <!-- ================================ -->
-  <!-- STORY BODY                       -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} STORY BODY                       {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   <div class="book-story-content" itemprop="text">
     {{ content }}
   </div>
@@ -51,16 +51,16 @@ layout: root
   <p class="book-the-end fs-4 mt-5">The End</p>
   {%- endunless -%}
 
-  <!-- ================================ -->
-  <!-- STORY NAVIGATION                 -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} STORY NAVIGATION                 {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {%- if page.chapter -%}
     {%- include components/book-nav.html book=_slug chapter=page.chapter -%}
   {%- endif -%}
 
-  <!-- ================================ -->
-  <!-- ILLUSTRATION COLOPHON            -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} ILLUSTRATION COLOPHON            {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {%- if page.illustrations and page.illustrations.size > 0 -%}
   <details class="book-colophon mt-4">
     <summary class="small"><i class="bi bi-stars me-1" aria-hidden="true"></i>How the illustrations in this story were made</summary>
@@ -79,9 +79,9 @@ layout: root
   </details>
   {%- endif -%}
 
-  <!-- ================================ -->
-  <!-- COMMENTS                         -->
-  <!-- ================================ -->
+  {% comment %} ================================ {% endcomment %}
+  {% comment %} COMMENTS                         {% endcomment %}
+  {% comment %} ================================ {% endcomment %}
   {%- if page.comments and site.giscus.enabled -%}
   <section class="post-comments mt-5 pt-4 border-top" id="comments">
     <h2 class="h4 mb-4"><i class="bi bi-chat-dots me-2" aria-hidden="true"></i>Comments</h2>

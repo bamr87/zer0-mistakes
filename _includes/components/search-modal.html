@@ -1,5 +1,5 @@
 {% comment %} Feature: ZER0-032 {% endcomment %}
-<!--
+{% comment %}
   ===================================================================
   SEARCH MODAL - Site-wide Search Popup
   ===================================================================
@@ -16,7 +16,7 @@
     prevents a dead link on remote-theme Pages builds that lack /sitemap/.
   - Keyboard shortcut handled by navigation keyboard module ("/")
   ===================================================================
--->
+{% endcomment %}
 
 {%- include core/i18n.html lang=include.lang -%}
 {%- assign search_placeholder = ui.search_placeholder_text | default: "Enter your search term..." -%}

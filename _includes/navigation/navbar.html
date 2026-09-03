@@ -1,25 +1,25 @@
 {% comment %} Features: ZER0-049, ZER0-055 {% endcomment %}
-<!-- 
+{% comment %} 
     file: navbar.html
     path: /includes/navbar.html
     includes:
     purpose: Offcanvas main navigation following Bootstrap 5 best practices
              with hover-activated dropdowns for desktop and accessible interactions
- -->
+ {% endcomment %}
 
-<!-- Navigation Links - Responsive Offcanvas (inline at lg+, offcanvas below) -->
+{% comment %} Navigation Links - Responsive Offcanvas (inline at lg+, offcanvas below) {% endcomment %}
 {%- include core/i18n.html -%}
 <div class="offcanvas-lg offcanvas-end" tabindex="-1" id="bdNavbar" aria-labelledby="mainNavOffcanvasLabel">
 
-    <!-- Main Navigation Header - Offcanvas -->
+    {% comment %} Main Navigation Header - Offcanvas {% endcomment %}
     <div class="offcanvas-header border-bottom">
         <h2 class="offcanvas-title h5 mb-0" id="mainNavOffcanvasLabel">{{ ui.main_nav_label | default: "Main Navigation" }}</h2>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close navigation menu" data-bs-target="#bdNavbar"></button>
     </div>
 
-    <!-- Main Navigation Body - Offcanvas -->
+    {% comment %} Main Navigation Body - Offcanvas {% endcomment %}
     <div class="offcanvas-body">
-        <!-- Desktop: width is the grid middle track; labels ellipsis or icon-only via container query -->
+        {% comment %} Desktop: width is the grid middle track; labels ellipsis or icon-only via container query {% endcomment %}
         <div class="bd-navbar-nav-viewport">
         <ul class="navbar-nav justify-content-lg-center text-start flex-grow-1">
             <li class="nav-item d-lg-none">
@@ -44,7 +44,7 @@
 
                 {%- if has_children -%}
                     <li class="nav-item dropdown d-flex align-items-center nav-hover-dropdown">
-                        <!-- Parent link navigates directly -->
+                        {% comment %} Parent link navigates directly {% endcomment %}
                         <a
                             class="nav-link"
                             href="{{ link.url | relative_url }}"
@@ -58,9 +58,9 @@
                             <span class="nav-link-text">{{ link.title }}</span>
                         </a>
 
-                        <!-- Split toggle opens the dropdown (click on mobile, hover on desktop) -->
-                        <!-- Note: No data-bs-toggle="dropdown" — custom JS handles all interactions
-                             to avoid Bootstrap's native handler conflicting with our toggle logic -->
+                        {% comment %} Split toggle opens the dropdown (click on mobile, hover on desktop) {% endcomment %}
+                        {% comment %} Note: No data-bs-toggle="dropdown" — custom JS handles all interactions
+                             to avoid Bootstrap's native handler conflicting with our toggle logic {% endcomment %}
                         <button
                             class="nav-link dropdown-toggle dropdown-toggle-split ms-1"
                             type="button"
@@ -165,8 +165,8 @@
     </div>
 </div>
 
-<!-- 
+{% comment %} 
   Navigation styles are now in _sass/core/_navbar.scss
   Navigation scripts are now in assets/js/navigation.js
   These are loaded automatically via the theme's asset pipeline
--->
+{% endcomment %}

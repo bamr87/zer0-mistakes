@@ -1,5 +1,5 @@
 {% comment %} Feature: ZER0-046 {% endcomment %}
-<!--
+{% comment %}
   ===================================================================
   FOOTER - Comprehensive Site Footer with Branding & Navigation
   ===================================================================
@@ -33,12 +33,12 @@
   - Guard optional fields (address/phone/email) to avoid empty output
   - Use relative_url for internal links to respect baseurl
   ===================================================================
--->
+{% endcomment %}
 
 {%- include core/i18n.html lang=include.lang -%}
 <footer class="bd-footer border-top" role="contentinfo">
   {% assign footer_page_urls = site.html_pages | map: "url" | join: "|" | prepend: "|" | append: "|" %}
-  <!-- Powered by Row -->
+  {% comment %} Powered by Row {% endcomment %}
   <div class="container-xl footer-powered-by">
     <p class="footer-powered-by-copyright text-center mb-0">
       &copy; {{ site.time | date: "%Y" }} {{ site.name | default: site.title }}
@@ -110,12 +110,12 @@
     </div>
   </div>
 
-  <!-- Branding and Navigation Block — full-width dark background -->
+  {% comment %} Branding and Navigation Block — full-width dark background {% endcomment %}
   <div class="bg-dark text-light footer-dark-block">
     <div class="container-xl">
-        <!-- Top: Site info + Quick Links + Social -->
+        {% comment %} Top: Site info + Quick Links + Social {% endcomment %}
         <div class="row mb-3 mb-lg-4 g-2 g-lg-3 footer-nav-columns justify-content-center">
-          <!-- Site Info -->
+          {% comment %} Site Info {% endcomment %}
           <div class="col-12 col-md-3 col-lg-3 mb-2 mb-lg-3 order-0 order-md-1 order-lg-1">
             <h2 class="footer-section-title text-uppercase h6 mb-0">{{ site.title }}</h2>
             {% if site.address %}<p class="mb-1">{{ site.address }}</p>{% endif %}
@@ -123,12 +123,12 @@
             {% if site.email %}<p class="mb-0"><a href="mailto:{{ site.email }}" class="text-light text-decoration-none">{{ site.email }}</a></p>{% endif %}
           </div>
 
-          <!-- Quick Links
+          {% comment %} Quick Links
                Resolution order:
                  1. site.footer_quick_links  (array of {label, url}) — explicit override
                  2. Auto-detection: only render links whose target pages
                     actually exist in the build. Prevents 404s on bare-minimum
-                    sites that haven't created /about/, /services/, etc. -->
+                    sites that haven't created /about/, /services/, etc. {% endcomment %}
           <div class="col-6 col-md-3 col-lg-3 mb-2 mb-lg-3 order-2 order-md-2 order-lg-2">
             <h2 class="footer-section-title text-uppercase h6 mb-0">Quick Links</h2>
             <ul class="list-unstyled" aria-label="Footer quick links">
@@ -171,7 +171,7 @@
             </ul>
           </div>
 
-          <!-- Latest Posts (dynamic) -->
+          {% comment %} Latest Posts (dynamic) {% endcomment %}
           {% assign posts_count = site.posts | size %}
           {% if posts_count and posts_count > 0 %}
           <div class="col-12 col-md-3 col-lg-3 mb-2 mb-lg-3 order-4 order-md-3 order-lg-3">
@@ -186,7 +186,7 @@
           </div>
           {% endif %}
 
-          <!-- Social & RSS -->
+          {% comment %} Social & RSS {% endcomment %}
           <div class="col-6 col-md-3 col-lg-3 mb-2 mb-lg-3 order-3 order-md-4 order-lg-4">
             <h2 class="footer-section-title text-uppercase h6 mb-0">Follow Us</h2>
             <ul class="list-inline mb-0" aria-label="Social links">
@@ -224,7 +224,7 @@
           </div>
         </div>
 
-        <!-- Middle: Subscribe + Policies -->
+        {% comment %} Middle: Subscribe + Policies {% endcomment %}
         <div class="row mb-3 mb-lg-4 align-items-center justify-content-center g-2 footer-subscribe-row">
           <div class="col-12 col-md-8 col-lg-8">
             <form class="row g-2 footer-subscribe-form" aria-label="Newsletter signup" onsubmit="return false;">
@@ -262,7 +262,7 @@
           </div>
         </div>
 
-      <!-- Bottom: Copyright -->
+      {% comment %} Bottom: Copyright {% endcomment %}
       <div class="text-center">
         <p class="mb-0">&copy; {{ site.time | date: "%Y" }} {{ site.title | default: site.name }}. All Rights Reserved.</p>
       </div>
@@ -278,9 +278,9 @@
     immediately after </footer> is visually identical to nesting them inside.
   {%- endcomment -%}
 
-  <!-- Back to Top Button (controlled by assets/js/back-to-top.js) -->
-  <!-- Positioning/stacking handled by _sass/components/_back-to-top.scss
-       via the FAB tokens (bottom-up: back-to-top → chat toggle → TOC FAB) -->
+  {% comment %} Back to Top Button (controlled by assets/js/back-to-top.js) {% endcomment %}
+  {% comment %} Positioning/stacking handled by _sass/components/_back-to-top.scss
+       via the FAB tokens (bottom-up: back-to-top → chat toggle → TOC FAB) {% endcomment %}
   <a
     id="backToTopBtn"
     href="#"

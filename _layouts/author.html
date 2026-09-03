@@ -66,9 +66,9 @@ hide_intro: true
 {% assign latest_date = nil %}
 {% for doc in author_docs %}{% if doc.date %}{% assign latest_date = doc.date %}{% break %}{% endif %}{% endfor %}
 
-<!-- ========================== -->
-<!-- BREADCRUMB                 -->
-<!-- ========================== -->
+{% comment %} ========================== {% endcomment %}
+{% comment %} BREADCRUMB                 {% endcomment %}
+{% comment %} ========================== {% endcomment %}
 {%- comment -%}
   Only link the /authors/ breadcrumb crumb when that index page actually exists
   in the build. A pure remote-theme Pages consumer doesn't get the
@@ -98,9 +98,9 @@ hide_intro: true
   </ol>
 </nav>
 
-<!-- ========================== -->
-<!-- PROFILE HERO               -->
-<!-- ========================== -->
+{% comment %} ========================== {% endcomment %}
+{% comment %} PROFILE HERO               {% endcomment %}
+{% comment %} ========================== {% endcomment %}
 <header class="author-hero card border-0 shadow-sm mb-4" itemscope itemtype="https://schema.org/Person">
   <div class="card-body p-4 p-md-5">
     <div class="d-flex flex-column flex-sm-row align-items-center align-items-sm-start gap-4">
@@ -118,14 +118,14 @@ hide_intro: true
         {% if author_data.tagline %}<p class="author-hero__tagline lead mb-2" itemprop="slogan">{{ author_data.tagline }}</p>{% endif %}
         {% if author_data.bio %}<p class="text-body-secondary mb-3" itemprop="description">{{ author_data.bio }}</p>{% endif %}
 
-        <!-- Hero meta: location + latest activity -->
+        {% comment %} Hero meta: location + latest activity {% endcomment %}
         <div class="author-hero__meta d-flex flex-wrap justify-content-center justify-content-sm-start gap-3 text-body-secondary small mb-3">
           {% if author_data.location %}<span itemprop="homeLocation"><i class="bi bi-geo-alt me-1" aria-hidden="true"></i>{{ author_data.location }}</span>{% endif %}
           <span><i class="bi bi-collection me-1" aria-hidden="true"></i>{{ author_docs.size }} contribution{% unless author_docs.size == 1 %}s{% endunless %}</span>
           {% if latest_date %}<span><i class="bi bi-clock-history me-1" aria-hidden="true"></i>Last active {{ latest_date | date: "%b %Y" }}</span>{% endif %}
         </div>
 
-        <!-- Expertise chips -->
+        {% comment %} Expertise chips {% endcomment %}
         {% assign hero_chips = author_data.topics | default: author_data.expertise %}
         {% if hero_chips %}
           <div class="author-expertise d-flex flex-wrap justify-content-center justify-content-sm-start gap-1 mb-3">
@@ -135,7 +135,7 @@ hide_intro: true
           </div>
         {% endif %}
 
-        <!-- Social links -->
+        {% comment %} Social links {% endcomment %}
         <div class="author-social d-flex flex-wrap justify-content-center justify-content-sm-start gap-2">
           {% if author_data.github %}<a href="https://github.com/{{ author_data.github }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" itemprop="sameAs"><i class="bi bi-github me-1" aria-hidden="true"></i>GitHub</a>{% endif %}
           {% if author_data.twitter %}<a href="https://x.com/{{ author_data.twitter }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" aria-label="X" itemprop="sameAs"><i class="bi bi-twitter-x me-1" aria-hidden="true"></i>X</a>{% endif %}
@@ -155,14 +155,14 @@ hide_intro: true
 </header>
 
 {% if author_docs.size > 0 %}
-<!-- ========================== -->
-<!-- INTERACTIVE CONTENT HUB    -->
-<!-- ========================== -->
+{% comment %} ========================== {% endcomment %}
+{% comment %} INTERACTIVE CONTENT HUB    {% endcomment %}
+{% comment %} ========================== {% endcomment %}
 <section class="author-content" data-author-profile>
 
   <h2 class="visually-hidden">Contributions by {{ author_name }}</h2>
 
-  <!-- Stats dashboard = interactive type filters (each card filters the grid) -->
+  {% comment %} Stats dashboard = interactive type filters (each card filters the grid) {% endcomment %}
   <div class="author-stats" role="group" aria-label="Filter contributions by type">
     <button type="button" class="author-stat is-active" data-filter="all" aria-pressed="true">
       <span class="author-stat__num">{{ author_docs.size }}</span>
@@ -188,7 +188,7 @@ hide_intro: true
     {% endfor %}
   </div>
 
-  <!-- Controls: search + sort + live result count -->
+  {% comment %} Controls: search + sort + live result count {% endcomment %}
   <div class="author-controls d-flex flex-column flex-md-row gap-2 align-items-stretch align-items-md-center mt-3">
     <div class="author-search flex-grow-1 position-relative">
       <i class="bi bi-search author-search__icon" aria-hidden="true"></i>
@@ -208,7 +208,7 @@ hide_intro: true
     </div>
   </div>
 
-  <!-- Topic / tag cloud (clickable filters) -->
+  {% comment %} Topic / tag cloud (clickable filters) {% endcomment %}
   {% if unique_tags.size > 0 %}
   <div class="author-tagcloud mt-3" role="group" aria-label="Filter by topic">
     <span class="author-tagcloud__label text-body-secondary small me-1"><i class="bi bi-tags me-1" aria-hidden="true"></i>Topics:</span>
@@ -218,12 +218,12 @@ hide_intro: true
   </div>
   {% endif %}
 
-  <!-- Live result count (announced to screen readers) -->
+  {% comment %} Live result count (announced to screen readers) {% endcomment %}
   <p class="author-resultcount text-body-secondary small mt-3 mb-2" data-author-count aria-live="polite">
     Showing {{ author_docs.size }} of {{ author_docs.size }}
   </p>
 
-  <!-- Content grid -->
+  {% comment %} Content grid {% endcomment %}
   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="author-grid" data-author-grid>
     {% for doc in author_docs %}
       {% assign dtags = doc.tags | join: "|" | downcase %}
@@ -237,7 +237,7 @@ hide_intro: true
     {% endfor %}
   </div>
 
-  <!-- No-results state (shown by JS when filters match nothing) -->
+  {% comment %} No-results state (shown by JS when filters match nothing) {% endcomment %}
   <div class="author-noresults text-center py-5 d-none" data-author-noresults>
     <i class="bi bi-search fs-1 text-muted" aria-hidden="true"></i>
     <p class="text-muted mt-3 mb-2">No contributions match your filters.</p>
@@ -245,7 +245,7 @@ hide_intro: true
   </div>
 </section>
 
-<!-- Structured data: this author's contributions as a CollectionPage / ItemList -->
+{% comment %} Structured data: this author's contributions as a CollectionPage / ItemList {% endcomment %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -280,7 +280,7 @@ hide_intro: true
    body content (e.g. the Guest profile, which is a contribution guide). {% endcomment %}
 {% assign page_body = content | strip %}
 {% if page_body == "" %}
-<!-- Empty state -->
+{% comment %} Empty state {% endcomment %}
 <div class="text-center py-5">
   <i class="bi bi-journal-x fs-1 text-muted" aria-hidden="true"></i>
   <p class="text-muted mt-3">No published content from this author yet.</p>

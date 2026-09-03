@@ -1,4 +1,4 @@
-<!--
+{% comment %}
   ===================================================================
   ENV DASHBOARD — Full environment and build information
   ===================================================================
@@ -12,9 +12,9 @@
   Dependencies: Bootstrap 5 card/table, Jekyll variables
   Used by: pages/_about/settings/environment.md
   ===================================================================
--->
+{% endcomment %}
 
-<!-- Environment Overview Cards -->
+{% comment %} Environment Overview Cards {% endcomment %}
 <div class="row g-3 mb-4">
   <div class="col-6 col-lg-3">
     <div class="card text-center h-100 border-primary">
@@ -56,7 +56,7 @@
 
 <div class="row g-4">
 
-  <!-- Site Configuration -->
+  {% comment %} Site Configuration {% endcomment %}
   <div class="col-lg-6">
     <div class="card h-100">
       <div class="card-header"><i class="bi bi-globe me-1"></i> Site Configuration</div>
@@ -76,7 +76,7 @@
     </div>
   </div>
 
-  <!-- Theme & Repository Info -->
+  {% comment %} Theme & Repository Info {% endcomment %}
   <div class="col-lg-6">
     <div class="card h-100">
       <div class="card-header"><i class="bi bi-palette me-1"></i> Theme & Repository</div>
@@ -105,7 +105,7 @@
   </div>
 </div>
 
-<!-- Plugins List -->
+{% comment %} Plugins List {% endcomment %}
 <h5 class="mt-4 mb-3"><i class="bi bi-plug me-1"></i> Active Plugins</h5>
 {% if site.plugins %}
   <div class="row g-2">
@@ -124,7 +124,7 @@
   <p class="text-body-secondary">No plugins configured.</p>
 {% endif %}
 
-<!-- URL Comparison (Dev vs Production) -->
+{% comment %} URL Comparison (Dev vs Production) {% endcomment %}
 <h5 class="mt-4 mb-3"><i class="bi bi-link-45deg me-1"></i> URL Configuration</h5>
 <div class="table-responsive">
   <table class="table table-sm">
@@ -143,7 +143,7 @@
   </table>
 </div>
 
-<!-- Quick links back to admin -->
+{% comment %} Quick links back to admin {% endcomment %}
 <div class="mt-4">
   <a href="{{ '/about/config/' | relative_url }}" class="btn btn-outline-secondary btn-sm me-2">
     <i class="bi bi-gear me-1"></i> Full Configuration

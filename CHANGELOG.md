@@ -50,6 +50,24 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Changed
 
+- **Developer doc banners no longer ship to visitors (#375)** — the 1,065
+  multi-line {% raw %}`<!-- ... -->`{% endraw %} banners documenting `_includes/**` and
+  `_layouts/**` (file paths, dependency lists, design rationale) are now Liquid
+  {% raw %}`{% comment %}`{% endraw %} blocks, which Jekyll strips at build time. The
+  in-source documentation is unchanged; only the delimiters moved. Across a
+  415-page build the delivered HTML drops from 91.5 MB to 71.6 MB — **21.7%** —
+  because an include's banner is re-emitted at every call site, not once:
+  `/authors/default/` alone carried 130,840 bytes of it from `post-card.html`
+  rendering 1,100 times. Per page: 47,898 comment bytes in 344 blocks → 111
+  bytes in 3. The four boundary markers inside Google's own copy-paste
+  analytics snippets are kept verbatim, and comments inside
+  `<script>`, `<style>`, `<pre>` or a Liquid raw block are untouched. A new
+  `test_developer_doc_banners_are_liquid` guard in `test/test_core.sh` fails if
+  any reappear. Two side effects worth knowing: reading-time estimates were
+  counting the banners and are now correct (`/docs/` claimed 63 minutes, really
+  24), and three pages that leak unescaped Liquid emit less as a result — those
+  leaks are pre-existing and filed separately.
+
 - **Setup wizard: live preview, vertical stepper, draft persistence (T-040, #408)** —
   the `_config.yml` preview is now a **persistent sticky panel** shown at every
   step rather than an element inside step 5, regenerated on every keystroke,

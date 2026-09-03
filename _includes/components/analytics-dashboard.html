@@ -1,4 +1,4 @@
-<!--
+{% comment %}
   ===================================================================
   ANALYTICS DASHBOARD — PostHog & tracking configuration overview
   ===================================================================
@@ -11,11 +11,11 @@
   Dependencies: Bootstrap 5 card/table/badge, site.posthog config
   Used by: pages/_about/settings/analytics.md
   ===================================================================
--->
+{% endcomment %}
 
 {% assign ph = site.posthog %}
 
-<!-- Status cards -->
+{% comment %} Status cards {% endcomment %}
 <div class="row g-3 mb-4">
   <div class="col-6 col-lg-3">
     <div class="card text-center h-100 {% if ph.enabled %}border-success{% else %}border-warning{% endif %}">
@@ -55,10 +55,10 @@
   </div>
 </div>
 
-<!-- Configuration Details -->
+{% comment %} Configuration Details {% endcomment %}
 <div class="row g-4">
 
-  <!-- PostHog Settings -->
+  {% comment %} PostHog Settings {% endcomment %}
   <div class="col-lg-6">
     <div class="card h-100">
       <div class="card-header"><i class="bi bi-gear me-1"></i> PostHog Configuration</div>
@@ -105,7 +105,7 @@
     </div>
   </div>
 
-  <!-- Privacy & Compliance -->
+  {% comment %} Privacy & Compliance {% endcomment %}
   <div class="col-lg-6">
     <div class="card h-100">
       <div class="card-header"><i class="bi bi-shield-lock me-1"></i> Privacy & Compliance</div>
@@ -162,7 +162,7 @@
   </div>
 </div>
 
-<!-- Custom Events -->
+{% comment %} Custom Events {% endcomment %}
 {% if ph.custom_events %}
 <h5 class="mt-4 mb-3"><i class="bi bi-lightning me-1"></i> Custom Event Tracking</h5>
 <div class="row g-3">
@@ -221,7 +221,7 @@
 </div>
 {% endif %}
 
-<!-- External Links -->
+{% comment %} External Links {% endcomment %}
 <div class="mt-4">
   <a href="https://us.posthog.com" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm me-2">
     <i class="bi bi-box-arrow-up-right me-1"></i> Open PostHog Dashboard

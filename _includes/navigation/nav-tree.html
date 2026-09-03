@@ -1,4 +1,4 @@
-<!--
+{% comment %}
   ===================================================================
   NAV TREE - Flat YAML Navigation Renderer
   ===================================================================
@@ -28,7 +28,7 @@
   Usage:
   include navigation/nav-tree.html nav="docs"
   ===================================================================
--->
+{% endcomment %}
 
 {% assign navigation = site.data.navigation[include.nav] %}
 
@@ -42,7 +42,7 @@
     
     <li class="mb-1 nav-tree-item" data-depth="0">
       {% if has_children %}
-        <!-- Parent item with children - collapsible -->
+        {% comment %} Parent item with children - collapsible {% endcomment %}
         <div class="d-flex align-items-center">
           {% if item.url %}
             <a href="{{ item.url | relative_url }}" 
@@ -73,7 +73,7 @@
           {% endif %}
         </div>
         
-        <!-- Children container (Level 1) -->
+        {% comment %} Children container (Level 1) {% endcomment %}
         <div class="collapse{% if is_expanded %} show{% endif %}" id="{{ item_id }}">
           <ul class="list-unstyled fw-normal ps-3 nav-tree-children">
             {% for child in item.children %}
@@ -84,7 +84,7 @@
               
               <li class="mb-1 nav-tree-item" data-depth="1">
                 {% if child_has_children %}
-                  <!-- Level 1 parent with children -->
+                  {% comment %} Level 1 parent with children {% endcomment %}
                   <div class="d-flex align-items-center">
                     {% if child.url %}
                       <a href="{{ child.url | relative_url }}" 
@@ -114,7 +114,7 @@
                     {% endif %}
                   </div>
                   
-                  <!-- Children container (Level 2) -->
+                  {% comment %} Children container (Level 2) {% endcomment %}
                   <div class="collapse{% if child_expanded %} show{% endif %}" id="{{ child_id }}">
                     <ul class="list-unstyled fw-normal ps-3 nav-tree-children">
                       {% for grandchild in child.children %}
@@ -137,7 +137,7 @@
                     </ul>
                   </div>
                 {% else %}
-                  <!-- Level 1 leaf item -->
+                  {% comment %} Level 1 leaf item {% endcomment %}
                   {% if child.url %}
                     <a href="{{ child.url | relative_url }}" 
                        class="nav-tree-link d-inline-flex align-items-center rounded py-1 px-2 text-decoration-none{% if child_active %} active{% endif %}">
@@ -156,7 +156,7 @@
           </ul>
         </div>
       {% else %}
-        <!-- Root level leaf item -->
+        {% comment %} Root level leaf item {% endcomment %}
         {% if item.url %}
           <a href="{{ item.url | relative_url }}" 
              class="nav-tree-link d-inline-flex align-items-center rounded py-1 px-2 text-decoration-none{% if is_active %} active{% endif %}">
