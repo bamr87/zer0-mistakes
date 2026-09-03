@@ -50,6 +50,26 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Changed
 
+- **Mobile browser chrome now tracks the page surface (#281)** — `theme-color`
+  drives the iOS Safari address bar and the Chrome/Android task-switcher card.
+  It fell back to `theme_color.main`, which is the brand **accent** (`#007bff`
+  here), so a dark-first theme advertised a bright blue address bar; and being
+  config-gated it emitted **nothing at all** on `remote_theme` consumers, which
+  do not inherit this repo's `_config.yml` — the case the issue was originally
+  filed about. The include now emits scheme-aware tags sourced from
+  `--bs-body-bg` (light `#ffffff`, dark `#212529`, Bootstrap 5.3.3's own
+  surfaces) **with no configuration required**, and honours new optional
+  `favicon.theme_color_light` / `theme_color_dark` keys. A site that pins its
+  mode (`color_mode_default: dark`/`light`, or `color_mode_lock: true`) gets a
+  single unconditional tag instead, because `media="(prefers-color-scheme: …)"`
+  keys off the OS and a pair would hand light chrome to an OS-light visitor
+  reading a page the site renders dark. `favicon.theme_color` still pins one
+  colour for both schemes, so existing consumer config is unchanged. Guarded by
+  four `@critical` tests in `test/visual/core/head-contract.spec.js` that
+  compare each value against the page's computed `--bs-body-bg` rather than a
+  constant, plus `test_theme_color_fallback_without_config` covering the
+  no-config consumer case.
+
 - **Setup wizard: live preview, vertical stepper, draft persistence (T-040, #408)** —
   the `_config.yml` preview is now a **persistent sticky panel** shown at every
   step rather than an element inside step 5, regenerated on every keystroke,

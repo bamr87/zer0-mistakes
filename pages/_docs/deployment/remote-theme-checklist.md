@@ -66,6 +66,8 @@ plugins:
 
 None of these are inherited from the theme — declare your own: `collections`, `defaults`, `permalink`, `theme_skin`, `theme_color`, `theme_background`.
 
+`favicon.theme_color_light` / `theme_color_dark` are optional: the browser-chrome tags fall back to the theme's surface colours and are emitted even when you declare nothing.
+
 ### 3. ⚠️ Do not copy the theme's `_config.yml` wholesale
 
 The theme's config ships a live `google_analytics:` ID and a PostHog `api_key:`. Copying them sends *your* visitors' analytics to the theme author. Strip or replace the analytics and identity blocks, and leave `posthog` / `ai_chat` **off** unless you own the project and deploy the proxy.

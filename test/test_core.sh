@@ -997,6 +997,66 @@ test_sass_compilation() {
 # controlled nothing. This walks the front matter of every _layouts/*.html,
 # resolves each chain, and fails if reality and the list disagree in either
 # direction.
+test_theme_color_fallback_without_config() {
+    log_info "Testing theme-color is emitted with no favicon/theme_color config (issue #281)..."
+
+    cd "$PROJECT_ROOT"
+
+    if ! command -v ruby &>/dev/null; then
+        log_warning "ruby not available for the theme-color fallback check"
+        return 0
+    fi
+
+    # The case this guard exists for is NOT this repo. A remote_theme consumer
+    # does not inherit the theme's _config.yml (remote-theme-checklist.md), so
+    # the previous config-gated tag emitted NOTHING on exactly the sites the
+    # include exists to serve. Rendering the include against an EMPTY site is
+    # the only way to reproduce that from here -- a served-page test always
+    # runs with this repo's own config, where the tag was present but wrong.
+    if ruby -e '
+      require "liquid"
+
+      module StubFilters
+        def relative_url(input); input.to_s; end
+      end
+      Liquid::Template.register_filter(StubFilters)
+
+      src = File.read("_includes/core/favicon.html")
+      out = Liquid::Template.parse(src).render!("site" => {})
+
+      metas = out.scan(/<meta name="theme-color"[^>]*>/)
+      fail = []
+
+      fail << "no theme-color emitted with an empty site config" if metas.empty?
+
+      light = metas.grep(/prefers-color-scheme: light/)
+      dark  = metas.grep(/prefers-color-scheme: dark/)
+      fail << "expected one light-scheme tag, got #{light.size}" if light.size != 1
+      fail << "expected one dark-scheme tag,  got #{dark.size}"  if dark.size != 1
+
+      # The accent must never be the fallback: that was the original defect.
+      fail << "fallback advertises the brand accent #007bff" if out.include?("#007bff")
+
+      if fail.empty?
+        puts "OK: empty config emits #{metas.size} theme-color tags"
+        metas.each { |m| puts "  #{m}" }
+        exit 0
+      else
+        puts "::error::theme-color fallback is wrong for a remote_theme consumer"
+        fail.each { |f| puts "  #{f}" }
+        puts "  rendered: #{metas.inspect}"
+        exit 1
+      end
+    '
+    then
+        log_success "theme-color falls back correctly with no config"
+        return 0
+    else
+        log_error "theme-color fallback check failed (see above)"
+        return 1
+    fi
+}
+
 test_sidebar_offcanvas_layout_gate() {
     log_info "Testing sidebar offcanvas layout gate (issue #373)..."
 
@@ -1128,6 +1188,7 @@ run_core_tests() {
     run_test "Version Consistency" "test_version_consistency" "unit"
     run_test "Plugin Unit Specs" "test_plugin_unit_specs" "unit"
     run_test "Sidebar Offcanvas Layout Gate" "test_sidebar_offcanvas_layout_gate" "unit"
+    run_test "Theme Color Fallback" "test_theme_color_fallback_without_config" "unit"
     run_test "Preview Generator Unit Specs" "test_preview_generator_unit_specs" "unit"
     
     # Integration Tests

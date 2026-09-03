@@ -9,7 +9,7 @@ This directory has been reorganized for better maintainability and clarity. File
 Essential layout components that form the foundation of the site:
 
 - `head.html` - HTML document head with meta tags, scripts, and styles
-- `favicon.html` - Favicon / browser-identity tags (icon links, apple-touch, manifest, theme-color) driven by the optional `favicon:` config block
+- `favicon.html` - Favicon / browser-identity tags (icon links, apple-touch, manifest, scheme-aware theme-color) driven by the optional `favicon:` config block; the theme-color tags are emitted even with no config
 - `header.html` - Main site header with navigation
 - `footer.html` - Site footer (if exists)
 - `branding.html` - Site branding and title display

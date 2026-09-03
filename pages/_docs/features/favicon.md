@@ -32,7 +32,14 @@ Before this include existed, sites relied on the browser's *implicit* `/favicon.
 
 ## Zero-config behavior
 
-With no configuration at all, every page links `/favicon.ico` explicitly (resolved through `relative_url`, so `baseurl` sites work), and `theme-color` falls back to your `theme_color.main` design token so the mobile address bar matches the site's palette.
+With no configuration at all, every page links `/favicon.ico` explicitly (resolved through `relative_url`, so `baseurl` sites work) **and emits both `theme-color` tags**:
+
+```html
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#212529">
+```
+
+Those defaults are Bootstrap 5.3.3's own `--bs-body-bg` for each scheme, so the mobile address bar matches the page **surface** out of the box. This matters most for `remote_theme` consumers, which do not inherit the theme's `_config.yml` — before v1.29.1 the tag was config-gated and such a site got none at all.
 
 Keep a `favicon.ico` at your site root — a 32×32 icon is enough.
 
@@ -48,7 +55,9 @@ favicon:
   png_size    : 32x32                           # sizes attribute for the png entry
   apple_touch : /assets/images/apple-touch.png  # iOS home-screen icon (180×180 or larger)
   manifest    : /site.webmanifest               # PWA manifest
-  theme_color : "#0d1117"                       # browser chrome color (falls back to theme_color.main)
+  theme_color       : "#0d1117"                 # pin ONE chrome color for both schemes
+  theme_color_light : "#ffffff"                 # light-scheme chrome (default: #ffffff)
+  theme_color_dark  : "#212529"                 # dark-scheme chrome  (default: #212529)
 ```
 
 Which renders:
@@ -61,6 +70,23 @@ Which renders:
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0d1117">
 ```
+
+`theme_color` pins a single colour for both schemes, so it wins over the pair. Omit it to get the scheme-aware defaults shown above (or your own `theme_color_light` / `theme_color_dark`).
+
+### Which shape is emitted
+
+`media="(prefers-color-scheme: …)"` keys off the **OS** setting, so the pair is only correct when the site follows the OS:
+
+| your config | emitted |
+| --- | --- |
+| `color_mode_default: auto` (the default) | both tags, one per scheme |
+| `color_mode_default: dark` or `light` | one unconditional tag for that surface |
+| `color_mode_lock: true` | one unconditional tag (a locked `auto` resolves to dark) |
+| `favicon.theme_color` set | one unconditional tag with your value |
+
+A pinned site gets a single tag on purpose: a media pair would hand light browser chrome to an OS-light visitor looking at a page the site renders dark.
+
+> **Note.** On an unlocked site a visitor can override the mode from the Appearance panel, and no static meta can follow that. Keeping chrome in sync with the panel needs a runtime hook in the toggle path.
 
 ## Recommendations
 
