@@ -64,7 +64,7 @@ root.html
 Create a file in `_layouts/`:
 
 ```html
----
+{% raw %}---
 layout: default
 ---
 <!-- _layouts/tutorial.html -->
@@ -86,7 +86,7 @@ layout: default
     <a href="{{ page.next_tutorial }}">Next Tutorial →</a>
   </footer>
   {% endif %}
-</article>
+</article>{% endraw %}
 ```
 
 ### Step 2: Use the Layout
@@ -107,12 +107,12 @@ Access these variables in your layouts:
 
 | Variable | Description |
 |----------|-------------|
-| `{{ content }}` | Page content (required) |
-| `{{ page.title }}` | Page title |
-| `{{ page.description }}` | Page description |
-| `{{ page.layout }}` | Current layout name |
-| `{{ page.url }}` | Page URL |
-| `{{ site.title }}` | Site title |
+| {% raw %}`{{ content }}`{% endraw %} | Page content (required) |
+| {% raw %}`{{ page.title }}`{% endraw %} | Page title |
+| {% raw %}`{{ page.description }}`{% endraw %} | Page description |
+| {% raw %}`{{ page.layout }}`{% endraw %} | Current layout name |
+| {% raw %}`{{ page.url }}`{% endraw %} | Page URL |
+| {% raw %}`{{ site.title }}`{% endraw %} | Site title |
 
 ## Overriding Theme Layouts
 
