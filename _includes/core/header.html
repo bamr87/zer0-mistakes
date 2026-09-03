@@ -72,12 +72,31 @@
                  never drift from the default layout's aside. -->
             {% include navigation/sidebar-config.html %}
 
-            {% if sidebar_has_content %}
-              {%- comment -%}
-                When site.navigation.unified_mobile_drawer is true, the sidebar
-                toggle opens the consolidated drawer (Browse tab pre-selected)
-                instead of the legacy #bdSidebar offcanvas.
-              {%- endcomment -%}
+            {%- comment -%}
+              Two conditions, and BOTH are required (issue #373).
+
+              `sidebar_has_content` asks "is there nav content to show". It is
+              not enough on its own: this include is pulled in by
+              _layouts/root.html, so it renders on EVERY layout, while
+              `#bdSidebar` is emitted by _layouts/default.html alone. On a
+              layout that inherits root directly — admin, stats, 404, section,
+              home … — the toggle rendered pointing at an offcanvas that was
+              never in the document: a dead control, and aria-controls
+              dangling into nothing for assistive tech. Measured before the
+              fix: 37 of 415 built pages.
+
+              The unified drawer is exempt because #zer0UnifiedDrawer IS
+              emitted from root.html, so it exists on every layout — that
+              target is always real and the toggle is always live.
+            {%- endcomment -%}
+            {% if sidebar_has_content and site.navigation.unified_mobile_drawer %}
+              {%- assign _sidebar_toggle_ok = true -%}
+            {% elsif sidebar_has_content and sidebar_offcanvas_rendered %}
+              {%- assign _sidebar_toggle_ok = true -%}
+            {% else %}
+              {%- assign _sidebar_toggle_ok = false -%}
+            {% endif %}
+            {% if _sidebar_toggle_ok %}
               {%- if site.navigation.unified_mobile_drawer -%}
                 {%- assign _sidebar_target = "#zer0UnifiedDrawer" -%}
                 {%- assign _sidebar_controls = "zer0UnifiedDrawer" -%}
