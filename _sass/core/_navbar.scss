@@ -6,10 +6,11 @@
 // Breakpoints:
 //   - Desktop >= 992px (inline nav; label density via @container bd-nav)
 //   - Mobile < 992px (offcanvas)
-// Nav label tiers (center track / bd-nav container width):
+// Nav label tiers (center track / bd-nav container width) — TWO, never truncating:
 //   - >= 51rem (~816px): icon + full label
-//   - 41-50.99rem: label only (icons dropped so the labels still fit)
-//   - < 41rem (~656px): icon-only (tooltips on lg–xl viewports)
+//   - < 51rem: icon-only (tooltips on lg–xl viewports)
+// Icons are present in BOTH tiers. The old bare-label middle tier and the
+// `text-overflow: ellipsis` safety net were removed in #405.
 // ==============================================================================
 
 // -----------------------------------------------------------------------------
@@ -89,6 +90,20 @@
   &:hover::after,
   &[aria-expanded="true"]::after {
     opacity: 1;
+  }
+}
+
+// The below-lg menu toggle carries a visible "Menu" label beside its glyph, so
+// it cannot be confused with the sidebar hamburger sitting next to it (#405).
+.navbar-toggler.navbar-toggler-labeled {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  width: auto;
+
+  .navbar-toggler-text {
+    font-size: 0.9375rem;
+    line-height: 1;
   }
 }
 
@@ -400,16 +415,24 @@
     transform: rotate(180deg);
   }
 
-  // Label density degrades in three tiers, measured on the center track
-  // (the `bd-nav` container), so items fit instead of ellipsizing:
+  // Label density has TWO tiers, measured on the center track (the `bd-nav`
+  // container), so items either fit whole or drop to icons — never truncate:
   //   >= 51rem (816px)   icon + label      — the roomy default
-  //   41-50.99rem        label only        — icons dropped to buy ~20px/item
-  //   < 41rem (656px)    icon only         — labels no longer fit at all
-  // Each boundary is the MEASURED width the tier below it needs for the
-  // theme's seven demo items (815px with icons, 647px without), so a tier only
-  // engages once its own content fits. Items keep min-width:0 + ellipsis as the
-  // last-resort safety net for consumers with more or longer entries.
-  @container bd-nav (min-width: 41rem) {
+  //   < 51rem            icon only         — icon + label no longer fits
+  // 51rem is the MEASURED width the icon+label row needs for the theme's seven
+  // demo items (815px), so the upper tier engages exactly when its own content
+  // fits and the lower one takes over otherwise.
+  //
+  // There used to be a middle 41-50.99rem tier that dropped the ICONS to buy
+  // ~20px per item, plus `text-overflow: ellipsis` as a last-resort safety net.
+  // Both are gone (#405): the ellipsis produced "Quicksta…", and an item whose
+  // label is cut is worse than an icon with a tooltip — the icon is at least
+  // honest about being an abbreviation. Icons now survive at every tier, and
+  // the icon-only cutoff moved 41rem -> 51rem to take over the band the middle
+  // tier used to hold. That is a deliberate behaviour change at 656-816px of
+  // center track: those widths used to show bare labels and now show icons,
+  // with `.nav-tooltip` (992-1199px) carrying the name on hover.
+  @container bd-nav (min-width: 51rem) {
     #bdNavbar .navbar-nav {
       gap: 0.125rem;
     }
@@ -418,28 +441,37 @@
       padding: 0.375rem;
     }
 
+    // No `overflow: hidden` / `text-overflow: ellipsis` here: this tier only
+    // engages once the whole icon+label row fits, so a clipped label would be a
+    // bug rather than a fallback. Labels stay whole or the row goes icon-only
+    // (#405).
     #bdNavbar .nav-link .nav-link-text {
       display: inline !important;
       margin-left: 0;
       min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
       white-space: nowrap;
       transition: opacity 0.15s ease-in-out;
     }
 
+    // Items do NOT shrink in this tier. Shrinking is what produced the clipped
+    // label this issue removes: the tier only engages once the full icon+label
+    // row fits, so an item that shrinks here is an item being cut for no reason.
+    // A consumer with materially more (or longer) items than the theme's seven
+    // demo entries will exceed 51rem of content and overflow rather than
+    // ellipsize — for those, raise the boundary below so the icon-only tier
+    // takes over sooner.
     #bdNavbar .nav-item,
     #bdNavbar .nav-hover-dropdown {
-      flex: 0 1 auto;
+      flex: 0 0 auto;
       min-width: 0;
     }
 
     #bdNavbar .nav-item > .nav-link:not(.dropdown-toggle-split),
     #bdNavbar .nav-hover-dropdown > .nav-link:first-child {
-      flex: 1 1 auto;
+      flex: 0 0 auto;
       min-width: 0;
       max-width: 100%;
-      overflow: hidden;
+      overflow: visible;
       gap: 0.25rem;
     }
 
@@ -449,56 +481,74 @@
       transition: transform 0.15s ease-in-out;
     }
 
-    #bdNavbar .nav-link:hover {
+    // Hover lives on the ROW, not on each control. With the chevron overlaying
+    // the link's padding box (below), a per-control background would light only
+    // half the row as the pointer crossed it.
+    #bdNavbar .nav-item:not(.nav-hover-dropdown) > .nav-link:hover,
+    #bdNavbar .nav-hover-dropdown:hover > .nav-link:first-child {
       background-color: var(--bs-tertiary-bg);
       border-radius: 0.375rem;
-
-      i {
-        transform: scale(1.1);
-      }
     }
 
-    .nav-hover-dropdown > .nav-link {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
+    #bdNavbar .nav-link:hover i,
+    #bdNavbar .nav-hover-dropdown:hover > .nav-link:first-child i {
+      transform: scale(1.1);
     }
 
-    .nav-hover-dropdown > .dropdown-toggle-split {
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
+    // Chevron merged into the parent link's box (#405). It stays a real
+    // <button> — keyboard reachable, `aria-expanded`/`aria-haspopup` intact —
+    // and is only repositioned: absolutely placed over the right end of the
+    // link's padding, which the link reserves with extra padding-right. There
+    // is no longer a gap between the two, so the dead zone between label and
+    // chevron is gone and the whole row is one hover target.
+    // Every rule below is scoped with #bdNavbar deliberately. The tier's own
+    // `#bdNavbar .nav-link { padding: 0.375rem }` above carries an id, so a
+    // class-only `padding-right` here loses to it and the chevron ends up with
+    // no reserved space to sit in — measured, not assumed.
+    #bdNavbar .nav-hover-dropdown {
+      position: relative;
+    }
+
+    #bdNavbar .nav-hover-dropdown > .nav-link:first-child {
+      border-radius: 0.375rem;
+      padding-right: 1.25rem;
+    }
+
+    #bdNavbar .nav-hover-dropdown > .dropdown-toggle-split {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.25rem;
       min-width: 1.25rem;
       min-height: 0;
-      width: 1.25rem;
-      padding-left: 0;
-      padding-right: 0;
-      margin-left: 0 !important;
+      margin: 0 !important;
+      padding: 0;
+      background-color: transparent;
+      border: 0;
+      border-radius: 0 0.375rem 0.375rem 0;
+    }
+
+    // The overlay must not paint its own hover background — the row already
+    // does. Without this the chevron reads as a separate control again, which
+    // is the whole defect. `!important` because the shared base block at the
+    // top of this file sets the chevron's own hover background with equal
+    // specificity and later source order.
+    #bdNavbar .nav-hover-dropdown > .dropdown-toggle-split:hover,
+    #bdNavbar .nav-hover-dropdown > .dropdown-toggle-split:focus-visible,
+    #bdNavbar .nav-hover-dropdown > .dropdown-toggle-split[aria-expanded="true"] {
+      background-color: transparent !important;
     }
   }
 
-  // Middle tier — the labels fit but the icons no longer do. Dropping the
-  // decorative icon (the label is the accessible name) and tightening the
-  // chevron buys back roughly 20px per item, which is the difference between
-  // "Notebooks" and "N…" at 992-1200px viewports.
-  @container bd-nav (min-width: 41rem) and (max-width: 50.99rem) {
-    #bdNavbar .nav-link i {
-      display: none;
-    }
-
-    #bdNavbar .nav-item > .nav-link:not(.dropdown-toggle-split),
-    #bdNavbar .nav-hover-dropdown > .nav-link:first-child {
-      gap: 0;
-    }
-
-    // Scoped with #bdNavbar to outrank the shared base rule at the top of this
-    // file, which sets the chevron to 1.5rem.
-    #bdNavbar .nav-hover-dropdown > .dropdown-toggle-split {
-      min-width: 1rem;
-      width: 1rem;
-    }
-  }
-
-  // Icon-only when the center track is too narrow even for bare labels
-  @container bd-nav (max-width: 40.99rem) {
+  // Icon-only when the center track cannot fit the icon+label row. The boundary
+  // is the complement of the tier above (was 40.99rem, when a bare-label tier
+  // sat between them) so the two tiers tile the whole range with no gap.
+  @container bd-nav (max-width: 50.99rem) {
     @include navbar-nav-icon-only;
   }
 }
@@ -1119,8 +1169,7 @@
     align-items: center;
 }
 
-#navbar .site-title-text,
-#navbar .site-subtitle-text {
+#navbar .site-title-text {
     display: inline-block;
 }
 
@@ -1157,9 +1206,29 @@
 
 // Desktop (lg+): 3-column grid — [brand/title | main nav | utilities] so nav cannot paint over Search/Settings
 @media (min-width: 992px) {
+    // Optical centering (#405) WITHOUT breaking the container queries.
+    //
+    // The obvious spelling — `1fr auto 1fr` — is a trap here. Track 2 must stay
+    // a `1fr` (a DEFINITE width): `.bd-navbar-nav-viewport` inside it is
+    // `width: 100%` + `container-type: inline-size`, and that percentage only
+    // resolves against a definite track. Make track 2 `auto` and it becomes
+    // content-sized, size containment breaks the circularity by handing
+    // `bd-nav` a degenerate width, and EVERY `@container bd-nav` label tier
+    // stops firing — the whole bar collapses to icon-only at all widths, which
+    // is the opposite of what #405 is for.
+    //
+    // So the nav keeps the elastic middle track and the two side tracks are
+    // equalised instead, via a shared floor. Whenever the brand and the utility
+    // cluster both fit inside it (the common case), the side tracks are the
+    // same width and the menubar is centred in the bar, not merely centred in
+    // its own track. The floor is deliberately small so it never steals the
+    // width the label tier needs at 1280px.
     #navbar .navbar-main {
         display: grid !important;
-        grid-template-columns: minmax(0, auto) minmax(0, 1fr) auto;
+        grid-template-columns:
+            minmax(var(--zer0-navbar-side-min, 9rem), auto)
+            minmax(0, 1fr)
+            minmax(var(--zer0-navbar-side-min, 9rem), auto);
         align-items: center;
         column-gap: 0.75rem;
         row-gap: 0.25rem;
@@ -1228,8 +1297,7 @@
         display: none;
     }
 
-    #navbar .site-title,
-    #navbar .site-subtitle {
+    #navbar .site-title {
         flex-shrink: 1;
         min-width: 0;
     }
@@ -1247,15 +1315,6 @@
         max-width: none;
     }
 
-    #navbar .site-subtitle .site-subtitle-text {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        display: inline-block;
-        vertical-align: bottom;
-        max-width: none;
-    }
-
     // Progressive brand degradation (container width, not viewport).
     // The home-link icons add ~108px to the brand cluster, so they only appear
     // once the bar is wide enough to carry them AND the full menubar
@@ -1264,12 +1323,6 @@
     @container navbar-main (min-width: 86rem) {
         #navbar .navbar-home-links {
             display: inline-flex !important;
-        }
-    }
-
-    @container navbar-main (max-width: 68rem) {
-        #navbar .site-subtitle {
-            display: none !important;
         }
     }
 

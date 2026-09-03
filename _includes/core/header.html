@@ -210,8 +210,14 @@
                   {%- assign _menu_target = "#bdNavbar" -%}
                   {%- assign _menu_controls = "bdNavbar" -%}
                 {%- endif -%}
+                {% comment %} Below lg this is a LABELLED control, not a bare glyph (#405).
+                     Two toggles coexist here — the sidebar hamburger and this one — and
+                     three-dots vs. list gave no clue which opened what. The gear is
+                     `d-lg-none`-excluded above (desktop only; on mobile its contents are
+                     reached through the drawer), so labelling this one is what makes the
+                     pair unambiguous. {% endcomment %}
                 <div class="bd-navbar-toggle d-lg-none">
-                    <button class="navbar-toggler p-2"
+                    <button class="navbar-toggler navbar-toggler-labeled p-2"
                             type="button"
                             data-bs-toggle="offcanvas"
                             data-bs-target="{{ _menu_target }}"
@@ -219,6 +225,7 @@
                             aria-label="Toggle main navigation"
                             aria-expanded="false">
                         <span class="bi bi-three-dots" aria-hidden="true"></span>
+                        <span class="navbar-toggler-text">{{ ui.menu_label | default: "Menu" }}</span>
                     </button>
                 </div>
             </div>

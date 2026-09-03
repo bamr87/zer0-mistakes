@@ -62,7 +62,20 @@ layout: root
     {%- if page.title and page.hide_title != true and page.hide_intro != true -%}
         <h1 class="page-heading">{{ page.title }}</h1>
     {%- endif -%}
-    
+
+    {% comment %} ========================== {% endcomment %}
+    {% comment %} SITE SUBTITLE (HOME HERO)  {% endcomment %}
+    {% comment %} ========================== {% endcomment %}
+    {% comment %} `site.subtitle` reads here, on the home hero, instead of in the {% endcomment %}
+    {% comment %} navbar, where it competed with the menubar for bar width (#405). {% endcomment %}
+    {% comment %} Suppressed alongside the heading, so a custom hero that supplies {% endcomment %}
+    {% comment %} its own copy is not doubled up. {% endcomment %}
+    {%- assign _subtitle = site.subtitle | strip -%}
+    {%- if _subtitle != "" and page.hide_title != true and page.hide_intro != true -%}
+        <p class="site-subtitle-text home-subtitle lead text-body-secondary">{{ _subtitle }}</p>
+    {%- endif -%}
+
+
     {% comment %} ========================== {% endcomment %}
     {% comment %} MAIN CONTENT AREA          {% endcomment %}
     {% comment %} ========================== {% endcomment %}

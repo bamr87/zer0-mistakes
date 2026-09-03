@@ -61,8 +61,12 @@
                         {% comment %} Split toggle opens the dropdown (click on mobile, hover on desktop) {% endcomment %}
                         {% comment %} Note: No data-bs-toggle="dropdown" — custom JS handles all interactions
                              to avoid Bootstrap's native handler conflicting with our toggle logic {% endcomment %}
+                        {% comment %} No `ms-1`: at lg+ the chevron is absolutely positioned over the
+                             parent link's reserved padding (_navbar.scss), so a left margin would
+                             re-open the dead zone between label and chevron that #405 closed. Below
+                             lg the offcanvas layout keeps them as ordinary siblings. {% endcomment %}
                         <button
-                            class="nav-link dropdown-toggle dropdown-toggle-split ms-1"
+                            class="nav-link dropdown-toggle dropdown-toggle-split"
                             type="button"
                             id="dropdown-{{ link.title | slugify }}"
                             aria-expanded="false"
