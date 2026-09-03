@@ -64,10 +64,7 @@ root.html                 # base HTML document — never use directly
 └── 404.html      setup.html  welcome.html  book*.html
 ```
 
-**Which branch a layout sits on is not cosmetic.** `default.html` is the only
-layout that renders the left sidebar (`#bdSidebar`) and the table-of-contents
-panel (`#tocContents`). A layout inheriting `root` directly gets neither — so a
-custom layout that needs them should inherit `default`.
+**Which branch a layout sits on is not cosmetic.** `default.html` is the only layout that renders the left sidebar (`#bdSidebar`) and the table-of-contents panel (`#tocContents`). A layout inheriting `root` directly gets neither — so a custom layout that needs them should inherit `default`.
 
 ## Creating Custom Layouts
 
