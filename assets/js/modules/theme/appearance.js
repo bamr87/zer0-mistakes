@@ -123,9 +123,15 @@
             // the panel's other h6 section headings.
             wrapper.className = 'zer0-appearance-panel mb-4';
             wrapper.innerHTML =
-                '<h6 id="zer0-appearance-heading" class="text-body-secondary small text-uppercase fw-semibold mb-2">' +
+                // h3, not h6: this panel mounts inside the Settings offcanvas,
+                // whose title is an <h2>, alongside the Liquid-rendered section
+                // labels that are also <h3 class="h6">. The tag carries DEPTH,
+                // the .h6 class carries SIZE (#436). Injected at runtime, so no
+                // source grep finds it -- only a rendered test does, which is
+                // how this one was caught.
+                '<h3 id="zer0-appearance-heading" class="h6 text-body-secondary small text-uppercase fw-semibold mb-2">' +
                   '<i class="bi bi-eyedropper me-1" aria-hidden="true"></i>Primary Color' +
-                '</h6>' +
+                '</h3>' +
                 pickerHtml('visually-hidden') +
                 '<button type="button" class="btn btn-link btn-sm p-0" data-appearance-reset>' +
                   '<i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>Reset color' +

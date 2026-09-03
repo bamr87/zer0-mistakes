@@ -52,7 +52,10 @@ function skips(items) {
  *  its own branch, which is worse than asserting less and saying so. */
 const CHROME_REGIONS = [
   { selector: '#cookieSettingsModal', why: 'cookie dialog — ships on every page' },
-  { selector: '#infoSection', why: 'settings offcanvas incl. the language panel' },
+  // #info-section (kebab) is the offcanvas. #infoSection is its <h2>'s id,
+  // used by aria-labelledby -- targeting that skipped these three tests
+  // silently, because the region locator matched nothing.
+  { selector: '#info-section', why: 'settings offcanvas incl. the language panel' },
 ];
 
 const ROUTES = [
