@@ -1151,6 +1151,10 @@ test_theme_color_fallback_without_config() {
         return 0
     else
         log_error "theme-color fallback check failed (see above)"
+        return 1
+    fi
+}
+
 test_content_liquid_is_raw_protected() {
     log_info "Testing Liquid shown as code in content is raw-protected..."
 
