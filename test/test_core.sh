@@ -1086,13 +1086,32 @@ test_theme_color_fallback_without_config() {
         return 0
     fi
 
+    # liquid is a BUNDLED gem, not stdlib. Every other ruby call in this file
+    # requires only 'yaml', which is always on the default load path, so this
+    # is the first test here that needs the bundle -- and CI runs
+    # ./scripts/bin/test without `bundle exec`, where setup-ruby's
+    # bundler-cache puts gems under vendor/bundle and off the default path.
+    # A bare `ruby -e "require \'liquid\'"` raises LoadError there.
+    local ruby_run=(ruby)
+    if ruby -e 'require "liquid"' >/dev/null 2>&1; then
+        :
+    elif command -v bundle &>/dev/null && bundle exec ruby -e 'require "liquid"' >/dev/null 2>&1; then
+        ruby_run=(bundle exec ruby)
+    else
+        # Not reachable either way: skip rather than fail. A guard that goes red
+        # because a gem is not on the load path is testing the environment, not
+        # favicon.html.
+        log_warning "liquid gem not loadable; skipping the theme-color fallback check"
+        return 0
+    fi
+
     # The case this guard exists for is NOT this repo. A remote_theme consumer
     # does not inherit the theme's _config.yml (remote-theme-checklist.md), so
     # the previous config-gated tag emitted NOTHING on exactly the sites the
     # include exists to serve. Rendering the include against an EMPTY site is
     # the only way to reproduce that from here -- a served-page test always
     # runs with this repo's own config, where the tag was present but wrong.
-    if ruby -e '
+    if "${ruby_run[@]}" -e '
       require "liquid"
 
       module StubFilters
