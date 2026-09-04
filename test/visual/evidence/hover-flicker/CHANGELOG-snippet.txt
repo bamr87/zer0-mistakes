@@ -1,0 +1,5 @@
+Navbar hover flicker (#404 / T-036) — before/after:
+  search: before dy=-0.388px hover-lost=6 -> after dy=0px hover-lost=0
+  settings: before dy=-0.48px hover-lost=14 -> after dy=0px hover-lost=0
+
+Evidence: test/visual/evidence/hover-flicker/01-box-shift.png, test/visual/evidence/hover-flicker/metrics.json

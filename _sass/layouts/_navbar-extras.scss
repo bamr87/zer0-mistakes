@@ -53,13 +53,18 @@
       display: block;
     }
 
+    // No transform on :hover — a lift moves the FAB out from under a pointer
+    // parked on its bottom edge, hover exits, it drops back: infinite flicker.
+    // These are `.btn`s, so the 2px lift _ui-enhancements.scss puts on every
+    // button has to be cancelled explicitly, not merely not-added here.
     &:hover,
     &:focus-visible {
-      transform: translateY(-1px);
+      transform: none;
     }
 
+    // :active is safe, because the button is held down for its whole duration.
     &:active {
-      transform: translateY(0);
+      transform: translateY(1px);
     }
   }
 }
@@ -112,13 +117,18 @@
       display: block;
     }
 
+    // No transform on :hover — a lift moves the FAB out from under a pointer
+    // parked on its bottom edge, hover exits, it drops back: infinite flicker.
+    // These are `.btn`s, so the 2px lift _ui-enhancements.scss puts on every
+    // button has to be cancelled explicitly, not merely not-added here.
     &:hover,
     &:focus-visible {
-      transform: translateY(-1px);
+      transform: none;
     }
 
+    // :active is safe, because the button is held down for its whole duration.
     &:active {
-      transform: translateY(0);
+      transform: translateY(1px);
     }
   }
 }

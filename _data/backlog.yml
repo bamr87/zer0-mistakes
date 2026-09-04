@@ -951,7 +951,7 @@ tasks:
 
   - id: T-036
     title: "Remove hover transforms that cause pointer-edge flicker in the navbar"
-    status: open
+    status: done
     priority: P1
     area: feat
     risk: standard
@@ -968,13 +968,34 @@ tasks:
       _sass/components/_ui-enhancements.scss and card hover styles for the same
       pattern.
     acceptance:
-      - "No transform in any :hover rule under _sass/ (grep for translateY/scale in hover context returns nothing)."
-      - "Pointer parked on the top edge of any nav item or utility button does not flicker."
+      # Scoped to the navbar per the issue's Option A. Criterion 1 was
+      # originally "no transform in any :hover rule under _sass/" — that is 42
+      # rules across ~15 files (card lifts, book tilts, recipe hovers) and a
+      # visual redesign of a published theme, not this defect. It also flagged
+      # `transform: none`, which is the CORRECTIVE pattern this repo already
+      # uses in _post-navigation.scss and the prefers-reduced-motion blocks.
+      # A theme-wide motion policy belongs in its own task.
+      # Stated as the COMPUTED value, not "no matching rule": these controls
+      # are `.btn`s and _ui-enhancements.scss's theme-wide
+      # `.btn:hover { translateY(-2px) }` still matches them and always will.
+      # It is overridden by `transform: none`, not deleted, so a rule-existence
+      # check would be permanently red. That inherited lift is why deleting the
+      # navbar's own translateY was not sufficient on its own.
+      - "getComputedStyle(control).transform is `none` while hovered, for every navbar control."
+      # Direction corrected: translateY(-1px) moves the element UP, so the row
+      # it stops covering is the BOTTOM one. A test parked on the top edge
+      # passes without exercising the bug.
+      - "Pointer parked on the bottom edge of any nav item or utility button does not flicker."
+      # Note: `#bdNavbar .nav-link:hover`, named in the summary as the primary
+      # cause, was dead code — its lift sits inside a container query that never
+      # matches at desktop widths (measured 1040/1140/1200/1280px on the built
+      # site, `none` at every one, on main too). The observable flicker was on
+      # the utility buttons and the FABs.
       - "regression test added"
       - "before/after evidence committed"
-    links: { issue: null, pr: null, roadmap: null }
+    links: { issue: 404, pr: null, roadmap: null }
     created: 2026-08-18
-    updated: 2026-08-18
+    updated: 2026-09-03
 
   - id: T-037
     title: "Navbar width recovery: two clean label tiers, merged chevron, centered grid, no subtitle"
