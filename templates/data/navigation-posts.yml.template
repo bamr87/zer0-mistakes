@@ -1,0 +1,9 @@
+# Post/news category navigation.
+#
+# Intentionally minimal: the theme's own copy listed six /news/* categories
+# that do not exist on a new site. Add a category entry once you have posts
+# in it, so the link resolves.
+
+- title: Blog
+  icon: bi-journal-text
+  url: /blog/
