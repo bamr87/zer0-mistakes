@@ -72,6 +72,43 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   The already-generated pages are not repaired by this change. Staleness is
   decided by source SHA alone, so a masker fix does not make an unchanged page
   stale; repairing them needs a `--full` re-translation.
+- **`components/background-image.html` — cover art painted as a CSS background,
+  announced correctly (#401)** — the theme had a solid convention for art
+  rendered as {% raw %}`<img>`{% endraw %} (`preview-image.html` always emits an escaped `alt`)
+  and none for art painted as a **background**. A background image is invisible
+  to assistive technology, so such a box announces nothing at all. The correct
+  pattern already existed by hand in three places (`abc-letter.html`, the
+  article rating stars, `theme-customizer.html`) without being a named
+  convention; this generalizes it. Two branches: a real image gets
+  `role="img"` with an escaped `aria-label`, a decorative one gets
+  `aria-hidden="true"` and **neither** `role` nor `aria-label` — combining them
+  announces a graphic and then hides it, which is worse than either alone.
+  Decorative is the **default**, and the real-image branch must earn it with
+  both a `src` and a non-empty `alt`. Path handling follows
+  `preview-image.html`. Purely additive: no in-theme call site, no CSS, no
+  layout change, and `content/intro.html` is deliberately untouched — it paints
+  a background *and* wraps the page `<h1>`, so `role="img"` there would delete
+  the heading from the accessibility tree. Guarded by
+  `test_background_image_include_contract`, which renders the include and
+  checks both branches, the escaping and all three path cases.
+- **Heading outlines no longer skip levels in theme chrome (#436)** — several
+  components picked a heading element for its default **font-size** rather than
+  its position in the document, so an article read
+  `h1 → h2 → h6 → h2 → h5 → h3 → h6` to anyone navigating by heading. Measured
+  across a 415-page build: **391 of 415 pages carried at least one skip, 1,060
+  in total**; now 66 and 173. Size and level are decoupled — `<h3 class="h6">`
+  keeps the small type and states the real depth — in the cookie dialog, the
+  settings offcanvas, the language panel, the author card and the related-posts
+  region. The language panel was not in the report and was doing the same thing
+  on every page. `author-card.html` renders under twelve different call sites,
+  so its level is now `heading_level` (default `5`, unchanged for callers that
+  do not pass it) rather than a guess. Fails **WCAG 1.3.1**. Nothing moves
+  visually. Guarded by `test/visual/core/heading-outline.spec.js`. One offender
+  is injected at **runtime** by `assets/js/modules/theme/appearance.js`, so no
+  grep over `_includes`/`_layouts` could find it — only a rendered assertion
+  does. Still open, deliberately: 66 pages with inline card markup in the news
+  and section index layouts, plus the `palette-generator` and `skin-editor`
+  admin tools — see the evidence bundle.
 
 - **Liquid written as documentation was being executed, not displayed** — Liquid
   runs before Markdown, so backticks and code fences never escaped it; they only
