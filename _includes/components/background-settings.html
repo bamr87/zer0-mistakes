@@ -24,9 +24,9 @@
 
 {% comment %} Skin selector {% endcomment %}
 <div class="mb-4">
-  <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
+  <h3 class="h6 text-body-secondary small text-uppercase fw-semibold mb-2">
     <i class="bi bi-palette2 me-1" aria-hidden="true"></i>Theme Skin
-  </h6>
+  </h3>
   <div class="d-flex flex-wrap gap-2" id="zer0SkinButtons" role="group" aria-label="Theme skin">
     {% for skin in skins %}
     <button class="btn btn-sm btn-outline-primary{% if skin == current_skin %} active{% endif %}"
@@ -40,9 +40,9 @@
 
 {% comment %} SVG background toggle + layer opacity {% endcomment %}
 <div class="mb-4">
-  <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
+  <h3 class="h6 text-body-secondary small text-uppercase fw-semibold mb-2">
     <i class="bi bi-image me-1" aria-hidden="true"></i>Background
-  </h6>
+  </h3>
 
   <div class="d-flex align-items-center justify-content-between p-3 bg-body-tertiary rounded mb-3">
     <label class="form-check-label" for="zer0BgToggle">SVG backgrounds</label>
