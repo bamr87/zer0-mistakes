@@ -170,8 +170,30 @@ module Zer0Translate
       masked
     end
 
+    # A masked span can carry a placeholder minted by an earlier pattern: a
+    # Liquid expression inside a link destination (`](⟦3⟧)`), or inside an
+    # inline code span (`` `⟦8⟧` ``). `gsub` never rescans its own replacement
+    # text, so one pass restores the outer span and strands the inner token as
+    # a literal ⟦N⟧ in the published page. Substitute until the text stops
+    # changing — nesting can only run as deep as the pattern list is long — and
+    # refuse to hand back anything still holding a placeholder, so a corrupt
+    # page fails its job instead of shipping.
     def unmask(text)
-      text.gsub(PLACEHOLDER_RE) { |token| @map.fetch(token, token) }
+      result = text
+      (INLINE_PATTERNS.length + 1).times do
+        expanded = result.gsub(PLACEHOLDER_RE) { |token| @map.fetch(token, token) }
+        break if expanded == result
+
+        result = expanded
+      end
+
+      leftover = result.scan(PLACEHOLDER_RE).uniq
+      unless leftover.empty?
+        raise Translator::TranslationError,
+              "unresolved placeholder(s) #{leftover.join(', ')} after unmasking"
+      end
+
+      result
     end
   end
 
