@@ -1,0 +1,14 @@
+# "About" section navigation.
+#
+# Starter entries only — each points at a page the installer created.
+# Add your own as you add pages; a link to a page you have not written
+# renders as a 404 for your readers.
+
+- title: About
+  icon: bi-info-circle
+  url: /about/
+  children:
+    - title: Overview
+      url: /about/
+    - title: Configuration
+      url: /about/config/

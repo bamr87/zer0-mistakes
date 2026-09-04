@@ -50,6 +50,26 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Changed
 
+- **Consumers no longer inherit the theme's own navigation (#332)** — `install.sh`
+  copied the theme's entire `_data/` into every consumer, so each site's *own*
+  `_data/navigation/*.yml` was a verbatim copy of the theme's and carried the
+  theme's page taxonomy. Measured on a real install: **106 of 129 seeded
+  navigation URLs pointed at pages the installer does not create** — ~47 per
+  doc page from `docs.yml` alone, which htmlproofer on a consumer counted as
+  ~1,598 broken internal links across ~34 docs, none of them removable from
+  consumer content. `_data/navigation/` is now held back from the theme copy
+  and seeded from `templates/data/navigation-*.yml.template`, whose links
+  resolve against the pages the installer actually creates: **0 of 26
+  unresolvable**. All seven files are covered, not just `docs.yml`. Because
+  `create_from_template` skips a file that already exists, a re-run or upgrade
+  preserves navigation a consumer has edited. The sidebar renderer is
+  unchanged — `nav: tree` → `auto` → `page.collection` was always correct, it
+  was being handed the wrong data. Existing consumers are not fixed
+  retroactively (`_data` is not part of Jekyll's theme payload); see
+  [Migrating already-seeded navigation data](docs/systems/theme-propagation.md).
+  Guarded by `test/test_install_navigation_seed.sh`, which fails on the old
+  installer naming all 51 seeded dead links.
+
 - **Translation placeholders leaked into published French pages** — before a
   line is sent to the model, `scripts/translate.rb` masks every non-translatable
   span as a `⟦N⟧` token and restores it afterwards. The patterns run in order,
