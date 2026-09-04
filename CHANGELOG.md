@@ -50,6 +50,28 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Changed
 
+- **Translation placeholders leaked into published French pages** — before a
+  line is sent to the model, `scripts/translate.rb` masks every non-translatable
+  span as a `⟦N⟧` token and restores it afterwards. The patterns run in order,
+  coarse first, so a span can be masked **twice**: a Liquid expression inside a
+  link destination becomes `](⟦3⟧)` and is then masked again as a whole, and the
+  same happens to Liquid inside an inline code span. `unmask` used a single
+  `gsub`, and `gsub` never rescans its own replacement text — so the outer span
+  came back and the inner token was stranded as a literal `⟦3⟧` on the page.
+  That is 107 tokens across 23 generated pages on `main` today, and where the
+  masked span was a URL it is a dead link: `[couleurs](⟦3⟧)` in
+  `fr/about/design.md`, `href="⟦24⟧"` in the same file, the whole Liquid
+  variable table in `fr/docs/customization/layouts.md`. `unmask` now substitutes
+  until the text stops changing, and refuses to return anything still holding a
+  placeholder — a corrupt page fails its own job (counted, logged, run exits
+  non-zero) rather than shipping. The existing "no placeholder tokens leak"
+  assertions in `test/test_i18n.sh` were correct but toothless: no fixture line
+  nested a mask. Both shapes are now in the fixture, so the guard fails without
+  the fix.
+
+  The already-generated pages are not repaired by this change. Staleness is
+  decided by source SHA alone, so a masker fix does not make an unchanged page
+  stale; repairing them needs a `--full` re-translation.
 - **`components/background-image.html` — cover art painted as a CSS background,
   announced correctly (#401)** — the theme had a solid convention for art
   rendered as {% raw %}`<img>`{% endraw %} (`preview-image.html` always emits an escaped `alt`)
