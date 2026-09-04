@@ -70,6 +70,25 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   Guarded by `test/test_install_navigation_seed.sh`, which fails on the old
   installer naming all 51 seeded dead links.
 
+- **Heading outlines no longer skip levels in theme chrome (#436)** — several
+  components picked a heading element for its default **font-size** rather than
+  its position in the document, so an article read
+  `h1 → h2 → h6 → h2 → h5 → h3 → h6` to anyone navigating by heading. Measured
+  across a 415-page build: **391 of 415 pages carried at least one skip, 1,060
+  in total**; now 66 and 173. Size and level are decoupled — `<h3 class="h6">`
+  keeps the small type and states the real depth — in the cookie dialog, the
+  settings offcanvas, the language panel, the author card and the related-posts
+  region. The language panel was not in the report and was doing the same thing
+  on every page. `author-card.html` renders under twelve different call sites,
+  so its level is now `heading_level` (default `5`, unchanged for callers that
+  do not pass it) rather than a guess. Fails **WCAG 1.3.1**. Nothing moves
+  visually. Guarded by `test/visual/core/heading-outline.spec.js`. One offender
+  is injected at **runtime** by `assets/js/modules/theme/appearance.js`, so no
+  grep over `_includes`/`_layouts` could find it — only a rendered assertion
+  does. Still open, deliberately: 66 pages with inline card markup in the news
+  and section index layouts, plus the `palette-generator` and `skin-editor`
+  admin tools — see the evidence bundle.
+
 - **Liquid written as documentation was being executed, not displayed** — Liquid
   runs before Markdown, so backticks and code fences never escaped it; they only
   changed how its *output* was displayed. Two pages leaked as a result. The

@@ -61,7 +61,14 @@ test.describe('Language toggle', { tag: '@critical' }, () => {
     await openSettings(page);
     // Appearance is the default-active pane, so the section is visible on open.
     await expect(page.locator('#appearance-pane #zer0-lang-toggle')).toBeVisible();
-    await expect(page.locator(`${TOGGLE} h6`)).toHaveText(/Language/i);
+    // The panel heading is <h3 class="h6"> since #436: h3 for its depth under
+    // the offcanvas <h2> title, .h6 for its size. Assert the heading by ROLE
+    // rather than by tag, so correcting a level does not break this test
+    // again -- and assert the size class separately, because keeping the type
+    // visually identical is the other half of that fix.
+    const langHeading = page.locator(`${TOGGLE} :is(h1,h2,h3,h4,h5,h6)`).first();
+    await expect(langHeading).toHaveText(/Language/i);
+    await expect(langHeading).toHaveClass(/\bh6\b/);
     await expect(page.locator(`${TOGGLE} .bi-translate`)).toBeAttached();
   });
 
