@@ -1,0 +1,100 @@
+{
+  "before": {
+    "pages": 415,
+    "total_skips": 1060,
+    "pages_with_skip": 391,
+    "top": [
+      {
+        "jump": "h2->h6",
+        "heading": "Essential Cookies",
+        "count": 391
+      },
+      {
+        "jump": "h2->h6",
+        "heading": "Language",
+        "count": 223
+      },
+      {
+        "jump": "h2->h6",
+        "heading": "Langue",
+        "count": 168
+      },
+      {
+        "jump": "h2->h5",
+        "heading": "Zer0-Mistakes Team",
+        "count": 62
+      },
+      {
+        "jump": "h1->h6",
+        "heading": "Administration",
+        "count": 19
+      },
+      {
+        "jump": "h3->h6",
+        "heading": "Development",
+        "count": 10
+      },
+      {
+        "jump": "h3->h6",
+        "heading": "Building an AI-Ready Knowled",
+        "count": 9
+      },
+      {
+        "jump": "h3->h6",
+        "heading": "Turn a Retired PC into an Al",
+        "count": 6
+      }
+    ]
+  },
+  "after": {
+    "pages": 415,
+    "total_skips": 173,
+    "pages_with_skip": 66,
+    "top": [
+      {
+        "jump": "h1->h6",
+        "heading": "Administration",
+        "count": 19
+      },
+      {
+        "jump": "h3->h5",
+        "heading": "Topics",
+        "count": 12
+      },
+      {
+        "jump": "h3->h5",
+        "heading": "Share this note",
+        "count": 10
+      },
+      {
+        "jump": "h3->h6",
+        "heading": "Development",
+        "count": 10
+      },
+      {
+        "jump": "h3->h5",
+        "heading": "Local Resilience Networks: H",
+        "count": 6
+      },
+      {
+        "jump": "h3->h5",
+        "heading": "Build a Responsive Documenta",
+        "count": 6
+      },
+      {
+        "jump": "h2->h5",
+        "heading": "Share this notebook",
+        "count": 5
+      },
+      {
+        "jump": "h2->h6",
+        "heading": "Turn a Retired PC into an Al",
+        "count": 4
+      }
+    ]
+  },
+  "reduction": {
+    "pages_with_skip": 325,
+    "total_skips": 887
+  }
+}

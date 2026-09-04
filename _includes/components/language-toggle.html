@@ -13,7 +13,7 @@
                  - "panel"  — self-contained "Language" section for the
                               Settings offcanvas (components/info-section.html),
                               rendered as an always-visible list of choices
-                              with its own <h6> heading
+                              with its own section heading
   Reads:       page.lang / page.url / page.translation_source_url and the
                generated _data/i18n/manifest.yml.
   Depends on:  site.translation.* config, site.data.i18n.manifest,
@@ -44,7 +44,7 @@
                    row via aria-describedby. Per-row text was the single
                    biggest contributor to menu width.
                Trigger changes (icon-only, no caret) apply to the navbar
-               variant only — the panel has an <h6> heading, not a button.
+               variant only — the panel has a section heading, not a button.
 
                New ui keys (lang_machine_translated, lang_machine_translated_title,
                lang_untranslated_note) live in _data/ui-text.yml `en`. core/i18n.html
@@ -94,9 +94,9 @@
 {%- assign _lt_fallback_url = _lt_src_url | default: '/' | relative_url -%}
 {%- if _lt_variant == 'panel' -%}
 <div class="mb-4 nav-lang-panel" id="zer0-lang-toggle">
-    <h6 class="text-body-secondary small text-uppercase fw-semibold mb-2">
+    <h3 class="h6 text-body-secondary small text-uppercase fw-semibold mb-2">
         <i class="bi bi-translate me-1" aria-hidden="true"></i>{{ ui.lang_toggle_label | default: "Language" }}
-    </h6>
+    </h3>
     <div class="list-group nav-lang-options" role="group" aria-label="{{ ui.lang_toggle_aria | default: 'Change language' }}">
         {%- if _lt_current == _lt_source %}
         <span class="list-group-item nav-lang-item is-current" aria-current="true">
