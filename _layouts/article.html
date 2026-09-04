@@ -449,9 +449,14 @@ layout: default
     
     {% if related_posts.size > 0 %}
       <aside class="related-posts my-5 pt-4 border-top">
-        <h3 class="h5 mb-3">
+        {%- comment -%}
+          h2, not h3: this aside is a sibling of "About the Author" (also h2),
+          not a child of it. The old h3 also made every card title below it an
+          h6, a two-level jump (#436). Size is held by .h5.
+        {%- endcomment -%}
+        <h2 class="h5 mb-3">
           <i class="bi bi-journal-text me-2"></i>Related Posts
-        </h3>
+        </h2>
         <div class="row row-cols-1 row-cols-md-3 g-3">
           {% for rpost in related_posts %}
             <div class="col">
@@ -468,11 +473,11 @@ layout: default
                   </a>
                 </div>
                 <div class="card-body">
-                  <h6 class="card-title mb-1">
+                  <h3 class="h6 card-title mb-1">
                     <a href="{{ rpost.url | relative_url }}" class="text-decoration-none text-body-emphasis">
                       {{ rpost.title | truncate: 60 }}
                     </a>
-                  </h6>
+                  </h3>
                   <small class="text-muted">
                     <i class="bi bi-calendar me-1"></i>{{ rpost.date | date: "%b %d, %Y" }}
                   </small>
