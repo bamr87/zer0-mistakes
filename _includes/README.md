@@ -55,6 +55,7 @@ Reusable UI components and widgets:
 - `svg.html` - SVG icon definitions
 - `js-cdn.html` - CDN JavaScript libraries
 - `preview-image.html` - Consistent preview image rendering with lazy loading
+- `background-image.html` - Cover art painted as a CSS background, announced correctly: `role="img"` + `aria-label` for a real image, `aria-hidden` when decorative. Sibling to `preview-image.html` (which covers the `<img>`-in-flow case)
 - `post-card.html` - Reusable post card component for listings
 - `page-views.html` - Inline "N views" badge for a page (hidden until a count is known)
 - `page-views-init.html` - Page-view counter bootstrap: injects `site.page_views` config and loads `assets/js/page-views.js` (included once from `core/head.html`)

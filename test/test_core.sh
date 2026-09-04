@@ -1235,6 +1235,93 @@ PYEOF
     fi
 }
 
+test_background_image_include_contract() {
+    log_info "Testing components/background-image.html announces backgrounds correctly (issue #401)..."
+
+    cd "$PROJECT_ROOT"
+
+    if [[ ! -f "_includes/components/background-image.html" ]]; then
+        log_error "components/background-image.html is missing"
+        return 1
+    fi
+
+    if ! command -v ruby &>/dev/null; then
+        log_warning "ruby not available for the background-image contract check"
+        return 0
+    fi
+
+    # liquid is a bundled gem -- see test_theme_color_fallback_without_config
+    # for why this probes rather than assuming a load path.
+    local ruby_run=(ruby)
+    if ruby -e 'require "liquid"' >/dev/null 2>&1; then
+        :
+    elif command -v bundle &>/dev/null && bundle exec ruby -e 'require "liquid"' >/dev/null 2>&1; then
+        ruby_run=(bundle exec ruby)
+    else
+        log_warning "liquid gem not loadable; skipping the background-image contract check"
+        return 0
+    fi
+
+    if "${ruby_run[@]}" -e '
+      require "liquid"
+      module StubFilters
+        def relative_url(input); input.to_s; end
+      end
+      Liquid::Template.register_filter(StubFilters)
+
+      tpl  = Liquid::Template.parse(File.read("_includes/components/background-image.html"))
+      site = {"preview_images" => {"assets_prefix" => "/assets", "auto_prefix" => true}}
+      render = lambda { |inc| tpl.render!("site" => site, "include" => inc).strip }
+      fail = []
+
+      # --- real-image branch: a graphic WITH a name -------------------------
+      real = render.call({"src" => "/images/previews/x.png", "alt" => "A cover"})
+      fail << "real branch has no role=img: #{real}"        unless real.include?(%q{role="img"})
+      fail << "real branch has no aria-label: #{real}"      unless real =~ /aria-label="A cover"/
+      fail << "real branch is aria-hidden: #{real}"         if real.include?("aria-hidden")
+
+      # The label must be escaped -- it is author text landing in an attribute.
+      esc = render.call({"src" => "/images/x.png", "alt" => %q{Tom & "Jerry" <b>}})
+      fail << "aria-label is not escaped: #{esc}" unless esc.include?("&amp;") && esc.include?("&quot;") && esc.include?("&lt;")
+
+      # --- decorative branch: hidden, and NEITHER role NOR label ------------
+      # Both halves matter: aria-hidden together with role="img" announces a
+      # graphic and then hides it, which is worse than either alone.
+      [["no src", {}],
+       ["src but no alt", {"src" => "/images/x.png"}],
+       ["forced", {"src" => "/images/x.png", "alt" => "A cover", "decorative" => true}]].each do |name, inc|
+        out = render.call(inc)
+        fail << "decorative (#{name}) is not aria-hidden: #{out}" unless out.include?(%q{aria-hidden="true"})
+        fail << "decorative (#{name}) still has role=img: #{out}" if out.include?(%q{role="img"})
+        fail << "decorative (#{name}) still has aria-label: #{out}" if out.include?("aria-label")
+      end
+
+      # --- path convention, same three cases as preview-image.html ----------
+      bare = render.call({"src" => "/images/previews/x.png", "alt" => "a"})
+      pref = render.call({"src" => "/assets/images/previews/x.png", "alt" => "a"})
+      ext  = render.call({"src" => "https://example.com/x.png", "alt" => "a"})
+      fail << "bare path not prefixed: #{bare}"     unless bare.include?("/assets/images/previews/x.png")
+      fail << "prefixed path doubled: #{pref}"      if pref.include?("/assets/assets")
+      fail << "external URL rewritten: #{ext}"      unless ext.include?("https://example.com/x.png")
+
+      if fail.empty?
+        puts "OK: background-image.html honours both branches, escaping and the path convention"
+        exit 0
+      else
+        puts "::error::components/background-image.html breaks its accessibility contract"
+        fail.each { |f| puts "  #{f}" }
+        exit 1
+      end
+    '
+    then
+        log_success "background-image.html announces backgrounds correctly"
+        return 0
+    else
+        log_error "background-image.html contract check failed (see above)"
+        return 1
+    fi
+}
+
 test_sidebar_offcanvas_layout_gate() {
     log_info "Testing sidebar offcanvas layout gate (issue #373)..."
 
@@ -1366,6 +1453,7 @@ run_core_tests() {
     run_test "Version Consistency" "test_version_consistency" "unit"
     run_test "Plugin Unit Specs" "test_plugin_unit_specs" "unit"
     run_test "Sidebar Offcanvas Layout Gate" "test_sidebar_offcanvas_layout_gate" "unit"
+    run_test "Background Image Include Contract" "test_background_image_include_contract" "unit"
     run_test "Developer Doc Banners Are Liquid" "test_developer_doc_banners_are_liquid" "unit"
     run_test "Theme Color Fallback" "test_theme_color_fallback_without_config" "unit"
     run_test "Content Liquid Raw-Protected" "test_content_liquid_is_raw_protected" "unit"
