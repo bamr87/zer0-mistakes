@@ -192,10 +192,18 @@
         {% endif %}
       {% endif %}
       <div class="flex-grow-1">
-        <h5 class="card-title mb-1" itemprop="name">
+        {%- comment -%}
+          Level is a PARAMETER, size is not. This card renders under an <h2> in
+          author-bio.html and under different ancestors elsewhere, so a
+          hardcoded level cannot be correct everywhere -- picking <h5> for its
+          font-size is what produced the h2 -> h5 skip in issue #436. The
+          default keeps the historic level for any caller that does not say.
+        {%- endcomment -%}
+        {%- assign _ac_level = include.heading_level | default: 5 -%}
+        <h{{ _ac_level }} class="h5 card-title mb-1" itemprop="name">
           {%- if profile_url -%}<a href="{{ profile_url }}" class="text-decoration-none text-reset" itemprop="url">{{ author_name }}</a>{%- else -%}{{ author_name }}{%- endif -%}
           {%- if author_data.ai -%} <span class="badge author-ai-badge align-middle" title="AI author persona"><i class="bi bi-robot me-1" aria-hidden="true"></i>AI</span>{%- endif -%}
-        </h5>
+        </h{{ _ac_level }}>
         {% if author_data.role %}<p class="text-primary mb-2" itemprop="jobTitle">{{ author_data.role }}</p>{% endif %}
         {% if author_data.tagline %}<p class="author-tagline fst-italic text-body-secondary mb-2">{{ author_data.tagline }}</p>{% endif %}
         {% if show_bio and author_data.bio %}<p class="card-text text-muted" itemprop="description">{{ author_data.bio }}</p>{% endif %}
