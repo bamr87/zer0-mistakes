@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-07-13T00:00:00.000Z
+lastmod: 2026-09-03T00:00:00.000Z
 title: Remote-Theme Consumer Checklist
 description: What remote_theme does not deliver on GitHub Pages, and the files and config every Zer0-Mistakes consumer must add to avoid silent breakage.
 preview: /images/previews/remote-theme-consumer-checklist.png
@@ -65,6 +65,8 @@ plugins:
 ### 2. Re-declare structure in your `_config.yml`
 
 None of these are inherited from the theme — declare your own: `collections`, `defaults`, `permalink`, `theme_skin`, `theme_color`, `theme_background`.
+
+The `favicon:` block, by contrast, is entirely optional: `favicon.theme_color_light` / `favicon.theme_color_dark` fall back to the theme's surface colors (`#ffffff` / `#212529`), and the `theme-color` tags are emitted even when you declare nothing.
 
 ### 3. ⚠️ Do not copy the theme's `_config.yml` wholesale
 

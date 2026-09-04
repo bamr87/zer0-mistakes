@@ -1076,6 +1076,85 @@ PYEOF
     fi
 }
 
+test_theme_color_fallback_without_config() {
+    log_info "Testing theme-color is emitted with no favicon/theme_color config (issue #281)..."
+
+    cd "$PROJECT_ROOT"
+
+    if ! command -v ruby &>/dev/null; then
+        log_warning "ruby not available for the theme-color fallback check"
+        return 0
+    fi
+
+    # liquid is a BUNDLED gem, not stdlib. Every other ruby call in this file
+    # requires only 'yaml', which is always on the default load path, so this
+    # is the first test here that needs the bundle -- and CI runs
+    # ./scripts/bin/test without `bundle exec`, where setup-ruby's
+    # bundler-cache puts gems under vendor/bundle and off the default path.
+    # A bare `ruby -e "require \'liquid\'"` raises LoadError there.
+    local ruby_run=(ruby)
+    if ruby -e 'require "liquid"' >/dev/null 2>&1; then
+        :
+    elif command -v bundle &>/dev/null && bundle exec ruby -e 'require "liquid"' >/dev/null 2>&1; then
+        ruby_run=(bundle exec ruby)
+    else
+        # Not reachable either way: skip rather than fail. A guard that goes red
+        # because a gem is not on the load path is testing the environment, not
+        # favicon.html.
+        log_warning "liquid gem not loadable; skipping the theme-color fallback check"
+        return 0
+    fi
+
+    # The case this guard exists for is NOT this repo. A remote_theme consumer
+    # does not inherit the theme's _config.yml (remote-theme-checklist.md), so
+    # the previous config-gated tag emitted NOTHING on exactly the sites the
+    # include exists to serve. Rendering the include against an EMPTY site is
+    # the only way to reproduce that from here -- a served-page test always
+    # runs with this repo's own config, where the tag was present but wrong.
+    if "${ruby_run[@]}" -e '
+      require "liquid"
+
+      module StubFilters
+        def relative_url(input); input.to_s; end
+      end
+      Liquid::Template.register_filter(StubFilters)
+
+      src = File.read("_includes/core/favicon.html")
+      out = Liquid::Template.parse(src).render!("site" => {})
+
+      metas = out.scan(/<meta name="theme-color"[^>]*>/)
+      fail = []
+
+      fail << "no theme-color emitted with an empty site config" if metas.empty?
+
+      light = metas.grep(/prefers-color-scheme: light/)
+      dark  = metas.grep(/prefers-color-scheme: dark/)
+      fail << "expected one light-scheme tag, got #{light.size}" if light.size != 1
+      fail << "expected one dark-scheme tag,  got #{dark.size}"  if dark.size != 1
+
+      # The accent must never be the fallback: that was the original defect.
+      fail << "fallback advertises the brand accent #007bff" if out.include?("#007bff")
+
+      if fail.empty?
+        puts "OK: empty config emits #{metas.size} theme-color tags"
+        metas.each { |m| puts "  #{m}" }
+        exit 0
+      else
+        puts "::error::theme-color fallback is wrong for a remote_theme consumer"
+        fail.each { |f| puts "  #{f}" }
+        puts "  rendered: #{metas.inspect}"
+        exit 1
+      end
+    '
+    then
+        log_success "theme-color falls back correctly with no config"
+        return 0
+    else
+        log_error "theme-color fallback check failed (see above)"
+        return 1
+    fi
+}
+
 test_content_liquid_is_raw_protected() {
     log_info "Testing Liquid shown as code in content is raw-protected..."
 
@@ -1376,6 +1455,7 @@ run_core_tests() {
     run_test "Sidebar Offcanvas Layout Gate" "test_sidebar_offcanvas_layout_gate" "unit"
     run_test "Background Image Include Contract" "test_background_image_include_contract" "unit"
     run_test "Developer Doc Banners Are Liquid" "test_developer_doc_banners_are_liquid" "unit"
+    run_test "Theme Color Fallback" "test_theme_color_fallback_without_config" "unit"
     run_test "Content Liquid Raw-Protected" "test_content_liquid_is_raw_protected" "unit"
     run_test "Preview Generator Unit Specs" "test_preview_generator_unit_specs" "unit"
     

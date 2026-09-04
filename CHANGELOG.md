@@ -107,6 +107,25 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   `transform: none`, which is the corrective pattern this repo already uses in
   `_post-navigation.scss` and its `prefers-reduced-motion` blocks. A theme-wide
   motion policy belongs in its own task.
+- **Mobile browser chrome now tracks the page surface (#281)** — `theme-color`
+  drives the iOS Safari address bar and the Chrome/Android task-switcher card.
+  It fell back to `theme_color.main`, which is the brand **accent** (`#007bff`
+  here), so a dark-first theme advertised a bright blue address bar; and being
+  config-gated it emitted **nothing at all** on `remote_theme` consumers, which
+  do not inherit this repo's `_config.yml` — the case the issue was originally
+  filed about. The include now emits scheme-aware tags sourced from
+  `--bs-body-bg` (light `#ffffff`, dark `#212529`, Bootstrap 5.3.3's own
+  surfaces) **with no configuration required**, and honors new optional
+  `favicon.theme_color_light` / `theme_color_dark` keys. A site that pins its
+  mode (`color_mode_default: dark`/`light`, or `color_mode_lock: true`) gets a
+  single unconditional tag instead, because `media="(prefers-color-scheme: …)"`
+  keys off the OS and a pair would hand light chrome to an OS-light visitor
+  reading a page the site renders dark. `favicon.theme_color` still pins one
+  color for both schemes, so existing consumer config is unchanged. Guarded by
+  four `@critical` tests in `test/visual/core/head-contract.spec.js` that
+  compare each value against the page's computed `--bs-body-bg` rather than a
+  constant, plus `test_theme_color_fallback_without_config` covering the
+  no-config consumer case.
 
 
 - **Consumers no longer inherit the theme's own navigation (#332)** — `install.sh`
