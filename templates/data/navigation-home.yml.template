@@ -1,0 +1,15 @@
+# Homepage navigation cards / links.
+#
+# Starter entries only — each points at a page the installer created.
+
+- title: Quick Start
+  icon: bi-rocket-takeoff
+  url: /quickstart/
+
+- title: Blog
+  icon: bi-journal-text
+  url: /blog/
+
+- title: Docs
+  icon: bi-book
+  url: /docs/
