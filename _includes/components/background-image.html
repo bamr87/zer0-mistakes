@@ -1,0 +1,114 @@
+{% comment %} Feature: ZER0-004 {% endcomment %}
+{% comment %}
+  BACKGROUND IMAGE - Cover art painted as a CSS background, announced correctly
+
+  Sibling to components/preview-image.html. Reach for THIS one when the art is
+  painted as a CSS background on an otherwise empty box; reach for
+  preview-image.html when the art is an <img> in the content flow.
+
+  WHY THIS EXISTS. A CSS background is invisible to assistive technology. A box
+  painted with cover art and nothing else announces nothing at all, so the
+  reader is told there is an element and never told what it shows. The fix is
+  role="img" plus an aria-label, which makes the box a single graphic with a
+  name. The theme already did this by hand in three places
+  (components/abc-letter.html, layouts/article.html rating stars,
+  components/theme-customizer.html) without it being a named convention.
+
+  TWO BRANCHES, and the second is not optional:
+
+    real image   -> role="img" aria-label="..."   (a graphic with a name)
+    decorative   -> aria-hidden="true", and NO role and NO aria-label
+
+  Combining aria-hidden with role="img" is worse than either alone: it
+  announces a graphic and then hides it. A gradient placeholder carries no
+  information the surrounding text does not already carry, so it is hidden.
+
+  Usage:
+    {%- include components/background-image.html
+       src=post.preview
+       alt=post.title
+       class="card-cover"
+       style="height: 180px;"
+    -%}
+
+    {%- comment -%} decorative fallback: omit alt, or pass decorative=true {%- endcomment -%}
+    {%- include components/background-image.html class="card-cover card-cover-empty" -%}
+
+  Params:
+    src         - image path (optional; omit for the decorative branch)
+    alt         - accessible name; REQUIRED for the real-image branch
+    class       - CSS classes on the box (default: "bg-cover")
+    style       - extra inline style, appended after the background shorthand
+    decorative  - force the decorative branch even when src is present
+    tag         - element name (default: div)
+
+  Path convention is preview-image.html's, duplicated rather than extracted:
+  it is ~14 lines of Liquid, and a third shared include to save them buys less
+  than it costs in indirection. preview-image.html remains the source of the
+  convention -- change it there first.
+    - /images/previews/x.png        -> /assets/images/previews/x.png
+    - /assets/images/previews/x.png -> unchanged
+    - https://example.com/x.png     -> unchanged (external URL)
+
+  DO NOT apply this to a box that wraps text. role="img" makes the element a
+  single graphic and its descendants stop being exposed -- so putting it on
+  _includes/content/intro.html, which paints a background AND wraps the page
+  <h1>, would delete the heading from the accessibility tree.
+{% endcomment %}
+{%- assign bgi_src = include.src -%}
+{%- assign bgi_alt = include.alt -%}
+{%- assign bgi_class = include.class | default: "bg-cover" -%}
+{%- assign bgi_style = include.style -%}
+{%- assign bgi_tag = include.tag | default: "div" -%}
+
+{%- comment -%} Decorative is the DEFAULT, and the real-image branch has to earn
+    it: an image AND a name AND no explicit decorative flag. Written as a
+    positive test on purpose -- the failure mode of getting this backwards is
+    role="img" aria-label="", an unnamed graphic, which is worse for a screen
+    reader than either branch done right. Falling back to aria-hidden is safe.
+
+    NOTE: `x == blank` does NOT match nil in Liquid 4 -- blank matches empty
+    strings and collections only. An earlier version of this file tested
+    `bgi_src == blank` and every decorative call rendered as an unnamed
+    graphic. Test truthiness AND emptiness, both. {%- endcomment -%}
+{%- assign bgi_decorative = true -%}
+{%- if include.decorative != true -%}
+  {%- if bgi_src and bgi_src != "" -%}
+    {%- if bgi_alt and bgi_alt != "" -%}
+      {%- assign bgi_decorative = false -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- comment -%} Path resolution -- see preview-image.html {%- endcomment -%}
+{%- assign bgi_assets_prefix = site.preview_images.assets_prefix | default: '/assets' -%}
+{%- assign bgi_auto_prefix = site.preview_images.auto_prefix | default: true -%}
+{%- if bgi_src == nil or bgi_src == "" -%}
+  {%- assign bgi_final_src = nil -%}
+{%- elsif bgi_src contains '://' -%}
+  {%- assign bgi_final_src = bgi_src -%}
+{%- elsif bgi_auto_prefix and bgi_src != blank -%}
+  {%- if bgi_src contains bgi_assets_prefix -%}
+    {%- assign bgi_final_src = bgi_src | relative_url -%}
+  {%- else -%}
+    {%- assign bgi_final_src = bgi_assets_prefix | append: bgi_src | relative_url -%}
+  {%- endif -%}
+{%- elsif bgi_src != blank -%}
+  {%- assign bgi_final_src = bgi_src | relative_url -%}
+{%- endif -%}
+
+{%- comment -%} One capture for the whole attribute value, so "is there a style
+    at all" is a single test. `!= blank` would not do here: a capture that
+    produced nothing is an empty string, and "" == blank is true, but the
+    surrounding whitespace control makes that fragile to edit. Compare to ""
+    explicitly. {%- endcomment -%}
+{%- capture bgi_background -%}
+{%- if bgi_final_src %}background-image: url('{{ bgi_final_src }}'); background-size: cover; background-position: center;{% endif %}{{ bgi_style }}
+{%- endcapture -%}
+{%- assign bgi_background = bgi_background | strip -%}
+
+{%- if bgi_decorative -%}
+<{{ bgi_tag }} class="{{ bgi_class }}" aria-hidden="true"{% if bgi_background != "" %} style="{{ bgi_background }}"{% endif %}></{{ bgi_tag }}>
+{%- else -%}
+<{{ bgi_tag }} class="{{ bgi_class }}" role="img" aria-label="{{ bgi_alt | escape }}"{% if bgi_background != "" %} style="{{ bgi_background }}"{% endif %}></{{ bgi_tag }}>
+{%- endif -%}
