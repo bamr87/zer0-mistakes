@@ -109,6 +109,18 @@ echo "do not translate me"
 ```
 
 Another paragraph mentioning [[Wiki Page]] targets.
+
+Nested masks — a Liquid expression inside a link destination, and inside an
+inline code span. Both shapes are masked twice (the inner Liquid first, then
+the enclosing link/code span), so they are what a single-pass unmask strands
+as a literal placeholder. Keep them here: they give the "no placeholder tokens
+leak into output" assertion below its teeth.
+
+Token files are addressable — [colors]({{ '/tokens/colors.css' | relative_url }}) and [motion]({{ '/tokens/motion.css' | relative_url }}).
+
+| Variable | Description |
+|----------|-------------|
+| `{{ content }}` | Page content |
 MD
 
   cat > "$sandbox/pages/_docs/setup-guide.md" <<'MD'
@@ -249,6 +261,10 @@ test_generation() {
   assert "link destination survives byte-identical" grep -qF '(https://example.com/docs)' "$post"
   assert "liquid output tag survives byte-identical" grep -qF '{{ site.title }}' "$post"
   assert "wiki-link survives byte-identical" grep -qF '[[Wiki Page]]' "$post"
+  assert "liquid nested in a link destination survives byte-identical" \
+    grep -qF "[colors]({{ '/tokens/colors.css' | relative_url }})" "$post"
+  assert "liquid nested in an inline code span survives byte-identical" \
+    grep -qF '`{{ content }}`' "$post"
   assert "liquid-only include line is untouched" \
     grep -qF '{% include components/callout.html %}' "$doc"
   assert "no placeholder tokens leak into output" bash -c "test -f '$post' && ! grep -q '⟦' '$post'"
