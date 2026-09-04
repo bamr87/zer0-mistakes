@@ -1,0 +1,132 @@
+{
+  "before_url": "http://127.0.0.1:4058",
+  "after_url": "http://127.0.0.1:4057",
+  "routes": {
+    "/": {
+      "before": {
+        "route": "/",
+        "tag_count": 1,
+        "declared": [
+          {
+            "media": null,
+            "content": "#007bff"
+          }
+        ],
+        "painted": {
+          "light": "#ffffff",
+          "dark": "#212529"
+        },
+        "matches": {
+          "light": null,
+          "dark": null
+        }
+      },
+      "after": {
+        "route": "/",
+        "tag_count": 2,
+        "declared": [
+          {
+            "media": "(prefers-color-scheme: light)",
+            "content": "#ffffff"
+          },
+          {
+            "media": "(prefers-color-scheme: dark)",
+            "content": "#212529"
+          }
+        ],
+        "painted": {
+          "light": "#ffffff",
+          "dark": "#212529"
+        },
+        "matches": {
+          "light": true,
+          "dark": true
+        }
+      }
+    },
+    "/docs/": {
+      "before": {
+        "route": "/docs/",
+        "tag_count": 1,
+        "declared": [
+          {
+            "media": null,
+            "content": "#007bff"
+          }
+        ],
+        "painted": {
+          "light": "#ffffff",
+          "dark": "#212529"
+        },
+        "matches": {
+          "light": null,
+          "dark": null
+        }
+      },
+      "after": {
+        "route": "/docs/",
+        "tag_count": 2,
+        "declared": [
+          {
+            "media": "(prefers-color-scheme: light)",
+            "content": "#ffffff"
+          },
+          {
+            "media": "(prefers-color-scheme: dark)",
+            "content": "#212529"
+          }
+        ],
+        "painted": {
+          "light": "#ffffff",
+          "dark": "#212529"
+        },
+        "matches": {
+          "light": true,
+          "dark": true
+        }
+      }
+    },
+    "/404.html": {
+      "before": {
+        "route": "/404.html",
+        "tag_count": 1,
+        "declared": [
+          {
+            "media": null,
+            "content": "#007bff"
+          }
+        ],
+        "painted": {
+          "light": "#ffffff",
+          "dark": "#212529"
+        },
+        "matches": {
+          "light": null,
+          "dark": null
+        }
+      },
+      "after": {
+        "route": "/404.html",
+        "tag_count": 2,
+        "declared": [
+          {
+            "media": "(prefers-color-scheme: light)",
+            "content": "#ffffff"
+          },
+          {
+            "media": "(prefers-color-scheme: dark)",
+            "content": "#212529"
+          }
+        ],
+        "painted": {
+          "light": "#ffffff",
+          "dark": "#212529"
+        },
+        "matches": {
+          "light": true,
+          "dark": true
+        }
+      }
+    }
+  }
+}

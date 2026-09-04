@@ -99,11 +99,22 @@ teaser                   : '/assets/images/favicon_gpt_computer_retro.png' # pat
 info_banner              : '/assets/images/info-banner-mountain-wizard.png' # path of fallback teaser image, e.g. "/assets/images/500x300.png"
 
 # Favicon / browser identity — rendered by _includes/core/favicon.html.
-# All keys optional; with no block at all the theme still links /favicon.ico.
-# theme_color falls back to theme_color.main below when unset here.
+# All keys optional; with no block at all the theme still links /favicon.ico
+# AND emits both theme-color tags.
+#
+# theme-color drives mobile browser chrome, so it tracks the page SURFACE
+# (--bs-body-bg), NOT theme_color.main below — that is the brand accent, and
+# pointing chrome at it gave a dark-first site a bright blue address bar (#281).
+# Defaults: light "#ffffff", dark "#212529" (Bootstrap 5.3.3's own surfaces).
+#
+# NOTE: Hex codes MUST be quoted — unquoted `#ffffff` is parsed as a YAML
+# comment and the key resolves to null.
 favicon:
   ico                    : /favicon.ico
   apple_touch            : /assets/images/favicon_gpt_computer_retro.png
+  # theme_color_light    : "#ffffff"   # light-scheme browser chrome
+  # theme_color_dark     : "#212529"   # dark-scheme browser chrome
+  # theme_color          : "#0d1117"   # pin ONE colour for both schemes (wins over the pair)
 
 ## Preview Image Generation (AI-powered) #####################################
 # Settings for automatic preview image generation using AI

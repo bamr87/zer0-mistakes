@@ -16,12 +16,17 @@
                  png_size    : 32x32                           # sizes attr for png (optional)
                  apple_touch : /assets/images/apple-touch.png  # iOS home-screen icon (optional)
                  manifest    : /site.webmanifest               # PWA manifest (optional)
-                 theme_color : "#0d1117"                       # browser chrome color (optional)
+                 theme_color       : "#0d1117"                 # pin ONE chrome color (optional)
+                 theme_color_light : "#ffffff"                 # light-scheme chrome (optional)
+                 theme_color_dark  : "#212529"                 # dark-scheme chrome (optional)
 
                With NO config at all this still emits the explicit
-               /favicon.ico link (every consumer site carries one at root),
-               and theme_color falls back to site.theme_color.main so the
-               mobile address bar matches the site's design tokens.
+               /favicon.ico link (every consumer site carries one at root)
+               AND both theme-color tags. That last part is the point of the
+               fallbacks below: a remote_theme consumer does not inherit this
+               repo's _config.yml (see remote-theme-checklist.md), so a
+               config-gated tag emitted nothing at all on exactly the sites
+               this include exists to serve (issue #281).
   Notes:       Page-invariant — safe to render via include_cached. All paths
                run through relative_url so baseurl deployments resolve.
 {%- endcomment -%}
@@ -40,7 +45,44 @@
 {%- if _fav.manifest %}
 <link rel="manifest" href="{{ _fav.manifest | relative_url }}">
 {%- endif %}
-{%- assign _fav_theme_color = _fav.theme_color | default: site.theme_color.main -%}
-{%- if _fav_theme_color %}
-<meta name="theme-color" content="{{ _fav_theme_color }}">
+{%- comment -%}
+  theme-color drives mobile browser chrome (iOS Safari address/status bar,
+  the Chrome/Android task-switcher card). It must track the page SURFACE.
+
+  It used to fall back to site.theme_color.main, which is the brand ACCENT --
+  #007bff on this site -- so a dark-first theme advertised a bright blue
+  address bar. The defaults below are Bootstrap 5.3.3's own --bs-body-bg for
+  each scheme (:root #fff, [data-bs-theme=dark] #212529); the theme adds no
+  dark override of that variable, so they are the real computed surface.
+
+  WHICH SHAPE TO EMIT depends on how the mode is decided, because
+  `media="(prefers-color-scheme: ...)"` keys off the OS and nothing else:
+
+    - mode is pinned (color_mode_lock, or a non-auto color_mode_default)
+      -> ONE unconditional tag. A media pair would hand light chrome to an
+         OS-light visitor looking at a page this site renders dark.
+    - mode is `auto` -> the media pair, which is exactly what `auto` means.
+
+  A locked `auto` resolves to dark here, matching core/color-mode-init.html.
+
+  Known limitation, deliberately not solved here: an unlocked site lets a
+  visitor override the mode from the Appearance panel via localStorage, which
+  no static meta can follow. Keeping chrome in sync with the panel needs a
+  runtime hook in the toggle path -- tracked separately.
+{%- endcomment -%}
+{%- assign _tc_light = _fav.theme_color_light | default: '#ffffff' -%}
+{%- assign _tc_dark  = _fav.theme_color_dark  | default: '#212529' -%}
+{%- assign _tc_mode  = site.color_mode_default | default: 'auto' -%}
+{%- if _fav.theme_color %}
+{%- comment -%} Back-compat: a consumer that pinned one colour keeps it. {%- endcomment %}
+<meta name="theme-color" content="{{ _fav.theme_color }}">
+{%- elsif site.color_mode_lock and _tc_mode == 'light' %}
+<meta name="theme-color" content="{{ _tc_light }}">
+{%- elsif site.color_mode_lock or _tc_mode == 'dark' %}
+<meta name="theme-color" content="{{ _tc_dark }}">
+{%- elsif _tc_mode == 'light' %}
+<meta name="theme-color" content="{{ _tc_light }}">
+{%- else %}
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="{{ _tc_light }}">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="{{ _tc_dark }}">
 {%- endif %}

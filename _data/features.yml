@@ -2219,7 +2219,7 @@ features:
     features:
       - "Zero-config default: explicit /favicon.ico link on every page (fixes silent 404s and baseurl project sites)"
       - "Optional SVG favicon, PNG sizes, apple-touch-icon, and web manifest links"
-      - "theme-color meta sourced from favicon.theme_color with fallback to theme_color.main design token"
+      - "scheme-aware theme-color metas tracking --bs-body-bg (light #ffffff / dark #212529), emitted even with no config; favicon.theme_color pins a single value"
 
   - id: ZER0-080
     title: "Books Collection — Children's Picture-Book Publishing"
