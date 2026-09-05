@@ -33,8 +33,6 @@ sidebar:
 
 Mermaid diagrams are enabled with one front matter flag and a standard code fence: no server-side plugin and no CDN dependency, because the renderer is vendored with the theme.
 
-> Create flowcharts, sequence diagrams, class diagrams and more in your Jekyll site using Mermaid's simple text-based syntax.
-
 **GitHub Pages Compatible** — Works without custom server-side plugins!
 
 **What you'll do:** turn a ` ```mermaid ` code block into a rendered, zoomable diagram that follows your site's color mode and skin.
