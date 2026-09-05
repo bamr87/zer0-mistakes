@@ -63,7 +63,7 @@
 meta:
   title: "zer0-mistakes Backlog"
   updated: 2026-09-05
-  next_id: 49
+  next_id: 51
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -1366,6 +1366,41 @@ tasks:
       - "Decide and document the precedence: skin over site theme_color (recommended) or the reverse — one rule, applied to every --zer0-color-* the mixin sets."
       - "A smoke test asserts --zer0-color-primary === --bs-primary after setSkin('neon')."
       - "before/after evidence committed"
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-09-05
+    updated: 2026-09-05
+
+  - id: T-049
+    title: "test_core.sh: Liquid nested-tag check and gem-content check can never fail"
+    status: open
+    priority: P3
+    area: tests
+    risk: low
+    effort: S
+    source: audit
+    summary: "Found while reviewing CI logs for PR #455: test/test_core.sh prints '[ERROR] Nested Liquid output tags found in _includes/navigation/sidebar-pagetree.html' on every run and still reports the Liquid validation as passed. Two defects: (1) the check is `grep -q \"{{.*{{\"`, which flags any line with two output tags — sidebar-pagetree.html:65 is `{{ _base }}{{ _section }}` inside a capture, valid Liquid — and the `return 1` sits inside a `find | while read` pipeline subshell, so it can never fail the function; (2) the gem-content check runs `tar -tzf` on the .gem, but a gem is an uncompressed tar (metadata.gz, data.tar.gz, checksums.yaml.gz), so gzip prints 'stdin: not in gzip format' four times and both branches always fall through to the 'Gem may not contain…' warnings without inspecting anything."
+    acceptance:
+      - "The nested-tag check only flags a genuinely nested output tag (e.g. `{{ a {{ b }} }}`), not two sibling tags on one line, and a positive match fails the test (no subshell swallowing the return)."
+      - "The gem-content check lists data.tar.gz inside the .gem (`tar -xOf … data.tar.gz | tar -tzf -`) and asserts _layouts/ and assets/ are present; a gem missing them fails the test."
+      - "./test/test_core.sh runs clean: no '[ERROR]' line on a passing run and no gzip/tar noise."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-09-05
+    updated: 2026-09-05
+
+  - id: T-050
+    title: "Visual Snapshots tier: LiveReload reloads the page mid-test because npm ci lands after Jekyll starts watching"
+    status: open
+    priority: P2
+    area: tests
+    risk: low
+    effort: S
+    source: audit
+    summary: "The snapshots project shows a retried test on most CI runs — '[snapshots] › appearance-snapshot.spec.js › skin: <random> › homepage visual snapshot' fails with 'page.evaluate: Execution context was destroyed, most likely because of a navigation' and passes on retry (aqua on PR #455, mint on main 5ff38bf). Nothing on the homepage navigates; the likely trigger is Jekyll's LiveReload. test/update-snapshots.sh runs `docker compose up -d` (jekyll serve --watch --livereload, repo bind-mounted at /site) and only then starts the Playwright container, which runs `npm ci` into the same bind mount. jekyll-watch 2.2.1 registers an ignore pattern only for exclude paths that EXIST when serve starts (`next unless absolute_path.exist?` in listen_ignore_paths), and a fresh CI checkout has no node_modules/, so the thousands of files npm ci writes fire the watcher, the site regenerates, and LiveReload pushes a reload to every open page over localhost:35729 (reachable: the Playwright container uses --network host). Whichever skin is mid-step when the regeneration finishes fails; Playwright's CI retry (retries: 1) masks it, at the cost of one retry per run and a false 'flaky' signal that would hide a real regression."
+    acceptance:
+      - "Jekyll in the snapshot stack cannot reload the browser during a run: either node_modules/ exists before `docker compose up` (run `npm ci` first, or `mkdir -p node_modules`) or the test stack serves without --livereload (compose override or a JEKYLL_LIVERELOAD toggle)."
+      - "Confirmed with the Playwright trace or `docker compose logs jekyll` showing no 'Regenerating' during a run."
+      - "Ten consecutive CI runs of the snapshots project report 0 flaky tests."
+      - "Root cause noted in the header of test/update-snapshots.sh so the ordering is not undone."
     links: { issue: null, pr: null, roadmap: null }
     created: 2026-09-05
     updated: 2026-09-05
