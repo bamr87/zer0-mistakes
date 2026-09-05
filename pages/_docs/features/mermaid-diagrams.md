@@ -194,7 +194,7 @@ mermaid:
 
 | Key | Default | Notes |
 |-----|---------|-------|
-| `src` | `/assets/vendor/mermaid/mermaid.min.js` | Path to the Mermaid bundle. Refresh it with `npm run vendor:mermaid` (or `docker-compose exec jekyll npm run vendor:mermaid` inside the container); `./scripts/vendor-install.sh` refreshes every vendored asset (Bootstrap, icons, Mermaid) at once. |
+| `src` | `/assets/vendor/mermaid/mermaid.min.js` | Path to the Mermaid bundle. Refresh it with `npm run vendor:mermaid` (inside the container: `docker-compose exec jekyll npm run vendor:mermaid`). To refresh every vendored asset at once (Bootstrap, icons, Mermaid), run `./scripts/vendor-install.sh`. |
 | `security_level` | `strict` | `strict` sanitises diagram text. Use `loose` only if you need `click` callbacks or HTML in labels — it disables that sanitisation, so keep it `strict` when diagrams can come from untrusted content. |
 | `toolbar` | `true` | Set `false` to render bare diagrams with no controls. |
 | `fullscreen` | `true` | Set `false` to remove the fullscreen control. |
@@ -673,7 +673,7 @@ docker-compose up
 
 For implementation details (file changes, test suite):
 
-- [Mermaid Integration v2.0 → docs/implementation/feature-change-log.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/implementation/feature-change-log.md#mermaid-integration-v20-january-2025--v030) — the previous implementation (a plain `<div class="mermaid">` wrapper), kept for history. The figure, toolbar and token-derived theming described on this page are the later rework, registered as `ZER0-013` in `_data/features.yml`
+- [Mermaid Integration v2.0 → docs/implementation/feature-change-log.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/implementation/feature-change-log.md#mermaid-integration-v20-january-2025--v030) — documents the earlier approach (a plain `<div class="mermaid">` wrapper) and is not the one to follow today. The figure, toolbar and token-derived theming described on this page are the later rework, registered as `ZER0-013` in `_data/features.yml`
 - Component files: `_includes/components/mermaid.html` (loader), `assets/js/mermaid-diagrams.js` (behaviour), `_sass/components/_mermaid.scss` (styles)
 - Regression test: `test/visual/features/mermaid.spec.js`
 
