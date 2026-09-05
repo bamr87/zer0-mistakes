@@ -56,11 +56,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 ### Hover Dropdowns
 
-Desktop navbar dropdowns open on hover with a short delay to prevent accidental triggers. Defined in `config.js`:
+Desktop navbar dropdowns open on hover with a short delay to prevent accidental triggers. The delay is a module-local constant in `navbar.js`; the `lg` breakpoint that gates hover behaviour comes from `config.breakpoints`, which `syncBreakpointsFromCss()` refreshes at runtime from the `--zer0-bp-*` custom properties so the SCSS tokens stay the single source of truth:
 
 ```javascript
-export const TOOLTIP_DELAY = { show: 400, hide: 100 };
-export const MOBILE_BREAKPOINT = 992; // px — Bootstrap lg breakpoint
+// assets/js/modules/navigation/navbar.js
+const TOOLTIP_DELAY = { show: 400, hide: 100 };
+
+// assets/js/modules/navigation/config.js
+breakpoints: { sm: 576, md: 768, lg: 992, xl: 1200, xxl: 1400 }
 ```
 
 ### Keyboard Navigation
