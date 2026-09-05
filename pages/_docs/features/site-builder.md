@@ -73,7 +73,9 @@ The preview panel shows every file live and regenerates on each keystroke. Any f
 | `index.md` | Home page on the `home` layout with a latest-posts list |
 | `_data/navigation/main.yml` | The navigation rows from the Structure step |
 | `pages/_about/index.md`, `pages/_posts/<date>-welcome.md` | Voice-step drafts with front matter added |
-| `pages/<collection>.md` | One index page per enabled collection on the `collection` layout |
+| `pages/<collection>.md` | One index page per enabled collection on the `collection` layout (`cookbook` layout for `recipes`) |
+| `pages/_docs/getting-started.md`, `pages/_quickstart/first-steps.md`, `pages/_notes/welcome-note.md`, `pages/_recipes/starter-recipe.md` | One valid starter document per enabled collection, showing the front matter that collection needs |
+| `assets/images/logo.svg` | A monogram in the skin's colours, so the navbar never shows a broken logo (the published gem ships no theme images) |
 | `.gitignore`, `.env.example`, `README.md` | Hygiene and a run/publish guide |
 | `zer0.install.yml` | Your answers, replayable by `scripts/bin/install` |
 
@@ -126,6 +128,19 @@ The routes live only in `templates/deploy/chat-proxy/dev-proxy.mjs` and are boun
 | `POST /api/wizard/compose` | Only `up -d --build`, `ps`, `logs`, `down`, `config`, in a folder that already holds `docker-compose.yml` |
 
 Environment: `WIZARD_TARGET_ROOT` and `WIZARD_DISABLE_COMPOSE=1`.
+
+## Validate a build end to end
+
+Because the agent's answers are not deterministic, the wizard ships a scenario runner rather than a fixed transcript. It samples a realistic brief, author, tone, skin, colour mode and integrations for a site type, drives the whole wizard in a real browser with video recording on, accepts Claude's confirmation cards, writes the project, starts it with Docker, and asserts structural facts about the result: the expected files exist, the site answers on every route for that type, and it carries the chosen title and skin.
+
+```bash
+# theme on :4000, dev proxy on :8787
+node test/visual/site-builder-walkthrough.mjs                       # one random scenario
+SCENARIO=cookbook SEED=42 node test/visual/site-builder-walkthrough.mjs
+SCENARIO=all COUNT=6 SITE_PORT=4100 node test/visual/site-builder-walkthrough.mjs
+```
+
+Scenarios live in `test/visual/site-builder-scenarios.mjs` (`blog`, `docs`, `cookbook`, `portfolio`, `garden`, `mixed`). Each run prints its seed and writes `report.md`, `report.json`, screenshots and `video-desktop.webm` under `test/visual-results/site-builder-walkthrough/<timestamp>/`. When the assistant is unavailable the runner records those checks as failed, fills deterministic stand-ins, and still exercises the build. Generated sites use `SITE_PORT + 10·i` with LiveReload on the next port, so they run beside the theme's own dev server.
 
 ## Verify
 

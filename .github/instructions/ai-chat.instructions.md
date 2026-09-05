@@ -67,6 +67,8 @@ new options there with a `site.ai_chat.*` default and read them in `ai-chat.js`.
   `assets/js/setup-wizard.js` and `assets/js/site-builder.js`.
 - `node test/test_wizard_store.mjs` — the sandbox's path, allow-list and
   overwrite rules against a temp target root.
+- `node test/visual/site-builder-walkthrough.mjs` (theme + dev proxy running) —
+a full randomised build per site type (`SCENARIO=`, `SEED=`), recorded on video, ending in a Docker-served site whose routes/title/skin are asserted. Run it after any change to the generators, the tools, or the proxy routes.
 - Build with `_config.yml,_config_dev.yml` (dev: widget on, `localEdit` true)
   and confirm the rendered `aiChatConfig` JSON is valid.
 - For proxy changes, exercise `worker.js` with mocked `fetch`/KV and the

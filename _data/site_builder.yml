@@ -249,13 +249,13 @@ collections:
     permalink: "/quests/:path/"
     default: false
     description: "Gamified learning paths with levels and badges."
-  - id: cookbook
-    label: "Cookbook"
+  - id: recipes
+    label: "Recipes"
     icon: bi-egg-fried
     layout: recipe
-    permalink: "/cookbook/:path/"
+    permalink: "/recipes/:path/"
     default: false
-    description: "Recipes with scaling and unit conversion."
+    description: "A cookbook: structured recipes with serving scaling and unit conversion."
 
 skins:
   - id: air
@@ -347,6 +347,9 @@ site_types:
   - id: mixed
     label: "Blog + docs"
     collections: [posts, docs, about]
+  - id: cookbook
+    label: "Cookbook"
+    collections: [recipes, posts, about]
 
 deploy_targets:
   - id: github-pages

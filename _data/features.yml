@@ -2445,6 +2445,8 @@ features:
         - "assets/js/site-builder.js"
         - "templates/deploy/chat-proxy/wizard-store.mjs"
         - "templates/deploy/chat-proxy/dev-proxy.mjs"
+        - "test/visual/site-builder-walkthrough.mjs"
+        - "test/visual/site-builder-scenarios.mjs"
       data: "_data/site_builder.yml"
       config: "_config.yml"
       instructions: ".github/instructions/ai-chat.instructions.md"
@@ -2457,3 +2459,4 @@ features:
       - "Tools — get/set wizard fields, go to step, get/override generated files, read theme source, list theme dirs, search the docs index, resolve target, write project, docker compose up/ps/logs/down, check the site is live"
       - "Context propagation — the whole wizard state, field schema and generated-file list are in the system prompt on every turn; the form is the single source of truth"
       - "Safety — proxy-only (no credential in the page), escape-first rendering, confirmation cards for every mutation, scaffold confined to a new folder beside the theme"
+      - "Validation — test/visual/site-builder-walkthrough.mjs samples a random brief per site type (site-builder-scenarios.mjs), drives the wizard on video, builds the site with Docker and asserts routes/title/skin; replayable by seed"

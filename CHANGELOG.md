@@ -78,6 +78,22 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   session,prereq-checklist}.html`, the `site_builder:` config block, a
   quickstart page and a feature reference. (evidence:
   [`test/visual/evidence/site-builder/`](test/visual/evidence/site-builder/README.md))
+  A first recorded end-to-end run then shaped the build half: the generated
+  `docker-compose.yml` publishes LiveReload on the site's port + 1 (a fixed
+  35729 collided with the theme's own dev container and the new site never
+  started) and shares one gem cache across generated sites; every enabled
+  collection now ships a valid starter document (a doc, a quickstart step, a
+  note with a wiki-link, a structured recipe) and the cookbook index uses the
+  theme's `cookbook` layout over the real `recipes` collection; `_config.yml`
+  sets `collections_dir: pages` (without it every collection but posts was
+  invisible to Jekyll); each site gets its own `assets/images/logo.svg`
+  monogram and gem-based sites turn the SVG background layers off, because
+  the published gem ships no theme images; a revoked Claude credential now
+  says so and names the fix. Validation is a scenario
+  runner, `test/visual/site-builder-walkthrough.mjs`, that samples random
+  briefs per site type (`test/visual/site-builder-scenarios.mjs`), drives the
+  wizard on video, builds the site with Docker and asserts its routes, title
+  and skin — replayable by seed.
 - **Mermaid diagrams are now accessible figures with a toolbar (ZER0-013)** —
   every ```` ```mermaid ```` fence (and legacy `<div class="mermaid">`) renders
   as a `<figure>` with a rendered SVG and a small toolbar: zoom out / in / reset
