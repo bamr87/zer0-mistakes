@@ -116,9 +116,14 @@ jobs:
             --pr-title "$AUTOGEN/pr-title.txt" --pr-body "$AUTOGEN/pr-body.md" \
             --out "$AUTOGEN/state.json" --github-output "$GITHUB_OUTPUT"
 
+      # Only pay for a verdict when there is something to judge: a failing
+      # verify pass, or freshly generated evidence that needs its README.
       - name: Check AI availability
         id: ai-gate
-        if: steps.plan.outputs.needed == 'true'
+        if: >-
+          steps.plan.outputs.needed == 'true' &&
+          (steps.generate.outputs.snapshots_verified == 'fail' ||
+           steps.generate.outputs.evidence_generated == 'true')
         env:
           OAUTH: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -131,7 +136,7 @@ jobs:
           fi
 
       - name: Setup Node (Claude Code CLI)
-        if: steps.plan.outputs.needed == 'true' && steps.ai-gate.outputs.enabled == 'true'
+        if: steps.ai-gate.outputs.enabled == 'true'
         uses: actions/setup-node@v7
         with:
           node-version: '20'
@@ -139,7 +144,7 @@ jobs:
       # The judgment call. The agent only writes verdict.json and the README
       # narrative; `decide` below is what turns its verdict into an action.
       - name: Review the diff images (visual-evidence-reviewer)
-        if: steps.plan.outputs.needed == 'true' && steps.ai-gate.outputs.enabled == 'true'
+        if: steps.ai-gate.outputs.enabled == 'true'
         uses: ./.github/actions/claude-run
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
