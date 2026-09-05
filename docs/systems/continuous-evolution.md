@@ -105,9 +105,7 @@ The evidence gate and the pixel-snapshot tier only ever **verified**. Their inpu
 [`visual-evidence-autogen.yml`](../../.github/workflows/visual-evidence-autogen.yml) makes the runner that producer. On every same-repo PR event it runs [`scripts/ci/visual_evidence_autogen.py`](../../scripts/ci/visual_evidence_autogen.py), which is deterministic end to end except for one judgment call:
 
 1. **plan** — from the diff: which evidence folders lack generated proof, which
-   `*-evidence.mjs` generators the PR ships, whether the pixel tier is in scope
-   (the same paths as ci.yml's `styling` filter), and whether it may act at all
-   (loop guard on its own commits; a three-commit budget per PR).
+`*-evidence.mjs` generators the PR ships, whether the pixel tier is in scope (the same paths as ci.yml's `styling` filter), and whether it may act at all (loop guard on its own commits; a three-commit budget per PR).
 2. **generate** — `docker compose up`, then the PR's generators or the generic
    [`test/visual/pr-evidence.mjs`](../../test/visual/pr-evidence.mjs), which renders the **base branch** and the head side by side so nobody has to hand-write an `unfixCss`; then `UPDATE_SNAPSHOTS=0 ./test/update-snapshots.sh` to verify the baselines — all inside the same jammy image CI compares with, via that script's new `PRE_TEST_SCRIPT` / `POST_TEST_SCRIPT` hooks.
 3. **review** — the [`visual-evidence-reviewer`](../../.claude/agents/visual-evidence-reviewer.md)
