@@ -29,7 +29,7 @@ sidebar:
     nav: docs
 ---
 
-# Mermaid Diagrams
+# Mermaid Diagrams for Jekyll Sites
 
 > Create flowcharts, sequence diagrams, class diagrams and more in your Jekyll site using Mermaid's simple text-based syntax.
 
@@ -250,9 +250,10 @@ graph LR
 |--------|-------|----------|
 | `A[Text]` | Rectangle | Actions, steps |
 | `A(Text)` | Rounded | Processes |
+| `A([Text])` | Stadium | Start/End |
 | `A{Text}` | Diamond | Decisions |
-| `A((Text))` | Circle | Start/End |
-| `A[[Text]]` | Stadium | Subroutines |
+| `A((Text))` | Circle | Terminals, connectors |
+| `A[[Text]]` | Subroutine | Sub-processes |
 | `A[(Text)]` | Cylinder | Database |
 
 **Link Types:**
@@ -670,9 +671,9 @@ docker-compose up
 
 ## Technical reference
 
-For implementation details (how Mermaid v2 was integrated, file changes, test suite):
+For implementation details (file changes, test suite):
 
-- [Mermaid Integration → docs/implementation/feature-change-log.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/implementation/feature-change-log.md#mermaid-integration-v20-january-2025--v030)
+- [Mermaid Integration v2.0 → docs/implementation/feature-change-log.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/implementation/feature-change-log.md#mermaid-integration-v20-january-2025--v030) — the previous implementation (a plain `<div class="mermaid">` wrapper), kept for history; the figure, toolbar and token-derived theming described on this page are the ZER0-013 rework
 - Component files: `_includes/components/mermaid.html` (loader), `assets/js/mermaid-diagrams.js` (behaviour), `_sass/components/_mermaid.scss` (styles)
 - Regression test: `test/visual/features/mermaid.spec.js`
 
