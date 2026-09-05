@@ -63,7 +63,7 @@
 meta:
   title: "zer0-mistakes Backlog"
   updated: 2026-08-18
-  next_id: 46
+  next_id: 47
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -1289,3 +1289,36 @@ tasks:
     links: { issue: 417, pr: 425, roadmap: null }
     created: 2026-08-23
     updated: 2026-09-01
+
+  - id: T-046
+    title: "Retire the now-dead gotoBeforeScrollSpy fixture and cover the mobile offcanvas TOC spy"
+    status: open
+    priority: P3
+    area: tests
+    risk: low
+    effort: S
+    source: issue
+    route: test-author
+    summary: >-
+      Discovered while fixing the TOC scroll spy: test/visual/fixtures.js
+      exports gotoBeforeScrollSpy(), which strips data-bs-spy/data-bs-target
+      from <body> before Bootstrap auto-initializes so its native ScrollSpy
+      cannot clear server-rendered .active classes off admin sidebar links.
+      That attribute no longer exists — _layouts/root.html dropped it (and
+      _layouts/default.html dropped the second copy on .bd-main) so the theme's
+      own scroll-spy.js is the single owner of .active on TOC links — which
+      makes the fixture a no-op that still reads as load-bearing. Replace its
+      call sites in test/visual/features/admin.spec.js with the plain
+      waitForJekyll/gotoOrSkip helpers and delete it, keeping the admin
+      active-link assertions that motivated it. While there, add the coverage
+      test/visual/features/scroll-spy.spec.js deliberately left out: the mobile
+      offcanvas TOC, where .offcanvas-body rather than .bd-toc is the scroll
+      container the spy keeps the active link visible in.
+    acceptance:
+      - "gotoBeforeScrollSpy is removed from test/visual/fixtures.js and from its call sites; no spec references it."
+      - "The admin specs that used it still pass, asserting the same server-rendered active nav links."
+      - "A spec exercises the TOC scroll spy below the lg breakpoint with the offcanvas TOC open, asserting the active entry tracks scrolling and stays visible inside .offcanvas-body."
+      - "npm run test:smoke is green."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-09-05
+    updated: 2026-09-05

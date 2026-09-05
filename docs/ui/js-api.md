@@ -166,7 +166,8 @@ These are page-scoped; they do not expose a global namespace.
 import { config, isBelowBreakpoint, syncBreakpointsFromCss } from './config.js';
 
 config.selectors.toc;                    // '#TableOfContents'
-config.scrollSpy.rootMargin;             // '-80px 0px -80px 0px'
+config.scrollSpy.offset;                 // null → derive from scroll-padding-top
+config.scrollSpy.tolerance;              // 4 (px slack at the reading line)
 config.keyboard.keys.search;             // '/'
 config.breakpoints.lg;                   // 992
 

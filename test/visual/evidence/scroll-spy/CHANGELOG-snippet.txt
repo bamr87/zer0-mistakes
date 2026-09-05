@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/scroll-spy/ -->
+  (evidence: [`test/visual/evidence/scroll-spy/`](test/visual/evidence/scroll-spy/README.md) — wrong TOC highlight at 19/25 scroll positions → 0)

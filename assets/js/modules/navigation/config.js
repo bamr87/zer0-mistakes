@@ -51,12 +51,15 @@ export const config = {
     // SCROLL SPY SETTINGS
     // ===================================================================
     scrollSpy: {
-        // Root margin for Intersection Observer
-        // Negative values account for fixed headers
-        rootMargin: '-80px 0px -80px 0px',
-        
-        // Intersection threshold levels
-        threshold: [0, 0.25, 0.5, 0.75, 1]
+        // Reading line: distance (px) below the top of the viewport at which a
+        // heading becomes the "current" one. `null` derives it from the
+        // document's `scroll-padding-top` so the highlight matches where
+        // anchor navigation parks a heading; set a number to pin it.
+        offset: null,
+
+        // Slack (px) when comparing a heading against the reading line and
+        // when detecting the bottom of the page.
+        tolerance: 4
     },
 
     // ===================================================================

@@ -84,7 +84,7 @@ localStorage.setItem(`zer0-sidebar-${sectionId}`, 'expanded');
 
 ### Scroll Spy
 
-`scroll-spy.js` highlights the current section in the sidebar table-of-contents as the user scrolls, using `IntersectionObserver` for performance.
+`scroll-spy.js` highlights the current section in the table-of-contents as the user scrolls. The active entry is the last heading whose top has crossed the reading line (`scroll-padding-top` below the viewport top), recomputed on each animation frame from cached heading offsets. See [Table of Contents](/docs/features/toc/#scroll-spy).
 
 ### Graceful Degradation
 
