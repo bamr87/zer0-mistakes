@@ -79,8 +79,8 @@ export const MOBILE_BREAKPOINT = 992; // px — Bootstrap lg breakpoint
 `sidebar-state.js` saves which sidebar sections are expanded to `localStorage` so the state survives page reloads:
 
 ```javascript
-// Key format: zer0-sidebar-<section-id>
-localStorage.setItem(`zer0-sidebar-${sectionId}`, 'expanded');
+// One key holds every expanded node: `state.storagePrefix` + `state.keys.expandedNodes`
+localStorage.setItem('zer0-nav-expanded-nodes', JSON.stringify([...expandedNodeIds]));
 ```
 
 ### Scroll Spy
@@ -89,11 +89,12 @@ localStorage.setItem(`zer0-sidebar-${sectionId}`, 'expanded');
 
 ### Graceful Degradation
 
-All navigation features are wrapped in feature detection:
+Optional browser APIs are feature-detected, so a module degrades instead of throwing. The scroll spy needs nothing beyond `scrollY` — it only reaches for `ResizeObserver` to re-measure heading offsets when content reflows:
 
 ```javascript
-if ('IntersectionObserver' in window) {
-  initScrollSpy();
+if (typeof ResizeObserver !== 'undefined') {
+  this._resizeObserver = new ResizeObserver(this._onReflow);
+  this._resizeObserver.observe(content);
 }
 ```
 
@@ -117,7 +118,7 @@ export function initMyFeature() {
 }
 ```
 
-1. Import and call it from `index.js`:
+2. Import and call it from `index.js`:
 
 ```javascript
 import { initMyFeature } from './my-feature.js';

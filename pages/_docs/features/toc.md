@@ -1,6 +1,6 @@
 ---
 lastmod: 2026-06-15T00:00:00.000Z
-title: Table of Contents
+title: Table of Contents with Scroll Spy
 description: Automatic table of contents built from a page's h2-h4 headings, with a positional scroll spy that bolds the section being read and smooth anchor scrolling.
 keywords: [table of contents, toc, scroll spy, anchor navigation, page headings, jekyll theme, sidebar]
 preview: /images/previews/table-of-contents.png
@@ -279,9 +279,9 @@ TOC in offcanvas (see [Mobile TOC](/docs/features/mobile-toc/)):
 
 ### Scroll Spy Not Working
 
-1. Check heading IDs match TOC hrefs
-2. Verify Intersection Observer support
-3. Test observer margins
+1. Check heading IDs match TOC hrefs — the spy resolves each TOC link's `href` to a heading by `id`, so a link with no matching element is skipped
+2. Check the reading line — `scroll-padding-top` on `html` (or `config.scrollSpy.offset`) decides when a heading becomes current
+3. Check nothing else claims `#TableOfContents` — a second scroll spy (a `data-bs-spy="scroll"` element targeting it) fights over the `.active` class
 
 ### Styling Issues
 
