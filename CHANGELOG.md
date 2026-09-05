@@ -12,6 +12,34 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [Unreleased]
+
+### Changed
+
+- **Navbar label tiers reduced from three to two** ([#405](https://github.com/bamr87/zer0-mistakes/issues/405)).
+  Top-level nav items now render as icon + full label above 51rem of centre
+  track and icon-only below it; `text-overflow: ellipsis` is gone, so a label is
+  never cut to "Quicksta…". Icons now survive in **both** tiers — the old
+  41–50.99rem tier dropped them to buy width for bare labels. **Behaviour
+  change:** centre-track widths between 41rem and 51rem (roughly 992–1200px
+  viewports) previously showed bare labels and now show icons with the existing
+  `.nav-tooltip` hover names.
+- **Dropdown chevrons merged into their parent row** ([#405](https://github.com/bamr87/zer0-mistakes/issues/405)).
+  The split toggle is now absolutely positioned inside padding the parent link
+  reserves, and hover applies to the whole row, so there is no seam between the
+  label and its chevron. It remains a real `<button>` with `aria-expanded`,
+  `aria-haspopup` and its visually-hidden label unchanged.
+- **The navbar carries logo + title only** ([#405](https://github.com/bamr87/zer0-mistakes/issues/405)).
+  `site.subtitle` moved out of `_includes/core/branding.html` and onto the home
+  hero (`_layouts/home.html`), returning its width to the menubar. Consumers
+  that relied on a navbar subtitle will see it on the homepage instead.
+- **The below-`lg` menu toggle is labelled "Menu"** ([#405](https://github.com/bamr87/zer0-mistakes/issues/405)),
+  so it is distinguishable from the sidebar hamburger beside it. Override the
+  string with `ui.menu_label`.
+- The desktop navbar grid gives its two side tracks a shared minimum
+  (`--zer0-navbar-side-min`, default `9rem`) so the menubar is optically centred
+  in the bar rather than only within its own track.
+
 ## [1.29.0](https://github.com/bamr87/zer0-mistakes/compare/v1.28.0...v1.29.0) (2026-09-01)
 
 
