@@ -198,4 +198,48 @@ test.describe('navbar brand and toggles (#405)', () => {
     // The gear is desktop-only; on mobile its contents are reached via the drawer.
     await expect(page.locator('#navbar .nav-settings-button:visible')).toHaveCount(0);
   });
+
+  // Regression: the sub-lg rule `#navbar .navbar-toggler { width: 2.5rem }` is
+  // meant for BARE-GLYPH togglers, and it outranks `.navbar-toggler-labeled`'s
+  // own `width: auto` on specificity (1,1,0 vs 0,2,0). While it won, the button
+  // was clamped to a 40px square that could not hold glyph + gap + "Menu": the
+  // label escaped its box and pushed the page 14px past the viewport at EVERY
+  // width below lg. `navbar.spec.js` caught the page overflow; this pins the
+  // cause, so a future respelling of that square fails HERE with the reason.
+  for (const width of [320, 390, 768, 991]) {
+    test(`the labelled menu toggle fits its own box at ${width}px`, async ({ page }) => {
+      if (!(await openHome(page, { width, height: 800 }))) test.skip();
+
+      const menu = page.locator('#navbar .navbar-toggler-labeled');
+      await expect(menu).toBeVisible();
+
+      const fit = await menu.evaluate((el) => {
+        const label = el.querySelector('.navbar-toggler-text');
+        return {
+          scrollWidth: el.scrollWidth,
+          clientWidth: el.clientWidth,
+          labelRight: label.getBoundingClientRect().right,
+          buttonRight: el.getBoundingClientRect().right,
+          viewport: document.documentElement.clientWidth,
+        };
+      });
+
+      // The button must be wide enough for its own contents...
+      expect(
+        fit.scrollWidth,
+        `the toggle's content (${fit.scrollWidth}px) overflows its box ` +
+          `(${fit.clientWidth}px) — it is being clamped to a fixed square`
+      ).toBeLessThanOrEqual(fit.clientWidth);
+
+      // ...and the label must not spill past the button or off-screen.
+      expect(
+        Math.round(fit.labelRight),
+        'the "Menu" label escapes the button box'
+      ).toBeLessThanOrEqual(Math.ceil(fit.buttonRight));
+      expect(
+        Math.round(fit.labelRight),
+        `the "Menu" label runs ${Math.round(fit.labelRight - fit.viewport)}px past the viewport`
+      ).toBeLessThanOrEqual(fit.viewport);
+    });
+  }
 });

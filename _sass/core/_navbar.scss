@@ -1391,6 +1391,18 @@
         height: 2.5rem;
     }
 
+    // The square above is for BARE-GLYPH togglers. The labelled menu toggle
+    // (#405) also carries a "Menu" span, and 2.5rem cannot hold glyph + gap +
+    // label — the text escaped the button box and pushed the page 14px past the
+    // viewport at EVERY width below lg, so the fixed-top bar read as "cut off".
+    // `.navbar-toggler-labeled`'s own `width: auto` lost to this ID selector on
+    // specificity (0,2,0 vs 1,1,0); re-assert it here, where it outranks.
+    #navbar .navbar-toggler.navbar-toggler-labeled {
+        width: auto;
+        min-width: 2.5rem;
+        flex-shrink: 0;
+    }
+
     #navbar .nav-search-button {
         width: 2.5rem;
         height: 2.5rem;
