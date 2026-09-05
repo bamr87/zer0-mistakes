@@ -314,21 +314,21 @@ pages:
       prompt_version: 1
   "/docs/customization/includes/":
     source: pages/_docs/customization/includes.md
-    sha: 302b054e92b74d17d0b0d0cf05942fbd021a5bf7e6639bdd70e9121fc1de6a54
+    sha: 85851dc85b902c3e9e6780adf5ccf4a4bca75a17deeec5d03c027139e95d2076
     fr:
       url: "/fr/docs/customization/includes/"
       path: fr/docs/customization/includes.md
-      sha: 302b054e92b74d17d0b0d0cf05942fbd021a5bf7e6639bdd70e9121fc1de6a54
-      translated_at: '2026-07-23T17:11:02Z'
+      sha: 85851dc85b902c3e9e6780adf5ccf4a4bca75a17deeec5d03c027139e95d2076
+      translated_at: '2026-09-05T13:56:16Z'
       prompt_version: 1
   "/docs/customization/layouts/":
     source: pages/_docs/customization/layouts.md
-    sha: edeb35201153cbae4bdb43b39604df3a2842c809a5f8b86915990359c1e59bd4
+    sha: e61ed6fee0858c71cc42e6ba36342dfe1e2f3847e6c5672aecbee195b61f54a4
     fr:
       url: "/fr/docs/customization/layouts/"
       path: fr/docs/customization/layouts.md
-      sha: edeb35201153cbae4bdb43b39604df3a2842c809a5f8b86915990359c1e59bd4
-      translated_at: '2026-07-23T17:11:28Z'
+      sha: e61ed6fee0858c71cc42e6ba36342dfe1e2f3847e6c5672aecbee195b61f54a4
+      translated_at: '2026-09-05T13:56:33Z'
       prompt_version: 1
   "/docs/customization/navigation/":
     source: pages/_docs/customization/navigation.md
@@ -395,12 +395,12 @@ pages:
       prompt_version: 1
   "/docs/deployment/remote-theme-checklist/":
     source: pages/_docs/deployment/remote-theme-checklist.md
-    sha: 9b96d540317e61dcd98890875b5d59454548cf983b741e9f59fc66ebfa4f1468
+    sha: 5d09a61aea206b665f94f0b084f10ced1c0629ce3766889151dd4cf9f1c01e62
     fr:
       url: "/fr/docs/deployment/remote-theme-checklist/"
       path: fr/docs/deployment/remote-theme-checklist.md
-      sha: 9b96d540317e61dcd98890875b5d59454548cf983b741e9f59fc66ebfa4f1468
-      translated_at: '2026-08-05T03:19:14Z'
+      sha: 5d09a61aea206b665f94f0b084f10ced1c0629ce3766889151dd4cf9f1c01e62
+      translated_at: '2026-09-05T13:57:09Z'
       prompt_version: 1
   "/docs/development/":
     source: pages/_docs/development/index.md
@@ -665,12 +665,12 @@ pages:
       prompt_version: 1
   "/docs/features/favicon/":
     source: pages/_docs/features/favicon.md
-    sha: 264da6b68023d01da6d1330c999686a2ca880db77a29fa3e4cfc4a2d63b7a53b
+    sha: 29f638af91189fd2bd0e90050bfd689b50dab2e21c3ebcae4217eff8ef4e7bd1
     fr:
       url: "/fr/docs/features/favicon/"
       path: fr/docs/features/favicon.md
-      sha: 264da6b68023d01da6d1330c999686a2ca880db77a29fa3e4cfc4a2d63b7a53b
-      translated_at: '2026-08-05T03:26:59Z'
+      sha: 29f638af91189fd2bd0e90050bfd689b50dab2e21c3ebcae4217eff8ef4e7bd1
+      translated_at: '2026-09-05T13:57:44Z'
       prompt_version: 1
   "/docs/features/giscus-comments/":
     source: pages/_docs/features/giscus-comments.md
@@ -728,12 +728,12 @@ pages:
       prompt_version: 1
   "/docs/features/navigation-architecture/":
     source: pages/_docs/features/navigation-architecture.md
-    sha: 2f062d7f74fb14ce79b61b3ca597f012ecd0616297781ff2db40015abbf9872e
+    sha: 4e083aa40f50b1707a4a2a534867c5d005cea64506fc88fe242bb3548e255e00
     fr:
       url: "/fr/docs/features/navigation-architecture/"
       path: fr/docs/features/navigation-architecture.md
-      sha: 2f062d7f74fb14ce79b61b3ca597f012ecd0616297781ff2db40015abbf9872e
-      translated_at: '2026-08-05T03:30:53Z'
+      sha: 4e083aa40f50b1707a4a2a534867c5d005cea64506fc88fe242bb3548e255e00
+      translated_at: '2026-09-05T13:58:01Z'
       prompt_version: 1
   "/docs/features/particles-background/":
     source: pages/_docs/features/particles-background.md
@@ -827,12 +827,12 @@ pages:
       prompt_version: 1
   "/docs/features/toc/":
     source: pages/_docs/features/toc.md
-    sha: 6e3a36b8d8b967bc391d2a0f7821f6fa276927a43265cf253c4d713e08db2306
+    sha: 0560ebf13ef174462eb977b3578ca6f5dbfadfea1052c3c8e5ab4eb1db452ae9
     fr:
       url: "/fr/docs/features/toc/"
       path: fr/docs/features/toc.md
-      sha: 6e3a36b8d8b967bc391d2a0f7821f6fa276927a43265cf253c4d713e08db2306
-      translated_at: '2026-08-05T03:34:58Z'
+      sha: 0560ebf13ef174462eb977b3578ca6f5dbfadfea1052c3c8e5ab4eb1db452ae9
+      translated_at: '2026-09-05T13:58:30Z'
       prompt_version: 1
   "/docs/features/vendored-assets/":
     source: pages/_docs/features/vendored-assets.md
@@ -1526,4 +1526,4 @@ ui_text:
 source_lang: en
 languages:
 - fr
-updated_at: '2026-09-01T21:29:35Z'
+updated_at: '2026-09-05T13:58:30Z'

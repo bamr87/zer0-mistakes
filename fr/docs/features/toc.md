@@ -1,8 +1,17 @@
 ---
-lastmod: 2026-06-15 00:00:00.000000000 Z
-title: Table des matières
-description: Génération automatique de la table des matières à partir des titres de
-  la page avec scroll spy et défilement fluide.
+lastmod: 2026-09-05 00:00:00.000000000 Z
+title: Table des matières avec Scroll Spy
+description: Table des matières automatique générée à partir des titres h1-h3 d'une
+  page, avec un scroll spy positionnel qui met en gras la section en cours de lecture
+  et un défilement fluide des ancres.
+keywords:
+- table of contents
+- toc
+- scroll spy
+- anchor navigation
+- page headings
+- jekyll theme
+- sidebar
 preview: "/images/previews/table-of-contents.png"
 layout: default
 categories:
@@ -22,23 +31,23 @@ permalink: "/fr/docs/features/toc/"
 translation_of: pages/_docs/features/toc.md
 translation_source_url: "/docs/features/toc/"
 machine_translated: true
-translated_from_sha: 6e3a36b8d8b9
+translated_from_sha: 0560ebf13ef1
 ---
 
 # Table des matières
 
-Génération automatique de la table des matières à partir des titres de la page avec mise en évidence de la section active.
+Génération automatique de la table des matières à partir des titres de la page, avec mise en évidence de la section active.
 
-![Une page de documentation avec la table des matières « On this page » dans la colonne de droite, listant les titres de la page ; la section courante est mise en évidence au défilement](/assets/images/docs/features/docs-layout.png)
+![Une page de documentation avec la table des matières « Sur cette page » dans la colonne de droite, listant les titres de la page ; la section actuelle est mise en évidence au défilement](/assets/images/docs/features/docs-layout.png)
 
-Le panneau **On this page** à droite est la table des matières, construite à partir des titres `h2`–`h6` de la page.
+Le panneau **Sur cette page** à droite est la table des matières, construite à partir des titres `h1`–`h3` de la page.
 
 ## Vue d'ensemble
 
-- **Auto-générée** : Extraite des titres h2-h6
-- **Scroll Spy** : Met en évidence la section courante
+- **Auto-générée** : Extraite des titres h1-h3 (la plage est un paramètre, voir [Niveaux de titre](#heading-levels))
+- **Scroll Spy** : Met en évidence la section actuelle
 - **Défilement fluide** : Navigation animée
-- **Responsive** : Barre latérale sur ordinateur, offcanvas sur mobile
+- **Responsive** : Barre latérale sur ordinateur, panneau hors-écran sur mobile
 
 ## Implémentation
 
@@ -48,9 +57,9 @@ Le panneau **On this page** à droite est la table des matières, construite à 
 {% raw %}{% include content/toc.html %}{% endraw %}
 ```
 
-### Génération de la TOC
+### Génération de la table des matières
 
-L'include `toc.html` utilise la TOC intégrée de Kramdown :
+L'inclusion `toc.html` utilise la table des matières intégrée de Kramdown :
 
 ```liquid
 {% raw %}<nav id="TableOfContents" class="toc">
@@ -59,7 +68,7 @@ L'include `toc.html` utilise la TOC intégrée de Kramdown :
 </nav>{% endraw %}
 ```
 
-Ou une extraction manuelle :
+Ou extraction manuelle :
 
 ```liquid
 {% raw %}<nav id="TableOfContents">
@@ -80,7 +89,7 @@ Ou une extraction manuelle :
 
 ## Configuration
 
-### Activer la TOC
+### Activer la table des matières
 
 Dans le front matter :
 
@@ -90,7 +99,7 @@ toc: true
 ---
 ```
 
-Ou à l'échelle du site dans `_config.yml` :
+Ou pour tout le site dans `_config.yml` :
 
 ```yaml
 defaults:
@@ -100,17 +109,17 @@ defaults:
       toc: true
 ```
 
-### Niveaux de titres
+### Niveaux de titre
 
-Configurer les titres à afficher :
+La plage est définie à l'endroit où la table des matières est incluse, avec les paramètres `h_min` / `h_max`. `_includes/navigation/sidebar-right.html` génère le panneau de droite avec `h_min=1 h_max=3`, de sorte que le titre de la page et ses sections h2/h3 apparaissent :
 
-```yaml
-toc:
-  min_level: 2  # Start at h2
-  max_level: 4  # End at h4
+```liquid
+{% raw %}{% include content/toc.html html=content h_min=1 h_max=3 %}{% endraw %}
 ```
 
-## Style
+L'inclusion elle-même utilise par défaut `h_min=1` et `h_max=6` ; tout ce qui est en dehors de la plage est ignoré, tout comme tout titre sans `id`.
+
+## Mise en forme
 
 ### Styles de base
 
@@ -172,31 +181,38 @@ toc:
 
 ## Scroll Spy
 
-### Intersection Observer
+`assets/js/modules/navigation/scroll-spy.js` met en gras l'entrée de la section que vous lisez. La règle est positionnelle plutôt que basée sur la visibilité : le titre actif est le **dernier dont le haut a franchi la ligne de lecture** — une ligne située `scroll-padding-top` sous le haut de la fenêtre, c'est-à-dire juste sous l'en-tête fixe, qui est aussi l'endroit où cliquer sur une entrée de la table des matières place son titre. Une fois la page défilée jusqu'en bas, le dernier titre l'emporte, de sorte que les sections finales plus courtes que la fenêtre restent accessibles.
 
 ```javascript
-function initScrollSpy() {
-  const headings = document.querySelectorAll('h2[id], h3[id], h4[id]');
-  const tocLinks = document.querySelectorAll('.toc-link');
-  
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          tocLinks.forEach((link) => link.classList.remove('active'));
-          const activeLink = document.querySelector(
-            `.toc-link[href="#${entry.target.id}"]`
-          );
-          activeLink?.classList.add('active');
-        }
-      });
-    },
-    { rootMargin: '-20% 0% -70% 0%' }
-  );
-  
-  headings.forEach((heading) => observer.observe(heading));
+// Simplified: the active heading, recomputed on each scroll frame.
+function activeHeading(headings) {          // headings sorted by document offset
+  const pad = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop);
+  const atBottom =
+    window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+  if (atBottom) return headings[headings.length - 1];
+
+  const line = window.scrollY + pad + 4;
+  let active = headings[0];
+  for (const heading of headings) {
+    if (heading.top > line) break;
+    active = heading;
+  }
+  return active;
 }
 ```
+
+Les décalages des titres sont mesurés une fois et re-mesurés au redimensionnement ou au réagencement du contenu (`ResizeObserver`), et le recalcul est limité à une image d'animation par défilement, de sorte que toute la page est réévaluée à chaque image sans mesurer le DOM à chaque fois.
+
+Demander à `IntersectionObserver` le titre « le plus visible » semble plus simple mais ne fonctionne pas : les titres ne font que quelques pixels de haut, de sorte que chaque titre à l'intérieur de la bande d'observation renvoie le même `intersectionRatio`, et les titres qui quittent la bande ne déclenchent aucun rappel. La mise en évidence se pose alors sur le titre qui se trouvait dans le dernier lot de rappels.
+
+Deux détails comptent pour le ressenti. Une entrée cliquée reste active pendant que le défilement fluide s'anime, au lieu de faire clignoter chaque titre traversé en chemin. Et garder l'entrée active visible dans une longue table des matières ajuste le `scrollTop` du conteneur de la table des matières lui-même — `scrollIntoView()` remonterait et ferait défiler la page, ce qui reboucle directement sur le scroll spy.
+
+**Configuration** (`assets/js/modules/navigation/config.js`) :
+
+| Clé | Défaut | Objet |
+|-----|---------|---------|
+| `scrollSpy.offset` | `null` | Distance de la ligne de lecture par rapport au haut de la fenêtre. `null` la dérive de `scroll-padding-top` ; définissez un nombre pour la fixer. |
+| `scrollSpy.tolerance` | `4` | Marge (px) à la ligne de lecture et lors de la détection du bas de la page. |
 
 ## Défilement fluide
 
@@ -233,7 +249,7 @@ document.querySelectorAll('.toc-link').forEach((link) => {
 
 ### Ordinateur
 
-La TOC apparaît dans la barre latérale droite :
+La table des matières apparaît dans la barre latérale droite :
 
 ```html
 <aside class="d-none d-lg-block">
@@ -243,7 +259,7 @@ La TOC apparaît dans la barre latérale droite :
 
 ### Mobile
 
-TOC en offcanvas (voir [Mobile TOC](/docs/features/mobile-toc/)) :
+Table des matières en panneau hors-écran (voir [Table des matières mobile](/docs/features/mobile-toc/)) :
 
 ```html
 <div class="offcanvas offcanvas-end d-lg-none" id="tocSidebar">
@@ -263,13 +279,13 @@ TOC en offcanvas (voir [Mobile TOC](/docs/features/mobile-toc/)) :
 
 ### Navigation au clavier
 
-- Tabulation à travers les liens de la TOC
+- Tabulation à travers les liens de la table des matières
 - Entrée pour naviguer vers la section
 - Le focus se déplace vers le titre
 
 ## Dépannage
 
-### La TOC ne se génère pas
+### La table des matières ne se génère pas
 
 1. Vérifiez que les titres ont des ID
 2. Vérifiez `toc: true` dans le front matter
@@ -277,20 +293,20 @@ TOC en offcanvas (voir [Mobile TOC](/docs/features/mobile-toc/)) :
 
 ### Le Scroll Spy ne fonctionne pas
 
-1. Vérifiez que les ID des titres correspondent aux href de la TOC
-2. Vérifiez la prise en charge d'Intersection Observer
-3. Testez les marges de l'observer
+1. Vérifiez que les ID des titres correspondent aux hrefs de la table des matières — le scroll spy résout le `href` de chaque lien de la table des matières vers un titre par `id`, donc un lien sans élément correspondant est ignoré
+2. Vérifiez la ligne de lecture — `scroll-padding-top` sur `html` (ou `config.scrollSpy.offset`) décide quand un titre devient actif
+3. Vérifiez que rien d'autre ne revendique `#TableOfContents` — un second scroll spy (un élément `data-bs-spy="scroll"` le ciblant) se dispute la classe `.active`
 
-### Problèmes de style
+### Problèmes de mise en forme
 
 1. Vérifiez le positionnement sticky
 2. Vérifiez le z-index
-3. Testez le comportement d'overflow
+3. Testez le comportement du débordement
 
-## Voir aussi
+## Associés
 
 - [Navigation dans la barre latérale](/docs/features/sidebar-navigation/)
-- [Mobile TOC](/docs/features/mobile-toc/)
+- [TOC mobile](/docs/features/mobile-toc/)
 - [Navigation au clavier](/docs/features/keyboard-navigation/)
 
 ## Voir aussi
