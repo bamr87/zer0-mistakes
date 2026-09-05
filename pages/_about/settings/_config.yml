@@ -573,10 +573,18 @@ giscus:
 
 ## Mermaid Diagram Configuration #################################################
 # Mermaid diagrams support both native markdown code blocks and div syntax
-# Usage: 
+# Usage:
 #   1. Add 'mermaid: true' to page front matter
 #   2. Use ```mermaid ... ``` code blocks OR <div class="mermaid">...</div>
-# 
+#
+# Every diagram renders as an accessible <figure> with a toolbar (zoom,
+# fullscreen, copy source, download SVG), a caption from `accTitle`, and an
+# error state that keeps the source visible. Colours are derived at runtime
+# from the theme's design tokens, so diagrams follow the colour mode and skin —
+# there is nothing to configure for dark mode. Component:
+# _includes/components/mermaid.html + assets/js/mermaid-diagrams.js +
+# _sass/components/_mermaid.scss; docs: /docs/features/mermaid-diagrams/
+#
 # GitHub Pages Compatible: Yes (client-side; script bundled under assets/vendor/)
 # Update file: npm install && npm run vendor:mermaid (copies from node_modules/mermaid, not jsDelivr)
 # Plugin: jekyll-mermaid is OPTIONAL (not needed for GitHub Pages)
@@ -584,6 +592,12 @@ giscus:
 
 mermaid:
   src: '/assets/vendor/mermaid/mermaid.min.js'
+  # strict (default) sanitises diagram text. Set `loose` only if you need
+  # `click` callbacks or HTML in labels — it disables that sanitisation.
+  security_level: strict
+  toolbar: true       # zoom / fullscreen / copy / download controls on each diagram
+  fullscreen: true    # allow the expand-to-fullscreen view
+  download: true      # allow "Download as SVG"
 
 ## Conversion
 # Markdown Options https://jekyllrb.com/docs/configuration/markdown/

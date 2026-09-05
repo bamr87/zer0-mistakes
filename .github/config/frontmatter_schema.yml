@@ -96,6 +96,7 @@ collections:
       - date
       - author
       - draft
+      - keywords
     layout:
       allowed:
         - default

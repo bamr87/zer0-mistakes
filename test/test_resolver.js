@@ -437,6 +437,31 @@ assert('hex-colour-shaped tokens are NOT linkified as tags', !/class="obsidian-t
 html = resolver.rewriteHtml('Brewing at #cafe now.', byKey, '/notes/x/');
 assert('all-letter word tag (#cafe) still links', /class="obsidian-tag">#cafe</.test(html), html);
 
+// ---- Inline SVG is graphics, not prose ----------------------------------
+// Mermaid renders a <style> INSIDE its <svg>. Elements in the SVG namespace
+// report a lower-case nodeName ("style", not "STYLE"), so the old skip list
+// walked into it and rewrote every `#id` selector into a tag link — the
+// diagram's stylesheet lost its scoping and leaked onto the page.
+console.log('Inline SVG subtrees:');
+{
+  const host = shim.document.createElement('div');
+  host.innerHTML = '<p>Prose with #obsidian tag.</p>'
+    + '<figure class="zer0-diagram"><svg><style>#zer0-diagram-1 .node{fill:#fff}</style><text>#label</text></svg></figure>'
+    + '<svg><style>#icon-1 path{fill:#000}</style></svg>';
+  // Model the SVG namespace: the real DOM reports these names in lower case.
+  const lower = (n) => {
+    if (n.nodeType === 1 && (n.nodeName === 'SVG' || n.nodeName === 'STYLE' || n.nodeName === 'TEXT')) n.nodeName = n.nodeName.toLowerCase();
+    (n.childNodes || []).forEach(lower);
+  };
+  lower(host);
+  const rewrites = resolver.rewriteContainer(host, byKey, '/notes/x/');
+  const out = host.outerHTML;
+  assert('prose tag outside the SVG is still linkified', /<p>Prose with <a [^>]*class="obsidian-tag">#obsidian<\/a> tag\.<\/p>/.test(out), out);
+  assert('svg <style> selectors are left untouched (lower-case nodeName)', /<style>#zer0-diagram-1 \.node\{fill:#fff\}<\/style>/.test(out) && /<style>#icon-1 path\{fill:#000\}<\/style>/.test(out), out);
+  assert('svg <text> content is left untouched', /<text>#label<\/text>/.test(out), out);
+  assert('exactly one text node was rewritten', rewrites === 1, 'rewrites=' + rewrites);
+}
+
 // ---- Callout DOM rewriting ----------------------------------------------
 console.log('Callouts (DOM-level):');
 const root = shim.document.createElement('main');

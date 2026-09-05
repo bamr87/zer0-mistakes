@@ -1,7 +1,7 @@
 # zer0-mistakes Theme Features Registry
 # Comprehensive feature tracking for the zer0-mistakes Jekyll theme
-# Version: 1.26.0
-# Last Updated: 2026-07-17
+# Version: 1.29.0
+# Last Updated: 2026-09-05
 
 features:
   # ============================================================================
@@ -435,22 +435,25 @@ features:
   
   - id: ZER0-013
     title: "Mermaid Diagram Support"
-    description: "Client-side Mermaid.js integration for 10+ diagram types. GitHub Pages compatible with no build plugins required"
+    description: "Client-side Mermaid.js diagrams for 10+ diagram types, rendered as accessible figures: a zoom / fullscreen / copy-source / SVG-export toolbar, accTitle captions, an error card that keeps the source visible, and colours derived from the live design tokens so diagrams follow the colour mode and skin. GitHub Pages compatible with no build plugins required"
     implemented: true
-    version: "0.3.0"
-    link: "/"
+    version: "1.30.0"
+    link: "/docs/features/mermaid-diagrams/"
     docs: "/docs/features/mermaid-diagrams/"
-    tags: [mermaid, diagrams, visualization, documentation]
-    date: 2025-01-27
+    tags: [mermaid, diagrams, visualization, documentation, accessibility, ui]
+    date: 2026-09-05
     provenance:
       introduced_in: "0.3.0"
       pr: null
       commit: "1a6184b"
       issue: null
     tests:
-      - "test/test_core.sh"
+      - "test/visual/features/mermaid.spec.js"
     references:
       include: "_includes/components/mermaid.html"
+      script: "assets/js/mermaid-diagrams.js"
+      styles: "_sass/components/_mermaid.scss"
+      evidence: "test/visual/mermaid-evidence.mjs"
       config: "_config.yml"
     diagram_types:
       - "Flowchart (graph TD)"
