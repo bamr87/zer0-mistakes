@@ -1,8 +1,7 @@
 ---
-lastmod: 2026-06-22 12:00:00.000000000 Z
+lastmod: 2026-09-03 00:00:00.000000000 Z
 title: Mises en page
-description: Créez et personnalisez les mises en page des pages dans le thème Jekyll
-  Zer0-Mistakes.
+description: Créez et personnalisez des mises en page pour le thème Jekyll Zer0-Mistakes.
 preview: "/images/previews/layouts.png"
 layout: default
 categories:
@@ -12,6 +11,12 @@ tags:
 - layouts
 - templates
 - jekyll
+keywords:
+- jekyll layouts
+- liquid templates
+- custom layouts
+- layout hierarchy
+- layout inheritance
 difficulty: intermediate
 estimated_reading_time: 15 minutes
 sidebar:
@@ -21,7 +26,7 @@ permalink: "/fr/docs/customization/layouts/"
 translation_of: pages/_docs/customization/layouts.md
 translation_source_url: "/docs/customization/layouts/"
 machine_translated: true
-translated_from_sha: edeb35201153
+translated_from_sha: e61ed6fee085
 ---
 
 # Mises en page
@@ -33,13 +38,13 @@ Les mises en page définissent la structure et l'apparence de vos pages. Le thè
 | Mise en page | Objectif | Cas d'usage |
 |--------|---------|----------|
 | `default` | Page standard avec barre latérale | Documentation, pages générales |
-| `journals` | Mise en page d'article de blog | Articles de blog avec métadonnées |
-| `home` | Mise en page de page d'accueil | Page d'accueil du site |
-| `collection` | Index de collection | Pages de liste pour les collections |
+| `article` | Mise en page d'article de blog | Articles de blog avec métadonnées |
+| `home` | Mise en page de la page d'accueil | Page d'accueil du site |
+| `collection` | Index de collection | Pages de listing pour les collections |
 | `landing` | Page pleine largeur | Pages marketing/d'atterrissage |
 | `root` | HTML de base | Ne pas utiliser directement |
 
-## Utiliser les mises en page
+## Utilisation des mises en page
 
 Spécifiez une mise en page dans le front matter de votre page :
 
@@ -55,22 +60,30 @@ layout: default
 Les mises en page héritent les unes des autres :
 
 ```text
-root.html
-└── default.html
-    ├── home.html
-    ├── journals.html
-    ├── collection.html
-    └── landing.html
+root.html                 # base HTML document — never use directly
+├── default.html          # adds the sidebars and table of contents
+│   ├── article.html      # blog posts
+│   ├── collection.html   # collection index pages
+│   ├── author.html  authors.html
+│   ├── note.html    notebook.html
+│   ├── recipe.html  cookbook.html
+│   └── tag.html
+├── home.html             # homepage
+├── landing.html          # full-width marketing pages
+├── section.html  news.html  admin.html  stats.html
+└── 404.html      setup.html  welcome.html  book*.html
 ```
 
-## Créer des mises en page personnalisées
+**La branche sur laquelle se trouve une mise en page n'est pas cosmétique.** `default.html` est la seule mise en page qui affiche la barre latérale gauche (`#bdSidebar`) et le panneau de table des matières (`#tocContents`). Une mise en page qui hérite directement de `root` n'obtient ni l'un ni l'autre — donc une mise en page personnalisée qui en a besoin doit hériter de `default`.
+
+## Création de mises en page personnalisées
 
 ### Étape 1 : Créer le fichier de mise en page
 
 Créez un fichier dans `_layouts/` :
 
 ```html
----
+{% raw %}---
 layout: default
 ---
 <!-- _layouts/tutorial.html -->
@@ -92,7 +105,7 @@ layout: default
     <a href="{{ page.next_tutorial }}">Next Tutorial →</a>
   </footer>
   {% endif %}
-</article>
+</article>{% endraw %}
 ```
 
 ### Étape 2 : Utiliser la mise en page
@@ -113,27 +126,27 @@ Accédez à ces variables dans vos mises en page :
 
 | Variable | Description |
 |----------|-------------|
-| `⟦8⟧` | Contenu de la page (obligatoire) |
-| `⟦10⟧` | Titre de la page |
-| `⟦12⟧` | Description de la page |
-| `⟦14⟧` | Nom de la mise en page actuelle |
-| `⟦16⟧` | URL de la page |
-| `⟦18⟧` | Titre du site |
+| {% raw %}`{{ content }}`{% endraw %} | Contenu de la page (requis) |
+| {% raw %}`{{ page.title }}`{% endraw %} | Titre de la page |
+| {% raw %}`{{ page.description }}`{% endraw %} | Description de la page |
+| {% raw %}`{{ page.layout }}`{% endraw %} | Nom de la mise en page actuelle |
+| {% raw %}`{{ page.url }}`{% endraw %} | URL de la page |
+| {% raw %}`{{ site.title }}`{% endraw %} | Titre du site |
 
-## Remplacer les mises en page du thème
+## Remplacement des mises en page du thème
 
 Pour personnaliser une mise en page du thème :
 
-1. Copiez la mise en page du thème vers votre répertoire `_layouts/`
+1. Copiez la mise en page du thème dans votre répertoire `_layouts/`
 2. Modifiez selon vos besoins
 3. Jekyll utilise votre version à la place
 
 ## Contenu conditionnel
 
-Affichez du contenu en fonction de la mise en page ou des variables de page :
+Affichez du contenu selon la mise en page ou les variables de page :
 
 ```html
-{% raw %}{% if page.layout == 'journals' %}
+{% raw %}{% if page.layout == 'article' %}
   <div class="post-meta">
     <time>{{ page.date | date: "%B %d, %Y" }}</time>
     <span class="author">{{ page.author }}</span>
@@ -145,9 +158,9 @@ Affichez du contenu en fonction de la mise en page ou des variables de page :
 {% endif %}{% endraw %}
 ```
 
-## Inclure des composants
+## Inclusion de composants
 
-Utilisez les includes pour les parties réutilisables :
+Utilisez des includes pour les parties réutilisables :
 
 ```html
 {% raw %}{% include core/head.html %}
@@ -159,8 +172,8 @@ Utilisez les includes pour les parties réutilisables :
 ## Bonnes pratiques
 
 1. **Commencez avec `default`** — Héritez de default pour la cohérence
-2. **Gardez les mises en page ciblées** — Chaque mise en page doit avoir un seul objectif
-3. **Utilisez les includes** — Extrayez les composants réutilisables
+2. **Gardez des mises en page ciblées** — Chaque mise en page doit avoir un seul objectif
+3. **Utilisez des includes** — Extrayez les composants réutilisables
 4. **Documentez les mises en page personnalisées** — Notez l'objectif et les variables requises
 5. **Testez la réactivité** — Vérifiez que les mises en page fonctionnent sur toutes les tailles d'écran
 
@@ -172,7 +185,7 @@ Utilisez les includes pour les parties réutilisables :
 
 ## Référence technique
 
-Pour les détails destinés aux contributeurs (hiérarchie des mises en page, héritage des templates Liquid, câblage de la barre latérale) :
+Pour les détails de niveau contributeur (hiérarchie des mises en page, héritage des templates Liquid, câblage de la barre latérale) :
 
 - [Mises en page et navigation → docs/ui/layouts-and-navigation.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/ui/layouts-and-navigation.md)
 

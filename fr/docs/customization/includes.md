@@ -1,8 +1,8 @@
 ---
-lastmod: 2026-06-16 00:00:00.000000000 Z
-title: Composants d'inclusion
-description: Guide des plus de 70 composants d'inclusion réutilisables, organisés
-  par catégorie pour une flexibilité maximale.
+lastmod: 2026-09-03 00:00:00.000000000 Z
+title: Composants d'include
+description: Guide des plus de 70 composants d'include réutilisables organisés par
+  catégorie pour une flexibilité maximale.
 preview: "/images/previews/include-components.png"
 layout: default
 categories:
@@ -22,12 +22,12 @@ permalink: "/fr/docs/customization/includes/"
 translation_of: pages/_docs/customization/includes.md
 translation_source_url: "/docs/customization/includes/"
 machine_translated: true
-translated_from_sha: 302b054e92b7
+translated_from_sha: 85851dc85b90
 ---
 
-# Composants Include
+# Composants d'inclusion
 
-Le thème Zer0-Mistakes inclut plus de 70 composants réutilisables organisés par catégorie.
+Le thème Zer0-Mistakes comprend plus de 70 composants réutilisables organisés par catégorie.
 
 ## Aperçu
 
@@ -43,7 +43,7 @@ _includes/
 └── stats/         # Statistics dashboard
 ```
 
-## Utilisation des includes
+## Utilisation des inclusions
 
 ### Utilisation de base
 
@@ -57,7 +57,7 @@ _includes/
 {% raw %}{% include components/post-card.html post=post %}{% endraw %}
 ```
 
-### Include conditionnel
+### Inclusion conditionnelle
 
 ```liquid
 {% raw %}{% if page.toc %}
@@ -65,14 +65,14 @@ _includes/
 {% endif %}{% endraw %}
 ```
 
-## Includes d'analytique
+## Inclusions d'analyse
 
-| Include | Objet |
+| Inclusion | Objectif |
 |---------|---------|
 | `analytics/google-analytics.html` | Google Analytics 4 |
-| `analytics/google-tag-manager-head.html` | Script GTM head |
-| `analytics/google-tag-manager-body.html` | GTM body noscript |
-| `analytics/posthog.html` | Analytique PostHog |
+| `analytics/google-tag-manager-head.html` | Script GTM pour l'en-tête |
+| `analytics/google-tag-manager-body.html` | Noscript GTM pour le corps |
+| `analytics/posthog.html` | Analyse PostHog |
 
 ### Utilisation
 
@@ -80,17 +80,18 @@ _includes/
 {% raw %}{% include analytics/posthog.html %}{% endraw %}
 ```
 
-## Includes de composants
+## Inclusions de composants
 
-| Include | Objet |
+| Inclusion | Objectif |
 |---------|---------|
-| `components/author-card.html` | Carte d'informations sur l'auteur |
+| `components/author-card.html` | Carte d'information sur l'auteur |
 | `components/cookie-consent.html` | Bannière de cookies RGPD |
 | `components/mermaid.html` | Chargeur de diagrammes Mermaid |
 | `components/post-card.html` | Carte d'article de blog |
 | `components/preview-image.html` | Gestionnaire d'image de prévisualisation |
+| `components/background-image.html` | Illustration de couverture en arrière-plan CSS, avec `role="img"` + `aria-label` ou `aria-hidden` |
 | `components/search-modal.html` | Fenêtre modale de recherche |
-| `components/searchbar.html` | Stub de recherche de style Algolia obsolète (utilisez `search-modal.html`) |
+| `components/searchbar.html` | Ébauche de recherche de style Algolia obsolète (utilisez `search-modal.html`) |
 | `components/theme-info.html` | Fenêtre modale de version du thème |
 
 ### Exemple de carte d'article
@@ -110,17 +111,17 @@ _includes/
 %}{% endraw %}
 ```
 
-## Includes de contenu
+## Inclusions de contenu
 
-| Include | Objet |
+| Inclusion | Objectif |
 |---------|---------|
 | `content/giscus.html` | Commentaires GitHub Discussions |
-| `content/intro.html` | Introduction de page |
+| `content/intro.html` | Introduction de la page |
 | `content/seo.html` | Balises meta SEO |
-| `content/sitemap.html` | Entrée du sitemap |
+| `content/sitemap.html` | Entrée du plan du site |
 | `content/toc.html` | Table des matières |
 
-### Include TOC
+### Inclusion de la table des matières
 
 ```liquid
 {% raw %}{% if page.toc != false %}
@@ -128,7 +129,7 @@ _includes/
 {% endif %}{% endraw %}
 ```
 
-### Include de commentaires
+### Inclusion des commentaires
 
 ```liquid
 {% raw %}{% if page.comments != false and site.giscus.enabled %}
@@ -136,14 +137,14 @@ _includes/
 {% endif %}{% endraw %}
 ```
 
-## Includes principaux
+## Inclusions principales
 
-| Include | Objet |
+| Inclusion | Objectif |
 |---------|---------|
 | `core/branding.html` | Logo et titre du site |
 | `core/footer.html` | Pied de page |
 | `core/head.html` | Section head HTML |
-| `core/header.html` | En-tête/barre de navigation de page |
+| `core/header.html` | En-tête de page / barre de navigation |
 
 ### Utilisation de la mise en page
 
@@ -161,9 +162,9 @@ _includes/
 </html>{% endraw %}
 ```
 
-## Includes de navigation
+## Inclusions de navigation
 
-| Include | Objet |
+| Inclusion | Objectif |
 |---------|---------|
 | `navigation/breadcrumbs.html` | Fil d'Ariane |
 | `navigation/nav_list.html` | Liste de navigation |
@@ -174,11 +175,11 @@ _includes/
 | `navigation/sidebar-categories.html` | Barre latérale des catégories/étiquettes (articles par terme de taxonomie) |
 | `navigation/sidebar-folders.html` | Barre latérale de collection (arborescence de dossiers repliable) |
 | `navigation/sidebar-left.html` | Panneau de barre latérale gauche |
-| `navigation/sidebar-right.html` | Barre latérale droite (TOC) |
+| `navigation/sidebar-right.html` | Barre latérale droite (table des matières) |
 
 ### Barre latérale avec navigation
 
-Le mode de barre latérale provient de la clé de front matter `sidebar.nav` (ou d'une valeur par défaut de collection/site), et non d'un paramètre d'include :
+Le mode de la barre latérale provient de la clé de front matter `sidebar.nav` (ou d'une valeur par défaut de collection/site), et non d'un paramètre d'inclusion :
 
 ```yaml
 sidebar:
@@ -189,11 +190,11 @@ sidebar:
 {% raw %}{% include navigation/sidebar-left.html %}{% endraw %}
 ```
 
-Consultez [Navigation par barre latérale](/docs/features/sidebar-navigation/) pour la référence complète des modes et options.
+Consultez [Navigation par barre latérale](/docs/features/sidebar-navigation/) pour la référence complète des modes et des options.
 
-## Includes de page d'accueil
+## Inclusions de page d'accueil
 
-| Include | Objet |
+| Inclusion | Objectif |
 |---------|---------|
 | `landing/landing-install-cards.html` | Options d'installation |
 | `landing/landing-quick-links.html` | Liens d'action rapide |
@@ -208,11 +209,11 @@ Consultez [Navigation par barre latérale](/docs/features/sidebar-navigation/) p
 
 | Include | Objectif |
 |---------|---------|
-| `stats/stats-categories.html` | Statistiques par catégorie |
+| `stats/stats-categories.html` | Statistiques de catégories |
 | `stats/stats-header.html` | En-tête de la page de statistiques |
 | `stats/stats-metrics.html` | Affichage des métriques |
 | `stats/stats-no-data.html` | État vide |
-| `stats/stats-overview.html` | Cartes de vue d'ensemble |
+| `stats/stats-overview.html` | Cartes de synthèse |
 | `stats/stats-tags.html` | Nuage de tags |
 
 ## Créer des includes personnalisés
@@ -227,7 +228,7 @@ Consultez [Navigation par barre latérale](/docs/features/sidebar-navigation/) p
 </div>
 ```
 
-### Avec paramètres
+### Avec des paramètres
 
 ```liquid
 {% raw %}{% include components/custom.html 
@@ -236,7 +237,7 @@ Consultez [Navigation par barre latérale](/docs/features/sidebar-navigation/) p
 %}{% endraw %}
 ```
 
-### Avec valeurs par défaut
+### Avec des valeurs par défaut
 
 ```html
 {% raw %}{% assign title = include.title | default: "Default Title" %}
@@ -277,7 +278,7 @@ Ajoutez des commentaires en haut des includes :
 {% endif %}{% endraw %}
 ```
 
-### Performances
+### Performance
 
 - Évitez les boucles imbriquées dans les includes
 - Utilisez des captures pour la logique complexe
@@ -287,7 +288,7 @@ Ajoutez des commentaires en haut des includes :
 
 ### Copier et modifier
 
-1. Copiez l'include du thème vers votre `_includes/`
+1. Copiez l'include du thème dans votre `_includes/`
 2. Modifiez selon vos besoins
 3. Jekyll utilise votre version
 
@@ -304,13 +305,13 @@ bundle show jekyll-theme-zer0
 
 1. Vérifiez que le chemin du fichier est correct
 2. Vérifiez que le fichier existe
-3. Recherchez des fautes de frappe dans le nom du fichier
+3. Recherchez les fautes de frappe dans le nom du fichier
 
-### Paramètre ne fonctionne pas
+### Paramètre ne fonctionnant pas
 
 1. Vérifiez que le nom du paramètre correspond
-2. Vérifiez les paramètres obligatoires
-3. Déboguez avec `⟦44⟧`
+2. Vérifiez les paramètres requis
+3. Déboguez avec `{{ include | inspect }}`
 
 ### Boucle infinie
 
@@ -322,11 +323,11 @@ bundle show jekyll-theme-zer0
 
 - [Layouts](/docs/customization/layouts/)
 - [Liquid de Jekyll](/docs/liquid/)
-- [Intégration Bootstrap](/docs/bootstrap/)
+- [Intégration de Bootstrap](/docs/bootstrap/)
 
 ## Référence technique
 
-Pour les détails de niveau contributeur (référence de l'API des composants, paramètres des includes, extension de la bibliothèque de composants) :
+Pour des détails de niveau contributeur (référence de l'API des composants, paramètres d'include, extension de la bibliothèque de composants) :
 
 - [Composants → docs/ui/components.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/ui/components.md)
 
@@ -334,4 +335,4 @@ Pour les détails de niveau contributeur (référence de l'API des composants, p
 
 - [[Customization]]
 - [[Layouts]]
-- [[Bootstrap Integration]]
+- [[Bootstrap 5 Integration in Zer0-Mistakes|Bootstrap 5 Integration]]
