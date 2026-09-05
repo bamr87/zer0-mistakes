@@ -3,6 +3,7 @@ date: 2026-09-05T00:00:00.000Z
 lastmod: 2026-09-05T00:00:00.000Z
 title: Mermaid Diagrams for Jekyll Sites
 description: "Add Mermaid diagrams to any Jekyll site: flowcharts, sequence diagrams, class diagrams and more, with a zoom toolbar and automatic dark-mode theming."
+# Site-wide form: seo.html and intro.html prefix /assets (preview_images.auto_prefix).
 preview: /images/previews/mermaid-diagrams.png
 layout: default
 author: bamr87
@@ -673,7 +674,7 @@ docker-compose up
 
 For implementation details (file changes, test suite):
 
-- [Mermaid Integration v2.0 → docs/implementation/feature-change-log.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/implementation/feature-change-log.md#mermaid-integration-v20-january-2025--v030) — documents the earlier approach (a plain `<div class="mermaid">` wrapper) and is not the one to follow today. The figure, toolbar and token-derived theming described on this page are the later rework, registered as `ZER0-013` in `_data/features.yml`
+- [Mermaid Integration v2.0 → docs/implementation/feature-change-log.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/implementation/feature-change-log.md#mermaid-integration-v20-january-2025--v030) — describes the earlier `<div class="mermaid">` approach; the current figure, toolbar and token-theming rework is registered as `ZER0-013` in `_data/features.yml`
 - Component files: `_includes/components/mermaid.html` (loader), `assets/js/mermaid-diagrams.js` (behaviour), `_sass/components/_mermaid.scss` (styles)
 - Regression test: `test/visual/features/mermaid.spec.js`
 
