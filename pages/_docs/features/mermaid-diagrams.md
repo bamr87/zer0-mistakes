@@ -5,6 +5,7 @@ title: Mermaid Diagrams for Jekyll Sites
 description: "Add Mermaid diagrams to any Jekyll site: flowcharts, sequence diagrams, class diagrams and more, with a zoom toolbar and automatic dark-mode theming."
 preview: /images/previews/mermaid-diagrams.png
 layout: default
+author: bamr87
 categories:
     - docs
     - features
@@ -14,7 +15,7 @@ tags:
     - jekyll
     - flowchart
     - documentation
-keywords: [mermaid diagrams jekyll, jekyll mermaid flowchart, mermaid github pages, mermaid sequence diagram, mermaid dark mode, zoomable diagrams]
+keywords: [mermaid diagrams jekyll, jekyll mermaid flowchart, mermaid github pages, mermaid sequence diagram, mermaid class diagram jekyll, mermaid dark mode]
 # Former title — keeps [[Mermaid Diagrams]] wiki-links on other pages resolving.
 aliases: ["Mermaid Diagrams"]
 permalink: /docs/features/mermaid-diagrams/
