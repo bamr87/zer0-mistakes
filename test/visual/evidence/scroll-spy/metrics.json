@@ -1,0 +1,166 @@
+{
+  "slug": "scroll-spy",
+  "base": "http://127.0.0.1:4000",
+  "route": "/docs/features/toc/",
+  "viewport": {
+    "width": 1280,
+    "height": 820
+  },
+  "stops": 25,
+  "wrongBefore": 19,
+  "wrongAfter": 0,
+  "backwardsJumpsBefore": 0,
+  "backwardsJumpsAfter": 0,
+  "detail": [
+    {
+      "y": 0,
+      "expected": "table-of-contents",
+      "before": "table-of-contents",
+      "after": "table-of-contents"
+    },
+    {
+      "y": 335,
+      "expected": "table-of-contents",
+      "before": "table-of-contents",
+      "after": "table-of-contents"
+    },
+    {
+      "y": 670,
+      "expected": "table-of-contents",
+      "before": "overview",
+      "after": "table-of-contents"
+    },
+    {
+      "y": 1005,
+      "expected": "table-of-contents",
+      "before": "implementation",
+      "after": "table-of-contents"
+    },
+    {
+      "y": 1340,
+      "expected": "implementation",
+      "before": "implementation",
+      "after": "implementation"
+    },
+    {
+      "y": 1675,
+      "expected": "toc-generation",
+      "before": "configuration",
+      "after": "toc-generation"
+    },
+    {
+      "y": 2010,
+      "expected": "toc-generation",
+      "before": "configuration",
+      "after": "toc-generation"
+    },
+    {
+      "y": 2344,
+      "expected": "enable-toc",
+      "before": "heading-levels",
+      "after": "enable-toc"
+    },
+    {
+      "y": 2679,
+      "expected": "enable-toc",
+      "before": "basic-styles",
+      "after": "enable-toc"
+    },
+    {
+      "y": 3014,
+      "expected": "basic-styles",
+      "before": "basic-styles",
+      "after": "basic-styles"
+    },
+    {
+      "y": 3349,
+      "expected": "basic-styles",
+      "before": "nested-levels",
+      "after": "basic-styles"
+    },
+    {
+      "y": 3684,
+      "expected": "basic-styles",
+      "before": "scroll-spy",
+      "after": "basic-styles"
+    },
+    {
+      "y": 4019,
+      "expected": "nested-levels",
+      "before": "scroll-spy",
+      "after": "nested-levels"
+    },
+    {
+      "y": 4354,
+      "expected": "scroll-spy",
+      "before": "scroll-spy",
+      "after": "scroll-spy"
+    },
+    {
+      "y": 4689,
+      "expected": "scroll-spy",
+      "before": "scroll-spy",
+      "after": "scroll-spy"
+    },
+    {
+      "y": 5024,
+      "expected": "scroll-spy",
+      "before": "smooth-scrolling",
+      "after": "scroll-spy"
+    },
+    {
+      "y": 5359,
+      "expected": "scroll-spy",
+      "before": "javascript-method",
+      "after": "scroll-spy"
+    },
+    {
+      "y": 5694,
+      "expected": "css-method",
+      "before": "responsive-behavior",
+      "after": "css-method"
+    },
+    {
+      "y": 6029,
+      "expected": "javascript-method",
+      "before": "desktop",
+      "after": "javascript-method"
+    },
+    {
+      "y": 6363,
+      "expected": "desktop",
+      "before": "accessibility",
+      "after": "desktop"
+    },
+    {
+      "y": 6698,
+      "expected": "mobile",
+      "before": "keyboard-navigation",
+      "after": "mobile"
+    },
+    {
+      "y": 7033,
+      "expected": "aria-attributes",
+      "before": "scroll-spy-not-working",
+      "after": "aria-attributes"
+    },
+    {
+      "y": 7368,
+      "expected": "toc-not-generating",
+      "before": "related",
+      "after": "toc-not-generating"
+    },
+    {
+      "y": 7703,
+      "expected": "styling-issues",
+      "before": "related",
+      "after": "styling-issues"
+    },
+    {
+      "y": 8038,
+      "expected": "see-also",
+      "before": "related",
+      "after": "see-also"
+    }
+  ]
+}

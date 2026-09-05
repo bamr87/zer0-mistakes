@@ -2,7 +2,7 @@
 title: "UI/UX Component Spec"
 description: "Single source of truth for every front-end UI/UX component in the zer0-mistakes theme — what it does, the files that implement it (SCSS / includes / layouts / JS / plugins), its API surface (classes, data-attributes, JS globals, events, CSS tokens), and its automated test coverage. Use it to define, test, and improve the UI."
 date: 2026-01-25T03:38:33.000Z
-lastmod: 2026-06-17T00:00:00.000Z
+lastmod: 2026-09-05T00:00:00.000Z
 categories: [docs]
 tags: [architecture, design, ui, testing, components]
 author: bamr87
@@ -69,7 +69,7 @@ Every catalogued component, its primary implementation file, primary test, and c
 | Navbar Extras / FAB Stacking | `_sass/layouts/_navbar-extras.scss` | `features/content-enhancements.spec.js` | 🟡 partial |
 | Navigation Orchestrator (index.js + config.js) | `assets/js/modules/navigation/index.js` | `core/styling.spec.js`, `features/layouts.spec.js` | 🟡 partial |
 | Navbar Module (dropdowns/keyboard/tooltips) | `assets/js/modules/navigation/navbar.js` | — | 🔴 none |
-| Scroll-Spy Module | `assets/js/modules/navigation/scroll-spy.js` | — | 🔴 none |
+| Scroll-Spy Module | `assets/js/modules/navigation/scroll-spy.js` | `features/scroll-spy.spec.js` | 🟡 partial |
 | Smooth-Scroll Module | `assets/js/modules/navigation/smooth-scroll.js` | — | 🔴 none |
 | Keyboard Shortcuts Module | `assets/js/modules/navigation/keyboard.js` | `features/layouts.spec.js` | 🟡 partial |
 | Swipe Gestures Module | `assets/js/modules/navigation/gestures.js` | — | 🔴 none |
@@ -90,7 +90,7 @@ Every catalogued component, its primary implementation file, primary test, and c
 | Table of Contents (Liquid parser + sidebar-right) | `_includes/content/toc.html` | `features/content-enhancements.spec.js` | 🟡 partial |
 | TOC FAB (mobile trigger) | `_includes/navigation/toc-fab.html` | `features/content-enhancements.spec.js` | 🟡 partial |
 | TOC visibility toggle + persistence | `assets/js/modules/navigation/toc-visibility.js` | `features/content-enhancements.spec.js` | 🟡 partial |
-| Scroll-spy (active heading highlight) | `assets/js/modules/navigation/scroll-spy.js` | — | 🔴 none |
+| Scroll-spy (active heading highlight) | `assets/js/modules/navigation/scroll-spy.js` | `features/scroll-spy.spec.js` | 🟡 partial |
 | Page intro header (.bd-intro family) | `_includes/content/intro.html` | `features/layouts.spec.js` | 🟡 partial |
 | Docs code-example chrome (.bd-example/.bd-clipboard) | `_sass/core/_docs-code-examples.scss` | — | 🔴 none |
 | Content tables (styling + CSV copy) | `_sass/components/_content-tables.scss` | `features/content-enhancements.spec.js` | 🟡 partial |
@@ -356,7 +356,7 @@ The fixed top header (brand, primary menubar, utility controls, mobile/tablet sh
 
 - **Purpose:** The ES-module entry point that constructs `window.zer0Navigation`, syncs breakpoints from CSS tokens, conditionally instantiates each sub-module, and exposes a public API (`scrollTo`, `expandTo`, `expandAll/collapseAll`, `getShortcuts`, `getModule`, `destroy`).
 - **Capabilities:** Auto-inits on DOM-ready (waits for Bootstrap `load` if absent); `syncBreakpointsFromCss()` reads `--zer0-bp-*` so SCSS token overrides propagate to JS; instantiates TOC modules only if a `#TableOfContents` exists, sidebar-visibility only if a left sidebar + docs layout exist; dispatches `navigation:ready`/`navigation:destroyed`; loaded via `_includes/components/js-cdn.html` as `type="module"`.
-- **Capabilities (config):** centralizes selectors, scroll-spy margins, smooth-scroll offset, keyboard key map, gesture thresholds, localStorage prefix `zer0-nav-`, and breakpoints; exports `isBelowBreakpoint`/`isAtOrAboveBreakpoint`.
+- **Capabilities (config):** centralizes selectors, the scroll-spy reading-line offset/tolerance, smooth-scroll offset, keyboard key map, gesture thresholds, localStorage prefix `zer0-nav-`, and breakpoints; exports `isBelowBreakpoint`/`isAtOrAboveBreakpoint`.
 - **Source:**
   - SCSS: — (consumes `--zer0-bp-*` from `_sass/tokens/_breakpoints.scss`)
   - Markup: `_includes/components/js-cdn.html` (module `<script>` loader)
@@ -379,14 +379,14 @@ The fixed top header (brand, primary menubar, utility controls, mobile/tablet sh
 
 ### Scroll-Spy Module
 
-- **Purpose:** IntersectionObserver-based section tracking that highlights the corresponding TOC link and auto-scrolls the TOC to keep it visible.
-- **Capabilities:** Observes headings referenced by `#TableOfContents a[href^="#"]`; activates the most-visible heading's link (`.active`); rootMargin `-80px` for the fixed header; auto-scrolls TOC container; dispatches `navigation:sectionChange`; `setActiveById`/`getActive` helpers; clean `destroy()`.
+- **Purpose:** Position-based section tracking that highlights the corresponding TOC link and keeps it visible inside the TOC.
+- **Capabilities:** Maps `#TableOfContents a[href^="#"]` to headings by id; the active heading is the LAST one whose top has crossed the reading line (`scroll-padding-top`, overridable via `scrollSpy.offset`), the last heading once the page is scrolled to the bottom; recomputed per rAF-throttled scroll frame from cached offsets, re-measured on resize/reflow (`ResizeObserver`); holds a clicked entry active while the smooth scroll animates (`navigation:scroll`); sets `aria-current="true"`; scrolls the TOC's own container (never the page); dispatches `navigation:sectionChange`; `setActiveById`/`getActive` helpers; `destroy()` removes every listener/observer.
 - **Source:**
   - JS: `assets/js/modules/navigation/scroll-spy.js` (config in `config.js`)
   - Markup: `_includes/navigation/sidebar-right.html` (`#TableOfContents`)
-- **API surface:** class `ScrollSpy` (`.setActiveById()`, `.getActive()`, `.destroy()`); event `navigation:sectionChange`; toggles `.active` on TOC links; config `scrollSpy.rootMargin`, `scrollSpy.threshold`, selectors `toc`, `tocLinks`, `tocContainer`
-- **Tests:** No automated tests.
-- **Gaps / improvement ideas:** Active-link highlighting on scroll is untested. Note this is the theme's custom scroll-spy; `fixtures.gotoBeforeScrollSpy` disables Bootstrap's native ScrollSpy for admin pages, but the custom one has no positive coverage.
+- **API surface:** class `ScrollSpy` (`.setActiveById()`, `.getActive()`, `.destroy()`); event `navigation:sectionChange`; toggles `.active` + `aria-current` on TOC links; config `scrollSpy.offset`, `scrollSpy.tolerance`, selectors `toc`, `tocLinks`, `tocContainer`, `mainContent`
+- **Tests:** `test/visual/features/scroll-spy.spec.js` — active entry matches the section under the reading line at every sampled scroll position, exactly one active entry, no backwards jumps, last entry at the page bottom, click keeps its entry active, and no `data-bs-spy` target claims `#TableOfContents`.
+- **Gaps / improvement ideas:** Coverage is desktop-width only; the mobile offcanvas TOC (where `.offcanvas-body` is the scroll container) has no spec. `fixtures.gotoBeforeScrollSpy` is now a no-op for TOC pages — Bootstrap's native ScrollSpy is no longer wired to `<body>` — and can be retired once nothing depends on it.
 
 ### Smooth-Scroll Module
 
@@ -479,7 +479,7 @@ The reading-page shell for content/docs pages: a CSS-grid `.bd-layout` (left `.b
   - SCSS: `_sass/core/_docs-layout.scss`
   - Markup: `_layouts/default.html` (`.bd-layout`/`.bd-main`/`.bd-content` + sidebar FAB), `_includes/navigation/sidebar-left.html` (`#bdSidebar` offcanvas-lg, `.bd-sidebar-desktop-header`), `_includes/navigation/sidebar-right.html` (`#tocContents` offcanvas-lg + `#TableOfContents`)
   - JS: `assets/js/modules/navigation/toc-visibility.js` and `sidebar-visibility.js` toggle the `--no-toc`/rail state classes (config in `assets/js/modules/navigation/config.js`)
-- **API surface:** classes `.bd-layout`, `.bd-layout--no-sidebar`, `.bd-layout--sidebar-collapsed`, `.bd-sidebar`, `.bd-sidebar-desktop-header`, `.bd-sidebar-fab`, `.bd-main`, `.bd-main--no-toc`, `.bd-toc`, `.bd-content`, `.bd-gutter`; ids `#bdSidebar`, `#tocContents`, `#sidebarFab`, `#tocFab`; html classes `bd-sidebar-pref-hidden`, `bd-toc-pref-hidden`; data-attrs on `<main>`: `data-bs-spy="scroll"`, `data-bs-target="#TableOfContents"`, `data-bs-offset="100"`, `data-bs-smooth-scroll`; CSS vars `--zer0-sidebar-width` (17rem), `--zer0-sidebar-toc-width` (12rem), `--zer0-sidebar-rail-width`/`--zer0-sidebar-toc-rail-width` (fallback 2.25rem only — undefined as tokens), `--zer0-layout-max-width-xl/xxl`, `--zer0-motion-duration-base/fast`, `--bd-sidebar-link-bg`
+- **API surface:** classes `.bd-layout`, `.bd-layout--no-sidebar`, `.bd-layout--sidebar-collapsed`, `.bd-sidebar`, `.bd-sidebar-desktop-header`, `.bd-sidebar-fab`, `.bd-main`, `.bd-main--no-toc`, `.bd-toc`, `.bd-content`, `.bd-gutter`; ids `#bdSidebar`, `#tocContents`, `#sidebarFab`, `#tocFab`; html classes `bd-sidebar-pref-hidden`, `bd-toc-pref-hidden`; CSS vars `--zer0-sidebar-width` (17rem), `--zer0-sidebar-toc-width` (12rem), `--zer0-sidebar-rail-width`/`--zer0-sidebar-toc-rail-width` (fallback 2.25rem only — undefined as tokens), `--zer0-layout-max-width-xl/xxl`, `--zer0-motion-duration-base/fast`, `--bd-sidebar-link-bg`
 - **Tests:** `test/visual/core/styling.spec.js` — "default layout page exposes docs-layout regions" asserts `main.bd-main` and `.bd-content` are visible. `test/visual/features/content-enhancements.spec.js` — "docs article exposes ToC on desktop" asserts `.bd-toc, #tocContents` attached and the visibility toggles attached; "mobile exposes sidebar FAB and ToC FAB" asserts `#sidebarFab/.bd-sidebar-fab` visible and `#tocFab` attached. No test exercises the collapsed-rail transition or the FOUC pref guards.
 - **Gaps / improvement ideas:** `--zer0-sidebar-rail-width` and `--zer0-sidebar-toc-rail-width` are consumed only via inline fallbacks and never defined in `_sass/tokens/` — promote them to real tokens for fork override. No automated coverage of the hide/show rail collapse, the `bd-*-pref-hidden` pre-paint guard, or keyboard reachability of the rail toggle when collapsed. `.bd-sidebar`/`.bd-toc` use `aria-controls` on offcanvas-lg containers that are static on desktop — consider verifying screen-reader semantics in the rail state where most content is `visibility: hidden`.
 
@@ -568,14 +568,14 @@ The reading-page shell for content/docs pages: a CSS-grid `.bd-layout` (left `.b
 
 ### Scroll-spy (active heading highlight)
 
-- **Purpose:** Highlights the TOC link for the currently-visible heading using an IntersectionObserver, and auto-scrolls the TOC to keep the active link in view.
-- **Capabilities:** Maps each `#TableOfContents a[href^="#"]` to its heading by id; observes headings with `rootMargin: -80px 0px -80px 0px`, `threshold: [0,0.25,0.5,0.75,1]`; picks the most-visible heading and toggles `.active`; auto-scrolls TOC container; `setActiveById()`/`getActive()`/`destroy()`; dispatches `navigation:sectionChange`; safe getters that warn-and-continue. (Note: a second, independent scroll-spy exists inline in `section-sidebar.html` for section pages.)
+- **Purpose:** Highlights the TOC link for the section being read, and keeps that link visible inside the TOC.
+- **Capabilities:** Maps each `#TableOfContents a[href^="#"]` to its heading by id and caches heading offsets; the active entry is the last heading whose top has crossed the reading line (the document's `scroll-padding-top`, i.e. under the fixed header), the last heading once the page is at the bottom; recomputed per rAF-throttled scroll frame, re-measured on resize/content reflow; toggles `.active` + `aria-current="true"`; scrolls the TOC's own scroll container (resolved at call time: `.bd-toc` on desktop, `.offcanvas-body` on mobile) rather than calling `scrollIntoView()`, which would scroll the page and feed back into the spy; holds a clicked entry active while the smooth scroll animates; `setActiveById()`/`getActive()`/`destroy()`; dispatches `navigation:sectionChange`; safe getters that warn-and-continue. (Note: a second, independent scroll-spy exists inline in `section-sidebar.html` for section pages; it targets `.sidebar-nav a.nav-link`, not the TOC.)
 - **Source:**
   - SCSS: active styling via `.bd-toc nav a.active` (`_docs-layout.scss`) and `.bd-toc nav a.active` shim (`_sidebar-extras.scss`)
-  - JS: `assets/js/modules/navigation/scroll-spy.js` (+ `config.js`); Bootstrap's own scrollspy also wired via `data-bs-spy="scroll"` on `<main>` in `default.html`
-- **API surface:** events `navigation:sectionChange` (detail `{link, href}`); classes `.active`; CSS selectors `#TableOfContents a`, `.bd-toc .offcanvas-body` (config `tocLinks`/`tocContainer`); `data-bs-spy="scroll"` on `main.bd-main`
-- **Tests:** No automated tests (no spec scrolls a docs page and asserts the active TOC link changes).
-- **Gaps / improvement ideas:** Two competing active-link drivers — Bootstrap's `data-bs-spy="scroll"` on `<main>` and the custom IntersectionObserver — may fight over `.active`; verify/dedupe. No behavioral test of active-link tracking, the most-visible selection, or TOC auto-scroll. Console logging in init.
+  - JS: `assets/js/modules/navigation/scroll-spy.js` (+ `config.js`) — the single owner of `.active` on TOC links; Bootstrap's native ScrollSpy is deliberately NOT wired to `#TableOfContents` (see below)
+- **API surface:** events `navigation:sectionChange` (detail `{link, href}`); classes `.active`, attribute `aria-current`; CSS selectors `#TableOfContents a`, TOC scroll container (config `tocLinks`/`tocContainer`); config `scrollSpy.offset`/`scrollSpy.tolerance`
+- **Tests:** `test/visual/features/scroll-spy.spec.js` (smoke) — positional accuracy across the page, single active entry, monotonic highlight, bottom-of-page, click, and a guard that nothing re-adds a `data-bs-spy` target for `#TableOfContents`. Evidence: `test/visual/evidence/scroll-spy/`.
+- **Gaps / improvement ideas:** Three drivers used to fight over `.active` — Bootstrap's `data-bs-spy="scroll"` on both `<body>` (`root.html`) and `.bd-main` (`default.html`), plus the catch-all `a[href^="#"]` observer in `ui-enhancements.js`. All three are resolved: the Bootstrap hooks are removed and the `ui-enhancements.js` observer is scoped away from TOC/sidebar links. Remaining: no mobile-offcanvas coverage; console logging in init.
 
 ### Page intro header (.bd-intro family)
 
@@ -1652,7 +1652,7 @@ Prioritized — interactive behaviors the smoke tier never exercises:
 - **Obsidian wiki-links / backlinks / callouts in rendered pages** — covered only by Ruby/JS unit tests; **no Playwright test** loads a page with `[[wiki-links]]`/embeds/callouts/backlinks and asserts client-side resolution. **(Medium)**
 - **Keyboard-shortcuts modal completeness** — `?`-opens is tested; Escape-to-close, focus trapping, and that listed shortcuts fire are not. **(Medium)**
 - **Background/skin controls as real UI** — tests drive the `window.zer0Bg` API directly; no test clicks the actual customizer toggle/slider/skin-swatch a user would use. **(Medium)**
-- **ToC / sidebar FAB interaction** — FABs are asserted *visible* but never clicked to open/close the offcanvas; ScrollSpy ToC highlighting on scroll is untested. **(Low)**
+- **ToC / sidebar FAB interaction** — FABs are asserted *visible* but never clicked to open/close the offcanvas. (ToC highlighting on scroll is now covered by `features/scroll-spy.spec.js`.) **(Low)**
 - **Table CSV export click** — the `.table-copy-csv` button's existence/name is checked, but nothing clicks it and validates the produced CSV. **(Low)**
 
 Net: coverage is strong on **static structure, admin-page rendering, accessibility audits, CSS-var/token wiring, and JS-API-level skin/background state**, but thin on **user-driven interactions** (clicks, typing, keyboard) for the search modal, AI chat, dropdowns, clipboard copy, and theme-apply — exactly the surfaces a UI overhaul is most likely to break.
@@ -1671,7 +1671,7 @@ These have no automated behavioral coverage — highest-value targets for new Pl
 - **Auto-Hide Navbar** (Global Chrome & Primary Navigation) — Hide-on-down/show-on-up, body-padding compensation, reduced-motion, and offcanvas-pause all untested; logic duplicated JS/SCSS.
 - **Nanobar (scroll/load progress bar)** (Global Chrome & Primary Navigation) — Render, step animation, and three position modes (top/bottom/navbar mount) all untested.
 - **Navbar Module (dropdowns/keyboard/tooltips)** (Global Chrome & Primary Navigation) — Rich keyboard menu nav, click dropdowns, and compact-desktop tooltips wholly untested; dead _setupDropdownHoverDelay no-op.
-- **Scroll-Spy Module** (Global Chrome & Primary Navigation) — IntersectionObserver active-link highlighting on scroll has no positive coverage.
+- **Scroll-Spy Module** (Global Chrome & Primary Navigation) — active-link highlighting on scroll is covered on desktop by `features/scroll-spy.spec.js`; the mobile offcanvas TOC is not (backlog T-046).
 - **Smooth-Scroll Module** (Global Chrome & Primary Navigation) — Offset scroll, hash pushState, and mobile-offcanvas-close untested; destroy() is a documented no-op leaking listeners.
 - **Swipe Gestures Module** (Global Chrome & Primary Navigation) — Edge-swipe sidebar/TOC opening untested; no guard distinguishes edge-swipe from content swipe.
 - **Focus Manager Module** (Global Chrome & Primary Navigation) — Focus-return-to-trigger on offcanvas close (a11y requirement) and keyboard-nav body class untested.
@@ -1679,7 +1679,7 @@ These have no automated behavioral coverage — highest-value targets for new Pl
 - **Nav-tree sidebar (YAML tree mode)** (Sidebar, Table of Contents & Docs Layout) — No coverage of collapse/aria-expanded/active state; inconsistent ARIA across depths; slug id collisions possible.
 - **Sidebar categories (categories mode)** (Sidebar, Table of Contents & Docs Layout) — No expand/collapse or active-state test; active styling duplicated in two partials; nested h2 heading-order risk.
 - **Sidebar folders (auto mode)** (Sidebar, Table of Contents & Docs Layout) — Dead wiring: JS needs .nested-list-group but the include emits a flat list, so folder disclosure never fires; untested.
-- **Scroll-spy (active heading highlight)** (Sidebar, Table of Contents & Docs Layout) — No active-link test; competes with Bootstrap data-bs-spy on `<main>`; console.log in init.
+- **Scroll-spy (active heading highlight)** (Sidebar, Table of Contents & Docs Layout) — Covered on desktop by `test/visual/features/scroll-spy.spec.js`; no mobile-offcanvas test; console.log in init.
 - **Docs code-example chrome (.bd-example/.bd-clipboard)** (Sidebar, Table of Contents & Docs Layout) — No AnchorJS/clipboard test; dead Algolia bootstrap-docs search binding; .bd-example::after content:null invalid; two parallel copy systems.
 - **Landing quick-links bar** (Landing, Home & Component Polish) — No tests; .landing-quick-links SCSS selector never applies (markup emits .bg-dark) — dead/mismatched rule
 - **Landing install cards** (Landing, Home & Component Polish) — No tests; snippets lack data-copy buttons; #get-started .card.card-header ~ selector is malformed and never matches

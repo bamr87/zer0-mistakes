@@ -101,12 +101,20 @@
   }
 
   /**
-   * Add active state to navigation links on scroll
+   * Add active state to in-page navigation links on scroll.
+   *
+   * Deliberately excludes `#TableOfContents` links (and the section-page
+   * sidebar): those are owned by assets/js/modules/navigation/scroll-spy.js.
+   * This observer used to claim every `a[href^="#"]` on the page and clear
+   * `.active` from all of them, which fought the TOC scroll spy and made the
+   * active heading flicker between entries.
    */
   function initScrollSpy() {
     const sections = document.querySelectorAll('section[id], [id^="get-started"], [id^="features"]');
-    const navLinks = document.querySelectorAll('a[href^="#"]');
-    
+    const navLinks = Array.from(document.querySelectorAll('a[href^="#"]')).filter(
+      link => !link.closest('#TableOfContents, .bd-toc, .sidebar-nav')
+    );
+
     if (!sections.length || !navLinks.length) return;
 
     const observerOptions = {
