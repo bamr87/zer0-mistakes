@@ -16,10 +16,12 @@ author: Zer0-Mistakes Team
 featured: true
 estimated_reading_time: 8 minutes
 draft: true
-lastmod: 2025-12-01T02:20:52.649Z
+lastmod: 2026-09-05T00:00:00.000Z
 ---
 
 Docker has revolutionized how developers work with Jekyll sites. This comprehensive guide will walk you through setting up an optimized Docker development environment for your Jekyll projects.
+
+> **Skip the typing:** the theme's [Site Builder](/quickstart/site-builder/) generates a `docker-compose.yml` like the one below for your own site, writes it to disk, and can run `docker compose up` for you while Claude explains the output. Everything on this page still applies when you want to understand or tune what it produced.
 
 ## Why Use Docker for Jekyll?
 

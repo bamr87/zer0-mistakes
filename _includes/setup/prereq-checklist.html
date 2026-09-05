@@ -1,0 +1,90 @@
+{% comment %} Feature: ZER0-085 {% endcomment %}
+{%- comment -%}
+  Component:   setup/prereq-checklist
+  Path:        _includes/setup/prereq-checklist.html
+  Purpose:     The Prerequisites step of the Site Builder — one row per tool
+               from _data/site_builder.yml with live check state, a manual
+               "done" toggle, and per-OS install + verify commands that mirror
+               pages/_quickstart/machine-setup.md.
+  Params:      none — reads site.data.site_builder.prerequisites
+  Depends on:  Bootstrap 5.3 + Icons, assets/js/setup-wizard.js (OS picker,
+               manual toggles, copy buttons), assets/js/site-builder.js
+               (live checks via the dev proxy's POST /api/wizard/check)
+  Notes:       Fully usable offline — the checks are an enhancement. The OS
+               picker defaults from navigator.platform in JS; the markup
+               defaults to macOS so the page is meaningful without JS.
+{%- endcomment -%}
+
+{% assign prereqs = site.data.site_builder.prerequisites %}
+
+<div class="prereq-toolbar d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+  <div class="btn-group btn-group-sm" role="group" aria-label="Operating system" id="prereq-os">
+    <input type="radio" class="btn-check" name="prereq-os" id="prereq-os-macos" value="macos" autocomplete="off" checked>
+    <label class="btn btn-outline-secondary" for="prereq-os-macos"><i class="bi bi-apple" aria-hidden="true"></i> macOS</label>
+    <input type="radio" class="btn-check" name="prereq-os" id="prereq-os-windows" value="windows" autocomplete="off">
+    <label class="btn btn-outline-secondary" for="prereq-os-windows"><i class="bi bi-windows" aria-hidden="true"></i> Windows</label>
+    <input type="radio" class="btn-check" name="prereq-os" id="prereq-os-linux" value="linux" autocomplete="off">
+    <label class="btn btn-outline-secondary" for="prereq-os-linux"><i class="bi bi-ubuntu" aria-hidden="true"></i> Linux</label>
+  </div>
+  <div class="d-flex align-items-center gap-2">
+    <span class="small text-body-secondary" id="prereq-summary" aria-live="polite">0 of 0 required ready</span>
+    <button class="btn btn-sm btn-primary sb-needs-proxy" type="button" id="btn-run-checks" disabled
+            title="Runs a fixed set of read-only version checks through the local dev proxy">
+      <i class="bi bi-play-circle" aria-hidden="true"></i> Run checks
+    </button>
+  </div>
+</div>
+
+<ul class="list-group prereq-list mb-3" id="prereq-list">
+  {% for p in prereqs %}
+  <li class="list-group-item prereq-item" data-prereq="{{ p.id }}" data-check="{{ p.check }}"
+      data-required="{{ p.required }}" data-state="unknown">
+    <div class="d-flex align-items-start gap-3">
+      <span class="prereq-state-icon mt-1" aria-hidden="true"><i class="bi {{ p.icon }}"></i></span>
+      <div class="flex-grow-1 min-w-0">
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <span class="fw-semibold">{{ p.label }}</span>
+          {% if p.required %}
+          <span class="badge text-bg-primary rounded-pill">required</span>
+          {% else %}
+          <span class="badge text-bg-secondary rounded-pill">recommended</span>
+          {% endif %}
+          <span class="badge rounded-pill prereq-state-badge" aria-live="polite">not checked</span>
+        </div>
+        <p class="small text-body-secondary mb-1">{{ p.why }}</p>
+        <p class="small mb-2 prereq-output text-body-secondary font-monospace" hidden></p>
+
+        <details class="prereq-details small">
+          <summary>Install &amp; verify</summary>
+          <div class="mt-2">
+            <div class="prereq-install">
+              <span class="text-body-secondary">Install</span>
+              <div class="wizard-cmd" data-os="macos"><code>{{ p.install.macos }}</code><button class="btn btn-sm btn-link" type="button" data-copy="{{ p.install.macos | escape }}" aria-label="Copy install command"><i class="bi bi-clipboard" aria-hidden="true"></i></button></div>
+              <div class="wizard-cmd" data-os="windows" hidden><code>{{ p.install.windows }}</code><button class="btn btn-sm btn-link" type="button" data-copy="{{ p.install.windows | escape }}" aria-label="Copy install command"><i class="bi bi-clipboard" aria-hidden="true"></i></button></div>
+              <div class="wizard-cmd" data-os="linux" hidden><code>{{ p.install.linux }}</code><button class="btn btn-sm btn-link" type="button" data-copy="{{ p.install.linux | escape }}" aria-label="Copy install command"><i class="bi bi-clipboard" aria-hidden="true"></i></button></div>
+            </div>
+            <div class="prereq-verify mt-2">
+              <span class="text-body-secondary">Verify</span>
+              <div class="wizard-cmd"><code>{{ p.verify }}</code><button class="btn btn-sm btn-link" type="button" data-copy="{{ p.verify | escape }}" aria-label="Copy verify command"><i class="bi bi-clipboard" aria-hidden="true"></i></button></div>
+            </div>
+            {% if p.docs %}
+            <a class="d-inline-block mt-2" href="{{ p.docs }}" target="_blank" rel="noopener">Docs <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i></a>
+            {% endif %}
+          </div>
+        </details>
+      </div>
+      <div class="form-check form-switch flex-shrink-0 ms-auto">
+        <input class="form-check-input prereq-manual" type="checkbox" id="prereq-{{ p.id }}" data-prereq="{{ p.id }}">
+        <label class="form-check-label small" for="prereq-{{ p.id }}">Done</label>
+      </div>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+
+<div class="alert alert-light border small mb-0">
+  <i class="bi bi-lightbulb" aria-hidden="true"></i>
+  On macOS you can install everything at once:
+  <span class="wizard-cmd d-inline-flex"><code id="cmd-brew-all">brew install git gh node && brew install --cask docker visual-studio-code</code><button class="btn btn-sm btn-link" type="button" data-copy-target="#cmd-brew-all" aria-label="Copy command"><i class="bi bi-clipboard" aria-hidden="true"></i></button></span>
+  Full guide: <a href="{{ '/quickstart/machine-setup/' | relative_url }}">Machine Setup</a>.
+</div>

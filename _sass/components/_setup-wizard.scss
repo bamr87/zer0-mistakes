@@ -1,10 +1,13 @@
 // =============================================================================
-// Setup wizard (_includes/setup/wizard.html + assets/js/setup-wizard.js)
+// Site Builder / setup wizard
+// (_includes/setup/wizard.html + setup/prereq-checklist.html +
+//  setup/claude-session.html · assets/js/setup-wizard.js + site-builder.js)
 // =============================================================================
-// Feature: ZER0-067 · Redesign: T-040 / #408
+// Feature: ZER0-067, ZER0-085 · Redesign: T-040 / #408 · Site Builder: ZER0-085
 //
-// Three columns at lg+ (stepper / steps / live preview), stacked below. The
-// two rules that matter most:
+// Three columns at lg+ (stepper / steps / side column), stacked below. The
+// side column holds the Claude session on top and the live file preview under
+// it, so both stay in view on every step. The two rules that matter most:
 //
 //   1. `.wizard-panes` is a GRID with every pane in the same cell, so the
 //      container is always exactly as tall as the tallest step; `.wizard-nav`
@@ -12,8 +15,8 @@
 //      Neither alone is enough: the grid stops the CONTAINER resizing, and the
 //      auto margin stops the BUTTONS floating up inside a short step.
 //      Together, Back/Next sit at the same y offset on every step.
-//   2. The preview panel is sticky and always present, so it needs its own
-//      scroll region rather than growing the page.
+//   2. The side column is sticky and scrolls on its own, so a long transcript
+//      or a long generated file never grows the page.
 // =============================================================================
 
 // -----------------------------------------------------------------------------
@@ -95,15 +98,13 @@
 
 .wizard-step-label {
   display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere; // "Integrations" must survive a ~100px stepper column
+  line-height: 1.2;
 }
 
 // "Draft saved" acknowledgement. Kept in the layout (no display toggling) so
-// its appearance never shifts the stepper.
+// its appearance never shifts the header.
 .wizard-draft-chip {
-  margin: 0.75rem 0 0;
   padding: 0.25rem 0.5rem;
   font-size: 0.75rem;
   color: var(--bs-success, #198754);
@@ -115,6 +116,10 @@
   }
 }
 
+.wizard-progress .progress-bar {
+  transition: width 0.3s ease;
+}
+
 // -----------------------------------------------------------------------------
 // Step panes — the stable-height half
 // -----------------------------------------------------------------------------
@@ -122,28 +127,27 @@
 .wizard-panes {
   // Every pane is stacked in ONE grid cell, so the row's height is
   // max(pane heights) — computed by the browser, continuously, exactly.
-  //
-  // This used to be a flex column whose min-height JS measured and wrote
-  // inline. Measuring a box you have to un-hide, lay out, read and restore is
-  // a guess: it came back ~16px short of the tallest pane, and the shortest
-  // step's Back/Next sat 16px higher than everywhere else. Grid asks the
-  // layout engine the same question and gets the answer right, on every
-  // reflow, with no resize listener.
   display: grid;
   min-height: 26rem; // floor for the degenerate case of no panes
 
   // The selector carries `.tab-content` purely for specificity: Bootstrap's
   // `.tab-content > .tab-pane { display: none }` would otherwise take the
   // cell's only occupant out of the grid on a tie.
+  // A grid item's default `min-width: auto` lets one unbreakable line (a
+  // command in .wizard-cmd) widen the whole column past its track and under
+  // the side column, where it intercepted clicks. Zero it so long content
+  // scrolls inside its own box instead.
+  min-width: 0;
+
   &.tab-content > .tab-pane {
     display: flex;
     flex-direction: column;
     grid-area: 1 / 1; // one cell, all panes
+    min-width: 0;
 
     // Inactive panes stay in layout — that is the whole point — but must not
     // be seen, focused, clicked, or read out. `visibility: hidden` does all
-    // four (it removes the subtree from the a11y tree and from the tab
-    // order), which `opacity: 0` alone would not.
+    // four (it removes the subtree from the a11y tree and from the tab order).
     visibility: hidden;
     pointer-events: none;
 
@@ -166,17 +170,10 @@
 }
 
 // Pinned to the bottom of the card, so a short step does not float its
-// Back/Next up the page relative to a tall one.
-//
-// Pinning the row's BOTTOM is only half the job: the test measures the Next
-// button's TOP, so anything that changes the row's height moves it. Two things
-// did, and both are fixed here rather than in the assertion.
+// Back/Next up the page relative to a tall one. Always a flex row (a block
+// box puts a lone button on a baseline, ~2px high) and labels never wrap
+// (a wrapped label makes the row taller and lifts the button's top).
 .wizard-nav {
-  // 1. Never a block box. Step 1's nav is `text-end` with no `d-flex`, so its
-  //    button was an inline-block on a line box and sat on the baseline — the
-  //    descender space below it left that button ~2px above every other step's.
-  //    `flex-end` is the base; the later steps' `justify-content-between`
-  //    utility (Bootstrap emits `!important`) still wins where it is applied.
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -184,29 +181,402 @@
   margin-top: auto;
   padding-top: 1rem;
 
-  // 2. Never let a label wrap. In the real three-column layout the middle
-  //    column is ~270px, and "Review & Download" wrapped to a second line —
-  //    making that one button a line-height taller. With the row pinned to the
-  //    bottom, the extra line pushes the button's TOP up instead of its bottom
-  //    down, which is the 16px the offset test caught on step 4.
   .btn {
     white-space: nowrap;
   }
 }
 
 // -----------------------------------------------------------------------------
-// Persistent live preview
+// Form furniture shared by several steps
 // -----------------------------------------------------------------------------
 
-.wizard-preview {
+.wizard-choice {
+  min-height: 3.5rem;
+  white-space: normal;
+}
+
+.wizard-check .form-check-label {
+  cursor: pointer;
+}
+
+// Inline command with a copy button on the right.
+.wizard-cmd {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  max-width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.25rem 0.25rem 0.25rem 0.6rem;
+  font-size: 0.8rem;
+  background: var(--zer0-color-bg-muted, var(--bs-tertiary-bg));
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--zer0-radius-sm, 0.375rem);
+
+  code {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+    color: inherit;
+    background: none;
+  }
+
+  .btn {
+    flex-shrink: 0;
+    padding: 0 0.35rem;
+    line-height: 1;
+    color: var(--zer0-color-ink-muted);
+  }
+
+  &.d-inline-flex {
+    display: inline-flex;
+    vertical-align: middle;
+    max-width: 100%;
+    margin: 0 0.15rem;
+  }
+}
+
+// Every step card is a flex column inside the grid cell; the same min-width
+// rule applies down the chain so a long line can never widen the card.
+.wizard-panes .card,
+.wizard-panes .card-body,
+.sb-manual-steps li,
+.prereq-item .min-w-0 {
+  min-width: 0;
+}
+
+// The prerequisites list is the tallest step by far. Cap it so the shared grid
+// row (sized to the tallest pane) stays close to the other steps instead of
+// leaving them with a screen of blank space above their Back/Next row.
+.prereq-list {
+  max-height: 30rem;
+  overflow-y: auto;
+}
+
+// Numbered connect steps
+.sb-steps li {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.sb-step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--bs-primary);
+  border-radius: 50%;
+}
+
+.sb-connect-status {
+  .btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .sb-status-detail {
+    overflow-wrap: anywhere; // long scaffold paths
+  }
+
+  .sb-status-dot {
+    display: inline-block;
+    flex-shrink: 0;
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    background: var(--bs-secondary);
+  }
+
+  &[data-state="online"] .sb-status-dot {
+    background: var(--bs-success);
+    box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.2);
+  }
+
+  &[data-state="offline"] .sb-status-dot {
+    background: var(--bs-warning);
+  }
+
+  &[data-state="checking"] .sb-status-dot {
+    animation: sbPulse 1.2s ease-in-out infinite;
+  }
+}
+
+@keyframes sbPulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+// Navigation editor rows
+.nav-editor .nav-row {
+  .nav-title { flex: 1 1 32%; }
+  .nav-url { flex: 1 1 40%; }
+  .nav-icon { flex: 0 1 24%; }
+}
+
+// Skin picker
+.skin-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 100%;
+  padding: 0.6rem;
+  cursor: pointer;
+  border: 2px solid var(--bs-border-color);
+  border-radius: var(--zer0-radius-md, 0.5rem);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  .skin-swatch {
+    display: block;
+    height: 2.5rem;
+    border-radius: var(--zer0-radius-sm, 0.375rem);
+    background: linear-gradient(135deg, var(--sw-a) 0%, var(--sw-a) 45%, var(--sw-b) 55%, var(--sw-b) 100%);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .skin-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .skin-mood {
+    font-size: 0.72rem;
+    color: var(--zer0-color-ink-muted);
+  }
+}
+
+.btn-check:checked + .skin-card {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), 0.2);
+}
+
+.btn-check:focus-visible + .skin-card {
+  outline: 2px solid var(--bs-primary);
+  outline-offset: 2px;
+}
+
+// Integration list
+.wizard-integrations .form-switch .form-check-input {
+  width: 2.5em;
+}
+
+// Build terminal
+.wizard-terminal {
+  max-height: 18rem;
+  margin: 0;
+  padding: 0.75rem;
+  overflow: auto;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: #d8dee9;
+  background: #1b1f24;
+  border-radius: var(--zer0-radius-sm, 0.375rem);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+// -----------------------------------------------------------------------------
+// Prerequisites checklist
+// -----------------------------------------------------------------------------
+
+.prereq-item {
+  .prereq-state-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    font-size: 1rem;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 50%;
+    color: var(--zer0-color-ink-muted);
+    transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+  }
+
+  &[data-state="ok"] .prereq-state-icon,
+  &[data-state="manual"] .prereq-state-icon {
+    color: #fff;
+    background: var(--bs-success);
+    border-color: var(--bs-success);
+  }
+
+  &[data-state="fail"] .prereq-state-icon {
+    color: #fff;
+    background: var(--bs-danger);
+    border-color: var(--bs-danger);
+  }
+
+  .prereq-output {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .prereq-details summary {
+    cursor: pointer;
+    color: var(--bs-link-color);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Side column — Claude session + generated files
+// -----------------------------------------------------------------------------
+
+.wizard-side {
   top: 1.5rem; // paired with .sticky-lg-top
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.sb-panel {
+  .card-header {
+    background: var(--zer0-color-bg-muted, var(--bs-tertiary-bg));
+  }
+
+  &[data-state="online"] .card-header {
+    border-bottom: 2px solid var(--bs-success);
+  }
+}
+
+.sb-messages {
+  min-height: 9rem;
+  max-height: 22rem;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.sb-message--user {
+  display: flex;
+  justify-content: flex-end;
+
+  .sb-bubble {
+    max-width: 88%;
+    color: #fff;
+    background: var(--bs-primary);
+    word-wrap: break-word;
+  }
+}
+
+.sb-message--assistant .sb-bubble {
+  max-width: 92%;
+  color: var(--bs-body-color);
+  background: var(--bs-tertiary-bg);
+  word-wrap: break-word;
+
+  .sb-li {
+    display: block;
+    padding-left: 0.25rem;
+  }
+
+  .sb-code {
+    margin: 0.35rem 0;
+    padding: 0.5rem;
+    font-size: 0.72rem;
+    color: #d8dee9;
+    background: #1b1f24;
+    border-radius: var(--zer0-radius-sm, 0.375rem);
+    overflow-x: auto;
+    white-space: pre;
+  }
+}
+
+.sb-card {
+  color: var(--bs-body-color);
+  background: var(--bs-tertiary-bg);
+  border: 1px solid var(--bs-border-color);
+  border-left: 3px solid var(--bs-primary);
+
+  .sb-card-meta {
+    overflow-wrap: anywhere;
+  }
+
+  .sb-card-list {
+    max-height: 9rem;
+    padding-left: 1.1rem;
+    overflow-y: auto;
+    font-family: var(--bs-font-monospace);
+    font-size: 0.72rem;
+  }
+
+  &--resolved {
+    opacity: 0.75;
+  }
+
+  &--accepted {
+    border-left-color: var(--bs-success);
+  }
+
+  &--declined {
+    border-left-color: var(--bs-secondary);
+  }
+
+  &--result {
+    border-left-color: var(--bs-info);
+  }
+}
+
+.sb-chips .sb-chip {
+  font-size: 0.72rem;
+  text-align: left;
+  white-space: normal;
+}
+
+.sb-composer textarea {
+  resize: none;
+  min-height: 2.4rem;
+}
+
+.sb-typing span {
+  display: inline-block;
+  font-weight: bold;
+  font-size: 1.2em;
+  animation: sbTyping 1.4s infinite;
+
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.4s; }
+}
+
+@keyframes sbTyping {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-4px); }
+}
+
+// File preview
+.wizard-file-tabs {
+  gap: 0.25rem;
+  scrollbar-width: thin;
+
+  .wizard-file-tab {
+    flex-shrink: 0;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.72rem;
+    font-family: var(--bs-font-monospace);
+    white-space: nowrap;
+
+    &.is-overridden::after {
+      content: "•";
+      margin-left: 0.25rem;
+      color: var(--bs-warning);
+    }
+  }
 }
 
 .wizard-preview-code {
-  max-height: 60vh;
+  max-height: 38vh;
   margin-bottom: 0;
   overflow: auto;
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   line-height: 1.45;
 }
 
@@ -216,11 +586,20 @@
   letter-spacing: 0.04em;
 }
 
-// Below lg the three columns stack; the preview is no longer sticky and a
+// Below lg the three columns stack; the side column is no longer sticky and a
 // shorter scroll region reads better under the form.
 @media (max-width: 991.98px) {
+  .wizard-side {
+    max-height: none;
+    overflow: visible;
+  }
+
   .wizard-preview-code {
     max-height: 20rem;
+  }
+
+  .sb-messages {
+    max-height: 16rem;
   }
 
   .wizard-stepper {
@@ -231,5 +610,19 @@
   .wizard-step {
     width: auto;
     flex: 1 1 auto;
+  }
+
+  .wizard-progress {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sb-typing span,
+  .sb-connect-status .sb-status-dot,
+  .skin-card,
+  .wizard-progress .progress-bar {
+    animation: none !important;
+    transition: none !important;
   }
 }

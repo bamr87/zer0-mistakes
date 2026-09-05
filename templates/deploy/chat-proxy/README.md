@@ -38,6 +38,21 @@ A static Jekyll site can't proxy API calls, so for local dev run [`dev-proxy.mjs
 
 `_config_dev.yml` already points the widget at `http://localhost:8787/api/chat`, so the chat works at `http://localhost:4000` with no Cloudflare or Worker deployment. The dev proxy uses the long-lived token directly (no KV/refresh).
 
+### Site Builder routes (dev proxy only)
+
+The same dev proxy powers the guided **Site Builder** at `/setup/` ([`_includes/setup/wizard.html`](../../../_includes/setup/wizard.html) + [`assets/js/site-builder.js`](../../../assets/js/site-builder.js)). These routes touch the local machine, so they live only in `dev-proxy.mjs` and are bounded by [`wizard-store.mjs`](wizard-store.mjs):
+
+| Route | Purpose | Bound by |
+| --- | --- | --- |
+| `GET /api/wizard/status` | Auth mode, model, allowed check ids, scaffold root, compose actions | — |
+| `POST /api/wizard/check` `{id}` | One allow-listed read-only command (`docker`, `compose`, `docker-daemon`, `git`, `git-config`, `gh`, `gh-auth`, `code`, `node`, `ruby`, `bundle`, `claude`) | fixed command table; emails redacted |
+| `GET /api/wizard/file?path=` / `GET /api/wizard/ls?path=` | Read theme source / list a theme directory | inside the checkout only; `.env*`, keys, `.git`, `node_modules`, `vendor`, `_site` denied; text extensions only |
+| `POST /api/wizard/target` `{target}` | Resolve the project folder and say whether it exists / is empty | strict sub-dir of `WIZARD_TARGET_ROOT`, never inside the theme |
+| `POST /api/wizard/scaffold` `{target, files[], overwrite?}` | Write the generated site | same root rule; relative paths; allow-listed names; ≤ 60 files, ≤ 200 KB each; no overwrite unless asked |
+| `POST /api/wizard/compose` `{target, action}` | `docker compose up -d --build` / `ps` / `logs` / `down` / `config` in the written project, output streamed as text | folder must hold `docker-compose.yml` |
+
+Environment: `WIZARD_TARGET_ROOT` (default: the theme's parent directory) and `WIZARD_DISABLE_COMPOSE=1` to switch the compose actions off. `_config_dev.yml` points `site_builder.endpoint` at `http://localhost:8787/api/wizard`.
+
 ## Anthropic auth — three modes (auto-detected by precedence)
 
 | Precedence | Trigger secret | Header sent | Refresh | Best for |

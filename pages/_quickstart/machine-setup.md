@@ -10,7 +10,7 @@ tags: [docker, git, setup, development, cross-platform]
 keywords:
   primary: ["docker installation", "development environment setup"]
   secondary: ["homebrew", "winget", "git configuration", "vs code"]
-lastmod: 2026-05-30T00:00:00.000Z
+lastmod: 2026-09-05T00:00:00.000Z
 draft: false
 sidebar:
   nav: quickstart
@@ -24,6 +24,8 @@ mermaid: true
 # Machine Setup
 
 Install the tools you need before starting Jekyll development. This guide covers **macOS**, **Windows**, and **Linux**.
+
+> **Prefer a guided setup?** The [Site Builder](/quickstart/site-builder/) runs these same checks live on your machine, shows the install command for your OS, and then walks you through configuring and launching a complete site with Claude alongside. This page is the manual reference behind its Prerequisites step.
 
 ```mermaid
 flowchart LR

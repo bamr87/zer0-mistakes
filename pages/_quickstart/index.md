@@ -60,6 +60,8 @@ Your site will be live at `http://localhost:4000`.
 
 ![Install wizard running in terminal](/assets/images/quickstart/install-oneliner.png)
 
+Prefer a browser over a terminal? The **[Site Builder](/quickstart/site-builder/)** walks you through the same result step by step, with Claude checking your machine, drafting your configuration and content, and starting Docker for you.
+
 ## What You Get
 
 - **Docker environment** — consistent dev setup across macOS, Linux, and Windows (WSL)
@@ -152,6 +154,7 @@ bundle install && bundle exec jekyll serve
 
 | Guide | Purpose | Time | Difficulty |
 |-------|---------|------|------------|
+| **[Site Builder](/quickstart/site-builder/)** | Guided wizard with Claude: prerequisites → configuration → running site | 15 min | Beginner |
 | **[Machine Setup](/quickstart/machine-setup/)** | Install Docker, Git, GitHub CLI | 10 min | Beginner |
 | **[Jekyll Setup](/quickstart/jekyll-setup/)** | Run the dev server, create content | 5 min | Beginner |
 | **[GitHub Setup](/quickstart/github-setup/)** | Fork, deploy to GitHub Pages | 10 min | Intermediate |

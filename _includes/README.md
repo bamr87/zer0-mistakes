@@ -103,6 +103,14 @@ Documentation and reference materials:
 
 - `bootstrap-docs.html` - Bootstrap documentation (moved from style.html)
 
+### `setup/` — the Site Builder
+
+The guided, Claude-assisted setup wizard rendered at `/setup/` and on the `welcome` layout:
+
+- `wizard.html` - Nine-step Site Builder (connect → prerequisites → identity → URLs → structure → appearance → voice → integrations → build) with a stepper, the step panes, a sticky side column and the JSON blocks both scripts read (`#siteBuilderData`, `#siteBuilderConfig`). Drives `assets/js/setup-wizard.js` (form, generators, drafts) and `assets/js/site-builder.js` (Claude session)
+- `prereq-checklist.html` - Prerequisites step: one row per tool from `_data/site_builder.yml`, per-OS install + verify commands, manual "done" toggles, live check state from the dev proxy
+- `claude-session.html` - The embedded Claude panel: connection badge, transcript, per-step suggested prompts, composer. Proxy-only; renders a connect prompt until the dev proxy answers
+
 ### `custom/` — consumer extension hooks
 
 Empty stubs the theme includes at fixed points in the page chrome. A consumer site creates a file at the same path to inject markup there — **no fork of `root.html`, `head.html`, or `footer.html` needed**, so theme updates keep flowing without merge drift:

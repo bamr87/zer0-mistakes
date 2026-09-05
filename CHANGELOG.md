@@ -50,6 +50,34 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Added
 
+- **Site Builder — a Claude-guided setup wizard that ends with a running site
+  (ZER0-085, extends ZER0-067)** — `/setup/` (and the `welcome` layout) grew
+  from a five-step `_config.yml` form into a nine-step builder: Connect →
+  Prerequisites → Identity → URLs → Structure → Appearance → Voice →
+  Integrations → Build. An embedded Claude session rides alongside every step
+  through the local dev proxy (Claude Code OAuth, `claude setup-token`; the
+  token never reaches the page). It sees the whole wizard state on every turn
+  and acts on it with tools: fill in fields, override a generated file, run
+  live prerequisite checks (Docker, Git, gh, VS Code, Node, Claude CLI — a
+  fixed command table), read the theme's real source and search the docs,
+  resolve a project folder, write the generated project, run `docker compose
+  up|ps|logs|down`, and check the new site answers — each mutation behind a
+  confirmation card. The form half still works with no proxy at all (GitHub
+  Pages included): it generates `_config.yml`, `_config_dev.yml`, `Gemfile`,
+  `docker-compose.yml`, `index.md`, navigation, about page, welcome post, one
+  index page per collection, `.gitignore`, `zer0.install.yml`, `.env.example`
+  and `README.md`, with per-file download and a self-extracting bash bundle.
+  Forms gained a site brief, a URL **Suggest** button, a site-type quick-pick,
+  a navigation row editor, skin cards with a live **Preview on this page**
+  toggle, tone/audience pickers, integration switches with conditional
+  sub-fields, a copy button on every command, and a toast for feedback. New:
+  `_data/site_builder.yml` (steps, prerequisites mirroring
+  `machine-setup.md`, catalogs, framework brief),
+  `templates/deploy/chat-proxy/wizard-store.mjs` (the dev-only sandbox behind
+  `/api/wizard/*`), `assets/js/site-builder.js`, `_includes/setup/{claude-
+  session,prereq-checklist}.html`, the `site_builder:` config block, a
+  quickstart page and a feature reference. (evidence:
+  [`test/visual/evidence/site-builder/`](test/visual/evidence/site-builder/README.md))
 - **Mermaid diagrams are now accessible figures with a toolbar (ZER0-013)** —
   every ```` ```mermaid ```` fence (and legacy `<div class="mermaid">`) renders
   as a `<figure>` with a rendered SVG and a small toolbar: zoom out / in / reset

@@ -9,6 +9,10 @@
   url: /quickstart/
   expanded: true
   children:
+    - title: "Site Builder (guided)"
+      url: /quickstart/site-builder/
+      icon: bi-magic
+      description: "Let Claude walk you from prerequisites to a running site"
     - title: "1. Machine Setup"
       url: /quickstart/machine-setup/
       icon: bi-laptop
