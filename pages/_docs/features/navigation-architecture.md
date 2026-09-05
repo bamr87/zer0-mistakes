@@ -138,5 +138,5 @@ The navbar include renders the Bootstrap 5 navbar, populates links from `_data/n
 ## See also
 
 - [[Navigation]]
-- [[JavaScript]]
+- [[Keyboard Navigation]]
 - [[Features]]
