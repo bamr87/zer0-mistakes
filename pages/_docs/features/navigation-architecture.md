@@ -112,22 +112,22 @@ The navbar include renders the Bootstrap 5 navbar, populates links from `_data/n
 
 1. Create `assets/js/modules/navigation/my-feature.js`:
 
-```javascript
-export function initMyFeature() {
-  // implementation
-}
-```
+   ```javascript
+   export function initMyFeature() {
+     // implementation
+   }
+   ```
 
 2. Import and call it from `index.js`:
 
-```javascript
-import { initMyFeature } from './my-feature.js';
+   ```javascript
+   import { initMyFeature } from './my-feature.js';
 
-export function initNavigation() {
-  // … existing init calls …
-  initMyFeature();
-}
-```
+   export function initNavigation() {
+     // … existing init calls …
+     initMyFeature();
+   }
+   ```
 
 ## Related
 

@@ -1,7 +1,7 @@
 ---
 lastmod: 2026-06-15T00:00:00.000Z
 title: Table of Contents with Scroll Spy
-description: Automatic table of contents built from a page's h2-h4 headings, with a positional scroll spy that bolds the section being read and smooth anchor scrolling.
+description: Automatic table of contents built from a page's h1-h3 headings, with a positional scroll spy that bolds the section being read and smooth anchor scrolling.
 keywords: [table of contents, toc, scroll spy, anchor navigation, page headings, jekyll theme, sidebar]
 preview: /images/previews/table-of-contents.png
 layout: default
@@ -30,7 +30,7 @@ The **On this page** panel on the right is the table of contents, built from the
 
 ## Overview
 
-- **Auto-Generated**: Extracts from h2-h6 headings
+- **Auto-Generated**: Extracts from h1-h3 headings (the range is a parameter, see [Heading Levels](#heading-levels))
 - **Scroll Spy**: Highlights current section
 - **Smooth Scroll**: Animated navigation
 - **Responsive**: Sidebar on desktop, offcanvas on mobile
@@ -97,13 +97,13 @@ defaults:
 
 ### Heading Levels
 
-Configure which headings appear:
+The range is set where the TOC is included, with the `h_min` / `h_max` parameters. `_includes/navigation/sidebar-right.html` renders the right-hand panel with `h_min=1 h_max=3`, so the page title and its h2/h3 sections appear:
 
-```yaml
-toc:
-  min_level: 2  # Start at h2
-  max_level: 4  # End at h4
+```liquid
+{% raw %}{% include content/toc.html html=content h_min=1 h_max=3 %}{% endraw %}
 ```
+
+The include itself defaults to `h_min=1` and `h_max=6`; anything outside the range is skipped, as is any heading without an `id`.
 
 ## Styling
 

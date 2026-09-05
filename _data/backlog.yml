@@ -63,7 +63,7 @@
 meta:
   title: "zer0-mistakes Backlog"
   updated: 2026-08-18
-  next_id: 47
+  next_id: 48
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -1319,6 +1319,38 @@ tasks:
       - "The admin specs that used it still pass, asserting the same server-rendered active nav links."
       - "A spec exercises the TOC scroll spy below the lg breakpoint with the offcanvas TOC open, asserting the active entry tracks scrolling and stays visible inside .offcanvas-body."
       - "npm run test:smoke is green."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-09-05
+    updated: 2026-09-05
+
+  - id: T-047
+    title: "pages/_docs/features/toc.md documents a TOC API the theme does not implement"
+    status: open
+    priority: P3
+    area: docs
+    risk: low
+    effort: S
+    source: issue
+    route: content-reviewer
+    summary: >-
+      Discovered while correcting the scroll-spy sections of
+      pages/_docs/features/toc.md: the page's Implementation and Configuration
+      halves describe a table of contents this theme does not have. "TOC
+      Generation" shows a Kramdown `{{ content | toc_only }}` snippet and a
+      hand-rolled `page.content | split: '<h'` extractor, neither of which the
+      theme uses — the real TOC comes from _includes/content/toc.html (the
+      allejo/jekyll-toc parser) invoked by _includes/navigation/sidebar-right.html.
+      "Enable TOC" documents front-matter keys that nothing reads; the
+      `toc.min_level` / `toc.max_level` pair in the same section was already
+      corrected (grep confirms no include, layout, plugin or _config.yml
+      references either key). A reader following this page cannot reproduce the
+      theme's behaviour. Rewrite the two sections against the actual include,
+      its parameters, and the front-matter keys that really gate the panel.
+    acceptance:
+      - "Every Liquid snippet in toc.md matches an include the theme actually ships, verified by path."
+      - "Front-matter keys documented on the page are read somewhere in _includes, _layouts, _plugins or _config.yml."
+      - "scripts/content-review.rb still scores the page in the green band."
+      - "Jekyll build with the layered dev configs is green and the page's anchors keep resolving."
     links: { issue: null, pr: null, roadmap: null }
     created: 2026-09-05
     updated: 2026-09-05
