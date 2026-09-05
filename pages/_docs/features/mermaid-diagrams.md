@@ -31,6 +31,8 @@ sidebar:
 
 # Mermaid Diagrams for Jekyll Sites
 
+Mermaid diagrams are enabled with one front matter flag and a standard code fence: no server-side plugin and no CDN dependency, because the renderer is vendored with the theme.
+
 > Create flowcharts, sequence diagrams, class diagrams and more in your Jekyll site using Mermaid's simple text-based syntax.
 
 **GitHub Pages Compatible** — Works without custom server-side plugins!
@@ -673,7 +675,7 @@ docker-compose up
 
 For implementation details (file changes, test suite):
 
-- [Mermaid Integration v2.0 → docs/implementation/feature-change-log.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/implementation/feature-change-log.md#mermaid-integration-v20-january-2025--v030) — the previous implementation (a plain `<div class="mermaid">` wrapper), kept for history; the figure, toolbar and token-derived theming described on this page are the ZER0-013 rework
+- [Mermaid Integration v2.0 → docs/implementation/feature-change-log.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/implementation/feature-change-log.md#mermaid-integration-v20-january-2025--v030) — the previous implementation (a plain `<div class="mermaid">` wrapper), kept for history. The figure, toolbar and token-derived theming described on this page are the later rework, registered as `ZER0-013` in `_data/features.yml`
 - Component files: `_includes/components/mermaid.html` (loader), `assets/js/mermaid-diagrams.js` (behaviour), `_sass/components/_mermaid.scss` (styles)
 - Regression test: `test/visual/features/mermaid.spec.js`
 
