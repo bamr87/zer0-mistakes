@@ -2,7 +2,7 @@
 title: "UI/UX Component Spec"
 description: "Single source of truth for every front-end UI/UX component in the zer0-mistakes theme — what it does, the files that implement it (SCSS / includes / layouts / JS / plugins), its API surface (classes, data-attributes, JS globals, events, CSS tokens), and its automated test coverage. Use it to define, test, and improve the UI."
 date: 2026-01-25T03:38:33.000Z
-lastmod: 2026-06-17T00:00:00.000Z
+lastmod: 2026-09-05T00:00:00.000Z
 categories: [docs]
 tags: [architecture, design, ui, testing, components]
 author: bamr87

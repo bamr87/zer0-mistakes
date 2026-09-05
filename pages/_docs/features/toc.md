@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-06-15T00:00:00.000Z
+lastmod: 2026-09-05T00:00:00.000Z
 title: Table of Contents with Scroll Spy
 description: Automatic table of contents built from a page's h1-h3 headings, with a positional scroll spy that bolds the section being read and smooth anchor scrolling.
 keywords: [table of contents, toc, scroll spy, anchor navigation, page headings, jekyll theme, sidebar]
@@ -26,7 +26,7 @@ Automatic table of contents generation from page headings with active section hi
 
 ![A documentation page with the "On this page" table of contents in the right column, listing the page's headings; the current section is highlighted as you scroll](/assets/images/docs/features/docs-layout.png)
 
-The **On this page** panel on the right is the table of contents, built from the page's `h2`–`h6` headings.
+The **On this page** panel on the right is the table of contents, built from the page's `h1`–`h3` headings.
 
 ## Overview
 

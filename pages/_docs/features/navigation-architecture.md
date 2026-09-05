@@ -1,5 +1,5 @@
 ---
-lastmod: 2026-06-15T00:00:00.000Z
+lastmod: 2026-09-05T00:00:00.000Z
 title: ES6 Modular Navigation Architecture
 description: The zer0-mistakes navigation system as ES6 modules — hover dropdowns, keyboard accessibility, smooth scroll, sidebar persistence, and graceful degradation.
 keywords: [navigation architecture, es6 modules, scroll spy, keyboard navigation, sidebar state, jekyll theme]

@@ -2,7 +2,7 @@
 title: "JavaScript API"
 description: "The public JavaScript API of Zer0-Mistakes: the navigation, background, and UI surfaces intended for consumers, plus their stability expectations."
 date: 2026-05-31T20:54:58.000Z
-lastmod: 2026-05-31T20:54:58.000Z
+lastmod: 2026-09-05T00:00:00.000Z
 categories: [docs]
 tags: [ui, styling, theme]
 author: bamr87
