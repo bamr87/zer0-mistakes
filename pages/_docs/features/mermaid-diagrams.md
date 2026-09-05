@@ -1,7 +1,7 @@
 ---
 lastmod: 2026-09-05T00:00:00.000Z
 title: Mermaid Diagrams for Jekyll Sites
-description: Complete guide to integrating Mermaid diagrams in Jekyll sites - flowcharts, sequence diagrams, class diagrams and more with GitHub Pages compatibility.
+description: "Add Mermaid diagrams to any Jekyll site: flowcharts, sequence diagrams, class diagrams and more, with a zoom toolbar and automatic dark-mode theming."
 preview: /images/previews/mermaid-diagrams.png
 layout: default
 categories:
@@ -61,9 +61,9 @@ flowchart TD
 
 The caption under the diagram comes from its `accTitle` line — see [Captions and accessible names](#captions-and-accessible-names).
 
-## Quick Start
+## Quick start
 
-### Step 1: Enable Mermaid on Your Page
+### Step 1: Enable Mermaid on your page
 
 Add `mermaid: true` to your page's front matter:
 
@@ -74,7 +74,7 @@ mermaid: true
 ---
 ```
 
-### Step 2: Write Your Diagram
+### Step 2: Write your diagram
 
 Use native markdown code blocks with `mermaid` as the language:
 
@@ -177,7 +177,7 @@ The vendored Mermaid bundle and the theme's script both load with `defer`, so th
 
 ## Configuration
 
-### Site Configuration
+### Site configuration
 
 Everything under `mermaid:` in `_config.yml` is optional:
 
@@ -200,7 +200,7 @@ mermaid:
 
 The toolbar labels are translated with the rest of the UI through `_data/ui-text.yml` (`diagram_*` keys).
 
-### How It Works
+### How it works
 
 1. **Front matter flag** — `mermaid: true` enables Mermaid on the page
 2. **Conditional loading** — the scripts load only on pages that opt in, and never block rendering
@@ -209,7 +209,7 @@ The toolbar labels are translated with the rest of the UI through `_data/ui-text
 
 ---
 
-## Diagram Types
+## Diagram types
 
 ### 1. Flowcharts
 
@@ -261,7 +261,7 @@ graph LR
 | `==>` | Thick arrow |
 | `--\|Text\|-->` | Arrow with label |
 
-### 2. Sequence Diagrams
+### 2. Sequence diagrams
 
 Perfect for documenting API calls, user interactions, and system communication.
 
@@ -302,7 +302,7 @@ sequenceDiagram
 | `--x` | Dotted line with cross |
 | `-)` | Solid line with open arrow |
 
-### 3. Class Diagrams
+### 3. Class diagrams
 
 Document code architecture and relationships.
 
@@ -344,7 +344,7 @@ classDiagram
     JekyllSite --> Page : contains
 ```
 
-### 4. State Diagrams
+### 4. State diagrams
 
 Model state machines and workflows.
 
@@ -368,7 +368,7 @@ stateDiagram-v2
     Published --> [*]
 ```
 
-### 5. Entity Relationship Diagrams
+### 5. Entity relationship diagrams
 
 Document database schemas.
 
@@ -402,7 +402,7 @@ erDiagram
     }
 ```
 
-### 6. Pie Charts
+### 6. Pie charts
 
 Visualize data distributions.
 
@@ -424,7 +424,7 @@ pie title Page Views by Section
     "About" : 10
 ```
 
-### 7. Gantt Charts
+### 7. Gantt charts
 
 Project timelines and schedules.
 
@@ -458,7 +458,7 @@ gantt
 
 `done`, `active` and `crit` tags pick up the theme's muted, accent and danger colours; `axisFormat` and `tickInterval` keep the axis labels from crowding on narrow screens.
 
-### 8. Git Graphs
+### 8. Git graphs
 
 Visualize Git branching and commits.
 
@@ -490,9 +490,9 @@ gitGraph
 
 ---
 
-## Syntax Options
+## Syntax options
 
-### Option A: Native Markdown (Recommended)
+### Option A: Native Markdown (recommended)
 
 Use fenced code blocks — cleanest and most portable:
 
@@ -503,7 +503,7 @@ graph TD
 ```
 ````
 
-### Option B: HTML Div
+### Option B: HTML div
 
 Use `<div class="mermaid">` — works when markdown doesn't:
 
@@ -514,7 +514,7 @@ graph TD
 </div>
 ```
 
-### When to Use Each
+### When to use each
 
 | Use Case | Recommended |
 |----------|-------------|
@@ -527,7 +527,7 @@ Both forms get the same figure, toolbar and theming.
 
 ---
 
-## Styling and Themes
+## Styling and themes
 
 ### Automatic theming
 
@@ -595,7 +595,7 @@ Events: `zer0:diagram-rendered` fires on each figure (`detail.ok`, `detail.type`
 
 ## Troubleshooting
 
-### Diagram Not Rendering
+### Diagram not rendering
 
 | Symptom | Solution |
 |---------|----------|
@@ -606,7 +606,7 @@ Events: `zer0:diagram-rendered` fires on each figure (`detail.ok`, `detail.type`
 | No toolbar visible | It appears on hover / keyboard focus on desktop. Set `mermaid.toolbar: true` if it was disabled |
 | Colours look wrong after a mode switch | The diagram re-renders on `data-bs-theme` / `data-theme-skin` changes; if you set tokens from custom JS, call `window.zer0Mermaid.refresh()` |
 
-### Common Syntax Errors
+### Common syntax errors
 
 ```markdown
 Wrong: graph TD A -> B      (single arrow)
@@ -618,7 +618,7 @@ Right: graph TD A[Text] --> B
 
 `graph TD` and `flowchart TD` are equivalent: `flowchart` is the current keyword, `graph` a legacy alias that Mermaid still accepts.
 
-### Testing Locally
+### Testing locally
 
 ```bash
 # Start Jekyll dev server
@@ -640,7 +640,7 @@ docker-compose up
 
 ---
 
-## Best Practices
+## Best practices
 
 1. **Only enable when needed** — use `mermaid: true` only on pages with diagrams
 2. **Give diagrams an `accTitle`** — it is the caption, the accessible name, and the file name of an SVG export
@@ -661,7 +661,7 @@ docker-compose up
 
 ---
 
-## Technical Reference
+## Technical reference
 
 For implementation details (how Mermaid v2 was integrated, file changes, test suite):
 
