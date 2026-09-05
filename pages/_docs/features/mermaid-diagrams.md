@@ -154,8 +154,8 @@ flowchart LR
     C -- no --> E["Error card + source"]
 ```
 
-- `accTitle` becomes the visible caption and the `aria-label` of the diagram.
-- `accDescr` becomes the SVG's `<desc>`, read by screen readers.
+- `accTitle` becomes the visible caption and the accessible name of the diagram frame (the `aria-label` on the scrollable region); Mermaid also writes it into the SVG's `<title>`.
+- `accDescr` is passed through to Mermaid's renderer, which inserts it as the SVG's `<desc>`, read by screen readers.
 - Without `accTitle`, the diagram is named by its type ("Flowchart", "Sequence diagram", …).
 
 ### Colors follow your theme
