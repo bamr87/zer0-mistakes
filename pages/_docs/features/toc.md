@@ -166,13 +166,7 @@ toc:
 
 ## Scroll Spy
 
-`assets/js/modules/navigation/scroll-spy.js` bolds the entry for the section you
-are reading. The rule is positional rather than visibility-based: the active
-heading is the **last one whose top has crossed the reading line** — a line
-`scroll-padding-top` below the top of the viewport, i.e. just under the fixed
-header, which is also where clicking a TOC entry parks its heading. Once the
-page is scrolled to the bottom, the last heading wins, so trailing sections
-shorter than the viewport are still reachable.
+`assets/js/modules/navigation/scroll-spy.js` bolds the entry for the section you are reading. The rule is positional rather than visibility-based: the active heading is the **last one whose top has crossed the reading line** — a line `scroll-padding-top` below the top of the viewport, i.e. just under the fixed header, which is also where clicking a TOC entry parks its heading. Once the page is scrolled to the bottom, the last heading wins, so trailing sections shorter than the viewport are still reachable.
 
 ```javascript
 // Simplified: the active heading, recomputed on each scroll frame.
@@ -192,22 +186,11 @@ function activeHeading(headings) {          // headings sorted by document offse
 }
 ```
 
-Heading offsets are measured once and re-measured on resize or content reflow
-(`ResizeObserver`), and the recompute is throttled to one animation frame per
-scroll, so the whole page is re-evaluated on every frame without measuring the
-DOM each time.
+Heading offsets are measured once and re-measured on resize or content reflow (`ResizeObserver`), and the recompute is throttled to one animation frame per scroll, so the whole page is re-evaluated on every frame without measuring the DOM each time.
 
-Asking `IntersectionObserver` for the "most visible" heading looks simpler but
-does not work: headings are only a few pixels tall, so every heading inside the
-observer band reports the same `intersectionRatio`, and headings leaving the
-band trigger no callback at all. The highlight then lands on whichever heading
-happened to be in the last callback batch.
+Asking `IntersectionObserver` for the "most visible" heading looks simpler but does not work: headings are only a few pixels tall, so every heading inside the observer band reports the same `intersectionRatio`, and headings leaving the band trigger no callback at all. The highlight then lands on whichever heading happened to be in the last callback batch.
 
-Two details matter for feel. A clicked entry stays active while the smooth
-scroll animates, instead of flashing every heading passed on the way. And
-keeping the active entry visible inside a long TOC adjusts the TOC container's
-own `scrollTop` — `scrollIntoView()` would bubble up and scroll the page, which
-feeds straight back into the spy.
+Two details matter for feel. A clicked entry stays active while the smooth scroll animates, instead of flashing every heading passed on the way. And keeping the active entry visible inside a long TOC adjusts the TOC container's own `scrollTop` — `scrollIntoView()` would bubble up and scroll the page, which feeds straight back into the spy.
 
 **Configuration** (`assets/js/modules/navigation/config.js`):
 
