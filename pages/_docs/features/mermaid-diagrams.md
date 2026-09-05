@@ -1,4 +1,5 @@
 ---
+date: 2026-09-05T00:00:00.000Z
 lastmod: 2026-09-05T00:00:00.000Z
 title: Mermaid Diagrams for Jekyll Sites
 description: "Add Mermaid diagrams to any Jekyll site: flowcharts, sequence diagrams, class diagrams and more, with a zoom toolbar and automatic dark-mode theming."
@@ -103,11 +104,11 @@ Each ` ```mermaid ` block becomes a `<figure>` with a rendered SVG and a small t
 
 | Control | Icon | What it does |
 |---------|------|--------------|
-| Zoom out / Zoom in | <i class="bi bi-zoom-out"></i> <i class="bi bi-zoom-in"></i> | Scales the diagram in 25 % steps (50 %–400 %). Once it is larger than its frame, drag to pan or scroll. |
-| Reset zoom | <i class="bi bi-arrow-counterclockwise"></i> | Back to fit-to-width. |
-| View fullscreen | <i class="bi bi-arrows-fullscreen"></i> | Opens the diagram in a fullscreen view — the fix for a wide diagram that is too small on a phone. `Esc` closes it. |
-| Copy diagram source | <i class="bi bi-clipboard"></i> | Copies the Mermaid text to the clipboard, so readers can paste it into the Live Editor. |
-| Download as SVG | <i class="bi bi-download"></i> | Saves the rendered diagram, with the page background baked in so a dark-mode export stays readable. |
+| Zoom out / Zoom in | <i class="bi bi-zoom-out" aria-hidden="true"></i><span class="visually-hidden">magnifier with minus</span> <i class="bi bi-zoom-in" aria-hidden="true"></i><span class="visually-hidden">magnifier with plus</span> | Scales the diagram in 25 % steps (50 %–400 %). Once it is larger than its frame, drag to pan or scroll. |
+| Reset zoom | <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i><span class="visually-hidden">counter-clockwise arrow</span> | Back to fit-to-width. |
+| View fullscreen | <i class="bi bi-arrows-fullscreen" aria-hidden="true"></i><span class="visually-hidden">four outward arrows</span> | Opens the diagram in a fullscreen view — the fix for a wide diagram that is too small on a phone. `Esc` closes it. |
+| Copy diagram source | <i class="bi bi-clipboard" aria-hidden="true"></i><span class="visually-hidden">clipboard</span> | Copies the Mermaid text to the clipboard, so readers can paste it into the Live Editor. |
+| Download as SVG | <i class="bi bi-download" aria-hidden="true"></i><span class="visually-hidden">download arrow</span> | Saves the rendered diagram, with the page background baked in so a dark-mode export stays readable. |
 
 The toolbar appears on hover or keyboard focus on desktop, and sits above the diagram on touch devices.
 
@@ -192,7 +193,7 @@ mermaid:
 
 | Key | Default | Notes |
 |-----|---------|-------|
-| `src` | `/assets/vendor/mermaid/mermaid.min.js` | Path to the Mermaid bundle. Refresh it with `npm run vendor:mermaid` (or `docker-compose exec jekyll npm run vendor:mermaid` inside the container). |
+| `src` | `/assets/vendor/mermaid/mermaid.min.js` | Path to the Mermaid bundle. Refresh it with `npm run vendor:mermaid` (or `docker-compose exec jekyll npm run vendor:mermaid` inside the container); `./scripts/vendor-install.sh` refreshes every vendored asset (Bootstrap, icons, Mermaid) at once. |
 | `security_level` | `strict` | `strict` sanitises diagram text. Use `loose` only if you need `click` callbacks or HTML in labels — it disables that sanitisation, so keep it `strict` when diagrams can come from untrusted content. |
 | `toolbar` | `true` | Set `false` to render bare diagrams with no controls. |
 | `fullscreen` | `true` | Set `false` to remove the fullscreen control. |
