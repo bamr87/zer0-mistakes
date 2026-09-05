@@ -16,6 +16,12 @@ name: CI self-repair
 #
 # Deliberately NOT triggered by "Evidence gate" or "Secret scan" — those must
 # never be auto-"fixed" by removing the test/evidence or the detection.
+#
+# A red "Visual Snapshots" job is left to visual-evidence-autogen.yml: stale
+# 9-skin baselines and missing montages are PRODUCIBLE artifacts, not code
+# bugs, and that lane renders them in the jammy image and pushes them. This
+# lane has no Docker, so repairing them here could only end by drafting a PR
+# that was already being fixed.
 
 on:
   workflow_run:
@@ -28,6 +34,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  actions: read          # gh run view — which jobs failed, and their logs
 
 concurrency:
   group: ci-self-repair-${{ github.event.workflow_run.head_branch }}
@@ -69,6 +76,14 @@ jobs:
           case ",$labels," in
             *",agent-hold,"*) echo "PR #$pr already held — leaving for a human."; echo "go=false" >>"$GITHUB_OUTPUT"; exit 0 ;;
           esac
+          # The pixel tier belongs to the visual-evidence autogen (see the header).
+          # When it is the ONLY red job there is nothing for this lane to repair.
+          failed=$(gh run view "$RUN_ID" -R "$GITHUB_REPOSITORY" --json jobs \
+                     --jq '[.jobs[] | select(.conclusion=="failure") | .name] | join("\n")' 2>/dev/null || true)
+          if [ -n "$failed" ] && ! printf '%s\n' "$failed" | grep -qv '^Visual Snapshots'; then
+            echo "Only the pixel tier failed on run $RUN_ID — visual-evidence-autogen.yml owns baselines; nothing to repair here."
+            echo "go=false" >>"$GITHUB_OUTPUT"; exit 0
+          fi
           echo "Repairing PR #$pr on $BRANCH."
           echo "pr=$pr" >>"$GITHUB_OUTPUT"
           echo "go=true" >>"$GITHUB_OUTPUT"

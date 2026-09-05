@@ -10,6 +10,7 @@ This directory contains the CI/CD workflows for the zer0-mistakes Jekyll theme.
 ├───────────────────────────────────────────────────────────────────────┤
 │                                                                       │
 │  Pull request ──────► ci.yml, evidence-gate.yml, secret-scan.yml,    │
+│                       visual-evidence-autogen.yml (same-repo UI PRs),│
 │                       ai-content-review.yml*, codeql.yml*,           │
 │                       install-matrix.yml*, sync.yml* (path-filtered*)│
 │                                                                       │
@@ -59,7 +60,13 @@ The `quality-checks` job must ALWAYS run (`if: always() && …`) — it is the s
 
 Requires any PR that touches UI paths (`_sass/`, `_includes/`, `_layouts/`,
 `assets/css|js/`) to also ship a regression test (`test/visual/*.spec.js`) and
-before/after evidence (`test/visual/evidence/`). Opt out with the `skip-evidence` / `no-visual-change` label. Always reports a status so it can be a required check. See `.github/skills/visual-evidence/SKILL.md`.
+**generated** before/after evidence (`metrics.json` or montage PNGs under `test/visual/evidence/<slug>/` — a README alone does not pass). Opt out with the `skip-evidence` / `no-visual-change` label. Always reports a status so it can be a required check. See `.github/skills/visual-evidence/SKILL.md`. It only verifies; `visual-evidence-autogen.yml` (below) is what produces the evidence.
+
+### `visual-evidence-autogen.yml` — Visual evidence autogen
+
+**Triggers:** Pull Requests from this repo (never forks)
+
+The **producer** behind the evidence gate and the pixel tier. A Python orchestrator (`scripts/ci/visual_evidence_autogen.py`) plans from the PR's diff, brings Jekyll up with `docker compose`, runs the PR's own `test/visual/<slug>-evidence.mjs` generators — or the generic base-vs-head generator `test/visual/pr-evidence.mjs`, which renders the base branch and the head side by side — and verifies the 9-skin baselines, all inside the same jammy Playwright image `ci.yml` compares with. The `visual-evidence-reviewer` agent then views the expected | actual | diff montage and writes a verdict; **only an `intentional` verdict lets code regenerate the baselines** (#417: a blessed regression and a green check are indistinguishable). Generated folders and, when blessed, `test/visual/snapshots/` are committed to the PR branch with a `[visual-autogen]` marker; one sticky comment shows the images. Loop guard + three-commit budget per PR; kill switch `VISUAL_EVIDENCE_AUTOGEN_ENABLED=false`; per-PR opt-out via the gate's labels. Born from PR #454, which sat red with nine legitimately stale baselines that no Docker-less agent could refresh. `ci-self-repair.yml` stands down when `Visual Snapshots` is the only red job.
 
 ### `secret-scan.yml` — Secret scan
 
@@ -162,7 +169,7 @@ Enables GitHub native auto-merge for PRs labeled `auto-merge`, after a denylist 
 
 **Triggers:** `workflow_run` completion of the Comprehensive CI Pipeline
 
-For failed PR runs where the PR opted in via the `auto-fix` label: runs Claude Code headless to diagnose and push a fix, bounded by a retry budget; otherwise drafts the PR with `agent-hold`. Never touches CODEOWNERS-protected paths.
+For failed PR runs where the PR opted in via the `auto-fix` label: runs Claude Code headless to diagnose and push a fix, bounded by a retry budget; otherwise drafts the PR with `agent-hold`. Never touches CODEOWNERS-protected paths. Stands down when the only red job is `Visual Snapshots` — stale baselines are producible artifacts that `visual-evidence-autogen.yml` owns.
 
 ### `milestone-assign.yml` — Milestone assignment
 
@@ -200,6 +207,7 @@ Every quality gate a contributor can run locally must be enforced somewhere in C
 | Playwright smoke tier | `./test/test_runner.sh --suites playwright` | `ci.yml` → `test` | PR + push (code changes) |
 | Playwright snapshot tier | `./test/test_runner.sh --suites playwright_snapshots` | `ci.yml` → `snapshots` | PR + push (styling changes) |
 | Visual evidence for UI changes | `.github/skills/visual-evidence/` | `evidence-gate.yml` | PR (always; self-scoping) |
+| Visual evidence + pixel baselines — **produced**, not just checked | `python3 scripts/ci/visual_evidence_autogen.py all` (any Docker host) | `visual-evidence-autogen.yml` | PR (same-repo; UI/styling changes) |
 | Gem build + install | `./scripts/build` | `ci.yml` → `build` | PR + push (code changes) |
 | Docker boot + critical pages | `docker compose up` | `ci.yml` → `integration` | PR + push (code or docker changes) |
 | Roadmap ↔ README ↔ version consistency | `ruby scripts/generate-roadmap.rb --check` | `sync.yml` → `roadmap` | PR (check) + push to main (regenerate) |
@@ -229,6 +237,9 @@ CLOUDFLARE_ACCOUNT_ID   # Chat proxy deploy
 # Opt-in repository variables (autonomous pipeline, all default OFF)
 ISSUE_AUTOPILOT_ENABLED / ISSUE_RESOLVE_ENABLED / ISSUE_AUTOCLOSE_ENABLED /
 ISSUE_VERIFY_CLOSE_ENABLED / ISSUE_AUTOMERGE_ENABLED
+
+# Kill switch (default ON — set to `false` to stop the lane)
+VISUAL_EVIDENCE_AUTOGEN_ENABLED   # visual-evidence-autogen.yml
 ```
 
 ## Composite Actions Used

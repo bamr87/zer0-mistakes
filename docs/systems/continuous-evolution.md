@@ -51,7 +51,9 @@ task, builds it on a branch, validates, and opens a PR. Low-risk classes auto-me
 | Auto-merge workflow | `.github/workflows/auto-merge.yml` | Enables native auto-merge for low-risk labelled PRs |
 | Visual-evidence skill | `.github/skills/visual-evidence/SKILL.md` | Standard: regression test + before/after evidence for UI/behavioural changes |
 | Evidence kit | `test/visual/evidence-kit.mjs` | Reusable generator for the before/after montages + metrics |
-| Evidence gate | `.github/workflows/evidence-gate.yml` | Required check: fails a UI PR lacking test+evidence (opt-out `skip-evidence`) |
+| Evidence gate | `.github/workflows/evidence-gate.yml` | Required check: fails a UI PR lacking test + **generated** evidence (opt-out `skip-evidence`) |
+| Visual-evidence autogen | `.github/workflows/visual-evidence-autogen.yml` + `scripts/ci/visual_evidence_autogen.py` | The **producer** behind that gate: renders a same-repo UI PR in the jammy image, generates its evidence (the PR's own generator or the generic base-vs-head `test/visual/pr-evidence.mjs`), verifies the 9-skin baselines and — only on the reviewer's `intentional` verdict — refreshes them, then pushes to the PR branch |
+| Visual-evidence reviewer | `.claude/agents/visual-evidence-reviewer.md` | The one judgment call in that loop: views expected/actual/diff and says whether the diff is the change the PR describes; a code step disposes |
 | Secret scan | `.github/workflows/secret-scan.yml` | Required gate: fails a PR whose diff/body leaks a credential shape |
 | Forbidden-path guards | `.github/CODEOWNERS` + the `auto-merge.yml` denylist | Block release/CI/plugin/script/version PRs from the auto-merge fast path |
 | Issue intake | `/repo-audit` Phase 1.D | Triages all open issues → `source: issue` tasks (adopted via `links.issue`, no duplicates) |
@@ -95,6 +97,31 @@ The committee prefers Task-subagent fan-out but falls back to **inline sequentia
 ### CI self-repair (closing the loop post-PR)
 
 The implement loop verifies **before** opening a PR, but local-green ≠ CI-green. `.github/workflows/ci-self-repair.yml` closes that gap: on a **failed** CI run (`Comprehensive CI Pipeline`) for a PR that opted in via the **`auto-fix`** label, it runs Claude Code headless ([`/ci-self-repair`](../../.github/prompts/ci-self-repair.prompt.md)) to diagnose and fix the failing check **by root cause**, verify locally, and push — bounded by a **3-commit retry budget**. If it can't reach green — or the only fix would touch a CODEOWNERS path or *weaken* a check (delete a test, `continue-on-error`, lower a threshold) — it converts the PR to a **draft** and applies `agent-hold` for a human. It uses `workflow_run` (reacts after CI, base-repo context) and only ever acts on an **opted-in, same-repo** PR; it deliberately ignores `Evidence gate` and `Secret scan` (those must never be auto-"fixed" by removing the gate). `/issue-implement` applies `auto-fix` to every ready PR it opens.
+
+### Visual-evidence autogen (producing what the gate checks)
+
+The evidence gate and the pixel-snapshot tier only ever **verified**. Their inputs — montages + `metrics.json` under `test/visual/evidence/<slug>/`, and the nine `test/visual/snapshots/**` baselines — can only be **rendered**: inside `mcr.microsoft.com/playwright:*-jammy`, against a live Jekyll, i.e. with Docker. The agents that author UI PRs mostly cannot: the fleet issue pipeline's tiers believed Docker was gated on their runner, and a Claude Code web session has no daemon. PR #454 was the case study — a correct navbar rework that arrived with a README-only evidence folder (which the gate accepted) and nine legitimately stale baselines, then collected three careful "one command on a Docker host finishes this" comments while staying red.
+
+[`visual-evidence-autogen.yml`](../../.github/workflows/visual-evidence-autogen.yml) makes the runner that producer. On every same-repo PR event it runs [`scripts/ci/visual_evidence_autogen.py`](../../scripts/ci/visual_evidence_autogen.py), which is deterministic end to end except for one judgment call:
+
+1. **plan** — from the diff: which evidence folders lack generated proof, which
+   `*-evidence.mjs` generators the PR ships, whether the pixel tier is in scope
+   (the same paths as ci.yml's `styling` filter), and whether it may act at all
+   (loop guard on its own commits; a three-commit budget per PR).
+2. **generate** — `docker compose up`, then the PR's generators or the generic
+   [`test/visual/pr-evidence.mjs`](../../test/visual/pr-evidence.mjs), which renders the **base branch** and the head side by side so nobody has to hand-write an `unfixCss`; then `UPDATE_SNAPSHOTS=0 ./test/update-snapshots.sh` to verify the baselines — all inside the same jammy image CI compares with, via that script's new `PRE_TEST_SCRIPT` / `POST_TEST_SCRIPT` hooks.
+3. **review** — the [`visual-evidence-reviewer`](../../.claude/agents/visual-evidence-reviewer.md)
+   agent reads the brief, views the expected | actual | diff montage and the evidence, and writes `verdict.json` (`intentional` / `regression` / `unclear`) plus the evidence README narrative. It never touches baselines.
+4. **decide → bless** — code reads the verdict. Only a well-formed `intentional`
+   on a genuinely failing verify may run `UPDATE_SNAPSHOTS=1`; the diff montage is kept beside the evidence so a human still sees what was blessed.
+5. **stage → commit → push → comment** — only the planner's paths are ever
+   `git add`ed; the commit carries a `[visual-autogen]` marker and a `Visual-Autogen:` trailer; one sticky comment shows the montages and the verdict.
+
+Why the split matters: issue #417 was a regression blessed into the baselines because the check was red and the fix was one command. Here the model only *proposes* and code *disposes* — the same arrangement the issue autopilot uses before it closes an issue. Without a Claude credential the lane still generates evidence; baselines are then left alone and the comment says how a human blesses them (`bless --force` after looking).
+
+**First-run green** is still the authoring agent's job: the fleet pipeline's tier 2/3 now run the same script before opening or finishing a PR (their runner has Docker; the allowlist and prompt say so). This lane is the safety net for every author that cannot — it turns a red first run into a green second one with no human in the loop.
+
+Controls: repo variable `VISUAL_EVIDENCE_AUTOGEN_ENABLED=false` (kill switch), the `skip-evidence` / `no-visual-change` labels (per-PR opt-out, shared with the gate). `ci-self-repair` stands down when the only red job is `Visual Snapshots`, so the two lanes never race on one branch.
 
 ## Task lifecycle
 

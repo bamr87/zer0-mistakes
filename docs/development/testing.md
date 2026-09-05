@@ -127,7 +127,15 @@ npx playwright test --config=test/playwright.config.js --project=smoke test/visu
 
 # Refresh Linux snapshot baselines (uses Docker)
 ./test/update-snapshots.sh
+
+# Or the whole visual-evidence flow at once — plan, render the PR (and the base
+# branch for a generic before/after), run the evidence generators, verify the
+# baselines; then bless ONLY after looking at snapshot-diff.png
+python3 scripts/ci/visual_evidence_autogen.py all --base origin/main
+python3 scripts/ci/visual_evidence_autogen.py bless --force && git add -- $(python3 scripts/ci/visual_evidence_autogen.py stage)
 ```
+
+The last block is what `.github/workflows/visual-evidence-autogen.yml` runs on every same-repo PR, with the `visual-evidence-reviewer` agent standing in for the human look before a bless — so a UI PR authored somewhere without Docker still ends up with generated evidence and current baselines without anyone opening a terminal.
 
 Core tests also validate that a production Jekyll build emits `main.css` containing docs-layout rules (e.g. `bd-layout`).
 
