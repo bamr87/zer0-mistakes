@@ -2416,3 +2416,35 @@ features:
       - "Volume↔weight conversion driven by _data/ingredient_densities.yml, overridable per ingredient with grams_per_cup"
       - "Baker's-percentage ratio table computed at build time, so percentages are correct with JavaScript disabled"
       - "Progressive enhancement: quantities render as authored by Jekyll; the control bar stays hidden until the script reveals it"
+
+  - id: ZER0-085
+    title: "Visual Evidence Autogen"
+    description: "CI produces a UI pull request's visual artifacts instead of only verifying them: before/after evidence from the PR's generator or a generic base-vs-head render, and 9-skin pixel baselines refreshed only when the reviewer agent judges the diff to be the change the PR describes"
+    implemented: true
+    version: "1.30.0"
+    link: "/"
+    docs: "/docs/development/testing/"
+    tags: [ci-cd, testing, automation, ai, quality]
+    date: 2026-09-05
+    provenance:
+      introduced_in: "1.30.0"
+      pr: 462
+      commit: "d0bfc0d1"
+      issue: null
+    tests:
+      - "scripts/ci/test_visual_evidence_autogen.py"
+    references:
+      workflow: ".github/workflows/visual-evidence-autogen.yml"
+      scripts:
+        - "scripts/ci/visual_evidence_autogen.py"
+        - "test/visual/pr-evidence.mjs"
+        - "test/visual/snapshot-diff-montage.mjs"
+        - "test/update-snapshots.sh"
+      agent: ".claude/agents/visual-evidence-reviewer.md"
+      docs: "docs/systems/continuous-evolution.md"
+    features:
+      - "Runs on every same-repo PR event: plans from the diff, brings Jekyll up with docker compose, and renders inside the same jammy Playwright image the snapshot gate compares with"
+      - "Evidence from the PR's own test/visual/*-evidence.mjs generators, or from the generic base-vs-head generator that renders the base branch and the head side by side — no hand-written unfixCss needed"
+      - "Pixel baselines are refreshed only on an 'intentional' verdict from the visual-evidence-reviewer agent, which views the expected | actual | diff montage; a code step disposes, the model only proposes (#417)"
+      - "Loop guard on its own [visual-autogen] commits, a three-commit budget per PR, per-folder manifests so author-made evidence is never overwritten, kill switch VISUAL_EVIDENCE_AUTOGEN_ENABLED=false, and the evidence gate's opt-out labels"
+      - "One sticky PR comment with the montages and the verdict; render output uploaded as an artifact on every run; the evidence gate now requires generated proof and ci-self-repair hands a red Visual Snapshots job to this lane"

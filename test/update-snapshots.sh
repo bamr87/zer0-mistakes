@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Feature: ZER0-085
 # =============================================================================
 # Generate OR verify Playwright snapshot baselines in the Linux Docker image.
 # =============================================================================
