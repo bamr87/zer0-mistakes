@@ -1,6 +1,6 @@
 ---
 lastmod: 2026-09-05T00:00:00.000Z
-title: Mermaid Diagrams
+title: Mermaid Diagrams for Jekyll Sites
 description: Complete guide to integrating Mermaid diagrams in Jekyll sites - flowcharts, sequence diagrams, class diagrams and more with GitHub Pages compatibility.
 preview: /images/previews/mermaid-diagrams.png
 layout: default
@@ -13,6 +13,9 @@ tags:
     - jekyll
     - flowchart
     - documentation
+keywords: [mermaid diagrams jekyll, jekyll mermaid flowchart, mermaid github pages, mermaid sequence diagram, mermaid dark mode, zoomable diagrams]
+# Former title — keeps [[Mermaid Diagrams]] wiki-links on other pages resolving.
+aliases: ["Mermaid Diagrams"]
 permalink: /docs/features/mermaid-diagrams/
 mermaid: true
 difficulty: beginner
@@ -189,7 +192,7 @@ mermaid:
 
 | Key | Default | Notes |
 |-----|---------|-------|
-| `src` | `/assets/vendor/mermaid/mermaid.min.js` | Path to the Mermaid bundle. Refresh it with `npm run vendor:mermaid`. |
+| `src` | `/assets/vendor/mermaid/mermaid.min.js` | Path to the Mermaid bundle. Refresh it with `npm run vendor:mermaid` (or `docker-compose exec jekyll npm run vendor:mermaid` inside the container). |
 | `security_level` | `strict` | `strict` sanitises diagram text. Use `loose` only if you need `click` callbacks or HTML in labels — it disables that sanitisation, so keep it `strict` when diagrams can come from untrusted content. |
 | `toolbar` | `true` | Set `false` to render bare diagrams with no controls. |
 | `fullscreen` | `true` | Set `false` to remove the fullscreen control. |
@@ -611,10 +614,9 @@ Right: graph TD A --> B     (double arrow)
 
 Wrong: graph TD A[Text]B    (no arrow between nodes)
 Right: graph TD A[Text] --> B
-
-Wrong: flowchart TD         (in older Mermaid versions)
-Right: graph TD             (more compatible)
 ```
+
+`graph TD` and `flowchart TD` are equivalent: `flowchart` is the current keyword, `graph` a legacy alias that Mermaid still accepts.
 
 ### Testing Locally
 
@@ -659,13 +661,11 @@ docker-compose up
 
 ---
 
-*This guide is part of the [Zer0-Mistakes Jekyll Theme](https://github.com/bamr87/zer0-mistakes) documentation.*
-
 ## Technical Reference
 
 For implementation details (how Mermaid v2 was integrated, file changes, test suite):
 
-- [Mermaid Integration → docs/implementation/feature-change-log.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/implementation/feature-change-log.md#mermaid-integration-v20)
+- [Mermaid Integration → docs/implementation/feature-change-log.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/implementation/feature-change-log.md#mermaid-integration-v20-january-2025--v030)
 - Component files: `_includes/components/mermaid.html` (loader), `assets/js/mermaid-diagrams.js` (behaviour), `_sass/components/_mermaid.scss` (styles)
 - Regression test: `test/visual/features/mermaid.spec.js`
 
@@ -674,3 +674,5 @@ For implementation details (how Mermaid v2 was integrated, file changes, test su
 - [[Features]]
 - [[MathJax Math]]
 - [[Jupyter Notebook Integration]]
+
+*This guide is part of the [Zer0-Mistakes Jekyll Theme](https://github.com/bamr87/zer0-mistakes) documentation.*
