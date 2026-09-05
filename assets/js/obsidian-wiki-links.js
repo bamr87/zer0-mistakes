@@ -213,9 +213,14 @@
     if (node.nodeType !== Node.TEXT_NODE) return false;
     var parent = node.parentNode;
     while (parent && parent !== document.body) {
-      var tag = parent.nodeName;
-      if (tag === 'CODE' || tag === 'PRE' || tag === 'A' || tag === 'SCRIPT' || tag === 'STYLE') return false;
-      if (parent.classList && (parent.classList.contains('mermaid') || parent.classList.contains('obsidian-embed'))) return false;
+      // Upper-case the name: HTML elements report "STYLE" but elements in
+      // the SVG namespace report "style", so an SVG <style> slipped through
+      // and had its `#id` selectors rewritten into tag links. Inline SVG
+      // (Mermaid diagrams, icons) is graphics, never prose — skip the whole
+      // subtree rather than special-casing its children.
+      var tag = String(parent.nodeName || '').toUpperCase();
+      if (tag === 'CODE' || tag === 'PRE' || tag === 'A' || tag === 'SCRIPT' || tag === 'STYLE' || tag === 'SVG') return false;
+      if (parent.classList && (parent.classList.contains('mermaid') || parent.classList.contains('zer0-diagram') || parent.classList.contains('obsidian-embed'))) return false;
       parent = parent.parentNode;
     }
     var text = node.nodeValue;

@@ -48,6 +48,76 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ## [Unreleased]
 
+### Added
+
+- **Mermaid diagrams are now accessible figures with a toolbar (ZER0-013)** —
+  every ```` ```mermaid ```` fence (and legacy `<div class="mermaid">`) renders
+  as a `<figure>` with a rendered SVG and a small toolbar: zoom out / in / reset
+  (50–400 %, real layout — the SVG is resized, so the frame scrolls and
+  drag-to-pan, `Ctrl`+wheel and the `+` / `-` / `0` keys all work), **View
+  fullscreen** (a native `<dialog>` — the fix for a wide diagram shrunk to
+  illegibility on a phone; `Esc` closes it and focus returns to the opener),
+  **Copy diagram source**, and **Download as SVG** (page background baked in so
+  a dark-mode export stays readable). On pointer devices the toolbar floats over
+  the top-right corner on hover/focus; on touch devices it is a static row above
+  the diagram so it never covers it. `accTitle` becomes the visible
+  `<figcaption>` and the diagram's accessible name, `accDescr` its `<desc>`,
+  and the scrollable frame is a focusable, labelled region. A syntax error no
+  longer blanks the block: the figure shows the parse message, a hint, and the
+  source in a `<details>`, with *copy* still enabled. Colours are **derived from
+  the live design tokens** (`--bs-primary`, `--bs-body-bg`, `--zer0-color-*`)
+  through Mermaid's `base` theme, so diagrams follow the colour mode, the
+  selected skin and any `theme_color` override, and re-render in place when
+  those change; dark mode is decided by background luminance, so wizard mode and
+  dark skins get legible ink, and a contrast guard keeps nodes visible when the
+  brand equals the page colour. Pie slices, git branches and mind-map branches
+  get a 12-colour series fanned out from the brand hue. `securityLevel` now
+  defaults to `strict` (`mermaid.security_level: loose` restores `click`
+  callbacks / HTML labels); `mermaid.toolbar`, `fullscreen` and `download` can
+  switch the controls off. Implemented as `_includes/components/mermaid.html`
+  (loader: config JSON + two `defer` scripts — the 3.3 MB bundle used to load
+  synchronously in `<head>`) + `assets/js/mermaid-diagrams.js` +
+  `_sass/components/_mermaid.scss`, replacing ~400 lines of inline
+  `<script>`/`<style>` in the include; the `!important` SVG overrides that
+  flattened `classDef`/`style` colours and pie slices are gone. Toolbar strings
+  are `diagram_*` keys in `_data/ui-text.yml`. The docs page
+  (`/docs/features/mermaid-diagrams/`) now renders a live example of every
+  diagram type, the caption directive, per-node styling and the error state.
+  Guarded by `test/visual/features/mermaid.spec.js` (12 tests, smoke tier)
+  (evidence: [`test/visual/evidence/mermaid/`](test/visual/evidence/mermaid/README.md)
+  — dark-mode toggle keeps the SVG (before: SVG lost, stylesheet text on
+  screen); page overflow 0px at 320/390px; 11/12 docs diagrams rendered, 1
+  shown as an error card with its source kept).
+
+### Fixed
+
+- **Switching colour mode destroyed every Mermaid diagram** — the old include's
+  `MutationObserver` re-render emptied each `.mermaid` div and refilled it with
+  the div's *current* text, which after the first render is the SVG's own
+  stylesheet, and never cleared Mermaid's `data-processed` flag, so
+  `mermaid.run()` skipped the div. Toggling dark mode on `/quickstart/`,
+  `/about/` or `/docs/ruby-101/` replaced the diagram with a wall of
+  `#mermaid-… {font-family: …}` text and a permanent "Loading diagram…" label
+  (reproduced headlessly on `main`: `svgs: 1 → 0` after the toggle). Sources are
+  now kept per figure and every render goes through `mermaid.render()`, so a
+  mode or skin change re-renders from the original definition — asserted by the
+  regression test in `test/visual/features/mermaid.spec.js`.
+- **The Obsidian wiki-link resolver rewrote the inside of inline SVGs** —
+  `assets/js/obsidian-wiki-links.js` skips text under `CODE`/`PRE`/`A`/
+  `SCRIPT`/`STYLE` by comparing `nodeName`, but elements in the SVG namespace
+  report it in lower case (`style`, `text`), so a Mermaid diagram's own
+  `<style>` was walked and every `#id` selector in it was turned into a
+  `<a class="obsidian-tag">` link. The stylesheet lost its scoping: one
+  diagram's `#arrowhead path { fill }` became a bare `path { fill }` for the
+  whole page, and pie slices rendered dark grey while their legend showed the
+  right colours. The old include escaped it only because the resolver
+  special-cases the `.mermaid` class. The name check is now case-insensitive
+  and any `<svg>` subtree (graphics, never prose) is skipped, with
+  `.zer0-diagram` added to the class exemptions. `test/test_resolver.js` gains
+  a fixture with a lower-case `style`/`text` inside `<svg>`, and the Mermaid
+  spec asserts a pie slice's computed fill equals its own attribute and that no
+  unscoped `path` rule exists on the page.
+
 ### Changed
 
 - **TOC scroll spy now bolds the section you are actually reading** — the
