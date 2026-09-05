@@ -1921,25 +1921,27 @@ features:
 
   - id: ZER0-067
     title: "Setup Wizard"
-    description: "Multi-step in-browser wizard that assembles a complete _config.yml and lets you download or copy it, lowering first-run setup friction"
+    description: "Nine-step in-browser wizard that assembles a complete starter project — _config.yml, dev config, Gemfile, docker-compose, navigation, first pages — with per-file download and a self-extracting bundle; the form half of the Site Builder"
     implemented: true
-    version: "0.22.7"
+    version: "1.30.0"
     link: "/setup/"
-    docs: "/docs/quickstart/bare-minimum/"
+    docs: "/docs/features/site-builder/"
     tags: [setup, onboarding, configuration]
-    date: 2026-04-03
+    date: 2026-09-05
     provenance:
       introduced_in: "0.22.7"
       pr: 51
       commit: "a70ae8a5"
       issue: null
     tests:
-      - na: "Client-side config generator; exercised manually and via the build"
+      - "test/visual/features/setup-wizard.spec.js"
     references:
       include: "_includes/setup/wizard.html"
       scripts:
         - "assets/js/setup-wizard.js"
+      styles: ["_sass/components/_setup-wizard.scss"]
       layout: "_layouts/setup.html"
+      data: "_data/site_builder.yml"
 
   - id: ZER0-068
     title: "Table CSV Copy"
@@ -2416,3 +2418,42 @@ features:
       - "Volume↔weight conversion driven by _data/ingredient_densities.yml, overridable per ingredient with grams_per_cup"
       - "Baker's-percentage ratio table computed at build time, so percentages are correct with JavaScript disabled"
       - "Progressive enhancement: quantities render as authored by Jekyll; the control bar stays hidden until the script reveals it"
+
+  - id: ZER0-085
+    title: "Claude-Guided Site Builder"
+    description: "An embedded Claude session that rides alongside the setup wizard: it sees every answer, fills in the forms, checks the machine, reads the theme's real source, writes the generated project to disk and starts Docker — through the local dev proxy, with a confirmation card before every action"
+    implemented: true
+    version: "1.30.0"
+    link: "/setup/"
+    docs: "/docs/features/site-builder/"
+    tags: [ai, claude, setup, onboarding, docker, proxy]
+    date: 2026-09-05
+    provenance:
+      introduced_in: "1.30.0"
+      pr: null
+      commit: "331ae16c"
+      issue: null
+    tests:
+      - "test/visual/features/setup-wizard.spec.js"
+      - "test/test_wizard_store.mjs"
+    references:
+      includes:
+        - "_includes/setup/wizard.html"
+        - "_includes/setup/claude-session.html"
+        - "_includes/setup/prereq-checklist.html"
+      scripts:
+        - "assets/js/site-builder.js"
+        - "templates/deploy/chat-proxy/wizard-store.mjs"
+        - "templates/deploy/chat-proxy/dev-proxy.mjs"
+      data: "_data/site_builder.yml"
+      config: "_config.yml"
+      instructions: ".github/instructions/ai-chat.instructions.md"
+      pages:
+        - "pages/_quickstart/site-builder.md"
+        - "pages/_docs/features/site-builder.md"
+    components:
+      - "Connect step — detects the dev proxy, shows the three commands to connect (claude setup-token → .env → node --env-file), re-checks every 15 s"
+      - "Prerequisites — live Docker/Git/gh/VS Code/Node/Claude CLI checks through a fixed command table, per-OS install commands from machine-setup, manual toggles offline"
+      - "Tools — get/set wizard fields, go to step, get/override generated files, read theme source, list theme dirs, search the docs index, resolve target, write project, docker compose up/ps/logs/down, check the site is live"
+      - "Context propagation — the whole wizard state, field schema and generated-file list are in the system prompt on every turn; the form is the single source of truth"
+      - "Safety — proxy-only (no credential in the page), escape-first rendering, confirmation cards for every mutation, scaffold confined to a new folder beside the theme"
