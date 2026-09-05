@@ -34,7 +34,7 @@ sidebar:
 
 **GitHub Pages Compatible** — Works without custom server-side plugins!
 
-**What you'll do:** turn a ` ```mermaid ` code block into a rendered, zoomable diagram that follows your site's colour mode and skin.
+**What you'll do:** turn a ` ```mermaid ` code block into a rendered, zoomable diagram that follows your site's color mode and skin.
 
 **Prerequisites:**
 
@@ -155,11 +155,11 @@ flowchart LR
 - `accDescr` becomes the SVG's `<desc>`, read by screen readers.
 - Without `accTitle`, the diagram is named by its type ("Flowchart", "Sequence diagram", …).
 
-### Colours follow your theme
+### Colors follow your theme
 
-Diagram colours are **not** configured anywhere. They are derived at render time from the theme's design tokens (`--bs-primary`, `--bs-body-bg`, `--zer0-color-*`), so a diagram matches whatever the reader is looking at: light or dark mode, any skin, and any `theme_color` override. Switch the colour mode with the toggle in the navbar and watch the diagram above re-render.
+Diagram colors are **not** configured anywhere. They are derived at render time from the theme's design tokens (`--bs-primary`, `--bs-body-bg`, `--zer0-color-*`), so a diagram matches whatever the reader is looking at: light or dark mode, any skin, and any `theme_color` override. Switch the color mode with the toggle in the navbar and watch the diagram above re-render.
 
-Per-node styling (`classDef`, `style`) still works — the theme no longer overrides SVG colours with `!important`.
+Per-node styling (`classDef`, `style`) still works — the theme no longer overrides SVG colors with `!important`.
 
 ### When a diagram has a typo
 
@@ -201,12 +201,14 @@ mermaid:
 
 The toolbar labels are translated with the rest of the UI through `_data/ui-text.yml` (`diagram_*` keys).
 
+See [Vendored Bootstrap & Icon Assets](/docs/features/vendored-assets/) for the full asset refresh workflow.
+
 ### How it works
 
 1. **Front matter flag** — `mermaid: true` enables Mermaid on the page
 2. **Conditional loading** — the scripts load only on pages that opt in, and never block rendering
 3. **Client-side rendering** — no server-side plugin required
-4. **Figure chrome** — `assets/js/mermaid-diagrams.js` converts each fence into a figure, renders it, and re-renders when the colour mode or skin changes
+4. **Figure chrome** — `assets/js/mermaid-diagrams.js` converts each fence into a figure, renders it, and re-renders when the color mode or skin changes
 
 ---
 
@@ -457,7 +459,7 @@ gantt
     Testing         :crit, a4, after a3, 15d
 ```
 
-`done`, `active` and `crit` tags pick up the theme's muted, accent and danger colours; `axisFormat` and `tickInterval` keep the axis labels from crowding on narrow screens.
+`done`, `active` and `crit` tags pick up the theme's muted, accent and danger colors; `axisFormat` and `tickInterval` keep the axis labels from crowding on narrow screens.
 
 ### 8. Git graphs
 
@@ -534,10 +536,10 @@ Both forms get the same figure, toolbar and theming.
 
 You do not pick a Mermaid theme. The theme uses Mermaid's `base` theme and fills its variables from the site's live design tokens, so:
 
-- **Light / dark / wizard** colour modes each get a legible palette, and a mode switch re-renders every diagram in place.
-- **Skins** (`data-theme-skin`) recolour node borders, fills and series colours to the skin's brand.
+- **Light / dark / wizard** color modes each get a legible palette, and a mode switch re-renders every diagram in place.
+- **Skins** (`data-theme-skin`) recolor node borders, fills and series colors to the skin's brand.
 - **`theme_color`** overrides in `_config.yml` flow through the same tokens.
-- Series colours for pie slices, git branches and mind maps fan out from the brand hue, so they stay distinct in both modes.
+- Series colors for pie slices, git branches and mind maps fan out from the brand hue, so they stay distinct in both modes.
 
 ### Overriding a single diagram
 
@@ -605,7 +607,7 @@ Events: `zer0:diagram-rendered` fires on each figure (`detail.ok`, `detail.type`
 | Script not loading | Verify `mermaid.src` in `_config.yml` points at the vendored bundle (`/assets/vendor/mermaid/mermaid.min.js`) |
 | Diagram tiny on a phone | Wide diagrams shrink to fit. Use the fullscreen control or zoom in |
 | No toolbar visible | It appears on hover / keyboard focus on desktop. Set `mermaid.toolbar: true` if it was disabled |
-| Colours look wrong after a mode switch | The diagram re-renders on `data-bs-theme` / `data-theme-skin` changes; if you set tokens from custom JS, call `window.zer0Mermaid.refresh()` |
+| Colors look wrong after a mode switch | The diagram re-renders on `data-bs-theme` / `data-theme-skin` changes; if you set tokens from custom JS, call `window.zer0Mermaid.refresh()` |
 
 ### Common syntax errors
 
@@ -637,7 +639,7 @@ docker-compose up
 - The diagram frame is a focusable, keyboard-operable region (see [shortcuts](#keyboard-shortcuts)), so a diagram wider than the page is never trapped behind a mouse-only scroll.
 - Toolbar buttons are real `<button>`s with labels; zoom level and copy feedback are announced through a polite live region.
 - The fullscreen view is a native `<dialog>`: focus is trapped inside it, `Esc` closes it, and focus returns to the control that opened it.
-- Series colours are chosen at a fixed lightness per colour mode so adjacent pie slices and branches stay distinguishable.
+- Series colors are chosen at a fixed lightness per color mode so adjacent pie slices and branches stay distinguishable.
 
 ---
 
@@ -675,5 +677,3 @@ For implementation details (how Mermaid v2 was integrated, file changes, test su
 - [[Features]]
 - [[MathJax Math]]
 - [[Jupyter Notebook Integration]]
-
-*This guide is part of the [Zer0-Mistakes Jekyll Theme](https://github.com/bamr87/zer0-mistakes) documentation.*
