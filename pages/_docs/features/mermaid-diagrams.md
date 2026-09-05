@@ -277,6 +277,7 @@ sequenceDiagram
 
     User->>Browser: Click button
     Browser->>Server: API request
+    Note over Server: Validate + query
     Server-->>Browser: JSON response
     Browser-->>User: Display result
 ```
@@ -445,6 +446,8 @@ gantt
 ```
 ````
 
+A richer version demonstrates status tags and axis formatting:
+
 ```mermaid
 gantt
     title Project Timeline
@@ -522,7 +525,7 @@ graph TD
 | Use Case | Recommended |
 |----------|-------------|
 | Normal documentation | Markdown code blocks |
-| Complex diagrams | HTML div |
+| Inside a Liquid/HTML include | HTML div |
 | Nested in HTML | HTML div |
 | Maximum portability | Markdown code blocks |
 
@@ -611,7 +614,7 @@ Events: `zer0:diagram-rendered` fires on each figure (`detail.ok`, `detail.type`
 
 ### Common syntax errors
 
-```markdown
+```text
 Wrong: graph TD A -> B      (single arrow)
 Right: graph TD A --> B     (double arrow)
 
