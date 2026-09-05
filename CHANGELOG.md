@@ -120,6 +120,57 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Changed
 
+- **TOC scroll spy now bolds the section you are actually reading** — the
+  highlighted entry in the right-hand Table of Contents jumped around and sat
+  one to three sections ahead of the viewport. Measured on `/docs/features/toc/`
+  at 1280×820, the wrong entry was bolded at **19–23 of 25 scroll positions**
+  — the count moves between runs because which implementation won depended on
+  callback timing, which is the bug in one sentence.
+
+  Three implementations were toggling `.active` on the same
+  `#TableOfContents a` links, so whichever fired last won. Bootstrap's native
+  ScrollSpy was wired up twice — `data-bs-spy="scroll"
+  data-bs-target="#TableOfContents"` on `<body>` in `_layouts/root.html` *and*
+  on `.bd-main` in `_layouts/default.html` (whose `data-bs-offset="100"` had
+  been dead since Bootstrap 5.2 replaced that option with
+  `data-bs-root-margin`). `assets/js/ui-enhancements.js` ran a third observer
+  over *every* `a[href^="#"]` on the page, clearing `.active` from all of them
+  each time a `section[id]` intersected. Both Bootstrap hooks are removed —
+  the `<body>` one was also stripping server-rendered `.active` classes off
+  admin sidebar links, which `fixtures.gotoBeforeScrollSpy` exists to work
+  around — and the `ui-enhancements.js` observer is now scoped away from TOC
+  and sidebar links.
+
+  The theme's own spy (`assets/js/modules/navigation/scroll-spy.js`) was wrong
+  on its own terms too: it asked IntersectionObserver for the "most visible"
+  heading, but headings are a few pixels tall, so every heading inside the
+  observer band reports the same `intersectionRatio` — the winner was whichever
+  entry happened to be in that callback's batch, and a heading scrolling *out*
+  of the band triggered no re-evaluation at all. It now applies a positional
+  rule: the active heading is the last one whose top has crossed the reading
+  line (the document's `scroll-padding-top`, the same offset anchor navigation
+  uses), with the last heading winning once the page is scrolled to the bottom
+  so trailing sections shorter than the viewport are still reachable. The
+  answer is recomputed from scratch on each rAF-throttled scroll frame from
+  cached heading offsets, re-measured on resize and content reflow
+  (`ResizeObserver`), so it cannot drift out of sync.
+
+  Two smaller fixes ride along. Clicking a TOC entry now holds that entry
+  active while the smooth scroll animates, instead of flashing every heading
+  passed on the way. And keeping the active entry visible inside the TOC no
+  longer calls `scrollIntoView()`, which bubbles up and scrolls the *page* —
+  feeding straight back into the spy; it adjusts the TOC container's own
+  `scrollTop`, resolving that container at call time (`.bd-toc` on desktop,
+  `.offcanvas-body` on mobile) rather than assuming one. The active link also
+  carries `aria-current="true"`.
+
+  `config.scrollSpy.rootMargin`/`threshold` are replaced by
+  `config.scrollSpy.offset` (`null` = derive from `scroll-padding-top`) and
+  `tolerance`. Guarded by `test/visual/features/scroll-spy.spec.js` (smoke
+  tier), which is 5 failed / 1 passed against the pre-fix theme and 6 passed
+  with the fix. (evidence:
+  [`test/visual/evidence/scroll-spy/`](test/visual/evidence/scroll-spy/README.md)
+  — wrong TOC highlight at 19/25 scroll positions → 0)
 - **Navbar controls no longer flicker under a stationary pointer (#404)** —
   `.nav-link:hover`, the Search/Settings utility buttons and the two sidebar/TOC
   FABs applied `transform: translateY(-1px)`. A 1px lift moves the element out
