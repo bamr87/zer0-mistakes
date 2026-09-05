@@ -768,7 +768,12 @@ def stage_paths(state: dict) -> list[str]:
 
 def cmd_stage(args: argparse.Namespace) -> int:
     state = read_json(args.state) or {}
-    print("\n".join(stage_paths(state)))
+    paths = stage_paths(state)
+    # Nothing to add → print NOTHING. A bare newline becomes one empty pathspec
+    # in the workflow's `mapfile`, and `git add -- ""` is a fatal error — the
+    # first real run of this lane died exactly there.
+    if paths:
+        print("\n".join(paths))
     return 0
 
 

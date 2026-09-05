@@ -184,7 +184,9 @@ jobs:
         if: steps.plan.outputs.needed == 'true'
         run: |
           # Only the paths the planner names — never `git add -A`.
-          mapfile -t paths < <(python3 scripts/ci/visual_evidence_autogen.py stage --state "$AUTOGEN/state.json")
+          # `sed` drops blank lines so an empty stage list can never become one
+          # empty pathspec (`git add -- ""` is fatal).
+          mapfile -t paths < <(python3 scripts/ci/visual_evidence_autogen.py stage --state "$AUTOGEN/state.json" | sed '/^[[:space:]]*$/d')
           if [ "${#paths[@]}" -eq 0 ]; then
             echo "nothing to stage"; echo "pushed=false" >> "$GITHUB_OUTPUT"; exit 0
           fi

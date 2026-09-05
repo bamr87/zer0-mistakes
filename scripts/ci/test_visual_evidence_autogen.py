@@ -236,6 +236,29 @@ def test_stage_and_messages() -> None:
           vea.render_comment(plan=plan, state=quiet, verdict=None, repo="r", sha=None, run_url="", pushed=False) == "")
 
 
+def test_stage_command_output() -> None:
+    print("stage — the command's stdout is what the workflow `mapfile`s")
+    import argparse
+    import contextlib
+    import io
+    import json
+    import tempfile
+    with tempfile.TemporaryDirectory() as tmp:
+        empty = Path(tmp) / "empty.json"
+        empty.write_text(json.dumps({"jobs": [], "snapshots": {"verified": "pass"}}), encoding="utf-8")
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            vea.cmd_stage(argparse.Namespace(state=str(empty)))
+        check("nothing to add → prints nothing, not even a newline (run 33992712400 died on `git add -- \"\"`)",
+              buf.getvalue() == "")
+        some = Path(tmp) / "some.json"
+        some.write_text(json.dumps({"jobs": [{"dir": "test/visual/evidence/x", "has_proof": True}]}), encoding="utf-8")
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            vea.cmd_stage(argparse.Namespace(state=str(some)))
+        check("one path per line when there is something to add", buf.getvalue() == "test/visual/evidence/x\n")
+
+
 def test_workflow_wiring() -> None:
     print("contract — the workflow, the hooks, the hand-offs")
     wf = REPO_ROOT / ".github/workflows/visual-evidence-autogen.yml"
@@ -261,7 +284,8 @@ def test_workflow_wiring() -> None:
 def main() -> int:
     for t in (test_detect_slug, test_plan_pr_454_shape, test_plan_loop_guard_and_budget, test_plan_generic_fallback,
               test_plan_respects_author_evidence, test_plan_out_of_scope, test_styling_matches_ci_filter,
-              test_ui_prefixes_match_gate, test_parse_results, test_decide, test_stage_and_messages, test_workflow_wiring):
+              test_ui_prefixes_match_gate, test_parse_results, test_decide, test_stage_and_messages,
+              test_stage_command_output, test_workflow_wiring):
         t()
     print(f"\n{PASSED} passed, {len(FAILURES)} failed")
     for f in FAILURES:
