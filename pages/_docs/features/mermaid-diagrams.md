@@ -78,7 +78,7 @@ mermaid: true
 
 ### Step 2: Write your diagram
 
-Use native markdown code blocks with `mermaid` as the language:
+Use native Markdown code blocks with `mermaid` as the language:
 
 ````markdown
 ```mermaid
@@ -513,7 +513,7 @@ graph TD
 
 ### Option B: HTML div
 
-Use `<div class="mermaid">` — works when markdown doesn't:
+Use `<div class="mermaid">` — works when Markdown doesn't:
 
 ```html
 <div class="mermaid">
