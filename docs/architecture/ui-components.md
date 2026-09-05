@@ -69,7 +69,7 @@ Every catalogued component, its primary implementation file, primary test, and c
 | Navbar Extras / FAB Stacking | `_sass/layouts/_navbar-extras.scss` | `features/content-enhancements.spec.js` | 🟡 partial |
 | Navigation Orchestrator (index.js + config.js) | `assets/js/modules/navigation/index.js` | `core/styling.spec.js`, `features/layouts.spec.js` | 🟡 partial |
 | Navbar Module (dropdowns/keyboard/tooltips) | `assets/js/modules/navigation/navbar.js` | — | 🔴 none |
-| Scroll-Spy Module | `assets/js/modules/navigation/scroll-spy.js` | — | 🔴 none |
+| Scroll-Spy Module | `assets/js/modules/navigation/scroll-spy.js` | `features/scroll-spy.spec.js` | 🟡 partial |
 | Smooth-Scroll Module | `assets/js/modules/navigation/smooth-scroll.js` | — | 🔴 none |
 | Keyboard Shortcuts Module | `assets/js/modules/navigation/keyboard.js` | `features/layouts.spec.js` | 🟡 partial |
 | Swipe Gestures Module | `assets/js/modules/navigation/gestures.js` | — | 🔴 none |
@@ -90,7 +90,7 @@ Every catalogued component, its primary implementation file, primary test, and c
 | Table of Contents (Liquid parser + sidebar-right) | `_includes/content/toc.html` | `features/content-enhancements.spec.js` | 🟡 partial |
 | TOC FAB (mobile trigger) | `_includes/navigation/toc-fab.html` | `features/content-enhancements.spec.js` | 🟡 partial |
 | TOC visibility toggle + persistence | `assets/js/modules/navigation/toc-visibility.js` | `features/content-enhancements.spec.js` | 🟡 partial |
-| Scroll-spy (active heading highlight) | `assets/js/modules/navigation/scroll-spy.js` | — | 🔴 none |
+| Scroll-spy (active heading highlight) | `assets/js/modules/navigation/scroll-spy.js` | `features/scroll-spy.spec.js` | 🟡 partial |
 | Page intro header (.bd-intro family) | `_includes/content/intro.html` | `features/layouts.spec.js` | 🟡 partial |
 | Docs code-example chrome (.bd-example/.bd-clipboard) | `_sass/core/_docs-code-examples.scss` | — | 🔴 none |
 | Content tables (styling + CSV copy) | `_sass/components/_content-tables.scss` | `features/content-enhancements.spec.js` | 🟡 partial |
@@ -356,7 +356,7 @@ The fixed top header (brand, primary menubar, utility controls, mobile/tablet sh
 
 - **Purpose:** The ES-module entry point that constructs `window.zer0Navigation`, syncs breakpoints from CSS tokens, conditionally instantiates each sub-module, and exposes a public API (`scrollTo`, `expandTo`, `expandAll/collapseAll`, `getShortcuts`, `getModule`, `destroy`).
 - **Capabilities:** Auto-inits on DOM-ready (waits for Bootstrap `load` if absent); `syncBreakpointsFromCss()` reads `--zer0-bp-*` so SCSS token overrides propagate to JS; instantiates TOC modules only if a `#TableOfContents` exists, sidebar-visibility only if a left sidebar + docs layout exist; dispatches `navigation:ready`/`navigation:destroyed`; loaded via `_includes/components/js-cdn.html` as `type="module"`.
-- **Capabilities (config):** centralizes selectors, scroll-spy margins, smooth-scroll offset, keyboard key map, gesture thresholds, localStorage prefix `zer0-nav-`, and breakpoints; exports `isBelowBreakpoint`/`isAtOrAboveBreakpoint`.
+- **Capabilities (config):** centralizes selectors, the scroll-spy reading-line offset/tolerance, smooth-scroll offset, keyboard key map, gesture thresholds, localStorage prefix `zer0-nav-`, and breakpoints; exports `isBelowBreakpoint`/`isAtOrAboveBreakpoint`.
 - **Source:**
   - SCSS: — (consumes `--zer0-bp-*` from `_sass/tokens/_breakpoints.scss`)
   - Markup: `_includes/components/js-cdn.html` (module `<script>` loader)
@@ -1652,7 +1652,7 @@ Prioritized — interactive behaviors the smoke tier never exercises:
 - **Obsidian wiki-links / backlinks / callouts in rendered pages** — covered only by Ruby/JS unit tests; **no Playwright test** loads a page with `[[wiki-links]]`/embeds/callouts/backlinks and asserts client-side resolution. **(Medium)**
 - **Keyboard-shortcuts modal completeness** — `?`-opens is tested; Escape-to-close, focus trapping, and that listed shortcuts fire are not. **(Medium)**
 - **Background/skin controls as real UI** — tests drive the `window.zer0Bg` API directly; no test clicks the actual customizer toggle/slider/skin-swatch a user would use. **(Medium)**
-- **ToC / sidebar FAB interaction** — FABs are asserted *visible* but never clicked to open/close the offcanvas; ScrollSpy ToC highlighting on scroll is untested. **(Low)**
+- **ToC / sidebar FAB interaction** — FABs are asserted *visible* but never clicked to open/close the offcanvas. (ToC highlighting on scroll is now covered by `features/scroll-spy.spec.js`.) **(Low)**
 - **Table CSV export click** — the `.table-copy-csv` button's existence/name is checked, but nothing clicks it and validates the produced CSV. **(Low)**
 
 Net: coverage is strong on **static structure, admin-page rendering, accessibility audits, CSS-var/token wiring, and JS-API-level skin/background state**, but thin on **user-driven interactions** (clicks, typing, keyboard) for the search modal, AI chat, dropdowns, clipboard copy, and theme-apply — exactly the surfaces a UI overhaul is most likely to break.
@@ -1671,7 +1671,7 @@ These have no automated behavioral coverage — highest-value targets for new Pl
 - **Auto-Hide Navbar** (Global Chrome & Primary Navigation) — Hide-on-down/show-on-up, body-padding compensation, reduced-motion, and offcanvas-pause all untested; logic duplicated JS/SCSS.
 - **Nanobar (scroll/load progress bar)** (Global Chrome & Primary Navigation) — Render, step animation, and three position modes (top/bottom/navbar mount) all untested.
 - **Navbar Module (dropdowns/keyboard/tooltips)** (Global Chrome & Primary Navigation) — Rich keyboard menu nav, click dropdowns, and compact-desktop tooltips wholly untested; dead _setupDropdownHoverDelay no-op.
-- **Scroll-Spy Module** (Global Chrome & Primary Navigation) — IntersectionObserver active-link highlighting on scroll has no positive coverage.
+- **Scroll-Spy Module** (Global Chrome & Primary Navigation) — active-link highlighting on scroll is covered on desktop by `features/scroll-spy.spec.js`; the mobile offcanvas TOC is not (backlog T-046).
 - **Smooth-Scroll Module** (Global Chrome & Primary Navigation) — Offset scroll, hash pushState, and mobile-offcanvas-close untested; destroy() is a documented no-op leaking listeners.
 - **Swipe Gestures Module** (Global Chrome & Primary Navigation) — Edge-swipe sidebar/TOC opening untested; no guard distinguishes edge-swipe from content swipe.
 - **Focus Manager Module** (Global Chrome & Primary Navigation) — Focus-return-to-trigger on offcanvas close (a11y requirement) and keyboard-nav body class untested.
