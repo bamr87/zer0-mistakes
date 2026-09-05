@@ -194,7 +194,7 @@ Every catalogued component, its primary implementation file, primary test, and c
 | Cookie Consent | `_includes/components/cookie-consent.html` | — | 🔴 none |
 | PostHog Analytics | `_includes/analytics/posthog.html` | `core/security.spec.js`, `test/test_quality.sh` | 🟡 partial |
 | Google Analytics & Tag Manager | `_includes/analytics/google-analytics.html` | `core/security.spec.js` | 🔴 none |
-| Mermaid Diagrams | `_includes/components/mermaid.html` | — | 🔴 none |
+| Mermaid Diagrams | `assets/js/mermaid-diagrams.js` | `features/mermaid.spec.js` | 🟢 good |
 | Keyboard Shortcuts | `assets/js/modules/navigation/keyboard.js` | — | 🔴 none |
 | Shortcuts Cheatsheet Modal | `_includes/components/shortcuts-modal.html` | — | 🔴 none |
 | cheetsheet.js (Bootstrap demos) | `assets/js/cheetsheet.js` | — | 🔴 none |
@@ -827,14 +827,14 @@ The theme's appearance is a four-layer system: a `--zer0-*` design-token base (a
 ### Color Modes (light / dark / wizard)
 
 - **Purpose:** Bootstrap `data-bs-theme` color-scheme switching that retones `--bs-*`/`--bd-*` accent tokens for light, dark, and a custom blue "wizard" mode; user-selectable via the halfmoon dropdown (light/dark/auto), with wizard set via config/programmatically.
-- **Capabilities:** `--bd-*` accent tokens (violet/purple/accent/toc/sidebar/callout/pre-bg) differ per light vs dark; wizard mode overrides body bg/color to blue + retones dropdowns and `.btn-secondary` using Sass color math; halfmoon toggle persists `localStorage["theme"]`, honors `prefers-color-scheme` for auto, updates active icon + `aria-pressed` + `aria-label`; Mermaid treats `wizard` like `dark`.
+- **Capabilities:** `--bd-*` accent tokens (violet/purple/accent/toc/sidebar/callout/pre-bg) differ per light vs dark; wizard mode overrides body bg/color to blue + retones dropdowns and `.btn-secondary` using Sass color math; halfmoon toggle persists `localStorage["theme"]`, honors `prefers-color-scheme` for auto, updates active icon + `aria-pressed` + `aria-label`; the Mermaid palette decides dark vs light from the page background's luminance, so `wizard` (blue body) gets the dark treatment without naming the mode.
 - **Source:**
   - SCSS: `_sass/theme/_color-modes.scss` (barrel), `_css-variables.scss` (`--bd-*` light/dark), `_wizard-mode.scss`
-  - Markup: `_includes/components/halfmoon.html` (light/dark/auto segmented control), `_includes/components/mermaid.html` (wizard→dark)
+  - Markup: `_includes/components/halfmoon.html` (light/dark/auto segmented control), `assets/js/mermaid-diagrams.js` (palette derived from the live tokens; wizard → dark by luminance)
   - JS: `assets/js/halfmoon.js`, `assets/js/modules/theme/appearance.js` (renders its own light/dark/auto group only on explicit `[data-appearance-panel-host]` mounts; in the settings panel it renders the primary-color picker only)
 - **API surface:** attributes `data-bs-theme="light|dark|wizard"`, `data-bs-theme-value`; localStorage `theme`; class `.bd-theme-switch`; CSS vars `--bd-{purple,violet,accent,violet-rgb,accent-rgb,pink-rgb,teal-rgb,violet-bg,toc-color,sidebar-link-bg,callout-link,callout-code-color,pre-bg}`, plus `--bs-body-*`/`--bs-dropdown-*`/`--bs-btn-*` under wizard
 - **Tests:** `test/visual/settings-panel.spec.js` asserts clicking light/dark buttons flips `data-bs-theme` and syncs `.active`/`aria-pressed`; `features/appearance.spec.js` and the dark/contrast snapshots exercise dark surfaces.
-- **Gaps / improvement ideas:** Wizard mode is defined in SCSS and read by Mermaid but is **not selectable from any UI** (halfmoon offers only light/dark/auto) — either expose it or document it as config-only. `--bd-callout-link` is an RGB triple in light/dark but consumed inconsistently.
+- **Gaps / improvement ideas:** Wizard mode is defined in SCSS and handled by the Mermaid palette but is **not selectable from any UI** (halfmoon offers only light/dark/auto) — either expose it or document it as config-only. `--bd-callout-link` is an RGB triple in light/dark but consumed inconsistently.
 
 ### Named Skins (the 9 `data-theme-skin` palettes)
 
@@ -1501,15 +1501,15 @@ Floating/embedded widgets and third-party integrations layered onto the theme: t
 
 ### Mermaid Diagrams
 
-- **Purpose:** Client-side Mermaid.js diagram rendering (GitHub-Pages-safe, bundled locally) supporting both fenced ```mermaid blocks and `.mermaid` divs, theme-aware to Bootstrap's `data-bs-theme`.
-- **Capabilities:** Loads bundled Mermaid v10 (`site.mermaid.src`); converts `code.language-mermaid`/`pre[data-language="mermaid"]` into `.mermaid` divs; light/dark theme variable sets keyed off `data-bs-theme` (treats `wizard` as dark, falls back to `prefers-color-scheme`); flowchart/sequence/gantt tuning; `securityLevel: loose`; MutationObserver re-renders on theme switch; loading placeholder, dark/light SVG overrides, responsive + print styles. Only active when `page.mermaid: true` (gated in `head.html`).
+- **Purpose:** Client-side Mermaid.js diagram rendering (GitHub-Pages-safe, bundled locally): every fenced ```mermaid block and legacy `.mermaid` div becomes an accessible `<figure>` with a toolbar, a caption, theme-derived colours and a graceful error state.
+- **Capabilities:** `mermaid.html` emits a `#mermaidConfig` JSON block (security level, toolbar/fullscreen/download flags, translated labels from `ui-text.yml`) and loads the vendored bundle + `mermaid-diagrams.js`, both `defer` (the 3.3 MB bundle used to load synchronously in `<head>`). The script converts fences at execution time — before `code-copy.js`'s DOMContentLoaded pass — into `figure.zer0-diagram` (toolbar → focusable, scrollable viewport → canvas → SVG, + `figcaption`), keeps every source in a WeakMap and renders through `mermaid.parse()`/`mermaid.render()` per figure. Palette: Mermaid `base` theme whose variables are derived at render time from the live tokens (`--bs-body-bg`, `--bs-body-color`, `--bs-primary`, `--zer0-color-*`) via a computed-style probe + canvas colour normalisation; dark mode is decided by background luminance (so wizard mode and dark skins work), a contrast guard keeps nodes visible when the brand equals the page colour, and a 12-colour categorical series fans out from the brand hue for pie/git/mindmap/xy charts. Re-renders (debounced, palette-diffed) on `data-bs-theme`, `data-theme-skin`, `<html style>` token overrides, `zer0:skin-change` and `prefers-color-scheme`. Toolbar: zoom out/in/reset (real-layout zoom by sizing the SVG, 50–400 %, drag-to-pan, Ctrl+wheel, `+`/`-`/`0` keys), fullscreen (native `<dialog>`, canvas moved in/out, Escape + focus return), copy source, download SVG (page background baked in). `accTitle` → `figcaption` + accessible name; `accDescr` → `<desc>`. Syntax errors render an error card (message + hint + source kept in a `<details>`), with only *copy* left enabled. Skeleton placeholder via CSS `:has()` with a delayed reveal so a missing script never hides the source; `html.no-js` keeps the fence as a code block. `securityLevel` defaults to `strict`.
 - **Source:**
-  - SCSS: — (inline `<style>` in the include)
-  - Markup/JS: `_includes/components/mermaid.html` (included in `_includes/core/head.html:54` when `page.mermaid`)
-  - Plugin/data: `site.mermaid.src`; bundles `assets/vendor/font-awesome/css/all.min.css`
-- **API surface:** classes `.mermaid`, `code.language-mermaid`, `pre[data-language="mermaid"]`; global `mermaid` (vendor); attribute observed `data-bs-theme`; config `site.mermaid.src`
-- **Tests:** No automated tests for diagram conversion or theme re-rendering.
-- **Gaps / improvement ideas:** `securityLevel: 'loose'` permits HTML in diagrams (XSS surface if user content is rendered) — document the trade-off or tighten to `'strict'` for untrusted content. The ~90-line theme config is duplicated between initial init and the MutationObserver re-render — extract to a shared `mermaid.initialize(...)` call. No test asserts that ```mermaid fences become rendered SVG, nor that a `data-bs-theme` toggle re-renders. `lineColor` is defined twice in the dark themeVariables object.
+  - SCSS: `_sass/components/_mermaid.scss` (figure, toolbar — floating on pointer devices, static row above the diagram on touch — viewport, error card, lightbox, print, no-JS placeholder)
+  - Markup/JS: `_includes/components/mermaid.html` (loader, included in `_includes/core/head.html` when `page.mermaid`); `assets/js/mermaid-diagrams.js` (behaviour)
+  - Data/config: `site.mermaid.{src,security_level,toolbar,fullscreen,download}`; `_data/ui-text.yml` `diagram_*` labels; vendored `assets/vendor/mermaid/mermaid.min.js`
+- **API surface:** classes `.zer0-diagram` (+ `.is-loading/.is-rendered/.has-error/.is-in-lightbox`), `.zer0-diagram__{toolbar,btn,zoom,viewport,canvas,caption,error,source}`, `.zer0-diagram-lightbox`; attributes `data-zer0-diagram="<type>"`, `data-zoom`; input selectors `pre > code.language-mermaid`, `pre[data-language="mermaid"]`, `div.mermaid`; global `window.zer0Mermaid` (`renderAll`, `render`, `refresh`, `getSource`, `palette`, `figures`, `setZoom`, `openFullscreen`, `closeFullscreen`); events `zer0:diagram-rendered` (figure), `zer0:diagrams-ready` (document), `zer0:diagram-fullscreen`; config `#mermaidConfig`
+- **Tests:** `features/mermaid.spec.js` — fences → figures for 8 diagram types, toolbar/caption a11y, colour-mode toggle re-renders from source (regression — the old include cleared the div without resetting `data-processed`, leaving stylesheet text on screen), skin recolour, error card keeps source, zoom resizes + scrolls, keyboard zoom, fullscreen dialog + focus return, clipboard copy, no page overflow at 320/390, static toolbar on touch. Evidence: `test/visual/mermaid-evidence.mjs` → `test/visual/evidence/mermaid/`.
+- **Gaps / improvement ideas:** Pinch-to-zoom inside the viewport is not handled (touch users zoom via the buttons or the fullscreen view). `useMaxWidth` shrinks very wide diagrams to fit; a configurable minimum scale (scroll instead of shrink) would suit dense LR flowcharts. Diagram-type labels for the accessible name are English-only (the toolbar strings are translated). No pixel snapshot of a rendered diagram in the `snapshots` tier — text metrics differ per platform, so the smoke spec asserts structure and computed colours instead.
 
 ### Keyboard Shortcuts
 
@@ -1723,7 +1723,7 @@ These have no automated behavioral coverage — highest-value targets for new Pl
 - **Site Search (modal + index)** (Widgets, Search & Integrations) — No tests; plus a real bug — unified-drawer.html targets #search-modal but the id is siteSearchModal (dead button).
 - **Cookie Consent** (Widgets, Search & Integrations) — No coverage of banner show, persistence, 365-day expiry, or PostHog opt-out; .cookie-category border hard-coded #dee2e6.
 - **Google Analytics & Tag Manager** (Widgets, Search & Integrations) — GTM container GTM-NN8P7RZ hard-coded (not config-driven); GA/GTM not consent-gated like PostHog.
-- **Mermaid Diagrams** (Widgets, Search & Integrations) — securityLevel:'loose' XSS surface; ~90-line theme config duplicated; no render/theme-switch test.
+- **Mermaid Diagrams** (Widgets, Search & Integrations) — no pinch-zoom inside the viewport; no configurable minimum scale for very wide diagrams; diagram-type accessible names are English-only.
 - **Keyboard Shortcuts** (Widgets, Search & Integrations) — No test for /, ?, or typing-guard; getShortcuts() map omits ? and diverges from shortcuts-modal labels.
 - **Shortcuts Cheatsheet Modal** (Widgets, Search & Integrations) — Hard-coded <kbd> list can drift from config.keyboard.keys; no test that ? opens it.
 - **cheetsheet.js (Bootstrap demos)** (Widgets, Search & Integrations) — setActiveItem() lacks null guards (throws on unexpected markup); filename misspelled; page-opt-in only.
