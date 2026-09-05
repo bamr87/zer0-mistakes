@@ -1,7 +1,8 @@
 ---
 lastmod: 2026-06-15T00:00:00.000Z
 title: Table of Contents
-description: Automatic table of contents generation from page headings with scroll spy and smooth scrolling.
+description: Automatic table of contents built from a page's h2-h4 headings, with a positional scroll spy that bolds the section being read and smooth anchor scrolling.
+keywords: [table of contents, toc, scroll spy, anchor navigation, page headings, jekyll theme, sidebar]
 preview: /images/previews/table-of-contents.png
 layout: default
 categories:
