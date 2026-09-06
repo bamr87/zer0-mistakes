@@ -348,7 +348,17 @@ def check_quality(body, quality)
 
   # Bare URLs.
   if quality['flag_bare_urls']
-    bare = strip_code_fences(body).scan(%r{(?<![("<\]])\bhttps?://[^\s)>\]]+}).reject { |u| u.include?('](') }
+    # Two sources of false positives this guards against:
+    #   [http://x](http://x) — a CORRECT markdown link whose text is the URL.
+    #     The lookbehind must exclude `[` too, or the link text is counted.
+    #   <script>/<style> blocks and HTML attributes — pages that embed a config
+    #     generator carry URLs in JS strings and markup, which are code, not prose.
+    #   <code>http://…</code> — inline code in HTML syntax, which the markdown
+    #     backtick form is already exempt from; the two should agree.
+    prose = strip_code_fences(body)
+             .gsub(%r{<(script|style|code|pre)\b.*?</\1>}mi, '')
+             .gsub(/<[^>]+>/, '')
+    bare = prose.scan(%r{(?<![("<\[\]])\bhttps?://[^\s)>\]]+}).reject { |u| u.include?('](') }
     issues << Issue.new('info', 'quality', "#{bare.length} bare URL(s) — wrap as [text](url)") unless bare.empty?
   end
   issues
