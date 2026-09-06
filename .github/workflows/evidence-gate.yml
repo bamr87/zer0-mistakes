@@ -2,9 +2,15 @@
 name: Evidence gate
 
 # Enforces the visual-evidence standard (.github/skills/visual-evidence/SKILL.md):
-# a PR that changes UI/behaviour must also add a regression test AND before/after
-# evidence. Genuinely non-visual edits opt out with the `skip-evidence` (or
+# a PR that changes UI/behaviour must also add a regression test AND GENERATED
+# before/after evidence (metrics.json or montage PNGs — not a README alone).
+# Genuinely non-visual edits opt out with the `skip-evidence` (or
 # `no-visual-change`) label.
+#
+# This gate only VERIFIES. Its producer is visual-evidence-autogen.yml, which
+# renders the evidence (and, after a reviewer verdict, the pixel baselines) on
+# the PR branch — so on a same-repo PR a red gate is a transient state that the
+# next autogen commit clears, not a request for a human with Docker.
 #
 # The job ALWAYS runs and reports a status (it self-determines applicability),
 # so it can be marked a REQUIRED check in branch protection without the
@@ -56,23 +62,46 @@ jobs:
           fi
 
           spec=$(echo "$changed" | grep -E '^test/visual/.*\.spec\.js$' || true)
-          evidence=$(echo "$changed" | grep -E '^test/visual/evidence/' || true)
+          evidence=$(echo "$changed" | grep -E '^test/visual/evidence/[^/]+/' || true)
+
+          # Evidence means GENERATED proof — metrics.json or a montage PNG in a
+          # changed evidence folder, as checked out at the PR head. A README
+          # alone is prose: #454 shipped one (numbers copied from a CI log) and
+          # this gate waved it through while the pixel tier stayed red.
+          proof=""
+          for dir in $(echo "$evidence" | awk -F/ 'NF>=5 {print $1"/"$2"/"$3"/"$4}' | sort -u); do
+            if [ -f "$dir/metrics.json" ] || ls "$dir"/*.png >/dev/null 2>&1; then
+              proof="${proof} ${dir}"
+            fi
+          done
 
           missing=""
-          [ -z "$spec" ]     && missing="${missing}\n  - a regression test (a changed test/visual/*.spec.js)"
-          [ -z "$evidence" ] && missing="${missing}\n  - before/after evidence (files under test/visual/evidence/<slug>/)"
+          [ -z "$spec" ]  && missing="${missing}\n  - a regression test (a changed test/visual/*.spec.js)"
+          if [ -z "$proof" ]; then
+            if [ -n "$evidence" ]; then
+              missing="${missing}\n  - GENERATED before/after evidence: the changed test/visual/evidence/<slug>/ folder holds no metrics.json and no montage PNG (a README alone is not evidence)"
+            else
+              missing="${missing}\n  - before/after evidence (metrics.json + montages under test/visual/evidence/<slug>/)"
+            fi
+          fi
 
           if [ -n "$missing" ]; then
             echo "::error::This PR changes UI/behaviour but is missing:${missing}"
             printf 'This PR changes UI/behaviour but is missing:%b\n' "$missing"
             echo ""
-            echo "Add them with the visual-evidence skill:"
-            echo "  .github/skills/visual-evidence/SKILL.md"
-            echo "  test/visual/evidence-kit.mjs   (generates the montages + metrics)"
+            echo "On a same-repo PR the 'Visual evidence autogen' workflow renders and"
+            echo "commits the evidence for you (it runs the PR's test/visual/<slug>-evidence.mjs,"
+            echo "or the generic base-vs-head generator) — give it a few minutes and this"
+            echo "check re-runs on its commit. To do it yourself on any Docker host:"
+            echo "  python3 scripts/ci/visual_evidence_autogen.py all --base origin/${BASE}"
+            echo ""
+            echo "The standard: .github/skills/visual-evidence/SKILL.md"
+            echo "  test/visual/evidence-kit.mjs   (bespoke generators import it)"
+            echo "  test/visual/pr-evidence.mjs    (generic base-vs-head generator)"
             echo ""
             echo "If this change has NO visual or behavioural effect, label the PR"
             echo "'skip-evidence' (and say why)."
             exit 1
           fi
 
-          echo "✓ UI change includes a regression test and before/after evidence."
+          echo "✓ UI change includes a regression test and generated before/after evidence:${proof}"
