@@ -8,8 +8,12 @@ preview: /images/previews/site-personalization-configuration.png
 categories: [Documentation, Quick Start]
 tags: [jekyll, configuration, personalization, customization, yaml]
 keywords:
-  primary: ["jekyll configuration", "site personalization"]
-  secondary: ["yaml config", "site branding", "analytics setup", "social links"]
+  - jekyll configuration
+  - site personalization
+  - yaml config
+  - site branding
+  - analytics setup
+  - social links
 lastmod: 2026-05-30T00:00:00.000Z
 draft: false
 sidebar:

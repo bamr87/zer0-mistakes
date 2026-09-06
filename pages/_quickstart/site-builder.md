@@ -7,8 +7,11 @@ permalink: /quickstart/site-builder/
 categories: [Documentation, Quick Start]
 tags: [setup, wizard, claude, docker, ai-powered]
 keywords:
-  primary: ["jekyll site builder", "guided jekyll setup"]
-  secondary: ["claude code oauth", "docker compose", "zer0-mistakes wizard"]
+  - jekyll site builder
+  - guided jekyll setup
+  - claude code oauth
+  - docker compose
+  - zer0-mistakes wizard
 date: 2026-09-05T00:00:00.000Z
 lastmod: 2026-09-05T00:00:00.000Z
 draft: false
@@ -47,9 +50,11 @@ Open the wizard, connect Claude through the local dev proxy, answer a handful of
 - The Claude Code CLI signed in to a Claude Pro or Max account, so `claude setup-token` can mint a token. Without it the wizard still works; only the Claude panel and the one-click build actions stay off.
 - Docker Desktop, Git, and the GitHub CLI for the site you are about to build. The Prerequisites step checks these for you and shows the install command for your operating system.
 
-## Steps
+## Walk through the wizard
 
-### 1. Connect Claude
+The wizard has nine steps; this walkthrough groups them into six passes.
+
+### Connect
 
 Open `http://localhost:4000/setup/`. The Connect step looks for the dev proxy and shows three commands when it is not running:
 
@@ -61,23 +66,23 @@ node --env-file=.env templates/deploy/chat-proxy/dev-proxy.mjs
 
 The page re-checks every fifteen seconds. Once the badge in the Claude panel turns green, the composer unlocks and the panel greets you. The token never reaches the browser: the proxy holds it and the page only talks to `http://localhost:8787`.
 
-### 2. Prerequisites
+### Prerequisites
 
 Press **Run checks**. The proxy runs a fixed list of read-only version commands (Docker, the Docker engine, Git and its identity, the GitHub CLI and its login, VS Code, Node, the Claude CLI) and the checklist turns green or red per tool. Pick your operating system to see the matching install command, or ask Claude to explain what is missing. Offline, tick each item as you install it.
 
-### 3. Identity, URLs, Structure
+### Identity, URLs and Structure
 
 Describe your site in the brief box and press **Draft with Claude**. Claude proposes a title, subtitle, tagline and description and applies them after you confirm on the inline card. Fill in your GitHub username and repository, press **Suggest** to derive the site URL and base path, then pick a kind of site to preselect collections and a navigation menu you can edit row by row.
 
-### 4. Appearance and Voice
+### Appearance and Voice
 
 Choose one of the seven skins and preview it on the page you are looking at, set the colour mode, and pick a tone and audience. **Draft both with Claude** writes the welcome post and about page in that voice; both are plain Markdown you can edit before they become files.
 
-### 5. Integrations
+### Integrations
 
 Switch on what you want: the improve-this-page widget, Obsidian wiki-links, Giscus comments, PostHog analytics, or the AI chat assistant. Nothing sends data until you add an ID or key, and keys never go in `_config.yml`.
 
-### 6. Build
+### Build
 
 Every generated file is in the preview panel the whole time. Enter a project folder name, press **Check** to see where it will be created, then **Write project**. Press **docker compose up** and watch the build in the terminal panel. When Jekyll reports it is serving, **Open site** takes you to the new site. Without the proxy, download the bundle and run it:
 

@@ -15,13 +15,11 @@ tags:
     - configuration
     - theme
 keywords:
-    primary:
-        - jekyll development
-        - docker compose
-    secondary:
-        - live reload
-        - content creation
-        - theme customization
+  - jekyll development
+  - docker compose
+  - live reload
+  - content creation
+  - theme customization
 lastmod: 2026-05-30T00:00:00.000Z
 draft: false
 sidebar:

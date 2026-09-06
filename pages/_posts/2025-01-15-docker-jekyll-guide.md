@@ -14,6 +14,8 @@ keywords:
   - jekyll docker compose
   - containerized jekyll
   - bundle cache volume
+  - jekyll dual-config pattern
+  - jekyll live reload docker
 date: 2025-01-15T10:00:00.000Z
 layout: article
 preview: /images/favicon_gpt_computer_retro.png
@@ -24,7 +26,7 @@ draft: true
 lastmod: 2026-09-05T00:00:00.000Z
 ---
 
-Docker has revolutionized how developers work with Jekyll sites. This comprehensive guide will walk you through setting up an optimized Docker development environment for your Jekyll projects.
+Docker gives you the same Jekyll environment on every machine — same Ruby, same gems, same build output whether you are on macOS, Windows, or Linux. This guide walks through the compose setup this theme actually uses, and the three decisions most Docker/Jekyll guides get wrong.
 
 > **Skip the typing:** the theme's [Site Builder](/quickstart/site-builder/) generates a `docker-compose.yml` like the one below for your own site, writes it to disk, and can run `docker compose up` for you while Claude explains the output. Everything on this page still applies when you want to understand or tune what it produced.
 

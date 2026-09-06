@@ -9,6 +9,8 @@ tags: [ai, claude, setup, onboarding, docker, proxy]
 author: bamr87
 permalink: /docs/features/site-builder/
 keywords:
+  - jekyll site builder wizard
+  - jekyll setup wizard ai
   - site builder
   - setup wizard
   - claude code oauth
@@ -29,7 +31,7 @@ The Site Builder is the theme's onboarding wizard. The form half runs anywhere t
 
 ## What you'll do
 
-You will learn how the wizard is structured, how to configure or extend a step, and exactly what actions the Claude session is permitted to take.
+Use this reference to understand how the wizard is structured, configure or extend a step, and see exactly what actions the Claude session is permitted to take.
 
 ## Prerequisites
 
@@ -105,7 +107,7 @@ site_builder:
   enabled: true
   endpoint: '/api/wizard'      # dev proxy base; _config_dev.yml sets http://localhost:8787/api/wizard
   chat_endpoint: ''            # '' reuses ai_chat.endpoint
-  model: 'claude-opus-4-8'     # the proxy's CHAT_MODEL still wins
+  model: 'claude-opus-4-8'     # default; the proxy's CHAT_MODEL overrides it server-side
   max_tokens: 4096
   default_port: 4000
 ```

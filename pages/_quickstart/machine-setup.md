@@ -8,8 +8,12 @@ preview: /images/previews/machine-setup.png
 categories: [Documentation, Quick Start]
 tags: [docker, git, setup, development, cross-platform]
 keywords:
-  primary: ["docker installation", "development environment setup"]
-  secondary: ["homebrew", "winget", "git configuration", "vs code"]
+  - docker installation
+  - development environment setup
+  - homebrew
+  - winget
+  - git configuration
+  - vs code
 lastmod: 2026-09-05T00:00:00.000Z
 draft: false
 sidebar:

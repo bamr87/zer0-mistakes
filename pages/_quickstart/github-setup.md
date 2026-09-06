@@ -15,14 +15,12 @@ tags:
   - github-pages
   - version-control
 keywords:
-  primary:
-    - github pages deployment
-    - git workflow
-  secondary:
-    - ssh keys
-    - github cli
-    - fork repository
-    - pull requests
+  - github pages deployment
+  - git workflow
+  - ssh keys
+  - github cli
+  - fork repository
+  - pull requests
 lastmod: 2026-06-15T00:00:00.000Z
 draft: false
 sidebar:

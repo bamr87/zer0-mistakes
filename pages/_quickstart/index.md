@@ -19,13 +19,11 @@ categories:
     - Documentation
     - Quick Start
 keywords:
-    primary:
-        - jekyll theme setup
-        - docker development
-    secondary:
-        - ai installation
-        - cross-platform
-        - bootstrap 5
+  - jekyll theme setup
+  - docker development
+  - ai installation
+  - cross-platform
+  - bootstrap 5
 mermaid: true
 ---
 
