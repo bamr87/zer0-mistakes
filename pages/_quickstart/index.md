@@ -120,7 +120,7 @@ docker compose up
 
 Enable Pages: **Settings → Pages → Branch: main → Save**.
 
-See [docs/FORKING.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/installation/forking.md) for the full fork → configure → personalize guide.
+See [docs/installation/forking.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/installation/forking.md) for the full fork → configure → personalize guide.
 
 ### Option E — Remote Theme
 

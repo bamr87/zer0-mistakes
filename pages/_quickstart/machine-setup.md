@@ -14,6 +14,7 @@ keywords:
   - winget
   - git configuration
   - vs code
+date: 2025-07-01T00:00:00.000Z
 lastmod: 2026-09-05T00:00:00.000Z
 draft: false
 sidebar:

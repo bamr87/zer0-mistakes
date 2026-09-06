@@ -69,6 +69,8 @@ volumes:
   bundle_cache:
 ```
 
+Starting a site from scratch rather than working in this repo? Replace the `build:` block with `image: jekyll/jekyll:4` and mount your site at `/srv/jekyll` — the rest of the file carries over unchanged.
+
 Three things in that file are deliberate, and all three are places the older Docker/Jekyll guides on the web get wrong:
 
 **No `version:` key.** The Compose Specification dropped it in 2022. Modern `docker compose` ignores it and warns when it is present.

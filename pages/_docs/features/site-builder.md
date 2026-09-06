@@ -54,7 +54,7 @@ Use this reference to understand how the wizard is structured, configure or exte
 | Identity | Brief, title, subtitle, tagline, description, owner, email | Drafts identity from the brief |
 | URLs | GitHub user and repo, theme source, url, baseurl, permalink, port | Derives url and baseurl |
 | Structure | Kind of site, collections, main navigation | Recommends collections and a menu |
-| Appearance | Skin, colour mode, lock, background layers, navbar icon | Picks a skin for the tone |
+| Appearance | Skin, color mode, lock, background layers, navbar icon | Picks a skin for the tone |
 | Voice | Tone, audience, welcome post, about page | Writes both drafts in that voice |
 | Integrations | Page feedback, Obsidian, Giscus, PostHog, AI chat, GA4, socials | Advises what fits |
 | Build | Target folder, overwrite switch | Reviews files, writes the project, runs compose, checks the site |
@@ -76,7 +76,7 @@ The preview panel shows every file live and regenerates on each keystroke. Any f
 | `pages/_about/index.md`, `pages/_posts/<date>-welcome.md` | Voice-step drafts with front matter added |
 | `pages/<collection>.md` | One index page per enabled collection on the `collection` layout (`cookbook` layout for `recipes`) |
 | `pages/_docs/getting-started.md`, `pages/_quickstart/first-steps.md`, `pages/_notes/welcome-note.md`, `pages/_recipes/starter-recipe.md` | One valid starter document per enabled collection, showing the front matter that collection needs |
-| `assets/images/logo.svg` | A monogram in the skin's colours, so the navbar never shows a broken logo (the published gem ships no theme images) |
+| `assets/images/logo.svg` | A monogram in the skin's colors, so the navbar never shows a broken logo (the published gem ships no theme images) |
 | `.gitignore`, `.env.example`, `README.md` | Hygiene and a run/publish guide |
 | `zer0.install.yml` | Your answers, replayable by `scripts/bin/install` |
 
@@ -93,7 +93,7 @@ Beyond the form fields, the agent produces a **site plan**: a structured descrip
 | `landing.sections[]` | `features`, `cards`, `steps`, `stats`, `faq`, `cta`, `latest_posts`, `quote`, `text` | Sections rendered through the theme's `section` include with Bootstrap cards, accordions and CTA buttons |
 | `navigation.style` | `flat`, `grouped` | `_data/navigation/main.yml`; grouped turns collections into dropdowns of their planned pages |
 | `navigation.sidebar` | `none`, `auto`, `docs` | `sidebar: {nav: auto}` in `_config.yml`, or a curated `_data/navigation/docs.yml` wired to the docs collection |
-| `theme.palette` | nine presets or `custom` with three hex colours | `assets/css/user-overrides.css`, layered over the skin (primary, links, accent, buttons) |
+| `theme.palette` | nine presets or `custom` with three hex colors | `assets/css/user-overrides.css`, layered over the skin (primary, links, accent, buttons) |
 | `theme.fonts` | seven pairings (system + six Google Fonts pairs) | `user-overrides.css` font variables plus `_includes/custom/head.html`, the theme's end-of-head hook |
 | `theme.radius` | `sharp`, `soft`, `round` | `user-overrides.css` radius tokens |
 | `pages[]` | collection, slug, title, description, date, categories, tags, Markdown body | One file per page under `pages/_<collection>/` |
@@ -151,7 +151,7 @@ Environment: `WIZARD_TARGET_ROOT` and `WIZARD_DISABLE_COMPOSE=1`.
 
 ## Validate a build end to end
 
-Because the agent's answers are not deterministic, the wizard ships a scenario runner rather than a fixed transcript. It samples a realistic brief, author, tone, skin, colour mode and integrations for a site type, drives the whole wizard in a real browser with video recording on, accepts Claude's confirmation cards, writes the project, starts it with Docker, and asserts structural facts about the result: the expected files exist, the site answers on every route for that type, and it carries the chosen title and skin.
+Because the agent's answers are not deterministic, the wizard ships a scenario runner rather than a fixed transcript. It samples a realistic brief, author, tone, skin, color mode and integrations for a site type, drives the whole wizard in a real browser with video recording on, accepts Claude's confirmation cards, writes the project, starts it with Docker, and asserts structural facts about the result: the expected files exist, the site answers on every route for that type, and it carries the chosen title and skin.
 
 ```bash
 # theme on :4000, dev proxy on :8787

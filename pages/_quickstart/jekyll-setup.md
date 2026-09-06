@@ -187,7 +187,7 @@ Jekyll picks it up immediately (live reload refreshes the browser).
 ```text
 zer0-mistakes/
 ├── _config.yml          # Production config
-├── _config_dev.yml      # Dev overrides (loaded by docker-compose)
+├── _config_dev.yml      # Dev overrides (loaded by docker compose)
 ├── docker-compose.yml   # Container definition
 ├── pages/
 │   ├── _posts/          # Blog posts

@@ -21,6 +21,7 @@ keywords:
   - github cli
   - fork repository
   - pull requests
+date: 2025-07-01T00:00:00.000Z
 lastmod: 2026-06-15T00:00:00.000Z
 draft: false
 sidebar:
@@ -32,7 +33,7 @@ quickstart:
 mermaid: true
 ---
 
-# GitHub Setup & Deployment
+# GitHub Setup
 
 Authenticate with GitHub, fork the theme, and deploy your site to GitHub Pages.
 

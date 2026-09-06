@@ -692,7 +692,7 @@ document.addEventListener('DOMContentLoaded', function() { // Configuration stat
     const bluesky = getValue('cfg-bluesky');
     const discord = getValue('cfg-discord');
     
-    const themeSkin = getValue('cfg-theme-skin', 'dark');
+    const themeSkin = getValue('cfg-theme-skin', 'air');
     const primaryColor = getValue('cfg-primary-color', '#007bff');
     const logo = getValue('cfg-logo');
     const ogImage = getValue('cfg-og-image');
@@ -936,7 +936,7 @@ plugins:
       // Set specific defaults
       document.getElementById('cfg-locale').value = 'en-US';
       document.getElementById('cfg-title-separator').value = '|';
-      document.getElementById('cfg-theme-skin').value = 'dark';
+      document.getElementById('cfg-theme-skin').value = 'air';
       document.getElementById('cfg-primary-color').value = '#007bff';
       document.getElementById('cfg-primary-color-picker').value = '#007bff';
       document.getElementById('cfg-wpm').value = '200';
