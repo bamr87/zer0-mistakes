@@ -1,6 +1,6 @@
 ---
 title: "Jekyll Setup: Run the Dev Server and Create Content"
-author: Zer0-Mistakes Development Team
+author: "Zer0-Mistakes Development Team"
 layout: default
 description: Configure your Docker-first Jekyll development environment. Start the development server, create content, and customize your theme.
 permalink: /quickstart/jekyll-setup/
