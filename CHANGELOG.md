@@ -67,6 +67,11 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   [#454](https://github.com/bamr87/zer0-mistakes/pull/454) red: its authoring
   agents ran where Docker was gated, and nothing in CI could render what they
   could not. Kill switch: repo variable `VISUAL_EVIDENCE_AUTOGEN_ENABLED=false`.
+  The lane restores its own tooling from the base branch before it runs, so it
+  works on branches cut before it shipped: without that its first real run on
+  #454 died in 20 seconds (that branch has no copy of the orchestrator), and a
+  branch carrying an older `update-snapshots.sh` would have silently generated
+  nothing at all.
 - **Site Builder — a Claude-guided setup wizard that ends with a running site
   (ZER0-086, extends ZER0-067)** — `/setup/` (and the `welcome` layout) grew
   from a five-step `_config.yml` form into a nine-step builder: Connect →

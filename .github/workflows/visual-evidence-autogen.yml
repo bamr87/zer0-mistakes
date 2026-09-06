@@ -78,6 +78,13 @@ jobs:
       BASE_REF: ${{ github.event.pull_request.base.ref }}
       AUTOGEN: test/visual-results/autogen
       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      # Kept in step with LANE_TOOLING in scripts/ci/visual_evidence_autogen.py,
+      # which the unit tests assert against.
+      LANE_TOOLING: >-
+        scripts/ci/visual_evidence_autogen.py
+        test/visual/pr-evidence.mjs
+        test/visual/snapshot-diff-montage.mjs
+        test/update-snapshots.sh
     steps:
       - name: Checkout the PR branch
         uses: actions/checkout@v7
@@ -86,10 +93,30 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.AUTO_PR_GITHUB_TOKEN || secrets.PAT_TOKEN || github.token }}
 
+      # The workspace is the PR's branch, but this lane's own tooling must come
+      # from the base branch — see LANE_TOOLING in the orchestrator for why, in
+      # full. Short version: a branch cut before the lane shipped has no copy
+      # (that is how the first real run died on #454, 20 seconds in), a branch
+      # with an OLDER copy silently no-ops, and the orchestrator is the step
+      # holding the write token. The PR's own <slug>-evidence.mjs is untouched.
+      - name: Restore the lane's tooling from the base branch
+        run: |
+          git fetch --quiet origin "$BASE_REF"
+          # shellcheck disable=SC2086  # LANE_TOOLING is an intentional path list
+          git checkout "origin/${BASE_REF}" -- $LANE_TOOLING
+          # `git checkout <ref> -- <paths>` STAGES what it writes. Unstage at
+          # once: nothing the lane restores may ride along in the artifact
+          # commit, whose only `git add` is the planner's own paths.
+          # shellcheck disable=SC2086
+          git reset --quiet HEAD -- $LANE_TOOLING
+          chmod +x test/update-snapshots.sh
+          echo "Lane tooling restored from origin/${BASE_REF}:"
+          # shellcheck disable=SC2086
+          git --no-pager log -1 --format='  %h %s' "origin/${BASE_REF}"
+
       - name: Plan what this PR needs
         id: plan
         run: |
-          git fetch --quiet origin "$BASE_REF"
           mkdir -p "$AUTOGEN"
           python3 scripts/ci/visual_evidence_autogen.py plan \
             --base "origin/${BASE_REF}" --head-ref "$HEAD_REF" \

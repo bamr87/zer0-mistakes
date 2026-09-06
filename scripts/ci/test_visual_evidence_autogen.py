@@ -259,6 +259,50 @@ def test_stage_command_output() -> None:
         check("one path per line when there is something to add", buf.getvalue() == "test/visual/evidence/x\n")
 
 
+def test_lane_tooling_contract() -> None:
+    """The regression that killed the lane's first real run on a real PR.
+
+    visual-evidence-autogen.yml checks out the PR's branch, but the orchestrator
+    lives on main. On #454 — a branch cut before the lane shipped — the job died
+    in 20 seconds with "can't open file scripts/ci/visual_evidence_autogen.py",
+    on the very PR the lane was built to unstick. Every open PR on the day this
+    ships has the same shape, so the fix (restore the lane's tooling from the
+    base branch) is pinned here rather than left to review.
+    """
+    print("contract — the lane's tooling comes from the BASE branch")
+    wf = (REPO_ROOT / ".github/workflows/visual-evidence-autogen.yml").read_text(encoding="utf-8")
+
+    check("the orchestrator itself is restored (the #454 crash)",
+          "scripts/ci/visual_evidence_autogen.py" in vea.LANE_TOOLING)
+    check("update-snapshots.sh is restored (an older copy lacks the hooks and silently no-ops)",
+          "test/update-snapshots.sh" in vea.LANE_TOOLING)
+    check("both shared generators are restored",
+          "test/visual/pr-evidence.mjs" in vea.LANE_TOOLING
+          and "test/visual/snapshot-diff-montage.mjs" in vea.LANE_TOOLING)
+    check("the PR's OWN evidence spec is NOT overwritten",
+          not any(p.endswith("-evidence.mjs") and "pr-evidence" not in p for p in vea.LANE_TOOLING))
+    check("evidence-kit.mjs is left to the PR (a shared library it may extend)",
+          "test/visual/evidence-kit.mjs" not in vea.LANE_TOOLING)
+
+    # The workflow's env list and the module constant must not drift apart.
+    m = re.search(r"LANE_TOOLING: >-\n((?:[ ]{8}\S+\n)+)", wf)
+    check("the workflow declares LANE_TOOLING", bool(m))
+    if m:
+        declared = tuple(m.group(1).split())
+        check("workflow LANE_TOOLING == the module's constant (single source of truth)",
+              declared == vea.LANE_TOOLING)
+
+    check("it restores from the base ref, not the head",
+          'git checkout "origin/${BASE_REF}" -- $LANE_TOOLING' in wf)
+    check("…and unstages at once, so restored files can never be committed",
+          'git reset --quiet HEAD -- $LANE_TOOLING' in wf)
+    # Ordering: the restore must happen before anything invokes the orchestrator.
+    restore_at = wf.find('git checkout "origin/${BASE_REF}" -- $LANE_TOOLING')
+    first_use = wf.find("python3 scripts/ci/visual_evidence_autogen.py plan")
+    check("the restore runs BEFORE the first orchestrator call",
+          restore_at != -1 and first_use != -1 and restore_at < first_use)
+
+
 def test_workflow_wiring() -> None:
     print("contract — the workflow, the hooks, the hand-offs")
     wf = REPO_ROOT / ".github/workflows/visual-evidence-autogen.yml"
@@ -285,7 +329,7 @@ def main() -> int:
     for t in (test_detect_slug, test_plan_pr_454_shape, test_plan_loop_guard_and_budget, test_plan_generic_fallback,
               test_plan_respects_author_evidence, test_plan_out_of_scope, test_styling_matches_ci_filter,
               test_ui_prefixes_match_gate, test_parse_results, test_decide, test_stage_and_messages,
-              test_stage_command_output, test_workflow_wiring):
+              test_stage_command_output, test_lane_tooling_contract, test_workflow_wiring):
         t()
     print(f"\n{PASSED} passed, {len(FAILURES)} failed")
     for f in FAILURES:
