@@ -40,7 +40,7 @@ flowchart TD
     B --> E[Add theme to existing repo]
     B --> F[Zero-install / cloud]
 
-    C --> C1["Option A: Install wizard\ncurl … | bash + docker-compose up"]
+    C --> C1["Option A: Install wizard\ncurl … | bash + docker compose up"]
     C --> C2["Option B: GitHub Template\ngh repo create --template"]
     D --> D1["Option D: Fork/Clone\ngh repo fork + fork-cleanup.sh"]
     E --> E1["Option E: Remote theme\nremote_theme: bamr87/zer0-mistakes"]
@@ -53,7 +53,7 @@ flowchart TD
 ```bash
 mkdir my-site && cd my-site
 curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
-docker-compose up
+docker compose up
 ```
 
 Your site will be live at `http://localhost:4000`.
@@ -86,20 +86,20 @@ Prefer a browser over a terminal? The **[Site Builder](/quickstart/site-builder/
 ```bash
 mkdir my-site && cd my-site
 curl -fsSL https://raw.githubusercontent.com/bamr87/zer0-mistakes/main/install.sh | bash
-docker-compose up
+docker compose up
 ```
 
 ### Option B — GitHub Template
 
 1. Go to [github.com/bamr87/zer0-mistakes](https://github.com/bamr87/zer0-mistakes)
 2. Click **Use this template** → **Create a new repository**
-3. Clone your new repo and run `docker-compose up`
+3. Clone your new repo and run `docker compose up`
 
 Or via CLI:
 
 ```bash
 gh repo create my-site --template bamr87/zer0-mistakes --clone
-cd my-site && docker-compose up
+cd my-site && docker compose up
 ```
 
 ### Option C — GitHub Codespaces
@@ -116,7 +116,7 @@ Fork into `<your-username>.github.io` to get your own GitHub Pages site:
 gh repo fork bamr87/zer0-mistakes --clone
 cd zer0-mistakes
 ./scripts/fork-cleanup.sh   # interactive config wizard
-docker-compose up
+docker compose up
 ```
 
 Enable Pages: **Settings → Pages → Branch: main → Save**.
@@ -166,8 +166,8 @@ bundle install && bundle exec jekyll serve
 
 ```bash
 lsof -i :4000          # see what's running
-docker-compose down    # stop any existing containers
-docker-compose up      # restart
+docker compose down    # stop any existing containers
+docker compose up      # restart
 ```
 
 **Docker platform warnings (Apple Silicon)**
@@ -177,14 +177,14 @@ This is expected — `docker-compose.yml` already sets `platform: linux/amd64`. 
 **Jekyll build errors**
 
 ```bash
-docker-compose exec jekyll bundle exec jekyll doctor
-docker-compose exec jekyll bundle exec jekyll build --trace
+docker compose exec jekyll bundle exec jekyll doctor
+docker compose exec jekyll bundle exec jekyll build --trace
 ```
 
 **Validate your setup:**
 
 ```bash
-docker-compose exec -T jekyll bundle exec jekyll build \
+docker compose exec -T jekyll bundle exec jekyll build \
   --config '_config.yml,_config_dev.yml'
 ```
 

@@ -29,7 +29,7 @@ The Site Builder (features `ZER0-067` and `ZER0-086`) is the theme's onboarding 
 
 ## What you'll do
 
-Understand how the wizard is put together so you can configure it, extend a step, or trust what the Claude session is allowed to do.
+You will learn how the wizard is structured, how to configure or extend a step, and exactly what actions the Claude session is permitted to take.
 
 ## Prerequisites
 

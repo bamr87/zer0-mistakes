@@ -1,5 +1,5 @@
 ---
-title: "Machine Setup"
+title: "Machine Setup: Install Docker, Git, and Dev Tools"
 author: "Zer0-Mistakes Development Team"
 layout: default
 description: "Install Docker, Git, and essential development tools for the Zer0-Mistakes Jekyll theme. Cross-platform setup for macOS, Windows, and Linux."

@@ -9,6 +9,11 @@ tags:
   - jekyll
   - devops
   - containerization
+keywords:
+  - docker jekyll development
+  - jekyll docker compose
+  - containerized jekyll
+  - bundle cache volume
 date: 2025-01-15T10:00:00.000Z
 layout: article
 preview: /images/favicon_gpt_computer_retro.png
@@ -37,19 +42,38 @@ Docker provides a consistent development environment across all platforms:
 Here's a basic `docker-compose.yml` configuration:
 
 ```yaml
-version: "3.8"
 services:
   jekyll:
-    image: jekyll/jekyll:latest
-    platform: linux/amd64
+    # This theme builds its own image rather than using jekyll/jekyll: the
+    # dev-test stage carries the full Jekyll + tooling toolchain.
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: dev-test
     ports:
       - "4000:4000"
+      - "35729:35729"        # LiveReload
     volumes:
-      - .:/srv/jekyll
+      - .:/site
+      - bundle_cache:/usr/local/bundle
     environment:
       - JEKYLL_ENV=development
-    command: jekyll serve --watch
+    command: >
+      sh -c "(bundle check || bundle install) &&
+             bundle exec jekyll serve --watch --livereload
+             --config '_config.yml,_config_dev.yml' --host 0.0.0.0 --port 4000"
+
+volumes:
+  bundle_cache:
 ```
+
+Three things in that file are deliberate, and all three are places the older Docker/Jekyll guides on the web get wrong:
+
+**No `version:` key.** The Compose Specification dropped it in 2022. Modern `docker compose` ignores it and warns when it is present.
+
+**No `platform:` pin.** Forcing `linux/amd64` runs the whole image under QEMU emulation on Apple Silicon, which costs 3–10× on `apt`, `bundle install` and native gem builds. Docker builds your native architecture by default and Jekyll serves identically. Export `DOCKER_DEFAULT_PLATFORM=linux/amd64` only when you specifically need x86 parity with production.
+
+**A named volume for gems.** `bundle_cache` keeps installed gems outside the bind mount, so a rebuild does not reinstall them and your host stays clean.
 
 ## Essential Docker Commands
 
@@ -65,11 +89,18 @@ Build your site:
 docker compose exec jekyll jekyll build
 ```
 
+## The Dual-Config Pattern
+
+Notice the `--config '_config.yml,_config_dev.yml'` in the command. Jekyll layers configuration files left to right, so the second file overrides the first. Production settings live in `_config.yml`; the development file flips the handful of keys that should differ locally — a `localhost` URL, live reload, analytics off, and the local theme instead of the remote one.
+
+One caution: Jekyll **replaces** rather than merges list keys such as `exclude:` and `plugins:`. A short list in the dev file silently discards the production one, so keep both in sync.
+
 ## Best Practices
 
-1. **Use volume mounts** for live reloading
-2. **Specify platform** for Apple Silicon compatibility
+1. **Use volume mounts** for live reloading, and a named volume for gems
+2. **Let Docker pick the architecture** rather than pinning `platform:`
 3. **Set environment variables** for development vs production
 4. **Keep containers lightweight** with minimal dependencies
+5. **Layer your configs** instead of maintaining two full copies
 
 Docker makes Jekyll development a breeze. Start containerizing your workflow today!
