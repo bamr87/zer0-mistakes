@@ -323,7 +323,7 @@ Customize the look and feel of your site.
             <option value="plum">Plum</option>
             <option value="sunrise">Sunrise</option>
           </select>
-          <div class="form-text">Color scheme for your site — light and dark modes are handled separately by the color-mode toggle</div>
+          <div class="form-text">Color scheme for your site. Seven skins ship with the theme: air, aqua, dirt, neon, mint, plum and sunrise. Light and dark are handled separately by the color-mode toggle, so a <code>theme_skin</code> of <code>dark</code> or <code>contrast</code> in an older config no longer resolves — pick one of the seven instead.</div>
         </div>
         <div class="col-md-6">
           <label for="cfg-primary-color" class="form-label"><i class="bi bi-droplet-fill"></i> Primary Color</label>

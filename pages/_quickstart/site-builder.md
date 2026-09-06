@@ -76,7 +76,7 @@ Describe your site in the brief box and press **Draft with Claude**. Claude prop
 
 ### Appearance and Voice
 
-Choose one of the seven skins and preview it on the page you are looking at, set the colour mode, and pick a tone and audience. **Draft both with Claude** writes the welcome post and about page in that voice; both are plain Markdown you can edit before they become files.
+Choose one of the seven skins and preview it on the page you are looking at, set the color mode, and pick a tone and audience. **Draft both with Claude** writes the welcome post and about page in that voice; both are plain Markdown you can edit before they become files.
 
 ### Integrations
 
