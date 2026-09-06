@@ -14,6 +14,7 @@ keywords:
   - site branding
   - analytics setup
   - social links
+date: 2025-07-01T00:00:00.000Z
 lastmod: 2026-05-30T00:00:00.000Z
 draft: false
 sidebar:
@@ -320,7 +321,7 @@ Customize the look and feel of your site.
             <option value="plum">Plum</option>
             <option value="sunrise">Sunrise</option>
           </select>
-          <div class="form-text">Colour scheme for your site — light and dark modes are handled separately by the colour-mode toggle</div>
+          <div class="form-text">Color scheme for your site — light and dark modes are handled separately by the color-mode toggle</div>
         </div>
         <div class="col-md-6">
           <label for="cfg-primary-color" class="form-label"><i class="bi bi-droplet-fill"></i> Primary Color</label>
@@ -585,7 +586,7 @@ Configure advanced features like comments, plugins, and build settings.
   <ol class="mb-0 mt-2">
     <li>Copy the generated configuration above</li>
     <li>Paste it into your <code>_config.yml</code> file</li>
-    <li>Restart your Jekyll server: <code>docker-compose restart</code></li>
+    <li>Restart your Jekyll server: <code>docker compose restart</code></li>
     <li>View your personalized site at <code>http://localhost:4000</code></li>
   </ol>
 </div>

@@ -355,9 +355,18 @@ def check_quality(body, quality)
     #     generator carry URLs in JS strings and markup, which are code, not prose.
     #   <code>http://…</code> — inline code in HTML syntax, which the markdown
     #     backtick form is already exempt from; the two should agree.
+    # Stripping markup in ONE pass leaves split or nested tags behind (CodeQL:
+    # incomplete multi-character sanitization). This is prose extraction for
+    # counting, never sanitization for output, but iterate to a fixpoint anyway
+    # so the result is exact. Each pass strictly shortens the string, so it
+    # terminates.
     prose = strip_code_fences(body)
-             .gsub(%r{<(script|style|code|pre)\b.*?</\1>}mi, '')
-             .gsub(/<[^>]+>/, '')
+    loop do
+      before = prose
+      prose = prose.gsub(%r{<(script|style|code|pre)\b[^>]*>.*?</\1\s*>}mi, ' ')
+                   .gsub(/<[^<>]*>/, ' ')
+      break if prose == before
+    end
     bare = prose.scan(%r{(?<![("<\[\]])\bhttps?://[^\s)>\]]+}).reject { |u| u.include?('](') }
     issues << Issue.new('info', 'quality', "#{bare.length} bare URL(s) — wrap as [text](url)") unless bare.empty?
   end

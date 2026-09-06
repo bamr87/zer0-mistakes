@@ -142,7 +142,7 @@ https://<your-username>.github.io
 ## Step 6 — Push Your Changes
 
 ```bash
-git add -A
+git add _config.yml pages/          # stage by path, not `git add -A`
 git commit -m "feat: initial site personalization"
 git push origin main
 ```
@@ -157,8 +157,8 @@ Watch the deployment: **Actions** tab → **pages build and deployment** workflo
 # New feature branch
 git checkout -b feat/my-feature
 
-# Make changes, then commit
-git add -A
+# Make changes, then stage the files you actually touched
+git add pages/_posts/my-first-post.md
 git commit -m "feat(posts): add first blog post"
 
 # Push and open PR
