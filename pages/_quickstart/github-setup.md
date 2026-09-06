@@ -22,7 +22,7 @@ keywords:
   - fork repository
   - pull requests
 date: 2025-07-01T00:00:00.000Z
-lastmod: 2026-06-15T00:00:00.000Z
+lastmod: 2026-09-05T00:00:00.000Z
 draft: false
 sidebar:
   nav: quickstart

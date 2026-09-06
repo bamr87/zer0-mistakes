@@ -15,7 +15,7 @@ keywords:
   - analytics setup
   - social links
 date: 2025-07-01T00:00:00.000Z
-lastmod: 2026-05-30T00:00:00.000Z
+lastmod: 2026-09-05T00:00:00.000Z
 draft: false
 sidebar:
   nav: quickstart
@@ -39,6 +39,8 @@ After completing the [Quick Start installation](/quickstart/), use this guide to
   <i class="bi bi-info-circle-fill"></i> <strong>How This Works</strong>
   <p class="mb-0 mt-2">Fill out the forms in each section. Your settings will be automatically saved and combined into a complete <code>_config.yml</code> at the bottom of the page. Copy and paste to customize your site!</p>
 </div>
+
+> This page is an interactive generator and needs JavaScript. With it disabled, use the [Site Builder](/quickstart/site-builder/), which produces the same `_config.yml` and can write the whole project for you.
 
 ## 📋 Configuration Sections
 

@@ -20,7 +20,7 @@ keywords:
   - live reload
   - content creation
   - theme customization
-lastmod: 2026-05-30T00:00:00.000Z
+lastmod: 2026-09-05T00:00:00.000Z
 draft: false
 sidebar:
     nav: quickstart
