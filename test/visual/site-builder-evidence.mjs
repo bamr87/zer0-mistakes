@@ -89,13 +89,39 @@ try {
   metrics.steps.url = await page.locator('#cfg-url').inputValue();
   metrics.steps.baseurl = await page.locator('#cfg-baseurl').inputValue();
 
-  // 05 — Structure: site type + nav editor.
+  // 05 — Structure: site type, navigation shape, landing template, page planner.
   await step(page, 'structure');
   await page.locator('label[for="site-type-mixed"]').click();
   await page.waitForTimeout(300);
   await shot(page, '05-structure.png');
   metrics.captured.push('05-structure.png');
   metrics.steps.navRows = await page.locator('#nav-editor .nav-row').count();
+
+  // 05b — the site plan's structural half: a grouped navbar, the docs sidebar
+  // tree, a docs-hub landing page, and two planned example pages.
+  await page.locator('label[for="nav-style-grouped"]').click();
+  await page.locator('#cfg-sidebar-mode').selectOption('docs');
+  await page.locator('label[for="landing-docs-hub"]').click();
+  for (const [collection, title] of [['docs', 'Backups and restores'], ['posts', 'The incident that taught us WAL']]) {
+    await page.locator('#btn-page-add').click();
+    const row = page.locator('#pages-planner .page-row').last();
+    await row.locator('.page-collection').selectOption(collection);
+    await row.locator('.page-title').fill(title);
+  }
+  await page.locator('#pages-planner').scrollIntoViewIfNeeded();
+  await page.waitForTimeout(400);
+  await shot(page, '05b-site-plan.png');
+  metrics.captured.push('05b-site-plan.png');
+  metrics.steps.plan = await page.evaluate(() => {
+    const p = window.Zer0SetupWizard.getPlan();
+    return { template: p.landing.template, nav: p.navigation.style, sidebar: p.navigation.sidebar, pages: p.pages.map((x) => `${x.collection}/${x.slug}`) };
+  });
+
+  // 05c — the landing data file the plan generates.
+  await page.locator('.wizard-file-tab[data-file="_data/landing.yml"]').click();
+  await page.waitForTimeout(250);
+  await shot(page, '05c-landing-yml.png');
+  metrics.captured.push('05c-landing-yml.png');
 
   // 06 — Appearance with the skin preview on.
   await step(page, 'appearance');
@@ -105,6 +131,27 @@ try {
   await shot(page, '06-appearance-preview-aqua.png');
   metrics.captured.push('06-appearance-preview-aqua.png');
   metrics.steps.previewSkin = await page.evaluate(() => document.documentElement.getAttribute('data-theme-skin'));
+
+  // 06b — the plan's theme overrides (palette · fonts · corners), which sit
+  // below the fold on the skin shot. The live preview is still on, so the page
+  // itself carries the palette and web font being chosen.
+  await page.locator('label[for="palette-ocean"]').click();
+  await page.locator('#cfg-fonts').selectOption('playfair-lato');
+  await page.locator('label[for="radius-round"]').click();
+  await page.locator('#cfg-fonts').scrollIntoViewIfNeeded();
+  await page.waitForTimeout(700); // let the web font load and repaint
+  await shot(page, '06b-appearance-palette-fonts.png');
+  metrics.captured.push('06b-appearance-palette-fonts.png');
+  metrics.steps.overrides = await page.evaluate(() => ({
+    primary: getComputedStyle(document.documentElement).getPropertyValue('--bs-primary').trim(),
+    body: getComputedStyle(document.body).fontFamily,
+  }));
+
+  // 06c — the stylesheet those choices generate.
+  await page.locator('.wizard-file-tab[data-file="assets/css/user-overrides.css"]').click();
+  await page.waitForTimeout(250);
+  await shot(page, '06c-user-overrides-css.png');
+  metrics.captured.push('06c-user-overrides-css.png');
   await page.locator('#btn-skin-preview').click();
 
   // 07 — Voice.
@@ -113,7 +160,9 @@ try {
   await page.locator('#cfg-welcome-title').fill('Why another Postgres site?');
   await page.locator('#cfg-welcome-body').fill('Because most guides stop at `CREATE DATABASE`. This one starts at 3 a.m. when replication lag is climbing.');
   await page.waitForTimeout(300);
-  await page.locator('.wizard-file-tab[data-file^="pages/_posts/"]').click();
+  // The planned example pages also live under pages/_posts/, so target the
+  // welcome post by name rather than by prefix.
+  await page.locator('.wizard-file-tab[data-file$="-welcome.md"]').first().click();
   await page.waitForTimeout(200);
   await shot(page, '07-voice-welcome-post.png');
   metrics.captured.push('07-voice-welcome-post.png');

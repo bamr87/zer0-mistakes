@@ -1,6 +1,6 @@
 ---
 title: "Site Builder (Claude-Guided Setup Wizard)"
-description: "Reference for the Site Builder: its nine steps, the files it generates, the Claude tools, the dev-proxy routes behind them, and the safety boundaries."
+description: "The Site Builder reference covers its nine steps, the files it generates, the Claude tools, the dev-proxy routes behind them, and the safety boundaries."
 date: 2026-09-05T00:00:00.000Z
 lastmod: 2026-09-05T00:00:00.000Z
 layout: default
@@ -25,7 +25,7 @@ sidebar:
 
 # Site Builder
 
-The Site Builder (features `ZER0-067` and `ZER0-086`) is the theme's onboarding wizard. The form half runs anywhere the theme renders, GitHub Pages included. The Claude half connects through the local dev proxy and turns the wizard into an assisted build: Claude sees every answer, proposes and applies values, checks the machine, reads the theme's source, writes the project, and runs Docker.
+The Site Builder is the theme's onboarding wizard. The form half runs anywhere the theme renders, GitHub Pages included. The Claude half connects through the local dev proxy and turns the wizard into an assisted build: Claude sees every answer, proposes and applies values, checks the machine, reads the theme's source, writes the project, and runs Docker.
 
 ## What you'll do
 
@@ -112,7 +112,7 @@ site_builder:
 
 ## The Claude session
 
-Every turn sends a system prompt built from four parts: the framework brief from the data file, the field schema the wizard exposes, the current step's guidance, and a summary of every answer, check result and generated file. Because the form is the single source of truth and the script only talks to it through `window.Zer0SetupWizard`, anything the user types and anything Claude applies is visible to both immediately.
+Every turn sends a system prompt built from four parts: the framework brief from the data file, the field schema the wizard exposes, the current step's guidance, and a summary of every answer, check result and generated file. Because the form is the single source of truth and the script only talks to it through `window.Zer0SetupWizard`, anything you type and anything Claude applies is visible to both immediately.
 
 Tools available to the model:
 

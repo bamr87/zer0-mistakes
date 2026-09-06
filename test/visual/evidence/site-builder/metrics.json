@@ -6,7 +6,11 @@
     "03-identity.png",
     "04-urls.png",
     "05-structure.png",
+    "05b-site-plan.png",
+    "05c-landing-yml.png",
     "06-appearance-preview-aqua.png",
+    "06b-appearance-palette-fonts.png",
+    "06c-user-overrides-css.png",
     "07-voice-welcome-post.png",
     "08-integrations.png",
     "09-build.png",
@@ -20,7 +24,20 @@
     "url": "https://samrivera.github.io",
     "baseurl": "/postgres-in-production",
     "navRows": 4,
+    "plan": {
+      "template": "docs-hub",
+      "nav": "grouped",
+      "sidebar": "docs",
+      "pages": [
+        "docs/backups-and-restores",
+        "posts/the-incident-that-taught-us-wal"
+      ]
+    },
     "previewSkin": "aqua",
+    "overrides": {
+      "primary": "#0b6e99",
+      "body": "Lato, system-ui, sans-serif"
+    },
     "targetNote": "/private/tmp/claude-501/-Users-bamr87-github-zer0-mistakes/c7dbccdd-eec0-4ce1-8bb8-33ef754af527/scratchpad/sites/postgres-in-production — will be created.",
     "files": [
       "_config.yml",
@@ -30,15 +47,23 @@
       "index.md",
       "_data/navigation/main.yml",
       "pages/_about/index.md",
-      "pages/_posts/2026-09-05-welcome.md",
+      "pages/_posts/2026-09-06-welcome.md",
       "pages/posts.md",
       "pages/docs.md",
+      "pages/_docs/getting-started.md",
+      "pages/_docs/backups-and-restores.md",
+      "pages/_posts/2026-09-06-the-incident-that-taught-us-wal.md",
+      "_data/landing.yml",
+      "_data/navigation/docs.yml",
+      "assets/css/user-overrides.css",
+      "_includes/custom/head.html",
+      "assets/images/logo.svg",
       ".gitignore",
       "zer0.install.yml",
       ".env.example",
       "README.md"
     ],
-    "writeCard": "Project written14 written, 0 skipped → /private/tmp/claude-501/-Users-bamr87-github-zer0-mistakes/c7dbccdd-eec0-4ce1-8bb8-33ef754af527/scratchpad/sites/postgres-in-productiondocker compose up"
+    "writeCard": "Project written22 written, 0 skipped → /private/tmp/claude-501/-Users-bamr87-github-zer0-mistakes/c7dbccdd-eec0-4ce1-8bb8-33ef754af527/scratchpad/sites/postgres-in-productiondocker compose up"
   },
   "proxy": "online",
   "mobileOverflow": 0

@@ -1,6 +1,6 @@
 ---
 title: "Docker for Jekyll Development: A Complete Guide"
-description: Learn how to set up a Docker-based development environment for Jekyll projects with optimized configurations for cross-platform compatibility.
+description: Set up a Docker-based Jekyll environment with live reload, gem caching, and the dual-config pattern for consistent builds on macOS, Windows, and Linux.
 categories:
   - Development
   - Tutorial
@@ -103,4 +103,4 @@ One caution: Jekyll **replaces** rather than merges list keys such as `exclude:`
 4. **Keep containers lightweight** with minimal dependencies
 5. **Layer your configs** instead of maintaining two full copies
 
-Docker makes Jekyll development a breeze. Start containerizing your workflow today!
+Run `docker compose up` and open `http://localhost:4000` — your site serves with live reload from a clean, portable container, and your host stays free of Ruby.

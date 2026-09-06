@@ -6,6 +6,7 @@ description: Complete setup guide for the Zer0-Mistakes Jekyll theme featuring D
 permalink: /quickstart/
 sidebar:
     nav: quickstart
+date: 2025-07-01T00:00:00.000Z
 lastmod: 2026-09-05T00:00:00.000Z
 preview: /images/previews/zer0-mistakes-quick-start-guide.png
 tags:
@@ -172,7 +173,7 @@ docker compose up      # restart
 
 **Docker platform warnings (Apple Silicon)**
 
-This is expected — `docker-compose.yml` already sets `platform: linux/amd64`. The site works normally.
+No `platform:` pin is set — Docker builds your native architecture by default, which is what you want. Forcing `linux/amd64` runs the image under QEMU emulation and costs 3–10× on installs and native gem builds. If a third-party tool prints this warning, it is safe to ignore. Export `DOCKER_DEFAULT_PLATFORM=linux/amd64` only when you need explicit x86 parity with production.
 
 **Jekyll build errors**
 

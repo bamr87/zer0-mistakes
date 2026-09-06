@@ -2,7 +2,7 @@
 title: "Site Builder: Guided Setup with Claude"
 author: "Zer0-Mistakes Development Team"
 layout: default
-description: "Build a zer0-mistakes site in your browser: Claude checks your machine, drafts your configuration and content, writes the project, and starts Docker."
+description: "The Site Builder walks you through nine steps, from prerequisites to a running zer0-mistakes site, with Claude checking your machine and starting Docker."
 permalink: /quickstart/site-builder/
 categories: [Documentation, Quick Start]
 tags: [setup, wizard, claude, docker, ai-powered]
@@ -22,7 +22,7 @@ mermaid: true
 
 # Site Builder
 
-The Site Builder is a nine-step wizard that takes you from an empty folder to a personalised, running zer0-mistakes site. It lives at `/setup/` on any local build of the theme and on the welcome screen of a fresh remote-theme site. An embedded Claude session sits beside every step: it can read your answers, fill in the forms, check your machine, read the theme's real source code, write the generated project to disk, and start Docker.
+The Site Builder is a nine-step wizard that takes you from an empty folder to a personalized, running zer0-mistakes site. It lives at `/setup/` on any local build of the theme and on the welcome screen of a fresh remote-theme site. An embedded Claude session sits beside every step: it can read your answers, fill in the forms, check your machine, read the theme's real source code, write the generated project to disk, and start Docker.
 
 ```mermaid
 flowchart LR

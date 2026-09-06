@@ -17,7 +17,11 @@ BASE_URL=http://localhost:4000 node test/visual/site-builder-evidence.mjs
 | `03-identity.png` | Brief, title, subtitle, description (with the 160-char counter), owner and email; the preview's `_config.yml` reflects them as typed. |
 | `04-urls.png` | GitHub user + repo, then **Suggest** derived `url: https://samrivera.github.io` and `baseurl: /postgres-in-production`. |
 | `05-structure.png` | The "Blog + docs" quick-pick preselected `posts`, `docs`, `about` and rebuilt the navigation editor (4 rows). |
+| `05b-site-plan.png` | The site plan's structural half: navigation style (flat/grouped), sidebar mode, the five landing templates, and the example-page planner with two pages added. |
+| `05c-landing-yml.png` | The `_data/landing.yml` that plan generates — hero and sections as editable copy, not markup. |
 | `06-appearance-preview-aqua.png` | Skin cards with gradient swatches; **Preview on this page** set `data-theme-skin="aqua"` on `<html>` so the page itself re-skins. |
+| `06b-appearance-palette-fonts.png` | The plan's theme overrides: nine palettes plus custom, seven font pairings (the sample line renders in the chosen face), and corner radius. The preview is live, so the page carries the Ocean palette and Playfair/Lato as they are picked — measured `--bs-primary: #0b6e99`, body `Lato`. |
+| `06c-user-overrides-css.png` | The `assets/css/user-overrides.css` those choices generate. `_config.yml` sets `user_overrides: true`, which is what makes the theme link it — without that flag the file shipped and nothing changed. |
 | `07-voice-welcome-post.png` | Tone/audience and the welcome-post draft, with the preview tab switched to `pages/_posts/<date>-welcome.md` showing the front matter the generator added. |
 | `08-integrations.png` | Integration switches; enabling Giscus reveals its ID sub-fields. Keys are never emitted into `_config.yml`. |
 | `09-build.png` | Build step: every recommended field filled, project folder resolved through the proxy (`… — will be created.`), and the proxy-gated actions enabled. |
@@ -30,6 +34,8 @@ BASE_URL=http://localhost:4000 node test/visual/site-builder-evidence.mjs
 | Metric | Value |
 | --- | --- |
 | Steps | 9 |
+| Landing templates · section types | 5 · 9 |
+| Palettes · font pairings · corner radii | 9 (+custom) · 7 · 3 |
 | Generated files | 14 (`_config.yml`, `_config_dev.yml`, `Gemfile`, `docker-compose.yml`, `index.md`, `_data/navigation/main.yml`, about page, welcome post, `pages/posts.md`, `pages/docs.md`, `.gitignore`, `zer0.install.yml`, `.env.example`, `README.md`) |
 | Required prerequisites reported ready by live checks | 5 of 5 |
 | Files written through the proxy | 14 written, 0 skipped |
