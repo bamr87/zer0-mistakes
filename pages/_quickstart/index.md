@@ -47,7 +47,7 @@ flowchart TD
     F --> F1["Option C: Codespaces\nOne click, browser-based"]
 ```
 
-## ⚡ Fastest Start (1 Command) {#fastest-start-1-command}
+## Fastest Start (1 command) {#fastest-start-1-command}
 
 ```bash
 mkdir my-site && cd my-site

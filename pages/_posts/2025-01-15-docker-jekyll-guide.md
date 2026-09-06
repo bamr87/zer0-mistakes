@@ -19,7 +19,7 @@ keywords:
 date: 2025-01-15T10:00:00.000Z
 layout: article
 preview: /images/favicon_gpt_computer_retro.png
-author: Zer0-Mistakes Development Team
+author: default
 featured: true
 estimated_reading_time: 8 minutes
 draft: true

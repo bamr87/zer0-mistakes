@@ -25,7 +25,7 @@ quickstart:
   prev: /quickstart/github-setup/
 ---
 
-# 🎨 Site Personalization & Configuration
+# Site Personalization & Configuration
 
 After completing the [Quick Start installation](/quickstart/), use this guide to personalize your Jekyll site. Fill out the interactive forms below to generate your custom `_config.yml` settings.
 
@@ -42,7 +42,7 @@ After completing the [Quick Start installation](/quickstart/), use this guide to
 
 > This page is an interactive generator and needs JavaScript. With it disabled, use the [Site Builder](/quickstart/site-builder/), which produces the same `_config.yml` and can write the whole project for you.
 
-## 📋 Configuration Sections
+## Configuration Sections
 
 <div class="row g-3 mb-4">
   <div class="col-md-4">
@@ -564,7 +564,7 @@ Configure advanced features like comments, plugins, and build settings.
 
 ---
 
-## 📝 Generated Configuration
+## Generated Configuration
 
 <div class="card mb-4 border-dark">
   <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
@@ -595,7 +595,20 @@ Configure advanced features like comments, plugins, and build settings.
 
 ---
 
-## 🎉 You're All Set!
+## Verify
+
+Restart the dev server so Jekyll reloads the configuration, then confirm the values you entered actually took effect:
+
+```bash
+docker compose restart
+```
+
+- The browser tab and navbar show your **Site Title**.
+- `/about/` shows your author name and email.
+- If you set a skin, the page colors change; if nothing changes, check that
+  `theme_skin` is one of the seven names listed above.
+
+## You're All Set
 
 Congratulations on completing the Quick Start guide! Your site is now:
 
@@ -613,7 +626,7 @@ Congratulations on completing the Quick Start guide! Your site is now:
 
 ---
 
-## 📚 Quick Start Guide Summary
+## Quick Start Guide Summary
 
 | Step | Guide | Description |
 |------|-------|-------------|
