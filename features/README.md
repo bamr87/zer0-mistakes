@@ -83,4 +83,4 @@ diff -q features/features.yml _data/features.yml   # must report no difference
 
 ## Feature Count
 
-Current count: **85 features** (as of 2026-09-05, gem v1.29.0)
+Current count: **86 features** (as of 2026-09-06, gem v1.29.0)

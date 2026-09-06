@@ -1,4 +1,4 @@
-# Evidence — the Claude-guided Site Builder (ZER0-085, extends ZER0-067)
+# Evidence — the Claude-guided Site Builder (ZER0-086, extends ZER0-067)
 
 `/setup/` grew from a five-step `_config.yml` form into a nine-step Site Builder with an embedded Claude session that can fill in the form, check the machine, read the theme's source, write the generated project and start Docker. This bundle is the **after** state, captured against the live dev server with the dev proxy connected (Claude Code OAuth). The **before** — the five-step form with a single YAML preview — is documented in [`../setup-wizard-nav-alignment/`](../setup-wizard-nav-alignment/README.md) (PR #432); it had no Connect, Prerequisites, Appearance, Voice or Build step and no way to act on the machine, so there is no runtime state of it to screenshot here.
 

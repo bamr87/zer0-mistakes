@@ -27,7 +27,7 @@ The opt-in floating chat assistant (feature `ZER0-060`) is Claude-powered and gr
 | `templates/deploy/chat-proxy/page-store.mjs` | Sandboxed local page read/write (dev only) |
 | `templates/deploy/chat-proxy/wizard-store.mjs` | Site Builder sandbox: allow-listed checks, read-only theme source, scaffold into a new folder, fixed `docker compose` actions (dev only) |
 | `templates/deploy/chat-proxy/wrangler.toml` | Live Worker config (workers.dev, CORS, caps) |
-| `assets/js/site-builder.js` + `_includes/setup/{wizard,claude-session,prereq-checklist}.html` | The Site Builder's embedded Claude session (feature `ZER0-085`) — a second client of the same proxy, bound by the same contracts below |
+| `assets/js/site-builder.js` + `_includes/setup/{wizard,claude-session,prereq-checklist}.html` | The Site Builder's embedded Claude session (feature `ZER0-086`) — a second client of the same proxy, bound by the same contracts below |
 
 ## Non-negotiable contracts
 

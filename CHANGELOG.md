@@ -50,8 +50,25 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Added
 
+- **CI now produces a UI pull request's visual artifacts instead of only
+  checking for them (ZER0-085)** — `visual-evidence-autogen.yml` renders every
+  same-repo PR in the same jammy Playwright image the snapshot gate uses, runs
+  the PR's `test/visual/*-evidence.mjs` generators (or the new generic
+  base-vs-head generator `test/visual/pr-evidence.mjs`, which renders the base
+  branch and the head side by side), verifies the 9-skin baselines, and pushes
+  the montages + `metrics.json` to the branch. Stale baselines are refreshed
+  **only** when the new `visual-evidence-reviewer` agent, having viewed the
+  expected | actual | diff montage, judges the diff to be the change the PR
+  describes — a code step disposes, the model only proposes ([#417](https://github.com/bamr87/zer0-mistakes/issues/417)
+  is why). The evidence gate now requires generated proof (a README alone no
+  longer passes), `ci-self-repair` leaves a red `Visual Snapshots` job to this
+  lane, and `test/update-snapshots.sh` gained `PRE_TEST_SCRIPT` /
+  `POST_TEST_SCRIPT` / `SKIP_PLAYWRIGHT` hooks. Closes the gap that kept
+  [#454](https://github.com/bamr87/zer0-mistakes/pull/454) red: its authoring
+  agents ran where Docker was gated, and nothing in CI could render what they
+  could not. Kill switch: repo variable `VISUAL_EVIDENCE_AUTOGEN_ENABLED=false`.
 - **Site Builder — a Claude-guided setup wizard that ends with a running site
-  (ZER0-085, extends ZER0-067)** — `/setup/` (and the `welcome` layout) grew
+  (ZER0-086, extends ZER0-067)** — `/setup/` (and the `welcome` layout) grew
   from a five-step `_config.yml` form into a nine-step builder: Connect →
   Prerequisites → Identity → URLs → Structure → Appearance → Voice →
   Integrations → Build. An embedded Claude session rides alongside every step

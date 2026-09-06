@@ -26,7 +26,7 @@ sidebar:
 
 # Site Builder
 
-The Site Builder (features `ZER0-067` and `ZER0-085`) is the theme's onboarding wizard. The form half runs anywhere the theme renders, GitHub Pages included. The Claude half connects through the local dev proxy and turns the wizard into an assisted build: Claude sees every answer, proposes and applies values, checks the machine, reads the theme's source, writes the project, and runs Docker.
+The Site Builder (features `ZER0-067` and `ZER0-086`) is the theme's onboarding wizard. The form half runs anywhere the theme renders, GitHub Pages included. The Claude half connects through the local dev proxy and turns the wizard into an assisted build: Claude sees every answer, proposes and applies values, checks the machine, reads the theme's source, writes the project, and runs Docker.
 
 ## What you'll do
 
