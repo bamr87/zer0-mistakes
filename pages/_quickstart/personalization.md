@@ -312,17 +312,15 @@ Customize the look and feel of your site.
         <div class="col-md-6">
           <label for="cfg-theme-skin" class="form-label"><i class="bi bi-moon-stars"></i> Theme Skin</label>
           <select class="form-select" id="cfg-theme-skin">
-            <option value="dark" selected>Dark</option>
-            <option value="air">Air (Light)</option>
+            <option value="air" selected>Air (Light)</option>
             <option value="aqua">Aqua</option>
-            <option value="contrast">High Contrast</option>
             <option value="dirt">Dirt</option>
             <option value="neon">Neon</option>
             <option value="mint">Mint</option>
             <option value="plum">Plum</option>
             <option value="sunrise">Sunrise</option>
           </select>
-          <div class="form-text">Color scheme for your site</div>
+          <div class="form-text">Colour scheme for your site — light and dark modes are handled separately by the colour-mode toggle</div>
         </div>
         <div class="col-md-6">
           <label for="cfg-primary-color" class="form-label"><i class="bi bi-droplet-fill"></i> Primary Color</label>
@@ -823,7 +821,7 @@ posthog: enabled: true api_key: "${escapeYaml(posthogKey)}" api_host: "${escapeY
 
 # Comments (Giscus)
 # -------------------------------------------------------------------------
-gisgus: enabled: true data-repo-id: "${escapeYaml(giscusRepoId)}" data-category-id: "${escapeYaml(giscusCategoryId)}"`;
+giscus: enabled: true data-repo-id: "${escapeYaml(giscusRepoId)}" data-category-id: "${escapeYaml(giscusCategoryId)}"`;
     }
 
     // Build Settings

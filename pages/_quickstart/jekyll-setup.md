@@ -1,5 +1,5 @@
 ---
-title: Jekyll Setup
+title: "Jekyll Setup: Run the Dev Server and Create Content"
 author: Zer0-Mistakes Development Team
 layout: default
 description: Configure your Docker-first Jekyll development environment. Start the development server, create content, and customize your theme.
@@ -37,7 +37,7 @@ Start your Docker-based Jekyll development server and create your first content.
 
 ```mermaid
 flowchart LR
-    A([Repo cloned]) --> B[docker-compose up]
+    A([Repo cloned]) --> B[docker compose up]
     B --> C{First run?}
     C -->|Yes| D[bundle install\n~2 min]
     C -->|No| E[Stats generator runs]
@@ -64,7 +64,7 @@ Or if you used the install wizard, you're already in the right directory.
 ## Step 2 — Start the Dev Server
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 On first run, Docker:
@@ -75,19 +75,19 @@ On first run, Docker:
 
 Your site is available at **[http://localhost:4000](http://localhost:4000)**.
 
-![docker-compose up output showing Jekyll starting](/assets/images/quickstart/jekyll-setup-compose-up.png)
+![docker compose up output showing Jekyll starting](/assets/images/quickstart/jekyll-setup-compose-up.png)
 
 ## Step 3 — Check Site Health
 
 ```bash
-docker-compose exec jekyll bundle exec jekyll doctor
+docker compose exec jekyll bundle exec jekyll doctor
 ```
 
 ![jekyll doctor output](/assets/images/quickstart/jekyll-setup-doctor.png)
 
 Expected output:
 
-```
+```text
 Configuration file: /app/_config.yml
            Source: /app
       Destination: /app/_site
@@ -99,22 +99,22 @@ Configuration file: /app/_config.yml
 
 ```bash
 # Start server (foreground — shows live logs)
-docker-compose up
+docker compose up
 
 # Start detached
-docker-compose up -d && docker-compose logs -f
+docker compose up -d && docker compose logs -f
 
 # Stop server
-docker-compose down
+docker compose down
 
 # Force rebuild (after Gemfile or Dockerfile changes)
-docker-compose down && docker-compose up --build
+docker compose down && docker compose up --build
 
 # Shell into the container
-docker-compose exec jekyll bash
+docker compose exec jekyll bash
 
 # Build for production (no watch)
-docker-compose exec -T jekyll bundle exec jekyll build \
+docker compose exec -T jekyll bundle exec jekyll build \
   --config '_config.yml,_config_dev.yml'
 ```
 
@@ -184,7 +184,7 @@ Jekyll picks it up immediately (live reload refreshes the browser).
 
 ## Project Structure
 
-```
+```text
 zer0-mistakes/
 ├── _config.yml          # Production config
 ├── _config_dev.yml      # Dev overrides (loaded by docker-compose)
@@ -219,28 +219,28 @@ Add your styles in `_sass/custom.scss` (compiled into `assets/css/main.css`):
 }
 ```
 
-Or add `assets/css/user-overrides.css` and link it in `_includes/core/head.html` after `main.css`.
+Or add `assets/css/user-overrides.css` and set `user_overrides: true` in `_config.yml`. The theme then links it after `main.css`, so your rules win without editing any include. (Without that flag the file ships but is never loaded.)
 
 ## Troubleshooting
 
 **Container won't start**
 
 ```bash
-docker-compose logs jekyll
-docker-compose down && docker-compose up --build
+docker compose logs jekyll
+docker compose down && docker compose up --build
 ```
 
 **`bundle install` errors**
 
 ```bash
-docker-compose exec jekyll bundle install --retry 3
+docker compose exec jekyll bundle install --retry 3
 ```
 
 **Page not found / old content**
 
 ```bash
-docker-compose exec jekyll bundle exec jekyll clean
-docker-compose restart
+docker compose exec jekyll bundle exec jekyll clean
+docker compose restart
 ```
 
 **Permission errors (Linux)**

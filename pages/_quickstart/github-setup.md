@@ -1,5 +1,5 @@
 ---
-title: GitHub Setup & Deployment
+title: "GitHub Setup: Fork, Configure, and Deploy to Pages"
 author: Zer0-Mistakes Development Team
 layout: default
 description: Configure GitHub integration for version control and automated deployment. Fork the theme, set up SSH keys, and deploy to GitHub Pages.
@@ -41,7 +41,7 @@ flowchart LR
     A([Machine Setup done]) --> B[gh auth login]
     B --> C[Fork bamr87/zer0-mistakes]
     C --> D[./scripts/fork-cleanup.sh]
-    D --> E[docker-compose up]
+    D --> E[docker compose up]
     E --> F[git push origin main]
     F --> G[GitHub Actions builds site]
     G --> H([username.github.io live 🚀])
@@ -117,7 +117,7 @@ It will prompt you for your site title, URL, author name, and other basic settin
 ## Step 4 — Start the Dev Server
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 Visit [http://localhost:4000](http://localhost:4000) to confirm your personalized site is running.
@@ -135,7 +135,7 @@ In your forked repo on GitHub.com:
 
 After the first push, GitHub Actions builds the site and it appears at:
 
-```
+```text
 https://<your-username>.github.io
 ```
 

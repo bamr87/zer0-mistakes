@@ -88,8 +88,11 @@ docker compose up
 Build your site:
 
 ```bash
-docker compose exec jekyll jekyll build
+docker compose exec -T jekyll bundle exec jekyll build \
+  --config '_config.yml,_config_dev.yml'
 ```
+
+Go through Bundler rather than calling `jekyll` directly: a bare `jekyll` can silently resolve to a different gem version than the one your `Gemfile.lock` pins.
 
 ## The Dual-Config Pattern
 
