@@ -56,13 +56,13 @@ services:
 Start your development server:
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 Build your site:
 
 ```bash
-docker-compose exec jekyll jekyll build
+docker compose exec jekyll jekyll build
 ```
 
 ## Best Practices

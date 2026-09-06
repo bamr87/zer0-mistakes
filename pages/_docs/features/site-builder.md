@@ -8,7 +8,6 @@ categories: [docs, features]
 tags: [ai, claude, setup, onboarding, docker, proxy]
 author: bamr87
 permalink: /docs/features/site-builder/
-preview: /images/previews/site-builder.png
 keywords:
   - site builder
   - setup wizard

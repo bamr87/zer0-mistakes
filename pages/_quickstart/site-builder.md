@@ -2,9 +2,8 @@
 title: "Site Builder: Guided Setup with Claude"
 author: "Zer0-Mistakes Development Team"
 layout: default
-description: "Build a complete zer0-mistakes Jekyll site in your browser: Claude checks your machine, drafts the configuration and content, writes the project, and starts Docker."
+description: "Build a zer0-mistakes site in your browser: Claude checks your machine, drafts your configuration and content, writes the project, and starts Docker."
 permalink: /quickstart/site-builder/
-preview: /images/previews/site-builder.png
 categories: [Documentation, Quick Start]
 tags: [setup, wizard, claude, docker, ai-powered]
 keywords:
@@ -16,7 +15,6 @@ draft: false
 sidebar:
   nav: quickstart
 quickstart:
-  step: 0
   next: /quickstart/machine-setup/
   prev: /quickstart/
 mermaid: true

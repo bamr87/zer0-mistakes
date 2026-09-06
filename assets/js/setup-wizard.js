@@ -882,6 +882,9 @@
     L.push('# ── Appearance ─────────────────────────────────────────────────────');
     L.push('# Skin = base palette + backgrounds; assets/css/user-overrides.css layers the');
     L.push('# palette, fonts and corner radius chosen in the Site Builder on top.');
+    L.push('# user_overrides is what makes the theme LINK that stylesheet (core/head.html);');
+    L.push('# without it the file ships but nothing on the site changes.');
+    L.push(pad('user_overrides') + ': true');
     L.push(pad('theme_skin') + ': ' + y(f.theme_skin || 'air') + '   # air | aqua | dirt | neon | mint | plum | sunrise');
     L.push(pad('color_mode_default') + ': ' + (f.color_mode_default || 'auto') + '     # auto | light | dark');
     L.push(pad('color_mode_lock') + ': ' + (f.color_mode_lock ? 'true' : 'false'));

@@ -391,6 +391,7 @@ async function runScenario(browser, sc, dir, { mobile }) {
         primary: getComputedStyle(document.documentElement).getPropertyValue('--bs-primary').trim().toLowerCase(),
         bodyFont: getComputedStyle(document.body).fontFamily,
         fontLink: !!document.querySelector('link[href*="fonts.googleapis.com"]'),
+        overridesLinked: !!document.querySelector('link[href*="user-overrides.css"]'),
         dropdowns: document.querySelectorAll('nav .dropdown-menu, nav [data-bs-toggle="dropdown"]').length,
       }));
       run.site = facts;
@@ -399,7 +400,17 @@ async function runScenario(browser, sc, dir, { mobile }) {
       const pal = plan.theme.palette;
       const wantPrimary = pal.preset === 'custom' ? pal.primary : (await page.evaluate((id) => (window.Zer0SetupWizard.catalog('palettes').find((p) => p.id === id) || {}).primary || null, pal.preset));
       if (wantPrimary) check('built site uses the planned palette primary colour', facts.primary === wantPrimary.toLowerCase(), `--bs-primary=${facts.primary} wanted ${wantPrimary}`);
-      if (plan.theme.fonts !== 'system') check('built site loads the planned web fonts', facts.fontLink && /'?[A-Z][A-Za-z ]+'?,/.test(facts.bodyFont), `link=${facts.fontLink} body=${facts.bodyFont.slice(0, 60)}`);
+      if (plan.theme.fonts !== 'system') {
+        // The link alone proves nothing: the stylesheet only takes effect when
+        // _config.yml sets `user_overrides: true`, so assert the planned family
+        // actually reaches the computed body font.
+        const wantFamily = await page.evaluate((id) => {
+          const fp = window.Zer0SetupWizard.catalog('font_pairings').find((f) => f.id === id);
+          return fp ? fp.body.split(',')[0].replace(/['"]/g, '').trim() : null;
+        }, plan.theme.fonts);
+        check('built site applies the planned web fonts', facts.fontLink && wantFamily && facts.bodyFont.includes(wantFamily), `link=${facts.fontLink} want="${wantFamily}" body=${facts.bodyFont.slice(0, 70)}`);
+      }
+      check('built site links user-overrides.css (user_overrides flag set)', facts.overridesLinked, String(facts.overridesLinked));
       const plannedRoutes = plan.pages.filter((p) => sc.collections.includes(p.collection)).map((p) => (p.collection === 'posts' ? `/posts/${p.slug}/` : `/${p.collection}/${p.slug}/`));
       const plannedStatus = {};
       for (const r of plannedRoutes) { const res = await fetch(`http://localhost:${sc.port}${r}`).catch(() => null); plannedStatus[r] = res ? res.status : 'ERR'; }

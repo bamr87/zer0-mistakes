@@ -2,11 +2,11 @@
 title: Zer0-Mistakes Quick Start Guide
 author: Zer0-Mistakes Development Team
 layout: default
-description: Complete setup guide for the Zer0-Mistakes Jekyll theme featuring Docker-first development, AI-powered installation, and cross-platform compatibility
+description: Complete setup guide for the Zer0-Mistakes Jekyll theme featuring Docker-first development, AI-powered installation, and cross-platform compatibility.
 permalink: /quickstart/
 sidebar:
     nav: quickstart
-lastmod: 2026-06-15T00:00:00.000Z
+lastmod: 2026-09-05T00:00:00.000Z
 preview: /images/previews/zer0-mistakes-quick-start-guide.png
 tags:
     - jekyll
