@@ -96,6 +96,34 @@ DIFF_MONTAGE_SCRIPT = "test/visual/snapshot-diff-montage.mjs"
 UPDATE_SNAPSHOTS = "./test/update-snapshots.sh"
 SNAPSHOT_DIR = "test/visual/snapshots"
 
+#: This lane's own tooling, which the workflow restores from the BASE branch
+#: before running anything. It is infrastructure, and it never comes from the PR:
+#:
+#:   * A branch cut before the lane shipped has no copy at all. That is not an
+#:     edge case — it is every open PR on the day it lands, and it is exactly how
+#:     the first real run died on #454 ("can't open file
+#:     scripts/ci/visual_evidence_autogen.py"), 20 seconds in, on the very PR the
+#:     lane exists to unstick.
+#:   * A branch carrying an OLDER copy is worse than one carrying none: #454's
+#:     update-snapshots.sh predates the PRE_TEST_SCRIPT / POST_TEST_SCRIPT /
+#:     SKIP_PLAYWRIGHT hooks, so generation would have silently no-opped and the
+#:     run would have reported success having produced nothing.
+#:   * The orchestrator is the step holding the write token and running the push,
+#:     so executing the PR's version of it would let a pull request rewrite what
+#:     CI runs with `contents: write`.
+#:
+#: Deliberately NOT here: `test/visual/<slug>-evidence.mjs` (the PR's own evidence
+#: spec, which is the whole point of letting a PR ship one) and
+#: `test/visual/evidence-kit.mjs` (a shared library a PR may legitimately extend;
+#: the lane already executes PR-authored generator code, which is why it is
+#: same-repo-only).
+LANE_TOOLING = (
+    "scripts/ci/visual_evidence_autogen.py",
+    "test/visual/pr-evidence.mjs",
+    "test/visual/snapshot-diff-montage.mjs",
+    "test/update-snapshots.sh",
+)
+
 #: The commit subject marker + trailer the loop guard and the budget read.
 MARKER = "[visual-autogen]"
 TRAILER = "Visual-Autogen:"
