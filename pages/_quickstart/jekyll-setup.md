@@ -80,7 +80,8 @@ Your site is available at **[http://localhost:4000](http://localhost:4000)**.
 ## Step 3 — Check Site Health
 
 ```bash
-docker compose exec jekyll bundle exec jekyll doctor
+docker compose exec jekyll bundle exec jekyll doctor \
+  --config '_config.yml,_config_dev.yml'
 ```
 
 ![jekyll doctor output](/assets/images/quickstart/jekyll-setup-doctor.png)
@@ -88,12 +89,15 @@ docker compose exec jekyll bundle exec jekyll doctor
 Expected output:
 
 ```text
-Configuration file: /app/_config.yml
-           Source: /app
-      Destination: /app/_site
+Configuration file: /site/_config.yml
+Configuration file: /site/_config_dev.yml
+            Source: /site
+       Destination: /site/_site
  Incremental build: enabled
-      Generating: done in X seconds.
+      Generating... done in X seconds.
 ```
+
+`Incremental build: enabled` comes from `_config_dev.yml`; without that second config the line is absent.
 
 ## Essential Commands
 
