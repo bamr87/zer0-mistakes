@@ -67,6 +67,66 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   [#454](https://github.com/bamr87/zer0-mistakes/pull/454) red: its authoring
   agents ran where Docker was gated, and nothing in CI could render what they
   could not. Kill switch: repo variable `VISUAL_EVIDENCE_AUTOGEN_ENABLED=false`.
+- **Site Builder — a Claude-guided setup wizard that ends with a running site
+  (ZER0-086, extends ZER0-067)** — `/setup/` (and the `welcome` layout) grew
+  from a five-step `_config.yml` form into a nine-step builder: Connect →
+  Prerequisites → Identity → URLs → Structure → Appearance → Voice →
+  Integrations → Build. An embedded Claude session rides alongside every step
+  through the local dev proxy (Claude Code OAuth, `claude setup-token`; the
+  token never reaches the page). It sees the whole wizard state on every turn
+  and acts on it with tools: fill in fields, override a generated file, run
+  live prerequisite checks (Docker, Git, gh, VS Code, Node, Claude CLI — a
+  fixed command table), read the theme's real source and search the docs,
+  resolve a project folder, write the generated project, run `docker compose
+  up|ps|logs|down`, and check the new site answers — each mutation behind a
+  confirmation card. The form half still works with no proxy at all (GitHub
+  Pages included): it generates `_config.yml`, `_config_dev.yml`, `Gemfile`,
+  `docker-compose.yml`, `index.md`, navigation, about page, welcome post, one
+  index page per collection, `.gitignore`, `zer0.install.yml`, `.env.example`
+  and `README.md`, with per-file download and a self-extracting bash bundle.
+  Forms gained a site brief, a URL **Suggest** button, a site-type quick-pick,
+  a navigation row editor, skin cards with a live **Preview on this page**
+  toggle, tone/audience pickers, integration switches with conditional
+  sub-fields, a copy button on every command, and a toast for feedback. New:
+  `_data/site_builder.yml` (steps, prerequisites mirroring
+  `machine-setup.md`, catalogs, framework brief),
+  `templates/deploy/chat-proxy/wizard-store.mjs` (the dev-only sandbox behind
+  `/api/wizard/*`), `assets/js/site-builder.js`, `_includes/setup/{claude-
+  session,prereq-checklist}.html`, the `site_builder:` config block, a
+  quickstart page and a feature reference. (evidence:
+  [`test/visual/evidence/site-builder/`](test/visual/evidence/site-builder/README.md))
+  A first recorded end-to-end run then shaped the build half: the generated
+  `docker-compose.yml` publishes LiveReload on the site's port + 1 (a fixed
+  35729 collided with the theme's own dev container and the new site never
+  started) and shares one gem cache across generated sites; every enabled
+  collection now ships a valid starter document (a doc, a quickstart step, a
+  note with a wiki-link, a structured recipe) and the cookbook index uses the
+  theme's `cookbook` layout over the real `recipes` collection; `_config.yml`
+  sets `collections_dir: pages` (without it every collection but posts was
+  invisible to Jekyll); each site gets its own `assets/images/logo.svg`
+  monogram and gem-based sites turn the SVG background layers off, because
+  the published gem ships no theme images; a revoked Claude credential now
+  says so and names the fix. Validation is a scenario
+  runner, `test/visual/site-builder-walkthrough.mjs`, that samples random
+  briefs per site type (`test/visual/site-builder-scenarios.mjs`), drives the
+  wizard on video, builds the site with Docker and asserts its routes, title
+  and skin — replayable by seed.
+  The builder then gained a **schema-driven site plan**: `plan_schema` in
+  `_data/site_builder.yml` (a JSON-Schema subset validated in the browser)
+  describes what the agent may produce — a landing page (five templates,
+  nine section types, hero + CTAs), navigation shape (flat or grouped
+  dropdowns, sidebar none/auto/docs tree), theme overrides (nine palettes or
+  custom colours, seven font pairings, three corner radii) and up to twelve
+  example pages with Markdown bodies — and the generators turn it into
+  `index.md` (a Liquid landing engine) + `_data/landing.yml`,
+  `_data/navigation/main.yml` and `docs.yml`, `assets/css/user-overrides.css`
+  + `_includes/custom/head.html`, and one file per page. Claude submits plans
+  with `set_site_plan` behind a confirmation card; the Structure and
+  Appearance steps expose the same choices as controls, with a page planner
+  and a **Preview on this page** toggle that applies the generated overrides
+  to the wizard itself. The scenario runner randomises the plan too and
+  asserts the built site's landing template, palette colour, web fonts and
+  planned routes.
 - **Mermaid diagrams are now accessible figures with a toolbar (ZER0-013)** —
   every ```` ```mermaid ```` fence (and legacy `<div class="mermaid">`) renders
   as a `<figure>` with a rendered SVG and a small toolbar: zoom out / in / reset

@@ -1434,6 +1434,29 @@ test_javascript_syntax() {
     return 0
 }
 
+test_wizard_store_sandbox() {
+    log_info "Testing the Site Builder proxy sandbox (wizard-store.mjs)..."
+
+    cd "$PROJECT_ROOT"
+
+    if ! command -v node &>/dev/null; then
+        log_warning "Node.js not available for the wizard-store sandbox test"
+        return 0
+    fi
+
+    # Pins the allow-list / path / overwrite rules promised in
+    # .github/instructions/ai-chat.instructions.md §9. Runs against a temp
+    # target root, so it never touches real files.
+    if node test/test_wizard_store.mjs > "$TEST_RESULTS_DIR/wizard_store.log" 2>&1; then
+        log_success "wizard-store sandbox rules hold ($(grep -c '✓' "$TEST_RESULTS_DIR/wizard_store.log") checks)"
+        return 0
+    fi
+
+    log_error "wizard-store sandbox test failed — see $TEST_RESULTS_DIR/wizard_store.log"
+    tail -20 "$TEST_RESULTS_DIR/wizard_store.log"
+    return 1
+}
+
 #
 # MAIN TEST EXECUTION
 #
@@ -1475,6 +1498,7 @@ run_core_tests() {
     run_test "Sass Compilation" "test_sass_compilation" "validation"
     run_test "Design Token Parity" "test_design_token_parity" "validation"
     run_test "JavaScript Syntax" "test_javascript_syntax" "validation"
+    run_test "Site Builder Proxy Sandbox" "test_wizard_store_sandbox" "validation"
 }
 
 # Generate test report

@@ -25,7 +25,9 @@ The opt-in floating chat assistant (feature `ZER0-060`) is Claude-powered and gr
 | `templates/deploy/chat-proxy/worker.js` | Cloudflare Worker: `/api/chat` + `/api/github/*` |
 | `templates/deploy/chat-proxy/dev-proxy.mjs` | Local dev proxy (same worker on Node) + `/api/page/*` |
 | `templates/deploy/chat-proxy/page-store.mjs` | Sandboxed local page read/write (dev only) |
+| `templates/deploy/chat-proxy/wizard-store.mjs` | Site Builder sandbox: allow-listed checks, read-only theme source, scaffold into a new folder, fixed `docker compose` actions (dev only) |
 | `templates/deploy/chat-proxy/wrangler.toml` | Live Worker config (workers.dev, CORS, caps) |
+| `assets/js/site-builder.js` + `_includes/setup/{wizard,claude-session,prereq-checklist}.html` | The Site Builder's embedded Claude session (feature `ZER0-086`) — a second client of the same proxy, bound by the same contracts below |
 
 ## Non-negotiable contracts
 
@@ -45,6 +47,8 @@ github.com forms (no token anywhere); `'proxy'` uses a server-side token. `creat
 markdown subset in `renderAssistantMarkdown` (escape, then a safe subset); confirmation/link cards are built with `createElement` + `textContent`, and link cards accept only `https://github.com/...` URLs. Never `innerHTML` raw model output.
 8. **History trimming preserves tool pairing.** `trimHistory` trims from the
 front until the buffer starts with a plain user text turn, so a `tool_result` is never orphaned from its `tool_use` (which would 400 the API). Preserve this when changing history handling.
+9. **The Site Builder's host access is dev-only and allow-listed.** The
+`/api/wizard/*` routes exist **only** in `dev-proxy.mjs` (the Worker has no host) and every capability is bounded by `wizard-store.mjs`: `check` runs a fixed table of read-only version commands keyed by id (no client input reaches a command line; emails in output are redacted); `file`/`ls` read text source inside the theme checkout only, with `.env*`, keys, `.git`, `node_modules`, `vendor`, `_site` and caches denied and extensions allow-listed; `scaffold` writes only into a **strict sub-directory of `WIZARD_TARGET_ROOT`** (default: the theme's parent folder), never inside the theme, relative paths only, allow-listed file names, size caps, and no overwrite unless `overwrite: true`; `compose` runs only `up -d --build` / `ps` / `logs` / `down` / `config` in a folder that already holds a `docker-compose.yml`. In the browser, `set_wizard_fields`, `set_site_plan` (validated against `plan_schema` in `_data/site_builder.yml` first — an invalid plan changes nothing), `set_file_override`, `write_site_files` and `run_compose` (`up`/`down`) all go through the confirmation card. Do not add a free-form command, path, or host parameter to any of these.
 
 ## Conventions
 
@@ -59,7 +63,12 @@ new options there with a `site.ai_chat.*` default and read them in `ai-chat.js`.
 
 ## Validation
 
-- `node --check` the three proxy JS files and `assets/js/ai-chat.js`.
+- `node --check` the four proxy JS files, `assets/js/ai-chat.js`,
+  `assets/js/setup-wizard.js` and `assets/js/site-builder.js`.
+- `node test/test_wizard_store.mjs` — the sandbox's path, allow-list and
+  overwrite rules against a temp target root.
+- `node test/visual/site-builder-walkthrough.mjs` (theme + dev proxy running) —
+a full randomised build per site type (`SCENARIO=`, `SEED=`), recorded on video, ending in a Docker-served site whose routes/title/skin are asserted. Run it after any change to the generators, the tools, or the proxy routes.
 - Build with `_config.yml,_config_dev.yml` (dev: widget on, `localEdit` true)
   and confirm the rendered `aiChatConfig` JSON is valid.
 - For proxy changes, exercise `worker.js` with mocked `fetch`/KV and the

@@ -1921,25 +1921,27 @@ features:
 
   - id: ZER0-067
     title: "Setup Wizard"
-    description: "Multi-step in-browser wizard that assembles a complete _config.yml and lets you download or copy it, lowering first-run setup friction"
+    description: "Nine-step in-browser wizard that assembles a complete starter project — _config.yml, dev config, Gemfile, docker-compose, navigation, first pages — with per-file download and a self-extracting bundle; the form half of the Site Builder"
     implemented: true
-    version: "0.22.7"
+    version: "1.30.0"
     link: "/setup/"
-    docs: "/docs/quickstart/bare-minimum/"
+    docs: "/docs/features/site-builder/"
     tags: [setup, onboarding, configuration]
-    date: 2026-04-03
+    date: 2026-09-05
     provenance:
       introduced_in: "0.22.7"
       pr: 51
       commit: "a70ae8a5"
       issue: null
     tests:
-      - na: "Client-side config generator; exercised manually and via the build"
+      - "test/visual/features/setup-wizard.spec.js"
     references:
       include: "_includes/setup/wizard.html"
       scripts:
         - "assets/js/setup-wizard.js"
+      styles: ["_sass/components/_setup-wizard.scss"]
       layout: "_layouts/setup.html"
+      data: "_data/site_builder.yml"
 
   - id: ZER0-068
     title: "Table CSV Copy"
@@ -2448,3 +2450,46 @@ features:
       - "Pixel baselines are refreshed only on an 'intentional' verdict from the visual-evidence-reviewer agent, which views the expected | actual | diff montage; a code step disposes, the model only proposes (#417)"
       - "Loop guard on its own [visual-autogen] commits, a three-commit budget per PR, per-folder manifests so author-made evidence is never overwritten, kill switch VISUAL_EVIDENCE_AUTOGEN_ENABLED=false, and the evidence gate's opt-out labels"
       - "One sticky PR comment with the montages and the verdict; render output uploaded as an artifact on every run; the evidence gate now requires generated proof and ci-self-repair hands a red Visual Snapshots job to this lane"
+
+  - id: ZER0-086
+    title: "Claude-Guided Site Builder"
+    description: "An embedded Claude session that rides alongside the setup wizard: it sees every answer, fills in the forms, checks the machine, reads the theme's real source, writes the generated project to disk and starts Docker — through the local dev proxy, with a confirmation card before every action"
+    implemented: true
+    version: "1.30.0"
+    link: "/setup/"
+    docs: "/docs/features/site-builder/"
+    tags: [ai, claude, setup, onboarding, docker, proxy]
+    date: 2026-09-05
+    provenance:
+      introduced_in: "1.30.0"
+      pr: null
+      commit: "331ae16c"
+      issue: null
+    tests:
+      - "test/visual/features/setup-wizard.spec.js"
+      - "test/test_wizard_store.mjs"
+    references:
+      includes:
+        - "_includes/setup/wizard.html"
+        - "_includes/setup/claude-session.html"
+        - "_includes/setup/prereq-checklist.html"
+      scripts:
+        - "assets/js/site-builder.js"
+        - "templates/deploy/chat-proxy/wizard-store.mjs"
+        - "templates/deploy/chat-proxy/dev-proxy.mjs"
+        - "test/visual/site-builder-walkthrough.mjs"
+        - "test/visual/site-builder-scenarios.mjs"
+      data: "_data/site_builder.yml"
+      config: "_config.yml"
+      instructions: ".github/instructions/ai-chat.instructions.md"
+      pages:
+        - "pages/_quickstart/site-builder.md"
+        - "pages/_docs/features/site-builder.md"
+    components:
+      - "Connect step — detects the dev proxy, shows the three commands to connect (claude setup-token → .env → node --env-file), re-checks every 15 s"
+      - "Prerequisites — live Docker/Git/gh/VS Code/Node/Claude CLI checks through a fixed command table, per-OS install commands from machine-setup, manual toggles offline"
+      - "Tools — get/set wizard fields, go to step, get/override generated files, read theme source, list theme dirs, search the docs index, resolve target, write project, docker compose up/ps/logs/down, check the site is live"
+      - "Context propagation — the whole wizard state, field schema and generated-file list are in the system prompt on every turn; the form is the single source of truth"
+      - "Safety — proxy-only (no credential in the page), escape-first rendering, confirmation cards for every mutation, scaffold confined to a new folder beside the theme"
+      - "Validation — test/visual/site-builder-walkthrough.mjs samples a random brief per site type (site-builder-scenarios.mjs), drives the wizard on video, builds the site with Docker and asserts routes/title/skin; replayable by seed"
+      - "Site plan — plan_schema in _data/site_builder.yml (JSON-Schema subset, validated in the browser) describes landing templates/sections, navigation style + sidebar, palette/font/radius overrides and example pages; set_site_plan applies it behind a confirmation card and the generators emit index.md + _data/landing.yml, navigation data, assets/css/user-overrides.css + _includes/custom/head.html and one file per planned page"

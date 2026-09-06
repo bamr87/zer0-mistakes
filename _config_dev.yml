@@ -56,6 +56,13 @@ page_feedback:
   endpoint             : 'http://localhost:8787/api/feedback'
   issue_endpoint       : 'http://localhost:8787/api/github/issue'
 
+# Site Builder (/setup/) — the Claude session, live prerequisite checks,
+# "Write project" and the docker compose actions all go through the same dev
+# proxy. Its /api/wizard/* routes exist ONLY in dev-proxy.mjs (never on the
+# Worker) and are bounded by templates/deploy/chat-proxy/wizard-store.mjs.
+site_builder:
+  endpoint             : 'http://localhost:8787/api/wizard'
+
 # Disable production optimizations for faster builds.
 # `limit_posts` caps the post-processing window during dev serves. Category
 # index pages (index: true) use a recent date so they stay inside this window.

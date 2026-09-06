@@ -1,0 +1,808 @@
+# Feature: ZER0-086
+# =============================================================================
+# _data/site_builder.yml — one source for the guided Site Builder
+# -----------------------------------------------------------------------------
+# Read by:
+#   _includes/setup/wizard.html            step list, prerequisites, catalogs
+#   _includes/setup/prereq-checklist.html  per-OS install + verify commands
+#   _includes/setup/claude-session.html    serialised as JSON for the browser
+#   assets/js/setup-wizard.js              catalogs (skins, tones, collections)
+#   assets/js/site-builder.js              the Claude session's framework brief
+#                                          and per-step suggested prompts
+#
+# Everything the wizard "knows" about the framework lives here so the form,
+# the generated files, and the AI brief cannot drift apart. Prerequisite
+# commands mirror pages/_quickstart/machine-setup.md — keep them in sync.
+# =============================================================================
+
+# ── Steps ─────────────────────────────────────────────────────────────────────
+# Order is the stepper order. `prompts` are the suggested asks shown as chips
+# in the Claude panel while that step is active.
+steps:
+  - id: connect
+    label: "Connect"
+    icon: bi-plug
+    summary: "Connect Claude through the local dev proxy, or continue without AI."
+    prompts:
+      - "What do I need to run locally so you can help me build this site?"
+      - "Explain what the Site Builder will generate for me."
+  - id: prereqs
+    label: "Prerequisites"
+    icon: bi-laptop
+    summary: "Docker, Git, GitHub CLI and an editor — checked live where possible."
+    prompts:
+      - "Run the prerequisite checks and tell me what is missing."
+      - "Which install commands should I run on my operating system?"
+  - id: identity
+    label: "Identity"
+    icon: bi-person-badge
+    summary: "Title, description, author and the story behind the site."
+    prompts:
+      - "Here is what my site is about — draft a title, tagline and description."
+      - "Suggest three title options with a one-line rationale each."
+  - id: urls
+    label: "URLs"
+    icon: bi-link-45deg
+    summary: "GitHub user, repository, deployment URL and base path."
+    prompts:
+      - "Work out my url and baseurl from my GitHub user and repo name."
+      - "Should this be a user site or a project site?"
+  - id: structure
+    label: "Structure"
+    icon: bi-diagram-3
+    summary: "Collections to enable and the main navigation."
+    prompts:
+      - "Design the site plan: landing page template and sections, navigation style, and 5–6 example pages with real content — then apply it."
+      - "Recommend collections and a navigation menu for this kind of site."
+      - "Explain the difference between posts, docs and notes in this theme."
+  - id: appearance
+    label: "Appearance"
+    icon: bi-palette
+    summary: "Skin, colour mode, hero and background layers."
+    prompts:
+      - "Pick a skin, palette, font pairing and corner style that suit the site's tone, and apply them."
+      - "What does each skin look like and which fits a technical blog?"
+  - id: voice
+    label: "Voice"
+    icon: bi-chat-quote
+    summary: "Tone, audience, and the first post + about page drafts."
+    prompts:
+      - "Write the welcome post and about page in the tone I selected."
+      - "Rewrite the about page draft to be shorter and warmer."
+  - id: integrations
+    label: "Integrations"
+    icon: bi-plugin
+    summary: "Analytics, comments, the AI assistant and page feedback."
+    prompts:
+      - "Which integrations make sense for a small personal site?"
+      - "How do I get Giscus IDs for my repository?"
+  - id: build
+    label: "Build"
+    icon: bi-rocket-takeoff
+    summary: "Review every generated file, write the project, start Docker."
+    prompts:
+      - "Review the generated files for mistakes before I write them."
+      - "Write the project to my target folder and start the dev server."
+      - "The build failed — read the logs and tell me what to fix."
+
+# ── Prerequisites ─────────────────────────────────────────────────────────────
+# `check` is the id of an allow-listed command in
+# templates/deploy/chat-proxy/wizard-store.mjs (dev proxy only). The install
+# and verify commands are shown per OS and mirror machine-setup.md.
+prerequisites:
+  - id: docker
+    label: "Docker Desktop"
+    required: true
+    icon: bi-box-seam
+    why: "Runs Jekyll in a container so you never fight Ruby versions."
+    check: docker
+    verify: "docker --version && docker compose version"
+    install:
+      macos: "brew install --cask docker"
+      windows: "winget install Docker.DockerDesktop"
+      linux: "curl -fsSL https://get.docker.com | sh && sudo usermod -aG docker $USER"
+    docs: "https://docs.docker.com/get-docker/"
+  - id: docker-daemon
+    label: "Docker engine running"
+    required: true
+    icon: bi-play-circle
+    why: "The compose commands need the engine up, not just installed."
+    check: docker-daemon
+    verify: "docker info --format '{{.ServerVersion}}'"
+    install:
+      macos: "open -a Docker"
+      windows: "Start Docker Desktop from the Start menu"
+      linux: "sudo systemctl start docker"
+    docs: "https://docs.docker.com/config/daemon/start/"
+  - id: git
+    label: "Git"
+    required: true
+    icon: bi-git
+    why: "Version control for your site and the theme's release flow."
+    check: git
+    verify: "git --version"
+    install:
+      macos: "brew install git"
+      windows: "winget install Git.Git"
+      linux: "sudo apt install git"
+    docs: "https://git-scm.com/downloads"
+  - id: git-config
+    label: "Git identity configured"
+    required: true
+    icon: bi-person-vcard
+    why: "Commits need a name and email; use your GitHub no-reply address."
+    check: git-config
+    verify: "git config --global --list | grep user"
+    install:
+      macos: "git config --global user.name \"YourGitHubUsername\" && git config --global user.email \"ID+username@users.noreply.github.com\""
+      windows: "git config --global user.name \"YourGitHubUsername\" ; git config --global user.email \"ID+username@users.noreply.github.com\""
+      linux: "git config --global user.name \"YourGitHubUsername\" && git config --global user.email \"ID+username@users.noreply.github.com\""
+    docs: "https://github.com/settings/emails"
+  - id: gh
+    label: "GitHub CLI"
+    required: true
+    icon: bi-github
+    why: "Creates the repository and enables GitHub Pages from the terminal."
+    check: gh
+    verify: "gh --version"
+    install:
+      macos: "brew install gh"
+      windows: "winget install GitHub.cli"
+      linux: "sudo apt install gh"
+    docs: "https://cli.github.com/manual/installation"
+  - id: gh-auth
+    label: "GitHub CLI signed in"
+    required: false
+    icon: bi-shield-check
+    why: "Needed to push and to turn on Pages; the local build works without it."
+    check: gh-auth
+    verify: "gh auth status"
+    install:
+      macos: "gh auth login"
+      windows: "gh auth login"
+      linux: "gh auth login"
+    docs: "https://cli.github.com/manual/gh_auth_login"
+  - id: code
+    label: "VS Code"
+    required: false
+    icon: bi-code-square
+    why: "Recommended editor with Jekyll, Liquid and Docker extensions."
+    check: code
+    verify: "code --version"
+    install:
+      macos: "brew install --cask visual-studio-code"
+      windows: "winget install Microsoft.VisualStudioCode"
+      linux: "sudo snap install code --classic"
+    docs: "https://code.visualstudio.com/"
+  - id: node
+    label: "Node.js 20.6+"
+    required: false
+    icon: bi-hexagon
+    why: "Runs the local Claude dev proxy (node --env-file) that powers this wizard's AI."
+    check: node
+    verify: "node --version"
+    install:
+      macos: "brew install node"
+      windows: "winget install OpenJS.NodeJS.LTS"
+      linux: "sudo apt install nodejs"
+    docs: "https://nodejs.org/"
+  - id: claude
+    label: "Claude Code CLI"
+    required: false
+    icon: bi-stars
+    why: "`claude setup-token` mints the OAuth token the dev proxy uses."
+    check: claude
+    verify: "claude --version"
+    install:
+      macos: "npm install -g @anthropic-ai/claude-code"
+      windows: "npm install -g @anthropic-ai/claude-code"
+      linux: "npm install -g @anthropic-ai/claude-code"
+    docs: "https://docs.anthropic.com/en/docs/claude-code"
+
+# ── Catalogs the form and the generators share ───────────────────────────────
+collections:
+  - id: posts
+    label: "Posts"
+    icon: bi-journal-text
+    layout: article
+    permalink: "/posts/:title/"
+    default: true
+    description: "Dated articles listed newest-first; the blog."
+  - id: docs
+    label: "Docs"
+    icon: bi-book
+    layout: default
+    permalink: "/docs/:path/"
+    default: true
+    description: "Evergreen guides with a sidebar tree."
+  - id: about
+    label: "About"
+    icon: bi-info-circle
+    layout: default
+    permalink: "/about/:path/"
+    default: true
+    description: "Who you are, contact, and site settings pages."
+  - id: notes
+    label: "Notes"
+    icon: bi-sticky
+    layout: note
+    permalink: "/notes/:path/"
+    default: false
+    description: "Short Obsidian-style notes with [[wiki-links]] and backlinks."
+  - id: quickstart
+    label: "Quickstart"
+    icon: bi-flag
+    layout: default
+    permalink: "/quickstart/:path/"
+    default: false
+    description: "Ordered onboarding steps with prev/next navigation."
+  - id: notebooks
+    label: "Notebooks"
+    icon: bi-journal-code
+    layout: notebook
+    permalink: "/notebooks/:path/"
+    default: false
+    description: "Rendered Jupyter notebooks."
+  - id: quests
+    label: "Quests"
+    icon: bi-controller
+    layout: default
+    permalink: "/quests/:path/"
+    default: false
+    description: "Gamified learning paths with levels and badges."
+  - id: recipes
+    label: "Recipes"
+    icon: bi-egg-fried
+    layout: recipe
+    permalink: "/recipes/:path/"
+    default: false
+    description: "A cookbook: structured recipes with serving scaling and unit conversion."
+
+skins:
+  - id: air
+    label: "Air"
+    mood: "Light, calm, airy blues"
+    primary: "#e8f4f8"
+    accent: "#6fa8dc"
+  - id: aqua
+    label: "Aqua"
+    mood: "Deep ocean blue with bright cyan"
+    primary: "#0077b6"
+    accent: "#90e0ef"
+  - id: dirt
+    label: "Dirt"
+    mood: "Earthy browns and sand"
+    primary: "#5c4033"
+    accent: "#d4a574"
+  - id: neon
+    label: "Neon"
+    mood: "Hot pink and electric blue"
+    primary: "#ff006e"
+    accent: "#3a86ff"
+  - id: mint
+    label: "Mint"
+    mood: "Forest green and fresh mint"
+    primary: "#2d6a4f"
+    accent: "#95d5b2"
+  - id: plum
+    label: "Plum"
+    mood: "Royal purple and violet"
+    primary: "#4a0e4e"
+    accent: "#c77dff"
+  - id: sunrise
+    label: "Sunrise"
+    mood: "Warm orange and cream"
+    primary: "#ff6b35"
+    accent: "#efefd0"
+
+color_modes:
+  - id: auto
+    label: "Follow the visitor's system"
+  - id: light
+    label: "Always light"
+  - id: dark
+    label: "Always dark"
+
+tones:
+  - id: friendly
+    label: "Friendly"
+    description: "Warm, second person, plain words, the occasional aside."
+  - id: technical
+    label: "Technical"
+    description: "Precise, direct, code-first; assumes a developer reader."
+  - id: editorial
+    label: "Editorial"
+    description: "Considered long-form prose with a point of view."
+  - id: playful
+    label: "Playful"
+    description: "Light, witty, energetic; fine for hobby and creative sites."
+  - id: formal
+    label: "Formal"
+    description: "Measured and neutral; suits documentation and portfolios."
+
+audiences:
+  - id: developers
+    label: "Developers"
+  - id: general
+    label: "General readers"
+  - id: students
+    label: "Students and learners"
+  - id: clients
+    label: "Clients and employers"
+  - id: community
+    label: "A community or team"
+
+site_types:
+  - id: blog
+    label: "Blog"
+    collections: [posts, about]
+  - id: docs
+    label: "Documentation"
+    collections: [docs, about, quickstart]
+  - id: portfolio
+    label: "Portfolio"
+    collections: [posts, about]
+  - id: notes
+    label: "Digital garden"
+    collections: [notes, posts, about]
+  - id: mixed
+    label: "Blog + docs"
+    collections: [posts, docs, about]
+  - id: cookbook
+    label: "Cookbook"
+    collections: [recipes, posts, about]
+
+deploy_targets:
+  - id: github-pages
+    label: "GitHub Pages (remote theme)"
+    description: "Zero-install hosting; the theme is pulled from GitHub at build time."
+  - id: gem
+    label: "Ruby gem + Docker"
+    description: "Pins jekyll-theme-zer0 in the Gemfile; builds anywhere Docker runs."
+
+integrations:
+  - id: ai_chat
+    label: "AI chat assistant"
+    icon: bi-robot
+    description: "Claude-powered page assistant. Needs the chat proxy deployed before it shows."
+    default: false
+  - id: page_feedback
+    label: "Improve-this-page widget"
+    icon: bi-megaphone
+    description: "Readers file well-formed GitHub issues from any page. No token needed."
+    default: true
+  - id: giscus
+    label: "Giscus comments"
+    icon: bi-chat-dots
+    description: "Comments stored as GitHub Discussions. Needs repo + category IDs from giscus.app."
+    default: false
+  - id: posthog
+    label: "PostHog analytics"
+    icon: bi-graph-up
+    description: "Consent-gated, production-only analytics."
+    default: false
+  - id: obsidian
+    label: "Obsidian wiki-links"
+    icon: bi-diagram-2
+    description: "[[wiki-links]], embeds, callouts and a local graph on every page."
+    default: true
+
+# ── Files the Build step generates ────────────────────────────────────────────
+# `path` may contain {slug} and {date}. Order is the preview-tab order.
+generated_files:
+  - path: "_config.yml"
+    label: "_config.yml"
+    description: "Production configuration — identity, URLs, collections, integrations."
+    required: true
+  - path: "_config_dev.yml"
+    label: "_config_dev.yml"
+    description: "Local overrides — localhost URL, livereload, analytics off."
+    required: true
+  - path: "Gemfile"
+    label: "Gemfile"
+    description: "Jekyll plus the theme (remote plugin or gem)."
+    required: true
+  - path: "docker-compose.yml"
+    label: "docker-compose.yml"
+    description: "One-command dev server on your chosen port."
+    required: true
+  - path: "index.md"
+    label: "index.md"
+    description: "Home page; the welcome layout until the site is configured."
+    required: true
+  - path: "_data/navigation/main.yml"
+    label: "navigation/main.yml"
+    description: "Top navigation, generated from your Structure choices."
+    required: true
+  - path: "pages/_about/index.md"
+    label: "about/index.md"
+    description: "About page, drafted in your voice."
+    required: false
+  - path: "pages/_posts/{date}-welcome.md"
+    label: "posts/welcome.md"
+    description: "First post, drafted in your voice."
+    required: false
+  - path: ".gitignore"
+    label: ".gitignore"
+    description: "Jekyll build output, caches and secrets."
+    required: true
+  - path: "zer0.install.yml"
+    label: "zer0.install.yml"
+    description: "Your answers, replayable by scripts/bin/install."
+    required: false
+  - path: ".env.example"
+    label: ".env.example"
+    description: "Where credentials go (never in _config.yml)."
+    required: false
+  - path: "README.md"
+    label: "README.md"
+    description: "How to run, edit and deploy this site."
+    required: false
+
+# ── Framework brief for the Claude session ───────────────────────────────────
+# Short, factual, and safe to send on every request. Deeper answers come from
+# the read_theme_file / search_theme_docs tools, which read the real source.
+framework:
+  name: "zer0-mistakes"
+  gem: "jekyll-theme-zer0"
+  remote_theme: "bamr87/zer0-mistakes"
+  repository: "https://github.com/bamr87/zer0-mistakes"
+  docs_root: "/docs/"
+  summary: >-
+    Docker-first Jekyll theme on Bootstrap 5.3.3. Layout hierarchy is
+    _layouts/root.html → default.html → content layouts (article, home, note,
+    notebook, recipe, book, section, landing, welcome, setup). Includes are
+    modular under _includes/{core,components,navigation,content,analytics}.
+    Content lives in collections under pages/ (_posts, _docs, _about, _notes,
+    _quickstart, _notebooks, _quests, _cookbook). Front matter drives behaviour
+    (title, description, layout, categories, tags, date, lastmod, permalink,
+    sidebar.nav, mermaid, preview). Styling is SCSS design tokens in _sass/tokens
+    with seven named skins (data-theme-skin) and light/dark/auto colour modes.
+    Consumers use remote_theme on GitHub Pages or the gem with Docker; the theme
+    never needs to be forked to customise — shadow an include, add
+    assets/css/user-overrides.css, or set config keys.
+  key_config:
+    - "site_configured: true hides the welcome/setup screens"
+    - "title, subtitle, description, founder, email — identity and SEO"
+    - "github_user, repository_name, url, baseurl — user site has baseurl '' ; project site has '/repo'"
+    - "remote_theme: bamr87/zer0-mistakes (GitHub Pages) or theme: jekyll-theme-zer0 (gem)"
+    - "collections.<name>.output/permalink plus a matching defaults: scope"
+    - "theme_skin: air|aqua|dirt|neon|mint|plum|sunrise ; color_mode_default: auto|light|dark ; color_mode_lock"
+    - "theme_background.enabled toggles the SVG gradient/pattern/noise layers"
+    - "posthog.enabled/api_key ; google_analytics ; cookie_consent.enabled"
+    - "giscus.enabled + data-repo-id + data-category-id"
+    - "ai_chat.enabled/auth_mode/proxy_ready/endpoint — the widget hides until a proxy exists"
+    - "page_feedback.enabled/mode/default_labels"
+    - "obsidian.enabled — wiki-links, embeds, callouts, local graph"
+  customisation:
+    - "Override any include by creating the same path under your site's _includes/"
+    - "assets/css/user-overrides.css is loaded last for style tweaks"
+    - "_includes/custom/{head,body-start,footer,body-end}.html are empty hooks"
+    - "_data/navigation/*.yml drives navbar, sidebars and footers"
+    - "Skins: data-theme-skin on <html>; add a skin by extending _sass/theme/_skins.scss in a fork"
+  guardrails:
+    - "Never put a credential in _config.yml or any generated file; point to .env"
+    - "Generated files must be valid YAML/Markdown; keep _config.yml keys the theme understands"
+    - "Ask before overwriting an existing file in the target folder"
+
+# ── Site plan: the schema the AI agent fills, and the catalogs it picks from ──
+# The plan is a structured description of the site beyond the form fields —
+# landing page, navigation shape, theme overrides, example pages. Claude
+# submits it with the set_site_plan tool; assets/js/setup-wizard.js validates
+# it against `plan_schema` (a JSON-Schema subset: type, properties, required,
+# additionalProperties, enum, enumFrom (a catalog below), items, maxItems,
+# maxLength, pattern) and the generators turn it into files:
+#   landing      → index.md (landing engine) + _data/landing.yml
+#   navigation   → _data/navigation/main.yml (flat or grouped),
+#                  _data/navigation/docs.yml + collection sidebar config
+#   theme        → assets/css/user-overrides.css (+ _includes/custom/head.html
+#                  for web fonts) layered over the chosen skin
+#   pages        → one Markdown file per planned example page
+plan_schema:
+  type: object
+  additionalProperties: false
+  properties:
+    landing:
+      type: object
+      additionalProperties: false
+      properties:
+        template: { type: string, enumFrom: landing_templates }
+        hero:
+          type: object
+          additionalProperties: false
+          properties:
+            eyebrow: { type: string, maxLength: 40 }
+            headline: { type: string, maxLength: 90 }
+            subheadline: { type: string, maxLength: 220 }
+            align: { type: string, enum: [start, center] }
+            variant: { type: string, enum: [default, muted, inverse] }
+            image: { type: string, maxLength: 200 }
+            ctas:
+              type: array
+              maxItems: 3
+              items:
+                type: object
+                additionalProperties: false
+                required: [label, url]
+                properties:
+                  label: { type: string, maxLength: 40 }
+                  url: { type: string, maxLength: 200 }
+                  variant: { type: string, enum: [primary, secondary, outline, light] }
+                  icon: { type: string, maxLength: 40 }
+        sections:
+          type: array
+          maxItems: 8
+          items:
+            type: object
+            additionalProperties: false
+            required: [type]
+            properties:
+              type: { type: string, enumFrom: section_types }
+              id: { type: string, maxLength: 40, pattern: "^[a-z][a-z0-9-]*$" }
+              heading: { type: string, maxLength: 90 }
+              lead: { type: string, maxLength: 220 }
+              variant: { type: string, enum: [default, muted, inverse] }
+              limit: { type: integer }
+              body: { type: string, maxLength: 4000 }
+              cta:
+                type: object
+                additionalProperties: false
+                properties:
+                  label: { type: string, maxLength: 40 }
+                  url: { type: string, maxLength: 200 }
+              items:
+                type: array
+                maxItems: 12
+                items:
+                  type: object
+                  additionalProperties: false
+                  properties:
+                    title: { type: string, maxLength: 80 }
+                    text: { type: string, maxLength: 400 }
+                    icon: { type: string, maxLength: 40 }
+                    url: { type: string, maxLength: 200 }
+                    value: { type: string, maxLength: 24 }
+                    label: { type: string, maxLength: 60 }
+                    quote: { type: string, maxLength: 400 }
+                    author: { type: string, maxLength: 80 }
+    navigation:
+      type: object
+      additionalProperties: false
+      properties:
+        style: { type: string, enumFrom: navigation_styles }
+        sidebar: { type: string, enumFrom: sidebar_modes }
+        items:
+          type: array
+          maxItems: 8
+          items:
+            type: object
+            additionalProperties: false
+            required: [title, url]
+            properties:
+              title: { type: string, maxLength: 30 }
+              url: { type: string, maxLength: 200 }
+              icon: { type: string, maxLength: 40 }
+              children:
+                type: array
+                maxItems: 8
+                items:
+                  type: object
+                  additionalProperties: false
+                  required: [title, url]
+                  properties:
+                    title: { type: string, maxLength: 40 }
+                    url: { type: string, maxLength: 200 }
+                    icon: { type: string, maxLength: 40 }
+    theme:
+      type: object
+      additionalProperties: false
+      properties:
+        palette:
+          type: object
+          additionalProperties: false
+          properties:
+            preset: { type: string, enumFrom: palettes }
+            primary: { type: string, pattern: "^#[0-9a-fA-F]{6}$" }
+            secondary: { type: string, pattern: "^#[0-9a-fA-F]{6}$" }
+            accent: { type: string, pattern: "^#[0-9a-fA-F]{6}$" }
+        fonts: { type: string, enumFrom: font_pairings }
+        radius: { type: string, enumFrom: radius_options }
+    pages:
+      type: array
+      maxItems: 12
+      items:
+        type: object
+        additionalProperties: false
+        required: [collection, title]
+        properties:
+          collection: { type: string, enum: [posts, docs, about, notes, quickstart, notebooks, quests, recipes] }
+          slug: { type: string, maxLength: 60, pattern: "^[a-z0-9][a-z0-9-]*$" }
+          title: { type: string, maxLength: 90 }
+          description: { type: string, maxLength: 220 }
+          date: { type: string, pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+          categories: { type: array, maxItems: 4, items: { type: string, maxLength: 30 } }
+          tags: { type: array, maxItems: 8, items: { type: string, maxLength: 30 } }
+          body: { type: string, maxLength: 20000 }
+
+landing_templates:
+  - id: minimal
+    label: "Minimal"
+    description: "Title, one paragraph, latest posts. No hero."
+    sections: [latest_posts]
+  - id: hero
+    label: "Hero + features"
+    description: "Big headline with calls to action, three feature cards, a closing CTA."
+    sections: [features, latest_posts, cta]
+  - id: showcase
+    label: "Showcase"
+    description: "Hero, a card grid of highlights, a pull quote, and a CTA. Portfolios and cookbooks."
+    sections: [cards, quote, cta]
+  - id: docs-hub
+    label: "Docs hub"
+    description: "Hero with a primary Read-the-docs CTA, three getting-started steps, topic cards, FAQ."
+    sections: [steps, cards, faq]
+  - id: editorial
+    label: "Editorial"
+    description: "Left-aligned hero, the latest writing, a short manifesto, a subscribe CTA."
+    sections: [latest_posts, text, cta]
+
+section_types:
+  - id: features
+    label: "Feature cards"
+    fields: "items[title, text, icon]"
+  - id: cards
+    label: "Link cards"
+    fields: "items[title, text, icon, url]"
+  - id: steps
+    label: "Numbered steps"
+    fields: "items[title, text]"
+  - id: stats
+    label: "Stats"
+    fields: "items[value, label]"
+  - id: faq
+    label: "FAQ accordion"
+    fields: "items[title, text]"
+  - id: cta
+    label: "Call to action"
+    fields: "heading, lead, cta{label, url}"
+  - id: latest_posts
+    label: "Latest posts"
+    fields: "heading, limit"
+  - id: quote
+    label: "Pull quote"
+    fields: "items[quote, author] (first item)"
+  - id: text
+    label: "Prose"
+    fields: "heading, body (Markdown)"
+
+navigation_styles:
+  - id: flat
+    label: "Flat"
+    description: "One link per collection plus your extras."
+  - id: grouped
+    label: "Grouped"
+    description: "Collections become dropdowns listing their planned pages."
+
+sidebar_modes:
+  - id: none
+    label: "No sidebar"
+    description: "Full-width reading on every page."
+  - id: auto
+    label: "Automatic"
+    description: "The theme picks the best tree for each collection."
+  - id: docs
+    label: "Docs tree"
+    description: "A curated _data/navigation/docs.yml built from the planned docs pages."
+
+# Palettes layer over the skin: they replace the primary/link/accent colours
+# only, so the skin's surfaces and backgrounds stay intact.
+palettes:
+  - id: skin
+    label: "Skin colours"
+    description: "No override — the skin's own palette."
+  - id: ocean
+    label: "Ocean"
+    primary: "#0b6e99"
+    secondary: "#5c7a89"
+    accent: "#00b4d8"
+  - id: forest
+    label: "Forest"
+    primary: "#2d6a4f"
+    secondary: "#6c757d"
+    accent: "#95d5b2"
+  - id: sunset
+    label: "Sunset"
+    primary: "#d9480f"
+    secondary: "#7a5c58"
+    accent: "#ffb703"
+  - id: graphite
+    label: "Graphite"
+    primary: "#343a40"
+    secondary: "#6c757d"
+    accent: "#adb5bd"
+  - id: berry
+    label: "Berry"
+    primary: "#7b2cbf"
+    secondary: "#6c5b7b"
+    accent: "#e0aaff"
+  - id: sand
+    label: "Sand"
+    primary: "#8a6d3b"
+    secondary: "#a0937d"
+    accent: "#e9c46a"
+  - id: midnight
+    label: "Midnight"
+    primary: "#1d3557"
+    secondary: "#457b9d"
+    accent: "#a8dadc"
+  - id: citrus
+    label: "Citrus"
+    primary: "#2b9348"
+    secondary: "#55a630"
+    accent: "#ffd60a"
+
+# Web-font pairings load from Google Fonts through the site's own
+# _includes/custom/head.html hook; `system` keeps the theme's system stack.
+font_pairings:
+  - id: system
+    label: "System stack"
+    heading: ""
+    body: ""
+    google: ""
+    description: "Fast, no external requests."
+  - id: inter
+    label: "Inter"
+    heading: "'Inter', system-ui, sans-serif"
+    body: "'Inter', system-ui, sans-serif"
+    google: "family=Inter:wght@400;500;600;700"
+    description: "Neutral, technical, very legible."
+  - id: playfair-lato
+    label: "Playfair Display + Lato"
+    heading: "'Playfair Display', Georgia, serif"
+    body: "'Lato', system-ui, sans-serif"
+    google: "family=Playfair+Display:wght@600;700&family=Lato:wght@400;700"
+    description: "Editorial headlines over a clean body."
+  - id: space-plex
+    label: "Space Grotesk + IBM Plex Sans"
+    heading: "'Space Grotesk', system-ui, sans-serif"
+    body: "'IBM Plex Sans', system-ui, sans-serif"
+    google: "family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;600"
+    description: "Geometric, modern, product-like."
+  - id: merriweather-source
+    label: "Merriweather + Source Sans 3"
+    heading: "'Merriweather', Georgia, serif"
+    body: "'Source Sans 3', system-ui, sans-serif"
+    google: "family=Merriweather:wght@700&family=Source+Sans+3:wght@400;600"
+    description: "Warm serif headings, friendly body."
+  - id: nunito
+    label: "Nunito"
+    heading: "'Nunito', system-ui, sans-serif"
+    body: "'Nunito', system-ui, sans-serif"
+    google: "family=Nunito:wght@400;600;800"
+    description: "Rounded and approachable — hobby and community sites."
+  - id: fraunces-work
+    label: "Fraunces + Work Sans"
+    heading: "'Fraunces', Georgia, serif"
+    body: "'Work Sans', system-ui, sans-serif"
+    google: "family=Fraunces:wght@600;700&family=Work+Sans:wght@400;600"
+    description: "Characterful display serif for food, craft, culture."
+
+radius_options:
+  - id: sharp
+    label: "Sharp"
+    sm: "0.125rem"
+    base: "0.2rem"
+    lg: "0.25rem"
+    xl: "0.375rem"
+  - id: soft
+    label: "Soft"
+    sm: "0.25rem"
+    base: "0.375rem"
+    lg: "0.5rem"
+    xl: "0.75rem"
+  - id: round
+    label: "Round"
+    sm: "0.5rem"
+    base: "0.75rem"
+    lg: "1rem"
+    xl: "1.25rem"

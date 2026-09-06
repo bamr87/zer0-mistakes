@@ -1,8 +1,8 @@
 ---
-title: GitHub Setup & Deployment
-author: Zer0-Mistakes Development Team
+title: "GitHub Setup: Fork, Configure, and Deploy to Pages"
+author: "Zer0-Mistakes Development Team"
 layout: default
-description: Configure GitHub integration for version control and automated deployment. Fork the theme, set up SSH keys, and deploy to GitHub Pages.
+description: "Authenticate with the GitHub CLI, fork the zer0-mistakes theme into your account, and deploy your personalized site to GitHub Pages."
 permalink: /quickstart/github-setup/
 preview: /images/previews/github-setup-deployment.png
 categories:
@@ -15,15 +15,14 @@ tags:
   - github-pages
   - version-control
 keywords:
-  primary:
-    - github pages deployment
-    - git workflow
-  secondary:
-    - ssh keys
-    - github cli
-    - fork repository
-    - pull requests
-lastmod: 2026-06-15T00:00:00.000Z
+  - github pages deployment
+  - git workflow
+  - github cli auth
+  - github cli
+  - fork repository
+  - pull requests
+date: 2025-07-01T00:00:00.000Z
+lastmod: 2026-09-05T00:00:00.000Z
 draft: false
 sidebar:
   nav: quickstart
@@ -34,7 +33,7 @@ quickstart:
 mermaid: true
 ---
 
-# GitHub Setup & Deployment
+# GitHub Setup
 
 Authenticate with GitHub, fork the theme, and deploy your site to GitHub Pages.
 
@@ -43,7 +42,7 @@ flowchart LR
     A([Machine Setup done]) --> B[gh auth login]
     B --> C[Fork bamr87/zer0-mistakes]
     C --> D[./scripts/fork-cleanup.sh]
-    D --> E[docker-compose up]
+    D --> E[docker compose up]
     E --> F[git push origin main]
     F --> G[GitHub Actions builds site]
     G --> H([username.github.io live 🚀])
@@ -102,7 +101,7 @@ cd <your-username>.github.io
 
 ![GitHub fork dialog](/assets/images/quickstart/github-fork-dialog.png)
 
-> See [docs/FORKING.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/installation/forking.md) for the full fork → configure → personalize workflow.
+> See [docs/installation/forking.md](https://github.com/bamr87/zer0-mistakes/blob/main/docs/installation/forking.md) for the full fork → configure → personalize workflow.
 
 ## Step 3 — Run the Fork Cleanup Script
 
@@ -119,7 +118,7 @@ It will prompt you for your site title, URL, author name, and other basic settin
 ## Step 4 — Start the Dev Server
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 Visit [http://localhost:4000](http://localhost:4000) to confirm your personalized site is running.
@@ -137,14 +136,14 @@ In your forked repo on GitHub.com:
 
 After the first push, GitHub Actions builds the site and it appears at:
 
-```
+```text
 https://<your-username>.github.io
 ```
 
 ## Step 6 — Push Your Changes
 
 ```bash
-git add -A
+git add _config.yml pages/          # stage by path, not `git add -A`
 git commit -m "feat: initial site personalization"
 git push origin main
 ```
@@ -159,8 +158,8 @@ Watch the deployment: **Actions** tab → **pages build and deployment** workflo
 # New feature branch
 git checkout -b feat/my-feature
 
-# Make changes, then commit
-git add -A
+# Make changes, then stage the files you actually touched
+git add pages/_posts/my-first-post.md
 git commit -m "feat(posts): add first blog post"
 
 # Push and open PR
