@@ -453,7 +453,13 @@ jobs:
           docker compose up --build -d
           
           echo "⏳ Waiting for Jekyll to start with adaptive timeout..."
-          MAX_WAIT=120
+          # The budget covers container start + `bundle install` + the first full
+          # site build, which is ~95-125s on a hosted runner and grows with the
+          # content. At 120 the job passed only via the post-loop grace curl
+          # (main's own run: "Site became accessible at 124s") and any added page
+          # turned it red. The loop still exits the moment the site answers, so a
+          # larger ceiling costs nothing on a healthy run and only buys headroom.
+          MAX_WAIT=300
           ELAPSED=0
           INTERVAL=2
           
