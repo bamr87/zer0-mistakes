@@ -72,6 +72,125 @@
   var checks = {};            // prerequisite id → {ok, output, version, manual}
   var activeFile = '_config.yml';
   var skinPreviewOriginal = null;
+  var previewStyle = null;    // <style> injected while "Preview on this page" is on
+  var previewFontLink = null; // Google Fonts <link> injected for the preview
+
+  // ── site plan ────────────────────────────────────────────────────
+  // The parts of the plan that have no form control of their own: the landing
+  // hero/sections, a navigation override, and the planned example pages. The
+  // form-backed parts (template, nav style, sidebar, palette, fonts, radius)
+  // live in the controls with `data-key="plan.…"`; getPlan() merges the two.
+  var planExtra = { landing: { hero: null, sections: null }, navigation: { items: null }, pages: [] };
+
+  function catalogItem(name, id) {
+    return catalog(name).filter(function (x) { return x.id === id; })[0] || null;
+  }
+
+  function planSchema() { return DATA.plan_schema || { type: 'object' }; }
+
+  /**
+   * Validate `value` against the JSON-Schema subset used by plan_schema.
+   * Supports: type, properties, required, additionalProperties:false, enum,
+   * enumFrom (ids of a catalog in the data file), items, maxItems, maxLength,
+   * pattern. Returns an array of "path: message" strings (empty = valid).
+   */
+  function validateSchema(value, schema, path, errors) {
+    errors = errors || [];
+    path = path || 'plan';
+    if (!schema) return errors;
+    var type = schema.type;
+    var actual = Array.isArray(value) ? 'array' : value === null ? 'null' : typeof value;
+    if (type === 'integer') { if (typeof value !== 'number' || value % 1 !== 0) errors.push(path + ': expected an integer'); return errors; }
+    if (type && actual !== type) { errors.push(path + ': expected ' + type + ', got ' + actual); return errors; }
+    if (schema.enum && schema.enum.indexOf(value) === -1) errors.push(path + ': must be one of ' + schema.enum.join(', '));
+    if (schema.enumFrom) {
+      var ids = catalog(schema.enumFrom).map(function (x) { return x.id; });
+      if (schema.enumFrom === 'palettes') ids.push('custom');
+      if (ids.indexOf(value) === -1) errors.push(path + ': must be one of ' + ids.join(', '));
+    }
+    if (type === 'string') {
+      if (schema.maxLength && value.length > schema.maxLength) errors.push(path + ': longer than ' + schema.maxLength + ' characters');
+      if (schema.pattern && !(new RegExp(schema.pattern)).test(value)) errors.push(path + ': does not match ' + schema.pattern);
+    }
+    if (type === 'array') {
+      if (schema.maxItems && value.length > schema.maxItems) errors.push(path + ': more than ' + schema.maxItems + ' items');
+      if (schema.items) value.forEach(function (v, i) { validateSchema(v, schema.items, path + '[' + i + ']', errors); });
+    }
+    if (type === 'object') {
+      var props = schema.properties || {};
+      (schema.required || []).forEach(function (k) { if (value[k] === undefined || value[k] === null || value[k] === '') errors.push(path + '.' + k + ': required'); });
+      Object.keys(value).forEach(function (k) {
+        if (props[k]) validateSchema(value[k], props[k], path + '.' + k, errors);
+        else if (schema.additionalProperties === false) errors.push(path + '.' + k + ': unknown key');
+      });
+    }
+    return errors;
+  }
+
+  /**
+   * Minimal YAML emitter for the nested data files the plan produces.
+   *
+   * Every branch returns COMPLETE lines already indented to `indent`. A list
+   * item renders its value at indent + 2 and then overwrites the two spaces in
+   * front of the item's first line with "- ", which is the one place block
+   * sequences and block mappings have to agree. An earlier version stripped
+   * the leading indent from the first line and left the rest at the item's own
+   * level, which produced a mapping whose keys sat under the dash — Psych
+   * rejected the file ("did not find expected '-' indicator") and every
+   * generated site failed to build.
+   */
+  function toYaml(value, indent) {
+    indent = indent || 0;
+    var padStr = ' '.repeat(indent);
+    if (Array.isArray(value)) {
+      if (!value.length) return padStr + '[]\n';
+      return value.map(function (v) {
+        if (v !== null && typeof v === 'object' && Object.keys(v).length) {
+          var inner = toYaml(v, indent + 2);
+          return padStr + '- ' + inner.slice(indent + 2); // first line joins the dash
+        }
+        if (v !== null && typeof v === 'object') return padStr + '- {}\n';
+        return padStr + '- ' + yScalar(v) + '\n';
+      }).join('');
+    }
+    if (value !== null && typeof value === 'object') {
+      var keys = Object.keys(value).filter(function (k) {
+        var v = value[k];
+        return v !== undefined && v !== null && !(typeof v === 'object' && !Array.isArray(v) && !Object.keys(v).length);
+      });
+      if (!keys.length) return padStr + '{}\n';
+      return keys.map(function (k) {
+        var v = value[k];
+        if (Array.isArray(v)) return v.length ? padStr + k + ':\n' + toYaml(v, indent + 2) : padStr + k + ': []\n';
+        if (typeof v === 'object') return padStr + k + ':\n' + toYaml(v, indent + 2);
+        if (typeof v === 'string' && v.indexOf('\n') !== -1) {
+          return padStr + k + ': |-\n' + v.split('\n').map(function (line) { return padStr + '  ' + line; }).join('\n') + '\n';
+        }
+        return padStr + k + ': ' + yScalar(v) + '\n';
+      }).join('');
+    }
+    return padStr + yScalar(value) + '\n';
+  }
+
+  function yScalar(v) {
+    if (typeof v === 'boolean' || typeof v === 'number') return String(v);
+    return y(v);
+  }
+
+  function hexToRgb(hex) {
+    var m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(String(hex || ''));
+    return m ? [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)].join(', ') : '';
+  }
+
+  function shade(hex, amount) {
+    var m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(String(hex || ''));
+    if (!m) return hex;
+    var out = [m[1], m[2], m[3]].map(function (h) {
+      var v = Math.round(parseInt(h, 16) * (1 + amount));
+      return ('0' + Math.max(0, Math.min(255, v)).toString(16)).slice(-2);
+    });
+    return '#' + out.join('');
+  }
 
   // ── tiny event bus ────────────────────────────────────────────────
 
@@ -182,6 +301,110 @@
     return active ? active.id : STEP_IDS[0];
   }
 
+  /** The merged site plan: form-backed choices + the AI/user-supplied extras. */
+  function getPlan() {
+    var f = readFields();
+    var palette = { preset: f['plan.theme.palette.preset'] || 'skin' };
+    if (palette.preset === 'custom') {
+      palette.primary = f['plan.theme.palette.primary'] || '#0d6efd';
+      palette.secondary = f['plan.theme.palette.secondary'] || '#6c757d';
+      palette.accent = f['plan.theme.palette.accent'] || '#20c997';
+    }
+    return {
+      landing: {
+        template: f['plan.landing.template'] || 'hero',
+        hero: planExtra.landing.hero || undefined,
+        sections: planExtra.landing.sections || undefined
+      },
+      navigation: {
+        style: f['plan.navigation.style'] || 'flat',
+        sidebar: f['plan.navigation.sidebar'] || 'none',
+        items: planExtra.navigation.items || undefined
+      },
+      theme: {
+        palette: palette,
+        fonts: f['plan.theme.fonts'] || 'system',
+        radius: f['plan.theme.radius'] || 'soft'
+      },
+      pages: planExtra.pages.slice()
+    };
+  }
+
+  /**
+   * Apply a (partial) plan. Form-backed keys go through the controls; the
+   * extras are merged. Validates against plan_schema first — an invalid plan
+   * changes nothing and the errors come back for the caller (Claude) to fix.
+   */
+  function setPlan(patch, opts) {
+    opts = opts || {};
+    if (!patch || typeof patch !== 'object') return { ok: false, errors: ['plan must be an object'] };
+    var errors = validateSchema(patch, planSchema(), 'plan');
+    if (errors.length) return { ok: false, errors: errors };
+
+    var fieldPatch = {};
+    if (patch.landing) {
+      if (patch.landing.template) fieldPatch['plan.landing.template'] = patch.landing.template;
+      if (patch.landing.hero !== undefined) planExtra.landing.hero = patch.landing.hero;
+      if (patch.landing.sections !== undefined) planExtra.landing.sections = patch.landing.sections;
+    }
+    if (patch.navigation) {
+      if (patch.navigation.style) fieldPatch['plan.navigation.style'] = patch.navigation.style;
+      if (patch.navigation.sidebar) fieldPatch['plan.navigation.sidebar'] = patch.navigation.sidebar;
+      if (patch.navigation.items !== undefined) planExtra.navigation.items = patch.navigation.items;
+    }
+    if (patch.theme) {
+      if (patch.theme.palette) {
+        var p = patch.theme.palette;
+        if (p.primary || p.secondary || p.accent) {
+          fieldPatch['plan.theme.palette.preset'] = 'custom';
+          if (p.primary) fieldPatch['plan.theme.palette.primary'] = p.primary;
+          if (p.secondary) fieldPatch['plan.theme.palette.secondary'] = p.secondary;
+          if (p.accent) fieldPatch['plan.theme.palette.accent'] = p.accent;
+        } else if (p.preset) fieldPatch['plan.theme.palette.preset'] = p.preset;
+      }
+      if (patch.theme.fonts) fieldPatch['plan.theme.fonts'] = patch.theme.fonts;
+      if (patch.theme.radius) fieldPatch['plan.theme.radius'] = patch.theme.radius;
+    }
+    if (Array.isArray(patch.pages)) {
+      var pages = patch.pages.map(normalizePage);
+      planExtra.pages = opts.mergePages ? mergePages(planExtra.pages, pages) : pages;
+      renderPagesPlanner();
+    }
+    var applied = Object.keys(fieldPatch).length ? applyFields(fieldPatch, { source: opts.source || 'plan', silent: true }) : { applied: [], ignored: [] };
+    refreshAll();
+    saveDraft();
+    emit('change', { source: opts.source || 'plan', keys: ['plan'] });
+    return { ok: true, applied: applied.applied.concat(Object.keys(patch)), ignored: applied.ignored };
+  }
+
+  function normalizePage(p) {
+    var page = Object.assign({}, p);
+    page.collection = page.collection || 'posts';
+    page.title = String(page.title || 'Untitled').trim();
+    page.slug = slugify(page.slug || page.title) || 'page';
+    if (page.collection === 'posts' && !page.date) page.date = todayISO();
+    return page;
+  }
+
+  function mergePages(existing, incoming) {
+    var out = existing.slice();
+    incoming.forEach(function (p) {
+      var i = out.findIndex(function (e) { return e.collection === p.collection && e.slug === p.slug; });
+      if (i === -1) out.push(p); else out[i] = Object.assign({}, out[i], p);
+    });
+    return out.slice(0, 12);
+  }
+
+  function planSummary(plan) {
+    var lines = [];
+    lines.push('Landing: template=' + plan.landing.template + (plan.landing.hero ? ' (custom hero)' : ' (default hero)') + (plan.landing.sections ? ', ' + plan.landing.sections.length + ' custom sections' : ', default sections'));
+    lines.push('Navigation: style=' + plan.navigation.style + ' sidebar=' + plan.navigation.sidebar + (plan.navigation.items ? ' (custom items)' : ''));
+    var pal = plan.theme.palette;
+    lines.push('Theme overrides: palette=' + pal.preset + (pal.primary ? ' ' + pal.primary + '/' + pal.secondary + '/' + pal.accent : '') + ' fonts=' + plan.theme.fonts + ' radius=' + plan.theme.radius);
+    lines.push('Planned pages (' + plan.pages.length + '): ' + (plan.pages.map(function (p) { return p.collection + '/' + p.slug + (p.body ? '' : ' (no body yet)'); }).join(', ') || 'none'));
+    return lines.join('\n');
+  }
+
   /** The full, serialisable wizard state — what Claude reads every turn. */
   function getState() {
     var f = readFields();
@@ -190,6 +413,7 @@
     return {
       step: activeStepId().replace(/^tab-/, ''),
       fields: f,
+      plan: getPlan(),
       collections: collections.map(function (c) { return c.id; }),
       navigation: readNavigation(),
       checks: JSON.parse(JSON.stringify(checks)),
@@ -224,6 +448,7 @@
     lines.push('Prerequisites: ' + (checkLines.join(', ') || 'not checked'));
     lines.push('Target folder: ' + s.target + ' | overwrite: ' + !!f.overwrite + ' | file overrides: ' + (s.overrides.join(', ') || 'none'));
     if (s.recommendedMissing.length) lines.push('Recommended fields still empty: ' + s.recommendedMissing.join(', '));
+    lines.push('Site plan:\n' + planSummary(s.plan));
     return lines.join('\n');
   }
 
@@ -263,7 +488,7 @@
     });
     out.push({ key: 'collections', label: 'Enabled collections', type: 'array of ids', options: catalog('collections').map(function (c) { return c.id; }) });
     out.push({ key: 'navigation', label: 'Main navigation', type: 'array of {title, url, icon?} (icon = Bootstrap icon class like bi-book)' });
-    return out;
+    return out.filter(function (e) { return e.key.indexOf('plan.') !== 0; }); // plan.* keys are set through set_site_plan
   }
 
   // ── writing the form (Claude → wizard) ───────────────────────────
@@ -423,6 +648,100 @@
     return row;
   }
 
+  // ── example-page planner ─────────────────────────────────────────
+
+  function pageRow(p, index) {
+    var row = document.createElement('div');
+    row.className = 'page-row input-group input-group-sm';
+    row.setAttribute('data-index', String(index));
+    var select = document.createElement('select');
+    select.className = 'form-select page-collection';
+    select.setAttribute('aria-label', 'Collection');
+    readCollections().forEach(function (col) {
+      var opt = document.createElement('option');
+      opt.value = col.id;
+      opt.textContent = labelFor(catalog('collections'), col.id);
+      if (col.id === p.collection) opt.selected = true;
+      select.appendChild(opt);
+    });
+    if (!Array.prototype.some.call(select.options, function (o) { return o.value === p.collection; })) {
+      var extra = document.createElement('option');
+      extra.value = p.collection;
+      extra.textContent = titleCase(p.collection) + ' (off)';
+      extra.selected = true;
+      select.appendChild(extra);
+    }
+    var title = document.createElement('input');
+    title.type = 'text';
+    title.className = 'form-control page-title';
+    title.placeholder = 'Page title';
+    title.setAttribute('aria-label', 'Page title');
+    title.value = p.title || '';
+    var state = document.createElement('span');
+    state.className = 'input-group-text small';
+    state.title = p.body ? 'Body written' : 'Body will be drafted from the title';
+    state.innerHTML = p.body ? '<i class="bi bi-file-earmark-check text-success" aria-hidden="true"></i>' : '<i class="bi bi-file-earmark text-body-secondary" aria-hidden="true"></i>';
+    var remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'btn btn-outline-danger page-remove';
+    remove.setAttribute('aria-label', 'Remove planned page');
+    remove.innerHTML = '<i class="bi bi-x-lg" aria-hidden="true"></i>';
+    row.appendChild(select);
+    row.appendChild(title);
+    row.appendChild(state);
+    row.appendChild(remove);
+    return row;
+  }
+
+  function renderPagesPlanner() {
+    var host = document.getElementById('pages-planner');
+    if (!host) return;
+    host.innerHTML = '';
+    planExtra.pages.forEach(function (p, i) { host.appendChild(pageRow(p, i)); });
+    if (!planExtra.pages.length) {
+      var empty = document.createElement('p');
+      empty.className = 'small text-body-secondary mb-0';
+      empty.textContent = 'No example pages planned yet — add one, or ask Claude to plan them.';
+      host.appendChild(empty);
+    }
+    var count = document.getElementById('pages-count');
+    if (count) count.textContent = String(planExtra.pages.length);
+  }
+
+  function updateLandingSummary() {
+    var host = document.getElementById('landing-summary');
+    if (!host) return;
+    var lp = landingPlan(ctx());
+    host.textContent = 'Hero: “' + (lp.hero.headline || '') + '” · sections: ' + lp.sections.map(function (s) { return s.type.replace('_', ' '); }).join(', ') + (planExtra.landing.sections ? ' (designed)' : ' (template defaults)');
+  }
+
+  function ensureFontLink(fp) {
+    if (!fp || !fp.google) return;
+    var id = 'wizard-font-' + fp.id;
+    if (document.getElementById(id)) return;
+    var link = document.createElement('link');
+    link.id = id;
+    link.rel = 'stylesheet';
+    link.href = 'https://fonts.googleapis.com/css2?' + fp.google + '&display=swap';
+    document.head.appendChild(link);
+  }
+
+  function updateFontPreview() {
+    var host = document.getElementById('font-preview');
+    if (!host) return;
+    var fp = catalogItem('font_pairings', readFields()['plan.theme.fonts']);
+    if (fp && fp.google) {
+      ensureFontLink(fp);
+      host.style.fontFamily = fp.body;
+      var strong = host.querySelector('strong');
+      if (strong) strong.style.fontFamily = fp.heading;
+    } else {
+      host.style.fontFamily = '';
+      var s2 = host.querySelector('strong');
+      if (s2) s2.style.fontFamily = '';
+    }
+  }
+
   function renderNavEditor(items) {
     var host = document.getElementById('nav-editor');
     if (!host) return;
@@ -446,7 +765,7 @@
     var isUserSite = /\.github\.io$/i.test(repo);
     var remote = f.deploy_target !== 'gem';
     return {
-      s: s, f: f, ghUser: ghUser, repo: repo, remote: remote,
+      s: s, f: f, ghUser: ghUser, repo: repo, remote: remote, plan: s.plan,
       title: f.title || 'My Site',
       url: f.url || ('https://' + ghUser + '.github.io'),
       baseurl: f.baseurl !== undefined ? f.baseurl : (isUserSite ? '' : '/' + repo),
@@ -520,6 +839,12 @@
       L.push('  ' + col.id + ':');
       L.push('    output: true');
       L.push('    permalink: ' + col.permalink);
+      if (col.id === 'docs' && c.plan.navigation.sidebar === 'docs') {
+        L.push('    sidebar:                 # curated tree in _data/navigation/docs.yml');
+        L.push('      nav: docs');
+        L.push('      title: "Docs"');
+        L.push('      icon: bi-book');
+      }
     });
     L.push('');
     L.push('# ── Default front matter ───────────────────────────────────────────');
@@ -547,7 +872,16 @@
     L.push('  - jekyll-paginate');
     if (c.remote) L.push('  - jekyll-remote-theme');
     L.push('');
+    if (c.plan.navigation.sidebar === 'auto') {
+      L.push('# ── Sidebar ────────────────────────────────────────────────────────');
+      L.push('# auto = the theme picks the best tree per collection (curated file, folder tree, categories).');
+      L.push('sidebar:');
+      L.push('  nav: auto');
+      L.push('');
+    }
     L.push('# ── Appearance ─────────────────────────────────────────────────────');
+    L.push('# Skin = base palette + backgrounds; assets/css/user-overrides.css layers the');
+    L.push('# palette, fonts and corner radius chosen in the Site Builder on top.');
     L.push(pad('theme_skin') + ': ' + y(f.theme_skin || 'air') + '   # air | aqua | dirt | neon | mint | plum | sunrise');
     L.push(pad('color_mode_default') + ': ' + (f.color_mode_default || 'auto') + '     # auto | light | dark');
     L.push(pad('color_mode_lock') + ': ' + (f.color_mode_lock ? 'true' : 'false'));
@@ -714,34 +1048,299 @@
     return L.join('\n') + '\n';
   }
 
+  // ── landing page (plan-driven) ───────────────────────────────────
+
+  var COLLECTION_BLURB = {
+    posts: { title: 'Posts', text: 'Dated writing, newest first, with an RSS feed.', icon: 'bi-journal-text' },
+    docs: { title: 'Guides', text: 'Evergreen documentation with a reading sidebar.', icon: 'bi-book' },
+    notes: { title: 'Notes', text: 'Short, interlinked notes that grow over time.', icon: 'bi-sticky' },
+    quickstart: { title: 'Quickstart', text: 'Ordered steps to get going in minutes.', icon: 'bi-flag' },
+    recipes: { title: 'Recipes', text: 'Structured recipes that scale to your table.', icon: 'bi-egg-fried' },
+    notebooks: { title: 'Notebooks', text: 'Rendered Jupyter notebooks.', icon: 'bi-journal-code' },
+    quests: { title: 'Quests', text: 'Learning paths with levels and badges.', icon: 'bi-controller' },
+    about: { title: 'About', text: 'Who is behind this site and how to reach them.', icon: 'bi-info-circle' }
+  };
+
+  function hasCollection(c, id) { return c.collections.some(function (x) { return x.id === id; }); }
+
+  function firstSentence(text) {
+    var m = String(text || '').trim().match(/^[^.!?]+[.!?]?/);
+    return m ? m[0].trim() : String(text || '').trim();
+  }
+
+  function defaultCtas(c) {
+    var ctas = [];
+    var lead = c.collections.filter(function (x) { return x.id !== 'about'; })[0];
+    if (lead) {
+      var verb = lead.id === 'docs' ? 'Read the docs' : lead.id === 'recipes' ? 'Browse the recipes' : lead.id === 'notes' ? 'Wander the notes' : lead.id === 'quickstart' ? 'Start here' : 'Read the latest';
+      ctas.push({ label: verb, url: '/' + lead.id + '/', variant: 'primary', icon: (COLLECTION_BLURB[lead.id] || {}).icon });
+    }
+    if (hasCollection(c, 'about')) ctas.push({ label: 'About', url: '/about/', variant: 'outline', icon: 'bi-info-circle' });
+    return ctas;
+  }
+
+  function defaultSection(type, c) {
+    var cols = c.collections.filter(function (x) { return x.id !== 'about'; });
+    var brief = c.f.brief || c.f.description || '';
+    var pages = c.plan.pages || [];
+    switch (type) {
+      case 'features': {
+        var items = cols.slice(0, 3).map(function (col) { return Object.assign({}, COLLECTION_BLURB[col.id] || { title: titleCase(col.id), text: '', icon: 'bi-folder' }); });
+        var fill = [{ title: 'Written to last', text: 'Evergreen pages that stay useful, revised when the facts change.', icon: 'bi-hourglass-split' },
+          { title: 'Easy to follow', text: 'Plain language, worked examples, and no assumed jargon.', icon: 'bi-signpost-2' },
+          { title: 'Made in the open', text: 'Every page has a source link; corrections are welcome.', icon: 'bi-github' }];
+        while (items.length < 3) items.push(fill[items.length]);
+        return { type: 'features', id: 'features', heading: 'What you\'ll find here', lead: firstSentence(brief), variant: 'muted', items: items };
+      }
+      case 'cards': {
+        var cards = pages.slice(0, 6).map(function (p) { return { title: p.title, text: p.description || '', icon: (COLLECTION_BLURB[p.collection] || {}).icon, url: pageUrl(p) }; });
+        if (!cards.length) cards = cols.slice(0, 3).map(function (col) { var b = COLLECTION_BLURB[col.id] || {}; return { title: b.title || titleCase(col.id), text: b.text || '', icon: b.icon, url: '/' + col.id + '/' }; });
+        return { type: 'cards', id: 'highlights', heading: 'Start with these', lead: '', variant: 'default', items: cards };
+      }
+      case 'steps': {
+        var lead = cols[0];
+        return { type: 'steps', id: 'get-started', heading: 'Get started in three steps', lead: '', variant: 'default', items: [
+          { title: 'Start here', text: lead ? 'Open the ' + (COLLECTION_BLURB[lead.id] || {}).title.toLowerCase() + ' and read the first page.' : 'Read the first page.' },
+          { title: 'Follow along', text: 'Each page links to the next; the sidebar keeps your place.' },
+          { title: 'Say hello', text: 'Questions and corrections are welcome on the About page.' }] };
+      }
+      case 'stats':
+        return { type: 'stats', id: 'by-the-numbers', heading: 'By the numbers', variant: 'muted', items: [
+          { value: String(cols.length), label: cols.length === 1 ? 'collection' : 'collections' },
+          { value: String(Math.max(pages.length, 1)), label: pages.length === 1 ? 'page to start with' : 'pages to start with' },
+          { value: '1', label: 'author who reads every comment' }] };
+      case 'faq':
+        return { type: 'faq', id: 'faq', heading: 'Questions people ask', variant: 'default', items: [
+          { title: 'Who is this for?', text: brief || 'Anyone curious about the subject.' },
+          { title: 'How often is it updated?', text: 'Whenever there is something worth writing down. Subscribe to the feed to hear about it.' },
+          { title: 'Can I suggest a correction?', text: 'Yes — every page has a source link and an Improve-this-page button.' }] };
+      case 'cta':
+        return hasCollection(c, 'posts')
+          ? { type: 'cta', id: 'subscribe', heading: 'Stay in the loop', lead: 'New posts land in the feed first.', variant: 'inverse', cta: { label: 'Subscribe via RSS', url: '/feed.xml' } }
+          : { type: 'cta', id: 'contact', heading: 'Questions?', lead: 'Get in touch — details are on the About page.', variant: 'inverse', cta: { label: 'Get in touch', url: '/about/' } };
+      case 'latest_posts':
+        return { type: 'latest_posts', id: 'latest', heading: 'Latest', limit: 3, variant: 'default' };
+      case 'quote':
+        return { type: 'quote', id: 'why', variant: 'muted', items: [{ quote: firstSentence(brief) || 'Made with care.', author: c.f.founder || '' }] };
+      case 'text':
+      default:
+        return { type: 'text', id: 'about-this-site', heading: 'About this site', variant: 'default', body: brief || 'Edit `_data/landing.yml` to change this text.' };
+    }
+  }
+
+  function pageUrl(p) {
+    if (p.collection === 'posts') return '/posts/' + p.slug + '/';
+    return '/' + p.collection + '/' + p.slug + '/';
+  }
+
+  /** Resolve the landing plan: template defaults filled in wherever the plan is silent. */
+  function landingPlan(c) {
+    var tpl = catalogItem('landing_templates', c.plan.landing.template) || catalogItem('landing_templates', 'hero') || { id: 'hero', sections: ['features', 'latest_posts', 'cta'] };
+    var hero = Object.assign({
+      eyebrow: c.f.subtitle || '',
+      headline: c.f.tagline || c.title,
+      subheadline: c.f.description || firstSentence(c.f.brief),
+      align: tpl.id === 'editorial' ? 'start' : 'center',
+      variant: tpl.id === 'showcase' ? 'inverse' : 'default',
+      ctas: defaultCtas(c)
+    }, c.plan.landing.hero || {});
+    var sections = (c.plan.landing.sections || (tpl.sections || []).map(function (t) { return defaultSection(t, c); }))
+      .filter(function (s) { return !(s.type === 'latest_posts' && !hasCollection(c, 'posts')); })
+      .map(function (s, i) { return Object.assign({ id: (s.type || 'section') + '-' + (i + 1) }, s); });
+    return { template: tpl.id, hero: hero, sections: sections };
+  }
+
+  function genLandingData(c) {
+    var lp = landingPlan(c);
+    var head = ['# _data/landing.yml — content for the landing page (index.md renders it).',
+      '# Generated by the zer0-mistakes Site Builder from your site plan. Edit freely:',
+      '# hero.{eyebrow,headline,subheadline,align,variant,ctas[]} and sections[] of type',
+      '# ' + catalog('section_types').map(function (s) { return s.id; }).join(' | ') + '.', ''];
+    return head.join('\n') + toYaml({ template: lp.template, hero: lp.hero, sections: lp.sections });
+  }
+
   function genIndex(c) {
-    // The home layout already renders page.title and page.description, so the
-    // body starts with the tagline (if any) and the content itself.
-    var L = ['---', 'layout: home', 'title: ' + y(c.title), 'description: ' + y(c.f.description || ''), 'permalink: /', '---', ''];
-    if (c.f.tagline) { L.push('## ' + c.f.tagline); L.push(''); }
-    L.push(c.f.brief ? c.f.brief.trim() : 'Welcome. This home page is `index.md` — edit it to say hello your way.');
-    L.push('');
-    var hasPosts = c.collections.some(function (x) { return x.id === 'posts'; });
-    if (hasPosts) {
-      L.push('## Latest');
+    var lp = landingPlan(c);
+    if (lp.template === 'minimal') {
+      var L = ['---', 'layout: home', 'title: ' + y(c.title), 'description: ' + y(c.f.description || ''), 'permalink: /', '---', ''];
+      if (c.f.tagline) { L.push('## ' + c.f.tagline); L.push(''); }
+      L.push(c.f.brief ? c.f.brief.trim() : 'Welcome. This home page is `index.md` — edit it to say hello your way.');
       L.push('');
-      L.push('{% for post in site.posts limit: 5 %}');
-      L.push('- [{{ post.title }}]({{ post.url | relative_url }}) — {{ post.date | date: "%B %-d, %Y" }}');
-      L.push('{% endfor %}');
+      if (hasCollection(c, 'posts')) {
+        L.push('## Latest', '', '{% for post in site.posts limit: 5 %}', '- [{{ post.title }}]({{ post.url | relative_url }}) — {{ post.date | date: "%B %-d, %Y" }}', '{% endfor %}', '');
+      }
+      return L.join('\n');
+    }
+    // The landing engine: index.md reads _data/landing.yml so the copy can be
+    // edited without touching markup. Only theme includes and Bootstrap classes.
+    return ['---', 'layout: home', 'title: ' + y(c.title), 'description: ' + y(c.f.description || ''), 'permalink: /', 'hide_title: true', 'rss_subscribe: false', '---',
+      '{%- assign landing = site.data.landing -%}',
+      '{%- assign hero = landing.hero -%}',
+      '<section class="zer0-landing-hero py-5{% if hero.variant == "inverse" %} bg-primary text-white{% elsif hero.variant == "muted" %} bg-body-tertiary{% endif %}" data-landing-template="{{ landing.template }}">',
+      '  <div class="container-xl text-{{ hero.align | default: "center" }}">',
+      '    {% if hero.eyebrow %}<p class="text-uppercase small fw-semibold mb-2 opacity-75">{{ hero.eyebrow }}</p>{% endif %}',
+      '    <h1 class="display-4 fw-bold mb-3">{{ hero.headline | default: site.title }}</h1>',
+      '    {% if hero.subheadline %}<p class="lead mb-4 mx-auto" style="max-width: 44rem;">{{ hero.subheadline }}</p>{% endif %}',
+      '    {% if hero.ctas and hero.ctas.size > 0 %}',
+      '    <div class="d-flex flex-wrap gap-2 justify-content-{{ hero.align | default: "center" }}">',
+      '      {% for cta in hero.ctas %}{% include components/cta-button.html label=cta.label url=cta.url variant=cta.variant icon=cta.icon size="lg" %}{% endfor %}',
+      '    </div>',
+      '    {% endif %}',
+      '  </div>',
+      '</section>',
+      '',
+      '{% for s in landing.sections %}',
+      '{%- capture body -%}',
+      '  {%- case s.type -%}',
+      '  {%- when "features" -%}',
+      '    <div class="row g-4">{% for it in s.items %}<div class="col-md-4"><div class="card h-100 border-0 shadow-sm"><div class="card-body"><i class="bi {{ it.icon | default: "bi-check-circle" }} fs-2 text-primary" aria-hidden="true"></i><h3 class="h5 mt-2">{{ it.title }}</h3><p class="mb-0 text-body-secondary">{{ it.text }}</p></div></div></div>{% endfor %}</div>',
+      '  {%- when "cards" -%}',
+      '    <div class="row g-4">{% for it in s.items %}<div class="col-md-6 col-lg-4"><a class="card h-100 text-decoration-none" href="{{ it.url | default: "#" | relative_url }}"><div class="card-body"><i class="bi {{ it.icon | default: "bi-arrow-right-circle" }} fs-3 text-primary" aria-hidden="true"></i><h3 class="h5 mt-2 card-title">{{ it.title }}</h3><p class="card-text text-body-secondary mb-0">{{ it.text }}</p></div></a></div>{% endfor %}</div>',
+      '  {%- when "steps" -%}',
+      '    <ol class="list-unstyled row g-4 mb-0">{% for it in s.items %}<li class="col-md-4 d-flex gap-3"><span class="badge rounded-pill text-bg-primary fs-6 align-self-start">{{ forloop.index }}</span><div><h3 class="h5 mb-1">{{ it.title }}</h3><p class="mb-0 text-body-secondary">{{ it.text }}</p></div></li>{% endfor %}</ol>',
+      '  {%- when "stats" -%}',
+      '    <div class="row g-4 text-center">{% for it in s.items %}<div class="col-6 col-md-3"><div class="display-5 fw-bold text-primary">{{ it.value }}</div><div class="text-body-secondary">{{ it.label }}</div></div>{% endfor %}</div>',
+      '  {%- when "faq" -%}',
+      '    <div class="accordion" id="faq-{{ forloop.index }}">{% for it in s.items %}<div class="accordion-item"><h3 class="accordion-header"><button class="accordion-button{% unless forloop.first %} collapsed{% endunless %}" type="button" data-bs-toggle="collapse" data-bs-target="#faq-{{ forloop.parentloop.index }}-{{ forloop.index }}">{{ it.title }}</button></h3><div id="faq-{{ forloop.parentloop.index }}-{{ forloop.index }}" class="accordion-collapse collapse{% if forloop.first %} show{% endif %}" data-bs-parent="#faq-{{ forloop.parentloop.index }}"><div class="accordion-body">{{ it.text }}</div></div></div>{% endfor %}</div>',
+      '  {%- when "cta" -%}',
+      '    <div class="text-center">{% if s.cta %}{% include components/cta-button.html label=s.cta.label url=s.cta.url variant="light" size="lg" %}{% endif %}</div>',
+      '  {%- when "latest_posts" -%}',
+      '    <div class="row g-4">{% for post in site.posts limit: s.limit | default: 3 %}<div class="col-md-4"><a class="card h-100 text-decoration-none" href="{{ post.url | relative_url }}"><div class="card-body"><p class="small text-body-secondary mb-1">{{ post.date | date: "%B %-d, %Y" }}</p><h3 class="h5 card-title">{{ post.title }}</h3><p class="card-text text-body-secondary mb-0">{{ post.description | default: post.excerpt | strip_html | truncate: 140 }}</p></div></a></div>{% endfor %}</div>',
+      '  {%- when "quote" -%}',
+      '    {% assign q = s.items | first %}<figure class="text-center mb-0"><blockquote class="blockquote fs-3"><p>“{{ q.quote }}”</p></blockquote>{% if q.author %}<figcaption class="blockquote-footer mt-2">{{ q.author }}</figcaption>{% endif %}</figure>',
+      '  {%- else -%}',
+      '    <div class="mx-auto" style="max-width: 44rem;">{{ s.body | markdownify }}</div>',
+      '  {%- endcase -%}',
+      '{%- endcapture -%}',
+      '{% include components/section.html id=s.id variant=s.variant heading=s.heading lead=s.lead content=body %}',
+      '{% endfor %}', ''].join('\n');
+  }
+
+  // ── theme overrides (palette · fonts · corners) ─────────────────
+
+  function resolvedPalette(c) {
+    var p = c.plan.theme.palette || { preset: 'skin' };
+    if (p.preset === 'custom') return { id: 'custom', primary: p.primary, secondary: p.secondary, accent: p.accent };
+    var preset = catalogItem('palettes', p.preset);
+    return preset && preset.primary ? preset : null;
+  }
+
+  function genUserOverrides(c) {
+    var L = ['/* assets/css/user-overrides.css — loaded LAST by the theme, so anything here wins.',
+      '   Generated by the zer0-mistakes Site Builder from your site plan (palette,',
+      '   fonts, corners). Edit freely; the theme never overwrites this file. */', ''];
+    var pal = resolvedPalette(c);
+    if (pal) {
+      L.push('/* Palette "' + pal.id + '" layered over the "' + (c.f.theme_skin || 'air') + '" skin. */');
+      L.push(':root, html[data-theme-skin], html[data-theme-skin][data-bs-theme] {');
+      L.push('  --bs-primary: ' + pal.primary + ' !important;');
+      L.push('  --bs-primary-rgb: ' + hexToRgb(pal.primary) + ' !important;');
+      L.push('  --zer0-color-primary: ' + pal.primary + ' !important;');
+      L.push('  --bs-link-color: ' + pal.primary + ' !important;');
+      L.push('  --bs-link-color-rgb: ' + hexToRgb(pal.primary) + ' !important;');
+      L.push('  --bs-link-hover-color: ' + shade(pal.primary, -0.18) + ' !important;');
+      L.push('  --bs-secondary: ' + pal.secondary + ' !important;');
+      L.push('  --bs-secondary-rgb: ' + hexToRgb(pal.secondary) + ' !important;');
+      L.push('  --zer0-color-accent: ' + pal.accent + ' !important;');
+      L.push('}');
+      L.push('.btn-primary, .badge.text-bg-primary, .bg-primary {');
+      L.push('  --bs-btn-bg: ' + pal.primary + '; --bs-btn-border-color: ' + pal.primary + ';');
+      L.push('  --bs-btn-hover-bg: ' + shade(pal.primary, -0.12) + '; --bs-btn-hover-border-color: ' + shade(pal.primary, -0.18) + ';');
+      L.push('  --bs-btn-active-bg: ' + shade(pal.primary, -0.2) + '; --bs-btn-active-border-color: ' + shade(pal.primary, -0.25) + ';');
+      L.push('  background-color: ' + pal.primary + ';');
+      L.push('}');
+      L.push('.btn-outline-primary { --bs-btn-color: ' + pal.primary + '; --bs-btn-border-color: ' + pal.primary + '; --bs-btn-hover-bg: ' + pal.primary + '; --bs-btn-hover-border-color: ' + pal.primary + '; --bs-btn-active-bg: ' + pal.primary + '; }');
       L.push('');
     }
-    return L.join('\n');
+    var fp = catalogItem('font_pairings', c.plan.theme.fonts);
+    if (fp && fp.google) {
+      L.push('/* Fonts: ' + fp.label + ' (loaded from Google Fonts by _includes/custom/head.html). */');
+      L.push(':root {');
+      L.push('  --zer0-font-sans: ' + fp.body + ';');
+      L.push('  --bs-body-font-family: ' + fp.body + ';');
+      L.push('  --zer0-font-heading: ' + fp.heading + ';');
+      L.push('}');
+      L.push('body { font-family: var(--bs-body-font-family); }');
+      L.push('h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .display-1, .display-2, .display-3, .display-4, .display-5, .display-6, .navbar-brand { font-family: var(--zer0-font-heading); }');
+      L.push('');
+    }
+    var r = catalogItem('radius_options', c.plan.theme.radius);
+    if (r && r.id !== 'soft') {
+      L.push('/* Corners: ' + r.label + '. */');
+      L.push(':root {');
+      L.push('  --zer0-radius-sm: ' + r.sm + '; --zer0-radius: ' + r.base + '; --zer0-radius-md: ' + r.base + '; --zer0-radius-lg: ' + r.lg + '; --zer0-radius-xl: ' + r.xl + ';');
+      L.push('  --bs-border-radius-sm: ' + r.sm + '; --bs-border-radius: ' + r.base + '; --bs-border-radius-lg: ' + r.lg + '; --bs-border-radius-xl: ' + r.xl + ';');
+      L.push('}');
+      L.push('.btn, .card, .form-control, .form-select, .alert, .badge:not(.rounded-pill), .accordion-item, .nav-pills .nav-link { border-radius: var(--bs-border-radius); }');
+      L.push('');
+    }
+    if (!pal && !(fp && fp.google) && !(r && r.id !== 'soft')) L.push('/* Nothing overridden yet — the skin\'s own palette, system fonts and soft corners. */');
+    return L.join('\n') + '\n';
+  }
+
+  function genCustomHead(c) {
+    var fp = catalogItem('font_pairings', c.plan.theme.fonts);
+    if (!fp || !fp.google) return null;
+    return ['{% comment %}', '  _includes/custom/head.html — end-of-<head> hook the theme leaves empty for the site.',
+      '  Generated by the Site Builder to load the "' + fp.label + '" font pairing; assets/css/user-overrides.css applies it.',
+      '{% endcomment %}',
+      '<link rel="preconnect" href="https://fonts.googleapis.com">',
+      '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>',
+      '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?' + fp.google + '&display=swap">', ''].join('\n');
+  }
+
+  // ── navigation (plan-driven) ─────────────────────────────────────
+
+  function plannedPagesFor(c, collection) {
+    return (c.plan.pages || []).filter(function (p) { return p.collection === collection; });
   }
 
   function genNav(c) {
     var L = ['# Main navigation — rendered by the theme navbar.', '# title, url and an optional Bootstrap icon class; nest `children:` for dropdowns.', ''];
-    c.nav.forEach(function (item) {
-      L.push('- title: ' + y(item.title || item.url));
-      L.push('  url: ' + y(item.url || '/'));
-      if (item.icon) L.push('  icon: ' + item.icon);
-      L.push('');
+    if (c.plan.navigation.items) return L.join('\n') + toYaml(c.plan.navigation.items);
+    var grouped = c.plan.navigation.style === 'grouped';
+    var items = c.nav.map(function (item) {
+      var out = { title: item.title || item.url, url: item.url || '/' };
+      if (item.icon) out.icon = item.icon;
+      if (grouped) {
+        var col = (item.url || '').replace(/^\/|\/$/g, '');
+        var children = [];
+        if (col === 'docs') children.push({ title: 'Getting started', url: '/docs/getting-started/' });
+        if (col === 'quickstart') children.push({ title: 'First steps', url: '/quickstart/first-steps/' });
+        plannedPagesFor(c, col).slice(0, 6).forEach(function (p) { children.push({ title: p.title, url: pageUrl(p) }); });
+        if (children.length) out.children = children;
+      }
+      return out;
     });
-    return L.join('\n');
+    return L.join('\n') + toYaml(items);
+  }
+
+  function genDocsNav(c) {
+    var children = [{ title: 'Getting started', url: '/docs/getting-started/', icon: 'bi-play-circle' }];
+    plannedPagesFor(c, 'docs').forEach(function (p) { children.push({ title: p.title, url: pageUrl(p), description: p.description || undefined }); });
+    return ['# Curated docs sidebar (used when a docs page has sidebar.nav: docs — set for the whole', '# collection in _config.yml by the Site Builder). Add entries as you write pages.', ''].join('\n')
+      + toYaml([{ title: 'Documentation', icon: 'bi-book', url: '/docs/', expanded: true, children: children }]);
+  }
+
+  // ── planned example pages ────────────────────────────────────────
+
+  function pagePath(p) {
+    if (p.collection === 'posts') return 'pages/_posts/' + (p.date || todayISO()) + '-' + p.slug + '.md';
+    return 'pages/_' + p.collection + '/' + p.slug + '.md';
+  }
+
+  function genPlanPage(c, p) {
+    var fm = ['---', 'title: ' + y(p.title)];
+    if (p.description) fm.push('description: ' + y(p.description));
+    if (p.collection === 'posts' || p.collection === 'notes') fm.push('date: ' + (p.date || c.date) + 'T09:00:00.000Z');
+    fm.push('lastmod: ' + c.date + 'T09:00:00.000Z');
+    if (p.collection === 'recipes') fm.push('layout: recipe', 'cookbook: ' + c.slug);
+    if (p.collection === 'posts') fm.push('author: ' + y(c.f.founder || 'default'));
+    if (p.categories && p.categories.length) fm.push('categories: [' + p.categories.map(function (x) { return y(x); }).join(', ') + ']');
+    if (p.tags && p.tags.length) fm.push('tags: [' + p.tags.map(function (x) { return y(x); }).join(', ') + ']');
+    fm.push('---', '');
+    var body = (p.body || '').trim() || ('# ' + p.title + '\n\n' + (p.description || firstSentence(c.f.brief) || 'Write this page.') + '\n\n_This page was planned by the Site Builder; replace this draft with the real thing._');
+    return fm.join('\n') + body + '\n';
   }
 
   function genAbout(c) {
@@ -959,6 +1558,15 @@
       if (col.id === 'notes') add('pages/_notes/welcome-note.md', genSampleNote(c), { label: 'notes/welcome-note.md', description: 'Starter note with a wiki-link and a callout.', required: false });
       if (col.id === 'recipes') add('pages/_recipes/starter-recipe.md', genSampleRecipe(c), { label: 'recipes/starter-recipe.md', description: 'Starter recipe with the structured front matter the recipe layout needs.', required: false });
     });
+    (c.plan.pages || []).forEach(function (p) {
+      if (!c.collections.some(function (col) { return col.id === p.collection; })) return; // planned for a collection that is off
+      add(pagePath(p), genPlanPage(c, p), { label: p.collection + '/' + p.slug + '.md', description: 'Planned example page' + (p.body ? '.' : ' (draft body — ask Claude to write it).'), required: false });
+    });
+    if (landingPlan(c).template !== 'minimal') add('_data/landing.yml', genLandingData(c), { label: 'landing.yml', description: 'Hero and sections the landing page renders — edit the copy here.', required: true });
+    if (c.plan.navigation.sidebar === 'docs' && hasCollection(c, 'docs')) add('_data/navigation/docs.yml', genDocsNav(c), { label: 'navigation/docs.yml', description: 'Curated docs sidebar tree.', required: true });
+    add('assets/css/user-overrides.css', genUserOverrides(c), { label: 'user-overrides.css', description: 'Palette, fonts and corners layered over the skin. The theme links this file on every page.', required: true });
+    var customHead = genCustomHead(c);
+    if (customHead) add('_includes/custom/head.html', customHead, { label: 'custom/head.html', description: 'Loads the chosen web fonts through the theme\'s head hook.', required: false });
     add('assets/images/logo.svg', genLogoSvg(c), { label: 'logo.svg', description: 'Monogram logo in the skin colours; replace with your own.', required: false });
     add('.gitignore', genGitignore(), meta('.gitignore'));
     add('zer0.install.yml', genInstallYml(c), meta('zer0.install.yml'));
@@ -1232,6 +1840,11 @@
     updatePreview();
     refreshStepper();
     renderPrereqs();
+    updateLandingSummary();
+    updateFontPreview();
+    applyPreview();
+    var count = document.getElementById('pages-count');
+    if (count) count.textContent = String(planExtra.pages.length);
     if (activeStepId() === 'tab-build') renderReviewWarnings();
   }
 
@@ -1266,7 +1879,7 @@
   // ── draft persistence ────────────────────────────────────────────
 
   function collectDraft() {
-    var data = { v: DRAFT_VERSION, fields: {}, checks: {}, radios: {}, step: null, navigation: readNavigation(), overrides: overrides, prereqs: checks, activeFile: activeFile };
+    var data = { v: DRAFT_VERSION, fields: {}, checks: {}, radios: {}, step: null, navigation: readNavigation(), overrides: overrides, prereqs: checks, activeFile: activeFile, planExtra: planExtra };
     wizard.querySelectorAll('.cfg-field').forEach(function (el) { if (el.id) data.fields[el.id] = el.value; });
     wizard.querySelectorAll('input[type="checkbox"]').forEach(function (el) { if (el.id) data.checks[el.id] = el.checked; });
     wizard.querySelectorAll('.cfg-radio:checked').forEach(function (el) { data.radios[el.name] = el.value; });
@@ -1337,6 +1950,14 @@
     if (data.overrides && typeof data.overrides === 'object') overrides = data.overrides;
     if (data.prereqs && typeof data.prereqs === 'object') checks = data.prereqs;
     if (typeof data.activeFile === 'string') activeFile = data.activeFile;
+    if (data.planExtra && typeof data.planExtra === 'object') {
+      planExtra = {
+        landing: Object.assign({ hero: null, sections: null }, data.planExtra.landing || {}),
+        navigation: Object.assign({ items: null }, data.planExtra.navigation || {}),
+        pages: Array.isArray(data.planExtra.pages) ? data.planExtra.pages.map(normalizePage) : []
+      };
+      renderPagesPlanner();
+    }
 
     var target = data.step && STEP_IDS.indexOf(data.step) !== -1 ? document.getElementById(data.step) : null;
     if (target && !target.disabled) showStep(target, { silent: true });
@@ -1346,6 +1967,10 @@
   function resetAll() {
     overrides = {};
     checks = {};
+    planExtra = { landing: { hero: null, sections: null }, navigation: { items: null }, pages: [] };
+    renderPagesPlanner();
+    var previewBtn = document.getElementById('btn-skin-preview');
+    if (previewBtn && previewBtn.getAttribute('aria-pressed') === 'true') toggleSkinPreview(previewBtn);
     wizard.querySelectorAll('.cfg-field').forEach(function (el) {
       if (el.tagName === 'SELECT') el.selectedIndex = 0;
       else if (el.id === 'cfg-port') el.value = String(DEFAULT_PORT);
@@ -1429,20 +2054,40 @@
     toast('URL and base path filled from GitHub fields');
   }
 
+  /**
+   * "Preview on this page": apply the chosen skin AND the generated
+   * user-overrides.css (palette, fonts, corners) to the wizard page itself,
+   * so the appearance step shows exactly what the new site will ship.
+   */
   function toggleSkinPreview(btn) {
     var html = document.documentElement;
-    var skin = readFields().theme_skin || 'air';
     var active = btn.getAttribute('aria-pressed') === 'true';
     if (!active) {
       if (skinPreviewOriginal === null) skinPreviewOriginal = html.getAttribute('data-theme-skin') || 'air';
-      html.setAttribute('data-theme-skin', skin);
       btn.setAttribute('aria-pressed', 'true');
       btn.innerHTML = '<i class="bi bi-eye-slash" aria-hidden="true"></i> Stop preview';
+      applyPreview();
     } else {
       if (skinPreviewOriginal !== null) html.setAttribute('data-theme-skin', skinPreviewOriginal);
+      if (previewStyle) { previewStyle.remove(); previewStyle = null; }
       btn.setAttribute('aria-pressed', 'false');
       btn.innerHTML = '<i class="bi bi-eye" aria-hidden="true"></i> Preview on this page';
     }
+  }
+
+  function applyPreview() {
+    var btn = document.getElementById('btn-skin-preview');
+    if (!btn || btn.getAttribute('aria-pressed') !== 'true') return;
+    var c = ctx();
+    document.documentElement.setAttribute('data-theme-skin', c.f.theme_skin || 'air');
+    var fp = catalogItem('font_pairings', c.plan.theme.fonts);
+    if (fp && fp.google) ensureFontLink(fp);
+    if (!previewStyle) {
+      previewStyle = document.createElement('style');
+      previewStyle.id = 'wizard-preview-overrides';
+      document.head.appendChild(previewStyle);
+    }
+    previewStyle.textContent = genUserOverrides(c);
   }
 
   // ── wiring ───────────────────────────────────────────────────────
@@ -1531,6 +2176,41 @@
       host.lastElementChild.querySelector('.nav-title').focus();
     });
     bind('btn-nav-regenerate', function () { renderNavEditor(defaultNavigation()); refreshAll(); saveDraft(); });
+
+    // Example-page planner: rows are rendered from planExtra.pages (the source
+    // of truth) and edited in place.
+    bind('btn-page-add', function () {
+      var col = (readCollections().filter(function (x) { return x.id !== 'about'; })[0] || { id: 'posts' }).id;
+      planExtra.pages.push(normalizePage({ collection: col, title: 'New page ' + (planExtra.pages.length + 1) }));
+      renderPagesPlanner();
+      var last = document.querySelector('#pages-planner .page-row:last-child .page-title');
+      if (last) { last.focus(); last.select(); }
+      refreshAll();
+      saveDraft();
+    });
+    var planner = document.getElementById('pages-planner');
+    if (planner) {
+      planner.addEventListener('input', function (event) {
+        var row = event.target.closest('.page-row');
+        if (!row) return;
+        var p = planExtra.pages[Number(row.getAttribute('data-index'))];
+        if (!p) return;
+        if (event.target.classList.contains('page-title')) { p.title = event.target.value; p.slug = slugify(p.title) || p.slug; }
+        if (event.target.classList.contains('page-collection')) p.collection = event.target.value;
+        var count = document.getElementById('pages-count');
+        if (count) count.textContent = String(planExtra.pages.length);
+      });
+      planner.addEventListener('click', function (event) {
+        var btn = event.target.closest('.page-remove');
+        if (!btn) return;
+        var row = btn.closest('.page-row');
+        planExtra.pages.splice(Number(row.getAttribute('data-index')), 1);
+        renderPagesPlanner();
+        refreshAll();
+        saveDraft();
+        emit('change', { source: 'user', keys: ['plan.pages'] });
+      });
+    }
     bind('btn-skin-preview', function (e) { toggleSkinPreview(e.currentTarget); });
     bind('btn-reset', function () {
       if (window.confirm('Clear every answer and start the Site Builder again?')) resetAll();
@@ -1543,6 +2223,7 @@
     // the real content; hash wins over the draft's remembered step.
     applyOS(detectOS());
     renderNavEditor(defaultNavigation());
+    renderPagesPlanner();
     restoreDraft();
     if (!readNavigation().length) renderNavEditor(defaultNavigation());
     var hashStep = (location.hash || '').replace(/^#step-/, '');
@@ -1563,6 +2244,12 @@
     getSummary: getSummary,
     schema: schema,
     applyFields: applyFields,
+    getPlan: getPlan,
+    setPlan: setPlan,
+    planSchema: planSchema,
+    validatePlan: function (plan) { return validateSchema(plan, planSchema(), 'plan'); },
+    landingPlan: function () { return landingPlan(ctx()); },
+    catalog: catalog,
     getFiles: getFiles,
     getFile: getFile,
     setOverride: setOverride,

@@ -229,6 +229,24 @@ async function runScenario(browser, sc, dir, { mobile }) {
     }
     const checked = await page.locator('.cfg-collection:checked').evaluateAll((els) => els.map((e) => e.dataset.col).sort());
     check('site type selected the expected collections', JSON.stringify(checked) === JSON.stringify(sc.collections.slice().sort()), checked.join(','));
+
+    // ── 5b. Site plan — Claude designs it, or the deterministic fallback ─
+    await page.locator('#step-structure .sb-ask').first().click();
+    let planTurn = await waitForClaude(page, 'site-plan');
+    let plan = await page.evaluate(() => window.Zer0SetupWizard.getPlan());
+    const agentPlanned = planTurn.accepted >= 1 && plan.pages.length >= 3;
+    check('Claude designed a site plan (landing + pages)', agentPlanned, claudeErrored(planTurn) ? 'Claude error: ' + planTurn.reply.slice(0, 120) : `${plan.pages.length} pages, template ${plan.landing.template}, hero ${plan.landing.hero ? 'custom' : 'default'}`);
+    if (!agentPlanned) {
+      const res = await page.evaluate((p) => window.Zer0SetupWizard.setPlan(p, { source: 'walkthrough-fallback' }), sc.fallbackPlan);
+      check('fallback plan accepted by the schema validator', res.ok, res.ok ? 'ok' : (res.errors || []).join('; '));
+      plan = await page.evaluate(() => window.Zer0SetupWizard.getPlan());
+      log(`plan: fallback — template ${plan.landing.template}, nav ${plan.navigation.style}/${plan.navigation.sidebar}, palette ${plan.theme.palette.preset}, fonts ${plan.theme.fonts}, radius ${plan.theme.radius}, ${plan.pages.length} pages`);
+    }
+    run.plan = plan;
+    const badPlan = await page.evaluate(() => window.Zer0SetupWizard.validatePlan({ landing: { template: 'nope' }, theme: { palette: { primary: 'red' } }, bogus: 1 }));
+    check('schema validator rejects an invalid plan', badPlan.length >= 3, badPlan.join(' | ').slice(0, 200));
+    await page.waitForTimeout(300);
+    await shot(page, 'structure-plan');
     await page.locator('.wizard-file-tab[data-file="_data/navigation/main.yml"]').click();
     await page.waitForTimeout(300);
     await shot(page, 'structure');
@@ -298,6 +316,14 @@ async function runScenario(browser, sc, dir, { mobile }) {
     run.files = files;
     const missing = sc.expectFiles.filter((exp) => !files.some((f) => (exp instanceof RegExp ? exp.test(f) : f === exp)));
     check('generated file set matches the site type', missing.length === 0, missing.length ? 'missing ' + missing.map(String).join(', ') : `${files.length} files`);
+    // Plan-derived files.
+    const planFiles = ['assets/css/user-overrides.css'];
+    if (plan.landing.template !== 'minimal') planFiles.push('_data/landing.yml');
+    if (plan.theme.fonts !== 'system') planFiles.push('_includes/custom/head.html');
+    if (plan.navigation.sidebar === 'docs' && sc.collections.includes('docs')) planFiles.push('_data/navigation/docs.yml');
+    const plannedPagePaths = plan.pages.filter((p) => sc.collections.includes(p.collection)).map((p) => (p.collection === 'posts' ? `pages/_posts/${p.date}-${p.slug}.md` : `pages/_${p.collection}/${p.slug}.md`));
+    const missingPlan = planFiles.concat(plannedPagePaths).filter((f) => !files.includes(f));
+    check('site plan produced its files (landing data, overrides css, fonts hook, nav tree, pages)', missingPlan.length === 0, missingPlan.length ? 'missing ' + missingPlan.join(', ') : `${planFiles.length + plannedPagePaths.length} plan files`);
     const cfgText = await page.evaluate(() => { const w = window.Zer0SetupWizard; return w ? w.getFile('_config.yml').content : ''; });
     check('_config.yml carries skin, colour mode and collections', cfgText.includes(`theme_skin               : "${sc.skin}"`) && cfgText.includes(`color_mode_default       : ${sc.colorMode}`) && sc.collections.every((c) => new RegExp(`^  ${c}:\\n    output: true`, 'm').test(cfgText)));
     // Real keys are long and alphanumeric; the `.env.example` placeholders
@@ -361,8 +387,25 @@ async function runScenario(browser, sc, dir, { mobile }) {
         theme: document.documentElement.getAttribute('data-bs-theme'),
         h1: document.querySelector('h1')?.textContent?.trim() || '',
         navLinks: [...document.querySelectorAll('nav a[href]')].map((a) => a.getAttribute('href')).filter((h) => h && h.startsWith('/')).slice(0, 20),
+        landingTemplate: document.querySelector('[data-landing-template]')?.getAttribute('data-landing-template') || null,
+        primary: getComputedStyle(document.documentElement).getPropertyValue('--bs-primary').trim().toLowerCase(),
+        bodyFont: getComputedStyle(document.body).fontFamily,
+        fontLink: !!document.querySelector('link[href*="fonts.googleapis.com"]'),
+        dropdowns: document.querySelectorAll('nav .dropdown-menu, nav [data-bs-toggle="dropdown"]').length,
       }));
       run.site = facts;
+      // Plan → built site.
+      if (plan.landing.template !== 'minimal') check('landing page renders the planned template', facts.landingTemplate === plan.landing.template, `data-landing-template=${facts.landingTemplate}`);
+      const pal = plan.theme.palette;
+      const wantPrimary = pal.preset === 'custom' ? pal.primary : (await page.evaluate((id) => (window.Zer0SetupWizard.catalog('palettes').find((p) => p.id === id) || {}).primary || null, pal.preset));
+      if (wantPrimary) check('built site uses the planned palette primary colour', facts.primary === wantPrimary.toLowerCase(), `--bs-primary=${facts.primary} wanted ${wantPrimary}`);
+      if (plan.theme.fonts !== 'system') check('built site loads the planned web fonts', facts.fontLink && /'?[A-Z][A-Za-z ]+'?,/.test(facts.bodyFont), `link=${facts.fontLink} body=${facts.bodyFont.slice(0, 60)}`);
+      const plannedRoutes = plan.pages.filter((p) => sc.collections.includes(p.collection)).map((p) => (p.collection === 'posts' ? `/posts/${p.slug}/` : `/${p.collection}/${p.slug}/`));
+      const plannedStatus = {};
+      for (const r of plannedRoutes) { const res = await fetch(`http://localhost:${sc.port}${r}`).catch(() => null); plannedStatus[r] = res ? res.status : 'ERR'; }
+      run.plannedRoutes = plannedStatus;
+      const badPlanned = Object.entries(plannedStatus).filter(([, s]) => s !== 200);
+      check('planned example pages answer 200', badPlanned.length === 0, badPlanned.length ? badPlanned.map(([r, s]) => `${r}=${s}`).join(' ') : `${plannedRoutes.length} pages`);
       // kramdown's smart quotes turn "Sam's" into "Sam’s" — compare with quotes normalised.
       const norm = (s) => String(s).toLowerCase().replace(/[‘’´`]/g, "'").replace(/[“”]/g, '"').replace(/\s+/g, ' ');
       check('site <title> carries the chosen title', norm(facts.title).includes(norm(idf.title).slice(0, 12)), facts.title);
@@ -483,7 +526,9 @@ for (const r of results) {
   lines.push('');
   lines.push('| Check | Result | Detail |');
   lines.push('| --- | --- | --- |');
-  for (const c of r.checks) lines.push(`| ${c.name} | ${c.ok ? '✅' : '❌'} | ${c.detail.replace(/\|/g, '\\|').replace(/\n/g, ' ')} |`);
+  // Escape backslashes BEFORE pipes, or a detail ending in "\" would escape
+  // the escape and break the table cell (CodeQL: incomplete string escaping).
+  for (const c of r.checks) lines.push(`| ${c.name} | ${c.ok ? '✅' : '❌'} | ${c.detail.replace(/\\/g, '\\\\').replace(/\|/g, '\\|').replace(/\n/g, ' ')} |`);
   lines.push('');
   lines.push(`Artifacts: \`${path.join(OUT, sc.id)}/\` — ${r.shots.length} screenshots, video-desktop.webm${fs.existsSync(path.join(OUT, sc.id, 'video-mobile.webm')) ? ', video-mobile.webm' : ''}`);
   if (r.error) lines.push(`\n> Harness error: ${r.error}`);

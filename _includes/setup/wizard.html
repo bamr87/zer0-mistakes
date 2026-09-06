@@ -406,6 +406,67 @@
                 </div>
               </fieldset>
 
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <fieldset>
+                    <legend class="form-label fs-6 mb-2">Navigation style</legend>
+                    <div class="d-flex flex-wrap gap-2">
+                      {% for n in sb.navigation_styles %}
+                      <input type="radio" class="btn-check cfg-radio" name="nav_style" id="nav-style-{{ n.id }}" value="{{ n.id }}"
+                             data-key="plan.navigation.style" autocomplete="off" {% if forloop.first %}checked{% endif %}>
+                      <label class="btn btn-outline-secondary btn-sm rounded-pill" for="nav-style-{{ n.id }}" title="{{ n.description | escape }}">{{ n.label }}</label>
+                      {% endfor %}
+                    </div>
+                  </fieldset>
+                </div>
+                <div class="col-md-6">
+                  <label for="cfg-sidebar-mode" class="form-label fs-6 mb-2">Sidebar</label>
+                  <select class="form-select form-select-sm cfg-field" id="cfg-sidebar-mode" data-key="plan.navigation.sidebar">
+                    {% for m in sb.sidebar_modes %}<option value="{{ m.id }}" title="{{ m.description | escape }}">{{ m.label }} — {{ m.description }}</option>{% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <fieldset class="mb-3">
+                <legend class="form-label fs-6 mb-2 d-flex justify-content-between align-items-center">
+                  <span>Landing page</span>
+                  <button class="btn btn-link btn-sm p-0 sb-ask" type="button"
+                          data-ask="Design the landing page for my site: pick the template, write the hero (eyebrow, headline, subheadline, up to three CTAs) and fill every section with real copy from my brief — then apply it with set_site_plan.">
+                    <i class="bi bi-stars" aria-hidden="true"></i> Design with Claude
+                  </button>
+                </legend>
+                <div class="row g-2">
+                  {% for t in sb.landing_templates %}
+                  <div class="col-sm-6 col-lg-4">
+                    <input type="radio" class="btn-check cfg-radio" name="landing_template" id="landing-{{ t.id }}" value="{{ t.id }}"
+                           data-key="plan.landing.template" autocomplete="off" {% if t.id == 'hero' %}checked{% endif %}>
+                    <label class="btn btn-outline-primary w-100 text-start wizard-choice" for="landing-{{ t.id }}">
+                      <span class="fw-semibold d-block">{{ t.label }}</span>
+                      <span class="small d-block">{{ t.description }}</span>
+                    </label>
+                  </div>
+                  {% endfor %}
+                </div>
+                <div class="form-text" id="landing-summary" aria-live="polite"></div>
+              </fieldset>
+
+              <fieldset class="mb-3">
+                <legend class="form-label fs-6 mb-2 d-flex justify-content-between align-items-center">
+                  <span>Example pages <span class="badge text-bg-secondary rounded-pill" id="pages-count">0</span></span>
+                  <span>
+                    <button class="btn btn-link btn-sm p-0 me-2 sb-ask" type="button"
+                            data-ask="Plan five or six example pages for my site across the enabled collections — each with a slug, title, description and a 150–300 word Markdown body in the {tone} tone for {audience} — then apply them with set_site_plan.">
+                      <i class="bi bi-stars" aria-hidden="true"></i> Plan with Claude
+                    </button>
+                    <button class="btn btn-link btn-sm p-0" type="button" id="btn-page-add">
+                      <i class="bi bi-plus-circle" aria-hidden="true"></i> Add page
+                    </button>
+                  </span>
+                </legend>
+                <div id="pages-planner" class="pages-planner" aria-live="polite"></div>
+                <div class="form-text">Each row becomes a real file with front matter. Bodies come from Claude, or are drafted from the title.</div>
+              </fieldset>
+
               <fieldset>
                 <legend class="form-label fs-6 mb-2 d-flex justify-content-between align-items-center">
                   <span>Main navigation</span>
@@ -480,6 +541,55 @@
                     <input class="form-check-input cfg-switch" type="checkbox" id="cfg-backgrounds" data-key="theme_background" checked>
                     <label class="form-check-label" for="cfg-backgrounds">SVG background layers (gradient, pattern, noise)</label>
                   </div>
+                </div>
+                <div class="col-12">
+                  <fieldset>
+                    <legend class="form-label fs-6 mb-2">Palette <small class="text-body-secondary">layered over the skin</small></legend>
+                    <div class="d-flex flex-wrap gap-2 palette-grid">
+                      {% for p in sb.palettes %}
+                      <input type="radio" class="btn-check cfg-radio" name="palette" id="palette-{{ p.id }}" value="{{ p.id }}"
+                             data-key="plan.theme.palette.preset" autocomplete="off" {% if forloop.first %}checked{% endif %}>
+                      <label class="palette-card" for="palette-{{ p.id }}" title="{{ p.description | default: p.label | escape }}">
+                        <span class="palette-swatches" aria-hidden="true">
+                          {% if p.primary %}
+                          <span style="background: {{ p.primary }}"></span><span style="background: {{ p.secondary }}"></span><span style="background: {{ p.accent }}"></span>
+                          {% else %}
+                          <span class="palette-swatch-skin"></span>
+                          {% endif %}
+                        </span>
+                        <span class="palette-name">{{ p.label }}</span>
+                      </label>
+                      {% endfor %}
+                      <input type="radio" class="btn-check cfg-radio" name="palette" id="palette-custom" value="custom" data-key="plan.theme.palette.preset" autocomplete="off">
+                      <label class="palette-card" for="palette-custom" title="Pick your own three colours">
+                        <span class="palette-swatches palette-swatches--custom" aria-hidden="true"><i class="bi bi-eyedropper"></i></span>
+                        <span class="palette-name">Custom</span>
+                      </label>
+                    </div>
+                    <div class="row g-2 mt-2 wizard-subfields" data-for="palette-custom" hidden>
+                      <div class="col-4"><label for="cfg-color-primary" class="form-label small mb-1">Primary</label><input type="color" class="form-control form-control-color cfg-field" id="cfg-color-primary" data-key="plan.theme.palette.primary" value="#0d6efd"></div>
+                      <div class="col-4"><label for="cfg-color-secondary" class="form-label small mb-1">Secondary</label><input type="color" class="form-control form-control-color cfg-field" id="cfg-color-secondary" data-key="plan.theme.palette.secondary" value="#6c757d"></div>
+                      <div class="col-4"><label for="cfg-color-accent" class="form-label small mb-1">Accent</label><input type="color" class="form-control form-control-color cfg-field" id="cfg-color-accent" data-key="plan.theme.palette.accent" value="#20c997"></div>
+                    </div>
+                  </fieldset>
+                </div>
+                <div class="col-md-7">
+                  <label for="cfg-fonts" class="form-label">Fonts</label>
+                  <select class="form-select cfg-field" id="cfg-fonts" data-key="plan.theme.fonts">
+                    {% for fp in sb.font_pairings %}<option value="{{ fp.id }}">{{ fp.label }} — {{ fp.description }}</option>{% endfor %}
+                  </select>
+                  <div class="form-text font-preview" id="font-preview">The quick brown fox jumps over the lazy dog. <strong>Headline weight</strong>.</div>
+                </div>
+                <div class="col-md-5">
+                  <fieldset>
+                    <legend class="form-label fs-6 mb-2">Corners</legend>
+                    <div class="btn-group w-100" role="group" aria-label="Corner radius">
+                      {% for r in sb.radius_options %}
+                      <input type="radio" class="btn-check cfg-radio" name="radius" id="radius-{{ r.id }}" value="{{ r.id }}" data-key="plan.theme.radius" autocomplete="off" {% if r.id == 'soft' %}checked{% endif %}>
+                      <label class="btn btn-outline-secondary" for="radius-{{ r.id }}">{{ r.label }}</label>
+                      {% endfor %}
+                    </div>
+                  </fieldset>
                 </div>
                 <div class="col-md-6">
                   <label for="cfg-title-icon" class="form-label">Navbar icon <small class="text-body-secondary">(Bootstrap icon name)</small></label>

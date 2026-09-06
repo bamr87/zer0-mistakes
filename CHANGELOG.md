@@ -94,6 +94,22 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   briefs per site type (`test/visual/site-builder-scenarios.mjs`), drives the
   wizard on video, builds the site with Docker and asserts its routes, title
   and skin — replayable by seed.
+  The builder then gained a **schema-driven site plan**: `plan_schema` in
+  `_data/site_builder.yml` (a JSON-Schema subset validated in the browser)
+  describes what the agent may produce — a landing page (five templates,
+  nine section types, hero + CTAs), navigation shape (flat or grouped
+  dropdowns, sidebar none/auto/docs tree), theme overrides (nine palettes or
+  custom colours, seven font pairings, three corner radii) and up to twelve
+  example pages with Markdown bodies — and the generators turn it into
+  `index.md` (a Liquid landing engine) + `_data/landing.yml`,
+  `_data/navigation/main.yml` and `docs.yml`, `assets/css/user-overrides.css`
+  + `_includes/custom/head.html`, and one file per page. Claude submits plans
+  with `set_site_plan` behind a confirmation card; the Structure and
+  Appearance steps expose the same choices as controls, with a page planner
+  and a **Preview on this page** toggle that applies the generated overrides
+  to the wizard itself. The scenario runner randomises the plan too and
+  asserts the built site's landing template, palette colour, web fonts and
+  planned routes.
 - **Mermaid diagrams are now accessible figures with a toolbar (ZER0-013)** —
   every ```` ```mermaid ```` fence (and legacy `<div class="mermaid">`) renders
   as a `<figure>` with a rendered SVG and a small toolbar: zoom out / in / reset

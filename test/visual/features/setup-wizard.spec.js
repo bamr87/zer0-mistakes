@@ -365,6 +365,87 @@ test.describe('Site Builder wizard', { tag: '@critical' }, () => {
     await expect(docker.locator('.prereq-install .wizard-cmd[data-os="macos"]')).toHaveAttribute('hidden', '');
   });
 
+  test('the site plan drives the generated files: pages, landing data, overrides, fonts hook', async ({ page }) => {
+    await goToStep(page, 'tab-structure');
+    // Planner: adding a page creates a real file in the preview set.
+    await page.locator('#btn-page-add').click();
+    await page.locator('#pages-planner .page-row').last().locator('.page-title').fill('Field Notes');
+    await page.locator('#pages-planner .page-row').last().locator('.page-collection').selectOption('docs');
+    await page.locator('#cfg-title').dispatchEvent('input'); // any input regenerates
+    await expect(page.locator('#pages-count')).toHaveText('1');
+    await expect(page.locator('.wizard-file-tab[data-file="pages/_docs/field-notes.md"]')).toHaveCount(1);
+
+    // Landing template: hero (default) emits the landing engine + data file;
+    // minimal drops both.
+    await expect(page.locator('.wizard-file-tab[data-file="_data/landing.yml"]')).toHaveCount(1);
+    await page.locator('.wizard-file-tab[data-file="index.md"]').click();
+    await expect(page.locator('#yaml-preview')).toContainText('data-landing-template');
+    await page.locator('label[for="landing-minimal"]').click();
+    await expect(page.locator('.wizard-file-tab[data-file="_data/landing.yml"]')).toHaveCount(0);
+    await page.locator('label[for="landing-docs-hub"]').click();
+    await expect(page.locator('#landing-summary')).toContainText(/steps, cards, faq/);
+
+    // Grouped navigation lists the planned page under its collection.
+    await page.locator('label[for="nav-style-grouped"]').click();
+    await page.locator('.wizard-file-tab[data-file="_data/navigation/main.yml"]').click();
+    await expect(page.locator('#yaml-preview')).toContainText('children:');
+    await expect(page.locator('#yaml-preview')).toContainText('/docs/field-notes/');
+
+    // Docs sidebar mode emits the curated tree and wires it in _config.yml.
+    await page.locator('#cfg-sidebar-mode').selectOption('docs');
+    await expect(page.locator('.wizard-file-tab[data-file="_data/navigation/docs.yml"]')).toHaveCount(1);
+    await page.locator('.wizard-file-tab[data-file="_config.yml"]').click();
+    await expect(page.locator('#yaml-preview')).toContainText('nav: docs');
+
+    // Appearance: palette + fonts + corners land in user-overrides.css and the head hook.
+    await goToStep(page, 'tab-appearance');
+    await page.locator('label[for="palette-ocean"]').click();
+    await page.locator('#cfg-fonts').selectOption('inter');
+    await page.locator('label[for="radius-round"]').click();
+    await page.locator('.wizard-file-tab[data-file="assets/css/user-overrides.css"]').click();
+    await expect(page.locator('#yaml-preview')).toContainText('--bs-primary: #0b6e99');
+    await expect(page.locator('#yaml-preview')).toContainText("'Inter'");
+    await expect(page.locator('#yaml-preview')).toContainText('--zer0-radius: 0.75rem');
+    await expect(page.locator('.wizard-file-tab[data-file="_includes/custom/head.html"]')).toHaveCount(1);
+    await page.locator('label[for="palette-custom"]').click();
+    await expect(page.locator('#cfg-color-primary')).toBeVisible();
+
+    // The preview toggle applies the overrides to this page and removes them again.
+    await page.locator('#btn-skin-preview').click();
+    await expect(page.locator('#wizard-preview-overrides')).toHaveCount(1);
+    await page.locator('#btn-skin-preview').click();
+    await expect(page.locator('#wizard-preview-overrides')).toHaveCount(0);
+  });
+
+  test('the plan API validates against the schema and round-trips through the draft', async ({ page }) => {
+    const bad = await page.evaluate(() => window.Zer0SetupWizard.validatePlan({ landing: { template: 'nope' }, theme: { palette: { primary: 'red' }, fonts: 'comic' }, bogus: 1, pages: [{ collection: 'posts' }] }));
+    expect(bad.join(' | ')).toMatch(/landing\.template/);
+    expect(bad.join(' | ')).toMatch(/palette\.primary/);
+    expect(bad.join(' | ')).toMatch(/fonts/);
+    expect(bad.join(' | ')).toMatch(/bogus/);
+    expect(bad.join(' | ')).toMatch(/title: required/);
+
+    const res = await page.evaluate(() => window.Zer0SetupWizard.setPlan({
+      landing: { template: 'showcase', hero: { headline: 'Hello there', ctas: [{ label: 'Go', url: '/posts/' }] }, sections: [{ type: 'quote', items: [{ quote: 'Ship it.', author: 'Me' }] }, { type: 'cta', heading: 'Join', cta: { label: 'Subscribe', url: '/feed.xml' } }] },
+      theme: { palette: { preset: 'berry' }, radius: 'sharp' },
+      pages: [{ collection: 'posts', slug: 'first-light', title: 'First Light', body: 'Body text.' }],
+    }));
+    expect(res.ok).toBe(true);
+    await expect(page.locator('#landing-summary')).toContainText('Hello there');
+    await expect(page.locator('.wizard-file-tab[data-file^="pages/_posts/"][data-file$="first-light.md"]')).toHaveCount(1);
+    await expect(page.locator('#palette-berry')).toBeChecked();
+    await expect(page.locator('#radius-sharp')).toBeChecked();
+
+    await expect.poll(() => page.evaluate((k) => localStorage.getItem(k), DRAFT_KEY)).toContain('first-light');
+    await page.reload();
+    await expect(page.locator(WIZARD)).toBeVisible();
+    const after = await page.evaluate(() => window.Zer0SetupWizard.getPlan());
+    expect(after.landing.template).toBe('showcase');
+    expect(after.landing.hero.headline).toBe('Hello there');
+    expect(after.pages.map((p) => p.slug)).toEqual(['first-light']);
+    expect(after.theme.palette.preset).toBe('berry');
+  });
+
   test('copy buttons and the bundle download are wired', async ({ page }) => {
     await goToStep(page, 'tab-build');
     const downloadPromise = page.waitForEvent('download');

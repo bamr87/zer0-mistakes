@@ -81,6 +81,24 @@ The preview panel shows every file live and regenerates on each keystroke. Any f
 
 **Download file** saves the active file. **Download bundle** saves `zer0-site-bundle.sh`, a self-extracting bash script that recreates the whole tree in a folder you name.
 
+## The site plan (schema-driven output)
+
+Beyond the form fields, the agent produces a **site plan**: a structured description of the landing page, the navigation shape, theme overrides and example pages. The plan is validated against `plan_schema` in `_data/site_builder.yml` (a JSON-Schema subset: `type`, `properties`, `required`, `additionalProperties`, `enum`, `enumFrom` a catalog, `items`, `maxItems`, `maxLength`, `pattern`) before anything changes, and the generators turn it into files. Every option the agent can pick comes from a catalog in the same data file, so adding a palette, a font pairing, a landing template or a section type is a data change.
+
+| Plan key | Options | Becomes |
+| --- | --- | --- |
+| `landing.template` | `minimal`, `hero`, `showcase`, `docs-hub`, `editorial` | `index.md` on the `home` layout running a small Liquid landing engine, plus `_data/landing.yml` holding the copy |
+| `landing.hero` | eyebrow, headline, subheadline, align, variant, up to three CTAs | The hero block of `_data/landing.yml` |
+| `landing.sections[]` | `features`, `cards`, `steps`, `stats`, `faq`, `cta`, `latest_posts`, `quote`, `text` | Sections rendered through the theme's `section` include with Bootstrap cards, accordions and CTA buttons |
+| `navigation.style` | `flat`, `grouped` | `_data/navigation/main.yml`; grouped turns collections into dropdowns of their planned pages |
+| `navigation.sidebar` | `none`, `auto`, `docs` | `sidebar: {nav: auto}` in `_config.yml`, or a curated `_data/navigation/docs.yml` wired to the docs collection |
+| `theme.palette` | nine presets or `custom` with three hex colours | `assets/css/user-overrides.css`, layered over the skin (primary, links, accent, buttons) |
+| `theme.fonts` | seven pairings (system + six Google Fonts pairs) | `user-overrides.css` font variables plus `_includes/custom/head.html`, the theme's end-of-head hook |
+| `theme.radius` | `sharp`, `soft`, `round` | `user-overrides.css` radius tokens |
+| `pages[]` | collection, slug, title, description, date, categories, tags, Markdown body | One file per page under `pages/_<collection>/` |
+
+Template defaults fill in whatever the plan leaves out, so a plan with only `landing.template: showcase` still yields a complete landing page whose copy is derived from the brief and collections. The Structure step exposes the same choices as controls (navigation style, sidebar, landing template, a page planner) and the Appearance step exposes palette cards, a font pairing with live preview, and corner radius; **Preview on this page** applies the generated overrides to the wizard itself. Claude submits plans with `set_site_plan`; the browser shows a confirmation card listing what changes and rejects anything the schema does not allow, returning the errors to the model.
+
 ## Configuration
 
 ```yaml
@@ -103,6 +121,7 @@ Tools available to the model:
 | --- | --- | --- |
 | `get_wizard_state`, `get_generated_file` | Read state or a file | No |
 | `set_wizard_fields` | Patch fields, collections, navigation | Yes |
+| `get_site_plan`, `set_site_plan` | Read or apply the schema-validated site plan (landing, navigation, theme overrides, pages) | `set_site_plan`: yes |
 | `set_file_override` | Replace one generated file | Yes |
 | `go_to_step` | Navigate | No |
 | `run_prerequisite_check` | Allow-listed check via the proxy | No |
@@ -157,6 +176,8 @@ Scenarios live in `test/visual/site-builder-scenarios.mjs` (`blog`, `docs`, `coo
 | Target rejected | Folder names use letters, digits, dot, dash and underscore only and must sit under the target root. |
 | Files skipped on write | They already exist; enable **Allow replacing files** or pick a new folder. |
 | Compose disabled | `WIZARD_DISABLE_COMPOSE=1` was set when the proxy started. |
+| `all predefined address pools have been fully subnetted` on `docker compose up` | Every generated site creates a Docker network; after many builds run `docker network prune` (removes only unused networks) or `docker compose down` in old project folders. |
+| `Bind for 0.0.0.0:<port> failed` | Another generated site still holds that port; stop it (`docker compose down` in its folder) or pick a different **Dev port** on the URLs step. |
 
 ## Related
 

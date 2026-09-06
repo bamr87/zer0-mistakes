@@ -110,6 +110,76 @@ const EXTRA_NAV = [
 ];
 const PERMALINKS = ['/:categories/:title/', '/:title/', '/:year/:month/:title/'];
 
+// Site-plan variation: which landing templates suit which type, plus the
+// theme overrides every type may draw from. Ids must exist in
+// _data/site_builder.yml catalogs (the wizard validates the plan against them).
+const LANDING_BY_TYPE = {
+  blog: ['hero', 'editorial', 'minimal'],
+  docs: ['docs-hub', 'hero'],
+  cookbook: ['showcase', 'hero'],
+  portfolio: ['showcase', 'editorial'],
+  garden: ['minimal', 'editorial'],
+  mixed: ['hero', 'docs-hub'],
+};
+const NAV_STYLES = ['flat', 'grouped'];
+const PALETTES = ['skin', 'skin', 'ocean', 'forest', 'sunset', 'graphite', 'berry', 'sand', 'midnight', 'citrus', 'custom'];
+const FONTS = ['system', 'system', 'inter', 'playfair-lato', 'space-plex', 'merriweather-source', 'nunito', 'fraunces-work'];
+const RADII = ['sharp', 'soft', 'round'];
+const PAGE_IDEAS = {
+  posts: ['Why I started this', 'What I got wrong last year', 'A field guide to getting unstuck', 'Notes from the first month', 'Tools I actually use'],
+  docs: ['Installation', 'Configuration reference', 'Troubleshooting', 'Frequently asked questions', 'Architecture overview'],
+  notes: ['Reading list', 'Open questions', 'Glossary', 'Ideas to revisit'],
+  quickstart: ['Install in five minutes', 'Your first change', 'Publishing'],
+  recipes: ['Weeknight lentil soup', 'Overnight oats three ways', 'Roasted vegetable traybake'],
+  quests: ['Level one: the basics'],
+  notebooks: ['Exploring the data'],
+};
+
+function randomHex(rng) {
+  const h = () => Math.floor(40 + rng() * 150).toString(16).padStart(2, '0');
+  return `#${h()}${h()}${h()}`;
+}
+
+function slugOf(t) { return t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
+
+/** A deterministic plan the runner applies when the agent did not deliver one. */
+function fallbackPlanFor(id, def, rng, inputs) {
+  const template = pick(rng, LANDING_BY_TYPE[id] || ['hero']);
+  const cols = def.collections.filter((c) => c !== 'about');
+  const pages = [];
+  cols.forEach((col) => {
+    const ideas = (PAGE_IDEAS[col] || ['Overview']).slice();
+    const n = Math.min(ideas.length, col === cols[0] ? 3 : 2);
+    for (let i = 0; i < n; i += 1) {
+      const idx = Math.floor(rng() * ideas.length);
+      const title = ideas.splice(idx, 1)[0];
+      pages.push({
+        collection: col,
+        slug: slugOf(title),
+        title,
+        description: `${title} — part of ${inputs.title}.`,
+        tags: [col, 'starter'],
+        body: `# ${title}\n\n${inputs.brief}\n\nThis page was planned by the Site Builder's end-to-end test as a stand-in for the assistant's draft. It exists so the **${col}** collection has real routes to check.\n\n## What belongs here\n\n- A clear opening that says who the page is for\n- One worked example\n- Links to the pages that come next`,
+      });
+    }
+  });
+  const palette = pick(rng, PALETTES);
+  const plan = {
+    landing: { template },
+    navigation: { style: pick(rng, NAV_STYLES), sidebar: def.collections.includes('docs') ? pick(rng, ['auto', 'docs', 'none']) : pick(rng, ['none', 'auto']) },
+    theme: {
+      palette: palette === 'custom' ? { preset: 'custom', primary: randomHex(rng), secondary: randomHex(rng), accent: randomHex(rng) } : { preset: palette },
+      fonts: pick(rng, FONTS),
+      radius: pick(rng, RADII),
+    },
+    pages,
+  };
+  if (template !== 'minimal') {
+    plan.landing.hero = { eyebrow: def.label, headline: inputs.tagline, subheadline: inputs.description.slice(0, 200), align: template === 'editorial' ? 'start' : 'center', variant: template === 'showcase' ? 'inverse' : 'default', ctas: [{ label: 'Start reading', url: `/${cols[0]}/`, variant: 'primary', icon: 'bi-arrow-right' }, { label: 'About', url: '/about/', variant: 'outline' }] };
+  }
+  return plan;
+}
+
 /** Mulberry32 — small, seedable, good enough for picking test inputs. */
 export function makeRng(seed) {
   let a = (Number(seed) >>> 0) || 1;
@@ -162,9 +232,11 @@ export function buildScenario(id, rng, opts = {}) {
     welcome_body: `This is the first post on **${fallback.title}**.\n\n${brief}\n\nPosts live in \`pages/_posts/\`. This one was generated as a placeholder by the Site Builder's end-to-end test because the assistant was unavailable; replace it with your own words.\n\n## What to expect\n\n- Regular updates in the ${pick(rng, TONES)} register the site was configured for\n- Cross-links between related pieces\n- An about page that explains who is behind it`,
     about_body: `${author} runs this site.\n\n${brief}\n\nThis about page is a placeholder written by the Site Builder's end-to-end test; edit \`pages/_about/index.md\` to tell your own story.`,
   };
+  const fallbackPlan = fallbackPlanFor(id, def, rng, { title: fallback.title, tagline: fallback.tagline, description: fallback.description, brief });
   return {
     fallback,
     fallbackVoice,
+    fallbackPlan,
     id,
     label: def.label,
     siteType: def.siteType,
