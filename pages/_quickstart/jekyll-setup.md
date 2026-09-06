@@ -2,7 +2,7 @@
 title: "Jekyll Setup: Run the Dev Server and Create Content"
 author: "Zer0-Mistakes Development Team"
 layout: default
-description: Configure your Docker-first Jekyll development environment. Start the development server, create content, and customize your theme.
+description: "Configure your Docker-first Jekyll development environment. Start the development server, create content, and customize your theme."
 permalink: /quickstart/jekyll-setup/
 preview: /images/previews/jekyll-setup.png
 categories:
@@ -40,7 +40,7 @@ flowchart LR
     A([Repo cloned]) --> B[docker compose up]
     B --> C{First run?}
     C -->|Yes| D[bundle install\n~2 min]
-    C -->|No| E[Stats generator runs]
+    C -->|No| E[Gems already cached]
     D --> E
     E --> F[Jekyll server starts]
     F --> G([localhost:4000 🎉])
