@@ -70,8 +70,11 @@ docker compose up
 On first run, Docker:
 1. Pulls the Jekyll image (≈ 1–2 min)
 2. Runs `bundle install` inside the container
-3. Runs `_data/generate_statistics.sh` to build site stats
-4. Starts Jekyll with live reload
+3. Starts Jekyll with live reload
+
+> Content statistics are **not** regenerated on start — `_data/content_statistics.yml`
+> is committed and read directly. Refresh it with `rake stats:generate` (or
+> `_data/generate_statistics.sh`) after you add content.
 
 Your site is available at **[http://localhost:4000](http://localhost:4000)**.
 

@@ -2,7 +2,7 @@
 title: "GitHub Setup: Fork, Configure, and Deploy to Pages"
 author: Zer0-Mistakes Development Team
 layout: default
-description: Configure GitHub integration for version control and automated deployment. Fork the theme, set up SSH keys, and deploy to GitHub Pages.
+description: Authenticate with the GitHub CLI, fork the zer0-mistakes theme into your account, and deploy your personalized site to GitHub Pages.
 permalink: /quickstart/github-setup/
 preview: /images/previews/github-setup-deployment.png
 categories:
@@ -17,7 +17,7 @@ tags:
 keywords:
   - github pages deployment
   - git workflow
-  - ssh keys
+  - github cli auth
   - github cli
   - fork repository
   - pull requests
