@@ -27,3 +27,27 @@ The hero preview illustration differs between the BEFORE and AFTER crops; this r
 docker compose up -d                              # serves :4000
 python3 scripts/ci/visual_evidence_autogen.py all --base origin/main
 ```
+
+## Root cause of the FAB difference (verified after the autogen run)
+
+The autogen narrative above reports the FAB changing from a blue square to a blue circle and reads it as a consequence of the button becoming an anchor. That is the right observation; the cause is worth recording, because the AFTER render is not a new design — it is the design this component always specified, finally applied.
+
+`origin/main` and this branch were built side by side and `#pageFeedbackFab` measured in Chromium at 1280px:
+
+| | element | `border-radius` | `display` | box |
+| --- | --- | --- | --- | --- |
+| BEFORE (`origin/main`) | `<button>` | 4px | block | 56×56 |
+| AFTER (this PR) | `<a>` | 50% | flex | 56×56 |
+
+`_sass/components/_page-feedback.scss` asks for `border-radius: 50%` and `display: inline-flex`, and that rule compiles into `main.css` on both branches. On `main` it was losing the cascade to `_sass/core/code-copy.scss`:
+
+```scss
+.button,
+button:not(.copy) { display: inline-block; padding: 0 20px; border-radius: 4px; border: 1px solid #bbb; font-size: 11px; cursor: pointer; }
+```
+
+`button:not(.copy)` is specificity (0,1,1) against `.pf-fab`'s (0,1,0), so it won outright and the component's own stylesheet never reached its own FAB. The feedback FAB has been rendering as a 4px-radius rectangle with 20px of horizontal padding since it shipped. Making it an anchor sidesteps the selector.
+
+**Not fixed here, deliberately:** a stylesheet named for code-copy buttons restyling every `<button>` on the site that is not `.copy` is a site-wide defect that needs its own before/after pass over the other button FABs (`#sidebarFab`, `#obsidianLocalGraphFab`) and every plain button on a page. Putting a site-wide restyle inside a feedback-widget PR would hide it under a title nobody would look beneath.
+
+**On the hero-image concern the narrative flagged for a human:** not this PR. Nothing in the diff touches the preview-image generator, the 9-skin pixel baselines passed 9/9, and overflow is 0px at every width on both sides — it reads as render-timing variance between the two captures.
