@@ -201,7 +201,10 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   call to action uses `outline` on a light hero. `outline` is now an outlined
   *primary* button; `outline-light` is the explicit variant for a dark surface,
   and the generated landing engine picks between them from `hero.variant`.
-  Nothing else in the theme used `outline`, so no other button changes.
+  The theme's own homepage hero is `bg-primary text-white`, so its two
+  outlined buttons moved to `outline-light` and render exactly as before —
+  a consumer who copied `_data/landing.yml` into a site with a dark hero
+  should make the same one-word change.
 - **A planned `landing.hero.image` was accepted and then thrown away** — the
   site plan's schema has offered `landing.hero.image` since the Site Builder
   shipped, but the landing engine it generates never rendered it, so an agent
