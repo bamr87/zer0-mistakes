@@ -50,6 +50,28 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Added
 
+- **Bring your own AI provider — Claude or Grok — and an open, coding-session-style
+  Site Builder (ZER0-087)** — the chat proxy gains a provider layer
+  (`templates/deploy/chat-proxy/providers.js`): xAI's Grok is a first-class
+  provider (`XAI_API_KEY`, `CHAT_PROVIDER`, `XAI_CHAT_MODEL`) for the chat
+  widget, the feedback triage and the Site Builder, translated server-side to
+  and from the Anthropic Messages dialect so no client changed. The Site
+  Builder's Connect step shows which providers the local dev proxy already has
+  keys for (masked), takes a token for the session (sent once to localhost,
+  kept in the proxy's memory, optionally saved to `.env` with mode 600), offers
+  the model catalog, an image renderer (Grok Imagine / OpenAI Images) and two
+  session modes: the guided nine steps, or an open session that can open an
+  existing site under the target root, read/edit/write/delete its files, run
+  `git status`/`diff`/`log`, generate images into `assets/`, run `jekyll build`
+  inside the container and stop a long tool run. Generated sites are
+  pre-configured for the chosen provider (`ai_chat.provider`, `preview_images`,
+  `.env.example`). The dev proxy now starts without a credential. Also fixes a
+  pre-existing 162px horizontal overflow of the whole `/setup/` page at phone
+  widths (the Connect step's command boxes could not shrink). (evidence:
+  [`test/visual/evidence/site-builder-providers/`](test/visual/evidence/site-builder-providers/README.md)
+  — Connect step: 2 provider cards, 2 session modes, token field is a password
+  input inert offline; mocked proxy: "needs a token" → "Grok connected"; Build:
+  existing sites listed, Open sets the target; mobile overflow 162px → 0px)
 - **CI now produces a UI pull request's visual artifacts instead of only
   checking for them (ZER0-085)** — `visual-evidence-autogen.yml` renders every
   same-repo PR in the same jammy Playwright image the snapshot gate uses, runs

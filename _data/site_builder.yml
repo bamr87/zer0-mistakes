@@ -1,4 +1,5 @@
 # Feature: ZER0-086
+# Feature: ZER0-087
 # =============================================================================
 # _data/site_builder.yml — one source for the guided Site Builder
 # -----------------------------------------------------------------------------
@@ -7,8 +8,9 @@
 #   _includes/setup/prereq-checklist.html  per-OS install + verify commands
 #   _includes/setup/claude-session.html    serialised as JSON for the browser
 #   assets/js/setup-wizard.js              catalogs (skins, tones, collections)
-#   assets/js/site-builder.js              the Claude session's framework brief
-#                                          and per-step suggested prompts
+#   assets/js/site-builder.js              the AI session's framework brief,
+#                                          provider catalog, session modes and
+#                                          suggested prompts
 #
 # Everything the wizard "knows" about the framework lives here so the form,
 # the generated files, and the AI brief cannot drift apart. Prerequisite
@@ -22,10 +24,11 @@ steps:
   - id: connect
     label: "Connect"
     icon: bi-plug
-    summary: "Connect Claude through the local dev proxy, or continue without AI."
+    summary: "Connect Claude or Grok through the local dev proxy — your own token, your choice of model and session style — or continue without AI."
     prompts:
       - "What do I need to run locally so you can help me build this site?"
       - "Explain what the Site Builder will generate for me."
+      - "What can you do in an open session that the guided steps don't cover?"
   - id: prereqs
     label: "Prerequisites"
     icon: bi-laptop
@@ -79,11 +82,73 @@ steps:
   - id: build
     label: "Build"
     icon: bi-rocket-takeoff
-    summary: "Review every generated file, write the project, start Docker."
+    summary: "Review every generated file, write the project, start Docker — or open an existing site and modify it."
     prompts:
       - "Review the generated files for mistakes before I write them."
       - "Write the project to my target folder and start the dev server."
       - "The build failed — read the logs and tell me what to fix."
+      - "Open the site I already wrote and add a post about my first week with it."
+
+# ── AI providers the Connect step offers ─────────────────────────────────────
+# The dev proxy (templates/deploy/chat-proxy/providers.js) is authoritative for
+# what is configured, which models exist and what a token looks like; this is
+# the UI copy. Order = card order.
+providers:
+  - id: anthropic
+    label: "Claude"
+    vendor: "Anthropic"
+    icon: bi-stars
+    description: "Claude Code OAuth token (Pro/Max, from `claude setup-token`) or an Anthropic API key."
+    token_placeholder: "sk-ant-oat01-… or sk-ant-api…"
+    token_hint: "Mint one with `claude setup-token`, or create an API key at console.anthropic.com."
+    console: "https://console.anthropic.com/"
+    env: "CLAUDE_CODE_OAUTH_TOKEN"
+    models: [claude-opus-4-8, claude-opus-5, claude-sonnet-5, claude-haiku-4-5]
+  - id: xai
+    label: "Grok"
+    vendor: "xAI"
+    icon: bi-x-diamond
+    description: "xAI API key — Grok for the session, Grok Imagine for images."
+    token_placeholder: "xai-…"
+    token_hint: "Create a key at console.x.ai (API keys)."
+    console: "https://console.x.ai/"
+    env: "XAI_API_KEY"
+    models: [grok-4.6, grok-4.5, grok-4.3]
+
+# Image renderers the session can use (generate_image) and the generated site
+# can be pre-configured for (preview_images in _config.yml).
+image_providers:
+  - id: xai
+    label: "Grok Imagine"
+    vendor: "xAI"
+    env: "XAI_API_KEY"
+    model: "grok-imagine-image-2.0"
+  - id: openai
+    label: "OpenAI Images"
+    vendor: "OpenAI"
+    env: "OPENAI_API_KEY"
+    model: "gpt-image-2"
+
+# How the session works. `guided` follows the nine steps; `open` is chat-driven
+# and any order — create, open an existing site, edit files, generate images,
+# rebuild — like a coding session in a terminal.
+session_modes:
+  - id: guided
+    label: "Guided steps"
+    icon: bi-signpost-2
+    description: "Walk the nine steps; the assistant suggests values and fills each one in."
+  - id: open
+    label: "Open session"
+    icon: bi-terminal
+    description: "Just talk: build from a brief, open an existing site, edit files, generate images, rebuild — in any order."
+
+open_session:
+  prompts:
+    - "Build me a complete site from this brief: {brief}"
+    - "Open my existing site and tell me what you would improve first."
+    - "Generate a hero image for the landing page in the site's palette and wire it in."
+    - "Add a new post about the project's first milestone and rebuild the site."
+    - "Run jekyll build and fix anything that fails."
 
 # ── Prerequisites ─────────────────────────────────────────────────────────────
 # `check` is the id of an allow-listed command in
@@ -190,7 +255,7 @@ prerequisites:
     label: "Claude Code CLI"
     required: false
     icon: bi-stars
-    why: "`claude setup-token` mints the OAuth token the dev proxy uses."
+    why: "`claude setup-token` mints a Claude OAuth token for the session (an xAI key from console.x.ai works instead)."
     check: claude
     verify: "claude --version"
     install:
@@ -364,7 +429,7 @@ integrations:
   - id: ai_chat
     label: "AI chat assistant"
     icon: bi-robot
-    description: "Claude-powered page assistant. Needs the chat proxy deployed before it shows."
+    description: "Page assistant answered by Claude or Grok through the chat proxy. Needs the proxy deployed before it shows."
     default: false
   - id: page_feedback
     label: "Improve-this-page widget"
@@ -471,7 +536,8 @@ framework:
     - "theme_background.enabled toggles the SVG gradient/pattern/noise layers"
     - "posthog.enabled/api_key ; google_analytics ; cookie_consent.enabled"
     - "giscus.enabled + data-repo-id + data-category-id"
-    - "ai_chat.enabled/auth_mode/proxy_ready/endpoint — the widget hides until a proxy exists"
+    - "ai_chat.enabled/auth_mode/proxy_ready/endpoint — the widget hides until a proxy exists; ai_chat.provider: anthropic|xai picks Claude or Grok (the proxy's CHAT_PROVIDER wins)"
+    - "preview_images.provider/model — renderer for post preview images: xai → grok-imagine-image-2.0, openai → gpt-image-2 (keys in .env, never in config)"
     - "page_feedback.enabled/mode/default_labels"
     - "obsidian.enabled — wiki-links, embeds, callouts, local graph"
   customisation:

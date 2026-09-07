@@ -51,6 +51,8 @@ A ready-to-deploy Cloudflare Worker that does all of this — streaming chat pas
 
 ### Which Anthropic credential does the proxy use?
 
+The proxy answers with Claude (Anthropic) by default, or with Grok (xAI) when you give it an `XAI_API_KEY` and set `ai_chat.provider: xai` (or pin `CHAT_PROVIDER=xai` on the proxy). The widget is unchanged either way: the proxy translates Grok's OpenAI-compatible API into the Anthropic Messages stream the widget parses, tools included. Locally, the Site Builder's Connect step can hand the dev proxy either token for the session — see [Site Builder](/docs/features/site-builder/).
+
 The proxy can authenticate to Claude two ways (auto-detected from which secrets you set):
 
 - **Claude Code connector (OAuth)** — use your Claude Code / Claude.ai login

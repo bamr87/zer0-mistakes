@@ -14,9 +14,11 @@
     - Renders nothing unless ai_chat.enabled AND a usable auth path
       exists: proxy mode with a deployed proxy (proxy_ready: true,
       recommended) or direct mode with a non-empty api_key.
-    - Proxy mode keeps the Anthropic key server-side (see
-      templates/deploy/chat-proxy/). Direct mode sends the key from the
-      browser (visible in page source) — local development only.
+    - Proxy mode keeps the provider key server-side (see
+      templates/deploy/chat-proxy/) and can answer with Claude or Grok
+      (ai_chat.provider; the proxy's CHAT_PROVIDER wins). Direct mode
+      sends an Anthropic key from the browser (visible in page source) —
+      local development only, Claude only.
     - GitHub actions: github.mode "url" opens pre-filled github.com
       forms (no token anywhere); "proxy" creates issues/PRs through the
       proxy's GitHub endpoints with a server-side token. Creation always
@@ -179,6 +181,7 @@
 <script id="aiChatConfig" type="application/json">
 {
   "endpoint": {{ site.ai_chat.endpoint | default: "/api/chat" | jsonify }},
+  "provider": {{ site.ai_chat.provider | default: "anthropic" | jsonify }},
   "authMode": {{ ai_auth_mode | jsonify }},
   "apiKey": {{ site.ai_chat.api_key | jsonify }},
   "anthropicVersion": {{ site.ai_chat.anthropic_version | default: "2023-06-01" | jsonify }},

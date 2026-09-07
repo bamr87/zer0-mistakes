@@ -1,19 +1,20 @@
 ---
-title: "Site Builder: Guided Setup with Claude"
+title: "Site Builder: Guided Setup with Claude or Grok"
 author: "Zer0-Mistakes Development Team"
 layout: default
-description: "The Site Builder walks you through nine steps, from prerequisites to a running zer0-mistakes site, with Claude checking your machine and starting Docker."
+description: "The Site Builder walks you through nine steps, from prerequisites to a running zer0-mistakes site, with Claude or Grok — your own token — checking your machine, writing files and starting Docker."
 permalink: /quickstart/site-builder/
 categories: [Documentation, Quick Start]
-tags: [setup, wizard, claude, docker, ai-powered]
+tags: [setup, wizard, claude, grok, docker, ai-powered]
 keywords:
   - jekyll site builder
   - guided jekyll setup
   - claude code oauth
+  - xai grok api key
   - docker compose
   - zer0-mistakes wizard
 date: 2026-09-05T00:00:00.000Z
-lastmod: 2026-09-05T00:00:00.000Z
+lastmod: 2026-09-07T00:00:00.000Z
 draft: false
 sidebar:
   nav: quickstart
@@ -25,7 +26,7 @@ mermaid: true
 
 # Site Builder
 
-The Site Builder is a nine-step wizard that takes you from an empty folder to a personalized, running zer0-mistakes site. It lives at `/setup/` on any local build of the theme and on the welcome screen of a fresh remote-theme site. An embedded Claude session sits beside every step: it can read your answers, fill in the forms, check your machine, read the theme's real source code, write the generated project to disk, and start Docker.
+The Site Builder is a nine-step wizard that takes you from an empty folder to a personalized, running zer0-mistakes site. It lives at `/setup/` on any local build of the theme and on the welcome screen of a fresh remote-theme site. An embedded AI session sits beside every step, answered by the provider you connect with your own token — Claude (Anthropic) or Grok (xAI). It can read your answers, fill in the forms, check your machine, read the theme's real source code, write the generated project to disk, start Docker, and, in an open session, modify a site you already have and generate images for it.
 
 ```mermaid
 flowchart LR
@@ -41,13 +42,13 @@ flowchart LR
 
 ## What you'll do
 
-Open the wizard, connect Claude through the local dev proxy, answer a handful of questions, and leave with a project folder that serves at `http://localhost:4000` and is ready to push to GitHub Pages.
+Open the wizard, connect Claude or Grok through the local dev proxy, answer a handful of questions — or just describe the site in an open session — and leave with a project folder that serves at `http://localhost:4000` and is ready to push to GitHub Pages.
 
 ## Prerequisites
 
 - A local checkout of the theme with its dev server running (`docker compose up` in the theme repository), or any site that uses the `welcome` layout.
-- Node.js 20.6 or newer, for the dev proxy that connects Claude.
-- The Claude Code CLI signed in to a Claude Pro or Max account, so `claude setup-token` can mint a token. Without it the wizard still works; only the Claude panel and the one-click build actions stay off.
+- Node.js 20.6 or newer, for the dev proxy that connects the AI.
+- A token for one provider: the Claude Code CLI signed in to a Claude Pro or Max account (`claude setup-token`), an Anthropic API key, or an xAI key from console.x.ai. Without one the wizard still works; only the AI panel stays off.
 - Docker Desktop, Git, and the GitHub CLI for the site you are about to build. The Prerequisites step checks these for you and shows the install command for your operating system.
 
 ## Walk through the wizard
@@ -56,15 +57,15 @@ The wizard has nine steps; this walkthrough groups them into six passes.
 
 ### Connect
 
-Open `http://localhost:4000/setup/`. The Connect step looks for the dev proxy and shows three commands when it is not running:
+Open `http://localhost:4000/setup/`. The Connect step looks for the dev proxy; start it from the theme root (it no longer needs a key to start):
 
 ```bash
-claude setup-token                                           # prints sk-ant-oat01-…
-echo 'CLAUDE_CODE_OAUTH_TOKEN=sk-ant-oat01-…' >> .env        # git-ignored, theme root
 node --env-file=.env templates/deploy/chat-proxy/dev-proxy.mjs
 ```
 
-The page re-checks every fifteen seconds. Once the badge in the Claude panel turns green, the composer unlocks and the panel greets you. The token never reaches the browser: the proxy holds it and the page only talks to `http://localhost:8787`.
+Pick **Claude** or **Grok**, paste a token — `claude setup-token` prints a Claude one; console.x.ai issues xAI keys — and press **Use for this session**. The proxy checks the token with the provider, keeps it in memory for the run, and shows only its last four characters; tick the switch to have the proxy save it to the git-ignored `.env` for next time. Choose a model, switch on image generation if you have an xAI or OpenAI key, and decide how to work: **Guided steps** or an **Open session** where you simply tell the assistant what to build or change.
+
+The page re-checks every fifteen seconds. Once the badge in the panel reads **Claude connected** or **Grok connected**, the composer unlocks and the panel greets you. The token never lives in the page: it goes once to `http://localhost:8787` and stays there.
 
 ### Prerequisites
 
@@ -72,11 +73,11 @@ Press **Run checks**. The proxy runs a fixed list of read-only version commands 
 
 ### Identity, URLs and Structure
 
-Describe your site in the brief box and press **Draft with Claude**. Claude proposes a title, subtitle, tagline and description and applies them after you confirm on the inline card. Fill in your GitHub username and repository, press **Suggest** to derive the site URL and base path, then pick a kind of site to preselect collections and a navigation menu you can edit row by row.
+Describe your site in the brief box and press **Draft with Claude** (or **with Grok**). The assistant proposes a title, subtitle, tagline and description and applies them after you confirm on the inline card. Fill in your GitHub username and repository, press **Suggest** to derive the site URL and base path, then pick a kind of site to preselect collections and a navigation menu you can edit row by row.
 
 ### Appearance and Voice
 
-Choose one of the seven skins and preview it on the page you are looking at, set the color mode, and pick a tone and audience. **Draft both with Claude** writes the welcome post and about page in that voice; both are plain Markdown you can edit before they become files.
+Choose one of the seven skins and preview it on the page you are looking at, set the color mode, and pick a tone and audience. **Draft both with Claude** (or Grok) writes the welcome post and about page in that voice; both are plain Markdown you can edit before they become files. With image generation on, **Hero image with …** renders a landing-page image into the project.
 
 ### Integrations
 
@@ -84,7 +85,7 @@ Switch on what you want: the improve-this-page widget, Obsidian wiki-links, Gisc
 
 ### Build
 
-Every generated file is in the preview panel the whole time. Enter a project folder name, press **Check** to see where it will be created, then **Write project**. Press **docker compose up** and watch the build in the terminal panel. When Jekyll reports it is serving, **Open site** takes you to the new site. Without the proxy, download the bundle and run it:
+Every generated file is in the preview panel the whole time. Enter a project folder name, press **Check** to see where it will be created, then **Write project**. Press **docker compose up** and watch the build in the terminal panel. When Jekyll reports it is serving, **Open site** takes you to the new site. To change it later, pick it under **Modify an existing site**, press **Open**, and ask: the assistant reads, edits and adds files there, and **jekyll build** validates the result. Without the proxy, download the bundle and run it:
 
 ```bash
 bash zer0-site-bundle.sh my-site
@@ -93,7 +94,7 @@ cd my-site && docker compose up
 
 ## Verify
 
-- The Claude panel badge reads **connected** and the Build step buttons are enabled.
+- The panel badge reads **Claude connected** or **Grok connected** and the Build step buttons are enabled.
 - `docker compose ps` in the new folder shows a running `jekyll` service.
 - `http://localhost:4000/` (or the port you chose) renders your title, skin and welcome post.
 - `zer0.install.yml` in the new folder records your answers so the installer can replay them.
@@ -102,10 +103,11 @@ cd my-site && docker compose up
 
 | Issue | Fix |
 | --- | --- |
-| Badge stays **offline** | Confirm the proxy printed `listening on http://localhost:8787`. It refuses to start without `CLAUDE_CODE_OAUTH_TOKEN` or `ANTHROPIC_API_KEY` in `.env`. |
+| Badge stays **offline** | Confirm the proxy printed `listening on http://localhost:8787`; it starts with or without a key. |
+| Badge reads **needs a token** | The proxy is up but the provider you picked has no key yet: paste one, or switch to the provider that has one in `.env`. |
 | **Write project** says the target is not allowed | New sites go under the theme's parent folder by default. Set `WIZARD_TARGET_ROOT=/path` when starting the proxy to change that. |
 | `docker compose up` fails on the first run | The first build installs gems and can take several minutes. Press **Logs**; Claude can read them and explain the error. |
-| Chat says the credential was rejected | Re-run `claude setup-token`, update `.env`, and restart the proxy. |
+| Chat says the credential was rejected | Paste a fresh token on the Connect step: re-run `claude setup-token` for Claude, or create a new key at console.x.ai for Grok. |
 | Port 4000 is already in use | Change **Dev port** on the URLs step before writing the project, or stop the other server. |
 
 ## Related

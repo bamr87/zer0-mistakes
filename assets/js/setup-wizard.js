@@ -1,4 +1,4 @@
-// Feature: ZER0-067, ZER0-086
+// Feature: ZER0-067, ZER0-086, ZER0-087
 /**
  * ===================================================================
  * Site Builder — form, generators, drafts (setup-wizard.js)
@@ -441,6 +441,7 @@
     lines.push('Voice: tone=' + (f.tone || 'friendly') + ' audience=' + (f.audience || 'developers') + ' | welcome title: ' + (f.welcome_title || '(empty)') + ' | welcome body: ' + (f.welcome_body ? f.welcome_body.length + ' chars' : 'empty') + ' | about body: ' + (f.about_body ? f.about_body.length + ' chars' : 'empty'));
     var ints = catalog('integrations').map(function (i) { return i.id + '=' + (f['integration.' + i.id] ? 'on' : 'off'); });
     lines.push('Integrations: ' + ints.join(', ') + ' | GA: ' + (f.google_analytics || 'none') + ' | giscus ids: ' + (f['giscus.repo_id'] ? 'set' : 'unset'));
+    lines.push('AI in the generated site: chat provider=' + (f.ai_provider || 'anthropic') + ' | preview-image renderer=' + (f.image_provider || 'none'));
     var checkLines = Object.keys(s.checks).map(function (id) {
       var c = s.checks[id];
       return id + ':' + (c.manual ? 'done(manual)' : c.ok === true ? 'ok' + (c.version ? ' v' + c.version : '') : c.ok === false ? 'FAIL' : '?');
@@ -926,9 +927,19 @@
     L.push('  default_labels: ["page-feedback"]');
     L.push('ai_chat:');
     L.push('  enabled: ' + (c.on('ai_chat') ? 'true' : 'false'));
+    L.push('  provider: ' + (f.ai_provider || 'anthropic') + '       # anthropic (Claude) | xai (Grok) — the proxy needs the matching key');
     L.push('  auth_mode: proxy');
     L.push('  proxy_ready: false        # set true once templates/deploy/chat-proxy is deployed');
     L.push('  endpoint: "/api/chat"');
+    if (f.image_provider) {
+      var ip = catalogItem('image_providers', f.image_provider) || {};
+      L.push('# Preview images for posts (theme generator; the key lives in .env).');
+      L.push('preview_images:');
+      L.push('  enabled: true');
+      L.push('  provider: ' + f.image_provider + '           # ' + (ip.label || f.image_provider) + ' — ' + (ip.env || 'API key') + ' in .env');
+      L.push('  model: ' + y(ip.model || ''));
+      L.push('  output_dir: assets/images/previews');
+    }
     L.push('');
     if (f.twitter_username || f.linkedin_username) {
       L.push('# ── Social ─────────────────────────────────────────────────────────');
@@ -1478,16 +1489,35 @@
     L.push('  audience: ' + (f.audience || 'developers'));
     L.push('agents: [copilot, claude]');
     L.push('ai:');
-    L.push('  provider: auto');
+    L.push('  provider: ' + (f.ai_provider === 'xai' ? 'xai' : 'auto'));
+    if (f.image_provider) L.push('  image_provider: ' + f.image_provider);
     return L.join('\n') + '\n';
   }
 
   function genEnvExample(c) {
-    return ['# Copy to .env (git-ignored). Credentials live here, never in _config.yml.', '',
-      '# jekyll-github-metadata', 'PAGES_REPO_NWO=' + c.ghUser + '/' + c.repo, '',
-      '# AI chat assistant / Site Builder — Claude Code OAuth token from `claude setup-token`',
-      '# CLAUDE_CODE_OAUTH_TOKEN=sk-ant-oat01-...', '# ANTHROPIC_API_KEY=sk-ant-...', '',
-      '# PostHog (only if enabled in _config.yml)', '# POSTHOG_API_KEY=phc_...', ''].join('\n');
+    var f = c.f;
+    var L = ['# Copy to .env (git-ignored). Credentials live here, never in _config.yml.', '',
+      '# jekyll-github-metadata', 'PAGES_REPO_NWO=' + c.ghUser + '/' + c.repo, ''];
+    L.push('# AI chat assistant / Site Builder — provider: ' + (f.ai_provider || 'anthropic'));
+    if (f.ai_provider === 'xai') {
+      L.push('# xAI API key from https://console.x.ai/ (Grok chat; also Grok Imagine images)');
+      L.push('# XAI_API_KEY=xai-...');
+      L.push('# CHAT_PROVIDER=xai');
+    } else {
+      L.push('# Claude Code OAuth token from `claude setup-token`, or an Anthropic API key');
+      L.push('# CLAUDE_CODE_OAUTH_TOKEN=sk-ant-oat01-...');
+      L.push('# ANTHROPIC_API_KEY=sk-ant-...');
+    }
+    L.push('');
+    if (f.image_provider) {
+      var ip = catalogItem('image_providers', f.image_provider) || {};
+      L.push('# Preview-image renderer (' + (ip.label || f.image_provider) + ')');
+      if (!(f.ai_provider === 'xai' && f.image_provider === 'xai')) L.push('# ' + (ip.env || 'IMAGE_API_KEY') + '=...');
+      else L.push('# (uses XAI_API_KEY above)');
+      L.push('');
+    }
+    L.push('# PostHog (only if enabled in _config.yml)', '# POSTHOG_API_KEY=phc_...', '');
+    return L.join('\n');
   }
 
   function genReadme(c) {
@@ -1563,7 +1593,7 @@
     });
     (c.plan.pages || []).forEach(function (p) {
       if (!c.collections.some(function (col) { return col.id === p.collection; })) return; // planned for a collection that is off
-      add(pagePath(p), genPlanPage(c, p), { label: p.collection + '/' + p.slug + '.md', description: 'Planned example page' + (p.body ? '.' : ' (draft body — ask Claude to write it).'), required: false });
+      add(pagePath(p), genPlanPage(c, p), { label: p.collection + '/' + p.slug + '.md', description: 'Planned example page' + (p.body ? '.' : ' (draft body — ask the assistant to write it).'), required: false });
     });
     if (landingPlan(c).template !== 'minimal') add('_data/landing.yml', genLandingData(c), { label: 'landing.yml', description: 'Hero and sections the landing page renders — edit the copy here.', required: true });
     if (c.plan.navigation.sidebar === 'docs' && hasCollection(c, 'docs')) add('_data/navigation/docs.yml', genDocsNav(c), { label: 'navigation/docs.yml', description: 'Curated docs sidebar tree.', required: true });
