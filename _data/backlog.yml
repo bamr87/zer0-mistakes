@@ -1409,7 +1409,7 @@ tasks:
     title: "Preview-image engine: the xAI default model grok-2-image is retired — default to grok-imagine-image-2.0"
     status: open
     priority: P2
-    area: scripts
+    area: infra
     risk: low
     effort: S
     source: issue
