@@ -238,8 +238,7 @@ A fine-grained personal access token scoped to the site repository with **Issues
 - `ALLOWED_ORIGINS` is a secondary gate (Origin headers are spoofable by
   non-browser clients) — Cloudflare Access is the real one.
 - `CHAT_PROVIDER`, `CHAT_MODEL` / `XAI_CHAT_MODEL` and `MAX_TOKENS_CAP` are
-  enforced server-side, so a tampered client cannot pick another provider, a
-  more expensive model or unbounded output.
+enforced server-side, so a tampered client cannot pick another provider, a more expensive model or unbounded output.
 - Session credentials exist only in the dev proxy, only in memory, only from a
   browser origin on the local allowlist, and are never echoed back.
 - The KV namespace stores live tokens — keep the worker and its KV private to

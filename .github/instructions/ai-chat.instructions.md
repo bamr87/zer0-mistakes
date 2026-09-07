@@ -66,8 +66,7 @@ new options there with a `site.ai_chat.*` default and read them in `ai-chat.js`.
 - Model id defaults to `claude-opus-4-8` for Claude and `grok-4.6` for Grok;
   do not send `temperature` (current Claude models reject sampling params).
 - Session state that is safe to keep in the browser (provider, model, mode,
-  image renderer) lives in `localStorage` under `zer0-site-builder-prefs`;
-  a token never does.
+image renderer) lives in `localStorage` under `zer0-site-builder-prefs`; a token never does.
 - `ANTHROPIC_API_KEY` is shared with the AI content reviewer
   (`ai-content-review.yml`) — see `docs/systems/github-secrets-setup.md`.
 
@@ -76,8 +75,7 @@ new options there with a `site.ai_chat.*` default and read them in `ai-chat.js`.
 - `node --check` the six proxy JS files, `assets/js/ai-chat.js`,
   `assets/js/setup-wizard.js` and `assets/js/site-builder.js`.
 - `node test/test_providers.mjs` — provider selection, model pinning, the
-  Anthropic ⇄ OpenAI translation, the Worker against a mock xAI/Anthropic
-  upstream, and the credential store (all offline).
+Anthropic ⇄ OpenAI translation, the Worker against a mock xAI/Anthropic upstream, and the credential store (all offline).
 - `node test/test_wizard_store.mjs` — the sandbox's path, allow-list,
   overwrite, project-session and image-asset rules against a temp target root.
 - `node test/visual/site-builder-walkthrough.mjs` (theme + dev proxy running) —
