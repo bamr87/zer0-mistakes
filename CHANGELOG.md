@@ -12,6 +12,25 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [Unreleased]
+
+### Fixed
+
+- **The weekly UI/UX audit was blind, and reported it as clean.** `sweep.mjs`
+  built its pages with `browser.newPage()`, which `@axe-core/playwright`
+  refuses; the throw was caught by a single per-route `try` that also discarded
+  the overflow, console-error and link-collection data already gathered for
+  that route. Screenshots still succeeded, so the harness looked alive while
+  every accessibility, console, overflow and broken-link result on every route
+  was silently dropped — and the report rendered the absence as "0 axe
+  violations / 0 broken links". Pages are now built from `browser.newContext()`,
+  each measurement fails independently, a scan that errored is reported as
+  UNKNOWN rather than clean, and a measurement that fails on every route turns
+  the sweep red the way a total capture failure already did. On the demo site
+  the sweep goes from 18/21 captured with 21 blackout entries to **21/21
+  captured, 0 harness errors, 191 links crawled and 8 genuinely broken links
+  found** ([#468](https://github.com/bamr87/zer0-mistakes/issues/468)).
+
 ## [1.29.0](https://github.com/bamr87/zer0-mistakes/compare/v1.28.0...v1.29.0) (2026-09-01)
 
 

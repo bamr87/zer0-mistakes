@@ -18,6 +18,15 @@
 # was already true and already gated. It is "a browser can finish loading a
 # page and we got a PNG out of it", which is the only thing the audit needs.
 #
+# A PNG turned out not to be enough either (#468). On 2026-09-07 the sweep
+# wrote 18 screenshots — so every guard above stayed quiet — while axe, the
+# overflow probe, the console capture and the link crawl were blacked out on
+# EVERY route by one `browser.newPage()` that @axe-core/playwright refuses.
+# The report rendered that blackout as "0 violations / 0 broken links", i.e. a
+# harness outage that read as a healthy audit. This check therefore also
+# asserts that each MEASUREMENT landed, and injects a failure to prove a broken
+# measurement costs exactly itself instead of erasing the other four.
+#
 # Red on the old `--detach` invocation, green on the current one. Prove it:
 #
 #     UI_AUDIT_SERVE_DETACH=1 ./test/ui-audit/check-audit-serve.sh   # expect FAIL
@@ -138,4 +147,69 @@ if [[ "$sweep_status" -ne 0 ]]; then
   exit 1
 fi
 
-log "PASS: the audit's serve invocation produces capturable pages (${shots} screenshot(s))."
+# ---------------------------------------------------------------------------
+# A screenshot is necessary but nowhere near sufficient (#468). The 2026-09-07
+# run wrote 18 of them while axe, overflow, console and the link crawl were
+# blacked out on every route, and the report rendered the absence as
+# "0 violations / 0 broken links" — a harness outage that read as a healthy
+# audit. So assert the MEASUREMENTS landed, not just the pixels.
+# ---------------------------------------------------------------------------
+log "Asserting every measurement is present in report.json..."
+node -e '
+  const r = require("./test/ui-audit/output/report.json");
+  const fail = (m) => { console.error("[check-audit-serve] FAIL: " + m); process.exit(1); };
+  if (!r.routes.length) fail("report.json has no route records");
+  // Anchor on a pass that actually LOADED. A slow first hit can time out one
+  // viewport on a very tall page; that is a load error, a different thing from
+  // the measurement blackout under test. A run where NOTHING loaded still fails.
+  const e = r.routes.find((x) => !x.error);
+  if (!e) fail("no route loaded: " + r.routes.map((x) => x.error).join(" | "));
+  if (e.errors) fail(`route ${e.route} @ ${e.viewport} had measurement errors: ${JSON.stringify(e.errors)}`);
+  // The axe assertion is the point of this block: before the newContext() fix
+  // AxeBuilder threw and this key never existed.
+  if (!Array.isArray(e.axe_violations)) fail("axe_violations missing — the axe scan did not run");
+  if (!Array.isArray(e.console_errors)) fail("console_errors missing");
+  if (!e.overflow || typeof e.overflow.scroll_width !== "number") fail("overflow missing");
+  if (!e.screenshot) fail("screenshot path missing");
+  if (!r.links_checked) fail("links_checked is 0 — the link crawl never ran, so \"broken: 0\" is meaningless");
+  if (r.harness.blacked_out.length) fail("blacked-out measurements: " + r.harness.blacked_out.join(", "));
+  console.log(`[check-audit-serve] measurements OK on ${e.route} @ ${e.viewport} ` +
+    `(axe ran, ${r.links_checked} links crawled)`);
+'
+
+# ---------------------------------------------------------------------------
+# And prove the isolation itself: a failing measurement must cost EXACTLY
+# itself. One try around the whole per-route body is what turned a single
+# library misuse into a total blackout, so this injects an axe failure and
+# asserts the other four measurements still landed.
+# ---------------------------------------------------------------------------
+log "Injecting an axe failure to prove measurement isolation..."
+inject_status=0
+UI_AUDIT_FAULT_INJECT=axe node test/ui-audit/sweep.mjs || inject_status=$?
+
+if [[ "$inject_status" -eq 0 ]]; then
+  log "FAIL: axe failed on every route but the sweep still exited 0."
+  log "      A blacked-out measurement is a harness fault and must be RED."
+  exit 1
+fi
+
+node -e '
+  const r = require("./test/ui-audit/output/report.json");
+  const fail = (m) => { console.error("[check-audit-serve] FAIL: " + m); process.exit(1); };
+  const e = r.routes.find((x) => !x.error);
+  if (!e) fail("no route loaded: " + r.routes.map((x) => x.error).join(" | "));
+  if (!e.errors || !e.errors.axe) fail("injected axe failure was not recorded on the axe measurement");
+  if ("axe_violations" in e) fail("a failed axe scan must not report violations at all");
+  // The four survivors — this is the regression that matters.
+  if (!e.screenshot) fail("screenshot was discarded by an unrelated axe failure");
+  if (!e.overflow) fail("overflow was discarded by an unrelated axe failure");
+  if (!Array.isArray(e.console_errors)) fail("console_errors was discarded by an unrelated axe failure");
+  if (!r.links_checked) fail("link crawl was discarded by an unrelated axe failure");
+  if (e.error) fail("a measurement failure must not be recorded as a whole-page load error");
+  const md = require("node:fs").readFileSync("test/ui-audit/output/report.md", "utf8");
+  if (!/axe scan FAILED/.test(md)) fail("report.md did not distinguish a failed scan from a clean one");
+  console.log("[check-audit-serve] isolation OK (axe failed alone; 4 measurements survived)");
+'
+
+log "PASS: the audit's serve invocation produces capturable pages (${shots} screenshot(s))"
+log "      and every measurement — axe, overflow, console, links — landed."
