@@ -87,7 +87,12 @@
         {% include components/svg-background.html zone="body" %}
     </head>
     
-    <body class="zer0-bg-body" data-bs-spy="scroll" data-bs-target="#TableOfContents">
+    {% comment %} No `data-bs-spy` here: the theme's own scroll spy
+         (assets/js/modules/navigation/scroll-spy.js) owns TOC highlighting.
+         Bootstrap's native ScrollSpy competed with it for the `.active` class
+         on `#TableOfContents a` (making the bolding jump), and also stripped
+         server-rendered `.active` classes off sidebar nav links. {% endcomment %}
+    <body class="zer0-bg-body">
         {% comment %} ============================================== {% endcomment %}
         {% comment %} BODY SECTION: Site structure and content area {% endcomment %}
         {% comment %} ============================================== {% endcomment %}

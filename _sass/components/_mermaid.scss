@@ -1,0 +1,375 @@
+// Feature: ZER0-013
+// ============================================================================
+// Mermaid diagram figures
+// ----------------------------------------------------------------------------
+// Markup:     built at runtime by assets/js/mermaid-diagrams.js from every
+//             ```mermaid fence:  figure.zer0-diagram > [toolbar] + viewport
+//             > canvas > svg, + figcaption
+// Loader:     _includes/components/mermaid.html (pages with `mermaid: true`)
+// Theming:    every colour here is a token, and the SVG's own palette is
+//             derived from the same tokens in JS — so light / dark / wizard
+//             modes and all skins work without per-mode overrides, and
+//             nothing needs `!important` (which used to flatten per-node
+//             `style`/`classDef` colours and pie slices).
+// ============================================================================
+
+.zer0-diagram {
+  --zer0-diagram-surface: color-mix(in srgb, var(--zer0-color-bg-elevated) 55%, var(--bs-body-bg));
+  --zer0-diagram-padding: var(--zer0-space-3);
+
+  position: relative;
+  margin: var(--zer0-space-4) 0;
+  padding: 0;
+  background: var(--zer0-diagram-surface);
+  border: 1px solid var(--zer0-color-border);
+  border-radius: var(--zer0-radius-lg);
+  box-shadow: var(--zer0-shadow-xs);
+  overflow: hidden;
+  transition: border-color var(--zer0-motion-duration-base) var(--zer0-motion-ease-standard),
+              box-shadow var(--zer0-motion-duration-base) var(--zer0-motion-ease-standard);
+
+  &:hover,
+  &:focus-within {
+    border-color: color-mix(in srgb, var(--zer0-color-primary) 35%, var(--zer0-color-border));
+    box-shadow: var(--zer0-shadow-sm);
+  }
+
+  // --- Toolbar ---------------------------------------------------------------
+  // On pointer devices it floats over the top-right corner and is hidden until
+  // the figure is hovered or holds focus. On touch devices there is no hover
+  // to reveal it, so it becomes a static, right-aligned row ABOVE the diagram
+  // — a floating bar that is always visible would cover the top of a phone-
+  // width diagram.
+  &__toolbar {
+    position: absolute;
+    top: var(--zer0-space-2);
+    right: var(--zer0-space-2);
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.125rem;
+    padding: 0.125rem;
+    background: color-mix(in srgb, var(--bs-body-bg) 88%, transparent);
+    border: 1px solid var(--zer0-color-border-translucent);
+    border-radius: var(--zer0-radius-pill);
+    box-shadow: var(--zer0-shadow-sm);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    opacity: 0;
+    transition: opacity var(--zer0-motion-duration-fast) var(--zer0-motion-ease-standard);
+
+    @media (hover: none) {
+      position: static;
+      display: flex;
+      justify-content: flex-end;
+      margin: var(--zer0-space-2) var(--zer0-space-2) 0 auto;
+      width: fit-content;
+      max-width: calc(100% - 2 * var(--zer0-space-2));
+      opacity: 1;
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+  }
+
+  &:hover &__toolbar,
+  &:focus-within &__toolbar,
+  &__toolbar:focus-within,
+  &__toolbar--static {
+    opacity: 1;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    color: var(--zer0-color-ink-muted);
+    background: transparent;
+    border: 0;
+    border-radius: var(--zer0-radius-circle);
+    line-height: 1;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color var(--zer0-motion-duration-fast) var(--zer0-motion-ease-standard),
+                color var(--zer0-motion-duration-fast) var(--zer0-motion-ease-standard);
+
+    &:hover:not(:disabled) {
+      color: var(--zer0-color-ink);
+      background: var(--zer0-color-bg-muted);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--zer0-color-primary);
+      outline-offset: 1px;
+      color: var(--zer0-color-ink);
+    }
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    &.is-success { color: var(--zer0-color-success); }
+    &.is-failure { color: var(--zer0-color-danger); }
+
+    // Comfortable touch targets without changing the desktop density.
+    @media (hover: none) and (pointer: coarse) {
+      width: 2.25rem;
+      height: 2.25rem;
+    }
+  }
+
+  &__sep {
+    width: 1px;
+    height: 1.125rem;
+    margin: 0 0.125rem;
+    background: var(--zer0-color-border);
+  }
+
+  &__zoom {
+    min-width: 2.5rem;
+    padding: 0 0.25rem;
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    color: var(--zer0-color-ink-muted);
+
+    &[hidden] { display: none; }
+  }
+
+  // --- Viewport / canvas -----------------------------------------------------
+  &__viewport {
+    position: relative;
+    max-height: min(80vh, 60rem);
+    padding: var(--zer0-diagram-padding);
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    outline: none;
+
+    &:focus-visible {
+      box-shadow: inset 0 0 0 2px var(--zer0-color-primary);
+      border-radius: var(--zer0-radius-lg);
+    }
+
+    &.is-zoomed { cursor: grab; }
+    &.is-panning { cursor: grabbing; user-select: none; }
+  }
+
+  &__canvas {
+    display: block;
+    width: 100%;
+  }
+
+  // Mermaid emits width="100%" + style="max-width: <natural>px". At 1:1 the
+  // SVG fills the viewport up to its natural size and is centred; when zoomed
+  // the JS sets an explicit width, the block overflows to the right and the
+  // viewport scrolls — a real layout, no transforms, so print/centring hold.
+  &__svg,
+  &__canvas > svg {
+    display: block;
+    height: auto;
+    margin: 0 auto;
+    max-width: 100%;
+  }
+
+  &__caption {
+    padding: 0 var(--zer0-space-3) var(--zer0-space-3);
+    font-size: 0.875rem;
+    color: var(--zer0-color-ink-muted);
+    text-align: center;
+
+    &[hidden] { display: none; }
+  }
+
+  // --- Loading ---------------------------------------------------------------
+  &__skeleton {
+    min-height: 8rem;
+    border-radius: var(--zer0-radius);
+  }
+
+  // --- Error state -----------------------------------------------------------
+  // The diagram could not be parsed: say so, show why, and keep the source on
+  // the page — content is never lost to a typo.
+  &.has-error {
+    border-color: color-mix(in srgb, var(--zer0-color-warning) 55%, var(--zer0-color-border));
+  }
+
+  &__error {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--zer0-space-3);
+    align-items: flex-start;
+    padding: var(--zer0-space-3);
+    color: var(--bs-warning-text-emphasis, var(--zer0-color-ink));
+    background: var(--bs-warning-bg-subtle, var(--zer0-color-bg-elevated));
+    border-left: 0.25rem solid var(--zer0-color-warning);
+    border-radius: var(--zer0-radius);
+
+    > .bi {
+      font-size: 1.25rem;
+      line-height: 1;
+      padding-top: 0.125rem;
+      color: var(--zer0-color-warning);
+    }
+  }
+
+  &__error-body { min-width: 0; }
+
+  &__error-title {
+    margin: 0 0 0.25rem;
+    font-weight: var(--zer0-font-weight-semibold, 600);
+  }
+
+  &__error-message {
+    margin: 0 0 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+    background: color-mix(in srgb, var(--bs-body-bg) 60%, transparent);
+    border: 0;
+    border-radius: var(--zer0-radius-sm);
+  }
+
+  &__error-hint {
+    margin: 0;
+    font-size: 0.875rem;
+  }
+
+  &__source {
+    margin-top: var(--zer0-space-3);
+    font-size: 0.875rem;
+
+    > summary {
+      cursor: pointer;
+      color: var(--zer0-color-ink-muted);
+    }
+
+    pre {
+      margin: 0.5rem 0 0;
+      padding: var(--zer0-space-3);
+      max-height: 20rem;
+      overflow: auto;
+      background: var(--zer0-color-code-bg);
+      border: 1px solid var(--zer0-color-border);
+      border-radius: var(--zer0-radius);
+      font-size: 0.8125rem;
+    }
+  }
+
+  // --- Print -----------------------------------------------------------------
+  @media print {
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+    break-inside: avoid;
+
+    .zer0-diagram__toolbar { display: none; }
+    .zer0-diagram__viewport { max-height: none; overflow: visible; }
+  }
+}
+
+// --- Fullscreen lightbox -------------------------------------------------------
+// A native <dialog> (top layer, focus trap, Escape) — the figure's canvas is
+// moved in and back out, so it is the same SVG the reader was looking at.
+.zer0-diagram-lightbox {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: var(--bs-body-color);
+  background: var(--bs-body-bg);
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  &__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--zer0-space-3);
+    padding: var(--zer0-space-2) var(--zer0-space-3);
+    border-bottom: 1px solid var(--zer0-color-border);
+    background: var(--zer0-color-bg-elevated);
+  }
+
+  &__title {
+    margin: 0;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: var(--zer0-font-weight-semibold, 600);
+  }
+
+  // The toolbar is static chrome here rather than a floating overlay.
+  .zer0-diagram__toolbar--static {
+    position: static;
+    flex: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  &__viewport {
+    flex: 1 1 auto;
+    max-height: none;
+    padding: var(--zer0-space-4);
+  }
+
+  .zer0-diagram__btn--close {
+    margin-left: 0.25rem;
+    color: var(--zer0-color-ink);
+  }
+}
+
+// Lock page scroll while the lightbox is open.
+.zer0-diagram-lightbox-open {
+  overflow: hidden;
+}
+
+// --- Progressive enhancement --------------------------------------------------
+// Until the deferred scripts run, a raw ```mermaid fence would paint as a code
+// block and then be swapped for the diagram — a visible flash of source. With
+// JS available, paint it as a placeholder instead. The delayed animation is a
+// safety net: if the scripts never arrive (blocked asset, old browser) the
+// source fades back in, so a broken script can never hide content. Without JS
+// (`html.no-js`) or when mermaid.min.js fails to load
+// (`.zer0-diagram-unavailable`, set by the script) the fence stays a normal,
+// readable code block.
+.js:not(.zer0-diagram-unavailable) pre:has(> code.language-mermaid) {
+  min-height: 8rem;
+  color: transparent;
+  background: linear-gradient(
+    90deg,
+    var(--zer0-color-bg-elevated) 25%,
+    var(--zer0-color-bg-muted) 50%,
+    var(--zer0-color-bg-elevated) 75%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--zer0-radius-lg);
+  animation:
+    zer0-skeleton-shimmer 1.5s ease-in-out infinite,
+    zer0-diagram-reveal 0s linear 8s forwards;
+
+  > code { color: inherit; }
+}
+
+@keyframes zer0-diagram-reveal {
+  to { color: inherit; animation: none; }
+}

@@ -1,0 +1,1 @@
+(evidence: [`test/visual/evidence/mermaid/`](test/visual/evidence/mermaid/README.md) — dark-mode toggle keeps the SVG (before: SVG lost, stylesheet text on screen); page overflow 0px at 390px; 11/12 docs diagrams rendered, 1 shown as an error card with source kept)

@@ -86,10 +86,13 @@ layout: root
     {% comment %} ================================ {% endcomment %}
     {% comment %} MAIN CONTENT AREA               {% endcomment %}
     {% comment %} ================================ {% endcomment %}
-    {% comment %} Primary content section with scroll spy for table of contents navigation.
+    {% comment %} Primary content section. TOC highlighting is handled by the
+         theme's own scroll spy (assets/js/modules/navigation/scroll-spy.js) —
+         no `data-bs-spy` here, because Bootstrap's native ScrollSpy fought it
+         for the `.active` class and made the bolding jump around.
          Not a <main>: root.html already provides the single <main id="main-content">
          landmark; a nested <main> here would duplicate it (issue #299). {% endcomment %}
-    <div class="bd-main order-1" data-bs-spy="scroll" data-bs-target="#TableOfContents" data-bs-offset="100" data-bs-smooth-scroll="true">
+    <div class="bd-main order-1">
 
         {%- comment -%}
           Page introduction: title, breadcrumbs, metadata.

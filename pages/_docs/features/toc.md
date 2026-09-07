@@ -1,7 +1,8 @@
 ---
-lastmod: 2026-06-15T00:00:00.000Z
-title: Table of Contents
-description: Automatic table of contents generation from page headings with scroll spy and smooth scrolling.
+lastmod: 2026-09-05T00:00:00.000Z
+title: Table of Contents with Scroll Spy
+description: Automatic table of contents built from a page's h1-h3 headings, with a positional scroll spy that bolds the section being read and smooth anchor scrolling.
+keywords: [table of contents, toc, scroll spy, anchor navigation, page headings, jekyll theme, sidebar]
 preview: /images/previews/table-of-contents.png
 layout: default
 categories:
@@ -25,11 +26,11 @@ Automatic table of contents generation from page headings with active section hi
 
 ![A documentation page with the "On this page" table of contents in the right column, listing the page's headings; the current section is highlighted as you scroll](/assets/images/docs/features/docs-layout.png)
 
-The **On this page** panel on the right is the table of contents, built from the page's `h2`–`h6` headings.
+The **On this page** panel on the right is the table of contents, built from the page's `h1`–`h3` headings.
 
 ## Overview
 
-- **Auto-Generated**: Extracts from h2-h6 headings
+- **Auto-Generated**: Extracts from h1-h3 headings (the range is a parameter, see [Heading Levels](#heading-levels))
 - **Scroll Spy**: Highlights current section
 - **Smooth Scroll**: Animated navigation
 - **Responsive**: Sidebar on desktop, offcanvas on mobile
@@ -96,13 +97,13 @@ defaults:
 
 ### Heading Levels
 
-Configure which headings appear:
+The range is set where the TOC is included, with the `h_min` / `h_max` parameters. `_includes/navigation/sidebar-right.html` renders the right-hand panel with `h_min=1 h_max=3`, so the page title and its h2/h3 sections appear:
 
-```yaml
-toc:
-  min_level: 2  # Start at h2
-  max_level: 4  # End at h4
+```liquid
+{% raw %}{% include content/toc.html html=content h_min=1 h_max=3 %}{% endraw %}
 ```
+
+The include itself defaults to `h_min=1` and `h_max=6`; anything outside the range is skipped, as is any heading without an `id`.
 
 ## Styling
 
@@ -166,31 +167,38 @@ toc:
 
 ## Scroll Spy
 
-### Intersection Observer
+`assets/js/modules/navigation/scroll-spy.js` bolds the entry for the section you are reading. The rule is positional rather than visibility-based: the active heading is the **last one whose top has crossed the reading line** — a line `scroll-padding-top` below the top of the viewport, i.e. just under the fixed header, which is also where clicking a TOC entry parks its heading. Once the page is scrolled to the bottom, the last heading wins, so trailing sections shorter than the viewport are still reachable.
 
 ```javascript
-function initScrollSpy() {
-  const headings = document.querySelectorAll('h2[id], h3[id], h4[id]');
-  const tocLinks = document.querySelectorAll('.toc-link');
-  
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          tocLinks.forEach((link) => link.classList.remove('active'));
-          const activeLink = document.querySelector(
-            `.toc-link[href="#${entry.target.id}"]`
-          );
-          activeLink?.classList.add('active');
-        }
-      });
-    },
-    { rootMargin: '-20% 0% -70% 0%' }
-  );
-  
-  headings.forEach((heading) => observer.observe(heading));
+// Simplified: the active heading, recomputed on each scroll frame.
+function activeHeading(headings) {          // headings sorted by document offset
+  const pad = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop);
+  const atBottom =
+    window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+  if (atBottom) return headings[headings.length - 1];
+
+  const line = window.scrollY + pad + 4;
+  let active = headings[0];
+  for (const heading of headings) {
+    if (heading.top > line) break;
+    active = heading;
+  }
+  return active;
 }
 ```
+
+Heading offsets are measured once and re-measured on resize or content reflow (`ResizeObserver`), and the recompute is throttled to one animation frame per scroll, so the whole page is re-evaluated on every frame without measuring the DOM each time.
+
+Asking `IntersectionObserver` for the "most visible" heading looks simpler but does not work: headings are only a few pixels tall, so every heading inside the observer band reports the same `intersectionRatio`, and headings leaving the band trigger no callback at all. The highlight then lands on whichever heading happened to be in the last callback batch.
+
+Two details matter for feel. A clicked entry stays active while the smooth scroll animates, instead of flashing every heading passed on the way. And keeping the active entry visible inside a long TOC adjusts the TOC container's own `scrollTop` — `scrollIntoView()` would bubble up and scroll the page, which feeds straight back into the spy.
+
+**Configuration** (`assets/js/modules/navigation/config.js`):
+
+| Key | Default | Purpose |
+|-----|---------|---------|
+| `scrollSpy.offset` | `null` | Reading-line distance from the viewport top. `null` derives it from `scroll-padding-top`; set a number to pin it. |
+| `scrollSpy.tolerance` | `4` | Slack (px) at the reading line and when detecting the bottom of the page. |
 
 ## Smooth Scrolling
 
@@ -271,9 +279,9 @@ TOC in offcanvas (see [Mobile TOC](/docs/features/mobile-toc/)):
 
 ### Scroll Spy Not Working
 
-1. Check heading IDs match TOC hrefs
-2. Verify Intersection Observer support
-3. Test observer margins
+1. Check heading IDs match TOC hrefs — the spy resolves each TOC link's `href` to a heading by `id`, so a link with no matching element is skipped
+2. Check the reading line — `scroll-padding-top` on `html` (or `config.scrollSpy.offset`) decides when a heading becomes current
+3. Check nothing else claims `#TableOfContents` — a second scroll spy (a `data-bs-spy="scroll"` element targeting it) fights over the `.active` class
 
 ### Styling Issues
 

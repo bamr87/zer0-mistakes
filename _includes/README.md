@@ -59,6 +59,7 @@ Reusable UI components and widgets:
 - `post-card.html` - Reusable post card component for listings
 - `page-views.html` - Inline "N views" badge for a page (hidden until a count is known)
 - `page-views-init.html` - Page-view counter bootstrap: injects `site.page_views` config and loads `assets/js/page-views.js` (included once from `core/head.html`)
+- `mermaid.html` - Mermaid loader for pages with `mermaid: true` (included from `core/head.html`): injects `site.mermaid` config + translated toolbar labels and loads the vendored bundle and `assets/js/mermaid-diagrams.js`, both deferred. Every ```` ```mermaid ```` fence becomes a figure with a zoom / fullscreen / copy / download toolbar, an `accTitle` caption, token-derived colours, and an error card that keeps the source
 - `data-card.html` - One generic card rendered from a plain data hash (title/url/icon/badge/meta/buttons schema in its header)
 - `card-grid.html` - Responsive grid of `data-card`s from any data array — hub dashboards, fleet registries, service grids
 - `bookshelf.html` - Grid of every book in the `books` collection (home-page library)
@@ -101,6 +102,14 @@ Landing page specific components:
 Documentation and reference materials:
 
 - `bootstrap-docs.html` - Bootstrap documentation (moved from style.html)
+
+### `setup/` — the Site Builder
+
+The guided, Claude-assisted setup wizard rendered at `/setup/` and on the `welcome` layout:
+
+- `wizard.html` - Nine-step Site Builder (connect → prerequisites → identity → URLs → structure → appearance → voice → integrations → build) with a stepper, the step panes, a sticky side column and the JSON blocks both scripts read (`#siteBuilderData`, `#siteBuilderConfig`). Drives `assets/js/setup-wizard.js` (form, generators, drafts) and `assets/js/site-builder.js` (Claude session)
+- `prereq-checklist.html` - Prerequisites step: one row per tool from `_data/site_builder.yml`, per-OS install + verify commands, manual "done" toggles, live check state from the dev proxy
+- `claude-session.html` - The embedded Claude panel: connection badge, transcript, per-step suggested prompts, composer. Proxy-only; renders a connect prompt until the dev proxy answers
 
 ### `custom/` — consumer extension hooks
 

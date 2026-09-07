@@ -8,9 +8,14 @@ preview: /images/previews/site-personalization-configuration.png
 categories: [Documentation, Quick Start]
 tags: [jekyll, configuration, personalization, customization, yaml]
 keywords:
-  primary: ["jekyll configuration", "site personalization"]
-  secondary: ["yaml config", "site branding", "analytics setup", "social links"]
-lastmod: 2026-05-30T00:00:00.000Z
+  - jekyll configuration
+  - site personalization
+  - yaml config
+  - site branding
+  - analytics setup
+  - social links
+date: 2025-07-01T00:00:00.000Z
+lastmod: 2026-09-05T00:00:00.000Z
 draft: false
 sidebar:
   nav: quickstart
@@ -20,7 +25,7 @@ quickstart:
   prev: /quickstart/github-setup/
 ---
 
-# 🎨 Site Personalization & Configuration
+# Site Personalization & Configuration
 
 After completing the [Quick Start installation](/quickstart/), use this guide to personalize your Jekyll site. Fill out the interactive forms below to generate your custom `_config.yml` settings.
 
@@ -35,7 +40,9 @@ After completing the [Quick Start installation](/quickstart/), use this guide to
   <p class="mb-0 mt-2">Fill out the forms in each section. Your settings will be automatically saved and combined into a complete <code>_config.yml</code> at the bottom of the page. Copy and paste to customize your site!</p>
 </div>
 
-## 📋 Configuration Sections
+> This page is an interactive generator and needs JavaScript. With it disabled, use the [Site Builder](/quickstart/site-builder/), which produces the same `_config.yml` and can write the whole project for you.
+
+## Configuration Sections
 
 <div class="row g-3 mb-4">
   <div class="col-md-4">
@@ -308,17 +315,15 @@ Customize the look and feel of your site.
         <div class="col-md-6">
           <label for="cfg-theme-skin" class="form-label"><i class="bi bi-moon-stars"></i> Theme Skin</label>
           <select class="form-select" id="cfg-theme-skin">
-            <option value="dark" selected>Dark</option>
-            <option value="air">Air (Light)</option>
+            <option value="air" selected>Air (Light)</option>
             <option value="aqua">Aqua</option>
-            <option value="contrast">High Contrast</option>
             <option value="dirt">Dirt</option>
             <option value="neon">Neon</option>
             <option value="mint">Mint</option>
             <option value="plum">Plum</option>
             <option value="sunrise">Sunrise</option>
           </select>
-          <div class="form-text">Color scheme for your site</div>
+          <div class="form-text">Color scheme for your site. Seven skins ship with the theme: air, aqua, dirt, neon, mint, plum and sunrise. Light and dark are handled separately by the color-mode toggle, so a <code>theme_skin</code> of <code>dark</code> or <code>contrast</code> in an older config no longer resolves — pick one of the seven instead.</div>
         </div>
         <div class="col-md-6">
           <label for="cfg-primary-color" class="form-label"><i class="bi bi-droplet-fill"></i> Primary Color</label>
@@ -559,7 +564,7 @@ Configure advanced features like comments, plugins, and build settings.
 
 ---
 
-## 📝 Generated Configuration
+## Generated Configuration
 
 <div class="card mb-4 border-dark">
   <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
@@ -583,14 +588,27 @@ Configure advanced features like comments, plugins, and build settings.
   <ol class="mb-0 mt-2">
     <li>Copy the generated configuration above</li>
     <li>Paste it into your <code>_config.yml</code> file</li>
-    <li>Restart your Jekyll server: <code>docker-compose restart</code></li>
+    <li>Restart your Jekyll server: <code>docker compose restart</code></li>
     <li>View your personalized site at <code>http://localhost:4000</code></li>
   </ol>
 </div>
 
 ---
 
-## 🎉 You're All Set!
+## Verify
+
+Restart the dev server so Jekyll reloads the configuration, then confirm the values you entered actually took effect:
+
+```bash
+docker compose restart
+```
+
+- The browser tab and navbar show your **Site Title**.
+- `/about/` shows your author name and email.
+- If you set a skin, the page colors change; if nothing changes, check that
+  `theme_skin` is one of the seven names listed above.
+
+## You're All Set
 
 Congratulations on completing the Quick Start guide! Your site is now:
 
@@ -608,7 +626,7 @@ Congratulations on completing the Quick Start guide! Your site is now:
 
 ---
 
-## 📚 Quick Start Guide Summary
+## Quick Start Guide Summary
 
 | Step | Guide | Description |
 |------|-------|-------------|
@@ -689,7 +707,7 @@ document.addEventListener('DOMContentLoaded', function() { // Configuration stat
     const bluesky = getValue('cfg-bluesky');
     const discord = getValue('cfg-discord');
     
-    const themeSkin = getValue('cfg-theme-skin', 'dark');
+    const themeSkin = getValue('cfg-theme-skin', 'air');
     const primaryColor = getValue('cfg-primary-color', '#007bff');
     const logo = getValue('cfg-logo');
     const ogImage = getValue('cfg-og-image');
@@ -819,7 +837,7 @@ posthog: enabled: true api_key: "${escapeYaml(posthogKey)}" api_host: "${escapeY
 
 # Comments (Giscus)
 # -------------------------------------------------------------------------
-gisgus: enabled: true data-repo-id: "${escapeYaml(giscusRepoId)}" data-category-id: "${escapeYaml(giscusCategoryId)}"`;
+giscus: enabled: true data-repo-id: "${escapeYaml(giscusRepoId)}" data-category-id: "${escapeYaml(giscusCategoryId)}"`;
     }
 
     // Build Settings
@@ -933,7 +951,7 @@ plugins:
       // Set specific defaults
       document.getElementById('cfg-locale').value = 'en-US';
       document.getElementById('cfg-title-separator').value = '|';
-      document.getElementById('cfg-theme-skin').value = 'dark';
+      document.getElementById('cfg-theme-skin').value = 'air';
       document.getElementById('cfg-primary-color').value = '#007bff';
       document.getElementById('cfg-primary-color-picker').value = '#007bff';
       document.getElementById('cfg-wpm').value = '200';

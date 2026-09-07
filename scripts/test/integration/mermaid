@@ -142,15 +142,16 @@ test_mermaid_init() {
     local url="$1"
     local description="$2"
     
-    run_test "$description" "curl -s '$url' | grep -q 'mermaid.initialize'"
+    run_test "$description" "curl -s '$url' | grep -q 'mermaid-diagrams.js'"
 }
 
-# Test diagram rendering
+# Test diagram presence (a ```mermaid fence is served as code.language-mermaid;
+# the deferred script turns it into a figure in the browser)
 test_diagram_rendering() {
     local url="$1"
     local description="$2"
-    
-    run_test "$description" "curl -s '$url' | grep -q 'class=\"mermaid\"'"
+
+    run_test "$description" "curl -s '$url' | grep -q 'language-mermaid'"
 }
 
 # Main test execution
@@ -179,16 +180,29 @@ main() {
     # Mermaid include file tests
     log_info "Testing Mermaid include file..."
     
-    test_file_content "_includes/components/mermaid.html" "site.mermaid.src" "Mermaid script from _config (local vendor path)"
-    test_file_content "_includes/components/mermaid.html" "mermaid.initialize" "Mermaid initialization script"
-    test_file_content "_includes/components/mermaid.html" "data-bs-theme" "Bootstrap theme detection configured"
-    test_file_content "_includes/components/mermaid.html" "getMermaidConfig" "Adaptive light/dark theming configured"
+    test_file_content "_includes/components/mermaid.html" "mm.src" "Mermaid script from _config (local vendor path)"
+    test_file_content "_includes/components/mermaid.html" "mermaidConfig" "Diagram config block emitted for the behaviour script"
+    test_file_content "_includes/components/mermaid.html" "mermaid-diagrams.js" "Behaviour script loaded after the vendor bundle"
+    test_file_content "_includes/components/mermaid.html" "defer" "Scripts are deferred (never block parsing)"
+
+    # Behaviour script (assets/js/mermaid-diagrams.js)
+    log_info "Testing diagram behaviour script..."
+
+    test_file_exists "assets/js/mermaid-diagrams.js" "Diagram behaviour script exists"
+    test_file_content "assets/js/mermaid-diagrams.js" "mermaid.initialize" "Mermaid initialization"
+    test_file_content "assets/js/mermaid-diagrams.js" "data-bs-theme" "Colour-mode change observed for re-render"
+    test_file_content "assets/js/mermaid-diagrams.js" "data-theme-skin" "Skin change observed for re-render"
+    test_file_content "assets/js/mermaid-diagrams.js" "themeVariables" "Palette derived into Mermaid theme variables"
+    test_file_content "assets/js/mermaid-diagrams.js" "zer0Mermaid" "Public API exposed"
+    test_file_exists "_sass/components/_mermaid.scss" "Diagram figure styles exist"
+    test_file_content "assets/css/main.scss" "components/mermaid" "Diagram styles imported by the stylesheet manifest"
     
     # Documentation tests
     log_info "Testing documentation..."
     
     test_file_content "pages/_docs/features/mermaid-diagrams.md" "mermaid: true" "Main docs have front matter"
     test_file_content "pages/_docs/features/mermaid-diagrams.md" "graph TD" "Main docs have examples"
+    test_file_content "pages/_docs/features/mermaid-diagrams.md" "accTitle" "Main docs cover accessible captions"
     
     # Server tests (if not quick mode)
     if [ "$QUICK" = false ]; then

@@ -48,6 +48,158 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ## [Unreleased]
 
+### Added
+
+- **CI now produces a UI pull request's visual artifacts instead of only
+  checking for them (ZER0-085)** — `visual-evidence-autogen.yml` renders every
+  same-repo PR in the same jammy Playwright image the snapshot gate uses, runs
+  the PR's `test/visual/*-evidence.mjs` generators (or the new generic
+  base-vs-head generator `test/visual/pr-evidence.mjs`, which renders the base
+  branch and the head side by side), verifies the 9-skin baselines, and pushes
+  the montages + `metrics.json` to the branch. Stale baselines are refreshed
+  **only** when the new `visual-evidence-reviewer` agent, having viewed the
+  expected | actual | diff montage, judges the diff to be the change the PR
+  describes — a code step disposes, the model only proposes ([#417](https://github.com/bamr87/zer0-mistakes/issues/417)
+  is why). The evidence gate now requires generated proof (a README alone no
+  longer passes), `ci-self-repair` leaves a red `Visual Snapshots` job to this
+  lane, and `test/update-snapshots.sh` gained `PRE_TEST_SCRIPT` /
+  `POST_TEST_SCRIPT` / `SKIP_PLAYWRIGHT` hooks. Closes the gap that kept
+  [#454](https://github.com/bamr87/zer0-mistakes/pull/454) red: its authoring
+  agents ran where Docker was gated, and nothing in CI could render what they
+  could not. Kill switch: repo variable `VISUAL_EVIDENCE_AUTOGEN_ENABLED=false`.
+  The lane restores its own tooling from the base branch before it runs, so it
+  works on branches cut before it shipped: without that its first real run on
+  #454 died in 20 seconds (that branch has no copy of the orchestrator), and a
+  branch carrying an older `update-snapshots.sh` would have silently generated
+  nothing at all.
+- **Site Builder — a Claude-guided setup wizard that ends with a running site
+  (ZER0-086, extends ZER0-067)** — `/setup/` (and the `welcome` layout) grew
+  from a five-step `_config.yml` form into a nine-step builder: Connect →
+  Prerequisites → Identity → URLs → Structure → Appearance → Voice →
+  Integrations → Build. An embedded Claude session rides alongside every step
+  through the local dev proxy (Claude Code OAuth, `claude setup-token`; the
+  token never reaches the page). It sees the whole wizard state on every turn
+  and acts on it with tools: fill in fields, override a generated file, run
+  live prerequisite checks (Docker, Git, gh, VS Code, Node, Claude CLI — a
+  fixed command table), read the theme's real source and search the docs,
+  resolve a project folder, write the generated project, run `docker compose
+  up|ps|logs|down`, and check the new site answers — each mutation behind a
+  confirmation card. The form half still works with no proxy at all (GitHub
+  Pages included): it generates `_config.yml`, `_config_dev.yml`, `Gemfile`,
+  `docker-compose.yml`, `index.md`, navigation, about page, welcome post, one
+  index page per collection, `.gitignore`, `zer0.install.yml`, `.env.example`
+  and `README.md`, with per-file download and a self-extracting bash bundle.
+  Forms gained a site brief, a URL **Suggest** button, a site-type quick-pick,
+  a navigation row editor, skin cards with a live **Preview on this page**
+  toggle, tone/audience pickers, integration switches with conditional
+  sub-fields, a copy button on every command, and a toast for feedback. New:
+  `_data/site_builder.yml` (steps, prerequisites mirroring
+  `machine-setup.md`, catalogs, framework brief),
+  `templates/deploy/chat-proxy/wizard-store.mjs` (the dev-only sandbox behind
+  `/api/wizard/*`), `assets/js/site-builder.js`, `_includes/setup/{claude-
+  session,prereq-checklist}.html`, the `site_builder:` config block, a
+  quickstart page and a feature reference. (evidence:
+  [`test/visual/evidence/site-builder/`](test/visual/evidence/site-builder/README.md))
+  A first recorded end-to-end run then shaped the build half: the generated
+  `docker-compose.yml` publishes LiveReload on the site's port + 1 (a fixed
+  35729 collided with the theme's own dev container and the new site never
+  started) and shares one gem cache across generated sites; every enabled
+  collection now ships a valid starter document (a doc, a quickstart step, a
+  note with a wiki-link, a structured recipe) and the cookbook index uses the
+  theme's `cookbook` layout over the real `recipes` collection; `_config.yml`
+  sets `collections_dir: pages` (without it every collection but posts was
+  invisible to Jekyll); each site gets its own `assets/images/logo.svg`
+  monogram and gem-based sites turn the SVG background layers off, because
+  the published gem ships no theme images; a revoked Claude credential now
+  says so and names the fix. Validation is a scenario
+  runner, `test/visual/site-builder-walkthrough.mjs`, that samples random
+  briefs per site type (`test/visual/site-builder-scenarios.mjs`), drives the
+  wizard on video, builds the site with Docker and asserts its routes, title
+  and skin — replayable by seed.
+  The builder then gained a **schema-driven site plan**: `plan_schema` in
+  `_data/site_builder.yml` (a JSON-Schema subset validated in the browser)
+  describes what the agent may produce — a landing page (five templates,
+  nine section types, hero + CTAs), navigation shape (flat or grouped
+  dropdowns, sidebar none/auto/docs tree), theme overrides (nine palettes or
+  custom colours, seven font pairings, three corner radii) and up to twelve
+  example pages with Markdown bodies — and the generators turn it into
+  `index.md` (a Liquid landing engine) + `_data/landing.yml`,
+  `_data/navigation/main.yml` and `docs.yml`, `assets/css/user-overrides.css`
+  + `_includes/custom/head.html`, and one file per page. Claude submits plans
+  with `set_site_plan` behind a confirmation card; the Structure and
+  Appearance steps expose the same choices as controls, with a page planner
+  and a **Preview on this page** toggle that applies the generated overrides
+  to the wizard itself. The scenario runner randomises the plan too and
+  asserts the built site's landing template, palette colour, web fonts and
+  planned routes.
+- **Mermaid diagrams are now accessible figures with a toolbar (ZER0-013)** —
+  every ```` ```mermaid ```` fence (and legacy `<div class="mermaid">`) renders
+  as a `<figure>` with a rendered SVG and a small toolbar: zoom out / in / reset
+  (50–400 %, real layout — the SVG is resized, so the frame scrolls and
+  drag-to-pan, `Ctrl`+wheel and the `+` / `-` / `0` keys all work), **View
+  fullscreen** (a native `<dialog>` — the fix for a wide diagram shrunk to
+  illegibility on a phone; `Esc` closes it and focus returns to the opener),
+  **Copy diagram source**, and **Download as SVG** (page background baked in so
+  a dark-mode export stays readable). On pointer devices the toolbar floats over
+  the top-right corner on hover/focus; on touch devices it is a static row above
+  the diagram so it never covers it. `accTitle` becomes the visible
+  `<figcaption>` and the diagram's accessible name, `accDescr` its `<desc>`,
+  and the scrollable frame is a focusable, labelled region. A syntax error no
+  longer blanks the block: the figure shows the parse message, a hint, and the
+  source in a `<details>`, with *copy* still enabled. Colours are **derived from
+  the live design tokens** (`--bs-primary`, `--bs-body-bg`, `--zer0-color-*`)
+  through Mermaid's `base` theme, so diagrams follow the colour mode, the
+  selected skin and any `theme_color` override, and re-render in place when
+  those change; dark mode is decided by background luminance, so wizard mode and
+  dark skins get legible ink, and a contrast guard keeps nodes visible when the
+  brand equals the page colour. Pie slices, git branches and mind-map branches
+  get a 12-colour series fanned out from the brand hue. `securityLevel` now
+  defaults to `strict` (`mermaid.security_level: loose` restores `click`
+  callbacks / HTML labels); `mermaid.toolbar`, `fullscreen` and `download` can
+  switch the controls off. Implemented as `_includes/components/mermaid.html`
+  (loader: config JSON + two `defer` scripts — the 3.3 MB bundle used to load
+  synchronously in `<head>`) + `assets/js/mermaid-diagrams.js` +
+  `_sass/components/_mermaid.scss`, replacing ~400 lines of inline
+  `<script>`/`<style>` in the include; the `!important` SVG overrides that
+  flattened `classDef`/`style` colours and pie slices are gone. Toolbar strings
+  are `diagram_*` keys in `_data/ui-text.yml`. The docs page
+  (`/docs/features/mermaid-diagrams/`) now renders a live example of every
+  diagram type, the caption directive, per-node styling and the error state.
+  Guarded by `test/visual/features/mermaid.spec.js` (12 tests, smoke tier)
+  (evidence: [`test/visual/evidence/mermaid/`](test/visual/evidence/mermaid/README.md)
+  — dark-mode toggle keeps the SVG (before: SVG lost, stylesheet text on
+  screen); page overflow 0px at 320/390px; 11/12 docs diagrams rendered, 1
+  shown as an error card with its source kept).
+
+### Fixed
+
+- **Switching colour mode destroyed every Mermaid diagram** — the old include's
+  `MutationObserver` re-render emptied each `.mermaid` div and refilled it with
+  the div's *current* text, which after the first render is the SVG's own
+  stylesheet, and never cleared Mermaid's `data-processed` flag, so
+  `mermaid.run()` skipped the div. Toggling dark mode on `/quickstart/`,
+  `/about/` or `/docs/ruby-101/` replaced the diagram with a wall of
+  `#mermaid-… {font-family: …}` text and a permanent "Loading diagram…" label
+  (reproduced headlessly on `main`: `svgs: 1 → 0` after the toggle). Sources are
+  now kept per figure and every render goes through `mermaid.render()`, so a
+  mode or skin change re-renders from the original definition — asserted by the
+  regression test in `test/visual/features/mermaid.spec.js`.
+- **The Obsidian wiki-link resolver rewrote the inside of inline SVGs** —
+  `assets/js/obsidian-wiki-links.js` skips text under `CODE`/`PRE`/`A`/
+  `SCRIPT`/`STYLE` by comparing `nodeName`, but elements in the SVG namespace
+  report it in lower case (`style`, `text`), so a Mermaid diagram's own
+  `<style>` was walked and every `#id` selector in it was turned into a
+  `<a class="obsidian-tag">` link. The stylesheet lost its scoping: one
+  diagram's `#arrowhead path { fill }` became a bare `path { fill }` for the
+  whole page, and pie slices rendered dark grey while their legend showed the
+  right colours. The old include escaped it only because the resolver
+  special-cases the `.mermaid` class. The name check is now case-insensitive
+  and any `<svg>` subtree (graphics, never prose) is skipped, with
+  `.zer0-diagram` added to the class exemptions. `test/test_resolver.js` gains
+  a fixture with a lower-case `style`/`text` inside `<svg>`, and the Mermaid
+  spec asserts a pie slice's computed fill equals its own attribute and that no
+  unscoped `path` rule exists on the page.
+
 ### Changed
 
 - **The page-feedback widget now files the fleet's issue contract, not its own
@@ -113,6 +265,57 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Changed
 
+- **TOC scroll spy now bolds the section you are actually reading** — the
+  highlighted entry in the right-hand Table of Contents jumped around and sat
+  one to three sections ahead of the viewport. Measured on `/docs/features/toc/`
+  at 1280×820, the wrong entry was bolded at **19–23 of 25 scroll positions**
+  — the count moves between runs because which implementation won depended on
+  callback timing, which is the bug in one sentence.
+
+  Three implementations were toggling `.active` on the same
+  `#TableOfContents a` links, so whichever fired last won. Bootstrap's native
+  ScrollSpy was wired up twice — `data-bs-spy="scroll"
+  data-bs-target="#TableOfContents"` on `<body>` in `_layouts/root.html` *and*
+  on `.bd-main` in `_layouts/default.html` (whose `data-bs-offset="100"` had
+  been dead since Bootstrap 5.2 replaced that option with
+  `data-bs-root-margin`). `assets/js/ui-enhancements.js` ran a third observer
+  over *every* `a[href^="#"]` on the page, clearing `.active` from all of them
+  each time a `section[id]` intersected. Both Bootstrap hooks are removed —
+  the `<body>` one was also stripping server-rendered `.active` classes off
+  admin sidebar links, which `fixtures.gotoBeforeScrollSpy` exists to work
+  around — and the `ui-enhancements.js` observer is now scoped away from TOC
+  and sidebar links.
+
+  The theme's own spy (`assets/js/modules/navigation/scroll-spy.js`) was wrong
+  on its own terms too: it asked IntersectionObserver for the "most visible"
+  heading, but headings are a few pixels tall, so every heading inside the
+  observer band reports the same `intersectionRatio` — the winner was whichever
+  entry happened to be in that callback's batch, and a heading scrolling *out*
+  of the band triggered no re-evaluation at all. It now applies a positional
+  rule: the active heading is the last one whose top has crossed the reading
+  line (the document's `scroll-padding-top`, the same offset anchor navigation
+  uses), with the last heading winning once the page is scrolled to the bottom
+  so trailing sections shorter than the viewport are still reachable. The
+  answer is recomputed from scratch on each rAF-throttled scroll frame from
+  cached heading offsets, re-measured on resize and content reflow
+  (`ResizeObserver`), so it cannot drift out of sync.
+
+  Two smaller fixes ride along. Clicking a TOC entry now holds that entry
+  active while the smooth scroll animates, instead of flashing every heading
+  passed on the way. And keeping the active entry visible inside the TOC no
+  longer calls `scrollIntoView()`, which bubbles up and scrolls the *page* —
+  feeding straight back into the spy; it adjusts the TOC container's own
+  `scrollTop`, resolving that container at call time (`.bd-toc` on desktop,
+  `.offcanvas-body` on mobile) rather than assuming one. The active link also
+  carries `aria-current="true"`.
+
+  `config.scrollSpy.rootMargin`/`threshold` are replaced by
+  `config.scrollSpy.offset` (`null` = derive from `scroll-padding-top`) and
+  `tolerance`. Guarded by `test/visual/features/scroll-spy.spec.js` (smoke
+  tier), which is 5 failed / 1 passed against the pre-fix theme and 6 passed
+  with the fix. (evidence:
+  [`test/visual/evidence/scroll-spy/`](test/visual/evidence/scroll-spy/README.md)
+  — wrong TOC highlight at 19/25 scroll positions → 0)
 - **Navbar controls no longer flicker under a stationary pointer (#404)** —
   `.nav-link:hover`, the Search/Settings utility buttons and the two sidebar/TOC
   FABs applied `transform: translateY(-1px)`. A 1px lift moves the element out

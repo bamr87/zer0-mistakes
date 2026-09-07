@@ -119,6 +119,24 @@ en: &DEFAULT_EN
   lang_untranslated_note     : "Marked languages are not yet translated — those links open the original."
   machine_translation_notice : "This page was translated automatically from the English original."
   machine_translation_view_source : "View the original"
+  # Mermaid diagram figures (ZER0-013) — toolbar + states built by
+  # assets/js/mermaid-diagrams.js; read through components/mermaid.html, which
+  # carries a literal `| default:` for each (see the language-menu note above).
+  diagram_label              : "Diagram"
+  diagram_tools_label        : "Diagram tools"
+  diagram_zoom_in            : "Zoom in"
+  diagram_zoom_out           : "Zoom out"
+  diagram_zoom_reset         : "Reset zoom"
+  diagram_fullscreen         : "View fullscreen"
+  diagram_fullscreen_close   : "Close fullscreen view"
+  diagram_copy_source        : "Copy diagram source"
+  diagram_copied             : "Copied"
+  diagram_copy_failed        : "Copy failed"
+  diagram_download           : "Download as SVG"
+  diagram_error_title        : "This diagram could not be rendered"
+  diagram_error_hint         : "Check the syntax in the Mermaid Live Editor. The source is shown below so nothing is lost."
+  diagram_source_label       : "Diagram source"
+  diagram_loading            : "Loading diagram"
 
 en-US:
   <<: *DEFAULT_EN

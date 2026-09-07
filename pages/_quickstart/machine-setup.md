@@ -1,5 +1,5 @@
 ---
-title: "Machine Setup"
+title: "Machine Setup: Install Docker, Git, and Dev Tools"
 author: "Zer0-Mistakes Development Team"
 layout: default
 description: "Install Docker, Git, and essential development tools for the Zer0-Mistakes Jekyll theme. Cross-platform setup for macOS, Windows, and Linux."
@@ -8,9 +8,14 @@ preview: /images/previews/machine-setup.png
 categories: [Documentation, Quick Start]
 tags: [docker, git, setup, development, cross-platform]
 keywords:
-  primary: ["docker installation", "development environment setup"]
-  secondary: ["homebrew", "winget", "git configuration", "vs code"]
-lastmod: 2026-05-30T00:00:00.000Z
+  - docker installation
+  - development environment setup
+  - homebrew
+  - winget
+  - git configuration
+  - vs code
+date: 2025-07-01T00:00:00.000Z
+lastmod: 2026-09-05T00:00:00.000Z
 draft: false
 sidebar:
   nav: quickstart
@@ -24,6 +29,8 @@ mermaid: true
 # Machine Setup
 
 Install the tools you need before starting Jekyll development. This guide covers **macOS**, **Windows**, and **Linux**.
+
+> **Prefer a guided setup?** The [Site Builder](/quickstart/site-builder/) runs these same checks live on your machine, shows the install command for your OS, and then walks you through configuring and launching a complete site with Claude alongside. This page is the manual reference behind its Prerequisites step.
 
 ```mermaid
 flowchart LR
@@ -221,6 +228,15 @@ Ensure Hyper-V or WSL 2 is enabled. Run `wsl --install` in an elevated PowerShel
 lsof -i :4000          # find the PID
 kill <PID>             # free the port
 ```
+
+## Related
+
+- [Site Builder](/quickstart/site-builder/) — the guided path that runs these
+  prerequisite checks for you.
+- [Site Builder reference](/docs/features/site-builder/) — what the wizard
+  generates, the tools it exposes, and its safety boundaries.
+- [Jekyll Setup](/quickstart/jekyll-setup/) — the next step once these tools
+  are installed.
 
 ---
 

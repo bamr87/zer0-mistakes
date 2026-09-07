@@ -1,438 +1,75 @@
 {% comment %} Feature: ZER0-013 {% endcomment %}
-{% comment %}
-  ===================================================================
-  MERMAID DIAGRAM INTEGRATION (v2.1 - GitHub Pages Compatible)
-  ===================================================================
-  
-  File: mermaid.html
-  Path: _includes/components/mermaid.html
-  Purpose: Load and initialize Mermaid.js for diagram rendering
-  
-  Usage (Two syntaxes supported):
-  
-  1. Native Markdown Code Blocks (Recommended):
-     ```mermaid
-     graph TD
-       A[Start] -> B[End]
-     ```
-     
-  2. HTML Div Syntax:
-     <div class="mermaid">
-       graph TD
-         A[Start] -- > B[End]
-     </div>
-  
-  Requirements:
-  - Set 'mermaid: true' in page front matter
-  - Supports all Mermaid diagram types (flowcharts, sequence, gantt, etc.)
-  
-  Configuration:
-  - Mermaid v10 bundled locally (_config.yml mermaid.src)
-  - Adaptive light/dark theme following Bootstrap's data-bs-theme
-  - Client-side code block conversion for GitHub Pages compatibility
-  
-  GitHub Pages Compatibility:
-  - No custom plugins required (jekyll-mermaid is optional)
-  - All processing done client-side via JavaScript
-  - Works with remote_theme on GitHub Pages
-  
-  Documentation:
-  - https://mermaid.js.org/
-  - https://github.com/mermaid-js/mermaid
-  ===================================================================
-{% endcomment %}
+{%- comment -%}
+  Component:   mermaid
+  Path:        _includes/components/mermaid.html
+  Purpose:     Load Mermaid and the theme's diagram-figure behaviour on pages
+               that opt in with `mermaid: true` (gated in core/head.html).
+               Emits a config block and two deferred scripts; renders no
+               markup itself — every ```mermaid fence (and legacy
+               <div class="mermaid">) becomes an accessible <figure> with a
+               toolbar (zoom, fullscreen, copy source, download SVG), a
+               caption from `accTitle`, and an error state that keeps the
+               source on the page.
+  Params:      none — configured via site.mermaid:
+                 src            (path, default /assets/vendor/mermaid/mermaid.min.js)
+                 security_level (strict | loose, default strict — `loose` is
+                                 needed only for `click` callbacks / HTML labels)
+                 toolbar        (bool, default true)
+                 fullscreen     (bool, default true)
+                 download       (bool, default true)
+               Labels come from _data/ui-text.yml via core/i18n.html so the
+               toolbar is translated with the rest of the UI.
+  Depends on:  assets/vendor/mermaid/mermaid.min.js (vendored, no CDN —
+               GitHub Pages-safe), assets/js/mermaid-diagrams.js,
+               _sass/components/_mermaid.scss
+  Notes:       Both scripts are `defer`: Mermaid is a 3.3 MB bundle and must
+               never block parsing (it used to load synchronously in <head>).
+               Order matters — the vendor bundle first, then the behaviour,
+               which converts fences at execution time, before code-copy.js's
+               DOMContentLoaded pass decorates <pre> blocks. Diagram colours
+               are not configured here: the script derives them from the live
+               --zer0-*/--bs-* tokens so light/dark/wizard modes and skins
+               work without per-mode overrides.
+{%- endcomment -%}
+{%- include core/i18n.html -%}
+{%- assign mm = site.mermaid -%}
+{%- comment -%}
+  Liquid's `default` filter treats `false` as missing, so boolean flags are
+  resolved with if-tags — an explicit `toolbar: false` must stay false.
+{%- endcomment -%}
+{%- assign mm_toolbar = true -%}
+{%- if mm.toolbar == false -%}{%- assign mm_toolbar = false -%}{%- endif -%}
+{%- assign mm_fullscreen = true -%}
+{%- if mm.fullscreen == false -%}{%- assign mm_fullscreen = false -%}{%- endif -%}
+{%- assign mm_download = true -%}
+{%- if mm.download == false -%}{%- assign mm_download = false -%}{%- endif -%}
+{%- assign mm_src = mm.src | default: '/assets/vendor/mermaid/mermaid.min.js' -%}
 
-{% comment %} Load Mermaid.js (bundled locally) {% endcomment %}
-<script type="text/javascript" src="{{ site.mermaid.src | relative_url }}"></script>
-
-{% comment %} Initialize Mermaid with custom configuration {% endcomment %}
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // ============================================================
-    // Helper function to detect Bootstrap theme
-    // ============================================================
-    function getBootstrapTheme() {
-      // Check data-bs-theme attribute on html element
-      var htmlTheme = document.documentElement.getAttribute('data-bs-theme');
-      if (htmlTheme === 'dark' || htmlTheme === 'wizard') {
-        return 'dark';
-      }
-      if (htmlTheme === 'light') {
-        return 'light';
-      }
-      // Fallback to prefers-color-scheme
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        return 'dark';
-      }
-      return 'light';
-    }
-    
-    // ============================================================
-    // Helper function to get Mermaid theme configuration
-    // ============================================================
-    function getMermaidConfig(theme) {
-      var isDark = theme === 'dark';
-      
-      if (isDark) {
-        // Dark mode configuration
-        return {
-          theme: 'dark',
-          themeVariables: {
-            primaryColor: '#0d6efd',
-            primaryTextColor: '#ffffff',
-            primaryBorderColor: '#0a58ca',
-            lineColor: '#6c757d',
-            secondaryColor: '#6c757d',
-            tertiaryColor: '#212529',
-            background: '#212529',
-            mainBkg: '#212529',
-            secondBkg: '#343a40',
-            tertiaryBkg: '#495057',
-            textColor: '#ffffff',
-            secondaryTextColor: '#adb5bd',
-            tertiaryTextColor: '#6c757d',
-            lineColor: '#6c757d',
-            border1: '#495057',
-            border2: '#6c757d',
-            noteBkgColor: '#343a40',
-            noteTextColor: '#ffffff',
-            noteBorderColor: '#6c757d',
-            actorBkg: '#0d6efd',
-            actorBorder: '#0a58ca',
-            actorTextColor: '#ffffff',
-            actorLineColor: '#ffffff',
-            signalColor: '#ffffff',
-            signalTextColor: '#ffffff',
-            labelBoxBkgColor: '#343a40',
-            labelBoxBorderColor: '#6c757d',
-            labelTextColor: '#ffffff',
-            loopTextColor: '#ffffff',
-            activationBorderColor: '#0d6efd',
-            activationBkgColor: '#0d6efd',
-            sequenceNumberColor: '#ffffff',
-            sectionBkgColor: '#343a40',
-            altSectionBkgColor: '#495057',
-            excludeBkgColor: '#495057',
-            taskBorderColor: '#0d6efd',
-            taskBkgColor: '#0d6efd',
-            taskTextLightColor: '#ffffff',
-            taskTextColor: '#ffffff',
-            taskTextDarkColor: '#000000',
-            taskTextOutsideColor: '#ffffff',
-            taskTextClickableColor: '#0d6efd',
-            activeTaskBorderColor: '#0a58ca',
-            activeTaskBkgColor: '#0a58ca',
-            gridColor: '#6c757d',
-            doneTaskBkgColor: '#198754',
-            doneTaskBorderColor: '#146c43',
-            critBorderColor: '#dc3545',
-            critBkgColor: '#dc3545',
-            todayLineColor: '#ffc107'
-          }
-        };
-      } else {
-        // Light mode configuration
-        return {
-          theme: 'default',
-          themeVariables: {
-            primaryColor: '#007bff',
-            primaryTextColor: '#fff',
-            primaryBorderColor: '#0056b3',
-            lineColor: '#6c757d',
-            secondaryColor: '#6c757d',
-            tertiaryColor: '#f8f9fa',
-            background: '#ffffff',
-            mainBkg: '#ffffff',
-            secondBkg: '#f8f9fa',
-            tertiaryBkg: '#e9ecef',
-            textColor: '#212529',
-            secondaryTextColor: '#6c757d',
-            tertiaryTextColor: '#adb5bd'
-          }
-        };
-      }
-    }
-    
-    // ============================================================
-    // Step 1: Convert native markdown code blocks to mermaid divs
-    // This enables ```mermaid syntax to work with GitHub Pages
-    // ============================================================
-    
-    // Find all code blocks with language-mermaid class (from ```mermaid)
-    var codeBlocks = document.querySelectorAll('pre > code.language-mermaid, code.language-mermaid');
-    
-    codeBlocks.forEach(function(codeBlock) {
-      // Get the mermaid content (decode HTML entities)
-      var content = codeBlock.textContent || codeBlock.innerText;
-      
-      // Create a new mermaid div
-      var mermaidDiv = document.createElement('div');
-      mermaidDiv.className = 'mermaid';
-      mermaidDiv.textContent = content;
-      
-      // Replace the pre/code block with the mermaid div
-      var preElement = codeBlock.closest('pre');
-      if (preElement && preElement.parentNode) {
-        preElement.parentNode.replaceChild(mermaidDiv, preElement);
-      } else if (codeBlock.parentNode) {
-        codeBlock.parentNode.replaceChild(mermaidDiv, codeBlock);
-      }
-    });
-    
-    // Also handle pre elements that might have data-language="mermaid"
-    var preBlocks = document.querySelectorAll('pre[data-language="mermaid"]');
-    preBlocks.forEach(function(preBlock) {
-      var content = preBlock.textContent || preBlock.innerText;
-      var mermaidDiv = document.createElement('div');
-      mermaidDiv.className = 'mermaid';
-      mermaidDiv.textContent = content;
-      if (preBlock.parentNode) {
-        preBlock.parentNode.replaceChild(mermaidDiv, preBlock);
-      }
-    });
-    
-    // ============================================================
-    // Step 2: Initialize Mermaid with theme-aware configuration
-    // ============================================================
-    
-    var bootstrapTheme = getBootstrapTheme();
-    var mermaidThemeConfig = getMermaidConfig(bootstrapTheme);
-    
-    mermaid.initialize({
-      startOnLoad: false,  // We'll manually run after conversion
-      theme: mermaidThemeConfig.theme,
-      themeVariables: mermaidThemeConfig.themeVariables,
-      flowchart: {
-        useMaxWidth: true,
-        // SVG labels avoid foreignObject clipping/position bugs with theme CSS
-        htmlLabels: false,
-        curve: 'basis'
-      },
-      sequence: {
-        diagramMarginX: 50,
-        diagramMarginY: 10,
-        actorMargin: 50,
-        width: 150,
-        height: 65,
-        boxMargin: 10,
-        boxTextMargin: 5,
-        noteMargin: 10,
-        messageMargin: 35,
-        mirrorActors: true,
-        bottomMarginAdj: 1,
-        useMaxWidth: true
-      },
-      gantt: {
-        titleTopMargin: 25,
-        barHeight: 20,
-        barGap: 4,
-        topPadding: 50,
-        leftPadding: 75,
-        gridLineStartPadding: 35,
-        fontSize: 11,
-        numberSectionStyles: 4,
-        axisFormat: '%Y-%m-%d'
-      },
-      securityLevel: 'loose'  // Required for some advanced features
-    });
-    
-    // ============================================================
-    // Step 3: Render all mermaid diagrams
-    // ============================================================
-    
-    // Run mermaid to render all .mermaid divs
-    mermaid.run().then(function() {
-      console.log('Mermaid.js: All diagrams rendered successfully with theme:', bootstrapTheme);
-    }).catch(function(error) {
-      console.warn('Mermaid.js: Some diagrams failed to render', error);
-    });
-    
-    // ============================================================
-    // Step 4: Watch for theme changes and re-render diagrams
-    // ============================================================
-    
-    // Create a MutationObserver to watch for theme changes
-    var themeObserver = new MutationObserver(function(mutations) {
-      mutations.forEach(function(mutation) {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'data-bs-theme') {
-          var newTheme = getBootstrapTheme();
-          var newMermaidConfig = getMermaidConfig(newTheme);
-          
-          // Update Mermaid configuration
-          mermaid.initialize({
-            startOnLoad: false,
-            theme: newMermaidConfig.theme,
-            themeVariables: newMermaidConfig.themeVariables,
-            flowchart: {
-              useMaxWidth: true,
-              htmlLabels: false,
-              curve: 'basis'
-            },
-            sequence: {
-              diagramMarginX: 50,
-              diagramMarginY: 10,
-              actorMargin: 50,
-              width: 150,
-              height: 65,
-              boxMargin: 10,
-              boxTextMargin: 5,
-              noteMargin: 10,
-              messageMargin: 35,
-              mirrorActors: true,
-              bottomMarginAdj: 1,
-              useMaxWidth: true
-            },
-            gantt: {
-              titleTopMargin: 25,
-              barHeight: 20,
-              barGap: 4,
-              topPadding: 50,
-              leftPadding: 75,
-              gridLineStartPadding: 35,
-              fontSize: 11,
-              numberSectionStyles: 4,
-              axisFormat: '%Y-%m-%d'
-            },
-            securityLevel: 'loose'
-          });
-          
-          // Re-render all diagrams with new theme
-          var mermaidDivs = document.querySelectorAll('.mermaid');
-          mermaidDivs.forEach(function(div) {
-            var content = div.textContent || div.innerText;
-            div.innerHTML = '';
-            div.textContent = content;
-          });
-          
-          mermaid.run().then(function() {
-            console.log('Mermaid.js: Diagrams re-rendered with theme:', newTheme);
-          }).catch(function(error) {
-            console.warn('Mermaid.js: Some diagrams failed to re-render', error);
-          });
-        }
-      });
-    });
-    
-    // Start observing the html element for theme changes
-    themeObserver.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-bs-theme']
-    });
-  });
+{% comment %} Diagram configuration consumed by assets/js/mermaid-diagrams.js {% endcomment %}
+<script id="mermaidConfig" type="application/json">
+{
+  "securityLevel": {{ mm.security_level | default: "strict" | jsonify }},
+  "toolbar": {{ mm_toolbar | jsonify }},
+  "fullscreen": {{ mm_fullscreen | jsonify }},
+  "download": {{ mm_download | jsonify }},
+  "labels": {
+    "diagram": {{ ui.diagram_label | default: "Diagram" | jsonify }},
+    "tools": {{ ui.diagram_tools_label | default: "Diagram tools" | jsonify }},
+    "zoomIn": {{ ui.diagram_zoom_in | default: "Zoom in" | jsonify }},
+    "zoomOut": {{ ui.diagram_zoom_out | default: "Zoom out" | jsonify }},
+    "zoomReset": {{ ui.diagram_zoom_reset | default: "Reset zoom" | jsonify }},
+    "fullscreen": {{ ui.diagram_fullscreen | default: "View fullscreen" | jsonify }},
+    "close": {{ ui.diagram_fullscreen_close | default: "Close fullscreen view" | jsonify }},
+    "copy": {{ ui.diagram_copy_source | default: "Copy diagram source" | jsonify }},
+    "copied": {{ ui.diagram_copied | default: "Copied" | jsonify }},
+    "copyFailed": {{ ui.diagram_copy_failed | default: "Copy failed" | jsonify }},
+    "download": {{ ui.diagram_download | default: "Download as SVG" | jsonify }},
+    "errorTitle": {{ ui.diagram_error_title | default: "This diagram could not be rendered" | jsonify }},
+    "errorHint": {{ ui.diagram_error_hint | default: "Check the syntax in the Mermaid Live Editor. The source is shown below so nothing is lost." | jsonify }},
+    "showSource": {{ ui.diagram_source_label | default: "Diagram source" | jsonify }},
+    "loading": {{ ui.diagram_loading | default: "Loading diagram" | jsonify }}
+  }
+}
 </script>
-
-{% comment %} Custom CSS for Mermaid diagrams {% endcomment %}
-<style>
-  /* Mermaid container styling */
-  .mermaid {
-    text-align: center;
-    margin: 2rem auto;
-    background-color: transparent;
-    overflow-x: auto;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    transition: background-color 0.3s ease;
-  }
-  
-  /* Ensure diagrams are responsive */
-  .mermaid svg {
-    max-width: 100%;
-    height: auto;
-    display: block;
-    margin: 0 auto;
-  }
-  
-  /* Hide code blocks before conversion (prevent flash of unstyled content) */
-  pre > code.language-mermaid,
-  code.language-mermaid {
-    display: block;
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  
-  /* Dark mode compatibility - Bootstrap theme aware */
-  [data-bs-theme="dark"] .mermaid {
-    background-color: rgba(33, 37, 41, 0.5);
-    border: 1px solid rgba(108, 117, 125, 0.2);
-  }
-  
-  [data-bs-theme="dark"] .mermaid svg {
-    /* Ensure SVG elements are visible in dark mode */
-    color-scheme: dark;
-  }
-  
-  [data-bs-theme="dark"] .mermaid svg text {
-    fill: #ffffff !important;
-  }
-  
-  [data-bs-theme="dark"] .mermaid svg .node rect,
-  [data-bs-theme="dark"] .mermaid svg .node polygon,
-  [data-bs-theme="dark"] .mermaid svg .cluster rect {
-    fill: #343a40 !important;
-    stroke: #6c757d !important;
-  }
-  
-  [data-bs-theme="dark"] .mermaid svg .edgePath .path {
-    stroke: #6c757d !important;
-  }
-  
-  [data-bs-theme="dark"] .mermaid svg .edgeLabel {
-    background-color: #212529 !important;
-    color: #ffffff !important;
-  }
-  
-  [data-bs-theme="dark"] .mermaid svg .edgeLabel text {
-    fill: #ffffff !important;
-  }
-  
-  /* Light mode styling */
-  [data-bs-theme="light"] .mermaid {
-    background-color: rgba(248, 249, 250, 0.5);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-  }
-  
-  [data-bs-theme="light"] .mermaid svg text {
-    fill: #212529 !important;
-  }
-  
-  /* Fallback for prefers-color-scheme if data-bs-theme is not set */
-  @media (prefers-color-scheme: dark) {
-    html:not([data-bs-theme]) .mermaid {
-      background-color: rgba(33, 37, 41, 0.5);
-      border: 1px solid rgba(108, 117, 125, 0.2);
-    }
-  }
-  
-  /* Smooth theme transition */
-  .mermaid svg {
-    transition: opacity 0.3s ease;
-  }
-  
-  /* Loading state */
-  .mermaid:not(:has(svg)) {
-    min-height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .mermaid:not(:has(svg))::after {
-    content: 'Loading diagram...';
-    color: var(--bs-secondary);
-    font-size: 0.875rem;
-  }
-  
-  /* Print styles */
-  @media print {
-    .mermaid {
-      background-color: transparent !important;
-      border: none !important;
-      page-break-inside: avoid;
-    }
-    
-    .mermaid svg {
-      max-width: 100% !important;
-      page-break-inside: avoid;
-    }
-  }
-</style>
+<script defer src="{{ mm_src | relative_url }}"></script>
+<script defer src="{{ '/assets/js/mermaid-diagrams.js' | relative_url }}"></script>

@@ -68,7 +68,7 @@ Iterate, **max 5 iterations**:
    - `ruby scripts/sync-backlog.rb --check`
    - targeted tests, then `./scripts/bin/test` (or the suite for what you touched)
    - templates touched → `docker-compose exec -T jekyll bundle exec jekyll build --config '_config.yml,_config_dev.yml'`
-   - UI/behavioural change → the [`visual-evidence`](../skills/visual-evidence/SKILL.md) skill (regression spec + before/after evidence), so `evidence-gate` will pass
+   - UI/behavioural change → the [`visual-evidence`](../skills/visual-evidence/SKILL.md) skill (regression spec + before/after evidence), so `evidence-gate` will pass. With Docker: `python3 scripts/ci/visual_evidence_autogen.py all --base origin/main` renders evidence **and** verifies the 9-skin baselines exactly as CI will (bless with `--force` only after viewing the diff). Without Docker: commit the spec + generator and say so — [`visual-evidence-autogen.yml`](../workflows/visual-evidence-autogen.yml) renders them on the PR.
    - **compatibility**: if gem-packaged files changed, `./scripts/bin/build` (gem builds) and confirm the site still builds with the remote-theme config.
 2. **Progress guard.** If an iteration reproduces the *same failure signature* as
 the previous one, stop looping — you're stuck. Open a **draft** PR + `agent-hold` and summarize the blocker.

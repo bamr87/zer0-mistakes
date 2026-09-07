@@ -190,6 +190,17 @@ git add test/visual/snapshots/
 git commit -m "test: refresh skin homepage snapshot baselines"
 ```
 
+##### Or let CI produce them (the visual-evidence autogen)
+
+`update-snapshots.sh` also carries three hooks — `PRE_TEST_SCRIPT`, `POST_TEST_SCRIPT` (repo-relative bash scripts run *inside* the jammy container, before/after the Playwright pass) and `SKIP_PLAYWRIGHT=1` — used by `scripts/ci/visual_evidence_autogen.py`, the orchestrator behind `.github/workflows/visual-evidence-autogen.yml`. On every same-repo PR that lane renders the branch, runs the PR's `test/visual/*-evidence.mjs` generators (or the generic base-vs-head `test/visual/pr-evidence.mjs`), verifies the baselines, composes an expected | actual | diff montage (`test/visual/snapshot-diff-montage.mjs`), and refreshes the baselines **only** when the `visual-evidence-reviewer` agent judges the diff to be the change the PR describes. The same flow on a Docker host:
+
+```bash
+python3 scripts/ci/visual_evidence_autogen.py all --base origin/main   # plan + render + verify
+python3 scripts/ci/visual_evidence_autogen.py bless --force            # after viewing test/visual-results/autogen/snapshot-diff.png
+git add -- $(python3 scripts/ci/visual_evidence_autogen.py stage)
+python3 scripts/ci/visual_evidence_autogen.py teardown
+```
+
 ## 🎮 Unified Test Runner (`test_runner.sh`)
 
 The **consolidated test runner** orchestrates all test suites with advanced features:
@@ -267,6 +278,8 @@ test/
 │   │                        #    feature registry's tests: links — search, admin, …)
 │   ├── fixtures.js          # Shared helpers (SKINS, VIEWPORTS, UI_ROUTES, setSkin, …)
 │   ├── *-evidence.mjs       # Visual-evidence generators (test/visual/evidence/<slug>/)
+│   ├── pr-evidence.mjs      # Generic base-vs-head evidence (no bespoke spec needed)
+│   ├── snapshot-diff-montage.mjs  # expected | actual | diff montage of a snapshot run
 │   └── snapshots/           # Committed Linux baselines for the snapshots tier
 ├── visual-results/          # ⚙️ Run output (gitignored): traces, html report, jekyll.log
 ├── results/                 # ✅ Test results (JSON)

@@ -1,0 +1,64 @@
+{% comment %} Feature: ZER0-086 {% endcomment %}
+{%- comment -%}
+  Component:   setup/claude-session
+  Path:        _includes/setup/claude-session.html
+  Purpose:     The embedded Claude session that rides alongside every Site
+               Builder step: connection state, transcript, per-step suggested
+               prompts, and the composer. Claude sees the whole wizard state
+               on every turn and acts on it through tools (fill fields, run
+               checks, read theme source, write the project, run Docker).
+  Params:      none — configured by #siteBuilderConfig in setup/wizard.html
+  Depends on:  Bootstrap 5.3 + Icons, assets/js/site-builder.js,
+               _sass/components/_setup-wizard.scss
+  Notes:
+    - Proxy-only. Nothing renders a credential; the panel shows a connect
+      prompt until GET {endpoint}/status answers, then goes live.
+    - Rendering is escape-first (a limited Markdown subset); action cards are
+      built with createElement/textContent — see ai-chat.instructions.md.
+    - role="log" + aria-live so screen readers hear replies; Escape does not
+      close the panel (it is a page region, not a dialog).
+{%- endcomment -%}
+
+<section class="sb-panel card" id="siteBuilderPanel" aria-labelledby="sb-title" data-state="offline">
+  <div class="card-header d-flex align-items-center justify-content-between gap-2 py-2">
+    <div class="d-flex align-items-center gap-2 min-w-0">
+      <i class="bi bi-stars" aria-hidden="true"></i>
+      <h2 class="h6 mb-0 text-truncate" id="sb-title">Claude session</h2>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <span class="sb-status-badge badge rounded-pill text-bg-secondary" id="sb-status-badge" aria-live="polite">offline</span>
+      <button class="btn btn-sm btn-link text-body p-0" type="button" id="sb-clear" title="Clear the conversation" aria-label="Clear the conversation">
+        <i class="bi bi-eraser" aria-hidden="true"></i>
+      </button>
+      <button class="btn btn-sm btn-link text-body p-0" type="button" id="sb-collapse" aria-expanded="true" aria-controls="sb-body" title="Collapse">
+        <i class="bi bi-chevron-up" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="sb-body" id="sb-body">
+    <div class="sb-messages p-3" id="sb-messages" role="log" aria-live="polite" aria-relevant="additions">
+      <div class="sb-offline text-body-secondary small" id="sb-offline">
+        <p class="mb-1"><strong>Not connected.</strong> Start the dev proxy (see step 1) and this panel comes alive: Claude can read your answers, fill in the forms, check your machine, read the theme's source and run the build.</p>
+        <p class="mb-0">Everything else on this page works without it.</p>
+      </div>
+    </div>
+
+    <div class="sb-chips px-3 pb-2 d-flex gap-2 flex-wrap" id="sb-chips" aria-label="Suggested prompts for this step"></div>
+
+    <form class="sb-composer p-3 pt-0" id="sb-form" autocomplete="off">
+      <label for="sb-input" class="visually-hidden">Message Claude</label>
+      <div class="input-group">
+        <textarea class="form-control" id="sb-input" rows="1" maxlength="4000"
+                  placeholder="Ask Claude, or describe your site…" disabled></textarea>
+        <button class="btn btn-primary" type="submit" id="sb-send" aria-label="Send" disabled>
+          <i class="bi bi-send" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="d-flex justify-content-between align-items-center mt-1">
+        <small class="text-body-secondary sb-disclaimer">Claude sees every answer on this page. Actions ask for confirmation first.</small>
+        <small class="text-body-secondary" id="sb-context-note"></small>
+      </div>
+    </form>
+  </div>
+</section>

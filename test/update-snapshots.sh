@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Feature: ZER0-085
 # =============================================================================
 # Generate OR verify Playwright snapshot baselines in the Linux Docker image.
 # =============================================================================
@@ -19,6 +20,8 @@
 #   ./test/update-snapshots.sh                       # generate (update) baselines
 #   UPDATE_SNAPSHOTS=0 ./test/update-snapshots.sh    # verify (CI uses this)
 #   PLAYWRIGHT_PROJECT=snapshots ./test/update-snapshots.sh
+#   PRE_TEST_SCRIPT=… POST_TEST_SCRIPT=… SKIP_PLAYWRIGHT=1 ./test/update-snapshots.sh
+#                                                    # hook scripts only (autogen lane)
 #
 # Requirements: Docker, docker-compose
 #
@@ -82,13 +85,41 @@ cleanup() {
 }
 trap cleanup EXIT
 
+# ---------------------------------------------------------------------------
+# Hooks for scripts/ci/visual_evidence_autogen.py (the visual-evidence autogen
+# lane). Both run INSIDE the same container as the snapshot pass, so evidence
+# montages are rendered by the exact browser build the baselines are — which is
+# the whole point of this script. Paths are repo-relative (the repo is /work).
+#   PRE_TEST_SCRIPT    bash script run after `npm ci`, before Playwright
+#   POST_TEST_SCRIPT   bash script run after Playwright, whether it passed or not
+#   SKIP_PLAYWRIGHT=1  run only the hooks — no snapshot pass
+# ---------------------------------------------------------------------------
+PRE_TEST_SCRIPT="${PRE_TEST_SCRIPT:-}"
+POST_TEST_SCRIPT="${POST_TEST_SCRIPT:-}"
+SKIP_PLAYWRIGHT="${SKIP_PLAYWRIGHT:-0}"
+
 PW_FLAGS=""
 if [[ "$UPDATE_SNAPSHOTS" == "1" ]]; then
   PW_FLAGS="--update-snapshots"
   log "Generating baselines (project=${PLAYWRIGHT_PROJECT}) in ${PLAYWRIGHT_IMAGE}..."
+elif [[ "$SKIP_PLAYWRIGHT" == "1" ]]; then
+  log "Running only the hook scripts in ${PLAYWRIGHT_IMAGE} (SKIP_PLAYWRIGHT=1)..."
 else
   log "Verifying snapshots (project=${PLAYWRIGHT_PROJECT}) against committed baselines in ${PLAYWRIGHT_IMAGE}..."
 fi
+
+# The in-container script. Playwright's own exit status survives the post hook,
+# so a failed verify still reports as a failure to the caller.
+INNER="set -o pipefail
+npm ci --ignore-scripts || exit \$?
+if [ -n '${PRE_TEST_SCRIPT}' ]; then bash '${PRE_TEST_SCRIPT}' || echo '[update-snapshots] pre-test hook exited non-zero (continuing)'; fi
+pw=0
+if [ '${SKIP_PLAYWRIGHT}' != '1' ]; then
+  npx playwright test --config=test/playwright.config.js --project=${PLAYWRIGHT_PROJECT} ${PW_FLAGS} || pw=\$?
+fi
+if [ -n '${POST_TEST_SCRIPT}' ]; then bash '${POST_TEST_SCRIPT}' || echo '[update-snapshots] post-test hook exited non-zero (continuing)'; fi
+exit \$pw"
+
 docker run --rm \
   --network host \
   -v "${PROJECT_ROOT}:/work" \
@@ -96,11 +127,11 @@ docker run --rm \
   -e BASE_URL=http://localhost:4000 \
   -e CI=true \
   "${PLAYWRIGHT_IMAGE}" \
-  bash -c "npm ci --ignore-scripts && npx playwright test --config=test/playwright.config.js --project=${PLAYWRIGHT_PROJECT} ${PW_FLAGS}"
+  bash -c "$INNER"
 
 if [[ "$UPDATE_SNAPSHOTS" == "1" ]]; then
   log "Done. Review generated baselines under test/visual/snapshots/ and commit them:"
   log "  git add test/visual/snapshots/"
-else
+elif [[ "$SKIP_PLAYWRIGHT" != "1" ]]; then
   log "Snapshots match the committed baselines. ✅"
 fi
