@@ -521,8 +521,13 @@
     }
     if (els.modeBadge) { els.modeBadge.textContent = state.mode === 'open' ? 'open session' : 'guided'; els.modeBadge.hidden = !connected; }
     if (els.title) els.title.textContent = (ready ? label : 'AI') + ' session';
-    if (els.input) { els.input.disabled = !ready; els.input.placeholder = ready ? (state.mode === 'open' ? 'Tell ' + label + ' what to build or change…' : 'Ask ' + label + ', or describe your site…') : 'Connect a provider to start chatting'; }
-    if (els.send) els.send.disabled = !ready;
+    // The status poll runs every 15 s, including in the middle of a turn — it
+    // must never hand the composer back while tools are still running, or a
+    // long action (docker compose, an image render) looks finished when it is
+    // not, and a second send can interleave with the first.
+    if (els.input) { els.input.disabled = !ready || state.busy; els.input.placeholder = ready ? (state.mode === 'open' ? 'Tell ' + label + ' what to build or change…' : 'Ask ' + label + ', or describe your site…') : 'Connect a provider to start chatting'; }
+    if (els.send) { els.send.disabled = !ready || state.busy; els.send.hidden = state.busy; }
+    if (els.stop) { els.stop.hidden = !state.busy; els.stop.disabled = !state.busy; }
     if (els.disclaimer) els.disclaimer.textContent = label + ' sees every answer on this page. Actions ask for confirmation first.';
     if (els.offline) els.offline.hidden = ready || els.messages.children.length > 1;
     document.querySelectorAll('.sb-needs-proxy').forEach(function (btn) { btn.disabled = !connected; });
@@ -907,12 +912,12 @@
   function buildTools() {
     var obj = function (props, required) { return { type: 'object', properties: props, required: required || [] }; };
     var commandIds = (state.status && state.status.projectCommands) || ['git-status', 'git-diff', 'git-log', 'git-init'];
-    var composeActions = ['up', 'ps', 'logs', 'down', 'config', 'build'];
+    var composeActions = ['up', 'ps', 'logs', 'down', 'restart', 'config', 'build'];
     var tools = [
       { name: 'get_wizard_state', description: 'Return the full wizard state as JSON: every field, chosen collections, navigation, prerequisite check results, target folder and the list of generated files.', input_schema: obj({}) },
       { name: 'set_wizard_fields', description: 'Set one or more wizard fields (see the schema in the system prompt). Keys are field keys; `collections` takes an array of ids; `navigation` takes an array of {title,url,icon}. The user confirms on an inline card before anything changes. Prefer one call with several fields over many calls.', input_schema: obj({ fields: { type: 'object', description: 'Map of field key → value.' }, note: { type: 'string', description: 'One line shown on the confirmation card explaining the change.' } }, ['fields']) },
       { name: 'get_site_plan', description: 'Return the current site plan (landing, navigation, theme overrides, planned pages) as JSON, plus the resolved landing page (template defaults filled in).', input_schema: obj({}) },
-      { name: 'set_site_plan', description: 'Apply a partial or complete site plan: landing {template, hero, sections}, navigation {style, sidebar, items}, theme {palette, fonts, radius}, pages [{collection, slug, title, description, date, categories, tags, body}]. Validated against the schema in the system prompt; errors come back for you to fix. Pages REPLACE the planned list unless merge_pages is true. The user confirms on a card before anything changes.', input_schema: obj({ plan: { type: 'object', description: 'The plan (partial allowed). Bodies are Markdown without front matter.' }, merge_pages: { type: 'boolean', description: 'true = merge pages by collection+slug instead of replacing the list.' }, note: { type: 'string', description: 'One line shown on the confirmation card.' } }, ['plan']) },
+      { name: 'set_site_plan', description: 'Apply a partial or complete site plan: landing {template, hero, sections}, navigation {style, sidebar, items}, theme {palette, fonts, radius}, pages [{collection, slug, title, description, date, categories, tags, body}]. Validated against the schema in the system prompt; errors come back for you to fix. `landing.hero` merges field by field, so a later call may add just an image; `landing.sections`, `navigation.items` and `pages` REPLACE (pages merge when merge_pages is true). The user confirms on a card before anything changes.', input_schema: obj({ plan: { type: 'object', description: 'The plan (partial allowed). Bodies are Markdown without front matter.' }, merge_pages: { type: 'boolean', description: 'true = merge pages by collection+slug instead of replacing the list.' }, note: { type: 'string', description: 'One line shown on the confirmation card.' } }, ['plan']) },
       { name: 'go_to_step', description: 'Move the wizard to a step by id (connect, prereqs, identity, urls, structure, appearance, voice, integrations, build).', input_schema: obj({ step: { type: 'string' } }, ['step']) },
       { name: 'get_generated_file', description: 'Return the current content of one generated project file (e.g. "_config.yml", "pages/_about/index.md"). Omit path to list all files with sizes.', input_schema: obj({ path: { type: 'string' } }) },
       { name: 'set_file_override', description: 'Replace the content of ONE generated file with your own version (e.g. a richer about page or a tweaked _config.yml). Pass the COMPLETE new content. The user confirms first. Pass content null to remove the override and return to the generated version.', input_schema: obj({ path: { type: 'string' }, content: { type: ['string', 'null'] }, summary: { type: 'string', description: 'One line: what changed.' } }, ['path', 'summary']) },
@@ -931,7 +936,7 @@
       { name: 'delete_project_file', description: 'Delete one regular file from the working project after confirmation. Never directories.', input_schema: obj({ path: { type: 'string' }, summary: { type: 'string' } }, ['path', 'summary']) },
       { name: 'run_project_command', description: 'Run an allow-listed command inside the working project and return its output: ' + commandIds.join(', ') + '.', input_schema: obj({ id: { type: 'string', enum: commandIds } }, ['id']) },
       { name: 'generate_image', description: 'Render an image with the configured image provider (Grok Imagine on xAI, or OpenAI Images) and save it into the working project under assets/ — path must end in .png, .jpg or .webp, e.g. "assets/images/hero.png". Costs money, so the user confirms first. Returns the saved path; reference it as /assets/... (front matter preview:, landing hero image, or an <img>).', input_schema: obj({ prompt: { type: 'string', description: 'A specific art brief: subject, style, palette, mood, no text in the image.' }, path: { type: 'string' }, aspect_ratio: { type: 'string', enum: IMAGE_ASPECTS }, quality: { type: 'string', enum: ['auto', 'low', 'medium', 'high'] }, provider: { type: 'string', enum: ['xai', 'openai'] }, overwrite: { type: 'boolean' } }, ['prompt', 'path']) },
-      { name: 'run_compose', description: 'Run docker compose in the working project: action is "up" (detached, builds), "ps", "logs", "down", "config" or "build" (runs `jekyll build` inside the running container to validate the site). Output streams into the Build step terminal and the tail is returned to you. up/down ask the user to confirm.', input_schema: obj({ action: { type: 'string', enum: composeActions }, target: { type: 'string' } }, ['action']) },
+      { name: 'run_compose', description: 'Run docker compose in the working project: action is "up" (detached, builds), "ps", "logs", "down", "restart", "config" or "build" (runs `jekyll build` inside the running container to validate the site). Use "restart" after ADDING a page or post to a running site — Jekyll\'s watcher only picks up files that existed when it started. Output streams into the Build step terminal and the tail is returned to you. up/down ask the user to confirm.', input_schema: obj({ action: { type: 'string', enum: composeActions }, target: { type: 'string' } }, ['action']) },
       { name: 'check_site_live', description: 'Probe whether the site answers on its dev port (default from the wizard). Returns reachable true/false.', input_schema: obj({ url: { type: 'string' } }) }
     ];
     return tools;
@@ -1282,9 +1287,14 @@
     if (!ok) return declined(block.id);
     try {
       var r = await proxyPost('/project/write', { target: target, path: path, content: content, overwrite: input.overwrite === true });
-      appendResultCard((r.replaced ? 'Replaced ' : 'Wrote ') + r.path, [r.bytes + ' bytes in ' + trimPath(r.target)]);
+      // A file the watcher never saw start is invisible to a running server.
+      var newCollectionDoc = !r.replaced && /^pages\/_[^/]+\//.test(r.path);
+      appendResultCard((r.replaced ? 'Replaced ' : 'Wrote ') + r.path,
+        [r.bytes + ' bytes in ' + trimPath(r.target)].concat(newCollectionDoc ? ['New collection document — restart the dev server to see it.'] : []),
+        newCollectionDoc ? [{ label: 'docker compose restart', onClick: function () { composeAction('restart', target); } }] : []);
       refreshProjectTree(target);
-      return toolResult(block.id, { path: r.path, bytes: r.bytes, replaced: r.replaced });
+      return toolResult(block.id, Object.assign({ path: r.path, bytes: r.bytes, replaced: r.replaced },
+        newCollectionDoc ? { note: 'This is a NEW collection document. Jekyll\'s watcher only tracks files that existed when it started, so the running site will not list it until you call run_compose("restart").' } : {}));
     } catch (e) {
       return toolResult(block.id, 'Write failed: ' + e.message + (/exists/.test(e.message) ? ' Pass overwrite:true to replace it, or use edit_project_file.' : ''), true);
     }
@@ -1421,6 +1431,7 @@
       ]);
     }
     if (action === 'build') appendResultCard(okExit ? 'jekyll build passed' : 'jekyll build failed', [okExit ? 'The site builds cleanly with its dev config.' : 'See the terminal on the Build step; the assistant can read the tail and fix it.']);
+    if (action === 'restart' && okExit) appendResultCard('Dev server restarted', ['Newly added pages and posts are picked up on the next build.']);
     if (!viaModel && w) w.toast('docker compose ' + action + (okExit ? ' finished' : ' failed — see the terminal'));
     return { ok: okExit, tail: tail };
   }

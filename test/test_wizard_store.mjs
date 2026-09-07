@@ -267,8 +267,12 @@ await t('writeProjectAsset accepts real images under assets/ only, sniffing the 
   assert.equal((await store.readProjectAsset('demo-site', '_config.yml')).ok, false);
 });
 
-await t('compose exposes the build action and still refuses folders without docker-compose.yml', async () => {
+await t('compose exposes the build and restart actions and still refuses folders without docker-compose.yml', async () => {
   assert.ok(store.composeActions().includes('build'));
+  // `restart` is how an agent makes a NEWLY added post visible: Jekyll's
+  // watcher only tracks documents that existed when serve started.
+  assert.ok(store.composeActions().includes('restart'));
+  assert.deepEqual(store.composeActions().sort(), ['build', 'config', 'down', 'logs', 'ps', 'restart', 'up']);
   const none = await store.compose('empty-site', 'build', () => {});
   assert.equal(none.ok, false);
   assert.match(none.error, /docker-compose.yml not found/);

@@ -344,7 +344,13 @@
     var fieldPatch = {};
     if (patch.landing) {
       if (patch.landing.template) fieldPatch['plan.landing.template'] = patch.landing.template;
-      if (patch.landing.hero !== undefined) planExtra.landing.hero = patch.landing.hero;
+      // A hero patch MERGES field by field. An agent that comes back later to
+      // add an image must not silently drop the headline, subheadline and CTAs
+      // it set two turns earlier. (sections and pages REPLACE — they are lists,
+      // not a bag of settings, so a shorter list has to mean a shorter list.)
+      if (patch.landing.hero !== undefined) {
+        planExtra.landing.hero = Object.assign({}, planExtra.landing.hero || {}, patch.landing.hero);
+      }
       if (patch.landing.sections !== undefined) planExtra.landing.sections = patch.landing.sections;
     }
     if (patch.navigation) {
@@ -974,7 +980,12 @@
     L.push('host: "0.0.0.0"');
     L.push('port: ' + c.port);
     L.push('livereload: true');
-    L.push('incremental: true');
+    // Incremental regeneration is still experimental in Jekyll and only
+    // rebuilds documents whose own source changed — so adding a post leaves
+    // every LISTING page (the collection index, the home page's latest-posts
+    // section, the feed) stale, showing a site that no longer exists. These
+    // sites are small: a full rebuild is a second or two, and always right.
+    L.push('incremental: false');
     L.push('show_drafts: true');
     L.push('future: true');
     L.push('');
@@ -1197,9 +1208,18 @@
       '    {% if hero.subheadline %}<p class="lead mb-4 mx-auto" style="max-width: 44rem;">{{ hero.subheadline }}</p>{% endif %}',
       '    {% if hero.ctas and hero.ctas.size > 0 %}',
       '    <div class="d-flex flex-wrap gap-2 justify-content-{{ hero.align | default: "center" }}">',
-      '      {% for cta in hero.ctas %}{% include components/cta-button.html label=cta.label url=cta.url variant=cta.variant icon=cta.icon size="lg" %}{% endfor %}',
+      '      {%- for cta in hero.ctas -%}',
+      '        {%- assign cta_variant = cta.variant | default: "primary" -%}',
+      '        {%- comment -%} An outlined button is white on an inverse hero and primary-coloured everywhere else. {%- endcomment -%}',
+      '        {%- if cta_variant == "outline" and hero.variant == "inverse" %}{% assign cta_variant = "outline-light" %}{% endif -%}',
+      '        {% include components/cta-button.html label=cta.label url=cta.url variant=cta_variant icon=cta.icon size="lg" %}',
+      '      {%- endfor -%}',
       '    </div>',
       '    {% endif %}',
+      // A hero illustration sits beside the headline it illustrates, so it is
+      // decorative: empty alt keeps a screen reader from hearing the headline
+      // twice. Swap in a real description if the picture carries information.
+      '    {% if hero.image %}<img src="{{ hero.image | relative_url }}" alt="" class="zer0-landing-hero-image img-fluid rounded-3 shadow-sm mt-4" loading="lazy" decoding="async">{% endif %}',
       '  </div>',
       '</section>',
       '',

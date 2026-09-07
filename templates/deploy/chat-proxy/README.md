@@ -59,7 +59,7 @@ The same dev proxy powers the guided **Site Builder** at `/setup/` ([`_includes/
 | `GET /api/wizard/file?path=` / `GET /api/wizard/ls?path=` | Read theme source / list a theme directory | inside the checkout only; `.env*`, keys, `.git`, `node_modules`, `vendor`, `_site` denied; text extensions only |
 | `POST /api/wizard/target` `{target}` | Resolve the project folder and say whether it exists / is empty | strict sub-dir of `WIZARD_TARGET_ROOT`, never inside the theme |
 | `POST /api/wizard/scaffold` `{target, files[], overwrite?}` | Write the generated site | same root rule; relative paths; allow-listed names; ≤ 60 files, ≤ 200 KB each; no overwrite unless asked |
-| `POST /api/wizard/compose` `{target, action}` | `docker compose up -d --build` / `ps` / `logs` / `down` / `config` / `build` (`jekyll build` inside the running container) in the written project, output streamed as text | folder must hold `docker-compose.yml` |
+| `POST /api/wizard/compose` `{target, action}` | `docker compose up -d --build` / `ps` / `logs` / `down` / `restart` / `config` / `build` (`jekyll build` inside the running container) in the written project, output streamed as text | folder must hold `docker-compose.yml` |
 | `GET /api/wizard/projects` | Sites under the target root (folders with `_config.yml` / `docker-compose.yml`) | never the theme checkout |
 | `GET /api/wizard/project/{ls,file,tree}?target=&path=` | Read an existing site | inside that project; same denylist and text-only rules as theme reads |
 | `POST /api/wizard/project/{write,edit,delete}` | Change ONE text file (`edit` = exact snippet, unique unless `all`) | allow-listed names, size caps, no overwrite unless asked, files only |

@@ -99,8 +99,11 @@ The Build step lists every site under the target root (folders holding a `_confi
 | `delete_project_file` | Remove one regular file | Yes |
 | `run_project_command` | `git-status`, `git-diff`, `git-log`, `git-init` | No |
 | `run_compose("build")` | `jekyll build` inside the running container, output in the Build terminal | No |
+| `run_compose("restart")` | Restart the container so a newly added page or post appears | No |
 
 Every write is bounded by the same sandbox as the scaffold: relative paths only, allow-listed extensions, size caps, secrets and VCS paths denied, never inside the theme checkout.
+
+One Jekyll quirk the tools account for: `--watch` only tracks collection documents that existed when the server started, so a **newly added** post or page does not appear on the running site. `write_project_file` says so in its result and offers a restart button, and `run_compose("restart")` makes it visible.
 
 ## Image generation
 
@@ -184,7 +187,7 @@ Tools available to the model:
 | `write_project_file`, `edit_project_file`, `delete_project_file` | Change one file in the working project | Yes |
 | `run_project_command` | `git-status`, `git-diff`, `git-log`, `git-init` | No |
 | `generate_image` | Render with Grok Imagine or OpenAI Images into `assets/` | Yes |
-| `run_compose` | `up`, `ps`, `logs`, `down`, `config`, `build` | `up` and `down` |
+| `run_compose` | `up`, `ps`, `logs`, `down`, `restart`, `config`, `build` | `up` and `down` |
 | `check_site_live` | Probe the dev port | No |
 
 The visible transcript is kept in `sessionStorage` as plain text turns only, so a restored conversation can never orphan a tool result.
@@ -200,7 +203,7 @@ The routes live only in `templates/deploy/chat-proxy/dev-proxy.mjs` and are boun
 | `POST /api/wizard/check` | Fixed command table keyed by id; emails redacted from output |
 | `GET /api/wizard/file`, `GET /api/wizard/ls` | Inside the theme checkout; secrets, VCS, vendored and build directories denied; text extensions only |
 | `POST /api/wizard/target`, `POST /api/wizard/scaffold` | Strict sub-directory of `WIZARD_TARGET_ROOT` (default: the theme's parent), never inside the theme, allow-listed names, size caps, no overwrite unless requested |
-| `POST /api/wizard/compose` | Only `up -d --build`, `ps`, `logs`, `down`, `config`, `build`, in a folder that already holds `docker-compose.yml` |
+| `POST /api/wizard/compose` | Only `up -d --build`, `ps`, `logs`, `down`, `restart`, `config`, `build`, in a folder that already holds `docker-compose.yml` |
 | `GET /api/wizard/projects`, `GET /api/wizard/project/{ls,file,tree}` | Sites under the target root; reads inside one of them with the theme denylist and text-only rules |
 | `POST /api/wizard/project/{write,edit,delete,command}` | One allow-listed text file per call, unique-snippet edits, files only, a fixed git table |
 | `POST /api/wizard/image`, `GET /api/wizard/asset` | PNG/JPEG/WebP under `assets/` only, bytes sniffed, 8 MB cap |

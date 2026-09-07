@@ -195,6 +195,52 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **Every generated landing page shipped an invisible button** —
+  `components/cta-button.html` mapped `variant: outline` to `btn-outline-light`,
+  which is white text on a white border, and the Site Builder's own default
+  call to action uses `outline` on a light hero. `outline` is now an outlined
+  *primary* button; `outline-light` is the explicit variant for a dark surface,
+  and the generated landing engine picks between them from `hero.variant`.
+  Nothing else in the theme used `outline`, so no other button changes.
+- **A planned `landing.hero.image` was accepted and then thrown away** — the
+  site plan's schema has offered `landing.hero.image` since the Site Builder
+  shipped, but the landing engine it generates never rendered it, so an agent
+  (or a human) could set a hero image, see it validated, watch it land in
+  `_data/landing.yml`, and get a landing page with no picture. `index.md` now
+  renders it inside the hero, decorative (empty `alt`) so a screen reader does
+  not hear the headline twice. Found by building a site end to end through the
+  new Grok path, where the "Hero image with …" shortcut pointed straight at the
+  dead field.
+- **A partial hero patch silently wiped the rest of the hero** —
+  `set_site_plan` replaced `landing.hero` wholesale, so the natural agent move
+  of "write the copy now, add the artwork two turns later"
+  (`{landing: {hero: {image}}}`) discarded the headline, subheadline and every
+  call to action, and the landing page quietly reverted to the site title and
+  the default buttons. The hero now merges field by field; `sections`,
+  `navigation.items` and `pages` still replace, because a shorter list has to
+  mean a shorter list. The tool description says so, and the regression test
+  pins both halves.
+
+- **A new post appeared at its own URL but on no index** — the generated
+  `_config_dev.yml` turned on Jekyll's experimental incremental regeneration,
+  which rebuilds only documents whose own source changed. Adding a post left
+  the collection index, the home page's latest-posts list and the feed showing
+  the old set, with the post reachable only by typing its URL. New sites are
+  now generated with `incremental: false`; a full rebuild of a fresh site takes
+  about a second and is always right.
+
+- **The 15-second status poll handed the composer back mid-turn** — the Site
+  Builder's proxy poll rebuilt the panel's enabled state from the connection
+  alone, so during a long action (a Docker build, an image render) the input
+  and Send button re-enabled themselves and the Stop button vanished, while
+  tools were still running. A second message could then interleave with the
+  first. The poll now respects the busy state.
+- **A newly added post never appeared on the running site** — Jekyll's
+  `--watch` only tracks collection documents that existed when `serve` started,
+  so a page or post the assistant added to a running project stayed invisible
+  with no explanation. `write_project_file` now says so in its result and
+  offers a restart, and `run_compose` gained a `restart` action.
+
 - **Switching colour mode destroyed every Mermaid diagram** — the old include's
   `MutationObserver` re-render emptied each `.mermaid` div and refilled it with
   the div's *current* text, which after the first render is the SVG's own

@@ -605,6 +605,23 @@ test.describe('Site Builder wizard', { tag: '@critical' }, () => {
     }));
     expect(res.ok).toBe(true);
     await expect(page.locator('#landing-summary')).toContainText('Hello there');
+    // A planned hero image reaches index.md — the plan schema offers
+    // landing.hero.image, so the landing engine has to render it. And a LATER
+    // partial hero patch (the shape an agent sends when it adds artwork after
+    // writing the copy) must not drop the headline or the CTAs.
+    const partial = await page.evaluate(() => window.Zer0SetupWizard.setPlan({ landing: { hero: { image: '/assets/images/hero.png' } } }));
+    expect(partial.ok).toBe(true);
+    const hero = await page.evaluate(() => window.Zer0SetupWizard.getPlan().landing.hero);
+    expect(hero).toMatchObject({ headline: 'Hello there', image: '/assets/images/hero.png' });
+    expect(hero.ctas).toHaveLength(1);
+    await page.locator('.wizard-file-tab[data-file="index.md"]').click();
+    await expect(page.locator('#yaml-preview')).toContainText('{% if hero.image %}');
+    // An outlined CTA renders white-on-white unless the surface behind it is
+    // dark, so the landing engine resolves the variant against the hero.
+    await expect(page.locator('#yaml-preview')).toContainText('outline-light');
+    const landing = await page.evaluate(() => window.Zer0SetupWizard.getFile('_data/landing.yml').content);
+    expect(landing).toContain('image: "/assets/images/hero.png"');
+    expect(landing).toContain('headline: "Hello there"');
     await expect(page.locator('.wizard-file-tab[data-file^="pages/_posts/"][data-file$="first-light.md"]')).toHaveCount(1);
     await expect(page.locator('#palette-berry')).toBeChecked();
     await expect(page.locator('#radius-sharp')).toBeChecked();

@@ -28,11 +28,12 @@
  *                           never above the root, relative paths only, an
  *                           allow-list of file names/extensions, size caps,
  *                           and no overwrite unless explicitly asked.
- *   compose(target, action) `docker compose` up/ps/logs/down/config/build in
- *                           a scaffolded project (must contain
+ *   compose(target, action) `docker compose` up/ps/logs/down/restart/config/
+ *                           build in a scaffolded project (must contain
  *                           docker-compose.yml). Output is streamed back as
  *                           text. `build` runs `jekyll build` inside the
- *                           running container so an agent can validate edits.
+ *                           running container so an agent can validate edits;
+ *                           `restart` re-reads content the watcher misses.
  *
  * Project session (ZER0-087 — an existing or freshly written site under
  * WIZARD_TARGET_ROOT, so the assistant can MODIFY a site, not only create it):
@@ -304,6 +305,10 @@ const COMPOSE_ACTIONS = {
   ps: ['compose', 'ps'],
   logs: ['compose', 'logs', '--no-color', '--tail', '120'],
   down: ['compose', 'down'],
+  // Jekyll's --watch does not pick up a collection document that did not exist
+  // when serve started, so an agent that adds a post to a RUNNING site needs a
+  // way to make it visible without tearing the project down.
+  restart: ['compose', 'restart'],
   config: ['compose', 'config', '--quiet'],
   // Validates the site the way CI would, inside the already-running container.
   // The config list is appended per target (dev overrides only when present).
