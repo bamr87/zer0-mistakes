@@ -16,11 +16,16 @@
 #   group        section header in the selector ("This page" | "The site")
 #   scope        page | site — targets this page, or the theme as a whole
 #   description  one-line helper shown under the label
-#   labels       GitHub labels applied to the issue. MUST already exist in the
-#                repo: GitHub SILENTLY DROPS unknown labels from a prefilled URL
-#                (this was the old feature's `labels=ai-agent` bug). Verify with
-#                `gh label list`. The marker label from
-#                site.page_feedback.default_labels is added on top of these.
+#   labels       GitHub labels applied to the issue. Drawn from the FLEET
+#                ISSUE-PIPELINE label set (bamr87/bamr87 _data/fleet.yml
+#                issue_pipeline.labels.types: bug feature docs chore ci refactor
+#                test security question) plus optional area:*, so an issue filed
+#                from this widget is pipeline-eligible on the next scan instead
+#                of carrying labels only this repo understands.
+#                Every one MUST already exist in the repo: GitHub SILENTLY DROPS
+#                unknown labels from a prefilled URL (this was the old feature's
+#                `labels=ai-agent` bug). Verify with `gh label list`. The marker
+#                label from site.page_feedback.default_labels is added on top.
 #   agent        true  → assign @copilot and attach `directive` for autonomous work
 #                false → human triage only (no assignee, no directive)
 #   directive    compact agent instruction. Kept SHORT on purpose — it rides in
@@ -50,7 +55,7 @@
   group: This page
   scope: page
   description: Polish the copy, structure, or presentation
-  labels: [enhancement, "area:docs"]
+  labels: [docs]
   agent: true
   directive: >-
     Act as a content editor for the page in Page Context. Tighten copy, fix
@@ -64,7 +69,7 @@
   group: This page
   scope: page
   description: Add depth, examples, or a section a reader would expect
-  labels: [enhancement, "area:docs"]
+  labels: [docs]
   agent: true
   directive: >-
     Expand the page in Page Context with concrete examples, prerequisites, and
@@ -77,7 +82,7 @@
   group: This page
   scope: page
   description: Stale versions, dead links, or old screenshots
-  labels: [documentation, "area:docs"]
+  labels: [docs]
   agent: true
   directive: >-
     Audit the page in Page Context for stale versions, dead links, and outdated
@@ -90,7 +95,7 @@
   group: This page
   scope: page
   description: Contrast, keyboard, screen-reader, or focus problems
-  labels: ["area:a11y"]
+  labels: [bug, "area:a11y"]
   agent: true
   directive: >-
     Audit the page in Page Context against WCAG 2.1 AA for the reported barrier
@@ -105,7 +110,7 @@
   group: The site
   scope: site
   description: A design or usability refinement for the theme
-  labels: [enhancement, "area:feat"]
+  labels: [feature]
   agent: true
   directive: >-
     Propose a Bootstrap-first UI/UX refinement, using the page in Page Context
@@ -118,7 +123,7 @@
   group: The site
   scope: site
   description: Slow load, layout shift, or heavy assets
-  labels: ["area:perf"]
+  labels: [bug, "area:perf"]
   agent: true
   directive: >-
     Profile the page in Page Context (LCP, CLS, INP), identify the bottleneck,
@@ -131,7 +136,7 @@
   group: The site
   scope: site
   description: Propose a new site-wide capability
-  labels: [enhancement, "area:feat"]
+  labels: [feature]
   agent: false
   directive: ""
   placeholder: What should it do, and who benefits?

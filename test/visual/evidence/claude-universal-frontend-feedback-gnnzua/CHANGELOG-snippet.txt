@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/claude-universal-frontend-feedback-gnnzua/ -->
+  (evidence: [`test/visual/evidence/claude-universal-frontend-feedback-gnnzua/`](test/visual/evidence/claude-universal-frontend-feedback-gnnzua/README.md))

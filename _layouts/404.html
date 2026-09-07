@@ -227,26 +227,40 @@ git push origin main</code></pre>
   </div>
 
   <a class="btn btn-danger mt-4" href="{{ '/' | relative_url }}">Return to Homepage</a>
-  {% if site.github_user and site.repository_name %}
+  {%- comment -%}
+    Report the dead URL through the page-feedback widget rather than through a
+    third hand-rolled issue-URL builder. This page used to encode its own
+    title and body — a two-line report with no page context, no environment,
+    and no captured errors — which is exactly the report a maintainer cannot
+    act on. Pre-typed `fix-page`; the missing URL rides in as `extra`, and the
+    widget attaches the rest (UPS-FB-09).
+
+    Still a real link, so it works with the widget disabled or JavaScript off:
+    page-feedback.js intercepts [data-pf-open] only when it is running.
+  {%- endcomment -%}
+  {% assign _404_repo = site.repository | default: site.github_user | append: '/' | append: site.repository_name %}
+  {% if site.page_feedback.enabled and _404_repo != '/' %}
   <div class="mt-3">
-    {% capture _issue_title %}404 Error{% endcapture %}
-    {% capture _issue_body %}I encountered a 404 error on this site. Please investigate.{% endcapture %}
     <a id="github-issue-link"
        class="btn btn-secondary"
-       href="https://github.com/{{ site.github_user }}/{{ site.repository_name }}/issues/new?title={{ _issue_title | uri_escape }}&body={{ _issue_body | uri_escape }}"
+       href="https://github.com/{{ _404_repo }}/issues/new?template=page_improvement.yml&labels=page-feedback"
+       data-pf-open
+       data-pf-type="fix-page"
        target="_blank"
        rel="noopener noreferrer">
-      Submit an Issue on GitHub
+      Report this broken link
     </a>
   </div>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var githubIssueLink = document.getElementById('github-issue-link');
-      if (!githubIssueLink) return;
-      var currentUrl = window.location.href;
-      var repoSlug = '{{ site.github_user }}/{{ site.repository_name }}';
-      githubIssueLink.href = 'https://github.com/' + repoSlug + '/issues/new?title=' + encodeURIComponent('404 Error on ' + currentUrl) + '&body=' + encodeURIComponent('I encountered a 404 error on the following page: ' + currentUrl + '. Please investigate.');
-    });
+    // The widget cannot know which URL 404'd — this page can. Hand it over as
+    // the pre-filled description the moment the reader opens the dialog.
+    document.addEventListener('click', function (event) {
+      var trigger = event.target.closest && event.target.closest('#github-issue-link');
+      if (!trigger || !window.zer0PageFeedback) return;
+      var missing = window.location.href;
+      trigger.setAttribute('data-pf-description',
+        'This URL returned 404: ' + missing + (document.referrer ? '\nLinked from: ' + document.referrer : ''));
+    }, true);
   </script>
   {% endif %}
 </div>

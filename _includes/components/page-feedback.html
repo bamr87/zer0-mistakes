@@ -62,16 +62,26 @@
 
 {%- if pf_show_fab -%}
 {% comment %} Global feedback FAB (page-invariant; opens the modal) {% endcomment %}
-<button type="button"
-        id="pageFeedbackFab"
-        class="pf-fab btn shadow-lg position-fixed"
-        data-pf-open
-        aria-haspopup="dialog"
-        aria-controls="pageFeedbackModal"
-        title="{{ site.page_feedback.fab_label | default: 'Improve this page' | escape }}"
-        aria-label="{{ site.page_feedback.fab_label | default: 'Improve this page' | escape }}">
+{%- comment -%}
+  An anchor, not a button, and the href is load-bearing: the widget now
+  delegates issue assembly to assets/js/fleet-feedback.js, so if that script
+  fails to load (or JavaScript is off entirely) the FAB still reaches the
+  issue form instead of becoming a decorative circle. page-feedback.js
+  intercepts [data-pf-open] and opens the richer modal when it is running.
+{%- endcomment -%}
+<a id="pageFeedbackFab"
+   class="pf-fab btn shadow-lg position-fixed"
+   href="https://github.com/{{ pf_repo }}/issues/new?template=page_improvement.yml&labels=page-feedback"
+   role="button"
+   data-pf-open
+   target="_blank"
+   rel="noopener noreferrer"
+   aria-haspopup="dialog"
+   aria-controls="pageFeedbackModal"
+   title="{{ site.page_feedback.fab_label | default: 'Improve this page' | escape }}"
+   aria-label="{{ site.page_feedback.fab_label | default: 'Improve this page' | escape }}">
   <i class="bi {{ site.page_feedback.fab_icon | default: 'bi-megaphone' }}" aria-hidden="true"></i>
-</button>
+</a>
 {%- endif -%}
 
 {% comment %} Feedback modal (self-contained overlay; controlled by page-feedback.js).
@@ -107,9 +117,11 @@
           _data/feedback_types.yml is optional for consumers (remote_theme
           cannot ship _data). Without it the widget falls back to a minimal
           generic taxonomy (see pf_fallback_types below) instead of rendering
-          an empty selector. The fallback entries carry no GitHub labels and
-          no agent directive — labels must exist in the target repo or GitHub
-          silently drops them from prefilled issue URLs.
+          an empty selector. The fallback carries the four fleet-taxonomy
+          labels (bug/docs/feature/question) and no agent directive: a label
+          the consumer repo does not have is silently dropped by GitHub, so
+          naming them costs nothing and makes the issue pipeline-eligible the
+          moment the feedback fan-out creates them.
         {%- endcomment -%}
         {%- assign pf_group = "" -%}
         {%- for t in site.data.feedback_types -%}
@@ -138,8 +150,7 @@
             cannot ship _data). Without it, render this minimal generic
             taxonomy instead of an empty selector. Ids/markup must stay in
             sync with the fallback JSON in the #pageFeedbackTypes script
-            below. Fallback entries carry no GitHub labels (labels must exist
-            in the target repo or GitHub silently drops them) and no agent
+            below, which carries the fleet-taxonomy labels and no agent
             directive.
           {%- endcomment -%}
           <p class="pf-types-group">This page</p>
@@ -280,10 +291,10 @@
      in the pf-types fieldset above) {% endcomment %}
 <script id="pageFeedbackTypes" type="application/json">
 {% if site.data.feedback_types %}{{ site.data.feedback_types | jsonify }}{% else %}[
-  {"id":"fix-page","label":"Report a problem","icon":"bi-bug","group":"This page","scope":"page","description":"A typo, broken link, wrong information, or something rendering badly","labels":[],"agent":false,"placeholder":"What is wrong, where on the page, and what did you expect instead?"},
-  {"id":"improve-page","label":"Improve this page","icon":"bi-stars","group":"This page","scope":"page","description":"Polish the copy, structure, or presentation","labels":[],"agent":false,"placeholder":"What would make this page clearer, tighter, or more useful?"},
-  {"id":"feature","label":"Suggest a feature","icon":"bi-lightbulb","group":"The site","scope":"site","description":"An idea that would make the site more useful","labels":[],"agent":false,"placeholder":"Describe the feature and the problem it would solve."},
-  {"id":"question","label":"Ask a question","icon":"bi-question-circle","group":"The site","scope":"site","description":"Something unclear that is not exactly a bug","labels":[],"agent":false,"placeholder":"What would you like to know?"}
+  {"id":"fix-page","label":"Report a problem","icon":"bi-bug","group":"This page","scope":"page","description":"A typo, broken link, wrong information, or something rendering badly","labels":["bug"],"agent":false,"placeholder":"What is wrong, where on the page, and what did you expect instead?"},
+  {"id":"improve-page","label":"Improve this page","icon":"bi-stars","group":"This page","scope":"page","description":"Polish the copy, structure, or presentation","labels":["docs"],"agent":false,"placeholder":"What would make this page clearer, tighter, or more useful?"},
+  {"id":"feature","label":"Suggest a feature","icon":"bi-lightbulb","group":"The site","scope":"site","description":"An idea that would make the site more useful","labels":["feature"],"agent":false,"placeholder":"Describe the feature and the problem it would solve."},
+  {"id":"question","label":"Ask a question","icon":"bi-question-circle","group":"The site","scope":"site","description":"Something unclear that is not exactly a bug","labels":["question"],"agent":false,"placeholder":"What would you like to know?"}
 ]{% endif %}
 </script>
 
@@ -310,6 +321,10 @@
 }
 </script>
 
+{% comment %} The shared fleet builder must be parsed before the widget: page-feedback.js
+     reads window.FleetFeedbackCore at load and bails without it. Both are `defer`, and
+     deferred scripts execute in document order, so this ordering is the dependency. {% endcomment %}
+<script defer src="{{ '/assets/js/fleet-feedback.js' | relative_url }}"></script>
 <script defer src="{{ '/assets/js/page-feedback.js' | relative_url }}"></script>
 
 {%- endunless -%}

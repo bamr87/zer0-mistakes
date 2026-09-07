@@ -202,6 +202,69 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Changed
 
+- **The page-feedback widget now files the fleet's issue contract, not its own
+  (UPS-FB).** The theme built its own issue body, its own escaping, and its own
+  URL-length trimming — and so did the 404 page and the AI chat, three builders
+  in one repo with three different behaviours. All three now go through
+  `FleetFeedbackCore` in `assets/js/fleet-feedback.js`, vendored byte-identically
+  from the fleet kit (`bamr87/bamr87` `templates/feedback/`, held to the hub's
+  copy by the drift gate). It is the same builder the fleet's `<fleet-feedback>`
+  web component uses, so an issue filed from a page here and one filed from a
+  React app elsewhere are byte-identical to the pipeline that triages them.
+
+  What that adds to every filed issue: sections in a fixed order, a
+  `<!-- fleet-feedback v1 type=... -->` marker the issue pipeline reads to
+  recognise an already-structured report, and a real over-budget path. The AI
+  chat in particular used to `.slice(0, 6000)` its body — silently dropping
+  whatever Claude had written past that point — and now trims by section and
+  hands the full text to the clipboard.
+
+  The theme keeps its Bootstrap modal and its AI triage step; only the body
+  assembly moved. Two UIs, one contract.
+
+- **Request-type labels map onto the fleet issue-pipeline taxonomy.**
+  `enhancement`/`documentation` become `feature`/`docs`; `area:docs`/`area:feat`
+  drop out. Every label the widget applies exists in this repo (GitHub silently
+  drops the ones that do not), and a widget-filed issue is now pipeline-eligible
+  on the next scan. The zero-`_data` fallback taxonomy carries them too, so
+  `remote_theme` consumers benefit the moment those labels exist in their repo.
+
+- **Captured console lines are redacted before they enter the buffer.** Bearer
+  tokens, API keys, JWTs, GitHub tokens and email addresses are masked on the
+  way in, so a secret cannot be previewed, copied, or filed even by accident.
+  Credentials reach the console more often than anyone expects — an
+  `Authorization` header logged by a fetch wrapper, a signed URL in a 403.
+
+- **The capture buffer hooks `console.warn` and `console.error` only.**
+  Previously `log`, `info` and `debug` were captured too. At a 40-entry ring,
+  debug chatter evicts the one line that explains the failure — which is the
+  line a report exists to carry. `_includes/core/console-capture.html` is now a
+  two-line loader for the vendored buffer rather than 60 lines of inline script,
+  which also *shrinks* `<head>` and buys back room for the charset meta that has
+  to land in the first 1024 bytes (#372).
+
+### Fixed
+
+- **The 404 page files a report a maintainer can act on.** "Submit an Issue on
+  GitHub" opened a hand-built form containing two sentences of boilerplate — no
+  page context, no environment, no captured errors. It now opens the feedback
+  widget pre-typed as `fix-page` with the URL that failed (and the page that
+  linked to it) already in the description.
+
+- **The feedback FAB survives its script failing to load.** It was a `<button>`
+  whose only behaviour came from JavaScript; with the widget now depending on a
+  second script, a 404 on either one would have left a decorative circle in the
+  corner. It is an anchor to the issue form, upgraded in place when the script
+  runs — the same progressive enhancement the inline "Improve" link already had.
+
+- **The page-feedback Playwright spec dismisses the cookie-consent banner.** The
+  banner is a full-width bar on a layer above the FAB stack, so it swallowed
+  every click aimed at the FAB. Every other spec that touches lower-screen chrome
+  already seeded the consent choice through the shared fixture; this one never
+  did.
+
+### Changed
+
 - **TOC scroll spy now bolds the section you are actually reading** — the
   highlighted entry in the right-hand Table of Contents jumped around and sat
   one to three sections ahead of the viewport. Measured on `/docs/features/toc/`

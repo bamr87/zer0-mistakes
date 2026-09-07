@@ -1,89 +1,47 @@
 {%- comment -%}
   ===================================================================
-  CONSOLE CAPTURE — early, tiny console/error ring buffer
+  CONSOLE CAPTURE — early console/error ring buffer
   ===================================================================
 
   File:    console-capture.html
   Path:    _includes/core/console-capture.html
-  Purpose: Capture a capped, in-memory buffer of console output and
-           uncaught errors, installed HIGH in <head> — before the
-           theme's deferred scripts run — so the page-feedback widget
-           (assets/js/page-feedback.js) can attach the logs and JS
-           errors that led up to a report.
+  Purpose: Load the fleet feedback kit's capture buffer HIGH in <head> —
+           before the theme's deferred scripts run — so the page-feedback
+           widget can attach the logs and JS errors that led up to a report.
 
   Renders: only when page_feedback.enabled AND page_feedback.capture_logs.
 
-  Privacy: in-memory only, never persisted, never sent anywhere until the
-           user opens the feedback modal, reviews the captured logs, and
-           chooses to submit. Any single entry is truncated; the buffer is
-           a fixed-size ring (page_feedback.log_limit).
+  This used to be ~60 lines of inline ES5 maintained here. It is now the
+  fleet kit's capture.js, VENDORED to assets/js/fleet-feedback-capture.js
+  (bamr87/bamr87 templates/feedback/capture.js — drift check (i) holds the
+  copy to the hub's). Two things came with the move: the buffer shape is
+  now the one FleetFeedbackCore reads, so the theme's widget and the fleet's
+  web component file byte-identical issues; and every captured line is
+  REDACTED before it enters the ring (bearer/API keys, JWTs, GitHub tokens,
+  email addresses), so a secret cannot be previewed, copied, or filed.
 
-  Depends on: nothing — pure inline ES5, GitHub Pages-safe (no CDN).
+  Loaded blocking rather than deferred, and that is the point: a buffer
+  installed after parsing misses exactly the load-time failures worth
+  reporting. It is ~4 KB, and it REPLACED ~3.7 KB of inline script, so the
+  head got smaller — which also buys back room for the charset meta that
+  has to land in the first 1024 bytes (issue #372).
+
+  Privacy: in-memory only, never persisted, never sent anywhere until the
+           reader opens the modal, reviews the captured lines, and submits.
+           Any single entry is truncated; the buffer is a fixed-size ring
+           (page_feedback.log_limit, default 40).
+
+  Depends on: assets/js/fleet-feedback-capture.js (vendored, no CDN).
   ===================================================================
 {%- endcomment -%}
 {%- if site.page_feedback.enabled and site.page_feedback.capture_logs -%}
-<script>
-/* page-feedback: early console/error capture — see _includes/core/console-capture.html */
-(function () {
-  "use strict";
-  if (window.__zer0Feedback && window.__zer0Feedback.installed) { return; }
-
-  var LIMIT = {{ site.page_feedback.log_limit | default: 40 | jsonify }};
-  var MAX_ENTRY = 600;      // truncate any single entry so the buffer stays small
-  var start = (window.performance && performance.now) ? null : Date.now();
-
-  var buffer = [];
-  function now() { return start === null ? Math.round(performance.now()) : (Date.now() - start); }
-
-  function stringify(value) {
-    if (typeof value === "string") { return value; }
-    if (value instanceof Error) {
-      return (value.name || "Error") + ": " + (value.message || "") + (value.stack ? "\n" + value.stack : "");
-    }
-    try { return JSON.stringify(value); } catch (e) { return String(value); }
-  }
-
-  function push(level, args) {
-    try {
-      var parts = [];
-      for (var i = 0; i < args.length; i++) { parts.push(stringify(args[i])); }
-      var text = parts.join(" ");
-      if (text.length > MAX_ENTRY) { text = text.slice(0, MAX_ENTRY) + "…"; }
-      buffer.push({ t: now(), level: level, text: text });
-      while (buffer.length > LIMIT) { buffer.shift(); }
-    } catch (e) { /* logging must never break the page */ }
-  }
-
-  // Wrap console methods, preserving passthrough to the real console.
-  if (window.console) {
-    ["log", "info", "warn", "error", "debug"].forEach(function (level) {
-      var original = console[level] ? console[level].bind(console) : null;
-      console[level] = function () {
-        push(level, arguments);
-        if (original) { original.apply(null, arguments); }
-      };
-    });
-  }
-
-  // Uncaught errors and unhandled promise rejections.
-  window.addEventListener("error", function (e) {
-    if (!e) { return; }
-    var where = e.filename ? " (" + e.filename + ":" + (e.lineno || 0) + ":" + (e.colno || 0) + ")" : "";
-    push("error", [(e.message || "Script error") + where]);
-  });
-  window.addEventListener("unhandledrejection", function (e) {
-    var reason = e && e.reason;
-    var msg = reason && reason.message ? reason.message : stringify(reason);
-    push("error", ["Unhandled promise rejection: " + msg]);
-  });
-
-  window.__zer0Feedback = {
-    installed: true,
-    logs: buffer,
-    /** Snapshot the buffer (newest last) for the widget to read. */
-    snapshot: function () { return buffer.slice(); },
-    clear: function () { buffer.length = 0; }
-  };
-})();
-</script>
+<script src="{{ '/assets/js/fleet-feedback-capture.js' | relative_url }}"></script>
+{%- comment -%}
+  The ring size is site configuration, so it is applied after the buffer
+  installs rather than baked into the vendored file (which must stay
+  byte-identical to the hub's).
+{%- endcomment -%}
+{%- if site.page_feedback.log_limit -%}
+<script>if(window.__fleetFeedback){window.__fleetFeedback.limit={{ site.page_feedback.log_limit | jsonify }};}</script>
+{%- endif -%}
 {%- endif -%}
