@@ -2,8 +2,8 @@
   "schema": "visual-autogen-manifest/v1",
   "slug": "claude-universal-frontend-feedback-gnnzua",
   "generator": "test/visual/pr-evidence.mjs",
-  "rendered_from": "3ab2766a0f8123c16c469f84cd3e8ed1193bb175",
+  "rendered_from": "6bdf6d9a28604f37b7339cb3b2238c17fc3fba14",
   "base_ref": "origin/main",
   "before_site": true,
-  "generated_at": "2026-09-07T16:29:02+00:00"
+  "generated_at": "2026-09-07T16:39:30+00:00"
 }
