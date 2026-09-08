@@ -31,6 +31,7 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   fallback (`scripts/ai/api_call.rb`) ride along as optional companions. The
   exit-code contract is pinned by `scripts/ci/test_ai_runner.sh`, wired into
   `./scripts/bin/test`. The action's six existing inputs are unchanged.
+- **`claude-run` is consumed by reference from the hub.** `issue-autopilot.yml` and `visual-evidence-autogen.yml` now call `bamr87/bamr87/.github/actions/claude-run@main` (identical inputs) instead of a vendored `./.github/actions/claude-run`; the local action, `scripts/ai/run.sh`, and the vendored contract test (`scripts/ci/test_ai_runner.sh` + its `scripts/test/lib/` bridge) are deleted, while the consumer companions the hub runner probes for — `scripts/ai/usage.rb`, `usage_report.rb`, `api_call.rb`, `_data/ai.yml`, `_data/ai_pricing.yml`, `tools/unwrap-prose.py` — stay ([bamr87/bamr87#254](https://github.com/bamr87/bamr87/pull/254)).
 - **Consumer registry corrections.** `ai-world-view/ai-world-view.github.io`
   is `remote_theme_floating` (both its `_config.yml` and `hub.yml` pins are
   untagged), not `remote_theme_pinned`; `amr-bash/bash-365.com` is registered

@@ -25,17 +25,15 @@ scripts/
 │   ├── pixelate_images.py          # Pure-stdlib pixelate/quantize engine
 │   ├── install-preview-generator   # Preview generator installer
 │   └── validate_preview_urls.py    # Preview URL validator
-├── ai/                    # The shared `ai-runner` kit (byte-identical to lifehacker.dev)
-│   ├── run.sh                      # Universal runner: Claude Code first, API fallback
+├── ai/                    # Consumer companions to the hub's `ai-runner` kit (the runner itself is referenced, not stored)
 │   ├── api_call.rb                 # Single-shot Claude API fallback (stdlib only)
 │   ├── usage.rb                    # Optional metering: one JSONL record per call
 │   ├── usage_report.rb             # Publishes metering (summary, artifact, PR comment)
-│   └── README.md                   # The kit's contract
+│   └── README.md                   # What stays here and why
 ├── ci/                    # Helpers called directly by workflow steps
 │   ├── classify_changes.py         # Change classifier (issue-pr-auto-merge)
 │   ├── agent_review_result.py      # Did the Claude content review actually run?
-│   ├── test_agent_review_result.py # …its tests (CI-run via test/lib bridge)
-│   └── test_ai_runner.sh           # ai-runner exit-code contract (CI-run via test/lib bridge)
+│   └── test_agent_review_result.py # …its tests (CI-run via test/lib bridge)
 ├── utils/                 # Utility scripts
 │   ├── analyze-commits    # Commit analyzer for version bumps
 │   ├── fix-markdown       # Markdown formatting fixer
@@ -184,31 +182,15 @@ python3 scripts/features/validate_preview_urls.py [--verbose] [--suggestions]
 
 ### AI Runner (scripts/ai/)
 
-Every model call a workflow makes goes through `.github/actions/claude-run`, which hands off to `scripts/ai/run.sh`. This directory is the fleet's shared **`ai-runner` kit**: lifehacker.dev is the source of truth and these files are byte-identical copies of it — change them there, then copy them forward (`shasum` parity is the check); never fork them here.
+Every model call a workflow makes goes through `uses: bamr87/bamr87/.github/actions/claude-run@main` — the fleet's shared **`ai-runner` kit**, versioned once in the [bamr87/bamr87 hub](https://github.com/bamr87/bamr87) and consumed by reference. The runner (`run.sh`) and the composite action are no longer stored in this repo; the hub's kit README ([`templates/ai-runner/README.md`](https://github.com/bamr87/bamr87/blob/main/templates/ai-runner/README.md)) is the contract. In short:
 
-```bash
-scripts/ai/run.sh --prompt "..." [--agent name] [--tools "Bash,Read"] [--mcp cfg.json] \
-                  [--system "..."] [--out file] [--model id] [--max-turns N]
-```
-
-- Model: `--model` > `AI_MODEL` > `_data/ai.yml` `model:` > the fleet default.
+- Model: `--model` input > `AI_MODEL` > `_data/ai.yml` `model:` > the fleet default.
 - Auth from the env, OAuth first: `CLAUDE_CODE_OAUTH_TOKEN` (preferred; strips `ANTHROPIC_API_KEY` from the CLI's env) or `ANTHROPIC_API_KEY` (also the only credential the API fallback can use).
-- Exit codes: `0` when the call ran or nothing was ever attempted (no `claude`, no key — the documented no-op); `1` when the call was attempted and failed with no usable fallback, with the reason printed and raised as a `::error::` annotation under Actions.
-- Optional companions (present means used): `usage.rb` metering (prices from `_data/ai_pricing.yml`), `api_call.rb` fallback, `tools/unwrap-prose.py` post-run prose normalizer.
+- Exit codes: `0` when the call ran or nothing was ever attempted (no auth — the documented no-op); `1` when the call was attempted and failed with no usable fallback, with the reason raised as a `::error::` annotation.
 
-Full contract: [`scripts/ai/README.md`](ai/README.md). The exit-code contract is pinned by `scripts/ci/test_ai_runner.sh` (below).
+This directory holds the **consumer-owned companions** the hub runner probes for in the checkout and uses when present: `usage.rb` metering (prices from `_data/ai_pricing.yml`), `usage_report.rb` publishing, `api_call.rb` fallback — plus `tools/unwrap-prose.py` as the post-run prose normalizer. See [`scripts/ai/README.md`](ai/README.md). The exit-code contract test lives in the hub (`templates/ai-runner/tests/contract.sh`) and runs there on every runner change.
 
 ### CI Helpers (scripts/ci/)
-
-#### `test_ai_runner.sh`
-
-Unit tests for `scripts/ai/run.sh`'s exit contract. Stubs `claude` on PATH so a run can be made to succeed, fail with a real `--output-format json` error payload, or be missing entirely — no network, no credentials, no tokens spent. The case that matters: a call that was attempted and rejected, with no `ANTHROPIC_API_KEY` to fall back to, must exit non-zero and name the reason (the previous hand-rolled `claude-run` exited 0 in that situation).
-
-```bash
-bash scripts/ci/test_ai_runner.sh      # "ai runner contract: N passed, 0 failed"
-```
-
-Runs in CI through `scripts/test/lib/test_ai_runner.sh`, which `run_tests.sh` sources and `./scripts/bin/test` executes on every PR.
 
 #### `agent_review_result.py`
 

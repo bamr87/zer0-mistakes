@@ -5,7 +5,7 @@
 spec_version: fleet/v1
 repo: bamr87/zer0-mistakes
 provenance: derived
-summary: The zer0-mistakes theme's AI fleet — issue autopilot, content review, visual-evidence review, UI audit, CI self-repair and the @claude mention lane, all Claude Code (OAuth-first) through the shared claude-run action.
+summary: The zer0-mistakes theme's AI fleet — issue autopilot, content review, visual-evidence review, UI audit, CI self-repair and the @claude mention lane, all Claude Code (OAuth-first); the autopilot and visual-evidence lanes call the fleet's claude-run action by reference (bamr87/bamr87/.github/actions/claude-run@main).
 lanes:
 - id: ai-content-review
   kind: review

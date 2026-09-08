@@ -135,7 +135,7 @@ workflow in `.github/copilot-instructions.md` (§ Commit and Release Workflow) o
 
 ## Fleet context
 
-This repo is one of ~40 managed by the [bamr87/bamr87 dash](https://github.com/bamr87/bamr87) (registry: `_data/projects.yml`; tiered baseline: `docs/STANDARDS.md`). It is vendored there as a git submodule: commit and push changes **here** first — the hub only bumps its pointer afterwards. Shared CI, release, schema, and agent kits are seeded from the hub's `templates/`; prefer adopting those over hand-rolling equivalents.
+This repo is one of ~40 managed by the [bamr87/bamr87 dash](https://github.com/bamr87/bamr87) (registry: `_data/projects.yml`; tiered baseline: `docs/STANDARDS.md`). It is vendored there as a git submodule: commit and push changes **here** first — the hub only bumps its pointer afterwards. Shared CI, release, schema, and agent kits are seeded from the hub's `templates/`; prefer adopting those over hand-rolling equivalents. The AI step is not vendored at all: workflows call `bamr87/bamr87/.github/actions/claude-run@main` by reference (hub kit `ai-runner`), and this repo keeps only the consumer companions it probes for (`_data/ai.yml`, `scripts/ai/usage.rb` + `usage_report.rb` + `api_call.rb`, `tools/unwrap-prose.py`).
 
 ## Standard deviations
 
