@@ -50,6 +50,28 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Added
 
+- **Bring your own AI provider — Claude or Grok — and an open, coding-session-style
+  Site Builder (ZER0-087)** — the chat proxy gains a provider layer
+  (`templates/deploy/chat-proxy/providers.js`): xAI's Grok is a first-class
+  provider (`XAI_API_KEY`, `CHAT_PROVIDER`, `XAI_CHAT_MODEL`) for the chat
+  widget, the feedback triage and the Site Builder, translated server-side to
+  and from the Anthropic Messages dialect so no client changed. The Site
+  Builder's Connect step shows which providers the local dev proxy already has
+  keys for (masked), takes a token for the session (sent once to localhost,
+  kept in the proxy's memory, optionally saved to `.env` with mode 600), offers
+  the model catalog, an image renderer (Grok Imagine / OpenAI Images) and two
+  session modes: the guided nine steps, or an open session that can open an
+  existing site under the target root, read/edit/write/delete its files, run
+  `git status`/`diff`/`log`, generate images into `assets/`, run `jekyll build`
+  inside the container and stop a long tool run. Generated sites are
+  pre-configured for the chosen provider (`ai_chat.provider`, `preview_images`,
+  `.env.example`). The dev proxy now starts without a credential. Also fixes a
+  pre-existing 162px horizontal overflow of the whole `/setup/` page at phone
+  widths (the Connect step's command boxes could not shrink). (evidence:
+  [`test/visual/evidence/site-builder-providers/`](test/visual/evidence/site-builder-providers/README.md)
+  — Connect step: 2 provider cards, 2 session modes, token field is a password
+  input inert offline; mocked proxy: "needs a token" → "Grok connected"; Build:
+  existing sites listed, Open sets the target; mobile overflow 162px → 0px)
 - **CI now produces a UI pull request's visual artifacts instead of only
   checking for them (ZER0-085)** — `visual-evidence-autogen.yml` renders every
   same-repo PR in the same jammy Playwright image the snapshot gate uses, runs
@@ -172,6 +194,71 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   shown as an error card with its source kept).
 
 ### Fixed
+
+- **Generated posts and notes were invisible on GitHub Pages** — every dated
+  document the wizard wrote was stamped `T09:00:00.000Z` on the day it was
+  generated. Jekyll refuses to publish future-dated documents unless
+  `future: true`, and GitHub Pages builds with the default, so a site generated
+  before 09:00 UTC went live with its posts and notes missing: linked from the
+  collection index and listed in the sitemap, but 404 when clicked. Generated
+  content is now stamped with the actual moment it was written, and a
+  regression test fails if any generated document carries a future date.
+  Found by publishing two example sites and clicking the links.
+- **Every page of every generated site 404'd on `user-overrides.js`** — the
+  Site Builder writes `user_overrides: true` so the theme loads the palette and
+  font overrides it generates, but that same flag also makes the theme load
+  `assets/js/user-overrides.js`, which the wizard never created. Generated
+  sites now ship a commented stub, so the request resolves and site owners have
+  an obvious place to put their own JavaScript. Found while publishing example
+  sites built by the wizard.
+- **Every generated landing page shipped an invisible button** —
+  `components/cta-button.html` mapped `variant: outline` to `btn-outline-light`,
+  which is white text on a white border, and the Site Builder's own default
+  call to action uses `outline` on a light hero. `outline` is now an outlined
+  *primary* button; `outline-light` is the explicit variant for a dark surface,
+  and the generated landing engine picks between them from `hero.variant`.
+  The theme's own homepage hero is `bg-primary text-white`, so its two
+  outlined buttons moved to `outline-light` and render exactly as before —
+  a consumer who copied `_data/landing.yml` into a site with a dark hero
+  should make the same one-word change.
+- **A planned `landing.hero.image` was accepted and then thrown away** — the
+  site plan's schema has offered `landing.hero.image` since the Site Builder
+  shipped, but the landing engine it generates never rendered it, so an agent
+  (or a human) could set a hero image, see it validated, watch it land in
+  `_data/landing.yml`, and get a landing page with no picture. `index.md` now
+  renders it inside the hero, decorative (empty `alt`) so a screen reader does
+  not hear the headline twice. Found by building a site end to end through the
+  new Grok path, where the "Hero image with …" shortcut pointed straight at the
+  dead field.
+- **A partial hero patch silently wiped the rest of the hero** —
+  `set_site_plan` replaced `landing.hero` wholesale, so the natural agent move
+  of "write the copy now, add the artwork two turns later"
+  (`{landing: {hero: {image}}}`) discarded the headline, subheadline and every
+  call to action, and the landing page quietly reverted to the site title and
+  the default buttons. The hero now merges field by field; `sections`,
+  `navigation.items` and `pages` still replace, because a shorter list has to
+  mean a shorter list. The tool description says so, and the regression test
+  pins both halves.
+
+- **A new post appeared at its own URL but on no index** — the generated
+  `_config_dev.yml` turned on Jekyll's experimental incremental regeneration,
+  which rebuilds only documents whose own source changed. Adding a post left
+  the collection index, the home page's latest-posts list and the feed showing
+  the old set, with the post reachable only by typing its URL. New sites are
+  now generated with `incremental: false`; a full rebuild of a fresh site takes
+  about a second and is always right.
+
+- **The 15-second status poll handed the composer back mid-turn** — the Site
+  Builder's proxy poll rebuilt the panel's enabled state from the connection
+  alone, so during a long action (a Docker build, an image render) the input
+  and Send button re-enabled themselves and the Stop button vanished, while
+  tools were still running. A second message could then interleave with the
+  first. The poll now respects the busy state.
+- **A newly added post never appeared on the running site** — Jekyll's
+  `--watch` only tracks collection documents that existed when `serve` started,
+  so a page or post the assistant added to a running project stayed invisible
+  with no explanation. `write_project_file` now says so in its result and
+  offers a restart, and `run_compose` gained a `restart` action.
 
 - **Switching colour mode destroyed every Mermaid diagram** — the old include's
   `MutationObserver` re-render emptied each `.mermaid` div and refilled it with

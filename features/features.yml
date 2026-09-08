@@ -1,7 +1,7 @@
 # zer0-mistakes Theme Features Registry
 # Comprehensive feature tracking for the zer0-mistakes Jekyll theme
 # Version: 1.29.0
-# Last Updated: 2026-09-05
+# Last Updated: 2026-09-07
 
 features:
   # ============================================================================
@@ -1756,14 +1756,14 @@ features:
       includes:
         - "_includes/content/backlinks.html"
   - id: ZER0-060
-    title: "AI Chat Assistant (Claude + GitHub)"
-    description: "Claude-powered floating chat grounded in the current page: streaming replies, GitHub issue/PR actions (after confirmation), and a dev-only mode that edits the page source file live"
+    title: "AI Chat Assistant (Claude or Grok + GitHub)"
+    description: "Floating chat grounded in the current page, answered by Claude or Grok through the proxy: streaming replies, GitHub issue/PR actions (after confirmation), and a dev-only mode that edits the page source file live"
     implemented: true
-    version: "1.18.0"
+    version: "1.30.0"
     link: "/docs/features/ai-chat-assistant/"
     docs: "/docs/features/ai-chat-assistant/"
-    tags: [ai, chatbot, claude, github, proxy, accessibility]
-    date: 2026-06-13
+    tags: [ai, chatbot, claude, grok, github, proxy, accessibility]
+    date: 2026-09-07
     provenance:
       introduced_in: "1.18.0"
       pr: 33
@@ -1774,7 +1774,7 @@ features:
     references:
       includes: ["_includes/components/ai-chat.html"]
       layouts: ["_layouts/root.html"]
-      scripts: ["assets/js/ai-chat.js", "templates/deploy/chat-proxy/worker.js", "templates/deploy/chat-proxy/dev-proxy.mjs", "templates/deploy/chat-proxy/page-store.mjs"]
+      scripts: ["assets/js/ai-chat.js", "templates/deploy/chat-proxy/worker.js", "templates/deploy/chat-proxy/providers.js", "templates/deploy/chat-proxy/dev-proxy.mjs", "templates/deploy/chat-proxy/page-store.mjs"]
       config: "_config.yml"
       instructions: ".github/instructions/ai-chat.instructions.md"
 
@@ -2458,8 +2458,8 @@ features:
     version: "1.30.0"
     link: "/setup/"
     docs: "/docs/features/site-builder/"
-    tags: [ai, claude, setup, onboarding, docker, proxy]
-    date: 2026-09-05
+    tags: [ai, claude, grok, setup, onboarding, docker, proxy]
+    date: 2026-09-07
     provenance:
       introduced_in: "1.30.0"
       pr: null
@@ -2493,3 +2493,49 @@ features:
       - "Safety — proxy-only (no credential in the page), escape-first rendering, confirmation cards for every mutation, scaffold confined to a new folder beside the theme"
       - "Validation — test/visual/site-builder-walkthrough.mjs samples a random brief per site type (site-builder-scenarios.mjs), drives the wizard on video, builds the site with Docker and asserts routes/title/skin; replayable by seed"
       - "Site plan — plan_schema in _data/site_builder.yml (JSON-Schema subset, validated in the browser) describes landing templates/sections, navigation style + sidebar, palette/font/radius overrides and example pages; set_site_plan applies it behind a confirmation card and the generators emit index.md + _data/landing.yml, navigation data, assets/css/user-overrides.css + _includes/custom/head.html and one file per planned page"
+      - "Providers, bring-your-own token, open sessions, project editing and image generation — see ZER0-087"
+
+  - id: ZER0-087
+    title: "Bring-Your-Own AI Provider (Claude or Grok) and Open Site Builder Sessions"
+    description: "The Site Builder and chat proxy answer with Claude (Anthropic) or Grok (xAI): users paste their own token on the Connect step, pick a model and an image renderer, and run a guided or open session that can also modify an existing site file by file and render images with Grok Imagine"
+    implemented: true
+    version: "1.30.0"
+    link: "/setup/"
+    docs: "/docs/features/site-builder/"
+    tags: [ai, claude, grok, xai, setup, onboarding, proxy, images]
+    date: 2026-09-07
+    provenance:
+      introduced_in: "1.30.0"
+      pr: null
+      commit: "b43a2bf6"
+      issue: null
+    tests:
+      - "test/test_providers.mjs"
+      - "test/test_wizard_store.mjs"
+      - "test/visual/features/setup-wizard.spec.js"
+    references:
+      includes:
+        - "_includes/setup/wizard.html"
+        - "_includes/setup/claude-session.html"
+      scripts:
+        - "assets/js/site-builder.js"
+        - "assets/js/setup-wizard.js"
+        - "templates/deploy/chat-proxy/providers.js"
+        - "templates/deploy/chat-proxy/credential-store.mjs"
+        - "templates/deploy/chat-proxy/worker.js"
+        - "templates/deploy/chat-proxy/dev-proxy.mjs"
+        - "templates/deploy/chat-proxy/wizard-store.mjs"
+        - "test/visual/site-builder-providers-evidence.mjs"
+      data: "_data/site_builder.yml"
+      config: "_config.yml"
+      instructions: ".github/instructions/ai-chat.instructions.md"
+      pages:
+        - "pages/_docs/features/site-builder.md"
+        - "pages/_quickstart/site-builder.md"
+    components:
+      - "Provider layer (providers.js, Worker + Node) — Anthropic Messages dialect translated to and from xAI's OpenAI-compatible chat API, streaming tool calls included, so ai-chat.js, site-builder.js and the feedback triage are unchanged; CHAT_PROVIDER / CHAT_MODEL / XAI_CHAT_MODEL pinned server-side, client models accepted only from the selected provider's family"
+      - "Connect step — Claude and Grok cards with masked key state, a password token field posted once to the localhost proxy (memory only, probed upstream, optional .env save with mode 600, Forget), model catalog, image renderer (Grok Imagine / OpenAI Images) and guided vs open session; the dev proxy starts without a credential"
+      - "Open session — chat-driven, any order, up to 24 tool rounds per turn with a Stop button; interrupted tool calls get synthetic results so the history stays valid"
+      - "Project session — list/open an existing site under WIZARD_TARGET_ROOT, tree/read, write/edit (unique snippet)/delete text files behind confirmation cards, git status/diff/log/init, jekyll build inside the container"
+      - "Image generation — generate_image renders with grok-imagine-image-2.0 (or gpt-image-2) into assets/ (PNG/JPEG/WebP sniffed, 8 MB cap) with a thumbnail card; generated sites carry ai_chat.provider, preview_images and the matching .env.example keys"
+      - "Validation — test/test_providers.mjs (mock xAI + Anthropic upstreams), test/test_wizard_store.mjs (project + asset rules), setup-wizard.spec.js (mocked proxy: connect as Grok, token never stored, open mode, existing sites), evidence in test/visual/evidence/site-builder-providers/"

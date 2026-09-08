@@ -8,7 +8,11 @@
   Parameters
     include.label    (string) — visible button text (required)
     include.url      (string) — destination URL (required)
-    include.variant  (string) — `primary` | `secondary` | `outline` | `light` (default: `primary`)
+    include.variant  (string) — `primary` | `secondary` | `outline` | `outline-light`
+                                | `light` (default: `primary`). `outline` is an
+                                outlined PRIMARY button, readable on the normal
+                                page background; use `outline-light` only on a
+                                dark/inverse surface, where white-on-dark works.
     include.size     (string) — `sm` | `md` (default) | `lg`
     include.icon     (string) — Bootstrap Icon class (optional)
     include.external (bool)   — opens in new tab with rel=noopener (default: false)
@@ -24,7 +28,8 @@
 {%- case variant -%}
   {%- when "primary"   -%}{%- assign btn_class = "btn-primary" -%}
   {%- when "secondary" -%}{%- assign btn_class = "btn-secondary" -%}
-  {%- when "outline"   -%}{%- assign btn_class = "btn-outline-light" -%}
+  {%- when "outline"   -%}{%- assign btn_class = "btn-outline-primary" -%}
+  {%- when "outline-light" -%}{%- assign btn_class = "btn-outline-light" -%}
   {%- when "light"     -%}{%- assign btn_class = "btn-light" -%}
   {%- else             -%}{%- assign btn_class = "btn-primary" -%}
 {%- endcase -%}

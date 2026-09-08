@@ -1,12 +1,15 @@
 # AI Chat Proxy (Cloudflare Worker)
 
-Server-side companion for the theme's AI chat assistant ([`_includes/components/ai-chat.html`](../../../_includes/components/ai-chat.html) + [`assets/js/ai-chat.js`](../../../assets/js/ai-chat.js)). GitHub Pages is static-only, so the widget delegates everything that needs a secret to this proxy. The site stays on GitHub Pages; only `/api/*` is handled here.
+Server-side companion for the theme's AI chat assistant ([`_includes/components/ai-chat.html`](../../../_includes/components/ai-chat.html) + [`assets/js/ai-chat.js`](../../../assets/js/ai-chat.js)) and the Site Builder session. GitHub Pages is static-only, so the widget delegates everything that needs a secret to this proxy. The site stays on GitHub Pages; only `/api/*` is handled here.
+
+The proxy answers with **Claude (Anthropic)** or **Grok (xAI)** — see [Providers](#providers--claude-or-grok). Every client speaks the Anthropic Messages dialect; for Grok the proxy translates the request to xAI's OpenAI-compatible API and converts the reply stream back, so switching providers is a server-side decision ([`providers.js`](providers.js)).
 
 ## What it serves
 
 | Route | Purpose |
 | --- | --- |
-| `POST /api/chat` | Forwards the widget's request to the Claude Messages API (`https://api.anthropic.com/v1/messages`) and streams the SSE response back unchanged. |
+| `POST /api/chat` | Forwards the widget's request to the selected provider — the Claude Messages API (`https://api.anthropic.com/v1/messages`, SSE passed through unchanged) or xAI's `https://api.x.ai/v1/chat/completions` (translated to and from the Anthropic dialect) — and streams Anthropic-shaped SSE back. |
+| `POST /api/feedback` | Triage a page-feedback capture into a JSON issue draft (either provider). |
 | `POST /api/github/issue` | Creates a GitHub issue (`{title, body, labels}` → `{url, number}`). |
 | `POST /api/github/pull-request` | Creates a branch from `BASE_BRANCH`, commits one updated file, opens a pull request. |
 
@@ -38,22 +41,48 @@ A static Jekyll site can't proxy API calls, so for local dev run [`dev-proxy.mjs
 
 `_config_dev.yml` already points the widget at `http://localhost:8787/api/chat`, so the chat works at `http://localhost:4000` with no Cloudflare or Worker deployment. The dev proxy uses the long-lived token directly (no KV/refresh).
 
+**No token yet? Start the proxy anyway.** It comes up in an "awaiting credential" state and the Site Builder's Connect step (`/setup/`) can hand it a Claude token or an xAI key for the run — see [Bring your own key](#bring-your-own-key-dev-proxy-only). Prefer Grok? Put `XAI_API_KEY=xai-…` in `.env` instead (or as well: `CHAT_PROVIDER` picks).
+
+### Bring your own key (dev proxy only)
+
+The Connect step posts a token **once** to `POST /api/wizard/credentials` on the localhost proxy. [`credential-store.mjs`](credential-store.mjs) keeps it in the process's memory, replaces that provider's environment credentials for the rest of the run (so a fresh key is never shadowed by a stale `CLAUDE_CODE_OAUTH_TOKEN`), proves it with one cheap upstream call, and reports it back **masked** (`••••c3f9`). Tick "save it to `.env`" and the proxy upserts the line itself (file mode 600). `DELETE /api/wizard/credentials?provider=` forgets it. The page never stores a token, and the client refuses to send one anywhere but a `localhost` endpoint. The Worker has no such route — its secrets come from wrangler.
+
 ### Site Builder routes (dev proxy only)
 
 The same dev proxy powers the guided **Site Builder** at `/setup/` ([`_includes/setup/wizard.html`](../../../_includes/setup/wizard.html) + [`assets/js/site-builder.js`](../../../assets/js/site-builder.js)). These routes touch the local machine, so they live only in `dev-proxy.mjs` and are bounded by [`wizard-store.mjs`](wizard-store.mjs):
 
 | Route | Purpose | Bound by |
 | --- | --- | --- |
-| `GET /api/wizard/status` | Auth mode, model, allowed check ids, scaffold root, compose actions | — |
+| `GET /api/wizard/status` | Active provider (masked), provider + image-renderer catalogs, model pins, check ids, scaffold root, compose actions, project commands, existing sites | — |
+| `POST /api/wizard/credentials` `{provider, token, persist?, test?}` / `DELETE …?provider=` | Session credential for Claude, Grok or OpenAI (images); optionally written to `.env` | shape-checked, probed upstream, memory only, masked in every response |
 | `POST /api/wizard/check` `{id}` | One allow-listed read-only command (`docker`, `compose`, `docker-daemon`, `git`, `git-config`, `gh`, `gh-auth`, `code`, `node`, `ruby`, `bundle`, `claude`) | fixed command table; emails redacted |
 | `GET /api/wizard/file?path=` / `GET /api/wizard/ls?path=` | Read theme source / list a theme directory | inside the checkout only; `.env*`, keys, `.git`, `node_modules`, `vendor`, `_site` denied; text extensions only |
 | `POST /api/wizard/target` `{target}` | Resolve the project folder and say whether it exists / is empty | strict sub-dir of `WIZARD_TARGET_ROOT`, never inside the theme |
 | `POST /api/wizard/scaffold` `{target, files[], overwrite?}` | Write the generated site | same root rule; relative paths; allow-listed names; ≤ 60 files, ≤ 200 KB each; no overwrite unless asked |
-| `POST /api/wizard/compose` `{target, action}` | `docker compose up -d --build` / `ps` / `logs` / `down` / `config` in the written project, output streamed as text | folder must hold `docker-compose.yml` |
+| `POST /api/wizard/compose` `{target, action}` | `docker compose up -d --build` / `ps` / `logs` / `down` / `restart` / `config` / `build` (`jekyll build` inside the running container) in the written project, output streamed as text | folder must hold `docker-compose.yml` |
+| `GET /api/wizard/projects` | Sites under the target root (folders with `_config.yml` / `docker-compose.yml`) | never the theme checkout |
+| `GET /api/wizard/project/{ls,file,tree}?target=&path=` | Read an existing site | inside that project; same denylist and text-only rules as theme reads |
+| `POST /api/wizard/project/{write,edit,delete}` | Change ONE text file (`edit` = exact snippet, unique unless `all`) | allow-listed names, size caps, no overwrite unless asked, files only |
+| `POST /api/wizard/project/command` `{target, id}` | `git-status`, `git-diff`, `git-log`, `git-init` | fixed table; emails redacted |
+| `POST /api/wizard/image` `{target, path, prompt, provider?, aspect_ratio?, quality?}` | Render with Grok Imagine (`XAI_API_KEY`) or OpenAI Images (`OPENAI_API_KEY`) into the project | `assets/**.{png,jpg,webp}` only, bytes sniffed, ≤ 8 MB |
+| `GET /api/wizard/asset?target=&path=` | Serve a project image for the preview card | same path rules |
 
-Environment: `WIZARD_TARGET_ROOT` (default: the theme's parent directory) and `WIZARD_DISABLE_COMPOSE=1` to switch the compose actions off. `_config_dev.yml` points `site_builder.endpoint` at `http://localhost:8787/api/wizard`.
+Environment: `WIZARD_TARGET_ROOT` (default: the theme's parent directory), `WIZARD_DISABLE_COMPOSE=1` to switch the compose actions off, `CHAT_DEV_ENV_FILE` (where "save to `.env`" writes; default `<repo>/.env`), and `MAX_TOKENS_CAP` (dev default 8192 — open sessions write whole files). `_config_dev.yml` points `site_builder.endpoint` at `http://localhost:8787/api/wizard`.
+
+## Providers — Claude or Grok
+
+| Provider | Secret | Model pin (default) | Upstream |
+| --- | --- | --- | --- |
+| `anthropic` (Claude) | one of the three Anthropic modes below | `CHAT_MODEL` (`claude-opus-4-8`) | `https://api.anthropic.com/v1/messages` (`ANTHROPIC_BASE_URL` overrides) |
+| `xai` (Grok) | `XAI_API_KEY` (`wrangler secret put XAI_API_KEY`) | `XAI_CHAT_MODEL` (`grok-4.6`) | `https://api.x.ai/v1/chat/completions` (`XAI_BASE_URL` overrides) |
+
+`CHAT_PROVIDER` pins the provider (`anthropic` | `xai`). `auto` (default) honours the client's `provider` field only when that provider has a secret, else takes the first configured one — Claude, then Grok — so a page can never pick a provider you did not fund. A client model is accepted only from the pinned provider's family (`claude-*` / `grok-*`) and only when no server pin is set. Image rendering (dev proxy) uses `IMAGE_PROVIDER` / `XAI_IMAGE_MODEL` (`grok-imagine-image-2.0`) / `OPENAI_IMAGE_MODEL` (`gpt-image-2`).
+
+The translation lives in [`providers.js`](providers.js) and is pinned by `test/test_providers.mjs` against a local mock of both upstreams: Anthropic `system`/`messages`/`tools` ⇄ OpenAI `messages` (`tool_use` ⇄ `tool_calls`, `tool_result` ⇄ `role: tool`, `input_schema` ⇄ `parameters`), and xAI's `chat.completion.chunk` stream → Anthropic `message_start` / `content_block_*` / `message_delta` events. Grok tool calls arrive whole in one chunk, which becomes one `input_json_delta`.
 
 ## Anthropic auth — three modes (auto-detected by precedence)
+
+(Independent of the xAI key: `XAI_API_KEY` configures the `xai` provider; the modes below configure `anthropic`.)
 
 | Precedence | Trigger secret | Header sent | Refresh | Best for |
 | --- | --- | --- | --- | --- |
@@ -208,8 +237,10 @@ A fine-grained personal access token scoped to the site repository with **Issues
 - OAuth mode = your personal account. Cloudflare Access is mandatory, not optional.
 - `ALLOWED_ORIGINS` is a secondary gate (Origin headers are spoofable by
   non-browser clients) — Cloudflare Access is the real one.
-- `CHAT_MODEL` and `MAX_TOKENS_CAP` are enforced server-side, so a tampered
-  client cannot pick a more expensive model or unbounded output.
+- `CHAT_PROVIDER`, `CHAT_MODEL` / `XAI_CHAT_MODEL` and `MAX_TOKENS_CAP` are
+enforced server-side, so a tampered client cannot pick another provider, a more expensive model or unbounded output.
+- Session credentials exist only in the dev proxy, only in memory, only from a
+  browser origin on the local allowlist, and are never echoed back.
 - The KV namespace stores live tokens — keep the worker and its KV private to
   your account.
 

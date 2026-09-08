@@ -24,6 +24,7 @@ Navigate to: **Repository Settings → Secrets and variables → Actions → Sec
 | `DOCKER_TOKEN` | Docker Hub access token | [Create at Docker Hub](https://hub.docker.com/settings/security) → New Access Token |
 | `RUBYGEMS_API_KEY` | RubyGems API key (for releases) | [Get from RubyGems](https://rubygems.org/profile/api_keys) |
 | `ANTHROPIC_API_KEY` | Shared Claude key — powers the AI chat proxy (`deploy-chat-proxy.yml`) and the content reviewer's Claude agent tier (`ai-content-review.yml`). Optional: both features are gated on its presence and skip gracefully without it. Use a workspace-scoped key with a spend cap (it feeds a public chat proxy and CI agent runs). | [Get from console.anthropic.com](https://console.anthropic.com/) → API keys |
+| `XAI_API_KEY` | Optional — lets the chat proxy answer with Grok instead of (or as well as) Claude. Not read by any workflow yet: set it on the Worker with `wrangler secret put XAI_API_KEY` and pin `CHAT_PROVIDER = "xai"` in `wrangler.toml` (see `templates/deploy/chat-proxy/README.md`). Locally it goes in `.env` or is pasted on the Site Builder's Connect step. | [Get from console.x.ai](https://console.x.ai/) → API keys |
 | `CLOUDFLARE_API_TOKEN` | Deploy the chat proxy Worker (`deploy-chat-proxy.yml`). Optional — only needed if you deploy the AI chat proxy. | [Create at Cloudflare](https://dash.cloudflare.com/profile/api-tokens) → "Edit Cloudflare Workers" |
 | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account id for the chat-proxy deploy. Optional. | Cloudflare dashboard → Workers & Pages (right sidebar) |
 

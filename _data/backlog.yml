@@ -63,7 +63,7 @@
 meta:
   title: "zer0-mistakes Backlog"
   updated: 2026-09-05
-  next_id: 51
+  next_id: 52
 
 tasks:
   # --- Housekeeping (seeded so the loop has work on day one) ------------------
@@ -1404,3 +1404,20 @@ tasks:
     links: { issue: null, pr: null, roadmap: null }
     created: 2026-09-05
     updated: 2026-09-05
+
+  - id: T-051
+    title: "Preview-image engine: the xAI default model grok-2-image is retired — default to grok-imagine-image-2.0"
+    status: open
+    priority: P2
+    area: infra
+    risk: low
+    effort: S
+    source: issue
+    summary: "Discovered while adding the xAI provider to the chat proxy and Site Builder (ZER0-087): scripts/lib/preview_generator.py's XAIProvider.default_model() still returns 'grok-2-image', which xAI has retired in favour of the Grok Imagine family (grok-imagine-image-2.0, per docs.x.ai release notes). A site with preview_images.provider: xai and no explicit model gets an upstream error. The Site Builder now writes preview_images.model explicitly for generated sites, so only the engine default (and the .env.example comment for IMAGE_MODEL) is stale. scripts/lib/ is CODEOWNERS-owned, so this is a human-review change."
+    acceptance:
+      - "XAIProvider.default_model() returns grok-imagine-image-2.0 and the provider table comment in the engine header matches."
+      - "The image request keeps working with the current xAI response shape (data[0].url or b64_json)."
+      - "scripts/lib/README.md / .env.example mention the new default."
+    links: { issue: null, pr: null, roadmap: null }
+    created: 2026-09-07
+    updated: 2026-09-07

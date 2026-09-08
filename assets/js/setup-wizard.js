@@ -1,4 +1,4 @@
-// Feature: ZER0-067, ZER0-086
+// Feature: ZER0-067, ZER0-086, ZER0-087
 /**
  * ===================================================================
  * Site Builder — form, generators, drafts (setup-wizard.js)
@@ -234,6 +234,17 @@
       .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 64);
   }
 
+  /**
+   * A timestamp for generated content. It must never be in the FUTURE: Jekyll
+   * refuses to publish future-dated documents unless `future: true`, and
+   * GitHub Pages builds with the default. Stamping a fixed "09:00Z" meant
+   * every post and note a site was generated with stayed invisible on Pages
+   * until 09:00 UTC — or a whole day, west of the meridian.
+   */
+  function nowISO() {
+    return new Date().toISOString().replace(/\.\d{3}Z$/, '.000Z');
+  }
+
   function todayISO() {
     try { return new Date().toISOString().slice(0, 10); } catch (e) { return '2026-01-01'; }
   }
@@ -344,7 +355,13 @@
     var fieldPatch = {};
     if (patch.landing) {
       if (patch.landing.template) fieldPatch['plan.landing.template'] = patch.landing.template;
-      if (patch.landing.hero !== undefined) planExtra.landing.hero = patch.landing.hero;
+      // A hero patch MERGES field by field. An agent that comes back later to
+      // add an image must not silently drop the headline, subheadline and CTAs
+      // it set two turns earlier. (sections and pages REPLACE — they are lists,
+      // not a bag of settings, so a shorter list has to mean a shorter list.)
+      if (patch.landing.hero !== undefined) {
+        planExtra.landing.hero = Object.assign({}, planExtra.landing.hero || {}, patch.landing.hero);
+      }
       if (patch.landing.sections !== undefined) planExtra.landing.sections = patch.landing.sections;
     }
     if (patch.navigation) {
@@ -441,6 +458,7 @@
     lines.push('Voice: tone=' + (f.tone || 'friendly') + ' audience=' + (f.audience || 'developers') + ' | welcome title: ' + (f.welcome_title || '(empty)') + ' | welcome body: ' + (f.welcome_body ? f.welcome_body.length + ' chars' : 'empty') + ' | about body: ' + (f.about_body ? f.about_body.length + ' chars' : 'empty'));
     var ints = catalog('integrations').map(function (i) { return i.id + '=' + (f['integration.' + i.id] ? 'on' : 'off'); });
     lines.push('Integrations: ' + ints.join(', ') + ' | GA: ' + (f.google_analytics || 'none') + ' | giscus ids: ' + (f['giscus.repo_id'] ? 'set' : 'unset'));
+    lines.push('AI in the generated site: chat provider=' + (f.ai_provider || 'anthropic') + ' | preview-image renderer=' + (f.image_provider || 'none'));
     var checkLines = Object.keys(s.checks).map(function (id) {
       var c = s.checks[id];
       return id + ':' + (c.manual ? 'done(manual)' : c.ok === true ? 'ok' + (c.version ? ' v' + c.version : '') : c.ok === false ? 'FAIL' : '?');
@@ -926,9 +944,19 @@
     L.push('  default_labels: ["page-feedback"]');
     L.push('ai_chat:');
     L.push('  enabled: ' + (c.on('ai_chat') ? 'true' : 'false'));
+    L.push('  provider: ' + (f.ai_provider || 'anthropic') + '       # anthropic (Claude) | xai (Grok) — the proxy needs the matching key');
     L.push('  auth_mode: proxy');
     L.push('  proxy_ready: false        # set true once templates/deploy/chat-proxy is deployed');
     L.push('  endpoint: "/api/chat"');
+    if (f.image_provider) {
+      var ip = catalogItem('image_providers', f.image_provider) || {};
+      L.push('# Preview images for posts (theme generator; the key lives in .env).');
+      L.push('preview_images:');
+      L.push('  enabled: true');
+      L.push('  provider: ' + f.image_provider + '           # ' + (ip.label || f.image_provider) + ' — ' + (ip.env || 'API key') + ' in .env');
+      L.push('  model: ' + y(ip.model || ''));
+      L.push('  output_dir: assets/images/previews');
+    }
     L.push('');
     if (f.twitter_username || f.linkedin_username) {
       L.push('# ── Social ─────────────────────────────────────────────────────────');
@@ -963,7 +991,12 @@
     L.push('host: "0.0.0.0"');
     L.push('port: ' + c.port);
     L.push('livereload: true');
-    L.push('incremental: true');
+    // Incremental regeneration is still experimental in Jekyll and only
+    // rebuilds documents whose own source changed — so adding a post leaves
+    // every LISTING page (the collection index, the home page's latest-posts
+    // section, the feed) stale, showing a site that no longer exists. These
+    // sites are small: a full rebuild is a second or two, and always right.
+    L.push('incremental: false');
     L.push('show_drafts: true');
     L.push('future: true');
     L.push('');
@@ -1186,9 +1219,18 @@
       '    {% if hero.subheadline %}<p class="lead mb-4 mx-auto" style="max-width: 44rem;">{{ hero.subheadline }}</p>{% endif %}',
       '    {% if hero.ctas and hero.ctas.size > 0 %}',
       '    <div class="d-flex flex-wrap gap-2 justify-content-{{ hero.align | default: "center" }}">',
-      '      {% for cta in hero.ctas %}{% include components/cta-button.html label=cta.label url=cta.url variant=cta.variant icon=cta.icon size="lg" %}{% endfor %}',
+      '      {%- for cta in hero.ctas -%}',
+      '        {%- assign cta_variant = cta.variant | default: "primary" -%}',
+      '        {%- comment -%} An outlined button is white on an inverse hero and primary-coloured everywhere else. {%- endcomment -%}',
+      '        {%- if cta_variant == "outline" and hero.variant == "inverse" %}{% assign cta_variant = "outline-light" %}{% endif -%}',
+      '        {% include components/cta-button.html label=cta.label url=cta.url variant=cta_variant icon=cta.icon size="lg" %}',
+      '      {%- endfor -%}',
       '    </div>',
       '    {% endif %}',
+      // A hero illustration sits beside the headline it illustrates, so it is
+      // decorative: empty alt keeps a screen reader from hearing the headline
+      // twice. Swap in a real description if the picture carries information.
+      '    {% if hero.image %}<img src="{{ hero.image | relative_url }}" alt="" class="zer0-landing-hero-image img-fluid rounded-3 shadow-sm mt-4" loading="lazy" decoding="async">{% endif %}',
       '  </div>',
       '</section>',
       '',
@@ -1281,6 +1323,32 @@
     return L.join('\n') + '\n';
   }
 
+  /**
+   * `user_overrides: true` makes the theme load BOTH assets/css/user-overrides.css
+   * and assets/js/user-overrides.js (see _includes/components/js-cdn.html). We
+   * always generate the CSS, so without this stub every page of every generated
+   * site fired a 404 for the JS half.
+   */
+  function genUserOverridesJs(c) {
+    return ['// assets/js/user-overrides.js — loaded last on every page of ' + c.title + '.',
+      '//',
+      '// The theme loads this file because `user_overrides: true` is set in',
+      '// _config.yml (the same flag loads assets/css/user-overrides.css, which',
+      '// carries your palette, fonts and corner radius).',
+      '//',
+      '// Put site-specific behaviour here. It runs after the theme\'s own scripts,',
+      '// so you can safely read anything they set up.',
+      '',
+      '(function () {',
+      "  'use strict';",
+      '  // Example: log which skin is active, once, in development.',
+      '  // if (location.hostname === "localhost") {',
+      '  //   console.info("skin:", document.documentElement.dataset.themeSkin);',
+      '  // }',
+      '})();',
+      ''].join('\n');
+  }
+
   function genCustomHead(c) {
     var fp = catalogItem('font_pairings', c.plan.theme.fonts);
     if (!fp || !fp.google) return null;
@@ -1335,8 +1403,11 @@
   function genPlanPage(c, p) {
     var fm = ['---', 'title: ' + y(p.title)];
     if (p.description) fm.push('description: ' + y(p.description));
-    if (p.collection === 'posts' || p.collection === 'notes') fm.push('date: ' + (p.date || c.date) + 'T09:00:00.000Z');
-    fm.push('lastmod: ' + c.date + 'T09:00:00.000Z');
+    // A plan may pin a date (a back-dated post); anything else is stamped now.
+    fm.push('lastmod: ' + nowISO());
+    if (p.collection === 'posts' || p.collection === 'notes') {
+      fm.splice(fm.length - 1, 0, 'date: ' + (p.date && p.date !== c.date ? p.date + 'T09:00:00.000Z' : nowISO()));
+    }
     if (p.collection === 'recipes') fm.push('layout: recipe', 'cookbook: ' + c.slug);
     if (p.collection === 'posts') fm.push('author: ' + y(c.f.founder || 'default'));
     if (p.categories && p.categories.length) fm.push('categories: [' + p.categories.map(function (x) { return y(x); }).join(', ') + ']');
@@ -1366,7 +1437,7 @@
       '\n\nPosts live in `pages/_posts/` and are named `YYYY-MM-DD-title.md`. Delete this one whenever you like.'
     );
     return ['---', 'title: ' + y(title), 'description: ' + y(c.f.description || ('The first post on ' + c.title)),
-      'date: ' + c.date + 'T09:00:00.000Z', 'lastmod: ' + c.date + 'T09:00:00.000Z', 'categories: [general]', 'tags: [welcome]',
+      'date: ' + nowISO(), 'lastmod: ' + nowISO(), 'categories: [general]', 'tags: [welcome]',
       'author: ' + y(c.f.founder || 'default'), 'preview: /assets/images/previews/welcome.png', '---', '', body, ''].join('\n');
   }
 
@@ -1408,7 +1479,7 @@
 
   function genSampleNote(c) {
     return ['---', 'title: "Welcome Note"', 'description: ' + y('The first note in the ' + c.title + ' garden.'),
-      'date: ' + c.date + 'T09:00:00.000Z', 'lastmod: ' + c.date + 'T09:00:00.000Z', 'tags: [meta, welcome]', '---', '',
+      'date: ' + nowISO(), 'lastmod: ' + nowISO(), 'tags: [meta, welcome]', '---', '',
       'Notes are short, evergreen and interlinked. Link to another note with a wiki-link, like [[Getting Started]], and the theme resolves it and shows backlinks on both pages.', '',
       '> [!tip] Obsidian users', '> Open `pages/_notes/` as a vault; callouts, embeds and `[[links]]` render the same on the site.', ''].join('\n');
   }
@@ -1478,16 +1549,35 @@
     L.push('  audience: ' + (f.audience || 'developers'));
     L.push('agents: [copilot, claude]');
     L.push('ai:');
-    L.push('  provider: auto');
+    L.push('  provider: ' + (f.ai_provider === 'xai' ? 'xai' : 'auto'));
+    if (f.image_provider) L.push('  image_provider: ' + f.image_provider);
     return L.join('\n') + '\n';
   }
 
   function genEnvExample(c) {
-    return ['# Copy to .env (git-ignored). Credentials live here, never in _config.yml.', '',
-      '# jekyll-github-metadata', 'PAGES_REPO_NWO=' + c.ghUser + '/' + c.repo, '',
-      '# AI chat assistant / Site Builder — Claude Code OAuth token from `claude setup-token`',
-      '# CLAUDE_CODE_OAUTH_TOKEN=sk-ant-oat01-...', '# ANTHROPIC_API_KEY=sk-ant-...', '',
-      '# PostHog (only if enabled in _config.yml)', '# POSTHOG_API_KEY=phc_...', ''].join('\n');
+    var f = c.f;
+    var L = ['# Copy to .env (git-ignored). Credentials live here, never in _config.yml.', '',
+      '# jekyll-github-metadata', 'PAGES_REPO_NWO=' + c.ghUser + '/' + c.repo, ''];
+    L.push('# AI chat assistant / Site Builder — provider: ' + (f.ai_provider || 'anthropic'));
+    if (f.ai_provider === 'xai') {
+      L.push('# xAI API key from https://console.x.ai/ (Grok chat; also Grok Imagine images)');
+      L.push('# XAI_API_KEY=xai-...');
+      L.push('# CHAT_PROVIDER=xai');
+    } else {
+      L.push('# Claude Code OAuth token from `claude setup-token`, or an Anthropic API key');
+      L.push('# CLAUDE_CODE_OAUTH_TOKEN=sk-ant-oat01-...');
+      L.push('# ANTHROPIC_API_KEY=sk-ant-...');
+    }
+    L.push('');
+    if (f.image_provider) {
+      var ip = catalogItem('image_providers', f.image_provider) || {};
+      L.push('# Preview-image renderer (' + (ip.label || f.image_provider) + ')');
+      if (!(f.ai_provider === 'xai' && f.image_provider === 'xai')) L.push('# ' + (ip.env || 'IMAGE_API_KEY') + '=...');
+      else L.push('# (uses XAI_API_KEY above)');
+      L.push('');
+    }
+    L.push('# PostHog (only if enabled in _config.yml)', '# POSTHOG_API_KEY=phc_...', '');
+    return L.join('\n');
   }
 
   function genReadme(c) {
@@ -1563,11 +1653,12 @@
     });
     (c.plan.pages || []).forEach(function (p) {
       if (!c.collections.some(function (col) { return col.id === p.collection; })) return; // planned for a collection that is off
-      add(pagePath(p), genPlanPage(c, p), { label: p.collection + '/' + p.slug + '.md', description: 'Planned example page' + (p.body ? '.' : ' (draft body — ask Claude to write it).'), required: false });
+      add(pagePath(p), genPlanPage(c, p), { label: p.collection + '/' + p.slug + '.md', description: 'Planned example page' + (p.body ? '.' : ' (draft body — ask the assistant to write it).'), required: false });
     });
     if (landingPlan(c).template !== 'minimal') add('_data/landing.yml', genLandingData(c), { label: 'landing.yml', description: 'Hero and sections the landing page renders — edit the copy here.', required: true });
     if (c.plan.navigation.sidebar === 'docs' && hasCollection(c, 'docs')) add('_data/navigation/docs.yml', genDocsNav(c), { label: 'navigation/docs.yml', description: 'Curated docs sidebar tree.', required: true });
     add('assets/css/user-overrides.css', genUserOverrides(c), { label: 'user-overrides.css', description: 'Palette, fonts and corners layered over the skin. The theme links this file on every page.', required: true });
+    add('assets/js/user-overrides.js', genUserOverridesJs(c), { label: 'user-overrides.js', description: 'Site-specific JavaScript. The theme loads it alongside the CSS whenever user_overrides is on.', required: true });
     var customHead = genCustomHead(c);
     if (customHead) add('_includes/custom/head.html', customHead, { label: 'custom/head.html', description: 'Loads the chosen web fonts through the theme\'s head hook.', required: false });
     add('assets/images/logo.svg', genLogoSvg(c), { label: 'logo.svg', description: 'Monogram logo in the skin colours; replace with your own.', required: false });
