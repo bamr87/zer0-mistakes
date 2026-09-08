@@ -1322,6 +1322,121 @@ test_background_image_include_contract() {
     fi
 }
 
+test_navbar_attribute_whitespace() {
+    log_info "Testing navbar attribute whitespace (issue #465)..."
+
+    cd "$PROJECT_ROOT"
+
+    if [[ ! -f "_includes/navigation/navbar.html" ]]; then
+        log_error "navigation/navbar.html is missing"
+        return 1
+    fi
+
+    if ! command -v ruby &>/dev/null; then
+        log_warning "ruby not available for the navbar attribute-whitespace check"
+        return 0
+    fi
+
+    # liquid is a bundled gem -- see test_theme_color_fallback_without_config
+    # for why this probes rather than assuming a load path.
+    local ruby_run=(ruby)
+    if ruby -e 'require "liquid"' >/dev/null 2>&1; then
+        :
+    elif command -v bundle &>/dev/null && bundle exec ruby -e 'require "liquid"' >/dev/null 2>&1; then
+        ruby_run=(bundle exec ruby)
+    else
+        log_warning "liquid gem not loadable; skipping the navbar attribute-whitespace check"
+        return 0
+    fi
+
+    # Renders the real include through Liquid rather than slicing it by line
+    # number, so the guard survives edits that move the anchors around. Both
+    # aria-current branches are exercised: two of the four sites used to glue
+    # aria-label to title on EVERY page, not just the current one.
+    if "${ruby_run[@]}" -e '
+      require "liquid"
+
+      module StubFilters
+        def relative_url(input); input.to_s; end
+        def slugify(input); input.to_s.downcase.gsub(/[^a-z0-9]+/, "-"); end
+      end
+      Liquid::Template.register_filter(StubFilters)
+
+      # navbar.html opens with an include for the ui.* strings. Standalone
+      # Liquid has no Jekyll include resolver, and every ui.* read in the file
+      # carries a default:, so a no-op include still renders the real markup.
+      class NoopInclude < Liquid::Tag
+        def render(_ctx); ""; end
+      end
+      Liquid::Template.register_tag("include", NoopInclude)
+
+      tpl = Liquid::Template.parse(File.read("_includes/navigation/navbar.html"))
+
+      nav = [
+        {"title" => "News", "url" => "/news/",
+         "children" => [{"title" => "The Newsroom", "url" => "/newsroom/"}]},
+        {"title" => "About", "url" => "/about/"}
+      ]
+      collections = [{"label" => "docs", "docs" => [1]}, {"label" => "pages", "docs" => [1]}]
+
+      data_site = {"default_icon" => "bi", "collections" => [],
+                   "data" => {"navigation" => {"main" => nav}}}
+      coll_site = {"default_icon" => "bi", "collections" => collections,
+                   "data" => {"navigation" => {"main" => []}}}
+
+      # A quoted attribute value immediately followed by another attribute
+      # name -- the WHATWG missing-whitespace-between-attributes parse error.
+      glued = /="[^"]*"[A-Za-z-]+=/
+
+      cases = [
+        ["data-nav, parent current", data_site, {"url" => "/news/"},     %q{href="/news/"}],
+        ["data-nav, child current",  data_site, {"url" => "/newsroom/"}, %q{href="/newsroom/"}],
+        ["data-nav, none current",   data_site, {"url" => "/elsewhere/"}, nil],
+        ["collection nav, current",  coll_site, {"url" => "/x/", "collection" => "docs"}, %q{href="/docs/"}],
+        ["collection nav, none",     coll_site, {"url" => "/x/", "collection" => "blog"}, nil]
+      ]
+
+      fail = []
+      cases.each do |name, site, page, current_href|
+        out = tpl.render!("site" => site, "page" => page)
+        anchors = out.scan(/<a\s[^>]*>/m)
+        fail << "#{name}: rendered no anchors" if anchors.empty?
+
+        anchors.each do |a|
+          fail << "#{name}: glued attributes -- #{a.gsub(/\s*\n\s*/, " ")}" if a =~ glued
+        end
+
+        # Spacing must be fixed without dropping the aria-current announcement.
+        marked = anchors.select { |a| a.include?(%q{aria-current="page"}) }
+        if current_href
+          if marked.empty?
+            fail << "#{name}: no anchor carries aria-current=page"
+          elsif marked.none? { |a| a.include?(current_href) }
+            fail << "#{name}: aria-current is not on #{current_href}"
+          end
+        elsif !marked.empty?
+          fail << "#{name}: aria-current emitted with nothing current"
+        end
+      end
+
+      if fail.empty?
+        puts "OK: navbar anchors separate every attribute in both aria-current branches"
+        exit 0
+      else
+        puts "::error::navigation/navbar.html emits attributes with no separating whitespace"
+        fail.each { |f| puts "  #{f}" }
+        exit 1
+      end
+    '
+    then
+        log_success "navbar anchors separate every attribute"
+        return 0
+    else
+        log_error "navbar attribute-whitespace check failed (see above)"
+        return 1
+    fi
+}
+
 test_sidebar_offcanvas_layout_gate() {
     log_info "Testing sidebar offcanvas layout gate (issue #373)..."
 
@@ -1477,6 +1592,7 @@ run_core_tests() {
     run_test "Plugin Unit Specs" "test_plugin_unit_specs" "unit"
     run_test "Sidebar Offcanvas Layout Gate" "test_sidebar_offcanvas_layout_gate" "unit"
     run_test "Background Image Include Contract" "test_background_image_include_contract" "unit"
+    run_test "Navbar Attribute Whitespace" "test_navbar_attribute_whitespace" "unit"
     run_test "Developer Doc Banners Are Liquid" "test_developer_doc_banners_are_liquid" "unit"
     run_test "Theme Color Fallback" "test_theme_color_fallback_without_config" "unit"
     run_test "Content Liquid Raw-Protected" "test_content_liquid_is_raw_protected" "unit"
