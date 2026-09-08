@@ -31,6 +31,11 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   fallback (`scripts/ai/api_call.rb`) ride along as optional companions. The
   exit-code contract is pinned by `scripts/ci/test_ai_runner.sh`, wired into
   `./scripts/bin/test`. The action's six existing inputs are unchanged.
+- **Consumer registry corrections.** `ai-world-view/ai-world-view.github.io`
+  is `remote_theme_floating` (both its `_config.yml` and `hub.yml` pins are
+  untagged), not `remote_theme_pinned`; `amr-bash/bash-365.com` is registered
+  as a consumer (floating `remote_theme`, unconstrained gem on Azure, path gem
+  for dev).
 
 ### Fixed
 
