@@ -195,6 +195,15 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **Generated posts and notes were invisible on GitHub Pages** — every dated
+  document the wizard wrote was stamped `T09:00:00.000Z` on the day it was
+  generated. Jekyll refuses to publish future-dated documents unless
+  `future: true`, and GitHub Pages builds with the default, so a site generated
+  before 09:00 UTC went live with its posts and notes missing: linked from the
+  collection index and listed in the sitemap, but 404 when clicked. Generated
+  content is now stamped with the actual moment it was written, and a
+  regression test fails if any generated document carries a future date.
+  Found by publishing two example sites and clicking the links.
 - **Every page of every generated site 404'd on `user-overrides.js`** — the
   Site Builder writes `user_overrides: true` so the theme loads the palette and
   font overrides it generates, but that same flag also makes the theme load

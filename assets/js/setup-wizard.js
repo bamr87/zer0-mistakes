@@ -234,6 +234,17 @@
       .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 64);
   }
 
+  /**
+   * A timestamp for generated content. It must never be in the FUTURE: Jekyll
+   * refuses to publish future-dated documents unless `future: true`, and
+   * GitHub Pages builds with the default. Stamping a fixed "09:00Z" meant
+   * every post and note a site was generated with stayed invisible on Pages
+   * until 09:00 UTC — or a whole day, west of the meridian.
+   */
+  function nowISO() {
+    return new Date().toISOString().replace(/\.\d{3}Z$/, '.000Z');
+  }
+
   function todayISO() {
     try { return new Date().toISOString().slice(0, 10); } catch (e) { return '2026-01-01'; }
   }
@@ -1392,8 +1403,11 @@
   function genPlanPage(c, p) {
     var fm = ['---', 'title: ' + y(p.title)];
     if (p.description) fm.push('description: ' + y(p.description));
-    if (p.collection === 'posts' || p.collection === 'notes') fm.push('date: ' + (p.date || c.date) + 'T09:00:00.000Z');
-    fm.push('lastmod: ' + c.date + 'T09:00:00.000Z');
+    // A plan may pin a date (a back-dated post); anything else is stamped now.
+    fm.push('lastmod: ' + nowISO());
+    if (p.collection === 'posts' || p.collection === 'notes') {
+      fm.splice(fm.length - 1, 0, 'date: ' + (p.date && p.date !== c.date ? p.date + 'T09:00:00.000Z' : nowISO()));
+    }
     if (p.collection === 'recipes') fm.push('layout: recipe', 'cookbook: ' + c.slug);
     if (p.collection === 'posts') fm.push('author: ' + y(c.f.founder || 'default'));
     if (p.categories && p.categories.length) fm.push('categories: [' + p.categories.map(function (x) { return y(x); }).join(', ') + ']');
@@ -1423,7 +1437,7 @@
       '\n\nPosts live in `pages/_posts/` and are named `YYYY-MM-DD-title.md`. Delete this one whenever you like.'
     );
     return ['---', 'title: ' + y(title), 'description: ' + y(c.f.description || ('The first post on ' + c.title)),
-      'date: ' + c.date + 'T09:00:00.000Z', 'lastmod: ' + c.date + 'T09:00:00.000Z', 'categories: [general]', 'tags: [welcome]',
+      'date: ' + nowISO(), 'lastmod: ' + nowISO(), 'categories: [general]', 'tags: [welcome]',
       'author: ' + y(c.f.founder || 'default'), 'preview: /assets/images/previews/welcome.png', '---', '', body, ''].join('\n');
   }
 
@@ -1465,7 +1479,7 @@
 
   function genSampleNote(c) {
     return ['---', 'title: "Welcome Note"', 'description: ' + y('The first note in the ' + c.title + ' garden.'),
-      'date: ' + c.date + 'T09:00:00.000Z', 'lastmod: ' + c.date + 'T09:00:00.000Z', 'tags: [meta, welcome]', '---', '',
+      'date: ' + nowISO(), 'lastmod: ' + nowISO(), 'tags: [meta, welcome]', '---', '',
       'Notes are short, evergreen and interlinked. Link to another note with a wiki-link, like [[Getting Started]], and the theme resolves it and shows backlinks on both pages.', '',
       '> [!tip] Obsidian users', '> Open `pages/_notes/` as a vault; callouts, embeds and `[[links]]` render the same on the site.', ''].join('\n');
   }

@@ -626,6 +626,19 @@ test.describe('Site Builder wizard', { tag: '@critical' }, () => {
     await expect(page.locator('#palette-berry')).toBeChecked();
     await expect(page.locator('#radius-sharp')).toBeChecked();
 
+    // Generated content must never carry a FUTURE timestamp: Jekyll withholds
+    // future-dated documents and GitHub Pages builds with the default
+    // `future: false`, so a fixed "09:00Z" stamp made every post and note
+    // invisible on a published site until 09:00 UTC.
+    const stamps = await page.evaluate(() => window.Zer0SetupWizard.getFiles()
+      .filter((f) => /^pages\/_(posts|notes)\//.test(f.path))
+      .map((f) => ({ path: f.path, date: (f.content.match(/^date:\s*(\S+)/m) || [])[1] })));
+    expect(stamps.length).toBeGreaterThan(0);
+    for (const s of stamps) {
+      expect(s.date, `${s.path} must carry a date`).toBeTruthy();
+      expect(new Date(s.date).getTime(), `${s.path} is dated in the future (${s.date})`).toBeLessThanOrEqual(Date.now() + 1000);
+    }
+
     await expect.poll(() => page.evaluate((k) => localStorage.getItem(k), DRAFT_KEY)).toContain('first-light');
     await page.reload();
     await expect(page.locator(WIZARD)).toBeVisible();
