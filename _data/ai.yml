@@ -1,9 +1,11 @@
 # =============================================================================
 # _data/ai.yml — one place the AI model is configured for zer0-mistakes agents
 # -----------------------------------------------------------------------------
-# Read by .github/actions/claude-run (the issue-autopilot's AI step). Change the
-# model here and every autopilot agent call uses it. Auth is NOT here — it comes
-# from the CLAUDE_CODE_OAUTH_TOKEN (preferred) or ANTHROPIC_API_KEY secret.
+# Read by scripts/ai/run.sh — the shared ai-runner kit behind
+# .github/actions/claude-run (the issue-autopilot's AI step). Change the model
+# here and every agent call uses it; AI_MODEL (or the action's `model` input)
+# overrides it for one run. Auth is NOT here — it comes from the
+# CLAUDE_CODE_OAUTH_TOKEN (preferred) or ANTHROPIC_API_KEY secret.
 # =============================================================================
 provider: anthropic
 model: claude-opus-4-8

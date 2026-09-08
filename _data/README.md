@@ -7,6 +7,8 @@ This directory contains YAML data files that power the Zer0-Mistakes Jekyll them
 | File | Purpose | Auto-Generated |
 |------|---------|----------------|
 | `navigation/` | Site navigation menus | No |
+| `ai.yml` | The one place the AI model is configured (read by `scripts/ai/run.sh` via `.github/actions/claude-run`) | No |
+| `ai_pricing.yml` | API list prices used to *estimate* AI spend for calls that report tokens but no cost (part of the shared `ai-runner` kit) | No |
 | `authors.yml` | Author profile information | No |
 | `content_statistics.yml` | Site content analytics | **Yes** |
 | `roadmap.yml` | Single source of truth for the project roadmap (drives the README mermaid diagram and the `/roadmap/` Jekyll page) | No |

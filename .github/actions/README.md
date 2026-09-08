@@ -8,6 +8,7 @@ Composite actions encapsulate common workflow steps into reusable components, re
 
 ```
 .github/actions/
+├── claude-run/        # Shared ai-runner kit step (Claude Code, OAuth-first)
 ├── configure-git/     # Git identity configuration
 ├── quality-checks/    # Code quality validation
 ├── setup-ruby/        # Ruby environment setup
@@ -114,6 +115,46 @@ Runs code quality checks including linting and formatting validation.
 - Project structure validation (required files/directories)
 
 **Used by:** `ci.yml`
+
+---
+
+### 5. `claude-run`
+
+The universal AI step: runs one Claude Code invocation as a named agent (`.claude/agents/<name>.md`). This is the fleet's shared **`ai-runner` kit** — `action.yml` and `scripts/ai/run.sh` are byte-identical copies of lifehacker.dev's (the kit source of truth); change them there and copy forward, never fork them here. The action installs the CLI and hands off to `scripts/ai/run.sh`, which resolves the model from `_data/ai.yml`, runs `claude -p … --output-format json`, and falls back to the Claude API (`scripts/ai/api_call.rb`) when the CLI is missing or fails.
+
+**Usage:**
+```yaml
+- uses: ./.github/actions/claude-run
+  env:
+    CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+    ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}   # optional fallback
+  with:
+    agent: issue-triager
+    prompt: "..."
+    tools: "Read,Grep,Glob,Bash(gh:*)"
+```
+
+**Inputs:**
+| Input | Required | Default | Description |
+|-------|----------|---------|-------------|
+| `prompt` | Yes | - | The instruction for the agent |
+| `agent` | No | `''` | Run AS a named agent (`.claude/agents/<name>.md`) |
+| `tools` | No | `''` | Comma-separated `--allowedTools` for Claude Code |
+| `mcp` | No | `''` | Path to an MCP config JSON |
+| `system` | No | `''` | System prompt appended to the agent |
+| `out` | No | `''` | Write the result to this file instead of stdout |
+| `model` | No | `''` | Model override for this step (beats `AI_MODEL` and `_data/ai.yml`) |
+| `max-turns` | No | `''` | Cap the agent's turns (`--max-turns`) |
+
+**Contract (see `scripts/ai/README.md`):**
+- **Auth from the job env, OAuth first.** `CLAUDE_CODE_OAUTH_TOKEN` is preferred; when it is set, `ANTHROPIC_API_KEY` is stripped from the CLI's environment (`env -u`) so the metered key is never billed for subscription work. With no auth at all the step is a clean no-op (exit 0).
+- **Canonical `AI_*` env** — `AI_MODEL`, `AI_FORCE_API`, `AI_MAX_TURNS`, `AI_USAGE_DIR` — no repo prefix, so the file stays identical across the fleet. (The installer's own `ZER0_AI_MODEL` belongs to `install.sh`'s AI planner and is unrelated.)
+- **Exit 1 on failure.** A call that was attempted and rejected (auth revoked, quota exhausted, `is_error` payload, CLI died without a payload) fails the step with the reason as a `::error::` annotation. The previous hand-rolled action exited 0 when the CLI install failed, so a dead run read green.
+- **Metering optional.** `scripts/ai/usage.rb` records tokens + API-equivalent cost per call and `usage_report.rb` publishes a step summary, an `ai-usage-*` artifact, and a sticky PR comment; both post-steps are `always()` and never fail the job.
+
+The exit-code contract is pinned by `scripts/ci/test_ai_runner.sh` (stubbed `claude`, no network, no credentials), wired into `./scripts/bin/test` through `scripts/test/lib/test_ai_runner.sh`.
+
+**Used by:** `issue-autopilot.yml`, `visual-evidence-autogen.yml`
 
 ---
 
