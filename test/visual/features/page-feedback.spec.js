@@ -11,21 +11,36 @@
 // the widget builds. The AI-enrichment path is not exercised here (it needs the
 // chat proxy running); the base layer under test works fully client-side.
 //
+// The issue BODY is built by FleetFeedbackCore in the vendored
+// assets/js/fleet-feedback.js (bamr87/bamr87 templates/feedback) — the same
+// builder the fleet's <fleet-feedback> web component uses — so these tests
+// double as the theme's half of a cross-repo contract check: if the vendored
+// core drifts, the marker and section assertions below fail here.
+//
 // Regressions this guards against:
 //   - a dead/absent FAB (render-guard or mount regression)
 //   - labels the repo doesn't have (the old `labels=ai-agent` silent-drop bug)
 //   - repo owner/name drifting from site.repository
 //   - the issue body losing its page context or the captured console logs
+//   - the body losing the marker the issue pipeline reads
+//   - a secret reaching the log preview unredacted
+//   - the FAB losing its href and becoming dead when the script fails to load
 // =============================================================================
 
 const { test, expect } = require('@playwright/test');
-const { waitForJekyll } = require('../fixtures');
+const { waitForJekyll, dismissCookieConsent } = require('../fixtures');
 
 const FAB = '#pageFeedbackFab';
 const MODAL = '#pageFeedbackModal';
 
 test.describe('Page-feedback widget', () => {
   test.beforeEach(async ({ page }) => {
+    // The consent banner is a full-width bar pinned to the bottom of the
+    // viewport, on a layer above the FAB stack (--zer0-layer-cookie-banner
+    // 1095 > --zer0-layer-fab-feedback 1051), so it swallows every click aimed
+    // at the FAB. Every other spec that touches lower-screen chrome seeds the
+    // choice the way a returning visitor would; this one never did.
+    await dismissCookieConsent(page);
     await waitForJekyll(page, '/');
   });
 
@@ -103,9 +118,47 @@ test.describe('Page-feedback widget', () => {
     expect(body).toContain('Environment');
   });
 
+  test('the body carries the fleet contract — section order and the pipeline marker', async ({ page }) => {
+    await page.locator(FAB).click();
+    await page.evaluate(() => {
+      window.__pfOpened = null;
+      window.open = (u) => { window.__pfOpened = u; return { opener: null, closed: false, focus() {} }; };
+    });
+    await page.locator('.pf-type[data-pf-type-id="improve-page"]').click();
+    await page.locator('#pfDescription').fill('The intro reads as three paragraphs of preamble.');
+    await page.locator('#pfSubmit').click();
+
+    const body = new URL(await page.evaluate(() => window.__pfOpened)).searchParams.get('body');
+
+    // The marker is what tells the issue pipeline this report is already
+    // structured, so it does not re-template it. Losing it is silent.
+    expect(body).toContain('<!-- fleet-feedback v1 type=improve-page -->');
+    expect(body).toMatch(/_Filed from .+ via fleet-feedback v[\d.]+\._/);
+
+    // Sections in the contract's order (UPS-FB-23).
+    const order = ['## 📝 Description', '## 📄 Page context', '## 🔧 Environment'];
+    let at = -1;
+    for (const heading of order) {
+      const found = body.indexOf(heading);
+      expect(found, `${heading} missing or out of order`).toBeGreaterThan(at);
+      at = found;
+    }
+  });
+
+  test('the FAB is a real link, so it survives the script failing to load', async ({ page }) => {
+    // The widget now delegates body assembly to a second script. If that one
+    // 404s the FAB must still reach the issue form rather than becoming a
+    // decorative circle — hence an anchor with an href, not a button.
+    const href = await page.locator(FAB).getAttribute('href');
+    expect(href).toContain('bamr87/zer0-mistakes/issues/new');
+    expect(href).toContain('labels=page-feedback');
+  });
+
   test('captures console output and offers it in the preview', async ({ page }) => {
-    // Emit a marker BEFORE opening — the head-installed shim buffers it.
-    await page.evaluate(() => console.log('PF_TEST_LOG_MARKER 42'));
+    // console.warn, not console.log: the shared buffer deliberately hooks only
+    // warn/error. At a 40-entry ring, debug chatter evicts the one line that
+    // explains the failure — which is the line a report exists to carry.
+    await page.evaluate(() => console.warn('PF_TEST_LOG_MARKER 42'));
     await page.locator(FAB).click();
 
     // Expand "What gets attached" and confirm the captured line is shown.
@@ -115,5 +168,23 @@ test.describe('Page-feedback widget', () => {
 
     // And it's opt-outable.
     await expect(page.locator('#pfIncludeLogs')).toBeChecked();
+  });
+
+  test('secrets in console output are redacted before they can be previewed', async ({ page }) => {
+    // Credentials reach the console more often than anyone expects — an
+    // Authorization header logged by a fetch wrapper, a signed URL in a 403.
+    // Redaction happens on the way INTO the buffer, so there is no window in
+    // which the raw value could be previewed, copied, or filed.
+    await page.evaluate(() => {
+      console.error('request failed: Authorization: Bearer sk-live-0123456789abcdef');
+      console.warn('notify reader@example.com of the outage');
+    });
+    await page.locator(FAB).click();
+    await page.locator('#pfContextWrap > summary').click();
+
+    const preview = await page.locator('#pfLogsPreview').textContent();
+    expect(preview).toContain('request failed');
+    expect(preview).not.toContain('sk-live-0123456789abcdef');
+    expect(preview).not.toContain('reader@example.com');
   });
 });

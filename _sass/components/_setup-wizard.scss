@@ -253,11 +253,19 @@
   overflow-y: auto;
 }
 
-// Numbered connect steps
+// Numbered connect steps. The text column must be allowed to shrink
+// (min-width: 0) or a nowrap command line inside .wizard-cmd widens the
+// list past the card and — because inactive panes stay in layout — the
+// whole page, on every step, at phone widths.
 .sb-steps li {
   display: flex;
   gap: 0.75rem;
   margin-bottom: 0.9rem;
+
+  > div {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
 }
 
 .sb-step-num {
@@ -687,4 +695,70 @@
     animation: none !important;
     transition: none !important;
   }
+}
+
+// -----------------------------------------------------------------------------
+// Connect step — providers, bring-your-own token, session mode (ZER0-087)
+// -----------------------------------------------------------------------------
+
+.sb-provider-card {
+  &.is-pinned-out {
+    opacity: 0.45;
+  }
+
+  .sb-provider-state {
+    flex-shrink: 0;
+    font-size: 0.65rem;
+  }
+}
+
+.sb-credential {
+  input[type="password"] {
+    font-family: var(--bs-font-monospace);
+    letter-spacing: 0.06em;
+  }
+
+  .input-group .btn {
+    white-space: nowrap;
+  }
+}
+
+// Proxy reachable, provider still without a key.
+.sb-connect-status[data-state="partial"] .sb-status-dot {
+  background: var(--bs-info);
+  box-shadow: 0 0 0 4px rgba(13, 202, 240, 0.2);
+}
+
+.sb-mode-badge {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+#sb-stop {
+  white-space: nowrap;
+}
+
+// Before/after snippet on edit cards and the start of a file on write cards.
+.sb-card .sb-diff {
+  max-height: 8rem;
+  margin: 0;
+  padding: 0.4rem 0.5rem;
+  overflow: auto;
+  font-size: 0.68rem;
+  line-height: 1.4;
+  color: #d8dee9;
+  background: #1b1f24;
+  border-radius: var(--zer0-radius-sm, 0.375rem);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+// Thumbnail of a generated image, served by the dev proxy's /asset route.
+.sb-card .sb-image-thumb {
+  display: block;
+  max-width: 100%;
+  max-height: 12rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--zer0-radius-sm, 0.375rem);
 }

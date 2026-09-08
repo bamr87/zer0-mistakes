@@ -1,4 +1,4 @@
-// Feature: ZER0-067, ZER0-086
+// Feature: ZER0-067, ZER0-086, ZER0-087
 // =============================================================================
 // setup-wizard.spec.js — Regression coverage for the Site Builder wizard
 // =============================================================================
@@ -21,6 +21,13 @@
 //      button is disabled — the wizard never pretends to have powers it lacks.
 //   6. Prerequisite rows flip state from the manual "Done" switch; the skin
 //      preview toggle sets data-theme-skin on <html> and restores it.
+//   7. The Connect step (ZER0-087) offers Claude and Grok with a bring-your-own
+//      token form, a model select, an image renderer and two session modes;
+//      with the proxy mocked as "Grok has a key" the panel connects AS GROK,
+//      a pasted token goes ONCE to the localhost proxy and is cleared from the
+//      page (never in localStorage/sessionStorage), the open session swaps the
+//      suggested prompts and survives a reload, and the Build step lists the
+//      proxy's existing sites and opens one as the working project.
 //
 // Note: /setup/ only renders the wizard when jekyll.environment is development
 // or site.show_setup_wizard is set. Rather than skip blindly (which would hide a
@@ -70,7 +77,7 @@ test.describe('Site Builder wizard', { tag: '@critical' }, () => {
     await dismissCookieConsent(page);
     await page.goto('/setup/');
     await page.evaluate((key) => {
-      try { localStorage.removeItem(key); sessionStorage.clear(); } catch (e) { /* private mode */ }
+      try { localStorage.removeItem(key); localStorage.removeItem('zer0-site-builder-prefs'); sessionStorage.clear(); } catch (e) { /* private mode */ }
     }, DRAFT_KEY);
     await openWizard(page);
   });
@@ -345,6 +352,172 @@ test.describe('Site Builder wizard', { tag: '@critical' }, () => {
     expect(configJson).not.toMatch(/sk-ant-|apiKey|api_key/);
   });
 
+  test('the Connect step offers Claude and Grok, a token form and session modes — all inert offline', async ({ page }) => {
+    await page.route('**/api/wizard/**', (route) => route.abort('connectionrefused'));
+    await page.reload();
+    await expect(page.locator(WIZARD)).toBeVisible();
+    await page.waitForTimeout(400);
+
+    await expect(page.locator('#step-connect h2')).toHaveText(/Connect your AI/);
+    await expect(page.locator('input[name="sb_provider"]')).toHaveCount(2);
+    await expect(page.locator('#sb-provider-anthropic')).toBeChecked();
+    await expect(page.locator('.sb-provider-state[data-provider="xai"]')).toHaveText(/proxy offline/i);
+    await expect(page.locator('#sb-token')).toHaveAttribute('type', 'password');
+    for (const id of ['sb-token', 'sb-token-use', 'sb-token-persist', 'sb-model', 'sb-image-provider']) {
+      await expect(page.locator(`#${id}`), `#${id} must be disabled offline`).toBeDisabled();
+    }
+    await expect(page.locator('input[name="sb_mode"]')).toHaveCount(2);
+    await expect(page.locator('#sb-mode-guided')).toBeChecked();
+    // The "with Claude" buttons follow the provider; offline they still read Claude.
+    await expect(page.locator('#step-identity .sb-ask .sb-provider-name')).toHaveText('Claude');
+    const configJson = await page.locator('#siteBuilderConfig').textContent();
+    expect(configJson).toMatch(/"provider"/);
+    expect(configJson).not.toMatch(/sk-ant-|xai-|apiKey|api_key/);
+  });
+
+  /** A dev proxy that already holds a Grok key (and nothing for Claude). */
+  async function mockProxyOnline(page, { provider = 'xai', projects = [] } = {}) {
+    const captured = { credentials: [], targets: [] };
+    const providers = {
+      anthropic: { id: 'anthropic', label: 'Claude', vendor: 'Anthropic', configured: provider === 'anthropic', kind: provider === 'anthropic' ? 'oauth_static' : null, source: provider === 'anthropic' ? 'env' : null, masked: provider === 'anthropic' ? '••••ab12' : '', models: ['claude-opus-4-8', 'claude-opus-5'], defaultModel: 'claude-opus-4-8', model: 'claude-opus-4-8', pinned: false, tokenHint: '', console: '' },
+      xai: { id: 'xai', label: 'Grok', vendor: 'xAI', configured: provider === 'xai', kind: provider === 'xai' ? 'api_key' : null, source: provider === 'xai' ? 'session' : null, masked: provider === 'xai' ? '••••c3f9' : '', models: ['grok-4.6', 'grok-4.5'], defaultModel: 'grok-4.6', model: 'grok-4.6', pinned: false, tokenHint: '', console: '' },
+    };
+    const status = {
+      ok: true,
+      auth: { provider, label: providers[provider].label, vendor: providers[provider].vendor, kind: providers[provider].kind, source: providers[provider].source, masked: providers[provider].masked, model: providers[provider].model, pinned: false },
+      providerPin: 'auto',
+      providers,
+      image: { providers: { xai: { id: 'xai', label: 'Grok Imagine', vendor: 'xAI', configured: provider === 'xai', source: 'session', masked: '••••c3f9', models: ['grok-imagine-image-2.0'], model: 'grok-imagine-image-2.0', aspectRatios: ['1:1', '16:9'], sizes: [] }, openai: { id: 'openai', label: 'OpenAI Images', vendor: 'OpenAI', configured: false, source: null, masked: '', models: ['gpt-image-2'], model: 'gpt-image-2', aspectRatios: [], sizes: ['1024x1024'] } }, default: provider === 'xai' ? 'xai' : null },
+      credentials: { accepted: true, persistAllowed: true, envFile: '/tmp/zer0/.env' },
+      checks: ['docker', 'git'],
+      scaffold: { root: '/tmp/zer0-sites', theme: '/tmp/zer0' },
+      compose: ['up', 'ps', 'logs', 'down', 'config', 'build'],
+      projectCommands: ['git-status', 'git-diff', 'git-log', 'git-init'],
+      projects,
+      maxTokensCap: 8192,
+      localEdit: true,
+      model: providers[provider].model,
+    };
+    // A developer's machine may have a real proxy on :8787 whose first answer
+    // already shaped the page; the mock must start from a clean slate.
+    await page.evaluate(() => { try { localStorage.removeItem('zer0-site-builder-prefs'); sessionStorage.removeItem('zer0-site-builder-transcript'); } catch (e) { /* ignore */ } });
+    await page.route('**/api/wizard/**', async (route) => {
+      const req = route.request();
+      const url = new URL(req.url());
+      const json = (body, statusCode = 200) => route.fulfill({ status: statusCode, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify(body) });
+      if (url.pathname.endsWith('/status')) return json(status);
+      if (url.pathname.endsWith('/credentials')) {
+        if (req.method() === 'POST') {
+          const body = req.postDataJSON();
+          captured.credentials.push(body);
+          return json({ ok: true, provider: body.provider, kind: 'api_key', envKey: 'XAI_API_KEY', masked: '••••' + String(body.token).slice(-4), source: 'session', persisted: body.persist ? { file: '/tmp/zer0/.env', key: 'XAI_API_KEY' } : null });
+        }
+        return json({ ok: true, provider: url.searchParams.get('provider'), cleared: true });
+      }
+      if (url.pathname.endsWith('/projects')) return json({ ok: true, root: '/tmp/zer0-sites', projects });
+      if (url.pathname.endsWith('/target')) { const body = req.postDataJSON(); captured.targets.push(body.target); return json({ ok: true, abs: '/tmp/zer0-sites/' + body.target, exists: true, empty: false, root: '/tmp/zer0-sites' }); }
+      if (url.pathname.includes('/project/tree')) return json({ ok: true, path: '.', entries: ['_config.yml', 'docker-compose.yml', 'pages/', 'pages/_posts/2026-01-01-welcome.md'], truncated: false });
+      if (req.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: { 'access-control-allow-origin': '*', 'access-control-allow-methods': 'GET, POST, DELETE, OPTIONS', 'access-control-allow-headers': 'content-type' } });
+      return json({ error: { message: 'not mocked: ' + url.pathname } }, 404);
+    });
+    return captured;
+  }
+
+  test('with a proxy that holds a Grok key the panel connects as Grok and a pasted token goes once to localhost', async ({ page }) => {
+    const captured = await mockProxyOnline(page, { provider: 'xai' });
+    await page.reload();
+    await expect(page.locator(WIZARD)).toBeVisible();
+
+    const panel = page.locator('#siteBuilderPanel');
+    await expect(panel).toHaveAttribute('data-state', 'online');
+    // With no remembered choice the only configured provider is picked for you.
+    await expect(panel).toHaveAttribute('data-ready', 'true');
+    await expect(panel).toHaveAttribute('data-provider', 'xai');
+    await expect(page.locator('.sb-provider-state[data-provider="xai"]')).toHaveText(/session ••••c3f9/);
+    await expect(page.locator('.sb-provider-state[data-provider="anthropic"]')).toHaveText(/needs a token/i);
+    await expect(page.locator('#sb-token')).toBeEnabled();
+
+    // A provider without a key is selectable but not ready — the badge says so
+    // and the composer stays locked; nothing pretends to work.
+    await page.locator('label[for="sb-provider-anthropic"]').click();
+    await expect(panel).toHaveAttribute('data-ready', 'false');
+    await expect(page.locator('#sb-status-badge')).toHaveText(/needs a token/i);
+    await expect(page.locator('#sb-input')).toBeDisabled();
+    await expect(page.locator('#sb-credential-status')).toContainText(/No Claude credential/);
+
+    // Back to Grok: ready again, the model list is Grok's, labels follow.
+    await page.locator('label[for="sb-provider-xai"]').click();
+    await expect(panel).toHaveAttribute('data-ready', 'true');
+    await expect(panel).toHaveAttribute('data-provider', 'xai');
+    await expect(page.locator('#sb-status-badge')).toHaveText(/Grok connected/);
+    await expect(page.locator('#sb-title')).toHaveText(/Grok session/);
+    await expect(page.locator('#sb-input')).toBeEnabled();
+    const models = await page.locator('#sb-model option').evaluateAll((els) => els.map((o) => o.value));
+    expect(models).toContain('grok-4.6');
+    expect(models).not.toContain('claude-opus-4-8');
+    await expect(page.locator('#step-identity .sb-ask .sb-provider-name')).toHaveText('Grok');
+    await expect(page.locator('#sb-messages')).toContainText(/Connected to/);
+    // The generated site follows the provider.
+    await goToStep(page, 'tab-integrations');
+    await expect(page.locator('#cfg-ai-provider')).toHaveValue('xai');
+    await page.locator('.wizard-file-tab[data-file="_config.yml"]').click();
+    await expect(page.locator('#yaml-preview')).toContainText('provider: xai');
+
+    // Paste a token: sent once, to the mocked localhost proxy, then cleared.
+    await goToStep(page, 'tab-connect');
+    await page.locator('#sb-token').fill('xai-playwright-token-0000c3f9');
+    await page.locator('#sb-token-use').click();
+    await expect.poll(() => captured.credentials.length).toBe(1);
+    expect(captured.credentials[0]).toMatchObject({ provider: 'xai', token: 'xai-playwright-token-0000c3f9', persist: false, test: true });
+    await expect(page.locator('#sb-token')).toHaveValue('');
+    await expect(page.locator('#sb-credential-status')).toContainText(/Grok/);
+    const storage = await page.evaluate(() => JSON.stringify({ l: { ...localStorage }, s: { ...sessionStorage } }));
+    expect(storage).not.toContain('playwright-token');
+    const prefs = await page.evaluate(() => JSON.parse(localStorage.getItem('zer0-site-builder-prefs') || '{}'));
+    expect(prefs.provider).toBe('xai');
+    expect(JSON.stringify(prefs)).not.toMatch(/token/i);
+    const html = await page.content();
+    expect(html).not.toContain('xai-playwright-token');
+  });
+
+  test('the open session swaps the suggested prompts, shows a mode badge and survives a reload', async ({ page }) => {
+    await mockProxyOnline(page, { provider: 'anthropic' });
+    await page.reload();
+    await expect(page.locator('#siteBuilderPanel')).toHaveAttribute('data-ready', 'true');
+    await expect(page.locator('#sb-status-badge')).toHaveText(/Claude connected/);
+    await expect(page.locator('#sb-chips .sb-chip').first()).toContainText(/run locally|generate for me|open session/i);
+
+    await page.locator('label[for="sb-mode-open"]').click();
+    await expect(page.locator('#siteBuilderPanel')).toHaveAttribute('data-mode', 'open');
+    await expect(page.locator('#sb-mode-badge')).toHaveText(/open session/);
+    await expect(page.locator('#sb-chips')).toContainText(/Build me a complete site/);
+    await expect(page.locator('#sb-input')).toHaveAttribute('placeholder', /what to build or change/);
+
+    await page.reload();
+    await expect(page.locator('#siteBuilderPanel')).toHaveAttribute('data-mode', 'open');
+    await expect(page.locator('#sb-mode-open')).toBeChecked();
+    await page.locator('label[for="sb-mode-guided"]').click();
+    await expect(page.locator('#siteBuilderPanel')).toHaveAttribute('data-mode', 'guided');
+  });
+
+  test('the Build step lists the proxy\'s existing sites and Open makes one the working project', async ({ page }) => {
+    const captured = await mockProxyOnline(page, { provider: 'anthropic', projects: [{ name: 'demo-site', abs: '/tmp/zer0-sites/demo-site', site: true, compose: true, mtime: 1 }] });
+    await page.reload();
+    await expect(page.locator('#siteBuilderPanel')).toHaveAttribute('data-ready', 'true');
+    await goToStep(page, 'tab-build');
+    const select = page.locator('#sb-project-select');
+    await expect(select).toBeEnabled();
+    await select.selectOption('demo-site');
+    await expect(page.locator('#btn-compose-build')).toBeEnabled();
+    await page.locator('#btn-project-open').click();
+    await expect.poll(() => captured.targets.length).toBe(1);
+    expect(captured.targets[0]).toBe('demo-site');
+    await expect(page.locator('#cfg-target')).toHaveValue('demo-site');
+    await expect(page.locator('#target-resolved')).toContainText(/open it as a project/);
+    await expect(page.locator('.sb-card--result').last()).toContainText(/Working project: demo-site/);
+    await expect(page.locator('.sb-card--result').last()).toContainText(/4 files/);
+  });
+
   test('prerequisite rows flip to done from the manual switch and the summary counts them', async ({ page }) => {
     await goToStep(page, 'tab-prereqs');
     const docker = page.locator('.prereq-item[data-prereq="docker"]');
@@ -432,9 +605,39 @@ test.describe('Site Builder wizard', { tag: '@critical' }, () => {
     }));
     expect(res.ok).toBe(true);
     await expect(page.locator('#landing-summary')).toContainText('Hello there');
+    // A planned hero image reaches index.md — the plan schema offers
+    // landing.hero.image, so the landing engine has to render it. And a LATER
+    // partial hero patch (the shape an agent sends when it adds artwork after
+    // writing the copy) must not drop the headline or the CTAs.
+    const partial = await page.evaluate(() => window.Zer0SetupWizard.setPlan({ landing: { hero: { image: '/assets/images/hero.png' } } }));
+    expect(partial.ok).toBe(true);
+    const hero = await page.evaluate(() => window.Zer0SetupWizard.getPlan().landing.hero);
+    expect(hero).toMatchObject({ headline: 'Hello there', image: '/assets/images/hero.png' });
+    expect(hero.ctas).toHaveLength(1);
+    await page.locator('.wizard-file-tab[data-file="index.md"]').click();
+    await expect(page.locator('#yaml-preview')).toContainText('{% if hero.image %}');
+    // An outlined CTA renders white-on-white unless the surface behind it is
+    // dark, so the landing engine resolves the variant against the hero.
+    await expect(page.locator('#yaml-preview')).toContainText('outline-light');
+    const landing = await page.evaluate(() => window.Zer0SetupWizard.getFile('_data/landing.yml').content);
+    expect(landing).toContain('image: "/assets/images/hero.png"');
+    expect(landing).toContain('headline: "Hello there"');
     await expect(page.locator('.wizard-file-tab[data-file^="pages/_posts/"][data-file$="first-light.md"]')).toHaveCount(1);
     await expect(page.locator('#palette-berry')).toBeChecked();
     await expect(page.locator('#radius-sharp')).toBeChecked();
+
+    // Generated content must never carry a FUTURE timestamp: Jekyll withholds
+    // future-dated documents and GitHub Pages builds with the default
+    // `future: false`, so a fixed "09:00Z" stamp made every post and note
+    // invisible on a published site until 09:00 UTC.
+    const stamps = await page.evaluate(() => window.Zer0SetupWizard.getFiles()
+      .filter((f) => /^pages\/_(posts|notes)\//.test(f.path))
+      .map((f) => ({ path: f.path, date: (f.content.match(/^date:\s*(\S+)/m) || [])[1] })));
+    expect(stamps.length).toBeGreaterThan(0);
+    for (const s of stamps) {
+      expect(s.date, `${s.path} must carry a date`).toBeTruthy();
+      expect(new Date(s.date).getTime(), `${s.path} is dated in the future (${s.date})`).toBeLessThanOrEqual(Date.now() + 1000);
+    }
 
     await expect.poll(() => page.evaluate((k) => localStorage.getItem(k), DRAFT_KEY)).toContain('first-light');
     await page.reload();

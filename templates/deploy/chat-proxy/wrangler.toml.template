@@ -8,6 +8,8 @@
 #     wrangler secret put ANTHROPIC_OAUTH_ACCESS_TOKEN   # optional, seeds KV
 #   API key (fallback — leave OAuth secrets unset to use this):
 #     wrangler secret put ANTHROPIC_API_KEY
+#   Grok (xAI) — instead of, or as well as, the Anthropic credential:
+#     wrangler secret put XAI_API_KEY
 #   GitHub routes (optional):
 #     wrangler secret put GITHUB_TOKEN
 
@@ -50,6 +52,11 @@ GITHUB_REPOSITORY = "{{GITHUB_USER}}/{{GITHUB_REPOSITORY}}"
 BASE_BRANCH = "main"
 PR_BRANCH_PREFIX = "chat/"
 
-# --- Model controls --------------------------------------------------------
+# --- Provider + model controls ---------------------------------------------
+# CHAT_PROVIDER pins which provider answers: "anthropic" (Claude) or "xai"
+# (Grok). "auto" honours the page's ai_chat.provider when that provider has a
+# secret, else Claude first, then Grok. Models are pinned per provider.
+CHAT_PROVIDER = "auto"
 CHAT_MODEL = "claude-opus-4-8"
+XAI_CHAT_MODEL = "grok-4.6"
 MAX_TOKENS_CAP = "4096"

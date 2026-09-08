@@ -1,0 +1,166 @@
+{
+  "base": "http://localhost:4000",
+  "site": "http://localhost:4300",
+  "routes": {
+    "/": 200,
+    "/posts/": 200,
+    "/docs/": 200,
+    "/about/": 200,
+    "/docs/getting-started/": 200,
+    "/docs/antenna-and-feedline/": 200,
+    "/docs/scheduling-passes/": 200,
+    "/assets/images/hero.png": 200,
+    "/assets/css/user-overrides.css": 200,
+    "/feed.xml": 200
+  },
+  "results": [
+    {
+      "name": "dev proxy reachable with no credential configured",
+      "ok": true,
+      "detail": "needs a token"
+    },
+    {
+      "name": "xAI key accepted after an upstream probe",
+      "ok": true,
+      "detail": "Grok connected (••••1234) for this session."
+    },
+    {
+      "name": "model resolved to a Grok model",
+      "ok": true,
+      "detail": "grok-4.6"
+    },
+    {
+      "name": "image renderer is Grok Imagine",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "token is not in the page or browser storage",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "open session selected",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "phase A ran the whole tool chain behind confirmation cards",
+      "ok": true,
+      "detail": "4 cards in 4.3s"
+    },
+    {
+      "name": "wizard fields were applied by the model",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "title on the form",
+      "ok": true,
+      "detail": "Orbital Notes"
+    },
+    {
+      "name": "skin applied",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "palette from the plan",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "target folder set",
+      "ok": true,
+      "detail": "orbital-notes"
+    },
+    {
+      "name": "docker compose ran from the session",
+      "ok": true,
+      "detail": " | [exit] ok (code 0) | "
+    },
+    {
+      "name": "the generated site answers on its port",
+      "ok": true,
+      "detail": "HTTP 200 after 33.1s"
+    },
+    {
+      "name": "phase B ran behind confirmation cards",
+      "ok": true,
+      "detail": "5 cards in 23.2s"
+    },
+    {
+      "name": "the image tool reported a saved asset",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "jekyll build passed inside the container",
+      "ok": true,
+      "detail": "jekyll build passed"
+    },
+    {
+      "name": "no page errors during the whole session",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "every planned route answers 200",
+      "ok": true,
+      "detail": "{\"/\":200,\"/posts/\":200,\"/docs/\":200,\"/about/\":200,\"/docs/getting-started/\":200,\"/docs/antenna-and-feedline/\":200,\"/docs/scheduling-passes/\":200,\"/assets/images/hero.png\":200,\"/assets/css/user-overrides.css\":200,\"/feed.xml\":200}"
+    },
+    {
+      "name": "home carries the site title",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "home renders the planned hero headline",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "home renders the generated hero image",
+      "ok": true,
+      "detail": "<img src=\"/assets/images/hero.png\" alt=\"\" class=\"zer0-landing-hero-image img-fluid rounded-3 shadow-sm mt-4\" loading=\"lazy\" decoding=\"async\""
+    },
+    {
+      "name": "home carries the aqua skin",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "grouped navigation from the plan",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "hero image is a real PNG served by the site",
+      "ok": true,
+      "detail": "61707 bytes, image/png"
+    },
+    {
+      "name": "planned posts are listed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "the post the model added post-build is listed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "theme overrides carry the midnight palette",
+      "ok": true,
+      "detail": "--bs-primary: #1d3557 !important"
+    },
+    {
+      "name": "the hero image is laid out on the page",
+      "ok": true,
+      "detail": "1200x630"
+    }
+  ],
+  "pageErrors": [],
+  "homeShot": "test/visual-results/xai-build/05-built-site-home.png",
+  "seconds": 70.1
+}

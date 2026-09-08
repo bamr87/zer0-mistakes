@@ -31,7 +31,8 @@
     {% for skin in skins %}
     <button class="btn btn-sm btn-outline-primary{% if skin == current_skin %} active{% endif %}"
             data-skin="{{ skin }}"
-            type="button">
+            type="button"
+            aria-pressed="{% if skin == current_skin %}true{% else %}false{% endif %}">
       {{ skin | capitalize }}
     </button>
     {% endfor %}
@@ -89,12 +90,26 @@ document.addEventListener("DOMContentLoaded", function () {
   if (typeof zer0Bg === "undefined") return;
 
   // Skin buttons
+  // `.active` is a Bootstrap visual class and carries no accessibility
+  // semantics, so selection is also exposed via aria-pressed (WCAG 4.1.2),
+  // matching the sibling color-mode group. Both are set in one place so no
+  // code path can leave them disagreeing.
+  function markActiveSkinButton(btn) {
+    document.querySelectorAll("#zer0SkinButtons .btn").forEach(function (b) {
+      b.classList.remove("active");
+      b.setAttribute("aria-pressed", "false");
+    });
+    if (btn) {
+      btn.classList.add("active");
+      btn.setAttribute("aria-pressed", "true");
+    }
+  }
+
   document.querySelectorAll("#zer0SkinButtons [data-skin]").forEach(function (btn) {
     btn.addEventListener("click", function () {
       var skin = this.getAttribute("data-skin");
       zer0Bg.setSkin(skin);
-      document.querySelectorAll("#zer0SkinButtons .btn").forEach(function (b) { b.classList.remove("active"); });
-      this.classList.add("active");
+      markActiveSkinButton(this);
     });
   });
 
@@ -128,9 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById(id + "Val").textContent = defaults[id];
     });
     toggle.checked = true;
-    document.querySelectorAll("#zer0SkinButtons .btn").forEach(function (b) { b.classList.remove("active"); });
-    var active = document.querySelector('#zer0SkinButtons [data-skin="{{ current_skin }}"]');
-    if (active) active.classList.add("active");
+    markActiveSkinButton(document.querySelector('#zer0SkinButtons [data-skin="{{ current_skin }}"]'));
   });
 });
 </script>

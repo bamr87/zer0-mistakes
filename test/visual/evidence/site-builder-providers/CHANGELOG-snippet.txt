@@ -1,0 +1,1 @@
+(evidence: [`test/visual/evidence/site-builder-providers/`](test/visual/evidence/site-builder-providers/README.md) — Connect step: 2 provider cards, 2 session modes, token field is a password input inert offline; mocked proxy: "needs a token" → "Grok connected"; Build: 2 existing sites listed, Open sets the target)

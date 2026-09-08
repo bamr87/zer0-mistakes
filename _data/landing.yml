@@ -22,12 +22,15 @@ hero:
     label: "Features"
     url: "/features/"
     icon: "bi-list-check"
-    variant: "outline"
+    # This hero is `bg-primary text-white`, so its outlined buttons need the
+    # light variant. Plain `outline` is an outlined PRIMARY button, for the
+    # normal page background — see components/cta-button.html.
+    variant: "outline-light"
   cta_tertiary:
     label: "GitHub"
     url: ""                # falls back to site.resources.github_repo
     icon: "bi-github"
-    variant: "outline"
+    variant: "outline-light"
     external: true
 
 # Features section ------------------------------------------------------------

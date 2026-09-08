@@ -347,7 +347,7 @@ nanobar:
 
 ai_chat:
   enabled                : true
-  provider               : 'anthropic'        # AI provider (Claude Messages API)
+  provider               : 'anthropic'        # anthropic (Claude) | xai (Grok) — the proxy translates for xAI; its CHAT_PROVIDER wins
   auth_mode              : 'proxy'            # 'proxy' (recommended) or 'direct'
   proxy_ready            : false              # Set true only when your proxy endpoint is deployed
   model                  : 'claude-opus-4-8'  # Claude model to use
@@ -430,11 +430,15 @@ page_feedback:
 # GET {endpoint}/status — _config_dev.yml points `endpoint` at it. No credential
 # ever appears in the page; the proxy reads CLAUDE_CODE_OAUTH_TOKEN from .env.
 site_builder:
-  enabled            : true               # Master switch for the wizard's Claude session
-  endpoint           : '/api/wizard'      # Dev proxy base (status/check/file/ls/target/scaffold/compose)
+  enabled            : true               # Master switch for the wizard's AI session
+  endpoint           : '/api/wizard'      # Dev proxy base (status/credentials/check/file/ls/target/scaffold/compose/project/image)
   chat_endpoint      : ''                 # '' = reuse ai_chat.endpoint for the streaming chat
-  model              : 'claude-opus-4-8'  # Model for the session (the proxy's CHAT_MODEL still wins)
-  max_tokens         : 4096
+  provider           : 'auto'             # auto | anthropic | xai — provider the Connect step preselects;
+                                          # the proxy decides what is configured (CHAT_PROVIDER pins it)
+  model              : 'claude-opus-4-8'  # Fallback model when the proxy reports none (CHAT_MODEL / XAI_CHAT_MODEL win)
+  mode               : 'guided'           # guided (nine steps) | open (chat-driven, any order — like a coding session)
+  image_provider     : ''                 # '' | xai (Grok Imagine) | openai — image renderer the session offers when its key exists
+  max_tokens         : 8192               # Open sessions write whole files; the proxy's MAX_TOKENS_CAP still caps it
   default_port       : 4000               # Dev port suggested for the generated docker-compose.yml
 
 ## Multilingual Translation (AI-generated alternates) ##########################

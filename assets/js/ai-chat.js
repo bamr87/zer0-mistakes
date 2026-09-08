@@ -28,8 +28,10 @@
  * the tool_result back, and continues the loop.
  *
  * Security:
- * - Proxy mode (recommended) keeps the Anthropic key and GitHub token
- *   server-side; the browser only ever talks to the same-origin proxy.
+ * - Proxy mode (recommended) keeps the provider key and GitHub token
+ *   server-side; the browser only ever talks to the same-origin proxy,
+ *   which answers with Claude or Grok (the reply is always Anthropic
+ *   Messages SSE — the proxy translates for xAI).
  * - Direct mode sends x-api-key from the page and requires the
  *   anthropic-dangerous-direct-browser-access header — local dev only.
  * - GitHub "url" mode never touches a token: it opens pre-filled
@@ -586,14 +588,53 @@
 
     // URL mode: open a pre-filled github.com form — the user submits it
     // with their own account, so no token is ever needed in the browser.
-    var params = new URLSearchParams();
-    params.set('title', String(inputData.title).slice(0, 256));
+    //
+    // The URL is composed by the shared fleet builder (FleetFeedbackCore, in
+    // assets/js/fleet-feedback.js) when the page-feedback widget is enabled,
+    // which is what removed the THIRD hand-rolled issue-URL builder in this
+    // theme. Two things come with it: the same `<!-- fleet-feedback v1 -->`
+    // marker the issue pipeline reads, and a real over-budget path — this used
+    // to `.slice(0, 6000)` the body, silently dropping whatever Claude had
+    // written past that point, with nobody the wiser.
     var body = String(inputData.body);
     if (meta.page_url && body.indexOf(meta.page_url) === -1) {
       body += '\n\n---\nPage: ' + meta.page_url;
     }
-    params.set('body', body.slice(0, 6000));
     var labels = mergedLabels(inputData.labels);
+    var title = String(inputData.title).slice(0, 256);
+    var FF = window.FleetFeedbackCore;
+
+    if (FF) {
+      var issue = {
+        title: title,
+        // The chat writes prose, not a capture, so it fills the description
+        // slot whole; only the footer is contributed by the contract.
+        sections: {
+          description: body,
+          footer: '---\n_Filed from ' + (meta.page_url || location.href) +
+            ' via the AI chat assistant (fleet-feedback v' + FF.VERSION + ')._\n' +
+            '<!-- fleet-feedback v1 type=chat -->'
+        },
+        labels: labels,
+        assignees: []
+      };
+      var built = FF.buildUrl(issue, { repo: CONFIG.github.repository });
+      var win = window.open(built.url, '_blank', 'noopener');
+      if (!win) {
+        return toolResult(block.id, 'The browser blocked the pop-up, so no issue form opened. Ask the user to allow pop-ups for this site and try again.', true);
+      }
+      if (built.overBudget && navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(built.fullBody).catch(function () {});
+        return toolResult(block.id, 'A pre-filled GitHub issue form was opened in a new browser tab. The report was too long for the URL, so the full text was copied to the user clipboard — tell them to paste it over the pre-filled body before submitting.');
+      }
+      return toolResult(block.id, 'A pre-filled GitHub issue form was opened in a new browser tab. The user reviews and submits it there (a GitHub account is required).');
+    }
+
+    // No page-feedback widget on this site, so the shared builder is not
+    // loaded. Compose the URL directly; the body is capped rather than trimmed.
+    var params = new URLSearchParams();
+    params.set('title', title);
+    params.set('body', body.slice(0, 6000));
     if (labels.length) params.set('labels', labels.join(','));
     window.open('https://github.com/' + CONFIG.github.repository + '/issues/new?' + params.toString(), '_blank', 'noopener');
     return toolResult(block.id, 'A pre-filled GitHub issue form was opened in a new browser tab. The user reviews and submits it there (a GitHub account is required).');
@@ -735,6 +776,7 @@
         var accumulated = '';
         var payload = {
           model: CONFIG.model,
+          provider: CONFIG.provider || 'anthropic', // honoured by the proxy only when that provider has a key
           max_tokens: CONFIG.maxTokens,
           system: buildSystemPrompt(meta),
           messages: history.slice(),
