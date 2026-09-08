@@ -195,6 +195,13 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **Every page of every generated site 404'd on `user-overrides.js`** — the
+  Site Builder writes `user_overrides: true` so the theme loads the palette and
+  font overrides it generates, but that same flag also makes the theme load
+  `assets/js/user-overrides.js`, which the wizard never created. Generated
+  sites now ship a commented stub, so the request resolves and site owners have
+  an obvious place to put their own JavaScript. Found while publishing example
+  sites built by the wizard.
 - **Every generated landing page shipped an invisible button** —
   `components/cta-button.html` mapped `variant: outline` to `btn-outline-light`,
   which is white text on a white border, and the Site Builder's own default

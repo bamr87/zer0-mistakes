@@ -1312,6 +1312,32 @@
     return L.join('\n') + '\n';
   }
 
+  /**
+   * `user_overrides: true` makes the theme load BOTH assets/css/user-overrides.css
+   * and assets/js/user-overrides.js (see _includes/components/js-cdn.html). We
+   * always generate the CSS, so without this stub every page of every generated
+   * site fired a 404 for the JS half.
+   */
+  function genUserOverridesJs(c) {
+    return ['// assets/js/user-overrides.js — loaded last on every page of ' + c.title + '.',
+      '//',
+      '// The theme loads this file because `user_overrides: true` is set in',
+      '// _config.yml (the same flag loads assets/css/user-overrides.css, which',
+      '// carries your palette, fonts and corner radius).',
+      '//',
+      '// Put site-specific behaviour here. It runs after the theme\'s own scripts,',
+      '// so you can safely read anything they set up.',
+      '',
+      '(function () {',
+      "  'use strict';",
+      '  // Example: log which skin is active, once, in development.',
+      '  // if (location.hostname === "localhost") {',
+      '  //   console.info("skin:", document.documentElement.dataset.themeSkin);',
+      '  // }',
+      '})();',
+      ''].join('\n');
+  }
+
   function genCustomHead(c) {
     var fp = catalogItem('font_pairings', c.plan.theme.fonts);
     if (!fp || !fp.google) return null;
@@ -1618,6 +1644,7 @@
     if (landingPlan(c).template !== 'minimal') add('_data/landing.yml', genLandingData(c), { label: 'landing.yml', description: 'Hero and sections the landing page renders — edit the copy here.', required: true });
     if (c.plan.navigation.sidebar === 'docs' && hasCollection(c, 'docs')) add('_data/navigation/docs.yml', genDocsNav(c), { label: 'navigation/docs.yml', description: 'Curated docs sidebar tree.', required: true });
     add('assets/css/user-overrides.css', genUserOverrides(c), { label: 'user-overrides.css', description: 'Palette, fonts and corners layered over the skin. The theme links this file on every page.', required: true });
+    add('assets/js/user-overrides.js', genUserOverridesJs(c), { label: 'user-overrides.js', description: 'Site-specific JavaScript. The theme loads it alongside the CSS whenever user_overrides is on.', required: true });
     var customHead = genCustomHead(c);
     if (customHead) add('_includes/custom/head.html', customHead, { label: 'custom/head.html', description: 'Loads the chosen web fonts through the theme\'s head hook.', required: false });
     add('assets/images/logo.svg', genLogoSvg(c), { label: 'logo.svg', description: 'Monogram logo in the skin colours; replace with your own.', required: false });
