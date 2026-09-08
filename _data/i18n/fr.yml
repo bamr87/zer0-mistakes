@@ -4,18 +4,18 @@
 # scripts/translate.rb from _data/ui-text.yml (en). Regenerate via
 # the Translate workflow or: ruby scripts/translate.rb --langs fr
 # ================================================================
-skip_links: Liens d'accès rapide
-skip_primary_nav: Aller à la navigation principale
-skip_content: Aller au contenu
-skip_main_content: Aller au contenu principal
-skip_footer: Aller au pied de page
+skip_links: Liens d'évitement
+skip_primary_nav: Passer à la navigation principale
+skip_content: Passer au contenu
+skip_main_content: Passer au contenu principal
+skip_footer: Passer au pied de page
 page: Page
 pagination_previous: Précédent
 pagination_next: Suivant
 breadcrumb_home_label: Accueil
 breadcrumb_separator: "/"
-menu_label: Basculer le menu
-search_label: Basculer la recherche
+menu_label: Afficher/masquer le menu
+search_label: Afficher/masquer la recherche
 toc_label: Sur cette page
 ext_link_label: Lien direct
 less_than: moins de
@@ -28,7 +28,7 @@ author_label: 'Auteur :'
 comments_label: Laisser un commentaire
 comments_title: Commentaires
 more_label: En savoir plus
-related_label: Vous pourriez aussi aimer
+related_label: Vous aimerez peut-être aussi
 follow_label: 'Suivre :'
 feed_label: Flux
 powered_by: Propulsé par
@@ -47,8 +47,8 @@ comment_btn_submit: Envoyer le commentaire
 comment_btn_submitted: Envoyé
 comment_success_msg: Merci pour votre commentaire ! Il apparaîtra sur le site une
   fois approuvé.
-comment_error_msg: Désolé, une erreur s'est produite lors de l'envoi. Veuillez vous
-  assurer que tous les champs obligatoires sont remplis et réessayez.
+comment_error_msg: Désolé, une erreur s'est produite lors de l'envoi. Veuillez vérifier
+  que tous les champs obligatoires sont remplis et réessayer.
 loading_label: Chargement...
 search_label_text: Saisissez votre terme de recherche...
 search_placeholder_text: Saisissez votre terme de recherche...
@@ -60,9 +60,9 @@ stats_total_pages: Total des pages
 stats_categories: Catégories
 stats_tags: Étiquettes
 stats_last_updated: Dernière mise à jour
-stats_overview: Aperçu
+stats_overview: Vue d'ensemble
 stats_content_breakdown: Répartition du contenu
-theme_toggle: Basculer le thème
+theme_toggle: Changer de thème
 dark_mode: Mode sombre
 light_mode: Mode clair
 view_source: Voir la source
@@ -98,6 +98,22 @@ lang_machine_translated: auto
 lang_machine_translated_title: Traduction générée automatiquement
 lang_untranslated_note: Les langues marquées ne sont pas encore traduites — ces liens
   ouvrent la version originale.
-machine_translation_notice: Cette page a été traduite automatiquement à partir de
-  l'original en anglais.
+machine_translation_notice: Cette page a été traduite automatiquement depuis l'original
+  en anglais.
 machine_translation_view_source: Voir l'original
+diagram_label: Diagramme
+diagram_tools_label: Outils de diagramme
+diagram_zoom_in: Zoom avant
+diagram_zoom_out: Zoom arrière
+diagram_zoom_reset: Réinitialiser le zoom
+diagram_fullscreen: Afficher en plein écran
+diagram_fullscreen_close: Fermer le plein écran
+diagram_copy_source: Copier la source du diagramme
+diagram_copied: Copié
+diagram_copy_failed: Échec de la copie
+diagram_download: Télécharger en SVG
+diagram_error_title: Ce diagramme n'a pas pu être affiché
+diagram_error_hint: Vérifiez la syntaxe dans le Mermaid Live Editor. La source est
+  affichée ci-dessous pour ne rien perdre.
+diagram_source_label: Source du diagramme
+diagram_loading: Chargement du diagramme

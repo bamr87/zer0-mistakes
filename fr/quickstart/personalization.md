@@ -2,8 +2,8 @@
 title: Personnalisation et configuration du site
 author: Zer0-Mistakes Development Team
 layout: default
-description: Personnalisez votre site Jekyll grâce à des formulaires interactifs.
-  Configurez l'identité du site, l'image de marque, l'analytique, les liens sociaux
+description: Personnalisez votre site Jekyll à l'aide de formulaires interactifs.
+  Configurez l'identité du site, l'image de marque, les analyses, les liens sociaux
   et générez votre fichier _config.yml complet.
 preview: "/images/previews/site-personalization-configuration.png"
 categories:
@@ -16,15 +16,14 @@ tags:
 - customization
 - yaml
 keywords:
-  primary:
-  - jekyll configuration
-  - site personalization
-  secondary:
-  - yaml config
-  - site branding
-  - analytics setup
-  - social links
-lastmod: 2026-05-30 00:00:00.000000000 Z
+- jekyll configuration
+- site personalization
+- yaml config
+- site branding
+- analytics setup
+- social links
+date: 2025-07-01 00:00:00.000000000 Z
+lastmod: 2026-09-05 00:00:00.000000000 Z
 draft: false
 sidebar:
   nav: quickstart
@@ -37,16 +36,16 @@ permalink: "/fr/quickstart/personalization/"
 translation_of: pages/_quickstart/personalization.md
 translation_source_url: "/quickstart/personalization/"
 machine_translated: true
-translated_from_sha: 630342fcd530
+translated_from_sha: '097b8c40314c'
 ---
 
-# 🎨 Personnalisation et configuration du site
+# Personnalisation et configuration du site
 
-Après avoir terminé l'[installation Quick Start](/quickstart/), utilisez ce guide pour personnaliser votre site Jekyll. Remplissez les formulaires interactifs ci-dessous pour générer vos paramètres `_config.yml` personnalisés.
+Après avoir terminé l'[installation du démarrage rapide](/quickstart/), utilisez ce guide pour personnaliser votre site Jekyll. Remplissez les formulaires interactifs ci-dessous pour générer vos paramètres `_config.yml` personnalisés.
 
-> **Vous préférez une interface en direct ?** Le [Theme Customizer](/about/settings/theme/) vous permet de prévisualiser en temps réel les changements de skin et de couleur directement sur votre site en cours d'exécution.
+> **Vous préférez une interface en direct ?** Le [personnalisateur de thème](/about/settings/theme/) vous permet de prévisualiser les changements de skin et de couleurs en temps réel directement sur votre site en cours d'exécution.
 
-![Theme Customizer — aperçu du skin et des couleurs](/assets/images/quickstart/06-theme-customizer.png)
+![Personnalisateur de thème — aperçu du skin et des couleurs](/assets/images/quickstart/06-theme-customizer.png)
 
 ![Formulaire de configuration de personnalisation](/assets/images/quickstart/personalization-config.png)
 
@@ -55,7 +54,9 @@ Après avoir terminé l'[installation Quick Start](/quickstart/), utilisez ce gu
   <p class="mb-0 mt-2">Remplissez les formulaires de chaque section. Vos paramètres seront automatiquement enregistrés et combinés en un fichier <code>_config.yml</code> complet en bas de la page. Copiez-collez pour personnaliser votre site !</p>
 </div>
 
-## 📋 Sections de configuration
+> Cette page est un générateur interactif et nécessite JavaScript. S'il est désactivé, utilisez le [générateur de site](/quickstart/site-builder/), qui produit le même `_config.yml` et peut écrire l'ensemble du projet pour vous.
+
+## Sections de configuration
 
 <div class="row g-3 mb-4">
   <div class="col-md-4">
@@ -152,7 +153,7 @@ Configurez les informations de base qui identifient votre site sur le web.
         <div class="col-12">
           <label for="cfg-description" class="form-label"><i class="bi bi-text-paragraph"></i> Description du site <span class="text-danger">*</span></label>
           <textarea class="form-control" id="cfg-description" rows="3" placeholder="A Jekyll site powered by the zer0-mistakes theme. Step-by-step guides and tutorials for developers." required></textarea>
-          <div class="form-text">Description SEO (150-160 caractères recommandés)</div>
+          <div class="form-text">Description SEO (150 à 160 caractères recommandés)</div>
           <small class="text-muted"><span id="desc-char-count">0</span>/160 caractères</small>
         </div>
         <div class="col-md-6">
@@ -169,10 +170,10 @@ Configurez les informations de base qui identifient votre site sur le web.
             <span class="input-group-text">/</span>
             <input type="text" class="form-control" id="cfg-baseurl" placeholder="">
           </div>
-          <div class="form-text">Sous-chemin pour les sites de projet (par ex., "blog" pour /blog/)</div>
+          <div class="form-text">Sous-chemin pour les sites de projet (par ex. « blog » pour /blog/)</div>
         </div>
         <div class="col-md-6">
-          <label for="cfg-locale" class="form-label"><i class="bi bi-translate"></i> Langue/Paramètres régionaux</label>
+          <label for="cfg-locale" class="form-label"><i class="bi bi-translate"></i> Langue/Locale</label>
           <select class="form-select" id="cfg-locale">
             <option value="en-US" selected>Anglais (US)</option>
             <option value="en-GB">Anglais (UK)</option>
@@ -205,7 +206,7 @@ Configurez les informations de base qui identifient votre site sur le web.
 
 <h2 id="owner-info"><i class="bi bi-person-circle text-success"></i> Informations du propriétaire</h2>
 
-Configurez votre identité personnelle ou organisationnelle.
+Configurez votre identité personnelle ou d'organisation.
 
 <div class="card mb-4">
   <div class="card-header bg-success text-white">
@@ -217,7 +218,7 @@ Configurez votre identité personnelle ou organisationnelle.
         <div class="col-md-6">
           <label for="cfg-author-name" class="form-label"><i class="bi bi-person"></i> Votre nom <span class="text-danger">*</span></label>
           <input type="text" class="form-control" id="cfg-author-name" placeholder="John Doe" required>
-          <div class="form-text">Nom affiché pour les crédits d'auteur</div>
+          <div class="form-text">Nom d'affichage pour les crédits d'auteur</div>
         </div>
         <div class="col-md-6">
           <label for="cfg-email" class="form-label"><i class="bi bi-envelope"></i> Adresse e-mail</label>
@@ -232,7 +233,7 @@ Configurez votre identité personnelle ou organisationnelle.
         <div class="col-md-6">
           <label for="cfg-location" class="form-label"><i class="bi bi-geo-alt"></i> Localisation</label>
           <input type="text" class="form-control" id="cfg-location" placeholder="San Francisco, CA">
-          <div class="form-text">Ville, Région/Pays (affiché sur le profil)</div>
+          <div class="form-text">Ville, région/pays (affiché sur le profil)</div>
         </div>
         <div class="col-md-6">
           <label for="cfg-avatar" class="form-label"><i class="bi bi-image"></i> URL de l'avatar</label>
@@ -288,7 +289,7 @@ Connectez vos profils sociaux et comptes externes.
         <div class="col-md-6">
           <label for="cfg-youtube" class="form-label"><i class="bi bi-youtube"></i> Chaîne YouTube</label>
           <input type="url" class="form-control" id="cfg-youtube" placeholder="https://youtube.com/@channel">
-          <div class="form-text">URL complète vers votre chaîne</div>
+          <div class="form-text">URL complète de votre chaîne</div>
         </div>
         <div class="col-md-6">
           <label for="cfg-mastodon" class="form-label"><i class="bi bi-mastodon"></i> Profil Mastodon</label>
@@ -316,7 +317,7 @@ Connectez vos profils sociaux et comptes externes.
 
 <h2 id="appearance"><i class="bi bi-palette text-warning"></i> Apparence et image de marque</h2>
 
-Personnalisez l'apparence et l'ambiance de votre site.
+Personnalisez l'apparence et le style de votre site.
 
 <div class="card mb-4">
   <div class="card-header bg-warning text-dark">
@@ -328,17 +329,15 @@ Personnalisez l'apparence et l'ambiance de votre site.
         <div class="col-md-6">
           <label for="cfg-theme-skin" class="form-label"><i class="bi bi-moon-stars"></i> Habillage du thème</label>
           <select class="form-select" id="cfg-theme-skin">
-            <option value="dark" selected>Sombre</option>
-            <option value="air">Air (Clair)</option>
+            <option value="air" selected>Air (clair)</option>
             <option value="aqua">Aqua</option>
-            <option value="contrast">Contraste élevé</option>
             <option value="dirt">Dirt</option>
             <option value="neon">Neon</option>
             <option value="mint">Mint</option>
             <option value="plum">Plum</option>
             <option value="sunrise">Sunrise</option>
           </select>
-          <div class="form-text">Palette de couleurs de votre site</div>
+          <div class="form-text">Palette de couleurs de votre site. Sept habillages sont fournis avec le thème : air, aqua, dirt, neon, mint, plum et sunrise. Les modes clair et sombre sont gérés séparément par le bouton de bascule du mode couleur, si bien qu'un <code>theme_skin</code> défini sur <code>dark</code> ou <code>contrast</code> dans une ancienne configuration n'est plus reconnu — choisissez plutôt l'un des sept.</div>
         </div>
         <div class="col-md-6">
           <label for="cfg-primary-color" class="form-label"><i class="bi bi-droplet-fill"></i> Couleur principale</label>
@@ -351,17 +350,17 @@ Personnalisez l'apparence et l'ambiance de votre site.
         <div class="col-md-6">
           <label for="cfg-logo" class="form-label"><i class="bi bi-image"></i> Chemin du logo</label>
           <input type="text" class="form-control" id="cfg-logo" placeholder="/assets/images/logo.png">
-          <div class="form-text">Chemin vers l'image du logo (88x88px recommandé)</div>
+          <div class="form-text">Chemin vers l'image du logo (88x88 px recommandé)</div>
         </div>
         <div class="col-md-6">
           <label for="cfg-og-image" class="form-label"><i class="bi bi-card-image"></i> Image sociale par défaut</label>
           <input type="text" class="form-control" id="cfg-og-image" placeholder="/assets/images/og-image.png">
-          <div class="form-text">Image par défaut pour le partage sur les réseaux sociaux (1200x630px)</div>
+          <div class="form-text">Image par défaut pour le partage social (1200x630 px)</div>
         </div>
         <div class="col-md-6">
-          <label for="cfg-teaser" class="form-label"><i class="bi bi-image"></i> Image d'aperçu</label>
+          <label for="cfg-teaser" class="form-label"><i class="bi bi-image"></i> Image teaser</label>
           <input type="text" class="form-control" id="cfg-teaser" placeholder="/assets/images/teaser.png">
-          <div class="form-text">Image de repli pour les articles sans aperçu</div>
+          <div class="form-text">Image de secours pour les articles sans aperçu</div>
         </div>
         <div class="col-md-6">
           <label for="cfg-wpm" class="form-label"><i class="bi bi-speedometer2"></i> Mots par minute</label>
@@ -399,14 +398,14 @@ Mettez en place une analytique respectueuse de la vie privée pour comprendre vo
           <h6 class="border-bottom pb-2"><i class="bi bi-google"></i> Google Analytics</h6>
         </div>
         <div class="col-md-6">
-          <label for="cfg-ga-id" class="form-label">ID de mesure</label>
+          <label for="cfg-ga-id" class="form-label">Identifiant de mesure</label>
           <input type="text" class="form-control" id="cfg-ga-id" placeholder="G-XXXXXXXXXX">
-          <div class="form-text">ID de mesure Google Analytics 4</div>
+          <div class="form-text">Identifiant de mesure Google Analytics 4</div>
         </div>
         
         <!-- PostHog Analytics -->
         <div class="col-12 mt-4">
-          <h6 class="border-bottom pb-2"><i class="bi bi-speedometer"></i> PostHog Analytics (Respectueux de la vie privée)</h6>
+          <h6 class="border-bottom pb-2"><i class="bi bi-speedometer"></i> PostHog Analytics (respectueux de la vie privée)</h6>
         </div>
         <div class="col-12">
           <div class="form-check form-switch">
@@ -432,7 +431,7 @@ Mettez en place une analytique respectueuse de la vie privée pour comprendre vo
             <div class="col-md-4">
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" id="cfg-posthog-dnt" checked>
-                <label class="form-check-label" for="cfg-posthog-dnt">Respecter Do Not Track</label>
+                <label class="form-check-label" for="cfg-posthog-dnt">Respecter le paramètre Do Not Track</label>
               </div>
             </div>
             <div class="col-md-4">
@@ -500,7 +499,7 @@ Configurez des fonctionnalités avancées comme les commentaires, les plugins et
           <input type="text" class="form-control" id="cfg-giscus-repo-id" placeholder="R_xxxxxxxxxxxx">
         </div>
         <div class="col-md-6">
-          <label for="cfg-giscus-category-id" class="form-label">ID de catégorie</label>
+          <label for="cfg-giscus-category-id" class="form-label">ID de la catégorie</label>
           <input type="text" class="form-control" id="cfg-giscus-category-id" placeholder="DIC_xxxxxxxxxxxx">
         </div>
 
@@ -514,7 +513,7 @@ Configurez des fonctionnalités avancées comme les commentaires, les plugins et
           <div class="form-text">Pagination pour les listes d'articles</div>
         </div>
         <div class="col-md-4">
-          <label for="cfg-port" class="form-label">Port du serveur de développement</label>
+          <label for="cfg-port" class="form-label">Port du serveur de dev</label>
           <input type="number" class="form-control" id="cfg-port" value="4000" min="1024" max="65535">
           <div class="form-text">Port de développement local</div>
         </div>
@@ -528,7 +527,7 @@ Configurez des fonctionnalités avancées comme les commentaires, les plugins et
 
         <!-- Features Toggle -->
         <div class="col-12 mt-4">
-          <h6 class="border-bottom pb-2"><i class="bi bi-toggles"></i> Options de fonctionnalités</h6>
+          <h6 class="border-bottom pb-2"><i class="bi bi-toggles"></i> Activation des fonctionnalités</h6>
         </div>
         <div class="col-md-4">
           <div class="form-check form-switch">
@@ -558,7 +557,7 @@ Configurez des fonctionnalités avancées comme les commentaires, les plugins et
           <input type="number" class="form-control" id="cfg-cr-year" value="2024" min="2000" max="2100">
         </div>
         <div class="col-md-4">
-          <label for="cfg-cr-entity" class="form-label">Titulaire des droits d'auteur</label>
+          <label for="cfg-cr-entity" class="form-label">Titulaire des droits</label>
           <input type="text" class="form-control" id="cfg-cr-entity" placeholder="Your Name">
         </div>
         <div class="col-md-4">
@@ -579,7 +578,7 @@ Configurez des fonctionnalités avancées comme les commentaires, les plugins et
 
 ---
 
-## 📝 Configuration générée
+## Configuration générée
 
 <div class="card mb-4 border-dark">
   <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
@@ -603,32 +602,45 @@ Configurez des fonctionnalités avancées comme les commentaires, les plugins et
   <ol class="mb-0 mt-2">
     <li>Copiez la configuration générée ci-dessus</li>
     <li>Collez-la dans votre fichier <code>_config.yml</code></li>
-    <li>Redémarrez votre serveur Jekyll : <code>docker-compose restart</code></li>
-    <li>Consultez votre site personnalisé à l'adresse <code>http://localhost:4000</code></li>
+    <li>Redémarrez votre serveur Jekyll : <code>docker compose restart</code></li>
+    <li>Consultez votre site personnalisé sur <code>http://localhost:4000</code></li>
   </ol>
 </div>
 
 ---
 
-## 🎉 Tout est prêt !
+## Vérifier
 
-Félicitations pour avoir terminé le guide de démarrage rapide ! Votre site est désormais :
+Redémarrez le serveur de développement pour que Jekyll recharge la configuration, puis vérifiez que les valeurs que vous avez saisies ont bien été prises en compte :
 
-- ✅ En cours d'exécution localement avec Docker
+```bash
+docker compose restart
+```
+
+- L'onglet du navigateur et la barre de navigation affichent votre **Titre du site**.
+- `/about/` affiche votre nom d'auteur et votre e-mail.
+- Si vous avez défini un thème, les couleurs de la page changent ; si rien ne change, vérifiez que
+  `theme_skin` est l'un des sept noms listés ci-dessus.
+
+## Tout est prêt
+
+Félicitations, vous avez terminé le guide de démarrage rapide ! Votre site est désormais :
+
+- ✅ Exécuté localement avec Docker
 - ✅ Connecté à GitHub pour le contrôle de version
-- ✅ Personnalisé avec votre identité visuelle
+- ✅ Personnalisé avec votre identité de marque
 - ✅ Prêt pour le déploiement sur GitHub Pages
 
 ### Et ensuite ?
 
 - **Créer du contenu** - Ajoutez des articles de blog dans `pages/_posts/`
 - **Personnaliser les mises en page** - Modifiez les modèles dans `_layouts/` et `_includes/`
-- **Déployer en production** - Poussez sur GitHub et activez GitHub Pages
+- **Déployer en production** - Poussez vers GitHub et activez GitHub Pages
 - **Explorer la documentation** - Consultez la [documentation complète](/docs/)
 
 ---
 
-## 📚 Résumé du guide de démarrage rapide
+## Résumé du guide de démarrage rapide
 
 | Étape | Guide | Description |
 |------|-------|-------------|
@@ -709,7 +721,7 @@ document.addEventListener('DOMContentLoaded', function() { // Configuration stat
     const bluesky = getValue('cfg-bluesky');
     const discord = getValue('cfg-discord');
     
-    const themeSkin = getValue('cfg-theme-skin', 'dark');
+    const themeSkin = getValue('cfg-theme-skin', 'air');
     const primaryColor = getValue('cfg-primary-color', '#007bff');
     const logo = getValue('cfg-logo');
     const ogImage = getValue('cfg-og-image');
@@ -761,7 +773,7 @@ title_separator: "${titleSeparator}" description: >- ${escapeYaml(description)} 
     if (baseurl) yaml += `\nbaseurl: "/${escapeYaml(baseurl)}"`;
     yaml += `\nport: ${port}`;
 
-    // Informations sur le propriétaire/auteur
+    // Informations sur le propriétaire/l'auteur
     yaml += `
 
 # Informations sur le propriétaire
@@ -778,7 +790,7 @@ author: name: "${escapeYaml(authorName)}"`;
     if (github) yaml += `\n  github_username: "${escapeYaml(github)}"`;
     if (twitter) yaml += `\n  twitter_username: "${escapeYaml(twitter)}"`;
 
-    // Liens sociaux
+    // Liens vers les réseaux sociaux
     const hasSocialLinks = github || twitter || linkedin || instagram || youtube || mastodon || bluesky || discord;
     if (hasSocialLinks) {
       yaml += `
@@ -839,7 +851,7 @@ posthog: enabled: true api_key: "${escapeYaml(posthogKey)}" api_host: "${escapeY
 
 # Commentaires (Giscus)
 # -------------------------------------------------------------------------
-gisgus: enabled: true data-repo-id: "${escapeYaml(giscusRepoId)}" data-category-id: "${escapeYaml(giscusCategoryId)}"`;
+giscus: enabled: true data-repo-id: "${escapeYaml(giscusRepoId)}" data-category-id: "${escapeYaml(giscusCategoryId)}"`;
     }
 
     // Paramètres de build
@@ -882,24 +894,24 @@ plugins:
   - jekyll-redirect-from
   - jekyll-include-cache`;
 
-    // Met à jour l'affichage
+    // Mettre à jour l'affichage
     const configOutput = document.getElementById('generated-config');
     if (configOutput) {
       configOutput.textContent = yaml;
     }
 
-    // Enregistre dans localStorage
+    // Enregistrer dans localStorage
     saveConfig();
 
     return yaml;
   }
 
-// Échappe les caractères spéciaux YAML function escapeYaml(str) {
+// Échapper les caractères spéciaux YAML function escapeYaml(str) {
     if (!str) return '';
     return str.replace(/"/g, '\\"').replace(/\n/g, '\\n');
   }
 
-// Enregistre la configuration dans localStorage function saveConfig() {
+// Enregistrer la configuration dans localStorage function saveConfig() {
     const formData = {};
     document.querySelectorAll('input, select, textarea').forEach(el => {
       if (el.id && el.id.startsWith('cfg-')) {
@@ -909,7 +921,7 @@ plugins:
     localStorage.setItem('zer0-personalization-config', JSON.stringify(formData));
   }
 
-// Charge la configuration depuis localStorage function loadConfig() {
+// Charger la configuration depuis localStorage function loadConfig() {
     const saved = localStorage.getItem('zer0-personalization-config');
     if (saved) {
       try {
@@ -924,23 +936,23 @@ plugins:
             }
           }
         });
-        // Met à jour le compteur de caractères après le chargement
+        // Mettre à jour le nombre de caractères après le chargement
         if (descInput && charCount) {
           charCount.textContent = descInput.value.length;
         }
       } catch (e) {
-        console.warn('Impossible de charger la configuration enregistrée :', e);
+        console.warn('Could not load saved configuration:', e);
       }
     }
     generateConfig();
   }
 
-// Réinitialise tous les champs function resetAll() {
-    if (confirm('Réinitialiser tous les champs aux valeurs par défaut ? Cette action est irréversible.')) {
+// Réinitialiser tous les champs function resetAll() {
+    if (confirm('Reset all fields to defaults? This cannot be undone.')) {
       document.querySelectorAll('input, select, textarea').forEach(el => {
         if (el.id && el.id.startsWith('cfg-')) {
           if (el.type === 'checkbox') {
-            // Réinitialise les cases à cocher selon leur data-default ou les valeurs par défaut standard
+            // Réinitialiser les cases à cocher selon leur data-default ou les valeurs par défaut standard
             el.checked = ['cfg-breadcrumbs', 'cfg-posthog-dnt', 'cfg-posthog-autocapture', 
                          'cfg-mermaid', 'cfg-mathjax', 'cfg-search'].includes(el.id);
           } else if (el.tagName === 'SELECT') {
@@ -950,10 +962,10 @@ plugins:
           }
         }
       });
-      // Définit des valeurs par défaut spécifiques
+      // Définir les valeurs par défaut spécifiques
       document.getElementById('cfg-locale').value = 'en-US';
       document.getElementById('cfg-title-separator').value = '|';
-      document.getElementById('cfg-theme-skin').value = 'dark';
+      document.getElementById('cfg-theme-skin').value = 'air';
       document.getElementById('cfg-primary-color').value = '#007bff';
       document.getElementById('cfg-primary-color-picker').value = '#007bff';
       document.getElementById('cfg-wpm').value = '200';
@@ -971,7 +983,7 @@ plugins:
     }
   }
 
-// Copy config to clipboard function copyConfig() {
+// Copier la configuration dans le presse-papiers function copyConfig() {
     const config = document.getElementById('generated-config').textContent;
     const btn = document.getElementById('copy-config-btn');
     
@@ -992,22 +1004,22 @@ plugins:
     });
   }
 
-// Event listeners for all form inputs document.querySelectorAll('input, select, textarea').forEach(el => {
+// Écouteurs d'événements pour tous les champs du formulaire document.querySelectorAll('input, select, textarea').forEach(el => {
     if (el.id && el.id.startsWith('cfg-')) {
       el.addEventListener('input', generateConfig);
       el.addEventListener('change', generateConfig);
     }
   });
 
-// Button event listeners const resetBtn = document.getElementById('reset-all-btn'); if (resetBtn) resetBtn.addEventListener('click', resetAll);
+// Écouteurs d'événements des boutons const resetBtn = document.getElementById('reset-all-btn'); if (resetBtn) resetBtn.addEventListener('click', resetAll);
   
 const copyBtn = document.getElementById('copy-config-btn'); if (copyBtn) copyBtn.addEventListener('click', copyConfig);
 
-// Initialize loadConfig(); });
+// Initialisation loadConfig(); });
 </script>
 
 <style>
-/* Form styling */ .form-label { font-weight: 500; }
+/* Style du formulaire */ .form-label { font-weight: 500; }
 
 .form-label i { margin-right: 0.25rem; }
 
@@ -1015,21 +1027,21 @@ const copyBtn = document.getElementById('copy-config-btn'); if (copyBtn) copyBtn
 
 .form-control-color { width: 50px; padding: 0.25rem; }
 
-/* Card hover effects */ .card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+/* Effets de survol des cartes */ .card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
 
 .card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 
-/* Code block styling */ #generated-config { font-family: 'Fira Code', 'Courier New', Courier, monospace; font-size: 0.85rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+/* Style des blocs de code */ #generated-config { font-family: 'Fira Code', 'Courier New', Courier, monospace; font-size: 0.85rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
 
-/* Section anchors */ h2[id] { scroll-margin-top: 80px; }
+/* Ancres de section */ h2[id] { scroll-margin-top: 80px; }
 
-/* Input group styling */ .input-group-text { font-size: 0.875rem; background-color: var(--bs-gray-100); }
+/* Style des groupes de champs */ .input-group-text { font-size: 0.875rem; background-color: var(--bs-gray-100); }
 
-/* Switch styling */ .form-check-input:checked { background-color: var(--bs-primary); border-color: var(--bs-primary); }
+/* Style des interrupteurs */ .form-check-input:checked { background-color: var(--bs-primary); border-color: var(--bs-primary); }
 
-/* Character counter */ #desc-char-count { transition: color 0.2s ease; }
+/* Compteur de caractères */ #desc-char-count { transition: color 0.2s ease; }
 
-/* Responsive adjustments */ @media (max-width: 768px) { .card-body {
+/* Ajustements responsives */ @media (max-width: 768px) { .card-body {
     padding: 1rem;
   }
   
