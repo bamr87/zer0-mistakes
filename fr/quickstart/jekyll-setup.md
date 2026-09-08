@@ -1,5 +1,5 @@
 ---
-title: Configuration de Jekyll
+title: 'Configuration de Jekyll : lancer le serveur de développement et créer du contenu'
 author: Zer0-Mistakes Development Team
 layout: default
 description: Configurez votre environnement de développement Jekyll axé sur Docker.
@@ -15,14 +15,12 @@ tags:
 - configuration
 - theme
 keywords:
-  primary:
-  - jekyll development
-  - docker compose
-  secondary:
-  - live reload
-  - content creation
-  - theme customization
-lastmod: 2026-05-30 00:00:00.000000000 Z
+- jekyll development
+- docker compose
+- live reload
+- content creation
+- theme customization
+lastmod: 2026-09-05 00:00:00.000000000 Z
 draft: false
 sidebar:
   nav: quickstart
@@ -36,19 +34,19 @@ permalink: "/fr/quickstart/jekyll-setup/"
 translation_of: pages/_quickstart/jekyll-setup.md
 translation_source_url: "/quickstart/jekyll-setup/"
 machine_translated: true
-translated_from_sha: fe93ed13d358
+translated_from_sha: fe9345270029
 ---
 
 # Configuration de Jekyll
 
-Démarrez votre serveur de développement Jekyll basé sur Docker et créez votre premier contenu. **Aucune installation locale de Ruby n'est nécessaire** — tout s'exécute à l'intérieur du conteneur.
+Démarrez votre serveur de développement Jekyll basé sur Docker et créez votre premier contenu. **Aucune installation locale de Ruby requise** — tout s'exécute à l'intérieur du conteneur.
 
 ```mermaid
 flowchart LR
-    A([Repo cloned]) --> B[docker-compose up]
+    A([Repo cloned]) --> B[docker compose up]
     B --> C{First run?}
     C -->|Yes| D[bundle install\n~2 min]
-    C -->|No| E[Stats generator runs]
+    C -->|No| E[Gems already cached]
     D --> E
     E --> F[Jekyll server starts]
     F --> G([localhost:4000 🎉])
@@ -67,68 +65,75 @@ gh repo clone bamr87/zer0-mistakes
 cd zer0-mistakes
 ```
 
-Ou, si vous avez utilisé l'assistant d'installation, vous êtes déjà dans le bon répertoire.
+Ou si vous avez utilisé l'assistant d'installation, vous êtes déjà dans le bon répertoire.
 
 ## Étape 2 — Démarrer le serveur de développement
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 Au premier lancement, Docker :
-1. Récupère l'image Jekyll (≈ 1–2 min)
+1. Télécharge l'image Jekyll (≈ 1–2 min)
 2. Exécute `bundle install` à l'intérieur du conteneur
-3. Exécute `_data/generate_statistics.sh` pour générer les statistiques du site
-4. Démarre Jekyll avec le rechargement automatique
+3. Démarre Jekyll avec le rechargement à chaud
+
+> Les statistiques de contenu ne sont **pas** régénérées au démarrage — `_data/content_statistics.yml`
+> est validé et lu directement. Actualisez-les avec `rake stats:generate` (ou
+> `_data/generate_statistics.sh`) après avoir ajouté du contenu.
 
 Votre site est disponible à l'adresse **[http://localhost:4000](http://localhost:4000)**.
 
-![Sortie de docker-compose up montrant le démarrage de Jekyll](/assets/images/quickstart/jekyll-setup-compose-up.png)
+![sortie de docker compose up montrant le démarrage de Jekyll](/assets/images/quickstart/jekyll-setup-compose-up.png)
 
 ## Étape 3 — Vérifier l'état du site
 
 ```bash
-docker-compose exec jekyll bundle exec jekyll doctor
+docker compose exec jekyll bundle exec jekyll doctor \
+  --config '_config.yml,_config_dev.yml'
 ```
 
-![Sortie de jekyll doctor](/assets/images/quickstart/jekyll-setup-doctor.png)
+![sortie de jekyll doctor](/assets/images/quickstart/jekyll-setup-doctor.png)
 
 Sortie attendue :
 
-```
-Configuration file: /app/_config.yml
-           Source: /app
-      Destination: /app/_site
+```text
+Configuration file: /site/_config.yml
+Configuration file: /site/_config_dev.yml
+            Source: /site
+       Destination: /site/_site
  Incremental build: enabled
-      Generating: done in X seconds.
+      Generating... done in X seconds.
 ```
+
+`Incremental build: enabled` provient de `_config_dev.yml` ; sans cette seconde configuration, la ligne est absente.
 
 ## Commandes essentielles
 
 ```bash
 # Start server (foreground — shows live logs)
-docker-compose up
+docker compose up
 
 # Start detached
-docker-compose up -d && docker-compose logs -f
+docker compose up -d && docker compose logs -f
 
 # Stop server
-docker-compose down
+docker compose down
 
 # Force rebuild (after Gemfile or Dockerfile changes)
-docker-compose down && docker-compose up --build
+docker compose down && docker compose up --build
 
 # Shell into the container
-docker-compose exec jekyll bash
+docker compose exec jekyll bash
 
 # Build for production (no watch)
-docker-compose exec -T jekyll bundle exec jekyll build \
+docker compose exec -T jekyll bundle exec jekyll build \
   --config '_config.yml,_config_dev.yml'
 ```
 
 ## Fichiers de configuration
 
-Le thème utilise **deux configurations superposées** — le développement remplace la production :
+Le thème utilise **deux configurations superposées** — le développement surcharge la production :
 
 ### `_config.yml` (production)
 
@@ -168,9 +173,9 @@ show_drafts: true
 future: true
 ```
 
-> Bootstrap 5.3.3 est **intégré** dans `assets/vendor/` — il n'y a aucune clé de configuration `bootstrap:`.
+> Bootstrap 5.3.3 est **intégré** dans `assets/vendor/` — il n'y a pas de clés de configuration `bootstrap:`.
 
-## Créer votre premier article
+## Créez votre premier article
 
 Les articles se trouvent dans `pages/_posts/`. Format du nom de fichier : `YYYY-MM-DD-slug.md`.
 
@@ -188,14 +193,14 @@ Hello, world! This is my first post.
 EOF
 ```
 
-Jekyll le prend en compte immédiatement (le rechargement automatique actualise le navigateur).
+Jekyll le prend en compte immédiatement (le rechargement à chaud actualise le navigateur).
 
 ## Structure du projet
 
-```
+```text
 zer0-mistakes/
 ├── _config.yml          # Production config
-├── _config_dev.yml      # Dev overrides (loaded by docker-compose)
+├── _config_dev.yml      # Dev overrides (loaded by docker compose)
 ├── docker-compose.yml   # Container definition
 ├── pages/
 │   ├── _posts/          # Blog posts
@@ -227,28 +232,28 @@ Ajoutez vos styles dans `_sass/custom.scss` (compilés dans `assets/css/main.css
 }
 ```
 
-Ou ajoutez `assets/css/user-overrides.css` et liez-le dans `_includes/core/head.html` après `main.css`.
+Ou ajoutez `assets/css/user-overrides.css` et définissez `user_overrides: true` dans `_config.yml`. Le thème l'intègre alors après `main.css`, de sorte que vos règles l'emportent sans modifier aucun include. (Sans ce paramètre, le fichier est livré mais jamais chargé.)
 
 ## Dépannage
 
 **Le conteneur ne démarre pas**
 
 ```bash
-docker-compose logs jekyll
-docker-compose down && docker-compose up --build
+docker compose logs jekyll
+docker compose down && docker compose up --build
 ```
 
 **Erreurs `bundle install`**
 
 ```bash
-docker-compose exec jekyll bundle install --retry 3
+docker compose exec jekyll bundle install --retry 3
 ```
 
-**Page introuvable / contenu obsolète**
+**Page introuvable / ancien contenu**
 
 ```bash
-docker-compose exec jekyll bundle exec jekyll clean
-docker-compose restart
+docker compose exec jekyll bundle exec jekyll clean
+docker compose restart
 ```
 
 **Erreurs de permissions (Linux)**
@@ -261,7 +266,7 @@ sudo chown -R $USER:$USER .
 
 <div class="d-flex justify-content-between mt-5">
   <a href="/quickstart/machine-setup/" class="btn btn-outline-secondary">
-    <i class="bi bi-arrow-left"></i> Précédent : Configuration de la machine
+    <i class="bi bi-arrow-left"></i> Retour : Configuration de la machine
   </a>
   <a href="/quickstart/github-setup/" class="btn btn-primary">
     Suivant : Configuration de GitHub <i class="bi bi-arrow-right"></i>
