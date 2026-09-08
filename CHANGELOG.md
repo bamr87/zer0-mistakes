@@ -12,6 +12,19 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [Unreleased]
+
+### Fixed
+
+- **Theme-skin buttons now announce which skin is applied.** The Theme Skin
+  group in Settings → Appearance conveyed selection only through the Bootstrap
+  `.active` class, which carries no accessibility semantics, so screen readers
+  announced nine identical unlabelled buttons — WCAG 2.1 SC 4.1.2 (Name, Role,
+  Value). Each button now ships `aria-pressed`, and the click and "Reset
+  background" handlers keep it in sync with `.active` through one shared
+  helper, matching the sibling color-mode group
+  ([#467](https://github.com/bamr87/zer0-mistakes/issues/467)).
+
 ## [1.29.0](https://github.com/bamr87/zer0-mistakes/compare/v1.28.0...v1.29.0) (2026-09-01)
 
 
