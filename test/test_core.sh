@@ -232,6 +232,15 @@ test_yaml_syntax() {
     return 0
 }
 
+# Meta-tests for the checks in this file: a check that can never fail is worse
+# than no check, because it reads green (T-049 / #460). test_core_checks.sh
+# drives test_liquid_templates and check_gem_contents against fixtures that are
+# known-good and known-bad, and fails if either verdict is wrong.
+test_core_check_specs() {
+    bash "$SCRIPT_DIR/test_core_checks.sh" > "$TEST_RESULTS_DIR/core_checks.log" 2>&1 \
+        || { tail -20 "$TEST_RESULTS_DIR/core_checks.log"; return 1; }
+}
+
 # Test plugin unit specs (T-011: content statistics, theme version, config sanitizer)
 test_plugin_unit_specs() {
     if command -v ruby &>/dev/null; then
@@ -516,6 +525,49 @@ test_jekyll_build() {
     return 0
 }
 
+# Asserts a built .gem actually carries the theme payload.
+#
+# A .gem is an UNCOMPRESSED tar wrapping three gzipped members -- metadata.gz,
+# data.tar.gz and checksums.yaml.gz. The previous implementation ran
+# `tar -tzf` directly on the .gem, which printed "stdin: not in gzip format"
+# four times and then fell through to a `log_warning` on BOTH branches, so a
+# gem missing _layouts/ or assets/ entirely still passed (T-049 / #460).
+# The payload has to be extracted to stdout and listed as its own archive.
+#
+# Exposed as a separate function so test/test_core_checks.sh can drive it
+# against fixture gems without building the real one.
+check_gem_contents() {
+    local gem_file="$1"
+    local contents
+
+    if ! contents=$(tar -xOf "$gem_file" data.tar.gz 2>/dev/null | tar -tzf - 2>/dev/null); then
+        log_error "Could not list data.tar.gz inside $gem_file (not a .gem?)"
+        return 1
+    fi
+
+    if [[ -z "$contents" ]]; then
+        log_error "$gem_file contains an empty data.tar.gz"
+        return 1
+    fi
+
+    local missing=()
+    local required
+    for required in _layouts assets; do
+        if ! grep -qE "^(\./)?${required}/" <<< "$contents"; then
+            missing+=("${required}/")
+        fi
+    done
+
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        log_error "Gem is missing required directories: ${missing[*]}"
+        log_error "Check the file patterns in jekyll-theme-zer0.gemspec"
+        return 1
+    fi
+
+    log_success "Gem contains _layouts/ and assets/ ($(grep -c . <<< "$contents") files)"
+    return 0
+}
+
 test_gem_build() {
     log_info "Testing gem build process..."
     
@@ -533,19 +585,11 @@ test_gem_build() {
             gem_file=$(ls jekyll-theme-zer0-*.gem 2>/dev/null | head -1)
             
             if [[ -f "$gem_file" ]]; then
-                # Check that essential files are included using tar (gems are tar.gz files)
-                if tar -tzf "$gem_file" | grep -q "_layouts" || tar -tzf "$gem_file" | grep -q "layouts"; then
-                    log_success "Gem contains layout files"
-                else
-                    log_warning "Gem may not contain layout files (check gemspec file patterns)"
+                if ! check_gem_contents "$gem_file"; then
+                    rm -f jekyll-theme-zer0-*.gem
+                    return 1
                 fi
-                
-                if tar -tzf "$gem_file" | grep -q "assets" || tar -tzf "$gem_file" | grep -q "lib"; then
-                    log_success "Gem contains expected files"
-                else
-                    log_warning "Gem may not contain expected files (check gemspec file patterns)"
-                fi
-                
+
                 # Clean up
                 rm -f jekyll-theme-zer0-*.gem
             else
@@ -572,38 +616,55 @@ test_liquid_templates() {
     
     cd "$PROJECT_ROOT"
     
+    # Both loops used to be `find ... | while read`, which runs the body in a
+    # SUBSHELL: the `return 1` on a match exited that subshell and the function
+    # still returned 0, so neither check could ever fail the suite (T-049 /
+    # #460). Reading from a process substitution keeps the body in this shell,
+    # so `failed` survives the loop.
+    local failed=0
+
     # Check layout files for basic Liquid syntax
     if [[ -d "_layouts" ]]; then
-        find "_layouts" -name "*.html" | while read -r layout; do
+        while IFS= read -r layout; do
             # Check for balanced Liquid tags
             local open_tags
             local close_tags
-            
+
             open_tags=$(grep -c "{%" "$layout" 2>/dev/null | tr -d '[:space:]' || echo "0")
             close_tags=$(grep -c "%}" "$layout" 2>/dev/null | tr -d '[:space:]' || echo "0")
-            
+
             # Ensure we have valid numbers
             [[ -z "$open_tags" ]] && open_tags=0
             [[ -z "$close_tags" ]] && close_tags=0
-            
+
             if [[ "$open_tags" -ne "$close_tags" ]]; then
                 log_error "Unbalanced Liquid tags in $layout"
-                return 1
+                failed=1
             fi
-        done
+        done < <(find "_layouts" -name "*.html")
     fi
-    
+
     # Check include files
     if [[ -d "_includes" ]]; then
-        find "_includes" -name "*.html" | while read -r include; do
-            # Basic syntax check for common issues
-            if grep -q "{{.*{{" "$include"; then
+        while IFS= read -r include; do
+            # A NESTED output tag is `{{ a {{ b }} }}` -- an opening `{{` that
+            # meets another `{{` before its own closing `}}`. The old pattern
+            # `{{.*{{` matched any two SIBLING tags on one line, so it flagged
+            # valid Liquid such as navigation/sidebar-pagetree.html's
+            # `{{ _base }}{{ _section }}` inside a capture, and printed
+            # [ERROR] on every clean run (64 of the includes matched it).
+            # `[^}]*` cannot cross the first `}`, so siblings no longer match.
+            if grep -qE '\{\{[^}]*\{\{' "$include"; then
                 log_error "Nested Liquid output tags found in $include"
-                return 1
+                failed=1
             fi
-        done
+        done < <(find "_includes" -name "*.html")
     fi
-    
+
+    if [[ "$failed" -ne 0 ]]; then
+        return 1
+    fi
+
     log_success "Liquid template validation passed"
     return 0
 }
@@ -1498,6 +1559,7 @@ run_core_tests() {
     run_test "Package.json Validity" "test_package_json_validity" "unit"
     run_test "Version Consistency" "test_version_consistency" "unit"
     run_test "Plugin Unit Specs" "test_plugin_unit_specs" "unit"
+    run_test "Core Check Meta-Specs" "test_core_check_specs" "unit"
     run_test "Sidebar Offcanvas Layout Gate" "test_sidebar_offcanvas_layout_gate" "unit"
     run_test "Background Image Include Contract" "test_background_image_include_contract" "unit"
     run_test "Developer Doc Banners Are Liquid" "test_developer_doc_banners_are_liquid" "unit"
@@ -1630,5 +1692,10 @@ main() {
     fi
 }
 
-# Execute main function
-main "$@"
+# Execute main function.
+#
+# Skipped when this file is SOURCED, so test/test_core_checks.sh can drive
+# individual checks against fixtures without running the whole suite.
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
+fi
