@@ -507,6 +507,23 @@ test_jekyll_build() {
             return 1
         fi
 
+        # Nav anchors must separate every attribute (issue #465). The two static
+        # guards check the template; this one checks the delivered bytes, where
+        # both branches of every aria-current conditional have been taken across
+        # the build (one current page, several hundred non-current ones).
+        local glued
+        glued=$(grep -rhEo '<a [^>]*class="(nav-link|dropdown-item)[^"]*"[^>]*>' \
+                    "$temp_site/_site" --include='*.html' 2>/dev/null \
+                | grep -E '="[^"]*"[A-Za-z_:][A-Za-z0-9_:.-]*=' | head -5 || true)
+        if [[ -n "$glued" ]]; then
+            log_error "Built nav anchors glue attributes together (invalid HTML):"
+            echo "$glued"
+            cd "$PROJECT_ROOT"
+            rm -rf "$temp_site"
+            return 1
+        fi
+        log_success "Built nav anchors separate every attribute"
+
         # Cleanup
         rm -rf "$temp_site"
     else
@@ -1322,6 +1339,96 @@ test_background_image_include_contract() {
     fi
 }
 
+test_attribute_whitespace_in_markup() {
+    log_info "Testing every include/layout renders separated attributes (issue #465)..."
+
+    cd "$PROJECT_ROOT"
+
+    if ! command -v python3 &>/dev/null; then
+        log_warning "python3 not available for the attribute-whitespace check"
+        return 0
+    fi
+
+    if python3 - <<'PYEOF'
+import re, sys, glob
+
+# The fleet-wide half of the navbar guard above. That one renders ONE include
+# through real Liquid; this one models the whitespace-trim rules over every
+# include and layout, so the same defect cannot reappear elsewhere -- it found
+# a second live instance (a literal missing space in
+# components/theme-preview-gallery.html) the day it was written. It needs no
+# gems, so unlike the Liquid check it never skips.
+#
+# The defect: {%- ... -%} strips ALL adjacent whitespace, including the
+# newlines that separate HTML attributes written one per line. A conditional
+# attribute written as
+#
+#     aria-label="{{ link.title }}"
+#     {%- if link.url == page.url -%} aria-current="page"{%- endif -%}
+#     title="{{ link.title }}"
+#
+# renders as aria-label="News"aria-current="page"title="News" -- the parse
+# error HTML Standard 13.2.5.32 names `missing-whitespace-between-attributes`.
+#
+# This models the RENDER rather than grepping the source, because the SAFE form
+# of the same construct -- {%- if x %} attr="v"{% endif %}, with the separating
+# space inside the tag body -- is textually almost identical to the broken one
+# and no source-level regex tells them apart (components/card-grid.html uses
+# the safe form). Every Liquid tag contributes nothing, every {{ output }}
+# contributes one space-free token, and the trim markers are applied to the
+# adjacent literal text exactly as Liquid applies them. Whatever is glued in
+# that render is glued in the delivered page.
+TOKEN = re.compile(r"\{\{-?.*?-?\}\}|\{%-?.*?-?%\}", re.S)
+# A quoted attribute value immediately followed by another attribute name.
+GLUE = re.compile(r'="[^"\n]*"[A-Za-z_:][A-Za-z0-9_:.\-]*\s*=')
+
+
+def render(text):
+    out, strip_next, pos = [], False, 0
+    for m in TOKEN.finditer(text):
+        lit, tag, pos = text[pos:m.start()], m.group(0), m.end()
+        if strip_next:
+            lit = lit.lstrip()
+        if tag.startswith(("{{-", "{%-")):
+            lit = lit.rstrip()
+        out.append(lit)
+        if tag.startswith("{{"):
+            out.append("X")
+        strip_next = tag.endswith(("-}}", "-%}"))
+    lit = text[pos:]
+    out.append(lit.lstrip() if strip_next else lit)
+    return "".join(out)
+
+
+offenders = []
+for path in sorted(glob.glob("_includes/**/*.html", recursive=True) +
+                   glob.glob("_layouts/**/*.html", recursive=True)):
+    with open(path, encoding="utf-8", errors="replace") as fh:
+        rendered = render(fh.read())
+    for m in GLUE.finditer(rendered):
+        line = rendered.count("\n", 0, m.start()) + 1
+        offenders.append(f"{path}: (rendered line {line}) {m.group(0)}")
+
+if offenders:
+    print("::error::HTML attributes render with no separating whitespace.")
+    print("Drop the trim markers around a conditional attribute, or move the")
+    print('separating space inside the tag body: {% if x %} attr="v"{% endif %}')
+    for o in offenders:
+        print(f"  {o}")
+    sys.exit(1)
+
+print("OK: every rendered HTML attribute is whitespace-separated")
+sys.exit(0)
+PYEOF
+    then
+        log_success "Every include/layout renders whitespace-separated attributes"
+        return 0
+    else
+        log_error "Liquid whitespace-trim glues HTML attributes together (see above)"
+        return 1
+    fi
+}
+
 test_navbar_attribute_whitespace() {
     log_info "Testing navbar attribute whitespace (issue #465)..."
 
@@ -1593,6 +1700,7 @@ run_core_tests() {
     run_test "Sidebar Offcanvas Layout Gate" "test_sidebar_offcanvas_layout_gate" "unit"
     run_test "Background Image Include Contract" "test_background_image_include_contract" "unit"
     run_test "Navbar Attribute Whitespace" "test_navbar_attribute_whitespace" "unit"
+    run_test "Attribute Whitespace In Markup" "test_attribute_whitespace_in_markup" "unit"
     run_test "Developer Doc Banners Are Liquid" "test_developer_doc_banners_are_liquid" "unit"
     run_test "Theme Color Fallback" "test_theme_color_fallback_without_config" "unit"
     run_test "Content Liquid Raw-Protected" "test_content_liquid_is_raw_protected" "unit"
