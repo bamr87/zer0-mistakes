@@ -132,7 +132,6 @@ main() {
     source "$TEST_DIR/test_pixelate_images.sh"
     source "$TEST_DIR/test_content_review.sh"
     source "$TEST_DIR/test_agent_review_result.sh"
-    source "$TEST_DIR/test_ai_runner.sh"
     source "$TEST_DIR/test_visual_evidence_autogen.sh"
 
     # Summary
