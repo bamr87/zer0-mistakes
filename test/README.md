@@ -42,14 +42,9 @@ The zer0-mistakes testing framework provides **6 comprehensive test suites** for
 
 #### Meta-specs (`test_core_checks.sh`)
 
-Some of the checks above are grep-and-exit-code assertions, and two of them
-silently could not fail: the Liquid nested-tag check swallowed its `return 1`
+Some of the checks above are grep-and-exit-code assertions, and two of them silently could not fail: the Liquid nested-tag check swallowed its `return 1`
 inside a `find | while` subshell, and the gem-content check ran `tar -tzf` on a
-`.gem` (an *uncompressed* tar) and fell through to a warning on both branches
-(issue #460). `test_core_checks.sh` sources `test_core.sh` — which only runs its
-suite when executed directly, not when sourced — and drives
-`test_liquid_templates` and `check_gem_contents` against known-good and
-known-bad fixtures, so a check that can no longer fail is itself a test failure.
+`.gem` (an *uncompressed* tar) and fell through to a warning on both branches (issue #460). `test_core_checks.sh` sources `test_core.sh` — which only runs its suite when executed directly, not when sourced — and drives `test_liquid_templates` and `check_gem_contents` against known-good and known-bad fixtures, so a check that can no longer fail is itself a test failure.
 
 ```bash
 # Run the meta-specs on their own (also runs inside test_core.sh)
