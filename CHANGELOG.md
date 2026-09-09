@@ -14,6 +14,29 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ## [Unreleased]
 
+### Changed
+
+- **`claude-run` is now the fleet's shared `ai-runner` kit.** The composite
+  action and its new `scripts/ai/run.sh` are byte-identical copies of
+  lifehacker.dev's (the kit source of truth) instead of a hand-rolled variant.
+  What changes for the two callers (`issue-autopilot.yml`,
+  `visual-evidence-autogen.yml`): an AI call that was attempted and rejected —
+  revoked credential, exhausted quota, `is_error` payload, CLI install failure
+  — now fails the step with the reason as a `::error::` annotation, where the
+  old action exited 0 and a dead run read green; the OAuth-first rule is
+  enforced with `env -u ANTHROPIC_API_KEY`; the model override is the canonical
+  `AI_MODEL` (or the new `model` input) rather than `ZER0_AI_MODEL`, and
+  `max-turns` is a new input. Metering (`scripts/ai/usage.rb`,
+  `usage_report.rb`, prices in `_data/ai_pricing.yml`) and the Claude API
+  fallback (`scripts/ai/api_call.rb`) ride along as optional companions. The
+  exit-code contract is pinned by `scripts/ci/test_ai_runner.sh`, wired into
+  `./scripts/bin/test`. The action's six existing inputs are unchanged.
+- **Consumer registry corrections.** `ai-world-view/ai-world-view.github.io`
+  is `remote_theme_floating` (both its `_config.yml` and `hub.yml` pins are
+  untagged), not `remote_theme_pinned`; `amr-bash/bash-365.com` is registered
+  as a consumer (floating `remote_theme`, unconstrained gem on Azure, path gem
+  for dev).
+
 ### Fixed
 
 - **The weekly UI/UX audit was blind, and reported it as clean.** `sweep.mjs`
