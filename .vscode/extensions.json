@@ -1,63 +1,19 @@
+// zer0-mistakes · .vscode/extensions.json — fleet-vscode/v1 · 2026-09-09. Convention + vocabulary: .vscode/README.md.
 {
-  // ==================================================
-  // UNIFIED VS CODE EXTENSIONS - Docker-First Development
-  // ==================================================
-  // Optimized for zer0-mistakes Jekyll theme development
-  // Last Updated: 2026-06-21
-
   "recommendations": [
-    // ==========================================
-    // CORE DEVELOPMENT TOOLS
-    // ==========================================
-    "github.copilot",
-    "github.copilot-chat",
+    "anthropic.claude-code",
+    "editorconfig.editorconfig",
     "github.vscode-github-actions",
-    "ms-azuretools.vscode-docker",
-
-    // ==========================================
-    // JEKYLL/WEB DEVELOPMENT
-    // ==========================================
-    "shopify.liquid",
+    "github.vscode-pull-request-github",
+    "ms-azuretools.vscode-containers",
     "redhat.vscode-yaml",
     "davidanson.vscode-markdownlint",
-    "yzhang.markdown-all-in-one",
-    "ms-playwright.playwright",
-
-    // ==========================================
-    // RUBY/GEM DEVELOPMENT
-    // ==========================================
-    "shopify.ruby-lsp",
-
-    // ==========================================
-    // BASH / SHELL TOOLING
-    // ==========================================
-    "timonwong.shellcheck",
-
-    // ==========================================
-    // UTILITY EXTENSIONS
-    // ==========================================
-    "ms-vscode-remote.remote-containers",
-    "ms-vscode.remote-repositories",
     "streetsidesoftware.code-spell-checker",
-    "eamodio.gitlens",
-
-    // ==========================================
-    // OPTIONAL ENHANCEMENTS
-    // ==========================================
-    "ms-vscode.live-server",
-    "formulahendry.auto-rename-tag",
-    "christian-kohler.path-intellisense",
-    "esbenp.prettier-vscode"
-  ],
-
-  // ==========================================
-  // WORKSPACE SPECIFIC RECOMMENDATIONS
-  // ==========================================
-  "unwantedRecommendations": [
-    "ms-vscode.vscode-typescript",
-    "ms-vscode.vscode-typescript-next",
-    "ms-vscode.nodejs-extension-pack",
-    "rebornix.ruby",
-    "bradlc.vscode-tailwindcss"
+    "timonwong.shellcheck",
+    "sissel.shopify-liquid",
+    "eliostruyf.vscode-front-matter",
+    "shopify.ruby-lsp",
+    "ms-playwright.playwright",
+    "ms-vscode.makefile-tools"
   ]
 }
