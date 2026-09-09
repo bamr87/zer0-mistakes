@@ -1,4 +1,5 @@
 // Feature: ZER0-060
+// Feature: ZER0-087
 /**
  * ===================================================================
  * Zer0-Mistakes AI Chat Proxy — Cloudflare Worker
@@ -26,6 +27,15 @@
  *   Modes 1 and 2 use a PERSONAL, ACCOUNT-SCOPED credential — gate the proxy
  *   with Cloudflare Access so only you can reach it (see README).
  *
+ * Providers (providers.js) — the proxy can answer with Claude (Anthropic) or
+ *   Grok (xAI). Every client keeps speaking the Anthropic Messages dialect;
+ *   for xAI the proxy translates the request to the OpenAI-compatible chat
+ *   API and converts the reply stream back into Anthropic SSE events, so the
+ *   widgets, the Site Builder session and the feedback triage are unchanged.
+ *   CHAT_PROVIDER pins the provider server-side ('anthropic' | 'xai'); 'auto'
+ *   (default) honours a client's `provider` only when that provider has a
+ *   credential, else takes the first configured one (Anthropic first).
+ *
  * Routes:
  *   POST /api/chat                 → Claude Messages API (SSE passthrough)
  *   POST /api/feedback             → triage a page-feedback capture, return JSON
@@ -45,6 +55,8 @@
  *     CLAUDE_CODE_OAUTH_TOKEN        — long-lived token from `claude setup-token`
  *   API-key mode:
  *     ANTHROPIC_API_KEY              — Anthropic API key
+ *   xAI (Grok) provider:
+ *     XAI_API_KEY                    — xai-… key from console.x.ai
  *   GitHub routes (optional):
  *     GITHUB_TOKEN                   — fine-grained PAT (Issues/Contents/PRs RW)
  *
@@ -55,12 +67,30 @@
  *   GITHUB_REPOSITORY  — "owner/repo" the GitHub routes act on
  *   BASE_BRANCH        — base branch for pull requests (default "main")
  *   PR_BRANCH_PREFIX   — branch prefix for generated PRs (default "chat/")
- *   CHAT_MODEL         — optional model override pinned server-side
+ *   CHAT_PROVIDER      — 'auto' (default) | 'anthropic' | 'xai'
+ *   CHAT_MODEL         — optional Claude model pinned server-side
+ *   XAI_CHAT_MODEL     — optional Grok model pinned server-side (default grok-4.6)
+ *   XAI_BASE_URL / ANTHROPIC_BASE_URL — upstream overrides (gateways, tests)
  *   MAX_TOKENS_CAP     — optional cap on client-requested max_tokens
  * ===================================================================
  */
 
-const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
+import {
+  anthropicAuthMode,
+  anthropicUrl,
+  selectProvider,
+  resolveModel,
+  anthropicToOpenAIChat,
+  openAIStreamToAnthropic,
+  openAIResponseToAnthropic,
+  normalizeUpstreamError,
+  openAIBase,
+  bearerHeaders,
+  PROVIDERS,
+} from './providers.js';
+
+export { anthropicAuthMode, selectProvider, resolveModel };
+
 const ANTHROPIC_VERSION = '2023-06-01';
 const OAUTH_BETA = 'oauth-2025-04-20';
 // Claude subscription OAuth tokens (`claude setup-token` / refresh) are gated to
@@ -145,17 +175,8 @@ function jsonError(message, status, cors) {
 }
 
 // --- Anthropic auth (OAuth connector or API key) ----------------------
-
-// Auth precedence, highest first:
-//   'oauth_refresh' — ANTHROPIC_OAUTH_REFRESH_TOKEN (rotating, KV-cached)
-//   'oauth_static'  — CLAUDE_CODE_OAUTH_TOKEN (long-lived Bearer, no refresh)
-//   'api_key'       — ANTHROPIC_API_KEY (x-api-key)
-function anthropicAuthMode(env) {
-  if (env.ANTHROPIC_OAUTH_REFRESH_TOKEN) return 'oauth_refresh';
-  if (env.CLAUDE_CODE_OAUTH_TOKEN) return 'oauth_static';
-  if (env.ANTHROPIC_API_KEY) return 'api_key';
-  return null;
-}
+// The precedence itself (oauth_refresh → oauth_static → api_key) lives in
+// providers.js `anthropicAuthMode`, shared with the dev proxy's status route.
 
 // Read the cached OAuth record from KV, seeding it from secrets on first run.
 async function readOAuthRecord(env) {
@@ -235,7 +256,7 @@ async function callAnthropic(env, payloadJson) {
   const send = async (forceRefresh) => {
     const headers = await anthropicAuthHeaders(env, { forceRefresh });
     headers['content-type'] = 'application/json';
-    return fetch(ANTHROPIC_URL, { method: 'POST', headers, body: payloadJson });
+    return fetch(anthropicUrl(env), { method: 'POST', headers, body: payloadJson });
   };
   let resp = await send(false);
   if (resp.status === 401 && anthropicAuthMode(env) === 'oauth_refresh') {
@@ -253,6 +274,25 @@ async function handleChat(request, env, cors) {
   }
 
   const cap = Number(env.MAX_TOKENS_CAP) || DEFAULT_MAX_TOKENS_CAP;
+  const provider = selectProvider(env, body.provider);
+  if (!provider) {
+    return jsonError('No AI provider credential configured (set CLAUDE_CODE_OAUTH_TOKEN / ANTHROPIC_API_KEY for Claude, or XAI_API_KEY for Grok)', 501, cors);
+  }
+  const model = resolveModel(env, provider, body.model);
+  const maxTokens = Math.min(Number(body.max_tokens) || 1024, cap);
+
+  if (provider === 'xai') {
+    // Grok speaks the OpenAI-compatible chat API. Translate the Anthropic-
+    // shaped request, stream the reply, and convert it back into Anthropic
+    // SSE events so the client's parser and tool loop stay untouched.
+    const upstreamBody = anthropicToOpenAIChat({ system: body.system, messages: body.messages, tools: body.tools }, { model, maxTokens, stream: true });
+    const upstream = await callOpenAICompatible(env, 'xai', upstreamBody);
+    if (!upstream.ok) return passUpstreamError(upstream, cors);
+    return new Response(openAIStreamToAnthropic(upstream.body, { model }), {
+      status: 200,
+      headers: { 'content-type': 'text/event-stream', 'cache-control': 'no-store', 'x-chat-provider': 'xai', ...cors },
+    });
+  }
 
   // OAuth (Claude subscription) tokens require the request to identify as Claude
   // Code: the first system block must be the Claude Code identity, else Anthropic
@@ -268,8 +308,8 @@ async function handleChat(request, env, cors) {
   }
 
   const payload = {
-    model: env.CHAT_MODEL || body.model,
-    max_tokens: Math.min(Number(body.max_tokens) || 1024, cap),
+    model,
+    max_tokens: maxTokens,
     system,
     messages: body.messages,
     tools: Array.isArray(body.tools) ? body.tools : undefined,
@@ -284,9 +324,69 @@ async function handleChat(request, env, cors) {
     headers: {
       'content-type': upstream.headers.get('content-type') || 'application/json',
       'cache-control': 'no-store',
+      'x-chat-provider': 'anthropic',
       ...cors,
     },
   });
+}
+
+// --- OpenAI-compatible providers (xAI Grok) ----------------------------------
+
+async function callOpenAICompatible(env, provider, body) {
+  const headers = bearerHeaders(provider, env);
+  return fetch(`${openAIBase(provider, env)}/chat/completions`, { method: 'POST', headers, body: JSON.stringify(body) });
+}
+
+// Re-shape a failed upstream reply into Anthropic's {error:{type,message}} so
+// the clients' error hints keep working whichever provider answered.
+async function passUpstreamError(upstream, cors) {
+  const text = await upstream.text().catch(() => '');
+  let parsed = null;
+  try { parsed = text ? JSON.parse(text) : null; } catch (err) { parsed = null; }
+  const norm = normalizeUpstreamError(upstream.status, parsed || text);
+  return new Response(JSON.stringify(norm), {
+    status: upstream.status || 502,
+    headers: { 'content-type': 'application/json', 'cache-control': 'no-store', ...cors },
+  });
+}
+
+/**
+ * Cheapest possible round trip that proves a credential works. Used by the
+ * dev proxy after a token is entered in the Site Builder. Returns
+ * { ok, status, message, provider, model } and never throws.
+ */
+export async function probeProvider(env, provider) {
+  try {
+    if (provider === 'xai') {
+      const headers = bearerHeaders('xai', env);
+      const list = await fetch(`${openAIBase('xai', env)}/models`, { method: 'GET', headers: { authorization: headers.authorization } });
+      if (list.ok) return { ok: true, status: list.status, provider, model: resolveModel(env, 'xai') };
+      if (list.status === 401 || list.status === 403) {
+        const body = await list.json().catch(() => null);
+        return { ok: false, status: list.status, provider, message: normalizeUpstreamError(list.status, body).error.message };
+      }
+      // Some gateways have no /models — fall back to a one-token completion.
+      const ping = await callOpenAICompatible(env, 'xai', { model: resolveModel(env, 'xai'), messages: [{ role: 'user', content: 'ping' }], max_tokens: 1, stream: false });
+      const body = await ping.json().catch(() => null);
+      return ping.ok
+        ? { ok: true, status: ping.status, provider, model: resolveModel(env, 'xai') }
+        : { ok: false, status: ping.status, provider, message: normalizeUpstreamError(ping.status, body).error.message };
+    }
+    if (provider === 'anthropic') {
+      const mode = anthropicAuthMode(env);
+      if (!mode) return { ok: false, status: 0, provider, message: 'no Anthropic credential' };
+      const system = mode === 'api_key' ? undefined : [{ type: 'text', text: CLAUDE_CODE_SYSTEM_PROMPT }];
+      const payload = { model: resolveModel(env, 'anthropic'), max_tokens: 1, system, messages: [{ role: 'user', content: 'ping' }], stream: false };
+      const resp = await callAnthropic(env, JSON.stringify(payload));
+      const body = await resp.json().catch(() => null);
+      return resp.ok
+        ? { ok: true, status: resp.status, provider, model: payload.model }
+        : { ok: false, status: resp.status, provider, message: normalizeUpstreamError(resp.status, body).error.message };
+    }
+    return { ok: false, status: 0, provider, message: `unknown provider ${provider}` };
+  } catch (err) {
+    return { ok: false, status: 0, provider, message: err.message || 'network error' };
+  }
 }
 
 // --- Feedback triage: analyze a page-feedback capture, return JSON --------
@@ -326,11 +426,12 @@ function parseModelJson(text) {
 }
 
 async function handleFeedback(request, env, cors) {
-  const mode = anthropicAuthMode(env);
-  if (!mode) {
-    return jsonError('AI analysis is not configured (no Anthropic credential)', 501, cors);
-  }
   const body = await request.json().catch(() => null);
+  const provider = selectProvider(env, body && body.provider);
+  if (!provider) {
+    return jsonError('AI analysis is not configured (no Claude or Grok credential)', 501, cors);
+  }
+  const mode = provider === 'anthropic' ? anthropicAuthMode(env) : null;
   if (!body || typeof body.description !== 'string' || !body.description.trim()) {
     return jsonError('description is required', 400, cors);
   }
@@ -356,7 +457,7 @@ async function handleFeedback(request, env, cors) {
   }
 
   const payload = {
-    model: env.CHAT_MODEL || body.model || 'claude-opus-4-8',
+    model: resolveModel(env, provider, body.model),
     max_tokens: Math.min(Number(body.maxTokens) || 1024, cap),
     system,
     messages: [{
@@ -366,10 +467,18 @@ async function handleFeedback(request, env, cors) {
     stream: false,
   };
 
-  const upstream = await callAnthropic(env, JSON.stringify(payload));
-  const data = await upstream.json().catch(() => null);
+  let upstream;
+  let data;
+  if (provider === 'xai') {
+    upstream = await callOpenAICompatible(env, 'xai', anthropicToOpenAIChat({ system: FEEDBACK_SYSTEM, messages: payload.messages }, { model: payload.model, maxTokens: payload.max_tokens, stream: false }));
+    const raw = await upstream.json().catch(() => null);
+    data = upstream.ok && raw ? openAIResponseToAnthropic(raw, { model: payload.model }) : (raw ? normalizeUpstreamError(upstream.status, raw) : null);
+  } else {
+    upstream = await callAnthropic(env, JSON.stringify(payload));
+    data = await upstream.json().catch(() => null);
+  }
   if (!upstream.ok || !data) {
-    const detail = data && data.error && data.error.message ? data.error.message : 'Anthropic request failed';
+    const detail = data && data.error && data.error.message ? data.error.message : `${PROVIDERS[provider].vendor} request failed`;
     return jsonError(detail, upstream.status || 502, cors);
   }
 

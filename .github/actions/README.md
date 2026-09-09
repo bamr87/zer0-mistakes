@@ -117,6 +117,28 @@ Runs code quality checks including linting and formatting validation.
 
 ---
 
+### 5. `claude-run` (consumed from the hub, not stored here)
+
+The universal AI step — one Claude Code invocation as a named agent (`.claude/agents/<name>.md`), OAuth-first, Claude API fallback, exit 1 on an attempted-and-failed call — is the fleet's `ai-runner` kit, versioned once in [bamr87/bamr87](https://github.com/bamr87/bamr87) and referenced at `@main`. It is **not** a local action any more: there is no `.github/actions/claude-run/` in this repo, and nothing to copy forward.
+
+**Usage:**
+```yaml
+- uses: bamr87/bamr87/.github/actions/claude-run@main
+  env:
+    CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+    ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}   # optional fallback
+  with:
+    agent: issue-triager
+    prompt: "..."
+    tools: "Read,Grep,Glob,Bash(gh:*)"
+```
+
+Inputs (`prompt`, `agent`, `tools`, `mcp`, `system`, `out`, `model`, `max-turns`), environment, and exit codes are documented in the hub kit README: [`templates/ai-runner/README.md`](https://github.com/bamr87/bamr87/blob/main/templates/ai-runner/README.md). The runner acts on the consumer checkout (`$GITHUB_WORKSPACE`) and picks up this repo's optional companions when present — `_data/ai.yml` (model), `scripts/ai/usage.rb` + `usage_report.rb` (metering), `scripts/ai/api_call.rb` (fallback), `tools/unwrap-prose.py` (prose normalizer); see [`scripts/ai/README.md`](../../scripts/ai/README.md).
+
+**Used by:** `issue-autopilot.yml`, `visual-evidence-autogen.yml`
+
+---
+
 ## Creating New Actions
 
 ### Action Structure

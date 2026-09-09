@@ -24,8 +24,11 @@ GITHUB_REPOSITORY = "bamr87/zer0-mistakes"
 BASE_BRANCH = "main"
 PR_BRANCH_PREFIX = "chat/"
 
-# Model + cost guardrails enforced server-side.
+# Provider, model + cost guardrails enforced server-side. To answer with Grok
+# instead, `wrangler secret put XAI_API_KEY` and set CHAT_PROVIDER = "xai".
+CHAT_PROVIDER = "anthropic"
 CHAT_MODEL = "claude-opus-4-8"
+XAI_CHAT_MODEL = "grok-4.6"
 MAX_TOKENS_CAP = "4096"
 
 # Public, API-key auth: no KV namespace and no Cloudflare Access needed.

@@ -28,8 +28,10 @@
  * the tool_result back, and continues the loop.
  *
  * Security:
- * - Proxy mode (recommended) keeps the Anthropic key and GitHub token
- *   server-side; the browser only ever talks to the same-origin proxy.
+ * - Proxy mode (recommended) keeps the provider key and GitHub token
+ *   server-side; the browser only ever talks to the same-origin proxy,
+ *   which answers with Claude or Grok (the reply is always Anthropic
+ *   Messages SSE — the proxy translates for xAI).
  * - Direct mode sends x-api-key from the page and requires the
  *   anthropic-dangerous-direct-browser-access header — local dev only.
  * - GitHub "url" mode never touches a token: it opens pre-filled
@@ -774,6 +776,7 @@
         var accumulated = '';
         var payload = {
           model: CONFIG.model,
+          provider: CONFIG.provider || 'anthropic', // honoured by the proxy only when that provider has a key
           max_tokens: CONFIG.maxTokens,
           system: buildSystemPrompt(meta),
           messages: history.slice(),

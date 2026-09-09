@@ -1,4 +1,4 @@
-{% comment %} Feature: ZER0-067, ZER0-086 {% endcomment %}
+{% comment %} Feature: ZER0-067, ZER0-086, ZER0-087 {% endcomment %}
 {% comment %}
   ===================================================================
   SITE BUILDER — guided, Claude-assisted site setup wizard
@@ -10,8 +10,10 @@
                to a complete, personalised zer0-mistakes site: prerequisites,
                identity, URLs, structure, appearance, voice, integrations and
                a Build step that writes the project and starts Docker — with
-               an embedded Claude session that can read the form, fill it in,
-               read the theme's real source, and drive the build.
+               an embedded AI session (Claude or Grok, the user's own token)
+               that can read the form, fill it in, read the theme's real
+               source, drive the build, and — in an open session — modify an
+               existing site file by file and generate images for it.
   Params:      none — configured via site.site_builder + site.ai_chat, data
                from _data/site_builder.yml
   Depends on:  Bootstrap 5.3, Bootstrap Icons, assets/js/setup-wizard.js
@@ -22,9 +24,12 @@
     - Works with NO proxy at all: the form, every generated file, per-file
       download and the self-extracting bundle are pure client-side, so a
       GitHub Pages consumer on the welcome layout still gets a full wizard.
-      The Claude panel, live prerequisite checks, "Write project" and the
-      Docker actions light up only when the local dev proxy answers
-      GET {site_builder.endpoint}/status (see templates/deploy/chat-proxy/).
+      Live prerequisite checks, "Write project" and the Docker actions
+      light up when the local dev proxy answers GET
+      {site_builder.endpoint}/status; the AI panel lights up once the
+      chosen provider has a credential — from .env, or pasted on the
+      Connect step (sent once to the localhost proxy, never stored in the
+      page). See templates/deploy/chat-proxy/.
     - Layout at lg+: stepper (2) · steps (6) · side column (4) holding the
       Claude session on top and the live file preview underneath, so every
       answer and every generated file stays in view on every step.
@@ -53,7 +58,7 @@
       </p>
       <h1 class="mb-1">Site Builder</h1>
       <p class="lead text-body-secondary mb-0">
-        Answer a few questions, let Claude fill in the rest, and leave with a running site.
+        Answer a few questions — or just talk to Claude or Grok — and leave with a running site.
       </p>
     </div>
     <div class="d-flex align-items-center gap-2">
@@ -110,11 +115,11 @@
         <div class="tab-pane fade show active" id="step-connect" role="tabpanel" aria-labelledby="tab-connect">
           <div class="card">
             <div class="card-body">
-              <h2 class="h4 card-title mb-1">Connect Claude</h2>
+              <h2 class="h4 card-title mb-1">Connect your AI</h2>
               <p class="text-body-secondary">
-                The builder runs entirely in your browser. Connect Claude through the
-                <strong>local dev proxy</strong> and it can also check your machine, read the theme's
-                source, fill in these forms, write your project and start Docker for you.
+                The builder runs entirely in your browser. Connect <strong>Claude</strong> or <strong>Grok</strong> through the
+                <strong>local dev proxy</strong> with your own token and it can fill in these forms, check your machine, read the
+                theme's source, write <em>or modify</em> your project, generate images and start Docker — in the order you choose.
               </p>
 
               <div class="sb-connect-status alert d-flex align-items-start gap-3 mb-3" id="connect-status"
@@ -129,41 +134,113 @@
                 </button>
               </div>
 
+              <fieldset class="mb-3" id="sb-providers">
+                <legend class="form-label fs-6 mb-2">AI provider</legend>
+                <div class="row g-2">
+                  {% for p in sb.providers %}
+                  <div class="col-sm-6">
+                    <input type="radio" class="btn-check" name="sb_provider" id="sb-provider-{{ p.id }}"
+                           value="{{ p.id }}" autocomplete="off" {% if forloop.first %}checked{% endif %}>
+                    <label class="btn btn-outline-primary w-100 text-start wizard-choice sb-provider-card" for="sb-provider-{{ p.id }}">
+                      <span class="d-flex justify-content-between align-items-center gap-2">
+                        <span class="fw-semibold"><i class="bi {{ p.icon }}" aria-hidden="true"></i> {{ p.label }} <small class="fw-normal">{{ p.vendor }}</small></span>
+                        <span class="badge rounded-pill text-bg-secondary sb-provider-state" data-provider="{{ p.id }}">proxy offline</span>
+                      </span>
+                      <span class="small d-block">{{ p.description }}</span>
+                    </label>
+                  </div>
+                  {% endfor %}
+                </div>
+              </fieldset>
+
+              <form class="sb-credential mb-3" id="sb-credential-form" autocomplete="off">
+                <label for="sb-token" class="form-label fw-semibold">Token for <span class="sb-provider-name">Claude</span></label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="sb-token" placeholder="sk-ant-oat01-…"
+                         autocomplete="off" autocapitalize="off" spellcheck="false" disabled>
+                  <button class="btn btn-primary" type="submit" id="sb-token-use" disabled>
+                    <i class="bi bi-plug" aria-hidden="true"></i> Use for this session
+                  </button>
+                </div>
+                <div class="form-text" id="sb-token-hint">Mint one with <code>claude setup-token</code>. The token goes once to the local proxy and stays in its memory — never in this page or your browser storage.</div>
+                <div class="form-check form-switch mt-2">
+                  <input class="form-check-input" type="checkbox" id="sb-token-persist" disabled>
+                  <label class="form-check-label small" for="sb-token-persist">Also save it to <code>.env</code> (mode 600) so the proxy remembers it next time</label>
+                </div>
+                <div class="small mt-2" id="sb-credential-status" aria-live="polite"></div>
+              </form>
+
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label for="sb-model" class="form-label">Model</label>
+                  <select class="form-select form-select-sm" id="sb-model" disabled>
+                    <option value="{{ sb_cfg.model | default: site.ai_chat.model | default: 'claude-opus-4-8' }}">{{ sb_cfg.model | default: site.ai_chat.model | default: 'claude-opus-4-8' }}</option>
+                  </select>
+                  <div class="form-text" id="sb-model-note">Sent with every request; the proxy can pin one with <code>CHAT_MODEL</code> / <code>XAI_CHAT_MODEL</code>.</div>
+                </div>
+                <div class="col-md-6">
+                  <label for="sb-image-provider" class="form-label">Image generation</label>
+                  <select class="form-select form-select-sm" id="sb-image-provider" disabled>
+                    <option value="">Off</option>
+                    {% for ip in sb.image_providers %}<option value="{{ ip.id }}" data-label="{{ ip.label }} ({{ ip.vendor }})">{{ ip.label }} ({{ ip.vendor }})</option>{% endfor %}
+                  </select>
+                  <div class="form-text" id="sb-image-note">Renders hero, logo and post images straight into the project's <code>assets/</code>.</div>
+                </div>
+              </div>
+
+              <fieldset class="mb-3" id="sb-mode">
+                <legend class="form-label fs-6 mb-2">How do you want to work?</legend>
+                <div class="row g-2">
+                  {% for m in sb.session_modes %}
+                  <div class="col-sm-6">
+                    <input type="radio" class="btn-check" name="sb_mode" id="sb-mode-{{ m.id }}" value="{{ m.id }}"
+                           autocomplete="off" {% if m.id == sb_cfg.mode %}checked{% elsif sb_cfg.mode == nil and forloop.first %}checked{% endif %}>
+                    <label class="btn btn-outline-secondary w-100 text-start wizard-choice" for="sb-mode-{{ m.id }}">
+                      <span class="fw-semibold d-block"><i class="bi {{ m.icon }}" aria-hidden="true"></i> {{ m.label }}</span>
+                      <span class="small d-block">{{ m.description }}</span>
+                    </label>
+                  </div>
+                  {% endfor %}
+                </div>
+              </fieldset>
+
               <div class="sb-connect-howto" id="connect-howto">
                 <h3 class="h6 text-uppercase text-body-secondary">How to connect (once, on your machine)</h3>
                 <ol class="sb-steps list-unstyled mb-3">
                   <li>
                     <span class="sb-step-num" aria-hidden="true">1</span>
                     <div>
-                      <div class="fw-semibold">Mint a Claude Code OAuth token</div>
-                      <p class="small text-body-secondary mb-1">Requires the Claude Code CLI and a Claude Pro/Max login. The token is personal — it never leaves your machine.</p>
-                      <div class="wizard-cmd"><code>claude setup-token</code><button class="btn btn-sm btn-link" type="button" data-copy="claude setup-token" aria-label="Copy command"><i class="bi bi-clipboard" aria-hidden="true"></i></button></div>
+                      <div class="fw-semibold">Start the dev proxy next to the site</div>
+                      <p class="small text-body-secondary mb-1">Node 20.6+. It starts without any key and waits for the token you paste above; <code>--env-file=.env</code> loads keys you saved earlier.</p>
+                      <div class="wizard-cmd"><code>node --env-file=.env templates/deploy/chat-proxy/dev-proxy.mjs</code><button class="btn btn-sm btn-link" type="button" data-copy="node --env-file=.env templates/deploy/chat-proxy/dev-proxy.mjs" aria-label="Copy command"><i class="bi bi-clipboard" aria-hidden="true"></i></button></div>
                     </div>
                   </li>
                   <li>
                     <span class="sb-step-num" aria-hidden="true">2</span>
                     <div>
-                      <div class="fw-semibold">Put it in <code>.env</code> at the theme's root</div>
-                      <p class="small text-body-secondary mb-1"><code>.env</code> is git-ignored. Copy <code>.env.example</code> if you do not have one yet.</p>
-                      <div class="wizard-cmd"><code>CLAUDE_CODE_OAUTH_TOKEN=sk-ant-oat01-…</code></div>
+                      <div class="fw-semibold">Get a token from the provider you picked</div>
+                      <p class="small text-body-secondary mb-1">Claude: a personal OAuth token from the Claude Code CLI (Pro/Max) or an API key from console.anthropic.com. Grok: an API key from <a href="https://console.x.ai/" target="_blank" rel="noopener">console.x.ai</a>.</p>
+                      <div class="wizard-cmd"><code>claude setup-token</code><button class="btn btn-sm btn-link" type="button" data-copy="claude setup-token" aria-label="Copy command"><i class="bi bi-clipboard" aria-hidden="true"></i></button></div>
                     </div>
                   </li>
                   <li>
                     <span class="sb-step-num" aria-hidden="true">3</span>
                     <div>
-                      <div class="fw-semibold">Start the dev proxy next to the site</div>
-                      <p class="small text-body-secondary mb-1">Node 20.6+ reads the file for you. Leave it running while you use the builder.</p>
-                      <div class="wizard-cmd"><code>node --env-file=.env templates/deploy/chat-proxy/dev-proxy.mjs</code><button class="btn btn-sm btn-link" type="button" data-copy="node --env-file=.env templates/deploy/chat-proxy/dev-proxy.mjs" aria-label="Copy command"><i class="bi bi-clipboard" aria-hidden="true"></i></button></div>
+                      <div class="fw-semibold">Paste it above — or keep it in <code>.env</code></div>
+                      <p class="small text-body-secondary mb-1">Pasting keeps the token in the proxy's memory for this run (tick the switch to save it). Or put it in the git-ignored <code>.env</code> yourself and restart the proxy.</p>
+                      <div class="wizard-cmd"><code>CLAUDE_CODE_OAUTH_TOKEN=sk-ant-oat01-…   # or XAI_API_KEY=xai-…</code></div>
                     </div>
                   </li>
                 </ol>
                 <details class="small">
                   <summary class="text-body-secondary">What the proxy is allowed to do</summary>
                   <ul class="mt-2 mb-0">
+                    <li>Hold the token you paste in memory only; write it to <code>.env</code> (mode 600) only when you tick the switch; report it masked.</li>
                     <li>Run a fixed list of read-only version checks (Docker, Git, gh, VS Code, Node, Claude CLI).</li>
                     <li>Read text source files inside the theme checkout — never <code>.env</code>, keys or build output.</li>
-                    <li>Write generated files only into a <em>new</em> folder beside the theme, never inside it, never over existing files unless you say so.</li>
-                    <li>Run <code>docker compose</code> up / ps / logs / down in that folder — nothing else.</li>
+                    <li>Write generated files into a folder beside the theme (never inside it), and read, edit, add or delete text files inside a site you open there — each change behind a confirmation card.</li>
+                    <li>Save generated images (PNG/JPEG/WebP only) under that site's <code>assets/</code>.</li>
+                    <li>Run <code>docker compose</code> up / ps / logs / down / build and <code>git status</code> / diff / log / init in that folder — nothing else.</li>
                   </ul>
                 </details>
               </div>
@@ -209,7 +286,7 @@
           <div class="card">
             <div class="card-body">
               <h2 class="h4 card-title mb-1">Site identity</h2>
-              <p class="text-body-secondary">Describe the site in your own words first — Claude uses that brief to draft everything else.</p>
+              <p class="text-body-secondary">Describe the site in your own words first — the assistant uses that brief to draft everything else.</p>
 
               <div class="mb-3">
                 <label for="cfg-brief" class="form-label fw-semibold">What is this site about, and who is it for?</label>
@@ -219,7 +296,7 @@
                   <span>The brief is not published; it steers the drafts.</span>
                   <button class="btn btn-link btn-sm p-0 sb-ask" type="button"
                           data-ask="Here is my brief: {brief}. Draft a title, subtitle, tagline and a 120–160 character description for the site, then apply them.">
-                    <i class="bi bi-stars" aria-hidden="true"></i> Draft with Claude
+                    <i class="bi bi-stars" aria-hidden="true"></i> Draft with <span class="sb-provider-name">Claude</span>
                   </button>
                 </div>
               </div>
@@ -432,7 +509,7 @@
                   <span>Landing page</span>
                   <button class="btn btn-link btn-sm p-0 sb-ask" type="button"
                           data-ask="Design the landing page for my site: pick the template, write the hero (eyebrow, headline, subheadline, up to three CTAs) and fill every section with real copy from my brief — then apply it with set_site_plan.">
-                    <i class="bi bi-stars" aria-hidden="true"></i> Design with Claude
+                    <i class="bi bi-stars" aria-hidden="true"></i> Design with <span class="sb-provider-name">Claude</span>
                   </button>
                 </legend>
                 <div class="row g-2">
@@ -456,7 +533,7 @@
                   <span>
                     <button class="btn btn-link btn-sm p-0 me-2 sb-ask" type="button"
                             data-ask="Plan five or six example pages for my site across the enabled collections — each with a slug, title, description and a 150–300 word Markdown body in the {tone} tone for {audience} — then apply them with set_site_plan.">
-                      <i class="bi bi-stars" aria-hidden="true"></i> Plan with Claude
+                      <i class="bi bi-stars" aria-hidden="true"></i> Plan with <span class="sb-provider-name">Claude</span>
                     </button>
                     <button class="btn btn-link btn-sm p-0" type="button" id="btn-page-add">
                       <i class="bi bi-plus-circle" aria-hidden="true"></i> Add page
@@ -464,7 +541,7 @@
                   </span>
                 </legend>
                 <div id="pages-planner" class="pages-planner" aria-live="polite"></div>
-                <div class="form-text">Each row becomes a real file with front matter. Bodies come from Claude, or are drafted from the title.</div>
+                <div class="form-text">Each row becomes a real file with front matter. Bodies come from the assistant, or are drafted from the title.</div>
               </fieldset>
 
               <fieldset>
@@ -517,11 +594,17 @@
                   </div>
                   {% endfor %}
                 </div>
-                <div class="form-text d-flex justify-content-between align-items-center">
+                <div class="form-text d-flex justify-content-between align-items-center flex-wrap gap-2">
                   <span>Applies <code>theme_skin</code> in <code>_config.yml</code>.</span>
-                  <button class="btn btn-outline-secondary btn-sm" type="button" id="btn-skin-preview" aria-pressed="false">
-                    <i class="bi bi-eye" aria-hidden="true"></i> Preview on this page
-                  </button>
+                  <span class="d-flex gap-2">
+                    <button class="btn btn-link btn-sm p-0 sb-ask" type="button"
+                            data-ask="Generate a hero image for the landing page that fits my brief, the {theme_skin} skin and the chosen palette (no text in the image), save it as assets/images/hero.png in my project, and set landing.hero.image to /assets/images/hero.png.">
+                      <i class="bi bi-image" aria-hidden="true"></i> Hero image with <span class="sb-provider-name">Claude</span>
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" type="button" id="btn-skin-preview" aria-pressed="false">
+                      <i class="bi bi-eye" aria-hidden="true"></i> Preview on this page
+                    </button>
+                  </span>
                 </div>
               </fieldset>
 
@@ -617,7 +700,7 @@
           <div class="card">
             <div class="card-body">
               <h2 class="h4 card-title mb-1">Voice &amp; first content</h2>
-              <p class="text-body-secondary">Set the tone, then let Claude draft the welcome post and about page — or write them yourself.</p>
+              <p class="text-body-secondary">Set the tone, then let the assistant draft the welcome post and about page — or write them yourself.</p>
 
               <div class="row g-3 mb-3">
                 <div class="col-md-7">
@@ -645,7 +728,7 @@
                   <span>Welcome post title</span>
                   <button class="btn btn-link btn-sm p-0 sb-ask" type="button"
                           data-ask="Using my brief and the {tone} tone for {audience}, write the welcome post (title + 150–250 words of Markdown body) and the about page (100–200 words), then apply both.">
-                    <i class="bi bi-stars" aria-hidden="true"></i> Draft both with Claude
+                    <i class="bi bi-stars" aria-hidden="true"></i> Draft both with <span class="sb-provider-name">Claude</span>
                   </button>
                 </label>
                 <input type="text" class="form-control cfg-field" id="cfg-welcome-title" data-key="welcome_title"
@@ -713,6 +796,17 @@
                     </div>
                   </div>
                   {% endif %}
+                  {% if i.id == 'ai_chat' %}
+                  <div class="row g-2 mt-2 wizard-subfields" data-for="int-ai_chat">
+                    <div class="col-md-6">
+                      <label for="cfg-ai-provider" class="form-label small mb-1">Chat provider</label>
+                      <select class="form-select form-select-sm cfg-field" id="cfg-ai-provider" data-key="ai_provider">
+                        {% for p in sb.providers %}<option value="{{ p.id }}">{{ p.label }} ({{ p.vendor }})</option>{% endfor %}
+                      </select>
+                    </div>
+                    <div class="col-12 form-text">Written as <code>ai_chat.provider</code>; the site's chat proxy needs the matching key (<code>.env.example</code> lists it).</div>
+                  </div>
+                  {% endif %}
                 </div>
                 {% endfor %}
               </div>
@@ -735,6 +829,14 @@
                     <span class="input-group-text"><i class="bi bi-linkedin" aria-hidden="true"></i></span>
                     <input type="text" class="form-control cfg-field" id="cfg-linkedin" placeholder="handle" data-key="linkedin_username" autocomplete="off">
                   </div>
+                </div>
+                <div class="col-md-6">
+                  <label for="cfg-image-provider" class="form-label">Preview-image renderer <small class="text-body-secondary">(optional)</small></label>
+                  <select class="form-select cfg-field" id="cfg-image-provider" data-key="image_provider">
+                    <option value="">None</option>
+                    {% for ip in sb.image_providers %}<option value="{{ ip.id }}">{{ ip.label }} ({{ ip.vendor }}) — {{ ip.model }}</option>{% endfor %}
+                  </select>
+                  <div class="form-text">Pre-configures <code>preview_images</code> in <code>_config.yml</code> for the theme's preview-image generator; the key goes in <code>.env</code>.</div>
                 </div>
               </div>
 
@@ -759,6 +861,19 @@
 
               <div id="wizard-review-warnings" role="status" aria-live="polite" class="mb-3"></div>
 
+              <div class="mb-3" id="sb-project-picker">
+                <label for="sb-project-select" class="form-label fw-semibold">Modify an existing site</label>
+                <div class="input-group">
+                  <select class="form-select" id="sb-project-select" disabled>
+                    <option value="">Connect the dev proxy to list sites</option>
+                  </select>
+                  <button class="btn btn-outline-secondary sb-needs-proxy" type="button" id="btn-project-open" disabled>
+                    <i class="bi bi-folder2-open" aria-hidden="true"></i> Open
+                  </button>
+                </div>
+                <div class="form-text">Any site under the target root — one this builder wrote, or one you copied there. The assistant can then read, edit and add files, generate images and rebuild it.</div>
+              </div>
+
               <div class="mb-3">
                 <label for="cfg-target" class="form-label fw-semibold">Project folder</label>
                 <div class="input-group">
@@ -781,6 +896,10 @@
                 </button>
                 <button class="btn btn-success sb-needs-proxy" type="button" id="btn-compose-up" disabled>
                   <i class="bi bi-play-fill" aria-hidden="true"></i> docker compose up
+                </button>
+                <button class="btn btn-outline-secondary sb-needs-proxy" type="button" id="btn-compose-build" disabled
+                        title="Runs jekyll build inside the running container to validate the site">
+                  <i class="bi bi-hammer" aria-hidden="true"></i> jekyll build
                 </button>
                 <button class="btn btn-outline-secondary sb-needs-proxy" type="button" id="btn-compose-logs" disabled>
                   <i class="bi bi-terminal" aria-hidden="true"></i> Logs
@@ -830,7 +949,7 @@
     {% comment %} 3. Side column — Claude session + live multi-file preview     {% endcomment %}
     {% comment %} ============================================================ {% endcomment %}
     <div class="col-lg-4">
-      <aside class="wizard-side sticky-lg-top" aria-label="Claude session and generated files">
+      <aside class="wizard-side sticky-lg-top" aria-label="AI session and generated files">
 
         {% include setup/claude-session.html %}
 
@@ -887,17 +1006,21 @@
 <script id="siteBuilderData" type="application/json">{{ sb | jsonify }}</script>
 
 {% comment %}
-  Runtime configuration. The Claude session is proxy-only: the endpoint below is
+  Runtime configuration. The AI session is proxy-only: the endpoint below is
   the dev proxy's /api/wizard base; chat goes to ai_chat.endpoint (or an explicit
-  site_builder.chat_endpoint). No credential is ever present in this JSON.
+  site_builder.chat_endpoint). No credential is ever present in this JSON —
+  a token pasted on the Connect step goes straight to the localhost proxy.
 {% endcomment %}
 <script id="siteBuilderConfig" type="application/json">
 {
   "enabled": {% if sb_cfg.enabled == false %}false{% else %}true{% endif %},
   "endpoint": {{ sb_cfg.endpoint | default: "/api/wizard" | jsonify }},
   "chatEndpoint": {{ sb_cfg.chat_endpoint | default: site.ai_chat.endpoint | default: "/api/chat" | jsonify }},
+  "provider": {{ sb_cfg.provider | default: "auto" | jsonify }},
   "model": {{ sb_cfg.model | default: site.ai_chat.model | default: "claude-opus-4-8" | jsonify }},
-  "maxTokens": {{ sb_cfg.max_tokens | default: 4096 }},
+  "mode": {{ sb_cfg.mode | default: "guided" | jsonify }},
+  "imageProvider": {{ sb_cfg.image_provider | default: "" | jsonify }},
+  "maxTokens": {{ sb_cfg.max_tokens | default: 8192 }},
   "defaultPort": {{ sb_port }},
   "searchIndex": {{ "/search.json" | relative_url | jsonify }},
   "docsBase": {{ "/docs/" | relative_url | jsonify }},

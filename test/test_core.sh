@@ -1679,6 +1679,29 @@ test_wizard_store_sandbox() {
     return 1
 }
 
+test_chat_providers() {
+    log_info "Testing the chat proxy provider layer (providers.js, credential-store.mjs)..."
+
+    cd "$PROJECT_ROOT"
+
+    if ! command -v node &>/dev/null; then
+        log_warning "Node.js not available for the chat provider test"
+        return 0
+    fi
+
+    # Pins the Claude ⇄ Grok translation, provider/model pinning and the
+    # session-credential rules (ai-chat.instructions.md §10–11) against a
+    # local mock upstream — no network, no real key.
+    if node test/test_providers.mjs > "$TEST_RESULTS_DIR/chat_providers.log" 2>&1; then
+        log_success "chat provider layer holds ($(grep -c '✓' "$TEST_RESULTS_DIR/chat_providers.log") checks)"
+        return 0
+    fi
+
+    log_error "chat provider test failed — see $TEST_RESULTS_DIR/chat_providers.log"
+    tail -20 "$TEST_RESULTS_DIR/chat_providers.log"
+    return 1
+}
+
 #
 # MAIN TEST EXECUTION
 #
@@ -1723,6 +1746,7 @@ run_core_tests() {
     run_test "Design Token Parity" "test_design_token_parity" "validation"
     run_test "JavaScript Syntax" "test_javascript_syntax" "validation"
     run_test "Site Builder Proxy Sandbox" "test_wizard_store_sandbox" "validation"
+    run_test "Chat Proxy Providers (Claude + Grok)" "test_chat_providers" "validation"
 }
 
 # Generate test report

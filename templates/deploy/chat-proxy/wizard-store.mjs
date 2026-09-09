@@ -1,4 +1,5 @@
 // Feature: ZER0-086
+// Feature: ZER0-087
 /**
  * ===================================================================
  * Site Builder sandbox — dev-proxy-only helpers behind /api/wizard/*
@@ -27,9 +28,27 @@
  *                           never above the root, relative paths only, an
  *                           allow-list of file names/extensions, size caps,
  *                           and no overwrite unless explicitly asked.
- *   compose(target, action) `docker compose` up/ps/logs/down in a scaffolded
- *                           project (must contain docker-compose.yml). Output
- *                           is streamed back as text.
+ *   compose(target, action) `docker compose` up/ps/logs/down/restart/config/
+ *                           build in a scaffolded project (must contain
+ *                           docker-compose.yml). Output is streamed back as
+ *                           text. `build` runs `jekyll build` inside the
+ *                           running container so an agent can validate edits;
+ *                           `restart` re-reads content the watcher misses.
+ *
+ * Project session (ZER0-087 — an existing or freshly written site under
+ * WIZARD_TARGET_ROOT, so the assistant can MODIFY a site, not only create it):
+ *   listProjects()          folders under the root that look like sites
+ *   readProjectFile()       text source inside the project (same denylist and
+ *   listProjectDir()        extension allow-list as the theme reads)
+ *   projectTree()           depth-limited tree of the project
+ *   writeProjectFile()      write ONE allow-listed text file (no overwrite
+ *                           unless asked); editProjectFile() replaces an exact
+ *                           snippet (must be unique unless all:true);
+ *                           deleteProjectFile() removes one regular file
+ *   runProjectCommand()     fixed table of read-only git commands (+ git init)
+ *   writeProjectAsset()     PNG/JPEG/WebP bytes under assets/ only, sniffed by
+ *                           magic bytes, size-capped (generated images);
+ *                           readProjectAsset() serves them back for previews
  *
  * Environment:
  *   WIZARD_TARGET_ROOT   directory new sites may be written under
@@ -141,7 +160,11 @@ function deniedThemePath(rel) {
 }
 
 export async function readThemeFile(rel) {
-  const r = resolveInside(REPO_ROOT, rel);
+  return readTextInside(REPO_ROOT, rel);
+}
+
+async function readTextInside(root, rel) {
+  const r = resolveInside(root, rel);
   if (!r.ok) return r;
   const denied = deniedThemePath(r.rel);
   if (denied) return { ok: false, error: denied };
@@ -165,7 +188,11 @@ export async function readThemeFile(rel) {
 }
 
 export async function listThemeDir(rel) {
-  const r = resolveInside(REPO_ROOT, rel || '.');
+  return listInside(REPO_ROOT, rel);
+}
+
+async function listInside(root, rel) {
+  const r = resolveInside(root, rel || '.');
   if (!r.ok) return r;
   if (r.rel !== '.' && deniedThemePath(r.rel)) return { ok: false, error: 'that directory is not readable' };
   try {
@@ -183,7 +210,7 @@ export async function listThemeDir(rel) {
 
 // --- Scaffold a new site ------------------------------------------------
 
-const WRITE_EXTENSIONS = new Set(['.yml', '.yaml', '.md', '.markdown', '.html', '.scss', '.css', '.js', '.json', '.txt', '.xml', '.svg', '.example']);
+const WRITE_EXTENSIONS = new Set(['.yml', '.yaml', '.md', '.markdown', '.html', '.liquid', '.scss', '.css', '.js', '.json', '.txt', '.csv', '.xml', '.svg', '.example']);
 const WRITE_BASENAMES = new Set(['Gemfile', 'Dockerfile', 'Makefile', 'Rakefile', '.gitignore', '.ruby-version', '.env.example', 'CNAME', '.nojekyll']);
 
 function slugOk(name) {
@@ -278,7 +305,14 @@ const COMPOSE_ACTIONS = {
   ps: ['compose', 'ps'],
   logs: ['compose', 'logs', '--no-color', '--tail', '120'],
   down: ['compose', 'down'],
+  // Jekyll's --watch does not pick up a collection document that did not exist
+  // when serve started, so an agent that adds a post to a RUNNING site needs a
+  // way to make it visible without tearing the project down.
+  restart: ['compose', 'restart'],
   config: ['compose', 'config', '--quiet'],
+  // Validates the site the way CI would, inside the already-running container.
+  // The config list is appended per target (dev overrides only when present).
+  build: ['compose', 'exec', '-T', 'jekyll', 'bundle', 'exec', 'jekyll', 'build', '--trace'],
 };
 
 export function composeActions() { return Object.keys(COMPOSE_ACTIONS); }
@@ -289,7 +323,7 @@ export function composeActions() { return Object.keys(COMPOSE_ACTIONS); }
  */
 export async function compose(target, action, onChunk) {
   if (!composeEnabled()) return { ok: false, error: 'compose actions are disabled (WIZARD_DISABLE_COMPOSE=1)' };
-  const args = COMPOSE_ACTIONS[action];
+  let args = COMPOSE_ACTIONS[action];
   if (!args) return { ok: false, error: `Unknown compose action: ${action}` };
   const t = await resolveTarget(target);
   if (!t.ok) return t;
@@ -297,6 +331,11 @@ export async function compose(target, action, onChunk) {
     await fs.stat(path.join(t.abs, 'docker-compose.yml'));
   } catch {
     return { ok: false, error: 'docker-compose.yml not found in the target — write the project first' };
+  }
+  if (action === 'build') {
+    let hasDev = false;
+    try { await fs.stat(path.join(t.abs, '_config_dev.yml')); hasDev = true; } catch { /* production config only */ }
+    args = args.concat(['--config', hasDev ? '_config.yml,_config_dev.yml' : '_config.yml']);
   }
   return new Promise((resolve) => {
     const child = spawn('docker', args, { cwd: t.abs, env: process.env, stdio: ['ignore', 'pipe', 'pipe'] });
@@ -313,4 +352,226 @@ export async function compose(target, action, onChunk) {
       resolve({ ok: code === 0, code, target: t.abs, action });
     });
   });
+}
+
+// --- Project session: modify an existing (or freshly written) site --------
+
+const MAX_TREE_ENTRIES = 400;
+const TREE_DEPTH = 3;
+const MAX_PROJECTS = 60;
+const ASSET_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.webp']);
+const MAX_ASSET_BYTES = 8 * 1024 * 1024;
+const COMMAND_TIMEOUT_MS = 30_000;
+
+/** Folders directly under TARGET_ROOT that look like a site (never the theme itself). */
+export async function listProjects() {
+  let entries;
+  try { entries = await fs.readdir(TARGET_ROOT, { withFileTypes: true }); } catch (err) { return { ok: false, error: err.message }; }
+  const projects = [];
+  for (const e of entries) {
+    if (!e.isDirectory() || !slugOk(e.name)) continue;
+    const abs = path.join(TARGET_ROOT, e.name);
+    if (abs === REPO_ROOT) continue;
+    const has = async (name) => { try { await fs.stat(path.join(abs, name)); return true; } catch { return false; } };
+    const site = await has('_config.yml');
+    const compose = await has('docker-compose.yml');
+    if (!site && !compose) continue;
+    let mtime = 0;
+    try { mtime = (await fs.stat(abs)).mtimeMs; } catch { /* ignore */ }
+    projects.push({ name: e.name, abs, site, compose, mtime: Math.round(mtime) });
+    if (projects.length >= MAX_PROJECTS) break;
+  }
+  projects.sort((a, b) => b.mtime - a.mtime);
+  return { ok: true, root: TARGET_ROOT, projects };
+}
+
+async function projectRoot(target) {
+  const t = await resolveTarget(target);
+  if (!t.ok) return t;
+  return { ok: true, abs: t.abs, exists: t.exists };
+}
+
+export async function readProjectFile(target, rel) {
+  const t = await projectRoot(target);
+  if (!t.ok) return t;
+  return readTextInside(t.abs, rel);
+}
+
+export async function listProjectDir(target, rel) {
+  const t = await projectRoot(target);
+  if (!t.ok) return t;
+  return listInside(t.abs, rel || '.');
+}
+
+/** Depth-limited tree ("dir/" entries first), skipping the denylist. */
+export async function projectTree(target, rel, depth = TREE_DEPTH) {
+  const t = await projectRoot(target);
+  if (!t.ok) return t;
+  const start = resolveInside(t.abs, rel || '.');
+  if (!start.ok) return start;
+  if (start.rel !== '.' && deniedThemePath(start.rel)) return { ok: false, error: 'that directory is not readable' };
+  const lines = [];
+  let truncated = false;
+  async function walk(abs, relPath, level) {
+    if (truncated) return;
+    let entries;
+    try { entries = await fs.readdir(abs, { withFileTypes: true }); } catch { return; }
+    entries.sort((a, b) => (a.isDirectory() === b.isDirectory() ? a.name.localeCompare(b.name) : a.isDirectory() ? -1 : 1));
+    for (const e of entries) {
+      if (DENY_SEGMENTS.has(e.name) || DENY_NAME.test(e.name)) continue;
+      if (lines.length >= MAX_TREE_ENTRIES) { truncated = true; return; }
+      const childRel = relPath === '.' ? e.name : `${relPath}/${e.name}`;
+      if (e.isDirectory()) {
+        lines.push(`${childRel}/`);
+        if (level < Math.max(1, Math.min(Number(depth) || TREE_DEPTH, 6))) await walk(path.join(abs, e.name), childRel, level + 1);
+      } else {
+        lines.push(childRel);
+      }
+    }
+  }
+  await walk(start.abs, start.rel, 1);
+  return { ok: true, path: start.rel, entries: lines, truncated };
+}
+
+/** Write ONE text file into the project (allow-listed name, size cap, no overwrite unless asked). */
+export async function writeProjectFile(target, rel, content, { overwrite = false } = {}) {
+  const t = await projectRoot(target);
+  if (!t.ok) return t;
+  const clean = writablePath(rel);
+  if (!clean) return { ok: false, error: 'path not allowed (relative, text extension, no secrets or VCS files)' };
+  const text = typeof content === 'string' ? content : '';
+  if (Buffer.byteLength(text, 'utf8') > MAX_SCAFFOLD_BYTES) return { ok: false, error: `file too large (max ${MAX_SCAFFOLD_BYTES} bytes)` };
+  const abs = path.join(t.abs, clean);
+  if (!abs.startsWith(t.abs + path.sep)) return { ok: false, error: 'path escapes target' };
+  let exists = false;
+  try { exists = (await fs.stat(abs)).isFile(); } catch { /* new file */ }
+  if (exists && !overwrite) return { ok: false, error: `${clean} exists (overwrite not requested)`, exists: true };
+  await fs.mkdir(path.dirname(abs), { recursive: true });
+  await fs.writeFile(abs, text, 'utf8');
+  return { ok: true, target: t.abs, path: clean, bytes: Buffer.byteLength(text, 'utf8'), replaced: exists };
+}
+
+/**
+ * Replace an exact snippet inside a project text file. The snippet must occur
+ * exactly once unless `all` is true — the same rule a careful editor follows.
+ */
+export async function editProjectFile(target, rel, find, replace, { all = false } = {}) {
+  const t = await projectRoot(target);
+  if (!t.ok) return t;
+  const clean = writablePath(rel);
+  if (!clean) return { ok: false, error: 'path not allowed' };
+  const needle = typeof find === 'string' ? find : '';
+  if (!needle) return { ok: false, error: 'find is required' };
+  const replacement = typeof replace === 'string' ? replace : '';
+  const current = await readTextInside(t.abs, clean);
+  if (!current.ok) return current;
+  if (current.truncated) return { ok: false, error: 'file too large to edit in place' };
+  const count = current.content.split(needle).length - 1;
+  if (count === 0) return { ok: false, error: 'the text to find does not occur in the file' };
+  if (count > 1 && !all) return { ok: false, error: `the text occurs ${count} times — pass all:true or a longer, unique snippet` };
+  const next = all ? current.content.split(needle).join(replacement) : current.content.replace(needle, () => replacement);
+  if (Buffer.byteLength(next, 'utf8') > MAX_SCAFFOLD_BYTES) return { ok: false, error: 'edited file would exceed the size cap' };
+  await fs.writeFile(path.join(t.abs, clean), next, 'utf8');
+  return { ok: true, target: t.abs, path: clean, replacements: all ? count : 1, bytes: Buffer.byteLength(next, 'utf8') };
+}
+
+/** Delete one regular file (never a directory, never a denied/secret path). */
+export async function deleteProjectFile(target, rel) {
+  const t = await projectRoot(target);
+  if (!t.ok) return t;
+  const clean = writablePath(rel);
+  if (!clean) return { ok: false, error: 'path not allowed' };
+  const abs = path.join(t.abs, clean);
+  if (!abs.startsWith(t.abs + path.sep)) return { ok: false, error: 'path escapes target' };
+  try {
+    const stat = await fs.stat(abs);
+    if (!stat.isFile()) return { ok: false, error: 'not a regular file' };
+  } catch (err) {
+    return { ok: false, error: err.code === 'ENOENT' ? 'file not found' : err.message };
+  }
+  await fs.unlink(abs);
+  return { ok: true, target: t.abs, path: clean };
+}
+
+// The ONLY commands the proxy runs inside a project. No client input reaches
+// the command line — only the id.
+const PROJECT_COMMANDS = {
+  'git-status': { cmd: 'git', args: ['status', '--short', '--branch'] },
+  'git-diff': { cmd: 'git', args: ['diff', '--stat'] },
+  'git-log': { cmd: 'git', args: ['log', '--oneline', '-n', '20'] },
+  'git-init': { cmd: 'git', args: ['init', '-q'] },
+};
+
+export function projectCommandIds() { return Object.keys(PROJECT_COMMANDS); }
+
+export async function runProjectCommand(target, id) {
+  const spec = PROJECT_COMMANDS[id];
+  if (!spec) return { ok: false, error: `Unknown project command: ${id}` };
+  const t = await projectRoot(target);
+  if (!t.ok) return t;
+  if (!t.exists) return { ok: false, error: 'the project folder does not exist yet' };
+  return new Promise((resolve) => {
+    execFile(spec.cmd, spec.args, { cwd: t.abs, timeout: COMMAND_TIMEOUT_MS, maxBuffer: 256 * 1024 }, (err, stdout, stderr) => {
+      const out = redactUser(`${stdout || ''}${stderr || ''}`).trim().slice(0, 12000);
+      if (err) {
+        resolve({ ok: false, id, output: out, error: err.code === 'ENOENT' ? `${spec.cmd}: command not found` : (out || err.message), code: typeof err.code === 'number' ? err.code : null });
+        return;
+      }
+      resolve({ ok: true, id, output: out, code: 0 });
+    });
+  });
+}
+
+function sniffImage(bytes) {
+  if (!bytes || bytes.length < 12) return null;
+  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return { ext: '.png', type: 'image/png' };
+  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return { ext: '.jpg', type: 'image/jpeg' };
+  if (bytes.toString('ascii', 0, 4) === 'RIFF' && bytes.toString('ascii', 8, 12) === 'WEBP') return { ext: '.webp', type: 'image/webp' };
+  return null;
+}
+
+function assetPath(rel) {
+  const clean = String(rel || '').replace(/\\/g, '/').replace(/^\/+/, '').trim();
+  if (!clean || clean.split('/').some((s) => s === '..' || s === '' || s === '.git')) return null;
+  if (!/^assets\//.test(clean)) return null;
+  if (!ASSET_EXTENSIONS.has(path.extname(clean).toLowerCase())) return null;
+  return clean;
+}
+
+/** Write image bytes under assets/ — the type must match the extension by magic bytes. */
+export async function writeProjectAsset(target, rel, bytes, { overwrite = false } = {}) {
+  const t = await projectRoot(target);
+  if (!t.ok) return t;
+  const clean = assetPath(rel);
+  if (!clean) return { ok: false, error: 'asset path must be under assets/ and end in .png, .jpg or .webp' };
+  if (!Buffer.isBuffer(bytes) || !bytes.length) return { ok: false, error: 'no image data' };
+  if (bytes.length > MAX_ASSET_BYTES) return { ok: false, error: `image too large (max ${MAX_ASSET_BYTES} bytes)` };
+  const kind = sniffImage(bytes);
+  if (!kind) return { ok: false, error: 'not a PNG, JPEG or WebP image' };
+  const ext = path.extname(clean).toLowerCase();
+  const matches = kind.ext === ext || (kind.ext === '.jpg' && ext === '.jpeg');
+  if (!matches) return { ok: false, error: `image is ${kind.type} but the path ends in ${ext}` };
+  const abs = path.join(t.abs, clean);
+  if (!abs.startsWith(t.abs + path.sep)) return { ok: false, error: 'path escapes target' };
+  let exists = false;
+  try { exists = (await fs.stat(abs)).isFile(); } catch { /* new */ }
+  if (exists && !overwrite) return { ok: false, error: `${clean} exists (overwrite not requested)`, exists: true };
+  await fs.mkdir(path.dirname(abs), { recursive: true });
+  await fs.writeFile(abs, bytes);
+  return { ok: true, target: t.abs, path: clean, bytes: bytes.length, type: kind.type, replaced: exists };
+}
+
+export async function readProjectAsset(target, rel) {
+  const t = await projectRoot(target);
+  if (!t.ok) return t;
+  const clean = assetPath(rel);
+  if (!clean) return { ok: false, error: 'asset path must be under assets/ and end in .png, .jpg or .webp' };
+  const abs = path.join(t.abs, clean);
+  if (!abs.startsWith(t.abs + path.sep)) return { ok: false, error: 'path escapes target' };
+  let bytes;
+  try { bytes = await fs.readFile(abs); } catch (err) { return { ok: false, error: err.code === 'ENOENT' ? 'asset not found' : err.message }; }
+  if (bytes.length > MAX_ASSET_BYTES) return { ok: false, error: 'asset too large' };
+  const kind = sniffImage(bytes);
+  if (!kind) return { ok: false, error: 'not an image' };
+  return { ok: true, path: clean, bytes, contentType: kind.type };
 }

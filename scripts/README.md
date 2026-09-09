@@ -25,6 +25,11 @@ scripts/
 │   ├── pixelate_images.py          # Pure-stdlib pixelate/quantize engine
 │   ├── install-preview-generator   # Preview generator installer
 │   └── validate_preview_urls.py    # Preview URL validator
+├── ai/                    # Consumer companions to the hub's `ai-runner` kit (the runner itself is referenced, not stored)
+│   ├── api_call.rb                 # Single-shot Claude API fallback (stdlib only)
+│   ├── usage.rb                    # Optional metering: one JSONL record per call
+│   ├── usage_report.rb             # Publishes metering (summary, artifact, PR comment)
+│   └── README.md                   # What stays here and why
 ├── ci/                    # Helpers called directly by workflow steps
 │   ├── classify_changes.py         # Change classifier (issue-pr-auto-merge)
 │   ├── agent_review_result.py      # Did the Claude content review actually run?
@@ -174,6 +179,16 @@ Validate preview image URLs in frontmatter.
 ```bash
 python3 scripts/features/validate_preview_urls.py [--verbose] [--suggestions]
 ```
+
+### AI Runner (scripts/ai/)
+
+Every model call a workflow makes goes through `uses: bamr87/bamr87/.github/actions/claude-run@main` — the fleet's shared **`ai-runner` kit**, versioned once in the [bamr87/bamr87 hub](https://github.com/bamr87/bamr87) and consumed by reference. The runner (`run.sh`) and the composite action are no longer stored in this repo; the hub's kit README ([`templates/ai-runner/README.md`](https://github.com/bamr87/bamr87/blob/main/templates/ai-runner/README.md)) is the contract. In short:
+
+- Model: `--model` input > `AI_MODEL` > `_data/ai.yml` `model:` > the fleet default.
+- Auth from the env, OAuth first: `CLAUDE_CODE_OAUTH_TOKEN` (preferred; strips `ANTHROPIC_API_KEY` from the CLI's env) or `ANTHROPIC_API_KEY` (also the only credential the API fallback can use).
+- Exit codes: `0` when the call ran or nothing was ever attempted (no auth — the documented no-op); `1` when the call was attempted and failed with no usable fallback, with the reason raised as a `::error::` annotation.
+
+This directory holds the **consumer-owned companions** the hub runner probes for in the checkout and uses when present: `usage.rb` metering (prices from `_data/ai_pricing.yml`), `usage_report.rb` publishing, `api_call.rb` fallback — plus `tools/unwrap-prose.py` as the post-run prose normalizer. See [`scripts/ai/README.md`](ai/README.md). The exit-code contract test lives in the hub (`templates/ai-runner/tests/contract.sh`) and runs there on every runner change.
 
 ### CI Helpers (scripts/ci/)
 

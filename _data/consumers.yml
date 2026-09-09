@@ -44,6 +44,9 @@
 #                       version; tracked so a bump doesn't miss the config that
 #                       activates it
 #   path_gem            local path gem, unversioned (development only)
+#   gem_unconstrained   `gem 'jekyll-theme-zer0'` with no version — resolves
+#                       whatever RubyGems has at `bundle update` time; tracked
+#                       only (like resolved_lockfile), never reports drift
 # ==============================================================================
 
 version: 1
@@ -118,6 +121,39 @@ consumers:
         note: line 40 — dev checkout via ZER0_MISTAKES_PATH; never bumped
 
   # ---------------------------------------------------------------------------
+  - repo: amr-bash/bash-365.com
+    mode: remote_theme_floating
+    site: https://bash-365.com
+    dispatch: false
+    note: >-
+      BASH Consulting's site, forked from bamr87/bashconsultants (which stays
+      registered above) and carrying the same three-stack shape: GitHub Pages
+      via remote_theme, Azure Static Web Apps via Gemfile.azure +
+      _config.azure.yml, local dev via a path gem. Unlike its parent, nothing
+      here carries a version any more — remote_theme is untagged and
+      Gemfile.azure names the gem with no constraint — so there is no pin for a
+      bump PR to rewrite. Declares its intentional forks in .theme-overrides.yml.
+    risk: >-
+      Unpinned on Pages; the Azure stack advances only when someone runs
+      `bundle update jekyll-theme-zer0`, so the two production stacks can
+      render different theme versions with nothing here to notice. Recommend
+      pinning remote_theme and constraining Gemfile.azure together and joining
+      the fan-out.
+    pins:
+      - file: _config.yml
+        kind: remote_theme
+        note: line 33, no tag — floats main
+      - file: Gemfile.azure
+        kind: gem_unconstrained
+        note: line 10 — no version; `bundle update jekyll-theme-zer0` advances it
+      - file: _config.azure.yml
+        kind: theme_name
+        note: line 3 — activates the gem; no version of its own
+      - file: Gemfile
+        kind: path_gem
+        note: line 59 — dev checkout via ZER0_MISTAKES_PATH; never bumped
+
+  # ---------------------------------------------------------------------------
   - repo: year-of-ai/year-of-ai.github.io
     mode: remote_theme_pinned
     site: https://year-of-ai.github.io
@@ -139,20 +175,27 @@ consumers:
 
   # ---------------------------------------------------------------------------
   - repo: ai-world-view/ai-world-view.github.io
-    mode: remote_theme_pinned
+    mode: remote_theme_floating
     site: https://ai-world-view.github.io
-    dispatch: true
+    dispatch: false
     fans_out_to_members: true
     note: >-
       Same two-file hub shape as year-of-ai; members join by auto_discover, so
-      the member count grows without this file changing.
+      the member count grows without this file changing. Was registered as
+      remote_theme_pinned until the 2026-09 fleet harmonization, but both its
+      _config.yml remote_theme and its hub.yml theme_repo carry NO tag — the
+      hub and every member it stamps float on this theme's main.
+    risk: >-
+      Unpinned, and an org hub: a theme break here reaches every auto-discovered
+      member site at once. Recommend pinning both files together and joining
+      the fan-out (dispatch: true) like year-of-ai.
     pins:
       - file: _config.yml
         kind: remote_theme
-        note: line 35
+        note: line 36, no tag — floats main
       - file: _data/hub.yml
         kind: hub_registry
-        note: "line 39 (pages.theme_repo) — re-roll members after bumping"
+        note: "line 39 (pages.theme_repo), no tag — members float too"
 
   # ---------------------------------------------------------------------------
   # The four entries below were missing entirely until the 2026-08 fleet audit.

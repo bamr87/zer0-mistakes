@@ -1,0 +1,31 @@
+{
+  "slug": "site-builder-providers",
+  "base": "http://localhost:4000",
+  "before": null,
+  "captured": [
+    "test/visual/evidence/site-builder-providers/01-connect-before-after.png",
+    "test/visual/evidence/site-builder-providers/02-connect-grok-session.png",
+    "test/visual/evidence/site-builder-providers/03-build-existing-site.png",
+    "test/visual/evidence/site-builder-providers/04-connect-mobile.png"
+  ],
+  "connect": {
+    "providerCards": 2,
+    "modeOptions": 2,
+    "tokenFieldType": "password",
+    "offlineDisabled": 4,
+    "badgeBeforePick": "needs a token",
+    "badgeAfterPick": "Grok connected",
+    "models": [
+      "grok-4.6",
+      "grok-4.5",
+      "grok-4.3"
+    ],
+    "openChips": 5,
+    "mobileOverflow": 0
+  },
+  "build": {
+    "projects": 2,
+    "target": "postgres-in-production",
+    "buildButton": true
+  }
+}
