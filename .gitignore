@@ -53,7 +53,7 @@ zer0.json
 
 # Front Matter CMS
 .frontmatter/
-# VS Code / Cursor js-debug browser profiles (see .vscode/launch.json userDataDir)
+# VS Code / Cursor js-debug browser profiles (legacy; launch.json no longer pins a userDataDir)
 .vscode/chrome-debug-profile/
 .vscode/chrome-debug-profile-mobile/
 .vscode/edge-debug-profile/

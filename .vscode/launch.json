@@ -1,251 +1,62 @@
+// zer0-mistakes · .vscode/launch.json — fleet-vscode/v1 · 2026-09-09. Convention + vocabulary: .vscode/README.md.
+// pathMapping serves / from _site and /assets/ from the source tree so breakpoints in the theme's JS bind to the file you edit. Gem releases: the Release: tasks.
+// The Playwright config launches the CLI as a plain node program (not runtimeExecutable) so breakpoints in test/visual/**/*.spec.js actually hit; append a spec path to args to target one file.
 {
-  // ==================================================
-  // Docker-first browser debugging (Jekyll on :4000)
-  // ==================================================
-  // Dev stack: docker-compose.yml → Jekyll serve with
-  //   _config.yml,_config_dev.yml (LiveReload :35729).
-  // Production-style static output is also under _site/ when built locally
-  // or via docker/config/docker-build.yml in CI/Docker image builds.
-  //
-  // Debug logs showed msedge failing with "Unable to find an installation
-  // of the browser" — default configs use type "chrome". Use the Edge
-  // variants if you have Microsoft Edge installed, or set runtimeExecutable
-  // to an absolute path (see https://aka.ms/msedge-debug).
-  //
-  // Gem releases: Tasks → 🚀 Release: * (scripts/release; see tasks.json).
-  //
-  // Last updated: 2026-06-21
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "🚀 Debug Zer0-Mistakes Theme (Docker, Chrome)",
-      "type": "chrome",
-      "request": "launch",
-      "url": "http://localhost:4000",
-      "webRoot": "${workspaceFolder}",
-      "preLaunchTask": "Docker: Compose Up (Detached)",
-      "postDebugTask": "Docker: Compose Stop",
-      "runtimeArgs": [
-        "--remote-debugging-port=9222"
-      ],
-      "userDataDir": "${workspaceFolder}/.vscode/chrome-debug-profile",
-      "killBehavior": "forceful",
-      "sourceMaps": true,
-      "smartStep": true,
-      "skipFiles": ["<node_internals>/**"],
-      "internalConsoleOptions": "openOnSessionStart",
-      "timeout": 60000,
-      "trace": {
-        "stdio": true,
-        "logFile": "${workspaceFolder}/logs/debug-trace.log"
-      },
-      "pathMapping": {
-        "/": "${workspaceFolder}/_site/",
-        "/assets/": "${workspaceFolder}/assets/"
-      },
-      "presentation": {
-        "group": "Docker",
-        "order": 1
-      }
-    },
-    {
-      "name": "🚀 Debug Theme (Docker, Microsoft Edge)",
+      "name": "Debug: theme in Edge (:4000)",
       "type": "msedge",
       "request": "launch",
       "url": "http://localhost:4000",
       "webRoot": "${workspaceFolder}",
-      "preLaunchTask": "Docker: Compose Up (Detached)",
-      "postDebugTask": "Docker: Compose Stop",
-      "runtimeArgs": [
-        "--remote-debugging-port=9222"
-      ],
-      "userDataDir": "${workspaceFolder}/.vscode/edge-debug-profile",
-      "killBehavior": "forceful",
+      "preLaunchTask": "Serve",
       "sourceMaps": true,
-      "smartStep": true,
-      "skipFiles": ["<node_internals>/**"],
-      "internalConsoleOptions": "openOnSessionStart",
-      "timeout": 60000,
-      "trace": {
-        "stdio": true,
-        "logFile": "${workspaceFolder}/logs/debug-trace-edge.log"
-      },
       "pathMapping": {
         "/": "${workspaceFolder}/_site/",
         "/assets/": "${workspaceFolder}/assets/"
-      },
-      "presentation": {
-        "group": "Docker",
-        "order": 2
       }
     },
     {
-      "name": "🔗 Attach to Running Browser (Chrome, port 9222)",
-      "type": "chrome",
-      "request": "attach",
-      "port": 9222,
-      "webRoot": "${workspaceFolder}",
-      "urlFilter": "http://localhost:4000*",
-      "sourceMaps": true,
-      "smartStep": true,
-      "skipFiles": ["<node_internals>/**"],
-      "internalConsoleOptions": "openOnSessionStart",
-      "trace": {
-        "stdio": true,
-        "logFile": "${workspaceFolder}/logs/debug-attach-trace.log"
-      },
-      "pathMapping": {
-        "/": "${workspaceFolder}/_site/",
-        "/assets/": "${workspaceFolder}/assets/"
-      },
-      "presentation": {
-        "group": "Docker",
-        "order": 3
-      }
-    },
-    {
-      "name": "🔄 Docker Rebuild & Debug (Chrome)",
-      "type": "chrome",
+      "name": "Debug: live site (zer0-mistakes.com)",
+      "type": "msedge",
       "request": "launch",
-      "url": "http://localhost:4000",
-      "webRoot": "${workspaceFolder}",
-      "preLaunchTask": "Docker: Rebuild (Force)",
-      "postDebugTask": "Docker: Compose Down",
-      "runtimeArgs": [
-        "--remote-debugging-port=9222",
-        "--auto-open-devtools-for-tabs"
-      ],
-      "userDataDir": "${workspaceFolder}/.vscode/chrome-debug-profile",
-      "killBehavior": "forceful",
-      "sourceMaps": true,
-      "smartStep": true,
-      "skipFiles": ["<node_internals>/**"],
-      "internalConsoleOptions": "openOnSessionStart",
-      "timeout": 120000,
-      "trace": {
-        "stdio": true,
-        "logFile": "${workspaceFolder}/logs/debug-rebuild-trace.log"
-      },
-      "pathMapping": {
-        "/": "${workspaceFolder}/_site/",
-        "/assets/": "${workspaceFolder}/assets/"
-      },
-      "presentation": {
-        "group": "Docker",
-        "order": 4
-      }
+      "url": "https://zer0-mistakes.com"
     },
     {
-      "name": "📱 Mobile Debug (Docker, Chrome)",
-      "type": "chrome",
-      "request": "launch",
-      "url": "http://localhost:4000",
-      "webRoot": "${workspaceFolder}",
-      "preLaunchTask": "Docker: Compose Up (Detached)",
-      "postDebugTask": "Docker: Compose Stop",
-      "runtimeArgs": [
-        "--remote-debugging-port=9222",
-        "--device-scale-factor=2",
-        "--force-device-scale-factor=2",
-        "--user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1"
-      ],
-      "userDataDir": "${workspaceFolder}/.vscode/chrome-debug-profile-mobile",
-      "killBehavior": "forceful",
-      "sourceMaps": true,
-      "smartStep": true,
-      "skipFiles": ["<node_internals>/**"],
-      "internalConsoleOptions": "openOnSessionStart",
-      "timeout": 60000,
-      "pathMapping": {
-        "/": "${workspaceFolder}/_site/",
-        "/assets/": "${workspaceFolder}/assets/"
-      },
-      "presentation": {
-        "group": "Docker",
-        "order": 5
-      }
-    },
-    {
-      // Launches the Playwright CLI as a plain node program (not
-      // runtimeExecutable) so breakpoints set in test/visual/**/*.spec.js
-      // actually hit. Reuses the Docker Jekyll dev server on :4000 — start
-      // it first (preLaunchTask) or leave it running from another session.
-      // Swap --project=smoke for --project=snapshots, or append
-      // test/visual/features/<name>.spec.js to target one file.
-      "name": "🎭 Debug Playwright: Smoke (Docker :4000)",
+      "name": "Debug: Playwright tier (Docker :4000)",
       "type": "node",
       "request": "launch",
       "program": "${workspaceFolder}/node_modules/.bin/playwright",
-      "args": ["test", "--config=test/playwright.config.js", "--project=smoke"],
+      "args": [
+        "test",
+        "--config=test/playwright.config.js",
+        "--project=${input:playwrightProject}"
+      ],
       "cwd": "${workspaceFolder}",
       "env": {
         "BASE_URL": "http://localhost:4000"
       },
       "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
-      "preLaunchTask": "Docker: Compose Up (Detached)",
-      "skipFiles": ["<node_internals>/**"],
-      "presentation": {
-        "group": "Playwright",
-        "order": 1
-      }
-    },
+      "preLaunchTask": "Serve",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    }
+  ],
+  "inputs": [
     {
-      // Standalone path: no Docker needed. preLaunchTask spins up a
-      // throwaway `bundle exec jekyll serve` on :4011 (background task,
-      // below) so it doesn't collide with your Docker dev server on :4000.
-      // Requires host Ruby/Bundler, same prerequisite as test_playwright.sh.
-      "name": "🎭 Debug Playwright: Smoke (Standalone :4011)",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceFolder}/node_modules/.bin/playwright",
-      "args": ["test", "--config=test/playwright.config.js", "--project=smoke"],
-      "cwd": "${workspaceFolder}",
-      "env": {
-        "BASE_URL": "http://127.0.0.1:4011"
-      },
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
-      "preLaunchTask": "Jekyll: Serve (Host, :4011, Background)",
-      "skipFiles": ["<node_internals>/**"],
-      "presentation": {
-        "group": "Playwright",
-        "order": 2
-      }
-    },
-    {
-      "name": "🎯 Performance Debug (Docker, Chrome)",
-      "type": "chrome",
-      "request": "launch",
-      "url": "http://localhost:4000",
-      "webRoot": "${workspaceFolder}",
-      "preLaunchTask": "Docker: Compose Up (Detached)",
-      "postDebugTask": "Docker: Compose Stop",
-      "runtimeArgs": [
-        "--remote-debugging-port=9222",
-        "--enable-logging=stderr",
-        "--log-level=0",
-        "--enable-features=NetworkService,NetworkServiceLogging"
+      "id": "playwrightProject",
+      "type": "pickString",
+      "description": "Which Playwright tier?",
+      "options": [
+        "smoke",
+        "critical",
+        "mobile",
+        "snapshots",
+        "regression"
       ],
-      "userDataDir": "${workspaceFolder}/.vscode/chrome-debug-profile",
-      "killBehavior": "forceful",
-      "sourceMaps": true,
-      "smartStep": true,
-      "skipFiles": ["<node_internals>/**"],
-      "internalConsoleOptions": "openOnSessionStart",
-      "timeout": 60000,
-      "trace": {
-        "stdio": true,
-        "logFile": "${workspaceFolder}/logs/performance-debug.log"
-      },
-      "pathMapping": {
-        "/": "${workspaceFolder}/_site/",
-        "/assets/": "${workspaceFolder}/assets/"
-      },
-      "presentation": {
-        "group": "Docker",
-        "order": 6
-      }
+      "default": "smoke"
     }
   ]
 }
