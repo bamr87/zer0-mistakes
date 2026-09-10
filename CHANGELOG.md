@@ -45,15 +45,15 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   conditional `aria-current` in `_includes/navigation/navbar.html` ate the
   newlines that separated the surrounding attributes, so the primary nav
   rendered `aria-label="News"aria-current="page"title="News"` (the WHATWG
-  `missing-whitespace-between-attributes` parse error). The leading `{%-`
-  stripped the newline after `aria-label` and the trailing `-%}` the whitespace
+  `missing-whitespace-between-attributes` parse error). The leading {% raw %}`{%-`{% endraw %}
+  stripped the newline after `aria-label` and the trailing {% raw %}`-%}`{% endraw %} the whitespace
   before `title`, which means **two of the four sites were broken on every page,
   not just the current one**: where the conditional sits between two
   unconditional attributes both markers fire even when the `if` emits nothing.
   Parsers recover, so nothing looked broken — but the attributes affected are
   exactly `aria-label`, `aria-current` and `title`, and a stricter parser is
   entitled to drop the "you are here" announcement for screen-reader users. All
-  four sites now use the non-trimming `{% if %}` form already present at line 26
+  four sites now use the non-trimming {% raw %}`{% if %}`{% endraw %} form already present at line 26
   of the same file, with the separator outside the tag. Two guards in
   `test/test_core.sh`: `test_navbar_attribute_whitespace` renders the real
   include through Liquid across both `aria-current` branches and both nav modes
