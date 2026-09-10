@@ -124,14 +124,7 @@ A single runner script invokes the appropriate Playwright project (tier). All ti
 | Snapshots | `snapshots` | Homepage pixel screenshots for the 9 theme skins (`features/appearance-snapshot.spec.js`) | PRs path-filtered on styling changes (non-blocking) + nightly |
 | Regression | `regression-chromium` / `regression-firefox` / `regression-webkit` | All specs across all browsers | Manual `workflow_dispatch` only |
 
-Parallelism: the config is `workers: 1`, `fullyParallel: false`. The **critical**
-tier is the one exception — `ci.yml` passes `workers: '3'` to the
-`playwright-tests` action (`PLAYWRIGHT_WORKERS` on the runner), which
-parallelises across spec *files* only; order within a file is unchanged. It is
-safe there because `critical` grep-inverts the snapshot block, so nothing in the
-tier drives the shared 9-skin theme state. **Never set `PLAYWRIGHT_WORKERS` for
-`snapshots`** — those specs walk all 9 skins through one server and must stay
-serial.
+Parallelism: the config is `workers: 1`, `fullyParallel: false`. The **critical** tier is the one exception — `ci.yml` passes `workers: '3'` to the `playwright-tests` action (`PLAYWRIGHT_WORKERS` on the runner), which parallelises across spec *files* only; order within a file is unchanged. It is safe there because `critical` grep-inverts the snapshot block, so nothing in the tier drives the shared 9-skin theme state. **Never set `PLAYWRIGHT_WORKERS` for `snapshots`** — those specs walk all 9 skins through one server and must stay serial.
 
 Tagging: add `{ tag: '@critical' }` to a `test()` or `test.describe()` to put it in the PR gate. Keep the gate honest — only behaviors a *visitor* would notice belong there; everything else is covered nightly. A weekly agentic UI/UX audit (`ui-audit.yml` + `test/ui-audit/sweep.mjs` + `.claude/agents/ui-auditor.md`) additionally reviews screenshots/axe/console output of the critical routes and files findings as `source:ui-audit` issues.
 
