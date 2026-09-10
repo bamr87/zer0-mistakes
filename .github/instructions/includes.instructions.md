@@ -50,15 +50,7 @@ New includes go in the most specific subdirectory. Create a new top-level only i
 - Pass-through content via `include.content` or block content with `capture`.
 - Whitespace: use `{%-` and `-%}` to strip whitespace; keep rendered HTML clean.
 - **Never trim around a conditional HTML attribute.** `{%-`/`-%}` strip *all*
-  adjacent whitespace, including the newlines that separate attributes written
-  one per line, which emits the `missing-whitespace-between-attributes` parse
-  error (issue #465 — this glued `aria-label`/`aria-current`/`title` together on
-  every navbar link of every consumer site). On its own line between two
-  attributes, write `{% if cond %}attr="v"{% endif %}` — non-trimming, separator
-  outside the tag — not `{%- if cond -%} attr="v"{%- endif -%}`, which glues the
-  attribute before it to the one after even when the `if` emits nothing.
-  `test_attribute_whitespace_in_markup` in `test/test_core.sh` enforces this
-  across every include and layout.
+adjacent whitespace, including the newlines that separate attributes written one per line, which emits the `missing-whitespace-between-attributes` parse error (issue #465 — this glued `aria-label`/`aria-current`/`title` together on every navbar link of every consumer site). On its own line between two attributes, write `{% if cond %}attr="v"{% endif %}` — non-trimming, separator outside the tag — not `{%- if cond -%} attr="v"{%- endif -%}`, which glues the attribute before it to the one after even when the `if` emits nothing. `test_attribute_whitespace_in_markup` in `test/test_core.sh` enforces this across every include and layout.
 
 ## 4. Conditional Loading
 
