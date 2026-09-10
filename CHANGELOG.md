@@ -40,6 +40,28 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **Every navbar link emitted invalid HTML — attributes glued together with no
+  separating whitespace (#465)** — the Liquid whitespace-trim markers around the
+  conditional `aria-current` in `_includes/navigation/navbar.html` ate the
+  newlines that separated the surrounding attributes, so the primary nav
+  rendered `aria-label="News"aria-current="page"title="News"` (the WHATWG
+  `missing-whitespace-between-attributes` parse error). The leading {% raw %}`{%-`{% endraw %}
+  stripped the newline after `aria-label` and the trailing {% raw %}`-%}`{% endraw %} the whitespace
+  before `title`, which means **two of the four sites were broken on every page,
+  not just the current one**: where the conditional sits between two
+  unconditional attributes both markers fire even when the `if` emits nothing.
+  Parsers recover, so nothing looked broken — but the attributes affected are
+  exactly `aria-label`, `aria-current` and `title`, and a stricter parser is
+  entitled to drop the "you are here" announcement for screen-reader users. All
+  four sites now use the non-trimming {% raw %}`{% if %}`{% endraw %} form already present at line 26
+  of the same file, with the separator outside the tag. Two guards in
+  `test/test_core.sh`: `test_navbar_attribute_whitespace` renders the real
+  include through Liquid across both `aria-current` branches and both nav modes
+  (6 of 8 rendered variants were invalid before the fix), and
+  `test_attribute_whitespace_in_markup` models the trim rules over every include
+  and layout with no gem dependency — it found a second live instance, a literal
+  missing space in `components/theme-preview-gallery.html`, fixed here too.
+  `test_jekyll_build` re-checks the delivered `_site` bytes. No visual change.
 - **The weekly UI/UX audit was blind, and reported it as clean.** `sweep.mjs`
   built its pages with `browser.newPage()`, which `@axe-core/playwright`
   refuses; the throw was caught by a single per-route `try` that also discarded
