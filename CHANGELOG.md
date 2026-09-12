@@ -12,6 +12,41 @@ hand-written prose covering the same releases in more depth; they sit below
 their version because release-please inserts each new release at the top of the
 file. Only `## [Unreleased]` describes work that has not shipped yet.
 
+## [1.30.0](https://github.com/bamr87/zer0-mistakes/compare/v1.29.0...v1.30.0) (2026-09-12)
+
+
+### Features
+
+* **ci:** produce visual evidence and baselines on PRs, not just verify them ([#462](https://github.com/bamr87/zer0-mistakes/issues/462)) ([a377fae](https://github.com/bamr87/zer0-mistakes/commit/a377fae6ea31a0bb015479dea6d1a7c41e141c3f))
+* **includes:** add background-image.html for CSS-painted cover art ([#451](https://github.com/bamr87/zer0-mistakes/issues/451)) ([9b15a67](https://github.com/bamr87/zer0-mistakes/commit/9b15a673f57b8f7f1f9dae9262191742d99d8080))
+* **includes:** Claude or Grok sessions in the Site Builder ([#473](https://github.com/bamr87/zer0-mistakes/issues/473)) ([e1c5753](https://github.com/bamr87/zer0-mistakes/commit/e1c57531fc23be8d071757cd1941e1ae15285da7))
+* **includes:** file the fleet issue contract from the feedback widget ([#472](https://github.com/bamr87/zer0-mistakes/issues/472)) ([24d4e2c](https://github.com/bamr87/zer0-mistakes/commit/24d4e2c6380541a894e9e671f0f0b0b859a29b05))
+* **includes:** make theme-color track the page surface, not the accent ([#447](https://github.com/bamr87/zer0-mistakes/issues/447)) ([f1fda85](https://github.com/bamr87/zer0-mistakes/commit/f1fda857bb0cf5bd64bebfc1215ba0a906f05e5c))
+* **includes:** themed Mermaid figures + toolbar ([#455](https://github.com/bamr87/zer0-mistakes/issues/455)) ([96776fa](https://github.com/bamr87/zer0-mistakes/commit/96776fa48bbe7b63058d1d246962019c745d7b93))
+* **scripts:** adopt the shared ai-runner kit for claude-run; consumers registry fixes; hub baseline ([#475](https://github.com/bamr87/zer0-mistakes/issues/475)) ([feb4133](https://github.com/bamr87/zer0-mistakes/commit/feb41332eb15d2c13fe0c0f6d15b61007e14daa3))
+
+
+### Bug Fixes
+
+* **a11y:** decouple heading size from heading level in theme chrome ([#450](https://github.com/bamr87/zer0-mistakes/issues/450)) ([bb92eb5](https://github.com/bamr87/zer0-mistakes/commit/bb92eb583c955e76339a9c7ab98532b35e226b36))
+* **a11y:** give footer icon links an accessible name, announce search results ([#441](https://github.com/bamr87/zer0-mistakes/issues/441)) ([a1811e8](https://github.com/bamr87/zer0-mistakes/commit/a1811e81ac0c17b0836994be7c48eba51252bae7))
+* **a11y:** stop emitting sidebar/TOC controls on layouts that render no offcanvas ([#443](https://github.com/bamr87/zer0-mistakes/issues/443)) ([619322d](https://github.com/bamr87/zer0-mistakes/commit/619322d8fd7c6e2a700ba154e065bf65caf67461))
+* **ci:** run the autogen lane's tooling from the base branch, not the PR ([#464](https://github.com/bamr87/zer0-mistakes/issues/464)) ([8473050](https://github.com/bamr87/zer0-mistakes/commit/8473050be2b4ddfd994c7bea8a8c35e37a66b7f8))
+* **ci:** stop the UI audit reporting a measurement blackout as a clean run ([#471](https://github.com/bamr87/zer0-mistakes/issues/471)) ([ab92619](https://github.com/bamr87/zer0-mistakes/commit/ab9261946e088417dabe4291590da1c7a964d4fa))
+* **content:** raw-protect Liquid that is written as documentation ([#446](https://github.com/bamr87/zer0-mistakes/issues/446)) ([6123c1f](https://github.com/bamr87/zer0-mistakes/commit/6123c1f1e6ffd167376d4ef421b0a9f78af3985e))
+* **includes:** declare charset inside the 1024-byte window, make the feed discoverable ([#440](https://github.com/bamr87/zer0-mistakes/issues/440)) ([4025205](https://github.com/bamr87/zer0-mistakes/commit/40252050ec21c70aa1d84820fdcde6d564e03478)), closes [#372](https://github.com/bamr87/zer0-mistakes/issues/372) [#371](https://github.com/bamr87/zer0-mistakes/issues/371)
+* **includes:** expose skin-button selected state via aria-pressed ([#469](https://github.com/bamr87/zer0-mistakes/issues/469)) ([6579b16](https://github.com/bamr87/zer0-mistakes/commit/6579b1621a5eff147e224977633728aadc960505)), closes [#467](https://github.com/bamr87/zer0-mistakes/issues/467)
+* **install:** stop seeding the theme's own navigation into consumers ([#449](https://github.com/bamr87/zer0-mistakes/issues/449)) ([232857c](https://github.com/bamr87/zer0-mistakes/commit/232857c66d7c3abccb166b5151a7f80a74dd17ca))
+* **navigation:** scroll spy bolds the section actually being read ([#456](https://github.com/bamr87/zer0-mistakes/issues/456)) ([5ff38bf](https://github.com/bamr87/zer0-mistakes/commit/5ff38bf98faf96cdc3bf63ea3f0e7b10e21f3aab))
+* **sass:** stop navbar controls flickering under a stationary pointer ([#453](https://github.com/bamr87/zer0-mistakes/issues/453)) ([fc84b9a](https://github.com/bamr87/zer0-mistakes/commit/fc84b9a4c714f8e04b8a0f940bed9e3795c144bc)), closes [#404](https://github.com/bamr87/zer0-mistakes/issues/404)
+* **scripts:** restore nested translation placeholders instead of leaking them ([#452](https://github.com/bamr87/zer0-mistakes/issues/452)) ([00cab73](https://github.com/bamr87/zer0-mistakes/commit/00cab73d915f4e116040ef6ca4c0381669ae4eb2))
+
+
+### Performance Improvements
+
+* **ci:** run the critical PR gate on 3 workers instead of 1 ([#481](https://github.com/bamr87/zer0-mistakes/issues/481)) ([b3fcbc7](https://github.com/bamr87/zer0-mistakes/commit/b3fcbc76a1af2a3a5e43eb28fbff7b3057751de6))
+* **includes:** strip developer doc banners from delivered HTML ([#445](https://github.com/bamr87/zer0-mistakes/issues/445)) ([89b10f1](https://github.com/bamr87/zer0-mistakes/commit/89b10f1ff361c919fd631d0e7e664ed6d7c28a14))
+
 ## [Unreleased]
 
 ### Changed
