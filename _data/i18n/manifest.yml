@@ -314,21 +314,21 @@ pages:
       prompt_version: 1
   "/docs/customization/includes/":
     source: pages/_docs/customization/includes.md
-    sha: 302b054e92b74d17d0b0d0cf05942fbd021a5bf7e6639bdd70e9121fc1de6a54
+    sha: 85851dc85b902c3e9e6780adf5ccf4a4bca75a17deeec5d03c027139e95d2076
     fr:
       url: "/fr/docs/customization/includes/"
       path: fr/docs/customization/includes.md
-      sha: 302b054e92b74d17d0b0d0cf05942fbd021a5bf7e6639bdd70e9121fc1de6a54
-      translated_at: '2026-07-23T17:11:02Z'
+      sha: 85851dc85b902c3e9e6780adf5ccf4a4bca75a17deeec5d03c027139e95d2076
+      translated_at: '2026-09-08T21:55:57Z'
       prompt_version: 1
   "/docs/customization/layouts/":
     source: pages/_docs/customization/layouts.md
-    sha: edeb35201153cbae4bdb43b39604df3a2842c809a5f8b86915990359c1e59bd4
+    sha: e61ed6fee0858c71cc42e6ba36342dfe1e2f3847e6c5672aecbee195b61f54a4
     fr:
       url: "/fr/docs/customization/layouts/"
       path: fr/docs/customization/layouts.md
-      sha: edeb35201153cbae4bdb43b39604df3a2842c809a5f8b86915990359c1e59bd4
-      translated_at: '2026-07-23T17:11:28Z'
+      sha: e61ed6fee0858c71cc42e6ba36342dfe1e2f3847e6c5672aecbee195b61f54a4
+      translated_at: '2026-09-08T21:56:15Z'
       prompt_version: 1
   "/docs/customization/navigation/":
     source: pages/_docs/customization/navigation.md
@@ -395,12 +395,12 @@ pages:
       prompt_version: 1
   "/docs/deployment/remote-theme-checklist/":
     source: pages/_docs/deployment/remote-theme-checklist.md
-    sha: 9b96d540317e61dcd98890875b5d59454548cf983b741e9f59fc66ebfa4f1468
+    sha: 5d09a61aea206b665f94f0b084f10ced1c0629ce3766889151dd4cf9f1c01e62
     fr:
       url: "/fr/docs/deployment/remote-theme-checklist/"
       path: fr/docs/deployment/remote-theme-checklist.md
-      sha: 9b96d540317e61dcd98890875b5d59454548cf983b741e9f59fc66ebfa4f1468
-      translated_at: '2026-08-05T03:19:14Z'
+      sha: 5d09a61aea206b665f94f0b084f10ced1c0629ce3766889151dd4cf9f1c01e62
+      translated_at: '2026-09-08T21:56:51Z'
       prompt_version: 1
   "/docs/development/":
     source: pages/_docs/development/index.md
@@ -566,12 +566,12 @@ pages:
       prompt_version: 1
   "/docs/features/ai-chat-assistant/":
     source: pages/_docs/features/ai-chat-assistant.md
-    sha: 663b35e275eb1c9e970ad05f9d37ba674a7217db2e35961802ab60d19f6a7919
+    sha: '0957be79c588450c29c12757a1b51cb50dd479c54c123cf901f05d21ae38a31a'
     fr:
       url: "/fr/docs/features/ai-chat-assistant/"
       path: fr/docs/features/ai-chat-assistant.md
-      sha: 663b35e275eb1c9e970ad05f9d37ba674a7217db2e35961802ab60d19f6a7919
-      translated_at: '2026-08-05T03:23:57Z'
+      sha: '0957be79c588450c29c12757a1b51cb50dd479c54c123cf901f05d21ae38a31a'
+      translated_at: '2026-09-08T21:57:41Z'
       prompt_version: 1
   "/docs/features/auto-hide-nav/":
     source: pages/_docs/features/auto-hide-nav.md
@@ -665,12 +665,12 @@ pages:
       prompt_version: 1
   "/docs/features/favicon/":
     source: pages/_docs/features/favicon.md
-    sha: 264da6b68023d01da6d1330c999686a2ca880db77a29fa3e4cfc4a2d63b7a53b
+    sha: 29f638af91189fd2bd0e90050bfd689b50dab2e21c3ebcae4217eff8ef4e7bd1
     fr:
       url: "/fr/docs/features/favicon/"
       path: fr/docs/features/favicon.md
-      sha: 264da6b68023d01da6d1330c999686a2ca880db77a29fa3e4cfc4a2d63b7a53b
-      translated_at: '2026-08-05T03:26:59Z'
+      sha: 29f638af91189fd2bd0e90050bfd689b50dab2e21c3ebcae4217eff8ef4e7bd1
+      translated_at: '2026-09-08T21:58:16Z'
       prompt_version: 1
   "/docs/features/giscus-comments/":
     source: pages/_docs/features/giscus-comments.md
@@ -710,12 +710,12 @@ pages:
       prompt_version: 1
   "/docs/features/mermaid-diagrams/":
     source: pages/_docs/features/mermaid-diagrams.md
-    sha: b8e7cd0aada3d21fa9fd357a681d97669bc0b5a0b68d6e50f8572de4421b8d90
+    sha: 6c7f9bbc21dd2c8f9b843736b7779c5a8eaee017630e9b4e36ad8ed9c267ee4e
     fr:
       url: "/fr/docs/features/mermaid-diagrams/"
       path: fr/docs/features/mermaid-diagrams.md
-      sha: b8e7cd0aada3d21fa9fd357a681d97669bc0b5a0b68d6e50f8572de4421b8d90
-      translated_at: '2026-08-05T03:30:12Z'
+      sha: 6c7f9bbc21dd2c8f9b843736b7779c5a8eaee017630e9b4e36ad8ed9c267ee4e
+      translated_at: '2026-09-08T21:59:38Z'
       prompt_version: 1
   "/docs/features/mobile-toc/":
     source: pages/_docs/features/mobile-toc.md
@@ -728,12 +728,12 @@ pages:
       prompt_version: 1
   "/docs/features/navigation-architecture/":
     source: pages/_docs/features/navigation-architecture.md
-    sha: 2f062d7f74fb14ce79b61b3ca597f012ecd0616297781ff2db40015abbf9872e
+    sha: 4e083aa40f50b1707a4a2a534867c5d005cea64506fc88fe242bb3548e255e00
     fr:
       url: "/fr/docs/features/navigation-architecture/"
       path: fr/docs/features/navigation-architecture.md
-      sha: 2f062d7f74fb14ce79b61b3ca597f012ecd0616297781ff2db40015abbf9872e
-      translated_at: '2026-08-05T03:30:53Z'
+      sha: 4e083aa40f50b1707a4a2a534867c5d005cea64506fc88fe242bb3548e255e00
+      translated_at: '2026-09-08T21:59:55Z'
       prompt_version: 1
   "/docs/features/particles-background/":
     source: pages/_docs/features/particles-background.md
@@ -779,6 +779,15 @@ pages:
       path: fr/docs/features/sidebar-page-tree.md
       sha: 78aaa54a3a5ccf0c0fc38bb4ed178e43d764a194358ce5878240f20a88f3c04a
       translated_at: '2026-08-05T03:33:13Z'
+      prompt_version: 1
+  "/docs/features/site-builder/":
+    source: pages/_docs/features/site-builder.md
+    sha: 198273b3a50974205928b044453a399e524893d6caeb1bee990e67fa04d704c6
+    fr:
+      url: "/fr/docs/features/site-builder/"
+      path: fr/docs/features/site-builder.md
+      sha: 198273b3a50974205928b044453a399e524893d6caeb1bee990e67fa04d704c6
+      translated_at: '2026-09-08T22:01:49Z'
       prompt_version: 1
   "/docs/features/site-search/":
     source: pages/_docs/features/site-search.md
@@ -827,12 +836,12 @@ pages:
       prompt_version: 1
   "/docs/features/toc/":
     source: pages/_docs/features/toc.md
-    sha: 6e3a36b8d8b967bc391d2a0f7821f6fa276927a43265cf253c4d713e08db2306
+    sha: 0560ebf13ef174462eb977b3578ca6f5dbfadfea1052c3c8e5ab4eb1db452ae9
     fr:
       url: "/fr/docs/features/toc/"
       path: fr/docs/features/toc.md
-      sha: 6e3a36b8d8b967bc391d2a0f7821f6fa276927a43265cf253c4d713e08db2306
-      translated_at: '2026-08-05T03:34:58Z'
+      sha: 0560ebf13ef174462eb977b3578ca6f5dbfadfea1052c3c8e5ab4eb1db452ae9
+      translated_at: '2026-09-08T22:02:18Z'
       prompt_version: 1
   "/docs/features/vendored-assets/":
     source: pages/_docs/features/vendored-assets.md
@@ -1232,12 +1241,12 @@ pages:
       prompt_version: 1
   "/posts/2025/01/15/docker-jekyll-guide/":
     source: pages/_posts/2025-01-15-docker-jekyll-guide.md
-    sha: f41e406ffb3cb2089ed37dfd8f388f975ca46edac746307768358d892aa9a3d2
+    sha: 5206782e47675994d85d1fafc0bc1661f8fb60479b595efd7b1d51705e821b86
     fr:
       url: "/fr/posts/2025/01/15/docker-jekyll-guide/"
       path: fr/posts/2025-01-15-docker-jekyll-guide.md
-      sha: f41e406ffb3cb2089ed37dfd8f388f975ca46edac746307768358d892aa9a3d2
-      translated_at: '2026-07-23T16:54:51Z'
+      sha: 5206782e47675994d85d1fafc0bc1661f8fb60479b595efd7b1d51705e821b86
+      translated_at: '2026-09-08T21:55:29Z'
       prompt_version: 1
   "/posts/2025/01/18/quantum-computing-explained/":
     source: pages/_posts/science/2025-01-18-quantum-computing-explained.md
@@ -1475,55 +1484,64 @@ pages:
       prompt_version: 1
   "/quickstart/":
     source: pages/_quickstart/index.md
-    sha: 2555308eac40feb9be440ee8287840ef6ed93fed5e8df08a135cecbc0479611b
+    sha: 66da1a1e9bc53e1036e68d82df4ae7a26d4c466e2efd45b552cec35ae1cb8be2
     fr:
       url: "/fr/quickstart/"
       path: fr/quickstart/index.md
-      sha: 2555308eac40feb9be440ee8287840ef6ed93fed5e8df08a135cecbc0479611b
-      translated_at: '2026-08-07T04:23:04Z'
+      sha: 66da1a1e9bc53e1036e68d82df4ae7a26d4c466e2efd45b552cec35ae1cb8be2
+      translated_at: '2026-09-08T22:03:00Z'
       prompt_version: 1
   "/quickstart/github-setup/":
     source: pages/_quickstart/github-setup.md
-    sha: b3a9ae56e1bf4b539656a08a0cf1b649530aaba8a300e369c82c430239539cb5
+    sha: 642910d38e2c34923948b56810db2394f9ad7a392f1937027050df6c52fc11fc
     fr:
       url: "/fr/quickstart/github-setup/"
       path: fr/quickstart/github-setup.md
-      sha: b3a9ae56e1bf4b539656a08a0cf1b649530aaba8a300e369c82c430239539cb5
-      translated_at: '2026-08-07T04:22:44Z'
+      sha: 642910d38e2c34923948b56810db2394f9ad7a392f1937027050df6c52fc11fc
+      translated_at: '2026-09-08T22:02:36Z'
       prompt_version: 1
   "/quickstart/jekyll-setup/":
     source: pages/_quickstart/jekyll-setup.md
-    sha: fe93ed13d358ba6e0551d1d178ccf91d339bc9e4989b5b8eca7c14f875c8de88
+    sha: fe93452700297ca885e8caa97ec46725760852fb9dee4a11f3b8793a2f0a72f6
     fr:
       url: "/fr/quickstart/jekyll-setup/"
       path: fr/quickstart/jekyll-setup.md
-      sha: fe93ed13d358ba6e0551d1d178ccf91d339bc9e4989b5b8eca7c14f875c8de88
-      translated_at: '2026-08-07T04:23:18Z'
+      sha: fe93452700297ca885e8caa97ec46725760852fb9dee4a11f3b8793a2f0a72f6
+      translated_at: '2026-09-08T22:03:15Z'
       prompt_version: 1
   "/quickstart/machine-setup/":
     source: pages/_quickstart/machine-setup.md
-    sha: 02d96d7d4b84d14f75e95ef459874aa4ee9148af179b3154f388db962e2e7221
+    sha: 75ac6f087cec781f6f897e27bcdb261f7a7ce4b0646432ef577162d40c4a77b3
     fr:
       url: "/fr/quickstart/machine-setup/"
       path: fr/quickstart/machine-setup.md
-      sha: 02d96d7d4b84d14f75e95ef459874aa4ee9148af179b3154f388db962e2e7221
-      translated_at: '2026-08-07T04:23:32Z'
+      sha: 75ac6f087cec781f6f897e27bcdb261f7a7ce4b0646432ef577162d40c4a77b3
+      translated_at: '2026-09-08T22:03:33Z'
       prompt_version: 1
   "/quickstart/personalization/":
     source: pages/_quickstart/personalization.md
-    sha: 630342fcd53022ce0191d47f9cb12cb5c25138e1a0e877c0b43d6f3bbcfd473e
+    sha: '097b8c40314c293ae40e3d7f0e551ba4f83205b0591058f988ae36bacb26e99a'
     fr:
       url: "/fr/quickstart/personalization/"
       path: fr/quickstart/personalization.md
-      sha: 630342fcd53022ce0191d47f9cb12cb5c25138e1a0e877c0b43d6f3bbcfd473e
-      translated_at: '2026-08-07T04:25:50Z'
+      sha: '097b8c40314c293ae40e3d7f0e551ba4f83205b0591058f988ae36bacb26e99a'
+      translated_at: '2026-09-08T22:05:54Z'
+      prompt_version: 1
+  "/quickstart/site-builder/":
+    source: pages/_quickstart/site-builder.md
+    sha: 45ea3ac202e149051c0817f258fb8928fa8e808f38b629898fdc4146a591440d
+    fr:
+      url: "/fr/quickstart/site-builder/"
+      path: fr/quickstart/site-builder.md
+      sha: 45ea3ac202e149051c0817f258fb8928fa8e808f38b629898fdc4146a591440d
+      translated_at: '2026-09-08T22:06:33Z'
       prompt_version: 1
 ui_text:
   fr:
-    sha: 648882b32870f5d536540e4b6e61d925c3bf7e550b3a6dd471ab8166cc36b351
-    translated_at: '2026-09-01T21:29:35Z'
+    sha: 32096c9ff9e64b0fdf40f167dc8b87c2a1ff551ee1b9df6c4daa81530d60b17f
+    translated_at: '2026-09-08T22:06:57Z'
     prompt_version: 1
 source_lang: en
 languages:
 - fr
-updated_at: '2026-09-01T21:29:35Z'
+updated_at: '2026-09-08T22:06:57Z'
