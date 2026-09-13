@@ -3,8 +3,8 @@
 # Regenerated automatically during each release (scripts/bin/release).
 # Consumers use this file via scripts/bin/audit-consumer to detect drift.
 
-version: "1.30.0"
-generated_at: "2026-09-12T15:18:42Z"
+version: "1.30.1"
+generated_at: "2026-09-13T02:03:13Z"
 
 # Directories owned by this theme.  A consumer file in any of these paths
 # that is not declared in the consumer's .theme-overrides.yml is flagged
@@ -160,7 +160,7 @@ file_checksums:
   _includes/components/theme-controls-bar.html: "53fe86978d1c9a13853fca0502c356b559640f67e11334fe27b180a6fd31d425"
   _includes/components/theme-customizer.html: "115030770a897e813a42108aa40794617fc5bc34fc39f41e77ed200f96d61cab"
   _includes/components/theme-info.html: "45121f886e48214106391fb89ac4c11ed5618b3730e41f21d1002ae325999851"
-  _includes/components/theme-preview-gallery.html: "acffb55a6122b40f0ce3e3c64e6847d488f75d42d6df11d86d846862cc9a6de7"
+  _includes/components/theme-preview-gallery.html: "8a2f2c86f12ae141f77943c4beb36f06b20f423ce0e6669d53c6e82562edad65"
   _includes/components/translation-notice.html: "01e5d23801d454641b49f1a1efe83cc09089decdb61da14045f158f1b097e819"
   _includes/components/zer0-env-var.html: "d11f3a578319f48f763b0e8639230e71b9a6e9301453c73c9907814f086fc03e"
   _includes/content/backlinks.html: "6b18741876a3923606b60f60b3f366c3f60d49924d03a2b86c80df41f2e8130a"
@@ -197,7 +197,7 @@ file_checksums:
   _includes/navigation/nav-tree.html: "d3002ad767eab6f27d9f252545f7564afc470b827ad67b7fb27fab90df9d124d"
   _includes/navigation/nav_list.html: "3450b282840fb5a82e0ab01d636e3b38e0bdbcc4233cca3e2f2a80fc7c71e3c5"
   _includes/navigation/navbar-mobile-quicklinks.html: "a2c23bbc41f8b27eae1a869893f1e7ecf881f12e34164ab7f8dc4a178011a45e"
-  _includes/navigation/navbar.html: "d7bce9b784062f391321bbbb26a65737b7b30ee1886cfa040af98285aef2d059"
+  _includes/navigation/navbar.html: "94d0dcb0da35b72f2fd8c991d16ba826452afa75f8dc419de4303d83023ab115"
   _includes/navigation/section-sidebar.html: "d77e8328f818a161449263d8293876a53fa0261747949901cf2e19ff6ac2c2b2"
   _includes/navigation/sidebar-categories.html: "42217519bc109e030b8f6e2578783efbc13838176e0eeba7cc1450641eb2f641"
   _includes/navigation/sidebar-config.html: "40e8bf838a3f819ba65ddad8bd004aeb01a9abc5c5d35a6894ffb18aa798ce24"
