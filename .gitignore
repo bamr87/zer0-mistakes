@@ -41,6 +41,7 @@ tmp/
 
 # Test framework results and reports
 test/results/*.json
+test/results/*.log
 test/reports/*
 test/coverage/*
 logs/*

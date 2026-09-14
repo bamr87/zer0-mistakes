@@ -75,6 +75,25 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
+- **Two `test_core.sh` checks could never fail, and one shouted on every clean
+  run (#460).** The Liquid nested-tag check grepped for
+  {% raw %}`{{.*{{`{% endraw %}, which matches
+  any two *sibling* output tags on one line — it flagged 64 of the theme's
+  includes, starting with `navigation/sidebar-pagetree.html`'s valid
+  {% raw %}`{{ _base }}{{ _section }}`{% endraw %} — and its `return 1` sat inside a `find | while`
+  pipeline, i.e. a subshell, so the function printed `[ERROR]` and then reported
+  the check as passed. The gem-content check ran `tar -tzf` on the built `.gem`,
+  but a gem is an *uncompressed* tar wrapping `metadata.gz`, `data.tar.gz` and
+  `checksums.yaml.gz`, so gzip printed `stdin: not in gzip format` four times
+  and both branches fell through to "Gem may not contain…" without ever
+  inspecting the payload — a gem shipped with no `_layouts/` would have passed.
+  The nested-tag pattern is now {% raw %}`{{[^}]*{{`{% endraw %} (cannot cross the first `}`, so
+  siblings do not match), both loops read from a process substitution so a
+  failure propagates, and the gem check extracts `data.tar.gz` and asserts
+  `_layouts/` and `assets/` are really in it. New `test/test_core_checks.sh`
+  drives both checks against known-good and known-bad fixtures, so a check that
+  stops being able to fail is itself a test failure. `./test/test_core.sh` now
+  runs clean: 26/26, no `[ERROR]` line, no gzip/tar noise.
 - **Every navbar link emitted invalid HTML — attributes glued together with no
   separating whitespace (#465)** — the Liquid whitespace-trim markers around the
   conditional `aria-current` in `_includes/navigation/navbar.html` ate the
