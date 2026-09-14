@@ -1981,10 +1981,15 @@
     return data;
   }
 
+  // `is-visible` is the ONLY handle on the chip's appearance. It used to also
+  // clear `hidden`, which the 2s timer below never restored (that timer only
+  // drops `is-visible`, an opacity/visibility class) — so the first debounced
+  // save moved the chip into layout permanently and shifted the whole wizard
+  // down 7px (issue #265). _setup-wizard.scss reserves the box and hides it
+  // with `visibility`, so there is nothing here to toggle but the class.
   function showDraftChip() {
     var chip = document.getElementById('wizard-draft-chip');
     if (!chip) return;
-    chip.hidden = false;
     chip.classList.add('is-visible');
     clearTimeout(chipTimer);
     chipTimer = setTimeout(function () { chip.classList.remove('is-visible'); }, 2000);
@@ -2016,7 +2021,7 @@
     draftTimer = null;
     try { localStorage.removeItem(DRAFT_KEY); } catch (e) { /* ignore */ }
     var chip = document.getElementById('wizard-draft-chip');
-    if (chip) { chip.classList.remove('is-visible'); chip.hidden = true; }
+    if (chip) { chip.classList.remove('is-visible'); }
   }
 
   function restoreDraft() {
