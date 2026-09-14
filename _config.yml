@@ -970,6 +970,7 @@ exclude:
   - AGENTS.md
   - docs/
   - frontmatter.json
+  - zer0.json
   - logs/
   - templates/
   - vendor-manifest.json
