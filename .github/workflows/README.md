@@ -21,7 +21,7 @@ This directory contains the CI/CD workflows for the zer0-mistakes Jekyll theme.
 │  Schedules ─────────► test-latest.yml (daily canary),                │
 │                       update-dependencies.yml, install-matrix.yml,   │
 │                       codeql.yml, issue-autopilot.yml,               │
-│                       giscus-digest.yml (weekly)                     │
+│                       giscus-digest.yml, zer0-doctor.yml (weekly)    │
 │                                                                       │
 └───────────────────────────────────────────────────────────────────────┘
 ```
@@ -192,6 +192,12 @@ The job goes **red** when the sweep captures nothing — enforced twice, by `swe
 **Triggers:** Weekly schedule, Manual dispatch
 
 Read-only digest of Giscus-backed GitHub Discussions to the job summary.
+
+### `zer0-doctor.yml` — zer0 stack contract check (report-only)
+
+**Triggers:** Weekly schedule (Wed 05:43 UTC), Manual dispatch
+
+A thin caller of the reusable `bamr87/zer0-CMS/.github/workflows/zer0-doctor.yml@main` with `fail-on-error: false`: it reports whether the docs site is aligned with the zer0 stack (theme, image generator gem + `preview_images:`, `zer0.json`, `fleet.manifest.yml`, front-matter required keys) and never fails. It is deliberately not on `pull_request`/`push`, so it cannot redden a PR — it stays inert until zer0-CMS ships the reusable workflow. No model, no secrets, `contents: read`; the job has no `timeout-minutes` because GitHub does not allow the key on a job that calls a reusable workflow (the called workflow bounds itself). The same file is shipped to consumer sites as `templates/consumer/zer0-doctor.yml`.
 
 ## Gate Coverage — What Enforces What
 
