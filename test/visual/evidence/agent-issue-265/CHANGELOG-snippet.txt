@@ -1,0 +1,2 @@
+<!-- CHANGELOG snippet — evidence: test/visual/evidence/agent-issue-265/ -->
+  (evidence: [`test/visual/evidence/agent-issue-265/`](test/visual/evidence/agent-issue-265/README.md) — first draft save moved the wizard 42px on the base branch, 0px here)
