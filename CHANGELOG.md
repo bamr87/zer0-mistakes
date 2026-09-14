@@ -29,7 +29,10 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
   link targets `#main-content`. Microdata (`h-entry`, `itemscope`,
   `BlogPosting`/`TechArticle`/`Article`) is unchanged, and the rendered pixels
   are identical. Pinned by `test/visual/core/landmarks.spec.js`
-  ([#484](https://github.com/bamr87/zer0-mistakes/issues/484)).
+  ([#484](https://github.com/bamr87/zer0-mistakes/issues/484)) (evidence:
+  [`test/visual/evidence/agent-issue-484/`](test/visual/evidence/agent-issue-484/README.md)
+  — base vs head on a post and a note page, page overflow 0px → 0px across 6
+  widths, 9 pixel baselines unchanged).
 
 ## [1.30.0](https://github.com/bamr87/zer0-mistakes/compare/v1.29.0...v1.30.0) (2026-09-12)
 
