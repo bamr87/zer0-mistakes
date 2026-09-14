@@ -111,7 +111,7 @@ The zer0-mistakes testing framework provides **6 comprehensive test suites** for
 Spec files live in exactly two sections under `test/visual/`, orthogonal to the execution tiers below:
 
 - **`core/`** — cross-cutting quality/a11y/security/responsive baseline that
-applies regardless of feature (accessibility, security, styling, responsive, layout-chrome, features-registry). Bare, non-negotiable expectations.
+applies regardless of feature (accessibility, landmarks, security, styling, responsive, layout-chrome, features-registry). Bare, non-negotiable expectations.
 - **`features/`** — one file per feature or tightly-scoped feature cluster,
 matching the feature registry (`_data/features.yml`'s `tests:` links) — e.g. `search.spec.js`, `admin.spec.js`, `appearance.spec.js`, `navbar.spec.js`.
 

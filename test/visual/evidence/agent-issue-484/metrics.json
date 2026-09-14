@@ -1,0 +1,128 @@
+{
+  "slug": "agent-issue-484",
+  "generator": "test/visual/pr-evidence.mjs",
+  "base": "http://localhost:4000",
+  "before": "http://localhost:4001",
+  "beforeLabel": "BEFORE — base branch",
+  "afterLabel": "AFTER — this PR",
+  "routes": [
+    {
+      "route": "/posts/2025/01/22/git-workflow-best-practices/",
+      "beforeRendered": true
+    },
+    {
+      "route": "/notes/git-cheatsheet/",
+      "beforeRendered": true
+    }
+  ],
+  "sweep": [
+    {
+      "route": "/posts/2025/01/22/git-workflow-best-practices/",
+      "width": 320,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/posts/2025/01/22/git-workflow-best-practices/",
+      "width": 390,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/posts/2025/01/22/git-workflow-best-practices/",
+      "width": 768,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/posts/2025/01/22/git-workflow-best-practices/",
+      "width": 992,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/posts/2025/01/22/git-workflow-best-practices/",
+      "width": 1280,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/posts/2025/01/22/git-workflow-best-practices/",
+      "width": 1440,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/notes/git-cheatsheet/",
+      "width": 320,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/notes/git-cheatsheet/",
+      "width": 390,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/notes/git-cheatsheet/",
+      "width": 768,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/notes/git-cheatsheet/",
+      "width": 992,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/notes/git-cheatsheet/",
+      "width": 1280,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/notes/git-cheatsheet/",
+      "width": 1440,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    }
+  ]
+}
