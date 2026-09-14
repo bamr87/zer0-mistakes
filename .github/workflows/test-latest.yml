@@ -20,9 +20,17 @@ name: TEST (Latest Dependencies)
 permissions:
   contents: read
 
+# Scheduled canaries get their OWN lane: the nightly builds --no-cache (the
+# zero-pin gate) while pushes build cached, so they are not interchangeable and
+# a push must never cancel — or queue behind — the nightly.
+# Within the push lane a newer commit supersedes an older one. Serializing them
+# (the previous cancel-in-progress: false) meant a push landing while another
+# was in flight sat in the concurrency queue before starting, which is pure
+# latency: this canary validates latest-deps against the TIP of main, so an
+# image for a commit main has already moved past is not worth the pipeline.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: ${{ github.event_name == 'push' }}
 
 # NOTE: deliberately NOT triggered on pull_request — PRs are validated by ci.yml
 # against the pinned (merge-relevant) dependencies. Running the whole zero-pin

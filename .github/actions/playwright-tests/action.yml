@@ -17,6 +17,10 @@ inputs:
     description: 'Suffix for uploaded artifacts (so multiple steps do not collide).'
     required: false
     default: 'playwright'
+  workers:
+    description: 'Worker count for this tier. Empty (default) uses the config value of 1. Never set it for the snapshots tier — those specs share one server across 9 skins and must stay serial.'
+    required: false
+    default: ''
 
 runs:
   using: composite
@@ -33,6 +37,7 @@ runs:
       env:
         PLAYWRIGHT_PROJECT: ${{ inputs.project }}
         BASE_URL: ${{ inputs.base-url }}
+        PLAYWRIGHT_WORKERS: ${{ inputs.workers }}
         # The runner does its own install only when explicitly asked.
         SKIP_NPM_INSTALL: '1'
         SKIP_PLAYWRIGHT_INSTALL: '1'

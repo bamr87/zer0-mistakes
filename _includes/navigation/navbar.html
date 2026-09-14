@@ -49,7 +49,7 @@
                             class="nav-link"
                             href="{{ link.url | relative_url }}"
                             aria-label="{{ link.title }}"
-                            {%- if link.url == page.url -%} aria-current="page"{%- endif -%}
+                            {% if link.url == page.url %}aria-current="page"{% endif %}
                             title="{{ link.title }}"
                         >
                             {%- if link.icon -%}
@@ -78,8 +78,7 @@
                                     <a
                                         class="dropdown-item"
                                         href="{{ child.url | relative_url }}"
-
-                                        {%- if child.url == page.url -%} aria-current="page"{%- endif -%}
+                                        {% if child.url == page.url %}aria-current="page"{% endif %}
                                     >
                                         {%- if child.icon -%}
                                             <i class="{{site.default_icon}} {{ child.icon }} me-2" aria-hidden="true"></i>
@@ -96,7 +95,7 @@
                             class="nav-link"
                             href="{{ link.url | relative_url }}"
                             aria-label="{{ link.title }}"
-                            {%- if link.url == page.url -%} aria-current="page"{%- endif -%}
+                            {% if link.url == page.url %}aria-current="page"{% endif %}
                             title="{{ link.title }}"
                         >
                             {%- if link.icon -%}
@@ -125,7 +124,7 @@
                             href="{{ col_url | relative_url }}"
                             aria-label="{{ col_title }}"
                             title="{{ col_title }}"
-                            {%- if page.collection == collection.label -%} aria-current="page"{%- endif -%}
+                            {% if page.collection == collection.label %}aria-current="page"{% endif %}
                         >
                             <span class="nav-link-text">{{ col_title }}</span>
                         </a>
