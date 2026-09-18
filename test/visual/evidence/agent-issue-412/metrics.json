@@ -1,0 +1,70 @@
+{
+  "slug": "agent-issue-412",
+  "generator": "test/visual/pr-evidence.mjs",
+  "base": "http://localhost:4000",
+  "before": "http://localhost:4001",
+  "beforeLabel": "BEFORE — origin/main",
+  "afterLabel": "AFTER — agent/issue-412 @ 1dd5eb0",
+  "routes": [
+    {
+      "route": "/",
+      "beforeRendered": true
+    }
+  ],
+  "sweep": [
+    {
+      "route": "/",
+      "width": 320,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/",
+      "width": 390,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/",
+      "width": 768,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/",
+      "width": 992,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/",
+      "width": 1280,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    },
+    {
+      "route": "/",
+      "width": 1440,
+      "afterStatus": 200,
+      "beforeStatus": 200,
+      "beforeOverflowPx": 0,
+      "afterOverflowPx": 0,
+      "afterOverflowEl": null
+    }
+  ]
+}

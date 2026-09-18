@@ -23,7 +23,7 @@ file. Only `## [Unreleased]` describes work that has not shipped yet.
 
 ### Fixed
 
-- **A code-copy partial no longer restyles every button on the site** ([#412](https://github.com/bamr87/zer0-mistakes/issues/412)). `_sass/core/code-copy.scss` shipped a bare `.button, button:not(.copy)` rule — an element selector at specificity (0,1,1) that out-ranked `.btn` and any consumer's own class, applying `padding: 0 20px`, `font-size: 11px` and a hardcoded `#bbb` border site-wide. It is scoped to `.code-block-header` / `pre.highlight` now and uses `--zer0-*` tokens, so `#bbb` is gone from the compiled stylesheet.
+- **A code-copy partial no longer restyles every button on the site** ([#412](https://github.com/bamr87/zer0-mistakes/issues/412)). `_sass/core/code-copy.scss` shipped a bare `.button, button:not(.copy)` rule — an element selector at specificity (0,1,1) that out-ranked `.btn` and any consumer's own class, applying `padding: 0 20px`, `font-size: 11px` and a hardcoded `#bbb` border site-wide. It is scoped to `.code-block-header` / `pre.highlight` now and uses `--zer0-*` tokens, so `#bbb` is gone from the compiled stylesheet. Every button on the site — the theme's own chrome included — gets its intended metrics back (evidence: [`test/visual/evidence/agent-issue-412/`](test/visual/evidence/agent-issue-412/README.md) — page overflow 0px at six widths; the nine skin baselines moved, and every red region in their diffs is a `<button>`).
 
 ## [1.30.0](https://github.com/bamr87/zer0-mistakes/compare/v1.29.0...v1.30.0) (2026-09-12)
 
